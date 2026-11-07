@@ -1,3 +1,193 @@
+--- a/plugins/soapysdr/Settings.cpp
++++ b/plugins/soapysdr/Settings.cpp
+@@ -26,6 +26,35 @@
+ 
+ constexpr uint8_t socIndex = 0;
+ 
++/* SRRX_RX_ONLY: receive-only lab build. Every setter of the transmit direction, every raw
++   register or GPIO write and every setting outside the RX allowlist is rejected before it
++   reaches the device; getters and register reads (0x0020 read-back) are unchanged. */
++static void srrxRejectTx(const int direction, const char* what)
++{
++    if (direction != SOAPY_SDR_RX)
++        throw std::runtime_error(std::string("SRRX receive-only: TX ") + what + " rejected");
++}
++
++/* SRRX_RX_ONLY: the --txen=0 path, the only LMS7002M field write: TXEN_A/TXEN_B (0x0020 bits 2/3) = 0. */
++static bool srrxTxOffField(const std::string& key, const std::string& value)
++{
++    return (key == "TXEN_A" || key == "TXEN_B") && value == "0";
++}
++
++/* SRRX_RX_ONLY: allowlist of the device-wide settings (RX calibration, RX GFIR, RX digital test signal). */
++static bool srrxRxSetting(const std::string& key)
++{
++    return key == "RXTSP_CONST" || key == "CALIBRATE_RX" || key == "ENABLE_RX_GFIR_LPF" || key == "DISABLE_RX_GFIR_LPF" ||
++           key == "RXTSG_NCO" || key == "OVERSAMPLING";
++}
++
++/* SRRX_RX_ONLY: allowlist of the per-channel RX settings. */
++static bool srrxRxChannelSetting(const std::string& key)
++{
++    return key == "TSP_CONST" || key == "CALIBRATE_RX" || key == "CALIBRATE" || key == "ENABLE_GFIR_LPF" ||
++           key == "DISABLE_GFIR_LPF" || key == "TSG_NCO";
++}
++
+ /*******************************************************************
+  * Constructor/destructor
+  ******************************************************************/
+@@ -56,7 +85,8 @@
+     for (uint8_t channel = 0; channel < channelCount; channel++)
+     {
+         sdrDevice->EnableChannel(socIndex, TRXDir::Rx, channel, true);
+-        sdrDevice->EnableChannel(socIndex, TRXDir::Tx, channel, true);
++        /* SRRX_RX_ONLY: TX stays powered down (TXEN_A/TXEN_B = 0), never enabled on open. */
++        sdrDevice->EnableChannel(socIndex, TRXDir::Tx, channel, false);
+     }
+ 
+     // Disable use of value cache automatically
+@@ -157,6 +187,7 @@
+ 
+ void Soapy_limesuiteng::setAntenna(const int direction, const size_t channel, const std::string& name)
+ {
++    srrxRejectTx(direction, "setAntenna");
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+ 
+     TRXDir dir = direction == SOAPY_SDR_TX ? TRXDir::Tx : TRXDir::Rx;
+@@ -203,6 +234,7 @@
+ 
+ void Soapy_limesuiteng::setDCOffsetMode(const int direction, const size_t channel, const bool automatic)
+ {
++    srrxRejectTx(direction, "setDCOffsetMode");
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     sdrDevice->SetDCOffsetMode(socIndex, direction == SOAPY_SDR_RX ? ::TRXDir::Rx : TRXDir::Tx, channel, automatic);
+ }
+@@ -220,6 +252,7 @@
+ 
+ void Soapy_limesuiteng::setDCOffset(const int direction, const size_t channel, const std::complex<double>& offset)
+ {
++    srrxRejectTx(direction, "setDCOffset");
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     const auto lmsDir = (direction == SOAPY_SDR_TX) ? TRXDir::Tx : TRXDir::Rx;
+     complex64f_t complex{ offset.real(), offset.imag() };
+@@ -241,6 +274,7 @@
+ 
+ void Soapy_limesuiteng::setIQBalance(const int direction, const size_t channel, const std::complex<double>& balance)
+ {
++    srrxRejectTx(direction, "setIQBalance");
+     const auto lmsDir = (direction == SOAPY_SDR_TX) ? TRXDir::Tx : TRXDir::Rx;
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     complex64f_t complex{ balance.real(), balance.imag() };
+@@ -275,6 +309,7 @@
+ 
+ void Soapy_limesuiteng::setGain(const int direction, const size_t channel, const double value)
+ {
++    srrxRejectTx(direction, "setGain");
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     TRXDir dir = direction == SOAPY_SDR_RX ? TRXDir::Rx : TRXDir::Tx;
+     SoapySDR::logf(SOAPY_SDR_DEBUG, "Soapy_limesuiteng::setGain(%s, %ld, %g dB)", ToString(dir).c_str(), channel, value);
+@@ -302,6 +337,7 @@
+ 
+ void Soapy_limesuiteng::setGain(const int direction, const size_t channel, const std::string& name, const double value)
+ {
++    srrxRejectTx(direction, "setGain");
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     TRXDir dir = direction == SOAPY_SDR_RX ? TRXDir::Rx : TRXDir::Tx;
+     SoapySDR::logf(
+@@ -367,6 +403,7 @@
+ 
+ void Soapy_limesuiteng::setFrequency(int direction, size_t channel, double frequency, [[maybe_unused]] const SoapySDR::Kwargs& args)
+ {
++    srrxRejectTx(direction, "setFrequency");
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     TRXDir dir = direction == SOAPY_SDR_TX ? TRXDir::Tx : TRXDir::Rx;
+ 
+@@ -389,6 +426,7 @@
+     const double frequency,
+     [[maybe_unused]] const SoapySDR::Kwargs& args)
+ {
++    srrxRejectTx(direction, "setFrequency");
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     TRXDir dir = direction == SOAPY_SDR_TX ? TRXDir::Tx : TRXDir::Rx;
+     SoapySDR::logf(SOAPY_SDR_DEBUG,
+@@ -482,6 +520,7 @@
+ 
+ void Soapy_limesuiteng::setSampleRate(const int direction, const size_t channel, const double rate)
+ {
++    srrxRejectTx(direction, "setSampleRate");
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     TRXDir dir = direction == SOAPY_SDR_TX ? TRXDir::Tx : TRXDir::Rx;
+ 
+@@ -541,6 +580,7 @@
+ 
+ void Soapy_limesuiteng::setBandwidth(const int direction, const size_t channel, const double bw)
+ {
++    srrxRejectTx(direction, "setBandwidth");
+     if (bw == 0.0)
+     {
+         return; // Special ignore value
+@@ -752,6 +792,9 @@
+ 
+ void Soapy_limesuiteng::writeRegister(const std::string& name, const unsigned addr, const unsigned value)
+ {
++    /* SRRX_RX_ONLY: no raw RFIC/BBIC register write from outside the library. */
++    throw std::runtime_error("SRRX receive-only: writeRegister(" + name + ") rejected");
++
+     if (name == "BBIC")
+     {
+         return writeRegister(addr, value);
+@@ -798,6 +841,9 @@
+ 
+ void Soapy_limesuiteng::writeRegister(const unsigned addr, const unsigned value)
+ {
++    /* SRRX_RX_ONLY: no raw FPGA register write from outside the library. */
++    throw std::runtime_error("SRRX receive-only: writeRegister rejected");
++
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     sdrDevice->WriteRegister(0, addr, value, true);
+ }
+@@ -845,6 +891,10 @@
+ 
+ void Soapy_limesuiteng::writeSetting(const std::string& key, const std::string& value)
+ {
++    /* SRRX_RX_ONLY: TX settings, LOAD_CONFIG/SAVE_CONFIG and other LMS7002M fields are rejected. */
++    if (!srrxRxSetting(key) && !srrxTxOffField(key, value))
++        throw std::runtime_error("SRRX receive-only: setting " + key + " rejected");
++
+     const size_t channelCount = sdrDevice->GetDescriptor().rfSOC.at(socIndex).channelCount;
+     if (key == "RXTSP_CONST")
+     {
+@@ -1007,6 +1057,10 @@
+ 
+ void Soapy_limesuiteng::writeSetting(const int direction, const size_t channel, const std::string& key, const std::string& value)
+ {
++    srrxRejectTx(direction, "writeSetting");
++    if (!srrxRxChannelSetting(key) && !srrxTxOffField(key, value))
++        throw std::runtime_error("SRRX receive-only: setting " + key + " rejected");
++
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     const TRXDir dir = (direction == SOAPY_SDR_TX) ? TRXDir::Tx : TRXDir::Rx;
+ 
+@@ -1160,6 +1214,9 @@
+ 
+ void Soapy_limesuiteng::writeGPIO(const std::string&, const unsigned value)
+ {
++    /* SRRX_RX_ONLY: no board GPIO write from outside the library. */
++    throw std::runtime_error("SRRX receive-only: writeGPIO rejected");
++
+     OpStatus r = sdrDevice->GPIOWrite(reinterpret_cast<const uint8_t*>(&value), sizeof(value));
+     if (r != OpStatus::Success)
+     {
+@@ -1180,6 +1237,9 @@
+ 
+ void Soapy_limesuiteng::writeGPIODir(const std::string&, const unsigned dir)
+ {
++    /* SRRX_RX_ONLY: no board GPIO direction write from outside the library. */
++    throw std::runtime_error("SRRX receive-only: writeGPIODir rejected");
++
+     OpStatus r = sdrDevice->GPIODirWrite(reinterpret_cast<const uint8_t*>(&dir), sizeof(dir));
+     if (r != OpStatus::Success)
+     {
 --- a/plugins/soapysdr/Streaming.cpp
 +++ b/plugins/soapysdr/Streaming.cpp
 @@ -107,6 +107,10 @@
@@ -52,9 +242,174 @@
  }
  
  int Soapy_limesuiteng::readStreamStatus(
+--- a/src/API/LimePlugin.cpp
++++ b/src/API/LimePlugin.cpp
+@@ -197,6 +197,9 @@
+ //max gain ~70-76 (higher will probably degrade signal quality to much)
+ void LimePlugin_SetTxGain(LimePluginContext* context, double gain, int channel_num)
+ {
++    /* SRRX_RX_ONLY: no TX gain through the plugin API. */
++    return;
++
+     int row = std::clamp(static_cast<int>(gain), 0, static_cast<int>(txGainTable.size() - 1));
+ 
+     std::lock_guard<std::mutex> lk(gainsMutex);
+@@ -755,6 +758,9 @@
+ 
+ int LimePlugin_Init(LimePluginContext* context, lime::SDRDevice::LogCallbackType logFptr, LimeSettingsProvider* configProvider)
+ {
++    /* SRRX_RX_ONLY: the TRX plugin API (Amarisoft-style transceiver) is disabled in this build. */
++    return -1;
++
+     context->hostLog = logFptr;
+     hostCallback = logFptr;
+     context->config = configProvider;
+@@ -1018,6 +1024,9 @@
+ 
+ int LimePlugin_Setup(LimePluginContext* context, const LimeRuntimeParameters* params)
+ {
++    /* SRRX_RX_ONLY: the TRX plugin API is disabled in this build. */
++    return -1;
++
+     OpStatus status = MapChannelsToDevices(context->rxChannels, context->ports, *params, TRXDir::Rx);
+     if (status != OpStatus::Success)
+         return -1;
+@@ -1125,6 +1134,9 @@
+ template<class T>
+ static int LimePlugin_Write(LimePluginContext* context, const T* const* samples, int count, int port, StreamTxMeta& meta)
+ {
++    /* SRRX_RX_ONLY: no transmit path is compiled in this entry point. */
++    return -1;
++
+     if (!samples) // Nothing to transmit
+         return 0;
+ 
+--- a/src/boards/LMS7002M_SDRDevice.cpp
++++ b/src/boards/LMS7002M_SDRDevice.cpp
+@@ -104,8 +104,19 @@
+ {
+ }
+ 
++/* SRRX_RX_ONLY: the only external LMS7002M register write is the TX-off write of 0x0020
++   (TXEN_A bit 2 and TXEN_B bit 3 both clear, the --txen=0 path); reads are unchanged. */
++static bool SrrxTxOffWrite(unsigned int address, unsigned int value)
++{
++    return address == 0x0020 && (value & 0x000C) == 0;
++}
++
+ OpStatus LMS7002M_SDRDevice::EnableChannel(uint8_t moduleIndex, TRXDir trx, uint8_t channel, bool enable)
+ {
++    /* SRRX_RX_ONLY: a TX channel may be disabled, never enabled. */
++    if (trx == TRXDir::Tx && enable)
++        return OpStatus::NotSupported;
++
+     if (moduleIndex >= mLMSChips.size())
+         return OpStatus::InvalidValue;
+     return mLMSChips.at(moduleIndex)->EnableChannel(trx, channel % 2, enable);
+@@ -178,6 +189,10 @@
+ 
+ OpStatus LMS7002M_SDRDevice::SetFrequency(uint8_t moduleIndex, TRXDir trx, uint8_t channel, double frequency)
+ {
++    /* SRRX_RX_ONLY: the TX synthesizer (SXT) is never tuned from outside the library. */
++    if (trx == TRXDir::Tx)
++        return OpStatus::NotSupported;
++
+     lime::LMS7002M* lms = mLMSChips.at(moduleIndex).get();
+     int64_t oppositeDirLO = lms->GetFrequencySX(trx == TRXDir::Rx ? TRXDir::Tx : TRXDir::Rx);
+     OpStatus status = lms->SetFrequencySX(trx, frequency);
+@@ -304,6 +319,10 @@
+ 
+ OpStatus LMS7002M_SDRDevice::SetLowPassFilter(uint8_t moduleIndex, TRXDir trx, uint8_t channel, double lpf)
+ {
++    /* SRRX_RX_ONLY: no TX low-pass filter configuration. */
++    if (trx == TRXDir::Tx)
++        return OpStatus::NotSupported;
++
+     auto& lms = mLMSChips.at(moduleIndex);
+ 
+     LMS7002M::Channel ch = channel == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB;
+@@ -451,6 +470,11 @@
+ 
+ OpStatus LMS7002M_SDRDevice::SetGain(uint8_t moduleIndex, TRXDir direction, uint8_t channel, eGainTypes gain, double value)
+ {
++    /* SRRX_RX_ONLY: no TX gain, also not through a TX gain type given with the RX direction. */
++    if (direction == TRXDir::Tx || gain == eGainTypes::PAD || gain == eGainTypes::LoopbackPAD || gain == eGainTypes::IAMP ||
++        gain == eGainTypes::PA)
++        return OpStatus::NotSupported;
++
+     auto& device = mLMSChips.at(moduleIndex);
+     LMS7002M::Channel enumChannel = channel > 0 ? LMS7002M::Channel::ChB : LMS7002M::Channel::ChA;
+ 
+@@ -670,6 +694,10 @@
+ 
+ OpStatus LMS7002M_SDRDevice::WriteRegister(uint8_t moduleIndex, unsigned int address, unsigned int value, bool useFPGA)
+ {
++    /* SRRX_RX_ONLY: no external FPGA write; on the LMS7002M only the 0x0020 TX-off write. */
++    if (useFPGA || !SrrxTxOffWrite(address, value))
++        return OpStatus::NotSupported;
++
+     if (useFPGA)
+         return WriteFPGARegister(address, value);
+ 
+@@ -678,6 +706,9 @@
+ 
+ OpStatus LMS7002M_SDRDevice::LoadConfig(uint8_t moduleIndex, const std::string& filename)
+ {
++    /* SRRX_RX_ONLY: a register file can set any TX field; loading one is not supported. */
++    return OpStatus::NotSupported;
++
+     auto& lms = mLMSChips.at(moduleIndex);
+     return lms->LoadConfig(filename);
+ }
+@@ -705,6 +736,10 @@
+ 
+ OpStatus LMS7002M_SDRDevice::SetParameter(uint8_t moduleIndex, uint8_t channel, const std::string& parameterKey, uint16_t value)
+ {
++    /* SRRX_RX_ONLY: the only named field write is TXEN_A=0 or TXEN_B=0. */
++    if (!((parameterKey == "TXEN_A" || parameterKey == "TXEN_B") && value == 0))
++        return OpStatus::NotSupported;
++
+     auto& lms = mLMSChips.at(moduleIndex);
+     lms->SetActiveChannel(channel % 2 == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB);
+     return lms->Modify_SPI_Reg_bits(lms->GetParam(parameterKey), value);
+@@ -729,6 +764,10 @@
+ OpStatus LMS7002M_SDRDevice::SetParameter(
+     uint8_t moduleIndex, uint8_t channel, uint16_t address, uint8_t msb, uint8_t lsb, uint16_t value)
+ {
++    /* SRRX_RX_ONLY: the only field write is a zero inside TXEN_B..TXEN_A (0x0020 bits 3..2). */
++    if (!(address == 0x0020 && lsb >= 2 && msb <= 3 && msb >= lsb && value == 0))
++        return OpStatus::NotSupported;
++
+     auto& lms = mLMSChips.at(moduleIndex);
+     lms->SetActiveChannel(channel % 2 == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB);
+     return lms->Modify_SPI_Reg_bits(address, msb, lsb, value);
+@@ -754,6 +793,9 @@
+ 
+ void* LMS7002M_SDRDevice::GetInternalChip(uint32_t index)
+ {
++    /* SRRX_RX_ONLY: no raw LMS7002M object leaves the library. */
++    throw std::logic_error("SRRX receive-only: internal chip handle is not exported"s);
++
+     if (index >= mLMSChips.size())
+         throw std::logic_error("Invalid chip index"s);
+     return mLMSChips.at(index).get();
 --- a/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
 +++ b/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
-@@ -425,6 +425,10 @@
+@@ -169,6 +169,13 @@
+     return OpStatus::Success;
+ }
+ 
++/* SRRX_RX_ONLY: the only external LMS7002M register write is the TX-off write of 0x0020
++   (TXEN_A bit 2 and TXEN_B bit 3 both clear, the --txen=0 path); reads are unchanged. */
++static bool TxOffWrite(unsigned int address, unsigned int value)
++{
++    return address == 0x0020 && (value & 0x000C) == 0;
++}
++
+ } // namespace limesdrmicro
+ 
+ /// @brief Constructs a new LimeSDR_Micro object
+@@ -425,7 +432,19 @@
  
  OpStatus LimeSDR_Micro::Configure(const SDRConfig& cfg, uint8_t socIndex)
  {
@@ -63,9 +418,27 @@
 +        return OpStatus::NotSupported;
 +
      OpStatus status;
++    /* SRRX_RX_ONLY: no TX LO, TX gain, TX test signal or TX calibration request either. */
++    for (int c = 0; c < 2; ++c)
++    {
++        const auto& tx = cfg.channel[c].tx;
++        if (tx.calibrate != CalibrationFlag::NONE || tx.testSignal.enabled || tx.centerFrequency > 0 || !tx.gain.empty())
++            return OpStatus::NotSupported;
++    }
++
      if (!fw)
          return ReportError(OpStatus::Error, "Firmware is not loaded");
-@@ -604,6 +608,10 @@
+     auto& rfsoc = mLMSChips.at(0);
+@@ -599,11 +618,19 @@
+ 
+ OpStatus LimeSDR_Micro::WriteRegister(uint8_t moduleIndex, unsigned int address, unsigned int value, bool useFPGA)
+ {
++    /* SRRX_RX_ONLY: raw register writes from outside the library: only the 0x0020 TX-off write. */
++    if (!limesdrmicro::TxOffWrite(address, value))
++        return OpStatus::NotSupported;
++
+     return mLMSChips.at(moduleIndex)->SPI_write(address, value);
+ }
  
  OpStatus LimeSDR_Micro::Calibrate(uint8_t moduleIndex, TRXDir trx, uint8_t channel, double bandwidth)
  {
@@ -76,40 +449,83 @@
      mLMSChips.at(0)->SetActiveChannel(static_cast<LMS7002M::Channel>((channel % 2) + 1));
      return trx == TRXDir::Rx ? CalibrateRx() : CalibrateTx();
  }
-@@ -824,24 +832,25 @@
+@@ -661,6 +688,13 @@
+ 
+ OpStatus LimeSDR_Micro::SPI(uint32_t chipSelect, const uint32_t* MOSI, uint32_t* MISO, uint32_t count)
+ {
++    /* SRRX_RX_ONLY: SPI reads pass; a write word (bit 31) passes only as the 0x0020 TX-off write. */
++    for (uint32_t i = 0; i < count; ++i)
++    {
++        if ((MOSI[i] & (1u << 31)) && !limesdrmicro::TxOffWrite((MOSI[i] >> 16) & 0x7FFF, MOSI[i] & 0xFFFF))
++            return OpStatus::NotSupported;
++    }
++
+     return lmsSPI->Transact(MOSI, MISO, count);
+ }
+ 
+@@ -671,6 +705,13 @@
+ 
+ OpStatus LimeSDR_Micro::CustomParameterWrite(const std::vector<CustomParameterIO>& parameters)
+ {
++    /* SRRX_RX_ONLY: only the volatile VCTCXO DAC (reference trim) may be written. */
++    for (const auto& parameter : parameters)
++    {
++        if (parameter.id != limesdrmicro::cp_vctcxo_dac.id)
++            return OpStatus::NotSupported;
++    }
++
+     return LMS64CProtocol::CustomParameterWrite(*mSerialPort, parameters, 0);
+ }
+ 
+@@ -750,13 +791,17 @@
+         }
+         value |= (rxsw2 << 0) | (rxsw3 << 2); // set TX_SW, Band2
+     }
+-    I2CWrite(0, i2c_expander_address, gpiob_addr, 1, &value, 1);
++    /* SRRX_RX_ONLY: the path switch write goes straight to the protocol; public I2CWrite is closed. */
++    LMS64CProtocol::I2C_Write(*mSerialPort, i2c_expander_address, gpiob_addr, 1, &value, 1);
+     return status;
+ }
+ 
+ OpStatus LimeSDR_Micro::UploadMemory(
+     eMemoryDevice device, uint8_t moduleIndex, const char* data, size_t length, UploadMemoryCallback callback)
+ {
++    /* SRRX_RX_ONLY: no M4/VSPA firmware or EEPROM upload; boot firmware loads only in the constructor. */
++    return OpStatus::NotSupported;
++
+     OpStatus status;
+ 
+     switch (device)
+@@ -804,6 +849,9 @@
+ 
+ OpStatus LimeSDR_Micro::MemoryWrite(std::shared_ptr<DataStorage> storage, Region region, const void* data)
+ {
++    /* SRRX_RX_ONLY: no EEPROM write. */
++    return OpStatus::NotSupported;
++
+     if (storage == nullptr || storage->ownerDevice != this || storage->memoryDeviceType != eMemoryDevice::EEPROM)
+     {
+         return OpStatus::Error;
+@@ -824,7 +872,8 @@
  
  OpStatus LimeSDR_Micro::UploadTxWaveform(const StreamConfig& config, uint8_t moduleIndex, const void** samples, uint32_t count)
  {
+-    return OpStatus::NotImplemented;
 +    /* SRRX_RX_ONLY: onboard waveform upload disabled. */
 +    return OpStatus::NotSupported;
-+}
-+
-+OpStatus LimeSDR_Micro::GetGPSLock(GPS_Lock* status)
-+{
-     return OpStatus::NotImplemented;
  }
  
--OpStatus LimeSDR_Micro::GetGPSLock(GPS_Lock* status)
-+OpStatus LimeSDR_Micro::GPIORead(uint8_t* buffer, const size_t bufLength)
- {
-     return OpStatus::NotImplemented;
- }
+ OpStatus LimeSDR_Micro::GetGPSLock(GPS_Lock* status)
+@@ -844,11 +893,20 @@
  
--OpStatus LimeSDR_Micro::GPIORead(uint8_t* buffer, const size_t bufLength)
-+OpStatus LimeSDR_Micro::GPIOWrite(const uint8_t* buffer, const size_t bufLength)
- {
-     return OpStatus::NotImplemented;
- }
- 
--OpStatus LimeSDR_Micro::GPIOWrite(const uint8_t* buffer, const size_t bufLength)
--{
--    return OpStatus::NotImplemented;
--}
--
  OpStatus LimeSDR_Micro::SetAntenna(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t path)
  {
++    /* SRRX_RX_ONLY: no TX band or TX switch selection from outside the library. */
++    if (trx == TRXDir::Tx)
++        return OpStatus::NotSupported;
++
      return LMSSetPath(trx, channel, path);
-@@ -849,6 +858,11 @@
+ }
  
  std::unique_ptr<lime::RFStream> LimeSDR_Micro::StreamCreate(const StreamConfig& config, uint8_t moduleIndex)
  {
@@ -121,3 +537,55 @@
      if (!la9310->IsVSPAFirmwareLoaded())
      {
          std::vector<char> firmware;
+@@ -886,6 +944,9 @@
+ OpStatus LimeSDR_Micro::I2CWrite(
+     uint32_t bus, uint32_t soc, uint32_t offset, uint8_t offset_len, const uint8_t* data, uint32_t length)
+ {
++    /* SRRX_RX_ONLY: no raw I2C write from outside the library (RF switches, expander, EEPROM). */
++    return OpStatus::NotSupported;
++
+     return LMS64CProtocol::I2C_Write(*mSerialPort, soc, offset, offset_len, data, length);
+ }
+ 
+@@ -942,6 +1003,9 @@
+ 
+ ICSR* LimeSDR_Micro::getICSR()
+ {
++    /* SRRX_RX_ONLY: no raw LA9310 CSR access object leaves the library. */
++    return nullptr;
++
+     return new LA9310_CSR(mStreamingPort);
+ }
+ 
+@@ -1117,6 +1181,9 @@
+ 
+ OpStatus LimeSDR_Micro::OEMTest(OEMTestReporter* reporter)
+ {
++    /* SRRX_RX_ONLY: the OEM test writes the EEPROM and runs TX band tests. */
++    return OpStatus::NotSupported;
++
+     TestData results;
+     OEMTestData test("LimeSDR-Micro OEM Test");
+ 
+@@ -1167,6 +1234,9 @@
+ 
+ OpStatus LimeSDR_Micro::WriteSerialNumber(uint64_t serialNumber)
+ {
++    /* SRRX_RX_ONLY: no EEPROM write. */
++    return OpStatus::NotSupported;
++
+     return la9310->eeprom.Write(0xFFF0, &serialNumber, 8);
+ }
+ 
+--- a/src/boards/LimeSDR_Micro/calibrations.cpp
++++ b/src/boards/LimeSDR_Micro/calibrations.cpp
+@@ -951,6 +951,9 @@
+ 
+ OpStatus LimeSDR_Micro::CalibrateTx()
+ {
++    /* SRRX_RX_ONLY: TX calibration is never run; CalibrateRx keeps its internal TX-tone loopback. */
++    return OpStatus::NotSupported;
++
+     CalibrationContext context;
+     context.vspa = iqstreamer.get();
+     context.sampleRate = GetSampleRate(0, TRXDir::Tx, 0, nullptr);
