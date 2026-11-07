@@ -640,7 +640,7 @@
 (property "Datasheet" "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md" (at 236.22 185.42 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Description" "Functional interface with logical connector names; no implied physical PCB pin numbering." (at 236.22 185.42 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "ReviewStatus" "module" (at 236.22 185.42 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "MPN" "CAB.011" (at 236.22 185.42 0) (effects (font (size 1.016 1.016)) (hide yes)))
+(property "MPN" "CAB.01029" (at 236.22 185.42 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Manufacturer" "Taoglas" (at 236.22 185.42 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (pin "END_A" (uuid 60d0b253-8b11-5c6c-acf0-c757d5e5fb3d))
 (pin "END_B" (uuid f8094944-2839-5b94-a992-36910437daf9))

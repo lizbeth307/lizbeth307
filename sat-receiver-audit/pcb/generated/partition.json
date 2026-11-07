@@ -66,7 +66,7 @@
       },
       {
         "file": "design/E4.json",
-        "sha256": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17"
+        "sha256": "46718300c33e64f2bf1d06dd9dbbe67cd729449234b3000bbd72b36d8c85a2ee"
       },
       {
         "file": "design/E5.json",
@@ -78,7 +78,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "53ca1af09cd48d729ca24c77dac1d33bb69f578e7ad9fa1ac387b05499844fd4"
+        "sha256": "af861cb9e3d9bca6aeb0276577eca9828fe24802084dd0aba1597ad9e3ec3d77"
       }
     ],
     "source_documents": [
@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "5d2a692e76b7631ffd8a4691f337e8680a1eea4b31d21ec7e1506fc701a5d9e5"
+      "projection_sha256": "3e671a2474e60bce373da750b24e61a88355a4e25878d87cb202344c32dd6f3f"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
@@ -14951,7 +14951,7 @@
       "ref": "J301",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) — родина IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці, бокс XDFH-0254-2*20P J304 на CTRL. Зафіксовано (W2 MECH-6): стрічка — 3M 3365/40 (assembly_items AI-IDC-RIBBON-40: 40 × 28 AWG, крок 1.27, 50.80 × 0.89 мм, рядок SRC-1 digikey:19-3365/40300-DS-ND), дві половини по 20, укладені одна на одну, крізь проріз SL1 27.5 × 3.8 (M-07; R-PLATE-SLOT-FILL PASS, модель); S01 (UART7) за трасою моделі в межах 200 мм, а PPS/UART6 ідуть гілкою PPS (R-PPS-LEN PASS, модель, і в найгіршому випадку; mechanical/generated/harness-routes.json). Відкрито: висота бокса J304 проти CTRL 5.5 мм (креслення XDFH-0254 не читається, еталон 9.1 мм — R-HDR-HEIGHT OPEN), креслення гнізда XDFH-0258 (стикування зі стрічкою 1.27 мм) і орієнтація контакту 1 J20 (на карті розміщення Radxa V1.21 мітки немає) — тому запис лишається interface_open (запис J-Q6A-EXISTING охоплює вісім ref)."
     },
     {
       "ref": "J303",
@@ -14999,7 +14999,7 @@
       "ref": "J407",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.011 (W407, P7): довжину різьби й виріз з лискою (D-Cut) рядок READS-RF web:taoglas-cab011-datasheet-spe-11-8-068-f (07.11.2026) не містить, а пігтейл P7 замінює MECH-6 (B-06: 95 мм не дістає LC76G), тож виріз, різьба (R-SMA-THREAD OPEN для P7), ущільнення й момент — TBD."
+      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.01029 (W407, P7, W2 MECH-6): водозахищена родина каталогу Taoglas SPE-24-8-198-C с.11 (рядок READS-RF): різьба 1/4-36UNS-2A довжиною 11.4 ±0.3, деталі 5 (1.75 ±0.2) і 6 (1.1 ±0.3) зовні, кругле ущільнення на фланці всередині; виріз ⌀6.5 (вибір конструкції 6.35 + 0.15, отвору креслення не дає; M-02 P7, mechanical/params/parts.json taoglas_mhf1_sma_wp); після стінки 4.5 і деталей 5 + 6 лишається 3.25 мм ≥ 3 витки (R-SMA-THREAD PASS, модель). Відкрито: момент гайки й ущільнення вирізу (T-07), стикування вилки I-PEX MHF I з гніздом IPEX Waveshare 24370 — вхідний контроль."
     },
     {
       "ref": "J408",

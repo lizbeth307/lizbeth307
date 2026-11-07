@@ -652,7 +652,7 @@
 "E4","W404","RX2 → Lime X4 MHF4 coax","module","module","","","Taoglas","CAB.01075","","STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",""
 "E4","W405","REF IN → J4 MHF4 coax","module","module","","","Taoglas","CAB.01075","","STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",""
 "E4","W406","CAB.01075 X1 → ANNE-50+ captive coax","module","module","","","Taoglas","CAB.01075","","STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",""
-"E4","W407","P7 SMA → LC76G IPEX coax","module","module","","","Taoglas","CAB.011","","STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",""
+"E4","W407","P7 SMA → LC76G IPEX coax","module","module","","","Taoglas","CAB.01029","","STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",""
 "E4","W408","RG316 common-mode choke FT240-77 +2631102002","module","module","","","Amphenol RF","135101-01-M1.00","","STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md","The center conductor and shield both pass through the cores as one continuous coax. This is a common-mode impedance, not a series RF choke."
 "E4","W409","Captive RX1 edge → profile pad coax","module","module","","","","","","STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",""
 "E4","W422","RG316 SMA-M/M 152.4 mm helix → LaNA","module","design","","","Cinch Connectivity Solutions Johnson","415-0029-006","","E4 completion design; see E4-review.md","Functional cable assembly; connector identifiers are logical, not physical pad numbering."
