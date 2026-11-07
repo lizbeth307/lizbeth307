@@ -6,7 +6,7 @@
   "build_system": "cmake",
   "build_depends": ["libairspyhf-dev", "libboost-dev", "libfftw3-dev", "libgl-dev", "libopus-dev", "libqt5charts5-dev", "libqt5opengl5-dev",
                     "libqt5serialport5-dev", "libqt5svg5-dev", "libqt5texttospeech5-dev", "libqt5websockets5-dev", "libsoapysdr-dev",
-                    "libusb-1.0-0-dev", "ninja-build", "qtbase5-dev", "qtdeclarative5-dev", "qtlocation5-dev", "qtmultimedia5-dev",
+                    "libusb-1.0-0-dev", "ninja-build", "qtbase5-dev", "qtbase5-private-dev", "qtdeclarative5-dev", "qtlocation5-dev", "qtmultimedia5-dev",
                     "qtpositioning5-dev"],
   "lab_build_depends": ["librtlsdr2", "librtlsdr-dev"],
   "cmake": {
