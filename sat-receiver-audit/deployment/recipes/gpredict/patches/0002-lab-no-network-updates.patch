@@ -1,0 +1,93 @@
+--- a/src/sat-cfg.c
++++ b/src/sat-cfg.c
+@@ -208,7 +208,7 @@
+     {"GLOBAL", "WINDOW_WIDTH", 700},
+     {"GLOBAL", "WINDOW_HEIGHT", 700},
+     {"GLOBAL", "HTML_BROWSER_TYPE", 0},
+-    {"TLE", "AUTO_UPDATE_FREQ", 2},     /* weekly, see tle_auto_upd_freq_t */
++    {"TLE", "AUTO_UPDATE_FREQ", 0},     /* SRRX +lab: never (upstream 2, weekly), see tle_auto_upd_freq_t */
+     {"TLE", "AUTO_UPDATE_ACTION", 1},   /* notify, see tle_auto_upd_action_t */
+     {"TLE", "LAST_UPDATE", 0},
+     {"LOG", "CLEAN_AGE", 0},    /* 0 = Never clean */
+@@ -225,25 +225,14 @@
+     {"MODULES", "MAP_FILE", "nasa-bmng-07_1024.jpg"},
+     {"MODULES", "MAP_FONT", "Sans 8"},
+     {"MODULES", "POLAR_FONT", "Sans 10"},
+-    {"TRSP", "SERVER", "https://db.satnogs.org/api/"},
++    {"TRSP", "SERVER", ""},     /* SRRX +lab: no network default (upstream SatNOGS DB) */
+     {"TRSP", "FREQ_FILE", "transmitters/?format=json"},
+     {"TRSP", "MODE_FILE", "modes/?format=json"},
+     {"TRSP", "PROXY", NULL},
+-    {"TLE", "SERVER", "https://celestrak.org/NORAD/elements/"},
++    {"TLE", "SERVER", ""},      /* SRRX +lab: no network default (upstream CelesTrak) */
+     {"TLE", "FILES", "amateur.txt;cubesat.txt;visual.txt;weather.txt"},
+     {"TLE", "PROXY", NULL},
+-    {"TLE", "URLS",
+-     "https://www.amsat.org/amsat/ftp/keps/current/nasabare.txt;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=amateur&FORMAT=tle;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=cubesat&FORMAT=tle;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=galileo&FORMAT=tle;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=glo-ops&FORMAT=tle;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=gps-ops&FORMAT=tlet;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=iridium-NEXT&FORMAT=tle;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=science&FORMAT=tle;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=last-30-days&FORMAT=tle;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=visual&FORMAT=tle;"
+-     "https://celestrak.org/NORAD/elements/gp.php?GROUP=weather&FORMAT=tle"},
++    {"TLE", "URLS", ""},        /* SRRX +lab: no download list (upstream AMSAT and CelesTrak URLs) */
+     {"TLE", "FILE_DIR", NULL},
+     {"PREDICT", "SAVE_DIR", NULL}
+ };
+--- a/src/tle-update.c
++++ b/src/tle-update.c
+@@ -495,6 +495,18 @@
+     GError         *err = NULL;
+     guint           success = 0;        /* no. of successful downloads */
+ 
++    /* SRRX +lab: element sets come only from the srrx Gpredict bridge (labd's
++       OMM, build/07 section 19); this build never downloads TLE files. */
++    sat_log_log(SAT_LOG_LEVEL_ERROR,
++                _("%s: network TLE update is disabled in the SR-RX lab build"),
++                __func__);
++    if (!silent && (label1 != NULL))
++        gtk_label_set_text(GTK_LABEL(label1),
++                           _("Network TLE update is disabled in the SR-RX lab build"));
++    (void)progress;
++    (void)label2;
++    return;
++
+     /* bail out if we are already in an update process */
+     if (g_mutex_trylock(&tle_in_progress) == FALSE)
+     {
+--- a/src/trsp-update.c
++++ b/src/trsp-update.c
+@@ -413,6 +413,12 @@
+     FILE           *outfile;
+     guint           success = 0;        /* no. of successful downloads */
+ 
++    /* SRRX +lab: no network transponder or mode update (build/07 section 19). */
++    sat_log_log(SAT_LOG_LEVEL_ERROR,
++                _("%s: network transponder update is disabled in the SR-RX lab build"),
++                __func__);
++    return;
++
+     server = sat_cfg_get_str(SAT_CFG_STR_TRSP_SERVER);
+     proxy = sat_cfg_get_str(SAT_CFG_STR_TRSP_PROXY);
+     modes_file = sat_cfg_get_str(SAT_CFG_STR_TRSP_MODE_FILE);
+@@ -552,6 +558,16 @@
+ 
+     (void)label2;
+ 
++    /* SRRX +lab: no network transponder or mode update (build/07 section 19). */
++    sat_log_log(SAT_LOG_LEVEL_ERROR,
++                _("%s: network transponder update is disabled in the SR-RX lab build"),
++                __func__);
++    if (!silent && (label1 != NULL))
++        gtk_label_set_text(GTK_LABEL(label1),
++                           _("Network transponder update is disabled in the SR-RX lab build"));
++    (void)progress;
++    return;
++
+     /* bail out if we are already in an update process */
+     if (g_mutex_trylock(&trsp_in_progress) == FALSE)
+     {

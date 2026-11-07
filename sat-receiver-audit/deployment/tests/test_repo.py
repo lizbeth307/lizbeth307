@@ -1037,7 +1037,7 @@ class ReleaseTarballTests(unittest.TestCase):
                           "source_cache_path": "sources/srrx-fixture.tar.gz"}
 
     def test_release_tarballs_are_lock_entries_with_a_tag_and_no_git_tree(self):
-        self.assertEqual([c["id"] for c in self.check_repo.release_tarballs(LOCK)], ["wsjt-decoders"])
+        self.assertEqual([c["id"] for c in self.check_repo.release_tarballs(LOCK)], ["gpredict", "wsjt-decoders"])
 
     def test_tree_ids_and_entries_equal_git(self):
         entries = self.check_repo.tag_entries(self.root / "clone")

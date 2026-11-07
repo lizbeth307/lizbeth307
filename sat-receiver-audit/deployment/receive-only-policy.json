@@ -272,10 +272,16 @@
       "config_paths": [],
       "binaries": ["usr/bin/gpredict", "usr/local/bin/gpredict"],
       "forbidden_needed": ["libgps", "libhamlib"],
-      "radio_config_globs": ["home/*/.config/Gpredict/radios/*.rig", "root/.config/Gpredict/radios/*.rig", "etc/skel/.config/Gpredict/radios/*.rig"],
+      "radio_config_globs": ["home/*/.config/Gpredict/hwconf/*.rig", "root/.config/Gpredict/hwconf/*.rig", "etc/skel/.config/Gpredict/hwconf/*.rig",
+                             "home/*/.config/Gpredict/radios/*.rig", "root/.config/Gpredict/radios/*.rig", "etc/skel/.config/Gpredict/radios/*.rig",
+                             "var/lib/srrx-ui/.config/Gpredict/hwconf/*.rig", "var/lib/srrx-ui/.config/Gpredict/radios/*.rig"],
       "rx_only_radio_type": "0",
-      "tle_update": {"file_globs": ["home/*/.config/Gpredict/gpredict.cfg", "root/.config/Gpredict/gpredict.cfg", "etc/skel/.config/Gpredict/gpredict.cfg"], "section": "TLE", "key": "AUTO_UPDATE_FREQ", "required": "0"},
-      "sources": ["build/07-pz-vstanovlennia.md:505-509", "build/07-pz-vstanovlennia.md:555", "STACK.md:888", "build/09-testy.md:79"]
+      "tle_update": {"file_globs": ["home/*/.config/Gpredict/gpredict.cfg", "root/.config/Gpredict/gpredict.cfg", "etc/skel/.config/Gpredict/gpredict.cfg",
+                                    "var/lib/srrx-ui/.config/Gpredict/gpredict.cfg"], "section": "TLE", "key": "AUTO_UPDATE_FREQ", "required": "0"},
+      "sources": ["build/07-pz-vstanovlennia.md:505-509", "build/07-pz-vstanovlennia.md:555", "STACK.md:888", "build/09-testy.md:79",
+                  "Gpredict v2.7 (sources.lock.json gpredict): .rig files in <config>/hwconf (src/compat.c:307-313 get_hwconf_dir, src/radio-conf.c:81-82), key Type with RIG_TYPE_RX = 0 (src/radio-conf.h); gpredict.cfg [TLE] AUTO_UPDATE_FREQ (src/sat-cfg.c:211, TLE_AUTO_UPDATE_NEVER = 0 in src/tle-update.h:40); radios/ kept as an extra place",
+                  "deployment/recipes/gpredict/recipe.json (lab patch 0003 refuses Type != 0 and drops IQ record signals; etc/skel defaults)", "build/15-rishennia-komplektu.md (W2 SW-GPREDICT)",
+                  "deployment/system/system_files.py SESSION_HOME: /var/lib/srrx-ui is the home of the touch-session account srrx-ui that runs the Expert GUI; tmpfiles.d creates it empty, without a copy of /etc/skel"]
     }
   },
   "lime": {

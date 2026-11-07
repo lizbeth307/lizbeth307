@@ -1,0 +1,79 @@
+--- a/src/radio-conf.c
++++ b/src/radio-conf.c
+@@ -231,6 +231,18 @@
+         return FALSE;
+     }
+ 
++    /* SRRX +lab: receive only. A TX only, half/full duplex or FT-817/857/897
++       toggle radio is refused, so no uplink VFO is tuned and PTT is never set
++       (STACK.md:141, build/07 section 19). */
++    if (conf->type != RIG_TYPE_RX)
++    {
++        sat_log_log(SAT_LOG_LEVEL_ERROR,
++                    _("%s: %s is not an RX only radio; refused by the SR-RX lab build."),
++                    __func__, conf->name);
++        g_key_file_free(cfg);
++        return FALSE;
++    }
++
+     /* PTT Type */
+     conf->ptt = g_key_file_get_integer(cfg, GROUP, KEY_PTT, &error);
+     if (error != NULL)
+@@ -280,8 +292,9 @@
+     /* Signal AOS and LOS */
+     conf->signal_aos = g_key_file_get_boolean(cfg, GROUP, KEY_SIG_AOS, NULL);
+     conf->signal_los = g_key_file_get_boolean(cfg, GROUP, KEY_SIG_LOS, NULL);
+-    conf->signal_aoiq = g_key_file_get_boolean(cfg, GROUP, KEY_SIG_AOIQ, NULL);
+-    conf->signal_loiq = g_key_file_get_boolean(cfg, GROUP, KEY_SIG_LOIQ, NULL);
++    /* SRRX +lab: no IQ recording signals (#371); IQ capture stays with labrx. */
++    conf->signal_aoiq = FALSE;
++    conf->signal_loiq = FALSE;
+ 
+     g_key_file_free(cfg);
+     sat_log_log(SAT_LOG_LEVEL_INFO,
+--- a/src/gtk-rig-ctrl.c
++++ b/src/gtk-rig-ctrl.c
+@@ -2486,20 +2486,7 @@
+                                                     retbuf, 10);
+                 }
+             }
+-            /* AOIQ has occurred */
+-            if (ctrl->conf->signal_aoiq)
+-            {
+-                retcode &= send_rigctld_command(ctrl, ctrl->sock, "U IQRECORD 1\n",
+-                                                retbuf, 10);
+-            }
+-            if (ctrl->conf2 != NULL)
+-            {
+-                if (ctrl->conf2->signal_aoiq)
+-                {
+-                    retcode &= send_rigctld_command(ctrl, ctrl->sock2, "U IQRECORD 1\n",
+-                                                    retbuf, 10);
+-                }
+-            }
++            /* SRRX +lab: no AOIQ signal (IQ recording, #371) is ever sent. */
+         }
+         else if (ctrl->prev_ele >= 0.0 && ctrl->target->el < 0.0)
+         {
+@@ -2517,20 +2504,7 @@
+                                                     retbuf, 10);
+                 }
+             }
+-            /* LOIQ has occurred */
+-            if (ctrl->conf->signal_loiq)
+-            {
+-                retcode &= send_rigctld_command(ctrl, ctrl->sock, "U IQRECORD 0\n",
+-                                                retbuf, 10);
+-            }
+-            if (ctrl->conf2 != NULL)
+-            {
+-                if (ctrl->conf2->signal_loiq)
+-                {
+-                    retcode &= send_rigctld_command(ctrl, ctrl->sock2, "U IQRECORD 0\n",
+-                                                    retbuf, 10);
+-                }
+-            }
++            /* SRRX +lab: no LOIQ signal (IQ recording, #371) is ever sent. */
+         }
+     }
+ 
