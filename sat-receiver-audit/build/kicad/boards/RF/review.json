@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/RF/RF.kicad_pcb",
-      "sha256": "8e36303f5b3a9e7bdb0817d2ed0686ac5561bcf6d4b03ad61de41f473f33cd3a"
+      "sha256": "2ea12e85775810d3c1185cf11add1d5d840ecb994022c75c374b054807190292"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "080c4dc87dadb4e29c4a48026c4d4e4e3d9509b20500fb5b4683b82bbe521683",
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 185,
     "pads": 568,
-    "tracks": 1356,
-    "vias": 182,
+    "tracks": 1357,
+    "vias": 184,
     "zones": 28,
     "holes": 6,
     "copper_layers": [
@@ -62,14 +62,14 @@
       "board_footprints": 185
     },
     "class_widths": {
-      "findings": 60,
-      "tracks_checked": 1268,
+      "findings": 55,
+      "tracks_checked": 1262,
       "pour_necks": [],
       "split_nets": {}
     },
     "rf50": {
-      "findings": 153,
-      "rf50_segments": 88
+      "findings": 157,
+      "rf50_segments": 95
     },
     "gnd_chassis_ties": {
       "findings": 0,
@@ -99,239 +99,11 @@
   "findings": [
     {
       "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        226.66,
-        120.912
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        204.273,
-        109.984
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        263.0,
-        135.698
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        213.267,
-        111.736
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        256.588,
-        129.286
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        204.218,
-        110.038
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        222.444,
-        120.912
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        213.267,
-        110.437
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        201.373,
-        110.038
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        235.033,
-        129.286
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        263.0,
-        136.9
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH3_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        212.815,
-        109.984
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH1",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        261.963,
-        137.59
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH1",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        261.388,
-        138.165
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH1",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        238.582,
-        133.844
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH1",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        261.963,
-        136.274
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH1",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        260.265,
-        138.165
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH1",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        227.898,
-        123.16
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH1",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        259.533,
-        133.844
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E4_DCS_LOW",
+      "item": "track GND",
       "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
       "at": [
-        239.357,
-        104.062
+        236.445,
+        107.47
       ],
       "value": 0.12,
       "limit": 0.15,
@@ -339,11 +111,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track E4_DCS_LOW",
+      "item": "track GND",
       "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
       "at": [
-        239.291,
-        103.996
+        236.445,
+        107.343
       ],
       "value": 0.12,
       "limit": 0.15,
@@ -351,11 +123,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track BIAS_CH2_PORT",
+      "item": "track BIAS_CH1",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        212.539,
-        111.75
+        232.768,
+        123.083
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -363,83 +135,83 @@
     },
     {
       "check": "class_widths",
-      "item": "track BIAS_CH2_PORT",
+      "item": "track BIAS_CH1",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        260.073,
+        261.937,
+        136.245
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH1",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        244.329,
+        134.644
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH1",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        261.937,
+        137.572
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH1",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        261.397,
+        138.112
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH1",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        260.212,
+        138.112
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH1",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        260.337,
+        134.644
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH1",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        259.0,
         136.9
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH2_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        260.073,
-        136.323
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH2_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        233.474,
-        132.685
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH2_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        234.729,
-        132.685
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH2_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        258.196,
-        134.446
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH2_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        261.0,
-        136.9
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH2_PORT",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        236.49,
-        134.446
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -450,8 +222,8 @@
       "item": "track LNB13V2",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        156.007,
-        132.525
+        216.141,
+        139.152
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -474,7 +246,211 @@
       "item": "track LNB13V2",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
+        266.398,
+        139.152
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LNB13V2",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        207.355,
+        130.365
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LNB13V2",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
         268.073,
+        137.477
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LNB13V2",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        152.126,
+        110.312
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LNB13V2",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        172.179,
+        130.365
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LNB13V2",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        131.029,
+        110.312
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        139.189,
+        117.616
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        143.932,
+        122.358
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        128.103,
+        117.616
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        143.932,
+        122.358
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        151.181,
+        122.358
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        139.189,
+        117.616
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
+      "at": [
+        266.073,
+        136.388
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In2.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
+      "at": [
+        267.0,
+        136.9
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In2.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
+      "at": [
+        164.052,
+        135.229
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In2.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
+      "at": [
+        157.797,
+        128.974
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In2.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track LAB5_RLY",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
+      "at": [
+        264.914,
+        135.229
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In2.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH4",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        265.0,
         136.9
       ],
       "value": 0.35,
@@ -483,11 +459,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LNB13V2",
+      "item": "track BIAS_CH4",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        132.444,
-        108.962
+        264.073,
+        136.9
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -495,11 +471,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LNB13V2",
+      "item": "track BIAS_CH4",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        197.566,
-        138.705
+        230.923,
+        135.45
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -507,10 +483,10 @@
     },
     {
       "check": "class_widths",
-      "item": "track LNB13V2",
+      "item": "track BIAS_CH4",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        268.073,
+        264.073,
         137.479
       ],
       "value": 0.35,
@@ -519,23 +495,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LNB13V2",
+      "item": "track BIAS_CH4",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        266.848,
-        138.705
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LNB13V2",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        191.386,
-        132.525
+        241.085,
+        135.45
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -546,8 +510,8 @@
       "item": "track BIAS_CH4",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        210.107,
-        114.634
+        241.877,
+        136.241
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -558,8 +522,8 @@
       "item": "track BIAS_CH4",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        214.111,
-        114.634
+        243.071,
+        138.629
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -568,9 +532,81 @@
     {
       "check": "class_widths",
       "item": "track BIAS_CH4",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        241.877,
+        137.435
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH4",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        262.923,
+        138.629
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH3_PORT",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        200.695,
+        120.2
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH3_PORT",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "at": [
+        218.322,
+        137.827
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In1.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH3_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
       "at": [
-        264.073,
+        218.612,
+        138.117
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In2.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH3_PORT",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
+      "at": [
+        261.435,
+        138.117
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In2.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH3_PORT",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
+      "at": [
+        262.073,
         136.9
       ],
       "value": 0.35,
@@ -579,10 +615,22 @@
     },
     {
       "check": "class_widths",
-      "item": "track BIAS_CH4",
+      "item": "track BIAS_CH3_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
       "at": [
-        265.0,
+        262.073,
+        137.479
+      ],
+      "value": 0.35,
+      "limit": 1.8,
+      "layer": "In2.Cu"
+    },
+    {
+      "check": "class_widths",
+      "item": "track BIAS_CH3_PORT",
+      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
+      "at": [
+        263.0,
         136.9
       ],
       "value": 0.35,
@@ -591,35 +639,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track BIAS_CH4",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
-      "at": [
-        263.034,
-        135.282
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track BIAS_CH4",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In2.Cu",
-      "at": [
-        264.073,
-        136.321
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5_RLY",
+      "item": "track BIAS_CH2_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        132.888,
-        127.329
+        232.9,
+        124.035
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -627,11 +651,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
+      "item": "track BIAS_CH2_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        148.558,
-        127.329
+        259.387,
+        135.637
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -639,11 +663,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
+      "item": "track BIAS_CH2_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        196.639,
-        139.222
+        261.0,
+        136.9
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -651,11 +675,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
+      "item": "track BIAS_CH2_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        112.363,
-        126.611
+        244.501,
+        135.637
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -663,11 +687,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
+      "item": "track BIAS_CH2_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        123.389,
-        117.829
+        260.073,
+        136.323
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -675,11 +699,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
+      "item": "track BIAS_CH2_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        144.273,
-        122.7
+        223.001,
+        124.035
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -687,11 +711,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
+      "item": "track BIAS_CH2_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        144.273,
-        127.329
+        260.073,
+        136.9
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -699,11 +723,11 @@
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
+      "item": "track BIAS_CH2_PORT",
       "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
       "at": [
-        156.28,
-        135.051
+        212.539,
+        113.573
       ],
       "value": 0.35,
       "limit": 1.8,
@@ -711,531 +735,185 @@
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "item": "track E4_RTLA_CTL_B",
+      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
       "at": [
-        144.273,
-        127.329
+        223.35,
+        120.254
       ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
+      "value": 0.12,
+      "limit": 0.15,
+      "layer": "F.Cu"
     },
     {
       "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
+      "item": "track E4_RTLA_CTL_B",
+      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
       "at": [
-        121.144,
-        117.829
+        223.287,
+        120.318
       ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        269.968,
-        137.56
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        268.306,
-        139.222
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        192.468,
-        135.051
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        144.273,
-        127.329
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        269.968,
-        136.235
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        269.411,
-        135.678
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5_RLY",
-      "detail": "PWR1A copper narrower than 1.8 mm (inner) on In1.Cu",
-      "at": [
-        268.222,
-        135.678
-      ],
-      "value": 0.35,
-      "limit": 1.8,
-      "layer": "In1.Cu"
+      "value": 0.12,
+      "limit": 0.15,
+      "layer": "F.Cu"
     },
     {
       "check": "rf50",
-      "item": "E4_PARK_B",
+      "item": "E4_CH4_RF_ONLY",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        217.04,
+        117.561
+      ],
+      "samples": 186
+    },
+    {
+      "check": "rf50",
+      "item": "E4_CH4_RF_ONLY",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        219.62,
+        116.75
+      ],
+      "value": 5.025,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_CH4_RF_ONLY",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        219.62,
+        116.75
+      ],
+      "value": 5.025,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_CH4_RF_ONLY",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        169.86,
-        117.18
+        214.425,
+        115.37
       ],
       "samples": 2
     },
     {
       "check": "rf50",
-      "item": "E4_BENCH",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        160.34,
-        116.32
-      ],
-      "samples": 104
-    },
-    {
-      "check": "rf50",
-      "item": "E4_BENCH",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        160.92,
-        116.75
-      ],
-      "value": 6.32,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_BENCH",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        160.92,
-        116.75
-      ],
-      "value": 6.32,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_BENCH",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        153.03,
-        114.17
-      ],
-      "samples": 202
-    },
-    {
-      "check": "rf50",
-      "item": "E4_BENCH",
+      "item": "E4_CH4_RF_ONLY",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        151.789,
-        108.27
+        213.284,
+        115.57
       ],
-      "samples": 136
+      "samples": 50
     },
     {
       "check": "rf50",
-      "item": "E4_BENCH",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        152.6,
-        114.75
-      ],
-      "value": 11.25,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_BENCH",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        152.6,
-        114.75
-      ],
-      "value": 11.25,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_BENCH",
+      "item": "E4_RF_CH3_B",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        154.494,
-        116.036
+        174.33,
+        122.43
       ],
-      "samples": 34
+      "samples": 5
     },
     {
       "check": "rf50",
-      "item": "E4_BENCH",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        154.6,
-        116.75
-      ],
-      "value": 2.828,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_BENCH",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        154.6,
-        116.75
-      ],
-      "value": 2.828,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_HF_CM",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        132.43,
-        140.095
-      ],
-      "samples": 82
-    },
-    {
-      "check": "rf50",
-      "item": "E4_HF_CM",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        132.0,
-        140.675
-      ],
-      "value": 5.175,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_HF_CM",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        132.0,
-        140.675
-      ],
-      "value": 5.175,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        198.43,
-        108.52
-      ],
-      "samples": 22
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        198.0,
-        109.1
-      ],
-      "value": 2.2,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        198.0,
-        109.1
-      ],
-      "value": 2.2,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        198.43,
-        114.67
-      ],
-      "samples": 202
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
+      "item": "E4_RF_CH3_B",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        197.189,
-        113.67
+        174.33,
+        121.289
       ],
-      "samples": 136
+      "samples": 109
     },
     {
       "check": "rf50",
-      "item": "E4_P3",
+      "item": "E4_RF_CH3_B",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        198.0,
-        115.25
+        173.75,
+        122.0
       ],
-      "value": 11.225,
+      "value": 3.75,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_P3",
+      "item": "E4_RF_CH3_B",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        198.0,
-        115.25
+        173.75,
+        122.0
       ],
-      "value": 11.225,
+      "value": 3.75,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_P3",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        183.54,
-        117.68
-      ],
-      "samples": 238
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        182.96,
-        117.25
-      ],
-      "value": 13.04,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        182.96,
-        117.25
-      ],
-      "value": 13.04,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        196.714,
-        117.144
-      ],
-      "samples": 34
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        196.0,
-        117.25
-      ],
-      "value": 2.828,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P3",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        196.0,
-        117.25
-      ],
-      "value": 2.828,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RTLB_RF4",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        162.617,
-        116.32
-      ],
-      "samples": 4
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH5",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        126.43,
-        103.92
-      ],
-      "samples": 6
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH5",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        125.57,
-        105.08
-      ],
-      "samples": 118
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH5",
+      "item": "E4_RF_CH3_B",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        126.811,
-        107.58
+        170.984,
+        118.087
       ],
-      "samples": 493
+      "samples": 15
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH5",
+      "item": "E4_RF_CH3_B",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        126.0,
-        104.5
+        170.0,
+        118.25
       ],
-      "value": 7.0,
+      "value": 5.303,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH5",
+      "item": "E4_RF_CH3_B",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        126.0,
-        104.5
+        170.0,
+        118.25
       ],
-      "value": 7.0,
+      "value": 5.303,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_PARK_A",
+      "item": "E4_RX1_EDGE",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        227.46,
-        117.18
+        178.68,
+        105.79
       ],
-      "samples": 2
+      "samples": 36
     },
     {
       "check": "rf50",
-      "item": "E4_PARK_C_SPARE",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        180.464,
-        113.614
-      ],
-      "samples": 4
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_C_SPARE",
-      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
-      "at": [
-        179.587,
-        112.736
-      ],
-      "samples": 29
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH5_DC",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        126.58,
-        113.63
-      ],
-      "samples": 30
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH5_DC",
+      "item": "E4_RX1_EDGE",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        126.0,
-        113.2
+        178.25,
+        108.17
       ],
-      "value": 2.6,
+      "value": 4.67,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH5_DC",
+      "item": "E4_RX1_EDGE",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        126.0,
-        113.2
+        178.25,
+        108.17
       ],
-      "value": 2.6,
+      "value": 4.67,
       "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_C",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        179.32,
-        121.84
-      ],
-      "samples": 10
     },
     {
       "check": "rf50",
@@ -1243,9 +921,9 @@
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
         178.68,
-        113.14
+        112.84
       ],
-      "samples": 8
+      "samples": 2
     },
     {
       "check": "rf50",
@@ -1265,155 +943,101 @@
         177.439,
         109.77
       ],
-      "samples": 1
+      "samples": 17
     },
     {
       "check": "rf50",
-      "item": "E4_P2",
+      "item": "E4_RF_CH5",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        207.43,
-        106.32
+        125.57,
+        109.78
       ],
-      "samples": 36
+      "samples": 16
     },
     {
       "check": "rf50",
-      "item": "E4_P2",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        207.0,
-        106.9
-      ],
-      "value": 2.875,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P2",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        207.0,
-        106.9
-      ],
-      "value": 2.875,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P2",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        207.43,
-        115.67
-      ],
-      "samples": 222
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P2",
+      "item": "E4_RF_CH5",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        206.189,
-        113.67
+        126.811,
+        109.78
       ],
-      "samples": 425
+      "samples": 51
     },
     {
       "check": "rf50",
-      "item": "E4_P2",
+      "item": "E4_RF_CH5",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        207.0,
-        116.25
+        126.0,
+        109.2
       ],
-      "value": 12.225,
+      "value": 2.3,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_P2",
+      "item": "E4_RF_CH5",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        207.0,
-        116.25
+        126.0,
+        109.2
       ],
-      "value": 12.225,
+      "value": 2.3,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_P2",
+      "item": "E4_RF_CH5",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        208.894,
-        117.536
+        126.43,
+        103.92
       ],
-      "samples": 34
+      "samples": 6
     },
     {
       "check": "rf50",
-      "item": "E4_P2",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        209.0,
-        118.25
-      ],
-      "value": 2.599,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P2",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        209.0,
-        118.25
-      ],
-      "value": 2.828,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P2",
+      "item": "E4_RF_CH5",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        219.04,
-        117.82
+        125.57,
+        105.08
       ],
-      "samples": 190
+      "samples": 32
     },
     {
       "check": "rf50",
-      "item": "E4_P2",
+      "item": "E4_RF_CH5",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        126.0,
+        104.5
+      ],
+      "value": 4.7,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH5",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        126.0,
+        104.5
+      ],
+      "value": 4.7,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH5_ATT",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        219.04,
+        161.34,
         119.061
       ],
-      "samples": 340
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P2",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        219.62,
-        118.25
-      ],
-      "value": 10.229,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P2",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        219.62,
-        118.25
-      ],
-      "value": 10.62,
-      "limit": 2.0
+      "samples": 36
     },
     {
       "check": "rf50",
@@ -1421,9 +1045,19 @@
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
         159.57,
+        120.83
+      ],
+      "samples": 2
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH5_ATT",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        160.811,
         118.83
       ],
-      "samples": 42
+      "samples": 28
     },
     {
       "check": "rf50",
@@ -1446,16 +1080,6 @@
       ],
       "value": 3.25,
       "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH5_ATT",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        161.34,
-        117.82
-      ],
-      "samples": 16
     },
     {
       "check": "rf50",
@@ -1463,17 +1087,17 @@
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
         229.17,
-        120.83
+        122.68
       ],
-      "samples": 90
+      "samples": 6
     },
     {
       "check": "rf50",
       "item": "E4_RF_CH1",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        228.811,
-        122.43
+        230.411,
+        122.78
       ],
       "samples": 357
     },
@@ -1483,9 +1107,9 @@
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
         229.6,
-        120.25
+        122.1
       ],
-      "value": 5.65,
+      "value": 3.8,
       "limit": 2.0
     },
     {
@@ -1494,9 +1118,9 @@
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
         229.6,
-        120.25
+        122.1
       ],
-      "value": 5.65,
+      "value": 3.8,
       "limit": 2.0
     },
     {
@@ -1504,20 +1128,20 @@
       "item": "E4_RF_CH1",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        227.706,
-        118.964
+        229.17,
+        121.43
       ],
-      "samples": 34
+      "samples": 2
     },
     {
       "check": "rf50",
       "item": "E4_RF_CH1",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        228.584,
-        118.087
+        228.513,
+        118.157
       ],
-      "samples": 66
+      "samples": 44
     },
     {
       "check": "rf50",
@@ -1543,296 +1167,76 @@
     },
     {
       "check": "rf50",
-      "item": "E4_RTLB_RFC",
+      "item": "E4_HF_CM",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        165.68,
-        114.618
+        132.43,
+        137.02
       ],
-      "samples": 2
+      "samples": 20
     },
     {
       "check": "rf50",
-      "item": "E4_P6",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        138.83,
-        120.42
-      ],
-      "samples": 318
-    },
-    {
-      "check": "rf50",
-      "item": "E4_P6",
+      "item": "E4_HF_CM",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        137.589,
-        120.42
+        131.289,
+        136.72
       ],
-      "samples": 537
+      "samples": 104
     },
     {
       "check": "rf50",
-      "item": "E4_P6",
+      "item": "E4_HF_CM",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        138.4,
-        121.0
+        132.0,
+        138.3
       ],
-      "value": 16.975,
+      "value": 2.8,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_P6",
+      "item": "E4_HF_CM",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        138.4,
-        121.0
+        132.0,
+        138.3
       ],
-      "value": 16.975,
+      "value": 2.8,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_RX1_EDGE",
+      "item": "E4_HF_CM",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        178.68,
-        107.59
+        132.43,
+        140.095
       ],
-      "samples": 72
+      "samples": 4
     },
     {
       "check": "rf50",
-      "item": "E4_RX1_EDGE",
+      "item": "E4_HF_CM",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        178.25,
-        108.17
+        132.0,
+        140.675
       ],
-      "value": 4.67,
+      "value": 2.375,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_RX1_EDGE",
+      "item": "E4_HF_CM",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        178.25,
-        108.17
+        132.0,
+        140.675
       ],
-      "value": 4.67,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH4",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        214.425,
-        111.65
-      ],
-      "samples": 142
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH4",
-      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
-      "at": [
-        213.184,
-        111.65
-      ],
-      "samples": 242
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH4",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        213.995,
-        112.23
-      ],
-      "value": 8.205,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH4",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        213.995,
-        112.23
-      ],
-      "value": 8.205,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RFC_A",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        223.43,
-        112.44
-      ],
-      "samples": 168
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RFC_A",
-      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
-      "at": [
-        222.189,
-        108.74
-      ],
-      "samples": 136
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RFC_A",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        223.0,
-        113.02
-      ],
-      "value": 9.52,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RFC_A",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        223.0,
-        113.02
-      ],
-      "value": 9.52,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RFC_B",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        165.68,
-        112.44
-      ],
-      "samples": 168
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RFC_B",
-      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
-      "at": [
-        164.439,
-        108.34
-      ],
-      "samples": 136
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RFC_B",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        165.25,
-        113.02
-      ],
-      "value": 9.52,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RFC_B",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        165.25,
-        113.02
-      ],
-      "value": 9.52,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_VHF",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        141.03,
-        120.42
-      ],
-      "samples": 42
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_VHF",
-      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
-      "at": [
-        141.389,
-        119.52
-      ],
-      "samples": 78
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_VHF",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        140.6,
-        121.0
-      ],
-      "value": 3.2,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_VHF",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        140.6,
-        121.0
-      ],
-      "value": 3.2,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RTLA_RFC",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        223.43,
-        114.618
-      ],
-      "samples": 2
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_HFP",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        140.17,
-        128.58
-      ],
-      "samples": 42
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_HFP",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        140.6,
-        128.0
-      ],
-      "value": 3.2,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_PARK_HFP",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        140.6,
-        128.0
-      ],
-      "value": 3.2,
+      "value": 2.375,
       "limit": 2.0
     },
     {
@@ -1843,7 +1247,7 @@
         114.97,
         128.58
       ],
-      "samples": 42
+      "samples": 16
     },
     {
       "check": "rf50",
@@ -1875,7 +1279,7 @@
         117.17,
         128.58
       ],
-      "samples": 232
+      "samples": 16
     },
     {
       "check": "rf50",
@@ -1907,70 +1311,38 @@
         120.23,
         127.42
       ],
-      "samples": 118
+      "samples": 22
     },
     {
       "check": "rf50",
       "item": "E4_HF_LINK",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        119.8,
-        128.0
-      ],
-      "value": 7.0,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_HF_LINK",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        119.8,
-        128.0
-      ],
-      "value": 7.0,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_HFP_ANT",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        118.18,
-        118.43
-      ],
-      "samples": 146
-    },
-    {
-      "check": "rf50",
-      "item": "E4_HFP_ANT",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        119.58,
-        118.789
+        120.589,
+        126.02
       ],
-      "samples": 520
+      "samples": 136
     },
     {
       "check": "rf50",
-      "item": "E4_HFP_ANT",
+      "item": "E4_HF_LINK",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        117.6,
-        118.0
+        119.8,
+        128.0
       ],
-      "value": 8.4,
+      "value": 7.0,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_HFP_ANT",
+      "item": "E4_HF_LINK",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        117.6,
-        118.0
+        119.8,
+        128.0
       ],
-      "value": 8.4,
+      "value": 7.0,
       "limit": 2.0
     },
     {
@@ -1979,9 +1351,9 @@
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
         125.57,
-        118.58
+        139.98
       ],
-      "samples": 432
+      "samples": 4
     },
     {
       "check": "rf50",
@@ -1989,9 +1361,9 @@
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
         125.211,
-        118.98
+        129.88
       ],
-      "samples": 238
+      "samples": 153
     },
     {
       "check": "rf50",
@@ -2013,6 +1385,28 @@
         118.0
       ],
       "value": 22.675,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_HFP_ANT",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        117.6,
+        118.0
+      ],
+      "value": 8.4,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_HFP_ANT",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        117.6,
+        118.0
+      ],
+      "value": 8.4,
       "limit": 2.0
     },
     {
@@ -2023,17 +1417,7 @@
         118.03,
         120.42
       ],
-      "samples": 38
-    },
-    {
-      "check": "rf50",
-      "item": "E4_HFP_ANT",
-      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
-      "at": [
-        117.889,
-        120.42
-      ],
-      "samples": 21
+      "samples": 12
     },
     {
       "check": "rf50",
@@ -2056,58 +1440,6 @@
       ],
       "value": 3.0,
       "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RELAY_STAGE",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        129.57,
-        116.58
-      ],
-      "samples": 308
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RELAY_STAGE",
-      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
-      "at": [
-        129.211,
-        122.98
-      ],
-      "samples": 238
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RELAY_STAGE",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        130.0,
-        116.0
-      ],
-      "value": 16.5,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RELAY_STAGE",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        130.0,
-        116.0
-      ],
-      "value": 16.5,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RELAY_STAGE",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        130.58,
-        132.93
-      ],
-      "samples": 146
     },
     {
       "check": "rf50",
@@ -2136,20 +1468,20 @@
       "item": "E4_RELAY_STAGE",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        115.98,
-        116.43
+        129.08,
+        115.57
       ],
-      "samples": 270
+      "samples": 4
     },
     {
       "check": "rf50",
       "item": "E4_RELAY_STAGE",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        120.68,
+        123.68,
         115.189
       ],
-      "samples": 170
+      "samples": 340
     },
     {
       "check": "rf50",
@@ -2176,22 +1508,22 @@
     {
       "check": "rf50",
       "item": "E4_RELAY_STAGE",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        138.83,
-        131.92
+        130.811,
+        117.28
       ],
-      "samples": 68
+      "samples": 272
     },
     {
       "check": "rf50",
       "item": "E4_RELAY_STAGE",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        138.4,
-        132.5
+        130.0,
+        116.0
       ],
-      "value": 4.5,
+      "value": 16.5,
       "limit": 2.0
     },
     {
@@ -2199,10 +1531,10 @@
       "item": "E4_RELAY_STAGE",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        138.4,
-        132.5
+        130.0,
+        116.0
       ],
-      "value": 4.5,
+      "value": 16.5,
       "limit": 2.0
     },
     {
@@ -2213,174 +1545,442 @@
         115.83,
         120.42
       ],
-      "samples": 78
+      "samples": 16
     },
     {
       "check": "rf50",
       "item": "E4_RELAY_STAGE",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        115.4,
-        121.0
-      ],
-      "value": 5.0,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RELAY_STAGE",
-      "detail": "GND fence gap above 2.0 mm on one side",
-      "at": [
-        115.4,
-        121.0
-      ],
-      "value": 5.0,
-      "limit": 2.0
-    },
-    {
-      "check": "rf50",
-      "item": "E4_CH4_RF_ONLY",
-      "detail": "no coplanar GND within 0.25 mm of the trace edge",
-      "at": [
-        214.425,
-        115.57
-      ],
-      "samples": 6
-    },
-    {
-      "check": "rf50",
-      "item": "E4_CH4_RF_ONLY",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        214.384,
-        115.57
+        114.989,
+        120.42
+      ],
+      "samples": 68
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RELAY_STAGE",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        115.4,
+        121.0
+      ],
+      "value": 5.0,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RELAY_STAGE",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        115.4,
+        121.0
+      ],
+      "value": 5.0,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RELAY_STAGE",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        138.83,
+        129.02
+      ],
+      "samples": 10
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RELAY_STAGE",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        138.4,
+        132.5
+      ],
+      "value": 4.5,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RELAY_STAGE",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        138.4,
+        132.5
+      ],
+      "value": 4.5,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        159.84,
+        117.561
+      ],
+      "samples": 170
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        160.92,
+        116.75
+      ],
+      "value": 6.32,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        160.92,
+        116.75
+      ],
+      "value": 6.32,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        154.6,
+        116.75
+      ],
+      "value": 2.828,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        154.6,
+        116.75
+      ],
+      "value": 2.828,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        153.03,
+        105.77
+      ],
+      "samples": 34
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        153.389,
+        112.07
+      ],
+      "samples": 273
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        152.6,
+        114.75
+      ],
+      "value": 11.25,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_BENCH",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        152.6,
+        114.75
+      ],
+      "value": 11.25,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        198.43,
+        104.72
+      ],
+      "samples": 4
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        198.0,
+        106.9
+      ],
+      "value": 2.875,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        198.0,
+        106.9
+      ],
+      "value": 2.875,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        187.84,
+        118.039
+      ],
+      "samples": 153
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        182.96,
+        117.25
+      ],
+      "value": 13.04,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        182.96,
+        117.25
+      ],
+      "value": 13.04,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        198.43,
+        114.17
       ],
       "samples": 18
     },
     {
       "check": "rf50",
-      "item": "E4_CH4_RF_ONLY",
+      "item": "E4_P3",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        198.0,
+        115.25
+      ],
+      "value": 2.55,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        198.0,
+        115.25
+      ],
+      "value": 2.55,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        219.04,
-        116.32
+        198.43,
+        112.12
       ],
-      "samples": 78
+      "samples": 22
     },
     {
       "check": "rf50",
-      "item": "E4_CH4_RF_ONLY",
+      "item": "E4_P3",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        219.04,
-        117.561
+        197.189,
+        110.42
       ],
-      "samples": 540
+      "samples": 136
     },
     {
       "check": "rf50",
-      "item": "E4_CH4_RF_ONLY",
+      "item": "E4_P3",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        219.62,
-        116.75
+        198.0,
+        112.7
       ],
-      "value": 5.025,
+      "value": 3.6,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_CH4_RF_ONLY",
+      "item": "E4_P3",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        219.62,
-        116.75
+        198.0,
+        112.7
       ],
-      "value": 5.025,
+      "value": 3.6,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH3_B",
+      "item": "E4_P3",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        170.106,
-        118.964
+        198.43,
+        108.52
       ],
-      "samples": 84
+      "samples": 2
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH3_B",
-      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
-      "at": [
-        170.984,
-        118.087
-      ],
-      "samples": 74
-    },
-    {
-      "check": "rf50",
-      "item": "E4_RF_CH3_B",
+      "item": "E4_P3",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        170.0,
-        118.25
+        198.0,
+        109.1
       ],
-      "value": 5.303,
+      "value": 2.2,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH3_B",
+      "item": "E4_P3",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        170.0,
-        118.25
+        198.0,
+        109.1
       ],
-      "value": 5.303,
+      "value": 2.2,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH3_B",
+      "item": "E4_P3",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        196.0,
+        117.25
+      ],
+      "value": 2.828,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P3",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        196.0,
+        117.25
+      ],
+      "value": 2.828,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_PARK_VHF",
       "detail": "no coplanar GND within 0.25 mm of the trace edge",
       "at": [
-        174.33,
-        122.43
+        141.03,
+        120.42
       ],
-      "samples": 52
+      "samples": 16
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH3_B",
+      "item": "E4_PARK_VHF",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        174.33,
-        121.189
+        141.389,
+        120.32
       ],
-      "samples": 137
+      "samples": 159
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH3_B",
+      "item": "E4_PARK_VHF",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        173.75,
-        122.0
+        140.6,
+        121.0
       ],
-      "value": 3.75,
+      "value": 3.2,
       "limit": 2.0
     },
     {
       "check": "rf50",
-      "item": "E4_RF_CH3_B",
+      "item": "E4_PARK_VHF",
       "detail": "GND fence gap above 2.0 mm on one side",
       "at": [
-        173.75,
-        122.0
+        140.6,
+        121.0
       ],
-      "value": 3.75,
+      "value": 3.2,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P6",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        138.83,
+        120.42
+      ],
+      "samples": 16
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P6",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        139.189,
+        118.12
+      ],
+      "samples": 326
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P6",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        138.4,
+        121.0
+      ],
+      "value": 16.975,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P6",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        138.4,
+        121.0
+      ],
+      "value": 16.975,
       "limit": 2.0
     },
     {
@@ -2391,17 +1991,17 @@
         136.63,
         127.42
       ],
-      "samples": 118
+      "samples": 22
     },
     {
       "check": "rf50",
       "item": "E4_VHF_LINK",
       "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
       "at": [
-        135.389,
-        127.42
+        135.489,
+        126.92
       ],
-      "samples": 102
+      "samples": 107
     },
     {
       "check": "rf50",
@@ -2423,6 +2023,398 @@
         128.0
       ],
       "value": 7.0,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_PARK_HFP",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        140.17,
+        128.58
+      ],
+      "samples": 16
+    },
+    {
+      "check": "rf50",
+      "item": "E4_PARK_HFP",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        140.6,
+        128.0
+      ],
+      "value": 3.2,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_PARK_HFP",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        140.6,
+        128.0
+      ],
+      "value": 3.2,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH4",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        214.425,
+        111.65
+      ],
+      "samples": 4
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH4",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        213.184,
+        105.95
+      ],
+      "samples": 136
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH4",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        213.995,
+        112.23
+      ],
+      "value": 8.205,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH4",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        213.995,
+        112.23
+      ],
+      "value": 8.205,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        207.43,
+        104.72
+      ],
+      "samples": 4
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        207.0,
+        106.9
+      ],
+      "value": 2.875,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        207.0,
+        106.9
+      ],
+      "value": 2.875,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        207.43,
+        112.32
+      ],
+      "samples": 24
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        206.189,
+        110.32
+      ],
+      "samples": 102
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        207.0,
+        112.9
+      ],
+      "value": 3.8,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        207.0,
+        112.9
+      ],
+      "value": 3.8,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        207.43,
+        108.52
+      ],
+      "samples": 4
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        207.0,
+        109.1
+      ],
+      "value": 2.2,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        207.0,
+        109.1
+      ],
+      "value": 2.2,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        212.14,
+        117.82
+      ],
+      "samples": 4
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        218.54,
+        119.061
+      ],
+      "samples": 493
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        219.62,
+        118.25
+      ],
+      "value": 10.229,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        219.62,
+        118.25
+      ],
+      "value": 10.62,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        209.0,
+        118.25
+      ],
+      "value": 2.598,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        209.0,
+        118.25
+      ],
+      "value": 2.828,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        207.43,
+        114.37
+      ],
+      "samples": 18
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        207.0,
+        116.25
+      ],
+      "value": 3.35,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_P2",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        207.0,
+        116.25
+      ],
+      "value": 3.35,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RFC_B",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        165.68,
+        105.74
+      ],
+      "samples": 34
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RFC_B",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        164.439,
+        110.04
+      ],
+      "samples": 102
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RFC_B",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        165.25,
+        113.02
+      ],
+      "value": 9.52,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RFC_B",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        165.25,
+        113.02
+      ],
+      "value": 9.52,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH5_DC",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        127.98,
+        113.63
+      ],
+      "samples": 2
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH5_DC",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        126.0,
+        113.2
+      ],
+      "value": 2.6,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RF_CH5_DC",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        126.0,
+        113.2
+      ],
+      "value": 2.6,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RFC_A",
+      "detail": "no coplanar GND within 0.25 mm of the trace edge",
+      "at": [
+        223.43,
+        105.74
+      ],
+      "samples": 34
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RFC_A",
+      "detail": "In1.Cu GND void within 0.8112 mm of the trace axis (3h band)",
+      "at": [
+        222.189,
+        105.94
+      ],
+      "samples": 136
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RFC_A",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        223.0,
+        113.02
+      ],
+      "value": 9.52,
+      "limit": 2.0
+    },
+    {
+      "check": "rf50",
+      "item": "E4_RFC_A",
+      "detail": "GND fence gap above 2.0 mm on one side",
+      "at": [
+        223.0,
+        113.02
+      ],
+      "value": 9.52,
       "limit": 2.0
     }
   ],
@@ -2440,22 +2432,22 @@
     {
       "check": "class_widths",
       "item": "BIAS_CH3_PORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
-      "item": "BIAS_CH4 vias",
       "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
+      "item": "BIAS_CH4 vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
       "item": "LAB5_RLY vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "LNB13V2 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "rf50",
@@ -2639,97 +2631,17 @@
     },
     {
       "check": "heights",
-      "item": "D450",
+      "item": "R4404",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "PH407",
+      "item": "R415",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R4452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R443",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J409",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4463",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4468",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C442",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4424",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "L404",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R411",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C448",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4462",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q454",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4435",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4451",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4443",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C420",
+      "item": "R435",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -2739,22 +2651,22 @@
     },
     {
       "check": "heights",
-      "item": "C4420",
+      "item": "D450",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "C409",
+      "item": "R4452",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R408",
+      "item": "C448",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "C4441",
+      "item": "R4432",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -2764,137 +2676,37 @@
     },
     {
       "check": "heights",
-      "item": "R4421",
+      "item": "C404",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R442",
+      "item": "R4451",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R412",
+      "item": "C416",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R444",
+      "item": "C4412",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R410",
+      "item": "R4469",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "C435",
+      "item": "C4400",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "C452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U457",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4408",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4404",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R445",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4464",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J426",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C417",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U453",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "D453",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C451",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4441",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R414",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4403",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4470",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C414",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4446",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4445",
+      "item": "J412",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -2904,22 +2716,287 @@
     },
     {
       "check": "heights",
-      "item": "U452",
+      "item": "J418",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R4460",
+      "item": "C401",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "Q451",
+      "item": "R4462",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R408",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "L406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4425",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C415",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
       "item": "PH403",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4463",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4465",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C434",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4413",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q456",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R412",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4436",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C442",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U454",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4471",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4426",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4444",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4440",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4410",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "K401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D452",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J409",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH404",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4467",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C446",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U456",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J424",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4453",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C441",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q453",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4466",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R417",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "K402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J427",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U453",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4435",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q457",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4422",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4404",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4470",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "NT401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4420",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4416",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J426",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -2934,442 +3011,12 @@
     },
     {
       "check": "heights",
-      "item": "J425",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4461",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4410",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R409",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4400",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J424",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J418",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C421",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4420",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U407",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C418",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4444",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J427",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J410",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U450",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4423",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4466",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R434",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q450",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C449",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q453",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4430",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C410",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4400",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "NT401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "D452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4415",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4450",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4431",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "L406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R418",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U451",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4407",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C450",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q455",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4412",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4425",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J419",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C412",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4469",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C415",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C411",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R440",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U458",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R419",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C441",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R416",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4433",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C446",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4442",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J423",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "K401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4413",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C422",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4453",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4436",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4471",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q457",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
       "item": "C447",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R417",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4431",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "A424",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R413",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U455",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4465",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "D451",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4467",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4426",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4404",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4422",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C440",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4417",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C419",
+      "item": "J425",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -3379,47 +3026,12 @@
     },
     {
       "check": "heights",
-      "item": "R435",
+      "item": "R4441",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "J412",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C408",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J411",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4434",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R415",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4421",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q456",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4409",
+      "item": "C4417",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -3429,7 +3041,22 @@
     },
     {
       "check": "heights",
-      "item": "L403",
+      "item": "R411",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4445",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R442",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4403",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -3439,47 +3066,7 @@
     },
     {
       "check": "heights",
-      "item": "C434",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4403",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH404",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "D401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4411",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U456",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C416",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C404",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4416",
+      "item": "C419",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -3489,37 +3076,282 @@
     },
     {
       "check": "heights",
-      "item": "C4405",
+      "item": "R434",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "J420",
+      "item": "J419",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "C405",
+      "item": "R4423",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "K402",
+      "item": "U452",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R4432",
+      "item": "C435",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R4440",
+      "item": "Q455",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "U454",
+      "item": "R409",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R419",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C411",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C410",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4430",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4464",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4408",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4468",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "L403",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4415",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4441",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4442",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R443",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C408",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U457",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q452",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C449",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4424",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4403",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C414",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R413",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U458",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D453",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R414",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R444",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4400",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4443",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4433",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q454",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R441",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R410",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4407",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U407",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U455",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4446",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH407",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4460",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C409",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -3529,7 +3361,167 @@
     },
     {
       "check": "heights",
-      "item": "R441",
+      "item": "J420",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R416",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J411",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4421",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4461",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C412",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R445",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C421",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4431",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R418",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4409",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4420",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4434",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C417",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4431",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C452",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C440",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "A424",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C420",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J410",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C418",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C422",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4411",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "L404",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J423",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4421",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R440",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     }
   ]
