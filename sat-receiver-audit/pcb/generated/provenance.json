@@ -2,31 +2,31 @@
   "inputs": [
     {
       "file": "design/E1.json",
-      "sha256": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90"
+      "sha256": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c"
     },
     {
       "file": "design/E2.json",
-      "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935"
+      "sha256": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461"
     },
     {
       "file": "design/E3.json",
-      "sha256": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d"
+      "sha256": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132"
     },
     {
       "file": "design/E4.json",
-      "sha256": "a003bedb98bfacbf1863ebc4bfc88eb8e10643d450820b399a668b4e65e1584d"
+      "sha256": "af71c452f6835c0d7ad043eaee21cfb17eb525a8ea39aa8aa9b4efa892afc29b"
     },
     {
       "file": "design/E5.json",
-      "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+      "sha256": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
     },
     {
       "file": "build/kicad/footprints/manifest.json",
-      "sha256": "096ae19a80380402d669caadbf5ab95ee9afbb3c0b9aaab07c7ca98144fa4c92"
+      "sha256": "8af43b7c5d4760132dd4cbc498afa21b8d6f93de7a15f14280436786f5ba92ee"
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "b2ea596af870594b8aa8f79f18e2f3e567265308a3946cc80efefe3e91e3b4ca"
+      "sha256": "b0ea96c62955b4195044b823fd9472f65c55cc062cc9a135e9e739235b77192d"
     }
   ],
   "source_documents": [
@@ -37,7 +37,6 @@
     "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
     "https://assets.nexperia.com/documents/data-sheet/PMEG4030ER.pdf",
     "https://bonito.net/en/boni-whip-2/",
-    "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
     "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
     "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
     "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
@@ -74,7 +73,6 @@
     "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
     "https://www.aosmd.com/sites/default/files/res/datasheets/AO3400A.pdf",
     "https://www.aosmd.com/sites/default/files/res/datasheets/AO3407A.pdf",
-    "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
     "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
     "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
     "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",
@@ -135,6 +133,6 @@
       "interface_open",
       "interface_resolved"
     ],
-    "projection_sha256": "84b7150d3d1175c2494735130aa51bd2a10c1a1803f7e2ab26f9dc0ba3fbf93b"
+    "projection_sha256": "3326c66905e7c2999f33370333da56d11fd958cc2fcbf05186ce621fcaf76512"
   }
 }

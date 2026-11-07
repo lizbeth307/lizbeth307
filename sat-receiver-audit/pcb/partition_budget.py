@@ -252,6 +252,10 @@ class Design:
                 continue
             fp = (r["footprint"] if self.fps.get(r["footprint"]) else tp_fp) if tp else r["footprint"]
             info = self.fps.get(fp)
+            if info is not None and info["crtyd"] is None and r["mount"] == "pcb_pad" and not tp:
+                # A copper net tie (NT401, board part since GR-2): KiCad's NetTie footprints carry no courtyard, and the
+                # mechanical area check lists it under parts_without_courtyard; it is not counted here either.
+                continue
             if info is None or info["crtyd"] is None:
                 raise SystemExit(f"{ref}: footprint {fp} has no F.CrtYd in the vendored library")
             c = self.comp[ref]

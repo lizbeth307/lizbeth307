@@ -1,0 +1,6 @@
+"Instance","Placement","Qty","Template ref","Graph ref"
+"ENCM","main","1","ENC","ENC301"
+"ENCM","main","1","J1","none (pilot_placeholder)"
+"ENCV","volume","1","ENC","ENC302"
+"ENCV","volume","1","J1","none (pilot_placeholder)"
+"spare","","1","*","none (spare copy of the same design: mechanical/params/boards.json:145 'same design x2 + 1 spare')"

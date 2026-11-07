@@ -1408,7 +1408,7 @@
       },
       "in_graph": true
     },
-    "E4_P8": {
+    "E4_P8_ANT": {
       "class": "RF50",
       "basis": "RF path",
       "source": "design/E*.json",
@@ -1557,7 +1557,7 @@
         "continuous_a": 0.3,
         "protective_a": 0.499,
         "via": "L406 (inductor) from LNB13V2",
-        "rf_pin": "W402.END_B"
+        "rf_pin": "J426.CENTER"
       },
       "in_graph": true,
       "required_outer_width_mm": 0.0756,
@@ -2450,7 +2450,7 @@
       },
       {
         "netclass": "RF50",
-        "pattern": "E4_P8"
+        "pattern": "E4_P8_ANT"
       },
       {
         "netclass": "RF50",

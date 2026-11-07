@@ -253,7 +253,10 @@ class PcbPreparationBlockersTest(unittest.TestCase):
         db["J501"] = {**self.db["J501"], "interface_resolved": "mating plug and panel cutout fixed", "interface_open": None}
         self.assertEqual(self.issues("J501", db), [])
         for ref in ("J402", "J403", "J406", "J401"):
-            self.assertEqual([i["type"] for i in self.issues(ref)], ["physical_interface_or_rework_unresolved"], ref)
+            # W2 GR-2: the panel pigtails are selected (MPN + interface_open), so they block as unresolved mounting; a tbd entry stays TBD.
+            self.assertEqual([i["type"] for i in self.issues(ref)], ["interface_mounting_unresolved"], ref)
+            tbd = {**db, ref: {**self.db[ref], "tbd": "pigtail not chosen", "interface_open": None}}
+            self.assertEqual([i["type"] for i in self.issues(ref, tbd)], ["physical_interface_or_rework_unresolved"], ref)
         db.pop("J501")
         self.assertEqual([i["type"] for i in self.issues("J501", db)], ["physical_interface_or_rework_unresolved"])
 

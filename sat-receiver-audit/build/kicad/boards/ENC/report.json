@@ -33,7 +33,7 @@
     "sha256": "39dcf8e6fe37749bb03cd7152c4ee090ede3b3aa7381b901d6943af546aa75ab"
   },
   "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-  "board_sha256": "7cc2d65fab8e4177e4bc4c6057276117f57f40158a3c6b4f7bdb18b2954026e0",
+  "board_sha256": "2b3c19876539f3fb7be18af9c3182c0363012fa2172053c76fd0f59ba810bc59",
   "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
   "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
   "layers": {
@@ -769,7 +769,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 484,
+            "external_refs": 489,
             "external_sample": [
               "A401",
               "A402",
@@ -845,7 +845,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 484,
+            "external_refs": 489,
             "external_sample": [
               "A401",
               "A402",

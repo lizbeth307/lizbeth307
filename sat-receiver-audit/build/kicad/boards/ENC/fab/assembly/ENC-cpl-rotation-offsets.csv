@@ -1,0 +1,3 @@
+"Footprint","Designators","JLC rotation offset (deg)","JLC centroid offset (mm)","Status"
+"Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical","J1","","","TBD: check every part in the JLC assembly viewer at order time (builder step); JLC rotation and centroid conventions are not read and are not checked in CI"
+"SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx","ENC","","","TBD: check every part in the JLC assembly viewer at order time (builder step); JLC rotation and centroid conventions are not read and are not checked in CI"

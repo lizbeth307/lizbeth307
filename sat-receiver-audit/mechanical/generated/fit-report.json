@@ -3,8 +3,8 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "4409635d92266d3bbe1878b2aa12dab0b111f8e4416b362a6984fc772dd991ea",
-    "pcb_components_sha256": "662254f0e1ffab09e12e23b6ad50e02d79f8c1843616972daac8d7fbb32a31cd"
+    "params_sha256": "5292c234c1ef28611ecde23cc5daf942e03e18a15ba9c2b3238cb19cd5d20c6d",
+    "pcb_components_sha256": "46b558baf81653b225634e7f5e9b87e95d2b96e65617a0e4df9fd4665e1618b6"
   },
   "envelope": {
     "model": [
@@ -207,43 +207,18 @@
     },
     {
       "id": "R-SMA-THREAD",
-      "rule": "per panel port: thread left for mating after the 4.5 mm wall (ASA 2.5 + Al angle 2.0), washer and nut >= 3 full threads (1/4-36: 3 x 0.706; 3/8-32: 3 x 0.794)",
-      "value_mm": {
-        "P1": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
-        "P2": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
-        "P3": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
-        "P4": "PASS (model): 3.6 mm left >= 2.38 (3 x 0.794); inside, for the W402 F plug: long side (min) - wall - washer - nut (max); the 7.6 short side outside is free for W401",
-        "P5": "OPEN: drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)",
-        "P6": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
-        "P7": "OPEN: CAB.011 thread length and D-cut hole not in the READS-RF row web:taoglas-cab011-datasheet-spe-11-8-068-f (2026-11-07); the P7 pigtail is chosen by MECH-6 (B-06)",
-        "P8": "OPEN: washer thickness not drawn: 2.32 mm left for it after the nut and 3 threads",
-        "RX1": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)",
-        "RX2": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)",
-        "REF_IN": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)"
-      },
-      "limit_mm": "3 x pitch; wall 4.5",
-      "result": "OPEN: P5, P7, P8, RX1, RX2, REF_IN (thread or hardware not drawn, or part not read); PASS (model): P1, P2, P3, P4, P6",
-      "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_mhf1_sma_wp, taoglas_cab01075, adamtech_ca_dkca1_305l5, cinch_vfa340 (read 2026-11-07)"
+      "rule": "bulkhead thread through ASA wall + Al angle with O-ring, lock washer and nut, >= 3 full threads left (1/4-36: 3 x 0.706 mm)",
+      "value_mm": 4.5,
+      "limit_mm": "thread length of the chosen bulkhead >= wall + O-ring + washer + nut + 2.1",
+      "result": "OPEN: bulkhead/pigtail MPN and its thread length not chosen (MECH-07); the representative Samtec SMA-J-C-X-ST-BH4 takes a 3.8 mm panel at most, less than this 4.5 mm wall: choose a long-thread bulkhead",
+      "source": "STACK 5.8 'стінка 4-5 мм'; parts.json sma_bulkhead_hw"
     },
     {
       "id": "R-BULKHEAD-NUTS",
-      "rule": "nut, washer or connector body of every panel bulkhead inside the wall: an envelope from the part's drawing in the envelope check (nut.*: clear of the RF-bay walls, modules and structure)",
-      "value_mm": {
-        "P1": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
-        "P2": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
-        "P3": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
-        "P4": "d 12.70 x 7.30 deep: washer, nut and the long side inside (cinch_vfa340)",
-        "P5": "no envelope: drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)",
-        "P6": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
-        "P7": "d 10.15 x 2.50 deep: sma_bulkhead_hw (representative hardware, part not read)",
-        "P8": "d 9.24 x 3.40 deep: connector body hex inside, nut outside (adamtech_ca_dkca1_305l5)",
-        "RX1": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
-        "RX2": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
-        "REF_IN": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
-        "LAB_BUS": "d 14.60 x 10.80 deep: nut and rear thread with solder cups (kinghelm_gx12_6p)"
-      },
-      "result": "OPEN: no inner envelope for P5 (drawing not read); body OD or length not dimensioned, envelope reserve for P1, P2, P3, P6, P7, P8, RX1, RX2, REF_IN",
-      "source": "parts.json (makers' drawings read 2026-11-07); envelopes in fit-report 'tight' / 'collisions'"
+      "rule": "nut and lock washer of every panel bulkhead inside the wall clear of the RF-bay walls and parts (envelope check)",
+      "value_mm": "SMA: washer d 10.15, 2.5 thick (layout nut.*)",
+      "result": "OPEN: hardware of P4, P5 not chosen (MPN TBD), no nut envelope",
+      "source": "parts.json sma_bulkhead_hw; envelopes in fit-report 'tight' / 'collisions'"
     },
     {
       "id": "R-PWR-PADS",
@@ -451,7 +426,7 @@
       "rule": "harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings",
       "value_mm": {
         "routed": 33,
-        "clear": 30,
+        "clear": 33,
         "provisional_end": 33,
         "no_route_unplaced_end": [
           "S06",
@@ -464,13 +439,9 @@
           "S33",
           "S41"
         ],
-        "crossing": [
-          "S11",
-          "S23",
-          "S34"
-        ]
+        "crossing": []
       },
-      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 33 of 33 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S06, S07, S36, S39, S40; provisional routes crossing a solid: S11, S23, S34; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
+      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 33 of 33 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S06, S07, S36, S39, S40; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
       "source": "mechanical.json harness_routes, layout, plate.slots, rf_bay.notches"
     },
     {
@@ -1663,21 +1634,6 @@
       "result": "OPEN: GR-3 decides (header orientation, board side or board): 13 headers above their board limit (X01I1-CTRL IDC_top 9.1 body, X02P1-CTRL MF_top 17.27 mated, X02P1-PWR MF_top 17.27 mated, X04P1-PWR MF_top 17.27 mated, X04P1-RF MF_top 17.27 mated, X11P1-PWR MF_top 17.27 mated, X12P1-PWR MF_top 17.27 mated, X13P1-PWR MF_top 17.27 mated, X14P1-PWR MF_top 17.27 mated, X17P1-PWR MF_top 17.27 mated, X18P1-PWR MF_top 17.27 mated, X19P1-PWR MF_top 17.27 mated, X28P1-CTRL MF_top 17.27 mated); as right-angle Micro-Fit (MF_ra 6.98 mm mated) 11 fit (X02P1-PWR, X04P1-PWR, X04P1-RF, X11P1-PWR, X12P1-PWR, X13P1-PWR, X14P1-PWR, X17P1-PWR, X18P1-PWR, X19P1-PWR, X28P1-CTRL), 1 fit no zone (X02P1-CTRL); judged on the header body because the mated height is not read: IDC_top (X01I1-CTRL); 5 heights not read"
     },
     {
-      "id": "R-BOTTOM-PITCH",
-      "rule": "bottom-face port row: outer flange or inner nut radius of each port + 1 mm <= centre distance (re-space inside x 163-213 if it fails)",
-      "value_mm": {
-        "USB_C_IN-LAB_USB_A": "17.0 mm apart; OPEN: USB_C_IN, LAB_USB_A not modelled",
-        "USB_C_IN-LAB_BUS": "18.0 mm apart; OPEN: USB_C_IN not modelled",
-        "USB_C_IN-AUDIO_3V5": "33.3 mm apart; OPEN: USB_C_IN, AUDIO_3V5 not modelled",
-        "LAB_USB_A-LAB_BUS": "34.5 mm apart; OPEN: LAB_USB_A not modelled",
-        "LAB_USB_A-AUDIO_3V5": "28.0 mm apart; OPEN: LAB_USB_A, AUDIO_3V5 not modelled",
-        "LAB_BUS-AUDIO_3V5": "41.3 mm apart; OPEN: AUDIO_3V5 not modelled"
-      },
-      "limit_mm": 1.0,
-      "result": "OPEN: USB_C_IN, LAB_USB_A, AUDIO_3V5 not modelled (mechanical.json bottom_face '_tbd_reason'); read but not placed: PX0845/A (hex 42) needs 22 mm + the neighbour radius to each neighbour, more than the 17 mm row pitch",
-      "source": "mechanical.json bottom_face.ports; parts.json (makers' drawings read 2026-11-07)"
-    },
-    {
       "id": "R-TOOL-ACCESS",
       "rule": "every closure, hatch and T7-holder screw: clear tool path (counterbore, then d 8.0 for 60 mm) from outside",
       "value_mm": [
@@ -1731,44 +1687,47 @@
       1.5,
       1.8
     ],
-    "parts_without_courtyard": [],
+    "parts_without_courtyard": [
+      "NT401"
+    ],
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "courtyard_raw_mm2": 6438.0,
+        "courtyard_raw_mm2": 6613.0,
         "modules_mm2": 1342.0,
         "per_domain_raw_mm2": {
-          "PWR_MAIN": 2290.0,
-          "PWR_BRANCH": 3515.0,
-          "USB_POWER": 633.0
+          "PWR_MAIN": 2340.0,
+          "PWR_BRANCH": 3634.0,
+          "USB_POWER": 639.0
         },
         "per_group_raw_mm2": {
-          "E1 LAB5": 1149.0,
-          "E1 SYS12": 753.0,
-          "E2 Boni: малошумна захищена шина": 500.0,
-          "E2 LNB: малошумна захищена шина": 410.0,
-          "E2 J21: захищене живлення 12 V": 399.0,
-          "E2 LNA4V5: паралельні LT3045": 352.0,
+          "E1 LAB5": 1155.0,
+          "E1 SYS12": 759.0,
+          "E2 Boni: малошумна захищена шина": 512.0,
+          "E2 LNB: малошумна захищена шина": 416.0,
+          "E2 J21: захищене живлення 12 V": 412.0,
+          "E2 LNA4V5: паралельні LT3045": 358.0,
           "E5 VBUS HF+ з демпфованим LC": 306.0,
-          "E2 LNA: канал 2": 247.0,
-          "E2 LNA: канал 3": 247.0,
+          "E2 LNA: канал 2": 259.0,
+          "E2 LNA: канал 3": 259.0,
           "E5 VBUS RTL-A і LAB PORT": 228.0,
-          "E2 AUX12: верхній ключ і PTC": 185.0,
-          "E2 Дисплей: захищене живлення 12 V": 171.0,
-          "E2 Lime M.2: комутована шина 3.3 V": 166.0,
-          "E2 LNA: канал 1": 146.0,
-          "E2 LNA: канал 4": 146.0,
-          "E2 RTL-B: комутований VBUS": 136.0,
-          "E2 S-band LaNA WB: захищена шина 5 V": 136.0,
+          "E2 AUX12: верхній ключ і PTC": 191.0,
+          "E2 Дисплей: захищене живлення 12 V": 183.0,
+          "E2 Lime M.2: комутована шина 3.3 V": 173.0,
+          "E2 LNA: канал 1": 153.0,
+          "E2 LNA: канал 4": 153.0,
+          "E2 RTL-B: комутований VBUS": 142.0,
+          "E2 S-band LaNA WB: захищена шина 5 V": 142.0,
           "E1 Сервісний заряд": 119.0,
           "E1 AON і UV": 94.0,
           "E1 Головний вимикач": 92.0,
           "E2 INA3221: струми LNA1–3": 67.0,
           "E2 INA3221: струми LNA4, LNB і Boni": 67.0,
           "E5 LAB BUS I2C buffer": 57.0,
-          "E2 LNB: незалежне точне відсікання OVP": 46.0,
-          "E1 Захист USB-PD": 43.0,
-          "E5 Сервіс і зовнішні шини": 41.0,
+          "E2 LNB: незалежне точне відсікання OVP": 52.0,
+          "E1 Захист USB-PD": 50.0,
+          "E5 Сервіс і зовнішні шини": 47.0,
+          "E1 Контрольні точки": 31.0,
           "E2 LNB: контроль напруги": 31.0,
           "E2 Boni: контроль напруги": 31.0,
           "E2 AUX12: контроль напруги після PTC": 31.0,
@@ -1777,72 +1736,72 @@
         },
         "per_group_need_mm2": {
           "E1 LAB5": [
-            1388.0,
-            1532.0
+            1397.0,
+            1543.0
           ],
           "E1 SYS12": [
-            794.0,
-            818.0
+            803.0,
+            830.0
           ],
           "E2 Boni: малошумна захищена шина": [
-            750.0,
-            899.0
+            768.0,
+            922.0
           ],
           "E2 LNB: малошумна захищена шина": [
-            614.0,
-            737.0
+            624.0,
+            748.0
           ],
           "E2 J21: захищене живлення 12 V": [
-            599.0,
-            719.0
+            618.0,
+            742.0
           ],
           "E2 LNA4V5: паралельні LT3045": [
-            528.0,
-            633.0
+            537.0,
+            645.0
           ],
           "E5 VBUS HF+ з демпфованим LC": [
             460.0,
             552.0
           ],
           "E2 LNA: канал 2": [
-            370.0,
-            444.0
+            389.0,
+            466.0
           ],
           "E2 LNA: канал 3": [
-            370.0,
-            444.0
+            389.0,
+            466.0
           ],
           "E5 VBUS RTL-A і LAB PORT": [
             342.0,
             410.0
           ],
           "E2 AUX12: верхній ключ і PTC": [
-            278.0,
-            333.0
+            287.0,
+            345.0
           ],
           "E2 Дисплей: захищене живлення 12 V": [
-            256.0,
-            307.0
+            275.0,
+            330.0
           ],
           "E2 Lime M.2: комутована шина 3.3 V": [
-            249.0,
-            299.0
+            259.0,
+            311.0
           ],
           "E2 LNA: канал 1": [
-            220.0,
-            263.0
+            229.0,
+            275.0
           ],
           "E2 LNA: канал 4": [
-            220.0,
-            263.0
+            229.0,
+            275.0
           ],
           "E2 RTL-B: комутований VBUS": [
-            204.0,
-            245.0
+            213.0,
+            256.0
           ],
           "E2 S-band LaNA WB: захищена шина 5 V": [
-            204.0,
-            245.0
+            213.0,
+            256.0
           ],
           "E1 Сервісний заряд": [
             179.0,
@@ -1869,16 +1828,20 @@
             103.0
           ],
           "E2 LNB: незалежне точне відсікання OVP": [
-            69.0,
-            83.0
+            78.0,
+            94.0
           ],
           "E1 Захист USB-PD": [
-            65.0,
-            78.0
+            74.0,
+            89.0
           ],
           "E5 Сервіс і зовнішні шини": [
-            61.0,
-            74.0
+            71.0,
+            85.0
+          ],
+          "E1 Контрольні точки": [
+            47.0,
+            56.0
           ],
           "E2 LNB: контроль напруги": [
             47.0,
@@ -1901,27 +1864,27 @@
             23.0
           ]
         },
-        "parts": 333,
-        "need_1_5_mm2": 8986.0,
-        "need_1_8_mm2": 10515.0,
-        "estimate_mm2": 10515.0,
-        "ratio_1_5": 1.14,
-        "ratio_1_8": 1.33,
+        "parts": 361,
+        "need_1_5_mm2": 9248.0,
+        "need_1_8_mm2": 10830.0,
+        "estimate_mm2": 10830.0,
+        "ratio_1_5": 1.17,
+        "ratio_1_8": 1.37,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 10515 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        "result": "OPEN: need 10830 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
       },
       "RF": {
         "area_mm2": 8188.0,
-        "courtyard_raw_mm2": 2056.0,
+        "courtyard_raw_mm2": 2338.0,
         "modules_mm2": 0.0,
         "per_domain_raw_mm2": {
           "RF_HMC": 1011.0,
-          "RF_HF": 302.0,
-          "RF_INJECTOR": 252.0,
+          "RF_HF": 321.0,
+          "RF_INJECTOR": 516.0,
           "DC_CORE": 490.0
         },
         "per_group_raw_mm2": {
-          "E4 RF and receiver interfaces": 856.0,
+          "E4 RF and receiver interfaces": 1139.0,
           "E4 RF passives and drivers": 454.0,
           "E4 DC detectors: common reference": 171.0,
           "E4 DC detectors: UHF": 156.0,
@@ -1933,8 +1896,8 @@
         },
         "per_group_need_mm2": {
           "E4 RF and receiver interfaces": [
-            1284.0,
-            1541.0
+            1708.0,
+            2050.0
           ],
           "E4 RF passives and drivers": [
             680.0,
@@ -1969,21 +1932,21 @@
             32.0
           ]
         },
-        "parts": 163,
-        "need_1_5_mm2": 3083.0,
-        "need_1_8_mm2": 3700.0,
-        "estimate_mm2": 3700.0,
-        "ratio_1_5": 0.38,
-        "ratio_1_8": 0.45,
+        "parts": 168,
+        "need_1_5_mm2": 3508.0,
+        "need_1_8_mm2": 4209.0,
+        "estimate_mm2": 4209.0,
+        "ratio_1_5": 0.43,
+        "ratio_1_8": 0.51,
         "scope": "board parts and modules, without the harness headers",
         "result": "PASS (model estimate)"
       },
       "CTRL": {
         "area_mm2": 5915.0,
-        "courtyard_raw_mm2": 3300.0,
+        "courtyard_raw_mm2": 3306.0,
         "modules_mm2": 1221.0,
         "per_domain_raw_mm2": {
-          "CTRL_HMI": 3300.0
+          "CTRL_HMI": 3306.0
         },
         "per_group_raw_mm2": {
           "E3 Pico HMI": 1287.0,
@@ -1993,8 +1956,8 @@
           "E3 Cooling": 170.0,
           "E3 Q6A header": 120.0,
           "E3 HMI encoders": 66.0,
+          "E3 GNSS": 53.0,
           "E3 Pico power control": 48.0,
-          "E3 GNSS": 47.0,
           "E3 Ambient sensor": 31.0,
           "E3 MCP hardware watchdog reset": 26.0,
           "E3 Thermal sensors": 17.0
@@ -2028,13 +1991,13 @@
             99.0,
             118.0
           ],
+          "E3 GNSS": [
+            79.0,
+            95.0
+          ],
           "E3 Pico power control": [
             72.0,
             86.0
-          ],
-          "E3 GNSS": [
-            70.0,
-            84.0
           ],
           "E3 Ambient sensor": [
             47.0,
@@ -2049,11 +2012,11 @@
             31.0
           ]
         },
-        "parts": 130,
-        "need_1_5_mm2": 4340.0,
-        "need_1_8_mm2": 4963.0,
-        "estimate_mm2": 4963.0,
-        "ratio_1_5": 0.73,
+        "parts": 131,
+        "need_1_5_mm2": 4349.0,
+        "need_1_8_mm2": 4975.0,
+        "estimate_mm2": 4975.0,
+        "ratio_1_5": 0.74,
         "ratio_1_8": 0.84,
         "scope": "board parts and modules, without the harness headers",
         "result": "PASS (model estimate)"
@@ -2073,22 +2036,22 @@
           "headers": 31,
           "header_courtyard_mm2": 2652.0,
           "area_mm2": 7910.0,
-          "with_headers_raw_mm2": 9090.0,
-          "estimate_with_headers_1_5_mm2": 12964.0,
-          "estimate_with_headers_mm2": 15289.0,
-          "ratio": 1.93,
+          "with_headers_raw_mm2": 9265.0,
+          "estimate_with_headers_1_5_mm2": 13226.0,
+          "estimate_with_headers_mm2": 15604.0,
+          "ratio": 1.97,
           "frontage_mm": 389.0,
           "edge_zones_mm": 233,
-          "result": "OPEN: area 15289 > 7910 mm2 at fill 1.8; frontage 389 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 15604 > 7910 mm2 at fill 1.8; frontage 389 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "RF": {
           "headers": 4,
           "header_courtyard_mm2": 474.0,
           "area_mm2": 8188.0,
-          "with_headers_raw_mm2": 2530.0,
-          "estimate_with_headers_1_5_mm2": 3794.0,
-          "estimate_with_headers_mm2": 4553.0,
-          "ratio": 0.56,
+          "with_headers_raw_mm2": 2812.0,
+          "estimate_with_headers_1_5_mm2": 4219.0,
+          "estimate_with_headers_mm2": 5062.0,
+          "ratio": 0.62,
           "frontage_mm": 57.0,
           "edge_zones_mm": 344,
           "result": "PASS (model estimate)"
@@ -2097,13 +2060,13 @@
           "headers": 21,
           "header_courtyard_mm2": 2663.0,
           "area_mm2": 5915.0,
-          "with_headers_raw_mm2": 5963.0,
-          "estimate_with_headers_1_5_mm2": 8335.0,
-          "estimate_with_headers_mm2": 9757.0,
+          "with_headers_raw_mm2": 5969.0,
+          "estimate_with_headers_1_5_mm2": 8344.0,
+          "estimate_with_headers_mm2": 9769.0,
           "ratio": 1.65,
           "frontage_mm": 316.0,
           "edge_zones_mm": 145,
-          "result": "OPEN: area 9757 > 5915 mm2 at fill 1.8; frontage 316 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 9769 > 5915 mm2 at fill 1.8; frontage 316 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "ENC": {
           "headers": 2,
@@ -2914,7 +2877,7 @@
         "through": [
           "SL3"
         ],
-        "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 2 through nut.LAB_BUS; piece 3 through nut.LAB_BUS"
+        "status": "OPEN (end provisional): behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       },
       "S12": {
         "kind": "harness",
@@ -3054,7 +3017,7 @@
         "through": [
           "SL3"
         ],
-        "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS"
+        "status": "OPEN (end provisional): behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       },
       "S24": {
         "kind": "harness",
@@ -3171,7 +3134,7 @@
         "through": [
           "SL3"
         ],
-        "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS; piece 7 through nut.LAB_BUS; piece 8 through nut.LAB_BUS"
+        "status": "OPEN (end provisional): behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       },
       "S35": {
         "kind": "harness",
@@ -3889,7 +3852,7 @@
   },
   "volumes_cm3": {
     "front_shell": {
-      "cm3": 157.61,
+      "cm3": 157.89,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -3900,7 +3863,7 @@
         161.9,
         71.99
       ],
-      "stl_triangles": 18668
+      "stl_triangles": 18692
     },
     "rear_shell": {
       "cm3": 126.02,
@@ -4042,7 +4005,7 @@
       ]
     },
     "angle_top_al": {
-      "cm3": 8.05,
+      "cm3": 8.06,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4055,7 +4018,7 @@
       ]
     },
     "angle_right_al": {
-      "cm3": 1.31,
+      "cm3": 1.32,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4315,7 +4278,7 @@
     "collisions": 0,
     "outside": 0,
     "rule_failures": 0,
-    "rules_open": 10,
+    "rules_open": 9,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
     "board_area_open": 1,

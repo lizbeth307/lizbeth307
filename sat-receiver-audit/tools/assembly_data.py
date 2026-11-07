@@ -462,7 +462,8 @@ WIRE = {
 # a harness colour outside them is bought white and told apart by the printed marker (build/18).
 WIRE_COLOUR_CODE = {"білий": "WH", "чорний": "BK", "червоний": "RD", "зелений": "GR", "жовтий": "YL", "синій": "BL", "коричневий": "BR",
                     "помаранчевий": "OR", "сірий": "SL", "фіолетовий": "VI"}
-WIRE_PUTUP = "005"  # 100 ft (30.5 m) spool, the shortest put-up of the specifications
+WIRE_PUTUP = "005"  # 100 ft (30.48 m) spool: the shortest put-up every WIRE series lists (5857 also lists 50 ft, code not read)
+WIRE_SPOOL_M = 30.48  # length of one WIRE_PUTUP spool, m (100 ft)
 # Insulation OD each crimp terminal accepts, mm (None: no limit given): JST-PH SPH-002T-P0.5S, MOLEX-43030, MOLEX-5556 (SOURCES).
 WIRE_INSULATION_RANGE = {"PH": (0.8, 1.5), "MF": (None, 1.85), "MFJ": (1.30, 3.10)}
 
@@ -482,10 +483,6 @@ ASSEMBLIES = [
     ("C-LAB", "USB2 H3 → LAB USB-A J501", r"^E5_LABPORT_D", "HUB → LABUSB", "VBUS лише з S23"),
     ("C-PCIE", "PCIe x1 Q6A → R44SF → Lime", r"^E5_PCIE_", "Q6A.MKEY → RISER → LIME", "ADT-Link R44SF 5 см; 3.3 V хоста відділено (E5 §10)"),
 ]
-
-# Coax assemblies bought at another length than the graph models (parts DB W-RG316-SMA-MM-0152: no shorter stock part).
-PURCHASED_LENGTH = {"W422": "152.4 мм", "W423": "152.4 мм"}
-GRAPH_LENGTH = {"W422": "0.10 м", "W423": "0.10 м"}
 
 # --- Labels (build/18) ---------------------------------------------------------
 # Panel RF ports: ref -> (label text, DC on the port). Must cover every panel RF connector.
@@ -782,10 +779,10 @@ STEPS = [
       "гайки енкодерів ≤1.0 N·m (F20); SW301 PV6F240SS у верхню стінку — 0.6 N·m (F21).",
       "VEML7700 на верхній грані безеля (S26); провід повітродувки S28 — заготовити до CTRL.",
       "NTC панелі TH301 — на задній тепловідвід панелі біля гарячої точки, ізольовано; виводи розвантажити, паяти ≥6 мм від бусинки (S39, примітка E3).",
-      "Кабелі CTRL: S01 (≤200 мм), S24, S25 (PPS разом з S01 ≤200 мм), S29, S30, S15 — заготовити з запасом петлі.",
-      "Шлейф S01 без 5 V (N-E3-01, R-E3-15): у місці кожної з двох розеток IDC до обтиснення вирізати провідники 2 і 4 стрічки (ділянку ≈5 мм під "
-      "лезами контактів 2 і 4), щоб жоден кінець цих провідників не торкався контакту; на CTRL контакти 2/4 бокса — без кола. Без цього кроку 5 V Q6A J20 "
-      "знову опиняється в стрічці 28 AWG без межі струму; LC76G живиться від U315 на CTRL (S25)."],
+      "Шлейф S01 без 5 V (N-E3-01, R-E3-15) — до заготовлення кабелів CTRL (наступний пункт): у місці кожної з двох розеток IDC до обтиснення вирізати "
+      "провідники 2 і 4 стрічки (ділянку ≈5 мм під лезами контактів 2 і 4), щоб жоден кінець цих провідників не торкався контакту; на CTRL контакти 2/4 "
+      "бокса — без кола. Без цього кроку 5 V Q6A J20 знову опиняється в стрічці 28 AWG без межі струму; LC76G живиться від U315 на CTRL (S25).",
+      "Кабелі CTRL: S01 (≤200 мм), S24, S25 (PPS разом з S01 ≤200 мм), S29, S30, S15 — заготовити з запасом петлі."],
      ["вали енкодерів вкорочені, ручки не торкаються гайок", "кнопки й енкодери перевіряються в E6 (19 §4 п. 3) — CTRL живиться від Q6A",
       "S01: прозвонка контактів 2 і 4 розетки Q6A → контакти 2 і 4 розетки CTRL — розрив, сусідні 1, 3, 5 — є з'єднання (до підключення до Q6A)"],
      ["F08", "F20", "F21", "F29", "S01", "S15", "S24", "S25", "S26", "S28", "S29", "S30", "S37", "S38", "S39", "L-SUN", "L-RX"]),

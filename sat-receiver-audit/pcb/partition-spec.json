@@ -179,7 +179,7 @@
   "group_domain": {
    "E1/Контрольні точки": "PWR_MAIN"
   },
-  "expected_pwr": 27,
+  "expected_pwr": 28,
   "expected_pwr_why": "pcb/partition_budget.py stops when it finds another number of PWR test points (E1, E2, E5): a changed TP set is checked and this count updated, never lost silently"
  },
  "header_families": {
