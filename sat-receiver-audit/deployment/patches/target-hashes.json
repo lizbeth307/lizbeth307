@@ -18,5 +18,23 @@
       "before_sha256": "f76a14d5589fa516090984e9a95258bd3ae481f6e4134dc7e6ff298d5f98ce09",
       "after_sha256": "c226888485b1fcb37509e84083d61fec8cf6ac0b0d91ade4cb1e199e4ade645e"
     }
+  },
+  "sdrangel": {
+    "CMakeLists.txt": {
+      "before_sha256": "b719077d6793c693103b3d5acfc00309fb3cf1a171dcf7f832ff1013f06dc4b6",
+      "after_sha256": "da7f772835be0c3288d54d40b470d9ad95a127dd0995bbfc9434b809ced957fa"
+    },
+    "plugins/CMakeLists.txt": {
+      "before_sha256": "c098ff1a939ad1da7c7909ae88f2100a8a0fc8f7ee73ee98717f3083ae768a88",
+      "after_sha256": "e3846fa6cf36eb7b13d97fed6439c3b15fa033ac99cbbc8483110ecaf0888e8f"
+    },
+    "plugins/channelrx/CMakeLists.txt": {
+      "before_sha256": "4a2e023aec9183659c987343570e84f85998cdf6cc017d40e28a9329a2e9735f",
+      "after_sha256": "1dea9b3d77beead4e8c34dd7aaabc17baec1f3a3f6063f3b620339ffb676aff9"
+    },
+    "plugins/samplesource/CMakeLists.txt": {
+      "before_sha256": "7b7c5a3f740018f01a8f29b96f6b8fdb451914169a606add0c8124cfe7b373d3",
+      "after_sha256": "96f82eabaed869ea4674020446d6c55d5cb733ac78984198a2a7ef1b65079e24"
+    }
   }
 }

@@ -56,4 +56,4 @@ Restart=no
 # Arguments: the SDRangel engine package (SW-SDRANGEL); the REST/WebSocket API binds 127.0.0.1
 # (STACK.md:882). The /usr/bin/env prefix stays: the lab guest verifies every staged unit without
 # the +lab engine packages (guest_smoke.verify_units).
-ExecStart=/usr/bin/env sdrangelsrv -a 127.0.0.1
+ExecStart=/usr/bin/env sdrangelsrv -a 127.0.0.1 -w /var/lib/lab/fftw/sdrangel.wisdom
