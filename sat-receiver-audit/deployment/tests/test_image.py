@@ -1347,8 +1347,9 @@ class SmokeClosureTests(unittest.TestCase):
                 "accounts": {"_chrony": "_chrony:x:105:110:Chrony daemon:/var/lib/chrony:/usr/sbin/nologin",
                              "gpsd": "gpsd:x:106:20:GPSD system user:/run/gpsd:/bin/false"},
                 "units": {"chrony.service": {"LoadState": "loaded", "ActiveState": "active"},
-                          "gpsd.service": {"LoadState": "loaded", "ActiveState": "active"},
-                          "gpsd.socket": {"LoadState": "loaded", "ActiveState": "active"},
+                          # run 42398832045: the package enables only the socket (socket activation)
+                          "gpsd.service": {"LoadState": "loaded", "ActiveState": "inactive", "UnitFileState": "disabled"},
+                          "gpsd.socket": {"LoadState": "loaded", "ActiveState": "active", "UnitFileState": "enabled"},
                           "systemd-timesyncd.service": {"LoadState": "not-found", "ActiveState": "inactive"}},
                 "chrony_conf_sha256": "c" * 64}
 
@@ -1358,6 +1359,11 @@ class SmokeClosureTests(unittest.TestCase):
 
     def test_the_built_closure_passes(self):
         self.assertEqual(self.smoke.closure_mismatches(self.observed(), self.RECORDED), [])
+        observed = self.observed()
+        observed["units"]["gpsd.service"]["ActiveState"] = "active"  # a client connected: still socket-activated
+        self.assertEqual(self.smoke.closure_mismatches(observed, self.RECORDED), [])
+        observed["units"]["gpsd.service"]["UnitFileState"] = "enabled"  # enabled at boot is not the package default
+        self.assertEqual(len(self.smoke.closure_mismatches(observed, self.RECORDED)), 1)
         raw = dict(self.RECORDED, gnss_mode="raw")
         observed = self.observed()
         for unit in ("gpsd.service", "gpsd.socket"):

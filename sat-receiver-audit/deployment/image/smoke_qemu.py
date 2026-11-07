@@ -23,8 +23,8 @@ srrx-boot-check.service on the boot that must fail), srrx.service inactive and d
 masks in effect (gdm.service and gdm3.service among them, and display-manager.service resolves to
 the mask), every SR-RX service account present with the UID/GID of the build manifest, and the
 package closure as built (W2 IMG-2: closure versions installed, systemd-timesyncd gone, _chrony and
-gpsd with the manifest ids, chrony.service active, gpsd as the staged GNSS mode decides, the built
-chrony.conf); a boot-check unit in the wrong state carries its journal of that boot into the mismatches, and every
+gpsd with the manifest ids, chrony.service active, gpsd as the staged GNSS mode decides (socket
+listening, service socket-activated), the built chrony.conf); a boot-check unit in the wrong state carries its journal of that boot into the mismatches, and every
 unexpected failed unit its bounded `systemctl status` tail (address-like tokens removed). srrx-boot-check accepts the smoke's own tokens (bootchain.smoke_tokens) only
 inside a VM (systemd-detect-virt), so every other extra token of an edited entry still fails it. The first slot A boot also runs selftest.py offline on a read-only view of the booted root
 and ESP (bootchain.live_selftest): its FAIL/BLOCKED rows must equal the build-time rows on root A,
@@ -214,10 +214,16 @@ def account_mismatches(observed, recorded):
     return bad
 
 
-# W2 IMG-2: gpsd's units by the GNSS mode the image staged (system_files.gpsd_defaults): the package
-# enables gpsd.socket and gpsd.service; in gpsd and off mode both run (gpsd keeps its systemd socket
-# without a device, gpsd.c 3.25), in raw mode deploy.py stage masks both.
-GNSS_UNIT_STATES = {"gpsd": ("ActiveState", "active"), "off": ("ActiveState", "active"), "raw": ("LoadState", "masked")}
+# W2 IMG-2: gpsd's units by the GNSS mode the image staged (system_files.gpsd_defaults). The package
+# enables only gpsd.socket (debian/rules of gpsd 3.25-3ubuntu3.2: dh_installsystemd --no-enable
+# --no-start gpsd.service), so in gpsd and off mode the socket listens and gpsd.service stays disabled
+# until a client connects (nothing does in the model); in raw mode deploy.py stage masks both.
+# {mode: {unit: {property: expected value}}}; "!failed" means any ActiveState but failed.
+GNSS_UNIT_STATES = {
+    "gpsd": {"gpsd.socket": {"ActiveState": "active"}, "gpsd.service": {"UnitFileState": "disabled", "ActiveState": "!failed"}},
+    "off": {"gpsd.socket": {"ActiveState": "active"}, "gpsd.service": {"UnitFileState": "disabled", "ActiveState": "!failed"}},
+    "raw": {"gpsd.socket": {"LoadState": "masked"}, "gpsd.service": {"LoadState": "masked"}},
+}
 
 
 def closure_mismatches(observed, recorded):
@@ -249,10 +255,14 @@ def closure_mismatches(observed, recorded):
         bad.append("chrony.service %r, expected active" % state("chrony.service"))
     if state("systemd-timesyncd.service", "LoadState") != "not-found":
         bad.append("systemd-timesyncd.service LoadState %r, expected not-found" % state("systemd-timesyncd.service", "LoadState"))
-    key, want = GNSS_UNIT_STATES.get(recorded.get("gnss_mode"), ("ActiveState", None))
-    for unit in ("gpsd.socket", "gpsd.service"):
-        if want is None or state(unit, key) != want:
-            bad.append("%s %s %r, expected %r for the staged GNSS mode %r" % (unit, key, state(unit, key), want, recorded.get("gnss_mode")))
+    expected = GNSS_UNIT_STATES.get(recorded.get("gnss_mode"))
+    if expected is None:
+        bad.append("no gpsd expectation for the staged GNSS mode %r" % recorded.get("gnss_mode"))
+    for unit, properties in sorted((expected or {}).items()):
+        for key, want in sorted(properties.items()):
+            got = state(unit, key)
+            if (got == "failed") if want == "!failed" else (got != want):
+                bad.append("%s %s %r, expected %s for the staged GNSS mode %r" % (unit, key, got, want, recorded.get("gnss_mode")))
     if observed.get("chrony_conf_sha256") != (recorded.get("chrony_conf") or {}).get("sha256"):
         bad.append("chrony.conf on the booted slot %r is not the built one" % observed.get("chrony_conf_sha256"))
     return bad
