@@ -850,19 +850,47 @@ def spares(n):
     return max(math.ceil(n * SPARE_PCT / 100), SPARE_MIN)
 
 
-def wire_part(awg, colour, families):
-    """Orderable hook-up wire of a gauge and colour (assembly_data WIRE), or TBD with the reason: the insulation OD range
-    (nominal +/- tolerance) must fit every crimp terminal family the gauge ends in."""
+def wire_spool(awg, colour, families):
+    """Orderable hook-up wire spool of a gauge and colour (assembly_data WIRE): (part text, colour code), or (TBD text with the
+    reason, None). The insulation OD range (nominal +/- tolerance) must fit every crimp terminal family the gauge ends in; a colour
+    the series is not made in is bought white (WH)."""
     if awg not in D.WIRE:
-        return f"TBD (немає в базі деталей: {awg} AWG немає серед серій AI-WIRE-PTFE)"
+        return f"TBD (немає в базі деталей: {awg} AWG немає серед серій AI-WIRE-PTFE)", None
     item, kind, od, tol = D.WIRE[awg]
     for fam in sorted(families):
         lo, hi = D.WIRE_INSULATION_RANGE.get(fam, (None, None))
         if (lo is not None and od - tol < lo) or (hi is not None and od + tol > hi):
-            return f"TBD (немає в базі деталей: Alpha Wire {item} ⌀{od:.2f} ±{tol:.2f} мм поза межами ізоляції клеми {fam}, AI-WIRE-PTFE)"
-    code = D.WIRE_COLOUR_CODE.get(colour)
-    swap = "" if code else f"; кольору «{colour}» у серії немає — білий, розрізнення за маркером (build/18)"
-    return f"Alpha Wire {item} {code or 'WH'}{D.WIRE_PUTUP} ({kind}, ⌀{od:.2f} ±{tol:.2f} мм, котушка 100 ft){swap}"
+            return f"TBD (немає в базі деталей: Alpha Wire {item} ⌀{od:.2f} ±{tol:.2f} мм поза межами ізоляції клеми {fam}, AI-WIRE-PTFE)", None
+    code = D.WIRE_COLOUR_CODE.get(colour) or "WH"
+    return f"Alpha Wire {item} {code}{D.WIRE_PUTUP} ({kind}, ⌀{od:.2f} ±{tol:.2f} мм, котушка 100 ft)", code
+
+
+def wire_part(awg, colour, families):
+    """Orderable hook-up wire of a gauge and colour (wire_spool), with the white-substitute note, or TBD with the reason."""
+    part, code = wire_spool(awg, colour, families)
+    if code and not D.WIRE_COLOUR_CODE.get(colour):
+        part += f"; кольору «{colour}» у серії немає — білий, розрізнення за маркером (build/18)"
+    return part
+
+
+def spool_row(awg, colours):
+    """Role, quantity and note of one orderable spool part: colours = [(colour, wires, [length mm or None])]. The quantity is
+    spools of WIRE_SPOOL_M for the summed model lengths (at least one); wires without a model length are named in the note."""
+    colours = sorted(colours, key=lambda c: not D.WIRE_COLOUR_CODE.get(c[0]))  # the spool's own colour first
+    wires = sum(n for _, n, _ in colours)
+    known = [x for _, _, lens in colours for x in lens if x]
+    unknown = sum(1 for _, _, lens in colours for x in lens if not x)
+    total_m = sum(known) / 1000
+    spools = max(1, math.ceil(total_m / D.WIRE_SPOOL_M))
+    swapped = [c for c, _, _ in colours if not D.WIRE_COLOUR_CODE.get(c)]
+
+    def cores(n):
+        return f"{n} " + ("жила" if n % 10 == 1 and n % 100 != 11 else "жили" if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14) else "жил")
+    note = (f"{cores(wires)} ({', '.join(f'{c} {n}' for c, n, _ in colours)}); сума довжин за моделлю {total_m:.2f} м"
+            + (f", ще {cores(unknown)} без довжини — TBD (CAD)" if unknown else "")
+            + f"; котушок — ⌈сума довжин / {D.WIRE_SPOOL_M:g} м⌉ (модель, уточнити за CAD)"
+            + (f"; {', '.join(swapped)} — білий провід, розрізнення за маркером (build/18)" if swapped else ""))
+    return f"{awg} AWG, {' + '.join(c for c, _, _ in colours)}", spools, note
 
 
 def rollup_rows(model, h):
@@ -891,14 +919,24 @@ def rollup_rows(model, h):
         tmpl = {"conn": {"family": fam, "pins": 2, "unit": "", "mate_of": ""}}
         terminal = connector_parts(model, tmpl["conn"])[2]
         add(fam, "", "клема", terminal, "кінці проводів на роз'ємах X цієї таблиці", n)
-    wires, wire_ends = defaultdict(int), defaultdict(set)
+    wires, wire_ends, wire_len = defaultdict(int), defaultdict(set), defaultdict(list)
     for w in h.wires:
         if "IDC" in (w["family_from"], w["family_to"]) or "CABLE" in (w["family_from"], w["family_to"]) or "FAN3" in (w["family_from"], w["family_to"]):
             continue
         wires[(int(w["awg"]), w["colour"])] += 1
         wire_ends[int(w["awg"])] |= {w["family_from"], w["family_to"]}
+        wire_len[(int(w["awg"]), w["colour"])].append(segment_length_mm(w["length_mm"]))
+    # one row per orderable spool part number (a colour bought white shares the white spool); quantity = spools, not wires
+    spools = OrderedDict()
     for (awg, col), n in sorted(wires.items(), key=lambda kv: (-kv[0][0], kv[0][1])):
-        add("провід", "", f"{awg} AWG, {col}", wire_part(awg, col, wire_ends[awg]), "кількість жил; довжина — TBD (CAD)", n)
+        part, code = wire_spool(awg, col, wire_ends[awg])
+        if not code:
+            add("провід", "", f"{awg} AWG, {col}", part, "кількість жил (котушку не обрано); довжина — TBD (CAD)", n)
+            continue
+        spools.setdefault((awg, code), (part, []))[1].append((col, n, wire_len[(awg, col)]))
+    for (awg, code), (part, colours) in spools.items():
+        role, n, note = spool_row(awg, colours)
+        add("провід", "", role, part, note, n)
     rows = []
     order = {"IDC": 0, "MFJ": 1, "MF": 2, "PH": 3, "FAN3": 4, "провід": 5}
     for (fam, pins, role, mpn, note), n in sorted(count.items(), key=lambda kv: (order.get(kv[0][0], 9), kv[0][1] == "", kv[0][1] or 0, kv[0][2])):
