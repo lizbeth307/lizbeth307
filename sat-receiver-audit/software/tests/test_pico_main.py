@@ -373,7 +373,7 @@ class LockHoldStopTests(unittest.TestCase):
     """Physical DISARM/STOP (W2 FW-STOP): hmi.lock_held_ms is an input fact and main.operator_stop
     is LOCK held >= LOCK_STOP_HOLD_MS on fresh key reads. Synthetic bus, no hardware PASS."""
     LOCK = b"\xdf\xff"  # PI4IO port 0 bit 5 low: LOCK pressed (keys are active low).
-    # The HMI sample labd accepts (engine.py:438-439): the hold is not part of it.
+    # The HMI sample labd accepts (engine.py:546-547): the hold is not part of it.
     HOST_FIELDS = {"ok", "fresh", "age_ms", "keys", "presses", "encoders", "lux", "lux_valid",
                    "lux_age_ms", "sequence", "generation", "error"}
 

@@ -61,7 +61,7 @@ class Engine:
         else:
             from .engine_leases import EngineLeases
             self.leases = EngineLeases()
-        self._leases_armed = False
+        self._leases_armed, self._leases_powered = False, {}
         self.events = []
         self.uv_since = None
         self.identity_ok = simulated
@@ -194,11 +194,18 @@ class Engine:
     def tick(self, now_ms):
         self.now_ms = int(now_ms)
         if self.leases is not None:
-            # Before the Pico freshness return below: a lost operator lease, and a policy that left
-            # ARMED by its own trip (lease expiry, a fault, undervoltage), end the engine leases.
+            # Before the Pico freshness return below: a lost operator lease, a policy that left
+            # ARMED by its own trip (lease expiry, a fault, undervoltage), and a receiver EN output
+            # switched off while ARMED (control, not a trip) end the engine leases.
             if self._leases_armed and not self.policy.armed:
                 self.leases.stop_all("POLICY_TRIP")
             self._leases_armed = self.policy.armed
+            from .engine_leases import POWER_OUTPUTS
+            for receiver, output in POWER_OUTPUTS.items():
+                powered = self.policy.outputs.get(output) is True
+                if self.policy.armed and self._leases_powered.get(receiver) and not powered:
+                    self.leases.stop(receiver, "RECEIVER_OFF")
+                self._leases_powered[receiver] = powered
             self.leases.tick(self.now_ms, self._own_valid_lease)
         if self.gnss is not None:
             self._gnss_tick()

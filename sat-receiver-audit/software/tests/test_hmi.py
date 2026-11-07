@@ -2048,7 +2048,7 @@ class OperatorStopQtTests(unittest.TestCase):
             window.render_state(controller.status())
             return window.fault_text.text()
         try:
-            # What labd reports after the Pico tripped on a LOCK hold (engine.py:120, :167-170).
+            # What labd reports after the Pico tripped on a LOCK hold (engine.py:142, :189-192).
             backend.data["policy"].update(armed=False, fault="new_pico_session")
             backend.data["pico"].update(state="TRIPPED", fault="OPERATOR_STOP")
             backend.data["last_error"] = "pico_OPERATOR_STOP"
