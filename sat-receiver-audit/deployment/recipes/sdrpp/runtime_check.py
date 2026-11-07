@@ -11,8 +11,15 @@ only. It checks that:
   (always written as 0) is still there;
 - rtl_sdr_source.so resolves librtlsdr.so.2 to the lab librtlsdr2 package (+labN version) and never
   to librtlsdr.so.0;
+- rigctl_server.so and network_source.so carry the loopback-only build (lab patch 0003): no host
+  input field, and the fixed 127.0.0.1 log line of the patch is present;
 - `sdrpp --help` exits 0, and `sdrpp --server` exits non-zero with the lab refusal before it
   creates the root directory it was given (lab patch 0002).
+The brief's "default config has no biasT key and directSampling 0" is checked by proxy: the
+rtl_sdr_source default config is {devices: {}, device: 0} with no device entry (upstream
+main.cpp:587-593), and the per-device keys are written only when the GUI first selects a device
+(:200-210). So this script checks the built module's strings, and the real rtl_sdr_config.json after
+the first selection (selftest RX-01c) stays a device row (OPEN).
 The GUI is never started: no display, no device, no RF. The last stdout line is a JSON object with
 ok true and no findings when everything holds. CI model only: no hardware PASS.
 """
@@ -29,6 +36,11 @@ ALLOWED = sorted(["radio", "audio_sink", "frequency_manager", "rtl_sdr_source", 
                   "network_source", "soapy_source", "rigctl_server"])
 RTL_FORBIDDEN = (b"biasT", b"Bias T", b"rtlsdr_set_bias_tee", b"Direct Sampling")
 RTL_REQUIRED = (b"directSampling",)
+# Lab patch 0003: the GUI host field id must be gone and the patch's fixed-loopback log line present.
+LOOPBACK = {
+    "rigctl_server": {"forbidden": (b"##_rigctl_srv_host_",), "required": (b"SR-RX lab rigctl server listens on 127.0.0.1 only",)},
+    "network_source": {"forbidden": (b"##network_source_host_",), "required": (b"SR-RX lab network source uses 127.0.0.1 only",)},
+}
 REFUSAL = "Server mode is disabled in the SR-RX receive-only lab build"
 LAB_VERSION = re.compile(r"\+lab[1-9][0-9]*\Z")
 LDD_LINE = re.compile(r"^\s*(\S+)\s+=>\s+(\S+)\s+\(0x[0-9a-f]+\)\s*$")
@@ -88,6 +100,21 @@ def rtl_module(findings):
     return {"librtlsdr.so.2": real, "package": owner, "version": version}
 
 
+def loopback_modules(findings):
+    report = {}
+    for module, tokens in sorted(LOOPBACK.items()):
+        with open(os.path.join(PLUGINS, module + ".so"), "rb") as handle:
+            data = handle.read()
+        hits = [t.decode() for t in tokens["forbidden"] if t in data]
+        missing = [t.decode() for t in tokens["required"] if t not in data]
+        if hits:
+            findings.append("%s.so still has a configurable host: %s" % (module, ", ".join(hits)))
+        if missing:
+            findings.append("%s.so lacks the loopback-only build of lab patch 0003: %s" % (module, ", ".join(missing)))
+        report[module] = "loopback-only" if not (hits or missing) else "configurable"
+    return report
+
+
 def binary(findings):
     report = {}
     scratch = tempfile.mkdtemp(prefix="sdrpp-check-")
@@ -108,7 +135,7 @@ def binary(findings):
 
 def main():
     findings, report = [], {}
-    for name, step in (("modules", plugin_directory), ("rtl_sdr_source", rtl_module), ("binary", binary)):
+    for name, step in (("modules", plugin_directory), ("rtl_sdr_source", rtl_module), ("loopback", loopback_modules), ("binary", binary)):
         try:
             report[name] = step(findings)
         except (OSError, subprocess.SubprocessError) as exc:  # missing file, timeout: a finding, not a traceback
