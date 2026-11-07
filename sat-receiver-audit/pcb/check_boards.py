@@ -18,7 +18,8 @@ not stale a review (F10). Results are MODEL checks of the drawn copper; they pro
 Spec fields read from pcb/boards/<B>.json (all optional except board_id):
   board_id, board_file (default build/kicad/boards/<B>/<B>.kicad_pcb), contract_board (default board_id),
   refs | domains (graph refs on the board; domains use pcb/generated/components.csv board_candidate),
-  board_only_refs {ref: reason}, instances [{id, ref_map {board_ref: graph_ref}, net_map {board_net: graph_net}}],
+  board_only_refs {ref: reason}, instances [{id, ref_map {board_ref: graph_ref}, net_map {board_net: graph_net}}]
+  or the board_gen form (srrx-board-spec-v1) instances {list [{id, refs, nets}]} with parts[] pilot_placeholder pins,
   contract_transform {origin: [x, y] (KiCad position of contract (0, 0)), y: "up"|"down"} (default: y up, origin
   from the Edge.Cuts bounding box), bond_hole {at: [x, y], net}, gnd_chassis_ties (default: graph ties on the board),
   split_nets {net: ["F.Cu", "B.Cu"]}, neck_exempt {ref: {escape_mm, reason}}, rf50_exempt {net: reason},
@@ -51,6 +52,9 @@ NECK_GRID = 0.05     # mm raster for pour necks; a measured neck passes within o
 NECK_MAX_CELLS = 600_000  # larger pours use a coarser step (recorded per neck as grid_mm)
 POS_TOL = 0.01       # mm outline vertex / hole position tolerance
 HOLE_D_TOL = 0.01    # mm hole diameter tolerance
+# mm: KiCad stores nm, so a pour that follows a circumscribed keepout polygon touches the keepout circle at its
+# edge midpoints up to ~1-2 nm inside after vertex rounding (ENC: 2.9999987 mm against r 3.0); 1 um is no fab margin.
+KEEPOUT_TOL = 0.001
 PTH_ANNULAR_FLOOR = 0.15  # mm, JLC multilayer 1 oz absolute minimum (netclasses.json fab_floor)
 
 
@@ -707,7 +711,7 @@ def check_keepouts(board, cb, frame, spec):
             if math.hypot(h['x'] - cx, h['y'] - cy) <= POS_TOL:
                 hole_pad = (h['ref'], h['pad'])
         for it in board.copper:
-            if it.shape.dist(cx, cy) >= r - 1e-9:
+            if it.shape.dist(cx, cy) >= r - KEEPOUT_TOL:
                 continue
             if hole_pad and it.kind == 'pad' and (it.ref, it.pad) == hole_pad:
                 continue
@@ -721,7 +725,11 @@ def check_keepouts(board, cb, frame, spec):
 
 def expected_views(spec, graph, components_csv=None):
     """[(view id, ref_map board->graph, net_map board->graph)] and the graph refs the board must carry."""
-    if spec.get('instances'):
+    if isinstance(spec.get('instances'), dict):
+        # board_gen spec (srrx-board-spec-v1, pcb/board_gen.py): instances.list[{id, refs {template: graph|null},
+        # nets {template: graph}}]; a null ref is a pilot_placeholder, checked against its spec pins in check_pad_nets.
+        views = [(i['id'], {t: g for t, g in i['refs'].items() if g}, dict(i['nets'])) for i in spec['instances']['list']]
+    elif spec.get('instances'):
         views = [(i.get('id', str(n)), dict(i.get('ref_map', {})), dict(i.get('net_map', {}))) for n, i in enumerate(spec['instances'])]
     else:
         if spec.get('refs') is not None:
@@ -777,7 +785,23 @@ def check_pad_nets(board, spec, graph, views):
             for number in sorted(set(pins) - seen):
                 if pins[number]:
                     out.append(finding('pad_nets', f'{bref}.{number}', f'graph pin of {gref} has no pad', graph_net=pins[number]))
-    allowed = spec.get('board_only_refs', {})
+    allowed = dict(spec.get('board_only_refs', {}))
+    for part in spec.get('parts', []):
+        # board_gen pilot_placeholder: no graph ref yet; its pads must carry the template nets of its spec pins.
+        if not isinstance(part, dict) or part.get('source') != 'pilot_placeholder':
+            continue
+        allowed[part['ref']] = 'pilot_placeholder'
+        fp = fps.get(part['ref'])
+        if fp is None:
+            out.append(finding('pad_nets', part['ref'], 'pilot_placeholder of the spec has no footprint on the board'))
+            continue
+        want = {str(k): v for k, v in part.get('pins', {}).items()}
+        have = {p['number']: (None if not p['net'] or p['net'].startswith('unconnected-') else p['net'])
+                for p in fp['pads'] if p['number'] and p['kind'] != 'np_thru_hole'}
+        for number in sorted(set(want) | set(have)):
+            if want.get(number) != have.get(number):
+                out.append(finding('pad_nets', f"{part['ref']}.{number}", 'pilot_placeholder pad net differs from the spec pins',
+                                   net=have.get(number), graph_net=want.get(number)))
     for ref, fp in sorted(fps.items()):
         if ref in board_refs or ref in allowed:
             continue
@@ -1199,7 +1223,11 @@ def fp_height(fp, spec):
 def check_heights(board, spec, cb, frame):
     out, unverified = [], []
     sides = set(spec.get('sides', ['top']))
-    zones = [(frame.rect(z['rect']), float(z['max_height']), z.get('side', 'top')) for z in spec.get('height_zones', [])]
+    zones = [(frame.rect(z['rect']), float(z['max_height']), z.get('side', 'top')) for z in spec.get('height_zones', []) if 'rect' in z]
+    for z in spec.get('height_zones', []):
+        if 'rect' not in z:  # board_gen form {region, checked: false, why}: no rectangle to check against
+            unverified.append({'check': 'heights', 'item': str(z.get('region', 'zone')),
+                               'reason': 'spec height zone without rect (board_gen form): ' + str(z.get('why', 'not checked'))})
     default = {'top': cb.get('max_component_height'), 'bottom': spec.get('max_height_bottom')}
     hole_refs = {h['ref'] for h in board.holes}
     checked = 0
