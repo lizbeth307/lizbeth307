@@ -1,0 +1,59 @@
+[Unit]
+Description=SR-RX exclusive engine lease: AIS-catcher on receiver %i (receive-only, localhost only)
+# Started and stopped only by labd (operation engine_lease, srrx.engine_leases) through the polkit
+# rule 60-srrx-engine-lease.rules. No [Install]: never enabled and never wanted by another unit.
+# The instance is the udev alias /dev/lab/%i of one receiver (rtla, rtlb or hfplus; deploy.udev_rules).
+AssertPathExists=/dev/lab/%i
+# No lease outlives the labd that granted it: a stop, a crash or a restart of srrx.service stops it.
+BindsTo=srrx.service
+After=srrx.service
+CollectMode=inactive-or-failed
+
+[Service]
+Type=simple
+User=lab
+Group=lab
+WorkingDirectory=/
+# STACK.md C7 lease mode 2: DeviceAllow= stat()s the alias at start; a missing node adds no rule,
+# so DevicePolicy=closed leaves only the pseudo devices (needs CONFIG_CGROUP_BPF=y, RX-12-runtime).
+DevicePolicy=closed
+DeviceAllow=/dev/lab/%i rw
+ProtectSystem=strict
+ProtectHome=yes
+ReadOnlyPaths=/data
+# 2750 lab:labd, created by usr/lib/tmpfiles.d/srrx.conf (deployment/system/system_files.py).
+ReadWritePaths=/data/products/aiscatcher-%i
+# Engine-private state lives only as long as the lease.
+RuntimeDirectory=srrx-lease-aiscatcher-%i
+RuntimeDirectoryMode=0700
+Environment=HOME=%t/srrx-lease-aiscatcher-%i
+UMask=0027
+IPAddressDeny=any
+IPAddressAllow=localhost
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+KeyringMode=private
+SystemCallArchitectures=native
+# build/07 §21 OOM order: an engine lease ranks with OpenWebRX+ (500), before labd and labrx.
+OOMScoreAdjust=500
+# labd stops the lease with the operator lease; these bound a lease labd failed to stop.
+RuntimeMaxSec=12h
+TimeoutStartSec=30s
+TimeoutStopSec=10s
+Restart=no
+# Arguments: the AIS-catcher engine package (SW-AIS), never -X (STACK.md:882). The /usr/bin/env
+# prefix stays: the lab guest verifies every staged unit without the +lab engine packages
+# (guest_smoke.verify_units).
+ExecStart=/usr/bin/env AIS-catcher

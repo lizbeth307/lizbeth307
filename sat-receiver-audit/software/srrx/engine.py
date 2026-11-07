@@ -45,6 +45,14 @@ class Engine:
         self.now_ms = 0
         self.arm_owner = None
         self.sim_overrides = {}
+        # srrx.engine_leases.EngineLeases: the exclusive engine lease units (hardware only; a
+        # simulation has no receivers to lease, so engine_lease is ENGINE_LEASE_DISABLED there).
+        if simulated:
+            self.leases = None
+        else:
+            from .engine_leases import EngineLeases
+            self.leases = EngineLeases()
+        self._leases_armed = False
         self.events = []
         self.uv_since = None
         self.identity_ok = simulated
@@ -80,6 +88,9 @@ class Engine:
             self.events.append({"at_ms": self.now_ms, "reason": str(reason)})
             self.events = self.events[-32:]
         self.policy.trip(str(reason))
+        if self.leases is not None:
+            # DISARM and every other trip: all_off has cut the receivers' VBUS, no engine keeps one.
+            self.leases.stop_all("POLICY_TRIP")
         if notify and self.session is not None:
             self.last_trip_tx_ms = self.now_ms
             try:
@@ -171,6 +182,13 @@ class Engine:
 
     def tick(self, now_ms):
         self.now_ms = int(now_ms)
+        if self.leases is not None:
+            # Before the Pico freshness return below: a lost operator lease, and a policy that left
+            # ARMED by its own trip (lease expiry, a fault, undervoltage), end the engine leases.
+            if self._leases_armed and not self.policy.armed:
+                self.leases.stop_all("POLICY_TRIP")
+            self._leases_armed = self.policy.armed
+            self.leases.tick(self.now_ms, self._own_valid_lease)
         if self.gnss is not None:
             self._gnss_tick()
         try:
@@ -311,6 +329,11 @@ class Engine:
             return None
         return round(float(value), 1) if _number(value) and -40 <= value <= 130 else None
 
+    def _own_valid_lease(self, owner):
+        """True while owner holds the unexpired operator lease (the gnss_config rule)."""
+        return (owner is not None and self.policy.owner == owner and self.policy.lease_deadline_ms is not None
+                and self.now_ms < self.policy.lease_deadline_ms)
+
     def request(self, request, now_ms=None):
         if now_ms is not None:
             # Time each request when it is handled, not at the earlier tick.
@@ -401,6 +424,19 @@ class Engine:
                     or self.now_ms >= self.policy.lease_deadline_ms):
                 return {"ok": False, "error": "gnss_config requires the caller's own valid lease"}
             return self.gnss.request_config(owner, self.now_ms)
+        if op == "engine_lease":
+            # Exclusive engine lease (STACK.md C7 mode 2, srrx.engine_leases): labd starts the
+            # srrx-lease-<engine>@<alias> unit through polkit; the client never starts a unit.
+            if self.leases is None:
+                return {"ok": False, "error": "ENGINE_LEASE_DISABLED"}
+            if not self._own_valid_lease(owner):
+                return {"ok": False, "error": "ENGINE_LEASE_NO_OPERATOR_LEASE"}
+            return self.leases.request(request.get("value"), owner, self.now_ms)
+        if op == "engine_stop":
+            # Operator or scope stop: like DISARM it needs no lease and energizes nothing.
+            if self.leases is None:
+                return {"ok": False, "error": "ENGINE_LEASE_DISABLED"}
+            return self.leases.stop_request(request.get("value"))
         if op == "route":
             receiver = request.get("receiver")
             if type(receiver) is not str or receiver not in {"RTLA", "RTLB", "LIME"}:
@@ -489,6 +525,7 @@ class Engine:
             "pico_age_ms": None if report_age is None else max(0, report_age),
             "policy": self.policy.status(), "events": list(self.events),
             "imu": imu, "hmi": self._hmi_status(),
+            "engine_leases": self.leases.status() if self.leases else {"enabled": False},
             "passes": self.passes.status(self.now_ms) if self.passes else {"enabled": False, "state": "DISABLED"},
             "gnss": None if self.gnss is None else self.gnss.status(),
             "live_identity_verified": self.identity_ok,
@@ -507,7 +544,7 @@ class Engine:
                         self.hardware.close()
                     finally:
                         try:
-                            for reader in (self.soc_temp_reader, self.telemetry_reader, self.passes):
+                            for reader in (self.soc_temp_reader, self.telemetry_reader, self.passes, self.leases):
                                 if reader and hasattr(reader, "close"):
                                     reader.close()
                         finally:

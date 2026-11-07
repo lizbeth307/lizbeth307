@@ -292,7 +292,7 @@ class SelftestTests(unittest.TestCase):
         expect = {"RX-01a": "dpkg_database_missing", "RX-02": "component_not_found", "RX-03": "component_not_found",
                   "RX-04": "component_not_found", "RX-05": "component_not_found", "RX-06": "component_not_found",
                   "RX-09": "librtlsdr_missing", "RX-10": "component_not_found", "RX-11": "unit_interpreter_missing",
-                  "RX-12": "lease_units_not_found", "RX-16": "apt_configuration_missing"}
+                  "RX-16": "apt_configuration_missing"}  # RX-12: the staged lease templates (EngineLeaseRowTests)
         for check_id, rule in expect.items():
             check = self.check(full, check_id)
             self.assertEqual(check["status"], "BLOCKED", check)
@@ -1309,6 +1309,56 @@ class PhysicalDisarmSelftestTests(unittest.TestCase):
         self.assertEqual(result["findings"], [{"path": "software/srrx/menu_model.py", "rule": "critical_leaf_touch_only",
                                                "effect": "BLOCKED", "item": "frame.disarm"}])
         self.assertEqual((report["status"], report["blockers"]), ("BLOCKED", ["RX-11"]))
+
+
+class EngineLeaseRowTests(unittest.TestCase):
+    """RX-12 on a deploy.stage root that carries the three srrx-lease-<engine>@.service templates
+    (software/systemd): offline unit evaluation only; EPERM/EROFS on a Q6A stay RX-12-runtime."""
+
+    TEMPLATES = ("srrx-lease-readsb@.service", "srrx-lease-aiscatcher@.service", "srrx-lease-sdrangelsrv@.service")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="srrx-selftest-lease-")
+        cls.root = Path(cls.temp.name)
+        deploy.stage(cls.root / "stage", devices())
+        cls.clean = cls.root / "stage/rootfs"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp.cleanup()
+
+    def row(self, rootfs, profile):
+        report = selftest.run_offline(rootfs, profile, POLICY)
+        self.assertFalse(report["hardware_ready"])
+        return next(c for c in report["checks"] if c["id"] == "RX-12")
+
+    def test_rx12_evaluates_the_staged_templates_with_no_fail(self):
+        units = self.clean / "etc/systemd/system"
+        self.assertEqual(sorted(p.name for p in units.glob("srrx-lease-*")), sorted(self.TEMPLATES))
+        for profile in ("controller", "full"):
+            row = self.row(self.clean, profile)
+            self.assertEqual(row["status"], "PASS", row)
+            self.assertNotIn("no_lease_units_in_controller_profile", row["notes"])
+            self.assertIn("EPERM_EROFS_behaviour_is_RX-12-runtime", row["notes"])
+        self.assertIn(("RX-12-runtime", "DEVICE"), {(c[0], c[2]) for c in selftest.CATALOGUE})
+        # The row really reads the templates: one weakened setting in an instance drop-in fails it.
+        work = Path(tempfile.mkdtemp(prefix="case-", dir=self.root))
+        self.addCleanup(shutil.rmtree, work, True)
+        for name, text in (("srrx-lease-readsb@rtla.service.d/50-x.conf", "[Service]\nDevicePolicy=auto\n"),
+                           ("srrx-lease-sdrangelsrv@hfplus.service.d/50-x.conf", "[Service]\nReadWritePaths=/data\n"),
+                           ("srrx-lease-aiscatcher@rtlb.service.d/50-x.conf", "[Service]\nIPAddressDeny=\n")):
+            rootfs = work / name.split("/")[0]
+            shutil.copytree(self.clean, rootfs, symlinks=True)
+            dropin = rootfs / "etc/systemd/system" / name
+            dropin.parent.mkdir(parents=True)
+            dropin.write_text(text, encoding="utf-8")
+            row = self.row(rootfs, "controller")
+            self.assertEqual(row["status"], "FAIL", (name, row))
+            self.assertIn("lease_setting", {f["rule"] for f in row["findings"]})
+
+    def test_rx11_finds_the_engine_lease_operations_of_labd(self):
+        self.assertTrue({"engine_lease", "engine_stop"} <= selftest._labd_operations())
 
 
 if __name__ == "__main__":
