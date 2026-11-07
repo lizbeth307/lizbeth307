@@ -322,7 +322,7 @@
     "_note": "boards of pcb/prepare.py that are not mounted on the plate or the front shell: their envelope is a layout item (or the IMU pack) and their layout is wave 2 (W2-05); listed here so the board domains of the partition are all accounted for",
     "HATCH": {"domains": ["HATCH"], "envelope": "layout hatch_parts", "name": "service-hatch board: J502 B3B-PH-K (UART5), J503 43650-0315 (J21), SW501 PV6F240SS through the board"},
     "T7_INSERT": {"domains": ["T7_INSERT"], "envelope": "in the T7 USB3 cable (not modelled)", "name": "VBUS key insert U505 of the T7 cable"},
-    "HDMI_INSERT": {"domains": ["HDMI_INSERT"], "envelope": "in the HDMI cable (not modelled; R-HDMI-ROUTE OPEN)", "name": "pin-18 insert U506 of the HDMI cable"},
+    "HDMI_INSERT": {"domains": ["HDMI_INSERT"], "envelope": "layout hdmi_insert (reserve 16 x 18 x 5 on the plate front face right of the BMS, between the two HDMI flexes, W2 MECH-4; refined by MECH-5)", "name": "pin-18 pass-through U506 between the two HDMI FPC segments"},
     "IMU_CARRIER": {"domains": ["IMU_CARRIER"], "envelope": "imu_pack.json carrier_pcb", "name": "carrier board in the Hammond 1550Z101 IMU pack"},
     "PACK_FUSE": {"domains": ["PACK_FUSE"], "envelope": "not modelled yet (OPEN, mechanical/README)", "name": "F101 carrier with the Keystone 3568 holder at the pack positive"}
   }
