@@ -1,0 +1,2804 @@
+{
+  "schema": "srrx-board-spec-v1",
+  "board_id": "CTRL",
+  "status": "DESIGN_NOT_FOR_FABRICATION",
+  "title": "CTRL control / HMI board (two-sided, 4 layers)",
+  "note": "W2 PCB-CTRL: control / HMI board, two-sided, 4 layers (A-PCB-07). Top: the six TL3145 at the contract switch points, MCP23017 U301-U303, PI4IOE5V9555 U306, the HMI resistors and TVS and the two ENC headers at the cut-outs. Bottom: the THT harness headers (hand-soldered from the top; pin field + 1.0 mm kept free on the top), the Raspberry Pi Pico U305 (its 23.1 x 53.9 mm courtyard does not fit the top between the switch columns and the cut-outs), the buzzer, the LED and the small SMD parts. CI/model output of pcb/board_gen.py; not a fabrication release; bench gates OPEN.",
+  "contract": {
+    "file": "mechanical/generated/contract/boards.json",
+    "board": "CTRL"
+  },
+  "domains": [
+    "CTRL_HMI"
+  ],
+  "partition": "pcb/generated/partition.json",
+  "layers": {
+    "copper": 4,
+    "thickness_mm": 1.6,
+    "source": "mechanical/generated/contract/boards.json stackup (4 layers, JLC04161H-7628, build/15 \"Шари\") and pcb/generated/netclasses.json stackup",
+    "types": {
+      "In1.Cu": "power",
+      "In2.Cu": "power"
+    },
+    "types_why": "In1.Cu (L2) carries a solid GND plane and In2.Cu (L3) a 3V3_Q6A plane, both laid before routing and typed power, so the Specctra export marks them (type power) and Freerouting routes on F.Cu/B.Cu only. KiCad 10.0.7 exports no per-class layer list, so this keeps the power-class nets (LAB5, E3_BLOWER_GND, E3_FAN5: PWR3A, outer layers only; E3_FAN5_P, E3_GNSS5V: PWR1A) off the inner layers, as pcb/check_boards.py requires (netclasses.json inner_min_width_mm).",
+    "plan": {
+      "F.Cu": "L1: top parts, signals, GND pour after routing",
+      "In1.Cu": "L2: GND plane (pre-route zone, DSN plane), no signals",
+      "In2.Cu": "L3: 3V3_Q6A plane (pre-route zone, DSN plane), no signals",
+      "B.Cu": "L4: bottom parts, signals, GND pour after routing"
+    }
+  },
+  "project": "build/kicad/boards/CTRL/CTRL.kicad_pro",
+  "rules_file": null,
+  "rules_note": "Rules live in the committed CTRL.kicad_pro: the project defaults of pcb/generated/netclasses.json project_defaults (track 0.15 / clearance 0.15, via 0.6 / 0.3, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) and the classes PWR3A (1.85 mm outer) and PWR1A (0.35 mm) with the netclass patterns of the CTRL power nets (netclasses.json kicad.netclass_patterns). rules_file stays null (board_gen does not copy .kicad_dru files yet).",
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 4-layer values (pcb/generated/netclasses.json fab_floor.jlc_4l_1oz)",
+    "min_track_width": 0.09,
+    "min_clearance": 0.09,
+    "min_drill": 0.15,
+    "min_via_diameter": 0.25,
+    "min_hole_to_hole": 0.45,
+    "min_hole_to_hole_note": "0.45 = pad hole-to-hole of different nets; via hole-to-hole is 0.2",
+    "min_copper_edge_clearance": 0.2,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "npth_min_diameter": 0.5,
+    "pth_annular_min": 0.15,
+    "pth_annular_recommended": 0.2
+  },
+  "instances": {
+    "template_nets": [
+      "3V3_Q6A",
+      "CHG_INHIBIT",
+      "DCS_HF",
+      "DCS_LBAND",
+      "DCS_UHF",
+      "E1_BAT_ADC",
+      "E3_ADC3V0",
+      "E3_BACK",
+      "E3_BACK_EXT",
+      "E3_BEZEL_SCL",
+      "E3_BEZEL_SDA",
+      "E3_BLOWER_EN",
+      "E3_BLOWER_GATE",
+      "E3_BLOWER_GND",
+      "E3_BUTTON_SENSE",
+      "E3_CASE_TEMP",
+      "E3_ENC1_A",
+      "E3_ENC1_A_RAW",
+      "E3_ENC1_B",
+      "E3_ENC1_B_RAW",
+      "E3_ENC1_PRESS",
+      "E3_ENC1_PRESS_EXT",
+      "E3_ENC2_A",
+      "E3_ENC2_A_RAW",
+      "E3_ENC2_B",
+      "E3_ENC2_B_RAW",
+      "E3_ENC2_PRESS",
+      "E3_ENC2_PRESS_EXT",
+      "E3_FAN5",
+      "E3_FAN5_P",
+      "E3_FAN_EN",
+      "E3_FAN_NG",
+      "E3_FAN_PG",
+      "E3_FAN_TACH",
+      "E3_FAN_TACH_RAW",
+      "E3_FN",
+      "E3_FN_EXT",
+      "E3_GNSS5V",
+      "E3_GNSS_FAULT",
+      "E3_GNSS_RESET_GATE",
+      "E3_GNSS_RESET_N",
+      "E3_HMI_INT",
+      "E3_HMI_SCL",
+      "E3_HMI_SDA",
+      "E3_HOME",
+      "E3_HOME_EXT",
+      "E3_LED_A",
+      "E3_LED_DRIVE",
+      "E3_LOCK",
+      "E3_LOCK_EXT",
+      "E3_MARK",
+      "E3_MARK_EXT",
+      "E3_MCP_RESET_ASSERT",
+      "E3_MCP_RESET_GATE",
+      "E3_MCP_RESET_N",
+      "E3_PANEL_TEMP",
+      "E3_PICO3V3",
+      "E3_PICO_RUN",
+      "E3_PICO_SWCLK",
+      "E3_PICO_SWDIO",
+      "E3_PICO_VSYS",
+      "E3_PIEZO_DRIVE",
+      "E3_PIEZO_OUT",
+      "E3_Q6A_KEY_GATE",
+      "E3_Q6A_ON_SENSE",
+      "E3_REC",
+      "E3_REC_EXT",
+      "E3_U315_ILIM",
+      "EN_AUX12",
+      "EN_BONI",
+      "EN_HFP",
+      "EN_LABPORT",
+      "EN_LIME3V3",
+      "EN_LNA1",
+      "EN_LNA2",
+      "EN_LNA3",
+      "EN_LNA4",
+      "EN_LNB",
+      "EN_RTLA",
+      "EN_RTLB",
+      "EN_SB_LNA",
+      "EN_T7",
+      "FAULT_HFP",
+      "FAULT_LABPORT",
+      "FAULT_LNA1",
+      "FAULT_LNA2",
+      "FAULT_LNA3",
+      "FAULT_LNA4",
+      "FAULT_RTLA",
+      "FAULT_RTLB",
+      "FLT_BONI",
+      "FLT_LIME3V3",
+      "FLT_LNB",
+      "FLT_SB_LNA",
+      "GND",
+      "I2C0_SCL",
+      "I2C0_SDA",
+      "I2C2_SCL",
+      "I2C2_SDA",
+      "IMU_RX",
+      "IMU_TX",
+      "INA228_ALERT",
+      "K1_ON",
+      "K2_ON",
+      "LAB5",
+      "MCP_INT",
+      "OVP_LNB_N",
+      "PG_BONI",
+      "PG_LNB",
+      "PICO_DISP_EN",
+      "PICO_OFF",
+      "PTC_AUX",
+      "PWR_BUTTON",
+      "PWR_ON_KEY",
+      "SAFE_BOOT",
+      "SLED_DET",
+      "SW_LIME_A",
+      "SW_LIME_B",
+      "SW_RTLA_A",
+      "SW_RTLA_B",
+      "SW_RTLB_A",
+      "SW_RTLB_B",
+      "UART5_RX",
+      "UART5_TX",
+      "UART7_RX",
+      "UART7_TX"
+    ],
+    "list": [
+      {
+        "id": "CTRL",
+        "placement": "default",
+        "qty": 1,
+        "refs": {
+          "BZ301": "BZ301",
+          "C301": "C301",
+          "C302": "C302",
+          "C303": "C303",
+          "C304": "C304",
+          "C305": "C305",
+          "C306": "C306",
+          "C307": "C307",
+          "C308": "C308",
+          "C309": "C309",
+          "C310": "C310",
+          "C311": "C311",
+          "C312": "C312",
+          "C313": "C313",
+          "C314": "C314",
+          "C315": "C315",
+          "C316": "C316",
+          "C317": "C317",
+          "C318": "C318",
+          "C319": "C319",
+          "C320": "C320",
+          "C321": "C321",
+          "C322": "C322",
+          "C342": "C342",
+          "C343": "C343",
+          "D301": "D301",
+          "D302": "D302",
+          "D303": "D303",
+          "D304": "D304",
+          "D305": "D305",
+          "D306": "D306",
+          "F301": "F301",
+          "J302": "J302",
+          "J304": "J304",
+          "J305": "J305",
+          "J306": "J306",
+          "J307": "J307",
+          "J308": "J308",
+          "J309": "J309",
+          "J310": "J310",
+          "J311": "J311",
+          "J312": "J312",
+          "J313": "J313",
+          "J314": "J314",
+          "J315": "J315",
+          "J316": "J316",
+          "J317": "J317",
+          "J318": "J318",
+          "J319": "J319",
+          "Q301": "Q301",
+          "Q302": "Q302",
+          "Q303": "Q303",
+          "Q304": "Q304",
+          "Q305": "Q305",
+          "Q306": "Q306",
+          "R301": "R301",
+          "R302": "R302",
+          "R305": "R305",
+          "R306": "R306",
+          "R307": "R307",
+          "R308": "R308",
+          "R309": "R309",
+          "R310": "R310",
+          "R311": "R311",
+          "R312": "R312",
+          "R313": "R313",
+          "R314": "R314",
+          "R315": "R315",
+          "R316": "R316",
+          "R317": "R317",
+          "R318": "R318",
+          "R319": "R319",
+          "R320": "R320",
+          "R321": "R321",
+          "R322": "R322",
+          "R323": "R323",
+          "R324": "R324",
+          "R325": "R325",
+          "R326": "R326",
+          "R327": "R327",
+          "R328": "R328",
+          "R329": "R329",
+          "R330": "R330",
+          "R331": "R331",
+          "R332": "R332",
+          "R333": "R333",
+          "R334": "R334",
+          "R335": "R335",
+          "R336": "R336",
+          "R337": "R337",
+          "R338": "R338",
+          "R339": "R339",
+          "R340": "R340",
+          "R341": "R341",
+          "R342": "R342",
+          "R343": "R343",
+          "R344": "R344",
+          "R345": "R345",
+          "R346": "R346",
+          "R347": "R347",
+          "R348": "R348",
+          "R349": "R349",
+          "R350": "R350",
+          "R351": "R351",
+          "R352": "R352",
+          "R353": "R353",
+          "R354": "R354",
+          "R355": "R355",
+          "R356": "R356",
+          "R357": "R357",
+          "R358": "R358",
+          "R359": "R359",
+          "R360": "R360",
+          "R361": "R361",
+          "R362": "R362",
+          "R363": "R363",
+          "R364": "R364",
+          "R365": "R365",
+          "R366": "R366",
+          "R367": "R367",
+          "R368": "R368",
+          "R369": "R369",
+          "R370": "R370",
+          "R371": "R371",
+          "R392": "R392",
+          "R393": "R393",
+          "R394": "R394",
+          "R395": "R395",
+          "R396": "R396",
+          "SW302": "SW302",
+          "SW303": "SW303",
+          "SW304": "SW304",
+          "SW305": "SW305",
+          "SW306": "SW306",
+          "SW307": "SW307",
+          "TP301": "TP301",
+          "U301": "U301",
+          "U302": "U302",
+          "U303": "U303",
+          "U305": "U305",
+          "U306": "U306",
+          "U307": "U307",
+          "U310": "U310",
+          "U311": "U311",
+          "U312": "U312",
+          "U313": "U313",
+          "U315": "U315"
+        },
+        "nets": {
+          "3V3_Q6A": "3V3_Q6A",
+          "CHG_INHIBIT": "CHG_INHIBIT",
+          "DCS_HF": "DCS_HF",
+          "DCS_LBAND": "DCS_LBAND",
+          "DCS_UHF": "DCS_UHF",
+          "E1_BAT_ADC": "E1_BAT_ADC",
+          "E3_ADC3V0": "E3_ADC3V0",
+          "E3_BACK": "E3_BACK",
+          "E3_BACK_EXT": "E3_BACK_EXT",
+          "E3_BEZEL_SCL": "E3_BEZEL_SCL",
+          "E3_BEZEL_SDA": "E3_BEZEL_SDA",
+          "E3_BLOWER_EN": "E3_BLOWER_EN",
+          "E3_BLOWER_GATE": "E3_BLOWER_GATE",
+          "E3_BLOWER_GND": "E3_BLOWER_GND",
+          "E3_BUTTON_SENSE": "E3_BUTTON_SENSE",
+          "E3_CASE_TEMP": "E3_CASE_TEMP",
+          "E3_ENC1_A": "E3_ENC1_A",
+          "E3_ENC1_A_RAW": "E3_ENC1_A_RAW",
+          "E3_ENC1_B": "E3_ENC1_B",
+          "E3_ENC1_B_RAW": "E3_ENC1_B_RAW",
+          "E3_ENC1_PRESS": "E3_ENC1_PRESS",
+          "E3_ENC1_PRESS_EXT": "E3_ENC1_PRESS_EXT",
+          "E3_ENC2_A": "E3_ENC2_A",
+          "E3_ENC2_A_RAW": "E3_ENC2_A_RAW",
+          "E3_ENC2_B": "E3_ENC2_B",
+          "E3_ENC2_B_RAW": "E3_ENC2_B_RAW",
+          "E3_ENC2_PRESS": "E3_ENC2_PRESS",
+          "E3_ENC2_PRESS_EXT": "E3_ENC2_PRESS_EXT",
+          "E3_FAN5": "E3_FAN5",
+          "E3_FAN5_P": "E3_FAN5_P",
+          "E3_FAN_EN": "E3_FAN_EN",
+          "E3_FAN_NG": "E3_FAN_NG",
+          "E3_FAN_PG": "E3_FAN_PG",
+          "E3_FAN_TACH": "E3_FAN_TACH",
+          "E3_FAN_TACH_RAW": "E3_FAN_TACH_RAW",
+          "E3_FN": "E3_FN",
+          "E3_FN_EXT": "E3_FN_EXT",
+          "E3_GNSS5V": "E3_GNSS5V",
+          "E3_GNSS_FAULT": "E3_GNSS_FAULT",
+          "E3_GNSS_RESET_GATE": "E3_GNSS_RESET_GATE",
+          "E3_GNSS_RESET_N": "E3_GNSS_RESET_N",
+          "E3_HMI_INT": "E3_HMI_INT",
+          "E3_HMI_SCL": "E3_HMI_SCL",
+          "E3_HMI_SDA": "E3_HMI_SDA",
+          "E3_HOME": "E3_HOME",
+          "E3_HOME_EXT": "E3_HOME_EXT",
+          "E3_LED_A": "E3_LED_A",
+          "E3_LED_DRIVE": "E3_LED_DRIVE",
+          "E3_LOCK": "E3_LOCK",
+          "E3_LOCK_EXT": "E3_LOCK_EXT",
+          "E3_MARK": "E3_MARK",
+          "E3_MARK_EXT": "E3_MARK_EXT",
+          "E3_MCP_RESET_ASSERT": "E3_MCP_RESET_ASSERT",
+          "E3_MCP_RESET_GATE": "E3_MCP_RESET_GATE",
+          "E3_MCP_RESET_N": "E3_MCP_RESET_N",
+          "E3_PANEL_TEMP": "E3_PANEL_TEMP",
+          "E3_PICO3V3": "E3_PICO3V3",
+          "E3_PICO_RUN": "E3_PICO_RUN",
+          "E3_PICO_SWCLK": "E3_PICO_SWCLK",
+          "E3_PICO_SWDIO": "E3_PICO_SWDIO",
+          "E3_PICO_VSYS": "E3_PICO_VSYS",
+          "E3_PIEZO_DRIVE": "E3_PIEZO_DRIVE",
+          "E3_PIEZO_OUT": "E3_PIEZO_OUT",
+          "E3_Q6A_KEY_GATE": "E3_Q6A_KEY_GATE",
+          "E3_Q6A_ON_SENSE": "E3_Q6A_ON_SENSE",
+          "E3_REC": "E3_REC",
+          "E3_REC_EXT": "E3_REC_EXT",
+          "E3_U315_ILIM": "E3_U315_ILIM",
+          "EN_AUX12": "EN_AUX12",
+          "EN_BONI": "EN_BONI",
+          "EN_HFP": "EN_HFP",
+          "EN_LABPORT": "EN_LABPORT",
+          "EN_LIME3V3": "EN_LIME3V3",
+          "EN_LNA1": "EN_LNA1",
+          "EN_LNA2": "EN_LNA2",
+          "EN_LNA3": "EN_LNA3",
+          "EN_LNA4": "EN_LNA4",
+          "EN_LNB": "EN_LNB",
+          "EN_RTLA": "EN_RTLA",
+          "EN_RTLB": "EN_RTLB",
+          "EN_SB_LNA": "EN_SB_LNA",
+          "EN_T7": "EN_T7",
+          "FAULT_HFP": "FAULT_HFP",
+          "FAULT_LABPORT": "FAULT_LABPORT",
+          "FAULT_LNA1": "FAULT_LNA1",
+          "FAULT_LNA2": "FAULT_LNA2",
+          "FAULT_LNA3": "FAULT_LNA3",
+          "FAULT_LNA4": "FAULT_LNA4",
+          "FAULT_RTLA": "FAULT_RTLA",
+          "FAULT_RTLB": "FAULT_RTLB",
+          "FLT_BONI": "FLT_BONI",
+          "FLT_LIME3V3": "FLT_LIME3V3",
+          "FLT_LNB": "FLT_LNB",
+          "FLT_SB_LNA": "FLT_SB_LNA",
+          "GND": "GND",
+          "I2C0_SCL": "I2C0_SCL",
+          "I2C0_SDA": "I2C0_SDA",
+          "I2C2_SCL": "I2C2_SCL",
+          "I2C2_SDA": "I2C2_SDA",
+          "IMU_RX": "IMU_RX",
+          "IMU_TX": "IMU_TX",
+          "INA228_ALERT": "INA228_ALERT",
+          "K1_ON": "K1_ON",
+          "K2_ON": "K2_ON",
+          "LAB5": "LAB5",
+          "MCP_INT": "MCP_INT",
+          "OVP_LNB_N": "OVP_LNB_N",
+          "PG_BONI": "PG_BONI",
+          "PG_LNB": "PG_LNB",
+          "PICO_DISP_EN": "PICO_DISP_EN",
+          "PICO_OFF": "PICO_OFF",
+          "PTC_AUX": "PTC_AUX",
+          "PWR_BUTTON": "PWR_BUTTON",
+          "PWR_ON_KEY": "PWR_ON_KEY",
+          "SAFE_BOOT": "SAFE_BOOT",
+          "SLED_DET": "SLED_DET",
+          "SW_LIME_A": "SW_LIME_A",
+          "SW_LIME_B": "SW_LIME_B",
+          "SW_RTLA_A": "SW_RTLA_A",
+          "SW_RTLA_B": "SW_RTLA_B",
+          "SW_RTLB_A": "SW_RTLB_A",
+          "SW_RTLB_B": "SW_RTLB_B",
+          "UART5_RX": "UART5_RX",
+          "UART5_TX": "UART5_TX",
+          "UART7_RX": "UART7_RX",
+          "UART7_TX": "UART7_TX"
+        },
+        "source": "pcb/generated/partition.json board_candidate CTRL_HMI (149 refs, R303/R304 DNP); one board, template refs and nets are the graph refs and nets"
+      }
+    ],
+    "spares": 0,
+    "spares_source": "no spare CTRL board is planned (mechanical/params/boards.json CTRL: one board); ENC carries the spare encoder boards"
+  },
+  "parts": [
+    {
+      "ref": "BZ301",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          29.25,
+          64.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "bottom over the hdmi_route_front_run / plate zones (min 7.18 mm >= 7.0 mm body), y 55-68 below cut-out 1"
+    },
+    {
+      "ref": "C301",
+      "source": "graph"
+    },
+    {
+      "ref": "C302",
+      "source": "graph"
+    },
+    {
+      "ref": "C303",
+      "source": "graph"
+    },
+    {
+      "ref": "C304",
+      "source": "graph"
+    },
+    {
+      "ref": "C305",
+      "source": "graph"
+    },
+    {
+      "ref": "C306",
+      "source": "graph"
+    },
+    {
+      "ref": "C307",
+      "source": "graph"
+    },
+    {
+      "ref": "C308",
+      "source": "graph"
+    },
+    {
+      "ref": "C309",
+      "source": "graph"
+    },
+    {
+      "ref": "C310",
+      "source": "graph"
+    },
+    {
+      "ref": "C311",
+      "source": "graph"
+    },
+    {
+      "ref": "C312",
+      "source": "graph"
+    },
+    {
+      "ref": "C313",
+      "source": "graph"
+    },
+    {
+      "ref": "C314",
+      "source": "graph"
+    },
+    {
+      "ref": "C315",
+      "source": "graph"
+    },
+    {
+      "ref": "C316",
+      "source": "graph"
+    },
+    {
+      "ref": "C317",
+      "source": "graph"
+    },
+    {
+      "ref": "C318",
+      "source": "graph"
+    },
+    {
+      "ref": "C319",
+      "source": "graph"
+    },
+    {
+      "ref": "C320",
+      "source": "graph"
+    },
+    {
+      "ref": "C321",
+      "source": "graph"
+    },
+    {
+      "ref": "C322",
+      "source": "graph"
+    },
+    {
+      "ref": "C342",
+      "source": "graph"
+    },
+    {
+      "ref": "C343",
+      "source": "graph"
+    },
+    {
+      "ref": "D301",
+      "source": "graph"
+    },
+    {
+      "ref": "D302",
+      "source": "graph"
+    },
+    {
+      "ref": "D303",
+      "source": "graph"
+    },
+    {
+      "ref": "D304",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          48.04,
+          71.81
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "bottom over the plate zone x 37-50 y 68.5-83 (8.6 mm LED; outside the plate zones no zone is that high)"
+    },
+    {
+      "ref": "D305",
+      "source": "graph"
+    },
+    {
+      "ref": "D306",
+      "source": "graph"
+    },
+    {
+      "ref": "F301",
+      "source": "graph"
+    },
+    {
+      "ref": "J302",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          6.8,
+          82.39
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "B"
+      },
+      "anchor_source": "left edge, bottom, plug -x (S02 control harness to PWR-B J201)"
+    },
+    {
+      "ref": "J304",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          46.27,
+          59.91
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "bottom along the right edge x 40-50, y 6-65.5 (59.5 mm box); its pin field keeps the top right column x 42-48 free"
+    },
+    {
+      "ref": "J305",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          9.47,
+          76.01
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "B"
+      },
+      "anchor_source": "left edge, bottom, plug -x; the Micro-Fit right angle stays below y 83 (the Lime band, 4.98 mm, is lower than 6.98 mm)"
+    },
+    {
+      "ref": "J306",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          8.0,
+          8.5
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "B"
+      },
+      "anchor_source": "left edge, bottom, plug -x, 1.5 mm overhang (cable_exits)"
+    },
+    {
+      "ref": "J307",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          8.0,
+          31.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "B"
+      },
+      "anchor_source": "left edge, bottom, plug -x, 1.5 mm overhang (cable_exits)"
+    },
+    {
+      "ref": "J308",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          6.8,
+          105.5
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "B"
+      },
+      "anchor_source": "left edge, bottom, plug -x (S03)"
+    },
+    {
+      "ref": "J309",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          6.8,
+          124.5
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "B"
+      },
+      "anchor_source": "left edge, bottom, plug -x (S03)"
+    },
+    {
+      "ref": "J310",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          41.5,
+          127.2
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "B"
+      },
+      "anchor_source": "rear drop above J311, bottom, plug +y into the plate.main zone (S15/S30 go to the hatch board in the rear layer)"
+    },
+    {
+      "ref": "J311",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          38.9,
+          122.05
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "B"
+      },
+      "anchor_source": "rear drop beside cut-out 2, bottom, plug +x into the plate.main zone x 44-50 (S24/S25 run in the rear layer)"
+    },
+    {
+      "ref": "J312",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          8.5,
+          137.2
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "B"
+      },
+      "anchor_source": "top edge, bottom, plug +y (S26 VEML)"
+    },
+    {
+      "ref": "J313",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.43,
+          76.87
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "B"
+      },
+      "anchor_source": "bottom, vertical KK over the plate zone x 37-50 y 68.5-83, next to the fan switch"
+    },
+    {
+      "ref": "J314",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          9.47,
+          59.25
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "B"
+      },
+      "anchor_source": "left edge, bottom, plug -x; first pin row above SW302 + 1.0 mm (Micro-Fit pins 9.47 mm from the edge)"
+    },
+    {
+      "ref": "J315",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          19.6,
+          137.2
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "B"
+      },
+      "anchor_source": "top edge, bottom, plug +y (S29 power key)"
+    },
+    {
+      "ref": "J316",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          41.55,
+          102.7
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "top at the bottom edge of cut-out 2, plug +y into the cut-out towards the ENCM J1 header (S37)"
+    },
+    {
+      "ref": "J317",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          21.05,
+          61.7
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "top at the bottom edge of cut-out 1, plug +y into the cut-out towards the ENCV J1 header (S38)"
+    },
+    {
+      "ref": "J318",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          26.7,
+          137.2
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "B"
+      },
+      "anchor_source": "top edge, bottom, plug +y (S39 NTC; sensor place TBD in MECH-6)"
+    },
+    {
+      "ref": "J319",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          33.8,
+          137.2
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "B"
+      },
+      "anchor_source": "top edge, bottom, plug +y (S40 NTC; sensor place TBD in MECH-6)"
+    },
+    {
+      "ref": "Q301",
+      "source": "graph"
+    },
+    {
+      "ref": "Q302",
+      "source": "graph"
+    },
+    {
+      "ref": "Q303",
+      "source": "graph"
+    },
+    {
+      "ref": "Q304",
+      "source": "graph"
+    },
+    {
+      "ref": "Q305",
+      "source": "graph"
+    },
+    {
+      "ref": "Q306",
+      "source": "graph"
+    },
+    {
+      "ref": "R301",
+      "source": "graph"
+    },
+    {
+      "ref": "R302",
+      "source": "graph"
+    },
+    {
+      "ref": "R305",
+      "source": "graph"
+    },
+    {
+      "ref": "R306",
+      "source": "graph"
+    },
+    {
+      "ref": "R307",
+      "source": "graph"
+    },
+    {
+      "ref": "R308",
+      "source": "graph"
+    },
+    {
+      "ref": "R309",
+      "source": "graph"
+    },
+    {
+      "ref": "R310",
+      "source": "graph"
+    },
+    {
+      "ref": "R311",
+      "source": "graph"
+    },
+    {
+      "ref": "R312",
+      "source": "graph"
+    },
+    {
+      "ref": "R313",
+      "source": "graph"
+    },
+    {
+      "ref": "R314",
+      "source": "graph"
+    },
+    {
+      "ref": "R315",
+      "source": "graph"
+    },
+    {
+      "ref": "R316",
+      "source": "graph"
+    },
+    {
+      "ref": "R317",
+      "source": "graph"
+    },
+    {
+      "ref": "R318",
+      "source": "graph"
+    },
+    {
+      "ref": "R319",
+      "source": "graph"
+    },
+    {
+      "ref": "R320",
+      "source": "graph"
+    },
+    {
+      "ref": "R321",
+      "source": "graph"
+    },
+    {
+      "ref": "R322",
+      "source": "graph"
+    },
+    {
+      "ref": "R323",
+      "source": "graph"
+    },
+    {
+      "ref": "R324",
+      "source": "graph"
+    },
+    {
+      "ref": "R325",
+      "source": "graph"
+    },
+    {
+      "ref": "R326",
+      "source": "graph"
+    },
+    {
+      "ref": "R327",
+      "source": "graph"
+    },
+    {
+      "ref": "R328",
+      "source": "graph"
+    },
+    {
+      "ref": "R329",
+      "source": "graph"
+    },
+    {
+      "ref": "R330",
+      "source": "graph"
+    },
+    {
+      "ref": "R331",
+      "source": "graph"
+    },
+    {
+      "ref": "R332",
+      "source": "graph"
+    },
+    {
+      "ref": "R333",
+      "source": "graph"
+    },
+    {
+      "ref": "R334",
+      "source": "graph"
+    },
+    {
+      "ref": "R335",
+      "source": "graph"
+    },
+    {
+      "ref": "R336",
+      "source": "graph"
+    },
+    {
+      "ref": "R337",
+      "source": "graph"
+    },
+    {
+      "ref": "R338",
+      "source": "graph"
+    },
+    {
+      "ref": "R339",
+      "source": "graph"
+    },
+    {
+      "ref": "R340",
+      "source": "graph"
+    },
+    {
+      "ref": "R341",
+      "source": "graph"
+    },
+    {
+      "ref": "R342",
+      "source": "graph"
+    },
+    {
+      "ref": "R343",
+      "source": "graph"
+    },
+    {
+      "ref": "R344",
+      "source": "graph"
+    },
+    {
+      "ref": "R345",
+      "source": "graph"
+    },
+    {
+      "ref": "R346",
+      "source": "graph"
+    },
+    {
+      "ref": "R347",
+      "source": "graph"
+    },
+    {
+      "ref": "R348",
+      "source": "graph"
+    },
+    {
+      "ref": "R349",
+      "source": "graph"
+    },
+    {
+      "ref": "R350",
+      "source": "graph"
+    },
+    {
+      "ref": "R351",
+      "source": "graph"
+    },
+    {
+      "ref": "R352",
+      "source": "graph"
+    },
+    {
+      "ref": "R353",
+      "source": "graph"
+    },
+    {
+      "ref": "R354",
+      "source": "graph"
+    },
+    {
+      "ref": "R355",
+      "source": "graph"
+    },
+    {
+      "ref": "R356",
+      "source": "graph"
+    },
+    {
+      "ref": "R357",
+      "source": "graph"
+    },
+    {
+      "ref": "R358",
+      "source": "graph"
+    },
+    {
+      "ref": "R359",
+      "source": "graph"
+    },
+    {
+      "ref": "R360",
+      "source": "graph"
+    },
+    {
+      "ref": "R361",
+      "source": "graph"
+    },
+    {
+      "ref": "R362",
+      "source": "graph"
+    },
+    {
+      "ref": "R363",
+      "source": "graph"
+    },
+    {
+      "ref": "R364",
+      "source": "graph"
+    },
+    {
+      "ref": "R365",
+      "source": "graph"
+    },
+    {
+      "ref": "R366",
+      "source": "graph"
+    },
+    {
+      "ref": "R367",
+      "source": "graph"
+    },
+    {
+      "ref": "R368",
+      "source": "graph"
+    },
+    {
+      "ref": "R369",
+      "source": "graph"
+    },
+    {
+      "ref": "R370",
+      "source": "graph"
+    },
+    {
+      "ref": "R371",
+      "source": "graph"
+    },
+    {
+      "ref": "R392",
+      "source": "graph"
+    },
+    {
+      "ref": "R393",
+      "source": "graph"
+    },
+    {
+      "ref": "R394",
+      "source": "graph"
+    },
+    {
+      "ref": "R395",
+      "source": "graph"
+    },
+    {
+      "ref": "R396",
+      "source": "graph"
+    },
+    {
+      "ref": "SW302",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          13.5,
+          51.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "mechanical/params/boards.json CTRL switches (13.5, 51), (35.5, 51), (13.5, 29), (35.5, 29), (13.5, 7), (35.5, 7) = mechanical.json hmi.buttons cols_x/rows_y minus the CTRL origin (176, 13); labels rows HOME/BACK, REC/MARK, FN/LOCK; footprint origin = switch centre (symmetric pads and courtyard)"
+    },
+    {
+      "ref": "SW303",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          35.5,
+          51.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "mechanical/params/boards.json CTRL switches (13.5, 51), (35.5, 51), (13.5, 29), (35.5, 29), (13.5, 7), (35.5, 7) = mechanical.json hmi.buttons cols_x/rows_y minus the CTRL origin (176, 13); labels rows HOME/BACK, REC/MARK, FN/LOCK; footprint origin = switch centre (symmetric pads and courtyard)"
+    },
+    {
+      "ref": "SW304",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          13.5,
+          29.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "mechanical/params/boards.json CTRL switches (13.5, 51), (35.5, 51), (13.5, 29), (35.5, 29), (13.5, 7), (35.5, 7) = mechanical.json hmi.buttons cols_x/rows_y minus the CTRL origin (176, 13); labels rows HOME/BACK, REC/MARK, FN/LOCK; footprint origin = switch centre (symmetric pads and courtyard)"
+    },
+    {
+      "ref": "SW305",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          35.5,
+          29.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "mechanical/params/boards.json CTRL switches (13.5, 51), (35.5, 51), (13.5, 29), (35.5, 29), (13.5, 7), (35.5, 7) = mechanical.json hmi.buttons cols_x/rows_y minus the CTRL origin (176, 13); labels rows HOME/BACK, REC/MARK, FN/LOCK; footprint origin = switch centre (symmetric pads and courtyard)"
+    },
+    {
+      "ref": "SW306",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          13.5,
+          7.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "mechanical/params/boards.json CTRL switches (13.5, 51), (35.5, 51), (13.5, 29), (35.5, 29), (13.5, 7), (35.5, 7) = mechanical.json hmi.buttons cols_x/rows_y minus the CTRL origin (176, 13); labels rows HOME/BACK, REC/MARK, FN/LOCK; footprint origin = switch centre (symmetric pads and courtyard)"
+    },
+    {
+      "ref": "SW307",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          35.5,
+          7.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "mechanical/params/boards.json CTRL switches (13.5, 51), (35.5, 51), (13.5, 29), (35.5, 29), (13.5, 7), (35.5, 7) = mechanical.json hmi.buttons cols_x/rows_y minus the CTRL origin (176, 13); labels rows HOME/BACK, REC/MARK, FN/LOCK; footprint origin = switch centre (symmetric pads and courtyard)"
+    },
+    {
+      "ref": "TP301",
+      "source": "graph"
+    },
+    {
+      "ref": "U301",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.2,
+          99.93
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      },
+      "anchor_source": "top strip y 94-106 between the cut-outs, rotated 270 so that VDD pin 9 faces the free strip edge"
+    },
+    {
+      "ref": "U302",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          25.68,
+          10.2
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "top middle column between the switch columns (x 17.25-31.75), decoupling C303 on the left"
+    },
+    {
+      "ref": "U303",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          25.68,
+          28.85
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "top middle column, decoupling C305 on the left"
+    },
+    {
+      "ref": "U305",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          22.54,
+          27.85
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "B"
+      },
+      "anchor_source": "bottom, x 11-34 y 0.5-54.4; its pins face the left headers and the support strip x 34-40"
+    },
+    {
+      "ref": "U306",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          24.5,
+          42.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "top middle column above U303, next to the HMI resistors"
+    },
+    {
+      "ref": "U307",
+      "source": "graph"
+    },
+    {
+      "ref": "U310",
+      "source": "graph"
+    },
+    {
+      "ref": "U311",
+      "source": "graph"
+    },
+    {
+      "ref": "U312",
+      "source": "graph"
+    },
+    {
+      "ref": "U313",
+      "source": "graph"
+    },
+    {
+      "ref": "U315",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          23.05,
+          95.7
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "bottom strip between the cut-outs; anchored for the LAB5-U315-IN stub"
+    }
+  ],
+  "holes": {
+    "from_contract": true,
+    "ref_prefix": "H",
+    "keepout_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ],
+    "keepout_blocks": [
+      "tracks",
+      "vias",
+      "zone_fills"
+    ]
+  },
+  "groups": [
+    {
+      "id": "MCP_DEC",
+      "side": "F",
+      "region": [
+        17.3,
+        0.3,
+        31.7,
+        46.5
+      ],
+      "gap_mm": 0.4,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "C303",
+          "rotation": 90,
+          "decouple": {
+            "ref": "U302",
+            "pad": "9",
+            "max_mm": 2.0
+          }
+        },
+        {
+          "ref": "C305",
+          "rotation": 90,
+          "decouple": {
+            "ref": "U303",
+            "pad": "9",
+            "max_mm": 2.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "MCP1_DEC",
+      "side": "F",
+      "region": [
+        8.8,
+        93.6,
+        32.9,
+        109.4
+      ],
+      "gap_mm": 0.4,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "C301",
+          "rotation": 0,
+          "decouple": {
+            "ref": "U301",
+            "pad": "9",
+            "max_mm": 2.0
+          }
+        }
+      ]
+    },
+    {
+      "id": "PULLUP_L",
+      "side": "F",
+      "region": [
+        0.25,
+        6.3,
+        4.4,
+        51.9
+      ],
+      "gap_mm": 0.4,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "R308",
+          "rotation": 90
+        },
+        {
+          "ref": "R309",
+          "rotation": 90
+        },
+        {
+          "ref": "R310",
+          "rotation": 90
+        },
+        {
+          "ref": "R311",
+          "rotation": 90
+        },
+        {
+          "ref": "R312",
+          "rotation": 90
+        },
+        {
+          "ref": "R313",
+          "rotation": 90
+        },
+        {
+          "ref": "R314",
+          "rotation": 90
+        },
+        {
+          "ref": "R315",
+          "rotation": 90
+        },
+        {
+          "ref": "R316",
+          "rotation": 90
+        },
+        {
+          "ref": "R317",
+          "rotation": 90
+        },
+        {
+          "ref": "R318",
+          "rotation": 90
+        },
+        {
+          "ref": "R319",
+          "rotation": 90
+        },
+        {
+          "ref": "R320",
+          "rotation": 90
+        },
+        {
+          "ref": "R321",
+          "rotation": 90
+        },
+        {
+          "ref": "R322",
+          "rotation": 90
+        },
+        {
+          "ref": "R323",
+          "rotation": 90
+        },
+        {
+          "ref": "R324",
+          "rotation": 90
+        },
+        {
+          "ref": "R325",
+          "rotation": 90
+        },
+        {
+          "ref": "R392",
+          "rotation": 90
+        },
+        {
+          "ref": "R301",
+          "rotation": 90
+        },
+        {
+          "ref": "R302",
+          "rotation": 90
+        },
+        {
+          "ref": "R305",
+          "rotation": 90
+        },
+        {
+          "ref": "R306",
+          "rotation": 90
+        },
+        {
+          "ref": "R307",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "HMI",
+      "side": "F",
+      "region": [
+        17.3,
+        46.9,
+        31.7,
+        56.6
+      ],
+      "gap_mm": 0.4,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "U310",
+          "rotation": 0
+        },
+        {
+          "ref": "U311",
+          "rotation": 0
+        },
+        {
+          "ref": "C312",
+          "rotation": 0
+        },
+        {
+          "ref": "C313",
+          "rotation": 0
+        },
+        {
+          "ref": "R334",
+          "rotation": 90
+        },
+        {
+          "ref": "R335",
+          "rotation": 90
+        },
+        {
+          "ref": "R336",
+          "rotation": 90
+        },
+        {
+          "ref": "R337",
+          "rotation": 90
+        },
+        {
+          "ref": "R338",
+          "rotation": 90
+        },
+        {
+          "ref": "R339",
+          "rotation": 90
+        },
+        {
+          "ref": "R340",
+          "rotation": 90
+        },
+        {
+          "ref": "R341",
+          "rotation": 90
+        },
+        {
+          "ref": "R342",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "HMI2",
+      "side": "F",
+      "region": [
+        23.8,
+        58.6,
+        26.8,
+        68.4
+      ],
+      "gap_mm": 0.25,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "R343",
+          "rotation": 90
+        },
+        {
+          "ref": "R344",
+          "rotation": 90
+        },
+        {
+          "ref": "R345",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "HMI3",
+      "side": "F",
+      "region": [
+        31.7,
+        58.6,
+        39.9,
+        68.4
+      ],
+      "gap_mm": 0.4,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "R346",
+          "rotation": 90
+        },
+        {
+          "ref": "R347",
+          "rotation": 90
+        },
+        {
+          "ref": "R348",
+          "rotation": 90
+        },
+        {
+          "ref": "R349",
+          "rotation": 90
+        },
+        {
+          "ref": "R350",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "PICO",
+      "side": "B",
+      "region": [
+        34.15,
+        0.3,
+        39.95,
+        54.9
+      ],
+      "gap_mm": 0.4,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "D301",
+          "rotation": 90
+        },
+        {
+          "ref": "C307",
+          "rotation": 90
+        },
+        {
+          "ref": "C302",
+          "rotation": 90
+        },
+        {
+          "ref": "C304",
+          "rotation": 90
+        },
+        {
+          "ref": "C306",
+          "rotation": 90
+        },
+        {
+          "ref": "U307",
+          "rotation": 90
+        },
+        {
+          "ref": "D302",
+          "rotation": 90
+        },
+        {
+          "ref": "D303",
+          "rotation": 90
+        },
+        {
+          "ref": "Q302",
+          "rotation": 90
+        },
+        {
+          "ref": "Q306",
+          "rotation": 90
+        },
+        {
+          "ref": "C308",
+          "rotation": 90
+        },
+        {
+          "ref": "C309",
+          "rotation": 90
+        },
+        {
+          "ref": "C310",
+          "rotation": 90
+        },
+        {
+          "ref": "C311",
+          "rotation": 90
+        },
+        {
+          "ref": "R327",
+          "rotation": 90
+        },
+        {
+          "ref": "R328",
+          "rotation": 90
+        },
+        {
+          "ref": "R329",
+          "rotation": 90
+        },
+        {
+          "ref": "R330",
+          "rotation": 90
+        },
+        {
+          "ref": "R331",
+          "rotation": 90
+        },
+        {
+          "ref": "R332",
+          "rotation": 90
+        },
+        {
+          "ref": "R333",
+          "rotation": 90
+        },
+        {
+          "ref": "R363",
+          "rotation": 90
+        },
+        {
+          "ref": "R364",
+          "rotation": 90
+        },
+        {
+          "ref": "R393",
+          "rotation": 90
+        },
+        {
+          "ref": "R394",
+          "rotation": 90
+        },
+        {
+          "ref": "R395",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "BLOWER",
+      "side": "B",
+      "region": [
+        11.0,
+        54.6,
+        22.65,
+        59.7
+      ],
+      "gap_mm": 0.3,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "D306",
+          "rotation": 0
+        },
+        {
+          "ref": "Q305",
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "id": "BLOWER2",
+      "side": "B",
+      "region": [
+        11.0,
+        63.6,
+        22.65,
+        68.4
+      ],
+      "gap_mm": 0.4,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "C342",
+          "rotation": 0
+        },
+        {
+          "ref": "C343",
+          "rotation": 90
+        },
+        {
+          "ref": "R370",
+          "rotation": 90
+        },
+        {
+          "ref": "R371",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "FAN",
+      "side": "B",
+      "region": [
+        37.05,
+        83.9,
+        49.95,
+        93.4
+      ],
+      "gap_mm": 0.3,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "F301",
+          "rotation": 90
+        },
+        {
+          "ref": "D305",
+          "rotation": 0
+        },
+        {
+          "ref": "C318",
+          "rotation": 0
+        },
+        {
+          "ref": "C320",
+          "rotation": 0
+        },
+        {
+          "ref": "C319",
+          "rotation": 90
+        },
+        {
+          "ref": "R367",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "FAN2",
+      "side": "B",
+      "region": [
+        44.05,
+        75.2,
+        49.95,
+        83.8
+      ],
+      "gap_mm": 0.3,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "Q303",
+          "rotation": 0
+        },
+        {
+          "ref": "Q304",
+          "rotation": 0
+        },
+        {
+          "ref": "R365",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "FAN3",
+      "side": "B",
+      "region": [
+        37.05,
+        68.6,
+        43.4,
+        74.9
+      ],
+      "gap_mm": 0.25,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "R366",
+          "rotation": 90
+        },
+        {
+          "ref": "R368",
+          "rotation": 90
+        },
+        {
+          "ref": "R369",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "GNSS_IN",
+      "side": "B",
+      "region": [
+        20.8,
+        97.9,
+        25.2,
+        100.6
+      ],
+      "gap_mm": 0.3,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "C321",
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "id": "R4A",
+      "side": "B",
+      "region": [
+        28.0,
+        93.6,
+        43.9,
+        100.6
+      ],
+      "gap_mm": 0.3,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "Q301",
+          "rotation": 0
+        },
+        {
+          "ref": "U312",
+          "rotation": 0
+        },
+        {
+          "ref": "C322",
+          "rotation": 0
+        },
+        {
+          "ref": "TP301",
+          "rotation": 0
+        },
+        {
+          "ref": "R326",
+          "rotation": 90
+        },
+        {
+          "ref": "R396",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "R4B",
+      "side": "B",
+      "region": [
+        20.8,
+        104.6,
+        43.9,
+        109.4
+      ],
+      "gap_mm": 0.3,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "R351",
+          "rotation": 90
+        },
+        {
+          "ref": "R352",
+          "rotation": 90
+        },
+        {
+          "ref": "R353",
+          "rotation": 90
+        },
+        {
+          "ref": "R354",
+          "rotation": 90
+        },
+        {
+          "ref": "R355",
+          "rotation": 90
+        },
+        {
+          "ref": "R356",
+          "rotation": 90
+        },
+        {
+          "ref": "R357",
+          "rotation": 90
+        },
+        {
+          "ref": "R358",
+          "rotation": 90
+        },
+        {
+          "ref": "C314",
+          "rotation": 90
+        },
+        {
+          "ref": "C315",
+          "rotation": 90
+        },
+        {
+          "ref": "C316",
+          "rotation": 90
+        },
+        {
+          "ref": "C317",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "AMB",
+      "side": "F",
+      "region": [
+        40.9,
+        109.6,
+        49.95,
+        125.2
+      ],
+      "gap_mm": 0.3,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "U313",
+          "rotation": 0
+        },
+        {
+          "ref": "R359",
+          "rotation": 90
+        },
+        {
+          "ref": "R360",
+          "rotation": 90
+        },
+        {
+          "ref": "R361",
+          "rotation": 90
+        },
+        {
+          "ref": "R362",
+          "rotation": 90
+        }
+      ]
+    }
+  ],
+  "pre_route": {
+    "tracks": [
+      {
+        "id": "LAB5-U315-IN",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            24.1875,
+            96.65
+          ],
+          [
+            26.4,
+            96.65
+          ]
+        ],
+        "locked": true,
+        "why": "scripted locked stub into U315.1 (IN, SOT-23-6 at 0.95 mm pitch): a 1.85 mm PWR3A track cannot reach the pad without touching U315.2, so the router lands on the stub end; low-current branch (U315 limits at 0.144-0.192 A, netclasses.json E3_GNSS5V), listed in branch_exempt"
+      }
+    ],
+    "zones": [
+      {
+        "id": "GND-L2",
+        "net": "GND",
+        "layer": "In1.Cu",
+        "outline": "board",
+        "priority": 0,
+        "why": "solid GND plane L2 (build/15 \"План шарів\"); every GND pad joins it through a via"
+      },
+      {
+        "id": "3V3-L3",
+        "net": "3V3_Q6A",
+        "layer": "In2.Cu",
+        "outline": "board",
+        "priority": 0,
+        "why": "L3 plane for 3V3_Q6A (42 pins: MCP23017, pull-ups, J302/J304/J311); build/15 plans L3 as signals on CTRL, it is a plane here so that Freerouting keeps every net off the inner layers (layers.types_why)"
+      }
+    ]
+  },
+  "post_route_zones": [
+    {
+      "id": "GND-F",
+      "net": "GND",
+      "layer": "F.Cu",
+      "outline": "board",
+      "priority": 0
+    },
+    {
+      "id": "GND-B",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": "board",
+      "priority": 0
+    }
+  ],
+  "height_zones": [
+    {
+      "region": [
+        0.0,
+        0.0,
+        6.0,
+        14.5
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        6.0,
+        0.0,
+        15.0,
+        14.5
+      ],
+      "side": "top",
+      "max_height_mm": 5.0,
+      "why": "top: min(contract max_height 5.5, fits_mm 5.0) under button_flange.02"
+    },
+    {
+      "region": [
+        21.0,
+        0.0,
+        7.0,
+        14.5
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        28.0,
+        0.0,
+        15.0,
+        14.5
+      ],
+      "side": "top",
+      "max_height_mm": 5.0,
+      "why": "top: min(contract max_height 5.5, fits_mm 5.0) under button_flange.12"
+    },
+    {
+      "region": [
+        43.0,
+        0.0,
+        7.0,
+        14.5
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        14.5,
+        50.0,
+        7.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        21.5,
+        6.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        6.0,
+        21.5,
+        15.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.0,
+      "why": "top: min(contract max_height 5.5, fits_mm 5.0) under button_flange.01"
+    },
+    {
+      "region": [
+        21.0,
+        21.5,
+        7.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        28.0,
+        21.5,
+        15.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.0,
+      "why": "top: min(contract max_height 5.5, fits_mm 5.0) under button_flange.11"
+    },
+    {
+      "region": [
+        43.0,
+        21.5,
+        7.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        36.5,
+        50.0,
+        7.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        43.5,
+        6.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        6.0,
+        43.5,
+        15.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.0,
+      "why": "top: min(contract max_height 5.5, fits_mm 5.0) under button_flange.00"
+    },
+    {
+      "region": [
+        21.0,
+        43.5,
+        7.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        28.0,
+        43.5,
+        15.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.0,
+      "why": "top: min(contract max_height 5.5, fits_mm 5.0) under button_flange.10"
+    },
+    {
+      "region": [
+        43.0,
+        43.5,
+        7.0,
+        15.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        58.5,
+        50.0,
+        10.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        68.5,
+        12.0,
+        25.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        37.0,
+        68.5,
+        13.0,
+        25.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        93.5,
+        50.0,
+        16.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        109.5,
+        12.0,
+        25.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        37.0,
+        109.5,
+        13.0,
+        25.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        134.5,
+        50.0,
+        2.5
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        137.0,
+        40.0,
+        7.0
+      ],
+      "side": "top",
+      "max_height_mm": 5.5,
+      "why": "top: min(contract max_height 5.5, fits_mm 6.5) under front wall"
+    },
+    {
+      "region": [
+        0.0,
+        0.0,
+        34.0,
+        57.0
+      ],
+      "side": "bottom",
+      "max_height_mm": 7.48,
+      "why": "bottom: contract rear_zones fits_mm 7.48 over bms"
+    },
+    {
+      "region": [
+        34.0,
+        0.0,
+        9.5,
+        5.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.ext"
+    },
+    {
+      "region": [
+        43.5,
+        0.0,
+        6.5,
+        5.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 3.98,
+      "why": "bottom: contract rear_zones fits_mm 3.98 over plate.boss2"
+    },
+    {
+      "region": [
+        34.0,
+        5.5,
+        16.0,
+        8.7
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.ext"
+    },
+    {
+      "region": [
+        34.0,
+        14.2,
+        6.2,
+        11.3
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.ext"
+    },
+    {
+      "region": [
+        40.2,
+        14.2,
+        5.6,
+        49.6
+      ],
+      "side": "bottom",
+      "max_height_mm": 7.18,
+      "why": "bottom: contract rear_zones fits_mm 7.18 over hdmi_route_front_up"
+    },
+    {
+      "region": [
+        45.8,
+        14.2,
+        4.2,
+        11.3
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.ext"
+    },
+    {
+      "region": [
+        34.0,
+        25.5,
+        6.2,
+        27.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        45.8,
+        25.5,
+        4.2,
+        38.3
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        34.0,
+        53.0,
+        0.8,
+        4.0
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        34.8,
+        53.0,
+        5.4,
+        10.8
+      ],
+      "side": "bottom",
+      "max_height_mm": 7.18,
+      "why": "bottom: contract rear_zones fits_mm 7.18 over hdmi_route_front_turn"
+    },
+    {
+      "region": [
+        0.0,
+        57.0,
+        34.8,
+        1.2
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        0.0,
+        58.2,
+        34.8,
+        5.6
+      ],
+      "side": "bottom",
+      "max_height_mm": 7.18,
+      "why": "bottom: contract rear_zones fits_mm 7.18 over hdmi_route_front_run"
+    },
+    {
+      "region": [
+        0.0,
+        63.8,
+        50.0,
+        4.7
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        0.0,
+        68.5,
+        12.0,
+        14.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        37.0,
+        68.5,
+        13.0,
+        14.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        0.0,
+        83.0,
+        12.0,
+        10.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 4.98,
+      "why": "bottom: contract rear_zones fits_mm 4.98 over lime"
+    },
+    {
+      "region": [
+        37.0,
+        83.0,
+        13.0,
+        10.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 4.98,
+      "why": "bottom: contract rear_zones fits_mm 4.98 over lime"
+    },
+    {
+      "region": [
+        0.0,
+        93.5,
+        50.0,
+        15.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 4.98,
+      "why": "bottom: contract rear_zones fits_mm 4.98 over lime"
+    },
+    {
+      "region": [
+        0.0,
+        109.0,
+        50.0,
+        0.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        0.0,
+        109.5,
+        12.0,
+        25.0
+      ],
+      "side": "bottom",
+      "max_height_mm": 7.48,
+      "why": "bottom: contract rear_zones fits_mm 7.48 over ip2368"
+    },
+    {
+      "region": [
+        37.0,
+        109.5,
+        7.0,
+        25.0
+      ],
+      "side": "bottom",
+      "max_height_mm": 7.48,
+      "why": "bottom: contract rear_zones fits_mm 7.48 over ip2368"
+    },
+    {
+      "region": [
+        44.0,
+        109.5,
+        6.0,
+        27.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    },
+    {
+      "region": [
+        0.0,
+        134.5,
+        44.0,
+        2.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 7.48,
+      "why": "bottom: contract rear_zones fits_mm 7.48 over ip2368"
+    },
+    {
+      "region": [
+        0.0,
+        137.0,
+        40.0,
+        6.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 7.48,
+      "why": "bottom: contract rear_zones fits_mm 7.48 over ip2368"
+    },
+    {
+      "region": [
+        0.0,
+        143.5,
+        40.0,
+        0.5
+      ],
+      "side": "bottom",
+      "max_height_mm": 17.98,
+      "why": "bottom: contract rear_zones fits_mm 17.98 over plate.main"
+    }
+  ],
+  "heights": {
+    "BZ301": 7.0,
+    "D304": 8.6,
+    "J305": 6.98,
+    "J314": 6.98,
+    "J306": 5.0,
+    "J307": 5.0,
+    "J302": 4.8,
+    "J308": 4.8,
+    "J309": 4.8,
+    "J310": 4.8,
+    "J311": 4.8,
+    "J312": 4.8,
+    "J315": 4.8,
+    "J316": 4.8,
+    "J317": 4.8,
+    "J318": 4.8,
+    "J319": 4.8
+  },
+  "heights_src": {
+    "BZ301": "Same Sky CPT-1207-3TH data sheet (rev 1.01, 11/02/2026) p.1 dimensions \"Ø12.5 x 7.0 mm\", https://www.sameskydevices.com/product/resource/cpt-1207-3th.pdf read 2026-11-07",
+    "D304": "Kingbright WP7113LSECK/J3 data sheet (DSAN8286, rev V.5A, 03/25/2025) p.1 package dimensions: 8.6 mm from the flange to the lens top, flange 1.0 mm max, https://www.kingbrightusa.com/images/catalog/SPEC/WP7113LSECK-J3.pdf read 2026-11-07 (page rendered with PyMuPDF)",
+    "PH side entry (J302, J308-J312, J315-J319)": "mechanical/params/parts.json harness_headers PH_side h_mated 4.8 (JST ePH catalogue PDF of 27.01.2026, read 2026-11-07 by W2 MECH-1)",
+    "PHD side entry (J306, J307)": "pcb/partition-spec.json PHD_side: LCSC S16B-PHDSS(LF)(SN) C161675 \"Z-Height of the Board\" 5 mm (JLCPCB parts search, read 2026-11-07 by W2 AREA)",
+    "Micro-Fit right angle (J305, J314)": "mechanical/params/parts.json harness_headers MF_ra h_mated 6.98 (Molex product sheets 436500900 / 436500311, read 2026-11-07 by W2 MECH-1)"
+  },
+  "heights_open": {
+    "J304": "XDFH-0254-2*20P (C19193815) drawing not readable (mechanical/params/parts.json IDC_top h_src); the reference 2x20 box header Würth 61204021621 is 9.1 mm above the PCB, more than every CTRL bottom zone it can occupy (7.18 hdmi_route_front_up, 7.48 BMS; the plate zones are narrower than the 9.0 mm box): OPEN for W2 GR-4 / MECH (a lower box header or a larger dz), not checked here",
+    "J313": "Molex KK 254 22-27-2031 vertical header with the Noctua housing: height not read (mechanical/params/parts.json FAN3 TBD); placed over the plate zone (17.98 mm) next to the fan circuit, not checked here",
+    "SW302-SW307": "TL3145BF350QJ actuator 5.2 mm is a repository value (mechanical/params/parts.json tl3145, STACK 5.8), not a data sheet read in this package; by design it sits gap_to_switch 0.3 mm under the 5.5 mm cap flange (mechanical.json hmi.buttons), and the 5.0 mm fits_mm of the flange zones applies to the other parts: not checked here",
+    "SMD parts": "package heights of the SMD ICs, transistors, diodes, passives and the Pico module were not read in this package (the vendored footprints carry no Height): unverified in review.json"
+  },
+  "sides": [
+    "top",
+    "bottom"
+  ],
+  "branch_exempt": {
+    "U315": {
+      "max_mm": 3.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 input stub of the GNSS 5 V switch U315 (IN pin between pins at 0.95 mm pitch); the switch limits its own current to 0.144-0.192 A (RILIM 162k, netclasses.json E3_GNSS5V); scripted pre-route LAB5-U315-IN"
+    }
+  },
+  "cable_exits": {
+    "left edge (bottom side, plug towards -x)": [
+      "J306",
+      "J307",
+      "J314",
+      "J305",
+      "J302",
+      "J308",
+      "J309"
+    ],
+    "top edge (bottom side, plug towards +y)": [
+      "J312",
+      "J315",
+      "J318",
+      "J319"
+    ],
+    "rear drop beside cut-out 2 (bottom side; the lead drops into the plate.main zone x 44-50, y 109.5-137, free 18.48 mm)": [
+      "J311",
+      "J310"
+    ],
+    "vertical, over the plate zone x 37-50 y 68.5-83 (bottom side)": [
+      "J313"
+    ],
+    "vertical box header (bottom side), ribbon S01": [
+      "J304"
+    ],
+    "into the cut-outs (top side, to the ENC J1 header)": [
+      "J316",
+      "J317"
+    ],
+    "why": "Between the hole keepouts the left edge holds 91 + 35 mm of header courtyard and the top edge 34 mm (x 6-40); the 13 side-entry harness headers need 173.6 mm of courtyard width, so J310 (S15/S30 to the hatch board) and J311 (S24/S25 to T7A and GNSS), whose segments run in the rear layer, drop to the rear beside cut-out 2. J306/J307 (PHD) overhang the left edge by 1.5 mm so that their second pin row clears the TL3145 column (x >= 9.75) by 1.0 mm; the Micro-Fit pin rows (9.47 mm from the edge) start above SW302. The harness route ends stay provisional until INT refreshes them from connectors.json (mechanical/generated/harness-routes.json \"end provisional\")."
+  },
+  "router": {
+    "tool": "freerouting",
+    "max_passes": 60,
+    "threads": 1,
+    "job_timeout": "00:25:00",
+    "timeout_s": 1620
+  },
+  "drc_policy": {
+    "warning_checks": {
+      "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+      "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+      "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board",
+      "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+      "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+      "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
+      "silk_edge_clearance": "legend only: J306/J307 (PHD side entry) overhang the left edge by 1.5 mm by design (cable_exits) and some library legends reach the cut-out and board edges; the fab clips legend outside the outline; every instance is listed in report.json"
+    }
+  }
+}

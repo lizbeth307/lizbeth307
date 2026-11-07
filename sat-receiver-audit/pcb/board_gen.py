@@ -291,7 +291,9 @@ def footprint_geometry(text):
             drill = next((n for n in node if isinstance(n, list) and n[0] == 'drill'), None)
             pads.append({'number': node[1], 'type': node[2], 'at': [float(at[1]), float(at[2])],
                          'size': [float(size[1]), float(size[2])],
-                         'drill': [float(x) for x in drill[1:] if re.fullmatch(r'-?[\d.]+', x)] if drill else []})
+                         # (drill (offset x y)) of an SMD pad (Pico castellations) has no size atom: skip sub-lists
+                         'drill': [float(x) for x in drill[1:] if isinstance(x, str) and re.fullmatch(r'-?[\d.]+', x)]
+                         if drill else []})
         elif node[0] in ('fp_line', 'fp_rect', 'fp_circle', 'fp_poly', 'fp_arc'):
             layer = next((n[1] for n in node if isinstance(n, list) and n[0] == 'layer'), '')
             if layer != 'F.CrtYd':
@@ -457,14 +459,21 @@ def point_in_outline(point, outline, eps=1e-6):
     return inside
 
 
-def place_groups(spec, template, geometry, hole_list, outline):
+def cutout_rects(contract):
+    """Contract cut-outs [x, y, w, h] (board mm) as boxes [x0, y0, x1, y1]."""
+    return [[float(x), float(y), float(x) + float(w), float(y) + float(h)]
+            for x, y, w, h in (contract.get('cutouts_mm') or [])]
+
+
+def place_groups(spec, template, geometry, hole_list, outline, cutouts=()):
     """Anchors for the parts that the spec's placement groups place (deterministic, standard library).
 
     geometry: {template ref: footprint_geometry()} for every template part. Anchored parts are fixed
     obstacles. Groups run in spec order. In each group the members without 'decouple' are shelf-packed
     into the region (courtyard boxes after rotation and side); then every decoupling member goes next to
     its pin ({ref, pad, max_mm}) with place_near, nearest free side first, at most max_mm from the pin.
-    A placed courtyard box must not overlap another part on the same side or enter a hole keepout.
+    A placed courtyard box must not overlap another part on the same side, enter a hole keepout or a
+    contract cut-out (cutouts: boxes [x0, y0, x1, y1]; a region may touch a cut-out, not overlap it).
     Returns ({ref: anchor}, rows); rows carry the plan that the KiCad group audit checks.
     """
     placed = {}
@@ -485,6 +494,9 @@ def place_groups(spec, template, geometry, hole_list, outline):
         for hole in hole_list:
             if box_circle_distance(geo['box'], hole['at']) < hole['keepout_d'] / 2:
                 raise PackError(f'group {group["id"]}: {member["ref"]} enters the keepout of {hole["ref"]}')
+        for cut in cutouts:
+            if rects_overlap(geo['box'], cut):
+                raise PackError(f'group {group["id"]}: {member["ref"]} enters the cut-out {cut}')
         placed[member['ref']] = {'side': side, **geo}
         anchors[member['ref']] = anchor
         rows.append({'group': group['id'], 'ref': member['ref'], 'side': side, 'rotation': rotation,
@@ -497,6 +509,8 @@ def place_groups(spec, template, geometry, hole_list, outline):
         corners = ((region[0], region[1]), (region[2], region[1]), (region[2], region[3]), (region[0], region[3]))
         if not all(point_in_outline(c, outline) for c in corners):
             raise SpecError(f'group {group["id"]}: region {region} is not inside the board outline')
+        if any(rects_overlap(region, cut) for cut in cutouts):
+            raise SpecError(f'group {group["id"]}: region {region} overlaps a contract cut-out')
         local_boxes, items = {}, []
         for member in group['members']:
             geo = geometry[member['ref']]
@@ -657,6 +671,10 @@ def validate_spec(spec, board):
         raise SpecError(f'{board}: schema must be {SPEC_SCHEMA} and board_id {board}')
     if spec['layers']['copper'] not in (2, 4):
         raise SpecError(f'{board}: copper layers must be 2 or 4')
+    inner = {'In1.Cu', 'In2.Cu'} if spec['layers']['copper'] == 4 else set()
+    for name, kind in (spec['layers'].get('types') or {}).items():
+        if name not in inner or kind not in ('power', 'signal'):
+            raise SpecError(f'{board}: layers.types {name}: {kind!r} must be an inner copper layer typed power or signal')
     if spec.get('rules_file') is not None:
         raise SpecError(f'{board}: rules_file is set, but copying it into build/kicad/boards/{board}/{board}.kicad_dru '
                         '(and hashing it) is not implemented in board_gen yet; keep it null')
@@ -1073,7 +1091,7 @@ def group_plan(spec, contract, template):
     if not spec['groups']:
         return {}, []
     geometry = {p['ref']: footprint_geometry(footprint_file(p).read_text(encoding='utf-8')) for p in template}
-    return place_groups(spec, template, geometry, holes(spec, contract), contract['outline_mm'])
+    return place_groups(spec, template, geometry, holes(spec, contract), contract['outline_mm'], cutout_rects(contract))
 
 
 def load_footprint(pcb, part, temp):
@@ -1129,6 +1147,10 @@ def build_board(pcb, spec, contract, template, temp):
     (Path(temp) / 'fp-lib-table').write_text(fp_lib_table(template), encoding='utf-8')
     board = pcb.LoadBoard(str(path))  # loads the committed project rules and net classes
     board.SetCopperLayerCount(spec['layers']['copper'])
+    # Optional layer types (spec layers.types {layer: 'power'}): a plane layer is exported to the Specctra DSN
+    # as '(type power)', which Freerouting does not route on (its pre-route plane zone is the copper there).
+    for name, kind in sorted((spec['layers'].get('types') or {}).items()):
+        board.SetLayerType(board.GetLayerID(name), pcb.LT_POWER if kind == 'power' else pcb.LT_SIGNAL)
     block = pcb.TITLE_BLOCK()
     block.SetTitle(f'{board_id} - {spec["status"]}')
     block.SetComment(0, 'CI/model output of pcb/board_gen.py; not a fabrication release; bench gates OPEN.')
@@ -1148,8 +1170,16 @@ def build_board(pcb, spec, contract, template, temp):
         edge.SetEnd(frame.k(*b))
         edge.SetWidth(pcb.FromMM(0.05))
         board.Add(edge)
-    if contract.get('cutouts_mm'):
-        raise SpecError('contract cutouts are not implemented in board_gen yet')
+    for x0, y0, x1, y1 in cutout_rects(contract):  # contract cut-outs: closed Edge.Cuts rectangles inside the outline
+        corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+        for a, b in zip(corners, corners[1:] + corners[:1]):
+            edge = pcb.PCB_SHAPE(board)
+            edge.SetShape(pcb.SHAPE_T_SEGMENT)
+            edge.SetLayer(pcb.Edge_Cuts)
+            edge.SetStart(frame.k(*a))
+            edge.SetEnd(frame.k(*b))
+            edge.SetWidth(pcb.FromMM(0.05))
+            board.Add(edge)
     group_anchors, _rows = group_plan(spec, contract, template)
     sources = []
     for part in template:
@@ -1453,6 +1483,26 @@ def group_audit(facts, rows):
     return {'rows': out, 'errors': errors, 'passed': not errors}
 
 
+def cutout_audit(facts, contract, template):
+    """No pad, courtyard box or F.Fab body box of a template part inside a contract cut-out (boards with cut-outs).
+
+    Boxes are axis-aligned bounding boxes, so the audit is conservative; touching the cut-out edge passes."""
+    cuts = cutout_rects(contract)
+    refs = {p['ref'] for p in template}
+    errors = []
+    for fp in facts['footprints']:
+        if fp['ref'] not in refs:
+            continue
+        for cut in cuts:
+            for what, box in (('courtyard', fp['courtyard_box']), ('body', fp['fab_box'])):
+                if box and rects_overlap(box, cut, -1e-3):
+                    errors.append({'kind': f'{what}_in_cutout', 'ref': fp['ref'], 'cutout': cut, 'box': box})
+            if any(rects_overlap(p['box'], cut, -1e-3) for p in fp['pads']):
+                errors.append({'kind': 'pad_in_cutout', 'ref': fp['ref'], 'cutout': cut})
+    return {'cutouts': cuts, 'errors': errors, 'passed': not errors,
+            'note': 'axis-aligned courtyard, F.Fab and pad boxes against the contract cut-outs (edge contact allowed)'}
+
+
 def annular_audit(facts, template, floor):
     refs = {p['ref'] for p in template}
     low = [{'ref': f['ref'], 'pad': p['number'], 'annular_mm': p['annular_mm']} for f in facts['footprints']
@@ -1507,9 +1557,12 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'annular_audit': audits['annular']['passed'], 'locked_copper_kept': audits['locked']['kept'],
         'group_audit': audits['groups']['passed'],
     }
+    if 'cutouts' in audits:  # only boards whose contract has cut-outs carry this key (ENC reports stay unchanged)
+        result['cutout_audit'] = audits['cutouts']['passed']
     passed = (drc['passed'] and all(a['passed'] for a in source_pad) and audits['domain']['passed']
               and audits['keepout']['passed'] and audits['annular']['passed'] and audits['locked']['kept']
-              and audits['groups']['passed'] and not any(b['status'].startswith('fail') for b in boundary))
+              and audits['groups']['passed'] and audits.get('cutouts', {'passed': True})['passed']
+              and not any(b['status'].startswith('fail') for b in boundary))
     return {
         'schema': REPORT_SCHEMA, 'board_id': spec['board_id'], 'status': spec['status'],
         'label': 'CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN',
@@ -1563,6 +1616,8 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
                    'kept': facts['tracks']['locked'] >= want_locked,
                    'note': 'SES import before/after counts and the DSN probe are in route-log.json'},
     }
+    if contract.get('cutouts_mm'):
+        audits['cutouts'] = cutout_audit(facts, contract, template)
     report = build_report(spec, contract, stackup, template, proj, facts, drc, audits, board_path, spec['project'])
     return report, connectors_doc(spec, contract, template, facts)
 

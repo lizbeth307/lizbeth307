@@ -480,5 +480,71 @@ class PlacementGroups(unittest.TestCase):
                 bg.validate_spec(candidate, 'ENC')
 
 
+class CutoutsLayerTypesAndDrillOffsets(unittest.TestCase):
+    """W2 PCB-CTRL additions: contract cut-outs, inner plane layer types, SMD drill offsets."""
+
+    def test_cutout_rects_are_boxes(self):
+        self.assertEqual(bg.cutout_rects({'cutouts_mm': [[12.0, 68.5, 25.0, 25.0]]}), [[12.0, 68.5, 37.0, 93.5]])
+        self.assertEqual(bg.cutout_rects({}), [])
+
+    def test_groups_keep_out_of_cutouts(self):
+        spec, template, geo = PlacementGroups().setup()
+        outline = [[0, 0], [30, 0], [30, 20], [0, 20]]
+        anchors, rows = bg.place_groups(spec, template, geo, [], outline, [[22.0, 2.0, 30.0, 14.0]])  # touching: accepted
+        self.assertEqual(sorted(anchors), ['C1', 'R1', 'R2'])
+        with self.assertRaises(SystemExit):  # the region overlaps a cut-out
+            bg.place_groups(spec, template, geo, [], outline, [[20.0, 2.0, 30.0, 14.0]])
+        with self.assertRaises(SystemExit):  # a cut-out in a corner of the region
+            bg.place_groups({'groups': [{'id': 'G1', 'region': [0.0, 0.0, 30.0, 20.0], 'members': [{'ref': 'R1'}]}]},
+                            template, geo, [], outline, [[0.0, 15.0, 3.0, 20.0]])
+
+    def test_cutout_audit_flags_boxes_inside(self):
+        facts = {'footprints': [
+            {'ref': 'A', 'courtyard_box': [0, 0, 2, 2], 'fab_box': [0.5, 0.5, 1.5, 1.5], 'pads': [{'box': [0.6, 0.6, 1.0, 1.0]}]},
+            {'ref': 'B', 'courtyard_box': [9, 9, 11, 11], 'fab_box': None, 'pads': []}]}
+        template = [{'ref': 'A'}, {'ref': 'B'}]
+        audit = bg.cutout_audit(facts, {'cutouts_mm': [[2.0, 0.0, 3.0, 3.0]]}, template)
+        self.assertTrue(audit['passed'])  # edge contact is allowed
+        audit = bg.cutout_audit(facts, {'cutouts_mm': [[10.0, 10.0, 3.0, 3.0]]}, template)
+        self.assertEqual([e['kind'] for e in audit['errors']], ['courtyard_in_cutout'])
+
+    def test_layer_types_are_validated(self):
+        spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
+        bg.validate_spec(spec, 'CTRL')
+        self.assertEqual(spec['layers']['types'], {'In1.Cu': 'power', 'In2.Cu': 'power'})
+        for bad in ({'F.Cu': 'power'}, {'In1.Cu': 'mixed'}):
+            candidate = copy.deepcopy(spec)
+            candidate['layers']['types'] = bad
+            with self.assertRaises(SystemExit):
+                bg.validate_spec(candidate, 'CTRL')
+        enc = bg.read_json(bg.spec_path('ENC'))
+        candidate = copy.deepcopy(enc)
+        candidate['layers']['types'] = {'In1.Cu': 'power'}
+        with self.assertRaises(SystemExit):  # a 2-layer board has no inner layer
+            bg.validate_spec(candidate, 'ENC')
+
+    def test_smd_drill_offset_without_size(self):
+        geo = bg.footprint_geometry(PICO.read_text(encoding='utf-8'))
+        self.assertTrue(any(p['number'] == '1' for p in geo['pads']))
+        self.assertTrue(all(isinstance(v, float) for p in geo['pads'] for v in p['drill']))
+
+    def test_ctrl_spec_resolves_and_covers_its_domain(self):
+        spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('CTRL')
+        partition = bg.read_json(bg.BASE / spec['partition'])
+        audit = bg.domain_audit(spec, partition)
+        self.assertTrue(audit['passed'])
+        self.assertEqual(len(audit['domain_refs']), len(template))
+        anchors, rows = bg.group_plan(spec, contract, template)
+        switches = {p['ref']: p['anchor']['at'] for p in spec['parts'] if p['ref'].startswith('SW')}
+        self.assertEqual(sorted(switches.values()), sorted([[13.5, 51.0], [35.5, 51.0], [13.5, 29.0], [35.5, 29.0],
+                                                             [13.5, 7.0], [35.5, 7.0]]))
+        cuts = bg.cutout_rects(contract)
+        for row in rows:
+            self.assertFalse(any(bg.rects_overlap(row['courtyard_box'], c) for c in cuts), row['ref'])
+
+
+PICO = bg.BASE / 'build/kicad/footprints/SR_RX_Custom.pretty/RaspberryPi_Pico_SMD_SWD.kicad_mod'
+
+
 if __name__ == '__main__':
     unittest.main()
