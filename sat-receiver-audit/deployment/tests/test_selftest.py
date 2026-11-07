@@ -1276,5 +1276,58 @@ class SelftestTests(unittest.TestCase):
             self.assertIn(rule, source)  # the documented ids are the ones the checker emits
 
 
+class ImageAptAndPinOnlyTests(unittest.TestCase):
+    """W2 IMG-1: embloader's version_rule (allow_only 0.4, the boot-chain recipe's version) and the
+    repository lab.pref, with its -1 pattern stanzas, on minimal synthetic roots (RX-01a, RX-16)."""
+
+    def run_row(self, row_id, files):
+        with tempfile.TemporaryDirectory(prefix="srrx-img1-") as temp:
+            root = Path(temp)
+            for rel, data in files.items():
+                (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                (root / rel).write_bytes(data.encode() if isinstance(data, str) else data)
+            policy = selftest.load_policy(POLICY)
+            ctx = selftest.Ctx(root, "controller", policy, deploy.PROJECT, {}, None, None, None)
+            result = selftest.Result(next(row for row in selftest.CATALOGUE if row[0] == row_id))
+            getattr(selftest, "check_" + row_id[3:].replace("-", "_").lower())(ctx, result)
+            return {(f["rule"], f.get("item")) for f in result.findings}, policy
+
+    @staticmethod
+    def status(**packages):
+        return "".join("Package: %s\nStatus: install ok installed\nVersion: %s\n\n" % kv for kv in packages.items())
+
+    def test_embloader_0_4_passes_and_any_other_version_blocks(self):
+        found, policy = self.run_row("RX-01a", {"var/lib/dpkg/status": self.status(embloader="0.4", bash="5.2.21-2ubuntu4")})
+        self.assertEqual(found, set())
+        entry = next(e for e in policy["forbidden_packages"] if e.get("name") == "embloader")
+        self.assertEqual((entry["check"], entry["version_rule"]), ("pin_only", {"allow_only": ["0.4"]}))
+        self.assertEqual(json.loads((HERE / "image/recipe.json").read_text(encoding="utf-8"))["routes"]["B"]["embloader_version"], "0.4")
+        self.assertEqual(policy["status"], "DRAFT")  # a content rule, not a review
+        for version in ("0.5", "0.4.1", "0.7"):
+            found, _ = self.run_row("RX-01a", {"var/lib/dpkg/status": self.status(embloader=version)})
+            self.assertEqual(found, {("pinned_package_present_unreviewed", "embloader")}, version)
+        # Every other pin_only entry still waits for the Phase 0 matrix: present means BLOCKED.
+        others = [e for e in policy["forbidden_packages"] if e["check"] == "pin_only" and e.get("name") != "embloader"]
+        self.assertTrue(others and not any("version_rule" in e for e in others))
+        found, _ = self.run_row("RX-01a", {"var/lib/dpkg/status": self.status(**{"dragonwing-defaults": "1.21", "libsnpe1": "2.42"})})
+        self.assertEqual(found, {("pinned_package_present_unreviewed", "dragonwing-defaults"), ("pinned_package_present_unreviewed", "libsnpe*")})
+
+    def test_repository_lab_pref_with_its_minus_one_stanzas_passes_rx16(self):
+        files = {"etc/apt/preferences.d/lab.pref": (HERE / "repo/lab.pref").read_bytes(),
+                 "etc/apt/preferences.d/srrx-boot-route-a.pref": (HERE / "image/files/srrx-boot-route-a.pref").read_bytes(),
+                 "etc/apt/sources.list.d/srrx-lab.sources": (HERE / "repo/srrx-lab.sources").read_bytes(),
+                 "etc/apt/sources.list.d/srrx-mirror.sources": (HERE / "repo/srrx-mirror.sources").read_bytes(),
+                 # what the image builder leaves of r2's entries: apt reads neither name
+                 "etc/apt/sources.list.d/50-noble.list.srrx-disabled": "deb http://ports.ubuntu.com/ubuntu-ports noble main\n",
+                 "etc/apt/preferences.d/ubuntu-pro-esm-apps.srrx-disabled": "Package: *\nPin: release o=UbuntuESMApps\nPin-Priority: 510\n"}
+        found, _ = self.run_row("RX-16", files)
+        self.assertEqual(found, set())
+        broken = dict(files)
+        broken["etc/apt/preferences.d/lab.pref"] = (HERE / "repo/lab.pref").read_text(encoding="utf-8") + "\nPackage: wsjtx\nPin: release *\nPin-Priority: 5\n"
+        self.assertIn(("apt_pin_positive_extra", None), self.run_row("RX-16", broken)[0])
+        broken["etc/apt/preferences.d/lab.pref"] = "Package: *\nPin: release o=srrx-lab\nPin-Priority: -1\n\n" + (HERE / "repo/lab.pref").read_text(encoding="utf-8")
+        self.assertIn(("lab_pref_structure", None), self.run_row("RX-16", broken)[0])
+
+
 if __name__ == "__main__":
     unittest.main()

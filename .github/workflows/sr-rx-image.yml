@@ -17,9 +17,11 @@ on:
     branches: ['wip/**', 'codex/**', 'ccr-*']
     # Everything the jobs consume: build_image.py stages the controller tree (deploy.py stage copies
     # software/, firmware/, design/ and deployment/ into /opt/srrx, with deployment/system and the *.template.json
-    # files), runs selftest.py, reads the lock and the policy.
+    # files), runs selftest.py, reads the lock and the policy, and installs deployment/repo's lab.pref and
+    # apt sources byte for byte.
     paths:
       - 'sat-receiver-audit/deployment/image/**'
+      - 'sat-receiver-audit/deployment/repo/**'
       - 'sat-receiver-audit/deployment/deploy.py'
       - 'sat-receiver-audit/deployment/*.template.json'
       - 'sat-receiver-audit/deployment/tests/test_image.py'
@@ -279,7 +281,7 @@ jobs:
                   print(name, "missing"); continue
               d = json.loads(p.read_text())
               if name == "image-manifest.json":
-                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "kernel", "bootloader", "entries", "enabled_units", "accounts", "hardening", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:14000])
+                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "blocking_by_closes_at", "kernel", "bootloader", "entries", "enabled_units", "accounts", "hardening", "apt_sources", "npu_payload", "mcu_firmware", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:20000])
               else:
                   r = d.get("root", {})
                   print(json.dumps({"partitions": d.get("partitions"), "base_cmdline_status": d.get("base_cmdline_status"),

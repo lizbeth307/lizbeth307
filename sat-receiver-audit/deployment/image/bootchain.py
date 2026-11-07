@@ -577,6 +577,18 @@ def unit_properties(text):
     return dict(line.split("=", 1) for line in text.splitlines() if "=" in line)
 
 
+# The smoke report and the console logs are CI artifacts of a public repository: an address-like
+# token (local@domain.tld) in captured unit or journal text is replaced. systemd unit instance names
+# (modprobe@configfs.service, getty@tty1.service) are not addresses and stay as they are.
+ADDRESS = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.([A-Za-z]{2,})\b")
+UNIT_SUFFIXES = frozenset(("service", "socket", "target", "mount", "automount", "swap", "timer", "path", "slice", "scope", "device"))
+FAILED_UNIT_STATUS_UNITS, FAILED_UNIT_STATUS_LINES, FAILED_UNIT_STATUS_BYTES = 6, 20, 2000
+
+
+def redact_addresses(text):
+    return ADDRESS.sub(lambda m: m.group(0) if m.group(1).lower() in UNIT_SUFFIXES else "<address removed>", text or "")
+
+
 def fail_or_blocked_rows(report):
     """{row id: sorted rules} of the FAIL/BLOCKED rows of a selftest.py offline report."""
     return {row["id"]: sorted({f.get("rule", "?") for f in row.get("findings", [])})
@@ -662,8 +674,14 @@ def smoke_report(timeout=900, root=Path("/"), selftest=False):
               "bless_boot_status": out(["/usr/lib/systemd/systemd-bless-boot", "status"]),
               # The boot-time run of the unit (it prints its JSON result): the post-boot boot_check below
               # can pass where the boot-time one failed, e.g. on a timeout while the boot loaded the CPU.
-              "boot_check_journal": out(["journalctl", "-b", "-u", "srrx-boot-check.service", "-o", "cat", "--no-pager", "-n", "60"]),
+              "boot_check_journal": redact_addresses(out(["journalctl", "-b", "-u", "srrx-boot-check.service", "-o", "cat", "--no-pager", "-n", "60"])),
               "boot_check": boot_check(root)}
+    # A bounded `systemctl status` tail of every failed unit (state, exit status, last lines of its
+    # journal), so a failed unit of any smoke boot can be diagnosed from the report alone.
+    failed = [line.split()[0] for line in report["failed_units"] if line.split()][:FAILED_UNIT_STATUS_UNITS]
+    report["failed_unit_status"] = {unit: redact_addresses(out(["systemctl", "status", "--no-pager", "--full",
+                                                                 "--lines=%d" % FAILED_UNIT_STATUS_LINES, unit]))[-FAILED_UNIT_STATUS_BYTES:]
+                                    for unit in failed}
     try:
         recipe = json.loads((HERE / "recipe.json").read_text(encoding="utf-8"))
         report["masked_units"] = {u: unit_properties(out(["systemctl", "show", "--property=LoadState,UnitFileState", u]))

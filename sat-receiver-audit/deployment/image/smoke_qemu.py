@@ -21,7 +21,8 @@ Scenarios, one QEMU boot each (-no-reboot; systemd.run_*_action=poweroff ends th
 Every boot also checks: no pending jobs, no failed unit beyond the scenario's expected ones (only
 srrx-boot-check.service on the boot that must fail), srrx.service inactive and disabled, the recipe
 masks in effect, every SR-RX service account present with the UID/GID of the build manifest; a
-boot-check unit in the wrong state carries its journal of that boot into the mismatches. srrx-boot-check accepts the smoke's own tokens (bootchain.smoke_tokens) only
+boot-check unit in the wrong state carries its journal of that boot into the mismatches, and every
+unexpected failed unit its bounded `systemctl status` tail (address-like tokens removed). srrx-boot-check accepts the smoke's own tokens (bootchain.smoke_tokens) only
 inside a VM (systemd-detect-virt), so every other extra token of an edited entry still fails it. The first slot A boot also runs selftest.py offline on a read-only view of the booted root
 and ESP (bootchain.live_selftest): its FAIL/BLOCKED rows must equal the build-time rows on root A,
 plus INTERPRETER_ROWS when the image's python3 lacks numpy. Bench gates W-03 (rollback on the Q6A)
@@ -242,6 +243,9 @@ def check(scenario, result, expect, build_rows=None, accounts=None):
     failed = sorted({line.split()[0] for line in report.get("failed_units") or [] if line.split()} - allowed_failed)
     if report and failed:
         bad.append("failed units: " + ",".join(failed))
+        # The guest's bounded `systemctl status` tail of each one (bootchain.smoke_report failed_unit_status).
+        status = report.get("failed_unit_status") or {}
+        bad += ["failed unit status %s: %s" % (u, bootchain.redact_addresses(status[u])[-1500:]) for u in failed if status.get(u)]
     if observed["srrx_service"] != ["inactive", "disabled"]:
         bad.append("srrx.service must stay inactive and disabled without acceptance (IMG-06): %r" % observed["srrx_service"])
     masked = report.get("masked_units") or {}
