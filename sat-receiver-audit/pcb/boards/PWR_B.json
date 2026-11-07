@@ -806,7 +806,14 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            76.0,
+            31.8
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -1119,7 +1126,14 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            59.5,
+            31.5
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -1132,7 +1146,14 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            66.5,
+            31.5
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -2737,7 +2758,7 @@
           12.2
         ],
         "drill_mm": 0.3,
-        "diameter_mm": 0.6,
+        "diameter_mm": 0.7,
         "locked": true,
         "why": "LAB5 B.Cu bar to the F.Cu trunk: six vias (netclasses.json PWR3A vias_per_transition 5)"
       },
@@ -2749,7 +2770,7 @@
           12.2
         ],
         "drill_mm": 0.3,
-        "diameter_mm": 0.6,
+        "diameter_mm": 0.7,
         "locked": true,
         "why": "LAB5 B.Cu bar to the F.Cu trunk: six vias (netclasses.json PWR3A vias_per_transition 5)"
       },
@@ -2761,7 +2782,7 @@
           13.2
         ],
         "drill_mm": 0.3,
-        "diameter_mm": 0.6,
+        "diameter_mm": 0.7,
         "locked": true,
         "why": "LAB5 B.Cu bar to the F.Cu trunk: six vias (netclasses.json PWR3A vias_per_transition 5)"
       },
@@ -2773,7 +2794,7 @@
           13.2
         ],
         "drill_mm": 0.3,
-        "diameter_mm": 0.6,
+        "diameter_mm": 0.7,
         "locked": true,
         "why": "LAB5 B.Cu bar to the F.Cu trunk: six vias (netclasses.json PWR3A vias_per_transition 5)"
       },
@@ -2785,7 +2806,7 @@
           14.2
         ],
         "drill_mm": 0.3,
-        "diameter_mm": 0.6,
+        "diameter_mm": 0.7,
         "locked": true,
         "why": "LAB5 B.Cu bar to the F.Cu trunk: six vias (netclasses.json PWR3A vias_per_transition 5)"
       },
@@ -2797,7 +2818,7 @@
           14.2
         ],
         "drill_mm": 0.3,
-        "diameter_mm": 0.6,
+        "diameter_mm": 0.7,
         "locked": true,
         "why": "LAB5 B.Cu bar to the F.Cu trunk: six vias (netclasses.json PWR3A vias_per_transition 5)"
       },
@@ -2809,7 +2830,7 @@
           23.625
         ],
         "drill_mm": 0.3,
-        "diameter_mm": 0.6,
+        "diameter_mm": 0.7,
         "locked": true,
         "why": "Kelvin sense E2_LNA4_SW to the B2B contact 32 (bottom side)"
       },
@@ -2821,7 +2842,7 @@
           23.625
         ],
         "drill_mm": 0.3,
-        "diameter_mm": 0.6,
+        "diameter_mm": 0.7,
         "locked": true,
         "why": "Kelvin sense E2_LNA4_SHUNT to the B2B contact 22 (bottom side)"
       }
@@ -2852,7 +2873,8 @@
       "layer": "F.Cu",
       "outline": "board",
       "priority": 0,
-      "pad_connection": "tht_thermal"
+      "pad_connection": "solid",
+      "why": "solid pad connection: thermal spokes of THT header GND pins were starved between the pins (route run 42414083566)"
     },
     {
       "id": "GND-B",
@@ -2860,9 +2882,21 @@
       "layer": "B.Cu",
       "outline": "board",
       "priority": 0,
-      "pad_connection": "tht_thermal"
+      "pad_connection": "solid"
     }
   ],
+  "edge_keepout": {
+    "width_mm": 0.2,
+    "layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "blocks": [
+      "tracks",
+      "vias"
+    ],
+    "why": "rule-area strips (half-width 0.2) on every outline and cutout edge: the router keeps its copper 0.35 mm off the edge, above the project copper-to-edge 0.3 (route run 42414083566 had 0.23)"
+  },
   "height_zones": [
     {
       "region": "board",
@@ -3194,7 +3228,13 @@
     "max_passes": 60,
     "threads": 1,
     "job_timeout": "00:25:00",
-    "timeout_s": 1620
+    "timeout_s": 1620,
+    "fanout": false,
+    "ignore_net_classes": [
+      "SCRIPTED_PWR1A",
+      "SCRIPTED_PWR3A"
+    ],
+    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted"
   },
   "drc_policy": {
     "warning_checks": {

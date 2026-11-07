@@ -208,7 +208,25 @@ def outside_repository(path):
     return path != REPO_ROOT and REPO_ROOT not in path.parents
 
 
-def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout):
+def router_extra(router):
+    """Optional Freerouting arguments of a spec router block (W2 PCB-PWRB; docs/settings.md and
+    docs/command_line_arguments.md at v2.5.0): 'fanout': false turns the SMD fan-out pre-pass off
+    (--router.fanout.enabled=false); 'ignore_net_classes' [names] are not autorouted (-inc), for nets whose
+    copper is all scripted and locked (the router does not count locked copper that crosses a pad as a connection)."""
+    extra = []
+    if 'fanout' in router:
+        if not isinstance(router['fanout'], bool):
+            raise SpecError('router.fanout must be true or false')
+        extra.append(f'--router.fanout.enabled={str(router["fanout"]).lower()}')
+    names = router.get('ignore_net_classes') or []
+    if names:
+        if not all(isinstance(n, str) and re.fullmatch(r'[A-Za-z0-9_]+', n) for n in names):
+            raise SpecError('router.ignore_net_classes must be net class names ([A-Za-z0-9_])')
+        extra += ['-inc', ','.join(names)]
+    return extra
+
+
+def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout, extra=()):
     """Headless Freerouting call: analytics off (-da), no GUI, optimizer on one thread (-mt), bounded job."""
     if int(max_passes) < 1 or int(threads) < 1:
         raise SpecError('router.max_passes and router.threads must be >= 1')
@@ -220,7 +238,7 @@ def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_
             '-de', str(dsn), '-do', str(ses), f'--router.autorouter.max_passes={int(max_passes)}', '-mt', str(int(threads)),
             f'--router.optimizer.max_threads={int(threads)}', '--router.automatic_neckdown=false',
             '-da', '--gui.enabled=false', f'--router.job_timeout={job_timeout}', '--logging.file.enabled=false',
-            f'--user_data_path={user_dir}']
+            f'--user_data_path={user_dir}'] + [str(a) for a in extra]
 
 
 def _download(item, dest):
@@ -735,6 +753,12 @@ def validate_spec(spec, board):
             raise SpecError(f'{board}: pre-route via {via.get("id")} needs a template net, at [x, y] and '
                             '0 < drill_mm < diameter_mm')
     copper = [f'In{i}.Cu' for i in range(1, int(spec['layers']['copper']) - 1)] + ['F.Cu', 'B.Cu']
+    router_extra(spec['router'])
+    edge = spec.get('edge_keepout')
+    if edge is not None and (not isinstance(edge, dict) or float(edge.get('width_mm', 0)) <= 0
+                             or not set(edge.get('layers', [])) <= set(copper) or not edge.get('layers')
+                             or not set(edge.get('blocks', [])) <= {'tracks', 'vias'} or not edge.get('blocks')):
+        raise SpecError(f'{board}: edge_keepout needs width_mm > 0, copper layers and blocks (tracks, vias)')
     for layer, kind in (spec['layers'].get('types') or {}).items():
         if layer not in copper or kind not in LAYER_TYPES:
             raise SpecError(f'{board}: layers.types {layer!r}: {kind!r} must name a copper layer of the board and one '
@@ -1030,6 +1054,16 @@ def npth_footprint(name, d):
 '''
 
 
+def edge_strip(a, b, w):
+    """Rectangle of half-width w around the edge segment ab, extended by w at both ends (board mm)."""
+    (x1, y1), (x2, y2) = a, b
+    length = math.hypot(x2 - x1, y2 - y1)
+    ux, uy = (x2 - x1) / length, (y2 - y1) / length
+    nx, ny = -uy * w, ux * w
+    p, q = (x1 - ux * w, y1 - uy * w), (x2 + ux * w, y2 + uy * w)
+    return [(p[0] + nx, p[1] + ny), (q[0] + nx, q[1] + ny), (q[0] - nx, q[1] - ny), (p[0] - nx, p[1] - ny)]
+
+
 def circle_polygon(cx, cy, radius, n=48):
     """Polygon that contains the circle (circumscribed), board mm."""
     rr = radius / math.cos(math.pi / n)
@@ -1250,6 +1284,21 @@ def build_board(pcb, spec, contract, template, temp):
             zone.SetDoNotAllowPads('pads' in blocks)
             zone.SetDoNotAllowFootprints('footprints' in blocks)
             board.Add(zone)
+    edge = spec.get('edge_keepout')
+    if edge:  # rule-area strips on every outline and cutout edge: the router keeps its copper off the edge clearance
+        loops = [contract['outline_mm']] + [[(x0, y0), (x1, y0), (x1, y1), (x0, y1)] for x0, y0, x1, y1 in cutout_boxes(contract)]
+        for li, loop in enumerate(loops):
+            for si, (a, b) in enumerate(zip(loop, loop[1:] + loop[:1])):
+                for name in edge['layers']:
+                    zone = add_polygon_zone(pcb, board, frame, edge_strip(a, b, float(edge['width_mm'])),
+                                            board.GetLayerID(name), f'KO_EDGE_{li}_{si}_{name}')
+                    zone.SetIsRuleArea(True)
+                    zone.SetDoNotAllowTracks('tracks' in edge['blocks'])
+                    zone.SetDoNotAllowVias('vias' in edge['blocks'])
+                    zone.SetDoNotAllowZoneFills(False)
+                    zone.SetDoNotAllowPads(False)
+                    zone.SetDoNotAllowFootprints(False)
+                    board.Add(zone)
     for track in spec['pre_route'].get('tracks', []):
         layer = board.GetLayerID(track['layer'])
         for a, b in zip(track['path'], track['path'][1:]):
@@ -1712,7 +1761,7 @@ def route(board, freerouting):
             raise SystemExit('board_gen: Specctra DSN export failed')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
         cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
-                                  temp / 'fr-user', spec['router']['job_timeout'])
+                                  temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']))
         shown_cmd = [shown_arg(c) for c in cmd]
         print('Freerouting command:', ' '.join(shown_cmd), flush=True)
         art = os.environ.get('SR_RX_PCB_ARTIFACTS')

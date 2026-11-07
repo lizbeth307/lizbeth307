@@ -525,6 +525,19 @@ class CutoutsViasAndLayerTypes(unittest.TestCase):
             with self.assertRaises(SystemExit, msg=i):
                 bg.validate_spec(candidate, 'ENC')
 
+    def test_router_extras_and_edge_strips(self):
+        self.assertEqual(bg.router_extra({}), [])
+        self.assertEqual(bg.router_extra({'fanout': False, 'ignore_net_classes': ['SCRIPTED_A', 'B']}),
+                         ['--router.fanout.enabled=false', '-inc', 'SCRIPTED_A,B'])
+        cmd = bg.freerouting_command('/t/java', '/t/fr.jar', 'b.dsn', 'b.ses', 20, 1, '/t/u', '00:05:00', ['-inc', 'X'])
+        self.assertEqual(cmd[-2:], ['-inc', 'X'])
+        for bad in ({'fanout': 'no'}, {'ignore_net_classes': ['A B']}):
+            with self.assertRaises(SystemExit):
+                bg.router_extra(bad)
+        strip = bg.edge_strip((0.0, 0.0), (10.0, 0.0), 0.2)
+        xs, ys = [p[0] for p in strip], [p[1] for p in strip]
+        self.assertEqual((round(min(xs), 6), round(max(xs), 6), round(min(ys), 6), round(max(ys), 6)), (-0.2, 10.2, -0.2, 0.2))
+
     def test_pwr_b_spec_resolves_with_the_b2b_placeholder(self):
         if not bg.spec_path('PWR_B').is_file():
             self.skipTest('no PWR_B spec')

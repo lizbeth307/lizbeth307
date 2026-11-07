@@ -54,7 +54,7 @@ B2B_MATE_SHA = '82ef2a7f5fbd930b90d97ef39fd59bbc18f8f31c22ec51cee135ad045241a67b
 CLEAR = 0.15          # project clearance (netclasses.json project_defaults)
 MARGIN = 0.05         # design margin of the scripted copper over the clearance
 EDGE = 0.3            # project copper-to-edge clearance
-VIA_D, VIA_DRILL = 0.6, 0.3
+VIA_D, VIA_DRILL = 0.7, 0.3   # 0.7 / 0.3: router vias at clearance 0.15 keep the 0.5 mm hole-to-hole rule (0.55)
 
 
 def read(path):
@@ -66,6 +66,12 @@ def r4(v):
 
 
 # ------------------------------------------------------------------ footprint geometry with F.Fab boxes and pad sizes
+def ref_xy(text):
+    """Local position of the Reference property of a .kicad_mod."""
+    m = re.search(r'\(property "Reference" "[^"]*"\s*\(at (-?[\d.]+) (-?[\d.]+)', text)
+    return (float(m.group(1)), float(m.group(2))) if m else (0.0, 0.0)
+
+
 def fab_box(text):
     tree = bg.sexpr(text)
     pts = []
@@ -201,13 +207,13 @@ class Inputs:
         self.contract = contract['boards'][BOARD]
         self.refs = sorted((p['ref'] for p in self.partition['parts']
                             if p['board_candidate'] in self.contract['domains'] and not p['dnp']), key=bg.sort_ref)
-        self.geo, self.fab = {}, {}
+        self.geo, self.fab, self.refpos = {}, {}, {}
         for ref in self.refs:
             fp = self.manifest[self.graph[ref]['footprint']]
             text = (BASE / fp['file']).read_text(encoding='utf-8')
-            self.geo[ref], self.fab[ref] = bg.footprint_geometry(text), fab_box(text)
+            self.geo[ref], self.fab[ref], self.refpos[ref] = bg.footprint_geometry(text), fab_box(text), ref_xy(text)
         text = self.b2b_text()
-        self.geo['B2B1'], self.fab['B2B1'] = bg.footprint_geometry(text), fab_box(text)
+        self.geo['B2B1'], self.fab['B2B1'], self.refpos['B2B1'] = bg.footprint_geometry(text), fab_box(text), ref_xy(text)
 
     def b2b_text(self):
         lib = bg.image_library_dir()  # KiCad 10.0.7 library (image), or KICAD10_FOOTPRINT_DIR with a copy of B2B_FP_URL
@@ -371,6 +377,24 @@ def check_placement(inp, parts):
             if a != owner and bg.rects_overlap(parts[a].box, box):
                 problems.append(f'hole {owner}.{number} inside the courtyard of {a}')
     return problems
+
+
+def move_edge_references(inp, anchors, parts):
+    """Put the reference legend on the part centre where the library position leaves the board or a cutout
+    (KiCad silk_edge_clearance), by the board_gen anchor key ref_text."""
+    c = inp.contract
+    outline = [tuple(p) for p in c['outline_mm']]
+    cuts = bg.cutout_boxes(c)
+    for ref, pa in parts.items():
+        x, y = pa.map(inp.refpos[ref])
+        n = max(2, len(ref))
+        box = (x - 0.5 * n - 0.4, y - 0.9, x + 0.5 * n + 0.4, y + 0.9)
+        corners = ((box[0], box[1]), (box[2], box[1]), (box[2], box[3]), (box[0], box[3]))
+        if all(point_in_poly(q, outline) and edge_dist(q, outline, cuts) >= 0.3 for q in corners) and \
+                not any(bg.rects_overlap(box, cut) for cut in cuts):
+            continue
+        b = pa.box
+        anchors[ref]['ref_text'] = {'at': [r4((b[0] + b[2]) / 2), r4((b[1] + b[3]) / 2)], 'angle': 0}
 
 
 def copper_items(parts):
@@ -714,6 +738,8 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt):
             continue
         a = anchors[ref]
         anchor = {'at': a['at'], 'align': a['align'], 'rotation': a['rotation'], 'side': a['side']}
+        if 'ref_text' in a:
+            anchor['ref_text'] = a['ref_text']
         parts.append({'ref': ref, 'source': 'graph', 'anchor': anchor})
     a = anchors['B2B1']
     parts.append({
@@ -798,8 +824,12 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt):
                       {'id': 'GND-In2', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0,
                        'why': 'second GND plane (power layer)'}]},
         'post_route_zones': [
-            {'id': 'GND-F', 'net': 'GND', 'layer': 'F.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'tht_thermal'},
-            {'id': 'GND-B', 'net': 'GND', 'layer': 'B.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'tht_thermal'}],
+            {'id': 'GND-F', 'net': 'GND', 'layer': 'F.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+             'why': 'solid pad connection: thermal spokes of THT header GND pins were starved between the pins (route run 42414083566)'},
+            {'id': 'GND-B', 'net': 'GND', 'layer': 'B.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid'}],
+        'edge_keepout': {'width_mm': 0.2, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
+                         'why': 'rule-area strips (half-width 0.2) on every outline and cutout edge: the router keeps its copper '
+                                '0.35 mm off the edge, above the project copper-to-edge 0.3 (route run 42414083566 had 0.23)'},
         'height_zones': [
             {'region': 'board', 'max_height_mm_from_contract': 'max_component_height', 'side': 'top', 'checked': True,
              'why': 'hB 5.5 (pcb/partition-spec.json parameters.hB): parts on the top side; heights from heights below'},
@@ -830,7 +860,11 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt):
                        'that PCB-PWRA places (pcb/partition-budget.json windows and edge strips)',
             'kelvin': 'INA3221 U215 between the ch1-ch3 shunts; every shunt net is scripted copper (current path plus sense '
                       'take-off from the shunt pads); ch4 senses through the B2B to U216 on PWR-A'},
-        'router': {'tool': 'freerouting', 'max_passes': 60, 'threads': 1, 'job_timeout': '00:25:00', 'timeout_s': 1620},
+        'router': {'tool': 'freerouting', 'max_passes': 60, 'threads': 1, 'job_timeout': '00:25:00', 'timeout_s': 1620,
+                   'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())),
+                   'why': 'the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and '
+                          'the router re-routed the scripted nets because locked copper that crosses a pad is no connection '
+                          'for it (route run 42414083566): fan-out off, the scripted classes not autorouted'},
         'drc_policy': {'warning_checks': WARNINGS},
     }
     return json.dumps(spec, ensure_ascii=False, indent=2) + '\n'
@@ -845,19 +879,22 @@ def project_json(inp, pins):
     pd = nc['project_defaults']['values_mm']
     classes = []
     for name, cls in (('Default', nc['classes']['SIG']), ('PWR1A', nc['classes']['PWR1A']), ('PWR2A', nc['classes']['PWR2A']),
-                      ('PWR3A', nc['classes']['PWR3A'])):
+                      ('PWR3A', nc['classes']['PWR3A']), ('SCRIPTED_PWR1A', nc['classes']['PWR1A']),
+                      ('SCRIPTED_PWR3A', nc['classes']['PWR3A'])):
         row = copy.deepcopy(default)
         row['name'] = name
         row['track_width'] = cls['outer_min_width_mm']
         row['clearance'] = cls['clearance_mm']
-        row['via_diameter'] = pd['via_diameter']
+        row['via_diameter'] = VIA_D
         row['via_drill'] = pd['via_hole']
         if name != 'Default':
             row['priority'] = len(classes) - 1
         classes.append(row)
     proj['net_settings']['classes'] = classes
     nets = set(template_nets(inp, pins))
-    patterns = [p for p in nc['kicad']['netclass_patterns'] if p['pattern'] in nets and p['netclass'] in ('PWR1A', 'PWR2A', 'PWR3A')]
+    patterns = [p for p in nc['kicad']['netclass_patterns'] if p['pattern'] in nets and p['netclass'] in ('PWR1A', 'PWR2A', 'PWR3A')
+                and p['pattern'] not in SCRIPTED_CLASSES]
+    patterns += [{'netclass': cls, 'pattern': net} for net, cls in SCRIPTED_CLASSES.items()]
     have = {p['pattern'] for p in patterns}
     for net, cls in BOARD_CLASSES.items():
         if net not in have:
@@ -872,7 +909,9 @@ def project_json(inp, pins):
 
 
 # Board routing classes beyond pcb/generated/netclasses.json (wider than its minimum, never narrower).
-BOARD_CLASSES = {'LNA4V5': 'PWR2A'}  # 2 B2B contacts, up to 1.209 A (b2b-nets.json net_current_extra): 0.8 mm routing width
+BOARD_CLASSES = {'LNA4V5': 'PWR2A'}
+# Nets whose copper is all scripted and locked: widths of their netclasses.json class, not autorouted (router -inc).
+SCRIPTED_CLASSES = {'LAB5': 'SCRIPTED_PWR3A', **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')}}  # 2 B2B contacts, up to 1.209 A (b2b-nets.json net_current_extra): 0.8 mm routing width
 
 
 # ------------------------------------------------------------------ main
@@ -881,6 +920,7 @@ def build(inp):
     missing = [r for r in inp.refs if r not in anchors]
     pins = b2b_pin_map(inp, anchors)
     parts = placed_parts(inp, anchors, pins['pins'])
+    move_edge_references(inp, anchors, parts)
     tracks, vias, exempt = scripted_copper(inp, parts, pins)
     return anchors, missing, pins, parts, tracks, vias, exempt
 
