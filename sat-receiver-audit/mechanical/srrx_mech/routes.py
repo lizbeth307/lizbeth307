@@ -61,7 +61,7 @@ def _port_box(P, pid):
         if p["id"] == pid:
             z = m["top_face"]["ports_z"]
             return (p["x"], H - t, z, p["x"], H - t, z)
-    for p in m["right_face"]["ports"]:
+    for p in m["right_face"]["ports"] + m["right_face"].get("panel", []):
         if p["id"] == pid:
             return (W - t, p["y"], p["z"], W - t, p["y"], p["z"])
     for p in m["bottom_face"]["ports"]:
