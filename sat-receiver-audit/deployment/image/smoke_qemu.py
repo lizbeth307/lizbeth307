@@ -20,8 +20,11 @@ Scenarios, one QEMU boot each (-no-reboot; systemd.run_*_action=poweroff ends th
   3 fallback-a       the bad labB sorts last: the blessed labA boots again
 Every boot also checks: no pending jobs, no failed unit beyond the scenario's expected ones (only
 srrx-boot-check.service on the boot that must fail), srrx.service inactive and disabled, the recipe
-masks in effect, every SR-RX service account present with the UID/GID of the build manifest; a
-boot-check unit in the wrong state carries its journal of that boot into the mismatches, and every
+masks in effect (gdm.service and gdm3.service among them, and display-manager.service resolves to
+the mask), every SR-RX service account present with the UID/GID of the build manifest, and the
+package closure as built (W2 IMG-2: closure versions installed, systemd-timesyncd gone, _chrony and
+gpsd with the manifest ids, chrony.service active, gpsd as the staged GNSS mode decides (socket
+listening, service socket-activated), the built chrony.conf); a boot-check unit in the wrong state carries its journal of that boot into the mismatches, and every
 unexpected failed unit its bounded `systemctl status` tail (address-like tokens removed). srrx-boot-check accepts the smoke's own tokens (bootchain.smoke_tokens) only
 inside a VM (systemd-detect-virt), so every other extra token of an edited entry still fails it. The first slot A boot also runs selftest.py offline on a read-only view of the booted root
 and ESP (bootchain.live_selftest): its FAIL/BLOCKED rows must equal the build-time rows on root A,
@@ -211,9 +214,64 @@ def account_mismatches(observed, recorded):
     return bad
 
 
-def check(scenario, result, expect, build_rows=None, accounts=None):
+# W2 IMG-2: gpsd's units by the GNSS mode the image staged (system_files.gpsd_defaults). The package
+# enables only gpsd.socket (debian/rules of gpsd 3.25-3ubuntu3.2: dh_installsystemd --no-enable
+# --no-start gpsd.service), so in gpsd and off mode the socket listens and gpsd.service stays disabled
+# until a client connects (nothing does in the model); in raw mode deploy.py stage masks both.
+# {mode: {unit: {property: expected value}}}; "!failed" means any ActiveState but failed.
+GNSS_UNIT_STATES = {
+    "gpsd": {"gpsd.socket": {"ActiveState": "active"}, "gpsd.service": {"UnitFileState": "disabled", "ActiveState": "!failed"}},
+    "off": {"gpsd.socket": {"ActiveState": "active"}, "gpsd.service": {"UnitFileState": "disabled", "ActiveState": "!failed"}},
+    "raw": {"gpsd.socket": {"LoadState": "masked"}, "gpsd.service": {"LoadState": "masked"}},
+}
+
+
+def closure_mismatches(observed, recorded):
+    """bootchain.closure_report of the booted slot against image-manifest.json package_closure: closure
+    versions installed, removed packages gone, the accounts with the build's ids, chrony active,
+    timesyncd not found, gpsd as the staged GNSS mode decides, chrony.conf as built."""
+    if not recorded:
+        return ["image-manifest.json records no package_closure (build_image.install_closure)"]
+    if not observed or "unavailable" in observed:
+        return ["no package closure report from the booted slot: %r" % (observed,)]
+    bad = []
+    dpkg = observed.get("dpkg") or {}
+    for name, version in sorted(recorded["installed"].items()):
+        if dpkg.get(name) != version + "\tinstalled":
+            bad.append("package %s is %r on the booted slot, expected %s installed" % (name, dpkg.get(name), version))
+    for name in recorded["removed"]:
+        if (dpkg.get(name) or "\tnot-installed").split("\t")[-1] not in ("not-installed", "config-files"):
+            bad.append("removed package %s is %r on the booted slot" % (name, dpkg.get(name)))
+    for name, ids in sorted(recorded["accounts"].items()):
+        fields = ((observed.get("accounts") or {}).get(name) or "").split(":")
+        if len(fields) < 4 or fields[0] != name or (fields[2], fields[3]) != (str(ids["uid"]), str(ids["primary_gid"])):
+            bad.append("package account %s %r differs from the image manifest %r" % (name, fields[2:4], ids))
+    units = observed.get("units") or {}
+
+    def state(unit, key="ActiveState"):
+        return (units.get(unit) or {}).get(key)
+
+    if state("chrony.service") != "active":
+        bad.append("chrony.service %r, expected active" % state("chrony.service"))
+    if state("systemd-timesyncd.service", "LoadState") != "not-found":
+        bad.append("systemd-timesyncd.service LoadState %r, expected not-found" % state("systemd-timesyncd.service", "LoadState"))
+    expected = GNSS_UNIT_STATES.get(recorded.get("gnss_mode"))
+    if expected is None:
+        bad.append("no gpsd expectation for the staged GNSS mode %r" % recorded.get("gnss_mode"))
+    for unit, properties in sorted((expected or {}).items()):
+        for key, want in sorted(properties.items()):
+            got = state(unit, key)
+            if (got == "failed") if want == "!failed" else (got != want):
+                bad.append("%s %s %r, expected %s for the staged GNSS mode %r" % (unit, key, got, want, recorded.get("gnss_mode")))
+    if observed.get("chrony_conf_sha256") != (recorded.get("chrony_conf") or {}).get("sha256"):
+        bad.append("chrony.conf on the booted slot %r is not the built one" % observed.get("chrony_conf_sha256"))
+    return bad
+
+
+def check(scenario, result, expect, build_rows=None, accounts=None, closure=None):
     """Compare one boot with its expectation; every mismatch is listed (host-testable).
-    accounts: image-manifest.json accounts.service_accounts (None: not compared)."""
+    accounts: image-manifest.json accounts.service_accounts (None: not compared);
+    closure: image-manifest.json package_closure (None: not compared)."""
     report = result["report"] or {}
     bc = report.get("boot_check") or {}
     units = report.get("units") or {}
@@ -254,6 +312,12 @@ def check(scenario, result, expect, build_rows=None, accounts=None):
         bad.append("recipe masks not in effect: " + (",".join(not_masked) or "no mask report"))
     if accounts is not None and report:
         bad += account_mismatches(report.get("accounts"), accounts)
+    if closure is not None and report:
+        bad += closure_mismatches(report.get("package_closure"), closure)
+    # graphical.target wants display-manager.service: r2's gdm3 alias must resolve to the recipe's gdm mask.
+    display_manager = report.get("display_manager")
+    if display_manager is not None and display_manager.get("LoadState") not in ("masked", "not-found"):
+        bad.append("display-manager.service LoadState %r: the GNOME greeter is not masked" % display_manager.get("LoadState"))
     if expect["selftest"]:
         selftest = report.get("selftest") or {}
         live = selftest.get("fail_or_blocked_rows")
@@ -304,6 +368,7 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
     build_rows = (manifest.get("selftest_root_a") or {}).get("fail_or_blocked_rows")
     result["build_selftest_rows"] = build_rows
     accounts = (manifest.get("accounts") or {}).get("service_accounts") or {}  # empty: every boot reports the gap
+    closure = manifest.get("package_closure") or {}  # likewise
     for index, ((name, expect), plan) in enumerate(zip(SCENARIOS, entry_plan(config)), 1):
         with Esp(copy, esp_dir) as esp:
             apply_entry_plan(esp / "loader/entries", plan)
@@ -314,7 +379,7 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
         run_result = qemu(copy, vars_file, log, timeout + (bootchain.SMOKE_SELFTEST_LIMIT if expect["selftest"] else 0), accel)
         with Esp(copy, esp_dir, read_only=True) as esp:
             run_result["entries_before"], run_result["entries_after"] = before, lab_entries(esp)
-        result["scenarios"].append(check(name, run_result, expect, build_rows, accounts))
+        result["scenarios"].append(check(name, run_result, expect, build_rows, accounts, closure))
         (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     result["status"] = "MODEL_PASS" if all(s["status"] == "MODEL_PASS" for s in result["scenarios"]) else "MODEL_FAIL"
     (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

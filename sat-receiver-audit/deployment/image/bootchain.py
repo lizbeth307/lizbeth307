@@ -597,6 +597,25 @@ def fail_or_blocked_rows(report):
 
 SMOKE_VIEW = Path("/run/srrx-smoke-root")
 SMOKE_SELFTEST_LIMIT = 1500  # seconds; the live run under QEMU TCG took about 17 min on 2026-11-06
+# W2 IMG-2: the package closure of the booted slot (package-closure.json, staged under /opt/srrx) and the
+# units it adds or removes; display-manager.service is r2's gdm3 alias, which the recipe masks with gdm.
+CLOSURE_FILE = HERE / "package-closure.json"
+CLOSURE_UNITS = ("chrony.service", "gpsd.service", "gpsd.socket", "systemd-timesyncd.service")
+CHRONY_CONF = Path("/etc/chrony/chrony.conf")
+UNIT_SHOW = "--property=LoadState,ActiveState,SubState,Result,UnitFileState"
+
+
+def closure_report(out, root=Path("/")):
+    """QEMU smoke only: dpkg state of every closure and removed package, getent of the accounts their
+    postinst creates, the closure units and the SHA-256 of chrony.conf on the booted slot.
+    out(argv) runs a bounded command and returns its stdout ("" when dpkg-query finds nothing)."""
+    closure = json.loads(CLOSURE_FILE.read_text(encoding="utf-8"))
+    names = [p["package"] for p in closure["packages"]] + list(closure["expected_removed"])
+    conf = root / CHRONY_CONF.relative_to("/")
+    return {"dpkg": {n: out(["dpkg-query", "-W", "-f=${Version}\t${db:Status-Status}", n]) for n in names},
+            "accounts": {n: out(["getent", "passwd", n]) for n in closure["expected_accounts"]},
+            "units": {u: unit_properties(out(["systemctl", "show", UNIT_SHOW, u])) for u in CLOSURE_UNITS},
+            "chrony_conf_sha256": hashlib.sha256(conf.read_bytes()).hexdigest() if conf.is_file() else None}
 
 
 def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW):
@@ -696,6 +715,11 @@ def smoke_report(timeout=900, root=Path("/"), selftest=False):
                               for kind, name, *_ in deploy.system_files().SERVICE_ACCOUNTS}
     except (ImportError, OSError, ValueError) as exc:
         report["accounts"] = {"unavailable": type(exc).__name__}
+    try:
+        report["package_closure"] = closure_report(out, root)
+    except (OSError, ValueError, KeyError) as exc:
+        report["package_closure"] = {"unavailable": type(exc).__name__}
+    report["display_manager"] = unit_properties(out(["systemctl", "show", UNIT_SHOW, "display-manager.service"]))
     if selftest:
         try:
             report["selftest"] = live_selftest(load_config(root / BOOT_CONFIG.relative_to("/")), read_slot(root / SLOT_FILE.relative_to("/")))

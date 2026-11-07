@@ -20,6 +20,7 @@ stay OPEN, and the image contains Radxa OS and Qualcomm material that must not b
 """
 import argparse
 import datetime
+import functools
 import hashlib
 import json
 import os
@@ -57,7 +58,7 @@ CONFIG_KEYS = ("CONFIG_VIRTIO_BLK", "CONFIG_VIRTIO_PCI", "CONFIG_VIRTIO_MMIO", "
 # (chrony's tzdata-legacy closure) are listed too, so the facts name every package RX-01a could block.
 INTEREST = re.compile(r"(linux-(image|headers|modules|firmware)|systemd|embloader|sdboot|radxa|rsetup|u-boot|edk2|fastrpc|qcom|qnn|qairt|"
                       r"mesa|libdrm|task-|aic8800|unattended|brltty|modemmanager|gdm3|greetd|labwc|python3$|python3\.12|dkms|gcc|initramfs|"
-                      r"util-linux|e2fsprogs|dosfstools|chrony|gpsd|network-manager|openssh|wpasupplicant|bluez|"
+                      r"util-linux|e2fsprogs|dosfstools|chrony|gpsd|libgps|network-manager|openssh|wpasupplicant|bluez|"
                       r"snpe|hexagon-dsp|dragonwing|tzdata)")
 REPO = DEPLOYMENT / "repo"
 # STACK.md:894: the signed publications are the only apt sources of the image (build/07 section 2):
@@ -72,6 +73,23 @@ SRRX_KEYRING = "usr/share/keyrings/srrx-lab.gpg"
 NPU_PAYLOAD_PACKAGES = ("qcom-qnn-sdk*", "radxa-qcom-qairt*", "qairt-*", "libqnn*", "libsnpe*", "qnn-tools", "snpe-tools")
 NPU_PAYLOAD_FILES = ("libQnn*", "libSnpe*", "libSNPE*")
 MCU_BUILD_MANIFEST = "firmware/dist/build-manifest.json"
+# Package closure (W2 IMG-2, build/15 «Закриття пакетів образу (W2 IMG-2)»): what the image adds to r2,
+# as hash-locked debs of the pinned snapshot. `closure --resolve` (CI, network) derives the file from the
+# gpgv-verified snapshot indices and the r2 dpkg status of image-facts.json; `build` never resolves, it
+# installs exactly the listed files with apt and every apt source and preference disabled.
+CLOSURE = HERE / "package-closure.json"
+CLOSURE_CACHE = "closure"  # cache subdirectory of the closure debs (sr-rx-image.yml caches it under its own key)
+CLOSURE_CHROOT_DIR = "var/cache/srrx-closure"
+SNAPSHOT_URL = "https://snapshot.ubuntu.com/ubuntu/"
+# The packages the closure is resolved for (STACK.md:902, build/07 §1.2) and the accounts their postinst
+# creates with adduser: chrony -> _chrony (+ group), gpsd -> gpsd in group dialout (debian/postinst of
+# chrony 4.5-1ubuntu4.2 and gpsd 3.25-3ubuntu3.2, read from the snapshot debs 2026-11-07).
+CLOSURE_ROOTS = {"chrony": ("_chrony",), "gpsd": ("gpsd",)}
+CLOSURE_PACKAGE_KEYS = ("package", "version", "architecture", "filename", "suite", "sha256", "size", "r2_version", "reason")
+# Compared between the committed file and a fresh `closure --resolve` (resolved_on is the run date).
+CLOSURE_COMPARED = ("snapshot", "suites", "base", "roots", "packages", "expected_removed", "removed_because", "expected_accounts")
+# r2's apt hooks (needrestart 3.6, apt-listchanges 3.27 in image-facts.json) stay quiet in the chroot; ucf keeps a local file.
+CLOSURE_ENV = {"NEEDRESTART_SUSPEND": "1", "APT_LISTCHANGES_FRONTEND": "none", "UCF_FORCE_CONFFOLD": "1"}
 
 
 class BuildError(RuntimeError):
@@ -157,8 +175,36 @@ def lock_artifacts(lock=None):
     return {a["id"]: a for a in lock["artifacts"]}
 
 
-def fetch(cache, ids=None):
-    """Download locked artifacts into cache_path; size and SHA-256 are checked before the rename."""
+def _download(url, target, expected_sha, expected_size, label):
+    """Stream url into target; size and SHA-256 are checked before the rename. Returns PRESENT or FETCHED."""
+    target = Path(target)
+    if target.is_file() and target.stat().st_size == expected_size and sha256(target) == expected_sha:
+        return "PRESENT"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    part = target.with_name(target.name + ".part")
+    digest, size = hashlib.sha256(), 0
+    LOG.write("fetch " + url)
+    request = urllib.request.Request(url, headers={"User-Agent": "sr-rx-image-builder"})
+    with urllib.request.urlopen(request, timeout=120) as response, open(part, "wb") as out:
+        while True:
+            chunk = response.read(1 << 20)
+            if not chunk:
+                break
+            digest.update(chunk)
+            size += len(chunk)
+            if size > expected_size:
+                raise BuildError("download exceeds the locked size: " + label)
+            out.write(chunk)
+    if size != expected_size or digest.hexdigest() != expected_sha:
+        part.unlink()
+        raise BuildError("downloaded bytes differ from the lock: " + label)
+    os.replace(part, target)
+    return "FETCHED"
+
+
+def fetch(cache, ids=None, closure=True):
+    """Download locked artifacts into cache_path and the package closure debs into cache/closure;
+    size and SHA-256 are checked before the rename."""
     cache = Path(cache)
     artifacts = lock_artifacts()
     ids = list(artifacts) if ids is None else ids
@@ -166,34 +212,16 @@ def fetch(cache, ids=None):
     for art_id in ids:
         art = artifacts[art_id]
         target = cache / art["cache_path"]
-        if target.is_file() and target.stat().st_size == art["size"] and sha256(target) == art["sha256"]:
-            done[art_id] = "PRESENT"
-            continue
-        if not art["url"].startswith("https://github.com/"):
+        if not (target.is_file() and target.stat().st_size == art["size"] and sha256(target) == art["sha256"]) \
+                and not art["url"].startswith("https://github.com/"):
             raise BuildError("locked artifact URL is not a GitHub release asset: " + art_id)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        part = target.with_name(target.name + ".part")
-        digest, size = hashlib.sha256(), 0
-        LOG.write("fetch " + art["url"])
-        request = urllib.request.Request(art["url"], headers={"User-Agent": "sr-rx-image-builder"})
-        with urllib.request.urlopen(request, timeout=120) as response, open(part, "wb") as out:
-            while True:
-                chunk = response.read(1 << 20)
-                if not chunk:
-                    break
-                digest.update(chunk)
-                size += len(chunk)
-                if size > art["size"]:
-                    raise BuildError("download exceeds the locked size: " + art_id)
-                out.write(chunk)
-        if size != art["size"] or digest.hexdigest() != art["sha256"]:
-            part.unlink()
-            raise BuildError("downloaded bytes differ from the lock: " + art_id)
-        os.replace(part, target)
-        done[art_id] = "FETCHED"
+        done[art_id] = _download(art["url"], target, art["sha256"], art["size"], art_id)
     import deploy
     verified = deploy.verify_cache(cache, components=[])
-    return {"status": "LOCKED_ARTIFACTS_VERIFIED", "artifacts": done, "verify_cache": verified}
+    result = {"status": "LOCKED_ARTIFACTS_VERIFIED", "artifacts": done, "verify_cache": verified}
+    if closure:
+        result["closure"] = fetch_closure(cache)
+    return result
 
 
 def sparse_decompress(xz_path, out_path, expected_sha=None):
@@ -415,8 +443,25 @@ def _units(root):
                           if re.search(r"first|rsetup|resize|grow|repart|embloader|bless|boot-complete|aic|ssh|gdm|greetd", p.name)})
     masked = sorted(p.name for p in (root / "etc/systemd/system").iterdir() if p.is_symlink() and os.readlink(p) == "/dev/null") \
         if (root / "etc/systemd/system").is_dir() else []
+    # gdm3's postinst links display-manager.service to its unit; graphical.target wants that alias (W2 IMG-2).
+    display_manager = root / "etc/systemd/system/display-manager.service"
     return {"wants": wants, "default_target": os.readlink(default) if default.is_symlink() else None,
-            "interesting_units": interesting, "masked": masked}
+            "interesting_units": interesting, "masked": masked,
+            "display_manager": os.readlink(display_manager) if display_manager.is_symlink() else
+            ("file" if display_manager.exists() else None)}
+
+
+def _dpkg_holds(root):
+    """Packages whose dpkg selection is hold (apt would refuse to change them without a flag)."""
+    path = Path(root) / "var/lib/dpkg/status"
+    if not path.is_file():
+        return []
+    held = set()
+    for para in path.read_text(encoding="utf-8", errors="replace").split("\n\n"):
+        name = re.search(r"^Package: (\S+)$", para, re.M)
+        if name and re.search(r"^Status: hold ", para, re.M):
+            held.add(name.group(1))
+    return sorted(held)
 
 
 # before.txt commands whose arguments are recorded; others keep only their argument count
@@ -518,11 +563,13 @@ def root_facts(root):
         "embloader_share": _listing(root / "usr/share/embloader", hashes=True),
         "dtb_paths": _find(root, "qcs6490-radxa-dragon-q6a*.dtb"),
         "packages_total": len(packages), "packages_of_interest": {k: v for k, v in sorted(packages.items()) if INTEREST.search(k)},
-        "packages": packages, "diversions": _diversions(root),
+        "packages": packages, "dpkg_holds": _dpkg_holds(root), "diversions": _diversions(root),
         "apt_sources_list_d": _listing(root / "etc/apt/sources.list.d"),
         "apt_sources_urls": sorted({u for p in [root / "etc/apt/sources.list", *sorted((root / "etc/apt/sources.list.d").glob("*"))]
                                     if p.is_file() for u in re.findall(r"https?://[^\s\"']+", p.read_text(errors="replace"))}),
         "apt_preferences_d": _listing(root / "etc/apt/preferences.d"),
+        # names, sizes and SHA-256 only: a netplan file could carry a Wi-Fi secret (W2 SYS-HOST asked whether r2 has a wired profile)
+        "netplan": _listing(root / "etc/netplan", hashes=True),
         "units": _units(root), "accounts": _accounts(root),
         "machine_id": "missing" if machine_id is None else ("empty" if not machine_id.strip() else ("uninitialized" if machine_id.strip() == "uninitialized" else "set")),
         "hostname": (_text(root / "etc/hostname") or "").strip(),
@@ -678,6 +725,10 @@ STEPS = (
     ("bootloader", "Route A: dpkg --purge sdboot-is-embloader, bootctl install --no-variables, embloader pinned -1; Route B: embloader kept (0.4 required)"),
     ("boot-config", "/etc/srrx/boot.json, /etc/srrx/slot, /etc/kernel/cmdline, tries, install.conf layout=other, 90-srrx-bls.install, boot-check unit (Route B: initramfs write-back and commit unit)"),
     ("kernel", "dpkg -i the five locked 6.18.2-4 debs before any apt run; the plugin writes the slot A entry and ESP files"),
+    ("closure", "step 8b: apt-get install --purge of the hash-locked package-closure.json debs (chrony, tzdata-legacy, tzdata, gpsd, "
+                "libgps30t64) with every apt source and preference disabled and policy-rc.d 101; the apt plan and the dpkg status "
+                "change must be exactly the closure (systemd-timesyncd purged); /etc/chrony/chrony.conf replaced by "
+                "system_files.chrony_conf() and parsed by chronyd -p (no network directive)"),
     ("accounts", "systemd-sysusers and systemd-tmpfiles --create of the staged SR-RX sysusers.d/tmpfiles.d in the root A chroot "
                  "(/data, /run, /tmp left to systemd-tmpfiles-setup on boot); every SERVICE_ACCOUNTS uid/gid recorded, a missing one is a blocker"),
     ("hardening", "apt-mark hold, purge unattended-upgrades/brltty, masks (apt/fwupd timers, ModemManager, sleep targets, rsetup.service, "
@@ -1022,6 +1073,10 @@ def hardening(root, recipe, route):
         else:
             run(["systemctl", "--root", str(root), "mask", unit])
         masked.append(unit)
+    # graphical.target wants display-manager.service, r2's alias of the gdm3 unit (W2 IMG-2): its target must be masked.
+    display_manager = _units(root)["display_manager"]
+    if display_manager not in (None, "file") and Path(display_manager).name not in masked:
+        raise BuildError("display-manager.service points to " + display_manager + ", which the recipe does not mask")
     policy = load_json(POLICY)
     tokens = policy["apt"]["forbidden_list_name_tokens"]
     origins = policy["apt_forbidden_origins"]
@@ -1069,7 +1124,7 @@ def hardening(root, recipe, route):
         (ssh_dir / name).unlink()
     install_file(FILES / "srrx-ssh-hostkeys.service", root / "etc/systemd/system/srrx-ssh-hostkeys.service")
     return {"held": hold, "hold_names_not_installed": missing, "purged": purge, "masked": masked, "masked_by_stage": masked_by_stage,
-            "removed_apt_lists": removed, "diverted_apt_preferences": diverted_prefs, "locked_accounts": locked,
+            "display_manager": display_manager, "removed_apt_lists": removed, "diverted_apt_preferences": diverted_prefs, "locked_accounts": locked,
             "machine_id_before": previous, "removed_ssh_host_keys": host_keys, "apt_sources": sources}
 
 
@@ -1147,7 +1202,9 @@ def system_accounts(root, stage_dir):
         if None in entry.values():
             missing.append(name)
         service[name] = entry
-    package = {name: {"uid": int(passwd[name][2]) if name in passwd else None, "gid": int(group[name][2]) if name in group else None}
+    # primary_gid: gpsd has no group of its own (its postinst puts it in dialout).
+    package = {name: {"uid": int(passwd[name][2]) if name in passwd else None, "gid": int(group[name][2]) if name in group else None,
+                      "primary_gid": int(passwd[name][3]) if name in passwd else None}
                for name in sorted(system.PACKAGE_ACCOUNTS)}
     return {"sysusers": sysusers, "tmpfiles": tmpfiles, "tmpfiles_left_to_boot": list(TMPFILES_AT_BOOT),
             "service_accounts": service, "service_accounts_missing": missing, "package_accounts": package,
@@ -1312,6 +1369,483 @@ def mcu_firmware(root):
     return record
 
 
+# ---------------------------------------------------------------- package closure (W2 IMG-2)
+
+def _order(char):
+    """dpkg lib/dpkg/version.c order(): '~' sorts before everything, letters by code, others after letters."""
+    if char == "~":
+        return -1
+    if "0" <= char <= "9":
+        return 0
+    if ("a" <= char <= "z") or ("A" <= char <= "Z"):
+        return ord(char)
+    return ord(char) + 256
+
+
+def _verrevcmp(a, b):
+    """dpkg verrevcmp() of an upstream version or revision."""
+    i = j = 0
+    while i < len(a) or j < len(b):
+        while (i < len(a) and not "0" <= a[i] <= "9") or (j < len(b) and not "0" <= b[j] <= "9"):
+            ac = _order(a[i]) if i < len(a) else 0
+            bc = _order(b[j]) if j < len(b) else 0
+            if ac != bc:
+                return ac - bc
+            i, j = i + 1, j + 1
+        while i < len(a) and a[i] == "0":
+            i += 1
+        while j < len(b) and b[j] == "0":
+            j += 1
+        first_diff = 0
+        while i < len(a) and "0" <= a[i] <= "9" and j < len(b) and "0" <= b[j] <= "9":
+            if not first_diff:
+                first_diff = ord(a[i]) - ord(b[j])
+            i, j = i + 1, j + 1
+        if i < len(a) and "0" <= a[i] <= "9":
+            return 1
+        if j < len(b) and "0" <= b[j] <= "9":
+            return -1
+        if first_diff:
+            return first_diff
+    return 0
+
+
+def _split_version(version):
+    epoch, sep, rest = version.partition(":")
+    if not sep:
+        epoch, rest = "0", version
+    upstream, sep, revision = rest.rpartition("-")
+    if not sep:
+        upstream, revision = rest, ""
+    return int(epoch), upstream, revision
+
+
+def deb_version_compare(a, b):
+    """<0, 0 or >0 like `dpkg --compare-versions` (epoch, upstream version, Debian revision)."""
+    ea, ua, ra = _split_version(a)
+    eb, ub, rb = _split_version(b)
+    if ea != eb:
+        return ea - eb
+    return _verrevcmp(ua, ub) or _verrevcmp(ra, rb)
+
+
+def version_satisfies(version, op, wanted):
+    if op is None:
+        return True
+    c = deb_version_compare(version, wanted)
+    return {"<<": c < 0, "<=": c <= 0, "<": c <= 0, "=": c == 0, ">=": c >= 0, ">>": c > 0, ">": c >= 0}[op]
+
+
+_RELATION = re.compile(r"([a-z0-9][a-z0-9+.-]*)(?::([a-z0-9-]+))?\s*(?:\(\s*(<<|<=|>=|>>|=|<|>)\s*([^\s)]+)\s*\))?\s*(?:\[[^\]]*\]\s*)?(?:<[^>]*>\s*)*\Z")
+
+
+def parse_relations(text):
+    """Depends-style field -> [[(name, arch qualifier, op, version), alternatives...], ...] (deb-control(5))."""
+    groups = []
+    for part in (text or "").replace("\n", " ").split(","):
+        if not part.strip():
+            continue
+        group = []
+        for alternative in part.split("|"):
+            match = _RELATION.match(alternative.strip())
+            if not match:
+                raise BuildError("unparsable package relation: " + alternative.strip()[:120])
+            group.append(match.groups())
+        groups.append(group)
+    return groups
+
+
+def _relation_text(group):
+    return " | ".join(n + ((":" + a) if a else "") + ((" (%s %s)" % (o, w)) if o else "") for n, a, o, w in group)
+
+
+def _source(stanza):
+    """(source package, source version) of a binary stanza ("Source: name (version)", default: itself)."""
+    source = (stanza.get("source") or stanza["package"]).split()
+    return source[0], source[1].strip("()") if len(source) > 1 else stanza["version"]
+
+
+def _versions(by_name, name, suites):
+    """[(version, suite, area, stanza)] of a package, newest first; a version belongs to the first suite
+    (apt_snapshot.suites order) whose signed index lists it."""
+    seen = {}
+    for suite, area, stanza in by_name.get(name, ()):
+        key = stanza["version"]
+        if key not in seen or suites.index(suite) < suites.index(seen[key][1]):
+            seen[key] = (key, suite, area, stanza)
+    return sorted(seen.values(), key=functools.cmp_to_key(lambda x, y: deb_version_compare(y[0], x[0])))
+
+
+def resolve_closure(stanzas, installed, lock, roots=CLOSURE_ROOTS):
+    """The packages the image must add to r2 for roots, from the signed snapshot indices.
+
+    stanzas: [(suite, area, {field: value})] of every binary-<arch> Packages index of the snapshot;
+    installed: {package[:arch]: version}, the r2 dpkg status (image-facts.json root.packages).
+    A dependency r2 already satisfies stays as it is. A missing one takes the version sources.lock.json
+    binary_debs pins, else the newest snapshot version that satisfies it (apt's candidate). An r2 package
+    built from the same source as a closure package at another version joins at the closure's source
+    version (tzdata with tzdata-legacy). An r2 package that a closure package Conflicts with or Breaks,
+    also through a virtual package it Provides, is removed. Installed relations are read from the
+    snapshot stanza of the installed version (else the newest one): r2 versions older than the
+    snapshot are an approximation, which the build's apt plan check settles."""
+    snapshot = lock["apt_snapshot"]
+    suites = list(snapshot["suites"])
+    by_name = {}
+    for suite, area, stanza in stanzas:
+        if stanza.get("architecture") in (snapshot["architecture"], "all") and stanza.get("package") and stanza.get("version"):
+            by_name.setdefault(stanza["package"], []).append((suite, area, stanza))
+    r2 = {name.split(":", 1)[0]: version for name, version in installed.items()}
+    locked = {}
+    for component in lock["components"]:
+        for deb in component.get("binary_debs") or []:
+            locked.setdefault(deb["package"], {})[deb["version"]] = deb
+
+    def approx(name, version):
+        found = _versions(by_name, name, suites)
+        return ([v for v in found if v[0] == version] or found or [None])[0]
+
+    installed_stanzas = {name: approx(name, version) for name, version in r2.items()}
+    installed_provides = {}
+    for name, entry in installed_stanzas.items():
+        for group in parse_relations(entry[3].get("provides")) if entry else []:
+            for pname, _, _, pversion in group:
+                installed_provides.setdefault(pname, []).append((name, pversion))
+    selected, removed, issues = {}, {}, []
+
+    def satisfied(name, op, wanted):
+        version = selected[name]["version"] if name in selected else (None if name in removed else r2.get(name))
+        if version is not None and version_satisfies(version, op, wanted):
+            return True
+        provided = [pv for sel in selected.values() for group in parse_relations(sel["stanza"].get("provides"))
+                    for pn, _, _, pv in group if pn == name]
+        provided += [pv for provider, pv in installed_provides.get(name, ()) if provider not in selected and provider not in removed]
+        return any(op is None or (pv is not None and version_satisfies(pv, op, wanted)) for pv in provided)
+
+    def choose(name, op=None, wanted=None):
+        options = [v for v in _versions(by_name, name, suites) if version_satisfies(v[0], op, wanted)]
+        return ([v for v in options if v[0] in locked.get(name, {})] or options or [None])[0]
+
+    queue = [(name, "root (STACK.md:902, build/07 §1.2)", None, None) for name in sorted(roots)]
+    while queue:
+        name, reason, op, wanted = queue.pop(0)
+        if name in selected:
+            if not version_satisfies(selected[name]["version"], op, wanted):
+                issues.append("%s %s does not satisfy %s" % (name, selected[name]["version"], reason))
+            continue
+        choice = choose(name, op, wanted)
+        if choice is None:
+            issues.append("no snapshot version of %s for %s" % (name, reason))
+            continue
+        version, suite, area, stanza = choice
+        selected[name] = {"version": version, "suite": suite, "area": area, "stanza": stanza, "reason": reason}
+        for field in ("pre-depends", "depends"):
+            for group in parse_relations(stanza.get(field)):
+                if any(satisfied(n, o, w) for n, _, o, w in group):
+                    continue
+                for n, _, o, w in group:
+                    if choose(n, o, w) is not None:
+                        queue.append((n, "%s of %s: %s (r2 has %s)" % (field.capitalize(), name, _relation_text(group),
+                                                                     r2.get(n) or "none"), o, w))
+                        break
+                else:
+                    issues.append("%s of %s %s satisfied neither by r2 nor by the snapshot: %s" % (field, name, version, _relation_text(group)))
+        source = _source(stanza)
+        for sibling, sibling_version in sorted(r2.items()):
+            entry = installed_stanzas.get(sibling)
+            if sibling in selected or not entry or _source(entry[3])[0] != source[0]:
+                continue
+            same = [v for v in _versions(by_name, sibling, suites) if _source(v[3]) == source]
+            if same and same[0][0] != sibling_version:
+                queue.append((sibling, "same source as %s (%s %s; r2 has %s)" % (name, source[0], source[1], sibling_version), "=", same[0][0]))
+    for name, sel in sorted(selected.items()):
+        for field in ("conflicts", "breaks"):
+            for group in parse_relations(sel["stanza"].get(field)):
+                for n, _, o, w in group:
+                    if n != name and n not in selected and r2.get(n) is not None and version_satisfies(r2[n], o, w):
+                        removed.setdefault(n, "%s of %s: %s" % (field.capitalize(), name, _relation_text([(n, None, o, w)])))
+                    if o is None:
+                        for provider, _ in installed_provides.get(n, ()):
+                            if provider != name and provider not in selected:
+                                removed.setdefault(provider, "%s of %s: %s, which %s provides" % (field.capitalize(), name, n, provider))
+    provided_by_closure = {pn for sel in selected.values() for group in parse_relations(sel["stanza"].get("provides")) for pn, *_ in group}
+    for name, version in sorted(r2.items()):
+        entry = installed_stanzas.get(name)
+        if name in selected or name in removed or not entry:
+            continue
+        for field in ("conflicts", "breaks"):
+            for group in parse_relations(entry[3].get(field)):
+                for n, _, o, w in group:
+                    if (n in selected and version_satisfies(selected[n]["version"], o, w)) or (o is None and n in provided_by_closure):
+                        issues.append("r2 %s %s %s %s, which the closure installs" % (name, version, field, n))
+        for field in ("pre-depends", "depends"):
+            for group in parse_relations(entry[3].get(field)):
+                if any(n in removed for n, *_ in group) and not any(satisfied(n, o, w) for n, _, o, w in group):
+                    issues.append("removing %s breaks %s of r2 %s: %s" % (",".join(n for n, *_ in group if n in removed), field, name,
+                                                                           _relation_text(group)))
+    packages = []
+    for name in sorted(selected):
+        sel, stanza = selected[name], selected[name]["stanza"]
+        entry = {"package": name, "version": sel["version"], "architecture": stanza["architecture"], "filename": stanza["filename"],
+                 "suite": sel["suite"], "sha256": stanza["sha256"], "size": int(stanza["size"]), "r2_version": r2.get(name),
+                 "reason": sel["reason"]}
+        pinned = locked.get(name, {}).get(sel["version"])
+        if pinned and any(pinned[k] != entry[k] for k in ("architecture", "filename", "sha256", "size")):
+            issues.append("snapshot %s %s differs from sources.lock.json binary_debs" % (name, sel["version"]))
+        packages.append(entry)
+    return {"packages": packages, "expected_removed": sorted(removed), "removed_because": dict(sorted(removed.items())), "issues": issues}
+
+
+CLOSURE_DESCRIPTION = ("Packages the golden image adds to Radxa OS r2 (build_image.py step 8b): apt-get install --purge of exactly these "
+                       "hash-locked debs of the pinned snapshot, with every apt source and preference disabled. chrony replaces r2's "
+                       "systemd-timesyncd (Conflicts/Provides time-daemon) and needs tzdata-legacy; tzdata follows its source; gpsd needs "
+                       "libgps30t64. Their postinst scripts create _chrony and gpsd. Generated by `build_image.py closure --resolve`; "
+                       "never edited by hand.")
+CLOSURE_METHOD = ("build_image.py closure --resolve: gpgv of each suite InRelease against the pinned archive key (fetch_sources.signed_release), "
+                  "equal to sources.lock.json apt_snapshot.releases; the signed SHA256 list checks every binary-arm64 Packages.xz; "
+                  "resolve_closure() against the r2 dpkg status of image-facts.json.")
+
+
+def closure_document(resolved, lock, recipe, packages_total, resolved_on):
+    snapshot = lock["apt_snapshot"]
+    base = lock_artifacts(lock)[recipe["base_artifact"]]
+    return {"schema_version": 1, "status": "CANDIDATE", "description": CLOSURE_DESCRIPTION,
+            "snapshot": {k: snapshot[k] for k in ("archive", "timestamp", "architecture")},
+            "suites": [dict(r) for r in snapshot["releases"]], "resolved_on": resolved_on, "method": CLOSURE_METHOD,
+            "base": {"artifact": base["id"], "sha256": base["sha256"], "packages_total": packages_total},
+            "roots": sorted(CLOSURE_ROOTS), "packages": resolved["packages"], "expected_removed": resolved["expected_removed"],
+            "removed_because": resolved["removed_because"],
+            "expected_accounts": sorted({a for accounts in CLOSURE_ROOTS.values() for a in accounts})}
+
+
+def closure_issues(closure, lock):
+    """Consistency of package-closure.json with sources.lock.json (host-tested; the build refuses any)."""
+    snapshot, issues = lock["apt_snapshot"], []
+    if closure.get("schema_version") != 1:
+        issues.append("schema_version must be 1")
+    if closure.get("snapshot") != {k: snapshot[k] for k in ("archive", "timestamp", "architecture")}:
+        issues.append("snapshot differs from sources.lock.json apt_snapshot")
+    if not (closure.get("snapshot", {}).get("archive", "") + "/").startswith(SNAPSHOT_URL):
+        issues.append("archive is not " + SNAPSHOT_URL)
+    if closure.get("suites") != snapshot["releases"]:
+        issues.append("suites differ from sources.lock.json apt_snapshot.releases")
+    packages = closure.get("packages") or []
+    names = [p.get("package") for p in packages]
+    if names != sorted(set(names)) or not names:
+        issues.append("packages must be non-empty, unique and sorted by name")
+    locked = {(d["package"], d["version"]): d for c in lock["components"] for d in c.get("binary_debs") or []}
+    basenames = set()
+    for p in packages:
+        if tuple(p) != CLOSURE_PACKAGE_KEYS:
+            issues.append("package entry keys: " + str(p.get("package")))
+            continue
+        if not re.fullmatch(r"[0-9a-f]{64}", p["sha256"]) or type(p["size"]) is not int or p["size"] <= 0:
+            issues.append("sha256/size: " + p["package"])
+        if not re.fullmatch(r"pool/(main|universe)/[a-z0-9]+/[a-z0-9][a-z0-9+.-]*/[A-Za-z0-9+.~_-]+\.deb", p["filename"]) \
+                or Path(p["filename"]).name in basenames:
+            issues.append("filename: " + p["package"])
+        basenames.add(Path(p["filename"]).name)
+        if p["suite"] not in snapshot["suites"] or p["architecture"] not in (snapshot["architecture"], "all"):
+            issues.append("suite/architecture: " + p["package"])
+        pinned = locked.get((p["package"], p["version"]))
+        if pinned and any(pinned[k] != p[k] for k in ("architecture", "filename", "sha256", "size")):
+            issues.append("differs from sources.lock.json binary_debs: " + p["package"])
+    if closure.get("roots") != sorted(CLOSURE_ROOTS) or not set(CLOSURE_ROOTS) <= set(names):
+        issues.append("roots must be " + ",".join(sorted(CLOSURE_ROOTS)) + " and in packages")
+    if set(closure.get("expected_removed") or []) & set(names) or sorted(closure.get("removed_because") or {}) != closure.get("expected_removed"):
+        issues.append("expected_removed must be outside packages and match removed_because")
+    if closure.get("expected_accounts") != sorted({a for accounts in CLOSURE_ROOTS.values() for a in accounts}):
+        issues.append("expected_accounts must be the accounts of the roots")
+    return issues
+
+
+def load_closure(path=CLOSURE, lock=None):
+    closure = load_json(path)
+    issues = closure_issues(closure, load_json(LOCK) if lock is None else lock)
+    if issues:
+        raise BuildError("package-closure.json: " + "; ".join(issues))
+    return closure
+
+
+def compare_closure(proposed, committed):
+    """Keys of CLOSURE_COMPARED where a fresh resolution differs from the committed file."""
+    return [k for k in CLOSURE_COMPARED if proposed.get(k) != committed.get(k)]
+
+
+def fetch_closure(cache, closure=None):
+    """Each closure deb from snapshot.ubuntu.com/ubuntu/<timestamp>/<filename>, accepted only with its SHA-256 and size."""
+    closure = load_closure() if closure is None else closure
+    base = closure["snapshot"]["archive"] + "/" + closure["snapshot"]["timestamp"] + "/"
+    return {p["package"]: _download(base + p["filename"], Path(cache) / CLOSURE_CACHE / Path(p["filename"]).name, p["sha256"], p["size"],
+                                    "closure " + p["package"]) for p in closure["packages"]}
+
+
+def apt_local_options(parts_dir):
+    """apt reads no source and no preference: only the debs on the command line and the dpkg status (apt.conf(5),
+    Dir::Etc). dpkg keeps a conffile that is already there (the staged /etc/default/gpsd) instead of asking."""
+    return ["-o", "Dir::Etc::SourceList=/dev/null", "-o", "Dir::Etc::SourceParts=" + parts_dir,
+            "-o", "Dir::Etc::Preferences=/dev/null", "-o", "Dir::Etc::PreferencesParts=" + parts_dir,
+            "-o", "Dpkg::Options::=--force-confdef", "-o", "Dpkg::Options::=--force-confold"]
+
+
+_APT_ACTION = re.compile(r"^(Inst|Remv|Purg) (\S+)(?: \[([^\]]*)\])?(?: \((\S+))?", re.M)
+
+
+def apt_simulation(text):
+    """{"install": {package: version}, "remove": [package]} of `apt-get -s` output (Inst/Remv/Purg lines)."""
+    plan = {"install": {}, "remove": set()}
+    for action, name, _, version in _APT_ACTION.findall(text):
+        name = name.split(":", 1)[0]
+        if action == "Inst":
+            plan["install"][name] = version
+        else:
+            plan["remove"].add(name)
+    return {"install": dict(sorted(plan["install"].items())), "remove": sorted(plan["remove"])}
+
+
+def closure_plan_issues(plan, closure):
+    want = {p["package"]: p["version"] for p in closure["packages"]}
+    issues = []
+    if plan["install"] != want:
+        issues.append("apt would install %s, the closure lists %s" % (json.dumps(plan["install"], sort_keys=True), json.dumps(want, sort_keys=True)))
+    if plan["remove"] != sorted(closure["expected_removed"]):
+        issues.append("apt would remove %s, the closure expects %s" % (plan["remove"], sorted(closure["expected_removed"])))
+    return issues
+
+
+def status_changes(before, after):
+    """{package: (version before, version after)} of every package whose installed version changed (None: absent)."""
+    b = {n.split(":", 1)[0]: v for n, v in before.items()}
+    a = {n.split(":", 1)[0]: v for n, v in after.items()}
+    return {n: (b.get(n), a.get(n)) for n in sorted(set(b) | set(a)) if b.get(n) != a.get(n)}
+
+
+def closure_status_issues(changes, closure):
+    issues = []
+    for p in closure["packages"]:
+        if changes.get(p["package"]) != (p["r2_version"], p["version"]):
+            issues.append("%s: %r, expected %r" % (p["package"], changes.get(p["package"]), (p["r2_version"], p["version"])))
+    for name in closure["expected_removed"]:
+        if not changes.get(name) or changes[name][1] is not None:
+            issues.append("%s was not removed: %r" % (name, changes.get(name)))
+    others = sorted(set(changes) - {p["package"] for p in closure["packages"]} - set(closure["expected_removed"]))
+    if others:
+        issues.append("packages outside the closure changed: " + json.dumps({n: changes[n] for n in others}))
+    return issues
+
+
+def install_closure(root, cache, closure):
+    """Step 8b: apt-get install --purge of the closure debs in the chroot (policy-rc.d 101 starts nothing);
+    the simulated plan and the dpkg status change must both be exactly the closure."""
+    root = Path(root)
+    before = _dpkg_status(root)
+    plain = {n.split(":", 1)[0]: v for n, v in before.items()}
+    drift = {p["package"]: plain.get(p["package"]) for p in closure["packages"] if plain.get(p["package"]) != p["r2_version"]}
+    drift.update({n: None for n in closure["expected_removed"] if n not in plain})
+    if drift:
+        raise BuildError("the r2 root differs from the dpkg status the closure was resolved against: " + json.dumps(drift))
+    target = root / CLOSURE_CHROOT_DIR
+    if target.exists():
+        shutil.rmtree(target)
+    (target / "parts.d").mkdir(parents=True)
+    names = []
+    for p in closure["packages"]:
+        source = Path(cache) / CLOSURE_CACHE / Path(p["filename"]).name
+        dest = target / source.name
+        shutil.copyfile(source, dest)
+        os.chmod(dest, 0o644)
+        if dest.stat().st_size != p["size"] or sha256(dest) != p["sha256"]:
+            raise BuildError("closure deb differs from package-closure.json: " + p["package"])
+        names.append("/" + CLOSURE_CHROOT_DIR + "/" + source.name)
+    for directory in (target, target / "parts.d"):
+        os.chmod(directory, 0o755)
+    argv = ["apt-get", "install", "-y", "-q", "--no-install-recommends", "--purge"] + apt_local_options("/" + CLOSURE_CHROOT_DIR + "/parts.d")
+    simulated = chroot(root, argv[:2] + ["-s"] + argv[2:] + names, extra_env=CLOSURE_ENV)
+    plan = apt_simulation(simulated.stdout)
+    issues = closure_plan_issues(plan, closure)
+    if issues:
+        raise BuildError("apt plan of the package closure: " + "; ".join(issues) + "\n" + simulated.stdout[-2000:])
+    done = chroot(root, argv + names, extra_env=CLOSURE_ENV)
+    shutil.rmtree(target)
+    changes = status_changes(before, _dpkg_status(root))
+    issues = closure_status_issues(changes, closure)
+    if issues:
+        raise BuildError("dpkg status after the package closure: " + "; ".join(issues))
+    passwd = _colon_table(root / "etc/passwd")
+    accounts = {n: {"uid": int(passwd[n][2]) if n in passwd else None, "primary_gid": int(passwd[n][3]) if n in passwd else None}
+                for n in closure["expected_accounts"]}
+    missing = sorted(n for n, ids in accounts.items() if ids["uid"] is None)
+    if missing:
+        raise BuildError("the closure's maintainer scripts did not create " + ", ".join(missing))
+    return {"file_sha256": sha256(CLOSURE), "snapshot": closure["snapshot"]["timestamp"],
+            "installed": {p["package"]: p["version"] for p in closure["packages"]},
+            "deb_sha256": {p["package"]: p["sha256"] for p in closure["packages"]},
+            "removed": sorted(n for n, (_, after) in changes.items() if after is None),
+            "upgraded": {n: {"from": b, "to": a} for n, (b, a) in changes.items() if b and a},
+            "accounts": accounts, "apt_plan": plan, "apt_tail": done.stdout[-1500:]}
+
+
+def install_chrony_conf(root):
+    """Replace chrony's own /etc/chrony/chrony.conf (ucf copy with the Ubuntu pools) by the offline SR-RX file,
+    then let the image's chronyd parse it (-p prints every directive, conf.d included, and exits)."""
+    import deploy
+    system = deploy.system_files()
+    root = Path(root)
+    target = root / system.CHRONY_CONF
+    if not target.parent.is_dir():
+        raise BuildError("chrony is not installed: /etc/chrony is missing")
+    replaced = sha256(target) if target.is_file() else None
+    write_text(target, system.chrony_conf(), 0o644)
+    parsed = chroot(root, ["chronyd", "-p", "-f", "/" + system.CHRONY_CONF])
+    directives = [line.split()[0].lower() for line in parsed.stdout.splitlines() if line.split()]
+    network = sorted(set(directives) & set(system.CHRONY_NETWORK_DIRECTIVES))
+    if network or not directives:
+        raise BuildError("chronyd -p of the SR-RX chrony.conf: " + (",".join(network) or "no directive") + "\n" + parsed.stdout[-800:])
+    return {"path": system.CHRONY_CONF, "sha256": sha256(target), "source": "deployment/system/system_files.py chrony_conf()",
+            "replaced_sha256": replaced, "chronyd_p_directives": directives, "network_directives": network}
+
+
+def staged_gnss_mode(root):
+    """The GNSS mode of the staged /etc/default/gpsd (deploy.py stage --gnss; the image stages the default)."""
+    import deploy
+    system = deploy.system_files()
+    path = Path(root) / system.GPSD_DEFAULTS
+    text = path.read_text(encoding="utf-8") if path.is_file() else None
+    return next((mode for mode in deploy.GNSS_MODES if text == system.gpsd_defaults(mode)), None)
+
+
+def snapshot_stanzas(lock, keyring, work):
+    """Every binary-<arch> Packages stanza of the pinned snapshot: gpgv of each suite InRelease by the pinned
+    key (fetch_sources.signed_release) must give the lock record, and each index its signed SHA-256."""
+    import deploy
+    import fetch_sources
+    snapshot = lock["apt_snapshot"]
+    recorded = {r["suite"]: r for r in snapshot["releases"]}
+    stanzas = []
+    Path(work).mkdir(parents=True, exist_ok=True)
+    for suite in snapshot["suites"]:
+        release, files = fetch_sources.signed_release(snapshot, suite, keyring, work)
+        if recorded.get(suite) != release:
+            raise BuildError("InRelease differs from sources.lock.json: " + suite)
+        for area in snapshot["areas"]:
+            _, text = fetch_sources.index(snapshot, suite, area + "/binary-" + snapshot["architecture"] + "/Packages.xz", files, work)
+            stanzas += [(suite, area, s) for s in deploy.deb822(text, suite + " " + area + " Packages")]
+    return stanzas
+
+
+def closure_resolve(facts_path, keyring, work, write=None):
+    """CI helper (network): the closure the signed snapshot gives for the r2 facts, compared with the committed file."""
+    lock, recipe, facts = load_json(LOCK), load_json(RECIPE), load_json(facts_path)
+    resolved = resolve_closure(snapshot_stanzas(lock, keyring, work), facts["root"]["packages"], lock)
+    proposed = closure_document(resolved, lock, recipe, facts["root"]["packages_total"], datetime.date.today().isoformat())
+    if write:
+        dump(write, proposed)
+    committed = load_json(CLOSURE) if CLOSURE.is_file() else {}
+    differs = compare_closure(proposed, committed)
+    issues = resolved["issues"] + closure_issues(proposed, lock)
+    return {"status": "CLOSURE_MATCHES_COMMITTED" if not differs and not issues else "CLOSURE_DIFFERS",
+            "differs": differs, "issues": issues, "dpkg_holds": facts["root"].get("dpkg_holds"), "proposed": proposed}
+
+
 # ---------------------------------------------------------------- build
 
 def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, data_bytes=None,
@@ -1341,7 +1875,7 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         LOG.step("inputs", "DONE", artifacts=fetched["artifacts"], bundle_sha256=staged["bundle"]["sha256"],
                  stage_files=staged["stage"]["files"])
         manifest["inputs"] = {"locked_artifacts": {a["id"]: a["sha256"] for a in load_json(LOCK)["artifacts"]},
-                              "sources_lock_sha256": sha256(LOCK), "recipe_sha256": sha256(RECIPE),
+                              "sources_lock_sha256": sha256(LOCK), "recipe_sha256": sha256(RECIPE), "package_closure_sha256": sha256(CLOSURE),
                               "layout_sha256": sha256(layoutlib.LAYOUT), "controller_bundle": staged}
         base = facts(cache, work, out / "image-facts.json", keep_mounted=keep)
         base_mounts, base_loop, base_root, base_esp = keep
@@ -1436,13 +1970,19 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["kernel"] = {"packages": status, "slot_a_plugin_entry": entry_a,
                               "cache_only": sorted(set(recipe["kernel_artifacts"]) - set(recipe["kernel_debs_install"]["artifacts"])),
                               "why_cache_only": recipe["kernel_debs_install"]["source"]}
+        closure = load_closure()
+        manifest["package_closure"] = install_closure(root_a, cache, closure)
+        manifest["package_closure"]["chrony_conf"] = install_chrony_conf(root_a)
+        manifest["package_closure"]["gnss_mode"] = staged_gnss_mode(root_a)
+        LOG.step("closure", "DONE", installed=manifest["package_closure"]["installed"], removed=manifest["package_closure"]["removed"],
+                 accounts=manifest["package_closure"]["accounts"], gnss_mode=manifest["package_closure"]["gnss_mode"])
         manifest["accounts"] = system_accounts(root_a, stage_dir)
         if manifest["accounts"]["service_accounts_missing"]:
             manifest["blocking"].append("service_accounts_missing: " + ", ".join(manifest["accounts"]["service_accounts_missing"])
                                         + " (systemd-sysusers did not create them)")
         if manifest["accounts"]["package_accounts_missing"]:
             manifest["blocking"].append("package_accounts_missing: " + ", ".join(manifest["accounts"]["package_accounts_missing"])
-                                        + " (their packages are not in r2; package closure IMG-09)")
+                                        + " (neither r2 nor the package closure, step 8b, created them)")
         LOG.step("accounts", "DONE", service=len(manifest["accounts"]["service_accounts"]),
                  missing=manifest["accounts"]["service_accounts_missing"] + manifest["accounts"]["package_accounts_missing"])
         manifest["hardening"] = hardening(root_a, recipe, route)
@@ -1591,10 +2131,29 @@ def main():
     p.add_argument("--allow-unmerged-dtb", action="store_true", help="CI candidate only: package DTB without the IMG-05 overlays")
     p.add_argument("--no-cache-copy", action="store_true")
     p.add_argument("--keep-base", action="store_true")
+    p = sub.add_parser("closure", help="package-closure.json: --check (offline, against the lock) or --resolve (CI, network)")
+    mode = p.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--resolve", action="store_true")
+    p.add_argument("--facts", type=Path, help="--resolve: image-facts.json of the locked r2 image")
+    p.add_argument("--keyring", type=Path, help="--resolve: keyring holding the pinned archive key")
+    p.add_argument("--work", type=Path, help="--resolve: directory for the downloaded InRelease and indices")
+    p.add_argument("--write", type=Path, help="--resolve: also write the proposed package-closure.json here")
     args = parser.parse_args()
     try:
         if args.op == "plan":
             result = plan(args.route)
+        elif args.op == "closure":
+            if args.check:
+                closure = load_closure()
+                result = {"status": "CLOSURE_CONSISTENT_WITH_LOCK", "packages": {p["package"]: p["version"] for p in closure["packages"]},
+                          "expected_removed": closure["expected_removed"], "expected_accounts": closure["expected_accounts"]}
+            else:
+                if not (args.facts and args.keyring and args.work):
+                    raise ValueError("--resolve needs --facts, --keyring and --work")
+                result = closure_resolve(args.facts, args.keyring, args.work, args.write)
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return 0 if result["status"] == "CLOSURE_MATCHES_COMMITTED" else 2
         elif args.op == "fetch":
             result = fetch(args.cache)
         elif args.op == "facts":
