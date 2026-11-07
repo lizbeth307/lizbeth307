@@ -6639,6 +6639,17 @@
    "note": "ставиться пресом (build/21 E2); нержавіюча альтернатива SOS-M3-3 — сторінку не прочитано"
   },
   {
+   "id": "AI-PEM-SO-M25-6ZI",
+   "item": "самоклінчувальна наскрізна стійка PEM SO-M2.5-6ZI, 6 мм",
+   "qty": 2,
+   "spares": 2,
+   "for": "M-07: PF1-PF2 (носій PACK_FUSE на розширенні пластини, mechanical.json module_mounts; гвинти й ізоляція — build/17 F39, AI-PACK-FUSE-FIX); отвір 4.22 +0.08, голівка врівень з тильною гранню, 6.0 мм від кромки (значення сторінки SO-M3-3ZI того самого корпусу: на сторінці M2.5 відстані до кромки немає)",
+   "manufacturer": "PennEngineering (PEM)",
+   "mpn": "SO-M2.5-6ZI",
+   "source": "PEM catalogue https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m2-5-6zi (read 2026-11-07: M2.5 x 0.45 - 6H, L 6, min sheet 1.00 mm, hole 4.22 +0.08, H 4.8, heat-treated carbon steel, zinc)",
+   "note": "ставиться пресом разом з F-M3-1 і SO-M3-3ZI (build/21 E2, AI-PEM-PRESS); коротшої M2.5 SO у каталозі немає"
+  },
+  {
    "id": "AI-M3X4-ISO14580",
    "item": "гвинт M3×4 ISO 14580 A2 TX10",
    "qty": 15,
@@ -6877,7 +6888,7 @@
    "item": "запресування PEM F-M3-1 і SO-M3-3ZI у пластину M-07 — послуга майстерні, що виготовляє M-07 (власного преса не купують)",
    "qty": 1,
    "spares": 0,
-   "for": "AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI (build/21 E2)",
+   "for": "AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI, AI-PEM-SO-M25-6ZI (build/21 E2)",
    "tbd": "рішення (build/15 «Провід, стрічка й інструмент (W2 SRC-1)»): F-M3-1 і SO-M3-3ZI запресовує майстерня, що виготовляє пластину M-07 (прес PEMSERTER або інший з паралельними пуансоном і матрицею), — послуга без MPN; власний ручний прес не обрано, бо зусилля встановлення й оснастку PEM 07.11.2026 не прочитано (pemnet.com: бюлетень F і сторінки product finder за WAF-викликом, знімок 2026-11-07-w2-src1-manual.json web:pem-type-f-installation)"
   },
   {

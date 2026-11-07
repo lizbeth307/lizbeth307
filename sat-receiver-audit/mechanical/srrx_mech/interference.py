@@ -24,10 +24,11 @@ ALLOWED = {
     "enc_volume": {"front.enc_bosses"},
     "lime": {"lime_pedestal"},                 # the Lime envelope starts at the plate and includes its pedestal
     "q6a": {"ufs_boss"},                       # contact through the UFS pad (thermal row T-UFS)
-    "tripod_boss": {"rear.tripod_boss"},       # this envelope is the boss itself
+    "tripod_boss": {"rear.tripod_boss", "rear.module_bosses"},  # this envelope is the boss itself; W2 MECH-5: the CH334F and INA228 bosses rise from its rim
     "gx16": {"rear.gx16_pad"},                 # the socket nut sits on its seat
     "hatch_parts": {"rear.hatch_seat", "hatch_cover"},
     "battery_pack": {"battery_tray"},          # the pack lies in its tray (the tray solid is checked separately)
+    "veml7700": {"front.veml_bosses"},         # W2 MECH-5: the board rests on its bosses in the top-wall pocket
 }
 SKIP_ITEMS = {"battery_tray"}                  # represented by its solid, not by its envelope box
 

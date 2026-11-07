@@ -132,6 +132,16 @@ def plate_holes(P):
     for i, s in enumerate((-1, 1)):
         out.append({"id": f"UB{i + 1}", "c": ((ux0 + ux1) / 2 + s * 5.0, (uy0 + uy1) / 2), "d": 2.9,
                     "use": "M2.5 countersunk from the front face into the UFS boss (tapped M2.5)"})
+    # W2 MECH-5 (B-13): PEM standoffs of boards mounted on the plate without a boards.json place (module_mounts, on plate_front)
+    k = 0
+    for mt in m.get("module_mounts", {}).get("mounts", []):
+        if mt["on"] != "plate_front":
+            continue
+        f = P.parts[mt["fastener"]]
+        for (hx, hy) in mt["standoffs"]:
+            k += 1
+            out.append({"id": f"PF{k}", "c": (hx, hy), "d": f["hole_d"], "edge_min": f["edge_min"],
+                        "use": f"PEM {f['mpn']}, head flush with the rear face ({mt['item']})"})
     return out
 
 
@@ -298,6 +308,7 @@ def evaluate(P):
     out += w2_mech2_rules(P)
     out += w2_mech3_rules(P)
     out += w2_mech4_rules(P)
+    out += w2_mech5_rules(P)
     return out
 
 
@@ -934,3 +945,100 @@ def p8_accessory_rule(P):
 def w2_mech4_rules(P):
     """Rows added by W2 MECH-4 (registration list, append-only)."""
     return [f101_access_rule(P), p8_accessory_rule(P)]
+
+
+def module_mount_geometry(P):
+    """Bosses, rests and pads of mechanical.json module_mounts as plain numbers (shared by cad.py, the drawings and the rule).
+
+    rear_wall: (x, y) circles standing on the rear-wall inner face up to seat_z; top_wall: (x, z) circles hanging from the top-wall
+    pocket floor down to seat_y; insert holes are hole_depth deep from the seat face."""
+    mm = P.mech.get("module_mounts")
+    if not mm:
+        return []
+    ins = mm["insert"]
+    out = []
+    for mt in mm["mounts"]:
+        for kind in ("screws", "rests"):
+            for c in mt.get(kind, []):
+                if mt["on"] in ("rear_wall", "top_wall"):
+                    out.append({"item": mt["item"], "on": mt["on"], "kind": kind, "c": tuple(c), "d": mm["boss_d"] if kind == "screws" else mm["rest_d"],
+                                "insert": kind == "screws", "hole_d": ins["hole_d"], "hole_depth": ins["len"],
+                                "seat": mt.get("seat_z", mt.get("seat_y"))})
+        if "pad" in mt:
+            out.append({"item": mt["item"], "on": mt["on"], "kind": "pad", "rect": tuple(mt["pad"]), "seat": mt["pad_top_z"], "tape_t": mt["tape_t"]})
+    return out
+
+
+def module_mounts_rule(P):
+    """R-MODULE-MOUNTS (W2 MECH-5, B-13 / CC-36 item 11): fixing of the modules without a board place; insert skins, seats against the
+    envelopes, plate standoffs, the INA228 terminal-block wire side and the 18 AWG fit, and what stays open."""
+    m = P.mech
+    mm = m.get("module_mounts")
+    rule = {"id": "R-MODULE-MOUNTS",
+            "rule": "module fixing (mechanical.json module_mounts): insert hole + skin <= wall + boss, seat face = envelope face, screw holes = the "
+                    "makers' board-file holes, the INA228 terminal wire side free, 18 AWG inside the terminal range; plate standoffs in R-HOLE-EDGE / R-CLINCH-EDGE",
+            "source": "mechanical.json module_mounts; parts.json adafruit_5997, adafruit_4162, adafruit_ina228_5832, pololu_2813, pem_so_m25_6"}
+    if not mm:
+        return dict(rule, value_mm=None, result="OPEN: no module_mounts")
+    W, H, D = P.outer
+    t = m["wall"]
+    boxes = {iid: bx for iid, name, bx, it in item_boxes(P)}
+    bad, val = [], {}
+    for g in module_mount_geometry(P):
+        bx = boxes[g["item"]]
+        if g["on"] == "rear_wall":
+            if g["kind"] == "pad":
+                x, y, w, h = g["rect"]
+                ok = bx[0] <= x and x + w <= bx[3] and bx[1] <= y and y + h <= bx[4] and abs(g["seat"] + g["tape_t"] - bx[2]) < 1e-6
+                val.setdefault(g["item"], {})["pad"] = {"rect": list(g["rect"]), "seat_z": g["seat"], "tape": g["tape_t"]}
+            else:
+                x, y = g["c"]
+                skin = g["seat"] - g["hole_depth"] if g["insert"] else None
+                ok = bx[0] <= x <= bx[3] and bx[1] <= y <= bx[4] and abs(g["seat"] - bx[2]) < 1e-6 and (skin is None or skin >= mm["insert"]["skin_min"])
+                val.setdefault(g["item"], {}).setdefault(g["kind"], []).append({"c": [x, y], "skin_mm": None if skin is None else round(skin, 2)})
+        else:
+            x, z = g["c"]
+            skin = H - (g["seat"] + g["hole_depth"]) if g["insert"] else None
+            ok = bx[0] <= x <= bx[3] and bx[2] <= z <= bx[5] and (skin is None or skin >= mm["insert"]["skin_min"])
+            val.setdefault(g["item"], {}).setdefault(g["kind"], []).append({"c": [x, z], "skin_mm": None if skin is None else round(skin, 2)})
+        if not ok:
+            bad.append(f"{g['item']} {g['kind']} {g.get('c', g.get('rect'))}")
+    # VEML7700: pocket skin, board front edge to the front wall, back face to the envelope below it
+    vm = next((mt for mt in mm["mounts"] if mt["item"] == "veml7700"), None)
+    if vm:
+        px, pz, pw, ph, pd = vm["pocket"]
+        fwi = m["stack_z"]["front_wall_inner"]
+        val["veml7700"]["pocket_skin_mm"] = round(t - pd, 2)
+        val["veml7700"]["front_edge_to_wall_mm"] = round(fwi - boxes["veml7700"][5], 2)
+        if t - pd < 1.0 or fwi - boxes["veml7700"][5] < 0.5:
+            bad.append("veml7700 pocket skin or front edge")
+    # INA228: free length in front of the terminal-block wire entries (towards -y) and the 18 AWG range
+    ina, term = boxes["ina228"], P.parts["adafruit_ina228_5832"]["terminal"]
+    cx = (ina[0] + ina[3]) / 2
+    span = (cx - 3.5 * 1.5, cx + 3.5 * 1.5)
+    front = [b[4] for iid, b in boxes.items() if iid != "ina228" and b[0] < span[1] and b[3] > span[0] and b[4] <= ina[1] + 1e-6
+             and b[2] < ina[5] and b[5] > ina[2]]
+    room = round(ina[1] - max(front + [t]), 2)
+    awg = 18
+    val["ina228"]["terminal"] = {"wire_side": "-y", "free_mm": room, "need_mm": term["wire_room"], "awg_range": term["wire_awg"], "vin_awg": awg}
+    if room < term["wire_room"] or not (term["wire_awg"][0] <= awg <= term["wire_awg"][1]):
+        bad.append("ina228 terminal wire side")
+    pf = [mt for mt in mm["mounts"] if mt["on"] == "plate_front"]
+    val["plate_standoffs"] = {mt["item"]: [list(c) for c in mt["standoffs"]] for mt in pf}
+    rule["value_mm"] = val
+    if bad:
+        return dict(rule, result="FAIL (model): " + "; ".join(bad))
+    opens = [f"{iid}: fixing TBD ({P.parts[it['part']]['status']}, no drawing)" for it in m["layout"]["items"]
+             for iid in [it["id"]] if iid == "boni_a406"]
+    return dict(rule, result=(
+        "PASS (model): CH334F 4 x M2.5 and INA228 2 x M2.5 (+2 rests) into TC-M2,5x4 inserts in rear-wall bosses (skin "
+        f"{min(v['skin_mm'] for v in val['hub_ch334f']['screws']):g}), #2813 on a printed pad with acrylic foam tape (no mounting hole on the Pololu drawing), "
+        f"VEML7700 2 x M2.5 (+2 rests) in a {vm['pocket'][4]:g} mm pocket of the top wall (skin {val['veml7700']['pocket_skin_mm']:g}, behind the inserts "
+        f"{min(v['skin_mm'] for v in val['veml7700']['screws']):g}), PACK_FUSE on 2 PEM SO-M2.5-6ZI (M-07 PF); INA228 terminal wire side towards the "
+        f"corridor with {room:g} mm free, 18 AWG inside {term['wire_awg'][1]}-{term['wire_awg'][0]} AWG (4UCON 19963; block identity inferred, confirm at "
+        "incoming inspection); torques coupon-defined (build/17 section 2)" + ("; OPEN: " + "; ".join(opens) if opens else "")))
+
+
+def w2_mech5_rules(P):
+    """Rows added by W2 MECH-5 (registration list, append-only)."""
+    return [module_mounts_rule(P)]

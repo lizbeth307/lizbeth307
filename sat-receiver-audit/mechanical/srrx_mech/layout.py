@@ -305,6 +305,7 @@ ALLOWED = [
     ("hdmi_route", "hdmi_fpc"), ("hdmi_route", "hdmi_ferrite"), ("hdmi_route", "hdmi_insert"), ("hdmi_insert", "plate."),
     ("hdmi_fpc_disp", "hdmi_board"),
     ("t7_gland_body", "rear"), ("t7_gland_outside", "rear"),
+    ("pack_fuse", "plate."),           # W2 MECH-5: the PACK_FUSE carrier stands on its PEM standoffs on the plate extension
 ]
 
 STRUCT = ("plate.", "angle.", "rfbay.")

@@ -622,15 +622,23 @@
     "adafruit_ina228_5832": {
       "name": "Adafruit INA228 5832 breakout with its 3.5 mm terminal block (U102 module, unit INA)",
       "size": [25.8, 20.2, 10.1],
-      "status": "listing+assumption",
-      "src": "maker's product page https://www.adafruit.com/product/5832 (read 2026-11-07 with WebFetch): 'Product Dimensions: 25.8mm x 20.2mm x 10.1mm', 3.3 g, 'fully assembled breakout board with a 3.5mm terminal block and header' (the 10.1 includes the terminal block); orientation on its stand-offs and the stand-off height are assumptions of this package; mounting holes not given on the page (fixing: MECH-5 B-13, build/17 F09)"
+      "board": [25.4, 20.32, 1.6],
+      "holes": {"d": 2.5, "uv": [[2.54, 17.78], [22.86, 17.78]], "screw": "M2.5"},
+      "terminal": {"pins": ["VIN-", "VBUS", "VIN+"], "pitch": 3.5, "uv": [12.7, 16.383], "edge": "+v", "wire_awg": [16, 30], "entry_d": 2.0, "current_a": 10.0, "h": 8.5, "depth": 7.0, "torque_kgfcm": 2.0, "wire_room": 8.0},
+      "status": "repo+assumption",
+      "src": "maker's product page https://www.adafruit.com/product/5832 (read 2026-11-07 with WebFetch): 'Product Dimensions: 25.8mm x 20.2mm x 10.1mm', 3.3 g, 'fully assembled breakout board with a 3.5mm terminal block and header' (the 10.1 includes the terminal block), no wire gauge and no mounting holes on the page. W2 MECH-5 (2026-11-07): board, holes and terminal from the maker's EAGLE board file 'Adafruit INA228 I2C Power Monitor.brd' of https://github.com/adafruit/Adafruit-INA228-PCB at commit 61b0d990f8e5f2e6df1ee5d270c501d17f53242d (fetched with gh api, CC BY-SA 3.0, fetch-only, not committed; layer-20 outline and element table read with lxml): outline 25.4 x 20.32 with R2.54 corners; two plated mounting holes MOUNTINGHOLE_2.5_PLATED (drill 2.5, pad 3.2) at (2.54, 17.78) and (22.86, 17.78), both on the terminal-block edge, none on the header edge; terminal X1 TERMBLOCK_1X3-3.5MM at (12.7, 16.383) rot 180, pads 1/2/3 = VIN-/VBUS/VIN+ (signal table; silkscreen V-, VBus, V+), wire entries out of the +v edge; header JP2 1X08 on the opposite edge (VCC, GND, SCL, SDA, VBUS, VIN-, VIN+, ALERT; drill 1.0). M2.5 screws: Adafruit product 3299 page (read 2026-11-07): 'M2.5 size screws fit almost all of the Adafruit breakout/dev board mounting holes (2.5mm or 0.1\" drill holes)'. Terminal block: the 3.5 mm 3-pin block Adafruit sells, product 725 (https://www.adafruit.com/product/725, read 2026-11-07: 'Wire gauge: 30-16AWG', 3.5 mm spacing) and its linked drawing 4UCON 19963 rev A4 (https://cdn-shop.adafruit.com/datasheets/19963.pdf, image-only PDF rendered with PyMuPDF 2026-11-07, not committed): 10 A per way max, 150 V AC, wire range 16-30 AWG, wire entry D2.0, 8.5 above the PCB, 7.0 deep, torque 2 kgf.cm; that this block is the one fitted to the 5832 is an inference (same 3.5 mm 3-pin footprint of the Adafruit library; board 1.6 + block 8.5 = the listed 10.1 height): confirm at incoming inspection. wire_room 8.0 = free length in front of the wire entries for the 18 AWG bend (design value of this package)"
     },
     "pololu_2813": {
       "name": "Pololu #2813 Big Pushbutton Power Switch with Reverse Voltage Protection, HP (U106 module, unit SWM)",
       "board": [25.4, 20.32, 4.06],
       "size": [25.4, 20.32, 10.1],
-      "status": "listing+assumption",
-      "src": "maker's product page https://www.pololu.com/product/2813 (read 2026-11-07 with WebFetch): size 0.8 x 1.0 x 0.16 in (20.32 x 25.4 x 4.06 mm), 2.7 g, two 2-pin 5 mm terminal blocks included (rated 16 A) or wires in the large holes, no dimension drawing on the page; size z 10.1 = board 4.06 + 6.0 reserve for the soldered 18 AWG leads or the terminal blocks (assumption: block height not given)"
+      "pcb_t": 1.57,
+      "top_parts": 2.4,
+      "mount_holes": 0,
+      "power_holes": {"n": 4, "d": 2.18, "pitch": 5.0, "from_edge": 2.29, "names": ["VOUT", "GND", "GND", "VIN"]},
+      "pin_holes": {"n": 16, "d": 1.02, "pitch": 2.54, "from_edge": 1.27},
+      "status": "datasheet+assumption",
+      "src": "maker's product page https://www.pololu.com/product/2813 (read 2026-11-07 with WebFetch): size 0.8 x 1.0 x 0.16 in (20.32 x 25.4 x 4.06 mm), 2.7 g, two 2-pin 5 mm terminal blocks included (rated 16 A) or wires in the large holes; size z 10.1 = board 4.06 + 6.0 reserve for the soldered 18 AWG leads or the terminal blocks (assumption: block height not given). W2 MECH-5: Pololu dimension diagram 'Big Pushbutton Power Switch with Reverse Voltage Protection', items 2812/2813, PCB psw03b, drawing date 12 January 2016 (https://www.pololu.com/file/0J1102/big-pushbutton-power-switch-with-reverse-voltage-protection-dimension-diagram.pdf, linked from https://www.pololu.com/product/2813/resources; curl default User-Agent, text layer and PyMuPDF rendering read 2026-11-07, not committed): board 20.3 x 25.4, PCB 1.57, top-side parts 2.4 (1.9 at the button), 4 x D2.18 large holes along one 20.3 edge (pitch 5.00, 2.29 from that edge, 2.66 from the sides; isometric labels VOUT, GND, GND, VIN), 16 x D1.02 holes in two rows 1.27 from the long edges (pitch 2.54, last row 2.54 from the far edge), drill location +-0.1, board edge +-0.3. The board has no mounting holes (all 20 holes are connections), so it is fixed with acrylic foam tape on a printed pad (mechanical.json module_mounts, build/17 F05)"
     },
     "binder_76_6618_1111": {
       "name": "binder 76 6618 1111 00003-0200 M8 female panel receptacle, A-coded, 3 contacts, single wires 0.2 m, M10x0.75 (J551, pod power, W2 GR-1)",
@@ -731,6 +739,71 @@
       "k_max": {"M2.5": 1.85, "M3": 2.4},
       "status": "datasheet",
       "src": "fasten.it norm page DIN EN ISO 14580 https://www.fasten.it/pt/norms/norm/din_en_iso_14580 (read 2026-11-07: dimension table 'source Din 14580 2011', k nom=max M2.5 1.85 / M3 2.4, socket Nr 8 / 10; table 'Din 14580 - weigth in kg x1000 pcs - commercial items': the lengths above are the rows with a weight in the M 2.5 / M 3 columns); a secondary reproduction of the standard, the ISO text itself was not read. The countersunk pages of the same site (DIN EN ISO 10642 https://www.fasten.it/pt/norms/norm/din_en_iso_10642 and DIN EN ISO 14581 https://www.fasten.it/pt/norms/norm/din_en_iso_14581, read 2026-11-07) give head dimensions only, no length table (used by generated/fastener-stacks.json, W2 MECH-3 review)"
+    },
+    "adafruit_5997": {
+      "name": "Adafruit 5997 CH334F Mini 4-Port USB Hub Breakout (U510, unit HUB)",
+      "mpn": "5997",
+      "listed": [31.6, 20.4, 4.8],
+      "board": [20.32, 30.48, 1.6],
+      "usb_c_overhang": 1.14,
+      "holes": {"d": 2.5, "uv": [[2.54, 2.54], [17.78, 2.54], [2.54, 27.94], [17.78, 27.94]], "screw": "M2.5"},
+      "upstream_pads": {"ref": "JP5", "uv": [10.16, 2.54]},
+      "downstream_pads": {"JP1": [17.78, 20.32], "JP2": [2.54, 20.32], "JP3": [2.54, 10.16], "JP4": [17.78, 10.16]},
+      "wire_reserve": 2.5,
+      "size": [20.32, 31.62, 7.3],
+      "status": "repo+listing",
+      "src": "maker's product page https://www.adafruit.com/product/5997 (read 2026-11-07 with WebFetch): 'Product Dimensions: 31.6mm x 20.4mm x 4.8mm', 2.9 g, four mounting holes (size not given), upstream on 0.1 in header or USB C, 'four 4-pin ports' as pads; EAGLE board file 'Adafruit CH334F Mini 4-Port USB Hub Breakout.brd' of https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB at commit a29ea7705f029962ebec1947eac3fb4d641f63bb (gh api, CC BY-SA 3.0, fetch-only, not committed; read with lxml 2026-11-07): outline 20.32 x 30.48 with R2.54 corners, four plated mounting holes MOUNTINGHOLE_2.5_PLATED (drill 2.5, pad 3.2) at (2.54, 2.54), (17.78, 2.54), (2.54, 27.94), (17.78, 27.94), USB-C X1 (CUSB31-CFM2AX) at (10.16, 26.543) rot 180 whose outline reaches v 31.62 (1.14 past the board edge: 31.62 = the listed 31.6), upstream pads JP5 1X04 at (10.16, 2.54), downstream pads JP1-JP4 1X04 at (17.78, 20.32), (2.54, 20.32), (2.54, 10.16), (17.78, 10.16); all parts on the top side (no mirrored part). M2.5 screws: Adafruit product 3299 (read 2026-11-07, see adafruit_ina228_5832). As placed: size [x, y, z] = board 20.32 along x, 30.48 + 1.14 along y, z = board 1.6 + parts 3.2 (listed 4.8) + wire_reserve 2.5 for the pigtails soldered to the pads (design value)"
+    },
+    "adafruit_4162": {
+      "name": "Adafruit 4162 VEML7700 lux sensor breakout, STEMMA QT format (U308, unit VEML)",
+      "mpn": "4162",
+      "board": [25.4, 17.78, 1.6],
+      "parts_h": 3.0,
+      "holes": {"d": 2.5, "uv": [[2.54, 2.54], [22.86, 2.54], [2.54, 15.24], [22.86, 15.24]], "screw": "M2.5"},
+      "sensor_uv": [12.7, 13.716],
+      "stemma_uv": [[2.667, 8.89], [22.733, 8.89]],
+      "pads": {"ref": "JP2", "uv": [12.7, 2.54], "pins": 5},
+      "size": [25.4, 3.8, 17.78],
+      "status": "repo+assumption",
+      "src": "maker's product page https://www.adafruit.com/product/4162 (read 2026-11-07 with WebFetch): no dimensions; 'As of April 11, 2022 - this board now comes in STEMMA QT format', mounting holes and two STEMMA QT connectors (Learn image text). EAGLE board file 'Adafruit VEML7700 STEMMA QT.brd' of https://github.com/adafruit/Adafruit-VEML7700-PCB at commit ab489f03c957f681ed0161fc6d2b786956556e23 (gh api, CC BY-SA 3.0, fetch-only, not committed; read with lxml 2026-11-07; the other file 'Adafruit VEML7700.brd', 16.51 x 16.51 with two holes, is the pre-2022 board): outline 25.4 x 17.78 with R2.54 corners, four plated mounting holes MOUNTINGHOLE_2.5_PLATED (drill 2.5, pad 3.2) at (2.54, 2.54), (22.86, 2.54), (2.54, 15.24), (22.86, 15.24), VEML7700 IC1 at (12.7, 13.716) rot 180 (top side), STEMMA QT JST SH CONN3/CONN4 at (22.733, 8.89) and (2.667, 8.89) on the short edges, pads JP2 1X05 at (12.7, 2.54); that this file is the board now sold as 4162 is an inference from the file name and the 2022 STEMMA QT note (the right-angle twin 5378 has its own CAD in adafruit/Adafruit_CAD_Parts, Learn downloads page read 2026-11-07). parts_h 3.0: the right-angle twin 5378 lists 'Product Dimensions: 25.5mm x 17.7mm x 4.6mm' (https://www.adafruit.com/product/5378, read 2026-11-07), i.e. 4.6 - 1.6 board; the 4162 height is not listed (assumption: same parts height). As placed (behind the top-face window, board plane x-z, parts side towards the wall): 25.4 along x, 3.8 along y = board 1.6 + 2.2 of the 3.0 parts (the other 0.8 and 0.3 of air sit in the 1.1 mm pocket of the top wall, mechanical.json module_mounts), 17.78 along z"
+    },
+    "pem_so_m25_6": {
+      "name": "PEM SO-M2.5-6ZI thru-hole threaded standoff, 6 mm (PACK_FUSE carrier on the plate extension, M-07 PF1-PF2)",
+      "mpn": "SO-M2.5-6ZI",
+      "hole_d": 4.22,
+      "hole_tol": [0.0, 0.08],
+      "length": 6.0,
+      "sheet_min": 1.0,
+      "head_d": 4.8,
+      "edge_min": 6.0,
+      "edge_status": "assumption",
+      "status": "datasheet+assumption",
+      "src": "PEM catalogue page https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m2-5-6zi (read 2026-11-07 with WebFetch and curl: SO-M2.5-6ZI, M2.5 x 0.45 - 6H, L 6 +0.05/-0.13, min sheet 1.00 mm, hole in sheet 4.22 +0.08, C 4.20 -0.13, H nom 4.8, sheet hardness HRB 80 / HB 150, heat-treated carbon steel 12L14, zinc 5 um clear; 'installed with their heads flush with one surface of the mounting sheet'); the metric SO list of the same catalogue (viewitems pages 1-6, read 2026-11-07) has no shorter M2.5 SO (so-m2-5-3zi and so-m2-5-4zi answer 410). The page gives no edge distance: edge_min 6.0 is the 'Min. Dist. Hole C/L to Edge' of the SO-M3-3ZI page (same body: hole 4.22, C 4.20, H 4.8; pem_so_m3_3), an assumption until the M2.5 value is read"
+    },
+    "boni_a406": {
+      "name": "Bias tee A406 of the Boni-Whip (Bonito 'Einspeiseweiche', supplied with the antenna) - reserve",
+      "size": [30.0, 26.0, 9.8],
+      "status": "assumption",
+      "src": "no drawing and no size published: https://www.wimo.com/en/18067 (Boni-Whip listing) not readable 2026-11-07 403; components/hf_receiver.md and components/rf_frontend.md (project research) give only BNC connectors and a 5.5/2.1 mm barrel input (bonito.net) and a 404 manual link. The reserve is the largest free volume next to the HF edge of the RF board outside the HF+ can (voxel scan of the layout with 0.5 mm clearance, W2 MECH-5 2026-11-07): over V4L-A, under the RF board, in the RF bay; a supplied unit with BNC jacks will not fit 9.8 mm, so if it does not fit the reserve, A406 becomes the homemade 2.2 mH bias tee of the E4 A406 note on a board of this size (decision of the E4 / parts DB owner; OPEN until the supplied unit is measured)"
+    },
+    "t7_insert_board": {
+      "name": "T7_INSERT VBUS key insert in the T7 USB3 cable (U505, R514-R517, C514-C516, TP501, J514 S3B-PH-K-S, J515-J517 wire pads; board by PCB-SB2) - reserve",
+      "size": [22.0, 9.0, 9.0],
+      "status": "assumption",
+      "src": "reserve of this package (W2 MECH-5): board about 22 x 9 with the side-entry PH header J514 (JST ePH side entry 8.6 deep, 4.8 high, w = 2 x 2 + 4.9 = 8.9: harness_headers PH_side) and the three wire pads, under heat-shrink; the PCB-SB2 board must fit it (outline not drawn yet)"
+    },
+    "hdmi_insert_board": {
+      "name": "HDMI_INSERT pin-18 pass-through between the two Adafruit 3560 flexes (U506, C517, C518, R552, TP502, two FPC sockets; board by PCB-SB2) - reserve",
+      "size": [16.0, 18.0, 5.0],
+      "status": "assumption",
+      "src": "reserve of W2 MECH-4 (mechanical.json layout hdmi_insert), kept by W2 MECH-5: the two straight FPC sockets for the 10 mm flex are not chosen (W2 GR-4 row 'HDMI_INSERT - FPC-прохідна плата' in build/15, OPEN), so the 16 mm width holds a socket only if the chosen one is at most 15.5 mm over its latches; fixing: polyimide insulation and tape on the plate front face, no plate hole (the board has no outline yet)"
+    },
+    "pack_fuse_carrier": {
+      "name": "PACK_FUSE carrier of F101: Keystone 3568 MINI fuse holder + Littelfuse MINI 297 7.5 A + 18 AWG wire pads J116/J117 (board by PCB-SB2) - reserve",
+      "board": [11.0, 26.0, 1.6],
+      "size": [11.0, 26.0, 23.77],
+      "status": "datasheet+assumption",
+      "src": "stack from this file: PEM SO-M2.5-6ZI barrel 6.0 (pem_so_m25_6) + carrier 1.6 (mechanical.json rear_face.hatch.f101_access carrier_t, assumption) + Keystone 3568 7.37 above the board (keystone_3568) + MINI fuse body 8.8 above the holder (littelfuse_mini_297) = 23.77; board 11 x 26 = the holder courtyard 16.5 x 7.24 (PCB-SB2 brief) plus a 1 mm2 solder-wire pad (KiCad Connector_Wire, W2 GR-4) at each end (design value of this package)"
     }
   }
 }

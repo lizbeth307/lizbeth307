@@ -28,6 +28,11 @@ def zcyl(x, y, z0, z1, r):
     return Pos(x, y, min(z0, z1)) * Cylinder(r, abs(z1 - z0), align=(Align.CENTER, Align.CENTER, Align.MIN))
 
 
+def ycyl(x, z, y0, y1, r):
+    """Cylinder along y between y0 and y1 at (x, z)."""
+    return Pos(x, (y0 + y1) / 2, z) * Rot(90, 0, 0) * Cylinder(r, abs(y1 - y0))
+
+
 def axis_cyl(p, normal, r, length, inward=True):
     """Cylinder of `length` starting `length/2` outside the face point p and going inwards along -normal."""
     nx, ny, nz = normal
@@ -205,6 +210,12 @@ def front_parts(P):
     # hood hinge knuckles on the front face
     hh = m["top_face"]["hood_hinge"]
     feats.append(("hinge_knuckles", [box(x - hh["knuckle_w"] / 2, hh["axis_y"] - 4.0, D - 0.01, hh["knuckle_w"], 8.0, hh["axis_z"] - D + 3.0) for x in hh["x"]]))
+    # W2 MECH-5 (B-09/B-13): bosses of the VEML7700 board, hanging from the floor of its pocket in the top wall (mechanical.json module_mounts)
+    from .rules import module_mount_geometry
+    vg = [g for g in module_mount_geometry(P) if g["on"] == "top_wall"]
+    vm = next((mt for mt in m.get("module_mounts", {}).get("mounts", []) if mt["on"] == "top_wall"), None)
+    pd = vm["pocket"][4] if vm else 0.0
+    feats.append(("veml_bosses", [ycyl(g["c"][0], g["c"][1], g["seat"], H - t + pd + 0.01, g["d"] / 2) for g in vg]))
     # ---- cutters
     cutters = [_ring(P, sg["groove_out"], sg["groove_in"], zs - 1.0, gk["groove_depth"] + 1.0)]
     ins = c["insert"]
@@ -214,6 +225,12 @@ def front_parts(P):
     cutters += [zcyl(ox + hx, oy + hy, ctrl_top - 1.0, ctrl_top + 4.5, 1.8) for (hx, hy) in cb["holes"]]
     cutters += [zcyl(ex + hx, ey + hy, enc_top - 1.0, enc_top + 4.5, 1.8) for (ex, ey) in e["place_at"].values() for (hx, hy) in e["holes"]]
     cutters += [Pos(x, hh["axis_y"], hh["axis_z"]) * Rot(0, 90, 0) * Cylinder(hh["pin_d"] / 2, hh["knuckle_w"] + 2.0) for x in hh["x"]]
+    if vm:
+        px, pz, pw, ph, _ = vm["pocket"]
+        pocket = box(px, H - t - 0.01, pz, pw, pd + 0.01, ph)
+        pocket = cut(pocket, [ycyl(g["c"][0], g["c"][1], H - t - 0.5, H - t + pd + 0.5, g["d"] / 2) for g in vg])
+        cutters.append(pocket)
+        cutters += [ycyl(g["c"][0], g["c"][1], g["seat"] - 1.0, g["seat"] + g["hole_depth"], g["hole_d"] / 2) for g in vg if g["insert"]]
     F = face_features(P)
     for face in ("front", "top", "bottom", "left", "right"):
         cutters += feature_cutters(P, face, F[face], 4.0 + sg["belt"])
@@ -271,7 +288,13 @@ def rear_parts(P):
                   + [box(ss["x"] - 9.0, yy - (ss["w"] + 8) / 2, -6.0, 18.0, ss["w"] + 8, 6.01) for yy in ss["y"]]))
     th = rf["t7_holder"]
     feats.append(("t7_pads", [zcyl(px, py, -th["pad_h"], 0.01, th["pad_d"] / 2) for (px, py) in th["screws"]]))
+    # W2 MECH-5 (B-13): module bosses, rests and tape pads on the inner face of the rear wall (mechanical.json module_mounts)
+    from .rules import module_mount_geometry
+    mg = [g for g in module_mount_geometry(P) if g["on"] == "rear_wall"]
+    feats.append(("module_bosses", [zcyl(g["c"][0], g["c"][1], t - 0.01, g["seat"], g["d"] / 2) for g in mg if g["kind"] != "pad"]
+                  + [box(g["rect"][0], g["rect"][1], t - 0.01, g["rect"][2], g["rect"][3], g["seat"] - t + 0.01) for g in mg if g["kind"] == "pad"]))
     cutters = []
+    cutters += [zcyl(g["c"][0], g["c"][1], g["seat"] - g["hole_depth"], g["seat"] + 1.0, g["hole_d"] / 2) for g in mg if g.get("insert")]
     for (bx, by) in c["bosses"]:
         cutters.append(zcyl(bx, by, -1.0, zs + 1.0, c["clearance_d"] / 2))
         cutters.append(zcyl(bx, by, -1.0, c["counterbore_depth"], c["counterbore_d"] / 2))
