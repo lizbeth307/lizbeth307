@@ -344,13 +344,13 @@ rtl_test -d LABRXB               # з трьома підключеними ві
 ```sh
 git clone <LimeSuiteNG> && cd LimeSuiteNG
 git checkout 37cb1833e35955f7072c0fb91642d14ae5515f28     # limesdr-micro-staging (або пізніший закріплений)
-# + патч, що валить TX setupStream (Lime TX заблоковано)
-cmake -B build -DBUILD_PLUGINS_AMARISOFT=OFF -DBUILD_GUI=OFF
+# + deployment/patches/limesuiteng-rx-only.patch через vendor_patch.py (аудит TX: deployment/recipes/limesuiteng/TX-AUDIT.md, AUDIT_DRAFT_CI_CHECKED)
+cmake -B build -DBUILD_PLUGINS_AMARISOFT=OFF -DBUILD_GUI=OFF   # повний набір опцій — deployment/recipes/limesuiteng/recipe.json
 ```
 
-- З пакування — лише liblimesuiteng (+ патч блокування TX), limesuiteng-soapysdr, limesuiteng-udev, limepcie-dkms; limesuiteng-legacyapi — лише якщо потрібна споживачу; limesuiteng-cli — лише з вилученими при компіляції всіма TX-підкомандами; limesuiteng-gui, gr-limesuiteng — ніколи; решта — −1.
+- З пакування — лише liblimesuiteng (+ патч блокування TX) і limesuiteng-soapysdr (limesuiteng-dev — лише в chroot збирача); limesuiteng-legacyapi — лише якщо потрібна споживачу; limesuiteng-cli — лише з вилученими при компіляції всіма TX-підкомандами; limesuiteng-gui, gr-limesuiteng — ніколи; limesuiteng-udev — ніколи (правило upstream 65-limesuiteng-pcie.rules дає вузлам la9310_limesdr MODE 666, TX-AUDIT H-05); limepcie-dkms — не потрібен (плати LimePCIe X3/XTRX/MMX8/sSDR вилучено зі збірки, TX-AUDIT M-01); решта — −1.
 - la9310_limesdr 0.2.1 + la9310_uart_module 1.0.0 — локальний DKMS +lab, зібраний GCC проти linux-headers-6.18.2-4-qcom; вантажиться при завантаженні (modalias).
-- /lib/firmware: limesdr-micro-m4.bin і limesdr-micro-iqplayer.eld — у пакеті +lab з перевіркою хешів; limesdr-micro-eeprom.bin — ніколи. Хеші — TBD (STACK.md 5.4: «закріплені», значень не наведено).
+- /lib/firmware: limesdr-micro-m4.bin і limesdr-micro-iqplayer.eld — у пакеті +lab з перевіркою хешів; limesdr-micro-eeprom.bin — ніколи. Хеші — байти закріпленого архіву 37cb183 (firmware/limesdr-micro/, обчислено 07.11.2026): m4 — 95f9f5513fbe389ca0b0ba69a40fd3fa0d9c28e6aeba13b9a919b495605204fc (33268 байт), iqplayer — 00f9b28e5e80dde8867d2de57f842a0637fac60003332c605513a5a114275f25 (56884 байт). Пакета ще немає, а бібліотека вантажить ці файли без перевірки хешу (TX-AUDIT K-01, K-02) — OPEN.
 - У полі — жодних записів EEPROM/завантажувача чи limeFLASH; заборонені limeSPI, limeI2C, limeCSR, limeOEM, limeFLASH, limeVSPA, limePPSDO, limeGUI, limeTRX --input/--repeater.
 - labd після кожного configure/calibrate повторно задає `--txen=0` і зчитує регістр 0x0020; не вмикає живлення/потік нижче 0 °C за TMP1075; частоти дискретизації нижче **7 Msps** відхиляються (профілів Lime нижче 7 Msps немає; STACK.md 2.11.1, 5.3); перед від'єднанням — внутрішня опорна.
 - Живлення Lime — шина LIME3V3 через ключ TI TPS259470ARPWR (EN — MCP23017 #4 GPA0, FLT — MCP #4 GPB3, адреса 0x23; STACK.md 2.11.1, 5.2). Після завантаження EN низький (100k до землі): Lime знеструмлена, labd вмикає її і пересканує PCIe. Відновлення після зависання (sysclk нижче 30 MHz може завісити DMA VSPA): labd спершу розриває PCIe-лінк, потім перемикає LIME3V3; VCC_3V3_MKEY слота Q6A не перемикати. Приймання: примусове зависання → відновлення перемиканням живлення; FLT не спрацьовує на 20 ввімкненнях.
