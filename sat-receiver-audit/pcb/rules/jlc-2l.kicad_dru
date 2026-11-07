@@ -42,9 +42,11 @@
 )
 
 # JLC: PTH to track 0.28mm min / 0.35mm recommended, PTH drill max 6.3mm (https://jlcpcb.com/capabilities/pcb-capabilities, 2026-11-07)
+# JLC PTH annular ring 1-2 layer 1 oz: absolute minimum 0.18mm, recommended 0.25mm (https://jlcpcb.com/capabilities/pcb-capabilities, 2026-11-07); the rule is the minimum (library THT footprints), pcb/check_boards.py uses the same floor
 (rule "project PTH pad hole"
   (constraint hole_size (min 0.3mm) (max 6.3mm))
   (constraint hole_clearance (min 0.35mm))
+  (constraint annular_width (min 0.18mm))
   (condition "A.Type == 'Pad' && A.isPlated()")
 )
 
@@ -103,4 +105,12 @@
   (layer outer)
   (constraint track_width (min 1.85mm) (opt 3.2mm))
   (condition "A.hasNetclass('BATT')")
+)
+
+# project rule: low-current branches of power nets (Kelvin sense lines, decoupling stubs) inside rule areas named PWR_BRANCH*
+# take the project default track 0.15mm (JLC floor 0.1mm, https://jlcpcb.com/capabilities/pcb-capabilities, 2026-11-07); each is listed in the board
+# spec branch_exempt {ref: {max_mm, min_width_mm, reason}} and bounded by pcb/check_boards.py
+(rule "power branch area"
+  (constraint track_width (min 0.15mm))
+  (condition "(A.hasNetclass('PWR1A') || A.hasNetclass('PWR2A') || A.hasNetclass('PWR3A') || A.hasNetclass('BATT')) && A.intersectsArea('PWR_BRANCH*')")
 )

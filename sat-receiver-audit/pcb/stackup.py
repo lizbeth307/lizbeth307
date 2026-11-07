@@ -3,7 +3,7 @@
 
 Run from any directory: python pcb/stackup.py [--check]
 Writes pcb/generated/netclasses.json, pcb/rules/jlc-4l-1oz.kicad_dru and pcb/rules/jlc-2l.kicad_dru;
---check compares them with the committed files. Stdlib only (runs in sr-rx-parts and sr-rx-pcb).
+--check compares them with the committed files. Stdlib only; no CI job runs --check yet (PCB-FAB wires it into sr-rx-pcb).
 
 Nothing here is a measurement. The impedance is a closed-form quasi-static model (t = 0, no solder mask),
 the widths are the IPC-2221 curve fit, the via current is a barrel cross-section estimate. The finished
@@ -171,6 +171,11 @@ SIG_MAX_A = 0.10           # nets at or below this current (both values) stay SI
 RF = {'w': 0.36, 's': 0.20, 'h': PREPREG_H, 'er': PREPREG_ER, 'w_tol': 0.005, 's_ground_tol': 0.05,
       'l2_band_h': 3, 'fence_pitch_max': 2.0, 'fence_row_max_from_gap': 1.0}
 DCTAP = {'width': 0.20, 'clearance': 0.30}
+# KiCad rule areas (zone names, wildcard as in A.intersectsArea) for the spec exemptions of pcb/check_boards.py:
+# low-current branches of power nets (Kelvin sense, decoupling stubs) and RF50 tapers into IC pins (project rule).
+BRANCH_AREA, TAPER_AREA = 'PWR_BRANCH*', 'RF_TAPER*'
+VIA_ADVISORY = 'advisory design value: neither KiCad DRC nor pcb/check_boards.py counts vias per transition (review.json lists it under unverified)'
+
 CLASS_CAPACITY = collections.OrderedDict([
     # class: (continuous A at DT_CONT, protective A at DT_PROT, why, split allowed, inner layers carry current)
     ('PWR1A', (1.0, 1.0, 'TPS2553 limits <=0.989 A (VBUS_HFP) and eFuse limits <=1 A', False, True)),
@@ -248,9 +253,12 @@ def class_table():
             'outer_ipc_width_mm': round(required_width(cont, prot), 4),
             'split_outer_per_layer_mm': up(required_width(cont, prot, share=SPLIT_SHARE)) if split else None,
             'inner_min_width_mm': up(required_width(cont, prot, INNER_CU, 'internal')) if inner else None,
-            'inner_note': None if inner else 'inner 0.5 oz copper is not counted as current path for this class (outer layers carry it)',
+            'inner_note': None if inner else ('inner 0.5 oz copper is not counted as current path for this class (outer layers carry it): '
+                                              f'tracks of the class on inner layers are disallowed (.kicad_dru, except {BRANCH_AREA} rule areas) and a '
+                                              'pcb/check_boards.py finding; inner pours are allowed and not counted'),
             'clearance_mm': PROJECT['clearance'],
             'vias_per_transition': max(math.ceil(round(cont / i10, 6)), math.ceil(round(prot / i20, 6))),
+            'vias_per_transition_status': VIA_ADVISORY,
             'basis': 'IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)'}
         classes[name] = entry
     z0, eps = cbcpw(RF['w'], RF['s'], RF['h'], RF['er'])
@@ -474,7 +482,13 @@ def build():
             'nets': unclassified},
         'kicad': {'netclass_patterns': patterns,
                   'note': 'board .kicad_pro: net_settings classes named as above with outer_min_width_mm as track width, patterns as listed; '
-                          'the .kicad_dru conditions use A.hasNetclass(<class>)'},
+                          'the .kicad_dru conditions use A.hasNetclass(<class>)',
+                  'rule_areas': {
+                      BRANCH_AREA: f'power-class tracks inside a rule area named so take the project default track {PROJECT["track_width"]} mm as minimum '
+                                   '(Kelvin sense, decoupling stubs); the board spec lists each in branch_exempt {ref: {max_mm, min_width_mm, reason}} '
+                                   'and pcb/check_boards.py bounds the chain (project rule)',
+                      TAPER_AREA: f'RF50 tracks inside a rule area named so may narrow to {PROJECT["track_width"]} mm (taper into an IC pin); the board spec '
+                                  'lists each in rf50_taper {ref: {max_len_mm, min_width_mm, reason}} and pcb/check_boards.py bounds it (project rule)'}},
         'open': [
             'Finished RF50 impedance, loss and coupon TDR/S21 (bench).',
             'Trace and via temperature rise under the protective currents (bench).',
@@ -536,11 +550,14 @@ def rules(kind, doc):
     rule('project silkscreen text', [f'text_height (min {fmt(p["text_height"])})', f'text_thickness (min {fmt(p["text_thickness"])})'],
          cond="A.existsOnLayer('F.SilkS') || A.existsOnLayer('B.SilkS')",
          comments=[f'JLC: silkscreen text >= {fmt(floor["silk_text_height_min"])}, line >= {fmt(floor["silk_line_min"])} ({URL_CAPS}, {READ})'])
-    rule('project PTH pad hole', [f'hole_size (min {fmt(p["pth_hole_min"])}) (max {fmt(floor["pth_drill_max"])})', f'hole_clearance (min {fmt(p["pth_hole_clearance"])})'],
+    rule('project PTH pad hole', [f'hole_size (min {fmt(p["pth_hole_min"])}) (max {fmt(floor["pth_drill_max"])})', f'hole_clearance (min {fmt(p["pth_hole_clearance"])})',
+                                  f'annular_width (min {fmt(floor["pth_annular_min"])})'],
          cond="A.Type == 'Pad' && A.isPlated()",
          comments=[f'JLC: PTH to track {fmt(floor["pth_to_track_min"])} min / {fmt(floor["pth_to_track_recommended"])} recommended'
                    + (f', inner PTH hole to copper {fmt(floor["inner_pth_hole_to_copper_min"])}' if four else '')
-                   + f', PTH drill max {fmt(floor["pth_drill_max"])} ({URL_CAPS}, {READ})'])
+                   + f', PTH drill max {fmt(floor["pth_drill_max"])} ({URL_CAPS}, {READ})',
+                   f'JLC PTH annular ring {"multilayer" if four else "1-2 layer"} 1 oz: absolute minimum {fmt(floor["pth_annular_min"])}, recommended '
+                   f'{fmt(floor["pth_annular_recommended"])} ({URL_CAPS}, {READ}); the rule is the minimum (library THT footprints), pcb/check_boards.py uses the same floor'])
     rule('JLC NPTH hole', [f'hole_size (min {fmt(floor["npth_hole_min"])}) (max {fmt(floor["pth_drill_max"])})', f'hole_clearance (min {fmt(p["npth_hole_clearance"])})'],
          cond="A.Pad_Type == 'NPTH, mechanical'",
          comments=[f'JLC: NPTH min {fmt(floor["npth_hole_min"])}, NPTH to track {fmt(floor["npth_to_track_min"])} ({URL_CAPS}, {READ})'])
@@ -569,6 +586,17 @@ def rules(kind, doc):
             rule(f'{name} inner width', [f'track_width (min {fmt(c["inner_min_width_mm"])}) (opt {fmt(c["inner_min_width_mm"])})'],
                  cond=f"A.hasNetclass('{name}')", layer='inner',
                  comments=[f'{name} on 0.5 oz inner copper (IPC-2221 internal k 0.024), MODEL'])
+        elif four:
+            rule(f'{name} no inner tracks', ['disallow track'],
+                 cond=f"A.hasNetclass('{name}') && !A.intersectsArea('{BRANCH_AREA}')", layer='inner',
+                 comments=[f'{name}: inner 0.5 oz copper is not counted as a current path, so no {name} track on In1/In2 (a thin inner',
+                           f'track would carry the current in series); inner pours stay allowed and uncounted; {BRANCH_AREA} rule areas excepted'])
+    power_cond = ' || '.join(f"A.hasNetclass('{n}')" for n in POWER_CLASSES)
+    rule('power branch area', [f'track_width (min {fmt(p["track_width"])})'],
+         cond=f"({power_cond}) && A.intersectsArea('{BRANCH_AREA}')",
+         comments=[f'project rule: low-current branches of power nets (Kelvin sense lines, decoupling stubs) inside rule areas named {BRANCH_AREA}',
+                   f'take the project default track {fmt(p["track_width"])} (JLC floor {fmt(floor["track_width_min"])}, {URL_CAPS}, {READ}); each is listed in the board',
+                   'spec branch_exempt {ref: {max_mm, min_width_mm, reason}} and bounded by pcb/check_boards.py'])
     if four:
         rf = cls['RF50']
         rule('RF50 CPWG on L1', [f'track_width (min {fmt(rf["width_mm"] - rf["width_tol_mm"])}) (opt {fmt(rf["width_mm"])}) (max {fmt(rf["width_mm"] + rf["width_tol_mm"])})',
@@ -576,6 +604,11 @@ def rules(kind, doc):
              cond="A.hasNetclass('RF50')", layer='"F.Cu"',
              comments=[f'CBCPW w {rf["width_mm"]} / s {rf["gap_mm"]} over L2 at h {rf["model"]["h_mm"]}, er {rf["model"]["er"]}: {rf["model"]["z0_ohm"]} ohm closed form (MODEL; {URL_STACKUP}, {READ})',
                        'L2 solid under RF50 (3h band) and the fence pitch are checked by pcb/check_boards.py, not by KiCad'])
+        rule('RF50 taper area', [f'track_width (min {fmt(p["track_width"])}) (max {fmt(rf["width_mm"] + rf["width_tol_mm"])})'],
+             cond=f"A.hasNetclass('RF50') && A.intersectsArea('{TAPER_AREA}')", layer='"F.Cu"',
+             comments=[f'project rule: RF50 tapers into IC pins inside rule areas named {TAPER_AREA} may narrow to {fmt(p["track_width"])}',
+                       f'(JLC floor {fmt(floor["track_width_min"])}, {URL_CAPS}, {READ}); clearance stays {fmt(rf["gap_mm"])}; each taper is listed in the board spec',
+                       'rf50_taper {ref: {max_len_mm, min_width_mm, reason}} and bounded by pcb/check_boards.py'])
         rule('RF50 only on L1', ['disallow track via'], cond="A.hasNetclass('RF50')", layer='inner',
              comments=['RF50 lines stay on F.Cu over the solid In1.Cu GND (layer plan, build/15)'])
         rule('RF50 not on L4', ['disallow track'], cond="A.hasNetclass('RF50')", layer='"B.Cu"')

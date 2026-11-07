@@ -254,6 +254,7 @@
       "inner_note": null,
       "clearance_mm": 0.15,
       "vias_per_transition": 2,
+      "vias_per_transition_status": "advisory design value: neither KiCad DRC nor pcb/check_boards.py counts vias per transition (review.json lists it under unverified)",
       "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
     },
     "PWR2A": {
@@ -272,6 +273,7 @@
       "inner_note": null,
       "clearance_mm": 0.15,
       "vias_per_transition": 3,
+      "vias_per_transition_status": "advisory design value: neither KiCad DRC nor pcb/check_boards.py counts vias per transition (review.json lists it under unverified)",
       "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
     },
     "PWR3A": {
@@ -287,9 +289,10 @@
       "outer_ipc_width_mm": 1.8159,
       "split_outer_per_layer_mm": 1.05,
       "inner_min_width_mm": null,
-      "inner_note": "inner 0.5 oz copper is not counted as current path for this class (outer layers carry it)",
+      "inner_note": "inner 0.5 oz copper is not counted as current path for this class (outer layers carry it): tracks of the class on inner layers are disallowed (.kicad_dru, except PWR_BRANCH* rule areas) and a pcb/check_boards.py finding; inner pours are allowed and not counted",
       "clearance_mm": 0.15,
       "vias_per_transition": 5,
+      "vias_per_transition_status": "advisory design value: neither KiCad DRC nor pcb/check_boards.py counts vias per transition (review.json lists it under unverified)",
       "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
     },
     "BATT": {
@@ -305,9 +308,10 @@
       "outer_ipc_width_mm": 3.1766,
       "split_outer_per_layer_mm": 1.85,
       "inner_min_width_mm": null,
-      "inner_note": "inner 0.5 oz copper is not counted as current path for this class (outer layers carry it)",
+      "inner_note": "inner 0.5 oz copper is not counted as current path for this class (outer layers carry it): tracks of the class on inner layers are disallowed (.kicad_dru, except PWR_BRANCH* rule areas) and a pcb/check_boards.py finding; inner pours are allowed and not counted",
       "clearance_mm": 0.15,
       "vias_per_transition": 8,
+      "vias_per_transition_status": "advisory design value: neither KiCad DRC nor pcb/check_boards.py counts vias per transition (review.json lists it under unverified)",
       "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
     },
     "RF50": {
@@ -2648,7 +2652,11 @@
         "pattern": "VCC_5V_PERI"
       }
     ],
-    "note": "board .kicad_pro: net_settings classes named as above with outer_min_width_mm as track width, patterns as listed; the .kicad_dru conditions use A.hasNetclass(<class>)"
+    "note": "board .kicad_pro: net_settings classes named as above with outer_min_width_mm as track width, patterns as listed; the .kicad_dru conditions use A.hasNetclass(<class>)",
+    "rule_areas": {
+      "PWR_BRANCH*": "power-class tracks inside a rule area named so take the project default track 0.15 mm as minimum (Kelvin sense, decoupling stubs); the board spec lists each in branch_exempt {ref: {max_mm, min_width_mm, reason}} and pcb/check_boards.py bounds the chain (project rule)",
+      "RF_TAPER*": "RF50 tracks inside a rule area named so may narrow to 0.15 mm (taper into an IC pin); the board spec lists each in rf50_taper {ref: {max_len_mm, min_width_mm, reason}} and pcb/check_boards.py bounds it (project rule)"
+    }
   },
   "open": [
     "Finished RF50 impedance, loss and coupon TDR/S21 (bench).",

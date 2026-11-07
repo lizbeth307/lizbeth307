@@ -15,14 +15,25 @@ over plate pockets and component heights against the height zones. Review hashes
 pins, nets, footprints, contract, classes), not whole input files, so an unrelated parts.json or graph edit does
 not stale a review (F10). Results are MODEL checks of the drawn copper; they prove no hardware gate.
 
-Spec fields read from pcb/boards/<B>.json (all optional except board_id):
-  board_id, board_file (default build/kicad/boards/<B>/<B>.kicad_pcb), contract_board (default board_id),
+Spec: pcb/boards/<B>.json is the board spec shared with pcb/board_gen.py (schema srrx-board-spec-v1, PCB-PIPE).
+normalize_spec() reads these v1 keys: board_id, contract {file, board}, project (board file = same stem .kicad_pcb),
+instances {template_nets, list [{id, refs {template_ref: graph_ref | null}, nets {template_net: graph_net}}]},
+parts [{ref, source "graph" | "pilot_placeholder", pins, replaced_by}] (placeholders become board-only refs whose pads
+are checked against `pins`), holes {ref_prefix} (mounting-hole footprints), height_zones [{region "board" | [x, y, w, h],
+max_height_mm | max_height_mm_from_contract <contract key>, side}]. Every other v1 key (layers, router, drc_policy,
+pre_route, ...) belongs to board_gen and is ignored here. A spec without "schema" uses the native form below; a spec with
+another schema, or a v1 key in an unknown shape, stops with a SystemExit naming the key.
+Checker keys (optional, in either form; contract frame mm, y up unless contract_transform says otherwise):
+  board_file (default build/kicad/boards/<B>/<B>.kicad_pcb), contract_board (default contract.board, then board_id),
   refs | domains (graph refs on the board; domains use pcb/generated/components.csv board_candidate),
-  board_only_refs {ref: reason}, instances [{id, ref_map {board_ref: graph_ref}, net_map {board_net: graph_net}}]
-  or the board_gen form (srrx-board-spec-v1) instances {list [{id, refs, nets}]} with parts[] pilot_placeholder pins,
+  board_only_refs {ref: reason}, instances [{id, ref_map {board_ref: graph_ref}, net_map {board_net: graph_net}}] (native),
   contract_transform {origin: [x, y] (KiCad position of contract (0, 0)), y: "up"|"down"} (default: y up, origin
   from the Edge.Cuts bounding box), bond_hole {at: [x, y], net}, gnd_chassis_ties (default: graph ties on the board),
-  split_nets {net: ["F.Cu", "B.Cu"]}, neck_exempt {ref: {escape_mm, reason}}, rf50_exempt {net: reason},
+  split_nets {net: ["F.Cu", "B.Cu"]} (verified: every declared layer must join the same vias/THT pads of the net),
+  neck_exempt {ref: {escape_mm, reason}}, branch_exempt {ref: {max_mm, min_width_mm, reason}} (low-current track chains of a
+  power net that end at that ref's pad: Kelvin sense, decoupling stubs; KiCad side: rule areas named PWR_BRANCH*),
+  rf50_exempt {net: reason}, rf50_taper {ref: {max_len_mm, min_width_mm, reason}} (RF50 tapers into that ref's pad;
+  KiCad side: rule areas named RF_TAPER*),
   b2b [{ref, mate_board, mate_ref, pin_map: "identity" | {pin: mate_pin}}],
   tht_pockets [[x, y, w, h], ...] + tht_pocket_margin_mm (contract frame), height_zones [{rect, max_height, side}],
   heights {ref: mm}, sides ["top"] (default top only), max_height_bottom.
@@ -34,6 +45,7 @@ import bisect
 import collections
 import csv
 import hashlib
+import heapq
 import json
 import math
 import re
@@ -52,10 +64,13 @@ NECK_GRID = 0.05     # mm raster for pour necks; a measured neck passes within o
 NECK_MAX_CELLS = 600_000  # larger pours use a coarser step (recorded per neck as grid_mm)
 POS_TOL = 0.01       # mm outline vertex / hole position tolerance
 HOLE_D_TOL = 0.01    # mm hole diameter tolerance
-# mm: KiCad stores nm, so a pour that follows a circumscribed keepout polygon touches the keepout circle at its
-# edge midpoints up to ~1-2 nm inside after vertex rounding (ENC: 2.9999987 mm against r 3.0); 1 um is no fab margin.
-KEEPOUT_TOL = 0.001
-PTH_ANNULAR_FLOOR = 0.15  # mm, JLC multilayer 1 oz absolute minimum (netclasses.json fab_floor)
+# mm: KiCad stores coordinates in 1 nm units and approximates knockout circles by polygons, so a correct fill edge can
+# sit a few nm inside the keepout radius (ENC pilot: 2.9999987 mm against r 3.0). Project tolerance, far below any clearance.
+KEEPOUT_TOL = 0.005
+# Contract board keys this checker reads (the review hash covers these only, F10); MECH-3 keeps the names.
+CONTRACT_KEYS = ('outline_mm', 'cutouts_mm', 'area_mm2', 'holes_mm', 'hole_d', 'hole_keepout_d', 'max_component_height')
+SPEC_SCHEMA_V1 = 'srrx-board-spec-v1'  # pcb/board_gen.py SPEC_SCHEMA
+CHAIN_TOL = 1e-3     # mm: track endpoints closer than this are one node
 
 
 # ------------------------------------------------------------------ S-expressions
@@ -243,6 +258,31 @@ class Capsule:
         return [(min(a for a, _ in out), max(b for _, b in out))]
 
 
+class Multi:
+    """Union of shapes (a custom pad: anchor plus primitives)."""
+
+    def __init__(self, shapes):
+        self.shapes = list(shapes)
+        bb = [s.bbox for s in self.shapes]
+        self.bbox = (min(b[0] for b in bb), min(b[1] for b in bb), max(b[2] for b in bb), max(b[3] for b in bb))
+
+    def dist(self, x, y):
+        return min(s.dist(x, y) for s in self.shapes)
+
+    def contains(self, x, y):
+        return any(s.contains(x, y) for s in self.shapes)
+
+    def intervals(self, y):
+        spans = sorted(iv for s in self.shapes for iv in s.intervals(y))
+        out = []
+        for a, b in spans:
+            if out and a <= out[-1][1]:
+                out[-1] = (out[-1][0], max(out[-1][1], b))
+            else:
+                out.append((a, b))
+        return out
+
+
 def rect_pts(cx, cy, w, h, deg):
     out = []
     for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
@@ -278,6 +318,7 @@ class Board:
                 self.net_table[str(n[1])] = str(n[2])
         self.footprints, self.pads, self.copper, self.edges, self.zones, self.vias, self.tracks = [], [], [], [], [], [], []
         self.holes = []
+        self.unverified = []  # what the reader models only approximately (custom pad primitives)
         for fp in kids(tree, 'footprint'):
             self._footprint(fp)
         for seg in kids(tree, 'segment'):
@@ -383,7 +424,9 @@ class Board:
         number, kind, shape = str(pad[1]), str(pad[2]), str(pad[3]) if len(pad) > 3 else 'rect'
         at = kid(pad, 'at')
         lx, ly = float(at[1]), float(at[2])
-        angle = float(at[3]) if len(at) > 3 else fa
+        # KiCad 10 writes the pad's absolute orientation and omits it when it is 0 (pcb_io_kicad_sexpr.cpp format(PAD):
+        # aPad->GetOrientation(), not GetFPRelativeOrientation()); the position is footprint-relative.
+        angle = float(at[3]) if len(at) > 3 else 0.0
         dx, dy = rot(lx, ly, fa)
         x, y = fx + dx, fy + dy
         size = kid(pad, 'size')
@@ -400,6 +443,11 @@ class Board:
             geo = Capsule(x - ux, y - uy, x + ux, y + uy, min(w, h) / 2)
         else:  # rect, roundrect, trapezoid, chamfered rect, custom anchor: the bounding rectangle
             geo = Poly(rect_pts(x, y, w, h, angle))
+        if shape == 'custom':
+            opts = kid(pad, 'options')
+            if opts is not None and kid(opts, 'anchor') is not None and str(kid(opts, 'anchor')[1]) == 'circle':
+                geo = Capsule(x, y, x, y, w / 2)
+            geo = self._custom_pad(pad, geo, x, y, angle, fp['ref'], number)
         rec = {'ref': fp['ref'], 'number': number, 'kind': kind, 'shape': shape, 'x': x, 'y': y, 'w': w, 'h': h, 'angle': angle,
                'drill': dvals, 'net': net, 'layers': layers, 'geo': geo, 'fp': fp}
         fp['pads'].append(rec)
@@ -409,6 +457,57 @@ class Board:
         if kind == 'np_thru_hole' or (kind == 'thru_hole' and (re.fullmatch(r'HB?\d*', fp['ref'] or '') or 'MountingHole' in fp['lib'])):
             d = dvals[0] if dvals else 0.0
             self.holes.append({'x': x, 'y': y, 'd': d, 'plated': kind == 'thru_hole', 'net': net, 'ref': fp['ref'], 'pad': number})
+
+    def _custom_pad(self, pad, anchor, x, y, angle, ref, number):
+        """Custom pad: the anchor plus its primitives in pad-local coordinates turned by the absolute pad orientation.
+        Filled gr_poly/gr_rect/gr_circle and stroked gr_line/gr_arc are modelled; the stroke width of a filled primitive
+        is not added (modelled copper up to that half-width smaller) and an unfilled circle counts as a disc; listed under
+        unverified with the counts."""
+        def T(px, py):
+            dx, dy = rot(float(px), float(py), angle)
+            return x + dx, y + dy
+        shapes, stroked, skipped = [anchor], 0, []
+        prims = kid(pad, 'primitives')
+        for g in (prims[1:] if prims else []):
+            if not isinstance(g, list) or not g:
+                continue
+            head = str(g[0])
+            width = num(kid(g, 'stroke') or g, 'width', default=0.0) or 0.0
+            if head == 'gr_poly':
+                p = kid(g, 'pts')
+                pts = [T(q[1], q[2]) for q in p[1:] if isinstance(q, list) and q and q[0] == 'xy'] if p else []
+                if len(pts) >= 3:
+                    shapes.append(Poly(pts))
+                    stroked += width > 0
+                else:
+                    skipped.append(head)
+            elif head == 'gr_rect':
+                s, e = kid(g, 'start'), kid(g, 'end')
+                x1, y1, x2, y2 = float(s[1]), float(s[2]), float(e[1]), float(e[2])
+                shapes.append(Poly([T(x1, y1), T(x2, y1), T(x2, y2), T(x1, y2)]))
+                stroked += width > 0
+            elif head == 'gr_circle':
+                c, e = kid(g, 'center'), kid(g, 'end')
+                r = math.hypot(float(e[1]) - float(c[1]), float(e[2]) - float(c[2]))
+                cx, cy = T(c[1], c[2])
+                shapes.append(Capsule(cx, cy, cx, cy, r + width / 2))
+            elif head == 'gr_line':
+                s, e = kid(g, 'start'), kid(g, 'end')
+                (ax, ay), (bx, by) = T(s[1], s[2]), T(e[1], e[2])
+                shapes.append(Capsule(ax, ay, bx, by, width / 2))
+            elif head == 'gr_arc' and kid(g, 'mid') is not None:
+                s, m, e = kid(g, 'start'), kid(g, 'mid'), kid(g, 'end')
+                pts = [T(px, py) for px, py in arc_points(float(s[1]), float(s[2]), float(m[1]), float(m[2]), float(e[1]), float(e[2]), max_seg=0.1)]
+                shapes.extend(Capsule(a[0], a[1], b[0], b[1], width / 2) for a, b in zip(pts, pts[1:]))
+            else:
+                skipped.append(head)
+        note = f'custom pad modelled as its anchor + {len(shapes) - 1} primitive shape(s)'
+        if stroked:
+            note += f'; stroke width of {stroked} filled primitive(s) not added'
+        if skipped:
+            note += f'; not modelled: {sorted(set(skipped))}'
+        self.unverified.append({'check': 'geometry', 'item': f'{ref}.{number}', 'reason': note})
+        return Multi(shapes) if len(shapes) > 1 else anchor
 
     def _track(self, node, arc=False):
         net, width = self.net_of(node), num(node, 'width', default=0.0)
@@ -569,6 +668,142 @@ class Frame:
         return (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1]))
 
 
+# ------------------------------------------------------------------ spec forms
+NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
+               'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
+               'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
+               'sides', 'max_height_bottom')
+DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
+             'rf50_exempt', 'rf50_taper', 'heights')
+LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides')
+
+
+def spec_error(spec, msg):
+    bid = spec.get('board_id', '?') if isinstance(spec, dict) else '?'
+    raise SystemExit(f'check_boards: {bid}: {msg}')
+
+
+def v1_instances(spec, inst):
+    """srrx-board-spec-v1 instances {template_nets, list [{id, refs, nets}]} -> native [{id, ref_map, net_map}]."""
+    if not isinstance(inst, dict) or not isinstance(inst.get('list'), list) or not inst['list']:
+        spec_error(spec, 'instances must be {"template_nets": [...], "list": [{"id", "refs", "nets"}, ...]} (srrx-board-spec-v1)')
+    out = []
+    for n, item in enumerate(inst['list']):
+        if not isinstance(item, dict) or not isinstance(item.get('refs'), dict) or not isinstance(item.get('nets'), dict):
+            spec_error(spec, f'instances.list[{n}] needs "refs" {{template_ref: graph_ref | null}} and "nets" {{template_net: graph_net}}')
+        if any(v is not None and not isinstance(v, str) for v in item['refs'].values()):
+            spec_error(spec, f'instances.list[{n}].refs values must be graph refs or null')
+        out.append({'id': str(item.get('id', n)), 'ref_map': {k: v for k, v in item['refs'].items() if v},
+                    'net_map': {str(k): str(v) for k, v in item['nets'].items()}})
+    return out
+
+
+def v1_height_zones(spec, zones):
+    """height_zones entries: native {rect, max_height, side} or v1 {region "board" | [x, y, w, h], max_height_mm |
+    max_height_mm_from_contract <contract key>, side}."""
+    if not isinstance(zones, list):
+        spec_error(spec, 'height_zones must be a list')
+    out = []
+    for n, z in enumerate(zones):
+        if not isinstance(z, dict):
+            spec_error(spec, f'height_zones[{n}] must be an object')
+        if ('rect' in z or z.get('board') is True) and ('max_height' in z or 'max_height_from_contract' in z):
+            out.append(z)  # native, or already translated
+            continue
+        if 'region' not in z:
+            spec_error(spec, f'height_zones[{n}] needs rect + max_height or region + max_height_mm(_from_contract)')
+        entry = {'side': z.get('side', 'top')}
+        region = z['region']
+        if region == 'board':
+            entry['board'] = True
+        elif isinstance(region, list) and len(region) == 4 and all(isinstance(v, (int, float)) for v in region):
+            entry['rect'] = region
+        else:
+            spec_error(spec, f'height_zones[{n}].region must be "board" or [x, y, w, h] (contract mm)')
+        if isinstance(z.get('max_height_mm'), (int, float)):
+            entry['max_height'] = float(z['max_height_mm'])
+        elif isinstance(z.get('max_height_mm_from_contract'), str):
+            entry['max_height_from_contract'] = z['max_height_mm_from_contract']
+        else:
+            spec_error(spec, f'height_zones[{n}] needs max_height_mm (number) or max_height_mm_from_contract (contract key)')
+        if 'checked' in z:
+            entry['spec_checked'] = bool(z['checked'])
+        out.append(entry)
+    return out
+
+
+def normalize_spec(raw):
+    """The checker view of a board spec: native keys only, with the srrx-board-spec-v1 forms translated (module doc).
+    Idempotent; the review hashes this view, so board_gen-only keys (router, drc_policy, ...) never stale a review."""
+    if not isinstance(raw, dict) or not raw.get('board_id'):
+        raise SystemExit('check_boards: a board spec must be an object with a board_id')
+    schema = raw.get('schema')
+    if schema not in (None, SPEC_SCHEMA_V1):
+        spec_error(raw, f'unknown spec schema {schema!r} (expected {SPEC_SCHEMA_V1} or the native form without "schema")')
+    spec = {k: raw[k] for k in NATIVE_KEYS if k in raw}
+    if schema == SPEC_SCHEMA_V1:
+        contract = raw.get('contract')
+        if contract is not None:
+            if not isinstance(contract, dict) or not isinstance(contract.get('board'), str):
+                spec_error(raw, 'contract must be {"file": <path>, "board": <contract board id>}')
+            spec.setdefault('contract_board', contract['board'])
+            if contract.get('file'):
+                spec.setdefault('contract_file', str(contract['file']))
+        project = raw.get('project')
+        if 'board_file' not in spec and isinstance(project, str) and project.endswith('.kicad_pro'):
+            spec['board_file'] = project[:-len('.kicad_pro')] + '.kicad_pcb'
+        if 'instances' in raw:
+            spec['instances'] = v1_instances(raw, raw['instances'])
+        parts = raw.get('parts', [])
+        if not isinstance(parts, list) or any(not isinstance(p, dict) or 'ref' not in p for p in parts):
+            spec_error(raw, 'parts must be a list of {"ref", "source", ...}')
+        only, pins = dict(spec.get('board_only_refs', {})), dict(spec.get('board_only_pins', {}))
+        for p in parts:
+            if p.get('source') == 'pilot_placeholder':
+                only.setdefault(p['ref'], f"pilot placeholder, replaced by {p.get('replaced_by', 'TBD')}")
+                if isinstance(p.get('pins'), dict):
+                    pins.setdefault(p['ref'], {str(k): v for k, v in p['pins'].items()})
+        if only:
+            spec['board_only_refs'] = only
+        if pins:
+            spec['board_only_pins'] = pins
+        holes = raw.get('holes')
+        if holes is not None:
+            if not isinstance(holes, dict):
+                spec_error(raw, 'holes must be an object (srrx-board-spec-v1: from_contract, ref_prefix, keepout_*)')
+            if holes.get('ref_prefix'):
+                spec['hole_ref_prefixes'] = sorted(set(spec.get('hole_ref_prefixes', [])) | {str(holes['ref_prefix'])})
+    elif isinstance(spec.get('instances'), dict):
+        spec['instances'] = v1_instances(raw, spec['instances'])
+    if 'height_zones' in spec:
+        spec['height_zones'] = v1_height_zones(raw, spec['height_zones'])
+    for k in DICT_KEYS:
+        if k in spec and not isinstance(spec[k], dict):
+            spec_error(raw, f'{k} must be an object')
+    for k in LIST_KEYS:
+        if k in spec and not isinstance(spec[k], list):
+            spec_error(raw, f'{k} must be a list')
+    if 'instances' in spec and (not isinstance(spec['instances'], list)
+                                or any(not isinstance(i, dict) or not isinstance(i.get('ref_map', {}), dict)
+                                       or not isinstance(i.get('net_map', {}), dict) for i in spec['instances'])):
+        spec_error(raw, 'instances must be [{"id", "ref_map": {...}, "net_map": {...}}] (native) or the srrx-board-spec-v1 object')
+    return spec
+
+
+def mounting_refs(board, spec):
+    """Mounting-hole footprints: ref H<n> / HB<n> (or a spec hole ref prefix), library MountingHole:*, or only NPTH pads.
+    Only these are left out of the height and THT-pocket checks; connectors with NPTH pegs are checked normally."""
+    prefixes = {'H', 'HB'} | set(spec.get('hole_ref_prefixes', []))
+    out = set()
+    for fp in board.footprints:
+        ref = fp['ref'] or ''
+        m = re.fullmatch(r'(.*?)\d+', ref)
+        if (m and m.group(1) in prefixes) or 'MountingHole' in fp['lib'] \
+                or (fp['pads'] and all(p['kind'] == 'np_thru_hole' for p in fp['pads'])):
+            out.add(ref)
+    return out
+
+
 # ------------------------------------------------------------------ checks
 def finding(check, item, detail, at=None, contract_at=None, **values):
     """One finding; `at` is in KiCad board coordinates, `contract_at` in the board contract frame (mm)."""
@@ -720,17 +955,18 @@ def check_keepouts(board, cb, frame, spec):
             what = f'{it.kind} {it.ref}.{it.pad}' if it.kind == 'pad' else it.kind
             out.append(finding('keepouts', what, f'copper inside the hole keepout (d {2 * r} mm)', contract_at=frame.to_contract(cx, cy),
                                net=it.net, layer=it.layer, distance=it.shape.dist(cx, cy)))
-    return out, {'keepout_r_mm': r}
+    return out, {'keepout_r_mm': r, 'tolerance_mm': KEEPOUT_TOL}
 
 
 def expected_views(spec, graph, components_csv=None):
     """[(view id, ref_map board->graph, net_map board->graph)] and the graph refs the board must carry."""
-    if isinstance(spec.get('instances'), dict):
-        # board_gen spec (srrx-board-spec-v1, pcb/board_gen.py): instances.list[{id, refs {template: graph|null},
-        # nets {template: graph}}]; a null ref is a pilot_placeholder, checked against its spec pins in check_pad_nets.
-        views = [(i['id'], {t: g for t, g in i['refs'].items() if g}, dict(i['nets'])) for i in spec['instances']['list']]
-    elif spec.get('instances'):
-        views = [(i.get('id', str(n)), dict(i.get('ref_map', {})), dict(i.get('net_map', {}))) for n, i in enumerate(spec['instances'])]
+    inst = spec.get('instances')
+    if isinstance(inst, dict):  # srrx-board-spec-v1 form
+        inst = v1_instances(spec, inst)
+    if inst:
+        if not isinstance(inst, list) or any(not isinstance(i, dict) for i in inst):
+            spec_error(spec, 'instances must be a list of {"id", "ref_map", "net_map"} or the srrx-board-spec-v1 object')
+        views = [(str(i.get('id', n)), dict(i.get('ref_map') or {}), dict(i.get('net_map') or {})) for n, i in enumerate(inst)]
     else:
         if spec.get('refs') is not None:
             refs = list(spec['refs'])
@@ -785,23 +1021,25 @@ def check_pad_nets(board, spec, graph, views):
             for number in sorted(set(pins) - seen):
                 if pins[number]:
                     out.append(finding('pad_nets', f'{bref}.{number}', f'graph pin of {gref} has no pad', graph_net=pins[number]))
-    allowed = dict(spec.get('board_only_refs', {}))
-    for part in spec.get('parts', []):
-        # board_gen pilot_placeholder: no graph ref yet; its pads must carry the template nets of its spec pins.
-        if not isinstance(part, dict) or part.get('source') != 'pilot_placeholder':
-            continue
-        allowed[part['ref']] = 'pilot_placeholder'
-        fp = fps.get(part['ref'])
+    allowed = spec.get('board_only_refs', {})
+    for ref, want in sorted(spec.get('board_only_pins', {}).items()):  # placeholders: pads against the spec pin map
+        fp = fps.get(ref)
         if fp is None:
-            out.append(finding('pad_nets', part['ref'], 'pilot_placeholder of the spec has no footprint on the board'))
+            out.append(finding('pad_nets', ref, 'board-only part with a spec pin map has no footprint on the board'))
             continue
-        want = {str(k): v for k, v in part.get('pins', {}).items()}
-        have = {p['number']: (None if not p['net'] or p['net'].startswith('unconnected-') else p['net'])
-                for p in fp['pads'] if p['number'] and p['kind'] != 'np_thru_hole'}
+        have = {}
+        for pad in fp['pads']:
+            if pad['kind'] == 'np_thru_hole' or pad['number'] == '':
+                continue
+            net = pad['net'] if pad['net'] and not pad['net'].startswith('unconnected-') else None
+            have.setdefault(pad['number'], set()).add(net)
         for number in sorted(set(want) | set(have)):
-            if want.get(number) != have.get(number):
-                out.append(finding('pad_nets', f"{part['ref']}.{number}", 'pilot_placeholder pad net differs from the spec pins',
-                                   net=have.get(number), graph_net=want.get(number)))
+            nets = have.get(number)
+            if nets is None:
+                out.append(finding('pad_nets', f'{ref}.{number}', 'spec pin of the board-only part has no pad', net=want[number]))
+            elif nets != {want.get(number)}:
+                out.append(finding('pad_nets', f'{ref}.{number}', 'pad net differs from the spec pin map of the board-only part',
+                                   net=sorted(n or '' for n in nets), graph_net=want.get(number)))
     for ref, fp in sorted(fps.items()):
         if ref in board_refs or ref in allowed:
             continue
@@ -825,12 +1063,19 @@ def class_map(netclasses, views):
     return lookup
 
 
-def layer_requirement(cls_name, cls, layer, net, spec, outer_layers):
-    """(required width mm, note) for copper of a class net on a layer; None when the layer is not counted."""
+def split_layers(spec, bnet, gnet):
+    """Layers a spec declares for a split net (keyed by graph or board net)."""
+    sn = spec.get('split_nets', {})
+    return sn.get(gnet) or sn.get(bnet)
+
+
+def layer_requirement(cls_name, cls, layer, net, spec, outer_layers, split_ok=frozenset(), bnet=None):
+    """(required width mm, note) for copper of a class net on a layer; None when the layer is not counted.
+    The split width applies only to nets in split_ok (declared and verified by check_split)."""
     if cls.get('kind') == 'power':
         if layer in outer_layers:
-            split = spec.get('split_nets', {}).get(net)
-            if split and cls.get('split_outer_per_layer_mm') and set(split) >= set(outer_layers) and layer in split:
+            split = split_layers(spec, bnet or net, net)
+            if split and cls.get('split_outer_per_layer_mm') and set(split) >= set(outer_layers) and layer in split and net in split_ok:
                 return cls['split_outer_per_layer_mm'], 'split L1+L4'
             return cls['outer_min_width_mm'], 'single layer'
         if cls.get('inner_min_width_mm') is None:
@@ -964,16 +1209,198 @@ def raster_neck(items, terminals, region, grid=NECK_GRID, entry=0.0):
     return sorted(out)
 
 
+def raster_fill(shape, value, target, x0, y0, grid, nx, ny):
+    """Mark the raster cells whose centres lie inside a shape."""
+    bx0, by0, bx1, by1 = shape.bbox
+    j0, j1 = max(0, int((by0 - y0) / grid) - 1), min(ny - 1, int((by1 - y0) / grid) + 1)
+    for j in range(j0, j1 + 1):
+        yc = y0 + (j + 0.5) * grid
+        for a, b in shape.intervals(yc):
+            i0 = max(0, int(math.ceil((a - x0) / grid - 0.5)))
+            i1 = min(nx - 1, int(math.floor((b - x0) / grid - 0.5)))
+            base = j * nx
+            for i in range(i0, i1 + 1):
+                target[base + i] = value
+
+
+def raster_grid(region):
+    x0, y0, x1, y1 = region
+    return max(NECK_GRID, math.ceil(math.sqrt((x1 - x0) * (y1 - y0) / NECK_MAX_CELLS) * 100) / 100)
+
+
+def raster_islands(shapes, region, grid):
+    """4-connected copper islands of shapes on a raster; returns a function (x, y) -> island id (0 = no copper)."""
+    x0, y0, x1, y1 = region
+    nx, ny = max(1, int(math.ceil((x1 - x0) / grid))), max(1, int(math.ceil((y1 - y0) / grid)))
+    cop = bytearray(nx * ny)
+    for s in shapes:
+        raster_fill(s, 1, cop, x0, y0, grid, nx, ny)
+    label = [0] * (nx * ny)
+    nxt = 0
+    for c in range(nx * ny):
+        if not cop[c] or label[c]:
+            continue
+        nxt += 1
+        label[c] = nxt
+        queue = collections.deque([c])
+        while queue:
+            q = queue.popleft()
+            i, j = q % nx, q // nx
+            for nb, ok in ((q - 1, i > 0), (q + 1, i < nx - 1), (q - nx, j > 0), (q + nx, j < ny - 1)):
+                if ok and cop[nb] and not label[nb]:
+                    label[nb] = nxt
+                    queue.append(nb)
+
+    def at(x, y):
+        i, j = int((x - x0) / grid), int((y - y0) / grid)
+        for di, dj in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
+            ii, jj = i + di, j + dj
+            if 0 <= ii < nx and 0 <= jj < ny and label[jj * nx + ii]:
+                return label[jj * nx + ii]
+        return 0
+    return at
+
+
+def check_split(board, bnet, layers, skip=frozenset()):
+    """(ok, reason) for a net declared split over `layers`: each layer carries its own copper (pour or tracks) and joins
+    the same groups of the net's vias and THT pads (the layers run in parallel between the same transitions)."""
+    items = [it for it in board.copper if it.net == bnet and it.layer in layers and id(it) not in skip]
+    terms = [(v['x'], v['y']) for v in board.vias if v['net'] == bnet and set(layers) <= set(v['layers'])]
+    terms += [(p['x'], p['y']) for p in board.pads if p['net'] == bnet and p['kind'] == 'thru_hole' and set(layers) <= set(p['layers'])]
+    for layer in layers:
+        if not any(it.layer == layer and it.kind in ('zone', 'track', 'arc', 'gr_copper') for it in items):
+            return False, f'no {layer} pour or track of the net (pads and vias only)'
+    if not terms:
+        return False, 'no via or THT pad of the net joins the declared layers'
+    if not items:
+        return False, 'no copper of the net on the declared layers'
+    region = (min(it.shape.bbox[0] for it in items) - 1.0, min(it.shape.bbox[1] for it in items) - 1.0,
+              max(it.shape.bbox[2] for it in items) + 1.0, max(it.shape.bbox[3] for it in items) + 1.0)
+    grid = raster_grid(region)
+    groups = {}
+    for layer in layers:
+        shapes = []
+        for it in items:
+            if it.layer != layer:
+                continue
+            s = it.shape
+            # thin tracks and vias get half a cell more so a coarse raster cannot break them
+            shapes.append(Capsule(s.x1, s.y1, s.x2, s.y2, s.r + grid / 2) if isinstance(s, Capsule) else s)
+        at = raster_islands(shapes, region, grid)
+        part = collections.defaultdict(set)
+        for k, (x, y) in enumerate(terms):
+            part[at(x, y)].add(k)
+        groups[layer] = sorted(sorted(g) for lbl, g in part.items() if lbl) + [sorted(part.get(0, ()))]
+    first = groups[layers[0]]
+    for layer in layers[1:]:
+        if groups[layer] != first:
+            return False, f'{layers[0]} and {layer} join different groups of the net vias/THT pads ({len(first) - 1} vs {len(groups[layer]) - 1} island group(s), raster {grid} mm)'
+    return True, f'{len(terms)} via/THT transition(s) joined alike on {layers}'
+
+
+def track_chain(board, net, start_pads, max_len, width_ok):
+    """Track pieces of `net` reached from `start_pads` along connected segments (vias join layers), within max_len mm path
+    length and each passing width_ok. A chain stops where it joins other copper of the net: another pad or the net's pour.
+    Returns (items, longest path mm)."""
+    segs = [it for it in board.tracks if it.net == net]
+    vias = [v for v in board.vias if v['net'] == net]
+    zones = [it for it in board.copper if it.kind == 'zone' and it.net == net]
+    start_ids = {id(p) for p in start_pads}
+    others = [p for p in board.pads if p['net'] == net and id(p) not in start_ids]
+
+    def key(x, y, layer):
+        return (layer, round(x / CHAIN_TOL), round(y / CHAIN_TOL))
+    adj, pts = collections.defaultdict(list), {}
+    for i, it in enumerate(segs):
+        s = it.shape
+        a, b = key(s.x1, s.y1, it.layer), key(s.x2, s.y2, it.layer)
+        length = math.hypot(s.x2 - s.x1, s.y2 - s.y1)
+        adj[a].append((i, b, length))
+        adj[b].append((i, a, length))
+        pts[a], pts[b] = (s.x1, s.y1, it.layer), (s.x2, s.y2, it.layer)
+    for v in vias:
+        joined = [n for n, (x, y, layer) in pts.items() if layer in v['layers'] and math.hypot(x - v['x'], y - v['y']) <= v['size'] / 2 + 1e-9]
+        for a in joined:
+            adj[a].extend((None, b, 0.0) for b in joined if b != a)
+
+    def inside(x, y, layer, pads):
+        return any(layer in p['layers'] and p['geo'].contains(x, y) for p in pads)
+    dist, heap = {}, []
+    for n, (x, y, layer) in pts.items():
+        if inside(x, y, layer, start_pads):
+            dist[n] = 0.0
+            heap.append((0.0, n))
+    heapq.heapify(heap)
+    chain, longest = {}, 0.0
+    while heap:
+        d, n = heapq.heappop(heap)
+        if d > dist.get(n, math.inf):
+            continue
+        x, y, layer = pts[n]
+        if d > 0 and (inside(x, y, layer, others) or any(z.layer == layer and z.shape.contains(x, y) for z in zones)):
+            continue
+        for i, m, length in adj[n]:
+            nd = d + length
+            if nd > max_len + 1e-9 or (i is not None and not width_ok(segs[i])):
+                continue
+            if i is not None:
+                chain[i] = segs[i]
+                longest = max(longest, nd)
+            if nd < dist.get(m, math.inf):
+                dist[m] = nd
+                heapq.heappush(heap, (nd, m))
+    return [chain[i] for i in sorted(chain)], longest
+
+
+def branch_exemptions(board, spec, netclasses, views):
+    """branch_exempt {ref: {max_mm, min_width_mm, reason}}: power-class track chains ending at that ref's pads.
+    Returns ({id(track item)}, {id(pad)}, unverified entries)."""
+    lookup = class_map(netclasses, views)
+    classes = netclasses.get('classes', {})
+    tracks, pads, notes = set(), set(), []
+    for ref, rule in sorted(spec.get('branch_exempt', {}).items()):
+        if not isinstance(rule, dict) or 'max_mm' not in rule or 'min_width_mm' not in rule:
+            spec_error(spec, f'branch_exempt.{ref} needs max_mm, min_width_mm and reason')
+        mine = [p for p in board.pads if p['ref'] == ref and p['net']]
+        for bnet in sorted({p['net'] for p in mine}):
+            gnet, cname = lookup(bnet)
+            if classes.get(cname, {}).get('kind') != 'power':
+                continue
+            start = [p for p in mine if p['net'] == bnet]
+            items, longest = track_chain(board, bnet, start, float(rule['max_mm']), lambda it: it.width + 1e-9 >= float(rule['min_width_mm']))
+            tracks.update(id(it) for it in items)
+            pads.update(id(p) for p in start)
+            notes.append({'check': 'class_widths', 'item': f'{ref} branch on {gnet}',
+                          'reason': f"branch_exempt: {len(items)} track piece(s), path {r3(longest)} mm <= {rule['max_mm']} mm, width >= {rule['min_width_mm']} mm "
+                                    f"left out of the {cname} width and neck checks: {rule.get('reason', '')}"})
+    return tracks, pads, notes
+
+
 def check_classes(board, spec, netclasses, views):
-    out, unverified, info = [], [], {'tracks_checked': 0, 'pour_necks': []}
+    out, unverified, info = [], [], {'tracks_checked': 0, 'pour_necks': [], 'split_nets': {}}
     lookup = class_map(netclasses, views)
     classes = netclasses.get('classes', {})
     outer = [l for l in ('F.Cu', 'B.Cu') if l in board.copper_layers]
     exempt = spec.get('neck_exempt', {})
+    branch_tracks, branch_pads, notes = branch_exemptions(board, spec, netclasses, views)
+    unverified.extend(notes)
     pads_by_net = collections.defaultdict(list)
     for p in board.pads:
         if p['net']:
             pads_by_net[p['net']].append(p)
+    split_ok = set()
+    for bnet in sorted({it.net for it in board.copper if it.net}):
+        gnet, cname = lookup(bnet)
+        layers = split_layers(spec, bnet, gnet)
+        if not layers or classes.get(cname, {}).get('kind') != 'power':
+            continue
+        ok, why = check_split(board, bnet, [l for l in layers if l in board.copper_layers] or list(layers), skip=branch_tracks)
+        info['split_nets'][gnet] = {'layers': list(layers), 'verified': ok, 'detail': why}
+        if ok:
+            split_ok.add(gnet)
+        else:
+            out.append(finding('class_widths', f'split {gnet}', f'split_nets declares {list(layers)} but {why}; '
+                               f'checked at the single-layer width {classes[cname]["outer_min_width_mm"]} mm', layer=','.join(layers)))
 
     def escaped(it):
         # a pad-escape segment: both ends within escape_mm (+ half the pad) of a pad of an exempt ref on the same net
@@ -993,19 +1420,22 @@ def check_classes(board, spec, netclasses, views):
         cls = classes.get(cname, {})
         if cname == 'RF50':
             continue
-        need, why = layer_requirement(cname, cls, it.layer, gnet, spec, outer)
+        if id(it) in branch_tracks:
+            continue
+        need, why = layer_requirement(cname, cls, it.layer, gnet, spec, outer, split_ok, it.net)
         info['tracks_checked'] += 1
         if need is None:
-            if (gnet, it.layer) not in noted and cls.get('kind') == 'power':
-                noted.add((gnet, it.layer))
-                unverified.append({'check': 'class_widths', 'item': f'{gnet} on {it.layer}', 'reason': why})
+            if cls.get('kind') == 'power':
+                # inner copper is not a current path for this class: a track there would carry the current in series
+                out.append(finding('class_widths', f'{it.kind} {gnet}', f'{cname} track on {it.layer}: {why} (route it on {"/".join(outer)} or pour; '
+                                   'low-current branches go in branch_exempt)', at=(it.shape.x1, it.shape.y1), value=it.width, layer=it.layer))
             continue
         if it.width + 1e-9 < need and not escaped(it):
             out.append(finding('class_widths', f'{it.kind} {gnet}', f'{cname} copper narrower than {need} mm ({why}) on {it.layer}',
                                at=(it.shape.x1, it.shape.y1), value=it.width, limit=need, layer=it.layer))
     by_net_layer = collections.defaultdict(list)
     for it in board.copper:
-        if it.net and it.kind in ('zone', 'track', 'arc', 'pad', 'via'):
+        if it.net and it.kind in ('zone', 'track', 'arc', 'pad', 'via') and id(it) not in branch_tracks:
             by_net_layer[(it.net, it.layer)].append(it)
     for (bnet, layer), items in sorted(by_net_layer.items(), key=lambda kv: kv[0]):
         zones = [it for it in items if it.kind == 'zone']
@@ -1015,24 +1445,37 @@ def check_classes(board, spec, netclasses, views):
         cls = classes.get(cname, {})
         if cls.get('kind') != 'power':
             continue
-        need, why = layer_requirement(cname, cls, layer, gnet, spec, outer)
+        need, why = layer_requirement(cname, cls, layer, gnet, spec, outer, split_ok, bnet)
         if need is None:
-            unverified.append({'check': 'class_widths', 'item': f'{gnet} pour on {layer}', 'reason': why})
+            if (gnet, layer) not in noted:
+                noted.add((gnet, layer))
+                unverified.append({'check': 'class_widths', 'item': f'{gnet} pour on {layer}', 'reason': why})
             continue
         bx0 = min(z.shape.bbox[0] for z in zones) - 1.0
         by0 = min(z.shape.bbox[1] for z in zones) - 1.0
         bx1 = max(z.shape.bbox[2] for z in zones) + 1.0
         by1 = max(z.shape.bbox[3] for z in zones) + 1.0
         copper = [it for it in items if it.kind in ('zone', 'track', 'arc')]
-        terms = [it.shape for it in items if it.kind in ('pad', 'via') and not (it.shape.bbox[2] < bx0 or it.shape.bbox[0] > bx1 or it.shape.bbox[3] < by0 or it.shape.bbox[1] > by1)]
+        terms = [it.shape for it in items if it.kind in ('pad', 'via') and not (it.kind == 'pad' and id(it.extra) in branch_pads)
+                 and not (it.shape.bbox[2] < bx0 or it.shape.bbox[0] > bx1 or it.shape.bbox[3] < by0 or it.shape.bbox[1] > by1)]
         # raster step: NECK_GRID, coarser for large pours so a region stays below NECK_MAX_CELLS (pure Python)
-        grid = max(NECK_GRID, math.ceil(math.sqrt((bx1 - bx0) * (by1 - by0) / NECK_MAX_CELLS) * 100) / 100)
+        grid = raster_grid((bx0, by0, bx1, by1))
         necks = raster_neck(copper, terms, (bx0, by0, bx1, by1), grid=grid, entry=need / 2)
         for width, x, y in necks:
             info['pour_necks'].append({'net': gnet, 'layer': layer, 'neck_mm': r3(width), 'limit_mm': need, 'grid_mm': grid, 'at': [r3(x), r3(y)]})
             if width + grid + 1e-9 < need:
                 out.append(finding('class_widths', f'pour {gnet}', f'{cname} pour neck below {need} mm ({why}) on {layer} (raster +/-{grid} mm)',
                                    at=(x, y), value=width, limit=need, layer=layer))
+    # vias_per_transition is a design value (netclasses.json): neither KiCad nor this checker counts vias per transition
+    vias_by_net = collections.Counter(v['net'] for v in board.vias if v['net'])
+    for bnet in sorted({it.net for it in board.copper if it.net}):
+        gnet, cname = lookup(bnet)
+        cls = classes.get(cname, {})
+        if cls.get('kind') != 'power' or not (vias_by_net.get(bnet) or split_layers(spec, bnet, gnet)):
+            continue
+        unverified.append({'check': 'class_widths', 'item': f'{gnet} vias',
+                           'reason': f"vias_per_transition {cls.get('vias_per_transition')} ({cname}) is advisory, not counted: "
+                                     f"{vias_by_net.get(bnet, 0)} via(s) of the net on the board"})
     return out, unverified, info
 
 
@@ -1053,6 +1496,24 @@ def check_rf50(board, spec, netclasses, views):
     segs = 0
     short = collections.Counter()
     exempt = spec.get('rf50_exempt', {})
+    # rf50_taper {ref: {max_len_mm, min_width_mm, reason}}: narrower F.Cu pieces from that ref's pad (taper into a QFN pin)
+    taper = set()
+    for ref, rule in sorted(spec.get('rf50_taper', {}).items()):
+        if not isinstance(rule, dict) or 'max_len_mm' not in rule or 'min_width_mm' not in rule:
+            spec_error(spec, f'rf50_taper.{ref} needs max_len_mm, min_width_mm and reason')
+        lo = float(rule['min_width_mm'])
+        mine = [p for p in board.pads if p['ref'] == ref and p['net']]
+        for bnet in sorted({p['net'] for p in mine}):
+            gnet, cname = lookup(bnet)
+            if cname != 'RF50':
+                continue
+            items, longest = track_chain(board, bnet, [p for p in mine if p['net'] == bnet], float(rule['max_len_mm']),
+                                         lambda it: it.layer == 'F.Cu' and lo - 1e-9 <= it.width < w - tol - 1e-9)
+            taper.update(id(it) for it in items)
+            unverified.append({'check': 'rf50', 'item': f'{ref} taper on {gnet}',
+                               'reason': f"rf50_taper: {len(items)} piece(s), path {r3(longest)} mm <= {rule['max_len_mm']} mm, width {lo}-{w} mm, "
+                                         f"left out of the width and CPWG gap/ground/L2/fence checks: {rule.get('reason', '')}"})
+    noted_exempt = set()
     for it in board.tracks:
         if not it.net:
             continue
@@ -1063,6 +1524,8 @@ def check_rf50(board, spec, netclasses, views):
             out.append(finding('rf50', f'{gnet}', 'RF50 copper off L1 (F.Cu)', at=(it.shape.x1, it.shape.y1), layer=it.layer))
             continue
         segs += 1
+        if id(it) in taper:
+            continue
         if abs(it.width - w) > tol + 1e-9:
             out.append(finding('rf50', f'{gnet}', 'RF50 width outside tolerance', at=(it.shape.x1, it.shape.y1), value=it.width, limit=w))
         x1, y1, x2, y2 = it.shape.x1, it.shape.y1, it.shape.x2, it.shape.y2
@@ -1076,7 +1539,9 @@ def check_rf50(board, spec, netclasses, views):
         if not ts:
             short[gnet] += 1
         if gnet in exempt:
-            unverified.append({'check': 'rf50', 'item': gnet, 'reason': 'exempt from coplanar/L2/fence checks: ' + str(exempt[gnet])})
+            if gnet not in noted_exempt:
+                noted_exempt.add(gnet)
+                unverified.append({'check': 'rf50', 'item': gnet, 'reason': 'exempt from coplanar/L2/fence checks: ' + str(exempt[gnet])})
             continue
         gap_bad = ground_bad = l2_bad = 0
         first = {}
@@ -1195,17 +1660,20 @@ def check_tht_pockets(board, spec, frame):
         return out, {'applies': False}
     margin = float(spec['tht_pocket_margin_mm'])
     rects = [frame.rect(r) for r in pockets]
-    hole_refs = {h['ref'] for h in board.holes}
-    n = 0
+    mounting = mounting_refs(board, spec)
+    n = pegs = 0
     for p in board.pads:
-        if p['kind'] != 'thru_hole' or p['ref'] in hole_refs:
+        # THT pads and the NPTH locating pegs of parts (both go through the board); mounting holes are left out
+        if p['kind'] not in ('thru_hole', 'np_thru_hole') or p['ref'] in mounting:
             continue
         n += 1
+        pegs += p['kind'] == 'np_thru_hole'
+        what = 'THT pad' if p['kind'] == 'thru_hole' else 'NPTH peg'
         x0, y0, x1, y1 = p['geo'].bbox
         x0, y0, x1, y1 = x0 - margin, y0 - margin, x1 + margin, y1 + margin
         if not any(rx0 <= x0 and ry0 <= y0 and x1 <= rx1 and y1 <= ry1 for rx0, ry0, rx1, ry1 in rects):
-            out.append(finding('tht_pockets', f"{p['ref']}.{p['number']}", f'THT pad (+{margin} mm) not inside a plate pocket', contract_at=frame.to_contract(p['x'], p['y'])))
-    return out, {'applies': True, 'tht_pads': n, 'pockets': len(rects)}
+            out.append(finding('tht_pockets', f"{p['ref']}.{p['number'] or 'NPTH'}", f'{what} (+{margin} mm) not inside a plate pocket', contract_at=frame.to_contract(p['x'], p['y'])))
+    return out, {'applies': True, 'tht_pads': n, 'npth_pegs': pegs, 'pockets': len(rects)}
 
 
 def fp_height(fp, spec):
@@ -1223,16 +1691,21 @@ def fp_height(fp, spec):
 def check_heights(board, spec, cb, frame):
     out, unverified = [], []
     sides = set(spec.get('sides', ['top']))
-    zones = [(frame.rect(z['rect']), float(z['max_height']), z.get('side', 'top')) for z in spec.get('height_zones', []) if 'rect' in z]
+    zones = []
     for z in spec.get('height_zones', []):
-        if 'rect' not in z:  # board_gen form {region, checked: false, why}: no rectangle to check against
-            unverified.append({'check': 'heights', 'item': str(z.get('region', 'zone')),
-                               'reason': 'spec height zone without rect (board_gen form): ' + str(z.get('why', 'not checked'))})
+        rect = (-math.inf, -math.inf, math.inf, math.inf) if z.get('board') else frame.rect(z['rect'])
+        if 'max_height' in z:
+            zmax = float(z['max_height'])
+        else:
+            zmax = cb.get(z['max_height_from_contract'])
+            if not isinstance(zmax, (int, float)):
+                spec_error(spec, f"height_zones: the contract board has no numeric {z['max_height_from_contract']!r}")
+        zones.append((rect, float(zmax), z.get('side', 'top')))
     default = {'top': cb.get('max_component_height'), 'bottom': spec.get('max_height_bottom')}
-    hole_refs = {h['ref'] for h in board.holes}
+    mounting = mounting_refs(board, spec)
     checked = 0
     for fp in board.footprints:
-        if not fp['ref'] or fp['ref'] in hole_refs or not fp['pads']:
+        if not fp['ref'] or fp['ref'] in mounting or not fp['pads']:
             continue
         if fp['side'] not in sides:
             out.append(finding('heights', fp['ref'], f"part on the {fp['side']} side; spec sides {sorted(sides)}"))
@@ -1267,8 +1740,15 @@ def check_heights(board, spec, cb, frame):
     return out, unverified, {'checked': checked}
 
 
-def check_annular(board):
+def annular_floor(board, netclasses):
+    """(mm, fab_floor key): the JLC PTH annular-ring absolute minimum for the board's copper layer count."""
+    key = 'jlc_4l_1oz' if len(board.copper_layers) > 2 else 'jlc_2l_1oz'
+    return float(netclasses['fab_floor'][key]['pth_annular_min']), key
+
+
+def check_annular(board, netclasses):
     out = []
+    floor, key = annular_floor(board, netclasses)
     for p in board.pads:
         if p['kind'] != 'thru_hole' or not p['drill']:
             continue
@@ -1276,9 +1756,9 @@ def check_annular(board):
             ring = min((p['w'] - p['drill'][0]) / 2, (p['h'] - p['drill'][1]) / 2)
         else:
             ring = (min(p['w'], p['h']) - p['drill'][0]) / 2
-        if ring + 1e-9 < PTH_ANNULAR_FLOOR:
-            out.append(finding('pth_annular', f"{p['ref']}.{p['number']}", 'PTH annular ring below the JLC absolute minimum', at=(p['x'], p['y']), value=ring, limit=PTH_ANNULAR_FLOOR))
-    return out, {}
+        if ring + 1e-9 < floor:
+            out.append(finding('pth_annular', f"{p['ref']}.{p['number']}", f'PTH annular ring below the JLC absolute minimum ({key})', at=(p['x'], p['y']), value=ring, limit=floor))
+    return out, {'floor_mm': floor, 'fab_floor': key}
 
 
 # ------------------------------------------------------------------ review
@@ -1293,20 +1773,26 @@ def projections(board, spec, cb, graph, views, netclasses):
     lookup = class_map(netclasses, views)
     used = {n: lookup(n) for n in board_nets}
     cls_names = sorted({c for _g, c in used.values()})
+    keys = set(CONTRACT_KEYS) | {z['max_height_from_contract'] for z in spec.get('height_zones', []) if 'max_height_from_contract' in z}
     return {
         'graph_refs_pins_nets': sha_text(canon({'views': [[v, rm, nm] for v, rm, nm in views], 'refs': refs})),
         'footprints': sha_text(canon({k: v['footprint'] for k, v in refs.items()})),
-        'contract_board': sha_text(canon(cb)),
+        'contract_board': sha_text(canon({k: cb.get(k) for k in sorted(keys)})),
         'netclasses': sha_text(canon({'nets': used, 'classes': {c: netclasses.get('classes', {}).get(c) for c in cls_names}})),
         'spec': sha_text(canon(spec)),
     }
 
 
+def contract_path(spec):
+    return ROOT / spec['contract_file'] if spec.get('contract_file') else CONTRACT
+
+
 def review_board(board, spec, contract, graph, netclasses, mates=None, components_csv=None, board_rel=None):
+    spec = normalize_spec(spec)
     bid = spec['board_id']
     cb = contract['boards'].get(spec.get('contract_board', bid))
     if cb is None:
-        raise SystemExit(f'check_boards: contract board {spec.get("contract_board", bid)} not in {CONTRACT.relative_to(ROOT).as_posix()}')
+        raise SystemExit(f'check_boards: {bid}: contract board {spec.get("contract_board", bid)} not in {contract_path(spec).name}')
     frame = Frame(board, cb, spec)
     views = expected_views(spec, graph, components_csv)
     findings, unverified, checks = [], [], collections.OrderedDict()
@@ -1330,7 +1816,8 @@ def review_board(board, spec, contract, graph, netclasses, mates=None, component
     run('b2b', check_b2b(board, spec, mates or {}))
     run('tht_pockets', check_tht_pockets(board, spec, frame))
     run('heights', check_heights(board, spec, cb, frame))
-    run('pth_annular', check_annular(board))
+    run('pth_annular', check_annular(board, netclasses))
+    unverified.extend(board.unverified)
     return {
         'schema': 'srrx-board-review-v1',
         'board_id': bid,
@@ -1340,7 +1827,7 @@ def review_board(board, spec, contract, graph, netclasses, mates=None, component
         'inputs': {
             'board_file': {'path': board_rel or (board.path.as_posix() if board.path else ''), 'sha256': sha_file(board.path) if board.path else None},
             'projection_sha256': projections(board, spec, cb, graph, views, netclasses),
-            'note': 'projections of refs/pins/nets, footprints, the contract entry, the classes used and the spec (F10); the board file itself is hashed whole',
+            'note': 'projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole',
         },
         'frame': {'origin': [r3(frame.ox), r3(frame.oy)], 'y': 'up' if frame.yup else 'down', 'source': frame.source},
         'counts': {'footprints': len(board.footprints), 'pads': len(board.pads), 'tracks': len(board.tracks), 'vias': len(board.vias),
@@ -1382,12 +1869,13 @@ def main(argv=None):
     ap.add_argument('--check', action='store_true', help='compare with the committed review.json, write nothing')
     args = ap.parse_args(argv)
     specs = spec_paths() if args.all else [BOARDS_DIR / f'{args.board}.json']
-    contract, netclasses, graph = read_json(CONTRACT), read_json(NETCLASSES), load_graph()
+    netclasses, graph = read_json(NETCLASSES), load_graph()
+    contracts = {}
     loaded = {}
     for p in specs:
         if not p.is_file():
             raise SystemExit(f'check_boards: no spec {p.relative_to(ROOT).as_posix()}')
-        spec = read_json(p)
+        spec = normalize_spec(read_json(p))
         bf = board_file(spec)
         loaded[spec['board_id']] = (spec, bf, load_board(bf) if bf.is_file() else None)
     if not loaded:
@@ -1406,10 +1894,15 @@ def main(argv=None):
             else:
                 mp = BOARDS_DIR / f'{m}.json'
                 if mp.is_file():
-                    mbf = board_file(read_json(mp))
+                    mbf = board_file(normalize_spec(read_json(mp)))
                     if mbf.is_file():
                         mates[m] = load_board(mbf)
-        doc = review_board(board, spec, contract, graph, netclasses, mates, board_rel=bf.relative_to(ROOT).as_posix())
+        cpath = contract_path(spec)
+        if cpath not in contracts:
+            if not cpath.is_file():
+                raise SystemExit(f'check_boards: {bid}: no contract file {cpath}')
+            contracts[cpath] = read_json(cpath)
+        doc = review_board(board, spec, contracts[cpath], graph, netclasses, mates, board_rel=bf.relative_to(ROOT).as_posix())
         text = dumps(doc)
         out = OUT_DIR / bid / 'review.json'
         if args.check:
