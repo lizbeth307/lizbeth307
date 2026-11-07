@@ -9,8 +9,8 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "572e09c77521b45312cc235761c465703c40cc099689af3b901ce6861705dde4",
-      "bytes": 96174
+      "sha256": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
+      "bytes": 96430
     },
     "design/E2.json": {
       "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
@@ -25,8 +25,8 @@
       "bytes": 212369
     },
     "design/E5.json": {
-      "sha256": "7fba795a8408c5037fcfbdddd7659dc58c31f437b360c9ad7ebf271f96b6abcd",
-      "bytes": 107820
+      "sha256": "a1af787e01694729e34bc1e9f0b854402f53bd20d93a784d9421f63a2f820703",
+      "bytes": 108385
     },
     "STACK.md": {
       "sha256": "a9475a40d0f735e392b9bc7b3ebbff8cd6193af1276d316238180cca79def48e",
@@ -8949,7 +8949,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9059,7 +9059,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9248,7 +9248,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9420,7 +9420,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9581,7 +9581,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9721,7 +9721,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9825,7 +9825,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9990,7 +9990,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -10113,7 +10113,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -11345,7 +11345,7 @@
       ],
       "source_description": "",
       "source_notes": [
-        "Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); розмикається щонайменше на 4 K нижче фактичного замикання і не нижче 50 °C (даташит Sensata 6700, с. 4). Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»)."
+        "Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); повернення — за таблицею даташиту Sensata 6700 (с. 4) «MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C», а приклад на тій самій сторінці читається як повернення не далі ніж на 4 K нижче фактичного замикання; за жодним прочитанням повернення ≥15 K нижче не гарантоване. Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»)."
       ],
       "coverage_constraints": [
         "Mechanical/power/contact/analog state model only; no vendor register interface is specified.",
@@ -23990,24 +23990,24 @@
         "GND"
       ],
       "configuration_from_source": {},
-      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
-      "pinout_gate": "binder M8 A-coded 3-contact numbering, mounting side and panel cut-out not read from the drawing (MECH-07); functional VOUT/RTN/SPARE identifiers",
+      "pinout_status": "source_numbered_pin_map",
+      "pinout_gate": "binder M8 contacts 1/3/4 from the data sheet; wall position and mounting side not fixed (MECH-07)",
       "source_pins": [
         {
-          "number": "VOUT",
-          "name": "+5 V pod (BIAS_SB_LNA)",
+          "number": "1",
+          "name": "+5 V pod (BIAS_SB_LNA), lead brown",
           "type": "passive",
           "net": "BIAS_SB_LNA"
         },
         {
-          "number": "RTN",
-          "name": "return",
+          "number": "3",
+          "name": "return (GND), lead blue",
           "type": "passive",
           "net": "GND"
         },
         {
-          "number": "SPARE",
-          "name": "third contact, unused",
+          "number": "4",
+          "name": "unused, lead black",
           "type": "no_connect",
           "nc": true
         }
@@ -24019,9 +24019,10 @@
           "component_source": "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires"
         }
       ],
-      "source_description": "Functional contact identifiers of a keyed panel receptacle: the M8 3-contact numbering is not read from the binder drawing yet, so no physical contact number is implied (MECH-07).",
+      "source_description": "binder M8 A-coded 3-contact receptacle: contacts 1, 3 and 4, there is no contact 2 (data sheet p.1, plug-in side: 4 at the top, 3 left, 1 right); lead colours 1 brown, 3 blue, 4 black.",
       "source_notes": [
-        "W425 (E4) is the cable plugged into J551: field-wired M8 male plug at this end, USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.",
+        "W425 (E4) is the cable plugged into J551: field-wired M8 male plug 99 3379 100 03 at this end (its contacts 1/3/4 mirror the receptacle), USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.",
+        "Lead colours are binder's (1 brown, 3 blue, 4 black): the black lead is the unused contact 4, not GND; insulate it at the PWR end. Map W425 by contact number, not by colour (its black conductor is GND).",
         "Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable)."
       ],
       "coverage_constraints": [
@@ -28164,8 +28165,8 @@
         {
           "sheet": "E5",
           "ref": "J551",
-          "pin": "VOUT",
-          "name": "+5 V pod (BIAS_SB_LNA)",
+          "pin": "1",
+          "name": "+5 V pod (BIAS_SB_LNA), lead brown",
           "electrical_type": "passive",
           "assembly": "E5-CIR-08"
         }
@@ -47073,8 +47074,8 @@
         {
           "sheet": "E5",
           "ref": "J551",
-          "pin": "RTN",
-          "name": "return",
+          "pin": "3",
+          "name": "return (GND), lead blue",
           "electrical_type": "passive",
           "assembly": "E5-CIR-08"
         },
@@ -50869,8 +50870,8 @@
     {
       "sheet": "E5",
       "ref": "J551",
-      "pin": "SPARE",
-      "name": "third contact, unused",
+      "pin": "4",
+      "name": "unused, lead black",
       "electrical_type": "no_connect",
       "assembly": "E5-CIR-08"
     }
