@@ -38,7 +38,7 @@
     "build/kicad/E3.kicad_sch": "f57eebf89c4785fa5aa196cbad87ea2eef6fa28825748332815552985759b1ea",
     "build/kicad/E3_02.kicad_sch": "aa9660f7923a6b8d253ab1437bf0a6ed55b057f02d4787eef87d27657599d930",
     "build/kicad/E3_03.kicad_sch": "bada180428554dcfd749799773dc2c1ccb86b83db822f8240f2baa6c059b4543",
-    "build/kicad/E4.kicad_sch": "b62050c2bfd872977c2cdbf28a2cbee27a6d9562c7ade5afc543ffe12b3d58b1",
+    "build/kicad/E4.kicad_sch": "cabf6b544634d2c65db06c34897f5255a76f17f5054c2d52805883b0eb06f654",
     "build/kicad/E4_02.kicad_sch": "e880d7939fe28f50e38bbbe81fb18e3a6088e4af686035b7fb8468e08cdd0f74",
     "build/kicad/E4_03.kicad_sch": "11d5325ae92ba9656baa295f3aeb2de7af798b76e692706887c76b6a05761d64",
     "build/kicad/E4_04.kicad_sch": "dfd96950133dd864665e1d5ba5e5546143d4d9e7101c7f39085c79c2a603d472",
@@ -53,7 +53,7 @@
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "1ef65f1355006a9eac2291e8294f7a279b89b050ff92e33fc0d2cd4b8015d645"
+      "sha256": "c6e9d9c1104f2ee390e72d72e3cc612beddf0aabb4b2ece2e159694ed36b82b6"
     }
   ]
 }
