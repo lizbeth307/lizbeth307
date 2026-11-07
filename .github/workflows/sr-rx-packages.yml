@@ -137,6 +137,10 @@ jobs:
             args+=(--build-all)
           fi
           python3 deployment/repo/check_repo.py plan "${args[@]}" | tee "$RUNNER_TEMP/plan.json"
+          # HEAVY-JOB WIRING PROBE (this one commit only; the next commit reverts it): the light recipe
+          # rtlsdr runs as a heavy job, so the matrix, chain build, artifacts and repository merge run once.
+          printf '%s\n' 'light=limesuiteng' 'heavy_matrix=[{"recipe":"rtlsdr","chain":"rtlsdr"}]' 'heavy_count=1' >> "$GITHUB_OUTPUT"
+          echo "- HEAVY-JOB WIRING PROBE: rtlsdr forced into a heavy job for this commit only" >> "$GITHUB_STEP_SUMMARY"
           python3 - "$RUNNER_TEMP/plan.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
           import json, sys
           plan = json.load(open(sys.argv[1]))
@@ -409,6 +413,8 @@ jobs:
         if: always()
         run: |
           mkdir -p "$RUNNER_TEMP/up/out" "$RUNNER_TEMP/up/chain/$RECIPE" "$RUNNER_TEMP/runtime-report"
+          # Always one file, so the chain artifact exists also for a heavy recipe without lab_build_depends.
+          printf '%s\n' "$CHAIN" > "$RUNNER_TEMP/up/chain/$RECIPE/chain.txt"
           if [ -d "$RUNNER_TEMP/debs/$RECIPE" ]; then
             cp -a "$RUNNER_TEMP/debs/$RECIPE" "$RUNNER_TEMP/up/out/"
           fi
