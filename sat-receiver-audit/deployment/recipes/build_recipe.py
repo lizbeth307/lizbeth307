@@ -85,7 +85,7 @@ NAME = re.compile(r"[a-z0-9][a-z0-9+.-]+")
 # component's git tag tree (a lock entry with a "tag") exported for the recipe's runtime_check.py.
 CI_KEYS = ("heavy", "runtime_depends", "tag_samples")
 DATA_TREE_KIND = "srrx_lab_data_tree"
-OPTION =re.compile(r"\b(?:option|cmake_dependent_option)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)", re.I)
+OPTION = re.compile(r"\b(?:option|cmake_dependent_option)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)", re.I)
 MAINTAINER = "SR-RX lab builder <builder@srrx.invalid>"
 MULTIARCH = "aarch64-linux-gnu"
 

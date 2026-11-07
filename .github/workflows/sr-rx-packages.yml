@@ -15,10 +15,10 @@ name: SR-RX lab packages
 # The mirror job builds srrx-mirror from deployment/image/package-closure.json once it exists.
 # CI evidence only: nothing here reviews a build, tests hardware or is a release signature.
 
-# A workflow_dispatch-only file cannot be dispatched before it reaches the default branch, so
-# pushes that change the packaging inputs run it too (with the defaults below). Heavy recipes run
-# on a push only when the push range changes their inputs (check_repo.heavy_selection) or when the
-# head commit message carries the token [lab-build-all].
+# Pushes that change the packaging inputs run it (with the defaults below), so the evidence sits
+# on the pushed sha itself; a registered workflow also runs on a wip ref by gh workflow run --ref.
+# Heavy recipes run on a push only when the push range changes their inputs
+# (check_repo.heavy_selection) or when the head commit message carries the token [lab-build-all].
 # Evidence trigger line (EVID edits this one line in its '[lab-build-all]' commit): none yet.
 on:
   push:
@@ -91,7 +91,8 @@ jobs:
           persist-credentials: false
           fetch-depth: 2
       # The range is the previous head of this ref (github.event.before) to this head. A new branch
-      # or an unreachable before uses the head commit's own change; no base at all means unknown.
+      # (before all zeros, whatever commits it brings) or an unreachable before is an unknown range:
+      # every heavy recipe runs once. Renames count as a deletion plus an addition (--no-renames).
       - name: Push range (changed paths and the source lock at its start)
         env:
           EVENT: ${{ github.event_name }}
@@ -109,16 +110,13 @@ jobs:
           if [[ "$BEFORE" =~ ^[0-9a-f]{40}$ ]] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
               && git fetch -q --no-tags --depth=1 origin "$BEFORE"; then
             base="$BEFORE"
-          elif git rev-parse -q --verify 'HEAD^' > /dev/null; then
-            base=$(git rev-parse 'HEAD^')
-            echo "::notice::no reachable earlier head of this ref: the range is the head commit's own change"
           fi
           if [ -z "$base" ]; then
             touch "$range/unknown"
-            echo "push range unknown: every heavy recipe runs" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "push range unknown (new branch or unreachable earlier head): every heavy recipe runs" | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          git diff --name-only "$base" HEAD > "$range/changed.txt"
+          git diff --no-renames --name-only "$base" HEAD > "$range/changed.txt"
           git show "$base:sat-receiver-audit/deployment/sources.lock.json" > "$range/lock-before.json" 2> /dev/null || echo '{}' > "$range/lock-before.json"
           echo "push range $base..$(git rev-parse HEAD): $(wc -l < "$range/changed.txt") changed paths" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Plan (every validating recipe; heavy ones by changed inputs or [lab-build-all])
@@ -318,6 +316,8 @@ jobs:
                 ", ".join(i["package"] for i in report["installed"]) or "none", (report["probe"] or {}).get("status")))
           for name, item in sorted(report["runtime_checks"].items()):
               print("  - %s runtime_check.py: %s" % (name, item["status"]))
+          for finding in report.get("findings", []):
+              print("  - FINDING: " + finding)
           for item in report["held_back"]:
               print("  - not installed: %s (%s)" % (item["package"], item["reason"]))
           EOF
@@ -402,9 +402,12 @@ jobs:
                 ", ".join(i["package"] for i in report["installed"]) or "none", (report["probe"] or {}).get("status")))
           for name, item in sorted(report["runtime_checks"].items()):
               print("  - %s runtime_check.py: %s" % (name, item["status"]))
+          for finding in report.get("findings", []):
+              print("  - FINDING: " + finding)
           EOF
       # The repository job takes this recipe's own output; the rebuilt chain goes along only as its
-      # build records, compared with the light job's bytes there (check_repo.py chains).
+      # build records, compared with the light job's bytes there (check_repo.py chains, reported);
+      # check_repo.py packages refuses this recipe if it was built against other bytes than those.
       - name: Stage the artifacts (own output; chain records)
         if: always()
         run: |
@@ -483,8 +486,12 @@ jobs:
           python3 deployment/repo/check_repo.py packages --out "$RUNNER_TEMP/debs" | tee "$RUNNER_TEMP/debs/packages-check.json"
           python3 - "$RUNNER_TEMP/debs/packages-check.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
           import json, sys
-          for item in json.load(open(sys.argv[1]))["packages"]:
+          result = json.load(open(sys.argv[1]))
+          for item in result["packages"]:
               print("- %s: %s (%d entries); build manifest %s" % (item["package"], item["data_tree"], item["data_tree_entries"], item["manifest_files"]))
+          for item in result["lab_build_depends"]:
+              print("- %s built against the published %s (%s); same build record: %s" % (item["component"], item["package"], item["sha256"][:12],
+                    item["record_equal"]))
           EOF
       - name: Lab packages consumed in a fresh chroot (lab_build_depends, DEBIAN/shlibs, ldconfig trigger)
         if: contains(format(' {0} ', env.BUILD), ' rtlsdr ')
@@ -622,7 +629,13 @@ jobs:
           if [ ! -f deployment/image/package-closure.json ]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
             echo "- mirror: deployment/image/package-closure.json absent: no-op" | tee -a "$GITHUB_STEP_SUMMARY"
-          elif ! python3 deployment/repo/check_repo.py mirror --help > /dev/null 2>&1; then
+            exit 0
+          fi
+          # check_repo.py must load (an import or syntax error fails here); only a missing subcommand is pending.
+          python3 deployment/repo/check_repo.py --help > "$RUNNER_TEMP/check-repo-help.txt"
+          choices=$(grep -o -m 1 '{[a-z,-]*}' "$RUNNER_TEMP/check-repo-help.txt" || true)  # the usage line's subcommand list
+          choices="${choices//[\{\}]/}"
+          if [[ ",${choices//$'\n'/,}," != *,mirror,* ]]; then
             echo "run=false" >> "$GITHUB_OUTPUT"
             echo "::warning::deployment/image/package-closure.json exists but check_repo.py has no mirror subcommand: the mirror is not built (REPO-MIRROR)"
             echo "- mirror: MIRROR_PENDING_BUILDER (check_repo.py mirror)" | tee -a "$GITHUB_STEP_SUMMARY"
