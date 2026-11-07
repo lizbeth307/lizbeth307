@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-07 Середня пластина (шасі), шаблон 1:1</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params bedbb3ef32c8</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params a856996aaf99</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="28.5" y1="198.5" x2="188" y2="198.5" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="188" y1="198.5" x2="188" y2="234" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -60,21 +60,21 @@
 <text x="222.5" y="139" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">проріз riser R44SF</text>
 <text x="169" y="83.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">виріз під гайку кнопки живлення</text>
 <text x="192" y="208" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">відкритий виріз кабелю HDMI</text>
-<line x1="188" y1="142.4" x2="221" y2="142.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="221" y1="142.4" x2="221" y2="140" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="221" y1="140" x2="188" y2="140" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="188" y1="140" x2="188" y2="142.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="188" y="139" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">проріз джгутів SL1 (кант)</text>
-<line x1="140.5" y1="163.4" x2="158" y2="163.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="158" y1="163.4" x2="158" y2="159.8" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="158" y1="159.8" x2="140.5" y2="159.8" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="140.5" y1="159.8" x2="140.5" y2="163.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="140.5" y="158.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">проріз джгутів SL2 (кант)</text>
+<line x1="193.5" y1="143.8" x2="221" y2="143.8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="221" y1="143.8" x2="221" y2="140" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="221" y1="140" x2="193.5" y2="140" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="193.5" y1="140" x2="193.5" y2="143.8" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="193.5" y="139" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">проріз джгутів SL1 (кант)</text>
+<line x1="140.5" y1="163.4" x2="158.5" y2="163.4" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="158.5" y1="163.4" x2="158.5" y2="155.8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="158.5" y1="155.8" x2="140.5" y2="155.8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="140.5" y1="155.8" x2="140.5" y2="163.4" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="140.5" y="154.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">проріз джгутів SL2 (кант)</text>
 <line x1="235.5" y1="227.5" x2="240" y2="227.5" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="240" y1="227.5" x2="240" y2="212.5" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="240" y1="212.5" x2="235.5" y2="212.5" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="235.5" y1="212.5" x2="235.5" y2="227.5" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="235.5" y="211.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">проріз джгутів SL3 (кант)</text>
+<line x1="240" y1="227.5" x2="240" y2="216" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="240" y1="216" x2="235.5" y2="216" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="235.5" y1="216" x2="235.5" y2="227.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="235.5" y="215" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">проріз джгутів SL3 (кант)</text>
 <circle cx="45" cy="80.7" r="1.7" stroke="#000" stroke-width="0.35" fill="none"/>
 <line x1="41.8" y1="80.7" x2="48.2" y2="80.7" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="45" y1="83.9" x2="45" y2="77.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
@@ -346,9 +346,9 @@
 <text x="262" y="122.7" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз riser: X 194..220, Y 91.6..94</text>
 <text x="262" y="125.25" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">виріз HDMI (відкритий): X 207.5..223, Y 23.5..30.5</text>
 <text x="262" y="127.8" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">виріз під гайку кнопки: X 140.5..163.5, Y 153.8..158.8</text>
-<text x="262" y="130.35" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL1: X 159.5..192.5, Y 91.6..94</text>
-<text x="262" y="132.9" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL2: X 112..129.5, Y 70.6..74.2</text>
-<text x="262" y="135.45" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL3: X 207..211.5, Y 6.5..21.5</text>
+<text x="262" y="130.35" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL1: X 165..192.5, Y 90.2..94</text>
+<text x="262" y="132.9" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL2: X 112..130, Y 70.6..78.2</text>
+<text x="262" y="135.45" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL3: X 207..211.5, Y 6.5..18</text>
 <text x="262" y="138" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PK1 (D36V50F12), глибина 1: X 15..31.4, Y 74.92..81.16</text>
 <text x="262" y="140.55" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PK2 (D36V50F5), глибина 1: X 15..31.4, Y 106.92..113.16</text>
 <line x1="8" y1="289" x2="412" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -379,7 +379,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-07 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-5754 (AlMg3) 2.0 mm, mill finish; alt. 1050…</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params bedbb3ef32c8 · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params a856996aaf99 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Середня пластина (шасі), шаблон 1:1</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">лазер/фрезер; отвори ±0.2; площинність ≤0.2 під Q6A, п'єдесталом і регуляторами</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Контур і отвори — з mechanical/params; DXF того самого аркуша — для різання. Різьбу в пластині не нарізати (STACK 5.8).</text>

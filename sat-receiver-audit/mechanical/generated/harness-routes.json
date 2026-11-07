@@ -569,17 +569,17 @@
         ],
         [
           189.0,
-          12.005,
+          11.421,
           24.0
         ],
         [
           212.75,
-          12.005,
+          11.421,
           24.0
         ],
         [
           212.75,
-          12.005,
+          11.421,
           53.0
         ],
         [
@@ -1265,17 +1265,17 @@
         ],
         [
           212.75,
-          12.005,
+          11.421,
           53.0
         ],
         [
           212.75,
-          12.005,
+          11.421,
           20.0
         ],
         [
           172.0,
-          12.005,
+          11.421,
           20.0
         ],
         [
@@ -1284,7 +1284,7 @@
           24.0
         ]
       ],
-      "path_mm": 188.9,
+      "path_mm": 189.0,
       "bends": 7,
       "bundle_od_mm": 2.15,
       "wires": 3,
@@ -1667,7 +1667,7 @@
       "wires": 2,
       "bend_allowance_mm": 6.3,
       "service_loops_mm": 30.0,
-      "length_mm": 78,
+      "length_mm": 76,
       "through": [],
       "crossings": [],
       "provisional": [
@@ -1911,17 +1911,17 @@
         ],
         [
           212.75,
-          12.005,
+          11.421,
           53.0
         ],
         [
           212.75,
-          12.005,
+          11.421,
           28.5
         ],
         [
           206.0,
-          12.005,
+          11.421,
           28.5
         ],
         [
@@ -2189,41 +2189,41 @@
         "CTRL",
         "NTCC"
       ],
-      "note": "front layer: CTRL left edge at y 85, down to 4 mm above the plate, east under the CTRL to the TH302 bead (layout ntc_case, W2 MECH-6 B-10); soldered >= 6 mm from the bead (E3 note)",
+      "note": "front layer: CTRL left edge at y 25, down between the BMS (x >= 175) and the blower (y >= 38.5) to 4 mm above the plate, west to the TH302 bead (layout ntc_case, W2 MECH-6 B-10); soldered >= 6 mm from the bead (E3 note)",
       "points_mm": [
         [
           176.0,
-          85.1,
+          25.1,
           62.98
         ],
         [
-          175.2,
-          85.1,
+          174.0,
+          25.1,
           62.98
         ],
         [
-          175.2,
-          85.1,
+          174.0,
+          25.1,
           44.7
         ],
         [
-          214.5,
-          85.1,
+          169.0,
+          25.1,
           44.7
         ],
         [
-          214.5,
-          85.1,
+          169.0,
+          25.1,
           41.6
         ]
       ],
-      "path_mm": 61.5,
+      "path_mm": 28.4,
       "bends": 3,
       "bundle_od_mm": 1.99,
       "wires": 2,
       "bend_allowance_mm": 4.7,
       "service_loops_mm": 30.0,
-      "length_mm": 97,
+      "length_mm": 64,
       "through": [],
       "crossings": [],
       "provisional": [
