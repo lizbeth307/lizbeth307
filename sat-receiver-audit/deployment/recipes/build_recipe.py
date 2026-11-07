@@ -330,17 +330,27 @@ def shlibs_depends(package_root, staged, own_sonames, scratch, log):
     return ""
 
 
+def inventory_refusal(root):
+    """Why deploy.build_inventory (the walk verify_build compares) refuses this package tree, or None.
+    A dangling link (a -dev package's .so link into the runtime package) is named relative to root."""
+    root = Path(root)
+    dangling = sorted(p.relative_to(root).as_posix() for p in root.rglob("*") if p.is_symlink() and not p.exists())
+    if dangling:
+        return "not self-contained for verify_build: dangling link " + ", ".join(dangling[:5])
+    try:
+        deploy.build_inventory(root)
+    except (OSError, deploy.DeploymentError) as exc:
+        return "refused by deploy.build_inventory: " + str(exc)[:300]
+    return None
+
+
 def package_manifest(root):
-    """verify_build manifest of one package's data tree: status OPEN, filled for a reviewer."""
-    files, modules = {}, []
-    for path in sorted(root.rglob("*")):
-        relative = path.relative_to(root).as_posix()
-        if path.is_symlink() and path.resolve().is_dir():
-            files[relative] = "symlink:" + path.resolve().relative_to(root.resolve()).as_posix()
-        elif path.is_file():
-            files[relative] = deploy.sha(path)
-            if ".so" in path.name:
-                modules.append(relative)
+    """verify_build manifest of one package's data tree, from deploy.build_inventory itself (the
+    walk verify_build compares): status OPEN, filled for a reviewer. A tree that walk refuses (a
+    -dev package's .so link into another package; a Lime library while the native TX audit is
+    OPEN) gets an empty file list: it cannot pass verify_build on its own, whatever a reviewer
+    fills in (inventory_refusal says why; build_deb logs it)."""
+    files, modules = ({}, []) if inventory_refusal(root) else deploy.build_inventory(root)
     return {"schema_version": 1, "status": "OPEN", "files": files, "allowed_modules": sorted(modules),
             "source_audit": {"status": "OPEN", "report": {"path": None, "sha256": None}},
             "tx_negative_tests": {"status": "OPEN", "report": {"path": None, "sha256": None}}}
@@ -355,7 +365,7 @@ def control_extras(package, version, sonames):
             "triggers": "activate-noawait ldconfig\n"}
 
 
-def build_deb(package, version, files, staged, epoch, depends, out, scratch, sonames=()):
+def build_deb(package, version, files, staged, epoch, depends, out, scratch, sonames=(), log=None):
     root = scratch / ("pkg-" + package["name"])
     for relative in files:
         target = root / relative
@@ -368,6 +378,10 @@ def build_deb(package, version, files, staged, epoch, depends, out, scratch, son
             # Shared objects are 0644 (Debian policy 8.1); only real executables keep 0755.
             os.chmod(target, 0o755 if os.access(source, os.X_OK) and ".so" not in source.name else 0o644)
     manifest = package_manifest(root)
+    refusal = inventory_refusal(root)
+    if refusal and log is not None:
+        with open(log, "a", encoding="utf-8") as stream:
+            stream.write("build manifest of " + package["name"] + " has no file list: " + refusal + "\n")
     control = root / "DEBIAN"
     control.mkdir()
     size_kib = (sum((root / f).stat().st_size for f in files if not (root / f).is_symlink()) + 1023) // 1024
@@ -476,7 +490,7 @@ def build(recipe_path, archive, work, out, jobs, lab_debs=None):
                 (stage / relative).parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(destdir / relative, stage / relative, follow_symlinks=False)
             depends = shlibs_depends(stage, destdir, own, scratch, log)
-        deb, manifest = build_deb(package, version, files, destdir, epoch, depends, out, scratch, sonames[package["name"]])
+        deb, manifest = build_deb(package, version, files, destdir, epoch, depends, out, scratch, sonames[package["name"]], log)
         manifest_path = out / (package["name"] + ".build-manifest.json")
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
         packages.append({"package": package["name"], "version": version, "architecture": "arm64", "filename": deb.name,

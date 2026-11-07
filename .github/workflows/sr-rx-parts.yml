@@ -10,10 +10,12 @@ on:
     # wip/** as well: a new workflow cannot be dispatched before it reaches the default branch.
     branches: ['codex/**', 'ccr-*', 'wip/**']
     paths: ['sat-receiver-audit/design/**', 'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/pcb/**', 'sat-receiver-audit/tools/build_parts.py',
-            'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', '.github/workflows/sr-rx-parts.yml']
+            'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', 'sat-receiver-audit/build/10-*',
+            '.github/workflows/sr-rx-parts.yml']
   pull_request:
     paths: ['sat-receiver-audit/design/**', 'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/pcb/**', 'sat-receiver-audit/tools/build_parts.py',
-            'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', '.github/workflows/sr-rx-parts.yml']
+            'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', 'sat-receiver-audit/build/10-*',
+            '.github/workflows/sr-rx-parts.yml']
   workflow_dispatch:
     inputs:
       availability_snapshot:
@@ -53,8 +55,11 @@ jobs:
         run: python tools/make_footprints.py --check
       - name: PCB preparation reproduces with the database mount decisions
         run: python pcb/prepare.py --check
-      - name: Nothing above wrote into the tree
-        run: git diff --exit-code -- .
+      - name: Nothing above wrote into the tree (changed or new files)
+        run: |
+          git status --porcelain --untracked-files=all -- . > "$RUNNER_TEMP/tree-status.txt"
+          cat "$RUNNER_TEMP/tree-status.txt"
+          test ! -s "$RUNNER_TEMP/tree-status.txt"
 
   footprints:
     name: Footprints against KiCad 10.0.7
