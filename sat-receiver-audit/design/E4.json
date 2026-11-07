@@ -1711,7 +1711,7 @@
         {
           "number": "3",
           "name": "K_COMMON",
-          "net": "LAB5",
+          "net": "LAB5_RLY",
           "type": "passive"
         }
       ],
@@ -2345,7 +2345,7 @@
         {
           "number": "1",
           "name": "COIL+",
-          "net": "LAB5",
+          "net": "LAB5_RLY",
           "type": "passive"
         },
         {
@@ -2422,7 +2422,7 @@
         {
           "number": "1",
           "name": "COIL+",
-          "net": "LAB5",
+          "net": "LAB5_RLY",
           "type": "passive"
         },
         {
@@ -7155,6 +7155,177 @@
       ],
       "notes": [
         "Place at the RF choke DC end with direct RF ground via. E2 power-board capacitance is not a substitute for local RF bypass."
+      ]
+    },
+    {
+      "ref": "J418",
+      "value": "X03S1-RF: JST PH 8, боковий вхід, S03",
+      "kind": "connector",
+      "group": "Роз'єми джгутів RF",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+      "mpn": "S8B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157915",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "DCS_HF",
+          "type": "passive",
+          "net": "DCS_HF"
+        },
+        {
+          "number": "3",
+          "name": "DCS_LBAND",
+          "type": "passive",
+          "net": "DCS_LBAND"
+        },
+        {
+          "number": "4",
+          "name": "DCS_UHF",
+          "type": "passive",
+          "net": "DCS_UHF"
+        },
+        {
+          "number": "5",
+          "name": "K1_ON",
+          "type": "passive",
+          "net": "K1_ON"
+        },
+        {
+          "number": "6",
+          "name": "K2_ON",
+          "type": "passive",
+          "net": "K2_ON"
+        },
+        {
+          "number": "7",
+          "name": "SW_LIME_A",
+          "type": "passive",
+          "net": "SW_LIME_A"
+        },
+        {
+          "number": "8",
+          "name": "SW_LIME_B",
+          "type": "passive",
+          "net": "SW_LIME_B"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X03S1-RF (build/16 §4; W2 GR-3): на RF, сегмент(и) S03; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J419",
+      "value": "X03S2-RF: JST PH 4, боковий вхід, S03",
+      "kind": "connector",
+      "group": "Роз'єми джгутів RF",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157926",
+      "pins": [
+        {
+          "number": "1",
+          "name": "SW_RTLA_A",
+          "type": "passive",
+          "net": "SW_RTLA_A"
+        },
+        {
+          "number": "2",
+          "name": "SW_RTLA_B",
+          "type": "passive",
+          "net": "SW_RTLA_B"
+        },
+        {
+          "number": "3",
+          "name": "SW_RTLB_A",
+          "type": "passive",
+          "net": "SW_RTLB_A"
+        },
+        {
+          "number": "4",
+          "name": "SW_RTLB_B",
+          "type": "passive",
+          "net": "SW_RTLB_B"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X03S2-RF (build/16 §4; W2 GR-3): на RF, сегмент(и) S03; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J420",
+      "value": "X04S1-RF: JST PH 8, боковий вхід, S04",
+      "kind": "connector",
+      "group": "Роз'єми джгутів RF",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+      "mpn": "S8B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157915",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "3",
+          "name": "BIAS_CH1",
+          "type": "passive",
+          "net": "BIAS_CH1"
+        },
+        {
+          "number": "4",
+          "name": "BIAS_CH2_PORT",
+          "type": "passive",
+          "net": "BIAS_CH2_PORT"
+        },
+        {
+          "number": "5",
+          "name": "BIAS_CH3_PORT",
+          "type": "passive",
+          "net": "BIAS_CH3_PORT"
+        },
+        {
+          "number": "6",
+          "name": "BIAS_CH4",
+          "type": "passive",
+          "net": "BIAS_CH4"
+        },
+        {
+          "number": "7",
+          "name": "LAB5_RLY",
+          "type": "passive",
+          "net": "LAB5_RLY"
+        },
+        {
+          "number": "8",
+          "name": "LNB13V2",
+          "type": "passive",
+          "net": "LNB13V2"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X04S1-RF (build/16 §4; W2 GR-3): на RF, сегмент(и) S04; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
       ]
     }
   ],

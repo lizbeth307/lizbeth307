@@ -1513,6 +1513,36 @@
       ]
     },
     {
+      "ref": "F104",
+      "value": "MF-MSMF075/24-2 0.75A",
+      "kind": "fuse",
+      "group": "LAB5",
+      "source": "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
+      "status": "design",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "mpn": "MF-MSMF075/24-2",
+      "manufacturer": "Bourns",
+      "lcsc": "C208467",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "LAB5_RLY"
+        }
+      ],
+      "notes": [
+        "W2 GR-3 (R-E1-09): PTC on PWR-A in the LAB5 feed of the RF relay coils K401/K402 (2 x G6K DC5, about 21.1 mA, build/08 step 10). Bourns MF-MSMF075/24-2: Ihold 0.75 A / Itrip 1.50 A at 23 C; Ihold 0.60 A at 50 C and 0.49 A at 70 C (Bourns MF-MSMF REV. AO, p.1 and p.4, as F301). It limits the S04 lead to the RF board (LAB5_RLY, one JST PH contact rated 2 A) instead of F102 4 A, so no Micro-Fit is needed on the 5.5 mm RF board.",
+        "Reflow only: the maker forbids wave and hand soldering."
+      ]
+    },
+    {
       "ref": "F103",
       "value": "5A DC≥32V service",
       "kind": "fuse",
@@ -2493,6 +2523,414 @@
           "net": "E1_UV_OFF"
         }
       ]
+    },
+    {
+      "ref": "J104",
+      "value": "X02P1-PWR: Molex Micro-Fit 3.0 4, верхній вхід, S02",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical",
+      "mpn": "43650-0415",
+      "manufacturer": "Molex",
+      "lcsc": "C293547",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "LAB5",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "4",
+          "name": "LAB5",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X02P1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J105",
+      "value": "X05J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S05",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "mpn": "0039288020",
+      "manufacturer": "Molex",
+      "lcsc": "C490534",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E1_SHUNT_P",
+          "type": "passive",
+          "net": "E1_SHUNT_P"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X05J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S05; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J106",
+      "value": "X06J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S06",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "mpn": "0039288020",
+      "manufacturer": "Molex",
+      "lcsc": "C490534",
+      "pins": [
+        {
+          "number": "1",
+          "name": "E1_N",
+          "type": "passive",
+          "net": "E1_N"
+        },
+        {
+          "number": "2",
+          "name": "E1_SHUNT_P",
+          "type": "passive",
+          "net": "E1_SHUNT_P"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X06J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J107",
+      "value": "X07J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S07",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "mpn": "0039288020",
+      "manufacturer": "Molex",
+      "lcsc": "C490534",
+      "pins": [
+        {
+          "number": "1",
+          "name": "E1_N",
+          "type": "passive",
+          "net": "E1_N"
+        },
+        {
+          "number": "2",
+          "name": "E1_SW",
+          "type": "passive",
+          "net": "E1_SW"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X07J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J108",
+      "value": "X10J1-PWR: Molex Mini-Fit Jr. 2×2, верхній вхід, S10",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
+      "mpn": "0039288040",
+      "manufacturer": "Molex",
+      "lcsc": "C240829",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E1_N",
+          "type": "passive",
+          "net": "E1_N"
+        },
+        {
+          "number": "3",
+          "name": "E1_USB_PD_SAFE",
+          "type": "passive",
+          "net": "E1_USB_PD_SAFE"
+        },
+        {
+          "number": "4",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X10J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S10; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J109",
+      "value": "X05S1-PWR: JST PH 2, верхній вхід, S05",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "mpn": "B2B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C131337",
+      "pins": [
+        {
+          "number": "1",
+          "name": "E1_CHG_NTC",
+          "type": "passive",
+          "net": "E1_CHG_NTC"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X05S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S05; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J110",
+      "value": "X06S1-PWR: JST PH 5, верхній вхід, S06",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+      "mpn": "B5B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157993",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "AON3V3",
+          "type": "passive",
+          "net": "AON3V3"
+        },
+        {
+          "number": "3",
+          "name": "I2C0_SCL",
+          "type": "passive",
+          "net": "I2C0_SCL"
+        },
+        {
+          "number": "4",
+          "name": "I2C0_SDA",
+          "type": "passive",
+          "net": "I2C0_SDA"
+        },
+        {
+          "number": "5",
+          "name": "INA228_ALERT",
+          "type": "passive",
+          "net": "INA228_ALERT"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X06S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J111",
+      "value": "X07S1-PWR: JST PH 3, верхній вхід, S07",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "mpn": "B3B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C131339",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E1_MASTER_OFF",
+          "type": "passive",
+          "net": "E1_MASTER_OFF"
+        },
+        {
+          "number": "3",
+          "name": "E1_SWITCH_A",
+          "type": "passive",
+          "net": "E1_SWITCH_A"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X07S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J112",
+      "value": "X10S1-PWR: JST PH 4, верхній вхід, S10",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+      "mpn": "B4B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C131334",
+      "pins": [
+        {
+          "number": "1",
+          "name": "E1_CHG_CC1",
+          "type": "passive",
+          "net": "E1_CHG_CC1"
+        },
+        {
+          "number": "2",
+          "name": "E1_CHG_CC2",
+          "type": "passive",
+          "net": "E1_CHG_CC2"
+        },
+        {
+          "number": "3",
+          "name": "E1_CHG_INHIBIT_LOW",
+          "type": "passive",
+          "net": "E1_CHG_INHIBIT_LOW"
+        },
+        {
+          "number": "4",
+          "name": "E1_CHG_NTC",
+          "type": "passive",
+          "net": "E1_CHG_NTC"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X10S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S10; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J113",
+      "value": "X11S1-PWR: JST PH 2, верхній вхід, S11",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "mpn": "B2B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C131337",
+      "pins": [
+        {
+          "number": "1",
+          "name": "E1_CHG_CC1",
+          "type": "passive",
+          "net": "E1_CHG_CC1"
+        },
+        {
+          "number": "2",
+          "name": "E1_CHG_CC2",
+          "type": "passive",
+          "net": "E1_CHG_CC2"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X11S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S11; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J114",
+      "value": "X11P1-PWR: Molex Micro-Fit 3.0 2, верхній вхід, S11",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "mpn": "43650-0215",
+      "manufacturer": "Molex",
+      "lcsc": "C293740",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E1_USB_PD_RAW",
+          "type": "passive",
+          "net": "E1_USB_PD_RAW"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X11P1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S11; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J115",
+      "value": "X12P1-PWR: Molex Micro-Fit 3.0 2, верхній вхід, S12",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "mpn": "43650-0215",
+      "manufacturer": "Molex",
+      "lcsc": "C293740",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E1_SERVICE_P",
+          "type": "passive",
+          "net": "E1_SERVICE_P"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X12P1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S12; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
     }
   ],
   "open_items": [
@@ -2613,6 +3051,10 @@
       "id": "R-E1-08",
       "description": "v2.1, рішення власника (E1-04): EN-резерв SYS12 R108 10.0k 1% → 4.99k 0.1% 25 ppm/K, R109 1.00k 1% → 562 Ω 0.1% 25 ppm/K; UV-мережа R103–R107 без змін. G = 1 + (4.99k‖100k)/0.562k = 9.457: wake 12.77 V, sleep 11.35 V ном.; з внутрішніми 100 kΩ ±20% — 12.61…12.88 / 11.21…11.45 V; із припущеними ±3% порога EN (Pololu дає лише типові 1.2/1.35 V) — 12.23…13.27 / 10.87…11.79 V. Порядок чинний, доки фактичний поріг наростання EN ≤1.35 V +4.3% (wake ≤13.44 V = release 13.50 V мінус ≈0.06 V спаду E1_N→E1_SW). Ж-03: wake >13.30 V → R109 576 Ω (12.49/11.10 V ном., обидва пороги нижчі ≈2.2%) і повторна розгортка 14 → 10.5 → 14 V; після перепаювання wake ≤13.30 V і sleep ≥10.9 V, інакше reject. Гістерезис 1.40…1.43 V більший за ≈0.55 V просідання при 4.2 A SYS12. Струм дільника ≈3.1 mA при 16.4 V (R108 ≈43 mW) лише при ввімкненому SW. Sleep 10.9…11.8 V лежить нижче точки стабільності Q6A 11.5 V, тож основним відсіченням лишається UV trip U104 (12.7…12.9 V); резерв більше не може випередити програмну відсічку 13.05 V. Якщо кнопка обходить утримуваний OFF, SYS12 стартує вже від ≈12.2…13.3 V — тоді кнопку вести через супервізор. Історія: нові пороги близькі до відкинутого варіанта 9.1k/1.0k (12.6/11.2 V), який раніше «виправили» на 10.0k/1.00k (13.6/12.1 V); той ставив wake вище UV release (13.39…13.86 V лише з допусками резисторів) і блокував PG_SYS12 після release.",
       "source": "https://www.pololu.com/product/4095 (EN sleep 1.2 V / wake 1.35 V лише типові, 100 kΩ EN→VIN); MCP65R41 DS22269B; розрахунок брифу SYS12-UV зі скептичною перевіркою 24.10.2026. Стенд: E1-04, Ж-03."
+    },
+    {
+      "id": "R-E1-09",
+      "description": "W2 GR-3, 07.11.2026: живлення котушок реле RF (K401/K402, D401 K_COMMON) — окрема мережа LAB5_RLY після PTC F104 Bourns MF-MSMF075/24-2 (Itrip 1.50 A при 23 °C, Ihold 0.49 A при 70 °C; MF-MSMF REV. AO) на PWR-A замість прямого LAB5 після F102 4 A. Причина: межа захисту LAB5 4 A вимагала б Micro-Fit на RF-платі (build/15 «Живлення ≥2 A»), а вертикальна 43650 (9.9 мм) і кутова (6.98 мм з розеткою) вищі за 5.5 мм RF; з PTC провід S04 до RF — один контакт JST PH (2 A) бічного входу. Струм котушок ≈21.1 mA (08 крок 10)."
     }
   ],
   "power_flags": [

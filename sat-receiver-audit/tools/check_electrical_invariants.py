@@ -53,7 +53,12 @@ def main(base=BASE):
     # OVP node is a clampable safe-enable signal, not a pulled-up fault input:
     # TPS3701 OUTB drives U212 EN/UVLO, R291 from EN_LNB and R292 to GND only.
     ovp = {("U212", "3"), ("U220", "6"), ("R291", "2"), ("R292", "1"), ("TP215", "1"), ("U303", "6")}
-    require(members("OVP_LNB_N") == ovp, "OVP_LNB_N membership", sorted(members("OVP_LNB_N")))
+    # W2 GR-3: the node reaches the CTRL MCP U303 through the S02 harness headers (graph refs, one contact on each board); a
+    # connector contact adds no pull-up, so the other members stay exactly these and only the two header contacts are added.
+    harness = {(r, p) for r, p in members("OVP_LNB_N") if comps[r]["kind"] == "connector"}
+    require(len(harness) == 2 and all(comps[r].get("group", "").startswith("Роз'єми джгутів") for r, _ in harness),
+            "OVP_LNB_N harness contacts", sorted(harness))
+    require(members("OVP_LNB_N") - harness == ovp, "OVP_LNB_N membership", sorted(members("OVP_LNB_N")))
     require(node("R291", 1) == "EN_LNB" and node("R292", 2) == "GND", "OVP divider ends")
     relay_results = []
     ports = {"HF": "E4_HF_BT", "VHF": "E4_P6", "HFP": "E4_HFP_ANT"}

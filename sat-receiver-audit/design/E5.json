@@ -3339,6 +3339,228 @@
       "notes": [
         "Measure with high-impedance DMM/scope. Low=disabled when sufficient supply exists; high/pulled-to-VIN=enabled. Interpret relative to actualVIN."
       ]
+    },
+    {
+      "ref": "J506",
+      "value": "X23S1-PWR: JST PH 3, боковий вхід, S23",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR і HATCH",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+      "mpn": "S3B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157929",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "VBUS_LABPORT",
+          "type": "passive",
+          "net": "VBUS_LABPORT"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X23S1-PWR (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S23; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J507",
+      "value": "X32S1-PWR: JST PH 4, верхній вхід, S32",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR і HATCH",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+      "mpn": "B4B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C131334",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E5_IMU5V",
+          "type": "passive",
+          "net": "E5_IMU5V"
+        },
+        {
+          "number": "3",
+          "name": "IMU_RX",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "4",
+          "name": "IMU_TX",
+          "type": "passive",
+          "net": "IMU_TX"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X32S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S32; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J508",
+      "value": "X34S1-PWR: JST PH 6, боковий вхід, S34",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR і HATCH",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+      "mpn": "S6B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157920",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "AUX12",
+          "type": "passive",
+          "net": "AUX12"
+        },
+        {
+          "number": "4",
+          "name": "I2CB_SCL",
+          "type": "passive",
+          "net": "I2CB_SCL"
+        },
+        {
+          "number": "5",
+          "name": "I2CB_SDA",
+          "type": "passive",
+          "net": "I2CB_SDA"
+        },
+        {
+          "number": "6",
+          "name": "SLED_DET",
+          "type": "passive",
+          "net": "SLED_DET"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X34S1-PWR (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S34; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J509",
+      "value": "X14P1-HATCH: Molex Micro-Fit 3.0 2, верхній вхід, S14",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR і HATCH",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "mpn": "43650-0215",
+      "manufacturer": "Molex",
+      "lcsc": "C293740",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "J21",
+          "type": "passive",
+          "net": "J21"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X14P1-HATCH (build/16 §4; W2 GR-3): на платі лючка HATCH, сегмент(и) S14; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J510",
+      "value": "X15S1-HATCH: JST PH 2, верхній вхід, S15",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR і HATCH",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "mpn": "B2B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C131337",
+      "pins": [
+        {
+          "number": "1",
+          "name": "PWR_ON_KEY",
+          "type": "passive",
+          "net": "PWR_ON_KEY"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X15S1-HATCH (build/16 §4; W2 GR-3): на платі лючка HATCH, сегмент(и) S15; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J513",
+      "value": "X30S1-HATCH: JST PH 3, верхній вхід, S30",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR і HATCH",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "mpn": "B3B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C131339",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "UART5_RX",
+          "type": "passive",
+          "net": "UART5_RX"
+        },
+        {
+          "number": "3",
+          "name": "UART5_TX",
+          "type": "passive",
+          "net": "UART5_TX"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X30S1-HATCH (build/16 §4; W2 GR-3): на платі лючка HATCH, сегмент(и) S30; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
     }
   ],
   "open_items": [

@@ -3,7 +3,9 @@
     "id": "PWR-01",
     "boards": [
       "PWR_MAIN",
-      "PWR_BRANCH"
+      "PWR_BRANCH",
+      "PWR_BRANCH_SW",
+      "USB_POWER_SW"
     ],
     "requirement": "4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.",
     "source": "design/E1-review.md; E1-05/E1-06"
@@ -19,10 +21,23 @@
   {
     "id": "PWR-03",
     "boards": [
-      "PWR_BRANCH"
+      "PWR_BRANCH",
+      "PWR_BRANCH_SW"
     ],
     "requirement": "LT3045 pair <=1 A physical total; Kelvin current-shunt routes, low-drop high-current planes, regulator exposed-pad heat flow and vendor capacitor placement are release work. LNB precision OVP and switch ratings need full temperature validation.",
     "source": "design/E2-review.md"
+  },
+  {
+    "id": "PWR-04",
+    "boards": [
+      "PWR_MAIN",
+      "PWR_BRANCH",
+      "USB_POWER",
+      "PWR_BRANCH_SW",
+      "USB_POWER_SW"
+    ],
+    "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec QSH-060-01-L-D-A / QTH-060-01-L-D-A pair (pcb/generated/b2b-nets.json: ceil(I_protection / 1 A) contacts per power net plus one adjacent GND, 25 A ground plane); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
+    "source": "pcb/partition-spec.json (W2 AREA); Samtec QSH/QTH specification Rev K"
   },
   {
     "id": "DC-01",
@@ -95,7 +110,8 @@
     "id": "IO-01",
     "boards": [
       "CTRL_HMI",
-      "USB_POWER"
+      "USB_POWER",
+      "USB_POWER_SW"
     ],
     "requirement": "3.3V GPIO only; retain existing USB3/HDMI/PCIe cables/riser and their shield return. Do not create an unqualified high-speed PCB route from functional cable symbols. T7 WSON thermal condition TJ<=105C at1.5A requires copper/thermal validation.",
     "source": "design/E3-review.md; design/E5-review.md"
@@ -104,7 +120,8 @@
     "id": "MECH-02",
     "boards": [
       "CTRL_HMI",
-      "PWR_BRANCH"
+      "PWR_BRANCH",
+      "PWR_BRANCH_SW"
     ],
     "requirement": "Existing mechanical source calls for MCP expanders15..20mm from TPS7A4701, PTC and buck inductors, and I2C away from switching nodes. Separate CTRL/PWR domains are candidates; if combined, preserve this separation and recheck enclosure fit.",
     "source": "build/05-mekhanika.md §3 item15; STACK.md §5.8"
@@ -114,6 +131,8 @@
     "boards": [
       "PWR_MAIN",
       "PWR_BRANCH",
+      "PWR_BRANCH_SW",
+      "USB_POWER_SW",
       "CTRL_HMI",
       "USB_POWER",
       "RF_HMC",
