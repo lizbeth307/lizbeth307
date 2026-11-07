@@ -72,7 +72,10 @@ class TemplateTests(unittest.TestCase):
             unit = sections((UNITS / ("srrx-lease-" + engine + "@.service")).read_text(encoding="utf-8"))
             self.assertNotIn("Install", unit)  # never enabled, never wanted
             service = dict(unit["Service"])
-            self.assertEqual(len(unit["Service"]), len(service), "a key is repeated: " + engine)
+            # The sandbox keys stay single assignments; engine packages may add other lines (arguments, Environment=).
+            once = ("User", "DevicePolicy", "DeviceAllow", "ProtectSystem", "ReadOnlyPaths", "ReadWritePaths",
+                    "IPAddressDeny", "IPAddressAllow", "RestrictAddressFamilies", "ExecStart")
+            self.assertEqual([k for k in once if [key for key, _ in unit["Service"]].count(k) != 1], [], engine)
             expected = {"Type": "simple", "User": "lab", "Group": "lab", "DevicePolicy": "closed",
                         "DeviceAllow": "/dev/lab/%i rw", "ProtectSystem": "strict", "ProtectHome": "yes",
                         "ReadOnlyPaths": "/data", "ReadWritePaths": "/data/products/" + engine + "-%i",
