@@ -242,5 +242,35 @@ class RuleFileTests(unittest.TestCase):
         self.assertIn('project choice, not IPC-verified', text)
 
 
+class KicadRuleLoadTests(unittest.TestCase):
+    """Runs only where kicad-cli exists (the kicad/kicad:10.0.7 container of sr-rx-pcb): the rule file must load and act."""
+
+    def test_rules_load_and_fire_in_kicad_drc(self):
+        import shutil
+        import subprocess
+        import tempfile
+        cli = shutil.which('kicad-cli')
+        if not cli:
+            self.skipTest('kicad-cli not installed (runs in the KiCad 10.0.7 container)')
+        fixture = (PCB / 'tests/fixtures/power_neck.kicad_pcb').read_text(encoding='utf-8')
+        # a 0.12 mm GND track (below the 0.15 mm project default, above the KiCad default minimum) and a GND via
+        # 1.0 mm from the edge of the 3.2 mm hole H1 at contract (4, 4) = KiCad (104, 96) (keepout rule 1.9 mm)
+        probe = fixture.rstrip()[:-1] + (
+            '\t(segment (start 110 85) (end 125 85) (width 0.12) (layer "F.Cu") (net "GND"))\n'
+            '\t(via (at 106.6 96) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net "GND"))\n)\n')
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            (tmp / 'probe.kicad_pcb').write_text(probe, encoding='utf-8')
+            (tmp / 'probe.kicad_pro').write_text(json.dumps({'meta': {'filename': 'probe.kicad_pro', 'version': 1}}), encoding='utf-8')
+            (tmp / 'probe.kicad_dru').write_text((PCB / 'rules/jlc-4l-1oz.kicad_dru').read_text(encoding='utf-8'), encoding='utf-8')
+            run = subprocess.run([cli, 'pcb', 'drc', '--format', 'json', '--severity-all', '--output', str(tmp / 'drc.json'), str(tmp / 'probe.kicad_pcb')],
+                                 capture_output=True, text=True, timeout=300)
+            self.assertIn(run.returncode, (0, 5), run.stdout + run.stderr)
+            report = json.loads((tmp / 'drc.json').read_text(encoding='utf-8'))
+        types = [v.get('type') for v in report.get('violations', [])]
+        self.assertIn('track_width', types, (types, run.stdout, run.stderr))
+        self.assertIn('hole_clearance', types, (types, run.stdout, run.stderr))
+
+
 if __name__ == '__main__':
     unittest.main()
