@@ -300,7 +300,7 @@ _Run `wf_0e70c405-a03`_
     - https://docs.radxa.com/en/dragon/q6a
     - https://docs.radxa.com/en/dragon/q6a/hardware-use/mipi-dsi
     - https://forum.radxa.com/t/dragon-q6a-radxa-display-8hd-not-detected-on-ubuntu-24-04-noble-problem/30422
-    - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-6-graham.oconnor@gmail.com/
+    - drm-ai-reviews, серія патчів 20260522060645.4399 (патч 6), https://lore.gitlab.freedesktop.org/drm-ai-reviews/ (адресу автора з посилання прибрано), прочитано до 18.10.2026
 - **Budget option:**
   - **Name:** Waveshare 5in high-brightness capacitive LCD 5DP-CAPLCD-B (1024x600, 800 nits, optically bonded, HDMI + USB touch). For a bigger budget screen, the Orient Display 7in 1024x600 900-nit PCAP HDMI module at $107.88 is the step up.
   - **Why:** - Cheapest option that is still semi-sun-readable and has known-good, driver-free USB HID touch on Linux.
@@ -584,7 +584,7 @@ _Run `wf_0e70c405-a03`_
     - **Outcome:** Unanswered (27 Aug 2026).
   10.
     - **Product:** QCS6490 mainline DP: RA620 bridge link-training patch
-    - **Source url:** https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-4-graham.oconnor@gmail.com/
+    - **Source url:** drm-ai-reviews, серія патчів 20260522060645.4399 (патч 4), https://lore.gitlab.freedesktop.org/drm-ai-reviews/ (адресу автора з посилання прибрано), прочитано до 18.10.2026
     - **Community:** Linux kernel lists (drm, via lore)
     - **What they built:** Graham O'Connor's mainline enablement series for the Q6A
     - **Problems:**
@@ -1131,7 +1131,7 @@ _Run `wf_0e70c405-a03`_
       - https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=4483604a4fd6635282f8d134d035136db9bd4d8f
       - https://raw.githubusercontent.com/torvalds/linux/master/drivers/gpu/drm/msm/dp/dp_link.c
       - https://raw.githubusercontent.com/torvalds/linux/master/arch/arm64/boot/dts/qcom/kodiak.dtsi
-      - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-6-graham.oconnor@gmail.com/
+      - drm-ai-reviews, серія патчів 20260522060645.4399 (патч 6), https://lore.gitlab.freedesktop.org/drm-ai-reviews/ (адресу автора з посилання прибрано), прочитано до 18.10.2026
       - https://lkml.indiana.edu/2605.2/12737.html
       - https://forum.radxa.com/t/samsung-g80sd-can-not-negotiate-resolution-refresh-rate/31118
       - https://gitlab.freedesktop.org/mesa/mesa/-/raw/main/src/gallium/drivers/freedreno/freedreno_screen.c
@@ -1244,7 +1244,7 @@ _Run `wf_0e70c405-a03`_
       - https://raw.githubusercontent.com/torvalds/linux/master/drivers/regulator/tps65132-regulator.c
       - https://www.ti.com/lit/ds/symlink/tps61169.pdf
       - https://raw.githubusercontent.com/torvalds/linux/master/drivers/input/touchscreen/edt-ft5x06.c
-      - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-6-graham.oconnor@gmail.com/
+      - drm-ai-reviews, серія патчів 20260522060645.4399 (патч 6), https://lore.gitlab.freedesktop.org/drm-ai-reviews/ (адресу автора з посилання прибрано), прочитано до 18.10.2026
   4.
     - **Problem:** Q6A kernel updates keep breaking the display path, and Radxa has not published a root-cause fix.
     - **Proposed fix:** Harden the device for field use: freeze a known-good kernel, make every kernel change reversible without a working screen, and always keep a serial console.

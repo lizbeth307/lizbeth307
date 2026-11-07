@@ -331,7 +331,7 @@ _Run `wf_3e735695-e00`_
   NVMe ~750-1644 MB/s depending on OS. Idle about 4 W and stress about 10 W with NVMe, UFS and a fan.
   10.
     - **Product:** Q6A USB3 SuperSpeed on mainline Linux (QMP combo PHY shared with DisplayPort/HDMI)
-    - **Source url:** https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-1-graham.oconnor@gmail.com/
+    - **Source url:** drm-ai-reviews, серія патчів 20260522060645.4399 (патч 1), https://lore.gitlab.freedesktop.org/drm-ai-reviews/ (адресу автора з посилання прибрано), прочитано до 18.10.2026
     - **Community:** Linux DRM/kernel patch review list (May 2026)
     - **What they built:** Mainline Linux 7.0.9 device-tree enablement for the Q6A: HDMI through the RA620 DP-to-HDMI bridge, plus USB3.
     - **Problems:**
@@ -860,7 +860,7 @@ _Run `wf_3e735695-e00`_
     - **Confidence:** medium
     - **Sources:**
       - https://github.com/radxa/kernel/blob/linux-7.0.11/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
-      - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-1-graham.oconnor@gmail.com/
+      - drm-ai-reviews, серія патчів 20260522060645.4399 (патч 1), https://lore.gitlab.freedesktop.org/drm-ai-reviews/ (адресу автора з посилання прибрано), прочитано до 18.10.2026
       - https://smarthomecircle.com/radxa-dragon-q6a-best-alternative-to-the-raspberry-pi-5
       - https://dl.radxa.com/q6a/docs/rad-doc-0150_radxa_dragon_q6a_product_brief__revision_1.5_gbc16bac.pdf
       - https://docs.radxa.com/en/dragon/q6a/hardware-use/usb

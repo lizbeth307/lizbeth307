@@ -80,7 +80,7 @@ _Run `wf_e49d4f53-8d4`_
     - **Cons:** Cannot use the UFS module or HDMI today, which blocks this design.
     - **Sources:**
       - https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/qcom/qcs6490-radxa-dragon-q6a.dts
-      - https://lore.gitlab.freedesktop.org/drm-ai-reviews/20260522060645.4399-1-graham.oconnor@gmail.com/
+      - drm-ai-reviews, серія патчів 20260522060645.4399 (патч 1), https://lore.gitlab.freedesktop.org/drm-ai-reviews/ (адресу автора з посилання прибрано), прочитано до 18.10.2026
     - **Availability:** Available, but incomplete
     - **Q6a compatibility:** Not suitable before UFS and display land upstream.
   5.
