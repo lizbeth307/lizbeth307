@@ -1837,17 +1837,12 @@ def check_04bb(ctx, r):
     bb, glue = _target_module(ctx, r, "baseband"), _target_module(ctx, r, "satdump_pass")
     if bb is None or glue is None:
         return
-    try:
-        import numpy as np
-    except ImportError:
-        return r.block(".", "numpy_unavailable")
     where, units = "software/srrx/baseband.py", "software/srrx/satdump_pass.py"
     for name, value in _BASEBAND_POLICY.items():
         if getattr(bb, name, None) != value:
             r.fail(where, "baseband_policy_constant", name)
     if bb.LIVE_MAX_SAMPLES * 8 > 65507 or set(bb.PIPELINES.values()) != {"meteor_m2-x_lrpt", "meteor_m2-x_lrpt_80k"}:
         r.fail(where, "baseband_policy_constant", "LIVE_OR_PIPELINES")
-    _replay_probe(r, "RX-04-bb", np, srrx_closure("baseband"), lambda findings: _baseband_probe(np, bb, where, findings))
     window = _lrpt_window(bb)
     instance = "lrpt-" + "0" * 16
     decode = glue.unit_lines("decode", instance)
@@ -1875,6 +1870,12 @@ def check_04bb(ctx, r):
         r.fail("etc/tmpfiles.d/srrx-satdump.conf", "baseband_tmpfiles_differs")
     r.note("live_localhost_behaviour_is_RX-04-live")
     r.note("device_recording_needs_labd_utc_verified")
+    # The unit, template and rule checks above need no NumPy; the filter and tone probes do.
+    try:
+        import numpy as np
+    except ImportError:
+        return r.block(".", "numpy_unavailable")
+    _replay_probe(r, "RX-04-bb", np, srrx_closure("baseband"), lambda findings: _baseband_probe(np, bb, where, findings))
 
 
 def _check_04bb_scheduler(ctx, r, glue, instance, decode):

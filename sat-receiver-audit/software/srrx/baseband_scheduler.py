@@ -66,6 +66,8 @@ REQUEST_KEYS = frozenset(("aos_utc", "center_hz", "symbol_rate"))
 STATES = ("IDLE", "QUEUED", "RECORD_STARTING", "RECORDING", "RECORD_STOPPING", "DECODE_WAIT", "DECODE_STARTING",
           "DECODING", "DECODE_FINISHING", "DONE", "FAILED", "CANCELLED")
 RUNNING_STATES = ("activating", "active", "deactivating", "reloading")
+# Only these mean the unit ended; "unknown" (a failed systemctl show) never ends a recording by itself.
+ENDED_STATES = ("inactive", "failed")
 _SYSTEMCTL_ENV = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "SYSTEMD_PAGER": "", "SYSTEMD_COLORS": "0"}
 _WORK = re.compile(r"\.satdump-lrpt-[0-9a-f]{16}\Z")
 
@@ -409,7 +411,7 @@ class BasebandScheduler:
             return
         if refusal is None and now_s > job["window"]["end_unix_s"] + RECORD_OVERRUN_S:
             refusal = "RECORD_UNIT_OVERRUN"
-        ended = job["seen_running"] and job["active"] not in RUNNING_STATES
+        ended = job["seen_running"] and job["active"] in ENDED_STATES
         if refusal is None and (ended or (not job["seen_running"] and now_ms - job["started_ms"] > START_GRACE_MS)):
             refusal = "RECORD_UNIT_NO_RESULT" if ended else "RECORD_UNIT_NOT_STARTED"
         if refusal is not None:
@@ -421,7 +423,7 @@ class BasebandScheduler:
 
     def _tick_stopping(self, job, now_ms):
         # Stopped: wait until the unit is seen ended (or never ran), then sweep and fail with the stop reason.
-        if job["active"] not in RUNNING_STATES and job["polled_ms"] is not None and job["polled_ms"] >= job["stop_ms"]:
+        if job["active"] in ENDED_STATES and job["polled_ms"] is not None and job["polled_ms"] >= job["stop_ms"]:
             self._finish(job, "FAILED", job["stop_reason"], cleanup=True)
         elif now_ms - job["stop_ms"] > START_GRACE_MS:
             self._finish(job, "FAILED", job["stop_reason"], cleanup=True)  # the sweep still removes a partial file
@@ -430,7 +432,7 @@ class BasebandScheduler:
             self._command(job, "RECORD_STOPPING", lambda j: self._op_poll(j, "record"), now_ms)
 
     def _tick_decoding(self, job, now_ms, now_s):
-        ended = job["seen_running"] and job["active"] not in RUNNING_STATES
+        ended = job["seen_running"] and job["active"] in ENDED_STATES
         late = not job["seen_running"] and now_ms - job["started_ms"] > START_GRACE_MS
         overrun = now_ms - job["started_ms"] > DECODE_OVERRUN_S * 1000
         if job["result"] is not None or ended or late or overrun or job["cancel"]:
