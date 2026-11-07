@@ -676,6 +676,10 @@ def validate_spec(spec, board):
     for name, kind in (spec['layers'].get('types') or {}).items():
         if name not in inner or kind not in ('power', 'signal'):
             raise SpecError(f'{board}: layers.types {name}: {kind!r} must be an inner copper layer typed power or signal')
+    copper_names = ['F.Cu', 'B.Cu'] + sorted(inner)
+    for cls, layers in (spec['router'].get('class_layers') or {}).items():
+        if not isinstance(layers, list) or not layers or any(n not in copper_names for n in layers):
+            raise SpecError(f'{board}: router.class_layers {cls}: {layers!r} must list copper layers of the board')
     cut = spec.get('cutouts')
     if cut is not None:
         margin = cut.get('keepout_margin_mm') if isinstance(cut, dict) else None
@@ -1027,6 +1031,21 @@ def circle_polygon(cx, cy, radius, n=48):
     """Polygon that contains the circle (circumscribed), board mm."""
     rr = radius / math.cos(math.pi / n)
     return [(cx + rr * math.cos(2 * math.pi * k / n), cy + rr * math.sin(2 * math.pi * k / n)) for k in range(n)]
+
+
+def patch_dsn_class_layers(text, class_layers):
+    """Restrict net classes to routing layers in a KiCad Specctra DSN: '(use_layer ...)' in each class circuit.
+
+    KiCad 10.0.7 exports no per-class layer list; Freerouting 2.5.0 reads '(circuit (use_layer ...))' of a class
+    (io/specctra/parser/Circuit.java, Network.createActiveTraceLayers at v2.5.0). class_layers: {class: [layers]}.
+    Returns the patched text; refuses a class that the DSN does not carry.
+    """
+    for name, layers in sorted((class_layers or {}).items()):
+        pattern = re.compile(r'(\(class\s+' + re.escape(name) + r'\s[^()]*\(circuit)')
+        if len(pattern.findall(text)) != 1:
+            raise SpecError(f'router.class_layers: the DSN has no single class {name}')
+        text = pattern.sub(lambda m: m.group(1) + '\n        (use_layer ' + ' '.join(layers) + ')', text)
+    return text
 
 
 def dsn_probe(text):
@@ -1737,6 +1756,9 @@ def route(board, freerouting):
         dsn, ses = temp / f'{board}.dsn', temp / f'{board}.ses'
         if not pcb.ExportSpecctraDSN(board_obj, str(dsn)) or not dsn.is_file():
             raise SystemExit('board_gen: Specctra DSN export failed')
+        if spec['router'].get('class_layers'):  # per-class routing layers (power classes on the outer layers)
+            dsn.write_text(patch_dsn_class_layers(dsn.read_text(encoding='utf-8'), spec['router']['class_layers']),
+                           encoding='utf-8')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
         cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
                                   temp / 'fr-user', spec['router']['job_timeout'])

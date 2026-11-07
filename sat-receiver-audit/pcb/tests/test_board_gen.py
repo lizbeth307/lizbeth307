@@ -533,6 +533,33 @@ class CutoutsLayerTypesAndDrillOffsets(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 bg.validate_spec(candidate, 'CTRL')
 
+    def test_dsn_class_layers_patch(self):
+        dsn = ('    (class kicad_default A B
+      (circuit
+        (use_via "V")
+      )
+    )
+'
+               '    (class PWR3A LAB5
+      (circuit
+        (use_via "V8")
+      )
+      (rule (width 1850))
+    )
+')
+        out = bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu', 'B.Cu']})
+        self.assertIn('(class PWR3A LAB5
+      (circuit
+        (use_layer F.Cu B.Cu)
+        (use_via "V8")', out)
+        self.assertEqual(out.count('use_layer'), 1)  # kicad_default untouched
+        with self.assertRaises(SystemExit):
+            bg.patch_dsn_class_layers(dsn, {'PWR1A': ['F.Cu']})
+        spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
+        spec['router']['class_layers'] = {'PWR3A': ['In3.Cu']}
+        with self.assertRaises(SystemExit):
+            bg.validate_spec(spec, 'CTRL')
+
     def test_smd_drill_offset_without_size(self):
         geo = bg.footprint_geometry(PICO.read_text(encoding='utf-8'))
         self.assertTrue(any(p['number'] == '1' for p in geo['pads']))

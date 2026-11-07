@@ -17,15 +17,14 @@
     "thickness_mm": 1.6,
     "source": "mechanical/generated/contract/boards.json stackup (4 layers, JLC04161H-7628, build/15 \"Шари\") and pcb/generated/netclasses.json stackup",
     "types": {
-      "In1.Cu": "power",
-      "In2.Cu": "power"
+      "In1.Cu": "power"
     },
-    "types_why": "In1.Cu (L2) carries a solid GND plane and In2.Cu (L3) a 3V3_Q6A plane, both laid before routing and typed power, so the Specctra export marks them (type power) and Freerouting routes on F.Cu/B.Cu only. KiCad 10.0.7 exports no per-class layer list, so this keeps the power-class nets (LAB5, E3_BLOWER_GND, E3_FAN5: PWR3A, outer layers only; E3_FAN5_P, E3_GNSS5V: PWR1A) off the inner layers, as pcb/check_boards.py requires (netclasses.json inner_min_width_mm).",
+    "types_why": "In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) and Freerouting does not route on it. F.Cu, In2.Cu and B.Cu are routing layers; the power classes are held on F.Cu/B.Cu by router.class_layers (DSN use_layer), as pcb/check_boards.py requires (netclasses.json inner_min_width_mm).",
     "plan": {
-      "F.Cu": "L1: top parts, signals, GND pour after routing",
+      "F.Cu": "L1: top parts, signals, power classes, GND pour after routing",
       "In1.Cu": "L2: GND plane (pre-route zone, DSN plane), no signals",
-      "In2.Cu": "L3: 3V3_Q6A plane (pre-route zone, DSN plane), no signals",
-      "B.Cu": "L4: bottom parts, signals, GND pour after routing"
+      "In2.Cu": "L3: signals (no power class), GND pour after routing",
+      "B.Cu": "L4: bottom parts, signals, power classes, GND pour after routing"
     }
   },
   "project": "build/kicad/boards/CTRL/CTRL.kicad_pro",
@@ -1497,15 +1496,15 @@
       ]
     },
     {
-      "id": "TR3A",
+      "id": "RCOL",
       "side": "F",
       "region": [
-        37.05,
-        84.0,
-        49.95,
-        93.4
+        39.35,
+        0.5,
+        41.75,
+        58.0
       ],
-      "gap_mm": 0.45,
+      "gap_mm": 0.6,
       "decouple_gap_mm": 0.25,
       "members": [
         {
@@ -1543,7 +1542,21 @@
         {
           "ref": "R302",
           "rotation": 90
-        },
+        }
+      ]
+    },
+    {
+      "id": "TR3A",
+      "side": "F",
+      "region": [
+        37.05,
+        84.0,
+        49.95,
+        93.4
+      ],
+      "gap_mm": 0.45,
+      "decouple_gap_mm": 0.25,
+      "members": [
         {
           "ref": "C302",
           "rotation": 90
@@ -2139,15 +2152,7 @@
         "layer": "In1.Cu",
         "outline": "board",
         "priority": 0,
-        "why": "solid GND plane L2 (build/15 \"План шарів\"); every GND pad joins it through a via"
-      },
-      {
-        "id": "3V3-L3",
-        "net": "3V3_Q6A",
-        "layer": "In2.Cu",
-        "outline": "board",
-        "priority": 0,
-        "why": "L3 plane for 3V3_Q6A (42 pins: MCP23017, pull-ups, J302/J304/J311); build/15 plans L3 as signals on CTRL, it is a plane here so that Freerouting keeps every net off the inner layers (layers.types_why)"
+        "why": "solid GND plane L2 (build/15 \"План шарів\"); every GND pad joins it through a via or an outer pour"
       }
     ]
   },
@@ -2156,6 +2161,13 @@
       "id": "GND-F",
       "net": "GND",
       "layer": "F.Cu",
+      "outline": "board",
+      "priority": 0
+    },
+    {
+      "id": "GND-L3",
+      "net": "GND",
+      "layer": "In2.Cu",
       "outline": "board",
       "priority": 0
     },
@@ -2898,7 +2910,18 @@
     "max_passes": 60,
     "threads": 1,
     "job_timeout": "00:25:00",
-    "timeout_s": 1620
+    "timeout_s": 1620,
+    "class_layers": {
+      "PWR3A": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "PWR1A": [
+        "F.Cu",
+        "B.Cu"
+      ]
+    },
+    "class_layers_why": "netclasses.json counts no inner copper for PWR3A and asks 1.8 mm inner for PWR1A; board_gen writes (use_layer F.Cu B.Cu) into these DSN classes, which Freerouting 2.5.0 honours (Network.java createActiveTraceLayers)"
   },
   "drc_policy": {
     "warning_checks": {
