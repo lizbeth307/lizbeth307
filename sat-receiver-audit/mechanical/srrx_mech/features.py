@@ -9,21 +9,43 @@ Each face has its own (u, v) system as seen from OUTSIDE the enclosure:
 """
 
 # Hole specifications by connector kind. d = finished hole; 'basis' says where it comes from.
+# shape: round (default) or dflat (a circle d with one flat, 'flat' = width across the flat, flat on the +v side of the face).
 HOLES = {
-    "sma_pigtail": {"d": 6.4, "basis": "1/4-36 UNS bulkhead, STACK 5.8 'близько 6.4 з лискою'; D-flat per received part (TBD)"},
-    "sma_k": {"d": 6.4, "basis": "SMA-K through bulkhead, 1/4-36 assumed; check the received part (TBD)"},
-    "sma_cab01075": {"d": 6.4, "basis": "Taoglas CAB.01075 SMA(f) bulkhead, 1/4-36 assumed; datasheet not readable (403), check the part (TBD)"},
-    "f_bulkhead": {"d": 9.7, "basis": "F-type 3/8-32 UNEF thread (IEC 61169-24), 9.525 + clearance; check the chosen F-F bulkhead (TBD)"},
-    "bnc_bulkhead": {"d": 9.7, "basis": "BNC bulkhead 3/8-32 UNEF typical, D-flat per part; MPN TBD (MECH-07)"},
+    "sma_pigtail": {"d": 6.5, "basis": "Taoglas MHF1-SMA(F) BK waterproof (CAB.0243/01028/01029, READS-RF row): 1/4-36UNS-2A, no D-cut drawn; 6.5 = catalogue hole of its 1/4-36 bulkheads"},
+    "sma_k": {"d": 6.4, "basis": "Taoglas CAB.011 (P7, W407): D-cut thread, hole and thread length not read (MECH-6, B-06); 1/4-36 clearance (TBD)"},
+    "sma_cab01075": {"d": 6.5, "basis": "Taoglas CAB.01075 SMA(F) BK (catalogue p.14, READS-RF row): 1/4-36UNS-2A, threaded 11.4, no D-cut drawn"},
+    "sma_adamtech": {"d": 6.5, "basis": "Adam Tech CA-DKCA1-305L5-APAJ drawing 11/16/18: 1/4-36UNS jack, washer ID 6.5, no D-cut drawn"},
+    "f_bulkhead": {"d": 9.7, "basis": "Cinch VFA340 ISS 3: 3/8-32 UNEF, washer ID 9.7, no D-flat drawn; flange outside, nut inside"},
+    "bnc_bulkhead": {"d": 9.7, "basis": "Amphenol RF 242181: drawing not readable (403, 2026-11-07); 3/8-32 typical, TBD (MECH-07)"},
+    "gx12": {"d": 12.0, "shape": "dflat", "flat": 11.2, "flange_d": 15.0,
+             "basis": "Kinghelm KH-GX12-6P drawing rev A (READS-E row): hole D12.00 with one flat at 11.20, flange D15 outside, nut D14.6 inside"},
+    "jack_3v5": {"d": 10.9, "shape": "dflat", "flat": 9.8, "flange_d": 13.5,
+                 "basis": "Tensility 10-06000 rev A: recommended cut-out D10.9 with a flat at 9.8, panel 1.5-4, flange D13.5 outside"},
+    "sma_bulkhead_pod": {"d": 6.47, "shape": "dflat", "flat": 5.94,
+                         "basis": "Fairview SM4955 REV 2.0 (reference drawing): mounting hole D6.47 with a flat at 5.94, panel <= 6.35"},
     "m12_vent": {"d": 12.2, "basis": "M12x1.5 clearance (design); Amphenol LTW VENT-PS1YBK-O8002"},
     "m12_vent_threaded": {"d": 10.5, "basis": "Amphenol LTW vent in a threaded hole (pad >= 4.0 mm, no nut): tap drill 10.5, tap M12x1.5"},
-    "m12_gland": {"d": 12.2, "basis": "M12x1.5 clearance (design)"},
-    "gx16": {"d": 16.0, "basis": "STACK D15: Olimex GX16-4 needs a 16 mm hole (not 12)"},
+    "m12_gland": {"d": 12.2, "basis": "M12x1.5 clearance (design); LAPP SKINTOP ST-M 12x1.5 53111400, clamping 3.5-7.0 mm, locknut separate"},
+    "gx16": {"d": 16.0, "basis": "STACK D15 / Olimex GX16-4 dimension picture: M16x1 socket, 16 mm hole (not 12), hex nut 18.8"},
     "pec11r": {"d": 7.3, "basis": "M7x0.75 bushing (Bourns PEC11R datasheet), 0.3 clearance (design)"},
     "pv6": {"d": 16.1, "basis": "E-Switch PV6 datasheet 8.28.2025: panel cut-out 16.00 +0.20/-0.00 (drill 16.0, ream to 16.1), panel 1-10 mm"},
-    "tbd": {"d": 3.0, "basis": "pilot only: connector MPN not chosen (MECH-07); final cut-out from the chosen part's drawing"},
+    "tbd": {"d": 3.0, "basis": "pilot only: part unread or not placed ('_tbd_reason' in mechanical.json); final cut-out from the chosen part's drawing"},
     "pilot": {"d": 3.0, "basis": "pilot only: SKU TBD"},
 }
+
+
+def hole_outline(f, n=24):
+    """Outline of a dflat hole in face (u, v) coordinates: arc on the -v side, chord on the +v side."""
+    import math
+    r = f["d"] / 2.0
+    c = f["flat"] - r                     # chord distance from the centre on the +v side
+    a = math.asin(max(-1.0, min(1.0, c / r)))
+    a0, a1 = a, math.pi - a               # chord ends; the arc runs the long way round through -v
+    pts = []
+    for i in range(n + 1):
+        t = a1 + (2 * math.pi - (a1 - a0)) * i / n
+        pts.append((f["u"] + r * math.cos(t), f["v"] + r * math.sin(t)))
+    return pts
 
 
 def face_features(P):
@@ -50,14 +72,14 @@ def face_features(P):
     # top
     tz = m["top_face"]["ports_z"]
     for p in m["top_face"]["ports"]:
-        F["top"].append({"id": p["id"], "kind": p["kind"], "u": p["x"], "v": D - tz, "d": HOLES[p["kind"]]["d"]})
+        F["top"].append(dict(hole(p["kind"]), id=p["id"], kind=p["kind"], u=p["x"], v=D - tz))
     pk = m["top_face"]["power_key"]
     F["top"].append({"id": pk["id"], "kind": pk["kind"], "u": pk["x"], "v": D - pk["z"], "d": HOLES[pk["kind"]]["d"]})
     vw = m["top_face"]["veml7700_window"]
     F["top"].append({"id": "VEML7700", "kind": "window_round", "u": vw["x"], "v": D - vw["z"], "d": vw["d"]})
     # right
     for p in m["right_face"]["ports"]:
-        F["right"].append({"id": p["id"], "kind": p["kind"], "u": D - p["z"], "v": p["y"], "d": HOLES[p["kind"]]["d"]})
+        F["right"].append(dict(hole(p["kind"]), id=p["id"], kind=p["kind"], u=D - p["z"], v=p["y"]))
     # vents (any face; enclosure coordinates in the params)
     for v in m["vents"]:
         u, vv = face_uv(P, v["face"], v.get("x", 0.0), v.get("y", 0.0), v.get("z", 0.0))
@@ -66,9 +88,13 @@ def face_features(P):
     ex = m["left_face"]["exhaust"]
     F["left"].append({"id": "EXHAUST_P2", "kind": "grille", "u": (ex["z"][0] + ex["z"][1]) / 2, "v": (ex["y"][0] + ex["y"][1]) / 2,
                       "w": ex["z"][1] - ex["z"][0], "h": ex["y"][1] - ex["y"][0], "slot_w": ex["slot_w"], "slot_pitch": ex["slot_pitch"], "slots_along": "u"})
-    # bottom
+    # bottom: a port keeps the 'tbd' pilot and reserve until its part is read and placed ('_tbd_reason')
     for p in m["bottom_face"]["ports"]:
-        F["bottom"].append({"id": p["id"], "kind": "tbd", "u": p["x"], "v": p["z"], "d": HOLES["tbd"]["d"], "w": p["w"], "h": p["h"], "note": p["_note"]})
+        if p["kind"] == "tbd":
+            F["bottom"].append({"id": p["id"], "kind": "tbd", "u": p["x"], "v": p["z"], "d": HOLES["tbd"]["d"], "w": p["w"], "h": p["h"],
+                                "note": p.get("_tbd_reason", p.get("_note", ""))})
+        else:
+            F["bottom"].append(dict(hole(p["kind"]), id=p["id"], kind=p["kind"], u=p["x"], v=p["z"]))
     it = m["bottom_face"]["intake"]
     F["bottom"].append({"id": "INTAKE_P2", "kind": "grille", "u": (it["x"][0] + it["x"][1]) / 2, "v": (it["z"][0] + it["z"][1]) / 2,
                         "w": it["x"][1] - it["x"][0], "h": it["z"][1] - it["z"][0], "slot_w": it["slot_w"], "slot_pitch": it["slot_pitch"], "slots_along": "v"})
@@ -89,7 +115,7 @@ def face_features(P):
                           "slot_w": rf[key]["slot_w"], "slot_pitch": rf[key]["slot_pitch"], "slots_along": "u"})
     tg = rf["t7_gland"]
     F["rear"].append({"id": "T7_GLAND", "kind": "tbd", "u": W - tg["c"][0], "v": tg["c"][1], "d": HOLES["tbd"]["d"], "w": tg["w"], "h": tg["h"],
-                      "note": "gland for the T7 lead, MPN TBD (STACK 5.8)"})
+                      "note": tg.get("_tbd_reason", "gland for the T7 lead, MPN TBD (STACK 5.8)")})
     ss = rf["strap_slots"]
     for i, y in enumerate(ss["y"]):
         F["rear"].append({"id": f"STRAP_SLOT_{i + 1}", "kind": "strap", "u": W - ss["x"], "v": y, "w": 18.0, "h": ss["w"] + 8.0,
@@ -107,6 +133,12 @@ def face_features(P):
         F["rear"].append({"id": f"CLOSURE_{i + 1}", "kind": "closure", "u": W - bx, "v": by, "d": c["clearance_d"],
                           "cb_d": c["counterbore_d"], "cb_depth": c["counterbore_depth"]})
     return F
+
+
+def hole(kind):
+    """Hole geometry of a connector kind for a feature: d, and shape / flat / flange_d where the drawing gives them."""
+    h = HOLES[kind]
+    return {k: h[k] for k in ("d", "shape", "flat", "flange_d") if k in h}
 
 
 def face_uv(P, face, x, y, z):
@@ -134,6 +166,8 @@ def to_xyz(P, face, u, v, depth=0.0):
 
 
 FACE_NORMAL = {"front": (0, 0, 1), "rear": (0, 0, -1), "top": (0, 1, 0), "bottom": (0, -1, 0), "left": (-1, 0, 0), "right": (1, 0, 0)}
+# +v of each face's (u, v) system in enclosure coordinates (see the module docstring)
+FACE_V = {"front": (0, 1, 0), "rear": (0, 1, 0), "top": (0, 0, -1), "bottom": (0, 0, 1), "left": (0, 1, 0), "right": (0, 1, 0)}
 
 
 def face_size(P, face):

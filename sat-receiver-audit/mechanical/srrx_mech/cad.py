@@ -108,10 +108,34 @@ def feature_cutters(P, face, feats, wall_depth):
         elif k == "insert_m3":
             p = to_xyz(P, face, f["u"], f["v"])
             out.append(zcyl(p[0], p[1], -1.0, 7.0, f["d"] / 2.0) if face == "rear" else None)
+        elif f.get("shape") == "dflat":
+            out.append(dflat_cutter(P, face, f, 2 * (wall_depth + 4.0)))
         elif "d" in f:
             p = to_xyz(P, face, f["u"], f["v"])
             out.append(axis_cyl(p, n, f["d"] / 2.0, 2 * (wall_depth + 4.0)))
     return out
+
+
+def dflat_cutter(P, face, f, length):
+    """Round hole with one flat ('flat' across, on the +v side of the face), built in enclosure axes so the flat side is exact."""
+    from .features import FACE_NORMAL, FACE_V
+    n, vdir = FACE_NORMAL[face], FACE_V[face]
+    r = f["d"] / 2.0
+    p = to_xyz(P, face, f["u"], f["v"])
+    cyl = axis_cyl(p, n, r, length)
+    lo, hi = [], []
+    for i in range(3):
+        # along the normal and the in-face u axis the keep box spans the cylinder; along v it ends at the flat
+        c = p[i] - n[i] * (length / 2 - 2.0)
+        span = [c - length, c + length] if n[i] else [p[i] - r - 1.0, p[i] + r + 1.0]
+        if vdir[i] > 0:
+            span = [p[i] - r - 1.0, p[i] + (f["flat"] - r)]
+        elif vdir[i] < 0:
+            span = [p[i] - (f["flat"] - r), p[i] + r + 1.0]
+        lo.append(span[0])
+        hi.append(span[1])
+    keep = box(lo[0], lo[1], lo[2], hi[0] - lo[0], hi[1] - lo[1], hi[2] - lo[2])
+    return cyl & keep
 
 
 # ---------------------------------------------------------------------------------------------

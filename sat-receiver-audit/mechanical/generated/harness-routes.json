@@ -510,12 +510,15 @@
       "through": [
         "SL3"
       ],
-      "crossings": [],
+      "crossings": [
+        "piece 2 through nut.LAB_BUS",
+        "piece 3 through nut.LAB_BUS"
+      ],
       "provisional": [
         "behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall",
         "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       ],
-      "status": "OPEN (end provisional): behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 2 through nut.LAB_BUS; piece 3 through nut.LAB_BUS",
       "in_build16": true
     },
     "S12": {
@@ -1174,12 +1177,14 @@
       "through": [
         "SL3"
       ],
-      "crossings": [],
+      "crossings": [
+        "piece 6 through nut.LAB_BUS"
+      ],
       "provisional": [
         "behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall",
         "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       ],
-      "status": "OPEN (end provisional): behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS",
       "in_build16": true
     },
     "S24": {
@@ -1809,12 +1814,16 @@
       "through": [
         "SL3"
       ],
-      "crossings": [],
+      "crossings": [
+        "piece 6 through nut.LAB_BUS",
+        "piece 7 through nut.LAB_BUS",
+        "piece 8 through nut.LAB_BUS"
+      ],
       "provisional": [
         "behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall",
         "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       ],
-      "status": "OPEN (end provisional): behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS; piece 7 through nut.LAB_BUS; piece 8 through nut.LAB_BUS",
       "in_build16": true
     },
     "S35": {

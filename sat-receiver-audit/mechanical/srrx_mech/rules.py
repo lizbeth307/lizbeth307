@@ -4,6 +4,7 @@ Each rule returns {id, rule, value, limit, result, source}. result is one of
 'PASS (model)', 'FAIL (model)' or 'OPEN: <what is missing>'. OPEN rows need a
 measured or chosen part and never fail the CI gate; FAIL rows do.
 """
+import itertools
 import math
 
 from .layout import item_boxes
@@ -198,21 +199,9 @@ def evaluate(P):
     ok = tp["outer_wall"] <= 1.0 and tp["behind"] >= 3.0 and abs(tp["hex_af"] - 11.3) < 1e-6
     out.append({"id": "R-TRIPOD", "rule": "captive 1/4-20 nut pocket: outer wall <= 1.0, 11.3 AF, >= 3 mm behind the nut",
                 "value_mm": [tp["outer_wall"], tp["hex_af"], tp["behind"]], "result": _res(ok), "source": "STACK D15 / 5.8"})
-    # Panel bulkheads: thread engagement needs the bulkhead thread length, which no chosen part gives yet.
-    wall = m["wall"] + m["angles"]["top"]["t"]
-    hw = P.parts["sma_bulkhead_hw"]
-    out.append({"id": "R-SMA-THREAD", "rule": "bulkhead thread through ASA wall + Al angle with O-ring, lock washer and nut, >= 3 full threads left (1/4-36: 3 x 0.706 mm)",
-                "value_mm": wall, "limit_mm": "thread length of the chosen bulkhead >= wall + O-ring + washer + nut + 2.1",
-                "result": f"OPEN: bulkhead/pigtail MPN and its thread length not chosen (MECH-07); the representative Samtec SMA-J-C-X-ST-BH4 takes a "
-                          f"{hw['panel_max']} mm panel at most, less than this {wall} mm wall: choose a long-thread bulkhead",
-                "source": "STACK 5.8 'стінка 4-5 мм'; parts.json sma_bulkhead_hw"})
-    # Bulkhead nuts inside the panel: SMA ports carry nut envelopes in the envelope check; F and BNC hardware is not known.
-    from .layout import SMA_KINDS
-    other = [p["id"] for p in m["top_face"]["ports"] + m["right_face"]["ports"] if p["kind"] not in SMA_KINDS]
-    out.append({"id": "R-BULKHEAD-NUTS", "rule": "nut and lock washer of every panel bulkhead inside the wall clear of the RF-bay walls and parts (envelope check)",
-                "value_mm": f"SMA: washer d {hw['washer_od']}, {hw['washer_t'] + hw['nut_t']} thick (layout nut.*)",
-                "result": f"OPEN: hardware of {', '.join(other)} not chosen (MPN TBD), no nut envelope" if other else "PASS (model)",
-                "source": "parts.json sma_bulkhead_hw; envelopes in fit-report 'tight' / 'collisions'"})
+    # Panel bulkheads: thread left for mating per port, and the inner hardware envelopes (W2 MECH-2, makers' drawings).
+    out.append(sma_thread_rule(P))
+    out.append(bulkhead_nuts_rule(P))
     # PWR pad zones must stay clear of the screw keep-outs (a pad never needs a hole).
     b = P.boards["boards"]["PWR"]
     kr = b["hole_keepout_d"] / 2
@@ -267,8 +256,8 @@ def evaluate(P):
         if face in ("front", "rear"):
             continue
         for f in feats:
-            hu = f["w"] / 2 if "w" in f and f["kind"] in ("grille", "tbd") else f["d"] / 2
-            hv = f["h"] / 2 if "h" in f and f["kind"] in ("grille", "tbd") else f["d"] / 2
+            hu = f["w"] / 2 if "w" in f and f["kind"] in ("grille", "tbd") else max(f["d"], f.get("flange_d", 0.0)) / 2
+            hv = f["h"] / 2 if "h" in f and f["kind"] in ("grille", "tbd") else max(f["d"], f.get("flange_d", 0.0)) / 2
             if face in ("top", "bottom"):
                 along, alen, z_lo, z_hi = (f["u"] - hu, f["u"] + hu), W, None, None
                 z_lo, z_hi = ((D - f["v"] - hv, D - f["v"] + hv) if face == "top" else (f["v"] - hv, f["v"] + hv))
@@ -314,6 +303,7 @@ def evaluate(P):
                 "value_mm": {"cable_od": hr["cable_od"], "bend_r": hr["bend_r"]},
                 "result": "OPEN: " + hr["_status"], "source": "mechanical.json hdmi_route, layout hdmi_*"})
     out += w2_mech1_rules(P)
+    out += w2_mech2_rules(P)
     return out
 
 
@@ -520,3 +510,126 @@ def w2_mech1_rules(P):
     """Harness routes (R-PPS-LEN, R-ROUTE-CLEAR; srrx_mech/routes.py) and board header heights (R-HDR-HEIGHT; boards.py)."""
     from . import boards, routes
     return routes.route_rules(P) + [boards.header_height_rule(P)]
+
+
+# ---- W2 MECH-2: panel bulkheads and the bottom port row from the makers' drawings ----------------------------
+def _port_stack(P, p):
+    """Thread left for mating at a panel port (worst case) with its basis and pitch; left is None when a stack item is not drawn.
+
+    Front-side-nut SMA: thread_len(min) - wall - washer(max) - nut(max); the seal sits at the flange inside, so it adds
+    nothing to the outer stack. VFA340 (flange outside, nut inside): the long side left inside for the W402 F plug."""
+    from .layout import port_wall
+    part = P.parts.get(p.get("part", ""))
+    wall = port_wall(P, p)
+    if part is None or part.get("status") == "listing":
+        return None, p.get("_tbd_reason", "part not read"), None
+    pitch = part["pitch"]
+    if p["kind"] == "f_bulkhead":
+        long_min = part["overall"] - part["overall_tol"] - (part["short_side"] + part["short_side_tol"]) - (part["flange_t"] + part["tol"])
+        left = long_min - wall - part["washer"][2] - part["nut_t"] - part["nut_t_tol"]
+        return round(left, 2), "inside, for the W402 F plug: long side (min) - wall - washer - nut (max); the 7.6 short side outside is free for W401", pitch
+    t_min = part["thread_len"] - part.get("thread_len_tol", 0.0)
+    if "item5_t" in part:
+        hw = part["item5_t"] + part["item5_t_tol"] + part["item6_t"] + part["item6_t_tol"]
+        return round(t_min - wall - hw, 2), "outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside", pitch
+    if "nut_t" in part:
+        allow = t_min - wall - part["nut_t"] - part.get("nut_t_tol", 0.0) - 3 * pitch
+        return None, f"washer thickness not drawn: {allow:.2f} mm left for it after the nut and 3 threads", pitch
+    allow = t_min - wall - 3 * pitch
+    return None, (f"nut and washer not drawn: {allow:.2f} mm left for both after 3 threads "
+                  "(1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)"), pitch
+
+
+def sma_thread_rule(P):
+    """R-SMA-THREAD per panel port: >= 3 full threads left for mating after wall, washer and nut (STACK 5.8)."""
+    m = P.mech
+    rows, opened = {}, []
+    for p in m["top_face"]["ports"] + m["right_face"]["ports"]:
+        left, how, pitch = _port_stack(P, p)
+        if left is None:
+            rows[p["id"]] = f"OPEN: {how}"
+            opened.append(p["id"])
+        else:
+            need = 3 * pitch
+            rows[p["id"]] = f"{'PASS' if left >= need - 1e-9 else 'FAIL'} (model): {left:g} mm left >= {need:.2f} (3 x {pitch:g}); {how}"
+    fails = [k for k, v in rows.items() if v.startswith("FAIL")]
+    passed = [k for k, v in rows.items() if v.startswith("PASS")]
+    if fails:
+        res = "FAIL (model): " + ", ".join(fails)
+    elif opened:
+        res = f"OPEN: {', '.join(opened)} (thread or hardware not drawn, or part not read); PASS (model): {', '.join(passed)}"
+    else:
+        res = "PASS (model)"
+    wall = m["wall"] + m["angles"]["top"]["t"]
+    return {"id": "R-SMA-THREAD", "rule": "per panel port: thread left for mating after the 4.5 mm wall (ASA 2.5 + Al angle 2.0), washer and nut >= 3 full threads (1/4-36: 3 x 0.706; 3/8-32: 3 x 0.794)",
+            "value_mm": rows, "limit_mm": f"3 x pitch; wall {wall:g}", "result": res,
+            "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_mhf1_sma_wp, taoglas_cab01075, adamtech_ca_dkca1_305l5, cinch_vfa340 (read 2026-11-07)"}
+
+
+def bulkhead_nuts_rule(P):
+    """R-BULKHEAD-NUTS: every panel port has an inner envelope from its drawing (nut.* in the envelope check), or is OPEN."""
+    from .layout import port_inner
+    m = P.mech
+    val, opened, assumed = {}, [], []
+    for p in m["top_face"]["ports"] + m["right_face"]["ports"] + [q for q in m["bottom_face"]["ports"] if q["kind"] != "tbd"]:
+        e = port_inner(P, p)
+        if e is None:
+            opened.append(p["id"])
+            val[p["id"]] = "no envelope: " + p.get("_tbd_reason", "part not read")
+            continue
+        r, th, basis = e
+        part = P.parts.get(p.get("part", ""), {})
+        if "representative" in basis or "body_od_reserve" in part or "body_len_reserve" in part:
+            assumed.append(p["id"])
+        val[p["id"]] = f"d {2 * r:.2f} x {th:.2f} deep: {basis}"
+    res = f"OPEN: no inner envelope for {', '.join(opened)} (drawing not read)" if opened else "PASS (model)"
+    if assumed:
+        res += f"; body OD or length not dimensioned, envelope reserve for {', '.join(assumed)}"
+    return {"id": "R-BULKHEAD-NUTS", "rule": "nut, washer or connector body of every panel bulkhead inside the wall: an envelope from the part's drawing in the envelope check (nut.*: clear of the RF-bay walls, modules and structure)",
+            "value_mm": val, "result": res, "source": "parts.json (makers' drawings read 2026-11-07); envelopes in fit-report 'tight' / 'collisions'"}
+
+
+def _port_radius(P, p):
+    """Largest radius of a bottom port about its axis: outer flange or hole (HOLES) and inner nut (part drawing); None if not modelled."""
+    from .features import HOLES
+    from .layout import port_inner
+    if p["kind"] == "tbd":
+        return None
+    e = port_inner(P, p)
+    h = HOLES[p["kind"]]
+    return max(h.get("flange_d", h["d"]) / 2.0, e[0] if e else 0.0)
+
+
+def bottom_pitch_rule(P, clear=1.0):
+    """R-BOTTOM-PITCH: every pair of bottom-face ports, radius of each + clear <= centre distance (in the face)."""
+    m = P.mech
+    ports = m["bottom_face"]["ports"]
+    val, bad, opened = {}, [], []
+    for a, b in itertools.combinations(ports, 2):
+        dist = math.hypot(a["x"] - b["x"], a["z"] - b["z"])
+        ra, rb = _port_radius(P, a), _port_radius(P, b)
+        key = f"{a['id']}-{b['id']}"
+        if ra is None or rb is None:
+            opened.append(key)
+            val[key] = f"{dist:.1f} mm apart; OPEN: {', '.join(q['id'] for q, r in ((a, ra), (b, rb)) if r is None)} not modelled"
+            continue
+        need = ra + rb + clear
+        val[key] = f"{dist:.1f} >= {need:.2f}: {'PASS' if dist >= need - 1e-9 else 'FAIL'} (model)"
+        if dist < need - 1e-9:
+            bad.append(key)
+    px = P.parts.get("bulgin_px0845a")
+    note = (f"; read but not placed: PX0845/A (hex {px['hex']:g}) needs {px['hex'] / 2 + clear:g} mm + the neighbour radius to each neighbour, "
+            "more than the 17 mm row pitch" if px else "")
+    if bad:
+        res = "FAIL (model): " + ", ".join(bad)
+    elif opened:
+        res = "OPEN: " + ", ".join(q["id"] for q in ports if q["kind"] == "tbd") + " not modelled (mechanical.json bottom_face '_tbd_reason')" + note
+    else:
+        res = "PASS (model)"
+    return {"id": "R-BOTTOM-PITCH", "rule": f"bottom-face port row: outer flange or inner nut radius of each port + {clear:g} mm <= centre distance (re-space inside x 163-213 if it fails)",
+            "value_mm": val, "limit_mm": clear, "result": res, "source": "mechanical.json bottom_face.ports; parts.json (makers' drawings read 2026-11-07)"}
+
+
+def w2_mech2_rules(P):
+    """Rows added by W2 MECH-2 (registration list, append-only)."""
+    return [bottom_pitch_rule(P)]
