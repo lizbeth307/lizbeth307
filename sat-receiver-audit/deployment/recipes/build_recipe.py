@@ -57,7 +57,8 @@ STEP_PROGRAMS = frozenset({"cmake", "make", "ninja"})
 PLACEHOLDERS = ("{src}", "{build}", "{destdir}", "{jobs}")
 BUILD_SYSTEMS = ("cmake", "make", "autotools")
 # One entry of source.patches: a patch file in deployment/recipes/<id>/patches/ (not the TX-rejecting
-# deployment/patches/<id>-rx-only.patch), its SHA-256, -p level and the git blob of every file it changes.
+# deployment/patches/<id>-rx-only.patch), its SHA-256, -p level and the git blob of every file it changes
+# as that file is just before this patch (the upstream blob unless an earlier listed patch changed it).
 PATCH_KEYS = ("file", "sha256", "strip", "targets", "kind", "summary")
 PATCH_KINDS = ("cherry-pick", "lab")
 PATCH_FILE = re.compile(r"patches/[A-Za-z0-9][A-Za-z0-9._+-]*\.patch")
@@ -107,7 +108,9 @@ def _argv(value, label):
     for item in value:
         if "://" in item or item.startswith("--download") or "FETCHCONTENT_FULLY_DISCONNECTED=OFF" in item:
             raise RecipeError(label + " names a URL or enables downloads")
-        if "{" in item and not any(p in item for p in PLACEHOLDERS):
+        # Every placeholder of the item must be one of PLACEHOLDERS ({recipe} and {hook_out} are not step placeholders).
+        found = re.findall(r"\{[^{}]*\}", item)
+        if item.count("{") != len(found) or any(p not in PLACEHOLDERS for p in found):
             raise RecipeError(label + " has an unknown placeholder")
     return value
 
@@ -185,7 +188,8 @@ def _patches(entries, component):
             raise RecipeError(label + " strip must be an integer 0..3")
         targets = entry["targets"]
         if type(targets) is not dict or not targets or not all(type(v) is str and GIT_BLOB.fullmatch(v) for v in targets.values()):
-            raise RecipeError(label + " targets must map each changed file to its upstream git blob id")
+            raise RecipeError(label + " targets must map each changed file to its git blob id just before this patch"
+                              " (the upstream blob unless an earlier listed patch changed that file)")
         for target in targets:
             _relative(target, label + " target")
         if entry["kind"] not in PATCH_KINDS or type(entry["summary"]) is not str or not entry["summary"]:
@@ -339,7 +343,8 @@ def validate_recipe(recipe, lock=None):
     for item in install["copy"]:
         deploy.keys(item, ("from", "to"), "install copy")
         if (type(item["from"]) is not str or type(item["to"]) is not str or not item["from"].startswith(sources)
-                or ".." in item["from"].split("/") or item["to"].startswith("/") or ".." in item["to"].split("/")):
+                or ".." in item["from"].split("/") or item["to"].startswith("/") or ".." in item["to"].split("/")
+                or "{" in item["from"].split("/", 1)[1] or "{" in item["to"]):  # one leading placeholder only
             raise RecipeError("install copy goes from " + ", ".join(sources) + " to a relative package path")
         if item["from"].startswith("{recipe}/"):
             files = (recipe_dir(recipe["component"]) / "files").resolve()

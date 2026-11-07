@@ -472,9 +472,10 @@ FIXTURE = "srrx-fixture"
 MEMBER = {"path": "superbuild-1.0/src/inner.tgz", "sha256": "c" * 64}
 
 
-def v2_deployment(root):
-    """deployment/ stand-in: recipes/srrx-fixture/ with a recipe naming three listed patches and a
-    source member, its check_recipe.py and files/. Returns the record a builder would write for it."""
+def v2_deployment(root, hook_out=True):
+    """deployment/ stand-in: recipes/srrx-fixture/ with a recipe naming three listed patches, a
+    source member, both hooks (the package hook writing {hook_out} unless hook_out is False) and a
+    files/ copy, its check_recipe.py and files/. Returns the record a builder would write for it."""
     directory = root / "recipes" / FIXTURE
     (directory / "patches").mkdir(parents=True)
     (directory / "files").mkdir()
@@ -486,15 +487,25 @@ def v2_deployment(root):
         (directory / file).write_text("--- a/f%d\n+++ b/f%d\n@@ -1 +1 @@\n-a\n+b\n" % (index, index), encoding="utf-8")
         listed.append({"file": file, "sha256": deploy.sha(directory / file), "strip": 1, "targets": {"f%d" % index: "0" * 40},
                        "kind": "lab", "summary": "synthetic"})
+    hooks = {"source_check": ["python3", "-I", "{recipe}/check_recipe.py", "verify-source", "--source", "{src}"],
+             "package": ["python3", "-I", "{recipe}/check_recipe.py", "package", "--root", "{destdir}"]
+             + (["--manifest", "{hook_out}"] if hook_out else [])}
+    install = {"cmake_install": False, "make_install": True, "copy": [{"from": "{recipe}/files/srrx-fixture.conf", "to": "etc/srrx-fixture"}]}
     (directory / "recipe.json").write_text(json.dumps({"schema_version": 2, "component": FIXTURE,
-                                                       "source": {"patch": None, "patches": listed, "member": MEMBER}}), encoding="utf-8")
+                                                       "source": {"patch": None, "patches": listed, "member": MEMBER},
+                                                       "install": install, "hooks": hooks}), encoding="utf-8")
     receipts = [dict(entry, after={t: "1" * 40 for t in entry["targets"]}) for entry in listed]
     for receipt in receipts:
         del receipt["kind"], receipt["summary"]
+    script = deploy.sha(directory / "check_recipe.py")
+    ran = [{"hook": name, "argv": list(argv), "script_sha256": script, "status": "CI_PASS", "report": {"findings": [], "ok": True}}
+           for name, argv in hooks.items()]
+    if hook_out:
+        ran[1].update(output=FIXTURE + ".package-hook.json", output_sha256="d" * 64)
     return {"component": FIXTURE, "recipe_sha256": deploy.sha(directory / "recipe.json"),
             "build_environment": {"patch_receipt": {"component": FIXTURE, "patch": None}, "patch_receipts": receipts,
-                                  "source_member": dict(MEMBER),
-                                  "recipe_files": {"check_recipe.py": deploy.sha(directory / "check_recipe.py"),
+                                  "source_member": dict(MEMBER), "hooks": ran,
+                                  "recipe_files": {"check_recipe.py": script,
                                                    "files/srrx-fixture.conf": deploy.sha(directory / "files/srrx-fixture.conf")}}}
 
 
@@ -550,6 +561,56 @@ class ListedPatchBindingTests(unittest.TestCase):
         with self.assertRaisesRegex(deploy.DeploymentError, "recipe files differ"):
             deploy._record_binding(self.good, "fixture")
 
+    def test_recipe_files_and_hooks_come_from_the_recipe(self):
+        # The expected recipe files and hooks are the recipe's (hook script, files/ matches, hooks in
+        # builder order), not whatever the record lists; build records are not signed.
+        directory = self.root / "recipes" / FIXTURE
+        files = lambda change: (lambda e: change(e["recipe_files"]))  # noqa: E731
+        hooks = lambda change: (lambda e: change(e["hooks"]))  # noqa: E731
+        for label, change in {"recipe file dropped": files(lambda f: f.pop("files/srrx-fixture.conf")),
+                              "hook script dropped": files(lambda f: f.pop("check_recipe.py")),
+                              "recipe_files missing for a hooked recipe": lambda e: e.pop("recipe_files"),
+                              "recipe_files empty": lambda e: e.update(recipe_files={})}.items():
+            with self.subTest(label):
+                self.refused("recipe files differ", change)
+        for label, change in {"hook list missing": lambda e: e.pop("hooks"),
+                              "hook list empty": lambda e: e.update(hooks=[]),
+                              "hook list not a list": lambda e: e.update(hooks={"package": {}}),
+                              "one hook missing": hooks(lambda h: h.pop(0)),
+                              "hooks reordered": hooks(lambda h: h.reverse()),
+                              "hook entry not an object": hooks(lambda h: h.__setitem__(0, "source_check")),
+                              "other hook argv": hooks(lambda h: h[0].update(argv=h[0]["argv"] + ["--strict"])),
+                              "other hook script": hooks(lambda h: h[1].update(script_sha256="0" * 64)),
+                              "package output missing": hooks(lambda h: h[1].pop("output")),
+                              "package output named otherwise": hooks(lambda h: h[1].update(output="other.package-hook.json")),
+                              "package output without its sha": hooks(lambda h: h[1].update(output_sha256=None)),
+                              "source_check with an output": hooks(lambda h: h[0].update(output=FIXTURE + ".package-hook.json",
+                                                                                          output_sha256="d" * 64))}.items():
+            with self.subTest(label):
+                self.refused("hooks differ", change)
+        (directory / "check_recipe.py").write_text("# rewritten after the build\n", encoding="utf-8")
+        record = copy.deepcopy(self.good)
+        record["build_environment"]["recipe_files"].pop("check_recipe.py")  # and its entry left out of the record
+        for each in (record, self.good):
+            with self.subTest(recipe_files=sorted(each["build_environment"]["recipe_files"])), \
+                    self.assertRaisesRegex(deploy.DeploymentError, "recipe files differ"):
+                deploy._record_binding(each, "fixture")
+
+    def test_recipe_file_globs_bind_every_match(self):
+        directory = self.root / "recipes" / FIXTURE
+        recipe = json.loads((directory / "recipe.json").read_text(encoding="utf-8"))
+        recipe["install"]["copy"] = [{"from": "{recipe}/files/*.conf", "to": "etc/srrx-fixture"}]
+        (directory / "recipe.json").write_text(json.dumps(recipe), encoding="utf-8")
+        record = copy.deepcopy(self.good)
+        record["recipe_sha256"] = deploy.sha(directory / "recipe.json")
+        deploy._record_binding(record, "fixture")
+        added = directory / "files/added-after-the-build.conf"
+        added.write_text("# not in the build\n", encoding="utf-8")
+        with self.assertRaisesRegex(deploy.DeploymentError, "recipe files differ"):
+            deploy._record_binding(record, "fixture")
+        record["build_environment"]["recipe_files"]["files/added-after-the-build.conf"] = deploy.sha(added)
+        deploy._record_binding(record, "fixture")
+
     def test_schema_1_records_bind_as_before(self):
         with patch.object(deploy, "HERE", HERE), patch.object(deploy, "PROJECT", HERE.parent):
             record = {"component": "rtlsdr", "recipe_sha256": deploy.sha(HERE / "recipes/rtlsdr/recipe.json"),
@@ -582,8 +643,7 @@ class PackageHookOutputTests(unittest.TestCase):
         self.out.mkdir(parents=True)
         self.output = self.out / (FIXTURE + ".package-hook.json")
         self.output.write_text(json.dumps({"files": {}, "record_digests": {"sha256": "a" * 64}}), encoding="utf-8")
-        self.record["build_environment"]["hooks"] = [{"hook": "package", "status": "CI_PASS", "output": self.output.name,
-                                                      "output_sha256": deploy.sha(self.output)}]
+        self.record["build_environment"]["hooks"][1].update(output=self.output.name, output_sha256=deploy.sha(self.output))
         self.record["record_digests"] = {"sha256": "a" * 64}
         self.path = self.out / (FIXTURE + ".build-record.json")
 
@@ -592,13 +652,27 @@ class PackageHookOutputTests(unittest.TestCase):
                          {"component": FIXTURE, "patch_receipts": 3, "source_member": MEMBER["path"], "record_digests": True})
         for label, change, needle in (
                 ("digests differ", lambda r: r.update(record_digests={"sha256": "b" * 64}), "record_digests differ"),
-                ("digests without output", lambda r: r["build_environment"].update(hooks=[]), "without a package hook output"),
-                ("output elsewhere", lambda r: r["build_environment"]["hooks"][0].update(output="../" + self.output.name), "hook output differs"),
-                ("output bytes", lambda r: r["build_environment"]["hooks"][0].update(output_sha256="0" * 64), "hook output differs"),
+                ("digests without output", lambda r: [r["build_environment"]["hooks"][1].pop(k) for k in ("output", "output_sha256")], "hooks differ"),
+                ("no hook list", lambda r: r["build_environment"].pop("hooks"), "hooks differ"),
+                ("output elsewhere", lambda r: r["build_environment"]["hooks"][1].update(output="../" + self.output.name), "hooks differ"),
+                ("output bytes", lambda r: r["build_environment"]["hooks"][1].update(output_sha256="0" * 64), "hook output differs"),
                 ("patch list", lambda r: r["build_environment"]["patch_receipts"].pop(), "patch list differs")):
             record = copy.deepcopy(self.record)
             change(record)
             with self.subTest(label), self.assertRaisesRegex(self.check_repo.CheckError, needle):
+                self.check_repo.record_binding(self.path, record)
+
+    def test_record_digests_need_a_package_hook_output(self):
+        # A package hook without {hook_out} names no output, so record_digests would have no source.
+        root = Path(self.temp.name) / "no-hook-out" / "deployment"
+        record = v2_deployment(root, hook_out=False)
+        with patch.object(deploy, "HERE", root), patch.object(deploy, "PROJECT", root.parent):
+            self.assertFalse(self.check_repo.record_binding(self.path, record)["record_digests"])
+            record["record_digests"] = {"sha256": "a" * 64}
+            with self.assertRaisesRegex(self.check_repo.CheckError, "without a package hook output"):
+                self.check_repo.record_binding(self.path, record)
+            record["build_environment"]["hooks"][1].update(output=self.output.name, output_sha256=deploy.sha(self.output))
+            with self.assertRaisesRegex(self.check_repo.CheckError, "hooks differ"):
                 self.check_repo.record_binding(self.path, record)
 
 
