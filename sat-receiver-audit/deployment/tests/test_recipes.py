@@ -1142,5 +1142,108 @@ class DataTreeBuildTests(unittest.TestCase):
                 self.assertEqual(check_repo.packages(out)["status"], "CI_PACKAGES_MATCH_BUILD_RECORDS")
 
 
+# The SDR++ recipe (W2 SW-SDRPP): the build allowlist, the policy module names, the two lab patches
+# and the runtime check stay one list; the build itself runs only in sr-rx-packages (lab-light).
+SDRPP_ON = {"OPT_BACKEND_GLFW", "OPT_BUILD_RADIO", "OPT_BUILD_AUDIO_SINK", "OPT_BUILD_FREQUENCY_MANAGER", "OPT_BUILD_RTL_SDR_SOURCE",
+            "OPT_BUILD_AIRSPYHF_SOURCE", "OPT_BUILD_FILE_SOURCE", "OPT_BUILD_NETWORK_SOURCE", "OPT_BUILD_SOAPY_SOURCE",
+            "OPT_BUILD_RIGCTL_SERVER", "USE_INTERNAL_LIBCORRECT"}
+SDRPP_MODULES = {"radio", "audio_sink", "frequency_manager", "rtl_sdr_source", "airspyhf_source", "file_source", "network_source",
+                 "soapy_source", "rigctl_server"}
+
+
+def sdrpp_runtime_check():
+    spec = importlib.util.spec_from_file_location("sdrpp_runtime_check", HERE / "recipes/sdrpp/runtime_check.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class SdrppRecipeTests(unittest.TestCase):
+    def setUp(self):
+        self.recipe = recipe("sdrpp")
+        self.policy = deploy.load(HERE / "receive-only-policy.json")["components"]["sdrpp"]
+
+    def test_every_upstream_option_is_explicit_and_only_the_allowlist_is_on(self):
+        options = self.recipe["cmake"]["options"]
+        self.assertEqual(len(options), 58)  # the option() calls of the 8c9f5ee8 top-level CMakeLists.txt
+        self.assertEqual({k for k, v in options.items() if v == "ON"}, SDRPP_ON)
+        for name in ("OPT_BUILD_RECORDER", "OPT_BUILD_IQ_EXPORTER", "OPT_BUILD_NETWORK_SINK", "OPT_BUILD_PAGER_DECODER",
+                     "OPT_BUILD_DISCORD_PRESENCE", "OPT_BUILD_RIGCTL_CLIENT", "OPT_BUILD_SCANNER", "OPT_BUILD_METEOR_DEMODULATOR",
+                     "OPT_BUILD_ATV_DECODER", "OPT_BUILD_RTL_TCP_SOURCE", "OPT_BUILD_SDRPP_SERVER_SOURCE", "OPT_BUILD_SPYSERVER_SOURCE",
+                     "OPT_BUILD_HACKRF_SOURCE", "OPT_BUILD_PLUTOSDR_SOURCE", "OPT_BUILD_LIMESDR_SOURCE", "OPT_BUILD_M17_DECODER"):
+            self.assertEqual(options[name], "OFF", name)
+        component = build_recipe.validate_recipe(self.recipe, LOCK)
+        self.assertEqual((component["id"], component["commit"]), ("sdrpp", "8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af"))
+
+    def test_policy_build_targets_required_paths_and_runtime_check_name_the_same_modules(self):
+        self.assertEqual(set(self.policy["allow_plugins"]), SDRPP_MODULES)
+        targets = self.recipe["build"][0][self.recipe["build"][0].index("--target") + 1:self.recipe["build"][0].index("--parallel")]
+        self.assertEqual(set(targets) - {"sdrpp"}, SDRPP_MODULES)
+        required = {g[len("usr/lib/sdrpp/plugins/"):-len(".so")] for c in self.recipe["checks"] if c["kind"] == "require_paths"
+                    for g in c["globs"] if g.startswith("usr/lib/sdrpp/plugins/")}
+        self.assertEqual(required, SDRPP_MODULES)
+        self.assertEqual(set(sdrpp_runtime_check().ALLOWED), SDRPP_MODULES)
+        self.assertEqual(self.policy["plugin_dirs"][0], "usr/lib/sdrpp/plugins")
+        words = [w.lower() for w in deploy.BAD_MODULE_WORDS]
+        for name in SDRPP_MODULES:  # selftest RX-03 would flag an allowlisted module that matches the deny layer
+            self.assertFalse([t for t in self.policy["deny_tokens"] if t in name] or [w for w in words if w in name], name)
+
+    def test_lab_patches_drop_the_bias_and_direct_sampling_controls_and_refuse_server_mode(self):
+        entries = {e["file"]: e for e in self.recipe["source"]["patches"]}
+        texts = {}
+        for name, entry in entries.items():
+            path = HERE / "recipes/sdrpp" / name
+            self.assertEqual(deploy.sha(path), entry["sha256"])
+            texts[name] = path.read_text(encoding="utf-8")
+            self.assertEqual(set(build_recipe.patch_paths(texts[name], entry["strip"])), set(entry["targets"]))
+        rtl = texts["patches/0001-lab-rtl-sdr-source-rx-only.patch"]
+        added = "\n".join(line[1:] for line in rtl.splitlines() if line.startswith("+") and not line.startswith("+++"))
+        removed = "\n".join(line[1:] for line in rtl.splitlines() if line.startswith("-") and not line.startswith("---"))
+        for token in ("biasT", "rtlsdr_set_bias_tee", "Direct Sampling", "directSamplingMode"):
+            self.assertIn(token, removed)
+            self.assertNotIn(token, added)
+        self.assertIn('["directSampling"] = 0;', added)
+        self.assertIn("rtlsdr_set_direct_sampling(_this->openDev, 0);", added)
+        core = texts["patches/0002-lab-no-server-mode.patch"]
+        self.assertIn(sdrpp_runtime_check().REFUSAL, core)
+        forbidden = next(c for c in self.recipe["checks"] if c["kind"] == "forbid_strings")
+        self.assertEqual(forbidden["file"], "usr/lib/sdrpp/plugins/rtl_sdr_source.so")
+        self.assertEqual(set(forbidden["substrings"]), {t.decode() for t in sdrpp_runtime_check().RTL_FORBIDDEN})
+
+    def test_light_plan_builds_sdrpp_after_the_lab_librtlsdr(self):
+        with patch.object(build_recipe, "DEPLOYMENT", HERE):
+            plan = build_recipe.ci_plan(LOCK)
+        self.assertIn("sdrpp", plan["light"])
+        self.assertLess(plan["light"].index("rtlsdr"), plan["light"].index("sdrpp"))
+        self.assertEqual(plan["recipes"]["sdrpp"]["chain"], ["rtlsdr", "sdrpp"])
+        self.assertTrue(plan["recipes"]["sdrpp"]["runtime_check"])
+        self.assertEqual(self.recipe["lab_build_depends"], ["librtlsdr2", "librtlsdr-dev"])
+        self.assertIn("libusb-1.0-0-dev", self.recipe["build_depends"])  # librtlsdr-dev Depends, dpkg -i offline
+
+    def test_package_version_is_a_dpkg_version_of_a_lab_build(self):
+        version = next(c for c in LOCK["components"] if c["id"] == "sdrpp")["version"]
+        self.assertRegex(version, r"\A[0-9]")  # dpkg-deb --build refuses a version that starts with a letter
+        self.assertRegex(version, deploy.LAB_BUILD)
+        self.assertEqual(deploy.prohibited_installed({"sdrpp": version}), [])
+        self.assertEqual(deploy.prohibited_installed({"sdrpp": "1.1.0-1"}), ["sdrpp"])  # a distro build stays forbidden
+
+    def test_runtime_check_plugin_directory_must_equal_the_allowlist(self):
+        module = sdrpp_runtime_check()
+        with tempfile.TemporaryDirectory(prefix="srrx-sdrpp-rt-") as temporary:
+            for name in sorted(SDRPP_MODULES):
+                (Path(temporary) / (name + ".so")).write_bytes(b"\x7fELF")
+            with patch.object(module, "PLUGINS", temporary):
+                findings = []
+                self.assertEqual(module.plugin_directory(findings), sorted(SDRPP_MODULES))
+                self.assertEqual(findings, [])
+                (Path(temporary) / "recorder.so").write_bytes(b"\x7fELF")
+                (Path(temporary) / "radio.so").unlink()
+                (Path(temporary) / "README").write_text("x", encoding="utf-8")
+                module.plugin_directory(findings)
+                self.assertEqual(len(findings), 2, findings)
+                self.assertIn("extra ['recorder'], missing ['radio']", findings[0])
+                self.assertIn("README", findings[1])
+
+
 if __name__ == "__main__":
     unittest.main()
