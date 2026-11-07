@@ -409,6 +409,24 @@
  } // namespace limesdrmicro
  
  /// @brief Constructs a new LimeSDR_Micro object
+@@ -302,7 +309,7 @@
+     values.reserve(limesdrmicro::lms7002defaultsOverrides_LimeSDR_Micro.size() + 2);
+ 
+     addrs.push_back(0x0020);
+-    values.push_back(0xFFFF); // enable simultaneous A&B write
++    values.push_back(0xFFF3); // enable simultaneous A&B write; SRRX_RX_ONLY: TXEN_A/TXEN_B cleared
+ 
+     for (const auto& val : limesdrmicro::lms7002defaultsOverrides_LimeSDR_Micro)
+     {
+@@ -310,7 +317,7 @@
+         values.push_back(val.second);
+     }
+     addrs.push_back(0x0020);
+-    values.push_back(0xFFFD); // back to A channel only
++    values.push_back(0xFFF1); // back to A channel only; SRRX_RX_ONLY: TXEN_A/TXEN_B cleared
+ 
+     OpStatus status = lms.SPI_write_batch(addrs.data(), values.data(), addrs.size(), true);
+     return status;
 @@ -425,7 +432,19 @@
  
  OpStatus LimeSDR_Micro::Configure(const SDRConfig& cfg, uint8_t socIndex)
@@ -429,7 +447,18 @@
      if (!fw)
          return ReportError(OpStatus::Error, "Firmware is not loaded");
      auto& rfsoc = mLMSChips.at(0);
-@@ -599,11 +618,19 @@
+@@ -542,6 +561,10 @@
+ 
+ OpStatus LimeSDR_Micro::SetClockFreq(uint8_t clk_id, double freq, uint8_t channel)
+ {
++    /* SRRX_RX_ONLY: the TX synthesizer (SXT) is never tuned from outside the library. */
++    if (clk_id == static_cast<uint8_t>(LMS7002M::ClockID::CLK_SXT))
++        return OpStatus::NotSupported;
++
+     auto& chip = mLMSChips.at(channel / 2);
+     return chip->SetClockFreq(static_cast<LMS7002M::ClockID>(clk_id), freq);
+ }
+@@ -599,11 +622,19 @@
  
  OpStatus LimeSDR_Micro::WriteRegister(uint8_t moduleIndex, unsigned int address, unsigned int value, bool useFPGA)
  {
@@ -449,7 +478,7 @@
      mLMSChips.at(0)->SetActiveChannel(static_cast<LMS7002M::Channel>((channel % 2) + 1));
      return trx == TRXDir::Rx ? CalibrateRx() : CalibrateTx();
  }
-@@ -661,6 +688,13 @@
+@@ -661,6 +692,13 @@
  
  OpStatus LimeSDR_Micro::SPI(uint32_t chipSelect, const uint32_t* MOSI, uint32_t* MISO, uint32_t count)
  {
@@ -463,7 +492,7 @@
      return lmsSPI->Transact(MOSI, MISO, count);
  }
  
-@@ -671,6 +705,13 @@
+@@ -671,6 +709,13 @@
  
  OpStatus LimeSDR_Micro::CustomParameterWrite(const std::vector<CustomParameterIO>& parameters)
  {
@@ -477,7 +506,7 @@
      return LMS64CProtocol::CustomParameterWrite(*mSerialPort, parameters, 0);
  }
  
-@@ -750,13 +791,17 @@
+@@ -750,13 +795,17 @@
          }
          value |= (rxsw2 << 0) | (rxsw3 << 2); // set TX_SW, Band2
      }
@@ -496,7 +525,7 @@
      OpStatus status;
  
      switch (device)
-@@ -804,6 +849,9 @@
+@@ -804,6 +853,9 @@
  
  OpStatus LimeSDR_Micro::MemoryWrite(std::shared_ptr<DataStorage> storage, Region region, const void* data)
  {
@@ -506,7 +535,7 @@
      if (storage == nullptr || storage->ownerDevice != this || storage->memoryDeviceType != eMemoryDevice::EEPROM)
      {
          return OpStatus::Error;
-@@ -824,7 +872,8 @@
+@@ -824,7 +876,8 @@
  
  OpStatus LimeSDR_Micro::UploadTxWaveform(const StreamConfig& config, uint8_t moduleIndex, const void** samples, uint32_t count)
  {
@@ -516,7 +545,7 @@
  }
  
  OpStatus LimeSDR_Micro::GetGPSLock(GPS_Lock* status)
-@@ -844,11 +893,20 @@
+@@ -844,11 +897,20 @@
  
  OpStatus LimeSDR_Micro::SetAntenna(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t path)
  {
@@ -537,7 +566,7 @@
      if (!la9310->IsVSPAFirmwareLoaded())
      {
          std::vector<char> firmware;
-@@ -886,6 +944,9 @@
+@@ -886,6 +948,9 @@
  OpStatus LimeSDR_Micro::I2CWrite(
      uint32_t bus, uint32_t soc, uint32_t offset, uint8_t offset_len, const uint8_t* data, uint32_t length)
  {
@@ -547,7 +576,7 @@
      return LMS64CProtocol::I2C_Write(*mSerialPort, soc, offset, offset_len, data, length);
  }
  
-@@ -942,6 +1003,9 @@
+@@ -942,6 +1007,9 @@
  
  ICSR* LimeSDR_Micro::getICSR()
  {
@@ -557,7 +586,7 @@
      return new LA9310_CSR(mStreamingPort);
  }
  
-@@ -1117,6 +1181,9 @@
+@@ -1117,6 +1185,9 @@
  
  OpStatus LimeSDR_Micro::OEMTest(OEMTestReporter* reporter)
  {
@@ -567,7 +596,7 @@
      TestData results;
      OEMTestData test("LimeSDR-Micro OEM Test");
  
-@@ -1167,6 +1234,9 @@
+@@ -1167,6 +1238,9 @@
  
  OpStatus LimeSDR_Micro::WriteSerialNumber(uint64_t serialNumber)
  {

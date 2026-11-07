@@ -16,7 +16,7 @@
     },
     "src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp": {
       "before_sha256": "f76a14d5589fa516090984e9a95258bd3ae481f6e4134dc7e6ff298d5f98ce09",
-      "after_sha256": "d5afb9450927c74d9ad7e15b9c23e360056a6d4dde223bfc217a7bc33eda37a3"
+      "after_sha256": "faff9d353d6c7c36b40f32d79c45709c6234a0cb1652506c62d2b99913a7409a"
     },
     "plugins/soapysdr/Settings.cpp": {
       "before_sha256": "bf336221f5acc2d8e399e192c02fd83c9a3e052ce6a73b3d87900604ae9ac677",
