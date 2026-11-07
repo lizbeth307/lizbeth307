@@ -11834,22 +11834,22 @@
     </comp>
     <comp ref="J302">
       <value>Power-board control harness DESIGN</value>
-      <footprint>Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical</footprint>
+      <footprint>Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal</footprint>
       <datasheet>STACK.md §5.2; project design</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">B5B-PH-K-S(LF)(SN)</field>
+        <field name="MPN">S5B-PH-K-S(LF)(SN)</field>
         <field name="Manufacturer">JST</field>
-        <field name="LCSC">C157993</field>
-        <field name="Footprint">Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical</field>
+        <field name="LCSC">C157923</field>
+        <field name="Footprint">Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal</field>
         <field name="Datasheet">STACK.md §5.2; project design</field>
         <field name="Description"/>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_J302" description="| design | New carrier harness assignment, not a measured existing cable."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="B5B-PH-K-S(LF)(SN)"/>
+      <property name="MPN" value="S5B-PH-K-S(LF)(SN)"/>
       <property name="Manufacturer" value="JST"/>
-      <property name="LCSC" value="C157993"/>
+      <property name="LCSC" value="C157923"/>
       <property name="Sheetname" value="E3"/>
       <property name="Sheetfile" value="E3.kicad_sch"/>
       <sheetpath names="/E3/" tstamps="/815659b2-9f99-5caa-9e97-34b4cd398135/"/>
@@ -30025,7 +30025,7 @@
       <fields>
         <field name="Reference">J302</field>
         <field name="Value">Power-board control harness DESIGN</field>
-        <field name="Footprint">Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical</field>
+        <field name="Footprint">Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal</field>
         <field name="Datasheet">STACK.md §5.2; project design</field>
         <field name="Description">| design | New carrier harness assignment, not a measured existing cable.</field>
       </fields>

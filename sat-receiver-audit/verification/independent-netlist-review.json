@@ -4,11 +4,11 @@
   "graph_sha256": {
     "E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
     "E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
-    "E3.json": "5d94d77320cb0ac41c3ea8d0c3ba98a8dba829ef896df8cfb5b642c85813f41d",
+    "E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
     "E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
     "E5.json": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
   },
-  "netlist_sha256": "d3b2d2293c1a602fa73fd7a9ef7faffde29dea49aa498cc820d8c63e356d0973",
+  "netlist_sha256": "c23ea8194f489a89509642f2889fe73ecaaad4254662e82b93359105c370bad8",
   "counts": {
     "hardware_components": 777,
     "hardware_pin_declarations": 2393,
