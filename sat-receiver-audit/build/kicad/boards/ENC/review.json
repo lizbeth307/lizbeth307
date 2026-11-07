@@ -7,10 +7,10 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/ENC/ENC.kicad_pcb",
-      "sha256": "f83a55d4f95973ad1fc3b87961af649293336fb5247b37f080318a336271be7a"
+      "sha256": "2b3c19876539f3fb7be18af9c3182c0363012fa2172053c76fd0f59ba810bc59"
     },
     "projection_sha256": {
-      "graph_refs_pins_nets": "60661f8cf773e1300c243a6468510e734578d1f9e711f225f2a91980df2dae75",
+      "graph_refs_pins_nets": "738a6dd68bfb0aa9723e4a47e10267467b6ca7b4846a174ea6690063e10f2382",
       "footprints": "6ab71e6ba45f706c40b02aaba3cb31d76afda871c96fb040775d53fc01c087f9",
       "contract_board": "a816690fd47d67589f0d2fd9c80b7214adac4fb8ed77f2b4f035006e3454b4e6",
       "netclasses": "2681d77f0f8c2d81aa4cf979f0c9584329d9bd10918d1594df7d7bd32ccf70ff",
@@ -29,7 +29,7 @@
   "counts": {
     "footprints": 4,
     "pads": 13,
-    "tracks": 8,
+    "tracks": 12,
     "vias": 0,
     "zones": 6,
     "holes": 2,
@@ -61,7 +61,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 8,
+      "tracks_checked": 12,
       "pour_necks": [],
       "split_nets": {}
     },
