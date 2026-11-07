@@ -216,7 +216,7 @@ UNIT_OF_REF = {
     "U305": "CTRL", "ENC301": "ENCM", "ENC302": "ENCV", "BZ301": "CTRL",
     # Leaded bead NTCs (parts DB mount "remote") sit away from CTRL (E3 notes: TH301 on the rear heat spreader of the
     # panel, TH302 on the inner frame away from converter heat), so each gets its own unit and a two-wire lead to a PH
-    # header on CTRL (S39, S40) like every other off-board part; the CTRL headers get graph refs with W2-01 (wave 2).
+    # header on CTRL (S39, S40) like every other off-board part; the CTRL headers are graph refs J318/J319 (W2 GR-3, HEADERS).
     "TH301": "NTCP", "TH302": "NTCC",
     "SW302": "CTRL", "SW303": "CTRL", "SW304": "CTRL", "SW305": "CTRL", "SW306": "CTRL", "SW307": "CTRL",
     "SW308": "ENCM", "SW309": "ENCV",  # push switches inside ENC301/ENC302 (parts DB virtual hosts)
