@@ -1,8 +1,8 @@
 [
   {
     "path": ".gitattributes",
-    "bytes": 680,
-    "sha256": "4a1e08bbe7b2e3cf99aeedd175409aaabf07442463362569b4afdef62aaebeb1"
+    "bytes": 861,
+    "sha256": "cee6e6afc9c580d6682c4aea9cbfa3d38c558e93e8a39523a53a3f3b966a7970"
   },
   {
     "path": ".gitignore",
@@ -11,23 +11,23 @@
   },
   {
     "path": "COMPLETION.md",
-    "bytes": 13396,
-    "sha256": "5cc36ad94de0e86941eb780eafb9a58c00b763b02f3753029f5f614ba107fcff"
+    "bytes": 15855,
+    "sha256": "7e899282c3bf003572daaba0400f8632047d3caeb70f85aa0892a5922a713a56"
   },
   {
     "path": "HANDOFF.md",
-    "bytes": 56316,
-    "sha256": "8667467fb2cbaadcd3fe68964a158017c2b9f444652c015a067d0e41b92a436c"
+    "bytes": 70726,
+    "sha256": "1331466333c120935f385bc56e92028dc9bfa62516ff1ca4e3a7572a88df412a"
   },
   {
     "path": "OPEN_ITEMS.md",
-    "bytes": 34850,
-    "sha256": "61138547c98f3939c2cfad81a014e736ee3d040eb22fbd9f1964753f37286377"
+    "bytes": 35161,
+    "sha256": "0921e12e8d51e49e6bafaaa0ad456efe7dca1023c30ead932e068bb7f2279988"
   },
   {
     "path": "README.md",
-    "bytes": 22110,
-    "sha256": "757819188a27d88ee6367acc33714203124c474f7ef85f7c4890b3390a5e0e18"
+    "bytes": 22702,
+    "sha256": "2d5c13b991d28f1a444bd6d932110eed5a17d8f273c3cee6013d59f9f33dcc52"
   },
   {
     "path": "REQUIREMENTS.md",
@@ -36,13 +36,13 @@
   },
   {
     "path": "RESTORE-GIT.md",
-    "bytes": 7522,
-    "sha256": "defcfae0525446ef0b47a683fb6cd978e3085253a6ce845132491a5d956d4d30"
+    "bytes": 7448,
+    "sha256": "a5ad9d6809802bc1adbb732de0ee398ec48fc769254fe231d1d0a36ad917b49d"
   },
   {
     "path": "STACK.md",
-    "bytes": 1960780,
-    "sha256": "2bfb815a81d924aaf59efe7ea4cb1117f1ad99c283885bcec472d1fdc159e3ef"
+    "bytes": 1966714,
+    "sha256": "dbf8adb3291872de4670d62a1a67758544d04339f12575dd96cb629e6557a825"
   },
   {
     "path": "USER_REQUIREMENTS.md",
@@ -51,8 +51,8 @@
   },
   {
     "path": "build/01-blok-skhema.md",
-    "bytes": 27148,
-    "sha256": "989db73e821ef93a7495dad6ad5c70c014a702e9dea760411cc49c648004c40d"
+    "bytes": 27516,
+    "sha256": "331b040cedf10a5ff631538da6a3bfa963cefbfb2f48ef3772815e79673c010f"
   },
   {
     "path": "build/01-blok-skhema.svg",
@@ -61,13 +61,13 @@
   },
   {
     "path": "build/02-zhyvlennia.md",
-    "bytes": 45116,
-    "sha256": "c7c227f23c9e3b42478c31645adcfa844b4bc1fa2fb75a592f6609ea31a55af0"
+    "bytes": 46448,
+    "sha256": "bf0293cef121d982a2de55f75b867923bee079505d2cd124ca018a834b774036"
   },
   {
     "path": "build/02-zhyvlennia.svg",
-    "bytes": 54471,
-    "sha256": "3d4ce68c4ab72a48cf966bed900e653511a54031e62780341d32588886efdfe8"
+    "bytes": 54475,
+    "sha256": "7c7e6e29534247b7ba87dce0445d2d5ab457c21261b5bb4d79eef748252b38cb"
   },
   {
     "path": "build/03-rf-trakt.md",
@@ -86,13 +86,13 @@
   },
   {
     "path": "build/04-pidkliuchennia-pinout.md",
-    "bytes": 43682,
-    "sha256": "5790791561687eac59fa8dae9dfcb03f0949c1f39b4604c8984f406d1919b3c5"
+    "bytes": 45678,
+    "sha256": "11e64e3404e0b7a9d52b32572b4afaba1a183347f701f1de56bab470271f0140"
   },
   {
     "path": "build/05-mekhanika.md",
-    "bytes": 42140,
-    "sha256": "2561a747653f9df3ede7390242d2a7229d3194d526ce3d9eb352b03d2e2282d8"
+    "bytes": 73147,
+    "sha256": "3355bf861010711ba07fbd9d8f5ab8158bb7b2f30c03c93a77cfeb0b355ad6b8"
   },
   {
     "path": "build/05-roztashuvannia-front.svg",
@@ -116,48 +116,83 @@
   },
   {
     "path": "build/06-anteny.md",
-    "bytes": 42464,
-    "sha256": "8f7fd3e6266f38d9fb97399180a1c1b5db3ed1020a6c852dc2efc73a0434a95d"
+    "bytes": 45828,
+    "sha256": "67d0a6232a0d88b1acdf05de85fc81efa99b741e7da5f0fe37f7ba37e24dab20"
   },
   {
     "path": "build/07-pz-vstanovlennia.md",
-    "bytes": 59130,
-    "sha256": "230748b87851d2bdad0e239c4fc36d96e740309a786e1fd540275da78b885b94"
+    "bytes": 63004,
+    "sha256": "477ebd3311589366d5dbffe1397f35d11907b994ba6b4aef49f408e747fdeaa5"
   },
   {
     "path": "build/08-zbyrannia.md",
-    "bytes": 66057,
-    "sha256": "26e0b5d07f9e281d6f22d2ece14c66650e6c1b247ec9ca86b7d6a629342ff613"
+    "bytes": 70427,
+    "sha256": "1e95ae45d419030f7e8b390366146889bf7a4680a27e7ed5afe5abf7b76b6131"
   },
   {
     "path": "build/09-testy.md",
-    "bytes": 174932,
-    "sha256": "d9937f27fac5aa52b11ff0c00b8940664aa31947391b73246c13e3d4d921a148"
+    "bytes": 201766,
+    "sha256": "9be3b9fb495494d7fbc9b71468b81bb0938a39c1c677332314a03bfaf8db3ae0"
   },
   {
     "path": "build/10-bom.csv",
-    "bytes": 67109,
-    "sha256": "847cce55546f78b97bfd952d34aa50823653aa8aacfeb346229f2e1df1f73e5d"
+    "bytes": 68145,
+    "sha256": "7921b7a7e7ae3dd2930ef00cf904f5ea294bb7b46768655a7ef81823c9216fbf"
   },
   {
     "path": "build/10-bom.md",
-    "bytes": 24791,
-    "sha256": "6e525d034ec636542cdcf021085a4352819b377f7ce7908d945faca4f8d8486c"
+    "bytes": 25726,
+    "sha256": "78a59f98d44d4f37307d3cdb6c82444c3b551506f5a809f72a72f445b04c675d"
+  },
+  {
+    "path": "build/10-dzhgut-rodyny.csv",
+    "bytes": 4928,
+    "sha256": "9aca0cdd328e8b92b1ca52b61b7ed9dc1fcd3c8d3e1a632d59e2de184e187950"
+  },
+  {
+    "path": "build/10-jlc-bom.csv",
+    "bytes": 16683,
+    "sha256": "ada2b9e7685882666fa16d312ea25917023cfc0c9ac943b14e19aa61f1e1cb37"
+  },
+  {
+    "path": "build/10-parts-coverage.json",
+    "bytes": 22116,
+    "sha256": "4c8f768c04a4cc60d756aa51961d03882727e3a799840f975416c5d8ea8812a6"
+  },
+  {
+    "path": "build/10-zakupivlia-inshe.csv",
+    "bytes": 29322,
+    "sha256": "1ea1b3813e191b4b84872d5a137f9abafdd4d1063a66af14a11f332205bb0021"
+  },
+  {
+    "path": "build/10-zakupivlia-kriplennia.csv",
+    "bytes": 16573,
+    "sha256": "e78ecb2ec10bae00b29e2ac80c40615e3fe6315d7c63d12764ccff301ac4d43d"
+  },
+  {
+    "path": "build/10-zakupivlia.csv",
+    "bytes": 77494,
+    "sha256": "73d035922c630eb542d6b92ad83ab0bfd90edc393a40ade585de0d2cc1036731"
+  },
+  {
+    "path": "build/10-zakupivlia.md",
+    "bytes": 86125,
+    "sha256": "c80f04fe2c5172806e8abd0e0872108eeaf97320bec76792f52e17526741d175"
   },
   {
     "path": "build/11-schematic-bom.csv",
-    "bytes": 226000,
-    "sha256": "cad726c4b9e548bcbec2f88b436e7c9135e8dddfa00dae0cc4db0fe4ac70b828"
+    "bytes": 269663,
+    "sha256": "8b708e3265fa54e542123539ccc52d10dbd07bb6964d5664ea6f1269b296896a"
   },
   {
     "path": "build/11-schematic-bom.md",
-    "bytes": 1762,
-    "sha256": "b75a70f72483b1904b1a3504c0eb858b2ea057721b4e8b64c3adf0167c9f1bf7"
+    "bytes": 2229,
+    "sha256": "62a2620dbc5fd428246240096900fd19f0522f1839f35660fc92b6c6a34c9674"
   },
   {
     "path": "build/12-revision-v2.1.md",
-    "bytes": 19651,
-    "sha256": "aa45a68934cf84a74da1ebc06a42e55b76cdccf9520698d19114b310938667a2"
+    "bytes": 21315,
+    "sha256": "56f71210b0d3e3f4547ebfc2cabe35fb746866183493882612da9707cbc806e5"
   },
   {
     "path": "build/12-revision-v2.1.svg",
@@ -166,98 +201,198 @@
   },
   {
     "path": "build/13-pcb-preparation.md",
-    "bytes": 14067,
-    "sha256": "c87409b83a83373d5bf097eae83936f7e801e75746a49479fa85ec4646ec6137"
+    "bytes": 17115,
+    "sha256": "0c8b8fa577315c01cbe4d4436dc63d5b0c46a2774aa7b8d8ba827cf84655c10c"
   },
   {
     "path": "build/14-control-software.md",
-    "bytes": 4236,
-    "sha256": "42ca6f2b5df4781545c999eb50f5c0694c1dae788f0341b26e7df707bbdf8e2d"
+    "bytes": 4353,
+    "sha256": "9e30b8bfd6703b463f88b77453d1391f6d86538f5902b81d708e889c87bffcf5"
+  },
+  {
+    "path": "build/15-rishennia-komplektu.md",
+    "bytes": 40007,
+    "sha256": "f07a842fc4d049a07e5fc11c1be3b0c6417d5db093e257554d6e22408389f2a0"
+  },
+  {
+    "path": "build/16-dzhgut-pidsumok.csv",
+    "bytes": 7387,
+    "sha256": "b534e494aecd277854e63a149e532ed88f3f680b62d72a7ea248cf0b0ae46921"
+  },
+  {
+    "path": "build/16-dzhgut-rozyemy.csv",
+    "bytes": 12161,
+    "sha256": "4ee1d57fb311d85a5dbef46631b05d05739c8ef267fcc69e44a347dd50854a59"
+  },
+  {
+    "path": "build/16-dzhgut.csv",
+    "bytes": 92354,
+    "sha256": "399e2c00068c7bf68a648ad9f13f3f68e1c0e4664cd5965b6b192b3985dffbd7"
+  },
+  {
+    "path": "build/16-dzhgut.md",
+    "bytes": 94397,
+    "sha256": "b3a6dc47eab558e36e3ed078ebf86890e8bc048b24414b9e4b846e2970b4e45c"
+  },
+  {
+    "path": "build/17-kriplennia.csv",
+    "bytes": 16827,
+    "sha256": "2cb3a009f1a96ae376df4a62f67acae36812610b077b674baeebd5bf6e1402fc"
+  },
+  {
+    "path": "build/17-kriplennia.md",
+    "bytes": 21512,
+    "sha256": "89e017b4f4e40428c7b893fc142ce1f77f85e28f20e715effdd8cb8068821dfa"
+  },
+  {
+    "path": "build/18-markuvannia-arkush.svg",
+    "bytes": 11831,
+    "sha256": "2e74b64913d99a9dbed8b59f20e184cec19528157a61207da67b128dcb15e0c8"
+  },
+  {
+    "path": "build/18-markuvannia.csv",
+    "bytes": 5188,
+    "sha256": "931065ad8031c6e7106f2fb600652cf4672e64f5d32442bc124d4c75ac079e8b"
+  },
+  {
+    "path": "build/18-markuvannia.md",
+    "bytes": 7535,
+    "sha256": "4f1627bc94c2579aa98a9bf03e9f589bb900ed2730df07624efeb599203ba28e"
+  },
+  {
+    "path": "build/19-zapusk-plat.csv",
+    "bytes": 4293,
+    "sha256": "4ff0aa37d946efc6764d80a7dfac6c5b6fa793ba4740237426d6b4ef9084a591"
+  },
+  {
+    "path": "build/19-zapusk-plat.md",
+    "bytes": 11384,
+    "sha256": "fcbcb44a7cf8fc2f6fa6efc13348f06af1fdb1a722592c7fe6b365cc3760e8fe"
+  },
+  {
+    "path": "build/20-forma-stendu.csv",
+    "bytes": 205225,
+    "sha256": "a18820b4243041ace6a222b7697f9fbe5828d56ba2d01aa9657a6c39efbc6c12"
+  },
+  {
+    "path": "build/20-forma-stendu.md",
+    "bytes": 214505,
+    "sha256": "aa5aa8cc0c695cce15b5615154c9c922ba15e40aee963d83f96f98e8152b3aa6"
+  },
+  {
+    "path": "build/21-poriadok-zbyrannia.md",
+    "bytes": 23918,
+    "sha256": "72e33788759b4a2738f95285e4dec65cffe25a88dce25cd36b8412a90cd9c91b"
   },
   {
     "path": "build/README.md",
-    "bytes": 9909,
-    "sha256": "88bf3b1f8f8a315d18a6b83625d4cc1650785f87d172f10778d30d12d675fcea"
+    "bytes": 14698,
+    "sha256": "2340e987f07a55d2b16e73b5337761b75203285fd18e296ca7ebe03bbcce80ca"
   },
   {
     "path": "build/kicad/E1.kicad_sch",
-    "bytes": 320597,
-    "sha256": "f7911d22305d8ef60b149164f1b4fce9b74b6d4b11039ba82069995b8c35311b"
+    "bytes": 345590,
+    "sha256": "fad8eba19bffdda8bbf4785db79cb1a1f32d3a3638c6db373c18eb50c60fc9df"
   },
   {
     "path": "build/kicad/E2.kicad_sch",
-    "bytes": 362467,
-    "sha256": "055b5044243a9dac6f7168a3382d8f61a8a1a3c911c4cd4586d23121e31269b9"
+    "bytes": 377829,
+    "sha256": "633993f84a2e9c3dcf756b2dfca70e4b3c97f31dc3ed51d58a8483f30e6b501b"
   },
   {
     "path": "build/kicad/E2_02.kicad_sch",
-    "bytes": 228984,
-    "sha256": "a9f2433e5229c1913ae32f5fe06496d998b40059791bc4dfcd4d87cdb91e62f7"
+    "bytes": 225677,
+    "sha256": "e1ab0a1e574657bb2d412f97b3404a722b6ac5d5dc729f8cfcd2896e64792d43"
   },
   {
     "path": "build/kicad/E2_03.kicad_sch",
-    "bytes": 250598,
-    "sha256": "f1f139b74caf318454fbc753ad9c2be307b3030c96b793e4275455dcb40d8a05"
+    "bytes": 271581,
+    "sha256": "bc08d0bbe6217abd552cc787f1a79a2edf6de25ae361e1d2acdc236723a0d07c"
   },
   {
     "path": "build/kicad/E2_04.kicad_sch",
-    "bytes": 160793,
-    "sha256": "2f6890cfa89bf7e01cf5416f542e63c2aebf4d177978b32b09233fc65963f353"
+    "bytes": 219940,
+    "sha256": "d9ea9724cdb4d8823db436ada49278d6577da4da3458a90280b4d912d2dcc0bd"
   },
   {
     "path": "build/kicad/E2_05.kicad_sch",
-    "bytes": 148141,
-    "sha256": "678317f251a24050db5065604bc1d73906995cb4dec797c3eea604ec3c80ebde"
+    "bytes": 160754,
+    "sha256": "51038154f668c24165be5bf238f4baa563f922fbf709891fa98bf46aea3fe68b"
   },
   {
     "path": "build/kicad/E3.kicad_sch",
-    "bytes": 366916,
-    "sha256": "34039378486311d5d4ce71a132ea3d57a8f4f498d16a0a758ebb03a934bb4c48"
+    "bytes": 403315,
+    "sha256": "e5770a0961b86a4a7fadcf6dbb03edeb419b3ac8438f669b782f667cbc6f89a7"
   },
   {
     "path": "build/kicad/E3_02.kicad_sch",
-    "bytes": 277613,
-    "sha256": "3b3e7da5bd505a62de25f0d7b23b31ffca4cc6b9208013a5b5dbb5925bb360f5"
+    "bytes": 304872,
+    "sha256": "712a26ff96eb3a660116a05c2254f4b6966d4ff385c0fcda5ee8e83c71b08ab7"
   },
   {
     "path": "build/kicad/E4.kicad_sch",
-    "bytes": 175911,
-    "sha256": "c4d2a84000d577c921f39e4a9ada9c4093b2f53a08b2266fb87ad73d667dafa3"
+    "bytes": 185339,
+    "sha256": "9b307fb0abdde73c624e824b71410053d289ec2bc9120a94d3f2b29ee994cc77"
   },
   {
     "path": "build/kicad/E4_02.kicad_sch",
-    "bytes": 326791,
-    "sha256": "5d743215323ed60386e2579b8eb2fc0b34f8245c11209c3e5b70143a398bcbff"
+    "bytes": 361892,
+    "sha256": "b1148b0a1f6af0586c40a6d4efe42cf4ccb52bb550d4f8503ea9f7d35de029b6"
   },
   {
     "path": "build/kicad/E4_03.kicad_sch",
-    "bytes": 173616,
-    "sha256": "f53434e0bc1eb7d3dd5b803398d177702a6fd0b69cfeb2090b54ad2d922b69fd"
+    "bytes": 193352,
+    "sha256": "54af126e9324f1fe724c33d70b787ecd101e9286286fa14df64687ebffd22f84"
   },
   {
     "path": "build/kicad/E4_04.kicad_sch",
-    "bytes": 190423,
-    "sha256": "a692674aef0f6ecfa2f1e7a09a1180f5469c785cbf71bc0e36822d95d449c27b"
+    "bytes": 206640,
+    "sha256": "228cde97bff8ef412e3186230cdd25df5ccf85ca33ad79461c23e9246c421e92"
   },
   {
     "path": "build/kicad/E5.kicad_sch",
-    "bytes": 276979,
-    "sha256": "2055321a25d0cac10e17184d8eba982caaeed57914b3349d34f4b51586de3dec"
+    "bytes": 295914,
+    "sha256": "f8984c729d15f2c36d7d9d4e89ab0e79cdb1a3488c8e4d1e9a986515fc05e0ab"
   },
   {
     "path": "build/kicad/E5_02.kicad_sch",
-    "bytes": 106107,
-    "sha256": "81224b8339f36050898a045edbd9ac836933d6445c0652c0a102934866011702"
+    "bytes": 111655,
+    "sha256": "8a29771bbdfec1acfc6036fefef17bc580c8f2d53ad6593030287cb4020a54c0"
   },
   {
     "path": "build/kicad/README.md",
-    "bytes": 17481,
-    "sha256": "460a4a6cd2fbebeb9831163865d4ea6b4d42f3d0ff97145c6673ba00041ca3d6"
+    "bytes": 17741,
+    "sha256": "3d9a862407e097adf2431c11922c3b1a2c76eb47b22805d82a855d04f90ad518"
   },
   {
     "path": "build/kicad/expected-netlist.json",
     "bytes": 231708,
     "sha256": "afa631cf31dd5f4daacaff5a093965da5abf07303e5973667304568ded3d2033"
+  },
+  {
+    "path": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+    "bytes": 5215,
+    "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+  },
+  {
+    "path": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_6.3x5.9.kicad_mod",
+    "bytes": 5230,
+    "sha256": "efe6ce7548c27034d3ee899c6d00ac17e75879f562c4f5b40d445e4770b8bdcd"
+  },
+  {
+    "path": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_6.3x7.7.kicad_mod",
+    "bytes": 5226,
+    "sha256": "5dd8fd24f704c6b1cff4e68302d61d80f9c0fd0e703478891b918fe51807f43e"
+  },
+  {
+    "path": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_8x6.9.kicad_mod",
+    "bytes": 5187,
+    "sha256": "88b7f133b4073d129781e0f54ba37008807d67b0cf309597ad793716f1ef1786"
+  },
+  {
+    "path": "build/kicad/footprints/Capacitor_SMD.pretty/C_0402_1005Metric.kicad_mod",
+    "bytes": 1936,
+    "sha256": "0403382fc4583ed510b461b1fa4a36dfaec6f4c0d9b1a67e6b0027837a54e1b5"
   },
   {
     "path": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
@@ -270,9 +405,49 @@
     "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
   },
   {
+    "path": "build/kicad/footprints/Capacitor_SMD.pretty/C_1206_3216Metric.kicad_mod",
+    "bytes": 1938,
+    "sha256": "b2e4a08e3aaf40bc587090190c0e3969e962d7ae962c172cce0581ae8327651c"
+  },
+  {
     "path": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
     "bytes": 1936,
     "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+  },
+  {
+    "path": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D5.0mm_P2.00mm.kicad_mod",
+    "bytes": 16180,
+    "sha256": "fd0a251de515130de6e789ffb786d43c746b83178e437feb9fc4f39b6ea9ef39"
+  },
+  {
+    "path": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+    "bytes": 18300,
+    "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+  },
+  {
+    "path": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D8.0mm_P3.50mm.kicad_mod",
+    "bytes": 20822,
+    "sha256": "e7256cc327aa5d1bc5410a487248fa9b5e3d25153b2315201d5da5108cb49580"
+  },
+  {
+    "path": "build/kicad/footprints/Connector_Coaxial.pretty/SMA_Molex_73251-1153_EdgeMount_Horizontal.kicad_mod",
+    "bytes": 7210,
+    "sha256": "109d98146d6d01a82932050c7c1c94acc804b4f1bd13a3911dbd7a6450f165b9"
+  },
+  {
+    "path": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
+    "bytes": 5048,
+    "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c"
+  },
+  {
+    "path": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal.kicad_mod",
+    "bytes": 5444,
+    "sha256": "5b4ca57c7ce9f495ab05ea74641545c33421e452291446e2f28a511f92d18bb6"
+  },
+  {
+    "path": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical.kicad_mod",
+    "bytes": 5086,
+    "sha256": "fb7beda27319e4f265515378f57a4f680e54c54c6edda2c1f3e239a4bd3ef42a"
   },
   {
     "path": "build/kicad/footprints/Diode_SMD.pretty/D_SMA.kicad_mod",
@@ -280,9 +455,59 @@
     "sha256": "f7cba3b52ed8b34dce89170722de58324eac04e9e61a095e0eab37b9ca93cb7f"
   },
   {
+    "path": "build/kicad/footprints/Diode_SMD.pretty/D_SMB.kicad_mod",
+    "bytes": 4551,
+    "sha256": "e25e9f4acef5b55585afebc48c685e151fd0d2f33a5c3c61f9fdf0389e19ae67"
+  },
+  {
     "path": "build/kicad/footprints/Diode_SMD.pretty/Nexperia_CFP3_SOD-123W.kicad_mod",
     "bytes": 4505,
     "sha256": "89ef0339e4b40830049981c4b2399acae4b93461c56423016d586bebea47f940"
+  },
+  {
+    "path": "build/kicad/footprints/Fuse.pretty/Fuse_1812_4532Metric.kicad_mod",
+    "bytes": 1906,
+    "sha256": "b2bd7adcbcc58fa3957f88eedc5c2c057055a8e1737142fc9ffea5afdb68f6e3"
+  },
+  {
+    "path": "build/kicad/footprints/Fuse.pretty/Fuseholder_Blade_Mini_Keystone_3568.kicad_mod",
+    "bytes": 4732,
+    "sha256": "ce9f2576e0604a938518a57905b3876e023afe3a4493bd80dbe5a56b171d068d"
+  },
+  {
+    "path": "build/kicad/footprints/Inductor_SMD.pretty/L_0603_1608Metric.kicad_mod",
+    "bytes": 1896,
+    "sha256": "a2a9c562208496756e22f3ab19e0bd6db2341d14da92e7c767d5eafd1bb45d38"
+  },
+  {
+    "path": "build/kicad/footprints/Inductor_SMD.pretty/L_0805_2012Metric.kicad_mod",
+    "bytes": 1931,
+    "sha256": "22f5100d304229ddc07ba8218e3b631d6db4f8fe0b5c310b078c7e41ad56517d"
+  },
+  {
+    "path": "build/kicad/footprints/Inductor_SMD.pretty/L_1008_2520Metric.kicad_mod",
+    "bytes": 1886,
+    "sha256": "eb3f2dc53b4e27df9f2bd5f79eb68100105fc58c34397b04f546d6f57939db6a"
+  },
+  {
+    "path": "build/kicad/footprints/Inductor_SMD.pretty/L_Bourns_SRR1260.kicad_mod",
+    "bytes": 6790,
+    "sha256": "5f4820601909aaee7397c98ea39a4be00d0fa474ca18cbcfebf15a3f62851349"
+  },
+  {
+    "path": "build/kicad/footprints/Inductor_SMD.pretty/L_Coilcraft_XAL5030-XXX.kicad_mod",
+    "bytes": 2084,
+    "sha256": "92ff22d3cd6d396cb55a5be65cf4ba1d5ef45247dc673c5ec2fcde91794871ad"
+  },
+  {
+    "path": "build/kicad/footprints/Inductor_SMD.pretty/L_Coilcraft_XAL6060-XXX.kicad_mod",
+    "bytes": 2082,
+    "sha256": "5d27dc6b6b402bcbbe858a0606c8fcb585007cf04b3635392f9e3d253306936a"
+  },
+  {
+    "path": "build/kicad/footprints/LED_THT.pretty/LED_D5.0mm.kicad_mod",
+    "bytes": 2430,
+    "sha256": "efba51d29b26d31bbf3957a5813ee41872a071099d3f28bf6354a857f7129392"
   },
   {
     "path": "build/kicad/footprints/LICENSE.md",
@@ -290,9 +515,29 @@
     "sha256": "45d2bce75e5a4208f5afb01b8fb2c406e700371c4fe2b5f5cd5c443d46db4d8f"
   },
   {
+    "path": "build/kicad/footprints/Module.pretty/RaspberryPi_Pico_SMD.kicad_mod",
+    "bytes": 46201,
+    "sha256": "b4b6e8c3f30d560dd69cf7306216269a72e45ccf906d4304ace34ee587040701"
+  },
+  {
+    "path": "build/kicad/footprints/NetTie.pretty/NetTie-2_SMD_Pad2.0mm.kicad_mod",
+    "bytes": 1586,
+    "sha256": "2c1f0982caf52d5f2dfc3fae8c99b8c9bdfd0ffce450d2d4700e5ed0616dbb2a"
+  },
+  {
+    "path": "build/kicad/footprints/Package_DFN_QFN.pretty/QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm.kicad_mod",
+    "bytes": 7435,
+    "sha256": "a08829ccac50f483f2fc15fef91f2e3870835cbb27424d5a5fbea9a7dff8f4b0"
+  },
+  {
     "path": "build/kicad/footprints/Package_SO.pretty/MSOP-10_3x3mm_P0.5mm.kicad_mod",
     "bytes": 4814,
     "sha256": "c179dbee33613027667b07b4dba02648f193fc65f63616c9d73d6f1162c6bb9d"
+  },
+  {
+    "path": "build/kicad/footprints/Package_SO.pretty/MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias.kicad_mod",
+    "bytes": 6840,
+    "sha256": "8b6bece92cec10d1e5c523200e161f3cb727242f49f594c2b6474cf657f6e53b"
   },
   {
     "path": "build/kicad/footprints/Package_SO.pretty/SOIC-28W_7.5x17.9mm_P1.27mm.kicad_mod",
@@ -335,9 +580,14 @@
     "sha256": "0659d885e00b786968c3ba29152b808777240a91c1fb49ab8d814eb03530115c"
   },
   {
+    "path": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/TSOT-23-6.kicad_mod",
+    "bytes": 4264,
+    "sha256": "2b3e097508a6979b828ca1125470c9edb557dced151630c94ad579b9b0e83442"
+  },
+  {
     "path": "build/kicad/footprints/README.md",
-    "bytes": 751,
-    "sha256": "a39ea1adee9264d0e756556beccfd927be8f5c90266cdd3728ae47a9b14ac856"
+    "bytes": 1673,
+    "sha256": "f24889db424ad469999a44a1b7c7b7cb9c58675439134b4109b8e89ffc26e349"
   },
   {
     "path": "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
@@ -350,24 +600,129 @@
     "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
   },
   {
+    "path": "build/kicad/footprints/Resistor_SMD.pretty/R_0805_2012Metric.kicad_mod",
+    "bytes": 1945,
+    "sha256": "f050b6a50cc7e6f86291fb7aa8f87b0d02255e21cfbddf291cdccc87e5889794"
+  },
+  {
+    "path": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+    "bytes": 1943,
+    "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+  },
+  {
     "path": "build/kicad/footprints/Resistor_SMD.pretty/R_1210_3225Metric.kicad_mod",
     "bytes": 1951,
     "sha256": "8816a8edfa0e619a86c5a65a59048b0fa2c3472d0df5a62244290224abacf7ff"
   },
   {
+    "path": "build/kicad/footprints/Resistor_SMD.pretty/R_2512_6332Metric.kicad_mod",
+    "bytes": 1941,
+    "sha256": "abab4bf8eeb3ed03061d8eeb56b542cdac074ce8a0ace0f9b06e933c0b48f297"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm.kicad_mod",
+    "bytes": 1958,
+    "sha256": "7045e25507cdfe70280f85eabb20e78bf6d9c1571da1153d2d6365eb22355938"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/D_SMB_KA.kicad_mod",
+    "bytes": 4674,
+    "sha256": "243590db2adf6f22c3a69ddd36b26b9660c8be8393dae2a436d0817f4b96c7f7"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/LED_D5.0mm_KA.kicad_mod",
+    "bytes": 2556,
+    "sha256": "9ea0759ac6f7418aea94a8b322c3130f25752d388477dff73c67247bc4ab21ec"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/MiniCircuits_GU1604_3.81x3.81mm.kicad_mod",
+    "bytes": 1900,
+    "sha256": "e48404f8e3065fe4b90ef6fe2111c183db1259506f58624e322893631ea121b5"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/MiniCircuits_MC1630_MCLP-6-1EP_2x2mm_P0.65mm.kicad_mod",
+    "bytes": 2147,
+    "sha256": "9e3df7bfc035895d5ef5370720ff5e579923021859e26df9623b9a832a81dbfe"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/Pololu_D36V50Fx.kicad_mod",
+    "bytes": 3787,
+    "sha256": "ca57b6cbe52f704f5d0ec8da14faf6525a02fcd895b0d4e71902722b866fdb84"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD.kicad_mod",
+    "bytes": 7598,
+    "sha256": "983d0a22526d8a8e1a93a4a850263201c67b2f174cb813f6d9824477afe7b18a"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/RaspberryPi_Pico_SMD_SWD.kicad_mod",
+    "bytes": 46372,
+    "sha256": "d2b6b69c78dfaa599eff2dabf1ab07e460f5c9139409b909706475216169fcf5"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/Relay_DPDT_Omron_G6K-2F-RF-S.kicad_mod",
+    "bytes": 2978,
+    "sha256": "d56a7e6392a42a3dc790446f40321a87c1bbc3bb6e37eb9daf83e29bd431ae91"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx.kicad_mod",
+    "bytes": 2578,
+    "sha256": "5a892be8aec0f4d2f8d4b273607974d04e8be47218e74c324bbf6033dfe7ae66"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/SMA_Molex_73251-1153_EdgeMount_Horizontal_CS.kicad_mod",
+    "bytes": 7442,
+    "sha256": "a1e31f4d0a3af2aecc18f8134e614891f247bd2008f043bb5bb43a051b15af20"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/SW_E-Switch_TL3145_6.45x6.45mm.kicad_mod",
+    "bytes": 1991,
+    "sha256": "a4cab768d054125c2fa828f669557848b03fe324e3d9297c98fe5549dc6603ed"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm.kicad_mod",
+    "bytes": 2837,
+    "sha256": "9a4eae28b9c4517a814e72ca25d1faaf31be20f3149407542195331836f0bd72"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.16x2.16mm.kicad_mod",
+    "bytes": 4870,
+    "sha256": "021b0285c99bdf68ceed8e61b18f71d6dda8c2cd9de9c35f1fe2117187ecba86"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm.kicad_mod",
+    "bytes": 5351,
+    "sha256": "e37866768c11f6a268569a71bc7771ae6cb58afe655230a8b2b8d84985276a49"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm.kicad_mod",
+    "bytes": 3280,
+    "sha256": "29d72363394623860e2ca3fe74a9cf3d6ebe7b265694989d3d5ca3d94a0b087f"
+  },
+  {
+    "path": "build/kicad/footprints/SR_RX_Custom.pretty/provenance.json",
+    "bytes": 4796,
+    "sha256": "e6bed7d650d64b6e3c68c38d88c0800a9af11aba1b0cf717c6c5644b9485c26c"
+  },
+  {
+    "path": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+    "bytes": 1756,
+    "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+  },
+  {
     "path": "build/kicad/footprints/manifest.json",
-    "bytes": 9002,
-    "sha256": "a8b1fcf3b427bf805eebe40a1e4193555c18d729e6d9498576e323730d98560c"
+    "bytes": 39863,
+    "sha256": "f39e7901065e0d9cf121e012c081a33a32dc014883147f7f41db2d0986884a3a"
   },
   {
     "path": "build/kicad/fp-lib-table",
-    "bytes": 974,
-    "sha256": "1b257c319bb3c15f1f5775b93eff2a085b417c716d943ead94511c200a2d395c"
+    "bytes": 2853,
+    "sha256": "9cd3189d7bcad8bcc65536d78ce6ba3ced2a796fdad0123c7450e3224b5f4b88"
   },
   {
     "path": "build/kicad/generation-manifest.json",
-    "bytes": 54247,
-    "sha256": "8030ae6a24f1e7ac93ce3bc30ca75ef0027438e872685a60c96a02146d22ad73"
+    "bytes": 54559,
+    "sha256": "6d01145aba176cb3f6b5f0e9c678838e2f6b9291c1500f861b21fb505cb47565"
   },
   {
     "path": "build/kicad/pcb-preparation/README.md",
@@ -377,7 +732,7 @@
   {
     "path": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
     "bytes": 302906,
-    "sha256": "25f586a5ec5ed50ef954a659732321277c03267a7f446fefc1e16512c8183ec6"
+    "sha256": "a501e0e920438acf36af00cf922dbc9a820569b528a63a41deaacf68df42cb75"
   },
   {
     "path": "build/kicad/pcb-preparation/detector-core-placement.kicad_pro",
@@ -392,7 +747,7 @@
   {
     "path": "build/kicad/pcb-preparation/detector-core-placement.svg",
     "bytes": 308971,
-    "sha256": "72e4d4e96b0972d4a43b54c7bbb2b671a97e943791d3a100328e3207362f72ad"
+    "sha256": "6859faae3e98d0d6abb32c2bf9c6d35c5cdaee95fd994169429a3edc22805208"
   },
   {
     "path": "build/kicad/pcb-preparation/drc-command.log",
@@ -402,7 +757,7 @@
   {
     "path": "build/kicad/pcb-preparation/drc-raw.json",
     "bytes": 112209,
-    "sha256": "180d2bc5c8508800952577d6db541a4b0d5ca84a26d04047be8ce87327480201"
+    "sha256": "81e385837b40d3154c7b87f1655f799d51de99172332bac0d7d01f5c2dea3369"
   },
   {
     "path": "build/kicad/pcb-preparation/footprint-provenance.json",
@@ -416,33 +771,33 @@
   },
   {
     "path": "build/kicad/pcb-preparation/placement-audit.json",
-    "bytes": 57420,
-    "sha256": "b8af382050afc6080b13be9ecfcc33f9bb982db9ee848babe6c4014fd68947fb"
+    "bytes": 57195,
+    "sha256": "4874837ec3129a47ac308299f51b1abca99050226b1a514091f018812ae3f05d"
   },
   {
     "path": "build/kicad/pcb-preparation/svg-command.log",
     "bytes": 63,
-    "sha256": "505cd206deb959852c891eddee603bb1ba450b6dcc938a102714d0b884877a0c"
+    "sha256": "5bfb59a82e2486560b87ffe4985f96fcff9f33e11badccd97622c45e46927079"
   },
   {
     "path": "build/kicad/pcb-prototype/README.md",
-    "bytes": 3489,
-    "sha256": "b6c402c783fdc84c7917cb0a62d618e223add4e03a1eedbe5a69f086a2fa45b5"
+    "bytes": 3567,
+    "sha256": "05b8531394ef9a73734a69e90e92879383554c91b39a90a2caef841675e595a2"
   },
   {
     "path": "build/kicad/pcb-prototype/detector-core-routed-prototype-bottom.png",
-    "bytes": 20845,
-    "sha256": "96ec5ae8f98b50e13d3b9848044d0a344443970d0af0e8628001d13d2809e6d6"
+    "bytes": 20832,
+    "sha256": "19070927c5660e28e31db8eade0e09d51ba7877058a9e49a2a12319a78810540"
   },
   {
     "path": "build/kicad/pcb-prototype/detector-core-routed-prototype-bottom.svg",
     "bytes": 47339,
-    "sha256": "df92ec53618c3632230429110aeab955b213a453a4abdb4ff28353c511cdc96d"
+    "sha256": "2cdb92518a94fa23f522ef853c6324523eb21c01b954245f199722fed24d1d62"
   },
   {
     "path": "build/kicad/pcb-prototype/detector-core-routed-prototype.kicad_pcb",
     "bytes": 485332,
-    "sha256": "c2f73cb5524ef7783850d42c32922f3c42f5933985d0e9ec603b51e2cdd9c295"
+    "sha256": "1c4665a20105f61693b52829ba0b6d797cf2ea94da78322aa8086dcb35b4b868"
   },
   {
     "path": "build/kicad/pcb-prototype/detector-core-routed-prototype.kicad_pro",
@@ -451,28 +806,28 @@
   },
   {
     "path": "build/kicad/pcb-prototype/detector-core-routed-prototype.png",
-    "bytes": 96452,
-    "sha256": "e0f1bd4ad04f92faeb9225f850131a2f3a7e5abd5167c8badf3e956eb41d2a2b"
+    "bytes": 96462,
+    "sha256": "d09230bf23872690402102df1eb5d54535402e74cf840777c8a1cec9198d292c"
   },
   {
     "path": "build/kicad/pcb-prototype/detector-core-routed-prototype.svg",
     "bytes": 354056,
-    "sha256": "8f69052eafc728b12bd7acb5ef28850821411fa7094197a52621208969ba4391"
+    "sha256": "9a28c977467fefa97761967b143c02cf818e57647a22836c1edff172e9f9340d"
   },
   {
     "path": "build/kicad/pcb-prototype/drc-command.log",
     "bytes": 118,
-    "sha256": "22960a5cfb2e2e386437df322c67ee3e50ea78ead5e1f3a51fab600ec052a269"
+    "sha256": "c8055951091d98fed89754976c9d5f36095d141cfbbe0eb8d0721e7eac047d10"
   },
   {
     "path": "build/kicad/pcb-prototype/drc-portable-raw.json",
     "bytes": 410,
-    "sha256": "82467fea26668fb6c0b0c444c4b372e75a45c413ce8d940b562ffcce8485800a"
+    "sha256": "fbac06ee0cda05a16e1fb4b0ca80855ccbea0532e05521a2ae9e3d7a685488d7"
   },
   {
     "path": "build/kicad/pcb-prototype/drc-raw.json",
     "bytes": 410,
-    "sha256": "c1ce0beedc7b06325880a63a0cb7a710b7a90b8891b9ab5ca6c38c9c830b84c3"
+    "sha256": "591f0c78910fe785e14f5a0cf3def2de79e796f66d01effcbd9615cd1261344c"
   },
   {
     "path": "build/kicad/pcb-prototype/fp-lib-table",
@@ -496,13 +851,13 @@
   },
   {
     "path": "build/kicad/sr-rx-v2.pdf",
-    "bytes": 799414,
-    "sha256": "22993b0d8103271d098bd52cc0689fd7293b55b60b4534ab443ebb35d5e7ea50"
+    "bytes": 799822,
+    "sha256": "0741c1b4a210780e54d4e11692efa1564e81c9ad61cafacc1c7d76bc5438c565"
   },
   {
     "path": "build/kicad/sr_rx_v2_completed.kicad_sym",
-    "bytes": 1224637,
-    "sha256": "d68f769f4f37612252f778f974ff1df451ebc55a69dd5fa2fe8be6d22c4efb16"
+    "bytes": 1240056,
+    "sha256": "89ffc7ff28a35cb369affb259286fb3766142ebcdd774690e3cd08505f74ff6a"
   },
   {
     "path": "build/kicad/sr_rx_v2_pwr.kicad_sym",
@@ -521,23 +876,23 @@
   },
   {
     "path": "build/kicad/svg/sr-rx-v2-E2.svg",
-    "bytes": 3294314,
-    "sha256": "06b215dab6be376c50a776badfba30f7f145f36619692e4ec001d703efab53c6"
+    "bytes": 3311073,
+    "sha256": "4b27375470bad0f33301fd9dbbe4270992f2b08884e1ae63a5b883a334e6af72"
   },
   {
     "path": "build/kicad/svg/sr-rx-v2-E2_02.svg",
-    "bytes": 2712514,
-    "sha256": "59c96c70ada069bb9a38dd4557ca2d6df73ba6610e9624313697ddca97e73d80"
+    "bytes": 2510787,
+    "sha256": "04ad258f8fd59a7f0a72eff3bcf432b7bfd1102220a08a51ee32c834403616c3"
   },
   {
     "path": "build/kicad/svg/sr-rx-v2-E2_03.svg",
-    "bytes": 2807756,
-    "sha256": "8764203ef1c21cd1fe0bfd49a015264a5234ddcede7796894e8d1e8e019dc831"
+    "bytes": 2803981,
+    "sha256": "a741d9996b2296e3c8b927245cf7a0bbd7d8a9dc1071e1d90f57890a514425f3"
   },
   {
     "path": "build/kicad/svg/sr-rx-v2-E2_04.svg",
-    "bytes": 1394065,
-    "sha256": "0c1d6ef52469611dc36390f0cb7e9434d12ddc10e3d00447ea1aa3d03c2dc69f"
+    "bytes": 1691365,
+    "sha256": "cb0c5f4919a2842d276643cdaf296532c347133ddff140e3ad8603bf82796500"
   },
   {
     "path": "build/kicad/svg/sr-rx-v2-E2_05.svg",
@@ -786,8 +1141,8 @@
   },
   {
     "path": "components/display.md",
-    "bytes": 153241,
-    "sha256": "de53cf63f921c9ec0972ab900ac67cccd1f588bf4f180fe832121a60b92431ab"
+    "bytes": 153761,
+    "sha256": "7363d5f7b388246e2375bfa6be1cf765c8f6f39bb98e2f726e015c6ea5449e5a"
   },
   {
     "path": "components/display_hmi.md",
@@ -1066,8 +1421,8 @@
   },
   {
     "path": "components/software.md",
-    "bytes": 153031,
-    "sha256": "a5a3a7af8337c34349f4f88710dd66a51aa03ff91aa3eb0c18982573e889da98"
+    "bytes": 153161,
+    "sha256": "28e9c89965a6bdb90fd7aceae32b884d118f0d218133320eb731723e8894e63d"
   },
   {
     "path": "components/software_stack.md",
@@ -1081,8 +1436,8 @@
   },
   {
     "path": "components/storage.md",
-    "bytes": 126111,
-    "sha256": "06b0d3fbe3f76c6076b553424df96f88b9a69852403bfc20b330b4e31e77bbb4"
+    "bytes": 126371,
+    "sha256": "377e79704a3f7adab4c2eb4760e62f6ba8a972cc498c2b54cc670df120f786d8"
   },
   {
     "path": "components/targets_link_budgets.md",
@@ -1166,13 +1521,13 @@
   },
   {
     "path": "deployment/UPSTREAM-REVIEW.md",
-    "bytes": 8838,
-    "sha256": "3113433d604f86e2aa71f6a25e7cf454e605a054a2172f66e519e7d4cb6369e5"
+    "bytes": 13216,
+    "sha256": "003574b998f563ea9addfc0b64d43d022461127dfbee26fdb520cd18366310a8"
   },
   {
     "path": "deployment/ab.template.json",
-    "bytes": 320,
-    "sha256": "463b5597015d43f010c205d3f5df841651254fb78dbb90be9e535e6277eab5fe"
+    "bytes": 703,
+    "sha256": "4e4de1b97cc79e76b67eccf21544def1e8be148a7a4b9695d827f0bf331e2c6e"
   },
   {
     "path": "deployment/build-manifest.template.json",
@@ -1191,13 +1546,13 @@
   },
   {
     "path": "deployment/dependencies.json",
-    "bytes": 4433,
-    "sha256": "2beccc22e7fd41f06f35482c0ca1d902e14bc68ae7eb80bd55828a473e17e2b9"
+    "bytes": 4833,
+    "sha256": "ff4aa0e490e93724866d61f8160f5885e63058d1e4ce9f898dfe8b937d513967"
   },
   {
     "path": "deployment/deploy.py",
-    "bytes": 58308,
-    "sha256": "08458c6b5e5a06fcdd0b75392166f3f0600a18bc7369d0e5e52e2584ec8e584d"
+    "bytes": 91377,
+    "sha256": "d19df2932290134df4d779cda200f540c2a2874e2d55c6f4bb33b8ed9addd076"
   },
   {
     "path": "deployment/devices.template.json",
@@ -1206,8 +1561,98 @@
   },
   {
     "path": "deployment/extra-pins.json",
-    "bytes": 956,
-    "sha256": "10a15a7ddcddcca93b9844ad64eefa04f2b3e6812e3a9f8ca97e203ef80451af"
+    "bytes": 992,
+    "sha256": "2ca294c70bf09b63f797b5c17f851265509649035c32344b696af5b930717278"
+  },
+  {
+    "path": "deployment/fetch_sources.py",
+    "bytes": 22625,
+    "sha256": "5837722703ecabcd43155397cd2223db703f24e34ca47a4bfdf3bc311845c5b4"
+  },
+  {
+    "path": "deployment/image/README.md",
+    "bytes": 60545,
+    "sha256": "b47202d523df502b88b4d11a2ec2e27c906581cdb8e5ac7a9fafa5905398da38"
+  },
+  {
+    "path": "deployment/image/bootchain.py",
+    "bytes": 39836,
+    "sha256": "3d72925b549cfa785a75860f4bbc7992d45ca2e5b0c2b384ee5cf1e2fb8b0aa8"
+  },
+  {
+    "path": "deployment/image/build_image.py",
+    "bytes": 79203,
+    "sha256": "d13826d0e0192e73d35043039942d6af8454c2347198b28ff74678398b0390f0"
+  },
+  {
+    "path": "deployment/image/files/90-srrx-bls.install",
+    "bytes": 441,
+    "sha256": "16bb4d894fc34a281718362787a3bfb512e8a9f457c6f8bfdf3cb67e5a7b099f"
+  },
+  {
+    "path": "deployment/image/files/initramfs-hook-srrx-ab",
+    "bytes": 632,
+    "sha256": "ca7e8385e758286005181af3219b3c926cd8ef060029bf121ecbd4a0bd3a6ba1"
+  },
+  {
+    "path": "deployment/image/files/initramfs-srrx-ab-writeback",
+    "bytes": 1897,
+    "sha256": "4918dd5880dcea921db623787728aed54d5b4fe2ad96a76a41f11c961757a93b"
+  },
+  {
+    "path": "deployment/image/files/install.conf",
+    "bytes": 289,
+    "sha256": "116ed0806a852a4a6d7103bf870d44a13049cfc4adf28a50a1f2ef0dc9f6f920"
+  },
+  {
+    "path": "deployment/image/files/kit-README.uk.txt",
+    "bytes": 4207,
+    "sha256": "5f786dd3a9e118456f5fc833aa08ecf929ce36cac65375a724dcb1576bddab19"
+  },
+  {
+    "path": "deployment/image/files/srrx-ab-commit.service",
+    "bytes": 741,
+    "sha256": "720d213803a776ae5633a34aa83cc38d5adab2b09602a94e5b72f91606a554ce"
+  },
+  {
+    "path": "deployment/image/files/srrx-boot-check.service",
+    "bytes": 1364,
+    "sha256": "f20a3db8dceea7614bd9eccfd2e4de6041542e642dec41d43b79970bd427b6ac"
+  },
+  {
+    "path": "deployment/image/files/srrx-boot-route-a.pref",
+    "bytes": 240,
+    "sha256": "808538188b0df57a3fbdc00fe617b6a11261533a5a8329d42ca3841a1b24df53"
+  },
+  {
+    "path": "deployment/image/files/srrx-ssh-hostkeys.service",
+    "bytes": 836,
+    "sha256": "499a7b3347994c00245d713b5225cd6360bdf68b094c345c577f29acff569a1b"
+  },
+  {
+    "path": "deployment/image/layout.py",
+    "bytes": 12285,
+    "sha256": "ed2742ce26a6d93f36ee4ef4bed5b25ef04d54df71077fea333090068378f174"
+  },
+  {
+    "path": "deployment/image/partition-layout.json",
+    "bytes": 3496,
+    "sha256": "0416029aa38ff1e3c6df12b749dd6925729d9f07af4fef9c25e919f8aad9ecb3"
+  },
+  {
+    "path": "deployment/image/recipe.json",
+    "bytes": 11462,
+    "sha256": "596fdacc6a8a287f79a45869480bcb7cf80e4121cd8aac622419b8aa92466616"
+  },
+  {
+    "path": "deployment/image/recovery_kit.py",
+    "bytes": 25914,
+    "sha256": "74804124d6a5af14a5936468429f96f1e06548fba7777acd46944023230ea87a"
+  },
+  {
+    "path": "deployment/image/smoke_qemu.py",
+    "bytes": 20331,
+    "sha256": "a791ae3cfd2ed22cdf953d932056e1e3bc9b6528f88641c856e2f50197cbad57"
   },
   {
     "path": "deployment/licenses/Apache-2.0.txt",
@@ -1221,13 +1666,13 @@
   },
   {
     "path": "deployment/linux_lab/FINDINGS.md",
-    "bytes": 38183,
-    "sha256": "1091c1c67404f9d82eed22d9725545982738c3e00414e926eb0f16e314cf291c"
+    "bytes": 38780,
+    "sha256": "1001b2dbc56442f9312c5e1758e34d2f71739e498ba006db534f0bee95d4ef14"
   },
   {
     "path": "deployment/linux_lab/README.md",
     "bytes": 23223,
-    "sha256": "2bd07466f69473b29c401a4892f2d61a6cf360f4213ad5a3195d158db91ac962"
+    "sha256": "656a7e3e3de1bb970f715527db004b5ab914fe52b879b926c335e1383c59b4e8"
   },
   {
     "path": "deployment/linux_lab/assets.lock.json",
@@ -1256,13 +1701,13 @@
   },
   {
     "path": "deployment/linux_lab/guest_bootstrap.sh",
-    "bytes": 11962,
-    "sha256": "08c63c5f950ceb189c37b0ec9a2a0586335774ed736f92a4254bdf018c20b0e4"
+    "bytes": 12456,
+    "sha256": "725e4fd06b466137efca615a3a4a4350c90be06d5b863aa3dbb471ebe67d8e44"
   },
   {
     "path": "deployment/linux_lab/guest_smoke.py",
-    "bytes": 44919,
-    "sha256": "4090b3f33f42ad0fa4d985d7415ae5b1d4f17da48d78782e06de2d7e6f795969"
+    "bytes": 45927,
+    "sha256": "8dcdcd4cd4fd29bc06bc077fb0856092cb7178118fd990658384ea6c082cc337"
   },
   {
     "path": "deployment/linux_lab/gui_smoke.py",
@@ -1301,13 +1746,13 @@
   },
   {
     "path": "deployment/linux_lab/test_guest_smoke.py",
-    "bytes": 14121,
-    "sha256": "2ce70ede7c9f0f88d443b8845b88ee75252db0c326c7c67bbd90d1f21e9c1d7c"
+    "bytes": 15807,
+    "sha256": "1051f44b18655ac8dc014d4e129750612a705c18705ad008696e54e0fc9f5ab0"
   },
   {
     "path": "deployment/linux_lab/test_lab_harness.py",
-    "bytes": 35493,
-    "sha256": "1a739a38f1e4e724b6e2cd079a4d7ddb7389696de1d4c8d6c5cb7ca9da23ae4d"
+    "bytes": 35743,
+    "sha256": "f1e857c5da38dab7e83bf209dbf2be7686e3c0f6ec1c077c5b38f8a803320513"
   },
   {
     "path": "deployment/linux_lab/test_rx_startup.py",
@@ -1331,8 +1776,8 @@
   },
   {
     "path": "deployment/module_lab/README.md",
-    "bytes": 20126,
-    "sha256": "3e0009098496189e565270f8157b340653f946389ad104e6663c2eedacd319f8"
+    "bytes": 20566,
+    "sha256": "b91366c91a471be26202f68edce8c55bdacc292886d605fd7a6150584d575c2e"
   },
   {
     "path": "deployment/module_lab/connectivity.py",
@@ -1341,8 +1786,8 @@
   },
   {
     "path": "deployment/module_lab/inventory.json",
-    "bytes": 1478051,
-    "sha256": "7e53394d7e1ae8290538b1411d361eff32a98a4308a4549d4d63cbd671d0fd4e"
+    "bytes": 1478103,
+    "sha256": "daa5f99d6c6fea49924bdb94032dd2bd4a35a98d969ba8b75c67667e2e851e95"
   },
   {
     "path": "deployment/module_lab/io_modules.py",
@@ -1366,13 +1811,13 @@
   },
   {
     "path": "deployment/module_lab/mcu_bus.py",
-    "bytes": 26689,
-    "sha256": "b32d6845eacf0dbccb25304b51056dadf00e54aaf645f43e548c0e8c8c4646c7"
+    "bytes": 27035,
+    "sha256": "d42db7c6271d37fc3861d471675516f552099575811138dfccea21d9d5311f5e"
   },
   {
     "path": "deployment/module_lab/mcu_scenarios.py",
-    "bytes": 31733,
-    "sha256": "44c167c4c8af1796b54f3c3465d6627d13aef7458086d4e7bef7963a62de99df"
+    "bytes": 39140,
+    "sha256": "06d358b46a87d470f064e4b6a3e07fc136659dffa83a58b431d5c8357aba284e"
   },
   {
     "path": "deployment/module_lab/power_bus.py",
@@ -1396,8 +1841,8 @@
   },
   {
     "path": "deployment/module_lab/refresh_inventory.py",
-    "bytes": 12796,
-    "sha256": "be421dc35533d3494e258d5c19a60c634b28beeb82e4065acced521a5cc8c7ac"
+    "bytes": 14055,
+    "sha256": "10572bb62f53c07cda9ddaf5e9527006787a99d9852e8375b70bc3d43f82bdc9"
   },
   {
     "path": "deployment/module_lab/run.py",
@@ -1421,28 +1866,213 @@
   },
   {
     "path": "deployment/receive-only-policy.json",
-    "bytes": 32906,
-    "sha256": "bfef2b57d855a23437b9e97878d9abf6cc1c60ffd0938946aac9708da6784771"
+    "bytes": 33298,
+    "sha256": "a1ed869b136cfb02815b7e99b17e87ed76fbab70122c76578ea150ff3b31b2da"
+  },
+  {
+    "path": "deployment/recipes/README.md",
+    "bytes": 18462,
+    "sha256": "378373f1013693f6a153c4d72df70912bc3ed727fe7789832991764550f15fbd"
+  },
+  {
+    "path": "deployment/recipes/build_recipe.py",
+    "bytes": 30284,
+    "sha256": "b547797ad3a86e4d29c7751cac733b40298508bdb2e8098fb5322d983aa9a558"
+  },
+  {
+    "path": "deployment/recipes/lab_build.py",
+    "bytes": 18161,
+    "sha256": "58bbcacd2dcbb0e091b62e3a80bb65bea91dda61b637063fa80ad69cb5cff679"
+  },
+  {
+    "path": "deployment/recipes/limesuiteng/recipe.json",
+    "bytes": 4884,
+    "sha256": "e92fa15a3aa0112d0d915e88ea3a2ad58e306950aaabd2084c5f2436a2229f4c"
+  },
+  {
+    "path": "deployment/recipes/rtlsdr/recipe.json",
+    "bytes": 3180,
+    "sha256": "82ab0e0b2d17214a64c38aeddffdda80c199e6eb229d704eea1c771f9de08942"
+  },
+  {
+    "path": "deployment/recipes/satdump/README.md",
+    "bytes": 4337,
+    "sha256": "0248f2e8e688bbc73583e6ac754f07c5616e41a36ba3561c619f67a3756bed72"
+  },
+  {
+    "path": "deployment/recipes/satdump/check_recipe.py",
+    "bytes": 20963,
+    "sha256": "d70df2cc9628c51f2070ca1df9e9ce2e712a1a6db236d32870eb99201dba434a"
+  },
+  {
+    "path": "deployment/recipes/satdump/patches/0001-cli-add-option-c0b6f88.patch",
+    "bytes": 1263,
+    "sha256": "650e666a30c79130d51a932aac7f5d1d8d5c300fcce3d48f1d8347b06dd1c517"
+  },
+  {
+    "path": "deployment/recipes/satdump/patches/0002-clock-recovery-free-6b5957f.patch",
+    "bytes": 3009,
+    "sha256": "377b3017be3055919d4d3b4cf1f4073651a04026b8e1208e00aba0bcfb41a78b"
+  },
+  {
+    "path": "deployment/recipes/satdump/patches/0003-lab-udp-loopback.patch",
+    "bytes": 1257,
+    "sha256": "e04d131fe58a16ec48e0cfcd17316183ec49164a1a024e7586206d24cf840faa"
+  },
+  {
+    "path": "deployment/recipes/satdump/recipe.json",
+    "bytes": 12951,
+    "sha256": "33a9ec08f9cd2be4ce822a9fd02fcfbf4f6108bbeb782fad35fb011435a8abb0"
+  },
+  {
+    "path": "deployment/recipes/satdump/upstream-options.json",
+    "bytes": 20574,
+    "sha256": "923f48f0f1a487c50c5259baf75b5a5fd2c0d2326d3ef68b7fb259911e4fec5c"
   },
   {
     "path": "deployment/release.template.json",
-    "bytes": 299,
-    "sha256": "4611399521963c3a55aa713814a5d194e523f25b24285aaabdafd47462587c88"
+    "bytes": 467,
+    "sha256": "33228e7a19d20dedee83a4eb39475eb6649756e2864f410e50066213898390c2"
+  },
+  {
+    "path": "deployment/repo/README.md",
+    "bytes": 10587,
+    "sha256": "783e65b1301dec08d2a5d5d660c183aa2819fab8fa0352b6047fa4f6314fb55b"
+  },
+  {
+    "path": "deployment/repo/aptly.conf.template.json",
+    "bytes": 528,
+    "sha256": "8a59e16a68f948e34c3075c6dc5ba385a6a81495206082499735a651fe8eae26"
+  },
+  {
+    "path": "deployment/repo/check_repo.py",
+    "bytes": 13239,
+    "sha256": "fe5765bf78b2911040fbea15bbdec5e427be5ddd79b3260e99d3c27c8555e986"
+  },
+  {
+    "path": "deployment/repo/lab.pref",
+    "bytes": 154,
+    "sha256": "fc7f10cea2a897f490ffba2385b509fc945935ddaa0be9ef2f732f0fd49233d7"
+  },
+  {
+    "path": "deployment/repo/publish.sh",
+    "bytes": 2300,
+    "sha256": "44896fbfd1dac3b9223b438c1ec0d3f6c49be7642d6e7f63365c6a95b7cd8833"
+  },
+  {
+    "path": "deployment/repo/repo-policy.json",
+    "bytes": 1859,
+    "sha256": "c971bd11b4fb0888c2911177f3e17fb48fac11a295209fe0c3ba0463d89f8e19"
+  },
+  {
+    "path": "deployment/repo/srrx-lab.sources",
+    "bytes": 141,
+    "sha256": "9b733448655782e170cc80927a429f0b0999e29c670ae9b31246a7b5e80fb16a"
   },
   {
     "path": "deployment/selftest.py",
-    "bytes": 96108,
-    "sha256": "046bf2ac7dfd9759aecddf6ecbc49dd020aa72bd590b2ba57c9e683c5711cf27"
+    "bytes": 124284,
+    "sha256": "48f527d773fed4ff9973e7a37fc97e3281e2729fea0e7c33dedc5e92ccaa56e6"
   },
   {
     "path": "deployment/source-cache-verification.json",
-    "bytes": 582,
-    "sha256": "7f06b43a54defb7932b22289e10c50ee6babde5a1584f9ad1197538630937262"
+    "bytes": 741,
+    "sha256": "73e5f6a9a763d86a1e862ae1da4bc36f1af6296c138dd142f8c5196b96bfa670"
   },
   {
     "path": "deployment/sources.lock.json",
-    "bytes": 31127,
-    "sha256": "00a8a889f7508463aba6840162644bb22de55f620fa40e9ba1e47e3571a9f22e"
+    "bytes": 62627,
+    "sha256": "2ca1b262b16938742170f389167a728029f0cf7c81a2d734f5a5bf5d83b098c7"
+  },
+  {
+    "path": "deployment/system/build_manifest.py",
+    "bytes": 3737,
+    "sha256": "14eb6e5b27879d297ad5f1e3b7c5bd610ca869e51576b012e3bacbcbf22a5d54"
+  },
+  {
+    "path": "deployment/system/dkms/pps-gpio/Makefile",
+    "bytes": 98,
+    "sha256": "26f18ca2dd6e5e023b06ac4e09544208882ccb354f0c9fe1ba13a6c2835f7c73"
+  },
+  {
+    "path": "deployment/system/dkms/pps-gpio/dkms.conf",
+    "bytes": 856,
+    "sha256": "f2c15623275be168a7a4183cbd0c03a31e783efaecb5e322c2ecdd9c93acd79c"
+  },
+  {
+    "path": "deployment/system/dt/LICENSE.radxa-overlays",
+    "bytes": 1926,
+    "sha256": "938bfb0b8ddd6653658c16d81528bc33ead08a4929625e7cdcba2d3bee3a813f"
+  },
+  {
+    "path": "deployment/system/dt/dt-manifest.json",
+    "bytes": 1326,
+    "sha256": "90b384225da2859d744af055d3c83fb6e23675aa49113d7895280e599205e83e"
+  },
+  {
+    "path": "deployment/system/dt/field-q6a.dtso",
+    "bytes": 795,
+    "sha256": "f2c249f996f03e7457bc3647e287539557f1b012323631c8a9ffed042a2e3aec"
+  },
+  {
+    "path": "deployment/system/dt/lab-q6a.dtso",
+    "bytes": 2452,
+    "sha256": "41183f6b46ae47bcc75e7f535a71195061159d98d4a5cc266b041da5a8049803"
+  },
+  {
+    "path": "deployment/system/edid/field.bin",
+    "bytes": 128,
+    "sha256": "43af2a52b8819051595a06855427d8eafe59da2ccfbfd75909ca9c517e0105bd"
+  },
+  {
+    "path": "deployment/system/edid/field.json",
+    "bytes": 747,
+    "sha256": "b9a316743fbd745a7fb70d12651745af9c36542a2b3c6be9f4583dd4dc7cdd5b"
+  },
+  {
+    "path": "deployment/system/edid_field.py",
+    "bytes": 9191,
+    "sha256": "1ec661a35e70c9712a88ab9cd14bc1f05bbe4173619849828c125cb15dcad6fb"
+  },
+  {
+    "path": "deployment/system/fdt_check.py",
+    "bytes": 7852,
+    "sha256": "2bd265ef2ca9cb97370c038cff51e8837d3bb3f067d5d73f2f0e0f6f70f96115"
+  },
+  {
+    "path": "deployment/system/npu/dsp-firmware.lock.json",
+    "bytes": 2543,
+    "sha256": "5754ac33bce6093d0aca36e9ea87c07f6aa92d8e0c861aa45a4cdfd1fbd20518"
+  },
+  {
+    "path": "deployment/system/npu/inferd-htp.service",
+    "bytes": 1569,
+    "sha256": "0c8861ad40c8c7a3f9a2962743969a38909bd2a206bf9ce35cf41c3021fd9c8e"
+  },
+  {
+    "path": "deployment/system/npu/qnn-layout.lock.json",
+    "bytes": 3057,
+    "sha256": "2054751e3cd8e0182932c6248a2ff1e7c86d1491e2dbaf3ae7111e28db469514"
+  },
+  {
+    "path": "deployment/system/npu_layout.py",
+    "bytes": 6881,
+    "sha256": "adb1e6122414215b42a90fe608bd541925e72ccb8c0e9e833baa0f363bf77f7c"
+  },
+  {
+    "path": "deployment/system/pps_dkms.py",
+    "bytes": 3362,
+    "sha256": "d1f96f8763e54b7864c14be1f7452bc1eaefed7e80d706864d8a8faaaea2632e"
+  },
+  {
+    "path": "deployment/system/system-sources.lock.json",
+    "bytes": 2465,
+    "sha256": "c3054406fb568dc4b2cef1ad5eb6e64a03824f690d6fc8a7ac55624bc90e74fd"
+  },
+  {
+    "path": "deployment/system/system_files.py",
+    "bytes": 21186,
+    "sha256": "f275a6187058bca1407f0c831f4e73a4b8897c87f007bd38465a4106631ae137"
   },
   {
     "path": "deployment/test.sh",
@@ -1456,18 +2086,68 @@
   },
   {
     "path": "deployment/tests/test_deployment.py",
-    "bytes": 51691,
-    "sha256": "407a813ade39b547c5e15a2cd81e8b181d63d9a2a5ba0a192a6f8b4ea0b47046"
+    "bytes": 53742,
+    "sha256": "d602f180f94ec747b1cd2878ffaf57ea7af63d5507da90172a563879b05e0f30"
+  },
+  {
+    "path": "deployment/tests/test_flash_mcu.py",
+    "bytes": 13785,
+    "sha256": "298dca5f75cd0ec06cc8964f25938d069cd20936c084aa557dc6d528f9f7b128"
+  },
+  {
+    "path": "deployment/tests/test_gnss_chain.py",
+    "bytes": 13624,
+    "sha256": "5473904c44f813899b238b4255bbe1ad7a113a821594b204cca8220452bece17"
+  },
+  {
+    "path": "deployment/tests/test_image.py",
+    "bytes": 56686,
+    "sha256": "05e3c3553886c4da2cf1349d7c48556284464f417866c2922a8c7f0037a7d7e1"
+  },
+  {
+    "path": "deployment/tests/test_passes_unit.py",
+    "bytes": 4488,
+    "sha256": "e96f940b54b8877ff9c2571026f5a8749543de4e067aee603e63a20e52ce87bb"
+  },
+  {
+    "path": "deployment/tests/test_recipes.py",
+    "bytes": 23018,
+    "sha256": "c408343a307acd70cd47c35711ef1d95272d873a8ee3fa720f266e0ee2ffda69"
   },
   {
     "path": "deployment/tests/test_refresh_inventory.py",
-    "bytes": 7355,
-    "sha256": "c5025f5d92df972487a5dab60a6a6c8db3e335d9cd7fb11329bb357c1ffc4278"
+    "bytes": 9647,
+    "sha256": "90b29ed3728f0ba3c95fb79598e190b54f5b501672b604004d35f61cf88fa60e"
+  },
+  {
+    "path": "deployment/tests/test_repo.py",
+    "bytes": 30104,
+    "sha256": "ee9b8c4bb3eb396709fe9e48a65682b69e3820ec8c7baefc85b6b23493270a43"
+  },
+  {
+    "path": "deployment/tests/test_satdump_recipe.py",
+    "bytes": 16625,
+    "sha256": "ad7bfdd085b17b4e58339d95064004c4df47a18b3e1c23c8472c92ddab95d4c1"
   },
   {
     "path": "deployment/tests/test_selftest.py",
-    "bytes": 75041,
-    "sha256": "fe0afd36eecc2d54b2602fed296c9bf0b532501061eecd5f6c9101c65839f3ed"
+    "bytes": 98053,
+    "sha256": "c572df6efe41dd035172a06a04f0126dbbc8c01af1a008ca520fee8e45636b6c"
+  },
+  {
+    "path": "deployment/tests/test_source_lock.py",
+    "bytes": 24072,
+    "sha256": "e9ab4b8369bc47570fcda31697865a0403b83188307acb064ac62927c6b49201"
+  },
+  {
+    "path": "deployment/tests/test_system_files.py",
+    "bytes": 25476,
+    "sha256": "c19c19e6913558d6645b78d5535fd006411255e662c6a4025401b781c5950ba4"
+  },
+  {
+    "path": "deployment/tests/test_system_sources.py",
+    "bytes": 16052,
+    "sha256": "e2ae3d06304480bdd07ebb4a86d3d01188e6daf340a42fa63e992948265e8a0f"
   },
   {
     "path": "deployment/upstream-fixtures/limesuiteng/COPYING",
@@ -1516,18 +2196,18 @@
   },
   {
     "path": "design/E1.json",
-    "bytes": 85810,
-    "sha256": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a"
+    "bytes": 95212,
+    "sha256": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c"
   },
   {
     "path": "design/E2-review.md",
-    "bytes": 30556,
-    "sha256": "1a9062455c8c6a80739664789f60d8160effa145c2f94f93189a213e21309173"
+    "bytes": 30620,
+    "sha256": "ddb683d5d1cbadd1b83aecc67116a6812f0d096c5984b3e5113c387867e1c57e"
   },
   {
     "path": "design/E2.json",
-    "bytes": 319508,
-    "sha256": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196"
+    "bytes": 355640,
+    "sha256": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461"
   },
   {
     "path": "design/E3-review.md",
@@ -1536,8 +2216,8 @@
   },
   {
     "path": "design/E3.json",
-    "bytes": 138783,
-    "sha256": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0"
+    "bytes": 163908,
+    "sha256": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132"
   },
   {
     "path": "design/E4-detector-analysis.py",
@@ -1546,18 +2226,18 @@
   },
   {
     "path": "design/E4-review.md",
-    "bytes": 27912,
-    "sha256": "a9a23087aa66929337c5a1d2bc8a9fe0ba315a018550e22b31a99f4e7b23e498"
+    "bytes": 28369,
+    "sha256": "4f6e591090f0bffb5ce3c56d5b164cfa52708c94bb484862c045db5385c9095a"
   },
   {
     "path": "design/E4.json",
-    "bytes": 181010,
-    "sha256": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b"
+    "bytes": 212369,
+    "sha256": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f"
   },
   {
     "path": "design/E5-connection-guide.md",
-    "bytes": 25125,
-    "sha256": "e05fd0852ca06bddb95077005658e67296b5373bfbc7f12b6d27c0de1d0d4a09"
+    "bytes": 25212,
+    "sha256": "8a50e780e1bb01f479d9f6a59ec551370aa65eb6995a796cb3beb88b8e24f3b1"
   },
   {
     "path": "design/E5-review.md",
@@ -1566,8 +2246,8 @@
   },
   {
     "path": "design/E5.json",
-    "bytes": 88455,
-    "sha256": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212"
+    "bytes": 97749,
+    "sha256": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
   },
   {
     "path": "design/SCHEMA.md",
@@ -1585,9 +2265,39 @@
     "sha256": "1a040c3f5da56fd0913af98fd97ca6bbd2ac039d641550af22c1049d1e493a32"
   },
   {
+    "path": "design/parts/README.md",
+    "bytes": 14278,
+    "sha256": "44d091cfcca4b920f2ab02f8b2428fcb75cfa68437e91105ba6e8622ee66146a"
+  },
+  {
+    "path": "design/parts/parts.json",
+    "bytes": 170912,
+    "sha256": "7f20d9a96b9113636bf2aef548c01332818317f523278fcdeeb40fbcd279d602"
+  },
+  {
+    "path": "design/parts/snapshots/2026-10-24-manual.json",
+    "bytes": 23603,
+    "sha256": "1f950d9a99385658dd12edfb82b447d1299c34314837205343eac0ac77ebfd92"
+  },
+  {
+    "path": "design/parts/snapshots/2026-11-06-lcsc.json",
+    "bytes": 320744,
+    "sha256": "533739daef61a8b595849b296994118d852223a94edcc15e95938e6854a77be6"
+  },
+  {
+    "path": "design/parts/snapshots/2026-11-06-manual.json",
+    "bytes": 21405,
+    "sha256": "ca8389de2ebda599e87fc8118cfa9f7c1228ab3487eda94b7e920cccfe0df3f0"
+  },
+  {
+    "path": "design/parts/snapshots/2026-11-07-manual.json",
+    "bytes": 5077,
+    "sha256": "1c7be632676af532a69d5ff6c3d933f034b451d248f31b2142aecfdedc20b7c9"
+  },
+  {
     "path": "design/readiness-contract.json",
-    "bytes": 10684,
-    "sha256": "a5ccc7a0c94d5dbce14ca94535e1d8984b67821460d318a8f95545e17384692f"
+    "bytes": 10685,
+    "sha256": "f19271c53ae1e381fc5cb03273f536774662d116573bf99e5ff4f59efb241189"
   },
   {
     "path": "design/runtime-review.md",
@@ -1607,7 +2317,7 @@
   {
     "path": "firmware/dist/build-manifest.json",
     "bytes": 1759,
-    "sha256": "f79739372513eea15d4e6e25a9f40170ee3b3f277ce993b320060d13fbaae3ad"
+    "sha256": "6e638973179c90689b079ca54ea473380fd82664a9dd0b6318b16181c837b5e4"
   },
   {
     "path": "firmware/dist/imu-micropython-files.zip",
@@ -1616,13 +2326,13 @@
   },
   {
     "path": "firmware/dist/pico-micropython-files.zip",
-    "bytes": 24833,
-    "sha256": "62107e7b8d4ddbd451553881ee10a1d06dfb6e6ed6303228075c02fd51c77a98"
+    "bytes": 26236,
+    "sha256": "89346c37fee767316844bba9d9cbee05387040f3b7291750e7a262667a8e8a93"
   },
   {
     "path": "firmware/imu/README.md",
-    "bytes": 16188,
-    "sha256": "67674a74f05aa2ed5a5bc4de57cb7adeff3ddf2cb9453df7dc44986bd8322372"
+    "bytes": 18803,
+    "sha256": "b069d70f86d1e019f30d0d38f6f372f424a5d6c74e2c61c015da0517e0e2b164"
   },
   {
     "path": "firmware/imu/__init__.py",
@@ -1650,14 +2360,19 @@
     "sha256": "5c737d0fc01166f04a4fdcba6676b00603fcc80997546cf2969b51d0ad2727dc"
   },
   {
+    "path": "firmware/mpremote-requirements.txt",
+    "bytes": 516,
+    "sha256": "fefd7c87dcee1207bcc695eafb9dbeaf19a7edb4c4e86655b819b33e80d314f6"
+  },
+  {
     "path": "firmware/pico/README.md",
-    "bytes": 19201,
-    "sha256": "5579d40373db2529e426f3eb8c9c0cb0e4467afbf3c5c5c21cf23c11fe6dda3d"
+    "bytes": 26712,
+    "sha256": "25b8a8d5284411f8ab3faa6205e0a761ca5227e1bf3a4719d9595578c55ba018"
   },
   {
     "path": "firmware/pico/adapter.py",
-    "bytes": 10570,
-    "sha256": "f405206c2279fcf8cf6b4225f185c9fc93d87fd23ac9a2ebf763b6fb9db2954a"
+    "bytes": 10807,
+    "sha256": "8ebac64c3880e965ae60bb86b329a53f9dae5666ffe9b8c94e394ab905ea6498"
   },
   {
     "path": "firmware/pico/boot.py",
@@ -1681,13 +2396,723 @@
   },
   {
     "path": "firmware/pico/main.py",
-    "bytes": 12470,
-    "sha256": "c537d05b9699b6f1e1b4e12ded656e947e8b8b398b47ee45ccd315bd3e051fb0"
+    "bytes": 12812,
+    "sha256": "e4a727d62038c55d4919196646297823c5d13fd2c7acd9f8ded969579e54f0a2"
   },
   {
     "path": "firmware/pico/supervisor.py",
-    "bytes": 17417,
-    "sha256": "b62b0aefad7bbc2afb5647022a786ed473065ebad4a27bc5f8f4854bb39d4746"
+    "bytes": 21012,
+    "sha256": "1c4b7c4184a56ffb0fddf1718981c252a265d4ddb81cc6a8fe03fe4bcd373b1e"
+  },
+  {
+    "path": "firmware/runtime.lock.json",
+    "bytes": 3376,
+    "sha256": "7ee6eff27db19b6aad8daa8eafb238c7ada4d4d79b5c9edd8df8bfd7a68f30ed"
+  },
+  {
+    "path": "mechanical/README.md",
+    "bytes": 20171,
+    "sha256": "1e10416e612c639fb583067308e7eb537eb1ca8c5005b93449e3168dab341dcb"
+  },
+  {
+    "path": "mechanical/build.py",
+    "bytes": 21523,
+    "sha256": "6521a524328ec970769887e207e854a6e10dbe4240618a48066577cd43333ad2"
+  },
+  {
+    "path": "mechanical/generated/boards/ctrl-edge-cuts.dxf",
+    "bytes": 1548,
+    "sha256": "17fd5e8e2929ce94bc22eb17db97c0308cc59166a62ef9f463171545b70d827d"
+  },
+  {
+    "path": "mechanical/generated/boards/enc-edge-cuts.dxf",
+    "bytes": 914,
+    "sha256": "0492685f2ff9ddad0ec9b59f6cdd8d6ce2e05acf74326daaaa37ad95f1e36d42"
+  },
+  {
+    "path": "mechanical/generated/boards/pwr-edge-cuts.dxf",
+    "bytes": 1216,
+    "sha256": "c687281e88c86c8d5b6554a28d1fad114b552e310a99fd9746e2137abb751520"
+  },
+  {
+    "path": "mechanical/generated/boards/rf-edge-cuts.dxf",
+    "bytes": 1089,
+    "sha256": "e8305537ee28f53d45d8c7add0e19b92f87005215d4e6c985912bb1bf8e2d2b5"
+  },
+  {
+    "path": "mechanical/generated/contract/boards.json",
+    "bytes": 8491,
+    "sha256": "0fd6be0d3c2a37afdd4e7c01ea9550119d47ed20af779fd083ad2ac43852233d"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-01.dxf",
+    "bytes": 3744,
+    "sha256": "a8d9db89dc6dc15b20378856f961988bbd29f1d153cdfac36acf31102d0d6a44"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-01.svg",
+    "bytes": 10322,
+    "sha256": "12bdeef74385cddddb1e9cecf679dde69da1a721b1e3bf171503e28ba8363e14"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-02.dxf",
+    "bytes": 3728,
+    "sha256": "27ca8ae4b4dd68c80e0497a81b04bf7f1415ee51d8f72386772133f5e0e15bd8"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-02.svg",
+    "bytes": 10598,
+    "sha256": "4d27fd0c80dc19d831d38964e7b8760f3bce1c73ac84f3dc8f85d515bccf960e"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-03.dxf",
+    "bytes": 5161,
+    "sha256": "e81a2a5b46ec575c18e8515955e43b1daa47eec99a62a6379f2f4d0c66d7c5a7"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-03.svg",
+    "bytes": 13172,
+    "sha256": "251a872f6af64b4fadcedbdd049e6f01672c58a974a34ac17afbfdc9da5f9b55"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-04.dxf",
+    "bytes": 11972,
+    "sha256": "326ebc3852016e11da4810a6ec3f956fd9e033303fcfc3a6c72b4a261289bc31"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-04.svg",
+    "bytes": 24157,
+    "sha256": "0ad7442e7b728042776baf0cf3a9f27138c23633d4cff8ca56104daba4c6d665"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-05.dxf",
+    "bytes": 11954,
+    "sha256": "46914bb9f95d40ef9b7cc8fe058e4f6d25022fc11ffc185798cfe9bd8034cf49"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-05.svg",
+    "bytes": 23968,
+    "sha256": "ab635fd12366ed39dca6f6a5f7e50c815fa2e376c99b73bcab7e0f4960fdad99"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-06.dxf",
+    "bytes": 9830,
+    "sha256": "44cced25ece8d13f7af3cddc7ed8592ae99c601f6b93c3c5d45893a80cc45c9e"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-06.svg",
+    "bytes": 19479,
+    "sha256": "fb17d97c8cee3bdc12e0d13531b34b47c4274f94651f5f944df58cdaf5dbf15e"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-07.dxf",
+    "bytes": 5288,
+    "sha256": "ebb51bd138ca360656be6a991903d35020cece3043d84ba67f3b29507fdf8c2e"
+  },
+  {
+    "path": "mechanical/generated/drawings/A-07.svg",
+    "bytes": 14992,
+    "sha256": "556be5a9731bb9826b7a57d95d2ef16c3b5a4775cd145c007c3bd8c09ad88ef0"
+  },
+  {
+    "path": "mechanical/generated/drawings/B-CTRL.dxf",
+    "bytes": 5378,
+    "sha256": "df52cf91399f98157e3d316b97dea87ce503d85d24e39a37b205706c8de38f1e"
+  },
+  {
+    "path": "mechanical/generated/drawings/B-CTRL.svg",
+    "bytes": 14904,
+    "sha256": "dad2dec07eb776e66245d80e5640f741318f58ccb0c24f7e36631ccaa18f0e20"
+  },
+  {
+    "path": "mechanical/generated/drawings/B-ENC.dxf",
+    "bytes": 2607,
+    "sha256": "ffb8b8c04b6a7474483ce096f7ec04dea33545af7629301b47a6112ef8e0417a"
+  },
+  {
+    "path": "mechanical/generated/drawings/B-ENC.svg",
+    "bytes": 9484,
+    "sha256": "6b8b6b6a1ee3965ee4d38b25fa0920b2879bfd73abafca81f526acde29593919"
+  },
+  {
+    "path": "mechanical/generated/drawings/B-PWR.dxf",
+    "bytes": 5468,
+    "sha256": "fd803b3e06585c78aa1456d767c96f953726e2b5e95c8d5ee721b88b7bbf11b2"
+  },
+  {
+    "path": "mechanical/generated/drawings/B-PWR.svg",
+    "bytes": 16518,
+    "sha256": "cf9be36f9eac52f02634210d9e02f5bc0a9222946ea48138d3f7d59fbe5e84cf"
+  },
+  {
+    "path": "mechanical/generated/drawings/B-RF.dxf",
+    "bytes": 3704,
+    "sha256": "0e901342d0e4ff7534abe48e629ac32ccd964b7fbc7751100478c6fb417c84eb"
+  },
+  {
+    "path": "mechanical/generated/drawings/B-RF.svg",
+    "bytes": 11926,
+    "sha256": "994dc6e0ab8ae874e2b9bac5168011faa8916c826d510f20f96b98dae14a74b5"
+  },
+  {
+    "path": "mechanical/generated/drawings/I-01.dxf",
+    "bytes": 3542,
+    "sha256": "ca88798a7cce7484ee89d47e2b3b25f82c69593690958c3b81d060d0a402c54b"
+  },
+  {
+    "path": "mechanical/generated/drawings/I-01.svg",
+    "bytes": 12125,
+    "sha256": "8705d5a53a8771acac3f98c4bf8216c1a7e727e8c5019ed09a7af209a8d44065"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-01.dxf",
+    "bytes": 6194,
+    "sha256": "a736f3b62869e48c3e64ff11e9d80cb55b7ed899c976e1f30f543061040194b4"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-01.svg",
+    "bytes": 19426,
+    "sha256": "872a6591822083751909f427c5f5b41c0e082abb1a406e773f18219f1024bcc7"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-02.dxf",
+    "bytes": 9224,
+    "sha256": "0b2cc00f66be44d7dc5c88c0e78ccb528c481009c4a706599bf973ab46e0759c"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-02.svg",
+    "bytes": 28929,
+    "sha256": "bc5c1b50a41a8b63472550c2e7258f553cb2daf9096e4ff8ccc3457a1da0ffa3"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-03.dxf",
+    "bytes": 4894,
+    "sha256": "e5eadfd6f1ede249bc3081efb7099c5614c8bb4b11afc9344041de11f90edd9a"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-03.svg",
+    "bytes": 15625,
+    "sha256": "2e16bc917611fe1329d7b8a918a96eacdc82c5304af1d0457f30cd8428158e53"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-06.dxf",
+    "bytes": 14703,
+    "sha256": "bf53190d606714c2247c5f7e65f4e47633390ab30a6c952dbb035ef6e9731001"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-06.svg",
+    "bytes": 38932,
+    "sha256": "3a60654a783236bc078a331dd89cda34e158bc54e360046dc2ea5824dc00575e"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-07.dxf",
+    "bytes": 16882,
+    "sha256": "ff2ba035e5a0ad24ecc7ab6868cc445f149636422b3dce2e0dfe7bf441a1269e"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-07.svg",
+    "bytes": 48050,
+    "sha256": "9d5aff81480e43935a302fe58bdea13953109a3f5e203d8355b963dad8b26e1a"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-08.dxf",
+    "bytes": 6129,
+    "sha256": "2681099fa9808687b7ada94bf02f9f02af59e9a5b06d1d895080f545994ec91d"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-08.svg",
+    "bytes": 17344,
+    "sha256": "9146a1d80282907471ca753ff13b783ae2200d701cf49af542497e0bae539905"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-09.dxf",
+    "bytes": 11004,
+    "sha256": "74809122e4d85fce6a9617a6eb67bd701cd49f3b318956729dadc249e90c693f"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-09.svg",
+    "bytes": 27033,
+    "sha256": "5f239cd285b77086dcea1242aae7637314bbf42c11b8bf04a7f595aef322d4d4"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-10.dxf",
+    "bytes": 8752,
+    "sha256": "e83eb88948936d2253d64229ac1f2f9bcf8c36b0f40f46a03439d644e5699683"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-10.svg",
+    "bytes": 21354,
+    "sha256": "90aefbfb733a26e508e0d522d23bb4bda0480835550831fe750dc3770ddcfb71"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-11.dxf",
+    "bytes": 3264,
+    "sha256": "bb9dd2583b18a147bc307ef1b9cb69a4ad03ea85613c2c16b6b7a98b75172d84"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-11.svg",
+    "bytes": 11429,
+    "sha256": "f1bbf5fafa4a3613dba4765b21de13acdd2f9f6e116f2e78dd964121acc2c533"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-12.dxf",
+    "bytes": 4204,
+    "sha256": "122419232adc3061532bf97daf836cf474463bfd834c8542867359cfbe262ec1"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-12.svg",
+    "bytes": 12129,
+    "sha256": "7ed2fd1cf8d4fbe77714a96eb1af0e5aed36b52c6868a43cf7c4a9f67832a25f"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-13.dxf",
+    "bytes": 4844,
+    "sha256": "38f36a7492c4f9da507dc1a542d8937eb42ef4f01caeaf0bad404c9ab9040aaa"
+  },
+  {
+    "path": "mechanical/generated/drawings/M-13.svg",
+    "bytes": 14880,
+    "sha256": "097abd833c69a957029b92907b3370dc8803938225499ea189d72167c667b779"
+  },
+  {
+    "path": "mechanical/generated/drawings/P-01.dxf",
+    "bytes": 3419,
+    "sha256": "e5184d8cb5c3dc1c0635376f6862fc4d86cacd38240c72c127f75170331706cf"
+  },
+  {
+    "path": "mechanical/generated/drawings/P-01.svg",
+    "bytes": 11180,
+    "sha256": "37871928c8361af35fc7ae2c539178579083a7c0098a65362d33aa918956e515"
+  },
+  {
+    "path": "mechanical/generated/drawings/P-02.dxf",
+    "bytes": 4882,
+    "sha256": "7ad021485257478b4b0d580a64966d70c0aea336cf1d9e07f757a1af87490975"
+  },
+  {
+    "path": "mechanical/generated/drawings/P-02.svg",
+    "bytes": 13290,
+    "sha256": "15e5e2d6e34aa69d7055968173f13d8cc3af8837baa769e21db99c6a56a23281"
+  },
+  {
+    "path": "mechanical/generated/drawings/antennas.pdf",
+    "bytes": 81871,
+    "sha256": "27c7650acc885aa267d3147f50a4fc6b8c8ecfc96f6fea34b147e397dcbbdd70"
+  },
+  {
+    "path": "mechanical/generated/drawings/boards.pdf",
+    "bytes": 58512,
+    "sha256": "dc2b958ce804a38ccacbc28f5ac93529621cb5381452c71b30520a3502fc8cf0"
+  },
+  {
+    "path": "mechanical/generated/drawings/enclosure.pdf",
+    "bytes": 168404,
+    "sha256": "632ab14a8bc0594bf1a6bfec3ced8713ddeb172ec0a4632c70aa63a02f135d12"
+  },
+  {
+    "path": "mechanical/generated/drawings/pod-imu.pdf",
+    "bytes": 46553,
+    "sha256": "284ac2fdc7cb9febbe178962bc4253387d75d4e24ce111d5f937bcc79a35938e"
+  },
+  {
+    "path": "mechanical/generated/fit-report.json",
+    "bytes": 38766,
+    "sha256": "568872d0e61bb64716339ba9573c5ec443519389a5525d20907ffa02a7b837c4"
+  },
+  {
+    "path": "mechanical/generated/fit-report.md",
+    "bytes": 21085,
+    "sha256": "89dcfc42c01589fc7d7f14e34712d130ef69b0053576580be7377cd75954bd82"
+  },
+  {
+    "path": "mechanical/generated/manifest.json",
+    "bytes": 16190,
+    "sha256": "ad059012d623f57989d5679d29367b65296bb3f2389c7c5efd9675d12f48be2a"
+  },
+  {
+    "path": "mechanical/generated/step/angle_right_al.step",
+    "bytes": 40568,
+    "sha256": "32116da4f3326230e14c7b69b315bd51b50fdd67326069657abb9a0988445c24"
+  },
+  {
+    "path": "mechanical/generated/step/angle_top_al.step",
+    "bytes": 84374,
+    "sha256": "9626e8bfd447e1f11525827f89394683f80d45ac93571710835b1111d017974a"
+  },
+  {
+    "path": "mechanical/generated/step/assembly.step",
+    "bytes": 3854978,
+    "sha256": "20f5e030e0592cf8899f3644d52ea58b1a7efdbcca82d2872fc25b366e1e610a"
+  },
+  {
+    "path": "mechanical/generated/step/battery_tray.step",
+    "bytes": 111036,
+    "sha256": "fae85a3394505f06c789a984a7021fd4ea2621b4dfbb5abeb4575eeef61beed8"
+  },
+  {
+    "path": "mechanical/generated/step/button_cap_ribbed_x2.step",
+    "bytes": 23756,
+    "sha256": "76696dde405e7f2a74a5e97bcedb6049d6ba62db55ea4990f4903d401f9312c6"
+  },
+  {
+    "path": "mechanical/generated/step/button_cap_x4.step",
+    "bytes": 9352,
+    "sha256": "973cdd554ccf98f5a5c24f0e13b05df33e65bc78688e3929fd808d94d8e40834"
+  },
+  {
+    "path": "mechanical/generated/step/cooler_a_cu_block.step",
+    "bytes": 29677,
+    "sha256": "f0a9c10462ab15dba7251fca86e79d67791a8977e89d1e316d46fa21ea6bc3c3"
+  },
+  {
+    "path": "mechanical/generated/step/display_clamp_x4.step",
+    "bytes": 32716,
+    "sha256": "9777a40b8246108fa0861dd2405e94f4472e5271436171f0871ec19c5ae9e557"
+  },
+  {
+    "path": "mechanical/generated/step/front_shell.step",
+    "bytes": 989865,
+    "sha256": "767ced74387aa41b546afe85bcb9f8e7b2b99c2a86d1a65d9118f75abd3d39c2"
+  },
+  {
+    "path": "mechanical/generated/step/hatch_cover.step",
+    "bytes": 128975,
+    "sha256": "af1da4ffdc73550aadbac52accc6d4f04589f9e41318689b47f4e58c94166629"
+  },
+  {
+    "path": "mechanical/generated/step/helicone_disk_al.step",
+    "bytes": 85812,
+    "sha256": "e5a90235814743a38a8af6d7c76c2591cd0b60eecd838ae841349f4b44709239"
+  },
+  {
+    "path": "mechanical/generated/step/hood.step",
+    "bytes": 95178,
+    "sha256": "65d982f3bc5ae8d4def6cf22fa020a00e808cf9497ded1c91d748d53eaff0bd6"
+  },
+  {
+    "path": "mechanical/generated/step/horn_ring_127.step",
+    "bytes": 210548,
+    "sha256": "821dcbfd854d974a2ddc7446ffe372c457215479ba7c0ed8f1cd3de0a88df37a"
+  },
+  {
+    "path": "mechanical/generated/step/horn_ring_180.step",
+    "bytes": 195458,
+    "sha256": "8ceb7b00850e9d555b9d0117840a2e599693d9571c78a6b3fe8a04d6c70eecce"
+  },
+  {
+    "path": "mechanical/generated/step/imu_carrier.step",
+    "bytes": 61578,
+    "sha256": "2092eca7a549ca6e7af1c9e4deba32f7ab7ababd8d4e489108c2863a7fc05201"
+  },
+  {
+    "path": "mechanical/generated/step/lime_pedestal_al.step",
+    "bytes": 22713,
+    "sha256": "aef8cf0935fd84769dfdbb62c559f5b045d301a2dfdfffd1a18bdf1646d67d62"
+  },
+  {
+    "path": "mechanical/generated/step/lnb_neck_adapter.step",
+    "bytes": 356059,
+    "sha256": "5c030f6c29f4032631838e0a6fbf6e63f5e37ddb37828a4a73cfe15a12e1e361"
+  },
+  {
+    "path": "mechanical/generated/step/lnb_throat_ring.step",
+    "bytes": 35135,
+    "sha256": "ef05ca15808ad948ddb9415057803c9d9407c04f47b3e1bda09bc088f433bda2"
+  },
+  {
+    "path": "mechanical/generated/step/main_knob.step",
+    "bytes": 223795,
+    "sha256": "aa8a9335035ccf81ab454ae6400816f5837c4a57363d25da1e8c149d8f333e69"
+  },
+  {
+    "path": "mechanical/generated/step/mandrel_hrpt_4t.step",
+    "bytes": 285310,
+    "sha256": "e48a88b11313282a9576d4a1ecacca68f3b524fbe2488ff2194773d805683b0a"
+  },
+  {
+    "path": "mechanical/generated/step/mandrel_sband_7t.step",
+    "bytes": 503833,
+    "sha256": "7edd27331aa0fb3d77b2c6fd2de401ba07dac84d01bc42b16e70b88e370511a8"
+  },
+  {
+    "path": "mechanical/generated/step/plate_al.step",
+    "bytes": 258783,
+    "sha256": "a4838f952919a8d4889c5ce7d014b13ff692edb2f3d9a338a7b101256d231063"
+  },
+  {
+    "path": "mechanical/generated/step/rear_shell.step",
+    "bytes": 829859,
+    "sha256": "4fb7c324737975b75711dad349e5357fb2804fbd4d983983d39d34f61b180891"
+  },
+  {
+    "path": "mechanical/generated/step/rf_bay_lid_fr4.step",
+    "bytes": 31178,
+    "sha256": "ed66c0d1a2e4bc4a68c873eb661dff482b556962820cfa3dcfb8c930d127bd75"
+  },
+  {
+    "path": "mechanical/generated/step/rf_bay_walls_fr4.step",
+    "bytes": 44457,
+    "sha256": "4c726d32a30040062e524d967ca0e5ea7b6d0c8910adc55579a59a11ff4b48ff"
+  },
+  {
+    "path": "mechanical/generated/step/t7_holder.step",
+    "bytes": 160963,
+    "sha256": "8de9da1ce372e0b05d40001344fe07733f5d69e0d5e9cad0a5a0f2b7cb1fc8af"
+  },
+  {
+    "path": "mechanical/generated/step/ufs_boss_al.step",
+    "bytes": 22865,
+    "sha256": "1842adf4e197a20550ddae40e2d6abc11373ac98445f0f668d3e99b34c0c7561"
+  },
+  {
+    "path": "mechanical/generated/step/yagi_boom_spigot.step",
+    "bytes": 73912,
+    "sha256": "804b1267441ba01c272f3cdde02573a675a729734a8cb6de0f0894b80ecfc271"
+  },
+  {
+    "path": "mechanical/generated/step/yagi_de_clamp.step",
+    "bytes": 64392,
+    "sha256": "ae58b28b1467a82b88d9c308a67f0178df186ecfdae55e5554ce8600caf44dd8"
+  },
+  {
+    "path": "mechanical/generated/step/yagi_tape_clamp.step",
+    "bytes": 41677,
+    "sha256": "a8d2d08e3c939d299435e2f24839752af3b2e39771c3f624bd467d7b06f166b0"
+  },
+  {
+    "path": "mechanical/generated/stl/battery_tray.stl",
+    "bytes": 47084,
+    "sha256": "d50a9baeb775b1f7b4622a13a481bf32eaaff109b942a26de50ef9199ca85305"
+  },
+  {
+    "path": "mechanical/generated/stl/button_cap_ribbed_x2.stl",
+    "bytes": 17484,
+    "sha256": "3e71d3e559c52e20adb378aebeb880b6ef05458188f22ffed9702707816442b3"
+  },
+  {
+    "path": "mechanical/generated/stl/button_cap_x4.stl",
+    "bytes": 16684,
+    "sha256": "eb184d50c94a5132dc692f71b45fc6b034f6ba7102dd94217695426aa7a4c753"
+  },
+  {
+    "path": "mechanical/generated/stl/display_clamp_x4.stl",
+    "bytes": 10084,
+    "sha256": "32adedca1b43d30c082e621a3edf967c48302acdcb2a437259a57ae77401ab0b"
+  },
+  {
+    "path": "mechanical/generated/stl/front_shell.stl",
+    "bytes": 934684,
+    "sha256": "08e21ba81707c8852aef9a3b34d2c89471872c7b494490eabf02081d84dbdd59"
+  },
+  {
+    "path": "mechanical/generated/stl/hatch_cover.stl",
+    "bytes": 40084,
+    "sha256": "5af089c317394b5dd1e06ba4157aa6950d6f65c4aad06e9909e0e464da118bc2"
+  },
+  {
+    "path": "mechanical/generated/stl/hood.stl",
+    "bytes": 21884,
+    "sha256": "d7ca48366d604568a525b960e821b0c10b68076ea25bd2d127ae1af176747171"
+  },
+  {
+    "path": "mechanical/generated/stl/horn_ring_127.stl",
+    "bytes": 91884,
+    "sha256": "b0809bbb01e745e81a9a90714dbe5a8d5d9ca3d7c0da752087a323891453ab85"
+  },
+  {
+    "path": "mechanical/generated/stl/horn_ring_180.stl",
+    "bytes": 94584,
+    "sha256": "03a107cffa66948bc05098f46f8eb5014fdb5cf088e92420a6a68372600fb90d"
+  },
+  {
+    "path": "mechanical/generated/stl/imu_carrier.stl",
+    "bytes": 102084,
+    "sha256": "f7f02e9a57bf22c984524f71b66fc55128ad3040cd92f04d6ec19e21f08f8e24"
+  },
+  {
+    "path": "mechanical/generated/stl/lnb_neck_adapter.stl",
+    "bytes": 72684,
+    "sha256": "3b595c7a3e34a208aed6a6ee59710ccc103318932ba81065901ab0b7380ce38e"
+  },
+  {
+    "path": "mechanical/generated/stl/lnb_throat_ring.stl",
+    "bytes": 87884,
+    "sha256": "3424ac4479262b1108c0ddad8c53d124b77eb915eb185d1f8472c3d58ebc9c80"
+  },
+  {
+    "path": "mechanical/generated/stl/main_knob.stl",
+    "bytes": 142384,
+    "sha256": "e5ece12a292e9ccbac08b5f36324de1acb8077bcf2595beb8c1509d246db9d08"
+  },
+  {
+    "path": "mechanical/generated/stl/mandrel_hrpt_4t.stl",
+    "bytes": 1184784,
+    "sha256": "be1c721c6cb7eb4850a3636e00662b2468c12821f451eb56dfa125ce97394f4b"
+  },
+  {
+    "path": "mechanical/generated/stl/mandrel_sband_7t.stl",
+    "bytes": 1585084,
+    "sha256": "4dacd4ceac6cfd8a19adcc4f58a7b3778aa37303891b5c0f0b86bf2a5b1c4012"
+  },
+  {
+    "path": "mechanical/generated/stl/rear_shell.stl",
+    "bytes": 590084,
+    "sha256": "4883427e0d438988c16c2ea724a176e8bd80607ae33235540aa5b7e7cc15f54b"
+  },
+  {
+    "path": "mechanical/generated/stl/t7_holder.stl",
+    "bytes": 53784,
+    "sha256": "ff4eda9ca4ad5e2fd33b1061289507ae4071a388a05ba3239fb3d3754ef224bd"
+  },
+  {
+    "path": "mechanical/generated/stl/yagi_boom_spigot.stl",
+    "bytes": 3884,
+    "sha256": "3b4e716b3d1f0ce741386a33f64d1458a13de73cfd3261a5b95cef5c26f68341"
+  },
+  {
+    "path": "mechanical/generated/stl/yagi_de_clamp.stl",
+    "bytes": 45484,
+    "sha256": "fc9cec39f104cf1965f61cbf01331c3cc8fc892068f6d8c2f3360d00da1d8d00"
+  },
+  {
+    "path": "mechanical/generated/stl/yagi_tape_clamp.stl",
+    "bytes": 27484,
+    "sha256": "bd4f853a87f8f8e89529131a2a159cd97cc50404d218a157887f52bc6cd830e3"
+  },
+  {
+    "path": "mechanical/generated/vendor-fit.json",
+    "bytes": 3344,
+    "sha256": "139cae344fb5638e96e5035dabd46ab939087fc86d2f77feba84df9204740940"
+  },
+  {
+    "path": "mechanical/params/antennas.json",
+    "bytes": 4537,
+    "sha256": "8d0f5242acdb63430a868d34318b76fef3ac2a036f5562727db0f27d673513cf"
+  },
+  {
+    "path": "mechanical/params/boards.json",
+    "bytes": 9439,
+    "sha256": "af1b997828eae6ed32a6e6c74c7b91fff6b7b5c54b16981c5da2e3c66e4e6c49"
+  },
+  {
+    "path": "mechanical/params/imu_pack.json",
+    "bytes": 2249,
+    "sha256": "29c16349b5e22bcbf6382f81756e48826b17e6ea22e171d67dd1cba7d7ba37c0"
+  },
+  {
+    "path": "mechanical/params/mechanical.json",
+    "bytes": 32927,
+    "sha256": "b634836276eaa875d3ba8c172bcffea3ba4d552990c210dbbbb3f0fa484985b1"
+  },
+  {
+    "path": "mechanical/params/parts.json",
+    "bytes": 21210,
+    "sha256": "bb47602d6d18454f966a8b595a06dfc86214879139b9b2da4af8a3a2f3398baa"
+  },
+  {
+    "path": "mechanical/params/vendor-models.json",
+    "bytes": 1622,
+    "sha256": "321aeb0e6afa4939b97578a08dd977545bd8bb66949db601855afb31c3f32142"
+  },
+  {
+    "path": "mechanical/requirements-mech.in",
+    "bytes": 552,
+    "sha256": "53fc5f57ba2cf9be0282fd48d76076b8e6c3775ea9a5c5ba5edab3b3208c3582"
+  },
+  {
+    "path": "mechanical/requirements-mech.txt",
+    "bytes": 91620,
+    "sha256": "b6466f8b82abd6dd051895b33c9318a6c1a5fdc05ff7d38ee14ffddac6799573"
+  },
+  {
+    "path": "mechanical/srrx_mech/__init__.py",
+    "bytes": 331,
+    "sha256": "516872285ea46ceae18876b170752ab961cc72cfee9636bb9904f2e2c6c58ac9"
+  },
+  {
+    "path": "mechanical/srrx_mech/antennas.py",
+    "bytes": 20048,
+    "sha256": "528793a7b7e60169d48fa3a608bb5a60a894004c4e760033977d716bcb4f813b"
+  },
+  {
+    "path": "mechanical/srrx_mech/boards.py",
+    "bytes": 10723,
+    "sha256": "62b2eeb88f15d5e10f0862453ae42ea8a8abac89104c8c36d8ecb078b71c12a8"
+  },
+  {
+    "path": "mechanical/srrx_mech/cad.py",
+    "bytes": 24402,
+    "sha256": "1b3233938e17df30380809e0ecc0fd8f2a67bf266cd8d4cc8ce71e4ab5f5a708"
+  },
+  {
+    "path": "mechanical/srrx_mech/cad_fixtures.py",
+    "bytes": 6008,
+    "sha256": "b9ca4addd943ab3e4de00752106bfd0311a9eb331796d4950d7cf367393dd839"
+  },
+  {
+    "path": "mechanical/srrx_mech/drawings_enclosure.py",
+    "bytes": 33565,
+    "sha256": "e0de1a4aef2dc94b985cae26810afbcda089c8ffe867217f6c37d9cb6e8996d8"
+  },
+  {
+    "path": "mechanical/srrx_mech/export3d.py",
+    "bytes": 4550,
+    "sha256": "2d19781f6e1faa2025fe9fdc2e02355033b4905bfaa75d0f40373a4d4cb45a1e"
+  },
+  {
+    "path": "mechanical/srrx_mech/features.py",
+    "bytes": 9585,
+    "sha256": "56289a4f3284a614f3514d380a175442cf1dd8179fda031d68f8681b842bda77"
+  },
+  {
+    "path": "mechanical/srrx_mech/geom2d.py",
+    "bytes": 10404,
+    "sha256": "5321ec1c2aab990462e3b701b7e62ce65bd8d75419d8f671e2f25e5d1af001e0"
+  },
+  {
+    "path": "mechanical/srrx_mech/interference.py",
+    "bytes": 8168,
+    "sha256": "90bd5cb1a445745eb9bf9ac559314f6d8c1f750c2032a3f8e2a3b0f5fa17f4c3"
+  },
+  {
+    "path": "mechanical/srrx_mech/layout.py",
+    "bytes": 12640,
+    "sha256": "94caf28862056787160f8477387a4a36fe9a0bf52fe25fd09cad090a095d51bd"
+  },
+  {
+    "path": "mechanical/srrx_mech/params.py",
+    "bytes": 907,
+    "sha256": "7c2dd8af90e8d085b6ea9f6d00dfe9eb80514ba2e820d6f311d9ed2f8ac993bd"
+  },
+  {
+    "path": "mechanical/srrx_mech/report_md.py",
+    "bytes": 11378,
+    "sha256": "164a66dd0cede51f7a762e896e593bbfab138c5997536974ecc995e5a04d7459"
+  },
+  {
+    "path": "mechanical/srrx_mech/rules.py",
+    "bytes": 30840,
+    "sha256": "029460b288de9c7b6c40f787dfaa1fa92dcafc9299dbabee6a5d60780d75b8ce"
+  },
+  {
+    "path": "mechanical/srrx_mech/thermal.py",
+    "bytes": 6015,
+    "sha256": "2fe8a48f3dfd74c43caefdd2a448dfe3034a76e449c4cce3b31a11679f741d60"
+  },
+  {
+    "path": "mechanical/srrx_mech/vendor.py",
+    "bytes": 4691,
+    "sha256": "d9361d0ec1ce867b1d73b8331bb71adb2b4f92c8cac275d69ac5fd1e67326592"
+  },
+  {
+    "path": "mechanical/srrx_mech/writers.py",
+    "bytes": 8250,
+    "sha256": "12b9b6b1568f24dc327db71a26225dbdd87fb2ea1225059a98bc276411dfabe0"
+  },
+  {
+    "path": "mechanical/tests/test_mech.py",
+    "bytes": 16646,
+    "sha256": "f44bf806a0616ece863abc227dacaffd1ff105396d3a387f9833180e57a1fc0b"
   },
   {
     "path": "minute-log.md",
@@ -1696,8 +3121,8 @@
   },
   {
     "path": "pcb/README.md",
-    "bytes": 3138,
-    "sha256": "1b9f336d3a01c9f32521336da514c20a995d5453aeb4d07bd9749bc6d01226c4"
+    "bytes": 3539,
+    "sha256": "830d64931ec0224893a5b537555e3526acc1797477b2d546168d14b4d3aea951"
   },
   {
     "path": "pcb/generate_layout.py",
@@ -1711,48 +3136,48 @@
   },
   {
     "path": "pcb/generated/components.csv",
-    "bytes": 166958,
-    "sha256": "c8a3c561a27ae3c9400089066f6489d3f3893b90f909c70dff76548c88f7b32e"
+    "bytes": 183321,
+    "sha256": "9e6bdc34a545f2e336583bc95d6d830c613508a454faee6549c191a62d61c21b"
   },
   {
     "path": "pcb/generated/constraints.json",
-    "bytes": 5537,
-    "sha256": "d8c68c072be7322a426dc311f0ff9dc14300faf2e32aa0af948b3ea5554e294d"
+    "bytes": 5645,
+    "sha256": "bfaf2030a8a971e475ca01fa64258d44651750ed793450f953b22b98821c1ef7"
   },
   {
     "path": "pcb/generated/detector-core-input.json",
-    "bytes": 188122,
-    "sha256": "14a5d3988a0e6e33a5e7b7134292d833edd25feafd3629fe5a69fc78db302892"
+    "bytes": 195623,
+    "sha256": "1956ef2cbdbd2326452c0c72595ce2c3f6b9eab8bafa110de1178a42589ad954"
   },
   {
     "path": "pcb/generated/detector-core-nodes.csv",
-    "bytes": 16376,
-    "sha256": "0d3178ceda9a1173c97c5b32f7873115da6b7a04acc3de1f19c183b24e06989d"
+    "bytes": 15376,
+    "sha256": "f278593b2f7de2b84a41564e7035289a7745e825ffc2c836fe4af78f75690065"
   },
   {
     "path": "pcb/generated/partition.json",
-    "bytes": 525270,
-    "sha256": "340b8ab2ed3f6184ea6b83defd3d0587f966fb7e2a9cc0c7d5687890e3f57589"
+    "bytes": 485303,
+    "sha256": "513c57f337cdff073af099aa01d905f5137e0b9efe6e2d902a4beb414ee90872"
   },
   {
     "path": "pcb/generated/provenance.json",
-    "bytes": 7892,
-    "sha256": "875376c62b1446f1a2b0532b1f80b524d975e6a6372710f2c3c1768d7d5ba7af"
+    "bytes": 8196,
+    "sha256": "a0e8b1fc9255e0097d550b7abd4da4a4232f8e125cfe2b90c87bb8e89926d29f"
   },
   {
     "path": "pcb/generated/summary.json",
-    "bytes": 1071,
-    "sha256": "d2777d23d47ef96b9e812f2ad4bc6f86de66fbd06b5801ca6c385d3fff5f352f"
+    "bytes": 1369,
+    "sha256": "9d4079771186e11fb692596af29f71397f6faa298640d131b6c029a305c16fbe"
   },
   {
     "path": "pcb/generated/unresolved.csv",
-    "bytes": 54643,
-    "sha256": "b1dab0fb867170081aac40ee96bcd3ee691fcfae5571366442a1bbf36683c6f0"
+    "bytes": 18420,
+    "sha256": "85ecb6824fbd38f45b131bfe05f5706a69ae937259b49066a8ffa25d8a93fc8a"
   },
   {
     "path": "pcb/prepare.py",
-    "bytes": 20387,
-    "sha256": "a50171fb854c4bc2c908ce73cdf096bec2570c3613dd1e0adc5cd798e210c783"
+    "bytes": 26713,
+    "sha256": "363ec58b5a8e4a70149f2018bd70952dad4ea912fd3e001d845be317cd509c17"
   },
   {
     "path": "software/CONSOLE-REVIEW.md",
@@ -1761,23 +3186,23 @@
   },
   {
     "path": "software/DECODERS.md",
-    "bytes": 13048,
-    "sha256": "38793837aae5c88b553b7447ed09eaf39ee13a6c8af93becfe29974accada68e"
+    "bytes": 19120,
+    "sha256": "1e5408a6d0a715a414a5a2b7ac8b992217d83ad1e79b009682e712b5269f2003"
   },
   {
     "path": "software/DEPLOYMENT.md",
-    "bytes": 50755,
-    "sha256": "19c753fe15a79f573bc92c9d4c7968af9fa8f294fcf6e14c3166a566e65ab929"
+    "bytes": 100081,
+    "sha256": "df85cad9320e92aa0d5366cb653ec19352838be3374e5890b9a67d8a69ef6831"
   },
   {
     "path": "software/GNSS-UART.md",
-    "bytes": 27939,
-    "sha256": "e5384d3224415578fc1b4b67250964cc80593713822a3dd0c168a77047f36212"
+    "bytes": 71423,
+    "sha256": "d967b4ced8609d13026f323cf9c22f443ac91ab0a22357784feaa05a6f5ecbfb"
   },
   {
     "path": "software/HMI.md",
-    "bytes": 31004,
-    "sha256": "ff6091702198dfaa48e0bc10d92ea8c286fa1b40f0f5478337f8b1ec87f0b036"
+    "bytes": 37987,
+    "sha256": "0501e9cea2178630c2e29f59b4c1f76f5e6055a3e36110b3e5d072198c0b642f"
   },
   {
     "path": "software/INTEGRATION-REVIEW.md",
@@ -1791,8 +3216,8 @@
   },
   {
     "path": "software/LOCATION.md",
-    "bytes": 20310,
-    "sha256": "fe81f5ff3ea3fa81a8eec938ab77a4435e3266689c1c0ce2d8fb58adfc7fb328"
+    "bytes": 28392,
+    "sha256": "649a1e0116f293db32b047d665961c4c0f30f25fe3717c638b2d5b3b809cb443"
   },
   {
     "path": "software/MODEL-EXPORT.md",
@@ -1806,38 +3231,48 @@
   },
   {
     "path": "software/PROTOCOL.md",
-    "bytes": 18685,
-    "sha256": "da505c01a0193b9f1f7db02db8248f68b6a5ec2d30736183b27941d91c70cacd"
+    "bytes": 21013,
+    "sha256": "264c7358ff8d8b7f1dc40231abe2d42de3d58b82eb41bc7dcf81d89942e14434"
   },
   {
     "path": "software/README.md",
-    "bytes": 19621,
-    "sha256": "e8662f06f4267b9fbe5eb9fecdc4ebdb3344144030e5dad48eb578d8491e977b"
+    "bytes": 21545,
+    "sha256": "01712bb5cc10ca44450e9947485401b59ffe43675b5f315b88ace87bd9d2e1af"
   },
   {
     "path": "software/RX.md",
-    "bytes": 22984,
-    "sha256": "3750b2993cd5b37d1de18d1ea4801a9c0dbcd6942d93a81591815be42fccc1a8"
+    "bytes": 36717,
+    "sha256": "c4f2f087452bc2f4443f1e2b62e4ce319e43ef96b0935fc3c5cad62be556795b"
   },
   {
     "path": "software/SCOPE-POLICY.md",
-    "bytes": 22177,
-    "sha256": "14c19782f4266a33f76f52d388cbe9dce509589eacc69c3158af0bcd205f975b"
+    "bytes": 45481,
+    "sha256": "38d340b59cf877047bca1794bf5b1b4c353661d85acea5ba3d88af9435d1dc7f"
   },
   {
     "path": "software/SPECTRUM.md",
-    "bytes": 16073,
-    "sha256": "2b2a77770a2890f0084252ef2e6fd3fc49277e159c88b5334f4fdf8d4f1219b7"
+    "bytes": 22044,
+    "sha256": "9e32f5ecd5ef0c3099dc7cc8741f9150e17ad33fce96387d8c4af520c12fe99d"
   },
   {
     "path": "software/config/acceptance.template.json",
-    "bytes": 21786,
-    "sha256": "c258c43d19c1fcbaaa87af5aa29fcaffcc3f5ef8e3768a998a978b6e1c880f9d"
+    "bytes": 23593,
+    "sha256": "9cc196a8b6f227bd84323b5013eac29a2fba28f440ad52e0e35379b8ec42e493"
   },
   {
     "path": "software/config/devices.env.example",
-    "bytes": 195,
-    "sha256": "d912879786341a7313852703a4d229444d6ae2f4805e0e8342e1db21a1c455a2"
+    "bytes": 297,
+    "sha256": "4ff0e38b8e446c6da1a66ca3b0018fabd1acea714f4cf7c0d3bf23b4fc4563e1"
+  },
+  {
+    "path": "software/config/hmi-requirements.lock",
+    "bytes": 1192,
+    "sha256": "e78298d4b4201ccab27de8a1153a853cffc9ebc04fc136bf2cde6324866a802f"
+  },
+  {
+    "path": "software/config/orbit-targets.json",
+    "bytes": 1187,
+    "sha256": "9054efde454c5fe20203cebee04ec5b94fe4a76635d918a85ab2493a3a154aea"
   },
   {
     "path": "software/config/rtl-driver.template.json",
@@ -1895,9 +3330,19 @@
     "sha256": "01af4d5ce201fe636a52f3849d25f4bdaadd04e7fad722e569ceeaf4b4f3949b"
   },
   {
+    "path": "software/srrx/artemis_convert.py",
+    "bytes": 32691,
+    "sha256": "09d86e8b8ffa2649e30cac6ca452dafe96a9628d9c40e957e9b789b72b0bf145"
+  },
+  {
+    "path": "software/srrx/baseband.py",
+    "bytes": 43130,
+    "sha256": "9ad86f3610ba324551ecf717b44c1cf0569a641c71f6a4d160e2c92f9c62a8a1"
+  },
+  {
     "path": "software/srrx/cli.py",
-    "bytes": 4184,
-    "sha256": "ae6acb6b32818833af78774fe7a25596f36437f1a6b65b27479b6a223c83bc10"
+    "bytes": 5693,
+    "sha256": "cc035aaedc60a6c5a834300a20a97cca9df44df6127d17a691efbd7f82d51c1b"
   },
   {
     "path": "software/srrx/commissioning.py",
@@ -1906,13 +3351,13 @@
   },
   {
     "path": "software/srrx/daemon.py",
-    "bytes": 13584,
-    "sha256": "48c1023cdf895f4b3ff8ca812068d18d5bd2dd3e24973466a5c358e0a6c91c75"
+    "bytes": 14833,
+    "sha256": "615cc463501e5cecf6a1770b9c09f012c602b16df0c9e51a847cf9f936b6b17d"
   },
   {
     "path": "software/srrx/decoder_policy.py",
-    "bytes": 19653,
-    "sha256": "d7a99359dec13d9abfe0ae744dd546fa8abf8b1143c66c63e9386fa8d44ce762"
+    "bytes": 34808,
+    "sha256": "6988181a44edb634ea557a5388ccff6180db7cf2fb5ec99908ed98bd8b755e87"
   },
   {
     "path": "software/srrx/demo.py",
@@ -1926,13 +3371,23 @@
   },
   {
     "path": "software/srrx/engine.py",
-    "bytes": 27253,
-    "sha256": "0325a6cff092f1eca1c65616fb9735199dd1402697a15fa2a740af8588a36538"
+    "bytes": 30389,
+    "sha256": "ffe3d91e135f777cfef4daca788ee50c9423317c6d8b94c6569b9dbab02cfdec"
   },
   {
     "path": "software/srrx/geo_look.py",
     "bytes": 18712,
     "sha256": "21a32e8f4e565428931e50ceb378f505ad6854c6a6817626684263e89ed9cc0c"
+  },
+  {
+    "path": "software/srrx/gnss_config.py",
+    "bytes": 12460,
+    "sha256": "38425bf6bd148882d2a869fbd92955c824258be8ebca862c83721562312e805d"
+  },
+  {
+    "path": "software/srrx/gnss_orchestrator.py",
+    "bytes": 29333,
+    "sha256": "b861bc502255b31ed921824b493c446c2e43ea6607137f65a136197247d0d690"
   },
   {
     "path": "software/srrx/gnss_uart.py",
@@ -1946,13 +3401,18 @@
   },
   {
     "path": "software/srrx/hmi.py",
-    "bytes": 110395,
-    "sha256": "e764c84aa66251e338dc4421a6f8e2a6ca5dfa982f2fb26e1f7e6d50ad546e39"
+    "bytes": 116075,
+    "sha256": "7a68ffd0eeea8d4051be291c72661c9e593c0feafc83b711756705f640101392"
   },
   {
     "path": "software/srrx/labrx.py",
-    "bytes": 19619,
-    "sha256": "64b11785da22b2451778a48e011e8dba66177e96e66cb19335b3a87c394ace69"
+    "bytes": 30035,
+    "sha256": "28678af2545d03a1fcda8288988231496ca05ff176d6666a14b1858873c8a9bf"
+  },
+  {
+    "path": "software/srrx/lc76g.py",
+    "bytes": 8394,
+    "sha256": "ccf18fb03858932d27e388518323ca6dc78ed3c89922729972a79626c90530ce"
   },
   {
     "path": "software/srrx/learning.py",
@@ -1970,9 +3430,24 @@
     "sha256": "f76fc0ad81f017596f569df502b7d6839028f31be77d37abe018b1d719b25dfb"
   },
   {
+    "path": "software/srrx/locationd.py",
+    "bytes": 19542,
+    "sha256": "cc3354c2cc2462aeb66809d4a2be524a0172bcaaf566acf41a1b77332b6d0238"
+  },
+  {
+    "path": "software/srrx/menu_model.py",
+    "bytes": 12082,
+    "sha256": "8cd685a2e6eaaab19a80913de3fa16ea25267cf991df4da4fd3b34585c80d098"
+  },
+  {
     "path": "software/srrx/model_export.py",
     "bytes": 30072,
     "sha256": "16e850a7acd5e9562f4fc9d3e5952d813d40cefe5667f96f98d7a50c4af87a37"
+  },
+  {
+    "path": "software/srrx/norad_allowlist.py",
+    "bytes": 17262,
+    "sha256": "83a645bdf44a86df55f54684cd6ecd8bbc8b4311ebefd1f6551a8f5dab44ec64"
   },
   {
     "path": "software/srrx/orbits.py",
@@ -1980,9 +3455,14 @@
     "sha256": "36f13c8e7c6e944d5831356471830f9fc85525071b5843e8d14e8df578633043"
   },
   {
+    "path": "software/srrx/pass_jobs.py",
+    "bytes": 23148,
+    "sha256": "6ac9b61b0a724b2e6ede2be498a84d7454cf5a24bfa8ece43e0edc65d18d6f46"
+  },
+  {
     "path": "software/srrx/passes.py",
-    "bytes": 19996,
-    "sha256": "775c63e5ada1aef43952a0d4d002baff5a0a093387619dea268b59f5c617dccb"
+    "bytes": 28303,
+    "sha256": "4a6125e0d402b982b1d452bd6eff2d7a6d2c75c56c5181bf6085b8a4eb62fa61"
   },
   {
     "path": "software/srrx/peripherals.py",
@@ -1991,8 +3471,8 @@
   },
   {
     "path": "software/srrx/policy.py",
-    "bytes": 31071,
-    "sha256": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b"
+    "bytes": 31545,
+    "sha256": "bdfef4495c37805e64add44a19c9d7311789f663f62f685d451d063356469d77"
   },
   {
     "path": "software/srrx/poweroff.py",
@@ -2020,9 +3500,14 @@
     "sha256": "d55b8b1192b8a18953993323fd173ca2f1013fcbe97f28d7e8cbe4ea907b24b5"
   },
   {
+    "path": "software/srrx/satdump_pass.py",
+    "bytes": 27566,
+    "sha256": "78e8e660e7e175ede1dfbf958a261f96887e751b8b10fe1638f83d19afb0468d"
+  },
+  {
     "path": "software/srrx/scope_policy.py",
-    "bytes": 35685,
-    "sha256": "a6e22e2effc12a39351bba1e75d648ef15f75eec4fa4fe3a99d23b9c025014f6"
+    "bytes": 35701,
+    "sha256": "01fef1a29624b4715ca75d4fac0f27f7a238ceb5594e8b1a1f3e85ca4a45240b"
   },
   {
     "path": "software/srrx/spectrum.py",
@@ -2031,8 +3516,8 @@
   },
   {
     "path": "software/srrx/storage.py",
-    "bytes": 15615,
-    "sha256": "775fdd716796c15f6fd1b7f9e9105c408bd67c33f45129e4996a6cdaab5ebcd8"
+    "bytes": 15973,
+    "sha256": "839627c7a9588e4a741d26d281b716d9defe1c68504ca3844efc48406d08da61"
   },
   {
     "path": "software/srrx/telemetry.py",
@@ -2040,9 +3525,29 @@
     "sha256": "418148d2427cddf48dabb51c05a54071d465e5697b8727116043c1252e6dfa60"
   },
   {
+    "path": "software/srrx/timegate.py",
+    "bytes": 5188,
+    "sha256": "63124fe1b227a61b1403d92697265873df4b571b01d34a3897950699c3ce1e5f"
+  },
+  {
+    "path": "software/srrx/voice_mask.py",
+    "bytes": 13540,
+    "sha256": "e9097bc3e036a0982c49d84828a2c4d7610291e66a7a041d7db8630f0b6cda84"
+  },
+  {
     "path": "software/srrx/wire.py",
     "bytes": 11128,
     "sha256": "f4ba993cbca9312c4639d3f6e8ddad083f7219017647026cb97b3e52a2f8fe3f"
+  },
+  {
+    "path": "software/systemd/srrx-gnss-config.service",
+    "bytes": 865,
+    "sha256": "3946df26ab37e0820973f71ccaa6d21668ab79a0874e2cd167a4946bd3398f52"
+  },
+  {
+    "path": "software/systemd/srrx-locationd.service",
+    "bytes": 893,
+    "sha256": "0d8112989a56603a600adfa52c4166c1ddf56dc9d8d836902e0d5b206bd3e841"
   },
   {
     "path": "software/systemd/srrx-menu.service",
@@ -2050,19 +3555,44 @@
     "sha256": "b69eb75a449c6b0657909c071abcec910dd377c852cb4a4fd857042de009c341"
   },
   {
+    "path": "software/systemd/srrx-passes@.service",
+    "bytes": 2008,
+    "sha256": "587cc0b08872775b805a7008a24ea3785c9193cd451ad001b2471804d72d92e0"
+  },
+  {
     "path": "software/systemd/srrx-poweroff.service",
     "bytes": 542,
     "sha256": "e6eb73829a455bc7832287bdb6e81b51acb0a5c5288d9a37b4323fd5e1f30556"
   },
   {
+    "path": "software/systemd/srrx-timegate.service",
+    "bytes": 832,
+    "sha256": "af915cc07d8296521fb17c26e2fa43a6697d9011344237d7cce6c5a1893a312b"
+  },
+  {
     "path": "software/systemd/srrx.service",
-    "bytes": 934,
-    "sha256": "f1c3d403623c759b6d919f42bbf2dcf09c7fdaaa6e417bd1eee25bdd73212e7e"
+    "bytes": 1003,
+    "sha256": "2ea3117bc787481238a15db32da69cdb093e038d34950129d327146ca864c737"
   },
   {
     "path": "software/tests/test_airspy_abi.py",
     "bytes": 7476,
     "sha256": "585c1328aab316235ea830a330cf05ac550727938ca132f10862f14a77d9ba4d"
+  },
+  {
+    "path": "software/tests/test_artemis_convert.py",
+    "bytes": 40075,
+    "sha256": "77c729e6871fca172f3f08d5b278cc7ea3df1626a2c20ef9e2953df549ba1e82"
+  },
+  {
+    "path": "software/tests/test_assembly_docs.py",
+    "bytes": 17184,
+    "sha256": "7b6704c2dded70fa216f94057d6ba0e0c422947f3d257bca74f5d4aae9d3674d"
+  },
+  {
+    "path": "software/tests/test_baseband.py",
+    "bytes": 31362,
+    "sha256": "f51998770eb8cba5d0616dc7fe868697c56e3546cd89d72989ad37407b25906b"
   },
   {
     "path": "software/tests/test_calibration_fixed_point.py",
@@ -2081,8 +3611,8 @@
   },
   {
     "path": "software/tests/test_decoder_policy.py",
-    "bytes": 16806,
-    "sha256": "8acb3b013135d650ac1f895dfff723fc1f808e3b4ae69b6c12ad7427723a39a6"
+    "bytes": 29144,
+    "sha256": "7f1c4e044cf21ad8edc0871de01cc38b817ee24021252bedc8454f42d18283eb"
   },
   {
     "path": "software/tests/test_demo.py",
@@ -2091,8 +3621,8 @@
   },
   {
     "path": "software/tests/test_design_power_gates.py",
-    "bytes": 7902,
-    "sha256": "400cb43c3b7b2f90efda723930adf833d57234833e3c4ade0e9b585e4668d1cd"
+    "bytes": 8738,
+    "sha256": "ac006789160cc7d9f88611213441adb80b087af135b8b170c2fba16a8613b7e6"
   },
   {
     "path": "software/tests/test_egc_gate.py",
@@ -2103,6 +3633,16 @@
     "path": "software/tests/test_geo_look.py",
     "bytes": 23682,
     "sha256": "6b92a524e638460c597c38912c7850d34d9e48a14bd53c90fc856a9ec9703e6b"
+  },
+  {
+    "path": "software/tests/test_gnss_config.py",
+    "bytes": 19947,
+    "sha256": "6b419ec49937b770534648d9b4f95b6b1879066944d0fc871874441807ba7761"
+  },
+  {
+    "path": "software/tests/test_gnss_orchestrator.py",
+    "bytes": 36611,
+    "sha256": "b3a329e305277a65a109f89d264de1b4d3732cf2962df72ca76285572e9bd6b2"
   },
   {
     "path": "software/tests/test_gnss_reset.py",
@@ -2121,8 +3661,8 @@
   },
   {
     "path": "software/tests/test_hmi.py",
-    "bytes": 108578,
-    "sha256": "27c2d640915a7f6edf40bde2f9c646ad38f5935711aa21f8d31c31aebfd172d8"
+    "bytes": 112533,
+    "sha256": "f2ede96950f71d321f263f2da12909b01b02a59a5d2ded8edd4063005d91985f"
   },
   {
     "path": "software/tests/test_host_hmi_age.py",
@@ -2150,6 +3690,16 @@
     "sha256": "84c5a2dc6e356258094b7896c65997c4c06e67cda9c0f816bec3763b4360d781"
   },
   {
+    "path": "software/tests/test_locationd.py",
+    "bytes": 19849,
+    "sha256": "211f2730cda62f596e4de0e125b25f450b5e42593be601d04bc1f414e3943703"
+  },
+  {
+    "path": "software/tests/test_menu_model.py",
+    "bytes": 17699,
+    "sha256": "9089315cb16e831b60ef52e9ceb85a261d18b04504451108e847d4e9df28634f"
+  },
+  {
     "path": "software/tests/test_mode_recovery.py",
     "bytes": 1142,
     "sha256": "ec4d4f31a915bc2274b868b771ec3a2aca8b48f841ff8dfa2385348ebbaf269b"
@@ -2161,8 +3711,13 @@
   },
   {
     "path": "software/tests/test_module_lab.py",
-    "bytes": 20546,
-    "sha256": "548b008c6d3ed561644bc9f8bdbf0b2007d50d7a52b1e54caa3c3b28d791ae18"
+    "bytes": 21901,
+    "sha256": "d2a25a71133df2a1b2c3028084f3489667d388c04a9662417b5a09a7d7081a02"
+  },
+  {
+    "path": "software/tests/test_norad_allowlist.py",
+    "bytes": 16945,
+    "sha256": "af4f048d036719a4dd9763de445c1e4882e3b9d6dee92d6600d0f972274ba098"
   },
   {
     "path": "software/tests/test_orbits.py",
@@ -2170,9 +3725,19 @@
     "sha256": "57d9b5bc5ef6d288b47153582b6f78dd506f8cab59dc58efb7f34f04d55e4391"
   },
   {
+    "path": "software/tests/test_parts_database.py",
+    "bytes": 14233,
+    "sha256": "7cdab723abe7b0c510e2beff32f63605ce43134bdea979f735b22c5b45dd6cd5"
+  },
+  {
+    "path": "software/tests/test_pass_jobs.py",
+    "bytes": 55714,
+    "sha256": "f72aa7e84dfcc950e114be6177ab42bd79f96028b63872f6b52f5d337e661c21"
+  },
+  {
     "path": "software/tests/test_passes.py",
-    "bytes": 26207,
-    "sha256": "0aa2a30ff2067ed22b0c366b2e90a16fc773fd6860642fa3edb9a68ede21e918"
+    "bytes": 26242,
+    "sha256": "5f7d932baf65f8d3abc3ec9e7560f1e75d9e531913d87c8d6c6d8c6a003961a1"
   },
   {
     "path": "software/tests/test_peripherals.py",
@@ -2181,8 +3746,8 @@
   },
   {
     "path": "software/tests/test_pico_main.py",
-    "bytes": 13917,
-    "sha256": "88fbe8bbab229a8d7a65e81ff4d7414a481d0352278335558e4e9819e611d946"
+    "bytes": 17266,
+    "sha256": "99dcdebb4bb917cebe717cc4e540ae2e6e521aeb7e0f29472235316745650ebf"
   },
   {
     "path": "software/tests/test_policy.py",
@@ -2210,6 +3775,11 @@
     "sha256": "2852b517d504ad676a5b771fae4e9f52199592d6316656830f69177d1b3ed5d7"
   },
   {
+    "path": "software/tests/test_satdump_pass.py",
+    "bytes": 25767,
+    "sha256": "99067b7e8c98db34401448b7b7b9170f8ea501ae22c2c87b1dc84d59e8131698"
+  },
+  {
     "path": "software/tests/test_scope_policy.py",
     "bytes": 43807,
     "sha256": "19cae082b9cf1c5fc254f4b93988e21f7fdd482b9f7d3ad90cccb44fa7dd70b2"
@@ -2221,8 +3791,8 @@
   },
   {
     "path": "software/tests/test_service_failures.py",
-    "bytes": 50726,
-    "sha256": "29ebe28a9a314f3831d89ff02272468e3c439ceaf6c1316e77e3941f55dfd34c"
+    "bytes": 58919,
+    "sha256": "b9296249e0c831bb73e6433f60157733d860aa0717d881964901fdae15463423"
   },
   {
     "path": "software/tests/test_spectrum.py",
@@ -2236,8 +3806,8 @@
   },
   {
     "path": "software/tests/test_supervisor.py",
-    "bytes": 34634,
-    "sha256": "5d63e07c411c7cb7c2d86747c218630a9dddd07dbd45a23adf63d9c75edf67fb"
+    "bytes": 43578,
+    "sha256": "8939354aefab7d6dbeb66a3aa037674b6dea2858e2d336280ff30634cb5a254b"
   },
   {
     "path": "software/tests/test_telemetry.py",
@@ -2245,14 +3815,24 @@
     "sha256": "c3a797a5cb7d92e632325d35e7aaa14c18cb72718ea74d1ff80769f39931304d"
   },
   {
+    "path": "software/tests/test_timegate.py",
+    "bytes": 7705,
+    "sha256": "e456d160f4c5ae4efe14269a48b35c260aeca7bb48335b2ac19ab18c7bdff043"
+  },
+  {
     "path": "software/tests/test_tool_documents.py",
-    "bytes": 21947,
-    "sha256": "7d5e22b734df682a8e6cedc85e12293025f4215e9332f5964db4f81dc20a02c5"
+    "bytes": 21949,
+    "sha256": "26e7d45af9eada2baa94ec284f0a2bf4dab927eba67a553cbf023e7ad4bb8855"
   },
   {
     "path": "software/tests/test_tool_gates.py",
-    "bytes": 21430,
-    "sha256": "424f50eae850a130aba307b761542bc9013ed1dc9d36a9833cdeee1ab221dc2c"
+    "bytes": 22316,
+    "sha256": "7fd17d5d126a1fd78efce996b02643be536c2f9a2a2080495a8d3176df3c2400"
+  },
+  {
+    "path": "software/tests/test_voice_mask.py",
+    "bytes": 10391,
+    "sha256": "6ec4c5cb0a88899ec301d5e73100a61350f1621663a1382fd729b18a3ba49c4c"
   },
   {
     "path": "software/tests/test_wire.py",
@@ -2265,19 +3845,34 @@
     "sha256": "b5662c6738ee4e68d104cd7f5a4069bca3d7847bfd5b00bebc91f32057ef6548"
   },
   {
+    "path": "tools/assembly_data.py",
+    "bytes": 102694,
+    "sha256": "ae05aedb5a6e11e034f9e4668e82c890060f6425b953bf76d5407175363589da"
+  },
+  {
+    "path": "tools/build_assembly_docs.py",
+    "bytes": 88113,
+    "sha256": "a32a3925326279f7a2c61e2d0e7c40729c7e6ef89d938e260f4811652439104b"
+  },
+  {
     "path": "tools/build_bundle.py",
-    "bytes": 28122,
-    "sha256": "acb5c59f5bbb5ac7c454df978b6a93bc3d52f803538896bcd8b7cc4d6d1a1a44"
+    "bytes": 28222,
+    "sha256": "c6ad8ccb8e2c8e14a0d760548d535457b88f5bb780e52b73347ad4955b7a6800"
   },
   {
     "path": "tools/build_documents.py",
-    "bytes": 30686,
-    "sha256": "5fcfb653e7449c3afea7576c510a0cd8f19791860845e853e22a2b68f5166d9e"
+    "bytes": 33731,
+    "sha256": "b0fff8335cf19a33ac07fe8d8847badf71e9e2e725c55d57773a2addf32e504f"
   },
   {
     "path": "tools/build_firmware.py",
     "bytes": 4542,
     "sha256": "076eedc4430a2705cda369ab7c7797f7535e5ec78739aaa22b2253fd49f5798a"
+  },
+  {
+    "path": "tools/build_parts.py",
+    "bytes": 69386,
+    "sha256": "85b19200a4b5fec4f16292c7506b6ba17e55811b284145954779b5b1d51ae3d6"
   },
   {
     "path": "tools/check_bundle.py",
@@ -2290,19 +3885,34 @@
     "sha256": "76c006bbc4ba0af226bb12cfd8a37814154eb9fb0f5cbab1428afd8aaf79b7d6"
   },
   {
+    "path": "tools/check_parts_availability.py",
+    "bytes": 4459,
+    "sha256": "acbc734e82c2b869d32bc228f35e8da6cc6f35f2b1d77d9b246db4d7c7fba4e2"
+  },
+  {
     "path": "tools/check_software.py",
-    "bytes": 2798,
-    "sha256": "292249ed38f3d4418dbc8da447c949a4061443598cdcc1c287c5a1a71a23db1b"
+    "bytes": 4056,
+    "sha256": "d62e175ef5c666a309a7879ec0f04757073c5a3e522207f8c0c5003d45c95369"
   },
   {
     "path": "tools/finalize_linux_lab.py",
-    "bytes": 14985,
-    "sha256": "cdbfd86bc23b8657ecd7c0c6734ca286792ee7aed390b5615a8cd6ee6b27b58b"
+    "bytes": 15886,
+    "sha256": "d9c7b7b07d2fb9eea609d87f18b5f8c97947db49ca8615397ef0b2e439bd8337"
+  },
+  {
+    "path": "tools/flash_mcu.py",
+    "bytes": 17801,
+    "sha256": "6acf5bb9cff309a85212041bc5c080709799a4319db74382c6802a4191dcee30"
   },
   {
     "path": "tools/generate_kicad.py",
-    "bytes": 111692,
-    "sha256": "e7cf71a05ff847df3f9760e47e57d87280511d963940d48a567a6b99443d2c47"
+    "bytes": 112100,
+    "sha256": "1a1f2ac72e7a90d1d2933d3bb39744c104d4435d376879eb5a69a18f2d410d53"
+  },
+  {
+    "path": "tools/make_footprints.py",
+    "bytes": 24662,
+    "sha256": "e30e7fa185ad2ea1aff65e3749cff6bdbfccfbf31a8cf2a45b96de7f90371ee6"
   },
   {
     "path": "tools/normalise_outputs.py",
@@ -2347,7 +3957,7 @@
   {
     "path": "verification/electrical-invariants.json",
     "bytes": 1521,
-    "sha256": "3fc548b77366c63d8e9be2368e6ab0b217868f8fa0fd7dd6647d7f47d72795b3"
+    "sha256": "2b219e9e30c55c142c50709f5cb89456553650bef6ebf553e4e43703a666b076"
   },
   {
     "path": "verification/erc.json",
@@ -2372,7 +3982,7 @@
   {
     "path": "verification/hmi-views/04-location.png",
     "bytes": 100926,
-    "sha256": "0c68bc09e9be24fc9a44659f87603cb1d2c843e125944bd056bb699e024f480a"
+    "sha256": "a7ad8e53e6c50b3ef05d824a44d85002d3a98c600e03a816da0c50f94496eb55"
   },
   {
     "path": "verification/hmi-views/05-teach-classify.png",
@@ -2387,7 +3997,7 @@
   {
     "path": "verification/hmi-views/report.json",
     "bytes": 2923,
-    "sha256": "a85ea37c425a91725032b6536a3bdc69db2e119b84a9e9519d1599edd52eff5f"
+    "sha256": "2d68cdf687608462d176408fb0b86f628bcf9d974dda4aa084aaec6cb3391124"
   },
   {
     "path": "verification/host-native/README.md",
@@ -2407,12 +4017,12 @@
   {
     "path": "verification/independent-netlist-review.json",
     "bytes": 12481,
-    "sha256": "afdc6d09c0ccd56eab7017f44d5296fe2111e74808c2aa2fa778838306eb9253"
+    "sha256": "af77b431646492cfb38fdc0e9e64d5062e29dff1bd11a3da73d4b7c11268037d"
   },
   {
     "path": "verification/independent-netlist-review.md",
-    "bytes": 2219,
-    "sha256": "6f4089b7f89720c45f439a623f48b42df92110977a53a973cf4ff84036823545"
+    "bytes": 2330,
+    "sha256": "ad20df91ef299d263432c9fd22541ac39c11332d4e11e8cb9e14d24498f7442f"
   },
   {
     "path": "verification/independent_netlist_check.py",
@@ -2426,8 +4036,8 @@
   },
   {
     "path": "verification/linux-attempts/README.md",
-    "bytes": 3972,
-    "sha256": "e997c4a515b626e5d8a971e57891c3f7037ab2caade1f8fce8d59bcb81c5a6ca"
+    "bytes": 4439,
+    "sha256": "d19842c98e6d50968641f4a15601d60ab5c753067bd304027ec3480035ed5f39"
   },
   {
     "path": "verification/linux-attempts/run03/report.json",
@@ -3140,19 +4750,309 @@
     "sha256": "0d374ffece77916a47980085894004401ff7c6c1edff647779d3e421ca8e6c8a"
   },
   {
-    "path": "verification/linux-lab/README.md",
+    "path": "verification/linux-attempts/run09/README.md",
     "bytes": 3308,
     "sha256": "a89accecd9a7f986549ab1814ad98222c362482ac6adddf53c12418126da9f0c"
   },
   {
-    "path": "verification/linux-lab/bootstrap.log",
+    "path": "verification/linux-attempts/run09/bootstrap.log",
     "bytes": 2665,
     "sha256": "8007b68fb8add6959b0e5d3cb1d6cc99432e2deb5114530d9b8a03db51f81d78"
   },
   {
-    "path": "verification/linux-lab/console.log",
+    "path": "verification/linux-attempts/run09/console.log",
     "bytes": 81828,
     "sha256": "0999bce5df0074817f5b171b9c1af4512596615a2828dab69ae6b7243eb3c676"
+  },
+  {
+    "path": "verification/linux-attempts/run09/debian-packages.txt",
+    "bytes": 24078,
+    "sha256": "1e340f4e77f20493ca0453165fdba83510e4a58daf84c6b32c4ccbb10177b67d"
+  },
+  {
+    "path": "verification/linux-attempts/run09/debugfs.log",
+    "bytes": 7038,
+    "sha256": "9bcbcb08f1dfe1a884dcb69af615e273f3646ba646b2de7842a2aad6ced57556"
+  },
+  {
+    "path": "verification/linux-attempts/run09/dependency-verification.json",
+    "bytes": 235,
+    "sha256": "2112114ce895dba98acc0579275d22ba5f92925965399696838240088821fa4f"
+  },
+  {
+    "path": "verification/linux-attempts/run09/dpkg-install.log",
+    "bytes": 19261,
+    "sha256": "24e085a788c57e6c42c87e4e442bd9162dc6c82c6f36f05caced83f3704c29b1"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui/fixture-kill.json",
+    "bytes": 2192,
+    "sha256": "f80802db48aae031d104461ad11b54443320e6bf5a2b6269053b0e7a919c80f0"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui/fixture-pause.json",
+    "bytes": 2796,
+    "sha256": "eb18a094cb23d1cb6acee384fc572b2ff8dead69afa1c55f26a6722ac5e7d659"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui/kill-qt.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui/kill-startup-disarmed.png",
+    "bytes": 122059,
+    "sha256": "1cbe18ce2f07230e5cd3a337a5a6ee8b8db81f5ad8bef543ad7320685b6cbfe9"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui/pause-qt.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui/pause-resumed-disarmed.png",
+    "bytes": 121234,
+    "sha256": "36b79ece86c950e87d541ef52d80f6e7a4a646fafa185ad2c79c8623625df36e"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui/pause-startup-disarmed.png",
+    "bytes": 122442,
+    "sha256": "f95cf9957a835ca9fc4f163809b7fd99ae1cf4e355339178e246136a192a6a13"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui/report.json",
+    "bytes": 64698,
+    "sha256": "b9e8b868c5a5902234d8aad48e8724682b6b11c6051a907a91f413f3d40f2f69"
+  },
+  {
+    "path": "verification/linux-attempts/run09/gui-smoke.json",
+    "bytes": 64698,
+    "sha256": "b9e8b868c5a5902234d8aad48e8724682b6b11c6051a907a91f413f3d40f2f69"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/MODULE-RESULTS.md",
+    "bytes": 29390,
+    "sha256": "ed73f6fe4c05af6e014443d5d4c622f7ec8f92519d717056955539f4c31df097"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/connectivity.json",
+    "bytes": 2876831,
+    "sha256": "9c2fc0cc6c43dfb7b2479097ef209bfe530fb5ec2e813e17d18d001af30e4dc5"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/connectivity.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/io.json",
+    "bytes": 15380,
+    "sha256": "5a3da4d02d5e674db2a3f96ddaf927abcdd151f146e364cc7766e92b8d74bf1c"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/io.log",
+    "bytes": 140,
+    "sha256": "65d17faf23f8268daadc8eeaadd6895c810f5ad847105ef6085b7c193a5c2871"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/location.json",
+    "bytes": 6382,
+    "sha256": "ca21849416ef57b1892f8f6e15717858628c5d9ffb4ca765f78f1c4dac31c261"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/location.log",
+    "bytes": 204,
+    "sha256": "40fbc4d56b403c68dcf14c60d01e14f3aa90a82c260a1c73f4d5d820be0c853d"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/mcu.json",
+    "bytes": 16620,
+    "sha256": "7e3c57de3c024e1ab083780074d9078d95d11038c1847ceec11c3054ddeb4211"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/mcu.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/power.json",
+    "bytes": 37609,
+    "sha256": "197c6f8a5505ea8b2835c65928dca07fe4db693545b43ab58145353510547fb9"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/power.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/radio.json",
+    "bytes": 47162,
+    "sha256": "f0a86a3924738ab2882772f5852ca272469ad7956945851ed7ce4789bb2fc342"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/radio.log",
+    "bytes": 47162,
+    "sha256": "f0a86a3924738ab2882772f5852ca272469ad7956945851ed7ce4789bb2fc342"
+  },
+  {
+    "path": "verification/linux-attempts/run09/module-lab/report.json",
+    "bytes": 4629648,
+    "sha256": "7ffc4c78ecc6a7378136a5ae099cde0d82427e4115f292ee0ac7155c998bc1f8"
+  },
+  {
+    "path": "verification/linux-attempts/run09/payload-manifest.json",
+    "bytes": 19186,
+    "sha256": "28b4a95118ba8ef56c8a996aef2316952cbff27c5ec3f51d1ccc7d13ec9f336d"
+  },
+  {
+    "path": "verification/linux-attempts/run09/pip-bootstrap.log",
+    "bytes": 475,
+    "sha256": "f882a08f1df6ce24b83a92fd0127f973e0deb51d771d456fe55259f6b61b8923"
+  },
+  {
+    "path": "verification/linux-attempts/run09/pip-dependencies.log",
+    "bytes": 4909,
+    "sha256": "7c51026d6990fbb49c9d360bd2b67a73da0ece9a92fbdb5885ab849670a6607f"
+  },
+  {
+    "path": "verification/linux-attempts/run09/pip-install.log",
+    "bytes": 745,
+    "sha256": "686a71acc24f869b1a38cd8c73066dee6c76abe64cb83b3553e5efc31155b4c8"
+  },
+  {
+    "path": "verification/linux-attempts/run09/project-manifest.json",
+    "bytes": 104262,
+    "sha256": "724550d16239bc52530086794c7ac69f99957de3500178a534be478662d30cfa"
+  },
+  {
+    "path": "verification/linux-attempts/run09/pty-smoke.json",
+    "bytes": 4360,
+    "sha256": "6b63b78681d6757a3912d382d867127ec0da524b3d20fbe095c02de9efd5e4c6"
+  },
+  {
+    "path": "verification/linux-attempts/run09/python-packages.txt",
+    "bytes": 465,
+    "sha256": "812f36300ef5f1ec929d8edf9265f34f775c451619b7aa6324eb7e65a0d95561"
+  },
+  {
+    "path": "verification/linux-attempts/run09/report.json",
+    "bytes": 1487,
+    "sha256": "194b5899f8596845900b4e04a24837eaa3dbcc3678abd1bc16a2cbb4a63be611"
+  },
+  {
+    "path": "verification/linux-attempts/run09/run.json",
+    "bytes": 2048,
+    "sha256": "4ba6d2512198c8fc2a2eaeb2e4dd17ba56000ded52caa191f3717eca2b1d642c"
+  },
+  {
+    "path": "verification/linux-attempts/run09/rx-worker-smoke.json",
+    "bytes": 4814,
+    "sha256": "2d05e45c5b0bcbfe79e57d4c6ac66c0f97682ff06901ae69ffd9ef45ac8c5069"
+  },
+  {
+    "path": "verification/linux-attempts/run09/software-tests.json",
+    "bytes": 8225,
+    "sha256": "d9ef8dedde459a3e68e6c0b232517afafa8fca7764da267106fdcdf4d7fe7af1"
+  },
+  {
+    "path": "verification/linux-attempts/run09/source-binding.json",
+    "bytes": 17243,
+    "sha256": "db82d1b38ca8e74c7811b491c34117ee802c6eb0f28c8dc11b740336f603b2da"
+  },
+  {
+    "path": "verification/linux-attempts/run09/storage-smoke.json",
+    "bytes": 2097,
+    "sha256": "7367b9026cffb1301cbdb8c2f4c80a3d34befa044e51589c5b54288e45966496"
+  },
+  {
+    "path": "verification/linux-attempts/run09/suite-exit-codes.json",
+    "bytes": 77,
+    "sha256": "513334200f02c09332aa697862dddf91ff9ac11bce6364df4d447deaf2520404"
+  },
+  {
+    "path": "verification/linux-attempts/run09/summary.json",
+    "bytes": 1234,
+    "sha256": "4f7cd5347ac56cef98046e47e8f948f091c5b9f2a05f7f391f7b80e27fd2d877"
+  },
+  {
+    "path": "verification/linux-attempts/run09/system-smoke.json",
+    "bytes": 41117,
+    "sha256": "3579fc34f732a84125f45fb097dcb4327bdd89aba09803e38d661a063f9bd905"
+  },
+  {
+    "path": "verification/linux-attempts/run09/unit-tests.log",
+    "bytes": 1275,
+    "sha256": "17810d6c24b513ae50bf3e0a31b0a304ba1f0590369bcbf7bc2ba87f43f4a1a9"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/cli-screen.json",
+    "bytes": 1030,
+    "sha256": "e0cd83c848c8dc0653576ef450654a785722dfa946389d573643f8629789ae53"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/cli-screen.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/menu-fixture.json",
+    "bytes": 2348,
+    "sha256": "ac695d54357057357ee3d1333b6a5dca05bf25c0dc3597054d9fbde6fad93bce"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/menu-fixture.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/production-cli-xcb.png",
+    "bytes": 123403,
+    "sha256": "af312dd4a6e05cfb4e05b21ede42c8b2a16bbd1a93a7f546bc83cb3eea4e62ff"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/production-cli.stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/production-menu-widget-xcb.png",
+    "bytes": 122059,
+    "sha256": "1cbe18ce2f07230e5cd3a337a5a6ee8b8db81f5ad8bef543ad7320685b6cbfe9"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/production-menu-xserver-xcb.png",
+    "bytes": 122059,
+    "sha256": "1cbe18ce2f07230e5cd3a337a5a6ee8b8db81f5ad8bef543ad7320685b6cbfe9"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/report.json",
+    "bytes": 8177,
+    "sha256": "8a00d1e919214606b56d914ab86d3c67091dd9c58ab4108aa00eb92d0609f751"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb/xvfb.log",
+    "bytes": 3571,
+    "sha256": "bbeeadfcf7445edd34fefc5f3774d3594c965ae64f05b5a51113f1ac907a41be"
+  },
+  {
+    "path": "verification/linux-attempts/run09/xcb-smoke.json",
+    "bytes": 8177,
+    "sha256": "8a00d1e919214606b56d914ab86d3c67091dd9c58ab4108aa00eb92d0609f751"
+  },
+  {
+    "path": "verification/linux-lab/README.md",
+    "bytes": 3687,
+    "sha256": "4767b5bd4a9a0bc21e7638c03e7a9beae22f7d9fafbe0aceb9e02195d68fde8a"
+  },
+  {
+    "path": "verification/linux-lab/bootstrap.log",
+    "bytes": 2665,
+    "sha256": "f1ebde9d0f2adf8fa2670602f56f3fcade0c873ece78691e01a0b3904dd83609"
+  },
+  {
+    "path": "verification/linux-lab/console.log",
+    "bytes": 84842,
+    "sha256": "c5327c5b8e757cb976b97775dc0b2c003a8a93b3fc04c75de7c7cbe94c7b842d"
   },
   {
     "path": "verification/linux-lab/debian-packages.txt",
@@ -3176,13 +5076,13 @@
   },
   {
     "path": "verification/linux-lab/gui/fixture-kill.json",
-    "bytes": 2192,
-    "sha256": "f80802db48aae031d104461ad11b54443320e6bf5a2b6269053b0e7a919c80f0"
+    "bytes": 2191,
+    "sha256": "48473192f44d55300a1736385776a011f08dbd293a03d646730f25b04569b7ca"
   },
   {
     "path": "verification/linux-lab/gui/fixture-pause.json",
-    "bytes": 2796,
-    "sha256": "eb18a094cb23d1cb6acee384fc572b2ff8dead69afa1c55f26a6722ac5e7d659"
+    "bytes": 2793,
+    "sha256": "aa480241bacee61d1df857ee47f2c29874ec72b40c48b37b9ecffc34078036bf"
   },
   {
     "path": "verification/linux-lab/gui/kill-qt.stderr.log",
@@ -3211,18 +5111,18 @@
   },
   {
     "path": "verification/linux-lab/gui/report.json",
-    "bytes": 64698,
-    "sha256": "b9e8b868c5a5902234d8aad48e8724682b6b11c6051a907a91f413f3d40f2f69"
+    "bytes": 61324,
+    "sha256": "40e7ff6bd926d0d8ead375ae7eb86461804aa519f839dcd55180beb27f3ccbfd"
   },
   {
     "path": "verification/linux-lab/gui-smoke.json",
-    "bytes": 64698,
-    "sha256": "b9e8b868c5a5902234d8aad48e8724682b6b11c6051a907a91f413f3d40f2f69"
+    "bytes": 61324,
+    "sha256": "40e7ff6bd926d0d8ead375ae7eb86461804aa519f839dcd55180beb27f3ccbfd"
   },
   {
     "path": "verification/linux-lab/payload-manifest.json",
     "bytes": 19186,
-    "sha256": "28b4a95118ba8ef56c8a996aef2316952cbff27c5ec3f51d1ccc7d13ec9f336d"
+    "sha256": "761bb3f677c6b70b1d95fc0738c863008d85cc3fca8a7a17a69c56023b3df4aa"
   },
   {
     "path": "verification/linux-lab/pip-bootstrap.log",
@@ -3237,17 +5137,17 @@
   {
     "path": "verification/linux-lab/pip-install.log",
     "bytes": 745,
-    "sha256": "686a71acc24f869b1a38cd8c73066dee6c76abe64cb83b3553e5efc31155b4c8"
+    "sha256": "09795e614d603665f81edccd7cf060e3e716c238cf0accbd66d880bd03a2fe03"
   },
   {
     "path": "verification/linux-lab/project-manifest.json",
-    "bytes": 104262,
-    "sha256": "724550d16239bc52530086794c7ac69f99957de3500178a534be478662d30cfa"
+    "bytes": 115289,
+    "sha256": "159a711f452520f7bb0846509c7c38c6580a4d66efb368899a43d0c1187804b6"
   },
   {
     "path": "verification/linux-lab/pty-smoke.json",
     "bytes": 4360,
-    "sha256": "6b63b78681d6757a3912d382d867127ec0da524b3d20fbe095c02de9efd5e4c6"
+    "sha256": "443359e823d9b705531a4a903593e140f9d8c8aa7b65c7006a2e8930c5499dac"
   },
   {
     "path": "verification/linux-lab/python-packages.txt",
@@ -3255,34 +5155,39 @@
     "sha256": "812f36300ef5f1ec929d8edf9265f34f775c451619b7aa6324eb7e65a0d95561"
   },
   {
+    "path": "verification/linux-lab/qemu-loaded-objects.json",
+    "bytes": 2728,
+    "sha256": "caacefc042bbbcb7a764ee3ea3b313f5112ca5933dc97df1c1461de8a5cc43c0"
+  },
+  {
     "path": "verification/linux-lab/report.json",
-    "bytes": 1487,
-    "sha256": "194b5899f8596845900b4e04a24837eaa3dbcc3678abd1bc16a2cbb4a63be611"
+    "bytes": 1698,
+    "sha256": "1d40285311f9636a0931a5cca0352b03362cf97b0385bc292c5fa5906fcde9f1"
   },
   {
     "path": "verification/linux-lab/run.json",
-    "bytes": 2048,
-    "sha256": "4ba6d2512198c8fc2a2eaeb2e4dd17ba56000ded52caa191f3717eca2b1d642c"
+    "bytes": 2528,
+    "sha256": "aa9dbd95c276e2ed2a8482c4bd052d376bfce53b43e22f7cae73c4f858fa6b7a"
   },
   {
     "path": "verification/linux-lab/rx-worker-smoke.json",
-    "bytes": 4814,
-    "sha256": "2d05e45c5b0bcbfe79e57d4c6ac66c0f97682ff06901ae69ffd9ef45ac8c5069"
+    "bytes": 14453,
+    "sha256": "fc9f18c07ce31db270008481d08e8f21f6daf85e8221cb49dc2f9333cf4f1db4"
   },
   {
     "path": "verification/linux-lab/software-tests.json",
     "bytes": 8225,
-    "sha256": "d9ef8dedde459a3e68e6c0b232517afafa8fca7764da267106fdcdf4d7fe7af1"
+    "sha256": "3ac063a66d239729fcc7cd8800ebf42dabd044b5ace19bd84d5e2144f4cc2693"
   },
   {
     "path": "verification/linux-lab/source-binding.json",
-    "bytes": 17243,
-    "sha256": "db82d1b38ca8e74c7811b491c34117ee802c6eb0f28c8dc11b740336f603b2da"
+    "bytes": 17714,
+    "sha256": "6c07aa6263a244d5147221091e4e09c0be1ded43cf99368017bd8f3fedf1a366"
   },
   {
     "path": "verification/linux-lab/storage-smoke.json",
     "bytes": 2097,
-    "sha256": "7367b9026cffb1301cbdb8c2f4c80a3d34befa044e51589c5b54288e45966496"
+    "sha256": "86289b9ab48aadf389071e5459ec06e7b6f8847893381cbfca7056f5f557e4b1"
   },
   {
     "path": "verification/linux-lab/suite-exit-codes.json",
@@ -3296,18 +5201,18 @@
   },
   {
     "path": "verification/linux-lab/system-smoke.json",
-    "bytes": 41117,
-    "sha256": "3579fc34f732a84125f45fb097dcb4327bdd89aba09803e38d661a063f9bd905"
+    "bytes": 42871,
+    "sha256": "5493060abca406611ffd2ec3f9413e1505afdf279f38d67017607b21226977de"
   },
   {
     "path": "verification/linux-lab/unit-tests.log",
-    "bytes": 1275,
-    "sha256": "17810d6c24b513ae50bf3e0a31b0a304ba1f0590369bcbf7bc2ba87f43f4a1a9"
+    "bytes": 1501,
+    "sha256": "d016f154359ad803a5e3daef844cfdd632bd6f8b713d48e48ddc7512afa7be2e"
   },
   {
     "path": "verification/linux-lab/xcb/cli-screen.json",
     "bytes": 1030,
-    "sha256": "e0cd83c848c8dc0653576ef450654a785722dfa946389d573643f8629789ae53"
+    "sha256": "210ebd844a81a7a811281b4e720e0cca5fd90a4a039b42c744c13e14d234a7ce"
   },
   {
     "path": "verification/linux-lab/xcb/cli-screen.stderr.log",
@@ -3316,8 +5221,8 @@
   },
   {
     "path": "verification/linux-lab/xcb/menu-fixture.json",
-    "bytes": 2348,
-    "sha256": "ac695d54357057357ee3d1333b6a5dca05bf25c0dc3597054d9fbde6fad93bce"
+    "bytes": 2350,
+    "sha256": "7724bd87e0cc449b8559ce987ff352fe34bf00da66d4c38ab7d1b1d2dde03134"
   },
   {
     "path": "verification/linux-lab/xcb/menu-fixture.stderr.log",
@@ -3346,8 +5251,8 @@
   },
   {
     "path": "verification/linux-lab/xcb/report.json",
-    "bytes": 8177,
-    "sha256": "8a00d1e919214606b56d914ab86d3c67091dd9c58ab4108aa00eb92d0609f751"
+    "bytes": 8180,
+    "sha256": "f2dfba1d2aa7f6d3c5b954d2d6d5bba4150873e40dd18e94573edc85331c6a1b"
   },
   {
     "path": "verification/linux-lab/xcb/xvfb.log",
@@ -3356,18 +5261,18 @@
   },
   {
     "path": "verification/linux-lab/xcb-smoke.json",
-    "bytes": 8177,
-    "sha256": "8a00d1e919214606b56d914ab86d3c67091dd9c58ab4108aa00eb92d0609f751"
+    "bytes": 8180,
+    "sha256": "f2dfba1d2aa7f6d3c5b954d2d6d5bba4150873e40dd18e94573edc85331c6a1b"
   },
   {
     "path": "verification/module-lab/MODULE-RESULTS.md",
-    "bytes": 29390,
-    "sha256": "ed73f6fe4c05af6e014443d5d4c622f7ec8f92519d717056955539f4c31df097"
+    "bytes": 29392,
+    "sha256": "5a1c51b173d0626675d42b1bf84adc54b4d01189c28a9f1f893482c64ca5f74b"
   },
   {
     "path": "verification/module-lab/connectivity.json",
-    "bytes": 2876831,
-    "sha256": "9c2fc0cc6c43dfb7b2479097ef209bfe530fb5ec2e813e17d18d001af30e4dc5"
+    "bytes": 2956526,
+    "sha256": "5864244f8d54be82c3d5868e35c9be786883d7195747161a770549fcd5d17e41"
   },
   {
     "path": "verification/module-lab/connectivity.log",
@@ -3377,7 +5282,7 @@
   {
     "path": "verification/module-lab/io.json",
     "bytes": 15380,
-    "sha256": "5a3da4d02d5e674db2a3f96ddaf927abcdd151f146e364cc7766e92b8d74bf1c"
+    "sha256": "358c83007d4e5203ede84764c77a18bdb9178035982246be14ed01078638ecbf"
   },
   {
     "path": "verification/module-lab/io.log",
@@ -3386,8 +5291,8 @@
   },
   {
     "path": "verification/module-lab/location.json",
-    "bytes": 6382,
-    "sha256": "ca21849416ef57b1892f8f6e15717858628c5d9ffb4ca765f78f1c4dac31c261"
+    "bytes": 6383,
+    "sha256": "72b1d96e74588e031f4222ececa2104084add0786087c26a06dc9ce037935a0f"
   },
   {
     "path": "verification/module-lab/location.log",
@@ -3397,7 +5302,7 @@
   {
     "path": "verification/module-lab/mcu.json",
     "bytes": 16620,
-    "sha256": "7e3c57de3c024e1ab083780074d9078d95d11038c1847ceec11c3054ddeb4211"
+    "sha256": "a36330b98b2d558fffbb6e88c0e602686039dd1178bda31179c47f5533161ba1"
   },
   {
     "path": "verification/module-lab/mcu.log",
@@ -3407,7 +5312,7 @@
   {
     "path": "verification/module-lab/power.json",
     "bytes": 37609,
-    "sha256": "197c6f8a5505ea8b2835c65928dca07fe4db693545b43ab58145353510547fb9"
+    "sha256": "8309059c4379a3fc1f186ce163d592fb522e55168b635b885775017d82ccfea9"
   },
   {
     "path": "verification/module-lab/power.log",
@@ -3416,33 +5321,33 @@
   },
   {
     "path": "verification/module-lab/radio.json",
-    "bytes": 47162,
-    "sha256": "f0a86a3924738ab2882772f5852ca272469ad7956945851ed7ce4789bb2fc342"
+    "bytes": 57411,
+    "sha256": "14665dd430f3712db356ddd7e4d801af69b870a3d67b7f27b88e5caf6141839a"
   },
   {
     "path": "verification/module-lab/radio.log",
-    "bytes": 47162,
-    "sha256": "f0a86a3924738ab2882772f5852ca272469ad7956945851ed7ce4789bb2fc342"
+    "bytes": 57411,
+    "sha256": "14665dd430f3712db356ddd7e4d801af69b870a3d67b7f27b88e5caf6141839a"
   },
   {
     "path": "verification/module-lab/report.json",
-    "bytes": 4629648,
-    "sha256": "7ffc4c78ecc6a7378136a5ae099cde0d82427e4115f292ee0ac7155c998bc1f8"
+    "bytes": 4743428,
+    "sha256": "0b9019e0e975f5f1b6a2a32c9a438dd4f533c60ea95414df50e0608be3df7f53"
   },
   {
     "path": "verification/netlist.xml",
-    "bytes": 1992234,
-    "sha256": "2fbb74498e079e328ec2a1f243522e68668a87e1905d59fa2d4711cc060a3df1"
+    "bytes": 2337150,
+    "sha256": "c23ea8194f489a89509642f2889fe73ecaaad4254662e82b93359105c370bad8"
   },
   {
     "path": "verification/pcb-prototype-review-check.py",
     "bytes": 21898,
-    "sha256": "3131d5187c3ad55db6b35c9561a6a0ecc3af9535cf05a531e5caea11c3cf83ce"
+    "sha256": "5c606e86b965ad42d18e5bd9af2fdace622181712424338c08652f6885592386"
   },
   {
     "path": "verification/pcb-prototype-review.json",
-    "bytes": 174754,
-    "sha256": "25c8f465a52a9843e3a0c7c388daecf9a1b748d34f4ca6ee6238b6d1ce8da0d6"
+    "bytes": 175186,
+    "sha256": "7f78311e047110583142af08b83e3a289e32776dfd78f82f767e553f1c05668d"
   },
   {
     "path": "verification/pcb-prototype-review.md",
@@ -3451,8 +5356,8 @@
   },
   {
     "path": "verification/pcb-review.json",
-    "bytes": 5472,
-    "sha256": "c328dee8b8d69935d18086f6552c7a6983ea3004f86a68385ac8efb39c888a8e"
+    "bytes": 5747,
+    "sha256": "78ab6205ab223d414f4dd5c5aa7825c4e93b0e237ffda424973a52a845c4edf6"
   },
   {
     "path": "verification/pcb-review.md",
@@ -3462,7 +5367,7 @@
   {
     "path": "verification/pdf-export.json",
     "bytes": 1701,
-    "sha256": "ff3bf73deea9ebf765053dd434b31980804ddeb023fc6b8504b1f873e71dd60b"
+    "sha256": "23fbfd6827311639413316e1c1373d3dace8473ad129ba38a92ecc445f2fc262"
   },
   {
     "path": "verification/pdf-visual-review.json",
@@ -3481,12 +5386,12 @@
   },
   {
     "path": "verification/software-tests.json",
-    "bytes": 8027,
-    "sha256": "c2c3bf2743bf953ee7a354fdf147ac2254ed2456f6d96305a0285c9b913fd88f"
+    "bytes": 10078,
+    "sha256": "2adb634ad67593de723863f5095796b7433bf90f1e7ef6696cb49de5910075b0"
   },
   {
     "path": "verification/validation.json",
     "bytes": 2599,
-    "sha256": "964ca4cf33cd57e4312abebff1de133624ceb500d1f073d9d2792da9988e977d"
+    "sha256": "66c0efc8e16c72d15da5f5a5598097504e53c82604af45a0f07361fbd4e64796"
   }
 ]

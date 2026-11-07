@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture": "pause",
-  "pid": 2802,
+  "pid": 3218,
   "uid": 1001,
   "stage": "HOLD_STOPPED",
   "qt_platform": "offscreen",
@@ -28,46 +28,46 @@
   "action_log": [
     {
       "operation": "recover",
-      "at_s": 7.168819,
+      "at_s": 7.121165,
       "name": null,
       "value": null
     },
     {
       "operation": "control",
-      "at_s": 7.876135,
+      "at_s": 7.716957,
       "name": "EN_RTLA",
       "value": true
     },
     {
       "operation": "disarm",
-      "at_s": 11.348064,
+      "at_s": 11.48112,
       "name": null,
       "value": null
     },
     {
       "operation": "disarm",
-      "at_s": 14.165725,
+      "at_s": 14.325787,
       "name": null,
       "value": null
     }
   ],
-  "elapsed_s": 14.179741,
+  "elapsed_s": 14.382987,
   "request_counts": {
-    "status": 24,
+    "status": 25,
     "recover": 1,
     "lease": 2,
     "control": 1,
     "disarm": 2
   },
   "accepted_lease_at_s": [
-    7.193876,
-    8.309584
+    7.176856,
+    8.391211
   ],
   "qt_timer": {
     "interval_ms": 100,
     "ticks": 46,
-    "mean_gap_ms": 308.255,
-    "max_gap_ms_including_SIGSTOP": 5658.079
+    "mean_gap_ms": 312.674,
+    "max_gap_ms_including_SIGSTOP": 5562.825
   },
   "service": {
     "mode": "SIMULATION",
@@ -106,16 +106,16 @@
   "holding": false,
   "controller_notice": "Console closed \u2014 DISARM requested",
   "controller_error": null,
-  "warmup_finished_s": 6.626474,
-  "natural_heartbeat_s": 6.97698,
-  "fresh_poll_s": 6.93668,
-  "arm_requested_s": 7.155681,
-  "active_s": 7.867613,
-  "stable_s": 9.13245,
-  "remaining_lease_ms": 2145,
-  "hold_stopped_s": 11.403093,
+  "warmup_finished_s": 6.501675,
+  "natural_heartbeat_s": 6.885675,
+  "fresh_poll_s": 6.798931,
+  "arm_requested_s": 7.096459,
+  "active_s": 7.701095,
+  "stable_s": 9.013163,
+  "remaining_lease_ms": 2375,
+  "hold_stopped_s": 11.53561,
   "exit_requests": {
-    "status": 24,
+    "status": 25,
     "recover": 1,
     "lease": 2,
     "control": 1,

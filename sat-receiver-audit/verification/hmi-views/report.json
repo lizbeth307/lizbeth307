@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-10-24T13:52:57.274032+00:00",
+  "generated_at_utc": "2026-11-07T08:27:57.966212+00:00",
   "status": "PASS_OFFSCREEN_SIMULATION",
-  "python": "3.12.15",
+  "python": "3.12.16",
   "pyside6": "6.12.0",
   "qt": "6.12.0",
   "qt_platform": "offscreen",
@@ -14,10 +14,10 @@
   "spectrum": "actual srrx.labrx --simulate CLI output; canonical masked FFT frame",
   "learning": "actual learning.demo grouped toy-spectrum CPU model; infer on SIM FFT; no field accuracy claim",
   "location": "no GNSS endpoint configured; tracker reports no live fix",
-  "hmi_sha256": "e764c84aa66251e338dc4421a6f8e2a6ca5dfa982f2fb26e1f7e6d50ad546e39",
+  "hmi_sha256": "7a68ffd0eeea8d4051be291c72661c9e593c0feafc83b711756705f640101392",
   "targeted_tests": {
-    "total": 72,
-    "passed": 72,
+    "total": 73,
+    "passed": 73,
     "skipped": 0,
     "qt_render": true,
     "real_qt_worker_close": true
@@ -59,7 +59,7 @@
       "width": 1100,
       "height": 800,
       "bytes": 100926,
-      "sha256": "0c68bc09e9be24fc9a44659f87603cb1d2c843e125944bd056bb699e024f480a"
+      "sha256": "a7ad8e53e6c50b3ef05d824a44d85002d3a98c600e03a816da0c50f94496eb55"
     },
     {
       "page": "teach-classify",

@@ -1328,11 +1328,11 @@
   "source_sha256": {
     "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
     "software/srrx/telemetry.py": "418148d2427cddf48dabb51c05a54071d465e5697b8727116043c1252e6dfa60",
-    "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
+    "software/srrx/policy.py": "bdfef4495c37805e64add44a19c9d7311789f663f62f685d451d063356469d77",
     "software/srrx/runtime_telemetry.py": "d55b8b1192b8a18953993323fd173ca2f1013fcbe97f28d7e8cbe4ea907b24b5",
-    "design/E1.json": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a",
-    "design/E2.json": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196",
-    "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
+    "design/E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
+    "design/E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
+    "design/E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
     "deployment/module_lab/power_bus.py": "1f0d1cc97edd745cfd2182d07e2e62e15e49413016e790560c5a19b76a11b1e5",
     "deployment/module_lab/power_scenarios.py": "085fe2eb08c4ea6f8850086ab92db5bc91422e5807d11a54c9e7263a36877485"
   },

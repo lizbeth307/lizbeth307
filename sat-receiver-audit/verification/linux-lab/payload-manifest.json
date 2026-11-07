@@ -1,8 +1,8 @@
 [
   {
     "path": "bootstrap.sh",
-    "bytes": 11962,
-    "sha256": "08c63c5f950ceb189c37b0ec9a2a0586335774ed736f92a4254bdf018c20b0e4"
+    "bytes": 12456,
+    "sha256": "725e4fd06b466137efca615a3a4a4350c90be06d5b863aa3dbb471ebe67d8e44"
   },
   {
     "path": "debs/binutils-aarch64-linux-gnu_2.42-4ubuntu2.10_arm64.deb",
@@ -416,18 +416,18 @@
   },
   {
     "path": "lab-clock.json",
-    "bytes": 129,
-    "sha256": "97bc3b952fa35d41a094c3c7dcd3486af303ad32648d3ce848003d7914833bfa"
+    "bytes": 127,
+    "sha256": "dfd7559da9dd8241cf26b7573a8e8e12dd94791fcb8405e50b3b25b04d107d3f"
   },
   {
     "path": "project-manifest.json",
-    "bytes": 115289,
-    "sha256": "159a711f452520f7bb0846509c7c38c6580a4d66efb368899a43d0c1187804b6"
+    "bytes": 180006,
+    "sha256": "85f0b56169f0d2b9e8d2e970d9cd50c28c3cf5eb8d95b98768b438120dc1c5ef"
   },
   {
     "path": "project.tar.gz",
-    "bytes": 21708359,
-    "sha256": "88504b82fb6a6dc67b898fc87cd705c0cb755934c01f1c749ac83d11996e7611"
+    "bytes": 28093555,
+    "sha256": "2264549398154cb416f9d5c4e16b232dc3d00bf41da0f1dbbfe56be87a9b23ca"
   },
   {
     "path": "wheelhouse-manifest.json",
