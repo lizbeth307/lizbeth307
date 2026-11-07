@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "bedbb3ef32c865638bac1b706dc8b9e6ab66fb8d94236d636ba890cdeef11fad",
+    "params_sha256": "3a9c737f061e46c21f1a5f9b005e5baa074d71e261876dc9e65dd9489d8e0863",
     "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
   },
   "envelope": {
@@ -467,7 +467,7 @@
     },
     {
       "id": "R-HDMI-ROUTE",
-      "rule": "HDMI FPC route Q6A to the Wisecoco input: adapter, fold, ferrite, insert and run envelopes in the envelope check without a conflict; each flex covers its centreline with slack 0-40 mm; flex through the ferrite slot and the plate notch",
+      "rule": "HDMI FPC route Q6A to the Wisecoco input: adapter, fold, ferrite, insert and run envelopes in the envelope check without a conflict; each flex covers its centreline with slack 0-40 mm; flex width through the ferrite slot and the plate notch (bare flex thickness <= the slot height once measured)",
       "value_mm": {
         "segments": {
           "FLEX1": {
@@ -490,6 +490,7 @@
           11.5,
           0.5
         ],
+        "flex_bare_t": "not published (measure)",
         "notch": [
           211.0,
           26.5,
@@ -497,10 +498,37 @@
           7.0
         ],
         "envelopes": 11,
-        "folds": 3
+        "folds": 3,
+        "harness_near": {
+          "nearest_centreline": [
+            "S02",
+            "hdmi_route_front_rise",
+            0.5
+          ],
+          "bundle_overlaps": 42,
+          "segments": [
+            "S02",
+            "S03",
+            "S10",
+            "S15",
+            "S24",
+            "S25",
+            "S30"
+          ],
+          "envelopes": [
+            "hdmi_fpc_disp",
+            "hdmi_route_front_flat",
+            "hdmi_route_front_rise"
+          ],
+          "worst": [
+            "S02",
+            "hdmi_route_front_rise",
+            7.78
+          ]
+        }
       },
       "source": "mechanical.json hdmi_route, layout hdmi_*; parts.json adafruit_3550, adafruit_3548, adafruit_flex, wurth_74278011",
-      "result": "PASS (model): Adafruit 3550 on the Q6A receptacle, flex 1 3560 (26.2 mm slack) with the WE-FLAT 74278011 ferrite under the LAB BUS nut, through the plate notch to the HDMI_INSERT reserve right of the BMS, flex 2 3560 (16.5 mm slack) up the strip and along y 78.65-88.65 to the Adafruit 3548 in the Wisecoco input; 3 45-degree folds; labelled assumptions: 3550 axis from the product photos (3550 or 3549 by the receptacle side), flex thickness 0.5 and bend radius 2 not published, insert reserve size, Wisecoco HDMI input at the lower end of the board's right edge (STACK D5: measure the received board); link, EMI of the wrapped flex and the folds stay bench OPEN"
+      "result": "PASS (model): Adafruit 3550 on the Q6A receptacle, flex 1 3560 (26.2 mm slack) with the WE-FLAT 74278011 ferrite under the LAB BUS nut, through the plate notch to the HDMI_INSERT reserve right of the BMS, flex 2 3560 (16.5 mm slack) up the strip and along y 78.65-88.65 to the Adafruit 3548 in the Wisecoco input; 3 45-degree folds; labelled assumptions: 3550 axis from the product photos (3550 or 3549 by the receptacle side), flex thickness 0.5 and bend radius 2 not published, insert reserve size, Wisecoco HDMI input at the lower end of the board's right edge (STACK D5: measure the received board); only the flex width is checked against the ferrite slot: the bare flex must be <= 0.5 thick for the 11.5 x 0.5 (+0.5/-0) slot (thickness not published: measure, OPEN); harness bundles are centrelines in the envelope check (R-ROUTE-CLEAR): the nearest, S02, runs 0.5 mm from hdmi_route_front_rise; with bundle_od_mm / 2 about the centreline 42 route pieces of S02, S03, S10, S15, S24, S25, S30 reach into hdmi_fpc_disp, hdmi_route_front_flat, hdmi_route_front_rise (worst S02 7.78 mm into hdmi_route_front_rise): the drops must move clear of flex 2, OPEN for the harness routes; link, EMI of the wrapped flex and the folds stay bench OPEN"
     },
     {
       "id": "R-PPS-LEN",
@@ -1549,7 +1577,7 @@
     },
     {
       "id": "R-F101-ACCESS",
-      "rule": "F101 for storage (STACK: F1 out for more than 2-4 weeks): the PACK_FUSE carrier with the fuse facing the hatch opening needs carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip; otherwise the seam is opened",
+      "rule": "F101 for storage (STACK: F1 out for more than 2-4 weeks): the PACK_FUSE carrier with the fuse facing the hatch opening needs carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip, and its place must leave the hatch access path to the keep-clear reserves behind it (USB-A plug bay) open; otherwise the seam is opened",
       "value_mm": {
         "place": [
           116.0,
@@ -1563,11 +1591,14 @@
           "carrier": 1.6,
           "keystone_3568": 7.37,
           "mini_fuse_body": 8.8
-        }
+        },
+        "access_path_to": [
+          "usb_plug_bay"
+        ]
       },
       "limit_mm": 17.77,
-      "source": "mechanical.json rear_face.hatch.f101_access; parts.json keystone_3568, littelfuse_mini_297",
-      "result": "PASS (model): decision - storage keeps the seam procedure: facing the opening, the stack needs 17.77 mm (carrier 1.6 + Keystone 3568 7.37 + MINI body 8.8) against 11.65 mm in front of the USB-A plug bay, and the rest of the hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery tray (envelope MECH-5) and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення')"
+      "source": "mechanical.json rear_face.hatch.f101_access, hatch.content, layout usb_plug_bay; parts.json keystone_3568, littelfuse_mini_297",
+      "result": "PASS (model, decision: seam): storage keeps the seam procedure, F101 is not reached through the hatch: facing the opening, the stack needs 17.77 mm (carrier 1.6 + Keystone 3568 7.37 + MINI body 8.8) against 11.65 mm in front of the USB-A plug bay; the place is the hatch access path to usb_plug_bay (the USB-A plug of the Q6A goes in through this strip, hatch.content); the rest of the hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery tray (envelope MECH-5) and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення')"
     },
     {
       "id": "R-P8-ACCESSORY",
@@ -1577,7 +1608,7 @@
         "chain": [
           "J428 antenna feed (SMA input of A403)",
           "A403 Flamingo+ FM #2",
-          "SMA male-male adapter from the LNA V2 package (A403 OUT -> A404 IN)",
+          "SMA male-male adapter from the LNA V2 package (A403 OUT -> A404 IN; assumption: both jacks SMA female, connector genders of A403/A404 not read, check at incoming inspection)",
           "A404 RTL-SDR Blog Wideband LNA V2",
           "coax A404 OUT -> P8 (W2 GR-2 net E4_RF_CH4; ch4 bias 4.3 V reaches A404 over it)"
         ],
