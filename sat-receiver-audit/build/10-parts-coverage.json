@@ -14,10 +14,11 @@
   "design/parts/snapshots/2026-11-07-w2-reads-rf-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-mech2-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src1-manual.json",
-  "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json"
+  "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json",
+  "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json"
  ],
- "refs": 794,
- "parts": 231,
+ "refs": 839,
+ "parts": 251,
  "refs_by_mount": {
   "assembly": 8,
   "existing": 9,
@@ -27,30 +28,30 @@
   "panel": 14,
   "pcb_module": 3,
   "pcb_pad": 32,
-  "pcb_smt": 627,
-  "pcb_tht": 29,
+  "pcb_smt": 628,
+  "pcb_tht": 73,
   "remote": 9,
   "rework": 5,
   "virtual": 2
  },
- "bare_board_parts": 691,
- "bare_board_parts_with_footprint": 691,
- "board_refs": 691,
- "board_refs_with_footprint": 691,
+ "bare_board_parts": 736,
+ "bare_board_parts_with_footprint": 736,
+ "board_refs": 736,
+ "board_refs_with_footprint": 736,
  "board_footprint_origin": {
-  "KiCad 10.0.7": 649,
+  "KiCad 10.0.7": 694,
   "SR_RX_Custom": 42
  },
- "purchased_refs": 735,
+ "purchased_refs": 780,
  "purchased_refs_by_availability": {
   "TBD": 3,
-  "в наявності": 627,
+  "в наявності": 672,
   "з 10-bom": 17,
   "склад 0": 66,
   "у каталозі": 22
  },
- "purchased_refs_with_mpn": 732,
- "harness_family_items": 49,
+ "purchased_refs_with_mpn": 777,
+ "harness_family_items": 57,
  "tbd": [
   {
    "part": "J-BALANCE-DNP",
@@ -278,7 +279,7 @@
    "refs": [
     "J505"
    ],
-   "open": "Готово до interface_resolved (W2 MECH-2). Сполучна частина — гніздова кабельна вилка GX12 того самого комплекту KH-GX12-6P (стор. 1 креслення), дроти build/16 S34 у чашки під пайку; кріплення — виріз ⌀12.0 з лискою 11.2 у нижній стінці 2.5 мм (M-02 LAB_BUS, x 206 / z 28.5), фланець ⌀15 × 1.7 зовні, різьба M12×0.75 довжиною 8.8, гайка 14.6 під ключ (⌀16.9 по кутах) зсередини (конверт nut.LAB_BUS) — за кресленням Kinghelm rev A (рядок READS-E web:kinghelm-kh-gx12-6p-drawing, LCSC C18203264, прочитано 07.11.2026; mechanical/params/parts.json kinghelm_gx12_6p). MODEL FIT ONLY: IP на кресленні не наведено — заглушка (10-bom рядок 90), ущільнення й момент — ворота T-07 (OPEN). Відкрито лише формально: interface_resolved не записано, бо software/tests/test_parts_database.py (test_committed_unresolved_records_keep_the_interface_blockers) вимагає блокуючий запис для кожного інтерфейсного ref — рішення про цей тест за його власником (INT)."
+   "open": "Готово до interface_resolved (W2 MECH-2). Сполучна частина — гніздова кабельна вилка GX12 того самого комплекту KH-GX12-6P (стор. 1 креслення), дроти build/16 S34 у чашки під пайку, до вилки JST PH J508 на PWR-B (ref графа з W2 GR-3); кріплення — виріз ⌀12.0 з лискою 11.2 у нижній стінці 2.5 мм (M-02 LAB_BUS, x 206 / z 28.5), фланець ⌀15 × 1.7 зовні, різьба M12×0.75 довжиною 8.8, гайка 14.6 під ключ (⌀16.9 по кутах) зсередини (конверт nut.LAB_BUS) — за кресленням Kinghelm rev A (рядок READS-E web:kinghelm-kh-gx12-6p-drawing, LCSC C18203264, прочитано 07.11.2026; mechanical/params/parts.json kinghelm_gx12_6p). MODEL FIT ONLY: IP на кресленні не наведено — заглушка (10-bom рядок 90), ущільнення й момент — ворота T-07 (OPEN). Відкрито лише формально: interface_resolved не записано, бо software/tests/test_parts_database.py (test_committed_unresolved_records_keep_the_interface_blockers) вимагає блокуючий запис для кожного інтерфейсного ref — рішення про цей тест за його власником (INT)."
   },
   {
    "part": "J-GX16-4",
