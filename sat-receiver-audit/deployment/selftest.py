@@ -92,7 +92,7 @@ CATALOGUE = (
      ("STACK.md:977", "STACK.md:882", "build/12-revision-v2.1.md:71", "software/srrx/baseband.py", "software/srrx/satdump_pass.py",
       "software/srrx/baseband_scheduler.py")),
     ("RX-04-live", 4, "DEVICE", "SatDump live unit on the Q6A: only 127.0.0.1 datagrams reach net_source; live products equal the file decode",
-     ("STACK.md:1480", "software/srrx/satdump_pass.py unit_properties")),
+     ("STACK.md:1480", "software/srrx/satdump_pass.py unit_lines")),
     ("RX-05", 5, "OFFLINE", "OpenWebRX+: static modes subset of allowlist, locked settings, admin password present", (_B07 + ":426-433", _B07 + ":550", _B09 + ":79")),
     ("RX-05-live", 5, "DEVICE", "OpenWebRX+ live feature/mode list", (_B07 + ":433", _B07 + ":550")),
     ("RX-06", 6, "OFFLINE", "Soapy modules0.8 exactly rtlsdr/airspyhf, no Lime module, no 0.9, no plugin path override", (_B07 + ":328-338", _B07 + ":551", "deployment/deploy.py validate_devices")),

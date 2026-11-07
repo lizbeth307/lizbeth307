@@ -635,6 +635,27 @@ class SchemaV2Tests(unittest.TestCase):
         with self.assertRaisesRegex(build_recipe.RecipeError, "check_recipe.py is missing"):
             self.validate(self.recipe())
 
+    def test_placeholders_outside_their_place_are_refused(self):
+        # {recipe} and {hook_out} are not step placeholders, even next to {src} or {build}; a copy
+        # takes one leading placeholder only.
+        cmake = lambda extra: (lambda d: (d.update(build_system="cmake", autotools=None, build=[["cmake", "--build", "{build}"]],  # noqa: E731
+                                                   cmake=dict(copy.deepcopy(recipe("rtlsdr")["cmake"]),
+                                                              configure=recipe("rtlsdr")["cmake"]["configure"] + [extra])),
+                                          d["install"].update(make_install=False, cmake_install=True)))
+        self.validate(self.recipe(cmake("-DSRRX_SOURCE={src}")))  # the same recipe with a step placeholder validates
+        for label, change, needle in (
+                ("recipe placeholder in a build step", lambda d: d["build"][0].append("F={src}{recipe}"), "unknown placeholder"),
+                ("hook_out placeholder in a build step", lambda d: d["build"][0].append("OUT={src}{hook_out}"), "unknown placeholder"),
+                ("unclosed placeholder in a build step", lambda d: d["build"][0].append("X={src}{"), "unknown placeholder"),
+                ("hook_out placeholder in cmake.configure", cmake("-DOUT={build}{hook_out}"), "unknown placeholder"),
+                ("recipe placeholder in cmake.configure", cmake("-DR={build}/{recipe}"), "unknown placeholder"),
+                ("placeholder after a copy prefix", lambda d: d["install"]["copy"].append({"from": "{src}/{recipe}/files/x", "to": "etc"}),
+                 "install copy goes from"),
+                ("placeholder in a copy target", lambda d: d["install"]["copy"].append({"from": "{src}/src/a.txt", "to": "{destdir}/etc"}),
+                 "install copy goes from")):
+            with self.subTest(label), self.assertRaisesRegex(build_recipe.RecipeError, needle):
+                self.validate(self.recipe(change))
+
     def test_schema_1_keeps_its_exact_shape(self):
         data = recipe("rtlsdr")
         with patch.object(build_recipe, "DEPLOYMENT", HERE):
@@ -733,8 +754,31 @@ class SchemaV2BuilderStepTests(unittest.TestCase):
     def test_vendor_patch_pins_come_from_the_lock(self):
         import vendor_patch
         lock = {c["id"]: c["commit"] for c in LOCK["components"]}
-        self.assertEqual(vendor_patch.pins(), {"rtlsdr": lock["rtlsdr"], "limesuiteng": lock["limesuiteng"]})
+        order = list(json.loads((HERE / "patches/target-hashes.json").read_text(encoding="utf-8")))
+        self.assertLessEqual({"rtlsdr", "limesuiteng"}, set(order))
+        self.assertEqual(list(vendor_patch.pins().items()), [(c, lock[c]) for c in order])  # target-hashes order, lock commits
         self.assertFalse(hasattr(vendor_patch, "PINS"))  # no second copy of the pinned commits
+
+    def test_a_reviewed_patch_without_a_fixture_is_listed_or_refused(self):
+        import vendor_patch
+        here = Path(self.temp.name) / "vendor"
+        (here / "recipes" / FIXTURE).mkdir(parents=True)
+        recipe_path = here / "recipes" / FIXTURE / "recipe.json"
+        with patch.object(vendor_patch, "HERE", here), patch.object(vendor_patch, "pins", return_value={FIXTURE: "0" * 40}):
+            with self.assertRaisesRegex(vendor_patch.PatchError, "no upstream fixture and no recipe that applies it: " + FIXTURE):
+                vendor_patch.check_fixtures()  # neither a fixture nor a recipe
+            recipe_path.write_text(json.dumps({"schema_version": 2, "source": {"patch": None}}), encoding="utf-8")
+            with self.assertRaisesRegex(vendor_patch.PatchError, "no recipe that applies it"):
+                vendor_patch.without_fixture()  # a recipe that does not apply the reviewed patch
+            recipe_path.write_text(json.dumps({"schema_version": 1, "source": {"patch": "deployment/patches/%s-rx-only.patch" % FIXTURE}}),
+                                   encoding="utf-8")
+            listed = vendor_patch.without_fixture()
+            self.assertEqual([(e["component"], e["status"], e["source_fixture_only"], e["release_ready"]) for e in listed],
+                             [(FIXTURE, "NO_UPSTREAM_FIXTURE", False, False)])
+            self.assertIn("deployment/recipes/" + FIXTURE, listed[0]["checked_by"])
+            self.assertEqual(vendor_patch.check_fixtures(), [])  # listed, never counted as a fixture result
+        # In this tree rtl-sdr and limesuiteng have fixtures; any other reviewed patch is listed with its recipe.
+        self.assertFalse({"rtlsdr", "limesuiteng"} & {e["component"] for e in vendor_patch.without_fixture()})
 
     def test_configure_must_be_generated_and_declare_every_flag(self):
         _, tree = self.extracted()
@@ -843,6 +887,259 @@ class SchemaV2BuildTests(unittest.TestCase):
                 (directory / entries[1]["file"]).write_text("changed after the build\n", encoding="utf-8")
                 with self.assertRaisesRegex(deploy.DeploymentError, "patch list differs"):
                     deploy._record_binding(record, "fixture")
+
+
+# --- W2 SW-CI: the optional schema-2 "ci" key, build_recipe.ci_plan (what sr-rx-packages.yml builds,
+# in which job) and the per-package data tree (D-17). Synthetic deployment trees; nothing is fetched.
+CI ={"heavy": True, "runtime_depends": ["strace"], "tag_samples": []}
+
+
+def plan_recipe(name, packages, lab=(), heavy=None):
+    """A minimal valid schema-2 recipe (make, make install, no patches, hooks or member)."""
+    data = {"schema_version": 2, "component": name, "summary": "synthetic plan recipe", "source": {"patch": None, "patches": [], "member": None},
+            "build_system": "make", "build_depends": ["libc6-dev"], "lab_build_depends": list(lab), "cmake": None, "autotools": None,
+            "build": [["make", "-C", "{src}"]], "install": {"cmake_install": False, "make_install": True, "copy": []},
+            "hooks": {"source_check": None, "package": None},
+            "packages": [{"name": p, "section": "misc", "description": "synthetic", "files": ["usr/share/%s/*" % p], "depends": [],
+                          "shlibs_depends": False} for p in packages],
+            "drop": [], "checks": [], "notes": []}
+    if heavy is not None:
+        data["ci"] = {"heavy": heavy, "runtime_depends": [], "tag_samples": []}
+    return data
+
+
+class CiKeyTests(unittest.TestCase):
+    """validate_recipe: "ci" is the one optional schema-2 key, with exactly heavy, runtime_depends, tag_samples."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-recipe-ci-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "deployment"
+        self.root.mkdir()
+        self.entries, self.outer, self.lock, self.member_sha = fixture_tree(self.root)
+        mocked = patch.object(build_recipe, "DEPLOYMENT", self.root)
+        mocked.start()
+        self.addCleanup(mocked.stop)
+
+    def recipe(self, ci=None):
+        data = v2_recipe(self.entries, self.member_sha)
+        if ci is not None:
+            data["ci"] = copy.deepcopy(ci)
+        return data
+
+    def test_ci_is_optional_and_exact(self):
+        self.assertEqual(build_recipe.ci_view(self.recipe()), {"heavy": False, "runtime_depends": [], "tag_samples": []})
+        build_recipe.validate_recipe(self.recipe(CI), self.lock)
+        self.assertEqual(build_recipe.ci_view(self.recipe(CI)), CI)
+        self.assertEqual(build_recipe.ci_view(recipe("rtlsdr")), {"heavy": False, "runtime_depends": [], "tag_samples": []})
+        for label, ci in {"unknown key": dict(CI, timeout=60), "missing key": {"heavy": True}, "heavy not a bool": dict(CI, heavy="yes"),
+                          "runtime package twice": dict(CI, runtime_depends=["strace", "strace"]),
+                          "runtime package not a name": dict(CI, runtime_depends=["strace; curl"]),
+                          "sample outside the tree": dict(CI, tag_samples=["../samples"]), "absolute sample": dict(CI, tag_samples=["/samples"]),
+                          "sample twice": dict(CI, tag_samples=["samples", "samples"]), "not an object": ["heavy"]}.items():
+            with self.subTest(label), self.assertRaises(ValueError):
+                build_recipe.validate_recipe(self.recipe(ci), self.lock)
+        with patch.object(build_recipe, "DEPLOYMENT", HERE), self.assertRaises(ValueError):
+            build_recipe.validate_recipe(dict(recipe("rtlsdr"), ci=dict(CI)), LOCK)  # schema 1 keeps its exact keys
+
+    def test_tag_samples_need_a_tagged_component(self):
+        sampled = dict(CI, tag_samples=["samples/FT8"])
+        with self.assertRaisesRegex(build_recipe.RecipeError, "tag and an https upstream_url"):
+            build_recipe.validate_recipe(self.recipe(sampled), self.lock)
+        tagged = copy.deepcopy(self.lock)
+        component = next(c for c in tagged["components"] if c["id"] == FIXTURE)
+        component.update(tag="srrx-fixture-1.0", upstream_url="https://example.invalid/srrx-fixture.git")
+        build_recipe.validate_recipe(self.recipe(sampled), tagged)
+        component["upstream_url"] = "git://example.invalid/srrx-fixture.git"
+        with self.assertRaises(build_recipe.RecipeError):
+            build_recipe.validate_recipe(self.recipe(sampled), tagged)
+
+
+class CiPlanTests(unittest.TestCase):
+    """build_recipe.ci_plan over a synthetic deployment/recipes tree."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-ci-plan-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "deployment"
+        (self.root / "recipes").mkdir(parents=True)
+        self.lock = copy.deepcopy(LOCK)
+        self.lock["components"] = []
+        mocked = patch.object(build_recipe, "DEPLOYMENT", self.root)
+        mocked.start()
+        self.addCleanup(mocked.stop)
+
+    def add(self, name, data):
+        (self.root / "recipes" / name).mkdir(exist_ok=True)
+        (self.root / "recipes" / name / "recipe.json").write_text(json.dumps(data), encoding="utf-8")
+        if not any(c["id"] == data.get("component", data.get("id")) for c in self.lock["components"]):
+            self.lock["components"].append({"id": data.get("component", data.get("id")), "version": "1.0+lab1", "commit": None,
+                                            "source_archive_sha256": "a" * 64, "source_archive_size": 1,
+                                            "source_cache_path": "sources/%s.tar.gz" % name})
+
+    def test_build_order_heavy_chains_and_skipped_recipes(self):
+        self.add("srrx-c", plan_recipe("srrx-c", ["srrx-c-tools"]))
+        self.add("srrx-b", plan_recipe("srrx-b", ["srrx-b-tools"], lab=["libsrrx-a-dev"], heavy=False))
+        self.add("srrx-a", plan_recipe("srrx-a", ["libsrrx-a1", "libsrrx-a-dev"]))
+        self.add("srrx-h", plan_recipe("srrx-h", ["srrx-h-tools"], lab=["libsrrx-a-dev", "srrx-b-tools"], heavy=True))
+        self.add("srrx-p", {"id": "srrx-p", "kind": build_recipe.PENDING_KIND, "status": build_recipe.PENDING_STATUS})
+        (self.root / "recipes/srrx-b/runtime_check.py").write_text("# synthetic\n", encoding="utf-8")
+        plan = build_recipe.ci_plan(self.lock)
+        self.assertEqual((plan["light"], plan["heavy"]), (["srrx-a", "srrx-b", "srrx-c"], ["srrx-h"]))
+        self.assertEqual(plan["recipes"]["srrx-h"]["chain"], ["srrx-a", "srrx-b", "srrx-h"])
+        self.assertEqual(plan["recipes"]["srrx-b"]["needs"], ["srrx-a"])
+        self.assertEqual((plan["recipes"]["srrx-b"]["runtime_check"], plan["recipes"]["srrx-c"]["runtime_check"]), (True, False))
+        self.assertIn(build_recipe.PENDING_STATUS, plan["skipped"]["srrx-p"])
+        self.assertNotIn("srrx-p", plan["recipes"])
+
+    def test_inconsistent_trees_fail_the_plan(self):
+        cases = {
+            "lab package no recipe builds": [("srrx-a", plan_recipe("srrx-a", ["srrx-a-tools"], lab=["libsrrx-x-dev"]))],
+            "cycle": [("srrx-a", plan_recipe("srrx-a", ["libsrrx-a-dev"], lab=["libsrrx-b-dev"])),
+                      ("srrx-b", plan_recipe("srrx-b", ["libsrrx-b-dev"], lab=["libsrrx-a-dev"]))],
+            "package of two recipes": [("srrx-a", plan_recipe("srrx-a", ["srrx-tools"])), ("srrx-b", plan_recipe("srrx-b", ["srrx-tools"]))],
+            "light needs heavy": [("srrx-a", plan_recipe("srrx-a", ["libsrrx-a-dev"], heavy=True)),
+                                  ("srrx-b", plan_recipe("srrx-b", ["srrx-b-tools"], lab=["libsrrx-a-dev"]))],
+            "directory is another component": [("srrx-a", plan_recipe("srrx-z", ["srrx-z-tools"]))],
+            "invalid recipe": [("srrx-a", dict(plan_recipe("srrx-a", ["srrx-a-tools"]), build=[["curl", "-O", "x"]]))],
+        }
+        for label, recipes in cases.items():
+            with self.subTest(label):
+                shutil.rmtree(self.root / "recipes")
+                (self.root / "recipes").mkdir()
+                self.lock["components"] = []
+                for name, data in recipes:
+                    self.add(name, data)
+                with self.assertRaises(build_recipe.RecipeError):
+                    build_recipe.ci_plan(self.lock)
+
+    def test_the_real_tree_plans_rtlsdr_and_limesuiteng_light_and_skips_satdump(self):
+        with patch.object(build_recipe, "DEPLOYMENT", HERE):
+            plan = build_recipe.ci_plan(LOCK)
+        self.assertLessEqual({"rtlsdr", "limesuiteng"}, set(plan["light"]))
+        self.assertEqual(sorted(plan["skipped"]), PENDING)
+        for name in plan["light"] + plan["heavy"]:
+            self.assertEqual(plan["recipes"][name]["chain"][-1], name)
+
+
+class DataTreeTests(unittest.TestCase):
+    """build_recipe.package_data_tree: the full data tree, also where package_manifest refuses it."""
+
+    def test_dangling_dev_link_gives_a_full_data_tree_while_the_manifest_stays_empty(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-data-tree-") as temporary:
+            root = Path(temporary)
+            (root / "usr/include").mkdir(parents=True)
+            (root / "usr/lib/aarch64-linux-gnu").mkdir(parents=True)
+            (root / "usr/include/rx.h").write_bytes(b"/* synthetic header */\n")
+            (root / "DEBIAN").mkdir()
+            (root / "DEBIAN/control").write_text("Package: x\n", encoding="utf-8")
+            try:
+                os.symlink("librx.so.2", root / "usr/lib/aarch64-linux-gnu/librx.so")
+            except OSError as exc:  # unprivileged Windows host only; Linux CI always creates links
+                self.skipTest("symlinks unavailable: " + str(exc))
+            tree = build_recipe.package_data_tree(root)
+            self.assertEqual(sorted(tree), ["usr", "usr/include", "usr/include/rx.h", "usr/lib", "usr/lib/aarch64-linux-gnu",
+                                            "usr/lib/aarch64-linux-gnu/librx.so"])  # DEBIAN/ is not data
+            self.assertEqual(tree["usr/lib/aarch64-linux-gnu/librx.so"], {"type": "symlink", "target": "librx.so.2"})
+            self.assertEqual(tree["usr/include/rx.h"]["sha256"], hashlib.sha256(b"/* synthetic header */\n").hexdigest())
+            self.assertEqual(tree["usr"]["type"], "dir")
+            if os.name == "posix":
+                os.chmod(root / "usr/include/rx.h", 0o644)
+                os.chmod(root / "usr/include", 0o755)
+                tree = build_recipe.package_data_tree(root)
+                self.assertEqual((tree["usr/include/rx.h"]["mode"], tree["usr/include"]["mode"]), ("0644", "0755"))
+            manifest = build_recipe.package_manifest(root)
+            self.assertEqual(manifest["files"], {})
+            self.assertIn("dangling link usr/lib/aarch64-linux-gnu/librx.so", build_recipe.inventory_refusal(root))
+            document = build_recipe.data_tree_document("librx-dev", "1.0+lab1", tree)
+            self.assertEqual((document["kind"], document["package"], document["entries"]), ("srrx_lab_data_tree", "librx-dev", tree))
+
+
+# A package hook that also leaves a -dev package's dangling .so link in DESTDIR.
+DEV_CHECK_RECIPE = CHECK_RECIPE.replace('    (args.root / "usr/share/srrx-fixture/dropped-by-hook.txt").unlink()\n',
+                                        '    (args.root / "usr/share/srrx-fixture/dropped-by-hook.txt").unlink()\n'
+                                        '    (args.root / "usr/lib").mkdir(parents=True, exist_ok=True)\n'
+                                        '    (args.root / "usr/lib/libsrrx-fixture.so").symlink_to("libsrrx-fixture.so.1")\n')
+
+
+@unittest.skipUnless(os.name == "posix" and all(shutil.which(t) for t in TOOLS), "needs " + ", ".join(TOOLS) + " (Linux host regression)")
+class DataTreeBuildTests(unittest.TestCase):
+    """One real schema-2 build with a -dev package whose .so link dangles: every package gets its
+    data tree, check_repo.py packages reports DATA_TREE_MATCH while that manifest stays empty with
+    its reason, and one changed hash, mode or link target, or a missing data tree, is refused."""
+
+    def test_every_package_has_a_matching_data_tree_and_tampering_is_refused(self):
+        self.assertNotEqual(DEV_CHECK_RECIPE, CHECK_RECIPE)
+        with tempfile.TemporaryDirectory(prefix="srrx-build-tree-") as temporary:
+            root = Path(temporary) / "deployment"
+            root.mkdir()
+            entries, outer, lock, member_sha = fixture_tree(root)
+            directory = root / "recipes" / FIXTURE
+            (directory / "check_recipe.py").write_text(DEV_CHECK_RECIPE, encoding="utf-8", newline="\n")
+            data = v2_recipe(entries, member_sha)
+            data["packages"].append({"name": FIXTURE + "-dev", "section": "libdevel", "description": "synthetic -dev package",
+                                     "files": ["usr/lib/*"], "depends": [], "shlibs_depends": False})
+            (directory / "recipe.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
+            out = Path(temporary) / "out"
+            with patch.object(build_recipe, "DEPLOYMENT", root), patch.object(build_recipe, "no_network", return_value="not checked (host test)"):
+                record = build_recipe.build(directory / "recipe.json", outer, Path(temporary) / "work", out / FIXTURE, 2)
+            for package in record["packages"]:
+                tree_path = out / FIXTURE / (package["package"] + ".data-tree.json")
+                self.assertEqual(deploy.sha(tree_path), package["data_tree_sha256"])
+                document = deploy.load(tree_path)
+                self.assertEqual(document["entries"], deploy.deb_data_inventory(out / FIXTURE / package["filename"]))
+            dev = deploy.load(out / FIXTURE / (FIXTURE + "-dev.data-tree.json"))["entries"]
+            self.assertEqual(dev["usr/lib/libsrrx-fixture.so"], {"type": "symlink", "target": "libsrrx-fixture.so.1"})
+            self.assertEqual(deploy.load(out / FIXTURE / (FIXTURE + "-dev.build-manifest.json"))["files"], {})
+            hello = deploy.load(out / FIXTURE / (FIXTURE + ".data-tree.json"))["entries"]["usr/bin/srrx-fixture-hello"]
+            self.assertEqual(hello["mode"], "0755")
+            spec = importlib.util.spec_from_file_location("srrx_check_repo_tree", HERE / "repo/check_repo.py")
+            check_repo = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(check_repo)
+            record_path = out / FIXTURE / (FIXTURE + ".build-record.json")
+            with patch.object(deploy, "HERE", root), patch.object(deploy, "PROJECT", root.parent), patch.object(build_recipe, "DEPLOYMENT", root):
+                summary = {p["package"]: p for p in check_repo.packages(out)["packages"]}
+                self.assertEqual({n: p["data_tree"] for n, p in summary.items()}, {FIXTURE: "DATA_TREE_MATCH", FIXTURE + "-dev": "DATA_TREE_MATCH"})
+                self.assertTrue(summary[FIXTURE + "-dev"]["manifest_files"].startswith("NONE: not self-contained"))
+                original = record_path.read_text(encoding="utf-8")
+
+                def tampered(package, edit, rebind=True):
+                    tree_path = out / FIXTURE / (package + ".data-tree.json")
+                    saved = tree_path.read_bytes()
+                    document = deploy.load(tree_path)
+                    edit(document)
+                    tree_path.write_text(json.dumps(document, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                    changed = json.loads(original)
+                    if rebind:
+                        next(p for p in changed["packages"] if p["package"] == package)["data_tree_sha256"] = deploy.sha(tree_path)
+                    record_path.write_text(json.dumps(changed, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+                    try:
+                        with self.assertRaises(check_repo.CheckError) as caught:
+                            check_repo.packages(out)
+                    finally:
+                        tree_path.write_bytes(saved)
+                        record_path.write_text(original, encoding="utf-8")
+                    return str(caught.exception)
+                link = lambda d: d["entries"]["usr/lib/libsrrx-fixture.so"].update(target="libsrrx-fixture.so.2")  # noqa: E731
+                self.assertIn("differs from its data tree", tampered(FIXTURE + "-dev", link))
+                self.assertIn("differs from its data tree",
+                              tampered(FIXTURE, lambda d: d["entries"]["usr/bin/srrx-fixture-hello"].update(mode="0644")))
+                self.assertIn("differs from its data tree",
+                              tampered(FIXTURE, lambda d: d["entries"]["usr/bin/srrx-fixture-hello"].update(sha256="0" * 64)))
+                self.assertIn("differs from the build record", tampered(FIXTURE + "-dev", link, rebind=False))
+                tree_path = out / FIXTURE / (FIXTURE + "-dev.data-tree.json")
+                saved = tree_path.read_bytes()
+                tree_path.unlink()
+                with self.assertRaisesRegex(check_repo.CheckError, "differs from the build record"):
+                    check_repo.packages(out)
+                tree_path.write_bytes(saved)
+                unbound = json.loads(original)
+                unbound["packages"][1].pop("data_tree_sha256")
+                record_path.write_text(json.dumps(unbound), encoding="utf-8")
+                with self.assertRaisesRegex(check_repo.CheckError, "lists no data tree"):
+                    check_repo.packages(out)
+                record_path.write_text(original, encoding="utf-8")
+                self.assertEqual(check_repo.packages(out)["status"], "CI_PACKAGES_MATCH_BUILD_RECORDS")
 
 
 if __name__ == "__main__":

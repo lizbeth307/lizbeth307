@@ -140,14 +140,37 @@ def apply_to_copy(component, source, destination, fixture=False):
         raise
 
 
+def without_fixture():
+    """The reviewed patches with no exact upstream fixture (upstream-fixtures/<dir>), never passed
+    silently: each must be the source.patch of its +lab recipe, so build_recipe applies it from the
+    locked archive (apply_from_archive: archive SHA-256, target hashes before and after) in the
+    packages CI. A patch with neither a fixture nor such a recipe fails. One NO_UPSTREAM_FIXTURE
+    entry per patch; not a fixture result and not release evidence."""
+    entries = []
+    for component in pins():
+        if (HERE / "upstream-fixtures" / FIXTURES.get(component, component)).is_dir():
+            continue
+        recipe_path = HERE / "recipes" / component / "recipe.json"
+        recipe = json.loads(recipe_path.read_text(encoding="utf-8")) if recipe_path.is_file() else None
+        source = recipe.get("source") if type(recipe) is dict else None
+        if type(source) is not dict or source.get("patch") != "deployment/patches/" + component + "-rx-only.patch":
+            raise PatchError("reviewed patch has no upstream fixture and no recipe that applies it: " + component)
+        entries.append({"component": component, "status": "NO_UPSTREAM_FIXTURE", "source_fixture_only": False, "release_ready": False,
+                        "checked_by": "build_recipe extract of deployment/recipes/" + component + " from the locked archive "
+                                      "(apply_from_archive: target hashes before/after), sr-rx-packages CI only"})
+    return entries
+
+
 def check_fixtures():
     """Every reviewed patch that has an exact upstream fixture (upstream-fixtures/) applies to a
-    copy of it; a component without a fixture is checked from its locked archive by the builder."""
+    copy of it; the receipts are returned. A patch without a fixture must be applied by its recipe
+    (without_fixture refuses one that is not; `--check` lists them as NO_UPSTREAM_FIXTURE)."""
+    missing = {entry["component"] for entry in without_fixture()}
     results = []
     with tempfile.TemporaryDirectory(prefix="srrx-patch-check-") as temporary:
         for component in pins():
-            fixture = HERE / "upstream-fixtures" / FIXTURES.get(component, component)
-            if fixture.is_dir():
+            if component not in missing:
+                fixture = HERE / "upstream-fixtures" / FIXTURES.get(component, component)
                 results.append(apply_to_copy(component, fixture, Path(temporary) / component, fixture=True))
     return results
 
@@ -188,7 +211,7 @@ def apply_from_archive(component, archive_path, destination):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--check", action="store_true", help="apply to temporary exact upstream fixtures only")
+    parser.add_argument("--check", action="store_true", help="apply to temporary exact upstream fixtures only; list patches without one")
     parser.add_argument("--component", choices=pins())
     parser.add_argument("--source", type=Path)
     parser.add_argument("--archive", type=Path)
@@ -198,7 +221,7 @@ def main():
         if args.check:
             if args.source or args.archive or args.output or args.component:
                 parser.error("--check does not accept source/output/component")
-            result = check_fixtures()
+            result = check_fixtures() + without_fixture()  # the second list: patches only a recipe build exercises
         else:
             if not args.component or not args.output or bool(args.source) == bool(args.archive):
                 parser.error("supply --component, exactly one of --source/--archive, and a new --output")
