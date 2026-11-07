@@ -1,6 +1,6 @@
 # Звіт посадки механічної моделі SR-RX-v2.1
 
-Згенеровано `mechanical/build.py` (params 135211b0855f); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
+Згенеровано `mechanical/build.py` (params 849d6e2620a0); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
 
 ## Габарит
 
@@ -29,8 +29,8 @@
 ## Підсумок
 
 - зіткнень конвертів: 0; поза внутрішнім об'ємом: 0
-- правила: FAIL 0, OPEN 6 (OPEN = потрібна обрана або виміряна деталь)
-- антенні деталі за правилом розміру: FAIL 0; площа плат (деталі без роз'ємів джгутів): FAIL 0; з роз'ємами джгутів build/16: OPEN 2 (оцінка, не в гейті до перерозкладки хвилі 2)
+- правила: FAIL 0, OPEN 9 (OPEN = потрібна обрана або виміряна деталь)
+- антенні деталі за правилом розміру: FAIL 0; площа плат (курт'ярди KiCad, деталі без роз'ємів джгутів): OPEN 1; з роз'ємами джгутів build/16: OPEN 2 (MODEL ESTIMATE, не в гейті; рішення — розбиття й розкладка плат)
 - термоінтерфейси: FAIL 0, OPEN 3; ущільнення: PASS (model)
 - звірка з STEP постачальника: PASS (model vs vendor STEP)
 - перетини тіл B-rep (оболонки, пластина, кутники, РЧ-відсік, лоток) з конвертами: 0; деталі з кількох тіл («висячі» елементи): 0
@@ -62,6 +62,9 @@
 | R-COOLER-A | cooler A: Cu block inside the 32 x 31 keep-in and over SoC + LPDDR5 (cover margin >= 0.5); fan face >= the keep-in minimum and above the 40-pin and 2x2 headers | {'cover_margin': 0.97, 'fan_face_above_board': 10.5, 'tallest_header': 9.65} | {'cover_margin': 0.5, 'fan_face_above_board': 10.0} | PASS (model) |
 | R-VENT-FOAM | battery vent: the thread ends in the 3 mm foam layer, so the foam has a hole >= thread d + 0.5 at the vent | {'V2': 13.0} | 12.5 | PASS (model) |
 | R-HDMI-ROUTE | HDMI cable Q6A to HDMI board: keep-clear route in the envelope check (plug head, bends, plate notch, run) | {'cable_od': 5.2, 'bend_r': 8.0} |  | OPEN: the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN; proposed default (build/15 'Оболонка D15', 2026-11-07): STACK's FPC reserve Adafruit 3550 (right angle) + 3548 + 3560 with a grounded copper-tape wrap; MPN, length and a ferrite for the flat cable TBD until the Adafruit pages are read |
+| R-PPS-LEN | PPS path Q6A J20.7 -> LC76G: harness length <= 200 mm (STACK 5.2 'UART7/PPS wiring <= 20 cm'; E3 J301 note) | {'via_segments_mm': 329, 'branch_mm': 196} | 200 | OPEN (end provisional): S01+S25 = 329 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 196 mm <= 200 (model; ends on board edge zones / envelope faces until the header and pin positions are placed) |
+| R-ROUTE-CLEAR | harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings | {'routed': 33, 'clear': 33, 'provisional_end': 33, 'no_route_unplaced_end': ['S06', 'S07', 'S36', 'S39', 'S40'], 'external': ['S33', 'S41'], 'crossing': []} |  | OPEN (end provisional): every routed centreline clears the envelopes and structure; 33 of 33 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S06, S07, S36, S39, S40; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27 |
+| R-HDR-HEIGHT | board-side harness headers (build/16 §4) inside the board height limit, or in a computed height zone (component side) / rear zone | {'above_limit': ['X01I1-CTRL IDC_top 9.1', 'X02P1-CTRL MF_top 9.9', 'X02P1-PWR MF_top 9.9', 'X04P1-PWR MF_top 9.9', 'X04P1-RF MF_top 9.9', 'X11P1-PWR MF_top 9.9', 'X12P1-PWR MF_top 9.9', 'X13P1-PWR MF_top 9.9', 'X14P1-PWR MF_top 9.9', 'X17P1-PWR MF_top 9.9', 'X18P1-PWR MF_top 9.9', 'X19P1-PWR MF_top 9.9', 'X25P1-CTRL MF_top 9.9', 'X28P1-CTRL MF_top 9.9', 'X32P1-PWR MF_top 9.9'], 'height_not_read': ['X05J1-PWR', 'X06J1-PWR', 'X07J1-PWR', 'X10J1-PWR', 'X27F1-CTRL']} | {'PWR': 9.0, 'RF': 5.5, 'CTRL': 5.5, 'ENC': 6.5} | OPEN: GR-3 decides (header orientation, board side or board): 15 headers above their board limit (X01I1-CTRL IDC_top 9.1, X02P1-CTRL MF_top 9.9, X02P1-PWR MF_top 9.9, X04P1-PWR MF_top 9.9, X04P1-RF MF_top 9.9, X11P1-PWR MF_top 9.9, X12P1-PWR MF_top 9.9, X13P1-PWR MF_top 9.9, X14P1-PWR MF_top 9.9, X17P1-PWR MF_top 9.9, X18P1-PWR MF_top 9.9, X19P1-PWR MF_top 9.9, X25P1-CTRL MF_top 9.9, X28P1-CTRL MF_top 9.9, X32P1-PWR MF_top 9.9); 5 heights not read; right-angle Micro-Fit 6.98 mm does not fit the CTRL component side (best zone 6.5 mm) |
 | R-TOOL-ACCESS | every closure, hatch and T7-holder screw: clear tool path (counterbore, then d 8.0 for 60 mm) from outside | CLOSURE_1: remove t7_holder first / CLOSURE_2: remove t7_holder first | no fixed solid in a tool path; removable parts only over closure screws | PASS (model) |
 | R-TRIPOD-DISC | tripod plate disc d 50.0 about the 1/4-20: no solid prouder than the plinth face (5.0 mm) | none | plinth d 23.0, 5.0 proud | PASS (model) |
 
@@ -146,18 +149,167 @@ B-rep intersection of every envelope with the shells, plate, angles, RF bay, ped
 | CTRL | CTRL_HMI | 5915 | 6 x ⌀2.7 | ≤5.5 | default: (176, 13) z 54.9 +z | M2.5 screws into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses |
 | ENC | ENC | 576 | 2 x ⌀2.7 | ≤6.5 | main: (188.5, 123) z 54.3 +z; volume: (188.5, 82) z 54.3 +z | 2x M2.5 into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses |
 
-## Площа плат: деталі і роз'єми джгутів (оцінка, модель)
+## Площа плат: курт'ярди KiCad і роз'єми джгутів (MODEL ESTIMATE)
 
-courtyard estimate per footprint class x 1.8 placement density (model, not a placement); courtyard w x d per header (parts.json harness_headers) x 1.8 placement density, added to the parts estimate; frontage = sum of header widths against the edge zones of boards.json (every header at an edge, cable leaving sideways).
+Джерело: KiCad 10.0.7 courtyards (build/kicad/footprints/manifest.json). Метод: sum of the vendored KiCad 10.0.7 F.CrtYd courtyards (bbox; polygon area for a single fp_poly) of the bare board parts of pcb/generated/components.csv (DNP excluded) per board domain; need = modules (mount pcb_module) x 1.0 + other parts x fill factor 1.5 or 1.8 (1.8 = planning value) — MODEL ESTIMATE, not a placement; роз'єми: header courtyard w x d (vendored KiCad 10.0.7 footprint where that pin count exists, else parts.json harness_headers) x fill factor 1.5 or 1.8, added to the parts need; frontage = sum of header widths against the edge zones of boards.json (every header at an edge, cable leaving sideways); Mini-Fit Jr., IDC and FAN3 courtyards are assumptions (parts.json).
 
-MODEL ESTIMATE: reported, not gated (OPEN = the outline or the harness architecture needs a wave-2 decision)
+MODEL ESTIMATE: reported, not gated (OPEN = need at the planning factor exceeds the outline; the real placement decides); MODEL ESTIMATE: reported, not gated (OPEN = the outline or the harness architecture needs a wave-2 decision)
 
-| плата | контур, мм² | деталі (без джгутів), мм² | результат | роз'ємів джгутів | з роз'ємами, мм² | ширина роз'ємів / крайові зони, мм | результат |
+| плата | контур, мм² | курт'ярди деталей, мм² | з них модулі (×1.0), мм² | потреба ×1.5 / ×1.8, мм² | результат | роз'ємів джгутів | курт'ярди роз'ємів, мм² | з роз'ємами ×1.5 / ×1.8, мм² | ширина роз'ємів / крайові зони, мм | результат |
+|---|---|---|---|---|---|---|---|---|---|---|
+| PWR | 7910 | 6411 | 1342 | 8945 / 10466 | OPEN: need 10466 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB) | 32 | 2702 | 12999 / 15330 | 396 / 233 | OPEN: area 15330 > 7910 mm2 at fill 1.8; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
+| RF | 8188 | 2056 | 0 | 3083 / 3700 | PASS (model estimate) | 4 | 474 | 3794 / 4553 | 57 / 344 | PASS (model estimate) |
+| CTRL | 5915 | 3248 | 1221 | 4261 / 4869 | PASS (model estimate) | 22 | 2701 | 8312 / 9731 | 322 / 145 | OPEN: area 9731 > 5915 mm2 at fill 1.8; frontage 322 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
+| ENC | 576 | — | — | — | — | 2 | 94 | 141 / 169 | 11 / 12 | PASS (model estimate) |
+
+Курт'ярди деталей за групами схем (design/E*.json «group»), мм²:
+
+- PWR: E1 LAB5 1149; E1 SYS12 753; E1 Сервісний заряд 119; E1 AON і UV 94; E1 Головний вимикач 92; E1 Захист USB-PD 43; E1 Інгібування заряду 26; E1 Аварійний ADC 13; E2 Boni: малошумна захищена шина 500; E2 LNB: малошумна захищена шина 410; E2 J21: захищене живлення 12 V 399; E2 LNA4V5: паралельні LT3045 352; E2 LNA: канал 2 247; E2 LNA: канал 3 247; E2 AUX12: верхній ключ і PTC 185; E2 Дисплей: захищене живлення 12 V 171; E2 Lime M.2: комутована шина 3.3 V 166; E2 LNA: канал 1 146; E2 LNA: канал 4 146; E2 RTL-B: комутований VBUS 136; E2 S-band LaNA WB: захищена шина 5 V 136; E2 INA3221: струми LNA1–3 67; E2 INA3221: струми LNA4, LNB і Boni 67; E2 LNB: незалежне точне відсікання OVP 46; E2 LNB: контроль напруги 31; E2 Boni: контроль напруги 31; E2 AUX12: контроль напруги після PTC 31; E5 VBUS HF+ з демпфованим LC 306; E5 VBUS RTL-A і LAB PORT 228; E5 LAB BUS I2C buffer 57; E5 Сервіс і зовнішні шини 14
+- RF: E4 RF and receiver interfaces 20; E4 RF passives and drivers 31; E4 SP4T switches 54; E4 DC detectors: UHF 95; E4 DC detectors: LBAND 95; E4 DC detectors: HF 95; E4 RF bias injector local decoupling 18; E4 DC detectors: common reference 171; E4 DC detectors: local power 35
+- CTRL: E3 Pico HMI 1287; E3 MCP23017 control 783; E3 HMI buttons 487; E3 Indicators 219; E3 Cooling 147; E3 Q6A header 120; E3 HMI encoders 66; E3 Pico power control 48; E3 Ambient sensor 31; E3 MCP hardware watchdog reset 26; E3 GNSS 17; E3 Thermal sensors 17
+
+## Зони висоти CTRL і RF (карта вільної висоти, модель)
+
+Вільна висота від площини компонентів (лице) і від тильної площини плати до найближчого конверту, деталі конструкції, фланця кнопки або стінки; «вміщує» = вільна − 0.5 мм. Координати — від лівого нижнього кута контуру плати (boards.json). Ті самі списки записано в boards.json (height_zones / rear_zones) і в contract/boards.json.
+
+| плата | бік | x, y, ш x в, мм | вільна, мм | вміщує, мм | обмежує |
+|---|---|---|---|---|---|
+| CTRL | лице | 0, 0, 6 x 14.5 | 7 | 6.5 | front wall |
+| CTRL | лице | 6, 0, 15 x 14.5 | 5.5 | 5 | button_flange.02 |
+| CTRL | лице | 21, 0, 7 x 14.5 | 7 | 6.5 | front wall |
+| CTRL | лице | 28, 0, 15 x 14.5 | 5.5 | 5 | button_flange.12 |
+| CTRL | лице | 43, 0, 7 x 14.5 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 14.5, 50 x 7 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 21.5, 6 x 15 | 7 | 6.5 | front wall |
+| CTRL | лице | 6, 21.5, 15 x 15 | 5.5 | 5 | button_flange.01 |
+| CTRL | лице | 21, 21.5, 7 x 15 | 7 | 6.5 | front wall |
+| CTRL | лице | 28, 21.5, 15 x 15 | 5.5 | 5 | button_flange.11 |
+| CTRL | лице | 43, 21.5, 7 x 15 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 36.5, 50 x 7 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 43.5, 6 x 15 | 7 | 6.5 | front wall |
+| CTRL | лице | 6, 43.5, 15 x 15 | 5.5 | 5 | button_flange.00 |
+| CTRL | лице | 21, 43.5, 7 x 15 | 7 | 6.5 | front wall |
+| CTRL | лице | 28, 43.5, 15 x 15 | 5.5 | 5 | button_flange.10 |
+| CTRL | лице | 43, 43.5, 7 x 15 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 58.5, 50 x 10 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 68.5, 12 x 25 | 7 | 6.5 | front wall |
+| CTRL | лице | 37, 68.5, 13 x 25 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 93.5, 50 x 16 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 109.5, 12 x 25 | 7 | 6.5 | front wall |
+| CTRL | лице | 37, 109.5, 13 x 25 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 134.5, 50 x 2.5 | 7 | 6.5 | front wall |
+| CTRL | лице | 0, 137, 40 x 7 | 7 | 6.5 | front wall |
+| CTRL | тил | 0, 0, 34 x 57 | 3.9 | 3.4 | bms |
+| CTRL | тил | 34, 0, 9.5 x 5.5 | 14.4 | 13.9 | plate.ext |
+| CTRL | тил | 43.5, 0, 6.5 x 5.5 | 0.4 | 0 | plate.boss2 |
+| CTRL | тил | 34, 5.5, 16 x 8.7 | 14.4 | 13.9 | plate.ext |
+| CTRL | тил | 34, 14.2, 6.2 x 11.3 | 14.4 | 13.9 | plate.ext |
+| CTRL | тил | 40.2, 14.2, 5.6 x 49.6 | 3.6 | 3.1 | hdmi_route_front_up |
+| CTRL | тил | 45.8, 14.2, 4.2 x 11.3 | 14.4 | 13.9 | plate.ext |
+| CTRL | тил | 34, 25.5, 6.2 x 27.5 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 45.8, 25.5, 4.2 x 38.3 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 34, 53, 0.8 x 4 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 34.8, 53, 5.4 x 10.8 | 3.6 | 3.1 | hdmi_route_front_turn |
+| CTRL | тил | 0, 57, 34.8 x 1.2 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 0, 58.2, 34.8 x 5.6 | 3.6 | 3.1 | hdmi_route_front_run |
+| CTRL | тил | 0, 63.8, 50 x 4.7 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 0, 68.5, 12 x 14.5 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 37, 68.5, 13 x 14.5 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 0, 83, 12 x 10.5 | 1.4 | 0.9 | lime |
+| CTRL | тил | 37, 83, 13 x 10.5 | 1.4 | 0.9 | lime |
+| CTRL | тил | 0, 93.5, 50 x 15.5 | 1.4 | 0.9 | lime |
+| CTRL | тил | 0, 109, 50 x 0.5 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 0, 109.5, 12 x 25 | 3.9 | 3.4 | ip2368 |
+| CTRL | тил | 37, 109.5, 7 x 25 | 3.9 | 3.4 | ip2368 |
+| CTRL | тил | 44, 109.5, 6 x 27.5 | 14.4 | 13.9 | plate.main |
+| CTRL | тил | 0, 134.5, 44 x 2.5 | 3.9 | 3.4 | ip2368 |
+| CTRL | тил | 0, 137, 40 x 6.5 | 3.9 | 3.4 | ip2368 |
+| CTRL | тил | 0, 143.5, 40 x 0.5 | 14.4 | 13.9 | plate.main |
+| RF | лице | 0, 0, 95 x 27 | 16.8 | 16.3 | v4l_a |
+| RF | лице | 95, 0, 1.5 x 27 | 29.8 | 29.3 | rfbay.lid |
+| RF | лице | 96.5, 0, 87.5 x 27 | 16.8 | 16.3 | v4l_b |
+| RF | лице | 0, 27, 184 x 0.5 | 29.8 | 29.3 | rfbay.lid |
+| RF | лице | 0, 27.5, 73.7 x 17 | 11.1 | 10.6 | sawbird |
+| RF | лице | 73.7, 27.5, 9.6 x 17 | 29.8 | 29.3 | rfbay.lid |
+| RF | лице | 83.3, 27.5, 73.7 x 17 | 11.1 | 10.6 | flamingo |
+| RF | лице | 157, 27.5, 27 x 17 | 29.8 | 29.3 | rfbay.lid |
+| RF | тил | 0, 0, 184 x 44.5 | 3 | 2.5 | plate.main |
+
+Роз'єми джгутів понад обмеження плати або без прочитаної висоти (20 з 60; правило R-HDR-HEIGHT):
+
+| роз'єм | плата | родина | висота, мм | курт'ярд, мм | межа плати | найкраща зона лиця / тилу, мм | висновок |
 |---|---|---|---|---|---|---|---|
-| PWR | 7910 | 7597 | PASS (model) | 32 | 12461 | 396 / 233 | OPEN: area 12461 > 7910 mm2; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
-| RF | 8188 | 2787 | PASS (model) | 4 | 3640 | 57 / 344 | PASS (model) |
-| CTRL | 5915 | 3049 | PASS (model) | 22 | 7911 | 322 / 145 | OPEN: area 7911 > 5915 mm2; frontage 322 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
-| ENC | 576 | — | — | 2 | 169 | 11 / 12 | PASS (model) |
+| X01I1-CTRL | CTRL | IDC top | 9.1 | 61 x 9 | 5.5 | 5.5 / 0 | above the board limit 5.5; fits no computed zone that takes its courtyard |
+| X02P1-CTRL | CTRL | MF top | 9.9 | 16.66 x 6.77 | 5.5 | 6.5 / 3.4 | above the board limit 5.5; fits no computed zone that takes its courtyard |
+| X02P1-PWR | PWR | MF top | 9.9 | 16.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X04P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X04P1-RF | RF | MF top | 9.9 | 10.66 x 6.77 | 5.5 | 29.3 / 2.5 | above the board limit 5.5; fits a component-side height zone |
+| X05J1-PWR | PWR | MFJ top | TBD | 11.7 x 13 | 9 | 10.5 / 0 | height of MFJ_top not read (TBD) |
+| X06J1-PWR | PWR | MFJ top | TBD | 11.7 x 13 | 9 | 10.5 / 0 | height of MFJ_top not read (TBD) |
+| X07J1-PWR | PWR | MFJ top | TBD | 11.7 x 13 | 9 | 10.5 / 0 | height of MFJ_top not read (TBD) |
+| X10J1-PWR | PWR | MFJ top | TBD | 15.9 x 13 | 9 | 10.5 / 0 | height of MFJ_top not read (TBD) |
+| X11P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X12P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X13P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X14P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X17P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X18P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X19P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+| X25P1-CTRL | CTRL | MF top | 9.9 | 10.66 x 6.77 | 5.5 | 6.5 / 13.9 | above the board limit 5.5; fits a rear zone (THT from the back) |
+| X27F1-CTRL | CTRL | FAN3 top | TBD | 10.08 x 6 | 5.5 | 6.5 / 13.9 | height of FAN3_top not read (TBD) |
+| X28P1-CTRL | CTRL | MF top | 9.9 | 10.66 x 6.77 | 5.5 | 6.5 / 13.9 | above the board limit 5.5; fits a rear zone (THT from the back) |
+| X32P1-PWR | PWR | MF top | 9.9 | 10.66 x 6.77 | 9 | 10.5 / 0 | above the board limit 9; fits a component-side height zone |
+
+## Траси джгутів (модель, generated/harness-routes.json)
+
+Осьова лінія кожного сегмента build/16 крізь модель корпусу (mechanical.json harness_routes): довжина = ламана + запас на вигини (половина діаметра джгута × кут) + 2 × 15 мм сервісних петель, округлено вгору до 1 мм. Діаметр джгута — верхня межа за кількістю жил build/16 і найбільшою ізоляцією, яку беруть клеми (дріт не обрано, AI-WIRE-PTFE). Кінці на крайових зонах плат і біля модулів без конверту — попередні (OPEN), доки немає позицій роз'ємів. MODEL ESTIMATE, не виміряні довжини.
+
+PPS (R-PPS-LEN): S01+S25 = 329 мм проти 200 мм; рішення — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); гілка PPS = 196 мм.
+
+| сегмент | тип | довжина, мм | ламана, мм | вигинів | ⌀ джгута, мм | прорізи | стан |
+|---|---|---|---|---|---|---|---|
+| S01 | harness | 102 | 66 | 3 | 2.54 | SL1 | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S02 | harness | 189 | 80.5 | 6 | 16.55 | — | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S03 | harness | 308 | 219.1 | 11 | 6.71 | SL2, N4 | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; RF header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S04 | harness | 221 | 151.4 | 7 | 7.17 | SL2, N4 | OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone; RF header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S05 | harness | 35 | 4.8 | 0 | 6.93 | — | OPEN (end provisional): F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S06 | harness | — | — | — | — | — | OPEN (end provisional): INA228 5832 has no envelope or place in the model yet (MECH-3) |
+| S07 | harness | — | — | — | — | — | OPEN (end provisional): Pololu #2813 has no envelope or place in the model yet (MECH-3) |
+| S10 | harness | 248 | 150.8 | 8 | 10.59 | — | OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S11 | harness | 229 | 175.6 | 6 | 4.78 | SL3 | OPEN (end provisional): behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S12 | harness | 35 | 4.8 | 0 | 3.38 | — | OPEN (end provisional): XT30 pigtail place in the battery compartment TBD: end on the pack top face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S13 | harness | 134 | 87.4 | 6 | 3.38 | SL2 | OPEN (end provisional): Adafruit 5997 has no envelope (mechanical/README): end below the Q6A USB stack (J2); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S14 | harness | 68 | 34.8 | 1 | 3.38 | SL2 | OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S15 | harness | 157 | 115.3 | 7 | 1.94 | SL2 | OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S16 | harness | 123 | 86.2 | 2 | 4.14 | — | OPEN (end provisional): hatch-board layout TBD (W2-05): J503 on the hatch-board envelope |
+| S17 | harness | 66 | 27.6 | 3 | 3.38 | SL2 | OPEN (end provisional): VCC_3V3_MKEY tap on the Q6A not chosen (E5/E2; MECH-6 B-07): end at the Q6A board edge; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S18 | harness | 164 | 122.8 | 4 | 3.38 | SL2 | OPEN (end provisional): R44SF envelope TBD: end at the riser window (plate rear face); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S19 | harness | 38 | 5 | 1 | 3.38 | — | OPEN (end provisional): barrel jack position on the Wisecoco HDMI board TBD (STACK D5): end on the board envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S20 | harness | 156 | 115.2 | 5 | 2.74 | SL2, N2 | OPEN (end provisional): J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S21 | harness | 142 | 100.7 | 5 | 2.74 | SL2, N3 | OPEN (end provisional): J541 place TBD: end at notch N3 of the RTL-B USB lead; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S22 | harness | 55 | 19.2 | 2 | 3.35 | SL2 | OPEN (end provisional): J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S23 | harness | 242 | 193.3 | 7 | 3.35 | SL3 | OPEN (end provisional): behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S24 | harness | 193 | 139 | 9 | 3.35 | SL2 | OPEN (end provisional): T7_INSERT envelope TBD (in the USB3 cable between Q6A J5 and the T7 gland): end beside the gland; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S25 | harness | 227 | 159.5 | 8 | 5.85 | SL2 | OPEN (end provisional): P1 header position on the Waveshare 24370 board not read: end on the LC76G envelope face towards the route; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S26 | harness | 97 | 63.6 | 1 | 3.87 | — | OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S27 | stock_lead | 111 | 67.5 | 5 | 3.35 | SL1 | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S28 | harness | 38 | 4.9 | 1 | 3.38 | — | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S29 | harness | 72 | 32.9 | 4 | 2.74 | — | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S30 | harness | 177 | 125.1 | 8 | 3.35 | SL2 | OPEN (end provisional): hatch-board layout TBD (W2-05): J502 on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S31 | harness | 58 | 24.2 | 2 | 2.74 | — | OPEN (end provisional): J522 EDL contact pads on the Q6A not localised (E5 §9): end at the Q6A board edge |
+| S32 | harness | 216 | 162.9 | 6 | 4.78 | SL3 | OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S33 | external | — | — | — | — | — | EXTERNAL: outside the enclosure; the length is set by the cable, not by the enclosure model |
+| S34 | harness | 201 | 144.5 | 7 | 4.74 | SL3 | OPEN (end provisional): behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S35 | harness | 157 | 117.5 | 4 | 2.74 | SL2 | OPEN (end provisional): Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S36 | harness | — | — | — | — | — | OPEN (end provisional): pod power entry (J551 panel receptacle, GR-1) is not placed on a face yet (MECH-3) |
+| S37 | harness | 31 | 0.8 | 0 | 3.87 | — | OPEN (end provisional): ENC header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S38 | harness | 31 | 0.8 | 0 | 3.87 | — | OPEN (end provisional): ENC header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S39 | harness | — | — | — | — | — | OPEN (end provisional): TH301 place on the panel rear heat spreader TBD (MECH-6 B-10) |
+| S40 | harness | — | — | — | — | — | OPEN (end provisional): TH302 place on the inner frame TBD (MECH-6 B-10) |
+| S41 | external | — | — | — | — | — | EXTERNAL: outside the enclosure; the length is set by the cable, not by the enclosure model |
+| PPS (гілка) | harness | 196 | 159.4 | 2 | 3.87 | — | OPEN (end provisional): P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge |
+
+Прорізи пластини: SL1 — у plate.slots 1, трасами 2, поза списком: S27; SL2 — у plate.slots 14, трасами 14; SL3 — у plate.slots 4, трасами 4.
 
 ## Розташування конвертів (мм; x вправо, y вгору з лиця, z від задньої зовнішньої грані)
 
