@@ -274,10 +274,10 @@ UP_ROWS = [('U', 0.0, 5.7, 90), ('cA', 0.0, 2.6, 0), ('cB', 2.5, 0.9, 90), ('ren
 # Voltage monitor (TLV3011 + precision divider + sense filter + supply decoupling): box 0-9.3 x 0.7-5.5.
 MON_ROWS = [('U', 5.1, 3.0, 0), ('rtop', 1.5, 4.6, 0), ('rbot', 1.5, 3.0, 0), ('cf', 1.5, 1.4, 0), ('cv', 8.6, 3.0, 90)]
 LAB5_CELLS = [  # switch axis x, refs
-    (58.0, dict(U='U210', cA='C248', ren='R249', rilim='R248')),
-    (64.5, dict(U='U221', cA='C295', ren='R294', rilim='R293')),
-    (71.0, dict(U='U501', cA='C502', cB='C501', ren='R502', rilim='R501')),
-    (77.5, dict(U='U502', cA='C505', cB='C504', ren='R506', rilim='R505'))]
+    (61.0, dict(U='U210', cA='C248', ren='R249', rilim='R248')),
+    (67.5, dict(U='U221', cA='C295', ren='R294', rilim='R293')),
+    (74.0, dict(U='U501', cA='C502', cB='C501', ren='R502', rilim='R501')),
+    (80.5, dict(U='U502', cA='C505', cB='C504', ren='R506', rilim='R505'))]
 
 
 def placement(inp):
@@ -301,9 +301,9 @@ def placement(inp):
     keys = ('U', 'cin', 'ren', 'rilim', 'rsh', 'csh', 'L', 'cout', 'rdamp', 'tp', 'rsp', 'rsm')
     for row in lna:
         put(cell(row[-1][0], row[-1][1], LNA_ROWS, dict(zip(keys, row[:-1]))))
-    put(cell(29.2, 0.6, BLOCK_ROWS, dict(Q='Q2901', D='D2901', QN='Q2911', RSINK='R2911', RGS='R2901', CGS='C2911',
+    put(cell(29.2, 2.6, BLOCK_ROWS, dict(Q='Q2901', D='D2901', QN='Q2911', RSINK='R2911', RGS='R2901', CGS='C2911',
                                            RBL='R2921', CPORT='C2901', TPP='TP2901')))
-    put(cell(44.2, 0.6, BLOCK_ROWS, dict(Q='Q2902', D='D2902', QN='Q2912', RSINK='R2912', RGS='R2902', CGS='C2912',
+    put(cell(44.2, 2.6, BLOCK_ROWS, dict(Q='Q2902', D='D2902', QN='Q2912', RSINK='R2912', RGS='R2902', CGS='C2912',
                                            RBL='R2922', CPORT='C2902', TPP='TP2902')))
     put(cell(29.0, 25.0, [('U', 5.5, 5.0, 0), ('c1', 1.6, 8.6, 0), ('c2', 1.6, 1.4, 0), ('c3', 9.6, 1.4, 0),
                           ('cvs', 9.6, 8.6, 0)], dict(U='U215', c1='C274', c2='C275', c3='C276', cvs='C277')))
@@ -317,7 +317,7 @@ def placement(inp):
     put(cell(0.0, 0.0, [('L210', 59.5, 31.5, 0), ('L215', 66.5, 31.5, 0), ('C503', 76.0, 31.8, 0),
                         ('C249', 57.5, 26.0, 90), ('C250', 61.3, 26.0, 90), ('C296', 64.5, 26.0, 90), ('C297', 68.3, 26.0, 90),
                         ('R251', 72.5, 25.0, 0), ('R295', 72.5, 27.55, 0), ('TP210', 77.0, 25.0, 0), ('TP216', 80.0, 25.0, 0),
-                        ('R504', 81.0, 31.6, 90), ('C507', 82.0, 18.0, 90), ('R508', 83.8, 18.0, 90)],
+                        ('R504', 81.0, 31.6, 90), ('C507', 83.2, 24.6, 90), ('R508', 85.0, 24.6, 90)],
              {r: r for r in ('L210', 'L215', 'C503', 'C249', 'C250', 'C296', 'C297', 'R251', 'R295', 'TP210', 'TP216',
                              'R504', 'C507', 'R508')}))
     # LAB BUS I2C buffer U507 over the B2B, between J201/J506 and ch4.
