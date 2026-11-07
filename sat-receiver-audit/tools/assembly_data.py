@@ -315,7 +315,7 @@ SEGMENTS = [
 FAMILIES = {
     "PH": {"title": "JST PH 2.0 мм", "rating": 2.0, "share": 0.6, "awg": (26, 24), "signal_awg": 26, "power_awg": 24,
            "max_pins": 16, "source": "JST-PH",
-           "db": "PH", "tool": "ручний інструмент JST для SPH-002T-P0.5S — TBD (каталог ePH називає лише аплікатор APLMK SPH002-05S / машину AP-K2N)"},
+           "db": "PH", "tool": "JST WC-240 (секції 30-28, 26, 24 AWG; зачистка 2.2 мм; assembly_items AI-JST-PH-TOOL)"},
     "MF": {"title": "Molex Micro-Fit 3.0 (1 ряд, 3.00 мм)", "rating": 5.0, "share": 0.6, "awg": (24, 22, 20), "signal_awg": 24, "power_awg": 20,
            "max_pins": 12, "source": "MOLEX-43030",
            "db": "MF", "tool": "Molex 0638190000; екстрактор 0011030043"},
@@ -323,12 +323,8 @@ FAMILIES = {
             "max_pins": 40, "source": None, "db": "IDC", "tool": "прес IDC"},
     "MFJ": {"title": "Molex Mini-Fit Jr. (дворядна)", "rating": 9.0, "share": 0.6, "awg": (24, 22, 20, 18), "signal_awg": 24, "power_awg": 18,
             "max_pins": 12, "source": "MOLEX-5556",
-            "db": None, "terminal": "0039000060 (пакет) / 0039000059 (котушка)",
-            "no_db": "коду розетки Mini-Fit Jr. 5557 і вилки 5566 на цю кількість контактів не прочитано (прочитано лише 2 і 4 конт., DIGIKEY-MFJ)",
-            # Codes read on DigiKey DE (DIGIKEY-MFJ): not in harness_families, which takes LCSC listings only (parts DB rule).
-            # Headers: vertical 5566, tin like the 0039000060 terminal; PCB pegs and footprint are not given on the pages (wave 2, W2-01).
-            "parts": {2: {"housing": "0039012020 (DigiKey WM3700-ND)", "header": "0039288020 (DigiKey WM23800-ND)"},
-                      4: {"housing": "0039012040 (DigiKey WM3701-ND)", "header": "0039288040 (DigiKey WM23801-ND)"}},
+            # Housings 5557, vertical headers 5566 and the 0039000060 terminal: harness_families MFJ (LCSC + DigiKey DE, W2 SRC-1).
+            "db": "MFJ", "terminal": "0039000060 (пакет) / 0039000059 (котушка)",
             "tool": "Molex 638190901 (18–24 AWG); екстрактор 11030044"},
     "SOLDER": {"title": "пайка до майданчиків", "rating": None, "share": None, "awg": (28, 26, 24, 22, 20, 18), "signal_awg": 26, "power_awg": 20,
                "max_pins": 99, "source": None, "housing": "—", "header": "—", "terminal": "—", "tool": "паяльник; термоусадка"},
@@ -432,7 +428,28 @@ COLOURS = [
     (r"^(FAULT_|FLT_|PG_|DCS_|OVP_|PTC_|MCP_INT|INA228_ALERT|SLED_DET)", "блакитний"),
     (r".*", "білий"),
 ]
-INSULATION = "PTFE, луджена мідь багатодротова, ≥200 °C; тип і MPN — TBD (немає в базі деталей: assembly_items AI-WIRE-PTFE); ⌀ ізоляції в межах клеми"
+INSULATION = ("PTFE, посріблена мідь багатодротова, −60…+200 °C (Alpha Wire, assembly_items AI-WIRE-PTFE): 26 AWG 5853, 20 AWG 5856 і 18 AWG 5857 — "
+              "MIL-W-16878/4 type E, 24 AWG 2844/7 — MIL-W-16878/6 type ET; ⌀ ізоляції в межах клеми; артикул за кольором — підсумок закупівлі")
+# Hook-up wire per gauge (W2 SRC-1, build/15 «Провід, стрічка й інструмент (W2 SRC-1)»): Alpha Wire PTFE, silver-plated copper.
+# AWG -> (Alpha Wire item, MIL-W-16878 type, insulation OD mm, OD tolerance mm), from the Alpha Wire customer specifications read
+# 07.11.2026 (design/parts/snapshots/2026-11-07-w2-src1-manual.json web:alphawire-*; inch values x 25.4). Per gauge the thinnest
+# series whose OD range fits every crimp terminal the gauge ends in (WIRE_INSULATION_RANGE): 2843/7 (ET, 0.79 +/- 0.05) is under the
+# PH minimum, so 26 AWG is type E 5853; type ET is made only up to 22 AWG (Alpha catalogue), so 20/18 AWG are type E.
+WIRE = {
+    28: ("2842/7", "MIL-W-16878/6 type ET, 250 V", 0.69, 0.05),
+    26: ("5853", "MIL-W-16878/4 type E, 600 V", 0.99, 0.10),
+    24: ("2844/7", "MIL-W-16878/6 type ET, 250 V", 0.91, 0.05),
+    22: ("2845/7", "MIL-W-16878/6 type ET, 250 V", 1.07, 0.05),
+    20: ("5856", "MIL-W-16878/4 type E, 600 V", 1.47, 0.10),
+    18: ("5857", "MIL-W-16878/4 type E, 600 V", 1.75, 0.13),
+}
+# Alpha Wire colour codes of the ten colours every series above is made in (specifications; DigiKey forum code list, DigiKey DE pages);
+# a harness colour outside them is bought white and told apart by the printed marker (build/18).
+WIRE_COLOUR_CODE = {"білий": "WH", "чорний": "BK", "червоний": "RD", "зелений": "GR", "жовтий": "YL", "синій": "BL", "коричневий": "BR",
+                    "помаранчевий": "OR", "сірий": "SL", "фіолетовий": "VI"}
+WIRE_PUTUP = "005"  # 100 ft (30.5 m) spool, the shortest put-up of the specifications
+# Insulation OD each crimp terminal accepts, mm (None: no limit given): JST-PH SPH-002T-P0.5S, MOLEX-43030, MOLEX-5556 (SOURCES).
+WIRE_INSULATION_RANGE = {"PH": (0.8, 1.5), "MF": (None, 1.85), "MFJ": (1.30, 3.10)}
 
 # High-speed / factory cable assemblies: id -> (title, net regex, ends, parts)
 ASSEMBLIES = [

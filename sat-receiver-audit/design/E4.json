@@ -3744,6 +3744,9 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "135101-01-M1.00",
+      "manufacturer": "Amphenol RF",
+      "alt_mpn": "Molex 0732305316",
       "pins": [
         {
           "number": "IN_CENTER",
