@@ -1361,5 +1361,50 @@ class EngineLeaseRowTests(unittest.TestCase):
         self.assertTrue({"engine_lease", "engine_stop"} <= selftest._labd_operations())
 
 
+class BasebandSchedulerRowTests(unittest.TestCase):
+    """SW-SCHED: RX-04-bb on a deploy.py stage root checks the record/decode templates, labd's drop-in and the
+    polkit rule, and that no SatDump unit is transient. Reuses the SelftestTests fixture and helpers."""
+    setUpClass = classmethod(SelftestTests.setUpClass.__func__)
+    tearDownClass = classmethod(SelftestTests.tearDownClass.__func__)
+    setUp, put, run_check = SelftestTests.setUp, SelftestTests.put, SelftestTests.run_check
+    check = staticmethod(SelftestTests.check)
+    statuses = staticmethod(SelftestTests.statuses)
+    checker_module = staticmethod(SelftestTests.checker_module)
+
+    def row(self, rootfs=None):
+        return self.check(self.run_check(rootfs=rootfs), "RX-04-bb")
+
+    @staticmethod
+    def rules(row):
+        return {(f["rule"], f["path"]) for f in row["findings"]}
+
+    def test_staged_root_passes_with_templates_rule_and_dropin(self):
+        row = self.row(self.clean)
+        self.assertEqual(row["status"], "PASS", row)
+        self.assertIn("polkit_decisions_are_the_sr-rx-system_node_harness", row["notes"])
+        for note in ("scheduler_templates_not_staged", "scheduler_files_not_staged"):
+            self.assertNotIn(note, row["notes"])
+
+    def test_each_defect_of_the_staged_units_and_rule_is_reported(self):
+        # Independent defects in one root, so the row runs twice only (TCG-cheap).
+        glue, sched = self.checker_module("satdump_pass"), self.checker_module("baseband_scheduler")
+        decode = "etc/systemd/system/" + glue.DECODE_TEMPLATE
+        self.put(decode, glue.unit_text("decode").replace("PrivateNetwork=yes\n", "") + "[Install]\nWantedBy=multi-user.target\n")
+        (self.rootfs / "etc/systemd/system" / glue.RECORD_TEMPLATE).unlink()
+        self.put(sched.POLKIT_RULE, sched.polkit_rule().replace('== "stop")', '== "stop" || action.lookup("verb") == "restart")'))
+        self.put(sched.LABD_DROPIN, sched.labd_dropin() + "SupplementaryGroups=lab\n")
+        row = self.row()
+        self.assertEqual(row["status"], "FAIL")
+        self.assertTrue({("template_differs", decode), ("decode_unit_properties", decode), ("template_not_fixed", decode),
+                         ("scheduler_file_differs", sched.POLKIT_RULE), ("scheduler_file_differs", sched.LABD_DROPIN)}
+                        <= self.rules(row), row)
+        self.assertIn("scheduler_templates_not_staged", row["notes"])
+        self.setUp()
+        with patch.object(glue, "transient_units", lambda: ["[Service]\nUser=root\n"]), \
+                patch.object(sched, "UNIT_PATTERN", r"^srrx-.*\.service$"):
+            found = {f["rule"] for f in self.row()["findings"]}
+        self.assertTrue({"transient_units_present", "polkit_rule_scope"} <= found, found)
+
+
 if __name__ == "__main__":
     unittest.main()

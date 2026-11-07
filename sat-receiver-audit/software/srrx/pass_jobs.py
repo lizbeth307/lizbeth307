@@ -26,14 +26,18 @@ One job at a time, and at most one accepted request per RATE_LIMIT_MS:
 
 status() exposes the job state and a bounded summary without coordinates; errors are
 stable codes (ERRORS) and never carry the position or file contents. UTC counts as
-verified only through an injected utc_verified() source; none is wired yet, so labd
-plans say time_verified=false. The plan is the window source of the v2.1 bounded
-baseband policy: windows() returns passes.baseband_windows() for the allowlisted
-LRPT targets (none without verified UTC). The LRPT role is the allowlist's own label,
-a pre-filter only: nothing here checks that those targets are Meteor-M N2-3/N2-4, so
-the future recorder must enforce that set itself (passes.BASEBAND_ROLE). Nothing here
-records.
+verified only through the injected utc_verified() source: labd passes Engine.utc_verified
+(srrx.location.system_utc_verified over the GNSS orchestrator's PPS gate and the kernel
+clock state; daemon --hardware), and without one plans say time_verified=false. That
+source is labd's model; the device confirmation stays W-04/W-05. The plan is the window
+source of the v2.1 bounded baseband policy: windows() returns passes.baseband_windows()
+for the allowlisted LRPT targets (none without verified UTC), and current_plan() hands the
+validated plan to srrx.baseband_scheduler, which applies satdump_pass.select_windows. The
+LRPT role is the allowlist's own label, a pre-filter only: nothing here checks that those
+targets are Meteor-M N2-3/N2-4, so the recorder enforces that set itself
+(passes.BASEBAND_ROLE). Nothing here records.
 """
+import copy
 from datetime import datetime, timezone
 import json
 import os
@@ -276,6 +280,14 @@ class PassPlanner:
             return {"windows": [], "reason": "NO_PLAN", "request_id": None}
         return {"windows": [dict(window) for window in current["windows"]["windows"]],
                 "reason": current["windows"]["reason"], "request_id": current["job"]["id"]}
+
+    def current_plan(self):
+        """{"plan": a copy of the current validated plan, "request_id"}, or None (srrx.baseband_scheduler)."""
+        with self._lock:
+            current = self._current
+        if current is None:
+            return None
+        return {"plan": copy.deepcopy(current["plan"]), "request_id": current["job"]["id"]}
 
     def close(self):
         with self._lock:
