@@ -3,15 +3,23 @@ name: SR-RX lab packages
 # Builds +lab .deb packages from sat-receiver-audit/deployment/recipes on native arm64
 # (ubuntu-24.04-arm): a fresh noble arm64 chroot per recipe from the snapshot.ubuntu.com
 # timestamp locked in deployment/sources.lock.json, trusting only the pinned archive key, with
-# no network while upstream code configures and compiles (unshare --net). The packages without a
-# receive-only finding go into a throwaway aptly repository signed by a CI-only TEST key and are
-# checked with deploy.py verify-repo and tamper cases; the held-back ones (Lime while Lime is
-# disabled) must be refused in a second repository. The sources job re-fetches the locked
-# source bytes and re-derives the signed Ubuntu pins.
+# no network while upstream code configures and compiles (unshare --net). Every recipe.json that
+# validates is built (check_repo.py plan, build_recipe.ci_plan): the light recipes in one job in
+# lab_build_depends order, each heavy recipe (ci.heavy) in its own job that rebuilds its chain, and
+# one repository job over all of them. Each build job installs its runtime packages offline in a
+# fresh chroot and runs a probe and the recipes' runtime_check.py under unshare --net. The packages
+# without a receive-only finding go into a throwaway aptly repository signed by a CI-only TEST key
+# and are checked with deploy.py verify-repo and tamper cases; the held-back ones (Lime while Lime
+# is disabled) must be refused in a second repository. The sources job re-fetches the locked
+# source bytes, re-derives the signed Ubuntu pins and compares release tarballs with their tags.
+# The mirror job builds srrx-mirror from deployment/image/package-closure.json once it exists.
 # CI evidence only: nothing here reviews a build, tests hardware or is a release signature.
 
 # A workflow_dispatch-only file cannot be dispatched before it reaches the default branch, so
-# pushes that change the packaging inputs run it too (with the defaults below).
+# pushes that change the packaging inputs run it too (with the defaults below). Heavy recipes run
+# on a push only when the push range changes their inputs (check_repo.heavy_selection) or when the
+# head commit message carries the token [lab-build-all].
+# Evidence trigger line (EVID edits this one line in its '[lab-build-all]' commit): none yet.
 on:
   push:
     branches: ['codex/**', 'ccr-*', 'wip/**']
@@ -27,13 +35,15 @@ on:
       - 'sat-receiver-audit/deployment/patches/**'
       - 'sat-receiver-audit/deployment/vendor_patch.py'
       - 'sat-receiver-audit/deployment/selftest.py'
+      # The target image's noble package closure: the mirror job builds srrx-mirror from it.
+      - 'sat-receiver-audit/deployment/image/package-closure.json'
       - '.github/workflows/sr-rx-packages.yml'
   workflow_dispatch:
     inputs:
-      lab_builds:
-        description: 'Comma-separated recipe ids (deployment/recipes/<id>/recipe.json)'
-        type: string
-        default: 'rtlsdr,limesuiteng'
+      lab_build_all:
+        description: 'Also build every heavy recipe (ci.heavy), as the [lab-build-all] token does on a push'
+        type: boolean
+        default: false
       repeat:
         description: 'Build every recipe twice in the same paths; differing .deb SHA-256 fail the job'
         type: boolean
@@ -52,6 +62,7 @@ concurrency:
 
 # shell: bash makes GitHub run every step as `bash --noprofile --norc -eo pipefail {0}`: a check
 # piped into tee fails the step with its own exit status (the "pipefail canary" step proves it).
+# Commit text, inputs and step outputs reach run scripts only through env, never through ${{ }}.
 defaults:
   run:
     shell: bash
@@ -61,13 +72,102 @@ env:
   PYTHONDONTWRITEBYTECODE: '1'
   UBUNTU_KEYRING: /usr/share/keyrings/ubuntu-archive-keyring.gpg
   # On push there are no inputs: the dispatch defaults apply.
-  LAB_BUILDS: ${{ inputs.lab_builds || 'rtlsdr,limesuiteng' }}
   REPEAT: ${{ github.event_name == 'push' || inputs.repeat }}
   ALL_SOURCES: ${{ github.event_name == 'push' || inputs.all_sources }}
 
 jobs:
+  plan:
+    name: Recipe plan (light job, heavy jobs) and tag samples
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      light: ${{ steps.plan.outputs.light }}
+      heavy_matrix: ${{ steps.plan.outputs.heavy_matrix }}
+      heavy_count: ${{ steps.plan.outputs.heavy_count }}
+      build: ${{ steps.plan.outputs.build }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      # The range is the previous head of this ref (github.event.before) to this head. A new branch
+      # or an unreachable before uses the head commit's own change; no base at all means unknown.
+      - name: Push range (changed paths and the source lock at its start)
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          range="$RUNNER_TEMP/range"
+          mkdir "$range"
+          : > "$range/changed.txt"
+          echo '{}' > "$range/lock-before.json"
+          if [ "$EVENT" != push ]; then
+            echo "dispatch: no push range" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          base=""
+          if [[ "$BEFORE" =~ ^[0-9a-f]{40}$ ]] && [ "$BEFORE" != 0000000000000000000000000000000000000000 ] \
+              && git fetch -q --no-tags --depth=1 origin "$BEFORE"; then
+            base="$BEFORE"
+          elif git rev-parse -q --verify 'HEAD^' > /dev/null; then
+            base=$(git rev-parse 'HEAD^')
+            echo "::notice::no reachable earlier head of this ref: the range is the head commit's own change"
+          fi
+          if [ -z "$base" ]; then
+            touch "$range/unknown"
+            echo "push range unknown: every heavy recipe runs" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git diff --name-only "$base" HEAD > "$range/changed.txt"
+          git show "$base:sat-receiver-audit/deployment/sources.lock.json" > "$range/lock-before.json" 2> /dev/null || echo '{}' > "$range/lock-before.json"
+          echo "push range $base..$(git rev-parse HEAD): $(wc -l < "$range/changed.txt") changed paths" | tee -a "$GITHUB_STEP_SUMMARY"
+      - name: Plan (every validating recipe; heavy ones by changed inputs or [lab-build-all])
+        id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          HEAD_MESSAGE: ${{ github.event.head_commit.message }}
+          INPUT_LAB_BUILD_ALL: ${{ inputs.lab_build_all }}
+        run: |
+          range="$RUNNER_TEMP/range"
+          args=(--lock-before "$range/lock-before.json" --github-output "$GITHUB_OUTPUT")
+          if [ "$EVENT" = push ]; then
+            args+=(--message-env HEAD_MESSAGE)
+            if [ -f "$range/unknown" ]; then args+=(--range-unknown); else args+=(--changed "$range/changed.txt"); fi
+          elif [ "$INPUT_LAB_BUILD_ALL" = true ]; then
+            args+=(--build-all)
+          fi
+          python3 deployment/repo/check_repo.py plan "${args[@]}" | tee "$RUNNER_TEMP/plan.json"
+          python3 - "$RUNNER_TEMP/plan.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys
+          plan = json.load(open(sys.argv[1]))
+          print("- light job, in build order:", " ".join(plan["light"]))
+          for name in plan["heavy"]:
+              print("- heavy job %s (chain %s): %s" % (name, " ".join(plan["recipes"][name]["chain"]),
+                    plan["heavy_reasons"].get(name, "not run (inputs unchanged; [lab-build-all] forces it)")))
+          if not plan["heavy"]:
+              print("- heavy jobs: no recipe sets ci.heavy")
+          for name, reason in sorted(plan["skipped"].items()):
+              print("- skipped %s: %s" % (name, reason))
+          EOF
+      - name: Tag samples the recipes declare (clone of the locked tag, commit checked)
+        run: python3 deployment/repo/check_repo.py tag-samples --out "$RUNNER_TEMP/tag-samples" | tee "$RUNNER_TEMP/tag-samples.json"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: tag-samples
+          retention-days: 14
+          path: ${{ runner.temp }}/tag-samples
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: recipe-plan
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/plan.json
+            ${{ runner.temp }}/range
+            ${{ runner.temp }}/tag-samples.json
+
   sources:
-    name: Source lock (bytes, git trees, signed Ubuntu pins)
+    name: Source lock (bytes, git trees, signed Ubuntu pins, release tarballs vs tags)
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 60
     steps:
@@ -82,26 +182,31 @@ jobs:
         id: select
         run: |
           python3 - <<'EOF' >> "$GITHUB_OUTPUT"
-          import json, os, re
-          lock = json.load(open("deployment/sources.lock.json"))
+          import json, os, sys
+          sys.path.insert(0, "deployment/recipes")
+          import build_recipe
+          lock = build_recipe.deploy.load("deployment/sources.lock.json")
           resolved = [c["id"] for c in lock["components"] if c["source_archive_sha256"] is not None]
-          builds = [b.strip() for b in os.environ["LAB_BUILDS"].split(",") if b.strip()]
-          for b in builds:
-              if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", b) or not os.path.isfile("deployment/recipes/%s/recipe.json" % b):
-                  raise SystemExit("unknown recipe id: " + b)
-          chosen = resolved if os.environ["ALL_SOURCES"] == "true" else sorted(set(builds))
+          plan = build_recipe.ci_plan(lock)
+          chosen = resolved if os.environ["ALL_SOURCES"] == "true" else sorted(plan["light"] + plan["heavy"])
           print("args=" + " ".join("--component " + c for c in chosen))
           print("ids=" + json.dumps(chosen))
           EOF
       - name: Fetch the locked bytes (streaming, no size cap, SHA-256 and size checked)
+        env:
+          ARGS: ${{ steps.select.outputs.args }}
         run: |
           documented=""
           [ "$ALL_SOURCES" = true ] && documented="--documented"
-          python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only $documented ${{ steps.select.outputs.args }} --report "$RUNNER_TEMP/fetch-report.json"
+          python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only $documented $ARGS --report "$RUNNER_TEMP/fetch-report.json"
       - name: deploy.py verify-cache (sources only)
-        run: python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }} | tee "$RUNNER_TEMP/verify-cache.json"
+        env:
+          ARGS: ${{ steps.select.outputs.args }}
+        run: python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only $ARGS | tee "$RUNNER_TEMP/verify-cache.json"
       - name: Archive contents equal the locked commit trees (non-git archives listed as skipped, with the reason)
-        run: python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" ${{ steps.select.outputs.args }} | tee "$RUNNER_TEMP/trees.json"
+        env:
+          ARGS: ${{ steps.select.outputs.args }}
+        run: python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" $ARGS | tee "$RUNNER_TEMP/trees.json"
       # Independent of the fetched cache: every suite's InRelease and all four Ubuntu pins are derived
       # again from the signed snapshot, whatever all_sources selects.
       - name: Ubuntu pins and every suite InRelease equal the gpgv-verified snapshot
@@ -122,24 +227,26 @@ jobs:
           assert record["source_lock_sha256"] == deploy.sha(deploy.HERE / "sources.lock.json"), "record is bound to another lock"
           print("source-cache-verification.json reproduces:", result)
           EOF
-      - name: WSJT-X release tarball against the wsjtx-2.7.0 tag tree (reported)
+      # Every lock entry with a tag and no git tree (a release tarball, e.g. WSJT-X 2.7.0): its tree,
+      # or the recipe's source.member, or else the closest archive nested in it, against a clone of
+      # the tag; the differing paths go to <id>-tree-diff.txt. Reported, not a gate.
+      - name: Release tarballs against their tag trees (reported)
         if: env.ALL_SOURCES == 'true'
         run: |
-          git clone -q --depth 1 --branch wsjtx-2.7.0 https://git.code.sf.net/p/wsjt/wsjtx "$RUNNER_TEMP/wsjtx-git"
-          tag_commit=$(git -C "$RUNNER_TEMP/wsjtx-git" rev-parse HEAD)
-          tag_tree=$(git -C "$RUNNER_TEMP/wsjtx-git" rev-parse 'HEAD^{tree}')
-          tar_tree=$(python3 deployment/fetch_sources.py tree --archive "$RUNNER_TEMP/cache/sources/wsjt-decoders.tar.gz" \
-            --member wsjtx-2.7.0/src/wsjtx.tgz | python3 -c 'import json, sys; print(json.load(sys.stdin)["git_tree_sha1"])' || echo unavailable)
-          if [ "$tag_tree" = "$tar_tree" ]; then verdict=EQUAL; else verdict=DIFFERENT; fi
-          echo "wsjtx-2.7.0 tag commit $tag_commit tree $tag_tree; release src/wsjtx.tgz tree $tar_tree: $verdict" | tee "$RUNNER_TEMP/wsjtx-tree.txt"
-          echo "WSJT-X src/wsjtx.tgz vs tag tree: $verdict ($tar_tree / $tag_tree)" >> "$GITHUB_STEP_SUMMARY"
-          # Which paths differ (content, missing or extra), so a reviewer can decide what the tarball is.
-          mkdir "$RUNNER_TEMP/wsjtx-outer" "$RUNNER_TEMP/wsjtx-inner"
-          tar -xzf "$RUNNER_TEMP/cache/sources/wsjt-decoders.tar.gz" -C "$RUNNER_TEMP/wsjtx-outer"
-          tar -xzf "$RUNNER_TEMP/wsjtx-outer/wsjtx-2.7.0/src/wsjtx.tgz" -C "$RUNNER_TEMP/wsjtx-inner"
-          diff -rq --exclude=.git "$RUNNER_TEMP/wsjtx-git" "$RUNNER_TEMP/wsjtx-inner/wsjtx" \
-            | sed "s#$RUNNER_TEMP/##g" | tee "$RUNNER_TEMP/wsjtx-tree-diff.txt" | head -60 || true
-          echo "differing paths: $(wc -l < "$RUNNER_TEMP/wsjtx-tree-diff.txt")" | tee -a "$RUNNER_TEMP/wsjtx-tree.txt"
+          python3 deployment/repo/check_repo.py tarball-vs-tag --cache "$RUNNER_TEMP/cache" --work "$RUNNER_TEMP/tag-trees" | tee "$RUNNER_TEMP/tarball-vs-tag.json"
+          python3 - "$RUNNER_TEMP/tarball-vs-tag.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys
+          for item in json.load(open(sys.argv[1]))["components"]:
+              if item["verdict"] == "NOT_FETCHED":
+                  print("- %s: release tarball not in the cache" % item["component"])
+                  continue
+              print("- %s %s vs tag %s tree: %s (%s / %s); differing paths %d (missing %d, extra %d, changed %d); tag commit %s%s"
+                    % (item["component"], item["compared"], item["tag"], item["verdict"], item["tarball_tree"], item["tag_tree"],
+                       item["missing"] + item["extra"] + item["changed"], item["missing"], item["extra"], item["changed"],
+                       item["tag_commit"], " = lock commit" if item["tag_commit_matches_lock"] else " DIFFERS from the lock commit " + str(item["lock_commit"])))
+              if not item["tag_commit_matches_lock"]:
+                  print("::warning::tag %s of %s is not the locked commit" % (item["tag"], item["component"]), file=sys.stderr)
+          EOF
       - uses: actions/upload-artifact@v5
         if: always()
         with:
@@ -150,13 +257,196 @@ jobs:
             ${{ runner.temp }}/verify-cache.json
             ${{ runner.temp }}/trees.json
             ${{ runner.temp }}/verify-debian.json
-            ${{ runner.temp }}/wsjtx-tree.txt
-            ${{ runner.temp }}/wsjtx-tree-diff.txt
+            ${{ runner.temp }}/tarball-vs-tag.json
+            ${{ runner.temp }}/tag-trees/*-tree-diff.txt
 
-  lab-build:
-    name: +lab packages, test-signed repository
+  lab-light:
+    name: +lab light recipes (one job, build order), runtime check
+    needs: plan
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 300
+    env:
+      RECIPES: ${{ needs.plan.outputs.light }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Host tools (the chroot contents come from the pinned snapshot, not from these)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends mmdebstrap gnupg gpgv dpkg-dev ubuntu-keyring ca-certificates
+          dpkg-query -W mmdebstrap gnupg dpkg | tee "$RUNNER_TEMP/host-tools-light.txt"
+      - uses: actions/download-artifact@v5
+        with:
+          name: tag-samples
+          path: ${{ runner.temp }}/tag-samples
+      - name: Fetch and verify the recipe sources
+        run: |
+          args=()
+          for id in $RECIPES; do args+=(--component "$id"); done
+          python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only "${args[@]}"
+          python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only "${args[@]}"
+          python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" "${args[@]}"
+      - name: Build in noble arm64 chroots, network namespace without a route (lab_build_depends order)
+        run: |
+          repeat=""
+          [ "$REPEAT" = true ] && repeat="--repeat"
+          for id in $RECIPES; do
+            echo "::group::$id"
+            sudo env PYTHONDONTWRITEBYTECODE=1 python3 -B deployment/recipes/lab_build.py --recipe "$id" --cache "$RUNNER_TEMP/cache" \
+              --work "$RUNNER_TEMP/build" --out "$RUNNER_TEMP/debs" $repeat
+            sudo rm -rf "$RUNNER_TEMP/build/$id"
+            echo "::endgroup::"
+          done
+          ls -l "$RUNNER_TEMP"/debs/*/
+      - name: Runtime check (fresh chroot, offline dpkg -i, probe and runtime_check.py under unshare --net)
+        run: |
+          args=()
+          for id in $RECIPES; do args+=(--recipe "$id"); done
+          mkdir "$RUNNER_TEMP/runtime-report"
+          sudo env PYTHONDONTWRITEBYTECODE=1 python3 -B deployment/repo/check_repo.py runtime-check --out "$RUNNER_TEMP/debs" "${args[@]}" \
+            --work "$RUNNER_TEMP/runtime" --samples "$RUNNER_TEMP/tag-samples" --report "$RUNNER_TEMP/runtime-report/runtime-check-light.json" > /dev/null
+      - name: Runtime check summary
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/runtime-report/runtime-check-light.json" ] || exit 0
+          sudo sh -c 'cp "$1"/*.log "$2"/ 2>/dev/null; chown -R "$3" "$2"' sh "$RUNNER_TEMP/runtime" "$RUNNER_TEMP/runtime-report" "$(id -u):$(id -g)"
+          python3 - "$RUNNER_TEMP/runtime-report/runtime-check-light.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys
+          report = json.load(open(sys.argv[1]))
+          print("- runtime check (light job, CI model): %s; installed %s; probe %s" % (report["status"],
+                ", ".join(i["package"] for i in report["installed"]) or "none", (report["probe"] or {}).get("status")))
+          for name, item in sorted(report["runtime_checks"].items()):
+              print("  - %s runtime_check.py: %s" % (name, item["status"]))
+          for item in report["held_back"]:
+              print("  - not installed: %s (%s)" % (item["package"], item["reason"]))
+          EOF
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: lab-out-light
+          retention-days: 14
+          path: ${{ runner.temp }}/debs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: runtime-light
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/runtime-report
+            ${{ runner.temp }}/host-tools-light.txt
+
+  lab-heavy:
+    name: +lab heavy recipe ${{ matrix.recipe }} (own job, chain rebuilt), runtime check
+    needs: plan
+    if: needs.plan.outputs.heavy_count != '0'
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.heavy_matrix) }}
+    env:
+      RECIPE: ${{ matrix.recipe }}
+      CHAIN: ${{ matrix.chain }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Runner disk before the build (reported)
+        run: df -h / "$RUNNER_TEMP" | tee "$RUNNER_TEMP/disk-before.txt"
+      - name: Host tools (the chroot contents come from the pinned snapshot, not from these)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends mmdebstrap gnupg gpgv dpkg-dev ubuntu-keyring ca-certificates
+          dpkg-query -W mmdebstrap gnupg dpkg | tee "$RUNNER_TEMP/host-tools-$RECIPE.txt"
+      - uses: actions/download-artifact@v5
+        with:
+          name: tag-samples
+          path: ${{ runner.temp }}/tag-samples
+      - name: Fetch and verify the chain sources
+        run: |
+          args=()
+          for id in $CHAIN; do args+=(--component "$id"); done
+          python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only "${args[@]}"
+          python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only "${args[@]}"
+          python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" "${args[@]}"
+      - name: Build the chain, then the heavy recipe, in noble arm64 chroots without a route
+        run: |
+          repeat=""
+          [ "$REPEAT" = true ] && repeat="--repeat"
+          for id in $CHAIN; do
+            echo "::group::$id"
+            sudo env PYTHONDONTWRITEBYTECODE=1 python3 -B deployment/recipes/lab_build.py --recipe "$id" --cache "$RUNNER_TEMP/cache" \
+              --work "$RUNNER_TEMP/build" --out "$RUNNER_TEMP/debs" $repeat
+            sudo rm -rf "$RUNNER_TEMP/build/$id"
+            echo "::endgroup::"
+          done
+          ls -l "$RUNNER_TEMP"/debs/*/
+      - name: Runtime check (fresh chroot, offline dpkg -i, probe and runtime_check.py under unshare --net)
+        run: |
+          mkdir "$RUNNER_TEMP/runtime-report"
+          sudo env PYTHONDONTWRITEBYTECODE=1 python3 -B deployment/repo/check_repo.py runtime-check --out "$RUNNER_TEMP/debs" --recipe "$RECIPE" \
+            --work "$RUNNER_TEMP/runtime" --samples "$RUNNER_TEMP/tag-samples" --report "$RUNNER_TEMP/runtime-report/runtime-check-$RECIPE.json" > /dev/null
+      - name: Runtime check summary and runner disk after the build
+        if: always()
+        run: |
+          df -h / "$RUNNER_TEMP" | tee "$RUNNER_TEMP/disk-after.txt"
+          echo "- $RECIPE runner disk (/ then RUNNER_TEMP), before: $(awk 'NR>1 {print $4 " free"}' "$RUNNER_TEMP/disk-before.txt" | paste -sd ' ' -); after: $(awk 'NR>1 {print $4 " free"}' "$RUNNER_TEMP/disk-after.txt" | paste -sd ' ' -)" >> "$GITHUB_STEP_SUMMARY"
+          [ -f "$RUNNER_TEMP/runtime-report/runtime-check-$RECIPE.json" ] || exit 0
+          sudo sh -c 'cp "$1"/*.log "$2"/ 2>/dev/null; chown -R "$3" "$2"' sh "$RUNNER_TEMP/runtime" "$RUNNER_TEMP/runtime-report" "$(id -u):$(id -g)"
+          python3 - "$RUNNER_TEMP/runtime-report/runtime-check-$RECIPE.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys
+          report = json.load(open(sys.argv[1]))
+          print("- runtime check (%s, CI model): %s; installed %s; probe %s" % (" ".join(report["recipes"]), report["status"],
+                ", ".join(i["package"] for i in report["installed"]) or "none", (report["probe"] or {}).get("status")))
+          for name, item in sorted(report["runtime_checks"].items()):
+              print("  - %s runtime_check.py: %s" % (name, item["status"]))
+          EOF
+      # The repository job takes this recipe's own output; the rebuilt chain goes along only as its
+      # build records, compared with the light job's bytes there (check_repo.py chains).
+      - name: Stage the artifacts (own output; chain records)
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/up/out" "$RUNNER_TEMP/up/chain/$RECIPE" "$RUNNER_TEMP/runtime-report"
+          if [ -d "$RUNNER_TEMP/debs/$RECIPE" ]; then
+            cp -a "$RUNNER_TEMP/debs/$RECIPE" "$RUNNER_TEMP/up/out/"
+          fi
+          for id in $CHAIN; do
+            if [ "$id" != "$RECIPE" ] && [ -f "$RUNNER_TEMP/debs/$id/$id.build-record.json" ]; then
+              mkdir "$RUNNER_TEMP/up/chain/$RECIPE/$id"
+              cp "$RUNNER_TEMP/debs/$id/$id.build-record.json" "$RUNNER_TEMP/debs/$id/$id.reproducibility.json" "$RUNNER_TEMP/up/chain/$RECIPE/$id/"
+            fi
+          done
+          cp "$RUNNER_TEMP"/disk-*.txt "$RUNNER_TEMP/host-tools-$RECIPE.txt" "$RUNNER_TEMP/runtime-report/" 2> /dev/null || true
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: lab-out-${{ matrix.recipe }}
+          retention-days: 14
+          path: ${{ runner.temp }}/up/out
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: lab-chain-${{ matrix.recipe }}
+          retention-days: 14
+          path: ${{ runner.temp }}/up/chain
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: runtime-${{ matrix.recipe }}
+          retention-days: 14
+          path: ${{ runner.temp }}/runtime-report
+
+  lab-repo:
+    name: +lab packages of all jobs, test-signed repository
+    needs: [plan, lab-light, lab-heavy]
+    if: ${{ !cancelled() && needs.lab-light.result == 'success' && (needs.lab-heavy.result == 'success' || needs.lab-heavy.result == 'skipped') }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    env:
+      BUILD: ${{ needs.plan.outputs.build }}
+      HEAVY_COUNT: ${{ needs.plan.outputs.heavy_count }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -166,55 +456,62 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y -q --no-install-recommends mmdebstrap aptly gnupg gpgv dpkg-dev ubuntu-keyring ca-certificates
           dpkg-query -W mmdebstrap aptly gnupg dpkg | tee "$RUNNER_TEMP/host-tools.txt"
-      - name: Select recipes
-        id: select
+      - uses: actions/download-artifact@v5
+        with:
+          pattern: lab-out-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/debs
+      - uses: actions/download-artifact@v5
+        if: env.HEAVY_COUNT != '0'
+        with:
+          pattern: lab-chain-*
+          merge-multiple: true
+          path: ${{ runner.temp }}/chains
+      - name: One build record per planned recipe (the light job's rtlsdr record only)
         run: |
-          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
-          import os, re
-          builds = [b.strip() for b in os.environ["LAB_BUILDS"].split(",") if b.strip()]
-          if not builds:
-              raise SystemExit("lab_builds is empty")
-          for b in builds:
-              if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", b) or not os.path.isfile("deployment/recipes/%s/recipe.json" % b):
-                  raise SystemExit("unknown recipe id: " + b)
-          print("ids=" + " ".join(builds))
-          print("args=" + " ".join("--component " + b for b in builds))
+          python3 - "$RUNNER_TEMP/debs" "$BUILD" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, pathlib, sys
+          found = sorted(json.load(open(p))["component"] for p in pathlib.Path(sys.argv[1]).glob("*/*.build-record.json"))
+          assert len(found) == len(set(found)), ("a component has two build records", found)
+          assert found == sorted(sys.argv[2].split()), ("build records", found, "planned", sys.argv[2])
+          print("- build records:", ", ".join(found))
           EOF
-      - name: Fetch and verify the recipe sources
+      - name: Packages match their build records and data trees, carry shlibs/triggers and stay OPEN for verify_build
         run: |
-          python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }}
-          python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }}
-          python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" ${{ steps.select.outputs.args }}
-      - name: Build in noble arm64 chroots, network namespace without a route
-        run: |
-          repeat=""
-          [ "$REPEAT" = true ] && repeat="--repeat"
-          for id in ${{ steps.select.outputs.ids }}; do
-            echo "::group::$id"
-            sudo env PYTHONDONTWRITEBYTECODE=1 python3 -B deployment/recipes/lab_build.py --recipe "$id" --cache "$RUNNER_TEMP/cache" \
-              --work "$RUNNER_TEMP/build" --out "$RUNNER_TEMP/debs" $repeat
-            echo "::endgroup::"
-          done
-          ls -l "$RUNNER_TEMP"/debs/*/
-      - name: Packages match their build records, carry shlibs/triggers and stay OPEN for verify_build
-        run: python3 deployment/repo/check_repo.py packages --out "$RUNNER_TEMP/debs" | tee "$RUNNER_TEMP/debs/packages-check.json"
+          python3 deployment/repo/check_repo.py packages --out "$RUNNER_TEMP/debs" | tee "$RUNNER_TEMP/debs/packages-check.json"
+          python3 - "$RUNNER_TEMP/debs/packages-check.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys
+          for item in json.load(open(sys.argv[1]))["packages"]:
+              print("- %s: %s (%d entries); build manifest %s" % (item["package"], item["data_tree"], item["data_tree_entries"], item["manifest_files"]))
+          EOF
       - name: Lab packages consumed in a fresh chroot (lab_build_depends, DEBIAN/shlibs, ldconfig trigger)
-        if: contains(format(',{0},', env.LAB_BUILDS), ',rtlsdr,')
+        if: contains(format(' {0} ', env.BUILD), ' rtlsdr ')
         run: |
           sudo env PYTHONDONTWRITEBYTECODE=1 python3 -B deployment/recipes/lab_build.py --consumer-check --out "$RUNNER_TEMP/debs" \
             --work "$RUNNER_TEMP/consumer" | tee "$RUNNER_TEMP/consumer-check.json"
           python3 -c 'import json, sys; assert json.load(open(sys.argv[1]))["status"] == "CI_LAB_PACKAGES_CONSUMED"' "$RUNNER_TEMP/consumer-check.json"
       - name: Reproducibility (same paths, same SOURCE_DATE_EPOCH; a difference fails)
         run: |
-          python3 - "$RUNNER_TEMP/debs" "$LAB_BUILDS" "$REPEAT" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 - "$RUNNER_TEMP/debs" "$BUILD" "$REPEAT" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
           import json, pathlib, sys
           records = {json.load(open(p))["component"]: json.load(open(p)) for p in sorted(pathlib.Path(sys.argv[1]).glob("*/*.reproducibility.json"))}
-          builds = sorted(b.strip() for b in sys.argv[2].split(",") if b.strip())
+          builds = sorted(sys.argv[2].split())
           assert sorted(records) == builds, ("reproducibility records", sorted(records), builds)
           for component, record in sorted(records.items()):
               print("-", component, "reproducible:", record["reproducible"])
               if sys.argv[3] == "true":
                   assert record["reproducible"] is True and record["first_debs"] == record["debs"], component + " is not reproducible"
+          EOF
+      - name: Heavy jobs' rebuilt chains against the published bytes (second builder, reported)
+        if: env.HEAVY_COUNT != '0'
+        run: |
+          python3 deployment/repo/check_repo.py chains --out "$RUNNER_TEMP/debs" --chains "$RUNNER_TEMP/chains" | tee "$RUNNER_TEMP/chains.json"
+          python3 - "$RUNNER_TEMP/chains.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys
+          result = json.load(open(sys.argv[1]))
+          print("- heavy chains:", result["status"])
+          for item in result["comparisons"]:
+              print("  - %s rebuilt %s: %s" % (item["heavy"], item["package"], "equal" if item["equal"] else "DIFFERENT bytes"))
           EOF
       - name: Packages that may enter the lab repository (the others are held back with their findings)
         run: |
@@ -249,6 +546,7 @@ jobs:
           for r in "$RUNNER_TEMP"/debs/*/*.build-record.json; do records="$records --build-record $r"; done
           python3 deployment/deploy.py verify-repo --repo "$RUNNER_TEMP/aptly/public" --keyring "$RUNNER_TEMP/srrx-lab-TEST.gpg" \
             --fingerprint "$TEST_FPR" $records --sources-entry deployment/repo/srrx-lab.sources | tee "$RUNNER_TEMP/verify-repo.json"
+          python3 -c 'import json, sys; r = json.load(open(sys.argv[1])); assert r["data_trees_checked"] == r["packages"], r' "$RUNNER_TEMP/verify-repo.json"
       - name: Pipefail canary (a refused verify-repo piped into tee must fail its pipeline)
         run: |
           records=""
@@ -295,6 +593,7 @@ jobs:
             ${{ runner.temp }}/host-tools.txt
             ${{ runner.temp }}/debs
             ${{ runner.temp }}/consumer-check.json
+            ${{ runner.temp }}/chains.json
             ${{ runner.temp }}/verify-repo.json
             ${{ runner.temp }}/pipefail-canary.txt
             ${{ runner.temp }}/tamper.json
@@ -302,3 +601,65 @@ jobs:
             ${{ runner.temp }}/selftest-full-summary.json
             ${{ runner.temp }}/srrx-lab-TEST.gpg
             ${{ runner.temp }}/aptly/public
+
+  # srrx-mirror (repo/README.md, REPO-MIRROR): the noble packages of the target image's closure,
+  # signed by the CI test key and checked by check_repo.py mirror. A no-op until
+  # deployment/image/package-closure.json exists (IMG-2); reported as pending while check_repo.py
+  # has no mirror subcommand yet.
+  mirror:
+    name: srrx-mirror from the image package closure (no-op until it exists)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Package closure and mirror builder present?
+        id: mirror
+        run: |
+          if [ ! -f deployment/image/package-closure.json ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "- mirror: deployment/image/package-closure.json absent: no-op" | tee -a "$GITHUB_STEP_SUMMARY"
+          elif ! python3 deployment/repo/check_repo.py mirror --help > /dev/null 2>&1; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::deployment/image/package-closure.json exists but check_repo.py has no mirror subcommand: the mirror is not built (REPO-MIRROR)"
+            echo "- mirror: MIRROR_PENDING_BUILDER (check_repo.py mirror)" | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Host tools
+        if: steps.mirror.outputs.run == 'true'
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends aptly gnupg gpgv dpkg-dev ubuntu-keyring ca-certificates
+          dpkg-query -W aptly gnupg dpkg | tee "$RUNNER_TEMP/host-tools-mirror.txt"
+      - name: Throwaway TEST signing keys (exist only in this job)
+        if: steps.mirror.outputs.run == 'true'
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gnupg-test"
+          install -d -m 700 "$GNUPGHOME"
+          gpg --batch --pinentry-mode loopback --passphrase '' --quick-gen-key 'SR-RX lab CI TEST KEY - not for release' ed25519 sign 2d
+          gpg --batch --pinentry-mode loopback --passphrase '' --quick-gen-key 'SR-RX lab CI WRONG KEY - tamper case only' ed25519 sign 2d
+          fpr=$(gpg --batch --with-colons --list-keys 'SR-RX lab CI TEST KEY' | awk -F: '$1 == "fpr" {print $10; exit}')
+          wrong=$(gpg --batch --with-colons --list-keys 'SR-RX lab CI WRONG KEY' | awk -F: '$1 == "fpr" {print $10; exit}')
+          gpg --batch --export "$fpr" > "$RUNNER_TEMP/srrx-lab-TEST.gpg"
+          gpg --batch --export "$wrong" > "$RUNNER_TEMP/srrx-lab-WRONG.gpg"
+          echo "TEST_FPR=$fpr" >> "$GITHUB_ENV"
+      - name: Build, sign and verify srrx-mirror from the closure (check_repo.py mirror)
+        if: steps.mirror.outputs.run == 'true'
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gnupg-test"
+          python3 deployment/repo/check_repo.py mirror --closure deployment/image/package-closure.json --work "$RUNNER_TEMP/mirror" \
+            --keyring "$RUNNER_TEMP/srrx-lab-TEST.gpg" --wrong-keyring "$RUNNER_TEMP/srrx-lab-WRONG.gpg" --fingerprint "$TEST_FPR" | tee "$RUNNER_TEMP/mirror.json"
+      - name: Discard the test private keys
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/gnupg-test"
+      - uses: actions/upload-artifact@v5
+        if: always() && steps.mirror.outputs.run == 'true'
+        with:
+          name: mirror-ci
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/host-tools-mirror.txt
+            ${{ runner.temp }}/mirror.json
+            ${{ runner.temp }}/srrx-lab-TEST.gpg

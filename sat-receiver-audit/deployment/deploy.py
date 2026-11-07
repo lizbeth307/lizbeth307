@@ -1041,12 +1041,65 @@ def _record_binding(record, label):
         raise DeploymentError("build record recipe files differ from deployment/recipes/" + record["component"] + ": " + label)
 
 
+def deb_data_inventory(deb):
+    """{path: {type: file, sha256, mode} | {type: symlink, target} | {type: dir, mode}} of the data
+    member of a .deb, read in Python like deb_data_tree (same refusals): the entries of the
+    <package>.data-tree.json that build_recipe.package_data_tree writes before dpkg-deb packs."""
+    entries = {}
+    with open(deb, "rb") as stream:
+        if stream.read(8) != b"!<arch>\n":
+            raise DeploymentError("not a .deb (ar) archive: " + Path(deb).name)
+        while True:
+            header = stream.read(60)
+            if len(header) != 60 or header[58:60] != b"`\n" or not header[48:58].strip().isdigit():
+                raise DeploymentError(".deb has no data.tar member: " + Path(deb).name)
+            name, size = header[:16].decode("ascii", "replace").strip().rstrip("/"), int(header[48:58])
+            if name.startswith("data.tar"):
+                break
+            stream.seek(size + (size & 1), os.SEEK_CUR)
+        try:
+            with tarfile.open(fileobj=_Member(stream, size), mode="r|*") as data:
+                for member in data:
+                    relative = (member.name[2:] if member.name.startswith("./") else member.name).rstrip("/")
+                    if relative in ("", "."):
+                        continue
+                    if (not (member.isdir() or member.issym() or member.isfile()) or relative.startswith("/")
+                            or ".." in relative.split("/") or relative in entries):
+                        raise DeploymentError("unsafe, repeated or special .deb member in " + Path(deb).name)
+                    if member.isdir():
+                        entries[relative] = {"type": "dir", "mode": "%04o" % (member.mode & 0o7777)}
+                    elif member.issym():
+                        entries[relative] = {"type": "symlink", "target": member.linkname}
+                    else:
+                        digest, source = hashlib.sha256(), data.extractfile(member)
+                        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                            digest.update(chunk)
+                        entries[relative] = {"type": "file", "sha256": digest.hexdigest(), "mode": "%04o" % (member.mode & 0o7777)}
+        except tarfile.TarError as exc:
+            raise DeploymentError(".deb data member unreadable (" + name + "): " + Path(deb).name) from exc
+    return dict(sorted(entries.items()))
+
+
+def _data_tree(path, digest, name, version):
+    """The entries of a build record's <package>.data-tree.json, accepted only with the recorded SHA-256."""
+    if not Path(path).is_file() or sha(path) != digest:
+        raise DeploymentError("package data tree differs from the build record: " + name)
+    document = load(path)
+    keys(document, ("schema_version", "kind", "package", "version", "entries"), "package data tree")
+    if (document["schema_version"] != 1 or document["kind"] != "srrx_lab_data_tree" or document["package"] != name
+            or document["version"] != version or type(document["entries"]) is not dict):
+        raise DeploymentError("package data tree names another package or schema: " + name)
+    return document["entries"]
+
+
 def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrelease_sha256=None, target_status=None, release=False):
     """Signed lab repository check: gpgv InRelease by the pinned key -> every dists/ file against the
     signed SHA256 list -> every Packages stanza against a build record (name, version, architecture,
     SHA-256, size) whose component, source archive, recipe and patch are the locked/reviewed ones ->
     every pool .deb listed once and its data tree free of receive-only policy findings (Lime while
-    Lime is disabled, Soapy modules outside the allowlist, TX/control tools). Refuses foreign origins,
+    Lime is disabled, Soapy modules outside the allowlist, TX/control tools) and, where the record
+    carries data_tree_sha256 (every package of the record or none), equal to the record's
+    <package>.data-tree.json, file hashes, modes and link targets included. Refuses foreign origins,
     non-+labN versions, receive-only policy packages, kernel/bootloader/SPI/DSP firmware packages, a
     changed held package (target_status) and an apt entry without Signed-By. release=True (the
     release_guard path) also needs REVIEWED build records and, per package, the build manifest the
@@ -1082,7 +1135,7 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
         raise DeploymentError("signed Release does not list " + index)
     lock = load(HERE / "sources.lock.json")
     components = {c["id"]: c for c in lock["components"]}
-    allowed, manifests, records = {}, {}, []
+    allowed, manifests, trees, records = {}, {}, {}, []
     for record_path in build_records:
         record = load(record_path)
         # record_digests (the recipe package hook's digests, build_recipe.py) is the one optional field.
@@ -1099,15 +1152,24 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
         _record_binding(record, Path(record_path).name)
         if release and record["status"] != "REVIEWED":
             raise DeploymentError("release path needs a REVIEWED build record (CI records are CI_BUILT_UNREVIEWED): " + Path(record_path).name)
+        # data_tree_sha256 (build_recipe writes it for every package) is optional only as a whole:
+        # records written before the data tree have none, a record with some has all.
+        with_tree = {type(p) is dict and "data_tree_sha256" in p for p in record["packages"]} if type(record["packages"]) is list else set()
+        if len(with_tree) > 1:
+            raise DeploymentError("build record lists a data tree for some packages only: " + Path(record_path).name)
         for package in record["packages"]:
-            keys(package, ("package", "version", "architecture", "filename", "sha256", "size", "build_manifest_sha256"), "build record package")
+            keys(package, ("package", "version", "architecture", "filename", "sha256", "size", "build_manifest_sha256")
+                 + (("data_tree_sha256",) if with_tree == {True} else ()), "build record package")
             allowed[(package["package"], package["version"], package["architecture"])] = (package["sha256"], package["size"])
             manifests[(package["package"], package["version"], package["architecture"])] = (
                 Path(record_path).parent / (package["package"] + ".build-manifest.json"), package["build_manifest_sha256"])
+            if with_tree == {True}:
+                trees[(package["package"], package["version"], package["architecture"])] = (
+                    Path(record_path).parent / (package["package"] + ".data-tree.json"), package["data_tree_sha256"])
         records.append({"path": str(record_path), "sha256": sha(record_path)})
     never = [g.lower() for g in policy["never_in_lab_repo_globs"]]
     held = _held(target_status) if target_status is not None else {}
-    referenced, versions = set(), {}
+    referenced, versions, checked_trees = set(), {}, 0
     for stanza in deb822((dist / index).read_text(encoding="utf-8"), "Packages"):
         name, version, arch = stanza.get("package"), stanza.get("version"), stanza.get("architecture")
         filename = stanza.get("filename", "")
@@ -1127,7 +1189,11 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
             raise DeploymentError("kernel, bootloader, SPI or DSP firmware package in the lab repository: " + name)
         if name in held and held[name] != version:
             raise DeploymentError("update would change a held package: " + name)
-        issues = lab_package_issues(deb_data_tree(deb))
+        inventory = deb_data_inventory(deb)
+        if (name, version, arch) in trees and inventory != _data_tree(*trees[(name, version, arch)], name, version):
+            raise DeploymentError("pool .deb data tree differs from the build record data tree: " + name)
+        checked_trees += (name, version, arch) in trees
+        issues = lab_package_issues({p: {"dir": "dir", "symlink": "link"}.get(e["type"], "file") for p, e in inventory.items()})
         if issues:
             raise DeploymentError("receive-only policy refuses the contents of " + name + ": " + issues[0])
         if release:
@@ -1156,8 +1222,10 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
         raise DeploymentError("apt entry must be one deb822 stanza with Signed-By " + policy["keyring_path"])
     return {"status": "SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS", "packages": len(referenced), "inrelease_sha256": sha(inrelease),
             "signing_fingerprint": fingerprint.upper(), "build_records": records, "release_path": bool(release), "hardware_ready": False,
-            "scope": "Signature, index and package hashes, build-record, recipe, patch, listed-patch, source-member and source-lock binding, named receive-only "
-                     "content rules" + (", REVIEWED records and verify_build per package" if release else "") + "; no install, no receive-only proof."}
+            "data_trees_checked": checked_trees,
+            "scope": "Signature, index and package hashes, build-record, recipe, patch, listed-patch, source-member and source-lock binding, "
+                     "package data trees where recorded, named receive-only content rules"
+                     + (", REVIEWED records and verify_build per package" if release else "") + "; no install, no receive-only proof."}
 
 
 def verify_build(prefix, manifest):

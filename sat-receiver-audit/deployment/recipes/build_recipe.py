@@ -14,9 +14,12 @@ configure with a fixed --prefix and only listed --enable/--disable/--with/--with
 autoreconf), files of deployment/recipes/<id>/files/ in install.copy, the package hook (its
 JSON record_digests go into the build record) and DT_NEEDED checks. Hooks run only
 `python3 -I deployment/recipes/<id>/check_recipe.py`. The result is .deb files,
-one verify_build manifest per package (status OPEN, never REVIEWED here) and a build record that
-deploy.verify_repo binds to the lock, the recipe, the patch, every listed patch and the source
-member. A package that ships a SONAME'd
+one verify_build manifest per package (status OPEN, never REVIEWED here), one data tree per package
+(<package>.data-tree.json: every path of the .deb data member with its type, SHA-256, mode or
+link target, also where the verify_build walk refuses the tree; data_tree_sha256 in the record)
+and a build record that deploy.verify_repo binds to the lock, the recipe, the patch, every listed
+patch and the source member. Schema 2 may add a "ci" key (heavy job, runtime-check packages, tag
+samples) that only sr-rx-packages.yml reads (ci_plan). A package that ships a SONAME'd
 library carries DEBIAN/shlibs and the ldconfig trigger, so consumers built against it in a later
 recipe (lab_build_depends) get their Depends from dpkg-shlibdeps without --ignore-missing-info.
 CI evidence only: no review, no TX proof, no hardware test.
@@ -32,6 +35,7 @@ from pathlib import Path
 import re
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 import tarfile
@@ -75,7 +79,13 @@ CONFIGURE_PREFIX = "/usr"
 # Tools that regenerate configure/Makefile.in: never in a chroot (release tarballs ship them generated).
 REGENERATORS = frozenset({"autoconf", "automake", "autopoint", "dh-autoreconf", "autoconf-archive", "gnulib"})
 NAME = re.compile(r"[a-z0-9][a-z0-9+.-]+")
-OPTION = re.compile(r"\b(?:option|cmake_dependent_option)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)", re.I)
+# The optional schema-2 "ci" key (sr-rx-packages.yml, recipes/README.md): a heavy recipe gets its own
+# job, run when its inputs change or the head commit carries [lab-build-all]; runtime_depends are
+# noble packages the runtime-check chroot also needs (strace, ...); tag_samples are paths of the
+# component's git tag tree (a lock entry with a "tag") exported for the recipe's runtime_check.py.
+CI_KEYS = ("heavy", "runtime_depends", "tag_samples")
+DATA_TREE_KIND = "srrx_lab_data_tree"
+OPTION =re.compile(r"\b(?:option|cmake_dependent_option)\s*\(\s*([A-Za-z_][A-Za-z0-9_]*)", re.I)
 MAINTAINER = "SR-RX lab builder <builder@srrx.invalid>"
 MULTIARCH = "aarch64-linux-gnu"
 
@@ -231,6 +241,96 @@ def _hook(argv, name, component):
     return argv
 
 
+def _ci(ci, component):
+    """The optional schema-2 "ci" key: exactly heavy, runtime_depends and tag_samples."""
+    deploy.keys(ci, CI_KEYS, "recipe ci")
+    if type(ci["heavy"]) is not bool:
+        raise RecipeError("ci.heavy must be true or false")
+    names = _strings(ci["runtime_depends"], "ci.runtime_depends", allow_empty=True)
+    if len(set(names)) != len(names) or not all(NAME.fullmatch(n) for n in names):
+        raise RecipeError("ci.runtime_depends lists noble package names, each once")
+    samples = _strings(ci["tag_samples"], "ci.tag_samples", allow_empty=True)
+    for sample in samples:
+        _relative(sample, "ci.tag_samples")
+    if len(set(samples)) != len(samples):
+        raise RecipeError("ci.tag_samples lists each path once")
+    if samples and not (type(component.get("tag")) is str and component["tag"]
+                        and str(component.get("upstream_url") or "").startswith("https://")):
+        raise RecipeError("ci.tag_samples needs a lock component with a tag and an https upstream_url (its tag clone)")
+    return ci
+
+
+def ci_view(recipe):
+    """{heavy, runtime_depends, tag_samples} of a validated recipe; without "ci" (and in schema 1) a
+    light recipe with no extra runtime packages and no samples."""
+    ci = recipe.get("ci") if recipe.get("schema_version") == 2 else None
+    ci = ci if type(ci) is dict else {"heavy": False, "runtime_depends": [], "tag_samples": []}
+    return {"heavy": ci["heavy"], "runtime_depends": list(ci["runtime_depends"]), "tag_samples": list(ci["tag_samples"])}
+
+
+def _order(needs):
+    """Recipe ids in build order: each after the recipes whose packages it needs; ties by name."""
+    order, done = [], set()
+    while len(order) < len(needs):
+        ready = sorted(n for n in needs if n not in done and set(needs[n]) <= done)
+        if not ready:
+            raise RecipeError("lab_build_depends form a cycle: " + ", ".join(sorted(set(needs) - done)))
+        order.append(ready[0])
+        done.add(ready[0])
+    return order
+
+
+def ci_plan(lock=None):
+    """What sr-rx-packages.yml builds: every deployment/recipes/<id>/recipe.json. A PENDING_BUILDER
+    recipe is skipped with its reason; any other invalid recipe, a directory that is not its
+    component, a package two recipes build, a lab_build_depends package no recipe builds, a cycle
+    and a light recipe that needs a heavy one's packages fail. light: the light recipes in build
+    order (one job, in sequence); heavy: the heavy ones, each with its chain (the recipes its
+    lab_build_depends come from, in build order, then itself) for its own job."""
+    lock = lock or deploy.load(DEPLOYMENT / "sources.lock.json")
+    entries, skipped, provider = {}, {}, {}
+    for path in sorted((DEPLOYMENT / "recipes").glob("*/recipe.json")):
+        name, recipe = path.parent.name, deploy.load(path)
+        if is_pending(recipe):
+            skipped[name] = PENDING_STATUS + " (kind " + PENDING_KIND + "): this builder does not build it"
+            continue
+        try:
+            validate_recipe(recipe, lock)
+        except (RecipeError, deploy.DeploymentError) as exc:
+            raise RecipeError("recipe " + name + " does not validate: " + str(exc)) from exc
+        if recipe["component"] != name:
+            raise RecipeError("recipe directory " + name + " holds component " + recipe["component"])
+        for package in recipe["packages"]:
+            if package["name"] in provider:
+                raise RecipeError("package " + package["name"] + " is built by two recipes: " + provider[package["name"]] + ", " + name)
+            provider[package["name"]] = name
+        view = ci_view(recipe)
+        entries[name] = {"heavy": view["heavy"], "packages": [p["name"] for p in recipe["packages"]],
+                         "lab_build_depends": list(recipe["lab_build_depends"]), "runtime_depends": view["runtime_depends"],
+                         "tag_samples": view["tag_samples"], "runtime_check": (path.parent / "runtime_check.py").is_file()}
+    needs = {}
+    for name, entry in entries.items():
+        missing = [p for p in entry["lab_build_depends"] if p not in provider]
+        if missing:
+            raise RecipeError(name + " lab_build_depends names packages no recipe builds: " + ", ".join(missing))
+        needs[name] = sorted({provider[p] for p in entry["lab_build_depends"]})
+    order = _order(needs)
+    for name in order:
+        closure, stack = set(), list(needs[name])
+        while stack:
+            current = stack.pop()
+            if current not in closure:
+                closure.add(current)
+                stack.extend(needs[current])
+        entries[name]["needs"] = needs[name]
+        entries[name]["chain"] = [n for n in order if n in closure] + [name]
+        heavy = [n for n in closure if entries[n]["heavy"]]
+        if heavy and not entries[name]["heavy"]:
+            raise RecipeError("light recipe " + name + " needs packages of heavy recipes: " + ", ".join(sorted(heavy)))
+    return {"light": [n for n in order if not entries[n]["heavy"]], "heavy": [n for n in order if entries[n]["heavy"]],
+            "recipes": entries, "skipped": skipped}
+
+
 def configure_name(flag):
     """--enable-foo-bar / --disable-foo-bar -> enable_foo_bar; --with-x / --without-x -> with_x (ac_user_opts)."""
     match = CONFIGURE_FLAG.fullmatch(flag)
@@ -284,11 +384,14 @@ def validate_recipe(recipe, lock=None):
     version = recipe.get("schema_version") if type(recipe) is dict else None
     if type(version) is not int or version not in (1, 2):
         raise RecipeError("recipe schema_version must be 1 or 2")
-    deploy.keys(recipe, RECIPE_KEYS if version == 1 else RECIPE_KEYS_V2, "recipe")
+    # schema 2: "ci" is the one optional key (absent: a light recipe, ci_view).
+    deploy.keys(recipe, RECIPE_KEYS if version == 1 else RECIPE_KEYS_V2 + (("ci",) if "ci" in recipe else ()), "recipe")
     lock = lock or deploy.load(DEPLOYMENT / "sources.lock.json")
     component = next((c for c in lock["components"] if c["id"] == recipe["component"]), None)
     if component is None:
         raise RecipeError("recipe component must be a sources.lock.json id")
+    if "ci" in recipe:
+        _ci(recipe["ci"], component)
     if component["source_archive_sha256"] is None or component.get("debian_source") is not None:
         raise RecipeError("recipe component needs a locked upstream source archive")
     if component.get("source_subdir"):  # e.g. the LA9310 DKMS modules inside the LimeSuiteNG archive
@@ -679,6 +782,38 @@ def package_manifest(root):
             "tx_negative_tests": {"status": "OPEN", "report": {"path": None, "sha256": None}}}
 
 
+def package_data_tree(root):
+    """The pure inventory of one package's data tree, as dpkg-deb packs it (DEBIAN/ excluded):
+    {path: {type: file, sha256, mode} | {type: symlink, target} | {type: dir, mode}}, modes as
+    4-digit octal. Unlike package_manifest it refuses nothing: a -dev package's dangling .so
+    link and a Lime library are listed like any other path (deploy.deb_data_inventory reads the
+    same entries from the .deb)."""
+    root, tree = Path(root), {}
+    for directory, dirs, files in os.walk(root):
+        dirs.sort()
+        for name in sorted(dirs + files):
+            path = Path(directory) / name
+            relative = path.relative_to(root).as_posix()
+            if relative == "DEBIAN" or relative.startswith("DEBIAN/"):
+                continue
+            info = os.lstat(path)
+            if stat.S_ISLNK(info.st_mode):
+                tree[relative] = {"type": "symlink", "target": os.readlink(path)}
+            elif stat.S_ISDIR(info.st_mode):
+                tree[relative] = {"type": "dir", "mode": "%04o" % stat.S_IMODE(info.st_mode)}
+            elif stat.S_ISREG(info.st_mode):
+                tree[relative] = {"type": "file", "sha256": deploy.sha(path), "mode": "%04o" % stat.S_IMODE(info.st_mode)}
+            else:
+                raise RecipeError("package tree holds a special file: " + relative)
+        dirs[:] = [d for d in dirs if not (Path(directory) / d).is_symlink()]
+    return dict(sorted(tree.items()))
+
+
+def data_tree_document(package, version, tree):
+    """<package>.data-tree.json: the data tree of one built package (data_tree_sha256 in the record)."""
+    return {"schema_version": 1, "kind": DATA_TREE_KIND, "package": package, "version": version, "entries": tree}
+
+
 def control_extras(package, version, sonames):
     """DEBIAN files beyond control/md5sums: shlibs for the SONAME'd libraries this package ships
     (consumers then depend on >= this lab version) and the ldconfig trigger (Debian policy 8.1.1)."""
@@ -727,10 +862,11 @@ def build_deb(package, version, files, staged, epoch, depends, out, scratch, son
             os.chmod(path, 0o644)
         os.utime(path, (epoch, epoch), follow_symlinks=False)
     os.utime(root, (epoch, epoch))
+    tree = package_data_tree(root)  # after the mode normalisation, i.e. what dpkg-deb packs
     deb = out / (package["name"] + "_" + version + "_arm64.deb")
     subprocess.run(["dpkg-deb", "--root-owner-group", "-Zxz", "--build", str(root), str(deb)], check=True,
                    capture_output=True, env=dict(os.environ, SOURCE_DATE_EPOCH=str(epoch)))
-    return deb, manifest
+    return deb, manifest, tree
 
 
 def lab_depends_manifest(path):
@@ -841,11 +977,15 @@ def build(recipe_path, archive, work, out, jobs, lab_debs=None):
                 (stage / relative).parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(destdir / relative, stage / relative, follow_symlinks=False)
             depends = shlibs_depends(stage, destdir, own, scratch, log)
-        deb, manifest = build_deb(package, version, files, destdir, epoch, depends, out, scratch, sonames[package["name"]], log)
+        deb, manifest, tree = build_deb(package, version, files, destdir, epoch, depends, out, scratch, sonames[package["name"]], log)
         manifest_path = out / (package["name"] + ".build-manifest.json")
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+        tree_path = out / (package["name"] + ".data-tree.json")
+        tree_path.write_text(json.dumps(data_tree_document(package["name"], version, tree), indent=2, sort_keys=True) + "\n",
+                             encoding="utf-8", newline="\n")
         packages.append({"package": package["name"], "version": version, "architecture": "arm64", "filename": deb.name,
-                         "sha256": deploy.sha(deb), "size": deb.stat().st_size, "build_manifest_sha256": deploy.sha(manifest_path)})
+                         "sha256": deploy.sha(deb), "size": deb.stat().st_size, "build_manifest_sha256": deploy.sha(manifest_path),
+                         "data_tree_sha256": deploy.sha(tree_path)})
     dpkg_list = subprocess.run(["dpkg-query", "-W", "-f", "${Package} ${Version} ${Architecture}\\n"], capture_output=True, text=True, check=True).stdout
     environment = "".join(sorted(dpkg_list.splitlines(keepends=True)))
     (out / (recipe["component"] + ".chroot-packages.txt")).write_text(environment, encoding="utf-8", newline="\n")
