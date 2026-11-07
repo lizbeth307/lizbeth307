@@ -35,10 +35,10 @@
    "harness_headers_raw_mm2_build16": 2702.4
   },
   "RF": {
-   "refs": 163,
-   "parts_raw_mm2": 2055.6,
+   "refs": 168,
+   "parts_raw_mm2": 2349.7,
    "modules_mm2": 0.0,
-   "total_raw_mm2": 2055.6,
+   "total_raw_mm2": 2349.7,
    "harness_headers_raw_mm2_build16": 473.8
   },
   "CTRL": {

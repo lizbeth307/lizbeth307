@@ -20,9 +20,9 @@
   "copper_zones": 0,
   "errors": [],
   "input_file": "pcb/generated/detector-core-input.json",
-  "input_sha256": "bf105f83f0b869c31e467ba39708285b236a79aa14ffb12a9a7e8a1b8a35cbaa",
+  "input_sha256": "840b3dcf560876e7e8f5930223a8f06f10ccae995340726a48b2376b5f04c5d6",
   "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
-  "board_sha256": "10a4467b6dea07419c7c09ffb77107e430f4c859a846004f7352bafc60510057",
+  "board_sha256": "86a3047243dcfdd367bd47080ac9c785f88f8f89bae5b8689fd57d53d278d617",
   "kicad_version": "10.0.7",
   "outline_candidate_mm": {
     "x": 125.0,
@@ -58,7 +58,7 @@
         "DC_CORE",
         "RF_INJECTOR"
       ],
-      "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+      "requirement": "Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
       "source": "design/E4-review.md; E4.json DC detector groups"
     },
     {
@@ -66,7 +66,7 @@
       "boards": [
         "DC_CORE"
       ],
-      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.",
       "source": "design/E4-review.md; design/E4-detector-analysis.py"
     },
     {
@@ -130,7 +130,7 @@
   "drc": {
     "exit_code": 5,
     "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
-    "raw_sha256": "d426f790646e92068ddcffa12fbafdab29a99b00180671b2ad2b2618c46a54d5",
+    "raw_sha256": "49c37f35148b8e96fcd75a5f575528c86e65d03e97579cbd7e3e07263e10a74c",
     "counts": {
       "unconnected_items": 140
     },

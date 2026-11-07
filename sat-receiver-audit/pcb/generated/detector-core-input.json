@@ -676,7 +676,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -717,7 +717,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -758,7 +758,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -1420,14 +1420,14 @@
     },
     {
       "ref": "R4421",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: UHF",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -1452,10 +1452,14 @@
     },
     {
       "ref": "R4422",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: UHF",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -1608,14 +1612,14 @@
     },
     {
       "ref": "R4431",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -1640,10 +1644,14 @@
     },
     {
       "ref": "R4432",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -1796,14 +1804,14 @@
     },
     {
       "ref": "R4441",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: HF",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -1828,10 +1836,14 @@
     },
     {
       "ref": "R4442",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: HF",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -4222,12 +4234,6 @@
           "name": "2"
         },
         {
-          "ref": "U315",
-          "pin": "3",
-          "sheet": "E3",
-          "name": "EN"
-        },
-        {
           "ref": "R328",
           "pin": "1",
           "sheet": "E3",
@@ -6306,30 +6312,6 @@
           "name": "2"
         },
         {
-          "ref": "U315",
-          "pin": "2",
-          "sheet": "E3",
-          "name": "GND"
-        },
-        {
-          "ref": "R396",
-          "pin": "2",
-          "sheet": "E3",
-          "name": "2"
-        },
-        {
-          "ref": "C321",
-          "pin": "2",
-          "sheet": "E3",
-          "name": "2"
-        },
-        {
-          "ref": "C322",
-          "pin": "2",
-          "sheet": "E3",
-          "name": "2"
-        },
-        {
           "ref": "J303",
           "pin": "1",
           "sheet": "E3",
@@ -6588,12 +6570,6 @@
           "name": "COMMON"
         },
         {
-          "ref": "ENC301",
-          "pin": "S2",
-          "sheet": "E3",
-          "name": "SW_B"
-        },
-        {
           "ref": "C316",
           "pin": "2",
           "sheet": "E3",
@@ -6610,12 +6586,6 @@
           "pin": "C",
           "sheet": "E3",
           "name": "COMMON"
-        },
-        {
-          "ref": "ENC302",
-          "pin": "S2",
-          "sheet": "E3",
-          "name": "SW_B"
         },
         {
           "ref": "U312",
@@ -7068,6 +7038,42 @@
           "name": "SHIELD"
         },
         {
+          "ref": "J423",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J424",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J425",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J426",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J427",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J428",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
           "ref": "K401",
           "pin": "G1",
           "sheet": "E4",
@@ -7090,12 +7096,6 @@
           "pin": "G2",
           "sheet": "E4",
           "name": "CASE_GND"
-        },
-        {
-          "ref": "L401",
-          "pin": "2",
-          "sheet": "E4",
-          "name": "2"
         },
         {
           "ref": "L407",
@@ -8076,36 +8076,6 @@
           "name": "−"
         },
         {
-          "ref": "U553",
-          "pin": "2",
-          "sheet": "E5",
-          "name": "GND"
-        },
-        {
-          "ref": "R553",
-          "pin": "2",
-          "sheet": "E5",
-          "name": "2"
-        },
-        {
-          "ref": "C552",
-          "pin": "2",
-          "sheet": "E5",
-          "name": "2"
-        },
-        {
-          "ref": "C553",
-          "pin": "2",
-          "sheet": "E5",
-          "name": "2"
-        },
-        {
-          "ref": "J551",
-          "pin": "3",
-          "sheet": "E5",
-          "name": "return (GND), lead blue"
-        },
-        {
           "ref": "U507",
           "pin": "4",
           "sheet": "E5",
@@ -8154,7 +8124,7 @@
         "DC_CORE",
         "RF_INJECTOR"
       ],
-      "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+      "requirement": "Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
       "source": "design/E4-review.md; E4.json DC detector groups"
     },
     {
@@ -8162,7 +8132,7 @@
       "boards": [
         "DC_CORE"
       ],
-      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.",
       "source": "design/E4-review.md; design/E4-detector-analysis.py"
     },
     {
@@ -8230,31 +8200,31 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90"
+        "sha256": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c"
       },
       {
         "file": "design/E2.json",
-        "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935"
+        "sha256": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461"
       },
       {
         "file": "design/E3.json",
-        "sha256": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d"
+        "sha256": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132"
       },
       {
         "file": "design/E4.json",
-        "sha256": "a003bedb98bfacbf1863ebc4bfc88eb8e10643d450820b399a668b4e65e1584d"
+        "sha256": "590eb7a5942d2dbe11015d67a63218b81af02a7540ac2c3c419ea90626d7f9ad"
       },
       {
         "file": "design/E5.json",
-        "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+        "sha256": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "096ae19a80380402d669caadbf5ab95ee9afbb3c0b9aaab07c7ca98144fa4c92"
+        "sha256": "8af43b7c5d4760132dd4cbc498afa21b8d6f93de7a15f14280436786f5ba92ee"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "b2ea596af870594b8aa8f79f18e2f3e567265308a3946cc80efefe3e91e3b4ca"
+        "sha256": "09be9823a82e097bd019ea4abb5cc7947a3a66c7aee225e2adc2e5f6a680bff1"
       }
     ],
     "source_documents": [
@@ -8265,7 +8235,6 @@
       "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "https://assets.nexperia.com/documents/data-sheet/PMEG4030ER.pdf",
       "https://bonito.net/en/boni-whip-2/",
-      "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
       "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
       "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
       "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
@@ -8302,7 +8271,6 @@
       "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
       "https://www.aosmd.com/sites/default/files/res/datasheets/AO3400A.pdf",
       "https://www.aosmd.com/sites/default/files/res/datasheets/AO3407A.pdf",
-      "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
       "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
       "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",

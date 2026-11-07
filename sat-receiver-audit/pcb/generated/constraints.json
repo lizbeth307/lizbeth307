@@ -30,7 +30,7 @@
       "DC_CORE",
       "RF_INJECTOR"
     ],
-    "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+    "requirement": "Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
     "source": "design/E4-review.md; E4.json DC detector groups"
   },
   {
@@ -38,7 +38,7 @@
     "boards": [
       "DC_CORE"
     ],
-    "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+    "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.",
     "source": "design/E4-review.md; design/E4-detector-analysis.py"
   },
   {

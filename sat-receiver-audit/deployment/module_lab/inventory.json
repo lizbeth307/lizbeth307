@@ -49,7 +49,7 @@
     },
     "top_level_circuit_assemblies": 64,
     "source_kind_module_count": 57,
-    "detailed_subinterfaces": 169,
+    "detailed_subinterfaces": 175,
     "catalogue_only_or_factory_internal_entities": 30,
     "catalogue_documents": 102,
     "partition_refs_assigned_exactly_once": true,
@@ -6765,6 +6765,12 @@
         "J415",
         "J416",
         "J417",
+        "J423",
+        "J424",
+        "J425",
+        "J426",
+        "J427",
+        "J428",
         "W401",
         "W402",
         "W403",
@@ -6775,7 +6781,7 @@
         "W408",
         "W409"
       ],
-      "component_count": 45,
+      "component_count": 51,
       "named_nets": [
         "BIAS_CH4",
         "BONI13V8_PORT",
@@ -6799,7 +6805,7 @@
         "E4_P4",
         "E4_P5",
         "E4_P6",
-        "E4_P8",
+        "E4_P8_ANT",
         "E4_REF_IN",
         "E4_RFC_A",
         "E4_RFC_B",
@@ -6894,7 +6900,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -6995,7 +7001,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -7075,7 +7081,6 @@
         "D401",
         "K401",
         "K402",
-        "L401",
         "L402",
         "L403",
         "L404",
@@ -7108,7 +7113,7 @@
         "R444",
         "R445"
       ],
-      "component_count": 62,
+      "component_count": 61,
       "named_nets": [
         "3V3_Q6A",
         "BIAS_CH1",
@@ -7132,7 +7137,6 @@
         "E4_LIME_RFC",
         "E4_LIME_RFSPARE",
         "E4_LIME_TO_RTLB",
-        "E4_P1",
         "E4_P2",
         "E4_P3",
         "E4_P6",
@@ -7353,12 +7357,6 @@
           "status": "verified"
         },
         {
-          "ref": "L401",
-          "kind": "inductor",
-          "value": "470 nH optional bleed: part TBD",
-          "status": "TBD"
-        },
-        {
           "ref": "L402",
           "kind": "inductor",
           "value": "Coilcraft 0805LS-471XGRC 470 nH 2%",
@@ -7385,8 +7383,8 @@
         {
           "ref": "L407",
           "kind": "inductor",
-          "value": "470 nH bleed SRF >300 MHz: part TBD",
-          "status": "TBD"
+          "value": "Coilcraft 0805CS-471XGRC 470 nH 2% bleed, SRF 375 MHz: DNP",
+          "status": "design"
         },
         {
           "ref": "NT401",
@@ -7563,7 +7561,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -7664,7 +7662,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -7928,7 +7926,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -8024,19 +8022,19 @@
         {
           "ref": "R4420",
           "kind": "resistor",
-          "value": "24.9 kΩ 0.1% 0402 RF tap",
+          "value": "26.7 kΩ 0.1% 0402 RF tap",
           "status": "design"
         },
         {
           "ref": "R4421",
           "kind": "resistor",
-          "value": "24.9 kΩ 0.1% 0402",
+          "value": "23.2 kΩ 0.1% 0402",
           "status": "design"
         },
         {
           "ref": "R4422",
           "kind": "resistor",
-          "value": "49.8 kΩ 0.1%",
+          "value": "49.9 kΩ 0.1%",
           "status": "design"
         },
         {
@@ -8137,7 +8135,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -8233,19 +8231,19 @@
         {
           "ref": "R4430",
           "kind": "resistor",
-          "value": "24.9 kΩ 0.1% 0402 RF tap",
+          "value": "26.7 kΩ 0.1% 0402 RF tap",
           "status": "design"
         },
         {
           "ref": "R4431",
           "kind": "resistor",
-          "value": "24.9 kΩ 0.1% 0402",
+          "value": "23.2 kΩ 0.1% 0402",
           "status": "design"
         },
         {
           "ref": "R4432",
           "kind": "resistor",
-          "value": "49.8 kΩ 0.1%",
+          "value": "49.9 kΩ 0.1%",
           "status": "design"
         },
         {
@@ -8346,7 +8344,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -8442,19 +8440,19 @@
         {
           "ref": "R4440",
           "kind": "resistor",
-          "value": "24.9 kΩ 0.1% 0402 RF tap",
+          "value": "26.7 kΩ 0.1% 0402 RF tap",
           "status": "design"
         },
         {
           "ref": "R4441",
           "kind": "resistor",
-          "value": "24.9 kΩ 0.1% 0402",
+          "value": "23.2 kΩ 0.1% 0402",
           "status": "design"
         },
         {
           "ref": "R4442",
           "kind": "resistor",
-          "value": "49.8 kΩ 0.1%",
+          "value": "49.9 kΩ 0.1%",
           "status": "design"
         },
         {
@@ -8555,7 +8553,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -8690,7 +8688,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -8812,7 +8810,7 @@
       "sheet_hardware_gates": [
         {
           "id": "E4-01",
-          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+          "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
           "blocking": true
         },
         {
@@ -17034,13 +17032,13 @@
       "module_id": "E4/A403",
       "parent_assembly": "E4-CIR-01",
       "ref": "A403",
-      "value": "Flamingo+ FM v2 #2 optional",
+      "value": "Flamingo+ FM v2 #2 optional: external P8 accessory",
       "source_kind": "module",
       "source_status": "module",
       "interface_family": "analog_rf_functional_ports",
       "software_interface_specified": false,
       "interface_signals": [
-        "E4_P8",
+        "E4_P8_ANT",
         "E4_RF_P8_FM",
         "GND"
       ],
@@ -17051,7 +17049,7 @@
         {
           "number": "IN",
           "name": "IN",
-          "net": "E4_P8",
+          "net": "E4_P8_ANT",
           "type": "passive"
         },
         {
@@ -17095,7 +17093,7 @@
       "module_id": "E4/A404",
       "parent_assembly": "E4-CIR-01",
       "ref": "A404",
-      "value": "LNA V2 optional",
+      "value": "LNA V2 optional: external P8 accessory",
       "source_kind": "module",
       "source_status": "module",
       "interface_family": "analog_rf_functional_ports",
@@ -18554,13 +18552,13 @@
       "module_id": "E4/J408",
       "parent_assembly": "E4-CIR-01",
       "ref": "J408",
-      "value": "P8 WIDE optional SMA",
+      "value": "P8 WIDE optional SMA: ch4 4.3 V",
       "source_kind": "connector",
       "source_status": "module",
       "interface_family": "passive_connector_or_named_boundary",
       "software_interface_specified": false,
       "interface_signals": [
-        "E4_P8",
+        "E4_RF_CH4",
         "GND"
       ],
       "configuration_from_source": {},
@@ -18570,7 +18568,7 @@
         {
           "number": "CENTER",
           "name": "CENTER",
-          "net": "E4_P8",
+          "net": "E4_RF_CH4",
           "type": "passive"
         },
         {
@@ -19037,6 +19035,296 @@
       "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
     },
     {
+      "module_id": "E4/J423",
+      "parent_assembly": "E4-CIR-01",
+      "ref": "J423",
+      "value": "P2 board U.FL: 4.3 V",
+      "source_kind": "connector",
+      "source_status": "module",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E4_P2",
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P2",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E4.json",
+          "ref": "J423",
+          "component_source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT"
+        }
+      ],
+      "source_description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
+      "source_notes": [
+        "Mates the U.FL plug of the J402 panel pigtail (Taoglas CAB.718). Carries the ch2 bias (4.3 V, TPS2553 limit 0.339 A max) outward: no U.FL current rating is published, so DC drop and heating at the bias current are E4-07 measurements.",
+        "Place at the E4_P2 node with C403, L403, R4420 and R4460: the detector RF tap R4420 stays ≤1 mm from this port (DC-01)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E4/J424",
+      "parent_assembly": "E4-CIR-01",
+      "ref": "J424",
+      "value": "P3 board U.FL: 4.3 V",
+      "source_kind": "connector",
+      "source_status": "module",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E4_P3",
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P3",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E4.json",
+          "ref": "J424",
+          "component_source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT"
+        }
+      ],
+      "source_description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
+      "source_notes": [
+        "Mates the U.FL plug of the J403 panel pigtail (Taoglas CAB.718). Carries the ch3 bias (4.3 V, TPS2553 limit 0.339 A max) outward: no U.FL current rating is published, so DC drop and heating at the bias current are E4-07 measurements.",
+        "Place at the E4_P3 node with C411, L404, R4430 and R4464: the detector RF tap R4430 stays ≤1 mm from this port (DC-01)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E4/J425",
+      "parent_assembly": "E4-CIR-01",
+      "ref": "J425",
+      "value": "P6 board U.FL: no DC",
+      "source_kind": "connector",
+      "source_status": "module",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E4_P6",
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P6",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E4.json",
+          "ref": "J425",
+          "component_source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT"
+        }
+      ],
+      "source_description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
+      "source_notes": [
+        "Mates the U.FL plug of the J406 panel pigtail (Taoglas CAB.718); feeds K402.3 next to the optional DNP L407 (RF_HF)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E4/J426",
+      "parent_assembly": "E4-CIR-01",
+      "ref": "J426",
+      "value": "ch5 IF edge SMA: 13.2 V LNB",
+      "source_kind": "connector",
+      "source_status": "module",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E4_RF_CH5",
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_RF_CH5",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E4.json",
+          "ref": "J426",
+          "component_source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json J-SMA-EDGE, W-IF-75OHM"
+        }
+      ],
+      "source_description": "Board-edge SMA jack at the RF_CH5 node; CENTER/SHIELD are the renamed pads of the derived Molex 73251-1153 footprint.",
+      "source_notes": [
+        "End of W402: SM3823 F(m)/SMA(f) adapter on J404, then RG-316 SMA-M/M 152.4 mm into this jack. Carries the LNB supply (13.2 V) from L406; no connector current rating is published (E4-07).",
+        "The 75/50 Ω transition sits at the SM3823 adapter: |Γ| 0.2, about 0.18 dB mismatch loss at the 739.5 MHz QO-100 IF (calculation, model)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E4/J427",
+      "parent_assembly": "E4-CIR-01",
+      "ref": "J427",
+      "value": "P8 board U.FL: ch4 4.3 V",
+      "source_kind": "connector",
+      "source_status": "module",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E4_RF_CH4",
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_RF_CH4",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E4.json",
+          "ref": "J427",
+          "component_source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT"
+        }
+      ],
+      "source_description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
+      "source_notes": [
+        "Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.",
+        "Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E4/J428",
+      "parent_assembly": "E4-CIR-01",
+      "ref": "J428",
+      "value": "P8 antenna feed / A403 input interface",
+      "source_kind": "connector",
+      "source_status": "module",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E4_P8_ANT",
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P8_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E4.json",
+          "ref": "J428",
+          "component_source": "STACK §5.3; assembly boundary of the external P8 accessory (A403 → A404), W2 GR-2; pcb/partition-spec.json p8"
+        },
+        {
+          "path": "components/2_m_wide_path_second_flamingo_fm_uses_th.md"
+        }
+      ],
+      "source_description": "Functional antenna-side coax interface of the external P8 accessory; named center/shield ports are not physical PCB pad numbers.",
+      "source_notes": [
+        "Antenna feed into the SMA input of A403 (Flamingo+ FM #2), upstream of A404; J408 remains the handheld P8 connection downstream of the accessory.",
+        "The interface is assembly-owned and adds no separately purchased connector; the accessory box, its SMA adapters and the cable to P8 are SRC-2/MECH-3/MECH-4 work."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
       "module_id": "E4/W401",
       "parent_assembly": "E4-CIR-01",
       "ref": "W401",
@@ -19098,7 +19386,7 @@
       "module_id": "E4/W402",
       "parent_assembly": "E4-CIR-01",
       "ref": "W402",
-      "value": "75 Ω shielded internal IF coax",
+      "value": "RG316 SMA-M/M 152.4 mm + SM3823 F/SMA adapter: P4 → J426",
       "source_kind": "module",
       "source_status": "module",
       "interface_family": "passive_cable_connectivity",
@@ -19683,7 +19971,7 @@
       "module_id": "E4/W422",
       "parent_assembly": "E4-CIR-02",
       "ref": "W422",
-      "value": "RG316 SMA-M/M 0.10 m helix → LaNA",
+      "value": "RG316 SMA-M/M 152.4 mm helix → LaNA",
       "source_kind": "module",
       "source_status": "design",
       "interface_family": "passive_cable_connectivity",
@@ -19740,7 +20028,7 @@
       "module_id": "E4/W423",
       "parent_assembly": "E4-CIR-02",
       "ref": "W423",
-      "value": "RG316 SMA-M/M 0.10 m LaNA → DC block",
+      "value": "RG316 SMA-M/M 152.4 mm LaNA → DC block",
       "source_kind": "module",
       "source_status": "design",
       "interface_family": "passive_cable_connectivity",
@@ -26464,6 +26752,12 @@
     "J415": "E4-CIR-01",
     "J416": "E4-CIR-01",
     "J417": "E4-CIR-01",
+    "J423": "E4-CIR-01",
+    "J424": "E4-CIR-01",
+    "J425": "E4-CIR-01",
+    "J426": "E4-CIR-01",
+    "J427": "E4-CIR-01",
+    "J428": "E4-CIR-01",
     "W401": "E4-CIR-01",
     "W402": "E4-CIR-01",
     "W403": "E4-CIR-01",
@@ -26511,7 +26805,6 @@
     "D401": "E4-CIR-03",
     "K401": "E4-CIR-03",
     "K402": "E4-CIR-03",
-    "L401": "E4-CIR-03",
     "L402": "E4-CIR-03",
     "L403": "E4-CIR-03",
     "L404": "E4-CIR-03",
@@ -38099,21 +38392,12 @@
           "name": "CENTER",
           "electrical_type": "passive",
           "assembly": "E4-CIR-01"
-        },
-        {
-          "sheet": "E4",
-          "ref": "L401",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
-          "assembly": "E4-CIR-03"
         }
       ],
       "assemblies": [
-        "E4-CIR-01",
-        "E4-CIR-03"
+        "E4-CIR-01"
       ],
-      "cross_assembly": true
+      "cross_assembly": false
     },
     {
       "net": "E4_P2",
@@ -38137,6 +38421,14 @@
         {
           "sheet": "E4",
           "ref": "J402",
+          "pin": "CENTER",
+          "name": "CENTER",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J423",
           "pin": "CENTER",
           "name": "CENTER",
           "electrical_type": "passive",
@@ -38221,6 +38513,14 @@
         {
           "sheet": "E4",
           "ref": "J403",
+          "pin": "CENTER",
+          "name": "CENTER",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J424",
           "pin": "CENTER",
           "name": "CENTER",
           "electrical_type": "passive",
@@ -38354,6 +38654,14 @@
         },
         {
           "sheet": "E4",
+          "ref": "J425",
+          "pin": "CENTER",
+          "name": "CENTER",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
           "ref": "K402",
           "pin": "3",
           "name": "COM1",
@@ -38376,7 +38684,7 @@
       "cross_assembly": true
     },
     {
-      "net": "E4_P8",
+      "net": "E4_P8_ANT",
       "pins": [
         {
           "sheet": "E4",
@@ -38388,7 +38696,7 @@
         },
         {
           "sheet": "E4",
-          "ref": "J408",
+          "ref": "J428",
           "pin": "CENTER",
           "name": "CENTER",
           "electrical_type": "passive",
@@ -38770,6 +39078,22 @@
           "name": "RF_DC",
           "electrical_type": "passive",
           "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J408",
+          "pin": "CENTER",
+          "name": "CENTER",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J427",
+          "pin": "CENTER",
+          "name": "CENTER",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
         }
       ],
       "assemblies": [
@@ -38787,6 +39111,14 @@
           "name": "1",
           "electrical_type": "passive",
           "assembly": "E4-CIR-03"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J426",
+          "pin": "CENTER",
+          "name": "CENTER",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
         },
         {
           "sheet": "E4",
@@ -45337,6 +45669,54 @@
         },
         {
           "sheet": "E4",
+          "ref": "J423",
+          "pin": "SHIELD",
+          "name": "SHIELD",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J424",
+          "pin": "SHIELD",
+          "name": "SHIELD",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J425",
+          "pin": "SHIELD",
+          "name": "SHIELD",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J426",
+          "pin": "SHIELD",
+          "name": "SHIELD",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J427",
+          "pin": "SHIELD",
+          "name": "SHIELD",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "J428",
+          "pin": "SHIELD",
+          "name": "SHIELD",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
           "ref": "K401",
           "pin": "G1",
           "name": "CASE_GND",
@@ -45364,14 +45744,6 @@
           "ref": "K402",
           "pin": "G2",
           "name": "CASE_GND",
-          "electrical_type": "passive",
-          "assembly": "E4-CIR-03"
-        },
-        {
-          "sheet": "E4",
-          "ref": "L401",
-          "pin": "2",
-          "name": "2",
           "electrical_type": "passive",
           "assembly": "E4-CIR-03"
         },

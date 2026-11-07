@@ -1,6 +1,6 @@
 {
   "kicad_version": "10.0.7",
-  "assignments": 688,
+  "assignments": 681,
   "footprints": [
     {
       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
@@ -147,7 +147,6 @@
         "C316",
         "C317",
         "C319",
-        "C321",
         "C341",
         "C343",
         "C440",
@@ -169,8 +168,6 @@
         "C520",
         "C550",
         "C551",
-        "C552",
-        "C553",
         "C2911",
         "C2912",
         "C2913",
@@ -247,7 +244,6 @@
         "C307",
         "C318",
         "C320",
-        "C322",
         "C340",
         "C342",
         "C502",
@@ -382,6 +378,18 @@
       "role": "source of a derived SR_RX_Custom footprint"
     },
     {
+      "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+      "file": "build/kicad/footprints/Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod",
+      "sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [],
+      "role": "source of a derived SR_RX_Custom footprint"
+    },
+    {
       "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
       "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
       "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c",
@@ -477,8 +485,7 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "F202",
-        "F301"
+        "F202"
       ]
     },
     {
@@ -520,7 +527,6 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "L401",
         "L402",
         "L403",
         "L407"
@@ -909,7 +915,6 @@
         "U311",
         "U312",
         "U313",
-        "U315",
         "U450",
         "U451",
         "U452",
@@ -922,8 +927,7 @@
         "U502",
         "U503",
         "U551",
-        "U552",
-        "U553"
+        "U552"
       ]
     },
     {
@@ -1189,7 +1193,6 @@
         "R393",
         "R394",
         "R395",
-        "R396",
         "R405",
         "R406",
         "R407",
@@ -1229,7 +1232,6 @@
         "R550",
         "R551",
         "R552",
-        "R553",
         "R2901",
         "R2902",
         "R2903",
@@ -1594,7 +1596,8 @@
         "J409",
         "J410",
         "J411",
-        "J412"
+        "J412",
+        "J426"
       ]
     },
     {
@@ -1723,6 +1726,22 @@
       ]
     },
     {
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS.kicad_mod",
+      "sha256": "2f622f6fe403f3d62dfbc2269cc15dec44cf5c2d9cefe3a5e37e7a4bbd7a62aa",
+      "pads": [
+        "CENTER",
+        "SHIELD"
+      ],
+      "origin": "SR_RX_Custom derived",
+      "refs": [
+        "J423",
+        "J424",
+        "J425",
+        "J427"
+      ]
+    },
+    {
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
       "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042",
@@ -1755,10 +1774,8 @@
         "TP214",
         "TP215",
         "TP216",
-        "TP301",
         "TP501",
         "TP502",
-        "TP503",
         "TP2901",
         "TP2902",
         "TP2903"
