@@ -16,10 +16,12 @@
   "design/parts/snapshots/2026-11-07-w2-src1-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json",
+  "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-mech4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src2-manual.json"
  ],
- "refs": 839,
- "parts": 251,
+ "refs": 849,
+ "parts": 256,
  "refs_by_mount": {
   "assembly": 8,
   "existing": 9,
@@ -28,30 +30,30 @@
   "on_module": 4,
   "panel": 14,
   "pcb_module": 3,
-  "pcb_pad": 32,
+  "pcb_pad": 41,
   "pcb_smt": 628,
-  "pcb_tht": 73,
+  "pcb_tht": 74,
   "remote": 9,
   "rework": 5,
   "virtual": 2
  },
- "bare_board_parts": 736,
- "bare_board_parts_with_footprint": 736,
- "board_refs": 736,
- "board_refs_with_footprint": 736,
+ "bare_board_parts": 746,
+ "bare_board_parts_with_footprint": 746,
+ "board_refs": 746,
+ "board_refs_with_footprint": 746,
  "board_footprint_origin": {
-  "KiCad 10.0.7": 694,
+  "KiCad 10.0.7": 704,
   "SR_RX_Custom": 42
  },
- "purchased_refs": 780,
+ "purchased_refs": 781,
  "purchased_refs_by_availability": {
   "TBD": 2,
-  "в наявності": 673,
+  "в наявності": 674,
   "з 10-bom": 17,
   "склад 0": 66,
   "у каталозі": 22
  },
- "purchased_refs_with_mpn": 778,
+ "purchased_refs_with_mpn": 779,
  "harness_family_items": 57,
  "tbd": [
   {
@@ -110,7 +112,7 @@
    "refs": [
     "J511"
    ],
-   "open": "Кабелі до J5: USB3 до T7 (U540) і USB2 до RTL-B (J541) — окремі записи; фіксація штекерів і розвантаження натягу в корпусі не задано (механічний пакет)."
+   "open": "Кабелі до J5: USB3 до T7 (U540, через вставку T7_INSERT і гермоввід T7) і USB2 до RTL-B (J541) — окремі записи. У моделі (W2 MECH-4, 07.11.2026) штекери J5 стоять у резерві usb_plug_bay (x 116.6–139, y 38.5–56.5, z 14.65–30.65; mechanical.json layout) перед стеком USB Q6A, кабелі виходять у бік лючка (−x); F101 у цьому місці не розміщується (R-F101-ACCESS). Відкрито: фіксація штекерів у J5 (скоба або стяжка до пластини) і розвантаження натягу обох кабелів — конверти штекерів, кабелю T7 і вставки T7_INSERT не змодельовано (MECH-5, MECH-6)."
   },
   {
    "part": "J-Q6A-EXISTING",
@@ -124,21 +126,21 @@
    "refs": [
     "J520"
    ],
-   "open": "Кабель HDMI — супутня деталь U520 (Adafruit 2420); фіксація штекера й розвантаження натягу не задано (механічний пакет)."
+   "open": "Відповідна частина — FPC-набір (W2 MECH-4, build/15 «Кабель HDMI (W2 MECH-4)»): кутовий адаптер Adafruit 3550 або 3549 у J520 (assembly_items AI-HDMI-FPC, AI-HDMI-FPC-R), дві стрічки 3560, вставка HDMI_INSERT і прямий 3548 у вхід Wisecoco; траса — R-HDMI-ROUTE PASS (model), конверти mechanical.json layout hdmi_*; адаптер (3.2 г) тримається в гнізді J520, стрічка лежить у резервах траси. Відкрито: вісь 3550/3549 узято з фото виробника — звірити бік гнізда на Q6A; фіксація стрічок до пластини (поліімідна стрічка, товар не обрано) і зусилля на J520 — стенд; запис U-WISECOCO-7IN (U520) досі має extras круглого кабелю Adafruit 2420 і 2 × Fair-Rite 0431164281 (власник запису)."
   },
   {
    "part": "J-Q6A-EXISTING",
    "refs": [
     "J521"
    ],
-   "open": "Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина — TBD (CAD)."
+   "open": "Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина в моделі 123 мм (MODEL ESTIMATE, mechanical/generated/harness-routes.json, W2 MECH-4 07.11.2026; кінець J503 попередній до розкладки плати лючка, PCB-SB1). Відкрито: місце J503 на платі лючка, розвантаження натягу пайки на площадках J21 (точка стяжки) — після розкладки плати лючка."
   },
   {
    "part": "J-Q6A-EXISTING",
    "refs": [
     "J522"
    ],
-   "open": "Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS на платі лючка) не задано (провід, довжина, фіксація пайки)."
+   "open": "Дроти S31 від площадок заводської кнопки EDL Q6A до SW501 (PV6F240SS на платі лючка): 2 × 26 AWG (build/16 S31-01/02); траса в моделі 58 мм (MODEL ESTIMATE, mechanical/generated/harness-routes.json, W2 MECH-4 07.11.2026), кінець J522 попередній. Відкрито: місце площадок EDL на Q6A (не локалізовано, E5 §9), фіксація пайки й розвантаження натягу на них."
   },
   {
    "part": "J-Q6A-EXISTING",

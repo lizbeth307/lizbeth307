@@ -4330,6 +4330,12 @@
           "name": "2"
         },
         {
+          "ref": "J514",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "3V3_Q6A"
+        },
+        {
           "ref": "U507",
           "pin": "1",
           "sheet": "E5",
@@ -6936,6 +6942,18 @@
           "name": "2"
         },
         {
+          "ref": "J320",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "→ U309.GND"
+        },
+        {
+          "ref": "J322",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "→ U314.GND"
+        },
+        {
           "ref": "Q306",
           "pin": "2",
           "sheet": "E3",
@@ -8292,6 +8310,18 @@
           "name": "cable shield"
         },
         {
+          "ref": "J514",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J517",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "GND кабелю"
+        },
+        {
           "ref": "J520",
           "pin": "2",
           "sheet": "E5",
@@ -8478,6 +8508,12 @@
           "name": "return (GND), lead blue"
         },
         {
+          "ref": "J518",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND від J550.2"
+        },
+        {
           "ref": "U507",
           "pin": "4",
           "sheet": "E5",
@@ -8646,7 +8682,7 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295"
+        "sha256": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487"
       },
       {
         "file": "design/E2.json",
@@ -8654,7 +8690,7 @@
       },
       {
         "file": "design/E3.json",
-        "sha256": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b"
+        "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0"
       },
       {
         "file": "design/E4.json",
@@ -8662,15 +8698,15 @@
       },
       {
         "file": "design/E5.json",
-        "sha256": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
+        "sha256": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "6e74404d6a71f8377c77b2bb4d556b7456bccc7b878765c7451a6a4dc766e121"
+        "sha256": "2359c03ba0e9e32355e105286c61dcb3463dd69322f3443c894da88289203209"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "927b26173077055a4834ed8517fa3777379fb5fb8121fd6f71951b193bccf2b7"
+        "sha256": "1ef65f1355006a9eac2291e8294f7a279b89b050ff92e33fc0d2cd4b8015d645"
       }
     ],
     "source_documents": [
