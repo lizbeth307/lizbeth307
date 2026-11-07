@@ -110,7 +110,8 @@ jobs:
           sudo cp "$RUNNER_TEMP/stage/rootfs/etc/tmpfiles.d/srrx-passes.conf" "$RUNNER_TEMP/stage/rootfs/etc/tmpfiles.d/srrx-satdump.conf" "$root/etc/tmpfiles.d/"
           sudo systemd-sysusers --root="$root"
           sudo systemd-tmpfiles --root="$root" --create
-          python - "$root" <<'EOF'
+          # As root: /data/raw is 0750 labd:srrx-bb, so the runner user cannot even stat the class directory.
+          sudo "$(command -v python)" - "$root" <<'EOF'
           import os, pwd, sys
           root = sys.argv[1]
           sys.path.insert(0, "deployment/system")
