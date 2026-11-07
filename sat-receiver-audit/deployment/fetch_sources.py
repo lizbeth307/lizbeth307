@@ -166,10 +166,12 @@ def git_tree_sha1(archive, gitlinks=None):
 
 
 def tree_exemption(component):
-    """Why a locked component has no git_tree_sha1, or None when it must have one."""
+    """Why a locked component has no git_tree_sha1, or None when it must have one. A GitHub
+    release asset (/releases/download/, e.g. Gpredict 2.7) is a release tarball, not a git archive."""
     if component.get("debian_source"):
         return "Ubuntu source package: signed snapshot pin (verify-debian)"
-    if component["commit"] is None or "github.com/" not in (component.get("source_archive_url") or ""):
+    url = component.get("source_archive_url") or ""
+    if component["commit"] is None or "github.com/" not in url or "/releases/download/" in url:
         return "release tarball, not a git archive"
     return None
 
