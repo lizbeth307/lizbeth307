@@ -415,7 +415,7 @@ class HostnameTests(unittest.TestCase):
         self.assertLessEqual(len(name), 63)
 
     def suffix(self, unit_id):
-        return hashlib.sha256(unit_id.encode()).hexdigest()[:6]
+        return hashlib.sha256(unit_id.lower().encode()).hexdigest()[:6]
 
     def test_lossless_ids_keep_their_readable_name(self):
         from srrx.provision import hostname_for
@@ -507,6 +507,29 @@ class HostnameTests(unittest.TestCase):
             with self.assertRaises(OSError):
                 provision(fixture.path, fixture.root, output, host_identity=True)
         self.assertEqual({p.name: p.read_text() for p in output.iterdir()}, {name: "previous " + name for name in names})
+
+
+class HostnameCaseTests(unittest.TestCase):
+    """The host name depends on lower(id) alone (RFC 4343), lossy ids included; the unit register
+    still checks the generated names for uniqueness (build/15 «Ім'я хоста (W2 SYS-HOST)»)."""
+
+    def test_ids_that_differ_only_in_case_share_one_name_lossy_or_not(self):
+        from srrx.provision import hostname_for
+        for upper, lower in (("UNIT-01", "unit-01"), ("UNIT_01", "unit_01"), ("SR-RX_U01", "sr-rx_u01"),
+                             ("A1" * 40, "a1" * 40)):
+            with self.subTest(unit_id=upper):
+                self.assertEqual(hostname_for(upper), hostname_for(lower))
+        # The suffix is SHA-256 of the lower-cased id: the build/15 example.
+        self.assertEqual(hostname_for("SR-RX_U01"), "srrx-sr-rx-u01-de10a6")
+        self.assertEqual(hashlib.sha256(b"sr-rx_u01").hexdigest()[:6], "de10a6")
+
+    def test_a_lossless_id_can_spell_a_lossy_ids_name(self):
+        from srrx.provision import hostname_for
+        lossy = hostname_for("unit_01")
+        self.assertEqual(lossy, "srrx-unit-01-" + hashlib.sha256(b"unit_01").hexdigest()[:6])
+        # 'unit-01-<that hex>' is itself a valid lossless id with the same name: only the register's
+        # uniqueness check on the generated names catches this (DEPLOYMENT.md commissioning step 2).
+        self.assertEqual(hostname_for(lossy[len("srrx-"):]), lossy)
 
 
 if __name__ == "__main__":
