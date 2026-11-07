@@ -1137,6 +1137,7 @@
         <field name="ReviewStatus">design</field>
         <field name="MPN">029707.5WXNV</field>
         <field name="Manufacturer">Littelfuse</field>
+        <field name="LCSC">C178942</field>
         <field name="Footprint">Fuse:Fuseholder_Blade_Mini_Keystone_3568</field>
         <field name="Datasheet">STACK §2.7,§5.1</field>
         <field name="Description"/>
@@ -1145,6 +1146,7 @@
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="029707.5WXNV"/>
       <property name="Manufacturer" value="Littelfuse"/>
+      <property name="LCSC" value="C178942"/>
       <property name="Sheetname" value="E1"/>
       <property name="Sheetfile" value="E1.kicad_sch"/>
       <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
@@ -2505,13 +2507,14 @@
     </comp>
     <comp ref="U107">
       <value>Pololu D36V50F12#4095</value>
+      <footprint>SR_RX_Custom:Pololu_D36V50Fx</footprint>
       <datasheet>https://www.pololu.com/product/4095</datasheet>
       <description>Функціональні клеми модуля; дубльовані силові отвори належать спільним мережам.</description>
       <fields>
         <field name="ReviewStatus">module</field>
         <field name="MPN">D36V50F12</field>
         <field name="Manufacturer">Pololu</field>
-        <field name="Footprint"/>
+        <field name="Footprint">SR_RX_Custom:Pololu_D36V50Fx</field>
         <field name="Datasheet">https://www.pololu.com/product/4095</field>
         <field name="Description">Функціональні клеми модуля; дубльовані силові отвори належать спільним мережам.</field>
       </fields>
@@ -2538,13 +2541,14 @@
     </comp>
     <comp ref="U108">
       <value>Pololu D36V50F5 #4091 — LAB5 default</value>
+      <footprint>SR_RX_Custom:Pololu_D36V50Fx</footprint>
       <datasheet>https://www.pololu.com/product/4091</datasheet>
       <description>Офіційний функціональний інтерфейс Pololu #4091. Дубльовані силові отвори належать спільним мережам; не одинарний header при струмі понад3A.</description>
       <fields>
         <field name="ReviewStatus">module</field>
         <field name="MPN">D36V50F5</field>
         <field name="Manufacturer">Pololu</field>
-        <field name="Footprint"/>
+        <field name="Footprint">SR_RX_Custom:Pololu_D36V50Fx</field>
         <field name="Datasheet">https://www.pololu.com/product/4091</field>
         <field name="Description">Офіційний функціональний інтерфейс Pololu #4091. Дубльовані силові отвори належать спільним мережам; не одинарний header при струмі понад3A.</field>
       </fields>
@@ -23856,7 +23860,7 @@
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J503" description="| design | PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY26–28AWG; insulation and strain relief. No power source from service PC."/>
+      <libsource lib="sr_rx_v2_completed" part="C_J503" description="| design | PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY 24 AWG (Micro-Fit 43030 terminals take 20–24 AWG; build/15); insulation and strain relief. No power source from service PC."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="43650-0315"/>
       <property name="Manufacturer" value="Molex"/>
@@ -30353,14 +30357,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_J503">
-      <description>| design | PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY26–28AWG; insulation and strain relief. No power source from service PC.</description>
+      <description>| design | PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY 24 AWG (Micro-Fit 43030 terminals take 20–24 AWG; build/15); insulation and strain relief. No power source from service PC.</description>
       <docs>STACK.md §5.2 / engineering design</docs>
       <fields>
         <field name="Reference">J503</field>
         <field name="Value">J21 service harness 3pin locking</field>
         <field name="Footprint">Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical</field>
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description">| design | PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY26–28AWG; insulation and strain relief. No power source from service PC.</field>
+        <field name="Description">| design | PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY 24 AWG (Micro-Fit 43030 terminals take 20–24 AWG; build/15); insulation and strain relief. No power source from service PC.</field>
       </fields>
       <pins>
         <pin num="1" name="12V" type="passive"/>
@@ -36361,7 +36365,7 @@
       <fields>
         <field name="Reference">U107</field>
         <field name="Value">Pololu D36V50F12#4095</field>
-        <field name="Footprint"/>
+        <field name="Footprint">SR_RX_Custom:Pololu_D36V50Fx</field>
         <field name="Datasheet">https://www.pololu.com/product/4095</field>
         <field name="Description">Функціональні клеми модуля; дубльовані силові отвори належать спільним мережам. | module | 12 V без boost. PG резервний для тесту. Монітори захищених шин містить E2.</field>
       </fields>
@@ -36380,7 +36384,7 @@
       <fields>
         <field name="Reference">U108</field>
         <field name="Value">Pololu D36V50F5 #4091 — LAB5 default</field>
-        <field name="Footprint"/>
+        <field name="Footprint">SR_RX_Custom:Pololu_D36V50Fx</field>
         <field name="Datasheet">https://www.pololu.com/product/4091</field>
         <field name="Description">Офіційний функціональний інтерфейс Pololu #4091. Дубльовані силові отвори належать спільним мережам; не одинарний header при струмі понад3A. | module | Оновлений default LAB5 замість D36V28F5. Advertised 5.5 A typ є умовним терморейтингом, а не гарантією при 50 °C. Вихід 5 V ±4%; EN вільний із внутрішнім pull-up; VRP не підключено; PG лише на TP102.; Габарит 25.4×25.4×9.5 mm проти 17.8×20.3×8.8 mm старого модуля: +7.6×5.1×0.7 mm і +78.5% площі. Потрібне перекомпонування силової плати та кріплень.; Проєктний режим: сукупний LAB5 ≤3.2 A continuous; transient qualification ≤4 A. Це новий бюджет, не вимір. Перевірити кожний VBUS після ключа. Силові дроти паяти напряму або використовувати обидва парні силові піни: одиночний header rated 3 A непридатний.; D36V28F5 є legacy-варіантом лише обмежених профілів з окремим gate ≤2.5 A; у default BOM і схемі не встановлюється.</field>
       </fields>
