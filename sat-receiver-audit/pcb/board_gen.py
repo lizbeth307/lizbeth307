@@ -22,6 +22,7 @@ Results are CI/model results, never a hardware PASS.
 from __future__ import annotations
 
 import argparse
+import faulthandler
 import hashlib
 import json
 import math
@@ -1123,6 +1124,14 @@ def place(pcb, frame, fp, anchor):
     fp.SetPosition(pcb.VECTOR2I(fp.GetPosition().x + target.x - point.x, fp.GetPosition().y + target.y - point.y))
 
 
+def layer_id(board, name):
+    """Layer id of an enabled layer of the board; refuses an unknown name (a negative id would crash pcbnew)."""
+    layer = board.GetLayerID(name)
+    if layer < 0 or not board.IsLayerEnabled(layer):
+        raise SpecError(f'layer {name} is not enabled on the board ({board.GetCopperLayerCount()} copper layers)')
+    return layer
+
+
 def add_polygon_zone(pcb, board, frame, points, layer, name):
     zone = pcb.ZONE(board)
     zone.SetLayer(layer)
@@ -1150,7 +1159,7 @@ def build_board(pcb, spec, contract, template, temp):
     # Optional layer types (spec layers.types {layer: 'power'}): a plane layer is exported to the Specctra DSN
     # as '(type power)', which Freerouting does not route on (its pre-route plane zone is the copper there).
     for name, kind in sorted((spec['layers'].get('types') or {}).items()):
-        board.SetLayerType(board.GetLayerID(name), pcb.LT_POWER if kind == 'power' else pcb.LT_SIGNAL)
+        board.SetLayerType(layer_id(board, name), pcb.LT_POWER if kind == 'power' else pcb.LT_SIGNAL)
     block = pcb.TITLE_BLOCK()
     block.SetTitle(f'{board_id} - {spec["status"]}')
     block.SetComment(0, 'CI/model output of pcb/board_gen.py; not a fabrication release; bench gates OPEN.')
@@ -1214,7 +1223,7 @@ def build_board(pcb, spec, contract, template, temp):
                         'sha256': part['sha256']})
     lib = Path(temp) / 'SR_RX_Board_Holes.pretty'
     lib.mkdir(exist_ok=True)
-    layers = [board.GetLayerID(n) for n in spec['holes'].get('keepout_layers', [])]
+    layers = [layer_id(board, n) for n in spec['holes'].get('keepout_layers', [])]
     blocks = set(spec['holes'].get('keepout_blocks', []))
     for hole in holes(spec, contract):
         name = f'NPTH_{hole["d"]:g}mm'
@@ -1235,7 +1244,7 @@ def build_board(pcb, spec, contract, template, temp):
             zone.SetDoNotAllowFootprints('footprints' in blocks)
             board.Add(zone)
     for track in spec['pre_route'].get('tracks', []):
-        layer = board.GetLayerID(track['layer'])
+        layer = layer_id(board, track['layer'])
         for a, b in zip(track['path'], track['path'][1:]):
             seg = pcb.PCB_TRACK(board)
             seg.SetStart(frame.k(*a))
@@ -1259,7 +1268,7 @@ def build_board(pcb, spec, contract, template, temp):
 
 def add_copper_zone(pcb, board, frame, spec, contract, zone, nets):
     points = contract['outline_mm'] if zone.get('outline', 'board') == 'board' else zone['outline']
-    item = add_polygon_zone(pcb, board, frame, points, board.GetLayerID(zone['layer']), zone['id'])
+    item = add_polygon_zone(pcb, board, frame, points, layer_id(board, zone['layer']), zone['id'])
     item.SetNet(nets[zone['net']])
     item.SetAssignedPriority(int(zone.get('priority', 0)))
     board.Add(item)
@@ -1803,6 +1812,7 @@ def check(board):
 
 
 def main(argv=None):
+    faulthandler.enable()  # a crash inside pcbnew prints the Python stack instead of a bare 'Segmentation fault'
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--board')
     mode = ap.add_mutually_exclusive_group()
