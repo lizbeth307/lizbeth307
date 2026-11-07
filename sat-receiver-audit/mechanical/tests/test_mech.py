@@ -459,8 +459,8 @@ class HeaderHeights(unittest.TestCase):
             b = P.boards["boards"][bid]
             got = [{k: z[k] for k in ("rect", "free_mm", "fits_mm", "limit")} for z in b["height_zones"]]
             with self.subTest(board=bid):
-                self.assertEqual(got, front, "re-run the clearance map into boards.json")
-                self.assertEqual(b["rear_zones"], rear)
+                self.assertEqual(got, front, "run python mechanical/build.py --update-zones")
+                self.assertEqual(b["rear_zones"], rear, "run python mechanical/build.py --update-zones")
                 self.assertTrue(all(z["max_height"] == b["max_height"] for z in b["height_zones"]))
 
     def test_micro_fit_vertical_height_is_read(self):

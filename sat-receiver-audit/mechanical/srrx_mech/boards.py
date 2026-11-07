@@ -493,3 +493,41 @@ def header_height_rule(P):
                 headers=rows,
                 result=f"OPEN: GR-3 decides (header orientation, board side or board): {len(over)} headers above their board limit"
                        + (f" ({', '.join(over)})" if over else "") + f"; {len(unknown)} heights not read" + note)
+
+
+ZONES_NOTE = ("computed by srrx_mech.boards.clearance_map (W2 MECH-1, MODEL ESTIMATE): free_mm = free height from the component face (height_zones) "
+              "or the back face (rear_zones) to the nearest layout envelope, structure part, button-cap flange or shell wall; fits_mm = free_mm - 0.5; "
+              "max_height stays the envelope limit the model uses for the whole board (layout.board_boxes), so a taller part in a zone needs a per-zone "
+              "envelope first; mechanical/tests keep these lists equal to the computation (after a layout change: python mechanical/build.py --update-zones)")
+
+
+def write_zones(P, path):
+    """Rewrite the computed height_zones / rear_zones of ZONE_BOARDS in boards.json in place (python mechanical/build.py --update-zones).
+
+    Text edit of the two lists and the note only, so the hand-formatted rest of the file keeps its layout."""
+    import json
+    import re
+    text = path.read_text(encoding="utf-8")
+
+    def lst(key, zones, extra):
+        rows = []
+        for z in zones:
+            if extra is not None:
+                z = {"rect": z["rect"], "max_height": extra, "free_mm": z["free_mm"], "fits_mm": z["fits_mm"], "limit": z["limit"]}
+            rows.append("        " + json.dumps(z, ensure_ascii=False))
+        return f'      "{key}": [\n' + ",\n".join(rows) + ("\n" if rows else "") + "      ],\n"
+    for bid in ZONE_BOARDS:
+        b = P.boards["boards"][bid]
+        front, rear = zones_from_map(clearance_map(P, bid))
+        start = text.index(f'    "{bid}": {{\n')
+        end = text.index("\n    }", start)
+        blk = text[start:end]
+        blk = re.sub(r'      "_zones_note": .*\n', "", blk)
+        blk = re.sub(r'      "(height_zones|rear_zones)": \[\n(?:        .*\n)*      \],\n', "", blk)
+        blk = blk.replace('      "height_zones": [],\n', "")
+        anchor = f'      "max_height": {json.dumps(b["max_height"])},\n'
+        ins = f'      "_zones_note": {json.dumps(ZONES_NOTE, ensure_ascii=False)},\n' + lst("height_zones", front, b["max_height"]) + lst("rear_zones", rear, None)
+        blk = blk.replace(anchor, anchor + ins, 1)
+        text = text[:start] + blk + text[end:]
+    json.loads(text)
+    path.write_text(text, encoding="utf-8", newline="\n")

@@ -6,6 +6,7 @@
     python mechanical/build.py --fetch-vendor DIR   # download and verify the pinned vendor STEP archives only
     python mechanical/build.py --gate               # fail on any FAIL row of the committed fit report
     python mechanical/build.py --skip-cad           # 2D drawings, contract and fit report only (no build123d)
+    python mechanical/build.py --update-zones       # rewrite the computed CTRL/RF height_zones/rear_zones in params/boards.json
 
 --offline refuses downloads (the archives must already be in --vendor-cache).
 Outputs are MODEL FIT ONLY: physical fit, sealing, thermal and drop gates stay OPEN.
@@ -384,7 +385,13 @@ def main():
     ap.add_argument("--fetch-vendor", type=Path, default=None, metavar="DIR", help="only download and verify the pinned vendor archives")
     ap.add_argument("--gate", action="store_true", help="evaluate the fit report in --out and fail on FAIL rows")
     ap.add_argument("--skip-cad", action="store_true")
+    ap.add_argument("--update-zones", action="store_true", help="rewrite the computed height_zones/rear_zones of CTRL and RF in params/boards.json")
     a = ap.parse_args()
+    if a.update_zones:
+        from srrx_mech.params import PARAMS
+        boards.write_zones(Params(), PARAMS / "boards.json")
+        print("params/boards.json: height_zones / rear_zones of", ", ".join(boards.ZONE_BOARDS), "rewritten from the clearance map")
+        return 0
     if a.fetch_vendor:
         from srrx_mech import vendor
         for k, v in vendor.fetch(Params(), a.fetch_vendor).items():

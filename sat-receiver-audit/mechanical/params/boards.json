@@ -89,7 +89,7 @@
       "hole_d": 3.2,
       "hole_keepout_d": 7.0,
       "max_height": 5.5,
-      "_zones_note": "computed by srrx_mech.boards.clearance_map (W2 MECH-1, MODEL ESTIMATE): free_mm = free height from the component face (height_zones) or the back face (rear_zones) to the nearest layout envelope, structure part, button-cap flange or shell wall; fits_mm = free_mm - 0.5; max_height stays the envelope limit the model uses for the whole board (layout.board_boxes), so a taller part in a zone needs a per-zone envelope first; mechanical/tests keep these lists equal to the computation (re-run this map after a layout change)",
+      "_zones_note": "computed by srrx_mech.boards.clearance_map (W2 MECH-1, MODEL ESTIMATE): free_mm = free height from the component face (height_zones) or the back face (rear_zones) to the nearest layout envelope, structure part, button-cap flange or shell wall; fits_mm = free_mm - 0.5; max_height stays the envelope limit the model uses for the whole board (layout.board_boxes), so a taller part in a zone needs a per-zone envelope first; mechanical/tests keep these lists equal to the computation (after a layout change: python mechanical/build.py --update-zones)",
       "height_zones": [
         {"rect": [0.0, 0.0, 95.0, 27.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
         {"rect": [95.0, 0.0, 1.5, 27.0], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
@@ -138,7 +138,7 @@
       "hole_d": 2.7,
       "hole_keepout_d": 6.0,
       "max_height": 5.5,
-      "_zones_note": "computed by srrx_mech.boards.clearance_map (W2 MECH-1, MODEL ESTIMATE): free_mm = free height from the component face (height_zones) or the back face (rear_zones) to the nearest layout envelope, structure part, button-cap flange or shell wall; fits_mm = free_mm - 0.5; max_height stays the envelope limit the model uses for the whole board (layout.board_boxes), so a taller part in a zone needs a per-zone envelope first; mechanical/tests keep these lists equal to the computation (re-run this map after a layout change)",
+      "_zones_note": "computed by srrx_mech.boards.clearance_map (W2 MECH-1, MODEL ESTIMATE): free_mm = free height from the component face (height_zones) or the back face (rear_zones) to the nearest layout envelope, structure part, button-cap flange or shell wall; fits_mm = free_mm - 0.5; max_height stays the envelope limit the model uses for the whole board (layout.board_boxes), so a taller part in a zone needs a per-zone envelope first; mechanical/tests keep these lists equal to the computation (after a layout change: python mechanical/build.py --update-zones)",
       "height_zones": [
         {"rect": [0.0, 0.0, 6.0, 14.5], "max_height": 5.5, "free_mm": 7.0, "fits_mm": 6.5, "limit": "front wall"},
         {"rect": [6.0, 0.0, 15.0, 14.5], "max_height": 5.5, "free_mm": 5.5, "fits_mm": 5.0, "limit": "button_flange.02"},
