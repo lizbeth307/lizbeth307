@@ -67,6 +67,10 @@ SOURCES = {
                    'used': 'jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, '
                            'job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; '
                            'Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp'},
+    'kicad_d356': {'url': 'https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp', 'read': '2026-11-07',
+                   'used': 'IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, '
+                           'otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 '
+                           'characters); test record types 307/317/327/367'},
 }
 
 # The 2-layer stack: JLC standard FR-4 (no named stack-up; impedance control starts at 4 layers on the same page).
@@ -292,11 +296,14 @@ def export_raw(board, copper, temp):
 
 # --- the kicad_jobset (manual reproduction of the raw exports) ---------------------------------------
 
+JOBSET_OUT = 'fab-jobset-raw'  # the folder output of jobset(): ${KIPRJMOD}/fab-jobset-raw
+
+
 def _id(board, name):
     return str(uuid.uuid5(uuid.NAMESPACE_URL, f'https://github.com/lizbeth307/lizbeth307/sr-rx/fab/{board}/{name}'))
 
 
-def jobset(board, copper, output_path='${KIPRJMOD}/fab-jobset-raw'):
+def jobset(board, copper, output_path='${KIPRJMOD}/' + JOBSET_OUT):
     """KiCad 10.0.7 jobset with the same export settings as cli_jobs (keys from common/jobs/*.cpp at 10.0.7)."""
     plot_common = {'layers_to_include_on_all_layers': [], 'mirror': False, 'black_and_white': False, 'negative': False,
                    'plot_footprint_values': True, 'plot_ref_des': True, 'hide_dnp_footprints_on_fab_layers': False,
@@ -335,14 +342,19 @@ def jobset_name(rel):
     return re.sub(r'-all-pos(\.csv)$', r'\1', rel)
 
 
-def jobset_check(board, copper, direct, temp, raw_copy=None):
-    """Run the jobset on a staged copy and compare its normalised outputs with the direct export."""
+def jobset_check(board, jobset_bytes, direct, temp, raw_copy=None):
+    """Run the set's own <board>.kicad_jobset (its bytes, as committed) on a staged copy of the board and compare its
+    normalised outputs with the direct export. ${KIPRJMOD} is the staged project folder (common/jobs/
+    jobs_output_folder.cpp expands it), so the outputs land in the temporary directory."""
     cli = kicad_cli()
     src = stage_sources(board, Path(temp) / 'jobset')
-    out = Path(temp) / 'jobset-out'
     path = src / f'{board}.kicad_jobset'
-    path.write_text(json.dumps(jobset(board, copper, str(out)), indent=2) + '\n', encoding='utf-8')
-    run([cli, 'jobset', 'run', '--stop-on-error', '--file', str(path), str(src / f'{board}.kicad_pro')], timeout=900)
+    path.write_bytes(jobset_bytes)
+    run([cli, 'jobset', 'run', '--stop-on-error', '--file', str(path), str(src / f'{board}.kicad_pro')], timeout=900,
+        cwd=str(src))
+    out = src / JOBSET_OUT
+    if not out.is_dir():
+        return [f'jobset wrote no {JOBSET_OUT}/ next to the staged project']
     produced = collect(out)
     if raw_copy:  # raw jobset outputs next to the direct ones in the CI artifact
         for rel, data in produced.items():
@@ -490,8 +502,10 @@ def rotation_offsets(cpl_rows, facts):
         refs = sorted((r['Designator'] for r in cpl_rows if facts.get(r['Designator'], {}).get('lib') == fpid), key=board_gen.sort_ref)
         rows.append({'Footprint': fpid, 'Designators': ','.join(refs), 'JLC rotation offset (deg)': '',
                      'JLC centroid offset (mm)': '',
-                     'Status': 'TBD: check every part in the JLC assembly viewer at order time (builder step); '
-                               'JLC rotation and centroid conventions are not read and are not checked in CI'})
+                     'Status': 'TBD: JLC defines Mid X/Mid Y as the component centroid (JLC CPL page, read 2026-11-07); '
+                               'this CPL gives the KiCad footprint origin and the raw KiCad rotation; the per-footprint '
+                               'rotation and centroid offsets are checked in the JLC assembly viewer at order time '
+                               '(builder step), not in CI'})
     return rows
 
 
@@ -510,20 +524,76 @@ def instances_rows(spec, report):
 
 # --- coverage checks ---------------------------------------------------------------------------------
 
-def ipc_nets(text):
-    """Net names of the IPC-D-356 test records (317/327/367), aliases (P NNAME) resolved; N/C dropped."""
-    alias, nets = {}, set()
+# IPC-D-356 net names as KiCad 10.0.7 writes them (pcbnew/exporters/export_d356.cpp at tag 10.0.7, read 2026-11-07:
+# sanitize_d356_name, d356_alias, write_D356_records): a test record (307/317/327/367) holds the signal name in
+# columns 4-17 ('%-14.14s'). That name is the net name upper-cased (ASCII a-z only) with '?' for every character
+# above 126 or not printable, when it has <= 14 characters, is not N/C and no other net of the board gives the same
+# name. Every other net gets an alias 'M' + 4 base-36 digits, declared once as 'P  NNAME<alias> <name>' where
+# <name> is the sanitised net name with its case kept, its last 58 characters.
+IPC_TEST_RECORDS = ('307', '317', '327', '367')
+IPC_NC = 'N/C'
+
+
+def d356_name(net, upper):
+    """KiCad 10.0.7 sanitize_d356_name: '?' for a character above 126 or not printable; a-z upper-cased if upper."""
+    out = []
+    for ch in net:
+        if not 33 <= ord(ch) <= 126:  # ch > 126 or !isgraph (C locale: 0x21-0x7E)
+            ch = '?'
+        elif upper and 'a' <= ch <= 'z':
+            ch = chr(ord(ch) - 32)
+        out.append(ch)
+    return ''.join(out)
+
+
+def ipc_expected(nets):
+    """{net: ('signal', name) or ('alias', recorded name)}: the IPC-D-356 name KiCad 10.0.7 gives each net of the
+    board (nets = every net of a copper pad or via, the set KiCad counts collisions over)."""
+    count = {}
+    for net in nets:
+        count[d356_name(net, True)] = count.get(d356_name(net, True), 0) + 1
+    out = {}
+    for net in nets:
+        short = d356_name(net, True)
+        if len(short) <= 14 and short != IPC_NC and count[short] == 1:
+            out[net] = ('signal', short)
+        else:
+            out[net] = ('alias', d356_name(net, False)[-58:])
+    return out
+
+
+def ipc_records(text):
+    """(signal names of the test records without N/C, {NNAME alias: recorded name}) of a KiCad IPC-D-356 file."""
+    signals, aliases = set(), {}
     for line in text.splitlines():
-        m = re.match(r'^P\s+(NNAME\d+)\s+(.*\S)\s*$', line)
+        m = re.match(r'^P  NNAME(\S{1,5}) +(\S+)', line)
         if m:
-            alias[m.group(1)] = m.group(2)
-    for line in text.splitlines():
-        if line[:3] in ('317', '327', '367') and len(line) >= 17:
-            net = line[3:17].strip()
-            net = alias.get(net, net)
-            if net and net != 'N/C':
-                nets.add(net)
-    return nets
+            aliases[m.group(1)] = m.group(2)
+        elif line[:3] in IPC_TEST_RECORDS and len(line) >= 17:
+            signal = line[3:17].strip()
+            if signal and signal != IPC_NC:
+                signals.add(signal)
+    return signals, aliases
+
+
+def ipc_nets(text):
+    """Names of the nets in the IPC-D-356 test records: an alias resolves to its NNAME record, any other signal
+    name stays as KiCad wrote it (upper-cased); N/C dropped."""
+    signals, aliases = ipc_records(text)
+    return {aliases.get(s, s) for s in signals}
+
+
+def ipc_missing(nets, record_nets, text):
+    """Nets of `nets` that the IPC-D-356 text lacks under the name KiCad 10.0.7 gives them."""
+    signals, aliases = ipc_records(text)
+    used_alias_names = {name for alias, name in aliases.items() if alias in signals}
+    expected = ipc_expected(set(record_nets) | set(nets))
+    missing = []
+    for net in nets:
+        kind, name = expected[net]
+        if not (name in used_alias_names if kind == 'alias' else (name in signals and name not in aliases)):
+            missing.append(net)
+    return missing
 
 
 def drill_hits(text):
@@ -562,14 +632,17 @@ def coverage(files, inputs, cpl_rows, bom_rows):
     info['bom'] = {'rows': len(bom_rows), 'designators': len(refs),
                    'tbd': sorted((r['Designator'] for r in bom_rows if r['LCSC Part #'] == 'TBD'), key=board_gen.sort_ref),
                    'boards': int(inputs['report']['build_quantity']['total'])}
-    # IPC-D-356: every net that has a pad on the board.
+    # IPC-D-356: every net that has a pad on the board, under the name KiCad 10.0.7 writes for it (upper-cased short
+    # name or an NNAME alias; ipc_expected).
     pad_nets = sorted({p['net'] for p in parsed.pads if p['net'] and not p['net'].startswith('unconnected-')})
+    record_nets = {p['net'] for p in parsed.pads if p['net'] and p['layers']} | {v['net'] for v in parsed.vias if v['net']}
     ipc = files.get(f'{board}.ipc356', b'').decode('utf-8', errors='replace')
     got = ipc_nets(ipc)
-    missing = sorted(set(pad_nets) - got)
+    missing = ipc_missing(pad_nets, record_nets, ipc)
     if missing:
         problems.append(f'IPC-D-356 lacks nets {missing}')
-    info['ipc356'] = {'board_pad_nets': pad_nets, 'ipc_nets': sorted(got), 'missing': missing}
+    info['ipc356'] = {'board_pad_nets': pad_nets, 'ipc_nets': sorted(got), 'aliases': dict(sorted(ipc_records(ipc)[1].items())),
+                      'missing': missing}
     # Gerber X2: one file per requested layer, each with X2 file attributes; copper with net attributes.
     gerbers = {rel: data.decode('utf-8', errors='replace') for rel, data in files.items()
                if rel.startswith('gerber/') and GERBER_EXT.search(rel)}
@@ -759,8 +832,9 @@ def notes_lines(inputs, stack, cov, bom_rows):
                     'design and is assembled the same.'),
               ('t', 'Sides with parts: ' + ', '.join(f'{s} ({", ".join(f"{m} {n}" for m, n in sorted(c.items()))})'
                                                        for s, c in sorted(cov['cpl']['placed_by_side_and_mount'].items())) + '.'),
-              ('t', 'CPL: Mid X / Mid Y are the KiCad footprint origins and Rotation the raw KiCad rotation (degrees, '
-                    'counter-clockwise as the JLC CPL column). JLC rotation and centroid offsets per footprint are TBD '
+              ('t', 'CPL: Mid X / Mid Y are the KiCad footprint origins (JLC defines them as the component centroid) and '
+                    'Rotation the raw KiCad rotation (degrees, counter-clockwise as the JLC CPL column). JLC rotation and '
+                    'centroid offsets per footprint are TBD '
                     f'(assembly/{board}-cpl-rotation-offsets.csv): check every part in the JLC viewer at order time; '
                     'nothing here verifies them.')]
     tbd = [r for r in bom_rows if r['LCSC Part #'] == 'TBD']
@@ -832,13 +906,15 @@ def readme(inputs, cov, bom_rows, files):
              'Каталог повністю генерує `python3 pcb/fab_export.py --board ' + board + '`; вручну не редагувати. '
              '`--check` перегенеровує набір у тимчасовому каталозі й порівнює побайтово (KiCad ставить дати, '
              'абсолютні шляхи й рядок збірки — їх нормалізовано, правила в `manifest.json`), а також запускає '
-             f'`{board}.kicad_jobset` і порівнює його вихід із прямим експортом.', '',
+             f'`{board}.kicad_jobset` цього набору (ті самі байти, що в коміті; вихід — у `fab-jobset-raw` тимчасової '
+             'копії плати) і порівнює його вихід із прямим експортом.', '',
              '| Файл | Що це |', '|---|---|']
     descr = {'gerber/': 'Gerber X2 (атрибути X2 і нетліста, розширення Protel), по файлу на шар; `.gbrjob` — файл завдання Gerber',
              'drill/': 'Excellon: PTH і NPTH окремо (мм, десятковий формат, абсолютний початок, alternate для овальних) і карти свердлінь Gerber X2',
              f'{board}.ipc356': 'нетліст IPC-D-356 для електротесту (усі кола з контактними майданчиками)',
              f'assembly/{board}-bom-jlc.csv': 'BOM для JLC PCBA: Comment, Designator, Footprint, LCSC Part # + кількості на плату й на партію',
-             f'assembly/{board}-cpl-jlc.csv': 'CPL для JLC: Designator, Mid X, Mid Y (мм), Layer (Top/Bottom), Rotation (сирий кут KiCad)',
+             f'assembly/{board}-cpl-jlc.csv': 'CPL для JLC: Designator, Mid X, Mid Y (мм, початок посадкового місця KiCad), '
+                                              'Layer (Top/Bottom), Rotation (сирий кут KiCad)',
              f'assembly/{board}-cpl-rotation-offsets.csv': 'таблиця поправок кута для JLC за посадковими місцями: порожня, TBD',
              f'assembly/{board}-instances.csv': 'відповідність шаблонних позначень плати позначенням графа для кожного екземпляра',
              f'assembly/{board}-pos-kicad.csv': 'сирий файл позицій KiCad (CSV, мм, обидва боки, без DNP)',
@@ -853,9 +929,10 @@ def readme(inputs, cov, bom_rows, files):
               f'- Плат: {q["total"]} = екземпляри ({inst}) + запасні {q["spares"]}; усі однакові й збираються однаково.',
               '- Gerber і свердління: заархівувати `gerber/` і `drill/` разом під час замовлення (архів не комітиться, '
               'бо zip має мітки часу).',
-              '- Кут у CPL — сирий кут KiCad; поправки JLC для посадкових місць не прочитано й у CI не перевірено (TBD): '
-              'кожну деталь перевіряє той, хто замовляє, у переглядачі JLC перед оплатою (крок збирання; у build/21 його '
-              'додає власник STEPS).',
+              '- Mid X / Mid Y у CPL — початок посадкового місця KiCad, тоді як JLC визначає їх як центр компонента '
+              '(сторінка CPL JLC, прочитано 2026-11-07); кут — сирий кут KiCad. Поправки кута й центру для кожного '
+              'посадкового місця — TBD, у CI не перевіряються: кожну деталь перевіряє той, хто замовляє, у переглядачі '
+              'JLC перед оплатою (крок збирання; у build/21 його додає власник STEPS).',
               f'- Позиції BOM з TBD: {", ".join(cov["bom"]["tbd"]) or "немає"}.']
     for r in bom_rows:
         if r['LCSC Part #'] == 'TBD':
@@ -960,7 +1037,7 @@ def check(board, raw_copy=None, jobset_run=True):
         inputs, raw, files, cov, problems = produce(board, temp, raw_copy)
         problems = list(problems)
         if jobset_run:
-            problems += jobset_check(board, inputs['spec']['layers']['copper'], raw, temp, raw_copy)
+            problems += jobset_check(board, files[f'{board}.kicad_jobset'], raw, temp, raw_copy)
     out = fab_dir(board)
     have = collect(out) if out.is_dir() else {}
     for rel in sorted(set(files) | set(have)):
