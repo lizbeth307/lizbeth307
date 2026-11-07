@@ -1,0 +1,136 @@
+name: SR-RX boards
+
+# Board generator of sat-receiver-audit (pcb/board_gen.py) in the KiCad 10.0.7 image.
+# Default per board: --check, read-only (DRC and audits must reproduce the committed report).
+# A board is re-placed and re-routed only when the head commit message carries '[pcb-route <BOARD>]';
+# its outputs come back as the artifact pcb-regenerated-<BOARD> and are committed as 'GENERATED: ...'.
+# Freerouting (GPL-3.0) is fetched by its pinned SHA256 into the runner temp directory and is never
+# committed, cached or uploaded. CI/model results only: hardware and bench gates stay OPEN.
+
+on:
+  push:
+    # wip/** as well: a new workflow cannot be dispatched before it reaches the default branch.
+    branches: ['wip/**', 'codex/**', 'ccr-*']
+    paths: ['sat-receiver-audit/pcb/**', 'sat-receiver-audit/build/kicad/boards/**', 'sat-receiver-audit/build/kicad/footprints/**',
+            'sat-receiver-audit/mechanical/generated/contract/boards.json', 'sat-receiver-audit/design/E*.json',
+            'sat-receiver-audit/design/parts/parts.json', 'sat-receiver-audit/build/10-jlc-bom.csv',
+            'sat-receiver-audit/tools/assembly_data.py', '.github/workflows/sr-rx-pcb.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  # One run per ref at a time; a push never cancels a running route job.
+  group: sr-rx-pcb-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: sat-receiver-audit
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+  QT_QPA_PLATFORM: offscreen
+
+jobs:
+  unit:
+    name: Board generator unit tests (standard library)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      boards: ${{ steps.boards.outputs.boards }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: python -m unittest discover -s pcb/tests
+        run: python -m unittest discover -s pcb/tests -v
+      - name: Board specs (each needs board_id = file name)
+        id: boards
+        run: |
+          boards=$(python pcb/board_gen.py --list-boards)
+          echo "boards=$boards" >> "$GITHUB_OUTPUT"
+          echo "Boards: $boards"
+      - name: Nothing above wrote into the tree
+        run: |
+          git status --porcelain --untracked-files=all -- . > "$RUNNER_TEMP/tree-status.txt"
+          cat "$RUNNER_TEMP/tree-status.txt"
+          test ! -s "$RUNNER_TEMP/tree-status.txt"
+
+  board:
+    name: Board ${{ matrix.board }} (KiCad 10.0.7)
+    needs: unit
+    if: needs.unit.outputs.boards != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        board: ${{ fromJSON(needs.unit.outputs.boards) }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    container:
+      image: kicad/kicad:10.0.7
+      options: --user root
+    env:
+      BOARD: ${{ matrix.board }}
+      # Data only: read by board_gen.py through a fixed regular expression, never expanded by a shell.
+      SR_RX_HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+    steps:
+      - name: Install git inside the KiCad image
+        working-directory: .
+        run: |
+          apt-get update -q
+          apt-get install -y -q --no-install-recommends git ca-certificates
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Tools and mode
+        id: mode
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          kicad-cli version
+          python3 -c "import pcbnew; print('pcbnew', pcbnew.Version())"
+          for candidate in "${KICAD10_FOOTPRINT_DIR:-}" /usr/share/kicad/footprints /usr/local/share/kicad/footprints; do
+            if [ -n "$candidate" ] && [ -d "$candidate/Resistor_SMD.pretty" ]; then echo "KICAD10_FOOTPRINT_DIR=$candidate" >> "$GITHUB_ENV"; echo "Library: $candidate"; break; fi
+          done
+          mode=$(python3 pcb/board_gen.py --board "$BOARD" --mode-from-commit)
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "Board $BOARD: $mode"
+      - name: Inputs against the committed report (standard library)
+        if: steps.mode.outputs.mode == 'check'
+        run: python3 pcb/board_gen.py --board "$BOARD" --inputs-only
+      - name: Fetch Freerouting (pinned SHA256, outside the work tree)
+        if: steps.mode.outputs.mode == 'route'
+        run: python3 pcb/board_gen.py --fetch-freerouting "$RUNNER_TEMP/freerouting"
+      - name: Route ${{ matrix.board }}
+        if: steps.mode.outputs.mode == 'route'
+        env:
+          SR_RX_PCB_ARTIFACTS: ${{ runner.temp }}/pcb-out/design-data
+        run: python3 pcb/board_gen.py --board "$BOARD" --route --freerouting "$RUNNER_TEMP/freerouting/freerouting-cli"
+      - name: Check ${{ matrix.board }} (DRC and audits reproduce the report)
+        run: python3 pcb/board_gen.py --board "$BOARD" --check
+      - name: Collect regenerated outputs
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/pcb-out"
+          git add -A -- "build/kicad/boards/$BOARD"
+          git -c core.quotePath=false diff --cached --stat
+          git -c core.quotePath=false diff --cached --binary > "$RUNNER_TEMP/pcb-out/pcb-$BOARD.patch"
+          cp -r "build/kicad/boards/$BOARD" "$RUNNER_TEMP/pcb-out/board" 2>/dev/null || true
+          if git ls-files | grep -i -E '(^|/)freerouting[^/]*$'; then echo "::error::a Freerouting file is tracked"; exit 1; fi
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: pcb-regenerated-${{ matrix.board }}
+          path: ${{ runner.temp }}/pcb-out
+      - name: Committed board outputs are current
+        if: always()
+        run: |
+          git status --porcelain --untracked-files=all -- . > "$RUNNER_TEMP/tree-status.txt"
+          cat "$RUNNER_TEMP/tree-status.txt"
+          if [ -s "$RUNNER_TEMP/tree-status.txt" ]; then
+            echo "::error::Board outputs differ from the commit; apply the pcb-regenerated-$BOARD patch as a 'GENERATED:' commit"
+            exit 1
+          fi
