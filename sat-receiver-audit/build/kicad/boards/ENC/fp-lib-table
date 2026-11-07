@@ -1,0 +1,5 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Connector_PinHeader_2.00mm")(type "KiCad")(uri "${KICAD10_FOOTPRINT_DIR}/Connector_PinHeader_2.00mm.pretty")(options "")(descr "Official KiCad 10.0.7 library of the kicad/kicad:10.0.7 image (pilot placeholder)"))
+  (lib (name "SR_RX_Custom")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/SR_RX_Custom.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+)

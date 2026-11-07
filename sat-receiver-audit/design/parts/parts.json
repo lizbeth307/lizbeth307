@@ -24,6 +24,8 @@
   "design/parts/snapshots/2026-11-07-w2-area-manual.json",
   "design/parts/snapshots/2026-11-07-w2-reads-e-manual.json",
   "design/parts/snapshots/2026-11-07-w2-reads-e-lcsc.json",
+  "design/parts/snapshots/2026-11-07-w2-reads-rf-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-reads-rf-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-src1-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json"
  ],
