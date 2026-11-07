@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
-"""PWR-A placement study (W2 PCB-PWRA-1): the board_gen planner run on the PWR_A draft spec, standard library only.
+"""PWR-A placement study (W2 PCB-PWRA-1, B2B check W2 PCB-PWRA-2): the board_gen planner run on the PWR_A draft spec,
+standard library only.
 
   python3 build/kicad/boards/PWR_A/placement_study.py           write placement-study.json next to this file
   python3 build/kicad/boards/PWR_A/placement_study.py --check   fail unless placement-study.json reproduces
 
+The B2B placeholders (PWR_A B2B2 and PWR_B B2B1, Hirose FX8 lands) come from the KiCad 10.0.7 image library, so
+KICAD10_FOOTPRINT_DIR must name a library holding Connector_Hirose_FX8.pretty (board_gen.image_library_dir; the
+kicad/kicad:10.0.7 image has it); both files are SHA256-checked.
+
 Inputs: PWR_A.spec-draft.json (this directory), pcb/board_gen.py (its validation, net resolution, footprint
 geometry and deterministic shelf packer are reused, nothing is re-implemented), the mechanical contract
 (mechanical/generated/contract/boards.json PWR and PWR_B), design/E1-E5, the portable footprint manifest,
-pcb/partition-spec.json, pcb/partition-budget.json, pcb/generated/netclasses.json and pcb/generated/b2b-nets.json.
+pcb/partition-spec.json, pcb/partition-budget.json, pcb/generated/netclasses.json and pcb/generated/b2b-nets.json;
+for the B2B check also pcb/boards/PWR_B.json and build/kicad/boards/PWR_B/connectors.json (PWR_B, read only).
 
 What it reports (MODEL / CI-free planning result, not a KiCad board, not a hardware result):
 - the anchors of the spec placed by board_gen.placed_geometry and checked against the contract (Pololu pin fields
@@ -18,7 +24,10 @@ What it reports (MODEL / CI-free planning result, not a KiCad board, not a hardw
   trigger 0.60 of pcb/partition-spec.json, and the free area left after the anchors;
 - the exit-edge length demand of the PWR-A and PWR-B harness headers, the PWR-B cut-outs this placement needs
   (windows over PWR-A parts taller than hA, header edge strips, test-point probe windows), the THT pads inside the
-  thermal_bond zones (plate pockets, M-07) and a geometric pre-check of the scripted copper.
+  thermal_bond zones (plate pockets, M-07) and a geometric pre-check of the scripted copper;
+- the B2B pair (spec b2b): every contact of the PWR_A mate against PWR_B B2B1, pin for pin (nets) and in position
+  (planner geometry of both lands, and the contact positions in PWR_B connectors.json from its CI route run);
+- the planned origin of every placed ref (positions), the input of lab5_budget.py.
 """
 from __future__ import annotations
 
@@ -40,6 +49,10 @@ PARTITION_SPEC = BASE / 'pcb/partition-spec.json'
 BUDGET = BASE / 'pcb/partition-budget.json'
 NETCLASSES = BASE / 'pcb/generated/netclasses.json'
 B2B_NETS = BASE / 'pcb/generated/b2b-nets.json'
+PWR_B_SPEC = BASE / 'pcb/boards/PWR_B.json'
+PWR_B_CONNECTORS = BASE / 'build/kicad/boards/PWR_B/connectors.json'
+B2B_X_TOL = 0.01   # mm: mating contacts share the contact axis along the row
+B2B_ROW_TOL = 0.2  # mm: socket and plug lands differ in pad length (FX8: rows at +-2.85 against +-2.7 about one axis)
 PIN_FIELD_TOL = 0.05
 EDGE_TOL = 0.5  # a header courtyard within 0.5 mm of its exit edge counts as on the edge
 # Design value: depth of the header strip along an exit edge = the deepest vertical Mini-Fit Jr./Micro-Fit
@@ -319,7 +332,9 @@ def study():
     fill = {
         'label': 'MODEL: courtyard boxes of the vendored KiCad 10.0.7 footprints (F.CrtYd), not a routed board',
         'outline_mm2': r4(outline_area), 'hole_keepouts_mm2': r4(keepout_area), 'usable_mm2': r4(usable),
-        'refs': len(all_refs), 'courtyard_sum_mm2': r4(sum(cy.values())),
+        'refs': len(all_refs), 'graph_refs': sum(p['source'] == 'graph' for p in template),
+        'placeholder_refs': sorted(p['ref'] for p in template if p['source'] == 'pilot_placeholder'),
+        'courtyard_sum_mm2': r4(sum(cy.values())),
         'reserved_rects_mm2': r4(reserved_rect_mm2), 'reserved_area_only_mm2': r4(reserve_mm2),
         'demand_mm2': r4(demand_total), 'fill_all_refs': r4(demand_total / usable),
         'budget_raw_fill': budget['candidates'][budget['chosen']]['boards']['PWR_A']['raw_fill'],
@@ -339,11 +354,12 @@ def study():
     }
 
     # --- the F2 options of pcb/partition-spec.json, measured on the same courtyards ---
-    radials = {r for r in all_refs if geometry[r]['courtyard'] and next(t for t in template if t['ref'] == r)['fpid']
+    graph_refs = [p['ref'] for p in template if p['source'] == 'graph']
+    radials = {r for r in graph_refs if geometry[r]['courtyard'] and next(t for t in template if t['ref'] == r)['fpid']
                .startswith('Capacitor_THT:CP_Radial')}
     f2b_groups = {('E5', 'VBUS HF+ з демпфованим LC'), ('E5', 'VBUS RTL-A і LAB PORT'), ('E5', 'LAB BUS I2C buffer'),
                   ('E2', 'RTL-B: комутований VBUS'), ('E2', 'S-band LaNA WB: захищена шина 5 V')}
-    f2b_refs = sorted((r for r in all_refs if (graph[r]['_sheet'], graph[r].get('group')) in f2b_groups
+    f2b_refs = sorted((r for r in graph_refs if (graph[r]['_sheet'], graph[r].get('group')) in f2b_groups
                        and r not in radials), key=bg.sort_ref)
     options = {
         'F2a_pololu_off_board': {'remove': ['U107', 'U108'],
@@ -506,6 +522,96 @@ def study():
     dangling = sorted(n['graph_net'] for n in boundary['nets'] if n['status'] == 'dangling')
     b2b = sorted(n['net'] for n in b2b_nets['nets'])
 
+    # --- B2B pair: the PWR_A mate against PWR_B B2B1 (pin for pin and in position) ---
+    spec_b = bg.read_json(PWR_B_SPEC)
+    conn_b = bg.read_json(PWR_B_CONNECTORS)
+    b2b_rows = []
+    for pair in spec.get('b2b', []):
+        mine = next(t for t in template if t['ref'] == pair['ref'])
+        mate_part = next(p for p in spec_b['parts'] if p['ref'] == pair['mate_ref'])
+        mate_tpl = {'fpid': mate_part['footprint'], 'library': mate_part['footprint_library'],
+                    'sha256': mate_part['footprint_sha256']}
+        mate_fp = bg.footprint_geometry(bg.footprint_file(mate_tpl).read_text(encoding='utf-8'))
+        mate_geo = bg.placed_geometry(mate_fp, mate_part['anchor'])
+        my_geo = placed[pair['ref']]
+        ci = next((c for inst in conn_b['instances'] for c in inst['connectors']
+                   if (c.get('ref') or c.get('template_ref')) == pair['mate_ref']), None)
+        ci_at = {p['pad']: p['at'] for p in ci['pins']} if ci else {}
+        pmap = pair.get('pin_map', 'identity')
+        my_pads = {k: v for k, v in my_geo['pads'].items() if k}
+        mate_pads = {k: v for k, v in mate_geo['pads'].items() if k}
+        axis_mine = sum(v[0][1] for v in my_pads.values()) / len(my_pads)
+        axis_mate = sum(v[0][1] for v in mate_pads.values()) / len(mate_pads)
+        net_diff, missing = [], []
+        worst_dx = worst_row = worst_ci_x = worst_ci_row = 0.0
+        rows_ok = True
+        for pin in sorted(my_pads, key=lambda p: (len(p), p)):
+            other = pin if pmap == 'identity' else pmap.get(pin)
+            if other not in mate_pads:
+                missing.append(pin)
+                continue
+            a, b = my_pads[pin][0], mate_pads[other][0]
+            worst_dx = max(worst_dx, abs(a[0] - b[0]))
+            worst_row = max(worst_row, abs(a[1] - b[1]))
+            rows_ok = rows_ok and ((a[1] > axis_mine) == (b[1] > axis_mate))
+            if other in ci_at:
+                worst_ci_x = max(worst_ci_x, abs(a[0] - ci_at[other][0]))
+                worst_ci_row = max(worst_ci_row, abs(a[1] - ci_at[other][1]))
+            if (mine['pads'].get(pin) or None) != (mate_part['pins'].get(other) or None):
+                net_diff.append({'pin': pin, 'net': mine['pads'].get(pin), 'mate_pin': other,
+                                 'mate_net': mate_part['pins'].get(other)})
+        extra = sorted(set(mate_pads) - {(p if pmap == 'identity' else pmap.get(p)) for p in my_pads},
+                       key=lambda p: (len(p), p))
+        def boss_list(fp_geo, anchor):
+            # NPTH locating bosses (board_gen.placed_geometry keeps numbered pads only): [x, y, drill] in board mm
+            out = []
+            for q in fp_geo['pads']:
+                if q['type'] == 'np_thru_hole':
+                    xy = bg.placed_geometry({'pads': [{**q, 'number': 'NPTH'}], 'courtyard': None}, anchor)['pads']['NPTH'][0]
+                    out.append([xy[0], xy[1], q['drill'][0]])
+            return sorted(out)
+        bosses = {'mine': boss_list(geometry[pair['ref']], anchored[pair['ref']]),
+                  'mate': boss_list(mate_fp, mate_part['anchor'])}
+
+        def big_boss_at_pin1(rows, pin1x):
+            if len(rows) != 2:
+                return None
+            big, small = sorted(rows, key=lambda r: -r[2])
+            return abs(big[0] - pin1x) < abs(small[0] - pin1x)
+        polarity = {'mine': big_boss_at_pin1(bosses['mine'], my_pads['1'][0][0]),
+                    'mate': big_boss_at_pin1(bosses['mate'], mate_pads['1'][0][0])}
+        z_top_a = contract['placements']['default']['z_bottom'] + spec['layers']['thickness_mm']
+        z_bot_b = contract_b['placements']['default']['z_bottom']
+        passed = (not net_diff and not missing and not extra and rows_ok and worst_dx <= B2B_X_TOL + 1e-9
+                  and worst_row <= B2B_ROW_TOL + 1e-9 and len(ci_at) == len(mate_pads)
+                  and worst_ci_x <= B2B_X_TOL + 1e-9 and worst_ci_row <= B2B_ROW_TOL + 1e-9
+                  and polarity['mine'] is True and polarity['mate'] is True)
+        b2b_rows.append({
+            'ref': pair['ref'], 'footprint': mine['fpid'], 'mate_board': pair['mate_board'], 'mate_ref': pair['mate_ref'],
+            'mate_footprint': mate_part['footprint'], 'pin_map': pmap,
+            'contacts': len(my_pads), 'netted_contacts': sum(1 for v in mine['pads'].values() if v),
+            'mate_netted_contacts': sum(1 for v in mate_part['pins'].values() if v),
+            'net_differences': net_diff, 'pins_without_mate': missing, 'mate_pins_without_pin': extra,
+            'max_dx_along_row_mm': r4(worst_dx), 'max_row_offset_mm': r4(worst_row), 'same_row_every_contact': rows_ok,
+            'row_axis_y': {'mine': r4(axis_mine), 'mate': r4(axis_mate)},
+            'pin1': {'mine': my_pads['1'][0], 'mate': mate_pads['1'][0]}, 'bosses_x_y_drill': bosses,
+            'larger_boss_at_pin1_end': polarity,
+            'against_pwr_b_connectors_json': {'contacts': len(ci_at), 'max_dx_mm': r4(worst_ci_x),
+                                              'max_row_offset_mm': r4(worst_ci_row)},
+            'stack': {'pwr_a_top_z': r4(z_top_a), 'pwr_b_bottom_z': r4(z_bot_b), 'gap_mm': r4(z_bot_b - z_top_a),
+                      'partition_spec_stack': pspec['parameters'].get('stack')},
+            'tolerances_mm': {'along_row': B2B_X_TOL, 'row': B2B_ROW_TOL},
+            'passed': passed,
+        })
+    positions = []
+    for ref in sorted(placed, key=bg.sort_ref):
+        if ref.startswith('__'):
+            continue
+        anchor = anchored.get(ref) or group_anchors.get(ref)
+        positions.append({'ref': ref, 'at': anchor['at'], 'rotation': anchor.get('rotation', 0),
+                          'side': anchor.get('side', 'F'), 'how': 'anchor' if ref in anchored else 'group',
+                          'courtyard_box': placed[ref]['box']})
+
     return {
         'schema': 'srrx-pwra-placement-study-v1',
         'board_id': board,
@@ -520,6 +626,9 @@ def study():
             'template_sha256': bg.sha256_bytes(bg.canonical([{k: p[k] for k in ('ref', 'fpid', 'sha256', 'value', 'pads')}
                                                              for p in template])),
             'project_sha256': bg.sha256_file(BASE / spec['project']),
+            'pwr_b_placeholders': bg.sha256_bytes(bg.canonical([p for p in spec_b['parts']
+                                                                 if p['source'] == 'pilot_placeholder'])),
+            'pwr_b_connectors_sha256': bg.sha256_file(PWR_B_CONNECTORS),
         },
         'spec_checks': {'validate_spec': 'passed', 'project_rules': project_problems or 'passed',
                         'domain_audit': {'passed': domain['passed'], 'refs': len(domain['domain_refs']),
@@ -543,11 +652,16 @@ def study():
         'scripted_copper_precheck': {'label': 'geometry of the spec copper against the planned pads; KiCad fill, '
                                               'thermal spokes and neck widths are checked only on the routed board',
                                      'items': copper},
+        'b2b': {'rule': 'pin_map identity: socket contact k on the PWR-A top under plug contact k on the PWR-B bottom, same net; '
+                        'MODEL geometry of the two KiCad 10.0.7 lands (placeholders, not the Samtec QSH/QTH-060 parts)',
+                'pairs': b2b_rows, 'passed': bool(b2b_rows) and all(r['passed'] for r in b2b_rows)},
+        'positions': {'note': 'planned footprint origins (board mm, y up; align origin), the planner result above, not an '
+                              'acceptable placement for the group-placed refs', 'refs': positions},
         'boundary': {'dangling_nets': dangling, 'b2b_nets': len(b2b),
                      'dangling_not_in_b2b': sorted(set(dangling) - set(b2b)),
                      'b2b_not_dangling': sorted(set(b2b) - set(dangling)),
-                     'note': 'nets with pins on other boards that end on no graph connector pin of PWR-A; the B2B is '
-                             'not a graph ref yet (GR-4), so its nets show as dangling here'},
+                     'note': 'nets with pins on other boards that end on no graph connector pin of PWR-A; the B2B mate '
+                             'B2B2 is a placeholder, so its nets are provisional, not dangling (GR-4 adds the graph ref)'},
     }
 
 

@@ -3,7 +3,7 @@
   "board_id": "PWR_A",
   "status": "DRAFT_PLACEMENT_BLOCKED_F2_NOT_FOR_FABRICATION",
   "title": "PWR-A plate-bonded power board (PWR_MAIN + PWR_BRANCH + USB_POWER) - placement draft",
-  "note": "W2 PCB-PWRA-1 draft. Kept in build/kicad/boards/PWR_A/ and NOT in pcb/boards/: board_gen.py refuses a spec whose groups do not all pack, and a pcb/boards/ spec without a passing routed board turns sr-rx-pcb red for the lane. build/kicad/boards/PWR_A/placement_study.py runs the board_gen planner on it (standard library) and writes placement-study.json: the courtyard fill is above the F2 trigger 0.60, so fallback F2 (pcb/partition-spec.json fallbacks) is raised. Move this file to pcb/boards/PWR_A.json only when the study places every ref.",
+  "note": "W2 PCB-PWRA-1 draft. Kept in build/kicad/boards/PWR_A/ and NOT in pcb/boards/: board_gen.py refuses a spec whose groups do not all pack, and a pcb/boards/ spec without a passing routed board turns sr-rx-pcb red for the lane. build/kicad/boards/PWR_A/placement_study.py runs the board_gen planner on it (standard library) and writes placement-study.json: the courtyard fill is above the F2 trigger 0.60, so fallback F2 (pcb/partition-spec.json fallbacks) is raised. Move this file to pcb/boards/PWR_A.json only when the study places every ref. W2 PCB-PWRA-2: the B2B mate B2B2 (FX8-120S-SV placeholder of the Samtec QSH-060-01-L-D-A) replaces the QSH-060 reservation and sits under PWR_B B2B1 contact for contact; J113/J115 left the right-edge columns for it; LAB5-RAW pours connect solid; U211/U213 carry the TI RGW0020A EP via pattern; study and probe: placement_study.py, make_probe_spec.py, lab5_budget.py.",
   "contract": {
     "file": "mechanical/generated/contract/boards.json",
     "board": "PWR"
@@ -450,7 +450,8 @@
           "U220": "U220",
           "U503": "U503",
           "U551": "U551",
-          "U553": "U553"
+          "U553": "U553",
+          "B2B2": null
         },
         "nets": {
           "3V3_Q6A": "3V3_Q6A",
@@ -653,7 +654,14 @@
         ],
         "align": "origin",
         "rotation": 270,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            37.95,
+            64.6
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "LAB5 damper R110 + C113 (E1_LAB5_DAMP has only C113.1 and R110.2: an RC damper, not a sense shunt): right strip of the leg above the H7 keepout; scripted locked link R110.2 -> C113.1"
     },
@@ -1043,7 +1051,14 @@
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            3.92,
+            74.25
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "next to U108 VOUT (E1_LAB5_RAW, BATT class): left strip x 0-7.75 of the leg, rotation 90; PWR-B window (Keystone 3568, height >= 7.37 mm lower bound)"
     },
@@ -1143,7 +1158,13 @@
         ],
         "align": "origin",
         "rotation": 180,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            46.05,
+            6.8
+          ]
+        }
       },
       "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
     },
@@ -1157,7 +1178,13 @@
         ],
         "align": "origin",
         "rotation": 180,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            68.95,
+            6.8
+          ]
+        }
       },
       "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
     },
@@ -1171,7 +1198,13 @@
         ],
         "align": "origin",
         "rotation": 180,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            25.15,
+            6.8
+          ]
+        }
       },
       "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
     },
@@ -1185,7 +1218,13 @@
         ],
         "align": "origin",
         "rotation": 180,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            93.85,
+            6.8
+          ]
+        }
       },
       "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
     },
@@ -1194,14 +1233,14 @@
       "source": "graph",
       "anchor": {
         "at": [
-          117.7,
-          14.15
+          104.63,
+          2.75
         ],
         "align": "origin",
         "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "contract edge_zones right (bottom-row ports through plate slot SL3: S11 USB-C, S12 XT30, S32 GX16); second/third column: the 35 mm edge minus the H2/H3 keepouts leaves 18 mm"
+      "anchor_source": "moved by W2 PCB-PWRA-2 from the right-edge column (117.7, 14.15): the B2B2 mate under PWR_B B2B1 takes x 84.2-127.8, y 14.3-22.7; bottom edge right of J112, next to J115 (harness S11 still leaves towards plate slot SL3 on the right; the route refresh takes the new connectors.json position)"
     },
     {
       "ref": "J114",
@@ -1222,14 +1261,14 @@
       "source": "graph",
       "anchor": {
         "at": [
-          124.5,
-          15.29
+          111.4,
+          4.13
         ],
         "align": "origin",
         "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "contract edge_zones right (bottom-row ports through plate slot SL3: S11 USB-C, S12 XT30, S32 GX16); second/third column: the 35 mm edge minus the H2/H3 keepouts leaves 18 mm"
+      "anchor_source": "moved by W2 PCB-PWRA-2 from the right-edge column (124.5, 15.29) for the B2B2 mate (see J113); bottom edge at x 108.4-115.2 (harness S12 towards SL3)"
     },
     {
       "ref": "J205",
@@ -1241,7 +1280,13 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            20.93,
+            102.2
+          ]
+        }
       },
       "anchor_source": "contract edge_zones top 0-42 (DISP12 to the HDMI board, S19), between the keepouts of H5 (4, 106) and H6 (38, 106)"
     },
@@ -1255,7 +1300,13 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            116.88,
+            24.0
+          ]
+        }
       },
       "anchor_source": "contract edge_zones top at 35, span 108-128 (SL2: S13, S14, S17, S18)"
     },
@@ -1866,6 +1917,91 @@
     {
       "ref": "U553",
       "source": "graph"
+    },
+    {
+      "ref": "B2B2",
+      "source": "pilot_placeholder",
+      "footprint": "Connector_Hirose_FX8:Hirose_FX8-120S-SV_2x60_P0.6mm",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "82ef2a7f5fbd930b90d97ef39fd59bbc18f8f31c22ec51cee135ad045241a67b",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Hirose_FX8.pretty/Hirose_FX8-120S-SV_2x60_P0.6mm.kicad_mod read 2026-11-07 (the same digest as PWR_B b2b_pin_map.mate.placeholder_sha256); checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "B2B placeholder mate: Samtec QSH-060-01-L-D-A pending",
+      "pins": {
+        "14": "BIAS_CH4_DAMP",
+        "22": "E2_LNA4_SHUNT",
+        "32": "E2_LNA4_SW",
+        "59": "GND",
+        "61": "3V3_Q6A",
+        "63": "I2C2_SDA",
+        "65": "I2C2_SCL",
+        "67": "VBUS_LABPORT",
+        "69": "GND",
+        "71": "PWR_BUTTON",
+        "73": "PICO_OFF",
+        "75": "PICO_DISP_EN",
+        "77": "OVP_LNB_N",
+        "79": "INA228_ALERT",
+        "81": "IMU_TX",
+        "82": "GND",
+        "83": "IMU_RX",
+        "84": "LAB5_RLY",
+        "85": "I2C0_SDA",
+        "86": "LAB5_RLY",
+        "87": "I2C0_SCL",
+        "88": "GND",
+        "89": "FLT_LNB",
+        "90": "LNB13V2",
+        "91": "FLT_LIME3V3",
+        "92": "GND",
+        "93": "FLT_BONI",
+        "94": "VBUS_HFP",
+        "95": "FAULT_HFP",
+        "96": "GND",
+        "97": "EN_LNB",
+        "98": "BONI13V8_PORT",
+        "99": "EN_LIME3V3",
+        "100": "GND",
+        "101": "EN_HFP",
+        "102": "AUX12",
+        "103": "EN_BONI",
+        "104": "BONI13V8",
+        "105": "EN_AUX12",
+        "106": "E2_SB_DAMP",
+        "107": "E1_BAT_ADC",
+        "108": "VBUS_RTLB_DAMP",
+        "109": "CHG_INHIBIT",
+        "110": "BIAS_CH3_DAMP",
+        "111": "GND",
+        "112": "BIAS_CH2_DAMP",
+        "113": "LAB5",
+        "114": "BIAS_CH1_DAMP",
+        "115": "LAB5",
+        "116": "GND",
+        "117": "LAB5",
+        "118": "LNA4V5",
+        "119": "LAB5",
+        "120": "LNA4V5"
+      },
+      "pins_source": "copied contact for contact from pcb/boards/PWR_B.json parts[B2B1].pins (generated by build/kicad/boards/PWR_B/make_spec.py from pcb/generated/b2b-nets.json); pin_map identity, checked by placement_study.py b2b and pcb/check_boards.py b2b",
+      "replaced_by": "graph ref of the Samtec QSH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_a) once its land pattern is read and vendored (GR-4 / PCB-PWRA / PCB-PWRB lineage), keeping this pin map and the position under PWR_B B2B1",
+      "pending": "B2B ref pending: Samtec QSH-060-01-L-D-A land pattern not read, no graph ref yet (GR-3 OPEN)",
+      "why_placeholder": "PWR_B B2B1 is the Hirose FX8-120P-SV plug land on the PWR-B bottom (W2 PCB-PWRB); its KiCad 10.0.7 socket land FX8-120S-SV on the PWR-A top lets the mate position, the pin map and the fan-out be checked now. Not the part to buy. The name B2B2 keeps the reference designators of the two stacked boards distinct in one assembly.",
+      "anchor": {
+        "at": [
+          106.0,
+          18.5
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            88.0,
+            24.0
+          ]
+        }
+      },
+      "anchor_source": "under PWR_B B2B1 (anchor (106.0, 18.5), side B; build/kicad/boards/PWR_B/connectors.json): rotation 180 on the top puts socket contact k under plug contact k (same x, rows 15.65/21.35 against 15.8/21.2: the two land patterns are symmetric about the same row axis y 18.5); pin 1 at the x 123.7 end, both polarising bosses (1.1 mm) at that end"
     }
   ],
   "holes": {
@@ -2123,7 +2259,7 @@
       "region": [
         78.8,
         11.2,
-        115.2,
+        83.7,
         26.4
       ],
       "region_name": "BAND_BONI",
@@ -2594,7 +2730,7 @@
     {
       "id": "LIME",
       "region": [
-        92.2,
+        50.0,
         26.6,
         108.0,
         34.8
@@ -2671,7 +2807,7 @@
       "region": [
         99.6,
         0.3,
-        115.2,
+        101.93,
         11.0
       ],
       "region_name": "BAND_BOTTOM_R",
@@ -2736,7 +2872,7 @@
     {
       "id": "HFP",
       "region": [
-        92.2,
+        50.0,
         26.6,
         108.0,
         34.8
@@ -2803,11 +2939,11 @@
       "id": "E1_SERVICE",
       "region": [
         115.5,
-        18.9,
-        121.3,
-        24.8
+        11.7,
+        128.3,
+        13.8
       ],
-      "region_name": "BAND_COL3_TOP",
+      "region_name": "BAND_RIGHT_BELOW",
       "alt_regions": [
         "BAND_TOP_MID",
         "BAND_BOTTOM_R",
@@ -2965,7 +3101,7 @@
       "region_name": "LEG_BOTTOM",
       "alt_regions": [
         "LEG_RIGHT_LOW",
-        "BAND_COL2_TOP",
+        "BAND_RIGHT_BELOW",
         "BAND_LT_LOW"
       ],
       "side": "F",
@@ -3120,7 +3256,7 @@
     }
   ],
   "regions": {
-    "note": "free rectangles of the outline after the anchors, the B2B reservation and the hole keepouts (design choice of W2 PCB-PWRA-1); a group names its preferred region and alt_regions. board_gen reads only group.region; placement_study.py uses all of them",
+    "note": "free rectangles of the outline after the anchors, the B2B reservation and the hole keepouts (design choice of W2 PCB-PWRA-1); a group names its preferred region and alt_regions. board_gen reads only group.region; placement_study.py uses all of them. W2 PCB-PWRA-2: BAND_BONI, BAND_BOTTOM_R and BAND_TOP_MID re-cut and BAND_B2B_BELOW/ABOVE, BAND_BOTTOM_R2, BAND_RIGHT_BELOW added around the B2B2 mate and the moved J113/J115; BAND_COL2_TOP and BAND_COL3_TOP are gone (the mate covers them); the QSH-060 strip y 26.6-34.6 is free again",
     "rects": {
       "BAND_LNB": [
         15.8,
@@ -3155,26 +3291,38 @@
       "BAND_BONI": [
         78.8,
         11.2,
+        83.7,
+        26.4
+      ],
+      "BAND_B2B_BELOW": [
+        84.2,
+        11.2,
         115.2,
+        13.8
+      ],
+      "BAND_B2B_ABOVE": [
+        84.2,
+        23.2,
+        107.8,
         26.4
       ],
       "BAND_BOTTOM_R": [
         99.6,
         0.3,
-        115.2,
+        101.93,
         11.0
       ],
-      "BAND_COL3_TOP": [
-        115.5,
-        18.9,
-        121.3,
-        24.8
+      "BAND_BOTTOM_R2": [
+        102.43,
+        7.7,
+        107.93,
+        11.0
       ],
-      "BAND_COL2_TOP": [
-        121.5,
-        22.4,
+      "BAND_RIGHT_BELOW": [
+        115.5,
+        11.7,
         128.3,
-        24.8
+        13.8
       ],
       "BAND_TOP_LEFT": [
         0.3,
@@ -3183,7 +3331,7 @@
         34.8
       ],
       "BAND_TOP_MID": [
-        92.2,
+        50.0,
         26.6,
         108.0,
         34.8
@@ -3244,26 +3392,20 @@
       ]
     }
   },
-  "reserved_areas": [
-    {
-      "id": "B2B_QSH060",
-      "rect": [
-        50.0,
-        26.6,
-        91.77,
-        34.59
-      ],
-      "kind": "b2b",
-      "what": "Samtec QSH-060-01-L-D-A socket (PWR-A half of the PWR-B stack), courtyard 41.77 x 7.99",
-      "source": "pcb/partition-spec.json b2b.courtyard_pwr_a (catalogue body + 0.25 mm, AREA); no graph ref and no KiCad 10.0.7 footprint (Connector_Samtec.pretty at tag 10.0.7 lists FMC, LSHM and SS4 only, read 2026-11-07): GR-4 adds the ref",
-      "position_source": "design choice: top strip of the band (y 26.6-34.6), between the H4 keepout and the SL2 headers; mirrors the QTH on the PWR-B bottom"
-    }
-  ],
+  "reserved_areas": [],
   "reserved_area_mm2": [
     {
       "id": "PWR_B_THT_KEEPOUTS",
       "area_mm2_source": "pcb/partition-budget.json candidates.a.pwr_a_keepouts_mm2",
       "what": "no PWR-A part under the PWR-B THT pin fields (pcb/partition-spec.json keepouts.pwr_a_under_pwr_b_tht); positions follow the PCB-PWRB placement"
+    }
+  ],
+  "b2b": [
+    {
+      "ref": "B2B2",
+      "mate_board": "PWR_B",
+      "mate_ref": "B2B1",
+      "pin_map": "identity"
     }
   ],
   "pre_route": {
@@ -3285,6 +3427,128 @@
         ],
         "locked": true,
         "why": "scripted locked link C113.1 -> R110.2 of the LAB5 RC damper (PWR3A class 1.85 mm, netclasses.json)"
+      }
+    ],
+    "vias": [
+      {
+        "id": "U211-EP-1",
+        "net": "GND",
+        "at": [
+          12.55,
+          16.55
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U211 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U211-EP-2",
+        "net": "GND",
+        "at": [
+          11.225,
+          16.55
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U211 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U211-EP-3",
+        "net": "GND",
+        "at": [
+          13.875,
+          16.55
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U211 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U211-EP-4",
+        "net": "GND",
+        "at": [
+          12.55,
+          15.225
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U211 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U211-EP-5",
+        "net": "GND",
+        "at": [
+          12.55,
+          17.875
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U211 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U213-EP-1",
+        "net": "GND",
+        "at": [
+          75.55,
+          16.55
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U213 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U213-EP-2",
+        "net": "GND",
+        "at": [
+          74.225,
+          16.55
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U213 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U213-EP-3",
+        "net": "GND",
+        "at": [
+          76.875,
+          16.55
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U213 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U213-EP-4",
+        "net": "GND",
+        "at": [
+          75.55,
+          15.225
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U213 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
+      },
+      {
+        "id": "U213-EP-5",
+        "net": "GND",
+        "at": [
+          75.55,
+          17.875
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "U213 TPS7A4701 exposed pad to In1 GND and the L4 bond copper: via locations of the TI RGW0020A land pattern example (5 vias, centre and +-1.325 mm on both axes; TPS7A47 datasheet SBVS204G p. 30, https://www.ti.com/lit/ds/symlink/tps7a47.pdf read 2026-11-07); size = the project via 0.6/0.3 (PWR_A.kicad_pro min_via_diameter 0.6) instead of the drawn 0.2 drill; TI recommends filled, plugged or tented vias under paste (order option, OPEN)"
       }
     ],
     "zones": [
@@ -3311,7 +3575,8 @@
           ]
         ],
         "priority": 2,
-        "why": "BATT class (3.2 mm single layer, 1.85 mm per layer on L1 + L4): U108 VOUT -> F102.1, paired with LAB5-RAW-B; the THT pins of U108 and F102 join the two layers"
+        "why": "BATT class (3.2 mm single layer, 1.85 mm per layer on L1 + L4): U108 VOUT -> F102.1, paired with LAB5-RAW-B; the THT pins of U108 and F102 join the two layers; solid pad connection (W2 PCB-PWRA-2): probe 1 measured a 1.03 mm thermal-spoke neck against 1.85 mm per layer",
+        "pad_connection": "solid"
       },
       {
         "id": "LAB5-RAW-B",
@@ -3336,7 +3601,8 @@
           ]
         ],
         "priority": 2,
-        "why": "L4 half of the E1_LAB5_RAW pour (see LAB5-RAW-F)"
+        "why": "L4 half of the E1_LAB5_RAW pour (see LAB5-RAW-F); solid pad connection (W2 PCB-PWRA-2): probe 1 measured a 1.03 mm thermal-spoke neck against 1.85 mm per layer",
+        "pad_connection": "solid"
       }
     ]
   },
@@ -3362,11 +3628,11 @@
       "outline": [
         [
           9,
-          4
+          0.6
         ],
         [
           69,
-          4
+          0.6
         ],
         [
           69,
@@ -3377,7 +3643,8 @@
           27
         ]
       ],
-      "priority": 1
+      "priority": 1,
+      "why": "GND copper on L4 over contract thermal_bond zone 1/2, extended to y 0.6 under the bottom header row (W2 PCB-PWRA-2: probe 1 had starved_thermal on J108.1 at the zone edge y 4); mask on"
     },
     {
       "id": "GND-BOND-2",
@@ -3386,11 +3653,11 @@
       "outline": [
         [
           72,
-          4
+          0.6
         ],
         [
           128,
-          4
+          0.6
         ],
         [
           128,
@@ -3401,7 +3668,8 @@
           27
         ]
       ],
-      "priority": 1
+      "priority": 1,
+      "why": "GND copper on L4 over contract thermal_bond zone 1/2, extended to y 0.6 under the bottom header row (W2 PCB-PWRA-2: probe 1 had starved_thermal on J108.1 at the zone edge y 4); mask on"
     },
     {
       "id": "GND-BOND-3",
@@ -3465,7 +3733,9 @@
     "max_passes": 100,
     "threads": 1,
     "job_timeout": "00:25:00",
-    "timeout_s": 1700
+    "timeout_s": 1700,
+    "fanout": false,
+    "why": "fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm stubs (PWR_A probe run 42413833702: 20 track_width + 6 connection_width; PWR_B run 42414083566)"
   },
   "drc_policy": {
     "warning_checks": {
