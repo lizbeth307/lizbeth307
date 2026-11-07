@@ -1,7 +1,7 @@
 {
   "schema": "srrx-board-connectors-v1",
   "board_id": "ENC",
-  "status": "PILOT_NOT_FOR_FABRICATION",
+  "status": "SB1_ROUTED_NOT_FOR_FABRICATION",
   "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
   "instances": [
     {
@@ -79,7 +79,7 @@
             190.75,
             132.0
           ],
-          "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1"
+          "replaced_by": "nothing is fitted: the four 26 AWG S37/S38 wires are soldered into this land (W2 PCB-SB1); a graph ref for the land (ENC domain, mount pcb_pad) is pending in design/E3.json (GR lineage)"
         }
       ]
     },
@@ -158,7 +158,7 @@
             190.75,
             91.0
           ],
-          "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1"
+          "replaced_by": "nothing is fitted: the four 26 AWG S37/S38 wires are soldered into this land (W2 PCB-SB1); a graph ref for the land (ENC domain, mount pcb_pad) is pending in design/E3.json (GR lineage)"
         }
       ]
     }
