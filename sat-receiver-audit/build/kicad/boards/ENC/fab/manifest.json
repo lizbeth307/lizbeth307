@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-    "board_sha256": "065243df3d2448b25d5230f43354e57a746ebbd7cb6a010d7c4b3b6f9735d3de",
+    "board_sha256": "ec63eaa8e4115201e0aab6fcfab5536fb4c42ebacf61caae8bd535aa2a25a486",
     "project_sha256": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
     "spec_projection_sha256": "2cc6aec9318a914fdb54071ced249cf8057df8d724d05ad0683a0c8d4d9e4376",
     "report_projection_sha256": "66f6103b3245233c1f78efb14d14a7d1ce4111ddadb9c1de9d096db4c7a26ae8",
@@ -245,7 +245,7 @@
     },
     {
       "path": "ENC.ipc356",
-      "sha256": "a77ef1550bd477beccf5ced098c53e29e61188304da4cb45387fd1d024733cd5",
+      "sha256": "ce7a11c22b4f9aec68525f0d2f6369fd763672d53961d3b62cdee6f39c47bb24",
       "bytes": 1552
     },
     {
@@ -305,12 +305,12 @@
     },
     {
       "path": "gerber/ENC-B_Cu.gbl",
-      "sha256": "9b32d04e8ad9efc1cccc33608e5a32f92573a4f62020d6f63be7ee62524d049c",
-      "bytes": 22468
+      "sha256": "ba805f6d906dac98ed73b50fb6596bdf254c5d7e2c2e2e248737db2a9a2c0ef8",
+      "bytes": 22478
     },
     {
       "path": "gerber/ENC-B_Mask.gbs",
-      "sha256": "0debaae072deef7c6657ba96522cda48157765bf8ee921e6af0e56e4707608d8",
+      "sha256": "a375d05a9ed6e0cc9e6ac5f579753c04fb161cedd0335ca280264b77cc295951",
       "bytes": 966
     },
     {
@@ -320,7 +320,7 @@
     },
     {
       "path": "gerber/ENC-B_Silkscreen.gbo",
-      "sha256": "3bc0b117977a4b866513fb0f780302c0c9c3048dafb3d91faa3e5fa34d52ea06",
+      "sha256": "2f0da819a020a3b4ecfd738b14c951a863023a71ce6d9a7b4699e2a47d75b3ba",
       "bytes": 976
     },
     {
@@ -330,12 +330,12 @@
     },
     {
       "path": "gerber/ENC-F_Cu.gtl",
-      "sha256": "806d95a94c2e57c3c5ad29f4dd216577dabc8322052e100a2c18eb83ff1c0591",
-      "bytes": 22269
+      "sha256": "85b0b713648a4406c7a99d8ead4d766659ad4b59ddfbf3e7d97cce3d82ab4955",
+      "bytes": 22217
     },
     {
       "path": "gerber/ENC-F_Mask.gts",
-      "sha256": "797d5502facea3566079bb0173f2ecfff356ebc11c29310f5c9c0a51e93fdce6",
+      "sha256": "29000c32465567fa348a177a90623a6f9662f3f4772cce86c7c37cdda0385820",
       "bytes": 966
     },
     {
@@ -345,7 +345,7 @@
     },
     {
       "path": "gerber/ENC-F_Silkscreen.gto",
-      "sha256": "751ba9cb5079a4ab52c45a6c723f464ce41b43d5e73200082845e2255c0ba255",
+      "sha256": "bcf125ee5e65f6c084fc7557ae9bf804046a94e556ed41404a15a4881e120055",
       "bytes": 3159
     },
     {
