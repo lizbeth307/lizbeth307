@@ -511,7 +511,7 @@ class CutoutsLayerTypesAndDrillOffsets(unittest.TestCase):
     def test_layer_types_are_validated(self):
         spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
         bg.validate_spec(spec, 'CTRL')
-        self.assertEqual(spec['layers']['types'], {'In1.Cu': 'power', 'In2.Cu': 'power'})
+        self.assertEqual(spec['layers']['types'], {'In1.Cu': 'power'})  # L2 GND plane; L3 routes signals
         for bad in ({'F.Cu': 'power'}, {'In1.Cu': 'mixed'}):
             candidate = copy.deepcopy(spec)
             candidate['layers']['types'] = bad
@@ -534,24 +534,10 @@ class CutoutsLayerTypesAndDrillOffsets(unittest.TestCase):
                 bg.validate_spec(candidate, 'CTRL')
 
     def test_dsn_class_layers_patch(self):
-        dsn = ('    (class kicad_default A B
-      (circuit
-        (use_via "V")
-      )
-    )
-'
-               '    (class PWR3A LAB5
-      (circuit
-        (use_via "V8")
-      )
-      (rule (width 1850))
-    )
-')
+        dsn = ('    (class kicad_default A B\n      (circuit\n        (use_via "V")\n      )\n    )\n'
+               '    (class PWR3A LAB5\n      (circuit\n        (use_via "V8")\n      )\n      (rule (width 1850))\n    )\n')
         out = bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu', 'B.Cu']})
-        self.assertIn('(class PWR3A LAB5
-      (circuit
-        (use_layer F.Cu B.Cu)
-        (use_via "V8")', out)
+        self.assertIn('(class PWR3A LAB5\n      (circuit\n        (use_layer F.Cu B.Cu)\n        (use_via "V8")', out)
         self.assertEqual(out.count('use_layer'), 1)  # kicad_default untouched
         with self.assertRaises(SystemExit):
             bg.patch_dsn_class_layers(dsn, {'PWR1A': ['F.Cu']})
