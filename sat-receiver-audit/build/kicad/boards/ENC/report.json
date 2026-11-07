@@ -24,15 +24,15 @@
   "inputs": {
     "parts": {
       "spec": "a97c96d016b04c65829925a8bb09474386b7dcadfa452a31559c75623f9ccd85",
-      "contract": "6e37f08ab030265bba0cc1d547d2c78135ed2a68c2d29f33af748f610b80e67a",
+      "contract": "eee8a3867163df550701303781111a0012b3314a89f7dee351a8ede7ac8353d0",
       "project_rules": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
       "template": "d455cb3519a825eb47ca3bafd22f3926c8383bf250349ca6cbfd19f642c4a065",
       "instances": "5af94aa57598cdecc667e7e5bcb2283be84bb439ac2ba58580569f10c4ed30fb"
     },
-    "sha256": "28419f7943db76f5253256f4c4b7f87b7999accebe50dd810e285e53e7233877"
+    "sha256": "28ecb9bdf314e245f0e03529d804cfe24d5b7a0663757d4cb2d1e5ba72c3b8d0"
   },
   "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-  "board_sha256": "46363b75966e422aa68e2f0bb6868ef65cbcf619a969d538dd6809470d338870",
+  "board_sha256": "20295268747261aff715de989582a8c3bad4585e5a4353ac13fc756e98342887",
   "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
   "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
   "layers": {
