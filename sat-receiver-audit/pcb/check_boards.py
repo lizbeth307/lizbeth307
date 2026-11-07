@@ -566,10 +566,13 @@ class Frame:
 
 
 # ------------------------------------------------------------------ checks
-def finding(check, item, detail, at=None, **values):
+def finding(check, item, detail, at=None, contract_at=None, **values):
+    """One finding; `at` is in KiCad board coordinates, `contract_at` in the board contract frame (mm)."""
     f = {'check': check, 'item': item, 'detail': detail}
     if at is not None:
         f['at'] = [r3(at[0]), r3(at[1])]
+    if contract_at is not None:
+        f['contract_at'] = [r3(float(contract_at[0])), r3(float(contract_at[1]))]
     for k, v in values.items():
         f[k] = r3(v) if isinstance(v, float) else v
     return f
@@ -648,7 +651,7 @@ def check_outline(board, cb, frame):
             matched.add(hit[0])
         else:
             out.append(finding('outline', 'Edge.Cuts cutout', 'cutout not in the contract cutouts_mm',
-                               at=frame.to_contract(*lp[0]), vertices=len(lp)))
+                               contract_at=frame.to_contract(*lp[0]), vertices=len(lp)))
     for i, c in enumerate(cb.get('cutouts_mm', [])):
         if i not in matched:
             out.append(finding('outline', 'contract cutout', f'contract cutout {c} missing on the board'))
@@ -669,24 +672,24 @@ def check_holes(board, cb, frame, spec):
     for (x, y), cpos in zip(want, cb.get('holes_mm', [])):
         near = [i for i, h in enumerate(candidates) if i not in used and math.hypot(h['x'] - x, h['y'] - y) <= POS_TOL + 1e-9]
         if not near:
-            out.append(finding('holes', f'contract hole {cpos}', 'no hole of the contract diameter at this position', at=cpos))
+            out.append(finding('holes', f'contract hole {cpos}', 'no hole of the contract diameter at this position', contract_at=cpos))
             continue
         i = near[0]
         used.add(i)
         h = candidates[i]
         if d_want is not None and abs(h['d'] - d_want) > HOLE_D_TOL + 1e-9:
-            out.append(finding('holes', f"{h['ref']}", 'hole diameter differs from the contract hole_d', at=cpos, value=h['d'], limit=d_want))
+            out.append(finding('holes', f"{h['ref']}", 'hole diameter differs from the contract hole_d', contract_at=cpos, value=h['d'], limit=d_want))
         is_bond = bond_at is not None and math.hypot(h['x'] - bond_at[0], h['y'] - bond_at[1]) <= POS_TOL + 1e-9
         if is_bond:
             if not h['plated'] or h['net'] != bond.get('net'):
-                out.append(finding('holes', f"{h['ref']}", f"BOND-RF hole must be plated on net {bond.get('net')}", at=cpos, net=h['net'], plated=h['plated']))
+                out.append(finding('holes', f"{h['ref']}", f"BOND-RF hole must be plated on net {bond.get('net')}", contract_at=cpos, net=h['net'], plated=h['plated']))
         elif h['plated'] or h['net']:
-            out.append(finding('holes', f"{h['ref']}", 'mounting hole is plated or netted (only the BOND-RF hole may be)', at=cpos, net=h['net'], plated=h['plated']))
+            out.append(finding('holes', f"{h['ref']}", 'mounting hole is plated or netted (only the BOND-RF hole may be)', contract_at=cpos, net=h['net'], plated=h['plated']))
     for i, h in enumerate(candidates):
         if i not in used:
-            out.append(finding('holes', f"{h['ref']}", 'hole of the contract diameter not in the contract holes_mm', at=frame.to_contract(h['x'], h['y'])))
+            out.append(finding('holes', f"{h['ref']}", 'hole of the contract diameter not in the contract holes_mm', contract_at=frame.to_contract(h['x'], h['y'])))
     if bond and not any(math.hypot(bond_at[0] - x, bond_at[1] - y) <= POS_TOL for x, y in want):
-        out.append(finding('holes', 'bond_hole', 'spec bond_hole is not a contract hole', at=bond['at']))
+        out.append(finding('holes', 'bond_hole', 'spec bond_hole is not a contract hole', contract_at=bond['at']))
     return out, {'contract_holes': len(want), 'board_holes': len(board.holes)}
 
 
@@ -711,7 +714,7 @@ def check_keepouts(board, cb, frame, spec):
             if is_bond and it.net is not None and it.net == bond.get('net'):
                 continue
             what = f'{it.kind} {it.ref}.{it.pad}' if it.kind == 'pad' else it.kind
-            out.append(finding('keepouts', what, f'copper inside the hole keepout (d {2 * r} mm)', at=frame.to_contract(cx, cy),
+            out.append(finding('keepouts', what, f'copper inside the hole keepout (d {2 * r} mm)', contract_at=frame.to_contract(cx, cy),
                                net=it.net, layer=it.layer, distance=it.shape.dist(cx, cy)))
     return out, {'keepout_r_mm': r}
 
@@ -1024,6 +1027,7 @@ def check_rf50(board, spec, netclasses, views):
     l2 = LayerIndex(layers.get('In1.Cu', []))
     gnd_vias = [v for v in board.vias if v['net'] == 'GND']
     segs = 0
+    short = collections.Counter()
     exempt = spec.get('rf50_exempt', {})
     for it in board.tracks:
         if not it.net:
@@ -1045,6 +1049,8 @@ def check_rf50(board, spec, netclasses, views):
         nx_, ny_ = -uy, ux
         end_ex = w / 2 + s + 0.2
         ts = [end_ex + k * 0.1 for k in range(int(max(0.0, L - 2 * end_ex) / 0.1) + 1)] if L > 2 * end_ex else []
+        if not ts:
+            short[gnet] += 1
         if gnet in exempt:
             unverified.append({'check': 'rf50', 'item': gnet, 'reason': 'exempt from coplanar/L2/fence checks: ' + str(exempt[gnet])})
             continue
@@ -1096,6 +1102,8 @@ def check_rf50(board, spec, netclasses, views):
                 worst = max(b - a for a, b in zip(pts, pts[1:]))
                 if worst > pitch + 1e-9:
                     out.append(finding('rf50', gnet, f'GND fence gap above {pitch} mm on one side', at=(x1, y1), value=worst, limit=pitch))
+    for gnet, count in sorted(short.items()):
+        unverified.append({'check': 'rf50', 'item': gnet, 'reason': f'{count} RF50 segment(s) shorter than 2 x (w/2 + s + 0.2) mm (bends, arc pieces, pad entries) not sampled for gap/L2/fence'})
     return out, unverified, {'rf50_segments': segs}
 
 
@@ -1172,7 +1180,7 @@ def check_tht_pockets(board, spec, frame):
         x0, y0, x1, y1 = p['geo'].bbox
         x0, y0, x1, y1 = x0 - margin, y0 - margin, x1 + margin, y1 + margin
         if not any(rx0 <= x0 and ry0 <= y0 and x1 <= rx1 and y1 <= ry1 for rx0, ry0, rx1, ry1 in rects):
-            out.append(finding('tht_pockets', f"{p['ref']}.{p['number']}", f'THT pad (+{margin} mm) not inside a plate pocket', at=frame.to_contract(p['x'], p['y'])))
+            out.append(finding('tht_pockets', f"{p['ref']}.{p['number']}", f'THT pad (+{margin} mm) not inside a plate pocket', contract_at=frame.to_contract(p['x'], p['y'])))
     return out, {'applies': True, 'tht_pads': n, 'pockets': len(rects)}
 
 
@@ -1227,7 +1235,7 @@ def check_heights(board, spec, cb, frame):
             continue
         checked += 1
         if h > limit + 1e-9:
-            out.append(finding('heights', fp['ref'], 'part taller than its height zone', at=frame.to_contract(fp['x'], fp['y']), value=h, limit=limit))
+            out.append(finding('heights', fp['ref'], 'part taller than its height zone', contract_at=frame.to_contract(fp['x'], fp['y']), value=h, limit=limit))
     return out, unverified, {'checked': checked}
 
 
