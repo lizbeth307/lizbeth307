@@ -54,6 +54,11 @@ ROUTE_TOKEN = re.compile(r'\[pcb-route ([A-Z][A-Z0-9_]*)\]')
 CONTRACT_FIELDS = ('outline_mm', 'cutouts_mm', 'holes_mm', 'hole_d', 'hole_keepout_d', 'max_component_height',
                    'edge_zones')
 PLACEMENT_FIELDS = ('origin', 'z_bottom', 'facing')
+# Optional spec keys (W2 PCB-PWRB): zone pad connection, copper layer type (a 'power' layer is a plane layer in the
+# Specctra export, specctra_export.cpp :1124-1138 at 10.0.7, so Freerouting routes no traces on it).
+ZONE_PAD_CONNECTIONS = {'thermal': 'ZONE_CONNECTION_THERMAL', 'solid': 'ZONE_CONNECTION_FULL',
+                        'tht_thermal': 'ZONE_CONNECTION_THT_THERMAL', 'none': 'ZONE_CONNECTION_NONE'}
+LAYER_TYPES = {'signal': 'LT_SIGNAL', 'power': 'LT_POWER', 'mixed': 'LT_MIXED'}
 
 # Release v2.5.0 of https://github.com/freerouting/freerouting (published 2026-10-05, GPL-3.0; licence from
 # gh api repos/freerouting/freerouting/license). Asset digests read from the GitHub release API
@@ -457,14 +462,21 @@ def point_in_outline(point, outline, eps=1e-6):
     return inside
 
 
-def place_groups(spec, template, geometry, hole_list, outline):
+def cutout_boxes(contract):
+    """Contract cutouts [x, y, w, h] (board mm, as pcb/check_boards.py reads them) as boxes [x0, y0, x1, y1]."""
+    return [[float(x), float(y), float(x) + float(w), float(y) + float(h)]
+            for x, y, w, h in (contract.get('cutouts_mm') or [])]
+
+
+def place_groups(spec, template, geometry, hole_list, outline, cutouts=()):
     """Anchors for the parts that the spec's placement groups place (deterministic, standard library).
 
     geometry: {template ref: footprint_geometry()} for every template part. Anchored parts are fixed
     obstacles. Groups run in spec order. In each group the members without 'decouple' are shelf-packed
     into the region (courtyard boxes after rotation and side); then every decoupling member goes next to
     its pin ({ref, pad, max_mm}) with place_near, nearest free side first, at most max_mm from the pin.
-    A placed courtyard box must not overlap another part on the same side or enter a hole keepout.
+    A placed courtyard box must not overlap another part on the same side, a contract cutout (cutouts:
+    boxes [x0, y0, x1, y1], cutout_boxes()) or enter a hole keepout; a region must not overlap a cutout.
     Returns ({ref: anchor}, rows); rows carry the plan that the KiCad group audit checks.
     """
     placed = {}
@@ -485,6 +497,9 @@ def place_groups(spec, template, geometry, hole_list, outline):
         for hole in hole_list:
             if box_circle_distance(geo['box'], hole['at']) < hole['keepout_d'] / 2:
                 raise PackError(f'group {group["id"]}: {member["ref"]} enters the keepout of {hole["ref"]}')
+        for cut in cutouts:
+            if rects_overlap(geo['box'], cut):
+                raise PackError(f'group {group["id"]}: {member["ref"]} overlaps the cutout {cut}')
         placed[member['ref']] = {'side': side, **geo}
         anchors[member['ref']] = anchor
         rows.append({'group': group['id'], 'ref': member['ref'], 'side': side, 'rotation': rotation,
@@ -497,6 +512,8 @@ def place_groups(spec, template, geometry, hole_list, outline):
         corners = ((region[0], region[1]), (region[2], region[1]), (region[2], region[3]), (region[0], region[3]))
         if not all(point_in_outline(c, outline) for c in corners):
             raise SpecError(f'group {group["id"]}: region {region} is not inside the board outline')
+        if any(rects_overlap(region, cut) for cut in cutouts):
+            raise SpecError(f'group {group["id"]}: region {region} overlaps a contract cutout')
         local_boxes, items = {}, []
         for member in group['members']:
             geo = geometry[member['ref']]
@@ -708,6 +725,19 @@ def validate_spec(spec, board):
     for zone in spec['post_route_zones'] + spec['pre_route'].get('zones', []):
         if zone['net'] not in nets:
             raise SpecError(f'{board}: zone {zone.get("id")} on unknown net {zone["net"]}')
+        if zone.get('pad_connection', 'thermal') not in ZONE_PAD_CONNECTIONS:
+            raise SpecError(f'{board}: zone {zone.get("id")} pad_connection must be one of {sorted(ZONE_PAD_CONNECTIONS)}')
+    for via in spec['pre_route'].get('vias', []):
+        at = via.get('at', [])
+        if via.get('net') not in nets or len(at) != 2 or not all(isinstance(v, (int, float)) for v in at) or \
+                not 0 < float(via.get('drill_mm', 0)) < float(via.get('diameter_mm', 0)):
+            raise SpecError(f'{board}: pre-route via {via.get("id")} needs a template net, at [x, y] and '
+                            '0 < drill_mm < diameter_mm')
+    copper = [f'In{i}.Cu' for i in range(1, int(spec['layers']['copper']) - 1)] + ['F.Cu', 'B.Cu']
+    for layer, kind in (spec['layers'].get('types') or {}).items():
+        if layer not in copper or kind not in LAYER_TYPES:
+            raise SpecError(f'{board}: layers.types {layer!r}: {kind!r} must name a copper layer of the board and one '
+                            f'of {sorted(LAYER_TYPES)}')
     for key, reason in spec['drc_policy'].get('warning_checks', {}).items():
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
@@ -1073,7 +1103,7 @@ def group_plan(spec, contract, template):
     if not spec['groups']:
         return {}, []
     geometry = {p['ref']: footprint_geometry(footprint_file(p).read_text(encoding='utf-8')) for p in template}
-    return place_groups(spec, template, geometry, holes(spec, contract), contract['outline_mm'])
+    return place_groups(spec, template, geometry, holes(spec, contract), contract['outline_mm'], cutout_boxes(contract))
 
 
 def load_footprint(pcb, part, temp):
@@ -1129,6 +1159,9 @@ def build_board(pcb, spec, contract, template, temp):
     (Path(temp) / 'fp-lib-table').write_text(fp_lib_table(template), encoding='utf-8')
     board = pcb.LoadBoard(str(path))  # loads the committed project rules and net classes
     board.SetCopperLayerCount(spec['layers']['copper'])
+    for layer, kind in sorted((spec['layers'].get('types') or {}).items()):
+        if not board.SetLayerType(board.GetLayerID(layer), getattr(pcb, LAYER_TYPES[kind])):
+            raise SpecError(f'KiCad refused layer type {kind} for {layer}')
     block = pcb.TITLE_BLOCK()
     block.SetTitle(f'{board_id} - {spec["status"]}')
     block.SetComment(0, 'CI/model output of pcb/board_gen.py; not a fabrication release; bench gates OPEN.')
@@ -1148,8 +1181,16 @@ def build_board(pcb, spec, contract, template, temp):
         edge.SetEnd(frame.k(*b))
         edge.SetWidth(pcb.FromMM(0.05))
         board.Add(edge)
-    if contract.get('cutouts_mm'):
-        raise SpecError('contract cutouts are not implemented in board_gen yet')
+    for x0, y0, x1, y1 in cutout_boxes(contract):  # inner Edge.Cuts loops; the DSN export makes them keepouts
+        corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+        for a, b in zip(corners, corners[1:] + corners[:1]):
+            edge = pcb.PCB_SHAPE(board)
+            edge.SetShape(pcb.SHAPE_T_SEGMENT)
+            edge.SetLayer(pcb.Edge_Cuts)
+            edge.SetStart(frame.k(*a))
+            edge.SetEnd(frame.k(*b))
+            edge.SetWidth(pcb.FromMM(0.05))
+            board.Add(edge)
     group_anchors, _rows = group_plan(spec, contract, template)
     sources = []
     for part in template:
@@ -1215,6 +1256,16 @@ def build_board(pcb, spec, contract, template, temp):
             seg.SetNet(nets[track['net']])
             seg.SetLocked(bool(track.get('locked', True)))
             board.Add(seg)
+    for item in spec['pre_route'].get('vias', []):  # through vias (F.Cu to B.Cu), scripted and locked
+        via = pcb.PCB_VIA(board)
+        via.SetViaType(pcb.VIATYPE_THROUGH)
+        via.SetPosition(frame.k(*item['at']))
+        via.SetLayerPair(pcb.F_Cu, pcb.B_Cu)
+        via.SetWidth(pcb.FromMM(item['diameter_mm']))
+        via.SetDrill(pcb.FromMM(item['drill_mm']))
+        via.SetNet(nets[item['net']])
+        via.SetLocked(bool(item.get('locked', True)))
+        board.Add(via)
     for zone in spec['pre_route'].get('zones', []):
         add_copper_zone(pcb, board, frame, spec, contract, zone, nets)
     text = pcb.PCB_TEXT(board)
@@ -1232,6 +1283,8 @@ def add_copper_zone(pcb, board, frame, spec, contract, zone, nets):
     item = add_polygon_zone(pcb, board, frame, points, board.GetLayerID(zone['layer']), zone['id'])
     item.SetNet(nets[zone['net']])
     item.SetAssignedPriority(int(zone.get('priority', 0)))
+    if 'pad_connection' in zone:
+        item.SetPadConnection(getattr(pcb, ZONE_PAD_CONNECTIONS[zone['pad_connection']]))
     board.Add(item)
     return item
 
@@ -1517,7 +1570,9 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'inputs': proj, 'board_file': rel(board_path), 'board_sha256': sha256_file(board_path),
         'project_file': project_rel, 'fp_lib_table_sha256': sha256_file(board_path.parent / 'fp-lib-table'),
         'layers': spec['layers'], 'stackup_contract': stackup,
-        'outline_mm': contract['outline_mm'], 'holes': holes(spec, contract),
+        'outline_mm': contract['outline_mm'],
+        **({'cutouts_mm': contract['cutouts_mm']} if contract.get('cutouts_mm') else {}),
+        'holes': holes(spec, contract),
         'instances': [{'id': i['id'], 'placement': i.get('placement'), 'qty': i['qty'], 'refs': i['refs'], 'nets': i['nets']}
                       for i in spec['instances']['list']],
         'build_quantity': {'instances': sum(i['qty'] for i in spec['instances']['list']),
@@ -1551,7 +1606,8 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
     drc = drc_summary(drc_raw, policy, project['board']['design_settings']['rule_severities'])
     partition = read_json(BASE / spec['partition'])
     hole_list = holes(spec, contract)
-    want_locked = sum(len(t['path']) - 1 for t in spec['pre_route'].get('tracks', []) if t.get('locked', True))
+    want_locked = (sum(len(t['path']) - 1 for t in spec['pre_route'].get('tracks', []) if t.get('locked', True))
+                   + sum(1 for v in spec['pre_route'].get('vias', []) if v.get('locked', True)))
     audits = {
         'domain': domain_audit(spec, partition),
         'source_pad': source_pad_audit(facts, spec, template, graph),
