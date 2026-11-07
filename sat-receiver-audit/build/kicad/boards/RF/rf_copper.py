@@ -271,34 +271,47 @@ def inward_stub(cu, pin, epad, width):
     return t
 
 
-def fanout(cu, pad, centre_of_part, width=0.3):
-    """One GND via next to an SMD GND pad with a short stub, outward from the part first; None when nothing fits."""
+def fanout(cu, pad, centre_of_part, width=0.3, net=GND, why=None):
+    """One via of the pad's net next to an SMD pad with a short stub; None when nothing fits.
+
+    Of the positions that clear everything (8 directions, 3 distances), the one with the least foreign copper within
+    1.5 mm wins (a fan-out via in front of a QFN pin row blocks the router there, route run 42421969829: U407.7), then
+    the shorter stub, then outward from the part.
+    """
     cx, cy = pad['center']
     hx, hy = (pad['box'][2] - pad['box'][0]) / 2, (pad['box'][3] - pad['box'][1]) / 2
     ox, oy = cx - centre_of_part[0], cy - centre_of_part[1]
     dirs = [(1, 0), (-1, 0), (0, 1), (0, -1), (0.7071, 0.7071), (-0.7071, 0.7071), (0.7071, -0.7071), (-0.7071, -0.7071)]
     dirs.sort(key=lambda d: (-(d[0] * ox + d[1] * oy), d))
     w = min(width, 2 * min(hx, hy))
-    for extra in (0.05, 0.3, 0.6):
-        for ux, uy in dirs:
+    best = None
+    for k, extra in enumerate((0.05, 0.3, 0.6)):
+        for j, (ux, uy) in enumerate(dirs):
             reach = min(hx / abs(ux) if ux else math.inf, hy / abs(uy) if uy else math.inf)
             d = reach + VIA_R + extra
             p = (cx + ux * d, cy + uy * d)
-            if not cu.via_ok(p, allow=(pad,)):
+            if not cu.via_ok(p, net, allow=(pad,)):
                 continue
-            if not cu.track_ok((cx, cy), p, w, allow=(pad,)):
+            if not cu.track_ok((cx, cy), p, w, net, allow=(pad,)):
                 continue
-            t = {'net': GND, 'layer': 'F.Cu', 'width_mm': round(w, 4),
-                 'path': [[round(cx, 4), round(cy, 4)], [round(p[0], 4), round(p[1], 4)]], 'locked': True,
-                 'why': 'GND pad fan-out to its via (scripted, locked; the router does not route GND)'}
-            cu.add_track(t)
-            v = cu.add_via(p, f'{pad["ref"]}.{pad["num"]} GND fan-out')
-            return t, v
-    return None
+            crowd = sum(max(0.0, 1.5 - box_point(q['box'], p)) for q in cu.pads.near(p, 2.0)
+                        if q['net'] != net and q is not pad)
+            key = (round(crowd, 3), k, j)
+            if best is None or key < best[0]:
+                best = (key, p)
+    if best is None:
+        return None
+    p = best[1]
+    t = {'net': net, 'layer': 'F.Cu', 'width_mm': round(w, 4),
+         'path': [[round(cx, 4), round(cy, 4)], [round(p[0], 4), round(p[1], 4)]], 'locked': True,
+         'why': why or 'GND pad fan-out to its via (scripted, locked; the router does not route GND)'}
+    cu.add_track(t)
+    v = cu.add_via(p, f'{pad["ref"]}.{pad["num"]} {net} fan-out', net)
+    return t, v
 
 
-def fences(cu, tracks, is_rf50, rf_w, why='RF50 GND fence'):
-    """GND vias on both sides of every RF50 segment, about FENCE_STEP apart, in the fence band."""
+def fences(cu, tracks, is_rf50, rf_w, why='RF50 GND fence', net=GND):
+    """Ground vias (net) on both sides of every RF50 segment, about FENCE_STEP apart, in the fence band."""
     out = []
     for t in tracks:
         if not is_rf50(t['net']) or abs(t['width_mm'] - rf_w) > 1e-6:
@@ -315,8 +328,8 @@ def fences(cu, tracks, is_rf50, rf_w, why='RF50 GND fence'):
                     s = L * k / n
                     for lat in FENCE_LAT:
                         p = (a[0] + ux * s + side * nx * lat, a[1] + uy * s + side * ny * lat)
-                        if cu.via_ok(p):
-                            out.append(cu.add_via(p, f'{why} {t["net"]}'))
+                        if cu.via_ok(p, net):
+                            out.append(cu.add_via(p, f'{why} {t["net"]}', net))
                             break
     return out
 

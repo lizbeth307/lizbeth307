@@ -61,8 +61,10 @@ BOND = {'at': [92.0, 40.5], 'net': 'CHASSIS', 'pad_mm': 7.0}
 # edge SMAs of the J409-J412 land, on separate outlines beside the board (a breakaway part of the same panel).
 SMA_FP = 'SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS'
 SMA_EDGE = 4.76                      # board edge at footprint x -4.76 (the J409-J412 placement)
-COUPON_Y = (-20.0, -6.0)             # coupon outline y span (board mm, below the board)
-COUPONS = [('CPN_THRU_50', 0.0, 50.0, 'CPN1', 'CPN2'), ('CPN_THRU_25', 70.0, 95.0, 'CPN3', 'CPN4')]
+COUPON_Y = (-22.0, -4.0)             # coupon outline y span (board mm, below the board; SMA legend 2 mm inside)
+# (line net, x0, x1, left SMA, right SMA, ground net): each coupon is a separate piece, so its ground is its own net
+# (one GND net on two pieces would be two unconnected GND islands for KiCad)
+COUPONS = [('CPN_THRU_50', 0.0, 50.0, 'CPN1', 'CPN2', 'CPN_GND_50'), ('CPN_THRU_25', 70.0, 95.0, 'CPN3', 'CPN4', 'CPN_GND_25')]
 
 GEO, PLACED, ANCHORS, TRACKS, CHECK_PAIRS, GAPS = {}, {}, {}, [], [], []
 VIAS, GND_TRACKS, COPPER_LOG, COUPON = [], [], {}, {}
@@ -269,7 +271,9 @@ def layout():
     anchor('C401', (126.4, 27.75), 0)
     pad_at('R405', 1, (128.1, 27.75), 0)
     anchor('A424', (112.6, 31.0), 90)
-    anchor('C446', (109.57, 29.73), 90)  # beside the A424 DC pin, clear of the E4_P2 fence (W2 PCB-RF-2)
+    anchor('C446', (109.57, 29.73), 90)
+    track('BIAS_CH4', [pad('C446', 1), pad('A424', 1)], 0.35,
+          'BIAS_CH4 at the A424 DC pin: decoupling to pin, then a scripted via (escape) out of the RF50 fences (PWR1A 0.35)')  # beside the A424 DC pin, clear of the E4_P2 fence (W2 PCB-RF-2)
     pad_at('J427', 'CENTER', (pad('A424', 3)[0], 40.475), 90)
     hmc_line('E4_RTLA_RFC', None, 'U405', 15, (0, 1), pad('C405', 1))
     track('E4_RFC_A', [pad('C405', 2), (pad('C405', 2)[0], 41.0)])
@@ -577,13 +581,12 @@ def spec_doc(template_nets, parts, enc):
                            'lines, 50 and 25 mm board edge to board edge between Molex 73251-1153 edge SMAs (the '
                            'J409-J412 land), same stackup, lamination and etch as the board; TDR / S21 of the 25 mm '
                            'difference is a bench measurement (OPEN)'), **coupon_spec}
-    pad_nets = {'CENTER': None, 'SHIELD': 'GND'}
     only_refs = {'H5': 'BOND-RF plated contract hole (92, 40.5) on CHASSIS (bond_hole; NT401 ties it to GND)'}
     only_pins = {'H5': {'1': 'CHASSIS'}}
-    for net, x0, x1, left, right in COUPONS:
+    for net, x0, x1, left, right, gnd in COUPONS:
         for ref in (left, right):
             only_refs[ref] = f'impedance coupon SMA of {net} ({x1 - x0:g} mm thru line), on the breakaway coupon outline'
-            only_pins[ref] = {k: (v or net) for k, v in pad_nets.items()}
+            only_pins[ref] = {'CENTER': net, 'SHIELD': gnd}
     return {
         'schema': bg.SPEC_SCHEMA,
         'board_id': 'RF',
@@ -646,8 +649,8 @@ def spec_doc(template_nets, parts, enc):
                                       'outside the keepout (parts DB NT-RF-CHASSIS; the other five holes stay NPTH)')},
         'board_only_refs': only_refs,
         'board_only_pins': only_pins,
-        'coupons': [{'rect': [o[0], o[1], o[2] - o[0], o[3] - o[1]], 'rf50_nets': [c[0]],
-                     'reason': f'impedance coupon {c[0]} on its own breakaway outline'}
+        'coupons': [{'rect': [o[0], o[1], o[2] - o[0], o[3] - o[1]], 'rf50_nets': [c[0]], 'gnd_net': c[5],
+                     'reason': f'impedance coupon {c[0]} on its own breakaway outline, ground net {c[5]}'}
                     for o, c in zip(COUPON['outlines'], COUPONS)],
         'groups': [],
         'rf50_taper': {ref: {'max_len_mm': TAPER_LEN, 'min_width_mm': TAPER_W,
@@ -789,7 +792,9 @@ def pad_items(placed, geos, anchors, nets_of):
 
 
 EPAD_NAMES = {'EPAD', 'EP'}
-NO_FANOUT = {'J409', 'J410', 'J411', 'J412', 'J426'}   # edge SMAs: their plated shield pins join every GND layer
+ESCAPES = [('C446', '1', 'BIAS_CH4')]
+NO_FANOUT = {'J409', 'J410', 'J411', 'J412', 'J426',   # edge SMAs: their plated shield pins join every GND layer
+             'NT401'}                                    # net tie: its copper bridge is no pad; the pour joins pad 1
 
 
 def copper(contract, classes):
@@ -810,6 +815,8 @@ def copper(contract, classes):
     ko = contract['hole_keepout_d'] / 2
     holes = [((x, y), ko) for x, y in contract['holes_mm'] if [x, y] != BOND['at']]
     keepouts = []
+    nt = [p['box'] for p in pads if p['ref'] == 'NT401']  # the net-tie bridge (footprint copper, no net) between its pads
+    keepouts.append([min(b[0] for b in nt) - 0.3, min(b[1] for b in nt) - 0.3, max(b[2] for b in nt) + 0.3, max(b[3] for b in nt) + 0.3])
     for ref in sorted(PLACED, key=bg.sort_ref):
         for poly in GEO[ref].get('keepouts', []):
             pts = [to_board(ref, p) for p in poly]
@@ -831,6 +838,16 @@ def copper(contract, classes):
     GND_TRACKS.extend(stubs)
     log['qfn_gnd_pin_stubs'] = len(stubs)
     log['qfn_gnd_pins_on_the_pour'] = no_stub
+    # 1b. escape vias of power pads boxed in by the RF50 fences (route run 42421969829 left BIAS_CH4 unrouted at A424)
+    esc = []
+    for ref, num, net in ESCAPES:
+        p = next(q for q in pads if q['ref'] == ref and q['num'] == num)
+        res = rc.fanout(cu, p, p['center'], 0.35, net, f'{net} escape of {ref}.{num} to B.Cu (scripted, locked)')
+        if res is None:
+            raise SystemExit(f'rf_layout: no escape via fits at {ref}.{num}')
+        GND_TRACKS.append(res[0])
+        esc.append(f'{ref}.{num} {net}')
+    log['escape_vias'] = esc
     # 2. a fan-out via at every other SMD GND pad
     fan, nofan = 0, []
     for p in sorted(pads, key=lambda p: (bg.sort_ref(p['ref']), p['num'], p['center'])):
@@ -871,7 +888,7 @@ def coupon(classes, clear, is_rf50):
     y0, y1 = COUPON_Y
     yc = (y0 + y1) / 2
     outlines, fps, tracks, vias, zones, gaps = [], [], [], [], [], []
-    for net, x0, x1, left, right in COUPONS:
+    for net, x0, x1, left, right, gnd in COUPONS:
         outlines.append([x0, y0, x1, y1])
         placed, anchors, geos = {}, {}, {}
         for ref, at, rot in ((left, (x0 + SMA_EDGE, yc), 0), (right, (x1 - SMA_EDGE, yc), 180)):
@@ -879,15 +896,15 @@ def coupon(classes, clear, is_rf50):
             anchors[ref], geos[ref] = a, g
             placed[ref] = bg.placed_geometry(g, a)
             fps.append({'ref': ref, 'footprint': SMA_FP, 'value': 'Molex 73251-1153 (coupon, hand-fitted for the bench)',
-                        'pads': {'CENTER': net, 'SHIELD': 'GND'}, 'anchor': a})
-        pads = pad_items(placed, geos, anchors, lambda r, n, net=net: net if n == 'CENTER' else 'GND')
+                        'pads': {'CENTER': net, 'SHIELD': gnd}, 'anchor': a})
+        pads = pad_items(placed, geos, anchors, lambda r, n, net=net, gnd=gnd: net if n == 'CENTER' else gnd)
         c0 = next(p['center'] for p in pads if p['ref'] == left and p['num'] == 'CENTER')
         c1 = next(p['center'] for p in pads if p['ref'] == right and p['num'] == 'CENTER')
         line = [{'id': f'{net}-1', 'net': net, 'layer': 'F.Cu', 'width_mm': RF_W, 'path': [list(c0), list(c1)], 'locked': True,
                  'why': f'coupon RF50 CPWG thru line, {x1 - x0:g} mm board edge to board edge (scripted, locked)'}]
         line = rc.trim_pad_entries(line, pads, lambda n: True, RF_W)
         cu = rc.Copper([x0, y0, x1, y1], pads, line, clear)
-        rc.fences(cu, line, lambda n: True, RF_W, why='coupon RF50 GND fence')
+        rc.fences(cu, line, lambda n: True, RF_W, why='coupon RF50 GND fence', net=gnd)
         gaps += rc.fence_gaps(cu.via_list, line, lambda n: True, RF_W)
         for v in cu.via_list:
             v['id'] = f'{net}-{v["id"]}'
@@ -895,7 +912,7 @@ def coupon(classes, clear, is_rf50):
         vias += cu.via_list
         rect = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]
         for layer in ('F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'):
-            zones.append({'id': f'{net}-GND-{layer.split(".")[0]}', 'net': 'GND', 'layer': layer, 'outline': rect,
+            zones.append({'id': f'{gnd}-{layer.split(".")[0]}', 'net': gnd, 'layer': layer, 'outline': rect,
                           'priority': 0, 'pad_connection': 'solid'})
     return {'outlines': outlines, 'footprints': fps, 'tracks': tracks, 'vias': vias, 'zones': zones, '_gaps': gaps}
 
@@ -934,7 +951,7 @@ def build():
     if missing:
         raise SystemExit(f'rf_layout: not placed: {missing}')
     nets = sorted({p['net'] for r in refs for p in graph[r]['pins'] if p.get('net')} |
-                  {n for n, _w, _i in PLACEHOLDERS.values()} | {'GND'} | {c[0] for c in COUPONS})
+                  {n for n, _w, _i in PLACEHOLDERS.values()} | {'GND'} | {c[0] for c in COUPONS} | {c[5] for c in COUPONS})
     classes = net_classes(nets)
     contract = bg.read_json(BASE / 'mechanical/generated/contract/boards.json')['boards']['RF']
     copper(contract, classes)
