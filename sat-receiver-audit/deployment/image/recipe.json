@@ -129,7 +129,7 @@
       "srrx-locationd.service": "srrx.locationd: standard library only",
       "srrx-timegate.service": "srrx.timegate: standard library only",
       "srrx-satdump-decode@.service": "srrx.satdump_unit decode: SatDump decodes; srrx.baseband and srrx.voice_mask import numpy only inside try/except ImportError (software/srrx/baseband.py:54-57) (W2 SW-SCHED, build/15 «Інтерпретатор шаблонів (W2 SW-SCHED)»)",
-      "srrx-baseband-sweep.service": "srrx.baseband sweep: BasebandStore.sweep lists the class directory, reads each metadata file and stats each data file (_sweep_locked, _keep), no NumPy call; the guarded import keeps the module importable without NumPy (deployment/tests/test_image.py UnitInterpreterTests runs the sweep with NumPy blocked)",
+      "srrx-baseband-sweep.service": "srrx.baseband sweep: BasebandStore.sweep lists the class directory, reads each metadata file and stats each data file (_sweep_locked, _keep), no NumPy call; the guarded import keeps the module importable without NumPy (deployment/tests/test_image.py VenvAndUnitInterpreterTests runs the sweep with NumPy blocked)",
       "srrx-boot-check.service": "deployment/image/bootchain.py boot-check: standard library only",
       "srrx-ab-commit.service": "deployment/image/bootchain.py route-b-commit (Route B only): standard library only"
     }

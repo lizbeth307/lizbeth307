@@ -108,7 +108,7 @@ BUILD_COPY = "tmp/srrx-software-build"  # chroot /tmp is a tmpfs (chroot_api)
 PROJECT_DIST = "srrx-control"
 VENV_HOME = "/tmp/srrx-venv-home"
 VENV_ENV = {"PYTHONDONTWRITEBYTECODE": "1", "HOME": VENV_HOME, "XDG_CACHE_HOME": VENV_HOME + "/cache"}
-PIP_OPTIONS = ["--isolated", "--disable-pip-version-check", "--no-input", "--root-user-action=ignore"]
+PIP_OPTIONS = ["--isolated", "--disable-pip-version-check", "--no-input"]  # general options; --root-user-action is install-only
 BUILD_MANIFEST_DRAFT = "build-manifest.draft.json"  # next to image-manifest.json; always OPEN
 # SR-RX units whose Exec lines start python3 (unit_interpreters, recipe.json unit_interpreters).
 UNIT_SEARCH = ("etc/systemd/system", "usr/lib/systemd/system", "etc/systemd/user", "usr/lib/systemd/user")
@@ -2071,7 +2071,7 @@ def build_venvs(root, cache, plan=None):
             chroot(root, ["/usr/bin/python3", "-P", "-B", "-m", "venv", "--copies", "--without-pip", "/" + venv], extra_env=VENV_ENV)
             python = "/" + venv + "/bin/python3"
             pip = [python, "-P", "-B", "-m", "pip"] + PIP_OPTIONS
-            install = pip + ["install", "--no-index", "--no-cache-dir", "--no-compile"]
+            install = pip + ["install", "--root-user-action=ignore", "--no-index", "--no-cache-dir", "--no-compile"]
             chroot(root, install + ["--find-links", "/" + WHEELS_CHROOT_DIR, "--only-binary", ":all:", "--require-hashes",
                                     "-r", "/opt/srrx/" + spec["lock"]], extra_env=pip_env)
             chroot(root, install + ["--no-deps", "--no-build-isolation", "/" + BUILD_COPY], extra_env=pip_env)
