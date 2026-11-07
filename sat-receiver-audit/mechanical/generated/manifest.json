@@ -247,16 +247,16 @@
       "sha256": "2377af706dfb8706c37fcca22a424a4226232713c239fce6403dacc6b4dac06c"
     },
     "fit-report.json": {
-      "bytes": 105435,
-      "sha256": "3677ce643a5affe531a3849aba2d7fc622e60bd45dc5d7565e6d7ea96f03052b"
+      "bytes": 104463,
+      "sha256": "0a76f714693531305e2680c2e4e1a0670af1df406748066ed6efe163772da4c3"
     },
     "fit-report.md": {
-      "bytes": 43924,
-      "sha256": "c5ac9c6b71e77b0d01460e1c5b3c581dcbed68173b3717dc2777f1f43eb249c3"
+      "bytes": 43567,
+      "sha256": "676ed30a5922fe096d2e52b9ebb5d0764b237f240f0e28a1595cc24fd9e3704a"
     },
     "harness-routes.json": {
-      "bytes": 47828,
-      "sha256": "e940365888436d77f0e9ba34e00349af5f21414c11b56865efa5341d61a5458b"
+      "bytes": 47827,
+      "sha256": "37533f11cdea16759533ab647a4a7b6c5dc37f5f9543271a979da8ba13a65711"
     },
     "step/angle_right_al.step": {
       "bytes": 40568,
