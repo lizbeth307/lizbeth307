@@ -292,7 +292,10 @@
       "exec_start_pre": ["/usr/bin/python3 -P -s -B -m srrx.adsb_filter prepare --receiver %i --run-dir %t/srrx-lease-readsb-%i --products /data/products/readsb-%i"],
       "exec_start_post": ["/usr/bin/python3 -P -s -B -m srrx.adsb_filter run --detach --receiver %i --run-dir %t/srrx-lease-readsb-%i --products /data/products/readsb-%i"],
       "exec_stop_post": ["/usr/bin/python3 -P -s -B -m srrx.adsb_filter stop --receiver %i --products /data/products/readsb-%i"],
-      "required_settings": {"Type": "simple", "User": "lab", "StandardOutput": "null", "StandardError": "null", "EnvironmentFile": "-%t/srrx-lease-readsb-%i/readsb.env"},
+      "required_settings": {"Type": "simple", "User": "lab", "StandardOutput": "null", "StandardError": "null", "RuntimeDirectory": "srrx-lease-readsb-%i", "RuntimeDirectoryMode": "0700", "UMask": "0027"},
+      "environment": ["HOME=%t/srrx-lease-readsb-%i", "PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1 LC_ALL=C.UTF-8"],
+      "environment_files": ["-%t/srrx-lease-readsb-%i/readsb.env"],
+      "forbidden_settings": ["PassEnvironment", "UnsetEnvironment", "ExecSearchPath", "RootDirectory", "RootImage", "MountImages", "ExtensionImages", "ExtensionDirectories", "BindPaths", "BindReadOnlyPaths", "TemporaryFileSystem"],
       "filter_module": "software/srrx/adsb_filter.py",
       "sources": ["STACK.md:621-622", "STACK.md:825", "STACK.md:882", "STACK.md:2180-2181", "build/07-pz-vstanovlennia.md:439", "deployment/recipes/readsb/recipe.json"]
     }

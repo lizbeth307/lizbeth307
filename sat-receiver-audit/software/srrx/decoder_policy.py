@@ -16,7 +16,8 @@ srrx.satdump_pass; nothing here launches SatDump.
 adsb-public (W2 SW-ADSB) is installation-gated too, but it is a live engine lease, never a file
 plan of this module: readsb with srrx.adsb_filter in srrx-lease-readsb@<rtla|rtlb>.service. Without
 an accepted record (/var/lib/srrx/adsb/acceptance.json: aircraft.csv.gz at most 90 days old and
-the military range table, both fetch-only) it reads UNAVAILABLE_NO_ACCEPTED_INSTALLATION.
+the military range table, both fetch-only) it reads UNAVAILABLE_NO_ACCEPTED_INSTALLATION; with
+load_adsb_acceptance() passed as adsb_acceptance= it reads LEASE_PRESET_ACCEPTED_FILTER_CHECKS_AT_START.
 """
 from __future__ import annotations
 
@@ -199,10 +200,22 @@ def availability(installation=None, satdump_installation=None, adsb_acceptance=N
         from . import adsb_filter  # stdlib only; the record schema, file digests and the 90-day age
         try:
             adsb_filter.check_record(adsb_acceptance)
-            adsb = "ENGINE_LEASE_ACCEPTED_FILTER_CHECKS_AT_START"
+            # "PRESET_ACCEPTED" is the accepted-preset marker the menu looks for (as FILE_/LRPT_FILE_*).
+            adsb = "LEASE_PRESET_ACCEPTED_FILTER_CHECKS_AT_START"
         except (adsb_filter.FilterRefused, OSError):
             adsb = "UNAVAILABLE_INSTALLATION_NOT_QUALIFIED"
     return {PRESET: status, SATDUMP_PRESET: satdump, ADSB_PRESET: adsb, **_DISABLED}
+
+
+def load_adsb_acceptance(root=None):
+    """The root-owned ADS-B acceptance record (srrx.adsb_filter.load_acceptance: schema, SHA-256 of
+    both files, 90-day age) to pass as availability(adsb_acceptance=...); DecoderRefused with the
+    filter's refusal code otherwise. The lease checks the record again at start (prepare)."""
+    from . import adsb_filter
+    try:
+        return adsb_filter.load_acceptance(root=root)[0]
+    except adsb_filter.FilterRefused as refused:
+        _refuse(refused.code)
 
 
 # ---------------------------------------------------------------- satdump-weather (v2.1)

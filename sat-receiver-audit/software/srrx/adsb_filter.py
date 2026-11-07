@@ -57,6 +57,9 @@ import time
 PRESET = "adsb-public"
 ENGINE = "readsb"
 # readsb opens RTL-SDR receivers only (deployment/recipes/readsb: RTLSDR=yes, no SoapySDR/airspyhf).
+# OPEN (review SWADSB-R3): the ADS-B receiver of STACK.md:825 sits on LAB USB-A (CH334F H3: Pro
+# Stick Plus 0bda:2832 or the spare V4L), which has no /dev/lab alias, devices.json key or lease
+# instance yet (srrx.engine_leases.DEVICE_KEYS); add it there first, then here and in RX-12-readsb.
 RECEIVERS = ("rtla", "rtlb")
 ROOT = Path("/var/lib/srrx/adsb")
 ACCEPTANCE_NAME, DATABASE_NAME, RANGES_NAME = "acceptance.json", "aircraft.csv.gz", "ranges.json"

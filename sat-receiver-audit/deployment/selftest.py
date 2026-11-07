@@ -110,7 +110,8 @@ CATALOGUE = (
     ("RX-12-runtime", 12, "DEVICE", "Lease EPERM/EROFS/EGL behaviour on the Q6A", (_B07 + ":557", _B09 + ":62")),
     # W2 SW-ADSB: the plan named this row RX-17, which is the kernel command line row; it extends row 12 (leases).
     ("RX-12-readsb", 12, "OFFLINE", "readsb ADS-B lease: RTL-SDR-only binary (allowlisted DT_NEEDED, no bias-tee call), exactly the reviewed readsb "
-     "argv between the srrx.adsb_filter steps with its output discarded, no other unit runs readsb, no tar1090 web UI",
+     "argv between the srrx.adsb_filter steps and no other Exec command, the reviewed environment without PATH or mount overrides, "
+     "its output discarded, no other unit runs readsb, no tar1090 web UI",
      ("STACK.md:621-622", "STACK.md:825", "STACK.md:882", "STACK.md:2180-2181", _B07 + ":439", "software/srrx/adsb_filter.py",
       "deployment/recipes/readsb/recipe.json")),
     ("RX-13", 13, "OFFLINE", "Band mask CPU path: 20 kHz, 300 MHz, 406.05 MHz, 1544.5 MHz bins invalid; annotate refuses",
@@ -203,7 +204,7 @@ POLICY_SCHEMA = {
                          tle_update={"file_globs": (_text,), "section": _text, "key": _text, "required": _text}),
         "readsb": dict(_COMMON, binaries=(_text,), allowed_needed=(_text,), forbidden_symbols=(_text,), forbidden_dirs=[_text], lease_unit=_text,
                        exec_start=_text, exec_start_pre=(_text,), exec_start_post=(_text,), exec_stop_post=(_text,), required_settings=_scalars,
-                       filter_module=_text),
+                       environment=(_text,), environment_files=(_text,), forbidden_settings=(_text,), filter_module=_text),
     },
     "lime": {"runtime_library_globs": [_text], "sources": [_text]},
     "librtlsdr": {"library_glob": _text, "old_library_glob": _text, "soname": _text, "export_prefix": _text, "exports": int, "forbidden_strings": [_text], "sources": [_text]},
@@ -1537,9 +1538,10 @@ def check_12(ctx, r):
 
 
 def _exec_lines(texts, key):
-    """Command lines of one Exec*= key in the [Service] section of a unit fragment and its drop-ins,
-    in order; an empty assignment resets the list (systemd.service(5)); continuation lines as
-    _unit_settings joins them."""
+    """Command lines of one Exec*= key (or the values of another list setting with the same reset
+    rule, such as Environment=) in the [Service] section of a unit fragment and its drop-ins, in
+    order; an empty assignment resets the list (systemd.service(5), systemd.exec(5)); continuation
+    lines as _unit_settings joins them."""
     lines = []
     for text in texts:
         section, joined = None, ""
@@ -1566,8 +1568,10 @@ _ENGINE_EXEC_KEYS = ("ExecCondition", "ExecStartPre", "ExecStart", "ExecStartPos
 def check_12_readsb(ctx, r):
     """readsb ADS-B lease (W2 SW-ADSB; STACK.md:621-622, :2181, build/07 §16): the binary links only
     the allowlisted libraries and imports no bias-tee or other-SDR call; the lease template and each
-    instance with its drop-ins run exactly the reviewed readsb argv between the srrx.adsb_filter steps,
-    with StandardOutput/StandardError null; no other unit starts readsb; no tar1090 web UI; the target
+    instance with its drop-ins run exactly the reviewed readsb argv between the srrx.adsb_filter steps
+    and no other Exec*= command, with exactly the reviewed Environment=/EnvironmentFile= lists, no
+    setting that brings in other environment, $PATH or mounts, the private RuntimeDirectory and
+    StandardOutput/StandardError null; no other unit starts readsb; no tar1090 web UI; the target
     srrx.adsb_filter equals the checker's. Static only: the filter's behaviour is its host tests."""
     comp = ctx.comp("readsb")
     binaries = set(ctx.globs(comp["binaries"])) | {k for k in ctx.keys if k.rsplit("/", 1)[-1] == "readsb" and k.split("/")[-2:-1] in (["bin"], ["sbin"])}
@@ -1621,10 +1625,21 @@ def check_12_readsb(ctx, r):
             for word in line.split()[2:]:
                 if word.split("=", 1)[0] in comp["deny_tokens"]:
                     r.fail(listed, "denied_option", word.split("=", 1)[0].lstrip("-"))  # item: no leading dash (_SAFE_ITEM)
-        for key, expected in (("ExecStartPre", comp["exec_start_pre"]), ("ExecStartPost", comp["exec_start_post"]),
-                              ("ExecStopPost", comp["exec_stop_post"])):
+        pinned = {"ExecStartPre": comp["exec_start_pre"], "ExecStartPost": comp["exec_start_post"], "ExecStopPost": comp["exec_stop_post"]}
+        for key, expected in pinned.items():
             if _exec_lines(texts, key) != expected:
                 r.fail(listed, "filter_step_not_allowlisted", key)
+        for key in _ENGINE_EXEC_KEYS:  # any other command (ExecStop, ExecReload, ExecCondition) runs beside the filter
+            if key != "ExecStart" and key not in pinned and _exec_lines(texts, key):
+                r.fail(listed, "exec_key_not_allowlisted", key)
+        # Environment= and EnvironmentFile= accumulate over the drop-ins (systemd.exec(5)): a later PATH,
+        # PYTHONPATH or LD_PRELOAD would swap readsb or srrx.adsb_filter, so both lists are exact.
+        for key, expected in (("Environment", comp["environment"]), ("EnvironmentFile", comp["environment_files"])):
+            if _exec_lines(texts, key) != expected:
+                r.fail(listed, "lease_setting", key)
+        for key in comp["forbidden_settings"]:  # manager environment, ExecSearchPath= ($PATH), mounts over the reviewed files
+            if _exec_lines(texts, key):
+                r.fail(listed, "lease_setting", key)
         settings = _unit_settings(texts)
         for key, value in comp["required_settings"].items():
             if settings.get(key) != value:

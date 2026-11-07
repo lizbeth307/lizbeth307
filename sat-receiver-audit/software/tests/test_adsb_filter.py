@@ -428,13 +428,29 @@ class DecoderPolicyTests(Fixture):
         with mock.patch.object(f, "admin_trust", TRUST), mock.patch.object(f, "utc_today", lambda: TODAY), \
                 mock.patch.object(f, "ROOT", self.root):
             self.assertEqual(decoder_policy.availability(adsb_acceptance=self.record)["adsb-public"],
-                             "ENGINE_LEASE_ACCEPTED_FILTER_CHECKS_AT_START")
+                             "LEASE_PRESET_ACCEPTED_FILTER_CHECKS_AT_START")
             stale = json.loads(json.dumps(self.record))
             stale["database"]["data_date"] = "2026-01-01"
             self.assertEqual(decoder_policy.availability(adsb_acceptance=stale)["adsb-public"], "UNAVAILABLE_INSTALLATION_NOT_QUALIFIED")
         with mock.patch.object(decoder_policy, "_file", side_effect=AssertionError("must not inspect payload")):
             with self.assertRaisesRegex(decoder_policy.DecoderRefused, "DISABLED"):
                 decoder_policy.make_plan("adsb-public", None, None, None)
+
+    def test_accepted_record_reads_as_an_accepted_preset_through_the_loader(self):
+        # Review SWADSB-R2: the accepted value carries the PRESET_ACCEPTED marker of the other gated
+        # presets (FILE_PRESET_ACCEPTED_*, LRPT_FILE_PRESET_ACCEPTED_*), which a menu gates its leaf on.
+        with mock.patch.object(f, "admin_trust", TRUST), mock.patch.object(f, "utc_today", lambda: TODAY), \
+                mock.patch.object(f, "ROOT", self.root):
+            record = decoder_policy.load_adsb_acceptance()
+            self.assertEqual(record, self.record)
+            value = decoder_policy.availability(adsb_acceptance=record)["adsb-public"]
+            self.assertIn("PRESET_ACCEPTED", value)
+            self.assertFalse(value.startswith(("DISABLED", "UNAVAILABLE")))
+            (self.root / f.ACCEPTANCE_NAME).unlink()
+            with self.assertRaisesRegex(decoder_policy.DecoderRefused, "^ACCEPTANCE_MISSING$"):
+                decoder_policy.load_adsb_acceptance()
+        for value in decoder_policy.availability().values():  # offline nothing reads as accepted
+            self.assertNotIn("PRESET_ACCEPTED", value)
 
 
 if __name__ == "__main__":
