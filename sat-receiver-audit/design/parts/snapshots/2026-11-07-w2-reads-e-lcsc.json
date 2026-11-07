@@ -1,0 +1,401 @@
+{
+ "date": "2026-11-07",
+ "distributor": "LCSC",
+ "entries": {
+  "C111738": {
+   "attributes": {
+    "Control Input Logic": "Active High",
+    "Features": "Overvoltage Protection、Soft-start、Under-voltage lockout、Reverse voltage protection、Integrated charge pump、Overcurrent Protection、Over temperature protection、Latch protection、Short-Circuit  Protection、Reverse current blocking",
+    "Maximum Continuous Current": "1.5A",
+    "Number of Channels": "1",
+    "Operating Temperature\t-": "-40℃~+150℃",
+    "RDS(on)": "85mΩ",
+    "Type": "High Side Switch",
+    "Voltage - Supply": "2.5V~6.5V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809080208_Texas-Instruments-TPS2553DBVR-1_C111738.pdf",
+   "description": "-40℃~+150℃ 1 1.5A 2.5V~6.5V 85mΩ Active High High Side Switch 过压保护、软启动、欠压锁定、反向电压保护、集成电荷泵、Overcurrent Protection、Over temperature protection、锁存保护、Short-Circuit  Protection、反向电流阻断 SOT-23-6 Power Distribution Switches ROHS",
+   "fetched_utc": "2026-11-07T16:06:42Z",
+   "jlc_library": "extended",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS2553DBVR-1",
+   "package": "SOT-23-6",
+   "price_usd": [
+    [
+     1,
+     0.3049
+    ],
+    [
+     50,
+     0.2434
+    ],
+    [
+     150,
+     0.2169
+    ],
+    [
+     500,
+     0.184
+    ],
+    [
+     3000,
+     0.1445
+    ],
+    [
+     6000,
+     0.1358
+    ]
+   ],
+   "stock": 6,
+   "url": "https://www.lcsc.com/product-detail/power-distribution-switches_texas-instruments-tps2553dbvr-1_C111738.html"
+  },
+  "C18203260": {
+   "attributes": {},
+   "datasheet": null,
+   "description": "-20℃~+85℃ 1 Set Male and Female 200V 2P 5A M12 Straight Header - Circular Connectors & Cable Connectors ROHS",
+   "fetched_utc": "2026-11-07T16:06:43Z",
+   "jlc_library": "extended",
+   "manufacturer": "Shenzhen Kinghelm Elec",
+   "mpn": "KH-GX12-2P",
+   "package": "-",
+   "price_usd": [
+    [
+     1,
+     1.6437
+    ],
+    [
+     10,
+     1.3918
+    ],
+    [
+     30,
+     1.2332
+    ],
+    [
+     100,
+     1.0713
+    ],
+    [
+     500,
+     0.9977
+    ],
+    [
+     1000,
+     0.9666
+    ]
+   ],
+   "stock": 114,
+   "url": null
+  },
+  "C18203261": {
+   "attributes": {
+    "Angle": "Straight head",
+    "Current Rating": "5A",
+    "Gender": "1 Set Male and Female",
+    "Number of Pins": "3P",
+    "Operating Temperature": "-20℃~+85℃",
+    "Socket Specification": "M12",
+    "Voltage Rating": "125V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2309271449_Shenzhen-Kinghelm-Elec-KH-GX12-3P_C18203261.pdf",
+   "description": "-20℃~+85℃ 1 Set Male and Female 125V 3P 5A M12 Straight Header 插件 Circular Connectors & Cable Connectors ROHS",
+   "fetched_utc": "2026-11-07T16:06:44Z",
+   "jlc_library": "extended",
+   "manufacturer": "Shenzhen Kinghelm Elec",
+   "mpn": "KH-GX12-3P",
+   "package": "Plugin",
+   "price_usd": [
+    [
+     1,
+     1.6486
+    ],
+    [
+     10,
+     1.3951
+    ],
+    [
+     30,
+     1.2365
+    ],
+    [
+     100,
+     1.0745
+    ],
+    [
+     500,
+     1.001
+    ],
+    [
+     1000,
+     0.9682
+    ]
+   ],
+   "stock": 79,
+   "url": "https://www.lcsc.com/product-detail/circular-connectors-cable-connectors_shenzhen-kinghelm-elec-kh-gx12-3p_C18203261.html"
+  },
+  "C240829": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "9A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "2",
+    "Number of Pins": "4P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pins Structure": "2x2P",
+    "Pitch": "4.2mm",
+    "Plastic Material": "PA",
+    "Row Spacing": "4.2mm",
+    "Voltage Rating": "600V",
+    "Z-Height of the Board": "12.8mm"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 2 2 2x2P 4.2mm 4.2mm 4P 600V 9A Brass PA Through Hole Tin UL94V-0 White 插件,P=4.2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-07T16:06:45Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "39288040",
+   "package": "Plugin,P=4.2mm",
+   "price_usd": [
+    [
+     1,
+     0.3305
+    ],
+    [
+     50,
+     0.2712
+    ],
+    [
+     150,
+     0.2459
+    ],
+    [
+     500,
+     0.2141
+    ],
+    [
+     2500,
+     0.2001
+    ],
+    [
+     5000,
+     0.1916
+    ]
+   ],
+   "stock": 3818,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-39288040_C240829.html"
+  },
+  "C490534": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "9A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "1",
+    "Number of Pins": "2P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pins Structure": "2x1P",
+    "Pitch": "4.2mm",
+    "Plastic Material": "PA",
+    "Row Spacing": "4.2mm",
+    "Voltage Rating": "600V",
+    "Z-Height of the Board": "12.8mm"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 2 2P 2x1P 4.2mm 4.2mm 600V 9A Brass PA Through Hole Tin UL94V-0 White 插件,P=4.2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-07T16:06:46Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "39288020",
+   "package": "Plugin,P=4.2mm",
+   "price_usd": [
+    [
+     1,
+     0.1948
+    ],
+    [
+     50,
+     0.1572
+    ],
+    [
+     150,
+     0.141
+    ],
+    [
+     1000,
+     0.109
+    ],
+    [
+     2000,
+     0.1
+    ],
+    [
+     5000,
+     0.0946
+    ]
+   ],
+   "stock": 6700,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-39288020_C490534.html"
+  },
+  "C55266": {
+   "attributes": {
+    "Control Input Logic": "Active High",
+    "Features": "Overvoltage Protection、Soft-start、Under-voltage lockout、Reverse voltage protection、Integrated charge pump、Overcurrent Protection、Over temperature protection、Latch protection、Short-Circuit  Protection",
+    "Maximum Continuous Current": "1.5A",
+    "Number of Channels": "1",
+    "Operating Temperature\t-": "-40℃~+150℃",
+    "RDS(on)": "85mΩ",
+    "Type": "High Side Switch",
+    "Voltage - Supply": "2.5V~6.5V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810221710_Texas-Instruments-TPS2553DBVR_C55266.pdf",
+   "description": "-40℃~+150℃ 1 1.5A 2.5V~6.5V 85mΩ Active High High Side Switch 过压保护、软启动、欠压锁定、反向电压保护、集成电荷泵、Overcurrent Protection、Over temperature protection、锁存保护、Short-Circuit  Protection SOT-23-6 Power Distribution Switches ROHS",
+   "fetched_utc": "2026-11-07T16:06:46Z",
+   "jlc_library": "extended",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS2553DBVR",
+   "package": "SOT-23-6",
+   "price_usd": [
+    [
+     1,
+     0.5528
+    ],
+    [
+     10,
+     0.458
+    ],
+    [
+     30,
+     0.3909
+    ],
+    [
+     100,
+     0.3353
+    ],
+    [
+     500,
+     0.3173
+    ],
+    [
+     1000,
+     0.3075
+    ]
+   ],
+   "stock": 57964,
+   "url": "https://www.lcsc.com/product-detail/power-distribution-switches_texas-instruments-tps2553dbvr_C55266.html"
+  },
+  "C861068": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "102kΩ",
+    "Temperature Coefficient": "±25ppm/℃",
+    "Tolerance": "±0.1%",
+    "Type": "Thin Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190030_YAGEO-RT0603BRD07102KL_C861068.pdf",
+   "description": "-55℃~+155℃ 100mW 102kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-07T16:06:47Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD07102KL",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0368
+    ],
+    [
+     200,
+     0.0315
+    ],
+    [
+     600,
+     0.0285
+    ],
+    [
+     5000,
+     0.0267
+    ],
+    [
+     10000,
+     0.0251
+    ],
+    [
+     20000,
+     0.0243
+    ]
+   ],
+   "stock": 8542,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rt0603brd07102kl_C861068.html"
+  },
+  "C861611": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "9.09kΩ",
+    "Temperature Coefficient": "±25ppm/℃",
+    "Tolerance": "±0.1%",
+    "Type": "Thin Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190000_YAGEO-RT0603BRD079K09L_C861611.pdf",
+   "description": "-55℃~+155℃ 100mW 75V 9.09kΩ Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-07T16:06:48Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD079K09L",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0521
+    ],
+    [
+     200,
+     0.0445
+    ],
+    [
+     600,
+     0.0403
+    ],
+    [
+     5000,
+     0.0378
+    ],
+    [
+     10000,
+     0.0355
+    ],
+    [
+     20000,
+     0.0344
+    ]
+   ],
+   "stock": 9225,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rt0603brd079k09l_C861611.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C111738",
+  "C18203260",
+  "C18203261",
+  "C240829",
+  "C490534",
+  "C55266",
+  "C861068",
+  "C861611"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}

@@ -20,7 +20,9 @@
   "design/parts/snapshots/2026-10-24-manual.json",
   "design/parts/snapshots/2026-11-06-lcsc.json",
   "design/parts/snapshots/2026-11-06-manual.json",
-  "design/parts/snapshots/2026-11-07-manual.json"
+  "design/parts/snapshots/2026-11-07-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-reads-e-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-reads-e-lcsc.json"
  ],
  "bom_v2_rows": {
   "4": {
