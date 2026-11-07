@@ -62,7 +62,7 @@
       },
       {
         "file": "design/E3.json",
-        "sha256": "933fcdd4d5f6ee6bdbc21afff56299a32211363171c5d509b0432651f26bca6d"
+        "sha256": "a84e824308def639d81a72ca97b054e329cfed89a76fd1d6a8f45f61c1016db8"
       },
       {
         "file": "design/E4.json",
@@ -78,7 +78,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "f112e459f95fb8eddfff80bb5717fd180e95bba9d27efbb6639faae63d83bb26"
+        "sha256": "564e965c5d07c2dcf245766d149a78407f1fe412de8e2538b0b91aec8bf02caf"
       }
     ],
     "source_documents": [

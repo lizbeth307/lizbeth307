@@ -116,9 +116,19 @@
         "type": "passive"
       },
       {
+        "ref": "J202",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
         "ref": "U303",
         "pin": "5",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "1",
+        "type": "passive"
       }
     ],
     "PICO_DISP_EN": [
@@ -133,9 +143,19 @@
         "type": "passive"
       },
       {
+        "ref": "J203",
+        "pin": "16",
+        "type": "passive"
+      },
+      {
         "ref": "U305",
         "pin": "21",
         "type": "output"
+      },
+      {
+        "ref": "J307",
+        "pin": "16",
+        "type": "passive"
       }
     ],
     "EN_LIME3V3": [
@@ -150,9 +170,19 @@
         "type": "passive"
       },
       {
+        "ref": "J202",
+        "pin": "7",
+        "type": "passive"
+      },
+      {
         "ref": "U303",
         "pin": "21",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "7",
+        "type": "passive"
       }
     ],
     "EN_AUX12": [
@@ -167,9 +197,19 @@
         "type": "passive"
       },
       {
+        "ref": "J202",
+        "pin": "3",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "22",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "3",
+        "type": "passive"
       }
     ],
     "EN_LNA1": [
@@ -184,9 +224,19 @@
         "type": "passive"
       },
       {
+        "ref": "J202",
+        "pin": "8",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "26",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "8",
+        "type": "passive"
       }
     ],
     "EN_LNA2": [
@@ -206,9 +256,19 @@
         "type": "input"
       },
       {
+        "ref": "J202",
+        "pin": "9",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "27",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "9",
+        "type": "passive"
       }
     ],
     "EN_LNA3": [
@@ -228,9 +288,19 @@
         "type": "input"
       },
       {
+        "ref": "J202",
+        "pin": "10",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "28",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "10",
+        "type": "passive"
       }
     ],
     "EN_LNA4": [
@@ -245,9 +315,19 @@
         "type": "passive"
       },
       {
+        "ref": "J202",
+        "pin": "11",
+        "type": "passive"
+      },
+      {
         "ref": "U302",
         "pin": "28",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "11",
+        "type": "passive"
       }
     ],
     "EN_RTLB": [
@@ -262,9 +342,19 @@
         "type": "passive"
       },
       {
+        "ref": "J202",
+        "pin": "14",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "24",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "14",
+        "type": "passive"
       }
     ],
     "EN_LNB": [
@@ -284,9 +374,19 @@
         "type": "passive"
       },
       {
+        "ref": "J202",
+        "pin": "12",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "1",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "12",
+        "type": "passive"
       }
     ],
     "EN_BONI": [
@@ -311,9 +411,19 @@
         "type": "input"
       },
       {
+        "ref": "J202",
+        "pin": "4",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "2",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "4",
+        "type": "passive"
       }
     ],
     "EN_SB_LNA": [
@@ -328,88 +438,63 @@
         "type": "passive"
       },
       {
+        "ref": "J202",
+        "pin": "15",
+        "type": "passive"
+      },
+      {
         "ref": "U303",
         "pin": "25",
         "type": "output"
-      }
-    ],
-    "K1_ON": [
-      {
-        "ref": "U301",
-        "pin": "3",
-        "type": "output"
       },
       {
-        "ref": "R412",
-        "pin": "1",
+        "ref": "J306",
+        "pin": "15",
         "type": "passive"
       }
     ],
-    "K2_ON": [
+    "EN_HFP": [
       {
-        "ref": "U301",
-        "pin": "4",
-        "type": "output"
-      },
-      {
-        "ref": "R413",
-        "pin": "1",
-        "type": "passive"
-      }
-    ],
-    "SW_RTLA_A": [
-      {
-        "ref": "U301",
+        "ref": "J202",
         "pin": "5",
-        "type": "output"
-      },
-      {
-        "ref": "R440",
-        "pin": "1",
         "type": "passive"
-      }
-    ],
-    "SW_RTLA_B": [
+      },
       {
         "ref": "U301",
-        "pin": "6",
+        "pin": "25",
         "type": "output"
       },
       {
-        "ref": "R441",
-        "pin": "1",
+        "ref": "J306",
+        "pin": "5",
         "type": "passive"
-      }
-    ],
-    "SW_RTLB_A": [
-      {
-        "ref": "U301",
-        "pin": "7",
-        "type": "output"
       },
       {
-        "ref": "R442",
-        "pin": "1",
-        "type": "passive"
-      }
-    ],
-    "SW_RTLB_B": [
-      {
-        "ref": "U301",
-        "pin": "8",
-        "type": "output"
+        "ref": "U503",
+        "pin": "3",
+        "type": "input"
       },
       {
-        "ref": "R443",
+        "ref": "R510",
         "pin": "1",
         "type": "passive"
       }
     ],
     "EN_LABPORT": [
       {
+        "ref": "J202",
+        "pin": "6",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "21",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "6",
+        "type": "passive"
       },
       {
         "ref": "U502",
@@ -424,9 +509,19 @@
     ],
     "EN_RTLA": [
       {
+        "ref": "J202",
+        "pin": "13",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "23",
         "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "13",
+        "type": "passive"
       },
       {
         "ref": "U501",
@@ -439,20 +534,135 @@
         "type": "passive"
       }
     ],
-    "EN_HFP": [
+    "K1_ON": [
       {
         "ref": "U301",
-        "pin": "25",
+        "pin": "3",
         "type": "output"
       },
       {
-        "ref": "U503",
-        "pin": "3",
-        "type": "input"
+        "ref": "J308",
+        "pin": "5",
+        "type": "passive"
       },
       {
-        "ref": "R510",
+        "ref": "R412",
         "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "J418",
+        "pin": "5",
+        "type": "passive"
+      }
+    ],
+    "K2_ON": [
+      {
+        "ref": "U301",
+        "pin": "4",
+        "type": "output"
+      },
+      {
+        "ref": "J308",
+        "pin": "6",
+        "type": "passive"
+      },
+      {
+        "ref": "R413",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "J418",
+        "pin": "6",
+        "type": "passive"
+      }
+    ],
+    "SW_RTLA_A": [
+      {
+        "ref": "U301",
+        "pin": "5",
+        "type": "output"
+      },
+      {
+        "ref": "J309",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "R440",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "J419",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "SW_RTLA_B": [
+      {
+        "ref": "U301",
+        "pin": "6",
+        "type": "output"
+      },
+      {
+        "ref": "J309",
+        "pin": "2",
+        "type": "passive"
+      },
+      {
+        "ref": "R441",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "J419",
+        "pin": "2",
+        "type": "passive"
+      }
+    ],
+    "SW_RTLB_A": [
+      {
+        "ref": "U301",
+        "pin": "7",
+        "type": "output"
+      },
+      {
+        "ref": "J309",
+        "pin": "3",
+        "type": "passive"
+      },
+      {
+        "ref": "R442",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "J419",
+        "pin": "3",
+        "type": "passive"
+      }
+    ],
+    "SW_RTLB_B": [
+      {
+        "ref": "U301",
+        "pin": "8",
+        "type": "output"
+      },
+      {
+        "ref": "J309",
+        "pin": "4",
+        "type": "passive"
+      },
+      {
+        "ref": "R443",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "J419",
+        "pin": "4",
         "type": "passive"
       }
     ],
@@ -461,6 +671,11 @@
         "ref": "U302",
         "pin": "8",
         "type": "output"
+      },
+      {
+        "ref": "J311",
+        "pin": "3",
+        "type": "passive"
       },
       {
         "ref": "U505",
@@ -480,8 +695,18 @@
         "type": "output"
       },
       {
+        "ref": "J308",
+        "pin": "7",
+        "type": "passive"
+      },
+      {
         "ref": "R444",
         "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "J418",
+        "pin": "7",
         "type": "passive"
       }
     ],
@@ -492,8 +717,18 @@
         "type": "output"
       },
       {
+        "ref": "J308",
+        "pin": "8",
+        "type": "passive"
+      },
+      {
         "ref": "R445",
         "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "J418",
+        "pin": "8",
         "type": "passive"
       }
     ]

@@ -1,11 +1,11 @@
 {
   "status": "PASS",
   "input_sha256": {
-    "design/E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
-    "design/E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
-    "design/E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
-    "design/E4.json": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc",
-    "design/E5.json": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+    "design/E1.json": "256ffe717c12e2f876b6c1736a8a9798f5e3de2ffc62f2253995da2d272bf4c4",
+    "design/E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
+    "design/E3.json": "a84e824308def639d81a72ca97b054e329cfed89a76fd1d6a8f45f61c1016db8",
+    "design/E4.json": "ad20d3e8e9268c3ca74c2e760adc5f1efc93376672a13574cd256a1fa81131ee",
+    "design/E5.json": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
   },
   "radxa_gpio_contract": "PASS",
   "raw_battery_negative_isolated_from_protected_return": "PASS",

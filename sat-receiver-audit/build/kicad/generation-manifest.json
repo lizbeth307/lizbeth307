@@ -5,8 +5,8 @@
     {
       "stem": "E1",
       "instance": "a943ccec-2813-5b6f-9c47-b1bcb52cee7f",
-      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/1)",
-      "components": 80,
+      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/2)",
+      "components": 73,
       "sheet": "E1",
       "notes": [
         "E1-03",
@@ -14,27 +14,48 @@
         "E1-04",
         "E1-05",
         "E1-02",
-        "E1-01",
         "E1-06"
       ],
-      "note_wrap_cap": 180,
+      "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E1-03": 180,
-        "E1-07": 180,
-        "E1-04": 180,
-        "E1-05": 180,
-        "E1-02": 121,
-        "E1-01": 180,
+        "E1-03": 110,
+        "E1-07": 110,
+        "E1-04": 110,
+        "E1-05": 110,
+        "E1-02": 110,
         "E1-06": 110
       },
-      "fill": 0.683,
+      "fill": 0.655,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 81,
-        "ground_symbols": 46,
-        "junctions": 31,
+        "global_labels": 72,
+        "ground_symbols": 38,
+        "junctions": 28,
         "wire_crossings": 4,
-        "wires": 215
+        "wires": 194
+      }
+    },
+    {
+      "stem": "E1_02",
+      "instance": "18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2",
+      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (2/2)",
+      "components": 20,
+      "sheet": "E1",
+      "notes": [
+        "E1-01"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E1-01": 110
+      },
+      "fill": 0.255,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 31,
+        "ground_symbols": 15,
+        "junctions": 7,
+        "wire_crossings": 0,
+        "wires": 54
       }
     },
     {
@@ -116,7 +137,7 @@
       "stem": "E2_04",
       "instance": "b86a610c-9540-56eb-9a94-fee3a23ee226",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/5)",
-      "components": 53,
+      "components": 60,
       "sheet": "E2",
       "notes": [
         "E2-02"
@@ -125,14 +146,14 @@
       "note_wrap_chars": {
         "E2-02": 110
       },
-      "fill": 0.494,
+      "fill": 0.631,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 54,
-        "ground_symbols": 20,
-        "junctions": 22,
+        "global_labels": 114,
+        "ground_symbols": 25,
+        "junctions": 28,
         "wire_crossings": 2,
-        "wires": 137
+        "wires": 215
       }
     },
     {
@@ -161,63 +182,86 @@
     {
       "stem": "E3",
       "instance": "815659b2-9f99-5caa-9e97-34b4cd398135",
-      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/2)",
-      "components": 92,
+      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/3)",
+      "components": 76,
       "sheet": "E3",
       "notes": [
-        "E3-05",
         "E3-04",
         "N-E3-01",
+        "N-E3-03",
+        "E3-05",
+        "E3-08",
+        "N-E3-02",
         "E3-06"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E3-05": 110,
         "E3-04": 110,
         "N-E3-01": 110,
+        "N-E3-03": 110,
+        "E3-05": 110,
+        "E3-08": 110,
+        "N-E3-02": 110,
         "E3-06": 110
       },
-      "fill": 0.784,
+      "fill": 0.741,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 133,
-        "ground_symbols": 37,
-        "junctions": 73,
-        "wire_crossings": 14,
-        "wires": 425
+        "global_labels": 116,
+        "ground_symbols": 34,
+        "junctions": 63,
+        "wire_crossings": 10,
+        "wires": 371
       }
     },
     {
       "stem": "E3_02",
       "instance": "047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0",
-      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/2)",
-      "components": 63,
+      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/3)",
+      "components": 73,
       "sheet": "E3",
       "notes": [
-        "E3-03",
         "E3-02",
         "E3-07",
-        "E3-01",
-        "E3-08",
-        "N-E3-02"
+        "E3-03"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E3-03": 110,
         "E3-02": 110,
         "E3-07": 110,
-        "E3-01": 110,
-        "E3-08": 110,
-        "N-E3-02": 110
+        "E3-03": 110
       },
-      "fill": 0.71,
+      "fill": 0.633,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 98,
-        "ground_symbols": 36,
-        "junctions": 39,
-        "wire_crossings": 9,
-        "wires": 255
+        "global_labels": 104,
+        "ground_symbols": 35,
+        "junctions": 36,
+        "wire_crossings": 6,
+        "wires": 268
+      }
+    },
+    {
+      "stem": "E3_03",
+      "instance": "c85ad7f8-a0d1-5e29-929c-feed1fd251ab",
+      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (3/3)",
+      "components": 22,
+      "sheet": "E3",
+      "notes": [
+        "E3-01"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E3-01": 110
+      },
+      "fill": 0.448,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 101,
+        "ground_symbols": 16,
+        "junctions": 19,
+        "wire_crossings": 7,
+        "wires": 155
       }
     },
     {
@@ -280,7 +324,7 @@
       "stem": "E4_03",
       "instance": "4dd92141-48db-50ea-8b51-bae65ea8ecfb",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (3/4)",
-      "components": 80,
+      "components": 83,
       "sheet": "E4",
       "notes": [
         "E4-01",
@@ -291,14 +335,14 @@
         "E4-01": 110,
         "E4-04": 110
       },
-      "fill": 0.668,
+      "fill": 0.71,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 112,
-        "ground_symbols": 50,
-        "junctions": 46,
-        "wire_crossings": 0,
-        "wires": 259
+        "global_labels": 128,
+        "ground_symbols": 52,
+        "junctions": 47,
+        "wire_crossings": 2,
+        "wires": 281
       }
     },
     {
@@ -324,86 +368,86 @@
       "stem": "E5",
       "instance": "7961f449-97be-5318-9750-0d1b8f253ccf",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (1/2)",
-      "components": 41,
+      "components": 56,
       "sheet": "E5",
       "notes": [
-        "E5-08",
-        "E5-02",
-        "N-E5-04",
-        "N-E5-05",
-        "E5-07",
         "E5-10",
+        "E5-09",
+        "E5-04",
+        "N-E5-01",
+        "N-E5-02",
         "E5-05",
         "N-E5-03",
         "E5-03"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E5-08": 110,
-        "E5-02": 110,
-        "N-E5-04": 110,
-        "N-E5-05": 110,
-        "E5-07": 110,
         "E5-10": 110,
+        "E5-09": 110,
+        "E5-04": 110,
+        "N-E5-01": 110,
+        "N-E5-02": 110,
         "E5-05": 110,
         "N-E5-03": 110,
         "E5-03": 110
       },
-      "fill": 0.808,
+      "fill": 0.734,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 75,
-        "ground_symbols": 31,
-        "junctions": 31,
-        "wire_crossings": 4,
-        "wires": 221
+        "global_labels": 91,
+        "ground_symbols": 48,
+        "junctions": 36,
+        "wire_crossings": 2,
+        "wires": 255
       }
     },
     {
       "stem": "E5_02",
       "instance": "2f560f15-377c-5a7b-8d16-c38c753251d6",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (2/2)",
-      "components": 39,
+      "components": 30,
       "sheet": "E5",
       "notes": [
         "E5-01",
         "E5-06",
-        "E5-09",
-        "E5-04",
-        "N-E5-01",
-        "N-E5-02"
+        "E5-08",
+        "E5-02",
+        "N-E5-04",
+        "N-E5-05",
+        "E5-07"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "E5-01": 110,
         "E5-06": 110,
-        "E5-09": 110,
-        "E5-04": 110,
-        "N-E5-01": 110,
-        "N-E5-02": 110
+        "E5-08": 110,
+        "E5-02": 110,
+        "N-E5-04": 110,
+        "N-E5-05": 110,
+        "E5-07": 110
       },
-      "fill": 0.506,
+      "fill": 0.549,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 56,
-        "ground_symbols": 35,
-        "junctions": 38,
-        "wire_crossings": 2,
-        "wires": 177
+        "ground_symbols": 24,
+        "junctions": 30,
+        "wire_crossings": 0,
+        "wires": 155
       }
     }
   ],
-  "components": 794,
+  "components": 839,
   "supply_annotations": 25,
-  "connected_contacts": 2297,
-  "nets": 485,
+  "connected_contacts": 2555,
+  "nets": 486,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 942,
-    "ground_symbols": 494,
-    "junctions": 471,
-    "wire_crossings": 48,
-    "wires": 2787
+    "global_labels": 1146,
+    "ground_symbols": 526,
+    "junctions": 485,
+    "wire_crossings": 46,
+    "wires": 3046
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -923,6 +967,16 @@
       "sheet": "E3"
     },
     {
+      "id": "N-E3-03",
+      "refs": [
+        "J301",
+        "J304"
+      ],
+      "stack": "§5.2 (UART7/PPS ≤20 см); §8.1",
+      "text": "Гілка PPS шлейфу S01 (W2 GR-3 за рішенням build/15 W2 MECH-1): провідники 6 (GND), 7 (PPS), 16 і 18 (UART6) стрічки відокремити одразу за розеткою на J20 і довести до P1 LC76G (P1.2/P1.5/P1.4/P1.3, ≤200 мм; модель 196 мм); на розетці CTRL ці провідники вирізати до обтиснення, контакти 6/7/16/18 бокса J304 — без кола. Мережі E3 не змінюються. Перевірка: прозвонка J20.7 → P1.5 — є, J20.7 → J304.7 — розрив.",
+      "sheet": "E3"
+    },
+    {
       "id": "N-E4-01",
       "refs": [
         "R4400",
@@ -1057,10 +1111,10 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
-    "E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
-    "E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
-    "E4.json": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc",
-    "E5.json": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+    "E1.json": "256ffe717c12e2f876b6c1736a8a9798f5e3de2ffc62f2253995da2d272bf4c4",
+    "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
+    "E3.json": "a84e824308def639d81a72ca97b054e329cfed89a76fd1d6a8f45f61c1016db8",
+    "E4.json": "ad20d3e8e9268c3ca74c2e760adc5f1efc93376672a13574cd256a1fa81131ee",
+    "E5.json": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
   }
 }
