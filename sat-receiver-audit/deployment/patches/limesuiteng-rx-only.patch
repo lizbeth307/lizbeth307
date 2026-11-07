@@ -284,6 +284,36 @@
      if (!samples) // Nothing to transmit
          return 0;
  
+--- a/src/boards/BoardSupportLoader.in.cpp
++++ b/src/boards/BoardSupportLoader.in.cpp
+@@ -21,7 +21,7 @@
+ #endif
+ 
+ #if LIMESUITENG_PCIE
+-    __loadDeviceFactoryPCIe();
++    /* SRRX_RX_ONLY: DeviceFactoryPCIe (LimeSDR-X3/XTRX/MMX8/sSDR) is not compiled; only the LA9310 factory registers. */
+     __loadDeviceFactoryLA9310();
+ #endif
+ }
+--- a/src/boards/CMakeLists.txt
++++ b/src/boards/CMakeLists.txt
+@@ -4,12 +4,11 @@
+ target_sources(limesuiteng PRIVATE DeviceRegistry.cpp DeviceHandle.cpp LMS7002M_SDRDevice.cpp GPIO.cpp)
+ 
+ if(LIMESUITENG_PCIE)
+-    target_sources(limesuiteng PRIVATE DeviceFactoryPCIe.cpp DeviceFactoryLA9310.cpp)
+-    add_subdirectory(LimeSDR_X3)
+-    add_subdirectory(LimeSDR_XTRX)
+-    add_subdirectory(MMX8)
++    # SRRX_RX_ONLY: only the LimeSDR-Micro (LA9310) board and its factory are compiled. The LimePCIe
++    # boards (LimeSDR-X3, LimeSDR-XTRX, MMX8, sSDR) and their DeviceFactoryPCIe, whose own TX paths
++    # are not audited, are left out of this receive-only build.
++    target_sources(limesuiteng PRIVATE DeviceFactoryLA9310.cpp)
+     add_subdirectory(LimeSDR_Micro)
+-    add_subdirectory(sSDR)
+ endif()
+ 
+ if(LIMESUITENG_USB_FX3)
 --- a/src/boards/LMS7002M_SDRDevice.cpp
 +++ b/src/boards/LMS7002M_SDRDevice.cpp
 @@ -104,8 +104,19 @@
@@ -393,6 +423,43 @@
      if (index >= mLMSChips.size())
          throw std::logic_error("Invalid chip index"s);
      return mLMSChips.at(index).get();
+--- a/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
++++ b/src/boards/LimeSDR_Micro/LA9310_TRX.cpp
+@@ -147,6 +147,10 @@
+     bool needTx = cfg.channels.at(TRXDir::Tx).size() > 0;
+     bool needRx = cfg.channels.at(TRXDir::Rx).size() > 0;
+ 
++    /* SRRX_RX_ONLY: a stream with TX channels is never set up (no TX DMA ring, no TX pipeline, no Tx thread). */
++    if (needTx)
++        return ReportError(OpStatus::NotSupported, "SRRX receive-only: TX stream setup rejected"s);
++
+     mConfig = cfg;
+     mConfig.linkFormat = DataFormat::I16; // always force I16 link
+ 
+@@ -1357,17 +1361,20 @@
+ 
+ uint32_t LA9310_TRX::Transmit(const lime::complex32f_t* const* samples, uint32_t count, const StreamTxMeta* meta)
+ {
+-    return StreamTxTemplate(samples, count, meta, chrono::microseconds(10000));
++    /* SRRX_RX_ONLY: no transmit path; a stream never has TX channels (Setup rejects them). */
++    return 0;
+ }
+ 
+ uint32_t LA9310_TRX::Transmit(const lime::complex16_t* const* samples, uint32_t count, const StreamTxMeta* meta)
+ {
+-    return StreamTxTemplate(samples, count, meta, chrono::microseconds(100000));
++    /* SRRX_RX_ONLY: no transmit path; a stream never has TX channels (Setup rejects them). */
++    return 0;
+ }
+ 
+ uint32_t LA9310_TRX::Transmit(const lime::complex12_t* const* samples, uint32_t count, const StreamTxMeta* meta)
+ {
+-    return StreamTxTemplate(samples, count, meta, chrono::microseconds(100000));
++    /* SRRX_RX_ONLY: no transmit path; a stream never has TX channels (Setup rejects them). */
++    return 0;
+ }
+ 
+ } // namespace lime
 --- a/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
 +++ b/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
 @@ -169,6 +169,13 @@
