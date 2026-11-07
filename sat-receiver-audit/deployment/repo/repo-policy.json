@@ -14,11 +14,20 @@
     "qcom-*", "fastrpc*", "libadsprpc*", "libcdsprpc*", "libsdsprpc*", "*dsp-default-listener*",
     "hexagon-dsp-binaries*", "firmware-qcom-*", "aic8800-*", "task-*"
   ],
+  "mirror": {
+    "origin": "srrx-mirror",
+    "label": "SR-RX mirrored noble packages (image package closure)",
+    "codename": "noble-mirror",
+    "component": "main",
+    "architecture": "arm64",
+    "contents": "deployment/image/package-closure.json"
+  },
   "notes": [
     "Origin srrx-lab is the 1001 stanza of etc/apt/preferences.d/lab.pref (repo/lab.pref); the mirrored noble snapshot is a separate publication with origin srrx-mirror at 990 (build/07-pz-vstanovlennia.md section 2; the origin names were TBD there and are fixed here).",
     "never_in_lab_repo_globs: kernel, bootloader/BIOS (SPI edk2), board firmware and DSP/FastRPC packages never come from the lab repository; they stay on the image at their held versions (build/07-pz-vstanovlennia.md section 1.2 and section 24).",
     "No Valid-Until in the Release file: the device is offline and its RTC may be wrong. Freshness is the reviewed release record instead: offline_snapshot.inrelease_sha256 pins one exact signed InRelease, so an older signed publication is refused.",
-    "status DRAFT until the owner's offline key ceremony (repo/README.md) fixes the release fingerprint; CI signs only with a throwaway test key."
+    "status DRAFT until the owner's offline key ceremony (repo/README.md) fixes the release fingerprint; CI signs only with a throwaway test key.",
+    "mirror: the srrx-mirror publication (origin at 990 in lab.pref, Suites of repo/srrx-mirror.sources) carries exactly the debs of the mirror contents file, the image package closure: publish.sh --mirror refuses any other deb and deploy.py verify-repo --closure any other package, version or byte. It is signed by the same key and installed with the same keyring_path (Signed-By) as srrx-lab; no +labN rule, never_in_lab_repo_globs, held packages and the receive-only rules apply as in srrx-lab."
   ],
   "sources": ["build/07-pz-vstanovlennia.md:102-119", "build/07-pz-vstanovlennia.md:565-567", "build/15-rishennia-komplektu.md (Ключ підпису офлайн-репозиторію)"]
 }

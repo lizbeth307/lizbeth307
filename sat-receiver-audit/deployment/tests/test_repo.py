@@ -1302,5 +1302,343 @@ class ReviewedHeavyInputsTests(unittest.TestCase):
         self.assertIn('python3 deployment/repo/check_repo.py --help > "$RUNNER_TEMP/check-repo-help.txt"', text)
 
 
+# --- W2 REPO-MIRROR: the srrx-mirror publication of the image package closure (repo-policy.json
+# mirror object, publish.sh --mirror, deploy.verify_repo(closure=...), check_repo.py mirror pieces).
+# Synthetic closures and debs in temporary directories; the signed cases use a throwaway key.
+CLOSURE_FILE = HERE / "image/package-closure.json"
+
+
+def closure_file(path, packages):
+    """A package closure file (schema 1, the build_image closure entry keys) for synthetic debs:
+    packages [(name, version, architecture, deb bytes)]."""
+    entries = [{"package": n, "version": v, "architecture": a, "filename": "pool/main/%s/%s/%s_%s_%s.deb" % (n[0], n, n, v, a),
+                "suite": "noble-updates", "sha256": sha(d), "size": len(d), "r2_version": None, "reason": "synthetic"}
+               for n, v, a, d in sorted(packages)]
+    Path(path).write_text(json.dumps({"schema_version": 1, "status": "CANDIDATE", "packages": entries}, indent=2), encoding="utf-8")
+    return Path(path)
+
+
+def zstd_deb(deb):
+    """The same .deb with its data member recompressed as data.tar.zst (zstd CLI), as the Ubuntu archive packs."""
+    import lzma
+    out, offset = b"!<arch>\n", 8
+    while offset < len(deb):
+        header = deb[offset:offset + 60]
+        size = int(header[48:58])
+        name, body = header[:16].strip().decode(), deb[offset + 60:offset + 60 + size]
+        if name == "data.tar.xz":
+            name = "data.tar.zst"
+            body = subprocess.run(["zstd", "-q", "-c"], input=lzma.decompress(body), capture_output=True, check=True, timeout=60).stdout
+        out += (name.ljust(16) + "0".ljust(12) + "0".ljust(6) + "0".ljust(6) + "100644".ljust(8) + str(len(body)).ljust(10) + "`\n").encode()
+        out += body + (b"\n" if len(body) % 2 else b"")
+        offset += 60 + size + (size & 1)
+    return out
+
+
+class MirrorPolicyTests(unittest.TestCase):
+    """The repo-policy.json mirror object, the strict closure reader and the publish.sh --mirror mode."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-mirror-policy-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def test_mirror_fields_match_lab_pref_and_the_mirror_sources_entry(self):
+        policy = deploy.load(deploy.REPO_POLICY)
+        mirror = policy["mirror"]
+        self.assertEqual(tuple(mirror), deploy.MIRROR_POLICY_KEYS)
+        self.assertEqual((policy["status"], mirror["origin"]), ("DRAFT", "srrx-mirror"))
+        wildcards = [s for s in deploy.deb822((HERE / "repo/lab.pref").read_text(encoding="utf-8"), "lab.pref") if s["package"] == "*"]
+        self.assertEqual((wildcards[1]["pin"], wildcards[1]["pin-priority"]), ("release o=" + mirror["origin"], "990"))
+        entry = deploy.deb822((HERE / "repo/srrx-mirror.sources").read_text(encoding="utf-8"), "mirror")[0]
+        self.assertEqual((entry["suites"], entry["components"], entry["architectures"], entry["signed-by"]),
+                         (mirror["codename"], mirror["component"], mirror["architecture"], policy["keyring_path"]))  # one key, one keyring
+        self.assertNotEqual(mirror["codename"], policy["codename"])
+        self.assertEqual((HERE.parent / mirror["contents"]).resolve(), CLOSURE_FILE.resolve())
+        self.assertTrue(CLOSURE_FILE.is_file())
+
+    def test_the_closure_is_read_strictly(self):
+        closure = deploy.load(CLOSURE_FILE)
+        self.assertEqual(deploy.mirror_closure(CLOSURE_FILE, "arm64"),
+                         {(p["package"], p["version"], p["architecture"]): (p["sha256"], p["size"]) for p in closure["packages"]})
+        first = closure["packages"][0]
+        bad = {"another schema": dict(closure, schema_version=2), "no packages": dict(closure, packages=[]),
+               "a repeated package": dict(closure, packages=closure["packages"] + [first]),
+               "a short SHA-256": dict(closure, packages=[dict(first, sha256="0" * 63)]),
+               "a foreign architecture": dict(closure, packages=[dict(first, architecture="amd64")]),
+               "no size": dict(closure, packages=[dict(first, size=0)]),
+               "a missing key": dict(closure, packages=[{k: v for k, v in first.items() if k != "version"}])}
+        for label, document in bad.items():
+            path = self.root / "closure.json"
+            path.write_text(json.dumps(document), encoding="utf-8")
+            with self.subTest(label), self.assertRaisesRegex(deploy.DeploymentError, "package closure"):
+                deploy.mirror_closure(path, "arm64")
+
+    def test_publish_script_has_a_mirror_mode_named_by_the_policy(self):
+        script = (HERE / "repo/publish.sh").read_text(encoding="utf-8")
+        for needle in ('"${1-}" = --mirror', 'policy["mirror"]', 'names["contents"]', "not exactly the package closure",
+                       'repo create -distribution="$codename"', 'repo add "$publication"', "srrx-lab:*+lab[1-9]*_arm64.deb"):
+            self.assertIn(needle, script)
+        self.assertEqual(script.count("python3 -B -I -"), 1)  # one reader for both publications
+
+    def test_a_zstd_data_member_without_dpkg_deb_fails_closed(self):
+        deb = self.root / "z.deb"
+        deb.write_bytes(make_deb({"a": b"1"}).replace(b"data.tar.xz ", b"data.tar.zst"))  # same header length
+        with patch.object(deploy.subprocess, "Popen", side_effect=OSError("no dpkg-deb")), \
+                self.assertRaisesRegex(deploy.DeploymentError, "dpkg-deb unavailable for the data.tar.zst member"):
+            deploy.deb_data_inventory(deb)
+
+    def test_verify_repo_command_needs_records_or_a_closure(self):
+        result = subprocess.run([sys.executable, "-I", str(HERE / "deploy.py"), "verify-repo", "--repo", "r", "--keyring", "k",
+                                 "--fingerprint", "A" * 40, "--sources-entry", "s"], capture_output=True, text=True, timeout=120)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("needs --build-record (srrx-lab) or --closure (srrx-mirror)", result.stderr)
+
+    def test_check_repo_usage_lists_the_mirror_subcommand(self):
+        # sr-rx-packages.yml reads the subcommands from the first {...} of the usage text.
+        out = subprocess.run([sys.executable, "-I", str(HERE / "repo/check_repo.py"), "--help"], capture_output=True, text=True,
+                             timeout=120, env=dict(os.environ, COLUMNS="80")).stdout
+        self.assertIn("mirror", re.search(r"\{[a-z,-]*\}", out).group(0)[1:-1].split(","))
+
+
+@unittest.skipUnless(shutil.which("dpkg-deb") and shutil.which("zstd"), "dpkg-deb and zstd needed for a data.tar.zst member")
+class ZstdDataMemberTests(unittest.TestCase):
+    """deploy.deb_data_inventory reads a data.tar.zst member (Ubuntu archive debs) through dpkg-deb --fsys-tarfile."""
+
+    def test_zstd_and_xz_members_give_the_same_inventory(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-zstd-") as temporary:
+            xz, zst = Path(temporary) / "x.deb", Path(temporary) / "z.deb"
+            xz.write_bytes(rtl_deb("librtlsdr2"))
+            zst.write_bytes(zstd_deb(xz.read_bytes()))
+            self.assertIn(b"data.tar.zst", zst.read_bytes()[:400])
+            self.assertEqual(deploy.deb_data_inventory(zst), deploy.deb_data_inventory(xz))
+            data = bytearray(zst.read_bytes())
+            data[-8] ^= 0xFF  # inside the zstd frame
+            zst.write_bytes(bytes(data))
+            with self.assertRaises(deploy.DeploymentError):
+                deploy.deb_data_inventory(zst)
+
+
+@unittest.skipUnless(GPG, "gpg/gpgv not available (SRRX_RELEASE_BUILDER=1 makes this a failure)")
+class MirrorRepositoryTests(unittest.TestCase):
+    """deploy.verify_repo(closure=...) on a synthetic srrx-mirror publication signed by a throwaway key."""
+    setUpClass = classmethod(SignedRepositoryTests.setUpClass.__func__)
+    tearDownClass = classmethod(SignedRepositoryTests.tearDownClass.__func__)
+    LABEL = "SR-RX mirrored noble packages (image package closure)"
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-mirror-test-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.keyring, self.wrong = self.root / "srrx-lab.gpg", self.root / "other.gpg"
+        self.keys.export(self.fpr, self.keyring)
+        self.keys.export(self.other, self.wrong)
+        self.sources = HERE / "repo/srrx-mirror.sources"
+        # Noble-style versions: no +labN rule in the mirror.
+        self.packages = [("srrx-closure-data", "2026e-0ubuntu0.24.04.1", "all", make_deb({"usr/share/srrx-closure-data/zone": b"synthetic"})),
+                         ("srrx-closure-tool", "1.0-1ubuntu0.24.04.1", "arm64", make_deb({"usr/sbin/srrx-closure-tool": b"\x7fELF synthetic"}))]
+        self.closure = closure_file(self.root / "package-closure.json", self.packages)
+
+    def publish(self, packages=None, origin="srrx-mirror", signer=None, extra=()):
+        """A signed srrx-mirror publication (dists/noble-mirror) of packages; extra adds pool files."""
+        repo = self.root / "repo"
+        if repo.exists():
+            shutil.rmtree(repo)
+        dist = repo / "dists/noble-mirror"
+        index = dist / "main/binary-arm64"
+        index.mkdir(parents=True)
+        stanzas = []
+        for name, version, arch, data in packages or self.packages:
+            filename = "pool/main/%s/%s/%s_%s_%s.deb" % (name[0], name, name, version, arch)
+            (repo / filename).parent.mkdir(parents=True, exist_ok=True)
+            (repo / filename).write_bytes(data)
+            stanzas.append("Package: %s\nVersion: %s\nArchitecture: %s\nFilename: %s\nSize: %d\nSHA256: %s\n"
+                           % (name, version, arch, filename, len(data), sha(data)))
+        for filename, data in extra:
+            (repo / filename).parent.mkdir(parents=True, exist_ok=True)
+            (repo / filename).write_bytes(data)
+        text = "\n".join(stanzas).encode()
+        (index / "Packages").write_bytes(text)
+        (index / "Packages.gz").write_bytes(gzip.compress(text, mtime=0))
+        (index / "Release").write_bytes(b"Archive: noble-mirror\nComponent: main\nArchitecture: arm64\n")
+        listed = "".join(" %s %d %s\n" % (sha((dist / p).read_bytes()), (dist / p).stat().st_size, p)
+                         for p in ("main/binary-arm64/Packages", "main/binary-arm64/Packages.gz", "main/binary-arm64/Release"))
+        release = ("Origin: %s\nLabel: %s\nSuite: noble-mirror\nCodename: noble-mirror\nDate: Sat, 07 Nov 2026 00:00:00 UTC\n"
+                   "Architectures: arm64\nComponents: main\nSHA256:\n%s" % (origin, self.LABEL, listed))
+        (dist / "InRelease").write_bytes(self.keys.clearsign(signer or self.fpr, release))
+        return repo
+
+    def verify(self, repo, **kwargs):
+        arguments = dict(repo=repo, keyring=self.keyring, fingerprint=self.fpr, build_records=[], sources_entry=self.sources, closure=self.closure)
+        arguments.update(kwargs)
+        return deploy.verify_repo(**arguments)
+
+    def refused(self, needle, repo, **kwargs):
+        with self.assertRaisesRegex(deploy.DeploymentError, needle):
+            self.verify(repo, **kwargs)
+
+    def changed(self, index, **change):
+        """self.packages with entry index changed (name, version, arch or deb bytes)."""
+        packages = list(self.packages)
+        name, version, arch, data = packages[index]
+        packages[index] = (change.get("name", name), change.get("version", version), change.get("arch", arch), change.get("data", data))
+        return packages
+
+    def test_the_mirror_of_exactly_the_closure_passes(self):
+        repo = self.publish()
+        result = self.verify(repo)
+        self.assertEqual((result["status"], result["publication"], result["packages"], result["hardware_ready"]),
+                         ("SIGNED_MIRROR_MATCHES_PACKAGE_CLOSURE", "srrx-mirror", 2, False))
+        self.assertEqual(result["closure"], {"path": str(self.closure), "sha256": deploy.sha(self.closure), "packages": 2})
+        pinned = self.verify(repo, inrelease_sha256=result["inrelease_sha256"], release=True)
+        self.assertTrue(pinned["release_path"])
+        status = self.root / "status"
+        status.write_text("".join("Package: %s\nStatus: hold ok installed\nVersion: %s\n\n" % (n, v) for n, v, _, _ in self.packages), encoding="utf-8")
+        self.assertEqual(self.verify(repo, target_status=status)["packages"], 2)  # held at the closure versions: unchanged
+
+    def test_changed_foreign_or_missing_packages_are_refused(self):
+        repo = self.publish()
+        deb = next(repo.rglob("srrx-closure-tool_*.deb"))
+        deb.write_bytes(deb.read_bytes()[:-1] + bytes([deb.read_bytes()[-1] ^ 0xFF]))
+        self.refused("pool .deb differs from the signed Packages index", repo)
+        changed = make_deb({"usr/sbin/srrx-closure-tool": b"\x7fELF synthetic, one byte else"})
+        self.refused("differs from its package closure entry", self.publish(self.changed(1, data=changed)))  # re-signed index, other bytes
+        self.refused("differs from its package closure entry", self.publish(self.changed(1, version="1.0-1ubuntu0.24.04.2")))
+        self.refused("differs from its package closure entry", self.publish(self.changed(0, arch="arm64")))
+        foreign = ("srrx-foreign", "1.0", "all", make_deb({"usr/share/doc/srrx-foreign/README": b"x"}))
+        self.refused("is not in the package closure", self.publish(self.packages + [foreign]))
+        self.refused("lacks closure packages: srrx-closure-tool", self.publish(self.packages[:1]))
+        self.refused("pool holds a file", self.publish(extra=[("pool/main/s/srrx-extra/srrx-extra_1.0_all.deb", b"unlisted")]))
+        twice = self.packages + [self.packages[1]]
+        self.refused("unsafe, duplicate or unhashed pool entry", self.publish(twice))
+
+    def test_signature_fingerprint_and_origin_rules_are_the_lab_ones(self):
+        repo = self.publish()
+        self.refused("not a good signature", repo, keyring=self.wrong)
+        self.refused("not a good signature", repo, fingerprint=self.other)  # wrong fingerprint, valid signature
+        self.refused("not a good signature", self.publish(signer=self.other))
+        repo = self.publish()
+        inrelease = repo / "dists/noble-mirror/InRelease"
+        inrelease.write_text(deploy.gpgv_signed_text(inrelease, self.keyring, [self.fpr]), encoding="utf-8")  # unsigned InRelease
+        self.refused("not a good signature", repo)
+        repo = self.publish()
+        self.refused("InRelease differs from the reviewed release record", repo, inrelease_sha256="0" * 64)
+        self.refused("foreign or unexpected repository origin", self.publish(origin="srrx-lab"))
+        self.refused("foreign or unexpected repository origin", self.publish(origin="Ubuntu"))
+
+    def test_records_apt_entry_and_release_pin(self):
+        repo = self.publish()
+        self.refused("has no build records", repo, build_records=[self.closure])
+        self.refused("apt entry must be one deb822 stanza", repo, sources_entry=HERE / "repo/srrx-lab.sources")
+        entry = self.root / "no-signed-by.sources"
+        entry.write_text("".join(l for l in self.sources.read_text(encoding="utf-8").splitlines(True) if not l.startswith("Signed-By:")), encoding="utf-8")
+        self.refused("apt entry must be one deb822 stanza", repo, sources_entry=entry)
+        self.refused("pinned InRelease", repo, release=True)
+
+    def test_held_kernel_and_receive_only_rules_still_apply(self):
+        repo = self.publish()
+        status = self.root / "status"
+        status.write_text("Package: srrx-closure-tool\nStatus: hold ok installed\nVersion: 0.9-1\n\n", encoding="utf-8")
+        self.refused("held package", repo, target_status=status)
+        cases = (("linux-image-6.18.2-4-qcom", "6.18.2-4", {"boot/vmlinuz": b"synthetic"}, "kernel, bootloader"),
+                 ("rtl-sdr", "2.0.1-2build1", {"usr/share/doc/rtl-sdr/README": b"synthetic"}, "receive-only policy forbids"),  # +labN only
+                 ("wsjtx", "2.6.1-1build1", {"usr/share/doc/wsjtx/README": b"synthetic"}, "receive-only policy forbids"),
+                 ("srrx-closure-tool", "1.0-1ubuntu0.24.04.1", {"usr/bin/rtl_tcp": b"\x7fELF tcp"}, "receive-only policy refuses the contents"))
+        for name, version, files, needle in cases:
+            packages = [(name, version, "arm64", make_deb(files))]
+            with self.subTest(name):
+                self.closure = closure_file(self.root / "package-closure.json", packages)
+                self.refused(needle, self.publish(packages))
+
+    def test_check_repo_mirror_tamper_refuses_every_case(self):
+        check_repo = load_check_repo("srrx_check_repo_mirror_tamper")
+        repo = self.publish()
+        with patch.dict(os.environ, {"GNUPGHOME": self.keys.home}):
+            result = check_repo.mirror_tamper(repo, self.keyring, self.wrong, self.fpr, self.closure)
+        self.assertEqual((result["status"], result["untampered"]), ("MIRROR_TAMPER_CASES_REFUSED", "SIGNED_MIRROR_MATCHES_PACKAGE_CLOSURE"))
+        self.assertEqual(set(result["cases"].values()), {"REFUSED"})
+        for case in ("changed .deb byte, index re-signed by the same key (srrx-closure-data)", "foreign package re-signed by the same key",
+                     "closure package missing, re-signed by the same key (srrx-closure-data)", "wrong fingerprint", "unsigned InRelease",
+                     "srrx-lab origin re-signed by the same key", "held package would change (srrx-closure-data)"):
+            self.assertIn(case, result["cases"])
+        self.assertEqual(len(result["cases"]), 17)
+        # resign() signs other contents validly: only the closure rules refuse them
+        with patch.dict(os.environ, {"GNUPGHOME": self.keys.home}):
+            check_repo.resign(repo, "noble-mirror", self.keyring, self.fpr)
+        self.assertEqual(self.verify(repo)["status"], "SIGNED_MIRROR_MATCHES_PACKAGE_CLOSURE")
+
+
+@unittest.skipUnless(shutil.which("dpkg-deb"), "dpkg-deb needed for the control fields")
+class MirrorSelectionTests(unittest.TestCase):
+    """check_repo.mirror_selection: every closure deb exactly its entry and free of receive-only findings, or no mirror."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-mirror-selection-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.check_repo = load_check_repo("srrx_check_repo_mirror_selection")
+
+    CONTROL = "Package: %s\nVersion: %s\nArchitecture: %s\nMaintainer: SR-RX unit test\nDescription: synthetic\n"
+
+    def select(self, packages, control=None):
+        debs = {}
+        for name, version, arch, files in packages:
+            path = self.root / ("%s_%s_%s.deb" % (name, version, arch))
+            path.write_bytes(control_deb((control or {}).get(name, self.CONTROL % (name, version, arch)), files))
+            debs[name] = path
+        closure = deploy.load(closure_file(self.root / "closure.json", [(n, v, a, debs[n].read_bytes()) for n, v, a, _ in packages]))
+        return self.check_repo.mirror_selection(closure, debs), closure, debs
+
+    def test_the_closure_debs_are_selected_or_the_mirror_is_refused(self):
+        good = [("srrx-closure-data", "2026e-0ubuntu0.24.04.1", "all", {"usr/share/srrx-closure-data/zone": b"z"}),
+                ("srrx-closure-tool", "1.0-1", "arm64", {"usr/sbin/srrx-closure-tool": b"\x7fELF t"})]
+        selected, closure, debs = self.select(good)
+        self.assertEqual([(s["package"], s["architecture"]) for s in selected], [("srrx-closure-data", "all"), ("srrx-closure-tool", "arm64")])
+        debs["srrx-closure-tool"].write_bytes(debs["srrx-closure-tool"].read_bytes() + b"\n")
+        with self.assertRaisesRegex(self.check_repo.CheckError, "differs from its package-closure.json entry"):
+            self.check_repo.mirror_selection(closure, debs)
+        with self.assertRaisesRegex(self.check_repo.CheckError, "control Version differs"):
+            self.select(good, control={"srrx-closure-tool": self.CONTROL % ("srrx-closure-tool", "1.0-2", "arm64")})
+        for name, version, files, needle in (("srrx-closure-tool", "1.0-1", {"usr/bin/rtl_tcp": b"\x7fELF"}, "TX/control executable"),
+                                             ("wsjtx", "2.6.1-1build1", {"usr/share/doc/wsjtx/README": b"x"}, "receive-only policy forbids wsjtx"),
+                                             ("sdrangel", "7.22.0-1", {"usr/share/doc/sdrangel/README": b"x"}, "receive-only policy forbids sdrangel"),
+                                             ("linux-image-6.18.2-4-qcom", "6.18.2-4", {"boot/x": b"x"}, "never_in_lab_repo_globs: linux-image-*")):
+            with self.subTest(name), self.assertRaisesRegex(self.check_repo.CheckError, "cannot be mirrored: .*" + re.escape(needle)):
+                self.select([(name, version, "arm64", files)])
+
+
+@unittest.skipUnless(os.name == "posix" and shutil.which("sh") and shutil.which("python3"), "POSIX sh and python3 needed")
+class MirrorPublishRefusalTests(unittest.TestCase):
+    """publish.sh --mirror refuses anything but the closure debs before aptly runs (no aptly needed here)."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-mirror-publish-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def publish(self, *args):
+        return subprocess.run(["sh", str(HERE / "repo/publish.sh")] + [str(a) for a in args], capture_output=True, text=True, timeout=120)
+
+    def test_only_the_closure_debs_get_past_the_check(self):
+        closure = deploy.load(CLOSURE_FILE)
+        fakes = []
+        for entry in closure["packages"]:
+            fakes.append(self.root / Path(entry["filename"]).name)
+            fakes[-1].write_bytes(b"not the closure deb")
+        foreign = self.root / "srrx-foreign_1.0_all.deb"
+        foreign.write_bytes(b"x")
+        for label, debs in (("other bytes", fakes), ("one missing", fakes[1:]), ("a foreign deb", fakes + [foreign])):
+            target = self.root / ("repo-" + label.replace(" ", "-"))
+            with self.subTest(label):
+                result = self.publish("--mirror", target, "A" * 40, *debs)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("not exactly the package closure deployment/image/package-closure.json", result.stderr)
+                self.assertFalse(target.exists())
+        tarball = self.root / "x.tar.gz"
+        tarball.write_bytes(b"x")
+        self.assertIn("not an arm64 or all package", self.publish("--mirror", self.root / "m", "A" * 40, tarball).stderr)
+        self.assertIn("not a +labN arm64 package", self.publish(self.root / "lab", "A" * 40, fakes[0]).stderr)  # the lab rule is unchanged
+
+
 if __name__ == "__main__":
     unittest.main()
