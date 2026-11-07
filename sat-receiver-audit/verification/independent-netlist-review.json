@@ -5,18 +5,18 @@
     "E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
     "E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
     "E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
-    "E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
+    "E4.json": "590eb7a5942d2dbe11015d67a63218b81af02a7540ac2c3c419ea90626d7f9ad",
     "E5.json": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
   },
-  "netlist_sha256": "c23ea8194f489a89509642f2889fe73ecaaad4254662e82b93359105c370bad8",
+  "netlist_sha256": "09be9823a82e097bd019ea4abb5cc7947a3a66c7aee225e2adc2e5f6a680bff1",
   "counts": {
-    "hardware_components": 777,
-    "hardware_pin_declarations": 2393,
-    "connected_hardware_pins": 2253,
+    "hardware_components": 782,
+    "hardware_pin_declarations": 2403,
+    "connected_hardware_pins": 2263,
     "connected_hardware_nets": 478,
     "declared_nc_pins": 140,
-    "xml_hardware_components": 777,
-    "xml_pin_nodes": 2393,
+    "xml_hardware_components": 782,
+    "xml_pin_nodes": 2403,
     "xml_nets": 618,
     "explicit_power_flags": 25
   },
@@ -24,7 +24,6 @@
     "J102",
     "R303",
     "R304",
-    "L401",
     "L407"
   ],
   "power_flag_components": {},

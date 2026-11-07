@@ -220,7 +220,7 @@
       "stem": "E4",
       "instance": "8f7e80ea-aee4-5257-bec3-c2e6ba73b52d",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (1/4)",
-      "components": 38,
+      "components": 40,
       "sheet": "E4",
       "notes": [
         "E4-08",
@@ -235,85 +235,85 @@
         "E4-09": 110,
         "E4-05": 110
       },
-      "fill": 0.57,
+      "fill": 0.607,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 57,
-        "ground_symbols": 37,
-        "junctions": 19,
+        "ground_symbols": 39,
+        "junctions": 21,
         "wire_crossings": 0,
-        "wires": 122
+        "wires": 126
       }
     },
     {
       "stem": "E4_02",
       "instance": "29d9ed3f-1ac6-5216-98b0-395a68609862",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (2/4)",
-      "components": 81,
+      "components": 62,
       "sheet": "E4",
       "notes": [
-        "E4-01",
-        "E4-07",
-        "E4-04"
+        "N-E4-01",
+        "E4-06",
+        "E4-07"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E4-01": 110,
-        "E4-07": 110,
-        "E4-04": 110
+        "N-E4-01": 110,
+        "E4-06": 110,
+        "E4-07": 110
       },
-      "fill": 0.687,
+      "fill": 0.821,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 112,
-        "ground_symbols": 51,
-        "junctions": 46,
-        "wire_crossings": 1,
-        "wires": 261
+        "global_labels": 55,
+        "ground_symbols": 44,
+        "junctions": 23,
+        "wire_crossings": 0,
+        "wires": 172
       }
     },
     {
       "stem": "E4_03",
       "instance": "4dd92141-48db-50ea-8b51-bae65ea8ecfb",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (3/4)",
-      "components": 45,
+      "components": 80,
       "sheet": "E4",
       "notes": [
-        "N-E4-01",
-        "E4-06"
+        "E4-01",
+        "E4-04"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "N-E4-01": 110,
-        "E4-06": 110
+        "E4-01": 110,
+        "E4-04": 110
       },
-      "fill": 0.613,
+      "fill": 0.668,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 43,
-        "ground_symbols": 27,
-        "junctions": 14,
+        "global_labels": 112,
+        "ground_symbols": 50,
+        "junctions": 46,
         "wire_crossings": 0,
-        "wires": 136
+        "wires": 259
       }
     },
     {
       "stem": "E4_04",
       "instance": "9df58c55-738d-55e8-9cee-b8959598c250",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (4/4)",
-      "components": 49,
+      "components": 36,
       "sheet": "E4",
       "notes": [],
       "note_wrap_cap": 110,
       "note_wrap_chars": {},
-      "fill": 0.494,
+      "fill": 0.367,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 51,
-        "ground_symbols": 29,
-        "junctions": 18,
+        "global_labels": 40,
+        "ground_symbols": 16,
+        "junctions": 10,
         "wire_crossings": 0,
-        "wires": 141
+        "wires": 114
       }
     },
     {
@@ -385,17 +385,17 @@
       }
     }
   ],
-  "components": 777,
+  "components": 782,
   "supply_annotations": 25,
-  "connected_contacts": 2253,
+  "connected_contacts": 2263,
   "nets": 478,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 933,
-    "ground_symbols": 480,
-    "junctions": 460,
-    "wire_crossings": 45,
-    "wires": 2736
+    "global_labels": 934,
+    "ground_symbols": 485,
+    "junctions": 463,
+    "wire_crossings": 44,
+    "wires": 2747
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -638,9 +638,9 @@
     },
     {
       "id": "E4-01",
-      "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+      "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
       "blocking": true,
-      "resolve": "Verify selected 0805LS-471XGRC / 0805HP-221XGRC / 0603HP-47NXGRW manufacturer land patterns and target-band impedance under bias. VNA qualify IL/RL/isolation and DC heating at actual/worst protected current. The current Coilcraft 0603HP PDF confirms the 2.3 GHz typical SRF; no documentary SRF question remains. L401/L407 stay optional DNP until separately qualified.",
+      "resolve": "Verify selected 0805LS-471XGRC / 0805HP-221XGRC / 0603HP-47NXGRW manufacturer land patterns and target-band impedance under bias. VNA qualify IL/RL/isolation and DC heating at actual/worst protected current. The current Coilcraft 0603HP PDF confirms the 2.3 GHz typical SRF; no documentary SRF question remains. Optional L407 (candidate 0805CS-471XGRC, SRF 375 MHz read on DigiKey; Q at 162 MHz not read) stays DNP until separately qualified; L401 is removed (P1 pigtail into A401).",
       "stack": "§5.3; §8 (РЧ-деталі); §8.1 RF-10",
       "refs": [
         "L402",
@@ -701,12 +701,17 @@
       "id": "E4-07",
       "description": "RF PCB, relay insertion loss, isolation, return loss and startup PARK are unmeasured.",
       "blocking": true,
-      "resolve": "VNA: HF selector 10 kHz–260 MHz IL ≤0.3 dB, RL ≥21 dB, isolation ≥35 dB at 162–260 MHz plus STACK LF/HF gates. HMC ≥40 dB isolation at 0.1–1.7 GHz (37–40 dB conditional and recorded); verify all DC blocks and startup. Check all SMT footprint pad numbers, dimensions, orientation and ground/exposed-pad implementation against the now-verified manufacturer maps.",
+      "resolve": "VNA: HF selector 10 kHz–260 MHz IL ≤0.3 dB, RL ≥21 dB, isolation ≥35 dB at 162–260 MHz plus STACK LF/HF gates. HMC ≥40 dB isolation at 0.1–1.7 GHz (37–40 dB conditional and recorded); verify all DC blocks and startup. Check all SMT footprint pad numbers, dimensions, orientation and ground/exposed-pad implementation against the now-verified manufacturer maps. Per RF port P1–P8 and the ch5 IF (W2 GR-2 board ports): VNA IL/RL of the assembled panel → pigtail → board-connector path in its band against the model loss table (design/E4-review.md), and DC drop/heating at the bias current on P2/P3/P8 (TPS2553 limits 0.339/0.339/0.192 A) and on ch5 (LNB 13.2 V): no U.FL, MHF or SMA current rating is published.",
       "stack": "§5.3; §8 (HMC7992LP3DE; G6K-2F-RF-S); §8.1 RF-0/RF-1, HF-13",
       "refs": [
         "K401",
         "K402",
-        "U405"
+        "U405",
+        "J423",
+        "J424",
+        "J425",
+        "J426",
+        "J427"
       ],
       "sheet": "E4"
     },
@@ -1005,7 +1010,7 @@
     "E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
     "E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
     "E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
-    "E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
+    "E4.json": "590eb7a5942d2dbe11015d67a63218b81af02a7540ac2c3c419ea90626d7f9ad",
     "E5.json": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
   }
 }

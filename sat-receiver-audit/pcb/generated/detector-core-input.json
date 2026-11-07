@@ -676,7 +676,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -717,7 +717,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -758,7 +758,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -1420,14 +1420,14 @@
     },
     {
       "ref": "R4421",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: UHF",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -1452,10 +1452,14 @@
     },
     {
       "ref": "R4422",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: UHF",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -1608,14 +1612,14 @@
     },
     {
       "ref": "R4431",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -1640,10 +1644,14 @@
     },
     {
       "ref": "R4432",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -1796,14 +1804,14 @@
     },
     {
       "ref": "R4441",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: HF",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -1828,10 +1836,14 @@
     },
     {
       "ref": "R4442",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: HF",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -7026,6 +7038,42 @@
           "name": "SHIELD"
         },
         {
+          "ref": "J423",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J424",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J425",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J426",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J427",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J428",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
           "ref": "K401",
           "pin": "G1",
           "sheet": "E4",
@@ -7048,12 +7096,6 @@
           "pin": "G2",
           "sheet": "E4",
           "name": "CASE_GND"
-        },
-        {
-          "ref": "L401",
-          "pin": "2",
-          "sheet": "E4",
-          "name": "2"
         },
         {
           "ref": "L407",
@@ -8082,7 +8124,7 @@
         "DC_CORE",
         "RF_INJECTOR"
       ],
-      "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+      "requirement": "Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
       "source": "design/E4-review.md; E4.json DC detector groups"
     },
     {
@@ -8090,7 +8132,7 @@
       "boards": [
         "DC_CORE"
       ],
-      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.",
       "source": "design/E4-review.md; design/E4-detector-analysis.py"
     },
     {
@@ -8170,7 +8212,7 @@
       },
       {
         "file": "design/E4.json",
-        "sha256": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f"
+        "sha256": "590eb7a5942d2dbe11015d67a63218b81af02a7540ac2c3c419ea90626d7f9ad"
       },
       {
         "file": "design/E5.json",
@@ -8178,11 +8220,11 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "f39e7901065e0d9cf121e012c081a33a32dc014883147f7f41db2d0986884a3a"
+        "sha256": "8af43b7c5d4760132dd4cbc498afa21b8d6f93de7a15f14280436786f5ba92ee"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "c23ea8194f489a89509642f2889fe73ecaaad4254662e82b93359105c370bad8"
+        "sha256": "09be9823a82e097bd019ea4abb5cc7947a3a66c7aee225e2adc2e5f6a680bff1"
       }
     ],
     "source_documents": [

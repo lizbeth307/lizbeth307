@@ -1,7 +1,7 @@
 {
   "status": "ROUTED_INTERNAL_PROTOTYPE_NOT_FOR_FABRICATION",
-  "source_input_sha256": "1956ef2cbdbd2326452c0c72595ce2c3f6b9eab8bafa110de1178a42589ad954",
-  "frozen_starter_sha256": "a501e0e920438acf36af00cf922dbc9a820569b528a63a41deaacf68df42cb75",
+  "source_input_sha256": "840b3dcf560876e7e8f5930223a8f06f10ccae995340726a48b2376b5f04c5d6",
+  "frozen_starter_sha256": "86a3047243dcfdd367bd47080ac9c785f88f8f89bae5b8689fd57d53d278d617",
   "published_board": true,
   "external_interfaces_selected": false,
   "release": "NOT_FOR_FABRICATION",
@@ -12,7 +12,7 @@
         "DC_CORE",
         "RF_INJECTOR"
       ],
-      "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+      "requirement": "Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
       "source": "design/E4-review.md; E4.json DC detector groups"
     },
     {
@@ -20,7 +20,7 @@
       "boards": [
         "DC_CORE"
       ],
-      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.",
       "source": "design/E4-review.md; design/E4-detector-analysis.py"
     },
     {
@@ -91,7 +91,7 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "591f0c78910fe785e14f5a0cf3def2de79e796f66d01effcbd9615cd1261344c",
+    "raw_sha256": "da8d34d6be251454dc9a7d4e525e31d7126ee89eb384d7d80cb4c55b36320bf8",
     "suppressed_or_filtered": false
   },
   "track_segments": 753,
@@ -11320,8 +11320,8 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "fbac06ee0cda05a16e1fb4b0ca80855ccbea0532e05521a2ae9e3d7a685488d7"
+    "raw_sha256": "1ee48623919eb43054b7dd4c486620a21315d99a0c419f89c31f43ac495c6782"
   },
-  "board_sha256": "1c4665a20105f61693b52829ba0b6d797cf2ea94da78322aa8086dcb35b4b868",
+  "board_sha256": "bc57e9a242c333ed3a794d90ff2591a6ba1559bbf3244e0a9698097d1de80e52",
   "frozen_starter_unchanged": true
 }
