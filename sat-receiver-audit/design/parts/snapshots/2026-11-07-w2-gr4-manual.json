@@ -1,0 +1,82 @@
+{
+ "schema": 1,
+ "date": "2026-11-07",
+ "note": "GR-4 (wave 2) reads of 2026-11-07 for the insert-board boundary refs: the Adafruit DIY HDMI parts pages (FPC pinout and socket MPN for HDMI_INSERT), the two forum threads that searched for the same data, and the KiCad 10.0.7 Connector_Wire library listing the solder-wire pads come from. A row records what the source showed; \"stock\": null means not shown, not zero. No PDF or vendor file is committed. Wire dimensions are the SRC-1 rows of 2026-11-07-w2-src1-manual.json and are only cited.",
+ "entries": {
+  "web:adafruit-3548": {
+   "distributor": "manufacturer shop page",
+   "url": "https://www.adafruit.com/product/3548",
+   "read": "2026-11-07",
+   "method": "WebFetch (default User-Agent)",
+   "mpn": "3548",
+   "manufacturer": "Adafruit",
+   "title": "DIY HDMI Cable Parts - Straight HDMI Plug Adapter",
+   "stock": null,
+   "in_stock": true,
+   "price": "USD 6.50 @1-9, 5.85 @10-99, 5.20 @100+",
+   "note": "27.5 x 17.3 x 5.0 mm, 3.2 g; mates the ribbon through 'flex cable clips'. The page gives no FPC socket part number, pin count, pitch or pinout; it says unnecessary pins may not be connected and quotes one customer report that pin 14 is not connected through. No download, Eagle/PCB or datasheet link on the page; it links only the Learn guides https://learn.adafruit.com/products/3548/guides and the ribbons 3560/3561/3588."
+  },
+  "web:adafruit-3550": {
+   "distributor": "manufacturer shop page",
+   "url": "https://www.adafruit.com/product/3550",
+   "read": "2026-11-07",
+   "method": "WebFetch (default User-Agent)",
+   "mpn": "3550",
+   "manufacturer": "Adafruit",
+   "title": "DIY HDMI Cable Parts - Right Angle (L Bend) HDMI Plug Adapter",
+   "stock": null,
+   "in_stock": true,
+   "price": "USD 6.50 @1-9, 5.85 @10-99, 5.20 @100+",
+   "note": "19.0 x 17.0 x 15.0 mm. No FPC pinout, socket part number, pin count or pitch on the page; the description only says the adapters are swapped 'using the flex cable clips'."
+  },
+  "web:adafruit-3560": {
+   "distributor": "manufacturer shop page",
+   "url": "https://www.adafruit.com/product/3560",
+   "read": "2026-11-07",
+   "method": "WebFetch (default User-Agent)",
+   "mpn": "3560",
+   "manufacturer": "Adafruit",
+   "title": "DIY USB or HDMI Cable Parts - 10 cm Ribbon Cable",
+   "stock": null,
+   "in_stock": true,
+   "price": "USD 1.50 @1-9, 1.35 @10-99, 1.20 @100+",
+   "note": "Cable length 100 mm, width 10 mm, 0.6 g; adapters sold separately; 'not going to be as durable or shielded as ready-made cables'. Conductor count, pitch, contact side, pinout and the mating connector MPN are not listed."
+  },
+  "web:core-electronics-forum-13976": {
+   "distributor": "distributor technical forum",
+   "url": "https://forum.core-electronics.com.au/t/pinout-for-diy-hdmi-cable-parts-right-angle-r-bend-hdmi-plug-adapter/13976",
+   "read": "2026-11-07",
+   "method": "WebFetch (default User-Agent)",
+   "mpn": null,
+   "manufacturer": "Adafruit",
+   "title": "Pinout for DIY HDMI Cable Parts - Right Angle (R bend) HDMI Plug Adapter (thread of 2022-05-05)",
+   "stock": null,
+   "price": null,
+   "note": "The asker found no pinout at Adafruit or by search; the distributor reply (2022-05-05) says no pinout was received from Adafruit for that connector, recommends mapping it by continuity with a multimeter and says all DIY HDMI cable parts are interchangeable. No pinout and no FPC connector part number in the thread."
+  },
+  "web:digikey-forum-58769": {
+   "distributor": "distributor technical forum",
+   "url": "https://forum.digikey.com/t/type-of-flex-cable-to-use-with-straight-hdmi-plug-adapter/58769",
+   "read": "2026-11-07",
+   "method": "WebFetch (default User-Agent)",
+   "mpn": null,
+   "manufacturer": "Adafruit",
+   "title": "Type of flex cable to use with STRAIGHT HDMI PLUG ADAPTER (thread of 2025-08-14)",
+   "stock": null,
+   "price": null,
+   "note": "The asker could not find any information on the FPC connectors and pin count; the replies point to the Adafruit ribbons 3561/3562 (DigiKey 1528-2375-ND for 3561) and give no connector part number, pin count, pitch or pinout."
+  },
+  "web:kicad-footprints-10.0.7-connector-wire": {
+   "distributor": "library repository",
+   "url": "https://gitlab.com/kicad/libraries/kicad-footprints/-/tree/10.0.7/Connector_Wire.pretty",
+   "read": "2026-11-07",
+   "method": "GitLab API tree listing and raw files of tag 10.0.7 with curl (default User-Agent); files vendored byte-for-byte in build/kicad/footprints/Connector_Wire.pretty",
+   "mpn": null,
+   "manufacturer": "KiCad",
+   "title": "Connector_Wire.pretty, KiCad 10.0.7",
+   "stock": null,
+   "price": null,
+   "note": "SolderWire sizes 0.1, 0.127, 0.15, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5 and 4 mm2, 1x01..1x06, each also as _Relief and _Relief2x. Footprint descr: conductor diameter D and outer diameter OD from Multi-Contact FLEXI-E (Staubli catalogue). Drills read from the files: 1 mm2 D1.4 -> 1.75 mm (pad 2.75), 0.75 mm2 D1.25 -> 1.6 mm (pad 2.6), 0.15 mm2 D0.5 -> 0.7 mm (pad 1.7, pitch 4 mm), 0.127 mm2 D0.48 -> 0.7 mm (pitch 3.7 mm)."
+  }
+ }
+}

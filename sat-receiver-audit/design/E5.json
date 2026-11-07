@@ -1866,6 +1866,101 @@
       "description": "Functional USB3 device/cable interface; no fabricated USB-C contact mapping."
     },
     {
+      "ref": "J514",
+      "value": "X24S1-T7: JST PH 3, боковий вхід, S24",
+      "kind": "connector",
+      "group": "T7 USB3 VBUS",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-4)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+      "mpn": "S3B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157929",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "3",
+          "name": "EN_T7",
+          "type": "passive",
+          "net": "EN_T7"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X24S1-T7 (build/16 §4; W2 GR-4): на вставці T7_INSERT, сегмент S24; номери контактів = контакти джгута (tools/assembly_data.py HEADERS), 1:1 з J311.1–3 на CTRL. Бічний вхід S3B-PH-K-S (висота 4.8 мм, JST ePH): провід іде вздовж кабелю USB3 під термоусадкою вставки."
+      ]
+    },
+    {
+      "ref": "J515",
+      "value": "Майданчик VBUS-жили кабелю T7: вхід від Q6A J5",
+      "kind": "connector",
+      "group": "T7 USB3 VBUS",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VBUS від Q6A J5",
+          "type": "passive",
+          "net": "E5_VBUS_J5"
+        }
+      ],
+      "notes": [
+        "VBUS-жилу цілісного кабелю A–C розрізано лише на вставці (W2 GR-4, E5 §7): кінець з боку Q6A J5 — у J515 (→ U505.6 IN), кінець з боку T7 — у J516 (U505.1 OUT →); GND-жилу не розривають, до J517 веде короткий відвід (зберегти повернення струму й екран кабелю). Посадкове місце KiCad SolderWire 0.75 мм² (D 1.25 мм, отвір 1.6 мм) бере жилу до 20 AWG (Alpha Wire 5856, жила 1.02 мм); переріз VBUS- і GND-жил обраного кабелю не опубліковано — виміряти до збирання (E5-05)."
+      ]
+    },
+    {
+      "ref": "J516",
+      "value": "Майданчик VBUS-жили кабелю T7: вихід до T7",
+      "kind": "connector",
+      "group": "T7 USB3 VBUS",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VBUS до T7",
+          "type": "passive",
+          "net": "E5_VBUS_T7"
+        }
+      ],
+      "notes": [
+        "VBUS-жилу цілісного кабелю A–C розрізано лише на вставці (W2 GR-4, E5 §7): кінець з боку Q6A J5 — у J515 (→ U505.6 IN), кінець з боку T7 — у J516 (U505.1 OUT →); GND-жилу не розривають, до J517 веде короткий відвід (зберегти повернення струму й екран кабелю). Посадкове місце KiCad SolderWire 0.75 мм² (D 1.25 мм, отвір 1.6 мм) бере жилу до 20 AWG (Alpha Wire 5856, жила 1.02 мм); переріз VBUS- і GND-жил обраного кабелю не опубліковано — виміряти до збирання (E5-05)."
+      ]
+    },
+    {
+      "ref": "J517",
+      "value": "Майданчик відводу GND-жили кабелю T7",
+      "kind": "connector",
+      "group": "T7 USB3 VBUS",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND кабелю",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "VBUS-жилу цілісного кабелю A–C розрізано лише на вставці (W2 GR-4, E5 §7): кінець з боку Q6A J5 — у J515 (→ U505.6 IN), кінець з боку T7 — у J516 (U505.1 OUT →); GND-жилу не розривають, до J517 веде короткий відвід (зберегти повернення струму й екран кабелю). Посадкове місце KiCad SolderWire 0.75 мм² (D 1.25 мм, отвір 1.6 мм) бере жилу до 20 AWG (Alpha Wire 5856, жила 1.02 мм); переріз VBUS- і GND-жил обраного кабелю не опубліковано — виміряти до збирання (E5-05)."
+      ]
+    },
+    {
       "ref": "J520",
       "value": "Q6A HDMI Type-A existing port",
       "kind": "connector",
@@ -3102,6 +3197,44 @@
         "W425 (E4) is the cable plugged into J551: field-wired M8 male plug 99 3379 100 03 at this end (its contacts 1/3/4 mirror the receptacle), USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.",
         "Lead colours are binder's (1 brown, 3 blue, 4 black): the black lead is the unused contact 4, not GND; insulate it at the PWR end. Map W425 by contact number, not by colour (its black conductor is GND).",
         "Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable)."
+      ]
+    },
+    {
+      "ref": "J518",
+      "value": "Майданчики кабелю IMU HELU 49655 на IMU_CARRIER",
+      "kind": "connector",
+      "group": "Сервіс і зовнішні шини",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "5V raw від J550.1",
+          "type": "passive",
+          "net": "E5_IMU5V"
+        },
+        {
+          "number": "2",
+          "name": "GND від J550.2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "packTX від J550.3",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "4",
+          "name": "packRX від J550.4",
+          "type": "passive",
+          "net": "IMU_RX"
+        }
+      ],
+      "notes": [
+        "Жили 1–4 кабелю J550 (HELUKABEL 49655: 4 × 0.14 мм², 18 × 0.1 мм) паяються в J518.1–4 у тому самому порядку, що J550 і GX16 J504 (W2 GR-4); обплетення — 360° у SKINTOP паку, не на платі (J550.S → CHASSIS). Посадкове місце KiCad SolderWire 0.15 мм² (D 0.5 мм, отвір 0.7 мм): жила 18 × 0.1 мм ≈ 0.5 мм (5 × 0.1 мм для укладання 1 + 6 + 12, арифметика). Купувати нічого (майданчики носійної плати IMU_CARRIER)."
       ]
     },
     {

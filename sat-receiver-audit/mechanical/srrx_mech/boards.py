@@ -224,8 +224,10 @@ def area_check(P):
             "need_1_5_mm2": round(n15, 0), "need_1_8_mm2": round(n18, 0), "estimate_mm2": round(n18, 0),
             "ratio_1_5": round(n15 / have, 2), "ratio_1_8": round(n18 / have, 2),
             "scope": "board parts and modules, without the harness headers",
-            "result": "PASS (model estimate)" if n18 <= have else
-                      f"OPEN: need {n18:.0f} mm2 at fill {FILL[1]:g} > outline {have:.0f} mm2 (model estimate; partition and placement decide, AREA / PCB)"}
+            "result": (f"OPEN: no part of pcb/generated/components.csv in the domains {', '.join(b['domains'])} yet (pcb/prepare.py creates them, GR-3)"
+                       if not any(refs.get(d) for d in b["domains"]) else
+                       "PASS (model estimate)" if n18 <= have else
+                       f"OPEN: need {n18:.0f} mm2 at fill {FILL[1]:g} > outline {have:.0f} mm2 (model estimate; partition and placement decide, AREA / PCB)")}
     res["with_harness"] = harness_check(P, res, root, cy)
     return res
 

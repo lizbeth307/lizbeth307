@@ -25,15 +25,15 @@
   "inputs": {
     "parts": {
       "spec": "003f66d4f0f534d32ce8d7a98827614b9961b52eba4249068834ba6efd69f64d",
-      "contract": "8ad359e2b8e9e52974332fa64d0b5a2ef8eca421cf5ed08efb38d2ee3da86707",
+      "contract": "4bdc61e4af2bafe4262a6b7a88468c41455d44ca1ffdf612adc37f2829893e5e",
       "project_rules": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
       "template": "4c9dcf416687d46f2147b6af3f9d85d7ae394b072e377e73fba15fcb524a55b9",
       "instances": "19a6ad3075d7bb21f060309f07b73889cd960c616b5337231528298fe5da9c08"
     },
-    "sha256": "39dcf8e6fe37749bb03cd7152c4ee090ede3b3aa7381b901d6943af546aa75ab"
+    "sha256": "882f85843a08a349e3dae82fcaf257a5d16c12d2c51dc4d4cbca49837c6ae5ba"
   },
   "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-  "board_sha256": "065243df3d2448b25d5230f43354e57a746ebbd7cb6a010d7c4b3b6f9735d3de",
+  "board_sha256": "270e0269c50cd03b8df6543a5103052c9468a6e0a8a1bfbce07958bd68e7f4ae",
   "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
   "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
   "layers": {
@@ -772,7 +772,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 520,
+            "external_refs": 525,
             "external_sample": [
               "A401",
               "A402",
@@ -851,7 +851,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 520,
+            "external_refs": 525,
             "external_sample": [
               "A401",
               "A402",

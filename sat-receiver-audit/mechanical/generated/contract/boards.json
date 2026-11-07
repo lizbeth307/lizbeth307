@@ -10,7 +10,7 @@
   },
   "boards": {
     "PWR": {
-      "name": "power board (PWR_MAIN + PWR_BRANCH + USB_POWER)",
+      "name": "power board PWR-A, plate-bonded (PWR_MAIN + PWR_BRANCH + USB_POWER)",
       "domains": [
         "PWR_MAIN",
         "PWR_BRANCH",
@@ -76,7 +76,7 @@
       ],
       "hole_d": 3.2,
       "hole_keepout_d": 7.0,
-      "max_component_height": 9.0,
+      "max_component_height": 4.5,
       "placements": {
         "default": {
           "origin": [
@@ -156,7 +156,14 @@
           "at": [
             8,
             40
-          ]
+          ],
+          "pin_field": [
+            13.5,
+            40.42,
+            14.4,
+            4.24
+          ],
+          "_pin_field_note": "placement contract (W2 MECH-3): footprint SR_RX_Custom:Pololu_D36V50Fx at rotation 0 with its two 6-pin rows (pads D1.7 at x -6.35..6.35, y 8.89 / 11.43 from the module centre) towards -y of the board; the plate relief pocket M-07 PK1 lies under this field"
         },
         {
           "id": "D36V50F5",
@@ -164,23 +171,156 @@
           "at": [
             8,
             72
-          ]
+          ],
+          "pin_field": [
+            13.5,
+            72.42,
+            14.4,
+            4.24
+          ],
+          "_pin_field_note": "same contract as U107; plate relief pocket M-07 PK2"
         }
       ],
       "height_zones": [
         {
           "rect": [
-            0,
-            35,
-            42,
-            75
+            8,
+            40,
+            25.4,
+            25.4
           ],
-          "max_height": 10.5,
-          "why": "Pololu D36V50F12/F5 on their header spacer (parts.json pololu_d36v50: 7.67 + mount_standoff 2.5, bottom-side parts 1.8 per the Pololu drawing); rule R-PWR-MODULES"
+          "max_height": 12.1,
+          "why": "PWR-B window over U107 D36V50F12 (module on its header spacer: parts.json pololu_d36v50 7.67 + mount_standoff 2.5 = 10.17); window ceiling 12.1 (pcb/partition-spec.json height_rule); rule R-PWR-MODULES"
+        },
+        {
+          "rect": [
+            8,
+            72,
+            25.4,
+            25.4
+          ],
+          "max_height": 12.1,
+          "why": "PWR-B window over U108 D36V50F5 (same module); window ceiling 12.1; rule R-PWR-MODULES"
         }
       ],
       "rear_zones": [],
       "dxf": "boards/pwr-edge-cuts.dxf"
+    },
+    "PWR_B": {
+      "name": "power mezzanine PWR-B (PWR_BRANCH_SW + USB_POWER_SW)",
+      "domains": [
+        "PWR_BRANCH_SW",
+        "USB_POWER_SW"
+      ],
+      "outline_mm": [
+        [
+          0,
+          0
+        ],
+        [
+          136,
+          0
+        ],
+        [
+          136,
+          35
+        ],
+        [
+          42,
+          35
+        ],
+        [
+          42,
+          110
+        ],
+        [
+          0,
+          110
+        ]
+      ],
+      "cutouts_mm": [
+        [
+          7.5,
+          39.5,
+          26.4,
+          26.4
+        ],
+        [
+          7.5,
+          71.5,
+          26.4,
+          26.4
+        ]
+      ],
+      "area_mm2": 6516.1,
+      "holes_mm": [
+        [
+          4,
+          6
+        ],
+        [
+          132,
+          6
+        ],
+        [
+          132,
+          31
+        ],
+        [
+          46,
+          31
+        ],
+        [
+          4,
+          106
+        ],
+        [
+          38,
+          106
+        ],
+        [
+          38,
+          56
+        ]
+      ],
+      "hole_d": 3.2,
+      "hole_keepout_d": 7.0,
+      "max_component_height": 5.5,
+      "placements": {
+        "default": {
+          "origin": [
+            6.0,
+            38.5
+          ],
+          "z_bottom": 47.5,
+          "facing": "+z"
+        }
+      },
+      "mount": "on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec QTH-060-01-L-D-A on the PWR-B bottom mates the QSH-060-01-L-D-A on the PWR-A top at 5.00 mm (pcb/partition-spec.json b2b)",
+      "edge_zones": [
+        {
+          "edge": "right",
+          "span": [
+            0,
+            35
+          ],
+          "use": "CTRL harness S02 (two JST PHD side entry, consolidated S02-PWR-SIG), LAB PORT / LAB BUS leads towards plate slot SL3 (side entry at hB)"
+        },
+        {
+          "edge": "top",
+          "at": 35,
+          "span": [
+            108,
+            128
+          ],
+          "use": "SL2-bound JST PH (consolidated SL2-PWR-PH: S20, S21, S22, S35, S36) and the RF lead S04 (X04S1) through plate slot SL2"
+        }
+      ],
+      "thermal_bond_mm": [],
+      "modules_on_board": [],
+      "height_zones": [],
+      "rear_zones": [],
+      "dxf": "boards/pwr_b-edge-cuts.dxf"
     },
     "RF": {
       "name": "RF / detector board (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE)",
@@ -257,7 +397,7 @@
             20,
             180
           ],
-          "use": "U.FL/MHF1 to the panel pigtails of P2, P3 and P6 (plus P1 if L401 stays, W2-02) and the 75-ohm W402 end of ch5 (P4); P4 F and P5 BNC are bulkhead adapters with W402/W408, P7 is the Taoglas CAB.011 end at the LC76G, P8 is the Adam Tech CA-DKCA1-305L5-APAJ assembly into A403 (parts DB; build/15 'RF-порти')"
+          "use": "U.FL J423/J424/J425/J427 to the Taoglas CAB.718 panel pigtails of P2, P3, P6 and P8 (W2 GR-2) and the 75-ohm W402 end of ch5 (P4); P1 is the Adam Tech CA-DKCA1-305L5-APAJ assembly into the A401 SMA input (no RF-board end), P4 F and P5 BNC are bulkhead adapters with W402/W408, P7 is the Taoglas CAB.011 end at the LC76G (parts DB; build/15 'RF-порти')"
         },
         {
           "edge": "bottom",
@@ -283,6 +423,42 @@
           "rect": [
             0.0,
             0.0,
+            184.0,
+            0.1
+          ],
+          "max_height": 5.5,
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            0.0,
+            0.1,
+            73.7,
+            30.6
+          ],
+          "max_height": 5.5,
+          "free_mm": 11.1,
+          "fits_mm": 10.6,
+          "limit": "sawbird"
+        },
+        {
+          "rect": [
+            73.7,
+            0.1,
+            7.9,
+            27.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            81.6,
+            0.1,
             95.0,
             27.0
           ],
@@ -293,10 +469,22 @@
         },
         {
           "rect": [
-            95.0,
-            0.0,
-            1.5,
-            27.0
+            176.6,
+            0.1,
+            7.4,
+            22.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "usb_socket_a"
+        },
+        {
+          "rect": [
+            176.6,
+            22.1,
+            7.4,
+            5.0
           ],
           "max_height": 5.5,
           "free_mm": 29.8,
@@ -305,10 +493,34 @@
         },
         {
           "rect": [
-            96.5,
-            0.0,
-            87.5,
-            27.0
+            73.7,
+            27.1,
+            110.3,
+            0.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            73.7,
+            27.6,
+            7.9,
+            3.1
+          ],
+          "max_height": 5.5,
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            81.6,
+            27.6,
+            95.0,
+            16.9
           ],
           "max_height": 5.5,
           "free_mm": 16.8,
@@ -317,9 +529,21 @@
         },
         {
           "rect": [
+            176.6,
+            27.6,
+            7.4,
+            16.9
+          ],
+          "max_height": 5.5,
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "usb_socket_b"
+        },
+        {
+          "rect": [
             0.0,
-            27.0,
-            184.0,
+            30.7,
+            81.6,
             0.5
           ],
           "max_height": 5.5,
@@ -330,33 +554,9 @@
         {
           "rect": [
             0.0,
-            27.5,
+            31.2,
             73.7,
-            17.0
-          ],
-          "max_height": 5.5,
-          "free_mm": 11.1,
-          "fits_mm": 10.6,
-          "limit": "sawbird"
-        },
-        {
-          "rect": [
-            73.7,
-            27.5,
-            9.6,
-            17.0
-          ],
-          "max_height": 5.5,
-          "free_mm": 29.8,
-          "fits_mm": 29.3,
-          "limit": "rfbay.lid"
-        },
-        {
-          "rect": [
-            83.3,
-            27.5,
-            73.7,
-            17.0
+            13.3
           ],
           "max_height": 5.5,
           "free_mm": 11.1,
@@ -365,10 +565,10 @@
         },
         {
           "rect": [
-            157.0,
-            27.5,
-            27.0,
-            17.0
+            73.7,
+            31.2,
+            7.9,
+            13.3
           ],
           "max_height": 5.5,
           "free_mm": 29.8,
@@ -468,7 +668,7 @@
             176.0,
             13.0
           ],
-          "z_bottom": 54.9,
+          "z_bottom": 58.98,
           "facing": "+z"
         }
       },
@@ -803,8 +1003,8 @@
             34.0,
             57.0
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "bms"
         },
         {
@@ -814,8 +1014,8 @@
             9.5,
             5.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.ext"
         },
         {
@@ -825,8 +1025,8 @@
             6.5,
             5.5
           ],
-          "free_mm": 0.4,
-          "fits_mm": 0.0,
+          "free_mm": 4.48,
+          "fits_mm": 3.98,
           "limit": "plate.boss2"
         },
         {
@@ -836,8 +1036,8 @@
             16.0,
             8.7
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.ext"
         },
         {
@@ -847,8 +1047,8 @@
             6.2,
             11.3
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.ext"
         },
         {
@@ -858,8 +1058,8 @@
             5.6,
             49.6
           ],
-          "free_mm": 3.6,
-          "fits_mm": 3.1,
+          "free_mm": 7.68,
+          "fits_mm": 7.18,
           "limit": "hdmi_route_front_up"
         },
         {
@@ -869,8 +1069,8 @@
             4.2,
             11.3
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.ext"
         },
         {
@@ -880,8 +1080,8 @@
             6.2,
             27.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -891,8 +1091,8 @@
             4.2,
             38.3
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -902,8 +1102,8 @@
             0.8,
             4.0
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -913,8 +1113,8 @@
             5.4,
             10.8
           ],
-          "free_mm": 3.6,
-          "fits_mm": 3.1,
+          "free_mm": 7.68,
+          "fits_mm": 7.18,
           "limit": "hdmi_route_front_turn"
         },
         {
@@ -924,8 +1124,8 @@
             34.8,
             1.2
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -935,8 +1135,8 @@
             34.8,
             5.6
           ],
-          "free_mm": 3.6,
-          "fits_mm": 3.1,
+          "free_mm": 7.68,
+          "fits_mm": 7.18,
           "limit": "hdmi_route_front_run"
         },
         {
@@ -946,8 +1146,8 @@
             50.0,
             4.7
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -957,8 +1157,8 @@
             12.0,
             14.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -968,8 +1168,8 @@
             13.0,
             14.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -979,8 +1179,8 @@
             12.0,
             10.5
           ],
-          "free_mm": 1.4,
-          "fits_mm": 0.9,
+          "free_mm": 5.48,
+          "fits_mm": 4.98,
           "limit": "lime"
         },
         {
@@ -990,8 +1190,8 @@
             13.0,
             10.5
           ],
-          "free_mm": 1.4,
-          "fits_mm": 0.9,
+          "free_mm": 5.48,
+          "fits_mm": 4.98,
           "limit": "lime"
         },
         {
@@ -1001,8 +1201,8 @@
             50.0,
             15.5
           ],
-          "free_mm": 1.4,
-          "fits_mm": 0.9,
+          "free_mm": 5.48,
+          "fits_mm": 4.98,
           "limit": "lime"
         },
         {
@@ -1012,8 +1212,8 @@
             50.0,
             0.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1023,8 +1223,8 @@
             12.0,
             25.0
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "ip2368"
         },
         {
@@ -1034,8 +1234,8 @@
             7.0,
             25.0
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "ip2368"
         },
         {
@@ -1045,8 +1245,8 @@
             6.0,
             27.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1056,8 +1256,8 @@
             44.0,
             2.5
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "ip2368"
         },
         {
@@ -1067,8 +1267,8 @@
             40.0,
             6.5
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "ip2368"
         },
         {
@@ -1078,8 +1278,8 @@
             40.0,
             0.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         }
       ],
@@ -1129,7 +1329,7 @@
             188.5,
             123.0
           ],
-          "z_bottom": 54.3,
+          "z_bottom": 58.38,
           "facing": "+z"
         },
         "volume": {
@@ -1137,7 +1337,7 @@
             188.5,
             82.0
           ],
-          "z_bottom": 54.3,
+          "z_bottom": 58.38,
           "facing": "+z"
         }
       },
