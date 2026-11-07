@@ -1846,7 +1846,7 @@ def check_04bb(ctx, r):
             r.fail(where, "baseband_policy_constant", name)
     if bb.LIVE_MAX_SAMPLES * 8 > 65507 or set(bb.PIPELINES.values()) != {"meteor_m2-x_lrpt", "meteor_m2-x_lrpt_80k"}:
         r.fail(where, "baseband_policy_constant", "LIVE_OR_PIPELINES")
-    _replay_probe(r, "RX-04-bb", np, lambda findings: _baseband_probe(np, bb, where, findings))
+    _replay_probe(r, "RX-04-bb", np, srrx_closure("baseband"), lambda findings: _baseband_probe(np, bb, where, findings))
     window = _lrpt_window(bb)
     ident = "0" * 16
     decode = glue.unit_properties("decode", ident, work_dir="/data/products/satdump/.satdump-" + ident,
@@ -2181,17 +2181,18 @@ class _Findings(list):
 # pure functions of the checker's own srrx modules (imported only after _target_identical) and NumPy.
 # One device run evaluates each once. A process that runs the selftest many times, the regression
 # suites above all (under TCG emulation the probes dominate a run), replays the recorded findings while
-# every object the probe can reach is unchanged: each srrx module, its globals, the attributes of its
-# classes, this module's globals and NumPy. A replaced object (a test patch, a reload) is a new key and
-# is evaluated again. The key's objects are kept, so no id() is reused while its entry exists. Objects
-# mutated in place are outside the key: nothing in srrx or here mutates the probes' inputs that way.
+# every object the probe can reach is unchanged: each srrx module of the probed module's closure
+# (srrx_closure), its globals, the attributes of its classes, this module's globals and NumPy. A replaced
+# object (a test patch, a reload) is a new key and is evaluated again. The key's objects are kept, so no
+# id() is reused while its entry exists. Objects mutated in place are outside the key: nothing in srrx
+# or here mutates the probes' inputs that way.
 _PROBE_RESULTS = {}
 
 
-def _probe_key(kind, np):
+def _probe_key(kind, np, closure):
     objects, ids = [np], [kind, id(np)]
-    for name in sorted(n for n in sys.modules if n == "srrx" or n.startswith("srrx.")):
-        module = sys.modules[name]
+    for name in ("srrx" if dependency == "__init__" else "srrx." + dependency for dependency in closure):
+        module = sys.modules.get(name)
         objects.append(module)
         ids.append((name, id(module)))
         if module is None:
@@ -2210,10 +2211,10 @@ def _probe_key(kind, np):
     return tuple(ids), objects
 
 
-def _replay_probe(r, kind, np, probe):
+def _replay_probe(r, kind, np, closure, probe):
     """Run probe(findings) once per unchanged key and replay its fail/block calls into r, in order.
     A probe that raises replays what it recorded first and is not kept (run_offline handles the error)."""
-    key, objects = _probe_key(kind, np)
+    key, objects = _probe_key(kind, np, closure)
     kept = _PROBE_RESULTS.get(key)
     if kept is None:
         findings = _Findings()
@@ -2260,7 +2261,7 @@ def check_14(ctx, r):
         import numpy as np
     except ImportError:
         return r.block(".", "numpy_unavailable")
-    _replay_probe(r, "RX-14", np, lambda findings: _voice_probe(np, mask, findings))
+    _replay_probe(r, "RX-14", np, srrx_closure("voice_mask"), lambda findings: _voice_probe(np, mask, findings))
     r.note("recorder_excises_through_srrx.baseband_RX-04-bb")
     r.note("repeater_pass_recording_is_device_evidence")
 
