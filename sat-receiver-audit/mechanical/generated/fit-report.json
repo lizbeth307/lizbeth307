@@ -4,7 +4,7 @@
   "generator": {
     "version": "1.0.0",
     "params_sha256": "fe0187c59c26114b1fa1fa0f26a95be0063b16074228060ffce5c625682711ae",
-    "pcb_components_sha256": "c45012670df97b251fd0a155088d62856b4cbc893bc01be42a553bc25145acb9"
+    "pcb_components_sha256": "25a0d7830a63c999575be8ff155e6cf5f2e5f6167dc958a97e287f3c5beff98f"
   },
   "envelope": {
     "model": [
