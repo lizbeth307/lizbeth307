@@ -180,8 +180,26 @@
         "schematic_color": "rgba(0, 0, 0, 0.000)"
       },
       {
-        "name": "SCRIPTED_PWR1A",
+        "name": "SCRIPTED_GND",
         "priority": 3,
+        "clearance": 0.15,
+        "track_width": 0.15,
+        "via_diameter": 0.7,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)"
+      },
+      {
+        "name": "SCRIPTED_PWR1A",
+        "priority": 4,
         "clearance": 0.15,
         "track_width": 0.35,
         "via_diameter": 0.7,
@@ -199,7 +217,7 @@
       },
       {
         "name": "SCRIPTED_PWR3A",
-        "priority": 4,
+        "priority": 5,
         "clearance": 0.15,
         "track_width": 1.85,
         "via_diameter": 0.7,
@@ -303,6 +321,10 @@
         "pattern": "E2_SB_SW"
       },
       {
+        "netclass": "SCRIPTED_GND",
+        "pattern": "GND"
+      },
+      {
         "netclass": "SCRIPTED_PWR3A",
         "pattern": "LAB5"
       },
@@ -311,7 +333,7 @@
         "pattern": "LAB5_RLY"
       },
       {
-        "netclass": "PWR2A",
+        "netclass": "PWR1A",
         "pattern": "LNA4V5"
       },
       {

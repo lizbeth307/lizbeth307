@@ -402,6 +402,8 @@ def copper_items(parts):
     out = []
     for ref, pa in parts.items():
         for p in pa.pads:
+            if p['type'] == 'smd' and not p['number']:
+                continue  # unnumbered SMD pads of the library footprints are paste apertures (F.Paste only)
             for layer in p['layers']:
                 out.append({'ref': ref, 'pad': p['number'], 'net': p['net'], 'layer': layer, 'box': p['box'],
                             'npth': p['type'] == 'np_thru_hole'})
@@ -673,7 +675,133 @@ def scripted_copper(inp, parts, pins):
             pins['scripted_nets'][sw] = [(u, '6'), (rsh, '1'), ('B2B1', next(n for n, v in pins['pins'].items() if v == sw))]
             pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'),
                                             ('B2B1', next(n for n, v in pins['pins'].items() if v == shunt))]
-    return tracks, vias, exempt
+    gt, gv, _n = gnd_fanout(inp, parts, tracks, vias)
+    return tracks + gt, vias + gv, exempt
+
+
+# ------------------------------------------------------------------ GND fan-out (scripted: every SMD GND pad gets a via)
+W_GND = 0.25
+GND_DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+GND_GAPS = (0.55, 0.9, 1.3, 1.8)
+
+
+def gnd_fanout(inp, parts, tracks, vias):
+    """A locked via next to every GND SMD pad (stub W_GND from the pad centre), so that the GND planes In1/In2 join all
+    GND pads and the router never routes GND (route run 42415437982: Freerouting left 83 GND connections open and did
+    not join the pads to the planes). Through-hole GND pins join the planes directly. The INA3221 exposed pad joins its
+    GND pin 3 by a short track. Candidates are tried in a fixed order; the first that clears every other net, the
+    edges, the hole keepouts and the via hole spacing is taken."""
+    c = inp.contract
+    outline = [tuple(p) for p in c['outline_mm']]
+    cuts = bg.cutout_boxes(c)
+    holes = [(tuple(h), c['hole_keepout_d'] / 2) for h in c['holes_mm']]
+    pads = copper_items(parts)
+    drills = []
+    for ref, pa in parts.items():
+        for p in pa.pads:
+            if p['type'] in ('thru_hole', 'np_thru_hole'):
+                drills.append((p['at'], min(p['box'][2] - p['box'][0], p['box'][3] - p['box'][1])))
+    for v in vias:
+        drills.append((tuple(v['at']), v['drill_mm']))
+    segs = scripted_segments(tracks, vias)
+    need = CLEAR + MARGIN
+    out_t, out_v = [], []
+
+    def clear(path, via_at, layer):
+        vx, vy = via_at
+        stubs = list(zip(path, path[1:]))
+        r = VIA_D / 2
+        if edge_dist(via_at, outline, cuts) - r < EDGE + MARGIN or not point_in_poly(via_at, outline):
+            return False
+        if any(bg.rects_overlap((vx - r, vy - r, vx + r, vy + r), cut) for cut in cuts):
+            return False
+        for (hx, hy), hr in holes:
+            if math.hypot(vx - hx, vy - hy) - r < hr:
+                return False
+        for (dx, dy), dd in drills:
+            if math.hypot(vx - dx, vy - dy) < VIA_DRILL / 2 + dd / 2 + 0.55:
+                return False
+        for p in pads:
+            if p['net'] == 'GND' and not p['npth']:
+                continue
+            gap = 0.25 + MARGIN if p['npth'] else need
+            b = p['box']
+            if b[0] - 3 > vx or b[2] + 3 < vx or b[1] - 3 > vy or b[3] + 3 < vy:
+                continue
+            if box_dist((vx, vy, vx, vy), b) - r < gap:
+                return False
+            if p['layer'] == layer and any(seg_box_dist(a, q, b) - W_GND / 2 < gap for a, q in stubs):
+                return False
+        for s in segs:
+            if s['net'] == 'GND':
+                continue
+            if seg_seg_dist(s['a'], s['b'], via_at, via_at) - s['r'] - r < need:
+                return False
+            if s['layer'] == layer and any(seg_seg_dist(s['a'], s['b'], a, q) - s['r'] - W_GND / 2 < need for a, q in stubs):
+                return False
+        return True
+    done = 0
+    for ref in sorted(parts, key=bg.sort_ref):
+        pa = parts[ref]
+        for p in sorted(pa.pads, key=lambda q: (bg.sort_ref(q['number']) if q['number'] else ('', -1, ''))):
+            if p['net'] != 'GND' or p['type'] != 'smd' or not p['number']:
+                continue
+            if ref == 'U215' and p['number'] == 'EP':
+                pin3 = pa.pad('3')['at']
+                out_t.append({'id': 'GND-U215-EP', 'net': 'GND', 'layer': 'F.Cu', 'width_mm': W_GND,
+                              'path': [[r4(pin3[0]), r4(pin3[1])], [r4(p['at'][0]), r4(pin3[1])]], 'locked': True,
+                              'why': 'INA3221 exposed pad to its GND pin 3 (the pin 3 via joins both to the planes)'})
+                continue
+            layer = p['layers'][0]
+            cx, cy = p['at']
+            hw, hh = (p['box'][2] - p['box'][0]) / 2, (p['box'][3] - p['box'][1]) / 2
+            cands = []
+            if ref == 'B2B1':  # out of the contact row first (away from the connector centre line), then a dog-leg
+                s = 1 if cy > B2B_AT[1] else -1
+                out = (cx, r4(cy + s * (hh + 0.35)))
+                for gap in GND_GAPS:
+                    for k in (0, 1, -1, 2, -2):
+                        at = (r4(cx + 0.65 * k), r4(cy + s * (hh + 0.35 + gap)))
+                        cands.append(([(cx, cy), out, at] if k else [(cx, cy), at], at))
+            else:
+                for gap in GND_GAPS:
+                    for dx, dy in GND_DIRS:
+                        n = math.hypot(dx, dy)
+                        ux, uy = dx / n, dy / n
+                        reach = (abs(ux) * hw + abs(uy) * hh) if (dx == 0 or dy == 0) else max(hw, hh)
+                        at = (r4(cx + ux * (reach + gap)), r4(cy + uy * (reach + gap)))
+                        cands.append(([(cx, cy), at], at))
+                # dog-legs: out of the pad along an axis, then to the via in any direction (pads in a pin row,
+                # or over the B2B contact rows of the bottom side where no via fits)
+                for leg in (0.4, 0.9, 1.5):
+                    for dx, dy in GND_DIRS[:4]:
+                        reach = abs(dx) * hw + abs(dy) * hh
+                        knee = (r4(cx + dx * (reach + leg)), r4(cy + dy * (reach + leg)))
+                        for gap in (0.6, 1.0, 1.5, 2.2):
+                            for ex, ey in GND_DIRS:
+                                if (ex, ey) == (-dx, -dy):
+                                    continue
+                                n = math.hypot(ex, ey)
+                                at = (r4(knee[0] + ex / n * gap), r4(knee[1] + ey / n * gap))
+                                cands.append(([(cx, cy), knee, at], at))
+            chosen = None
+            for path, at in cands:
+                if clear(path, at, layer):
+                    chosen = (path, at)
+                    break
+            if chosen is None:
+                raise SystemExit(f'make_spec: no GND fan-out via position for {ref}.{p["number"]} at {p["at"]}')
+            path, at = chosen
+            vid = f'GND-{ref}-{p["number"]}'
+            out_t.append({'id': vid + '-S', 'net': 'GND', 'layer': f'{layer}.Cu', 'width_mm': W_GND,
+                          'path': [[r4(x), r4(y)] for x, y in path], 'locked': True,
+                          'why': f'GND fan-out of {ref}.{p["number"]} to its plane via'})
+            out_v.append({'id': vid + '-V', 'net': 'GND', 'at': [at[0], at[1]], 'drill_mm': VIA_DRILL,
+                          'diameter_mm': VIA_D, 'locked': True, 'why': f'GND plane via of {ref}.{p["number"]}'})
+            drills.append((at, VIA_DRILL))
+            segs += scripted_segments(out_t[-1:], out_v[-1:])
+            done += 1
+    return out_t, out_v, done
 
 
 # ------------------------------------------------------------------ heights (pcb/partition-spec.json heights, AREA reads)
@@ -864,7 +992,8 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt):
                    'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())),
                    'why': 'the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and '
                           'the router re-routed the scripted nets because locked copper that crosses a pad is no connection '
-                          'for it (route run 42414083566): fan-out off, the scripted classes not autorouted'},
+                          'for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by '
+                          'the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)'},
         'drc_policy': {'warning_checks': WARNINGS},
     }
     return json.dumps(spec, ensure_ascii=False, indent=2) + '\n'
@@ -879,8 +1008,8 @@ def project_json(inp, pins):
     pd = nc['project_defaults']['values_mm']
     classes = []
     for name, cls in (('Default', nc['classes']['SIG']), ('PWR1A', nc['classes']['PWR1A']), ('PWR2A', nc['classes']['PWR2A']),
-                      ('PWR3A', nc['classes']['PWR3A']), ('SCRIPTED_PWR1A', nc['classes']['PWR1A']),
-                      ('SCRIPTED_PWR3A', nc['classes']['PWR3A'])):
+                      ('PWR3A', nc['classes']['PWR3A']), ('SCRIPTED_GND', nc['classes']['SIG']),
+                      ('SCRIPTED_PWR1A', nc['classes']['PWR1A']), ('SCRIPTED_PWR3A', nc['classes']['PWR3A'])):
         row = copy.deepcopy(default)
         row['name'] = name
         row['track_width'] = cls['outer_min_width_mm']
@@ -908,10 +1037,14 @@ def project_json(inp, pins):
     return json.dumps(proj, indent=2) + '\n'
 
 
-# Board routing classes beyond pcb/generated/netclasses.json (wider than its minimum, never narrower).
-BOARD_CLASSES = {'LNA4V5': 'PWR2A'}
+# Board routing classes beyond pcb/generated/netclasses.json (never narrower than its minimum).
+# LNA4V5: 2 B2B contacts, up to 1.209 A at the protection limits (b2b-nets.json net_current_extra); routed at the PWR1A
+# width 0.35 mm (IPC-2221 external 1 oz about 1.1 A at +10 degC per track, MODEL), the widest track that leaves a
+# 0.6 mm-pitch contact of the B2B placeholder (route run 42415437982: 0.8 mm could not reach contacts 118 and 120).
+BOARD_CLASSES = {'LNA4V5': 'PWR1A'}
 # Nets whose copper is all scripted and locked: widths of their netclasses.json class, not autorouted (router -inc).
-SCRIPTED_CLASSES = {'LAB5': 'SCRIPTED_PWR3A', **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')}}  # 2 B2B contacts, up to 1.209 A (b2b-nets.json net_current_extra): 0.8 mm routing width
+SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
+                    **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')}}
 
 
 # ------------------------------------------------------------------ main
@@ -937,6 +1070,12 @@ def main(argv=None):
     anchors, missing, pins, parts, tracks, vias, exempt = build(inp)
     problems = check_placement(inp, parts) + check_copper(inp, parts, tracks, vias)
     problems += [f'not placed: {r}' for r in missing]
+    gnd_pads = [(r, q['number']) for r, pa in parts.items() for q in pa.pads if q['net'] == 'GND' and q['type'] == 'smd'
+                and (r, q['number']) != ('U215', 'EP')]
+    gnd_vias = {tuple(t['path'][0]) for t in tracks if t['net'] == 'GND' and t['id'].endswith('-S')}
+    for r, n in gnd_pads:
+        if tuple(r4(v) for v in parts[r].pad(n)['at']) not in gnd_vias:
+            problems.append(f'GND pad {r}.{n} without a plane via')
     for net, pad_refs in pins['scripted_nets'].items():
         ok, names = connected(parts, tracks, vias, net, pad_refs)
         if not ok:

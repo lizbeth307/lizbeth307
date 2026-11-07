@@ -2747,6 +2747,1536 @@
         ],
         "locked": true,
         "why": "Kelvin sense to B2B contact 22"
+      },
+      {
+        "id": "GND-B2B1-59-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            106.3,
+            15.8
+          ],
+          [
+            106.3,
+            14.15
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.59 to its plane via"
+      },
+      {
+        "id": "GND-B2B1-69-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            103.3,
+            15.8
+          ],
+          [
+            103.3,
+            14.15
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.69 to its plane via"
+      },
+      {
+        "id": "GND-B2B1-82-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            99.7,
+            21.2
+          ],
+          [
+            99.7,
+            22.85
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.82 to its plane via"
+      },
+      {
+        "id": "GND-B2B1-88-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            97.9,
+            21.2
+          ],
+          [
+            97.9,
+            22.85
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.88 to its plane via"
+      },
+      {
+        "id": "GND-B2B1-92-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            96.7,
+            21.2
+          ],
+          [
+            96.7,
+            22.85
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.92 to its plane via"
+      },
+      {
+        "id": "GND-B2B1-96-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            95.5,
+            21.2
+          ],
+          [
+            95.5,
+            22.85
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.96 to its plane via"
+      },
+      {
+        "id": "GND-B2B1-100-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            94.3,
+            21.2
+          ],
+          [
+            94.3,
+            22.85
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.100 to its plane via"
+      },
+      {
+        "id": "GND-B2B1-111-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            90.7,
+            15.8
+          ],
+          [
+            90.7,
+            14.7
+          ],
+          [
+            91.35,
+            14.15
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.111 to its plane via"
+      },
+      {
+        "id": "GND-B2B1-116-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            89.5,
+            21.2
+          ],
+          [
+            89.5,
+            22.85
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of B2B1.116 to its plane via"
+      },
+      {
+        "id": "GND-C232-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.65,
+            32.2
+          ],
+          [
+            11.7,
+            32.2
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C232.2 to its plane via"
+      },
+      {
+        "id": "GND-C233-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            18.3,
+            26.55
+          ],
+          [
+            19.575,
+            26.55
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C233.2 to its plane via"
+      },
+      {
+        "id": "GND-C234-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            26.9,
+            29.05
+          ],
+          [
+            28.175,
+            29.05
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C234.2 to its plane via"
+      },
+      {
+        "id": "GND-C236-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.65,
+            21.1
+          ],
+          [
+            11.7,
+            21.1
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C236.2 to its plane via"
+      },
+      {
+        "id": "GND-C237-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            18.3,
+            15.45
+          ],
+          [
+            19.575,
+            15.45
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C237.2 to its plane via"
+      },
+      {
+        "id": "GND-C238-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            26.9,
+            17.95
+          ],
+          [
+            28.175,
+            17.95
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C238.2 to its plane via"
+      },
+      {
+        "id": "GND-C240-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.65,
+            10.0
+          ],
+          [
+            11.7,
+            10.0
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C240.2 to its plane via"
+      },
+      {
+        "id": "GND-C241-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            18.3,
+            4.35
+          ],
+          [
+            19.575,
+            4.35
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C241.2 to its plane via"
+      },
+      {
+        "id": "GND-C242-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            26.9,
+            6.85
+          ],
+          [
+            28.175,
+            6.85
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C242.2 to its plane via"
+      },
+      {
+        "id": "GND-C244-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            109.75,
+            23.7
+          ],
+          [
+            110.8,
+            23.7
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C244.2 to its plane via"
+      },
+      {
+        "id": "GND-C245-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            117.4,
+            18.05
+          ],
+          [
+            118.675,
+            18.05
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C245.2 to its plane via"
+      },
+      {
+        "id": "GND-C246-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            126.0,
+            20.55
+          ],
+          [
+            127.275,
+            20.55
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C246.2 to its plane via"
+      },
+      {
+        "id": "GND-C248-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            58.95,
+            15.8
+          ],
+          [
+            60.0,
+            15.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C248.2 to its plane via"
+      },
+      {
+        "id": "GND-C249-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            57.5,
+            26.95
+          ],
+          [
+            58.775,
+            26.95
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C249.2 to its plane via"
+      },
+      {
+        "id": "GND-C250-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            61.3,
+            26.95
+          ],
+          [
+            62.575,
+            26.95
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C250.2 to its plane via"
+      },
+      {
+        "id": "GND-C277-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            39.375,
+            33.6
+          ],
+          [
+            40.375,
+            33.6
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C277.2 to its plane via"
+      },
+      {
+        "id": "GND-C282-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            31.775,
+            15.2
+          ],
+          [
+            31.775,
+            16.225
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C282.2 to its plane via"
+      },
+      {
+        "id": "GND-C283-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            38.1,
+            17.575
+          ],
+          [
+            39.125,
+            17.575
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C283.2 to its plane via"
+      },
+      {
+        "id": "GND-C284-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            41.775,
+            15.2
+          ],
+          [
+            41.775,
+            16.225
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C284.2 to its plane via"
+      },
+      {
+        "id": "GND-C285-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            48.1,
+            17.575
+          ],
+          [
+            49.125,
+            17.575
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C285.2 to its plane via"
+      },
+      {
+        "id": "GND-C286-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            31.775,
+            21.0
+          ],
+          [
+            31.775,
+            22.025
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C286.2 to its plane via"
+      },
+      {
+        "id": "GND-C287-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            38.1,
+            23.375
+          ],
+          [
+            39.125,
+            23.375
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C287.2 to its plane via"
+      },
+      {
+        "id": "GND-C295-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            65.45,
+            15.8
+          ],
+          [
+            66.5,
+            15.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C295.2 to its plane via"
+      },
+      {
+        "id": "GND-C296-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            64.5,
+            26.95
+          ],
+          [
+            65.775,
+            26.95
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C296.2 to its plane via"
+      },
+      {
+        "id": "GND-C297-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            68.3,
+            26.95
+          ],
+          [
+            69.575,
+            26.95
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C297.2 to its plane via"
+      },
+      {
+        "id": "GND-C501-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            73.5,
+            14.875
+          ],
+          [
+            74.525,
+            14.875
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C501.2 to its plane via"
+      },
+      {
+        "id": "GND-C502-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            71.95,
+            15.8
+          ],
+          [
+            73.0,
+            15.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C502.2 to its plane via"
+      },
+      {
+        "id": "GND-C503-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            78.2,
+            31.8
+          ],
+          [
+            80.25,
+            31.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C503.2 to its plane via"
+      },
+      {
+        "id": "GND-C504-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            80.0,
+            14.875
+          ],
+          [
+            81.025,
+            14.875
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C504.2 to its plane via"
+      },
+      {
+        "id": "GND-C505-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            78.45,
+            15.8
+          ],
+          [
+            79.5,
+            15.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C505.2 to its plane via"
+      },
+      {
+        "id": "GND-C507-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            82.0,
+            18.775
+          ],
+          [
+            83.025,
+            18.775
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C507.2 to its plane via"
+      },
+      {
+        "id": "GND-C550-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            111.0,
+            13.775
+          ],
+          [
+            112.025,
+            13.775
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C550.2 to its plane via"
+      },
+      {
+        "id": "GND-C551-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            121.0,
+            13.775
+          ],
+          [
+            119.975,
+            13.775
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C551.2 to its plane via"
+      },
+      {
+        "id": "GND-C2901-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            36.15,
+            10.8
+          ],
+          [
+            37.2,
+            10.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C2901.2 to its plane via"
+      },
+      {
+        "id": "GND-C2902-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            51.15,
+            10.8
+          ],
+          [
+            52.2,
+            10.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of C2902.2 to its plane via"
+      },
+      {
+        "id": "GND-Q2911-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            34.4625,
+            1.35
+          ],
+          [
+            35.75,
+            1.35
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of Q2911.2 to its plane via"
+      },
+      {
+        "id": "GND-Q2912-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            49.4625,
+            1.35
+          ],
+          [
+            50.75,
+            1.35
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of Q2912.2 to its plane via"
+      },
+      {
+        "id": "GND-R228-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            15.0,
+            26.775
+          ],
+          [
+            16.025,
+            26.775
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R228.2 to its plane via"
+      },
+      {
+        "id": "GND-R229-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.525,
+            25.9
+          ],
+          [
+            11.475,
+            25.9
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R229.2 to its plane via"
+      },
+      {
+        "id": "GND-R233-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            15.0,
+            15.675
+          ],
+          [
+            16.025,
+            15.675
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R233.2 to its plane via"
+      },
+      {
+        "id": "GND-R234-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.525,
+            14.8
+          ],
+          [
+            11.475,
+            14.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R234.2 to its plane via"
+      },
+      {
+        "id": "GND-R238-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            15.0,
+            4.575
+          ],
+          [
+            16.025,
+            4.575
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R238.2 to its plane via"
+      },
+      {
+        "id": "GND-R239-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.525,
+            3.7
+          ],
+          [
+            11.475,
+            3.7
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R239.2 to its plane via"
+      },
+      {
+        "id": "GND-R243-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            114.1,
+            18.275
+          ],
+          [
+            115.125,
+            18.275
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R243.2 to its plane via"
+      },
+      {
+        "id": "GND-R244-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            109.625,
+            17.4
+          ],
+          [
+            110.575,
+            17.4
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R244.2 to its plane via"
+      },
+      {
+        "id": "GND-R248-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            58.825,
+            22.1
+          ],
+          [
+            59.775,
+            22.1
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R248.2 to its plane via"
+      },
+      {
+        "id": "GND-R249-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            61.0,
+            18.625
+          ],
+          [
+            62.025,
+            18.625
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R249.2 to its plane via"
+      },
+      {
+        "id": "GND-R281-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            31.825,
+            16.8
+          ],
+          [
+            32.775,
+            16.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R281.2 to its plane via"
+      },
+      {
+        "id": "GND-R284-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            41.825,
+            16.8
+          ],
+          [
+            42.775,
+            16.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R284.2 to its plane via"
+      },
+      {
+        "id": "GND-R287-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            31.825,
+            22.6
+          ],
+          [
+            32.775,
+            22.6
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R287.2 to its plane via"
+      },
+      {
+        "id": "GND-R293-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            65.325,
+            22.1
+          ],
+          [
+            66.275,
+            22.1
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R293.2 to its plane via"
+      },
+      {
+        "id": "GND-R294-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            67.5,
+            18.625
+          ],
+          [
+            68.525,
+            18.625
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R294.2 to its plane via"
+      },
+      {
+        "id": "GND-R501-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            71.825,
+            22.1
+          ],
+          [
+            72.775,
+            22.1
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R501.2 to its plane via"
+      },
+      {
+        "id": "GND-R502-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            74.0,
+            18.625
+          ],
+          [
+            75.025,
+            18.625
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R502.2 to its plane via"
+      },
+      {
+        "id": "GND-R504-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            81.0,
+            32.425
+          ],
+          [
+            82.025,
+            32.425
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R504.2 to its plane via"
+      },
+      {
+        "id": "GND-R505-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            78.325,
+            22.1
+          ],
+          [
+            79.275,
+            22.1
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R505.2 to its plane via"
+      },
+      {
+        "id": "GND-R506-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            80.5,
+            18.625
+          ],
+          [
+            81.525,
+            18.625
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R506.2 to its plane via"
+      },
+      {
+        "id": "GND-R508-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            83.8,
+            18.825
+          ],
+          [
+            84.825,
+            18.825
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R508.2 to its plane via"
+      },
+      {
+        "id": "GND-R2921-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            40.5,
+            10.825
+          ],
+          [
+            39.475,
+            10.825
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R2921.2 to its plane via"
+      },
+      {
+        "id": "GND-R2922-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            55.5,
+            10.825
+          ],
+          [
+            54.475,
+            10.825
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of R2922.2 to its plane via"
+      },
+      {
+        "id": "GND-U206-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.5625,
+            29.0
+          ],
+          [
+            9.35,
+            29.0
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U206.2 to its plane via"
+      },
+      {
+        "id": "GND-U207-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.5625,
+            17.9
+          ],
+          [
+            9.35,
+            17.9
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U207.2 to its plane via"
+      },
+      {
+        "id": "GND-U208-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            10.5625,
+            6.8
+          ],
+          [
+            9.35,
+            6.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U208.2 to its plane via"
+      },
+      {
+        "id": "GND-U209-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            109.6625,
+            20.5
+          ],
+          [
+            110.725,
+            20.5
+          ],
+          [
+            110.725,
+            22.7
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U209.2 to its plane via"
+      },
+      {
+        "id": "GND-U210-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            58.0,
+            17.7625
+          ],
+          [
+            58.0,
+            18.825
+          ],
+          [
+            60.2,
+            18.825
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U210.2 to its plane via"
+      },
+      {
+        "id": "GND-U215-3-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            32.675,
+            29.675
+          ],
+          [
+            33.6,
+            29.675
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U215.3 to its plane via"
+      },
+      {
+        "id": "GND-U215-EP",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            32.675,
+            29.675
+          ],
+          [
+            34.5,
+            29.675
+          ]
+        ],
+        "locked": true,
+        "why": "INA3221 exposed pad to its GND pin 3 (the pin 3 via joins both to the planes)"
+      },
+      {
+        "id": "GND-U217-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            33.4625,
+            16.8
+          ],
+          [
+            34.525,
+            16.8
+          ],
+          [
+            34.525,
+            19.0
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U217.2 to its plane via"
+      },
+      {
+        "id": "GND-U218-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            43.4625,
+            16.8
+          ],
+          [
+            44.525,
+            16.8
+          ],
+          [
+            44.525,
+            19.0
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U218.2 to its plane via"
+      },
+      {
+        "id": "GND-U219-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            33.4625,
+            22.6
+          ],
+          [
+            34.525,
+            22.6
+          ],
+          [
+            34.525,
+            24.8
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U219.2 to its plane via"
+      },
+      {
+        "id": "GND-U221-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            64.5,
+            17.7625
+          ],
+          [
+            64.5,
+            18.825
+          ],
+          [
+            66.7,
+            18.825
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U221.2 to its plane via"
+      },
+      {
+        "id": "GND-U501-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            71.0,
+            17.7625
+          ],
+          [
+            71.0,
+            18.825
+          ],
+          [
+            73.2,
+            18.825
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U501.2 to its plane via"
+      },
+      {
+        "id": "GND-U502-2-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            77.5,
+            17.7625
+          ],
+          [
+            77.5,
+            18.825
+          ],
+          [
+            79.7,
+            18.825
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U502.2 to its plane via"
+      },
+      {
+        "id": "GND-U507-4-S",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            113.525,
+            10.495
+          ],
+          [
+            115.05,
+            10.495
+          ]
+        ],
+        "locked": true,
+        "why": "GND fan-out of U507.4 to its plane via"
       }
     ],
     "vias": [
@@ -2845,6 +4375,990 @@
         "diameter_mm": 0.7,
         "locked": true,
         "why": "Kelvin sense E2_LNA4_SHUNT to the B2B contact 22 (bottom side)"
+      },
+      {
+        "id": "GND-B2B1-59-V",
+        "net": "GND",
+        "at": [
+          106.3,
+          14.15
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.59"
+      },
+      {
+        "id": "GND-B2B1-69-V",
+        "net": "GND",
+        "at": [
+          103.3,
+          14.15
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.69"
+      },
+      {
+        "id": "GND-B2B1-82-V",
+        "net": "GND",
+        "at": [
+          99.7,
+          22.85
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.82"
+      },
+      {
+        "id": "GND-B2B1-88-V",
+        "net": "GND",
+        "at": [
+          97.9,
+          22.85
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.88"
+      },
+      {
+        "id": "GND-B2B1-92-V",
+        "net": "GND",
+        "at": [
+          96.7,
+          22.85
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.92"
+      },
+      {
+        "id": "GND-B2B1-96-V",
+        "net": "GND",
+        "at": [
+          95.5,
+          22.85
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.96"
+      },
+      {
+        "id": "GND-B2B1-100-V",
+        "net": "GND",
+        "at": [
+          94.3,
+          22.85
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.100"
+      },
+      {
+        "id": "GND-B2B1-111-V",
+        "net": "GND",
+        "at": [
+          91.35,
+          14.15
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.111"
+      },
+      {
+        "id": "GND-B2B1-116-V",
+        "net": "GND",
+        "at": [
+          89.5,
+          22.85
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of B2B1.116"
+      },
+      {
+        "id": "GND-C232-2-V",
+        "net": "GND",
+        "at": [
+          11.7,
+          32.2
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C232.2"
+      },
+      {
+        "id": "GND-C233-2-V",
+        "net": "GND",
+        "at": [
+          19.575,
+          26.55
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C233.2"
+      },
+      {
+        "id": "GND-C234-2-V",
+        "net": "GND",
+        "at": [
+          28.175,
+          29.05
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C234.2"
+      },
+      {
+        "id": "GND-C236-2-V",
+        "net": "GND",
+        "at": [
+          11.7,
+          21.1
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C236.2"
+      },
+      {
+        "id": "GND-C237-2-V",
+        "net": "GND",
+        "at": [
+          19.575,
+          15.45
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C237.2"
+      },
+      {
+        "id": "GND-C238-2-V",
+        "net": "GND",
+        "at": [
+          28.175,
+          17.95
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C238.2"
+      },
+      {
+        "id": "GND-C240-2-V",
+        "net": "GND",
+        "at": [
+          11.7,
+          10.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C240.2"
+      },
+      {
+        "id": "GND-C241-2-V",
+        "net": "GND",
+        "at": [
+          19.575,
+          4.35
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C241.2"
+      },
+      {
+        "id": "GND-C242-2-V",
+        "net": "GND",
+        "at": [
+          28.175,
+          6.85
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C242.2"
+      },
+      {
+        "id": "GND-C244-2-V",
+        "net": "GND",
+        "at": [
+          110.8,
+          23.7
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C244.2"
+      },
+      {
+        "id": "GND-C245-2-V",
+        "net": "GND",
+        "at": [
+          118.675,
+          18.05
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C245.2"
+      },
+      {
+        "id": "GND-C246-2-V",
+        "net": "GND",
+        "at": [
+          127.275,
+          20.55
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C246.2"
+      },
+      {
+        "id": "GND-C248-2-V",
+        "net": "GND",
+        "at": [
+          60.0,
+          15.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C248.2"
+      },
+      {
+        "id": "GND-C249-2-V",
+        "net": "GND",
+        "at": [
+          58.775,
+          26.95
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C249.2"
+      },
+      {
+        "id": "GND-C250-2-V",
+        "net": "GND",
+        "at": [
+          62.575,
+          26.95
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C250.2"
+      },
+      {
+        "id": "GND-C277-2-V",
+        "net": "GND",
+        "at": [
+          40.375,
+          33.6
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C277.2"
+      },
+      {
+        "id": "GND-C282-2-V",
+        "net": "GND",
+        "at": [
+          31.775,
+          16.225
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C282.2"
+      },
+      {
+        "id": "GND-C283-2-V",
+        "net": "GND",
+        "at": [
+          39.125,
+          17.575
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C283.2"
+      },
+      {
+        "id": "GND-C284-2-V",
+        "net": "GND",
+        "at": [
+          41.775,
+          16.225
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C284.2"
+      },
+      {
+        "id": "GND-C285-2-V",
+        "net": "GND",
+        "at": [
+          49.125,
+          17.575
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C285.2"
+      },
+      {
+        "id": "GND-C286-2-V",
+        "net": "GND",
+        "at": [
+          31.775,
+          22.025
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C286.2"
+      },
+      {
+        "id": "GND-C287-2-V",
+        "net": "GND",
+        "at": [
+          39.125,
+          23.375
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C287.2"
+      },
+      {
+        "id": "GND-C295-2-V",
+        "net": "GND",
+        "at": [
+          66.5,
+          15.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C295.2"
+      },
+      {
+        "id": "GND-C296-2-V",
+        "net": "GND",
+        "at": [
+          65.775,
+          26.95
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C296.2"
+      },
+      {
+        "id": "GND-C297-2-V",
+        "net": "GND",
+        "at": [
+          69.575,
+          26.95
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C297.2"
+      },
+      {
+        "id": "GND-C501-2-V",
+        "net": "GND",
+        "at": [
+          74.525,
+          14.875
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C501.2"
+      },
+      {
+        "id": "GND-C502-2-V",
+        "net": "GND",
+        "at": [
+          73.0,
+          15.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C502.2"
+      },
+      {
+        "id": "GND-C503-2-V",
+        "net": "GND",
+        "at": [
+          80.25,
+          31.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C503.2"
+      },
+      {
+        "id": "GND-C504-2-V",
+        "net": "GND",
+        "at": [
+          81.025,
+          14.875
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C504.2"
+      },
+      {
+        "id": "GND-C505-2-V",
+        "net": "GND",
+        "at": [
+          79.5,
+          15.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C505.2"
+      },
+      {
+        "id": "GND-C507-2-V",
+        "net": "GND",
+        "at": [
+          83.025,
+          18.775
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C507.2"
+      },
+      {
+        "id": "GND-C550-2-V",
+        "net": "GND",
+        "at": [
+          112.025,
+          13.775
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C550.2"
+      },
+      {
+        "id": "GND-C551-2-V",
+        "net": "GND",
+        "at": [
+          119.975,
+          13.775
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C551.2"
+      },
+      {
+        "id": "GND-C2901-2-V",
+        "net": "GND",
+        "at": [
+          37.2,
+          10.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C2901.2"
+      },
+      {
+        "id": "GND-C2902-2-V",
+        "net": "GND",
+        "at": [
+          52.2,
+          10.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of C2902.2"
+      },
+      {
+        "id": "GND-Q2911-2-V",
+        "net": "GND",
+        "at": [
+          35.75,
+          1.35
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of Q2911.2"
+      },
+      {
+        "id": "GND-Q2912-2-V",
+        "net": "GND",
+        "at": [
+          50.75,
+          1.35
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of Q2912.2"
+      },
+      {
+        "id": "GND-R228-2-V",
+        "net": "GND",
+        "at": [
+          16.025,
+          26.775
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R228.2"
+      },
+      {
+        "id": "GND-R229-2-V",
+        "net": "GND",
+        "at": [
+          11.475,
+          25.9
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R229.2"
+      },
+      {
+        "id": "GND-R233-2-V",
+        "net": "GND",
+        "at": [
+          16.025,
+          15.675
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R233.2"
+      },
+      {
+        "id": "GND-R234-2-V",
+        "net": "GND",
+        "at": [
+          11.475,
+          14.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R234.2"
+      },
+      {
+        "id": "GND-R238-2-V",
+        "net": "GND",
+        "at": [
+          16.025,
+          4.575
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R238.2"
+      },
+      {
+        "id": "GND-R239-2-V",
+        "net": "GND",
+        "at": [
+          11.475,
+          3.7
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R239.2"
+      },
+      {
+        "id": "GND-R243-2-V",
+        "net": "GND",
+        "at": [
+          115.125,
+          18.275
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R243.2"
+      },
+      {
+        "id": "GND-R244-2-V",
+        "net": "GND",
+        "at": [
+          110.575,
+          17.4
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R244.2"
+      },
+      {
+        "id": "GND-R248-2-V",
+        "net": "GND",
+        "at": [
+          59.775,
+          22.1
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R248.2"
+      },
+      {
+        "id": "GND-R249-2-V",
+        "net": "GND",
+        "at": [
+          62.025,
+          18.625
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R249.2"
+      },
+      {
+        "id": "GND-R281-2-V",
+        "net": "GND",
+        "at": [
+          32.775,
+          16.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R281.2"
+      },
+      {
+        "id": "GND-R284-2-V",
+        "net": "GND",
+        "at": [
+          42.775,
+          16.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R284.2"
+      },
+      {
+        "id": "GND-R287-2-V",
+        "net": "GND",
+        "at": [
+          32.775,
+          22.6
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R287.2"
+      },
+      {
+        "id": "GND-R293-2-V",
+        "net": "GND",
+        "at": [
+          66.275,
+          22.1
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R293.2"
+      },
+      {
+        "id": "GND-R294-2-V",
+        "net": "GND",
+        "at": [
+          68.525,
+          18.625
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R294.2"
+      },
+      {
+        "id": "GND-R501-2-V",
+        "net": "GND",
+        "at": [
+          72.775,
+          22.1
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R501.2"
+      },
+      {
+        "id": "GND-R502-2-V",
+        "net": "GND",
+        "at": [
+          75.025,
+          18.625
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R502.2"
+      },
+      {
+        "id": "GND-R504-2-V",
+        "net": "GND",
+        "at": [
+          82.025,
+          32.425
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R504.2"
+      },
+      {
+        "id": "GND-R505-2-V",
+        "net": "GND",
+        "at": [
+          79.275,
+          22.1
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R505.2"
+      },
+      {
+        "id": "GND-R506-2-V",
+        "net": "GND",
+        "at": [
+          81.525,
+          18.625
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R506.2"
+      },
+      {
+        "id": "GND-R508-2-V",
+        "net": "GND",
+        "at": [
+          84.825,
+          18.825
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R508.2"
+      },
+      {
+        "id": "GND-R2921-2-V",
+        "net": "GND",
+        "at": [
+          39.475,
+          10.825
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R2921.2"
+      },
+      {
+        "id": "GND-R2922-2-V",
+        "net": "GND",
+        "at": [
+          54.475,
+          10.825
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of R2922.2"
+      },
+      {
+        "id": "GND-U206-2-V",
+        "net": "GND",
+        "at": [
+          9.35,
+          29.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U206.2"
+      },
+      {
+        "id": "GND-U207-2-V",
+        "net": "GND",
+        "at": [
+          9.35,
+          17.9
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U207.2"
+      },
+      {
+        "id": "GND-U208-2-V",
+        "net": "GND",
+        "at": [
+          9.35,
+          6.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U208.2"
+      },
+      {
+        "id": "GND-U209-2-V",
+        "net": "GND",
+        "at": [
+          110.725,
+          22.7
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U209.2"
+      },
+      {
+        "id": "GND-U210-2-V",
+        "net": "GND",
+        "at": [
+          60.2,
+          18.825
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U210.2"
+      },
+      {
+        "id": "GND-U215-3-V",
+        "net": "GND",
+        "at": [
+          33.6,
+          29.675
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U215.3"
+      },
+      {
+        "id": "GND-U217-2-V",
+        "net": "GND",
+        "at": [
+          34.525,
+          19.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U217.2"
+      },
+      {
+        "id": "GND-U218-2-V",
+        "net": "GND",
+        "at": [
+          44.525,
+          19.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U218.2"
+      },
+      {
+        "id": "GND-U219-2-V",
+        "net": "GND",
+        "at": [
+          34.525,
+          24.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U219.2"
+      },
+      {
+        "id": "GND-U221-2-V",
+        "net": "GND",
+        "at": [
+          66.7,
+          18.825
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U221.2"
+      },
+      {
+        "id": "GND-U501-2-V",
+        "net": "GND",
+        "at": [
+          73.2,
+          18.825
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U501.2"
+      },
+      {
+        "id": "GND-U502-2-V",
+        "net": "GND",
+        "at": [
+          79.7,
+          18.825
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U502.2"
+      },
+      {
+        "id": "GND-U507-4-V",
+        "net": "GND",
+        "at": [
+          115.05,
+          10.495
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "GND plane via of U507.4"
       }
     ],
     "zones": [
@@ -3231,10 +5745,11 @@
     "timeout_s": 1620,
     "fanout": false,
     "ignore_net_classes": [
+      "SCRIPTED_GND",
       "SCRIPTED_PWR1A",
       "SCRIPTED_PWR3A"
     ],
-    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted"
+    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)"
   },
   "drc_policy": {
     "warning_checks": {
