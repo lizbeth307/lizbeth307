@@ -463,5 +463,175 @@ class RepositoryLayoutTests(unittest.TestCase):
             deploy.release_files({"sha256": "\n" + "a" * 64 + " 1 ../escape"}, "t")
 
 
+# --- W2 SW-BUILDER: the record binding of schema-2 recipes (listed patches, source member, recipe
+# files) and the optional record_digests field. Synthetic deployment trees in temporary directories.
+import copy  # noqa: E402
+import importlib.util  # noqa: E402
+
+FIXTURE = "srrx-fixture"
+MEMBER = {"path": "superbuild-1.0/src/inner.tgz", "sha256": "c" * 64}
+
+
+def v2_deployment(root):
+    """deployment/ stand-in: recipes/srrx-fixture/ with a recipe naming three listed patches and a
+    source member, its check_recipe.py and files/. Returns the record a builder would write for it."""
+    directory = root / "recipes" / FIXTURE
+    (directory / "patches").mkdir(parents=True)
+    (directory / "files").mkdir()
+    (directory / "check_recipe.py").write_text("# synthetic hook\n", encoding="utf-8")
+    (directory / "files/srrx-fixture.conf").write_text("# synthetic recipe file\n", encoding="utf-8")
+    listed = []
+    for index in range(1, 4):
+        file = "patches/%04d-synthetic.patch" % index
+        (directory / file).write_text("--- a/f%d\n+++ b/f%d\n@@ -1 +1 @@\n-a\n+b\n" % (index, index), encoding="utf-8")
+        listed.append({"file": file, "sha256": deploy.sha(directory / file), "strip": 1, "targets": {"f%d" % index: "0" * 40},
+                       "kind": "lab", "summary": "synthetic"})
+    (directory / "recipe.json").write_text(json.dumps({"schema_version": 2, "component": FIXTURE,
+                                                       "source": {"patch": None, "patches": listed, "member": MEMBER}}), encoding="utf-8")
+    receipts = [dict(entry, after={t: "1" * 40 for t in entry["targets"]}) for entry in listed]
+    for receipt in receipts:
+        del receipt["kind"], receipt["summary"]
+    return {"component": FIXTURE, "recipe_sha256": deploy.sha(directory / "recipe.json"),
+            "build_environment": {"patch_receipt": {"component": FIXTURE, "patch": None}, "patch_receipts": receipts,
+                                  "source_member": dict(MEMBER),
+                                  "recipe_files": {"check_recipe.py": deploy.sha(directory / "check_recipe.py"),
+                                                   "files/srrx-fixture.conf": deploy.sha(directory / "files/srrx-fixture.conf")}}}
+
+
+class ListedPatchBindingTests(unittest.TestCase):
+    """deploy._record_binding: one receipt per listed patch, the source member and recipe files."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-binding-v2-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "deployment"
+        self.good = v2_deployment(self.root)
+        for name, value in (("HERE", self.root), ("PROJECT", self.root.parent)):
+            mocked = patch.object(deploy, name, value)
+            mocked.start()
+            self.addCleanup(mocked.stop)
+
+    def refused(self, needle, change):
+        record = copy.deepcopy(self.good)
+        change(record["build_environment"])
+        with self.assertRaisesRegex(deploy.DeploymentError, needle):
+            deploy._record_binding(record, "fixture")
+
+    def test_a_three_patch_record_binds_with_three_receipts(self):
+        self.assertEqual(len(self.good["build_environment"]["patch_receipts"]), 3)
+        deploy._record_binding(self.good, "fixture")
+
+    def test_a_patch_list_mismatch_is_refused(self):
+        receipts = lambda change: (lambda environment: change(environment["patch_receipts"]))  # noqa: E731
+        for label, change in {"one receipt missing": receipts(lambda r: r.pop()),
+                              "one receipt more": receipts(lambda r: r.append(copy.deepcopy(r[0]))),
+                              "receipts reordered": receipts(lambda r: r.reverse()),
+                              "other patch bytes": receipts(lambda r: r[1].update(sha256="0" * 64)),
+                              "other strip level": receipts(lambda r: r[2].update(strip=0)),
+                              "other file": receipts(lambda r: r[0].update(file="patches/0009-other.patch")),
+                              "no receipt list": lambda e: e.pop("patch_receipts"),
+                              "receipts not a list": lambda e: e.update(patch_receipts={"file": "x"}),
+                              "receipt not an object": receipts(lambda r: r.__setitem__(0, "patches/0001-synthetic.patch"))}.items():
+            with self.subTest(label):
+                self.refused("patch list differs", change)
+        (self.root / "recipes" / FIXTURE / "patches/0002-synthetic.patch").write_text("changed after the build\n", encoding="utf-8")
+        with self.assertRaisesRegex(deploy.DeploymentError, r"patch list differs .*\(3 listed, 3 recorded\)"):
+            deploy._record_binding(self.good, "fixture")
+
+    def test_member_and_recipe_files_are_bound(self):
+        self.refused("source member differs", lambda e: e.pop("source_member"))
+        self.refused("source member differs", lambda e: e.update(source_member=dict(MEMBER, sha256="0" * 64)))
+        self.refused("source member differs", lambda e: e.update(source_member=dict(MEMBER, path="other/inner.tgz")))
+        self.refused("recipe files differ", lambda e: e["recipe_files"].update({"check_recipe.py": "0" * 64}))
+        self.refused("recipe files differ", lambda e: e["recipe_files"].update({"files/absent.conf": "0" * 64}))
+        self.refused("recipe files differ", lambda e: e["recipe_files"].update({"../recipes/x": "0" * 64}))
+        self.refused("recipe files differ", lambda e: e.update(recipe_files=[]))
+        (self.root / "recipes" / FIXTURE / "files/srrx-fixture.conf").write_text("changed\n", encoding="utf-8")
+        with self.assertRaisesRegex(deploy.DeploymentError, "recipe files differ"):
+            deploy._record_binding(self.good, "fixture")
+
+    def test_schema_1_records_bind_as_before(self):
+        with patch.object(deploy, "HERE", HERE), patch.object(deploy, "PROJECT", HERE.parent):
+            record = {"component": "rtlsdr", "recipe_sha256": deploy.sha(HERE / "recipes/rtlsdr/recipe.json"),
+                      "build_environment": {"patch_receipt": {"component": "rtlsdr", "patch_sha256": deploy.sha(HERE / "patches/rtlsdr-rx-only.patch")}}}
+            deploy._record_binding(record, "rtlsdr")  # a record written before schema 2: no new fields
+            current = copy.deepcopy(record)
+            current["build_environment"].update(patch_receipts=[], source_member=None, recipe_files={})
+            deploy._record_binding(current, "rtlsdr")  # the fields this builder now writes for a schema-1 recipe
+            current["build_environment"]["patch_receipts"].append({"file": "patches/0001-x.patch", "sha256": "0" * 64, "strip": 1})
+            with self.assertRaisesRegex(deploy.DeploymentError, r"patch list differs .*\(0 listed, 1 recorded\)"):
+                deploy._record_binding(current, "rtlsdr")
+
+
+class PackageHookOutputTests(unittest.TestCase):
+    """check_repo.record_binding: the package hook output next to the record and its record_digests."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-hook-output-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "deployment"
+        self.record = v2_deployment(self.root)
+        for name, value in (("HERE", self.root), ("PROJECT", self.root.parent)):
+            mocked = patch.object(deploy, name, value)
+            mocked.start()
+            self.addCleanup(mocked.stop)
+        spec = importlib.util.spec_from_file_location("srrx_check_repo_hooks", HERE / "repo/check_repo.py")
+        self.check_repo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.check_repo)
+        self.out = Path(self.temp.name) / "out" / FIXTURE
+        self.out.mkdir(parents=True)
+        self.output = self.out / (FIXTURE + ".package-hook.json")
+        self.output.write_text(json.dumps({"files": {}, "record_digests": {"sha256": "a" * 64}}), encoding="utf-8")
+        self.record["build_environment"]["hooks"] = [{"hook": "package", "status": "CI_PASS", "output": self.output.name,
+                                                      "output_sha256": deploy.sha(self.output)}]
+        self.record["record_digests"] = {"sha256": "a" * 64}
+        self.path = self.out / (FIXTURE + ".build-record.json")
+
+    def test_output_and_digests_match_the_record(self):
+        self.assertEqual(self.check_repo.record_binding(self.path, self.record),
+                         {"component": FIXTURE, "patch_receipts": 3, "source_member": MEMBER["path"], "record_digests": True})
+        for label, change, needle in (
+                ("digests differ", lambda r: r.update(record_digests={"sha256": "b" * 64}), "record_digests differ"),
+                ("digests without output", lambda r: r["build_environment"].update(hooks=[]), "without a package hook output"),
+                ("output elsewhere", lambda r: r["build_environment"]["hooks"][0].update(output="../" + self.output.name), "hook output differs"),
+                ("output bytes", lambda r: r["build_environment"]["hooks"][0].update(output_sha256="0" * 64), "hook output differs"),
+                ("patch list", lambda r: r["build_environment"]["patch_receipts"].pop(), "patch list differs")):
+            record = copy.deepcopy(self.record)
+            change(record)
+            with self.subTest(label), self.assertRaisesRegex(self.check_repo.CheckError, needle):
+                self.check_repo.record_binding(self.path, record)
+
+
+@unittest.skipUnless(GPG, "gpg/gpgv not available (SRRX_RELEASE_BUILDER=1 makes this a failure)")
+class SchemaV2SignedRecordTests(unittest.TestCase):
+    """deploy.verify_repo with the schema-2 record fields: record_digests is the one optional key, and
+    the listed-patch, member and recipe-file bindings refuse a record that differs from the recipe."""
+    # The fixtures of SignedRepositoryTests, without inheriting (and re-running) its tests.
+    setUpClass = classmethod(SignedRepositoryTests.setUpClass.__func__)
+    tearDownClass = classmethod(SignedRepositoryTests.tearDownClass.__func__)
+    setUp = SignedRepositoryTests.setUp
+    publish = SignedRepositoryTests.publish
+    record = SignedRepositoryTests.record
+    verify = SignedRepositoryTests.verify
+    refused = SignedRepositoryTests.refused
+
+    def environment(self, **fields):
+        return dict({"patch_receipt": {"component": "rtlsdr", "patch_sha256": deploy.sha(HERE / "patches/rtlsdr-rx-only.patch")},
+                     "patch_receipts": [], "source_member": None, "recipe_files": {}}, **fields)
+
+    def test_record_digests_is_the_one_optional_record_field(self):
+        repo = self.publish()
+        self.assertEqual(self.verify(repo, [self.record(build_environment=self.environment(), record_digests={"sha256": "a" * 64})])["packages"], 2)
+        self.refused("record_digests must be an object", repo, [self.record(record_digests=["a" * 64])])
+        self.refused("missing or unknown fields", repo, [self.record(digests={"sha256": "a" * 64})])
+
+    def test_records_differing_from_the_recipe_patches_member_or_files_are_refused(self):
+        repo = self.publish()
+        receipt = {"file": "patches/0001-x.patch", "sha256": "0" * 64, "strip": 1}
+        self.refused("patch list differs", repo, [self.record(build_environment=self.environment(patch_receipts=[receipt]))])
+        self.refused("source member differs", repo, [self.record(build_environment=self.environment(source_member=dict(MEMBER)))])
+        self.refused("recipe files differ", repo, [self.record(build_environment=self.environment(recipe_files={"check_recipe.py": "0" * 64}))])
+
+
 if __name__ == "__main__":
     unittest.main()

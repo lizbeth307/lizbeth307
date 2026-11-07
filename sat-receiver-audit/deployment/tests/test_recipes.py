@@ -361,5 +361,489 @@ class BuilderArgvTests(unittest.TestCase):
             self.assertTrue(finalize.bound(name), name)
 
 
+# --- schema_version 2 (W2 SW-BUILDER): listed patches, source member, make/autotools, hooks, recipe
+# files and forbid_needed. Synthetic deployment trees in temporary directories; nothing is fetched.
+import gzip  # noqa: E402
+import hashlib  # noqa: E402
+import io  # noqa: E402
+import shutil  # noqa: E402
+import subprocess  # noqa: E402
+import tarfile  # noqa: E402
+
+FIXTURE = "srrx-fixture"
+HELLO = '#include <stdio.h>\nint main(void) { puts("srrx fixture"); return 0; }\n'
+SOURCE = {"src/a.txt": "alpha\n", "src/b.txt": "beta\n", "src/c.txt": "gamma\n", "hello.c": HELLO}
+# Three listed patches, the second with two targets: 4 changed files in all.
+PATCHES = [("alpha", [("src/a.txt", "alpha\n", "alpha patched\n")]),
+           ("beta-gamma", [("src/b.txt", "beta\n", "beta patched\n"), ("src/c.txt", "gamma\n", "gamma patched\n")]),
+           ("greeting", [("hello.c", HELLO, HELLO.replace("srrx fixture", "srrx fixture patched"))])]
+MEMBER = "superbuild-1.0/src/inner.tgz"
+# Stand-in for an autoconf-generated configure: the ac_user_opts list the builder reads, and a Makefile.
+CONFIGURE = """#!/bin/sh
+# Synthetic stand-in for a GNU Autoconf configure script (builder test fixture only).
+ac_user_opts='
+enable_option_checking
+enable_greeting
+with_colour
+'
+prefix=/usr/local
+for arg in "$@"; do
+  case $arg in
+    --prefix=*) prefix=${arg#--prefix=} ;;
+    --enable-greeting|--disable-greeting|--with-colour|--with-colour=*|--without-colour) ;;
+    *) echo "configure: unrecognized option $arg" >&2; exit 1 ;;
+  esac
+done
+cat > Makefile <<EOF
+PREFIX = $prefix
+all: hello
+hello: hello.c
+\tcc -O2 -o hello hello.c
+install: hello
+\tmkdir -p \\$(DESTDIR)\\$(PREFIX)/bin \\$(DESTDIR)\\$(PREFIX)/share/srrx-fixture
+\tcp hello \\$(DESTDIR)\\$(PREFIX)/bin/srrx-fixture-hello
+\tcp src/a.txt \\$(DESTDIR)\\$(PREFIX)/share/srrx-fixture/a.txt
+\tcp src/b.txt \\$(DESTDIR)\\$(PREFIX)/share/srrx-fixture/dropped-by-hook.txt
+EOF
+"""
+CHECK_RECIPE = '''#!/usr/bin/env python3
+"""Synthetic recipe hook of the builder tests (stdlib only, no network)."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import sys
+
+parser = argparse.ArgumentParser()
+commands = parser.add_subparsers(dest="command", required=True)
+commands.add_parser("verify-source").add_argument("--source", type=Path, required=True)
+stage = commands.add_parser("package")
+stage.add_argument("--root", type=Path, required=True)
+stage.add_argument("--manifest", type=Path)
+args = parser.parse_args()
+findings = []
+if args.command == "verify-source":
+    if (args.source / "src/a.txt").read_text(encoding="utf-8") != "alpha\\n":
+        findings.append("upstream_file:src/a.txt")
+else:
+    (args.root / "usr/share/srrx-fixture/dropped-by-hook.txt").unlink()
+    files = {p.relative_to(args.root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+             for p in sorted(args.root.rglob("*")) if p.is_file()}
+    with args.manifest.open("x", encoding="utf-8") as stream:
+        stream.write(json.dumps({"files": files, "record_digests": {"hello_sha256": files["usr/bin/srrx-fixture-hello"]}}) + "\\n")
+print(json.dumps({"command": args.command, "findings": findings, "ok": not findings}))
+sys.exit(0 if not findings else 2)
+'''
+SOURCE_CHECK = ["python3", "-I", "{recipe}/check_recipe.py", "verify-source", "--source", "{src}"]
+PACKAGE_HOOK = ["python3", "-I", "{recipe}/check_recipe.py", "package", "--root", "{destdir}", "--manifest", "{hook_out}"]
+
+
+def blob(text):
+    data = text.encode()
+    return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
+
+
+def diff(path, old, new):
+    a, b = old.splitlines(True), new.splitlines(True)
+    return ("diff --git a/%s b/%s\n--- a/%s\n+++ b/%s\n@@ -1,%d +1,%d @@\n" % (path, path, path, path, len(a), len(b))
+            + "".join("-" + line for line in a) + "".join("+" + line for line in b))
+
+
+def tar_gz(entries, mtime=1700000000):
+    """gzip tar bytes of {name: (bytes, mode)} with one fixed mtime."""
+    buffer = io.BytesIO()
+    with gzip.GzipFile(fileobj=buffer, mode="wb", mtime=0) as compressed, tarfile.open(fileobj=compressed, mode="w") as archive:
+        for name, (data, mode) in sorted(entries.items()):
+            info = tarfile.TarInfo(name)
+            info.size, info.mode, info.mtime = len(data), mode, mtime
+            archive.addfile(info, io.BytesIO(data))
+    return buffer.getvalue()
+
+
+def fixture_tree(root):
+    """A deployment/ stand-in: recipes/srrx-fixture/ with check_recipe.py, three listed patches and
+    files/, plus sources.lock.json (the real lock and the synthetic component). Returns the listed
+    patch entries, the outer archive path and its lock."""
+    directory = root / "recipes" / FIXTURE
+    (directory / "patches").mkdir(parents=True)
+    (directory / "files").mkdir()
+    (directory / "check_recipe.py").write_text(CHECK_RECIPE, encoding="utf-8", newline="\n")
+    (directory / "files/srrx-fixture.conf").write_text("# synthetic recipe file\n", encoding="utf-8", newline="\n")
+    entries = []
+    for index, (name, changes) in enumerate(PATCHES, 1):
+        file = "patches/%04d-%s.patch" % (index, name)
+        (directory / file).write_text("".join(diff(p, old, new) for p, old, new in changes), encoding="utf-8", newline="\n")
+        entries.append({"file": file, "sha256": deploy.sha(directory / file), "strip": 1,
+                        "targets": {p: blob(old) for p, old, _ in changes}, "kind": "lab", "summary": "synthetic " + name})
+    inner = tar_gz(dict({"srrx-fixture-1.0/" + p: (t.encode(), 0o644) for p, t in SOURCE.items()},
+                        **{"srrx-fixture-1.0/configure": (CONFIGURE.encode(), 0o755)}))
+    outer = root.parent / "superbuild.tar.gz"
+    outer.write_bytes(tar_gz({MEMBER: (inner, 0o644), "superbuild-1.0/README": (b"synthetic superbuild\n", 0o644)}, mtime=1600000000))
+    lock = copy.deepcopy(LOCK)
+    lock["components"].append({"id": FIXTURE, "version": "1.0+lab1", "commit": None, "source_archive_sha256": deploy.sha(outer),
+                               "source_archive_size": outer.stat().st_size, "source_cache_path": "sources/superbuild.tar.gz"})
+    (root / "sources.lock.json").write_text(json.dumps(lock, indent=2), encoding="utf-8")
+    return entries, outer, lock, hashlib.sha256(inner).hexdigest()
+
+
+def v2_recipe(entries, member_sha):
+    return {"schema_version": 2, "component": FIXTURE, "summary": "synthetic schema-2 recipe of the builder tests",
+            "source": {"patch": None, "patches": copy.deepcopy(entries), "member": {"path": MEMBER, "sha256": member_sha}},
+            "build_system": "autotools", "build_depends": ["libc6-dev"], "lab_build_depends": [],
+            "cmake": None, "autotools": {"flags": ["--disable-greeting", "--without-colour"]},
+            "build": [["make", "-C", "{src}", "-j{jobs}"]],
+            "install": {"cmake_install": False, "make_install": True,
+                        "copy": [{"from": "{recipe}/files/srrx-fixture.conf", "to": "etc/srrx-fixture"}]},
+            "hooks": {"source_check": list(SOURCE_CHECK), "package": list(PACKAGE_HOOK)},
+            "packages": [{"name": FIXTURE, "section": "misc", "description": "synthetic schema-2 test package",
+                          "files": ["usr/bin/*", "usr/share/srrx-fixture/*", "etc/srrx-fixture/*"], "depends": [], "shlibs_depends": False}],
+            "drop": [], "checks": [{"kind": "forbid_needed", "files": ["usr/bin/*"], "needed": ["libhamlib*", "libgps*"]},
+                                   {"kind": "require_paths", "globs": ["usr/bin/srrx-fixture-hello"]}],
+            "notes": ["synthetic"]}
+
+
+class SchemaV2Tests(unittest.TestCase):
+    """build_recipe.validate_recipe for schema_version 2: each new key and each refusal."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-recipe-v2-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "deployment"
+        self.root.mkdir()
+        self.entries, self.outer, self.lock, self.member_sha = fixture_tree(self.root)
+        mocked = patch.object(build_recipe, "DEPLOYMENT", self.root)
+        mocked.start()
+        self.addCleanup(mocked.stop)
+
+    def recipe(self, change=None):
+        data = v2_recipe(self.entries, self.member_sha)
+        if change:
+            change(data)
+        return data
+
+    def validate(self, data):
+        return build_recipe.validate_recipe(data, self.lock)
+
+    def test_schema_1_recipes_are_unchanged_and_mean_cmake_without_listed_patches(self):
+        for name in ("rtlsdr", "limesuiteng"):
+            data = recipe(name)
+            self.assertEqual(data["schema_version"], 1)
+            with patch.object(build_recipe, "DEPLOYMENT", HERE):
+                build_recipe.validate_recipe(data, LOCK)
+            view = build_recipe.spec(data)
+            self.assertEqual((view["build_system"], view["patches"], view["member"], view["make_install"], view["flags"]),
+                             ("cmake", [], None, False, None))
+            self.assertEqual(view["hooks"], {"source_check": None, "package": None})
+            self.assertEqual(view["patch"], "deployment/patches/%s-rx-only.patch" % name)  # the TX-rejecting patch keeps its place
+
+    def test_a_schema_2_recipe_with_every_new_key_validates(self):
+        self.assertEqual(self.validate(self.recipe())["id"], FIXTURE)
+        view = build_recipe.spec(self.recipe())
+        self.assertEqual((view["build_system"], len(view["patches"]), view["member"]["path"], view["make_install"]),
+                         ("autotools", 3, MEMBER, True))
+        self.assertEqual(view["flags"], ["--disable-greeting", "--without-colour"])
+        # make: no cmake, no autotools, copy-only install; cmake under schema 2: the schema-1 rules.
+        self.validate(self.recipe(lambda d: d.update(build_system="make", autotools=None)))
+        self.validate(self.recipe(lambda d: (d.update(build_system="cmake", autotools=None, cmake=copy.deepcopy(recipe("rtlsdr")["cmake"]),
+                                                      build=[["cmake", "--build", "{build}"]]),
+                                             d["install"].update(make_install=False, cmake_install=True))))
+        self.validate(self.recipe(lambda d: d["source"].update(patches=[], member=None)))
+        self.validate(self.recipe(lambda d: d.update(hooks={"source_check": None, "package": None})))
+        self.validate(self.recipe(lambda d: d["install"].update(make_install=False)))  # copy alone
+        with_commit = dict(self.entries[0], kind="cherry-pick", upstream_commit="c0b6f8876c514990c2f22ca98b2a6c8a6f290a5d")
+        self.validate(self.recipe(lambda d: d["source"].update(patches=[with_commit])))
+
+    def test_each_refusal(self):
+        rx_only = self.root.parent / "deployment/patches" / (FIXTURE + "-rx-only.patch")
+        rx_only.parent.mkdir(parents=True, exist_ok=True)
+        rx_only.write_text(PATCHES[0][1][0][1], encoding="utf-8")
+        hook = lambda name, argv: (lambda d: d["hooks"].update({name: argv}))  # noqa: E731
+        patches = lambda change: (lambda d: change(d["source"]["patches"]))  # noqa: E731
+        flags = lambda *f: (lambda d: d["autotools"].update(flags=list(f)))  # noqa: E731
+        cases = {
+            "schema_version 3": lambda d: d.update(schema_version=3),
+            "schema 2 without hooks": lambda d: d.pop("hooks"),
+            "schema 1 with schema-2 keys": lambda d: d.update(schema_version=1),
+            "unknown build_system": lambda d: d.update(build_system="meson"),
+            # hooks: only python3 -I {recipe}/check_recipe.py <subcommand> of the recipe's own directory
+            "hook outside the recipe dir": hook("source_check", ["python3", "-I", "{recipe}/../rtlsdr/check_recipe.py", "verify-source"]),
+            "hook absolute script": hook("source_check", ["python3", "-I", "/usr/lib/srrx/check_recipe.py", "verify-source"]),
+            "hook script in the source tree": hook("source_check", ["python3", "-I", "{src}/check_recipe.py", "verify-source"]),
+            "hook without -I": hook("source_check", ["python3", "{recipe}/check_recipe.py", "verify-source"]),
+            "hook other program": hook("package", ["sh", "-c", "rm -rf {destdir}"]),
+            "hook other subcommand": hook("source_check", ["python3", "-I", "{recipe}/check_recipe.py", "package"]),
+            "hook URL argument": hook("package", PACKAGE_HOOK + ["--fetch=https://example.invalid/tle.txt"]),
+            "hook argument leaving its dir": hook("package", ["python3", "-I", "{recipe}/check_recipe.py", "package", "--root", "{destdir}/../.."]),
+            "hook output placeholder in source_check": hook("source_check", SOURCE_CHECK + ["--out", "{hook_out}"]),
+            "hook unknown placeholder": hook("package", PACKAGE_HOOK + ["{home}"]),
+            # source.member
+            "member without sha": lambda d: d["source"].update(member={"path": MEMBER}),
+            "member with a short sha": lambda d: d["source"].update(member={"path": MEMBER, "sha256": "abc"}),
+            "member outside the archive": lambda d: d["source"].update(member={"path": "../inner.tgz", "sha256": "0" * 64}),
+            "member not an archive": lambda d: d["source"].update(member={"path": "superbuild-1.0/README", "sha256": "0" * 64}),
+            "member with the rx-only patch": lambda d: d["source"].update(patch="deployment/patches/%s-rx-only.patch" % FIXTURE),
+            # autotools: fixed --prefix, only listed --enable/--disable/--with/--without flags, no autoreconf
+            "autotools prefix flag": flags("--prefix=/opt"),
+            "autotools libdir flag": flags("--libdir=/usr/lib"),
+            "autotools environment": flags("CFLAGS=-O0"),
+            "autotools URL in a flag": flags("--with-tle-url=https://example.invalid/x"),
+            "autotools value on disable": flags("--disable-greeting=yes"),
+            "autotools option twice": flags("--enable-greeting", "--disable-greeting"),
+            "autotools option checking off": flags("--disable-option-checking"),
+            "autotools key with make": lambda d: d.update(build_system="make"),
+            "autotools without its key": lambda d: d.update(autotools=None),
+            "cmake key with autotools": lambda d: d.update(cmake=copy.deepcopy(recipe("rtlsdr")["cmake"])),
+            "autoreconf tools in the chroot": lambda d: d["build_depends"].append("autoconf"),
+            "dh-autoreconf in the chroot": lambda d: d["build_depends"].append("dh-autoreconf"),
+            "URL in a make argv": lambda d: d["build"][0].append("URL=https://example.invalid/x.tar.gz"),
+            "configure as a build step": lambda d: d["build"].insert(0, ["{src}/configure", "--prefix=/usr"]),
+            "autoreconf as a build step": lambda d: d["build"].insert(0, ["autoreconf", "-fi"]),
+            # cmake under schema 2 keeps the non-empty variable rule (no EXTERNAL_PLUGINS="")
+            "empty CMake variable": lambda d: (d.update(build_system="cmake", autotools=None, build=[["cmake", "--build", "{build}"]],
+                                                        cmake=dict(copy.deepcopy(recipe("rtlsdr")["cmake"]),
+                                                                   variables=dict(recipe("rtlsdr")["cmake"]["variables"], EXTERNAL_PLUGINS=""))),
+                                               d["install"].update(make_install=False, cmake_install=True)),
+            # install
+            "make_install with cmake": lambda d: d.update(build_system="cmake", autotools=None, cmake=copy.deepcopy(recipe("rtlsdr")["cmake"])),
+            "cmake_install with autotools": lambda d: d["install"].update(cmake_install=True),
+            "nothing installed": lambda d: d["install"].update(make_install=False, copy=[]),
+            "recipe copy of a missing file": lambda d: d["install"]["copy"].append({"from": "{recipe}/files/absent.conf", "to": "etc"}),
+            "recipe copy outside files/": lambda d: d["install"]["copy"].append({"from": "{recipe}/check_recipe.py", "to": "etc"}),
+            "recipe copy climbing out of files/": lambda d: d["install"]["copy"].append({"from": "{recipe}/files/../check_recipe.py", "to": "etc"}),
+            # source.patches
+            "patch sha differs": patches(lambda p: p[0].update(sha256="0" * 64)),
+            "patch outside patches/": patches(lambda p: p[0].update(file="check_recipe.py")),
+            "TX patch path as a listed patch": patches(lambda p: p[0].update(file="deployment/patches/%s-rx-only.patch" % FIXTURE)),
+            "patch listed twice": patches(lambda p: p.append(copy.deepcopy(p[0]))),
+            "patch changes an unlisted file": patches(lambda p: p[1]["targets"].pop("src/c.txt")),
+            "patch target not a blob id": patches(lambda p: p[0]["targets"].update({"src/a.txt": "1234"})),
+            "patch target outside the tree": patches(lambda p: p[0]["targets"].update({"../a.txt": "0" * 40})),
+            "patch strip level": patches(lambda p: p[0].update(strip=9)),
+            "patch without summary": patches(lambda p: p[0].pop("summary")),
+            "patch unknown field": patches(lambda p: p[0].update(note="x")),
+            "cherry-pick without its commit": patches(lambda p: p[0].update(kind="cherry-pick")),
+            "lab patch with a commit": patches(lambda p: p[0].update(upstream_commit="c0b6f8876c514990c2f22ca98b2a6c8a6f290a5d")),
+            "unknown patch kind": patches(lambda p: p[0].update(kind="rx-only")),
+            # forbid_needed
+            "forbid_needed without files": lambda d: d["checks"].append({"kind": "forbid_needed", "files": [], "needed": ["libhamlib*"]}),
+            "forbid_needed without globs": lambda d: d["checks"].append({"kind": "forbid_needed", "files": ["usr/bin/*"]}),
+        }
+        for label, change in cases.items():
+            with self.subTest(label), self.assertRaises(ValueError):
+                self.validate(self.recipe(change))
+        (self.root / "recipes" / FIXTURE / "check_recipe.py").unlink()
+        with self.assertRaisesRegex(build_recipe.RecipeError, "check_recipe.py is missing"):
+            self.validate(self.recipe())
+
+    def test_schema_1_keeps_its_exact_shape(self):
+        data = recipe("rtlsdr")
+        with patch.object(build_recipe, "DEPLOYMENT", HERE):
+            build_recipe.validate_recipe(data, LOCK)
+            for label, change in {"schema-2 install key": lambda d: d["install"].update(make_install=False),
+                                  "recipe file copy": lambda d: d["install"]["copy"].append({"from": "{recipe}/files/x", "to": "etc"}),
+                                  "listed patches": lambda d: d["source"].update(patches=[]),
+                                  "hooks": lambda d: d.update(hooks={"source_check": None, "package": None})}.items():
+                changed = copy.deepcopy(data)
+                change(changed)
+                with self.subTest(label), self.assertRaises(ValueError):
+                    build_recipe.validate_recipe(changed, LOCK)
+
+    def test_patch_paths_refuse_anything_but_changes_to_existing_files(self):
+        self.assertEqual(build_recipe.patch_paths(diff("src/a.txt", "a\n", "b\n") + diff("src/b.txt", "b\n", "c\n"), 1), ["src/a.txt", "src/b.txt"])
+        self.assertEqual(build_recipe.patch_paths(diff("src/a.txt", "a\n", "b\n"), 2), ["a.txt"])
+        with self.assertRaisesRegex(build_recipe.RecipeError, "renames"):
+            build_recipe.patch_paths(diff("src/a.txt", "a\n", "b\n"), 0)  # a/src/a.txt and b/src/a.txt differ at -p0
+        removed = "--- a/x.sql\n+++ b/x.sql\n@@ -1,2 +1,1 @@\n--- a removed SQL comment\n keep\n"
+        self.assertEqual(build_recipe.patch_paths(removed, 1), ["x.sql"])  # a removed line that looks like a header
+        for label, text in {"new file": "--- /dev/null\n+++ b/new.c\n@@ -0,0 +1 @@\n+x\n",
+                            "deleted file": "--- a/old.c\n+++ /dev/null\n@@ -1 +0,0 @@\n-x\n",
+                            "rename": "diff --git a/a.c b/b.c\nsimilarity index 90%\nrename from a.c\nrename to b.c\n",
+                            "mode change": "diff --git a/a.sh b/a.sh\nold mode 100644\nnew mode 100755\n",
+                            "binary": "diff --git a/a.bin b/a.bin\nGIT binary patch\nliteral 1\n",
+                            "renamed in headers": "--- a/a.c\n+++ b/b.c\n@@ -1 +1 @@\n-x\n+y\n"}.items():
+            with self.subTest(label), self.assertRaises(build_recipe.RecipeError):
+                build_recipe.patch_paths(text, 1)
+
+    def test_satdump_patch_entries_and_hooks_fit_the_schema(self):
+        # The current satdump patches (moving into source.patches with its recipe) and its check_recipe.py.
+        data = recipe("satdump")
+        listed = (data.get("source") or {}).get("patches") or data.get("patches")
+        with patch.object(build_recipe, "DEPLOYMENT", HERE):
+            self.assertEqual(len(build_recipe._patches(listed, "satdump")), 3)
+            build_recipe._hook(SOURCE_CHECK, "source_check", "satdump")
+            build_recipe._hook(PACKAGE_HOOK, "package", "satdump")
+            with self.assertRaisesRegex(build_recipe.RecipeError, "check_recipe.py is missing"):
+                build_recipe._hook(SOURCE_CHECK, "source_check", "rtlsdr")
+
+
+class SchemaV2BuilderStepTests(unittest.TestCase):
+    """The new builder steps one by one: member extraction, listed patches, configure, hooks, DT_NEEDED."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-builder-v2-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name) / "deployment"
+        self.root.mkdir()
+        self.entries, self.outer, self.lock, self.member_sha = fixture_tree(self.root)
+        self.component = next(c for c in self.lock["components"] if c["id"] == FIXTURE)
+
+    def extracted(self, name="src", member=None):
+        work = Path(self.temp.name) / ("work-" + name)
+        work.mkdir()
+        member = member or {"path": MEMBER, "sha256": self.member_sha}
+        return build_recipe.extract(self.outer, self.component, work / "src", None, member), work / "src"
+
+    def test_member_is_the_source_tree_with_its_sha(self):
+        (receipt, source, member), tree = self.extracted()
+        self.assertEqual((receipt["patch"], member), (None, {"path": MEMBER, "sha256": self.member_sha}))
+        self.assertEqual(deploy.sha(source), self.member_sha)
+        self.assertEqual(build_recipe.source_date_epoch(source), 1700000000)  # the inner archive's own time
+        self.assertEqual({p.relative_to(tree).as_posix() for p in tree.rglob("*") if p.is_file()}, set(SOURCE) | {"configure"})
+        with self.assertRaisesRegex(build_recipe.RecipeError, "differs from its recorded sha256"):
+            self.extracted("bad-sha", {"path": MEMBER, "sha256": "0" * 64})
+        with self.assertRaisesRegex(build_recipe.RecipeError, "not one regular file"):
+            self.extracted("absent", {"path": "superbuild-1.0/src/other.tgz", "sha256": self.member_sha})
+        with self.assertRaisesRegex(build_recipe.RecipeError, "differs from the lock"):
+            build_recipe.extract(self.outer, dict(self.component, source_archive_size=1), Path(self.temp.name) / "x", None,
+                                 {"path": MEMBER, "sha256": self.member_sha})
+
+    @unittest.skipUnless(shutil.which("git"), "git unavailable")
+    def test_listed_patches_apply_in_order_with_one_receipt_each(self):
+        import vendor_patch
+        _, tree = self.extracted()
+        base = self.root / "recipes" / FIXTURE
+        receipts = vendor_patch.apply_listed(tree, base, self.entries)
+        self.assertEqual([r["file"] for r in receipts], [e["file"] for e in self.entries])
+        self.assertEqual(sum(len(r["targets"]) for r in receipts), 4)
+        for receipt, (_, changes) in zip(receipts, PATCHES):
+            self.assertEqual(receipt["after"], {p: blob(new) for p, _, new in changes})
+            for path, _, new in changes:
+                self.assertEqual((tree / path).read_text(encoding="utf-8"), new)
+        with self.assertRaisesRegex(vendor_patch.PatchError, "recorded git blob: src/a.txt"):
+            vendor_patch.apply_listed(tree, base, self.entries[:1])  # already patched: the target blob moved on
+        _, fresh = self.extracted("fresh")
+        partial = [dict(self.entries[1], targets={"src/b.txt": self.entries[1]["targets"]["src/b.txt"]})]
+        with self.assertRaisesRegex(vendor_patch.PatchError, "other files than its targets"):
+            vendor_patch.apply_listed(fresh, base, partial)
+        self.assertEqual((fresh / "src/b.txt").read_text(encoding="utf-8"), "beta\n")  # refused before git apply
+        (base / self.entries[2]["file"]).write_text("changed after the review\n", encoding="utf-8")
+        with self.assertRaisesRegex(vendor_patch.PatchError, "recorded SHA-256"):
+            vendor_patch.apply_listed(fresh, base, self.entries)
+
+    def test_vendor_patch_pins_come_from_the_lock(self):
+        import vendor_patch
+        lock = {c["id"]: c["commit"] for c in LOCK["components"]}
+        self.assertEqual(vendor_patch.pins(), {"rtlsdr": lock["rtlsdr"], "limesuiteng": lock["limesuiteng"]})
+        self.assertFalse(hasattr(vendor_patch, "PINS"))  # no second copy of the pinned commits
+
+    def test_configure_must_be_generated_and_declare_every_flag(self):
+        _, tree = self.extracted()
+        result = build_recipe.check_configure(tree, ["--disable-greeting", "--with-colour=no"])
+        self.assertEqual((result["prefix"], result["declared"]), ("/usr", 3))
+        with self.assertRaisesRegex(build_recipe.RecipeError, "not declared upstream: --enable-telemetry"):
+            build_recipe.check_configure(tree, ["--enable-telemetry"])
+        (tree / "configure").write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        with self.assertRaisesRegex(build_recipe.RecipeError, "ac_user_opts"):
+            build_recipe.check_configure(tree, [])
+        (tree / "configure").unlink()
+        with self.assertRaisesRegex(build_recipe.RecipeError, "generated configure of a release tarball"):
+            build_recipe.check_configure(tree, [])
+
+    def test_hooks_must_report_ok_without_findings(self):
+        values = {"src": Path("/w/src"), "destdir": Path("/w/destdir"), "hook_out": Path("/w/hook.json"), "recipe": self.root / "recipes" / FIXTURE}
+        log = Path(self.temp.name) / "hook.log"
+
+        def runs(code, stdout):
+            return patch.object(build_recipe.subprocess, "run", return_value=subprocess.CompletedProcess([], code, stdout, ""))
+        with runs(0, 'noise\n{"command": "verify-source", "findings": [], "ok": true}\n') as mocked:
+            entry = build_recipe.run_hook("source_check", SOURCE_CHECK, values, {}, log, Path(self.temp.name))
+        self.assertEqual(mocked.call_args[0][0][:4], ["python3", "-I", str(values["recipe"]) + "/check_recipe.py", "verify-source"])
+        self.assertEqual((entry["status"], entry["argv"], entry["script_sha256"]),
+                         ("CI_PASS", SOURCE_CHECK, deploy.sha(values["recipe"] / "check_recipe.py")))
+        for code, stdout in ((2, '{"findings": ["x"], "ok": false}'), (0, '{"findings": ["x"], "ok": true}'),
+                             (0, '{"ok": false}'), (0, "not json"), (0, ""), (1, '{"ok": true}')):
+            with self.subTest(stdout=stdout, code=code), runs(code, stdout), self.assertRaisesRegex(build_recipe.RecipeError, "hooks.source_check failed"):
+                build_recipe.run_hook("source_check", SOURCE_CHECK, values, {}, log, Path(self.temp.name))
+        out = Path(self.temp.name) / "hook-out.json"
+        out.write_text('{"record_digests": []}', encoding="utf-8")
+        with self.assertRaisesRegex(build_recipe.RecipeError, "object record_digests"):
+            build_recipe.hook_output(out)
+
+    def test_forbid_needed_reads_dt_needed_of_matched_elf_files(self):
+        stage = Path(self.temp.name) / "stage"
+        (stage / "usr/bin").mkdir(parents=True)
+        (stage / "usr/bin/jt9").write_bytes(b"\x7fELF synthetic")
+        (stage / "usr/bin/notes.txt").write_text("not an ELF file", encoding="utf-8")
+        check = {"kind": "forbid_needed", "files": ["usr/bin/*"], "needed": ["libhamlib*", "libgps*"]}
+        readelf = (" 0x0000000000000001 (NEEDED)             Shared library: [libfftw3f.so.3]\n"
+                   " 0x0000000000000001 (NEEDED)             Shared library: [libc.so.6]\n")
+        with patch.object(build_recipe, "_tool", return_value=readelf) as tool:
+            result = build_recipe.run_checks({"checks": [check]}, stage)[0]
+        self.assertEqual(tool.call_args[0][0][:2], ["readelf", "-d"])
+        self.assertEqual((result["status"], result["dt_needed"]), ("CI_PASS", {"usr/bin/jt9": ["libfftw3f.so.3", "libc.so.6"]}))
+        with patch.object(build_recipe, "_tool", return_value=readelf + " 0x1 (NEEDED) Shared library: [libhamlib.so.4]\n"), \
+                self.assertRaisesRegex(build_recipe.RecipeError, "forbidden DT_NEEDED: usr/bin/jt9: libhamlib.so.4"):
+            build_recipe.run_checks({"checks": [check]}, stage)
+        with self.assertRaisesRegex(build_recipe.RecipeError, "matches no ELF file"):
+            build_recipe.run_checks({"checks": [dict(check, files=["usr/lib/*"])]}, stage)
+
+
+TOOLS = ("git", "make", "cc", "readelf", "dpkg-deb", "dpkg-query", "python3")
+
+
+@unittest.skipUnless(os.name == "posix" and all(shutil.which(t) for t in TOOLS), "needs " + ", ".join(TOOLS) + " (Linux host regression)")
+class SchemaV2BuildTests(unittest.TestCase):
+    """One real schema-2 build on the host, outside a chroot (no_network is the builder's own check
+    of its namespace and is replaced here): member, 3 listed patches, both hooks, autotools,
+    make install, a recipe file, forbid_needed, record_digests and the record binding."""
+
+    def test_autotools_member_three_patches_and_hooks_build_into_a_bound_record(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-build-v2-") as temporary:
+            root = Path(temporary) / "deployment"
+            root.mkdir()
+            entries, outer, lock, member_sha = fixture_tree(root)
+            directory = root / "recipes" / FIXTURE
+            (directory / "recipe.json").write_text(json.dumps(v2_recipe(entries, member_sha), indent=2), encoding="utf-8")
+            work, out = Path(temporary) / "work", Path(temporary) / "out"
+            with patch.object(build_recipe, "DEPLOYMENT", root), patch.object(build_recipe, "no_network", return_value="not checked (host test)"):
+                record = build_recipe.build(directory / "recipe.json", outer, work, out, 2)
+            environment = record["build_environment"]
+            self.assertEqual([r["file"] for r in environment["patch_receipts"]], [e["file"] for e in entries])
+            self.assertEqual((environment["source_member"], environment["build_system"], environment["cmake_options"]),
+                             ({"path": MEMBER, "sha256": member_sha}, "autotools", None))
+            self.assertEqual(environment["configure_options"]["flags"], ["--disable-greeting", "--without-colour"])
+            self.assertEqual([(h["hook"], h["status"]) for h in environment["hooks"]], [("source_check", "CI_PASS"), ("package", "CI_PASS")])
+            self.assertEqual(sorted(environment["recipe_files"]), ["check_recipe.py", "files/srrx-fixture.conf"])
+            self.assertEqual(environment["source_date_epoch"], 1700000000)
+            hello = work / "destdir/usr/bin/srrx-fixture-hello"
+            self.assertEqual(record["record_digests"], {"hello_sha256": deploy.sha(hello)})
+            self.assertEqual(subprocess.run([str(hello)], capture_output=True, text=True, check=True).stdout, "srrx fixture patched\n")
+            self.assertEqual((work / "destdir/usr/share/srrx-fixture/a.txt").read_text(encoding="utf-8"), "alpha patched\n")
+            self.assertFalse((work / "destdir/usr/share/srrx-fixture/dropped-by-hook.txt").exists())  # the package hook ran before the checks
+            needed = next(c for c in record["checks"] if c["check"] == "forbid_needed")["dt_needed"]
+            self.assertIn("libc.so.6", needed["usr/bin/srrx-fixture-hello"])
+            self.assertEqual([p["package"] for p in record["packages"]], [FIXTURE])
+            self.assertEqual(deploy.load(out / (FIXTURE + ".build-record.json")), record)
+            self.assertTrue((out / (FIXTURE + ".package-hook.json")).is_file())
+            with patch.object(deploy, "HERE", root), patch.object(deploy, "PROJECT", root.parent):
+                deploy._record_binding(record, "fixture")
+                spec = importlib.util.spec_from_file_location("srrx_check_repo_v2", HERE / "repo/check_repo.py")
+                check_repo = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(check_repo)
+                self.assertEqual(check_repo.record_binding(out / (FIXTURE + ".build-record.json"), record),
+                                 {"component": FIXTURE, "patch_receipts": 3, "source_member": MEMBER, "record_digests": True})
+                dropped = copy.deepcopy(record)
+                dropped["build_environment"]["patch_receipts"].pop()
+                with self.assertRaisesRegex(deploy.DeploymentError, "patch list differs .*3 listed, 2 recorded"):
+                    deploy._record_binding(dropped, "fixture")
+                changed = copy.deepcopy(record)
+                changed["record_digests"]["hello_sha256"] = "0" * 64
+                with self.assertRaisesRegex(check_repo.CheckError, "record_digests differ"):
+                    check_repo.record_binding(out / (FIXTURE + ".build-record.json"), changed)
+                (directory / entries[1]["file"]).write_text("changed after the build\n", encoding="utf-8")
+                with self.assertRaisesRegex(deploy.DeploymentError, "patch list differs"):
+                    deploy._record_binding(record, "fixture")
+
+
 if __name__ == "__main__":
     unittest.main()

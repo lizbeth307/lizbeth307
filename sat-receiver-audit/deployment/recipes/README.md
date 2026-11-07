@@ -20,26 +20,29 @@ Workflow `.github/workflows/sr-rx-packages.yml` запускається вру�
 
 ## Схема `recipe.json`
 
-Ключі точні (`build_recipe.validate_recipe`, тести `deployment/tests/test_recipes.py`):
+Ключі точні (`build_recipe.validate_recipe`, тести `deployment/tests/test_recipes.py`). Схема 1 — лише CMake (`rtlsdr`, `limesuiteng`); схема 2 додає ключі з позначкою «(2)», а ключі схеми 1 зберігають свої правила:
 
 | Ключ | Зміст |
 |---|---|
-| `schema_version` | 1 |
+| `schema_version` | 1 або 2 |
 | `component` | id з `sources.lock.json` із закріпленим архівом upstream (не пакет Ubuntu з `debian_source` і не компонент із `source_subdir`) |
 | `summary`, `notes` | опис і обґрунтування відхилень від upstream за замовчуванням |
-| `source.patch` | `null` або лише `deployment/patches/<component>-rx-only.patch` |
+| `source.patch` | `null` або лише `deployment/patches/<component>-rx-only.patch` — патч, що відхиляє TX (`vendor_patch.py`; закріплений коміт — `commit` компонента в `sources.lock.json`, цілі — `patches/target-hashes.json`) |
+| `source.patches`, `source.member` (2) | `source.patches` — список `{file, sha256, strip, targets, kind, summary}` (для `kind` `cherry-pick` ще 40-hex `upstream_commit`, для `lab` — без нього): файл `patches/<назва>.patch` каталогу рецепта (не `deployment/patches/`: cherry-pick чи зміна +lab не є патчем RX-only), SHA-256 файла, рівень `-p` 0–3 і git blob кожного файла, який патч змінює; патч лише змінює наявні файли (створення, видалення, перейменування, зміна режиму й двійкові дані відхиляються). Збирач застосовує їх по черзі через `git apply` і перед кожним звіряє SHA-256 файла, blob кожної цілі та що `git apply --numstat` називає рівно `targets`. `source.member` — `null` або `{path, sha256}`: внутрішній tar-архів закріпленого архіву (реліз-суперзбірка, наприклад `wsjtx-2.7.0/src/wsjtx.tgz`) стає деревом `{src}`, а його час — `SOURCE_DATE_EPOCH`; разом із `source.patch` не дозволено |
 | `build_depends` | назви пакетів noble для chroot |
 | `lab_build_depends` | назви пакетів +lab з рецептів, зібраних раніше в тому самому job (кожна один раз, не власні пакети рецепта); `[]`, якщо їх немає |
-| `cmake.configure` | argv, що починається з `cmake -S {src} -B {build}` |
+| `cmake.configure` | argv, що починається з `cmake -S {src} -B {build}` (лише `build_system` `cmake`; для `make`/`autotools` `cmake` — `null`, а `check_options` не виконується) |
 | `cmake.options` | кожна опція upstream, значення `ON`/`OFF` |
-| `cmake.variables` | інші змінні CMake; `FETCHCONTENT_FULLY_DISCONNECTED=ON` обов'язково |
+| `cmake.variables` | інші змінні CMake, кожне значення непорожнє (порожній рядок не перевизначається: значення upstream за замовчуванням лишається); `FETCHCONTENT_FULLY_DISCONNECTED=ON` обов'язково |
 | `build` | список argv; дозволені програми — лише `cmake`, `make`, `ninja`; URL і ввімкнення завантажень відхиляються |
-| `install` | або `cmake_install: true`, або явний список `copy` з `{src}`/`{build}` у відносний шлях пакета |
+| `build_system`, `autotools` (2) | `cmake`, `make` або `autotools`. `autotools` — `{flags: […]}` лише для `autotools`, інакше `null`: збирач сам запускає `{src}/configure --prefix=/usr` у дереві джерел (як `dh_auto_configure` за замовчуванням) лише з прапорцями списку — `--enable-*`, `--disable-*`, `--with-*[=значення]`, `--without-*`, кожна опція один раз, без `--disable-option-checking`, URL та інших опцій, — і кожен прапорець має бути оголошений у `ac_user_opts` згенерованого `configure`. Без autoreconf: `configure` має бути в tarball релізу (немає — збирання зупиняється), а `autoconf`, `automake`, `autopoint`, `dh-autoreconf`, `autoconf-archive` і `gnulib` у `build_depends` будь-якого рецепта відхиляються. Тип `meson` не підтримується |
+| `install` | або `cmake_install: true`, або явний список `copy` з `{src}`/`{build}` у відносний шлях пакета; у схемі 2 ще `make_install` (`make -C {src} install DESTDIR=…`, лише для `make`/`autotools`), а `copy` може доповнювати встановлення і брати звичайні файли з `{recipe}/files/` (каталог `files/` рецепта, без `..`) |
 | `packages` | `name`, `section`, `description`, `files` (glob), `depends` (`{version}` — версія з lock), `shlibs_depends` (`dpkg-shlibdeps`) |
 | `drop` | файли, які свідомо не пакуються, кожен із причиною |
-| `checks` | `soname`, `export_count`, `forbid_strings`, `forbid_paths`, `require_paths` |
+| `checks` | `soname`, `export_count`, `forbid_strings`, `forbid_paths`, `require_paths`, `forbid_needed` (`files` — glob шляхів у DESTDIR, `needed` — glob імен DT_NEEDED з `readelf -d`; має збігтися хоча б один файл ELF, інакше перевірка нічого не доводить) |
+| `hooks` (2) | `source_check` і `package`, кожен `null` або argv рівно `python3 -I {recipe}/check_recipe.py verify-source …` / `… package …` — скрипт лише з власного каталогу рецепта; аргументи без URL і `..`, плейсхолдери `{src}` (обидва хуки), `{destdir}` і `{hook_out}` (лише `package`). `source_check` перевіряє розпаковане дерево до `source.patches` (після патча RX-only, якщо він є), `package` іде після встановлення й до перевірок і розкладу файлів за пакетами (він може змінювати DESTDIR). Хук має завершитися з кодом 0 і надрукувати останнім рядком JSON-об'єкт з `ok: true` без `findings`; `record_digests` з JSON-файла `{hook_out}` переходять у запис збирання, а сам файл лежить поруч як `<id>.package-hook.json` |
 
-Плейсхолдери: `{src}`, `{build}`, `{destdir}`, `{jobs}`. Кожен файл із `DESTDIR` має належати рівно одному пакету або бути в `drop`; невідомий файл зупиняє збирання. Назва пакета, яку забороняє `receive-only-policy.json` (наприклад `wsjtx`, `limesuiteng-cli`, `gr-limesuiteng`), відхиляється ще до збирання. Версія пакета завжди дорівнює `version` компонента в lock (`+labN` або `-0labN`). Рецепт для компонента з `source_subdir` (модулі DKMS `la9310-limesdr`, `la9310-uart` усередині архіву LimeSuiteNG) поки відхиляється: `build_recipe.py` збирав би все дерево, доки не навчиться заходити в підкаталог.
+Плейсхолдери: `{src}`, `{build}`, `{destdir}`, `{jobs}`; у схемі 2 ще `{recipe}` (каталог `deployment/recipes/<id>/`, лише в `hooks` і `install.copy`) і `{hook_out}` (лише хук `package`). Запис збирання має в `build_environment` квитанцію на кожен патч зі списку (`patch_receipts`: файл, SHA-256, `-p`, blob цілей до і після), `source_member`, `hooks` і `recipe_files` (SHA-256 `check_recipe.py` і використаних файлів `files/`), а `record_digests` хука `package` — на верхньому рівні; `deploy.verify_repo` і `check_repo.py packages`/`tamper` звіряють їх із рецептом і файлами цього дерева й відхиляють запис з іншим списком патчів, іншим `source_member` чи іншими файлами рецепта. Кожен файл із `DESTDIR` має належати рівно одному пакету або бути в `drop`; невідомий файл зупиняє збирання. Назва пакета, яку забороняє `receive-only-policy.json` (наприклад `wsjtx`, `limesuiteng-cli`, `gr-limesuiteng`), відхиляється ще до збирання. Версія пакета завжди дорівнює `version` компонента в lock (`+labN` або `-0labN`). Рецепт для компонента з `source_subdir` (модулі DKMS `la9310-limesdr`, `la9310-uart` усередині архіву LimeSuiteNG) поки відхиляється: `build_recipe.py` збирав би все дерево, доки не навчиться заходити в підкаталог.
 
 ## Чинні рецепти
 
