@@ -122,7 +122,7 @@ _Run `wf_45d278c2-004`_
     - **Sources:**
       - https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf
       - https://www.adafruit.com/product/4754
-      - https://lore.kernel.org/all/Yqs… (staging: iio: imu: CEVA BNO08x)
+      - https://lore.kernel.org/all/YqsMmmqhN3WEx1Lq@kroah.com/T/
       - https://prom.ua/ua/search?search_term=BNO085
   9.
     - **Name:** CEVA BNO086 (SparkFun VR IMU Breakout SEN-22857)
