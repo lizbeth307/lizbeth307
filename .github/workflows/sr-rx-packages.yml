@@ -89,7 +89,7 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
-          fetch-depth: 2
+          fetch-depth: 1
       # The range is the previous head of this ref (github.event.before) to this head. A new branch
       # (before all zeros, whatever commits it brings) or an unreachable before is an unknown range:
       # every heavy recipe runs once. Renames count as a deletion plus an addition (--no-renames).
