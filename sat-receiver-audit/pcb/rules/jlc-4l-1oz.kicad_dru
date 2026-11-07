@@ -42,9 +42,11 @@
 )
 
 # JLC: PTH to track 0.28mm min / 0.35mm recommended, inner PTH hole to copper 0.3mm, PTH drill max 6.3mm (https://jlcpcb.com/capabilities/pcb-capabilities, 2026-11-07)
+# JLC PTH annular ring multilayer 1 oz: absolute minimum 0.15mm, recommended 0.2mm (https://jlcpcb.com/capabilities/pcb-capabilities, 2026-11-07); the rule is the minimum (library THT footprints), pcb/check_boards.py uses the same floor
 (rule "project PTH pad hole"
   (constraint hole_size (min 0.3mm) (max 6.3mm))
   (constraint hole_clearance (min 0.35mm))
+  (constraint annular_width (min 0.15mm))
   (condition "A.Type == 'Pad' && A.isPlated()")
 )
 
@@ -116,6 +118,14 @@
   (condition "A.hasNetclass('PWR3A')")
 )
 
+# PWR3A: inner 0.5 oz copper is not counted as a current path, so no PWR3A track on In1/In2 (a thin inner
+# track would carry the current in series); inner pours stay allowed and uncounted; PWR_BRANCH* rule areas excepted
+(rule "PWR3A no inner tracks"
+  (layer inner)
+  (constraint disallow track)
+  (condition "A.hasNetclass('PWR3A') && !A.intersectsArea('PWR_BRANCH*')")
+)
+
 # BATT: capacity 4.6 A at +10 degC / 7.5 A at +20 degC (battery path 4.6 A model and F101 7.5 A);
 # IPC-2221 1 oz outer 3.1766 mm -> class width 3.2 mm (netclasses.json, MODEL)
 # DRC floor is the L1+L4 split width 1.85 mm per layer; pcb/check_boards.py enforces 3.2 mm unless the net is split on both outer layers
@@ -126,6 +136,22 @@
   (condition "A.hasNetclass('BATT')")
 )
 
+# BATT: inner 0.5 oz copper is not counted as a current path, so no BATT track on In1/In2 (a thin inner
+# track would carry the current in series); inner pours stay allowed and uncounted; PWR_BRANCH* rule areas excepted
+(rule "BATT no inner tracks"
+  (layer inner)
+  (constraint disallow track)
+  (condition "A.hasNetclass('BATT') && !A.intersectsArea('PWR_BRANCH*')")
+)
+
+# project rule: low-current branches of power nets (Kelvin sense lines, decoupling stubs) inside rule areas named PWR_BRANCH*
+# take the project default track 0.15mm (JLC floor 0.09mm, https://jlcpcb.com/capabilities/pcb-capabilities, 2026-11-07); each is listed in the board
+# spec branch_exempt {ref: {max_mm, min_width_mm, reason}} and bounded by pcb/check_boards.py
+(rule "power branch area"
+  (constraint track_width (min 0.15mm))
+  (condition "(A.hasNetclass('PWR1A') || A.hasNetclass('PWR2A') || A.hasNetclass('PWR3A') || A.hasNetclass('BATT')) && A.intersectsArea('PWR_BRANCH*')")
+)
+
 # CBCPW w 0.36 / s 0.2 over L2 at h 0.2104, er 4.4: 51.24 ohm closed form (MODEL; https://jlcpcb.com/impedance, 2026-11-07)
 # L2 solid under RF50 (3h band) and the fence pitch are checked by pcb/check_boards.py, not by KiCad
 (rule "RF50 CPWG on L1"
@@ -133,6 +159,15 @@
   (constraint track_width (min 0.355mm) (opt 0.36mm) (max 0.365mm))
   (constraint clearance (min 0.2mm))
   (condition "A.hasNetclass('RF50')")
+)
+
+# project rule: RF50 tapers into IC pins inside rule areas named RF_TAPER* may narrow to 0.15mm
+# (JLC floor 0.09mm, https://jlcpcb.com/capabilities/pcb-capabilities, 2026-11-07); clearance stays 0.2mm; each taper is listed in the board spec
+# rf50_taper {ref: {max_len_mm, min_width_mm, reason}} and bounded by pcb/check_boards.py
+(rule "RF50 taper area"
+  (layer "F.Cu")
+  (constraint track_width (min 0.15mm) (max 0.365mm))
+  (condition "A.hasNetclass('RF50') && A.intersectsArea('RF_TAPER*')")
 )
 
 # RF50 lines stay on F.Cu over the solid In1.Cu GND (layer plan, build/15)
