@@ -58,7 +58,7 @@ class SystemFilesTests(unittest.TestCase):
         missing = sorted(n for k, n in needed if n not in (users if k == "user" else groups))
         self.assertEqual(missing, [])
         text = system_files.sysusers()
-        self.assertNotRegex(text, r"(?m)^m ")  # no members: srrx-pico/srrx-gnss stay empty
+        self.assertEqual(re.findall(r"(?m)^m .*$", text), ["m srrx-ui labd"])  # one member line; srrx-pico/srrx-gnss stay empty
         for kind, name, *_ in system_files.SERVICE_ACCOUNTS:
             line = re.search(r"(?m)^%s %s .*$" % (kind, re.escape(name)), text).group(0)
             if kind == "u":
@@ -205,8 +205,8 @@ class SystemFilesTests(unittest.TestCase):
             self.assertIn("user:srrx-satdump", system_files.unknown_accounts(Path(self.temp.name) / "empty", transient))
             with self.assertRaisesRegex(deploy.DeploymentError, "srrx-satdump"):
                 self.stage("no-satdump-user", devices())
-        # No "m" line: labd gets srrx-satdump/srrx-bb only through unit SupplementaryGroups= (system_files.py).
-        self.assertNotRegex(system_files.sysusers(), r"(?m)^m ")
+        # The one "m" line is srrx-ui -> labd: labd gets srrx-satdump/srrx-bb only through unit SupplementaryGroups=.
+        self.assertEqual(re.findall(r"(?m)^m .*$", system_files.sysusers()), ["m srrx-ui labd"])
 
     def test_bundle_keeps_hooks_executable_and_everything_else_0644(self):
         self.stage("candidate", devices())
@@ -396,6 +396,291 @@ class BuildManifestTests(unittest.TestCase):
             build_manifest.main(["--prefix", str(self.prefix), "--output", str(output)])
         with self.assertRaises(SystemExit):
             build_manifest.main(["--prefix", str(self.prefix), "--output", str(self.prefix / "inside.json")])
+
+
+def greetd_inish(text):
+    """greetd 0.9.0 inish/src/lib.rs parse() plus config/mod.rs maybe_unquote, enough for one file:
+    '#' lines are comments, [section], key = value (value.trim_matches('=').trim()), quoted strings."""
+    sections, name = {"": {}}, ""
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("["):
+            if not line.endswith("]"):
+                raise ValueError("unterminated section " + line)
+            name = line[1:-1].strip()
+            sections[name] = {}
+            continue
+        key, sep, value = line.partition("=")
+        if not sep:
+            raise ValueError("expected equals sign on line " + line)
+        value = value.strip("=").strip()
+        if value[:1] in ('"', "'") and value[-1:] == value[:1] and len(value) >= 2:
+            value = value[1:-1]
+        sections[name][key.strip()] = value
+    return sections
+
+
+class SessionFilesTests(unittest.TestCase):
+    """W2 SYS-SESSION: touch-session files (greetd, lab-session, labwc, kanshi) as staged text."""
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-session-test-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def test_srrx_ui_account_has_no_login_and_the_single_member_line(self):
+        text = system_files.sysusers()
+        self.assertEqual(re.findall(r"(?m)^m .*$", text), ["m srrx-ui labd"])
+        self.assertIn('u srrx-ui - "SR-RX touch session" /var/lib/srrx-ui /usr/sbin/nologin', text.splitlines())
+        users, groups = system_files.accounts()
+        self.assertTrue({"srrx-ui", "labd"} <= users and "labd" in groups)
+        self.assertEqual([(u, g) for u, g, _ in system_files.SESSION_MEMBERS], [("srrx-ui", "labd")])
+        # The socket model the member line serves: 0660 socket in the 0750 labd runtime directory.
+        self.assertIn("HMI users join labd for the socket", (HERE / "deploy.py").read_text(encoding="utf-8"))
+        self.assertIn("os.chmod(self.path, 0o660)", (PROJECT / "software/srrx/daemon.py").read_text(encoding="utf-8"))
+        unit = (PROJECT / "software/systemd/srrx.service").read_text(encoding="utf-8")
+        self.assertIn("\nRuntimeDirectory=srrx\nRuntimeDirectoryMode=0750\n", unit)
+        self.assertIn("--socket /run/srrx/control.sock", (PROJECT / "software/systemd/srrx-menu.service").read_text())
+        tmp = system_files.session_tmpfiles()
+        self.assertEqual([l for l in tmp.splitlines() if not l.startswith("#")],
+                         ["d /var/lib/srrx-ui 0700 srrx-ui srrx-ui -", "d /run/srrx-session 0700 srrx-ui srrx-ui -"])
+        self.assertEqual(system_files.tmpfiles_accounts(tmp), {("user", "srrx-ui"), ("group", "srrx-ui")})
+
+    def test_greetd_config_runs_lab_session_as_srrx_ui_on_vt1(self):
+        config = greetd_inish(system_files.greetd_config())
+        self.assertEqual(config, {"": {}, "terminal": {"vt": "1"}, "general": {"source_profile": "false"},
+                                  "default_session": {"command": "/usr/lib/srrx/lab-session", "user": "srrx-ui"}})
+        self.assertNotIn("initial_session", config)  # every start is the same greeter-class session
+        self.assertEqual(config["default_session"]["command"], "/" + system_files.LAB_SESSION)
+        self.assertIn(system_files.LAB_SESSION, system_files.EXECUTABLES)  # greetd execs it via /bin/sh -c
+        self.assertEqual(system_files.GREETD_CONFIG, "etc/greetd/config.toml")
+        files = system_files.staged_files(None, "gpsd")
+        self.assertNotIn("etc/greetd/greetd.conf", files)  # greetd 0.9.0 would read it before config.toml
+        dropin = system_files.greetd_dropin()
+        body = [l for l in dropin.splitlines() if l and not l.startswith("#")]
+        self.assertEqual(body, ["[Unit]", "StartLimitBurst=0", "Conflicts=getty@tty1.service", "After=getty@tty1.service"])
+        self.assertEqual("tty" + config["terminal"]["vt"], re.search(r"Conflicts=getty@(tty[0-9]+)\.service", dropin).group(1))
+        self.assertEqual(system_files.GREETD_DROPIN, "etc/systemd/system/greetd.service.d/60-srrx-session.conf")
+        self.assertEqual(system_files.unit_accounts(dropin), set())
+
+    def test_labwc_kiosk_config_maps_touch_and_has_no_binding(self):
+        import xml.etree.ElementTree as ET
+        rc = ET.fromstring(system_files.labwc_rc())
+        self.assertEqual(rc.tag, "labwc_config")
+        self.assertEqual([t.attrib for t in rc.iter("touch")], [{"mapToOutput": "HDMI-A-1"}])  # no deviceName: default entry
+        bindings = list(rc.iter("keybind")) + list(rc.iter("mousebind"))
+        self.assertEqual(len(list(rc.iter("keybind"))), 1)
+        self.assertEqual(len(list(rc.iter("mousebind"))), 1)
+        # labwc loads its defaults only when none are configured, then drops None-only bindings.
+        self.assertEqual({a.get("name") for b in bindings for a in b.iter("action")}, {"None"})
+        rule = rc.find("windowRules/windowRule")
+        self.assertEqual((rule.get("identifier"), rule.get("serverDecoration")), ("lab.shell", "no"))
+        env = system_files.labwc_environment()
+        self.assertEqual([l for l in env.splitlines() if l and not l.startswith("#")], ["LABWC_FALLBACK_OUTPUT=NOOP-fallback"])
+        self.assertIn("WLR_DRM_DEVICES=/dev/dri/by-path/<display controller>: TBD", env)
+        session = (system_files.SESSION_SOURCES / "lab-session").read_text(encoding="utf-8")
+        self.assertIn("\nLABWC_CONFIG=/" + system_files.LABWC_DIR + "\n", session)
+        self.assertIn('/usr/bin/labwc -C "$LABWC_CONFIG"', session)
+        self.assertIn('/usr/bin/cage -d -- "$SELF" client', session)
+        self.assertIn("\nSTATE=" + system_files.SESSION_STATE + "\n", session)
+        self.assertIn("\nWINDOW=600\nLIMIT=3\n", session)
+        self.assertTrue(session.startswith("#!/bin/sh\n"))
+
+    def test_kanshi_profiles_follow_the_field_edid(self):
+        modes = {}
+        for name, timing in system_files.KANSHI_PROFILES:
+            text = system_files.kanshi_profile(name)
+            body = [l.strip() for l in text.splitlines() if l and not l.startswith("#")]
+            self.assertEqual(body[0], "profile " + name + " {")
+            self.assertEqual(body[-1], "}")
+            modes[name] = body[1:-1]
+            self.assertNotRegex(text, r"@60Hz|@52Hz|--custom")
+        self.assertEqual(modes, {"field60": ["output HDMI-A-1 mode 1920x1080@59.986Hz"],
+                                 "field52": ["output HDMI-A-1 mode 1920x1080@51.677Hz"]})
+        self.assertEqual([edid_field.check_timing(t)["refresh_hz"] for _, t in system_files.KANSHI_PROFILES], [59.986, 51.677])
+        autostart = (system_files.SESSION_SOURCES / "labwc-autostart").read_text(encoding="utf-8")
+        self.assertIn('/usr/bin/kanshi -c "/' + system_files.KANSHI_DIR + '/$profile" &', autostart)
+        self.assertIn("\tfield60|field52)\n", autostart)
+        self.assertIn("\nprofile=field60\n", autostart)
+        self.assertIn(system_files.DISPLAY_PROFILE, autostart)
+
+    def test_stage_installs_the_session_and_the_console_unit(self):
+        deploy.stage(self.root / "candidate", devices(), "gpsd")
+        rootfs = self.root / "candidate/rootfs"
+        files = json.loads((self.root / "candidate/stage-files.json").read_text())["files"]
+        for relative, text in system_files.session_files().items():
+            self.assertIn(relative, files)
+            self.assertEqual((rootfs / relative).read_text(encoding="utf-8"), text, relative)
+        self.assertEqual(system_files.unknown_accounts(rootfs), [])
+        self.assertEqual(sorted(p for p in files if p.startswith("usr/lib/srrx/kanshi/")),
+                         ["usr/lib/srrx/kanshi/field52", "usr/lib/srrx/kanshi/field60"])
+        if os.name == "posix":
+            self.assertEqual(stat.S_IMODE((rootfs / system_files.LAB_SESSION).stat().st_mode), 0o755)
+        deploy.bundle(self.root / "candidate", self.root / "bundle.tar.gz")
+        with tarfile.open(self.root / "bundle.tar.gz") as archive:
+            modes = {m.name: m.mode for m in archive.getmembers() if m.isfile()}
+        self.assertEqual(modes[system_files.LAB_SESSION], 0o755)
+        self.assertEqual(modes[system_files.LABWC_DIR + "/autostart"], 0o644)  # labwc runs it as `sh <file>`
+        menu = (rootfs / "usr/lib/systemd/user/srrx-menu.service").read_text(encoding="utf-8")
+        self.assertEqual(menu, (PROJECT / "software/systemd/srrx-menu.service").read_text(encoding="utf-8"))
+        self.assertIn("\nConditionPathExists=/opt/srrx/venv/bin/python3\n", menu)
+        self.assertIn("\nRestart=no\n", menu)
+        self.assertIn(" -m srrx.hmi ", menu)
+        self.assertIn("disable srrx-menu.service", system_files.user_preset().splitlines())  # enabled after the venv audit
+
+
+@unittest.skipUnless(SH, "lab-session and the labwc autostart run under a POSIX sh")
+class LabSessionExecutionTests(unittest.TestCase):
+    """lab-session and the labwc autostart with fake labwc/cage/systemctl/kanshi/sleep; no compositor runs."""
+    FAKES = {
+        "labwc": 'echo "labwc $*" >> "$CALLS"\n'
+                 'if [ "$1" = --exit ]; then exit 0; fi\n'
+                 'if [ -n "${STEP:-}" ]; then read -r up rest < "$UPTIME"; echo "$(( ${up%%.*} + STEP )).00 0.00" > "$UPTIME"; fi\n'
+                 'if [ "$(grep -c "^labwc -C" "$CALLS")" -ge "${KILL_AFTER:-99}" ]; then kill -TERM "$PPID"; fi\n'
+                 'exit 1\n',
+        "cage": 'echo "cage $*" >> "$CALLS"\n'
+                'if [ -n "${CAGE_KILL:-}" ]; then kill -TERM "$PPID"; exit 1; fi\n'
+                'shift 2\n"$@"\nexit $?\n',
+        "systemctl": 'echo "systemctl $*" >> "$CALLS"\n'
+                     'case "$*" in *is-enabled*) exit "${ENABLED:-0}" ;; *start*) exit "${START_STATUS:-1}" ;; esac\nexit 0\n',
+        "kanshi": 'echo "kanshi $*" >> "$CALLS"\n',
+        "python3": 'echo \'{"ok": false, "fake": "labd status"}\'\n',
+        "sleep": 'echo "sleep $*" >> "$CALLS"\nif [ "$1" = 30 ]; then kill -TERM "$PPID"; fi\n',
+    }
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-lab-session-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.bin = self.root / "bin"
+        self.bin.mkdir()
+        for name, body in self.FAKES.items():
+            (self.bin / name).write_text("#!/bin/sh\n" + body, newline="\n")
+            (self.bin / name).chmod(0o755)
+        self.state = self.root / "state"
+        self.state.mkdir()
+        self.uptime = self.root / "uptime"
+        self.uptime.write_text("100.00 50.00\n", newline="\n")
+        self.calls = self.root / "calls"
+        self.calls.write_text("")
+        self.profile = self.root / "display-profile"
+        self.proc = self.root / "proc"
+
+    def script(self, name):
+        text = (system_files.SESSION_SOURCES / name).read_text(encoding="utf-8")
+        for old, new in (("/usr/bin/", self.bin.as_posix() + "/"), ("/proc/uptime", self.uptime.as_posix()),
+                         ("/run/srrx-session", self.state.as_posix()), ("/etc/srrx/display-profile", self.profile.as_posix()),
+                         ("/proc/", self.proc.as_posix() + "/")):
+            text = text.replace(old, new)
+        path = self.root / name
+        path.write_text(text, newline="\n")
+        path.chmod(0o755)
+        return path
+
+    def run_sh(self, path, *args, **env):
+        environ = {"PATH": self.bin.as_posix() + os.pathsep + os.environ["PATH"], "CALLS": self.calls.as_posix(),
+                   "UPTIME": self.uptime.as_posix(), "HOME": self.root.as_posix()}
+        environ.update(env)
+        return subprocess.run([SH, str(path), *args], env=environ, capture_output=True, text=True, timeout=60)
+
+    def lines(self):
+        return self.calls.read_text().splitlines()
+
+    def test_three_failures_in_ten_minutes_go_to_safe_mode_then_to_the_text_console(self):
+        script = self.script("lab-session")
+        result = self.run_sh(script)
+        self.assertEqual(result.returncode, -15, result.stderr)  # alive until the fake sleep's SIGTERM
+        calls = [l for l in self.lines() if not l.startswith("sleep 1")]
+        client = ["systemctl --user import-environment WAYLAND_DISPLAY", "systemctl --user --quiet is-enabled srrx-menu.service",
+                  "systemctl --user start --wait srrx-menu.service"]
+        self.assertEqual(calls, ["labwc -C /usr/lib/srrx/labwc"] * 3
+                         + (["cage -d -- " + str(script) + " client"] + client) * 3 + ["sleep 30"])
+        self.assertEqual((self.state / "mode").read_text(), "text\n")
+        self.assertIn("switching to safe mode", result.stderr)
+        self.assertIn("switching to the text console", result.stderr)
+        self.assertIn("lab-session text console", result.stdout)
+        self.assertIn('"fake": "labd status"', result.stdout)
+
+    def test_failures_older_than_ten_minutes_do_not_count(self):
+        result = self.run_sh(self.script("lab-session"), STEP="300", KILL_AFTER="6")
+        self.assertEqual(result.returncode, -15, result.stderr)
+        self.assertEqual([l for l in self.lines() if not l.startswith("sleep")], ["labwc -C /usr/lib/srrx/labwc"] * 6)
+        self.assertFalse((self.state / "mode").exists())
+        self.assertEqual((self.state / "failures").read_text().split(), ["1300", "1600"])  # 1000 is 600 s old
+        self.assertIn("2 failure(s) in the last 600 s", result.stderr)
+
+    def test_the_mode_survives_a_greetd_restart_and_bad_state_falls_back(self):
+        (self.state / "mode").write_text("safe\n", newline="\n")
+        (self.state / "failures").write_text("99\n", newline="\n")
+        result = self.run_sh(self.script("lab-session"), CAGE_KILL="1")
+        self.assertEqual(result.returncode, -15, result.stderr)
+        self.assertEqual(self.lines()[0].split()[:3], ["cage", "-d", "--"])  # restarted greetd: still safe mode
+        (self.state / "mode").write_text("bogus\n", newline="\n")
+        self.calls.write_text("")
+        result = self.run_sh(self.script("lab-session"), KILL_AFTER="1")
+        self.assertIn("unknown mode 'bogus'", result.stderr)
+        self.assertEqual(self.lines(), ["labwc -C /usr/lib/srrx/labwc"])
+        shutil.rmtree(self.state)  # no tmpfiles directory: count in XDG_RUNTIME_DIR, only for this greetd run
+        runtime = self.root / "runtime"
+        runtime.mkdir()
+        self.calls.write_text("")
+        result = self.run_sh(self.script("lab-session"), KILL_AFTER="2", XDG_RUNTIME_DIR=runtime.as_posix())
+        self.assertIn("counting failures in " + runtime.as_posix() + "/srrx-session", result.stderr)
+        self.assertEqual((runtime / "srrx-session/failures").read_text().split(), ["100"])
+
+    def test_safe_mode_client_starts_only_an_enabled_console(self):
+        script = self.script("lab-session")
+        result = self.run_sh(script, "client", ENABLED="1")
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("srrx-menu.service is not enabled", result.stderr)
+        self.assertEqual(self.lines(), ["systemctl --user import-environment WAYLAND_DISPLAY",
+                                        "systemctl --user --quiet is-enabled srrx-menu.service"])
+        self.calls.write_text("")
+        result = self.run_sh(script, "client", ENABLED="0", START_STATUS="3")
+        self.assertEqual(result.returncode, 3)  # exec: the status is systemctl's, so cage ends with the console
+        self.assertEqual(self.lines()[-1], "systemctl --user start --wait srrx-menu.service")
+
+    def test_autostart_runs_kanshi_and_ends_its_compositor_with_the_console(self):
+        script = self.script("labwc-autostart")
+        (self.proc / "4242").mkdir(parents=True)
+        (self.proc / "4242/comm").write_text("labwc\n", newline="\n")
+
+        import time
+
+        def run(**env):
+            self.calls.write_text("")
+            result = self.run_sh(script, LABWC_PID="4242", **env)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            for _ in range(50):  # kanshi runs in the background
+                if any(l.startswith("kanshi ") for l in self.lines()):
+                    break
+                time.sleep(0.1)
+            return result, self.lines()
+
+        result, calls = run(ENABLED="0", START_STATUS="0")
+        self.assertIn("kanshi -c /usr/lib/srrx/kanshi/field60", calls)
+        self.assertEqual([l for l in calls if not l.startswith("kanshi")],
+                         ["systemctl --user import-environment WAYLAND_DISPLAY", "systemctl --user --quiet is-enabled srrx-menu.service",
+                          "systemctl --user start --wait srrx-menu.service", "labwc --exit"])
+        self.profile.write_text("field52\n", newline="\n")
+        self.assertIn("kanshi -c /usr/lib/srrx/kanshi/field52", run(ENABLED="0")[1])
+        self.profile.write_text("@60Hz\n", newline="\n")
+        result, calls = run(ENABLED="0")
+        self.assertIn("kanshi -c /usr/lib/srrx/kanshi/field60", calls)
+        self.assertIn("ignoring display profile '@60Hz'", result.stderr)
+        result, calls = run(ENABLED="1")  # not enabled: no console, the compositor stays
+        self.assertNotIn("systemctl --user start --wait srrx-menu.service", calls)
+        self.assertNotIn("labwc --exit", calls)
+        (self.proc / "4242/comm").write_text("other\n", newline="\n")  # the PID is no longer this compositor
+        self.assertNotIn("labwc --exit", run(ENABLED="0")[1])
+
+    @unittest.skipUnless(shutil.which("shellcheck"), "shellcheck is not installed")
+    def test_scripts_pass_shellcheck(self):
+        for name in ("lab-session", "labwc-autostart"):
+            path = system_files.SESSION_SOURCES / name
+            result = subprocess.run(["shellcheck", "-s", "sh", "-S", "warning", str(path)], capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
 
 if __name__ == "__main__":
