@@ -47,12 +47,12 @@
 | Q6A.MKEY | Q6A, M.2 M-key (J530) | середня пластина |
 | Q6A.EDL | Q6A, контакти кнопки EDL (J522) | середня пластина |
 | Q6A.RTC | Q6A, J11 RTC (J303 + BT301) | середня пластина |
-| PACK | Пак 4S1P + BMS Daly + запобіжник паку (BT101–BT104, U101, TH101, F101) | батарейний відсік (лоток x 3–161 уздовж нижньої стінки, layout battery_tray), BMS — лицьовий бік пластини x 175–210 (layout bms); F101 7.5 A — у тримачі Keystone 3568 на малій носійній платі PACK_FUSE біля плюса паку, ізольованій і закріпленій біля лотка (STACK D2 «біля батареї»; конверт у моделі — TBD, mechanical/README); провід BT104.+ → F101.1 — найкоротший, 18 AWG (його захищає лише BMS, DOCP 40±10 A, 02 §2) |
+| PACK | Пак 4S1P + BMS Daly + запобіжник паку (BT101–BT104, U101, TH101, F101; майданчики J116/J117 носія F101) | батарейний відсік (лоток x 3–161 уздовж нижньої стінки, layout battery_tray), BMS — лицьовий бік пластини x 175–210 (layout bms); F101 7.5 A — у тримачі Keystone 3568 на малій носійній платі PACK_FUSE біля плюса паку, ізольованій і закріпленій біля лотка (STACK D2 «біля батареї»; конверт у моделі — TBD, mechanical/README); провід BT104.+ → майданчик J116 (мідь до F101.1) — найкоротший, 18 AWG (його захищає лише BMS, DOCP 40±10 A, 02 §2); провід S05 — від майданчика J117 (мідь від F101.2), W2 GR-4 |
 | INA | Adafruit INA228 5832 (U102, R101, C101, C102) | задній шар, на стійках задньої стінки біля батарейного лотка x 72.6–92.8, y 39–64.8, z 5.5–15.6 (layout ina228, W2 MECH-3: над PWR-A тепер мезонін PWR-B); кріплення — F09 |
 | SWM | Pololu #2813 (U106) | задній шар, на стійках задньої стінки поруч з INA228 x 93.3–113.6, y 39–64.4, z 5.5–15.6 (layout swm_2813, W2 MECH-3); кріплення — F05 |
 | CHG | IP2368 COUT (U110, R117–R120, C118, TH102) | лицьовий бік пластини вгорі праворуч x 172–220, y 122.5–156.5 (layout ip2368; R-IP2368 ≥10 мм від батареї) |
 | HUB | Adafruit 5997 CH334F (U510) | біля Q6A J2 (конверт у моделі механіки — TBD, mechanical/README) |
-| T7A | Вставка ключа VBUS T7 (U505, R514–R517, C514–C516, TP501) | у розриві USB3 біля Q6A J5 |
+| T7A | Вставка ключа VBUS T7 (U505, R514–R517, C514–C516, TP501; вилка S24 J514, майданчики VBUS J515/J516 і GND J517) | у розриві USB3 біля Q6A J5 |
 | T7 | Samsung T7 + цілісний кабель A–C (U540) | ззовні ззаду внизу, тримач |
 | HDMIA | HDMI-вставка pin 18 (U506, C517, C518, R552, TP502) | біля HDMI Q6A |
 | DISP | Дисплей Wisecoco (U520) | лице |
@@ -68,8 +68,8 @@
 | GX16 | Гніздо IMU GX16-4 (J504) | задня стінка x 175, y 25 (M-06, GX16_IMU) |
 | SBPWR | Панельна розетка живлення S-band pod (J551, binder M8 A-код 3 конт.) | стінка головного корпусу — грань і виріз TBD (MECH-07, моделює MECH-3); вилка — на кабелі W425 (S41); рішення build/15 «Ключування панельних роз'ємів» |
 | EDL | Кнопка EDL (SW501, E-Switch PV6F240SS) | на платі лючка за кришкою сервісного лючка (layout edl_key_body) |
-| PWRBTN | Кнопка живлення (SW301, E-Switch PV6F240SS) | верхня грань x 155, z 48.5 (layout pwr_key_body, M-02, PWR_KEY; рішення build/15 «Оболонка D15») |
-| IMUPACK | IMU-пак Hammond 1550Z101 (U309, U314, J550, D502, C519, C520, U552 і деталі E3 «External IMU») | на штанзі антени, ≥30 см позаду |
+| PWRBTN | Кнопка живлення (SW301, E-Switch PV6F240SS) | верхня грань x 155.5, z 50 (layout pwr_key_body, nut.PWR_KEY, M-02, PWR_KEY; рішення build/15 «Кнопка живлення SW301 (W2 MECH-4)») |
+| IMUPACK | IMU-пак Hammond 1550Z101 (U309, U314, J550, D502, C519, C520, U552 і деталі E3 «External IMU»; майданчики носійної плати IMU_CARRIER: кабель J518, RP2040-Zero J320/J321, BNO085 J322) | на штанзі антени, ≥30 см позаду |
 | GNSS | LC76G (U304) | задня стінка ліворуч x 8–71.6, y 38.5–92.5 (layout lc76g); до P7 (верхня грань x 163.5) ≥113 мм по прямій — W407 CAB.011 100 мм не дістає, потрібен довший пігтейл (MPN TBD, build/15 «Оболонка D15») |
 | VEML | Adafruit 4162 VEML7700 (U308) | верхня грань безеля, вікно ⌀4 x 120, z 60 (layout veml7700_window), поза козирком; конверт плати — TBD |
 | NTCP | NTC панелі TH301 (бусинка Semiware MF52A103F3950 на виводах) | задній тепловідвід панелі біля гарячої точки (примітка E3 TH301); місце в моделі механіки — TBD |
@@ -93,7 +93,7 @@
 | S02 | Керування і LAB5: CTRL ↔ PWR | CTRL ↔ PWR | 48 | MF, PH, PHD | 193 (модель, кінець попередній) | I2C2/3V3_Q6A: на CTRL — J302 (E3, S5B-PH-K-S, боковий вхід; контакт 5 MCP_INT лишається на CTRL), на PWR-B — J201 (S5B-PH-K-S, боковий вхід, контакт 5 без кола); LAB5 — кутова J305 (43650-0400) на CTRL ↔ J104 (43650-0415) на PWR-A; сигнали — 2 × S20B-PHDSS: J306/J307 ↔ J202/J203 (W2 GR-3) |
 | S03 | Керування RF: CTRL ↔ RF | CTRL ↔ RF | 12 | PH | 312 (модель, кінець попередній) | лінії HMC7992/G6K/DCS; крізь проріз SL2 (M-07) і виріз N4 стінки РЧ-відсіку; подалі від буферних дроселів |
 | S04 | Зміщення і реле: PWR ↔ RF | PWR ↔ RF | 8 | PH | 212 (модель, кінець попередній) | шини bias ch1–ch4, LNB і LAB5_RLY котушок G6K (після PTC F104 на PWR-A, R-E1-09); крізь проріз SL2 і виріз N4 (M-07, M-09) |
-| S05 | Пак (після F101) → PWR | PACK ↔ PWR | 3 | MFJ, PH, SOLDER | 35 (модель, кінець попередній) | F101 стоїть біля паку, тож увесь сегмент захищає F101 7.5 A; коло батареї 18 AWG (E1 F101); найкоротша траса, без петель; роз'єм S05 на PWR — також вхід стенда при запуску (19 §4) |
+| S05 | Пак (після F101) → PWR | PACK ↔ PWR | 3 | MFJ, PH, SOLDER | 35 (модель, кінець попередній) | F101 стоїть біля паку, тож увесь сегмент захищає F101 7.5 A; коло батареї 18 AWG (E1 F101); найкоротша траса, без петель; кінець у паку — майданчик J117 носійної плати PACK_FUSE (мідь від F101.2, W2 GR-4); роз'єм S05 на PWR — також вхід стенда при запуску (19 §4) |
 | S06 | PWR ↔ INA228 (шунт) | PWR ↔ INA | 7 | MFJ, PH, SOLDER | 159 (модель, кінець попередній) | VIN+/VIN− — клеми шунта Adafruit 5832; I2C0/ALERT/VS — гребінка модуля |
 | S07 | PWR ↔ Pololu #2813 | PWR ↔ SWM | 5 | MFJ, PH, SOLDER | 136 (модель, кінець попередній) | пайка до контактів модуля; коло батареї 18 AWG |
 | S10 | PWR ↔ IP2368 | PWR ↔ CHG | 7 | MFJ, PH, SOLDER | 248 (модель, кінець попередній) | пайка до контактів роздрібної плати; KSD9700 — на MOSFET плати |
@@ -110,12 +110,12 @@
 | S21 | VBUS_RTLB → кабель RTL-B (J541.1) | PWR ↔ RTLB | 2 | PH, SOLDER | 185 (модель, кінець попередній) | розділений VBUS; J5.10 не з'єднувати; крізь SL2 і виріз N3 |
 | S22 | VBUS_HFP → пігтейл HF+ (J544.1) | PWR ↔ HFP | 3 | PH, SOLDER | 55 (модель, кінець попередній) | після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2 |
 | S23 | VBUS_LABPORT → J501.1 | PWR ↔ LABUSB | 3 | PH, SOLDER | 242 (модель, кінець попередній) | C506 біля вихідного порту; крізь проріз SL3 |
-| S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH, SOLDER | 197 (модель, кінець попередній) | U505 на вставці USB3; крізь проріз SL2 |
+| S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH | 197 (модель, кінець попередній) | U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7A, PH 3 бічного входу, W2 GR-4); крізь проріз SL2 |
 | S25 | CTRL → LC76G (живлення і RESET) | CTRL ↔ GNSS | 3 | PH, SOLDER | 215 (модель, кінець попередній) | E3_GNSS5V від U315 і E3_GNSS_RESET_N від Q301 з CTRL, крізь SL2; PPS і UART6 сюди не входять — вони йдуть гілкою PPS шлейфу S01 (S01 + S25 за моделлю 322 мм > 200, R-PPS-LEN; рішення build/15 W2 MECH-1) |
 | S26 | CTRL → VEML7700 | CTRL ↔ VEML | 4 | PH, SOLDER | 101 (модель, кінець попередній) | 100 Ω + TVS біля безеля (на CTRL) |
 | S27 | CTRL → Noctua | CTRL ↔ FAN1 | 3 | FAN3 | кабель вентилятора; траса 115 (модель, кінець попередній) | штатний 3-контактний роз'єм Noctua; на CTRL — сумісна 3-контактна вилка 2.54 мм |
 | S28 | CTRL → повітродувка Delta | CTRL ↔ FAN2 | 2 | MF, SOLDER | 42 (модель, кінець попередній) | 2 дроти; низький ключ на CTRL |
-| S29 | CTRL → кнопка живлення | CTRL ↔ PWRBTN | 2 | PH, SOLDER | 80 (модель, кінець попередній) | пайка до виводів PV6F240SS |
+| S29 | CTRL → кнопка живлення | CTRL ↔ PWRBTN | 2 | PH, SOLDER | 78 (модель, кінець попередній) | пайка до виводів PV6F240SS |
 | S30 | CTRL → плата лючка (консоль UART5 J502) | CTRL ↔ HATCH | 3 | PH | 181 (модель, кінець попередній) | лише 3.3 V TTL, без живлення адаптера; крізь проріз SL2 |
 | S31 | Контакти EDL Q6A → SW501 | Q6A.EDL ↔ EDL | 2 | SOLDER | 58 (модель, кінець попередній) | точки пайки на Q6A не локалізовано (E5 §9); пайка до виводів PV6F240SS |
 | S32 | PWR → гніздо GX16-4 (J504) | PWR ↔ GX16 | 4 | PH, SOLDER | 212 (модель, кінець попередній) | U551 біля входу на PWR; корпус GX16 → CHASSIS; крізь проріз SL3 |
@@ -131,7 +131,7 @@
 
 ## 4. Роз'єми джгутів на платах
 
-Кожен роз'єм джгута на платі — позиційне позначення графа `design/E[1-5].json` (W2 GR-3): контакт таблиці проводів = контакт схеми й посадкового місця (`tools/assembly_data.py` HEADERS; генератор зупиняється на кінці проводу на платі без такого контакту). Мітка — колишній ідентифікатор X хвилі 1 або назва зведення `pcb/partition-spec.json` (один роз'єм на напрям і зону виходу, джгут розходиться після прорізу); плата — фізична плата за доменом `pcb/prepare.py` (PWR_A, PWR_B, CTRL, RF, HATCH). Вилки на платі купуються за базою деталей (10-zakupivlia, BOM JLC); розетки кабелю й клеми — лише за [16-dzhgut-pidsumok.csv](16-dzhgut-pidsumok.csv) (одне джерело, без подвійного рахунку). Висоти: на CTRL усі вилки — на нижньому боці (PH і PHD бічного входу, Micro-Fit лише кутова 43650-0n00), на RF — лише PH бічного входу, на PWR-B — PH/PHD бічного входу, на PWR-A — Micro-Fit, Mini-Fit Jr. і PH верхнього входу в непокритих крайових смугах, де вертикальні Micro-Fit і Mini-Fit Jr. вищі за межу PWR 9.0 мм — OPEN, §11 (build/15 «Сигнальні джгути», «Живлення ≥2 A»); без позначення графа лишаються лише кінці на ENCM, ENCV — причина в рядку (OPEN).
+Кожен роз'єм джгута на платі — позиційне позначення графа `design/E[1-5].json` (W2 GR-3): контакт таблиці проводів = контакт схеми й посадкового місця (`tools/assembly_data.py` HEADERS; генератор зупиняється на кінці проводу на платі без такого контакту). Мітка — колишній ідентифікатор X хвилі 1 або назва зведення `pcb/partition-spec.json` (один роз'єм на напрям і зону виходу, джгут розходиться після прорізу); плата — фізична плата за доменом `pcb/prepare.py` (PWR_A, PWR_B, CTRL, RF, HATCH, вставка T7_INSERT). Вилки на платі купуються за базою деталей (10-zakupivlia, BOM JLC); розетки кабелю й клеми — лише за [16-dzhgut-pidsumok.csv](16-dzhgut-pidsumok.csv) (одне джерело, без подвійного рахунку). Висоти: на CTRL усі вилки — на нижньому боці (PH і PHD бічного входу, Micro-Fit лише кутова 43650-0n00), на RF — лише PH бічного входу, на PWR-B — PH/PHD бічного входу, на PWR-A — Micro-Fit, Mini-Fit Jr. і PH верхнього входу в непокритих крайових смугах, де вертикальні Micro-Fit і Mini-Fit Jr. вищі за межу PWR 9.0 мм — OPEN, §11 (build/15 «Сигнальні джгути», «Живлення ≥2 A»); без позначення графа лишаються лише кінці на ENCM, ENCV — причина в рядку (OPEN).
 
 | роз'єм | мітка | плата | сегмент | родина | контактів | на платі | розетка кабелю | клема | джерело |
 |---|---|---|---|---|---|---|---|---|---|
@@ -181,6 +181,7 @@
 | J509 | X14P1-HATCH | HATCH | S14 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 (2 з проводом) | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json J-HDR-436500215; design/parts/parts.json harness_families MF; MOLEX-43030 |
 | J510 | X15S1-HATCH | HATCH | S15 | JST PH 2.0 мм | 2 (1 з проводом) | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-B2BPH; design/parts/parts.json harness_families PH; JST-PH |
 | J513 | X30S1-HATCH | HATCH | S30 | JST PH 2.0 мм | 3 (3 з проводом) | B3B-PH-K-S(LF)(SN) (C131339) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-B3BPH; design/parts/parts.json harness_families PH; JST-PH |
+| J514 | X24S1-T7A | T7_INSERT | S24 | JST PH 2.0 мм | 3 (3 з проводом) | S3B-PH-K-S(LF)(SN) (C157929) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S3BPH; design/parts/parts.json harness_families PH; JST-PH |
 | X37S0-ENCM | X37S0-ENCM | ENCM | S37 | JST PH 2.0 мм | 4 | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | tools/assembly_data.py PENDING_BOARD_ENDS |
 | X38S0-ENCV | X38S0-ENCV | ENCV | S38 | JST PH 2.0 мм | 4 | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | tools/assembly_data.py PENDING_BOARD_ENDS |
 
@@ -300,7 +301,7 @@
 | S04-07 | LAB5_RLY | PWR: J204.7 (X04S1-PWR) → F104.2 | RF: J420.7 (X04S1-RF) → D401.3, K401.1, K402.1 | 24 | 1/1 | 0.1 / 1.5 | червоний |
 | S04-08 | LNB13V2 | PWR: J204.8 (X04S1-PWR) → L212.2, C261.1, R259.1 … | RF: J420.8 (X04S1-RF) → L406.2 | 24 | 1/1 | 0.3 / 0.499 | фіолетовий |
 | S05-01 | GND | PACK: пайка: U101.P- (P− BMS) | PWR: J105.1 (X05J1-PWR) → U103.2, C103.2, C104.2 … | 18 | 1/1 | 4.6 / 7.5 | чорний |
-| S05-02 | E1_SHUNT_P | PACK: пайка: F101.2 (вихід тримача F101 біля плюса паку) | PWR: J105.2 (X05J1-PWR) (транзит) | 18 | 1/1 | 4.6 / 7.5 | коричневий |
+| S05-02 | E1_SHUNT_P | PACK: пайка: F101.2 (вихід тримача F101 біля плюса паку; провід паяється в майданчик J117 носійної плати PACK_FUSE, W2 GR-4) | PWR: J105.2 (X05J1-PWR) (транзит) | 18 | 1/1 | 4.6 / 7.5 | коричневий |
 | S05-03 | E1_CHG_NTC | PACK: пайка: TH101.1 | PWR: J109.1 (X05S1-PWR) → R121.1 | 26 | 1/1 | 0.05 / — | білий |
 | S06-01 | E1_N | PWR: J106.1 (X06J1-PWR) → U103.1, C103.1, R103.1 … | INA: пайка: R101.2 (клема VIN− модуля 5832) | 18 | 1/1 | 4.6 / 7.5 | коричневий |
 | S06-02 | E1_SHUNT_P | PWR: J106.2 (X06J1-PWR) (транзит) | INA: пайка: R101.1 (клема VIN+ модуля 5832) | 18 | 1/1 | 4.6 / 7.5 | коричневий |
@@ -351,9 +352,9 @@
 | S23-01 | GND | PWR: J506.1 (X23S1-PWR) → U103.2, C103.2, C104.2 … | LABUSB: J501.S (cable shield) | 24 | 1/2 | 0.825 / 0.825 | чорний |
 | S23-02 | GND | PWR: J506.2 (X23S1-PWR) → U103.2, C103.2, C104.2 … | LABUSB: J501.4 (GND) | 24 | 2/2 | 0.825 / 0.825 | чорний |
 | S23-03 | VBUS_LABPORT | PWR: J506.3 (X23S1-PWR) → U502.6, C506.1, C507.1 … | LABUSB: J501.1 (VBUS) | 24 | 1/1 | 0.825 / 0.825 | червоний |
-| S24-01 | GND | CTRL: J311.1 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | T7A: пайка: U505.5 | 24 | 1/1 | 0.1 / 0.1 | чорний |
-| S24-02 | 3V3_Q6A | CTRL: J311.2 (S24-25-CTRL) → J302.1, R301.2, R302.2 … | T7A: пайка: R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
-| S24-03 | EN_T7 | CTRL: J311.3 (S24-25-CTRL) → U302.8 | T7A: пайка: U505.4 (той самий вузол: R515.1) | 26 | 1/1 | 0.05 / — | сірий |
+| S24-01 | GND | CTRL: J311.1 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | T7A: J514.1 (X24S1-T7A) → U505.5, U505.7, R514.2 … | 24 | 1/1 | 0.1 / 0.1 | чорний |
+| S24-02 | 3V3_Q6A | CTRL: J311.2 (S24-25-CTRL) → J302.1, R301.2, R302.2 … | T7A: J514.2 (X24S1-T7A) → R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
+| S24-03 | EN_T7 | CTRL: J311.3 (S24-25-CTRL) → U302.8 | T7A: J514.3 (X24S1-T7A) → U505.4, R515.1 | 26 | 1/1 | 0.05 / — | сірий |
 | S25-01 | GND | CTRL: J311.4 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | GNSS: пайка: U304.P1.2 | 24 | 1/1 | 0.1 / 0.192 | чорний |
 | S25-02 | E3_GNSS5V | CTRL: J311.5 (S24-25-CTRL) → U315.6 | GNSS: пайка: U304.P1.1 | 24 | 1/1 | 0.1 / 0.192 | червоний |
 | S25-03 | E3_GNSS_RESET_N | CTRL: J311.6 (S24-25-CTRL) → Q301.3 | GNSS: пайка: U304.P1.6 | 26 | 1/1 | 0.05 / — | білий |
@@ -410,8 +411,8 @@
 
 | збірка | призначення | кінці | мережі графа | деталі й вимоги |
 |---|---|---|---|---|
-| C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | R-HDMI-ROUTE OPEN (fit-report): прямий штекер Adafruit 2420 упирається в нижню стінку, кишень під 2× Fair-Rite 0431164281 і S-укладку надлишку на трасі немає; запропоновано за замовчуванням FPC-запас STACK (Adafruit 3550 кутовий + 3548 + 3560, обмотка заземленою мідною стрічкою) — MPN, довжина й ферит для пласкої стрічки TBD (assembly_items AI-HDMI-FPC); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати |
-| C-T7 | USB3 Q6A J5 нижній → T7 | Q6A.J5 → T7A → T7 | E5_T7_DM, E5_T7_DP, E5_T7_HOST_RX_N, E5_T7_HOST_RX_P, E5_T7_HOST_TX_N, E5_T7_HOST_TX_P, E5_VBUS_J5, E5_VBUS_T7 | цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7); перевірка 5000M/uas |
+| C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | FPC-набір (W2 MECH-4, build/15 «Кабель HDMI (W2 MECH-4)»; траса R-HDMI-ROUTE у fit-report — модель): Adafruit 3550 або 3549 у HDMI Q6A, стрічка 3560 10 см з феритом Würth 74278011, вставка HDMI_INSERT біля BMS, стрічка 3560 10 см, Adafruit 3548 у вхід Wisecoco (assembly_items AI-HDMI-FPC, AI-HDMI-FPC-R, AI-HDMI-FPC-FLEX, AI-HDMI-FPC-3548, AI-HDMI-FERRITE); обмотка заземленою мідною стрічкою (AI-HDMI-CU-TAPE, TBD); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати; лінк і EMI — стенд |
+| C-T7 | USB3 Q6A J5 нижній → T7 | Q6A.J5 → T7A → T7 | E5_T7_DM, E5_T7_DP, E5_T7_HOST_RX_N, E5_T7_HOST_RX_P, E5_T7_HOST_TX_N, E5_T7_HOST_TX_P, E5_VBUS_J5, E5_VBUS_T7 | цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7): VBUS-жилу розрізано лише на вставці (J515 від J5, J516 до T7), GND-жилу не розривають (відвід J517), S24 — вилка J514 (W2 GR-4); перевірка 5000M/uas |
 | C-HUB | USB2 Q6A J2 P3 → CH334F JP5 | Q6A.J2 → HUB | E5_HUB_DM, E5_HUB_DP | VBUS Q6A не підключати (E5 §2) |
 | C-TOUCH | USB2 Q6A J2 P2 → touch Wisecoco | Q6A.J2 → DISP | E5_TOUCH_DM, E5_TOUCH_DP | лише D+/D−/GND, ферит Würth 74271140 |
 | C-RTLA | USB2 H2 → RTL-A | HUB → RTLA | RTLA_DM, RTLA_DP | пігтейл H2 → USB-A J543; VBUS лише з S20 |
@@ -472,7 +473,7 @@
 | E4_SB_FILTER_OUT | A423: A423.SMA_F_B; W424: W424.FILTER | W424 (RG316 SMA-M/M 1.00 m pod → RX2; купується Amphenol RF 135101-01-M1.00) | без DC |
 | E4_SB_LNA_IN | A422: A422.SMA_IN; W422: W422.LNA | W422 (RG316 SMA-M/M 152.4 mm helix → LaNA; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
 | E4_SB_LNA_OUT | A422: A422.SMA_OUT; W423: W423.LNA | W423 (RG316 SMA-M/M 152.4 mm LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
-| E4_SB_POD5 | SPOD: W425.POD_5V; A422: A422.USB_C_VBUS | W425 (USB-C power-only 1.50 m, 26 AWG pair) | DC 5 V (живлення pod, не РЧ) |
+| E4_SB_POD5 | SPOD: W425.POD_5V; A422: A422.USB_C_VBUS | W425 (USB-C power-only 1.50 m, 26 AWG pair; купується Tensility 10-03676) | DC 5 V (живлення pod, не РЧ) |
 | E4_SB_PREBLOCK | W423: W423.BLOCK; A425: A425.SMA_A | W423 (RG316 SMA-M/M 152.4 mm LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
 | E4_TX_LOAD | A410: A410.END_A; W406: W406.END_B | W406 (CAB.01075 X1 → ANNE-50+ captive coax; купується Taoglas CAB.01075) | без DC |
 | GNSS_ANT | GNSS: U304.GPS1.2; J407: J407.CENTER; W407: W407.END_A, W407.END_B | W407 (P7 SMA → LC76G IPEX coax; купується Taoglas CAB.011) | DC ≈3.1 V від LC76G |

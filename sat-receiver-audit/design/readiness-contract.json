@@ -686,6 +686,11 @@
         "ref": "R515",
         "pin": "1",
         "type": "passive"
+      },
+      {
+        "ref": "J514",
+        "pin": "3",
+        "type": "passive"
       }
     ],
     "SW_LIME_A": [

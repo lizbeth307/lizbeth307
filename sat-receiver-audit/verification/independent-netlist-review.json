@@ -2,21 +2,21 @@
   "passed": true,
   "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
   "graph_sha256": {
-    "E1.json": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295",
+    "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
     "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
-    "E3.json": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b",
-    "E4.json": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17",
-    "E5.json": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
+    "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
+    "E4.json": "b7e76b58e992f767726d4d2481d1100987e9cb296a45784f9ebbaac260872595",
+    "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   },
-  "netlist_sha256": "157cf5c9225d12445f8945ab235dbd5777918f5c4a5ae9e1f6d2b3703d9098d3",
+  "netlist_sha256": "1ef65f1355006a9eac2291e8294f7a279b89b050ff92e33fc0d2cd4b8015d645",
   "counts": {
-    "hardware_components": 839,
-    "hardware_pin_declarations": 2718,
-    "connected_hardware_pins": 2555,
+    "hardware_components": 849,
+    "hardware_pin_declarations": 2742,
+    "connected_hardware_pins": 2579,
     "connected_hardware_nets": 486,
     "declared_nc_pins": 163,
-    "xml_hardware_components": 839,
-    "xml_pin_nodes": 2718,
+    "xml_hardware_components": 849,
+    "xml_pin_nodes": 2742,
     "xml_nets": 649,
     "explicit_power_flags": 25
   },

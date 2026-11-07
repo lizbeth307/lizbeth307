@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/drc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-11-07T19:30:58",
+    "date": "2026-11-07T22:18:18",
     "ignored_checks": [],
     "included_severities": [
         "error",
@@ -21,7 +21,7 @@
                         "x": 29.0625,
                         "y": 39.05
                     },
-                    "uuid": "e69f1799-c24f-4bc5-bf9f-04ff5457b7f8"
+                    "uuid": "1dd48663-d939-47b5-9bf7-cefd39611b7b"
                 },
                 {
                     "description": "Pad 1 [3V3_Q6A] of C4416 on F.Cu",
@@ -29,7 +29,7 @@
                         "x": 57.225,
                         "y": 65.5
                     },
-                    "uuid": "dca9ae2d-53f7-4e46-884e-2732e6b8a430"
+                    "uuid": "ed49b30b-a7fd-47ff-b08d-38faa3051496"
                 }
             ],
             "severity": "error",
@@ -44,7 +44,7 @@
                         "x": 57.225,
                         "y": 65.5
                     },
-                    "uuid": "dca9ae2d-53f7-4e46-884e-2732e6b8a430"
+                    "uuid": "ed49b30b-a7fd-47ff-b08d-38faa3051496"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U456 on F.Cu",
@@ -52,7 +52,7 @@
                         "x": 59.1375,
                         "y": 69.05
                     },
-                    "uuid": "33d0d5d0-c683-4d53-8b63-f201dfd75d11"
+                    "uuid": "156a6dab-b113-4161-9a92-964a00132b4b"
                 }
             ],
             "severity": "error",
@@ -67,7 +67,7 @@
                         "x": 57.225,
                         "y": 80.5
                     },
-                    "uuid": "b98689a7-877f-43ae-97e0-6130907a4fff"
+                    "uuid": "65c343d4-592f-4885-9567-265ad6bcbfa1"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U457 on F.Cu",
@@ -75,7 +75,7 @@
                         "x": 59.1375,
                         "y": 84.05
                     },
-                    "uuid": "0ef7f14b-bb66-483b-b026-1be644b67b6d"
+                    "uuid": "22e75a06-c595-4d71-93b5-55146930bd71"
                 }
             ],
             "severity": "error",
@@ -90,7 +90,7 @@
                         "x": 59.1375,
                         "y": 69.05
                     },
-                    "uuid": "33d0d5d0-c683-4d53-8b63-f201dfd75d11"
+                    "uuid": "156a6dab-b113-4161-9a92-964a00132b4b"
                 },
                 {
                     "description": "Pad 1 [3V3_Q6A] of C4417 on F.Cu",
@@ -98,7 +98,7 @@
                         "x": 57.225,
                         "y": 80.5
                     },
-                    "uuid": "b98689a7-877f-43ae-97e0-6130907a4fff"
+                    "uuid": "65c343d4-592f-4885-9567-265ad6bcbfa1"
                 }
             ],
             "severity": "error",
@@ -113,7 +113,7 @@
                         "x": 59.1375,
                         "y": 84.05
                     },
-                    "uuid": "0ef7f14b-bb66-483b-b026-1be644b67b6d"
+                    "uuid": "22e75a06-c595-4d71-93b5-55146930bd71"
                 },
                 {
                     "description": "Pad 1 [3V3_Q6A] of R4401 on F.Cu",
@@ -121,7 +121,7 @@
                         "x": 44.175,
                         "y": 94.0
                     },
-                    "uuid": "a8037e00-a211-42ef-ba9c-d098664a2901"
+                    "uuid": "69932102-a536-4e7f-9ab3-978c70a07782"
                 }
             ],
             "severity": "error",
@@ -136,7 +136,7 @@
                         "x": 95.225,
                         "y": 62.5
                     },
-                    "uuid": "00184d7a-9ab6-481d-983a-63fd152a9a7b"
+                    "uuid": "48fec960-eee4-4cf7-a5f8-1418c3cb19fc"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U452 on F.Cu",
@@ -144,7 +144,7 @@
                         "x": 97.1375,
                         "y": 66.05
                     },
-                    "uuid": "3f5cb2b3-b2a5-4e00-95f0-9b5d7f4ce161"
+                    "uuid": "9597fb7e-e5e2-4708-9711-08bda267feb2"
                 }
             ],
             "severity": "error",
@@ -159,7 +159,7 @@
                         "x": 95.225,
                         "y": 62.5
                     },
-                    "uuid": "00184d7a-9ab6-481d-983a-63fd152a9a7b"
+                    "uuid": "48fec960-eee4-4cf7-a5f8-1418c3cb19fc"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U456 on F.Cu",
@@ -167,7 +167,7 @@
                         "x": 59.1375,
                         "y": 69.05
                     },
-                    "uuid": "33d0d5d0-c683-4d53-8b63-f201dfd75d11"
+                    "uuid": "156a6dab-b113-4161-9a92-964a00132b4b"
                 }
             ],
             "severity": "error",
@@ -182,7 +182,7 @@
                         "x": 95.225,
                         "y": 92.5
                     },
-                    "uuid": "5ea25539-b59f-42c2-96e2-3df583ebcf92"
+                    "uuid": "2b5ccdac-ce06-4489-aa56-e3c584452e4e"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U454 on F.Cu",
@@ -190,7 +190,7 @@
                         "x": 97.1375,
                         "y": 96.05
                     },
-                    "uuid": "688a1f96-17ca-4cf3-a9e6-7a9449cb5c20"
+                    "uuid": "b17da7cf-c1cd-4a0b-ba8d-678f922abbe4"
                 }
             ],
             "severity": "error",
@@ -205,7 +205,7 @@
                         "x": 97.1375,
                         "y": 36.05
                     },
-                    "uuid": "b41ffa98-c9ea-4275-b922-9f7f28b60757"
+                    "uuid": "156c1c4b-4446-41b2-81ce-b5a5ee13187e"
                 },
                 {
                     "description": "Pad 1 [3V3_Q6A] of C4410 on F.Cu",
@@ -213,7 +213,7 @@
                         "x": 95.225,
                         "y": 32.5
                     },
-                    "uuid": "a37aa228-2f3a-4b2a-85bf-915e861f0253"
+                    "uuid": "5fc63168-dd22-4910-8ea1-cc089756495c"
                 }
             ],
             "severity": "error",
@@ -228,7 +228,7 @@
                         "x": 97.1375,
                         "y": 36.05
                     },
-                    "uuid": "b41ffa98-c9ea-4275-b922-9f7f28b60757"
+                    "uuid": "156c1c4b-4446-41b2-81ce-b5a5ee13187e"
                 },
                 {
                     "description": "Pad 1 [3V3_Q6A] of C4412 on F.Cu",
@@ -236,7 +236,7 @@
                         "x": 95.225,
                         "y": 62.5
                     },
-                    "uuid": "00184d7a-9ab6-481d-983a-63fd152a9a7b"
+                    "uuid": "48fec960-eee4-4cf7-a5f8-1418c3cb19fc"
                 }
             ],
             "severity": "error",
@@ -251,7 +251,7 @@
                         "x": 117.225,
                         "y": 32.5
                     },
-                    "uuid": "8e5b0414-fe90-478c-a6a0-7ddb36a65a9c"
+                    "uuid": "ab79bbcf-cc41-4a34-9396-9fc06bfa136e"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U450 on F.Cu",
@@ -259,7 +259,7 @@
                         "x": 97.1375,
                         "y": 36.05
                     },
-                    "uuid": "b41ffa98-c9ea-4275-b922-9f7f28b60757"
+                    "uuid": "156c1c4b-4446-41b2-81ce-b5a5ee13187e"
                 }
             ],
             "severity": "error",
@@ -274,7 +274,7 @@
                         "x": 117.225,
                         "y": 62.5
                     },
-                    "uuid": "0ee090ec-913f-4d35-9525-eaf42a98a0c5"
+                    "uuid": "efee3de8-083b-4274-af54-0e61d4c9fc31"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U452 on F.Cu",
@@ -282,7 +282,7 @@
                         "x": 97.1375,
                         "y": 66.05
                     },
-                    "uuid": "3f5cb2b3-b2a5-4e00-95f0-9b5d7f4ce161"
+                    "uuid": "9597fb7e-e5e2-4708-9711-08bda267feb2"
                 }
             ],
             "severity": "error",
@@ -297,7 +297,7 @@
                         "x": 117.225,
                         "y": 92.5
                     },
-                    "uuid": "a95695a8-3355-4e5d-9276-d99aca1d6299"
+                    "uuid": "c96c81b5-bcf0-46b3-b6c1-8d247a1bec05"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U454 on F.Cu",
@@ -305,7 +305,7 @@
                         "x": 97.1375,
                         "y": 96.05
                     },
-                    "uuid": "688a1f96-17ca-4cf3-a9e6-7a9449cb5c20"
+                    "uuid": "b17da7cf-c1cd-4a0b-ba8d-678f922abbe4"
                 }
             ],
             "severity": "error",
@@ -320,7 +320,7 @@
                         "x": 117.225,
                         "y": 92.5
                     },
-                    "uuid": "a95695a8-3355-4e5d-9276-d99aca1d6299"
+                    "uuid": "c96c81b5-bcf0-46b3-b6c1-8d247a1bec05"
                 },
                 {
                     "description": "Pad 6 [3V3_Q6A] of U453 on F.Cu",
@@ -328,7 +328,7 @@
                         "x": 119.1375,
                         "y": 66.05
                     },
-                    "uuid": "062e4fbe-9981-4d77-90f3-4ccb516a0d46"
+                    "uuid": "6d66587c-36c2-46e8-9c3e-1a7e9611baac"
                 }
             ],
             "severity": "error",
@@ -343,7 +343,7 @@
                         "x": 119.1375,
                         "y": 36.05
                     },
-                    "uuid": "0afaeceb-9f7c-4d3e-8029-c8f2de014412"
+                    "uuid": "7d81664c-0443-43cd-bff6-795a7de6e5e9"
                 },
                 {
                     "description": "Pad 1 [3V3_Q6A] of C4411 on F.Cu",
@@ -351,7 +351,7 @@
                         "x": 117.225,
                         "y": 32.5
                     },
-                    "uuid": "8e5b0414-fe90-478c-a6a0-7ddb36a65a9c"
+                    "uuid": "ab79bbcf-cc41-4a34-9396-9fc06bfa136e"
                 }
             ],
             "severity": "error",
@@ -366,7 +366,7 @@
                         "x": 119.1375,
                         "y": 66.05
                     },
-                    "uuid": "062e4fbe-9981-4d77-90f3-4ccb516a0d46"
+                    "uuid": "6d66587c-36c2-46e8-9c3e-1a7e9611baac"
                 },
                 {
                     "description": "Pad 1 [3V3_Q6A] of C4413 on F.Cu",
@@ -374,7 +374,7 @@
                         "x": 117.225,
                         "y": 62.5
                     },
-                    "uuid": "0ee090ec-913f-4d35-9525-eaf42a98a0c5"
+                    "uuid": "efee3de8-083b-4274-af54-0e61d4c9fc31"
                 }
             ],
             "severity": "error",
@@ -389,7 +389,7 @@
                         "x": 119.1375,
                         "y": 96.05
                     },
-                    "uuid": "ebc26622-0cf5-4ceb-b838-d7711b9a9c17"
+                    "uuid": "f799cc0d-701b-42df-a44c-d9d796ff89fd"
                 },
                 {
                     "description": "Pad 1 [3V3_Q6A] of C4415 on F.Cu",
@@ -397,7 +397,7 @@
                         "x": 117.225,
                         "y": 92.5
                     },
-                    "uuid": "a95695a8-3355-4e5d-9276-d99aca1d6299"
+                    "uuid": "c96c81b5-bcf0-46b3-b6c1-8d247a1bec05"
                 }
             ],
             "severity": "error",
@@ -412,7 +412,7 @@
                         "x": 37.825,
                         "y": 52.0
                     },
-                    "uuid": "b0b8fd42-23d3-4a8d-9dc6-e6b6be995be9"
+                    "uuid": "d672a6d3-163b-447f-a550-00f283a3caa8"
                 },
                 {
                     "description": "Pad 2 [GND] of C4401 on F.Cu",
@@ -420,7 +420,7 @@
                         "x": 44.775,
                         "y": 52.0
                     },
-                    "uuid": "2abdca8c-afcd-4d35-a0c8-0a8c62549aa5"
+                    "uuid": "a029afb5-d93e-4b7e-8d18-555f3604e7cb"
                 }
             ],
             "severity": "error",
@@ -435,7 +435,7 @@
                         "x": 37.825,
                         "y": 61.0
                     },
-                    "uuid": "4bb2533c-1547-485f-8861-a98de866a7c4"
+                    "uuid": "2c08be79-5467-4366-8ae8-5340aa6b21df"
                 },
                 {
                     "description": "Pad 2 [GND] of C4402 on F.Cu",
@@ -443,7 +443,7 @@
                         "x": 44.775,
                         "y": 61.0
                     },
-                    "uuid": "f30cc807-d3d6-40f1-abcb-5f080892a5a7"
+                    "uuid": "9150467b-6003-461d-af9a-939ebcfdb310"
                 }
             ],
             "severity": "error",
@@ -458,7 +458,7 @@
                         "x": 37.825,
                         "y": 70.0
                     },
-                    "uuid": "af9d81d8-9f22-401f-aaf3-582fa5f745c1"
+                    "uuid": "1a8130ed-3e04-4014-95d8-11772aac0032"
                 },
                 {
                     "description": "Pad 2 [GND] of C4405 on F.Cu",
@@ -466,7 +466,7 @@
                         "x": 44.775,
                         "y": 70.0
                     },
-                    "uuid": "1d24d967-3d05-493e-abe6-aa0f31c0a96d"
+                    "uuid": "dc7965a6-ed12-43a0-8bbb-9c230fc8830a"
                 }
             ],
             "severity": "error",
@@ -481,7 +481,7 @@
                         "x": 44.775,
                         "y": 52.0
                     },
-                    "uuid": "2abdca8c-afcd-4d35-a0c8-0a8c62549aa5"
+                    "uuid": "a029afb5-d93e-4b7e-8d18-555f3604e7cb"
                 },
                 {
                     "description": "Pad 2 [GND] of U458 on F.Cu",
@@ -489,7 +489,7 @@
                         "x": 44.0625,
                         "y": 40.95
                     },
-                    "uuid": "bfe4821c-63e9-4297-bf8c-338de574765e"
+                    "uuid": "09ae3500-5a89-437e-ac32-c32b4b82f376"
                 }
             ],
             "severity": "error",
@@ -504,7 +504,7 @@
                         "x": 44.775,
                         "y": 61.0
                     },
-                    "uuid": "f30cc807-d3d6-40f1-abcb-5f080892a5a7"
+                    "uuid": "9150467b-6003-461d-af9a-939ebcfdb310"
                 },
                 {
                     "description": "Pad 2 [GND] of C4401 on F.Cu",
@@ -512,7 +512,7 @@
                         "x": 44.775,
                         "y": 52.0
                     },
-                    "uuid": "2abdca8c-afcd-4d35-a0c8-0a8c62549aa5"
+                    "uuid": "a029afb5-d93e-4b7e-8d18-555f3604e7cb"
                 }
             ],
             "severity": "error",
@@ -527,7 +527,7 @@
                         "x": 44.775,
                         "y": 70.0
                     },
-                    "uuid": "1d24d967-3d05-493e-abe6-aa0f31c0a96d"
+                    "uuid": "dc7965a6-ed12-43a0-8bbb-9c230fc8830a"
                 },
                 {
                     "description": "Pad 2 [GND] of C4402 on F.Cu",
@@ -535,7 +535,7 @@
                         "x": 44.775,
                         "y": 61.0
                     },
-                    "uuid": "f30cc807-d3d6-40f1-abcb-5f080892a5a7"
+                    "uuid": "9150467b-6003-461d-af9a-939ebcfdb310"
                 }
             ],
             "severity": "error",
@@ -550,7 +550,7 @@
                         "x": 44.775,
                         "y": 79.0
                     },
-                    "uuid": "f7715e89-8c75-4048-bd2c-e341eb3f732f"
+                    "uuid": "ec97aaa8-f75a-483f-abee-3525d042c2f9"
                 },
                 {
                     "description": "Pad 2 [GND] of R4409 on F.Cu",
@@ -558,7 +558,7 @@
                         "x": 37.825,
                         "y": 79.0
                     },
-                    "uuid": "9c462a1d-ca1a-4adf-adc8-4515ef2edf20"
+                    "uuid": "87bb474b-f907-475b-a26d-b7801bdaabba"
                 }
             ],
             "severity": "error",
@@ -573,7 +573,7 @@
                         "x": 44.775,
                         "y": 79.0
                     },
-                    "uuid": "f7715e89-8c75-4048-bd2c-e341eb3f732f"
+                    "uuid": "ec97aaa8-f75a-483f-abee-3525d042c2f9"
                 },
                 {
                     "description": "Pad 2 [GND] of C4405 on F.Cu",
@@ -581,7 +581,7 @@
                         "x": 44.775,
                         "y": 70.0
                     },
-                    "uuid": "1d24d967-3d05-493e-abe6-aa0f31c0a96d"
+                    "uuid": "dc7965a6-ed12-43a0-8bbb-9c230fc8830a"
                 }
             ],
             "severity": "error",
@@ -596,7 +596,7 @@
                         "x": 45.825,
                         "y": 94.0
                     },
-                    "uuid": "389beb26-7f83-4185-ab46-2248edc31096"
+                    "uuid": "2a497423-48eb-4867-b25c-a6e00aaec7a3"
                 },
                 {
                     "description": "Pad 2 [GND] of U457 on F.Cu",
@@ -604,7 +604,7 @@
                         "x": 56.8625,
                         "y": 85.0
                     },
-                    "uuid": "5337c820-696d-4404-9a78-f8eab547db45"
+                    "uuid": "6bca214e-7850-4c3e-b70d-7d49a1ec6ea2"
                 }
             ],
             "severity": "error",
@@ -619,7 +619,7 @@
                         "x": 45.825,
                         "y": 94.0
                     },
-                    "uuid": "389beb26-7f83-4185-ab46-2248edc31096"
+                    "uuid": "2a497423-48eb-4867-b25c-a6e00aaec7a3"
                 },
                 {
                     "description": "Pad 2 [GND] of R4451 on F.Cu",
@@ -627,7 +627,7 @@
                         "x": 55.825,
                         "y": 105.0
                     },
-                    "uuid": "fe4bc0fe-0039-4260-83ee-ce6eae348f27"
+                    "uuid": "92f4281d-b76e-4de4-9b98-17713a2cc123"
                 }
             ],
             "severity": "error",
@@ -642,7 +642,7 @@
                         "x": 45.9375,
                         "y": 40.0
                     },
-                    "uuid": "1daed19d-f6ab-4a8f-bd94-194f1484f56b"
+                    "uuid": "d6a00f2e-d4c9-4faf-a835-0750fe17a8e1"
                 },
                 {
                     "description": "Pad 2 [GND] of U458 on F.Cu",
@@ -650,7 +650,7 @@
                         "x": 44.0625,
                         "y": 40.95
                     },
-                    "uuid": "bfe4821c-63e9-4297-bf8c-338de574765e"
+                    "uuid": "09ae3500-5a89-437e-ac32-c32b4b82f376"
                 }
             ],
             "severity": "error",
@@ -665,7 +665,7 @@
                         "x": 53.775,
                         "y": 40.0
                     },
-                    "uuid": "cbe07cd8-f7a4-4881-a0cf-fdd158987ecc"
+                    "uuid": "01126b27-3f94-4e1e-87ef-87f1891f9d7d"
                 },
                 {
                     "description": "Pad 3 [GND] of U458 on F.Cu",
@@ -673,7 +673,7 @@
                         "x": 45.9375,
                         "y": 40.0
                     },
-                    "uuid": "1daed19d-f6ab-4a8f-bd94-194f1484f56b"
+                    "uuid": "d6a00f2e-d4c9-4faf-a835-0750fe17a8e1"
                 }
             ],
             "severity": "error",
@@ -688,7 +688,7 @@
                         "x": 56.8625,
                         "y": 70.0
                     },
-                    "uuid": "90a71b4c-ae2c-4d07-ab6c-814585a50cfb"
+                    "uuid": "3faa6e87-a0d3-40f7-b0a9-8694f0c72bb0"
                 },
                 {
                     "description": "Pad 2 [GND] of C4416 on F.Cu",
@@ -696,7 +696,7 @@
                         "x": 58.775,
                         "y": 65.5
                     },
-                    "uuid": "6bc742f6-141a-4aaa-b66f-161ef934b5ec"
+                    "uuid": "4643dd95-6c54-4dfd-942e-e5484192810a"
                 }
             ],
             "severity": "error",
@@ -711,7 +711,7 @@
                         "x": 56.8625,
                         "y": 70.0
                     },
-                    "uuid": "90a71b4c-ae2c-4d07-ab6c-814585a50cfb"
+                    "uuid": "3faa6e87-a0d3-40f7-b0a9-8694f0c72bb0"
                 },
                 {
                     "description": "Pad 2 [GND] of C4417 on F.Cu",
@@ -719,7 +719,7 @@
                         "x": 58.775,
                         "y": 80.5
                     },
-                    "uuid": "5a3270df-3371-45fd-b3d9-cab373d3cb7d"
+                    "uuid": "4704d18d-4d81-40be-9a09-403c86e88660"
                 }
             ],
             "severity": "error",
@@ -734,7 +734,7 @@
                         "x": 56.8625,
                         "y": 70.0
                     },
-                    "uuid": "90a71b4c-ae2c-4d07-ab6c-814585a50cfb"
+                    "uuid": "3faa6e87-a0d3-40f7-b0a9-8694f0c72bb0"
                 },
                 {
                     "description": "Pad 2 [GND] of C4405 on F.Cu",
@@ -742,7 +742,7 @@
                         "x": 44.775,
                         "y": 70.0
                     },
-                    "uuid": "1d24d967-3d05-493e-abe6-aa0f31c0a96d"
+                    "uuid": "dc7965a6-ed12-43a0-8bbb-9c230fc8830a"
                 }
             ],
             "severity": "error",
@@ -757,7 +757,7 @@
                         "x": 58.775,
                         "y": 65.5
                     },
-                    "uuid": "6bc742f6-141a-4aaa-b66f-161ef934b5ec"
+                    "uuid": "4643dd95-6c54-4dfd-942e-e5484192810a"
                 },
                 {
                     "description": "Pad 2 [GND] of C4403 on F.Cu",
@@ -765,7 +765,7 @@
                         "x": 65.775,
                         "y": 70.0
                     },
-                    "uuid": "edb809d4-8259-44da-b7a0-cf749b1c16c0"
+                    "uuid": "1dcd6dda-df2a-49dc-a7e8-7c4ad757698d"
                 }
             ],
             "severity": "error",
@@ -780,7 +780,7 @@
                         "x": 58.775,
                         "y": 80.5
                     },
-                    "uuid": "5a3270df-3371-45fd-b3d9-cab373d3cb7d"
+                    "uuid": "4704d18d-4d81-40be-9a09-403c86e88660"
                 },
                 {
                     "description": "Pad 2 [GND] of U457 on F.Cu",
@@ -788,7 +788,7 @@
                         "x": 56.8625,
                         "y": 85.0
                     },
-                    "uuid": "5337c820-696d-4404-9a78-f8eab547db45"
+                    "uuid": "6bca214e-7850-4c3e-b70d-7d49a1ec6ea2"
                 }
             ],
             "severity": "error",
@@ -803,7 +803,7 @@
                         "x": 65.775,
                         "y": 85.0
                     },
-                    "uuid": "2011bc16-c666-4f9c-a2f8-37a929a1783d"
+                    "uuid": "e355f78e-3e00-4200-bc50-93733abfa944"
                 },
                 {
                     "description": "Pad 2 [GND] of C4417 on F.Cu",
@@ -811,7 +811,7 @@
                         "x": 58.775,
                         "y": 80.5
                     },
-                    "uuid": "5a3270df-3371-45fd-b3d9-cab373d3cb7d"
+                    "uuid": "4704d18d-4d81-40be-9a09-403c86e88660"
                 }
             ],
             "severity": "error",
@@ -826,7 +826,7 @@
                         "x": 72.825,
                         "y": 105.0
                     },
-                    "uuid": "44346fe1-bfe8-4d1b-9d15-bbeb356893bd"
+                    "uuid": "f7ad4d77-7546-490a-a03e-05298efb65c7"
                 },
                 {
                     "description": "Pad 2 [GND] of Q457 on F.Cu",
@@ -834,7 +834,7 @@
                         "x": 79.0625,
                         "y": 98.95
                     },
-                    "uuid": "db03e581-24be-47b9-9f1f-0422d42fbac4"
+                    "uuid": "48e31ec5-3a71-43c8-ba97-b1eaac68cba6"
                 }
             ],
             "severity": "error",
@@ -849,7 +849,7 @@
                         "x": 72.825,
                         "y": 105.0
                     },
-                    "uuid": "44346fe1-bfe8-4d1b-9d15-bbeb356893bd"
+                    "uuid": "f7ad4d77-7546-490a-a03e-05298efb65c7"
                 },
                 {
                     "description": "Pad 2 [GND] of R4451 on F.Cu",
@@ -857,7 +857,7 @@
                         "x": 55.825,
                         "y": 105.0
                     },
-                    "uuid": "fe4bc0fe-0039-4260-83ee-ce6eae348f27"
+                    "uuid": "92f4281d-b76e-4de4-9b98-17713a2cc123"
                 }
             ],
             "severity": "error",
@@ -872,7 +872,7 @@
                         "x": 88.775,
                         "y": 45.0
                     },
-                    "uuid": "1985ec52-5df8-4ba0-a2bf-1f5d61261252"
+                    "uuid": "3885d41e-2648-40ba-8bd8-286c5eaa65e0"
                 },
                 {
                     "description": "Pad 2 [GND] of R4424 on F.Cu",
@@ -880,7 +880,7 @@
                         "x": 88.825,
                         "y": 61.0
                     },
-                    "uuid": "e77d9d22-f2d4-4c98-8f5d-6ed42e90c368"
+                    "uuid": "e63fd57a-94c0-4fc4-a596-2b81257817c5"
                 }
             ],
             "severity": "error",
@@ -895,7 +895,7 @@
                         "x": 88.775,
                         "y": 105.0
                     },
-                    "uuid": "fa3f1615-2d3c-425b-ab17-45e85efdfd4c"
+                    "uuid": "acc9db07-5c03-4a4e-bbd2-c64b1d1bc705"
                 },
                 {
                     "description": "Pad 1 [GND] of D453 on F.Cu",
@@ -903,7 +903,7 @@
                         "x": 95.0625,
                         "y": 104.05
                     },
-                    "uuid": "42b95568-88b4-43ac-ac06-7eb5a0e48398"
+                    "uuid": "823ac4c1-aec2-4012-aecb-13a6f07fe6c8"
                 }
             ],
             "severity": "error",
@@ -918,7 +918,7 @@
                         "x": 88.775,
                         "y": 105.0
                     },
-                    "uuid": "fa3f1615-2d3c-425b-ab17-45e85efdfd4c"
+                    "uuid": "acc9db07-5c03-4a4e-bbd2-c64b1d1bc705"
                 },
                 {
                     "description": "Pad 2 [GND] of Q457 on F.Cu",
@@ -926,7 +926,7 @@
                         "x": 79.0625,
                         "y": 98.95
                     },
-                    "uuid": "db03e581-24be-47b9-9f1f-0422d42fbac4"
+                    "uuid": "48e31ec5-3a71-43c8-ba97-b1eaac68cba6"
                 }
             ],
             "severity": "error",
@@ -941,7 +941,7 @@
                         "x": 88.825,
                         "y": 61.0
                     },
-                    "uuid": "e77d9d22-f2d4-4c98-8f5d-6ed42e90c368"
+                    "uuid": "e63fd57a-94c0-4fc4-a596-2b81257817c5"
                 },
                 {
                     "description": "Pad 2 [GND] of C4412 on F.Cu",
@@ -949,7 +949,7 @@
                         "x": 96.775,
                         "y": 62.5
                     },
-                    "uuid": "8bb1d6ac-7603-4478-accd-f35fdcce223a"
+                    "uuid": "adcb763d-4c1a-47a5-9dcd-6fb86db31d52"
                 }
             ],
             "severity": "error",
@@ -964,7 +964,7 @@
                         "x": 88.825,
                         "y": 91.0
                     },
-                    "uuid": "5f64a9a7-0fa2-4c74-a922-ac0a4a9811e9"
+                    "uuid": "be066fa8-4bb6-45d6-967d-db87c3d4a7b2"
                 },
                 {
                     "description": "Pad 2 [GND] of C4414 on F.Cu",
@@ -972,7 +972,7 @@
                         "x": 96.775,
                         "y": 92.5
                     },
-                    "uuid": "d732791a-d459-4bd0-8216-cc615dddca00"
+                    "uuid": "eab2ebbf-7bcd-4f33-9621-ec982ec92bff"
                 }
             ],
             "severity": "error",
@@ -987,7 +987,7 @@
                         "x": 88.825,
                         "y": 91.0
                     },
-                    "uuid": "5f64a9a7-0fa2-4c74-a922-ac0a4a9811e9"
+                    "uuid": "be066fa8-4bb6-45d6-967d-db87c3d4a7b2"
                 },
                 {
                     "description": "Pad 2 [GND] of C4431 on F.Cu",
@@ -995,7 +995,7 @@
                         "x": 88.775,
                         "y": 75.0
                     },
-                    "uuid": "c884afab-3950-4f41-9e56-19a736e022f7"
+                    "uuid": "1e7f73cd-6d68-455f-95f6-469b88adcd04"
                 }
             ],
             "severity": "error",
@@ -1010,7 +1010,7 @@
                         "x": 88.825,
                         "y": 121.0
                     },
-                    "uuid": "eac261c3-9770-4037-8d47-391462def72d"
+                    "uuid": "6e9b07f6-ae4e-4d6b-920f-15f29546fed8"
                 },
                 {
                     "description": "Pad 2 [GND] of C4441 on F.Cu",
@@ -1018,7 +1018,7 @@
                         "x": 88.775,
                         "y": 105.0
                     },
-                    "uuid": "fa3f1615-2d3c-425b-ab17-45e85efdfd4c"
+                    "uuid": "acc9db07-5c03-4a4e-bbd2-c64b1d1bc705"
                 }
             ],
             "severity": "error",
@@ -1033,7 +1033,7 @@
                         "x": 88.825,
                         "y": 121.0
                     },
-                    "uuid": "eac261c3-9770-4037-8d47-391462def72d"
+                    "uuid": "6e9b07f6-ae4e-4d6b-920f-15f29546fed8"
                 },
                 {
                     "description": "Pad 2 [GND] of R4446 on F.Cu",
@@ -1041,7 +1041,7 @@
                         "x": 110.825,
                         "y": 121.0
                     },
-                    "uuid": "f28b3658-9594-414f-9e2f-151c5866365f"
+                    "uuid": "1c70ec88-3426-4e38-a31a-3581bb6d1271"
                 }
             ],
             "severity": "error",
@@ -1056,7 +1056,7 @@
                         "x": 94.8625,
                         "y": 37.0
                     },
-                    "uuid": "ee23b024-efe2-4edd-b619-61b127c842a5"
+                    "uuid": "3a7873af-30db-4e03-ae7c-43ab3098baa4"
                 },
                 {
                     "description": "Pad 1 [GND] of D451 on F.Cu",
@@ -1064,7 +1064,7 @@
                         "x": 95.0625,
                         "y": 44.05
                     },
-                    "uuid": "99bc998b-b91e-4640-a279-2abd9db3e05e"
+                    "uuid": "4b24078f-9f0d-4223-91b5-ff645672ed33"
                 }
             ],
             "severity": "error",
@@ -1079,7 +1079,7 @@
                         "x": 94.8625,
                         "y": 97.0
                     },
-                    "uuid": "212cd62e-ec83-49d1-b68b-071f1da3f866"
+                    "uuid": "438277bf-2d11-4243-92fd-2b9551325ba7"
                 },
                 {
                     "description": "Pad 1 [GND] of D453 on F.Cu",
@@ -1087,7 +1087,7 @@
                         "x": 95.0625,
                         "y": 104.05
                     },
-                    "uuid": "42b95568-88b4-43ac-ac06-7eb5a0e48398"
+                    "uuid": "823ac4c1-aec2-4012-aecb-13a6f07fe6c8"
                 }
             ],
             "severity": "error",
@@ -1102,7 +1102,7 @@
                         "x": 95.0625,
                         "y": 44.05
                     },
-                    "uuid": "99bc998b-b91e-4640-a279-2abd9db3e05e"
+                    "uuid": "4b24078f-9f0d-4223-91b5-ff645672ed33"
                 },
                 {
                     "description": "Pad 2 [GND] of C4421 on F.Cu",
@@ -1110,7 +1110,7 @@
                         "x": 88.775,
                         "y": 45.0
                     },
-                    "uuid": "1985ec52-5df8-4ba0-a2bf-1f5d61261252"
+                    "uuid": "3885d41e-2648-40ba-8bd8-286c5eaa65e0"
                 }
             ],
             "severity": "error",
@@ -1125,7 +1125,7 @@
                         "x": 95.0625,
                         "y": 74.05
                     },
-                    "uuid": "5eddc71d-bf9b-4b39-9254-7da184f0d8b4"
+                    "uuid": "c2043bdc-5231-41e8-a615-0e8a38dae53a"
                 },
                 {
                     "description": "Pad 2 [GND] of C4431 on F.Cu",
@@ -1133,7 +1133,7 @@
                         "x": 88.775,
                         "y": 75.0
                     },
-                    "uuid": "c884afab-3950-4f41-9e56-19a736e022f7"
+                    "uuid": "1e7f73cd-6d68-455f-95f6-469b88adcd04"
                 }
             ],
             "severity": "error",
@@ -1148,7 +1148,7 @@
                         "x": 95.0625,
                         "y": 74.05
                     },
-                    "uuid": "5eddc71d-bf9b-4b39-9254-7da184f0d8b4"
+                    "uuid": "c2043bdc-5231-41e8-a615-0e8a38dae53a"
                 },
                 {
                     "description": "Pad 2 [GND] of U452 on F.Cu",
@@ -1156,7 +1156,7 @@
                         "x": 94.8625,
                         "y": 67.0
                     },
-                    "uuid": "1f261b97-f1c7-40ab-a5c1-722b2c228b86"
+                    "uuid": "f2696712-3b1c-4ea3-853d-f06be36af335"
                 }
             ],
             "severity": "error",
@@ -1171,7 +1171,7 @@
                         "x": 96.775,
                         "y": 32.5
                     },
-                    "uuid": "08ea0e8f-6a8e-4ee7-bb85-58f72b63ea29"
+                    "uuid": "d79da9af-998c-413d-a134-f0125655984e"
                 },
                 {
                     "description": "Pad 2 [GND] of U450 on F.Cu",
@@ -1179,7 +1179,7 @@
                         "x": 94.8625,
                         "y": 37.0
                     },
-                    "uuid": "ee23b024-efe2-4edd-b619-61b127c842a5"
+                    "uuid": "3a7873af-30db-4e03-ae7c-43ab3098baa4"
                 }
             ],
             "severity": "error",
@@ -1194,7 +1194,7 @@
                         "x": 96.775,
                         "y": 32.5
                     },
-                    "uuid": "08ea0e8f-6a8e-4ee7-bb85-58f72b63ea29"
+                    "uuid": "d79da9af-998c-413d-a134-f0125655984e"
                 },
                 {
                     "description": "Pad 2 [GND] of U451 on F.Cu",
@@ -1202,7 +1202,7 @@
                         "x": 116.8625,
                         "y": 37.0
                     },
-                    "uuid": "81227e6a-066f-4335-8ce2-1dec19ee7287"
+                    "uuid": "8ab44180-d343-4269-aef1-bcf965d00957"
                 }
             ],
             "severity": "error",
@@ -1217,7 +1217,7 @@
                         "x": 96.775,
                         "y": 62.5
                     },
-                    "uuid": "8bb1d6ac-7603-4478-accd-f35fdcce223a"
+                    "uuid": "adcb763d-4c1a-47a5-9dcd-6fb86db31d52"
                 },
                 {
                     "description": "Pad 2 [GND] of U452 on F.Cu",
@@ -1225,7 +1225,7 @@
                         "x": 94.8625,
                         "y": 67.0
                     },
-                    "uuid": "1f261b97-f1c7-40ab-a5c1-722b2c228b86"
+                    "uuid": "f2696712-3b1c-4ea3-853d-f06be36af335"
                 }
             ],
             "severity": "error",
@@ -1240,7 +1240,7 @@
                         "x": 96.775,
                         "y": 92.5
                     },
-                    "uuid": "d732791a-d459-4bd0-8216-cc615dddca00"
+                    "uuid": "eab2ebbf-7bcd-4f33-9621-ec982ec92bff"
                 },
                 {
                     "description": "Pad 2 [GND] of U454 on F.Cu",
@@ -1248,7 +1248,7 @@
                         "x": 94.8625,
                         "y": 97.0
                     },
-                    "uuid": "212cd62e-ec83-49d1-b68b-071f1da3f866"
+                    "uuid": "438277bf-2d11-4243-92fd-2b9551325ba7"
                 }
             ],
             "severity": "error",
@@ -1263,7 +1263,7 @@
                         "x": 96.775,
                         "y": 92.5
                     },
-                    "uuid": "d732791a-d459-4bd0-8216-cc615dddca00"
+                    "uuid": "eab2ebbf-7bcd-4f33-9621-ec982ec92bff"
                 },
                 {
                     "description": "Pad 2 [GND] of R4436 on F.Cu",
@@ -1271,7 +1271,7 @@
                         "x": 110.825,
                         "y": 91.0
                     },
-                    "uuid": "354cbc36-7f2e-4557-b67a-b1fa57d059b8"
+                    "uuid": "fb4e3e00-bfaf-4c3e-b190-7ea82fbc3830"
                 }
             ],
             "severity": "error",
@@ -1286,7 +1286,7 @@
                         "x": 110.825,
                         "y": 61.0
                     },
-                    "uuid": "47febbdb-1b73-4009-aa84-07d0d4aad080"
+                    "uuid": "02549952-b118-4585-a60d-8de12a19c11b"
                 },
                 {
                     "description": "Pad 2 [GND] of C4412 on F.Cu",
@@ -1294,7 +1294,7 @@
                         "x": 96.775,
                         "y": 62.5
                     },
-                    "uuid": "8bb1d6ac-7603-4478-accd-f35fdcce223a"
+                    "uuid": "adcb763d-4c1a-47a5-9dcd-6fb86db31d52"
                 }
             ],
             "severity": "error",
@@ -1309,7 +1309,7 @@
                         "x": 110.825,
                         "y": 91.0
                     },
-                    "uuid": "354cbc36-7f2e-4557-b67a-b1fa57d059b8"
+                    "uuid": "fb4e3e00-bfaf-4c3e-b190-7ea82fbc3830"
                 },
                 {
                     "description": "Pad 2 [GND] of C4415 on F.Cu",
@@ -1317,7 +1317,7 @@
                         "x": 118.775,
                         "y": 92.5
                     },
-                    "uuid": "b2cce0fa-dbd1-4fc1-a7cb-5b618f0d7b7e"
+                    "uuid": "ffb3c2ca-90e9-4221-aa0d-828fd9735628"
                 }
             ],
             "severity": "error",
@@ -1332,7 +1332,7 @@
                         "x": 116.8625,
                         "y": 37.0
                     },
-                    "uuid": "81227e6a-066f-4335-8ce2-1dec19ee7287"
+                    "uuid": "8ab44180-d343-4269-aef1-bcf965d00957"
                 },
                 {
                     "description": "Pad 2 [GND] of C4411 on F.Cu",
@@ -1340,7 +1340,7 @@
                         "x": 118.775,
                         "y": 32.5
                     },
-                    "uuid": "228e1739-ff8a-4cab-b625-89db7a4ed8a3"
+                    "uuid": "93d4a5d3-d24e-410f-a212-9e369074d48a"
                 }
             ],
             "severity": "error",
@@ -1355,7 +1355,7 @@
                         "x": 116.8625,
                         "y": 97.0
                     },
-                    "uuid": "0d327430-c477-40f3-b054-9f990604c5c7"
+                    "uuid": "7d6a2d31-568a-4131-bf99-b8089afac707"
                 },
                 {
                     "description": "Pad 2 [GND] of C4415 on F.Cu",
@@ -1363,7 +1363,7 @@
                         "x": 118.775,
                         "y": 92.5
                     },
-                    "uuid": "b2cce0fa-dbd1-4fc1-a7cb-5b618f0d7b7e"
+                    "uuid": "ffb3c2ca-90e9-4221-aa0d-828fd9735628"
                 }
             ],
             "severity": "error",
@@ -1378,7 +1378,7 @@
                         "x": 118.775,
                         "y": 62.5
                     },
-                    "uuid": "03205a17-fe59-40eb-8b93-ed7c595cb74a"
+                    "uuid": "851bc988-fb15-42e4-9c7c-8cb9742eac35"
                 },
                 {
                     "description": "Pad 2 [GND] of U453 on F.Cu",
@@ -1386,7 +1386,7 @@
                         "x": 116.8625,
                         "y": 67.0
                     },
-                    "uuid": "388bc37d-7dc8-4b0f-96e6-3ea926f1b0e0"
+                    "uuid": "37570c5f-c45c-45db-be97-975cf1194563"
                 }
             ],
             "severity": "error",
@@ -1401,7 +1401,7 @@
                         "x": 118.775,
                         "y": 62.5
                     },
-                    "uuid": "03205a17-fe59-40eb-8b93-ed7c595cb74a"
+                    "uuid": "851bc988-fb15-42e4-9c7c-8cb9742eac35"
                 },
                 {
                     "description": "Pad 2 [GND] of R4426 on F.Cu",
@@ -1409,927 +1409,7 @@
                         "x": 110.825,
                         "y": 61.0
                     },
-                    "uuid": "47febbdb-1b73-4009-aa84-07d0d4aad080"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_LOW_GATE] of R4433 on F.Cu",
-                    "pos": {
-                        "x": 88.825,
-                        "y": 83.0
-                    },
-                    "uuid": "fa2eb878-eafc-467c-a84d-8e86c1cc944d"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_LOW_GATE] of R4434 on F.Cu",
-                    "pos": {
-                        "x": 87.175,
-                        "y": 91.0
-                    },
-                    "uuid": "96c5cfc7-fdb1-47b0-bdfa-dfd004feca3a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_LOW_GATE] of Q452 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 82.05
-                    },
-                    "uuid": "b71b76e9-171f-4915-a497-ace3455723ef"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_LOW_GATE] of R4433 on F.Cu",
-                    "pos": {
-                        "x": 88.825,
-                        "y": 83.0
-                    },
-                    "uuid": "fa2eb878-eafc-467c-a84d-8e86c1cc944d"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_SINK_MID] of Q452 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 83.95
-                    },
-                    "uuid": "ee6e7e9c-b3b2-48c8-8cd9-097236ecc48e"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_LBAND_SINK_MID] of Q453 on F.Cu",
-                    "pos": {
-                        "x": 118.9375,
-                        "y": 83.0
-                    },
-                    "uuid": "f032dba5-4e27-4073-9f48-93a89d47bf00"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4402 on F.Cu",
-                    "pos": {
-                        "x": 29.175,
-                        "y": 52.0
-                    },
-                    "uuid": "33a12f40-7ac1-45af-baa2-04e5cee65a1f"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4404 on F.Cu",
-                    "pos": {
-                        "x": 29.175,
-                        "y": 61.0
-                    },
-                    "uuid": "a234350f-d6ee-4d6e-a083-f96a3f4c58ad"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4404 on F.Cu",
-                    "pos": {
-                        "x": 29.175,
-                        "y": 61.0
-                    },
-                    "uuid": "a234350f-d6ee-4d6e-a083-f96a3f4c58ad"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4406 on F.Cu",
-                    "pos": {
-                        "x": 29.175,
-                        "y": 70.0
-                    },
-                    "uuid": "bc51df48-74ca-4f33-803b-253aea4916b9"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4406 on F.Cu",
-                    "pos": {
-                        "x": 29.175,
-                        "y": 70.0
-                    },
-                    "uuid": "bc51df48-74ca-4f33-803b-253aea4916b9"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4408 on F.Cu",
-                    "pos": {
-                        "x": 29.175,
-                        "y": 79.0
-                    },
-                    "uuid": "318d0353-8c49-455f-833f-4be036fa2b01"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of R4400 on F.Cu",
-                    "pos": {
-                        "x": 37.825,
-                        "y": 40.0
-                    },
-                    "uuid": "1d82bfed-07d2-43d9-b94e-8b12f302bbc4"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4402 on F.Cu",
-                    "pos": {
-                        "x": 29.175,
-                        "y": 52.0
-                    },
-                    "uuid": "33a12f40-7ac1-45af-baa2-04e5cee65a1f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of U458 on F.Cu",
-                    "pos": {
-                        "x": 44.0625,
-                        "y": 39.05
-                    },
-                    "uuid": "c127d1c6-7082-4def-b77a-c23176f977b2"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of R4400 on F.Cu",
-                    "pos": {
-                        "x": 37.825,
-                        "y": 40.0
-                    },
-                    "uuid": "1d82bfed-07d2-43d9-b94e-8b12f302bbc4"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of U458 on F.Cu",
-                    "pos": {
-                        "x": 44.0625,
-                        "y": 39.05
-                    },
-                    "uuid": "c127d1c6-7082-4def-b77a-c23176f977b2"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of C4400 on F.Cu",
-                    "pos": {
-                        "x": 52.225,
-                        "y": 40.0
-                    },
-                    "uuid": "eec1b68f-712e-4c39-8f83-c2703ee1b387"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of C4400 on F.Cu",
-                    "pos": {
-                        "x": 52.225,
-                        "y": 40.0
-                    },
-                    "uuid": "eec1b68f-712e-4c39-8f83-c2703ee1b387"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of D451 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 45.95
-                    },
-                    "uuid": "7108b8c5-0470-4b41-bcf1-2ca59fc7845a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of D451 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 45.95
-                    },
-                    "uuid": "7108b8c5-0470-4b41-bcf1-2ca59fc7845a"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4422 on F.Cu",
-                    "pos": {
-                        "x": 111.175,
-                        "y": 45.0
-                    },
-                    "uuid": "581262b4-f5db-4cf5-97b7-fdeb02157a37"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of D452 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 75.95
-                    },
-                    "uuid": "82125ca5-a0b0-482a-b9da-91b68359d45c"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of D451 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 45.95
-                    },
-                    "uuid": "7108b8c5-0470-4b41-bcf1-2ca59fc7845a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of D452 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 75.95
-                    },
-                    "uuid": "82125ca5-a0b0-482a-b9da-91b68359d45c"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of D453 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 105.95
-                    },
-                    "uuid": "42b74b93-a093-4140-84ac-0945471da1e9"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of D453 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 105.95
-                    },
-                    "uuid": "42b74b93-a093-4140-84ac-0945471da1e9"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4442 on F.Cu",
-                    "pos": {
-                        "x": 111.175,
-                        "y": 105.0
-                    },
-                    "uuid": "acce5a62-fc12-46b7-b6a8-7ae2b09b195e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF] of R4432 on F.Cu",
-                    "pos": {
-                        "x": 111.175,
-                        "y": 75.0
-                    },
-                    "uuid": "85bb51f6-1052-4993-9ee4-850a86dcd5b7"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF] of D452 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 75.95
-                    },
-                    "uuid": "82125ca5-a0b0-482a-b9da-91b68359d45c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_SENSE] of C4431 on F.Cu",
-                    "pos": {
-                        "x": 87.225,
-                        "y": 75.0
-                    },
-                    "uuid": "2cc25cc7-2aeb-4cbf-9a91-7185063094de"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_LBAND_SENSE] of D452 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 75.0
-                    },
-                    "uuid": "784db6ee-9bee-4010-994d-750811a8753e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_LBAND_SENSE] of U452 on F.Cu",
-                    "pos": {
-                        "x": 94.8625,
-                        "y": 67.95
-                    },
-                    "uuid": "d5ea39da-64d3-41f1-b6e2-4299f016bc9d"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_LBAND_SENSE] of D452 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 75.0
-                    },
-                    "uuid": "784db6ee-9bee-4010-994d-750811a8753e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_LBAND_SENSE] of D452 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 75.0
-                    },
-                    "uuid": "784db6ee-9bee-4010-994d-750811a8753e"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_SENSE] of R4431 on F.Cu",
-                    "pos": {
-                        "x": 104.51,
-                        "y": 75.0
-                    },
-                    "uuid": "0d931048-8961-4677-a8be-52b9f43627ef"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_SENSE] of R4431 on F.Cu",
-                    "pos": {
-                        "x": 104.51,
-                        "y": 75.0
-                    },
-                    "uuid": "0d931048-8961-4677-a8be-52b9f43627ef"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_SENSE] of R4432 on F.Cu",
-                    "pos": {
-                        "x": 112.825,
-                        "y": 75.0
-                    },
-                    "uuid": "751f3626-1601-4caf-ba10-bc2ac363a7af"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_SENSE] of R4432 on F.Cu",
-                    "pos": {
-                        "x": 112.825,
-                        "y": 75.0
-                    },
-                    "uuid": "751f3626-1601-4caf-ba10-bc2ac363a7af"
-                },
-                {
-                    "description": "Pad 4 [E4_DCS_LBAND_SENSE] of U453 on F.Cu",
-                    "pos": {
-                        "x": 119.1375,
-                        "y": 67.95
-                    },
-                    "uuid": "f796e073-604d-452e-8fad-11c8e1bc6759"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_HIGH_GATE] of R4435 on F.Cu",
-                    "pos": {
-                        "x": 110.825,
-                        "y": 83.0
-                    },
-                    "uuid": "41af2102-1cf5-44b9-9eec-45d0c19e61e1"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_HIGH_GATE] of R4436 on F.Cu",
-                    "pos": {
-                        "x": 109.175,
-                        "y": 91.0
-                    },
-                    "uuid": "c39c56be-7897-4ba5-ba86-f4f5d2424462"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_HIGH_GATE] of Q453 on F.Cu",
-                    "pos": {
-                        "x": 117.0625,
-                        "y": 82.05
-                    },
-                    "uuid": "7ae72086-87bb-4ac4-bb03-bf6285b4748e"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_LBAND_HIGH_GATE] of R4435 on F.Cu",
-                    "pos": {
-                        "x": 110.825,
-                        "y": 83.0
-                    },
-                    "uuid": "41af2102-1cf5-44b9-9eec-45d0c19e61e1"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_RETURN] of Q456 on F.Cu",
-                    "pos": {
-                        "x": 63.9375,
-                        "y": 98.0
-                    },
-                    "uuid": "2561aa5e-7869-4e25-af87-ebc03d289638"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_RETURN] of Q453 on F.Cu",
-                    "pos": {
-                        "x": 117.0625,
-                        "y": 83.95
-                    },
-                    "uuid": "bc2c8f49-0655-44bf-9ec4-53094e992944"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_RETURN] of Q453 on F.Cu",
-                    "pos": {
-                        "x": 117.0625,
-                        "y": 83.95
-                    },
-                    "uuid": "bc2c8f49-0655-44bf-9ec4-53094e992944"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_RETURN] of Q451 on F.Cu",
-                    "pos": {
-                        "x": 117.0625,
-                        "y": 53.95
-                    },
-                    "uuid": "feb2a57c-62f1-49dd-9207-4e3bf02f4b0a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_RETURN] of Q455 on F.Cu",
-                    "pos": {
-                        "x": 117.0625,
-                        "y": 113.95
-                    },
-                    "uuid": "74a61c16-d13f-4b3b-b7a8-2da1d14d3cd9"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_RETURN] of Q453 on F.Cu",
-                    "pos": {
-                        "x": 117.0625,
-                        "y": 83.95
-                    },
-                    "uuid": "bc2c8f49-0655-44bf-9ec4-53094e992944"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_HF_SENSE] of C4441 on F.Cu",
-                    "pos": {
-                        "x": 87.225,
-                        "y": 105.0
-                    },
-                    "uuid": "bc07f68b-fca5-4f04-a93b-b1db42d5451f"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_HF_SENSE] of D453 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 105.0
-                    },
-                    "uuid": "d12fedf6-00af-421d-996d-709b8eb13e2e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_HF_SENSE] of U454 on F.Cu",
-                    "pos": {
-                        "x": 94.8625,
-                        "y": 97.95
-                    },
-                    "uuid": "4708ed5a-06ac-4194-9964-f41e6bff8e3c"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_HF_SENSE] of D453 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 105.0
-                    },
-                    "uuid": "d12fedf6-00af-421d-996d-709b8eb13e2e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_HF_SENSE] of D453 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 105.0
-                    },
-                    "uuid": "d12fedf6-00af-421d-996d-709b8eb13e2e"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_HF_SENSE] of R4441 on F.Cu",
-                    "pos": {
-                        "x": 104.51,
-                        "y": 105.0
-                    },
-                    "uuid": "0330f761-5342-401f-90e6-6db13335902e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_HF_SENSE] of R4441 on F.Cu",
-                    "pos": {
-                        "x": 104.51,
-                        "y": 105.0
-                    },
-                    "uuid": "0330f761-5342-401f-90e6-6db13335902e"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_HF_SENSE] of R4442 on F.Cu",
-                    "pos": {
-                        "x": 112.825,
-                        "y": 105.0
-                    },
-                    "uuid": "785ee30f-3c81-4c1f-ac37-a38413c1ffc1"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_HF_SENSE] of R4442 on F.Cu",
-                    "pos": {
-                        "x": 112.825,
-                        "y": 105.0
-                    },
-                    "uuid": "785ee30f-3c81-4c1f-ac37-a38413c1ffc1"
-                },
-                {
-                    "description": "Pad 4 [E4_DCS_HF_SENSE] of U455 on F.Cu",
-                    "pos": {
-                        "x": 119.1375,
-                        "y": 97.95
-                    },
-                    "uuid": "2b706f5c-4785-49e4-8346-23d684cecd5f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF_GOOD_HIGH] of U457 on F.Cu",
-                    "pos": {
-                        "x": 56.8625,
-                        "y": 84.05
-                    },
-                    "uuid": "4d118e7e-7fff-447d-8ddf-66e0bc69f2ee"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_GOOD_HIGH] of R4452 on F.Cu",
-                    "pos": {
-                        "x": 71.175,
-                        "y": 98.0
-                    },
-                    "uuid": "5af68151-7c5b-4d80-a8b3-2160ac9d3ba0"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 5 [E4_DCS_REF12_HIGH] of U457 on F.Cu",
-                    "pos": {
-                        "x": 59.1375,
-                        "y": 85.0
-                    },
-                    "uuid": "576e8ab7-2c13-46c1-8042-d107bca6b35a"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_REF12_HIGH] of U457 on F.Cu",
-                    "pos": {
-                        "x": 56.8625,
-                        "y": 85.95
-                    },
-                    "uuid": "5679d985-04d7-41eb-8f4e-322b9ab712af"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF12_HIGH] of C4404 on F.Cu",
-                    "pos": {
-                        "x": 64.225,
-                        "y": 85.0
-                    },
-                    "uuid": "897f4f72-5a06-4f65-9b0a-59ce86ceb320"
-                },
-                {
-                    "description": "Pad 5 [E4_DCS_REF12_HIGH] of U457 on F.Cu",
-                    "pos": {
-                        "x": 59.1375,
-                        "y": 85.0
-                    },
-                    "uuid": "576e8ab7-2c13-46c1-8042-d107bca6b35a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF_PG_HIGH] of R4409 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 79.0
-                    },
-                    "uuid": "0d0ee464-8aff-47e3-b9f5-d793045b1585"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF_PG_HIGH] of R4408 on F.Cu",
-                    "pos": {
-                        "x": 30.825,
-                        "y": 79.0
-                    },
-                    "uuid": "033e7004-21f6-4cf3-91b7-4b64ed450fcf"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF_PG_HIGH] of C4406 on F.Cu",
-                    "pos": {
-                        "x": 43.225,
-                        "y": 79.0
-                    },
-                    "uuid": "7bc4742e-4834-454d-9467-5e3f1bdc2f7e"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_PG_HIGH] of R4409 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 79.0
-                    },
-                    "uuid": "0d0ee464-8aff-47e3-b9f5-d793045b1585"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 4 [E4_DCS_REF_PG_HIGH] of U457 on F.Cu",
-                    "pos": {
-                        "x": 59.1375,
-                        "y": 85.95
-                    },
-                    "uuid": "c8070b98-25a9-46a3-9184-56de279da672"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_PG_HIGH] of C4406 on F.Cu",
-                    "pos": {
-                        "x": 43.225,
-                        "y": 79.0
-                    },
-                    "uuid": "7bc4742e-4834-454d-9467-5e3f1bdc2f7e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF_PG_LOW] of R4407 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 70.0
-                    },
-                    "uuid": "8456a58d-f46c-4850-935c-6ac004e50ff0"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF_PG_LOW] of R4406 on F.Cu",
-                    "pos": {
-                        "x": 30.825,
-                        "y": 70.0
-                    },
-                    "uuid": "39de07d3-fce8-44cf-8808-efad6a0812e0"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF_PG_LOW] of C4405 on F.Cu",
-                    "pos": {
-                        "x": 43.225,
-                        "y": 70.0
-                    },
-                    "uuid": "360c0f13-0bf3-449a-bd7a-06759a2b412c"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_PG_LOW] of R4407 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 70.0
-                    },
-                    "uuid": "8456a58d-f46c-4850-935c-6ac004e50ff0"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_REF_PG_LOW] of U456 on F.Cu",
-                    "pos": {
-                        "x": 56.8625,
-                        "y": 70.95
-                    },
-                    "uuid": "145b9a36-3b32-4ea0-8a73-800b43228abc"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_PG_LOW] of C4405 on F.Cu",
-                    "pos": {
-                        "x": 43.225,
-                        "y": 70.0
-                    },
-                    "uuid": "360c0f13-0bf3-449a-bd7a-06759a2b412c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_LOW_OK] of R4433 on F.Cu",
-                    "pos": {
-                        "x": 87.175,
-                        "y": 83.0
-                    },
-                    "uuid": "c40052e2-e1da-44bd-8443-55b52e3a5226"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_LOW_OK] of U452 on F.Cu",
-                    "pos": {
-                        "x": 94.8625,
-                        "y": 66.05
-                    },
-                    "uuid": "f9dc9927-d06d-46f8-a0ae-91bef5a2cf0f"
+                    "uuid": "02549952-b118-4585-a60d-8de12a19c11b"
                 }
             ],
             "severity": "error",
@@ -2344,7 +1424,7 @@
                         "x": 88.825,
                         "y": 113.0
                     },
-                    "uuid": "12b38b6c-1ea7-466b-816f-0989ae5607d5"
+                    "uuid": "031ac33a-872a-431e-ac05-728d019060b5"
                 },
                 {
                     "description": "Pad 1 [E4_DCS_HF_LOW_GATE] of R4444 on F.Cu",
@@ -2352,7 +1432,7 @@
                         "x": 87.175,
                         "y": 121.0
                     },
-                    "uuid": "29f48e41-0a63-47b2-b24d-cd76c8fb00fb"
+                    "uuid": "fef7a6ae-e533-4dbf-9c4c-7b701e779cf3"
                 }
             ],
             "severity": "error",
@@ -2367,7 +1447,7 @@
                         "x": 95.0625,
                         "y": 112.05
                     },
-                    "uuid": "75cb9335-0a4b-4a3d-89ce-484a11de119c"
+                    "uuid": "9c511521-1f79-498b-a2d6-08ad4e3350a6"
                 },
                 {
                     "description": "Pad 2 [E4_DCS_HF_LOW_GATE] of R4443 on F.Cu",
@@ -2375,168 +1455,7 @@
                         "x": 88.825,
                         "y": 113.0
                     },
-                    "uuid": "12b38b6c-1ea7-466b-816f-0989ae5607d5"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_LOW_GATE] of R4423 on F.Cu",
-                    "pos": {
-                        "x": 88.825,
-                        "y": 53.0
-                    },
-                    "uuid": "e9b853d5-c2f7-46bd-994e-cbf6fb005c82"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_UHF_LOW_GATE] of R4424 on F.Cu",
-                    "pos": {
-                        "x": 87.175,
-                        "y": 61.0
-                    },
-                    "uuid": "15283df7-a441-41c6-882e-8e2f285854e7"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_UHF_LOW_GATE] of Q450 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 52.05
-                    },
-                    "uuid": "b549df14-6a74-462d-9b1e-e7d7d8bcb448"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_LOW_GATE] of R4423 on F.Cu",
-                    "pos": {
-                        "x": 88.825,
-                        "y": 53.0
-                    },
-                    "uuid": "e9b853d5-c2f7-46bd-994e-cbf6fb005c82"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_SINK_MID] of Q450 on F.Cu",
-                    "pos": {
-                        "x": 95.0625,
-                        "y": 53.95
-                    },
-                    "uuid": "855d3a8d-42b9-40eb-820f-444888a2cde0"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_UHF_SINK_MID] of Q451 on F.Cu",
-                    "pos": {
-                        "x": 118.9375,
-                        "y": 53.0
-                    },
-                    "uuid": "4ec4212b-5729-4c8b-912d-1af3eebbd672"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_REF_GATE_HIGH] of R4452 on F.Cu",
-                    "pos": {
-                        "x": 72.825,
-                        "y": 98.0
-                    },
-                    "uuid": "130d99d4-8612-46a1-ad2b-584ceaa475b3"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_GATE_HIGH] of R4453 on F.Cu",
-                    "pos": {
-                        "x": 71.175,
-                        "y": 105.0
-                    },
-                    "uuid": "a002c5bf-c574-4600-9042-987403db5478"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF_GATE_HIGH] of Q457 on F.Cu",
-                    "pos": {
-                        "x": 79.0625,
-                        "y": 97.05
-                    },
-                    "uuid": "fdd7ddc6-9c49-4d86-b256-e0e6c5e017fc"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF_GATE_HIGH] of R4452 on F.Cu",
-                    "pos": {
-                        "x": 72.825,
-                        "y": 98.0
-                    },
-                    "uuid": "130d99d4-8612-46a1-ad2b-584ceaa475b3"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 5 [E4_DCS_REF12_LOW] of U456 on F.Cu",
-                    "pos": {
-                        "x": 59.1375,
-                        "y": 70.0
-                    },
-                    "uuid": "00c4bfbc-b685-48c0-a842-004dd0dd45e2"
-                },
-                {
-                    "description": "Pad 4 [E4_DCS_REF12_LOW] of U456 on F.Cu",
-                    "pos": {
-                        "x": 59.1375,
-                        "y": 70.95
-                    },
-                    "uuid": "4935264a-bd16-423d-97be-612a28150496"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF12_LOW] of C4403 on F.Cu",
-                    "pos": {
-                        "x": 64.225,
-                        "y": 70.0
-                    },
-                    "uuid": "5f9b2ae8-2e5c-4e07-96a3-8aa1905a93e4"
-                },
-                {
-                    "description": "Pad 5 [E4_DCS_REF12_LOW] of U456 on F.Cu",
-                    "pos": {
-                        "x": 59.1375,
-                        "y": 70.0
-                    },
-                    "uuid": "00c4bfbc-b685-48c0-a842-004dd0dd45e2"
+                    "uuid": "031ac33a-872a-431e-ac05-728d019060b5"
                 }
             ],
             "severity": "error",
@@ -2551,7 +1470,7 @@
                         "x": 95.0625,
                         "y": 113.95
                     },
-                    "uuid": "9444b204-3d28-41ec-9c99-0f6a64156a8d"
+                    "uuid": "02f307f5-5a2f-4d2d-b21a-c5e7e8b5935d"
                 },
                 {
                     "description": "Pad 3 [E4_DCS_HF_SINK_MID] of Q455 on F.Cu",
@@ -2559,628 +1478,7 @@
                         "x": 118.9375,
                         "y": 113.0
                     },
-                    "uuid": "2f97d89c-a99c-43d1-a04d-c34adebd6efa"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_UHF_SENSE] of C4421 on F.Cu",
-                    "pos": {
-                        "x": 87.225,
-                        "y": 45.0
-                    },
-                    "uuid": "4044903f-7c32-47ca-83ee-cc6a7deedb3f"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_UHF_SENSE] of D451 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 45.0
-                    },
-                    "uuid": "a82fc41e-5533-4ea7-95ba-745692cbf029"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_UHF_SENSE] of U450 on F.Cu",
-                    "pos": {
-                        "x": 94.8625,
-                        "y": 37.95
-                    },
-                    "uuid": "edcbadf6-5702-497b-a81f-4f17a93239c7"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_UHF_SENSE] of D451 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 45.0
-                    },
-                    "uuid": "a82fc41e-5533-4ea7-95ba-745692cbf029"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_UHF_SENSE] of D451 on F.Cu",
-                    "pos": {
-                        "x": 96.9375,
-                        "y": 45.0
-                    },
-                    "uuid": "a82fc41e-5533-4ea7-95ba-745692cbf029"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_SENSE] of R4421 on F.Cu",
-                    "pos": {
-                        "x": 104.51,
-                        "y": 45.0
-                    },
-                    "uuid": "803697f6-48a0-4263-a1dd-23627306147b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_SENSE] of R4421 on F.Cu",
-                    "pos": {
-                        "x": 104.51,
-                        "y": 45.0
-                    },
-                    "uuid": "803697f6-48a0-4263-a1dd-23627306147b"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_SENSE] of R4422 on F.Cu",
-                    "pos": {
-                        "x": 112.825,
-                        "y": 45.0
-                    },
-                    "uuid": "6698696c-f2a8-4d6a-a52b-11e59585687b"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_SENSE] of R4422 on F.Cu",
-                    "pos": {
-                        "x": 112.825,
-                        "y": 45.0
-                    },
-                    "uuid": "6698696c-f2a8-4d6a-a52b-11e59585687b"
-                },
-                {
-                    "description": "Pad 4 [E4_DCS_UHF_SENSE] of U451 on F.Cu",
-                    "pos": {
-                        "x": 119.1375,
-                        "y": 37.95
-                    },
-                    "uuid": "aee83a67-14ea-4f20-a4f3-1b734325840a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_HF_HIGH_OK] of R4445 on F.Cu",
-                    "pos": {
-                        "x": 109.175,
-                        "y": 113.0
-                    },
-                    "uuid": "31143bf1-789e-4c00-bc5e-497573219602"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_HF_HIGH_OK] of U455 on F.Cu",
-                    "pos": {
-                        "x": 116.8625,
-                        "y": 96.05
-                    },
-                    "uuid": "c8c4ded4-6354-40a2-8391-314fbaaa5511"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_HIGH] of R4405 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 61.0
-                    },
-                    "uuid": "5cdf4c0a-0df0-4c24-a78f-6784dad9261a"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_HIGH] of R4404 on F.Cu",
-                    "pos": {
-                        "x": 30.825,
-                        "y": 61.0
-                    },
-                    "uuid": "9f6e7383-2ba8-46cf-8d06-db07a803c63f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_HIGH] of C4402 on F.Cu",
-                    "pos": {
-                        "x": 43.225,
-                        "y": 61.0
-                    },
-                    "uuid": "f2f7c618-2e1f-4939-9143-c58902d26027"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_HIGH] of R4405 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 61.0
-                    },
-                    "uuid": "5cdf4c0a-0df0-4c24-a78f-6784dad9261a"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_HIGH] of C4402 on F.Cu",
-                    "pos": {
-                        "x": 43.225,
-                        "y": 61.0
-                    },
-                    "uuid": "f2f7c618-2e1f-4939-9143-c58902d26027"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_HIGH] of U453 on F.Cu",
-                    "pos": {
-                        "x": 116.8625,
-                        "y": 67.95
-                    },
-                    "uuid": "1ce99eb3-a2f9-4e3a-842f-2c9e50f70469"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_HIGH] of U453 on F.Cu",
-                    "pos": {
-                        "x": 116.8625,
-                        "y": 67.95
-                    },
-                    "uuid": "1ce99eb3-a2f9-4e3a-842f-2c9e50f70469"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_HIGH] of U451 on F.Cu",
-                    "pos": {
-                        "x": 116.8625,
-                        "y": 37.95
-                    },
-                    "uuid": "d2a4189d-b940-46b3-862d-aa71c127264f"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_HIGH] of U455 on F.Cu",
-                    "pos": {
-                        "x": 116.8625,
-                        "y": 97.95
-                    },
-                    "uuid": "de41a590-d879-4df4-9ede-8a0353d458e1"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_HIGH] of U453 on F.Cu",
-                    "pos": {
-                        "x": 116.8625,
-                        "y": 67.95
-                    },
-                    "uuid": "1ce99eb3-a2f9-4e3a-842f-2c9e50f70469"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_HF_LOW_OK] of R4443 on F.Cu",
-                    "pos": {
-                        "x": 87.175,
-                        "y": 113.0
-                    },
-                    "uuid": "ddb9d0a6-eb1e-4e2c-92ed-715eaffd2499"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_HF_LOW_OK] of U454 on F.Cu",
-                    "pos": {
-                        "x": 94.8625,
-                        "y": 96.05
-                    },
-                    "uuid": "1fa3a324-8a5e-42fa-b98a-407d6d927ea2"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_REF_GATE_LOW] of R4450 on F.Cu",
-                    "pos": {
-                        "x": 55.825,
-                        "y": 98.0
-                    },
-                    "uuid": "ff4b7463-5343-4e3e-ae8f-7758d23bd3c2"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_GATE_LOW] of R4451 on F.Cu",
-                    "pos": {
-                        "x": 54.175,
-                        "y": 105.0
-                    },
-                    "uuid": "64a26511-6d5a-42d7-9b85-41a69b497935"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF_GATE_LOW] of Q456 on F.Cu",
-                    "pos": {
-                        "x": 62.0625,
-                        "y": 97.05
-                    },
-                    "uuid": "1b599b25-7745-44eb-abb3-a5f138361b35"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_REF_GATE_LOW] of R4450 on F.Cu",
-                    "pos": {
-                        "x": 55.825,
-                        "y": 98.0
-                    },
-                    "uuid": "ff4b7463-5343-4e3e-ae8f-7758d23bd3c2"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_HIGH_GATE] of R4425 on F.Cu",
-                    "pos": {
-                        "x": 110.825,
-                        "y": 53.0
-                    },
-                    "uuid": "1c25e12d-8282-4285-830b-76363dd6d3cd"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_UHF_HIGH_GATE] of R4426 on F.Cu",
-                    "pos": {
-                        "x": 109.175,
-                        "y": 61.0
-                    },
-                    "uuid": "3ca6006f-b1d6-49a4-b621-a98b462c7b7e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_UHF_HIGH_GATE] of Q451 on F.Cu",
-                    "pos": {
-                        "x": 117.0625,
-                        "y": 52.05
-                    },
-                    "uuid": "0aedc501-f491-48c3-9bfc-6c08f0e2e14a"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_UHF_HIGH_GATE] of R4425 on F.Cu",
-                    "pos": {
-                        "x": 110.825,
-                        "y": 53.0
-                    },
-                    "uuid": "1c25e12d-8282-4285-830b-76363dd6d3cd"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_LOW] of R4402 on F.Cu",
-                    "pos": {
-                        "x": 30.825,
-                        "y": 52.0
-                    },
-                    "uuid": "61ee4824-af22-4878-a6fe-2c5c849db05b"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_LOW] of R4403 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 52.0
-                    },
-                    "uuid": "e39cacf2-22c6-4004-9582-35522f8095e6"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_LOW] of R4403 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 52.0
-                    },
-                    "uuid": "e39cacf2-22c6-4004-9582-35522f8095e6"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_LOW] of C4401 on F.Cu",
-                    "pos": {
-                        "x": 43.225,
-                        "y": 52.0
-                    },
-                    "uuid": "526925b9-9b68-4cf7-b1a8-450ca8d317f8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 4 [E4_DCS_LOW] of U450 on F.Cu",
-                    "pos": {
-                        "x": 97.1375,
-                        "y": 37.95
-                    },
-                    "uuid": "460bc7df-6545-4bbb-9845-19058e8e3591"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_LOW] of C4401 on F.Cu",
-                    "pos": {
-                        "x": 43.225,
-                        "y": 52.0
-                    },
-                    "uuid": "526925b9-9b68-4cf7-b1a8-450ca8d317f8"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 4 [E4_DCS_LOW] of U452 on F.Cu",
-                    "pos": {
-                        "x": 97.1375,
-                        "y": 67.95
-                    },
-                    "uuid": "7c9afdc0-2366-4139-8aed-1eef3e518817"
-                },
-                {
-                    "description": "Pad 4 [E4_DCS_LOW] of U450 on F.Cu",
-                    "pos": {
-                        "x": 97.1375,
-                        "y": 37.95
-                    },
-                    "uuid": "460bc7df-6545-4bbb-9845-19058e8e3591"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 4 [E4_DCS_LOW] of U454 on F.Cu",
-                    "pos": {
-                        "x": 97.1375,
-                        "y": 97.95
-                    },
-                    "uuid": "5a1d944a-4043-42fa-8bf5-abe3d480efb7"
-                },
-                {
-                    "description": "Pad 4 [E4_DCS_LOW] of U452 on F.Cu",
-                    "pos": {
-                        "x": 97.1375,
-                        "y": 67.95
-                    },
-                    "uuid": "7c9afdc0-2366-4139-8aed-1eef3e518817"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_REF_GOOD_LOW] of R4450 on F.Cu",
-                    "pos": {
-                        "x": 54.175,
-                        "y": 98.0
-                    },
-                    "uuid": "f4685d8c-7af7-4927-a5d8-7edd1ff6becb"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_GOOD_LOW] of U456 on F.Cu",
-                    "pos": {
-                        "x": 56.8625,
-                        "y": 69.05
-                    },
-                    "uuid": "2969f0ad-b489-4f1b-b344-afd2ff2a2c55"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 3 [E4_DCS_REF_FEED] of D450 on F.Cu",
-                    "pos": {
-                        "x": 30.9375,
-                        "y": 40.0
-                    },
-                    "uuid": "de273851-943c-4ee7-a1c3-6128e66956eb"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_REF_FEED] of R4400 on F.Cu",
-                    "pos": {
-                        "x": 36.175,
-                        "y": 40.0
-                    },
-                    "uuid": "8b2c7622-1b30-43d8-927f-3cca99fed0d2"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_HF_HIGH_GATE] of R4445 on F.Cu",
-                    "pos": {
-                        "x": 110.825,
-                        "y": 113.0
-                    },
-                    "uuid": "a3b6c2e0-dedf-4809-a4c1-49b8f5df724c"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_HF_HIGH_GATE] of R4446 on F.Cu",
-                    "pos": {
-                        "x": 109.175,
-                        "y": 121.0
-                    },
-                    "uuid": "e417309b-2832-4848-ae24-2bfadae7e42e"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_HF_HIGH_GATE] of Q455 on F.Cu",
-                    "pos": {
-                        "x": 117.0625,
-                        "y": 112.05
-                    },
-                    "uuid": "430d3610-aaa1-47e8-9b54-05e520c9c339"
-                },
-                {
-                    "description": "Pad 2 [E4_DCS_HF_HIGH_GATE] of R4445 on F.Cu",
-                    "pos": {
-                        "x": 110.825,
-                        "y": 113.0
-                    },
-                    "uuid": "a3b6c2e0-dedf-4809-a4c1-49b8f5df724c"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 2 [E4_DCS_REF_RETURN_MID] of Q456 on F.Cu",
-                    "pos": {
-                        "x": 62.0625,
-                        "y": 98.95
-                    },
-                    "uuid": "34118901-369c-4cd8-bb1b-e84ec77769d5"
-                },
-                {
-                    "description": "Pad 3 [E4_DCS_REF_RETURN_MID] of Q457 on F.Cu",
-                    "pos": {
-                        "x": 80.9375,
-                        "y": 98.0
-                    },
-                    "uuid": "60f9e07b-6e6d-46d6-ac72-7d58ed84f6de"
-                }
-            ],
-            "severity": "error",
-            "type": "unconnected_items"
-        },
-        {
-            "description": "Missing connection between items",
-            "items": [
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_HIGH_OK] of R4435 on F.Cu",
-                    "pos": {
-                        "x": 109.175,
-                        "y": 83.0
-                    },
-                    "uuid": "2ea47e26-9fe9-4cce-8173-f036d003d81c"
-                },
-                {
-                    "description": "Pad 1 [E4_DCS_LBAND_HIGH_OK] of U453 on F.Cu",
-                    "pos": {
-                        "x": 116.8625,
-                        "y": 66.05
-                    },
-                    "uuid": "8f4da516-6910-45e4-89a5-a7cdfe2c6b95"
+                    "uuid": "b88bc97c-da26-4e5d-92e7-ea0ba8157890"
                 }
             ],
             "severity": "error",
@@ -3195,7 +1493,7 @@
                         "x": 87.175,
                         "y": 53.0
                     },
-                    "uuid": "c6992049-e2ba-49ed-a368-354ca96dfcd9"
+                    "uuid": "a1bab0ef-002c-4440-a8f5-eef04206354e"
                 },
                 {
                     "description": "Pad 1 [E4_DCS_UHF_LOW_OK] of U450 on F.Cu",
@@ -3203,7 +1501,1226 @@
                         "x": 94.8625,
                         "y": 36.05
                     },
-                    "uuid": "69a81e8d-e44d-4872-8db6-bd89ad76b8af"
+                    "uuid": "40e8d677-11c5-455d-909d-d2d7dae6d01e"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_UHF_SENSE] of C4421 on F.Cu",
+                    "pos": {
+                        "x": 87.225,
+                        "y": 45.0
+                    },
+                    "uuid": "06c75829-85e5-49cd-9eb9-07bb467fec71"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_UHF_SENSE] of D451 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 45.0
+                    },
+                    "uuid": "f6b225d4-461c-4d94-98d9-48fade1c6bef"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_UHF_SENSE] of U450 on F.Cu",
+                    "pos": {
+                        "x": 94.8625,
+                        "y": 37.95
+                    },
+                    "uuid": "f4b156c1-4b7a-41ed-826d-308f26078272"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_UHF_SENSE] of D451 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 45.0
+                    },
+                    "uuid": "f6b225d4-461c-4d94-98d9-48fade1c6bef"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_UHF_SENSE] of D451 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 45.0
+                    },
+                    "uuid": "f6b225d4-461c-4d94-98d9-48fade1c6bef"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_SENSE] of R4421 on F.Cu",
+                    "pos": {
+                        "x": 104.51,
+                        "y": 45.0
+                    },
+                    "uuid": "28a03f7d-3246-4b62-8040-295f7323d74d"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_SENSE] of R4421 on F.Cu",
+                    "pos": {
+                        "x": 104.51,
+                        "y": 45.0
+                    },
+                    "uuid": "28a03f7d-3246-4b62-8040-295f7323d74d"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_SENSE] of R4422 on F.Cu",
+                    "pos": {
+                        "x": 112.825,
+                        "y": 45.0
+                    },
+                    "uuid": "c1828758-0e78-40fa-9930-c1cc5bac9d35"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_SENSE] of R4422 on F.Cu",
+                    "pos": {
+                        "x": 112.825,
+                        "y": 45.0
+                    },
+                    "uuid": "c1828758-0e78-40fa-9930-c1cc5bac9d35"
+                },
+                {
+                    "description": "Pad 4 [E4_DCS_UHF_SENSE] of U451 on F.Cu",
+                    "pos": {
+                        "x": 119.1375,
+                        "y": 37.95
+                    },
+                    "uuid": "654465f2-89b1-4d17-a450-6ff9860bbd66"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_LOW] of R4402 on F.Cu",
+                    "pos": {
+                        "x": 30.825,
+                        "y": 52.0
+                    },
+                    "uuid": "23abeb08-e8d2-4bcf-b093-f7a60c6de6a6"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_LOW] of R4403 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 52.0
+                    },
+                    "uuid": "6753b4cc-d3cc-44fe-b938-5b9e5f09f8f9"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_LOW] of R4403 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 52.0
+                    },
+                    "uuid": "6753b4cc-d3cc-44fe-b938-5b9e5f09f8f9"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_LOW] of C4401 on F.Cu",
+                    "pos": {
+                        "x": 43.225,
+                        "y": 52.0
+                    },
+                    "uuid": "fb1f0e53-c627-42c0-b8b0-deb5d4d41f21"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [E4_DCS_LOW] of U450 on F.Cu",
+                    "pos": {
+                        "x": 97.1375,
+                        "y": 37.95
+                    },
+                    "uuid": "08b59c89-2a1c-4312-8f0d-bcf8f4b5775f"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_LOW] of C4401 on F.Cu",
+                    "pos": {
+                        "x": 43.225,
+                        "y": 52.0
+                    },
+                    "uuid": "fb1f0e53-c627-42c0-b8b0-deb5d4d41f21"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [E4_DCS_LOW] of U452 on F.Cu",
+                    "pos": {
+                        "x": 97.1375,
+                        "y": 67.95
+                    },
+                    "uuid": "779f3426-5052-472c-82dd-28015df8966b"
+                },
+                {
+                    "description": "Pad 4 [E4_DCS_LOW] of U450 on F.Cu",
+                    "pos": {
+                        "x": 97.1375,
+                        "y": 37.95
+                    },
+                    "uuid": "08b59c89-2a1c-4312-8f0d-bcf8f4b5775f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [E4_DCS_LOW] of U454 on F.Cu",
+                    "pos": {
+                        "x": 97.1375,
+                        "y": 97.95
+                    },
+                    "uuid": "5d2d1b5e-9f87-4cb2-8b17-54cec720c263"
+                },
+                {
+                    "description": "Pad 4 [E4_DCS_LOW] of U452 on F.Cu",
+                    "pos": {
+                        "x": 97.1375,
+                        "y": 67.95
+                    },
+                    "uuid": "779f3426-5052-472c-82dd-28015df8966b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_HIGH] of R4405 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 61.0
+                    },
+                    "uuid": "f9bd195f-9ac3-4672-9199-f2d4f854fd3a"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_HIGH] of R4404 on F.Cu",
+                    "pos": {
+                        "x": 30.825,
+                        "y": 61.0
+                    },
+                    "uuid": "4d896ddf-81c7-44a0-a783-5205d880bf1c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_HIGH] of C4402 on F.Cu",
+                    "pos": {
+                        "x": 43.225,
+                        "y": 61.0
+                    },
+                    "uuid": "07a19034-48f6-42e9-bbe8-e495c379e050"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_HIGH] of R4405 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 61.0
+                    },
+                    "uuid": "f9bd195f-9ac3-4672-9199-f2d4f854fd3a"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_HIGH] of C4402 on F.Cu",
+                    "pos": {
+                        "x": 43.225,
+                        "y": 61.0
+                    },
+                    "uuid": "07a19034-48f6-42e9-bbe8-e495c379e050"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_HIGH] of U453 on F.Cu",
+                    "pos": {
+                        "x": 116.8625,
+                        "y": 67.95
+                    },
+                    "uuid": "ccec9672-9854-435b-9ff8-6f9d86ce4f14"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_HIGH] of U453 on F.Cu",
+                    "pos": {
+                        "x": 116.8625,
+                        "y": 67.95
+                    },
+                    "uuid": "ccec9672-9854-435b-9ff8-6f9d86ce4f14"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_HIGH] of U451 on F.Cu",
+                    "pos": {
+                        "x": 116.8625,
+                        "y": 37.95
+                    },
+                    "uuid": "830c0ec7-9e8d-481b-b052-d80482dce198"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_HIGH] of U455 on F.Cu",
+                    "pos": {
+                        "x": 116.8625,
+                        "y": 97.95
+                    },
+                    "uuid": "0a87d6ea-d9bf-4a25-9c8a-def3db2d1a77"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_HIGH] of U453 on F.Cu",
+                    "pos": {
+                        "x": 116.8625,
+                        "y": 67.95
+                    },
+                    "uuid": "ccec9672-9854-435b-9ff8-6f9d86ce4f14"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_REF_GATE_HIGH] of R4452 on F.Cu",
+                    "pos": {
+                        "x": 72.825,
+                        "y": 98.0
+                    },
+                    "uuid": "49a44cbf-8933-4c40-9138-d4d14c4ab698"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_GATE_HIGH] of R4453 on F.Cu",
+                    "pos": {
+                        "x": 71.175,
+                        "y": 105.0
+                    },
+                    "uuid": "a38dd0b3-6818-4cbb-95b9-37083a0cf75c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF_GATE_HIGH] of Q457 on F.Cu",
+                    "pos": {
+                        "x": 79.0625,
+                        "y": 97.05
+                    },
+                    "uuid": "bf8ad187-0be7-49b6-9f4f-1695896a999d"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF_GATE_HIGH] of R4452 on F.Cu",
+                    "pos": {
+                        "x": 72.825,
+                        "y": 98.0
+                    },
+                    "uuid": "49a44cbf-8933-4c40-9138-d4d14c4ab698"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 5 [E4_DCS_REF12_LOW] of U456 on F.Cu",
+                    "pos": {
+                        "x": 59.1375,
+                        "y": 70.0
+                    },
+                    "uuid": "7f14375d-57f3-4aa9-a583-0c84b211374a"
+                },
+                {
+                    "description": "Pad 4 [E4_DCS_REF12_LOW] of U456 on F.Cu",
+                    "pos": {
+                        "x": 59.1375,
+                        "y": 70.95
+                    },
+                    "uuid": "23ebaa00-7a78-4f05-9c5a-7df977fb1c60"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF12_LOW] of C4403 on F.Cu",
+                    "pos": {
+                        "x": 64.225,
+                        "y": 70.0
+                    },
+                    "uuid": "45f6e860-85e2-4a23-9ebc-fff2f37691f4"
+                },
+                {
+                    "description": "Pad 5 [E4_DCS_REF12_LOW] of U456 on F.Cu",
+                    "pos": {
+                        "x": 59.1375,
+                        "y": 70.0
+                    },
+                    "uuid": "7f14375d-57f3-4aa9-a583-0c84b211374a"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF_GOOD_LOW] of R4450 on F.Cu",
+                    "pos": {
+                        "x": 54.175,
+                        "y": 98.0
+                    },
+                    "uuid": "0d42a65c-4403-4907-8a17-6d549e14ae69"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_GOOD_LOW] of U456 on F.Cu",
+                    "pos": {
+                        "x": 56.8625,
+                        "y": 69.05
+                    },
+                    "uuid": "90516fa6-8bb8-4167-add0-ce2df33060c3"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF_PG_LOW] of R4407 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 70.0
+                    },
+                    "uuid": "93df7c21-2ca8-470a-97d6-f3b2a41f52bc"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF_PG_LOW] of R4406 on F.Cu",
+                    "pos": {
+                        "x": 30.825,
+                        "y": 70.0
+                    },
+                    "uuid": "5f3508f5-d5e1-43af-b81e-610b05122dd1"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF_PG_LOW] of C4405 on F.Cu",
+                    "pos": {
+                        "x": 43.225,
+                        "y": 70.0
+                    },
+                    "uuid": "d5c01f67-bbba-4fa4-99ae-27a0886e6d65"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_PG_LOW] of R4407 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 70.0
+                    },
+                    "uuid": "93df7c21-2ca8-470a-97d6-f3b2a41f52bc"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_REF_PG_LOW] of U456 on F.Cu",
+                    "pos": {
+                        "x": 56.8625,
+                        "y": 70.95
+                    },
+                    "uuid": "9791a750-bc7c-4c0a-8a78-c62ec092c8f2"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_PG_LOW] of C4405 on F.Cu",
+                    "pos": {
+                        "x": 43.225,
+                        "y": 70.0
+                    },
+                    "uuid": "d5c01f67-bbba-4fa4-99ae-27a0886e6d65"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_HF_SENSE] of C4441 on F.Cu",
+                    "pos": {
+                        "x": 87.225,
+                        "y": 105.0
+                    },
+                    "uuid": "071e5cd8-9e93-4f49-9463-e373a9d40d03"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_HF_SENSE] of D453 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 105.0
+                    },
+                    "uuid": "b12dc2b6-5e80-46fa-9ed4-fee63e91e846"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_HF_SENSE] of U454 on F.Cu",
+                    "pos": {
+                        "x": 94.8625,
+                        "y": 97.95
+                    },
+                    "uuid": "7158d542-9b02-4b3e-86b0-eca9250e4f43"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_HF_SENSE] of D453 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 105.0
+                    },
+                    "uuid": "b12dc2b6-5e80-46fa-9ed4-fee63e91e846"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_HF_SENSE] of D453 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 105.0
+                    },
+                    "uuid": "b12dc2b6-5e80-46fa-9ed4-fee63e91e846"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_HF_SENSE] of R4441 on F.Cu",
+                    "pos": {
+                        "x": 104.51,
+                        "y": 105.0
+                    },
+                    "uuid": "447d7441-5acd-4c93-a581-22e4227a32fb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_HF_SENSE] of R4441 on F.Cu",
+                    "pos": {
+                        "x": 104.51,
+                        "y": 105.0
+                    },
+                    "uuid": "447d7441-5acd-4c93-a581-22e4227a32fb"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_HF_SENSE] of R4442 on F.Cu",
+                    "pos": {
+                        "x": 112.825,
+                        "y": 105.0
+                    },
+                    "uuid": "ba054dd0-0e26-4e46-9e6b-e3f861328d35"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_HF_SENSE] of R4442 on F.Cu",
+                    "pos": {
+                        "x": 112.825,
+                        "y": 105.0
+                    },
+                    "uuid": "ba054dd0-0e26-4e46-9e6b-e3f861328d35"
+                },
+                {
+                    "description": "Pad 4 [E4_DCS_HF_SENSE] of U455 on F.Cu",
+                    "pos": {
+                        "x": 119.1375,
+                        "y": 97.95
+                    },
+                    "uuid": "6db60f55-da5a-46a5-9a0c-4764556b0ad0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_LOW_GATE] of R4423 on F.Cu",
+                    "pos": {
+                        "x": 88.825,
+                        "y": 53.0
+                    },
+                    "uuid": "debf2fdc-4bf7-4840-bd6d-6d92479b4a0c"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_UHF_LOW_GATE] of R4424 on F.Cu",
+                    "pos": {
+                        "x": 87.175,
+                        "y": 61.0
+                    },
+                    "uuid": "e265e2ca-9fcc-4297-af30-6f38014cb573"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_UHF_LOW_GATE] of Q450 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 52.05
+                    },
+                    "uuid": "711c6773-15e3-409e-82c0-0466319cf526"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_LOW_GATE] of R4423 on F.Cu",
+                    "pos": {
+                        "x": 88.825,
+                        "y": 53.0
+                    },
+                    "uuid": "debf2fdc-4bf7-4840-bd6d-6d92479b4a0c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_HF_HIGH_OK] of R4445 on F.Cu",
+                    "pos": {
+                        "x": 109.175,
+                        "y": 113.0
+                    },
+                    "uuid": "aacd0056-3647-4c81-8180-705161ba1311"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_HF_HIGH_OK] of U455 on F.Cu",
+                    "pos": {
+                        "x": 116.8625,
+                        "y": 96.05
+                    },
+                    "uuid": "9aaf0e6e-fc47-4fc8-8517-8bbadda138b4"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4402 on F.Cu",
+                    "pos": {
+                        "x": 29.175,
+                        "y": 52.0
+                    },
+                    "uuid": "e9679690-cd45-455d-99d0-cabdaa7561d0"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4404 on F.Cu",
+                    "pos": {
+                        "x": 29.175,
+                        "y": 61.0
+                    },
+                    "uuid": "a32d1369-1674-4a8d-888c-6179ceb613e1"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4404 on F.Cu",
+                    "pos": {
+                        "x": 29.175,
+                        "y": 61.0
+                    },
+                    "uuid": "a32d1369-1674-4a8d-888c-6179ceb613e1"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4406 on F.Cu",
+                    "pos": {
+                        "x": 29.175,
+                        "y": 70.0
+                    },
+                    "uuid": "9a153845-5262-4273-baf1-f7d6a77c5349"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4406 on F.Cu",
+                    "pos": {
+                        "x": 29.175,
+                        "y": 70.0
+                    },
+                    "uuid": "9a153845-5262-4273-baf1-f7d6a77c5349"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4408 on F.Cu",
+                    "pos": {
+                        "x": 29.175,
+                        "y": 79.0
+                    },
+                    "uuid": "766defd2-710e-420f-a133-5d14cd3a36ac"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of R4400 on F.Cu",
+                    "pos": {
+                        "x": 37.825,
+                        "y": 40.0
+                    },
+                    "uuid": "107af990-7fac-4947-b909-dcfa8541460a"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4402 on F.Cu",
+                    "pos": {
+                        "x": 29.175,
+                        "y": 52.0
+                    },
+                    "uuid": "e9679690-cd45-455d-99d0-cabdaa7561d0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of U458 on F.Cu",
+                    "pos": {
+                        "x": 44.0625,
+                        "y": 39.05
+                    },
+                    "uuid": "0afed1ba-f058-4ac8-a3d2-77b24ce389e5"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of R4400 on F.Cu",
+                    "pos": {
+                        "x": 37.825,
+                        "y": 40.0
+                    },
+                    "uuid": "107af990-7fac-4947-b909-dcfa8541460a"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of U458 on F.Cu",
+                    "pos": {
+                        "x": 44.0625,
+                        "y": 39.05
+                    },
+                    "uuid": "0afed1ba-f058-4ac8-a3d2-77b24ce389e5"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of C4400 on F.Cu",
+                    "pos": {
+                        "x": 52.225,
+                        "y": 40.0
+                    },
+                    "uuid": "a1e4a212-73b0-45f3-8e21-9c6a492afa29"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of C4400 on F.Cu",
+                    "pos": {
+                        "x": 52.225,
+                        "y": 40.0
+                    },
+                    "uuid": "a1e4a212-73b0-45f3-8e21-9c6a492afa29"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of D451 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 45.95
+                    },
+                    "uuid": "70814095-9939-4ebc-88c7-014976732514"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of D451 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 45.95
+                    },
+                    "uuid": "70814095-9939-4ebc-88c7-014976732514"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4422 on F.Cu",
+                    "pos": {
+                        "x": 111.175,
+                        "y": 45.0
+                    },
+                    "uuid": "9c9aee12-a879-4499-b95b-5f8fa0a4eac3"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of D452 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 75.95
+                    },
+                    "uuid": "b6256310-b65e-4ba2-8af1-e38c23052d4f"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of D451 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 45.95
+                    },
+                    "uuid": "70814095-9939-4ebc-88c7-014976732514"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of D452 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 75.95
+                    },
+                    "uuid": "b6256310-b65e-4ba2-8af1-e38c23052d4f"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of D453 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 105.95
+                    },
+                    "uuid": "2d2dbb77-cdef-4ad5-b51a-2df0da7cab8b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of D453 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 105.95
+                    },
+                    "uuid": "2d2dbb77-cdef-4ad5-b51a-2df0da7cab8b"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4442 on F.Cu",
+                    "pos": {
+                        "x": 111.175,
+                        "y": 105.0
+                    },
+                    "uuid": "7eff3bdd-b393-412a-8c66-5649e5afa4f4"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF] of R4432 on F.Cu",
+                    "pos": {
+                        "x": 111.175,
+                        "y": 75.0
+                    },
+                    "uuid": "ac8622f2-01e9-412e-a3ca-3a86dc5d8404"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF] of D452 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 75.95
+                    },
+                    "uuid": "b6256310-b65e-4ba2-8af1-e38c23052d4f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF_PG_HIGH] of R4409 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 79.0
+                    },
+                    "uuid": "b947d3fb-2d7b-41c8-82e1-aeca9f0e41f2"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF_PG_HIGH] of R4408 on F.Cu",
+                    "pos": {
+                        "x": 30.825,
+                        "y": 79.0
+                    },
+                    "uuid": "37487787-6fde-4cef-8a78-36087ede8e1f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF_PG_HIGH] of C4406 on F.Cu",
+                    "pos": {
+                        "x": 43.225,
+                        "y": 79.0
+                    },
+                    "uuid": "6dcf2f8a-c853-41f5-ad99-fc25e5499168"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_PG_HIGH] of R4409 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 79.0
+                    },
+                    "uuid": "b947d3fb-2d7b-41c8-82e1-aeca9f0e41f2"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 4 [E4_DCS_REF_PG_HIGH] of U457 on F.Cu",
+                    "pos": {
+                        "x": 59.1375,
+                        "y": 85.95
+                    },
+                    "uuid": "91404972-4cfb-42de-bd02-ed9bd4711150"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_PG_HIGH] of C4406 on F.Cu",
+                    "pos": {
+                        "x": 43.225,
+                        "y": 79.0
+                    },
+                    "uuid": "6dcf2f8a-c853-41f5-ad99-fc25e5499168"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_SENSE] of C4431 on F.Cu",
+                    "pos": {
+                        "x": 87.225,
+                        "y": 75.0
+                    },
+                    "uuid": "4d39d872-3f1b-45bd-8ca8-b0fa9b39a753"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_LBAND_SENSE] of D452 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 75.0
+                    },
+                    "uuid": "a2431744-1faf-4f97-a4fa-36b8f65a2ac8"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_LBAND_SENSE] of U452 on F.Cu",
+                    "pos": {
+                        "x": 94.8625,
+                        "y": 67.95
+                    },
+                    "uuid": "e03eae6f-7f1d-4ebb-928c-e65c2520b98a"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_LBAND_SENSE] of D452 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 75.0
+                    },
+                    "uuid": "a2431744-1faf-4f97-a4fa-36b8f65a2ac8"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_LBAND_SENSE] of D452 on F.Cu",
+                    "pos": {
+                        "x": 96.9375,
+                        "y": 75.0
+                    },
+                    "uuid": "a2431744-1faf-4f97-a4fa-36b8f65a2ac8"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_SENSE] of R4431 on F.Cu",
+                    "pos": {
+                        "x": 104.51,
+                        "y": 75.0
+                    },
+                    "uuid": "09f30344-99a5-4e2f-ab25-190f2bc365dc"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_SENSE] of R4431 on F.Cu",
+                    "pos": {
+                        "x": 104.51,
+                        "y": 75.0
+                    },
+                    "uuid": "09f30344-99a5-4e2f-ab25-190f2bc365dc"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_SENSE] of R4432 on F.Cu",
+                    "pos": {
+                        "x": 112.825,
+                        "y": 75.0
+                    },
+                    "uuid": "8ed43a1a-098a-48c5-b90c-ccc9a4c81e49"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_SENSE] of R4432 on F.Cu",
+                    "pos": {
+                        "x": 112.825,
+                        "y": 75.0
+                    },
+                    "uuid": "8ed43a1a-098a-48c5-b90c-ccc9a4c81e49"
+                },
+                {
+                    "description": "Pad 4 [E4_DCS_LBAND_SENSE] of U453 on F.Cu",
+                    "pos": {
+                        "x": 119.1375,
+                        "y": 67.95
+                    },
+                    "uuid": "74210f55-6cb7-4931-bb4b-54fc1b8c5a93"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_HIGH_OK] of R4435 on F.Cu",
+                    "pos": {
+                        "x": 109.175,
+                        "y": 83.0
+                    },
+                    "uuid": "af8c5a7a-c572-45ec-a650-5ad655d4229c"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_HIGH_OK] of U453 on F.Cu",
+                    "pos": {
+                        "x": 116.8625,
+                        "y": 66.05
+                    },
+                    "uuid": "f7d90ca8-bf0f-4fbe-b054-cc9d478b8cb0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_SINK_MID] of Q450 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 53.95
+                    },
+                    "uuid": "ca7e2c1b-3329-4372-9730-95a05fa62352"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_UHF_SINK_MID] of Q451 on F.Cu",
+                    "pos": {
+                        "x": 118.9375,
+                        "y": 53.0
+                    },
+                    "uuid": "965174c7-423b-45d5-a7d5-7727864763df"
                 }
             ],
             "severity": "error",
@@ -3218,7 +2735,7 @@
                         "x": 109.175,
                         "y": 53.0
                     },
-                    "uuid": "eb18c2fd-f167-4939-b82c-23462b861ad9"
+                    "uuid": "2f079e66-4d91-4c5d-9950-6fa19f734e93"
                 },
                 {
                     "description": "Pad 1 [E4_DCS_UHF_HIGH_OK] of U451 on F.Cu",
@@ -3226,7 +2743,490 @@
                         "x": 116.8625,
                         "y": 36.05
                     },
-                    "uuid": "ee7b1f53-07b6-4453-bd49-256ed77c75e0"
+                    "uuid": "41a10868-9dfc-4d4d-bbae-27954ae236f7"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_HIGH_GATE] of R4425 on F.Cu",
+                    "pos": {
+                        "x": 110.825,
+                        "y": 53.0
+                    },
+                    "uuid": "f09311bf-7202-4871-b448-81d60cdd1970"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_UHF_HIGH_GATE] of R4426 on F.Cu",
+                    "pos": {
+                        "x": 109.175,
+                        "y": 61.0
+                    },
+                    "uuid": "addb8147-8866-454d-9831-fa65b02e461f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_UHF_HIGH_GATE] of Q451 on F.Cu",
+                    "pos": {
+                        "x": 117.0625,
+                        "y": 52.05
+                    },
+                    "uuid": "cbf9add4-0738-4e01-ba42-8d47278f3888"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_UHF_HIGH_GATE] of R4425 on F.Cu",
+                    "pos": {
+                        "x": 110.825,
+                        "y": 53.0
+                    },
+                    "uuid": "f09311bf-7202-4871-b448-81d60cdd1970"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_LOW_GATE] of R4433 on F.Cu",
+                    "pos": {
+                        "x": 88.825,
+                        "y": 83.0
+                    },
+                    "uuid": "a0e6bb30-2c17-4613-9bfd-f1443724068b"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_LOW_GATE] of R4434 on F.Cu",
+                    "pos": {
+                        "x": 87.175,
+                        "y": 91.0
+                    },
+                    "uuid": "28a2019b-cb6b-4004-adb0-e597caa36d8b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_LOW_GATE] of Q452 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 82.05
+                    },
+                    "uuid": "cee1438a-13bd-4193-bbea-28cef37a029f"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_LOW_GATE] of R4433 on F.Cu",
+                    "pos": {
+                        "x": 88.825,
+                        "y": 83.0
+                    },
+                    "uuid": "a0e6bb30-2c17-4613-9bfd-f1443724068b"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_HIGH_GATE] of R4435 on F.Cu",
+                    "pos": {
+                        "x": 110.825,
+                        "y": 83.0
+                    },
+                    "uuid": "0dda3871-d12b-4816-b40d-deeb24a61dcf"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_HIGH_GATE] of R4436 on F.Cu",
+                    "pos": {
+                        "x": 109.175,
+                        "y": 91.0
+                    },
+                    "uuid": "02c5c602-ba3c-4556-89b6-bff03ee9a506"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_HIGH_GATE] of Q453 on F.Cu",
+                    "pos": {
+                        "x": 117.0625,
+                        "y": 82.05
+                    },
+                    "uuid": "62f66ca7-0fcf-4eb2-9291-30aa7ee1c4d9"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_HIGH_GATE] of R4435 on F.Cu",
+                    "pos": {
+                        "x": 110.825,
+                        "y": 83.0
+                    },
+                    "uuid": "0dda3871-d12b-4816-b40d-deeb24a61dcf"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_HF_HIGH_GATE] of R4445 on F.Cu",
+                    "pos": {
+                        "x": 110.825,
+                        "y": 113.0
+                    },
+                    "uuid": "ffd19792-b63e-4a51-a468-84cf81ede62c"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_HF_HIGH_GATE] of R4446 on F.Cu",
+                    "pos": {
+                        "x": 109.175,
+                        "y": 121.0
+                    },
+                    "uuid": "7824d6ab-b7d9-44ee-9cf1-35bc5df3d0d0"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_HF_HIGH_GATE] of Q455 on F.Cu",
+                    "pos": {
+                        "x": 117.0625,
+                        "y": 112.05
+                    },
+                    "uuid": "922895ed-abef-4fd0-9a34-0c1ad4b11286"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_HF_HIGH_GATE] of R4445 on F.Cu",
+                    "pos": {
+                        "x": 110.825,
+                        "y": 113.0
+                    },
+                    "uuid": "ffd19792-b63e-4a51-a468-84cf81ede62c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_RETURN] of Q456 on F.Cu",
+                    "pos": {
+                        "x": 63.9375,
+                        "y": 98.0
+                    },
+                    "uuid": "41fea65b-19f3-48ae-a24e-9972ce54ca68"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_RETURN] of Q453 on F.Cu",
+                    "pos": {
+                        "x": 117.0625,
+                        "y": 83.95
+                    },
+                    "uuid": "f69de931-adc0-464b-a501-699e6218f430"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_RETURN] of Q453 on F.Cu",
+                    "pos": {
+                        "x": 117.0625,
+                        "y": 83.95
+                    },
+                    "uuid": "f69de931-adc0-464b-a501-699e6218f430"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_RETURN] of Q451 on F.Cu",
+                    "pos": {
+                        "x": 117.0625,
+                        "y": 53.95
+                    },
+                    "uuid": "8e2ac4c6-9891-4a57-926e-e56343b5c26d"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_RETURN] of Q455 on F.Cu",
+                    "pos": {
+                        "x": 117.0625,
+                        "y": 113.95
+                    },
+                    "uuid": "b4c4e5f7-3896-47b1-ab30-ef884fbd65aa"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_RETURN] of Q453 on F.Cu",
+                    "pos": {
+                        "x": 117.0625,
+                        "y": 83.95
+                    },
+                    "uuid": "f69de931-adc0-464b-a501-699e6218f430"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_REF_GATE_LOW] of R4450 on F.Cu",
+                    "pos": {
+                        "x": 55.825,
+                        "y": 98.0
+                    },
+                    "uuid": "3fd5febd-58d4-47b3-8d34-bed0ea0a252c"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_GATE_LOW] of R4451 on F.Cu",
+                    "pos": {
+                        "x": 54.175,
+                        "y": 105.0
+                    },
+                    "uuid": "dfc88a57-1145-42d0-80cf-0b9c007581ad"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF_GATE_LOW] of Q456 on F.Cu",
+                    "pos": {
+                        "x": 62.0625,
+                        "y": 97.05
+                    },
+                    "uuid": "8b6b48c6-6f48-46ea-92cf-9f721b31bdcc"
+                },
+                {
+                    "description": "Pad 2 [E4_DCS_REF_GATE_LOW] of R4450 on F.Cu",
+                    "pos": {
+                        "x": 55.825,
+                        "y": 98.0
+                    },
+                    "uuid": "3fd5febd-58d4-47b3-8d34-bed0ea0a252c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 3 [E4_DCS_REF_FEED] of D450 on F.Cu",
+                    "pos": {
+                        "x": 30.9375,
+                        "y": 40.0
+                    },
+                    "uuid": "8de57364-09fc-40ab-8393-2557b946b34c"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_FEED] of R4400 on F.Cu",
+                    "pos": {
+                        "x": 36.175,
+                        "y": 40.0
+                    },
+                    "uuid": "444d7291-2073-4e86-b2fc-996b3463b9b5"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_REF_RETURN_MID] of Q456 on F.Cu",
+                    "pos": {
+                        "x": 62.0625,
+                        "y": 98.95
+                    },
+                    "uuid": "cdd303e9-2aef-4f05-be0f-81c89a0dca35"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_REF_RETURN_MID] of Q457 on F.Cu",
+                    "pos": {
+                        "x": 80.9375,
+                        "y": 98.0
+                    },
+                    "uuid": "482003cf-8dff-4227-b2d8-ff262c634fdb"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF_GOOD_HIGH] of U457 on F.Cu",
+                    "pos": {
+                        "x": 56.8625,
+                        "y": 84.05
+                    },
+                    "uuid": "9d324738-87fa-4d6c-995d-db980b5bb9de"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_REF_GOOD_HIGH] of R4452 on F.Cu",
+                    "pos": {
+                        "x": 71.175,
+                        "y": 98.0
+                    },
+                    "uuid": "fdc9d7cc-f5a0-41f1-8f57-9014958776a3"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 5 [E4_DCS_REF12_HIGH] of U457 on F.Cu",
+                    "pos": {
+                        "x": 59.1375,
+                        "y": 85.0
+                    },
+                    "uuid": "99f7bf33-4e70-471b-9cb2-57c410764b40"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_REF12_HIGH] of U457 on F.Cu",
+                    "pos": {
+                        "x": 56.8625,
+                        "y": 85.95
+                    },
+                    "uuid": "99ca8216-a918-441f-8a41-5c3d5965185f"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_REF12_HIGH] of C4404 on F.Cu",
+                    "pos": {
+                        "x": 64.225,
+                        "y": 85.0
+                    },
+                    "uuid": "32f3da0a-607e-469a-b87e-2335e9ff1a15"
+                },
+                {
+                    "description": "Pad 5 [E4_DCS_REF12_HIGH] of U457 on F.Cu",
+                    "pos": {
+                        "x": 59.1375,
+                        "y": 85.0
+                    },
+                    "uuid": "99f7bf33-4e70-471b-9cb2-57c410764b40"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_LOW_OK] of R4433 on F.Cu",
+                    "pos": {
+                        "x": 87.175,
+                        "y": 83.0
+                    },
+                    "uuid": "bbd823e6-c04d-40e6-8d3a-4378ee3314da"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_LBAND_LOW_OK] of U452 on F.Cu",
+                    "pos": {
+                        "x": 94.8625,
+                        "y": 66.05
+                    },
+                    "uuid": "cf88d1bd-47dd-44b7-99a9-bd9051aacca7"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 2 [E4_DCS_LBAND_SINK_MID] of Q452 on F.Cu",
+                    "pos": {
+                        "x": 95.0625,
+                        "y": 83.95
+                    },
+                    "uuid": "324ee965-127d-4b1a-b749-1e919942ae8f"
+                },
+                {
+                    "description": "Pad 3 [E4_DCS_LBAND_SINK_MID] of Q453 on F.Cu",
+                    "pos": {
+                        "x": 118.9375,
+                        "y": 83.0
+                    },
+                    "uuid": "79185550-8ae5-4a5c-9738-75f14215757c"
+                }
+            ],
+            "severity": "error",
+            "type": "unconnected_items"
+        },
+        {
+            "description": "Missing connection between items",
+            "items": [
+                {
+                    "description": "Pad 1 [E4_DCS_HF_LOW_OK] of R4443 on F.Cu",
+                    "pos": {
+                        "x": 87.175,
+                        "y": 113.0
+                    },
+                    "uuid": "0360a4e5-40d3-41b8-9e72-b54fb523d60c"
+                },
+                {
+                    "description": "Pad 1 [E4_DCS_HF_LOW_OK] of U454 on F.Cu",
+                    "pos": {
+                        "x": 94.8625,
+                        "y": 96.05
+                    },
+                    "uuid": "efb8e3e7-ef79-4347-8b35-e78682e747ce"
                 }
             ],
             "severity": "error",

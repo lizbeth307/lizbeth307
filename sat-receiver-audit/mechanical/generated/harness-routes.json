@@ -1623,21 +1623,21 @@
         [
           155.5,
           135.0,
-          48.5
+          50.0
         ],
         [
           155.5,
           140.8,
-          48.5
+          50.0
         ]
       ],
-      "path_mm": 40.8,
+      "path_mm": 39.3,
       "bends": 4,
       "bundle_od_mm": 2.74,
       "wires": 2,
       "bend_allowance_mm": 8.6,
       "service_loops_mm": 30.0,
-      "length_mm": 80,
+      "length_mm": 78,
       "through": [],
       "crossings": [],
       "provisional": [

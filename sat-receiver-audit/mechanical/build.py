@@ -31,6 +31,7 @@ from srrx_mech.params import Params  # noqa: E402
 OUT = HERE / "generated"
 D15 = (222.5, 137.5, 57.5)
 COMPONENTS = HERE.parent / "pcb" / "generated" / "components.csv"
+SPEC = HERE.parent / "pcb" / "partition-spec.json"
 # PolyLite ASA, ISO 1183, 23 C: https://wiki.polymaker.com/polymaker-products/more-about-our-products/documents/technical-data-sheets/abs-asa/polylite-tm-asa (read 2026-10-24)
 ASA_DENSITY = 1.13
 STL_DEFLECTION, STL_ANGULAR = 0.1, 0.3   # mm (half a 0.2 mm print layer), rad
@@ -97,12 +98,33 @@ def envelope_report(P):
             "depth_mm": round(Dc, 1), "depth_without_t7_holder_mm": round(no_t7, 1),
             "w_plus_d": round(Wb + Dc, 1), "h_plus_d": round(Hb + Dc, 1),
             "result": "PASS (model)" if ok else "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"},
-        "reason": ("height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (64.3: two rows of cased LNA modules, "
-                   "arrangement b, W2 MECH-3) along the top; "
-                   "depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 18.1 (PWR-A + B2B 5.0 + PWR-B + parts 5.5 + "
-                   "path-2 channel 4.0, W2 MECH-3 dz 2.1) + display 7; "
-                   "width: display glass 164.8 + HMI column 51 (build/05 1.1)"),
+        "reason": depth_reason(P),
     }
+
+
+def depth_reason(P):
+    """Envelope reason with the front-tier stack computed from the parameters (W2 MECH-3 review F3)."""
+    m, B = P.mech, P.boards["boards"]
+    sz, t = m["stack_z"], P.boards["stackup"]["t"]
+    pa, pb = B["PWR"], B["PWR_B"]
+    gap = pa["place"]["z_bottom"] - sz["plate_front"]
+    stack = pb["place"]["z_bottom"] - (pa["place"]["z_bottom"] + t)
+    chan = sz["module_back"] - (pb["place"]["z_bottom"] + t + pb["max_height"])
+    front = sz["module_back"] - sz["plate_front"]
+    dz = None
+    if SPEC.exists():
+        dz = json.loads(SPEC.read_text(encoding="utf-8")).get("envelope", {}).get("dz")
+
+    def f(v):
+        return f"{round(v, 2):g}"
+    return (f"height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay ({f(m['rf_bay']['rect'][3])}: two rows "
+            "of cased LNA modules, arrangement b, W2 MECH-3) along the top; "
+            f"depth: wall {f(m['wall'])} + rear layer {f(sz['plate_rear'] - m['wall'])} (Q6A with cooler and fan duct) + plate {f(sz['plate_t'])} + "
+            f"front layer {f(front)} (bond gap {f(gap)} + PWR-A {f(t)} + B2B {f(stack)} + PWR-B {f(t)} + parts {f(pb['max_height'])} + "
+            f"path-2 channel {f(chan)}; W2 MECH-3 depth growth "
+            + (f"dz {f(dz)} = pcb/partition-spec.json envelope.dz" if dz is not None else "dz: pcb/partition-spec.json not found")
+            + f") + display {f(sz['front_wall_inner'] - sz['module_back'])} + front wall {f(P.outer[2] - sz['front_wall_inner'])}; "
+            "width: display glass 164.8 + HMI column 51 (build/05 1.1)")
 
 
 def gasket_report(P):

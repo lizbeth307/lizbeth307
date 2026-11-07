@@ -805,3 +805,137 @@ class EnvelopeW2Mech3(unittest.TestCase):
         Q.mech["closure"]["insert"]["len"] = 2.0
         j = [x for x in fasteners.stacks(Q)["joints"] if x["id"] == "CLOSURE"][0]
         self.assertTrue(j["result"].startswith("FAIL"), j["result"])
+
+
+class EnvelopeW2Mech3Review(unittest.TestCase):
+    """W2 MECH-3 review fixes: PWR-B usable area, computed depth reason, PEM shank windows, IMU screw rows, ISO lengths."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _budget(self):
+        d = json.loads((HERE.parent / "pcb" / "partition-budget.json").read_text(encoding="utf-8"))
+        return d["candidates"][d["chosen"]]
+
+    def test_pwr_b_area_is_judged_against_the_budget_usable_area(self):
+        row = boards.area_check(P)["boards"]["PWR_B"]
+        usable = self._budget()["boards"]["PWR_B"]["usable_mm2"]
+        self.assertEqual(row["usable_mm2"], round(usable, 0))
+        self.assertLess(row["usable_mm2"], row["area_mm2"])                    # the outline minus the Pololu windows is an upper bound
+        self.assertEqual(row["result"].startswith("PASS"), row["need_1_8_mm2"] <= usable, row["result"])
+        self.assertIn("partition-budget.json", row["result"])
+
+    def test_envelope_reason_is_computed_from_the_stack(self):
+        import build
+        sz = P.mech["stack_z"]
+        dz = json.loads((HERE.parent / "pcb" / "partition-spec.json").read_text(encoding="utf-8"))["envelope"]["dz"]
+        reason = build.envelope_report(P)["reason"]
+        self.assertIn(f"front layer {round(sz['module_back'] - sz['plate_front'], 2):g}", reason)
+        self.assertIn(f"dz {dz:g}", reason)
+        self.assertNotIn("dz 2.1", reason)
+        Q = self._copy()
+        Q.mech["stack_z"]["module_back"] += 1.0
+        self.assertIn(f"front layer {round(sz['module_back'] + 1.0 - sz['plate_front'], 2):g}", build.envelope_report(Q)["reason"])
+
+    def test_pem_nut_windows_use_the_shank(self):
+        from srrx_mech import fasteners
+        pem, t = P.parts["pem_f_m3_1"], P.mech["plate"]["t"]
+        J = {j["id"]: j for j in fasteners.stacks(P)["joints"]}
+        for jid in ("ANGLES", "PWR_A-PLATE"):
+            j = J[jid]
+            self.assertEqual(j["receiver"]["thread_mm"], pem["shank"])
+            self.assertEqual(j["length_window_mm"], [round(j["grip_mm"] + pem["shank"], 2), round(j["grip_mm"] + t, 2)])
+            self.assertLess(j["length_window_mm"][0], j["length_window_mm"][1], jid)
+        self.assertTrue(J["ANGLES"]["result"].startswith("PASS (model)"), J["ANGLES"]["result"])   # the F31 M3 x 4 fits
+
+    def test_imu_screw_rows_are_joints_with_open_reasons(self):
+        from srrx_mech import fasteners
+        doc = fasteners.stacks(P)
+        rows = {j["build17_row"]: j for j in doc["joints"]}
+        for r in ("F24", "F36", "F37"):
+            self.assertIn(r, rows)
+            self.assertNotIn(r, doc["nut_and_kit_rows"])
+            self.assertTrue(rows[r]["result"].startswith("OPEN: "), rows[r]["result"])
+            self.assertGreater(len(rows[r]["result"]), len("OPEN: ") + 20)
+
+    def test_pass_needs_a_named_iso_length_in_the_window(self):
+        from srrx_mech import fasteners
+        for j in fasteners.stacks(P)["joints"]:
+            if j["result"].startswith("PASS"):
+                ol = j.get("orderable_lengths", {})
+                self.assertTrue(ol.get("named_in_build17"), j["id"])
+                self.assertTrue(ol.get("in_window"), j["id"])
+        J = {j["id"]: j for j in fasteners.stacks(P)["joints"]}
+        for jid in ("CTRL", "ENC", "UFS-BOSS"):
+            self.assertTrue(J[jid]["result"].startswith("OPEN"), J[jid]["result"])
+        Q = self._copy()
+        Q.mech["closure"]["insert"]["len"] += 1.0                                 # a deeper insert widens the window: still an ISO length
+        self.assertTrue([j for j in fasteners.stacks(Q)["joints"] if j["id"] == "CLOSURE"][0]["result"].startswith("PASS"))
+
+    def test_pocket_rule_reports_the_budget_items(self):
+        r = [x for x in rules.evaluate(P) if x["id"] == "R-PWR-POCKETS"][0]
+        n = len(self._budget()["pwr_a_tht_pocket_items"])
+        self.assertIn(f"{n} items", r["result"])
+
+
+class RoutesW2Mech4(unittest.TestCase):
+    """W2 MECH-4: HDMI FPC route, PV6 nut reserve, F101 access decision, P8 accessory row."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def test_hdmi_fpc_route_is_in_the_envelope_check(self):
+        names = {n for _, n, _, _ in layout.item_boxes(P)}
+        self.assertTrue(set(P.mech["hdmi_route"]["envelopes"]) <= names)
+        self.assertNotIn("hdmi_plug_ra", names)
+        coll, outside = layout.fit_checks(P)
+        env = set(P.mech["hdmi_route"]["envelopes"])
+        self.assertEqual([c for c in coll if c["gap_mm"] < 0.5 and (c["a"] in env or c["b"] in env)], [])
+        r = self._rule(P, "R-HDMI-ROUTE")
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        for s in r["value_mm"]["segments"].values():
+            self.assertGreaterEqual(s["slack_mm"], 0.0)
+
+    def test_hdmi_route_fails_when_an_envelope_collides_or_a_flex_is_short(self):
+        Q = self._copy()
+        for it in Q.mech["layout"]["items"]:
+            if it["id"] == "hdmi_insert":
+                it["box"][0] -= 2.0                     # into the BMS
+        self.assertTrue(self._rule(Q, "R-HDMI-ROUTE")["result"].startswith("FAIL"))
+        Q = self._copy()
+        Q.parts["adafruit_flex"]["lengths"]["3560"] = 60.0
+        self.assertTrue(self._rule(Q, "R-HDMI-ROUTE")["result"].startswith("FAIL"))
+
+    def test_harness_anchor_of_the_hdmi_run_is_kept(self):
+        box = [it for it in P.mech["layout"]["items"] if it["id"] == "hdmi_route_front_run"][0]["box"]
+        self.assertAlmostEqual(box[1] + box[4], 76.8)   # waypoint y 78.0 of the CTRL harness drops (harness_routes)
+
+    def test_pwr_key_nut_reserve_clears_and_stays_open(self):
+        names = {n for _, n, _, _ in layout.item_boxes(P)}
+        self.assertIn("nut.PWR_KEY", names)
+        r = self._rule(P, "R-PWR-KEY-NUT")
+        self.assertTrue(r["result"].startswith("OPEN"), r["result"])
+        self.assertGreaterEqual(r["value_mm"]["worst"][1], 0.5)
+        coll, _ = layout.fit_checks(P)
+        self.assertEqual([c for c in coll if {"pwr_key_body", "plate.main"} == {c["a"], c["b"]}], [])
+        Q = self._copy()
+        Q.parts["pv6_button"]["nut_d"] = 26.0                # reaches the top Al angle
+        self.assertTrue(self._rule(Q, "R-PWR-KEY-NUT")["result"].startswith("FAIL"))
+
+    def test_f101_access_decision_follows_the_depth(self):
+        r = self._rule(P, "R-F101-ACCESS")
+        self.assertIn("seam", r["result"])
+        self.assertGreater(r["value_mm"]["stack"], r["value_mm"]["free_depth"])
+        Q = self._copy()
+        Q.parts["littelfuse_mini_297"]["body"][2] = 1.0
+        self.assertIn("fits facing the hatch", self._rule(Q, "R-F101-ACCESS")["result"])
+
+    def test_p8_accessory_row_is_open_until_the_lna_is_measured(self):
+        r = self._rule(P, "R-P8-ACCESSORY")
+        self.assertTrue(r["result"].startswith("OPEN"), r["result"])
+        self.assertTrue(r["value_mm"]["outside_enclosure"])

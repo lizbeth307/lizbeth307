@@ -91,6 +91,22 @@ def _root():
     return ROOT or Path(__file__).resolve().parents[2]
 
 
+# Boards whose usable area is cut by the partition budget (windows over PWR-A parts taller than hA, edge strips of the
+# PWR-A headers, probe windows): mech board id -> pcb/partition-budget.json board (W2 MECH-3 review F2).
+USABLE_FROM_BUDGET = {"PWR_B": "PWR_B"}
+
+
+def budget_candidate():
+    """(chosen id, candidate dict) of pcb/partition-budget.json (pcb/partition_budget.py output), or (None, None)."""
+    import json
+    p = _root() / "pcb" / "partition-budget.json"
+    if not p.exists():
+        return None, None
+    d = json.loads(p.read_text(encoding="utf-8"))
+    ch = d.get("chosen")
+    return ch, d.get("candidates", {}).get(ch)
+
+
 def _sexpr_items(text, kinds=("fp_line", "fp_rect", "fp_circle", "fp_poly", "fp_arc")):
     """Top-level graphic items of a .kicad_mod (kind, item text), found by balanced parentheses."""
     import re
@@ -214,6 +230,29 @@ def area_check(P):
             for g, v in gmods.get(d, {}).items():
                 gmod[g] = gmod.get(g, 0.0) + v
         gsorted = sorted(graw.items(), key=lambda kv: -kv[1])
+        # usable area: the outline, or for a mezzanine the budget's area after its windows and edge strips (the outline is then an upper bound)
+        judge, usable, basis = have, None, "outline"
+        if bid in USABLE_FROM_BUDGET:
+            ch, cand = budget_candidate()
+            row = (cand or {}).get("boards", {}).get(USABLE_FROM_BUDGET[bid])
+            if row and row.get("usable_mm2") is not None:
+                usable = row["usable_mm2"]
+                judge = usable
+                basis = (f"usable {usable:.0f} mm2 of pcb/partition-budget.json candidates.{ch} boards.{USABLE_FROM_BUDGET[bid]} (outline minus holes, "
+                         f"windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline {have:.0f} mm2 "
+                         "minus only the Pololu windows is an upper bound)")
+            else:
+                judge, basis = None, "usable area not computed: pcb/partition-budget.json has no usable_mm2 for this board"
+        if not any(refs.get(d) for d in b["domains"]):
+            result = f"OPEN: no part of pcb/generated/components.csv in the domains {', '.join(b['domains'])} yet (pcb/prepare.py creates them, GR-3)"
+        elif judge is None:
+            result = f"OPEN: {basis}; outline {have:.0f} mm2 (model estimate)"
+        elif n18 <= judge:
+            result = "PASS (model estimate)" + ("" if usable is None else f" against the {basis}")
+        elif usable is None:
+            result = f"OPEN: need {n18:.0f} mm2 at fill {FILL[1]:g} > outline {have:.0f} mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        else:
+            result = f"OPEN: need {n18:.0f} mm2 at fill {FILL[1]:g} > {basis} (model estimate; partition and placement decide, AREA / PCB)"
         res["boards"][bid] = {
             "area_mm2": round(have, 0), "courtyard_raw_mm2": round(raw, 0), "modules_mm2": round(mod, 0),
             "per_domain_raw_mm2": {d: round(by.get(d, 0.0), 0) for d in b["domains"]},
@@ -222,12 +261,12 @@ def area_check(P):
                                    for g, v in gsorted},
             "parts": sum(len(refs.get(d, [])) for d in b["domains"]),
             "need_1_5_mm2": round(n15, 0), "need_1_8_mm2": round(n18, 0), "estimate_mm2": round(n18, 0),
-            "ratio_1_5": round(n15 / have, 2), "ratio_1_8": round(n18 / have, 2),
+            "ratio_1_5": round(n15 / judge, 2) if judge else None, "ratio_1_8": round(n18 / judge, 2) if judge else None,
             "scope": "board parts and modules, without the harness headers",
-            "result": (f"OPEN: no part of pcb/generated/components.csv in the domains {', '.join(b['domains'])} yet (pcb/prepare.py creates them, GR-3)"
-                       if not any(refs.get(d) for d in b["domains"]) else
-                       "PASS (model estimate)" if n18 <= have else
-                       f"OPEN: need {n18:.0f} mm2 at fill {FILL[1]:g} > outline {have:.0f} mm2 (model estimate; partition and placement decide, AREA / PCB)")}
+            "result": result}
+        if usable is not None:
+            res["boards"][bid]["usable_mm2"] = round(usable, 0)
+            res["boards"][bid]["ratio_basis"] = "usable_mm2 (pcb/partition-budget.json)"
     res["with_harness"] = harness_check(P, res, root, cy)
     return res
 

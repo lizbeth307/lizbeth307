@@ -120,7 +120,7 @@
             108,
             128
           ],
-          "use": "rear-layer harness through plate slot SL2 (S04, S13, S14, S17, S18, S20-S22, S35; JST PH, Micro-Fit)"
+          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22 and S35 leave from PWR-B J204/J207 (build/16-dzhgut-rozyemy.csv, W2 GR-3)"
         }
       ],
       "thermal_bond_mm": [
@@ -304,7 +304,7 @@
             0,
             35
           ],
-          "use": "CTRL harness S02 (two JST PHD side entry, consolidated S02-PWR-SIG), LAB PORT / LAB BUS leads towards plate slot SL3 (side entry at hB)"
+          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry), LAB PORT J506 (S23) and LAB BUS J508 (S34) leads towards plate slot SL3 (side entry at hB; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
         },
         {
           "edge": "top",
@@ -313,7 +313,7 @@
             108,
             128
           ],
-          "use": "SL2-bound JST PH (consolidated SL2-PWR-PH: S20, S21, S22, S35, S36) and the RF lead S04 (X04S1) through plate slot SL2"
+          "use": "J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 X04S1-PWR (RF board lead S04) through plate slot SL2 (build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
         }
       ],
       "thermal_bond_mm": [],
@@ -1034,7 +1034,7 @@
             34.0,
             5.5,
             16.0,
-            8.7
+            8.0
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -1043,9 +1043,9 @@
         {
           "rect": [
             34.0,
-            14.2,
-            6.2,
-            11.3
+            13.5,
+            1.0,
+            7.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -1053,21 +1053,21 @@
         },
         {
           "rect": [
-            40.2,
-            14.2,
-            5.6,
-            49.6
+            35.0,
+            13.5,
+            11.0,
+            7.5
           ],
-          "free_mm": 7.68,
-          "fits_mm": 7.18,
+          "free_mm": 14.98,
+          "fits_mm": 14.48,
           "limit": "hdmi_route_front_up"
         },
         {
           "rect": [
-            45.8,
-            14.2,
-            4.2,
-            11.3
+            46.0,
+            13.5,
+            4.0,
+            7.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -1076,20 +1076,31 @@
         {
           "rect": [
             34.0,
-            25.5,
-            6.2,
-            27.5
+            21.0,
+            0.5,
+            4.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
-          "limit": "plate.main"
+          "limit": "plate.ext"
         },
         {
           "rect": [
-            45.8,
+            34.5,
+            21.0,
+            15.5,
+            18.0
+          ],
+          "free_mm": 13.48,
+          "fits_mm": 12.98,
+          "limit": "hdmi_insert"
+        },
+        {
+          "rect": [
+            34.0,
             25.5,
-            4.2,
-            38.3
+            0.5,
+            13.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -1098,9 +1109,9 @@
         {
           "rect": [
             34.0,
-            53.0,
-            0.8,
-            4.0
+            39.0,
+            1.0,
+            18.0
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -1108,21 +1119,32 @@
         },
         {
           "rect": [
-            34.8,
-            53.0,
-            5.4,
-            10.8
+            35.0,
+            39.0,
+            11.0,
+            24.8
           ],
-          "free_mm": 7.68,
-          "fits_mm": 7.18,
-          "limit": "hdmi_route_front_turn"
+          "free_mm": 17.38,
+          "fits_mm": 16.88,
+          "limit": "hdmi_route_front_run"
+        },
+        {
+          "rect": [
+            46.0,
+            39.0,
+            4.0,
+            37.5
+          ],
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
+          "limit": "plate.main"
         },
         {
           "rect": [
             0.0,
             57.0,
-            34.8,
-            1.2
+            35.0,
+            8.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -1130,32 +1152,65 @@
         },
         {
           "rect": [
-            0.0,
-            58.2,
-            34.8,
-            5.6
-          ],
-          "free_mm": 7.68,
-          "fits_mm": 7.18,
-          "limit": "hdmi_route_front_run"
-        },
-        {
-          "rect": [
-            0.0,
+            35.0,
             63.8,
-            50.0,
+            11.0,
             4.7
           ],
-          "free_mm": 18.48,
-          "fits_mm": 17.98,
-          "limit": "plate.main"
+          "free_mm": 16.48,
+          "fits_mm": 15.98,
+          "limit": "hdmi_route_front_turn"
         },
         {
           "rect": [
             0.0,
+            65.5,
+            10.0,
+            11.0
+          ],
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
+          "limit": "hdmi_route_front_rise"
+        },
+        {
+          "rect": [
+            10.0,
+            65.5,
+            25.0,
+            3.0
+          ],
+          "free_mm": 16.98,
+          "fits_mm": 16.48,
+          "limit": "hdmi_route_front_flat"
+        },
+        {
+          "rect": [
+            10.0,
             68.5,
+            2.0,
+            8.0
+          ],
+          "free_mm": 16.98,
+          "fits_mm": 16.48,
+          "limit": "hdmi_route_front_flat"
+        },
+        {
+          "rect": [
+            37.0,
+            68.5,
+            9.0,
+            8.0
+          ],
+          "free_mm": 16.48,
+          "fits_mm": 15.98,
+          "limit": "hdmi_route_front_turn"
+        },
+        {
+          "rect": [
+            0.0,
+            76.5,
             12.0,
-            14.5
+            6.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -1164,9 +1219,9 @@
         {
           "rect": [
             37.0,
-            68.5,
+            76.5,
             13.0,
-            14.5
+            6.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,

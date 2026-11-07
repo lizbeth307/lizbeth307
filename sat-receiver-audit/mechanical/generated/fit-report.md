@@ -1,6 +1,6 @@
 # Звіт посадки механічної моделі SR-RX-v2.1
 
-Згенеровано `mechanical/build.py` (params fe0187c59c26); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
+Згенеровано `mechanical/build.py` (params bedbb3ef32c8); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
 
 ## Габарит
 
@@ -30,7 +30,7 @@
 
 - зіткнень конвертів: 0; поза внутрішнім об'ємом: 0
 - правила: FAIL 0, OPEN 11 (OPEN = потрібна обрана або виміряна деталь)
-- антенні деталі за правилом розміру: FAIL 0; площа плат (курт'ярди KiCad, деталі без роз'ємів джгутів): OPEN 2; з роз'ємами джгутів build/16: OPEN 0 (MODEL ESTIMATE, не в гейті; рішення — розбиття й розкладка плат)
+- антенні деталі за правилом розміру: FAIL 0; площа плат (курт'ярди KiCad, деталі без роз'ємів джгутів): OPEN 3; з роз'ємами джгутів build/16: OPEN 0 (MODEL ESTIMATE, не в гейті; рішення — розбиття й розкладка плат)
 - термоінтерфейси: FAIL 0, OPEN 3; ущільнення: PASS (model)
 - звірка з STEP постачальника: PASS (model vs vendor STEP)
 - перетини тіл B-rep (оболонки, пластина, кутники, РЧ-відсік, лоток) з конвертами: 0; деталі з кількох тіл («висячі» елементи): 0
@@ -55,21 +55,23 @@
 | R-VENT-REACH | space behind each vent seat minus the thread reach (worst vent) | 5.88 | 0.5 | PASS (model) |
 | R-PANEL-FLAT | side-face cut-outs on the flat face and clear of the seam belt (split plane +- 5.5 mm) | none |  | PASS (model) |
 | R-PWR-KEY | E-Switch PV6F240SS panel thickness at the power key (top wall) and at SW501 (hatch board 1.6 mm) | 2.5 / 1.6 | 1 / 10 | PASS (model) |
-| R-PWR-KEY-NUT | PV6 panel nut inside the top wall clear of the HDMI board, the display clamp bosses and the top Al angle | {'key_x': 155.5, 'key_z': 48.5, 'nut_d_assumed': 20.0} |  | OPEN: the PV6 datasheet gives no nut size; a D20 nut (assumption) at x 155.5 / z 48.5 would reach the HDMI board edge (x 146.2) and the top-right display clamp boss (z >= 56.5): measure the received nut; if it does not clear, re-place the key (wave 2 layout) |
+| R-PWR-KEY-NUT | PV6 panel nut inside the top wall (reserve nut.PWR_KEY) and the key body clear of the HDMI board, the display and its clamp plates, the top Al angle and the plate (the nut inside the plate notch), >= 0.5 | {'key_x': 155.5, 'key_z': 50.0, 'nut_reserve': [22.0, 3.5], 'clear_mm': {'body-display': 2.58, 'body-display_clamp.3': 0.58, 'body-hdmi_board': 1.3, 'body-plate.main': 1.5, 'nut-angle.top.plate': 0.5, 'nut-angle.top.wall': 0.5, 'nut-display_clamp.3': 1.05, 'nut-front_wall': 6.58, 'nut-hdmi_board': 0.8}, 'worst': ['nut-angle.top.plate', 0.5], 'in_plate_notch': True} | 0.5 | OPEN: the nut is not dimensioned (PV6 and PV2 datasheets; DigiKey PV2PV3PV6HEX16 'HEX NUT FOR PV2 SERIES'; parts.json pv6_button nut_src): the reserve D22 x 3.5 (assumption) at x 155.5 / z 50 clears everything by >= 0.5 (worst nut-angle.top.plate 0.50) inside the plate notch, and the key body no longer touches the plate; measure the received nut at incoming inspection: a nut wider than the reserve needs the top Al angle notched or the key moved |
 | R-PLATE-SLOTS | plate harness slots inside the outline with a web >= 1.5 mm to the outline and to every other opening (worst slot) | 1.5 | 1.5 | PASS (model) |
 | R-PLATE-SLOT-FILL | harness wires through each plate slot (build/16-dzhgut.csv rows of the slot segments) against the bare opening | {'SL1': {'opening_mm2': 79.2, 'wires': 27, 'wires_per_awg': {'28': 27}}, 'SL2': {'opening_mm2': 63.0, 'wires': 61, 'wires_per_awg': {'18': 4, '20': 8, '24': 24, '26': 25}}, 'SL3': {'opening_mm2': 67.5, 'wires': 17, 'wires_per_awg': {'20': 2, '24': 8, '26': 7}}} | bundle OD with edge trim inside the opening | OPEN: wire outer diameter (AI-WIRE-PTFE) and edge-trim profile (AI-EDGE-TRIM) not chosen, so the fill is not checked (SL1 carries the whole 40-way S01 ribbon as two stacked 20-way halves; build/16 rows count only its connected conductors); resize SL1/SL2 or add a slot once both are read (wave 2) |
 | R-PWR-MODULES | modules on a board (height + mount standoff) inside the board envelope height there (worst module) | 10.17 | 12.1 | PASS (model) |
 | R-COOLER-A | cooler A: Cu block inside the 32 x 31 keep-in and over SoC + LPDDR5 (cover margin >= 0.5); fan face >= the keep-in minimum and above the 40-pin and 2x2 headers | {'cover_margin': 0.97, 'fan_face_above_board': 10.5, 'tallest_header': 9.65} | {'cover_margin': 0.5, 'fan_face_above_board': 10.0} | PASS (model) |
 | R-VENT-FOAM | battery vent: the thread ends in the 3 mm foam layer, so the foam has a hole >= thread d + 0.5 at the vent | {'V2': 13.0} | 12.5 | PASS (model) |
-| R-HDMI-ROUTE | HDMI cable Q6A to HDMI board: keep-clear route in the envelope check (plug head, bends, plate notch, run) | {'cable_od': 5.2, 'bend_r': 8.0} |  | OPEN: the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN; proposed default (build/15 'Оболонка D15', 2026-11-07): STACK's FPC reserve Adafruit 3550 (right angle) + 3548 + 3560 with a grounded copper-tape wrap; MPN, length and a ferrite for the flat cable TBD until the Adafruit pages are read |
+| R-HDMI-ROUTE | HDMI FPC route Q6A to the Wisecoco input: adapter, fold, ferrite, insert and run envelopes in the envelope check without a conflict; each flex covers its centreline with slack 0-40 mm; flex through the ferrite slot and the plate notch | {'segments': {'FLEX1': {'part': '3560', 'flex_mm': 100.0, 'centreline_mm': 73.8, 'slack_mm': 26.2, 'folds': 2}, 'FLEX2': {'part': '3560', 'flex_mm': 100.0, 'centreline_mm': 83.5, 'slack_mm': 16.5, 'folds': 1}}, 'flex_w': 10.0, 'ferrite_slot': [11.5, 0.5], 'notch': [211.0, 26.5, 15.5, 7.0], 'envelopes': 11, 'folds': 3} |  | PASS (model): Adafruit 3550 on the Q6A receptacle, flex 1 3560 (26.2 mm slack) with the WE-FLAT 74278011 ferrite under the LAB BUS nut, through the plate notch to the HDMI_INSERT reserve right of the BMS, flex 2 3560 (16.5 mm slack) up the strip and along y 78.65-88.65 to the Adafruit 3548 in the Wisecoco input; 3 45-degree folds; labelled assumptions: 3550 axis from the product photos (3550 or 3549 by the receptacle side), flex thickness 0.5 and bend radius 2 not published, insert reserve size, Wisecoco HDMI input at the lower end of the board's right edge (STACK D5: measure the received board); link, EMI of the wrapped flex and the folds stay bench OPEN |
 | R-PPS-LEN | PPS path Q6A J20.7 -> LC76G: harness length <= 200 mm (STACK 5.2 'UART7/PPS wiring <= 20 cm'; E3 J301 note) | {'via_segments_mm': 322, 'branch_mm': 196} | 200 | OPEN (end provisional): S01+S25 = 322 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 196 mm <= 200 (model; ends on board edge zones / envelope faces until the header and pin positions are placed); the margin depends on: J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm) |
 | R-ROUTE-CLEAR | harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings | {'routed': 36, 'clear': 33, 'provisional_end': 36, 'no_route_unplaced_end': ['S39', 'S40'], 'external': ['S33', 'S41'], 'crossing': ['S11', 'S23', 'S34']} |  | OPEN (end provisional): every routed centreline clears the envelopes and structure; 36 of 36 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S39, S40; provisional routes crossing a solid: S11, S23, S34; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27 |
 | R-HDR-HEIGHT | board-side harness headers (build/16 §4) inside the board height limit, or in a computed height zone (component side) / rear zone; heights mated (header + plug) where read, else the header body (labelled); the wire exit beyond the plug is not included (wire TBD, AI-WIRE-PTFE) | {'above_limit': ['J104 MF_top 17.27 mated', 'J109 PH_top 8 mated', 'J110 PH_top 8 mated', 'J111 PH_top 8 mated', 'J112 PH_top 8 mated', 'J113 PH_top 8 mated', 'J114 MF_top 17.27 mated', 'J115 MF_top 17.27 mated', 'J201 PH_top 8 mated', 'J204 PH_top 8 mated', 'J205 MF_top 17.27 mated', 'J207 PH_top 8 mated', 'J506 PH_top 8 mated', 'J507 PH_top 8 mated', 'J508 PH_top 8 mated', 'J304 IDC_top 9.1 body', 'J305 MF_top 17.27 mated', 'J314 MF_top 17.27 mated'], 'height_not_read': ['J105', 'J106', 'J107', 'J108', 'J202', 'J203', 'J206', 'J306', 'J307', 'J313'], 'alternative_fits': ['J104', 'J114', 'J115', 'J205', 'J305', 'J314'], 'alternative_fits_no_zone': [], 'body_height_only': {'IDC_top': ['J304']}} | {'PWR': 4.5, 'PWR_B': 5.5, 'RF': 5.5, 'CTRL': 5.5, 'ENC': 6.5} | OPEN: GR-3 decides (header orientation, board side or board): 18 headers above their board limit (J104 MF_top 17.27 mated, J109 PH_top 8 mated, J110 PH_top 8 mated, J111 PH_top 8 mated, J112 PH_top 8 mated, J113 PH_top 8 mated, J114 MF_top 17.27 mated, J115 MF_top 17.27 mated, J201 PH_top 8 mated, J204 PH_top 8 mated, J205 MF_top 17.27 mated, J207 PH_top 8 mated, J506 PH_top 8 mated, J507 PH_top 8 mated, J508 PH_top 8 mated, J304 IDC_top 9.1 body, J305 MF_top 17.27 mated, J314 MF_top 17.27 mated); as right-angle Micro-Fit (MF_ra 6.98 mm mated) 6 fit (J104, J114, J115, J205, J305, J314); judged on the header body because the mated height is not read: IDC_top (J304); 10 heights not read |
 | R-BOTTOM-PITCH | bottom-face port row: outer flange or inner nut radius of each port + 1 mm <= centre distance (re-space inside x 163-213 if it fails) | {'USB_C_IN-LAB_USB_A': '17.0 mm apart; OPEN: USB_C_IN, LAB_USB_A not modelled', 'USB_C_IN-LAB_BUS': '17.6 mm apart; OPEN: USB_C_IN not modelled', 'USB_C_IN-AUDIO_3V5': '33.3 mm apart; OPEN: USB_C_IN, AUDIO_3V5 not modelled', 'LAB_USB_A-LAB_BUS': '34.3 mm apart; OPEN: LAB_USB_A not modelled', 'LAB_USB_A-AUDIO_3V5': '28.0 mm apart; OPEN: LAB_USB_A, AUDIO_3V5 not modelled', 'LAB_BUS-AUDIO_3V5': '42.2 mm apart; OPEN: AUDIO_3V5 not modelled'} | 1 | OPEN: USB_C_IN, LAB_USB_A, AUDIO_3V5 not modelled (mechanical.json bottom_face '_tbd_reason'); read but not placed: PX0845/A (hex 42) needs 22 mm + the neighbour radius to each neighbour, more than the 17 mm row pitch |
 | R-POD-WALL | S-band pod: bulkhead panel range, gland thread through wall + locknut, vent through-hole range against the pod wall (worst case) | {'RF_IN': 'PASS (model): wall 3.94 <= panel max 6.35; end wall not dimensioned: upper bound (outside - inside length) / 2', 'RF_OUT': 'PASS (model): wall 3.94 <= panel max 6.35; end wall not dimensioned: upper bound (outside - inside length) / 2', 'PWR': 'PASS (model): thread 8 - wall 3.94 - locknut 3 = 1.06 >= 0 (locknut fully on the thread); end wall not dimensioned: upper bound (outside - inside length) / 2', 'VENT': 'PASS (model): wall 3.00 in the through-hole range 2-3.5; side wall, Hammond 1554U section B-B'} |  | PASS (model); the end walls are not dimensioned (upper bound used) |
-| R-PWR-POCKETS | plate relief pocket >= 1 mm under every PWR-A THT pad group (pin field + 1 mm), polyimide over it | {'PK1': 'D36V50F12: 16.40 x 6.24 x 1 deep at x 18.50..34.90, y 77.92..84.16; 10.7 mm to the nearest plate hole', 'PK2': 'D36V50F5: 16.40 x 6.24 x 1 deep at x 18.50..34.90, y 109.92..116.16; 4.8 mm to the nearest plate hole'} | {'depth_min': 1.0, 'plate_t': 2.0} | OPEN: the Pololu pin rows are pocketed (M-07 PK1, PK2); the other PWR-A THT groups (radials C2xx/C511/C512, Keystone 3568 holders F102/F103/F201, the PWR-A harness headers: pcb/partition-budget.json candidates.a pwr_a_tht_pocket_items, 34 items with 72 pads incl. the two Pololu rows) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS) |
-| R-J551 | pod power receptacle J551 (binder M8): wall inside the data-sheet range, cut-out from the data sheet, inner envelope nut.J551 in the envelope check | {'face': 'right', 'y': 106.0, 'z': 30.0, 'wall': 2.5, 'range': [2.0, 6.5], 'hole_d': 10.1, 'proud_outside': 7.5, 'inner': [12.6, 9.5], 'leads_mm': 200.0} | {'wall': [2.0, 6.5]} | PASS (model): 2.5 mm ASA wall inside 2-6.5; inserted from inside (collar on the inner face), SW 11 nut outside, 7.5 mm proud of the right face; plain bore 10.1 (binder proposal 2) |
-| R-FASTENER-STACKS | screw joints: under-head length window between the minimum engagement and the tip limit (generated/fastener-stacks.json) | {'CLOSURE': [15.5, 17.0], 'HATCH': [8.25, 9.75], 'T7_HOLDER': [14.0, 15.5], 'PLATE_PM1': [6.5, 8.0], 'PLATE_PM2': [6.5, 8.0], 'PLATE_PM3': [6.5, 8.0], 'PLATE_PM4': [6.5, 8.0], 'ANGLES': [4.0, 4.0], 'PWR_A-PLATE': [4.0, 4.0], 'PWR_B-STANDOFF': [4.6, 6.1], 'RF-STANDOFF': [4.6, 6.6], 'CTRL': [5.35, 5.6], 'ENC': [5.35, 5.6], 'UFS-BOSS': [4.5, 4.7], 'LIME-PEDESTAL': [5.0, 7.0], 'DISPLAY-CLAMP': [5.75, 6.0]} |  | OPEN: Q6A-STANDOFF, Q6A-PLATE, IMU-CARRIER, POD-LID, POD-PANEL, PWR-BOND, INA228, SWM-2813, HUB-5997, IP2368, FAN-NF-A4X10, BLOWER, HATCH-BOARD, PACK-FUSE, POD-MODULES (thread depth not read or fixing not designed); PASS (model): CLOSURE, HATCH, T7_HOLDER, PLATE_PM1, PLATE_PM2, PLATE_PM3, PLATE_PM4, ANGLES, PWR_A-PLATE, PWR_B-STANDOFF, RF-STANDOFF, CTRL, ENC, UFS-BOSS, LIME-PEDESTAL, DISPLAY-CLAMP |
+| R-PWR-POCKETS | plate relief pocket >= 1 mm under every PWR-A THT pad group (pin field + 1 mm), polyimide over it | {'PK1': 'D36V50F12: 16.40 x 6.24 x 1 deep at x 18.50..34.90, y 77.92..84.16; 10.7 mm to the nearest plate hole', 'PK2': 'D36V50F5: 16.40 x 6.24 x 1 deep at x 18.50..34.90, y 109.92..116.16; 4.8 mm to the nearest plate hole'} | {'depth_min': 1.0, 'plate_t': 2.0} | OPEN: the Pololu pin rows are pocketed (M-07 PK1, PK2); the other PWR-A THT groups (radials, Keystone 3568 fuse holders, the PWR-A harness headers: pcb/partition-budget.json candidates.<chosen> pwr_a_tht_pocket_items, which also list U107/U108) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS prints the current count) (pcb/partition-budget.json candidates.a pwr_a_tht_pocket_items now: 38 items with 120 THT pads, U107/U108 of them pocketed here) |
+| R-J551 | pod power receptacle J551 (binder M8): wall inside the data-sheet range, cut-out from the data sheet, inner envelope nut.J551 in the envelope check | {'face': 'right', 'y': 106.0, 'z': 30.0, 'wall': 2.5, 'range': [2.0, 6.5], 'hole_d': 10.1, 'proud_outside': 7.5, 'inner': [12.6, 9.5], 'leads_mm': 200.0} | {'wall': [2.0, 6.5]} | PASS (model): 2.5 mm ASA wall inside 2-6.5; inserted from inside (collar on the inner face), SW 11 nut outside, 7.5 mm proud of the right face; plain bore 10.1 (binder proposal 2: takes the M10x0.75 body with or without flats); anti-rotation with the flats proposal (9.1 across) OPEN until flats on this part's body are confirmed (the READS-E reading of the scale drawing names none) |
+| R-FASTENER-STACKS | screw joints: under-head length window between the minimum engagement and the tip limit (generated/fastener-stacks.json) | {'CLOSURE': [15.5, 17.0], 'HATCH': [8.25, 9.75], 'T7_HOLDER': [14.0, 15.5], 'PLATE_PM1': [6.5, 8.0], 'PLATE_PM2': [6.5, 8.0], 'PLATE_PM3': [6.5, 8.0], 'PLATE_PM4': [6.5, 8.0], 'ANGLES': [3.53, 4.0], 'PWR_A-PLATE': [3.53, 4.0], 'PWR_B-STANDOFF': [4.6, 6.1], 'RF-STANDOFF': [4.6, 6.6], 'CTRL': [5.35, 5.6], 'ENC': [5.35, 5.6], 'UFS-BOSS': [4.5, 4.7], 'LIME-PEDESTAL': [5.0, 7.0], 'DISPLAY-CLAMP': [5.75, 6.0]} |  | OPEN: HATCH, PWR_A-PLATE, CTRL, ENC, Q6A-STANDOFF, Q6A-PLATE, UFS-BOSS, LIME-PEDESTAL, DISPLAY-CLAMP, IMU-CARRIER, IMU-LID, IMU-BOARD-STANDOFFS, IMU-TRIPOD, POD-LID, POD-PANEL, PWR-BOND, INA228, SWM-2813, HUB-5997, IP2368, FAN-NF-A4X10, BLOWER, HATCH-BOARD, PACK-FUSE, POD-MODULES (thread depth not read, fixing or screw not chosen, or no ISO length in the window); PASS (model): CLOSURE, T7_HOLDER, PLATE_PM1, PLATE_PM2, PLATE_PM3, PLATE_PM4, ANGLES, PWR_B-STANDOFF, RF-STANDOFF |
+| R-F101-ACCESS | F101 for storage (STACK: F1 out for more than 2-4 weeks): the PACK_FUSE carrier with the fuse facing the hatch opening needs carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip; otherwise the seam is opened | {'place': [116.0, 40.0, 22.0, 16.5], 'free_depth': 11.65, 'stack': 17.77, 'stack_parts': {'carrier': 1.6, 'keystone_3568': 7.37, 'mini_fuse_body': 8.8}} | 17.77 | PASS (model): decision - storage keeps the seam procedure: facing the opening, the stack needs 17.77 mm (carrier 1.6 + Keystone 3568 7.37 + MINI body 8.8) against 11.65 mm in front of the USB-A plug bay, and the rest of the hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery tray (envelope MECH-5) and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення') |
+| R-P8-ACCESSORY | P8 external inline accessory (A403 -> A404 in the antenna line, ch4 bias through P8): module envelopes, chain and the parts still open | {'outside_enclosure': True, 'chain': ['J428 antenna feed (SMA input of A403)', 'A403 Flamingo+ FM #2', 'SMA male-male adapter from the LNA V2 package (A403 OUT -> A404 IN)', 'A404 RTL-SDR Blog Wideband LNA V2', 'coax A404 OUT -> P8 (W2 GR-2 net E4_RF_CH4; ch4 bias 4.3 V reaches A404 over it)'], 'modules': {'A403': [73.7, 30.6, 18.7], 'A404': None}, 'envelope': {'length': None, 'w': 30.6, 'h': 18.7}} |  | OPEN: A404: RTL-SDR Blog Wideband LNA V2: the maker's page https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/ (read 2026-11-07 with WebFetch) gives no dimensions and no connector genders; it lists '1x SMA male to SMA male adapter' in the package and 'Requires 3 - 5v bias tee power' (ch4 gives 4.3 V through P8, build/03 P8 row); length = A403 73.7 (reserve) + adapter + A404 (not read); box, adapters, cable and mounting items are SRC-2's (CC-27); sealing of the accessory box is OPEN (T-07); assembly order build/21 E9c |
 | R-TOOL-ACCESS | every closure, hatch and T7-holder screw: clear tool path (counterbore, then d 8.0 for 60 mm) from outside | CLOSURE_1: remove t7_holder first / CLOSURE_2: remove t7_holder first | no fixed solid in a tool path; removable parts only over closure screws | PASS (model) |
 | R-TRIPOD-DISC | tripod plate disc d 50.0 about the 1/4-20: no solid prouder than the plinth face (5.0 mm) | none | plinth d 23.0, 5.0 proud | PASS (model) |
 
@@ -143,7 +145,6 @@ B-rep intersection of every envelope with the shells, plate, angles, RF bay, ped
 - q6a.board ↔ closure.boss6: 0.4 мм
 - hatch_parts ↔ edl_key_body: 0 мм
 - RF.r0 ↔ rfbay.wall.bottom: 0.4 мм
-- pwr_key_body ↔ plate.main: 0 мм
 
 ## Плати: механічний інтерфейс (contract/boards.json)
 
@@ -164,7 +165,7 @@ MODEL ESTIMATE: reported, not gated (OPEN = need at the planning factor exceeds 
 | плата | контур, мм² | курт'ярди деталей, мм² | з них модулі (×1.0), мм² | потреба ×1.5 / ×1.8, мм² | результат | роз'ємів джгутів | курт'ярди роз'ємів, мм² | з роз'ємами ×1.5 / ×1.8, мм² | ширина роз'ємів / крайові зони, мм | результат |
 |---|---|---|---|---|---|---|---|---|---|---|
 | PWR | 7910 | 6631 | 1342 | 9276 / 10863 | OPEN: need 10863 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB) | — | — | — | — | — |
-| PWR_B | 6516 | 2370 | 0 | 3555 / 4266 | PASS (model estimate) | — | — | — | — | — |
+| PWR_B | 6516 | 2370 | 0 | 3555 / 4266 | OPEN: need 4266 mm2 at fill 1.8 > usable 2290 mm2 of pcb/partition-budget.json candidates.a boards.PWR_B (outline minus holes, windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline 6516 mm2 minus only the Pololu windows is an upper bound) (model estimate; partition and placement decide, AREA / PCB) | — | — | — | — | — |
 | RF | 8188 | 2757 | 0 | 4136 / 4963 | PASS (model estimate) | — | — | — | — | — |
 | CTRL | 5915 | 5675 | 1221 | 7901 / 9238 | OPEN: need 9238 mm2 at fill 1.8 > outline 5915 mm2 (model estimate; partition and placement decide, AREA / PCB) | — | — | — | — | — |
 | ENC | 576 | — | — | — | — | 2 | 94 | 141 / 169 | 11 / 12 | PASS (model estimate) |
@@ -211,19 +212,24 @@ MODEL ESTIMATE: reported, not gated (OPEN = need at the planning factor exceeds 
 | CTRL | тил | 0, 0, 34 x 57 | 7.98 | 7.48 | bms |
 | CTRL | тил | 34, 0, 9.5 x 5.5 | 18.48 | 17.98 | plate.ext |
 | CTRL | тил | 43.5, 0, 6.5 x 5.5 | 4.48 | 3.98 | plate.boss2 |
-| CTRL | тил | 34, 5.5, 16 x 8.7 | 18.48 | 17.98 | plate.ext |
-| CTRL | тил | 34, 14.2, 6.2 x 11.3 | 18.48 | 17.98 | plate.ext |
-| CTRL | тил | 40.2, 14.2, 5.6 x 49.6 | 7.68 | 7.18 | hdmi_route_front_up |
-| CTRL | тил | 45.8, 14.2, 4.2 x 11.3 | 18.48 | 17.98 | plate.ext |
-| CTRL | тил | 34, 25.5, 6.2 x 27.5 | 18.48 | 17.98 | plate.main |
-| CTRL | тил | 45.8, 25.5, 4.2 x 38.3 | 18.48 | 17.98 | plate.main |
-| CTRL | тил | 34, 53, 0.8 x 4 | 18.48 | 17.98 | plate.main |
-| CTRL | тил | 34.8, 53, 5.4 x 10.8 | 7.68 | 7.18 | hdmi_route_front_turn |
-| CTRL | тил | 0, 57, 34.8 x 1.2 | 18.48 | 17.98 | plate.main |
-| CTRL | тил | 0, 58.2, 34.8 x 5.6 | 7.68 | 7.18 | hdmi_route_front_run |
-| CTRL | тил | 0, 63.8, 50 x 4.7 | 18.48 | 17.98 | plate.main |
-| CTRL | тил | 0, 68.5, 12 x 14.5 | 18.48 | 17.98 | plate.main |
-| CTRL | тил | 37, 68.5, 13 x 14.5 | 18.48 | 17.98 | plate.main |
+| CTRL | тил | 34, 5.5, 16 x 8 | 18.48 | 17.98 | plate.ext |
+| CTRL | тил | 34, 13.5, 1 x 7.5 | 18.48 | 17.98 | plate.ext |
+| CTRL | тил | 35, 13.5, 11 x 7.5 | 14.98 | 14.48 | hdmi_route_front_up |
+| CTRL | тил | 46, 13.5, 4 x 7.5 | 18.48 | 17.98 | plate.ext |
+| CTRL | тил | 34, 21, 0.5 x 4.5 | 18.48 | 17.98 | plate.ext |
+| CTRL | тил | 34.5, 21, 15.5 x 18 | 13.48 | 12.98 | hdmi_insert |
+| CTRL | тил | 34, 25.5, 0.5 x 13.5 | 18.48 | 17.98 | plate.main |
+| CTRL | тил | 34, 39, 1 x 18 | 18.48 | 17.98 | plate.main |
+| CTRL | тил | 35, 39, 11 x 24.8 | 17.38 | 16.88 | hdmi_route_front_run |
+| CTRL | тил | 46, 39, 4 x 37.5 | 18.48 | 17.98 | plate.main |
+| CTRL | тил | 0, 57, 35 x 8.5 | 18.48 | 17.98 | plate.main |
+| CTRL | тил | 35, 63.8, 11 x 4.7 | 16.48 | 15.98 | hdmi_route_front_turn |
+| CTRL | тил | 0, 65.5, 10 x 11 | 7.98 | 7.48 | hdmi_route_front_rise |
+| CTRL | тил | 10, 65.5, 25 x 3 | 16.98 | 16.48 | hdmi_route_front_flat |
+| CTRL | тил | 10, 68.5, 2 x 8 | 16.98 | 16.48 | hdmi_route_front_flat |
+| CTRL | тил | 37, 68.5, 9 x 8 | 16.48 | 15.98 | hdmi_route_front_turn |
+| CTRL | тил | 0, 76.5, 12 x 6.5 | 18.48 | 17.98 | plate.main |
+| CTRL | тил | 37, 76.5, 13 x 6.5 | 18.48 | 17.98 | plate.main |
 | CTRL | тил | 0, 83, 12 x 10.5 | 5.48 | 4.98 | lime |
 | CTRL | тил | 37, 83, 13 x 10.5 | 5.48 | 4.98 | lime |
 | CTRL | тил | 0, 93.5, 50 x 15.5 | 5.48 | 4.98 | lime |
@@ -276,11 +282,11 @@ MODEL ESTIMATE: reported, not gated (OPEN = need at the planning factor exceeds 
 | J507 | PWR | PH top | 8 (пара) | 10.9 x 5.5 | 4.5 | 12.1 / 0 | — | above the board limit 4.5; fits a component-side height zone |
 | J508 | PWR | PH top | 8 (пара) | 14.9 x 5.5 | 4.5 | 12.1 / 0 | — | above the board limit 4.5; fits a component-side height zone |
 | J304 | CTRL | IDC top | 9.1 (корпус) | 61 x 9 | 5.5 | 5.5 / 0 | — | above the board limit 5.5; fits no computed zone that takes its courtyard (header body 9.1 mm, reference part; mated height not read: TBD) |
-| J305 | CTRL | MF top | 17.27 (пара) | 16.66 x 6.77 | 5.5 | 6.5 / 7.48 | 6.98 (пара); 16.66 x 10.91; 6.5 / 7.48 | above the board limit 5.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back) |
+| J305 | CTRL | MF top | 17.27 (пара) | 16.66 x 6.77 | 5.5 | 6.5 / 17.98 | 6.98 (пара); 16.66 x 10.91; 6.5 / 16.88 | above the board limit 5.5; fits a rear zone (THT from the back); as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back) |
 | J306 | CTRL | PHD top | TBD | — | 5.5 | 5.5 / 0 | — | height of PHD_top not read (TBD) |
 | J307 | CTRL | PHD top | TBD | — | 5.5 | 5.5 / 0 | — | height of PHD_top not read (TBD) |
 | J313 | CTRL | FAN3 top | TBD | 10.08 x 6 | 5.5 | 6.5 / 17.98 | — | height of FAN3_top not read (TBD) |
-| J314 | CTRL | MF top | 17.27 (пара) | 10.66 x 6.77 | 5.5 | 6.5 / 17.98 | 6.98 (пара); 10.66 x 10.91; 6.5 / 17.98 | above the board limit 5.5; fits a rear zone (THT from the back); as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back) |
+| J314 | CTRL | MF top | 17.27 (пара) | 10.66 x 6.77 | 5.5 | 6.5 / 17.98 | 6.98 (пара); 10.66 x 10.91; 6.5 / 16.88 | above the board limit 5.5; fits a rear zone (THT from the back); as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back) |
 
 ## Траси джгутів (модель, generated/harness-routes.json)
 
@@ -316,7 +322,7 @@ PPS (R-PPS-LEN): S01+S25 = 322 мм проти 200 мм; рішення — PPS 
 | S26 | harness | 101 | 67.4 | 1 | 3.87 | — | OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
 | S27 | stock_lead | 115 | 71.6 | 5 | 3.35 | SL1 | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
 | S28 | harness | 42 | 9 | 1 | 3.38 | — | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
-| S29 | harness | 80 | 40.8 | 4 | 2.74 | — | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
+| S29 | harness | 78 | 39.3 | 4 | 2.74 | — | OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
 | S30 | harness | 181 | 129.2 | 8 | 3.35 | SL2 | OPEN (end provisional): hatch-board layout TBD (W2-05): J502 on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone |
 | S31 | harness | 58 | 24.2 | 2 | 2.74 | — | OPEN (end provisional): J522 EDL contact pads on the Q6A not localised (E5 §9): end at the Q6A board edge |
 | S32 | harness | 212 | 162.9 | 6 | 3.87 | SL3 | OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone |
@@ -381,11 +387,17 @@ PPS (R-PPS-LEN): S01+S25 = 322 мм проти 200 мм; рішення — PPS 
 | cooler_a.fan | q6a_cooler_zone | 164-204 | 46-86 | 10.4-20.4 | q6a |
 | q6a_fan_duct | — | 164-204 | 46-86 | 2.5-10.4 | rear_wall |
 | usb_plug_bay | резерв (порожньо) | 116.6-139 | 38.5-56.5 | 14.65-30.65 | free |
-| hdmi_plug_ra | резерв (порожньо) | 186.5-211 | 24-36.2 | 22.2-33.2 | free |
-| hdmi_route_rear | резерв (порожньо) | 211-221.8 | 27.2-32.8 | 25-38.5 | free |
-| hdmi_route_front_up | резерв (порожньо) | 216.2-221.8 | 27.2-76.8 | 40.5-51.3 | free |
-| hdmi_route_front_turn | резерв (порожньо) | 210.8-221.8 | 66-76.8 | 45.7-51.3 | free |
-| hdmi_route_front_run | резерв (порожньо) | 146.2-221.8 | 71.2-76.8 | 45.7-51.3 | free |
+| hdmi_fpc_q6a | adafruit_3550 | 186.45-203.45 | 21.23-36.23 | 16.22-35.22 | free |
+| hdmi_route_rear | резерв (порожньо) | 189.45-222 | 11.6-22 | 10.5-16 | free |
+| hdmi_ferrite | wurth_74278011 | 201.5-209.5 | 8.8-24.8 | 10.5-15.5 | free |
+| hdmi_route_rise | резерв (порожньо) | 211-222 | 21.6-33.5 | 10.5-38.5 | free |
+| hdmi_route_front_up | резерв (порожньо) | 211-222 | 26.5-34 | 40.5-44 | free |
+| hdmi_insert | — | 210.5-226.5 | 34-52 | 40.5-45.5 | plate_front |
+| hdmi_route_front_run | резерв (порожньо) | 211-222 | 52-76.8 | 40.5-41.6 | free |
+| hdmi_route_front_turn | резерв (порожньо) | 211-222 | 76.8-89.5 | 40.5-42.5 | free |
+| hdmi_route_front_flat | резерв (порожньо) | 176-211 | 78.5-89.5 | 40.5-42 | free |
+| hdmi_route_front_rise | резерв (порожньо) | 171.7-186 | 78.5-89.5 | 40.5-51 | free |
+| hdmi_fpc_disp | adafruit_3548 | 146.2-171.7 | 75-92.3 | 45.5-50.5 | free |
 | hatch_parts | — | 116-138 | 40-90 | 2.5-13.5 | rear_wall |
 | edl_key_body | pv6_button | 119-135 | 72-88 | 13.5-28.1 | rear_wall |
 | t7_gland_body | — | 143-157 | 59-73 | 2.5-15.5 | rear_wall |
@@ -401,7 +413,8 @@ PPS (R-PPS-LEN): S01+S25 = 322 мм проти 200 мм; рішення — PPS 
 | ina228 | adafruit_ina228_5832 | 72.6-92.8 | 39-64.8 | 5.5-15.6 | rear_wall |
 | swm_2813 | pololu_2813 | 93.3-113.62 | 39-64.4 | 5.5-15.6 | rear_wall |
 | gx16 | gx16_socket | 165-185 | 15-35 | 2.5-24.5 | rear_wall |
-| pwr_key_body | pv6_button | 147.5-163.5 | 140.8-161.3 | 40.5-56.5 | front_wall |
+| pwr_key_body | pv6_button | 147.5-163.5 | 140.8-161.3 | 42-58 | front_wall |
+| nut.PWR_KEY | — | 144.5-166.5 | 157.8-161.3 | 39-61 | front_wall |
 | nut.P1 | — | 38.88-48.12 | 155.9-159.3 | 25.38-34.62 | angle |
 | nut.P2 | — | 58.88-68.12 | 155.7-159.3 | 25.38-34.62 | angle |
 | nut.P3 | — | 78.88-88.12 | 155.7-159.3 | 25.38-34.62 | angle |

@@ -9,24 +9,24 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295",
-      "bytes": 113086
+      "sha256": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
+      "bytes": 115484
     },
     "design/E2.json": {
       "sha256": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
       "bytes": 371902
     },
     "design/E3.json": {
-      "sha256": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b",
-      "bytes": 206255
+      "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
+      "bytes": 211423
     },
     "design/E4.json": {
-      "sha256": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17",
-      "bytes": 229512
+      "sha256": "b7e76b58e992f767726d4d2481d1100987e9cb296a45784f9ebbaac260872595",
+      "bytes": 229603
     },
     "design/E5.json": {
-      "sha256": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639",
-      "bytes": 115907
+      "sha256": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f",
+      "bytes": 123087
     },
     "STACK.md": {
       "sha256": "a9475a40d0f735e392b9bc7b3ebbff8cd6193af1276d316238180cca79def48e",
@@ -38,24 +38,24 @@
     }
   },
   "scope": {
-    "graph_components": 839,
-    "graph_pins": 2718,
+    "graph_components": 849,
+    "graph_pins": 2742,
     "graph_sheets": {
-      "E1": 89,
+      "E1": 91,
       "E2": 276,
-      "E3": 169,
+      "E3": 172,
       "E4": 221,
-      "E5": 84
+      "E5": 89
     },
     "top_level_circuit_assemblies": 69,
     "source_kind_module_count": 57,
-    "detailed_subinterfaces": 219,
+    "detailed_subinterfaces": 229,
     "catalogue_only_or_factory_internal_entities": 30,
     "catalogue_documents": 102,
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2555,
+    "graph_connected_pins": 2579,
     "graph_nc_pins": 163,
     "canonical_nets": 486,
     "cross_assembly_nets": 232
@@ -88,9 +88,11 @@
         "BT103",
         "BT104",
         "U101",
-        "F101"
+        "F101",
+        "J116",
+        "J117"
       ],
-      "component_count": 6,
+      "component_count": 8,
       "named_nets": [
         "E1_CELL0",
         "E1_CELL1",
@@ -6735,9 +6737,12 @@
         "C340",
         "C341",
         "R390",
-        "R391"
+        "R391",
+        "J320",
+        "J321",
+        "J322"
       ],
-      "component_count": 6,
+      "component_count": 9,
       "named_nets": [
         "E3_IMU3V3",
         "E3_IMU_CS_N",
@@ -9954,9 +9959,13 @@
         "C516",
         "R517",
         "TP501",
-        "U540"
+        "U540",
+        "J514",
+        "J515",
+        "J516",
+        "J517"
       ],
-      "component_count": 10,
+      "component_count": 14,
       "named_nets": [
         "3V3_Q6A",
         "E5_FAULT_T7",
@@ -10366,9 +10375,10 @@
         "C552",
         "C553",
         "TP503",
-        "J551"
+        "J551",
+        "J518"
       ],
-      "component_count": 17,
+      "component_count": 18,
       "named_nets": [
         "AUX12",
         "BIAS_SB_LNA",
@@ -11013,6 +11023,86 @@
       ],
       "coverage_constraints": [
         "No UART/I2C exists in this graph. Model protected path, cell OV/UV/current trip, balance and fault state without inventing a Daly serial protocol. Raw B0 and protected P- must remain distinct.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E1/J116",
+      "parent_assembly": "E1-CIR-01",
+      "ref": "J116",
+      "value": "Майданчик проводу 18 AWG: вхід F101 від BT104.+",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E1_CELL4"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "E1_CELL4 від BT104.+",
+          "type": "passive",
+          "net": "E1_CELL4"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E1.json",
+          "ref": "J116",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Мідний майданчик під провід (W2 GR-4) на носійній платі PACK_FUSE, купувати нічого. Провід 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм, ізоляція 1.75 ±0.13 мм) паяється в отвір посадкового місця KiCad SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм); мідь плати веде до тримача F101. J116 — вхід: провід від BT104.+ (найкоротший, у паку), мідь до F101.1."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E1/J117",
+      "parent_assembly": "E1-CIR-01",
+      "ref": "J117",
+      "value": "Майданчик проводу 18 AWG: вихід F101 у S05",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E1_SHUNT_P"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "E1_SHUNT_P до S05",
+          "type": "passive",
+          "net": "E1_SHUNT_P"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E1.json",
+          "ref": "J117",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Мідний майданчик під провід (W2 GR-4) на носійній платі PACK_FUSE, купувати нічого. Провід 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм, ізоляція 1.75 ±0.13 мм) паяється в отвір посадкового місця KiCad SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм); мідь плати веде до тримача F101. J117 — вихід: мідь від F101.2, провід S05-02 до J105.2 на PWR-A (build/16)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
         "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
       ],
       "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
@@ -18891,6 +18981,188 @@
       "protocol_fidelity_boundary": "Source interface identified; exact implementation and test coverage are not assessed by this inventory."
     },
     {
+      "module_id": "E3/J320",
+      "parent_assembly": "E3-CIR-13",
+      "ref": "J320",
+      "value": "Майданчики живлення RP2040-Zero U309 на IMU_CARRIER",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E5_IMU_VIN",
+        "GND",
+        "E3_IMU3V3"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "→ U309.5V",
+          "type": "passive",
+          "net": "E5_IMU_VIN"
+        },
+        {
+          "number": "2",
+          "name": "→ U309.GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "← U309.3V3",
+          "type": "passive",
+          "net": "E3_IMU3V3"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E3.json",
+          "ref": "J320",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Майданчики носійної плати IMU_CARRIER (W2 GR-4), купувати нічого. Від кожного майданчика — один провід 26 AWG (Alpha Wire 5853: 7/34, жила 0.48 мм) до виводу модуля, названого в імені контакту; модулі стоять на стійках 13 мм над носієм (mechanical/params/imu_pack.json). SPI SCK/MOSI/MISO, INT і RST з'єднуються модуль–модуль, без носійної плати. Посадкове місце KiCad SolderWire 0.15 мм² (D 0.5 мм, отвір 0.7 мм)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E3/J321",
+      "parent_assembly": "E3-CIR-13",
+      "ref": "J321",
+      "value": "Майданчики сигналів RP2040-Zero U309 на IMU_CARRIER",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "IMU_TX",
+        "IMU_RX",
+        "E3_IMU_CS_N",
+        "E3_IMU_WAKE_N"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "→ U309.GP0 (TX)",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "2",
+          "name": "→ U309.GP1 (RX)",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "3",
+          "name": "→ U309.GP5 (CS)",
+          "type": "passive",
+          "net": "E3_IMU_CS_N"
+        },
+        {
+          "number": "4",
+          "name": "→ U309.GP8 (WAKE)",
+          "type": "passive",
+          "net": "E3_IMU_WAKE_N"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E3.json",
+          "ref": "J321",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Майданчики носійної плати IMU_CARRIER (W2 GR-4), купувати нічого. Від кожного майданчика — один провід 26 AWG (Alpha Wire 5853: 7/34, жила 0.48 мм) до виводу модуля, названого в імені контакту; модулі стоять на стійках 13 мм над носієм (mechanical/params/imu_pack.json). SPI SCK/MOSI/MISO, INT і RST з'єднуються модуль–модуль, без носійної плати. Посадкове місце KiCad SolderWire 0.15 мм² (D 0.5 мм, отвір 0.7 мм)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E3/J322",
+      "parent_assembly": "E3-CIR-13",
+      "ref": "J322",
+      "value": "Майданчики BNO085 U314 на IMU_CARRIER",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E3_IMU3V3",
+        "GND",
+        "E3_IMU_CS_N",
+        "E3_IMU_WAKE_N"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "→ U314.VIN",
+          "type": "passive",
+          "net": "E3_IMU3V3"
+        },
+        {
+          "number": "2",
+          "name": "→ U314.GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "→ U314.CS",
+          "type": "passive",
+          "net": "E3_IMU_CS_N"
+        },
+        {
+          "number": "4",
+          "name": "→ U314.P0 (PS0/WAKE)",
+          "type": "passive",
+          "net": "E3_IMU_WAKE_N"
+        },
+        {
+          "number": "5",
+          "name": "→ U314.P1 (PS1)",
+          "type": "passive",
+          "net": "E3_IMU3V3"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E3.json",
+          "ref": "J322",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Майданчики носійної плати IMU_CARRIER (W2 GR-4), купувати нічого. Від кожного майданчика — один провід 26 AWG (Alpha Wire 5853: 7/34, жила 0.48 мм) до виводу модуля, названого в імені контакту; модулі стоять на стійках 13 мм над носієм (mechanical/params/imu_pack.json). SPI SCK/MOSI/MISO, INT і RST з'єднуються модуль–модуль, без носійної плати. Посадкове місце KiCad SolderWire 0.15 мм² (D 0.5 мм, отвір 0.7 мм)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
       "module_id": "E3/J304",
       "parent_assembly": "E3-CIR-15",
       "ref": "J304",
@@ -26566,6 +26838,180 @@
       "protocol_fidelity_boundary": "Source interface identified; exact implementation and test coverage are not assessed by this inventory."
     },
     {
+      "module_id": "E5/J514",
+      "parent_assembly": "E5-CIR-05",
+      "ref": "J514",
+      "value": "X24S1-T7A: JST PH 3, боковий вхід, S24",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "GND",
+        "3V3_Q6A",
+        "EN_T7"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project harness header assignment (build/16 §4, tools/assembly_data.py HEADERS); header position and orientation by the board layout",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "3",
+          "name": "EN_T7",
+          "type": "passive",
+          "net": "EN_T7"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E5.json",
+          "ref": "J514",
+          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-4)"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Роз'єм джгута X24S1-T7A (build/16 §4; W2 GR-4): на вставці T7_INSERT, сегмент S24; номери контактів = контакти джгута (tools/assembly_data.py HEADERS), 1:1 з J311.1–3 на CTRL. Бічний вхід S3B-PH-K-S (висота 4.8 мм, JST ePH): провід іде вздовж кабелю USB3 під термоусадкою вставки."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E5/J515",
+      "parent_assembly": "E5-CIR-05",
+      "ref": "J515",
+      "value": "Майданчик VBUS-жили кабелю T7: вхід від Q6A J5",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E5_VBUS_J5"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "VBUS від Q6A J5",
+          "type": "passive",
+          "net": "E5_VBUS_J5"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E5.json",
+          "ref": "J515",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "VBUS-жилу цілісного кабелю A–C розрізано лише на вставці (W2 GR-4, E5 §7): кінець з боку Q6A J5 — у J515 (→ U505.6 IN), кінець з боку T7 — у J516 (U505.1 OUT →); GND-жилу не розривають, до J517 веде короткий відвід (зберегти повернення струму й екран кабелю). Посадкове місце KiCad SolderWire 0.75 мм² (D 1.25 мм, отвір 1.6 мм) бере жилу до 20 AWG (Alpha Wire 5856, жила 1.02 мм); переріз VBUS- і GND-жил обраного кабелю не опубліковано — виміряти до збирання (E5-05)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E5/J516",
+      "parent_assembly": "E5-CIR-05",
+      "ref": "J516",
+      "value": "Майданчик VBUS-жили кабелю T7: вихід до T7",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E5_VBUS_T7"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "VBUS до T7",
+          "type": "passive",
+          "net": "E5_VBUS_T7"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E5.json",
+          "ref": "J516",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "VBUS-жилу цілісного кабелю A–C розрізано лише на вставці (W2 GR-4, E5 §7): кінець з боку Q6A J5 — у J515 (→ U505.6 IN), кінець з боку T7 — у J516 (U505.1 OUT →); GND-жилу не розривають, до J517 веде короткий відвід (зберегти повернення струму й екран кабелю). Посадкове місце KiCad SolderWire 0.75 мм² (D 1.25 мм, отвір 1.6 мм) бере жилу до 20 AWG (Alpha Wire 5856, жила 1.02 мм); переріз VBUS- і GND-жил обраного кабелю не опубліковано — виміряти до збирання (E5-05)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E5/J517",
+      "parent_assembly": "E5-CIR-05",
+      "ref": "J517",
+      "value": "Майданчик відводу GND-жили кабелю T7",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "GND кабелю",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E5.json",
+          "ref": "J517",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "VBUS-жилу цілісного кабелю A–C розрізано лише на вставці (W2 GR-4, E5 §7): кінець з боку Q6A J5 — у J515 (→ U505.6 IN), кінець з боку T7 — у J516 (U505.1 OUT →); GND-жилу не розривають, до J517 веде короткий відвід (зберегти повернення струму й екран кабелю). Посадкове місце KiCad SolderWire 0.75 мм² (D 1.25 мм, отвір 1.6 мм) бере жилу до 20 AWG (Alpha Wire 5856, жила 1.02 мм); переріз VBUS- і GND-жил обраного кабелю не опубліковано — виміряти до збирання (E5-05)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
       "module_id": "E5/J520",
       "parent_assembly": "E5-CIR-06",
       "ref": "J520",
@@ -27937,6 +28383,67 @@
         "W425 (E4) is the cable plugged into J551: field-wired M8 male plug 99 3379 100 03 at this end (its contacts 1/3/4 mirror the receptacle), USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.",
         "Lead colours are binder's (1 brown, 3 blue, 4 black): the black lead is the unused contact 4, not GND; insulate it at the PWR end. Map W425 by contact number, not by colour (its black conductor is GND).",
         "Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E5/J518",
+      "parent_assembly": "E5-CIR-08",
+      "ref": "J518",
+      "value": "Майданчики кабелю IMU HELU 49655 на IMU_CARRIER",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E5_IMU5V",
+        "GND",
+        "IMU_TX",
+        "IMU_RX"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "project_harness_assignment_not_factory_pinout",
+      "pinout_gate": "project solder-wire pad assignment (W2 GR-4, design graph); pad position by the insert-board layout; wire and conductor gauge as the component notes",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "5V raw від J550.1",
+          "type": "passive",
+          "net": "E5_IMU5V"
+        },
+        {
+          "number": "2",
+          "name": "GND від J550.2",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "packTX від J550.3",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "4",
+          "name": "packRX від J550.4",
+          "type": "passive",
+          "net": "IMU_RX"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E5.json",
+          "ref": "J518",
+          "component_source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Жили 1–4 кабелю J550 (HELUKABEL 49655: 4 × 0.14 мм², 18 × 0.1 мм) паяються в J518.1–4 у тому самому порядку, що J550 і GX16 J504 (W2 GR-4); обплетення — 360° у SKINTOP паку, не на платі (J550.S → CHASSIS). Посадкове місце KiCad SolderWire 0.15 мм² (D 0.5 мм, отвір 0.7 мм): жила 18 × 0.1 мм ≈ 0.5 мм (5 × 0.1 мм для укладання 1 + 6 + 12, арифметика). Купувати нічого (майданчики носійної плати IMU_CARRIER)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -30184,6 +30691,8 @@
     "BT104": "E1-CIR-01",
     "U101": "E1-CIR-01",
     "F101": "E1-CIR-01",
+    "J116": "E1-CIR-01",
+    "J117": "E1-CIR-01",
     "R101": "E1-CIR-02",
     "U102": "E1-CIR-02",
     "C101": "E1-CIR-02",
@@ -30692,6 +31201,9 @@
     "C341": "E3-CIR-13",
     "R390": "E3-CIR-13",
     "R391": "E3-CIR-13",
+    "J320": "E3-CIR-13",
+    "J321": "E3-CIR-13",
+    "J322": "E3-CIR-13",
     "Q306": "E3-CIR-14",
     "R393": "E3-CIR-14",
     "R394": "E3-CIR-14",
@@ -30980,6 +31492,10 @@
     "R517": "E5-CIR-05",
     "TP501": "E5-CIR-05",
     "U540": "E5-CIR-05",
+    "J514": "E5-CIR-05",
+    "J515": "E5-CIR-05",
+    "J516": "E5-CIR-05",
+    "J517": "E5-CIR-05",
     "J520": "E5-CIR-06",
     "U520": "E5-CIR-06",
     "U506": "E5-CIR-06",
@@ -31006,6 +31522,7 @@
     "C553": "E5-CIR-08",
     "TP503": "E5-CIR-08",
     "J551": "E5-CIR-08",
+    "J518": "E5-CIR-08",
     "U507": "E5-CIR-09",
     "R550": "E5-CIR-09",
     "R551": "E5-CIR-09",
@@ -31732,6 +32249,14 @@
           "ref": "R516",
           "pin": "2",
           "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-05"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J514",
+          "pin": "2",
+          "name": "3V3_Q6A",
           "electrical_type": "passive",
           "assembly": "E5-CIR-05"
         },
@@ -33335,6 +33860,14 @@
         },
         {
           "sheet": "E1",
+          "ref": "J116",
+          "pin": "1",
+          "name": "E1_CELL4 від BT104.+",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-01"
+        },
+        {
+          "sheet": "E1",
           "ref": "J102",
           "pin": "B4",
           "name": "B4",
@@ -34169,6 +34702,14 @@
           "ref": "F101",
           "pin": "2",
           "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-01"
+        },
+        {
+          "sheet": "E1",
+          "ref": "J117",
+          "pin": "1",
+          "name": "E1_SHUNT_P до S05",
           "electrical_type": "passive",
           "assembly": "E1-CIR-01"
         },
@@ -39590,6 +40131,30 @@
           "name": "2",
           "electrical_type": "passive",
           "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J320",
+          "pin": "3",
+          "name": "← U309.3V3",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J322",
+          "pin": "1",
+          "name": "→ U314.VIN",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J322",
+          "pin": "5",
+          "name": "→ U314.P1 (PS1)",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
         }
       ],
       "assemblies": [
@@ -39621,6 +40186,22 @@
           "ref": "R390",
           "pin": "1",
           "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J321",
+          "pin": "3",
+          "name": "→ U309.GP5 (CS)",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J322",
+          "pin": "3",
+          "name": "→ U314.CS",
           "electrical_type": "passive",
           "assembly": "E3-CIR-13"
         }
@@ -39779,6 +40360,22 @@
           "ref": "R391",
           "pin": "1",
           "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J321",
+          "pin": "4",
+          "name": "→ U309.GP8 (WAKE)",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J322",
+          "pin": "4",
+          "name": "→ U314.P0 (PS0/WAKE)",
           "electrical_type": "passive",
           "assembly": "E3-CIR-13"
         }
@@ -45293,6 +45890,14 @@
         },
         {
           "sheet": "E5",
+          "ref": "J518",
+          "pin": "1",
+          "name": "5V raw від J550.1",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
           "ref": "J507",
           "pin": "2",
           "name": "E5_IMU5V",
@@ -45347,6 +45952,14 @@
           "ref": "C340",
           "pin": "1",
           "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J320",
+          "pin": "1",
+          "name": "→ U309.5V",
           "electrical_type": "passive",
           "assembly": "E3-CIR-13"
         },
@@ -46209,6 +46822,14 @@
           "name": "+",
           "electrical_type": "passive",
           "assembly": "E5-CIR-05"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J515",
+          "pin": "1",
+          "name": "VBUS від Q6A J5",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-05"
         }
       ],
       "assemblies": [
@@ -46250,6 +46871,14 @@
           "pin": "VBUS",
           "name": "5V",
           "electrical_type": "power_in",
+          "assembly": "E5-CIR-05"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J516",
+          "pin": "1",
+          "name": "VBUS до T7",
+          "electrical_type": "passive",
           "assembly": "E5-CIR-05"
         }
       ],
@@ -47007,6 +47636,14 @@
           "ref": "R515",
           "pin": "1",
           "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-05"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J514",
+          "pin": "3",
+          "name": "EN_T7",
           "electrical_type": "passive",
           "assembly": "E5-CIR-05"
         }
@@ -50439,6 +51076,22 @@
         },
         {
           "sheet": "E3",
+          "ref": "J320",
+          "pin": "2",
+          "name": "→ U309.GND",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
+          "ref": "J322",
+          "pin": "2",
+          "name": "→ U314.GND",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
           "ref": "Q306",
           "pin": "2",
           "name": "S",
@@ -52607,6 +53260,22 @@
         },
         {
           "sheet": "E5",
+          "ref": "J514",
+          "pin": "1",
+          "name": "GND",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-05"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J517",
+          "pin": "1",
+          "name": "GND кабелю",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-05"
+        },
+        {
+          "sheet": "E5",
           "ref": "J520",
           "pin": "2",
           "name": "TMDS2 shield",
@@ -52850,6 +53519,14 @@
           "ref": "J551",
           "pin": "3",
           "name": "return (GND), lead blue",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J518",
+          "pin": "2",
+          "name": "GND від J550.2",
           "electrical_type": "passive",
           "assembly": "E5-CIR-08"
         },
@@ -53568,6 +54245,14 @@
         },
         {
           "sheet": "E3",
+          "ref": "J321",
+          "pin": "2",
+          "name": "→ U309.GP1 (RX)",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
           "ref": "J307",
           "pin": "10",
           "name": "IMU_RX",
@@ -53603,6 +54288,14 @@
           "ref": "U552",
           "pin": "6",
           "name": "D1− RX",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J518",
+          "pin": "4",
+          "name": "packRX від J550.4",
           "electrical_type": "passive",
           "assembly": "E5-CIR-08"
         },
@@ -53654,6 +54347,14 @@
         },
         {
           "sheet": "E3",
+          "ref": "J321",
+          "pin": "1",
+          "name": "→ U309.GP0 (TX)",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-13"
+        },
+        {
+          "sheet": "E3",
           "ref": "J307",
           "pin": "11",
           "name": "IMU_TX",
@@ -53689,6 +54390,14 @@
           "ref": "U552",
           "pin": "1",
           "name": "D1+ TX",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J518",
+          "pin": "3",
+          "name": "packTX від J550.3",
           "electrical_type": "passive",
           "assembly": "E5-CIR-08"
         },
@@ -57797,10 +58506,10 @@
   "validation": {
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
-    "all839refs_assigned_once": true,
-    "all2555connected_pin_net_triples_exact": true,
+    "all849refs_assigned_once": true,
+    "all2579connected_pin_net_triples_exact": true,
     "all163NCpins_exact": true,
-    "all219subinterface_pin_arrays_exact": true,
+    "all229subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
     "no_project_files_written_by_inventory_task": true,
     "synchronised": "23.10.2026 with the current design graphs: refs removed from the graphs dropped, renamed nets followed, graph-derived fields recomputed; curated fields unchanged"

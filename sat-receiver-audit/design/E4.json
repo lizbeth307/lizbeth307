@@ -1727,7 +1727,7 @@
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
       "mpn": "CA-DKCA1-305L5-APAJ",
       "manufacturer": "Adam Tech",
-      "alt_mpn": "TE Connectivity Linx CSE-SGAM-305-SGFB",
+      "alt_mpn": "TE Connectivity Linx CSE-SGAM-305-SGFB; Adam Tech CA-DKCA1-152L5-APAJ",
       "pins": [
         {
           "number": "CENTER",
@@ -4087,6 +4087,8 @@
       "value": "USB-C power-only 1.50 m, 26 AWG pair",
       "kind": "module",
       "group": "S-band external inline pod",
+      "mpn": "10-03676",
+      "manufacturer": "Tensility",
       "pins": [
         {
           "number": "BRANCH_5V",
