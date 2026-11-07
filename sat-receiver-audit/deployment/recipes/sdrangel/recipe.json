@@ -8,7 +8,16 @@
       {"file": "patches/0001-packetdemod-chase-max-6ddd5bd.patch", "sha256": "7a02154eeae9d3bdbfb352db5b803d473c8ba1fe2a40601cf7fb65f3293e7d8c", "strip": 1,
        "targets": {"plugins/channelrx/demodpacket/packetdemodframer.h": "f4a9c0a05be55805ec5fe62ffe62e916a9216319"},
        "kind": "cherry-pick", "upstream_commit": "6ddd5bd2e19a4f39a39e5cabbe670b1bd0704356",
-       "summary": "f4exb/sdrangel PR #2901 (merged 2026-09-04, in v8.0.0): PACKETDEMOD_CHASE_MAX becomes a macro; at 97e9e21 the static const member has no definition, so libdemodpacketsrv.so fails to load with an undefined symbol (CI run 42408939741)"}
+       "summary": "f4exb/sdrangel PR #2901 (merged 2026-09-04, in v8.0.0): PACKETDEMOD_CHASE_MAX becomes a macro; at 97e9e21 the static const member has no definition, so libdemodpacketsrv.so fails to load with an undefined symbol (CI run 42408939741)"},
+      {"file": "patches/0002-lab-api-loopback.patch", "sha256": "2ac2a9f61df6ad6c9bedf1760bd324c2620b6594c2fc997445e11a267a7c8136", "strip": 1,
+       "targets": {"sdrbase/mainparser.cpp": "1456b8f259b14288e3cd2291df1784056883dd5d"},
+       "kind": "lab",
+       "summary": "MainParser (shared by sdrangel and sdrangelsrv) defaults -a to 127.0.0.1 instead of \"\" (QHostAddress::Any, every interface) and exits on a non-loopback -a: the REST API has no authentication; second layer under the lease unit's IPAddressDeny=any"},
+      {"file": "patches/0003-lab-no-external-commands.patch", "sha256": "5c18956ce477b371992cb6b1c688cd7be6e78c4009fbe10ca4801ac34271c273", "strip": 1,
+       "targets": {"plugins/channelrx/noisefigure/noisefigure.cpp": "af767931aad7f5167914365dc8a82be72aa894f0",
+                   "plugins/channelrx/radioastronomy/radioastronomy.cpp": "3aeec05e5e3ed6849635769b40e77842811a1829"},
+       "kind": "lab",
+       "summary": "NoiseFigure power on/off and RadioAstronomy calibration start/stop run no command (QProcess::execute, QProcess::startDetached), send no SCPI and set no SDR GPIO: these settings come from presets and the REST API; each is logged as refused"}
     ],
     "member": null
   },
@@ -203,7 +212,10 @@
                                        "*adsb*", "*demodais*", "*featureais*", "*m17*", "*freedv*", "*chirpchat*", "*mesh*", "*pager*",
                                        "*endoftrain*", "*rigctl*", "*ambe*", "*lime*", "*remotecontrol*", "*pertester*", "*simpleptt*",
                                        "*featuresid*", "*wdsp*", "*freqscanner*", "*sdrangelbench*", "*.a", "*.pdb", "usr/include/*",
-                                       "opt/sdrangel/include/*"]},
+                                       "opt/sdrangel/include/*",
+                                       "*/liboutput*", "*/libmimo*", "*/libmod*", "*/libfilesource*", "*/liblocalsource*", "*/libremotesource*",
+                                       "*/libudpsource*", "*beamsteering*", "*doa2*", "*interferometer*", "*/libinputremote*", "*/libinputtcpremote*",
+                                       "*/libinputaudio*", "*/libinputlocal*", "*hackrf*", "*bladerf*", "*plutosdr*", "*usrp*", "*xtrx*"]},
     {"kind": "require_paths", "globs": ["opt/sdrangel/bin/sdrangelsrv"]},
     {"kind": "require_paths", "globs": ["opt/sdrangel/bin/sdrangel"]},
     {"kind": "require_paths", "globs": ["usr/bin/sdrangelsrv"]},
@@ -216,11 +228,12 @@
   "notes": [
     "Locked f4exb/sdrangel v7.27.2 = 97e9e21 (sources.lock.json); v8.0.0 (2026-10-24) adds an MCP server feature and new demodulators and stays the next re-pin candidate (build/15, W2 SW-SDRANGEL rows).",
     "deployment/patches/sdrangel-rx-only.patch (vendor_patch target hashes) keeps out of the build: plugins/samplesink and plugins/samplemimo (testsink, fileoutput, localoutput and audiooutput are unconditional at 97e9e21, testmi and testmosync too, audiocatsiso whenever Hamlib is found); the unconditional inputs localinput, audioinput, kiwisdr and remotetcpinput; the M17, Meshtastic and MeshCore modem libraries and WDSP, which only disabled plugins use. The text decoders demodnavtex, demodrtty and demodpacket build only in server mode (build/07-pz-vstanovlennia.md:422). Core libraries install into /opt/sdrangel/lib, so lib/sdrangel holds only plugins/ and pluginssrv/, the tree selftest RX-02 walks.",
-    "source.patches cherry-picks f4exb/sdrangel 6ddd5bd (PR #2901, released in v8.0.0): at 97e9e21 PacketDemodFramer::PACKETDEMOD_CHASE_MAX is a static const member without a definition, so the packet demodulator plugin fails to load (undefined symbol). The RX-only patch also drops the Qt5 GUI OPTIONAL_COMPONENTS WebEngine, WebEngineCore, WebEngineWidgets and Gamepad: Qt5Config.cmake passes REQUIRED to every component of a REQUIRED call, and only map, skymap and gs232controller (none built) use them.",
+    "source.patches cherry-picks f4exb/sdrangel 6ddd5bd (PR #2901, released in v8.0.0): at 97e9e21 PacketDemodFramer::PACKETDEMOD_CHASE_MAX is a static const member without a definition, so the packet demodulator plugin fails to load (undefined symbol). Two +lab patches follow (kind lab, build/15 'Патчі, що не відхиляють TX'): 0002 makes the web API of both binaries default to 127.0.0.1 and refuse a non-loopback -a (upstream \"\" listens on every interface, and the GUI desktop entry passes no -a); 0003 stops the noisefigure and radioastronomy channels from running programs, sending SCPI or setting SDR GPIO from preset or REST settings. The RX-only patch also drops the Qt5 GUI OPTIONAL_COMPONENTS WebEngine, WebEngineCore, WebEngineWidgets and Gamepad: Qt5Config.cmake passes REQUIRED to every component of a REQUIRED call, and only map, skymap and gs232controller (none built) use them.",
     "Every option() the configure evaluates is set (check_options): ON only the build/07 allowlist that noble can build; ENABLE_CHANNELTX, ENABLE_CHANNELMIMO, every Tx and MIMO channel, every device family except RTL-SDR, AirspyHF and SoapySDR, ENABLE_LIBUNWIND, BUILD_BENCH and the profiler are OFF. ENABLE_CHANNELTX_MOD802.15.4 has dots in its name (no cache entry the check reads) and is never added because ENABLE_CHANNELTX is OFF.",
     "Not built although build/07 allows them: sigmffileinput (noble libsigmf 1.0.2-2 is header-only without libsigmf/sigmf_sdrangel_generated.h, cmake/Modules/FindLibSigMF.cmake), satellitetracker (no libsgp4), startracker (no cspice), morsedecoder (no ggmorse) and denoiser (no rnnoise) in the 20261020T000000Z snapshot, and skymap (needs QtWebEngine and remote sky surveys). ENABLE_EXTERNAL_LIBRARIES=OFF keeps the build to prebuilt noble libraries; no libhamlib-dev, libcodec2-dev, libcm256cc-dev or libsigmf is installed.",
     "ARCH_OPT=armv8-a (the noble arm64 baseline) instead of the upstream default native: -march=native would tie the binaries to the CI runner's CPU. VKFFT_BACKEND=1 (upstream default) without a CUDA toolkit: FFTW and KissFFT only, and no Vulkan path although qtbase5-dev pulls libvulkan-dev.",
-    "The package hook (check_recipe.py package) checks the exact plugin and library sets, links /usr/bin/sdrangel and /usr/bin/sdrangelsrv to /opt/sdrangel/bin (the engine lease runs /usr/bin/env sdrangelsrv) and writes the unsigned per-file RX-02 manifest of /opt/sdrangel (status OPEN, never REVIEWED here); runtime_check.py starts sdrangelsrv -a 127.0.0.1 offline and compares the REST plugin lists with the allowlist. CI model only; RX-02 stays BLOCKED until the owner signs a reviewed manifest."
+    "Two receive-only layers after the patch: forbid_paths matches the installed names of every Tx sink (liboutput*), MIMO device (libmimo*), Tx channel (libmod*, the file/local/remote/UDP sources), MIMO channel, network, sound-card and loop input and Tx-capable device family of 97e9e21 (software/tests/test_sdrangel_client.py lists them), and the package hook's exact sets are the allowlist layer: any other file stops the build, nothing is dropped silently.",
+    "The package hook (check_recipe.py package) checks the exact plugin and library sets, links /usr/bin/sdrangel and /usr/bin/sdrangelsrv to /opt/sdrangel/bin (the engine lease runs /usr/bin/env sdrangelsrv) and writes the unsigned per-file RX-02 manifest of /opt/sdrangel (status OPEN, never REVIEWED here); runtime_check.py starts sdrangelsrv offline with the lease command (-a 127.0.0.1 -p 8091), without -a (the patched default must be loopback) and with -a 0.0.0.0 (must be refused), and compares the REST plugin lists with the allowlist where loopback is up. CI model only; RX-02 stays BLOCKED until the owner signs a reviewed manifest."
   ],
   "ci": {"heavy": true, "runtime_depends": [], "tag_samples": []}
 }

@@ -322,7 +322,7 @@ def _symlinks_work():
 
 
 def install_tree(root, extra=(), missing=()):
-    """A synthetic `cmake --install` tree in the reviewed layout (ELF magic in binaries and libraries)."""
+    """A synthetic `cmake --install` tree in the allowlisted layout (ELF magic in binaries and libraries)."""
     prefix = Path(root) / "opt/sdrangel"
     files = (["bin/" + b for b in check_recipe.BINARIES] + ["lib/" + n for n in check_recipe.CORE_LIBRARIES]
              + ["lib/sdrangel/plugins/" + n for n in check_recipe.GUI_PLUGINS] + ["lib/sdrangel/pluginssrv/" + n for n in check_recipe.SERVER_PLUGINS])
@@ -399,7 +399,7 @@ class RecipeTests(unittest.TestCase):
         for name in ("sigmffileinput", "satellitetracker", "startracker", "skymap", "denoiser", "morsedecoder", "soapysdrinput"):
             self.assertNotIn(name, allow)
 
-    def test_patch_removes_exactly_the_reviewed_subdirectories(self):
+    def test_patch_removes_exactly_the_planned_subdirectories(self):
         text = (PROJECT / "deployment/patches/sdrangel-rx-only.patch").read_text(encoding="utf-8")
         targets = set(json.loads((PROJECT / "deployment/patches/target-hashes.json").read_text(encoding="utf-8"))["sdrangel"])
         self.assertEqual(set(build_recipe.patch_paths(text, 1)), targets)
@@ -506,6 +506,203 @@ class RuntimeCheckTests(unittest.TestCase):
         soapy = "\n".join(lines + ["(I) PluginManager::loadPluginsDir: loaded plugin libinputsoapysdrsrv.so"])
         self.assertEqual(runtime_check.log_findings(soapy, soapy=True)[0], [])
         self.assertTrue(runtime_check.log_findings(soapy + "\n(I) PluginManager::loadPluginsDir: loaded plugin libmodamsrv.so", soapy=True)[0])
+
+
+# Review fixes of W2 SW-SDRANGEL (appended TestCases).
+
+# TARGET_NAME at 97e9e21 (read from the locked archive, 2026-11-07) of every Tx sink (plugins/samplesink),
+# MIMO device (plugins/samplemimo), Tx channel (plugins/channeltx), MIMO channel (plugins/channelmimo),
+# network or file sink of plugins/channelrx, and network, sound-card, loop and Tx-capable-device input
+# of plugins/samplesource. Each builds lib<name>.so (GUI) and lib<name>srv.so (server).
+TX_CLASS_TARGETS = (
+    "beamsteeringcwmod", "doa2", "filesink", "filesource", "inputaaroniartsa", "inputaudio", "inputbladerf1", "inputbladerf2",
+    "inputhackrf", "inputkiwisdr", "inputlimesdr", "inputlocal", "inputplutosdr", "inputremote", "inputtcpremote", "inputusrp",
+    "inputxtrx", "interferometer", "localsink", "localsource", "mimoaudiocatsiso", "mimobladerf2", "mimolimesdr", "mimometismiso",
+    "mimoplutosdr", "mimotestmi", "mimoxtrx", "modais", "modam", "modatv", "modchirpchat", "moddatv", "modfreedv", "modieee_802_15_4",
+    "modm17", "modmeshcore", "modmeshtastic", "modnfm", "modpacket", "modpsk31", "modrtty", "modssb", "modwfm", "outputaaroniartsa",
+    "outputaudio", "outputbladerf1", "outputbladerf2", "outputfileoutput", "outputhackrf", "outputlimesdr", "outputlocal",
+    "outputplutosdr", "outputremote", "outputsoapysdr", "outputtestmosync", "outputtestsink", "outputusrp", "outputxtrx", "remotesink",
+    "remotesource", "remotetcpsink", "sigmffilesink", "udpsink", "udpsource")
+
+
+class ForbidPathsTests(unittest.TestCase):
+    """forbid_paths alone (build_recipe.run_checks) is a receive-only layer of its own: it matches the
+    installed names, not the source directories; the package hook's exact sets are the allowlist layer."""
+
+    recipe = deploy.load(RECIPE_DIR / "recipe.json")
+
+    def forbid(self, root):
+        checks = [c for c in self.recipe["checks"] if c["kind"] == "forbid_paths"]
+        self.assertEqual(len(checks), 1)
+        return build_recipe.run_checks({"checks": checks}, Path(root))
+
+    def test_forbid_paths_alone_refuses_an_installed_tx_sink_and_modulator(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-sdr-forbid-") as temporary:
+            install_tree(Path(temporary))
+            self.assertEqual([r["status"] for r in self.forbid(temporary)], ["CI_PASS"])
+        for extra in ("lib/sdrangel/plugins/liboutputaudio.so", "lib/sdrangel/plugins/libmodam.so", "lib/sdrangel/pluginssrv/libmodamsrv.so",
+                      "lib/sdrangel/pluginssrv/libmimotestmisrv.so", "lib/sdrangel/plugins/libinputtcpremote.so"):
+            with tempfile.TemporaryDirectory(prefix="srrx-sdr-forbid-") as temporary:
+                install_tree(Path(temporary), extra=[extra])
+                with self.assertRaises(build_recipe.RecipeError, msg=extra) as caught:
+                    self.forbid(temporary)
+                self.assertIn("forbid_paths failed", str(caught.exception))
+
+    def test_globs_cover_every_tx_class_target_and_no_allowlisted_file(self):
+        import fnmatch
+        globs = [c for c in self.recipe["checks"] if c["kind"] == "forbid_paths"][0]["globs"]
+        hit = lambda path: [g for g in globs if fnmatch.fnmatchcase(path, g)]
+        missed = [path for name in TX_CLASS_TARGETS
+                  for path in ("opt/sdrangel/lib/sdrangel/plugins/lib%s.so" % name, "opt/sdrangel/lib/sdrangel/pluginssrv/lib%ssrv.so" % name)
+                  if not hit(path)]
+        self.assertEqual(missed, [])
+        allowed = (["opt/sdrangel/lib/sdrangel/plugins/" + n for n in check_recipe.GUI_PLUGINS]
+                   + ["opt/sdrangel/lib/sdrangel/pluginssrv/" + n for n in check_recipe.SERVER_PLUGINS]
+                   + ["opt/sdrangel/lib/" + n for n in check_recipe.CORE_LIBRARIES] + ["opt/sdrangel/bin/" + n for n in check_recipe.BINARIES]
+                   + sorted(check_recipe.LINKS) + ["opt/sdrangel/share/applications/sdrangel.desktop", "opt/sdrangel/share/sdrangel/LICENSE",
+                                                   "opt/sdrangel/share/icons/hicolor/scalable/apps/sdrangel_icon.svg",
+                                                   "opt/sdrangel/share/metainfo/org.sdrangel.SDRangel.metainfo.xml", "opt/sdrangel/share/sdrangel/Readme.md"])
+        self.assertEqual({path: hit(path) for path in allowed if hit(path)}, {})
+
+
+class LabPatchTests(unittest.TestCase):
+    """source.patches: the cherry-pick, then recipe patch 0002 (web API on loopback) and 0003 (no
+    program, SCPI or GPIO from the noise figure and radio astronomy channels)."""
+
+    recipe = deploy.load(RECIPE_DIR / "recipe.json")
+
+    @staticmethod
+    def changes(name):
+        text = (RECIPE_DIR / "patches" / name).read_text(encoding="utf-8")
+        removed = [l[1:].strip() for l in text.splitlines() if l.startswith("-") and not l.startswith("---")]
+        added = [l[1:].strip() for l in text.splitlines() if l.startswith("+") and not l.startswith("+++")]
+        return text, removed, added
+
+    def test_recipe_lists_the_cherry_pick_and_the_two_lab_patches_in_order(self):
+        entries = self.recipe["source"]["patches"]
+        self.assertEqual([(e["file"], e["kind"]) for e in entries],
+                         [("patches/0001-packetdemod-chase-max-6ddd5bd.patch", "cherry-pick"), ("patches/0002-lab-api-loopback.patch", "lab"),
+                          ("patches/0003-lab-no-external-commands.patch", "lab")])
+        self.assertEqual(entries[1]["targets"], {"sdrbase/mainparser.cpp": "1456b8f259b14288e3cd2291df1784056883dd5d"})
+        self.assertEqual(entries[2]["targets"], {"plugins/channelrx/noisefigure/noisefigure.cpp": "af767931aad7f5167914365dc8a82be72aa894f0",
+                                                 "plugins/channelrx/radioastronomy/radioastronomy.cpp": "3aeec05e5e3ed6849635769b40e77842811a1829"})
+        for entry in entries:
+            path = RECIPE_DIR / entry["file"]
+            self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), entry["sha256"], entry["file"])
+            self.assertEqual(set(build_recipe.patch_paths(path.read_text(encoding="utf-8"), entry["strip"])), set(entry["targets"]))
+        rx_only = (PROJECT / "deployment/patches/sdrangel-rx-only.patch").read_text(encoding="utf-8")
+        self.assertTrue(set(build_recipe.patch_paths(rx_only, 1)).isdisjoint(t for e in entries for t in e["targets"]))
+
+    def test_0002_makes_loopback_the_default_and_refuses_any_other_address(self):
+        text, removed, added = self.changes("0002-lab-api-loopback.patch")
+        self.assertIn('m_serverAddress = "";   // Bind to any address', removed)
+        self.assertIn('""),', removed)
+        self.assertIn('"127.0.0.1"),', added)  # the -a option default
+        self.assertTrue([l for l in added if l.startswith('m_serverAddress = "127.0.0.1";')])
+        self.assertIn('} else if (!serverAddress.startsWith("127.")) {', added)
+        self.assertIn("exit (EXIT_FAILURE);", added)
+        self.assertTrue([l for l in added if runtime_check.REFUSAL.replace("0.0.0.0", "%s") in l])  # the line the runtime check waits for
+        self.assertFalse([l for l in added if "any address" in l and "upstream" not in l])
+
+    def test_0003_removes_every_program_scpi_and_gpio_path(self):
+        text, removed, added = self.changes("0003-lab-no-external-commands.patch")
+        for needle in ("QProcess::execute(program, allArgs);", "processVISA(commands);", "QProcess::startDetached(program, allArgs);",
+                       'ChannelWebAPIUtils::patchDeviceSetting(getDeviceSetIndex(), "gpioPins", gpioPins);'):
+            self.assertEqual(sum(needle in l for l in removed), 2, needle)
+        self.assertFalse([l for l in added if any(w in l for w in ("QProcess", "processVISA", "patchDeviceSetting", "viPrintf", "allArgs"))])
+        self.assertEqual(sum("refused, not run" in l for l in added), 4)
+
+
+class LivePortAndLeaseContractTests(unittest.TestCase):
+    """SDR-3 and SDR-6: the lease pins the port the client uses, and a lease (empty HOME: no device
+    set, no preset) is served by the live write and read-back."""
+
+    def test_the_lease_pins_the_api_address_and_port_of_the_client(self):
+        template = (PROJECT / "software/systemd/srrx-lease-sdrangelsrv@.service").read_text(encoding="utf-8")
+        start = [line.split("=", 1)[1].split() for line in template.splitlines() if line.startswith("ExecStart=")][0]
+        address, port = start[start.index("-a") + 1], int(start[start.index("-p") + 1])
+        self.assertEqual(sdrangel_client.loopback_endpoint(sdrangel_client.DEFAULT_URL), (address, port))
+        self.assertEqual((address, port), ("127.0.0.1", runtime_check.PORT))
+        transport = sdrangel_client.RestTransport()
+        self.assertEqual((transport.host, transport.port), (address, port))
+        self.assertIn("Environment=HOME=%t/srrx-lease-sdrangelsrv-%i", template.splitlines())  # wiped with each lease
+
+    def test_live_write_and_read_back_without_any_preset(self):
+        fake = FakeSdrangel(patch_polls=2)
+        fake.presets = {}
+        remote = client(fake)
+        result = remote.push_live_lo_ppm(-250, 0)
+        self.assertEqual((result["status"], result["lo_ppm_tenths"], result["presets"], result["hardware_ready"]),
+                         ("LO_PPM_LIVE_WRITTEN", -3, [], False))
+        self.assertEqual(fake.device["LOppmTenths"], -3)
+        self.assertFalse([c for c in fake.calls if c[1].startswith("/sdrangel/preset")])  # no preset is read or written
+        self.assertEqual(remote.verify_live_lo_ppm(-250, 0)["status"], "LO_PPM_LIVE_VERIFIED")
+        with self.assertRaises(SdrangelError) as caught:
+            remote.verify_live_lo_ppm(0, 0)
+        self.assertEqual(caught.exception.code, "LO_PPM_MISMATCH")
+
+    def test_live_refusals_including_a_fresh_lease_without_a_device_set(self):
+        class NoDeviceSet(FakeSdrangel):
+            def handle(self, method, path, query, body):
+                if (method, path) == ("GET", "/sdrangel"):
+                    return 200, {"appname": "SDRangelSrv", "version": "7.27.2", "devicesetlist": {"devicesetcount": 0, "deviceSets": []}}
+                return super().handle(method, path, query, body)
+
+        for fake, call, code in ((NoDeviceSet(), lambda c: c.push_live_lo_ppm(100, 0), "SDRANGEL_NOT_AIRSPYHF"),
+                                 (NoDeviceSet(), lambda c: c.push_lo_ppm(100, 0), "SDRANGEL_NOT_AIRSPYHF"),
+                                 (FakeSdrangel(hwtype="RTLSDR"), lambda c: c.push_live_lo_ppm(100, 0), "SDRANGEL_NOT_AIRSPYHF"),
+                                 (FakeSdrangel(), lambda c: c.verify_live_lo_ppm(100, 1), "SDRANGEL_NOT_AIRSPYHF"),
+                                 (FakeSdrangel(reply_offset=1), lambda c: c.push_live_lo_ppm(100, 0), "LO_PPM_MISMATCH"),
+                                 (FakeSdrangel(read_offset=1), lambda c: c.push_live_lo_ppm(100, 0), "LO_PPM_MISMATCH"),
+                                 (FakeSdrangel(), lambda c: c.push_live_lo_ppm(10050, 0), "SDRANGEL_PPB_OUT_OF_RANGE")):
+            with self.assertRaises(SdrangelError) as caught:
+                call(client(fake))
+            self.assertEqual(caught.exception.code, code)
+            self.assertFalse([c for c in fake.calls if c[0] == "PATCH" and code == "SDRANGEL_NOT_AIRSPYHF"])  # refused before any write
+
+
+class RuntimeRefusalTests(unittest.TestCase):
+    """The default-address and refused runs of runtime_check.py (recipe patch 0002)."""
+
+    def test_refused_run_and_web_api_start_address(self):
+        refusal = "2026-11-07 12:00:00.000 (C) " + runtime_check.REFUSAL + "\n"
+        started_any = "2026-11-07 12:00:00.000 (I) WebAPIServer::start: starting web API server at http://0.0.0.0:8091\n"
+        self.assertEqual(runtime_check.refused_findings(1, refusal), [])
+        for returncode, text in ((0, refusal), (None, refusal), (1, ""), (1, refusal + started_any)):
+            self.assertEqual(len(runtime_check.refused_findings(returncode, text)), 1, (returncode, text))
+        self.assertEqual(runtime_check.api_start_findings(started_any.replace("0.0.0.0", "127.0.0.1")), [])
+        self.assertTrue(runtime_check.api_start_findings(started_any))
+        self.assertTrue(runtime_check.api_start_findings(started_any.replace("0.0.0.0:8091", "127.0.0.1:8092")))
+        self.assertNotIn("-a", runtime_check.DEFAULT_ARGV)
+        self.assertEqual(runtime_check.REFUSED_ARGV[2:], ("-a", "0.0.0.0"))
+        self.assertIn("0.0.0.0", runtime_check.REFUSAL)
+
+
+class UnsignedManifestSelftestTests(unittest.TestCase):
+    """SDR-8: selftest RX-02 (--profile full) on a synthetic install of the three packages with the
+    hook's unsigned manifest as the sdrangel component manifest and no signature: BLOCKED for the
+    missing signature and the OPEN status, and no plugin finding (the built set is the allowlist)."""
+
+    def test_rx02_blocks_the_unsigned_open_manifest_for_exactly_those_reasons(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-sdr-rx02-") as temporary:
+            rootfs = Path(temporary) / "rootfs"
+            prefix = install_tree(rootfs)
+            if _symlinks_work():
+                result = check_recipe.package(rootfs, Path(temporary) / "hook.json")
+                self.assertTrue(result["ok"], result)
+                document = json.loads((Path(temporary) / "hook.json").read_text(encoding="utf-8"))["manifest"]
+            else:  # the hook's own manifest writer, without the /usr/bin links (unprivileged Windows host)
+                document = check_recipe.manifest(prefix)
+            manifest = Path(temporary) / "sdrangel-manifest.json"
+            manifest.write_bytes(check_recipe.canonical(document))
+            report = selftest.run_offline(rootfs, "full", PROJECT / "deployment/receive-only-policy.json",
+                                          manifests={"sdrangel": (manifest, None)})
+        rx02 = [c for c in report["checks"] if c["id"] == "RX-02"][0]
+        self.assertEqual(rx02["status"], "BLOCKED", rx02)
+        self.assertEqual({(f["rule"], f["effect"]) for f in rx02["findings"]},
+                         {("manifest_signature_unverified", "BLOCKED"), ("component_manifest_not_reviewed", "BLOCKED")}, rx02)
+        self.assertEqual(document["status"], "OPEN")
+        self.assertFalse(report["hardware_ready"])
 
 
 if __name__ == "__main__":

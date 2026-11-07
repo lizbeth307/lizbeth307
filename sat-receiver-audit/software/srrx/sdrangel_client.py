@@ -10,9 +10,15 @@ each preset load (STACK.md:143, build/07-pz-vstanovlennia.md:324). labrx adds no
 - lo_ppm_tenths(ppb): integer ppb to tenths of a ppm, halves away from zero (Python's round()
   would give 2 for 250 ppb), within the GUI range -100..100 (+-10.0 ppm, airspyhfgui.ui:174-185).
 - RestTransport: JSON over HTTP to http://127.0.0.1:<port> or http://[::1]:<port> only; the
-  lease starts sdrangelsrv with -a 127.0.0.1 (software/systemd/srrx-lease-sdrangelsrv@.service),
-  so any other host is refused before a connection is made. A connection factory can be
-  given (the tests use an AF_UNIX one: the host regression denies AF_INET sockets).
+  lease starts sdrangelsrv with -a 127.0.0.1 -p 8091 (software/systemd/srrx-lease-sdrangelsrv@.service;
+  DEFAULT_URL is that address), so any other host is refused before a connection is made. One
+  sdrangelsrv lease at a time owns that port (build/15, «SDRangel: один sdrangelsrv»). A
+  connection factory can be given (the tests use an AF_UNIX one: the host regression denies
+  AF_INET sockets).
+- SdrangelClient.push_live_lo_ppm(ppb, device_set): PATCH the running AirspyHF device set with
+  LOppmTenths and read it back; verify_live_lo_ppm() is the read-back alone. This is the lease
+  path: each lease starts sdrangelsrv with an empty HOME (RuntimeDirectory=), so there are no
+  device sets and no presets, and a preset saved there is gone when the lease ends.
 - SdrangelClient.push_lo_ppm(ppb, device_set, presets): for each preset: load it, PATCH the
   AirspyHF device settings with LOppmTenths, read it back, save the preset (PUT
   /sdrangel/preset), load it again and read LOppmTenths back once more. A load is PATCH
@@ -20,6 +26,14 @@ each preset load (STACK.md:143, build/07-pz-vstanovlennia.md:324). labrx adds no
   frequency, then polling until the device shows that frequency again, so a GET never reads
   the settings from before the load. verify_lo_ppm() is the read-back alone, after each load.
   Every mismatch is refused (LO_PPM_MISMATCH).
+
+The lease contract for labd (its call is not wired yet, OPEN): after the lease unit starts, POST
+/sdrangel/deviceset?direction=0 and wait until GET /sdrangel lists the new set, PUT
+/sdrangel/deviceset/{i}/device with {"hwType": "AirspyHF", "serial": <HF+ serial of
+/etc/srrx/devices.json>, "direction": 0}, then push_live_lo_ppm(); after every later preset load
+(which carries the preset's own LOppmTenths) push_live_lo_ppm() again or verify_live_lo_ppm().
+Presets labd imports into the lease (PUT /sdrangel/preset/file from var/lib/lab/sdrangel, a
+policy config path) go through push_lo_ppm() before they are used.
 
 The REST paths and JSON fields are those of sdrbase/resources/webapi/doc/swagger/swagger.yaml at
 97e9e21 (/sdrangel, /sdrangel/presets, /sdrangel/preset, /sdrangel/deviceset/{i}/device/settings;
@@ -33,7 +47,7 @@ import json
 import time
 from urllib.parse import urlencode, urlsplit
 
-DEFAULT_URL = "http://127.0.0.1:8091"
+DEFAULT_URL = "http://127.0.0.1:8091"  # the lease's -a 127.0.0.1 -p 8091 (a host test compares them)
 HWTYPE = "AirspyHF"
 LO_PPM_TENTHS_LIMIT = 100
 LOAD_TIMEOUT_S = 10.0
@@ -231,4 +245,29 @@ class SdrangelClient:
             self._check(self.load_preset(device_set, preset), preset, expected, "after loading")
             checked.append(dict(preset))
         return {"status": "LO_PPM_VERIFIED", "lo_ppm_tenths": expected, "ppb": ppb, "device_set": device_set, "presets": checked,
+                "hardware_ready": False}
+
+    def _live(self, device_set):
+        if self.device_hwtype(device_set) != HWTYPE:
+            raise SdrangelError("SDRANGEL_NOT_AIRSPYHF", "device set %d is not an AirspyHF" % device_set)
+        return {"groupName": "device set %d" % device_set, "name": "live settings"}
+
+    def push_live_lo_ppm(self, ppb, device_set):
+        """Write LOppmTenths = round(ppb/100) into the running AirspyHF device set (no preset: the
+        lease path) and read it back until it has landed; a mismatch is refused."""
+        expected = lo_ppm_tenths(ppb)
+        label = self._live(device_set)
+        reply = self._patch_device(device_set, {"LOppmTenths": expected})
+        if (reply.get("airspyHFSettings") or {}).get("LOppmTenths") != expected:
+            raise SdrangelError("LO_PPM_MISMATCH", "%s: the PATCH reply does not carry LOppmTenths %d" % (label["groupName"], expected))
+        self._check(self._wait(device_set, lambda s: s.get("LOppmTenths") == expected)[1], label, expected, "after the write")
+        return {"status": "LO_PPM_LIVE_WRITTEN", "lo_ppm_tenths": expected, "ppb": ppb, "device_set": device_set, "presets": [],
+                "hardware_ready": False}
+
+    def verify_live_lo_ppm(self, ppb, device_set):
+        """Refuse unless the running AirspyHF device set holds LOppmTenths = round(ppb/100)."""
+        expected = lo_ppm_tenths(ppb)
+        label = self._live(device_set)
+        self._check(self.airspyhf_settings(device_set), label, expected, "now")
+        return {"status": "LO_PPM_LIVE_VERIFIED", "lo_ppm_tenths": expected, "ppb": ppb, "device_set": device_set, "presets": [],
                 "hardware_ready": False}

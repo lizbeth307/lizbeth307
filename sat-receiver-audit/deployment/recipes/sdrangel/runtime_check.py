@@ -5,11 +5,14 @@ check_repo.py installs sdrangel-common, sdrangel and sdrangelsrv offline in a fr
 the pinned snapshot and runs this file alone as uid 1000 under `unshare --net` (loopback only).
 It checks the installed plugin and library sets, starts sdrangelsrv with the engine lease's own
 command (software/systemd/srrx-lease-sdrangelsrv@.service: `/usr/bin/env sdrangelsrv -a
-127.0.0.1 -w ...`), reads the REST API on 127.0.0.1:8091 (instance summary, Rx/Tx/MIMO channel
+127.0.0.1 -p 8091 -w ...`), reads the REST API on 127.0.0.1:8091 (instance summary, Rx/Tx/MIMO channel
 plugins, feature plugins, Rx/Tx/MIMO devices), checks that every listening TCP socket and every
 bound UDP socket is a loopback address, compares the plugins the log says were loaded with the
 server allowlist and stops the server with SIGTERM, as systemd does. A second run adds --soapy, so the
-SoapySDR input plugin (not loaded by the lease while Lime is disabled) is shown to load too.
+SoapySDR input plugin (not loaded by the lease while Lime is disabled) is shown to load too. A
+third run passes no -a: recipe patch 0002 makes the default of the shared MainParser (GUI and
+server) 127.0.0.1, so the web API must still start on loopback; a fourth passes -a 0.0.0.0, which
+the patched parser must refuse (exit status not 0, the refusal in the log, no web API started).
 Finally it writes the unsigned per-file manifest of /opt/sdrangel for selftest RX-02 (the walk of
 deploy.build_inventory; status OPEN) into its report.
 
@@ -55,7 +58,12 @@ CORE_LIBRARIES = frozenset({
     "libsoapysdrdevice.so", "libsdrgui.so", "libsdrsrv.so"})
 SOAPY_PLUGIN = "libinputsoapysdrsrv.so"
 # The ExecStart of the engine lease template (a host test compares them).
-LEASE_ARGV = ("/usr/bin/env", "sdrangelsrv", "-a", "127.0.0.1", "-w", "/var/lib/lab/fftw/sdrangel.wisdom")
+LEASE_ARGV = ("/usr/bin/env", "sdrangelsrv", "-a", "127.0.0.1", "-p", "8091", "-w", "/var/lib/lab/fftw/sdrangel.wisdom")
+# Recipe patch 0002: no -a means 127.0.0.1; a non-loopback -a is refused before anything starts.
+DEFAULT_ARGV = ("/usr/bin/env", "sdrangelsrv")
+REFUSED_ARGV = ("/usr/bin/env", "sdrangelsrv", "-a", "0.0.0.0")
+REFUSAL = "MainParser::parse: SR-RX: refusing web API address 0.0.0.0: not a loopback address"
+REFUSE_TIMEOUT = 30.0
 PORT = 8091
 # REST ids of the server plugins: each plugin's m_channelId / m_featureId / m_hardwareID at 97e9e21.
 RX_CHANNELS = frozenset({"ChannelPower", "AMDemod", "BFMDemod", "WFMDemod", "NFMDemod", "SSBDemod", "NavtexDemod", "RTTYDemod",
@@ -68,6 +76,7 @@ RX_DEVICES_ALLOWED = RX_DEVICES_REQUIRED | {"RTLSDR", "AirspyHF", "SoapySDR"}
 START_TIMEOUT, STOP_TIMEOUT = 90.0, 20.0
 LOADED = re.compile(r"PluginManager::loadPluginsDir: loaded plugin (\S+)")
 SKIPPED = re.compile(r"PluginManager::loadPluginsDir: Soapy SDR disabled skipping (\S+)")
+STARTED = re.compile(r"WebAPIServer::start: starting web API server at http://([0-9.]+):(\d+)")
 
 
 def set_findings(label, found, expected):
@@ -242,6 +251,44 @@ def _logged(log, needle):
         return False
 
 
+def api_start_findings(text):
+    """Every web API start in the log is on 127.0.0.1:PORT (recipe patch 0002 and the lease's -p)."""
+    return ["the web API started on %s:%s, not 127.0.0.1:%d" % (host, port, PORT)
+            for host, port in STARTED.findall(text) if (host, port) != ("127.0.0.1", str(PORT))]
+
+
+def refused_findings(returncode, text):
+    """sdrangelsrv -a 0.0.0.0: the patched MainParser exits with a non-zero status before any web
+    API starts and logs REFUSAL. returncode None: it was still running at REFUSE_TIMEOUT."""
+    findings = []
+    if returncode is None:
+        findings.append("sdrangelsrv -a 0.0.0.0 was still running after %d s" % REFUSE_TIMEOUT)
+    elif returncode == 0:
+        findings.append("sdrangelsrv -a 0.0.0.0 exited with status 0")
+    if REFUSAL not in text:
+        findings.append("the log does not show the refusal of -a 0.0.0.0")
+    if "WebAPIServer::start" in text:
+        findings.append("a web API started although -a 0.0.0.0 must be refused")
+    return findings
+
+
+def refuse(argv, home, log):
+    """Run one sdrangelsrv that must refuse its arguments; returns (exit status or None, log text)."""
+    env = {"PATH": os.environ.get("PATH", "/usr/sbin:/usr/bin:/sbin:/bin"), "HOME": str(home), "LANG": "C.UTF-8",
+           "XDG_RUNTIME_DIR": str(home)}
+    with open(log, "wb") as stream:
+        process = subprocess.Popen(list(argv), stdin=subprocess.DEVNULL, stdout=stream, stderr=subprocess.STDOUT, env=env, cwd=str(home))
+    try:
+        returncode = process.wait(timeout=REFUSE_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        returncode = None
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.wait()
+    return returncode, Path(log).read_text(encoding="utf-8", errors="replace")
+
+
 def serve(argv, home, log, lo_up):
     """Start one sdrangelsrv, wait until it starts its web API server, read the REST API (only with
     loopback up), the bound sockets and stop it. Returns (rest, sockets, log text, findings, rest state)."""
@@ -258,6 +305,10 @@ def serve(argv, home, log, lo_up):
                 findings.append("sdrangelsrv exited with %s before its web API was reached" % process.returncode)
                 break
             started = started or _logged(log, "WebAPIServer::start: starting web API server at http://127.0.0.1:%d" % PORT)
+            elsewhere = api_start_findings(Path(log).read_text(encoding="utf-8", errors="replace"))
+            if elsewhere:
+                findings += elsewhere
+                break
             if started and not lo_up:
                 time.sleep(1.0)  # the listener is set up right before that log line
                 state = "BLOCKED_NO_LOOPBACK"
@@ -315,7 +366,8 @@ def main():
                                          "cannot bring it up, so the REST API on 127.0.0.1:%d cannot be reached here; the plugin "
                                          "set is checked from the server log and the listening socket from /proc/net" % PORT)
     with tempfile.TemporaryDirectory(prefix="srrx-sdrangel-") as temporary:
-        for label, argv, soapy in (("lease", LEASE_ARGV, False), ("soapy", LEASE_ARGV + ("--soapy",), True)):
+        for label, argv, soapy in (("lease", LEASE_ARGV, False), ("soapy", LEASE_ARGV + ("--soapy",), True),
+                                   ("default", DEFAULT_ARGV, False)):
             home = Path(temporary) / label
             home.mkdir(mode=0o700)
             rest, sockets, text, problems, state = serve(argv, home, Path(temporary) / (label + ".log"), lo["up"])
@@ -332,7 +384,15 @@ def main():
                                      "features": sorted(f.get("id") for f in (rest.get("features") or {}).get("features", [])),
                                      "rx_devices": sorted(d.get("hwType") for d in (rest.get("devices_rx") or {}).get("devices", [])),
                                      "sockets": [list(s) for s in sockets], "listener_bind_failed": bind_failed,
-                                     "loaded_plugins": loaded, "log_tail": text.splitlines()[-60:]}
+                                     "loaded_plugins": loaded, "api_started": STARTED.findall(text),
+                                     "log_tail": text.splitlines()[-60:]}
+        home = Path(temporary) / "refused"
+        home.mkdir(mode=0o700)
+        returncode, text = refuse(REFUSED_ARGV, home, Path(temporary) / "refused.log")
+        problems = refused_findings(returncode, text)
+        findings += ["refused run: %s" % p for p in problems]
+        report["runs"]["refused"] = {"argv": list(REFUSED_ARGV), "returncode": returncode, "refused": not problems,
+                                     "log_tail": text.splitlines()[-20:]}
     try:
         document = prefix_manifest()
         report.update(rx02_manifest=document, rx02_manifest_sha256=hashlib.sha256(canonical(document)).hexdigest(),

@@ -2,7 +2,7 @@
 """Package hook of the SDRangel +lab recipe (recipe.json hooks.package, recipes/README.md).
 
   package --destdir DIR --out FILE
-      DIR is the `cmake --install` tree of one build. The hook checks it against the reviewed
+      DIR is the `cmake --install` tree of one build. The hook checks it against the allowlisted
       sets below (the exact plugin files of opt/sdrangel/lib/sdrangel/plugins and pluginssrv, the
       core libraries of opt/sdrangel/lib, the two binaries, no other ELF file anywhere), links
       usr/bin/sdrangel and usr/bin/sdrangelsrv to ../../opt/sdrangel/bin/ (the engine lease runs
@@ -85,7 +85,7 @@ def _set_finding(label, found, expected):
 
 
 def check_tree(destdir):
-    """Findings of one install tree before the links exist (empty list: the reviewed layout)."""
+    """Findings of one install tree before the links exist (empty list: the allowlisted layout)."""
     root = Path(destdir)
     prefix = root / PREFIX
     findings = []

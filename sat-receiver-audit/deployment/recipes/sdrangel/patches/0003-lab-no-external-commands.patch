@@ -1,0 +1,174 @@
+SR-RX recipe patch 0003 (+lab): the noise figure and radio astronomy channels run no program and
+switch no output. At 97e9e21 NoiseFigure::powerOn/powerOff run QProcess::execute of a command and
+send SCPI to a VISA instrument (plugins/channelrx/noisefigure/noisefigure.cpp), and
+RadioAstronomy::startCal/calComplete run QProcess::startDetached of a command and set SDR GPIO
+pins (plugins/channelrx/radioastronomy/radioastronomy.cpp); each of these settings comes from a
+preset or the unauthenticated REST API. After the patch they are logged as refused and not run;
+the measurements themselves are unchanged. The Bench noise source is switched by labd only.
+SDRangel is GPL-3.0 (upstream LICENSE, GNU GPL version 3, "or any later version" in every
+source header); this change is distributed under the same licence.
+---
+diff --git a/plugins/channelrx/noisefigure/noisefigure.cpp b/plugins/channelrx/noisefigure/noisefigure.cpp
+--- a/plugins/channelrx/noisefigure/noisefigure.cpp
++++ b/plugins/channelrx/noisefigure/noisefigure.cpp
+@@ -396,49 +396,18 @@ void NoiseFigure::nextState()
+ 
+ void NoiseFigure::powerOn()
+ {
+-    QString command = m_settings.m_powerOnCommand.trimmed();
+-
+-    if (!command.isEmpty())
+-    {
+-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+-        QStringList allArgs = command.split(" ", Qt::SkipEmptyParts);
+-#else
+-        QStringList allArgs = command.split(" ", QString::SkipEmptyParts);
+-#endif
+-        QString program = allArgs[0];
+-        allArgs.pop_front();
+-        qDebug() << "NoiseFigure::powerOn(): Executing" << program << allArgs;
+-        int exitCode = QProcess::execute(program, allArgs);
+-        if (exitCode) {
+-            qWarning() << "NoiseFigure::powerOn():" << program << "exited with code" << exitCode;
+-        }
++    // SR-RX: SDRangel never switches the noise source or runs a program: the power-on command
++    // and SCPI of a preset or of the REST API are ignored (labd switches the Bench noise source).
++    if (!m_settings.m_powerOnCommand.trimmed().isEmpty() || !m_settings.m_powerOnSCPI.trimmed().isEmpty()) {
++        qWarning("NoiseFigure::powerOn: SR-RX: power-on command and SCPI refused, not run");
+     }
+-
+-    QStringList commands = m_settings.m_powerOnSCPI.split("\n");
+-    processVISA(commands);
+ }
+ 
+ void NoiseFigure::powerOff()
+ {
+-    QStringList commands = m_settings.m_powerOffSCPI.split("\n");
+-    processVISA(commands);
+-
+-    QString command = m_settings.m_powerOffCommand.trimmed();
+-
+-    if (!command.isEmpty())
+-    {
+-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+-        QStringList allArgs = command.split(" ", Qt::SkipEmptyParts);
+-#else
+-        QStringList allArgs = command.split(" ", QString::SkipEmptyParts);
+-#endif
+-        QString program = allArgs[0];
+-        allArgs.pop_front();
+-        qDebug() << "NoiseFigure::powerOff(): Executing" << program << allArgs;
+-        int exitCode = QProcess::execute(program, allArgs);
+-        if (exitCode) {
+-            qWarning() << "NoiseFigure::powerOff():" << program << "exited with code" << exitCode;
+-        }
++    // SR-RX: as powerOn(): the power-off SCPI and command are ignored.
++    if (!m_settings.m_powerOffCommand.trimmed().isEmpty() || !m_settings.m_powerOffSCPI.trimmed().isEmpty()) {
++        qWarning("NoiseFigure::powerOff: SR-RX: power-off command and SCPI refused, not run");
+     }
+ }
+ 
+diff --git a/plugins/channelrx/radioastronomy/radioastronomy.cpp b/plugins/channelrx/radioastronomy/radioastronomy.cpp
+--- a/plugins/channelrx/radioastronomy/radioastronomy.cpp
++++ b/plugins/channelrx/radioastronomy/radioastronomy.cpp
+@@ -348,52 +348,10 @@ bool RadioAstronomy::handleMessage(const Message& cmd)
+ 
+ void RadioAstronomy::startCal(bool hot)
+ {
+-    // Set GPIO pin in SDR to enable calibration
+-    if (m_settings.m_gpioEnabled)
+-    {
+-        int gpioPins;
+-        int gpioDir;
+-        if (ChannelWebAPIUtils::getDeviceSetting(getDeviceSetIndex(), "gpioDir", gpioDir))
+-        {
+-            // Set pin as output
+-            gpioDir |= 1 << m_settings.m_gpioPin;
+-            ChannelWebAPIUtils::patchDeviceSetting(getDeviceSetIndex(), "gpioDir", gpioDir);
+-            if (ChannelWebAPIUtils::getDeviceSetting(getDeviceSetIndex(), "gpioPins", gpioPins))
+-            {
+-                // Set state of pin
+-                if (m_settings.m_gpioSense) {
+-                    gpioPins |= 1 << m_settings.m_gpioPin;
+-                } else {
+-                    gpioPins &= ~(1 << m_settings.m_gpioPin);
+-                }
+-                ChannelWebAPIUtils::patchDeviceSetting(getDeviceSetIndex(), "gpioPins", gpioPins);
+-            }
+-            else
+-            {
+-                qDebug() << "RadioAstronomy::startCal - Failed to read gpioPins setting. Does this SDR support it?";
+-            }
+-        }
+-        else
+-        {
+-            qDebug() << "RadioAstronomy::startCal - Failed to read gpioDir setting. Does this SDR support it?";
+-        }
+-    }
+-
+-    // Execute command to enable calibration
+-    if (!m_settings.m_startCalCommand.isEmpty())
+-    {
+-#if QT_CONFIG(process)
+-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+-        QStringList allArgs = m_settings.m_startCalCommand.split(" ", Qt::SkipEmptyParts);
+-#else
+-        QStringList allArgs = m_settings.m_startCalCommand.split(" ", QString::SkipEmptyParts);
+-#endif
+-        QString program = allArgs[0];
+-        allArgs.pop_front();
+-        QProcess::startDetached(program, allArgs);
+-#else
+-        qWarning() << "RadioAstronomy::startCal: QProcess not supported. Can't run: " << m_settings.m_startCalCommand;
+-#endif
++    // SR-RX: SDRangel switches no calibration source: neither the SDR's GPIO pins nor the
++    // start-calibration command of a preset or of the REST API (it would run any program).
++    if (m_settings.m_gpioEnabled || !m_settings.m_startCalCommand.trimmed().isEmpty()) {
++        qWarning("RadioAstronomy::startCal: SR-RX: calibration GPIO and command refused, not run");
+     }
+ 
+     // Start calibration after requested delay
+@@ -405,40 +363,9 @@ void RadioAstronomy::startCal(bool hot)
+ 
+ void RadioAstronomy::calComplete(MsgCalComplete* report)
+ {
+-    // Set GPIO pin in SDR to disable calibration
+-    if (m_settings.m_gpioEnabled)
+-    {
+-        int gpioPins;
+-        if (ChannelWebAPIUtils::getDeviceSetting(getDeviceSetIndex(), "gpioPins", gpioPins))
+-        {
+-            if (m_settings.m_gpioSense) {
+-                gpioPins &= ~(1 << m_settings.m_gpioPin);
+-            } else {
+-                gpioPins |= 1 << m_settings.m_gpioPin;
+-            }
+-            ChannelWebAPIUtils::patchDeviceSetting(getDeviceSetIndex(), "gpioPins", gpioPins);
+-        }
+-        else
+-        {
+-            qDebug() << "RadioAstronomy::calComplete - Failed to read gpioPins setting. Does this SDR support it?";
+-        }
+-    }
+-
+-    // Execute command to disable calibration
+-    if (!m_settings.m_stopCalCommand.isEmpty())
+-    {
+-#if QT_CONFIG(process)
+-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+-        QStringList allArgs = m_settings.m_stopCalCommand.split(" ", Qt::SkipEmptyParts);
+-#else
+-        QStringList allArgs = m_settings.m_stopCalCommand.split(" ", QString::SkipEmptyParts);
+-#endif
+-        QString program = allArgs[0];
+-        allArgs.pop_front();
+-        QProcess::startDetached(program, allArgs);
+-#else
+-        qWarning() << "RadioAstronomy::calComplete: QProcess not supported. Can't run: " << m_settings.m_startCalCommand;
+-#endif
++    // SR-RX: as startCal(): the GPIO pins and the stop-calibration command are ignored.
++    if (m_settings.m_gpioEnabled || !m_settings.m_stopCalCommand.trimmed().isEmpty()) {
++        qWarning("RadioAstronomy::calComplete: SR-RX: calibration GPIO and command refused, not run");
+     }
+ 
+     // Send calibration result to GUI
