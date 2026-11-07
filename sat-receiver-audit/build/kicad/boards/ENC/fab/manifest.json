@@ -1,0 +1,351 @@
+{
+  "schema": "srrx-fab-manifest-v1",
+  "board_id": "ENC",
+  "status": "PILOT_NOT_FOR_FABRICATION",
+  "label": "NOT RELEASED: model/CI only; bench gates OPEN",
+  "generator": "pcb/fab_export.py",
+  "kicad_version": "10.0.7",
+  "inputs": {
+    "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
+    "board_sha256": "7a122c3361d2a74b2fba5edd4fc4c532afef11475b27978db90c8ca11f046133",
+    "project_sha256": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
+    "spec_projection_sha256": "2cc6aec9318a914fdb54071ced249cf8057df8d724d05ad0683a0c8d4d9e4376",
+    "report_projection_sha256": "9a25aae3dac4c58b4658af2d36355da5ea2c60b98e48d8b463b8d018a678f696",
+    "jlc_bom_rows": [
+      {
+        "Board": "ENC",
+        "Comment": "PEC11R-4220F-S0024",
+        "Designator": "ENC301,ENC302",
+        "Footprint": "RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
+        "LCSC Part #": "C143797",
+        "Mount": "THT"
+      }
+    ],
+    "jlc_bom_rows_sha256": "4e3e15d3bd10215c13370c24d09bf2ba16fb712cbcab60fbbd0ae15e290567f8",
+    "stackup": {
+      "id": "JLC standard 2-layer FR-4",
+      "material": "FR-4",
+      "copper_outer": "1 oz",
+      "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "note": "finished thickness from the spec layers.thickness_mm; JLC tolerance +/-10 % for boards >= 1.0 mm; 1 oz outer copper is the project choice (build/15 rows Шари and Мідь і струмові класи)",
+      "copper_layers": 2,
+      "thickness_mm": 1.6
+    },
+    "stackup_sha256": "5d4429eae592c730808058b5134bdf6fb5f9b87bf3e9f3435e687871bce8f37a",
+    "rf50_nets": [],
+    "note": "projections (F10): an unrelated build/10-jlc-bom.csv row, LCSC stock or spec edit does not stale this set"
+  },
+  "commands": [
+    {
+      "job": "gerbers",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "gerbers",
+        "--output",
+        "<temp>/raw/gerber/",
+        "--layers",
+        "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+        "--subtract-soldermask",
+        "--precision",
+        "6",
+        "<temp>/src/ENC.kicad_pcb"
+      ]
+    },
+    {
+      "job": "drill",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "drill",
+        "--output",
+        "<temp>/raw/drill/",
+        "--format",
+        "excellon",
+        "--drill-origin",
+        "absolute",
+        "--excellon-zeros-format",
+        "decimal",
+        "--excellon-oval-format",
+        "alternate",
+        "--excellon-units",
+        "mm",
+        "--excellon-separate-th",
+        "--generate-map",
+        "--map-format",
+        "gerberx2",
+        "<temp>/src/ENC.kicad_pcb"
+      ]
+    },
+    {
+      "job": "ipcd356",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "ipcd356",
+        "--output",
+        "<temp>/raw/ENC.ipc356",
+        "<temp>/src/ENC.kicad_pcb"
+      ]
+    },
+    {
+      "job": "pos",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "pos",
+        "--output",
+        "<temp>/raw/assembly/ENC-pos-kicad.csv",
+        "--side",
+        "both",
+        "--format",
+        "csv",
+        "--units",
+        "mm",
+        "--exclude-dnp",
+        "<temp>/src/ENC.kicad_pcb"
+      ]
+    }
+  ],
+  "normalisation": [
+    "Gerber and drill-map Gerber: the %TF.CreationDate attribute line (optional in Gerber X2) is removed; 'G04 Created by KiCad (...) date ...*' keeps the creator and loses the date",
+    "Excellon: the '; #@! TF.CreationDate' line is removed; \"; DRILL file KiCad ... date ...\" loses the date",
+    "Gerber job file (.gbrjob): Header.CreationDate is removed (JSON re-written with indent 2)",
+    "IPC-D-356: comment-record dates are removed and file paths become the board file name",
+    "KiCad build strings that start with 10.0.7 become 10.0.7 in generator lines",
+    "after normalisation no date/time stamp and no path of the export directory may remain (checked)"
+  ],
+  "build_quantity": {
+    "instances": 2,
+    "spares": 1,
+    "total": 3
+  },
+  "dnp_excluded": [],
+  "coverage": {
+    "cpl": {
+      "rows": 2,
+      "placed_by_side_and_mount": {
+        "Top": {
+          "THT": 2
+        }
+      },
+      "smd_refs_once_per_side": true
+    },
+    "bom": {
+      "rows": 2,
+      "designators": 2,
+      "tbd": [
+        "J1"
+      ],
+      "boards": 3
+    },
+    "ipc356": {
+      "board_pad_nets": [
+        "ENC_A",
+        "ENC_B",
+        "ENC_SW",
+        "GND"
+      ],
+      "ipc_nets": [
+        "ENC_A",
+        "ENC_B",
+        "ENC_SW",
+        "GND"
+      ],
+      "missing": []
+    },
+    "gerber_x2": {
+      "files": {
+        "gerber/ENC-B_Cu.gbl": "Copper,L2,Bot",
+        "gerber/ENC-B_Mask.gbs": "Soldermask,Bot",
+        "gerber/ENC-B_Paste.gbp": "Paste,Bot",
+        "gerber/ENC-B_Silkscreen.gbo": "Legend,Bot",
+        "gerber/ENC-Edge_Cuts.gm1": "Profile,NP",
+        "gerber/ENC-F_Cu.gtl": "Copper,L1,Top",
+        "gerber/ENC-F_Mask.gts": "Soldermask,Top",
+        "gerber/ENC-F_Paste.gtp": "Paste,Top",
+        "gerber/ENC-F_Silkscreen.gto": "Legend,Top"
+      }
+    },
+    "drill": {
+      "pth_file": 1,
+      "npth_file": 1,
+      "pth_hits": 11,
+      "npth_hits": 2,
+      "board_pth_pads": 11,
+      "board_vias": 0,
+      "board_npth_pads": 2,
+      "maps": [
+        "drill/ENC-NPTH-drl_map.gbr",
+        "drill/ENC-PTH-drl_map.gbr"
+      ]
+    },
+    "passed": true,
+    "area_mm2": 576.0
+  },
+  "problems": [],
+  "sources": {
+    "jlc_bom": {
+      "url": "https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "required BOM columns Comment, Designator, Footprint; .csv/.xls/.xlsx; designators are upper-cased by JLC"
+    },
+    "jlc_cpl": {
+      "url": "https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "CPL columns Designator, Mid X, Mid Y (mm, component centroid), Layer (Top/Bottom), Rotation (degrees, positive counter-clockwise); the page names no coordinate origin and no rotation offsets"
+    },
+    "jlc_kicad": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad",
+      "read": "2026-11-07",
+      "used": "BOM Comment, Designator, Footprint, LCSC Part #; KiCad pos Ref/PosX/PosY/Rot/Side become Designator/Mid X/Mid Y/Rotation/Layer"
+    },
+    "jlc_gerber": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8",
+      "read": "2026-11-07",
+      "used": "layers F/B.Cu (+ inner), F/B.Paste, F/B.Silkscreen, F/B.Mask, Edge.Cuts; Protel extensions; subtract soldermask from silkscreen; drill: alternate oval mode, absolute origin, millimetres, decimal zeros, drill map recommended"
+    },
+    "jlc_capabilities": {
+      "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "used": "FR-4; thickness 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm, tolerance +/-10 % for >= 1.0 mm; 2-layer outer copper 1/2/2.5/3.5/4.5 oz; impedance control listed from 4 layers, standard +/-10 %"
+    },
+    "kicad_cli": {
+      "url": "https://docs.kicad.org/10.0/en/cli/cli.html",
+      "read": "2026-11-07",
+      "used": "options of pcb export gerbers/drill/ipcd356/pos and jobset run"
+    },
+    "kicad_jobs": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs",
+      "read": "2026-11-07",
+      "used": "jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp"
+    }
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "f86c57c52f7adff3ee5d122070d2fe7e8c8cfd1a4f0eaa361fddee04152d0b82",
+      "bytes": 113
+    },
+    {
+      "path": "ENC-fab-notes.pdf",
+      "sha256": "fbe85513209397a26b7b129e40e131145311e7172fca3d0473f285d55c466ce4",
+      "bytes": 7216
+    },
+    {
+      "path": "ENC.ipc356",
+      "sha256": "caaa31155573b3a3d8b0180ef303d64db9c2cea7e730617b2c2cb1d69aa989b2",
+      "bytes": 1552
+    },
+    {
+      "path": "ENC.kicad_jobset",
+      "sha256": "811cc2b5da0d7567df82c121e54fd16c5357b28264e90e1be93f096607c3b838",
+      "bytes": 3319
+    },
+    {
+      "path": "README.md",
+      "sha256": "f658b7f1c46ee3c03e67c72703fc204fdff395f1b4b7be12f9ba2dd64d1e5165",
+      "bytes": 6205
+    },
+    {
+      "path": "assembly/ENC-bom-jlc.csv",
+      "sha256": "3b92a23d763ddfe5c7b8305df3adef70077adbc8a38519c7b12fed16ef4c8d24",
+      "bytes": 458
+    },
+    {
+      "path": "assembly/ENC-cpl-jlc.csv",
+      "sha256": "bac935262ec45aa6e7ac24b1526ab85830e006de359ebfdd47523370e4529902",
+      "bytes": 150
+    },
+    {
+      "path": "assembly/ENC-cpl-rotation-offsets.csv",
+      "sha256": "393a7538c4e6114ca5000a03146f6a76d61a49db32073d385e750eeaa6028205",
+      "bytes": 545
+    },
+    {
+      "path": "assembly/ENC-instances.csv",
+      "sha256": "f7c8bca346c28b07a9615dbf6bafcb868cbfec858da34a81b74171f1f78f4dec",
+      "bytes": 346
+    },
+    {
+      "path": "assembly/ENC-pos-kicad.csv",
+      "sha256": "15f51d15dd7236d7557a6072d3cee1c5b6a8fa391db960dfafdbba673e17aec9",
+      "bytes": 244
+    },
+    {
+      "path": "drill/ENC-NPTH-drl_map.gbr",
+      "sha256": "eff25f99a9b3619ca74488b9beee12378936cbc39aa4ce17deaad1dbc503b426",
+      "bytes": 21666
+    },
+    {
+      "path": "drill/ENC-NPTH.drl",
+      "sha256": "9562237ccc72e7f73309cf6c5d68fb9b526041b2b10fb50634d72ed4af6e0b2b",
+      "bytes": 283
+    },
+    {
+      "path": "drill/ENC-PTH-drl_map.gbr",
+      "sha256": "0bfd6956ab8c41b56f55293cb9730560e334f7095b92471c589374a5ea059da6",
+      "bytes": 47949
+    },
+    {
+      "path": "drill/ENC-PTH.drl",
+      "sha256": "8275264068d0d02ecc40a5a555965a7fd1f3a07facc25ae34449214c197a4468",
+      "bytes": 565
+    },
+    {
+      "path": "gerber/ENC-B_Cu.gbl",
+      "sha256": "c3a6254195603a6f2046a75bbbdd507a21cb3e2e6db7435b87ee376d80b964bf",
+      "bytes": 22044
+    },
+    {
+      "path": "gerber/ENC-B_Mask.gbs",
+      "sha256": "0ed4e5811e44ffcbeee7d0b60678c661824570ede7730a5f465a45f098aa6e54",
+      "bytes": 966
+    },
+    {
+      "path": "gerber/ENC-B_Paste.gbp",
+      "sha256": "063ff1eca27e7c61a9f292c32d339eca1f365e6e13871e0935052fb59e36c689",
+      "bytes": 378
+    },
+    {
+      "path": "gerber/ENC-B_Silkscreen.gbo",
+      "sha256": "18c04156e10e98a63f241d6ba129f37ce08000b568c4f1dcc982b6d557e9f000",
+      "bytes": 976
+    },
+    {
+      "path": "gerber/ENC-Edge_Cuts.gm1",
+      "sha256": "3dbf9fdb5f978e309a8d07566c5fe9d19ddcbd1c5d907aa7d2a03ddbbc52fc21",
+      "bytes": 616
+    },
+    {
+      "path": "gerber/ENC-F_Cu.gtl",
+      "sha256": "abfc274b3f9a11f7cb9a56566f226defcb23bac5e3f788c58cdb0c6df0f72ee5",
+      "bytes": 21629
+    },
+    {
+      "path": "gerber/ENC-F_Mask.gts",
+      "sha256": "6aa1887653a092067554d7a14293fc1b07c413bcbbcdcfd57b0c5ca869d0cbca",
+      "bytes": 966
+    },
+    {
+      "path": "gerber/ENC-F_Paste.gtp",
+      "sha256": "8e0bd85790b8246fda7e0b6163e8132927bd4c01862561f6b511ca9959192d7f",
+      "bytes": 378
+    },
+    {
+      "path": "gerber/ENC-F_Silkscreen.gto",
+      "sha256": "d6abe9278f05e9965216845328e0f49652fe69bb38c2a312887aef83ef4032b8",
+      "bytes": 3159
+    },
+    {
+      "path": "gerber/ENC-job.gbrjob",
+      "sha256": "1141c0062869f6bb1f08b2b0b833ede05858460d092a7fdfa7de17a45299fbd6",
+      "bytes": 2590
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+"Comment","Designator","Footprint","LCSC Part #","Quantity","Boards","Total quantity","Mount","Graph refs","Note"
+"PEC11R-4220F-S0024","ENC","RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx","C143797","1","3","3","THT","ENC: ENCM ENC301, ENCV ENC302",""
+"PH4 pilot placeholder","J1","PinHeader_1x04_P2.00mm_Vertical","TBD","1","3","3","THT","J1: none","TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-3 ENC-side header ref (graph), then PCB-SB1"
