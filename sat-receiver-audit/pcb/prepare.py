@@ -164,7 +164,7 @@ def net_currents():
     raise SystemExit('PCB preparation audit FAIL: tools/assembly_data.py NET_CURRENT not found')
 
 def sense_nets(components,currents):
-    """Kelvin nets (a part value says Kelvin), INA inputs (pins IN+/IN-) and precision divider mid-points (two or more 0.1/0.5 %
+    """Kelvin nets (a part value says Kelvin), INA inputs (pins IN+/IN-, either minus sign) and precision divider mid-points (two or more 0.1/0.5 %
     resistors into an IC input, not a rail): the rule of pcb/partition_budget.py (W2 AREA), applied here to the B2B net list."""
     kelvin,precision,res=set(),set(),{}
     flags=set().union(*(c['_flags'] for c in components))
@@ -172,7 +172,7 @@ def sense_nets(components,currents):
         nets={p['net'] for p in c['pins'] if p.get('net')}
         if 'Kelvin' in c.get('value',''):kelvin|=nets-{'GND'}
         for p in c['pins']:
-            if p.get('net') and re.match(r'IN[+-]\d?$',p.get('name','')):precision.add(p['net'])
+            if p.get('net') and re.match(r'IN[+\-\u2212]\d?$',p.get('name','')):precision.add(p['net'])
         if c['ref'].startswith('R') and re.search(r'0\.[15] ?%',c.get('value','')):
             for n in nets:res.setdefault(n,set()).add(c['ref'])
     for n,refs in res.items():

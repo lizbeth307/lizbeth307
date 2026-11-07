@@ -385,7 +385,7 @@ class Evaluator:
                 kelvin |= set(p["nets"]) - {"GND"}
         for ref, c in self.D.comp.items():
             for pin in c["pins"]:
-                if pin.get("net") and re.match(r"IN[+-]\d?$", pin.get("name", "")):
+                if pin.get("net") and re.match(r"IN[+\-\u2212]\d?$", pin.get("name", "")):
                     precision.add(pin["net"])
             if ref.startswith("R") and re.search(r"0\.[15] ?%", c.get("value", "")):
                 for pin in c["pins"]:
