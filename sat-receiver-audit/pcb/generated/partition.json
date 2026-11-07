@@ -1,12 +1,12 @@
 {
   "summary": {
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-    "components": 839,
-    "schematic_contacts": 2718,
-    "connected_contacts": 2555,
+    "components": 849,
+    "schematic_contacts": 2742,
+    "connected_contacts": 2579,
     "nets": 486,
     "categories": {
-      "bare_board_part": 736,
+      "bare_board_part": 746,
       "harness_assembly": 13,
       "integral_to_host_part": 2,
       "mechanical_or_remote_part": 11,
@@ -21,24 +21,24 @@
       "ENC": 2,
       "HATCH": 5,
       "HDMI_INSERT": 5,
-      "IMU_CARRIER": 8,
-      "PACK_FUSE": 1,
+      "IMU_CARRIER": 12,
+      "PACK_FUSE": 3,
       "PWR_BRANCH": 169,
       "PWR_BRANCH_SW": 107,
       "PWR_MAIN": 67,
       "RF_HF": 14,
       "RF_HMC": 54,
       "RF_INJECTOR": 34,
-      "T7_INSERT": 9,
+      "T7_INSERT": 13,
       "USB_POWER": 20,
       "USB_POWER_SW": 21
     },
-    "graph_assigned_footprints": 737,
-    "portable_graph_assignments": 737,
+    "graph_assigned_footprints": 747,
+    "portable_graph_assignments": 747,
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2555,
+    "xml_compared_connected_pins": 2579,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
@@ -54,7 +54,7 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295"
+        "sha256": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487"
       },
       {
         "file": "design/E2.json",
@@ -62,7 +62,7 @@
       },
       {
         "file": "design/E3.json",
-        "sha256": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b"
+        "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0"
       },
       {
         "file": "design/E4.json",
@@ -70,11 +70,11 @@
       },
       {
         "file": "design/E5.json",
-        "sha256": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
+        "sha256": "be7e960634f1f776264125c7e8d30ce695b0f5302c38ddef08b8421e86da7594"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "6e74404d6a71f8377c77b2bb4d556b7456bccc7b878765c7451a6a4dc766e121"
+        "sha256": "2359c03ba0e9e32355e105286c61dcb3463dd69322f3443c894da88289203209"
       },
       {
         "file": "verification/netlist.xml",
@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "caa325f1d72a6fb531ae284738e235ca75f97b59b5eef78c8ff8fed5ee80b580"
+      "projection_sha256": "5d2a692e76b7631ffd8a4691f337e8680a1eea4b31d21ec7e1506fc701a5d9e5"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
@@ -5616,6 +5616,40 @@
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
     },
     {
+      "ref": "J116",
+      "sheet": "E1",
+      "mount": "pcb_pad",
+      "value": "Майданчик проводу 18 AWG: вхід F101 від BT104.+",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "PACK_FUSE",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 1,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
+      "ref": "J117",
+      "sheet": "E1",
+      "mount": "pcb_pad",
+      "value": "Майданчик проводу 18 AWG: вихід F101 у S05",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "PACK_FUSE",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 1,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
       "ref": "J201",
       "sheet": "E2",
       "mount": "pcb_tht",
@@ -6056,6 +6090,57 @@
       "pin_count": 2,
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
+    },
+    {
+      "ref": "J320",
+      "sheet": "E3",
+      "mount": "pcb_pad",
+      "value": "Майданчики живлення RP2040-Zero U309 на IMU_CARRIER",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "IMU_CARRIER",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 3,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
+      "ref": "J321",
+      "sheet": "E3",
+      "mount": "pcb_pad",
+      "value": "Майданчики сигналів RP2040-Zero U309 на IMU_CARRIER",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "IMU_CARRIER",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 4,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
+      "ref": "J322",
+      "sheet": "E3",
+      "mount": "pcb_pad",
+      "value": "Майданчики BNO085 U314 на IMU_CARRIER",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "IMU_CARRIER",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 5,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "J401",
@@ -6736,6 +6821,91 @@
       "pin_count": 3,
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
+    },
+    {
+      "ref": "J514",
+      "sheet": "E5",
+      "mount": "pcb_tht",
+      "value": "X24S1-T7: JST PH 3, боковий вхід, S24",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "T7_INSERT",
+      "dnp": false,
+      "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 3,
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-4)",
+      "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
+    },
+    {
+      "ref": "J515",
+      "sheet": "E5",
+      "mount": "pcb_pad",
+      "value": "Майданчик VBUS-жили кабелю T7: вхід від Q6A J5",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "T7_INSERT",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 1,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
+      "ref": "J516",
+      "sheet": "E5",
+      "mount": "pcb_pad",
+      "value": "Майданчик VBUS-жили кабелю T7: вихід до T7",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "T7_INSERT",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 1,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
+      "ref": "J517",
+      "sheet": "E5",
+      "mount": "pcb_pad",
+      "value": "Майданчик відводу GND-жили кабелю T7",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "T7_INSERT",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 1,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
+      "ref": "J518",
+      "sheet": "E5",
+      "mount": "pcb_pad",
+      "value": "Майданчики кабелю IMU HELU 49655 на IMU_CARRIER",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "IMU_CARRIER",
+      "dnp": false,
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 4,
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "J520",

@@ -296,6 +296,46 @@
       ]
     },
     {
+      "ref": "J116",
+      "value": "Майданчик проводу 18 AWG: вхід F101 від BT104.+",
+      "kind": "connector",
+      "group": "Пак 4S1P",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "E1_CELL4 від BT104.+",
+          "type": "passive",
+          "net": "E1_CELL4"
+        }
+      ],
+      "notes": [
+        "Мідний майданчик під провід (W2 GR-4) на носійній платі PACK_FUSE, купувати нічого. Провід 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм, ізоляція 1.75 ±0.13 мм) паяється в отвір посадкового місця KiCad SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм); мідь плати веде до тримача F101. J116 — вхід: провід від BT104.+ (найкоротший, у паку), мідь до F101.1."
+      ]
+    },
+    {
+      "ref": "J117",
+      "value": "Майданчик проводу 18 AWG: вихід F101 у S05",
+      "kind": "connector",
+      "group": "Пак 4S1P",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "E1_SHUNT_P до S05",
+          "type": "passive",
+          "net": "E1_SHUNT_P"
+        }
+      ],
+      "notes": [
+        "Мідний майданчик під провід (W2 GR-4) на носійній платі PACK_FUSE, купувати нічого. Провід 18 AWG (Alpha Wire 5857: 19/30, жила 1.27 мм, ізоляція 1.75 ±0.13 мм) паяється в отвір посадкового місця KiCad SolderWire 1 мм² (D 1.4 мм, отвір 1.75 мм); мідь плати веде до тримача F101. J117 — вихід: мідь від F101.2, провід S05-02 до J105.2 на PWR-A (build/16)."
+      ]
+    },
+    {
       "ref": "R101",
       "value": "15 mΩ 1% 2 W (Adafruit R1)",
       "kind": "resistor",

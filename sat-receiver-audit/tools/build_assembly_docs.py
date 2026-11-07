@@ -640,9 +640,12 @@ class Harness:
             for key, ukey, fkey in (("from", "from_unit", "family_from"), ("to", "to_unit", "family_to")):
                 unit = w[ukey]
                 m = re.match(r"([A-Z][A-Z0-9]*\d)\.(\S+)", w[key])
-                if not m or not self.model.is_board(unit) or m[1] not in self.model.by_ref:
+                if not m or m[1] not in self.model.by_ref:
                     continue
                 ref = m[1]
+                # a header of an insert board (W2 GR-4: J514 on T7_INSERT in the cable unit T7A) is a board connector too
+                if not self.model.is_board(unit) and ref not in D.HEADERS:
+                    continue
                 if ref not in D.HEADERS and ref not in EXPLICIT_SEGMENTS:
                     continue
                 found.setdefault(ref, {"unit": unit, "segments": set(), "used": set()})
@@ -798,7 +801,7 @@ def render_harness(model, h):
     lines.append("Кожен роз'єм джгута на платі — позиційне позначення графа `design/E[1-5].json` (W2 GR-3): контакт таблиці проводів = контакт "
                  "схеми й посадкового місця (`tools/assembly_data.py` HEADERS; генератор зупиняється на кінці проводу на платі без такого контакту). "
                  "Мітка — колишній ідентифікатор X хвилі 1 або назва зведення `pcb/partition-spec.json` (один роз'єм на напрям і зону виходу, джгут "
-                 "розходиться після прорізу); плата — фізична плата за доменом `pcb/prepare.py` (PWR_A, PWR_B, CTRL, RF, HATCH). Вилки на платі купуються "
+                 "розходиться після прорізу); плата — фізична плата за доменом `pcb/prepare.py` (PWR_A, PWR_B, CTRL, RF, HATCH, вставка T7_INSERT). Вилки на платі купуються "
                  "за базою деталей (10-zakupivlia, BOM JLC); розетки кабелю й клеми — лише за [16-dzhgut-pidsumok.csv](16-dzhgut-pidsumok.csv) "
                  "(одне джерело, без подвійного рахунку). Висоти: на CTRL усі вилки — на нижньому боці (PH і PHD бічного входу, Micro-Fit лише кутова "
                  "43650-0n00), на RF — лише PH бічного входу, на PWR-B — PH/PHD бічного входу, на PWR-A — Micro-Fit, Mini-Fit Jr. і PH верхнього входу "
