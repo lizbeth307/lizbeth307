@@ -37,8 +37,9 @@ def render(P, report, params_short, boards_contract):
         "",
         f"- зіткнень конвертів: {s['collisions']}; поза внутрішнім об'ємом: {s['outside']}",
         f"- правила: FAIL {s['rule_failures']}, OPEN {s['rules_open']} (OPEN = потрібна обрана або виміряна деталь)",
-        f"- антенні деталі за правилом розміру: FAIL {s['antenna_rule_failures']}; площа плат (деталі без роз'ємів джгутів): FAIL {s['board_area_failures']}; "
-        f"з роз'ємами джгутів build/16: OPEN {s.get('board_area_harness_open', 0)} (оцінка, не в гейті до перерозкладки хвилі 2)",
+        f"- антенні деталі за правилом розміру: FAIL {s['antenna_rule_failures']}; площа плат (курт'ярди KiCad, деталі без роз'ємів джгутів): "
+        f"OPEN {s.get('board_area_open', s['board_area_failures'])}; з роз'ємами джгутів build/16: OPEN {s.get('board_area_harness_open', 0)} "
+        "(MODEL ESTIMATE, не в гейті; рішення — розбиття й розкладка плат)",
         f"- термоінтерфейси: FAIL {s['thermal_failures']}, OPEN {s['thermal_open']}; ущільнення: {s['gasket']}",
         f"- звірка з STEP постачальника: {s['vendor_fit']}",
         f"- перетини тіл B-rep (оболонки, пластина, кутники, РЧ-відсік, лоток) з конвертами: {s.get('solid_conflicts')}; "
@@ -112,19 +113,76 @@ def render(P, report, params_short, boards_contract):
     out.append("")
     ba = report.get("board_area", {})
     if ba.get("boards"):
-        out += ["## Площа плат: деталі і роз'єми джгутів (оцінка, модель)", "", ba["method"] + "; " + ba.get("with_harness", {}).get("method", "") + ".", "",
-                ba.get("with_harness", {}).get("status", ""), "",
-                "| плата | контур, мм² | деталі (без джгутів), мм² | результат | роз'ємів джгутів | з роз'ємами, мм² | ширина роз'ємів / крайові зони, мм | результат |",
-                "|---|---|---|---|---|---|---|---|"]
-        wh = ba.get("with_harness", {}).get("boards", {})
+        wh = ba.get("with_harness", {})
+        out += ["## Площа плат: курт'ярди KiCad і роз'єми джгутів (MODEL ESTIMATE)", "",
+                f"Джерело: {ba.get('source', '')}. Метод: {ba['method']}; роз'єми: {wh.get('method', '')}.", "",
+                ba.get("status", "") + "; " + wh.get("status", ""), "",
+                "| плата | контур, мм² | курт'ярди деталей, мм² | з них модулі (×1.0), мм² | потреба ×1.5 / ×1.8, мм² | результат | роз'ємів джгутів | "
+                "курт'ярди роз'ємів, мм² | з роз'ємами ×1.5 / ×1.8, мм² | ширина роз'ємів / крайові зони, мм | результат |",
+                "|---|---|---|---|---|---|---|---|---|---|---|"]
+        whb = wh.get("boards", {})
         for bid in P.boards["boards"]:
-            p_, h_ = ba["boards"].get(bid, {}), wh.get(bid, {})
+            p_, h_ = ba["boards"].get(bid, {}), whb.get(bid, {})
             if not p_ and not h_:
                 continue
-            out.append(f"| {bid} | {_r(p_.get('area_mm2', h_.get('area_mm2', 0)))} | {_r(p_['estimate_mm2']) if p_ else '—'} | {p_.get('result', '—')} | "
-                       f"{h_.get('headers', '—')} | {_r(h_['estimate_with_headers_mm2']) if h_ else '—'} | "
+            need = f"{_r(p_['need_1_5_mm2'])} / {_r(p_['need_1_8_mm2'])}" if p_.get("need_1_5_mm2") is not None else "—"
+            hneed = (f"{_r(h_['estimate_with_headers_1_5_mm2'])} / {_r(h_['estimate_with_headers_mm2'])}"
+                     if h_.get("estimate_with_headers_1_5_mm2") is not None else "—")
+            out.append(f"| {bid} | {_r(p_.get('area_mm2', h_.get('area_mm2', 0)))} | {_r(p_['courtyard_raw_mm2']) if p_ else '—'} | "
+                       f"{_r(p_['modules_mm2']) if p_ else '—'} | {need} | {p_.get('result', '—')} | {h_.get('headers', '—')} | "
+                       f"{_r(h_['header_courtyard_mm2']) if h_ else '—'} | {hneed} | "
                        f"{(_r(h_['frontage_mm']) + ' / ' + _r(h_['edge_zones_mm'])) if h_ else '—'} | {h_.get('result', '—')} |")
+        out += ["", "Курт'ярди деталей за групами схем (design/E*.json «group»), мм²:", ""]
+        for bid, p_ in ba["boards"].items():
+            out.append(f"- {bid}: " + "; ".join(f"{g} {_r(v)}" for g, v in p_.get("per_group_raw_mm2", {}).items()))
+        if wh.get("counted_with_parts"):
+            out.append(f"- роз'єми, що вже є деталями плати (пораховано раз): {', '.join(wh['counted_with_parts'])}")
         out.append("")
+    bz = report.get("board_zones")
+    if bz:
+        out += ["## Зони висоти CTRL і RF (карта вільної висоти, модель)", "",
+                "Вільна висота від площини компонентів (лице) і від тильної площини плати до найближчого конверту, деталі конструкції, фланця "
+                "кнопки або стінки; «вміщує» = вільна − 0.5 мм. Координати — від лівого нижнього кута контуру плати (boards.json). "
+                "Ті самі списки записано в boards.json (height_zones / rear_zones) і в contract/boards.json.", "",
+                "| плата | бік | x, y, ш x в, мм | вільна, мм | вміщує, мм | обмежує |", "|---|---|---|---|---|---|"]
+        for bid, m in bz.items():
+            for side, zones in m.items():
+                for z in zones:
+                    if z["rect"][2] < 0.05 or z["rect"][3] < 0.05:
+                        continue
+                    x, y, w, h = z["rect"]
+                    out.append(f"| {bid} | {'лице' if side == 'front' else 'тил'} | {_r(x)}, {_r(y)}, {_r(w)} x {_r(h)} | {_r(z['free_mm'])} | "
+                               f"{_r(z['fits_mm'])} | {z['limit']} |")
+        hr = next((r for r in report["rules"] if r["id"] == "R-HDR-HEIGHT"), None)
+        if hr and hr.get("headers"):
+            rows = [x for x in hr["headers"] if x["verdict"] != "inside the board limit"]
+            out += ["", f"Роз'єми джгутів понад обмеження плати або без прочитаної висоти ({len(rows)} з {len(hr['headers'])}; правило R-HDR-HEIGHT):", "",
+                    "| роз'єм | плата | родина | висота, мм | курт'ярд, мм | межа плати | найкраща зона лиця / тилу, мм | висновок |",
+                    "|---|---|---|---|---|---|---|---|"]
+            for x in rows:
+                cyd = " x ".join(_r(v) for v in x["courtyard_mm"]) if x.get("courtyard_mm") else "—"
+                out.append(f"| {x['connector']} | {x['board']} | {x['family']} {x['orientation']} | {_r(x['h_mm']) if x['h_mm'] is not None else 'TBD'} | "
+                           f"{cyd} | {_r(x['max_height'])} | {_r(x['best_front_zone_mm'])} / {_r(x['best_rear_zone_mm'])} | {x['verdict']} |")
+        out.append("")
+    rt = report.get("harness_routes")
+    if rt:
+        pb = rt["pps"]
+        out += ["## Траси джгутів (модель, generated/harness-routes.json)", "",
+                "Осьова лінія кожного сегмента build/16 крізь модель корпусу (mechanical.json harness_routes): довжина = ламана + запас на вигини "
+                "(половина діаметра джгута × кут) + 2 × 15 мм сервісних петель, округлено вгору до 1 мм. Діаметр джгута — верхня межа за "
+                "кількістю жил build/16 і найбільшою ізоляцією, яку беруть клеми (дріт не обрано, AI-WIRE-PTFE). Кінці на крайових зонах плат "
+                "і біля модулів без конверту — попередні (OPEN), доки немає позицій роз'ємів. MODEL ESTIMATE, не виміряні довжини.", "",
+                f"PPS (R-PPS-LEN): {'+'.join(pb['via_segments'])} = {pb.get('via_segments_mm')} мм проти {_r(pb['limit_mm'])} мм"
+                + (f"; рішення — {pb['decision']}; гілка {pb['branch']} = {pb.get('branch_mm')} мм" if "branch" in pb else "") + ".", "",
+                "| сегмент | тип | довжина, мм | ламана, мм | вигинів | ⌀ джгута, мм | прорізи | стан |", "|---|---|---|---|---|---|---|---|"]
+        for sid, r in list(rt["segments"].items()) + [(f"{k} (гілка)", v) for k, v in rt["branches"].items()]:
+            out.append(f"| {sid} | {r.get('kind', '')} | {r.get('length_mm') if r.get('length_mm') is not None else '—'} | "
+                       f"{_r(r['path_mm']) if 'path_mm' in r else '—'} | {r.get('bends', '—')} | {_r(r['bundle_od_mm']) if 'bundle_od_mm' in r else '—'} | "
+                       f"{', '.join(r.get('through', [])) or '—'} | {r['status']} |")
+        out += ["", "Прорізи пластини: " + "; ".join(
+            f"{k} — у plate.slots {len(v['listed'])}, трасами {len(v['routed'])}"
+            + (f", поза списком: {', '.join(v['routed_not_listed'])}" if v["routed_not_listed"] else "")
+            + (f", без траси: {', '.join(v['listed_not_routed'])}" if v["listed_not_routed"] else "") for k, v in rt["slots"].items()) + ".", ""]
     out += ["## Розташування конвертів (мм; x вправо, y вгору з лиця, z від задньої зовнішньої грані)", "",
             "| ID | деталь / плата | x | y | z | кріплення |", "|---|---|---|---|---|---|"]
     for iid, name, bx, it in item_boxes(P):

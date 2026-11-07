@@ -23,7 +23,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from srrx_mech import VERSION, antennas, boards, drawings_enclosure as de, layout, report_md, rules, thermal, writers  # noqa: E402
+from srrx_mech import VERSION, antennas, boards, drawings_enclosure as de, layout, report_md, routes, rules, thermal, writers  # noqa: E402
 from srrx_mech.geom2d import scale_label  # noqa: E402
 from srrx_mech.params import Params  # noqa: E402
 
@@ -224,6 +224,7 @@ def summary(report):
         "rules_open": sum(1 for r in report["rules"] + [report["rf_bay_packing"]] if str(r["result"]).startswith("OPEN")),
         "antenna_rule_failures": fails(report["antenna_parts"]),
         "board_area_failures": fails(report["board_area"].get("boards", {}).values()),
+        "board_area_open": sum(1 for r in report["board_area"].get("boards", {}).values() if str(r["result"]).startswith("OPEN")),
         "board_area_harness_open": sum(1 for r in report["board_area"].get("with_harness", {}).get("boards", {}).values() if str(r["result"]).startswith("OPEN")),
         "thermal_failures": fails(report["thermal_interfaces"]["rows"]),
         "thermal_open": sum(1 for r in report["thermal_interfaces"]["rows"] if r["result"].startswith("OPEN")),
@@ -256,6 +257,9 @@ def build(out, vendor_cache=None, skip_cad=False, offline=False):
                 write(out, f"boards/{sh.sid[2:].lower()}-edge-cuts.dxf", writers.to_dxf(sh, only=("CUT", "HOLE")), files)
         write(out, f"drawings/{g}.pdf", writers.to_pdf(sheets, meta), files)
     write(out, "contract/boards.json", jdump(boards.contract(P)), files)
+    route_res = routes.evaluate(P)
+    if route_res is not None:
+        write(out, "harness-routes.json", jdump(routes.document(P, route_res)), files)
     coll, outside = layout.fit_checks(P)
     trows = thermal.interfaces(P)
     report = {
@@ -271,6 +275,8 @@ def build(out, vendor_cache=None, skip_cad=False, offline=False):
         "rules": rules.evaluate(P),
         "rf_bay_packing": rules.bay_packing(P),
         "board_area": boards.area_check(P),
+        "board_zones": {bid: boards.clearance_map(P, bid) for bid in boards.ZONE_BOARDS},
+        "harness_routes": routes.summary(P, route_res) if route_res else None,
         "thermal_interfaces": {"rule": f"Gelid GP-Ultimate, compression {thermal.COMP_MIN:.0%}-{P.parts['gelid_gp_ultimate']['max_compression']:.0%} "
                                        "over the design gap +- tolerance (upper limit: Gelid product page, parts.json)",
                                "rows": trows, "cuts_per_thickness": thermal.nest(trows, P.parts["gelid_gp_ultimate"]["sheet"])},
