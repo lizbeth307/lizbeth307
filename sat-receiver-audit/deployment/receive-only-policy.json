@@ -284,7 +284,7 @@
       "deny_tokens": ["--net", "--net-only", "--net-connector", "--net-api-port", "--net-bo-port", "--net-bi-port", "--net-ro-port", "--net-ri-port", "--net-sbs-port", "--net-sbs-in-port", "--net-sbs-jaero-port", "--net-sbs-jaero-in-port", "--net-json-port", "--net-vrs-port", "--net-beast-reduce-out-port", "--net-uat-replay-port", "--net-uat-in-port", "--net-asterix-out-port", "--net-asterix-in-port", "--net-garbage", "--net-ingest", "--enable-biastee", "--write-globe-history", "--write-state", "--write-state-only-on-exit", "--dump-beast", "--write-prom", "--heatmap", "--heatmap-dir", "--full-trace-dir", "--write-json-globe-index", "--write-receiver-id-json", "--uuid", "--uuid-file", "--interactive", "--show-only", "--raw", "--onlyaddr", "--debug", "--devel"],
       "config_paths": [],
       "binaries": ["usr/bin/readsb", "usr/local/bin/readsb"],
-      "allowed_needed": ["librtlsdr.so.2", "libusb-1.0.so.0", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6"],
+      "allowed_needed": ["librtlsdr.so.2", "libusb-1.0.so.0", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6", "ld-linux-aarch64.so.1"],
       "forbidden_symbols": ["rtlsdr_set_bias_tee", "bladerf_open", "hackrf_open", "SoapySDRDevice_make", "iio_create_context"],
       "forbidden_dirs": ["usr/share/tar1090", "usr/local/share/tar1090", "var/www/html/tar1090", "etc/lighttpd/conf-available/*tar1090*", "etc/lighttpd/conf-enabled/*tar1090*", "etc/nginx/*/*tar1090*"],
       "lease_unit": "srrx-lease-readsb@.service",

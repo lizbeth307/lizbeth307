@@ -18,8 +18,10 @@ import sys
 BINARY = "/usr/bin/readsb"
 VERSION = "3.16.17+lab1"
 # Shared objects readsb links (Makefile:36 -pthread -lm -lrt -lzstd, :51 -lz, :146 -lrtlsdr -lusb-1.0);
-# libpthread and librt are part of libc.so.6 on noble (glibc 2.39).
-ALLOWED_NEEDED = ("librtlsdr.so.2", "libusb-1.0.so.0", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6")
+# libpthread and librt are part of libc.so.6 on noble (glibc 2.39), and the arm64 build also names
+# glibc's dynamic loader ld-linux-aarch64.so.1 (seen in CI run 42406849942); libusb-1.0 is not
+# a direct entry (readsb calls only librtlsdr; linked --as-needed).
+ALLOWED_NEEDED = ("librtlsdr.so.2", "libusb-1.0.so.0", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6", "ld-linux-aarch64.so.1")
 FORBIDDEN_SYMBOLS = ("rtlsdr_set_bias_tee", "bladerf_open", "hackrf_open", "SoapySDRDevice_make", "iio_create_context")
 ABSENT_TYPES = ("bladerf", "hackrf", "plutosdr", "soapysdr")
 TIMEOUT_S = 30

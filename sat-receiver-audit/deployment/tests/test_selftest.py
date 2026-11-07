@@ -1464,7 +1464,7 @@ class AdsbLeaseRowTests(unittest.TestCase):
     srrx.adsb_filter), with a fake readsb ELF and a fake readelf where the binary matters. Offline
     unit text only; reception and the accepted database are device evidence."""
 
-    GOOD = readelf(None, ["librtlsdr.so.2", "libusb-1.0.so.0", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6"])
+    GOOD = readelf(None, ["librtlsdr.so.2", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6", "ld-linux-aarch64.so.1"])  # run 42406849942
 
     @classmethod
     def setUpClass(cls):
