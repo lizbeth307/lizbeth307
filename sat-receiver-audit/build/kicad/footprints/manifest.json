@@ -1,6 +1,6 @@
 {
   "kicad_version": "10.0.7",
-  "assignments": 737,
+  "assignments": 747,
   "footprints": [
     {
       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
@@ -590,7 +590,8 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "J506"
+        "J506",
+        "J514"
       ]
     },
     {
@@ -804,6 +805,79 @@
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
         "J108"
+      ]
+    },
+    {
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "3aec59111aec53223d14e038df98ac794e3fdb901b1d9ca06d803c2e03750894",
+      "pads": [
+        "1",
+        "2",
+        "3"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J320"
+      ]
+    },
+    {
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "0c7ad0be2489f1c3944a4b99c5987cd5a62c3a45f945ea8999e29d4cc3bb82e8",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J321",
+        "J518"
+      ]
+    },
+    {
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "fd0bd049af6a685c3715ee6abbad0374ac1f7b4b568e02529e6e544bf9995a18",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J322"
+      ]
+    },
+    {
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm.kicad_mod",
+      "sha256": "6602297c1c068f4578341b36eec1b9042cf28a5c831dc791e06fa381f5e8e887",
+      "pads": [
+        "1"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J515",
+        "J516",
+        "J517"
+      ]
+    },
+    {
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm.kicad_mod",
+      "sha256": "7ada10a576fca83ea24c69fe1e5d72ea6e96d2278db67c21186aa5616432856f",
+      "pads": [
+        "1"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J116",
+        "J117"
       ]
     },
     {

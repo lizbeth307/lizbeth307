@@ -723,6 +723,14 @@
       "body": [10.9, 3.8, 8.8],
       "status": "listing",
       "src": "DigiKey DE F990-ND (WebFetch 2026-11-07): 'FUSE AUTO 7.5A 32VDC BLADE MINI', Size / Dimension '0.429\" L x 0.150\" W x 0.346\" H (10.90mm x 3.80mm x 8.80mm)', EUR 0.35 @1; the Littelfuse datasheet (DigiKey link https://www.littelfuse.com/assetdocs/littelfuse_datasheet_297_mini32v.pdf, and https://www.littelfuse.com/~/media/automotive/datasheets/fuses/passenger-car-and-commercial-vehicle/blade-fuses/littelfuse_mini_datasheet.pdf) answered 403 to curl 2026-11-07: the body is taken to sit fully above the holder (the blades enter the holder clips), so the 8.8 is counted above the 7.37 holder"
+    },
+    "iso14580_lengths": {
+      "name": "ISO 14580 (DIN EN ISO 14580) hexalobular socket cheese head screws: commercial nominal lengths l (under-head length), mm",
+      "M2.5": [3, 4, 5, 6, 8, 10, 12, 14, 16, 20, 25],
+      "M3": [4, 5, 6, 8, 10, 12, 14, 16, 20, 25, 30],
+      "k_max": {"M2.5": 1.85, "M3": 2.4},
+      "status": "datasheet",
+      "src": "fasten.it norm page DIN EN ISO 14580 https://www.fasten.it/pt/norms/norm/din_en_iso_14580 (read 2026-11-07: dimension table 'source Din 14580 2011', k nom=max M2.5 1.85 / M3 2.4, socket Nr 8 / 10; table 'Din 14580 - weigth in kg x1000 pcs - commercial items': the lengths above are the rows with a weight in the M 2.5 / M 3 columns); a secondary reproduction of the standard, the ISO text itself was not read. The countersunk pages of the same site (DIN EN ISO 10642 https://www.fasten.it/pt/norms/norm/din_en_iso_10642 and DIN EN ISO 14581 https://www.fasten.it/pt/norms/norm/din_en_iso_14581, read 2026-11-07) give head dimensions only, no length table (used by generated/fastener-stacks.json, W2 MECH-3 review)"
     }
   }
 }

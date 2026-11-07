@@ -1,6 +1,23 @@
-# PCB preparation package
+# PCB package: partition, board generator, checks and fab sets
 
-This directory contains audited PCB partition and placement inputs. It is **not a fabrication package**. The E1–E5 schematic graphs include whole purchased products, existing board circuitry, cables and physical interfaces as well as custom-board parts. Placing all 839 graph references on one PCB would duplicate hardware and invent module pads.
+This directory holds the board tool chain of SR-RX-v2.1: the audited partition of the E1–E5 graphs into boards, the area budget, the net classes and DRC rules, the board generator, the independent board check and the fab-set exporter. Everything it produces is a **CI/model result, not a fabrication release**: no board has been made, every fab set says `NOT RELEASED: model/CI only; bench gates OPEN`, and no hardware or bench gate is closed by any tool here. The E1–E5 schematic graphs include whole purchased products, existing board circuitry, cables and physical interfaces as well as custom-board parts; placing all 839 graph references on one PCB would duplicate hardware and invent module pads. The Ukrainian description of the boards, the pipeline and what "DRC 0" proves and does not prove per board is `../build/13-pcb-preparation.md`; the decisions and their reasons are `../build/15-rishennia-komplektu.md` («Плати»).
+
+## Pipeline overview and lineage (wave 2)
+
+Each board `<B>` (PWR_A, PWR_B, RF, CTRL, ENC, HATCH, PACK_FUSE, IMU_CARRIER, T7_INSERT, HDMI_INSERT) runs through the same chain. Steps 1-3 and 5 use the Python standard library only; steps 4 and 6 need `kicad-cli` 10.0.7 and run in `../../.github/workflows/sr-rx-pcb.yml`.
+
+| Step | Tool | Writes | Check | Owner (lineage) |
+|---|---|---|---|---|
+| 1 Partition and graph audit | `prepare.py` | `generated/*` (below), incl. `generated/b2b-nets.json` (nets between PWR-A and PWR-B) | `python pcb/prepare.py --check` (also in `sr-rx-parts`) | wave 1, then W2 GR-2, GR-3 (domains PWR_BRANCH_SW/USB_POWER_SW, b2b-nets), GR-4 |
+| 2 Area budget | `partition_budget.py` reading `partition-spec.json` | `partition-budget.json` (MODEL ESTIMATE) | `--check` (sr-rx-pcb `checks` job) | W2 AREA, then GR-3 |
+| 3 Net classes and rules | `stackup.py` | `generated/netclasses.json`, `rules/jlc-4l-1oz.kicad_dru`, `rules/jlc-2l.kicad_dru` | `--check` (`checks` job) | W2 PCB-RULES |
+| 4 Board | `board_gen.py` with `boards/<B>.json` | `../build/kicad/boards/<B>/` board, `report.json`, `drc.json`, `connectors.json`, `route-log.json`, SVG | `--check` per board; re-route only with `[pcb-route <B>]` | W2 PCB-PIPE (tool, ENC pilot), then the board packages PCB-PWRA, PCB-PWRB, PCB-RF, PCB-CTRL, PCB-SB1, PCB-SB2 (specs and boards) |
+| 5 Independent check | `check_boards.py` | `../build/kicad/boards/<B>/review.json` | `--board <B> --check`, `--all --check` | W2 PCB-RULES |
+| 6 Fab set | `fab_export.py` | `../build/kicad/boards/<B>/fab/` (Gerber X2, drill, IPC-D-356, JLC CPL/BOM, fab notes, jobset, manifest; see that directory's `README.md`) | `--board <B> --check` (byte-stable) | W2 PCB-FAB |
+
+A stale board, review or fab set comes back from `sr-rx-pcb` as the artifact `pcb-regenerated-<B>` and is committed as `GENERATED: ...`; none of these outputs is edited by hand. The DC_CORE starter and prototype (`generate_layout.py`, `generate_routed.py`, `../build/kicad/pcb-preparation/`, `../build/kicad/pcb-prototype/`, `../verification/pcb-prototype-review*`) are the historical prototype chain; the wave-2 boards do not use it, and its 71/187/40 contract is unchanged. Order-time checks that CI cannot make (CPL rotation and centroid in the JLC viewer, JLC DFM, LCSC stock on the order date) are build/21 step E1.
+
+## Partition and graph audit (`prepare.py`)
 
 Run from the repository root:
 
@@ -21,14 +38,15 @@ Only Python standard-library modules are used. The script reads E1–E5 and the 
 | `generated/constraints.json` | Current, thermal, RF, DC, grounding and mechanical requirements with sources |
 | `generated/provenance.json` | Exact input SHA256s and primary-document URLs |
 | `generated/summary.json` | Reproducible counts and audit outcomes |
+| `generated/b2b-nets.json` | Nets with pins on both PWR-A and PWR-B, contacts per net and the Samtec QSH/QTH-060 pair (design input of PCB-PWRA/PCB-PWRB, W2 GR-3) |
 
 Existing assemblies are separated from custom-PCB parts. In particular U102/R101/C101/C102 are already on the Adafruit INA228 breakout; U500 represents existing Q6A rail circuitry. R117–R120/C118 are IP2368 module rework, not parts automatically placed on a new motherboard. A407 YAT and A424 TCBT are the opposite exception: these are physical SMT RF parts despite their graph `kind=module`.
 
-Eight domains are candidates for partitioning and may be combined or split after electrical/mechanical review. They do not require buying eight new boards. The DC core excludes three first RF tap resistors, their three 100 pF capacitors and twelve hot bleed resistors, keeping these 18 parts at the antenna/RF substrate. Its eight external nets have **no invented connector footprint or pin order**.
+The sixteen domains of `prepare.py` are grouped into ten physical boards (`PHYSICAL_BOARD` in `../tools/assembly_data.py`; four main boards PWR-A, PWR-B, RF and CTRL, and six small boards, the encoder board ENC counted once with two instances and a spare). The DC core excludes three first RF tap resistors, their three 100 pF capacitors and twelve hot bleed resistors, keeping these 18 parts at the antenna/RF substrate. Its eight external nets have **no invented connector footprint or pin order**.
 
 All 71 DC core parts now carry graph-assigned portable footprints with MPNs selected in `design/parts/parts.json` (three 0402 series resistors, 29 resistors and 18 capacitors in 0603, 13 SOT-23 and 8 SOT-23-6; exact counts in `generated/summary.json`). A selected MPN is a procurement record, not a qualification: voltage/power/TCR/leakage ratings and land patterns still need review, and the circuit has not passed threshold/RF tests.
 
-The CAD-stage generator and actual starter boards, if present, are maintained separately from `prepare.py`. See `../build/13-pcb-preparation.md` for boundaries and release gates. No Gerber/drill output should be treated as approved from these inputs.
+The board generator, the checks and the fab sets below are maintained separately from `prepare.py`. See `../build/13-pcb-preparation.md` for boundaries and release gates. No Gerber/drill output is approved by these tools: the fab sets in `../build/kicad/boards/<B>/fab/` are CI/model output, NOT RELEASED.
 
 ## Board generator pipeline (`board_gen.py`, wave 2)
 
@@ -82,6 +100,6 @@ First routed in run 42389609473; the committed board comes from route run 423945
 
 Pilot limits, kept OPEN for the packages named:
 
-- **J1 is a `pilot_placeholder`**: the 2.0 mm 4-pad land `PinHeader_1x04_P2.00mm_Vertical` of the KiCad 10.0.7 library, pins GND, A, B, PRESS as in `build/16-dzhgut-rozyemy.csv:60` and `:62`. No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm at rotation 90 (at 0 or 180 the A/C/B or S1/S2 pads sit 4.5-5 mm from the edges), and a vertical PH stands 8 mm against the 6.5 mm envelope (`tools/assembly_data.py:120-121`). The header choice, side and outline belong to GR-3, MECH-4 and PCB-SB1.
+- **J1 is a `pilot_placeholder`**: the 2.0 mm 4-pad land `PinHeader_1x04_P2.00mm_Vertical` of the KiCad 10.0.7 library, pins GND, A, B, PRESS as in `build/16-dzhgut-rozyemy.csv:48` and `:49` (X37S0-ENCM / X38S0-ENCV). No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm at rotation 90 (at 0 or 180 the A/C/B or S1/S2 pads sit 4.5-5 mm from the edges), and a vertical PH stands 8 mm against the 6.5 mm envelope (`tools/assembly_data.py:120-121`). The header choice, side and outline belong to GR-3, MECH-4 and PCB-SB1.
 - **S1/S2 carry no net**, as in the graph today (`design/parts/parts.json` ENC entry `unused_pads`; `generated/unresolved.csv` host_pads_unconnected for SW308/SW309). When GR-1 adds S1 (PRESS) and S2 (GND) to ENC301/302, the instances projection changes, `--check` reports the board stale, and a `[pcb-route ENC]` run takes the nets from the graph (template net `ENC_SW` on S1 and J1.4).
 - The PEC11R courtyard box enters both 6 mm hole keepouts by up to 1.5 mm (empty corners of the rectangle); its pads (at least 5.5 mm from the hole centres) and F.Fab body (3.51 mm) clear them. Heights are not checked here: the footprints carry no body heights, and the enclosure model owns them.

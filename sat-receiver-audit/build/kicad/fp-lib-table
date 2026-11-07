@@ -6,6 +6,7 @@
   (lib (name "Connector_IDC")(type "KiCad")(uri "${KIPRJMOD}/footprints/Connector_IDC.pretty")(options "")(descr "Selected official KiCad 10.0.7 footprints"))
   (lib (name "Connector_JST")(type "KiCad")(uri "${KIPRJMOD}/footprints/Connector_JST.pretty")(options "")(descr "Selected official KiCad 10.0.7 footprints"))
   (lib (name "Connector_Molex")(type "KiCad")(uri "${KIPRJMOD}/footprints/Connector_Molex.pretty")(options "")(descr "Selected official KiCad 10.0.7 footprints"))
+  (lib (name "Connector_Wire")(type "KiCad")(uri "${KIPRJMOD}/footprints/Connector_Wire.pretty")(options "")(descr "Selected official KiCad 10.0.7 footprints"))
   (lib (name "Diode_SMD")(type "KiCad")(uri "${KIPRJMOD}/footprints/Diode_SMD.pretty")(options "")(descr "Selected official KiCad 10.0.7 footprints"))
   (lib (name "Fuse")(type "KiCad")(uri "${KIPRJMOD}/footprints/Fuse.pretty")(options "")(descr "Selected official KiCad 10.0.7 footprints"))
   (lib (name "Inductor_SMD")(type "KiCad")(uri "${KIPRJMOD}/footprints/Inductor_SMD.pretty")(options "")(descr "Selected official KiCad 10.0.7 footprints"))

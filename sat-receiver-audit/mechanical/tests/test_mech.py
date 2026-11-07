@@ -807,6 +807,78 @@ class EnvelopeW2Mech3(unittest.TestCase):
         self.assertTrue(j["result"].startswith("FAIL"), j["result"])
 
 
+class EnvelopeW2Mech3Review(unittest.TestCase):
+    """W2 MECH-3 review fixes: PWR-B usable area, computed depth reason, PEM shank windows, IMU screw rows, ISO lengths."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _budget(self):
+        d = json.loads((HERE.parent / "pcb" / "partition-budget.json").read_text(encoding="utf-8"))
+        return d["candidates"][d["chosen"]]
+
+    def test_pwr_b_area_is_judged_against_the_budget_usable_area(self):
+        row = boards.area_check(P)["boards"]["PWR_B"]
+        usable = self._budget()["boards"]["PWR_B"]["usable_mm2"]
+        self.assertEqual(row["usable_mm2"], round(usable, 0))
+        self.assertLess(row["usable_mm2"], row["area_mm2"])                    # the outline minus the Pololu windows is an upper bound
+        self.assertEqual(row["result"].startswith("PASS"), row["need_1_8_mm2"] <= usable, row["result"])
+        self.assertIn("partition-budget.json", row["result"])
+
+    def test_envelope_reason_is_computed_from_the_stack(self):
+        import build
+        sz = P.mech["stack_z"]
+        dz = json.loads((HERE.parent / "pcb" / "partition-spec.json").read_text(encoding="utf-8"))["envelope"]["dz"]
+        reason = build.envelope_report(P)["reason"]
+        self.assertIn(f"front layer {round(sz['module_back'] - sz['plate_front'], 2):g}", reason)
+        self.assertIn(f"dz {dz:g}", reason)
+        self.assertNotIn("dz 2.1", reason)
+        Q = self._copy()
+        Q.mech["stack_z"]["module_back"] += 1.0
+        self.assertIn(f"front layer {round(sz['module_back'] + 1.0 - sz['plate_front'], 2):g}", build.envelope_report(Q)["reason"])
+
+    def test_pem_nut_windows_use_the_shank(self):
+        from srrx_mech import fasteners
+        pem, t = P.parts["pem_f_m3_1"], P.mech["plate"]["t"]
+        J = {j["id"]: j for j in fasteners.stacks(P)["joints"]}
+        for jid in ("ANGLES", "PWR_A-PLATE"):
+            j = J[jid]
+            self.assertEqual(j["receiver"]["thread_mm"], pem["shank"])
+            self.assertEqual(j["length_window_mm"], [round(j["grip_mm"] + pem["shank"], 2), round(j["grip_mm"] + t, 2)])
+            self.assertLess(j["length_window_mm"][0], j["length_window_mm"][1], jid)
+        self.assertTrue(J["ANGLES"]["result"].startswith("PASS (model)"), J["ANGLES"]["result"])   # the F31 M3 x 4 fits
+
+    def test_imu_screw_rows_are_joints_with_open_reasons(self):
+        from srrx_mech import fasteners
+        doc = fasteners.stacks(P)
+        rows = {j["build17_row"]: j for j in doc["joints"]}
+        for r in ("F24", "F36", "F37"):
+            self.assertIn(r, rows)
+            self.assertNotIn(r, doc["nut_and_kit_rows"])
+            self.assertTrue(rows[r]["result"].startswith("OPEN: "), rows[r]["result"])
+            self.assertGreater(len(rows[r]["result"]), len("OPEN: ") + 20)
+
+    def test_pass_needs_a_named_iso_length_in_the_window(self):
+        from srrx_mech import fasteners
+        for j in fasteners.stacks(P)["joints"]:
+            if j["result"].startswith("PASS"):
+                ol = j.get("orderable_lengths", {})
+                self.assertTrue(ol.get("named_in_build17"), j["id"])
+                self.assertTrue(ol.get("in_window"), j["id"])
+        J = {j["id"]: j for j in fasteners.stacks(P)["joints"]}
+        for jid in ("CTRL", "ENC", "UFS-BOSS"):
+            self.assertTrue(J[jid]["result"].startswith("OPEN"), J[jid]["result"])
+        Q = self._copy()
+        Q.mech["closure"]["insert"]["len"] += 1.0                                 # a deeper insert widens the window: still an ISO length
+        self.assertTrue([j for j in fasteners.stacks(Q)["joints"] if j["id"] == "CLOSURE"][0]["result"].startswith("PASS"))
+
+    def test_pocket_rule_reports_the_budget_items(self):
+        r = [x for x in rules.evaluate(P) if x["id"] == "R-PWR-POCKETS"][0]
+        n = len(self._budget()["pwr_a_tht_pocket_items"])
+        self.assertIn(f"{n} items", r["result"])
+
+
 class RoutesW2Mech4(unittest.TestCase):
     """W2 MECH-4: HDMI FPC route, PV6 nut reserve, F101 access decision, P8 accessory row."""
 

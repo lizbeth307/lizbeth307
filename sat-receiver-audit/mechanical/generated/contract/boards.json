@@ -120,7 +120,7 @@
             108,
             128
           ],
-          "use": "rear-layer harness through plate slot SL2 (S04, S13, S14, S17, S18, S20-S22, S35; JST PH, Micro-Fit)"
+          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22 and S35 leave from PWR-B J204/J207 (build/16-dzhgut-rozyemy.csv, W2 GR-3)"
         }
       ],
       "thermal_bond_mm": [
@@ -304,7 +304,7 @@
             0,
             35
           ],
-          "use": "CTRL harness S02 (two JST PHD side entry, consolidated S02-PWR-SIG), LAB PORT / LAB BUS leads towards plate slot SL3 (side entry at hB)"
+          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry), LAB PORT J506 (S23) and LAB BUS J508 (S34) leads towards plate slot SL3 (side entry at hB; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
         },
         {
           "edge": "top",
@@ -313,7 +313,7 @@
             108,
             128
           ],
-          "use": "SL2-bound JST PH (consolidated SL2-PWR-PH: S20, S21, S22, S35, S36) and the RF lead S04 (X04S1) through plate slot SL2"
+          "use": "J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 X04S1-PWR (RF board lead S04) through plate slot SL2 (build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
         }
       ],
       "thermal_bond_mm": [],

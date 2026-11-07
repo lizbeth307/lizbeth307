@@ -30,6 +30,7 @@
   "design/parts/snapshots/2026-11-07-w2-src1-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json",
+  "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech4-manual.json"
  ],
  "bom_v2_rows": {
@@ -5247,9 +5248,59 @@
    },
    "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
    "refs": [
-    "J506"
+    "J506",
+    "J514"
    ],
-   "note": "Board-side harness header (W2 GR-3): J506 X23S1-PWR on PWR_B. Part, LCSC SKU and footprint as harness_families PH 3 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+   "note": "Board-side harness headers: J506 X23S1-PWR on PWR_B (W2 GR-3) and J514 X24S1-T7 on T7_INSERT (W2 GR-4, segment S24). Part, LCSC SKU and footprint as harness_families PH 3 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "WP-SOLDERWIRE-1SQMM",
+   "mount": "pcb_pad",
+   "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+   "note": "Plated solder-wire pad on PACK_FUSE (W2 GR-4); nothing to buy. 18 AWG battery-circuit wire Alpha Wire 5857 (19/30, conductor 1.27 mm, insulation 1.75 +/- 0.13 mm; snapshot 2026-11-07-w2-src1-manual.json web:alphawire-5857): 19 x 0.0507 mm2 = 0.96 mm2 <= 1 mm2, 1.27 mm <= D 1.4 mm (drill 1.75 mm). Selection (build/15 «Майданчики проводів малих плат (W2 GR-4)»): the smallest KiCad 10.0.7 Connector_Wire SolderWire size whose cross-section is at least the conductor cross-section and whose conductor diameter D is at least the read conductor diameter.",
+   "refs": [
+    "J116",
+    "J117"
+   ]
+  },
+  {
+   "id": "WP-SOLDERWIRE-0.75SQMM",
+   "mount": "pcb_pad",
+   "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+   "note": "Plated solder-wire pads on T7_INSERT for the cut VBUS conductor and the GND tap of the T7 A-C cable (W2 GR-4); nothing to buy. Sized for conductors up to 20 AWG, the SOLDER power gauge of tools/assembly_data.py FAMILIES: Alpha Wire 5856 (19/32, conductor 1.02 mm; web:alphawire-5856), 19 x 0.0320 mm2 = 0.61 mm2 <= 0.75 mm2, 1.02 mm <= D 1.25 mm (drill 1.6 mm). The conductor gauge of the chosen cable is not published: measure it before assembly (E5-05). Selection (build/15 «Майданчики проводів малих плат (W2 GR-4)»): the smallest KiCad 10.0.7 Connector_Wire SolderWire size whose cross-section is at least the conductor cross-section and whose conductor diameter D is at least the read conductor diameter.",
+   "refs": [
+    "J515",
+    "J516",
+    "J517"
+   ]
+  },
+  {
+   "id": "WP-SOLDERWIRE-0.15SQMM-3",
+   "mount": "pcb_pad",
+   "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm",
+   "note": "Plated solder-wire pads on IMU_CARRIER for the RP2040-Zero U309 supply leads (W2 GR-4); nothing to buy. 26 AWG Alpha Wire 5853 (7/34, conductor 0.48 mm; web:alphawire-5853): 7 x 0.0201 mm2 = 0.14 mm2 <= 0.15 mm2, 0.48 mm <= D 0.5 mm (drill 0.7 mm). Selection (build/15 «Майданчики проводів малих плат (W2 GR-4)»): the smallest KiCad 10.0.7 Connector_Wire SolderWire size whose cross-section is at least the conductor cross-section and whose conductor diameter D is at least the read conductor diameter.",
+   "refs": [
+    "J320"
+   ]
+  },
+  {
+   "id": "WP-SOLDERWIRE-0.15SQMM-4",
+   "mount": "pcb_pad",
+   "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+   "note": "Plated solder-wire pads on IMU_CARRIER (W2 GR-4); nothing to buy. J321: RP2040-Zero U309 signal leads, 26 AWG Alpha Wire 5853 as WP-SOLDERWIRE-0.15SQMM-3. J518: the four cores of the IMU cable J550, HELUKABEL 49655 4 x 0.14 mm2 with 18 x 0.1 mm strands (web:helukabel-heluchain-49655): 0.14 mm2 <= 0.15 mm2, about 0.5 mm over the strands (1 + 6 + 12 lay, 5 x 0.1 mm) <= D 0.5 mm (drill 0.7 mm). Selection (build/15 «Майданчики проводів малих плат (W2 GR-4)»): the smallest KiCad 10.0.7 Connector_Wire SolderWire size whose cross-section is at least the conductor cross-section and whose conductor diameter D is at least the read conductor diameter.",
+   "refs": [
+    "J321",
+    "J518"
+   ]
+  },
+  {
+   "id": "WP-SOLDERWIRE-0.15SQMM-5",
+   "mount": "pcb_pad",
+   "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm",
+   "note": "Plated solder-wire pads on IMU_CARRIER for the BNO085 U314 leads (W2 GR-4); nothing to buy. 26 AWG Alpha Wire 5853 as WP-SOLDERWIRE-0.15SQMM-3. Selection (build/15 «Майданчики проводів малих плат (W2 GR-4)»): the smallest KiCad 10.0.7 Connector_Wire SolderWire size whose cross-section is at least the conductor cross-section and whose conductor diameter D is at least the read conductor diameter.",
+   "refs": [
+    "J322"
+   ]
   },
   {
    "id": "J-PH-B3B",

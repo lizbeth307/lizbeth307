@@ -387,5 +387,46 @@ class HarnessHeaderRefTests(unittest.TestCase):
         self.assertNotIn("E3_GNSS_PPS", {w["net"] for w in self.h.wires if w["segment"] == "S25"})
 
 
+class InsertBoardBoundaryTests(unittest.TestCase):
+    """W2 GR-4: the insert boards end every off-board net on a connector ref of that board (the boundary-audit rule of
+    pcb/board_gen.py, applied to pcb/generated/components.csv). Design data only, no hardware claim."""
+
+    BOARDS = ("T7_INSERT", "IMU_CARRIER", "PACK_FUSE")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.model, cls.h, cls.files = gen.build_all(BASE)
+
+    def test_every_off_board_net_ends_on_a_connector_of_the_board(self):
+        nodes = {}
+        for comp in self.model.components:
+            for pin in comp["pins"]:
+                if pin.get("net"):
+                    nodes.setdefault(pin["net"], set()).add(comp["ref"])
+        for board in self.BOARDS:
+            refs = {r for r, row in self.model.partition.items() if row["board_candidate"] == board}
+            self.assertTrue(any(self.model.by_ref[r]["kind"] == "connector" for r in refs), board)
+            for net in {p["net"] for r in refs for p in self.model.by_ref[r]["pins"] if p.get("net")}:
+                if nodes[net] - refs:
+                    ends = [r for r in refs if self.model.by_ref[r]["kind"] == "connector"
+                            and any(p.get("net") == net for p in self.model.by_ref[r]["pins"])]
+                    self.assertTrue(ends, f"{board}: {net} leaves the board without a connector ref")
+
+    def test_solder_wire_pads_are_copper_with_official_footprints(self):
+        for board in self.BOARDS:
+            for ref, row in self.model.partition.items():
+                if row["board_candidate"] == board and self.model.by_ref[ref]["kind"] == "connector" and row["mount"] == "pcb_pad":
+                    self.assertTrue(row["footprint"].startswith("Connector_Wire:SolderWire-"), ref)
+                    self.assertEqual(row["pad_coverage"], "PASS", ref)
+                    self.assertNotIn("mpn", self.model.db_part[ref], ref)
+
+    def test_s24_lands_on_the_insert_header(self):
+        wires = [w for w in self.h.wires if w["segment"] == "S24"]
+        self.assertEqual(sorted(w["to"].split(" ")[0] for w in wires), ["J514.1", "J514.2", "J514.3"])
+        self.assertEqual({w["family_to"] for w in wires}, {"PH"})
+        rows = {r["connector"]: r for r in csv.DictReader(io.StringIO(self.files[gen.OUT["connectors_csv"]]))}
+        self.assertEqual((rows["J514"]["board"], rows["J514"]["orientation"]), ("T7_INSERT", "side"))
+
+
 if __name__ == "__main__":
     unittest.main()

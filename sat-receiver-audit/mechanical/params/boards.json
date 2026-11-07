@@ -22,7 +22,7 @@
       },
       "holes": [[4, 6], [132, 6], [132, 31], [46, 31], [4, 106], [38, 106], [38, 56]],
       "plate_fastener": "pem_f_m3_1",
-      "screw": "the M3 male stud of the PWR-A/PWR-B standoff (F45, M3 male-female, body 5.0 = the B2B stack) from the component side (board 1.6 + shim 0.4 + plate 2.0: the stud is at most 4.0 long so its tip ends flush with the plate rear face, as the earlier M3 x 4 did; generated/fastener-stacks.json PWR_A-PLATE)",
+      "screw": "the M3 male stud of the PWR-A/PWR-B standoff (F45, M3 male-female, body 5.0 = the B2B stack) from the component side (board 1.6 + shim 0.4 + plate 2.0: the stud is 3.53-4.0 long, so it fills the 1.53 thread of the PEM nut flush with the plate front face and its tip ends at most flush with the plate rear face, as the earlier M3 x 4 did; generated/fastener-stacks.json PWR_A-PLATE)",
       "hole_d": 3.2,
       "hole_keepout_d": 7.0,
       "max_height": 4.5,
@@ -77,7 +77,7 @@
           "edge": "top",
           "at": 35,
           "span": [108, 128],
-          "use": "rear-layer harness through plate slot SL2 (S04, S13, S14, S17, S18, S20-S22, S35; JST PH, Micro-Fit)"
+          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22 and S35 leave from PWR-B J204/J207 (build/16-dzhgut-rozyemy.csv, W2 GR-3)"
         }
       ],
       "tht_pockets": {
@@ -86,10 +86,10 @@
         "depth_min": 1.0,
         "depth": 1.0,
         "drawn": ["D36V50F12", "D36V50F5"],
-        "from_placement": "the other PWR-A THT groups (radials C2xx/C511/C512, Keystone 3568 holders F102/F103/F201, the PWR-A harness headers: pcb/partition-budget.json candidates.a pwr_a_tht_pocket_items, 34 items with 72 pads incl. the two Pololu rows) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS)",
+        "from_placement": "the other PWR-A THT groups (radials, Keystone 3568 fuse holders, the PWR-A harness headers: pcb/partition-budget.json candidates.<chosen> pwr_a_tht_pocket_items, which also list U107/U108) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS prints the current count)",
         "insulator": "polyimide film over each pocket and across the shim gap (product TBD: SRC-2 C-18 polyimide tape)"
       },
-      "notes": "Fastening (W2 MECH-3): the M3 male studs of the seven PWR-A/PWR-B standoffs F45 into PEM F-M3-1 self-clinching flush nuts in the plate (flush on both faces, so nothing reaches the RF side; no cut thread in the plate, STACK 5.8); PWR-B sits on the standoffs (boards.json PWR_B, F46). D36V50F12 U107 and D36V50F5 U108 are soldered into the left leg (footprint SR_RX_Custom:Pololu_D36V50Fx) and stand in PWR-B windows. The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check with and without the build/16 harness headers: fit-report 'board_area'."
+      "notes": "Fastening (W2 MECH-3): the M3 male studs of the seven PWR-A/PWR-B standoffs F45 into PEM F-M3-1 self-clinching flush nuts in the plate (pressed flush with the plate front face, M-07; the 1.53 shank stops 0.47 short of the rear face and the stud tip at most flush with it, so nothing reaches the RF side; no cut thread in the plate, STACK 5.8); PWR-B sits on the standoffs (boards.json PWR_B, F46). D36V50F12 U107 and D36V50F5 U108 are soldered into the left leg (footprint SR_RX_Custom:Pololu_D36V50Fx) and stand in PWR-B windows. The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check with and without the build/16 harness headers: fit-report 'board_area'."
     },
     "PWR_B": {
       "name": "power mezzanine PWR-B (PWR_BRANCH_SW + USB_POWER_SW)",
@@ -97,7 +97,7 @@
       "_domains_note": "CC-12: the third copy of the domain map (pcb/prepare.py and tools/assembly_data.py BOARD_OF_DOMAIN / tools/build_parts.py BOARD3 are GR-3's); names from pcb/partition-spec.json domains.PWR_B.prepare_domains (AREA candidate a: E2 'LNA: канал 1'..'4', 'RTL-B', 'S-band LaNA WB', 'INA3221: струми LNA1–3', the LNB/Boni/AUX12 voltage monitors -> PWR_BRANCH_SW; E5 'VBUS RTL-A і LAB PORT', 'LAB BUS I2C buffer' -> USB_POWER_SW; parts above hB stay PWR-A by DOMAIN_OVERRIDE)",
       "outline": [[0, 0], [136, 0], [136, 35], [42, 35], [42, 110], [0, 110]],
       "cutouts": [[7.5, 39.5, 26.4, 26.4], [7.5, 71.5, 26.4, 26.4]],
-      "_outline_note": "the PWR-A L (same origin, coaxial holes) minus the two Pololu windows (module + window_margin 0.5, pcb/partition-spec.json parameters); PCB-PWRB cuts the further windows over PWR-A parts taller than hA and the edge strips of the PWR-A harness headers from the PCB-PWRA placement (pcb/partition-budget.json candidates.a: windows 3797.9 mm2 incl. these two, edge strips 1420.7, probe windows 171.0; usable 2251 mm2 after them)",
+      "_outline_note": "the PWR-A L (same origin, coaxial holes) minus the two Pololu windows (module + window_margin 0.5, pcb/partition-spec.json parameters); PCB-PWRB cuts the further windows over PWR-A parts taller than hA and the edge strips of the PWR-A harness headers from the PCB-PWRA placement (pcb/partition-budget.json candidates.<chosen>: windows_mm2 incl. these two, edge_strips_mm2, tp_probe_windows_mm2, and boards.PWR_B.usable_mm2 after them; the fit-report board_area row of PWR_B judges the need against that usable area, this outline is only an upper bound)",
       "rects": [[0, 0, 136, 35], [0, 35, 7.5, 75], [33.9, 35, 8.1, 75], [7.5, 35, 26.4, 4.5], [7.5, 65.9, 26.4, 5.6], [7.5, 97.9, 26.4, 12.1]],
       "place": {
         "origin": [6.0, 38.5],
@@ -120,7 +120,7 @@
         "_src": "pcb/partition-spec.json b2b (AREA: Samtec catalogue F-226 qth.pdf read 2026-11-07; LCSC codes C5199901 / C116054 are GR-3's to record, not LCSC-snapshot evidence yet)"
       },
       "keepouts": {
-        "pwr_a_under_pwr_b_tht": "no PWR-A component under a PWR-B THT pin field (pin field + window_margin 0.5 each side; copper and mask allowed): pcb/partition-budget.json candidates.a pwr_a_keepout_items (S02-PWR-SIG-1/2, SL2-PWR-PH, X04S1, X05S1, X06S1, X10S1, X11S1, X23S1, X32S1, X34S1; 436.3 mm2)",
+        "pwr_a_under_pwr_b_tht": "no PWR-A component under a PWR-B THT pin field (pin field + window_margin 0.5 each side; copper and mask allowed): pcb/partition-budget.json candidates.<chosen> pwr_a_keepout_items (the THT harness headers of PWR-B, build/16-dzhgut-rozyemy.csv rows with board PWR_B; their area is pwr_a_keepouts_mm2 there)",
         "pwr_a_under_b2b": "no PWR-A component under the mated QSH/QTH stack outside the QSH courtyard",
         "pwr_a_test_points": "PWR-A test points under probe windows of PWR-B (tp_probe_window 3.0)",
         "positions": "TBD: from the PCB-PWRA / PCB-PWRB placement (MODEL contract only)",
@@ -130,13 +130,13 @@
         {
           "edge": "right",
           "span": [0, 35],
-          "use": "CTRL harness S02 (two JST PHD side entry, consolidated S02-PWR-SIG), LAB PORT / LAB BUS leads towards plate slot SL3 (side entry at hB)"
+          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry), LAB PORT J506 (S23) and LAB BUS J508 (S34) leads towards plate slot SL3 (side entry at hB; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
         },
         {
           "edge": "top",
           "at": 35,
           "span": [108, 128],
-          "use": "SL2-bound JST PH (consolidated SL2-PWR-PH: S20, S21, S22, S35, S36) and the RF lead S04 (X04S1) through plate slot SL2"
+          "use": "J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 X04S1-PWR (RF board lead S04) through plate slot SL2 (build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
         }
       ],
       "notes": "Mezzanine of the W2 AREA decision 'Кількість плат' (four main boards): parts <= hB on the top side only, no PWR-B part over a window (check_boards, PCB-PWRB). Its outline and windows are the mechanical contract; MODEL FIT ONLY."
