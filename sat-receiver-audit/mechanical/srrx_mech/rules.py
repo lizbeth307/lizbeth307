@@ -275,12 +275,7 @@ def evaluate(P):
     out.append({"id": "R-PWR-KEY", "rule": "E-Switch PV6F240SS panel thickness at the power key (top wall) and at SW501 (hatch board 1.6 mm)",
                 "value_mm": [m["wall"], P.boards["stackup"]["t"]], "limit_mm": [lo, hi],
                 "result": _res(lo <= m["wall"] <= hi and lo <= P.boards["stackup"]["t"] <= hi), "source": "E-Switch PV6 datasheet (parts.json pv6_button)"})
-    pk, pv = m["top_face"]["power_key"], P.parts["pv6_button"]
-    out.append({"id": "R-PWR-KEY-NUT", "rule": "PV6 panel nut inside the top wall clear of the HDMI board, the display clamp bosses and the top Al angle",
-                "value_mm": {"key_x": pk["x"], "key_z": pk["z"], "nut_d_assumed": pv["nut_d"]},
-                "result": f"OPEN: the PV6 datasheet gives no nut size; a D{pv['nut_d']:g} nut (assumption) at x {pk['x']:g} / z {pk['z']:g} would reach the HDMI "
-                          "board edge (x 146.2) and the top-right display clamp boss (z >= 56.5): measure the received nut; if it does not clear, re-place "
-                          "the key (wave 2 layout)", "source": "parts.json pv6_button; mechanical.json top_face.power_key"})
+    out.append(pwr_key_nut_rule(P))
     out.append(plate_slot_rule(P))
     out.append(plate_slot_fill(P))
     out += module_rules(P)
@@ -298,13 +293,11 @@ def evaluate(P):
     out.append({"id": "R-VENT-FOAM", "rule": "battery vent: the thread ends in the 3 mm foam layer, so the foam has a hole >= thread d + 0.5 at the vent",
                 "value_mm": {v["id"]: v.get("foam_cutout_d") for v in m["vents"] if "foam_cutout_d" in v}, "limit_mm": 12.5,
                 "result": _res(not bad), "source": "mechanical.json vents, battery_pack (foam 3.0)"})
-    hr = m["hdmi_route"]
-    out.append({"id": "R-HDMI-ROUTE", "rule": "HDMI cable Q6A to HDMI board: keep-clear route in the envelope check (plug head, bends, plate notch, run)",
-                "value_mm": {"cable_od": hr["cable_od"], "bend_r": hr["bend_r"]},
-                "result": "OPEN: " + hr["_status"], "source": "mechanical.json hdmi_route, layout hdmi_*"})
+    out.append(hdmi_route_rule(P))
     out += w2_mech1_rules(P)
     out += w2_mech2_rules(P)
     out += w2_mech3_rules(P)
+    out += w2_mech4_rules(P)
     return out
 
 
@@ -773,3 +766,159 @@ def w2_mech3_rules(P):
     """Rows added by W2 MECH-3 (registration list, append-only)."""
     from . import fasteners
     return [pwr_pocket_rule(P), j551_rule(P), fasteners.rule(P)]
+
+
+def _boxes_by_name(P):
+    from .layout import structure_boxes
+    out = {name: bx for _, name, bx, _ in item_boxes(P)}
+    out.update(dict(structure_boxes(P)))
+    return out
+
+
+def clamp_plate_boxes(P):
+    """Display clamp plates under the clamp bosses (cad.display_clamp, screwed to the boss bottom at module_back, clamp t below the
+    module back): the plate reaches from its boss towards the glass (long side boss_d / 2 - 1 + reach, short side boss_d / 2 away
+    from the glass) and to either side along the glass edge."""
+    m = P.mech
+    d = m["display"]["clamp"]
+    zb = m["stack_z"]["module_back"]
+    gx, gy, gw, gh = m["display"]["glass_pocket"]
+    long_, short = max(d["w"] - d["boss_d"] / 2, d["boss_d"] / 2 - 1.0 + d["reach"]), d["boss_d"] / 2
+    out = []
+    for i, (bx, by) in enumerate(m["display"]["clamp_bosses"]):
+        y0, y1 = (by - long_, by + short) if by > gy + gh / 2 else (by - short, by + long_)
+        out.append((f"display_clamp.{i}", (bx - long_, y0, zb - d["t"], bx + long_, y1, zb)))
+    return out
+
+
+def pwr_key_nut_rule(P):
+    """R-PWR-KEY-NUT (W2 MECH-4, B-05): the PV6 nut reserve nut.PWR_KEY and the key body clear the HDMI board, the display, the clamp
+    plates, the top Al angle and the plate (the nut only inside the plate notch); OPEN while the nut is not dimensioned."""
+    from .layout import gap, pwr_key_nut_box
+    m = P.mech
+    pk, pv = m["top_face"]["power_key"], P.parts["pv6_button"]
+    named = _boxes_by_name(P)
+    nut, body = pwr_key_nut_box(P), named["pwr_key_body"]
+    checks = {"nut-hdmi_board": gap(nut, named["hdmi_board"]), "body-hdmi_board": gap(body, named["hdmi_board"]),
+              "body-display": gap(body, named["display"]), "nut-angle.top.plate": gap(nut, named["angle.top.plate"]),
+              "nut-angle.top.wall": gap(nut, named["angle.top.wall"]), "body-plate.main": gap(body, named["plate.main"]),
+              "nut-front_wall": m["stack_z"]["front_wall_inner"] - nut[5]}
+    for name, c in clamp_plate_boxes(P):
+        checks[f"body-{name}"] = gap(body, c)
+        checks[f"nut-{name}"] = gap(nut, c)
+    notch = [n for n in m["plate"].get("notches", []) if n[0] <= nut[0] - 0.5 and nut[3] + 0.5 <= n[0] + n[2] and n[1] <= nut[1]]
+    in_notch = bool(notch) or nut[2] >= m["stack_z"]["plate_front"]
+    worst = min(checks, key=checks.get)
+    ok = checks[worst] >= 0.5 and in_notch
+    val = {"key_x": pk["x"], "key_z": pk["z"], "nut_reserve": [pv["nut_d"], pv["nut_t"]],
+           "clear_mm": {k: round(v, 2) for k, v in sorted(checks.items()) if v < 20.0}, "worst": [worst, round(checks[worst], 2)],
+           "in_plate_notch": in_notch}
+    rule = {"id": "R-PWR-KEY-NUT",
+            "rule": "PV6 panel nut inside the top wall (reserve nut.PWR_KEY) and the key body clear of the HDMI board, the display and its clamp plates, "
+                    "the top Al angle and the plate (the nut inside the plate notch), >= 0.5",
+            "value_mm": val, "limit_mm": 0.5, "source": "parts.json pv6_button (nut_src); mechanical.json top_face.power_key, plate.notches, display.clamp"}
+    if not ok:
+        why = f"{worst} {checks[worst]:.2f} < 0.5" if checks[worst] < 0.5 else "not inside a plate notch"
+        return dict(rule, result=f"FAIL (model): the nut reserve D{pv['nut_d']:g} x {pv['nut_t']:g} at x {pk['x']:g} / z {pk['z']:g}: {why}")
+    return dict(rule, result=(
+        f"OPEN: the nut is not dimensioned (PV6 and PV2 datasheets; DigiKey PV2PV3PV6HEX16 'HEX NUT FOR PV2 SERIES'; parts.json pv6_button nut_src): "
+        f"the reserve D{pv['nut_d']:g} x {pv['nut_t']:g} (assumption) at x {pk['x']:g} / z {pk['z']:g} clears everything by >= 0.5 "
+        f"(worst {worst} {checks[worst]:.2f}) inside the plate notch, and the key body no longer touches the plate; measure the received nut at "
+        "incoming inspection: a nut wider than the reserve needs the top Al angle notched or the key moved"))
+
+
+def hdmi_route_rule(P):
+    """R-HDMI-ROUTE (W2 MECH-4, B-04): the FPC route envelopes (adapters, folds, ferrite, insert) are in the envelope check without a
+    conflict, each flex is long enough for its centreline with bounded slack, the flex fits the ferrite slot and the plate notch."""
+    from .layout import fit_checks
+    m = P.mech
+    hr = m["hdmi_route"]
+    flex, fer = P.parts[hr["flex"]], P.parts[hr["ferrite"]]
+    named = _boxes_by_name(P)
+    missing = [e for e in hr["envelopes"] if e not in named]
+    coll, outside = fit_checks(P)
+    env = set(hr["envelopes"])
+    conflicts = [f"{c['a']} / {c['b']} {c['gap_mm']}" for c in coll if c["a"] in env or c["b"] in env]
+    conflicts += [f"{o['item']} outside on {o['axis']}" for o in outside if o["item"] in env]
+    segs, bad = {}, []
+    for s in hr["segments"]:
+        pts = s["points"]
+        cl = sum(math.dist(a, b) for a, b in zip(pts, pts[1:]))
+        length = flex["lengths"][s["part"]]
+        slack = length - cl
+        segs[s["id"]] = {"part": s["part"], "flex_mm": length, "centreline_mm": round(cl, 1), "slack_mm": round(slack, 1), "folds": s.get("folds", 0)}
+        if not 0.0 <= slack <= hr["slack_max"]:
+            bad.append(f"{s['id']} slack {slack:.1f} outside 0-{hr['slack_max']:g}")
+    w = flex["width"]
+    if w > min(fer["cable_width_max"], fer["slot"][0]):
+        bad.append(f"flex {w:g} wider than the ferrite slot {fer['slot'][0]:g}")
+    nx, ny, nw, nh = m["plate"]["notches_right"][0]
+    xc = hr["segments"][0]["points"][4][0]
+    if not (nx + hr["notch_clear"] <= xc - w / 2 and xc + w / 2 <= nx + nw - hr["notch_clear"]):
+        bad.append(f"flex band x {xc - w / 2:g}-{xc + w / 2:g} not inside the notch x {nx:g}-{nx + nw:g} with {hr['notch_clear']:g} clearance")
+    val = {"segments": segs, "flex_w": w, "ferrite_slot": fer["slot"], "notch": [nx, ny, nw, nh], "envelopes": len(hr["envelopes"]),
+           "folds": sum(s.get("folds", 0) for s in hr["segments"])}
+    rule = {"id": "R-HDMI-ROUTE",
+            "rule": "HDMI FPC route Q6A to the Wisecoco input: adapter, fold, ferrite, insert and run envelopes in the envelope check without a conflict; "
+                    f"each flex covers its centreline with slack 0-{hr['slack_max']:g} mm; flex through the ferrite slot and the plate notch",
+            "value_mm": val, "source": "mechanical.json hdmi_route, layout hdmi_*; parts.json adafruit_3550, adafruit_3548, adafruit_flex, wurth_74278011"}
+    problems = [f"missing envelope {e}" for e in missing] + conflicts + bad
+    if problems:
+        return dict(rule, result="FAIL (model): " + "; ".join(problems))
+    f1, f2 = segs["FLEX1"], segs["FLEX2"]
+    return dict(rule, result=(
+        f"PASS (model): Adafruit 3550 on the Q6A receptacle, flex 1 {f1['part']} ({f1['slack_mm']:g} mm slack) with the WE-FLAT 74278011 ferrite under the "
+        f"LAB BUS nut, through the plate notch to the HDMI_INSERT reserve right of the BMS, flex 2 {f2['part']} ({f2['slack_mm']:g} mm slack) up the strip "
+        f"and along y 78.65-88.65 to the Adafruit 3548 in the Wisecoco input; {val['folds']} 45-degree folds; labelled assumptions: 3550 axis from the "
+        f"product photos (3550 or 3549 by the receptacle side), flex thickness {flex['thickness_reserve']:g} and bend radius {flex['bend_r']:g} not "
+        "published, insert reserve size, Wisecoco HDMI input at the lower end of the board's right edge (STACK D5: measure the received board); "
+        "link, EMI of the wrapped flex and the folds stay bench OPEN"))
+
+
+def f101_access_rule(P):
+    """R-F101-ACCESS (W2 MECH-4, B-12): can F101 face the service hatch for storage? Free depth in the hatch bottom strip in front of
+    the USB-A plug bay against the carrier + holder + fuse body stack; otherwise storage opens the seam (decision record)."""
+    m = P.mech
+    fa = m["rear_face"]["hatch"]["f101_access"]
+    x, y, w, hh = fa["place"]
+    t = m["wall"]
+    holder, fuse = P.parts["keystone_3568"], P.parts["littelfuse_mini_297"]
+    front = [bx for iid, name, bx, it in item_boxes(P)
+             if iid != "hatch_parts" and not it.get("outside") and bx[0] < x + w and bx[3] > x and bx[1] < y + hh and bx[4] > y and bx[2] > t]
+    z_front = min([bx[2] for bx in front] or [m["stack_z"]["plate_rear"]])
+    free = round(z_front - t - fa["clearance"], 2)
+    stack = round(fa["carrier_t"] + holder["body"][2] + fuse["body"][2], 2)
+    val = {"place": fa["place"], "free_depth": free, "stack": stack,
+           "stack_parts": {"carrier": fa["carrier_t"], "keystone_3568": holder["body"][2], "mini_fuse_body": fuse["body"][2]}}
+    rule = {"id": "R-F101-ACCESS",
+            "rule": "F101 for storage (STACK: F1 out for more than 2-4 weeks): the PACK_FUSE carrier with the fuse facing the hatch opening needs "
+                    "carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip; otherwise the seam is opened",
+            "value_mm": val, "limit_mm": stack, "source": "mechanical.json rear_face.hatch.f101_access; parts.json keystone_3568, littelfuse_mini_297"}
+    if stack <= free:
+        return dict(rule, result=f"PASS (model): F101 fits facing the hatch opening ({stack:g} <= {free:g} mm free)")
+    return dict(rule, result=(
+        f"PASS (model): decision - storage keeps the seam procedure: facing the opening, the stack needs {stack:g} mm (carrier {fa['carrier_t']:g} "
+        f"+ Keystone 3568 {holder['body'][2]:g} + MINI body {fuse['body'][2]:g}) against {free:g} mm in front of the USB-A plug bay, and the rest of the "
+        "hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery tray (envelope MECH-5) "
+        "and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення')"))
+
+
+def p8_accessory_rule(P):
+    """R-P8-ACCESSORY (W2 MECH-4, CC-27): the external P8 inline accessory (outside the enclosure) and what its envelope still lacks."""
+    pa = P.parts["p8_accessory"]
+    mods = pa["modules"]
+    open_ = [f"{k}: {v.get('_tbd_reason', 'TBD')}" for k, v in mods.items() if not v.get("size")]
+    val = {"outside_enclosure": True, "chain": pa["chain"], "modules": {k: v.get("size") for k, v in mods.items()},
+           "envelope": {k: v for k, v in pa["envelope"].items() if not k.startswith("_")}}
+    rule = {"id": "R-P8-ACCESSORY",
+            "rule": "P8 external inline accessory (A403 -> A404 in the antenna line, ch4 bias through P8): module envelopes, chain and the parts still open",
+            "value_mm": val, "source": "parts.json p8_accessory; build/03 P8 row; build/15 'Шлях P8 (W2 AREA)'"}
+    if open_:
+        return dict(rule, result="OPEN: " + "; ".join(open_) + "; " + pa["envelope"]["_tbd_reason"]
+                    + "; sealing of the accessory box is OPEN (T-07); assembly order build/21 E9c")
+    return dict(rule, result="PASS (model): every module of the accessory has an envelope")
+
+
+def w2_mech4_rules(P):
+    """Rows added by W2 MECH-4 (registration list, append-only)."""
+    return [f101_access_rule(P), p8_accessory_rule(P)]
