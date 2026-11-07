@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "date": "2026-11-07",
- "note": "SRC-2 (wave 2) sourcing reads of 2026-11-07: panel-port pigtail lengths (Taoglas Hirose U.FL 1.13 family CAB.01038 / CAB.01039, Adam Tech CA-DKCA1-152L5-APAJ), fasteners mapped to mechanical/generated/fastener-stacks.json (CNC Kitchen ISO 14580 at 3DJAKE, Würth 970060154, the F45 standoff search, Hammond 1554U accessories), seals and edge trim, S-band pod and P8-accessory bulkheads (Cinch 142-0901-401) and thermal-interface materials (3M 5413). A row records what the source showed; \"stock\": null means not shown, not zero; a 3DJAKE stock text counts packs. web:* rows are datasheet, vendor or search reads; digikey:* rows are DigiKey DE pages keyed by the DigiKey part number the page showed. No browser User-Agent was sent (curl default, WebFetch); a 403, CAPTCHA, redirect to a home page or 404 is recorded as not readable with URL and date and was not bypassed. PDFs were read from a scratch directory and are not committed. Rows cited from READS-RF (Taoglas CAB.718 / CAB.0243 / CAB.011, Hirose U.FL, Telegärtner RG-316, Cristek SMA), READS-E (Tensility 10-03676, binder M8), MECH-2 (Hammond 1554U wall, LAPP 53111200 / 52103000, Fairview SM4955, Cinch VFA340, Amphenol 242181, Bulgin PX0845/A) and SRC-1 (Amphenol 135101-01-M1.00) and the 2026-11-06 row of Cinch 415-0029-006 are not re-read here. No new LCSC code, so this package has no -lcsc.json snapshot.",
+ "note": "SRC-2 (wave 2) sourcing reads of 2026-11-07: panel-port pigtail lengths (Taoglas Hirose U.FL 1.13 family CAB.01038 / CAB.01039, Adam Tech CA-DKCA1-152L5-APAJ), fasteners mapped to mechanical/generated/fastener-stacks.json (CNC Kitchen ISO 14580 at 3DJAKE, Würth 970060154, the F45 standoff search, Hammond 1554U accessories), seals and edge trim, S-band pod and P8-accessory bulkheads (Cinch 142-0901-401), thermal-interface materials (3M 5413) and the Würth 614004190021 receptacle page (J541/J543 female ends, data only). A row records what the source showed; \"stock\": null means not shown, not zero; a 3DJAKE stock text counts packs. web:* rows are datasheet, vendor or search reads; digikey:* rows are DigiKey DE pages keyed by the DigiKey part number the page showed. No browser User-Agent was sent (curl default, WebFetch); a 403, CAPTCHA, redirect to a home page or 404 is recorded as not readable with URL and date and was not bypassed. PDFs were read from a scratch directory and are not committed. Rows cited from READS-RF (Taoglas CAB.718 / CAB.0243 / CAB.011, Hirose U.FL, Telegärtner RG-316, Cristek SMA), READS-E (Tensility 10-03676, binder M8), MECH-2 (Hammond 1554U wall, LAPP 53111200 / 52103000, Fairview SM4955, Cinch VFA340, Amphenol 242181, Bulgin PX0845/A) and SRC-1 (Amphenol 135101-01-M1.00) and the 2026-11-06 row of Cinch 415-0029-006 are not re-read here. No new LCSC code, so this package has no -lcsc.json snapshot.",
  "entries": {
   "digikey:931-CAB.01039-ND": {
    "distributor": "DigiKey DE",
@@ -373,6 +373,18 @@
    "stock": null,
    "price": null,
    "note": "\"mpn\" is null on purpose: 0 products (only the category tile \"Adhesives, Epoxies, Greases, Pastes - Thermal, 53 items\"); \"8329TFM\" (https://www.digikey.de/en/products/result?keywords=8329TFM) 0 results, 2026-11-07. No thermally conductive adhesive was read in this package."
+  },
+  "digikey:732-10012-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=614004190021",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE search result page (single product)",
+   "mpn": "614004190021",
+   "manufacturer": "Würth Elektronik",
+   "stock": 3865,
+   "status": "Active",
+   "price": "EUR 1.21 @1",
+   "note": "CONN RCPT USB2.0 TYPEA 4POS R/A: USB-A USB 2.0 receptacle, 4 positions, through hole, right angle, horizontal, solder; current rating 0.5 A, 3 A; lead time 11 weeks; ladder 10 @ EUR 1.008, 50 @ EUR 0.8872, 100 @ EUR 0.7261; datasheet https://www.we-online.com/catalog/datasheet/614004190021.pdf (not re-read here; MECH-3 read the drawing rev C, mechanical/params/parts.json wurth_614004190021). Read for the female ends of the RTL-A/RTL-B leads (J543/J541) that MECH-3 modelled; the parts DB entry W-LINDY-36700 of J541/J543 is not changed by SRC-2 (owner of that entry)."
   }
  }
 }
