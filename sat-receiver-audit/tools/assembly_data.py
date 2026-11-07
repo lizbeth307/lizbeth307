@@ -300,7 +300,7 @@ HEADERS = {
     "J510": ("X15S1-HATCH", {"S15": "1"}),
     "J513": ("X30S1-HATCH", {"S30": "1-3"}),
     # W2 GR-4: the T7A end of S24 lands on the side-entry PH 3 header of the T7_INSERT board (was soldered to U505/R516 pins)
-    "J514": ("X24S1-T7", {"S24": "1-3"}),
+    "J514": ("X24S1-T7A", {"S24": "1-3"}),
 }
 # Graph connectors whose contacts serve more than one segment: the S01 ribbon conductors 6, 7, 16 and 18 leave as the PPS branch
 # right after the J20 socket (build/15 W2 MECH-1, mechanical/params/mechanical.json harness_routes branches.PPS).
@@ -383,7 +383,7 @@ SEGMENTS = [
     ("S22", "PWR", "HFP", "VBUS_HFP → пігтейл HF+ (J544.1)", None, "TBD (CAD)", "після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2"),
     ("S23", "PWR", "LABUSB", "VBUS_LABPORT → J501.1", None, "TBD (CAD)", "C506 біля вихідного порту; крізь проріз SL3"),
     ("S24", "CTRL", "T7A", "EN_T7/3V3 → вставка T7", None, "TBD (CAD)",
-     "U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7, PH 3 бічного входу, W2 GR-4); крізь проріз SL2"),
+     "U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7A, PH 3 бічного входу, W2 GR-4); крізь проріз SL2"),
     ("S25", "CTRL", "GNSS", "CTRL → LC76G (живлення і RESET)", None, "TBD (CAD)",
      "E3_GNSS5V від U315 і E3_GNSS_RESET_N від Q301 з CTRL, крізь SL2; PPS і UART6 сюди не входять — вони йдуть гілкою PPS шлейфу S01 "
      "(S01 + S25 за моделлю 322 мм > 200, R-PPS-LEN; рішення build/15 W2 MECH-1)"),

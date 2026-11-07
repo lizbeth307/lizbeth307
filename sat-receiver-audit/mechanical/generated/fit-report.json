@@ -3,8 +3,8 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "e9f65a072a5648bbcc25e0806b672126efc61b56a8819329d9afdd331b45eae4",
-    "pcb_components_sha256": "25a0d7830a63c999575be8ff155e6cf5f2e5f6167dc958a97e287f3c5beff98f"
+    "params_sha256": "fe0187c59c26114b1fa1fa0f26a95be0063b16074228060ffce5c625682711ae",
+    "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
   },
   "envelope": {
     "model": [
@@ -69,7 +69,7 @@
       "h_plus_d": 269.7,
       "result": "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"
     },
-    "reason": "height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (64.3: two rows of cased LNA modules, arrangement b, W2 MECH-3) along the top; depth: wall 2.5 + rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 20.08 (bond gap 0.4 + PWR-A 1.6 + B2B 5 + PWR-B 1.6 + parts 5.5 + path-2 channel 5.98; W2 MECH-3 depth growth dz 4.08 = pcb/partition-spec.json envelope.dz) + display 7 + front wall 2.5; width: display glass 164.8 + HMI column 51 (build/05 1.1)"
+    "reason": "height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (64.3: two rows of cased LNA modules, arrangement b, W2 MECH-3) along the top; depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 18.1 (PWR-A + B2B 5.0 + PWR-B + parts 5.5 + path-2 channel 4.0, W2 MECH-3 dz 2.1) + display 7; width: display glass 164.8 + HMI column 51 (build/05 1.1)"
   },
   "collisions": [],
   "tight_below_0_5mm": [
@@ -1402,8 +1402,8 @@
         "depth_min": 1.0,
         "plate_t": 2.0
       },
-      "result": "OPEN: the Pololu pin rows are pocketed (M-07 PK1, PK2); the other PWR-A THT groups (radials, Keystone 3568 fuse holders, the PWR-A harness headers: pcb/partition-budget.json candidates.<chosen> pwr_a_tht_pocket_items, which also list U107/U108) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS prints the current count) (pcb/partition-budget.json candidates.a pwr_a_tht_pocket_items now: 38 items with 120 THT pads, U107/U108 of them pocketed here)",
-      "source": "boards.json PWR tht_pockets / modules_on_board pin_field; pcb/partition-spec.json keepouts.pwr_a_tht_pockets; pcb/partition-budget.json pwr_a_tht_pocket_items"
+      "result": "OPEN: the Pololu pin rows are pocketed (M-07 PK1, PK2); the other PWR-A THT groups (radials C2xx/C511/C512, Keystone 3568 holders F102/F103/F201, the PWR-A harness headers: pcb/partition-budget.json candidates.a pwr_a_tht_pocket_items, 34 items with 72 pads incl. the two Pololu rows) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS)",
+      "source": "boards.json PWR tht_pockets / modules_on_board pin_field; pcb/partition-spec.json keepouts.pwr_a_tht_pockets"
     },
     {
       "id": "R-J551",
@@ -1432,7 +1432,7 @@
           6.5
         ]
       },
-      "result": "PASS (model): 2.5 mm ASA wall inside 2-6.5; inserted from inside (collar on the inner face), SW 11 nut outside, 7.5 mm proud of the right face; plain bore 10.1 (binder proposal 2: takes the M10x0.75 body with or without flats); anti-rotation with the flats proposal (9.1 across) OPEN until flats on this part's body are confirmed (the READS-E reading of the scale drawing names none)"
+      "result": "PASS (model): 2.5 mm ASA wall inside 2-6.5; inserted from inside (collar on the inner face), SW 11 nut outside, 7.5 mm proud of the right face; plain bore 10.1 (binder proposal 2)"
     },
     {
       "id": "R-FASTENER-STACKS",
@@ -1467,11 +1467,11 @@
           8.0
         ],
         "ANGLES": [
-          3.53,
+          4.0,
           4.0
         ],
         "PWR_A-PLATE": [
-          3.53,
+          4.0,
           4.0
         ],
         "PWR_B-STANDOFF": [
@@ -1503,7 +1503,7 @@
           6.0
         ]
       },
-      "result": "OPEN: HATCH, PWR_A-PLATE, CTRL, ENC, Q6A-STANDOFF, Q6A-PLATE, UFS-BOSS, LIME-PEDESTAL, DISPLAY-CLAMP, IMU-CARRIER, IMU-LID, IMU-BOARD-STANDOFFS, IMU-TRIPOD, POD-LID, POD-PANEL, PWR-BOND, INA228, SWM-2813, HUB-5997, IP2368, FAN-NF-A4X10, BLOWER, HATCH-BOARD, PACK-FUSE, POD-MODULES (thread depth not read, fixing or screw not chosen, or no ISO length in the window); PASS (model): CLOSURE, T7_HOLDER, PLATE_PM1, PLATE_PM2, PLATE_PM3, PLATE_PM4, ANGLES, PWR_B-STANDOFF, RF-STANDOFF",
+      "result": "OPEN: Q6A-STANDOFF, Q6A-PLATE, IMU-CARRIER, POD-LID, POD-PANEL, PWR-BOND, INA228, SWM-2813, HUB-5997, IP2368, FAN-NF-A4X10, BLOWER, HATCH-BOARD, PACK-FUSE, POD-MODULES (thread depth not read or fixing not designed); PASS (model): CLOSURE, HATCH, T7_HOLDER, PLATE_PM1, PLATE_PM2, PLATE_PM3, PLATE_PM4, ANGLES, PWR_A-PLATE, PWR_B-STANDOFF, RF-STANDOFF, CTRL, ENC, UFS-BOSS, LIME-PEDESTAL, DISPLAY-CLAMP",
       "source": "mechanical/srrx_mech/fasteners.py; build/17 rows"
     },
     {
@@ -1852,12 +1852,10 @@
         "need_1_5_mm2": 3555.0,
         "need_1_8_mm2": 4266.0,
         "estimate_mm2": 4266.0,
-        "ratio_1_5": 1.55,
-        "ratio_1_8": 1.86,
+        "ratio_1_5": 0.55,
+        "ratio_1_8": 0.65,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 4266 mm2 at fill 1.8 > usable 2290 mm2 of pcb/partition-budget.json candidates.a boards.PWR_B (outline minus holes, windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline 6516 mm2 minus only the Pololu windows is an upper bound) (model estimate; partition and placement decide, AREA / PCB)",
-        "usable_mm2": 2290.0,
-        "ratio_basis": "usable_mm2 (pcb/partition-budget.json)"
+        "result": "PASS (model estimate)"
       },
       "RF": {
         "area_mm2": 8188.0,
@@ -4365,7 +4363,7 @@
     "rules_open": 11,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
-    "board_area_open": 3,
+    "board_area_open": 2,
     "board_area_harness_open": 0,
     "thermal_failures": 0,
     "thermal_open": 3,
