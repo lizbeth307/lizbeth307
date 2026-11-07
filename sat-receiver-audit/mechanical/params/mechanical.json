@@ -4,18 +4,19 @@
   "note": "Single source of the enclosure geometry (mm). Axes: x right and y up as seen from the front, z from the rear outer face (0) towards the front face (outer.d). Values without a _src key are design choices of this package (build/15 decisions, build/05 rules); part envelopes and their sources are in parts.json. Physical fit, sealing, thermal and drop gates stay OPEN.",
   "outer": {
     "w": 230.0,
-    "h": 160.0,
-    "d": 66.0,
+    "h": 163.8,
+    "d": 68.1,
     "corner_r": 14.0,
-    "_src": "D15 222.5 x 137.5 x 57.5 grown after the model fit (fit-report.json 'envelope'); decision build/15 'Оболонка D15 може збільшитися'"
+    "_src": "D15 222.5 x 137.5 x 57.5 grown after the model fit (fit-report.json 'envelope'); decision build/15 'Оболонка D15 може збільшитися'",
+    "_growth_w2_mech3": "one joint growth (W2 MECH-3, build/15 'Оболонка D15'): h 160.0 -> 163.8 = RF-bay arrangement (b), two rows of cased LNA modules 2 x 30.6 + 3 x 0.5 clearance = 62.7 against the inner bay height 58.9 (rules.bay_packing); d 66.0 -> 68.1 = front-tier dz 2.1 of pcb/partition-spec.json envelope.dz ((42.5 + stack 5.0 + board 1.6 + hB 5.5 + channel 4.0) - 56.5 = 2.1, equal to the CTRL bottom term PHD 5.0 + 1.0 - 3.9); both inside the AREA caps dh <= 4.0, dz <= 6.0; width unchanged (STACK.md:109)"
   },
   "wall": 2.5,
   "split_z": 14.0,
   "stack_z": {
     "_note": "front-to-rear stack in the display region",
-    "front_wall_inner": 63.5,
+    "front_wall_inner": 65.6,
     "vhb": 1.0,
-    "module_back": 56.5,
+    "module_back": 58.6,
     "plate_front": 40.5,
     "plate_t": 2.0,
     "plate_rear": 38.5,
@@ -77,12 +78,12 @@
   },
   "front_face_small": {
     "status_led": {
-      "c": [30.0, 154.5],
+      "c": [30.0, 158.3],
       "pilot_d": 3.0,
       "_src": "SKU TBD (STACK 2.9 open row)"
     },
     "piezo_port": {
-      "c": [45.0, 154.5],
+      "c": [45.0, 158.3],
       "pilot_d": 3.0,
       "_src": "acoustic ePTFE vent SKU TBD (STACK 2.9 open row)"
     }
@@ -153,15 +154,15 @@
     ],
     "veml7700_window": {
       "x": 120.0,
-      "z": 60.0,
+      "z": 62.1,
       "d": 4.0
     },
     "hood_hinge": {
       "x": [20.0, 92.0, 160.0],
       "knuckle_w": 8.0,
       "pin_d": 2.1,
-      "axis_y": 155.0,
-      "axis_z": 69.0
+      "axis_y": 158.8,
+      "axis_z": 71.1
     },
     "_src": "port pitch 20 mm, types and the order P1..P8 + RX1: STACK 5.8 / 05 5.1; the row starts at x 43.5 so that the RX1 bulkhead nut and washer (envelope: Samtec SMA-J-C-X-ST-BH4 hardware, parts.json sma_bulkhead_hw) clear the right FR4 wall of the RF bay (x 209.6) by 1 mm",
     "power_key": {
@@ -169,7 +170,7 @@
       "x": 155.5,
       "z": 48.5,
       "kind": "pv6",
-      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) fills the 16 mm between the plate front face (40.5) and the display module back (56.5), so x 155.5 / z 48.5 leaves 1.3 mm to the HDMI board and 0 mm to plate and module (model; TBD: measure the received key); the nut is not dimensioned on the datasheet and is not modelled as an envelope: with a D20 nut (assumption) it would meet the HDMI board edge and the top-right display clamp boss (rule R-PWR-KEY-NUT OPEN)"
+      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) sits between the plate front face (40.5) and the display module back (58.6 after the W2 MECH-3 dz 2.1), so x 155.5 / z 48.5 leaves 1.3 mm to the HDMI board, 0 mm to the plate and 2.1 mm to the module (model; TBD: measure the received key); the nut is not dimensioned on the datasheet and is not modelled as an envelope: with a D20 nut (assumption) it would meet the HDMI board edge and the top-right display clamp boss (rule R-PWR-KEY-NUT OPEN)"
     }
   },
   "right_face": {
@@ -189,7 +190,17 @@
         "part": "taoglas_cab01075"
       }
     ],
-    "_src": "STACK D15 puts RX2/REF IN on the left wall; this model moves them to the right wall next to the LimeSDR: the Taoglas CAB.01075 leads are 100 mm long and the left wall is at least 145 mm from the Lime (recorded in build/15)"
+    "_src": "STACK D15 puts RX2/REF IN on the left wall; this model moves them to the right wall next to the LimeSDR: the Taoglas CAB.01075 leads are 100 mm long and the left wall is at least 145 mm from the Lime (recorded in build/15)",
+    "panel": [
+      {
+        "id": "J551",
+        "y": 106.0,
+        "z": 30.0,
+        "kind": "m8_panel",
+        "part": "binder_76_6618_1111",
+        "_note": "pod power entry (W2 MECH-3, build/15 'Вхід живлення pod J551/W425 (W2 MECH-3)'): binder M8 3-pin receptacle J551 (GR-1 part), W425 plugs in from outside with binder 99 3379 100 03; right face between the Q6A top edge (y 94.5) and the right Al angle (y 116), rear layer beside the RF-bay right wall (x 211.2) where the inner envelope (D12.6 x 9.5) and the 0.2 m leads have room; plain bore 10.1 (binder cut-out proposal 2) in the 2.5 mm ASA wall (no Al angle at y 106)"
+      }
+    ]
   },
   "left_face": {
     "exhaust": {
@@ -297,7 +308,7 @@
       "slot_pitch": 5.0,
       "_note": "centred on the Noctua NF-A4x10 of cooler A (fan centre x 184, y 66 = parts.json q6a_cooler_zone center_in_board)"
     },
-    "strap_lugs": [[20.5, 150.0], [209.5, 150.0]],
+    "strap_lugs": [[20.5, 153.8], [209.5, 153.8]],
     "strap_lug": {
       "w": 14.0,
       "h": 10.0,
@@ -333,7 +344,7 @@
     }
   },
   "closure": {
-    "bosses": [[22.0, 4.5], [60.0, 4.5], [98.0, 4.5], [136.0, 4.5], [163.5, 4.5], [222.7, 7.3], [225.5, 98.0], [225.5, 130.0], [222.7, 152.7], [180.0, 155.5], [96.1, 155.5], [7.3, 152.7], [4.5, 126.0], [4.5, 99.0]],
+    "bosses": [[22.0, 4.5], [60.0, 4.5], [98.0, 4.5], [136.0, 4.5], [163.5, 4.5], [222.7, 7.3], [225.5, 98.0], [225.5, 130.0], [222.7, 156.5], [180.0, 159.3], [96.1, 159.3], [7.3, 156.5], [4.5, 126.0], [4.5, 99.0]],
     "boss_d": 7.5,
     "insert": {
       "thread": "M3",
@@ -361,18 +372,19 @@
     "_src": "EPDM cord in a groove (build/15). The groove sits in the wall thickened outwards (belt) at the split, so the seal needs no rim inside the enclosure; land = wall left on each side of the groove (2 perimeters of a 0.45 mm line); squeeze and fill rule: parts.json oring_groove_rule"
   },
   "plate": {
-    "main": [3.5, 38.5, 223.0, 118.5],
+    "main": [3.5, 38.5, 223.0, 122.3],
     "ext": [163.0, 3.0, 63.5, 35.5],
     "t": 2.0,
     "material": "EN AW-5754 (AlMg3) 2.0 mm, mill finish; alt. 1050A-H14 or 6082-T6",
     "mount_bosses": [
       {
-        "c": [20.0, 152.5],
+        "c": [20.0, 156.3],
         "wall": "top"
       },
       {
-        "c": [40.0, 152.5],
-        "wall": "top"
+        "c": [31.0, 156.3],
+        "wall": "top",
+        "_note": "W2 MECH-3: moved from x 40 to x 31 so that the screw and its head clear the plate leg of the top Al angle (x 36-214; generated/fastener-stacks.json PLATE_PM2)"
       },
       {
         "c": [223.0, 15.0],
@@ -400,7 +412,7 @@
     "_src": "STACK 5.8 (2.0 mm Al, holes +-0.2, flatness <=0.2 under Q6A, pedestal and regulator pads, no thread cut in the plate; riser window about 26 x 20)",
     "mount_boss_d": 7.0,
     "corner_clearance": 0.5,
-    "notches": [[145.5, 153.0, 20.0, 5.0]],
+    "notches": [[145.5, 156.8, 20.0, 5.0]],
     "_notches_note": "open notch in the top edge under the power-key nut (PV6 nut D20, assumption)",
     "slots": [
       {
@@ -413,7 +425,7 @@
         "id": "SL2",
         "rect": [115.5, 73.6, 17.5, 3.6],
         "use": "front layer (PWR top edge, CTRL harness along y 74-77) <-> rear layer above the hatch: S03, S04, S13, S14, S15, S17, S18, S20-S22, S24, S25, S30, S35 (build/16); C-T7 stays in the rear layer (Q6A J5 at the plate rear, T7 gland in the rear wall)",
-        "segments": ["S03", "S04", "S13", "S14", "S15", "S17", "S18", "S20", "S21", "S22", "S24", "S25", "S30", "S35"]
+        "segments": ["S03", "S04", "S13", "S14", "S15", "S17", "S18", "S20", "S21", "S22", "S24", "S25", "S30", "S35", "S06", "S07", "S36"]
       },
       {
         "id": "SL3",
@@ -443,7 +455,7 @@
       {
         "id": "display",
         "part": "display_module",
-        "box": [6.3, 50.3, 56.5, 164.22, 97.98, 6.0],
+        "box": [6.3, 50.3, 58.6, 164.22, 97.98, 6.0],
         "mount": "front_wall"
       },
       {
@@ -456,6 +468,12 @@
         "id": "board_pwr",
         "board": "PWR",
         "mount": "plate_front"
+      },
+      {
+        "id": "board_pwrb",
+        "board": "PWR_B",
+        "mount": "plate_front",
+        "_note": "PWR-B mezzanine on the F45 standoffs over PWR-A (W2 MECH-3, boards.json PWR_B)"
       },
       {
         "id": "blower",
@@ -605,31 +623,69 @@
       {
         "id": "v4l_a",
         "part": "v4l",
-        "box": [17.6, 99.0, 4.1, 95.0, 27.0, 13.0],
-        "mount": "rf_lid"
+        "box": [99.2, 99.1, 4.1, 95.0, 27.0, 13.0],
+        "mount": "rf_lid",
+        "_note": "RF-bay arrangement (b), row 1 (W2 MECH-3): SAWbird+ case, 7.9 mm for the right-angle SMA plug at the V4L SMA end, V4L, its USB-A socket carrier at the right"
       },
       {
         "id": "v4l_b",
         "part": "v4l",
-        "box": [114.1, 99.0, 4.1, 95.0, 27.0, 13.0],
-        "mount": "rf_lid"
+        "box": [99.2, 126.6, 4.1, 95.0, 27.0, 13.0],
+        "mount": "rf_lid",
+        "_note": "row 2 of arrangement (b): stacked on V4L-A (0.5 apart), so its top (y 153.6) stays clear of the top closure bosses at x 96.1 and 180 (y >= 155.55)"
       },
       {
         "id": "sawbird",
         "part": "sawbird_noaa",
-        "box": [17.6, 126.5, 4.1, 73.7, 30.6, 18.7],
+        "box": [17.6, 99.1, 4.1, 73.7, 30.6, 18.7],
         "mount": "rf_lid"
       },
       {
         "id": "flamingo",
         "part": "flamingo_fm",
-        "box": [100.9, 126.5, 4.1, 73.7, 30.6, 18.7],
-        "mount": "rf_lid"
+        "box": [17.6, 130.2, 4.1, 73.7, 30.6, 18.7],
+        "mount": "rf_lid",
+        "_note": "the two cased LNA modules stacked at the left end of the bay: 0.5 + 30.6 + 0.5 + 30.6 + 0.5 = 62.7 sets the bay height (outer.h 163.8)"
+      },
+      {
+        "id": "usb_socket_a",
+        "part": "wurth_614004190021",
+        "box": [194.2, 99.1, 4.1, 14.9, 22.0, 13.0],
+        "mount": "rf_lid",
+        "_note": "female USB-A end of the RTL-A lead: Wurth 614004190021 on a small carrier board on the lid, mouth towards -x on the V4L-A plug axis, wire pads on the -y strip; lead A leaves through notch N2 below it"
+      },
+      {
+        "id": "usb_socket_b",
+        "part": "wurth_614004190021",
+        "box": [194.2, 126.6, 4.1, 14.9, 22.0, 13.0],
+        "mount": "rf_lid",
+        "_note": "female USB-A end of the RTL-B lead (same carrier); lead B runs -y over socket A (usb_lead_b) to notch N3"
+      },
+      {
+        "id": "usb_lead_b",
+        "box": [202.1, 99.1, 17.6, 6.5, 27.5, 4.5],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "RTL-B lead from the socket-B pads over socket A to notch N3, right of the RF board edge (x 201.6), so no RF height zone is used; lead OD TBD (cable not chosen): 4.5 mm reserve"
       },
       {
         "id": "board_rf",
         "board": "RF",
         "mount": "plate_rear"
+      },
+      {
+        "id": "ina228",
+        "part": "adafruit_ina228_5832",
+        "box": [72.6, 39.0, 5.5, 20.2, 25.8, 10.1],
+        "mount": "rear_wall",
+        "_note": "W2 MECH-3 (CC-06): INA228 5832 no longer 'over PWR' (PWR-B covers the PWR-A L): rear layer between the LC76G (x 71.6), the HF+ can (z >= 17.5) and the tripod boss (z <= 4.8), next to the battery tray, turned 90 deg (25.8 along y) so that the S25 run at y 74.25 passes above both modules; on stand-offs from the rear wall (z 2.5 -> 5.5, fixing MECH-5 B-13 / F09); free volume of fallback F2b reduced accordingly (build/15)"
+      },
+      {
+        "id": "swm_2813",
+        "part": "pololu_2813",
+        "box": [93.3, 39.0, 5.5, 20.32, 25.4, 10.1],
+        "mount": "rear_wall",
+        "_note": "W2 MECH-3 (CC-06): Pololu #2813 U106 beside the INA228 in the same rear-layer zone (x 93.3-113.6, clear of the hatch bay at x 116), partly over the tripod boss (boss top z 4.8, module bottom 5.5); fixing MECH-5 B-13 / F05"
       },
       {
         "id": "gx16",
@@ -640,14 +696,14 @@
       {
         "id": "pwr_key_body",
         "part": "pv6_button",
-        "box": [147.5, 137.0, 40.5, 16.0, 20.5, 16.0],
+        "box": [147.5, 140.8, 40.5, 16.0, 20.5, 16.0],
         "mount": "front_wall",
         "_note": "PV6F240SS body below the panel: 17.50 +0.50 to the terminal ends (datasheet p.5) + 2.5 mm for the soldered wires; M16 thread D16"
       }
     ]
   },
   "rf_bay": {
-    "rect": [15.5, 97.0, 195.7, 60.5],
+    "rect": [15.5, 97.0, 195.7, 64.3],
     "wall_t": 1.6,
     "lid_z": [2.5, 4.1],
     "material": "FR4 copper clad 35/35 um, 1.5-1.6 mm (Bungard 120306Z33 or Scankemi 1.6, STACK 2.9)",
@@ -663,16 +719,16 @@
       {
         "id": "N2",
         "wall": "bottom",
-        "x": [60.0, 72.0],
+        "x": [195.0, 201.5],
         "h": 6.0,
-        "use": "USB 2.0 lead of V4L-A (RTL-A) to the hub / Q6A"
+        "use": "USB 2.0 lead of V4L-A (RTL-A) from the socket-A carrier pads to the hub / Q6A (W2 MECH-3: below usb_socket_a)"
       },
       {
         "id": "N3",
         "wall": "bottom",
-        "x": [150.0, 162.0],
-        "h": 6.0,
-        "use": "USB 2.0 lead of V4L-B (RTL-B) to the hub"
+        "x": [202.0, 208.5],
+        "h": 18.0,
+        "use": "USB 2.0 lead of V4L-B (RTL-B) to the hub: it crosses over socket A at z 17.6-22.1 (usb_lead_b), so the notch reaches z 22.1"
       },
       {
         "id": "N4",
@@ -684,8 +740,11 @@
     ],
     "angle_clearance": 0.3,
     "_angle_clearance_note": "the FR4 side walls run up to the top wall; where the top Al angle crosses a wall (right wall, x 209.6-211.2) both angle legs are notched out of the FR4 with this clearance (M-09)",
-    "usb_socket_reserve": [40.0, 16.0, 9.0],
-    "_usb_socket_src": "female end of the V4L extension lead (Lindy 36700 or a CH334F pigtail, STACK C5 / 2.10): no drawing read; 40 x 16 x 9 mm is an assumption (TBD: measure) used only by the bay packing check",
+    "usb_socket_reserve": [14.9, 22.0, 13.0],
+    "_usb_socket_src": "W2 MECH-3 (B-08): the female end of each V4L lead is a PCB right-angle USB-A receptacle Wurth 614004190021 on a small carrier on the lid (parts.json wurth_614004190021: drawing rev C read 2026-11-07); envelope = receptacle depth 14.15 + 0.25 + carrier margin 0.5 along the plug axis, receptacle width 15.7 + 0.3 plus a 6.0 wire-pad strip, the 13.0 z band of the V4L reserve (receptacle 7.37 + carrier 1.6 + tails 1.75 = 10.72 fits it); replaces the Lindy 36700 / CH334F pigtail assumption 40 x 16 x 9",
+    "arrangement": "b",
+    "clearance": 0.5,
+    "_arrangement_note": "rules.bay_packing reports (a) two dongles with sockets in one row, (b) LNA case + V4L + socket per row x 2 rows (chosen, W2 MECH-3), (c) V4L + socket per row x 2 rows with the LNA cases out of the bay; the V4L reserve stays the listing maximum (parts.json v4l, status listing)",
     "_note": "floor = plate, top side = top Al angle + top wall; FR4 walls on the left, bottom and right; the FR4 lid carries the modules (rf_lid mount); notches are cut at the lid edge of the bottom wall"
   },
   "angles": {
@@ -893,13 +952,31 @@
       },
       "S06": {
         "ends": ["PWR", "INA"],
-        "via": [],
-        "open": "INA228 5832 has no envelope or place in the model yet (MECH-3)"
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 8},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "hfplus", "at": [1.0, 0.5, 0.5], "off": [0.7, 0, 0], "keep": "yz"},
+          {"box": "ina228", "at": [0.5, 1.0, 0.5], "keep": "xy"},
+          {"box": "ina228", "at": [0.5, 1.0, 0.5], "keep": "y"},
+          {"box": "ina228", "at": [0.5, 1.0, 0.5]}
+        ],
+        "end_status": [{"unit": "INA", "provisional": "INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope"}],
+        "note": "SL2, rear layer: shaft between the HF+ can and the hatch bay, west along y 74.25 under the HF+ can, down to the INA228 envelope (W2 MECH-3)"
       },
       "S07": {
         "ends": ["PWR", "SWM"],
-        "via": [],
-        "open": "Pololu #2813 has no envelope or place in the model yet (MECH-3)"
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 12},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "hfplus", "at": [1.0, 0.5, 0.5], "off": [0.7, 0, 0], "keep": "yz"},
+          {"box": "swm_2813", "at": [0.5, 1.0, 0.5], "keep": "xy"},
+          {"box": "swm_2813", "at": [0.5, 1.0, 0.5], "keep": "y"},
+          {"box": "swm_2813", "at": [0.5, 1.0, 0.5]}
+        ],
+        "end_status": [{"unit": "SWM", "provisional": "#2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope"}],
+        "note": "SL2, rear layer: shaft between the HF+ can and the hatch bay, west along y 74.25, down to the #2813 envelope (W2 MECH-3)"
       },
       "S10": {
         "ends": ["PWR", "CHG"],
@@ -1246,9 +1323,18 @@
         "note": "SL2, rear layer along y 95.8 to the HF+ can top edge (G6K side)"
       },
       "S36": {
-        "ends": ["PWR", "SPOD"],
-        "via": [],
-        "open": "pod power entry (J551 panel receptacle, GR-1) is not placed on a face yet (MECH-3)"
+        "ends": ["PWR", "SBPWR"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 3.5},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"box": "nut.J551", "at": [0.0, 0.5, 0.5], "off": [-4.0, 0, 0], "keep": "yz"},
+          {"box": "nut.J551", "at": [0.0, 0.5, 0.5], "off": [-4.0, 0, 0], "keep": "xz"},
+          {"box": "nut.J551", "at": [0.0, 0.5, 0.5]}
+        ],
+        "end_status": [{"unit": "SBPWR", "provisional": "J551 lead exit at the receptacle rear (0.2 m AWG 24 leads, soldered to the S36 wires, build/16): end at the rear face of the receptacle's inner envelope (nut.J551)"}],
+        "note": "SL2, rear layer along y 95.8 east past the riser window, between the RF-bay right wall (x 211.2) and the J551 envelope north to y 106, into the receptacle rear (W2 MECH-3)"
       },
       "S37": {
         "ends": ["CTRL", "ENCM"],

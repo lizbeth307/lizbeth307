@@ -50,8 +50,8 @@ class Params_(unittest.TestCase):
 
     def test_three_boards_and_the_encoder_daughterboard(self):
         # build/15: three boards (power, RF/detector, control/HMI); the encoder board is the replaceable
-        # daughterboard STACK 5.8 asks for.
-        self.assertEqual(set(P.boards["boards"]), {"PWR", "RF", "CTRL", "ENC"})
+        # daughterboard STACK 5.8 asks for. W2 AREA / MECH-3: the power board is PWR-A plus the PWR-B mezzanine.
+        self.assertEqual(set(P.boards["boards"]), {"PWR", "PWR_B", "RF", "CTRL", "ENC"})
         self.assertEqual(P.boards["stackup"]["layers"], 4)
 
     def test_board_domains_are_the_pcb_partition_domains(self):
@@ -62,7 +62,12 @@ class Params_(unittest.TestCase):
             domains = {r["board_candidate"] for r in csv.DictReader(fh) if r["board_candidate"]}
         mine = {d for b in P.boards["boards"].values() for d in b["domains"]}
         mine |= {d for k, b in P.boards["small_boards"].items() if not k.startswith("_") for d in b["domains"]}
-        self.assertEqual(mine, domains)
+        # W2 MECH-3 (CC-12): boards.json PWR_B carries the PWR-B domains of pcb/partition-spec.json before pcb/prepare.py
+        # creates them (GR-3); once components.csv has them this is the plain equality again
+        spec = json.loads((HERE.parent / "pcb" / "partition-spec.json").read_text(encoding="utf-8"))
+        pending = set(spec["domains"]["PWR_B"]["prepare_domains"]) - domains
+        self.assertEqual(set(P.boards["boards"]["PWR_B"]["domains"]), set(spec["domains"]["PWR_B"]["prepare_domains"]))
+        self.assertEqual(mine, domains | pending)
 
     def test_vendor_models_are_pinned_and_not_committed(self):
         for m in P.vendor["models"]:
@@ -639,3 +644,99 @@ class PanelPortsW2Mech2Cad(unittest.TestCase):
         self.assertAlmostEqual(c.volume, (math.pi * r * r - seg) * L, delta=0.5)
         bb = c.bounding_box()
         self.assertAlmostEqual(bb.max.Z, f["v"] + h, places=3)            # the flat is on the +v (front) side
+
+class EnvelopeW2Mech3(unittest.TestCase):
+    """W2 MECH-3 (B-08, A-PCB-02 mech handoff, CC-06, CC-12, J551/W425, fastener stacks)."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _spec(self):
+        return json.loads((HERE.parent / "pcb" / "partition-spec.json").read_text(encoding="utf-8"))
+
+    def test_bay_arrangement_b_passes_with_the_read_socket(self):
+        bp = rules.bay_packing(P)
+        self.assertEqual(bp["chosen"], "b")
+        self.assertTrue(bp["result"].startswith("PASS (model)"), bp["result"])
+        self.assertFalse(bp["arrangements"]["a"]["fits"])
+        self.assertTrue(bp["arrangements"]["b"]["fits"])
+        self.assertEqual(bp["v4l_status"], "listing")                        # V4L reserve stays the listing maximum
+        self.assertTrue(P.parts["wurth_614004190021"]["status"].startswith("datasheet"))
+        self.assertEqual(bp["layout_outside_bay"], [])
+
+    def test_bay_packing_fails_at_the_old_height(self):
+        Q = self._copy()
+        Q.mech["rf_bay"]["rect"][3] = 60.5                                   # the bay before the joint growth
+        self.assertTrue(rules.bay_packing(Q)["result"].startswith("FAIL"))
+
+    def test_joint_growth_is_inside_the_area_caps(self):
+        env = self._spec()["envelope"]
+        W, H, D = P.outer
+        self.assertEqual(W, 230.0)                                           # width unchanged (STACK.md:109)
+        self.assertLessEqual(H - 160.0, env["cap"]["dh_max"] + 1e-9)
+        self.assertAlmostEqual(D - 66.0, env["dz"], places=6)
+        self.assertLessEqual(D - 66.0, env["cap"]["dz_max"] + 1e-9)
+
+    def test_pwr_b_is_the_mezzanine_over_pwr_a(self):
+        spec = self._spec()
+        par = spec["parameters"]
+        a, b = P.boards["boards"]["PWR"], P.boards["boards"]["PWR_B"]
+        t = P.boards["stackup"]["t"]
+        self.assertAlmostEqual(b["place"]["z_bottom"], a["place"]["z_bottom"] + t + par["stack"], places=6)
+        self.assertEqual(a["max_height"], par["hA"])
+        self.assertEqual(b["max_height"], par["hB"])
+        self.assertEqual(b["holes"], a["holes"])                             # coaxial F45 standoffs
+        self.assertEqual(b["place"]["origin"], a["place"]["origin"])
+        for mo in a["modules_on_board"]:
+            mx, my = mo["at"]
+            mw, mh = P.parts[mo["part"]]["size"][:2]
+            self.assertTrue(any(c[0] <= mx - par["window_margin"] + 1e-9 and mx + mw + par["window_margin"] <= c[0] + c[2] + 1e-9
+                                and c[1] <= my - par["window_margin"] + 1e-9 and my + mh + par["window_margin"] <= c[1] + c[3] + 1e-9
+                                for c in b["cutouts"]), mo["id"])
+        for g in layout.channel_check(P):
+            if g["item"].startswith(("PWR", "PWR_B")):
+                self.assertGreaterEqual(g["gap_to_module_mm"], spec["envelope"]["air_channel"] - 1e-9, g)
+
+    def test_ctrl_rear_zone_over_the_bms_meets_the_gr3_rule(self):
+        cap = self._spec()["ctrl"]["bottom_header_rule"]
+        zones = [z for z in P.boards["boards"]["CTRL"]["rear_zones"] if z["limit"] in ("bms", "ip2368")]
+        self.assertTrue(zones)
+        for z in zones:
+            # PHD side entry 5.0 + 1.0 clearance needs gap 3.9 + dz 2.1 = 6.0 over BMS/IP2368
+            self.assertGreaterEqual(z["free_mm"], cap["gap_mm"] + 2.1 - 1e-9, z)
+
+    def test_ina_swm_and_j551_are_in_the_collision_set(self):
+        names = {n for _, n, _, _ in layout.item_boxes(P)}
+        self.assertTrue({"ina228", "swm_2813", "nut.J551", "usb_socket_a", "usb_socket_b"} <= names)
+        coll, outside = layout.fit_checks(P)
+        self.assertEqual([c for c in coll if c["gap_mm"] < 0], [])
+        r = [x for x in rules.evaluate(P) if x["id"] == "R-J551"][0]
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+
+    def test_pololu_pin_rows_are_pocketed(self):
+        r = [x for x in rules.evaluate(P) if x["id"] == "R-PWR-POCKETS"][0]
+        self.assertFalse(r["result"].startswith("FAIL"), r["result"])
+        self.assertEqual(sorted(r["value_mm"]), ["PK1", "PK2"])
+        Q = self._copy()
+        Q.boards["boards"]["PWR"]["tht_pockets"]["depth"] = 0.5               # below the 1.0 mm rule
+        r = [x for x in rules.evaluate(Q) if x["id"] == "R-PWR-POCKETS"][0]
+        self.assertTrue(r["result"].startswith("FAIL"), r["result"])
+
+    def test_fastener_stacks_cover_every_screw_row(self):
+        from srrx_mech import fasteners
+        doc = fasteners.stacks(P)
+        text = (HERE.parent / "tools" / "assembly_data.py").read_text(encoding="utf-8")
+        start = text.index("FASTENERS = [")
+        rows = set(re.findall(r'^    \("(F\d+[ab]?)",', text[start:text.index("\n]", start)], re.M))
+        covered = {r.strip() for j in doc["joints"] for r in j["build17_row"].split("/")} | set(doc["nut_and_kit_rows"])
+        self.assertTrue({"F45", "F46", "F06"} <= rows)
+        self.assertEqual(sorted(rows - covered), [])
+        self.assertEqual(doc["summary"]["FAIL"], 0)
+
+    def test_a_short_insert_fails_the_closure_stack(self):
+        from srrx_mech import fasteners
+        Q = self._copy()
+        Q.mech["closure"]["insert"]["len"] = 2.0
+        j = [x for x in fasteners.stacks(Q)["joints"] if x["id"] == "CLOSURE"][0]
+        self.assertTrue(j["result"].startswith("FAIL"), j["result"])

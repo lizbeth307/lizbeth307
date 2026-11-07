@@ -180,7 +180,9 @@ def plate_sheet(P):
                 "UB1-2: потай M2.5 з лицьової грані в бобишку UFS; Q6A1-4: M2.5 крізь пластину в стійки 6 мм з тильного боку.",
                 "Ребра шляху 2 (смуги Al 1 x 3.5) — на лицьовій грані під HDMI-платою, уздовж потоку; точки з'єднання — голий метал.",
                 "SL1-SL3: прорізи джгутів між лицьовим і тильним шаром (build/16 §1), кромки — кант або грумет; гайки PEM ставити пресом.",
-                "Пунктир: контури плат, Q6A, бобишки UFS (тильна грань), п'єдесталу Lime і зон термопрокладок PWR."])
+                "Пунктир: контури плат, Q6A, бобишки UFS (тильна грань), п'єдесталу Lime і зон термопрокладок PWR.",
+                "PK1-PK2: глухі кишені 1.0 мм у лицьовій грані під рядами виводів Pololu U107/U108 (поле виводів + 1.0 з кожного боку); поверх — поліімід "
+                "через зазор 0.4 мм; прокладка Gelid зони 3/4 — з вирізом над кишенею. Кишені під інші THT-групи PWR-A — за розкладкою PCB-PWRA (R-PWR-POCKETS)."])
     sh.poly(plate_outline(P), True, "CUT")
     rw = pl["riser_window"]
     sh.rect(rw[0], rw[1], rw[2], rw[3], "CUT")
@@ -198,6 +200,11 @@ def plate_sheet(P):
         sh.hole(h["c"], h["d"], h["id"], 1.6)
     for bp in pl["bond_points"]:
         sh.circle(tuple(bp["c"]), 5.0, "HIDDEN")
+    from .rules import pwr_pockets
+    pockets = pwr_pockets(P)
+    for pid, mod, (x0, y0, x1, y1), d in pockets:
+        sh.rect(x0, y0, x1 - x0, y1 - y0, "HIDDEN")
+        sh.label((x0, y1 + 1), f"{pid} кишеня {fmt(d)}", 1.6)
     for bid in ("PWR", "RF"):
         b = P.boards["boards"][bid]
         ox, oy = b["place"]["origin"]
@@ -242,6 +249,9 @@ def plate_sheet(P):
         + [("виріз під гайку кнопки", n) for n in pl.get("notches", [])] + [(f"проріз джгутів {sl['id']}", sl["rect"]) for sl in pl.get("slots", [])]
     for label, (rx, ry, rw_, rh_) in wins:
         sh.ptext((tx, ty), f"{label}: X {fmt(rx - dx)}..{fmt(rx + rw_ - dx)}, Y {fmt(ry - dy)}..{fmt(ry + rh_ - dy)}", 1.75, layer="TABLE")
+        ty -= 2.55
+    for pid, mod, (x0, y0, x1, y1), d in pockets:
+        sh.ptext((tx, ty), f"кишеня {pid} ({mod}), глибина {fmt(d)}: X {fmt(x0 - dx)}..{fmt(x1 - dx)}, Y {fmt(y0 - dy)}..{fmt(y1 - dy)}", 1.75, layer="TABLE")
         ty -= 2.55
     return sh
 
@@ -303,7 +313,7 @@ def rfbay_sheet(P):
                 f"Висота стінок {fmt(hz)} = від кришки до тильної грані пластини; стінки паяти до кришки, до пластини — мідною стрічкою або пружними лапками.",
                 "Вирізи N1-N4 — біля кришки, під кабелі (таблиця); краї вирізів облудити. Фоторезист зняти перед паянням (STACK 2.9).",
                 "Модулі на кришці: SAWbird+/Flamingo+ — M3 за отворами корпусу модуля (розмітити по деталі, TBD); V4L — хомути через пари прорізів 2 x 4.",
-                "Розетки USB-подовжувачів V4L у відсіку не змодельовано (fit-report 'rf_bay_packing': OPEN)."])
+                "Розетки V4L: Würth 614004190021 на малих носійних платах на кришці (usb_socket_a/b), вихід кабелів — вирізи N2/N3; розкладка (b), fit-report 'rf_bay_packing'."])
     # lid
     sh.rect(0, 0, w, h, "CUT")
     sh.label((0, h + 3), f"Кришка {fmt(w)} x {fmt(h)} (несе модулі), 1 шт.", 2.6)

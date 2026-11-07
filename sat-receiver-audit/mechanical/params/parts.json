@@ -585,6 +585,67 @@
       "nut_side": "outside (mating side): DigiKey 'SMA jack bulkhead front-side nut'; the 8 HEX body sits on the inner face of the Al angle",
       "status": "datasheet",
       "src": "READS-RF rows design/parts/snapshots/2026-11-07-w2-reads-rf-manual.json web:taoglas-cab718-datasheet-spe-12-8-100 (https://www.taoglas.com/datasheets/CAB.718.pdf SPE-12-8-100/B/WY, read 2026-11-07, drawing pages rendered: 200 +-5 mm, washer dia 6.35 +-0.3 / 10.2 REF (thickness not dimensioned), nut HEX8 x 1.8 +-0.3, SMA(F)BKST hex 3.4 +-0.2, threaded length 11.4 +-0.2, 1/4\"-36UNS-2A, 8 HEX, recommended mounting hole dia 6.5 with one flat at 6 +0.08/0, no O-ring) and digikey:931-1186-ND (front-side nut, 2,749 in stock, EUR 5.21 @1, 2026-11-07); pitch 0.706 = 25.4 / 36; 'hex 3.4' is read as the length of the 8 HEX body behind the thread"
+    },
+    "wurth_614004190021": {
+      "name": "Wurth Elektronik WR-COM 614004190021 USB 2.0 Type A receptacle, horizontal THT, on a small carrier board (female end of each V4L lead in the RF bay, W2 MECH-3 B-08)",
+      "mpn": "614004190021",
+      "depth": 14.15,
+      "depth_tol": 0.25,
+      "width": 15.7,
+      "width_tol": 0.3,
+      "flange_w": 14.5,
+      "h_above_pcb": 7.12,
+      "h_tol": 0.25,
+      "shell_top_above_pcb": 6.9,
+      "shell_h": 5.12,
+      "tail": 3.1,
+      "tail_tol": 0.25,
+      "peg_to_face": 10.3,
+      "pins_behind_pegs": 2.71,
+      "flange_t": 0.3,
+      "pcb_t": 1.6,
+      "current_a": {"pins_1_4": 3.0, "pins_2_3": 1.0},
+      "carrier": {"t": 1.6, "pad_strip": 6.0, "margin": 0.5,
+                  "_note": "design values of this package: carrier PCB 1.6 mm (the receptacle's recommended thickness), mating face flush with the carrier edge, a 6.0 mm strip on the -y side for the lead's solder pads, 0.5 mm behind the receptacle body; carrier MPN/fab and its fixing to the FR4 lid TBD (SRC-2 / PCB work)"},
+      "size": [14.9, 22.0, 13.0],
+      "status": "datasheet+assumption",
+      "src": "Wurth datasheet https://www.we-online.com/components/products/datasheet/614004190021.pdf (drawing 'USB 2.0 TYPE A HORIZONTAL THT', sheet 1/3, rev C 20-JUN-17; fetched 2026-11-07 with the WebFetch tool after a default-curl 403 on the same URL, vector drawing rendered with PyMuPDF and read from the rendering; not committed): depth 14.15 +-0.25 (mating face to rear), width 15.70 +-0.30 over the side latches / 14.50 +-0.25 at the flange, shell 12.50 +-0.1 x 5.12 +-0.1, 6.90 +-0.25 shell top above the seating plane and 7.12 +-0.25 overall, solder tails 3.10 +-0.25, pegs 2 x D2.30 13.14 apart 10.30 +-0.25 behind the mating face, pins 4 x D0.92 2.71 behind the pegs (2.00 / 2.50 pitch), front flange 0.30 +-0.05, recommended PCB 1.6 mm; current rating pins 1 and 4 3 A, other pins 1 A; 30 V AC; insertion 35 N max, extraction 10 N min; -40 to +85 C; wave solder. size = [depth + tol + carrier margin, width + tol + pad strip, the 13.0 z band of the V4L reserve] (envelope: receptacle 7.37 + carrier 1.6 + tails 3.35 - 1.6 = 10.72 high); the carrier is a design value (assumption); stock and price not read (no distributor page read in this package: parts DB entry and snapshot row are SRC-2's)"
+    },
+    "adafruit_ina228_5832": {
+      "name": "Adafruit INA228 5832 breakout with its 3.5 mm terminal block (U102 module, unit INA)",
+      "size": [25.8, 20.2, 10.1],
+      "status": "listing+assumption",
+      "src": "maker's product page https://www.adafruit.com/product/5832 (read 2026-11-07 with WebFetch): 'Product Dimensions: 25.8mm x 20.2mm x 10.1mm', 3.3 g, 'fully assembled breakout board with a 3.5mm terminal block and header' (the 10.1 includes the terminal block); orientation on its stand-offs and the stand-off height are assumptions of this package; mounting holes not given on the page (fixing: MECH-5 B-13, build/17 F09)"
+    },
+    "pololu_2813": {
+      "name": "Pololu #2813 Big Pushbutton Power Switch with Reverse Voltage Protection, HP (U106 module, unit SWM)",
+      "board": [25.4, 20.32, 4.06],
+      "size": [25.4, 20.32, 10.1],
+      "status": "listing+assumption",
+      "src": "maker's product page https://www.pololu.com/product/2813 (read 2026-11-07 with WebFetch): size 0.8 x 1.0 x 0.16 in (20.32 x 25.4 x 4.06 mm), 2.7 g, two 2-pin 5 mm terminal blocks included (rated 16 A) or wires in the large holes, no dimension drawing on the page; size z 10.1 = board 4.06 + 6.0 reserve for the soldered 18 AWG leads or the terminal blocks (assumption: block height not given)"
+    },
+    "binder_76_6618_1111": {
+      "name": "binder 76 6618 1111 00003-0200 M8 female panel receptacle, A-coded, 3 contacts, single wires 0.2 m, M10x0.75 (J551, pod power, W2 GR-1)",
+      "mpn": "76 6618 1111 00003-0200",
+      "panel_thread": "M10x0.75",
+      "hole_d": 10.1,
+      "hole_flats": 9.1,
+      "wall_min": 2.0,
+      "wall_max": 6.5,
+      "torque_nm": 1.0,
+      "max_d": 12.6,
+      "length": 15.0,
+      "front_to_collar": 10.0,
+      "collar_to_rear": 5.0,
+      "nut_af": 11.0,
+      "nut_t": 2.0,
+      "leads_mm": 200.0,
+      "lead_od": 1.5,
+      "inner_d": 12.6,
+      "inner_depth": 9.5,
+      "mounting": "inserted from inside: the knurled SW 12 collar bears on the inner wall face and the leads stay inside; the SW 11 nut and its ring clamp the wall from outside (READS-E reading of the data-sheet drawing, confirmed here with the 2.5 mm wall inside 2.0-6.5)",
+      "status": "datasheet+assumption",
+      "src": "READS-E row design/parts/snapshots/2026-11-07-w2-reads-e-manual.json web:binder-76-6618-1111-00003-0200 (data sheet read 2026-11-07, drawings extracted with PyMuPDF): max D12.6, M8x1 mating thread, panel thread M10x0.75, length 15 mm, 10 mm from the front face to the knurled SW 12 collar and 5 mm from there to the rear end, SW 9 hex at the front, SW 11 nut 2 mm thick, a ring between nut and collar, leads 200 mm AWG 24 (OD 1.5); panel cut-out p.3: bore 10.1 (1st proposal with flats 9.1 as anti-rotation, 2nd a plain bore), wall 2.0-6.5, 1 Nm; inner_depth 9.5 = collar to rear 5.0 + 4.5 bend reserve for the 1.5 mm leads (3 x OD, assumption)"
     }
   }
 }

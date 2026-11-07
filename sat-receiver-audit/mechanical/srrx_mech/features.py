@@ -19,6 +19,8 @@ HOLES = {
                    "basis": "Taoglas CAB.718 SPE-12-8-100 (READS-RF row): recommended mounting hole D6.5 with one flat at 6 +0.08/0, 1/4-36UNS-2A"},
     "f_bulkhead": {"d": 9.7, "basis": "Cinch VFA340 ISS 3: 3/8-32 UNEF, washer ID 9.7, no D-flat drawn; flange outside, nut inside"},
     "bnc_bulkhead": {"d": 9.7, "basis": "Amphenol RF 242181: drawing not readable (403, 2026-11-07); 3/8-32 typical, TBD (MECH-07)"},
+    "m8_panel": {"d": 10.1, "flange_d": 12.7,
+                 "basis": "binder 76 6618 1111 00003-0200 data sheet p.3 (READS-E row): M10x0.75 bore 10.1 (cut-out proposal 2, plain bore), wall 2.0-6.5, 1 Nm; SW 11 nut outside (12.7 across corners)"},
     "gx12": {"d": 12.0, "shape": "dflat", "flat": 11.2, "flange_d": 15.0,
              "basis": "Kinghelm KH-GX12-6P drawing rev A (READS-E row): hole D12.00 with one flat at 11.20, flange D15 outside, nut D14.6 inside"},
     "jack_3v5": {"d": 10.9, "shape": "dflat", "flat": 9.8, "flange_d": 13.5,
@@ -80,7 +82,7 @@ def face_features(P):
     vw = m["top_face"]["veml7700_window"]
     F["top"].append({"id": "VEML7700", "kind": "window_round", "u": vw["x"], "v": D - vw["z"], "d": vw["d"]})
     # right
-    for p in m["right_face"]["ports"]:
+    for p in m["right_face"]["ports"] + m["right_face"].get("panel", []):
         F["right"].append(dict(hole(p["kind"]), id=p["id"], kind=p["kind"], u=D - p["z"], v=p["y"]))
     # vents (any face; enclosure coordinates in the params)
     for v in m["vents"]:

@@ -304,6 +304,7 @@ def evaluate(P):
                 "result": "OPEN: " + hr["_status"], "source": "mechanical.json hdmi_route, layout hdmi_*"})
     out += w2_mech1_rules(P)
     out += w2_mech2_rules(P)
+    out += w2_mech3_rules(P)
     return out
 
 
@@ -477,32 +478,60 @@ def closure_spans(P):
 
 
 def bay_packing(P):
-    """Can the RF bay lid carry both V4L dongles with the female ends of their USB leads and the two LNA cases?
+    """RF-bay packing (B-08, W2 MECH-3): both V4L dongles with the USB-A socket carriers of their leads and the two LNA cases.
 
-    Rows along x on the lid; the modules sit next to each other in two rows (layout). The check adds the
-    socket reserve in line with each dongle and compares the row lengths with the inner bay width."""
+    Three arrangements are reported with numbers; the chosen one (rf_bay.arrangement) must fit the inner bay and its layout
+    items must sit inside the bay at the clearance. (a) two dongles + sockets in one row, the LNA cases in a second row;
+    (b) LNA case + V4L + socket per row, two rows (the LNA cases stacked at one end set the bay height); (c) V4L + socket
+    per row, two rows, with the LNA cases out of the bay. V4L and socket are mated (no gap); every other neighbour and wall
+    is at rf_bay.clearance. MODEL FIT ONLY: the V4L reserve is the listing maximum (parts.json v4l)."""
+    from .layout import item_boxes
     rb = P.mech["rf_bay"]
     x, y, w, h = rb["rect"]
     wt = rb["wall_t"]
+    c = rb.get("clearance", 0.5)
     inner_w = w - (2 if "right" in rb["walls"] else 1) * wt
     inner_h = h - wt
     v4l = P.parts["v4l"]["size"]
     lna = P.parts["sawbird_noaa"]["size"]
     sock = rb["usb_socket_reserve"]
-    rows = {
-        "layout (two dongles in one row)": 2 * (v4l[0] + sock[0]),
-        "alternative (dongle + socket + LNA case per row)": v4l[0] + sock[0] + lna[0],
+    dongle = v4l[0] + sock[0]                      # V4L plugged into its socket carrier
+    dh = max(v4l[1], sock[1])
+    arr = {
+        "a": {"title": "two dongles with their sockets in one row, the LNA cases in a second row",
+              "row_mm": round(2 * dongle + 3 * c, 1), "height_mm": round(dh + lna[1] + 3 * c, 1)},
+        "b": {"title": "LNA case + V4L + socket per row, two rows (LNA cases stacked at one end)",
+              "row_mm": round(lna[0] + dongle + 3 * c, 1), "height_mm": round(2 * lna[1] + 3 * c, 1),
+              "dongle_column_mm": round(2 * dh + 3 * c, 1)},
+        "c": {"title": "V4L + socket per row, two rows, LNA cases moved out of the bay",
+              "row_mm": round(dongle + 2 * c, 1), "height_mm": round(2 * dh + 3 * c, 1),
+              "note": "fits without growth, but the two cased LNA modules then need a shielded place outside the RF bay with new wall ports and seals: none in the model, so not chosen"},
     }
-    alt_h = 2 * max(v4l[1], lna[1])
-    res = {"inner_mm": [round(inner_w, 1), round(inner_h, 1)], "v4l_reserve": v4l, "socket_reserve": sock, "lna_case": lna[:2],
-           "rows_mm": {k: round(v, 1) for k, v in rows.items()}, "alternative_height_mm": round(alt_h, 1)}
-    fits_layout = rows["layout (two dongles in one row)"] <= inner_w
-    fits_alt = rows["alternative (dongle + socket + LNA case per row)"] <= inner_w and alt_h <= inner_h
-    if fits_layout or fits_alt:
-        res["result"] = "PASS (model)"
+    for k, a in arr.items():
+        a["fits"] = a["row_mm"] <= inner_w + 1e-9 and a["height_mm"] <= inner_h + 1e-9
+        a["spare_row_mm"] = round(inner_w - a["row_mm"], 1)
+        a["spare_height_mm"] = round(inner_h - a["height_mm"], 1)
+    chosen = rb.get("arrangement")
+    ids = ("v4l_a", "v4l_b", "sawbird", "flamingo", "usb_socket_a", "usb_socket_b")
+    boxes = {i: b for i, n, b, _ in item_boxes(P) if i in ids}
+    ix0, iy0, ix1, iy1 = x + wt, y + wt, x + w - (wt if "right" in rb["walls"] else 0.0), y + h
+    W, H, _ = P.outer
+    iy1 = min(iy1, H - P.mech["wall"])
+    outside = sorted(i for i, b in boxes.items()
+                     if b[0] < ix0 + c - 1e-9 or b[3] > ix1 - c + 1e-9 or b[1] < iy0 + c - 1e-9 or b[4] > iy1 - c + 1e-9)
+    missing = sorted(set(ids) - set(boxes))
+    res = {"inner_mm": [round(inner_w, 1), round(inner_h, 1)], "clearance_mm": c, "v4l_reserve": v4l, "v4l_status": P.parts["v4l"]["status"],
+           "socket_reserve": sock, "socket_part": "wurth_614004190021", "lna_case": lna[:2], "arrangements": arr, "chosen": chosen,
+           "layout_outside_bay": outside, "layout_missing": missing,
+           "not_included": "coax mating plugs at the module SMA ends (cable assemblies TBD, SRC-2): (b) leaves the row spare between the LNA case and the V4L SMA end for a right-angle plug; the lead paths beyond notches N2/N3 to the hub (Adafruit 5997, envelope MECH-5)"}
+    ok = chosen in arr and arr[chosen]["fits"] and not outside and not missing
+    if ok:
+        res["result"] = (f"PASS (model): arrangement ({chosen}) {arr[chosen]['row_mm']:g} x {arr[chosen]['height_mm']:g} mm in "
+                         f"{inner_w:g} x {inner_h:g}; socket Wurth 614004190021 from its drawing; V4L reserve is the seller-listing maximum (measure at receipt)")
+    elif chosen in arr and not arr[chosen]["fits"]:
+        res["result"] = f"FAIL (model): arrangement ({chosen}) needs {arr[chosen]['row_mm']:g} x {arr[chosen]['height_mm']:g} mm, inner bay {inner_w:g} x {inner_h:g}"
     else:
-        res["result"] = ("OPEN: the female USB ends of the two V4L leads are not inside the modelled bay; with the current reserves "
-                         "neither arrangement fits (measure the V4L and the socket, then re-pack or move the cased LNA modules out of the bay)")
+        res["result"] = f"FAIL (model): layout items outside the bay or missing: {', '.join(outside + missing) or 'no arrangement chosen'}"
     return res
 
 
@@ -573,7 +602,7 @@ def bulkhead_nuts_rule(P):
     from .layout import port_inner
     m = P.mech
     val, opened, assumed = {}, [], []
-    for p in m["top_face"]["ports"] + m["right_face"]["ports"] + [q for q in m["bottom_face"]["ports"] if q["kind"] != "tbd"]:
+    for p in m["top_face"]["ports"] + m["right_face"]["ports"] + m["right_face"].get("panel", []) + [q for q in m["bottom_face"]["ports"] if q["kind"] != "tbd"]:
         e = port_inner(P, p)
         if e is None:
             opened.append(p["id"])
@@ -635,3 +664,79 @@ def bottom_pitch_rule(P, clear=1.0):
 def w2_mech2_rules(P):
     """Rows added by W2 MECH-2 (registration list, append-only)."""
     return [bottom_pitch_rule(P)]
+
+
+# ---- W2 MECH-3: PWR-A relief pockets, the J551 pod power entry --------------------------------------------
+def pwr_pockets(P):
+    """Plate relief pockets under the PWR-A THT pin fields that have a placement contract (boards.json modules_on_board
+    pin_field): (id, module, (x0, y0, x1, y1) enclosure, depth)."""
+    b = P.boards["boards"]["PWR"]
+    tp = b.get("tht_pockets", {})
+    mg, depth = tp.get("margin", 1.0), tp.get("depth", 1.0)
+    ox, oy = b["place"]["origin"]
+    out = []
+    for i, mo in enumerate(m for m in b.get("modules_on_board", []) if "pin_field" in m):
+        x, y, w, h = mo["pin_field"]
+        out.append((f"PK{i + 1}", mo["id"], (ox + x - mg, oy + y - mg, ox + x + w + mg, oy + y + h + mg), depth))
+    return out
+
+
+def pwr_pocket_rule(P):
+    """R-PWR-POCKETS: every PWR-A THT pin field with a placement contract has a plate relief pocket (M-07) of at least
+    depth_min, inside the plate and clear of the plate holes; the other PWR-A THT groups wait for the PCB-PWRA placement."""
+    b = P.boards["boards"]["PWR"]
+    tp = b.get("tht_pockets", {})
+    pl = P.mech["plate"]
+    poly = plate_outline(P)
+    holes = plate_holes(P)
+    val, bad = {}, []
+    for pid, mod, (x0, y0, x1, y1), depth in pwr_pockets(P):
+        inside = all(_inside(c, poly) for c in ((x0, y0), (x1, y0), (x1, y1), (x0, y1)))
+        gap = min(_rect_gap((x0, y0, x1, y1), (h["c"][0] - h["d"] / 2, h["c"][1] - h["d"] / 2, h["c"][0] + h["d"] / 2, h["c"][1] + h["d"] / 2))
+                  for h in holes)
+        ok = inside and tp.get("depth_min", 1.0) <= depth < pl["t"] and gap >= 0.5
+        val[pid] = (f"{mod}: {x1 - x0:.2f} x {y1 - y0:.2f} x {depth:g} deep at x {x0:.2f}..{x1:.2f}, y {y0:.2f}..{y1:.2f}; "
+                    f"{gap:.1f} mm to the nearest plate hole")
+        if not ok:
+            bad.append(pid)
+    if bad:
+        res = "FAIL (model): " + ", ".join(bad)
+    else:
+        res = ("OPEN: the Pololu pin rows are pocketed (M-07 " + ", ".join(val) + "); "
+               + tp.get("from_placement", "the other THT groups wait for the placement"))
+    return {"id": "R-PWR-POCKETS",
+            "rule": f"plate relief pocket >= {tp.get('depth_min', 1.0):g} mm under every PWR-A THT pad group (pin field + {tp.get('margin', 1.0):g} mm), polyimide over it",
+            "value_mm": val, "limit_mm": {"depth_min": tp.get("depth_min", 1.0), "plate_t": pl["t"]}, "result": res,
+            "source": "boards.json PWR tht_pockets / modules_on_board pin_field; pcb/partition-spec.json keepouts.pwr_a_tht_pockets"}
+
+
+def j551_rule(P):
+    """R-J551: the pod power receptacle J551 (binder M8) on a flat face, in a wall inside the binder range, inner envelope in
+    the collision set; mounting side from the data-sheet drawing (inserted from inside, nut outside)."""
+    from .layout import port_wall
+    m = P.mech
+    ports = [p for p in m["right_face"].get("panel", []) if p["id"] == "J551"]
+    rule = {"id": "R-J551",
+            "rule": "pod power receptacle J551 (binder M8): wall inside the data-sheet range, cut-out from the data sheet, inner envelope nut.J551 in the envelope check",
+            "source": "parts.json binder_76_6618_1111 (READS-E row web:binder-76-6618-1111-00003-0200); mechanical.json right_face.panel"}
+    if not ports:
+        return dict(rule, value_mm=None, result="OPEN: J551 not placed on a face")
+    p = ports[0]
+    part = P.parts[p["part"]]
+    wall = port_wall(P, p)
+    ok = part["wall_min"] <= wall <= part["wall_max"]
+    proud = part["front_to_collar"] - wall
+    val = {"face": "right", "y": p["y"], "z": p["z"], "wall": wall, "range": [part["wall_min"], part["wall_max"]], "hole_d": part["hole_d"],
+           "proud_outside": round(proud, 2), "inner": [part["inner_d"], part["inner_depth"]], "leads_mm": part["leads_mm"]}
+    if ok:
+        res = (f"PASS (model): {wall:g} mm ASA wall inside {part['wall_min']:g}-{part['wall_max']:g}; inserted from inside (collar on the inner face), "
+               f"SW 11 nut outside, {proud:g} mm proud of the right face; plain bore {part['hole_d']:g} (binder proposal 2)")
+    else:
+        res = f"FAIL (model): wall {wall:g} outside {part['wall_min']:g}-{part['wall_max']:g}"
+    return dict(rule, value_mm=val, limit_mm={"wall": [part["wall_min"], part["wall_max"]]}, result=res)
+
+
+def w2_mech3_rules(P):
+    """Rows added by W2 MECH-3 (registration list, append-only)."""
+    from . import fasteners
+    return [pwr_pocket_rule(P), j551_rule(P), fasteners.rule(P)]

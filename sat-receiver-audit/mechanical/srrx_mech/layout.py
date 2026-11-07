@@ -107,6 +107,8 @@ def port_inner(P, p):
         return r, long_side - port_wall(P, p), "washer, nut and the long side inside (cinch_vfa340)"
     if kind == "gx12":
         return part["nut_d"] / 2.0, part["behind_reserve"], "nut and rear thread with solder cups (kinghelm_gx12_6p)"
+    if "inner_d" in part and "inner_depth" in part:
+        return part["inner_d"] / 2.0, part["inner_depth"], f"collar, rear body and lead bend inside, nut outside ({p['part']})"
     if "body_od_reserve" in part:
         depth = part.get("body_len_reserve", part.get("body_len", 0.0) - part.get("thread_len", 0.0))
         return part["body_od_reserve"] / 2.0, depth, f"connector body and seal inside, nut outside ({p['part']})"
@@ -121,8 +123,9 @@ def port_wall(P, p):
     m = P.mech
     if p in m["top_face"]["ports"]:
         return m["wall"] + m["angles"]["top"]["t"]
-    if p in m["right_face"]["ports"]:
-        return m["wall"] + m["angles"]["right"]["t"]
+    a = m["angles"]["right"]
+    if p in m["right_face"]["ports"] and a["y"][0] <= p["y"] <= a["y"][1]:
+        return m["wall"] + a["t"]
     return m["wall"]
 
 
@@ -147,6 +150,11 @@ def bulkhead_nut_boxes(P):
         if e:
             r, th, _ = e
             out.append((f"nut.{p['id']}", (x1 - th, p["y"] - r, p["z"] - r, x1, p["y"] + r, p["z"] + r)))
+    for p in m["right_face"].get("panel", []):        # panel parts on the bare ASA wall (no Al angle), W2 MECH-3
+        e = port_inner(P, p)
+        if e:
+            r, th, _ = e
+            out.append((f"nut.{p['id']}", (W - t - th, p["y"] - r, p["z"] - r, W - t, p["y"] + r, p["z"] + r)))
     for p in m["bottom_face"]["ports"]:
         e = port_inner(P, p)
         if e:
@@ -165,14 +173,23 @@ def board_boxes(P, bid, at=None):
     t = P.boards["stackup"]["t"]
     z0 = pl["z_bottom"]
     out = []
-    for i, r in enumerate(b["rects"]):
-        # a height zone that overlaps this rectangle raises the whole rectangle (boards.json height_zones)
-        h = max([b["max_height"]] + [zn["max_height"] for zn in b.get("height_zones", [])
-                                     if zn["rect"][0] < r[0] + r[2] and r[0] < zn["rect"][0] + zn["rect"][2]
-                                     and zn["rect"][1] < r[1] + r[3] and r[1] < zn["rect"][1] + zn["rect"][3]])
+
+    def zspan(h):
         # z0 is the face opposite the components (towards the mounting surface)
-        za, zb = (z0, z0 + t + h) if pl["facing"] == "+z" else (z0 - t - h, z0)
+        return (z0, z0 + t + h) if pl["facing"] == "+z" else (z0 - t - h, z0)
+    for i, r in enumerate(b["rects"]):
+        za, zb = zspan(b["max_height"])
         out.append((f"{bid}.r{i}", (ox + r[0], oy + r[1], za, ox + r[0] + r[2], oy + r[1] + r[3], zb)))
+        # a taller height zone raises only its own part of the rectangle (W2 MECH-3: the PWR-A windows under PWR-B)
+        for j, zn in enumerate(b.get("height_zones", [])):
+            if zn["max_height"] <= b["max_height"]:
+                continue
+            q = zn["rect"]
+            x0, y0 = max(r[0], q[0]), max(r[1], q[1])
+            x1, y1 = min(r[0] + r[2], q[0] + q[2]), min(r[1] + r[3], q[1] + q[3])
+            if x1 > x0 and y1 > y0:
+                za, zb = zspan(zn["max_height"])
+                out.append((f"{bid}.r{i}z{j}", (ox + x0, oy + y0, za, ox + x1, oy + y1, zb)))
     return out
 
 
@@ -264,6 +281,8 @@ ALLOWED = [
     ("pwr_key_nut", "plate.main"),                                   # the plate has an open notch under the nut (plate.notches; the solid check sees it)
     ("tripod_boss", "rear"), ("gx16", "rear"), ("hatch_parts", "rear"), ("q6a_fan_duct", "rear"),
     ("enc_main", "board_ctrl"), ("enc_volume", "board_ctrl"), ("closure.boss", "rfbay.lid"),
+    ("v4l_", "usb_socket_"), ("usb_lead_", "usb_socket_"),           # the V4L plug mates into its socket; the lead leaves the socket pads (W2 MECH-3)
+    ("usb_socket_", "rfbay.lid"), ("usb_lead_", "rfbay.wall.bottom"),  # socket carriers on the lid; lead B through notch N3
     ("q6a.usb_stack", "usb_plug_bay"), ("q6a.hdmi", "hdmi_plug_ra"),
     ("q6a.board", "plate.ufs_boss"),  # contact through the UFS pad by design (thermal T-UFS)
     ("cooler_a", "q6a.board"),         # the cooler sits in the generic 7.5 mm component zone of the Q6A envelope

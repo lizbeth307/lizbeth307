@@ -61,11 +61,15 @@ def render(P, report, params_short, boards_contract):
         out.append(f"| {r['id']} | {r['rule']} | {_r(r.get('value_mm', ''))} | {_r(r.get('limit_mm', ''))} | {r['result']} |")
     bp = report["rf_bay_packing"]
     out += ["", "## РЧ-відсік: донгли V4L, розетки USB-подовжувачів і модулі LNA", "",
-            f"Внутрішній розмір кришки {_r(bp['inner_mm'][0])} x {_r(bp['inner_mm'][1])} мм; резерви: V4L {_r(bp['v4l_reserve'])}, "
-            f"розетка {_r(bp['socket_reserve'])} (припущення), корпус LNA {_r(bp['lna_case'])}.", ""]
-    for k, v in bp["rows_mm"].items():
-        out.append(f"- {k}: ряд {_r(v)} мм")
-    out += [f"- висота двох рядів у варіанті «донгл + розетка + LNA»: {_r(bp['alternative_height_mm'])} мм", "", f"Результат: {bp['result']}", ""]
+            f"Внутрішній розмір кришки {_r(bp['inner_mm'][0])} x {_r(bp['inner_mm'][1])} мм, зазор {_r(bp['clearance_mm'])} мм; резерви: "
+            f"V4L {_r(bp['v4l_reserve'])} ({bp['v4l_status']}), розетка на носійній платі {_r(bp['socket_reserve'])} ({bp['socket_part']}), "
+            f"корпус LNA {_r(bp['lna_case'])}.", "",
+            "| варіант | розкладка | ряд, мм | висота, мм | запас ряду / висоти, мм | вміщується |", "|---|---|---|---|---|---|"]
+    for k, a in bp["arrangements"].items():
+        mark = " (обрано)" if k == bp["chosen"] else ""
+        out.append(f"| ({k}){mark} | {a['title']} | {_r(a['row_mm'])} | {_r(a['height_mm'])} | {_r(a['spare_row_mm'])} / {_r(a['spare_height_mm'])} | "
+                   f"{'так' if a['fits'] else 'ні'}{'; ' + a['note'] if a.get('note') else ''} |")
+    out += ["", f"Не враховано: {bp['not_included']}.", "", f"Результат: {bp['result']}", ""]
     t = report["thermal_interfaces"]
     out += ["## Термоінтерфейси (Gelid GP-Ultimate)", "", t["rule"], "",
             "| ID | де | середовище | зазор ± допуск, мм | прокладка | стиск | виріз, мм | результат |",
