@@ -2,7 +2,7 @@
 
 **NOT RELEASED: model/CI only; bench gates OPEN.** Це вихід CI/моделі (`pcb/fab_export.py` у `sr-rx-pcb`, KiCad 10.0.7), а не випуск для фабрики: статус специфікації — `PILOT_NOT_FOR_FABRICATION`; жодні апаратні чи стендові ворота цим не закриваються.
 
-Каталог повністю генерує `python3 pcb/fab_export.py --board ENC`; вручну не редагувати. `--check` перегенеровує набір у тимчасовому каталозі й порівнює побайтово (KiCad ставить дати, абсолютні шляхи й рядок збірки — їх нормалізовано, правила в `manifest.json`), а також запускає `ENC.kicad_jobset` і порівнює його вихід із прямим експортом.
+Каталог повністю генерує `python3 pcb/fab_export.py --board ENC`; вручну не редагувати. `--check` перегенеровує набір у тимчасовому каталозі й порівнює побайтово (KiCad ставить дати, абсолютні шляхи й рядок збірки — їх нормалізовано, правила в `manifest.json`), а також запускає `ENC.kicad_jobset` цього набору (ті самі байти, що в коміті; вихід — у `fab-jobset-raw` тимчасової копії плати) і порівнює його вихід із прямим експортом.
 
 | Файл | Що це |
 |---|---|
@@ -10,7 +10,7 @@
 | `drill/` | Excellon: PTH і NPTH окремо (мм, десятковий формат, абсолютний початок, alternate для овальних) і карти свердлінь Gerber X2 |
 | `ENC.ipc356` | нетліст IPC-D-356 для електротесту (усі кола з контактними майданчиками) |
 | `assembly/ENC-bom-jlc.csv` | BOM для JLC PCBA: Comment, Designator, Footprint, LCSC Part # + кількості на плату й на партію |
-| `assembly/ENC-cpl-jlc.csv` | CPL для JLC: Designator, Mid X, Mid Y (мм), Layer (Top/Bottom), Rotation (сирий кут KiCad) |
+| `assembly/ENC-cpl-jlc.csv` | CPL для JLC: Designator, Mid X, Mid Y (мм, початок посадкового місця KiCad), Layer (Top/Bottom), Rotation (сирий кут KiCad) |
 | `assembly/ENC-cpl-rotation-offsets.csv` | таблиця поправок кута для JLC за посадковими місцями: порожня, TBD |
 | `assembly/ENC-instances.csv` | відповідність шаблонних позначень плати позначенням графа для кожного екземпляра |
 | `assembly/ENC-pos-kicad.csv` | сирий файл позицій KiCad (CSV, мм, обидва боки, без DNP) |
@@ -22,7 +22,7 @@
 
 - Плат: 3 = екземпляри (ENCM ×1, ENCV ×1) + запасні 1; усі однакові й збираються однаково.
 - Gerber і свердління: заархівувати `gerber/` і `drill/` разом під час замовлення (архів не комітиться, бо zip має мітки часу).
-- Кут у CPL — сирий кут KiCad; поправки JLC для посадкових місць не прочитано й у CI не перевірено (TBD): кожну деталь перевіряє той, хто замовляє, у переглядачі JLC перед оплатою (крок збирання; у build/21 його додає власник STEPS).
+- Mid X / Mid Y у CPL — початок посадкового місця KiCad, тоді як JLC визначає їх як центр компонента (сторінка CPL JLC, прочитано 2026-11-07); кут — сирий кут KiCad. Поправки кута й центру для кожного посадкового місця — TBD, у CI не перевіряються: кожну деталь перевіряє той, хто замовляє, у переглядачі JLC перед оплатою (крок збирання; у build/21 його додає власник STEPS).
 - Позиції BOM з TBD: J1.
   - J1 (PH4 pilot placeholder): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-3 ENC-side header ref (graph), then PCB-SB1.
 - Заглушка `J1` (Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical): її замінить GR-3 ENC-side header ref (graph), then PCB-SB1; доти набір не для виробництва.
@@ -47,3 +47,4 @@
 - https://jlcpcb.com/capabilities/pcb-capabilities — FR-4; thickness 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm, tolerance +/-10 % for >= 1.0 mm; 2-layer outer copper 1/2/2.5/3.5/4.5 oz; impedance control listed from 4 layers, standard +/-10 %
 - https://docs.kicad.org/10.0/en/cli/cli.html — options of pcb export gerbers/drill/ipcd356/pos and jobset run
 - https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs — jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp
+- https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp — IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 characters); test record types 307/317/327/367
