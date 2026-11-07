@@ -1,0 +1,31 @@
+{
+ "schema": 1,
+ "date": "2026-11-07",
+ "note": "Manufacturer catalogue pages read on this date with WebFetch for the self-clinching fasteners of the mid-plate (mechanical/params, drawing M-07). The pages show the part number and its specification but no stock or price, so stock is null (not shown). Installation of both parts needs a press (PEM: 'install with a squeeze in properly sized round holes').",
+ "entries": {
+  "web:pem-f-m3-1": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://catalog.pemnet.com/item/pemsert--self-clinching-flush-fasteners---type-f/msert-self-clinching-flush-fasteners-type-f-metric/f-m3-1",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PEM product catalogue page",
+   "mpn": "F-M3-1",
+   "manufacturer": "PennEngineering (PEM)",
+   "title": "PEMSERT self-clinching flush fasteners type F, metric",
+   "stock": null,
+   "price": null,
+   "note": "M3 x 0.5, internal 6H; sheet thickness 1.53 to 2.32 mm; hole size in sheet 4.37 +0.08 mm; A (shank) max 1.53 mm; C max 4.35 mm; H nom 4.8 mm; min distance hole C/L to edge 6.00 mm; for use in sheet hardness HRB 70 / HB 125 or less; 300 series stainless steel, passivated"
+  },
+  "web:pem-so-m3-3zi": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m3-3zi",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PEM product catalogue page",
+   "mpn": "SO-M3-3ZI",
+   "manufacturer": "PennEngineering (PEM)",
+   "title": "Thru-hole threaded standoffs types SO, SOA, SOS, metric",
+   "stock": null,
+   "price": null,
+   "note": "M3 x 0.5, internal 6H; L 3 mm (+0.05 -0.13); min sheet thickness 1.00 mm; hole size in sheet 4.22 +0.08 mm; H nom 4.8 mm; C 4.20 mm; min distance hole C/L to edge 6.00 mm; heat-treated carbon steel, zinc plated ASTM B633 SC1 Type III colorless; installed with the head flush with one surface of the sheet"
+  }
+ }
+}

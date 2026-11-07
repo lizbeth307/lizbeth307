@@ -37,7 +37,19 @@ BOARDS = {
  'RF_HF': {'purpose':'Two DPDT HF/VHF relays, drivers and individually terminated PARK paths.', 'source':['design/E4-review.md','STACK.md §5.7']},
  'RF_INJECTOR': {'purpose':'Band-specific RF bias injectors, local RF bypass and three DC-tap/bleed front ends. May share RF substrate after qualification.', 'source':['design/E4-review.md','STACK.md §5.3']},
  'DC_CORE': {'purpose':'71-part low-frequency comparator/reference/sink core; RF taps and hot bleeds remain at RF ports, not on this core.', 'source':['design/E4-review.md','design/E4-detector-analysis.py']},
+ 'ENC': {'purpose':'Replaceable encoder daughterboard (PEC11R-4220F with its push switch), two in use plus one spare; harness to CTRL_HMI.', 'source':['STACK.md §5.8','mechanical/params/boards.json ENC','build/15-rishennia-komplektu.md']},
+ 'HATCH': {'purpose':'Service-hatch board in the rear hatch bay: J503 J21 service header (Micro-Fit 3) and J502 UART5 console header (JST PH 3); harness from PWR/CTRL.', 'source':['STACK.md §5.8 (service hatch)','build/15-rishennia-komplektu.md']},
+ 'T7_INSERT': {'purpose':'In-line VBUS key insert of the T7 USB3 cable (E5 U505 and its passives); built off the plate boards.', 'source':['design/E5-connection-guide.md §7','build/16-dzhgut.md']},
+ 'HDMI_INSERT': {'purpose':'In-line HDMI pin-18 insert of the display cable (E5 U506 and its passives); built off the plate boards.', 'source':['design/E5-connection-guide.md §8','build/16-dzhgut.md']},
+ 'IMU_CARRIER': {'purpose':'Carrier board inside the Hammond 1550Z101 IMU pack: E5 IMU supply/data protection and the bare parts of E3 group External IMU.', 'source':['design/E5-connection-guide.md','design/E3-review.md','mechanical/params/imu_pack.json']},
+ 'PACK_FUSE': {'purpose':'Small F101 carrier at the pack positive: Keystone 3568 mini-blade holder and 18 AWG solder pads, insulated and fixed beside the battery tray.', 'source':['STACK.md D2','build/15-rishennia-komplektu.md']},
 }
+# Board parts assembled off the plate boards (build/15, build/16 §2): their own domain instead of the sheet default.
+DOMAIN_OVERRIDE = {**{r:'ENC' for r in ('ENC301','ENC302')}, **{r:'HATCH' for r in ('J502','J503')},
+ **{r:'T7_INSERT' for r in ('U505','R514','R515','R516','R517','C514','C515','C516')},
+ **{r:'HDMI_INSERT' for r in ('U506','C517','C518','R552')},
+ **{r:'IMU_CARRIER' for r in ('U552','D502','C519','C520','C340','C341','R390','R391')},
+ 'F101':'PACK_FUSE'}
 CONSTRAINTS = [
  {'id':'PWR-01','boards':['PWR_MAIN','PWR_BRANCH'],'requirement':'4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.','source':'design/E1-review.md; E1-05/E1-06'},
  {'id':'PWR-02','boards':['PWR_MAIN'],'requirement':'Keep raw E1_CELL0/B- distinct from GND/P-. No accidental copper, mounting-hole or balance-cable BMS bypass. J102 remains DNP/service-only.','source':'design/E1-review.md; design/charger-bms-review.md'},
@@ -119,6 +131,7 @@ def category(c):
 def board(c,cat):
     if cat!='bare_board_part':return ''
     s=c['_sheet'];ref=c['ref']
+    if ref in DOMAIN_OVERRIDE:return DOMAIN_OVERRIDE[ref]
     if s!='E4':return {'E1':'PWR_MAIN','E2':'PWR_BRANCH','E3':'CTRL_HMI','E5':'USB_POWER'}[s]
     if c['group'].startswith('DC detectors'):
         return 'RF_INJECTOR' if ref in RF_TAP|RF_BLEED else 'DC_CORE'
