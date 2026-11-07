@@ -3,10 +3,10 @@
   "status": "MODEL GEOMETRY ONLY: stacks from mechanical/params (mechanical.json, boards.json, imu_pack.json, parts.json); no screw was fitted",
   "generator": "mechanical/srrx_mech/fasteners.py (W2 MECH-3)",
   "rules": {
-    "min_engagement": "heat-set insert in ASA >= 1.5 d, metal thread >= 1 d, PEM flush nut = its full thread (the plate)",
+    "min_engagement": "heat-set insert in ASA >= 1.5 d, metal thread >= 1 d, PEM flush nut = its full thread (its shank, flush with the screw-entry face)",
     "tip_gap_mm": 0.5,
     "length": "under-head length (ISO 14580); ISO 10642 includes the head",
-    "use": "SRC-2 (C-13/C-14) maps each window to an orderable length; a window that no stocked length meets keeps the item TBD"
+    "use": "PASS (model) = a length of the named ISO series (parts.json iso14580_lengths) falls in the window; a window without one, or a joint whose screw or standoff is not chosen, is OPEN; SRC-2 (C-13/C-14) orders the lengths and a window that no stocked length meets keeps the item TBD"
   },
   "joints": [
     {
@@ -34,8 +34,16 @@
         17.0
       ],
       "max_engagement_mm": 6.0,
-      "result": "PASS (model): under-head length 15.5-17 mm",
-      "note": "the sealing washer under the head (AI-SEAL-WASHER-M3, thickness TBD) adds its thickness to the grip and to both window ends"
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          16
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 15.5-17 mm; ISO 14580 M3 x 16 in the window",
+      "note": "the sealing washer under the head (AI-SEAL-WASHER-M3, thickness TBD) adds its thickness to the grip and to both window ends; M3 x 16 stays in the window for a washer up to 0.5 mm thick"
     },
     {
       "id": "HATCH",
@@ -62,7 +70,7 @@
         9.75
       ],
       "max_engagement_mm": 6.0,
-      "result": "PASS (model): under-head length 8.25-9.75 mm",
+      "result": "OPEN: under-head length window 8.25-9.75 mm; captive screw type TBD (F13, AI-M3-HATCH): no length series",
       "note": "captive screw type TBD (AI-M3-HATCH): its shoulder changes the grip"
     },
     {
@@ -90,7 +98,15 @@
         15.5
       ],
       "max_engagement_mm": 6.0,
-      "result": "PASS (model): under-head length 14-15.5 mm"
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          14
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 14-15.5 mm; ISO 14580 M3 x 14 in the window"
     },
     {
       "id": "PLATE_PM1",
@@ -117,7 +133,15 @@
         8.0
       ],
       "max_engagement_mm": 6.0,
-      "result": "PASS (model): under-head length 6.5-8 mm"
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          8
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 6.5-8 mm; ISO 14580 M3 x 8 in the window"
     },
     {
       "id": "PLATE_PM2",
@@ -144,7 +168,15 @@
         8.0
       ],
       "max_engagement_mm": 6.0,
-      "result": "PASS (model): under-head length 6.5-8 mm"
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          8
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 6.5-8 mm; ISO 14580 M3 x 8 in the window"
     },
     {
       "id": "PLATE_PM3",
@@ -171,7 +203,15 @@
         8.0
       ],
       "max_engagement_mm": 6.0,
-      "result": "PASS (model): under-head length 6.5-8 mm"
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          8
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 6.5-8 mm; ISO 14580 M3 x 8 in the window"
     },
     {
       "id": "PLATE_PM4",
@@ -198,7 +238,15 @@
         8.0
       ],
       "max_engagement_mm": 6.0,
-      "result": "PASS (model): under-head length 6.5-8 mm"
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          8
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 6.5-8 mm; ISO 14580 M3 x 8 in the window"
     },
     {
       "id": "ANGLES",
@@ -215,17 +263,25 @@
       ],
       "grip_mm": 2.0,
       "receiver": {
-        "kind": "PEM F-M3-1 flush nut in the plate (thread = plate thickness)",
-        "thread_mm": 2.0,
+        "kind": "PEM F-M3-1 flush nut flush with the plate rear face, the angle side (M-07): thread = its shank 1.53 in the 2 plate, then a 0.47 recess to the front face",
+        "thread_mm": 1.53,
         "tip_limit": "plate front face (flush: IP2368, Lime and HDMI board sit there; PEM F-M3-1 self-clinching flush nut)"
       },
-      "min_engagement_mm": 2.0,
+      "min_engagement_mm": 1.53,
       "length_window_mm": [
-        4.0,
+        3.53,
         4.0
       ],
       "max_engagement_mm": 2.0,
-      "result": "PASS (model): under-head length 4-4 mm"
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          4
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 3.53-4 mm; ISO 14580 M3 x 4 in the window"
     },
     {
       "id": "PWR_A-PLATE",
@@ -246,18 +302,18 @@
       ],
       "grip_mm": 2.0,
       "receiver": {
-        "kind": "PEM F-M3-1 flush nut in the plate (thread = plate thickness)",
-        "thread_mm": 2.0,
+        "kind": "PEM F-M3-1 flush nut flush with the plate front face, the PWR-A side (M-07): thread = its shank 1.53 in the 2 plate, then a 0.47 recess to the rear face",
+        "thread_mm": 1.53,
         "tip_limit": "plate rear face: the stud must not stand proud (HF+ can lid and RF board behind the plate)"
       },
-      "min_engagement_mm": 2.0,
+      "min_engagement_mm": 1.53,
       "length_window_mm": [
-        4.0,
+        3.53,
         4.0
       ],
       "max_engagement_mm": 2.0,
-      "result": "PASS (model): under-head length 4-4 mm",
-      "note": "the window is the male stud length of the F45 standoff (male-female M3, body 5.0 = the B2B stack): at most 4.0 mm; the MPN with that stud is SRC-2's (C-14)"
+      "result": "OPEN: under-head length window 3.53-4 mm; F45 standoff not chosen: SRC-2 (C-14) picks a male-female M3 standoff with a stud in this window",
+      "note": "the window is the male stud length of the F45 standoff (male-female M3, body 5.0 = the B2B stack); the MPN with that stud is SRC-2's (C-14)"
     },
     {
       "id": "PWR_B-STANDOFF",
@@ -284,7 +340,16 @@
         6.1
       ],
       "max_engagement_mm": 4.5,
-      "result": "PASS (model): under-head length 4.6-6.1 mm",
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          5,
+          6
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 4.6-6.1 mm; ISO 14580 M3 x 5, x 6 in the window",
       "note": "head height of an ISO 14580 M3 (2.4 max) stays under hB 5.5 on the PWR-B top"
     },
     {
@@ -312,7 +377,16 @@
         6.6
       ],
       "max_engagement_mm": 5.0,
-      "result": "PASS (model): under-head length 4.6-6.6 mm"
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": true,
+        "in_window": [
+          5,
+          6
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 4.6-6.6 mm; ISO 14580 M3 x 5, x 6 in the window"
     },
     {
       "id": "CTRL",
@@ -339,7 +413,13 @@
         5.6
       ],
       "max_engagement_mm": 4.0,
-      "result": "PASS (model): under-head length 5.35-5.6 mm",
+      "orderable_lengths": {
+        "series": "ISO 14580 M2.5",
+        "named_in_build17": false,
+        "in_window": [],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "OPEN: under-head length window 5.35-5.6 mm; head type and length TBD in build/17 F08 (M2.5 A2 TX8); deepen the boss hole by 1 mm for M2.5 x 6, or a non-standard length; ISO 14580 M2.5 lengths in the window: none",
       "note": "the window is narrow: M2.5 x 5 engages 3.4 (1.36 d) and leaves the insert end free; a hole 1 mm deeper would take M2.5 x 6"
     },
     {
@@ -367,7 +447,13 @@
         5.6
       ],
       "max_engagement_mm": 4.0,
-      "result": "PASS (model): under-head length 5.35-5.6 mm",
+      "orderable_lengths": {
+        "series": "ISO 14580 M2.5",
+        "named_in_build17": false,
+        "in_window": [],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "OPEN: under-head length window 5.35-5.6 mm; head type and length TBD in build/17 F29 (M2.5 A2 TX8); deepen the boss hole by 1 mm for M2.5 x 6, or a non-standard length; ISO 14580 M2.5 lengths in the window: none",
       "note": "the window is narrow: M2.5 x 5 engages 3.4 (1.36 d) and leaves the insert end free; a hole 1 mm deeper would take M2.5 x 6"
     },
     {
@@ -443,8 +529,8 @@
         4.7
       ],
       "max_engagement_mm": 2.7,
-      "result": "PASS (model): under-head length 4.5-4.7 mm",
-      "note": "ISO 10642 lengths include the head; no standard length falls in the window: M2.5 x 4 engages 2.0 (0.8 d) unless the boss grows"
+      "result": "OPEN: under-head length window 4.5-4.7 mm; no length table of M2.5 countersunk screws was read (the ISO 10642 page read for this check gives head dimensions only: parts.json iso14580_lengths src), so no orderable length is confirmed",
+      "note": "ISO 10642 lengths include the head; a whole-mm length misses the window: M2.5 x 4 engages 2 (0.8 d), M2.5 x 5 ends 0.3 past the boss rear face; a taller boss or a smaller pad gap widens it"
     },
     {
       "id": "LIME-PEDESTAL",
@@ -471,7 +557,16 @@
         7.0
       ],
       "max_engagement_mm": 5.0,
-      "result": "PASS (model): under-head length 5-7 mm",
+      "orderable_lengths": {
+        "series": "ISO 14580 M3",
+        "named_in_build17": false,
+        "in_window": [
+          5,
+          6
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "OPEN: under-head length window 5-7 mm; screw type and length TBD in build/17 F04 (AI-M3-LIME); ISO 14580 M3 lengths in the window: x 5, x 6",
       "note": "cad.lime_pedestal draws the two holes as 3.4 clearance holes: the pedestal drawing must call them M3 tapped (tap drill 2.5)"
     },
     {
@@ -499,7 +594,15 @@
         6.0
       ],
       "max_engagement_mm": 4.0,
-      "result": "PASS (model): under-head length 5.75-6 mm",
+      "orderable_lengths": {
+        "series": "ISO 14580 M2.5",
+        "named_in_build17": false,
+        "in_window": [
+          6
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "OPEN: under-head length window 5.75-6 mm; no build/17 row names the clamp screw yet (DOCS); ISO 14580 M2.5 lengths in the window: x 6",
       "note": "no build/17 row for the display clamps yet (DOCS): screw and insert to be added there"
     },
     {
@@ -524,6 +627,66 @@
       "min_engagement_mm": 4.5,
       "length_window_mm": null,
       "result": "OPEN: the named M3 x 5.7 insert is longer than the 3.0 mm carrier and the IMU_CARRIER strip shares the screws: bosses >= 6.5 at the two screws or a short insert are not designed (imu_pack.json; IMU lineage)"
+    },
+    {
+      "id": "IMU-LID",
+      "build17_row": "F24",
+      "what": "IMU pack lid to the Hammond 1550Z101 body (M4-0.7 brass instead of the stock screws)",
+      "count": 2,
+      "thread": "M4",
+      "seat": "lid outer face",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "Hammond 1550Z101 body bosses (supplied thread)",
+        "thread_mm": null,
+        "tip_limit": "boss thread bottom"
+      },
+      "min_engagement_mm": 4.0,
+      "length_window_mm": null,
+      "result": "OPEN: lid (6.2 high) thickness at the screws and the body boss thread depth are not read (Hammond 1550Z101 drawing): no window",
+      "note": "the brass M4 x 20 keeps the length of the stock Hammond lid screws"
+    },
+    {
+      "id": "IMU-BOARD-STANDOFFS",
+      "build17_row": "F36",
+      "what": "BNO085 + RP2040-Zero pair to the IMU carrier",
+      "count": null,
+      "thread": "TBD",
+      "seat": "board top face",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "13 mm standoffs (AI-STANDOFF-IMU-13)",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: standoff type, its thread depth and the screws are TBD (F36, AI-STANDOFF-IMU-13): no stack"
+    },
+    {
+      "id": "IMU-TRIPOD",
+      "build17_row": "F37",
+      "what": "tripod camera screw into the 1/4-20 insert of the IMU carrier (from outside through the box floor)",
+      "count": 1,
+      "thread": "1/4-20 UNC",
+      "seat": "tripod head plate on the box floor outside",
+      "stack_mm": [
+        [
+          "Hammond 1550Z101 floor (tripod hole)",
+          2.5
+        ]
+      ],
+      "grip_mm": 2.5,
+      "receiver": {
+        "kind": "brass insert 1/4-20 x 12.7 brass insert in the printed carrier (STACK D15)",
+        "thread_mm": null,
+        "tip_limit": "insert end inside the carrier"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: the camera screw belongs to the tripod (not a kit part) and the insert depth below the board pair is not dimensioned (imu_pack.json tripod / boards.standoff_h): no window"
     },
     {
       "id": "POD-LID",
@@ -754,19 +917,16 @@
     "F22a": "LTW vents (threaded seats, R-VENT-SEAT)",
     "F22b": "LTW vents with nuts",
     "F23": "LAPP gland",
-    "F24": "Hammond 1550Z101 lid",
     "F25": "captive 1/4-20 nut (R-TRIPOD)",
     "F34": "PV6 EDL key nut",
-    "F36": "IMU board standoffs",
-    "F37": "1/4-20 insert",
     "F43": "pod bulkheads and gland",
     "F44": "pod vent",
     "F03": "Armor 7056A kit",
     "F15": "SMA mating torque"
   },
   "summary": {
-    "PASS": 16,
-    "OPEN": 15,
+    "PASS": 9,
+    "OPEN": 25,
     "FAIL": 0
   }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-07 Середня пластина (шасі), шаблон 1:1</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params fe0187c59c26</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params e9f65a072a56</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="28.5" y1="198.5" x2="188" y2="198.5" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="188" y1="198.5" x2="188" y2="234" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -379,11 +379,11 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-07 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-5754 (AlMg3) 2.0 mm, mill finish; alt. 1050…</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params fe0187c59c26 · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params e9f65a072a56 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Середня пластина (шасі), шаблон 1:1</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">лазер/фрезер; отвори ±0.2; площинність ≤0.2 під Q6A, п'єдесталом і регуляторами</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Контур і отвори — з mechanical/params; DXF того самого аркуша — для різання. Різьбу в пластині не нарізати (STACK 5.8).</text>
-<text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">PWR1-7, AT1-5, AR1-3: гайки PEM F-M3-1 врівень з обох боків (отвір 4.37 +0.08); RF1-6: стійки PEM SO-M3-3, голівка врівень з лицьовою гранню (4.22 +0.08).</text>
+<text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">PWR1-7: гайки PEM F-M3-1 урівень з лицьовою гранню (бік PWR-A), AT1-5, AR1-3 — урівень з тильною (бік кутників); хвостовик 1.53 у пластині 2.0 не доходить до другої грані (отвір 4.37 +0.08); RF1-6: стійки PEM SO-M3-3, голівка врівень з лицьовою гранню (4.22 +0.08).</text>
 <text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">AT/AR: гвинти M3 Al-кутників з тильного боку; на лицьовій грані нічого не виступає (там IP2368, Lime, HDMI-плата).</text>
 <text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">UB1-2: потай M2.5 з лицьової грані в бобишку UFS; Q6A1-4: M2.5 крізь пластину в стійки 6 мм з тильного боку.</text>
 <text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Ребра шляху 2 (смуги Al 1 x 3.5) — на лицьовій грані під HDMI-платою, уздовж потоку; точки з'єднання — голий метал.</text>
