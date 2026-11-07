@@ -66,11 +66,11 @@
       },
       {
         "file": "design/E4.json",
-        "sha256": "46718300c33e64f2bf1d06dd9dbbe67cd729449234b3000bbd72b36d8c85a2ee"
+        "sha256": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17"
       },
       {
         "file": "design/E5.json",
-        "sha256": "be7e960634f1f776264125c7e8d30ce695b0f5302c38ddef08b8421e86da7594"
+        "sha256": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
@@ -78,7 +78,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "af861cb9e3d9bca6aeb0276577eca9828fe24802084dd0aba1597ad9e3ec3d77"
+        "sha256": "e8158ced457cc3a74bec8d2e412addf1e3dbae1fd177a08faa2d98426013787d"
       }
     ],
     "source_documents": [
@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "3e671a2474e60bce373da750b24e61a88355a4e25878d87cb202344c32dd6f3f"
+      "projection_sha256": "98becf07b29482be8ebf7ad6ed760773bb98b6515972547359924771ef7d91c2"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
@@ -6826,7 +6826,7 @@
       "ref": "J514",
       "sheet": "E5",
       "mount": "pcb_tht",
-      "value": "X24S1-T7: JST PH 3, боковий вхід, S24",
+      "value": "X24S1-T7A: JST PH 3, боковий вхід, S24",
       "kind": "connector",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -14951,7 +14951,7 @@
       "ref": "J301",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) — родина IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці, бокс XDFH-0254-2*20P J304 на CTRL. Зафіксовано (W2 MECH-6): стрічка — 3M 3365/40 (assembly_items AI-IDC-RIBBON-40: 40 × 28 AWG, крок 1.27, 50.80 × 0.89 мм, рядок SRC-1 digikey:19-3365/40300-DS-ND), дві половини по 20, укладені одна на одну, крізь проріз SL1 27.5 × 3.8 (M-07; R-PLATE-SLOT-FILL PASS, модель); S01 (UART7) за трасою моделі в межах 200 мм, а PPS/UART6 ідуть гілкою PPS (R-PPS-LEN PASS, модель, і в найгіршому випадку; mechanical/generated/harness-routes.json). Відкрито: висота бокса J304 проти CTRL 5.5 мм (креслення XDFH-0254 не читається, еталон 9.1 мм — R-HDR-HEIGHT OPEN), креслення гнізда XDFH-0258 (стикування зі стрічкою 1.27 мм) і орієнтація контакту 1 J20 (на карті розміщення Radxa V1.21 мітки немає) — тому запис лишається interface_open (запис J-Q6A-EXISTING охоплює вісім ref)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07)."
     },
     {
       "ref": "J303",
@@ -14999,7 +14999,7 @@
       "ref": "J407",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.01029 (W407, P7, W2 MECH-6): водозахищена родина каталогу Taoglas SPE-24-8-198-C с.11 (рядок READS-RF): різьба 1/4-36UNS-2A довжиною 11.4 ±0.3, деталі 5 (1.75 ±0.2) і 6 (1.1 ±0.3) зовні, кругле ущільнення на фланці всередині; виріз ⌀6.5 (вибір конструкції 6.35 + 0.15, отвору креслення не дає; M-02 P7, mechanical/params/parts.json taoglas_mhf1_sma_wp); після стінки 4.5 і деталей 5 + 6 лишається 3.25 мм ≥ 3 витки (R-SMA-THREAD PASS, модель). Відкрито: момент гайки й ущільнення вирізу (T-07), стикування вилки I-PEX MHF I з гніздом IPEX Waveshare 24370 — вхідний контроль."
+      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.011 (W407, P7): довжину різьби й виріз з лискою (D-Cut) рядок READS-RF web:taoglas-cab011-datasheet-spe-11-8-068-f (07.11.2026) не містить, а пігтейл P7 замінює MECH-6 (B-06: 95 мм не дістає LC76G), тож виріз, різьба (R-SMA-THREAD OPEN для P7), ущільнення й момент — TBD."
     },
     {
       "ref": "J408",
@@ -15053,13 +15053,13 @@
       "ref": "J521",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина — TBD (CAD)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина в моделі 123 мм (MODEL ESTIMATE, mechanical/generated/harness-routes.json, W2 MECH-4 07.11.2026; кінець J503 попередній до розкладки плати лючка, PCB-SB1). Відкрито: місце J503 на платі лючка, розвантаження натягу пайки на площадках J21 (точка стяжки) — після розкладки плати лючка."
     },
     {
       "ref": "J511",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабелі до J5: USB3 до T7 (U540) і USB2 до RTL-B (J541) — окремі записи; фіксація штекерів і розвантаження натягу в корпусі не задано (механічний пакет)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабелі до J5: USB3 до T7 (U540, через вставку T7_INSERT і гермоввід T7) і USB2 до RTL-B (J541) — окремі записи. У моделі (W2 MECH-4, 07.11.2026) штекери J5 стоять у резерві usb_plug_bay (x 116.6–139, y 38.5–56.5, z 14.65–30.65; mechanical.json layout) перед стеком USB Q6A, кабелі виходять у бік лючка (−x); F101 у цьому місці не розміщується (R-F101-ACCESS). Відкрито: фіксація штекерів у J5 (скоба або стяжка до пластини) і розвантаження натягу обох кабелів — конверти штекерів, кабелю T7 і вставки T7_INSERT не змодельовано (MECH-5, MECH-6)."
     },
     {
       "ref": "J512",
@@ -15095,7 +15095,7 @@
       "ref": "J520",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель HDMI — супутня деталь U520 (Adafruit 2420); фіксація штекера й розвантаження натягу не задано (механічний пакет)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Відповідна частина — FPC-набір (W2 MECH-4, build/15 «Кабель HDMI (W2 MECH-4)»): кутовий адаптер Adafruit 3550 або 3549 у J520 (assembly_items AI-HDMI-FPC, AI-HDMI-FPC-R), дві стрічки 3560, вставка HDMI_INSERT і прямий 3548 у вхід Wisecoco; траса — R-HDMI-ROUTE PASS (model), конверти mechanical.json layout hdmi_*; адаптер (3.2 г) тримається в гнізді J520, стрічка лежить у резервах траси. Відкрито: вісь 3550/3549 узято з фото виробника — звірити бік гнізда на Q6A; фіксація стрічок до пластини (поліімідна стрічка, товар не обрано) і зусилля на J520 — стенд; запис U-WISECOCO-7IN (U520) досі має extras круглого кабелю Adafruit 2420 і 2 × Fair-Rite 0431164281 (власник запису)."
     },
     {
       "ref": "J530",
@@ -15107,7 +15107,7 @@
       "ref": "J522",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS на платі лючка) не задано (провід, довжина, фіксація пайки)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти S31 від площадок заводської кнопки EDL Q6A до SW501 (PV6F240SS на платі лючка): 2 × 26 AWG (build/16 S31-01/02); траса в моделі 58 мм (MODEL ESTIMATE, mechanical/generated/harness-routes.json, W2 MECH-4 07.11.2026), кінець J522 попередній. Відкрито: місце площадок EDL на Q6A (не локалізовано, E5 §9), фіксація пайки й розвантаження натягу на них."
     },
     {
       "ref": "J505",

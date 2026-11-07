@@ -68,12 +68,12 @@
 | GX16 | Гніздо IMU GX16-4 (J504) | задня стінка x 175, y 25 (M-06, GX16_IMU) |
 | SBPWR | Панельна розетка живлення S-band pod (J551, binder M8 A-код 3 конт.) | стінка головного корпусу — грань і виріз TBD (MECH-07, моделює MECH-3); вилка — на кабелі W425 (S41); рішення build/15 «Ключування панельних роз'ємів» |
 | EDL | Кнопка EDL (SW501, E-Switch PV6F240SS) | на платі лючка за кришкою сервісного лючка (layout edl_key_body) |
-| PWRBTN | Кнопка живлення (SW301, E-Switch PV6F240SS) | верхня грань x 155, z 48.5 (layout pwr_key_body, M-02, PWR_KEY; рішення build/15 «Оболонка D15») |
+| PWRBTN | Кнопка живлення (SW301, E-Switch PV6F240SS) | верхня грань x 155.5, z 50 (layout pwr_key_body, nut.PWR_KEY, M-02, PWR_KEY; рішення build/15 «Кнопка живлення SW301 (W2 MECH-4)») |
 | IMUPACK | IMU-пак Hammond 1550Z101 (U309, U314, J550, D502, C519, C520, U552 і деталі E3 «External IMU»; майданчики носійної плати IMU_CARRIER: кабель J518, RP2040-Zero J320/J321, BNO085 J322) | на штанзі антени, ≥30 см позаду |
 | GNSS | LC76G (U304) | задня стінка ліворуч x 58–88.5, y 71–96.5 (layout lc76g; плата Waveshare 30.5 × 25.5 за кресленням, W2 MECH-6); P1 (MX1.25) — до валу біля лючка; IPEX → P7: пігтейл W407 Taoglas CAB.01029 250 мм, запас ≥30 мм над трасою (R-P7-PIGTAIL; build/15 «Пігтейл P7 і місце LC76G (W2 MECH-6)») |
 | VEML | Adafruit 4162 VEML7700 (U308) | верхня грань безеля, вікно ⌀4 x 120, z 60 (layout veml7700_window), поза козирком; конверт плати — TBD |
 | NTCP | NTC панелі TH301 (бусинка Semiware MF52A103F3950 на виводах) | тил панелі x 164.5–168.5, y 98.9–101.1 (layout ntc_panel): права смуга без плати HDMI біля колонки HMI, поліімідна стрічка (примітка E3 TH301; модель, OPEN T-02) |
-| NTCC | NTC корпусу TH302 (бусинка Semiware MF52A103F3950 на виводах) | лицьова грань пластини x 214.5–218.5, y 84–86.2 під CTRL (layout ntc_case), ≥70 мм від зон теплового контакту PWR-A, поліімідна стрічка (примітка E3 TH302; модель) |
+| NTCC | NTC корпусу TH302 (бусинка Semiware MF52A103F3950 на виводах) | лицьова грань розширення пластини x 165–169, y 24–26.2 (layout ntc_case) між нижнім входом повітря шляху 2 і повітродувкою, ≥23 мм від PWR-A, поліімідна стрічка (примітка E3 TH302; модель) |
 | FAN1 | Noctua NF-A4x10 5V (FAN301) | на охолоджувачі A Q6A, витяжка шляху 1 у задній стінці (layout cooler_a, q6a_fan_duct) |
 | FAN2 | Delta BFB0305HA-C (FAN302) | лицьовий бік пластини x 144–174.5, y 38.5–69, шлях 2 (layout blower) |
 | BONI | Bias-tee Boni-Whip (A406) | поруч з G6K, поза екраном HF+ (конверт у моделі механіки — TBD, mechanical/README) |
@@ -110,7 +110,7 @@
 | S21 | VBUS_RTLB → кабель RTL-B (J541.1) | PWR ↔ RTLB | 2 | PH, SOLDER | 188 (модель, кінець попередній) | розділений VBUS; J5.10 не з'єднувати; крізь SL2 і виріз N3 |
 | S22 | VBUS_HFP → пігтейл HF+ (J544.1) | PWR ↔ HFP | 3 | PH, SOLDER | 60 (модель, кінець попередній) | після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2 |
 | S23 | VBUS_LABPORT → J501.1 | PWR ↔ LABUSB | 3 | PH, SOLDER | 231 (модель, кінець попередній) | C506 біля вихідного порту; крізь проріз SL3 |
-| S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH | 190 (модель, кінець попередній) | U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7, PH 3 бічного входу, W2 GR-4); крізь проріз SL2 |
+| S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH | 190 (модель, кінець попередній) | U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7A, PH 3 бічного входу, W2 GR-4); крізь проріз SL2 |
 | S25 | CTRL → LC76G (живлення і RESET) | CTRL ↔ GNSS | 3 | PH, SOLDER | 195 (модель, кінець попередній) | E3_GNSS5V від U315 і E3_GNSS_RESET_N від Q301 з CTRL, крізь SL2, до P1 (MX1.25) LC76G; PPS і UART6 сюди не входять — вони йдуть гілкою PPS шлейфу S01 (S01 + S25 за моделлю понад 200 мм, R-PPS-LEN; рішення build/15 W2 MECH-1) |
 | S26 | CTRL → VEML7700 | CTRL ↔ VEML | 4 | PH, SOLDER | 100 (модель, кінець попередній) | 100 Ω + TVS біля безеля (на CTRL) |
 | S27 | CTRL → Noctua | CTRL ↔ FAN1 | 3 | FAN3 | кабель вентилятора; траса 114 (модель, кінець попередній) | штатний 3-контактний роз'єм Noctua; на CTRL — сумісна 3-контактна вилка 2.54 мм |
@@ -181,7 +181,7 @@
 | J509 | X14P1-HATCH | HATCH | S14 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 (2 з проводом) | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json J-HDR-436500215; design/parts/parts.json harness_families MF; MOLEX-43030 |
 | J510 | X15S1-HATCH | HATCH | S15 | JST PH 2.0 мм | 2 (1 з проводом) | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-B2BPH; design/parts/parts.json harness_families PH; JST-PH |
 | J513 | X30S1-HATCH | HATCH | S30 | JST PH 2.0 мм | 3 (3 з проводом) | B3B-PH-K-S(LF)(SN) (C131339) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-B3BPH; design/parts/parts.json harness_families PH; JST-PH |
-| J514 | X24S1-T7 | T7_INSERT | S24 | JST PH 2.0 мм | 3 (3 з проводом) | S3B-PH-K-S(LF)(SN) (C157929) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S3BPH; design/parts/parts.json harness_families PH; JST-PH |
+| J514 | X24S1-T7A | T7_INSERT | S24 | JST PH 2.0 мм | 3 (3 з проводом) | S3B-PH-K-S(LF)(SN) (C157929) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S3BPH; design/parts/parts.json harness_families PH; JST-PH |
 | X37S0-ENCM | X37S0-ENCM | ENCM | S37 | JST PH 2.0 мм | 4 | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | tools/assembly_data.py PENDING_BOARD_ENDS |
 | X38S0-ENCV | X38S0-ENCV | ENCV | S38 | JST PH 2.0 мм | 4 | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | tools/assembly_data.py PENDING_BOARD_ENDS |
 
@@ -352,9 +352,9 @@
 | S23-01 | GND | PWR: J506.1 (X23S1-PWR) → U103.2, C103.2, C104.2 … | LABUSB: J501.S (cable shield) | 24 | 1/2 | 0.825 / 0.825 | чорний |
 | S23-02 | GND | PWR: J506.2 (X23S1-PWR) → U103.2, C103.2, C104.2 … | LABUSB: J501.4 (GND) | 24 | 2/2 | 0.825 / 0.825 | чорний |
 | S23-03 | VBUS_LABPORT | PWR: J506.3 (X23S1-PWR) → U502.6, C506.1, C507.1 … | LABUSB: J501.1 (VBUS) | 24 | 1/1 | 0.825 / 0.825 | червоний |
-| S24-01 | GND | CTRL: J311.1 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | T7A: J514.1 (X24S1-T7) → U505.5, U505.7, R514.2 … | 24 | 1/1 | 0.1 / 0.1 | чорний |
-| S24-02 | 3V3_Q6A | CTRL: J311.2 (S24-25-CTRL) → J302.1, R301.2, R302.2 … | T7A: J514.2 (X24S1-T7) → R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
-| S24-03 | EN_T7 | CTRL: J311.3 (S24-25-CTRL) → U302.8 | T7A: J514.3 (X24S1-T7) → U505.4, R515.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S24-01 | GND | CTRL: J311.1 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | T7A: J514.1 (X24S1-T7A) → U505.5, U505.7, R514.2 … | 24 | 1/1 | 0.1 / 0.1 | чорний |
+| S24-02 | 3V3_Q6A | CTRL: J311.2 (S24-25-CTRL) → J302.1, R301.2, R302.2 … | T7A: J514.2 (X24S1-T7A) → R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
+| S24-03 | EN_T7 | CTRL: J311.3 (S24-25-CTRL) → U302.8 | T7A: J514.3 (X24S1-T7A) → U505.4, R515.1 | 26 | 1/1 | 0.05 / — | сірий |
 | S25-01 | GND | CTRL: J311.4 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | GNSS: пайка: U304.P1.2 | 24 | 1/1 | 0.1 / 0.192 | чорний |
 | S25-02 | E3_GNSS5V | CTRL: J311.5 (S24-25-CTRL) → U315.6 | GNSS: пайка: U304.P1.1 | 24 | 1/1 | 0.1 / 0.192 | червоний |
 | S25-03 | E3_GNSS_RESET_N | CTRL: J311.6 (S24-25-CTRL) → Q301.3 | GNSS: пайка: U304.P1.6 | 26 | 1/1 | 0.05 / — | білий |
@@ -411,7 +411,7 @@
 
 | збірка | призначення | кінці | мережі графа | деталі й вимоги |
 |---|---|---|---|---|
-| C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | R-HDMI-ROUTE OPEN (fit-report): прямий штекер Adafruit 2420 упирається в нижню стінку, кишень під 2× Fair-Rite 0431164281 і S-укладку надлишку на трасі немає; запропоновано за замовчуванням FPC-запас STACK (Adafruit 3550 кутовий + 3548 + 3560, обмотка заземленою мідною стрічкою) — MPN, довжина й ферит для пласкої стрічки TBD (assembly_items AI-HDMI-FPC); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати |
+| C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | FPC-набір (W2 MECH-4, build/15 «Кабель HDMI (W2 MECH-4)»; траса R-HDMI-ROUTE у fit-report — модель): Adafruit 3550 або 3549 у HDMI Q6A, стрічка 3560 10 см з феритом Würth 74278011, вставка HDMI_INSERT біля BMS, стрічка 3560 10 см, Adafruit 3548 у вхід Wisecoco (assembly_items AI-HDMI-FPC, AI-HDMI-FPC-R, AI-HDMI-FPC-FLEX, AI-HDMI-FPC-3548, AI-HDMI-FERRITE); обмотка заземленою мідною стрічкою (AI-HDMI-CU-TAPE, TBD); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати; лінк і EMI — стенд |
 | C-T7 | USB3 Q6A J5 нижній → T7 | Q6A.J5 → T7A → T7 | E5_T7_DM, E5_T7_DP, E5_T7_HOST_RX_N, E5_T7_HOST_RX_P, E5_T7_HOST_TX_N, E5_T7_HOST_TX_P, E5_VBUS_J5, E5_VBUS_T7 | цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7): VBUS-жилу розрізано лише на вставці (J515 від J5, J516 до T7), GND-жилу не розривають (відвід J517), S24 — вилка J514 (W2 GR-4); перевірка 5000M/uas |
 | C-HUB | USB2 Q6A J2 P3 → CH334F JP5 | Q6A.J2 → HUB | E5_HUB_DM, E5_HUB_DP | VBUS Q6A не підключати (E5 §2) |
 | C-TOUCH | USB2 Q6A J2 P2 → touch Wisecoco | Q6A.J2 → DISP | E5_TOUCH_DM, E5_TOUCH_DP | лише D+/D−/GND, ферит Würth 74271140 |

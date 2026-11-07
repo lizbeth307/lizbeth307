@@ -171,9 +171,9 @@
     "power_key": {
       "id": "PWR_KEY",
       "x": 155.5,
-      "z": 48.5,
+      "z": 50.0,
       "kind": "pv6",
-      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) sits between the plate front face (40.5) and the display module back (60.58 after the W2 MECH-3 dz 4.08), so x 155.5 / z 48.5 leaves 1.3 mm to the HDMI board, 0 mm to the plate and 4.08 mm to the module (model; TBD: measure the received key); the nut is not dimensioned on the datasheet and is not modelled as an envelope: with a D20 nut (assumption) it would meet the HDMI board edge and the top-right display clamp boss (rule R-PWR-KEY-NUT OPEN)"
+      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) sits between the plate front face (40.5) and the display clamp plates under the top clamp bosses (module_back 60.58 - clamp t 2.0 = 58.58, W2 MECH-3 dz 4.08); W2 MECH-4 (B-05, build/15 'Кнопка живлення SW301 (W2 MECH-4)'): moved along the top face from z 48.5 to z 50.0, so the body clears the plate by 1.5 (was 0), the clamp plate by 0.58 and the HDMI board by 1.3, and the nut reserve nut.PWR_KEY (parts.json pv6_button nut_d x nut_t, assumption) clears the top Al angle by 0.5, the HDMI board top edge by 0.8 and the top clamp boss by 1.05, sitting in the plate notch (plate.notches); the nut is not dimensioned (rule R-PWR-KEY-NUT OPEN: measure the received nut)"
     }
   },
   "right_face": {
@@ -201,7 +201,7 @@
         "z": 30.0,
         "kind": "m8_panel",
         "part": "binder_76_6618_1111",
-        "_note": "pod power entry (W2 MECH-3, build/15 'Вхід живлення pod J551/W425 (W2 MECH-3)'): binder M8 3-pin receptacle J551 (GR-1 part), W425 plugs in from outside with binder 99 3379 100 03; right face between the Q6A top edge (y 94.5) and the right Al angle (y 116), rear layer beside the RF-bay right wall (x 211.2) where the inner envelope (D12.6 x 9.5) and the 0.2 m leads have room; plain bore 10.1 (binder cut-out proposal 2) in the 2.5 mm ASA wall (no Al angle at y 106)"
+        "_note": "pod power entry (W2 MECH-3, build/15 'Вхід живлення pod J551/W425 (W2 MECH-3)'): binder M8 3-pin receptacle J551 (GR-1 part), W425 plugs in from outside with binder 99 3379 100 03; right face between the Q6A top edge (y 94.5) and the right Al angle (y 116), rear layer beside the RF-bay right wall (x 211.2) where the inner envelope (D12.6 x 9.5) and the 0.2 m leads have room; plain bore 10.1 (binder cut-out proposal 2) in the 2.5 mm ASA wall (no Al angle at y 106): the bore takes the M10x0.75 body with or without flats, while the flats cut-out (proposal 1, 9.1 across, anti-rotation) needs flats on the body that the READS-E reading of the scale drawing does not name; anti-rotation stays OPEN until the part is checked (R-J551)"
       }
     ]
   },
@@ -275,7 +275,7 @@
       "pad_t": 3.0,
       "pad_d": 22.0,
       "_pad_note": "flat seat for the 18.8 mm hex nut (across corners 21.7)",
-      "_place_note": "left of the Q6A HDMI plug: the right-angle plug head and the HDMI cable bend take the space below the Q6A HDMI receptacle (layout hdmi_plug_ra, hdmi_route_rear)"
+      "_place_note": "left of the Q6A HDMI plug: the right-angle FPC adapter and the flex folds take the space below the Q6A HDMI receptacle (layout hdmi_fpc_q6a, hdmi_route_rear)"
     },
     "tripod": {
       "c": [100.0, 70.0],
@@ -298,6 +298,12 @@
       "screws": [[120.0, 93.0], [134.0, 93.0]],
       "lip": "bottom edge of the cover hooks under the opening (no screw near the battery)",
       "content": ["blue USB-A port of the Q6A (reached directly in the plug bay)", "hatch board (pcb/prepare.py HATCH): J503 J21 header 43650-0315 and J502 UART5 console header B3B-PH-K", "EDL button SW501 PV6F240SS through the hatch board (layout edl_key_body)"],
+      "f101_access": {
+        "place": [116.0, 40.0, 22.0, 16.5],
+        "carrier_t": 1.6,
+        "clearance": 0.5,
+        "_note": "W2 MECH-4 (B-12, rule R-F101-ACCESS): candidate place for the PACK_FUSE carrier with F101 facing the hatch opening, the bottom strip of the hatch (x, y, w, h) in front of the USB-A plug bay; the rest of the hatch footprint is the hatch board with its service headers and the EDL key; carrier_t is the carrier board thickness (assumption, PCB-SB2)"
+      },
       "_src": "STACK 5.8 / D15 service hatch"
     },
     "path1_intake": {
@@ -403,8 +409,8 @@
     "mount_hole_d": 3.4,
     "riser_window": [197.5, 94.6, 26.0, 2.4],
     "_riser_window_note": "slot between the Q6A top edge (y 94.5) and the RF-bay bottom wall (y 97): the R44SF card-edge end (about 22 mm wide) is threaded through it; STACK 5.8 estimated about 26 x 20, check on the received riser (TBD)",
-    "notches_right": [[215.5, 26.5, 11.0, 7.0]],
-    "_notches_right_note": "open notch in the right edge of the plate extension for the HDMI cable (OD 5.2): the cable slides in from the side, so no plug has to pass the plate; the earlier closed slot x 186-204, y 30-36 lay under the BMS and over the straight plug",
+    "notches_right": [[211.0, 26.5, 15.5, 7.0]],
+    "_notches_right_note": "open notch in the right edge of the plate extension for the HDMI flat flex (W2 MECH-4: 10 mm Adafruit flex, width along x, with 0.5 mm each side between the BMS (x 210) and the right edge; was 11 x 7 for the round 5.2 mm cable): the flex is unclipped from its adapters, so it slides in from the side and no plug has to pass the plate; 2.0 mm web to plate slot SL3 below (R-PLATE-SLOTS); the earlier closed slot x 186-204, y 30-36 lay under the BMS and over the straight plug",
     "bond_points": [
       {
         "id": "BOND-RF",
@@ -415,8 +421,8 @@
     "_src": "STACK 5.8 (2.0 mm Al, holes +-0.2, flatness <=0.2 under Q6A, pedestal and regulator pads, no thread cut in the plate; riser window about 26 x 20)",
     "mount_boss_d": 7.0,
     "corner_clearance": 0.5,
-    "notches": [[145.5, 156.8, 20.0, 5.0]],
-    "_notches_note": "open notch in the top edge under the power-key nut (PV6 nut D20, assumption)",
+    "notches": [[144.0, 156.8, 23.0, 5.0]],
+    "_notches_note": "open notch in the top edge under the power-key nut (nut.PWR_KEY: reserve D22 x 3.5 of parts.json pv6_button, assumption, + 0.5 each side; W2 MECH-4, was 20 wide for D20); its corners stay >= 6.0 from the PEM F-M3-1 of the top-angle holes AT3/AT4 (R-CLINCH-EDGE)",
     "slots": [
       {
         "id": "SL1",
@@ -436,7 +442,8 @@
       },
       {
         "id": "SL3",
-        "rect": [210.5, 9.5, 4.5, 15.0],
+        "rect": [210.5, 9.5, 4.5, 11.5],
+        "_rect_note": "W2 MECH-6: shortened from 15.0 to 11.5 so that the grommet legs on its long edges stay below the HDMI flex rise (hdmi_route_rise, y >= 21.6, W2 MECH-4) on the plate rear face; the fill still passes (R-PLATE-SLOT-FILL)",
         "use": "front layer <-> bottom-face port row and GX16 under the plate extension: S11, S23, S32, S34, the IP2368 PD lead (build/16)",
         "segments": ["S11", "S23", "S32", "S34"],
         "trim": {"bottom": "tape", "top": "tape", "left": "grommet", "right": "grommet"}
@@ -519,7 +526,7 @@
         "part": "daly_bms",
         "box": [175.0, 9.0, 41.0, 35.0, 61.0, 10.0],
         "mount": "plate_front",
-        "_note": "left of the HDMI cable riser (hdmi_route_front_up) and below its run to the HDMI board"
+        "_note": "left of the HDMI flex strip (hdmi_route_front_up, hdmi_insert, hdmi_route_front_run) and below its run to the HDMI board"
       },
       {
         "id": "ip2368",
@@ -583,39 +590,80 @@
         "keep_clear": true
       },
       {
-        "id": "hdmi_plug_ra",
-        "box": [186.5, 24.0, 22.2, 24.5, 12.2, 11.0],
+        "id": "hdmi_fpc_q6a",
+        "part": "adafruit_3550",
+        "box": [186.45, 21.23, 16.22, 17.0, 15.0, 19.0],
         "mount": "free",
-        "keep_clear": true,
-        "_note": "right-angle HDMI A plug on the Q6A receptacle, cable leaving towards +x (assumption envelope, MPN TBD): a straight plug points at the bottom wall and leaves about 10 mm, too little for any bend of the 5.2 mm cable"
+        "_note": "W2 MECH-4 (B-04): Adafruit 3550 (or 3549) right-angle plug adapter on the Q6A HDMI receptacle (q6a.hdmi, mouth at y 36.23 facing -y, centre x 194.95 / z 27.72), axis assignment from the product photos (parts.json adafruit_3550, assumption); the flex clip edge points to the rear wall, so flex 1 leaves at z 16.2; 1.45 to the GX16 socket, 3.3 to the plate"
       },
       {
         "id": "hdmi_route_rear",
-        "box": [211.0, 27.2, 25.0, 10.8, 5.6, 13.5],
+        "box": [189.45, 11.6, 10.5, 32.55, 10.4, 5.5],
         "mount": "free",
         "keep_clear": true,
-        "_note": "HDMI cable (OD 5.2) from the plug head to the plate notch: bend towards +z, axis radius hdmi_route.bend_r"
+        "_note": "flex 1 (Adafruit 3560, 10 mm) below the 3550: bend towards -y, 45-degree fold 1 to +x, run under the LAB BUS nut (z <= 16 against its z >= 20.07) with the WE-FLAT ferrite, 45-degree fold 2 to +y at x 211.5-221.5 (hdmi_route); 0.55 above closure boss 5"
+      },
+      {
+        "id": "hdmi_ferrite",
+        "part": "wurth_74278011",
+        "box": [201.5, 8.8, 10.5, 8.0, 16.0, 5.0],
+        "mount": "free",
+        "_note": "Wurth WE-FLAT 74278011 on flex 1 between the two folds, near the Q6A end of the route (the source end); the copper-tape wrap ends either side of it (0.5 mm slot)"
+      },
+      {
+        "id": "hdmi_route_rise",
+        "box": [211.0, 21.6, 10.5, 11.0, 11.9, 28.0],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "flex 1 after fold 2: +y to y 30, bend +z and up to the plate notch (plate.notches_right x 211-226.5, y 26.5-33.5); slack of flex 1 as a loose bend here; 3.8 below the Q6A USB-C receptacle"
       },
       {
         "id": "hdmi_route_front_up",
-        "box": [216.2, 27.2, 40.5, 5.6, 49.6, 10.8],
+        "box": [211.0, 26.5, 40.5, 11.0, 7.5, 3.5],
         "mount": "free",
         "keep_clear": true,
-        "_note": "through the plate notch, bend towards +y, up the right side under the CTRL board"
+        "_note": "through the plate notch, bend towards +y onto the plate front face, into socket A on the bottom edge of the HDMI insert; 1.0 right of the BMS"
       },
       {
-        "id": "hdmi_route_front_turn",
-        "box": [210.8, 66.0, 45.7, 11.0, 10.8, 5.6],
-        "mount": "free",
-        "keep_clear": true,
-        "_note": "turn towards -x below the V1 vent thread"
+        "id": "hdmi_insert",
+        "box": [210.5, 34.0, 40.5, 16.0, 18.0, 5.0],
+        "mount": "plate_front",
+        "_note": "HDMI_INSERT reserve (U506 pin-18 pass-through between flex 1 and flex 2, pcb/prepare.py domain HDMI_INSERT; build/15 'Кабель HDMI (W2 MECH-4)'): 16 x 18 x 5 (board, two straight FPC clips on the bottom and top edges, U506/C517/C518/R552/TP502, fixing; assumption) lying on the plate front face in the strip right of the BMS (0.5 to it), under the CTRL (13.5 free); refined by MECH-5, board by PCB-SB2"
       },
       {
         "id": "hdmi_route_front_run",
-        "box": [146.2, 71.2, 45.7, 75.6, 5.6, 5.6],
+        "box": [211.0, 52.0, 40.5, 11.0, 24.8, 1.1],
         "mount": "free",
         "keep_clear": true,
-        "_note": "run to the right edge of the HDMI board between the blower/BMS and the ENC boards; HDMI board input position TBD (STACK D5)"
+        "_note": "flex 2 (Adafruit 3560) from socket B on the insert top edge, flat on the plate front face up the strip to the corner fold (y 76.8 is the waypoint of the CTRL harness drop, harness_routes); below the moved V1 thread (z >= 43)"
+      },
+      {
+        "id": "hdmi_route_front_turn",
+        "box": [211.0, 76.8, 40.5, 11.0, 12.7, 2.0],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "45-degree fold 3 of flex 2 towards -x in the corner under the CTRL (16.5 free)"
+      },
+      {
+        "id": "hdmi_route_front_flat",
+        "box": [176.0, 78.5, 40.5, 35.0, 11.0, 1.5],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "flex 2 flat on the plate front face along y 78.65-88.65, under the CTRL and the volume ENC board, right of the CTRL harness drop (x 175.2)"
+      },
+      {
+        "id": "hdmi_route_front_rise",
+        "box": [171.7, 78.5, 40.5, 14.3, 11.0, 10.5],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "flex 2 bends up (S, slack) to the clip of the 3548 at z 48, above the harness drops at y 78 (S02-S03/S10/S15/S24/S25/S30 pass below it at z 42.5 along y and drop at y 78); CTRL bottom 7.98 above"
+      },
+      {
+        "id": "hdmi_fpc_disp",
+        "part": "adafruit_3548",
+        "box": [146.2, 75.0, 45.5, 25.5, 17.3, 5.0],
+        "mount": "free",
+        "_note": "Adafruit 3548 straight plug adapter in the HDMI input of the Wisecoco board: the input is placed at the lower end of the board's right edge (y 75-92.3, z centre 48), an assumption until the received board is measured (STACK D5); 3.7 below the Lime"
       },
       {
         "id": "hatch_parts",
@@ -718,9 +766,15 @@
       {
         "id": "pwr_key_body",
         "part": "pv6_button",
-        "box": [147.5, 140.8, 40.5, 16.0, 20.5, 16.0],
+        "box": [147.5, 140.8, 42.0, 16.0, 20.5, 16.0],
         "mount": "front_wall",
-        "_note": "PV6F240SS body below the panel: 17.50 +0.50 to the terminal ends (datasheet p.5) + 2.5 mm for the soldered wires; M16 thread D16"
+        "_note": "PV6F240SS body below the panel: 17.50 +0.50 to the terminal ends (datasheet p.5) + 2.5 mm for the soldered wires; M16 thread D16; centre at top_face.power_key (z 50.0 after W2 MECH-4)"
+      },
+      {
+        "id": "nut.PWR_KEY",
+        "derived": "pwr_key_nut",
+        "mount": "front_wall",
+        "_note": "W2 MECH-4 (B-05): PV6 panel nut inside the top wall on the key thread, reserve D nut_d x nut_t of parts.json pv6_button (assumption, not dimensioned: R-PWR-KEY-NUT OPEN) as a box about top_face.power_key; it reaches 0.5 below the plate front face inside the plate notch"
       },
       {
         "id": "ntc_panel",
@@ -732,9 +786,9 @@
       {
         "id": "ntc_case",
         "part": "ntc_mf52a",
-        "box": [214.5, 84.0, 40.5, 4.0, 2.2, 2.2],
+        "box": [165.0, 24.0, 40.5, 4.0, 2.2, 2.2],
         "mount": "plate_front",
-        "_note": "W2 MECH-6 (B-10): TH302 bead taped with polyimide to the mid-plate front face (the inner Al frame) at the right edge under the CTRL: >= 70 mm from the PWR-A thermal-bond zones (x <= 142), 43 mm from the blower, clear of the HDMI cable keep-clears (y <= 76.8), the Lime (y >= 96) and the thread of vent V1 (x >= 220 at y 85.5, R-VENT-REACH); E3 note: inner frame away from direct converter heat. Model choice, re-check at T-02/T-03 (bench OPEN)"
+        "_note": "W2 MECH-6 (B-10): TH302 bead taped with polyimide to the front face of the plate extension (the inner Al frame) between the path-2 bottom intake (x 179.6-216) and the blower: >= 23 mm from PWR-A (x <= 142), 12 mm below the blower, 6 mm left of the BMS, clear of the HDMI flex route (W2 MECH-4: x >= 171.7 in the front layer) and of the Lime and the IP2368; E3 note: inner frame away from direct converter heat. Model choice, re-check at T-02/T-03 (bench OPEN)"
       }
     ]
   },
@@ -835,10 +889,22 @@
     "_note": "cooler A: flat face on the SoC (paste or PTM7950), face over the LPDDR5 recessed by ram_recess for a Gelid pad (STACK 5.8: never one pad over SoC and RAM); SoC and LPDDR5 tops from the Q6A STEP V1.21 (parts.json q6a); gap_tol is an assumed package/flatness tolerance (TBD); the block stays inside the keep-in of parts.json q6a_cooler_zone; fan_above_board = board top face to the fan's board-side face (>=10 per parts.json q6a_cooler_zone, +0.5 over the 9.65 mm 40-pin header); the fins/spacer between the 5 mm block and the fan and the fan bracket on the 58 x 49 holes are TBD with the purchased cooler"
   },
   "hdmi_route": {
-    "cable_od": 5.2,
-    "bend_r": 8.0,
-    "_src": "Adafruit 2420 OD 5.2 +-0.15 (STACK 2.6 / 11.5, drawing CHDMI-AM-AM-457); bend_r = cable-axis radius used for the keep-clear boxes, an assumption (no bend radius found for the 2420; check on the cable)",
-    "_status": "the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN; proposed default (build/15 'Оболонка D15', 2026-11-07): STACK's FPC reserve Adafruit 3550 (right angle) + 3548 + 3560 with a grounded copper-tape wrap; MPN, length and a ferrite for the flat cable TBD until the Adafruit pages are read"
+    "kind": "fpc",
+    "flex": "adafruit_flex",
+    "ferrite": "wurth_74278011",
+    "notch_clear": 0.5,
+    "slack_max": 40.0,
+    "envelopes": ["hdmi_fpc_q6a", "hdmi_route_rear", "hdmi_ferrite", "hdmi_route_rise", "hdmi_route_front_up", "hdmi_insert", "hdmi_route_front_run", "hdmi_route_front_turn", "hdmi_route_front_flat", "hdmi_route_front_rise", "hdmi_fpc_disp"],
+    "segments": [
+      {"id": "FLEX1", "from": "3550 clip (hdmi_fpc_q6a)", "to": "HDMI_INSERT socket A (bottom edge)", "part": "3560",
+       "points": [[194.95, 21.6, 16.2], [194.95, 21.6, 13.5], [194.95, 16.8, 13.5], [216.5, 16.8, 13.5], [216.5, 30.0, 13.5], [216.5, 30.0, 41.0], [216.5, 34.0, 41.0]],
+       "folds": 2},
+      {"id": "FLEX2", "from": "HDMI_INSERT socket B (top edge)", "to": "3548 clip (hdmi_fpc_disp)", "part": "3560",
+       "points": [[216.5, 52.0, 41.0], [216.5, 83.65, 41.0], [181.0, 83.65, 41.0], [181.0, 83.65, 48.0], [171.7, 83.65, 48.0]],
+       "folds": 1}
+    ],
+    "_src": "W2 MECH-4 (B-04, build/15 'Кабель HDMI (W2 MECH-4)'): the FPC set of STACK.md:269 replaces the round Adafruit 2420 route (it needed a right-angle plug without an MPN and had no room for two Fair-Rite 0431164281 or the S-fold of about 250 mm of excess cable). Parts read 2026-11-07 (parts.json adafruit_3550, adafruit_3548, adafruit_flex, wurth_74278011). The flex keeps its width direction through bends; the two width changes (x at the Q6A receptacle, y at the Wisecoco input) and the x offset below the Q6A are made by three 45-degree folds (fold rating not published by Adafruit: fold once over a radius, never re-crease; bench OPEN) and the HDMI_INSERT is a straight pass-through between two 100 mm flexes (plan decision of W2 GR-4); segment centrelines (points) give the flex length: polyline + 2 x bend_r x (2 - pi/2) saved per 90-degree bend is ignored, so the length is an upper bound; slack = flex length - centreline <= slack_max, taken up as loose bends in hdmi_route_rise and hdmi_route_front_rise. MODEL ESTIMATE",
+    "_status": "R-HDMI-ROUTE: envelopes of the 3550, the folds, the ferrite, the insert and the 3548 are in the envelope check (generated/fit-report.json); the HDMI link, the EMI effect of the unshielded flex with its grounded copper wrap and the ferrite, and the folds stay bench OPEN"
   },
   "pwr_bond": {
     "pad": 0.5,
@@ -882,12 +948,12 @@
     {
       "id": "V1",
       "face": "right",
-      "y": 85.5,
-      "z": 47.7,
+      "y": 60.0,
+      "z": 49.0,
       "kind": "m12_vent_threaded",
       "pad_t": 4.0,
       "pad_d": 14.0,
-      "_note": "display/front-layer cavity: right wall between the BMS and the Lime; no nut (threaded hole), the 6 mm thread end clears the BMS, the Lime and the ENC board"
+      "_note": "display/front-layer cavity: right wall beside the BMS (W2 MECH-4: moved from y 85.5 / z 47.7, where the HDMI flex now folds towards -x under the CTRL); no nut (threaded hole), the 6 mm thread end clears the BMS by 10 and lies 1.4 above the flat HDMI flex (hdmi_route_front_run, z <= 41.6); pad below the CTRL board (z 56 against 58.98)"
     },
     {
       "id": "V2",
@@ -1407,13 +1473,13 @@
       "S40": {
         "ends": ["CTRL", "NTCC"],
         "via": [
-          {"edge": "CTRL", "zone": 0, "s": 72.1, "dz": 2.4},
-          {"edge": "CTRL", "zone": 0, "s": 72.1, "dz": 2.4, "off": [-0.8, 0, 0]},
-          {"box": "ntc_case", "at": [0.0, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
-          {"box": "ntc_case", "at": [0.0, 0.5, 1.0], "off": [0, 0, 2.0]},
-          {"box": "ntc_case", "at": [0.0, 0.5, 0.5]}
+          {"edge": "CTRL", "zone": 0, "s": 12.1, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 12.1, "dz": 2.4, "off": [-2.0, 0, 0]},
+          {"box": "ntc_case", "at": [1.0, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "ntc_case", "at": [1.0, 0.5, 1.0], "off": [0, 0, 2.0]},
+          {"box": "ntc_case", "at": [1.0, 0.5, 0.5]}
         ],
-        "note": "front layer: CTRL left edge at y 85, down to 4 mm above the plate, east under the CTRL to the TH302 bead (layout ntc_case, W2 MECH-6 B-10); soldered >= 6 mm from the bead (E3 note)"
+        "note": "front layer: CTRL left edge at y 25, down between the BMS (x >= 175) and the blower (y >= 38.5) to 4 mm above the plate, west to the TH302 bead (layout ntc_case, W2 MECH-6 B-10); soldered >= 6 mm from the bead (E3 note)"
       },
       "S41": {
         "kind": "external",
