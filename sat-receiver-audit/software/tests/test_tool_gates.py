@@ -385,5 +385,89 @@ class RoutedPrototypeCheckTests(TempProject):
         self.assertFalse(issues & {"DRC_board_binding", "DRC_report_binding"})
 
 
+class LinuxLabArchiveIndexTests(TempProject):
+    """finalize_linux_lab keeps the attempt archive indexed and linked (W2 EVID-G). Synthetic runs only."""
+    INTRO = ("Ці запуски не підтверджують поточну редакцію: run03 завершились FAIL, run07 пройшли для попередніх джерел. "
+             "Первинні результати збережені без переписування статусів.")
+    LINKS = ("Посилання `../module-lab/` нижче чинні, поки цей каталог лежить у `verification/linux-lab/`.\n\n"
+             "[Таблиця модулів](../module-lab/MODULE-RESULTS.md) та автономний `../module-lab/module-results.html`; "
+             "лічильники — в `../module-lab/connectivity.json`.\n")
+
+    def setUp(self):
+        super().setUp()
+        self.attempts = self.root / "verification/linux-attempts"
+        self.attempts.mkdir(parents=True)
+        self.bullets = ["- run03: виявлені дефекти harness.", "", "- run07: **PASS** для джерел 20.10.2026 (QEMU exit 0, 1434.289 s)."]
+        (self.attempts / "README.md").write_text("# Попередні Linux-прогони\n\n" + self.INTRO + "\n\n" + "\n".join(self.bullets)
+                                                 + "\n\nІсторичні PASS не переносяться на змінені джерела.\n", encoding="utf-8")
+        for name, status, module in (("run03", "FAIL", False), ("run07", "PASS", True), ("run10", "PASS", True),
+                                     ("run11", "PASS", True), ("run12", "FAIL", False)):
+            run = self.attempts / name
+            run.mkdir()
+            (run / "report.json").write_text(json.dumps({"status": status, "host": {"qemu_exit_code": 0, "elapsed_s": 12.5}}))
+            (run / "system-smoke.json").write_text(json.dumps({"started_at": "2026-11-07T09:26:11.885622+00:00"}))
+            if module:
+                (run / "module-lab").mkdir()
+                (run / "README.md").write_text(self.LINKS, encoding="utf-8")
+        (self.attempts / "run12/github-run.json").write_text(json.dumps({"run_id": "123456789", "sha": "a" * 40}))
+        (self.attempts / "run13").mkdir()  # an archived lab result without its own module-lab keeps its links
+        (self.attempts / "run13/README.md").write_text(self.LINKS, encoding="utf-8")
+        (self.attempts / "run13/attempt.json").write_text(json.dumps({"status": "ABORTED"}))
+
+    def test_module_links_point_into_the_archive_and_a_second_pass_changes_nothing(self):
+        self.assertEqual(finalize.archive_links(self.attempts), ["run07", "run10", "run11"])
+        text = (self.attempts / "run07/README.md").read_text(encoding="utf-8")
+        self.assertEqual(text, self.LINKS.replace("](../module-lab/", "](module-lab/")
+                         .replace("`../module-lab/module", "`module-lab/module").replace("`../module-lab/conn", "`module-lab/conn"))
+        self.assertIn("Посилання `../module-lab/` нижче", text)  # prose about the old location, not a link
+        self.assertEqual((self.attempts / "run13/README.md").read_text(encoding="utf-8"), self.LINKS)
+        before = {p: p.read_bytes() for p in self.attempts.rglob("README.md")}
+        self.assertEqual(finalize.archive_links(self.attempts), [])
+        self.assertEqual({p: p.read_bytes() for p in self.attempts.rglob("README.md")}, before)
+
+    def test_one_bullet_per_run_existing_bullets_verbatim_and_the_intro_regenerated(self):
+        index = finalize.attempt_index(self.attempts)
+        self.assertEqual(index["added"], ["run10", "run11", "run12", "run13"])
+        text = (self.attempts / "README.md").read_text(encoding="utf-8")
+        lines = text.split("\n")
+        for bullet in self.bullets:
+            self.assertIn(bullet, lines)
+        for name in ("run03", "run07", "run10", "run11", "run12", "run13"):
+            self.assertEqual(sum(line.startswith("- " + name + ":") for line in lines), 1, name)
+        self.assertIn("- run10: **PASS** (GitHub run 40099774142, 07.11.2026; QEMU exit 0, 12.5 s).", text)
+        self.assertIn("- run11: **PASS** (GitHub run 42355259865,", text)
+        self.assertIn("- run12: **FAIL** (GitHub run 123456789,", text)  # its own github-run.json wins
+        self.assertIn("- run13: **ABORTED** (GitHub run не записано).", text)
+        self.assertLess(text.index("- run07:"), text.index("- run10:"))
+        self.assertLess(text.index("- run13:"), text.index("Історичні PASS"))
+        self.assertIn("Ці запуски не підтверджують поточну редакцію: run03, run12 і run13 завершились FAIL/ABORTED, "
+                      "run07, run10 і run11 пройшли для попередніх джерел. Первинні результати", text)
+        before = (self.attempts / "README.md").read_bytes()
+        self.assertEqual(finalize.attempt_index(self.attempts)["added"], [])
+        self.assertEqual((self.attempts / "README.md").read_bytes(), before)
+
+    def test_github_run_record_is_written_only_inside_github_actions(self):
+        lab = self.root / "verification/linux-lab"
+        lab.mkdir()
+        for environ in ({}, {"GITHUB_RUN_ID": "42355259865"}, {"GITHUB_SHA": "b" * 40}):
+            self.assertIsNone(finalize.github_run(lab, environ))
+            self.assertFalse((lab / "github-run.json").exists())
+        record = finalize.github_run(lab, {"GITHUB_RUN_ID": "42355259865", "GITHUB_SHA": "b" * 40})
+        self.assertEqual(json.loads((lab / "github-run.json").read_text(encoding="utf-8")), record)
+        self.assertEqual((record["run_id"], record["sha"]), ("42355259865", "b" * 40))
+        for environ in ({"GITHUB_RUN_ID": "1; rm", "GITHUB_SHA": "b" * 40}, {"GITHUB_RUN_ID": "1", "GITHUB_SHA": "main"}):
+            with self.subTest(environ=environ), self.assertRaisesRegex(SystemExit, "Malformed"):
+                finalize.github_run(lab, environ)
+
+    def test_import_requires_the_filtered_console_the_host_hashed(self):
+        console = self.root / "console.log"
+        console.write_bytes(b"[    0.489278] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 A. Author <address removed>\n")
+        host = {"console_sha256": sha(console), "console_redactions": {"count": 1, "patterns": []}}
+        self.assertEqual(finalize.console_filtered({"host": host}, console), host["console_redactions"])
+        for change in ({"console_redactions": None}, {"console_redactions": {"count": "1"}}, {"console_sha256": "0" * 64}):
+            with self.subTest(change=change), self.assertRaises(SystemExit):
+                finalize.console_filtered({"host": dict(host, **change)}, console)
+
+
 if __name__ == "__main__":
     unittest.main()

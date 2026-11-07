@@ -6,6 +6,7 @@ import importlib.util
 import json
 import os
 from pathlib import Path, PurePosixPath
+import re
 import shutil
 import stat
 import sys
@@ -34,6 +35,17 @@ BOUND_EXTRA = {"tools/check_software.py", "tools/run_tests_offline.py", "design/
                "firmware/mpremote-requirements.txt", "deployment/linux_lab/wheelhouse-requirements.txt"}
 CONTRACT = "design/readiness-contract.json"
 UNBOUND = ("deployment/linux_lab/build_kit.py", "firmware/dist/")
+ATTEMPTS = "verification/linux-attempts"
+# GitHub run ids of imports archived before finalize wrote github-run.json next to each import. Both are
+# named by commit 51f8a4c on origin/wip/stage3-int ("GENERATED: ARM64 QEMU Linux lab run 42355259865
+# evidence": the lab patch of run 42355259865, which archived the previous import, run 40099774142, as
+# run10); run10 itself was imported by be8fd84 ("Stage 2 evidence: ARM64 lab PASS (CI run 40099774142)").
+KNOWN_RUN_IDS = {"run10": "40099774142", "run11": "42355259865"}
+RUN_DIR = re.compile(r"run(\d+)")
+# An archived README's module links: '../module-lab/<file>' was right next to verification/module-lab,
+# the archive keeps that tree in runNN/module-lab. A bare '`../module-lab/`' mention is prose, not a link.
+MODULE_LINK = re.compile(r"(\]\(|`)\.\./module-lab/(?=[^\s)`])")
+INTRO = re.compile(r"Ці запуски не підтверджують поточну редакцію: [^.\n]*\.")
 
 
 def sha(path):
@@ -140,12 +152,126 @@ def lineage_text(base):
             "нижній шар — locked Ubuntu image. Журнал файлової системи відновлює саме Linux guest. Це не прогін із чистого базового образу.")
 
 
+def console_filtered(report, console):
+    """The imported console.log is the file host.py filtered for addresses and then hashed."""
+    record = report["host"].get("console_redactions")
+    if type(record) is not dict or type(record.get("count")) is not int or record["count"] < 0:
+        raise SystemExit("console.log was not filtered for addresses before hashing (host.py run)")
+    if sha(console) != report["host"].get("console_sha256"):
+        raise SystemExit("console.log differs from the console_sha256 the host recorded")
+    return record
+
+
+def github_run(destination, environ):
+    """github-run.json names the workflow run that imported this result, so its archive can cite it.
+    Written only inside GitHub Actions (GITHUB_RUN_ID and GITHUB_SHA set); a local import writes none."""
+    run_id, commit = environ.get("GITHUB_RUN_ID"), environ.get("GITHUB_SHA")
+    if not run_id or not commit:
+        return None
+    if not re.fullmatch(r"[0-9]+", run_id) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise SystemExit("Malformed GITHUB_RUN_ID or GITHUB_SHA")
+    record = {"schema_version": 1, "run_id": run_id, "sha": commit,
+              "source": "GITHUB_RUN_ID and GITHUB_SHA of the workflow run that imported this ARM64 lab result"}
+    (destination / "github-run.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8", newline="\n")
+    return record
+
+
+def archive_links(attempts):
+    """In each archived runNN/README.md whose runNN/module-lab exists, point '../module-lab/' links at
+    'module-lab/'. Nothing else changes; a second pass finds nothing to rewrite."""
+    changed = []
+    for readme in sorted(attempts.glob("run*/README.md")):
+        if not RUN_DIR.fullmatch(readme.parent.name) or not (readme.parent / "module-lab").is_dir():
+            continue
+        text = readme.read_bytes().decode("utf-8")
+        fixed = MODULE_LINK.sub(r"\1module-lab/", text)
+        if fixed != text:
+            readme.write_bytes(fixed.encode("utf-8"))
+            changed.append(readme.parent.name)
+    return changed
+
+
+def run_dirs(attempts):
+    return sorted((d for d in attempts.iterdir() if d.is_dir() and RUN_DIR.fullmatch(d.name)),
+                  key=lambda d: int(RUN_DIR.fullmatch(d.name).group(1)))
+
+
+def run_status(run):
+    for name in ("report.json", "attempt.json"):
+        if (run / name).is_file():
+            return read(run / name).get("status")
+    return None
+
+
+def run_bullet(run):
+    """Index bullet of an archived import, from its own records; statuses are copied, never rewritten."""
+    report = read(run / "report.json") if (run / "report.json").is_file() else {}
+    host = report.get("host", {})
+    record = read(run / "github-run.json") if (run / "github-run.json").is_file() else {}
+    run_id = record.get("run_id") or KNOWN_RUN_IDS.get(run.name)
+    facts = ["GitHub run " + run_id if run_id else "GitHub run не записано"]
+    smoke = run / "system-smoke.json"
+    started = read(smoke).get("started_at", "") if smoke.is_file() else ""
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}T.*", started):
+        facts[0] += ", " + ".".join(reversed(started[:10].split("-")))
+    if "qemu_exit_code" in host and "elapsed_s" in host:
+        facts.append(f"QEMU exit {host['qemu_exit_code']}, {host['elapsed_s']} s")
+    status = run_status(run) or "без report.json"
+    moved = "разом із `module-lab/` " if (run / "module-lab").is_dir() else ""
+    return (f"- {run.name}: **{status}** ({'; '.join(facts)}). Пункт записав `tools/finalize_linux_lab.py` під час "
+            f"наступного імпорту: первинні результати {moved}перенесено сюди без переписування статусів; цей результат "
+            "стосується тодішніх джерел і не переноситься на поточне дерево, чинний прогін — у ../linux-lab/.")
+
+
+def run_ranges(names):
+    numbers = sorted(int(RUN_DIR.fullmatch(n).group(1)) for n in names)
+    groups = []
+    for number in numbers:
+        if groups and number == groups[-1][-1] + 1:
+            groups[-1].append(number)
+        else:
+            groups.append([number])
+    width = max(len(RUN_DIR.fullmatch(n).group(1)) for n in names)
+    def name(number):
+        return f"run{number:0{width}d}"
+    # Three or more consecutive runs read as a range (run03–run06); shorter runs are listed one by one.
+    parts = [p for g in groups for p in ([name(g[0]) + "–" + name(g[-1])] if len(g) > 2 else [name(n) for n in g])]
+    return parts[0] if len(parts) == 1 else ", ".join(parts[:-1]) + " і " + parts[-1]
+
+
+def attempt_index(attempts):
+    """README of the archive: one bullet per runNN (missing ones appended after the last bullet, existing
+    ones kept verbatim) and the intro status sentence regenerated from the runs' recorded statuses."""
+    readme = attempts / "README.md"
+    lines = readme.read_bytes().decode("utf-8").split("\n")
+    runs = run_dirs(attempts)
+    listed = {m.group(1) for m in (re.match(r"- (run\d+):", line) for line in lines) if m}
+    added = [run.name for run in runs if run.name not in listed]
+    bullets = [i for i, line in enumerate(lines) if re.match(r"- run\d+:", line)]
+    at = bullets[-1] + 1 if bullets else len(lines)
+    for run in reversed([r for r in runs if r.name in added]):
+        lines[at:at] = ["", run_bullet(run)]
+    statuses = {run.name: run_status(run) for run in runs}
+    passed = [n for n, s in statuses.items() if s == "PASS"]
+    failed = [n for n, s in statuses.items() if s != "PASS"]
+    kinds = "/".join(dict.fromkeys(statuses[n] or "без звіту" for n in failed))
+    said = ([f"{run_ranges(failed)} завершились {kinds}"] if failed else []) + \
+           ([f"{run_ranges(passed)} пройшли для попередніх джерел"] if passed else [])
+    sentence = "Ці запуски не підтверджують поточну редакцію: " + ", ".join(said) + "."
+    text = "\n".join(lines)
+    if said and INTRO.search(text):
+        text = INTRO.sub(lambda _: sentence, text, count=1)
+    readme.write_bytes(text.encode("utf-8"))
+    return {"added": added, "intro": sentence}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--work", type=Path, required=True)
     args = parser.parse_args()
     work = args.work.resolve(strict=True)
     report = importable(read(work / "report.json"))
+    redactions = console_filtered(report, work / "console.log")
     # debugfs rdump recreates guest symlinks on the host; never follow one.
     regular_tree(work / "results")
     executed = bind_executed(read(work / "results/project-manifest.json"), PROJECT)
@@ -223,7 +349,14 @@ Storage smoke: **{len(storage['cases'])} PASS** на окремому вірту
 Апаратні ворота, що лишаються OPEN: {len(read(PROJECT / 'design/readiness-contract.json')['gate_results'])}. Фізичне залізо, аналогові RF/живлення, BMS, калібрування, Q6A peripheral pinmux, повний Lime/56MS/s/HTP та виробничий випуск не прийняті.
 """
     (destination / "README.md").write_text(text, encoding="utf-8", newline="\n")
-    print(json.dumps({"status": "IMPORTED", "bound_sources": len(executed), "linux": str(destination), "modules": str(modules)}))
+    github = github_run(destination, os.environ)
+    # The workflow has just moved the previous import into the archive: fix its links, index every run.
+    attempts = PROJECT / ATTEMPTS
+    links = archive_links(attempts)
+    index = attempt_index(attempts)
+    print(json.dumps({"status": "IMPORTED", "bound_sources": len(executed), "linux": str(destination), "modules": str(modules),
+                      "console_redactions": redactions["count"], "github_run": github and github["run_id"],
+                      "archive_links_rewritten": links, "archive_bullets_added": index["added"]}))
 
 
 if __name__ == "__main__":
