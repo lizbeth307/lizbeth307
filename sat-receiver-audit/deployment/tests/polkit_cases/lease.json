@@ -1,0 +1,690 @@
+{
+  "schema_version": 1,
+  "kind": "srrx_polkit_cases",
+  "rule": "etc/polkit-1/rules.d/60-srrx-engine-lease.rules",
+  "generator": "software/srrx/engine_leases.py polkit_rule(), staged by deployment/deploy.py stage",
+  "evaluation": "every *.rules file of the staged etc/polkit-1/rules.d in file-name order, as polkitd runs them; the first rule that returns a result decides, and expect null means no rule decides (the default policy). details are what action.lookup() returns: systemd 255 passes unit and verb (src/core/dbus-util.c bus_verify_manage_units_async_full)",
+  "cases": [
+    {
+      "id": "labd-start-readsb-rtla",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-readsb-rtla",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-start-readsb-rtlb",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtlb.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-readsb-rtlb",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtlb.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-start-readsb-hfplus",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@hfplus.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-readsb-hfplus",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@hfplus.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-start-aiscatcher-rtla",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-aiscatcher@rtla.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-aiscatcher-rtla",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-aiscatcher@rtla.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-start-aiscatcher-rtlb",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-aiscatcher@rtlb.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-aiscatcher-rtlb",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-aiscatcher@rtlb.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-start-aiscatcher-hfplus",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-aiscatcher@hfplus.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-aiscatcher-hfplus",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-aiscatcher@hfplus.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-start-sdrangelsrv-rtla",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-sdrangelsrv@rtla.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-sdrangelsrv-rtla",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-sdrangelsrv@rtla.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-start-sdrangelsrv-rtlb",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-sdrangelsrv@rtlb.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-sdrangelsrv-rtlb",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-sdrangelsrv@rtlb.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-start-sdrangelsrv-hfplus",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-sdrangelsrv@hfplus.service",
+        "verb": "start"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-stop-sdrangelsrv-hfplus",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-sdrangelsrv@hfplus.service",
+        "verb": "stop"
+      },
+      "expect": "yes"
+    },
+    {
+      "id": "labd-verb-restart",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "restart"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-verb-reload",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "reload"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-verb-try-restart",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "try-restart"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-verb-reload-or-restart",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "reload-or-restart"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-verb-kill",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "kill"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-verb-reset-failed",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "reset-failed"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-verb-freeze",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "freeze"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-no-verb",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service"
+      },
+      "expect": null
+    },
+    {
+      "id": "user-lab-start",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "lab"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "user-lab-stop",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "lab"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "stop"
+      },
+      "expect": null
+    },
+    {
+      "id": "user-srrx-passes-start",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "srrx-passes"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "user-srrx-passes-stop",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "srrx-passes"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "stop"
+      },
+      "expect": null
+    },
+    {
+      "id": "user-srrx-satdump-start",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "srrx-satdump"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "user-srrx-satdump-stop",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "srrx-satdump"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "stop"
+      },
+      "expect": null
+    },
+    {
+      "id": "user-nobody-start",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "nobody"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "user-nobody-stop",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "nobody"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "stop"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-alias-hfp",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@hfp.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-alias-lime",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@lime.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-alias-pico",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@pico.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-alias-gnss",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-aiscatcher@gnss.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-template-itself",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-alias-suffix",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla-x.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-alias-escaped",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla-1.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-unit-suffix",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.serviceX",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-unit-prefix",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "xsrrx-lease-readsb@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-socket-type",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.socket",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-engine-unknown",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-dump1090@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-engine-case",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-READSB@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-engine-openwebrx",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-openwebrx@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-two-instances",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service srrx.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-newline",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service\nsrrx.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-labd-itself",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-poweroff-bridge",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-poweroff.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-start-radio-off",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-radio-off.service",
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-stop-labd-itself",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx.service",
+        "verb": "stop"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-stop-radio-off",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-radio-off.service",
+        "verb": "stop"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-no-unit",
+      "action": "org.freedesktop.systemd1.manage-units",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "verb": "start"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-enable-template",
+      "action": "org.freedesktop.systemd1.manage-unit-files",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service"
+      },
+      "expect": null
+    },
+    {
+      "id": "labd-set-property",
+      "action": "org.freedesktop.systemd1.set-unit-properties",
+      "subject": {
+        "user": "labd"
+      },
+      "details": {
+        "unit": "srrx-lease-readsb@rtla.service",
+        "verb": "start"
+      },
+      "expect": null
+    }
+  ]
+}

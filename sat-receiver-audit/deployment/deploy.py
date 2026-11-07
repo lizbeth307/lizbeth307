@@ -116,6 +116,13 @@ class DeploymentError(ValueError):
     pass
 
 
+# No release guard for the engine lease templates either (srrx.engine_leases.TEMPLATES): labd starts and
+# stops them through polkit after its own guard, BindsTo=srrx.service ends them with labd, they energize
+# nothing, and their user lab could not read the acceptance and cache records the guard hashes (DEPLOYMENT.md).
+LEASE_TEMPLATES = frozenset({"srrx-lease-readsb@.service", "srrx-lease-aiscatcher@.service", "srrx-lease-sdrangelsrv@.service"})
+RELEASE_GUARD_EXEMPT = RELEASE_GUARD_EXEMPT | LEASE_TEMPLATES
+
+
 def sha(path):
     # Streamed: the guard runs inside MemoryMax=64M/128M units and hashes a 1.6 GB image.
     with open(path, "rb") as handle:
@@ -1290,6 +1297,8 @@ def stage(destination, config=None, gnss="gpsd"):
     from srrx import satdump_pass  # SatDump/baseband tmpfiles, sweep service and timer, baseband.env template
     stage_files(rootfs, pass_jobs.staged_files(), "pass planner file")
     stage_files(rootfs, satdump_pass.staged_files(), "SatDump/baseband file")
+    from srrx import engine_leases  # polkit rule of the engine lease templates, from the module labd uses
+    stage_files(rootfs, engine_leases.staged_files(), "engine lease file")
     for name in ("release.template.json", "build-manifest.template.json", "devices.template.json"):
         shutil.copyfile(HERE / name, etc / name)
     shutil.copyfile(PROJECT / "software/config/acceptance.template.json", etc / "acceptance.template.json")
