@@ -36,7 +36,10 @@ Checker keys (optional, in either form; contract frame mm, y up unless contract_
   KiCad side: rule areas named RF_TAPER*),
   b2b [{ref, mate_board, mate_ref, pin_map: "identity" | {pin: mate_pin}}],
   tht_pockets [[x, y, w, h], ...] + tht_pocket_margin_mm (contract frame), height_zones [{rect, max_height, side}],
-  heights {ref: mm}, sides ["top"] (default top only), max_height_bottom.
+  heights {ref: mm}, sides ["top"] (default top only), max_height_bottom,
+  coupons [{rect: [x, y, w, h] (contract frame), rf50_nets [...], reason}] (test coupons drawn beside the board in the same
+  file, e.g. the RF impedance coupon on a breakaway tab: Edge.Cuts loops inside a coupon rect are not board cutouts and
+  stay out of the outline and area checks; rf50_nets are checked as RF50 lines; W2 PCB-RF-2).
 """
 from __future__ import annotations
 
@@ -672,10 +675,10 @@ class Frame:
 NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
                'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
                'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
-               'sides', 'max_height_bottom')
+               'sides', 'max_height_bottom', 'coupons')
 DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
              'rf50_exempt', 'rf50_taper', 'heights')
-LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides')
+LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides', 'coupons')
 
 
 def spec_error(spec, msg):
@@ -869,13 +872,30 @@ def same_polygon(a, b, tol=POS_TOL):
     return False
 
 
-def check_outline(board, cb, frame):
+def coupon_boxes(spec, frame):
+    """Board-coordinate boxes of the spec coupons (contract rects [x, y, w, h])."""
+    out = []
+    for n, c in enumerate(spec.get('coupons', [])):
+        if not isinstance(c, dict) or not isinstance(c.get('rect'), list) or len(c['rect']) != 4:
+            spec_error(spec, f'coupons[{n}] needs rect [x, y, w, h] (contract frame)')
+        out.append(frame.rect(c['rect']))
+    return out
+
+
+def check_outline(board, cb, frame, spec=None):
     out = []
     lps, open_chains = loops(board.edges)
     if open_chains or not lps:
         out.append(finding('outline', 'Edge.Cuts', f'outline not closed ({open_chains} open chain(s), {len(lps)} loop(s))'))
         return out, {}
     lps = [simplify(lp) for lp in lps]
+    boxes = coupon_boxes(spec or {}, frame)
+    coupon_loops = [lp for lp in lps if any(all(b[0] - POS_TOL <= x <= b[2] + POS_TOL and b[1] - POS_TOL <= y <= b[3] + POS_TOL
+                                                 for x, y in lp) for b in boxes)]
+    lps = [lp for lp in lps if not any(lp is c for c in coupon_loops)]
+    if not lps:
+        out.append(finding('outline', 'Edge.Cuts', 'no board outline outside the spec coupons'))
+        return out, {}
     lps.sort(key=lambda p: -abs(poly_area(p)))
     outer, inner = lps[0], lps[1:]
     want = [frame.to_board(x, y) for x, y in cb['outline_mm']]
@@ -897,7 +917,10 @@ def check_outline(board, cb, frame):
     area = abs(poly_area(outer)) - sum(abs(poly_area(lp)) for lp in inner)
     if cb.get('area_mm2') is not None and abs(area - cb['area_mm2']) > 0.5:
         out.append(finding('outline', 'area', 'board area differs from the contract area_mm2', value=area, limit=cb['area_mm2']))
-    return out, {'area_mm2': r3(area), 'loops': len(lps)}
+    info = {'area_mm2': r3(area), 'loops': len(lps)}
+    if boxes:  # only boards with spec coupons carry this key
+        info['coupon_loops'] = len(coupon_loops)
+    return out, info
 
 
 def check_holes(board, cb, frame, spec):
@@ -1482,6 +1505,12 @@ def check_classes(board, spec, netclasses, views):
 def check_rf50(board, spec, netclasses, views):
     out, unverified = [], []
     lookup = class_map(netclasses, views)
+    coupon_rf50 = {n for c in spec.get('coupons', []) for n in c.get('rf50_nets', [])}
+    if coupon_rf50:  # coupon lines (board-only nets) are checked as RF50 lines too
+        graph_lookup = lookup
+
+        def lookup(bnet):
+            return (bnet, 'RF50') if bnet in coupon_rf50 else graph_lookup(bnet)
     rf = netclasses.get('classes', {}).get('RF50')
     if not rf:
         return out, unverified, {'rf50_segments': 0}
@@ -1806,7 +1835,7 @@ def review_board(board, spec, contract, graph, netclasses, mates=None, component
             info = result[1]
         findings.extend(f)
         checks[name] = {'findings': len(f), **info}
-    run('outline', check_outline(board, cb, frame))
+    run('outline', check_outline(board, cb, frame, spec))
     run('holes', check_holes(board, cb, frame, spec))
     run('keepouts', check_keepouts(board, cb, frame, spec))
     run('pad_nets', check_pad_nets(board, spec, graph, views))
