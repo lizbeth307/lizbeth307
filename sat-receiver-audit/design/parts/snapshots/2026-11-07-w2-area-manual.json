@@ -82,7 +82,7 @@
     "Current Rating": "2A",
     "Mounting Type": "Surface Mount,Vertical"
    },
-   "note": "60-contact socket; 72 in stock is why the 120-contact size was chosen"
+   "note": "60-contact socket, 72 in stock (enough for one build); the 120-contact size is chosen by the spare rule of pcb/partition-spec.json b2b, not by this stock"
   },
   "w2-area:jlcpcb-C2843756": {
    "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
@@ -489,6 +489,68 @@
    "stock": 87946,
    "price": null,
    "note": "fuse size 11.00 x 3.85 mm (0.433 x 0.152 in), through hole, blade, 30 A; datasheet link K75p48.pdf; the height above the board is not listed"
+  },
+  "w2-area:jlcpcb-C116053": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": null,
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C116053",
+   "mpn": "QTH-060-02-L-D-A",
+   "manufacturer": "Samtec",
+   "stock": 0,
+   "price": "USD 7.1372 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "System Fit Height": "8mm",
+    "Number of Pins": "120P",
+    "Pitch": "0.5mm",
+    "Gender": "Male",
+    "Mounting Type": "Surface Mount,Vertical"
+   },
+   "note": "B2B terminal for the 8.00 mm stack (lead style -02), candidates s8/s8c only; stock 0; the search answer gave no product URL"
+  },
+  "w2-area:jlcpcb-C7267810": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/board-to-board-and-backplane-connector_samtec-qth-060-02-l-d-a-k_C7267810.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C7267810",
+   "mpn": "QTH-060-02-L-D-A-K",
+   "manufacturer": "Samtec",
+   "stock": 33,
+   "price": "USD 6.6678 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "Voltage Rating": "175V",
+    "Number of Pins": "120P",
+    "Pitch": "0.5mm",
+    "Current Rating": "2A",
+    "Supplementary Features": "With column",
+    "Gender": "Male",
+    "Mounting Type": "Surface Mount,Vertical"
+   },
+   "note": "the -02 terminal with the -K pick and place pad; 33 in stock"
+  },
+  "w2-area:jlcpcb-C5852170": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/board-to-board-and-backplane-connector_samtec-qth-060-02-l-d-a-tr_C5852170.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C5852170",
+   "mpn": "QTH-060-02-L-D-A-TR",
+   "manufacturer": "Samtec",
+   "stock": 5,
+   "price": "USD 8.1283 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "System Fit Height": "8mm",
+    "Number of Pins": "120P",
+    "Pitch": "0.5mm",
+    "Current Rating": "2A",
+    "Mounting Type": "Surface Mount,Vertical"
+   },
+   "note": "the -02 terminal on tape and reel; 5 in stock"
   }
  }
 }
