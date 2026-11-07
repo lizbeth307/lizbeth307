@@ -372,7 +372,7 @@ cmake -S . -B build -G Ninja -DPLUGINS_ALL=OFF -DCMAKE_INSTALL_PREFIX=/usr -DCMA
   -DPLUGIN_ELEKTRO_ARKTIKA=ON -DPLUGIN_XRIT=ON -DPLUGIN_FY2=ON \
   -DPLUGIN_NET_SOURCE_SDR_SUPPORT=ON  # і кожна з решти 105 опцій 1aedd60 поіменно: recipe.json cmake.definitions
 # на 1aedd60 PLUGINS_ALL типово ON, а SDR-джерела, PORTAUDIO/AAUDIO sink, TOOLS/WIPSETTINGS/WEBHOOK/EXPERIMENTAL — option(... ON), тож OFF задано явно
-# пакет 2.0.0~alpha+git20260929+lab1 (без inmarsat_support); -j4 із zram, без мережі (unshare --user --map-root-user --net)
+# пакет 2.0.0~alpha+git20260929+lab1 (без inmarsat_support); -j4 із zram, без мережі: як збирач +lab (lab_build.offline_argv) — новий chroot mmdebstrap, unshare --net --mount --pid, chroot --userspec непривілейованого збирача
 ```
 
 | вимкнено (OFF) | |

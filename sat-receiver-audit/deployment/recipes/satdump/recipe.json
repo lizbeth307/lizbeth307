@@ -200,7 +200,7 @@
  },
  "build": {
   "network": "none",
-  "isolation": "unshare --user --map-root-user --net (as deployment/build-vendor.sh)",
+  "isolation": "as deployment/recipes/lab_build.py offline_argv: a fresh mmdebstrap chroot per recipe, unshare --net --mount --pid --fork (new, empty network namespace) and chroot --userspec=1000:1000 with a clean environment; build_recipe.no_network checks that only loopback exists (README.md, builder order). deployment/build-vendor.sh (unshare --user --map-root-user --net) builds only the rtlsdr/limesuiteng candidates",
   "jobs": 4,
   "steps": [
    "verify archive sha256",
