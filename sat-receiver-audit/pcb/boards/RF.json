@@ -1,0 +1,4294 @@
+{
+  "schema": "srrx-board-spec-v1",
+  "board_id": "RF",
+  "status": "RF1_PLACED_FIRST_ROUTE_NOT_FOR_FABRICATION",
+  "title": "RF / detector board (RF_HMC, RF_HF, RF_INJECTOR, DC_CORE) 184 x 44.5 - placement and scripted RF copper",
+  "note": "W2 PCB-RF-1: every RF-domain ref placed, RF50 copper scripted and locked, first route run. Written by build/kicad/boards/RF/rf_layout.py (edit the layout there, then rerun it). PCB-RF-2 routes to DRC 0, adds the coupon tab and the fab set. Nothing here is a fabrication release; bench gates stay OPEN.",
+  "contract": {
+    "file": "mechanical/generated/contract/boards.json",
+    "board": "RF"
+  },
+  "domains": [
+    "RF_HMC",
+    "RF_HF",
+    "RF_INJECTOR",
+    "DC_CORE"
+  ],
+  "partition": "pcb/generated/partition.json",
+  "layers": {
+    "copper": 4,
+    "thickness_mm": 1.6,
+    "source": "contract stackup JLC04161H-7628, 4 layers, 1.6 mm (mechanical/generated/contract/boards.json stackup; build/15); RF50 geometry from pcb/generated/netclasses.json (L1 over L2, h 0.2104 mm)",
+    "plan": {
+      "F.Cu": "all parts, RF50 CPWG (scripted, locked), signals, GND pour (coplanar ground)",
+      "In1.Cu": "solid GND reference plane under RF50 (pre-route zone, a DSN plane)",
+      "In2.Cu": "signals, GND pour",
+      "B.Cu": "signals, GND pour"
+    }
+  },
+  "project": "build/kicad/boards/RF/RF.kicad_pro",
+  "rules_file": null,
+  "rules_note": "rules_file stays null (pcb/board_gen.py does not copy .kicad_dru files yet); the net classes RF50 0.36/0.20, DCTAP 0.20/0.30 (project rule, not IPC-verified), PWR1A 0.35/0.15 and the default 0.20/0.15 live in RF.kicad_pro, values from pcb/generated/netclasses.json.",
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 4-layer 1 oz values (pcb/generated/netclasses.json fab_floor.jlc_4l_1oz)",
+    "min_track_width": 0.09,
+    "min_clearance": 0.09,
+    "min_drill": 0.15,
+    "min_via_diameter": 0.25,
+    "min_hole_to_hole": 0.45,
+    "min_hole_to_hole_note": "0.45 = pad hole-to-hole of different nets; via hole-to-hole is 0.2",
+    "min_copper_edge_clearance": 0.2,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "npth_min_diameter": 0.5,
+    "pth_annular_min": 0.15,
+    "pth_annular_recommended": 0.2
+  },
+  "instances": {
+    "template_nets": [
+      "3V3_Q6A",
+      "BIAS_CH1",
+      "BIAS_CH2_PORT",
+      "BIAS_CH3_PORT",
+      "BIAS_CH4",
+      "CHASSIS",
+      "DCS_HF",
+      "DCS_LBAND",
+      "DCS_UHF",
+      "E4_BENCH",
+      "E4_CH4_RF_ONLY",
+      "E4_DCS_HF_BLEED_1",
+      "E4_DCS_HF_BLEED_2",
+      "E4_DCS_HF_BLEED_3",
+      "E4_DCS_HF_HIGH_GATE",
+      "E4_DCS_HF_HIGH_OK",
+      "E4_DCS_HF_LOW_GATE",
+      "E4_DCS_HF_LOW_OK",
+      "E4_DCS_HF_SENSE",
+      "E4_DCS_HF_SINK_MID",
+      "E4_DCS_HF_TAP",
+      "E4_DCS_HIGH",
+      "E4_DCS_LBAND_BLEED_1",
+      "E4_DCS_LBAND_BLEED_2",
+      "E4_DCS_LBAND_BLEED_3",
+      "E4_DCS_LBAND_HIGH_GATE",
+      "E4_DCS_LBAND_HIGH_OK",
+      "E4_DCS_LBAND_LOW_GATE",
+      "E4_DCS_LBAND_LOW_OK",
+      "E4_DCS_LBAND_SENSE",
+      "E4_DCS_LBAND_SINK_MID",
+      "E4_DCS_LBAND_TAP",
+      "E4_DCS_LOW",
+      "E4_DCS_REF",
+      "E4_DCS_REF12_HIGH",
+      "E4_DCS_REF12_LOW",
+      "E4_DCS_REF_FEED",
+      "E4_DCS_REF_GATE_HIGH",
+      "E4_DCS_REF_GATE_LOW",
+      "E4_DCS_REF_GOOD_HIGH",
+      "E4_DCS_REF_GOOD_LOW",
+      "E4_DCS_REF_PG_HIGH",
+      "E4_DCS_REF_PG_LOW",
+      "E4_DCS_REF_RETURN_MID",
+      "E4_DCS_RETURN",
+      "E4_DCS_UHF_BLEED_1",
+      "E4_DCS_UHF_BLEED_2",
+      "E4_DCS_UHF_BLEED_3",
+      "E4_DCS_UHF_HIGH_GATE",
+      "E4_DCS_UHF_HIGH_OK",
+      "E4_DCS_UHF_LOW_GATE",
+      "E4_DCS_UHF_LOW_OK",
+      "E4_DCS_UHF_SENSE",
+      "E4_DCS_UHF_SINK_MID",
+      "E4_DCS_UHF_TAP",
+      "E4_HFP_ANT",
+      "E4_HF_BT",
+      "E4_HF_CM",
+      "E4_HF_LINK",
+      "E4_K1_G",
+      "E4_K1_LS",
+      "E4_K2_G",
+      "E4_K2_LS",
+      "E4_LIME_CTL_A",
+      "E4_LIME_CTL_B",
+      "E4_LIME_RF1",
+      "E4_LIME_RF3",
+      "E4_LIME_RFC",
+      "E4_LIME_RFSPARE",
+      "E4_LIME_TO_RTLB",
+      "E4_P2",
+      "E4_P3",
+      "E4_P6",
+      "E4_PARK_A",
+      "E4_PARK_B",
+      "E4_PARK_C",
+      "E4_PARK_C_SPARE",
+      "E4_PARK_HF",
+      "E4_PARK_HFP",
+      "E4_PARK_VHF",
+      "E4_RELAY_STAGE",
+      "E4_RFC_A",
+      "E4_RFC_B",
+      "E4_RF_CH1",
+      "E4_RF_CH3_B",
+      "E4_RF_CH4",
+      "E4_RF_CH5",
+      "E4_RF_CH5_ATT",
+      "E4_RF_CH5_DC",
+      "E4_RTLA_CTL_A",
+      "E4_RTLA_CTL_B",
+      "E4_RTLA_RF1",
+      "E4_RTLA_RF2",
+      "E4_RTLA_RF3",
+      "E4_RTLA_RF4",
+      "E4_RTLA_RFC",
+      "E4_RTLB_CTL_A",
+      "E4_RTLB_CTL_B",
+      "E4_RTLB_RF1",
+      "E4_RTLB_RF2",
+      "E4_RTLB_RF3",
+      "E4_RTLB_RF4",
+      "E4_RTLB_RFC",
+      "E4_RX1_EDGE",
+      "E4_VHF_LINK",
+      "E4_YAT_IN",
+      "E4_YAT_OUT",
+      "GND",
+      "K1_ON",
+      "K2_ON",
+      "LAB5_RLY",
+      "LNB13V2",
+      "SW_LIME_A",
+      "SW_LIME_B",
+      "SW_RTLA_A",
+      "SW_RTLA_B",
+      "SW_RTLB_A",
+      "SW_RTLB_B"
+    ],
+    "list": [
+      {
+        "id": "RF",
+        "placement": "default",
+        "qty": 1,
+        "refs": {
+          "A407": "A407",
+          "A424": "A424",
+          "C401": "C401",
+          "C402": "C402",
+          "C403": "C403",
+          "C404": "C404",
+          "C405": "C405",
+          "C406": "C406",
+          "C407": "C407",
+          "C408": "C408",
+          "C409": "C409",
+          "C410": "C410",
+          "C411": "C411",
+          "C412": "C412",
+          "C414": "C414",
+          "C415": "C415",
+          "C416": "C416",
+          "C417": "C417",
+          "C418": "C418",
+          "C419": "C419",
+          "C420": "C420",
+          "C421": "C421",
+          "C422": "C422",
+          "C434": "C434",
+          "C435": "C435",
+          "C440": "C440",
+          "C441": "C441",
+          "C442": "C442",
+          "C446": "C446",
+          "C447": "C447",
+          "C448": "C448",
+          "C449": "C449",
+          "C450": "C450",
+          "C451": "C451",
+          "C452": "C452",
+          "C4400": "C4400",
+          "C4401": "C4401",
+          "C4402": "C4402",
+          "C4403": "C4403",
+          "C4404": "C4404",
+          "C4405": "C4405",
+          "C4406": "C4406",
+          "C4410": "C4410",
+          "C4411": "C4411",
+          "C4412": "C4412",
+          "C4413": "C4413",
+          "C4414": "C4414",
+          "C4415": "C4415",
+          "C4416": "C4416",
+          "C4417": "C4417",
+          "C4420": "C4420",
+          "C4421": "C4421",
+          "C4430": "C4430",
+          "C4431": "C4431",
+          "C4440": "C4440",
+          "C4441": "C4441",
+          "D401": "D401",
+          "D450": "D450",
+          "D451": "D451",
+          "D452": "D452",
+          "D453": "D453",
+          "J409": "J409",
+          "J410": "J410",
+          "J411": "J411",
+          "J412": "J412",
+          "J418": "J418",
+          "J419": "J419",
+          "J420": "J420",
+          "J423": "J423",
+          "J424": "J424",
+          "J425": "J425",
+          "J426": "J426",
+          "J427": "J427",
+          "K401": "K401",
+          "K402": "K402",
+          "L402": "L402",
+          "L403": "L403",
+          "L404": "L404",
+          "L406": "L406",
+          "NT401": "NT401",
+          "Q401": "Q401",
+          "Q402": "Q402",
+          "Q450": "Q450",
+          "Q451": "Q451",
+          "Q452": "Q452",
+          "Q453": "Q453",
+          "Q454": "Q454",
+          "Q455": "Q455",
+          "Q456": "Q456",
+          "Q457": "Q457",
+          "R405": "R405",
+          "R406": "R406",
+          "R407": "R407",
+          "R408": "R408",
+          "R409": "R409",
+          "R410": "R410",
+          "R411": "R411",
+          "R412": "R412",
+          "R413": "R413",
+          "R414": "R414",
+          "R415": "R415",
+          "R416": "R416",
+          "R417": "R417",
+          "R418": "R418",
+          "R419": "R419",
+          "R434": "R434",
+          "R435": "R435",
+          "R440": "R440",
+          "R441": "R441",
+          "R442": "R442",
+          "R443": "R443",
+          "R444": "R444",
+          "R445": "R445",
+          "R4400": "R4400",
+          "R4401": "R4401",
+          "R4402": "R4402",
+          "R4403": "R4403",
+          "R4404": "R4404",
+          "R4405": "R4405",
+          "R4406": "R4406",
+          "R4407": "R4407",
+          "R4408": "R4408",
+          "R4409": "R4409",
+          "R4420": "R4420",
+          "R4421": "R4421",
+          "R4422": "R4422",
+          "R4423": "R4423",
+          "R4424": "R4424",
+          "R4425": "R4425",
+          "R4426": "R4426",
+          "R4430": "R4430",
+          "R4431": "R4431",
+          "R4432": "R4432",
+          "R4433": "R4433",
+          "R4434": "R4434",
+          "R4435": "R4435",
+          "R4436": "R4436",
+          "R4440": "R4440",
+          "R4441": "R4441",
+          "R4442": "R4442",
+          "R4443": "R4443",
+          "R4444": "R4444",
+          "R4445": "R4445",
+          "R4446": "R4446",
+          "R4450": "R4450",
+          "R4451": "R4451",
+          "R4452": "R4452",
+          "R4453": "R4453",
+          "R4460": "R4460",
+          "R4461": "R4461",
+          "R4462": "R4462",
+          "R4463": "R4463",
+          "R4464": "R4464",
+          "R4465": "R4465",
+          "R4466": "R4466",
+          "R4467": "R4467",
+          "R4468": "R4468",
+          "R4469": "R4469",
+          "R4470": "R4470",
+          "R4471": "R4471",
+          "U405": "U405",
+          "U406": "U406",
+          "U407": "U407",
+          "U450": "U450",
+          "U451": "U451",
+          "U452": "U452",
+          "U453": "U453",
+          "U454": "U454",
+          "U455": "U455",
+          "U456": "U456",
+          "U457": "U457",
+          "U458": "U458",
+          "PH401": null,
+          "PH402": null,
+          "PH403": null,
+          "PH404": null,
+          "PH405": null,
+          "PH406": null,
+          "PH407": null
+        },
+        "nets": {
+          "3V3_Q6A": "3V3_Q6A",
+          "BIAS_CH1": "BIAS_CH1",
+          "BIAS_CH2_PORT": "BIAS_CH2_PORT",
+          "BIAS_CH3_PORT": "BIAS_CH3_PORT",
+          "BIAS_CH4": "BIAS_CH4",
+          "CHASSIS": "CHASSIS",
+          "DCS_HF": "DCS_HF",
+          "DCS_LBAND": "DCS_LBAND",
+          "DCS_UHF": "DCS_UHF",
+          "E4_BENCH": "E4_BENCH",
+          "E4_CH4_RF_ONLY": "E4_CH4_RF_ONLY",
+          "E4_DCS_HF_BLEED_1": "E4_DCS_HF_BLEED_1",
+          "E4_DCS_HF_BLEED_2": "E4_DCS_HF_BLEED_2",
+          "E4_DCS_HF_BLEED_3": "E4_DCS_HF_BLEED_3",
+          "E4_DCS_HF_HIGH_GATE": "E4_DCS_HF_HIGH_GATE",
+          "E4_DCS_HF_HIGH_OK": "E4_DCS_HF_HIGH_OK",
+          "E4_DCS_HF_LOW_GATE": "E4_DCS_HF_LOW_GATE",
+          "E4_DCS_HF_LOW_OK": "E4_DCS_HF_LOW_OK",
+          "E4_DCS_HF_SENSE": "E4_DCS_HF_SENSE",
+          "E4_DCS_HF_SINK_MID": "E4_DCS_HF_SINK_MID",
+          "E4_DCS_HF_TAP": "E4_DCS_HF_TAP",
+          "E4_DCS_HIGH": "E4_DCS_HIGH",
+          "E4_DCS_LBAND_BLEED_1": "E4_DCS_LBAND_BLEED_1",
+          "E4_DCS_LBAND_BLEED_2": "E4_DCS_LBAND_BLEED_2",
+          "E4_DCS_LBAND_BLEED_3": "E4_DCS_LBAND_BLEED_3",
+          "E4_DCS_LBAND_HIGH_GATE": "E4_DCS_LBAND_HIGH_GATE",
+          "E4_DCS_LBAND_HIGH_OK": "E4_DCS_LBAND_HIGH_OK",
+          "E4_DCS_LBAND_LOW_GATE": "E4_DCS_LBAND_LOW_GATE",
+          "E4_DCS_LBAND_LOW_OK": "E4_DCS_LBAND_LOW_OK",
+          "E4_DCS_LBAND_SENSE": "E4_DCS_LBAND_SENSE",
+          "E4_DCS_LBAND_SINK_MID": "E4_DCS_LBAND_SINK_MID",
+          "E4_DCS_LBAND_TAP": "E4_DCS_LBAND_TAP",
+          "E4_DCS_LOW": "E4_DCS_LOW",
+          "E4_DCS_REF": "E4_DCS_REF",
+          "E4_DCS_REF12_HIGH": "E4_DCS_REF12_HIGH",
+          "E4_DCS_REF12_LOW": "E4_DCS_REF12_LOW",
+          "E4_DCS_REF_FEED": "E4_DCS_REF_FEED",
+          "E4_DCS_REF_GATE_HIGH": "E4_DCS_REF_GATE_HIGH",
+          "E4_DCS_REF_GATE_LOW": "E4_DCS_REF_GATE_LOW",
+          "E4_DCS_REF_GOOD_HIGH": "E4_DCS_REF_GOOD_HIGH",
+          "E4_DCS_REF_GOOD_LOW": "E4_DCS_REF_GOOD_LOW",
+          "E4_DCS_REF_PG_HIGH": "E4_DCS_REF_PG_HIGH",
+          "E4_DCS_REF_PG_LOW": "E4_DCS_REF_PG_LOW",
+          "E4_DCS_REF_RETURN_MID": "E4_DCS_REF_RETURN_MID",
+          "E4_DCS_RETURN": "E4_DCS_RETURN",
+          "E4_DCS_UHF_BLEED_1": "E4_DCS_UHF_BLEED_1",
+          "E4_DCS_UHF_BLEED_2": "E4_DCS_UHF_BLEED_2",
+          "E4_DCS_UHF_BLEED_3": "E4_DCS_UHF_BLEED_3",
+          "E4_DCS_UHF_HIGH_GATE": "E4_DCS_UHF_HIGH_GATE",
+          "E4_DCS_UHF_HIGH_OK": "E4_DCS_UHF_HIGH_OK",
+          "E4_DCS_UHF_LOW_GATE": "E4_DCS_UHF_LOW_GATE",
+          "E4_DCS_UHF_LOW_OK": "E4_DCS_UHF_LOW_OK",
+          "E4_DCS_UHF_SENSE": "E4_DCS_UHF_SENSE",
+          "E4_DCS_UHF_SINK_MID": "E4_DCS_UHF_SINK_MID",
+          "E4_DCS_UHF_TAP": "E4_DCS_UHF_TAP",
+          "E4_HFP_ANT": "E4_HFP_ANT",
+          "E4_HF_BT": "E4_HF_BT",
+          "E4_HF_CM": "E4_HF_CM",
+          "E4_HF_LINK": "E4_HF_LINK",
+          "E4_K1_G": "E4_K1_G",
+          "E4_K1_LS": "E4_K1_LS",
+          "E4_K2_G": "E4_K2_G",
+          "E4_K2_LS": "E4_K2_LS",
+          "E4_LIME_CTL_A": "E4_LIME_CTL_A",
+          "E4_LIME_CTL_B": "E4_LIME_CTL_B",
+          "E4_LIME_RF1": "E4_LIME_RF1",
+          "E4_LIME_RF3": "E4_LIME_RF3",
+          "E4_LIME_RFC": "E4_LIME_RFC",
+          "E4_LIME_RFSPARE": "E4_LIME_RFSPARE",
+          "E4_LIME_TO_RTLB": "E4_LIME_TO_RTLB",
+          "E4_P2": "E4_P2",
+          "E4_P3": "E4_P3",
+          "E4_P6": "E4_P6",
+          "E4_PARK_A": "E4_PARK_A",
+          "E4_PARK_B": "E4_PARK_B",
+          "E4_PARK_C": "E4_PARK_C",
+          "E4_PARK_C_SPARE": "E4_PARK_C_SPARE",
+          "E4_PARK_HF": "E4_PARK_HF",
+          "E4_PARK_HFP": "E4_PARK_HFP",
+          "E4_PARK_VHF": "E4_PARK_VHF",
+          "E4_RELAY_STAGE": "E4_RELAY_STAGE",
+          "E4_RFC_A": "E4_RFC_A",
+          "E4_RFC_B": "E4_RFC_B",
+          "E4_RF_CH1": "E4_RF_CH1",
+          "E4_RF_CH3_B": "E4_RF_CH3_B",
+          "E4_RF_CH4": "E4_RF_CH4",
+          "E4_RF_CH5": "E4_RF_CH5",
+          "E4_RF_CH5_ATT": "E4_RF_CH5_ATT",
+          "E4_RF_CH5_DC": "E4_RF_CH5_DC",
+          "E4_RTLA_CTL_A": "E4_RTLA_CTL_A",
+          "E4_RTLA_CTL_B": "E4_RTLA_CTL_B",
+          "E4_RTLA_RF1": "E4_RTLA_RF1",
+          "E4_RTLA_RF2": "E4_RTLA_RF2",
+          "E4_RTLA_RF3": "E4_RTLA_RF3",
+          "E4_RTLA_RF4": "E4_RTLA_RF4",
+          "E4_RTLA_RFC": "E4_RTLA_RFC",
+          "E4_RTLB_CTL_A": "E4_RTLB_CTL_A",
+          "E4_RTLB_CTL_B": "E4_RTLB_CTL_B",
+          "E4_RTLB_RF1": "E4_RTLB_RF1",
+          "E4_RTLB_RF2": "E4_RTLB_RF2",
+          "E4_RTLB_RF3": "E4_RTLB_RF3",
+          "E4_RTLB_RF4": "E4_RTLB_RF4",
+          "E4_RTLB_RFC": "E4_RTLB_RFC",
+          "E4_RX1_EDGE": "E4_RX1_EDGE",
+          "E4_VHF_LINK": "E4_VHF_LINK",
+          "E4_YAT_IN": "E4_YAT_IN",
+          "E4_YAT_OUT": "E4_YAT_OUT",
+          "GND": "GND",
+          "K1_ON": "K1_ON",
+          "K2_ON": "K2_ON",
+          "LAB5_RLY": "LAB5_RLY",
+          "LNB13V2": "LNB13V2",
+          "SW_LIME_A": "SW_LIME_A",
+          "SW_LIME_B": "SW_LIME_B",
+          "SW_RTLA_A": "SW_RTLA_A",
+          "SW_RTLA_B": "SW_RTLA_B",
+          "SW_RTLB_A": "SW_RTLB_A",
+          "SW_RTLB_B": "SW_RTLB_B"
+        },
+        "source": "one RF board per device (mechanical/params/boards.json RF; contract placement default)"
+      }
+    ],
+    "spares": 0,
+    "spares_source": "no spare stated for the RF board (mechanical/params/boards.json RF)"
+  },
+  "parts": [
+    {
+      "ref": "A407",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          78.25,
+          32.25
+        ],
+        "align": {
+          "pad": "2"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "A424",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          112.6,
+          31.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C401",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          126.4,
+          27.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C402",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          126.4,
+          26.25
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C403",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          120.1,
+          26.25
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C404",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          120.1,
+          27.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C405",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          123.0,
+          30.52
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C406",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          68.8,
+          27.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C407",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          68.8,
+          26.25
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C408",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          62.4,
+          26.25
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C409",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          61.4,
+          27.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C410",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          65.25,
+          30.52
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C411",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          82.0,
+          27.25
+        ],
+        "align": {
+          "pad": "2"
+        },
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C412",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          26.0,
+          33.0
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C414",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          79.75,
+          24.2
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C415",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          78.25,
+          29.82
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C416",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          78.25,
+          24.2
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C417",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          79.75,
+          29.82
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C418",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          78.25,
+          35.37
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C419",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          116.91,
+          18.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C420",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          119.13,
+          18.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C421",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          64.01,
+          17.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C422",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          66.23,
+          17.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C434",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          75.32,
+          16.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C435",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          76.64,
+          16.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C440",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          123.25,
+          23.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C441",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          65.5,
+          23.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C442",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          75.2,
+          27.25
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C446",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          111.2,
+          27.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C447",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          125.575,
+          22.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C448",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          125.6,
+          20.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C449",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          110.4,
+          35.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C450",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          111.8,
+          35.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C451",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          101.8,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C452",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          102.35,
+          34.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4400",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          166.75,
+          40.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4401",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          169.39,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4402",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          171.25,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4403",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          158.23,
+          31.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4404",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          168.85,
+          31.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4405",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          161.95,
+          24.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4406",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          161.95,
+          20.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4410",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          137.84,
+          37.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4411",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          134.48,
+          37.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4412",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          137.84,
+          28.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4413",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          134.48,
+          28.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4414",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          137.84,
+          19.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4415",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          134.48,
+          19.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4416",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          160.8725,
+          28.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4417",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          171.4925,
+          28.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4420",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          109.6,
+          37.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4421",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          141.2,
+          37.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4430",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          100.6,
+          37.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4431",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          141.2,
+          28.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4440",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          34.6,
+          6.2
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "C4441",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          141.2,
+          19.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "D401",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          19.45,
+          34.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "D450",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          159.43,
+          40.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "D451",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          143.93,
+          40.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "D452",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          143.93,
+          31.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "D453",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          143.93,
+          22.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J409",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          52.6,
+          39.74
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J410",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          123.0,
+          39.74
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J411",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          65.25,
+          39.74
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J412",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          78.25,
+          39.74
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J418",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          134.95,
+          7.6
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J419",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          122.0,
+          7.6
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J420",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          155.0,
+          7.6
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J423",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          107.0,
+          40.475
+        ],
+        "align": {
+          "pad": "CENTER"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J424",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          98.0,
+          40.475
+        ],
+        "align": {
+          "pad": "CENTER"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J425",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          38.4,
+          40.475
+        ],
+        "align": {
+          "pad": "CENTER"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J426",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          26.0,
+          39.74
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "J427",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          113.995,
+          40.475
+        ],
+        "align": {
+          "pad": "CENTER"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "K401",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          16.0,
+          20.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "K402",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.0,
+          20.0
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "L402",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          129.6,
+          22.4
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "L403",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          107.0,
+          35.4
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "L404",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          98.0,
+          35.4
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "L406",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          26.0,
+          35.3
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "NT401",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          92.0,
+          32.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q401",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          10.93,
+          34.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q402",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          15.19,
+          34.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q450",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          148.19,
+          40.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q451",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          152.45,
+          40.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q452",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          148.19,
+          31.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q453",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          152.45,
+          31.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q454",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          148.19,
+          22.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q455",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          152.45,
+          22.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q456",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          165.79,
+          31.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "Q457",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          176.41,
+          31.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R405",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          128.1,
+          27.75
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R406",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          70.475,
+          27.75
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R407",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          79.75,
+          21.6
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R408",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          120.45,
+          21.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R409",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          122.31,
+          21.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R410",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          67.35,
+          20.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R411",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          69.21,
+          20.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R412",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          10.48,
+          31.2
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R413",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          17.2,
+          31.2
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R414",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          13.84,
+          31.2
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R415",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          20.56,
+          31.2
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R416",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          80.65,
+          32.2
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R417",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          15.4,
+          13.3
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R418",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.6,
+          26.7
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R419",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.6,
+          13.3
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R434",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          77.45,
+          19.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R435",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          73.73,
+          16.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R440",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          116.73,
+          21.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R441",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          118.59,
+          21.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R442",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          63.63,
+          20.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R443",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          65.49,
+          20.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R444",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          73.73,
+          19.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R445",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          75.59,
+          19.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4400",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          158.23,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4401",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          160.09,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4402",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          161.95,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4403",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          163.81,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4404",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          165.67,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4405",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          167.53,
+          35.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4406",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          158.23,
+          24.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4407",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          160.09,
+          24.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4408",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          158.23,
+          20.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4409",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          160.09,
+          20.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4420",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          107.0,
+          37.6
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4421",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          144.01,
+          37.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4422",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          146.82,
+          37.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4423",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          136.48,
+          35.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4424",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          139.84,
+          35.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4425",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          143.2,
+          35.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4426",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          146.56,
+          35.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4430",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          98.0,
+          37.6
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4431",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          144.01,
+          28.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4432",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          146.82,
+          28.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4433",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          136.48,
+          26.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4434",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          139.84,
+          26.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4435",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          143.2,
+          26.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4436",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          146.56,
+          26.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4440",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          32.0,
+          6.2
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4441",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          144.01,
+          19.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4442",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          146.82,
+          19.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4443",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          136.48,
+          17.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4444",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          139.84,
+          17.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4445",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          143.2,
+          17.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4446",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          146.56,
+          17.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4450",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          163.81,
+          24.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4451",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          165.67,
+          24.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4452",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          163.81,
+          20.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4453",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          165.67,
+          20.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4460",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          107.0,
+          31.6
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4461",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          106.3,
+          23.3
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4462",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          106.3,
+          18.6
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4463",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          106.3,
+          13.9
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4464",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          98.0,
+          31.8
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4465",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          103.0,
+          27.6
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4466",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          103.0,
+          22.9
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4467",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          103.0,
+          18.2
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4468",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          32.0,
+          9.0
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4469",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          38.6,
+          9.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4470",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          43.7,
+          9.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "R4471",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          43.7,
+          5.4
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U405",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          123.25,
+          27.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U406",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          65.5,
+          27.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U407",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          79.0,
+          27.0
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U450",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          139.55,
+          40.4
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U451",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          135.05,
+          40.4
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U452",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          139.55,
+          31.4
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U453",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          135.05,
+          31.4
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U454",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          139.55,
+          22.4
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U455",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          135.05,
+          22.4
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U456",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          161.41,
+          31.0
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U457",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          172.03,
+          31.0
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "U458",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          163.69,
+          40.4
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "PH401",
+      "source": "pilot_placeholder",
+      "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod read 2026-11-07 (the same file that SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS names as its origin); checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "A402 SAWbird+ NOAA OUT (E4_RF_CH1) board end, placeholder",
+      "pins": {
+        "1": "E4_RF_CH1",
+        "2": "GND"
+      },
+      "pins_source": "design/E4.json: the net reaches only off-board modules (boundary would be dangling); pad 1 = centre / land, pad 2 = shield (GND)",
+      "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)",
+      "pending": "board end of E4_RF_CH1 pending GR-4",
+      "why_placeholder": "A402 SAWbird+ NOAA OUT (E4_RF_CH1): no board-side connector ref exists in design/E*.json, and design/** is outside PCB-RF-1",
+      "anchor": {
+        "at": [
+          129.6,
+          18.6
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "PH402",
+      "source": "pilot_placeholder",
+      "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod read 2026-11-07 (the same file that SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS names as its origin); checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "A405 VAT attenuator IN (E4_RF_CH5_DC) board end, placeholder",
+      "pins": {
+        "1": "E4_RF_CH5_DC",
+        "2": "GND"
+      },
+      "pins_source": "design/E4.json: the net reaches only off-board modules (boundary would be dangling); pad 1 = centre / land, pad 2 = shield (GND)",
+      "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)",
+      "pending": "board end of E4_RF_CH5_DC pending GR-4",
+      "why_placeholder": "A405 VAT attenuator IN (E4_RF_CH5_DC): no board-side connector ref exists in design/E*.json, and design/** is outside PCB-RF-1",
+      "anchor": {
+        "at": [
+          28.6,
+          31.3
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 0,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "PH403",
+      "source": "pilot_placeholder",
+      "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod read 2026-11-07 (the same file that SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS names as its origin); checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "A405 VAT attenuator OUT (E4_RF_CH5_ATT) board end, placeholder",
+      "pins": {
+        "1": "E4_RF_CH5_ATT",
+        "2": "GND"
+      },
+      "pins_source": "design/E4.json: the net reaches only off-board modules (boundary would be dangling); pad 1 = centre / land, pad 2 = shield (GND)",
+      "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)",
+      "pending": "board end of E4_RF_CH5_ATT pending GR-4",
+      "why_placeholder": "A405 VAT attenuator OUT (E4_RF_CH5_ATT): no board-side connector ref exists in design/E*.json, and design/** is outside PCB-RF-1",
+      "anchor": {
+        "at": [
+          60.0,
+          23.0
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "PH404",
+      "source": "pilot_placeholder",
+      "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod read 2026-11-07 (the same file that SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS names as its origin); checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "A406 Boni bias-tee RF port (E4_HF_BT) board end, placeholder",
+      "pins": {
+        "1": "E4_HF_BT",
+        "2": "GND"
+      },
+      "pins_source": "design/E4.json: the net reaches only off-board modules (boundary would be dangling); pad 1 = centre / land, pad 2 = shield (GND)",
+      "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)",
+      "pending": "board end of E4_HF_BT pending GR-4",
+      "why_placeholder": "A406 Boni bias-tee RF port (E4_HF_BT): no board-side connector ref exists in design/E*.json, and design/** is outside PCB-RF-1",
+      "anchor": {
+        "at": [
+          17.6,
+          3.825
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "PH405",
+      "source": "pilot_placeholder",
+      "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod read 2026-11-07 (the same file that SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS names as its origin); checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "W408 OUT / A406 ANT tap point (E4_HF_CM) board end, placeholder",
+      "pins": {
+        "1": "E4_HF_CM",
+        "2": "GND"
+      },
+      "pins_source": "design/E4.json: the net reaches only off-board modules (boundary would be dangling); pad 1 = centre / land, pad 2 = shield (GND)",
+      "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)",
+      "pending": "board end of E4_HF_CM pending GR-4",
+      "why_placeholder": "W408 OUT / A406 ANT tap point (E4_HF_CM): no board-side connector ref exists in design/E*.json, and design/** is outside PCB-RF-1",
+      "anchor": {
+        "at": [
+          32.0,
+          3.825
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "PH406",
+      "source": "pilot_placeholder",
+      "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod read 2026-11-07 (the same file that SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS names as its origin); checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "A414 Airspy HF+ ANT (E4_HFP_ANT) board end, placeholder",
+      "pins": {
+        "1": "E4_HFP_ANT",
+        "2": "GND"
+      },
+      "pins_source": "design/E4.json: the net reaches only off-board modules (boundary would be dangling); pad 1 = centre / land, pad 2 = shield (GND)",
+      "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)",
+      "pending": "board end of E4_HFP_ANT pending GR-4",
+      "why_placeholder": "A414 Airspy HF+ ANT (E4_HFP_ANT): no board-side connector ref exists in design/E*.json, and design/** is outside PCB-RF-1",
+      "anchor": {
+        "at": [
+          26.0,
+          3.825
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F"
+      }
+    },
+    {
+      "ref": "PH407",
+      "source": "pilot_placeholder",
+      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "0a1ce94753a7b270c8ff6c20698b4de7ce95606b643549926acc04bb698d0120",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/TestPoint.pretty/TestPoint_Pad_D2.0mm.kicad_mod read 2026-11-07; checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "BOND-RF chassis land of NT401 (CHASSIS) board end, placeholder",
+      "pins": {
+        "1": "CHASSIS"
+      },
+      "pins_source": "design/E4.json: the net reaches only off-board modules (boundary would be dangling); pad 1 = centre / land, pad 2 = shield (GND)",
+      "replaced_by": "BOND-RF plated hole once board_gen.py has a plated-hole primitive",
+      "pending": "BOND-RF plated hole pending a board_gen primitive",
+      "why_placeholder": "parts DB NT-RF-CHASSIS: the chassis side of NT401 lands on a plated mounting hole and M3 screw; board_gen.py draws only NPTH contract holes, so the land sits beside H5",
+      "anchor": {
+        "at": [
+          88.8,
+          34.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      }
+    }
+  ],
+  "holes": {
+    "from_contract": true,
+    "ref_prefix": "H",
+    "keepout_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ],
+    "keepout_blocks": [
+      "tracks",
+      "vias",
+      "zone_fills"
+    ]
+  },
+  "groups": [],
+  "rf50_taper": {
+    "U405": {
+      "max_len_mm": 0.84,
+      "min_width_mm": 0.25,
+      "reason": "HMC7992 QFN-16 pins are 0.25 mm wide at 0.5 mm pitch: the RF50 line enters each RF pin at pad width for 0.84 mm (pad half-length 0.4125 + 0.43), then widens to 0.36 mm; the board_gen side has no RF_TAPER rule area yet (rf_copper_not_drawn)"
+    },
+    "U406": {
+      "max_len_mm": 0.84,
+      "min_width_mm": 0.25,
+      "reason": "HMC7992 QFN-16 pins are 0.25 mm wide at 0.5 mm pitch: the RF50 line enters each RF pin at pad width for 0.84 mm (pad half-length 0.4125 + 0.43), then widens to 0.36 mm; the board_gen side has no RF_TAPER rule area yet (rf_copper_not_drawn)"
+    },
+    "U407": {
+      "max_len_mm": 0.84,
+      "min_width_mm": 0.25,
+      "reason": "HMC7992 QFN-16 pins are 0.25 mm wide at 0.5 mm pitch: the RF50 line enters each RF pin at pad width for 0.84 mm (pad half-length 0.4125 + 0.43), then widens to 0.36 mm; the board_gen side has no RF_TAPER rule area yet (rf_copper_not_drawn)"
+    }
+  },
+  "pre_route": {
+    "tracks": [
+      {
+        "id": "E4_HF_LINK-1",
+        "net": "E4_HF_LINK",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            19.8,
+            16.5
+          ],
+          [
+            19.8,
+            23.5
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_VHF_LINK-1",
+        "net": "E4_VHF_LINK",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            36.2,
+            16.5
+          ],
+          [
+            36.2,
+            23.5
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_P6-1",
+        "net": "E4_P6",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            38.4,
+            23.5
+          ],
+          [
+            38.4,
+            40.475
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_PARK_VHF-1",
+        "net": "E4_PARK_VHF",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            40.6,
+            23.5
+          ],
+          [
+            40.6,
+            26.7
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_PARK_HFP-1",
+        "net": "E4_PARK_HFP",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            40.6,
+            16.5
+          ],
+          [
+            40.6,
+            13.3
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_PARK_HF-1",
+        "net": "E4_PARK_HF",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            15.4,
+            16.5
+          ],
+          [
+            15.4,
+            13.3
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_HF_BT-1",
+        "net": "E4_HF_BT",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            17.6,
+            16.5
+          ],
+          [
+            17.6,
+            3.825
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_HFP_ANT-1",
+        "net": "E4_HFP_ANT",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            17.6,
+            23.5
+          ],
+          [
+            17.6,
+            26.5
+          ],
+          [
+            26.0,
+            26.5
+          ],
+          [
+            26.0,
+            3.825
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RELAY_STAGE-1",
+        "net": "E4_RELAY_STAGE",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            15.4,
+            23.5
+          ],
+          [
+            15.4,
+            28.5
+          ],
+          [
+            30.0,
+            28.5
+          ],
+          [
+            30.0,
+            12.0
+          ],
+          [
+            38.4,
+            12.0
+          ],
+          [
+            38.4,
+            16.5
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_HF_CM-1",
+        "net": "E4_HF_CM",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            32.0,
+            3.825
+          ],
+          [
+            32.0,
+            9.0
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RF_CH5-1",
+        "net": "E4_RF_CH5",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            26.0,
+            40.0
+          ],
+          [
+            26.0,
+            33.0
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RF_CH5_DC-1",
+        "net": "E4_RF_CH5_DC",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            26.0,
+            32.04
+          ],
+          [
+            26.0,
+            31.3
+          ],
+          [
+            28.6,
+            31.3
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLB_RFC-1",
+        "net": "E4_RTLB_RFC",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            65.25,
+            28.4625
+          ],
+          [
+            65.25,
+            29.3025
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLB_RFC-2",
+        "net": "E4_RTLB_RFC",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            65.25,
+            29.3025
+          ],
+          [
+            65.25,
+            30.52
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RFC_B-1",
+        "net": "E4_RFC_B",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            65.25,
+            31.48
+          ],
+          [
+            65.25,
+            41.0
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLB_RF4-1",
+        "net": "E4_RTLB_RF4",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            64.0375,
+            27.75
+          ],
+          [
+            63.1975,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLB_RF4-2",
+        "net": "E4_RTLB_RF4",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            63.1975,
+            27.75
+          ],
+          [
+            61.88,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_BENCH-1",
+        "net": "E4_BENCH",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            60.92,
+            27.75
+          ],
+          [
+            54.6,
+            27.75
+          ],
+          [
+            52.6,
+            29.75
+          ],
+          [
+            52.6,
+            41.0
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLB_RF3-1",
+        "net": "E4_RTLB_RF3",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            64.0375,
+            26.25
+          ],
+          [
+            63.1975,
+            26.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLB_RF3-2",
+        "net": "E4_RTLB_RF3",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            63.1975,
+            26.25
+          ],
+          [
+            62.88,
+            26.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RF_CH5_ATT-1",
+        "net": "E4_RF_CH5_ATT",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            61.92,
+            26.25
+          ],
+          [
+            60.0,
+            26.25
+          ],
+          [
+            60.0,
+            23.0
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLB_RF2-1",
+        "net": "E4_RTLB_RF2",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            66.9625,
+            26.25
+          ],
+          [
+            67.8025,
+            26.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLB_RF2-2",
+        "net": "E4_RTLB_RF2",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            67.8025,
+            26.25
+          ],
+          [
+            68.32,
+            26.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLB_RF1-1",
+        "net": "E4_RTLB_RF1",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            66.9625,
+            27.75
+          ],
+          [
+            67.8025,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLB_RF1-2",
+        "net": "E4_RTLB_RF1",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            67.8025,
+            27.75
+          ],
+          [
+            68.32,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_PARK_B-1",
+        "net": "E4_PARK_B",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            69.28,
+            27.75
+          ],
+          [
+            70.475,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_LIME_TO_RTLB-1",
+        "net": "E4_LIME_TO_RTLB",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            78.25,
+            25.5375
+          ],
+          [
+            78.25,
+            24.6975
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_LIME_TO_RTLB-2",
+        "net": "E4_LIME_TO_RTLB",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            78.25,
+            24.6975
+          ],
+          [
+            78.25,
+            24.2
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RF_CH3_B-1",
+        "net": "E4_RF_CH3_B",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            69.28,
+            26.25
+          ],
+          [
+            70.0,
+            26.25
+          ],
+          [
+            73.75,
+            22.5
+          ],
+          [
+            77.5,
+            22.5
+          ],
+          [
+            78.25,
+            23.24
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_LIME_RF1-1",
+        "net": "E4_LIME_RF1",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            79.75,
+            25.5375
+          ],
+          [
+            79.75,
+            24.6975
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_LIME_RF1-2",
+        "net": "E4_LIME_RF1",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            79.75,
+            24.6975
+          ],
+          [
+            79.75,
+            24.2
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_PARK_C-1",
+        "net": "E4_PARK_C",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            79.75,
+            23.24
+          ],
+          [
+            79.75,
+            21.6
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_LIME_RF3-1",
+        "net": "E4_LIME_RF3",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            78.25,
+            28.4625
+          ],
+          [
+            78.25,
+            29.3025
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_LIME_RF3-2",
+        "net": "E4_LIME_RF3",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            78.25,
+            29.3025
+          ],
+          [
+            78.25,
+            29.82
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_YAT_IN-1",
+        "net": "E4_YAT_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            78.25,
+            30.78
+          ],
+          [
+            78.25,
+            32.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_YAT_OUT-1",
+        "net": "E4_YAT_OUT",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            78.25,
+            34.15
+          ],
+          [
+            78.25,
+            35.37
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RX1_EDGE-1",
+        "net": "E4_RX1_EDGE",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            78.25,
+            36.33
+          ],
+          [
+            78.25,
+            41.0
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_LIME_RFSPARE-1",
+        "net": "E4_LIME_RFSPARE",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            79.75,
+            28.4625
+          ],
+          [
+            79.75,
+            29.3025
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_LIME_RFSPARE-2",
+        "net": "E4_LIME_RFSPARE",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            79.75,
+            29.3025
+          ],
+          [
+            79.75,
+            29.82
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_PARK_C_SPARE-1",
+        "net": "E4_PARK_C_SPARE",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            79.75,
+            30.78
+          ],
+          [
+            80.65,
+            31.68
+          ],
+          [
+            80.65,
+            32.2
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_LIME_RFC-1",
+        "net": "E4_LIME_RFC",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            80.4625,
+            27.25
+          ],
+          [
+            81.3025,
+            27.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_LIME_RFC-2",
+        "net": "E4_LIME_RFC",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            81.3025,
+            27.25
+          ],
+          [
+            82.0,
+            27.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_P3-1",
+        "net": "E4_P3",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            82.96,
+            27.25
+          ],
+          [
+            96.0,
+            27.25
+          ],
+          [
+            98.0,
+            29.25
+          ],
+          [
+            98.0,
+            40.475
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "CHASSIS-1",
+        "net": "CHASSIS",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            88.8,
+            34.0
+          ],
+          [
+            92.0,
+            34.0
+          ]
+        ],
+        "locked": true,
+        "why": "CHASSIS land to the NT401 net tie (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLA_RFC-1",
+        "net": "E4_RTLA_RFC",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            123.0,
+            28.4625
+          ],
+          [
+            123.0,
+            29.3025
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLA_RFC-2",
+        "net": "E4_RTLA_RFC",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            123.0,
+            29.3025
+          ],
+          [
+            123.0,
+            30.52
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RFC_A-1",
+        "net": "E4_RFC_A",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            123.0,
+            31.48
+          ],
+          [
+            123.0,
+            41.0
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLA_RF4-1",
+        "net": "E4_RTLA_RF4",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            121.7875,
+            27.75
+          ],
+          [
+            120.9475,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLA_RF4-2",
+        "net": "E4_RTLA_RF4",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            120.9475,
+            27.75
+          ],
+          [
+            120.58,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_CH4_RF_ONLY-1",
+        "net": "E4_CH4_RF_ONLY",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            119.62,
+            27.75
+          ],
+          [
+            114.595,
+            27.75
+          ],
+          [
+            113.995,
+            28.35
+          ],
+          [
+            113.995,
+            29.73
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RF_CH4-1",
+        "net": "E4_RF_CH4",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            113.995,
+            32.27
+          ],
+          [
+            113.995,
+            40.475
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLA_RF3-1",
+        "net": "E4_RTLA_RF3",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            121.7875,
+            26.25
+          ],
+          [
+            120.9475,
+            26.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLA_RF3-2",
+        "net": "E4_RTLA_RF3",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            120.9475,
+            26.25
+          ],
+          [
+            120.58,
+            26.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_P2-1",
+        "net": "E4_P2",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            119.62,
+            26.25
+          ],
+          [
+            109.0,
+            26.25
+          ],
+          [
+            107.0,
+            28.25
+          ],
+          [
+            107.0,
+            40.475
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLA_RF2-1",
+        "net": "E4_RTLA_RF2",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            124.7125,
+            26.25
+          ],
+          [
+            125.5525,
+            26.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLA_RF2-2",
+        "net": "E4_RTLA_RF2",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            125.5525,
+            26.25
+          ],
+          [
+            125.92,
+            26.25
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RTLA_RF1-1",
+        "net": "E4_RTLA_RF1",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            124.7125,
+            27.75
+          ],
+          [
+            125.5525,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 entry at the HMC7992 pin: pad width 0.25 mm for 0.84 mm (rf50_taper)"
+      },
+      {
+        "id": "E4_RTLA_RF1-2",
+        "net": "E4_RTLA_RF1",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            125.5525,
+            27.75
+          ],
+          [
+            125.92,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_PARK_A-1",
+        "net": "E4_PARK_A",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            126.88,
+            27.75
+          ],
+          [
+            128.1,
+            27.75
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      },
+      {
+        "id": "E4_RF_CH1-1",
+        "net": "E4_RF_CH1",
+        "layer": "F.Cu",
+        "width_mm": 0.36,
+        "path": [
+          [
+            126.88,
+            26.25
+          ],
+          [
+            127.6,
+            26.25
+          ],
+          [
+            129.6,
+            24.25
+          ],
+          [
+            129.6,
+            18.6
+          ]
+        ],
+        "locked": true,
+        "why": "RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)"
+      }
+    ],
+    "zones": [
+      {
+        "id": "GND-L2",
+        "net": "GND",
+        "layer": "In1.Cu",
+        "outline": "board",
+        "priority": 0,
+        "why": "solid L2 GND under the RF50 CPWG; exported to Freerouting as a plane, so GND pads fan out to it"
+      }
+    ]
+  },
+  "post_route_zones": [
+    {
+      "id": "GND-F",
+      "net": "GND",
+      "layer": "F.Cu",
+      "outline": "board",
+      "priority": 0
+    },
+    {
+      "id": "GND-L3",
+      "net": "GND",
+      "layer": "In2.Cu",
+      "outline": "board",
+      "priority": 0
+    },
+    {
+      "id": "GND-B",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": "board",
+      "priority": 0
+    }
+  ],
+  "height_zones": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "checked": false,
+      "why": "footprints carry no body heights; the enclosure height check belongs to the mechanical model (fit-report)"
+    }
+  ],
+  "router": {
+    "tool": "freerouting",
+    "max_passes": 40,
+    "threads": 1,
+    "job_timeout": "00:20:00",
+    "timeout_s": 1500
+  },
+  "drc_policy": {
+    "warning_checks": {
+      "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+      "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+      "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board",
+      "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+      "silk_over_copper": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads",
+      "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+    }
+  },
+  "rf_copper_not_drawn": {
+    "status": "OPEN: pcb/board_gen.py has no via, plated-hole or rule-area primitive in pre_route (W2 PCB-RF-1 finding)",
+    "items": [
+      "GND via fences 0.3/0.6 mm at <= 2.0 mm pitch along every RF50 line (netclasses.json RF50 fence_pitch_max_mm, fence_row_max_from_gap_mm)",
+      "HMC7992 EPAD via arrays (ADI land pattern) under U405/U406/U407; Freerouting fans each EPAD out to the In1.Cu plane with single vias only",
+      "GND stitching of the four GND layers outside the pad fan-outs",
+      "GND fence ring around each HMC section for an optional shield can (no can fitted, no MPN)",
+      "BOND-RF: plated M3 hole on CHASSIS at (92, 40.5); here H5 stays NPTH and PH407 is the CHASSIS land",
+      "DC_CORE SENSE nets pre-routed with a GND guard (Freerouting routes them in this revision)",
+      "RF_TAPER rule areas for the 0.25 mm HMC pin entries (check_boards rf50_taper names them)",
+      "keeping Freerouting off In1.Cu (layer type power or plane_as_obstacle; the board_gen command line fixes neither)"
+    ],
+    "owner": "board_gen.py owner (PCB-PIPE lineage) or INT; PCB-RF-2 draws them once the primitive exists"
+  },
+  "decisions": [
+    {
+      "topic": "Shield can over the HMC sections",
+      "choice": "no can fitted in this revision; a GND fence ring per HMC section is reserved (rf_copper_not_drawn)",
+      "reason": "STACK.md names an optional shield wall or lid; a ring costs only copper and invents no MPN (A-PCB-06 decision)"
+    },
+    {
+      "topic": "Impedance coupon",
+      "choice": "breakaway tab of the RF panel, built in PCB-RF-2",
+      "reason": "same lamination and etch as the board (A-PCB-06 decision)"
+    },
+    {
+      "topic": "Edge SMA side (J409-J412, J426)",
+      "choice": "top edge (y 44.5), beside the U.FL ports, instead of the bottom edge [100,184]",
+      "reason": "the 73251-1153 body reaches 9.5 mm beyond the board edge (footprint courtyard -14.29 to -4.76 mm local), while RF.r0 is 0.4 mm from rfbay.wall.bottom (mechanical/generated/fit-report.md); beyond the top edge the bay has 18.3 mm (bay inner height 62.7 from y 99.1; board top at enclosure y 143.5). The V4L SMA ends sit at board x 81.6 (arrangement b), so J410/J411 at x 65-123 keep the cables short. MODEL reasoning; MECH must model the SMA overhang (OPEN)."
+    },
+    {
+      "topic": "Board ends that the graph lacks",
+      "choice": "U.FL lands (KiCad 10.0.7 U.FL_Hirose_U.FL-R-SMT-1_Vertical, the land of GR-2 J423-J427) as pilot placeholders PH401-PH406, and a 2 mm pad PH407 for CHASSIS",
+      "reason": "design/** is outside PCB-RF-1; the boundary audit reports them provisional until GR-4/SRC-2 add the refs"
+    },
+    {
+      "topic": "S03/S04 headers",
+      "choice": "bottom edge x 120-171, openings to the edge",
+      "reason": "harness routes S03/S04 reach the RF bottom edge at board x 163.3 and 167.5 (mechanical/generated/harness-routes.json)"
+    },
+    {
+      "topic": "DC_CORE placement",
+      "choice": "x 132-176 in channel rows (UHF, LBAND, HF top to bottom) with the reference and reference-good blocks to the right",
+      "reason": "the prototype positions (generate_routed.py:25-44) span 59 x 67 mm for 2-layer routing and do not fit the 44.5 mm board; the channel order and part grouping are kept, the 12 bleeds stay at the ports 25-100 mm away (DC-01, DC-02)"
+    }
+  ]
+}
