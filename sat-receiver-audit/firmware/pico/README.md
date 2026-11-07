@@ -183,18 +183,24 @@ The physical DISARM/STOP needs neither the Q6A, labd nor the Qt console
   The value is not part of the HMI EVENT snapshot sent to labd.
 - `main.py` adds `operator_stop` (hold >= `LOCK_STOP_HOLD_MS` = 1000 ms) to
   every sample it passes to `Supervisor.step`, like the ADC readings.
-- The supervisor treats it as a readiness gate after SENSOR_STALE: ARM is
-  refused with `OPERATOR_STOP`, and WARMING, CONFIGURING or ACTIVE trip with
-  fault `OPERATOR_STOP` in the same step (reset asserted, full cooling, DISP12
-  kept for the console, nonce rotated). SAFE, TRIPPED, SHUTTING_DOWN and OFF
-  are not changed, and the hold never cuts Pololu power.
+- The supervisor treats it as the last readiness gate, after SENSOR_STALE and
+  the Q6A, sensor, battery, panel, case and fan gates: ARM is refused (with
+  `OPERATOR_STOP` when no other gate applies), and WARMING, CONFIGURING or
+  ACTIVE trip with fault `OPERATOR_STOP` in the same step (reset asserted, full
+  cooling, DISP12 kept for the console, nonce rotated). A protective cause in
+  the same sample names the trip instead, so a CASE_HOT or FAN_STALLED seen
+  with the hold still removes DISP12 (item 5 above); armed, only the battery
+  gate is skipped, so low battery never masks the stop. SAFE, TRIPPED,
+  SHUTTING_DOWN and OFF are not changed, and the hold never cuts Pololu power.
 - labd needs no new path: a Pico TRIPPED report trips labd
   (`pico_OPERATOR_STOP`, `software/srrx/engine.py:167-170`) and all outputs go
   off; the console names the stop. Restart is the normal explicit host ARM in
   the new session after LOCK is released.
 - 1.0 s differs from the 1.5 s case-button shutdown hold. A stuck LOCK key
-  keeps ARM refused (fail-safe). The hold also counts as one LOCK press, so
-  the console's touch lock toggles once.
+  keeps ARM refused (fail-safe). A hold that starts as a sampled press also
+  counts as one LOCK press, so the console's touch lock toggles once; a LOCK
+  already down at boot or after a bus or poll-gap recovery is a baseline with
+  no press and toggles nothing.
 
 Host tests cover the model and the deployed loop wiring; the glove operation
 and the LOCK-to-EN-off latency on the assembled unit are bench work (build/09

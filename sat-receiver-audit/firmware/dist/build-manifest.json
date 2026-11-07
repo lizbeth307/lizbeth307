@@ -5,8 +5,8 @@
   "packages": {
     "pico": {
       "file": "pico-micropython-files.zip",
-      "bytes": 27128,
-      "sha256": "37cf5042bce47cfd34f45a3aa9ed5c06abe77a99e67a9035daa901db172512ba",
+      "bytes": 27191,
+      "sha256": "56b3162f04b1ea72d527c0faccec91ad2dd96c31cfec858930c153500b8a5aff",
       "source_files": {
         "adapter.py": "8ebac64c3880e965ae60bb86b329a53f9dae5666ffe9b8c94e394ab905ea6498",
         "boot.py": "158fb83e60f2553f1154438037d17a4715e078f14241778dba30fc5d9f6a99d8",
@@ -14,7 +14,7 @@
         "hmi.py": "c3def2f37946e9f652b9f5eb10d98ef52f7dc8857aa9cac0619e8ab1d81e3a93",
         "imu_relay.py": "192f8bc43cc932c036c13cdf70cc4548eb0f56fa3f7af9c940d42aabc6b6d820",
         "main.py": "836f4fe467183eeb7992622a2ce46741f11d5b5038d5085fc76c1621ac3eb4f7",
-        "supervisor.py": "331f1cbcf9c56234cf8ae6f0447399a68925b8699ffe8363aea7268948b9bab2",
+        "supervisor.py": "43b5b9dc0f1dd2a2aec5601bd5e00604dbf8902695f16b45da88541be3e32e9d",
         "wire.py": "f4ba993cbca9312c4639d3f6e8ddad083f7219017647026cb97b3e52a2f8fe3f"
       }
     },
