@@ -1,44 +1,42 @@
 {
   "summary": {
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-    "components": 777,
-    "schematic_contacts": 2393,
-    "connected_contacts": 2253,
-    "nets": 478,
+    "components": 794,
+    "schematic_contacts": 2438,
+    "connected_contacts": 2297,
+    "nets": 485,
     "categories": {
-      "bare_board_part": 646,
-      "bond_implementation_requirement": 1,
+      "bare_board_part": 691,
       "harness_assembly": 13,
       "integral_to_host_part": 2,
       "mechanical_or_remote_part": 11,
       "module_rework_part": 5,
-      "physical_interface_boundary": 32,
+      "physical_interface_boundary": 34,
       "purchased_module": 33,
-      "purchased_module_internal_detail": 5,
-      "test_access_requirement": 29
+      "purchased_module_internal_detail": 5
     },
     "board_candidates": {
-      "CTRL_HMI": 127,
+      "CTRL_HMI": 133,
       "DC_CORE": 71,
       "ENC": 2,
       "HATCH": 2,
-      "HDMI_INSERT": 4,
+      "HDMI_INSERT": 5,
       "IMU_CARRIER": 8,
       "PACK_FUSE": 1,
-      "PWR_BRANCH": 250,
-      "PWR_MAIN": 46,
-      "RF_HF": 13,
-      "RF_HMC": 50,
-      "RF_INJECTOR": 31,
-      "T7_INSERT": 8,
-      "USB_POWER": 33
+      "PWR_BRANCH": 269,
+      "PWR_MAIN": 54,
+      "RF_HF": 14,
+      "RF_HMC": 51,
+      "RF_INJECTOR": 34,
+      "T7_INSERT": 9,
+      "USB_POWER": 38
     },
-    "graph_assigned_footprints": 677,
-    "portable_graph_assignments": 677,
+    "graph_assigned_footprints": 692,
+    "portable_graph_assignments": 692,
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2253,
+    "xml_compared_connected_pins": 2297,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
@@ -46,40 +44,39 @@
     "core_proposed_footprints": 0,
     "blocking_issue_records": 39,
     "blocking_issue_types": {
-      "host_pads_unconnected": 2,
-      "interface_mounting_unresolved": 27,
-      "physical_interface_or_rework_unresolved": 10
+      "interface_mounting_unresolved": 33,
+      "physical_interface_or_rework_unresolved": 6
     }
   },
   "provenance": {
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c"
+        "sha256": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90"
       },
       {
         "file": "design/E2.json",
-        "sha256": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461"
+        "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935"
       },
       {
         "file": "design/E3.json",
-        "sha256": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132"
+        "sha256": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d"
       },
       {
         "file": "design/E4.json",
-        "sha256": "a003bedb98bfacbf1863ebc4bfc88eb8e10643d450820b399a668b4e65e1584d"
+        "sha256": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc"
       },
       {
         "file": "design/E5.json",
-        "sha256": "4a2bcc042a19a596ebeee44e676d732b4c9ed80ca613490627746dc88f429b0f"
+        "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "f39e7901065e0d9cf121e012c081a33a32dc014883147f7f41db2d0986884a3a"
+        "sha256": "d61e32c4ebae8eda9625abd27e778b18c5976a234a84fa25ed0750a57630dff4"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "5c0d3b16cd475025717aa70fbeb5e732b4542097fd7dde2da02d7b25f31cee04"
+        "sha256": "f112e459f95fb8eddfff80bb5717fd180e95bba9d27efbb6639faae63d83bb26"
       }
     ],
     "source_documents": [
@@ -90,6 +87,7 @@
       "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "https://assets.nexperia.com/documents/data-sheet/PMEG4030ER.pdf",
       "https://bonito.net/en/boni-whip-2/",
+      "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
       "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
       "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
       "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
@@ -126,6 +124,7 @@
       "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
       "https://www.aosmd.com/sites/default/files/res/datasheets/AO3400A.pdf",
       "https://www.aosmd.com/sites/default/files/res/datasheets/AO3407A.pdf",
+      "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
       "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
       "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",
@@ -186,7 +185,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "ecee0ac776e1f86deebed96f65fbdeea250e9bfb54ba4ca6eaa36b853560b537"
+      "projection_sha256": "d11d85d5976e023d7caf543ccde17a03d4dd8597e68832051674e5176141dc13"
     }
   },
   "boards": {
@@ -323,7 +322,7 @@
         "DC_CORE",
         "RF_INJECTOR"
       ],
-      "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+      "requirement": "Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
       "source": "design/E4-review.md; E4.json DC detector groups"
     },
     {
@@ -331,7 +330,7 @@
       "boards": [
         "DC_CORE"
       ],
-      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.",
       "source": "design/E4-review.md; design/E4-detector-analysis.py"
     },
     {
@@ -463,7 +462,7 @@
       "ref": "A403",
       "sheet": "E4",
       "mount": "module",
-      "value": "Flamingo+ FM v2 #2 optional",
+      "value": "Flamingo+ FM v2 #2 optional: external P8 accessory",
       "kind": "module",
       "category": "purchased_module",
       "assembly_owner": "",
@@ -480,7 +479,7 @@
       "ref": "A404",
       "sheet": "E4",
       "mount": "module",
-      "value": "LNA V2 optional",
+      "value": "LNA V2 optional: external P8 accessory",
       "kind": "module",
       "category": "purchased_module",
       "assembly_owner": "",
@@ -3214,6 +3213,40 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
+      "ref": "C321",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "TI SLVS841G Table 5-1 (IN >=0.1 uF ceramic); engineering design",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "C322",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "4.7u 10V",
+      "kind": "capacitor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "engineering design (as C502 at U501)",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
       "ref": "C340",
       "sheet": "E3",
       "mount": "pcb_smt",
@@ -4217,6 +4250,40 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
+      "ref": "C552",
+      "sheet": "E5",
+      "mount": "pcb_smt",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "USB_POWER",
+      "dnp": false,
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "TI SLVS841G Table 5-1 (IN >=0.1 uF ceramic); engineering design",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "C553",
+      "sheet": "E5",
+      "mount": "pcb_smt",
+      "value": "1uF X7R 10V",
+      "kind": "capacitor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "USB_POWER",
+      "dnp": false,
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "engineering design (output capacitor of a cable branch, as C510 at U503)",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
       "ref": "C2901",
       "sheet": "E2",
       "mount": "pcb_smt",
@@ -5079,7 +5146,7 @@
       "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
       "portable_footprint": true,
       "pad_coverage": "PASS",
-      "pin_count": 3,
+      "pin_count": 5,
       "source": "STACK.md §5.2; BournsPEC11R",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
     },
@@ -5096,7 +5163,7 @@
       "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
       "portable_footprint": true,
       "pad_coverage": "PASS",
-      "pin_count": 3,
+      "pin_count": 5,
       "source": "STACK.md §5.2; BournsPEC11R",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
     },
@@ -5183,6 +5250,23 @@
       "pad_coverage": "PASS",
       "pin_count": 2,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "F301",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "MF-MSMF075/24-2 0.75A",
+      "kind": "fuse",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
@@ -5444,7 +5528,7 @@
       "ref": "J408",
       "sheet": "E4",
       "mount": "panel",
-      "value": "P8 WIDE optional SMA",
+      "value": "P8 WIDE optional SMA: ch4 4.3 V",
       "kind": "connector",
       "category": "physical_interface_boundary",
       "assembly_owner": "",
@@ -5625,6 +5709,108 @@
       "pad_coverage": "UNASSIGNED",
       "pin_count": 2,
       "source": "E4 completion design; see E4-review.md",
+      "classification_reason": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately."
+    },
+    {
+      "ref": "J423",
+      "sheet": "E4",
+      "mount": "pcb_smt",
+      "value": "P2 board U.FL: 4.3 V",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "RF_INJECTOR",
+      "dnp": false,
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "J424",
+      "sheet": "E4",
+      "mount": "pcb_smt",
+      "value": "P3 board U.FL: 4.3 V",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "RF_INJECTOR",
+      "dnp": false,
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "J425",
+      "sheet": "E4",
+      "mount": "pcb_smt",
+      "value": "P6 board U.FL: no DC",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "RF_HF",
+      "dnp": false,
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "J426",
+      "sheet": "E4",
+      "mount": "pcb_smt",
+      "value": "ch5 IF edge SMA: 13.2 V LNB",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "RF_INJECTOR",
+      "dnp": false,
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json J-SMA-EDGE, W-IF-75OHM",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "J427",
+      "sheet": "E4",
+      "mount": "pcb_smt",
+      "value": "P8 board U.FL: ch4 4.3 V",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "RF_INJECTOR",
+      "dnp": false,
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "J428",
+      "sheet": "E4",
+      "mount": "assembly",
+      "value": "P8 antenna feed / A403 input interface",
+      "kind": "connector",
+      "category": "physical_interface_boundary",
+      "assembly_owner": "",
+      "board_candidate": "",
+      "dnp": false,
+      "footprint": "",
+      "portable_footprint": false,
+      "pad_coverage": "UNASSIGNED",
+      "pin_count": 2,
+      "source": "STACK §5.3; assembly boundary of the external P8 accessory (A403 → A404), W2 GR-2; pcb/partition-spec.json p8",
       "classification_reason": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately."
     },
     {
@@ -5880,6 +6066,23 @@
       "pad_coverage": "UNASSIGNED",
       "pin_count": 5,
       "source": "STACK.md §5.2 / engineering design",
+      "classification_reason": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately."
+    },
+    {
+      "ref": "J551",
+      "sheet": "E5",
+      "mount": "panel",
+      "value": "S-band pod power M8 3-pin receptacle DESIGN",
+      "kind": "connector",
+      "category": "physical_interface_boundary",
+      "assembly_owner": "",
+      "board_candidate": "",
+      "dnp": false,
+      "footprint": "",
+      "portable_footprint": false,
+      "pad_coverage": "UNASSIGNED",
+      "pin_count": 3,
+      "source": "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
       "classification_reason": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately."
     },
     {
@@ -6189,23 +6392,6 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
-      "ref": "L401",
-      "sheet": "E4",
-      "mount": "pcb_smt",
-      "value": "470 nH optional bleed: part TBD",
-      "kind": "inductor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "RF_INJECTOR",
-      "dnp": true,
-      "footprint": "Inductor_SMD:L_0805_2012Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
       "ref": "L402",
       "sheet": "E4",
       "mount": "pcb_smt",
@@ -6277,7 +6463,7 @@
       "ref": "L407",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "470 nH bleed SRF >300 MHz: part TBD",
+      "value": "Coilcraft 0805CS-471XGRC 470 nH 2% bleed, SRF 375 MHz: DNP",
       "kind": "inductor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -6287,7 +6473,7 @@
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 2,
-      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "source": "https://www.digikey.de/en/products/result?keywords=0805CS-471XGRC (read 2026-11-07; design/parts/snapshots/2026-11-07-w2-reads-rf-manual.json)",
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
@@ -6313,16 +6499,16 @@
       "mount": "pcb_pad",
       "value": "RF ground / CHASSIS bond",
       "kind": "net_tie",
-      "category": "bond_implementation_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "RF_HMC",
       "dnp": false,
       "footprint": "NetTie:NetTie-2_SMD_Pad2.0mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 2,
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
-      "classification_reason": "Electrical bond requirement; choose physical strap/net-tie/mount implementation explicitly."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "Q101",
@@ -8062,7 +8248,7 @@
       "ref": "R263",
       "sheet": "E2",
       "mount": "pcb_smt",
-      "value": "OVLO TBD (start 112k 0.1%)",
+      "value": "OVLO TBD (start 102k 0.1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -8079,7 +8265,7 @@
       "ref": "R264",
       "sheet": "E2",
       "mount": "pcb_smt",
-      "value": "OVLO TBD (start 10.0k 0.1%)",
+      "value": "OVLO TBD (start 9.09k 0.1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -9878,6 +10064,23 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
+      "ref": "R396",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "RILIM TBD (start 162k 1%)",
+      "kind": "resistor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "STACK.md §5.1 rule; E2 RILIM value of U209/U221; engineering design",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
       "ref": "R405",
       "sheet": "E4",
       "mount": "pcb_smt",
@@ -10558,6 +10761,23 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
+      "ref": "R553",
+      "sheet": "E5",
+      "mount": "pcb_smt",
+      "value": "RILIM TBD (start 88.7k 1%)",
+      "kind": "resistor",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "USB_POWER",
+      "dnp": false,
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 2,
+      "source": "STACK.md §5.1 rule; E2 RILIM value of U206-U208; engineering design",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
       "ref": "R2901",
       "sheet": "E2",
       "mount": "pcb_smt",
@@ -10884,7 +11104,7 @@
       "ref": "R4420",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "value": "26.7 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -10901,7 +11121,7 @@
       "ref": "R4421",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -10918,7 +11138,7 @@
       "ref": "R4422",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -11003,7 +11223,7 @@
       "ref": "R4430",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "value": "26.7 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -11020,7 +11240,7 @@
       "ref": "R4431",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -11037,7 +11257,7 @@
       "ref": "R4432",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -11122,7 +11342,7 @@
       "ref": "R4440",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "value": "26.7 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -11139,7 +11359,7 @@
       "ref": "R4441",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -11156,7 +11376,7 @@
       "ref": "R4442",
       "sheet": "E4",
       "mount": "pcb_smt",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -11700,7 +11920,7 @@
       "ref": "TH102",
       "sheet": "E1",
       "mount": "remote",
-      "value": "KSD9700 70 °C NO",
+      "value": "67F070 70 °C NO",
       "kind": "switch",
       "category": "mechanical_or_remote_part",
       "assembly_owner": "",
@@ -11710,7 +11930,7 @@
       "portable_footprint": false,
       "pad_coverage": "UNASSIGNED",
       "pin_count": 2,
-      "source": "STACK §2.7,§5.1",
+      "source": "STACK §2.7,§5.1; Sensata 6700 series datasheet (https://static.chipdip.ru/lib/822/DOC031822369.pdf, прочитано 07.11.2026)",
       "classification_reason": "Leaded/remote part on wires (mount remote in design/parts/parts.json); not a PCB footprint."
     },
     {
@@ -11753,16 +11973,16 @@
       "mount": "pcb_pad",
       "value": "PG_SYS12резерв",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP102",
@@ -11770,16 +11990,16 @@
       "mount": "pcb_pad",
       "value": "PG_LAB5резерв",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP103",
@@ -11787,16 +12007,16 @@
       "mount": "pcb_pad",
       "value": "PD_FLT service",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP104",
@@ -11804,16 +12024,16 @@
       "mount": "pcb_pad",
       "value": "ВузолN",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP105",
@@ -11821,16 +12041,16 @@
       "mount": "pcb_pad",
       "value": "ВузолSW",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP106",
@@ -11838,16 +12058,16 @@
       "mount": "pcb_pad",
       "value": "AON3V3",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP107",
@@ -11855,16 +12075,16 @@
       "mount": "pcb_pad",
       "value": "Protectedground",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP108",
@@ -11872,16 +12092,16 @@
       "mount": "pcb_pad",
       "value": "UV_OFF",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP201",
@@ -11889,16 +12109,16 @@
       "mount": "pcb_pad",
       "value": "J21",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP202",
@@ -11906,16 +12126,16 @@
       "mount": "pcb_pad",
       "value": "DISP12",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP203",
@@ -11923,16 +12143,16 @@
       "mount": "pcb_pad",
       "value": "LIME3V3",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP204",
@@ -11940,16 +12160,16 @@
       "mount": "pcb_pad",
       "value": "AUX12",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP205",
@@ -11957,16 +12177,16 @@
       "mount": "pcb_pad",
       "value": "LNA4V5",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP206",
@@ -11974,16 +12194,16 @@
       "mount": "pcb_pad",
       "value": "BIAS_CH1",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP207",
@@ -11991,16 +12211,16 @@
       "mount": "pcb_pad",
       "value": "BIAS_CH2",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP208",
@@ -12008,16 +12228,16 @@
       "mount": "pcb_pad",
       "value": "BIAS_CH3",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP209",
@@ -12025,16 +12245,16 @@
       "mount": "pcb_pad",
       "value": "BIAS_CH4",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP210",
@@ -12042,16 +12262,16 @@
       "mount": "pcb_pad",
       "value": "VBUS_RTLB",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP211",
@@ -12059,16 +12279,16 @@
       "mount": "pcb_pad",
       "value": "LNB13V2",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP212",
@@ -12076,16 +12296,16 @@
       "mount": "pcb_pad",
       "value": "BONI13V8",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP213",
@@ -12093,16 +12313,16 @@
       "mount": "pcb_pad",
       "value": "E2_FAULT_J21",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP214",
@@ -12110,16 +12330,16 @@
       "mount": "pcb_pad",
       "value": "E2_FAULT_DISP",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP215",
@@ -12127,16 +12347,16 @@
       "mount": "pcb_pad",
       "value": "OVP_LNB_N",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP216",
@@ -12144,16 +12364,33 @@
       "mount": "pcb_pad",
       "value": "BIAS_SB_LNA",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
+      "ref": "TP301",
+      "sheet": "E3",
+      "mount": "pcb_pad",
+      "value": "GNSS 5V switch FAULT_N test point",
+      "kind": "testpoint",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 1,
+      "source": "engineering design",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP501",
@@ -12161,16 +12398,16 @@
       "mount": "pcb_pad",
       "value": "T7 FAULT_N test point",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §5.2 / engineering design",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP502",
@@ -12178,16 +12415,33 @@
       "mount": "pcb_pad",
       "value": "HDMI ideal diode ST_N diagnostic",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "HDMI_INSERT",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
+    },
+    {
+      "ref": "TP503",
+      "sheet": "E5",
+      "mount": "pcb_pad",
+      "value": "IMU 5V switch FAULT_N test point",
+      "kind": "testpoint",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "USB_POWER",
+      "dnp": false,
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 1,
+      "source": "engineering design",
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP2901",
@@ -12195,16 +12449,16 @@
       "mount": "pcb_pad",
       "value": "BIAS_CH2_PORT",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP2902",
@@ -12212,16 +12466,16 @@
       "mount": "pcb_pad",
       "value": "BIAS_CH3_PORT",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "TP2903",
@@ -12229,16 +12483,16 @@
       "mount": "pcb_pad",
       "value": "BONI13V8_PORT",
       "kind": "testpoint",
-      "category": "test_access_requirement",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_BRANCH",
       "dnp": false,
       "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
-      "classification_reason": "Schematic access requirement; actual pad/hardware footprint not yet selected."
+      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
       "ref": "U101",
@@ -12989,6 +13243,23 @@
       "classification_reason": "Retain functional connector interfaces; no arbitrary module-pad footprint."
     },
     {
+      "ref": "U315",
+      "sheet": "E3",
+      "mount": "pcb_smt",
+      "value": "TPS2553DBVR-1",
+      "kind": "ic",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "CTRL_HMI",
+      "dnp": false,
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 6,
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
       "ref": "U405",
       "sheet": "E4",
       "mount": "pcb_smt",
@@ -13414,6 +13685,23 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
+      "ref": "U553",
+      "sheet": "E5",
+      "mount": "pcb_smt",
+      "value": "TPS2553DBVR",
+      "kind": "ic",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "USB_POWER",
+      "dnp": false,
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 6,
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
       "ref": "W401",
       "sheet": "E4",
       "mount": "harness",
@@ -13434,7 +13722,7 @@
       "ref": "W402",
       "sheet": "E4",
       "mount": "harness",
-      "value": "75 Ω shielded internal IF coax",
+      "value": "RG316 SMA-M/M 152.4 mm + SM3823 F/SMA adapter: P4 → J426",
       "kind": "module",
       "category": "harness_assembly",
       "assembly_owner": "",
@@ -13570,7 +13858,7 @@
       "ref": "W422",
       "sheet": "E4",
       "mount": "harness",
-      "value": "RG316 SMA-M/M 0.10 m helix → LaNA",
+      "value": "RG316 SMA-M/M 152.4 mm helix → LaNA",
       "kind": "module",
       "category": "harness_assembly",
       "assembly_owner": "",
@@ -13587,7 +13875,7 @@
       "ref": "W423",
       "sheet": "E4",
       "mount": "harness",
-      "value": "RG316 SMA-M/M 0.10 m LaNA → DC block",
+      "value": "RG316 SMA-M/M 152.4 mm LaNA → DC block",
       "kind": "module",
       "category": "harness_assembly",
       "assembly_owner": "",
@@ -13697,34 +13985,22 @@
       "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Відповідна частина — 2-контактна вилка 1.25 мм на виводі 50 мм батареї BT301 (Electrokit 41036512, прочитано 07.11.2026, знімок 2026-11-07-w2-src1-manual.json web:electrokit-41036512; кріплення — власна клейка стрічка батареї). Відкрито: полярність вилки (сторінка її не дає; на Q6A J11 контакт 1 — GND, E3 J303) звірити до вставлення; місце батареї в межах 50 мм від J11 — механічний пакет."
     },
     {
-      "ref": "SW308",
-      "type": "host_pads_unconnected",
-      "blocking": true,
-      "detail": "Contact of ENC301 (host in design/parts/parts.json), but net(s) E3_ENC1_PRESS_EXT reach no pin of ENC301: the host footprint pads for this contact carry no net, so it is unconnected on any layout until the sheet owner moves the nets onto host pins."
-    },
-    {
-      "ref": "SW309",
-      "type": "host_pads_unconnected",
-      "blocking": true,
-      "detail": "Contact of ENC302 (host in design/parts/parts.json), but net(s) E3_ENC2_PRESS_EXT reach no pin of ENC302: the host footprint pads for this contact carry no net, so it is unconnected on any layout until the sheet owner moves the nets onto host pins."
-    },
-    {
       "ref": "J401",
-      "type": "physical_interface_or_rework_unresolved",
+      "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: Внутрішній бік цих портів — кола RF-плати, а не SMA-вхід модуля: E4_P1 — L401 (посадкове місце дроселя відведення); E4_P2 — C403, L403, R4420, R4460; E4_P3 — C411, L404, R4430, R4464; E4_P6 — K402.3, L407. Роз’єму з боку плати (U.FL/MHF1-розетки чи крайового SMA) у графі E4 немає, тому пігтейл нікуди вкрутити. За правилом build/15 «RF-порти» потрібні позначення J з боку плати й футпринт (зміна власника E4) і пігтейл SMA bulkhead → U.FL/MHF1 або крайовий SMA з розрахунком втрат для кожного порту. Збірка Adam Tech CA-DKCA1-305L5-APAJ (J-SMA-PANEL) закінчується SMA-вилкою й підходить лише до SMA-входу модуля (J408)."
+      "detail": "Parts database entry J-SMA-PANEL (mount panel, MPN CA-DKCA1-305L5-APAJ) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Збірка з пігтейлом до SMA-входу A401 обрана; довжину за трасою моделі перевіряє SRC-2; виріз панелі, ущільнення й момент затягування гайки не задано — механічний пакет (MECH-07)."
     },
     {
       "ref": "J402",
-      "type": "physical_interface_or_rework_unresolved",
+      "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: Внутрішній бік цих портів — кола RF-плати, а не SMA-вхід модуля: E4_P1 — L401 (посадкове місце дроселя відведення); E4_P2 — C403, L403, R4420, R4460; E4_P3 — C411, L404, R4430, R4464; E4_P6 — K402.3, L407. Роз’єму з боку плати (U.FL/MHF1-розетки чи крайового SMA) у графі E4 немає, тому пігтейл нікуди вкрутити. За правилом build/15 «RF-порти» потрібні позначення J з боку плати й футпринт (зміна власника E4) і пігтейл SMA bulkhead → U.FL/MHF1 або крайовий SMA з розрахунком втрат для кожного порту. Збірка Adam Tech CA-DKCA1-305L5-APAJ (J-SMA-PANEL) закінчується SMA-вилкою й підходить лише до SMA-входу модуля (J408)."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J403",
-      "type": "physical_interface_or_rework_unresolved",
+      "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: Внутрішній бік цих портів — кола RF-плати, а не SMA-вхід модуля: E4_P1 — L401 (посадкове місце дроселя відведення); E4_P2 — C403, L403, R4420, R4460; E4_P3 — C411, L404, R4430, R4464; E4_P6 — K402.3, L407. Роз’єму з боку плати (U.FL/MHF1-розетки чи крайового SMA) у графі E4 немає, тому пігтейл нікуди вкрутити. За правилом build/15 «RF-порти» потрібні позначення J з боку плати й футпринт (зміна власника E4) і пігтейл SMA bulkhead → U.FL/MHF1 або крайовий SMA з розрахунком втрат для кожного порту. Збірка Adam Tech CA-DKCA1-305L5-APAJ (J-SMA-PANEL) закінчується SMA-вилкою й підходить лише до SMA-входу модуля (J408)."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J404",
@@ -13740,9 +14016,9 @@
     },
     {
       "ref": "J406",
-      "type": "physical_interface_or_rework_unresolved",
+      "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: Внутрішній бік цих портів — кола RF-плати, а не SMA-вхід модуля: E4_P1 — L401 (посадкове місце дроселя відведення); E4_P2 — C403, L403, R4420, R4460; E4_P3 — C411, L404, R4430, R4464; E4_P6 — K402.3, L407. Роз’єму з боку плати (U.FL/MHF1-розетки чи крайового SMA) у графі E4 немає, тому пігтейл нікуди вкрутити. За правилом build/15 «RF-порти» потрібні позначення J з боку плати й футпринт (зміна власника E4) і пігтейл SMA bulkhead → U.FL/MHF1 або крайовий SMA з розрахунком втрат для кожного порту. Збірка Adam Tech CA-DKCA1-305L5-APAJ (J-SMA-PANEL) закінчується SMA-вилкою й підходить лише до SMA-входу модуля (J408)."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J407",
@@ -13754,7 +14030,7 @@
       "ref": "J408",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL (mount panel, MPN CA-DKCA1-305L5-APAJ) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Збірка з пігтейлом до SMA-входу A403 обрана; виріз панелі, ущільнення й момент затягування гайки не задано — механічний пакет (MECH-07)."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J413",
@@ -13785,6 +14061,12 @@
       "type": "interface_mounting_unresolved",
       "blocking": true,
       "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419 — антенний пакет (build/06), окремо не купується. J416 — вхід ANT Uputronics 440 під провід основи 60 см RG174 із SMA-вилкою (build/06 §2.3, набір #1); стать роз’ємів HAB-FPA440 не прочитано (store.uputronics.com 07.11.2026 — 429, знімок 2026-11-07-w2-src1-manual.json web:uputronics-hab-fpa440), тож MPN перемички SMA M-F або кронштейна біля P2 (build/06 §2.3, §7.1) не обрано. J417 — вхід профільної L-band антени чи LNA A419 (SAWbird+ GOES 100792 або активний патч): стать роз’єму записати на прибутті (build/06 §2.4)."
+    },
+    {
+      "ref": "J428",
+      "type": "interface_mounting_unresolved",
+      "blocking": true,
+      "detail": "Parts database entry J-P8-ACCESSORY-IN (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього аксесуара P8 (SMA-вхід A403): антенний кабель, коробка аксесуара, адаптери SMA й кабель до панельного P8 — SRC-2 і MECH-3/MECH-4 (pcb/partition-spec.json p8); окремо не купується."
     },
     {
       "ref": "J422",
@@ -13869,6 +14151,12 @@
       "type": "interface_mounting_unresolved",
       "blocking": true,
       "detail": "Parts database entry W-IMU-CABLE (mount harness, MPN SUPERTRONIC-C-PURO 4x0.14 (49655)) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Прочитано 07.11.2026: HELUKABEL 49655 — 4 × 0.14 мм² (≈26 AWG), ⌀4.7 мм, обплетення з лудженої міді ≈85 %, PUR, −40…+90 °C нерухомо (каталог HELUCHAIN, знімок 2026-11-07-w2-src1-manual.json web:helukabel-heluchain-49655); LAPP SKINTOP MS-SC-M 12×1.5 (53112610) — затискання 3.5–7 мм, ≥1.0 мм над обплетенням, IP68, контакт екрана (дані LAPP, web:lapp-db53112610): кабель уміщується у ввід. Відкрито: отвір M12×1.5 і контргайка (серед частин вводу її немає) у стінці Hammond 1550Z101, заробка екрана 360° і кінці на платі носія IMU — механічний пакет; кінець у корпусі SR-RX — GX16 J504 (окремий запис)."
+    },
+    {
+      "ref": "J551",
+      "type": "interface_mounting_unresolved",
+      "blocking": true,
+      "detail": "Parts database entry J-POD-PWR-PANEL (mount panel, MPN 76 6618 1111 00003-0200) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Розетку J551 і вилку W425 обрано (binder M8 A-код, контакти 1/3/4: 1 — BIAS_SB_LNA, 3 — GND, 4 — вільний); виріз — з даташиту (M10×0.75: отвір 10.1 мм, лиски 9.1 мм, стінка 2.0–6.5 мм, 1 N·m); відкриті: місце на стінці (грань — MECH-07, моделює MECH-3), бік монтажу (з креслення: вставляється зсередини, гайка — ззовні; підтвердити з товщиною стінки, MECH-2/3), довжина виводів 0.2 м проти траси S36 — TBD."
     }
   ]
 }
