@@ -123,6 +123,12 @@
       "type": "passive"
     },
     {
+      "ref": "J116",
+      "pin": "1",
+      "sheet": "E1",
+      "type": "passive"
+    },
+    {
       "ref": "J102",
       "pin": "B4",
       "sheet": "E1",
@@ -2225,6 +2231,18 @@
       "type": "passive"
     },
     {
+      "ref": "J320",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "J322",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
       "ref": "Q306",
       "pin": "2",
       "sheet": "E3",
@@ -3851,6 +3869,18 @@
       "type": "passive"
     },
     {
+      "ref": "J514",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "J517",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
       "ref": "J520",
       "pin": "2",
       "sheet": "E5",
@@ -4037,6 +4067,12 @@
       "type": "passive"
     },
     {
+      "ref": "J518",
+      "pin": "2",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
       "ref": "U507",
       "pin": "4",
       "sheet": "E5",
@@ -4101,6 +4137,12 @@
     {
       "ref": "F101",
       "pin": "2",
+      "sheet": "E1",
+      "type": "passive"
+    },
+    {
+      "ref": "J117",
+      "pin": "1",
       "sheet": "E1",
       "type": "passive"
     },
@@ -6250,6 +6292,12 @@
     },
     {
       "ref": "R516",
+      "pin": "2",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "J514",
       "pin": "2",
       "sheet": "E5",
       "type": "passive"
@@ -10321,6 +10369,12 @@
       "type": "input"
     },
     {
+      "ref": "J321",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
       "ref": "J307",
       "pin": "10",
       "sheet": "E3",
@@ -10351,6 +10405,12 @@
       "type": "passive"
     },
     {
+      "ref": "J518",
+      "pin": "4",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
       "ref": "J507",
       "pin": "3",
       "sheet": "E5",
@@ -10375,6 +10435,12 @@
       "pin": "GP0",
       "sheet": "E3",
       "type": "output"
+    },
+    {
+      "ref": "J321",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
     },
     {
       "ref": "J307",
@@ -10403,6 +10469,12 @@
     {
       "ref": "U552",
       "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "J518",
+      "pin": "3",
       "sheet": "E5",
       "type": "passive"
     },
@@ -11153,6 +11225,12 @@
     {
       "ref": "R515",
       "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "J514",
+      "pin": "3",
       "sheet": "E5",
       "type": "passive"
     }
@@ -12745,6 +12823,18 @@
       "pin": "1",
       "sheet": "E3",
       "type": "passive"
+    },
+    {
+      "ref": "J321",
+      "pin": "3",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "J322",
+      "pin": "3",
+      "sheet": "E3",
+      "type": "passive"
     }
   ],
   "E3_IMU_INT_N": [
@@ -12793,6 +12883,18 @@
       "pin": "1",
       "sheet": "E3",
       "type": "passive"
+    },
+    {
+      "ref": "J321",
+      "pin": "4",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "J322",
+      "pin": "4",
+      "sheet": "E3",
+      "type": "passive"
     }
   ],
   "E5_IMU_VIN": [
@@ -12804,6 +12906,12 @@
     },
     {
       "ref": "C340",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "J320",
       "pin": "1",
       "sheet": "E3",
       "type": "passive"
@@ -12861,6 +12969,24 @@
     {
       "ref": "R391",
       "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "J320",
+      "pin": "3",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "J322",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "J322",
+      "pin": "5",
       "sheet": "E3",
       "type": "passive"
     }
@@ -15559,6 +15685,12 @@
       "pin": "1",
       "sheet": "E5",
       "type": "passive"
+    },
+    {
+      "ref": "J515",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
     }
   ],
   "E5_T7_DM": [
@@ -15867,6 +15999,12 @@
       "pin": "VBUS",
       "sheet": "E5",
       "type": "power_in"
+    },
+    {
+      "ref": "J516",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
     }
   ],
   "E5_U505_ILIM": [
@@ -16262,6 +16400,12 @@
     },
     {
       "ref": "C553",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "J518",
       "pin": "1",
       "sheet": "E5",
       "type": "passive"
