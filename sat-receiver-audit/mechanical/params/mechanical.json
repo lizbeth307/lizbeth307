@@ -201,7 +201,7 @@
         "z": 30.0,
         "kind": "m8_panel",
         "part": "binder_76_6618_1111",
-        "_note": "pod power entry (W2 MECH-3, build/15 'Вхід живлення pod J551/W425 (W2 MECH-3)'): binder M8 3-pin receptacle J551 (GR-1 part), W425 plugs in from outside with binder 99 3379 100 03; right face between the Q6A top edge (y 94.5) and the right Al angle (y 116), rear layer beside the RF-bay right wall (x 211.2) where the inner envelope (D12.6 x 9.5) and the 0.2 m leads have room; plain bore 10.1 (binder cut-out proposal 2) in the 2.5 mm ASA wall (no Al angle at y 106)"
+        "_note": "pod power entry (W2 MECH-3, build/15 'Вхід живлення pod J551/W425 (W2 MECH-3)'): binder M8 3-pin receptacle J551 (GR-1 part), W425 plugs in from outside with binder 99 3379 100 03; right face between the Q6A top edge (y 94.5) and the right Al angle (y 116), rear layer beside the RF-bay right wall (x 211.2) where the inner envelope (D12.6 x 9.5) and the 0.2 m leads have room; plain bore 10.1 (binder cut-out proposal 2) in the 2.5 mm ASA wall (no Al angle at y 106): the bore takes the M10x0.75 body with or without flats, while the flats cut-out (proposal 1, 9.1 across, anti-rotation) needs flats on the body that the READS-E reading of the scale drawing does not name; anti-rotation stays OPEN until the part is checked (R-J551)"
       }
     ]
   },
