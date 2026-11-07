@@ -248,7 +248,16 @@ class LinuxLabImportTests(TempProject):
                      "deployment/patches/rtlsdr-rx-only.patch", "deployment/upstream-fixtures/rtl-sdr/COPYING",
                      "deployment/tests/test_deployment.py", "software/pyproject.toml", "tools/check_software.py",
                      "tools/run_tests_offline.py", "firmware/pico/supervisor.py", "software/systemd/srrx.service",
-                     "design/readiness-contract.json"):
+                     "design/readiness-contract.json",
+                     # read, hashed or run by the guest's offline suite (test_system_sources, test_system_files,
+                     # test_image, test_flash_mcu, guest_smoke)
+                     "deployment/system/dt/lab-q6a.dtso", "deployment/system/dt/field-q6a.dtso",
+                     "deployment/system/dt/LICENSE.radxa-overlays", "deployment/system/dkms/pps-gpio/dkms.conf",
+                     "deployment/system/dkms/pps-gpio/Makefile", "deployment/system/edid/field.bin",
+                     "deployment/image/files/initramfs-srrx-ab-writeback", "deployment/image/files/90-srrx-bls.install",
+                     "deployment/image/files/kit-README.uk.txt", "software/config/devices.env.example",
+                     "software/config/hmi-requirements.lock", "firmware/mpremote-requirements.txt",
+                     "deployment/linux_lab/wheelhouse-requirements.txt"):
             self.assertTrue(finalize.bound(name), name)
         # Host evidence sinks stay unbound: software-tests.json carries elapsed_s and the contract hash.
         for name in ("deployment/linux_lab/build_kit.py", "firmware/dist/pico-micropython-files.zip",

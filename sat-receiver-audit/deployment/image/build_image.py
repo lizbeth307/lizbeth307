@@ -509,6 +509,8 @@ def root_facts(root):
         "machine_id": "missing" if machine_id is None else ("empty" if not machine_id.strip() else ("uninitialized" if machine_id.strip() == "uninitialized" else "set")),
         "hostname": (_text(root / "etc/hostname") or "").strip(),
         "locale": _text(root / "etc/default/locale"),
+        # zram-tools' conffile as r2 ships it; the controller bundle replaces it (system_files.ZRAMSWAP_DEFAULTS).
+        "zramswap_default": _text(root / "etc/default/zramswap"),
         # names only: a private host key is never hashed or copied into the facts
         "ssh_host_keys": sorted(p.name for p in (root / "etc/ssh").glob("ssh_host_*")) if (root / "etc/ssh").is_dir() else None,
         "config_dir": _listing(root / "config"),
@@ -658,9 +660,11 @@ STEPS = (
     ("bootloader", "Route A: dpkg --purge sdboot-is-embloader, bootctl install --no-variables, embloader pinned -1; Route B: embloader kept (0.4 required)"),
     ("boot-config", "/etc/srrx/boot.json, /etc/srrx/slot, /etc/kernel/cmdline, tries, install.conf layout=other, 90-srrx-bls.install, boot-check unit (Route B: initramfs write-back and commit unit)"),
     ("kernel", "dpkg -i the five locked 6.18.2-4 debs before any apt run; the plugin writes the slot A entry and ESP files"),
+    ("accounts", "systemd-sysusers and systemd-tmpfiles --create of the staged SR-RX sysusers.d/tmpfiles.d in the root A chroot "
+                 "(/data, /run, /tmp left to systemd-tmpfiles-setup on boot); every SERVICE_ACCOUNTS uid/gid recorded, a missing one is a blocker"),
     ("hardening", "apt-mark hold, purge unattended-upgrades/brltty, masks (apt/fwupd timers, ModemManager, sleep targets, rsetup.service, "
-                  "ssh/samba/cups/avahi that rsetup's skipped first boot or the recipe disables), PPA lists removed, default-password accounts locked, "
-                  "empty machine-id, r2 SSH host keys removed"),
+                  "ssh/samba/cups/avahi that rsetup's skipped first boot or the recipe disables, bluetooth/wpa_supplicant, the Ubuntu Pro "
+                  "and motd-news units), PPA lists removed, default-password accounts locked, empty machine-id, r2 SSH host keys removed"),
     ("enable", "srrx-radio-off.service, srrx-boot-check.service (Route B also srrx-ab-commit.service), srrx-ssh-hostkeys.service for a later "
                "sshd start; srrx.service is not enabled (IMG-06); every before.txt step is checked as replaced or skipped"),
     ("data", "/etc/fstab of slot A, /data directories, the locked cache copied to /data/srrx-cache (read-only bind at /srv/srrx-cache)"),
@@ -1047,6 +1051,55 @@ def hardening(root, recipe, route):
             "machine_id_before": previous, "removed_ssh_host_keys": host_keys}
 
 
+# systemd-tmpfiles-setup.service applies these on every boot: /data is its own partition (not mounted
+# at this step) and the rest are API or runtime file systems.
+TMPFILES_AT_BOOT = ("/data", "/run", "/tmp", "/dev", "/proc", "/sys")
+
+
+def _colon_table(path):
+    table = {}
+    for line in (Path(path).read_text(errors="replace").splitlines() if Path(path).is_file() else []):
+        parts = line.split(":")
+        if len(parts) >= 4 and parts[0]:
+            table[parts[0]] = parts
+    return table
+
+
+def system_accounts(root, stage_dir):
+    """systemd-sysusers and systemd-tmpfiles --create of the staged SR-RX configuration, once, in the
+    chroot of root A (software/DEPLOYMENT.md, «Системні файли»): deterministic and checked here instead
+    of relying on systemd-sysusers.service at first boot (ConditionNeedsUpdate=/etc). Root B is an rsync
+    copy, so every unit built from this golden image gets the same UIDs/GIDs. Returns the record of
+    every system_files.SERVICE_ACCOUNTS and PACKAGE_ACCOUNTS name with its ids (None: absent)."""
+    import deploy
+    system = deploy.system_files()
+    staged = load_json(Path(stage_dir) / "stage-files.json")["files"]
+    sysusers = sorted("/" + p for p in staged if re.fullmatch(r"(usr/lib|etc)/sysusers\.d/[^/]+\.conf", p))
+    tmpfiles = sorted("/" + p for p in staged if re.fullmatch(r"(usr/lib|etc)/tmpfiles\.d/[^/]+\.conf", p))
+    if "/" + system.SYSUSERS not in sysusers or "/" + system.TMPFILES not in tmpfiles:
+        raise BuildError("the controller bundle lacks the SR-RX sysusers.d/tmpfiles.d configuration")
+    chroot(root, ["systemd-sysusers"] + sysusers)
+    # A line that names an unknown user or group makes systemd-tmpfiles exit non-zero: the build stops.
+    chroot(root, ["systemd-tmpfiles", "--create"] + ["--exclude-prefix=" + p for p in TMPFILES_AT_BOOT] + tmpfiles)
+    passwd, group = _colon_table(Path(root) / "etc/passwd"), _colon_table(Path(root) / "etc/group")
+    service, missing = {}, []
+    for kind, name, *_ in system.SERVICE_ACCOUNTS:
+        entry = {"kind": kind, "gid": int(group[name][2]) if name in group else None}
+        if kind == "u":
+            user = passwd.get(name)
+            entry.update(uid=int(user[2]) if user else None, primary_gid=int(user[3]) if user else None,
+                         shell=user[6] if user and len(user) > 6 else None)
+        if None in entry.values():
+            missing.append(name)
+        service[name] = entry
+    package = {name: {"uid": int(passwd[name][2]) if name in passwd else None, "gid": int(group[name][2]) if name in group else None}
+               for name in sorted(system.PACKAGE_ACCOUNTS)}
+    return {"sysusers": sysusers, "tmpfiles": tmpfiles, "tmpfiles_left_to_boot": list(TMPFILES_AT_BOOT),
+            "service_accounts": service, "service_accounts_missing": missing, "package_accounts": package,
+            # root/_chrony/gpsd are users, dialout a group only: absent means in neither table.
+            "package_accounts_missing": sorted(n for n, ids in package.items() if ids["uid"] is None and ids["gid"] is None)}
+
+
 def enable_units(root, recipe, route):
     units = dict(recipe["enable_common"]["units"], **recipe["routes"][route]["enable"])
     for unit in units:
@@ -1212,6 +1265,15 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["kernel"] = {"packages": status, "slot_a_plugin_entry": entry_a,
                               "cache_only": sorted(set(recipe["kernel_artifacts"]) - set(recipe["kernel_debs_install"]["artifacts"])),
                               "why_cache_only": recipe["kernel_debs_install"]["source"]}
+        manifest["accounts"] = system_accounts(root_a, stage_dir)
+        if manifest["accounts"]["service_accounts_missing"]:
+            manifest["blocking"].append("service_accounts_missing: " + ", ".join(manifest["accounts"]["service_accounts_missing"])
+                                        + " (systemd-sysusers did not create them)")
+        if manifest["accounts"]["package_accounts_missing"]:
+            manifest["blocking"].append("package_accounts_missing: " + ", ".join(manifest["accounts"]["package_accounts_missing"])
+                                        + " (their packages are not in r2; package closure IMG-09)")
+        LOG.step("accounts", "DONE", service=len(manifest["accounts"]["service_accounts"]),
+                 missing=manifest["accounts"]["service_accounts_missing"] + manifest["accounts"]["package_accounts_missing"])
         manifest["hardening"] = hardening(root_a, recipe, route)
         LOG.step("hardening", "DONE", held=len(manifest["hardening"]["held"]), masked=manifest["hardening"]["masked"])
         manifest["enabled_units"] = enable_units(root_a, recipe, route)

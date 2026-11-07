@@ -20,6 +20,13 @@ on:
       - 'sat-receiver-audit/tools/flash_mcu.py'
       - 'sat-receiver-audit/firmware/runtime.lock.json'
       - 'sat-receiver-audit/firmware/mpremote-requirements.txt'
+      # kernel/header debs of the DT and DKMS jobs, the staged fixture bindings and the staged units/tmpfiles
+      - 'sat-receiver-audit/deployment/sources.lock.json'
+      - 'sat-receiver-audit/deployment/devices.template.json'
+      - 'sat-receiver-audit/software/systemd/**'
+      - 'sat-receiver-audit/software/srrx/pass_jobs.py'
+      - 'sat-receiver-audit/software/srrx/satdump_pass.py'
+      - 'sat-receiver-audit/software/srrx/baseband.py'
       - '.github/workflows/sr-rx-system.yml'
   pull_request:
     paths:
@@ -28,6 +35,13 @@ on:
       - 'sat-receiver-audit/tools/flash_mcu.py'
       - 'sat-receiver-audit/firmware/runtime.lock.json'
       - 'sat-receiver-audit/firmware/mpremote-requirements.txt'
+      # kernel/header debs of the DT and DKMS jobs, the staged fixture bindings and the staged units/tmpfiles
+      - 'sat-receiver-audit/deployment/sources.lock.json'
+      - 'sat-receiver-audit/deployment/devices.template.json'
+      - 'sat-receiver-audit/software/systemd/**'
+      - 'sat-receiver-audit/software/srrx/pass_jobs.py'
+      - 'sat-receiver-audit/software/srrx/satdump_pass.py'
+      - 'sat-receiver-audit/software/srrx/baseband.py'
       - '.github/workflows/sr-rx-system.yml'
 
 permissions:
@@ -93,10 +107,11 @@ jobs:
           for f in passwd group shadow gshadow; do sudo cp "/etc/$f" "$root/etc/$f"; done
           sudo cp "$RUNNER_TEMP/stage/rootfs/usr/lib/sysusers.d/srrx.conf" "$root/usr/lib/sysusers.d/"
           sudo cp "$RUNNER_TEMP/stage/rootfs/usr/lib/tmpfiles.d/srrx.conf" "$root/usr/lib/tmpfiles.d/"
-          sudo cp "$RUNNER_TEMP/stage/rootfs/etc/tmpfiles.d/srrx-passes.conf" "$root/etc/tmpfiles.d/"
+          sudo cp "$RUNNER_TEMP/stage/rootfs/etc/tmpfiles.d/srrx-passes.conf" "$RUNNER_TEMP/stage/rootfs/etc/tmpfiles.d/srrx-satdump.conf" "$root/etc/tmpfiles.d/"
           sudo systemd-sysusers --root="$root"
           sudo systemd-tmpfiles --root="$root" --create
-          python - "$root" <<'EOF'
+          # As root: /data/raw is 0750 labd:srrx-bb, so the runner user cannot even stat the class directory.
+          sudo "$(command -v python)" - "$root" <<'EOF'
           import os, pwd, sys
           root = sys.argv[1]
           sys.path.insert(0, "deployment/system")
@@ -111,7 +126,9 @@ jobs:
               assert groups[group][3] == "", groups[group]  # no members
           ids = {v[2]: k for k, v in users.items()}
           gids = {v[2]: k for k, v in groups.items()}
-          for path, owner, group, mode in (("/data/products", "root", "lab", 0o750), ("/var/lib/srrx/plans", "srrx-passes", "labd", 0o2750)):
+          for path, owner, group, mode in (("/data/products", "root", "lab", 0o751), ("/var/lib/srrx/plans", "srrx-passes", "labd", 0o2750),
+                                           ("/data/products/satdump", "labd", "srrx-satdump", 0o2770), ("/data/raw/baseband-lrpt", "labd", "srrx-bb", 0o2750),
+                                           ("/var/lib/srrx-satdump/empty", "root", "root", 0o555)):
               st = os.stat(root + path)
               actual = (ids[str(st.st_uid)], gids[str(st.st_gid)], st.st_mode & 0o7777)
               assert actual == (owner, group, mode), (path, actual)

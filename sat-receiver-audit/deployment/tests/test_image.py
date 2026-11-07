@@ -459,6 +459,30 @@ class SmokeModelTests(unittest.TestCase):
         report["failed_units"] = ["srrx-boot-check.service loaded failed failed SR-RX boot self-check"]
         self.assertIn("failed units: srrx-boot-check.service", self.run_check(2, report, bad_b)["mismatches"])
 
+    def test_a_failed_boot_check_unit_carries_its_journal_and_accounts_are_compared(self):
+        # Run 42300813861, attempt 1: the unit failed in scenario 1 while the post-boot check passed, with no journal.
+        blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        report = self.report("A", True, "active", "active", "good")
+        report["units"]["srrx-boot-check.service"] = {"ActiveState": "failed", "Result": "exit-code", "ExecMainStatus": "1"}
+        report["boot_check_journal"] = '{"status": "BLOCKED", "issues": ["installed package inventory unavailable (dpkg-query exit -1)"]}'
+        mismatches = self.run_check(0, report, blessed)["mismatches"]
+        self.assertIn("srrx-boot-check.service 'failed', expected 'active'", mismatches)
+        self.assertTrue(any(m.startswith("srrx-boot-check journal: ") and "dpkg-query exit -1" in m for m in mismatches), mismatches)
+        name, expect = self.smoke.SCENARIOS[0]
+        recorded = {"labd": {"kind": "u", "uid": 998, "primary_gid": 997, "gid": 997, "shell": "/usr/sbin/nologin"},
+                    "srrx-pico": {"kind": "g", "gid": 990}}
+        good = self.report("A", True, "active", "active", "good")
+        good["accounts"] = {"labd": "labd:x:998:997:SR-RX labd hardware control:/var/lib/srrx:/usr/sbin/nologin", "srrx-pico": "srrx-pico:x:990:"}
+        result = {"qemu_exit": 0, "report": good, "entries_after": blessed}
+        rows = {"RX-16": ["lab_pref_missing"]}
+        self.assertEqual(self.smoke.check(name, result, expect, rows, recorded)["status"], "MODEL_PASS")
+        good["accounts"] = {"labd": "labd:x:996:997:x:/var/lib/srrx:/usr/sbin/nologin", "srrx-pico": ""}
+        mismatches = self.smoke.check(name, result, expect, rows, recorded)["mismatches"]
+        self.assertEqual(mismatches, ["account labd ids ('996', '997') differ from the image manifest ('998', '997')",
+                                      "account srrx-pico missing on the booted slot"])
+        self.assertEqual(self.smoke.check(name, result, expect, rows, {})["mismatches"],
+                         ["image-manifest.json records no service accounts (build_image.system_accounts)"])
+
     def test_not_feasible_is_a_failure_when_the_model_is_required(self):
         result = {"status": "SMOKE_NOT_FEASIBLE", "scenarios": []}
         argv = ["smoke_qemu.py", "--image", "x.img", "--manifest", "m.json", "--work", "w", "--out", "o"]
@@ -775,6 +799,48 @@ class StagedMaskTests(unittest.TestCase):
         self.assertFalse(set(masked_by_systemctl) & set(self.staged))
         self.assertEqual(sorted(masked_by_systemctl + result["masked_by_stage"]), sorted(self.recipe["mask"]["units"]))
         self.assertEqual(result["masked"], self.recipe["mask"]["units"])
+
+
+class SystemAccountsTests(unittest.TestCase):
+    """build_image.system_accounts: sysusers/tmpfiles of the staged SR-RX files in the chroot, ids recorded."""
+
+    def test_staged_configuration_is_applied_and_every_account_is_recorded(self):
+        sys.path.insert(0, str(HERE / "system"))
+        self.addCleanup(sys.path.remove, str(HERE / "system"))
+        import system_files
+        with tempfile.TemporaryDirectory() as temp:
+            root, stage = Path(temp) / "root", Path(temp) / "stage"
+            (root / "etc").mkdir(parents=True)
+            stage.mkdir()
+            files = {system_files.SYSUSERS: "0" * 64, system_files.TMPFILES: "0" * 64, "etc/tmpfiles.d/srrx-passes.conf": "0" * 64,
+                     "etc/tmpfiles.d/srrx-satdump.conf": "0" * 64, "opt/srrx/deployment/deploy.py": "0" * 64}
+            (stage / "stage-files.json").write_text(json.dumps({"schema_version": 1, "status": "STAGED_ONLY", "files": files}))
+            users = [a for a in system_files.SERVICE_ACCOUNTS if a[1] != "srrx-loc"]  # one account sysusers "did not create"
+            passwd = ["root:x:0:0:root:/root:/bin/bash"] + ["%s:x:%d:%d::/nonexistent:/usr/sbin/nologin" % (a[1], 990 - i, 990 - i)
+                                                            for i, a in enumerate(users) if a[0] == "u"]
+            group = ["root:x:0:", "dialout:x:20:"] + ["%s:x:%d:" % (a[1], 990 - i) for i, a in enumerate(users)]
+            calls = []
+
+            def fake_chroot(where, argv, **kwargs):
+                calls.append(list(argv))
+                if argv[0] == "systemd-sysusers":
+                    (root / "etc/passwd").write_text("\n".join(passwd) + "\n")
+                    (root / "etc/group").write_text("\n".join(group) + "\n")
+            with patch.object(build_image, "chroot", fake_chroot):
+                record = build_image.system_accounts(root, stage)
+        self.assertEqual(calls[0], ["systemd-sysusers", "/" + system_files.SYSUSERS])
+        self.assertEqual(calls[1][:2], ["systemd-tmpfiles", "--create"])
+        self.assertTrue({"--exclude-prefix=/data", "--exclude-prefix=/run", "--exclude-prefix=/tmp"} <= set(calls[1]))
+        self.assertEqual([a for a in calls[1] if a.startswith("/")],
+                         ["/etc/tmpfiles.d/srrx-passes.conf", "/etc/tmpfiles.d/srrx-satdump.conf", "/" + system_files.TMPFILES])
+        self.assertEqual(record["service_accounts_missing"], ["srrx-loc"])
+        self.assertEqual(set(record["service_accounts"]), {a[1] for a in system_files.SERVICE_ACCOUNTS})
+        self.assertEqual(record["service_accounts"]["labd"]["shell"], "/usr/sbin/nologin")
+        self.assertEqual(record["package_accounts_missing"], ["_chrony", "gpsd"])  # dialout is a group, root a user
+        with tempfile.TemporaryDirectory() as temp:
+            (Path(temp) / "stage-files.json").write_text(json.dumps({"files": {system_files.TMPFILES: "0" * 64}}))
+            with patch.object(build_image, "chroot", lambda *a, **k: None), self.assertRaisesRegex(build_image.BuildError, "sysusers"):
+                build_image.system_accounts(Path(temp), Path(temp))
 
 
 if __name__ == "__main__":

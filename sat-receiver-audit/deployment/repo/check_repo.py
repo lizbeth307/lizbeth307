@@ -2,7 +2,9 @@
 """CI checks around the lab builder output and a published lab repository (repo/README.md).
 
 `packages`: every .deb of every build record has the recorded SHA-256/size and control fields,
-its extracted data tree equals the package's verify_build manifest, a package with a public
+its extracted data tree, walked by deploy.build_inventory (the walk verify_build compares), equals
+the package's verify_build manifest (an empty file list where that walk refuses the tree, as
+build_recipe.package_manifest writes it: a -dev .so link into another package, Lime), a package with a public
 SONAME'd library carries DEBIAN/shlibs and the ldconfig trigger, and deploy.verify_build still
 refuses the manifest because it is OPEN (a reviewer, never CI, sets REVIEWED).
 `publishable`: the .deb files a lab repository may carry now (no deploy.lab_package_issues
@@ -26,6 +28,8 @@ sys.dont_write_bytecode = True
 DEPLOYMENT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(DEPLOYMENT))
 import deploy  # noqa: E402
+sys.path.insert(0, str(DEPLOYMENT / "recipes"))
+import build_recipe  # noqa: E402
 
 PUBLIC_LIBRARY = re.compile(r"usr/lib/aarch64-linux-gnu/[^/]+\.so\.[^/]+")
 
@@ -73,7 +77,8 @@ def packages(out):
                 for path in sorted(root.rglob("*")):
                     if path.is_file():
                         files[path.relative_to(root).as_posix()] = deploy.sha(path)
-                if files != manifest["files"]:
+                refusal = build_recipe.inventory_refusal(root)
+                if ({} if refusal else deploy.build_inventory(root)[0]) != manifest["files"]:
                     raise CheckError("extracted " + deb.name + " differs from its build manifest")
                 libraries = [f for f in files if PUBLIC_LIBRARY.fullmatch(f)]
                 shlibs = (control / "shlibs").read_text(encoding="utf-8").splitlines() if (control / "shlibs").is_file() else []
@@ -90,7 +95,8 @@ def packages(out):
                 else:
                     raise CheckError("verify_build accepted a CI manifest: " + deb.name)
             summary.append({"package": package["package"], "version": package["version"], "files": len(files),
-                            "sha256": package["sha256"], "shlibs": shlibs, "verify_build": "REFUSED_OPEN_AS_EXPECTED"})
+                            "sha256": package["sha256"], "shlibs": shlibs, "verify_build": "REFUSED_OPEN_AS_EXPECTED",
+                            "manifest_files": "NONE: " + refusal if refusal else "BUILD_INVENTORY_MATCH"})
     return {"status": "CI_PACKAGES_MATCH_BUILD_RECORDS", "packages": summary, "hardware_ready": False}
 
 

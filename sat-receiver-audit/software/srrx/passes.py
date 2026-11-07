@@ -430,8 +430,9 @@ def baseband_windows(plan, norad_ids):
     [AOS, LOS] of one complete pass of such a target in a plan that passes validate_plan;
     passes cut by the plan window are not listed, so they never give a window. Fails
     closed: a plan without verified UTC gives no window at all (UTC_NOT_VERIFIED), since
-    its times are provisional. This is the window source only; no recorder exists, and
-    the Meteor-only target set is not checked here (BASEBAND_ROLE).
+    its times are provisional. This is the window source only: the recorder is srrx.baseband
+    (labd scheduling is not wired), and the Meteor-only target set is checked in
+    srrx.satdump_pass.select_windows, not here (BASEBAND_ROLE).
     """
     stored = validate_plan(plan)
     if not isinstance(norad_ids, (set, frozenset, list, tuple)) or not all(

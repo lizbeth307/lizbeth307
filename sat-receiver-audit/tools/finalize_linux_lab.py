@@ -20,13 +20,18 @@ from uk_text import plural  # noqa: E402
 # locks, patches and byte-exact upstream fixtures, plus the guest test runner.
 BOUND_PREFIXES = ("software/", "firmware/", "deployment/")
 BOUND_SUFFIXES = {".py", ".sh", ".service", ".json", ".toml", ".patch", ".c", ".h", ".cpp", ".hpp", ".cmake", ".in"}
-# Build recipes (debian/ files have no suffix), the lab repository layout and native sources.
+# Build recipes (debian/ files have no suffix), the lab repository layout and native sources; the
+# system files the guest tests hash, read or run (DT overlays, DKMS tree, EDID, image initramfs and
+# kernel-install scripts) and the software configuration examples and locks.
 BOUND_TREES = ("deployment/upstream-fixtures/", "deployment/patches/", "deployment/recipes/", "deployment/repo/",
-               "software/labrx-native/")
+               "software/labrx-native/", "deployment/system/", "deployment/image/files/", "software/config/")
 BOUND_NAMES = {"CMakeLists.txt"}
 # The guest compares the readiness contract's gate_results with the staged template (guest_smoke.py).
 # It is a sink of host evidence (test counts); never bind verification/software-tests.json itself.
-BOUND_EXTRA = {"tools/check_software.py", "tools/run_tests_offline.py", "design/readiness-contract.json"}
+# firmware/mpremote-requirements.txt: the mpremote pin test_flash_mcu.py checks; the wheel lock the
+# guest bootstrap installs from and compares with its payload (guest_bootstrap.sh).
+BOUND_EXTRA = {"tools/check_software.py", "tools/run_tests_offline.py", "design/readiness-contract.json",
+               "firmware/mpremote-requirements.txt", "deployment/linux_lab/wheelhouse-requirements.txt"}
 CONTRACT = "design/readiness-contract.json"
 UNBOUND = ("deployment/linux_lab/build_kit.py", "firmware/dist/")
 

@@ -113,6 +113,39 @@ class RecipeSchemaTests(unittest.TestCase):
             with self.assertRaisesRegex(deploy.DeploymentError, "OPEN/unreviewed"):
                 deploy.verify_build(root, manifest)  # CI output never passes the release verifier on its own
 
+    def test_package_manifest_is_the_verify_build_walk_and_refuses_what_it_refuses(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-recipe-test-") as temporary:
+            root = Path(temporary)
+            (root / "usr/lib").mkdir(parents=True)
+            (root / "usr/lib/librx.so.2.0.3").write_bytes(b"synthetic")
+            try:
+                os.symlink("librx.so.2.0.3", root / "usr/lib/librx.so.2")
+            except OSError as exc:  # unprivileged Windows host only; Linux CI always creates links
+                self.skipTest("symlinks unavailable: " + str(exc))
+            files, modules = deploy.build_inventory(root)
+            manifest = build_recipe.package_manifest(root)
+            self.assertEqual((manifest["files"], manifest["allowed_modules"]), (files, sorted(modules)))
+            self.assertIsNone(build_recipe.inventory_refusal(root))
+            # A -dev package's .so link into the runtime package: verify_build's walk refuses the tree,
+            # so the CI manifest carries no file list instead of silently dropping the link.
+            os.symlink("librx.so.2", root / "usr/lib/librx.so")
+            (root / "usr/lib/librx.so.2").unlink()
+            (root / "usr/lib/librx.so.2.0.3").unlink()
+            with self.assertRaises(OSError):
+                deploy.build_inventory(root)
+            refused = build_recipe.package_manifest(root)
+            self.assertEqual((refused["status"], refused["files"], refused["allowed_modules"]), ("OPEN", {}, []))
+            self.assertIn("dangling link usr/lib/librx.so", build_recipe.inventory_refusal(root))
+            reviewed = dict(refused, status="REVIEWED")
+            with self.assertRaisesRegex(deploy.DeploymentError, "OPEN/unreviewed"):
+                deploy.verify_build(root, reviewed)  # an empty file list never passes, whatever the status
+        with tempfile.TemporaryDirectory(prefix="srrx-recipe-test-") as temporary:
+            root = Path(temporary)
+            (root / "usr/lib").mkdir(parents=True)
+            (root / "usr/lib/liblimesuiteng.so.25").write_bytes(b"synthetic")
+            self.assertIn("Lime runtime library", build_recipe.inventory_refusal(root))
+            self.assertEqual(build_recipe.package_manifest(root)["files"], {})
+
     def test_library_packages_carry_shlibs_and_the_ldconfig_trigger(self):
         extras = build_recipe.control_extras("liblimesuiteng", "25.1.0+git37cb183+lab1", [("liblimesuiteng", "0.3-1")])
         self.assertEqual(extras, {"shlibs": "liblimesuiteng 0.3-1 liblimesuiteng (>= 25.1.0+git37cb183+lab1)\n",

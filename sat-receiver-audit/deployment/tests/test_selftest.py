@@ -634,8 +634,9 @@ class SelftestTests(unittest.TestCase):
         bb, glue = self.checker_module("baseband"), self.checker_module("satdump_pass")
         row = self.check(self.run_check(rootfs=self.clean), "RX-04-bb")
         self.assertEqual(row["status"], "PASS", row)
-        self.assertTrue({"baseband_tmpfiles_not_staged", "live_localhost_behaviour_is_RX-04-live",
+        self.assertTrue({"live_localhost_behaviour_is_RX-04-live",
                          "device_recording_needs_labd_utc_verified"} <= set(row["notes"]), row["notes"])
+        self.assertNotIn("baseband_tmpfiles_not_staged", row["notes"])  # deploy.stage writes satdump_pass.staged_files()
 
         def rx(patches):
             with contextlib.ExitStack() as stack:
@@ -673,6 +674,8 @@ class SelftestTests(unittest.TestCase):
         staged = self.check(self.run_check(), "RX-04-bb")
         self.assertEqual(staged["status"], "PASS")
         self.assertNotIn("baseband_tmpfiles_not_staged", staged["notes"])
+        (self.rootfs / "etc/tmpfiles.d/srrx-satdump.conf").unlink()  # a root without the file: noted, not failed
+        self.assertIn("baseband_tmpfiles_not_staged", self.check(self.run_check(), "RX-04-bb")["notes"])
 
     @staticmethod
     def checker_module(name):

@@ -148,6 +148,17 @@ def load_deploy(project):
     return module
 
 
+def verify_units(rootfs, masks):
+    """Staged system units that `systemd-analyze verify` can load. An empty unit file in
+    etc/systemd/system is a mask (systemd.unit(5)), and verify refuses a masked unit, so the
+    masks are checked as a set instead: the empty files there are exactly the staged masks."""
+    units = Path(rootfs) / "etc/systemd/system"
+    empty = sorted(p.relative_to(units).as_posix() for p in units.rglob("*") if p.is_file() and p.stat().st_size == 0)
+    require(empty == sorted(masks), "empty unit files in the staged root are not exactly the staged masks: "
+            + ", ".join(empty) + " (expected " + ", ".join(sorted(masks)) + ")")
+    return sorted(p for p in units.glob("*.service") if p.is_file() and p.stat().st_size > 0)
+
+
 def device_probe_units():
     """Throwaway units that carry the generated srrx.service device ordering; no hardware, no [Install]."""
     head = "[Unit]\nDescription=SR-RX Linux lab device-wait probe (no hardware)\n\n[Service]\n"
@@ -399,7 +410,7 @@ class GuestSmoke:
                 "staged package does not contain the current installed source")
         for path in rootfs.rglob("*"):
             require(not path.is_symlink() and not path.name.endswith(".wants"), "staging created a service enable link")
-        for name in ("acceptance.json", "devices.json", "devices.env", "release.json", "build-manifest.json"):
+        for name in ("acceptance.json", "devices.json", "devices.env", "release.json", "build-manifest.json", "baseband.env"):
             require(not (rootfs / "etc/srrx" / name).exists(), "staging supplied a live record: " + name)
         menu = rootfs / "usr/lib/systemd/user/srrx-menu.service"
         require(menu.is_file() and not (rootfs / "etc/systemd/system/srrx-menu.service").exists(), "menu must remain a user unit")
@@ -409,7 +420,9 @@ class GuestSmoke:
         contract = json.loads((self.project / "design/readiness-contract.json").read_text())["gate_results"]
         require(set(gates) == set(contract) and all(g["status"] == "OPEN" for g in gates.values()),
                 f"all {len(contract)} physical gates must remain OPEN")
-        unit_paths = sorted((rootfs / "etc/systemd/system").glob("*.service")) + [menu]
+        # deploy.py stage without --devices stages the gpsd-mode masks; verify loads only the real units.
+        masks = load_deploy(self.project).system_files().masks("gpsd")
+        unit_paths = verify_units(rootfs, masks) + [menu]
         self.command(["/usr/bin/systemd-analyze", "verify", *unit_paths], timeout=60)
         # Install only the guarded hardware unit in this marked guest. Never
         # install/start the root poweroff bridge or create an enable symlink.
@@ -423,7 +436,8 @@ class GuestSmoke:
         require(self.properties("srrx.service")["UnitFileState"] != "enabled", "hardware unit must not be enabled")
         return {"stage": str(self.stage), "payload_files": len(manifest["files"]), "current_source_files_verified": len(copied),
                 "manifest_sha256": digest(self.stage / "stage-files.json"),
-                "physical_gates_open": len(gates), "menu_user_unit": True, "systemd_verify": "PASS"}
+                "physical_gates_open": len(gates), "menu_user_unit": True, "systemd_verify": "PASS",
+                "verified_units": len(unit_paths), "staged_masks": sorted(masks)}
 
     def device_wait(self):
         """DEP-11 on this guest's real systemd: the generated Wants=/After= drop-in waits for an absent

@@ -1,6 +1,6 @@
 # Рецепт SatDump +lab (2.0.0~alpha+git20260929+lab1)
 
-Стан: **PENDING_BUILDER**. Рецепт, повнота опцій і накладання патчів перевірено офлайн, на закріплених файлах 1aedd60 24.10.2026. Збирання arm64, трасування плагінів і декодування фікстури ще не виконувалися: збирач пакетів +lab — окремий пакет етапу 3.
+Стан: **PENDING_BUILDER**. Рецепт, повнота опцій і накладання патчів перевірено офлайн, на закріплених файлах 1aedd60 24.10.2026. Збирання arm64, трасування плагінів і декодування фікстури ще не виконувалися. Збирач +lab уже є (`deployment/recipes/build_recipe.py`, `lab_build.py`, `sr-rx-packages.yml`), але цей рецепт має власну схему (`"kind": "srrx_build_recipe"`), і `build_recipe.validate_recipe` відхиляє його за статусом PENDING_BUILDER. Мета перенесення — схема `build_recipe` ([README рецептів](../README.md)); тоді збирач копіює `record_digests` з `check_recipe.py package --manifest` у запис збірки, і запис встановлення бере їх із виводу CI.
 
 | Файл | Що містить |
 |---|---|
@@ -13,6 +13,6 @@
 
 SatDump розповсюджується за GPL-3.0 (upstream `LICENSE`, blob f288702d2fa16d3cdf0035b15a9fcbc552cd88e7). Патчі — похідні зміни за тією самою ліцензією.
 
-Порядок для збирача (без мережі, `unshare --user --map-root-user --net`): перевірити SHA256 архіву → розпакувати → `check_recipe.py verify-source` → `patch -p1` 0001–0003 → `cmake` з `cmake.definitions` → збірка `-j4` → `DESTDIR=… cmake --install build` → `check_recipe.py package --root … --manifest stage.json`. Поле `record_digests` у `stage.json` (SHA256 ELF, `libsatdump_core.so`, плагінів, конвеєрів, конфігу, дайджест дерева `share/satdump/resources` і SHA256 цього `recipe.json`) адміністратор переносить у root-owned запис встановлення `decoder_policy.load_satdump_installation` (див. [DECODERS](../../../software/DECODERS.md)).
+Порядок для збирача. Ізоляція — як у `lab_build.offline_argv`: новий chroot `mmdebstrap` на рецепт, `unshare --net --mount --pid` (порожній мережевий простір імен) і `chroot --userspec` непривілейованого збирача з чистим середовищем: перевірити SHA256 архіву → розпакувати → `check_recipe.py verify-source` → `patch -p1` 0001–0003 → `cmake` з `cmake.definitions` → збірка `-j4` → `DESTDIR=… cmake --install build` → `check_recipe.py package --root … --manifest stage.json`. Поле `record_digests` у `stage.json` (SHA256 ELF, `libsatdump_core.so`, плагінів, конвеєрів, конфігу, дайджест дерева `share/satdump/resources` і SHA256 цього `recipe.json`) адміністратор переносить у root-owned запис встановлення `decoder_policy.load_satdump_installation` (див. [DECODERS](../../../software/DECODERS.md)).
 
 Відкрите питання до власника: `PLUGIN_SIMD_NEON` вимкнено, бо `simd_neon` немає в алоу-листі плагінів STACK. Вмикати його — лише окремим рішенням після заміру CPU на Q6A.

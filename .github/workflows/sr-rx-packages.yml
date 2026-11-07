@@ -23,6 +23,10 @@ on:
       - 'sat-receiver-audit/deployment/receive-only-policy.json'
       - 'sat-receiver-audit/deployment/sources.lock.json'
       - 'sat-receiver-audit/deployment/source-cache-verification.json'
+      # The reviewed RX-only/TX-rejecting patches, their applier and the selftest the packages job runs.
+      - 'sat-receiver-audit/deployment/patches/**'
+      - 'sat-receiver-audit/deployment/vendor_patch.py'
+      - 'sat-receiver-audit/deployment/selftest.py'
       - '.github/workflows/sr-rx-packages.yml'
   workflow_dispatch:
     inputs:

@@ -221,13 +221,25 @@ class CommandTests(unittest.TestCase):
     def test_staged_texts(self):
         files = sp.staged_files()
         self.assertEqual(set(files), {"etc/systemd/system/srrx-baseband-sweep.service",
-                                      "etc/systemd/system/srrx-baseband-sweep.timer", "etc/tmpfiles.d/srrx-satdump.conf"})
+                                      "etc/systemd/system/srrx-baseband-sweep.timer", "etc/tmpfiles.d/srrx-satdump.conf",
+                                      "etc/srrx/baseband.env.template"})
         tmp = files["etc/tmpfiles.d/srrx-satdump.conf"]
         self.assertIn("d /data/raw/baseband-lrpt 2750 labd srrx-bb 24h", tmp)
         self.assertIn("d /var/lib/srrx-satdump/empty 0555 root root -", tmp)
         self.assertIn("OnUnitActiveSec=15min", files["etc/systemd/system/srrx-baseband-sweep.timer"])
         self.assertIn("PrivateNetwork=yes", files["etc/systemd/system/srrx-baseband-sweep.service"])
-        self.assertIn("member of group srrx-satdump", tmp)  # labd reads the unit's PNGs and removes its tree
+        self.assertIn("group srrx-satdump", tmp)  # the caller reads the unit's PNGs and removes its tree
+        # Before commissioning writes the storage binding the sweep is skipped, not failed; the template binds nothing.
+        self.assertIn("\nConditionPathExists=" + sp.BASEBAND_ENV + "\n", files["etc/systemd/system/srrx-baseband-sweep.service"])
+        self.assertIn("\nEnvironmentFile=" + sp.BASEBAND_ENV + "\n", files["etc/systemd/system/srrx-baseband-sweep.service"])
+        self.assertEqual([l for l in files["etc/srrx/baseband.env.template"].splitlines() if not l.startswith("#")], ["SRRX_BB_DEVICE="])
+
+    def test_transient_units_name_the_unit_user_and_the_baseband_group(self):
+        decode, live = sp.transient_units()
+        self.assertIn("\nUser=" + sp.UNIT_USER + "\n", decode)
+        self.assertIn("\nGroup=" + sp.UNIT_USER + "\n", live)
+        self.assertIn("\nSupplementaryGroups=" + sp.BASEBAND_GROUP + "\n", decode)
+        self.assertNotIn("SupplementaryGroups=", live)
 
     def sweep_service(self):
         text = sp.sweep_units()["etc/systemd/system/srrx-baseband-sweep.service"]

@@ -20,7 +20,8 @@ Scenarios, one QEMU boot each (-no-reboot; systemd.run_*_action=poweroff ends th
   3 fallback-a       the bad labB sorts last: the blessed labA boots again
 Every boot also checks: no pending jobs, no failed unit beyond the scenario's expected ones (only
 srrx-boot-check.service on the boot that must fail), srrx.service inactive and disabled, the recipe
-masks in effect. srrx-boot-check accepts the smoke's own tokens (bootchain.smoke_tokens) only
+masks in effect, every SR-RX service account present with the UID/GID of the build manifest; a
+boot-check unit in the wrong state carries its journal of that boot into the mismatches. srrx-boot-check accepts the smoke's own tokens (bootchain.smoke_tokens) only
 inside a VM (systemd-detect-virt), so every other extra token of an edited entry still fails it. The first slot A boot also runs selftest.py offline on a read-only view of the booted root
 and ESP (bootchain.live_selftest): its FAIL/BLOCKED rows must equal the build-time rows on root A,
 plus INTERPRETER_ROWS when the image's python3 lacks numpy. Bench gates W-03 (rollback on the Q6A)
@@ -190,8 +191,28 @@ def expected_live_rows(build_rows, interpreter_numpy):
     return rows
 
 
-def check(scenario, result, expect, build_rows=None):
-    """Compare one boot with its expectation; every mismatch is listed (host-testable)."""
+def account_mismatches(observed, recorded):
+    """`getent` lines of the booted slot (bootchain.smoke_report "accounts") against the builder's
+    image-manifest.json accounts.service_accounts: every account present, with the same UID/GID."""
+    if not recorded:
+        return ["image-manifest.json records no service accounts (build_image.system_accounts)"]
+    observed = observed or {}
+    bad = []
+    for name, entry in sorted(recorded.items()):
+        fields = (observed.get(name) or "").split(":")
+        if len(fields) < 3 or fields[0] != name:
+            bad.append("account %s missing on the booted slot" % name)
+            continue
+        ids = (fields[2], fields[3] if len(fields) > 3 else None) if entry.get("kind") == "u" else (None, fields[2])
+        want = (str(entry.get("uid")), str(entry.get("primary_gid"))) if entry.get("kind") == "u" else (None, str(entry.get("gid")))
+        if ids != want:
+            bad.append("account %s ids %r differ from the image manifest %r" % (name, ids, want))
+    return bad
+
+
+def check(scenario, result, expect, build_rows=None, accounts=None):
+    """Compare one boot with its expectation; every mismatch is listed (host-testable).
+    accounts: image-manifest.json accounts.service_accounts (None: not compared)."""
     report = result["report"] or {}
     bc = report.get("boot_check") or {}
     units = report.get("units") or {}
@@ -213,6 +234,8 @@ def check(scenario, result, expect, build_rows=None):
     want_unit = "active" if expect["boot_check"] == "BOOT_SELF_CHECK_OK" else "failed"
     if observed["boot_check_unit"] != want_unit:
         bad.append("srrx-boot-check.service %r, expected %r" % (observed["boot_check_unit"], want_unit))
+        if report.get("boot_check_journal"):  # what the boot-time run printed (bootchain.smoke_report)
+            bad.append("srrx-boot-check journal: " + report["boot_check_journal"][-1500:])
     if observed["pending_jobs"]:
         bad.append("jobs still pending: " + "; ".join(observed["pending_jobs"])[:300])
     allowed_failed = set() if expect["boot_check"] == "BOOT_SELF_CHECK_OK" else {"srrx-boot-check.service"}
@@ -225,6 +248,8 @@ def check(scenario, result, expect, build_rows=None):
     not_masked = sorted(u for u, p in masked.items() if (p or {}).get("LoadState") != "masked")
     if not masked or not_masked:
         bad.append("recipe masks not in effect: " + (",".join(not_masked) or "no mask report"))
+    if accounts is not None and report:
+        bad += account_mismatches(report.get("accounts"), accounts)
     if expect["selftest"]:
         selftest = report.get("selftest") or {}
         live = selftest.get("fail_or_blocked_rows")
@@ -274,6 +299,7 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
     esp_dir = work / "esp"
     build_rows = (manifest.get("selftest_root_a") or {}).get("fail_or_blocked_rows")
     result["build_selftest_rows"] = build_rows
+    accounts = (manifest.get("accounts") or {}).get("service_accounts") or {}  # empty: every boot reports the gap
     for index, ((name, expect), plan) in enumerate(zip(SCENARIOS, entry_plan(config)), 1):
         with Esp(copy, esp_dir) as esp:
             apply_entry_plan(esp / "loader/entries", plan)
@@ -284,7 +310,7 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
         run_result = qemu(copy, vars_file, log, timeout + (bootchain.SMOKE_SELFTEST_LIMIT if expect["selftest"] else 0), accel)
         with Esp(copy, esp_dir, read_only=True) as esp:
             run_result["entries_before"], run_result["entries_after"] = before, lab_entries(esp)
-        result["scenarios"].append(check(name, run_result, expect, build_rows))
+        result["scenarios"].append(check(name, run_result, expect, build_rows, accounts))
         (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     result["status"] = "MODEL_PASS" if all(s["status"] == "MODEL_PASS" for s in result["scenarios"]) else "MODEL_FAIL"
     (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

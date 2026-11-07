@@ -31,6 +31,9 @@ SERVICE_ACCOUNTS = (
     ("u", "labnpu", "SR-RX NPU inference", "/nonexistent", "STACK.md:875 inferd-htp User=labnpu"),
     ("u", "srrx-loc", "SR-RX location service", "/nonexistent", "software/systemd/srrx-locationd.service"),
     ("u", "srrx-passes", "SR-RX pass planner", "/nonexistent", "software/systemd/srrx-passes@.service"),
+    ("u", "srrx-satdump", "SR-RX SatDump decode", "/nonexistent",
+     "software/srrx/satdump_pass.py UNIT_USER: transient decode/live units, products 2770 labd:srrx-satdump"),
+    ("g", "srrx-bb", None, None, "satdump_pass.BASEBAND_GROUP: LRPT baseband class directory, sweep unit Group=, decode unit"),
     ("g", "srrx-pico", None, None, "deploy.PICO_GROUP: Pico UART, no members"),
     ("g", "srrx-gnss", None, None, "deploy.GNSS_GROUP: LC76G UART, no members"),
     ("g", "i2c", None, None, "srrx.service SupplementaryGroups=i2c; bound /dev/i2c-N"),
@@ -55,7 +58,9 @@ INA238_BLACKLIST = "etc/modprobe.d/lab-ina238-blacklist.conf"
 GPSD_DEFAULTS = "etc/default/gpsd"
 CHRONY_CANDIDATE = "etc/chrony/conf.d/60-srrx-gnss.conf.candidate"
 LOGIND_DROPIN = "etc/systemd/logind.conf.d/60-srrx.conf"
-ZRAM = "usr/lib/systemd/zram-generator.conf.d/60-srrx.conf"
+# zram-tools 0.3.3.1-1.1 (installed in r2 with its zramswap.service enabled, image-facts.json) reads this
+# conffile; systemd-zram-generator is not in r2 (build/15 «Збирання образу»).
+ZRAMSWAP_DEFAULTS = "etc/default/zramswap"
 POLKIT_RADIO_OFF = "etc/polkit-1/rules.d/60-srrx-radio-off.rules"
 EDID_FIRMWARE = "usr/lib/firmware/edid/field.bin"
 EDID_HOOK = "etc/initramfs-tools/hooks/srrx-edid"
@@ -64,11 +69,14 @@ NPU_PHASE0 = "/etc/srrx/npu-phase0.env"
 # bundle() gives exactly these staged paths mode 0755: initramfs-tools runs only executable hooks.
 EXECUTABLES = frozenset({EDID_HOOK, DSP_HOOK})
 
-# build/07 §1.2 (STACK.md:845): unattended apt/fwupd, ModemManager and every sleep state.
+# build/07 §1.2 (STACK.md:845): unattended apt/fwupd, ModemManager and every sleep state; and the
+# receive-only userspace layer over the AIC8800 blacklist (IMG-06, build/15 «Збирання образу»):
+# bluetoothd and wpa_supplicant, which would start BT/Wi-Fi transmissions if an interface appeared.
 # An empty unit file in /etc/systemd/system is masked like a /dev/null link (systemd.unit(5));
 # bundle() refuses symlinks, so the masks are empty files.
 MASKED_UNITS = ("apt-daily.timer", "apt-daily-upgrade.timer", "fwupd-refresh.timer", "ModemManager.service",
-                "sleep.target", "suspend.target", "hibernate.target", "hybrid-sleep.target")
+                "sleep.target", "suspend.target", "hibernate.target", "hybrid-sleep.target",
+                "bluetooth.service", "wpa_supplicant.service")
 # Raw mode: srrx-locationd is the one UART6 reader; gpsd may not be started at all.
 RAW_MODE_MASKS = ("gpsd.service", "gpsd.socket")
 GNSS_MODULES = ("gnss-usb", "gnss-ubx", "gnss-mtk", "gnss-sirf", "gnss-serial")
@@ -110,9 +118,13 @@ def tmpfiles():
     # OPEN for the lease-unit owner: every lease unit's ReadWritePaths=/data/products/<lease> must exist
     # before systemd sets up its namespace, and neither lab nor labd can create it below this root-owned
     # parent. No lease names are fixed yet, so no per-lease line is generated (software/DEPLOYMENT.md).
+    # 0751: group lab lists it; every other account may only pass through to a subdirectory that grants
+    # it access by its own mode (labd to products/satdump, 2770 labd:srrx-satdump, srrx.satdump_pass).
+    # Group lab for labd would also open the receiver nodes to it (udev GROUP="lab"; build/15 Baseband/IQ).
     return (GENERATED + "# Lease outputs (STACK.md:873, build/07 §21): read-only /data, one writable /data/products/<lease>.\n"
-            "# Per-lease directories are OPEN: they come with the lease units, not from this file.\n"
-            "d /data/products 0750 root lab -\n")
+            "# Per-lease directories are OPEN: they come with the lease units, not from this file, and grant\n"
+            "# others nothing (0751 lets any account pass through, never list).\n"
+            "d /data/products 0751 root lab -\n")
 
 
 def udev_fastrpc():
@@ -184,17 +196,26 @@ def logind_dropin():
     return GENERATED + "[Login]\nHandlePowerKey=ignore\nIdleAction=ignore\n"
 
 
-def zram():
-    # build/07 §21: zram 1 GiB, no disk swap. zram-size is in MiB (zram-generator.conf(5), v1.1.2).
-    return GENERATED + "[zram0]\nzram-size = 1024\n"
+def zramswap_defaults():
+    """build/07 §21 / STACK.md:910: zram 1 GiB, no disk swap. Keys of zram-tools 0.3.3.1-1.1 (its
+    conf/zramswap and the zramswap script on sources.debian.org, read 2026-11-07): SIZE in MiB, and
+    PERCENT (of MemTotal) overrides SIZE. r2's own copy (image-facts.json root.zramswap_default, CI
+    run 42318869479) sets ALGO=zstd and PERCENT=50: ALGO is kept, PERCENT is dropped for SIZE.
+    PRIORITY keeps the script default (100; the only swap device, so it orders nothing)."""
+    return (GENERATED + "# zram-tools conffile (/usr/sbin/zramswap sources it): one 1 GiB zram swap device, no disk swap.\n"
+            "# Replaces r2's copy (ALGO=zstd, PERCENT=50): the algorithm stays, PERCENT would override SIZE.\n"
+            "ALGO=zstd\nSIZE=1024\n")
 
 
 def system_preset(mode):
     """Only the receive-only layer is enabled by `systemctl preset`; every other SR-RX unit is
     enabled deliberately after acceptance (software/DEPLOYMENT.md install order)."""
     lines = [GENERATED.rstrip("\n"), "enable srrx-radio-off.service"]
+    # The baseband sweep timer too: it is enabled at commissioning, after the administrator has written
+    # /etc/srrx/baseband.env (srrx.satdump_pass.sweep_units, ConditionPathExists= on that file).
     lines += ["disable " + unit for unit in ("srrx.service", "srrx-poweroff.service", "srrx-locationd.service",
-                                              "srrx-timegate.service", "srrx-gnss-config.service", "inferd-htp.service")]
+                                              "srrx-timegate.service", "srrx-gnss-config.service", "inferd-htp.service",
+                                              "srrx-baseband-sweep.timer")]
     if mode == "raw":
         lines += ["disable " + unit for unit in RAW_MODE_MASKS]
     return "\n".join(lines) + "\n"
@@ -309,16 +330,21 @@ def staged_files(config=None, gnss="gpsd"):
     files = {SYSUSERS: sysusers(), TMPFILES: tmpfiles(), SYSTEM_PRESET: system_preset(gnss), USER_PRESET: user_preset(),
              UDEV_FASTRPC: udev_fastrpc(), UDEV_PPS: udev_pps(), UDEV_I2C_TOOLS_OVERRIDE: udev_i2c_tools_override(),
              GNSS_BLACKLIST: gnss_blacklist(), INA238_BLACKLIST: ina238_blacklist(),
-             GPSD_DEFAULTS: gpsd_defaults(gnss), LOGIND_DROPIN: logind_dropin(), ZRAM: zram(),
+             GPSD_DEFAULTS: gpsd_defaults(gnss), LOGIND_DROPIN: logind_dropin(), ZRAMSWAP_DEFAULTS: zramswap_defaults(),
              POLKIT_RADIO_OFF: polkit_radio_off(), EDID_FIRMWARE: edid_field.build(),
              EDID_HOOK: edid_hook(), DSP_HOOK: dsp_hook()}
     if gnss == "gpsd":
         files[CHRONY_CANDIDATE] = chrony_candidate()
     if config is not None:
         files[UDEV_I2C] = udev_i2c(config)
-    for unit in MASKED_UNITS + (RAW_MODE_MASKS if gnss == "raw" else ()):
+    for unit in masks(gnss):
         files["etc/systemd/system/" + unit] = ""
     return files
+
+
+def masks(gnss="gpsd"):
+    """The units staged_files() masks with an empty file in etc/systemd/system for this GNSS mode."""
+    return MASKED_UNITS + (RAW_MODE_MASKS if gnss == "raw" else ())
 
 
 _ACCOUNT_KEYS = {"User": "user", "Group": "group", "SupplementaryGroups": "group"}
@@ -349,11 +375,16 @@ def tmpfiles_accounts(text):
     return found
 
 
-def unknown_accounts(rootfs):
-    """Accounts that staged units, udev rules or tmpfiles name but nothing creates (empty = complete)."""
+def unknown_accounts(rootfs, transient_units=()):
+    """Accounts that staged units, udev rules or tmpfiles name but nothing creates (empty = complete).
+
+    transient_units: unit texts of systemd-run units that exist only at run time (the SatDump
+    decode/live units, srrx.satdump_pass.transient_units); their User=/Group= are checked too."""
     rootfs = Path(rootfs)
     users, groups = accounts()
     needed = set()
+    for text in transient_units:
+        needed |= unit_accounts(text)
     for directory in ("etc/systemd/system", "usr/lib/systemd/system"):
         for path in sorted((rootfs / directory).rglob("*")):
             if path.is_file() and path.suffix in (".service", ".conf", ".socket", ".timer"):
