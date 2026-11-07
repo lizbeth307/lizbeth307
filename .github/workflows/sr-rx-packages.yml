@@ -240,9 +240,9 @@ jobs:
               if item["verdict"] == "NOT_FETCHED":
                   print("- %s: release tarball not in the cache" % item["component"])
                   continue
-              print("- %s %s vs tag %s tree: %s (%s / %s); differing paths %d (missing %d, extra %d, changed %d); tag commit %s%s"
+              print("- %s %s vs tag %s tree: %s (%s / %s); differing paths %d (missing %d, extra %d, other bytes %d, mode only %d); tag commit %s%s"
                     % (item["component"], item["compared"], item["tag"], item["verdict"], item["tarball_tree"], item["tag_tree"],
-                       item["missing"] + item["extra"] + item["changed"], item["missing"], item["extra"], item["changed"],
+                       item["missing"] + item["extra"] + item["changed"] + item["mode"], item["missing"], item["extra"], item["changed"], item["mode"],
                        item["tag_commit"], " = lock commit" if item["tag_commit_matches_lock"] else " DIFFERS from the lock commit " + str(item["lock_commit"])))
               if not item["tag_commit_matches_lock"]:
                   print("::warning::tag %s of %s is not the locked commit" % (item["tag"], item["component"]), file=sys.stderr)

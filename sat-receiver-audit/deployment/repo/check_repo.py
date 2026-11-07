@@ -525,8 +525,12 @@ def tree_id(entries):
 
 
 def compare_entries(tag, tarball):
+    """Paths only in the tag (missing), only in the tarball (extra), with other bytes (changed) and
+    with the same bytes but another git mode (mode: an executable bit a release tarball dropped or set)."""
+    common = set(tag) & set(tarball)
     return {"missing": sorted(set(tag) - set(tarball)), "extra": sorted(set(tarball) - set(tag)),
-            "changed": sorted(p for p in set(tag) & set(tarball) if tag[p] != tarball[p])}
+            "changed": sorted(p for p in common if tag[p][1] != tarball[p][1]),
+            "mode": sorted(p for p in common if tag[p][1] == tarball[p][1] and tag[p][0] != tarball[p][0])}
 
 
 def nested_archives(archive):
@@ -578,12 +582,13 @@ def compare_release_tarball(component, archive, clone, member=None):
             "tag_tree": tag_tree, "compared": closest["member"] or Path(component["source_cache_path"]).name, "tarball_tree": closest["tree"],
             "verdict": "EQUAL" if closest["tree"] == tag_tree else "DIFFERENT",
             "missing": len(differences["missing"]), "extra": len(differences["extra"]), "changed": len(differences["changed"]),
+            "mode": len(differences["mode"]),
             "candidates": [{k: c[k] for k in ("member", "root", "tree", "differing")} for c in candidates], "differences": differences}
 
 
 def tarball_vs_tag(cache, work, lock=None):
     """sources job: every release_tarballs entry in the fetched cache against its tag tree; writes
-    <id>-tree-diff.txt (missing/extra/changed paths) into work. Reported, not a gate."""
+    <id>-tree-diff.txt (missing/extra/changed/mode paths) into work. Reported, not a gate."""
     lock = lock or deploy.load(DEPLOYMENT / "sources.lock.json")
     root, work = Path(cache).resolve(strict=True), Path(work)
     work.mkdir(parents=True, exist_ok=True)
@@ -600,12 +605,13 @@ def tarball_vs_tag(cache, work, lock=None):
         report = compare_release_tarball(component, archive, clone, recipe_member(component["id"]))
         differences = report.pop("differences")
         diff = work / (component["id"] + "-tree-diff.txt")
-        diff.write_text("".join("%s %s\n" % (kind, path) for kind in ("missing", "extra", "changed") for path in differences[kind]), encoding="utf-8")
+        diff.write_text("".join("%s %s\n" % (kind, path) for kind in ("missing", "extra", "changed", "mode") for path in differences[kind]),
+                        encoding="utf-8")
         report["diff_file"] = diff.name
         shutil.rmtree(clone, ignore_errors=True)
         reports.append(report)
     return {"status": "RELEASE_TARBALLS_COMPARED_WITH_TAGS", "components": reports, "hardware_ready": False,
-            "scope": "Reported, not a gate: which paths a release tarball adds, lacks or changes against its tag tree."}
+            "scope": "Reported, not a gate: which paths a release tarball adds, lacks, changes or re-modes against its tag tree."}
 
 
 # --- runtime check: one fresh chroot per job, offline -------------------------------------------
