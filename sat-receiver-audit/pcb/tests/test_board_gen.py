@@ -480,5 +480,76 @@ class PlacementGroups(unittest.TestCase):
                 bg.validate_spec(candidate, 'ENC')
 
 
+class CutoutsViasAndLayerTypes(unittest.TestCase):
+    """W2 PCB-PWRB: contract cutouts, scripted vias, zone pad connection and copper layer types (optional spec keys)."""
+
+    def enc(self):
+        return bg.read_json(bg.spec_path('ENC'))
+
+    def test_cutout_boxes_read_x_y_w_h(self):
+        self.assertEqual(bg.cutout_boxes({'cutouts_mm': [[7.5, 39.5, 26.4, 26.4]]}), [[7.5, 39.5, 33.9, 65.9]])
+        self.assertEqual(bg.cutout_boxes({}), [])
+
+    def test_group_region_and_parts_stay_out_of_cutouts(self):
+        template = [{'ref': 'C1', 'anchor': None}]
+        geometry = {'C1': bg.footprint_geometry(C0603.read_text(encoding='utf-8'))}
+        outline = [[0, 0], [40, 0], [40, 20], [0, 20]]
+        spec = {'groups': [{'id': 'G', 'region': [2, 2, 12, 12], 'members': [{'ref': 'C1'}]}]}
+        anchors, _rows = bg.place_groups(spec, template, geometry, [], outline, bg.cutout_boxes({'cutouts_mm': [[20, 5, 10, 10]]}))
+        self.assertIn('C1', anchors)
+        spec['groups'][0]['region'] = [15, 2, 25, 12]
+        with self.assertRaises(SystemExit):
+            bg.place_groups(spec, template, geometry, [], outline, bg.cutout_boxes({'cutouts_mm': [[20, 5, 10, 10]]}))
+
+    def test_optional_keys_validate(self):
+        spec = self.enc()
+        spec['layers']['types'] = {'B.Cu': 'signal'}
+        spec['pre_route']['vias'] = [{'id': 'V1', 'net': 'GND', 'at': [12.0, 4.5], 'drill_mm': 0.3, 'diameter_mm': 0.6}]
+        spec['post_route_zones'][0]['pad_connection'] = 'tht_thermal'
+        bg.validate_spec(spec, 'ENC')
+        bad = []
+        for key, value in (('types', {'In1.Cu': 'power'}), ('types', {'F.Cu': 'plane'})):
+            s = copy.deepcopy(spec)
+            s['layers'][key] = value
+            bad.append(s)  # In1.Cu does not exist on a 2-layer board; unknown type
+        s = copy.deepcopy(spec)
+        s['pre_route']['vias'][0]['net'] = 'NOPE'
+        bad.append(s)
+        s = copy.deepcopy(spec)
+        s['pre_route']['vias'][0]['drill_mm'] = 0.7
+        bad.append(s)  # drill not below the diameter
+        s = copy.deepcopy(spec)
+        s['post_route_zones'][0]['pad_connection'] = 'spokes'
+        bad.append(s)
+        for i, candidate in enumerate(bad):
+            with self.assertRaises(SystemExit, msg=i):
+                bg.validate_spec(candidate, 'ENC')
+
+    def test_router_extras_and_edge_strips(self):
+        self.assertEqual(bg.router_extra({}), [])
+        self.assertEqual(bg.router_extra({'fanout': False, 'ignore_net_classes': ['SCRIPTED_A', 'B']}),
+                         ['--router.fanout.enabled=false', '-inc', 'SCRIPTED_A,B'])
+        cmd = bg.freerouting_command('/t/java', '/t/fr.jar', 'b.dsn', 'b.ses', 20, 1, '/t/u', '00:05:00', ['-inc', 'X'])
+        self.assertEqual(cmd[-2:], ['-inc', 'X'])
+        for bad in ({'fanout': 'no'}, {'ignore_net_classes': ['A B']}):
+            with self.assertRaises(SystemExit):
+                bg.router_extra(bad)
+        strip = bg.edge_strip((0.0, 0.0), (10.0, 0.0), 0.2)
+        xs, ys = [p[0] for p in strip], [p[1] for p in strip]
+        self.assertEqual((round(min(xs), 6), round(max(xs), 6), round(min(ys), 6), round(max(ys), 6)), (-0.2, 10.2, -0.2, 0.2))
+
+    def test_pwr_b_spec_resolves_with_the_b2b_placeholder(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('PWR_B')
+        self.assertTrue(contract['cutouts_mm'])
+        self.assertTrue(bg.domain_audit(spec, bg.read_json(bg.BASE / spec['partition']))['passed'])
+        b2b = next(t for t in template if t['ref'] == 'B2B1')
+        self.assertEqual(sum(1 for n in b2b['pads'].values() if n == 'LAB5'), 4)  # ceil(4 A / 1 A), b2b-nets.json
+        status = {b['status'] for b in bg.boundary_audit(spec, template, graph, db)}
+        self.assertEqual(len(status), 1)
+        self.assertTrue(next(iter(status)).startswith('provisional: B2B ref pending'))
+
+
 if __name__ == '__main__':
     unittest.main()
