@@ -70,7 +70,11 @@ def _port_box(P, pid):
     if pid == "VEML7700":
         v = m["top_face"]["veml7700_window"]
         return (v["x"], H - t, v["z"], v["x"], H - t, v["z"])
-    raise KeyError(f"harness_routes: unknown port {pid}")
+    raise MissingWaypoint(f"port {pid}")
+
+
+class MissingWaypoint(KeyError):
+    """A waypoint names a box, opening, port or edge zone that the model does not have (renamed or removed item)."""
 
 
 def boxes(P):
@@ -85,7 +89,9 @@ def boxes(P):
 
 def _edge_point(P, wp):
     """Point on a board edge zone (boards.json edge_zones), dz above the component face (towards the components)."""
-    b = P.boards["boards"][wp["edge"]]
+    b = P.boards["boards"].get(wp["edge"])
+    if b is None or not 0 <= wp["zone"] < len(b.get("edge_zones", [])):
+        raise MissingWaypoint(f"edge {wp['edge']} zone {wp['zone']}")
     ez = b["edge_zones"][wp["zone"]]
     if "place_at" in b:
         ox, oy = b["place_at"][wp["at_place"]]
@@ -116,11 +122,15 @@ def point(P, wp, prev, named, opens):
         p = _edge_point(P, wp)
     else:
         if "box" in wp:
+            if wp["box"] not in named:
+                raise MissingWaypoint(f"box {wp['box']}")
             bx = named[wp["box"]][1]
         elif "port" in wp:
             bx = _port_box(P, wp["port"])
         else:
             key = next(f"{k}:{wp[k]}" for k in ("slot", "notch", "window") if k in wp)
+            if key not in opens:
+                raise MissingWaypoint(key.replace(":", " "))
             bx = opens[key][1]
         f = wp.get("at", [0.5, 0.5, 0.5])
         p = [bx[i] + f[i] * (bx[i + 3] - bx[i]) for i in range(3)]
@@ -216,8 +226,13 @@ def evaluate_route(P, sid, spec, named, opens, wires):
                     "status": "OPEN (end provisional): " + (spec.get("open") or "no route")})
         return out
     pts = []
-    for wp in via:
-        pts.append(point(P, wp, pts[-1] if pts else None, named, opens))
+    try:
+        for wp in via:
+            pts.append(point(P, wp, pts[-1] if pts else None, named, opens))
+    except MissingWaypoint as e:      # a renamed or removed layout item shows up as OPEN, not as a crash of build.py
+        msg = f"waypoint {e.args[0]} not in the model"
+        out.update({"points_mm": [], "length_mm": None, "provisional": prov + [msg], "status": "OPEN (end provisional): " + msg})
+        return out
     path = sum(math.dist(a, b) for a, b in zip(pts, pts[1:]))
     od, n = bundle(P, sid, wires) if spec.get("wires") is None else (round(hr["insulation_max_mm"]["default"] * math.sqrt(spec["wires"] / hr["fill"]), 2), spec["wires"])
     bends, ang = 0, 0.0
@@ -319,6 +334,7 @@ def pps_budget(P, res):
         out["branch"] = pb["branch"]
         out["branch_mm"] = br.get("length_mm")
         out["branch_provisional"] = bool(br.get("provisional"))
+        out["branch_provisional_ends"] = list(br.get("provisional") or [])
         out["value_mm"] = br.get("length_mm")
     else:
         out["value_mm"] = via
@@ -341,7 +357,9 @@ def route_rules(P, res=None):
         what = (f"{'+'.join(pb['via_segments'])} = {pb['via_segments_mm']} mm > {lim:g}: decision (build/15 W2 MECH-1) — {pb['decision']}; "
                 f"branch {pb['branch']} = {v} mm" if "branch" in pb else f"{'+'.join(pb['via_segments'])} = {v} mm")
         if prov:
-            r1 = f"OPEN (end provisional): {what} {'<=' if v <= lim else '>'} {lim:g} (model; ends on board edge zones / envelope faces until the header and pin positions are placed)"
+            ends = pb.get("branch_provisional_ends") if "branch" in pb else []
+            r1 = (f"OPEN (end provisional): {what} {'<=' if v <= lim else '>'} {lim:g} (model; ends on board edge zones / envelope faces until the header and pin positions are placed)"
+                  + (f"; the margin depends on: {'; '.join(ends)}" if ends else ""))
         else:
             r1 = f"{'PASS' if v <= lim else 'FAIL'} (model): {what}"
     rows = [{"id": "R-PPS-LEN", "rule": f"PPS path Q6A J20.7 -> LC76G: harness length <= {lim:g} mm (STACK 5.2 'UART7/PPS wiring <= 20 cm'; E3 J301 note)",
