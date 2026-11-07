@@ -1033,5 +1033,406 @@ class SmokeFailedUnitStatusTests(unittest.TestCase):
         self.assertIn('"systemctl", "status", "--no-pager"', source)
 
 
+def _lock():
+    return json.loads((HERE / "sources.lock.json").read_text(encoding="utf-8"))
+
+
+def _locked_deb(lock, name):
+    return next(d for c in lock["components"] for d in c.get("binary_debs") or [] if d["package"] == name)
+
+
+class PackageClosureFileTests(unittest.TestCase):
+    """W2 IMG-2 (D-02): package-closure.json against sources.lock.json; chrony/gpsd/libgps30t64 are the locked debs."""
+
+    def setUp(self):
+        self.lock = _lock()
+        self.closure = json.loads((HERE / "image/package-closure.json").read_text(encoding="utf-8"))
+
+    def test_committed_closure_is_consistent_with_the_lock(self):
+        self.assertEqual(build_image.closure_issues(self.closure, self.lock), [])
+        self.assertEqual(build_image.load_closure()["packages"], self.closure["packages"])
+        by_name = {p["package"]: p for p in self.closure["packages"]}
+        self.assertEqual(sorted(by_name), ["chrony", "gpsd", "libgps30t64", "tzdata", "tzdata-legacy"])
+        for name in ("chrony", "gpsd", "libgps30t64"):
+            deb = _locked_deb(self.lock, name)
+            self.assertEqual({k: by_name[name][k] for k in ("version", "architecture", "filename", "sha256", "size")},
+                             {k: deb[k] for k in ("version", "architecture", "filename", "sha256", "size")}, name)
+        self.assertEqual((by_name["tzdata"]["r2_version"], by_name["tzdata"]["version"]), ("2025b-0ubuntu0.24.04.1", "2026e-0ubuntu0.24.04.1"))
+        self.assertEqual(by_name["tzdata-legacy"]["version"], by_name["tzdata"]["version"])  # one source version
+        self.assertTrue(all(by_name[n]["r2_version"] is None for n in ("chrony", "gpsd", "libgps30t64", "tzdata-legacy")))
+        self.assertEqual(self.closure["expected_removed"], ["systemd-timesyncd"])
+        self.assertEqual(self.closure["expected_accounts"], ["_chrony", "gpsd"])
+        self.assertEqual(self.closure["snapshot"]["timestamp"], self.lock["apt_snapshot"]["timestamp"])
+        self.assertEqual(self.closure["base"]["sha256"], self.lock["target"]["base_image_sha256"])
+        self.assertEqual(build_image.compare_closure(self.closure, copy.deepcopy(self.closure)), [])
+
+    def test_drift_from_the_lock_is_refused(self):
+        cases = []
+        bad = copy.deepcopy(self.closure)
+        next(p for p in bad["packages"] if p["package"] == "chrony")["sha256"] = "0" * 64
+        cases.append((bad, "binary_debs"))
+        bad = copy.deepcopy(self.closure)
+        bad["suites"][0]["inrelease_sha256"] = "1" * 64
+        cases.append((bad, "suites"))
+        bad = copy.deepcopy(self.closure)
+        bad["packages"].reverse()
+        cases.append((bad, "sorted"))
+        bad = copy.deepcopy(self.closure)
+        bad["snapshot"]["archive"] = "http://ports.ubuntu.com/ubuntu-ports"
+        cases.append((bad, "snapshot"))
+        bad = copy.deepcopy(self.closure)
+        bad["expected_removed"] = []
+        cases.append((bad, "expected_removed"))
+        for closure, word in cases:
+            self.assertTrue(any(word in issue for issue in build_image.closure_issues(closure, self.lock)), word)
+        changed = copy.deepcopy(self.closure)
+        changed["packages"][0]["version"] = "9"
+        self.assertEqual(build_image.compare_closure(changed, self.closure), ["packages"])
+
+    def test_fetch_takes_each_deb_from_the_snapshot_by_filename(self):
+        calls = []
+        with tempfile.TemporaryDirectory() as cache, \
+                patch.object(build_image, "_download", lambda url, target, sha, size, label: calls.append((url, Path(target), sha, size)) or "FETCHED"):
+            build_image.fetch_closure(cache, self.closure)
+            for (url, target, sha, size), entry in zip(calls, self.closure["packages"]):
+                self.assertEqual(url, "https://snapshot.ubuntu.com/ubuntu/20261020T000000Z/" + entry["filename"])
+                self.assertEqual(target, Path(cache) / "closure" / Path(entry["filename"]).name)
+                self.assertEqual((sha, size), (entry["sha256"], entry["size"]))
+        self.assertEqual(len(calls), len(self.closure["packages"]))
+
+
+class DebVersionTests(unittest.TestCase):
+    def test_dpkg_ordering(self):
+        smaller = (("1.0~rc1", "1.0"), ("1.0", "1.0-1"), ("1.0-1", "1.0-1ubuntu1"), ("3.25-3ubuntu3", "3.25-3ubuntu3.2"),
+                   ("2025b-0ubuntu0.24.04.1", "2026e-0ubuntu0.24.04.1"), ("2024a-2~", "2024a-2ubuntu1"), ("1:9", "2:0.1"),
+                   ("255.4-1ubuntu8.12", "255.4-1ubuntu8.18"), ("1.9", "1.10"), ("1.0a", "1.0b"), ("1.0", "1.0+lab1"))
+        for a, b in smaller:
+            self.assertLess(build_image.deb_version_compare(a, b), 0, (a, b))
+            self.assertGreater(build_image.deb_version_compare(b, a), 0, (b, a))
+        self.assertEqual(build_image.deb_version_compare("0:1.0-1", "1.0-1"), 0)
+        self.assertEqual(build_image.deb_version_compare("1.00", "1.0"), 0)
+        self.assertTrue(build_image.version_satisfies("1:2.66-5ubuntu2.2", ">=", "1:2.32-1"))
+        self.assertTrue(build_image.version_satisfies("2.39-0ubuntu8.7", ">=", "2.38"))
+        self.assertFalse(build_image.version_satisfies("2025b-0ubuntu0.24.04.1", "<<", "2024a-2~"))
+        self.assertTrue(build_image.version_satisfies("x", None, None))
+
+    def test_relations(self):
+        groups = build_image.parse_relations("adduser (>= 3.34), netbase | systemd-sysv, python3:any, libstdc++6 (>= 5) [arm64]")
+        self.assertEqual(groups, [[("adduser", None, ">=", "3.34")], [("netbase", None, None, None), ("systemd-sysv", None, None, None)],
+                                  [("python3", "any", None, None)], [("libstdc++6", None, ">=", "5")]])
+        with self.assertRaises(build_image.BuildError):
+            build_image.parse_relations("Bad Name")
+
+
+def _stanza(package, version, **fields):
+    data = {"package": package, "version": version, "architecture": fields.pop("architecture", "arm64"),
+            "filename": fields.pop("filename", "pool/main/%s/%s/%s_%s_arm64.deb" % (package[0], package, package, version)),
+            "sha256": fields.pop("sha256", hashlib.sha256((package + version).encode()).hexdigest()), "size": str(fields.pop("size", 1000))}
+    data.update({k.replace("_", "-"): v for k, v in fields.items()})
+    return data
+
+
+class ClosureResolverTests(unittest.TestCase):
+    """build_image.resolve_closure on a small signed-index model of the snapshot and the r2 dpkg status."""
+
+    def setUp(self):
+        self.lock = _lock()
+        locked = {n: _locked_deb(self.lock, n) for n in ("chrony", "gpsd", "libgps30t64")}
+
+        def pinned(name, **fields):
+            deb = locked[name]
+            return _stanza(name, deb["version"], filename=deb["filename"], sha256=deb["sha256"], size=deb["size"], **fields)
+        self.stanzas = [
+            ("noble", "main", _stanza("tzdata-legacy", "2024a-2ubuntu1", architecture="all", depends="tzdata", source="tzdata")),
+            ("noble", "main", _stanza("tzdata", "2024a-2ubuntu1", architecture="all")),
+            ("noble-updates", "main", pinned("chrony", depends="adduser (>= 3.130), tzdata-legacy, libc6 (>= 2.38)",
+                                             conflicts="time-daemon", replaces="time-daemon", provides="time-daemon",
+                                             breaks="network-manager (<< 1.20.0-1~)")),
+            ("noble-updates", "main", _stanza("tzdata-legacy", "2026e-0ubuntu0.24.04.1", architecture="all", depends="tzdata",
+                                              source="tzdata", breaks="tzdata (<< 2024a-2~)")),
+            ("noble-updates", "main", _stanza("tzdata", "2026e-0ubuntu0.24.04.1", architecture="all", depends="debconf (>= 0.5) | debconf-2.0")),
+            ("noble-updates", "main", pinned("gpsd", depends="adduser (>= 3.34), libgps30t64 (= 3.25-3ubuntu3.2), netbase | systemd-sysv",
+                                             source="gpsd")),
+            ("noble-updates", "main", pinned("libgps30t64", source="gpsd", depends="libc6 (>= 2.38)")),
+            ("noble-security", "main", pinned("libgps30t64", source="gpsd", depends="libc6 (>= 2.38)")),
+            ("noble-updates", "main", _stanza("systemd-timesyncd", "255.4-1ubuntu8.17", source="systemd", conflicts="time-daemon",
+                                              provides="time-daemon", depends="systemd")),
+            ("noble-updates", "main", _stanza("debconf", "1.5.86ubuntu1", architecture="all", provides="debconf-2.0")),
+            ("noble-updates", "universe", _stanza("ntpsec", "1.2.2", architecture="armhf")),  # other architectures are ignored
+        ]
+        self.installed = {"adduser": "3.137ubuntu1", "tzdata": "2025b-0ubuntu0.24.04.1", "systemd-timesyncd": "255.4-1ubuntu8.12",
+                          "systemd-sysv": "255.4-1ubuntu8.12", "systemd": "255.4-1ubuntu8.12", "libc6:arm64": "2.39-0ubuntu8.7",
+                          "debconf": "1.5.86ubuntu1", "network-manager": "1.46.0-1ubuntu2.5"}
+
+    def test_the_r2_closure_of_chrony_and_gpsd(self):
+        resolved = build_image.resolve_closure(self.stanzas, self.installed, self.lock)
+        self.assertEqual(resolved["issues"], [])
+        by_name = {p["package"]: p for p in resolved["packages"]}
+        self.assertEqual(sorted(by_name), ["chrony", "gpsd", "libgps30t64", "tzdata", "tzdata-legacy"])
+        self.assertEqual(by_name["tzdata-legacy"]["version"], "2026e-0ubuntu0.24.04.1")  # apt's candidate: the newest
+        self.assertEqual(by_name["libgps30t64"]["suite"], "noble-updates")  # the first suite listing the version
+        self.assertTrue(by_name["tzdata"]["reason"].startswith("same source as tzdata-legacy"))
+        self.assertTrue(by_name["tzdata-legacy"]["reason"].startswith("Depends of chrony"))
+        self.assertEqual(resolved["expected_removed"], ["systemd-timesyncd"])
+        self.assertIn("time-daemon", resolved["removed_because"]["systemd-timesyncd"])
+        recipe = json.loads((HERE / "image/recipe.json").read_text())
+        document = build_image.closure_document(resolved, self.lock, recipe, len(self.installed), "2026-11-07")
+        self.assertEqual(build_image.closure_issues(document, self.lock), [])
+        self.assertEqual(list(document["packages"][0]), list(build_image.CLOSURE_PACKAGE_KEYS))
+
+    def test_unsatisfiable_dependencies_and_broken_reverse_dependencies_are_issues(self):
+        stanzas = [s for s in self.stanzas if s[2]["package"] != "libgps30t64"]
+        issues = build_image.resolve_closure(stanzas, self.installed, self.lock)["issues"]
+        self.assertTrue(any("libgps30t64" in i for i in issues), issues)
+        stanzas = self.stanzas + [("noble-updates", "main", _stanza("timeclient", "1", depends="systemd-timesyncd"))]
+        issues = build_image.resolve_closure(stanzas, dict(self.installed, timeclient="1"), self.lock)["issues"]
+        self.assertTrue(any(i.startswith("removing systemd-timesyncd breaks") for i in issues), issues)
+        # A dependency r2 satisfies through a virtual package (time-daemon here) needs no closure package.
+        stanzas = self.stanzas + [("noble-updates", "main", _stanza("clockuser", "1", depends="time-daemon"))]
+        resolved = build_image.resolve_closure(stanzas, dict(self.installed, clockuser="1"), self.lock)
+        self.assertEqual(resolved["issues"], [])
+
+
+class ClosureInstallTests(unittest.TestCase):
+    """install_closure: the apt plan and the dpkg status change must both be exactly the closure."""
+
+    STATUS = ("Package: tzdata\nStatus: install ok installed\nVersion: 2025b-0ubuntu0.24.04.1\n\n"
+              "Package: systemd-timesyncd\nStatus: install ok installed\nVersion: 255.4-1ubuntu8.12\n\n"
+              "Package: adduser\nStatus: install ok installed\nVersion: 3.137ubuntu1\n\n")
+    PLAN = ("Reading package lists...\nThe following packages will be REMOVED:\n  systemd-timesyncd*\n"
+            "Purg systemd-timesyncd [255.4-1ubuntu8.12]\n"
+            "Inst tzdata [2025b-0ubuntu0.24.04.1] (2026e-0ubuntu0.24.04.1 local-deb [all])\n"
+            "Inst chrony (4.5-1ubuntu4.2 local-deb [arm64])\n"
+            "Conf tzdata (2026e-0ubuntu0.24.04.1 local-deb [all])\nConf chrony (4.5-1ubuntu4.2 local-deb [arm64])\n")
+
+    def closure(self, cache):
+        packages = []
+        for name, version, r2 in (("chrony", "4.5-1ubuntu4.2", None), ("tzdata", "2026e-0ubuntu0.24.04.1", "2025b-0ubuntu0.24.04.1")):
+            data = (name + version).encode()
+            filename = "pool/main/%s/%s/%s_%s_all.deb" % (name[0], name, name, version)
+            (Path(cache) / "closure").mkdir(parents=True, exist_ok=True)
+            (Path(cache) / "closure" / Path(filename).name).write_bytes(data)
+            packages.append({"package": name, "version": version, "architecture": "all", "filename": filename, "suite": "noble-updates",
+                             "sha256": hashlib.sha256(data).hexdigest(), "size": len(data), "r2_version": r2, "reason": "test"})
+        return {"packages": packages, "expected_removed": ["systemd-timesyncd"], "expected_accounts": ["_chrony"],
+                "snapshot": {"timestamp": "20261020T000000Z"}}
+
+    def fake_chroot(self, root, calls, after_status, plan=None):
+        def run(where, argv, extra_env=None, check=True):
+            calls.append((list(argv), extra_env))
+            if "-s" in argv:
+                return subprocess.CompletedProcess(argv, 0, plan or self.PLAN, "")
+            (root / "var/lib/dpkg/status").write_text(after_status)
+            (root / "etc/passwd").write_text("root:x:0:0::/root:/bin/bash\n_chrony:x:105:110:Chrony daemon:/var/lib/chrony:/usr/sbin/nologin\n")
+            return subprocess.CompletedProcess(argv, 0, "Setting up chrony (4.5-1ubuntu4.2) ...\n", "")
+        return run
+
+    def root(self, temp):
+        root = Path(temp) / "root"
+        (root / "var/lib/dpkg").mkdir(parents=True)
+        (root / "etc").mkdir()
+        (root / "var/lib/dpkg/status").write_text(self.STATUS)
+        return root
+
+    def test_plan_and_status_equal_to_the_closure_pass(self):
+        after = self.STATUS.replace("2025b-0ubuntu0.24.04.1", "2026e-0ubuntu0.24.04.1").replace(
+            "Package: systemd-timesyncd\nStatus: install ok installed\nVersion: 255.4-1ubuntu8.12\n\n",
+            "Package: chrony\nStatus: install ok installed\nVersion: 4.5-1ubuntu4.2\n\n")
+        with tempfile.TemporaryDirectory() as temp:
+            root, calls = self.root(temp), []
+            closure = self.closure(Path(temp) / "cache")
+            with patch.object(build_image, "chroot", self.fake_chroot(root, calls, after)):
+                record = build_image.install_closure(root, Path(temp) / "cache", closure)
+            self.assertFalse((root / build_image.CLOSURE_CHROOT_DIR).exists())  # the debs leave the image
+        self.assertEqual(record["installed"], {"chrony": "4.5-1ubuntu4.2", "tzdata": "2026e-0ubuntu0.24.04.1"})
+        self.assertEqual(record["removed"], ["systemd-timesyncd"])
+        self.assertEqual(record["upgraded"], {"tzdata": {"from": "2025b-0ubuntu0.24.04.1", "to": "2026e-0ubuntu0.24.04.1"}})
+        self.assertEqual(record["accounts"], {"_chrony": {"uid": 105, "primary_gid": 110}})
+        simulate, install = calls
+        self.assertEqual(simulate[0][:3], ["apt-get", "install", "-s"])
+        self.assertNotIn("-s", install[0])
+        for argv, env in calls:
+            self.assertIn("--purge", argv)
+            self.assertIn("--no-install-recommends", argv)
+            for option in ("Dir::Etc::SourceList=/dev/null", "Dir::Etc::Preferences=/dev/null", "Dpkg::Options::=--force-confold",
+                           "Dir::Etc::SourceParts=/" + build_image.CLOSURE_CHROOT_DIR + "/parts.d"):
+                self.assertIn(option, argv)
+            self.assertEqual([a for a in argv if a.endswith(".deb")],
+                             ["/" + build_image.CLOSURE_CHROOT_DIR + "/" + Path(p["filename"]).name for p in closure["packages"]])
+            self.assertEqual(env, build_image.CLOSURE_ENV)
+
+    def test_any_other_plan_or_change_stops_the_build(self):
+        plan = self.PLAN + "Inst ntpsec (1.2.2 Ubuntu:24.04/noble [arm64])\n"
+        with tempfile.TemporaryDirectory() as temp:
+            root, calls = self.root(temp), []
+            closure = self.closure(Path(temp) / "cache")
+            with patch.object(build_image, "chroot", self.fake_chroot(root, calls, self.STATUS, plan)), \
+                    self.assertRaisesRegex(build_image.BuildError, "apt plan"):
+                build_image.install_closure(root, Path(temp) / "cache", closure)
+            self.assertEqual(len(calls), 1)  # refused before the real install
+            with patch.object(build_image, "chroot", self.fake_chroot(root, calls, self.STATUS)), \
+                    self.assertRaisesRegex(build_image.BuildError, "dpkg status after"):
+                build_image.install_closure(root, Path(temp) / "cache", closure)  # nothing changed: closure not installed
+            (root / "var/lib/dpkg/status").write_text(self.STATUS.replace("2025b", "2025a"))
+            with self.assertRaisesRegex(build_image.BuildError, "resolved against"):
+                build_image.install_closure(root, Path(temp) / "cache", closure)
+            (root / "var/lib/dpkg/status").write_text(self.STATUS)
+            (Path(temp) / "cache/closure" / Path(closure["packages"][0]["filename"]).name).write_bytes(b"other")
+            with patch.object(build_image, "chroot", self.fake_chroot(root, [], self.STATUS)), \
+                    self.assertRaisesRegex(build_image.BuildError, "closure deb differs"):
+                build_image.install_closure(root, Path(temp) / "cache", closure)
+
+    def test_apt_simulation_and_status_changes(self):
+        plan = build_image.apt_simulation(self.PLAN)
+        self.assertEqual(plan, {"install": {"chrony": "4.5-1ubuntu4.2", "tzdata": "2026e-0ubuntu0.24.04.1"}, "remove": ["systemd-timesyncd"]})
+        changes = build_image.status_changes({"a": "1", "b:arm64": "2", "c": "3"}, {"a": "1", "b:arm64": "3", "d": "1"})
+        self.assertEqual(changes, {"b": ("2", "3"), "c": ("3", None), "d": (None, "1")})
+
+
+class ChronyConfInstallTests(unittest.TestCase):
+    """install_chrony_conf: the SR-RX file replaces chrony's ucf copy and chronyd -p finds no network directive."""
+
+    def parse(self, extra=""):
+        def run(where, argv, extra_env=None, check=True):
+            text = (Path(where) / argv[-1].lstrip("/")).read_text(encoding="utf-8")
+            lines = [l for l in text.splitlines() if l.strip() and not l.startswith("#") and not l.startswith("confdir")]
+            return subprocess.CompletedProcess(argv, 0, "\n".join(lines) + "\n" + extra, "")
+        return run
+
+    def test_offline_file_is_written_and_parsed(self):
+        sys.path.insert(0, str(HERE / "system"))
+        self.addCleanup(sys.path.remove, str(HERE / "system"))
+        import system_files
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "etc/chrony").mkdir(parents=True)
+            (root / "etc/chrony/chrony.conf").write_text("pool ntp.ubuntu.com iburst maxsources 4\n")
+            with patch.object(build_image, "chroot", self.parse()):
+                record = build_image.install_chrony_conf(root)
+            self.assertEqual((root / "etc/chrony/chrony.conf").read_text(encoding="utf-8"), system_files.chrony_conf())
+            self.assertEqual(record["sha256"], hashlib.sha256(system_files.chrony_conf().encode()).hexdigest())
+            self.assertEqual(record["network_directives"], [])
+            self.assertIn("rtcsync", record["chronyd_p_directives"])
+            self.assertIsNotNone(record["replaced_sha256"])
+            with patch.object(build_image, "chroot", self.parse("pool 0.ubuntu.pool.ntp.org iburst\n")), \
+                    self.assertRaisesRegex(build_image.BuildError, "pool"):
+                build_image.install_chrony_conf(root)  # e.g. a *.conf in conf.d that adds a pool
+        with tempfile.TemporaryDirectory() as temp, self.assertRaisesRegex(build_image.BuildError, "not installed"):
+            build_image.install_chrony_conf(Path(temp))
+
+    def test_staged_gnss_mode_is_read_from_the_gpsd_defaults(self):
+        sys.path.insert(0, str(HERE / "system"))
+        self.addCleanup(sys.path.remove, str(HERE / "system"))
+        import system_files
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self.assertIsNone(build_image.staged_gnss_mode(root))
+            (root / "etc/default").mkdir(parents=True)
+            for mode in ("gpsd", "raw", "off"):
+                (root / "etc/default/gpsd").write_text(system_files.gpsd_defaults(mode))
+                self.assertEqual(build_image.staged_gnss_mode(root), mode)
+            (root / "etc/default/gpsd").write_text('DEVICES=""\n')  # the package's own copy
+            self.assertIsNone(build_image.staged_gnss_mode(root))
+
+
+class SmokeClosureTests(unittest.TestCase):
+    """smoke_qemu.closure_mismatches: the booted slot against image-manifest.json package_closure (W2 IMG-2)."""
+
+    RECORDED = {"installed": {"chrony": "4.5-1ubuntu4.2", "gpsd": "3.25-3ubuntu3.2"}, "removed": ["systemd-timesyncd"],
+                "accounts": {"_chrony": {"uid": 105, "primary_gid": 110}, "gpsd": {"uid": 106, "primary_gid": 20}},
+                "gnss_mode": "gpsd", "chrony_conf": {"sha256": "c" * 64}}
+
+    def observed(self):
+        return {"dpkg": {"chrony": "4.5-1ubuntu4.2\tinstalled", "gpsd": "3.25-3ubuntu3.2\tinstalled", "systemd-timesyncd": ""},
+                "accounts": {"_chrony": "_chrony:x:105:110:Chrony daemon:/var/lib/chrony:/usr/sbin/nologin",
+                             "gpsd": "gpsd:x:106:20:GPSD system user:/run/gpsd:/bin/false"},
+                "units": {"chrony.service": {"LoadState": "loaded", "ActiveState": "active"},
+                          "gpsd.service": {"LoadState": "loaded", "ActiveState": "active"},
+                          "gpsd.socket": {"LoadState": "loaded", "ActiveState": "active"},
+                          "systemd-timesyncd.service": {"LoadState": "not-found", "ActiveState": "inactive"}},
+                "chrony_conf_sha256": "c" * 64}
+
+    def setUp(self):
+        import smoke_qemu
+        self.smoke = smoke_qemu
+
+    def test_the_built_closure_passes(self):
+        self.assertEqual(self.smoke.closure_mismatches(self.observed(), self.RECORDED), [])
+        raw = dict(self.RECORDED, gnss_mode="raw")
+        observed = self.observed()
+        for unit in ("gpsd.service", "gpsd.socket"):
+            observed["units"][unit] = {"LoadState": "masked", "ActiveState": "inactive"}
+        self.assertEqual(self.smoke.closure_mismatches(observed, raw), [])
+
+    def test_every_deviation_is_a_mismatch(self):
+        observed = self.observed()
+        observed["dpkg"]["systemd-timesyncd"] = "255.4-1ubuntu8.12\tinstalled"
+        observed["dpkg"]["chrony"] = ""
+        observed["accounts"]["gpsd"] = "gpsd:x:107:20::/run/gpsd:/bin/false"
+        observed["units"]["chrony.service"]["ActiveState"] = "failed"
+        observed["units"]["systemd-timesyncd.service"]["LoadState"] = "loaded"
+        observed["units"]["gpsd.service"]["ActiveState"] = "failed"
+        observed["chrony_conf_sha256"] = "d" * 64
+        mismatches = self.smoke.closure_mismatches(observed, self.RECORDED)
+        self.assertEqual(len(mismatches), 7, mismatches)
+        self.assertEqual(self.smoke.closure_mismatches(self.observed(), {}),
+                         ["image-manifest.json records no package_closure (build_image.install_closure)"])
+        self.assertTrue(self.smoke.closure_mismatches({"unavailable": "OSError"}, self.RECORDED)[0].startswith("no package closure report"))
+        self.assertTrue(self.smoke.closure_mismatches(self.observed(), dict(self.RECORDED, gnss_mode=None)))
+
+    def test_check_carries_closure_and_display_manager_mismatches(self):
+        recipe = json.loads((HERE / "image/recipe.json").read_text())
+        self.assertTrue({"gdm.service", "gdm3.service"} <= set(recipe["mask"]["units"]))
+        name, expect = self.smoke.SCENARIOS[2]
+        report = {"boot_check": {"slot": "A", "status": "BOOT_SELF_CHECK_OK"}, "bless_boot_status": "clean", "pending_jobs": [],
+                  "units": {"srrx-boot-check.service": {"ActiveState": "active"}, "systemd-bless-boot.service": {"ActiveState": "inactive"},
+                            "srrx.service": {"ActiveState": "inactive", "UnitFileState": "disabled"}},
+                  "masked_units": {u: {"LoadState": "masked"} for u in recipe["mask"]["units"]},
+                  "package_closure": self.observed(), "display_manager": {"LoadState": "masked"}}
+        entries = sorted(["labA.conf", "labB+0-1.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        result = {"qemu_exit": 0, "report": report, "entries_after": entries}
+        self.assertEqual(self.smoke.check(name, result, expect, {}, None, self.RECORDED)["status"], "MODEL_PASS")
+        report["display_manager"] = {"LoadState": "loaded"}
+        report["package_closure"]["units"]["chrony.service"]["ActiveState"] = "inactive"
+        mismatches = self.smoke.check(name, result, expect, {}, None, self.RECORDED)["mismatches"]
+        self.assertEqual(len(mismatches), 2, mismatches)
+        self.assertTrue(any(m.startswith("display-manager.service") for m in mismatches))
+
+
+class GdmMaskAndFactsTests(unittest.TestCase):
+    """D-12 step 1: gdm masked by the recipe; the builder refuses a display-manager link to an unmasked unit.
+    The facts record dpkg holds, the display-manager link and the netplan files."""
+
+    def test_display_manager_must_point_to_a_masked_unit(self):
+        recipe = json.loads((HERE / "image/recipe.json").read_text())
+        for target, ok in (("/lib/systemd/system/gdm3.service", True), ("/usr/lib/systemd/system/gdm.service", True),
+                           ("/usr/lib/systemd/system/lightdm.service", False)):
+            with tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                (root / "etc/systemd/system").mkdir(parents=True)
+                (root / "etc/passwd").write_text("root:x:0:0:root:/root:/bin/bash\n")
+                try:
+                    os.symlink(target, root / "etc/systemd/system/display-manager.service")
+                except OSError:
+                    self.skipTest("symlinks unavailable")
+                with patch.object(build_image, "run", lambda argv, **kwargs: None), patch.object(build_image, "chroot", lambda *a, **k: None):
+                    if ok:
+                        self.assertEqual(build_image.hardening(root, recipe, "A")["display_manager"], target)
+                    else:
+                        with self.assertRaisesRegex(build_image.BuildError, "display-manager"):
+                            build_image.hardening(root, recipe, "A")
+
+    def test_facts_name_holds(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "var/lib/dpkg").mkdir(parents=True)
+            (root / "var/lib/dpkg/status").write_text("Package: tzdata\nStatus: hold ok installed\nVersion: 2025b\n\n"
+                                                      "Package: adduser\nStatus: install ok installed\nVersion: 3.137\n\n")
+            self.assertEqual(build_image._dpkg_holds(root), ["tzdata"])
+            self.assertEqual(build_image._units(root)["display_manager"], None)
+        self.assertTrue(build_image.INTEREST.search("libgps30t64"))
+        self.assertEqual([s[0] for s in build_image.STEPS].index("closure"), [s[0] for s in build_image.STEPS].index("kernel") + 1)
+
+
 if __name__ == "__main__":
     unittest.main()

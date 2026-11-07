@@ -220,6 +220,35 @@ def chrony_candidate():
             "maxchange 5 1 -1\nmakestep 1 3\nrtcsync\n")
 
 
+# The image's /etc/chrony/chrony.conf (W2 IMG-2): build_image.py writes it over chrony's own ucf copy
+# after the package closure. Not a staged file: chrony is a package of the image, not of the bundle.
+CHRONY_CONF = "etc/chrony/chrony.conf"
+# chrony.conf(5) directives that add a time source, open an NTP or command service to others, or read
+# source lists; none may appear in chrony_conf(). refclock belongs to the bench-measured candidate only.
+CHRONY_NETWORK_DIRECTIVES = ("pool", "server", "peer", "sourcedir", "refclock", "allow", "broadcast", "bindaddress",
+                             "bindcmdaddress", "cmdallow", "ntsserverkey", "ntsservercert")
+
+
+def chrony_conf():
+    """build/07 §18 without its two refclock lines: they stay in the inert CHRONY_CANDIDATE until the NMEA
+    offset is measured (W-04/W-05), because chrony 4.5 stops when the PPS device cannot be opened
+    (refclock_pps.c LOG_FATAL) and the SHM offset is TBD. No pool, server, peer, sourcedir or allow line:
+    the receiver is offline and sends no NTP packet on bench Ethernet. confdir, driftfile, logdir,
+    maxupdateskew and leapsectz right/UTC (from tzdata-legacy, the reason chrony depends on it) are the
+    package's own defaults (/usr/share/chrony/chrony.conf of chrony 4.5-1ubuntu4.2, read 2026-11-07);
+    confdir reads only *.conf files (conf.c parse_confdir), so the .candidate name stays inert."""
+    return (GENERATED + "# Offline receiver (build/07 §18): no pool, server, peer, sourcedir or allow line, so chronyd sends no NTP packet.\n"
+            "# The GNSS refclocks are conf.d/60-srrx-gnss.conf.candidate, inert under that name until the NMEA offset is measured.\n"
+            "confdir /etc/chrony/conf.d\n"
+            "driftfile /var/lib/chrony/chrony.drift\n"
+            "logdir /var/log/chrony\n"
+            "maxupdateskew 100.0\n"
+            "leapsectz right/UTC\n"
+            "maxchange 5 1 -1\n"
+            "makestep 1 3\n"
+            "rtcsync\n")
+
+
 def logind_dropin():
     # labpowerd owns KEY_POWER (STACK.md:877); no idle action may suspend a receiver (STACK.md:845).
     return GENERATED + "[Login]\nHandlePowerKey=ignore\nIdleAction=ignore\n"

@@ -250,6 +250,8 @@ jobs:
           import hashlib, json
           arts = json.load(open("deployment/sources.lock.json"))["artifacts"]
           print("CACHE_KEY=srrx-locked-" + hashlib.sha256(json.dumps(sorted(a["sha256"] for a in arts)).encode()).hexdigest()[:16])
+          # The package closure debs (W2 IMG-2) have their own key: a closure change never refetches the 1.6 GB base image.
+          print("CLOSURE_KEY=srrx-closure-" + hashlib.sha256(open("deployment/image/package-closure.json", "rb").read()).hexdigest()[:16])
           EOF
       - uses: actions/cache@v4
         if: steps.sel.outputs.run == 'true'
@@ -257,7 +259,13 @@ jobs:
           # Public upstream release files only (Radxa r2 image and kernel debs), never a derived image.
           path: ~/srrx-cache
           key: ${{ env.CACHE_KEY }}
-      - name: Fetch and verify the locked base image and kernel debs
+      - uses: actions/cache@v4
+        if: steps.sel.outputs.run == 'true'
+        with:
+          # Public Ubuntu snapshot debs of deployment/image/package-closure.json only.
+          path: ~/srrx-cache/closure
+          key: ${{ env.CLOSURE_KEY }}
+      - name: Fetch and verify the locked base image, kernel debs and package closure debs
         if: steps.sel.outputs.run == 'true'
         run: python3 deployment/image/build_image.py fetch --cache "$CACHE"
       - name: Build the golden image (candidate)
@@ -281,7 +289,7 @@ jobs:
                   print(name, "missing"); continue
               d = json.loads(p.read_text())
               if name == "image-manifest.json":
-                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "blocking_by_closes_at", "kernel", "bootloader", "entries", "enabled_units", "accounts", "hardening", "apt_sources", "npu_payload", "mcu_firmware", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:20000])
+                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "blocking_by_closes_at", "kernel", "package_closure", "bootloader", "entries", "enabled_units", "accounts", "hardening", "apt_sources", "npu_payload", "mcu_firmware", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:24000])
               else:
                   r = d.get("root", {})
                   print(json.dumps({"partitions": d.get("partitions"), "base_cmdline_status": d.get("base_cmdline_status"),
@@ -289,7 +297,8 @@ jobs:
                                     "loader_conf": d.get("esp", {}).get("loader_conf"), "kernel_install_plugins": r.get("kernel_install_plugins"),
                                     "packages_of_interest": r.get("packages_of_interest"), "diversions": r.get("diversions"), "units": r.get("units"),
                                     "accounts": r.get("accounts"), "machine_id": r.get("machine_id"), "kernel_deb_config": d.get("kernel_deb_config"),
-                                    "kernel_debs": d.get("kernel_debs"), "fstab": r.get("fstab"), "used_bytes": r.get("used_bytes")}, indent=1)[:30000])
+                                    "kernel_debs": d.get("kernel_debs"), "fstab": r.get("fstab"), "used_bytes": r.get("used_bytes"),
+                                    "dpkg_holds": r.get("dpkg_holds"), "netplan": r.get("netplan")}, indent=1)[:30000])
           EOF
       - name: QEMU boot smoke of the Route A image
         if: steps.sel.outputs.run == 'true' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
@@ -318,6 +327,20 @@ jobs:
           EOF
           cat "$OUT/packed-image.json" "$OUT/packed-listing.txt"
           echo "PACKED=$W/$I.tar.zst" >> "$GITHUB_ENV"
+      - name: Resolve the package closure from the gpgv-verified snapshot (CI helper; the build never resolves)
+        if: always() && steps.sel.outputs.run == 'true' && matrix.route == 'A'
+        run: |
+          # The r2 dpkg status of this run's facts against the signed snapshot indices. The step fails when the result
+          # differs from the committed deployment/image/package-closure.json: package-closure.resolved.json of the
+          # artifact is then applied as a GENERATED commit.
+          sudo chown -R "$(id -u)" "$OUT" || true
+          test -f "$OUT/image-facts.json" || { echo "::error::no image-facts.json to resolve against"; exit 1; }
+          rc=0
+          python3 deployment/image/build_image.py closure --resolve --facts "$OUT/image-facts.json" \
+            --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --work "$W/closure-resolve" \
+            --write "$OUT/package-closure.resolved.json" > "$OUT/closure-resolve.json" || rc=$?
+          python3 -c "import json, sys; r = json.load(open(sys.argv[1])); print(json.dumps({k: r.get(k) for k in ('status', 'differs', 'issues', 'dpkg_holds')}, indent=1))" "$OUT/closure-resolve.json" || true
+          exit $rc
       - name: Upload the manifest, facts, logs and extent map
         if: always() && steps.sel.outputs.run == 'true'
         uses: actions/upload-artifact@v5

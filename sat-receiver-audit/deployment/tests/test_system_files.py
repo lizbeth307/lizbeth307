@@ -580,5 +580,39 @@ class BasebandSchedulerStagingTests(unittest.TestCase):
         self.assertIn("FAIL satdump.json: labd restart is not allowed -> yes", widened.stdout)
 
 
+class ChronyConfTests(unittest.TestCase):
+    """W2 IMG-2: the image's chrony.conf is offline (no source, no service to others) and keeps build/07 §18."""
+
+    def directives(self, text):
+        return [line.split()[0] for line in text.splitlines() if line.strip() and not line.lstrip().startswith("#")]
+
+    def test_no_network_source_or_service(self):
+        text = system_files.chrony_conf()
+        self.assertTrue(text.startswith(system_files.GENERATED))
+        self.assertFalse(set(self.directives(text)) & set(system_files.CHRONY_NETWORK_DIRECTIVES), text)
+        for word in ("pool", "server", "peer", "sourcedir", "refclock", "allow"):
+            self.assertIn(word, system_files.CHRONY_NETWORK_DIRECTIVES)
+        self.assertNotIn("ubuntu.pool.ntp.org", text)
+        self.assertNotIn("ntp.ubuntu.com", text)
+
+    def test_build07_lines_confdir_and_the_inert_candidate(self):
+        lines = system_files.chrony_conf().splitlines()
+        for line in ("confdir /etc/chrony/conf.d", "driftfile /var/lib/chrony/chrony.drift", "leapsectz right/UTC",
+                     "maxchange 5 1 -1", "makestep 1 3", "rtcsync"):
+            self.assertIn(line, lines)
+        # build/07 §18 lines other than the two refclocks, which stay in the candidate
+        candidate = [l for l in self.directives(system_files.chrony_candidate()) if l != "refclock"]
+        self.assertLessEqual(set(candidate), set(self.directives(system_files.chrony_conf())))
+        self.assertEqual(self.directives(system_files.chrony_candidate()).count("refclock"), 2)
+        # chrony 4.5 confdir reads *.conf only (conf.c parse_confdir): the candidate name is inert
+        self.assertFalse(system_files.CHRONY_CANDIDATE.endswith(".conf"))
+        self.assertEqual(Path(system_files.CHRONY_CANDIDATE).parent.as_posix(), "etc/chrony/conf.d")
+
+    def test_chrony_conf_is_an_image_file_not_a_staged_file(self):
+        for mode in ("gpsd", "raw", "off"):
+            self.assertNotIn(system_files.CHRONY_CONF, system_files.staged_files(gnss=mode))
+        self.assertEqual(system_files.CHRONY_CONF, "etc/chrony/chrony.conf")
+
+
 if __name__ == "__main__":
     unittest.main()
