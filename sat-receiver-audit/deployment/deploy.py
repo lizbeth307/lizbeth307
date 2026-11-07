@@ -1240,7 +1240,8 @@ def stage_files(rootfs, files, label):
 def stage_system(rootfs, config, gnss, transient_units=()):
     """System files of the installed root (software/DEPLOYMENT.md, «Системні файли»). Writes only
     below rootfs; refuses to overwrite another staged file and any account nothing creates, also
-    for the run-time units of transient_units (systemd-run properties as unit text)."""
+    for the unit texts of transient_units (srrx.satdump_pass.transient_units: empty, the SatDump
+    units are staged templates now)."""
     system = system_files()
     stage_files(rootfs, system.staged_files(config, gnss), "system file")
     for relative in system.EXECUTABLES:
