@@ -24,7 +24,7 @@
    "(c) Pololu modules off PWR-A on plate standoffs: PWR-A 0.733, PWR-B 0.723, still short, and no plate location exists (front face full, build/15 'Розмір'; behind the left leg sit the HF+ can and the RF bay, mechanical/generated/fit-report.md layout); a cut-out in the L for them saves nothing",
    "bigger single PWR board or larger face: the face is fixed by the plan (D-ENV width unchanged, STACK.md:109 HMI layouts); depth growth adds no area",
    "radials or headers on the RF board: RF max height 5.5 (mechanical/params/boards.json:91) and constraints DC-02/RF-01 (pcb/generated/constraints.json:37-77)",
-   "stack 8 mm (QTH-xxx-02, hA 7.5): fewer windows but dz +5.1 mm, still short (scenario hB 8.0: PWR-A 0.746, PWR-B 0.442)"
+   "(h8) hB 8.0 instead of 5.5: PWR-A 0.660, PWR-B 0.515 for 2.5 mm more depth (dz_mezz 4.6); still short, and the radials (11.0-11.5 mm) stay above it"
   ],
   "next_decision": "OPEN for INT/owner (integration_plan step 8, F2): the PWR function needs about 7.0k mm2 more board area at 1.8 than PWR-A + PWR-B give in the plan's face, or a smaller PWR connector/circuit set. GR-3, MECH-3 and the board packages implement (a) as the working partition; the real placement fill of PCB-PWRA-1/2 and PCB-PWRB is the trigger record."
  },
@@ -708,6 +708,62 @@
      "group": "LAB BUS I2C buffer"
     }
    ]
+  },
+  "h8": {
+   "title": "(a) with hB 8.0 (taller PWR-B parts; dz_mezz 4.6 mm)",
+   "pololu": "pwr_a",
+   "pinned_pwr_a": [],
+   "pwr_b_groups": [
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 1"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 2"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 4"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    },
+    {
+     "sheet": "E2",
+     "group": "INA3221: струми LNA1–3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNB: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "Boni: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "AUX12: контроль напруги після PTC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    }
+   ],
+   "hB": 8.0
   },
   "f2b": {
    "title": "F2b = (a) plus a rear-tier board PCB-REAR taking the rear-load groups",
