@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "a856996aaf9970530e84409f262f742ca38a436626f4a6865fe14f5883a8b2e5",
+    "params_sha256": "813314e1d5362b905acd7bb6052f86dcca89f3491b8fe2ffccadaef6d0cb143b",
     "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
   },
   "envelope": {
@@ -398,8 +398,8 @@
     },
     {
       "id": "R-PLATE-SLOT-FILL",
-      "rule": "harness bundle through each plate slot (wire areas / 0.6 + ribbon stack) inside the opening left by the edge trim (grommet heyco_ngsg_105 B 0.8 per edge, tape 0.1); ribbon, stack and largest wire fit the inner size; grommet legs clear",
-      "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json heyco_ngsg_105 (Heyco catalogue 6-23 read 2026-11-07), hookup_wire_ptfe and ribbon_3m_3365_40 (SRC-1 rows read 2026-11-07)",
+      "rule": "harness bundle through each plate slot (wire areas / 0.6 + ribbon stack) inside the opening left by the edge trim (edging essentra_mgs_2_01 base 1.397 per edge, tape 0.1); ribbon, stack and largest wire fit the inner size; edging legs clear",
+      "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json essentra_mgs_2_01 (Essentra catalogue p.276 read 2026-11-07), hookup_wire_ptfe and ribbon_3m_3365_40 (SRC-1 rows read 2026-11-07)",
       "value_mm": {
         "SL1": {
           "opening_mm": [
@@ -414,9 +414,9 @@
           },
           "inner_mm": [
             27.3,
-            2.9
+            2.3
           ],
-          "inner_mm2": 79.2,
+          "inner_mm2": 62.9,
           "wires": 30,
           "loose_wires": 3,
           "wires_per_awg": {
@@ -431,7 +431,7 @@
             "conductors_in_build16": 27
           },
           "bundle_need_mm2": 49.9,
-          "fill_of_inner": 0.63,
+          "fill_of_inner": 0.79,
           "largest_wire_mm": 1.09,
           "legs_clear": "yes",
           "result": "PASS (model)"
@@ -439,7 +439,7 @@
         "SL2": {
           "opening_mm": [
             18.0,
-            7.6
+            8.2
           ],
           "trim": {
             "bottom": "tape",
@@ -470,7 +470,7 @@
         },
         "SL3": {
           "opening_mm": [
-            4.5,
+            5.5,
             11.5
           ],
           "trim": {
@@ -480,10 +480,10 @@
             "right": "grommet"
           },
           "inner_mm": [
-            2.9,
+            2.71,
             11.3
           ],
-          "inner_mm2": 32.8,
+          "inner_mm2": 30.6,
           "wires": 17,
           "loose_wires": 17,
           "wires_per_awg": {
@@ -494,14 +494,14 @@
           "wire_area_mm2": 16.2,
           "ribbon": null,
           "bundle_need_mm2": 27.0,
-          "fill_of_inner": 0.82,
+          "fill_of_inner": 0.88,
           "largest_wire_mm": 1.57,
           "legs_clear": "yes",
           "result": "PASS (model)"
         }
       },
       "limit_mm": "bundle inside the trimmed opening",
-      "result": "PASS (model): SL1 49.9 <= 79.2 mm2 (0.63 of the inner opening 27.3 x 2.9); SL2 112.2 <= 119.3 mm2 (0.94 of the inner opening 17.8 x 6.7); SL3 27 <= 32.8 mm2 (0.82 of the inner opening 2.9 x 11.3); grommet legs clear of the envelopes, the structure and the plate-hole footprints"
+      "result": "PASS (model): SL1 49.9 <= 62.9 mm2 (0.79 of the inner opening 27.3 x 2.3); SL2 112.2 <= 119.3 mm2 (0.94 of the inner opening 17.8 x 6.7); SL3 27 <= 30.6 mm2 (0.88 of the inner opening 2.71 x 11.3); edging legs clear of the envelopes, the structure and the plate-hole footprints"
     },
     {
       "id": "R-PWR-MODULES",
@@ -3174,8 +3174,8 @@
       },
       "S11": {
         "kind": "harness",
-        "length_mm": 225,
-        "path_mm": 175.6,
+        "length_mm": 228,
+        "path_mm": 178.6,
         "bends": 6,
         "bundle_od_mm": 4.05,
         "bend_allowance_mm": 19.1,
@@ -3314,8 +3314,8 @@
       },
       "S23": {
         "kind": "harness",
-        "length_mm": 231,
-        "path_mm": 189.0,
+        "length_mm": 234,
+        "path_mm": 192.0,
         "bends": 7,
         "bundle_od_mm": 2.15,
         "bend_allowance_mm": 11.8,
@@ -3414,8 +3414,8 @@
       },
       "S32": {
         "kind": "harness",
-        "length_mm": 207,
-        "path_mm": 162.9,
+        "length_mm": 210,
+        "path_mm": 165.9,
         "bends": 6,
         "bundle_od_mm": 2.81,
         "bend_allowance_mm": 13.2,
@@ -3431,8 +3431,8 @@
       },
       "S34": {
         "kind": "harness",
-        "length_mm": 191,
-        "path_mm": 141.6,
+        "length_mm": 194,
+        "path_mm": 144.6,
         "bends": 7,
         "bundle_od_mm": 3.45,
         "bend_allowance_mm": 19.0,
@@ -4333,7 +4333,7 @@
       "stl_triangles": 2846
     },
     "plate_al": {
-      "cm3": 56.78,
+      "cm3": 56.74,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
