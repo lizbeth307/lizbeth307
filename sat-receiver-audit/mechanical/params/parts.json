@@ -661,7 +661,7 @@
         "A403": {"part": "flamingo_fm", "size": [73.7, 30.6, 18.7], "status": "assumption"},
         "A404": {"size": null, "status": "TBD", "_tbd_reason": "RTL-SDR Blog Wideband LNA V2: the maker's page https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/ (read 2026-11-07 with WebFetch) gives no dimensions and no connector genders; it lists '1x SMA male to SMA male adapter' in the package and 'Requires 3 - 5v bias tee power' (ch4 gives 4.3 V through P8, build/03 P8 row)"}
       },
-      "chain": ["J428 antenna feed (SMA input of A403)", "A403 Flamingo+ FM #2", "SMA male-male adapter from the LNA V2 package (A403 OUT -> A404 IN)", "A404 RTL-SDR Blog Wideband LNA V2", "coax A404 OUT -> P8 (W2 GR-2 net E4_RF_CH4; ch4 bias 4.3 V reaches A404 over it)"],
+      "chain": ["J428 antenna feed (SMA input of A403)", "A403 Flamingo+ FM #2", "SMA male-male adapter from the LNA V2 package (A403 OUT -> A404 IN; assumption: both jacks SMA female, connector genders of A403/A404 not read, check at incoming inspection)", "A404 RTL-SDR Blog Wideband LNA V2", "coax A404 OUT -> P8 (W2 GR-2 net E4_RF_CH4; ch4 bias 4.3 V reaches A404 over it)"],
       "envelope": {"length": null, "w": 30.6, "h": 18.7, "_tbd_reason": "length = A403 73.7 (reserve) + adapter + A404 (not read); box, adapters, cable and mounting items are SRC-2's (CC-27)"},
       "size": [73.7, 30.6, 18.7],
       "status": "assumption",

@@ -7126,7 +7126,10 @@
    "for": "R-HDMI-ROUTE PASS (model), mechanical.json layout hdmi_fpc_q6a (build/15 «Кабель HDMI (W2 MECH-4)»): вісь — за фото виробника; 3550 чи 3549 — за боком гнізда Q6A, купуються обидва (AI-HDMI-FPC-R)",
    "manufacturer": "Adafruit",
    "mpn": "3550",
-   "sku": {"digikey": "1528-2364-ND", "web": "adafruit-3550"},
+   "sku": {
+    "digikey": "1528-2364-ND",
+    "web": "adafruit-3550"
+   },
    "note": "19.0 × 17.0 × 15.0 мм, 3.2 г (сторінка Adafruit, 07.11.2026); стрічку й другий адаптер купують окремо (AI-HDMI-FPC-FLEX, AI-HDMI-FPC-3548); не такий міцний і не екранований, як готовий кабель — завжди з обмоткою заземленою мідною стрічкою (STACK.md:269, AI-HDMI-CU-TAPE)"
   },
   {
@@ -7137,7 +7140,9 @@
    "for": "той, що на гнізді Q6A спрямовує затискач стрічки до задньої стінки (mechanical/params/parts.json adafruit_3550), ставиться; інший — запасний",
    "manufacturer": "Adafruit",
    "mpn": "3549",
-   "sku": {"web": "adafruit-3549"},
+   "sku": {
+    "web": "adafruit-3549"
+   },
    "note": "19.0 × 17.0 × 16.5 мм, 3.3 г (сторінка Adafruit, 07.11.2026)"
   },
   {
@@ -7148,7 +7153,9 @@
    "for": "R-HDMI-ROUTE, layout hdmi_fpc_disp; місце входу на платі Wisecoco — припущення до вимірювання (STACK D5)",
    "manufacturer": "Adafruit",
    "mpn": "3548",
-   "sku": {"web": "adafruit-3548"},
+   "sku": {
+    "web": "adafruit-3548"
+   },
    "note": "27.5 × 17.3 × 5.0 мм, 3.2 г; частина контактів може бути не з'єднана (відгук: контакт 14) — розпіновку Adafruit не публікує (GR-4)"
   },
   {
@@ -7159,7 +7166,9 @@
    "for": "R-HDMI-ROUTE: стрічка 1 — 3550 → вставка HDMI_INSERT (осьова лінія 73.8 мм, запас 26.2), стрічка 2 — HDMI_INSERT → 3548 (83.5 мм, запас 16.5); mechanical.json hdmi_route segments, MODEL ESTIMATE",
    "manufacturer": "Adafruit",
    "mpn": "3560",
-   "sku": {"web": "adafruit-3560"},
+   "sku": {
+    "web": "adafruit-3560"
+   },
    "note": "100 мм, 10 мм, 0.6 г; довші 3561 (20 см), 3562 (30 см), 3563 (50 см) — лише якщо виміряна траса довша (сторінки Adafruit, 07.11.2026); товщину, радіус вигину і стійкість до згину Adafruit не публікує: три згини під 45° — одноразово, без повторного заламування (стенд)"
   },
   {
@@ -7170,7 +7179,9 @@
    "for": "R-HDMI-ROUTE, layout hdmi_ferrite (між двома згинами під гніздом LAB BUS); проріз 11.5 × 0.5 мм для стрічки 10 мм",
    "manufacturer": "Würth Elektronik",
    "mpn": "74278011",
-   "sku": {"digikey": "732-4014-ND"},
+   "sku": {
+    "digikey": "732-4014-ND"
+   },
    "note": "16.0 × 5.0 × 8.0 мм, 31 Ω на 25 MHz і 63 Ω на 100 MHz (даташит Würth, 07.11.2026); суцільний: стрічку протягнути до затискання в адаптери; мідну обмотку закінчити по обидва боки фериту"
   },
   {
