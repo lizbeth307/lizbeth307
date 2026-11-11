@@ -4566,13 +4566,13 @@
     },
     {
       "ref": "J208",
-      "pin": "61",
+      "pin": "68",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "62",
+      "pin": "67",
       "sheet": "E2",
       "type": "passive"
     },
@@ -4622,13 +4622,13 @@
     },
     {
       "ref": "J208",
-      "pin": "56",
+      "pin": "63",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "55",
+      "pin": "64",
       "sheet": "E2",
       "type": "passive"
     },
@@ -4672,13 +4672,13 @@
     },
     {
       "ref": "J208",
-      "pin": "55",
+      "pin": "62",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "56",
+      "pin": "61",
       "sheet": "E2",
       "type": "passive"
     },
@@ -4898,13 +4898,13 @@
     },
     {
       "ref": "J208",
-      "pin": "64",
+      "pin": "71",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "63",
+      "pin": "72",
       "sheet": "E2",
       "type": "passive"
     },
@@ -5066,13 +5066,13 @@
     },
     {
       "ref": "J208",
-      "pin": "65",
+      "pin": "72",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "66",
+      "pin": "71",
       "sheet": "E2",
       "type": "passive"
     },
@@ -5640,13 +5640,13 @@
     },
     {
       "ref": "J208",
-      "pin": "45",
+      "pin": "46",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "46",
+      "pin": "45",
       "sheet": "E2",
       "type": "passive"
     },
@@ -6956,13 +6956,13 @@
     },
     {
       "ref": "J208",
-      "pin": "63",
+      "pin": "70",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "64",
+      "pin": "69",
       "sheet": "E2",
       "type": "passive"
     },
@@ -7100,13 +7100,13 @@
     },
     {
       "ref": "J208",
-      "pin": "49",
+      "pin": "54",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "50",
+      "pin": "53",
       "sheet": "E2",
       "type": "passive"
     },
@@ -7158,13 +7158,13 @@
     },
     {
       "ref": "J208",
-      "pin": "53",
+      "pin": "60",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "54",
+      "pin": "59",
       "sheet": "E2",
       "type": "passive"
     },
@@ -7386,13 +7386,13 @@
     },
     {
       "ref": "J208",
-      "pin": "46",
+      "pin": "48",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "45",
+      "pin": "47",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9244,13 +9244,13 @@
     },
     {
       "ref": "J208",
-      "pin": "50",
+      "pin": "56",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "49",
+      "pin": "55",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9334,13 +9334,13 @@
     },
     {
       "ref": "J208",
-      "pin": "62",
+      "pin": "69",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "61",
+      "pin": "70",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9398,13 +9398,13 @@
     },
     {
       "ref": "J208",
-      "pin": "54",
+      "pin": "61",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "53",
+      "pin": "62",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9698,13 +9698,13 @@
     },
     {
       "ref": "J208",
-      "pin": "47",
+      "pin": "50",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "48",
+      "pin": "49",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9790,13 +9790,13 @@
     },
     {
       "ref": "J208",
-      "pin": "52",
+      "pin": "59",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "51",
+      "pin": "60",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9930,13 +9930,13 @@
     },
     {
       "ref": "J208",
-      "pin": "41",
+      "pin": "40",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "42",
+      "pin": "39",
       "sheet": "E2",
       "type": "passive"
     }
@@ -10058,13 +10058,13 @@
     },
     {
       "ref": "J208",
-      "pin": "40",
+      "pin": "41",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "39",
+      "pin": "42",
       "sheet": "E2",
       "type": "passive"
     },
@@ -10236,13 +10236,13 @@
     },
     {
       "ref": "J208",
-      "pin": "57",
+      "pin": "64",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "58",
+      "pin": "63",
       "sheet": "E2",
       "type": "passive"
     },
@@ -10316,13 +10316,13 @@
     },
     {
       "ref": "J208",
-      "pin": "58",
+      "pin": "65",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "57",
+      "pin": "66",
       "sheet": "E2",
       "type": "passive"
     },
@@ -10922,13 +10922,13 @@
     },
     {
       "ref": "J208",
-      "pin": "48",
+      "pin": "52",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "47",
+      "pin": "51",
       "sheet": "E2",
       "type": "passive"
     },
@@ -11030,13 +11030,13 @@
     },
     {
       "ref": "J208",
-      "pin": "51",
+      "pin": "58",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "52",
+      "pin": "57",
       "sheet": "E2",
       "type": "passive"
     },
@@ -11138,13 +11138,13 @@
     },
     {
       "ref": "J208",
-      "pin": "59",
+      "pin": "66",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "60",
+      "pin": "65",
       "sheet": "E2",
       "type": "passive"
     },
@@ -11218,13 +11218,13 @@
     },
     {
       "ref": "J208",
-      "pin": "60",
+      "pin": "67",
       "sheet": "E2",
       "type": "passive"
     },
     {
       "ref": "J209",
-      "pin": "59",
+      "pin": "68",
       "sheet": "E2",
       "type": "passive"
     },
