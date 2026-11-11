@@ -1,0 +1,106 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "HDMI_INSERT",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "HDMIA",
+      "placement": "default",
+      "board_origin_enclosure_mm": [
+        210.5,
+        34.0
+      ],
+      "z_bottom": 41.59,
+      "facing": "+z",
+      "connectors": [
+        {
+          "template_ref": "J1",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            7.0,
+            2.2
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E5_HDMI_5V_Q6A",
+              "at": [
+                7.0,
+                2.2
+              ],
+              "enclosure_xy": [
+                217.5,
+                36.2
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                5.0,
+                2.2
+              ],
+              "enclosure_xy": [
+                215.5,
+                36.2
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            217.5,
+            36.2
+          ],
+          "replaced_by": "FPC socket A for flex 1 (MPN TBD; W2 GR-4 OPEN): its pin-18 and GND contacts"
+        },
+        {
+          "template_ref": "J2",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            7.0,
+            15.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E5_HDMI_5V_DISP",
+              "at": [
+                7.0,
+                15.8
+              ],
+              "enclosure_xy": [
+                217.5,
+                49.8
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                5.0,
+                15.8
+              ],
+              "enclosure_xy": [
+                215.5,
+                49.8
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            217.5,
+            49.8
+          ],
+          "replaced_by": "FPC socket B for flex 2 (MPN TBD; W2 GR-4 OPEN): its pin-18 and GND contacts"
+        }
+      ]
+    }
+  ]
+}
