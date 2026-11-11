@@ -3,21 +3,21 @@
   "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
   "graph_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
-    "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
+    "E2.json": "a65c3c726ed44e79b03d915284010b97471447e3ee99c65146679c4b118dfeea",
     "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   },
-  "netlist_sha256": "c6e9d9c1104f2ee390e72d72e3cc612beddf0aabb4b2ece2e159694ed36b82b6",
+  "netlist_sha256": "0f486b1ebaecca31585941bcdd9dce28563b54b50a34f0bdaf68c66d8123ed03",
   "counts": {
-    "hardware_components": 849,
-    "hardware_pin_declarations": 2742,
-    "connected_hardware_pins": 2579,
+    "hardware_components": 851,
+    "hardware_pin_declarations": 2942,
+    "connected_hardware_pins": 2717,
     "connected_hardware_nets": 486,
-    "declared_nc_pins": 163,
-    "xml_hardware_components": 849,
-    "xml_pin_nodes": 2742,
-    "xml_nets": 649,
+    "declared_nc_pins": 225,
+    "xml_hardware_components": 851,
+    "xml_pin_nodes": 2942,
+    "xml_nets": 711,
     "explicit_power_flags": 25
   },
   "dnp_components": [
