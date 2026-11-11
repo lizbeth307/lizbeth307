@@ -212,25 +212,28 @@ def b2b_pairs(out,bb):
     return [pair['nets'] for pair in bb['declared_sense_pairs'] if all(any(r['net']==n for r in out) for n in pair['nets'])]
 
 def b2b_guards(out,bb):
-    """GND guard contacts of b2b.guard_rule: a GND column (2 contacts) after each crossing declared sense pair, and one GND
+    """GND guard contacts of b2b.guard_rule: a GND column (2 contacts) beside each crossing declared sense pair, and one GND
     contact after the last rail column, in the row of that rail contact."""
     return 2*len(b2b_pairs(out,bb))+(1 if any(r['kind'] in B2B_RAIL_KINDS and r['pins'] for r in out) else 0)
 
 def b2b_contacts(out,bb):
     """Contact map of the two B2B halves (W2 B2B, pcb/partition-spec.json b2b.pin_map_rule and b2b.guard_rule), J208 column c =
-    contacts 2c-1 (odd row) and 2c (even row). From contact 1: each declared sense pair in one column, then a GND guard column;
-    then the rail block, one column per rail contact (power: ceil(I/I_pin) per net; sense/supply taps; rail nodes) in the order
-    b2b.rail_order (unlisted rails after it, by name), the rail contact on the odd row in odd columns and on the even row in even
-    columns, its GND return in the other row of the same column (a checkerboard: every in-row neighbour of a rail contact is GND);
-    one GND guard after the last rail contact in its row; the other nets in name order on the free contacts in contact order; the
-    rest spare (nc). The PWR-B half carries on contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
+    contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last
+    column, the next pair two columns before it), with a GND guard column before it. From contact 1: the rail block, one column per
+    rail contact (power: ceil(I/I_pin) per net; sense/supply taps; rail nodes) in the order b2b.rail_order (unlisted rails after
+    it, by name), the rail contact on the odd row in odd columns and on the even row in even columns, its GND return in the other
+    row of the same column (a checkerboard: every in-row neighbour of a rail contact is GND); one GND guard after the last rail
+    contact in its row; the other nets in name order on the free contacts in contact order; the rest spare (nc). The PWR-B half
+    carries on contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
     n_all=bb['contacts'];slots={};over=[]
     def put(pin,net,role):
-        if pin<=n_all:slots[pin]=(net,role)
+        if 1<=pin<=n_all and pin not in slots:slots[pin]=(net,role)
         else:over.append(net)
+    end=n_all//2
+    for k,pair in enumerate(b2b_pairs(out,bb)):
+        c=end-2*k
+        put(2*c-1,pair[0],'sense pair');put(2*c,pair[1],'sense pair');put(2*c-3,'GND','guard');put(2*c-2,'GND','guard')
     col=1
-    for pair in b2b_pairs(out,bb):
-        put(2*col-1,pair[0],'sense pair');put(2*col,pair[1],'sense pair');put(2*col+1,'GND','guard');put(2*col+2,'GND','guard');col+=2
     order=bb['rail_order'];last=None
     for r in sorted((r for r in out if r['kind'] in B2B_RAIL_KINDS and r['pins']),key=lambda r:(order.index(r['net']) if r['net'] in order else len(order),r['net'])):
         for _ in range(r['pins']):

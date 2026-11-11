@@ -9757,15 +9757,15 @@
       "pins": [
         {
           "number": "1",
-          "name": "E2_LNA4_SW",
+          "name": "3V3_Q6A",
           "type": "passive",
-          "net": "E2_LNA4_SW"
+          "net": "3V3_Q6A"
         },
         {
           "number": "2",
-          "name": "E2_LNA4_SHUNT",
+          "name": "GND",
           "type": "passive",
-          "net": "E2_LNA4_SHUNT"
+          "net": "GND"
         },
         {
           "number": "3",
@@ -9775,15 +9775,15 @@
         },
         {
           "number": "4",
-          "name": "GND",
+          "name": "LNA4V5",
           "type": "passive",
-          "net": "GND"
+          "net": "LNA4V5"
         },
         {
           "number": "5",
-          "name": "3V3_Q6A",
+          "name": "LNA4V5",
           "type": "passive",
-          "net": "3V3_Q6A"
+          "net": "LNA4V5"
         },
         {
           "number": "6",
@@ -9799,15 +9799,15 @@
         },
         {
           "number": "8",
-          "name": "LNA4V5",
+          "name": "BIAS_CH1_DAMP",
           "type": "passive",
-          "net": "LNA4V5"
+          "net": "BIAS_CH1_DAMP"
         },
         {
           "number": "9",
-          "name": "LNA4V5",
+          "name": "BIAS_CH2_DAMP",
           "type": "passive",
-          "net": "LNA4V5"
+          "net": "BIAS_CH2_DAMP"
         },
         {
           "number": "10",
@@ -9823,15 +9823,15 @@
         },
         {
           "number": "12",
-          "name": "BIAS_CH1_DAMP",
+          "name": "BIAS_CH3_DAMP",
           "type": "passive",
-          "net": "BIAS_CH1_DAMP"
+          "net": "BIAS_CH3_DAMP"
         },
         {
           "number": "13",
-          "name": "BIAS_CH2_DAMP",
+          "name": "BIAS_CH4_DAMP",
           "type": "passive",
-          "net": "BIAS_CH2_DAMP"
+          "net": "BIAS_CH4_DAMP"
         },
         {
           "number": "14",
@@ -9847,15 +9847,15 @@
         },
         {
           "number": "16",
-          "name": "BIAS_CH3_DAMP",
+          "name": "LAB5",
           "type": "passive",
-          "net": "BIAS_CH3_DAMP"
+          "net": "LAB5"
         },
         {
           "number": "17",
-          "name": "BIAS_CH4_DAMP",
+          "name": "LAB5",
           "type": "passive",
-          "net": "BIAS_CH4_DAMP"
+          "net": "LAB5"
         },
         {
           "number": "18",
@@ -9895,15 +9895,15 @@
         },
         {
           "number": "24",
-          "name": "LAB5",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "LAB5"
+          "net": "LAB5_RLY"
         },
         {
           "number": "25",
-          "name": "LAB5",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "LAB5"
+          "net": "LAB5_RLY"
         },
         {
           "number": "26",
@@ -9919,15 +9919,15 @@
         },
         {
           "number": "28",
-          "name": "LAB5_RLY",
+          "name": "E2_SB_DAMP",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "net": "E2_SB_DAMP"
         },
         {
           "number": "29",
-          "name": "LAB5_RLY",
+          "name": "VBUS_HFP",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "net": "VBUS_HFP"
         },
         {
           "number": "30",
@@ -9943,15 +9943,15 @@
         },
         {
           "number": "32",
-          "name": "E2_SB_DAMP",
+          "name": "VBUS_LABPORT",
           "type": "passive",
-          "net": "E2_SB_DAMP"
+          "net": "VBUS_LABPORT"
         },
         {
           "number": "33",
-          "name": "VBUS_HFP",
+          "name": "VBUS_RTLB_DAMP",
           "type": "passive",
-          "net": "VBUS_HFP"
+          "net": "VBUS_RTLB_DAMP"
         },
         {
           "number": "34",
@@ -9967,15 +9967,15 @@
         },
         {
           "number": "36",
-          "name": "VBUS_LABPORT",
+          "name": "LNB13V2",
           "type": "passive",
-          "net": "VBUS_LABPORT"
+          "net": "LNB13V2"
         },
         {
           "number": "37",
-          "name": "VBUS_RTLB_DAMP",
+          "name": "AUX12",
           "type": "passive",
-          "net": "VBUS_RTLB_DAMP"
+          "net": "AUX12"
         },
         {
           "number": "38",
@@ -9991,15 +9991,15 @@
         },
         {
           "number": "40",
-          "name": "LNB13V2",
+          "name": "BONI13V8_PORT",
           "type": "passive",
-          "net": "LNB13V2"
+          "net": "BONI13V8_PORT"
         },
         {
           "number": "41",
-          "name": "AUX12",
+          "name": "BONI13V8",
           "type": "passive",
-          "net": "AUX12"
+          "net": "BONI13V8"
         },
         {
           "number": "42",
@@ -10015,159 +10015,159 @@
         },
         {
           "number": "44",
-          "name": "BONI13V8_PORT",
-          "type": "passive",
-          "net": "BONI13V8_PORT"
-        },
-        {
-          "number": "45",
-          "name": "BONI13V8",
-          "type": "passive",
-          "net": "BONI13V8"
-        },
-        {
-          "number": "46",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "47",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "48",
           "name": "CHG_INHIBIT",
           "type": "passive",
           "net": "CHG_INHIBIT"
         },
         {
-          "number": "49",
+          "number": "45",
           "name": "E1_BAT_ADC",
           "type": "passive",
           "net": "E1_BAT_ADC"
         },
         {
-          "number": "50",
+          "number": "46",
           "name": "EN_AUX12",
           "type": "passive",
           "net": "EN_AUX12"
         },
         {
-          "number": "51",
+          "number": "47",
           "name": "EN_BONI",
           "type": "passive",
           "net": "EN_BONI"
         },
         {
-          "number": "52",
+          "number": "48",
           "name": "EN_HFP",
           "type": "passive",
           "net": "EN_HFP"
         },
         {
-          "number": "53",
+          "number": "49",
           "name": "EN_LIME3V3",
           "type": "passive",
           "net": "EN_LIME3V3"
         },
         {
-          "number": "54",
+          "number": "50",
           "name": "EN_LNB",
           "type": "passive",
           "net": "EN_LNB"
         },
         {
-          "number": "55",
+          "number": "51",
           "name": "FAULT_HFP",
           "type": "passive",
           "net": "FAULT_HFP"
         },
         {
-          "number": "56",
+          "number": "52",
           "name": "FLT_BONI",
           "type": "passive",
           "net": "FLT_BONI"
         },
         {
-          "number": "57",
+          "number": "53",
           "name": "FLT_LIME3V3",
           "type": "passive",
           "net": "FLT_LIME3V3"
         },
         {
-          "number": "58",
+          "number": "54",
           "name": "FLT_LNB",
           "type": "passive",
           "net": "FLT_LNB"
         },
         {
-          "number": "59",
+          "number": "55",
           "name": "I2C0_SCL",
           "type": "passive",
           "net": "I2C0_SCL"
         },
         {
-          "number": "60",
+          "number": "56",
           "name": "I2C0_SDA",
           "type": "passive",
           "net": "I2C0_SDA"
         },
         {
-          "number": "61",
+          "number": "57",
           "name": "I2C2_SCL",
           "type": "passive",
           "net": "I2C2_SCL"
         },
         {
-          "number": "62",
+          "number": "58",
           "name": "I2C2_SDA",
           "type": "passive",
           "net": "I2C2_SDA"
         },
         {
-          "number": "63",
+          "number": "59",
           "name": "IMU_RX",
           "type": "passive",
           "net": "IMU_RX"
         },
         {
-          "number": "64",
+          "number": "60",
           "name": "IMU_TX",
           "type": "passive",
           "net": "IMU_TX"
         },
         {
-          "number": "65",
+          "number": "61",
           "name": "INA228_ALERT",
           "type": "passive",
           "net": "INA228_ALERT"
         },
         {
-          "number": "66",
+          "number": "62",
           "name": "OVP_LNB_N",
           "type": "passive",
           "net": "OVP_LNB_N"
         },
         {
-          "number": "67",
+          "number": "63",
           "name": "PICO_DISP_EN",
           "type": "passive",
           "net": "PICO_DISP_EN"
         },
         {
-          "number": "68",
+          "number": "64",
           "name": "PICO_OFF",
           "type": "passive",
           "net": "PICO_OFF"
         },
         {
-          "number": "69",
+          "number": "65",
           "name": "PWR_BUTTON",
           "type": "passive",
           "net": "PWR_BUTTON"
+        },
+        {
+          "number": "66",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "67",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "68",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "69",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
         },
         {
           "number": "70",
@@ -10333,27 +10333,27 @@
         },
         {
           "number": "97",
-          "name": "NC",
+          "name": "GND",
           "type": "passive",
-          "nc": true
+          "net": "GND"
         },
         {
           "number": "98",
-          "name": "NC",
+          "name": "GND",
           "type": "passive",
-          "nc": true
+          "net": "GND"
         },
         {
           "number": "99",
-          "name": "NC",
+          "name": "E2_LNA4_SW",
           "type": "passive",
-          "nc": true
+          "net": "E2_LNA4_SW"
         },
         {
           "number": "100",
-          "name": "NC",
+          "name": "E2_LNA4_SHUNT",
           "type": "passive",
-          "nc": true
+          "net": "E2_LNA4_SHUNT"
         }
       ],
       "notes": [
@@ -10374,21 +10374,21 @@
       "pins": [
         {
           "number": "1",
-          "name": "E2_LNA4_SHUNT",
-          "type": "passive",
-          "net": "E2_LNA4_SHUNT"
-        },
-        {
-          "number": "2",
-          "name": "E2_LNA4_SW",
-          "type": "passive",
-          "net": "E2_LNA4_SW"
-        },
-        {
-          "number": "3",
           "name": "GND",
           "type": "passive",
           "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "3",
+          "name": "LNA4V5",
+          "type": "passive",
+          "net": "LNA4V5"
         },
         {
           "number": "4",
@@ -10404,15 +10404,15 @@
         },
         {
           "number": "6",
-          "name": "3V3_Q6A",
-          "type": "passive",
-          "net": "3V3_Q6A"
-        },
-        {
-          "number": "7",
           "name": "LNA4V5",
           "type": "passive",
           "net": "LNA4V5"
+        },
+        {
+          "number": "7",
+          "name": "BIAS_CH1_DAMP",
+          "type": "passive",
+          "net": "BIAS_CH1_DAMP"
         },
         {
           "number": "8",
@@ -10428,15 +10428,15 @@
         },
         {
           "number": "10",
-          "name": "LNA4V5",
+          "name": "BIAS_CH2_DAMP",
           "type": "passive",
-          "net": "LNA4V5"
+          "net": "BIAS_CH2_DAMP"
         },
         {
           "number": "11",
-          "name": "BIAS_CH1_DAMP",
+          "name": "BIAS_CH3_DAMP",
           "type": "passive",
-          "net": "BIAS_CH1_DAMP"
+          "net": "BIAS_CH3_DAMP"
         },
         {
           "number": "12",
@@ -10452,15 +10452,15 @@
         },
         {
           "number": "14",
-          "name": "BIAS_CH2_DAMP",
+          "name": "BIAS_CH4_DAMP",
           "type": "passive",
-          "net": "BIAS_CH2_DAMP"
+          "net": "BIAS_CH4_DAMP"
         },
         {
           "number": "15",
-          "name": "BIAS_CH3_DAMP",
+          "name": "LAB5",
           "type": "passive",
-          "net": "BIAS_CH3_DAMP"
+          "net": "LAB5"
         },
         {
           "number": "16",
@@ -10476,9 +10476,9 @@
         },
         {
           "number": "18",
-          "name": "BIAS_CH4_DAMP",
+          "name": "LAB5",
           "type": "passive",
-          "net": "BIAS_CH4_DAMP"
+          "net": "LAB5"
         },
         {
           "number": "19",
@@ -10506,9 +10506,9 @@
         },
         {
           "number": "23",
-          "name": "LAB5",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "LAB5"
+          "net": "LAB5_RLY"
         },
         {
           "number": "24",
@@ -10524,15 +10524,15 @@
         },
         {
           "number": "26",
-          "name": "LAB5",
-          "type": "passive",
-          "net": "LAB5"
-        },
-        {
-          "number": "27",
           "name": "LAB5_RLY",
           "type": "passive",
           "net": "LAB5_RLY"
+        },
+        {
+          "number": "27",
+          "name": "E2_SB_DAMP",
+          "type": "passive",
+          "net": "E2_SB_DAMP"
         },
         {
           "number": "28",
@@ -10548,15 +10548,15 @@
         },
         {
           "number": "30",
-          "name": "LAB5_RLY",
+          "name": "VBUS_HFP",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "net": "VBUS_HFP"
         },
         {
           "number": "31",
-          "name": "E2_SB_DAMP",
+          "name": "VBUS_LABPORT",
           "type": "passive",
-          "net": "E2_SB_DAMP"
+          "net": "VBUS_LABPORT"
         },
         {
           "number": "32",
@@ -10572,15 +10572,15 @@
         },
         {
           "number": "34",
-          "name": "VBUS_HFP",
+          "name": "VBUS_RTLB_DAMP",
           "type": "passive",
-          "net": "VBUS_HFP"
+          "net": "VBUS_RTLB_DAMP"
         },
         {
           "number": "35",
-          "name": "VBUS_LABPORT",
+          "name": "LNB13V2",
           "type": "passive",
-          "net": "VBUS_LABPORT"
+          "net": "LNB13V2"
         },
         {
           "number": "36",
@@ -10596,15 +10596,15 @@
         },
         {
           "number": "38",
-          "name": "VBUS_RTLB_DAMP",
+          "name": "AUX12",
           "type": "passive",
-          "net": "VBUS_RTLB_DAMP"
+          "net": "AUX12"
         },
         {
           "number": "39",
-          "name": "LNB13V2",
+          "name": "BONI13V8_PORT",
           "type": "passive",
-          "net": "LNB13V2"
+          "net": "BONI13V8_PORT"
         },
         {
           "number": "40",
@@ -10620,15 +10620,15 @@
         },
         {
           "number": "42",
-          "name": "AUX12",
+          "name": "BONI13V8",
           "type": "passive",
-          "net": "AUX12"
+          "net": "BONI13V8"
         },
         {
           "number": "43",
-          "name": "BONI13V8_PORT",
+          "name": "CHG_INHIBIT",
           "type": "passive",
-          "net": "BONI13V8_PORT"
+          "net": "CHG_INHIBIT"
         },
         {
           "number": "44",
@@ -10638,147 +10638,147 @@
         },
         {
           "number": "45",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "46",
-          "name": "BONI13V8",
-          "type": "passive",
-          "net": "BONI13V8"
-        },
-        {
-          "number": "47",
-          "name": "CHG_INHIBIT",
-          "type": "passive",
-          "net": "CHG_INHIBIT"
-        },
-        {
-          "number": "48",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "49",
           "name": "EN_AUX12",
           "type": "passive",
           "net": "EN_AUX12"
         },
         {
-          "number": "50",
+          "number": "46",
           "name": "E1_BAT_ADC",
           "type": "passive",
           "net": "E1_BAT_ADC"
         },
         {
-          "number": "51",
+          "number": "47",
           "name": "EN_HFP",
           "type": "passive",
           "net": "EN_HFP"
         },
         {
-          "number": "52",
+          "number": "48",
           "name": "EN_BONI",
           "type": "passive",
           "net": "EN_BONI"
         },
         {
-          "number": "53",
+          "number": "49",
           "name": "EN_LNB",
           "type": "passive",
           "net": "EN_LNB"
         },
         {
-          "number": "54",
+          "number": "50",
           "name": "EN_LIME3V3",
           "type": "passive",
           "net": "EN_LIME3V3"
         },
         {
-          "number": "55",
+          "number": "51",
           "name": "FLT_BONI",
           "type": "passive",
           "net": "FLT_BONI"
         },
         {
-          "number": "56",
+          "number": "52",
           "name": "FAULT_HFP",
           "type": "passive",
           "net": "FAULT_HFP"
         },
         {
-          "number": "57",
+          "number": "53",
           "name": "FLT_LNB",
           "type": "passive",
           "net": "FLT_LNB"
         },
         {
-          "number": "58",
+          "number": "54",
           "name": "FLT_LIME3V3",
           "type": "passive",
           "net": "FLT_LIME3V3"
         },
         {
-          "number": "59",
+          "number": "55",
           "name": "I2C0_SDA",
           "type": "passive",
           "net": "I2C0_SDA"
         },
         {
-          "number": "60",
+          "number": "56",
           "name": "I2C0_SCL",
           "type": "passive",
           "net": "I2C0_SCL"
         },
         {
-          "number": "61",
+          "number": "57",
           "name": "I2C2_SDA",
           "type": "passive",
           "net": "I2C2_SDA"
         },
         {
-          "number": "62",
+          "number": "58",
           "name": "I2C2_SCL",
           "type": "passive",
           "net": "I2C2_SCL"
         },
         {
-          "number": "63",
+          "number": "59",
           "name": "IMU_TX",
           "type": "passive",
           "net": "IMU_TX"
         },
         {
-          "number": "64",
+          "number": "60",
           "name": "IMU_RX",
           "type": "passive",
           "net": "IMU_RX"
         },
         {
-          "number": "65",
+          "number": "61",
           "name": "OVP_LNB_N",
           "type": "passive",
           "net": "OVP_LNB_N"
         },
         {
-          "number": "66",
+          "number": "62",
           "name": "INA228_ALERT",
           "type": "passive",
           "net": "INA228_ALERT"
         },
         {
-          "number": "67",
+          "number": "63",
           "name": "PICO_OFF",
           "type": "passive",
           "net": "PICO_OFF"
         },
         {
-          "number": "68",
+          "number": "64",
           "name": "PICO_DISP_EN",
           "type": "passive",
           "net": "PICO_DISP_EN"
+        },
+        {
+          "number": "65",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "66",
+          "name": "PWR_BUTTON",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        },
+        {
+          "number": "67",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "68",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
         },
         {
           "number": "69",
@@ -10788,9 +10788,9 @@
         },
         {
           "number": "70",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "71",
@@ -10950,27 +10950,27 @@
         },
         {
           "number": "97",
-          "name": "NC",
+          "name": "GND",
           "type": "passive",
-          "nc": true
+          "net": "GND"
         },
         {
           "number": "98",
-          "name": "NC",
+          "name": "GND",
           "type": "passive",
-          "nc": true
+          "net": "GND"
         },
         {
           "number": "99",
-          "name": "NC",
+          "name": "E2_LNA4_SHUNT",
           "type": "passive",
-          "nc": true
+          "net": "E2_LNA4_SHUNT"
         },
         {
           "number": "100",
-          "name": "NC",
+          "name": "E2_LNA4_SW",
           "type": "passive",
-          "nc": true
+          "net": "E2_LNA4_SW"
         }
       ],
       "notes": [
