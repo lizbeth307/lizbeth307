@@ -625,24 +625,12 @@ def scripted_copper(inp, parts, pins):
 
     def row(n):  # upper / lower contact row of J209 on the board (rotation 180: odd contacts lower, even upper)
         return 'upper' if j.pad(n)['at'][1] > B2B_AT[1] else 'lower'
-    # LAB5: four J209 contacts (b2b-nets.json: ceil(4 A / 1 A)) in the even columns of the rail block, all in the lower row
-    # (b2b.rail_order), next to the end of the trunk. Each contact: B.Cu stub -> one via below the row; a 2.0 mm F.Cu plate
-    # (4 A, PWR3A >= 1.85) over the vias joins the trunk -> 0.6 mm branch to each switch IN. A LAB5 contact in the upper row
-    # (not in this map) would get its via above the row and a 0.8 mm F.Cu riser (PWR2A, at most 2 A) over the strip to the plate.
+    # LAB5: four J209 contacts (b2b-nets.json: ceil(4 A / 1 A)) next to the end of the trunk. Each contact: B.Cu stub -> one via
+    # beside its row (above the upper row, below the lower row); the vias of a row are joined by F.Cu (2.0 mm for more than two
+    # contacts, else 0.8 mm, PWR2A for 2 A); upper-row LAB5 vias reach the trunk by an F.Cu riser over the strip (no top-side
+    # part there), lower-row vias by a 2.0 mm plate (PWR3A >= 1.85 where the four contacts meet) -> 0.6 mm branch to each IN.
     lab5 = sorted((n for n, net in pins['pins'].items() if net == 'LAB5'), key=int)
     up, lo = [n for n in lab5 if row(n) == 'upper'], [n for n in lab5 if row(n) == 'lower']
-    if not lo or len(up) > 2:
-        raise SystemExit(f'make_spec: LAB5 contacts {lab5}: the J209 LAB5 copper needs them in the lower row (b2b.rail_order)')
-    for n in lo:
-        x = P(B2B_REF, n)[0]
-        T(f'LAB5-J209-{n}', 'LAB5', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (x, LAB5_LO_VY)],
-          f'out of J209 contact {n} (lower row) between its GND neighbours to its via: one contact, at most 1 A')
-        V(f'LAB5-LV-{n}', 'LAB5', (x, LAB5_LO_VY), f'LAB5 via of J209 contact {n}')
-    lx = sorted(P(B2B_REF, n)[0] for n in lo)
-    xr = r4(sum(lx) / len(lx))
-    T('LAB5-PLATE', 'LAB5', 'F.Cu', W_TRUNK, [(lx[0], LAB5_LO_VY), (lx[-1], LAB5_LO_VY)],
-      f'F.Cu plate over the {len(lo)} LAB5 vias of the lower J209 row (PWR3A width 2.0 mm)')
-    T('LAB5-PLATE-DOWN', 'LAB5', 'F.Cu', W_TRUNK, [(xr, LAB5_LO_VY), (xr, TY)], 'LAB5 plate to the trunk (4 A)')
     for n in up:
         x = P(B2B_REF, n)[0]
         end = j.pad(n)['box'][3] + 0.3
@@ -651,9 +639,28 @@ def scripted_copper(inp, parts, pins):
         T(f'LAB5-J209-{n}-E', 'LAB5', 'B.Cu', W_SENSE, [(x, end), (x, LAB5_UP_VY)],
           f'J209 contact {n} to its via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width')
         V(f'LAB5-UV-{n}', 'LAB5', (x, LAB5_UP_VY), f'LAB5 via of J209 contact {n}')
-        T(f'LAB5-RISER-{n}', 'LAB5', 'F.Cu', W_PAIR, [(x, LAB5_UP_VY), (x, LAB5_LO_VY)],
-          f'F.Cu riser of J209 contact {n} over the strip to the plate (PWR2A width 0.8 mm)')
-    xm = xr
+    for n in lo:
+        x = P(B2B_REF, n)[0]
+        T(f'LAB5-J209-{n}', 'LAB5', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (x, LAB5_LO_VY)],
+          f'out of J209 contact {n} (lower row) between its GND neighbours to its via: one contact, at most 1 A')
+        V(f'LAB5-LV-{n}', 'LAB5', (x, LAB5_LO_VY), f'LAB5 via of J209 contact {n}')
+    if lo:
+        lx = sorted(P(B2B_REF, n)[0] for n in lo)
+        xm = r4(sum(lx) / len(lx))
+        T('LAB5-PLATE', 'LAB5', 'F.Cu', W_TRUNK, [(lx[0], LAB5_LO_VY), (lx[-1], LAB5_LO_VY)],
+          f'F.Cu plate over the {len(lo)} LAB5 vias of the lower J209 row (PWR3A width 2.0 mm)')
+        T('LAB5-PLATE-DOWN', 'LAB5', 'F.Cu', W_TRUNK, [(xm, LAB5_LO_VY), (xm, TY)], 'LAB5 plate to the trunk (4 A)')
+    if up:
+        ux = sorted(P(B2B_REF, n)[0] for n in up)
+        xu = r4(sum(ux) / len(ux))
+        wu = W_TRUNK if len(up) > 2 else W_PAIR
+        inset = max(0.0, wu / 2 - VIA_D / 2)  # the bar ends stay inside the outer vias, clear of the neighbouring escapes
+        T('LAB5-UP-BAR', 'LAB5', 'F.Cu', wu, [(r4(ux[0] + inset), LAB5_UP_VY), (r4(ux[-1] - inset), LAB5_UP_VY)],
+          f'F.Cu bar over the {len(up)} LAB5 vias above the upper J209 row')
+        T('LAB5-RISER', 'LAB5', 'F.Cu', wu, [(xu, LAB5_UP_VY), (xu, LAB5_LO_VY if lo else TY)],
+          'F.Cu riser of the upper-row LAB5 contacts over the strip (no top-side part there)')
+        if not lo:
+            xm = xu
     first = LAB5_CELLS[0][0] - 0.95
     T('LAB5-TRUNK', 'LAB5', 'F.Cu', W_TRUNK, [(xm, TY), (first, TY)],
       'LAB5 trunk to the four TPS2553 inputs: PWR3A width 2.0 mm >= 1.85 (netclasses.json)')
