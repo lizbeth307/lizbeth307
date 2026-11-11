@@ -710,9 +710,12 @@ def scripted_copper(inp, parts, pins):
         ksh = next(n for n, v in pins['pins'].items() if v == shunt)
         if (row(ksw), row(ksh)) != ('upper', 'lower') or j.pad(ksw)['at'][0] != j.pad(ksh)['at'][0]:
             raise SystemExit(f'make_spec: J209 {sw} {ksw} / {shunt} {ksh} are not one column (SW upper, SHUNT lower)')
-        top = parts[rsh].pad('1')['box'][3]
-        vsw, vsh = (s1[0] + 0.16, top + 0.65), (s2[0] - 0.16, top + 0.65)
-        T('K4-SW-S', sw, 'F.Cu', W_SENSE, [(vsw[0], s1[1]), vsw], f'Kelvin sense: top of {rsh} pad 1 to its via')
+        b1 = parts[rsh].pad('1')['box']
+        top = b1[3]
+        # SW: via left of the top of pad 1 (clear of the current path K4-SW-I, which enters pad 1 from below), so that the
+        # SHUNT path can pass close to the J209 hole and leave the board right of it open; SHUNT: via over pad 2 as before
+        vsw, vsh = (r4(b1[0] - 0.775), r4(top - 0.075)), (s2[0] - 0.16, top + 0.65)
+        T('K4-SW-S', sw, 'F.Cu', W_SENSE, [(r4(b1[0] + 0.15), vsw[1]), vsw], f'Kelvin sense: top-left of {rsh} pad 1 to its via')
         V('K4-SW-V', sw, vsw, f'Kelvin sense {sw} to J209 contact {ksw} (bottom side)')
         bx, by = P(B2B_REF, ksw)
         end = j.pad(ksw)['box'][3] + 0.3
@@ -722,8 +725,10 @@ def scripted_copper(inp, parts, pins):
         V('K4-SH-V', shunt, vsh, f'Kelvin sense {shunt} to J209 contact {ksh} (bottom side)')
         bx, by = P(B2B_REF, ksh)
         end = j.pad(ksh)['box'][1] - 0.3
-        T('K4-SH-B', shunt, 'B.Cu', W_SENSE, [vsh, (vsh[0], K4_KLO), (bx, K4_KLO), (bx, end)],
-          f'Kelvin sense on B.Cu right of the J209 alignment hole, under the lower row to contact {ksh}')
+        hole_r = max(p['box'][2] for p in j.pads if p['type'] == 'np_thru_hole')
+        xs = r4(hole_r + NPTH_CLEAR + W_SENSE / 2 + 0.4)
+        T('K4-SH-B', shunt, 'B.Cu', W_SENSE, [vsh, (xs, r4(vsw[1] - 0.7)), (xs, K4_KLO), (bx, K4_KLO), (bx, end)],
+          f'Kelvin sense on B.Cu just right of the J209 alignment hole, under the lower row to contact {ksh}')
         T('K4-SH-P', shunt, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksh} between its neighbours')
         pins['scripted_nets'][sw] = [(u, '6'), (rsh, '1'), (B2B_REF, ksw)]
         pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'), (B2B_REF, ksh)]

@@ -2754,16 +2754,16 @@
         "width_mm": 0.35,
         "path": [
           [
-            114.6975,
-            22.1
+            114.125,
+            22.9
           ],
           [
-            114.6975,
-            23.625
+            113.2,
+            22.9
           ]
         ],
         "locked": true,
-        "why": "Kelvin sense: top of R246 pad 1 to its via"
+        "why": "Kelvin sense: top-left of R246 pad 1 to its via"
       },
       {
         "id": "K4-SW-B",
@@ -2772,8 +2772,8 @@
         "width_mm": 0.35,
         "path": [
           [
-            114.6975,
-            23.625
+            113.2,
+            22.9
           ],
           [
             111.05,
@@ -2834,7 +2834,11 @@
             23.625
           ],
           [
-            117.3025,
+            113.9,
+            22.2
+          ],
+          [
+            113.9,
             15.2
           ],
           [
@@ -2847,7 +2851,7 @@
           ]
         ],
         "locked": true,
-        "why": "Kelvin sense on B.Cu right of the J209 alignment hole, under the lower row to contact 99"
+        "why": "Kelvin sense on B.Cu just right of the J209 alignment hole, under the lower row to contact 99"
       },
       {
         "id": "K4-SH-P",
@@ -4735,8 +4739,8 @@
         "id": "K4-SW-V",
         "net": "E2_LNA4_SW",
         "at": [
-          114.6975,
-          23.625
+          113.2,
+          22.9
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
