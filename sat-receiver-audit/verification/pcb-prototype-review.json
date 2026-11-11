@@ -1,7 +1,7 @@
 {
   "status": "ROUTED_INTERNAL_PROTOTYPE_NOT_FOR_FABRICATION",
-  "source_input_sha256": "939ea9862e0ac0c619e62e755c4e0f3b0ea4b370ec58ec9a042fd6084cd4f4aa",
-  "frozen_starter_sha256": "a80b7e6bb47ef2cb4f8da51fbfbab3c9b65b6b975b0d05572ce9402045f38fe9",
+  "source_input_sha256": "0c2a9d3d5b39b687312e1dbf6dc078b22dc0bf43f0a598ad3584fb94a44d1ad1",
+  "frozen_starter_sha256": "08e03752933a8aac8541cf8e7005ab75595c9ac12a2c5d411bc1349b3c6be913",
   "published_board": true,
   "external_interfaces_selected": false,
   "release": "NOT_FOR_FABRICATION",
@@ -93,7 +93,7 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "ed526d01b2f2f93ef24cbeb04b7a575606587df6daa5c8fbf10060ede185a659",
+    "raw_sha256": "839d6145c3ff03341ef8de596fed336b6040fcd96ce0ed6c4dd73a3603b4c3f5",
     "suppressed_or_filtered": false
   },
   "track_segments": 753,
@@ -11322,8 +11322,8 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "e14d0f6fee2b9dd051bd7b84f614e31a83fede67895b65cf34cb200cfda23c63"
+    "raw_sha256": "59a399fd44b05f9a3551ba3b8e9f431d83670a5cbf8565498ed6072c90872b6b"
   },
-  "board_sha256": "afc5ed25a0578710230730bbba28dc216bf9f76fe0e6162fafa66fa122227dae",
+  "board_sha256": "ca8fc7a30a4cafc2d4c15575a68f86708d9823f3fefaea422c6420c1f8f52cb6",
   "frozen_starter_unchanged": true
 }
