@@ -551,5 +551,30 @@ class CutoutsViasAndLayerTypes(unittest.TestCase):
         self.assertTrue(next(iter(status)).startswith('provisional: B2B ref pending'))
 
 
+class PwrBPinMapFollowsB2bNets(unittest.TestCase):
+    """W2 PCB-PWRB: the committed PWR_B B2B pin map still matches pcb/generated/b2b-nets.json (CI does not run
+    build/kicad/boards/PWR_B/make_spec.py --check, which needs the FX8 library, and b2b-nets.json is no board_gen input)."""
+
+    def test_contacts_per_net_gnd_count_and_source_hash(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        import collections
+        import hashlib
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        path = bg.BASE / 'pcb/generated/b2b-nets.json'
+        b2b = bg.read_json(path)
+        want = collections.Counter({n['net']: int(n['pins']) for n in b2b['nets']})
+        self.assertEqual(sum(int(n.get('gnd_pins', 0)) for n in b2b['nets']), b2b['totals']['gnd_pins'])
+        want['GND'] += b2b['totals']['gnd_pins']
+        placeholder = next(p for p in spec['parts'] if p['ref'] == 'B2B1')
+        self.assertEqual(collections.Counter(placeholder['pins'].values()), want)
+        pin_map = spec['b2b_pin_map']
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.assertEqual(pin_map['source'], f'pcb/generated/b2b-nets.json sha256 {digest}')
+        self.assertIn(f'(sha256 {digest})', placeholder['pins_source'])
+        self.assertEqual((pin_map['used'], pin_map['spare']), (len(placeholder['pins']), pin_map['contacts'] - len(placeholder['pins'])))
+        self.assertEqual(pin_map['used'], b2b['totals']['contacts_needed'])
+
+
 if __name__ == '__main__':
     unittest.main()

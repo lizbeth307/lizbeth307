@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "19420cbcbd70d65ccafb3633bbe1d1ab229fd440730e65256a5d020c56ddc8a6"
+      "sha256": "2401afe0e17613bf7a6889ec91261ef667756f145f88b06359e4b69ee35ae06e"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "24b67c29a0ff6c102b1240424842bc6c908b3d3ee428ca1c6e050572bf5dde08",
       "footprints": "bd1e734548d14a0debe688988611d93113f265cd10d07edd64cfd0d5f9480656",
       "contract_board": "0512319f5dc30b645f8133ef381bdfd9e136ba19c2294d3cfbfc4d5a9c0d39ef",
       "netclasses": "9e600b028a9b15dc6b5300504884fbce7797e7e6e234de3ecf1fc1819c233513",
-      "spec": "405ff540e8a4d4ceae0a25b6dbd03f39552d7301fadccb7a35373301fece6038"
+      "spec": "88093fa2a79b36f346e9d518b0d0ccd465b0e224956d086ac811e7b733fd7d73"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },

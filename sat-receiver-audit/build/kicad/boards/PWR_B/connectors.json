@@ -2485,7 +2485,7 @@
             112.0,
             57.0
           ],
-          "replaced_by": "graph ref of the Samtec QTH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_b) once its land pattern is read and vendored (GR-4 / PCB-PWRA / PCB-PWRB lineage), keeping this pin map"
+          "replaced_by": "graph ref of the Samtec QTH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_b) once its land, derived from the dimensions of the Samtec recommended PCB layout Rev M, is vendored (GR-4 / PCB-PWRA lineage); only the contact numbers of this pin map carry over, then PWR_B and PWR_A are re-routed"
         }
       ]
     }
