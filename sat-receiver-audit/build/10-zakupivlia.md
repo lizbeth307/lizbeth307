@@ -532,10 +532,10 @@ Molex KK 254 з фіксатором для штатної вилки кабел
 | AI-GLAND-POD | гермоввід LAPP SKINTOP ST-M 12x1.5 RAL 9005 BK (53111200), чорний, UV-стійкий, кабелю W425 у pod | 1 + 0 | LAPP | 53111200 | P-02 PWR ⌀12.2, build/17 F43 (W425 — лише живлення LaNA) | digikey:2181-53111200-ND | у каталозі |
 | AI-GLAND-POD-LOCKNUT | контргайка LAPP SKINDICHT SM-M 12x1.5 (52103000), латунь нікельована, до гермовводу pod | 1 + 0 | LAPP | 52103000 | P-02 PWR ⌀12.2 зсередини pod, build/17 F43 (MECH-2: різьба 8.0 − стінка ≤3.94 − гайка 3.0 = 1.06 мм ≥ 0) | web:lapp-52103000-article-information | у каталозі |
 | AI-M3-IMU-CARRIER | гвинт M3 носія паку IMU у вставки TC-M3x5.7 | 2 + 2 | — | — | build/17 F35 (mechanical/params/imu_pack.json carrier.screws; на тих самих гвинтах — носійна плата IMU_CARR… | — | TBD |
-| AI-STANDOFF-IMU-13 | стійки 13 мм під пару BNO085 + RP2040-Zero (набір) | 1 + 0 | — | — | build/17 F36 (imu_pack.json boards.standoff_h 13.0; I-01) | — | TBD |
+| AI-STANDOFF-IMU-13 | стійка Würth 970130155: M2.5 «мама-мама», 13 мм, поліамід, шестигранник 5.0, під BNO085 паку IMU | 4 + 2 | Würth Elektronik | 970130155 | build/17 F36 (mechanical/params/imu_pack.json boards.standoff_h 13.0): 4 металізовані отвори ⌀2.5 (MOUNTING… | digikey:732-13002-ND | в наявності |
 | AI-INSERT-1420 | латунна вставка 1/4-20 × 12.7 у носій паку IMU | 1 + 1 | CNC Kitchen | вставка 1/4-20 × 12.7 | build/17 F37 (imu_pack.json tripod.carrier_insert, STACK D15) | CNC Kitchen (10-bom row 86, v2 18.10.2026: «вставки M3x5.7, M2.5x4, 1/4-20x12.7»; page not re-read) | з 10-bom |
 | AI-HATCH-BOARD-FIX | гвинт M2.5 A2 TX8 для плати лючка HATCH у вставки TC-M2,5x4 бобишок задньої стінки | 2 + 2 | — | — | build/17 F38: 2 отвори ⌀2.7 у вушках плати HATCH (pcb/boards/HATCH.json, build/kicad/boards/HATCH/contract-… | — | TBD |
-| AI-PACK-FUSE-FIX | кріплення носійної плати F101 (PACK_FUSE) біля лотка батареї | 1 + 0 | — | — | build/17 F39 (build/16 §2 PACK: «ізольованій і закріпленій біля лотка») | — | TBD |
+| AI-PACK-FUSE-FIX | гвинт M2.5×6 ISO 14580 A2-70 TX8 носійної плати F101 (PACK_FUSE) у стійки PEM SO-M2.5-6ZI (пачка 25 шт.) | 2 + 2 | CNC Kitchen | TC-S-M2,5x6 | build/17 F39: 2 отвори ⌀2.7 плати PACK_FUSE за 2.6 від торців (pcb/boards/PACK_FUSE.json, build/kicad/board… | web:3djake-tc-s-m2,5x6 | у каталозі |
 
 ## Решта закупівлі: рядки оцінки v2 поза схемою
 

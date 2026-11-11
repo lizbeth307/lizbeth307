@@ -1,0 +1,15 @@
+P  JOB   PACK_FUSE
+P  CODE  00                                                                     
+P  UNITS CUST 0                                                                 
+P  arrayDim   N                                                                 
+P  VER   IPC-D-356A                                                             
+P  IMAGE PRIMARY                                                                
+317E1_CELL4         J116  -1    D0689PA00X+040315Y-048740X1083Y1083R000 S0      
+317E1_CELL4         F101  -1    D0701PA00X+040807Y-046520X1094Y0000R270 S0      
+317E1_CELL4         F101  -1    D0701PA00X+042146Y-046520X1094Y0000R270 S0      
+317E1_SHUNT_P       J117  -1    D0689PA00X+040315Y-040394X1083Y1083R000 S0      
+317E1_SHUNT_P       F101  -2    D0701PA00X+040807Y-042614X1094Y0000R270 S0      
+317E1_SHUNT_P       F101  -2    D0701PA00X+042146Y-042614X1094Y0000R270 S0      
+367N/C              H1         MD1063UA00X+042244Y-048740X1063Y0000R000 S0      
+367N/C              H2         MD1063UA00X+042244Y-040394X1063Y0000R000 S0      
+999                                                                             

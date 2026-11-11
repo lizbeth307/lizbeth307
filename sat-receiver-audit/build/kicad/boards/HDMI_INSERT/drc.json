@@ -1,0 +1,108 @@
+{
+  "$schema": "https://schemas.kicad.org/drc.v1.json",
+  "coordinate_units": "mm",
+  "ignored_checks": [],
+  "included_severities": [
+    "error",
+    "warning",
+    "exclusion"
+  ],
+  "kicad_version": "10.0.7",
+  "schematic_parity": [],
+  "unconnected_items": [],
+  "violations": [
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of U506",
+          "pos": {
+            "x": 108.0,
+            "y": 106.4
+          },
+          "uuid": "443f11de-4119-456f-8df7-3e59af7ede7d"
+        },
+        {
+          "description": "Reference field of C517",
+          "pos": {
+            "x": 104.6,
+            "y": 106.9
+          },
+          "uuid": "7a1fe1ad-191e-4b89-a435-a33dc887c92b"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of U506",
+          "pos": {
+            "x": 108.0,
+            "y": 106.4
+          },
+          "uuid": "443f11de-4119-456f-8df7-3e59af7ede7d"
+        },
+        {
+          "description": "Reference field of C518",
+          "pos": {
+            "x": 111.4,
+            "y": 106.9
+          },
+          "uuid": "964d33ca-2816-4b11-8a80-c57648ec56a9"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Reference field of J1",
+          "pos": {
+            "x": 104.0,
+            "y": 115.8
+          },
+          "uuid": "4247fd7d-dbfd-4f62-bb6f-dd121697081f"
+        },
+        {
+          "description": "PTH pad 2 [GND] of J1",
+          "pos": {
+            "x": 105.0,
+            "y": 115.8
+          },
+          "uuid": "232f68be-e585-4b27-b406-e5fbb91d1509"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Reference field of J2",
+          "pos": {
+            "x": 104.0,
+            "y": 102.2
+          },
+          "uuid": "1a79ce1f-5e51-453c-a634-0789ceb933f4"
+        },
+        {
+          "description": "PTH pad 2 [GND] of J2",
+          "pos": {
+            "x": 105.0,
+            "y": 102.2
+          },
+          "uuid": "ea0486d5-a94d-493d-8033-0dab7853be82"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    }
+  ],
+  "source": "see report.json board_file"
+}

@@ -1,0 +1,354 @@
+{
+  "schema": "srrx-fab-manifest-v1",
+  "board_id": "PACK_FUSE",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "NOT RELEASED: model/CI only; bench gates OPEN",
+  "generator": "pcb/fab_export.py",
+  "kicad_version": "10.0.7",
+  "inputs": {
+    "board_file": "build/kicad/boards/PACK_FUSE/PACK_FUSE.kicad_pcb",
+    "board_sha256": "bb250b01be958eac4cc32c0eea38ac1b1ba36dadbd211a5d044ed580ef03f06d",
+    "project_sha256": "d9a60e9c60498e76037aafa247c6f684cebc18c0af0e81278edb87abf456d3d5",
+    "spec_projection_sha256": "e8cb1cc850160fe8af5f5bd267181ff66acfa5d2fb56c50206cde5a2c4b6d735",
+    "report_projection_sha256": "7927a782f99c79720bd1f60bb53be0f2c9945ee52ac8e7ff7d724cda8e31409c",
+    "jlc_bom_rows": [
+      {
+        "Board": "PACK_FUSE",
+        "Comment": "029707.5WXNV",
+        "Designator": "F101",
+        "Footprint": "Fuseholder_Blade_Mini_Keystone_3568",
+        "LCSC Part #": "C178942",
+        "Mount": "THT"
+      }
+    ],
+    "jlc_bom_rows_sha256": "50f25e8696ca046e826cf94a4d355938109574d6e4204a151c5b05443b9ebe5a",
+    "stackup": {
+      "id": "JLC standard 2-layer FR-4",
+      "material": "FR-4",
+      "copper_outer": "1 oz",
+      "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "note": "finished thickness from the spec layers.thickness_mm; JLC tolerance +/-10 % for boards >= 1.0 mm; 1 oz outer copper is the project choice (build/15 rows Шари and Мідь і струмові класи)",
+      "copper_layers": 2,
+      "thickness_mm": 1.6
+    },
+    "stackup_sha256": "5d4429eae592c730808058b5134bdf6fb5f9b87bf3e9f3435e687871bce8f37a",
+    "rf50_nets": [],
+    "note": "projections (F10): an unrelated build/10-jlc-bom.csv row, LCSC stock or spec edit does not stale this set"
+  },
+  "commands": [
+    {
+      "job": "gerbers",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "gerbers",
+        "--output",
+        "<temp>/raw/gerber/",
+        "--layers",
+        "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+        "--subtract-soldermask",
+        "--precision",
+        "6",
+        "<temp>/src/PACK_FUSE.kicad_pcb"
+      ]
+    },
+    {
+      "job": "drill",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "drill",
+        "--output",
+        "<temp>/raw/drill/",
+        "--format",
+        "excellon",
+        "--drill-origin",
+        "absolute",
+        "--excellon-zeros-format",
+        "decimal",
+        "--excellon-oval-format",
+        "alternate",
+        "--excellon-units",
+        "mm",
+        "--excellon-separate-th",
+        "--generate-map",
+        "--map-format",
+        "gerberx2",
+        "<temp>/src/PACK_FUSE.kicad_pcb"
+      ]
+    },
+    {
+      "job": "ipcd356",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "ipcd356",
+        "--output",
+        "<temp>/raw/PACK_FUSE.ipc356",
+        "<temp>/src/PACK_FUSE.kicad_pcb"
+      ]
+    },
+    {
+      "job": "pos",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "pos",
+        "--output",
+        "<temp>/raw/assembly/PACK_FUSE-pos-kicad.csv",
+        "--side",
+        "both",
+        "--format",
+        "csv",
+        "--units",
+        "mm",
+        "--exclude-dnp",
+        "<temp>/src/PACK_FUSE.kicad_pcb"
+      ]
+    }
+  ],
+  "normalisation": [
+    "Gerber and drill-map Gerber: the %TF.CreationDate attribute line (optional in Gerber X2) is removed; 'G04 Created by KiCad (...) date ...*' keeps the creator and loses the date",
+    "Excellon: the '; #@! TF.CreationDate' line is removed; \"; DRILL file KiCad ... date ...\" loses the date",
+    "Gerber job file (.gbrjob): Header.CreationDate is removed (JSON re-written with indent 2)",
+    "IPC-D-356: comment-record dates are removed and file paths become the board file name",
+    "KiCad build strings that start with 10.0.7 become 10.0.7 in generator lines",
+    "after normalisation no date/time stamp and no path of the export directory may remain (checked)"
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "dnp_excluded": [
+    "J116",
+    "J117"
+  ],
+  "coverage": {
+    "cpl": {
+      "rows": 1,
+      "placed_by_side_and_mount": {
+        "Top": {
+          "THT": 1
+        }
+      },
+      "smd_refs_once_per_side": true
+    },
+    "bom": {
+      "rows": 1,
+      "designators": 1,
+      "tbd": [],
+      "boards": 1
+    },
+    "ipc356": {
+      "board_pad_nets": [
+        "E1_CELL4",
+        "E1_SHUNT_P"
+      ],
+      "ipc_nets": [
+        "E1_CELL4",
+        "E1_SHUNT_P"
+      ],
+      "aliases": {},
+      "missing": []
+    },
+    "gerber_x2": {
+      "files": {
+        "gerber/PACK_FUSE-B_Cu.gbl": "Copper,L2,Bot",
+        "gerber/PACK_FUSE-B_Mask.gbs": "Soldermask,Bot",
+        "gerber/PACK_FUSE-B_Paste.gbp": "Paste,Bot",
+        "gerber/PACK_FUSE-B_Silkscreen.gbo": "Legend,Bot",
+        "gerber/PACK_FUSE-Edge_Cuts.gm1": "Profile,NP",
+        "gerber/PACK_FUSE-F_Cu.gtl": "Copper,L1,Top",
+        "gerber/PACK_FUSE-F_Mask.gts": "Soldermask,Top",
+        "gerber/PACK_FUSE-F_Paste.gtp": "Paste,Top",
+        "gerber/PACK_FUSE-F_Silkscreen.gto": "Legend,Top"
+      }
+    },
+    "drill": {
+      "pth_file": 1,
+      "npth_file": 1,
+      "pth_hits": 6,
+      "npth_hits": 2,
+      "board_pth_pads": 6,
+      "board_vias": 0,
+      "board_npth_pads": 2,
+      "maps": [
+        "drill/PACK_FUSE-NPTH-drl_map.gbr",
+        "drill/PACK_FUSE-PTH-drl_map.gbr"
+      ]
+    },
+    "passed": true,
+    "area_mm2": 282.48
+  },
+  "problems": [],
+  "sources": {
+    "jlc_bom": {
+      "url": "https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "required BOM columns Comment, Designator, Footprint; .csv/.xls/.xlsx; designators are upper-cased by JLC"
+    },
+    "jlc_cpl": {
+      "url": "https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "CPL columns Designator, Mid X, Mid Y (mm, component centroid), Layer (Top/Bottom), Rotation (degrees, positive counter-clockwise); the page names no coordinate origin and no rotation offsets"
+    },
+    "jlc_kicad": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad",
+      "read": "2026-11-07",
+      "used": "BOM Comment, Designator, Footprint, LCSC Part #; KiCad pos Ref/PosX/PosY/Rot/Side become Designator/Mid X/Mid Y/Rotation/Layer"
+    },
+    "jlc_gerber": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8",
+      "read": "2026-11-07",
+      "used": "layers F/B.Cu (+ inner), F/B.Paste, F/B.Silkscreen, F/B.Mask, Edge.Cuts; Protel extensions; subtract soldermask from silkscreen; drill: alternate oval mode, absolute origin, millimetres, decimal zeros, drill map recommended"
+    },
+    "jlc_capabilities": {
+      "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "used": "FR-4; thickness 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm, tolerance +/-10 % for >= 1.0 mm; 2-layer outer copper 1/2/2.5/3.5/4.5 oz; impedance control listed from 4 layers, standard +/-10 %"
+    },
+    "kicad_cli": {
+      "url": "https://docs.kicad.org/10.0/en/cli/cli.html",
+      "read": "2026-11-07",
+      "used": "options of pcb export gerbers/drill/ipcd356/pos and jobset run"
+    },
+    "kicad_jobs": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs",
+      "read": "2026-11-07",
+      "used": "jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp"
+    },
+    "kicad_d356": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp",
+      "read": "2026-11-07",
+      "used": "IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 characters); test record types 307/317/327/367"
+    }
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "f86c57c52f7adff3ee5d122070d2fe7e8c8cfd1a4f0eaa361fddee04152d0b82",
+      "bytes": 113
+    },
+    {
+      "path": "PACK_FUSE-fab-notes.pdf",
+      "sha256": "de06c85626c480fa77063214a02e09290029fb724191eca0e255c1a368f77391",
+      "bytes": 7022
+    },
+    {
+      "path": "PACK_FUSE.ipc356",
+      "sha256": "d2a7ea5711b56087e770a34eee127305e28314fd777f7312c7bb39d545dbfbb3",
+      "bytes": 1153
+    },
+    {
+      "path": "PACK_FUSE.kicad_jobset",
+      "sha256": "2bf6328c313ff47a5654904039716c00945a1aad15bf0264f1e31cbffd5c03f0",
+      "bytes": 3331
+    },
+    {
+      "path": "README.md",
+      "sha256": "2728cc1f6451ee82eb1b95e51ec9cb840cfdde843e98b689be2b0930cc4b681e",
+      "bytes": 6691
+    },
+    {
+      "path": "assembly/PACK_FUSE-bom-jlc.csv",
+      "sha256": "26162ff95ababe5c993269edcfdc596bb377ba41c78929394f4dcda04441e1bf",
+      "bytes": 223
+    },
+    {
+      "path": "assembly/PACK_FUSE-cpl-jlc.csv",
+      "sha256": "4735a3155dd7cf44bf9311e11fd01aa0a6c1dfb9a490b8466d172993b7c61987",
+      "bytes": 100
+    },
+    {
+      "path": "assembly/PACK_FUSE-cpl-rotation-offsets.csv",
+      "sha256": "6db6233e70efa20a68c91938487c5a001dee11e2e63752f0bfb482f7ede4bab3",
+      "bytes": 433
+    },
+    {
+      "path": "assembly/PACK_FUSE-instances.csv",
+      "sha256": "cdf2e2d299c42b3135f5415e6601bb5820e391da54350bde38862a5072ccc02e",
+      "bytes": 161
+    },
+    {
+      "path": "assembly/PACK_FUSE-pos-kicad.csv",
+      "sha256": "e278fa582abcd3e0663d4c25cc836abdc40674f930f5089d033b89b4c8751bb0",
+      "bytes": 147
+    },
+    {
+      "path": "drill/PACK_FUSE-NPTH-drl_map.gbr",
+      "sha256": "ca99db783146990784bc9205c15607f5ef2ff0872f534b2422d23152e92bddb8",
+      "bytes": 21672
+    },
+    {
+      "path": "drill/PACK_FUSE-NPTH.drl",
+      "sha256": "38587fb57f9f369140d861271b9959eb08f40c4e5f509f2b36ec76e41c26fa8e",
+      "bytes": 283
+    },
+    {
+      "path": "drill/PACK_FUSE-PTH-drl_map.gbr",
+      "sha256": "02b2a4b6ec92707da81c551120ef57c9ea1619504680929a2398ad6bdfe1da05",
+      "bytes": 30011
+    },
+    {
+      "path": "drill/PACK_FUSE-PTH.drl",
+      "sha256": "adb20aba9ab385a86486fc0c22a55a8137c33634e171e44161272efdc5441655",
+      "bytes": 399
+    },
+    {
+      "path": "gerber/PACK_FUSE-B_Cu.gbl",
+      "sha256": "4bf92247f2f64784e684901549284d4fb57060feedb58e849db3792859a23948",
+      "bytes": 3596
+    },
+    {
+      "path": "gerber/PACK_FUSE-B_Mask.gbs",
+      "sha256": "27cd971a7d1d40799677c79331ebd249e1fdc3463f7249e1a49940b0683fafdd",
+      "bytes": 1391
+    },
+    {
+      "path": "gerber/PACK_FUSE-B_Paste.gbp",
+      "sha256": "d35b591f43151b59694cb39270bc1cb9ef4a6a57a725200103473ba4019c6c33",
+      "bytes": 384
+    },
+    {
+      "path": "gerber/PACK_FUSE-B_Silkscreen.gbo",
+      "sha256": "e8373e6c4f7f23549b6bb68511c3fb7ef3bc5e849812f19b6db18b8e586d676d",
+      "bytes": 1401
+    },
+    {
+      "path": "gerber/PACK_FUSE-Edge_Cuts.gm1",
+      "sha256": "42f79d98c8eb20b3fedfb60058df5f8382d54be8dcea0113f44ff69fb29ffc3d",
+      "bytes": 622
+    },
+    {
+      "path": "gerber/PACK_FUSE-F_Cu.gtl",
+      "sha256": "a94463a6077fc32fc62ebbb95d5fc5890f742de55b9aaf60ac2452c75e3a0e91",
+      "bytes": 3596
+    },
+    {
+      "path": "gerber/PACK_FUSE-F_Mask.gts",
+      "sha256": "d147ba44b6601aad8fdbf00c39886ca7387c419539b6a4b733dcbb90670833e0",
+      "bytes": 1391
+    },
+    {
+      "path": "gerber/PACK_FUSE-F_Paste.gtp",
+      "sha256": "ec8d9d97411bb16c63e7b632bf4b1baf5a485e85d0412dfe965267dbcf4c3a70",
+      "bytes": 384
+    },
+    {
+      "path": "gerber/PACK_FUSE-F_Silkscreen.gto",
+      "sha256": "5ca31a4bb7c9a9440dba6f9a118c14187793b2c439a4cac6cc4380d592408dfa",
+      "bytes": 6304
+    },
+    {
+      "path": "gerber/PACK_FUSE-job.gbrjob",
+      "sha256": "06b1882c168b58d5f5a887e9ca0df179fa2d93adc3cebbb7898f985dd4c5f699",
+      "bytes": 2649
+    }
+  ]
+}

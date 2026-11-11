@@ -1,0 +1,1963 @@
+{
+  "schema": "srrx-board-report-v1",
+  "board_id": "T7_INSERT",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN",
+  "passed": true,
+  "result": {
+    "drc_errors": 0,
+    "drc_unconnected": 0,
+    "drc_warnings": 31,
+    "ignored_checks": [],
+    "source_pad_audit_errors": {
+      "T7A": 0
+    },
+    "boundary_audit": [
+      "pass"
+    ],
+    "domain_audit": true,
+    "keepout_audit": true,
+    "annular_audit": true,
+    "locked_copper_kept": true,
+    "group_audit": true
+  },
+  "inputs": {
+    "parts": {
+      "spec": "d7c70606866984e34a11aad08c7c085e97de3e51e071bfae842e95caac89eb96",
+      "contract": "3fe9f86568a6cc7539a556110efc26829d7b61e99bc69f2db38f1c79d1440775",
+      "project_rules": "218eaa6b22df4ea942c0c921221df012fd9fcfb91247ce4e576be6c17a7c6f1b",
+      "template": "b807559ccc2ea53c19d463e6b835f646fd18b61a6373f3a11eaf8c478a73c288",
+      "instances": "198cdc6daa34d6495f67e92dfacfce5bf2d2739e35385655de61b66c908f41d2"
+    },
+    "sha256": "35630f042130eaa10739add9827b86ee8adf9aa33825681a8b1c68e274a08297"
+  },
+  "board_file": "build/kicad/boards/T7_INSERT/T7_INSERT.kicad_pcb",
+  "board_sha256": "91094ddc0601e9aa8f542a5fb6f8fad6234326e387679aacc77eb34130b5c88b",
+  "project_file": "build/kicad/boards/T7_INSERT/T7_INSERT.kicad_pro",
+  "fp_lib_table_sha256": "9d3b2abac62e81c26897581993139a373cb453bd2ff8d0f68e209e66f4de8df4",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
+    "plan": {
+      "F.Cu": "all parts; E5_VBUS_J5 / E5_VBUS_T7 scripted 0.8 mm (class SCRIPTED_VBUS in T7_INSERT.kicad_pro); signals; GND pour",
+      "B.Cu": "3V3_Q6A and EN_T7 scripted 0.2 mm under C516 (class SCRIPTED_SIG), GND pour (U505 thermal vias and five stitch vias land here)"
+    }
+  },
+  "stackup_contract": {
+    "t": 1.6,
+    "layers": 2,
+    "fab": "JLC 2-layer FR-4 1.6 mm, 1 oz outer copper (standard; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)', build/15)",
+    "components": "top side only (SMD and THT)"
+  },
+  "outline_mm": [
+    [
+      0,
+      0
+    ],
+    [
+      41.0,
+      0
+    ],
+    [
+      41.0,
+      9.0
+    ],
+    [
+      0,
+      9.0
+    ]
+  ],
+  "holes": [],
+  "instances": [
+    {
+      "id": "T7A",
+      "placement": "default",
+      "qty": 1,
+      "refs": {
+        "C514": "C514",
+        "C515": "C515",
+        "C516": "C516",
+        "J514": "J514",
+        "J515": "J515",
+        "J516": "J516",
+        "J517": "J517",
+        "R514": "R514",
+        "R515": "R515",
+        "R516": "R516",
+        "R517": "R517",
+        "TP501": "TP501",
+        "U505": "U505"
+      },
+      "nets": {
+        "3V3_Q6A": "3V3_Q6A",
+        "E5_FAULT_T7": "E5_FAULT_T7",
+        "E5_U505_ILIM": "E5_U505_ILIM",
+        "E5_VBUS_J5": "E5_VBUS_J5",
+        "E5_VBUS_T7": "E5_VBUS_T7",
+        "EN_T7": "EN_T7",
+        "GND": "GND"
+      }
+    }
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "template": [
+    {
+      "ref": "J517",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm.kicad_mod",
+      "sha256": "6602297c1c068f4578341b36eec1b9042cf28a5c831dc791e06fa381f5e8e887",
+      "value": "Майданчик відводу GND-жили кабелю T7",
+      "pads": {
+        "1": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J515",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm.kicad_mod",
+      "sha256": "6602297c1c068f4578341b36eec1b9042cf28a5c831dc791e06fa381f5e8e887",
+      "value": "Майданчик VBUS-жили кабелю T7: вхід від Q6A J5",
+      "pads": {
+        "1": "E5_VBUS_J5"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C515",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:C_0805_2012Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb",
+      "value": "4.7uF X7R 10V",
+      "pads": {
+        "1": "E5_VBUS_J5",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C514",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "value": "100nF X7R 10V",
+      "pads": {
+        "1": "E5_VBUS_J5",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "U505",
+      "source": "graph",
+      "fpid": "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Package_SON.pretty/WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm.kicad_mod",
+      "sha256": "5b7efafe23ba0a80faf2aa5786e7ceed526eb3802b254bc28577f1fc06abb633",
+      "value": "TPS2553DRVR",
+      "pads": {
+        "1": "E5_VBUS_T7",
+        "2": "E5_U505_ILIM",
+        "3": "E5_FAULT_T7",
+        "4": "EN_T7",
+        "5": "GND",
+        "6": "E5_VBUS_J5",
+        "7": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "R515",
+      "source": "graph",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "value": "100k",
+      "pads": {
+        "1": "EN_T7",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "R514",
+      "source": "graph",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "value": "RILIM TBD (start 15.8k 1%)",
+      "pads": {
+        "1": "E5_U505_ILIM",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "TP501",
+      "source": "graph",
+      "fpid": "TestPoint:TestPoint_Pad_D1.5mm",
+      "library": "project",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042",
+      "value": "T7 FAULT_N test point",
+      "pads": {
+        "1": "E5_FAULT_T7"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "R516",
+      "source": "graph",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "value": "10k",
+      "pads": {
+        "1": "E5_FAULT_T7",
+        "2": "3V3_Q6A"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "R517",
+      "source": "graph",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "value": "10k",
+      "pads": {
+        "1": "E5_VBUS_T7",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J516",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm.kicad_mod",
+      "sha256": "6602297c1c068f4578341b36eec1b9042cf28a5c831dc791e06fa381f5e8e887",
+      "value": "Майданчик VBUS-жили кабелю T7: вихід до T7",
+      "pads": {
+        "1": "E5_VBUS_T7"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C516",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:CP_Elec_8x6.9",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_8x6.9.kicad_mod",
+      "sha256": "88b7f133b4073d129781e0f54ba37008807d67b0cf309597ad793716f1ef1786",
+      "value": "150uF 10V low-ESR",
+      "pads": {
+        "1": "E5_VBUS_T7",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J514",
+      "source": "graph",
+      "fpid": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "e1536f71fadb2bcb735cc91360ecf558f92ed45bcc42831e606aa2c128c38c63",
+      "value": "X24S1-T7A: JST PH 3, боковий вхід, S24",
+      "pads": {
+        "1": "GND",
+        "2": "3V3_Q6A",
+        "3": "EN_T7"
+      },
+      "unused_pads": []
+    }
+  ],
+  "placeholders": [],
+  "placement": [
+    {
+      "ref": "C514",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "side": "F",
+      "rotation": 90.0,
+      "at": [
+        6.8,
+        5.6
+      ],
+      "courtyard_box": [
+        6.045,
+        4.095,
+        7.555,
+        7.105
+      ],
+      "fab_box": [
+        6.35,
+        4.75,
+        7.25,
+        6.45
+      ]
+    },
+    {
+      "ref": "C515",
+      "fpid": "Capacitor_SMD:C_0805_2012Metric",
+      "side": "F",
+      "rotation": -90.0,
+      "at": [
+        6.6,
+        2.2
+      ],
+      "courtyard_box": [
+        5.595,
+        0.475,
+        7.605,
+        3.925
+      ],
+      "fab_box": [
+        5.925,
+        1.15,
+        7.275,
+        3.25
+      ]
+    },
+    {
+      "ref": "C516",
+      "fpid": "Capacitor_SMD:CP_Elec_8x6.9",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        26.2,
+        4.5
+      ],
+      "courtyard_box": [
+        20.375,
+        0.075,
+        32.025,
+        8.925
+      ],
+      "fab_box": [
+        22.0,
+        0.3,
+        30.4,
+        8.7
+      ]
+    },
+    {
+      "ref": "J514",
+      "fpid": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+      "side": "F",
+      "rotation": 90.0,
+      "at": [
+        34.0,
+        2.5
+      ],
+      "courtyard_box": [
+        32.125,
+        0.025,
+        40.775,
+        8.975
+      ],
+      "fab_box": [
+        32.6,
+        0.5,
+        40.3,
+        8.5
+      ]
+    },
+    {
+      "ref": "J515",
+      "fpid": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        2.2,
+        6.7
+      ],
+      "courtyard_box": [
+        0.275,
+        4.875,
+        4.125,
+        8.525
+      ],
+      "fab_box": [
+        1.0,
+        5.5,
+        3.4,
+        7.9
+      ]
+    },
+    {
+      "ref": "J516",
+      "fpid": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        18.4,
+        4.35
+      ],
+      "courtyard_box": [
+        16.475,
+        2.525,
+        20.325,
+        6.175
+      ],
+      "fab_box": [
+        17.2,
+        3.15,
+        19.6,
+        5.55
+      ]
+    },
+    {
+      "ref": "J517",
+      "fpid": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        2.2,
+        2.3
+      ],
+      "courtyard_box": [
+        0.275,
+        0.475,
+        4.125,
+        4.125
+      ],
+      "fab_box": [
+        1.0,
+        1.1,
+        3.4,
+        3.5
+      ]
+    },
+    {
+      "ref": "R514",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        12.45,
+        5.6
+      ],
+      "courtyard_box": [
+        10.945,
+        4.845,
+        13.955,
+        6.355
+      ],
+      "fab_box": [
+        11.6,
+        5.1375,
+        13.3,
+        6.0625
+      ]
+    },
+    {
+      "ref": "R515",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        7.6,
+        7.9
+      ],
+      "courtyard_box": [
+        6.095,
+        7.145,
+        9.105,
+        8.655
+      ],
+      "fab_box": [
+        6.75,
+        7.4375,
+        8.45,
+        8.3625
+      ]
+    },
+    {
+      "ref": "R516",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        15.3,
+        7.9
+      ],
+      "courtyard_box": [
+        13.795,
+        7.145,
+        16.805,
+        8.655
+      ],
+      "fab_box": [
+        14.45,
+        7.4375,
+        16.15,
+        8.3625
+      ]
+    },
+    {
+      "ref": "R517",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "side": "F",
+      "rotation": -90.0,
+      "at": [
+        13.6,
+        2.6
+      ],
+      "courtyard_box": [
+        12.845,
+        1.095,
+        14.355,
+        4.105
+      ],
+      "fab_box": [
+        13.1375,
+        1.75,
+        14.0625,
+        3.45
+      ]
+    },
+    {
+      "ref": "TP501",
+      "fpid": "TestPoint:TestPoint_Pad_D1.5mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        12.3,
+        7.6
+      ],
+      "courtyard_box": [
+        11.025,
+        6.325,
+        13.575,
+        8.875
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "U505",
+      "fpid": "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm",
+      "side": "F",
+      "rotation": 180.0,
+      "at": [
+        9.6,
+        5.0
+      ],
+      "courtyard_box": [
+        8.245,
+        3.725,
+        10.955,
+        6.275
+      ],
+      "fab_box": [
+        8.55,
+        3.95,
+        10.65,
+        6.05
+      ]
+    }
+  ],
+  "pads": {
+    "C514": [
+      {
+        "number": "1",
+        "net": "E5_VBUS_J5",
+        "at": [
+          6.8,
+          4.825
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          6.8,
+          6.375
+        ]
+      }
+    ],
+    "C515": [
+      {
+        "number": "1",
+        "net": "E5_VBUS_J5",
+        "at": [
+          6.6,
+          3.15
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          6.6,
+          1.25
+        ]
+      }
+    ],
+    "C516": [
+      {
+        "number": "1",
+        "net": "E5_VBUS_T7",
+        "at": [
+          22.725,
+          4.5
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          29.675,
+          4.5
+        ]
+      }
+    ],
+    "J514": [
+      {
+        "number": "1",
+        "net": "GND",
+        "at": [
+          34.0,
+          2.5
+        ]
+      },
+      {
+        "number": "2",
+        "net": "3V3_Q6A",
+        "at": [
+          34.0,
+          4.5
+        ]
+      },
+      {
+        "number": "3",
+        "net": "EN_T7",
+        "at": [
+          34.0,
+          6.5
+        ]
+      }
+    ],
+    "J515": [
+      {
+        "number": "1",
+        "net": "E5_VBUS_J5",
+        "at": [
+          2.2,
+          6.7
+        ]
+      }
+    ],
+    "J516": [
+      {
+        "number": "1",
+        "net": "E5_VBUS_T7",
+        "at": [
+          18.4,
+          4.35
+        ]
+      }
+    ],
+    "J517": [
+      {
+        "number": "1",
+        "net": "GND",
+        "at": [
+          2.2,
+          2.3
+        ]
+      }
+    ],
+    "R514": [
+      {
+        "number": "1",
+        "net": "E5_U505_ILIM",
+        "at": [
+          11.625,
+          5.6
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          13.275,
+          5.6
+        ]
+      }
+    ],
+    "R515": [
+      {
+        "number": "1",
+        "net": "EN_T7",
+        "at": [
+          6.775,
+          7.9
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          8.425,
+          7.9
+        ]
+      }
+    ],
+    "R516": [
+      {
+        "number": "1",
+        "net": "E5_FAULT_T7",
+        "at": [
+          14.475,
+          7.9
+        ]
+      },
+      {
+        "number": "2",
+        "net": "3V3_Q6A",
+        "at": [
+          16.125,
+          7.9
+        ]
+      }
+    ],
+    "R517": [
+      {
+        "number": "1",
+        "net": "E5_VBUS_T7",
+        "at": [
+          13.6,
+          3.425
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          13.6,
+          1.775
+        ]
+      }
+    ],
+    "TP501": [
+      {
+        "number": "1",
+        "net": "E5_FAULT_T7",
+        "at": [
+          12.3,
+          7.6
+        ]
+      }
+    ],
+    "U505": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          9.6,
+          4.6
+        ]
+      },
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          9.6,
+          5.4
+        ]
+      },
+      {
+        "number": "1",
+        "net": "E5_VBUS_T7",
+        "at": [
+          10.4875,
+          4.35
+        ]
+      },
+      {
+        "number": "2",
+        "net": "E5_U505_ILIM",
+        "at": [
+          10.4875,
+          5.0
+        ]
+      },
+      {
+        "number": "3",
+        "net": "E5_FAULT_T7",
+        "at": [
+          10.4875,
+          5.65
+        ]
+      },
+      {
+        "number": "4",
+        "net": "EN_T7",
+        "at": [
+          8.7125,
+          5.65
+        ]
+      },
+      {
+        "number": "5",
+        "net": "GND",
+        "at": [
+          8.7125,
+          5.0
+        ]
+      },
+      {
+        "number": "6",
+        "net": "E5_VBUS_J5",
+        "at": [
+          8.7125,
+          4.35
+        ]
+      },
+      {
+        "number": "7",
+        "net": "GND",
+        "at": [
+          9.6,
+          5.0
+        ]
+      }
+    ]
+  },
+  "copper": {
+    "tracks": {
+      "segments": 52,
+      "vias": 9,
+      "locked": 31,
+      "by_layer": {
+        "B.Cu": 14,
+        "F.Cu": 38
+      },
+      "widths_mm": [
+        0.2,
+        0.35,
+        0.4,
+        0.8
+      ]
+    },
+    "zones": [
+      {
+        "name": "GND-B",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "B.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "GND-F",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "F.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_0_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_0_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_1_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_1_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_2_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_2_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_3_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_3_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      }
+    ],
+    "copper_layers": 2
+  },
+  "drc": {
+    "errors": 0,
+    "warnings": 31,
+    "unconnected": 0,
+    "schematic_parity": 0,
+    "ignored_checks": [],
+    "by_type": {
+      "silk_over_copper": {
+        "severity": "warning",
+        "count": 13
+      },
+      "silk_overlap": {
+        "severity": "warning",
+        "count": 18
+      }
+    },
+    "error_items": [],
+    "warning_items": [
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C516",
+            "pos": [
+              126.2,
+              104.5
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_VBUS_T7] of C516 on F.Cu",
+            "pos": [
+              122.725,
+              104.5
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C516",
+            "pos": [
+              126.2,
+              104.5
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C516 on F.Cu",
+            "pos": [
+              129.675,
+              104.5
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of J515",
+            "pos": [
+              104.9,
+              101.1
+            ]
+          },
+          {
+            "description": "PTH pad 1 [E5_VBUS_J5] of J515",
+            "pos": [
+              102.2,
+              102.3
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of J515",
+            "pos": [
+              104.9,
+              101.1
+            ]
+          },
+          {
+            "description": "Pad 1 [EN_T7] of R515 on F.Cu",
+            "pos": [
+              106.775,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of J517",
+            "pos": [
+              104.9,
+              107.7
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C515 on F.Cu",
+            "pos": [
+              106.6,
+              107.75
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R514",
+            "pos": [
+              112.45,
+              103.4
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_U505_ILIM] of R514 on F.Cu",
+            "pos": [
+              111.625,
+              103.4
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R514",
+            "pos": [
+              112.45,
+              103.4
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of R514 on F.Cu",
+            "pos": [
+              113.275,
+              103.4
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R515",
+            "pos": [
+              107.6,
+              101.1
+            ]
+          },
+          {
+            "description": "Pad 1 [EN_T7] of R515 on F.Cu",
+            "pos": [
+              106.775,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R515",
+            "pos": [
+              107.6,
+              101.1
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of R515 on F.Cu",
+            "pos": [
+              108.425,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R516",
+            "pos": [
+              115.3,
+              101.1
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_FAULT_T7] of R516 on F.Cu",
+            "pos": [
+              114.475,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R516",
+            "pos": [
+              115.3,
+              101.1
+            ]
+          },
+          {
+            "description": "Pad 2 [3V3_Q6A] of R516 on F.Cu",
+            "pos": [
+              116.125,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of TP501",
+            "pos": [
+              112.3,
+              101.4
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_FAULT_T7] of R516 on F.Cu",
+            "pos": [
+              114.475,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of TP501",
+            "pos": [
+              112.3,
+              101.4
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_FAULT_T7] of TP501 on F.Cu",
+            "pos": [
+              112.3,
+              101.4
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Circle of TP501 on F.Silkscreen",
+            "pos": [
+              112.3,
+              101.4
+            ]
+          },
+          {
+            "description": "Reference field of TP501",
+            "pos": [
+              112.3,
+              101.4
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C514",
+            "pos": [
+              105.4,
+              103.3
+            ]
+          },
+          {
+            "description": "Reference field of J515",
+            "pos": [
+              104.9,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C514",
+            "pos": [
+              105.4,
+              103.3
+            ]
+          },
+          {
+            "description": "Reference field of R515",
+            "pos": [
+              107.6,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of J516",
+            "pos": [
+              118.4,
+              101.6
+            ]
+          },
+          {
+            "description": "Reference field of R516",
+            "pos": [
+              115.3,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R514",
+            "pos": [
+              112.45,
+              103.4
+            ]
+          },
+          {
+            "description": "Segment of R514 on F.Silkscreen",
+            "pos": [
+              112.2127,
+              102.8775
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R514",
+            "pos": [
+              112.45,
+              103.4
+            ]
+          },
+          {
+            "description": "Segment of U505 on F.Silkscreen",
+            "pos": [
+              108.49,
+              102.89
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R515",
+            "pos": [
+              107.6,
+              101.1
+            ]
+          },
+          {
+            "description": "Reference field of J515",
+            "pos": [
+              104.9,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R515",
+            "pos": [
+              107.6,
+              101.1
+            ]
+          },
+          {
+            "description": "Segment of R515 on F.Silkscreen",
+            "pos": [
+              107.3627,
+              100.5775
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R515",
+            "pos": [
+              107.6,
+              101.1
+            ]
+          },
+          {
+            "description": "Segment of R515 on F.Silkscreen",
+            "pos": [
+              107.3627,
+              101.6225
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of TP501",
+            "pos": [
+              112.3,
+              101.4
+            ]
+          },
+          {
+            "description": "Reference field of R516",
+            "pos": [
+              115.3,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C515 on F.Silkscreen",
+            "pos": [
+              105.865,
+              106.5387
+            ]
+          },
+          {
+            "description": "Reference field of J517",
+            "pos": [
+              104.9,
+              107.7
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of J514 on F.Silkscreen",
+            "pos": [
+              136.0,
+              103.0
+            ]
+          },
+          {
+            "description": "Reference field of J514",
+            "pos": [
+              137.5,
+              104.5
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of J514 on F.Silkscreen",
+            "pos": [
+              140.36,
+              106.0
+            ]
+          },
+          {
+            "description": "Reference field of J514",
+            "pos": [
+              137.5,
+              104.5
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of R514 on F.Silkscreen",
+            "pos": [
+              112.2127,
+              103.9225
+            ]
+          },
+          {
+            "description": "Reference field of R514",
+            "pos": [
+              112.45,
+              103.4
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of R516 on F.Silkscreen",
+            "pos": [
+              115.0627,
+              100.5775
+            ]
+          },
+          {
+            "description": "Reference field of R516",
+            "pos": [
+              115.3,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of R516 on F.Silkscreen",
+            "pos": [
+              115.0627,
+              101.6225
+            ]
+          },
+          {
+            "description": "Reference field of R516",
+            "pos": [
+              115.3,
+              101.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of R517 on F.Silkscreen",
+            "pos": [
+              113.0775,
+              106.1627
+            ]
+          },
+          {
+            "description": "Reference field of U505",
+            "pos": [
+              111.2,
+              106.6
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U505 on F.Silkscreen",
+            "pos": [
+              110.2993,
+              105.11
+            ]
+          },
+          {
+            "description": "Reference field of C515",
+            "pos": [
+              108.6,
+              106.8
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      }
+    ],
+    "unconnected_items": [],
+    "severities_reviewed": {
+      "errors": [
+        "annular_width",
+        "assertion_failure",
+        "clearance",
+        "connection_width",
+        "copper_edge_clearance",
+        "copper_sliver",
+        "courtyards_overlap",
+        "creepage",
+        "diff_pair_gap_out_of_range",
+        "diff_pair_uncoupled_length_too_long",
+        "drill_out_of_range",
+        "footprint",
+        "footprint_type_mismatch",
+        "generic_error",
+        "hole_clearance",
+        "hole_to_hole",
+        "holes_co_located",
+        "invalid_outline",
+        "isolated_copper",
+        "item_on_disabled_layer",
+        "items_not_allowed",
+        "length_out_of_range",
+        "lib_footprint_issues",
+        "lib_footprint_mismatch",
+        "malformed_courtyard",
+        "microvia_drill_out_of_range",
+        "mirrored_text_on_front_layer",
+        "missing_courtyard",
+        "nonmirrored_text_on_back_layer",
+        "npth_inside_courtyard",
+        "padstack",
+        "padstack_invalid",
+        "pth_inside_courtyard",
+        "shorting_items",
+        "silk_edge_clearance",
+        "skew_out_of_range",
+        "solder_mask_bridge",
+        "starved_thermal",
+        "text_height",
+        "text_on_edge_cuts",
+        "text_thickness",
+        "through_hole_pad_without_hole",
+        "too_many_vias",
+        "track_angle",
+        "track_dangling",
+        "track_not_centered_on_via",
+        "track_on_post_machined_layer",
+        "track_segment_length",
+        "track_width",
+        "tracks_crossing",
+        "unconnected_items",
+        "unresolved_variable",
+        "via_dangling",
+        "via_diameter",
+        "zones_intersect"
+      ],
+      "warnings": {
+        "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+        "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+        "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+        "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+        "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
+        "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board"
+      }
+    },
+    "kicad_version": "10.0.7",
+    "coordinate_units": "mm",
+    "passed": true
+  },
+  "audits": {
+    "domain": {
+      "domains": [
+        "T7_INSERT"
+      ],
+      "domain_refs": [
+        "C514",
+        "C515",
+        "C516",
+        "J514",
+        "J515",
+        "J516",
+        "J517",
+        "R514",
+        "R515",
+        "R516",
+        "R517",
+        "TP501",
+        "U505"
+      ],
+      "missing": [],
+      "foreign": [],
+      "passed": true
+    },
+    "source_pad": [
+      {
+        "instance": "T7A",
+        "errors": [],
+        "passed": true
+      }
+    ],
+    "boundary": [
+      {
+        "instance": "T7A",
+        "status": "pass",
+        "nets": [
+          {
+            "net": "3V3_Q6A",
+            "graph_net": "3V3_Q6A",
+            "board_pads": [
+              "R516.2",
+              "J514.2"
+            ],
+            "external_refs": 85,
+            "external_sample": [
+              "C277",
+              "C281",
+              "C283",
+              "C285",
+              "C287",
+              "C301"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "E5_FAULT_T7",
+            "graph_net": "E5_FAULT_T7",
+            "board_pads": [
+              "U505.3",
+              "TP501.1",
+              "R516.1"
+            ],
+            "external_refs": 0,
+            "external_sample": [],
+            "status": "internal"
+          },
+          {
+            "net": "E5_U505_ILIM",
+            "graph_net": "E5_U505_ILIM",
+            "board_pads": [
+              "U505.2",
+              "R514.1"
+            ],
+            "external_refs": 0,
+            "external_sample": [],
+            "status": "internal"
+          },
+          {
+            "net": "E5_VBUS_J5",
+            "graph_net": "E5_VBUS_J5",
+            "board_pads": [
+              "J515.1",
+              "C515.1",
+              "C514.1",
+              "U505.6"
+            ],
+            "external_refs": 1,
+            "external_sample": [
+              "J511"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "E5_VBUS_T7",
+            "graph_net": "E5_VBUS_T7",
+            "board_pads": [
+              "U505.1",
+              "R517.1",
+              "J516.1",
+              "C516.1"
+            ],
+            "external_refs": 1,
+            "external_sample": [
+              "U540"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "EN_T7",
+            "graph_net": "EN_T7",
+            "board_pads": [
+              "U505.4",
+              "R515.1",
+              "J514.3"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "J311",
+              "U302"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "GND",
+            "graph_net": "GND",
+            "board_pads": [
+              "J517.1",
+              "C515.2",
+              "C514.2",
+              "U505.5",
+              "U505.7",
+              "R515.2",
+              "R514.2",
+              "R517.2",
+              "C516.2",
+              "J514.1"
+            ],
+            "external_refs": 518,
+            "external_sample": [
+              "A401",
+              "A402",
+              "A403",
+              "A404",
+              "A405",
+              "A406"
+            ],
+            "status": "connector"
+          }
+        ],
+        "hosted_contacts": []
+      }
+    ],
+    "keepout": {
+      "rows": [],
+      "errors": [],
+      "passed": true,
+      "note": "Keepout = copper rule area (tracks, vias, fills) on the listed layers. A courtyard box intrusion is reported, not failed, when pads and the F.Fab body clear the keepout."
+    },
+    "annular": {
+      "floor_mm": 0.18,
+      "below_floor": [],
+      "passed": true
+    },
+    "groups": {
+      "rows": [],
+      "errors": [],
+      "passed": true
+    },
+    "locked": {
+      "scripted_segments": 31,
+      "locked_on_board": 31,
+      "kept": true,
+      "note": "SES import before/after counts and the DSN probe are in route-log.json"
+    }
+  },
+  "router": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "runtime": "Eclipse Temurin JRE 25.0.5+8 (sha256 6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6)",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:06:00",
+    "fetch": "CI only, never committed or uploaded"
+  },
+  "heights": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "reserve height 8.5 minus the board"
+    }
+  ],
+  "does_not_prove": [
+    "that the schematic is right",
+    "current capacity or temperature rise beyond the chosen class widths",
+    "impedance, RF loss or isolation, EMC or signal integrity",
+    "creepage beyond the encoded clearances",
+    "that the enclosure fits (only outline and hole checks; heights are not checked here)",
+    "that the fab's DFM accepts the board, or that CPL rotations are right",
+    "that the land patterns match the purchased MPNs",
+    "any function: hardware and bench gates stay OPEN"
+  ]
+}

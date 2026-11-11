@@ -1,0 +1,121 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "T7_INSERT",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "T7A",
+      "placement": "default",
+      "board_origin_enclosure_mm": null,
+      "z_bottom": null,
+      "facing": null,
+      "connectors": [
+        {
+          "template_ref": "J517",
+          "ref": "J517",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            2.2,
+            2.3
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                2.2,
+                2.3
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J515",
+          "ref": "J515",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            2.2,
+            6.7
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E5_VBUS_J5",
+              "at": [
+                2.2,
+                6.7
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J516",
+          "ref": "J516",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            18.4,
+            4.35
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E5_VBUS_T7",
+              "at": [
+                18.4,
+                4.35
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J514",
+          "ref": "J514",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            34.0,
+            2.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                34.0,
+                2.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "3V3_Q6A",
+              "at": [
+                34.0,
+                4.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "EN_T7",
+              "at": [
+                34.0,
+                6.5
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

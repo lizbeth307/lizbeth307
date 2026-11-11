@@ -1,0 +1,103 @@
+{
+  "schema": "srrx-board-review-v1",
+  "board_id": "IMU_CARRIER",
+  "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "pcb/check_boards.py",
+  "result": "NO_FINDINGS",
+  "inputs": {
+    "board_file": {
+      "path": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pcb",
+      "sha256": "dd2a8fb80f486f26f35de7b71e88a6d426acc88f4ab33eff3470b6e662a5cfe1"
+    },
+    "projection_sha256": {
+      "graph_refs_pins_nets": "a57360fb63aabd5cb2aa5cdece33e173e40c7d634a8606d8fe4809d8942616b2",
+      "footprints": "d92a132fb1eb12749bbb801ec6c6d6324136a042568d6bde63c1b0036d77e1b7",
+      "contract_board": "4c77a2e5a62f42a90de0ca1fa8b043ec9ef7b5f9e90d7aedf238ae32b4c2102c",
+      "netclasses": "f5643c77e6a3630565e5002d4b9d0187a227a225dbea601838ea40ae1362af87",
+      "spec": "3c20ab05de8d17516b9dda1163274800d598c1e25d8d91812c806e3abbdc07a1"
+    },
+    "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
+  },
+  "frame": {
+    "origin": [
+      100.0,
+      114.5
+    ],
+    "y": "up",
+    "source": "Edge.Cuts bounding box"
+  },
+  "counts": {
+    "footprints": 14,
+    "pads": 38,
+    "tracks": 85,
+    "vias": 5,
+    "zones": 26,
+    "holes": 2,
+    "copper_layers": [
+      "F.Cu",
+      "B.Cu"
+    ]
+  },
+  "checks": {
+    "outline": {
+      "findings": 0,
+      "area_mm2": 427.86,
+      "loops": 1
+    },
+    "holes": {
+      "findings": 0,
+      "contract_holes": 2,
+      "board_holes": 2
+    },
+    "keepouts": {
+      "findings": 0,
+      "keepout_r_mm": 3.0,
+      "tolerance_mm": 0.005
+    },
+    "pad_nets": {
+      "findings": 0,
+      "expected_refs": 12,
+      "board_footprints": 14
+    },
+    "class_widths": {
+      "findings": 0,
+      "tracks_checked": 85,
+      "pour_necks": [],
+      "split_nets": {}
+    },
+    "rf50": {
+      "findings": 0,
+      "rf50_segments": 0
+    },
+    "gnd_chassis_ties": {
+      "findings": 0,
+      "ties": [],
+      "expected": 0
+    },
+    "b2b": {
+      "findings": 0,
+      "pairs": 0
+    },
+    "tht_pockets": {
+      "findings": 0,
+      "applies": false
+    },
+    "heights": {
+      "findings": 0,
+      "checked": 12
+    },
+    "pth_annular": {
+      "findings": 0,
+      "floor_mm": 0.18,
+      "fab_floor": "jlc_2l_1oz"
+    }
+  },
+  "findings": [],
+  "unverified": [
+    {
+      "check": "class_widths",
+      "item": "E5_IMU5V vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+    }
+  ]
+}
