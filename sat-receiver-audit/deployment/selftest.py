@@ -104,7 +104,7 @@ CATALOGUE = (
     ("RX-09-hw", 9, "HARDWARE", "RTL bias/token tests without token", (_B07 + ":308-310", _B07 + ":554", _B09 + ":71")),
     ("RX-10", 10, "OFFLINE", "Gpredict: no libgps/libhamlib in DT_NEEDED, RX-only radios, network TLE update off", (_B07 + ":505-509", _B07 + ":555")),
     ("RX-11", 11, "OFFLINE", "Menu model: each leaf reaches a staged backend, Lime/T7 leaves declare their fallback, critical leaves have a key or encoder",
-     (_B07 + ":556", "STACK.md:884", "STACK.md:110", "software/srrx/menu_model.py LEAVES")),
+     (_B07 + ":556", "STACK.md:884", "STACK.md:110", "software/srrx/menu_model.py LEAVES", "software/srrx/lab_shell_menu.py LEAVES")),
     ("RX-12", 12, "OFFLINE", "Lease units (systemd precedence): DevicePolicy=closed, ProtectSystem=strict, /data read-only, products lease, localhost only",
      (_B07 + ":532", _B07 + ":534", _B07 + ":557")),
     ("RX-12-runtime", 12, "DEVICE", "Lease EPERM/EROFS/EGL behaviour on the Q6A", (_B07 + ":557", _B09 + ":62")),
@@ -2085,13 +2085,13 @@ def _exec_file(ctx, word):
     return next((f for f in (ctx.file(d + "/" + word) for d in _EXEC_SEARCH) if f is not None), None)
 
 
-def _unit_backend(ctx, r, backend, item):
+def _unit_backend(ctx, r, backend, item, where="software/srrx/menu_model.py"):
     """A unit of the backend's scope is effective in the rootfs and its ExecStart runs the declared
     program: `-m srrx.<module>` with that module staged, or an absolute binary present in the rootfs.
     The executables ExecStart starts (the interpreter, also behind /usr/bin/env) must be files of the
     rootfs; a controller overlay without a dpkg database lacks the base image and the venv, so a
-    missing one is a note there and BLOCKED otherwise. Enablement is an install step, not checked."""
-    where = "software/srrx/menu_model.py"
+    missing one is a note there and BLOCKED otherwise. Enablement is an install step, not checked.
+    `where` is the model file a missing unit is filed under (the console's or the Lab Shell's)."""
     paths = ctx.policy["units"]["system_unit_paths"] if backend["scope"] == "system" else _USER_UNIT_DIRS
     if backend["scope"] == "user":
         _home_unit_overrides(ctx, r, backend["name"])
@@ -2116,12 +2116,155 @@ def _unit_backend(ctx, r, backend, item):
             r.block(fragment[0], "unit_interpreter_missing", item)
 
 
+_LAB_SHELL = "software/srrx/lab_shell_menu.py"
+
+
+def _lab_shell_lime(ctx):
+    """The root has the Lime: /etc/srrx/devices.json enables it and a Lime runtime library is staged
+    (policy lime.runtime_library_globs, the RX-08 match). deploy.validate_devices refuses an enabled
+    Lime today, so a staged root has none; anything unreadable counts as no Lime."""
+    final = ctx.file("etc/srrx/devices.json")
+    try:
+        devices = ctx.json(final) if final is not None else None
+    except Blocked:
+        return False
+    lime = devices.get("lime") if isinstance(devices, dict) else None
+    if not (isinstance(lime, dict) and lime.get("enabled") is True):
+        return False
+    globs = [g.lower() for g in ctx.policy["lime"]["runtime_library_globs"]]
+    return any(ctx.entries[rel].kind in ("file", "link") and _matches(rel.rsplit("/", 1)[-1].lower(), globs) for rel in ctx.keys)
+
+
+def _lab_shell_capabilities(ctx, r, shell, operations, presets):
+    """What the root offers the Lab Shell model: a package when every executable PACKAGES names is on
+    systemd's search path, an effective unit, the staged srrx modules, labd's operations, the decoder
+    presets and the policy allowlists. A unit a leaf requires (an engine lease) is a system unit
+    (STACK.md:76, "не --user"), so it is looked up in the system unit paths only, as RX-12 does; an
+    engine_unit backend in the paths of its scope. Returns the capability set and {unit: (listed,
+    final)} of the required units with the system unit directories for the reach check."""
+    names = shell.referenced()
+    system = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in ctx.policy["units"]["system_unit_paths"]) if d is not None))
+    user = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in _USER_UNIT_DIRS) if d is not None))
+    required = {u for leaf in shell.LEAVES for u in leaf["requires"]["units"]}
+    units, present = {}, set()
+    for name in sorted(required):
+        fragment = _unit_fragment(ctx, r, system, name)
+        if fragment is not None:
+            units[name] = fragment
+            present.add(name)
+    for leaf in shell.LEAVES:
+        backend = leaf["backend"]
+        if backend["kind"] == "engine_unit" and backend["name"] in names["units"] and backend["name"] not in required | present:
+            if _unit_fragment(ctx, r, user if backend["scope"] == "user" else system, backend["name"]) is not None:
+                present.add(backend["name"])
+    root = ctx.policy["srrx_root"] + "/software/srrx/"
+    packages = [name for name, package in shell.PACKAGES.items()
+                if package["binaries"] and all(_exec_file(ctx, binary) is not None for binary in package["binaries"])]
+    caps = shell.capabilities(lime=_lab_shell_lime(ctx), packages=packages, units=present,
+                              modules=[m for m in names["modules"] if ctx.file(root + m + ".py") is not None],
+                              ops=operations or (), presets=presets or {}, policy=shell.policy_lists(ctx.policy))
+    return caps, units, system
+
+
+def _lab_shell_unknown(shell, leaf, presets, checker_ops, lists):
+    """Names of the leaf that the checker's own tree does not build and PLANNED does not list, and an
+    allowlist entry the policy neither allows nor denies (`lists`, policy_lists of ctx.policy): a typo
+    or a forbidden operation is a FAIL, never a quietly hidden leaf."""
+    software = deploy.PROJECT / "software"
+    backend, needs, unknown = leaf["backend"], leaf["requires"], []
+    kind, name = backend["kind"], backend["name"]
+    if not name.startswith(shell.PLANNED_PREFIX):
+        known = (name in checker_ops if kind == "labd_op"
+                 else (software / "srrx" / (name + ".py")).is_file() if kind == "page_only"
+                 else (software / "systemd" / name).is_file() if kind == "engine_unit"
+                 else presets is None or name in presets)
+        if not known:
+            unknown.append("backend")
+    unknown += ["module:" + m for m in needs["modules"] if not (software / "srrx" / (m + ".py")).is_file()]
+    unknown += ["unit:" + u for u in needs["units"] if not (software / "systemd" / u).is_file()]
+    unknown += ["preset:" + p for p in needs["presets"] if presets is not None and p not in presets]
+    allow = leaf["allowlist"]
+    if allow is not None and (shell.allowlist_reason(allow, lists) or "").startswith("not_allowlisted:"):
+        unknown.append("allowlist:%s:%s" % (allow["component"], allow["name"]))
+    return unknown
+
+
+def _lab_shell_reach(ctx, r, shell, leaf, units, dirs):
+    """A visible leaf reaches its backend in depth: the page's srrx module is the checker's copy, an
+    engine unit runs its program, and each unit it needs runs one of its packages' executables with
+    every executable of the ExecStart chain on the root (overlay rule as _unit_backend). `dirs` are
+    the system unit directories, whose drop-ins apply to a required unit."""
+    backend, item = leaf["backend"], leaf["id"]
+    if backend["kind"] == "page_only":
+        _target_identical(ctx, r, backend["name"])
+    elif backend["kind"] == "engine_unit":
+        _unit_backend(ctx, r, backend, item, _LAB_SHELL)
+    binaries = {b for p in leaf["requires"]["packages"] for b in shell.PACKAGES[p]["binaries"]}
+    for name in leaf["requires"]["units"]:
+        listed, final = units[name]
+        texts = [ctx.text(final)] + [ctx.text(f) for f in _unit_dropins(ctx, r, dirs, [name])]
+        chain = _exec_chain(_unit_settings(texts).get("ExecStart", "").split())
+        if not chain or (binaries and not binaries & {posixpath.basename(w) for w in chain if w}):
+            r.fail(listed, "lab_shell_unit_program_mismatch", item)
+        elif any(_exec_file(ctx, word) is None for word in chain):
+            if ctx.profile == "controller" and ctx.file("var/lib/dpkg/status") is None:
+                r.note("unit_interpreter_absent_controller_overlay")
+            else:
+                r.block(listed, "unit_interpreter_missing", item)
+
+
+def _lab_shell_menu(ctx, r, operations):
+    """srrx.lab_shell_menu (STACK.md:884) on the same root, the CI menu test of that line: the model
+    is valid; every backend and requirement is built by the checker's tree or PLANNED; a Lime/T7
+    leaf declares its no-Lime/no-T7 backend; a critical leaf has a key or encoder (BLOCKED, as for
+    the console); every leaf the capability check shows reaches its backend; every hidden leaf is
+    listed with its reasons (note lab_shell_hidden:<id>:<reasons>). A hidden critical leaf gets a
+    second note, lab_shell_critical_hidden:<id>:<reasons>: the key/encoder rule above holds for the
+    controls it declares, not for a glove path that exists (BACK, the encoders and LOCK wait for
+    labinput and the touch lock, МЕН-03/Д-06 OPEN). A T7 is removable and has no binding offline
+    (software/RX.md), so T7 leaves are evaluated with and without it; the Lime comes from the root
+    (_lab_shell_lime). The QML shell itself is not built (note)."""
+    shell = _target_module(ctx, r, "lab_shell_menu")
+    if shell is None:
+        return
+    try:
+        shell.validate()
+    except ValueError:
+        return r.fail(_LAB_SHELL, "lab_shell_menu_invalid")
+    decoders = _target_module(ctx, r, "decoder_policy")
+    presets = decoders.availability() if decoders is not None else None
+    caps, units, dirs = _lab_shell_capabilities(ctx, r, shell, operations, presets)
+    checker_ops = _labd_operations()  # parsed once: the checker's engine.py, whatever the target holds
+    for leaf in shell.LEAVES:
+        item = leaf["id"]
+        for what in _lab_shell_unknown(shell, leaf, presets, checker_ops, caps["policy"]):
+            r.fail(_LAB_SHELL, "lab_shell_backend_unknown" if what == "backend" else "lab_shell_requirement_unknown", item)
+        if leaf["needs_lime"] and not leaf["fallback_text"]:
+            r.fail(_LAB_SHELL, "no_lime_backend_undeclared", item)
+        if leaf["needs_t7"] and not leaf["fallback_text"]:
+            r.fail(_LAB_SHELL, "no_t7_backend_undeclared", item)
+        if leaf["critical"] and not leaf["controls"]["keys"]:
+            r.block(_LAB_SHELL, "critical_leaf_touch_only", item)
+    visible = {}
+    for t7 in (False, True):
+        for leaf in shell.visible_leaves(dict(caps, t7=t7)):
+            visible.setdefault(leaf["id"], leaf)
+    for leaf in visible.values():
+        _lab_shell_reach(ctx, r, shell, leaf, units, dirs)
+    critical = {leaf["id"] for leaf in shell.LEAVES if leaf["critical"]}
+    for item, reasons in shell.hidden_leaves(caps):
+        r.note("lab_shell_hidden:%s:%s" % (item, ",".join(reasons)))
+        if item in critical:
+            r.note("lab_shell_critical_hidden:%s:%s" % (item, ",".join(reasons)))
+    r.note("lab_shell_qml_not_built")
+
+
 def check_11(ctx, r):
     """srrx.menu_model against the staged rootfs (build/07 row 11, STACK.md:884): every leaf reaches
     its backend, a Lime/T7 leaf declares its no-Lime/no-T7 backend, a critical leaf has a key or
     encoder (STACK.md:110). The target console (hmi and its imports) must be the evaluated code.
-    The model describes only the srrx.hmi touch console: the Lab Shell menu of STACK.md:884 (hubs,
-    Lime capability check) has no code yet and stays outside this row (note, Д-06)."""
+    Then the Lab Shell menu of STACK.md:884 (srrx.lab_shell_menu: hubs and the Lime/T7 and package
+    capability check) on the same root (_lab_shell_menu); the QML shell itself stays OPEN (Д-06)."""
     menu = _target_module(ctx, r, "menu_model")
     hmi = _target_module(ctx, r, "hmi") if menu is not None else None  # importing srrx.hmi loads no Qt
     if hmi is None:
@@ -2170,7 +2313,7 @@ def check_11(ctx, r):
     r.note("fallback_text_is_declared_not_rendered")
     r.note("glove_and_physical_key_operation_is_hardware_acceptance")
     r.note("unit_enablement_is_an_install_step")
-    r.note("lab_shell_menu_not_modelled")
+    _lab_shell_menu(ctx, r, operations)
 
 
 # RX-14 probes (build/07 row 14, ПОЛ-05): label, centre, rate, NFM voices, active windows, bench
