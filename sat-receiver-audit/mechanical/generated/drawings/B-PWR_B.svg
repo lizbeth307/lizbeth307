@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>B-PWR_B Плата PWR_B: контур Edge.Cuts і кріпильні отвори</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 041e1dec897f</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 96a49cfa7180</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="178" y1="237" x2="178" y2="202" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <text x="179" y="201" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E1: CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J20</text>
@@ -100,12 +100,12 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення B-PWR_B · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: FR-4, 4 шари, 1.6 мм (build/15)</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 041e1dec897f · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 96a49cfa7180 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Плата PWR_B: контур Edge.Cuts і кріпильні отвори</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">power mezzanine PWR-B (PWR_BRANCH_SW + USB_POWER_SW)</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Координати — від лівого нижнього кута контуру, вид з боку компонентів (деталі лише зверху, build/15).</text>
 <text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Отвори ⌀3.2, зона заборони міді/деталей ⌀7; висота деталей ≤5.5 мм.</text>
-<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Кріплення: on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec QTH-060-01-L-D-A on the PWR-B bottom mates the QSH-060-01-L-D-A on the PWR-A top at 5.00 mm (pcb/partition-spec.json b2b); гвинт M3 ISO 14580 A2 TX10 from the component side into the female thread of the F45 standoff (F46; length from generated/fastener-stacks.json PWR_B-STANDOFF).</text>
+<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Кріплення: on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec LSHM-150-02.5-L-DV-A-N-K-TR J209 on the PWR-B bottom mates the same part J208 on the PWR-A top at 5.00 mm (two -02.5 halves, catalogue F-224; pcb/partition-spec.json b2b, W2 B2B); гвинт M3 ISO 14580 A2 TX10 from the component side into the female thread of the F45 standoff (F46; length from generated/fastener-stacks.json PWR_B-STANDOFF).</text>
 <text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">boards/&lt;id&gt;-edge-cuts.dxf — лише контур (CUT) і отвори (HOLE) для KiCad Edge.Cuts; 1 одиниця = 1 мм.</text>
 <text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Пунктир: зони термопрокладок, модулі на платі, перемикачі/енкодер; рамки по краях — зони роз'ємів (contract/boards.json).</text>
 </svg>

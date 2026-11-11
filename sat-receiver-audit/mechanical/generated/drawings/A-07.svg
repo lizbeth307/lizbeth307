@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>A-07 Схрещений Yagi: штанга 20 x 20, розмітка і свердління</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 041e1dec897f</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 96a49cfa7180</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="20" y1="257" x2="150" y2="257" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="150" y1="257" x2="150" y2="237" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -126,7 +126,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення A-07 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: PVC/GRP square tube 20 x 20</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 041e1dec897f · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 96a49cfa7180 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Схрещений Yagi: штанга 20 x 20, розмітка і свердління</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">1:1 по частинах (ультракомпакт, 5 частин)</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">2 m (WB2HOL): R 0, DE 0.203 м, D 0.508 м — стрічки 25 мм у власних затискачах (STL), штангу не свердлити.</text>
