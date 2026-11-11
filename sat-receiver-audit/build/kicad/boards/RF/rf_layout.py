@@ -10,7 +10,8 @@ the geometry checks below run on every write: courtyard overlaps, pads against t
 keepouts, scripted RF copper against foreign pads and tracks, tap and decoupling distances. PCB-RF-2 adds the
 scripted GND vias (exposed pads, pad fan-outs, RF50 fences, HMC rings, stitching; rf_copper.py), the DC_CORE SENSE
 copper, the BOND-RF plated hole and the breakaway impedance coupon, with their checks (RF50 fence pitch, SENSE length
-against the prototype, bleeds outside the DC_CORE keepout). pcb/board_gen.py reads only the written spec.
+against the prototype, bleeds outside the DC_CORE keepout); the spec key rf_checks hands the tap, keepout and SENSE
+limits to pcb/check_boards.py, which measures them again on the routed board. pcb/board_gen.py reads only the written spec.
 CI/model geometry; no hardware or bench gate is closed by it.
 """
 from __future__ import annotations
@@ -529,6 +530,7 @@ CLEAR = {'Default': 0.15, 'RF50': 0.2, 'DCTAP': 0.3, 'PWR1A': 0.15, 'DCSENSE': 0
 PROJECT_ONLY = {'DCSENSE': ('E4_DCS_UHF_SENSE', 'E4_DCS_LBAND_SENSE', 'E4_DCS_HF_SENSE'), 'SCRIPTED': ('GND', 'CHASSIS')}
 DC_KEEPOUT_MM = 5.0                  # bleeds stay this far outside the DC_CORE courtyard box (DC-01, DC-02)
 BLEEDS = ['R4460', 'R4461', 'R4462', 'R4463', 'R4464', 'R4465', 'R4466', 'R4467', 'R4468', 'R4469', 'R4470', 'R4471']
+TAPS = (('R4420', 'C4420'), ('R4430', 'C4430'), ('R4440', 'C4440'))  # 26.7 k DC tap and its first 100 pF (DC-01)
 
 
 def net_classes(nets):
@@ -658,6 +660,15 @@ def spec_doc(template_nets, parts, enc):
                                         'RF pin at pad width for 0.84 mm (pad half-length 0.4125 + 0.43), then widens to '
                                         '0.36 mm')}
                        for ref in ('U405', 'U406', 'U407')},
+        'rf_checks': {
+            'why': ('independent checks of the routed board (pcb/check_boards.py rf_nodes; the same limits as rf2_checks() '
+                    'here, measured on RF.kicad_pcb): DC taps on their RF50 line and their first 100 pF next to the tap '
+                    '(DC-01, <= 2 mm), the 12 bleeds outside the DC_CORE keepout (courtyards + 5 mm; DC-01, DC-02), the '
+                    'SENSE copper not longer than the routed prototype (verification/pcb-prototype-review.json; DC-02)'),
+            'taps': [{'ref': tap, 'pad': '1', 'max_mm': 2.0} for tap, _cap in TAPS],
+            'tap_caps': [{'ref': cap, 'to': [tap, '2'], 'max_mm': 2.0} for tap, cap in TAPS],
+            'keepout': {'domains': ['DC_CORE'], 'margin_mm': DC_KEEPOUT_MM, 'refs': BLEEDS},
+            'sense': {'nets': list(PROJECT_ONLY['DCSENSE']), 'prototype': PROTOTYPE_REVIEW.relative_to(BASE).as_posix()}},
         'pre_route': {
             'tracks': TRACKS + GND_TRACKS,
             'vias': VIAS,
@@ -1003,7 +1014,7 @@ def rf2_checks(classes, domain):
                                                                           (PLACED[r]['box'][1] + PLACED[r]['box'][3]) / 2))
                                                          for r in BLEEDS), 3)
     taps = {}
-    for tap, cap in (('R4420', 'C4420'), ('R4430', 'C4430'), ('R4440', 'C4440')):
+    for tap, cap in TAPS:
         net = NET_OF[(tap, '1')]
         box = next(b for r, n, _net, b in pad_boxes({tap: {'1': net}}) if r == tap and n == '1')
         d = min(rc.seg_box(a, b, box) for t in TRACKS if t['net'] == net for a, b in zip(t['path'], t['path'][1:]))

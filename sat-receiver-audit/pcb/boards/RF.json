@@ -3068,6 +3068,80 @@
       "reason": "HMC7992 QFN-16 pins are 0.25 mm wide at 0.5 mm pitch: the RF50 line enters each RF pin at pad width for 0.84 mm (pad half-length 0.4125 + 0.43), then widens to 0.36 mm"
     }
   },
+  "rf_checks": {
+    "why": "independent checks of the routed board (pcb/check_boards.py rf_nodes; the same limits as rf2_checks() here, measured on RF.kicad_pcb): DC taps on their RF50 line and their first 100 pF next to the tap (DC-01, <= 2 mm), the 12 bleeds outside the DC_CORE keepout (courtyards + 5 mm; DC-01, DC-02), the SENSE copper not longer than the routed prototype (verification/pcb-prototype-review.json; DC-02)",
+    "taps": [
+      {
+        "ref": "R4420",
+        "pad": "1",
+        "max_mm": 2.0
+      },
+      {
+        "ref": "R4430",
+        "pad": "1",
+        "max_mm": 2.0
+      },
+      {
+        "ref": "R4440",
+        "pad": "1",
+        "max_mm": 2.0
+      }
+    ],
+    "tap_caps": [
+      {
+        "ref": "C4420",
+        "to": [
+          "R4420",
+          "2"
+        ],
+        "max_mm": 2.0
+      },
+      {
+        "ref": "C4430",
+        "to": [
+          "R4430",
+          "2"
+        ],
+        "max_mm": 2.0
+      },
+      {
+        "ref": "C4440",
+        "to": [
+          "R4440",
+          "2"
+        ],
+        "max_mm": 2.0
+      }
+    ],
+    "keepout": {
+      "domains": [
+        "DC_CORE"
+      ],
+      "margin_mm": 5.0,
+      "refs": [
+        "R4460",
+        "R4461",
+        "R4462",
+        "R4463",
+        "R4464",
+        "R4465",
+        "R4466",
+        "R4467",
+        "R4468",
+        "R4469",
+        "R4470",
+        "R4471"
+      ]
+    },
+    "sense": {
+      "nets": [
+        "E4_DCS_UHF_SENSE",
+        "E4_DCS_LBAND_SENSE",
+        "E4_DCS_HF_SENSE"
+      ],
+      "prototype": "verification/pcb-prototype-review.json"
+    }
+  },
   "pre_route": {
     "tracks": [
       {

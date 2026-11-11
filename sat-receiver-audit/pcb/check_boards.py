@@ -10,8 +10,9 @@ It checks what KiCad DRC does not prove by itself: the outline and the holes aga
 (mechanical/generated/contract/boards.json), every pad net against the graphs (design/E*.json), the copper width
 of each net class (pcb/generated/netclasses.json, tracks exactly and pour necks by a raster bottleneck), RF50
 CPWG geometry (width, gap, coplanar ground, solid L2 within 3h, fence pitch), no copper in hole keepouts except
-the BOND-RF hole's own net, the count of GND-CHASSIS ties, B2B pin-for-pin nets between two boards, THT pads
-over plate pockets and component heights against the height zones. Review hashes are projections (board refs,
+the BOND-RF hole's own net, the count of GND-CHASSIS ties (and their copper path to the BOND-RF hole), optional RF
+node checks (DC taps, tap capacitors, a domain keepout, SENSE length; rf_checks), B2B pin-for-pin nets between two
+boards, THT pads over plate pockets and component heights against the height zones. Review hashes are projections (board refs,
 pins, nets, footprints, contract, classes), not whole input files, so an unrelated parts.json or graph edit does
 not stale a review (F10). Results are MODEL checks of the drawn copper; they prove no hardware gate.
 
@@ -40,7 +41,13 @@ Checker keys (optional, in either form; contract frame mm, y up unless contract_
   coupons [{rect: [x, y, w, h] (contract frame), rf50_nets [...], gnd_net, reason}] (test coupons drawn beside the board in
   the same file, e.g. the RF impedance coupon on a breakaway tab: Edge.Cuts loops inside a coupon rect are not board
   cutouts and stay out of the outline and area checks; rf50_nets are checked as RF50 lines against the coupon's own ground
-  net gnd_net (default GND; a separate piece needs its own net, or KiCad reports the two GND islands unconnected); W2 PCB-RF-2).
+  net gnd_net (default GND; a separate piece needs its own net, or KiCad reports the two GND islands unconnected); W2 PCB-RF-2),
+  rf_checks {why, taps [{ref, pad, max_mm}] (pad edge to the RF50-width copper of its own RF50 net), tap_caps [{ref, to: [ref,
+  pad], max_mm}] (a pad of ref on the net of the target pad, pad edge to pad edge), keepout {domains [...], margin_mm, refs [...]}
+  (refs' courtyards outside the box of the domain parts' courtyards + margin; domains from pcb/generated/components.csv),
+  sense {nets [...], prototype <routed prototype review json>} (track length on the board > 0 and <= the prototype's routing
+  length of that net)} (W2 PCB-RF-2). With bond_hole, each GND-CHASSIS tie must also reach the plated bond hole land through
+  copper of the bond net.
 """
 from __future__ import annotations
 
@@ -676,9 +683,9 @@ class Frame:
 NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
                'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
                'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
-               'sides', 'max_height_bottom', 'coupons')
+               'sides', 'max_height_bottom', 'coupons', 'rf_checks')
 DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
-             'rf50_exempt', 'rf50_taper', 'heights')
+             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks')
 LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides', 'coupons')
 
 
@@ -1631,7 +1638,7 @@ def check_rf50(board, spec, netclasses, views):
     return out, unverified, {'rf50_segments': segs}
 
 
-def check_ties(board, spec, graph, views):
+def check_ties(board, spec, graph, views, frame=None):
     ties = []
     for fp in board.footprints:
         nets = {p['net'] for p in fp['pads']}
@@ -1649,7 +1656,216 @@ def check_ties(board, spec, graph, views):
     out = []
     if len(ties) != want:
         out.append(finding('gnd_chassis_ties', 'board', f'{len(ties)} GND-CHASSIS tie(s), expected exactly {want}', value=len(ties), limit=want, refs=sorted(ties)))
-    return out, {'ties': sorted(ties), 'expected': want}
+    info = {'ties': sorted(ties), 'expected': want}
+    bond = spec.get('bond_hole')
+    if bond and ties and frame is not None:  # W2 PCB-RF-2: each tie reaches the BOND-RF hole land through bond-net copper
+        info.update(tie_on_bond_hole(board, bond, frame.to_board(*bond['at']), ties, out))
+    return out, info
+
+
+def seg_seg_dist(a, b, c, d):
+    """Distance between the segments ab and cd (0 where they cross or touch)."""
+    def orient(p, q, r):
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+    if orient(a, b, c) * orient(a, b, d) < 0 and orient(c, d, a) * orient(c, d, b) < 0:
+        return 0.0
+    return min(seg_dist(c[0], c[1], a[0], a[1], b[0], b[1]), seg_dist(d[0], d[1], a[0], a[1], b[0], b[1]),
+               seg_dist(a[0], a[1], c[0], c[1], d[0], d[1]), seg_dist(b[0], b[1], c[0], c[1], d[0], d[1]))
+
+
+def shape_gap(a, b):
+    """Edge-to-edge distance between two copper shapes (Poly, Capsule, Multi); 0 where they overlap."""
+    if isinstance(a, Multi):
+        return min(shape_gap(s, b) for s in a.shapes)
+    if isinstance(b, Multi):
+        return min(shape_gap(a, s) for s in b.shapes)
+    if isinstance(a, Capsule) and isinstance(b, Capsule):
+        return max(0.0, seg_seg_dist((a.x1, a.y1), (a.x2, a.y2), (b.x1, b.y1), (b.x2, b.y2)) - a.r - b.r)
+    if isinstance(a, Capsule):
+        a, b = b, a
+    if isinstance(b, Capsule):  # a is a Poly
+        if a.contains(b.x1, b.y1) or a.contains(b.x2, b.y2):
+            return 0.0
+        return max(0.0, min(seg_seg_dist(p, q, (b.x1, b.y1), (b.x2, b.y2)) for p, q in a.edges) - b.r)
+    if a.contains(*b.pts[0]) or b.contains(*a.pts[0]):
+        return 0.0
+    return min(seg_seg_dist(p, q, r, s) for p, q in a.edges for r, s in b.edges)
+
+
+def net_islands(board, net):
+    """Connected pieces of the copper of one net: items on one layer join where they touch, a pad or via joins its
+    own layers. Returns (items, {id(item): island number})."""
+    items = [it for it in board.copper if it.net == net]
+    parent = list(range(len(items)))
+
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    def join(i, j):
+        parent[find(i)] = find(j)
+    owner = {}
+    for i, it in enumerate(items):
+        if it.kind in ('pad', 'via'):
+            k = id(it.extra)
+            if k in owner:
+                join(i, owner[k])
+            owner[k] = i
+    for i, a in enumerate(items):
+        ax0, ay0, ax1, ay1 = a.shape.bbox
+        for j in range(i + 1, len(items)):
+            b = items[j]
+            bx0, by0, bx1, by1 = b.shape.bbox
+            if a.layer != b.layer or ax1 < bx0 or bx1 < ax0 or ay1 < by0 or by1 < ay0:
+                continue
+            if find(i) != find(j) and shape_gap(a.shape, b.shape) <= 1e-6:
+                join(i, j)
+    roots = {}
+    return items, {id(it): roots.setdefault(find(i), len(roots)) for i, it in enumerate(items)}
+
+
+def tie_on_bond_hole(board, bond, bond_at, ties, out):
+    """Each GND-CHASSIS tie reaches the plated bond hole (at bond_at, board mm) through copper of the bond net (W2 PCB-RF-2)."""
+    net = bond.get('net')
+    hole = next((h for h in board.holes if h['plated'] and math.hypot(h['x'] - bond_at[0], h['y'] - bond_at[1]) <= POS_TOL + 1e-9), None)
+    items, island = net_islands(board, net)
+    hole_islands = {island[id(it)] for it in items if hole and it.kind == 'pad' and (it.ref, it.pad) == (hole['ref'], hole['pad'])}
+    on_hole = []
+    for ref in sorted(ties):
+        mine = {island[id(it)] for it in items if it.kind == 'pad' and it.ref == ref}
+        if mine & hole_islands:
+            on_hole.append(ref)
+        else:
+            out.append(finding('gnd_chassis_ties', ref, f'GND-CHASSIS tie does not reach the bond hole through {net} copper',
+                               contract_at=bond['at'], hole=(hole or {}).get('ref')))
+    return {'bond_net_islands': len(set(island.values())), 'ties_on_bond_hole': on_hole}
+
+
+RF_CHECK_KEYS = ('why', 'taps', 'tap_caps', 'keepout', 'sense')
+
+
+def rf_check_spec(spec):
+    """rf_checks {why, taps [{ref, pad, max_mm}], tap_caps [{ref, to: [ref, pad], max_mm}], keepout {domains [...],
+    margin_mm, refs [...]}, sense {nets [...], prototype <review json>}} (W2 PCB-RF-2); a bad shape stops."""
+    rc = spec['rf_checks']
+    extra = sorted(set(rc) - set(RF_CHECK_KEYS))
+    if extra:
+        spec_error(spec, f'rf_checks: unknown keys {extra}')
+    for n, t in enumerate(rc.get('taps', [])):
+        if not isinstance(t, dict) or not t.get('ref') or not t.get('pad') or not isinstance(t.get('max_mm'), (int, float)):
+            spec_error(spec, f'rf_checks.taps[{n}] needs ref, pad and max_mm')
+    for n, t in enumerate(rc.get('tap_caps', [])):
+        if (not isinstance(t, dict) or not t.get('ref') or not isinstance(t.get('to'), list) or len(t['to']) != 2
+                or not isinstance(t.get('max_mm'), (int, float))):
+            spec_error(spec, f'rf_checks.tap_caps[{n}] needs ref, to [ref, pad] and max_mm')
+    ko = rc.get('keepout')
+    if ko is not None and (not isinstance(ko, dict) or not isinstance(ko.get('domains'), list) or not ko['domains']
+                           or not isinstance(ko.get('margin_mm'), (int, float)) or not isinstance(ko.get('refs'), list)):
+        spec_error(spec, 'rf_checks.keepout needs domains [...], margin_mm and refs [...]')
+    se = rc.get('sense')
+    if se is not None and (not isinstance(se, dict) or not isinstance(se.get('nets'), list) or not se['nets']
+                           or not isinstance(se.get('prototype'), str)):
+        spec_error(spec, 'rf_checks.sense needs nets [...] and prototype (a routed prototype review json)')
+    return rc
+
+
+def check_rf_nodes(board, spec, netclasses, views, frame, components_csv=None):
+    """rf_checks (W2 PCB-RF-2) on the routed board: DC tap resistors on their RF50 line, their first capacitor next to
+    the tap's far pad, parts outside a domain keepout box, and SENSE copper not longer than the routed prototype's."""
+    rc = rf_check_spec(spec)
+    out, info = [], {}
+    pads = {(p['ref'], p['number']): p for p in board.pads}
+    fps = {fp['ref']: fp for fp in board.footprints if fp['ref']}
+    lookup = class_map(netclasses, views)
+    rf = netclasses.get('classes', {}).get('RF50') or {}
+    w, tol = rf.get('width_mm'), rf.get('width_tol_mm', 0.0)
+    taps = {}
+    for t in rc.get('taps', []):
+        item = f"{t['ref']}.{t['pad']}"
+        p = pads.get((t['ref'], str(t['pad'])))
+        if p is None or not p['net']:
+            out.append(finding('rf_nodes', item, 'tap pad not on the board or without a net'))
+            continue
+        gnet, cname = lookup(p['net'])
+        lines = [it for it in board.tracks if it.net == p['net'] and it.layer in p['layers']
+                 and w is not None and abs(it.width - w) <= tol + 1e-9]
+        if cname != 'RF50' or not lines:
+            out.append(finding('rf_nodes', item, 'tap pad net is not an RF50 line with RF50-width copper on the pad layer', net=gnet, net_class=cname))
+            continue
+        d = min(shape_gap(p['geo'], it.shape) for it in lines)
+        taps[item] = {'net': gnet, 'to_rf50_line_mm': r3(d), 'max_mm': t['max_mm']}
+        if d > t['max_mm'] + 1e-9:
+            out.append(finding('rf_nodes', item, 'tap pad farther from its RF50 line than allowed', at=(p['x'], p['y']), value=d, limit=t['max_mm']))
+    if 'taps' in rc:
+        info['taps'] = taps
+    caps = {}
+    for t in rc.get('tap_caps', []):
+        to = pads.get((t['to'][0], str(t['to'][1])))
+        item = f"{t['ref']} to {t['to'][0]}.{t['to'][1]}"
+        mine = [p for p in fps.get(t['ref'], {}).get('pads', []) if to is not None and to['net'] and p['net'] == to['net']]
+        if not mine:
+            out.append(finding('rf_nodes', item, 'no pad of this part on the net of the target pad', net=(to or {}).get('net')))
+            continue
+        d = min(shape_gap(p['geo'], to['geo']) for p in mine)
+        caps[item] = {'net': lookup(to['net'])[0], 'pad_gap_mm': r3(d), 'max_mm': t['max_mm']}
+        if d > t['max_mm'] + 1e-9:
+            out.append(finding('rf_nodes', item, 'capacitor pad farther from the tap pad than allowed', at=(to['x'], to['y']), value=d, limit=t['max_mm']))
+    if 'tap_caps' in rc:
+        info['tap_caps'] = caps
+    ko = rc.get('keepout')
+    if ko is not None:
+        if components_csv is None:
+            with COMPONENTS.open(encoding='utf-8', newline='') as fh:
+                components_csv = list(csv.DictReader(fh))
+        in_domain = {r['ref'] for r in components_csv if r['board_candidate'] in set(ko['domains'])}
+        members = sorted({bref for _v, ref_map, _n in views for bref, gref in ref_map.items() if gref in in_domain and bref in fps})
+
+        def box(fp):
+            if fp['courtyard']:
+                return fp['courtyard']
+            bb = [p['geo'].bbox for p in fp['pads']]
+            return (min(b[0] for b in bb), min(b[1] for b in bb), max(b[2] for b in bb), max(b[3] for b in bb))
+        gap = float(ko['margin_mm'])
+        if not members:
+            out.append(finding('rf_nodes', 'keepout', f"no footprint of the domains {ko['domains']} on the board"))
+        else:
+            boxes = [box(fps[r]) for r in members]
+            kb = (min(b[0] for b in boxes) - gap, min(b[1] for b in boxes) - gap, max(b[2] for b in boxes) + gap, max(b[3] for b in boxes) + gap)
+            clear = {}
+            for ref in ko['refs']:
+                fp = fps.get(ref)
+                if fp is None:
+                    out.append(finding('rf_nodes', ref, 'keepout part not on the board'))
+                    continue
+                b = box(fp)
+                dx, dy = max(kb[0] - b[2], b[0] - kb[2], 0.0), max(kb[1] - b[3], b[1] - kb[3], 0.0)
+                clear[ref] = r3(math.hypot(dx, dy))
+                if dx <= 0 and dy <= 0:
+                    out.append(finding('rf_nodes', ref, f"part inside the {'/'.join(ko['domains'])} keepout (courtyards + {gap} mm)",
+                                       contract_at=frame.to_contract(fp['x'], fp['y'])))
+            c0, c1 = frame.to_contract(kb[0], kb[1]), frame.to_contract(kb[2], kb[3])
+            info['keepout'] = {'domains': ko['domains'], 'domain_parts': len(members), 'margin_mm': gap,
+                               'box_contract': [r3(min(c0[0], c1[0])), r3(min(c0[1], c1[1])), r3(max(c0[0], c1[0])), r3(max(c0[1], c1[1]))],
+                               'min_clearance_mm': min(clear.values()) if clear else None, 'parts': len(clear)}
+    se = rc.get('sense')
+    if se is not None:
+        path = ROOT / se['prototype']
+        proto = collections.Counter()
+        if path.is_file():
+            for s in read_json(path).get('routing', []):
+                proto[s['net']] += float(s['length_mm'])
+        lengths = {}
+        for net in se['nets']:
+            L = sum(math.hypot(it.shape.x2 - it.shape.x1, it.shape.y2 - it.shape.y1) for it in board.tracks if it.net == net)
+            lengths[net] = {'board_mm': r3(L), 'prototype_mm': r3(proto[net]) if net in proto else None}
+            if net not in proto:
+                out.append(finding('rf_nodes', net, f"SENSE net not in the prototype routing ({se['prototype']})"))
+            elif not 0 < L <= proto[net] + 1e-6:
+                out.append(finding('rf_nodes', net, 'SENSE copper missing or longer than in the routed prototype', value=L, limit=proto[net]))
+        info['sense'] = {'prototype': se['prototype'], 'nets': lengths}
+    return out, info
 
 
 def pin_nets(board, ref):
@@ -1847,7 +2063,9 @@ def review_board(board, spec, contract, graph, netclasses, mates=None, component
     run('pad_nets', check_pad_nets(board, spec, graph, views))
     run('class_widths', check_classes(board, spec, netclasses, views))
     run('rf50', check_rf50(board, spec, netclasses, views))
-    run('gnd_chassis_ties', check_ties(board, spec, graph, views))
+    run('gnd_chassis_ties', check_ties(board, spec, graph, views, frame))
+    if 'rf_checks' in spec:
+        run('rf_nodes', check_rf_nodes(board, spec, netclasses, views, frame, components_csv))
     run('b2b', check_b2b(board, spec, mates or {}))
     run('tht_pockets', check_tht_pockets(board, spec, frame))
     run('heights', check_heights(board, spec, cb, frame))
