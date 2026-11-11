@@ -1,0 +1,442 @@
+{
+  "schema": "srrx-board-spec-v1",
+  "board_id": "IMU_CARRIER",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "title": "IMU_CARRIER L 40.28 x 14.5: IMU pack TVS, reverse isolation and the 16 wire pads of the IMU cable, RP2040-Zero and BNO085",
+  "note": "W2 PCB-SB2. Two-layer carrier on the printed IMU carrier: the IMU cable cores land on J518 next to the TVS U552 and the reverse-isolation diode D502; J320/J321 and J322 take the 26 AWG leads up to the RP2040-Zero and the BNO085 on their 13 mm standoffs. The 40.28 x 6.0 strip of imu_pack.json cannot hold the 16 W2 GR-4 pads at 4 mm pitch, so the outline adds an arm under the RP2040-Zero (build/kicad/boards/IMU_CARRIER/contract-proposal.json; OPEN for the IMU lineage). CI/model output only; not a fabrication release; IMU-01 and the pack gates stay OPEN.",
+  "contract": {
+    "file": "build/kicad/boards/IMU_CARRIER/contract-proposal.json",
+    "board": "IMU_CARRIER"
+  },
+  "domains": [
+    "IMU_CARRIER"
+  ],
+  "partition": "pcb/generated/partition.json",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
+    "plan": {
+      "F.Cu": "all parts; E5_IMU5V class PWR1A 0.35 mm (IMU_CARRIER.kicad_pro, pcb/generated/netclasses.json); signals; GND pour",
+      "B.Cu": "signals, GND pour"
+    }
+  },
+  "project": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pro",
+  "rules_file": null,
+  "rules_note": "The rules live in the committed project file, the same set as pcb/boards/HATCH.json and ENC (track 0.25 / clearance 0.2, minimum 0.15 / 0.15, via 0.6 / 0.3, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15), plus the board net classes named in layers.plan. pcb/rules/jlc-2l.kicad_dru is not attached: pcb/board_gen.py refuses a non-null rules_file (validate_spec).",
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 1-2 layer values (as pcb/boards/ENC.json; pcb/generated/netclasses.json fab_floor.jlc_2l_1oz)",
+    "min_track_width": 0.1,
+    "min_clearance": 0.1,
+    "min_drill": 0.15,
+    "min_via_diameter": 0.25,
+    "min_hole_to_hole": 0.45,
+    "min_hole_to_hole_note": "0.45 = pad hole-to-hole of different nets; via hole-to-hole is 0.2",
+    "min_copper_edge_clearance": 0.2,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "npth_min_diameter": 0.5,
+    "pth_annular_min": 0.18,
+    "pth_annular_recommended": 0.25
+  },
+  "instances": {
+    "template_nets": [
+      "E3_IMU3V3",
+      "E3_IMU_CS_N",
+      "E3_IMU_WAKE_N",
+      "E5_IMU5V",
+      "E5_IMU_VIN",
+      "GND",
+      "IMU_RX",
+      "IMU_TX"
+    ],
+    "list": [
+      {
+        "id": "IMUPACK",
+        "placement": "default",
+        "qty": 1,
+        "refs": {
+          "C340": "C340",
+          "C341": "C341",
+          "C519": "C519",
+          "C520": "C520",
+          "D502": "D502",
+          "J320": "J320",
+          "J321": "J321",
+          "J322": "J322",
+          "J518": "J518",
+          "R390": "R390",
+          "R391": "R391",
+          "U552": "U552"
+        },
+        "nets": {
+          "E3_IMU3V3": "E3_IMU3V3",
+          "E3_IMU_CS_N": "E3_IMU_CS_N",
+          "E3_IMU_WAKE_N": "E3_IMU_WAKE_N",
+          "E5_IMU5V": "E5_IMU5V",
+          "E5_IMU_VIN": "E5_IMU_VIN",
+          "GND": "GND",
+          "IMU_RX": "IMU_RX",
+          "IMU_TX": "IMU_TX"
+        },
+        "source": "pcb/generated/partition.json board_candidate IMU_CARRIER (12 refs: E5 U552, D502, C519, C520, J518 and E3 C340, C341, R390, R391, J320-J322, W2 GR-4); design/E3.json and design/E5.json pins"
+      }
+    ],
+    "spares": 0,
+    "spares_source": "one board per device (tools/assembly_data.py UNITS); the JLC minimum order quantity gives spare bare boards"
+  },
+  "parts": [
+    {
+      "ref": "J321",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          7.5,
+          1.5
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            13.5,
+            3.0
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "strip, lower row: RP2040-Zero signal leads (IMU_TX, IMU_RX, CS_N, WAKE_N), pads x 7.5-19.5; pad 1 3.2 clear of the H1 keepout"
+    },
+    {
+      "ref": "J320",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          23.0,
+          1.5
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            27.0,
+            3.0
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "strip, lower row: RP2040-Zero supply leads (E5_IMU_VIN, GND, 3V3), pads x 23-31 (courtyard 21.5-32.5)"
+    },
+    {
+      "ref": "J322",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          8.6,
+          4.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            16.6,
+            5.4
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "strip, upper row: BNO085 leads (3V3, GND, CS_N, WAKE_N, 3V3), pads x 8.6-24.6 under the BNO085"
+    },
+    {
+      "ref": "J518",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          26.5,
+          7.5
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            32.5,
+            9.0
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "arm, lowest row: the four IMU cable cores (E5_IMU5V, GND, IMU_TX, IMU_RX), pads x 26.5-38.5; 3.5 clear of the H2 keepout"
+    },
+    {
+      "ref": "D502",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          28.6,
+          12.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            28.6,
+            10.6
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "arm, top band: reverse isolation, anode (pad 2, E5_IMU5V) towards U552"
+    },
+    {
+      "ref": "U552",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          34.4,
+          12.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            34.4,
+            10.6
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "arm, top band: TVS on IMU_TX / IMU_RX / E5_IMU5V next to J518"
+    },
+    {
+      "ref": "C519",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          38.4,
+          12.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            38.4,
+            9.6
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "arm, right edge: 10 uF on E5_IMU_VIN"
+    },
+    {
+      "ref": "C340",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          27.2,
+          9.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            27.2,
+            9.9
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "arm: 10 uF on E5_IMU_VIN (E3)"
+    },
+    {
+      "ref": "C520",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          30.6,
+          9.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            30.6,
+            9.9
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "arm: 100 nF on E5_IMU_VIN"
+    },
+    {
+      "ref": "C341",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          34.0,
+          9.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            34.0,
+            9.9
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "arm: 100 nF on E3_IMU3V3"
+    },
+    {
+      "ref": "R390",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          28.0,
+          4.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            28.0,
+            4.3
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "strip right of J322: CS_N pull-up"
+    },
+    {
+      "ref": "R391",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          31.2,
+          4.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            31.2,
+            4.3
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "strip right of J322: WAKE_N pull-up"
+    }
+  ],
+  "holes": {
+    "from_contract": true,
+    "ref_prefix": "H",
+    "keepout_layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "keepout_blocks": [
+      "tracks",
+      "vias",
+      "zone_fills"
+    ]
+  },
+  "groups": [],
+  "pre_route": {
+    "tracks": [],
+    "zones": []
+  },
+  "post_route_zones": [
+    {
+      "id": "GND-F",
+      "net": "GND",
+      "layer": "F.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid"
+    },
+    {
+      "id": "GND-B",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid"
+    }
+  ],
+  "edge_keepout": {
+    "width_mm": 0.2,
+    "layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "blocks": [
+      "tracks",
+      "vias"
+    ],
+    "why": "rule-area strips (half-width 0.2) on every outline edge keep router copper 0.35 mm off the edge, above the project copper-to-edge 0.3 (as pcb/boards/PWR_B.json edge_keepout)"
+  },
+  "height_zones": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "imu_pack.json carrier_pcb parts_h 2.5 (assumption)"
+    }
+  ],
+  "sides": [
+    "top"
+  ],
+  "heights": {
+    "D502": 2.3,
+    "U552": 1.45,
+    "C519": 1.35,
+    "C340": 1.35,
+    "C520": 0.95,
+    "C341": 0.95,
+    "R390": 0.55,
+    "R391": 0.55,
+    "J320": 1.5,
+    "J321": 1.5,
+    "J322": 1.5,
+    "J518": 1.5
+  },
+  "heights_note": "D502 SMA 2.3, U552 SOT-23-6 1.45, 0805 1.35, 0603 0.95/0.55 (package outline assumptions until the datasheets are read); wire pads 1.5 = solder joint of a 26 AWG lead (assumption)",
+  "router": {
+    "tool": "freerouting",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:06:00",
+    "timeout_s": 480,
+    "fanout": false,
+    "why": "fan-out pre-pass off: on PWR_B it escaped SMD pins with necked-down stubs and dangling vias (pcb/boards/PWR_B.json router.why)"
+  },
+  "drc_policy": {
+    "warning_checks": {
+      "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+      "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+      "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board",
+      "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+      "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+      "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+    }
+  }
+}

@@ -1,0 +1,608 @@
+{
+  "schema": "srrx-board-spec-v1",
+  "board_id": "T7_INSERT",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "title": "T7_INSERT 40.4 x 9.0: U505 TPS2553DRVR VBUS key in the T7 cable, S24 header J514, wire pads J515-J517",
+  "note": "W2 PCB-SB2. One-sided in-cable board under heat-shrink: the cut VBUS conductor of the T7 USB3 cable lands on J515 (from the Q6A J5) and J516 (to the T7), J517 taps the uncut GND, J514 takes S24 (EN_T7, 3V3_Q6A, GND). The VBUS copper is scripted 0.8 mm; U505's exposed pad has two thermal vias to the bottom pour (IO-01 TJ <= 105 C at 1.5 A: model in build/15). The board keeps the 9.0 width and 8.5 height of the MECH-5 reserve but is 40.4 long, not 21.5 (OPEN for the mechanical lineage). CI/model output only; not a fabrication release; the bench gates (T-gates, USB3 link with the insert, TJ) stay OPEN.",
+  "contract": {
+    "file": "build/kicad/boards/T7_INSERT/contract-proposal.json",
+    "board": "T7_INSERT"
+  },
+  "domains": [
+    "T7_INSERT"
+  ],
+  "partition": "pcb/generated/partition.json",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
+    "plan": {
+      "F.Cu": "all parts; E5_VBUS_J5 / E5_VBUS_T7 scripted 0.8 mm (class SCRIPTED_VBUS in T7_INSERT.kicad_pro); signals; GND pour",
+      "B.Cu": "signals, GND pour (U505 thermal vias land here)"
+    }
+  },
+  "project": "build/kicad/boards/T7_INSERT/T7_INSERT.kicad_pro",
+  "rules_file": null,
+  "rules_note": "The rules live in the committed project file, the same set as pcb/boards/HATCH.json and ENC (track 0.25 / clearance 0.2, minimum 0.15 / 0.15, via 0.6 / 0.3, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15), plus the board net classes named in layers.plan. pcb/rules/jlc-2l.kicad_dru is not attached: pcb/board_gen.py refuses a non-null rules_file (validate_spec).",
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 1-2 layer values (as pcb/boards/ENC.json; pcb/generated/netclasses.json fab_floor.jlc_2l_1oz)",
+    "min_track_width": 0.1,
+    "min_clearance": 0.1,
+    "min_drill": 0.15,
+    "min_via_diameter": 0.25,
+    "min_hole_to_hole": 0.45,
+    "min_hole_to_hole_note": "0.45 = pad hole-to-hole of different nets; via hole-to-hole is 0.2",
+    "min_copper_edge_clearance": 0.2,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "npth_min_diameter": 0.5,
+    "pth_annular_min": 0.18,
+    "pth_annular_recommended": 0.25
+  },
+  "instances": {
+    "template_nets": [
+      "3V3_Q6A",
+      "E5_FAULT_T7",
+      "E5_U505_ILIM",
+      "E5_VBUS_J5",
+      "E5_VBUS_T7",
+      "EN_T7",
+      "GND"
+    ],
+    "list": [
+      {
+        "id": "T7A",
+        "placement": "default",
+        "qty": 1,
+        "refs": {
+          "C514": "C514",
+          "C515": "C515",
+          "C516": "C516",
+          "J514": "J514",
+          "J515": "J515",
+          "J516": "J516",
+          "J517": "J517",
+          "R514": "R514",
+          "R515": "R515",
+          "R516": "R516",
+          "R517": "R517",
+          "TP501": "TP501",
+          "U505": "U505"
+        },
+        "nets": {
+          "3V3_Q6A": "3V3_Q6A",
+          "E5_FAULT_T7": "E5_FAULT_T7",
+          "E5_U505_ILIM": "E5_U505_ILIM",
+          "E5_VBUS_J5": "E5_VBUS_J5",
+          "E5_VBUS_T7": "E5_VBUS_T7",
+          "EN_T7": "EN_T7",
+          "GND": "GND"
+        },
+        "source": "pcb/generated/partition.json board_candidate T7_INSERT (13 refs: U505, R514-R517, C514-C516, TP501 and the W2 GR-4 J514-J517); design/E5.json pins"
+      }
+    ],
+    "spares": 0,
+    "spares_source": "one board per device (tools/assembly_data.py UNITS); the JLC minimum order quantity gives spare bare boards"
+  },
+  "parts": [
+    {
+      "ref": "J514",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          6.95,
+          6.5
+        ],
+        "align": {
+          "pad": "1"
+        },
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            3.0,
+            4.5
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "left end; rotation 270 turns the side-entry opening to the board end x 0; pins 1 GND (6.95, 6.5), 2 3V3_Q6A (6.95, 4.5), 3 EN_T7 (6.95, 2.5); courtyard x 0.2-8.8, y 0.05-8.95"
+    },
+    {
+      "ref": "J517",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          10.9,
+          2.5
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            10.9,
+            0.9
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "GND tap of the uncut cable GND, lower pad of the J5-side column (courtyard x 9.0-12.8, y 0.7-4.3)"
+    },
+    {
+      "ref": "J515",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          10.9,
+          6.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            10.9,
+            8.3
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "VBUS from the Q6A J5 end of the cut conductor, upper pad of the column (courtyard y 4.8-8.4)"
+    },
+    {
+      "ref": "C515",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          14.0,
+          2.2
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            15.9,
+            1.3
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "input 4.7 uF: pad 1 (E5_VBUS_J5) up at (14.0, 3.15) under the VBUS trunk, pad 2 GND (14.0, 1.25)"
+    },
+    {
+      "ref": "C514",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          14.2,
+          5.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            13.3,
+            7.6
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "input 100 nF at U505 IN: pad 1 (E5_VBUS_J5) (14.2, 4.775) on the trunk, pad 2 GND (14.2, 6.425)"
+    },
+    {
+      "ref": "U505",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          17.0,
+          5.0
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            17.0,
+            2.6
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "TPS2553DRVR; rotation 180 puts IN (pin 6) at (16.11, 4.35) towards J515 and OUT (pin 1) at (17.89, 4.35) towards J516; EP 1.0 x 1.6 at (17.0, 5.0) with two scripted thermal vias"
+    },
+    {
+      "ref": "R515",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          15.2,
+          7.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            15.2,
+            7.9
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "EN_T7 pull-down 100k above-left of U505 (pin 4 EN at (16.11, 5.65))"
+    },
+    {
+      "ref": "R516",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.4,
+          7.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            18.4,
+            7.9
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "FAULT pull-up 10k to 3V3_Q6A above U505 pin 3"
+    },
+    {
+      "ref": "R514",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          20.7,
+          6.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            21.9,
+            6.4
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "RILIM to GND beside U505 pin 2 (ILIM, (17.89, 5.0)); pad 1 0.43 above the VBUS_T7 trunk"
+    },
+    {
+      "ref": "TP501",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          22.9,
+          7.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            22.9,
+            7.4
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "FAULT test pad"
+    },
+    {
+      "ref": "R517",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          22.0,
+          2.6
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            23.6,
+            2.0
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "VBUS_T7 bleeder 10k under the trunk: pad 1 up (22.0, 3.425)"
+    },
+    {
+      "ref": "J516",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          26.4,
+          4.35
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            26.4,
+            7.3
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "VBUS to the T7 end of the cut conductor (courtyard x 24.5-28.3)"
+    },
+    {
+      "ref": "C516",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          34.2,
+          4.5
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            34.2,
+            4.5
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "output 150 uF polymer at the T7 end: pad 1 (+, E5_VBUS_T7) (30.725, 4.5) towards J516, pad 2 GND (37.675, 4.5); courtyard x 28.4-40.0, y 0.1-8.9"
+    }
+  ],
+  "holes": {
+    "from_contract": true,
+    "ref_prefix": "H",
+    "keepout_layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "keepout_blocks": [
+      "tracks",
+      "vias",
+      "zone_fills"
+    ]
+  },
+  "groups": [],
+  "pre_route": {
+    "tracks": [
+      {
+        "id": "VBUSJ5-TRUNK",
+        "net": "E5_VBUS_J5",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            10.9,
+            6.6
+          ],
+          [
+            13.0,
+            4.35
+          ],
+          [
+            15.3,
+            4.35
+          ]
+        ],
+        "locked": true,
+        "why": "VBUS of the T7 (TPS2553 current limit about 1.5-1.6 A with RILIM 15.8k, eq. (2) of SLVS841G quoted in snapshot web:ti-slvs841g-tps2553): 0.8 mm (the PWR2A width of pcb/generated/netclasses.json, 2 A at +10 C on 1 oz) scripted and locked, necked to 0.35 mm over the last 0.75 mm into the 0.375 mm WSON pin; the graph nets have no NET_CURRENT entry, so pcb/check_boards.py checks them as SIG (OPEN for the NET_CURRENT owner)"
+      },
+      {
+        "id": "VBUSJ5-NECK",
+        "net": "E5_VBUS_J5",
+        "layer": "F.Cu",
+        "width_mm": 0.35,
+        "path": [
+          [
+            15.3,
+            4.35
+          ],
+          [
+            16.05,
+            4.35
+          ]
+        ],
+        "locked": true,
+        "why": "VBUS of the T7 (TPS2553 current limit about 1.5-1.6 A with RILIM 15.8k, eq. (2) of SLVS841G quoted in snapshot web:ti-slvs841g-tps2553): 0.8 mm (the PWR2A width of pcb/generated/netclasses.json, 2 A at +10 C on 1 oz) scripted and locked, necked to 0.35 mm over the last 0.75 mm into the 0.375 mm WSON pin; the graph nets have no NET_CURRENT entry, so pcb/check_boards.py checks them as SIG (OPEN for the NET_CURRENT owner)"
+      },
+      {
+        "id": "VBUSJ5-C515",
+        "net": "E5_VBUS_J5",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            14.0,
+            4.35
+          ],
+          [
+            14.0,
+            3.15
+          ]
+        ],
+        "locked": true,
+        "why": "stub to the C515 input capacitor"
+      },
+      {
+        "id": "VBUST7-NECK",
+        "net": "E5_VBUS_T7",
+        "layer": "F.Cu",
+        "width_mm": 0.35,
+        "path": [
+          [
+            17.95,
+            4.35
+          ],
+          [
+            18.7,
+            4.35
+          ]
+        ],
+        "locked": true,
+        "why": "VBUS of the T7 (TPS2553 current limit about 1.5-1.6 A with RILIM 15.8k, eq. (2) of SLVS841G quoted in snapshot web:ti-slvs841g-tps2553): 0.8 mm (the PWR2A width of pcb/generated/netclasses.json, 2 A at +10 C on 1 oz) scripted and locked, necked to 0.35 mm over the last 0.75 mm into the 0.375 mm WSON pin; the graph nets have no NET_CURRENT entry, so pcb/check_boards.py checks them as SIG (OPEN for the NET_CURRENT owner)"
+      },
+      {
+        "id": "VBUST7-TRUNK",
+        "net": "E5_VBUS_T7",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            18.7,
+            4.35
+          ],
+          [
+            30.725,
+            4.35
+          ]
+        ],
+        "locked": true,
+        "why": "VBUS of the T7 (TPS2553 current limit about 1.5-1.6 A with RILIM 15.8k, eq. (2) of SLVS841G quoted in snapshot web:ti-slvs841g-tps2553): 0.8 mm (the PWR2A width of pcb/generated/netclasses.json, 2 A at +10 C on 1 oz) scripted and locked, necked to 0.35 mm over the last 0.75 mm into the 0.375 mm WSON pin; the graph nets have no NET_CURRENT entry, so pcb/check_boards.py checks them as SIG (OPEN for the NET_CURRENT owner)"
+      },
+      {
+        "id": "VBUST7-R517",
+        "net": "E5_VBUS_T7",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            22.0,
+            4.35
+          ],
+          [
+            22.0,
+            3.425
+          ]
+        ],
+        "locked": true,
+        "why": "stub to the R517 bleeder (10k: about 0.5 mA)"
+      }
+    ],
+    "vias": [
+      {
+        "id": "EP-V1",
+        "net": "GND",
+        "at": [
+          17.0,
+          4.6
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.6,
+        "locked": true,
+        "why": "thermal via in the U505 exposed pad (pin 7, GND) to the B.Cu GND pour (IO-01 thermal condition, build/15 'Вставка T7: тепло U505 (W2 PCB-SB2)')"
+      },
+      {
+        "id": "EP-V2",
+        "net": "GND",
+        "at": [
+          17.0,
+          5.4
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.6,
+        "locked": true,
+        "why": "second thermal via; 0.8 pitch keeps the project hole-to-hole 0.5"
+      }
+    ],
+    "zones": []
+  },
+  "post_route_zones": [
+    {
+      "id": "GND-F",
+      "net": "GND",
+      "layer": "F.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "GND pour, solid pad connection (U505 exposed pad and the J517 tap without thermal spokes)"
+    },
+    {
+      "id": "GND-B",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid"
+    }
+  ],
+  "edge_keepout": {
+    "width_mm": 0.2,
+    "layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "blocks": [
+      "tracks",
+      "vias"
+    ],
+    "why": "rule-area strips (half-width 0.2) on every outline edge keep router copper 0.35 mm off the edge, above the project copper-to-edge 0.3 (as pcb/boards/PWR_B.json edge_keepout)"
+  },
+  "height_zones": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "reserve height 8.5 minus the board"
+    }
+  ],
+  "sides": [
+    "top"
+  ],
+  "heights": {
+    "C516": 6.9,
+    "J514": 4.8,
+    "J515": 1.5,
+    "J516": 1.5,
+    "J517": 1.5,
+    "U505": 0.8,
+    "C514": 0.95,
+    "C515": 1.35,
+    "R514": 0.55,
+    "R515": 0.55,
+    "R516": 0.55,
+    "R517": 0.55,
+    "TP501": 0.1
+  },
+  "heights_note": "C516 16SVPC150M L6.9 (parts DB); J514 = mechanical/params/parts.json harness_headers PH_side 4.8; wire pads 1.5 = solder joint of the cut 20 AWG conductor (assumption); U505 WSON 0.8, 0603/0805 parts <= 0.95/1.35 (assumptions until the part heights are read)",
+  "router": {
+    "tool": "freerouting",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:06:00",
+    "timeout_s": 480,
+    "fanout": false,
+    "ignore_net_classes": [
+      "SCRIPTED_VBUS"
+    ],
+    "why": "the two VBUS nets are scripted and locked (class SCRIPTED_VBUS, not autorouted); fan-out pre-pass off: on PWR_B it escaped SMD pins with necked-down stubs and dangling vias (pcb/boards/PWR_B.json router.why)"
+  },
+  "drc_policy": {
+    "warning_checks": {
+      "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+      "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+      "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board",
+      "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+      "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+      "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+    }
+  }
+}
