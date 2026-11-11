@@ -21,15 +21,15 @@
     },
     "types_why": "In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).",
     "plan": {
-      "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm), PWR1A/PWR3A_BRANCH routes, GND pour after routing",
+      "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, PWR1A/PWR3A_BRANCH routes, GND pour after routing",
       "In1.Cu": "L2: GND plane (pre-route zone, DSN plane), no signals",
-      "In2.Cu": "L3: signals (no power class), GND pour after routing",
-      "B.Cu": "L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm), PWR1A/PWR3A_BRANCH routes, GND pour after routing"
+      "In2.Cu": "L3: signals, the scripted 0.8/0.6 mm LAB5 branch run (J305.3 -> U315, C322, fan switch, D301), GND pour after routing",
+      "B.Cu": "L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm), scripted LAB5 branch ends, locked GND copper over the custom Pico GND pads, PWR1A/PWR3A_BRANCH routes, GND pour after routing"
     }
   },
   "project": "build/kicad/boards/CTRL/CTRL.kicad_pro",
   "rules_file": null,
-  "rules_note": "Rules live in the committed CTRL.kicad_pro: the project defaults of pcb/generated/netclasses.json project_defaults (track 0.15 / clearance 0.15, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias 0.7 / 0.3 (0.6 mm vias at 0.15 mm clearance sit 0.45 mm hole to hole, PCB-PWRB lesson), and the classes PWR1A (0.35 mm: E3_FAN5_P, E3_GNSS5V), PWR3A_BRANCH (0.5 mm router branches of LAB5 and E3_BLOWER_GND), SCRIPTED_GND (GND) and SCRIPTED_PWR3A (E3_FAN5), the last two not autorouted. check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru files yet).",
+  "rules_note": "Rules live in the committed CTRL.kicad_pro: the project defaults of pcb/generated/netclasses.json project_defaults (track 0.15 / clearance 0.15, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias 0.7 / 0.3 (0.6 mm vias at 0.15 mm clearance sit 0.45 mm hole to hole, PCB-PWRB lesson), and the classes PWR1A (0.35 mm: E3_FAN5_P, E3_GNSS5V), PWR3A_BRANCH (0.5 mm router branches of E3_BLOWER_GND), SCRIPTED_GND (GND) and SCRIPTED_PWR3A (LAB5, E3_FAN5), the last two not autorouted. check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru files yet).",
   "fab_floor": {
     "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 4-layer values (pcb/generated/netclasses.json fab_floor.jlc_4l_1oz)",
     "min_track_width": 0.09,
@@ -2176,6 +2176,10 @@
           ],
           [
             12.2,
+            64.5
+          ],
+          [
+            12.2,
             56.25
           ],
           [
@@ -2249,6 +2253,1031 @@
         "why": "fan switch Q304 drain to the PTC F301 at the PWR3A width (one segment, pad centre to pad centre)"
       },
       {
+        "id": "LAB5-D306",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            9.47,
+            56.25
+          ],
+          [
+            10.6,
+            54.65
+          ],
+          [
+            16.5,
+            54.65
+          ],
+          [
+            16.5,
+            56.3
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, D306): J314.2 to the flyback diode cathode below the D306 body; low current (transient only)"
+      },
+      {
+        "id": "LAB5-C343",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            9.47,
+            67.01
+          ],
+          [
+            11.73,
+            66.145
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C343): decoupling capacitor next to J305.4"
+      },
+      {
+        "id": "LAB5-C342-F",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            12.2,
+            64.5
+          ],
+          [
+            21.9,
+            64.5
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C342): from the F.Cu feed above the J317 pins to a via next to C342"
+      },
+      {
+        "id": "LAB5-C342-B",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            21.9,
+            64.5
+          ],
+          [
+            21.9,
+            66.4
+          ],
+          [
+            21.09,
+            67.42
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C342): via to the C342 LAB5 pad"
+      },
+      {
+        "id": "LAB5-L3",
+        "net": "LAB5",
+        "layer": "In2.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            9.47,
+            70.01
+          ],
+          [
+            11.15,
+            71.21
+          ],
+          [
+            11.15,
+            94.3
+          ],
+          [
+            26.2,
+            94.3
+          ],
+          [
+            32.4,
+            94.3
+          ],
+          [
+            44.0,
+            94.3
+          ],
+          [
+            44.0,
+            88.7
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, U315, C321, C322, Q304, R367, C320): inner L3 run to the GNSS switch and the fan switch, 0.8 mm (<= 0.44 A)"
+      },
+      {
+        "id": "LAB5-L3-U315",
+        "net": "LAB5",
+        "layer": "In2.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            26.2,
+            94.3
+          ],
+          [
+            26.2,
+            97.3
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, U315): L3 tap to the U315 via"
+      },
+      {
+        "id": "LAB5-U315",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            26.2,
+            97.3
+          ],
+          [
+            24.1875,
+            97.3
+          ],
+          [
+            24.1875,
+            96.65
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, U315): via to the U315 IN pad from above"
+      },
+      {
+        "id": "LAB5-C321",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            26.2,
+            97.3
+          ],
+          [
+            26.2,
+            99.87
+          ],
+          [
+            23.055,
+            99.87
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C321): U315 input capacitor"
+      },
+      {
+        "id": "LAB5-L3-C322",
+        "net": "LAB5",
+        "layer": "In2.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            32.4,
+            94.3
+          ],
+          [
+            32.4,
+            95.92
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C322): L3 tap to the C322 via"
+      },
+      {
+        "id": "LAB5-C322",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            32.4,
+            95.92
+          ],
+          [
+            30.65,
+            95.92
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C322): via to the C322 LAB5 pad"
+      },
+      {
+        "id": "LAB5-FAN",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            44.0,
+            88.7
+          ],
+          [
+            45.4,
+            88.7
+          ],
+          [
+            49.15,
+            88.7
+          ],
+          [
+            49.15,
+            87.3
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C320): fan switch source capacitor, above C320"
+      },
+      {
+        "id": "LAB5-R367",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            45.4,
+            88.7
+          ],
+          [
+            45.4,
+            86.325
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, R367): gate pull-up of Q304"
+      },
+      {
+        "id": "LAB5-Q304",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            49.15,
+            87.3
+          ],
+          [
+            48.95,
+            85.2375
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, Q304): fan switch source"
+      },
+      {
+        "id": "LAB5-L3-D301",
+        "net": "LAB5",
+        "layer": "In2.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            44.0,
+            88.7
+          ],
+          [
+            38.4,
+            88.7
+          ],
+          [
+            38.4,
+            56.4
+          ],
+          [
+            36.2,
+            55.6
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, D301): inner L3 run down the right strip to a via next to the Pico VSYS diode D301 (Pico VSYS current only)"
+      },
+      {
+        "id": "LAB5-D301",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            36.2,
+            55.6
+          ],
+          [
+            35.9,
+            53.4
+          ]
+        ],
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, D301): via to the D301 LAB5 pad"
+      },
+      {
+        "id": "GND-U305.3-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            12.05,
+            8.8
+          ],
+          [
+            13.65,
+            8.8
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.3-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            8.2
+          ],
+          [
+            14.25,
+            9.4
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.3-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            9.4
+          ],
+          [
+            13.65,
+            9.4
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.3-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            8.2
+          ],
+          [
+            13.65,
+            8.2
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.8-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            12.05,
+            21.5
+          ],
+          [
+            13.65,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.8-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            20.9
+          ],
+          [
+            14.25,
+            22.1
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.8-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            22.1
+          ],
+          [
+            13.65,
+            22.1
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.8-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            20.9
+          ],
+          [
+            13.65,
+            20.9
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.13-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            12.05,
+            34.2
+          ],
+          [
+            13.65,
+            34.2
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.13-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            33.6
+          ],
+          [
+            14.25,
+            34.8
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.13-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            34.8
+          ],
+          [
+            13.65,
+            34.8
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.13-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            33.6
+          ],
+          [
+            13.65,
+            33.6
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.18-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            12.05,
+            46.9
+          ],
+          [
+            13.65,
+            46.9
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.18-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            46.3
+          ],
+          [
+            14.25,
+            47.5
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.18-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            47.5
+          ],
+          [
+            13.65,
+            47.5
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.18-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            14.25,
+            46.3
+          ],
+          [
+            13.65,
+            46.3
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.23-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            31.43,
+            46.9
+          ],
+          [
+            33.03,
+            46.9
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.23-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            46.3
+          ],
+          [
+            30.83,
+            47.5
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.23-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            47.5
+          ],
+          [
+            31.43,
+            47.5
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.23-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            46.3
+          ],
+          [
+            31.43,
+            46.3
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.28-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            31.43,
+            34.2
+          ],
+          [
+            33.03,
+            34.2
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.28-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            33.6
+          ],
+          [
+            30.83,
+            34.8
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.28-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            34.8
+          ],
+          [
+            31.43,
+            34.8
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.28-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            33.6
+          ],
+          [
+            31.43,
+            33.6
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.33-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            31.43,
+            21.5
+          ],
+          [
+            33.03,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.33-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            20.9
+          ],
+          [
+            30.83,
+            22.1
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.33-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            22.1
+          ],
+          [
+            31.43,
+            22.1
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.33-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            20.9
+          ],
+          [
+            31.43,
+            20.9
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.38-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            31.43,
+            8.8
+          ],
+          [
+            33.03,
+            8.8
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.38-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            8.2
+          ],
+          [
+            30.83,
+            9.4
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.38-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            9.4
+          ],
+          [
+            31.43,
+            9.4
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.38-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            30.83,
+            8.2
+          ],
+          [
+            31.43,
+            8.2
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.SWD_GND-COVER0",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            22.54,
+            51.75
+          ],
+          [
+            22.54,
+            53.35
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.SWD_GND-COVER1",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            23.14,
+            51.15
+          ],
+          [
+            21.94,
+            51.15
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.SWD_GND-COVER2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            21.94,
+            51.15
+          ],
+          [
+            21.94,
+            51.75
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U305.SWD_GND-COVER3",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            23.14,
+            51.15
+          ],
+          [
+            23.14,
+            51.75
+          ]
+        ],
+        "locked": true,
+        "why": "inside the custom Pico GND pad outline: the router keeps its clearance to the whole pad"
+      },
+      {
+        "id": "GND-U310.2",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            18.2125,
+            54.9
+          ],
+          [
+            19.299,
+            54.609
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U311.2",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            22.7125,
+            54.9
+          ],
+          [
+            23.799,
+            54.609
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U315.2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            24.1875,
+            95.7
+          ],
+          [
+            27.312,
+            95.7
+          ]
+        ],
+        "locked": true
+      },
+      {
         "id": "GND-C301.2",
         "net": "GND",
         "layer": "F.Cu",
@@ -2276,8 +3305,8 @@
             92.65
           ],
           [
-            37.791,
-            93.543
+            39.177,
+            93.312
           ]
         ],
         "locked": true
@@ -2310,8 +3339,8 @@
             92.65
           ],
           [
-            40.201,
-            93.543
+            41.587,
+            93.312
           ]
         ],
         "locked": true
@@ -2344,8 +3373,8 @@
             92.65
           ],
           [
-            42.611,
-            93.543
+            44.95,
+            93.863
           ]
         ],
         "locked": true
@@ -2565,8 +3594,8 @@
             91.6
           ],
           [
-            44.8,
-            91.6
+            45.212,
+            90.712
           ]
         ],
         "locked": true
@@ -2616,8 +3645,8 @@
             95.92
           ],
           [
-            27.825,
-            95.92
+            27.884,
+            96.786
           ]
         ],
         "locked": true
@@ -2633,8 +3662,8 @@
             91.6
           ],
           [
-            39.072,
-            93.363
+            38.6,
+            89.675
           ]
         ],
         "locked": true
@@ -2786,8 +3815,8 @@
             88.0
           ],
           [
-            37.775,
-            87.075
+            39.56,
+            86.215
           ]
         ],
         "locked": true
@@ -2861,7 +3890,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-36",
+        "id": "GND-SW302.2-44",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2895,7 +3924,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-38",
+        "id": "GND-SW303.2-46",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2929,7 +3958,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-40",
+        "id": "GND-SW304.2-48",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2963,7 +3992,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-42",
+        "id": "GND-SW305.2-50",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2997,7 +4026,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-44",
+        "id": "GND-SW306.2-52",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3031,7 +4060,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-46",
+        "id": "GND-SW307.2-54",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3093,7 +4122,7 @@
           ],
           [
             11.215,
-            93.855
+            96.705
           ]
         ],
         "locked": true
@@ -3456,40 +4485,6 @@
         "locked": true
       },
       {
-        "id": "GND-U310.2",
-        "net": "GND",
-        "layer": "F.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            18.2125,
-            54.9
-          ],
-          [
-            17.126,
-            54.609
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "GND-U311.2",
-        "net": "GND",
-        "layer": "F.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            22.7125,
-            54.9
-          ],
-          [
-            23.799,
-            54.609
-          ]
-        ],
-        "locked": true
-      },
-      {
         "id": "GND-U312.2",
         "net": "GND",
         "layer": "B.Cu",
@@ -3522,26 +4517,102 @@
           ]
         ],
         "locked": true
+      }
+    ],
+    "vias": [
+      {
+        "id": "LAB5-V-C342",
+        "net": "LAB5",
+        "at": [
+          21.9,
+          64.5
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C342): F.Cu to B.Cu"
+      },
+      {
+        "id": "LAB5-V-U315",
+        "net": "LAB5",
+        "at": [
+          26.2,
+          97.3
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, U315): L3 to B.Cu next to U315"
+      },
+      {
+        "id": "LAB5-V-C322",
+        "net": "LAB5",
+        "at": [
+          32.4,
+          95.92
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, C322): L3 to B.Cu next to C322"
+      },
+      {
+        "id": "LAB5-V-FAN",
+        "net": "LAB5",
+        "at": [
+          44.0,
+          88.7
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, Q304): L3 to B.Cu above the fan switch"
+      },
+      {
+        "id": "LAB5-V-D301",
+        "net": "LAB5",
+        "at": [
+          36.2,
+          55.6
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "LAB5 branch (branch_exempt, D301): L3 to B.Cu next to D301"
+      },
+      {
+        "id": "GND-U310.2",
+        "net": "GND",
+        "at": [
+          19.299,
+          54.609
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "GND-U311.2",
+        "net": "GND",
+        "at": [
+          23.799,
+          54.609
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
       },
       {
         "id": "GND-U315.2",
         "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            24.1875,
-            95.7
-          ],
-          [
-            27.303,
-            94.865
-          ]
+        "at": [
+          27.312,
+          95.7
         ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
-      }
-    ],
-    "vias": [
+      },
       {
         "id": "GND-C301.2",
         "net": "GND",
@@ -3557,8 +4628,8 @@
         "id": "GND-C302.2",
         "net": "GND",
         "at": [
-          37.791,
-          93.543
+          39.177,
+          93.312
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -3579,8 +4650,8 @@
         "id": "GND-C304.2",
         "net": "GND",
         "at": [
-          40.201,
-          93.543
+          41.587,
+          93.312
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -3601,8 +4672,8 @@
         "id": "GND-C306.2",
         "net": "GND",
         "at": [
-          42.611,
-          93.543
+          44.95,
+          93.863
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -3744,8 +4815,8 @@
         "id": "GND-C319.2",
         "net": "GND",
         "at": [
-          44.8,
-          91.6
+          45.212,
+          90.712
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -3777,8 +4848,8 @@
         "id": "GND-C322.2",
         "net": "GND",
         "at": [
-          27.825,
-          95.92
+          27.884,
+          96.786
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -3788,8 +4859,8 @@
         "id": "GND-D305.2",
         "net": "GND",
         "at": [
-          39.072,
-          93.363
+          38.6,
+          89.675
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -3887,8 +4958,8 @@
         "id": "GND-R366.2",
         "net": "GND",
         "at": [
-          37.775,
-          87.075
+          39.56,
+          86.215
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -3939,7 +5010,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-36",
+        "id": "GND-SW302.2-44",
         "net": "GND",
         "at": [
           15.709,
@@ -3961,7 +5032,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-38",
+        "id": "GND-SW303.2-46",
         "net": "GND",
         "at": [
           37.709,
@@ -3983,7 +5054,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-40",
+        "id": "GND-SW304.2-48",
         "net": "GND",
         "at": [
           15.709,
@@ -4005,7 +5076,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-42",
+        "id": "GND-SW305.2-50",
         "net": "GND",
         "at": [
           37.683,
@@ -4027,7 +5098,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-44",
+        "id": "GND-SW306.2-52",
         "net": "GND",
         "at": [
           15.709,
@@ -4049,7 +5120,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-46",
+        "id": "GND-SW307.2-54",
         "net": "GND",
         "at": [
           37.709,
@@ -4086,7 +5157,7 @@
         "net": "GND",
         "at": [
           11.215,
-          93.855
+          96.705
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -4324,28 +5395,6 @@
         "locked": true
       },
       {
-        "id": "GND-U310.2",
-        "net": "GND",
-        "at": [
-          17.126,
-          54.609
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "GND-U311.2",
-        "net": "GND",
-        "at": [
-          23.799,
-          54.609
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
         "id": "GND-U312.2",
         "net": "GND",
         "at": [
@@ -4362,17 +5411,6 @@
         "at": [
           40.688,
           123.5
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "GND-U315.2",
-        "net": "GND",
-        "at": [
-          27.303,
-          94.865
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5080,52 +6118,52 @@
     "C320": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "C321": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "C322": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "C342": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate) E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
     },
     "C343": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate) E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
     },
     "D301": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "D306": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "flyback diode D306 cathode on LAB5: it conducts the blower current only while the coil current decays after Q305 turns off (ms); LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+      "reason": "flyback diode D306 cathode on LAB5: it conducts the blower current only while the coil current decays after Q305 turns off (ms); scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "Q304": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "R367": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "U315": {
       "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     }
   },
   "neck_exempt": {
@@ -5211,8 +6249,8 @@
         "B.Cu"
       ]
     },
-    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off; GND and E3_FAN5 are fully scripted and not autorouted (-inc); the 1.85 mm LAB5 feed and E3_BLOWER_GND rail are scripted and the router adds only the 0.5 mm branches (class PWR3A_BRANCH, branch_exempt). Route run 43092258826 with these settings: 2 DRC errors and 15 unconnected when the 25 min job timeout stopped the router (artifact upload failed in a GitHub Actions outage), so the job timeout is 34 min, inside the 45 min CI job with routing, DRC and the fab set",
-    "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no power copper lands on the inner layers"
+    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off and GND / E3_FAN5 scripted. Route run 43092258826 (2 errors, 15 unconnected at the 25 min timeout; artifact lost in a GitHub Actions outage) and 43100344071 (34 min: 2 errors, both router tracks too close to the custom Pico GND pads 8 and 13, 8 unconnected, 5 of them LAB5 branches): LAB5 is now fully scripted (feed, branches, five vias) and not autorouted, the custom Pico GND pads carry locked GND copper over their whole outline, only the E3_BLOWER_GND capacitor branches stay in class PWR3A_BRANCH (0.5 mm, branch_exempt); job timeout 34 min inside the 45 min CI job",
+    "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper lands on the inner layers (the scripted LAB5 L3 run is locked and branch_exempt)"
   },
   "drc_policy": {
     "warning_checks": {

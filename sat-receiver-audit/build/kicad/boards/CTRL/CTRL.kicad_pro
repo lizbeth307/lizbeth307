@@ -223,7 +223,7 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "PWR3A_BRANCH",
+        "netclass": "SCRIPTED_PWR3A",
         "pattern": "LAB5"
       },
       {

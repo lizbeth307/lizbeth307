@@ -647,7 +647,8 @@ class CtrlClassLayersCutoutAuditAndDrillOffsets(unittest.TestCase):
         self.assertEqual(patterns['GND'], 'SCRIPTED_GND')
         self.assertEqual(patterns['E3_FAN5'], 'SCRIPTED_PWR3A')
         vias = spec['pre_route']['vias']
-        self.assertTrue(vias and all(v['net'] == 'GND' and v['drill_mm'] >= spec['fab_floor']['min_drill'] for v in vias))
+        self.assertEqual(patterns['LAB5'], 'SCRIPTED_PWR3A')
+        self.assertTrue(vias and all(v['net'] in ('GND', 'LAB5') and v['drill_mm'] >= spec['fab_floor']['min_drill'] for v in vias))
         self.assertEqual(spec['pre_route']['gnd_vias_skipped'], [])
 
 
