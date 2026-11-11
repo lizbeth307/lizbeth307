@@ -3,12 +3,12 @@
   "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
   "graph_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
-    "E2.json": "9194b3e72b6e644fa7791b4f89b8bea9f97980f49f831bf285afdbd00d567910",
+    "E2.json": "f7df0056983ea7155c2d23062be3c1855e96cc4b8f02c757d42797754f8f8c5e",
     "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   },
-  "netlist_sha256": "cfbac0e2d44512b2ed9f526809f377aace350e230cad0c4bb3ab5713529a3f85",
+  "netlist_sha256": "5c56c46f6f9290cf1e5143d6bb5fe233728eddab81b375728c2e8e0c5c4aa04e",
   "counts": {
     "hardware_components": 851,
     "hardware_pin_declarations": 2942,
