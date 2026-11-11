@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/RF/RF.kicad_pcb",
-    "board_sha256": "7aecaa13e66cc683521af091ea5b063412bf588495d4fb7a9ae3fd452d686fc1",
+    "board_sha256": "b798aaca1f8d1ea1aff6c01f62c4ba540036f8c731f6f38c2163299a9e9914b1",
     "project_sha256": "1d34c17bd5a6235e64f328c4222d1fd47a65f78a88be0e4173b7d59fcc872cbf",
     "spec_projection_sha256": "05d901eb7e540c7a3197d0b3c2462f4f7b793c67747e7856927ba6e097abde00",
     "report_projection_sha256": "e107c8bac8c287bbe1319cfe5c0dcef8629c3703909270cb84f0ef1c4d071a31",
@@ -850,10 +850,10 @@
     "drill": {
       "pth_file": 1,
       "npth_file": 1,
-      "pth_hits": 1344,
+      "pth_hits": 1360,
       "npth_hits": 5,
       "board_pth_pads": 39,
-      "board_vias": 1305,
+      "board_vias": 1321,
       "board_npth_pads": 5,
       "maps": [
         "drill/RF-NPTH-drl_map.gbr",
@@ -861,7 +861,54 @@
       ]
     },
     "passed": true,
-    "area_mm2": 6838.0
+    "area_mm2": 8188.0,
+    "coupons": [
+      {
+        "rf50_nets": [
+          "CPN_THRU_50"
+        ],
+        "gnd_net": "CPN_GND_50",
+        "rect_contract": [
+          0.0,
+          -22.0,
+          50.0,
+          18.0
+        ],
+        "gerber_box": [
+          100.0,
+          -166.5,
+          150.0,
+          -148.5
+        ],
+        "refs_not_in_cpl_bom": [
+          "CPN1",
+          "CPN2"
+        ]
+      },
+      {
+        "rf50_nets": [
+          "CPN_THRU_25"
+        ],
+        "gnd_net": "CPN_GND_25",
+        "rect_contract": [
+          70.0,
+          -22.0,
+          25.0,
+          18.0
+        ],
+        "gerber_box": [
+          170.0,
+          -166.5,
+          195.0,
+          -148.5
+        ],
+        "refs_not_in_cpl_bom": [
+          "CPN3",
+          "CPN4"
+        ]
+      }
+    ],
+    "edge_cuts_pieces": 3
   },
   "problems": [],
   "sources": {
@@ -914,18 +961,18 @@
     },
     {
       "path": "README.md",
-      "sha256": "177279ccdfddbaa8002d0f057af4d7d96db9a99f7500c0a7579f6af5b29809e2",
-      "bytes": 9340
+      "sha256": "80de02348d143e90928096445ee3d875d4a90868dd4462832f004ff78fd22591",
+      "bytes": 9950
     },
     {
       "path": "RF-fab-notes.pdf",
-      "sha256": "feaf705121150b7f8fa31d8264eadb8a23024fd25041e170dcd8cb16a597bc5c",
-      "bytes": 34648
+      "sha256": "2a5fc9ad421ccdf4dcd009d9c17d2386d0380cd93fcacfe516e50a0d75183bc5",
+      "bytes": 36081
     },
     {
       "path": "RF.ipc356",
-      "sha256": "5c9b43ab6956e7f32e8f26ae69dca9820c07e8e4ba3696265802bb8437c09195",
-      "bytes": 158043
+      "sha256": "63bd4ea7cc2056693137ebc0c0ef33e2d353ed7b00c9c529594382f0e87543d2",
+      "bytes": 159339
     },
     {
       "path": "RF.kicad_jobset",
@@ -969,33 +1016,33 @@
     },
     {
       "path": "drill/RF-PTH-drl_map.gbr",
-      "sha256": "d913fcd769ff738c081f2974ee454d8e7187c93a07781defaa270d8184d9815a",
-      "bytes": 189735
+      "sha256": "ed06c3ec8c97885c65646867a9de227ab83afbaa954c111b207ac27aea7f602f",
+      "bytes": 190311
     },
     {
       "path": "drill/RF-PTH.drl",
-      "sha256": "3573458b2aec5f3d974f4bda94897e17bb4c7029a92d91daddcdec6b990473e6",
-      "bytes": 21533
+      "sha256": "9b5c6dbdf94af5e0c49894cd8d8413a53451326ff714c46b2e878b6c589ddc94",
+      "bytes": 21776
     },
     {
       "path": "gerber/RF-B_Cu.gbl",
-      "sha256": "3dbba251eaa7eb1c8f8e6c138447e6b9611f8cbf38a7ad0e3512dbca74946ba2",
-      "bytes": 249374
+      "sha256": "989c5a27edbd3d7716662c70648db6a0acf2dce187ede4fee49578e2d47c8b11",
+      "bytes": 253131
     },
     {
       "path": "gerber/RF-B_Mask.gbs",
-      "sha256": "8018e0c3aad36988dfec11162cfaa929238ae4246a80757cf9e96b724cf3bbc9",
-      "bytes": 2718
+      "sha256": "72b55cb3278009201c77a7ce2a103e70cb47948ef7bd1facdb71bf135eab6896",
+      "bytes": 2708
     },
     {
       "path": "gerber/RF-B_Paste.gbp",
-      "sha256": "149daded8bd26f536cc24124ac055ed4a519774259fb11c41e6566df7f92d96d",
-      "bytes": 1107
+      "sha256": "e23e4e6d67903388d08043c99a61c69a8231c1612ccff49c804e011b186f83c6",
+      "bytes": 1092
     },
     {
       "path": "gerber/RF-B_Silkscreen.gbo",
-      "sha256": "e8faf006f9754ec6385cbe3ac0b446df92756540294342b99ad681b17fa56f77",
-      "bytes": 2728
+      "sha256": "3226b0d04d166950ead146cdb30ef92db8638bfaaa0f40d3389f9d0e421b7d9d",
+      "bytes": 2718
     },
     {
       "path": "gerber/RF-Edge_Cuts.gm1",
@@ -1004,33 +1051,33 @@
     },
     {
       "path": "gerber/RF-F_Cu.gtl",
-      "sha256": "ad16e91999fbc315df52c7060027eccb11c90eca65c19090044d2db681f72f65",
-      "bytes": 518846
+      "sha256": "ae4d8071995253a786197843c0d3d104a192cb5234479f36625b801ca72ebeb6",
+      "bytes": 541261
     },
     {
       "path": "gerber/RF-F_Mask.gts",
-      "sha256": "d693b6ee1fd6e89167dcd5fa0cd39891d63d2a4687dbd67dc74250b254414152",
-      "bytes": 24928
+      "sha256": "9d41e80113b5bf1745622cb91aca0a581d0dc3c9d58b87d158480efe007fff6d",
+      "bytes": 24903
     },
     {
       "path": "gerber/RF-F_Paste.gtp",
-      "sha256": "bc3ff785606b510f111faf4c40fc74fb10f4ecf2199067c84e77e0c96554a9c3",
-      "bytes": 22671
+      "sha256": "b792d73cbb57778c07077eda830f722b3a1dbe284b6948bb5a4d33d347e52887",
+      "bytes": 22651
     },
     {
       "path": "gerber/RF-F_Silkscreen.gto",
-      "sha256": "b6f9e5e03b2b0cc2abcaba575969c1e386cd721dce4471616f459e0fe609c94e",
-      "bytes": 454087
+      "sha256": "04484dad775f79114920f3443a333210cbc0e7f4de1860318d4599200a88dd27",
+      "bytes": 454062
     },
     {
       "path": "gerber/RF-In1_Cu.g1",
-      "sha256": "3da88ac68987d9e846d6714fc0cef42dbe4c3645c784932e5477b72a3a32ce4c",
-      "bytes": 186153
+      "sha256": "5c2788e8413f3352fbc8dfbfa557e17ea0e824a672bddb677102721df1280a8e",
+      "bytes": 200605
     },
     {
       "path": "gerber/RF-In2_Cu.g2",
-      "sha256": "d8aeb53098517b0bf23be07913fd91c621d2e8b1e532c1f47c974e57237dcae5",
-      "bytes": 186153
+      "sha256": "02ffa04fad6f0655caf29db9731f66bddcf7ea5396ab0953b1e5fbe54ca99af2",
+      "bytes": 200605
     },
     {
       "path": "gerber/RF-job.gbrjob",

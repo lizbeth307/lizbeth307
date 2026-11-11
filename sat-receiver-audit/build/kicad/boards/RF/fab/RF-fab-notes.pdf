@@ -18,7 +18,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
 endobj
 7 0 obj
-<< /Length 29681 >>
+<< /Length 30124 >>
 stream
 1.00 w 36.00 220.95 m 36.00 126.63 l S
 1.00 w 36.00 126.63 m 426.00 126.63 l S
@@ -32,11 +32,11 @@ stream
 1.00 w 237.36 80.00 m 237.36 118.15 l S
 1.00 w 426.00 220.95 m 36.00 220.95 l S
 1.00 w 426.00 126.63 m 426.00 220.95 l S
+0.60 w 47.87 212.47 m 47.87 214.35 46.35 215.86 44.48 215.86 c 42.61 215.86 41.09 214.35 41.09 212.47 c 41.09 210.60 42.61 209.08 44.48 209.08 c 46.35 209.08 47.87 210.60 47.87 212.47 c S
+0.60 w 234.39 135.11 m 234.39 136.98 232.87 138.50 231.00 138.50 c 229.13 138.50 227.61 136.98 227.61 135.11 c 227.61 133.24 229.13 131.72 231.00 131.72 c 232.87 131.72 234.39 133.24 234.39 135.11 c S
+0.60 w 420.91 212.47 m 420.91 214.35 419.39 215.86 417.52 215.86 c 415.65 215.86 414.13 214.35 414.13 212.47 c 414.13 210.60 415.65 209.08 417.52 209.08 c 419.39 209.08 420.91 210.60 420.91 212.47 c S
 0.60 w 234.39 212.47 m 234.39 214.35 232.87 215.86 231.00 215.86 c 229.13 215.86 227.61 214.35 227.61 212.47 c 227.61 210.60 229.13 209.08 231.00 209.08 c 232.87 209.08 234.39 210.60 234.39 212.47 c S
 0.60 w 412.43 143.59 m 412.43 145.46 410.92 146.98 409.04 146.98 c 407.17 146.98 405.65 145.46 405.65 143.59 c 405.65 141.71 407.17 140.20 409.04 140.20 c 410.92 140.20 412.43 141.71 412.43 143.59 c S
-0.60 w 47.87 212.47 m 47.87 214.35 46.35 215.86 44.48 215.86 c 42.61 215.86 41.09 214.35 41.09 212.47 c 41.09 210.60 42.61 209.08 44.48 209.08 c 46.35 209.08 47.87 210.60 47.87 212.47 c S
-0.60 w 420.91 212.47 m 420.91 214.35 419.39 215.86 417.52 215.86 c 415.65 215.86 414.13 214.35 414.13 212.47 c 414.13 210.60 415.65 209.08 417.52 209.08 c 419.39 209.08 420.91 210.60 420.91 212.47 c S
-0.60 w 234.39 135.11 m 234.39 136.98 232.87 138.50 231.00 138.50 c 229.13 138.50 227.61 136.98 227.61 135.11 c 227.61 133.24 229.13 131.72 231.00 131.72 c 232.87 131.72 234.39 133.24 234.39 135.11 c S
 0.60 w 47.87 135.11 m 47.87 136.98 46.35 138.50 44.48 138.50 c 42.61 138.50 41.09 136.98 41.09 135.11 c 41.09 133.24 42.61 131.72 44.48 131.72 c 46.35 131.72 47.87 133.24 47.87 135.11 c S
 0.40 w 197.86 197.00 m 205.86 197.00 l S
 0.40 w 201.86 193.00 m 201.86 201.00 l S
@@ -569,7 +569,9 @@ BT /F1 7.00 Tf 405.63 195.34 Td (U457 \(Top\)) Tj ET
 0.40 w 378.95 212.26 m 386.95 212.26 l S
 0.40 w 382.95 208.26 m 382.95 216.26 l S
 BT /F1 7.00 Tf 387.95 215.26 Td (U458 \(Top\)) Tj ET
-BT /F1 8.00 Tf 36.00 66.00 Td (Board extent 184.000 mm \(X\) x 66.500 mm \(Y\)) Tj ET
+BT /F1 7.00 Tf 38.00 82.00 Td (coupon CPN_THRU_50) Tj ET
+BT /F1 7.00 Tf 186.37 82.00 Td (coupon CPN_THRU_25) Tj ET
+BT /F1 8.00 Tf 36.00 66.00 Td (Board extent 184.000 mm \(X\) x 44.500 mm \(Y\) \(without the 2 coupons\)) Tj ET
 BT /F1 7.00 Tf 36.00 48.00 Td (Top view, Edge.Cuts and holes of RF.kicad_pcb; crosses = CPL positions \(KiCad footprint origins\). Not to a fixed scale.) Tj ET
 BT /F1 7.00 Tf 36.00 38.00 Td (NOT RELEASED: model/CI only; bench gates OPEN) Tj ET
 BT /F2 11.00 Tf 450.00 545.00 Td (RF fab notes) Tj ET
@@ -578,80 +580,89 @@ BT /F1 8.00 Tf 450.00 520.00 Td (Board status: RF2_ROUTED_NOT_FOR_FABRICATION. E
 BT /F1 8.00 Tf 450.00 509.00 Td (output of pcb/fab_export.py and pcb/board_gen.py; no hardware or bench gate is) Tj ET
 BT /F1 8.00 Tf 450.00 498.00 Td (closed by it.) Tj ET
 BT /F2 11.00 Tf 450.00 481.00 Td (Board) Tj ET
-BT /F1 8.00 Tf 450.00 467.00 Td (Outline \(Edge.Cuts of RF.kicad_pcb\): 184.000 x 66.500 mm, area 6838.0 mm2;) Tj ET
-BT /F1 8.00 Tf 450.00 456.00 Td (lower-left corner at X 100.000, Y -166.500 mm in the Gerber/CPL frame \(KiCad) Tj ET
+BT /F1 8.00 Tf 450.00 467.00 Td (Outline \(Edge.Cuts of RF.kicad_pcb\): 184.000 x 44.500 mm, area 8188.0 mm2;) Tj ET
+BT /F1 8.00 Tf 450.00 456.00 Td (lower-left corner at X 100.000, Y -144.500 mm in the Gerber/CPL frame \(KiCad) Tj ET
 BT /F1 8.00 Tf 450.00 445.00 Td (absolute origin, Y up\).) Tj ET
 BT /F1 8.00 Tf 450.00 434.00 Td (Holes: NPTH 3.20 mm, PTH 3.20 mm \(6 mounting holes; NPTH unplated and without) Tj ET
 BT /F1 8.00 Tf 450.00 423.00 Td (net\).) Tj ET
-BT /F2 11.00 Tf 450.00 406.00 Td (Fabrication) Tj ET
-BT /F1 8.00 Tf 450.00 392.00 Td (Copper layers: 4; finished thickness 1.6 mm \(JLC tolerance +/-10 % for boards) Tj ET
-BT /F1 8.00 Tf 450.00 381.00 Td (>= 1.0 mm\).) Tj ET
-BT /F1 8.00 Tf 450.00 370.00 Td (Stack-up JLC04161H-7628 \(https://jlcpcb.com/impedance, read 2026-11-07;) Tj ET
-BT /F1 8.00 Tf 450.00 359.00 Td (pcb/generated/netclasses.json stackup \(pcb/stackup.py\)\):) Tj ET
-BT /F1 8.00 Tf 450.00 348.00 Td (  L1 F.Cu: copper 0.035 mm) Tj ET
-BT /F1 8.00 Tf 450.00 337.00 Td (  prepreg 7628x1: 0.2104 mm, Er 4.4) Tj ET
-BT /F1 8.00 Tf 450.00 326.00 Td (  L2 In1.Cu: copper 0.0152 mm) Tj ET
-BT /F1 8.00 Tf 450.00 315.00 Td (  core: 1.065 mm, Er 4.6) Tj ET
-BT /F1 8.00 Tf 450.00 304.00 Td (  L3 In2.Cu: copper 0.0152 mm) Tj ET
-BT /F1 8.00 Tf 450.00 293.00 Td (  prepreg 7628x1: 0.2104 mm, Er 4.4) Tj ET
-BT /F1 8.00 Tf 450.00 282.00 Td (  L4 B.Cu: copper 0.035 mm) Tj ET
-BT /F1 8.00 Tf 450.00 271.00 Td (Layer thicknesses sum to 1.5862 mm \(computed\). Copper weights: outer 0.035 mm) Tj ET
-BT /F1 8.00 Tf 450.00 260.00 Td (= 1 oz, inner 0.0152 mm = 0.5 oz finished \(JLC "H/HOZ"\).) Tj ET
-BT /F2 8.00 Tf 450.00 249.00 Td (Impedance: 50 ohm CPWG on L1 over solid L2, w 0.36 mm, gap 0.2 mm, +/-10 %) Tj ET
-BT /F2 8.00 Tf 450.00 238.00 Td (\(JLC standard\): order WITH impedance control \(44 RF50 nets\).) Tj ET
-BT /F1 8.00 Tf 450.00 227.00 Td (The finished impedance is a coupon measurement \(bench gate, OPEN\); the design) Tj ET
-BT /F1 8.00 Tf 450.00 216.00 Td (value is a MODEL.) Tj ET
-BT /F1 8.00 Tf 450.00 205.00 Td (Surface finish, solder mask and legend colours: order options, not fixed by) Tj ET
-BT /F1 8.00 Tf 450.00 194.00 Td (this fab set.) Tj ET
-BT /F1 8.00 Tf 450.00 183.00 Td (KiCad 10.0.7 DRC on the committed board: 0 errors, 0 unconnected, 398 reviewed) Tj ET
-BT /F1 8.00 Tf 450.00 172.00 Td (warnings, ignored checks [] \(report.json; CI/model result\).) Tj ET
-BT /F2 11.00 Tf 450.00 155.00 Td (Files \(fab/\)) Tj ET
-BT /F1 8.00 Tf 450.00 141.00 Td (gerber/: Gerber X2 with netlist attributes, Protel extensions, one file per) Tj ET
-BT /F1 8.00 Tf 450.00 130.00 Td (layer, Gerber job file \(.gbrjob\). drill/: Excellon PTH and NPTH files \(mm,) Tj ET
-BT /F1 8.00 Tf 450.00 119.00 Td (decimal, absolute origin, alternate oval mode\) and Gerber X2 drill maps.) Tj ET
-BT /F1 8.00 Tf 450.00 108.00 Td (RF.ipc356: IPC-D-356 netlist of every net with a pad. assembly/: JLC BOM and) Tj ET
-BT /F1 8.00 Tf 450.00 97.00 Td (CPL, the raw KiCad position file, the rotation offset table and the instance) Tj ET
-BT /F1 8.00 Tf 450.00 86.00 Td (map.) Tj ET
-BT /F2 11.00 Tf 450.00 69.00 Td (Assembly) Tj ET
-BT /F1 8.00 Tf 450.00 55.00 Td (Boards to build: 1 = instances \(RF 1\) + spares 0; every board is the same) Tj ET
-BT /F1 8.00 Tf 450.00 44.00 Td (design and is assembled the same.) Tj ET
+BT /F2 11.00 Tf 450.00 406.00 Td (Test coupons \(separate pieces\)) Tj ET
+BT /F1 8.00 Tf 450.00 392.00 Td (Edge.Cuts holds 3 separate closed outlines: the board and 2 impedance test) Tj ET
+BT /F1 8.00 Tf 450.00 381.00 Td (coupons. The coupons are not joined to the board \(no tab or mouse-bite\), are) Tj ET
+BT /F1 8.00 Tf 450.00 370.00 Td (not boards and get no assembly; make them with the board, same stack-up, and) Tj ET
+BT /F1 8.00 Tf 450.00 359.00 Td (tell the fab at order time that the Gerber holds 3 pieces \(the panelisation is) Tj ET
+BT /F1 8.00 Tf 450.00 348.00 Td (an order option, OPEN\).) Tj ET
+BT /F1 8.00 Tf 450.00 337.00 Td (Coupon CPN_THRU_50: X 100.000 to 150.000, Y -166.500 to -148.500 mm in the) Tj ET
+BT /F1 8.00 Tf 450.00 326.00 Td (Gerber/CPL frame \(board frame x 0 to 50, y -22 to -4 mm\); an RF50 CPWG thru) Tj ET
+BT /F1 8.00 Tf 450.00 315.00 Td (line like the board lines, own ground net CPN_GND_50; edge SMAs CPN1, CPN2 are) Tj ET
+BT /F1 8.00 Tf 450.00 304.00 Td (not in the CPL or BOM \(hand-fitted for the bench\).) Tj ET
+BT /F1 8.00 Tf 450.00 293.00 Td (Coupon CPN_THRU_25: X 170.000 to 195.000, Y -166.500 to -148.500 mm in the) Tj ET
+BT /F1 8.00 Tf 450.00 282.00 Td (Gerber/CPL frame \(board frame x 70 to 95, y -22 to -4 mm\); an RF50 CPWG thru) Tj ET
+BT /F1 8.00 Tf 450.00 271.00 Td (line like the board lines, own ground net CPN_GND_25; edge SMAs CPN3, CPN4 are) Tj ET
+BT /F1 8.00 Tf 450.00 260.00 Td (not in the CPL or BOM \(hand-fitted for the bench\).) Tj ET
+BT /F2 11.00 Tf 450.00 243.00 Td (Fabrication) Tj ET
+BT /F1 8.00 Tf 450.00 229.00 Td (Copper layers: 4; finished thickness 1.6 mm \(JLC tolerance +/-10 % for boards) Tj ET
+BT /F1 8.00 Tf 450.00 218.00 Td (>= 1.0 mm\).) Tj ET
+BT /F1 8.00 Tf 450.00 207.00 Td (Stack-up JLC04161H-7628 \(https://jlcpcb.com/impedance, read 2026-11-07;) Tj ET
+BT /F1 8.00 Tf 450.00 196.00 Td (pcb/generated/netclasses.json stackup \(pcb/stackup.py\)\):) Tj ET
+BT /F1 8.00 Tf 450.00 185.00 Td (  L1 F.Cu: copper 0.035 mm) Tj ET
+BT /F1 8.00 Tf 450.00 174.00 Td (  prepreg 7628x1: 0.2104 mm, Er 4.4) Tj ET
+BT /F1 8.00 Tf 450.00 163.00 Td (  L2 In1.Cu: copper 0.0152 mm) Tj ET
+BT /F1 8.00 Tf 450.00 152.00 Td (  core: 1.065 mm, Er 4.6) Tj ET
+BT /F1 8.00 Tf 450.00 141.00 Td (  L3 In2.Cu: copper 0.0152 mm) Tj ET
+BT /F1 8.00 Tf 450.00 130.00 Td (  prepreg 7628x1: 0.2104 mm, Er 4.4) Tj ET
+BT /F1 8.00 Tf 450.00 119.00 Td (  L4 B.Cu: copper 0.035 mm) Tj ET
+BT /F1 8.00 Tf 450.00 108.00 Td (Layer thicknesses sum to 1.5862 mm \(computed\). Copper weights: outer 0.035 mm) Tj ET
+BT /F1 8.00 Tf 450.00 97.00 Td (= 1 oz, inner 0.0152 mm = 0.5 oz finished \(JLC "H/HOZ"\).) Tj ET
+BT /F2 8.00 Tf 450.00 86.00 Td (Impedance: 50 ohm CPWG on L1 over solid L2, w 0.36 mm, gap 0.2 mm, +/-10 %) Tj ET
+BT /F2 8.00 Tf 450.00 75.00 Td (\(JLC standard\): order WITH impedance control \(44 RF50 nets\).) Tj ET
+BT /F1 8.00 Tf 450.00 64.00 Td (The finished impedance is a coupon measurement \(bench gate, OPEN\); the design) Tj ET
+BT /F1 8.00 Tf 450.00 53.00 Td (value is a MODEL.) Tj ET
+BT /F1 8.00 Tf 450.00 42.00 Td (Surface finish, solder mask and legend colours: order options, not fixed by) Tj ET
 endstream
 endobj
 8 0 obj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
 endobj
 9 0 obj
-<< /Length 3801 >>
+<< /Length 4791 >>
 stream
-BT /F1 8.00 Tf 36.00 560.00 Td (Sides with parts: Top \(SMD 174, THT 3\).) Tj ET
-BT /F1 8.00 Tf 36.00 549.00 Td (CPL: Mid X / Mid Y are the KiCad footprint origins \(JLC defines them as the component centroid\) and Rotation the raw KiCad rotation \(degrees, counter-) Tj ET
-BT /F1 8.00 Tf 36.00 538.00 Td (clockwise as the JLC CPL column\). JLC rotation and centroid offsets per footprint are TBD \(assembly/RF-cpl-rotation-offsets.csv\): check every part in) Tj ET
-BT /F1 8.00 Tf 36.00 527.00 Td (the JLC viewer at order time; nothing here verifies them.) Tj ET
-BT /F1 8.00 Tf 36.00 516.00 Td (BOM TBD: L402 \(0805LS-471XGRC\): TBD: build/10-jlc-bom.csv row has no LCSC code) Tj ET
-BT /F1 8.00 Tf 36.00 505.00 Td (BOM TBD: PH401 \(A402 SAWbird+ NOAA OUT \(E4_RF_CH1\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4) Tj ET
-BT /F1 8.00 Tf 36.00 494.00 Td (graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
-BT /F1 8.00 Tf 36.00 483.00 Td (BOM TBD: PH402 \(A405 VAT attenuator IN \(E4_RF_CH5_DC\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4) Tj ET
-BT /F1 8.00 Tf 36.00 472.00 Td (graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
-BT /F1 8.00 Tf 36.00 461.00 Td (BOM TBD: PH403 \(A405 VAT attenuator OUT \(E4_RF_CH5_ATT\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4) Tj ET
-BT /F1 8.00 Tf 36.00 450.00 Td (graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
-BT /F1 8.00 Tf 36.00 439.00 Td (BOM TBD: PH404 \(A406 Boni bias-tee RF port \(E4_HF_BT\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4) Tj ET
-BT /F1 8.00 Tf 36.00 428.00 Td (graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
-BT /F1 8.00 Tf 36.00 417.00 Td (BOM TBD: PH405 \(W408 OUT / A406 ANT tap point \(E4_HF_CM\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by) Tj ET
-BT /F1 8.00 Tf 36.00 406.00 Td (GR-4 graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
-BT /F1 8.00 Tf 36.00 395.00 Td (BOM TBD: PH406 \(A414 Airspy HF+ ANT \(E4_HFP_ANT\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4 graph) Tj ET
-BT /F1 8.00 Tf 36.00 384.00 Td (ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
-BT /F2 11.00 Tf 36.00 367.00 Td (Not proved here \(OPEN\)) Tj ET
-BT /F1 8.00 Tf 36.00 353.00 Td (- that the schematic is right) Tj ET
-BT /F1 8.00 Tf 36.00 342.00 Td (- current capacity or temperature rise beyond the chosen class widths) Tj ET
-BT /F1 8.00 Tf 36.00 331.00 Td (- impedance, RF loss or isolation, EMC or signal integrity) Tj ET
-BT /F1 8.00 Tf 36.00 320.00 Td (- creepage beyond the encoded clearances) Tj ET
-BT /F1 8.00 Tf 36.00 309.00 Td (- that the enclosure fits \(only outline and hole checks; heights are not checked here\)) Tj ET
-BT /F1 8.00 Tf 36.00 298.00 Td (- that the fab's DFM accepts the board, or that CPL rotations are right) Tj ET
-BT /F1 8.00 Tf 36.00 287.00 Td (- that the land patterns match the purchased MPNs) Tj ET
-BT /F1 8.00 Tf 36.00 276.00 Td (- any function: hardware and bench gates stay OPEN) Tj ET
-BT /F1 8.00 Tf 36.00 265.00 Td (Sources \(read 2026-11-07\): https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly; https://jlcpcb.com/help/article/pick-place-file-for-) Tj ET
-BT /F1 8.00 Tf 36.00 254.00 Td (pcb-assembly; https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad; https://jlcpcb.com/help/article/how-to-generate-) Tj ET
-BT /F1 8.00 Tf 36.00 243.00 Td (gerber-and-drill-files-in-kicad-8; https://jlcpcb.com/capabilities/pcb-capabilities) Tj ET
+BT /F1 8.00 Tf 36.00 560.00 Td (this fab set.) Tj ET
+BT /F1 8.00 Tf 36.00 549.00 Td (KiCad 10.0.7 DRC on the committed board: 0 errors, 0 unconnected, 398 reviewed warnings, ignored checks [] \(report.json; CI/model result\).) Tj ET
+BT /F2 11.00 Tf 36.00 532.00 Td (Files \(fab/\)) Tj ET
+BT /F1 8.00 Tf 36.00 518.00 Td (gerber/: Gerber X2 with netlist attributes, Protel extensions, one file per layer, Gerber job file \(.gbrjob\). drill/: Excellon PTH and NPTH files \(mm,) Tj ET
+BT /F1 8.00 Tf 36.00 507.00 Td (decimal, absolute origin, alternate oval mode\) and Gerber X2 drill maps. RF.ipc356: IPC-D-356 netlist of every net with a pad. assembly/: JLC BOM and) Tj ET
+BT /F1 8.00 Tf 36.00 496.00 Td (CPL, the raw KiCad position file, the rotation offset table and the instance map.) Tj ET
+BT /F2 11.00 Tf 36.00 479.00 Td (Assembly) Tj ET
+BT /F1 8.00 Tf 36.00 465.00 Td (Boards to build: 1 = instances \(RF 1\) + spares 0; every board is the same design and is assembled the same.) Tj ET
+BT /F1 8.00 Tf 36.00 454.00 Td (Sides with parts: Top \(SMD 174, THT 3\).) Tj ET
+BT /F1 8.00 Tf 36.00 443.00 Td (CPL: Mid X / Mid Y are the KiCad footprint origins \(JLC defines them as the component centroid\) and Rotation the raw KiCad rotation \(degrees, counter-) Tj ET
+BT /F1 8.00 Tf 36.00 432.00 Td (clockwise as the JLC CPL column\). JLC rotation and centroid offsets per footprint are TBD \(assembly/RF-cpl-rotation-offsets.csv\): check every part in) Tj ET
+BT /F1 8.00 Tf 36.00 421.00 Td (the JLC viewer at order time; nothing here verifies them.) Tj ET
+BT /F1 8.00 Tf 36.00 410.00 Td (BOM TBD: L402 \(0805LS-471XGRC\): TBD: build/10-jlc-bom.csv row has no LCSC code) Tj ET
+BT /F1 8.00 Tf 36.00 399.00 Td (BOM TBD: PH401 \(A402 SAWbird+ NOAA OUT \(E4_RF_CH1\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4) Tj ET
+BT /F1 8.00 Tf 36.00 388.00 Td (graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
+BT /F1 8.00 Tf 36.00 377.00 Td (BOM TBD: PH402 \(A405 VAT attenuator IN \(E4_RF_CH5_DC\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4) Tj ET
+BT /F1 8.00 Tf 36.00 366.00 Td (graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
+BT /F1 8.00 Tf 36.00 355.00 Td (BOM TBD: PH403 \(A405 VAT attenuator OUT \(E4_RF_CH5_ATT\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4) Tj ET
+BT /F1 8.00 Tf 36.00 344.00 Td (graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
+BT /F1 8.00 Tf 36.00 333.00 Td (BOM TBD: PH404 \(A406 Boni bias-tee RF port \(E4_HF_BT\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4) Tj ET
+BT /F1 8.00 Tf 36.00 322.00 Td (graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
+BT /F1 8.00 Tf 36.00 311.00 Td (BOM TBD: PH405 \(W408 OUT / A406 ANT tap point \(E4_HF_CM\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by) Tj ET
+BT /F1 8.00 Tf 36.00 300.00 Td (GR-4 graph ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
+BT /F1 8.00 Tf 36.00 289.00 Td (BOM TBD: PH406 \(A414 Airspy HF+ ANT \(E4_HFP_ANT\) board end, placeholder\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-4 graph) Tj ET
+BT /F1 8.00 Tf 36.00 278.00 Td (ref for this board end \(cable assembly and length: SRC-2\)) Tj ET
+BT /F2 11.00 Tf 36.00 261.00 Td (Not proved here \(OPEN\)) Tj ET
+BT /F1 8.00 Tf 36.00 247.00 Td (- that the schematic is right) Tj ET
+BT /F1 8.00 Tf 36.00 236.00 Td (- current capacity or temperature rise beyond the chosen class widths) Tj ET
+BT /F1 8.00 Tf 36.00 225.00 Td (- impedance, RF loss or isolation, EMC or signal integrity) Tj ET
+BT /F1 8.00 Tf 36.00 214.00 Td (- creepage beyond the encoded clearances) Tj ET
+BT /F1 8.00 Tf 36.00 203.00 Td (- that the enclosure fits \(only outline and hole checks; heights are not checked here\)) Tj ET
+BT /F1 8.00 Tf 36.00 192.00 Td (- that the fab's DFM accepts the board, or that CPL rotations are right) Tj ET
+BT /F1 8.00 Tf 36.00 181.00 Td (- that the land patterns match the purchased MPNs) Tj ET
+BT /F1 8.00 Tf 36.00 170.00 Td (- any function: hardware and bench gates stay OPEN) Tj ET
+BT /F1 8.00 Tf 36.00 159.00 Td (Sources \(read 2026-11-07\): https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly; https://jlcpcb.com/help/article/pick-place-file-for-) Tj ET
+BT /F1 8.00 Tf 36.00 148.00 Td (pcb-assembly; https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad; https://jlcpcb.com/help/article/how-to-generate-) Tj ET
+BT /F1 8.00 Tf 36.00 137.00 Td (gerber-and-drill-files-in-kicad-8; https://jlcpcb.com/capabilities/pcb-capabilities) Tj ET
 endstream
 endobj
 xref
@@ -664,10 +675,10 @@ xref
 0000000320 00000 n 
 0000000512 00000 n 
 0000000648 00000 n 
-0000030381 00000 n 
-0000030517 00000 n 
+0000030824 00000 n 
+0000030960 00000 n 
 trailer
 << /Size 10 /Root 1 0 R /Info 5 0 R >>
 startxref
-34369
+35802
 %%EOF

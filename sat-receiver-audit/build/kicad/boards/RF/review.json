@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/RF/RF.kicad_pcb",
-      "sha256": "7aecaa13e66cc683521af091ea5b063412bf588495d4fb7a9ae3fd452d686fc1"
+      "sha256": "b798aaca1f8d1ea1aff6c01f62c4ba540036f8c731f6f38c2163299a9e9914b1"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "bf406e6dc0b0a9ea148cbc8357e8360e857ce056176d3f05e1acb7edf3587db0",
       "footprints": "98c573a5b2daa4d78ff06844e9af99575b9bace01b90aec29159c8873e4d2419",
       "contract_board": "ac93675ac152fd0b0e5932dbacb1cf11ed8ebcf5848839cd73111baf4ab78674",
       "netclasses": "49da3a459f402425535f04a2f52c1217b35ca5582d100571e3ec8e130e27018f",
-      "spec": "cce7822499593b185198e8d0dc39368a1578d76a259a26339c2bf08ded55161a"
+      "spec": "e252280cf5ddc9255ce852af2796e6fa672be2eb2f336b9ad84d8fd997ba8100"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 188,
     "pads": 611,
-    "tracks": 1214,
-    "vias": 1305,
+    "tracks": 1158,
+    "vias": 1321,
     "zones": 32,
     "holes": 6,
     "copper_layers": [
@@ -64,7 +64,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1124,
+      "tracks_checked": 1068,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -175,7 +175,7 @@
     {
       "check": "class_widths",
       "item": "BIAS_CH1 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -190,7 +190,7 @@
     {
       "check": "class_widths",
       "item": "BIAS_CH4 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -389,482 +389,7 @@
     },
     {
       "check": "heights",
-      "item": "R4401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R411",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4404",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4465",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4400",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4463",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R443",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R445",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "L402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C451",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH403",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J425",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J423",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4415",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q451",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J424",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C408",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4444",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "D451",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R444",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R419",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U450",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "A407",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4464",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U451",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "K402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4436",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C415",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4468",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C422",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4421",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C416",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J420",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J411",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q450",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C410",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4446",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4432",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U455",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "CPN2",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C417",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4440",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4466",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J418",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J410",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "CPN3",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C414",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4467",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4421",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R412",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4431",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R442",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C441",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "NT401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C412",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4470",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U457",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4440",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4460",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4471",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C446",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "L406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4430",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4422",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U453",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R440",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4423",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4408",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4413",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R414",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J412",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4409",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "L404",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "L403",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4420",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4435",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C447",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C409",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4407",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C404",
+      "item": "C4414",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -874,272 +399,12 @@
     },
     {
       "check": "heights",
-      "item": "Q453",
+      "item": "C414",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "U452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C407",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "D401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "K401",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4461",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J409",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4469",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R418",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q454",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C448",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C434",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4416",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4420",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R417",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q457",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C435",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4445",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4441",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4433",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4404",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R435",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "CPN4",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R416",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4442",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4417",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U458",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R409",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4424",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "D450",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C421",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4403",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R415",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4411",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4431",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C440",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "Q456",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C450",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "D452",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4412",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R441",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4430",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J427",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4426",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R410",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "CPN1",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C418",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C4414",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J419",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C419",
+      "item": "J410",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -1149,82 +414,32 @@
     },
     {
       "check": "heights",
-      "item": "R407",
+      "item": "Q456",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R4451",
+      "item": "J409",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "J426",
+      "item": "C408",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "C401",
+      "item": "R4442",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R4453",
+      "item": "C402",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "C4441",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C442",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4402",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C411",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U407",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U456",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "PH406",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4443",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4434",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U405",
-      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R4462",
+      "item": "R4465",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -1234,27 +449,167 @@
     },
     {
       "check": "heights",
+      "item": "C403",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U455",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "L402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4417",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH403",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4404",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C419",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4468",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
       "item": "D453",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R4403",
+      "item": "R4469",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "A424",
+      "item": "R4464",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R434",
+      "item": "C422",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "U454",
+      "item": "C4416",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q457",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U456",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C415",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J411",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R440",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J427",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R435",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R443",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4430",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4403",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "K402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4440",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U458",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -1264,12 +619,97 @@
     },
     {
       "check": "heights",
-      "item": "C449",
+      "item": "J424",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "R4450",
+      "item": "R4435",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "L403",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "CPN4",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4421",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R410",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C441",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D452",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4411",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U452",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4431",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R411",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "CPN1",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH405",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -1279,12 +719,327 @@
     },
     {
       "check": "heights",
+      "item": "U450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R418",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C449",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4466",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4426",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "A424",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J419",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U457",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4452",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R444",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4471",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U454",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4408",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4441",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "A407",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4415",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4400",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U453",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4434",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4440",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4444",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R434",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
       "item": "R408",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
       "check": "heights",
-      "item": "C403",
+      "item": "C410",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4421",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R442",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4462",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J423",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C409",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R441",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C452",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4453",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R407",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4436",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C417",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R419",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C446",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4432",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "L406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4407",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4433",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R409",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C412",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C407",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4422",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C435",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4467",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C440",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4425",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J425",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J420",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C404",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4409",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH406",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R415",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "L404",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R412",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     },
     {
@@ -1294,7 +1049,252 @@
     },
     {
       "check": "heights",
-      "item": "R4425",
+      "item": "Q453",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4470",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R445",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "CPN3",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C442",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4424",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4423",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U451",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "NT401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4460",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4413",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C447",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C411",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R417",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4441",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4404",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4463",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4443",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q452",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4461",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C418",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4445",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4446",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4403",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J426",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R416",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R414",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U407",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C421",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4450",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4430",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4420",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J412",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4412",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "K401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R405",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "CPN2",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C4420",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J418",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "PH401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4402",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D401",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R4431",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C448",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C416",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C434",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q454",
       "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
     }
   ]
