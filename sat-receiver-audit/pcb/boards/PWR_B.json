@@ -2138,184 +2138,112 @@
   "pre_route": {
     "tracks": [
       {
-        "id": "LAB5-J209-6",
+        "id": "LAB5-J209-1",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            86.55,
+            16.65
+          ],
+          [
+            86.55,
+            15.4
+          ]
+        ],
+        "locked": true,
+        "why": "out of J209 contact 1 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
+      },
+      {
+        "id": "LAB5-J209-5",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
             87.55,
-            20.35
+            16.65
           ],
           [
             87.55,
-            21.4
+            15.4
           ]
         ],
         "locked": true,
-        "why": "out of J209 contact 6 (upper row) between its GND neighbours"
+        "why": "out of J209 contact 5 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
       },
       {
-        "id": "LAB5-J209-6-E",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.35,
-        "path": [
-          [
-            87.55,
-            21.4
-          ],
-          [
-            87.55,
-            22.2
-          ]
-        ],
-        "locked": true,
-        "why": "J209 contact 6 to its via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width"
-      },
-      {
-        "id": "LAB5-J209-10",
+        "id": "LAB5-J209-9",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
             88.55,
-            20.35
+            16.65
           ],
           [
             88.55,
-            21.4
+            15.4
           ]
         ],
         "locked": true,
-        "why": "out of J209 contact 10 (upper row) between its GND neighbours"
+        "why": "out of J209 contact 9 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
       },
       {
-        "id": "LAB5-J209-10-E",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.35,
-        "path": [
-          [
-            88.55,
-            21.4
-          ],
-          [
-            88.55,
-            22.2
-          ]
-        ],
-        "locked": true,
-        "why": "J209 contact 10 to its via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width"
-      },
-      {
-        "id": "LAB5-J209-14",
+        "id": "LAB5-J209-13",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
             89.55,
-            20.35
+            16.65
           ],
           [
             89.55,
-            21.4
+            15.4
           ]
         ],
         "locked": true,
-        "why": "out of J209 contact 14 (upper row) between its GND neighbours"
+        "why": "out of J209 contact 13 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
       },
       {
-        "id": "LAB5-J209-14-E",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.35,
-        "path": [
-          [
-            89.55,
-            21.4
-          ],
-          [
-            89.55,
-            22.2
-          ]
-        ],
-        "locked": true,
-        "why": "J209 contact 14 to its via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width"
-      },
-      {
-        "id": "LAB5-J209-18",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            90.55,
-            20.35
-          ],
-          [
-            90.55,
-            21.4
-          ]
-        ],
-        "locked": true,
-        "why": "out of J209 contact 18 (upper row) between its GND neighbours"
-      },
-      {
-        "id": "LAB5-J209-18-E",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.35,
-        "path": [
-          [
-            90.55,
-            21.4
-          ],
-          [
-            90.55,
-            22.2
-          ]
-        ],
-        "locked": true,
-        "why": "J209 contact 18 to its via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width"
-      },
-      {
-        "id": "LAB5-UP-BAR",
-        "net": "LAB5",
-        "layer": "F.Cu",
-        "width_mm": 0.8,
-        "path": [
-          [
-            87.55,
-            22.2
-          ],
-          [
-            90.55,
-            22.2
-          ]
-        ],
-        "locked": true,
-        "why": "F.Cu bar over the 4 LAB5 vias above the upper J209 row (at most 2 A on each side of the riser)"
-      },
-      {
-        "id": "LAB5-RISER",
+        "id": "LAB5-PLATE",
         "net": "LAB5",
         "layer": "F.Cu",
         "width_mm": 2.0,
         "path": [
           [
-            89.05,
-            22.2
+            86.55,
+            15.4
           ],
           [
-            89.05,
+            89.55,
+            15.4
+          ]
+        ],
+        "locked": true,
+        "why": "F.Cu plate over the 4 LAB5 vias of the lower J209 row (PWR3A width 2.0 mm)"
+      },
+      {
+        "id": "LAB5-PLATE-DOWN",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 2.0,
+        "path": [
+          [
+            88.05,
+            15.4
+          ],
+          [
+            88.05,
             13.2
           ]
         ],
         "locked": true,
-        "why": "F.Cu riser of the upper-row LAB5 contacts over the strip (no top-side part there)"
+        "why": "LAB5 plate to the trunk (4 A)"
       },
       {
         "id": "LAB5-TRUNK",
@@ -2324,7 +2252,7 @@
         "width_mm": 2.0,
         "path": [
           [
-            89.05,
+            88.05,
             13.2
           ],
           [
@@ -2890,6 +2818,24 @@
         "why": "GND spine of the 24 J209 GND contacts between the contact rows (no ground plane in the LSHM)"
       },
       {
+        "id": "GND-J209-3-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            87.05,
+            16.65
+          ],
+          [
+            87.05,
+            18.0
+          ]
+        ],
+        "locked": true,
+        "why": "J209 GND contact 3 inwards into the spine"
+      },
+      {
         "id": "GND-J209-4-S",
         "net": "GND",
         "layer": "B.Cu",
@@ -2906,6 +2852,24 @@
         ],
         "locked": true,
         "why": "J209 GND contact 4 inwards into the spine"
+      },
+      {
+        "id": "GND-J209-7-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            88.05,
+            16.65
+          ],
+          [
+            88.05,
+            18.0
+          ]
+        ],
+        "locked": true,
+        "why": "J209 GND contact 7 inwards into the spine"
       },
       {
         "id": "GND-J209-8-S",
@@ -2926,6 +2890,24 @@
         "why": "J209 GND contact 8 inwards into the spine"
       },
       {
+        "id": "GND-J209-11-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            89.05,
+            16.65
+          ],
+          [
+            89.05,
+            18.0
+          ]
+        ],
+        "locked": true,
+        "why": "J209 GND contact 11 inwards into the spine"
+      },
+      {
         "id": "GND-J209-12-S",
         "net": "GND",
         "layer": "B.Cu",
@@ -2942,6 +2924,24 @@
         ],
         "locked": true,
         "why": "J209 GND contact 12 inwards into the spine"
+      },
+      {
+        "id": "GND-J209-15-S",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            90.05,
+            16.65
+          ],
+          [
+            90.05,
+            18.0
+          ]
+        ],
+        "locked": true,
+        "why": "J209 GND contact 15 inwards into the spine"
       },
       {
         "id": "GND-J209-16-S",
@@ -3196,94 +3196,22 @@
         "why": "J209 GND contact 68 inwards into the spine"
       },
       {
-        "id": "GND-J209-72-S",
+        "id": "GND-J209-70-S",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
-            104.05,
+            103.55,
             20.35
           ],
           [
-            104.05,
+            103.55,
             19.0
           ]
         ],
         "locked": true,
-        "why": "J209 GND contact 72 inwards into the spine"
-      },
-      {
-        "id": "GND-J209-76-S",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            105.05,
-            20.35
-          ],
-          [
-            105.05,
-            19.0
-          ]
-        ],
-        "locked": true,
-        "why": "J209 GND contact 76 inwards into the spine"
-      },
-      {
-        "id": "GND-J209-80-S",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            106.05,
-            20.35
-          ],
-          [
-            106.05,
-            19.0
-          ]
-        ],
-        "locked": true,
-        "why": "J209 GND contact 80 inwards into the spine"
-      },
-      {
-        "id": "GND-J209-84-S",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            107.05,
-            20.35
-          ],
-          [
-            107.05,
-            19.0
-          ]
-        ],
-        "locked": true,
-        "why": "J209 GND contact 84 inwards into the spine"
-      },
-      {
-        "id": "GND-J209-86-S",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            107.55,
-            20.35
-          ],
-          [
-            107.55,
-            19.0
-          ]
-        ],
-        "locked": true,
-        "why": "J209 GND contact 86 inwards into the spine"
+        "why": "J209 GND contact 70 inwards into the spine"
       },
       {
         "id": "GND-J209-97-S",
@@ -4688,52 +4616,52 @@
     ],
     "vias": [
       {
-        "id": "LAB5-UV-6",
+        "id": "LAB5-LV-1",
+        "net": "LAB5",
+        "at": [
+          86.55,
+          15.4
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "LAB5 via of J209 contact 1"
+      },
+      {
+        "id": "LAB5-LV-5",
         "net": "LAB5",
         "at": [
           87.55,
-          22.2
+          15.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
         "locked": true,
-        "why": "LAB5 via of J209 contact 6"
+        "why": "LAB5 via of J209 contact 5"
       },
       {
-        "id": "LAB5-UV-10",
+        "id": "LAB5-LV-9",
         "net": "LAB5",
         "at": [
           88.55,
-          22.2
+          15.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
         "locked": true,
-        "why": "LAB5 via of J209 contact 10"
+        "why": "LAB5 via of J209 contact 9"
       },
       {
-        "id": "LAB5-UV-14",
+        "id": "LAB5-LV-13",
         "net": "LAB5",
         "at": [
           89.55,
-          22.2
+          15.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
         "locked": true,
-        "why": "LAB5 via of J209 contact 14"
-      },
-      {
-        "id": "LAB5-UV-18",
-        "net": "LAB5",
-        "at": [
-          90.55,
-          22.2
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "LAB5 via of J209 contact 18"
+        "why": "LAB5 via of J209 contact 13"
       },
       {
         "id": "K4-SW-V",
@@ -4763,7 +4691,7 @@
         "id": "GND-J209-V1",
         "net": "GND",
         "at": [
-          90.8,
+          87.8,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4775,7 +4703,7 @@
         "id": "GND-J209-V2",
         "net": "GND",
         "at": [
-          92.0,
+          89.0,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4787,7 +4715,7 @@
         "id": "GND-J209-V3",
         "net": "GND",
         "at": [
-          93.2,
+          90.2,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4799,7 +4727,7 @@
         "id": "GND-J209-V4",
         "net": "GND",
         "at": [
-          94.8,
+          91.8,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4811,7 +4739,7 @@
         "id": "GND-J209-V5",
         "net": "GND",
         "at": [
-          96.0,
+          93.0,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4823,7 +4751,7 @@
         "id": "GND-J209-V6",
         "net": "GND",
         "at": [
-          97.2,
+          94.2,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4835,7 +4763,7 @@
         "id": "GND-J209-V7",
         "net": "GND",
         "at": [
-          98.8,
+          95.8,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4847,7 +4775,7 @@
         "id": "GND-J209-V8",
         "net": "GND",
         "at": [
-          100.0,
+          97.0,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4859,7 +4787,7 @@
         "id": "GND-J209-V9",
         "net": "GND",
         "at": [
-          101.2,
+          98.2,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4871,7 +4799,7 @@
         "id": "GND-J209-V10",
         "net": "GND",
         "at": [
-          102.8,
+          99.8,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4883,7 +4811,7 @@
         "id": "GND-J209-V11",
         "net": "GND",
         "at": [
-          104.0,
+          101.0,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4895,7 +4823,7 @@
         "id": "GND-J209-V12",
         "net": "GND",
         "at": [
-          105.2,
+          102.2,
           18.5
         ],
         "drill_mm": 0.3,
@@ -4907,7 +4835,7 @@
         "id": "GND-J209-V13",
         "net": "GND",
         "at": [
-          106.8,
+          103.4,
           18.5
         ],
         "drill_mm": 0.3,
@@ -6162,7 +6090,7 @@
       "pin_map": "pin n of J208 (PWR-A) meets pin n+1 of J209 (PWR-B) for n odd and pin n-1 for n even; the map is its own inverse",
       "rule": "PWR_A has no board of record yet (W2 PCB-PWRA-2 not run: area study); when it has one, its spec places J208 on the PWR-A top under J209 (J209 = J208 mirrored about the strip axis, so J209 pad m lies over J208 pad m+1 for m odd and m-1 for m even, and the alignment holes coincide) and both specs get the check_boards b2b pair with that pin_map; a geometric pad-over-pad check is not in check_boards yet (OPEN, build/15 W2 B2B)"
     },
-    "source": "pcb/generated/b2b-nets.json sha256 452172984e49214178a40ec64db51f6d7bf5a2fb8c186d9ff290950f7c7f9112",
+    "source": "pcb/generated/b2b-nets.json sha256 fe22196c5944bca45653ace28617b5b62184f6cd5e08ad75f84d9606fdabe9bf",
     "rule": "J209 pad nets are its graph pins, which equal b2b-nets.json contacts[].pwr_b_pin (make_spec.py b2b_pin_map stops on any difference); the map itself is pcb/prepare.py b2b_contacts (pin_map_rule, guard_rule in b2b-nets.json)",
     "contacts": 100,
     "used": 69,
