@@ -1,0 +1,2493 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "PWR_B",
+  "status": "MODEL_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "PWRB",
+      "placement": "default",
+      "board_origin_enclosure_mm": [
+        6.0,
+        38.5
+      ],
+      "z_bottom": 47.5,
+      "facing": "+z",
+      "connectors": [
+        {
+          "template_ref": "J201",
+          "ref": "J201",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            108.0,
+            6.75
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "3V3_Q6A",
+              "at": [
+                108.0,
+                6.75
+              ],
+              "enclosure_xy": [
+                114.0,
+                45.25
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                110.0,
+                6.75
+              ],
+              "enclosure_xy": [
+                116.0,
+                45.25
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "I2C2_SDA",
+              "at": [
+                112.0,
+                6.75
+              ],
+              "enclosure_xy": [
+                118.0,
+                45.25
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "I2C2_SCL",
+              "at": [
+                114.0,
+                6.75
+              ],
+              "enclosure_xy": [
+                120.0,
+                45.25
+              ]
+            },
+            {
+              "pad": "5",
+              "net": null,
+              "at": [
+                116.0,
+                6.75
+              ],
+              "enclosure_xy": [
+                122.0,
+                45.25
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            114.0,
+            45.25
+          ]
+        },
+        {
+          "template_ref": "J202",
+          "ref": "J202",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            62.0,
+            9.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "CHG_INHIBIT",
+              "at": [
+                62.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                68.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_BAT_ADC",
+              "at": [
+                62.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                68.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "EN_AUX12",
+              "at": [
+                64.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                70.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "EN_BONI",
+              "at": [
+                64.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                70.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "EN_HFP",
+              "at": [
+                66.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                72.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "EN_LABPORT",
+              "at": [
+                66.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                72.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "EN_LIME3V3",
+              "at": [
+                68.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                74.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "EN_LNA1",
+              "at": [
+                68.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                74.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "EN_LNA2",
+              "at": [
+                70.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                76.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "EN_LNA3",
+              "at": [
+                70.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                76.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "11",
+              "net": "EN_LNA4",
+              "at": [
+                72.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                78.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "12",
+              "net": "EN_LNB",
+              "at": [
+                72.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                78.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "13",
+              "net": "EN_RTLA",
+              "at": [
+                74.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                80.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "14",
+              "net": "EN_RTLB",
+              "at": [
+                74.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                80.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "15",
+              "net": "EN_SB_LNA",
+              "at": [
+                76.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                82.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "16",
+              "net": "FAULT_HFP",
+              "at": [
+                76.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                82.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "17",
+              "net": "FAULT_LABPORT",
+              "at": [
+                78.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                84.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "18",
+              "net": "FAULT_LNA1",
+              "at": [
+                78.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                84.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "19",
+              "net": "FAULT_LNA2",
+              "at": [
+                80.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                86.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "20",
+              "net": "FAULT_LNA3",
+              "at": [
+                80.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                86.0,
+                46.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            68.0,
+            48.0
+          ]
+        },
+        {
+          "template_ref": "J203",
+          "ref": "J203",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            85.0,
+            9.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "FAULT_LNA4",
+              "at": [
+                85.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                91.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "FAULT_RTLA",
+              "at": [
+                85.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                91.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "FAULT_RTLB",
+              "at": [
+                87.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                93.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "FLT_BONI",
+              "at": [
+                87.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                93.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "FLT_LIME3V3",
+              "at": [
+                89.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                95.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "FLT_LNB",
+              "at": [
+                89.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                95.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "FLT_SB_LNA",
+              "at": [
+                91.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                97.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "I2C0_SCL",
+              "at": [
+                91.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                97.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "I2C0_SDA",
+              "at": [
+                93.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                99.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "IMU_RX",
+              "at": [
+                93.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                99.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "11",
+              "net": "IMU_TX",
+              "at": [
+                95.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                101.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "12",
+              "net": "INA228_ALERT",
+              "at": [
+                95.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                101.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "13",
+              "net": "OVP_LNB_N",
+              "at": [
+                97.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                103.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "14",
+              "net": "PG_BONI",
+              "at": [
+                97.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                103.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "15",
+              "net": "PG_LNB",
+              "at": [
+                99.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                105.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "16",
+              "net": "PICO_DISP_EN",
+              "at": [
+                99.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                105.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "17",
+              "net": "PICO_OFF",
+              "at": [
+                101.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                107.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "18",
+              "net": "PTC_AUX",
+              "at": [
+                101.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                107.0,
+                46.0
+              ]
+            },
+            {
+              "pad": "19",
+              "net": "PWR_BUTTON",
+              "at": [
+                103.0,
+                9.5
+              ],
+              "enclosure_xy": [
+                109.0,
+                48.0
+              ]
+            },
+            {
+              "pad": "20",
+              "net": "SLED_DET",
+              "at": [
+                103.0,
+                7.5
+              ],
+              "enclosure_xy": [
+                109.0,
+                46.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            91.0,
+            48.0
+          ]
+        },
+        {
+          "template_ref": "J204",
+          "ref": "J204",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            126.0,
+            28.25
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                126.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                132.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "3V3_Q6A",
+              "at": [
+                124.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                130.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "BIAS_CH1",
+              "at": [
+                122.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                128.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "BIAS_CH2_PORT",
+              "at": [
+                120.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                126.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "BIAS_CH3_PORT",
+              "at": [
+                118.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                124.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "BIAS_CH4",
+              "at": [
+                116.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                122.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "LAB5_RLY",
+              "at": [
+                114.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                120.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "LNB13V2",
+              "at": [
+                112.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                118.0,
+                66.75
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            132.0,
+            66.75
+          ]
+        },
+        {
+          "template_ref": "J207",
+          "ref": "J207",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            107.0,
+            28.25
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                107.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                113.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "VBUS_RTLA",
+              "at": [
+                105.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                111.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "GND",
+              "at": [
+                103.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                109.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "VBUS_RTLB",
+              "at": [
+                101.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                107.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "GND",
+              "at": [
+                99.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                105.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "GND",
+              "at": [
+                97.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                103.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "VBUS_HFP",
+              "at": [
+                95.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                101.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "GND",
+              "at": [
+                93.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                99.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "BONI13V8_PORT",
+              "at": [
+                91.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                97.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "GND",
+              "at": [
+                89.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                95.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "11",
+              "net": "BIAS_SB_LNA",
+              "at": [
+                87.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                93.0,
+                66.75
+              ]
+            },
+            {
+              "pad": "12",
+              "net": null,
+              "at": [
+                85.0,
+                28.25
+              ],
+              "enclosure_xy": [
+                91.0,
+                66.75
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            113.0,
+            66.75
+          ]
+        },
+        {
+          "template_ref": "J506",
+          "ref": "J506",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            121.0,
+            6.75
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                121.0,
+                6.75
+              ],
+              "enclosure_xy": [
+                127.0,
+                45.25
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                123.0,
+                6.75
+              ],
+              "enclosure_xy": [
+                129.0,
+                45.25
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "VBUS_LABPORT",
+              "at": [
+                125.0,
+                6.75
+              ],
+              "enclosure_xy": [
+                131.0,
+                45.25
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            127.0,
+            45.25
+          ]
+        },
+        {
+          "template_ref": "J508",
+          "ref": "J508",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            129.25,
+            13.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                129.25,
+                13.5
+              ],
+              "enclosure_xy": [
+                135.25,
+                52.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                129.25,
+                15.5
+              ],
+              "enclosure_xy": [
+                135.25,
+                54.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "AUX12",
+              "at": [
+                129.25,
+                17.5
+              ],
+              "enclosure_xy": [
+                135.25,
+                56.0
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "I2CB_SCL",
+              "at": [
+                129.25,
+                19.5
+              ],
+              "enclosure_xy": [
+                135.25,
+                58.0
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "I2CB_SDA",
+              "at": [
+                129.25,
+                21.5
+              ],
+              "enclosure_xy": [
+                135.25,
+                60.0
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "SLED_DET",
+              "at": [
+                129.25,
+                23.5
+              ],
+              "enclosure_xy": [
+                135.25,
+                62.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            135.25,
+            52.0
+          ]
+        },
+        {
+          "template_ref": "B2B1",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm",
+          "side": "B",
+          "rotation": 180.0,
+          "at": [
+            106.0,
+            18.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": null,
+              "at": [
+                123.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                129.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "2",
+              "net": null,
+              "at": [
+                123.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                129.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "3",
+              "net": null,
+              "at": [
+                123.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                129.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "4",
+              "net": null,
+              "at": [
+                123.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                129.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "5",
+              "net": null,
+              "at": [
+                122.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                128.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "6",
+              "net": null,
+              "at": [
+                122.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                128.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "7",
+              "net": null,
+              "at": [
+                121.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                127.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "8",
+              "net": null,
+              "at": [
+                121.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                127.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "9",
+              "net": null,
+              "at": [
+                121.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                127.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "10",
+              "net": null,
+              "at": [
+                121.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                127.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "11",
+              "net": null,
+              "at": [
+                120.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                126.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "12",
+              "net": null,
+              "at": [
+                120.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                126.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "13",
+              "net": null,
+              "at": [
+                120.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                126.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "14",
+              "net": "BIAS_CH4_DAMP",
+              "at": [
+                120.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                126.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "15",
+              "net": null,
+              "at": [
+                119.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                125.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "16",
+              "net": null,
+              "at": [
+                119.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                125.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "17",
+              "net": null,
+              "at": [
+                118.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                124.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "18",
+              "net": null,
+              "at": [
+                118.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                124.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "19",
+              "net": null,
+              "at": [
+                118.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                124.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "20",
+              "net": null,
+              "at": [
+                118.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                124.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "21",
+              "net": null,
+              "at": [
+                117.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                123.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "22",
+              "net": "E2_LNA4_SHUNT",
+              "at": [
+                117.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                123.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "23",
+              "net": null,
+              "at": [
+                117.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                123.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "24",
+              "net": null,
+              "at": [
+                117.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                123.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "25",
+              "net": null,
+              "at": [
+                116.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                122.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "26",
+              "net": null,
+              "at": [
+                116.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                122.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "27",
+              "net": null,
+              "at": [
+                115.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                121.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "28",
+              "net": null,
+              "at": [
+                115.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                121.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "29",
+              "net": null,
+              "at": [
+                115.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                121.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "30",
+              "net": null,
+              "at": [
+                115.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                121.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "31",
+              "net": null,
+              "at": [
+                114.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                120.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "32",
+              "net": "E2_LNA4_SW",
+              "at": [
+                114.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                120.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "33",
+              "net": null,
+              "at": [
+                114.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                120.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "34",
+              "net": null,
+              "at": [
+                114.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                120.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "35",
+              "net": null,
+              "at": [
+                113.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                119.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "36",
+              "net": null,
+              "at": [
+                113.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                119.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "37",
+              "net": null,
+              "at": [
+                112.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                118.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "38",
+              "net": null,
+              "at": [
+                112.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                118.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "39",
+              "net": null,
+              "at": [
+                112.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                118.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "40",
+              "net": null,
+              "at": [
+                112.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                118.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "41",
+              "net": null,
+              "at": [
+                111.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                117.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "42",
+              "net": null,
+              "at": [
+                111.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                117.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "43",
+              "net": null,
+              "at": [
+                111.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                117.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "44",
+              "net": null,
+              "at": [
+                111.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                117.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "45",
+              "net": null,
+              "at": [
+                110.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                116.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "46",
+              "net": null,
+              "at": [
+                110.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                116.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "47",
+              "net": null,
+              "at": [
+                109.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                115.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "48",
+              "net": null,
+              "at": [
+                109.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                115.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "49",
+              "net": null,
+              "at": [
+                109.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                115.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "50",
+              "net": null,
+              "at": [
+                109.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                115.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "51",
+              "net": null,
+              "at": [
+                108.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                114.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "52",
+              "net": null,
+              "at": [
+                108.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                114.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "53",
+              "net": null,
+              "at": [
+                108.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                114.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "54",
+              "net": null,
+              "at": [
+                108.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                114.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "55",
+              "net": null,
+              "at": [
+                107.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                113.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "56",
+              "net": null,
+              "at": [
+                107.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                113.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "57",
+              "net": null,
+              "at": [
+                106.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                112.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "58",
+              "net": null,
+              "at": [
+                106.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                112.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "59",
+              "net": "GND",
+              "at": [
+                106.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                112.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "60",
+              "net": null,
+              "at": [
+                106.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                112.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "61",
+              "net": "3V3_Q6A",
+              "at": [
+                105.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                111.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "62",
+              "net": null,
+              "at": [
+                105.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                111.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "63",
+              "net": "I2C2_SDA",
+              "at": [
+                105.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                111.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "64",
+              "net": null,
+              "at": [
+                105.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                111.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "65",
+              "net": "I2C2_SCL",
+              "at": [
+                104.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                110.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "66",
+              "net": null,
+              "at": [
+                104.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                110.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "67",
+              "net": "VBUS_LABPORT",
+              "at": [
+                103.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                109.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "68",
+              "net": null,
+              "at": [
+                103.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                109.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "69",
+              "net": "GND",
+              "at": [
+                103.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                109.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "70",
+              "net": null,
+              "at": [
+                103.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                109.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "71",
+              "net": "PWR_BUTTON",
+              "at": [
+                102.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                108.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "72",
+              "net": null,
+              "at": [
+                102.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                108.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "73",
+              "net": "PICO_OFF",
+              "at": [
+                102.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                108.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "74",
+              "net": null,
+              "at": [
+                102.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                108.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "75",
+              "net": "PICO_DISP_EN",
+              "at": [
+                101.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                107.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "76",
+              "net": null,
+              "at": [
+                101.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                107.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "77",
+              "net": "OVP_LNB_N",
+              "at": [
+                100.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                106.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "78",
+              "net": null,
+              "at": [
+                100.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                106.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "79",
+              "net": "INA228_ALERT",
+              "at": [
+                100.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                106.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "80",
+              "net": null,
+              "at": [
+                100.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                106.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "81",
+              "net": "IMU_TX",
+              "at": [
+                99.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                105.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "82",
+              "net": "GND",
+              "at": [
+                99.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                105.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "83",
+              "net": "IMU_RX",
+              "at": [
+                99.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                105.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "84",
+              "net": "LAB5_RLY",
+              "at": [
+                99.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                105.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "85",
+              "net": "I2C0_SDA",
+              "at": [
+                98.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                104.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "86",
+              "net": "LAB5_RLY",
+              "at": [
+                98.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                104.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "87",
+              "net": "I2C0_SCL",
+              "at": [
+                97.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                103.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "88",
+              "net": "GND",
+              "at": [
+                97.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                103.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "89",
+              "net": "FLT_LNB",
+              "at": [
+                97.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                103.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "90",
+              "net": "LNB13V2",
+              "at": [
+                97.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                103.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "91",
+              "net": "FLT_LIME3V3",
+              "at": [
+                96.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                102.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "92",
+              "net": "GND",
+              "at": [
+                96.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                102.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "93",
+              "net": "FLT_BONI",
+              "at": [
+                96.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                102.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "94",
+              "net": "VBUS_HFP",
+              "at": [
+                96.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                102.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "95",
+              "net": "FAULT_HFP",
+              "at": [
+                95.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                101.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "96",
+              "net": "GND",
+              "at": [
+                95.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                101.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "97",
+              "net": "EN_LNB",
+              "at": [
+                94.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                100.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "98",
+              "net": "BONI13V8_PORT",
+              "at": [
+                94.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                100.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "99",
+              "net": "EN_LIME3V3",
+              "at": [
+                94.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                100.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "100",
+              "net": "GND",
+              "at": [
+                94.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                100.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "101",
+              "net": "EN_HFP",
+              "at": [
+                93.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                99.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "102",
+              "net": "AUX12",
+              "at": [
+                93.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                99.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "103",
+              "net": "EN_BONI",
+              "at": [
+                93.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                99.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "104",
+              "net": "BONI13V8",
+              "at": [
+                93.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                99.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "105",
+              "net": "EN_AUX12",
+              "at": [
+                92.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                98.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "106",
+              "net": "E2_SB_DAMP",
+              "at": [
+                92.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                98.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "107",
+              "net": "E1_BAT_ADC",
+              "at": [
+                91.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                97.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "108",
+              "net": "VBUS_RTLB_DAMP",
+              "at": [
+                91.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                97.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "109",
+              "net": "CHG_INHIBIT",
+              "at": [
+                91.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                97.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "110",
+              "net": "BIAS_CH3_DAMP",
+              "at": [
+                91.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                97.3,
+                59.7
+              ]
+            },
+            {
+              "pad": "111",
+              "net": "GND",
+              "at": [
+                90.7,
+                15.8
+              ],
+              "enclosure_xy": [
+                96.7,
+                54.3
+              ]
+            },
+            {
+              "pad": "112",
+              "net": "BIAS_CH2_DAMP",
+              "at": [
+                90.7,
+                21.2
+              ],
+              "enclosure_xy": [
+                96.7,
+                59.7
+              ]
+            },
+            {
+              "pad": "113",
+              "net": "LAB5",
+              "at": [
+                90.1,
+                15.8
+              ],
+              "enclosure_xy": [
+                96.1,
+                54.3
+              ]
+            },
+            {
+              "pad": "114",
+              "net": "BIAS_CH1_DAMP",
+              "at": [
+                90.1,
+                21.2
+              ],
+              "enclosure_xy": [
+                96.1,
+                59.7
+              ]
+            },
+            {
+              "pad": "115",
+              "net": "LAB5",
+              "at": [
+                89.5,
+                15.8
+              ],
+              "enclosure_xy": [
+                95.5,
+                54.3
+              ]
+            },
+            {
+              "pad": "116",
+              "net": "GND",
+              "at": [
+                89.5,
+                21.2
+              ],
+              "enclosure_xy": [
+                95.5,
+                59.7
+              ]
+            },
+            {
+              "pad": "117",
+              "net": "LAB5",
+              "at": [
+                88.9,
+                15.8
+              ],
+              "enclosure_xy": [
+                94.9,
+                54.3
+              ]
+            },
+            {
+              "pad": "118",
+              "net": "LNA4V5",
+              "at": [
+                88.9,
+                21.2
+              ],
+              "enclosure_xy": [
+                94.9,
+                59.7
+              ]
+            },
+            {
+              "pad": "119",
+              "net": "LAB5",
+              "at": [
+                88.3,
+                15.8
+              ],
+              "enclosure_xy": [
+                94.3,
+                54.3
+              ]
+            },
+            {
+              "pad": "120",
+              "net": "LNA4V5",
+              "at": [
+                88.3,
+                21.2
+              ],
+              "enclosure_xy": [
+                94.3,
+                59.7
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            112.0,
+            57.0
+          ],
+          "replaced_by": "graph ref of the Samtec QTH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_b) once its land, derived from the dimensions of the Samtec recommended PCB layout Rev M, is vendored (GR-4 / PCB-PWRA lineage); only the contact numbers of this pin map carry over, then PWR_B and PWR_A are re-routed"
+        }
+      ]
+    }
+  ]
+}

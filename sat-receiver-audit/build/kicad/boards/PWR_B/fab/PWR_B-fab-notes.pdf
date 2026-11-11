@@ -1,0 +1,500 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Title (PWR_B fab notes - NOT RELEASED: model/CI only; bench gates OPEN) /Subject (pcb/fab_export.py; board PWR_B; MODEL_NOT_FOR_FABRICATION) /Producer (pcb/fab_export.py) >>
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 22696 >>
+stream
+1.00 w 36.00 395.44 m 36.00 80.00 l S
+1.00 w 36.00 80.00 m 426.00 80.00 l S
+1.00 w 57.51 360.74 m 57.51 285.04 l S
+1.00 w 57.51 285.04 m 133.21 285.04 l S
+1.00 w 57.51 268.98 m 57.51 193.27 l S
+1.00 w 57.51 193.27 m 133.21 193.27 l S
+1.00 w 133.21 360.74 m 57.51 360.74 l S
+1.00 w 133.21 285.04 m 133.21 360.74 l S
+1.00 w 133.21 268.98 m 57.51 268.98 l S
+1.00 w 133.21 193.27 m 133.21 268.98 l S
+1.00 w 156.44 395.44 m 36.00 395.44 l S
+1.00 w 156.44 180.37 m 156.44 395.44 l S
+1.00 w 426.00 180.37 m 156.44 180.37 l S
+1.00 w 426.00 80.00 m 426.00 180.37 l S
+0.60 w 149.56 383.97 m 149.56 386.50 147.50 388.56 144.97 388.56 c 142.44 388.56 140.38 386.50 140.38 383.97 c 140.38 381.44 142.44 379.38 144.97 379.38 c 147.50 379.38 149.56 381.44 149.56 383.97 c S
+0.60 w 172.50 168.90 m 172.50 171.43 170.45 173.49 167.91 173.49 c 165.38 173.49 163.32 171.43 163.32 168.90 c 163.32 166.36 165.38 164.31 167.91 164.31 c 170.45 164.31 172.50 166.36 172.50 168.90 c S
+0.60 w 419.12 97.21 m 419.12 99.74 417.06 101.79 414.53 101.79 c 412.00 101.79 409.94 99.74 409.94 97.21 c 409.94 94.67 412.00 92.62 414.53 92.62 c 417.06 92.62 419.12 94.67 419.12 97.21 c S
+0.60 w 419.12 168.90 m 419.12 171.43 417.06 173.49 414.53 173.49 c 412.00 173.49 409.94 171.43 409.94 168.90 c 409.94 166.36 412.00 164.31 414.53 164.31 c 417.06 164.31 419.12 166.36 419.12 168.90 c S
+0.60 w 52.06 383.97 m 52.06 386.50 50.00 388.56 47.47 388.56 c 44.94 388.56 42.88 386.50 42.88 383.97 c 42.88 381.44 44.94 379.38 47.47 379.38 c 50.00 379.38 52.06 381.44 52.06 383.97 c S
+0.60 w 52.06 97.21 m 52.06 99.74 50.00 101.79 47.47 101.79 c 44.94 101.79 42.88 99.74 42.88 97.21 c 42.88 94.67 44.94 92.62 47.47 92.62 c 50.00 92.62 52.06 94.67 52.06 97.21 c S
+0.60 w 149.56 240.59 m 149.56 243.12 147.50 245.18 144.97 245.18 c 142.44 245.18 140.38 243.12 140.38 240.59 c 140.38 238.05 142.44 236.00 144.97 236.00 c 147.50 236.00 149.56 238.05 149.56 240.59 c S
+0.60 w 399.19 128.75 m 399.19 129.62 398.48 130.33 397.61 130.33 c 396.74 130.33 396.03 129.62 396.03 128.75 c 396.03 127.88 396.74 127.17 397.61 127.17 c 398.48 127.17 399.19 127.88 399.19 128.75 c S
+0.60 w 283.33 128.75 m 283.33 129.30 282.89 129.75 282.33 129.75 c 281.78 129.75 281.33 129.30 281.33 128.75 c 281.33 128.20 281.78 127.75 282.33 127.75 c 282.89 127.75 283.33 128.20 283.33 128.75 c S
+0.40 w 59.82 172.34 m 67.82 172.34 l S
+0.40 w 63.82 168.34 m 63.82 176.34 l S
+BT /F1 7.00 Tf 68.82 175.34 Td (C232 \(Top\)) Tj ET
+0.40 w 84.48 158.86 m 92.48 158.86 l S
+0.40 w 88.48 154.86 m 88.48 162.86 l S
+BT /F1 7.00 Tf 93.48 161.86 Td (C233 \(Top\)) Tj ET
+0.40 w 109.14 166.03 m 117.14 166.03 l S
+0.40 w 113.14 162.03 m 113.14 170.03 l S
+BT /F1 7.00 Tf 118.14 169.03 Td (C234 \(Top\)) Tj ET
+0.40 w 59.82 140.51 m 67.82 140.51 l S
+0.40 w 63.82 136.51 m 63.82 144.51 l S
+BT /F1 7.00 Tf 68.82 143.51 Td (C236 \(Top\)) Tj ET
+0.40 w 84.48 127.03 m 92.48 127.03 l S
+0.40 w 88.48 123.03 m 88.48 131.03 l S
+BT /F1 7.00 Tf 93.48 130.03 Td (C237 \(Top\)) Tj ET
+0.40 w 109.14 134.20 m 117.14 134.20 l S
+0.40 w 113.14 130.20 m 113.14 138.20 l S
+BT /F1 7.00 Tf 118.14 137.20 Td (C238 \(Top\)) Tj ET
+0.40 w 59.82 108.68 m 67.82 108.68 l S
+0.40 w 63.82 104.68 m 63.82 112.68 l S
+BT /F1 7.00 Tf 68.82 111.68 Td (C240 \(Top\)) Tj ET
+0.40 w 84.48 95.20 m 92.48 95.20 l S
+0.40 w 88.48 91.20 m 88.48 99.20 l S
+BT /F1 7.00 Tf 93.48 98.20 Td (C241 \(Top\)) Tj ET
+0.40 w 109.14 102.37 m 117.14 102.37 l S
+0.40 w 113.14 98.37 m 113.14 106.37 l S
+BT /F1 7.00 Tf 118.14 105.37 Td (C242 \(Top\)) Tj ET
+0.40 w 344.00 147.96 m 352.00 147.96 l S
+0.40 w 348.00 143.96 m 348.00 151.96 l S
+BT /F1 7.00 Tf 353.00 150.96 Td (C244 \(Top\)) Tj ET
+0.40 w 368.66 134.49 m 376.66 134.49 l S
+0.40 w 372.66 130.49 m 372.66 138.49 l S
+BT /F1 7.00 Tf 377.66 137.49 Td (C245 \(Top\)) Tj ET
+0.40 w 393.32 141.65 m 401.32 141.65 l S
+0.40 w 397.32 137.65 m 397.32 145.65 l S
+BT /F1 7.00 Tf 402.32 144.65 Td (C246 \(Top\)) Tj ET
+0.40 w 206.93 125.31 m 214.93 125.31 l S
+0.40 w 210.93 121.31 m 210.93 129.31 l S
+BT /F1 7.00 Tf 215.93 128.31 Td (C248 \(Top\)) Tj ET
+0.40 w 196.89 154.56 m 204.89 154.56 l S
+0.40 w 200.89 150.56 m 200.89 158.56 l S
+BT /F1 7.00 Tf 205.89 157.56 Td (C249 \(Top\)) Tj ET
+0.40 w 207.79 154.56 m 215.79 154.56 l S
+0.40 w 211.79 150.56 m 211.79 158.56 l S
+BT /F1 7.00 Tf 216.79 157.56 Td (C250 \(Top\)) Tj ET
+0.40 w 119.75 176.35 m 127.75 176.35 l S
+0.40 w 123.75 172.35 m 123.75 180.35 l S
+BT /F1 7.00 Tf 128.75 179.35 Td (C274 \(Top\)) Tj ET
+0.40 w 119.75 155.71 m 127.75 155.71 l S
+0.40 w 123.75 151.71 m 123.75 159.71 l S
+BT /F1 7.00 Tf 128.75 158.71 Td (C275 \(Top\)) Tj ET
+0.40 w 142.69 155.71 m 150.69 155.71 l S
+0.40 w 146.69 151.71 m 146.69 159.71 l S
+BT /F1 7.00 Tf 151.69 158.71 Td (C276 \(Top\)) Tj ET
+0.40 w 142.69 176.35 m 150.69 176.35 l S
+0.40 w 146.69 172.35 m 146.69 180.35 l S
+BT /F1 7.00 Tf 151.69 179.35 Td (C277 \(Top\)) Tj ET
+0.40 w 120.90 123.59 m 128.90 123.59 l S
+0.40 w 124.90 119.59 m 124.90 127.59 l S
+BT /F1 7.00 Tf 129.90 126.59 Td (C282 \(Top\)) Tj ET
+0.40 w 141.26 128.18 m 149.26 128.18 l S
+0.40 w 145.26 124.18 m 145.26 132.18 l S
+BT /F1 7.00 Tf 150.26 131.18 Td (C283 \(Top\)) Tj ET
+0.40 w 149.57 123.59 m 157.57 123.59 l S
+0.40 w 153.57 119.59 m 153.57 127.59 l S
+BT /F1 7.00 Tf 158.57 126.59 Td (C284 \(Top\)) Tj ET
+0.40 w 169.93 128.18 m 177.93 128.18 l S
+0.40 w 173.93 124.18 m 173.93 132.18 l S
+BT /F1 7.00 Tf 178.93 131.18 Td (C285 \(Top\)) Tj ET
+0.40 w 120.90 140.22 m 128.90 140.22 l S
+0.40 w 124.90 136.22 m 124.90 144.22 l S
+BT /F1 7.00 Tf 129.90 143.22 Td (C286 \(Top\)) Tj ET
+0.40 w 141.26 144.81 m 149.26 144.81 l S
+0.40 w 145.26 140.81 m 145.26 148.81 l S
+BT /F1 7.00 Tf 150.26 147.81 Td (C287 \(Top\)) Tj ET
+0.40 w 225.57 125.31 m 233.57 125.31 l S
+0.40 w 229.57 121.31 m 229.57 129.31 l S
+BT /F1 7.00 Tf 234.57 128.31 Td (C295 \(Top\)) Tj ET
+0.40 w 216.96 154.56 m 224.96 154.56 l S
+0.40 w 220.96 150.56 m 220.96 158.56 l S
+BT /F1 7.00 Tf 225.96 157.56 Td (C296 \(Top\)) Tj ET
+0.40 w 227.86 154.56 m 235.86 154.56 l S
+0.40 w 231.86 150.56 m 231.86 158.56 l S
+BT /F1 7.00 Tf 236.86 157.56 Td (C297 \(Top\)) Tj ET
+0.40 w 251.38 120.43 m 259.38 120.43 l S
+0.40 w 255.38 116.43 m 255.38 124.43 l S
+BT /F1 7.00 Tf 260.38 123.43 Td (C501 \(Top\)) Tj ET
+0.40 w 244.21 125.31 m 252.21 125.31 l S
+0.40 w 248.21 121.31 m 248.21 129.31 l S
+BT /F1 7.00 Tf 253.21 128.31 Td (C502 \(Top\)) Tj ET
+0.40 w 249.94 171.19 m 257.94 171.19 l S
+0.40 w 253.94 167.19 m 253.94 175.19 l S
+BT /F1 7.00 Tf 258.94 174.19 Td (C503 \(Top\)) Tj ET
+0.40 w 270.01 120.43 m 278.01 120.43 l S
+0.40 w 274.01 116.43 m 274.01 124.43 l S
+BT /F1 7.00 Tf 279.01 123.43 Td (C504 \(Top\)) Tj ET
+0.40 w 262.85 125.31 m 270.85 125.31 l S
+0.40 w 266.85 121.31 m 266.85 129.31 l S
+BT /F1 7.00 Tf 271.85 128.31 Td (C505 \(Top\)) Tj ET
+0.40 w 270.59 150.54 m 278.59 150.54 l S
+0.40 w 274.59 146.54 m 274.59 154.54 l S
+BT /F1 7.00 Tf 279.59 153.54 Td (C507 \(Top\)) Tj ET
+0.40 w 350.31 117.28 m 358.31 117.28 l S
+0.40 w 354.31 113.28 m 354.31 121.28 l S
+BT /F1 7.00 Tf 359.31 120.28 Td (C550 \(Top\)) Tj ET
+0.40 w 378.99 117.28 m 386.99 117.28 l S
+0.40 w 382.99 113.28 m 382.99 121.28 l S
+BT /F1 7.00 Tf 387.99 120.28 Td (C551 \(Top\)) Tj ET
+0.40 w 132.94 116.71 m 140.94 116.71 l S
+0.40 w 136.94 112.71 m 136.94 120.71 l S
+BT /F1 7.00 Tf 141.94 119.71 Td (C2901 \(Top\)) Tj ET
+0.40 w 175.96 116.71 m 183.96 116.71 l S
+0.40 w 179.96 112.71 m 179.96 120.71 l S
+BT /F1 7.00 Tf 184.96 119.71 Td (C2902 \(Top\)) Tj ET
+0.40 w 148.14 105.24 m 156.14 105.24 l S
+0.40 w 152.14 101.24 m 152.14 109.24 l S
+BT /F1 7.00 Tf 157.14 108.24 Td (C2911 \(Top\)) Tj ET
+0.40 w 191.15 105.24 m 199.15 105.24 l S
+0.40 w 195.15 101.24 m 195.15 109.24 l S
+BT /F1 7.00 Tf 200.15 108.24 Td (C2912 \(Top\)) Tj ET
+0.40 w 121.47 92.33 m 129.47 92.33 l S
+0.40 w 125.47 88.33 m 125.47 96.33 l S
+BT /F1 7.00 Tf 130.47 95.33 Td (D2901 \(Top\)) Tj ET
+0.40 w 164.49 92.33 m 172.49 92.33 l S
+0.40 w 168.49 88.33 m 168.49 96.33 l S
+BT /F1 7.00 Tf 173.49 95.33 Td (D2902 \(Top\)) Tj ET
+0.40 w 341.71 99.36 m 349.71 99.36 l S
+0.40 w 345.71 95.36 m 345.71 103.36 l S
+BT /F1 7.00 Tf 350.71 102.36 Td (J201 \(Top\)) Tj ET
+0.40 w 209.79 107.24 m 217.79 107.24 l S
+0.40 w 213.79 103.24 m 213.79 111.24 l S
+BT /F1 7.00 Tf 218.79 110.24 Td (J202 \(Top\)) Tj ET
+0.40 w 275.75 107.24 m 283.75 107.24 l S
+0.40 w 279.75 103.24 m 279.75 111.24 l S
+BT /F1 7.00 Tf 284.75 110.24 Td (J203 \(Top\)) Tj ET
+0.40 w 393.32 161.01 m 401.32 161.01 l S
+0.40 w 397.32 157.01 m 397.32 165.01 l S
+BT /F1 7.00 Tf 402.32 164.01 Td (J204 \(Top\)) Tj ET
+0.40 w 338.84 161.01 m 346.84 161.01 l S
+0.40 w 342.84 157.01 m 342.84 165.01 l S
+BT /F1 7.00 Tf 347.84 164.01 Td (J207 \(Top\)) Tj ET
+0.40 w 378.99 99.36 m 386.99 99.36 l S
+0.40 w 382.99 95.36 m 382.99 103.36 l S
+BT /F1 7.00 Tf 387.99 102.36 Td (J506 \(Top\)) Tj ET
+0.40 w 402.64 118.71 m 410.64 118.71 l S
+0.40 w 406.64 114.71 m 406.64 122.71 l S
+BT /F1 7.00 Tf 411.64 121.71 Td (J508 \(Top\)) Tj ET
+0.40 w 97.10 163.74 m 105.10 163.74 l S
+0.40 w 101.10 159.74 m 101.10 167.74 l S
+BT /F1 7.00 Tf 106.10 166.74 Td (L206 \(Top\)) Tj ET
+0.40 w 97.10 131.90 m 105.10 131.90 l S
+0.40 w 101.10 127.90 m 101.10 135.90 l S
+BT /F1 7.00 Tf 106.10 134.90 Td (L207 \(Top\)) Tj ET
+0.40 w 97.10 100.07 m 105.10 100.07 l S
+0.40 w 101.10 96.07 m 101.10 104.07 l S
+BT /F1 7.00 Tf 106.10 103.07 Td (L208 \(Top\)) Tj ET
+0.40 w 381.28 139.36 m 389.28 139.36 l S
+0.40 w 385.28 135.36 m 385.28 143.36 l S
+BT /F1 7.00 Tf 390.28 142.36 Td (L209 \(Top\)) Tj ET
+0.40 w 202.62 170.33 m 210.62 170.33 l S
+0.40 w 206.62 166.33 m 206.62 174.33 l S
+BT /F1 7.00 Tf 211.62 173.33 Td (L210 \(Top\)) Tj ET
+0.40 w 222.70 170.33 m 230.70 170.33 l S
+0.40 w 226.70 166.33 m 226.70 174.33 l S
+BT /F1 7.00 Tf 231.70 173.33 Td (L215 \(Top\)) Tj ET
+0.40 w 132.94 106.10 m 140.94 106.10 l S
+0.40 w 136.94 102.10 m 136.94 110.10 l S
+BT /F1 7.00 Tf 141.94 109.10 Td (Q2901 \(Top\)) Tj ET
+0.40 w 175.96 106.10 m 183.96 106.10 l S
+0.40 w 179.96 102.10 m 179.96 110.10 l S
+BT /F1 7.00 Tf 184.96 109.10 Td (Q2902 \(Top\)) Tj ET
+0.40 w 133.51 92.33 m 141.51 92.33 l S
+0.40 w 137.51 88.33 m 137.51 96.33 l S
+BT /F1 7.00 Tf 142.51 95.33 Td (Q2911 \(Top\)) Tj ET
+0.40 w 176.53 92.33 m 184.53 92.33 l S
+0.40 w 180.53 88.33 m 180.53 96.33 l S
+BT /F1 7.00 Tf 185.53 95.33 Td (Q2912 \(Top\)) Tj ET
+0.40 w 75.01 159.15 m 83.01 159.15 l S
+0.40 w 79.01 155.15 m 79.01 163.15 l S
+BT /F1 7.00 Tf 84.01 162.15 Td (R228 \(Top\)) Tj ET
+0.40 w 59.82 154.27 m 67.82 154.27 l S
+0.40 w 63.82 150.27 m 63.82 158.27 l S
+BT /F1 7.00 Tf 68.82 157.27 Td (R229 \(Top\)) Tj ET
+0.40 w 80.46 167.75 m 88.46 167.75 l S
+0.40 w 84.46 163.75 m 84.46 171.75 l S
+BT /F1 7.00 Tf 89.46 170.75 Td (R231 \(Top\)) Tj ET
+0.40 w 97.10 176.35 m 105.10 176.35 l S
+0.40 w 101.10 172.35 m 101.10 180.35 l S
+BT /F1 7.00 Tf 106.10 179.35 Td (R232 \(Top\)) Tj ET
+0.40 w 75.01 127.32 m 83.01 127.32 l S
+0.40 w 79.01 123.32 m 79.01 131.32 l S
+BT /F1 7.00 Tf 84.01 130.32 Td (R233 \(Top\)) Tj ET
+0.40 w 59.82 122.44 m 67.82 122.44 l S
+0.40 w 63.82 118.44 m 63.82 126.44 l S
+BT /F1 7.00 Tf 68.82 125.44 Td (R234 \(Top\)) Tj ET
+0.40 w 80.46 135.92 m 88.46 135.92 l S
+0.40 w 84.46 131.92 m 84.46 139.92 l S
+BT /F1 7.00 Tf 89.46 138.92 Td (R236 \(Top\)) Tj ET
+0.40 w 97.10 144.52 m 105.10 144.52 l S
+0.40 w 101.10 140.52 m 101.10 148.52 l S
+BT /F1 7.00 Tf 106.10 147.52 Td (R237 \(Top\)) Tj ET
+0.40 w 75.01 95.49 m 83.01 95.49 l S
+0.40 w 79.01 91.49 m 79.01 99.49 l S
+BT /F1 7.00 Tf 84.01 98.49 Td (R238 \(Top\)) Tj ET
+0.40 w 59.82 90.61 m 67.82 90.61 l S
+0.40 w 63.82 86.61 m 63.82 94.61 l S
+BT /F1 7.00 Tf 68.82 93.61 Td (R239 \(Top\)) Tj ET
+0.40 w 80.46 104.09 m 88.46 104.09 l S
+0.40 w 84.46 100.09 m 84.46 108.09 l S
+BT /F1 7.00 Tf 89.46 107.09 Td (R241 \(Top\)) Tj ET
+0.40 w 97.10 112.69 m 105.10 112.69 l S
+0.40 w 101.10 108.69 m 101.10 116.69 l S
+BT /F1 7.00 Tf 106.10 115.69 Td (R242 \(Top\)) Tj ET
+0.40 w 359.20 134.77 m 367.20 134.77 l S
+0.40 w 363.20 130.77 m 363.20 138.77 l S
+BT /F1 7.00 Tf 368.20 137.77 Td (R243 \(Top\)) Tj ET
+0.40 w 344.00 129.90 m 352.00 129.90 l S
+0.40 w 348.00 125.90 m 348.00 133.90 l S
+BT /F1 7.00 Tf 353.00 132.90 Td (R244 \(Top\)) Tj ET
+0.40 w 364.65 143.38 m 372.65 143.38 l S
+0.40 w 368.65 139.38 m 368.65 147.38 l S
+BT /F1 7.00 Tf 373.65 146.38 Td (R246 \(Top\)) Tj ET
+0.40 w 381.28 151.98 m 389.28 151.98 l S
+0.40 w 385.28 147.98 m 385.28 155.98 l S
+BT /F1 7.00 Tf 390.28 154.98 Td (R247 \(Top\)) Tj ET
+0.40 w 206.93 143.38 m 214.93 143.38 l S
+0.40 w 210.93 139.38 m 210.93 147.38 l S
+BT /F1 7.00 Tf 215.93 146.38 Td (R248 \(Top\)) Tj ET
+0.40 w 215.53 131.04 m 223.53 131.04 l S
+0.40 w 219.53 127.04 m 219.53 135.04 l S
+BT /F1 7.00 Tf 224.53 134.04 Td (R249 \(Top\)) Tj ET
+0.40 w 239.90 151.69 m 247.90 151.69 l S
+0.40 w 243.90 147.69 m 243.90 155.69 l S
+BT /F1 7.00 Tf 248.90 154.69 Td (R251 \(Top\)) Tj ET
+0.40 w 76.74 175.49 m 84.74 175.49 l S
+0.40 w 80.74 171.49 m 80.74 179.49 l S
+BT /F1 7.00 Tf 85.74 178.49 Td (R268 \(Top\)) Tj ET
+0.40 w 84.19 175.49 m 92.19 175.49 l S
+0.40 w 88.19 171.49 m 88.19 179.49 l S
+BT /F1 7.00 Tf 93.19 178.49 Td (R269 \(Top\)) Tj ET
+0.40 w 76.74 143.66 m 84.74 143.66 l S
+0.40 w 80.74 139.66 m 80.74 147.66 l S
+BT /F1 7.00 Tf 85.74 146.66 Td (R270 \(Top\)) Tj ET
+0.40 w 84.19 143.66 m 92.19 143.66 l S
+0.40 w 88.19 139.66 m 88.19 147.66 l S
+BT /F1 7.00 Tf 93.19 146.66 Td (R271 \(Top\)) Tj ET
+0.40 w 76.74 111.83 m 84.74 111.83 l S
+0.40 w 80.74 107.83 m 80.74 115.83 l S
+BT /F1 7.00 Tf 85.74 114.83 Td (R272 \(Top\)) Tj ET
+0.40 w 84.19 111.83 m 92.19 111.83 l S
+0.40 w 88.19 107.83 m 88.19 115.83 l S
+BT /F1 7.00 Tf 93.19 114.83 Td (R273 \(Top\)) Tj ET
+0.40 w 120.90 132.76 m 128.90 132.76 l S
+0.40 w 124.90 128.76 m 124.90 136.76 l S
+BT /F1 7.00 Tf 129.90 135.76 Td (R280 \(Top\)) Tj ET
+0.40 w 120.90 128.18 m 128.90 128.18 l S
+0.40 w 124.90 124.18 m 124.90 132.18 l S
+BT /F1 7.00 Tf 129.90 131.18 Td (R281 \(Top\)) Tj ET
+0.40 w 149.57 132.76 m 157.57 132.76 l S
+0.40 w 153.57 128.76 m 153.57 136.76 l S
+BT /F1 7.00 Tf 158.57 135.76 Td (R283 \(Top\)) Tj ET
+0.40 w 149.57 128.18 m 157.57 128.18 l S
+0.40 w 153.57 124.18 m 153.57 132.18 l S
+BT /F1 7.00 Tf 158.57 131.18 Td (R284 \(Top\)) Tj ET
+0.40 w 120.90 149.40 m 128.90 149.40 l S
+0.40 w 124.90 145.40 m 124.90 153.40 l S
+BT /F1 7.00 Tf 129.90 152.40 Td (R286 \(Top\)) Tj ET
+0.40 w 120.90 144.81 m 128.90 144.81 l S
+0.40 w 124.90 140.81 m 124.90 148.81 l S
+BT /F1 7.00 Tf 129.90 147.81 Td (R287 \(Top\)) Tj ET
+0.40 w 225.57 143.38 m 233.57 143.38 l S
+0.40 w 229.57 139.38 m 229.57 147.38 l S
+BT /F1 7.00 Tf 234.57 146.38 Td (R293 \(Top\)) Tj ET
+0.40 w 234.17 131.04 m 242.17 131.04 l S
+0.40 w 238.17 127.04 m 238.17 135.04 l S
+BT /F1 7.00 Tf 243.17 134.04 Td (R294 \(Top\)) Tj ET
+0.40 w 239.90 159.00 m 247.90 159.00 l S
+0.40 w 243.90 155.00 m 243.90 163.00 l S
+BT /F1 7.00 Tf 248.90 162.00 Td (R295 \(Top\)) Tj ET
+0.40 w 244.21 143.38 m 252.21 143.38 l S
+0.40 w 248.21 139.38 m 248.21 147.38 l S
+BT /F1 7.00 Tf 253.21 146.38 Td (R501 \(Top\)) Tj ET
+0.40 w 252.81 131.04 m 260.81 131.04 l S
+0.40 w 256.81 127.04 m 256.81 135.04 l S
+BT /F1 7.00 Tf 261.81 134.04 Td (R502 \(Top\)) Tj ET
+0.40 w 264.28 170.62 m 272.28 170.62 l S
+0.40 w 268.28 166.62 m 268.28 174.62 l S
+BT /F1 7.00 Tf 273.28 173.62 Td (R504 \(Top\)) Tj ET
+0.40 w 262.85 143.38 m 270.85 143.38 l S
+0.40 w 266.85 139.38 m 266.85 147.38 l S
+BT /F1 7.00 Tf 271.85 146.38 Td (R505 \(Top\)) Tj ET
+0.40 w 271.45 131.04 m 279.45 131.04 l S
+0.40 w 275.45 127.04 m 275.45 135.04 l S
+BT /F1 7.00 Tf 280.45 134.04 Td (R506 \(Top\)) Tj ET
+0.40 w 275.75 150.54 m 283.75 150.54 l S
+0.40 w 279.75 146.54 m 279.75 154.54 l S
+BT /F1 7.00 Tf 284.75 153.54 Td (R508 \(Top\)) Tj ET
+0.40 w 384.15 117.28 m 392.15 117.28 l S
+0.40 w 388.15 113.28 m 388.15 121.28 l S
+BT /F1 7.00 Tf 393.15 120.28 Td (R550 \(Top\)) Tj ET
+0.40 w 389.31 117.28 m 397.31 117.28 l S
+0.40 w 393.31 113.28 m 393.31 121.28 l S
+BT /F1 7.00 Tf 398.31 120.28 Td (R551 \(Top\)) Tj ET
+0.40 w 118.32 106.10 m 126.32 106.10 l S
+0.40 w 122.32 102.10 m 122.32 110.10 l S
+BT /F1 7.00 Tf 127.32 109.10 Td (R2901 \(Top\)) Tj ET
+0.40 w 161.33 106.10 m 169.33 106.10 l S
+0.40 w 165.33 102.10 m 165.33 110.10 l S
+BT /F1 7.00 Tf 170.33 109.10 Td (R2902 \(Top\)) Tj ET
+0.40 w 148.14 94.05 m 156.14 94.05 l S
+0.40 w 152.14 90.05 m 152.14 98.05 l S
+BT /F1 7.00 Tf 157.14 97.05 Td (R2911 \(Top\)) Tj ET
+0.40 w 191.15 94.05 m 199.15 94.05 l S
+0.40 w 195.15 90.05 m 195.15 98.05 l S
+BT /F1 7.00 Tf 200.15 97.05 Td (R2912 \(Top\)) Tj ET
+0.40 w 148.14 114.41 m 156.14 114.41 l S
+0.40 w 152.14 110.41 m 152.14 118.41 l S
+BT /F1 7.00 Tf 157.14 117.41 Td (R2921 \(Top\)) Tj ET
+0.40 w 191.15 114.41 m 199.15 114.41 l S
+0.40 w 195.15 110.41 m 195.15 118.41 l S
+BT /F1 7.00 Tf 200.15 117.41 Td (R2922 \(Top\)) Tj ET
+0.40 w 65.55 163.16 m 73.55 163.16 l S
+0.40 w 69.55 159.16 m 69.55 167.16 l S
+BT /F1 7.00 Tf 74.55 166.16 Td (U206 \(Top\)) Tj ET
+0.40 w 65.55 131.33 m 73.55 131.33 l S
+0.40 w 69.55 127.33 m 69.55 135.33 l S
+BT /F1 7.00 Tf 74.55 134.33 Td (U207 \(Top\)) Tj ET
+0.40 w 65.55 99.50 m 73.55 99.50 l S
+0.40 w 69.55 95.50 m 69.55 103.50 l S
+BT /F1 7.00 Tf 74.55 102.50 Td (U208 \(Top\)) Tj ET
+0.40 w 349.74 138.79 m 357.74 138.79 l S
+0.40 w 353.74 134.79 m 353.74 142.79 l S
+BT /F1 7.00 Tf 358.74 141.79 Td (U209 \(Top\)) Tj ET
+0.40 w 206.93 134.20 m 214.93 134.20 l S
+0.40 w 210.93 130.20 m 210.93 138.20 l S
+BT /F1 7.00 Tf 215.93 137.20 Td (U210 \(Top\)) Tj ET
+0.40 w 130.93 166.03 m 138.93 166.03 l S
+0.40 w 134.93 162.03 m 134.93 170.03 l S
+BT /F1 7.00 Tf 139.93 169.03 Td (U215 \(Top\)) Tj ET
+0.40 w 131.22 128.18 m 139.22 128.18 l S
+0.40 w 135.22 124.18 m 135.22 132.18 l S
+BT /F1 7.00 Tf 140.22 131.18 Td (U217 \(Top\)) Tj ET
+0.40 w 159.90 128.18 m 167.90 128.18 l S
+0.40 w 163.90 124.18 m 163.90 132.18 l S
+BT /F1 7.00 Tf 168.90 131.18 Td (U218 \(Top\)) Tj ET
+0.40 w 131.22 144.81 m 139.22 144.81 l S
+0.40 w 135.22 140.81 m 135.22 148.81 l S
+BT /F1 7.00 Tf 140.22 147.81 Td (U219 \(Top\)) Tj ET
+0.40 w 225.57 134.20 m 233.57 134.20 l S
+0.40 w 229.57 130.20 m 229.57 138.20 l S
+BT /F1 7.00 Tf 234.57 137.20 Td (U221 \(Top\)) Tj ET
+0.40 w 244.21 134.20 m 252.21 134.20 l S
+0.40 w 248.21 130.20 m 248.21 138.20 l S
+BT /F1 7.00 Tf 253.21 137.20 Td (U501 \(Top\)) Tj ET
+0.40 w 262.85 134.20 m 270.85 134.20 l S
+0.40 w 266.85 130.20 m 266.85 138.20 l S
+BT /F1 7.00 Tf 271.85 137.20 Td (U502 \(Top\)) Tj ET
+0.40 w 364.65 115.56 m 372.65 115.56 l S
+0.40 w 368.65 111.56 m 368.65 119.56 l S
+BT /F1 7.00 Tf 373.65 118.56 Td (U507 \(Top\)) Tj ET
+0.40 w 335.97 133.05 m 343.97 133.05 l S
+0.40 w 339.97 129.05 m 339.97 137.05 l S
+BT /F1 7.00 Tf 344.97 136.05 Td (B2B1 \(Bottom\)) Tj ET
+BT /F1 8.00 Tf 36.00 66.00 Td (Board extent 136.000 mm \(X\) x 110.000 mm \(Y\)) Tj ET
+BT /F1 7.00 Tf 36.00 48.00 Td (Top view, Edge.Cuts and holes of PWR_B.kicad_pcb; crosses = CPL positions \(KiCad footprint origins\). Not to a fixed scale.) Tj ET
+BT /F1 7.00 Tf 36.00 38.00 Td (NOT RELEASED: model/CI only; bench gates OPEN) Tj ET
+BT /F2 11.00 Tf 450.00 545.00 Td (PWR_B fab notes) Tj ET
+BT /F2 8.00 Tf 450.00 531.00 Td (NOT RELEASED: model/CI only; bench gates OPEN.) Tj ET
+BT /F1 8.00 Tf 450.00 520.00 Td (Board status: MODEL_NOT_FOR_FABRICATION. Every value below is a CI/model) Tj ET
+BT /F1 8.00 Tf 450.00 509.00 Td (output of pcb/fab_export.py and pcb/board_gen.py; no hardware or bench gate is) Tj ET
+BT /F1 8.00 Tf 450.00 498.00 Td (closed by it.) Tj ET
+BT /F2 11.00 Tf 450.00 481.00 Td (Board) Tj ET
+BT /F1 8.00 Tf 450.00 467.00 Td (Outline \(Edge.Cuts of PWR_B.kicad_pcb\): 136.000 x 110.000 mm, area 6516.1 mm2;) Tj ET
+BT /F1 8.00 Tf 450.00 456.00 Td (lower-left corner at X 100.000, Y -210.000 mm in the Gerber/CPL frame \(KiCad) Tj ET
+BT /F1 8.00 Tf 450.00 445.00 Td (absolute origin, Y up\).) Tj ET
+BT /F1 8.00 Tf 450.00 434.00 Td (Holes: NPTH 0.70 mm, NPTH 1.10 mm, NPTH 3.20 mm \(9 mounting holes; NPTH) Tj ET
+BT /F1 8.00 Tf 450.00 423.00 Td (unplated and without net\).) Tj ET
+BT /F2 11.00 Tf 450.00 406.00 Td (Fabrication) Tj ET
+BT /F1 8.00 Tf 450.00 392.00 Td (Copper layers: 4; finished thickness 1.6 mm \(JLC tolerance +/-10 % for boards) Tj ET
+BT /F1 8.00 Tf 450.00 381.00 Td (>= 1.0 mm\).) Tj ET
+BT /F1 8.00 Tf 450.00 370.00 Td (Stack-up JLC04161H-7628 \(https://jlcpcb.com/impedance, read 2026-11-07;) Tj ET
+BT /F1 8.00 Tf 450.00 359.00 Td (pcb/generated/netclasses.json stackup \(pcb/stackup.py\)\):) Tj ET
+BT /F1 8.00 Tf 450.00 348.00 Td (  L1 F.Cu: copper 0.035 mm) Tj ET
+BT /F1 8.00 Tf 450.00 337.00 Td (  prepreg 7628x1: 0.2104 mm, Er 4.4) Tj ET
+BT /F1 8.00 Tf 450.00 326.00 Td (  L2 In1.Cu: copper 0.0152 mm) Tj ET
+BT /F1 8.00 Tf 450.00 315.00 Td (  core: 1.065 mm, Er 4.6) Tj ET
+BT /F1 8.00 Tf 450.00 304.00 Td (  L3 In2.Cu: copper 0.0152 mm) Tj ET
+BT /F1 8.00 Tf 450.00 293.00 Td (  prepreg 7628x1: 0.2104 mm, Er 4.4) Tj ET
+BT /F1 8.00 Tf 450.00 282.00 Td (  L4 B.Cu: copper 0.035 mm) Tj ET
+BT /F1 8.00 Tf 450.00 271.00 Td (Layer thicknesses sum to 1.5862 mm \(computed\). Copper weights: outer 0.035 mm) Tj ET
+BT /F1 8.00 Tf 450.00 260.00 Td (= 1 oz, inner 0.0152 mm = 0.5 oz finished \(JLC "H/HOZ"\).) Tj ET
+BT /F1 8.00 Tf 450.00 249.00 Td (Impedance: no RF50 net on this board; order without impedance control.) Tj ET
+BT /F1 8.00 Tf 450.00 238.00 Td (Surface finish, solder mask and legend colours: order options, not fixed by) Tj ET
+BT /F1 8.00 Tf 450.00 227.00 Td (this fab set.) Tj ET
+BT /F1 8.00 Tf 450.00 216.00 Td (KiCad 10.0.7 DRC on the committed board: 0 errors, 0 unconnected, 269 reviewed) Tj ET
+BT /F1 8.00 Tf 450.00 205.00 Td (warnings, ignored checks [] \(report.json; CI/model result\).) Tj ET
+BT /F2 11.00 Tf 450.00 188.00 Td (Files \(fab/\)) Tj ET
+BT /F1 8.00 Tf 450.00 174.00 Td (gerber/: Gerber X2 with netlist attributes, Protel extensions, one file per) Tj ET
+BT /F1 8.00 Tf 450.00 163.00 Td (layer, Gerber job file \(.gbrjob\). drill/: Excellon PTH and NPTH files \(mm,) Tj ET
+BT /F1 8.00 Tf 450.00 152.00 Td (decimal, absolute origin, alternate oval mode\) and Gerber X2 drill maps.) Tj ET
+BT /F1 8.00 Tf 450.00 141.00 Td (PWR_B.ipc356: IPC-D-356 netlist of every net with a pad. assembly/: JLC BOM) Tj ET
+BT /F1 8.00 Tf 450.00 130.00 Td (and CPL, the raw KiCad position file, the rotation offset table and the) Tj ET
+BT /F1 8.00 Tf 450.00 119.00 Td (instance map.) Tj ET
+BT /F2 11.00 Tf 450.00 102.00 Td (Assembly) Tj ET
+BT /F1 8.00 Tf 450.00 88.00 Td (Boards to build: 1 = instances \(PWRB 1\) + spares 0; every board is the same) Tj ET
+BT /F1 8.00 Tf 450.00 77.00 Td (design and is assembled the same.) Tj ET
+BT /F1 8.00 Tf 450.00 66.00 Td (Sides with parts: Bottom \(SMD 1\), Top \(SMD 113, THT 7\).) Tj ET
+BT /F1 8.00 Tf 450.00 55.00 Td (CPL: Mid X / Mid Y are the KiCad footprint origins \(JLC defines them as the) Tj ET
+BT /F1 8.00 Tf 450.00 44.00 Td (component centroid\) and Rotation the raw KiCad rotation \(degrees, counter-) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 2386 >>
+stream
+BT /F1 8.00 Tf 36.00 560.00 Td (clockwise as the JLC CPL column\). JLC rotation and centroid offsets per) Tj ET
+BT /F1 8.00 Tf 36.00 549.00 Td (footprint are TBD \(assembly/PWR_B-cpl-rotation-offsets.csv\): check every part) Tj ET
+BT /F1 8.00 Tf 36.00 538.00 Td (in the JLC viewer at order time; nothing here verifies them.) Tj ET
+BT /F1 8.00 Tf 36.00 527.00 Td (BOM TBD: B2B1 \(B2B placeholder: Samtec QTH-060-01-L-D-A pending\): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by graph ref of the) Tj ET
+BT /F1 8.00 Tf 36.00 516.00 Td (Samtec QTH-060-01-L-D-A \(pcb/partition-spec.json b2b.mpn.pwr_b\) once its land, derived from the dimensions of the Samtec recommended PCB layout Rev M,) Tj ET
+BT /F1 8.00 Tf 36.00 505.00 Td (is vendored \(GR-4 / PCB-PWRA lineage\); only the contact numbers of this pin map carry over, then PWR_B and PWR_A are re-routed) Tj ET
+BT /F1 8.00 Tf 36.00 494.00 Td (BOM TBD: C274,C275,C276,C277,C283,C285,C287,C2911,C2912 \(C1608X7R1H104K080AA\): TBD: build/10-jlc-bom.csv row has no LCSC code) Tj ET
+BT /F2 11.00 Tf 36.00 477.00 Td (Not proved here \(OPEN\)) Tj ET
+BT /F1 8.00 Tf 36.00 463.00 Td (- that the schematic is right) Tj ET
+BT /F1 8.00 Tf 36.00 452.00 Td (- current capacity or temperature rise beyond the chosen class widths) Tj ET
+BT /F1 8.00 Tf 36.00 441.00 Td (- impedance, RF loss or isolation, EMC or signal integrity) Tj ET
+BT /F1 8.00 Tf 36.00 430.00 Td (- creepage beyond the encoded clearances) Tj ET
+BT /F1 8.00 Tf 36.00 419.00 Td (- that the enclosure fits \(only outline and hole checks; heights are not checked here\)) Tj ET
+BT /F1 8.00 Tf 36.00 408.00 Td (- that the fab's DFM accepts the board, or that CPL rotations are right) Tj ET
+BT /F1 8.00 Tf 36.00 397.00 Td (- that the land patterns match the purchased MPNs) Tj ET
+BT /F1 8.00 Tf 36.00 386.00 Td (- any function: hardware and bench gates stay OPEN) Tj ET
+BT /F1 8.00 Tf 36.00 375.00 Td (Sources \(read 2026-11-07\): https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly; https://jlcpcb.com/help/article/pick-place-file-for-) Tj ET
+BT /F1 8.00 Tf 36.00 364.00 Td (pcb-assembly; https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad; https://jlcpcb.com/help/article/how-to-generate-) Tj ET
+BT /F1 8.00 Tf 36.00 353.00 Td (gerber-and-drill-files-in-kicad-8; https://jlcpcb.com/capabilities/pcb-capabilities) Tj ET
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000320 00000 n 
+0000000513 00000 n 
+0000000649 00000 n 
+0000023397 00000 n 
+0000023533 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R /Info 5 0 R >>
+startxref
+25970
+%%EOF

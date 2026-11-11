@@ -1,12 +1,12 @@
 {
   "summary": {
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-    "components": 851,
-    "schematic_contacts": 2942,
-    "connected_contacts": 2717,
+    "components": 849,
+    "schematic_contacts": 2742,
+    "connected_contacts": 2579,
     "nets": 486,
     "categories": {
-      "bare_board_part": 748,
+      "bare_board_part": 746,
       "harness_assembly": 13,
       "integral_to_host_part": 2,
       "mechanical_or_remote_part": 11,
@@ -23,8 +23,8 @@
       "HDMI_INSERT": 5,
       "IMU_CARRIER": 12,
       "PACK_FUSE": 3,
-      "PWR_BRANCH": 170,
-      "PWR_BRANCH_SW": 108,
+      "PWR_BRANCH": 169,
+      "PWR_BRANCH_SW": 107,
       "PWR_MAIN": 67,
       "RF_HF": 14,
       "RF_HMC": 54,
@@ -33,12 +33,12 @@
       "USB_POWER": 20,
       "USB_POWER_SW": 21
     },
-    "graph_assigned_footprints": 749,
-    "portable_graph_assignments": 749,
+    "graph_assigned_footprints": 747,
+    "portable_graph_assignments": 747,
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2717,
+    "xml_compared_connected_pins": 2579,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
@@ -58,7 +58,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "a65c3c726ed44e79b03d915284010b97471447e3ee99c65146679c4b118dfeea"
+        "sha256": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721"
       },
       {
         "file": "design/E3.json",
@@ -66,7 +66,7 @@
       },
       {
         "file": "design/E4.json",
-        "sha256": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17"
+        "sha256": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09"
       },
       {
         "file": "design/E5.json",
@@ -74,11 +74,11 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "6b9b480ac6f99aaaad27011715b89d5041b16991208551979465eed412dc4748"
+        "sha256": "2359c03ba0e9e32355e105286c61dcb3463dd69322f3443c894da88289203209"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "d5192ab4052f26d5469bf9bc7cb7b709ebdfa92e4b0fae49087ae2df658d9a9b"
+        "sha256": "c6e9d9c1104f2ee390e72d72e3cc612beddf0aabb4b2ece2e159694ed36b82b6"
       }
     ],
     "source_documents": [
@@ -187,11 +187,11 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "a1b01ca1fd93b5d246c47e2a134cc0318c7f49edf8250db1b783befb51fb15d7"
+      "projection_sha256": "63bf102b57bf53e1c3cf455601db8d34b0cd18751d95d2f6235574fd06957f81"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
-      "sha256": "26640ad27b2b83f911249cf720dea3d2a045ad12bf1b574c3e9edefdb2b86cc0",
+      "sha256": "96c2093e38b997474060037dcb22a1091ec98fedc0c6e6aee3f9f2b7e8062745",
       "b2b_currents": "tools/assembly_data.py NET_CURRENT"
     }
   },
@@ -211,7 +211,7 @@
       ]
     },
     "PWR_BRANCH_SW": {
-      "purpose": "PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec LSHM-150 pair J208 (PWR-A top) / J209 (PWR-B bottom) (b2b-nets.json, W2 B2B).",
+      "purpose": "PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec QSH/QTH pair (b2b-nets.json).",
       "source": [
         "pcb/partition-spec.json",
         "design/E2-review.md"
@@ -349,8 +349,8 @@
         "PWR_BRANCH_SW",
         "USB_POWER_SW"
       ],
-      "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec LSHM-150-02.5-L-DV-A-N-K-TR pair J208 (PWR-A top) / J209 (PWR-B bottom), 5.00 mm mated (pcb/generated/b2b-nets.json contacts: ceil(I_protection / 1 A) contacts per power net, no ground plane, so every rail contact (power, sense/supply tap, rail node) has its GND return in the same column and only GND contacts beside it in its row (b2b.guard_rule); pin n of J208 meets pin n+1 (n odd) / n-1 (n even) of J209); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
-      "source": "pcb/partition-spec.json (W2 AREA, W2 B2B); Samtec LSHM specification Rev H, catalogue F-224, print Rev Z note 4"
+      "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec QSH-060-01-L-D-A / QTH-060-01-L-D-A pair (pcb/generated/b2b-nets.json: ceil(I_protection / 1 A) contacts per power net plus one adjacent GND, 25 A ground plane); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
+      "source": "pcb/partition-spec.json (W2 AREA); Samtec QSH/QTH specification Rev K"
     },
     {
       "id": "DC-01",
@@ -5767,40 +5767,6 @@
       "pin_count": 12,
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
-    },
-    {
-      "ref": "J208",
-      "sheet": "E2",
-      "mount": "pcb_smt",
-      "value": "B2B-PWRA: Samtec LSHM-150 2×50, PWR-A верх, стик 5.00 мм",
-      "kind": "connector",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "PWR_BRANCH",
-      "dnp": false,
-      "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 100,
-      "source": "pcb/generated/b2b-nets.json contacts (pcb/prepare.py b2b_contacts); pcb/partition-spec.json b2b (W2 B2B)",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
-      "ref": "J209",
-      "sheet": "E2",
-      "mount": "pcb_smt",
-      "value": "B2B-PWRB: Samtec LSHM-150 2×50, PWR-B низ, стик 5.00 мм",
-      "kind": "connector",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "PWR_BRANCH_SW",
-      "dnp": false,
-      "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 100,
-      "source": "pcb/generated/b2b-nets.json contacts (pcb/prepare.py b2b_contacts); pcb/partition-spec.json b2b (W2 B2B)",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
       "ref": "J301",
@@ -14985,7 +14951,7 @@
       "ref": "J301",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) — родина IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці, бокс XDFH-0254-2*20P J304 на CTRL. Зафіксовано (W2 MECH-6): стрічка — 3M 3365/40 (assembly_items AI-IDC-RIBBON-40: 40 × 28 AWG, крок 1.27, 50.80 × 0.89 мм, рядок SRC-1 digikey:19-3365/40300-DS-ND), дві половини по 20, укладені одна на одну, крізь проріз SL1 27.5 × 3.8 (M-07; R-PLATE-SLOT-FILL PASS, модель); S01 (UART7) за трасою моделі в межах 200 мм, а PPS/UART6 ідуть гілкою PPS (R-PPS-LEN PASS, модель, і в найгіршому випадку; mechanical/generated/harness-routes.json). Відкрито: висота бокса J304 проти CTRL 5.5 мм (креслення XDFH-0254 не читається, еталон 9.1 мм — R-HDR-HEIGHT OPEN), креслення гнізда XDFH-0258 (стикування зі стрічкою 1.27 мм) і орієнтація контакту 1 J20 (на карті розміщення Radxa V1.21 мітки немає) — тому запис лишається interface_open (запис J-Q6A-EXISTING охоплює вісім ref)."
     },
     {
       "ref": "J303",
@@ -14997,19 +14963,19 @@
       "ref": "J401",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL (mount panel, MPN CA-DKCA1-305L5-APAJ) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Збірка з пігтейлом до SMA-входу A401 обрана; довжину за трасою моделі перевіряє SRC-2; виріз панелі, ущільнення й момент затягування гайки не задано — механічний пакет (MECH-07)."
+      "detail": "Parts database entry J-SMA-PANEL (mount panel, MPN CA-DKCA1-305L5-APAJ) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Збірку з пігтейлом до SMA-входу A401 обрано; довжину звірено з моделлю (W2 SRC-2): 305 мм дістає обидва торці корпусу A401 (траса ≤75 мм без вилки), коротша CA-DKCA1-152L5-APAJ — альтернатива; відкриті: торець входу A401 і місце для вилки біля лівої стінки РЧ-відсіку (механіка), товщина шайби (R-SMA-THREAD OPEN), ущільнення вирізу T-07 (MECH-4), момент гайки — TBD."
     },
     {
       "ref": "J402",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P2 170 мм (запас 25) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
     },
     {
       "ref": "J403",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J424; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P3 150 мм (запас 45) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
     },
     {
       "ref": "J404",
@@ -15027,13 +14993,13 @@
       "ref": "J406",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J425; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P6 142 мм (запас 53) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
     },
     {
       "ref": "J407",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.011 (W407, P7): довжину різьби й виріз з лискою (D-Cut) рядок READS-RF web:taoglas-cab011-datasheet-spe-11-8-068-f (07.11.2026) не містить, а пігтейл P7 замінює MECH-6 (B-06: 95 мм не дістає LC76G), тож виріз, різьба (R-SMA-THREAD OPEN для P7), ущільнення й момент — TBD."
+      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.01029 (W407, P7, W2 MECH-6): водозахищена родина каталогу Taoglas SPE-24-8-198-C с.11 (рядок READS-RF): різьба 1/4-36UNS-2A довжиною 11.4 ±0.3, деталі 5 (1.75 ±0.2) і 6 (1.1 ±0.3) зовні; на кресленні с.11 біля фланця показано круглий переріз ущільнення, але в BOM CAB.0243 (рядок READS-RF web:taoglas-cab0243-datasheet-spe-24-8-147-a) окремого кільця немає, а DigiKey ступеня IP не наводить — ущільнення фланця перевірити на вхідному контролі й на T-07 (IPX4, build/09); виріз ⌀6.5 (вибір конструкції 6.35 + 0.15, отвору креслення не дає; M-02 P7, mechanical/params/parts.json taoglas_mhf1_sma_wp); після стінки 4.5 і деталей 5 + 6 лишається 3.25 мм ≥ 3 витки (R-SMA-THREAD PASS, модель). Відкрито: момент гайки й ущільнення вирізу (T-07), стикування вилки I-PEX MHF I з гніздом IPEX Waveshare 24370 — вхідний контроль."
     },
     {
       "ref": "J408",
@@ -15075,7 +15041,7 @@
       "ref": "J428",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-P8-ACCESSORY-IN (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього аксесуара P8 (SMA-вхід A403): антенний кабель, коробка аксесуара, адаптери SMA й кабель до панельного P8 — SRC-2 і MECH-3/MECH-4 (pcb/partition-spec.json p8); окремо не купується."
+      "detail": "Parts database entry J-P8-ACCESSORY-IN (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього аксесуара P8 (SMA-вхід A403 у коробці аксесуара): коробку Hammond 1554U2GY, прохідники Cinch 142-0901-401, перемички 415-0029-006 і кабель 135101-01-M1.00 до панельного P8 обрано (W2 SRC-2, assembly_items AI-P8-*, build/15 «Аксесуар P8 (W2 SRC-2)»); відкриті: антенний кабель до вхідного прохідника (антенний пакет, build/06), ущільнення прохідників (T-07, MECH-4), конверт, кріплення й місце аксесуара та кроки build/21 (MECH-4), стійки модулів (виміряти отримані A403/A404); окремо не купується."
     },
     {
       "ref": "J422",
@@ -15087,13 +15053,13 @@
       "ref": "J521",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина — TBD (CAD)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина в моделі 123 мм (MODEL ESTIMATE, mechanical/generated/harness-routes.json, W2 MECH-4 07.11.2026; кінець J503 попередній до розкладки плати лючка, PCB-SB1). Відкрито: місце J503 на платі лючка, розвантаження натягу пайки на площадках J21 (точка стяжки) — після розкладки плати лючка."
     },
     {
       "ref": "J511",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабелі до J5: USB3 до T7 (U540) і USB2 до RTL-B (J541) — окремі записи; фіксація штекерів і розвантаження натягу в корпусі не задано (механічний пакет)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабелі до J5: USB3 до T7 (U540, через вставку T7_INSERT і гермоввід T7) і USB2 до RTL-B (J541) — окремі записи. У моделі (W2 MECH-4, 07.11.2026) штекери J5 стоять у резерві usb_plug_bay (x 116.6–139, y 38.5–56.5, z 14.65–30.65; mechanical.json layout) перед стеком USB Q6A, кабелі виходять у бік лючка (−x); F101 у цьому місці не розміщується (R-F101-ACCESS). Відкрито: фіксація штекерів у J5 (скоба або стяжка до пластини) і розвантаження натягу обох кабелів — конверти штекерів, кабелю T7 і вставки T7_INSERT не змодельовано (MECH-5, MECH-6)."
     },
     {
       "ref": "J512",
@@ -15129,7 +15095,7 @@
       "ref": "J520",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель HDMI — супутня деталь U520 (Adafruit 2420); фіксація штекера й розвантаження натягу не задано (механічний пакет)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Відповідна частина — FPC-набір (W2 MECH-4, build/15 «Кабель HDMI (W2 MECH-4)»): кутовий адаптер Adafruit 3550 або 3549 у J520 (assembly_items AI-HDMI-FPC, AI-HDMI-FPC-R), дві стрічки 3560, вставка HDMI_INSERT і прямий 3548 у вхід Wisecoco; траса — R-HDMI-ROUTE PASS (model), конверти mechanical.json layout hdmi_*; адаптер (3.2 г) тримається в гнізді J520, стрічка лежить у резервах траси. Відкрито: вісь 3550/3549 узято з фото виробника — звірити бік гнізда на Q6A; фіксація стрічок до пластини (поліімідна стрічка, товар не обрано) і зусилля на J520 — стенд; запис U-WISECOCO-7IN (U520) досі має extras круглого кабелю Adafruit 2420 і 2 × Fair-Rite 0431164281 (власник запису)."
     },
     {
       "ref": "J530",
@@ -15141,7 +15107,7 @@
       "ref": "J522",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS на платі лючка) не задано (провід, довжина, фіксація пайки)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти S31 від площадок заводської кнопки EDL Q6A до SW501 (PV6F240SS на платі лючка): 2 × 26 AWG (build/16 S31-01/02); траса в моделі 58 мм (MODEL ESTIMATE, mechanical/generated/harness-routes.json, W2 MECH-4 07.11.2026), кінець J522 попередній. Відкрито: місце площадок EDL на Q6A (не локалізовано, E5 §9), фіксація пайки й розвантаження натягу на них."
     },
     {
       "ref": "J505",

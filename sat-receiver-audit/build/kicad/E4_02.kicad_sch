@@ -1329,6 +1329,8 @@
 (property "Datasheet" "E4 completion design; see E4-review.md" (at 335.28 271.78 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Description" "Functional cable assembly interface." (at 335.28 271.78 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "ReviewStatus" "design" (at 335.28 271.78 0) (effects (font (size 1.016 1.016)) (hide yes)))
+(property "MPN" "10-03676" (at 335.28 271.78 0) (effects (font (size 1.016 1.016)) (hide yes)))
+(property "Manufacturer" "Tensility" (at 335.28 271.78 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (pin "BRANCH_5V" (uuid c0cca7ad-59e2-57c6-a60d-48871c73aec6))
 (pin "POD_5V" (uuid 265a1ba7-ff37-57ba-9335-7237db55a93b))
 (pin "RETURN" (uuid eef6799e-bbf3-516e-b826-1648382bdf40))
