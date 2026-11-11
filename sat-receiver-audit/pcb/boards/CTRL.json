@@ -21,7 +21,7 @@
     },
     "types_why": "In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).",
     "plan": {
-      "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, PWR1A/PWR3A_BRANCH routes, GND pour after routing",
+      "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), PWR1A/PWR3A_BRANCH routes, GND pour after routing",
       "In1.Cu": "L2: GND plane (pre-route zone, DSN plane), no signals",
       "In2.Cu": "L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, GND pour after routing",
       "B.Cu": "L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm), scripted LAB5 islands, locked GND copper over the custom Pico GND pads, PWR1A/PWR3A_BRANCH routes, GND pour after routing"
@@ -3333,6 +3333,288 @@
         "why": "3V3_Q6A bus of the left pull-up column on L3 (no other copper on L3 left of the J306/J307 pins)"
       },
       {
+        "id": "V33-R301-R302",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            40.08,
+            57.345
+          ],
+          [
+            39.27,
+            57.345
+          ],
+          [
+            39.27,
+            53.785
+          ],
+          [
+            40.08,
+            53.785
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+      },
+      {
+        "id": "V33-R302-R320",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            40.08,
+            53.785
+          ],
+          [
+            39.27,
+            53.785
+          ],
+          [
+            39.27,
+            50.225
+          ],
+          [
+            40.08,
+            50.225
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+      },
+      {
+        "id": "V33-R320-R321",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            40.08,
+            50.225
+          ],
+          [
+            39.27,
+            50.225
+          ],
+          [
+            39.27,
+            46.665
+          ],
+          [
+            40.08,
+            46.665
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+      },
+      {
+        "id": "V33-R321-R322",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            40.08,
+            46.665
+          ],
+          [
+            39.27,
+            46.665
+          ],
+          [
+            39.27,
+            43.105
+          ],
+          [
+            40.08,
+            43.105
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+      },
+      {
+        "id": "V33-R322-R323",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            40.08,
+            43.105
+          ],
+          [
+            39.27,
+            43.105
+          ],
+          [
+            39.27,
+            39.545
+          ],
+          [
+            40.08,
+            39.545
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+      },
+      {
+        "id": "V33-R323-R324",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            40.08,
+            39.545
+          ],
+          [
+            39.27,
+            39.545
+          ],
+          [
+            39.27,
+            35.985
+          ],
+          [
+            40.08,
+            35.985
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+      },
+      {
+        "id": "V33-R324-R325",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            40.08,
+            35.985
+          ],
+          [
+            39.27,
+            35.985
+          ],
+          [
+            39.27,
+            32.425
+          ],
+          [
+            40.08,
+            32.425
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+      },
+      {
+        "id": "V33-R325-R392",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            40.08,
+            32.425
+          ],
+          [
+            39.27,
+            32.425
+          ],
+          [
+            39.27,
+            28.865
+          ],
+          [
+            40.08,
+            28.865
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+      },
+      {
+        "id": "V33-U303",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            21.03,
+            26.945
+          ],
+          [
+            24.0,
+            26.945
+          ],
+          [
+            24.0,
+            21.865
+          ],
+          [
+            30.33,
+            21.865
+          ],
+          [
+            30.33,
+            20.595
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A of U303: VDD pin 9 to the address pins tied high, under the body"
+      },
+      {
+        "id": "V33-U302",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            21.03,
+            8.295
+          ],
+          [
+            24.0,
+            8.295
+          ],
+          [
+            24.0,
+            3.215
+          ],
+          [
+            30.33,
+            3.215
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A of U302: VDD pin 9 to the address pins tied high, under the body"
+      },
+      {
+        "id": "V33-U315",
+        "net": "3V3_Q6A",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            24.1875,
+            94.75
+          ],
+          [
+            27.5,
+            94.45
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A stub, U315.3 to its via"
+      },
+      {
         "id": "GND-U310.2",
         "net": "GND",
         "layer": "F.Cu",
@@ -4040,7 +4322,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-54",
+        "id": "GND-SW302.2-55",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4074,7 +4356,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-56",
+        "id": "GND-SW303.2-57",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4108,7 +4390,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-58",
+        "id": "GND-SW304.2-59",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4142,7 +4424,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-60",
+        "id": "GND-SW305.2-61",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4176,7 +4458,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-62",
+        "id": "GND-SW306.2-63",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4210,7 +4492,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-64",
+        "id": "GND-SW307.2-65",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4476,7 +4758,7 @@
           ],
           [
             28.78,
-            21.5
+            21.0
           ]
         ],
         "locked": true
@@ -4825,6 +5107,18 @@
         "diameter_mm": 0.65,
         "locked": true,
         "why": "3V3_Q6A pull-up bus via next to R319.2"
+      },
+      {
+        "id": "V33-U315",
+        "net": "3V3_Q6A",
+        "at": [
+          27.5,
+          94.45
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "3V3_Q6A via for U315 pin 3, right of the U301 pads"
       },
       {
         "id": "GND-U310.2",
@@ -5280,7 +5574,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-54",
+        "id": "GND-SW302.2-55",
         "net": "GND",
         "at": [
           15.709,
@@ -5302,7 +5596,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-56",
+        "id": "GND-SW303.2-57",
         "net": "GND",
         "at": [
           37.709,
@@ -5324,7 +5618,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-58",
+        "id": "GND-SW304.2-59",
         "net": "GND",
         "at": [
           15.709,
@@ -5346,7 +5640,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-60",
+        "id": "GND-SW305.2-61",
         "net": "GND",
         "at": [
           37.683,
@@ -5368,7 +5662,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-62",
+        "id": "GND-SW306.2-63",
         "net": "GND",
         "at": [
           15.709,
@@ -5390,7 +5684,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-64",
+        "id": "GND-SW307.2-65",
         "net": "GND",
         "at": [
           37.709,
@@ -5559,7 +5853,7 @@
         "net": "GND",
         "at": [
           28.78,
-          21.5
+          21.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6519,7 +6813,7 @@
         "B.Cu"
       ]
     },
-    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches): locked GND copper now covers the custom Pico GND pads. Route runs 43106410728 (a locked L3 LAB5 run across the board) and 43111037016 (LAB5 branches on L3 at 0.6 mm): DRC errors 0, but the router stalled with 36-37 of the 3V3_Q6A connections open once L3 carried LAB5. LAB5 now uses short scripted islands (one 18 mm L3 piece to D301) and the router joins them on L1/L4 at 0.5 mm. Route run 43114111838 (that setting): LAB5 complete, DRC errors 0, but 34 of the 3V3_Q6A connections still open: the left pull-up column R308-R319 now has a scripted 3V3_Q6A bus on L3 with a via beside each pad 2, and the Pico GND vias sit under the module instead of in the escape channels between and outside the castellated pads. Job timeout 34 min inside the 45 min CI job",
+    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches): locked GND copper now covers the custom Pico GND pads. Route runs 43106410728 (a locked L3 LAB5 run across the board) and 43111037016 (LAB5 branches on L3 at 0.6 mm): DRC errors 0, but the router stalled with 36-37 of the 3V3_Q6A connections open once L3 carried LAB5. LAB5 now uses short scripted islands (one 18 mm L3 piece to D301) and the router joins them on L1/L4 at 0.5 mm. Route run 43114111838 (that setting): LAB5 complete, DRC errors 0, but 34 of the 3V3_Q6A connections still open: the left pull-up column R308-R319 now has a scripted 3V3_Q6A bus on L3 with a via beside each pad 2, and the Pico GND vias sit under the module instead of in the escape channels between and outside the castellated pads. Route run 43118391983 (that setting): 1 error (a router neck at U313.1) and 25 unconnected, 15 of them 3V3_Q6A: the right pull-up column, the MCP VDD-to-address-pin links and a via for the boxed-in U315.3 are scripted too. Job timeout 34 min inside the 45 min CI job",
     "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper lands on the inner layers"
   },
   "drc_policy": {
