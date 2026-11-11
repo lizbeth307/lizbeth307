@@ -163,9 +163,13 @@
         {"rect": [0.0, 0.0, 184.0, 0.1], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
         {"rect": [0.0, 0.1, 73.7, 30.6], "max_height": 5.5, "free_mm": 11.1, "fits_mm": 10.6, "limit": "sawbird"},
         {"rect": [73.7, 0.1, 7.9, 27.0], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
-        {"rect": [81.6, 0.1, 95.0, 27.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
+        {"rect": [81.6, 0.1, 95.0, 0.5], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
         {"rect": [176.6, 0.1, 7.4, 22.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "usb_socket_a"},
+        {"rect": [81.6, 0.6, 6.8, 26.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
+        {"rect": [88.4, 0.6, 30.0, 26.0], "max_height": 5.5, "free_mm": 6.5, "fits_mm": 6.0, "limit": "boni_a406"},
+        {"rect": [118.4, 0.6, 58.2, 26.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
         {"rect": [176.6, 22.1, 7.4, 5.0], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
+        {"rect": [81.6, 26.6, 95.0, 0.5], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
         {"rect": [73.7, 27.1, 110.3, 0.5], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
         {"rect": [73.7, 27.6, 7.9, 3.1], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
         {"rect": [81.6, 27.6, 95.0, 16.9], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_b"},
@@ -321,9 +325,9 @@
   "small_boards": {
     "_note": "boards of pcb/prepare.py that are not mounted on the plate or the front shell: their envelope is a layout item (or the IMU pack) and their layout is wave 2 (W2-05); listed here so the board domains of the partition are all accounted for",
     "HATCH": {"domains": ["HATCH"], "envelope": "layout hatch_parts", "name": "service-hatch board: J502 B3B-PH-K (UART5), J503 43650-0315 (J21), SW501 PV6F240SS through the board"},
-    "T7_INSERT": {"domains": ["T7_INSERT"], "envelope": "in the T7 USB3 cable (not modelled)", "name": "VBUS key insert U505 of the T7 cable"},
-    "HDMI_INSERT": {"domains": ["HDMI_INSERT"], "envelope": "layout hdmi_insert (reserve 16 x 18 x 5 on the plate front face right of the BMS, between the two HDMI flexes, W2 MECH-4; refined by MECH-5)", "name": "pin-18 pass-through U506 between the two HDMI FPC segments"},
+    "T7_INSERT": {"domains": ["T7_INSERT"], "envelope": "layout t7_insert (reserve 22 x 9 x 9 in the T7 USB3 cable under the Q6A USB stack, W2 MECH-5; board by PCB-SB2)", "name": "VBUS key insert U505 of the T7 cable"},
+    "HDMI_INSERT": {"domains": ["HDMI_INSERT"], "envelope": "layout hdmi_insert (reserve 16 x 18 x 5 on the plate front face right of the BMS, between the two HDMI flexes, W2 MECH-4; kept by W2 MECH-5 while the FPC sockets are not chosen)", "name": "pin-18 pass-through U506 between the two HDMI FPC segments"},
     "IMU_CARRIER": {"domains": ["IMU_CARRIER"], "envelope": "imu_pack.json carrier_pcb", "name": "carrier board in the Hammond 1550Z101 IMU pack"},
-    "PACK_FUSE": {"domains": ["PACK_FUSE"], "envelope": "not modelled yet (OPEN, mechanical/README)", "name": "F101 carrier with the Keystone 3568 holder at the pack positive"}
+    "PACK_FUSE": {"domains": ["PACK_FUSE"], "envelope": "layout pack_fuse (reserve 11 x 26 x 23.77 on 2 PEM SO-M2.5-6ZI on the plate extension beside the right end of the battery tray, M-07 PF1-PF2, W2 MECH-5; board by PCB-SB2)", "name": "F101 carrier with the Keystone 3568 holder at the pack positive"}
   }
 }

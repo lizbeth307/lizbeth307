@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "041e1dec897f5ed94d3328fe2fa0f3433b9097f34dca3e083a1d3cf89fb460d2",
+    "params_sha256": "a778f21c914802f13695b65ebd3dcfaa38c1016b9060e6cabe587a3a63d2278b",
     "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
   },
   "envelope": {
@@ -653,7 +653,7 @@
       "rule": "harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings",
       "value_mm": {
         "routed": 39,
-        "clear": 36,
+        "clear": 35,
         "provisional_end": 38,
         "no_route_unplaced_end": [],
         "external": [
@@ -663,10 +663,11 @@
         "crossing": [
           "S11",
           "S23",
+          "S26",
           "S34"
         ]
       },
-      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 38 of 39 routes end on a board edge zone (header refs named, positions TBD until the board placement) or at a module without an envelope; no route yet (end not placed): none; provisional routes crossing a solid: S11, S23, S34",
+      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 38 of 39 routes end on a board edge zone (header refs named, positions TBD until the board placement) or at a module without an envelope; no route yet (end not placed): none; provisional routes crossing a solid: S11, S23, S26, S34",
       "source": "mechanical.json harness_routes, layout, plate.slots, rf_bay.notches"
     },
     {
@@ -1700,9 +1701,21 @@
         "DISPLAY-CLAMP": [
           5.75,
           6.0
+        ],
+        "INA228": [
+          5.35,
+          6.1
+        ],
+        "HUB-5997": [
+          5.35,
+          6.1
+        ],
+        "PACK-FUSE": [
+          4.1,
+          9.6
         ]
       },
-      "result": "OPEN: HATCH, PWR_A-PLATE, CTRL, ENC, Q6A-STANDOFF, Q6A-PLATE, UFS-BOSS, LIME-PEDESTAL, DISPLAY-CLAMP, IMU-CARRIER, IMU-LID, IMU-BOARD-STANDOFFS, IMU-TRIPOD, POD-LID, POD-PANEL, PWR-BOND, INA228, SWM-2813, HUB-5997, IP2368, FAN-NF-A4X10, BLOWER, HATCH-BOARD, PACK-FUSE, POD-MODULES (thread depth not read, fixing or screw not chosen, or no ISO length in the window); PASS (model): CLOSURE, T7_HOLDER, PLATE_PM1, PLATE_PM2, PLATE_PM3, PLATE_PM4, ANGLES, PWR_B-STANDOFF, RF-STANDOFF",
+      "result": "OPEN: HATCH, PWR_A-PLATE, CTRL, ENC, Q6A-STANDOFF, Q6A-PLATE, UFS-BOSS, LIME-PEDESTAL, DISPLAY-CLAMP, IMU-CARRIER, IMU-LID, IMU-BOARD-STANDOFFS, IMU-TRIPOD, POD-LID, POD-PANEL, SWM-2813, VEML7700, PACK-FUSE, PWR-BOND, IP2368, FAN-NF-A4X10, BLOWER, HATCH-BOARD, POD-MODULES (thread depth not read, fixing or screw not chosen, or no ISO length in the window); PASS (model): CLOSURE, T7_HOLDER, PLATE_PM1, PLATE_PM2, PLATE_PM3, PLATE_PM4, ANGLES, PWR_B-STANDOFF, RF-STANDOFF, INA228, HUB-5997",
       "source": "mechanical/srrx_mech/fasteners.py; build/17 rows"
     },
     {
@@ -1758,6 +1771,227 @@
       },
       "source": "parts.json p8_accessory; build/03 P8 row; build/15 'Шлях P8 (W2 AREA)'",
       "result": "OPEN: A404: RTL-SDR Blog Wideband LNA V2: the maker's page https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/ (read 2026-11-07 with WebFetch) gives no dimensions and no connector genders; it lists '1x SMA male to SMA male adapter' in the package and 'Requires 3 - 5v bias tee power' (ch4 gives 4.3 V through P8, build/03 P8 row); length = A403 73.7 (reserve) + adapter + A404 (not read); box, adapters, cable and mounting items are SRC-2's (CC-27); sealing of the accessory box is OPEN (T-07); assembly order build/21 E9c"
+    },
+    {
+      "id": "R-MODULE-MOUNTS",
+      "rule": "module fixing (mechanical.json module_mounts): insert hole + skin <= wall + boss, board face = envelope face, screw holes = the makers' board-file holes, rear-wall insert holes >= tripod_clear from the 1/4-20 nut pocket, the INA228 terminal wire side free of envelopes and harness bundles, 18 AWG inside the terminal range, this package's envelopes >= bundle OD / 2 + bundle_clear from other routes, plate standoff barrels clear of the envelopes; plate standoff holes in R-HOLE-EDGE / R-CLINCH-EDGE",
+      "source": "mechanical.json module_mounts, rear_face.tripod; parts.json adafruit_5997, adafruit_4162, adafruit_ina228_5832, pololu_2813, pem_so_m25_6; generated/harness-routes.json bundle_od_mm",
+      "value_mm": {
+        "hub_ch334f": {
+          "screws": [
+            {
+              "c": [
+                84.38,
+                41.54
+              ],
+              "skin_mm": 1.0,
+              "to_tripod_pocket_mm": 23.94
+            },
+            {
+              "c": [
+                84.38,
+                56.78
+              ],
+              "skin_mm": 1.0,
+              "to_tripod_pocket_mm": 11.94
+            },
+            {
+              "c": [
+                58.98,
+                41.54
+              ],
+              "skin_mm": 1.0,
+              "to_tripod_pocket_mm": 41.4
+            },
+            {
+              "c": [
+                58.98,
+                56.78
+              ],
+              "skin_mm": 1.0,
+              "to_tripod_pocket_mm": 34.57
+            }
+          ]
+        },
+        "ina228": {
+          "screws": [
+            {
+              "c": [
+                31.24,
+                62.26
+              ],
+              "skin_mm": 1.0,
+              "to_tripod_pocket_mm": 60.67
+            },
+            {
+              "c": [
+                51.56,
+                62.26
+              ],
+              "skin_mm": 1.0,
+              "to_tripod_pocket_mm": 40.53
+            }
+          ],
+          "rests": [
+            {
+              "c": [
+                33.3,
+                53.48
+              ],
+              "skin_mm": null
+            },
+            {
+              "c": [
+                49.3,
+                53.48
+              ],
+              "skin_mm": null
+            }
+          ],
+          "terminal": {
+            "wire_side": "+y",
+            "free_mm": 30.64,
+            "free_envelopes_only_mm": 34.3,
+            "limited_by": "W407",
+            "need_mm": 8.0,
+            "awg_range": [
+              16,
+              30
+            ],
+            "vin_awg": 18
+          }
+        },
+        "swm_2813": {
+          "pad": {
+            "rect": [
+              97.46,
+              44.0,
+              12.0,
+              14.0
+            ],
+            "seat_z": 4.5,
+            "tape": 1.0
+          }
+        },
+        "veml7700": {
+          "rests": [
+            {
+              "c": [
+                109.84,
+                51.824
+              ],
+              "skin_mm": null,
+              "face_y": 160.1,
+              "tape": 1.0
+            },
+            {
+              "c": [
+                130.16,
+                51.824
+              ],
+              "skin_mm": null,
+              "face_y": 160.1,
+              "tape": 1.0
+            },
+            {
+              "c": [
+                109.84,
+                64.524
+              ],
+              "skin_mm": null,
+              "face_y": 160.1,
+              "tape": 1.0
+            },
+            {
+              "c": [
+                130.16,
+                64.524
+              ],
+              "skin_mm": null,
+              "face_y": 160.1,
+              "tape": 1.0
+            }
+          ],
+          "spigots": [
+            {
+              "c": [
+                109.84,
+                64.524
+              ],
+              "d": 2.2,
+              "len": 2.0
+            },
+            {
+              "c": [
+                130.16,
+                51.824
+              ],
+              "d": 2.2,
+              "len": 2.0
+            }
+          ],
+          "pocket_skin_mm": 1.4,
+          "front_edge_to_wall_mm": 0.52
+        },
+        "bundle_clearance": {
+          "hub_ch334f": {
+            "route": "S06",
+            "centreline_mm": 8.68,
+            "need_mm": 3.71
+          },
+          "ina228": {
+            "route": "W407",
+            "centreline_mm": 29.08,
+            "need_mm": 1.06
+          },
+          "veml7700": {
+            "route": "S29",
+            "centreline_mm": 24.41,
+            "need_mm": 1.5
+          },
+          "t7_insert": {
+            "route": "S13",
+            "centreline_mm": 2.0,
+            "need_mm": 1.94
+          },
+          "pack_fuse": {
+            "route": "S40",
+            "centreline_mm": 3.4,
+            "need_mm": 1.5
+          },
+          "pack_fuse_board": {
+            "route": "S40",
+            "centreline_mm": 1.6,
+            "need_mm": 1.5
+          },
+          "boni_a406": {
+            "route": "W407",
+            "centreline_mm": 1.28,
+            "need_mm": 1.06
+          }
+        },
+        "plate_standoffs": {
+          "pack_fuse": [
+            {
+              "c": [
+                169.0,
+                14.1
+              ],
+              "nearest": "plate.boss3",
+              "gap_mm": 0.99
+            },
+            {
+              "c": [
+                169.0,
+                35.3
+              ],
+              "nearest": "blower",
+              "gap_mm": 1.09
+            }
+          ]
+        }
+      },
+      "result": "PASS (model): CH334F 4 x M2.5 and INA228 2 x M2.5 (+2 rests) into TC-M2,5x4 inserts in rear-wall bosses (hole 5 deep, skin 1, 11.94 from the tripod nut pocket >= 3), #2813 on a printed pad with acrylic foam tape (no mounting hole on the Pololu drawing), VEML7700 taped to 4 rests (+2 locating spigots) in a 1.1 mm pocket of the top wall (skin 1.4; no insert joint fits that wall), PACK_FUSE on 2 PEM SO-M2.5-6ZI (M-07 PF; barrels 0.99 from the nearest envelope); INA228 terminal wire side +y with 30.64 mm free of envelopes and harness bundles (limit: W407), 18 AWG inside 30-16 AWG (4UCON 19963; block identity inferred, confirm at incoming inspection); this package's envelopes keep bundle OD / 2 + 0.5 from the other route centrelines; torques coupon-defined (build/17 section 2); OPEN: boni_a406: fixing TBD (assumption, no drawing)"
     },
     {
       "id": "R-TOOL-ACCESS",
@@ -3001,7 +3235,7 @@
             81.6,
             0.1,
             95.0,
-            27.0
+            0.5
           ],
           "free_mm": 16.8,
           "fits_mm": 16.3,
@@ -3020,6 +3254,39 @@
         },
         {
           "rect": [
+            81.6,
+            0.6,
+            6.8,
+            26.0
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
+        },
+        {
+          "rect": [
+            88.4,
+            0.6,
+            30.0,
+            26.0
+          ],
+          "free_mm": 6.5,
+          "fits_mm": 6.0,
+          "limit": "boni_a406"
+        },
+        {
+          "rect": [
+            118.4,
+            0.6,
+            58.2,
+            26.0
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
+        },
+        {
+          "rect": [
             176.6,
             22.1,
             7.4,
@@ -3028,6 +3295,17 @@
           "free_mm": 29.8,
           "fits_mm": 29.3,
           "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            81.6,
+            26.6,
+            95.0,
+            0.5
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
         },
         {
           "rect": [
@@ -3205,8 +3483,8 @@
       },
       "S06": {
         "kind": "harness",
-        "length_mm": 147,
-        "path_mm": 86.5,
+        "length_mm": 188,
+        "path_mm": 127.3,
         "bends": 6,
         "bundle_od_mm": 6.42,
         "bend_allowance_mm": 30.3,
@@ -3416,12 +3694,12 @@
       "S26": {
         "kind": "harness",
         "length_mm": 100,
-        "path_mm": 67.4,
+        "path_mm": 67.3,
         "bends": 1,
         "bundle_od_mm": 2.81,
         "bend_allowance_mm": 2.2,
         "through": [],
-        "status": "OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; J312 (X26S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
+        "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 3 through veml7700"
       },
       "S27": {
         "kind": "stock_lead",
@@ -4252,13 +4530,28 @@
           3.0
         ],
         "result": "BY DESIGN (model)"
+      },
+      {
+        "item": "veml7700",
+        "solid": "front_shell",
+        "overlap_mm3": 143.8,
+        "by_design_mm3": 143.8,
+        "bbox_mm": [
+          107.3,
+          158.1,
+          49.3,
+          133.2,
+          161.3,
+          67.1
+        ],
+        "result": "BY DESIGN (model)"
       }
     ],
     "result": "PASS (model fit only)"
   },
   "volumes_cm3": {
     "front_shell": {
-      "cm3": 168.4,
+      "cm3": 168.02,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -4269,10 +4562,10 @@
         165.7,
         76.07
       ],
-      "stl_triangles": 18906
+      "stl_triangles": 19938
     },
     "rear_shell": {
-      "cm3": 128.5,
+      "cm3": 129.51,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -4283,7 +4576,7 @@
         165.7,
         14.0
       ],
-      "stl_triangles": 11800
+      "stl_triangles": 14168
     },
     "hatch_cover": {
       "cm3": 5.68,
@@ -4398,7 +4691,7 @@
       "stl_triangles": 2846
     },
     "plate_al": {
-      "cm3": 56.71,
+      "cm3": 56.65,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4659,7 +4952,7 @@
     "rule": "solid CAD volume x 1.13 g/cm3 (PolyLite ASA, ISO 1183); real prints with 30 % infill weigh less",
     "parts": {
       "front_shell": 190,
-      "rear_shell": 145,
+      "rear_shell": 146,
       "hatch_cover": 6,
       "hood": 18,
       "battery_tray": 26,
