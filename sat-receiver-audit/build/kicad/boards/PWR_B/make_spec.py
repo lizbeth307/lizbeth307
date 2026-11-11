@@ -236,12 +236,16 @@ HEADERS = {
     'J207': ((107.0, 28.25), 180),  # SL2-PWR-PH PH 12 -> plate slot SL2 (top edge)
     'J204': ((126.0, 28.25), 180),  # X04S1-PWR PH 8 (S04, RF bias) -> SL2 (top edge zone 108-128)
 }
-# J209 centre, bottom side, rotation 0: contact 1 at the right end of the upper row (odd contacts upper, even lower,
-# pads 2k-1 / 2k in one column, 0.5 mm pitch). The FX8 placeholder sat at (106.0, 18.5); there the right alignment-post
-# hole (footprint (13.5, -0.85), 1.45 mm NPTH) lands in the L209 courtyard. x 102.1 is the nearest centre on y 18.5
-# where both holes clear every top-side courtyard (right hole between R243 and C245, left hole in the free area), and
-# it puts column 1 (the ch4 Kelvin pair) under the shunt R246.
-B2B_AT = (102.1, 18.5)
+# J209 centre, bottom side, rotation 180: contact 1 at the left end of the lower row (odd contacts lower, even upper,
+# pads 2k-1 / 2k in one column, 0.5 mm pitch), so the rail block (columns 1-21 of b2b-nets.json) lies next to the end of
+# the LAB5 trunk and the left LNA channels, the signal block over the header J203 and the sense pair (column 50) under
+# the ch4 shunt R246. The FX8 placeholder sat at (106.0, 18.5); there the right alignment-post hole (footprint
+# (13.5, -0.85), 1.45 mm NPTH) lands in a top-side courtyard (L209 at rotation 0 or 180). On y 18.5 with rotation 180
+# both holes clear every top-side courtyard for x 98.46-99.14 (right hole between R244 and R243, left hole right of
+# R506); 98.8 is its middle. With rotation 0 only x 102.05-102.2 is legal, and there the LAB5 contacts lie under U209
+# (route run 43100556016: 21 connections open).
+B2B_AT = (98.8, 18.5)
+B2B_ROT = 180
 TX, TY = 72.0, 13.2      # LAB5 F.Cu trunk: vertical at x = TX, horizontal at y = TY (to the J209 via blocks)
 
 
@@ -291,9 +295,9 @@ def placement(inp):
             anchors[ref] = {'at': a['at'], 'align': a.get('align', 'origin'), 'rotation': a['rotation'], 'side': side}
     for ref, (at, rot) in HEADERS.items():
         anchors[ref] = {'at': [at[0], at[1]], 'align': {'pad': '1'}, 'rotation': rot, 'side': 'F'}
-    anchors[B2B_REF] = {'at': list(B2B_AT), 'align': 'origin', 'rotation': 0, 'side': 'B'}
+    anchors[B2B_REF] = {'at': list(B2B_AT), 'align': 'origin', 'rotation': B2B_ROT, 'side': 'B'}
     # LNA channels ch1-ch3 in the left column (x 8-28), the INA3221 U215 beside the three Kelvin sense pairs, ch4 over
-    # the right end of J209 (its Kelvin pair and LNA4V5 go through the B2B to PWR-A).
+    # the right end of J209 (its Kelvin pair in column 50 and LNA4V5 go through the B2B to PWR-A).
     lna = [('U206', 'C232', 'R229', 'R228', 'R231', 'C233', 'L206', 'C234', 'R232', 'TP206', 'R268', 'R269', (6.7, 24.0)),
            ('U207', 'C236', 'R234', 'R233', 'R236', 'C237', 'L207', 'C238', 'R237', 'TP207', 'R270', 'R271', (6.7, 12.9)),
            ('U208', 'C240', 'R239', 'R238', 'R241', 'C241', 'L208', 'C242', 'R242', 'TP208', 'R272', 'R273', (6.7, 1.8)),
@@ -566,13 +570,13 @@ W_TRUNK, W_BRANCH, W_CURRENT, W_SENSE = 2.0, 0.6, 0.5, 0.35
 # and signal contacts escape outwards, and copper that enters a pad between two neighbours is at most W_PADSTUB wide.
 W_PADSTUB = 0.25          # into a 0.30 mm pad beside a neighbour: 0.225 mm gap (clearance 0.15 + margin 0.05)
 W_SPINE = 1.4             # GND spine on the connector centre line: 0.40 mm from the inner pad ends of both rows
-W_NECK = 0.8              # LAB5 F.Cu neck of the two upper contacts (2 A): PWR2A width 0.8 mm (netclasses.json)
+SPINE_STUB = 0.5          # GND stubs end 0.5 mm off the spine centre line, so no stub end lies inside a spine via
+NPTH_CLEAR = 0.25 + 0.05  # copper to the J209 alignment-post holes (KiCad hole clearance 0.25, design margin 0.05)
 SPINE_VIAS_MIN = 4
-LAB5_UP_VY = 22.36        # upper LAB5 vias: on the top side between U209 pad 1 (y <= 21.75) and C244 (y >= 22.975)
-LAB5_LO_VY = (15.4, 14.55)  # lower LAB5 vias: below the lower contact row, clear of the GND contacts beside them
-LAB5_RISER_X = 106.2      # F.Cu riser from the upper neck to the trunk, left of R244 / C244 (top side free there)
-K4_KY, K4_SW_VX, K4_KLO = 24.4, 118.6, 15.2   # ch4 SW sense: over R246, via right of the hole, B.Cu under the lower row
-K4_SH_V = (116.5, 23.55)  # ch4 SHUNT sense via: top-left of R246 pad 2, left of the SW take-off
+SPINE_VIA_PITCH = 1.2     # spine plane vias at least this far apart: 0.5 mm between them for one F.Cu track
+LAB5_UP_VY = 22.2         # upper LAB5 vias above the upper contact row (top side free there)
+LAB5_LO_VY = (15.4, 14.55)  # lower LAB5 vias below the lower contact row, clear of the GND contacts beside them
+K4_KLO = 15.2             # ch4 SHUNT sense: B.Cu right of the J209 hole, under the lower row into its contact
 
 
 def via_spot_ok(inp, parts, tracks, vias, at, net):
@@ -618,11 +622,12 @@ def scripted_copper(inp, parts, pins):
         return parts[ref].pad(number)['at']
     j = parts[B2B_REF]
 
-    def row(n):  # J209 on the bottom, rotation 0: odd contacts in the upper row, even contacts in the lower row
-        return 'upper' if int(n) % 2 else 'lower'
-    # LAB5: four J209 contacts (b2b-nets.json: ceil(4 A / 1 A)), two in each row (guard_rule checkerboard). Upper pair:
-    # B.Cu stubs -> two vias -> F.Cu neck (2 A, PWR2A 0.8 mm) -> F.Cu riser; lower pair: B.Cu stubs -> four vias -> F.Cu
-    # plate; riser and plate join the F.Cu trunk (PWR3A 2.0 mm >= 1.85) -> 0.6 mm branch to each switch IN.
+    def row(n):  # upper / lower contact row of J209 on the board (rotation 180: odd contacts lower, even upper)
+        return 'upper' if j.pad(n)['at'][1] > B2B_AT[1] else 'lower'
+    # LAB5: four J209 contacts (b2b-nets.json: ceil(4 A / 1 A)), two in each row (guard_rule checkerboard), next to the end of
+    # the trunk. Upper pair: B.Cu stubs -> one via each -> F.Cu riser over the strip (top side free there); lower pair: B.Cu
+    # stubs -> two vias each -> F.Cu plate; riser and plate join the F.Cu trunk (PWR3A 2.0 mm >= 1.85) -> 0.6 mm branch to
+    # each switch IN.
     lab5 = sorted((n for n, net in pins['pins'].items() if net == 'LAB5'), key=int)
     up, lo = [n for n in lab5 if row(n) == 'upper'], [n for n in lab5 if row(n) == 'lower']
     if len(up) != 2 or len(lo) != 2:
@@ -634,24 +639,21 @@ def scripted_copper(inp, parts, pins):
           f'out of J209 contact {n} (upper row) between its GND neighbours')
         T(f'LAB5-J209-{n}-E', 'LAB5', 'B.Cu', W_SENSE, [(x, end), (x, LAB5_UP_VY)],
           f'J209 contact {n} to its via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width')
-        V(f'LAB5-UV-{n}', 'LAB5', (x, LAB5_UP_VY), f'LAB5 via of J209 contact {n}, between U209 and C244 on the top side')
-    xs = sorted(P(B2B_REF, n)[0] for n in up)
-    T('LAB5-UP-NECK', 'LAB5', 'F.Cu', W_NECK, [(xs[-1], LAB5_UP_VY), (LAB5_RISER_X, LAB5_UP_VY)],
-      'the two upper LAB5 contacts (2 A) between U209 pad 1 and C244 to the riser: PWR2A width 0.8 mm, the widest that '
-      'clears both pad rows by 0.2 mm')
-    T('LAB5-RISER', 'LAB5', 'F.Cu', W_TRUNK, [(LAB5_RISER_X, LAB5_UP_VY), (LAB5_RISER_X, TY)],
-      'F.Cu riser of the upper LAB5 pair to the trunk, left of R244 / C244')
+        V(f'LAB5-UV-{n}', 'LAB5', (x, LAB5_UP_VY), f'LAB5 via of J209 contact {n}')
+    xr = sum(P(B2B_REF, n)[0] for n in up) / len(up)
+    T('LAB5-RISER', 'LAB5', 'F.Cu', W_TRUNK, [(xr, LAB5_UP_VY), (xr, TY)],
+      'F.Cu riser from the two upper LAB5 vias over J209 to the trunk (no top-side part there)')
     for n in lo:
         x = P(B2B_REF, n)[0]
-        end = j.pad(n)['box'][1] - 0.3
-        T(f'LAB5-J209-{n}', 'LAB5', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (x, end)],
-          f'out of J209 contact {n} (lower row) between its GND neighbours')
-        T(f'LAB5-J209-{n}-E', 'LAB5', 'B.Cu', W_SENSE, [(x, end), (x, LAB5_LO_VY[1])],
-          f'J209 contact {n} to its two vias: one contact, at most 1 A (b2b_i_pin_A), PWR1A width')
+        T(f'LAB5-J209-{n}', 'LAB5', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (x, LAB5_LO_VY[0])],
+          f'out of J209 contact {n} (lower row) between its GND neighbours to its first via')
+        T(f'LAB5-J209-{n}-E', 'LAB5', 'B.Cu', W_SENSE, [(x, LAB5_LO_VY[0]), (x, LAB5_LO_VY[1])],
+          f'J209 contact {n} to its second via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width')
         for k, vy in enumerate(LAB5_LO_VY, 1):
             V(f'LAB5-LV-{n}-{k}', 'LAB5', (x, vy), f'LAB5 via {k} of J209 contact {n}')
     xm = sum(P(B2B_REF, n)[0] for n in lo) / len(lo)
     T('LAB5-LO-PLATE', 'LAB5', 'F.Cu', W_TRUNK, [(xm, LAB5_LO_VY[0]), (xm, TY)], 'F.Cu copper over the four lower LAB5 vias')
+    xm = xr
     first = LAB5_CELLS[0][0] - 0.95
     T('LAB5-TRUNK', 'LAB5', 'F.Cu', W_TRUNK, [(xm, TY), (first, TY)],
       'LAB5 trunk to the four TPS2553 inputs: PWR3A width 2.0 mm >= 1.85 (netclasses.json)')
@@ -669,8 +671,7 @@ def scripted_copper(inp, parts, pins):
                        'reason': 'J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail '
                                  'neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, '
                                  'pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row and 0.35 mm '
-                                 '(PWR1A, 1 A) beyond it, and the two upper LAB5 contacts (2 A) join the riser by the 0.8 mm PWR2A '
-                                 'neck LAB5-UP-NECK; the 1.85 mm of PWR3A does not fit between 0.30 mm pads'}
+                                 '(PWR1A, 1 A) beyond it up to its via; the 1.85 mm of PWR3A does not fit between 0.30 mm pads'}
     lab5_pads = [(B2B_REF, n) for n in lab5] + [(refs['U'], '1') for _cx, refs in LAB5_CELLS] + \
         [(refs['cA'], '1') for _cx, refs in LAB5_CELLS] + [(refs['cB'], '1') for _cx, refs in LAB5_CELLS if 'cB' in refs]
     pins['scripted_nets']['LAB5'] = lab5_pads
@@ -692,31 +693,30 @@ def scripted_copper(inp, parts, pins):
             pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'), (rsm, '1')]
             continue
         # ch4: the sense pair crosses the B2B to INA3221 #2 U216 on PWR-A (declared sense pair, partition-spec b2b). Its
-        # contacts are J209 column 1 under R246: SW in the lower row, SHUNT in the upper row. SW leaves the top of pad 1,
-        # passes over R246 to a via right of the shunt and runs on B.Cu right of the J209 alignment hole, under the lower
-        # row into its contact; SHUNT leaves the top-left of pad 2 to a via and enters its contact from above. The two
-        # take-offs touch only their shunt pad, not the current-path copper (K4-SW-I enters pad 1 from the left, K4-SH-I
-        # and K4-SH-C leave pad 2 to the right and below).
+        # contacts are J209 column 50 under R246: SW in the upper row, SHUNT in the lower row. Each take-off leaves the top of
+        # its shunt pad to a via (as for the FX8 placeholder); SW runs on B.Cu into its contact from above, SHUNT on B.Cu
+        # right of the J209 alignment hole and under the lower row into its contact. The take-offs touch only their shunt
+        # pad, not the current-path copper (K4-SW-I enters pad 1 from the left, K4-SH-I and K4-SH-C leave pad 2 to the
+        # right and below).
         ksw = next(n for n, v in pins['pins'].items() if v == sw)
         ksh = next(n for n, v in pins['pins'].items() if v == shunt)
-        if (row(ksw), row(ksh)) != ('lower', 'upper') or j.pad(ksw)['at'][0] != j.pad(ksh)['at'][0]:
-            raise SystemExit(f'make_spec: J209 {sw} {ksw} / {shunt} {ksh} are not one column (SW lower, SHUNT upper)')
-        a = (s1[0] + 0.16, s1[1])
-        vsw = (K4_SW_VX, K4_KY)
-        T('K4-SW-S', sw, 'F.Cu', W_SENSE, [a, (a[0], K4_KY), vsw], f'Kelvin sense: top of {rsh} pad 1 over the shunt to its via')
+        if (row(ksw), row(ksh)) != ('upper', 'lower') or j.pad(ksw)['at'][0] != j.pad(ksh)['at'][0]:
+            raise SystemExit(f'make_spec: J209 {sw} {ksw} / {shunt} {ksh} are not one column (SW upper, SHUNT lower)')
+        top = parts[rsh].pad('1')['box'][3]
+        vsw, vsh = (s1[0] + 0.16, top + 0.65), (s2[0] - 0.16, top + 0.65)
+        T('K4-SW-S', sw, 'F.Cu', W_SENSE, [(vsw[0], s1[1]), vsw], f'Kelvin sense: top of {rsh} pad 1 to its via')
         V('K4-SW-V', sw, vsw, f'Kelvin sense {sw} to J209 contact {ksw} (bottom side)')
         bx, by = P(B2B_REF, ksw)
-        end = j.pad(ksw)['box'][1] - 0.3
-        T('K4-SW-B', sw, 'B.Cu', W_SENSE, [vsw, (vsw[0], K4_KLO), (bx, K4_KLO), (bx, end)],
-          f'Kelvin sense on B.Cu right of the J209 alignment hole, under the lower row to contact {ksw}')
-        T('K4-SW-P', sw, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksw} between its GND neighbours')
-        b = (s2[0] - 0.26, s2[1])
-        T('K4-SH-S', shunt, 'F.Cu', W_SENSE, [b, K4_SH_V], f'Kelvin sense: top-left of {rsh} pad 2 to its via')
-        V('K4-SH-V', shunt, K4_SH_V, f'Kelvin sense {shunt} to J209 contact {ksh} (bottom side)')
+        end = j.pad(ksw)['box'][3] + 0.3
+        T('K4-SW-B', sw, 'B.Cu', W_SENSE, [vsw, (bx, end + 0.6), (bx, end)], f'Kelvin sense to J209 contact {ksw}')
+        T('K4-SW-P', sw, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksw} between its neighbours')
+        T('K4-SH-S', shunt, 'F.Cu', W_SENSE, [(vsh[0], s2[1]), vsh], f'Kelvin sense: top of {rsh} pad 2 to its via')
+        V('K4-SH-V', shunt, vsh, f'Kelvin sense {shunt} to J209 contact {ksh} (bottom side)')
         bx, by = P(B2B_REF, ksh)
-        end = j.pad(ksh)['box'][3] + 0.3
-        T('K4-SH-B', shunt, 'B.Cu', W_SENSE, [K4_SH_V, (bx, end + 0.6), (bx, end)], f'Kelvin sense to J209 contact {ksh}')
-        T('K4-SH-P', shunt, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksh} between its GND neighbours')
+        end = j.pad(ksh)['box'][1] - 0.3
+        T('K4-SH-B', shunt, 'B.Cu', W_SENSE, [vsh, (vsh[0], K4_KLO), (bx, K4_KLO), (bx, end)],
+          f'Kelvin sense on B.Cu right of the J209 alignment hole, under the lower row to contact {ksh}')
+        T('K4-SH-P', shunt, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksh} between its neighbours')
         pins['scripted_nets'][sw] = [(u, '6'), (rsh, '1'), (B2B_REF, ksw)]
         pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'), (B2B_REF, ksh)]
     # J209 GND spine: every GND contact (b2b-nets.json guard_rule: the return beside each rail contact and the guards)
@@ -725,14 +725,24 @@ def scripted_copper(inp, parts, pins):
     gnd = sorted((n for n, net in pins['pins'].items() if net == 'GND'), key=int)
     sy = B2B_AT[1]
     gx = [P(B2B_REF, n)[0] for n in gnd]
-    T('GND-J209-SPINE', 'GND', 'B.Cu', W_SPINE, [(min(gx), sy), (max(gx), sy)],
+    holes = [p['box'] for p in j.pads if p['type'] == 'np_thru_hole']
+    x0, x1 = min(gx), max(gx)
+    # keep the spine ends clear of the alignment-post holes beside columns 1 and 50 (hole box, as check_copper measures)
+    while any(seg_box_dist((x0, sy), (x1, sy), h) - W_SPINE / 2 < NPTH_CLEAR for h in holes if h[0] < (x0 + x1) / 2):
+        x0 = r4(x0 + 0.05)
+    while any(seg_box_dist((x0, sy), (x1, sy), h) - W_SPINE / 2 < NPTH_CLEAR for h in holes if h[0] > (x0 + x1) / 2):
+        x1 = r4(x1 - 0.05)
+    T('GND-J209-SPINE', 'GND', 'B.Cu', W_SPINE, [(x0, sy), (x1, sy)],
       f'GND spine of the {len(gnd)} J209 GND contacts between the contact rows (no ground plane in the LSHM)')
     for n in gnd:
-        T(f'GND-J209-{n}-S', 'GND', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (P(B2B_REF, n)[0], sy)],
-          f'J209 GND contact {n} inwards to the spine')
-    k, last, x = 0, None, min(gx)
-    while x <= max(gx) + 1e-9:
-        if (last is None or x - last >= VIA_DRILL + 0.55 - 1e-9) and via_spot_ok(inp, parts, tracks, vias, (x, sy), 'GND'):
+        px, py = P(B2B_REF, n)
+        T(f'GND-J209-{n}-S', 'GND', 'B.Cu', W_PADSTUB, [(px, py), (px, sy + (SPINE_STUB if py > sy else -SPINE_STUB))],
+          f'J209 GND contact {n} inwards into the spine')
+    # plane vias only under GND columns (rail block, guards) and SPINE_VIA_PITCH apart, so the spine leaves F.Cu channels
+    # across the strip between them and none at all over the signal and spare columns
+    k, last, x = 0, None, x0
+    while x <= x1 + 1e-9:
+        if (last is None or x - last >= SPINE_VIA_PITCH - 1e-9) and min(abs(x - g) for g in gx) <= 0.25 + 1e-9                 and via_spot_ok(inp, parts, tracks, vias, (x, sy), 'GND'):
             k += 1
             V(f'GND-J209-V{k}', 'GND', (x, sy), 'plane via on the J209 GND spine')
             last = x
