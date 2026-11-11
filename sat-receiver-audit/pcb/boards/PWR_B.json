@@ -2285,19 +2285,19 @@
         "id": "LAB5-UP-BAR",
         "net": "LAB5",
         "layer": "F.Cu",
-        "width_mm": 2.0,
+        "width_mm": 0.8,
         "path": [
           [
-            88.2,
+            87.55,
             22.2
           ],
           [
-            89.9,
+            90.55,
             22.2
           ]
         ],
         "locked": true,
-        "why": "F.Cu bar over the 4 LAB5 vias above the upper J209 row"
+        "why": "F.Cu bar over the 4 LAB5 vias above the upper J209 row (at most 2 A on each side of the riser)"
       },
       {
         "id": "LAB5-RISER",

@@ -653,11 +653,11 @@ def scripted_copper(inp, parts, pins):
     if up:
         ux = sorted(P(B2B_REF, n)[0] for n in up)
         xu = r4(sum(ux) / len(ux))
-        wu = W_TRUNK if len(up) > 2 else W_PAIR
-        inset = max(0.0, wu / 2 - VIA_D / 2)  # the bar ends stay inside the outer vias, clear of the neighbouring escapes
-        T('LAB5-UP-BAR', 'LAB5', 'F.Cu', wu, [(r4(ux[0] + inset), LAB5_UP_VY), (r4(ux[-1] - inset), LAB5_UP_VY)],
-          f'F.Cu bar over the {len(up)} LAB5 vias above the upper J209 row')
-        T('LAB5-RISER', 'LAB5', 'F.Cu', wu, [(xu, LAB5_UP_VY), (xu, LAB5_LO_VY if lo else TY)],
+        # the bar runs from via centre to via centre (KiCad: a track end inside a via must be its centre) at the PWR2A width:
+        # each half carries at most two contacts (2 A) to the riser in the middle; 2.0 mm would reach the neighbouring escapes
+        T('LAB5-UP-BAR', 'LAB5', 'F.Cu', W_PAIR, [(ux[0], LAB5_UP_VY), (ux[-1], LAB5_UP_VY)],
+          f'F.Cu bar over the {len(up)} LAB5 vias above the upper J209 row (at most 2 A on each side of the riser)')
+        T('LAB5-RISER', 'LAB5', 'F.Cu', W_TRUNK if len(up) > 2 else W_PAIR, [(xu, LAB5_UP_VY), (xu, LAB5_LO_VY if lo else TY)],
           'F.Cu riser of the upper-row LAB5 contacts over the strip (no top-side part there)')
         if not lo:
             xm = xu
