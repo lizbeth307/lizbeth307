@@ -386,7 +386,7 @@ class DeploymentTests(unittest.TestCase):
         allowed = {"dream": "2.1.1-2+lab1", "librtlsdr2": "2.0.3-0+lab1", "sdrangel": "7.27.2-1+lab1",
                    "openwebrx": "1.2.126+lab1", "gpredict": lock["gpredict"], "gr-satellites": lock["gr-satellites"],
                    "satdump": "2.0.0~alpha+git20260929+lab1", "sdrpp": "git8c9f5ee+lab1", "aic8800-usb-dkms": "4.0"}
-        self.assertEqual(lock["gpredict"], "2.6+git20261011+lab1")
+        self.assertEqual(lock["gpredict"], "2.7+lab1")
         dependencies = deploy.load(HERE / "dependencies.json")
         for name, versions in dependencies["required_target_packages"].items():
             allowed[name] = versions[0]

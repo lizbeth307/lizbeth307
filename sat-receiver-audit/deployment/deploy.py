@@ -860,6 +860,8 @@ def verify_cache(cache, components=None, include_core=True):
 
 # Signed offline package repository (deployment/repo/README.md). One aptly publication of the
 # +labN builds: InRelease signed by the owner's offline key (CI uses only a throwaway test key).
+# srrx-mirror, the image package closure (the repo-policy.json mirror object), is a second
+# publication signed by the same key.
 REPO_POLICY = HERE / "repo/repo-policy.json"
 _FIELD = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]*")
 
@@ -1080,8 +1082,29 @@ def _record_binding(record, label):
 def deb_data_inventory(deb):
     """{path: {type: file, sha256, mode} | {type: symlink, target} | {type: dir, mode}} of the data
     member of a .deb, read in Python like deb_data_tree (same refusals): the entries of the
-    <package>.data-tree.json that build_recipe.package_data_tree writes before dpkg-deb packs."""
+    <package>.data-tree.json that build_recipe.package_data_tree writes before dpkg-deb packs.
+    A data.tar.zst member (the Ubuntu archive's compression, so every srrx-mirror package; Python
+    3.12's tarfile has no zstd) is decompressed by `dpkg-deb --fsys-tarfile`, and Python reads the
+    tar it prints with the same refusals; without dpkg-deb that member fails closed."""
     entries = {}
+
+    def walk(data):
+        for member in data:
+            relative = (member.name[2:] if member.name.startswith("./") else member.name).rstrip("/")
+            if relative in ("", "."):
+                continue
+            if (not (member.isdir() or member.issym() or member.isfile()) or relative.startswith("/")
+                    or ".." in relative.split("/") or relative in entries):
+                raise DeploymentError("unsafe, repeated or special .deb member in " + Path(deb).name)
+            if member.isdir():
+                entries[relative] = {"type": "dir", "mode": "%04o" % (member.mode & 0o7777)}
+            elif member.issym():
+                entries[relative] = {"type": "symlink", "target": member.linkname}
+            else:
+                digest, source = hashlib.sha256(), data.extractfile(member)
+                for chunk in iter(lambda: source.read(1024 * 1024), b""):
+                    digest.update(chunk)
+                entries[relative] = {"type": "file", "sha256": digest.hexdigest(), "mode": "%04o" % (member.mode & 0o7777)}
     with open(deb, "rb") as stream:
         if stream.read(8) != b"!<arch>\n":
             raise DeploymentError("not a .deb (ar) archive: " + Path(deb).name)
@@ -1094,26 +1117,34 @@ def deb_data_inventory(deb):
                 break
             stream.seek(size + (size & 1), os.SEEK_CUR)
         try:
-            with tarfile.open(fileobj=_Member(stream, size), mode="r|*") as data:
-                for member in data:
-                    relative = (member.name[2:] if member.name.startswith("./") else member.name).rstrip("/")
-                    if relative in ("", "."):
-                        continue
-                    if (not (member.isdir() or member.issym() or member.isfile()) or relative.startswith("/")
-                            or ".." in relative.split("/") or relative in entries):
-                        raise DeploymentError("unsafe, repeated or special .deb member in " + Path(deb).name)
-                    if member.isdir():
-                        entries[relative] = {"type": "dir", "mode": "%04o" % (member.mode & 0o7777)}
-                    elif member.issym():
-                        entries[relative] = {"type": "symlink", "target": member.linkname}
-                    else:
-                        digest, source = hashlib.sha256(), data.extractfile(member)
-                        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-                            digest.update(chunk)
-                        entries[relative] = {"type": "file", "sha256": digest.hexdigest(), "mode": "%04o" % (member.mode & 0o7777)}
+            if name == "data.tar.zst":
+                _fsys_tarfile(deb, walk)
+            else:
+                with tarfile.open(fileobj=_Member(stream, size), mode="r|*") as data:
+                    walk(data)
         except tarfile.TarError as exc:
             raise DeploymentError(".deb data member unreadable (" + name + "): " + Path(deb).name) from exc
     return dict(sorted(entries.items()))
+
+
+def _fsys_tarfile(deb, walk):
+    """walk(tarfile stream) over the uncompressed data tar `dpkg-deb --fsys-tarfile` prints for deb (it
+    decompresses data.tar.zst, which Python 3.12 cannot); dpkg-deb missing or failing fails closed."""
+    try:
+        process = subprocess.Popen(["dpkg-deb", "--fsys-tarfile", str(Path(deb).resolve(strict=True))],
+                                   stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    except OSError as exc:
+        raise DeploymentError("dpkg-deb unavailable for the data.tar.zst member of " + Path(deb).name) from exc
+    try:
+        with tarfile.open(fileobj=process.stdout, mode="r|") as data:
+            walk(data)
+        while process.stdout.read(1024 * 1024):
+            pass
+    finally:
+        process.stdout.close()
+        code = process.wait(timeout=600)
+    if code != 0:
+        raise DeploymentError("dpkg-deb --fsys-tarfile refused " + Path(deb).name)
 
 
 def _data_tree(path, digest, name, version):
@@ -1128,7 +1159,35 @@ def _data_tree(path, digest, name, version):
     return document["entries"]
 
 
-def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrelease_sha256=None, target_status=None, release=False):
+MIRROR_POLICY_KEYS = ("origin", "label", "codename", "component", "architecture", "contents")
+CLOSURE_ENTRY_KEYS = ("package", "version", "architecture", "filename", "sha256", "size")
+
+
+def mirror_closure(path, architecture):
+    """{(package, version, architecture): (sha256, size)} of a package closure file
+    (deployment/image/package-closure.json, written by `build_image.py closure --resolve`): the one
+    list the srrx-mirror publication may carry. Read with the strict bounded load; a malformed or
+    repeated entry, another schema or a foreign architecture fails closed. (CI also checks the file
+    against sources.lock.json with build_image.closure_issues: check_repo.py mirror.)"""
+    document = load(path)
+    packages = document.get("packages") if type(document) is dict else None
+    if type(document) is not dict or document.get("schema_version") != 1 or type(packages) is not list or not packages:
+        raise DeploymentError("package closure must be schema_version 1 with a non-empty packages list: " + Path(path).name)
+    allowed, names = {}, set()
+    for entry in packages:
+        name = entry.get("package") if type(entry) is dict else None
+        if (type(entry) is not dict or not set(CLOSURE_ENTRY_KEYS) <= set(entry) or type(name) is not str or name in names
+                or not re.fullmatch(r"[a-z0-9][a-z0-9+.-]*", name) or type(entry["version"]) is not str or not entry["version"]
+                or entry["architecture"] not in (architecture, "all") or type(entry["sha256"]) is not str
+                or not re.fullmatch(r"[0-9a-f]{64}", entry["sha256"]) or type(entry["size"]) is not int or entry["size"] <= 0):
+            raise DeploymentError("package closure entry is malformed, repeated or of a foreign architecture: " + str(name))
+        names.add(name)
+        allowed[(name, entry["version"], entry["architecture"])] = (entry["sha256"], entry["size"])
+    return allowed
+
+
+def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrelease_sha256=None, target_status=None, release=False,
+                closure=None):
     """Signed lab repository check: gpgv InRelease by the pinned key -> every dists/ file against the
     signed SHA256 list -> every Packages stanza against a build record (name, version, architecture,
     SHA-256, size) whose component, source archive, recipe and patch are the locked/reviewed ones ->
@@ -1140,12 +1199,28 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
     changed held package (target_status) and an apt entry without Signed-By. release=True (the
     release_guard path) also needs REVIEWED build records and, per package, the build manifest the
     record names, which deploy.verify_build must accept for the extracted package. Integrity,
-    provenance and named content rules only; no install, no TX proof."""
+    provenance and named content rules only; no install, no TX proof.
+
+    closure (a package closure file, mirror_closure) selects the srrx-mirror publication instead: the
+    names of the repo-policy.json mirror object, the same key, keyring_path and Signed-By rule, no
+    build records and no +labN rule; the Packages index must list exactly the closure entries (name,
+    version, architecture, SHA-256 and size of the file), each one free of the same content, policy
+    and never_in_lab_repo_globs findings and held-package changes. release=True there only needs the
+    pinned InRelease SHA-256 of the release record (noble packages have no build manifests)."""
     policy = load(REPO_POLICY)
     keys(policy, ("schema_version", "status", "origin", "label", "codename", "component", "architecture",
-                  "keyring_path", "never_in_lab_repo_globs", "notes", "sources"), "repository policy")
+                  "keyring_path", "never_in_lab_repo_globs", "mirror", "notes", "sources"), "repository policy")
+    names = policy
+    if closure is not None:
+        names = policy["mirror"]
+        keys(names, MIRROR_POLICY_KEYS, "repository policy mirror")
+        if build_records:
+            raise DeploymentError("the srrx-mirror publication has no build records: its packages are bound to the package closure")
+        if release and inrelease_sha256 is None:
+            raise DeploymentError("release path of srrx-mirror needs the pinned InRelease SHA-256 of the release record")
+        closure_packages = mirror_closure(closure, names["architecture"])
     root = Path(repo).resolve(strict=True)
-    dist = root / "dists" / policy["codename"]
+    dist = root / "dists" / names["codename"]
     inrelease = dist / "InRelease"
     if inrelease_sha256 is not None and sha(inrelease) != inrelease_sha256:
         raise DeploymentError("InRelease differs from the reviewed release record")
@@ -1153,9 +1228,9 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
     if len(paragraphs) != 1:
         raise DeploymentError("InRelease must hold exactly one Release paragraph")
     signed = paragraphs[0]
-    expected = {"origin": policy["origin"], "codename": policy["codename"], "components": policy["component"],
-                "architectures": policy["architecture"]}
-    if any(signed.get(k) != v for k, v in expected.items()) or signed.get("suite", policy["codename"]) != policy["codename"]:
+    expected = {"origin": names["origin"], "codename": names["codename"], "components": names["component"],
+                "architectures": names["architecture"]}
+    if any(signed.get(k) != v for k, v in expected.items()) or signed.get("suite", names["codename"]) != names["codename"]:
         raise DeploymentError("foreign or unexpected repository origin/suite/components/architectures")
     listed = release_files(signed, "InRelease")
     present = {p.relative_to(dist).as_posix() for p in dist.rglob("*") if p.is_file() or p.is_symlink()}
@@ -1166,9 +1241,12 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
         path = dist / relative
         if path.is_symlink() or not path.is_file() or path.stat().st_size != size or sha(path) != digest:
             raise DeploymentError("index differs from the signed Release: " + relative)
-    index = policy["component"] + "/binary-" + policy["architecture"] + "/Packages"
+    index = names["component"] + "/binary-" + names["architecture"] + "/Packages"
     if index not in listed:
         raise DeploymentError("signed Release does not list " + index)
+    if closure is not None:
+        return _verify_mirror_packages(root, dist / index, closure, closure_packages, names, policy, target_status, sources_entry,
+                                       fingerprint, inrelease, release)
     lock = load(HERE / "sources.lock.json")
     components = {c["id"]: c for c in lock["components"]}
     allowed, manifests, trees, records = {}, {}, {}, []
@@ -1262,6 +1340,66 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
             "scope": "Signature, index and package hashes, build-record, recipe, patch, listed-patch, source-member, recipe-file, hook and source-lock binding, "
                      "package data trees where recorded, named receive-only content rules"
                      + (", REVIEWED records and verify_build per package" if release else "") + "; no install, no receive-only proof."}
+
+
+def _verify_mirror_packages(root, index, closure, closure_packages, names, policy, target_status, sources_entry, fingerprint, inrelease,
+                            release):
+    """The srrx-mirror half of verify_repo, after the signature and the signed index list: every
+    Packages stanza is one pool .deb with the index hashes and exactly one package closure entry
+    (no +labN rule: these are the noble snapshot's own versions), checked against
+    never_in_lab_repo_globs, the held packages of target_status and the receive-only content rules
+    before the next; then every closure entry is listed, the policy forbids none of the versions,
+    the pool holds nothing else and the apt entry is the mirror's with the one Signed-By keyring."""
+    never = [g.lower() for g in policy["never_in_lab_repo_globs"]]
+    held = _held(target_status) if target_status is not None else {}
+    closure_names = {name for name, _, _ in closure_packages}
+    referenced, versions, found = set(), {}, set()
+    for stanza in deb822(index.read_text(encoding="utf-8"), "Packages"):
+        name, version, arch = stanza.get("package"), stanza.get("version"), stanza.get("architecture")
+        filename = stanza.get("filename", "")
+        if not name or not version or arch not in (names["architecture"], "all"):
+            raise DeploymentError("Packages stanza lacks package/version or has a foreign architecture")
+        if (not filename.startswith("pool/") or ".." in filename.split("/") or filename in referenced or name in versions
+                or not stanza.get("size", "").isdigit() or not re.fullmatch(r"[0-9a-f]{64}", stanza.get("sha256", ""))):
+            raise DeploymentError("unsafe, duplicate or unhashed pool entry: " + name)
+        deb = root / filename
+        if deb.is_symlink() or not deb.is_file() or deb.stat().st_size != int(stanza["size"]) or sha(deb) != stanza["sha256"]:
+            raise DeploymentError("pool .deb differs from the signed Packages index: " + filename)
+        if name not in closure_names:
+            raise DeploymentError("package is not in the package closure (" + Path(closure).name + "): " + name + " " + version)
+        if closure_packages.get((name, version, arch)) != (stanza["sha256"], int(stanza["size"])):
+            raise DeploymentError("package differs from its package closure entry (version, architecture, SHA-256 or size): " + name)
+        if any(fnmatch.fnmatchcase(name.lower(), g) for g in never):
+            raise DeploymentError("kernel, bootloader, SPI or DSP firmware package in the srrx-mirror publication: " + name)
+        if name in held and held[name] != version:
+            raise DeploymentError("update would change a held package: " + name)
+        inventory = deb_data_inventory(deb)
+        issues = lab_package_issues({p: {"dir": "dir", "symlink": "link"}.get(e["type"], "file") for p, e in inventory.items()})
+        if issues:
+            raise DeploymentError("receive-only policy refuses the contents of " + name + ": " + issues[0])
+        referenced.add(filename)
+        versions[name] = version
+        found.add((name, version, arch))
+    missing = sorted(name for name, _, _ in set(closure_packages) - found)
+    if missing:
+        raise DeploymentError("signed srrx-mirror publication lacks closure packages: " + ", ".join(missing))
+    forbidden = prohibited_installed(versions, identifiers=True)
+    if forbidden:
+        raise DeploymentError("receive-only policy forbids repository packages: " + ", ".join(forbidden))
+    pool = {p.relative_to(root).as_posix() for p in (root / "pool").rglob("*") if p.is_file() or p.is_symlink()} if (root / "pool").is_dir() else set()
+    if pool != referenced:
+        raise DeploymentError("pool holds a file the signed Packages index does not list: " + sorted(pool - referenced)[0])
+    entries = deb822(Path(sources_entry).read_text(encoding="utf-8"), "apt sources entry")
+    if (len(entries) != 1 or entries[0].get("signed-by") != policy["keyring_path"] or entries[0].get("suites") != names["codename"]
+            or entries[0].get("components") != names["component"] or entries[0].get("types") != "deb"):
+        raise DeploymentError("apt entry must be one deb822 stanza with Signed-By " + policy["keyring_path"] + " and Suites " + names["codename"])
+    return {"status": "SIGNED_MIRROR_MATCHES_PACKAGE_CLOSURE", "publication": names["origin"], "packages": len(referenced),
+            "inrelease_sha256": sha(inrelease), "signing_fingerprint": fingerprint.upper(),
+            "closure": {"path": str(closure), "sha256": sha(closure), "packages": len(closure_packages)},
+            "release_path": bool(release), "hardware_ready": False,
+            "scope": "Signature, index and package hashes, exactly the package closure entries (version, architecture, SHA-256, size), "
+                     "held packages, never_in_lab_repo_globs and named receive-only content and package rules"
+                     + (", pinned InRelease" if release else "") + "; no install, no receive-only proof."}
 
 
 def verify_build(prefix, manifest):
@@ -1601,11 +1739,13 @@ def main():
     package = commands.add_parser("bundle")
     package.add_argument("--stage-dir", type=Path, required=True)
     package.add_argument("--output", type=Path, required=True)
-    signed = commands.add_parser("verify-repo", help="check a signed lab repository against build records (deployment/repo/README.md)")
+    signed = commands.add_parser("verify-repo", help="check a signed lab repository against build records, or the srrx-mirror "
+                                                     "publication against the package closure (deployment/repo/README.md)")
     signed.add_argument("--repo", type=Path, required=True)
     signed.add_argument("--keyring", type=Path, required=True)
     signed.add_argument("--fingerprint", required=True)
-    signed.add_argument("--build-record", type=Path, action="append", required=True)
+    signed.add_argument("--build-record", type=Path, action="append", default=[], help="srrx-lab: one per build record (required)")
+    signed.add_argument("--closure", type=Path, help="srrx-mirror: the package closure file (deployment/image/package-closure.json); no build records")
     signed.add_argument("--sources-entry", type=Path, required=True)
     signed.add_argument("--inrelease-sha256")
     signed.add_argument("--target-status", type=Path, help="dpkg status of the root being updated (held packages)")
@@ -1614,6 +1754,8 @@ def main():
     for name in ("devices", "acceptance", "release", "build-manifest", "cache"):
         guard.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args()
+    if args.operation == "verify-repo" and not args.build_record and args.closure is None:
+        parser.error("verify-repo needs --build-record (srrx-lab) or --closure (srrx-mirror)")
     try:
         if args.operation == "check": result = check()
         elif args.operation == "doctor": result = doctor(load(args.devices) if args.devices else None)
@@ -1625,7 +1767,7 @@ def main():
         elif args.operation == "stage-ab": result = stage_ab(load(args.config), args.dest)
         elif args.operation == "bundle": result = bundle(args.stage_dir, args.output)
         elif args.operation == "verify-repo": result = verify_repo(args.repo, args.keyring, args.fingerprint, args.build_record, args.sources_entry,
-                                                                args.inrelease_sha256, args.target_status, args.release)
+                                                                args.inrelease_sha256, args.target_status, args.release, args.closure)
         else: result = release_guard(args.devices, args.acceptance, args.release, args.build_manifest, args.cache)
         print(json.dumps(result, indent=2))
         if result.get("status") == "BLOCKED": sys.exit(2)

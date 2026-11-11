@@ -1,0 +1,10 @@
+[Radio]
+Host=127.0.0.1
+Port=4532
+Cycle=1000
+Type=0
+PTT=0
+SIGNAL_AOS=false
+SIGNAL_LOS=false
+SIGNAL_AOIQ=false
+SIGNAL_LOIQ=false

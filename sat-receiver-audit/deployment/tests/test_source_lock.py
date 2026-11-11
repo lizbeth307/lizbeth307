@@ -40,7 +40,9 @@ class LockShapeTests(unittest.TestCase):
             self.assertRegex(component["commit"], "^[0-9a-f]{40}$")
             self.assertTrue(component["source_archive_url"].startswith("https://"), component["id"])
             self.assertGreater(component["source_archive_size"], 0)
-            if component["source_archive_url"].startswith("https://github.com/"):
+            if component["source_archive_url"].startswith("https://github.com/") and "/releases/download/" in component["source_archive_url"]:
+                self.assertIn("/releases/download/" + component["tag"] + "/", component["source_archive_url"])  # release asset of its tag
+            elif component["source_archive_url"].startswith("https://github.com/"):
                 self.assertRegex(component.get("git_tree_sha1", ""), "^[0-9a-f]{40}$", component["id"])
                 self.assertIn(component["commit"], component["source_archive_url"])
 
@@ -362,6 +364,31 @@ class SignedSnapshotTests(unittest.TestCase):
     def snapshot_without_version(self):
         shutil.rmtree(self.root / "snapshot")
         return self.snapshot(version="4.5-1ubuntu9")
+
+
+class GpredictReleaseAssetTests(unittest.TestCase):
+    """W2 SW-GPREDICT: Gpredict 2.7 is the GitHub release asset of tag v2.7, a release tarball
+    (generated configure) with no git_tree_sha1, compared with its tag by the sources job."""
+
+    def test_gpredict_is_the_v2_7_release_asset(self):
+        gpredict = next(c for c in LOCK["components"] if c["id"] == "gpredict")
+        self.assertEqual((gpredict["version"], gpredict["tag"], gpredict["commit"]),
+                         ("2.7+lab1", "v2.7", "22593781b5fc922aa7064c8665d40ef8b3f98ddb"))
+        self.assertEqual(gpredict["source_archive_url"], "https://github.com/csete/gpredict/releases/download/v2.7/gpredict-2.7.tar.bz2")
+        self.assertEqual((gpredict["source_archive_size"], gpredict["source_cache_path"]), (4727308, "sources/gpredict.tar.bz2"))
+        self.assertNotIn("git_tree_sha1", gpredict)
+        self.assertEqual(fetch_sources.tree_exemption(gpredict), "release tarball, not a git archive")
+        with tempfile.TemporaryDirectory(prefix="srrx-tree-gpredict-") as temporary:
+            self.assertEqual(fetch_sources.verify_trees(temporary, ["gpredict"])["skipped"], {"gpredict": "release tarball, not a git archive"})
+
+    def test_a_github_archive_without_its_tree_still_fails(self):
+        lock = copy.deepcopy(LOCK)
+        sdrpp = next(c for c in lock["components"] if c["id"] == "sdrpp")
+        self.assertIsNone(fetch_sources.tree_exemption(sdrpp))  # /archive/<commit>.tar.gz is a git archive
+        del sdrpp["git_tree_sha1"]
+        with tempfile.TemporaryDirectory(prefix="srrx-tree-gpredict-") as temporary:
+            with self.assertRaisesRegex(fetch_sources.FetchError, "git archive has no recorded git_tree_sha1: sdrpp"):
+                fetch_sources.verify_trees(temporary, ["sdrpp"], lock=lock)
 
 
 if __name__ == "__main__":

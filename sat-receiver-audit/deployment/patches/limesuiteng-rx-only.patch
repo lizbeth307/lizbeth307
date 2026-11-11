@@ -146,18 +146,22 @@
      std::unique_lock<std::recursive_mutex> lock(_accessMutex);
      sdrDevice->WriteRegister(0, addr, value, true);
  }
-@@ -845,6 +891,10 @@
+@@ -845,6 +891,14 @@
  
  void Soapy_limesuiteng::writeSetting(const std::string& key, const std::string& value)
  {
-+    /* SRRX_RX_ONLY: TX settings, LOAD_CONFIG/SAVE_CONFIG and other LMS7002M fields are rejected. */
++    /* SRRX_RX_ONLY: TX settings, LOAD_CONFIG/SAVE_CONFIG and other LMS7002M fields are rejected. A per-channel
++       RX key goes on, as upstream, to writeSetting(SOAPY_SDR_RX, channel, ...), which checks it again. */
 +    if (!srrxRxSetting(key) && !srrxTxOffField(key, value))
-+        throw std::runtime_error("SRRX receive-only: setting " + key + " rejected");
++    {
++        if (!srrxRxChannelSetting(key))
++            throw std::runtime_error("SRRX receive-only: setting " + key + " rejected");
++    }
 +
      const size_t channelCount = sdrDevice->GetDescriptor().rfSOC.at(socIndex).channelCount;
      if (key == "RXTSP_CONST")
      {
-@@ -1007,6 +1057,10 @@
+@@ -1007,6 +1061,10 @@
  
  void Soapy_limesuiteng::writeSetting(const int direction, const size_t channel, const std::string& key, const std::string& value)
  {
@@ -168,7 +172,7 @@
      std::unique_lock<std::recursive_mutex> lock(_accessMutex);
      const TRXDir dir = (direction == SOAPY_SDR_TX) ? TRXDir::Tx : TRXDir::Rx;
  
-@@ -1160,6 +1214,9 @@
+@@ -1160,6 +1218,9 @@
  
  void Soapy_limesuiteng::writeGPIO(const std::string&, const unsigned value)
  {
@@ -178,7 +182,7 @@
      OpStatus r = sdrDevice->GPIOWrite(reinterpret_cast<const uint8_t*>(&value), sizeof(value));
      if (r != OpStatus::Success)
      {
-@@ -1180,6 +1237,9 @@
+@@ -1180,6 +1241,9 @@
  
  void Soapy_limesuiteng::writeGPIODir(const std::string&, const unsigned dir)
  {
@@ -427,7 +431,7 @@
  
      OpStatus status = lms.SPI_write_batch(addrs.data(), values.data(), addrs.size(), true);
      return status;
-@@ -425,7 +432,19 @@
+@@ -425,9 +432,28 @@
  
  OpStatus LimeSDR_Micro::Configure(const SDRConfig& cfg, uint8_t socIndex)
  {
@@ -446,8 +450,17 @@
 +
      if (!fw)
          return ReportError(OpStatus::Error, "Firmware is not loaded");
++    /* SRRX_RX_ONLY: no TX band/TX switch (tx.path other than 0, "None") and no TX LPF, as SetAntenna(Tx) and
++       SetLowPassFilter(Tx) are rejected. */
++    for (int c = 0; c < 2; ++c)
++    {
++        if (cfg.channel[c].tx.path != 0 || cfg.channel[c].tx.lpf != 0)
++            return OpStatus::NotSupported;
++    }
      auto& rfsoc = mLMSChips.at(0);
-@@ -542,6 +561,10 @@
+ 
+     if (cfg.referenceClockFreq > 0)
+@@ -542,6 +568,10 @@
  
  OpStatus LimeSDR_Micro::SetClockFreq(uint8_t clk_id, double freq, uint8_t channel)
  {
@@ -458,7 +471,7 @@
      auto& chip = mLMSChips.at(channel / 2);
      return chip->SetClockFreq(static_cast<LMS7002M::ClockID>(clk_id), freq);
  }
-@@ -599,11 +622,19 @@
+@@ -599,11 +629,19 @@
  
  OpStatus LimeSDR_Micro::WriteRegister(uint8_t moduleIndex, unsigned int address, unsigned int value, bool useFPGA)
  {
@@ -478,7 +491,7 @@
      mLMSChips.at(0)->SetActiveChannel(static_cast<LMS7002M::Channel>((channel % 2) + 1));
      return trx == TRXDir::Rx ? CalibrateRx() : CalibrateTx();
  }
-@@ -661,6 +692,13 @@
+@@ -661,6 +699,13 @@
  
  OpStatus LimeSDR_Micro::SPI(uint32_t chipSelect, const uint32_t* MOSI, uint32_t* MISO, uint32_t count)
  {
@@ -492,7 +505,7 @@
      return lmsSPI->Transact(MOSI, MISO, count);
  }
  
-@@ -671,6 +709,13 @@
+@@ -671,6 +716,13 @@
  
  OpStatus LimeSDR_Micro::CustomParameterWrite(const std::vector<CustomParameterIO>& parameters)
  {
@@ -506,7 +519,7 @@
      return LMS64CProtocol::CustomParameterWrite(*mSerialPort, parameters, 0);
  }
  
-@@ -750,13 +795,17 @@
+@@ -750,13 +802,17 @@
          }
          value |= (rxsw2 << 0) | (rxsw3 << 2); // set TX_SW, Band2
      }
@@ -525,7 +538,7 @@
      OpStatus status;
  
      switch (device)
-@@ -804,6 +853,9 @@
+@@ -804,6 +860,9 @@
  
  OpStatus LimeSDR_Micro::MemoryWrite(std::shared_ptr<DataStorage> storage, Region region, const void* data)
  {
@@ -535,7 +548,7 @@
      if (storage == nullptr || storage->ownerDevice != this || storage->memoryDeviceType != eMemoryDevice::EEPROM)
      {
          return OpStatus::Error;
-@@ -824,7 +876,8 @@
+@@ -824,7 +883,8 @@
  
  OpStatus LimeSDR_Micro::UploadTxWaveform(const StreamConfig& config, uint8_t moduleIndex, const void** samples, uint32_t count)
  {
@@ -545,7 +558,7 @@
  }
  
  OpStatus LimeSDR_Micro::GetGPSLock(GPS_Lock* status)
-@@ -844,11 +897,20 @@
+@@ -844,11 +904,20 @@
  
  OpStatus LimeSDR_Micro::SetAntenna(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t path)
  {
@@ -566,7 +579,7 @@
      if (!la9310->IsVSPAFirmwareLoaded())
      {
          std::vector<char> firmware;
-@@ -886,6 +948,9 @@
+@@ -886,6 +955,9 @@
  OpStatus LimeSDR_Micro::I2CWrite(
      uint32_t bus, uint32_t soc, uint32_t offset, uint8_t offset_len, const uint8_t* data, uint32_t length)
  {
@@ -576,7 +589,7 @@
      return LMS64CProtocol::I2C_Write(*mSerialPort, soc, offset, offset_len, data, length);
  }
  
-@@ -942,6 +1007,9 @@
+@@ -942,6 +1014,9 @@
  
  ICSR* LimeSDR_Micro::getICSR()
  {
@@ -586,7 +599,7 @@
      return new LA9310_CSR(mStreamingPort);
  }
  
-@@ -1117,6 +1185,9 @@
+@@ -1117,6 +1192,9 @@
  
  OpStatus LimeSDR_Micro::OEMTest(OEMTestReporter* reporter)
  {
@@ -596,7 +609,7 @@
      TestData results;
      OEMTestData test("LimeSDR-Micro OEM Test");
  
-@@ -1167,6 +1238,9 @@
+@@ -1167,6 +1245,9 @@
  
  OpStatus LimeSDR_Micro::WriteSerialNumber(uint64_t serialNumber)
  {

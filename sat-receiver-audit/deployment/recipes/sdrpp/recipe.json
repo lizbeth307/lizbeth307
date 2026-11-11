@@ -1,7 +1,7 @@
 {
   "schema_version": 2,
   "component": "sdrpp",
-  "summary": "sdrpp 1.3.0~git20260705.8c9f5ee+lab1: SDR++ 8c9f5ee8 with the build allowlist (radio, audio_sink, frequency_manager, sources rtl_sdr/airspyhf/soapy/file/network, rigctl_server), no RTL bias-tee or direct-sampling control, server mode refused",
+  "summary": "sdrpp 1.3.0~git20260705.8c9f5ee+lab1: SDR++ 8c9f5ee8 with the build allowlist (radio, audio_sink, frequency_manager, sources rtl_sdr/airspyhf/soapy/file/network, rigctl_server), no RTL bias-tee or direct-sampling control, server mode refused, rigctl_server and network_source on 127.0.0.1 only",
   "source": {
     "patch": null,
     "patches": [
@@ -20,6 +20,15 @@
         "targets": {"core/src/core.cpp": "2b6a89d6a5743e3a4bf1fd4e99c353df28457e17"},
         "kind": "lab",
         "summary": "core: sdrpp --server / -s exits with status 1 before the root directory or any config is touched (upstream server mode listens on 0.0.0.0:5259 by default)"
+      },
+      {
+        "file": "patches/0003-lab-loopback-only.patch",
+        "sha256": "2deb927ff39671f9b5bfbae9b7e6fb089923ddc6efc0d64bf9bfe2a1477bfbf2",
+        "strip": 1,
+        "targets": {"misc_modules/rigctl_server/src/main.cpp": "0699724db13b9449ac8dfbcfc9f29310bad3ed38",
+                    "source_modules/network_source/src/main.cpp": "4dfa5cdc6c2fb08f103c21a0b0840bad38bf0dd9"},
+        "kind": "lab",
+        "summary": "rigctl_server listens on 127.0.0.1 only and network_source binds its UDP socket to and connects its TCP client to 127.0.0.1 only: the host fields, the host config keys and the configurable host are removed, the port stays configurable"
       }
     ],
     "member": null
@@ -129,6 +138,8 @@
                                         "*bladerf*", "*usrp*", "*.a", "usr/include/*"]},
     {"kind": "soname", "file": "usr/lib/libsdrpp_core.so", "equals": "libsdrpp_core.so"},
     {"kind": "forbid_strings", "file": "usr/lib/sdrpp/plugins/rtl_sdr_source.so", "substrings": ["biasT", "Bias T", "rtlsdr_set_bias_tee", "Direct Sampling"]},
+    {"kind": "forbid_strings", "file": "usr/lib/sdrpp/plugins/rigctl_server.so", "substrings": ["##_rigctl_srv_host_"]},
+    {"kind": "forbid_strings", "file": "usr/lib/sdrpp/plugins/network_source.so", "substrings": ["##network_source_host_"]},
     {"kind": "forbid_needed", "files": ["usr/bin/sdrpp", "usr/lib/libsdrpp_core.so", "usr/lib/sdrpp/plugins/*.so"],
      "needed": ["librtlsdr.so.0*", "libhackrf*", "libbladeRF*", "libLimeSuite*", "liblimesuite*", "libiio*", "libad9361*", "libairspy.so*", "libSoapySDR.so.0.9*"]}
   ],
@@ -139,8 +150,9 @@
     "libsdrpp_core.so keeps the upstream layout: /usr/lib, SONAME libsdrpp_core.so without a version, so it gets no DEBIAN/shlibs and dpkg-shlibdeps skips it as an unversioned library of the same build. Only the listed targets are built: libcorrect's tests and tools and the Linux copy target do_always are not compiled.",
     "Lab patch 0001 (rtl_sdr_source) removes the Bias T and Direct Sampling controls: no biasT key is written or read, directSampling is written as 0 and never read, and the device always gets rtlsdr_set_direct_sampling(dev, 0) (STACK.md:888; selftest RX-01c). The lab librtlsdr already refuses GPIO0 bias ON (deployment/patches/rtlsdr-rx-only.patch).",
     "Lab patch 0002 (core) makes sdrpp --server exit with status 1 before it touches a root directory: build/07 section 13 says never sdrpp --server, and upstream server mode listens on 0.0.0.0:5259 (core/src/command_args.cpp:16,18). Selftest RX-03 still refuses any launcher with --server.",
-    "rigctl_server default at 8c9f5ee8 is host localhost, port 4532, autoStart false (misc_modules/rigctl_server/src/main.cpp:39-43, 684); the host stays editable in the GUI, so the lease unit's IPAddressDeny=any + IPAddressAllow=localhost is the enforcement (receive-only-policy.json units.lease_required). network_source in UDP mode binds 0.0.0.0:<port> (source_modules/network_source/src/main.cpp:167): the same unit rule applies.",
+    "Lab patch 0003 makes loopback-only networking a property of the build. Upstream 8c9f5ee8 rigctl_server defaults to host localhost, port 4532, autoStart false (misc_modules/rigctl_server/src/main.cpp:39-43, 684) but the host is an editable GUI field (:114-118) passed to net::listen (:200; core/src/utils/networking.cpp:417-431, IPv4 bind). Upstream network_source keeps an editable host (default localhost, port 1234, UDP; source_modules/network_source/src/main.cpp:216-220, 329-334): its TCP client connects to that host (:163), and in UDP mode it binds the socket to that host, because the 0.0.0.0 of net::openudp(\"0.0.0.0\", port, hostname, port, true) at :167 is the remote address (core/src/utils/net.h:281, net.cpp:407, 425-426). After 0003 both use the fixed 127.0.0.1, the host fields and host config keys are gone, and only the port stays configurable; forbid_strings and runtime_check.py check this in the built modules. No lease or unit for the Expert GUI exists yet (software/systemd has only the readsb, AIS-catcher and sdrangelsrv lease templates; RX-12 checks only system units): the IPAddressDeny=any + IPAddressAllow=localhost confinement of the SDR++ session is OPEN (HMI session IMG-06, GUI lease, RX-12-runtime).",
     "The package version 1.3.0~git20260705.8c9f5ee+lab1 (sources.lock.json) follows core/src/version.h VERSION_STR 1.3.0 of the commit dated 2026-07-05 UTC; there is no 1.3.0 release tag, hence ~git. The earlier lock version git8c9f5ee+lab1 does not start with a digit, which dpkg-deb --build refuses.",
+    "The brief's check that the default config has no biasT key and directSampling 0 is met by proxy: the rtl_sdr_source default config of 8c9f5ee8 is {devices: {}, device: 0} (source_modules/rtl_sdr_source/src/main.cpp:587-593) and holds no device entry, and the per-device keys are written only when a device is first selected (:200-210), which needs the GUI and a device. So CI checks patch 0001 (tests/test_recipes.py) and the built module's strings (forbid_strings, runtime_check.py: no biasT, Bias T, rtlsdr_set_bias_tee or Direct Sampling; directSampling present). The check of a real rtl_sdr_config.json after the first selection (selftest RX-01c) is a device row and stays OPEN.",
     "CI build only: the package is CI_BUILT_UNREVIEWED; the GUI is never started in CI and tuning, audio and the Gpredict Doppler loop on the Q6A stay device rows."
   ]
 }

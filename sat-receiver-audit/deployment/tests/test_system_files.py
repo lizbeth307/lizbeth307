@@ -714,24 +714,46 @@ class SessionFilesTests(unittest.TestCase):
 
 @unittest.skipUnless(SH, "lab-session and the labwc autostart run under a POSIX sh")
 class LabSessionExecutionTests(unittest.TestCase):
-    """lab-session and the labwc autostart with fake labwc/cage/systemctl/kanshi/sleep; no compositor runs."""
+    """lab-session and the labwc autostart with fake labwc/cage/systemctl/systemd-cat/kanshi/sleep; no compositor runs."""
     FAKES = {
         "labwc": 'echo "labwc $*" >> "$CALLS"\n'
                  'if [ "$1" = --exit ]; then exit 0; fi\n'
+                 'if [ -n "${HANG:-}" ]; then\n'
+                 '  trap \'echo "labwc HUP" >> "$CALLS"\' HUP\n'
+                 '  if [ -n "${IGNORE_TERM:-}" ]; then trap "" TERM; else trap \'echo "labwc TERM" >> "$CALLS"; exit 0\' TERM; fi\n'
+                 '  echo "$$" > "$HANG.new" && mv "$HANG.new" "$HANG"\n'
+                 '  while :; do "$REAL_SLEEP" 1 > /dev/null 2>&1 & wait $!; done\n'
+                 'fi\n'
                  'if [ -n "${STEP:-}" ]; then read -r up rest < "$UPTIME"; echo "$(( ${up%%.*} + STEP )).00 0.00" > "$UPTIME"; fi\n'
                  'if [ "$(grep -c "^labwc -C" "$CALLS")" -ge "${KILL_AFTER:-99}" ]; then kill -TERM "$PPID"; fi\n'
                  'exit 1\n',
         "cage": 'echo "cage $*" >> "$CALLS"\n'
                 'if [ -n "${CAGE_KILL:-}" ]; then kill -TERM "$PPID"; exit 1; fi\n'
                 'shift 2\n"$@"\nexit $?\n',
+        # is-enabled: ENABLED=0 enabled, 1 disabled, bus = no user manager (nothing on stdout).
         "systemctl": 'echo "systemctl $*" >> "$CALLS"\n'
-                     'case "$*" in *is-enabled*) exit "${ENABLED:-0}" ;; *start*) exit "${START_STATUS:-1}" ;; esac\nexit 0\n',
+                     'case "$*" in\n'
+                     '*is-enabled*) case ${ENABLED:-0} in 0) echo enabled; exit 0 ;; bus) echo "Failed to connect to bus" >&2; exit 1 ;; esac\n'
+                     '  echo disabled; exit 1 ;;\n'
+                     '*ConditionResult*) echo "${CONDITION:-yes}" ;;\n'
+                     '*start*) exit "${START_STATUS:-1}" ;;\n'
+                     'esac\nexit 0\n',
+        # Like systemd v255 systemd-cat: stdin lines under a tag, or exec the command (same PID).
+        "systemd-cat": 'tag=-\nif [ "$1" = -t ]; then tag=$2; shift 2; fi\n'
+                       'if [ "$#" -eq 0 ]; then while IFS= read -r line; do echo "$tag: $line" >> "$JOURNAL_LOG"; done; exit 0; fi\n'
+                       'echo "$tag: exec $*" >> "$JOURNAL_LOG"\nexec "$@"\n',
         "kanshi": 'echo "kanshi $*" >> "$CALLS"\n',
         "python3": 'echo \'{"ok": false, "fake": "labd status"}\'\n',
-        "sleep": 'echo "sleep $*" >> "$CALLS"\nif [ "$1" = 30 ]; then kill -TERM "$PPID"; fi\n',
+        # lab-session's stop watchdog sleeps STOP_WAIT=5 s: really sleep, but only STOP_SLEEP s.
+        "sleep": 'case $1 in 5) exec "$REAL_SLEEP" "${STOP_SLEEP:-0.5}" ;; esac\n'
+                 'echo "sleep $*" >> "$CALLS"\nif [ "$1" = 30 ]; then kill -TERM "$PPID"; fi\n',
     }
+    STOP = "systemctl --user stop srrx-menu.service"
+    CONSOLE = ["systemctl --user import-environment WAYLAND_DISPLAY", "systemctl --user is-enabled srrx-menu.service",
+               "systemctl --user start --wait srrx-menu.service", "systemctl --user show -P ConditionResult srrx-menu.service"]
 
     def setUp(self):
+        import socket
         self.temp = tempfile.TemporaryDirectory(prefix="srrx-lab-session-")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
@@ -740,6 +762,7 @@ class LabSessionExecutionTests(unittest.TestCase):
         for name, body in self.FAKES.items():
             (self.bin / name).write_text("#!/bin/sh\n" + body, newline="\n")
             (self.bin / name).chmod(0o755)
+        self.real_sleep = shutil.which("sleep")
         self.state = self.root / "state"
         self.state.mkdir()
         self.uptime = self.root / "uptime"
@@ -748,46 +771,80 @@ class LabSessionExecutionTests(unittest.TestCase):
         self.calls.write_text("")
         self.profile = self.root / "display-profile"
         self.proc = self.root / "proc"
+        # journald's stream socket: while it exists, lab-session logs and runs its stages through systemd-cat.
+        self.journal = self.root / "journal.sock"
+        listener = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.addCleanup(listener.close)
+        listener.bind(str(self.journal))
+        self.journal_log = self.root / "journal"
+        self.journal_log.write_text("")
 
     def script(self, name):
         text = (system_files.SESSION_SOURCES / name).read_text(encoding="utf-8")
         for old, new in (("/usr/bin/", self.bin.as_posix() + "/"), ("/proc/uptime", self.uptime.as_posix()),
                          ("/run/srrx-session", self.state.as_posix()), ("/etc/srrx/display-profile", self.profile.as_posix()),
-                         ("/proc/", self.proc.as_posix() + "/")):
+                         ("/run/systemd/journal/stdout", self.journal.as_posix()), ("/proc/", self.proc.as_posix() + "/")):
             text = text.replace(old, new)
         path = self.root / name
         path.write_text(text, newline="\n")
         path.chmod(0o755)
         return path
 
-    def run_sh(self, path, *args, **env):
+    def environ(self, env):
         environ = {"PATH": self.bin.as_posix() + os.pathsep + os.environ["PATH"], "CALLS": self.calls.as_posix(),
-                   "UPTIME": self.uptime.as_posix(), "HOME": self.root.as_posix()}
+                   "UPTIME": self.uptime.as_posix(), "HOME": self.root.as_posix(), "JOURNAL_LOG": self.journal_log.as_posix(),
+                   "REAL_SLEEP": self.real_sleep}
         environ.update(env)
-        return subprocess.run([SH, str(path), *args], env=environ, capture_output=True, text=True, timeout=60)
+        return environ
+
+    def run_sh(self, path, *args, **env):
+        return subprocess.run([SH, str(path), *args], env=self.environ(env), capture_output=True, text=True, timeout=60)
+
+    def popen_sh(self, path, **env):
+        proc = subprocess.Popen([SH, str(path)], env=self.environ(env), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        self.addCleanup(lambda: proc.poll() is None and proc.kill())
+        return proc
+
+    def wait_for(self, check):
+        import time
+        for _ in range(200):
+            value = check()
+            if value:
+                return value
+            time.sleep(0.05)
+        self.fail("timed out")
 
     def lines(self):
         return self.calls.read_text().splitlines()
 
+    def journal_lines(self):
+        return self.journal_log.read_text().splitlines()
+
     def test_three_failures_in_ten_minutes_go_to_safe_mode_then_to_the_text_console(self):
         script = self.script("lab-session")
         result = self.run_sh(script)
-        self.assertEqual(result.returncode, -15, result.stderr)  # alive until the fake sleep's SIGTERM
+        self.assertEqual(result.returncode, 143, result.stderr)  # alive until the fake sleep's SIGTERM, then 128+15
         calls = [l for l in self.lines() if not l.startswith("sleep 1")]
-        client = ["systemctl --user import-environment WAYLAND_DISPLAY", "systemctl --user --quiet is-enabled srrx-menu.service",
-                  "systemctl --user start --wait srrx-menu.service"]
-        self.assertEqual(calls, ["labwc -C /usr/lib/srrx/labwc"] * 3
-                         + (["cage -d -- " + str(script) + " client"] + client) * 3 + ["sleep 30"])
+        self.assertEqual(calls, [self.STOP, "labwc -C /usr/lib/srrx/labwc"] * 3
+                         + ([self.STOP, "cage -d -- " + str(script) + " client"] + self.CONSOLE) * 3 + ["sleep 30"])
         self.assertEqual((self.state / "mode").read_text(), "text\n")
         self.assertIn("switching to safe mode", result.stderr)
         self.assertIn("switching to the text console", result.stderr)
         self.assertIn("lab-session text console", result.stdout)
+        self.assertIn("no graphical session: the graphical session failed 3 times within 600 s in safe mode as well.", result.stdout)
         self.assertIn('"fake": "labd status"', result.stdout)
+        # The same lines reach the journal, and the stages run under systemd-cat with their own tags.
+        journal = self.journal_lines()
+        self.assertEqual(journal.count("labwc: exec " + self.bin.as_posix() + "/labwc -C /usr/lib/srrx/labwc"), 3)
+        self.assertEqual(journal.count("cage: exec " + self.bin.as_posix() + "/cage -d -- " + str(script) + " client"), 3)
+        self.assertIn("lab-session: switching to safe mode: cage with the console only", journal)
+        self.assertIn("lab-session: switching to the text console", journal)
+        self.assertIn("lab-session: ending on SIGTERM", journal)
 
     def test_failures_older_than_ten_minutes_do_not_count(self):
         result = self.run_sh(self.script("lab-session"), STEP="300", KILL_AFTER="6")
-        self.assertEqual(result.returncode, -15, result.stderr)
-        self.assertEqual([l for l in self.lines() if not l.startswith("sleep")], ["labwc -C /usr/lib/srrx/labwc"] * 6)
+        self.assertEqual(result.returncode, 143, result.stderr)
+        self.assertEqual([l for l in self.lines() if not l.startswith("sleep")], [self.STOP, "labwc -C /usr/lib/srrx/labwc"] * 6)
         self.assertFalse((self.state / "mode").exists())
         self.assertEqual((self.state / "failures").read_text().split(), ["1300", "1600"])  # 1000 is 600 s old
         self.assertIn("2 failure(s) in the last 600 s", result.stderr)
@@ -796,55 +853,106 @@ class LabSessionExecutionTests(unittest.TestCase):
         (self.state / "mode").write_text("safe\n", newline="\n")
         (self.state / "failures").write_text("99\n", newline="\n")
         result = self.run_sh(self.script("lab-session"), CAGE_KILL="1")
-        self.assertEqual(result.returncode, -15, result.stderr)
-        self.assertEqual(self.lines()[0].split()[:3], ["cage", "-d", "--"])  # restarted greetd: still safe mode
+        self.assertEqual(result.returncode, 143, result.stderr)
+        self.assertEqual(self.lines()[0], self.STOP)
+        self.assertEqual(self.lines()[1].split()[:3], ["cage", "-d", "--"])  # restarted greetd: still safe mode
         (self.state / "mode").write_text("bogus\n", newline="\n")
         self.calls.write_text("")
         result = self.run_sh(self.script("lab-session"), KILL_AFTER="1")
         self.assertIn("unknown mode 'bogus'", result.stderr)
-        self.assertEqual(self.lines(), ["labwc -C /usr/lib/srrx/labwc"])
+        self.assertEqual(self.lines(), [self.STOP, "labwc -C /usr/lib/srrx/labwc"])
         shutil.rmtree(self.state)  # no tmpfiles directory: count in XDG_RUNTIME_DIR, only for this greetd run
         runtime = self.root / "runtime"
         runtime.mkdir()
         self.calls.write_text("")
+        self.journal.unlink()  # no journald: the stage runs directly and the log stays on the VT
+        self.journal_log.write_text("")
         result = self.run_sh(self.script("lab-session"), KILL_AFTER="2", XDG_RUNTIME_DIR=runtime.as_posix())
         self.assertIn("counting failures in " + runtime.as_posix() + "/srrx-session", result.stderr)
         self.assertEqual((runtime / "srrx-session/failures").read_text().split(), ["100"])
+        self.assertEqual([l for l in self.lines() if l.startswith("labwc")], ["labwc -C /usr/lib/srrx/labwc"] * 2)
+        self.assertEqual(self.journal_log.read_text(), "")
 
     def test_safe_mode_client_starts_only_an_enabled_console(self):
         script = self.script("lab-session")
         result = self.run_sh(script, "client", ENABLED="1")
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("srrx-menu.service is not enabled", result.stderr)
-        self.assertEqual(self.lines(), ["systemctl --user import-environment WAYLAND_DISPLAY",
-                                        "systemctl --user --quiet is-enabled srrx-menu.service"])
+        self.assertEqual(result.returncode, 69)  # no console to show: not a crash
+        self.assertIn("srrx-menu.service is disabled", result.stderr)
+        self.assertEqual(self.lines(), self.CONSOLE[:2])
         self.calls.write_text("")
         result = self.run_sh(script, "client", ENABLED="0", START_STATUS="3")
-        self.assertEqual(result.returncode, 3)  # exec: the status is systemctl's, so cage ends with the console
-        self.assertEqual(self.lines()[-1], "systemctl --user start --wait srrx-menu.service")
+        self.assertEqual(result.returncode, 3)  # the console's status, so cage ends with the console
+        self.assertEqual(self.lines(), self.CONSOLE)
+        self.calls.write_text("")
+        result = self.run_sh(script, "client", ENABLED="0", START_STATUS="0", CONDITION="no")
+        self.assertEqual(result.returncode, 69)  # skipped by ConditionPathExists= (no venv): no console either
+        self.assertIn("skipped by its condition", result.stderr)
+        self.calls.write_text("")
+        result = self.run_sh(script, "client", ENABLED="bus")
+        self.assertEqual(result.returncode, 1)  # the user manager did not answer: a session failure
+        self.assertIn("the user manager did not answer", result.stderr)
+        self.assertEqual(self.lines(), self.CONSOLE[:2])
+
+    def test_a_safe_mode_without_a_console_goes_straight_to_the_text_console(self):
+        (self.state / "mode").write_text("safe\n", newline="\n")
+        script = self.script("lab-session")
+        result = self.run_sh(script, ENABLED="0", START_STATUS="0", CONDITION="no")
+        self.assertEqual(result.returncode, 143, result.stderr)
+        self.assertEqual([l for l in self.lines() if not l.startswith("sleep 1")],
+                         [self.STOP, "cage -d -- " + str(script) + " client"] + self.CONSOLE + ["sleep 30"])
+        self.assertEqual((self.state / "mode").read_text(), "text\n")
+        self.assertEqual((self.state / "failures").read_text(), "")  # not counted as a failure
+        self.assertIn("no graphical session: the safe mode has no console", result.stdout)
+
+    def test_a_signal_to_the_wrapper_ends_a_compositor_that_ignores_the_hangup(self):
+        import signal
+        script = self.script("lab-session")
+        for sig, code in ((signal.SIGTERM, 143), (signal.SIGHUP, 129)):
+            self.calls.write_text("")
+            pidfile = self.root / ("labwc-%d.pid" % sig)
+            proc = self.popen_sh(script, HANG=pidfile.as_posix())
+            labwc = int(self.wait_for(lambda: pidfile.exists() and pidfile.read_text().strip()))
+            # The VT hangup when greetd's worker exits: labwc 0.7.1 reloads its configuration and stays.
+            os.kill(labwc, signal.SIGHUP)
+            self.wait_for(lambda: "labwc HUP" in self.lines())
+            os.kill(labwc, 0)
+            # greetd stop sends SIGTERM to the session's sub_task, that is to lab-session only.
+            os.kill(proc.pid, sig)
+            out, err = proc.communicate(timeout=30)
+            self.assertEqual(proc.returncode, code, err)
+            self.assertEqual(self.lines(), [self.STOP, "labwc -C /usr/lib/srrx/labwc", "labwc HUP", "labwc TERM"])
+            with self.assertRaises(ProcessLookupError):
+                os.kill(labwc, 0)
+            self.assertIn("ending on SIG" + sig.name[3:], err)
+            self.assertFalse((self.state / "failures").exists())  # a stop is not a failure
+
+    def test_a_compositor_that_ignores_sigterm_is_killed(self):
+        import signal
+        pidfile = self.root / "labwc.pid"
+        proc = self.popen_sh(self.script("lab-session"), HANG=pidfile.as_posix(), IGNORE_TERM="1")
+        labwc = int(self.wait_for(lambda: pidfile.exists() and pidfile.read_text().strip()))
+        os.kill(proc.pid, signal.SIGTERM)
+        out, err = proc.communicate(timeout=30)
+        self.assertEqual(proc.returncode, 143, err)
+        self.assertIn("the stage did not end within 5 s of SIGTERM and was killed", err)
+        with self.assertRaises(ProcessLookupError):
+            os.kill(labwc, 0)
 
     def test_autostart_runs_kanshi_and_ends_its_compositor_with_the_console(self):
         script = self.script("labwc-autostart")
         (self.proc / "4242").mkdir(parents=True)
         (self.proc / "4242/comm").write_text("labwc\n", newline="\n")
 
-        import time
-
         def run(**env):
             self.calls.write_text("")
             result = self.run_sh(script, LABWC_PID="4242", **env)
             self.assertEqual(result.returncode, 0, result.stderr)
-            for _ in range(50):  # kanshi runs in the background
-                if any(l.startswith("kanshi ") for l in self.lines()):
-                    break
-                time.sleep(0.1)
+            self.wait_for(lambda: any(l.startswith("kanshi ") for l in self.lines()))  # kanshi runs in the background
             return result, self.lines()
 
         result, calls = run(ENABLED="0", START_STATUS="0")
         self.assertIn("kanshi -c /usr/lib/srrx/kanshi/field60", calls)
-        self.assertEqual([l for l in calls if not l.startswith("kanshi")],
-                         ["systemctl --user import-environment WAYLAND_DISPLAY", "systemctl --user --quiet is-enabled srrx-menu.service",
-                          "systemctl --user start --wait srrx-menu.service", "labwc --exit"])
+        self.assertEqual([l for l in calls if not l.startswith("kanshi")], self.CONSOLE + ["labwc --exit"])
         self.profile.write_text("field52\n", newline="\n")
         self.assertIn("kanshi -c /usr/lib/srrx/kanshi/field52", run(ENABLED="0")[1])
         self.profile.write_text("@60Hz\n", newline="\n")
@@ -852,8 +960,14 @@ class LabSessionExecutionTests(unittest.TestCase):
         self.assertIn("kanshi -c /usr/lib/srrx/kanshi/field60", calls)
         self.assertIn("ignoring display profile '@60Hz'", result.stderr)
         result, calls = run(ENABLED="1")  # not enabled: no console, the compositor stays
-        self.assertNotIn("systemctl --user start --wait srrx-menu.service", calls)
-        self.assertNotIn("labwc --exit", calls)
+        self.assertEqual([l for l in calls if not l.startswith("kanshi")], self.CONSOLE[:2])
+        self.assertIn("srrx-menu.service is disabled", result.stderr)
+        result, calls = run(ENABLED="0", START_STATUS="0", CONDITION="no")  # enabled, no venv: skipped, the compositor stays
+        self.assertEqual([l for l in calls if not l.startswith("kanshi")], self.CONSOLE)
+        self.assertIn("skipped by its condition", result.stderr)
+        result, calls = run(ENABLED="bus")  # no user manager: a session failure, never "not enabled"
+        self.assertEqual([l for l in calls if not l.startswith("kanshi")], self.CONSOLE[:2] + ["labwc --exit"])
+        self.assertIn("the user manager did not answer", result.stderr)
         (self.proc / "4242/comm").write_text("other\n", newline="\n")  # the PID is no longer this compositor
         self.assertNotIn("labwc --exit", run(ENABLED="0")[1])
 
@@ -897,6 +1011,18 @@ class ChronyConfTests(unittest.TestCase):
         for mode in ("gpsd", "raw", "off"):
             self.assertNotIn(system_files.CHRONY_CONF, system_files.staged_files(gnss=mode))
         self.assertEqual(system_files.CHRONY_CONF, "etc/chrony/chrony.conf")
+
+
+class ChronyNetworkGuardTests(unittest.TestCase):
+    """IMG2-R2: chrony 4.5 directives that poll servers (initstepslew), send mail (mailonchange) or open a port without
+    any server or client setting (ptpport) are network directives too; the offline file still has none."""
+
+    def test_initstepslew_mailonchange_and_ptpport_are_guarded(self):
+        for word in ("initstepslew", "mailonchange", "ptpport"):
+            self.assertIn(word, system_files.CHRONY_NETWORK_DIRECTIVES)
+        self.assertEqual(len(set(system_files.CHRONY_NETWORK_DIRECTIVES)), len(system_files.CHRONY_NETWORK_DIRECTIVES))
+        directives = ChronyConfTests.directives(self, system_files.chrony_conf())
+        self.assertFalse(set(directives) & set(system_files.CHRONY_NETWORK_DIRECTIVES), directives)
 
 
 class VenvLockTests(unittest.TestCase):

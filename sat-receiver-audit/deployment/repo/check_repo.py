@@ -29,6 +29,10 @@ installed offline, a probe and each recipe's runtime_check.py under unshare --ne
 `tarball-vs-tag` (every lock entry with a tag and no git tree: its release tarball against the
 tag tree, reported) and `chains` (a heavy job's rebuilt lab_build_depends against the published
 bytes, reported; the bytes a published package was built against are a gate in `packages`).
+`mirror` (the mirror job): the srrx-mirror publication of exactly the image package closure
+(deployment/image/package-closure.json), its debs fetched from the pinned snapshot, published by
+publish.sh --mirror with the job's TEST key, verified by deploy.verify_repo(closure=...) and
+refused in tampered copies (changed byte, foreign package, wrong fingerprint, unsigned InRelease...).
 Read-only for its inputs; writes only into new temporary or named output directories. CI
 evidence only: no review, no TX proof, no hardware test.
 """
@@ -881,6 +885,363 @@ def chain_identity(out, chains):
             "scope": "Second builder on another runner for the chain packages; reported, not a gate."}
 
 
+# --- srrx-mirror (REPO-MIRROR): the image package closure as a signed publication -----------------
+
+MIRROR_SOURCES = DEPLOYMENT / "repo" / "srrx-mirror.sources"
+RELEASE_FIELDS = ("Origin", "Label", "Suite", "Codename", "Date", "Architectures", "Components")
+
+
+def _build_image():
+    """deployment/image/build_image.py (its closure checks and the snapshot fetch), imported on first use."""
+    if str(DEPLOYMENT / "image") not in sys.path:
+        sys.path.insert(0, str(DEPLOYMENT / "image"))
+    import build_image
+    return build_image
+
+
+def mirror_policy():
+    """The repo-policy.json mirror object (deploy.MIRROR_POLICY_KEYS)."""
+    policy = deploy.load(deploy.REPO_POLICY)
+    mirror = policy.get("mirror") if type(policy) is dict else None
+    if type(mirror) is not dict or tuple(mirror) != deploy.MIRROR_POLICY_KEYS:
+        raise CheckError("repo-policy.json has no mirror object with the keys " + ", ".join(deploy.MIRROR_POLICY_KEYS))
+    return mirror
+
+
+def load_mirror_closure(path):
+    """The package closure as the image build accepts it: build_image.load_closure, i.e. closure_issues
+    against sources.lock.json (snapshot, suites, sorted unique entries, lock binary_debs)."""
+    build_image = _build_image()
+    try:
+        return build_image.load_closure(Path(path))
+    except build_image.BuildError as exc:
+        raise CheckError(str(exc)) from exc
+
+
+def deb_members(deb):
+    """The ar member names of a .deb up to its data member (reported: data.tar.zst means deploy reads
+    the data tree through dpkg-deb --fsys-tarfile)."""
+    names = []
+    with open(deb, "rb") as stream:
+        if stream.read(8) != b"!<arch>\n":
+            raise CheckError("not a .deb (ar) archive: " + Path(deb).name)
+        while not (names and names[-1].startswith("data.tar")):
+            header = stream.read(60)
+            if len(header) != 60 or header[58:60] != b"`\n" or not header[48:58].strip().isdigit():
+                raise CheckError(".deb has no data member: " + Path(deb).name)
+            size = int(header[48:58])
+            names.append(header[:16].decode("ascii", "replace").strip().rstrip("/"))
+            stream.seek(size + (size & 1), os.SEEK_CUR)
+    return names
+
+
+def mirror_selection(closure, debs):
+    """The closure debs (debs: {package: path}) the srrx-mirror publication carries, each checked to be
+    exactly its closure entry (size and SHA-256 of the file; Package, Version and Architecture of its
+    control file, dpkg-deb --field) and free of receive-only findings: deploy.lab_package_issues of
+    its data tree, deploy.prohibited_installed (forbidden_packages, version rules included, so the
+    +labN-only names never come from the mirror) and repo-policy never_in_lab_repo_globs. One finding
+    refuses the mirror: it carries the closure or nothing, nothing is held back."""
+    policy = deploy.load(deploy.REPO_POLICY)
+    never = [g.lower() for g in policy["never_in_lab_repo_globs"]]
+    import fnmatch
+    selected, findings = [], []
+    for entry in closure["packages"]:
+        name, deb = entry["package"], debs.get(entry["package"])
+        if deb is None or not Path(deb).is_file() or Path(deb).stat().st_size != entry["size"] or deploy.sha(deb) != entry["sha256"]:
+            raise CheckError("closure deb differs from its package-closure.json entry (size, SHA-256): " + name)
+        for field_name, wanted in (("Package", name), ("Version", entry["version"]), ("Architecture", entry["architecture"])):
+            if field(deb, field_name) != wanted:
+                raise CheckError("closure deb control " + field_name + " differs from package-closure.json: " + name)
+        inventory = deploy.deb_data_inventory(deb)
+        issues = deploy.lab_package_issues({p: {"dir": "dir", "symlink": "link"}.get(e["type"], "file") for p, e in inventory.items()})
+        issues += ["never_in_lab_repo_globs: " + g for g in never if fnmatch.fnmatchcase(name.lower(), g)]
+        if issues:
+            findings.append(name + ": " + "; ".join(issues))
+        selected.append({"package": name, "version": entry["version"], "architecture": entry["architecture"], "sha256": entry["sha256"],
+                         "size": entry["size"], "data_member": deb_members(deb)[-1], "data_tree_entries": len(inventory), "path": str(deb)})
+    forbidden = deploy.prohibited_installed({p["package"]: p["version"] for p in closure["packages"]}, identifiers=True)
+    findings += ["receive-only policy forbids " + f for f in forbidden]
+    if findings:
+        raise CheckError("the package closure cannot be mirrored: " + " | ".join(findings))
+    return selected
+
+
+def run_publish(root, fingerprint, debs, log, mirror=True):
+    """sh repo/publish.sh [--mirror] root fingerprint debs (the signing key of GNUPGHOME); its output goes
+    into log, never into the JSON on stdout. Returns (exit code, last output lines)."""
+    argv = ["sh", str(DEPLOYMENT / "repo" / "publish.sh")] + (["--mirror"] if mirror else []) + [str(root), fingerprint] + [str(d) for d in debs]
+    result = subprocess.run(argv, capture_output=True, text=True, timeout=1800)
+    text = "$ publish.sh %s%s (%d debs)\n%s%s" % ("--mirror " if mirror else "", Path(root).name, len(debs), result.stdout, result.stderr)
+    with open(log, "a", encoding="utf-8") as stream:
+        stream.write(text + "\n")
+    return result.returncode, (result.stdout + result.stderr).strip().splitlines()[-3:]
+
+
+def resign(repo, codename, keyring, fingerprint, edit=None):
+    """Rewrite dists/<codename>/InRelease over the dists files there now, clearsigned by fingerprint
+    with the key of GNUPGHOME (gpg): the Release fields of the verified InRelease (edit(fields) may
+    change them) and a SHA256 list of every file but InRelease/Release/Release.gpg, which are
+    removed. A tamper helper: the result is a validly signed publication of other contents."""
+    dist = Path(repo) / "dists" / codename
+    fields = deploy.deb822(deploy.gpgv_signed_text(dist / "InRelease", keyring, [fingerprint]), "InRelease")[0]
+    for name in ("InRelease", "Release", "Release.gpg"):
+        if (dist / name).exists():
+            (dist / name).unlink()
+    fields = {k: fields[k.lower()] for k in RELEASE_FIELDS if k.lower() in fields}
+    if edit:
+        edit(fields)
+    files = sorted(p for p in dist.rglob("*") if p.is_file())
+    text = "".join("%s: %s\n" % (k, v) for k, v in fields.items()) + "SHA256:\n" + "".join(
+        " %s %d %s\n" % (deploy.sha(p), p.stat().st_size, p.relative_to(dist).as_posix()) for p in files)
+    signed = subprocess.run(["gpg", "--batch", "--yes", "--pinentry-mode", "loopback", "--passphrase", "", "--local-user", fingerprint,
+                             "--digest-algo", "SHA512", "--clearsign"], input=text.encode("utf-8"), capture_output=True, check=True, timeout=120)
+    (dist / "InRelease").write_bytes(signed.stdout)
+    return text
+
+
+def _packages_paragraphs(index):
+    return [p for p in Path(index).read_text(encoding="utf-8").split("\n\n") if p.strip()]
+
+
+def _write_packages(index, paragraphs):
+    """The Packages index and its Packages.gz from paragraphs; other compressed variants are removed."""
+    text = "\n\n".join(p.strip("\n") for p in paragraphs) + "\n"
+    Path(index).write_text(text, encoding="utf-8", newline="\n")
+    import gzip
+    Path(str(index) + ".gz").write_bytes(gzip.compress(text.encode("utf-8"), mtime=0))
+    for suffix in (".xz", ".bz2", ".zst", ".lz4"):
+        if Path(str(index) + suffix).exists():
+            Path(str(index) + suffix).unlink()
+
+
+def _stanza_field(paragraph, name):
+    match = re.search(r"^" + name + r": *(.*)$", paragraph, re.M)
+    return match.group(1).strip() if match else None
+
+
+def synthetic_deb(name, version, architecture, files):
+    """A small .deb built in Python (ar: debian-binary, control.tar.gz, data.tar.gz), the foreign
+    package of the tamper cases. Not a package anyone installs."""
+    import io
+
+    def tar(entries):
+        buffer = io.BytesIO()
+        with tarfile.open(fileobj=buffer, mode="w:gz", format=tarfile.GNU_FORMAT) as archive:
+            for path, data in entries:
+                info = tarfile.TarInfo(path)
+                if data is None:
+                    info.type, info.mode = tarfile.DIRTYPE, 0o755
+                else:
+                    info.size, info.mode = len(data), 0o644
+                archive.addfile(info, io.BytesIO(data) if data is not None else None)
+        return buffer.getvalue()
+    control = ("Package: %s\nVersion: %s\nArchitecture: %s\nMaintainer: SR-RX CI tamper case\nDescription: not for use\n"
+               % (name, version, architecture)).encode()
+    directories = sorted({"/".join(p.split("/")[:i]) for p in files for i in range(1, p.count("/") + 1)})
+    data = tar([("./", None)] + [("./" + d + "/", None) for d in directories] + [("./" + p, b) for p, b in sorted(files.items())])
+    out = b"!<arch>\n"
+    for member, payload in (("debian-binary", b"2.0\n"), ("control.tar.gz", tar([("./", None), ("./control", control)])), ("data.tar.gz", data)):
+        out += (member.ljust(16) + "0".ljust(12) + "0".ljust(6) + "0".ljust(6) + "100644".ljust(8) + str(len(payload)).ljust(10) + "`\n").encode()
+        out += payload + (b"\n" if len(payload) % 2 else b"")
+    return out
+
+
+def mirror_tamper(repo, keyring, wrong_keyring, fingerprint, closure_path, sources_entry=MIRROR_SOURCES):
+    """deploy.verify_repo(closure=...) accepts the published srrx-mirror and refuses each tampered copy:
+    the index or pool changed without a new signature, a changed .deb byte, a foreign package, a
+    missing closure package or another origin re-signed by the same key, an unsigned InRelease, a
+    wrong keyring or fingerprint, another pinned InRelease, a changed closure file, build records,
+    the srrx-lab apt entry or one without Signed-By, a held package change and the release path
+    without a pin."""
+    repo, closure_path = Path(repo).resolve(strict=True), Path(closure_path)
+    names = mirror_policy()
+    good = deploy.verify_repo(repo, keyring, fingerprint, [], sources_entry, closure=closure_path)
+    pinned = good["inrelease_sha256"]
+    closure = deploy.load(closure_path)
+    dist_rel = Path("dists") / names["codename"]
+    index_rel = dist_rel / names["component"] / ("binary-" + names["architecture"]) / "Packages"
+    victim = closure["packages"][0]
+    cases = {}
+
+    def expect(label, needle, change=None, **overrides):
+        with tempfile.TemporaryDirectory(prefix="srrx-mirror-tamper-") as temporary:
+            copy = Path(temporary) / "repo"
+            shutil.copytree(repo, copy, symlinks=True)
+            arguments = {"repo": copy, "keyring": keyring, "fingerprint": fingerprint, "build_records": [], "sources_entry": sources_entry,
+                         "inrelease_sha256": pinned, "target_status": None, "release": False, "closure": closure_path}
+            if change:
+                change(copy, Path(temporary), arguments)
+            arguments.update(overrides)
+            try:
+                deploy.verify_repo(**arguments)
+            except deploy.DeploymentError as exc:
+                if needle not in str(exc):
+                    raise CheckError(label + ": refused for another reason: " + str(exc)) from exc
+                cases[label] = "REFUSED"
+                return
+            raise CheckError(label + ": tampered srrx-mirror accepted")
+
+    def victim_deb(copy):
+        paragraph = next(p for p in _packages_paragraphs(copy / index_rel) if _stanza_field(p, "Package") == victim["package"])
+        return copy / _stanza_field(paragraph, "Filename")
+
+    def resigned(change):
+        """change(copy) and a new signature over the result (the same key): only the contents differ."""
+        def apply(copy, _, arguments):
+            change(copy)
+            resign(copy, names["codename"], keyring, fingerprint)
+            arguments["inrelease_sha256"] = None
+        return apply
+
+    def flip_last_byte(path):
+        data = bytearray(path.read_bytes())
+        data[-1] ^= 0xFF
+        path.write_bytes(bytes(data))
+
+    def packages_index(copy, _, __):
+        index = copy / index_rel
+        index.write_bytes(index.read_bytes() + b"\n")
+
+    def extra_pool_file(copy, _, __):
+        deb = victim_deb(copy)
+        shutil.copyfile(deb, deb.parent / ("srrx-extra_1.0_" + names["architecture"] + ".deb"))
+
+    def pool_byte(copy, _, __):
+        flip_last_byte(victim_deb(copy))
+
+    def changed_byte(copy):
+        deb = victim_deb(copy)
+        flip_last_byte(deb)
+        paragraphs = _packages_paragraphs(copy / index_rel)
+        for i, p in enumerate(paragraphs):
+            if _stanza_field(p, "Package") == victim["package"]:
+                paragraphs[i] = re.sub(r"^SHA256: *[0-9a-f]{64}$", "SHA256: " + deploy.sha(deb), p, flags=re.M)
+        _write_packages(copy / index_rel, paragraphs)
+
+    def foreign_package(copy):
+        data = synthetic_deb("srrx-foreign-probe", "1.0", "all", {"usr/share/doc/srrx-foreign-probe/README": b"tamper case\n"})
+        filename = "pool/" + names["component"] + "/s/srrx-foreign-probe/srrx-foreign-probe_1.0_all.deb"
+        (copy / filename).parent.mkdir(parents=True)
+        (copy / filename).write_bytes(data)
+        stanza = ("Package: srrx-foreign-probe\nVersion: 1.0\nArchitecture: all\nFilename: %s\nSize: %d\nSHA256: %s\n"
+                  % (filename, len(data), hashlib.sha256(data).hexdigest()))
+        _write_packages(copy / index_rel, _packages_paragraphs(copy / index_rel) + [stanza])
+
+    def missing_package(copy):
+        deb = victim_deb(copy)
+        _write_packages(copy / index_rel, [p for p in _packages_paragraphs(copy / index_rel) if _stanza_field(p, "Package") != victim["package"]])
+        deb.unlink()
+
+    def plain_inrelease(copy, _, __):
+        inrelease = copy / dist_rel / "InRelease"
+        inrelease.write_text(deploy.gpgv_signed_text(inrelease, keyring, [fingerprint]), encoding="utf-8")
+
+    def lab_origin(copy, _, arguments):
+        resign(copy, names["codename"], keyring, fingerprint, edit=lambda fields: fields.update(Origin=deploy.load(deploy.REPO_POLICY)["origin"]))
+        arguments["inrelease_sha256"] = None
+
+    def other_closure(_, temporary, arguments):
+        changed = json.loads(closure_path.read_text(encoding="utf-8"))
+        changed["packages"][0]["sha256"] = hashlib.sha256(b"another build of " + victim["package"].encode()).hexdigest()
+        (temporary / closure_path.name).write_text(json.dumps(changed, indent=2) + "\n", encoding="utf-8")
+        arguments["closure"] = temporary / closure_path.name
+
+    def no_signed_by(_, temporary, arguments):
+        entry = temporary / "no-signed-by.sources"
+        entry.write_text("".join(l for l in Path(sources_entry).read_text(encoding="utf-8").splitlines(True) if not l.startswith("Signed-By:")),
+                         encoding="utf-8")
+        arguments["sources_entry"] = entry
+
+    def held(_, temporary, arguments):
+        status = temporary / "status"
+        status.write_text("Package: %s\nStatus: hold ok installed\nVersion: 0:0-srrx-held\n\n" % victim["package"], encoding="utf-8")
+        arguments["target_status"] = status
+
+    wrong_fingerprint = fingerprint[:-1] + ("0" if fingerprint[-1] != "0" else "1")
+    expect("modified Packages index (no new signature)", "index differs from the signed Release", packages_index)
+    expect("extra .deb in the pool", "pool holds a file", extra_pool_file)
+    expect("changed .deb byte in the pool (no new signature)", "pool .deb differs from the signed Packages index", pool_byte)
+    expect("changed .deb byte, index re-signed by the same key (" + victim["package"] + ")", "differs from its package closure entry",
+           resigned(changed_byte))
+    expect("foreign package re-signed by the same key", "is not in the package closure", resigned(foreign_package))
+    expect("closure package missing, re-signed by the same key (" + victim["package"] + ")", "lacks closure packages", resigned(missing_package))
+    expect("srrx-lab origin re-signed by the same key", "foreign or unexpected repository origin", lab_origin)
+    expect("unsigned InRelease", "not a good signature", plain_inrelease, inrelease_sha256=None)
+    expect("wrong keyring", "not a good signature", keyring=wrong_keyring)
+    expect("wrong fingerprint", "not a good signature", fingerprint=wrong_fingerprint)
+    expect("other InRelease pinned", "InRelease differs", inrelease_sha256="0" * 64)
+    expect("closure file with another SHA-256 (" + victim["package"] + ")", "differs from its package closure entry", other_closure)
+    expect("build records passed for the mirror", "has no build records", build_records=[closure_path])
+    expect("srrx-lab apt entry", "apt entry", sources_entry=DEPLOYMENT / "repo" / "srrx-lab.sources")
+    expect("apt entry without Signed-By", "apt entry", no_signed_by)
+    expect("held package would change (" + victim["package"] + ")", "held package", held)
+    expect("release path without the pinned InRelease", "pinned InRelease", release=True, inrelease_sha256=None)
+    return {"status": "MIRROR_TAMPER_CASES_REFUSED", "untampered": good["status"], "cases": cases, "hardware_ready": False}
+
+
+def mirror(closure_path, work, keyring, wrong_keyring, fingerprint):
+    """sr-rx-packages.yml mirror job: the closure (build_image closure checks) -> its debs from the
+    pinned snapshot by filename with SHA-256 and size (build_image.fetch_closure) -> mirror_selection
+    -> publish.sh --mirror with the CI TEST key of GNUPGHOME (and its refusals of a foreign, a missing
+    and a changed deb) -> deploy.verify_repo(closure=...) untampered, pinned and with the closure's
+    held packages -> mirror_tamper. CI evidence only: the test key is not a release signature."""
+    closure_path, work = Path(closure_path), Path(work).resolve()
+    if work.exists():
+        raise CheckError("mirror work directory already exists")
+    work.mkdir(parents=True)
+    names = mirror_policy()
+    closure = load_mirror_closure(closure_path)
+    build_image = _build_image()
+    try:
+        fetched = build_image.fetch_closure(work / "cache", closure)
+    except build_image.BuildError as exc:
+        raise CheckError(str(exc)) from exc
+    debs = {p["package"]: work / "cache" / build_image.CLOSURE_CACHE / Path(p["filename"]).name for p in closure["packages"]}
+    selected = mirror_selection(closure, debs)
+    log = work / "publish.log"
+    paths = [debs[p["package"]] for p in closure["packages"]]
+    refusals = {}
+    foreign = work / "foreign" / "srrx-foreign-probe_1.0_all.deb"
+    foreign.parent.mkdir()
+    foreign.write_bytes(synthetic_deb("srrx-foreign-probe", "1.0", "all", {"usr/share/doc/srrx-foreign-probe/README": b"tamper case\n"}))
+    changed = work / "changed" / paths[0].name
+    changed.parent.mkdir()
+    shutil.copyfile(paths[0], changed)
+    data = bytearray(changed.read_bytes())
+    data[-1] ^= 0xFF
+    changed.write_bytes(bytes(data))
+    for label, argv in (("foreign deb added", paths + [foreign]), ("closure deb missing (" + closure["packages"][0]["package"] + ")", paths[1:]),
+                        ("closure deb with a changed byte (" + closure["packages"][0]["package"] + ")", [changed] + paths[1:])):
+        target = work / ("refused-" + str(len(refusals)))
+        code, tail = run_publish(target, fingerprint, argv, log)
+        if code == 0 or target.exists() or not any("not exactly the package closure" in line for line in tail):
+            raise CheckError("publish.sh --mirror did not refuse: " + label + " (exit %d)" % code)
+        refusals[label] = "REFUSED"
+    code, tail = run_publish(work / "aptly", fingerprint, paths, log)
+    if code != 0:
+        raise CheckError("publish.sh --mirror failed (exit %d): %s" % (code, " | ".join(tail)))
+    public = work / "aptly" / "public"
+    verified = deploy.verify_repo(public, keyring, fingerprint, [], MIRROR_SOURCES, closure=closure_path)
+    pinned = deploy.verify_repo(public, keyring, fingerprint, [], MIRROR_SOURCES, inrelease_sha256=verified["inrelease_sha256"], closure=closure_path)
+    status = work / "held-status"
+    status.write_text("".join("Package: %s\nStatus: hold ok installed\nVersion: %s\n\n" % (p["package"], p["version"]) for p in closure["packages"]),
+                      encoding="utf-8")
+    held = deploy.verify_repo(public, keyring, fingerprint, [], MIRROR_SOURCES, target_status=status, closure=closure_path)
+    packages_index = public / "dists" / names["codename"] / names["component"] / ("binary-" + names["architecture"]) / "Packages"
+    listed = [{"package": _stanza_field(p, "Package"), "version": _stanza_field(p, "Version"), "architecture": _stanza_field(p, "Architecture"),
+               "filename": _stanza_field(p, "Filename")} for p in _packages_paragraphs(packages_index)]
+    tampered = mirror_tamper(public, keyring, wrong_keyring, fingerprint, closure_path)
+    return {"status": "CI_MIRROR_PUBLISHED_AND_VERIFIED", "publication": dict(names), "closure": {"path": str(closure_path),
+            "sha256": deploy.sha(closure_path), "snapshot": closure["snapshot"]["timestamp"], "packages": [p["package"] for p in closure["packages"]]},
+            "fetched": fetched, "selection": [{k: v for k, v in p.items() if k != "path"} for p in selected], "publish_refusals": refusals,
+            "published": listed, "verify_repo": verified, "verify_repo_pinned": pinned["status"], "verify_repo_held_at_closure_versions": held["status"],
+            "tamper": tampered, "signing_key": "CI TEST KEY of this job (sr-rx-packages mirror job); not a release signature",
+            "hardware_ready": False,
+            "scope": "CI model: the image package closure published as srrx-mirror with a throwaway test key and checked by deploy.verify_repo; "
+                     "the owner's key ceremony, the release keyring and an install on the Q6A stay OPEN."}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     commands = parser.add_subparsers(dest="operation", required=True)
@@ -915,6 +1276,12 @@ def main():
     chains = commands.add_parser("chains", help="heavy jobs' rebuilt lab_build_depends against the published bytes (reported)")
     chains.add_argument("--out", type=Path, required=True)
     chains.add_argument("--chains", type=Path, required=True)
+    mirrored = commands.add_parser("mirror", help="srrx-mirror from the package closure: fetch, publish with the GNUPGHOME test key, verify, tamper")
+    mirrored.add_argument("--closure", type=Path, required=True, help="deployment/image/package-closure.json")
+    mirrored.add_argument("--work", type=Path, required=True, help="a new directory")
+    mirrored.add_argument("--keyring", type=Path, required=True)
+    mirrored.add_argument("--wrong-keyring", type=Path, required=True)
+    mirrored.add_argument("--fingerprint", required=True)
     args = parser.parse_args()
     failed = False
     try:
@@ -941,6 +1308,8 @@ def main():
             failed = result["status"] == "CI_RUNTIME_CHECK_FAILED"
         elif args.operation == "chains":
             result = chain_identity(args.out, args.chains)
+        elif args.operation == "mirror":
+            result = mirror(args.closure, args.work, args.keyring, args.wrong_keyring, args.fingerprint)
         else:
             result = tamper(args.repo, args.keyring, args.wrong_keyring, args.fingerprint, args.build_record, args.sources_entry, args.full_repo)
     except (OSError, ValueError, subprocess.SubprocessError, tarfile.TarError) as exc:
