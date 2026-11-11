@@ -179,16 +179,13 @@ class GuardRuleTests(unittest.TestCase):
                             self.assertIn(net[q], ('GND',), f'{ref}.{p} {n} beside {ref}.{q} {net[q]}')
 
     def test_rails_follow_rail_order(self):
+        # rail_order lists the rail contacts column by column (since 11.11.2026; a net listed once keeps its contacts together)
         order = SPEC['rail_order']
         self.assertEqual(order[0], '3V3_Q6A')
-        seq = []
-        for r in sorted(NETS['contacts'], key=lambda r: int(r['pwr_a_pin'])):
-            if r['role'] in prepare.B2B_RAIL_KINDS and (not seq or seq[-1] != r['net']):
-                seq.append(r['net'])
-        listed = [n for n in seq if n in order]
-        self.assertEqual(listed, sorted(listed, key=order.index))
-        self.assertEqual(seq[:len(listed)], listed, 'unlisted rails come after the listed ones')
-        self.assertEqual(len(seq), len(set(seq)), 'the contacts of one rail are neighbours')
+        seq = [r['net'] for r in sorted(NETS['contacts'], key=lambda r: int(r['pwr_a_pin'])) if r['role'] in prepare.B2B_RAIL_KINDS]
+        want = sorted(r['net'] for r in NETS['nets'] if r['kind'] in prepare.B2B_RAIL_KINDS for _ in range(r['pins']))
+        self.assertEqual(sorted(seq), want)
+        self.assertEqual(seq[:len(order)], [n for n in order if n in want])
         # 3V3_Q6A is at the far end of the rail block from the 12-13.8 V rails of the net names
         hv = [i for i, n in enumerate(seq) if n in ('LNB13V2', 'AUX12', 'BONI13V8_PORT', 'BONI13V8')]
         self.assertEqual(seq.index('3V3_Q6A'), 0)
