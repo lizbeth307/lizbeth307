@@ -17,7 +17,7 @@
     "thickness_mm": 1.6,
     "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
     "plan": {
-      "F.Cu": "all parts; E5_IMU5V class PWR1A 0.35 mm (IMU_CARRIER.kicad_pro, pcb/generated/netclasses.json); signals; GND pour",
+      "F.Cu": "all parts; E5_IMU5V class PWR1A 0.35 mm (IMU_CARRIER.kicad_pro, pcb/generated/netclasses.json); E5_IMU_VIN scripted 0.4 mm (class SCRIPTED_VIN); signals; GND pour",
       "B.Cu": "signals, GND pour"
     }
   },
@@ -217,21 +217,21 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.4,
-          12.0
+          30.5,
+          4.6
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 0,
         "side": "F",
         "ref_text": {
           "at": [
-            38.4,
-            9.6
+            30.5,
+            4.6
           ],
           "angle": 0
         }
       },
-      "anchor_source": "arm, right edge: 10 uF on E5_IMU_VIN"
+      "anchor_source": "strip right of J322: 10 uF on E5_IMU_VIN beside the scripted VIN lane (pad 1 (29.55, 4.6))"
     },
     {
       "ref": "C340",
@@ -288,10 +288,10 @@
         "side": "F",
         "ref_text": {
           "at": [
-            15.3,
-            10.4
+            13.65,
+            7.8
           ],
-          "angle": 0
+          "angle": 90
         }
       },
       "anchor_source": "tongue above J322 pad 3: CS_N pull-up, pad 1 (CS_N) down, pad 2 (3V3) up"
@@ -309,10 +309,10 @@
         "side": "F",
         "ref_text": {
           "at": [
-            12.0,
-            10.4
+            10.4,
+            7.8
           ],
-          "angle": 0
+          "angle": 90
         }
       },
       "anchor_source": "tongue above J322 pad 4: WAKE_N pull-up, pad 1 (WAKE_N) down, pad 2 (3V3) up"
@@ -330,10 +330,10 @@
         "side": "F",
         "ref_text": {
           "at": [
-            8.8,
-            10.4
+            7.0,
+            7.8
           ],
-          "angle": 0
+          "angle": 90
         }
       },
       "anchor_source": "tongue above J322 pad 5: 100 nF on E3_IMU3V3, pad 1 (3V3) up, pad 2 GND down"
@@ -354,7 +354,104 @@
   },
   "groups": [],
   "pre_route": {
-    "tracks": [],
+    "tracks": [
+      {
+        "id": "VIN-D502-C520",
+        "net": "E5_IMU_VIN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            26.6,
+            12.75
+          ],
+          [
+            26.6,
+            11.2
+          ],
+          [
+            29.0,
+            11.2
+          ],
+          [
+            30.175,
+            9.9
+          ]
+        ],
+        "locked": true,
+        "why": "E5_IMU_VIN (D502 cathode to C340/C520/C519 and the RP2040-Zero supply pad J320.1; at most the U553 limit 0.339 A of tools/assembly_data.py NET_CURRENT E5_IMU5V) scripted 0.4 mm, class SCRIPTED_VIN not autorouted: route run 43113738311 left it open"
+      },
+      {
+        "id": "VIN-C340",
+        "net": "E5_IMU_VIN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            26.6,
+            11.2
+          ],
+          [
+            26.25,
+            9.9
+          ]
+        ],
+        "locked": true,
+        "why": "E5_IMU_VIN (D502 cathode to C340/C520/C519 and the RP2040-Zero supply pad J320.1; at most the U553 limit 0.339 A of tools/assembly_data.py NET_CURRENT E5_IMU5V) scripted 0.4 mm, class SCRIPTED_VIN not autorouted: route run 43113738311 left it open"
+      },
+      {
+        "id": "VIN-J320",
+        "net": "E5_IMU_VIN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            26.25,
+            9.9
+          ],
+          [
+            26.25,
+            8.75
+          ],
+          [
+            28.5,
+            8.75
+          ],
+          [
+            28.5,
+            3.1
+          ],
+          [
+            24.0,
+            3.1
+          ],
+          [
+            23.5,
+            1.5
+          ]
+        ],
+        "locked": true,
+        "why": "E5_IMU_VIN (D502 cathode to C340/C520/C519 and the RP2040-Zero supply pad J320.1; at most the U553 limit 0.339 A of tools/assembly_data.py NET_CURRENT E5_IMU5V) scripted 0.4 mm, class SCRIPTED_VIN not autorouted: route run 43113738311 left it open; down between J518 pads 1 and 2 to the J320 row"
+      },
+      {
+        "id": "VIN-C519",
+        "net": "E5_IMU_VIN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            28.5,
+            4.6
+          ],
+          [
+            29.55,
+            4.6
+          ]
+        ],
+        "locked": true,
+        "why": "stub to C519"
+      }
+    ],
     "zones": []
   },
   "post_route_zones": [
@@ -422,7 +519,10 @@
     "job_timeout": "00:06:00",
     "timeout_s": 480,
     "fanout": false,
-    "why": "fan-out pre-pass off: on PWR_B it escaped SMD pins with necked-down stubs and dangling vias (pcb/boards/PWR_B.json router.why)"
+    "ignore_net_classes": [
+      "SCRIPTED_VIN"
+    ],
+    "why": "E5_IMU_VIN is scripted and locked (class SCRIPTED_VIN, not autorouted); fan-out pre-pass off: on PWR_B it escaped SMD pins with necked-down stubs and dangling vias (pcb/boards/PWR_B.json router.why)"
   },
   "drc_policy": {
     "warning_checks": {

@@ -578,6 +578,54 @@
         "diameter_mm": 0.6,
         "locked": true,
         "why": "second thermal via; 0.8 pitch keeps the project hole-to-hole 0.5"
+      },
+      {
+        "id": "GND-S1",
+        "net": "GND",
+        "at": [
+          10.5,
+          2.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.6,
+        "locked": true,
+        "why": "GND stitch of the top pour below the VBUS trunk to the bottom pour (route run 43113738311 left a GND-F island)"
+      },
+      {
+        "id": "GND-S2",
+        "net": "GND",
+        "at": [
+          16.0,
+          1.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.6,
+        "locked": true,
+        "why": "GND stitch, lower band right of R517"
+      },
+      {
+        "id": "GND-S3",
+        "net": "GND",
+        "at": [
+          4.6,
+          8.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.6,
+        "locked": true,
+        "why": "GND stitch, upper band left of R515"
+      },
+      {
+        "id": "GND-S4",
+        "net": "GND",
+        "at": [
+          20.0,
+          7.6
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.6,
+        "locked": true,
+        "why": "GND stitch, upper band between J516 and C516"
       }
     ],
     "zones": []
