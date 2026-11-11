@@ -14,7 +14,7 @@
     },
     {
       "file": "design/E4.json",
-      "sha256": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17"
+      "sha256": "b7e76b58e992f767726d4d2481d1100987e9cb296a45784f9ebbaac260872595"
     },
     {
       "file": "design/E5.json",
@@ -26,7 +26,7 @@
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "e8158ced457cc3a74bec8d2e412addf1e3dbae1fd177a08faa2d98426013787d"
+      "sha256": "1ef65f1355006a9eac2291e8294f7a279b89b050ff92e33fc0d2cd4b8015d645"
     }
   ],
   "source_documents": [
@@ -135,7 +135,7 @@
       "interface_open",
       "interface_resolved"
     ],
-    "projection_sha256": "98becf07b29482be8ebf7ad6ed760773bb98b6515972547359924771ef7d91c2"
+    "projection_sha256": "dea2e2766cbadcce296fabe587f76436c156e8b60b73c5ca0539f2ea0ee6fbc7"
   },
   "partition": {
     "file": "pcb/partition-spec.json",
