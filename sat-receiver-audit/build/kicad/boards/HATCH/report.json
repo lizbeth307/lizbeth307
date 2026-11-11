@@ -1,0 +1,948 @@
+{
+  "schema": "srrx-board-report-v1",
+  "board_id": "HATCH",
+  "status": "SB1_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN",
+  "passed": true,
+  "result": {
+    "drc_errors": 0,
+    "drc_unconnected": 0,
+    "drc_warnings": 0,
+    "ignored_checks": [],
+    "source_pad_audit_errors": {
+      "HATCH": 0
+    },
+    "boundary_audit": [
+      "pass"
+    ],
+    "domain_audit": true,
+    "keepout_audit": true,
+    "annular_audit": true,
+    "locked_copper_kept": true,
+    "group_audit": true
+  },
+  "inputs": {
+    "parts": {
+      "spec": "dbc2c1fcbab50248a4fb597e819f958b40c5ff30a99622c51813a1c3a6a0c714",
+      "contract": "32ac323e0f476553acf74f379ae89875f3bfa85b7ff312bb0450513340b01e4d",
+      "project_rules": "1279fb9f09911b2db6a4743a86aa096afd1a4727022f1e0a128b20330b874f3f",
+      "template": "6dbc8dcacbe5c15864305de2ef987c0c6dd97104b983a46cb9135fada88f7d64",
+      "instances": "9b344ca36f41e8377cdb3cc9a25929c0c35351c65eed016486eab6af6d3f6f8b"
+    },
+    "sha256": "a1b547de099b45573c121baa548f29891e83a760230d0df335e840b2e487d230"
+  },
+  "board_file": "build/kicad/boards/HATCH/HATCH.kicad_pcb",
+  "board_sha256": "4e9d43327f2ee8b165999f8ec6e0910686fb4e4a47b8d6a0714bef0f61e0abc2",
+  "project_file": "build/kicad/boards/HATCH/HATCH.kicad_pro",
+  "fp_lib_table_sha256": "4624ebcd45ef537759b39969d89fdff6dc2bfe30eb5de430df4c223489ba2640",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "PCB-SB1 plan: 2-layer 1.6 mm 1 oz JLC standard for the small boards (final-plan.json PCB-SB1 decisions); decision 'Шари малих плат ENC і HATCH (W2 PCB-SB1)' in build/15",
+    "plan": {
+      "F.Cu": "interior side: J503, J509, J510, J513; J21 scripted 2.0 mm (PWR3A), signals, GND pour",
+      "B.Cu": "hatch side: J502; signals, GND pour"
+    }
+  },
+  "stackup_contract": {
+    "t": 1.6,
+    "layers": 2,
+    "fab": "JLC 2-layer FR-4 1.6 mm, 1 oz outer copper (standard; decision 'Шари малих плат ENC і HATCH (W2 PCB-SB1)', build/15)",
+    "components": "both sides, through-hole only: harness headers on the top (interior), the UART5 console header J502 on the bottom (hatch opening)"
+  },
+  "outline_mm": [
+    [
+      8,
+      0
+    ],
+    [
+      30,
+      0
+    ],
+    [
+      30,
+      11.5
+    ],
+    [
+      38,
+      11.5
+    ],
+    [
+      38,
+      21.5
+    ],
+    [
+      0,
+      21.5
+    ],
+    [
+      0,
+      11.5
+    ],
+    [
+      8,
+      11.5
+    ]
+  ],
+  "holes": [
+    {
+      "ref": "H1",
+      "at": [
+        4.0,
+        16.5
+      ],
+      "d": 2.7,
+      "keepout_d": 8.0
+    },
+    {
+      "ref": "H2",
+      "at": [
+        34.0,
+        16.5
+      ],
+      "d": 2.7,
+      "keepout_d": 8.0
+    }
+  ],
+  "instances": [
+    {
+      "id": "HATCH",
+      "placement": "default",
+      "qty": 1,
+      "refs": {
+        "J502": "J502",
+        "J503": "J503",
+        "J509": "J509",
+        "J510": "J510",
+        "J513": "J513"
+      },
+      "nets": {
+        "GND": "GND",
+        "J21": "J21",
+        "PWR_ON_KEY": "PWR_ON_KEY",
+        "UART5_RX": "UART5_RX",
+        "UART5_TX": "UART5_TX"
+      }
+    }
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "template": [
+    {
+      "ref": "J503",
+      "source": "graph",
+      "fpid": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical.kicad_mod",
+      "sha256": "fb7beda27319e4f265515378f57a4f680e54c54c6edda2c1f3e239a4bd3ef42a",
+      "value": "J21 service harness 3pin locking",
+      "pads": {
+        "1": "J21",
+        "2": "GND",
+        "3": "PWR_ON_KEY"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J509",
+      "source": "graph",
+      "fpid": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6",
+      "value": "X14P1-HATCH: Molex Micro-Fit 3.0 2, верхній вхід, S14",
+      "pads": {
+        "1": "GND",
+        "2": "J21"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J502",
+      "source": "graph",
+      "fpid": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c",
+      "value": "UART5 console 3pin locking",
+      "pads": {
+        "1": "GND",
+        "2": "UART5_TX",
+        "3": "UART5_RX"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J513",
+      "source": "graph",
+      "fpid": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c",
+      "value": "X30S1-HATCH: JST PH 3, верхній вхід, S30",
+      "pads": {
+        "1": "GND",
+        "2": "UART5_RX",
+        "3": "UART5_TX"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J510",
+      "source": "graph",
+      "fpid": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd59286748b9a6fa9174237072608f811cf3169dddf00eab54a5c196fcb6f7e8",
+      "value": "X15S1-HATCH: JST PH 2, верхній вхід, S15",
+      "pads": {
+        "1": "PWR_ON_KEY",
+        "2": null
+      },
+      "unused_pads": []
+    }
+  ],
+  "placeholders": [],
+  "placement": [
+    {
+      "ref": "H1",
+      "fpid": "NPTH_2.7mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        4.0,
+        16.5
+      ],
+      "courtyard_box": [
+        2.625,
+        15.125,
+        5.375,
+        17.875
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "H2",
+      "fpid": "NPTH_2.7mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        34.0,
+        16.5
+      ],
+      "courtyard_box": [
+        32.625,
+        15.125,
+        35.375,
+        17.875
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "J502",
+      "fpid": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "side": "B",
+      "rotation": 180.0,
+      "at": [
+        27.4,
+        10.0
+      ],
+      "courtyard_box": [
+        20.925,
+        6.675,
+        29.875,
+        12.225
+      ],
+      "fab_box": [
+        21.4,
+        7.15,
+        29.81,
+        12.16
+      ]
+    },
+    {
+      "ref": "J503",
+      "fpid": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        15.33,
+        18.23
+      ],
+      "courtyard_box": [
+        11.475,
+        14.405,
+        25.185,
+        21.225
+      ],
+      "fab_box": [
+        11.955,
+        14.88,
+        24.705,
+        20.75
+      ]
+    },
+    {
+      "ref": "J509",
+      "fpid": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        12.33,
+        11.3
+      ],
+      "courtyard_box": [
+        8.475,
+        7.475,
+        19.185,
+        14.295
+      ],
+      "fab_box": [
+        8.955,
+        7.95,
+        18.705,
+        13.82
+      ]
+    },
+    {
+      "ref": "J510",
+      "fpid": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        20.5,
+        3.8
+      ],
+      "courtyard_box": [
+        18.025,
+        0.475,
+        24.975,
+        6.025
+      ],
+      "fab_box": [
+        18.09,
+        0.95,
+        24.5,
+        5.96
+      ]
+    },
+    {
+      "ref": "J513",
+      "fpid": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        11.0,
+        3.8
+      ],
+      "courtyard_box": [
+        8.525,
+        0.475,
+        17.475,
+        6.025
+      ],
+      "fab_box": [
+        8.59,
+        0.95,
+        17.0,
+        5.96
+      ]
+    }
+  ],
+  "pads": {
+    "H1": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          4.0,
+          16.5
+        ]
+      }
+    ],
+    "H2": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          34.0,
+          16.5
+        ]
+      }
+    ],
+    "J502": [
+      {
+        "number": "1",
+        "net": "GND",
+        "at": [
+          27.4,
+          10.0
+        ]
+      },
+      {
+        "number": "2",
+        "net": "UART5_TX",
+        "at": [
+          25.4,
+          10.0
+        ]
+      },
+      {
+        "number": "3",
+        "net": "UART5_RX",
+        "at": [
+          23.4,
+          10.0
+        ]
+      }
+    ],
+    "J503": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          12.33,
+          20.19
+        ]
+      },
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          24.33,
+          20.19
+        ]
+      },
+      {
+        "number": "1",
+        "net": "J21",
+        "at": [
+          15.33,
+          18.23
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          18.33,
+          18.23
+        ]
+      },
+      {
+        "number": "3",
+        "net": "PWR_ON_KEY",
+        "at": [
+          21.33,
+          18.23
+        ]
+      }
+    ],
+    "J509": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          9.33,
+          13.26
+        ]
+      },
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          18.33,
+          13.26
+        ]
+      },
+      {
+        "number": "1",
+        "net": "GND",
+        "at": [
+          12.33,
+          11.3
+        ]
+      },
+      {
+        "number": "2",
+        "net": "J21",
+        "at": [
+          15.33,
+          11.3
+        ]
+      }
+    ],
+    "J510": [
+      {
+        "number": "1",
+        "net": "PWR_ON_KEY",
+        "at": [
+          20.5,
+          3.8
+        ]
+      },
+      {
+        "number": "2",
+        "net": null,
+        "at": [
+          22.5,
+          3.8
+        ]
+      }
+    ],
+    "J513": [
+      {
+        "number": "1",
+        "net": "GND",
+        "at": [
+          11.0,
+          3.8
+        ]
+      },
+      {
+        "number": "2",
+        "net": "UART5_RX",
+        "at": [
+          13.0,
+          3.8
+        ]
+      },
+      {
+        "number": "3",
+        "net": "UART5_TX",
+        "at": [
+          15.0,
+          3.8
+        ]
+      }
+    ]
+  },
+  "copper": {
+    "tracks": {
+      "segments": 23,
+      "vias": 0,
+      "locked": 1,
+      "by_layer": {
+        "B.Cu": 12,
+        "F.Cu": 11
+      },
+      "widths_mm": [
+        0.25,
+        2.0
+      ]
+    },
+    "zones": [
+      {
+        "name": "GND-B",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "B.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "GND-F",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "F.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "KO_H1_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H1_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H2_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H2_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      }
+    ],
+    "copper_layers": 2
+  },
+  "drc": {
+    "errors": 0,
+    "warnings": 0,
+    "unconnected": 0,
+    "schematic_parity": 0,
+    "ignored_checks": [],
+    "by_type": {},
+    "error_items": [],
+    "warning_items": [],
+    "unconnected_items": [],
+    "severities_reviewed": {
+      "errors": [
+        "annular_width",
+        "assertion_failure",
+        "clearance",
+        "connection_width",
+        "copper_edge_clearance",
+        "copper_sliver",
+        "courtyards_overlap",
+        "creepage",
+        "diff_pair_gap_out_of_range",
+        "diff_pair_uncoupled_length_too_long",
+        "drill_out_of_range",
+        "footprint",
+        "footprint_type_mismatch",
+        "generic_error",
+        "hole_clearance",
+        "hole_to_hole",
+        "holes_co_located",
+        "invalid_outline",
+        "isolated_copper",
+        "item_on_disabled_layer",
+        "items_not_allowed",
+        "length_out_of_range",
+        "lib_footprint_issues",
+        "lib_footprint_mismatch",
+        "malformed_courtyard",
+        "microvia_drill_out_of_range",
+        "mirrored_text_on_front_layer",
+        "missing_courtyard",
+        "nonmirrored_text_on_back_layer",
+        "npth_inside_courtyard",
+        "padstack",
+        "padstack_invalid",
+        "pth_inside_courtyard",
+        "shorting_items",
+        "silk_edge_clearance",
+        "skew_out_of_range",
+        "solder_mask_bridge",
+        "starved_thermal",
+        "text_height",
+        "text_on_edge_cuts",
+        "text_thickness",
+        "through_hole_pad_without_hole",
+        "too_many_vias",
+        "track_angle",
+        "track_dangling",
+        "track_not_centered_on_via",
+        "track_on_post_machined_layer",
+        "track_segment_length",
+        "track_width",
+        "tracks_crossing",
+        "unconnected_items",
+        "unresolved_variable",
+        "via_dangling",
+        "via_diameter",
+        "zones_intersect"
+      ],
+      "warnings": {
+        "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+        "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+        "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+        "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+        "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
+        "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board"
+      }
+    },
+    "kicad_version": "10.0.7",
+    "coordinate_units": "mm",
+    "passed": true
+  },
+  "audits": {
+    "domain": {
+      "domains": [
+        "HATCH"
+      ],
+      "domain_refs": [
+        "J502",
+        "J503",
+        "J509",
+        "J510",
+        "J513"
+      ],
+      "missing": [],
+      "foreign": [],
+      "passed": true
+    },
+    "source_pad": [
+      {
+        "instance": "HATCH",
+        "errors": [],
+        "passed": true
+      }
+    ],
+    "boundary": [
+      {
+        "instance": "HATCH",
+        "status": "pass",
+        "nets": [
+          {
+            "net": "GND",
+            "graph_net": "GND",
+            "board_pads": [
+              "J503.2",
+              "J509.1",
+              "J502.1",
+              "J513.1"
+            ],
+            "external_refs": 523,
+            "external_sample": [
+              "A401",
+              "A402",
+              "A403",
+              "A404",
+              "A405",
+              "A406"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "J21",
+            "graph_net": "J21",
+            "board_pads": [
+              "J503.1",
+              "J509.2"
+            ],
+            "external_refs": 9,
+            "external_sample": [
+              "C205",
+              "C207",
+              "D201",
+              "J206",
+              "J521",
+              "L201"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "PWR_ON_KEY",
+            "graph_net": "PWR_ON_KEY",
+            "board_pads": [
+              "J503.3",
+              "J510.1"
+            ],
+            "external_refs": 4,
+            "external_sample": [
+              "D303",
+              "J310",
+              "J521",
+              "Q302"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "UART5_RX",
+            "graph_net": "UART5_RX",
+            "board_pads": [
+              "J502.3",
+              "J513.2"
+            ],
+            "external_refs": 3,
+            "external_sample": [
+              "J301",
+              "J304",
+              "J310"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "UART5_TX",
+            "graph_net": "UART5_TX",
+            "board_pads": [
+              "J502.2",
+              "J513.3"
+            ],
+            "external_refs": 3,
+            "external_sample": [
+              "J301",
+              "J304",
+              "J310"
+            ],
+            "status": "connector"
+          }
+        ],
+        "hosted_contacts": []
+      }
+    ],
+    "keepout": {
+      "rows": [
+        {
+          "hole": "H1",
+          "ref": "J502",
+          "keepout_radius": 4.0,
+          "pad_distance": 19.6235,
+          "courtyard_distance": 17.4566,
+          "body_distance": 17.9331,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J503",
+          "keepout_radius": 4.0,
+          "pad_distance": 10.6045,
+          "courtyard_distance": 7.475,
+          "body_distance": 7.955,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J509",
+          "keepout_radius": 4.0,
+          "pad_distance": 8.661,
+          "courtyard_distance": 4.9888,
+          "body_distance": 5.6333,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J510",
+          "keepout_radius": 4.0,
+          "pad_distance": 19.8152,
+          "courtyard_distance": 17.505,
+          "body_distance": 17.596,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J513",
+          "keepout_radius": 4.0,
+          "pad_distance": 13.4458,
+          "courtyard_distance": 11.4106,
+          "body_distance": 11.4961,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J502",
+          "keepout_radius": 4.0,
+          "pad_distance": 8.2244,
+          "courtyard_distance": 5.9406,
+          "body_distance": 6.0326,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J503",
+          "keepout_radius": 4.0,
+          "pad_distance": 11.9417,
+          "courtyard_distance": 8.815,
+          "body_distance": 9.295,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J509",
+          "keepout_radius": 4.0,
+          "pad_distance": 18.4033,
+          "courtyard_distance": 14.9782,
+          "body_distance": 15.528,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J510",
+          "keepout_radius": 4.0,
+          "pad_distance": 16.0823,
+          "courtyard_distance": 13.8266,
+          "body_distance": 14.1895,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J513",
+          "keepout_radius": 4.0,
+          "pad_distance": 21.8721,
+          "courtyard_distance": 19.5653,
+          "body_distance": 20.0023,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        }
+      ],
+      "errors": [],
+      "passed": true,
+      "note": "Keepout = copper rule area (tracks, vias, fills) on the listed layers. A courtyard box intrusion is reported, not failed, when pads and the F.Fab body clear the keepout."
+    },
+    "annular": {
+      "floor_mm": 0.18,
+      "below_floor": [],
+      "passed": true
+    },
+    "groups": {
+      "rows": [],
+      "errors": [],
+      "passed": true
+    },
+    "locked": {
+      "scripted_segments": 1,
+      "locked_on_board": 1,
+      "kept": true,
+      "note": "SES import before/after counts and the DSN probe are in route-log.json"
+    }
+  },
+  "router": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "runtime": "Eclipse Temurin JRE 25.0.5+8 (sha256 6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6)",
+    "max_passes": 20,
+    "threads": 1,
+    "job_timeout": "00:05:00",
+    "fetch": "CI only, never committed or uploaded"
+  },
+  "heights": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "interior side: board top z 13.5 to the plate rear face z 38.5 (contract-proposal.json); body heights in 'heights', mated heights in heights_note"
+    }
+  ],
+  "does_not_prove": [
+    "that the schematic is right",
+    "current capacity or temperature rise beyond the chosen class widths",
+    "impedance, RF loss or isolation, EMC or signal integrity",
+    "creepage beyond the encoded clearances",
+    "that the enclosure fits (only outline and hole checks; heights are not checked here)",
+    "that the fab's DFM accepts the board, or that CPL rotations are right",
+    "that the land patterns match the purchased MPNs",
+    "any function: hardware and bench gates stay OPEN"
+  ]
+}
