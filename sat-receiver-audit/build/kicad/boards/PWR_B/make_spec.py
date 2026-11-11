@@ -575,7 +575,8 @@ NPTH_CLEAR = 0.25 + 0.05  # copper to the J209 alignment-post holes (KiCad hole 
 SPINE_VIAS_MIN = 4
 SPINE_VIA_PITCH = 1.2     # spine plane vias at least this far apart: 0.5 mm between them for one F.Cu track
 LAB5_UP_VY = 22.2         # upper LAB5 vias above the upper contact row (top side free there)
-LAB5_LO_VY = (15.4, 14.55)  # lower LAB5 vias below the lower contact row, clear of the GND contacts beside them
+LAB5_LO_VY = 15.4         # lower LAB5 vias below the lower contact row, clear of the GND contacts beside them
+W_PAIR = 0.8              # copper of one LAB5 contact pair (2 A): PWR2A width (netclasses.json)
 K4_KLO = 15.2             # ch4 SHUNT sense: B.Cu right of the J209 hole, under the lower row into its contact
 
 
@@ -625,9 +626,9 @@ def scripted_copper(inp, parts, pins):
     def row(n):  # upper / lower contact row of J209 on the board (rotation 180: odd contacts lower, even upper)
         return 'upper' if j.pad(n)['at'][1] > B2B_AT[1] else 'lower'
     # LAB5: four J209 contacts (b2b-nets.json: ceil(4 A / 1 A)), two in each row (guard_rule checkerboard), next to the end of
-    # the trunk. Upper pair: B.Cu stubs -> one via each -> F.Cu riser over the strip (top side free there); lower pair: B.Cu
-    # stubs -> two vias each -> F.Cu plate; riser and plate join the F.Cu trunk (PWR3A 2.0 mm >= 1.85) -> 0.6 mm branch to
-    # each switch IN.
+    # the trunk. Each contact: B.Cu stub -> one via; each pair (2 A): F.Cu bar 0.8 mm (PWR2A); the upper pair by a 0.8 mm riser
+    # over the strip (top side free there) down to the lower bar; from there a 2.0 mm plate (4 A, PWR3A >= 1.85) to the
+    # F.Cu trunk -> 0.6 mm branch to each switch IN.
     lab5 = sorted((n for n, net in pins['pins'].items() if net == 'LAB5'), key=int)
     up, lo = [n for n in lab5 if row(n) == 'upper'], [n for n in lab5 if row(n) == 'lower']
     if len(up) != 2 or len(lo) != 2:
@@ -640,19 +641,21 @@ def scripted_copper(inp, parts, pins):
         T(f'LAB5-J209-{n}-E', 'LAB5', 'B.Cu', W_SENSE, [(x, end), (x, LAB5_UP_VY)],
           f'J209 contact {n} to its via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width')
         V(f'LAB5-UV-{n}', 'LAB5', (x, LAB5_UP_VY), f'LAB5 via of J209 contact {n}')
-    xr = sum(P(B2B_REF, n)[0] for n in up) / len(up)
-    T('LAB5-RISER', 'LAB5', 'F.Cu', W_TRUNK, [(xr, LAB5_UP_VY), (xr, TY)],
-      'F.Cu riser from the two upper LAB5 vias over J209 to the trunk (no top-side part there)')
+    ux = sorted(P(B2B_REF, n)[0] for n in up)
+    xr = sum(ux) / len(ux)
+    T('LAB5-UP-BAR', 'LAB5', 'F.Cu', W_PAIR, [(ux[0], LAB5_UP_VY), (ux[-1], LAB5_UP_VY)], 'F.Cu over the two upper LAB5 vias')
+    T('LAB5-RISER', 'LAB5', 'F.Cu', W_PAIR, [(xr, LAB5_UP_VY), (xr, LAB5_LO_VY)],
+      'F.Cu riser of the two upper LAB5 contacts (2 A, PWR2A width 0.8 mm) over J209 (no top-side part there)')
     for n in lo:
         x = P(B2B_REF, n)[0]
-        T(f'LAB5-J209-{n}', 'LAB5', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (x, LAB5_LO_VY[0])],
-          f'out of J209 contact {n} (lower row) between its GND neighbours to its first via')
-        T(f'LAB5-J209-{n}-E', 'LAB5', 'B.Cu', W_SENSE, [(x, LAB5_LO_VY[0]), (x, LAB5_LO_VY[1])],
-          f'J209 contact {n} to its second via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width')
-        for k, vy in enumerate(LAB5_LO_VY, 1):
-            V(f'LAB5-LV-{n}-{k}', 'LAB5', (x, vy), f'LAB5 via {k} of J209 contact {n}')
-    xm = sum(P(B2B_REF, n)[0] for n in lo) / len(lo)
-    T('LAB5-LO-PLATE', 'LAB5', 'F.Cu', W_TRUNK, [(xm, LAB5_LO_VY[0]), (xm, TY)], 'F.Cu copper over the four lower LAB5 vias')
+        T(f'LAB5-J209-{n}', 'LAB5', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (x, LAB5_LO_VY)],
+          f'out of J209 contact {n} (lower row) between its GND neighbours to its via: one contact, at most 1 A')
+        V(f'LAB5-LV-{n}', 'LAB5', (x, LAB5_LO_VY), f'LAB5 via of J209 contact {n}')
+    lx = sorted(P(B2B_REF, n)[0] for n in lo)
+    T('LAB5-LO-BAR', 'LAB5', 'F.Cu', W_PAIR, [(lx[0], LAB5_LO_VY), (max(lx[-1], xr), LAB5_LO_VY)],
+      'F.Cu over the two lower LAB5 vias to the riser (2 A, PWR2A width 0.8 mm)')
+    T('LAB5-PLATE', 'LAB5', 'F.Cu', W_TRUNK, [(xr, LAB5_LO_VY), (xr, TY)],
+      'the four LAB5 contacts (4 A) from the riser to the trunk: PWR3A width 2.0 mm')
     xm = xr
     first = LAB5_CELLS[0][0] - 0.95
     T('LAB5-TRUNK', 'LAB5', 'F.Cu', W_TRUNK, [(xm, TY), (first, TY)],
@@ -667,11 +670,13 @@ def scripted_copper(inp, parts, pins):
                      'reason': f'LAB5 branch from the 2.0 mm trunk to {u} IN (pin 1), through the input capacitor {refs["cA"]}: '
                                f'it carries at most the TPS2553 limit of {u} (<= 0.825 A, tools/assembly_data.py NET_CURRENT), '
                                f'within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm'}
-    exempt[B2B_REF] = {'max_mm': 6.0, 'min_width_mm': W_PADSTUB,
+    exempt[B2B_REF] = {'max_mm': 10.0, 'min_width_mm': W_PADSTUB,
                        'reason': 'J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail '
                                  'neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, '
                                  'pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row and 0.35 mm '
-                                 '(PWR1A, 1 A) beyond it up to its via; the 1.85 mm of PWR3A does not fit between 0.30 mm pads'}
+                                 '(PWR1A, 1 A) beyond it up to its via; each LAB5 pair (2 A) then runs at the PWR2A width 0.8 mm '
+                                 '(LAB5-UP-BAR, LAB5-RISER, LAB5-LO-BAR) up to the 2.0 mm LAB5-PLATE where the four contacts join; '
+                                 'the 1.85 mm of PWR3A does not fit between 0.30 mm pads'}
     lab5_pads = [(B2B_REF, n) for n in lab5] + [(refs['U'], '1') for _cx, refs in LAB5_CELLS] + \
         [(refs['cA'], '1') for _cx, refs in LAB5_CELLS] + [(refs['cB'], '1') for _cx, refs in LAB5_CELLS if 'cB' in refs]
     pins['scripted_nets']['LAB5'] = lab5_pads
@@ -742,7 +747,8 @@ def scripted_copper(inp, parts, pins):
     # across the strip between them and none at all over the signal and spare columns
     k, last, x = 0, None, x0
     while x <= x1 + 1e-9:
-        if (last is None or x - last >= SPINE_VIA_PITCH - 1e-9) and min(abs(x - g) for g in gx) <= 0.25 + 1e-9                 and via_spot_ok(inp, parts, tracks, vias, (x, sy), 'GND'):
+        if (last is None or x - last >= SPINE_VIA_PITCH - 1e-9) and min(abs(x - g) for g in gx) <= 0.25 + 1e-9 and \
+                min(abs(x - x0), abs(x - x1)) >= VIA_D / 2 + 0.05 and via_spot_ok(inp, parts, tracks, vias, (x, sy), 'GND'):
             k += 1
             V(f'GND-J209-V{k}', 'GND', (x, sy), 'plane via on the J209 GND spine')
             last = x
