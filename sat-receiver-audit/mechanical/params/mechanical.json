@@ -748,9 +748,9 @@
       {
         "id": "ina228",
         "part": "adafruit_ina228_5832",
-        "box": [86.0, 74.98, 5.5, 25.8, 20.32, 10.1],
+        "box": [28.5, 44.48, 6.0, 25.8, 20.32, 10.1],
         "mount": "rear_wall",
-        "_note": "W2 MECH-3 (CC-06): INA228 5832 no longer 'over PWR' (PWR-B covers the PWR-A L): rear layer between the LC76G (x 71.6), the HF+ can (z >= 17.5) and the tripod boss (z <= 4.8), next to the battery tray; on stand-offs from the rear wall (z 2.5 -> 5.5); free volume of fallback F2b reduced accordingly (build/15). W2 MECH-5 (B-13 / F09, CC-36 item 11): the maker's board file puts the 3-way terminal block VIN-/VBUS/VIN+ on a long edge with the wire entries out of it (parts.json adafruit_ina228_5832 terminal); at x 72.6-92.8 with 25.8 along y that edge faced the #2813 (0.5) or the LC76G (1.0), so the 18 AWG VIN+/VIN- of S06 could not enter it. Moved to the upper row x 86.0-111.8, y 74.98-95.3 with 25.8 along x and the terminal edge towards -y: the wire entries face the S06/S07/S25 corridor (y 74.25) with 10.6 free above the #2813 (wire_room 8.0); 0.5 below the PPS run (y 95.8), 4.2 left of the hatch bay (its right insert hole stays 0.9 outside the hatch seat frame), 1.9 under the HF+ can; its old place takes the CH334F hub (hub_ch334f); fixing module_mounts ina228 (2 x M2.5 into TC-M2,5x4 inserts in printed bosses, 2 printed rests under the header edge)"
+        "_note": "W2 MECH-3 (CC-06): INA228 5832 no longer 'over PWR' (PWR-B covers the PWR-A L): rear layer between the LC76G (x 71.6), the HF+ can (z >= 17.5) and the tripod boss (z <= 4.8), next to the battery tray; on stand-offs from the rear wall (z 2.5 -> 5.5); free volume of fallback F2b reduced accordingly (build/15). W2 MECH-5 review (B-13 / F09, CC-36 item 11): the maker's board file puts the 3-way terminal block VIN-/VBUS/VIN+ on a long edge with the wire entries out of it (parts.json adafruit_ina228_5832 terminal). After W2 MECH-6 moved the LC76G to x 58-88.5, y 71-96.5, the rear layer x 3-58, y 38.5-71 under the HF+ can is free: board x 28.7-54.1 (u along +x), y 44.48-64.8 (v along +y), terminal edge on the +y face, where S06 ends (route end at the middle of the +y face = the terminal, u 12.7), wire side free to the RF-bay wall (R-MODULE-MOUNTS counts envelopes and harness bundles); header JP2 on the -y edge, 6.5 above the battery tray for the I2C0/ALERT/VS wires; 1.0 left of the CH334F hub, 3.7 left of the LC76G x range, 1.4 under the HF+ can; on 2 bosses + 2 rests (module_mounts ina228, seat z 6.0)"
       },
       {
         "id": "swm_2813",
@@ -781,37 +781,37 @@
       {
         "id": "hub_ch334f",
         "part": "adafruit_5997",
-        "box": [72.66, 39.0, 5.5, 20.32, 31.62, 7.3],
+        "box": [55.3, 39.0, 6.0, 31.62, 20.32, 7.3],
         "mount": "rear_wall",
-        "_note": "W2 MECH-5 (B-09): Adafruit 5997 CH334F U510 in the rear layer under the HF+ can, where the INA228 was (x 72.66-92.98, y 39.0-70.62, z 5.5-12.8): board on 4 printed bosses of the rear wall (module_mounts hub_ch334f), USB-C end (unused) towards the battery tray, upstream pads JP5 at the +y end towards the S06/S07/S25 corridor (y 74.25) that leads east past the hatch bay to Q6A J2 (about 50 mm to the J2 face at x 139.25) and the downstream pads JP1-JP4 on the long edges (H4 to the HF+ can right above it); 1.0 to the LC76G (its bosses touch the LC76G face x 71.6), 0.32 to the #2813 (tight), 1.05 to the battery tray, 4.7 under the HF+ can"
+        "_note": "W2 MECH-5 (B-09), review: Adafruit 5997 CH334F U510 in the rear layer under the HF+ can, x 55.3-86.92, y 39.0-59.32, z 6.0-13.3, board v along -x: upstream pads JP5 at the east end (x 84.4) towards Q6A J2 and the PWR shaft, USB-C end (unused) at the west end, downstream pads JP1-JP4 on the long edges (H4 to the HF+ can above); on 4 printed bosses of the rear wall (module_mounts hub_ch334f), the east bosses 1.0 short of the tripod boss envelope (x 89) and 11.9 from the 1/4-20 nut pocket; 1.0 right of the INA228, 1.05 above the battery tray, 6.4 left of the #2813, 11.7 below the LC76G, 8.7 below the S06 run (y 68), 4.2 under the HF+ can"
       },
       {
         "id": "veml7700",
         "part": "adafruit_4162",
         "box": [107.3, 157.5, 49.284, 30.4, 3.8, 17.78],
         "mount": "front_wall",
-        "_note": "W2 MECH-5 (B-09): Adafruit 4162 U308 under the top wall behind the window (top_face.veml7700_window x 120, z 63.0): board x 107.3-132.7 in the x-z plane, parts side towards the wall in a 1.1 mm pocket of the top wall (module_mounts veml7700), back face y 157.5 = 0.5 above the HDMI board reserve (y 157; a board without the pocket would cut 0.6 into it), front edge z 67.06 (0.52 to the front-wall inner face); x +5.0 for the STEMMA QT plug of S26 at the +x end (JST SH, CONN3); held by 2 M2.5 screws at the front holes (the rear holes rest on printed pins: screw heads there would reach into the HDMI board reserve)"
+        "_note": "W2 MECH-5 (B-09): Adafruit 4162 U308 under the top wall behind the window (top_face.veml7700_window x 120, z 63.0): board x 107.3-132.7 in the x-z plane, parts side towards the wall in a 1.1 mm pocket of the top wall (module_mounts veml7700), back face y 157.5 = 0.5 above the HDMI board reserve (y 157; a board without the pocket would cut 0.6 into it), front edge z 67.06 (0.52 to the front-wall inner face); x +5.0 for the STEMMA QT plug of S26 at the +x end (JST SH, CONN3). Review: held by acrylic foam tape discs on 4 printed rests at its 4 holes, 2 diagonal spigots in the holes locate it (build/17 F47): the 2.5 top wall with the pocket leaves no depth for an M2.5 insert joint with 1.5 d engagement"
       },
       {
         "id": "t7_insert",
         "part": "t7_insert_board",
-        "box": [140.5, 47.6, 4.5, 22.0, 9.0, 9.0],
+        "box": [142.0, 49.1, 3.0, 21.5, 9.0, 8.5],
         "mount": "free",
-        "_note": "W2 MECH-5 (B-09): T7_INSERT reserve (U505 VBUS key in the T7 USB3 cable, pcb/prepare.py domain T7_INSERT, W2 GR-4 refs J514-J517) under the Q6A USB stack (J5) between the S13 run (y 47.1) and the S24 run (y 57.0), 1.5 left of the fan duct, 0.5 above the hatch seat frame (z 4.0), 1.15 below the J5 stack; heat-shrunk in the cable, tied down (no screw); the T7 cable route from the J5 plug to the gland and its bend radius are not modelled (J511 interface_open, MECH-6); board by PCB-SB2"
+        "_note": "W2 MECH-5 (B-09): T7_INSERT reserve (U505 VBUS key in the T7 USB3 cable, pcb/prepare.py domain T7_INSERT, W2 GR-4 refs J514-J517) under the Q6A USB stack (J5) between the S13 run (y 47.1) and the S24 run (y 57.0, its own harness), review: x 142.0-163.5, y 49.1-58.1, z 3.0-11.5 so the S13 bundle (OD 2.87, down x 140 and east along y 47.1) keeps 0.5 to it and its own S24 run (z 12) ends 0.5 above it; 0.5 left of the fan duct, 0.5 above the rear-wall inner face (right of the hatch seat frame x 142), 3.15 below the J5 stack, 0.9 below the T7 gland body; heat-shrunk in the cable, tied down (no screw); the T7 cable route from the J5 plug to the gland and its bend radius are not modelled (J511 interface_open, MECH-6); board by PCB-SB2"
       },
       {
         "id": "pack_fuse",
         "part": "pack_fuse_carrier",
-        "box": [163.5, 11.5, 40.5, 11.0, 26.0, 23.77],
+        "box": [161.7, 7.5, 46.5, 10.7, 28.0, 17.77],
         "mount": "plate_front",
-        "_note": "W2 MECH-5 (B-09 / B-12): PACK_FUSE carrier (F101 in Keystone 3568, 18 AWG pads J116/J117, W2 GR-4) beside the right end of the battery tray (2.3 mm, the pack positive side next to the BMS), on the plate extension front face on 2 PEM SO-M2.5-6ZI standoffs (M-07 PF1-PF2, module_mounts pack_fuse), fuse pointing +z: it is reached when the front half is lifted off (storage procedure through the seam, R-F101-ACCESS); 0.5 to the BMS, 1.0 below the blower, 3.3 under the front wall; board by PCB-SB2, fixing F39 (PCB-SB2)"
+        "_note": "W2 MECH-5 (B-09 / B-12): PACK_FUSE carrier (F101 in Keystone 3568, 18 AWG pads J116/J117, W2 GR-4) beside the right end of the battery tray (0.5, the pack positive side next to the BMS), on 2 PEM SO-M2.5-6ZI standoffs in the plate extension (M-07 PF1-PF2, module_mounts pack_fuse), fuse pointing +z: it is reached when the front half is lifted off (storage procedure through the seam, R-F101-ACCESS). Review: the envelope is the carrier board with holder and fuse (z 46.5-64.27); the 6 mm standoff barrels below it are checked by R-MODULE-MOUNTS, and the case NTC TH302 (ntc_case, W2 MECH-6) lies under the carrier between them (3.8 air); x 161.7-172.4 keeps 1.6 to the S40 riser (x 174), y 7.5-35.5 keeps 2.7 to the S11/S23/S32/S34 run (y 38.2); 2.6 to the BMS, 3.0 below the blower, 3.3 under the front wall; board by PCB-SB2, fixing F39 (PCB-SB2)"
       },
       {
         "id": "boni_a406",
         "part": "boni_a406",
-        "box": [100.0, 99.6, 17.6, 30.0, 26.0, 9.8],
+        "box": [106.0, 99.6, 17.6, 30.0, 26.0, 9.8],
         "mount": "free",
-        "_note": "W2 MECH-5 (B-09): A406 bias-tee reserve (assumption, parts.json boni_a406) in the RF bay over V4L-A (0.5) and under the RF board (1.0), next to the HF edge of the RF board (bottom edge zone x 17.6-117.6: K401/K402, 'Boni bias feed') and outside the HF+ can: the largest free volume there (voxel scan 2026-11-07); fixing TBD with the received unit (OPEN)"
+        "_note": "W2 MECH-5 (B-09): A406 bias-tee reserve (assumption, parts.json boni_a406) in the RF bay over V4L-A (0.5) and under the RF board (1.0), next to the HF edge of the RF board (bottom edge zone x 17.6-117.6: K401/K402, 'Boni bias feed') and outside the HF+ can; review: x 106-136, so the W407 P7 pigtail (W2 MECH-6, diagonal at z 24.9) passes 1.3 from its corner; fixing TBD with the received unit (OPEN)"
       },
       {
         "id": "ntc_panel",
@@ -830,22 +830,28 @@
     ]
   },
   "module_mounts": {
-    "_note": "W2 MECH-5 (B-13, build/17 F05/F09/F10): fixing of the modules that have no board place in boards.json. Rear-wall and top-wall modules sit on printed bosses of the shell with CNC Kitchen TC-M2,5x4 heat-set inserts (screws M2.5, Adafruit holes D2.5: product 3299 'M2.5 size screws fit almost all of the Adafruit breakout/dev board mounting holes'), or on printed rests without insert, or (no mounting hole) on a printed pad with acrylic foam tape; plate-mounted boards on PEM self-clinching standoffs in the plate (no thread cut in the plate, STACK 5.8). Hole positions come from the makers' board files (parts.json). MODEL FIT ONLY",
-    "insert": {"part": "TC-M2,5x4", "thread": "M2.5", "hole_d": 4.0, "len": 4.0, "skin_min": 0.5, "_src": "CNC Kitchen TC-M2,5x4 listing (tools/assembly_data.py CNCK-M25: L 4.0, D1 4.6, hole D3 4.0, wall >= 1.6); boss_d = hole 4.0 + 2 x 1.6"},
+    "_note": "W2 MECH-5 (B-13, build/17 F05/F09/F10/F47): fixing of the modules that have no board place in boards.json. Rear-wall modules sit on printed bosses of the shell with CNC Kitchen TC-M2,5x4 heat-set inserts (screws M2.5, Adafruit holes D2.5: product 3299 'M2.5 size screws fit almost all of the Adafruit breakout/dev board mounting holes') and on printed rests without insert; a board without mounting holes (#2813) or one in a wall too thin for an insert joint (VEML7700 in the top wall) sits on printed pads or rests with acrylic foam tape; plate-mounted boards on PEM self-clinching standoffs in the plate (no thread cut in the plate, STACK 5.8). Hole positions come from the makers' board files (parts.json). MODEL FIT ONLY",
+    "insert": {"part": "TC-M2,5x4", "thread": "M2.5", "hole_d": 4.0, "len": 4.0, "hole_depth": 5.0, "skin_min": 0.5, "_src": "CNC Kitchen TC-M2,5x4 listing (tools/assembly_data.py CNCK-M25: L 4.0, D1 4.6, hole D3 4.0, wall >= 1.6); boss_d = hole 4.0 + 2 x 1.6; hole_depth = insert + 1.0 (W2 MECH-5 review, design value): M2.5 x 6 ISO 14580 through a 1.6 board engages 4.4 (>= 1.5 d of fasteners.py ENG_INSERT, the insert 4.0 fully used) and ends 0.6 above the hole bottom (TIP_GAP 0.5); with the seat at z 6.0 the rear wall keeps 1.0 under the hole; the M2.5 lengths stocked by the screw seller are 4, 6 and 10 (parts DB AI-M25-CTRL-ENC, W2 SRC-2), so no x 5"},
     "boss_d": 7.2,
     "rest_d": 6.0,
     "tape": "vhb_4910",
+    "tripod_clear": 3.0,
+    "_tripod_clear_src": "design value of this package (W2 MECH-5 review): every rear-wall insert hole keeps >= 3.0 mm in plan from the captive 1/4-20 nut pocket (rear_face.tripod hex, taken as its circumscribed circle), the same 3 mm STACK D15 asks behind the nut, so the 100 % infill tripod boss is not weakened and heat-setting does not distort the pocket",
+    "bundle_clear": 0.5,
+    "bundle_items": {"hub_ch334f": "HUB", "ina228": "INA", "veml7700": "VEML", "t7_insert": "T7A", "pack_fuse": "PACK", "boni_a406": "BONI"},
+    "_bundle_src": "W2 MECH-5 review: the envelopes placed by this package keep bundle_od_mm / 2 + bundle_clear from every harness route centreline (generated/harness-routes.json) that does not end at their own unit; R-ROUTE-CLEAR itself stays centreline-only",
     "mounts": [
-      {"item": "hub_ch334f", "on": "rear_wall", "seat_z": 5.5, "screws": [[75.2, 42.68], [90.44, 42.68], [75.2, 68.08], [90.44, 68.08]],
-       "screw": "M2.5 x 5 ISO 14580 A2 TX8 (board 1.6 + 3.4 in the 4.0 insert)", "_src": "holes (2.54, 2.54), (17.78, 2.54), (2.54, 27.94), (17.78, 27.94) of parts.json adafruit_5997 with the board v axis towards -y (JP5 edge at y 70.62)"},
-      {"item": "ina228", "on": "rear_wall", "seat_z": 5.5, "screws": [[88.74, 77.52], [109.06, 77.52]], "rests": [[90.8, 86.3], [106.8, 86.3]],
-       "screw": "M2.5 x 5 ISO 14580 A2 TX8", "_src": "holes (2.54, 17.78), (22.86, 17.78) of parts.json adafruit_ina228_5832 (board x 86.2-111.6 centred in the 25.8 envelope, terminal edge at y 74.98); the rests sit under the board between the header and the terminal pins (v about 9), clear of their solder tails"},
+      {"item": "hub_ch334f", "on": "rear_wall", "seat_z": 6.0, "screws": [[84.38, 41.54], [84.38, 56.78], [58.98, 41.54], [58.98, 56.78]],
+       "screw": "M2.5 x 6 ISO 14580 A2 TX8 (board 1.6 + 4.4: the 4.0 insert, tip 0.6 above the hole bottom)", "_src": "holes (2.54, 2.54), (17.78, 2.54), (2.54, 27.94), (17.78, 27.94) of parts.json adafruit_5997 with the board v axis towards -x from the JP5 end x 86.92 and u towards +y from y 39.0"},
+      {"item": "ina228", "on": "rear_wall", "seat_z": 6.0, "screws": [[31.24, 62.26], [51.56, 62.26]], "rests": [[33.3, 53.48], [49.3, 53.48]], "terminal_side": "+y",
+       "screw": "M2.5 x 6 ISO 14580 A2 TX8 (board 1.6 + 4.4: the 4.0 insert, tip 0.6 above the hole bottom)", "_src": "holes (2.54, 17.78), (22.86, 17.78) of parts.json adafruit_ina228_5832 with u towards +x from x 28.7 (board 25.4 centred in the 25.8 envelope) and v towards +y from y 44.48, so the terminal edge (v 20.32) is the +y face at y 64.8; the rests sit under the board between the header and the terminal pins (u 4.6 / 20.6, v 9.0), clear of their solder tails"},
       {"item": "swm_2813", "on": "rear_wall", "pad": [97.46, 44.0, 12.0, 14.0], "pad_top_z": 4.5, "tape_t": 1.0,
        "_src": "the #2813 has no mounting hole (parts.json pololu_2813): pad under the middle of the board, clear of the pin rows (1.27 from the long edges) and of the power holes at the +y end, board bottom 4.5 + tape 1.0 = 5.5"},
-      {"item": "veml7700", "on": "top_wall", "pocket": [106.8, 48.78, 31.4, 19.3, 1.1], "seat_y": 159.1, "screws": [[109.84, 64.524], [130.16, 64.524]], "rests": [[109.84, 51.824], [130.16, 51.824]],
-       "screw": "M2.5 x 5 ISO 14580 A2 TX8 from the back face (board 1.6 + 3.4 in the insert)", "_src": "holes (2.54, 15.24), (22.86, 15.24) and (2.54, 2.54), (22.86, 2.54) of parts.json adafruit_4162 (board u along x from 107.3, v along z from 49.284); pocket [x, z, w, h, depth] in the inner face of the top wall (running 0.5 into the front-wall inner face at the corner): the 3.0 mm parts + 0.3 air leave the board parts face at y 159.1, the wall keeps 1.4 over the pocket and 0.7 behind the 4.0 insert holes"},
-      {"item": "pack_fuse", "on": "plate_front", "standoffs": [[169.0, 14.5], [169.0, 34.5]], "fastener": "pem_so_m25_6",
-       "_src": "two holes on the carrier centreline 3.0 from its ends; 6.0 from the plate-extension edge x 163 (PEM edge distance, parts.json pem_so_m25_6); heads flush with the plate rear face; the carrier screws (M2.5 x 6, tip 1.6 above the plate front face) and the carrier outline are PCB-SB2's (F39)"}
+      {"item": "veml7700", "on": "top_wall", "pocket": [106.8, 48.78, 31.4, 19.3, 1.1], "seat_y": 159.1, "tape_t": 1.0,
+       "rests": [[109.84, 51.824], [130.16, 51.824], [109.84, 64.524], [130.16, 64.524]], "spigots": [[109.84, 64.524], [130.16, 51.824]], "spigot_d": 2.2, "spigot_len": 2.0,
+       "_src": "holes (2.54, 2.54), (22.86, 2.54), (2.54, 15.24), (22.86, 15.24) of parts.json adafruit_4162 (board u along x from 107.3, v along z from 49.284); pocket [x, z, w, h, depth] in the inner face of the top wall (running 0.5 into the front-wall inner face at the corner): the 3.0 mm parts + 0.3 air leave the board parts face at y 159.1, the wall keeps 1.4 over the pocket. W2 MECH-5 review: no insert joint fits here (an insert hole 1 mm deeper than the 4.0 insert would leave the outer top face -0.3; the M2.5 x 4 that fits engages 2.4 = 0.96 d), so the board is taped (VHB 4910 discs D6 with a D2.5 hole, 1.0 thick) to 4 printed rests D6 at its holes, the rest faces at y 160.1; two diagonal spigots D2.2 x 2.0 stand on two rests and enter the D2.5 holes 1.0 deep (board located +-0.15 under the D4 window)"},
+      {"item": "pack_fuse", "on": "plate_front", "standoffs": [[169.0, 10.5], [169.0, 32.5]], "fastener": "pem_so_m25_6",
+       "_src": "two holes 3.0 from the carrier ends; 6.0 from the plate-extension edge x 163 (PEM edge distance, parts.json pem_so_m25_6) and 7.5 from its bottom edge y 3.0; heads flush with the plate rear face; barrels 6.0 on the front face up to the carrier bottom z 46.5; the carrier screws (M2.5 x 6, tip 1.6 above the plate front face) and the carrier outline are PCB-SB2's (F39)"}
     ]
   },
   "rf_bay": {

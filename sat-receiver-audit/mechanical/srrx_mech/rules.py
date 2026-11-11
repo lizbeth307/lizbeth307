@@ -1133,45 +1133,115 @@ def w2_mech4_rules(P):
 
 
 def module_mount_geometry(P):
-    """Bosses, rests and pads of mechanical.json module_mounts as plain numbers (shared by cad.py, the drawings and the rule).
+    """Bosses, rests, spigots and pads of mechanical.json module_mounts as plain numbers (shared by cad.py, the drawings and the rule).
 
-    rear_wall: (x, y) circles standing on the rear-wall inner face up to seat_z; top_wall: (x, z) circles hanging from the top-wall
-    pocket floor down to seat_y; insert holes are hole_depth deep from the seat face."""
+    rear_wall: (x, y) circles standing on the rear-wall inner face up to seat; top_wall: (x, z) circles hanging from the top-wall
+    pocket floor down to seat. seat is the printed face; a taped mount (tape_t) has the board tape_t beyond it (rear: +z, top: -y),
+    otherwise the board lies on it. Insert holes are hole_depth deep from the seat face; a spigot stands len on its rest face."""
     mm = P.mech.get("module_mounts")
     if not mm:
         return []
     ins = mm["insert"]
+    depth = ins.get("hole_depth", ins["len"])
     out = []
     for mt in mm["mounts"]:
-        for kind in ("screws", "rests"):
-            for c in mt.get(kind, []):
-                if mt["on"] in ("rear_wall", "top_wall"):
-                    out.append({"item": mt["item"], "on": mt["on"], "kind": kind, "c": tuple(c), "d": mm["boss_d"] if kind == "screws" else mm["rest_d"],
-                                "insert": kind == "screws", "hole_d": ins["hole_d"], "hole_depth": ins["len"],
-                                "seat": mt.get("seat_z", mt.get("seat_y"))})
+        if mt["on"] not in ("rear_wall", "top_wall"):
+            continue
         if "pad" in mt:
             out.append({"item": mt["item"], "on": mt["on"], "kind": "pad", "rect": tuple(mt["pad"]), "seat": mt["pad_top_z"], "tape_t": mt["tape_t"]})
+            continue
+        board = mt.get("seat_z", mt.get("seat_y"))
+        tape = mt.get("tape_t", 0.0)
+        face = board - tape if mt["on"] == "rear_wall" else board + tape
+        for kind in ("screws", "rests"):
+            for c in mt.get(kind, []):
+                out.append({"item": mt["item"], "on": mt["on"], "kind": kind, "c": tuple(c), "d": mm["boss_d"] if kind == "screws" else mm["rest_d"],
+                            "insert": kind == "screws", "hole_d": ins["hole_d"], "hole_depth": depth, "seat": face if kind == "rests" else board,
+                            "board": board, "tape_t": tape if kind == "rests" else 0.0})
+        for c in mt.get("spigots", []):
+            out.append({"item": mt["item"], "on": mt["on"], "kind": "spigot", "c": tuple(c), "d": mt["spigot_d"], "insert": False,
+                        "seat": face, "board": board, "len": mt["spigot_len"]})
     return out
+
+
+def _seg_box_dist(a, b, bx):
+    """Shortest distance between the segment a-b and the box (x0, y0, z0, x1, y1, z1): convex along the segment, golden-section search."""
+    def d(t):
+        p = [a[i] + t * (b[i] - a[i]) for i in range(3)]
+        return math.sqrt(sum(max(bx[i] - p[i], 0.0, p[i] - bx[i + 3]) ** 2 for i in range(3)))
+    lo, hi = 0.0, 1.0
+    g = (math.sqrt(5) - 1) / 2
+    for _ in range(48):
+        m1, m2 = hi - g * (hi - lo), lo + g * (hi - lo)
+        if d(m1) <= d(m2):
+            hi = m2
+        else:
+            lo = m1
+    return min(d(0.0), d(1.0), d((lo + hi) / 2))
+
+
+def _terminal_room(P, ina, side, routes_all, unit, t):
+    """Free length in front of the INA228 terminal-block wire entries: envelopes and harness bundles (bundle_od_mm / 2) that cross the
+    terminal span in front of the face, the routes ending at the INA228 itself (S06) excepted; the enclosure wall bounds it.
+    Returns (envelopes only, envelopes and bundles, what limits it)."""
+    W, H, D = P.outer
+    cx = (ina[0] + ina[3]) / 2
+    span = (cx - 3.5 * 1.5, cx + 3.5 * 1.5)
+    face = ina[4] if side == "+y" else ina[1]
+    sgn = 1.0 if side == "+y" else -1.0
+    env = [((b[1] if side == "+y" else b[4]), iid) for iid, name, b, it in item_boxes(P) if iid != "ina228" and b[0] < span[1] and b[3] > span[0]
+           and b[2] < ina[5] and b[5] > ina[2] and sgn * ((b[1] if side == "+y" else b[4]) - face) >= -1e-6]
+    env.append(((H - t) if side == "+y" else t, "wall"))
+    lim_env = min(env, key=lambda v: sgn * (v[0] - face))
+    best = (sgn * (lim_env[0] - face), lim_env[1])
+    for sid, r in routes_all:
+        if unit in r.get("ends", []):
+            continue
+        od = r.get("bundle_od_mm") or 0.0
+        pts = r.get("points_mm") or []
+        for a, b in zip(pts, pts[1:]):
+            n = max(2, int(math.dist(a, b) / 0.5) + 1)
+            for k in range(n + 1):
+                p = [a[i] + k / n * (b[i] - a[i]) for i in range(3)]
+                if span[0] - od / 2 < p[0] < span[1] + od / 2 and ina[2] - od / 2 < p[2] < ina[5] + od / 2 and sgn * (p[1] - face) > 0:
+                    room = sgn * (p[1] - face) - od / 2
+                    if room < best[0]:
+                        best = (room, sid)
+    return round(sgn * (lim_env[0] - face), 2), round(best[0], 2), best[1]
 
 
 def module_mounts_rule(P):
     """R-MODULE-MOUNTS (W2 MECH-5, B-13 / CC-36 item 11): fixing of the modules without a board place; insert skins, seats against the
-    envelopes, plate standoffs, the INA228 terminal-block wire side and the 18 AWG fit, and what stays open."""
+    envelopes, insert holes clear of the tripod nut pocket, plate standoffs, the INA228 terminal-block wire side (envelopes and harness
+    bundles) and the 18 AWG fit, the harness-bundle clearance of this package's envelopes, and what stays open."""
+    from . import routes
+    from .layout import gap as box_gap
     m = P.mech
     mm = m.get("module_mounts")
     rule = {"id": "R-MODULE-MOUNTS",
-            "rule": "module fixing (mechanical.json module_mounts): insert hole + skin <= wall + boss, seat face = envelope face, screw holes = the "
-                    "makers' board-file holes, the INA228 terminal wire side free, 18 AWG inside the terminal range; plate standoffs in R-HOLE-EDGE / R-CLINCH-EDGE",
-            "source": "mechanical.json module_mounts; parts.json adafruit_5997, adafruit_4162, adafruit_ina228_5832, pololu_2813, pem_so_m25_6"}
+            "rule": "module fixing (mechanical.json module_mounts): insert hole + skin <= wall + boss, board face = envelope face, screw holes = the "
+                    "makers' board-file holes, rear-wall insert holes >= tripod_clear from the 1/4-20 nut pocket, the INA228 terminal wire side free of "
+                    "envelopes and harness bundles, 18 AWG inside the terminal range, this package's envelopes >= bundle OD / 2 + bundle_clear from "
+                    "other routes, plate standoff barrels clear of the envelopes; plate standoff holes in R-HOLE-EDGE / R-CLINCH-EDGE",
+            "source": "mechanical.json module_mounts, rear_face.tripod; parts.json adafruit_5997, adafruit_4162, adafruit_ina228_5832, pololu_2813, "
+                      "pem_so_m25_6; generated/harness-routes.json bundle_od_mm"}
     if not mm:
         return dict(rule, value_mm=None, result="OPEN: no module_mounts")
     W, H, D = P.outer
     t = m["wall"]
     boxes = {iid: bx for iid, name, bx, it in item_boxes(P)}
-    bad, val = [], {}
+    tp = m["rear_face"]["tripod"]
+    hexr = tp["hex_af"] / 2 / math.cos(math.radians(30))
+    veml = P.parts["adafruit_4162"]
+    pocket = {mt["item"]: mt["pocket"][4] for mt in mm["mounts"] if "pocket" in mt}
+    bad, val, tri = [], {}, []
     for g in module_mount_geometry(P):
         bx = boxes[g["item"]]
-        if g["on"] == "rear_wall":
+        if g["kind"] == "spigot":
+            # a locating spigot on a taped rest: thinner than the board hole, ends inside the board
+            ok = g["on"] == "top_wall" and g["d"] < veml["holes"]["d"] and g["len"] <= g["seat"] - g["board"] + veml["board"][2] - 0.1
+            val.setdefault(g["item"], {}).setdefault("spigots", []).append({"c": list(g["c"]), "d": g["d"], "len": g["len"]})
+        elif g["on"] == "rear_wall":
             if g["kind"] == "pad":
                 x, y, w, h = g["rect"]
                 ok = bx[0] <= x and x + w <= bx[3] and bx[1] <= y and y + h <= bx[4] and abs(g["seat"] + g["tape_t"] - bx[2]) < 1e-6
@@ -1179,13 +1249,21 @@ def module_mounts_rule(P):
             else:
                 x, y = g["c"]
                 skin = g["seat"] - g["hole_depth"] if g["insert"] else None
-                ok = bx[0] <= x <= bx[3] and bx[1] <= y <= bx[4] and abs(g["seat"] - bx[2]) < 1e-6 and (skin is None or skin >= mm["insert"]["skin_min"])
-                val.setdefault(g["item"], {}).setdefault(g["kind"], []).append({"c": [x, y], "skin_mm": None if skin is None else round(skin, 2)})
+                ok = bx[0] <= x <= bx[3] and bx[1] <= y <= bx[4] and abs(g["board"] - bx[2]) < 1e-6 and (skin is None or skin >= mm["insert"]["skin_min"])
+                row = {"c": [x, y], "skin_mm": None if skin is None else round(skin, 2)}
+                if g["insert"]:
+                    dt = round(math.hypot(x - tp["c"][0], y - tp["c"][1]) - hexr - g["hole_d"] / 2, 2)
+                    row["to_tripod_pocket_mm"] = dt
+                    tri.append(dt)
+                    ok = ok and dt >= mm.get("tripod_clear", 0.0)
+                val.setdefault(g["item"], {}).setdefault(g["kind"], []).append(row)
         else:
             x, z = g["c"]
             skin = H - (g["seat"] + g["hole_depth"]) if g["insert"] else None
-            ok = bx[0] <= x <= bx[3] and bx[2] <= z <= bx[5] and (skin is None or skin >= mm["insert"]["skin_min"])
-            val.setdefault(g["item"], {}).setdefault(g["kind"], []).append({"c": [x, z], "skin_mm": None if skin is None else round(skin, 2)})
+            ok = (bx[0] <= x <= bx[3] and bx[2] <= z <= bx[5] and (skin is None or skin >= mm["insert"]["skin_min"])
+                  and g["board"] <= g["seat"] <= H - t + pocket.get(g["item"], 0.0) + 1e-6)
+            val.setdefault(g["item"], {}).setdefault(g["kind"], []).append({"c": [x, z], "skin_mm": None if skin is None else round(skin, 2),
+                                                                            "face_y": round(g["seat"], 2), "tape": g.get("tape_t", 0.0)})
         if not ok:
             bad.append(f"{g['item']} {g['kind']} {g.get('c', g.get('rect'))}")
     # VEML7700: pocket skin, board front edge to the front wall, back face to the envelope below it
@@ -1197,31 +1275,68 @@ def module_mounts_rule(P):
         val["veml7700"]["front_edge_to_wall_mm"] = round(fwi - boxes["veml7700"][5], 2)
         if t - pd < 1.0 or fwi - boxes["veml7700"][5] < 0.5:
             bad.append("veml7700 pocket skin or front edge")
-    # INA228: free length in front of the terminal-block wire entries (towards -y) and the 18 AWG range
+    res = routes.evaluate(P)
+    allr = (list(res["segments"].items()) + list(res["branches"].items()) + list(res.get("coax", {}).items())) if res else []
+    # INA228: free length in front of the terminal-block wire entries (envelopes and harness bundles) and the 18 AWG range
     ina, term = boxes["ina228"], P.parts["adafruit_ina228_5832"]["terminal"]
-    cx = (ina[0] + ina[3]) / 2
-    span = (cx - 3.5 * 1.5, cx + 3.5 * 1.5)
-    front = [b[4] for iid, b in boxes.items() if iid != "ina228" and b[0] < span[1] and b[3] > span[0] and b[4] <= ina[1] + 1e-6
-             and b[2] < ina[5] and b[5] > ina[2]]
-    room = round(ina[1] - max(front + [t]), 2)
+    side = next((mt.get("terminal_side", "-y") for mt in mm["mounts"] if mt["item"] == "ina228"), "-y")
+    env_room, room, lim = _terminal_room(P, ina, side, allr, "INA", t)
     awg = 18
-    val["ina228"]["terminal"] = {"wire_side": "-y", "free_mm": room, "need_mm": term["wire_room"], "awg_range": term["wire_awg"], "vin_awg": awg}
+    val["ina228"]["terminal"] = {"wire_side": side, "free_mm": room, "free_envelopes_only_mm": env_room, "limited_by": lim, "need_mm": term["wire_room"],
+                                 "awg_range": term["wire_awg"], "vin_awg": awg}
     if room < term["wire_room"] or not (term["wire_awg"][0] <= awg <= term["wire_awg"][1]):
         bad.append("ina228 terminal wire side")
-    pf = [mt for mt in mm["mounts"] if mt["on"] == "plate_front"]
-    val["plate_standoffs"] = {mt["item"]: [list(c) for c in mt["standoffs"]] for mt in pf}
+    # this package's envelopes against the harness bundles of the routes that do not end at them
+    margin = mm.get("bundle_clear", 0.5)
+    bc = {}
+    for iid, unit in mm.get("bundle_items", {}).items():
+        bx = boxes[iid]
+        worst = None
+        for sid, r in allr:
+            if unit in r.get("ends", []) or len(r.get("points_mm") or []) < 2:
+                continue
+            need = (r.get("bundle_od_mm") or 0.0) / 2 + margin
+            dmin = min(_seg_box_dist(a, b, bx) for a, b in zip(r["points_mm"], r["points_mm"][1:]))
+            if worst is None or dmin - need < worst[0]:
+                worst = (dmin - need, sid, round(dmin, 2), round(need, 2))
+        if worst:
+            bc[iid] = {"route": worst[1], "centreline_mm": worst[2], "need_mm": worst[3]}
+            if worst[0] < -1e-6:
+                bad.append(f"{iid} {worst[2]:g} from the {worst[1]} centreline < bundle OD / 2 + {margin:g} = {worst[3]:g}")
+    val["bundle_clearance"] = bc
+    # plate standoff barrels (front face up to the board) clear of every other envelope
+    pfz = m["stack_z"]["plate_front"]
+    val["plate_standoffs"] = {}
+    for mt in mm["mounts"]:
+        if mt["on"] != "plate_front":
+            continue
+        f = P.parts[mt["fastener"]]
+        r = f.get("barrel_d", f["hole_d"]) / 2
+        rows = []
+        for (hx, hy) in mt["standoffs"]:
+            bar = (hx - r, hy - r, pfz, hx + r, hy + r, pfz + f["length"])
+            near = min(((box_gap(bar, b), iid) for iid, b in boxes.items() if iid != mt["item"]), default=(99.0, ""))
+            rows.append({"c": [hx, hy], "nearest": near[1], "gap_mm": round(near[0], 2)})
+            if near[0] < 0.5:
+                bad.append(f"{mt['item']} standoff ({hx:g}, {hy:g}) {near[0]:.2f} from {near[1]}")
+        val["plate_standoffs"][mt["item"]] = rows
     rule["value_mm"] = val
     if bad:
         return dict(rule, result="FAIL (model): " + "; ".join(bad))
     opens = [f"{iid}: fixing TBD ({P.parts[it['part']]['status']}, no drawing)" for it in m["layout"]["items"]
              for iid in [it["id"]] if iid == "boni_a406"]
+    vr = val["veml7700"]["rests"]
+    gaps = [rw["gap_mm"] for rows in val["plate_standoffs"].values() for rw in rows]
     return dict(rule, result=(
-        "PASS (model): CH334F 4 x M2.5 and INA228 2 x M2.5 (+2 rests) into TC-M2,5x4 inserts in rear-wall bosses (skin "
-        f"{min(v['skin_mm'] for v in val['hub_ch334f']['screws']):g}), #2813 on a printed pad with acrylic foam tape (no mounting hole on the Pololu drawing), "
-        f"VEML7700 2 x M2.5 (+2 rests) in a {vm['pocket'][4]:g} mm pocket of the top wall (skin {val['veml7700']['pocket_skin_mm']:g}, behind the inserts "
-        f"{min(v['skin_mm'] for v in val['veml7700']['screws']):g}), PACK_FUSE on 2 PEM SO-M2.5-6ZI (M-07 PF); INA228 terminal wire side towards the "
-        f"corridor with {room:g} mm free, 18 AWG inside {term['wire_awg'][1]}-{term['wire_awg'][0]} AWG (4UCON 19963; block identity inferred, confirm at "
-        "incoming inspection); torques coupon-defined (build/17 section 2)" + ("; OPEN: " + "; ".join(opens) if opens else "")))
+        "PASS (model): CH334F 4 x M2.5 and INA228 2 x M2.5 (+2 rests) into TC-M2,5x4 inserts in rear-wall bosses (hole "
+        f"{mm['insert'].get('hole_depth', mm['insert']['len']):g} deep, skin {min(v['skin_mm'] for v in val['hub_ch334f']['screws']):g}, "
+        f"{min(tri):g} from the tripod nut pocket >= {mm.get('tripod_clear', 0.0):g}), #2813 on a printed pad with acrylic foam tape (no mounting "
+        f"hole on the Pololu drawing), VEML7700 taped to {len(vr)} rests (+{len(val['veml7700'].get('spigots', []))} locating spigots) in a "
+        f"{vm['pocket'][4]:g} mm pocket of the top wall (skin {val['veml7700']['pocket_skin_mm']:g}; no insert joint fits that wall), PACK_FUSE on "
+        f"2 PEM SO-M2.5-6ZI (M-07 PF; barrels {min(gaps):g} from the nearest envelope); INA228 terminal wire side {side} with {room:g} mm free of "
+        f"envelopes and harness bundles (limit: {lim}), 18 AWG inside {term['wire_awg'][1]}-{term['wire_awg'][0]} AWG (4UCON 19963; block identity "
+        f"inferred, confirm at incoming inspection); this package's envelopes keep bundle OD / 2 + {margin:g} from the other route centrelines; "
+        "torques coupon-defined (build/17 section 2)" + ("; OPEN: " + "; ".join(opens) if opens else "")))
 
 
 def w2_mech5_rules(P):

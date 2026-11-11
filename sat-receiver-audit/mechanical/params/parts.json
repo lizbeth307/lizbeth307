@@ -765,9 +765,9 @@
       "upstream_pads": {"ref": "JP5", "uv": [10.16, 2.54]},
       "downstream_pads": {"JP1": [17.78, 20.32], "JP2": [2.54, 20.32], "JP3": [2.54, 10.16], "JP4": [17.78, 10.16]},
       "wire_reserve": 2.5,
-      "size": [20.32, 31.62, 7.3],
+      "size": [31.62, 20.32, 7.3],
       "status": "repo+listing",
-      "src": "maker's product page https://www.adafruit.com/product/5997 (read 2026-11-07 with WebFetch): 'Product Dimensions: 31.6mm x 20.4mm x 4.8mm', 2.9 g, four mounting holes (size not given), upstream on 0.1 in header or USB C, 'four 4-pin ports' as pads; EAGLE board file 'Adafruit CH334F Mini 4-Port USB Hub Breakout.brd' of https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB at commit a29ea7705f029962ebec1947eac3fb4d641f63bb (gh api, CC BY-SA 3.0, fetch-only, not committed; read with lxml 2026-11-07): outline 20.32 x 30.48 with R2.54 corners, four plated mounting holes MOUNTINGHOLE_2.5_PLATED (drill 2.5, pad 3.2) at (2.54, 2.54), (17.78, 2.54), (2.54, 27.94), (17.78, 27.94), USB-C X1 (CUSB31-CFM2AX) at (10.16, 26.543) rot 180 whose outline reaches v 31.62 (1.14 past the board edge: 31.62 = the listed 31.6), upstream pads JP5 1X04 at (10.16, 2.54), downstream pads JP1-JP4 1X04 at (17.78, 20.32), (2.54, 20.32), (2.54, 10.16), (17.78, 10.16); all parts on the top side (no mirrored part). M2.5 screws: Adafruit product 3299 (read 2026-11-07, see adafruit_ina228_5832). As placed: size [x, y, z] = board 20.32 along x, 30.48 + 1.14 along y, z = board 1.6 + parts 3.2 (listed 4.8) + wire_reserve 2.5 for the pigtails soldered to the pads (design value)"
+      "src": "maker's product page https://www.adafruit.com/product/5997 (read 2026-11-07 with WebFetch): 'Product Dimensions: 31.6mm x 20.4mm x 4.8mm', 2.9 g, four mounting holes (size not given), upstream on 0.1 in header or USB C, 'four 4-pin ports' as pads; EAGLE board file 'Adafruit CH334F Mini 4-Port USB Hub Breakout.brd' of https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB at commit a29ea7705f029962ebec1947eac3fb4d641f63bb (gh api, CC BY-SA 3.0, fetch-only, not committed; read with lxml 2026-11-07): outline 20.32 x 30.48 with R2.54 corners, four plated mounting holes MOUNTINGHOLE_2.5_PLATED (drill 2.5, pad 3.2) at (2.54, 2.54), (17.78, 2.54), (2.54, 27.94), (17.78, 27.94), USB-C X1 (CUSB31-CFM2AX) at (10.16, 26.543) rot 180 whose outline reaches v 31.62 (1.14 past the board edge: 31.62 = the listed 31.6), upstream pads JP5 1X04 at (10.16, 2.54), downstream pads JP1-JP4 1X04 at (17.78, 20.32), (2.54, 20.32), (2.54, 10.16), (17.78, 10.16); all parts on the top side (no mirrored part). M2.5 screws: Adafruit product 3299 (read 2026-11-07, see adafruit_ina228_5832). As placed (W2 MECH-5 review): size [x, y, z] = 30.48 + 1.14 along x (v towards -x), board 20.32 along y, z = board 1.6 + parts 3.2 (listed 4.8) + wire_reserve 2.5 for the pigtails soldered to the pads (design value)"
     },
     "adafruit_4162": {
       "name": "Adafruit 4162 VEML7700 lux sensor breakout, STEMMA QT format (U308, unit VEML)",
@@ -799,13 +799,13 @@
       "name": "Bias tee A406 of the Boni-Whip (Bonito 'Einspeiseweiche', supplied with the antenna) - reserve",
       "size": [30.0, 26.0, 9.8],
       "status": "assumption",
-      "src": "no drawing and no size published: https://www.wimo.com/en/18067 (Boni-Whip listing) not readable 2026-11-07 403; components/hf_receiver.md and components/rf_frontend.md (project research) give only BNC connectors and a 5.5/2.1 mm barrel input (bonito.net) and a 404 manual link. The reserve is the largest free volume next to the HF edge of the RF board outside the HF+ can (voxel scan of the layout with 0.5 mm clearance, W2 MECH-5 2026-11-07): over V4L-A, under the RF board, in the RF bay; a supplied unit with BNC jacks will not fit 9.8 mm, so if it does not fit the reserve, A406 becomes the homemade 2.2 mH bias tee of the E4 A406 note on a board of this size (decision of the E4 / parts DB owner; OPEN until the supplied unit is measured)"
+      "src": "no drawing and no size published: https://www.wimo.com/en/18067 (Boni-Whip listing) not readable 2026-11-07 403; components/hf_receiver.md and components/rf_frontend.md (project research) give only BNC connectors and a 5.5/2.1 mm barrel input (bonito.net) and a 404 manual link. The reserve is the largest free volume next to the HF edge of the RF board outside the HF+ can (voxel scan of the layout with 0.5 mm clearance, W2 MECH-5 2026-11-07): over V4L-A, under the RF board, in the RF bay, moved to x 106-136 in the W2 MECH-5 review so that the W407 P7 pigtail of W2 MECH-6 clears it; a supplied unit with BNC jacks will not fit 9.8 mm, so if it does not fit the reserve, A406 becomes the homemade 2.2 mH bias tee of the E4 A406 note on a board of this size (decision of the E4 / parts DB owner; OPEN until the supplied unit is measured)"
     },
     "t7_insert_board": {
       "name": "T7_INSERT VBUS key insert in the T7 USB3 cable (U505, R514-R517, C514-C516, TP501, J514 S3B-PH-K-S, J515-J517 wire pads; board by PCB-SB2) - reserve",
-      "size": [22.0, 9.0, 9.0],
+      "size": [21.5, 9.0, 8.5],
       "status": "assumption",
-      "src": "reserve of this package (W2 MECH-5): board about 22 x 9 with the side-entry PH header J514 (JST ePH side entry 8.6 deep, 4.8 high, w = 2 x 2 + 4.9 = 8.9: harness_headers PH_side) and the three wire pads, under heat-shrink; the PCB-SB2 board must fit it (outline not drawn yet)"
+      "src": "reserve of this package (W2 MECH-5; 21.5 x 9 x 8.5 after the review, between the S13 run, the fan duct and the S24 run above): board about 21.5 x 9 with the side-entry PH header J514 (JST ePH side entry 8.6 deep, 4.8 high, w = 2 x 2 + 4.9 = 8.9: harness_headers PH_side) and the three wire pads, under heat-shrink; the PCB-SB2 board must fit it (outline not drawn yet)"
     },
     "hdmi_insert_board": {
       "name": "HDMI_INSERT pin-18 pass-through between the two Adafruit 3560 flexes (U506, C517, C518, R552, TP502, two FPC sockets; board by PCB-SB2) - reserve",
@@ -815,10 +815,10 @@
     },
     "pack_fuse_carrier": {
       "name": "PACK_FUSE carrier of F101: Keystone 3568 MINI fuse holder + Littelfuse MINI 297 7.5 A + 18 AWG wire pads J116/J117 (board by PCB-SB2) - reserve",
-      "board": [11.0, 26.0, 1.6],
-      "size": [11.0, 26.0, 23.77],
+      "board": [10.7, 28.0, 1.6],
+      "size": [10.7, 28.0, 17.77],
       "status": "datasheet+assumption",
-      "src": "stack from this file: PEM SO-M2.5-6ZI barrel 6.0 (pem_so_m25_6) + carrier 1.6 (mechanical.json rear_face.hatch.f101_access carrier_t, assumption) + Keystone 3568 7.37 above the board (keystone_3568) + MINI fuse body 8.8 above the holder (littelfuse_mini_297) = 23.77; board 11 x 26 = the holder courtyard 16.5 x 7.24 (PCB-SB2 brief) plus a 1 mm2 solder-wire pad (KiCad Connector_Wire, W2 GR-4) at each end (design value of this package)"
+      "src": "stack from this file above the PEM SO-M2.5-6ZI barrels (6.0, pem_so_m25_6; the barrel zone under the carrier is checked by R-MODULE-MOUNTS, not by this envelope, W2 MECH-5 review): carrier 1.6 (mechanical.json rear_face.hatch.f101_access carrier_t, assumption) + Keystone 3568 7.37 above the board (keystone_3568) + MINI fuse body 8.8 above the holder (littelfuse_mini_297) = 17.77; board 10.7 x 28 = the holder courtyard 16.5 x 7.24 (PCB-SB2 brief) plus a 1 mm2 solder-wire pad (KiCad Connector_Wire, W2 GR-4) and a standoff hole at each end, the M2.5 heads (D4.5) clear of the courtyard (design value of this package)"
     },
     "heyco_ngsg_105": {
       "name": "Heyco continuous grommet roll NGSG-105-100' (part 12417 natural, 12417B black): nylon, unserrated, with adhesive, 100 ft (30.5 m) roll, for 1.8-2.7 mm panels (read as a candidate; not the purchased trim: SRC-2 found no Heyco listing on DigiKey DE and chose essentra_mgs_2_01 for parts DB AI-EDGE-TRIM)",

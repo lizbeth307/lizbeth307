@@ -201,8 +201,22 @@ def face_sheets(P):
                 Dm = P.outer[2]
                 v0 = max(0.0, Dm - (pz + ph))
                 sh.rect(ox + px, oy + v0, pw, Dm - pz - v0, "HIDDEN")
-                sh.text((ox + px, oy + Dm - pz + 1.0), f"кишеня {fmt(pd)} мм усередині (VEML7700, 2 бобишки M2.5 + 2 упори; W2 MECH-5)", 1.6)
+                sh.text((ox + px, oy + Dm - pz + 1.0), f"кишеня {fmt(pd)} мм усередині (VEML7700: 4 упори ⌀{fmt(P.mech['module_mounts']['rest_d'])} зі скотчем, "
+                        f"2 шипи ⌀{fmt(vm['spigot_d'])}; W2 MECH-5)", 1.6)
+                from .rules import module_mount_geometry
+                vr = [g for g in module_mount_geometry(P) if g["on"] == "top_wall" and g["kind"] == "rests"]
+                for g in vr:
+                    sh.circle((ox + g["c"][0], oy + Dm - g["c"][1]), g["d"] / 2, "HIDDEN")
             ty = _table(sh, F[face], 268.0, ty, f"Таблиця: {face}") - 4.0
+            if face == "top" and vm:
+                sh.ptext((268.0, ty), "Упори VEML7700 у кишені (W2 MECH-5; x, z — як ззовні)", 2.0)
+                ty -= 3.2
+                sp = [tuple(c) for c in vm.get("spigots", [])]
+                for k, g in enumerate(vr, 1):
+                    sh.ptext((268.0, ty), f"VR{k} x {fmt(g['c'][0], 2)} z {fmt(g['c'][1], 3)}: упор ⌀{fmt(g['d'])}, грань y {fmt(g['seat'], 2)} + скотч "
+                             f"{fmt(g['tape_t'])}" + (f", шип ⌀{fmt(vm['spigot_d'])} x {fmt(vm['spigot_len'])}" if g["c"] in sp else ""), 1.6, layer="TABLE")
+                    ty -= 2.6
+                ty -= 2.0
         sheets.append(sh)
     return sheets
 

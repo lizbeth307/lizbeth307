@@ -33,7 +33,8 @@
   "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech6-manual.json",
-  "design/parts/snapshots/2026-11-07-w2-src2-manual.json"
+  "design/parts/snapshots/2026-11-07-w2-src2-manual.json",
+  "design/parts/snapshots/2026-11-11-w2-mech5-manual.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -6675,11 +6676,39 @@
    "item": "самоклінчувальна наскрізна стійка PEM SO-M2.5-6ZI, 6 мм",
    "qty": 2,
    "spares": 2,
-   "for": "M-07: PF1-PF2 (носій PACK_FUSE на розширенні пластини, mechanical.json module_mounts; гвинти й ізоляція — build/17 F39, AI-PACK-FUSE-FIX); отвір 4.22 +0.08, голівка врівень з тильною гранню, 6.0 мм від кромки (значення сторінки SO-M3-3ZI того самого корпусу: на сторінці M2.5 відстані до кромки немає)",
+   "for": "M-07: PF1-PF2 (169.0, 10.5) і (169.0, 32.5) — носій PACK_FUSE на розширенні пластини, mechanical.json module_mounts; гвинти й ізоляція — build/17 F39, AI-PACK-FUSE-FIX; отвір 4.22 +0.08, голівка врівень з тильною гранню, 6.0 мм від кромки (значення сторінки SO-M3-3ZI того самого корпусу: на сторінці M2.5 відстані до кромки немає, перечитано 11.11.2026)",
    "manufacturer": "PennEngineering (PEM)",
    "mpn": "SO-M2.5-6ZI",
-   "source": "PEM catalogue https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m2-5-6zi (read 2026-11-07: M2.5 x 0.45 - 6H, L 6, min sheet 1.00 mm, hole 4.22 +0.08, H 4.8, heat-treated carbon steel, zinc)",
+   "sku": {
+    "web": "pem-so-m2-5-6zi"
+   },
    "note": "ставиться пресом разом з F-M3-1 і SO-M3-3ZI (build/21 E2, AI-PEM-PRESS); коротшої M2.5 SO у каталозі немає"
+  },
+  {
+   "id": "AI-M25X6-MODULES",
+   "item": "гвинт M2.5×6 ISO 14580 A2-70 TX8 модулів заднього шару у вставки TC-M2,5x4 (пачка 25 шт.)",
+   "qty": 6,
+   "spares": 2,
+   "for": "build/17 F09 (INA228 5832 ×2) і F10 (CH334F 5997 ×4): mechanical/generated/fastener-stacks.json INA228/HUB-5997, вікно 5.35–6.1 мм (плата 1.6 + вставка 4.0, отвір бобишки 5.0 = вставка + 1.0, mechanical.json module_mounts)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "TC-S-M2,5x6",
+   "sku": {
+    "web": "3djake-tc-s-m2,5x6"
+   },
+   "note": "Рядок знімка W2 SRC-2 (web:3djake-tc-s-m2,5x6, 07.11.2026), той самий артикул, що AI-M25-DISPLAY-CLAMP: одна пачка 25 шт. покриває обидві позиції (4 + 2 запасні і 6 + 2 запасні); 6 вставок цих бобишок не входять у кількість AI-INSERT-M25 (10 = CTRL 6 + ENC 4) — додає власник запису (W2 MECH-5)."
+  },
+  {
+   "id": "AI-VHB-4910-MODULES",
+   "item": "двосторонній акриловий скотч 3M VHB 4910 прозорий, 3/4\" × 15 yd (19.05 мм × 13.7 м), 1.016 мм",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/17 F05 (Pololu #2813: смужка 12 × 14 на майданчику задньої стінки) і F47 (VEML7700: 4 диски ⌀6 з отвором ⌀2.5 на упорах верхньої стінки); mechanical.json module_mounts",
+   "manufacturer": "3M",
+   "mpn": "4910 3/4\"X15YD",
+   "sku": {
+    "digikey": "3M5648-ND"
+   },
+   "note": "Найменший рулон 4910 на сторінці DigiKey BE (11.11.2026): 3/4\" × 15 yd; товщина 1.016 мм збігається з mechanical/params/parts.json vhb_4910 (1.0); робоча температура на сторінці 93 °C; міцність на ASA і на масці плат не прочитано — стенд (W2 MECH-5)."
   },
   {
    "id": "AI-M3X4-ISO14580",
@@ -7021,7 +7050,7 @@
   },
   {
    "id": "AI-PEM-PRESS",
-   "item": "запресування PEM F-M3-1 і SO-M3-3ZI у пластину M-07 — послуга майстерні, що виготовляє M-07 (власного преса не купують)",
+   "item": "запресування PEM F-M3-1, SO-M3-3ZI і SO-M2.5-6ZI у пластину M-07 — послуга майстерні, що виготовляє M-07 (власного преса не купують)",
    "qty": 1,
    "spares": 0,
    "for": "AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI, AI-PEM-SO-M25-6ZI (build/21 E2)",

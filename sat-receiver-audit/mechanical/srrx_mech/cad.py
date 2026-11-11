@@ -205,12 +205,13 @@ def front_parts(P):
     # hood hinge knuckles on the front face
     hh = m["top_face"]["hood_hinge"]
     feats.append(("hinge_knuckles", [box(x - hh["knuckle_w"] / 2, hh["axis_y"] - 4.0, D - 0.01, hh["knuckle_w"], 8.0, hh["axis_z"] - D + 3.0) for x in hh["x"]]))
-    # W2 MECH-5 (B-09/B-13): bosses of the VEML7700 board, hanging from the floor of its pocket in the top wall (mechanical.json module_mounts)
+    # W2 MECH-5 (B-09/B-13): taped rests and locating spigots of the VEML7700 board, hanging from the floor of its top-wall pocket (module_mounts)
     from .rules import module_mount_geometry
     vg = [g for g in module_mount_geometry(P) if g["on"] == "top_wall"]
     vm = next((mt for mt in m.get("module_mounts", {}).get("mounts", []) if mt["on"] == "top_wall"), None)
     pd = vm["pocket"][4] if vm else 0.0
-    feats.append(("veml_bosses", [ycyl(g["c"][0], g["c"][1], g["seat"], H - t + pd + 0.01, g["d"] / 2) for g in vg]))
+    feats.append(("veml_bosses", [ycyl(g["c"][0], g["c"][1], g["seat"], H - t + pd + 0.01, g["d"] / 2) for g in vg if g["kind"] != "spigot"]
+                  + [ycyl(g["c"][0], g["c"][1], g["seat"] - g["len"], g["seat"] + 0.01, g["d"] / 2) for g in vg if g["kind"] == "spigot"]))
     # ---- cutters
     cutters = [_ring(P, sg["groove_out"], sg["groove_in"], zs - 1.0, gk["groove_depth"] + 1.0)]
     ins = c["insert"]
@@ -223,7 +224,7 @@ def front_parts(P):
     if vm:
         px, pz, pw, ph, _ = vm["pocket"]
         pocket = box(px, H - t - 0.01, pz, pw, pd + 0.01, ph)
-        pocket = cut(pocket, [ycyl(g["c"][0], g["c"][1], H - t - 0.5, H - t + pd + 0.5, g["d"] / 2) for g in vg])
+        pocket = cut(pocket, [ycyl(g["c"][0], g["c"][1], H - t - 0.5, H - t + pd + 0.5, g["d"] / 2) for g in vg if g["kind"] != "spigot"])
         cutters.append(pocket)
         cutters += [ycyl(g["c"][0], g["c"][1], g["seat"] - 1.0, g["seat"] + g["hole_depth"], g["hole_d"] / 2) for g in vg if g["insert"]]
     F = face_features(P)
@@ -291,7 +292,7 @@ def rear_parts(P):
     # W2 MECH-5 (B-13): module bosses, rests and tape pads on the inner face of the rear wall (mechanical.json module_mounts)
     from .rules import module_mount_geometry
     mg = [g for g in module_mount_geometry(P) if g["on"] == "rear_wall"]
-    feats.append(("module_bosses", [zcyl(g["c"][0], g["c"][1], t - 0.01, g["seat"], g["d"] / 2) for g in mg if g["kind"] != "pad"]
+    feats.append(("module_bosses", [zcyl(g["c"][0], g["c"][1], t - 0.01, g["seat"], g["d"] / 2) for g in mg if g["kind"] in ("screws", "rests")]
                   + [box(g["rect"][0], g["rect"][1], t - 0.01, g["rect"][2], g["rect"][3], g["seat"] - t + 0.01) for g in mg if g["kind"] == "pad"]))
     cutters = []
     cutters += [zcyl(g["c"][0], g["c"][1], g["seat"] - g["hole_depth"], g["seat"] + 1.0, g["hole_d"] / 2) for g in mg if g.get("insert")]
