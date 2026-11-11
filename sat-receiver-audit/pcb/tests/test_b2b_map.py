@@ -214,15 +214,17 @@ class GuardRuleTests(unittest.TestCase):
         # pcb/partition-spec.json b2b.pin_map_rule quotes the layout of (a); a crossing-net change must update that text
         role = {int(r['pwr_a_pin']): r['role'] for r in NETS['contacts']}
         # (sense pair at the end of the strip since 11.11.2026, for the PWR-B board of record)
-        self.assertIn('1-42 the rail block (21 columns), 43 guard, 44-65 the 22 signal nets, 66-96 spare, 97-98 guard, '
-                      '99-100 the LNA4 sense pair', SPEC['pin_map_rule'])
+        self.assertIn('1-42 the rail block (21 columns), 43 guard, 44-58 even the 8 single-row signal nets (45-57 odd spare), '
+                      '59-72 the other 14 signal nets, 73-96 spare, 97-98 guard, 99-100 the LNA4 sense pair', SPEC['pin_map_rule'])
         for c in range(1, 22):
             got = sorted([role[2 * c - 1], role[2 * c]])
             self.assertEqual(got[0], 'gnd', c)
             self.assertIn(got[1], prepare.B2B_RAIL_KINDS, c)
         self.assertEqual(role[43], 'guard')
-        self.assertEqual({role[p] for p in range(44, 66)}, {'signal'})
-        self.assertEqual({role[p] for p in range(66, 97)}, {'spare'})
+        self.assertEqual({role[p] for p in list(range(44, 59, 2)) + list(range(59, 73))}, {'signal'})
+        self.assertEqual({role[p] for p in list(range(45, 58, 2)) + list(range(73, 97))}, {'spare'})
+        net = {int(r['pwr_a_pin']): r['net'] for r in NETS['contacts']}
+        self.assertEqual([net[p] for p in range(44, 59, 2)], sorted(SPEC['single_row_signals']))
         self.assertEqual([role[p] for p in (97, 98, 99, 100)], ['guard', 'guard', 'sense pair', 'sense pair'])
 
 
