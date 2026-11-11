@@ -223,8 +223,8 @@ def b2b_contacts(out,bb):
     block (power: ceil(I/I_pin) per net; sense/supply taps; rail nodes) in the order b2b.rail_order, which lists the rail contacts
     one by one (a net listed once keeps all its contacts together; unlisted rails after it, by name), each rail contact followed
     by its GND return on the same row (rail, GND, rail, GND, ...: every in-row neighbour of a rail contact is GND), then one GND
-    guard; the other nets in name order on the free contacts of the even row, one per column, then on any free contact; the rest
-    spare (nc). The PWR-B half carries on contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
+    guard; the rails of b2b.rail_row_even the same way from contact 2 on the even row; the other nets in name order on the free
+    contacts of the even row, one per column, then on any free contact; the rest spare (nc). The PWR-B half carries on contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
     n_all=bb['contacts'];slots={};over=[]
     def put(pin,net,role):
         if 1<=pin<=n_all and pin not in slots:slots[pin]=(net,role)
@@ -241,7 +241,9 @@ def b2b_contacts(out,bb):
         if not left.get(n):continue
         k=1 if n in order[i+1:] else left[n];seq+=[n]*k;left[n]-=k
     for r in sorted(rails,key=lambda r:r['net']):seq+=[r['net']]*left[r['net']];left[r['net']]=0
+    even=set(bb.get('rail_row_even',[]));ecol=1
     for net in seq:
+        if net in even:put(2*ecol,net,kind[net]);put(2*ecol+2,'GND','gnd');ecol+=2;continue
         put(2*col-1,net,kind[net]);put(2*col+1,'GND','gnd');last=2*col+1;col+=2
     if last is not None:put(last+2,'GND','guard')
     rest=[(r['net'],r['kind']) for r in out if r['kind'] not in B2B_RAIL_KINDS+('declared sense pair',) and r['pins']]

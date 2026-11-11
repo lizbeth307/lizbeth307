@@ -182,10 +182,13 @@ class GuardRuleTests(unittest.TestCase):
         # rail_order lists the rail contacts column by column (since 11.11.2026; a net listed once keeps its contacts together)
         order = SPEC['rail_order']
         self.assertEqual(order[0], '3V3_Q6A')
-        seq = [r['net'] for r in sorted(NETS['contacts'], key=lambda r: int(r['pwr_a_pin'])) if r['role'] in prepare.B2B_RAIL_KINDS]
+        rails = [r for r in sorted(NETS['contacts'], key=lambda r: int(r['pwr_a_pin'])) if r['role'] in prepare.B2B_RAIL_KINDS]
+        even = set(SPEC.get('rail_row_even', []))
         want = sorted(r['net'] for r in NETS['nets'] if r['kind'] in prepare.B2B_RAIL_KINDS for _ in range(r['pins']))
-        self.assertEqual(sorted(seq), want)
-        self.assertEqual(seq[:len(order)], [n for n in order if n in want])
+        self.assertEqual(sorted(r['net'] for r in rails), want)
+        self.assertEqual({r['net'] for r in rails if int(r['pwr_a_pin']) % 2 == 0}, even)
+        seq = [r['net'] for r in rails if int(r['pwr_a_pin']) % 2]  # the rail row (odd), in contact order
+        self.assertEqual(seq, [n for n in order if n in want and n not in even])
         # 3V3_Q6A is at the far end of the rail block from the 12-13.8 V rails of the net names
         hv = [i for i, n in enumerate(seq) if n in ('LNB13V2', 'AUX12', 'BONI13V8_PORT', 'BONI13V8')]
         self.assertEqual(seq.index('3V3_Q6A'), 0)
@@ -214,13 +217,15 @@ class GuardRuleTests(unittest.TestCase):
         # pcb/partition-spec.json b2b.pin_map_rule quotes the layout of (a); a crossing-net change must update that text
         role = {int(r['pwr_a_pin']): r['role'] for r in NETS['contacts']}
         # (sense pair at the end of the strip since 11.11.2026, for the PWR-B board of record)
-        self.assertIn('odd 1-81 the 21 rail contacts (1, 5, 9, ... 81) with their GND returns (3, 7, ... 83), 85 guard, even 2-44 '
-                      'the 22 signal nets, the other contacts up to 96 spare', SPEC['pin_map_rule'])
-        self.assertEqual({role[p] for p in range(1, 82, 4)} <= set(prepare.B2B_RAIL_KINDS), True)
-        self.assertEqual({role[p] for p in range(3, 84, 4)}, {'gnd'})
-        self.assertEqual(role[85], 'guard')
-        self.assertEqual({role[p] for p in range(2, 45, 2)}, {'signal'})
-        self.assertEqual({role[p] for p in list(range(46, 97, 2)) + list(range(87, 97, 2))}, {'spare'})
+        self.assertIn('odd 1-65 the 17 rail contacts (1, 5, ... 65) with their GND returns (3, 7, ... 67), 69 guard, even 2-14 the '
+                      '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets',
+                      SPEC['pin_map_rule'])
+        self.assertTrue({role[p] for p in range(1, 66, 4)} <= set(prepare.B2B_RAIL_KINDS))
+        self.assertEqual({role[p] for p in range(3, 68, 4)} | {role[p] for p in range(4, 17, 4)}, {'gnd'})
+        self.assertEqual(role[69], 'guard')
+        self.assertEqual({role[p] for p in range(2, 15, 4)}, {'power'})
+        self.assertEqual({role[p] for p in range(18, 61, 2)}, {'signal'})
+        self.assertEqual({role[p] for p in list(range(62, 97, 2)) + list(range(71, 97, 2))}, {'spare'})
         self.assertEqual([role[p] for p in (97, 98, 99, 100)], ['guard', 'guard', 'sense pair', 'sense pair'])
 
 
