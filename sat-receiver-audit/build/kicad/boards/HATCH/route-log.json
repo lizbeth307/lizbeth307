@@ -1,0 +1,135 @@
+{
+  "schema": "srrx-board-route-log-v1",
+  "board_id": "HATCH",
+  "label": "Frozen route provenance (CI run); --check does not re-route",
+  "tool": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "source_read": "GitHub release API v2.5.0 asset digests, read 2026-11-07"
+  },
+  "runtime": {
+    "name": "Eclipse Temurin JRE",
+    "version": "25.0.5+8",
+    "licence": "GPL-2.0-with-classpath-exception",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jre_x64_linux_hotspot_25.0.5_8.tar.gz",
+    "sha256": "6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6",
+    "source_read": "Adoptium API and GitHub release API, read 2026-11-07"
+  },
+  "command": [
+    "java",
+    "-Djava.awt.headless=true",
+    "-cp",
+    "freerouting-2.5.0.jar",
+    "app.freerouting.cli.FreeroutingCli",
+    "-de",
+    "HATCH.dsn",
+    "-do",
+    "HATCH.ses",
+    "--router.autorouter.max_passes=20",
+    "-mt",
+    "1",
+    "--router.optimizer.max_threads=1",
+    "--router.automatic_neckdown=false",
+    "-da",
+    "--gui.enabled=false",
+    "--router.job_timeout=00:05:00",
+    "--logging.file.enabled=false",
+    "--user_data_path=<temp>"
+  ],
+  "exit_code": 0,
+  "log_tail": [
+    "2026-11-07 22:45:09.941 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-07 22:45:10.030 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-07 22:45:10.438 INFO   [F4E5FC\\0CD279] Loading board file 'HATCH.dsn'...",
+    "2026-11-07 22:45:10.525 INFO   [F4E5FC\\0CD279] Job 'F4E5FC\\0CD279' started at 2026-11-07T22:45:10.525619667Z.",
+    "2026-11-07 22:45:10.588 INFO   [F4E5FC\\0CD279] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-07 22:45:10.629 INFO   [F4E5FC\\0CD279] Fanout stage is enabled but skipped because the board has no SMD pins.",
+    "2026-11-07 22:45:10.657 INFO   [F4E5FC\\0CD279] Auto-routing stage started on board 'e25aa08e5912652ee248636b29ce2a12' with baseline score 95.24 for 6 unrouted items.",
+    "2026-11-07 22:45:10.964 INFO   [F4E5FC\\0CD279] Auto-routing pass #1 on board 'e25aa08e5912652ee248636b29ce2a12' was completed in 0.28 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-07 22:45:10.976 INFO   [F4E5FC\\0CD279] Auto-routing pass #2 on board 'ed27a3b974179ec037c26ce291c65cdb' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-07 22:45:10.991 INFO   [F4E5FC\\0CD279] Auto-routing stage completed: started with 6 unrouted nets, completed in 0.40 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
+    "2026-11-07 22:45:11.007 INFO   [F4E5FC\\0CD279] Skipping optimization stage: the board has no vias to eliminate and trace length (82.39 mm) is within 5% of theoretical minimum (93.52 mm).",
+    "2026-11-07 22:45:11.015 INFO   [F4E5FC\\0CD279] Job 'F4E5FC\\0CD279' finished with state: COMPLETED (elapsed: 0.49 seconds, finished at UTC: 2026-11-07T22:45:11.015114736Z).",
+    "2026-11-07 22:45:11.054 INFO   Saving output file '/tmp/sr-rx-HATCH-3rs0qdkz/HATCH.ses' (SES)...",
+    "2026-11-07 22:45:11.056 INFO   Successfully saved output file '/tmp/sr-rx-HATCH-3rs0qdkz/HATCH.ses' (2868 bytes)."
+  ],
+  "dsn_sha256": "d1ea357a7bc45b3f006f87077482cb5bdfbdb1f6e3ba9761d7d58e0f65c03434",
+  "ses_sha256": "8e3e816aad3932dcd78fb469c37c5eda8e81758c4f8601df6e61ae5beb8f8d45",
+  "dsn_probe": {
+    "resolution": "um 10",
+    "wires_fix": 1,
+    "wires_protect": 0,
+    "keepouts": 14,
+    "planes": 0,
+    "classes": {
+      "kicad_default": {
+        "width": "250",
+        "clearance": "200"
+      }
+    }
+  },
+  "locked_segments": {
+    "before_ses_import": 1,
+    "after_ses_import": 1
+  },
+  "drc_command": [
+    "kicad-cli",
+    "pcb",
+    "drc",
+    "--format",
+    "json",
+    "--severity-all",
+    "--all-track-errors",
+    "--units",
+    "mm",
+    "--refill-zones",
+    "--save-board"
+  ],
+  "board_sha256": "4e9d43327f2ee8b165999f8ec6e0910686fb4e4a47b8d6a0714bef0f61e0abc2",
+  "previews": [
+    "build/kicad/boards/HATCH/HATCH-top.svg",
+    "build/kicad/boards/HATCH/HATCH-bottom.svg"
+  ],
+  "footprint_sources": [
+    {
+      "ref": "J503",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical.kicad_mod",
+      "sha256": "fb7beda27319e4f265515378f57a4f680e54c54c6edda2c1f3e239a4bd3ef42a"
+    },
+    {
+      "ref": "J509",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6"
+    },
+    {
+      "ref": "J502",
+      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c"
+    },
+    {
+      "ref": "J513",
+      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c"
+    },
+    {
+      "ref": "J510",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd59286748b9a6fa9174237072608f811cf3169dddf00eab54a5c196fcb6f7e8"
+    }
+  ],
+  "kicad_version": "10.0.7",
+  "github": {
+    "run_id": "42421953772",
+    "sha": "4ffd307e9d62d477a4c9274b4ca51cfc665e0a1c",
+    "ref": "refs/heads/wip/w2-sb1"
+  }
+}

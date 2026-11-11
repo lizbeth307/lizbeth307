@@ -534,7 +534,7 @@ Molex KK 254 з фіксатором для штатної вилки кабел
 | AI-M3-IMU-CARRIER | гвинт M3 носія паку IMU у вставки TC-M3x5.7 | 2 + 2 | — | — | build/17 F35 (mechanical/params/imu_pack.json carrier.screws; на тих самих гвинтах — носійна плата IMU_CARR… | — | TBD |
 | AI-STANDOFF-IMU-13 | стійки 13 мм під пару BNO085 + RP2040-Zero (набір) | 1 + 0 | — | — | build/17 F36 (imu_pack.json boards.standoff_h 13.0; I-01) | — | TBD |
 | AI-INSERT-1420 | латунна вставка 1/4-20 × 12.7 у носій паку IMU | 1 + 1 | CNC Kitchen | вставка 1/4-20 × 12.7 | build/17 F37 (imu_pack.json tripod.carrier_insert, STACK D15) | CNC Kitchen (10-bom row 86, v2 18.10.2026: «вставки M3x5.7, M2.5x4, 1/4-20x12.7»; page not re-read) | з 10-bom |
-| AI-HATCH-BOARD-FIX | кріплення плати лючка HATCH до задньої стінки | 1 + 0 | — | — | build/17 F38 | — | TBD |
+| AI-HATCH-BOARD-FIX | гвинт M2.5 A2 TX8 для плати лючка HATCH у вставки TC-M2,5x4 бобишок задньої стінки | 2 + 2 | — | — | build/17 F38: 2 отвори ⌀2.7 у вушках плати HATCH (pcb/boards/HATCH.json, build/kicad/boards/HATCH/contract-… | — | TBD |
 | AI-PACK-FUSE-FIX | кріплення носійної плати F101 (PACK_FUSE) біля лотка батареї | 1 + 0 | — | — | build/17 F39 (build/16 §2 PACK: «ізольованій і закріпленій біля лотка») | — | TBD |
 
 ## Решта закупівлі: рядки оцінки v2 поза схемою

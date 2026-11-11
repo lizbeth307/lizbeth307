@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/ENC/ENC.kicad_pcb",
-      "sha256": "270e0269c50cd03b8df6543a5103052c9468a6e0a8a1bfbce07958bd68e7f4ae"
+      "sha256": "2d7145ebff98b51e7a96c676f78f0dd8b28c2ce7c4580b00b246a4aa47fb8be6"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "738a6dd68bfb0aa9723e4a47e10267467b6ca7b4846a174ea6690063e10f2382",
       "footprints": "6ab71e6ba45f706c40b02aaba3cb31d76afda871c96fb040775d53fc01c087f9",
       "contract_board": "a816690fd47d67589f0d2fd9c80b7214adac4fb8ed77f2b4f035006e3454b4e6",
       "netclasses": "2681d77f0f8c2d81aa4cf979f0c9584329d9bd10918d1594df7d7bd32ccf70ff",
-      "spec": "49003afb413cf5fd402e66542f42154c573bd0bb7e36071fe8af217185a8fce6"
+      "spec": "c0381fd10b735ec8e3aad0a2bae419d4354ca85520923a7368fbcc4eba86698c"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },

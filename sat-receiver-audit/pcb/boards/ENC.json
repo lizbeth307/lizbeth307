@@ -1,9 +1,9 @@
 {
   "schema": "srrx-board-spec-v1",
   "board_id": "ENC",
-  "status": "PILOT_NOT_FOR_FABRICATION",
-  "title": "ENC encoder daughterboard - board_gen pipeline pilot",
-  "note": "Pipeline pilot of pcb/board_gen.py (W2 PCB-PIPE). PCB-SB1 replaces the J1 placeholder with the GR-3 ENC-side header ref and makes the final board; nothing here is a fabrication release.",
+  "status": "SB1_ROUTED_NOT_FOR_FABRICATION",
+  "title": "ENC encoder daughterboard (PEC11R-4220F-S0024): one design for ENC301 and ENC302, plus one spare",
+  "note": "W2 PCB-SB1 board, from the W2 PCB-PIPE pilot (same outline, holes, encoder anchor and scripted GND link). The ENC end of S37/S38 is the 4-pad land J1: the 26 AWG harness wires are soldered into it and nothing is fitted (decision 'Роз'єм плати ENC (W2 PCB-SB1)' in build/15). J1 stays a pilot_placeholder because no ENC-domain graph ref exists for the land yet (design/E3.json is outside PCB-SB1). CI/model output only; nothing here is a fabrication release and the bench gates stay OPEN.",
   "contract": {
     "file": "mechanical/generated/contract/boards.json",
     "board": "ENC"
@@ -13,7 +13,7 @@
   "layers": {
     "copper": 2,
     "thickness_mm": 1.6,
-    "source": "PCB-SB1 plan: ENC is a 2-layer 1.6 mm 1 oz board (final-plan.json PCB-SB1 brief); the 4-layer default of build/15 'Шари' is for the main boards",
+    "source": "PCB-SB1 plan: ENC is a 2-layer 1.6 mm 1 oz board (final-plan.json PCB-SB1 brief); the 4-layer default of build/15 'Шари' is for the main boards; decision 'Шари малих плат ENC і HATCH (W2 PCB-SB1)' in build/15",
     "plan": {
       "F.Cu": "parts, signals, GND pour",
       "B.Cu": "scripted GND link, signals, GND pour"
@@ -21,7 +21,7 @@
   },
   "project": "build/kicad/boards/ENC/ENC.kicad_pro",
   "rules_file": null,
-  "rules_note": "Pilot rules live in the committed ENC.kicad_pro (project choice above the fab floor: track 0.25 / clearance 0.2, minimum 0.15 / 0.15, via 0.6 / 0.3, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15). PCB-RULES adds pcb/rules/*.kicad_dru; PCB-SB1 points rules_file at it.",
+  "rules_note": "The rules live in the committed ENC.kicad_pro (project choice above the fab floor: track 0.25 / clearance 0.2, minimum 0.15 / 0.15, via 0.6 / 0.3, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15). pcb/rules/jlc-2l.kicad_dru (W2 PCB-RULES) is not attached: pcb/board_gen.py still refuses a non-null rules_file (copying the .kicad_dru into the board directory and hashing it are not implemented, validate_spec), so rules_file stays null (OPEN for the board_gen lineage, W2 PCB-SB1).",
   "fab_floor": {
     "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 1-2 layer values",
     "min_track_width": 0.10,
@@ -46,7 +46,7 @@
         "qty": 1,
         "refs": {"ENC": "ENC301", "J1": null},
         "nets": {"ENC_A": "E3_ENC1_A_RAW", "ENC_B": "E3_ENC1_B_RAW", "ENC_SW": "E3_ENC1_PRESS_EXT", "GND": "GND"},
-        "source": "tools/assembly_data.py:133 unit ENCM = ENC301 + SW308 at place_at main; the ENC1 role is still 'звірити' until GR-1 (R-E3-16)"
+        "source": "tools/assembly_data.py:133 unit ENCM = ENC301 + SW308 at place_at main; ENC1 = ENC301 = main tuning knob (R-E3-16, W2 GR-1)"
       },
       {
         "id": "ENCV",
@@ -58,7 +58,7 @@
       }
     ],
     "spares": 1,
-    "spares_source": "mechanical/params/boards.json:145 'same design x2 + 1 spare'"
+    "spares_source": "mechanical/params/boards.json:293 'same design x2 + 1 spare'"
   },
   "parts": [
     {
@@ -66,7 +66,7 @@
       "source": "graph",
       "anchor": {"at": [12.0, 12.0], "align": {"pad_centroid": "MP"}, "rotation": 90, "side": "F",
                  "ref_text": {"at": [12.0, 22.2], "angle": 0}},
-      "anchor_source": "contract encoder_at [12, 12] (mechanical/params/boards.json:162); MP slot centre = shaft axis (footprint descr); rotation 90 keeps the left strip x 0-4.5 free"
+      "anchor_source": "contract encoder_at [12, 12] (mechanical/params/boards.json:310); MP slot centre = shaft axis (footprint descr); rotation 90 keeps the left strip x 0-4.5 free"
     },
     {
       "ref": "J1",
@@ -75,12 +75,13 @@
       "footprint_library": "kicad-image",
       "footprint_sha256": "c1fbb648efbffa98c740285def47b64fc2cc9e5cf07f24a196e7956b940e8e1d",
       "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_PinHeader_2.00mm.pretty/PinHeader_1x04_P2.00mm_Vertical.kicad_mod read 2026-11-07; checked against the kicad/kicad:10.0.7 image copy at run time",
-      "value": "PH4 pilot placeholder",
+      "value": "S37/S38 wire land, no part fitted",
       "pins": {"1": "GND", "2": "ENC_A", "3": "ENC_B", "4": "ENC_SW"},
-      "pins_source": "build/16-dzhgut-rozyemy.csv:60 and :62 (X37S1-ENCM / X38S1-ENCV: PH 4, pins GND, A, B, PRESS; synthesized, not a graph ref)",
-      "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1",
+      "pins_source": "build/16-dzhgut-rozyemy.csv:49 and :50 (X37S0-ENCM / X38S0-ENCV: synthesized ENC ends of S37/S38, pins GND, A, B, PRESS, not graph refs) in the contact order of the CTRL ends J316/J317 (:37, :38; design/E3.json J316/J317 pins 1-4 GND, ENCx_A_RAW, ENCx_B_RAW, ENCx_PRESS_EXT)",
+      "replaced_by": "nothing is fitted: the four 26 AWG S37/S38 wires are soldered into this land (W2 PCB-SB1); a graph ref for the land (ENC domain, mount pcb_pad) is pending in design/E3.json (GR lineage)",
       "pending": "header ref pending GR-3",
-      "why_placeholder": "No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm (encoder at 90 deg) and a vertical PH is 8 mm tall against the 6.5 mm envelope (tools/assembly_data.py:120-121). The pilot keeps a 2.0 mm 4-pad land in the contract edge zone left [6, 18]; the header choice stays with GR-3/PCB-SB1/MECH-4.",
+      "pending_note": "The boundary-audit text is kept verbatim (pcb/tests/test_board_gen.py test_enc_keeps_the_acceptance_string pins it). GR-3 left the ENC ends synthesized (tools/assembly_data.py PENDING_BOARD_ENDS); the ref now waits for the GR lineage (design/E3.json), which must map J1 here in the same change because an ENC-domain ref fails the domain audit of this spec until it is mapped.",
+      "why_placeholder": "No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm (encoder at 90 deg) and a vertical PH is 8 mm tall against the 6.5 mm envelope (tools/assembly_data.py:120-121). Decision (W2 PCB-SB1, build/15): the pilot's 2.0 mm 4-pad land stays as the solder-wire land of the S37/S38 pigtail, in the contract edge zone left [6, 18] (pads at y 9-15); the PH 4 housing is only at the CTRL end (J316/J317 S4B-PH-K). Land: KiCad 10.0.7 PinHeader_1x04_P2.00mm_Vertical, drill 0.8, pad 1.35 (gitlab raw 10.0.7, read 2026-11-07, sha256 as above); wire: Alpha Wire 5853, 26 AWG 7/34, OD 0.99 mm (design/parts/snapshots/2026-11-07-w2-src1-manual.json web:alphawire-5853), stripped end through the 0.8 mm hole.",
       "anchor": {"at": [2.25, 9.0], "align": {"pad": "1"}, "rotation": 180, "side": "F"}
     }
   ],

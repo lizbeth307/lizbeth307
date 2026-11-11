@@ -1,6 +1,6 @@
 # Файли виробництва плати ENC
 
-**NOT RELEASED: model/CI only; bench gates OPEN.** Це вихід CI/моделі (`pcb/fab_export.py` у `sr-rx-pcb`, KiCad 10.0.7), а не випуск для фабрики: статус специфікації — `PILOT_NOT_FOR_FABRICATION`; жодні апаратні чи стендові ворота цим не закриваються.
+**NOT RELEASED: model/CI only; bench gates OPEN.** Це вихід CI/моделі (`pcb/fab_export.py` у `sr-rx-pcb`, KiCad 10.0.7), а не випуск для фабрики: статус специфікації — `SB1_ROUTED_NOT_FOR_FABRICATION`; жодні апаратні чи стендові ворота цим не закриваються.
 
 Каталог повністю генерує `python3 pcb/fab_export.py --board ENC`; вручну не редагувати. `--check` перегенеровує набір у тимчасовому каталозі й порівнює побайтово (KiCad ставить дати, абсолютні шляхи й рядок збірки — їх нормалізовано, правила в `manifest.json`), а також запускає `ENC.kicad_jobset` цього набору (ті самі байти, що в коміті; вихід — у `fab-jobset-raw` тимчасової копії плати) і порівнює його вихід із прямим експортом.
 
@@ -24,8 +24,8 @@
 - Gerber і свердління: заархівувати `gerber/` і `drill/` разом під час замовлення (архів не комітиться, бо zip має мітки часу).
 - Mid X / Mid Y у CPL — початок посадкового місця KiCad, тоді як JLC визначає їх як центр компонента (сторінка CPL JLC, прочитано 2026-11-07); кут — сирий кут KiCad. Поправки кута й центру для кожного посадкового місця — TBD, у CI не перевіряються: кожну деталь перевіряє той, хто замовляє, у переглядачі JLC перед оплатою (крок збирання; у build/21 його додає власник STEPS).
 - Позиції BOM з TBD: J1.
-  - J1 (PH4 pilot placeholder): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by GR-3 ENC-side header ref (graph), then PCB-SB1.
-- Заглушка `J1` (Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical): її замінить GR-3 ENC-side header ref (graph), then PCB-SB1; доти набір не для виробництва.
+  - J1 (S37/S38 wire land, no part fitted): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by nothing is fitted: the four 26 AWG S37/S38 wires are soldered into this land (W2 PCB-SB1); a graph ref for the land (ENC domain, mount pcb_pad) is pending in design/E3.json (GR lineage).
+- Заглушка `J1` (Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical): її замінить nothing is fitted: the four 26 AWG S37/S38 wires are soldered into this land (W2 PCB-SB1); a graph ref for the land (ENC domain, mount pcb_pad) is pending in design/E3.json (GR lineage); доти набір не для виробництва.
 
 ## Що цей набір не доводить (OPEN)
 
