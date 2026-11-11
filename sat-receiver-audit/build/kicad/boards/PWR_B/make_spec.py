@@ -52,7 +52,7 @@ MANIFEST = BASE / 'build/kicad/footprints/manifest.json'
 
 # B2B placeholder: official KiCad 10.0.7 library footprints (the plug on PWR-B, its socket for PWR-A), read 2026-11-07.
 # Not a part to populate: Hirose rates FX8 contacts at 0.4 A, the pin map runs 1 A per contact (why_placeholder).
-B2B_FP ='Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm'
+B2B_FP = 'Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm'
 B2B_FP_SHA = '9037e84fbb6b50960b888d23e8ba8dea9d7cd6d705ad00ea4d6b2893bffb586f'
 B2B_FP_URL = ('https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Hirose_FX8.pretty/'
               'Hirose_FX8-120P-SV_2x60_P0.6mm.kicad_mod')
