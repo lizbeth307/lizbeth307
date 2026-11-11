@@ -1278,13 +1278,16 @@ class ModulesW2Mech5Review(unittest.TestCase):
         for iid, v in bc.items():
             self.assertGreaterEqual(v["centreline_mm"], v["need_mm"] - 1e-6, iid)
         Q = self._copy()
-        pf = [it for it in Q.mech["layout"]["items"] if it["id"] == "pack_fuse"][0]
-        pf["box"][1] += 2.0                                 # back against the y 38.2 trunk
-        self.assertIn("pack_fuse", self._rule(Q, "R-MODULE-MOUNTS")["result"])
+        pf = [it for it in Q.mech["layout"]["items"] if it["id"] == "pack_fuse_board"][0]
+        pf["box"][2] += 2.0                                 # carrier board raised towards the y 38.2 / z 53 trunk
+        self.assertIn("pack_fuse_board", self._rule(Q, "R-MODULE-MOUNTS")["result"])
 
     def test_case_ntc_lies_under_the_pack_fuse_carrier_clear_of_the_standoffs(self):
         boxes = {i: b for i, n, b, it in layout.item_boxes(P)}
-        pf, ntc = boxes["pack_fuse"], boxes["ntc_case"]
+        pf, ntc = boxes["pack_fuse_board"], boxes["ntc_case"]
         self.assertGreaterEqual(pf[2] - ntc[5], 0.5)
+        self.assertTrue(P.parts[[it for it in P.mech["layout"]["items"] if it["id"] == "pack_fuse_board"][0]["part"]]["status"])
         r = self._rule(P, "R-MODULE-MOUNTS")
         self.assertTrue(all(x["gap_mm"] >= 0.5 for x in r["value_mm"]["plate_standoffs"]["pack_fuse"]))
+        coll, _ = layout.fit_checks(P)
+        self.assertEqual([c for c in coll if "pack_fuse" in c["a"] + c["b"]], [])       # PM4 plate boss included (no allowance)

@@ -1304,7 +1304,10 @@ def module_mounts_rule(P):
             if worst[0] < -1e-6:
                 bad.append(f"{iid} {worst[2]:g} from the {worst[1]} centreline < bundle OD / 2 + {margin:g} = {worst[3]:g}")
     val["bundle_clearance"] = bc
-    # plate standoff barrels (front face up to the board) clear of every other envelope
+    # plate standoff barrels (front face up to the board) clear of every other envelope and of the structure (plate bosses)
+    from .layout import structure_boxes
+    obst = dict(boxes)
+    obst.update({n: b for n, b in structure_boxes(P) if n not in ("plate.main", "plate.ext")})
     pfz = m["stack_z"]["plate_front"]
     val["plate_standoffs"] = {}
     for mt in mm["mounts"]:
@@ -1315,7 +1318,7 @@ def module_mounts_rule(P):
         rows = []
         for (hx, hy) in mt["standoffs"]:
             bar = (hx - r, hy - r, pfz, hx + r, hy + r, pfz + f["length"])
-            near = min(((box_gap(bar, b), iid) for iid, b in boxes.items() if iid != mt["item"]), default=(99.0, ""))
+            near = min(((box_gap(bar, b), iid) for iid, b in obst.items() if not iid.startswith(mt["item"])), default=(99.0, ""))
             rows.append({"c": [hx, hy], "nearest": near[1], "gap_mm": round(near[0], 2)})
             if near[0] < 0.5:
                 bad.append(f"{mt['item']} standoff ({hx:g}, {hy:g}) {near[0]:.2f} from {near[1]}")

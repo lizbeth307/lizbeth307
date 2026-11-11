@@ -815,10 +815,10 @@
     },
     "pack_fuse_carrier": {
       "name": "PACK_FUSE carrier of F101: Keystone 3568 MINI fuse holder + Littelfuse MINI 297 7.5 A + 18 AWG wire pads J116/J117 (board by PCB-SB2) - reserve",
-      "board": [10.7, 28.0, 1.6],
-      "size": [10.7, 28.0, 17.77],
+      "board": [10.7, 26.4, 1.6],
+      "size": [10.7, 26.4, 17.77],
       "status": "datasheet+assumption",
-      "src": "stack from this file above the PEM SO-M2.5-6ZI barrels (6.0, pem_so_m25_6; the barrel zone under the carrier is checked by R-MODULE-MOUNTS, not by this envelope, W2 MECH-5 review): carrier 1.6 (mechanical.json rear_face.hatch.f101_access carrier_t, assumption) + Keystone 3568 7.37 above the board (keystone_3568) + MINI fuse body 8.8 above the holder (littelfuse_mini_297) = 17.77; board 10.7 x 28 = the holder courtyard 16.5 x 7.24 (PCB-SB2 brief) plus a 1 mm2 solder-wire pad (KiCad Connector_Wire, W2 GR-4) and a standoff hole at each end, the M2.5 heads (D4.5) clear of the courtyard (design value of this package)"
+      "src": "stack from this file above the PEM SO-M2.5-6ZI barrels (6.0, pem_so_m25_6; the barrel zone under the carrier is checked by R-MODULE-MOUNTS, not by this envelope, W2 MECH-5 review): carrier 1.6 (mechanical.json rear_face.hatch.f101_access carrier_t, assumption) + Keystone 3568 7.37 above the board (keystone_3568) + MINI fuse body 8.8 above the holder (littelfuse_mini_297) = 17.77; board 10.7 x 26.4 = the Keystone body 16.0 x 6.73 plus a 1 mm2 solder-wire pad (KiCad Connector_Wire, W2 GR-4) and a standoff hole 2.6 from each end, the M2.5 heads (D4.5) 0.35 clear of the body (design value of this package); in the layout as two envelopes: pack_fuse_board (board + heads, 3.5 high) and pack_fuse (holder body + fuse, 16.17 above the board)"
     },
     "heyco_ngsg_105": {
       "name": "Heyco continuous grommet roll NGSG-105-100' (part 12417 natural, 12417B black): nylon, unserrated, with adhesive, 100 ft (30.5 m) roll, for 1.8-2.7 mm panels (read as a candidate; not the purchased trim: SRC-2 found no Heyco listing on DigiKey DE and chose essentra_mgs_2_01 for parts DB AI-EDGE-TRIM)",

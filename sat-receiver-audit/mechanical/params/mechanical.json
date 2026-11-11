@@ -802,9 +802,16 @@
       {
         "id": "pack_fuse",
         "part": "pack_fuse_carrier",
-        "box": [161.7, 7.5, 46.5, 10.7, 28.0, 17.77],
+        "box": [163.7, 16.7, 48.1, 6.7, 16.0, 16.17],
         "mount": "plate_front",
-        "_note": "W2 MECH-5 (B-09 / B-12): PACK_FUSE carrier (F101 in Keystone 3568, 18 AWG pads J116/J117, W2 GR-4) beside the right end of the battery tray (0.5, the pack positive side next to the BMS), on 2 PEM SO-M2.5-6ZI standoffs in the plate extension (M-07 PF1-PF2, module_mounts pack_fuse), fuse pointing +z: it is reached when the front half is lifted off (storage procedure through the seam, R-F101-ACCESS). Review: the envelope is the carrier board with holder and fuse (z 46.5-64.27); the 6 mm standoff barrels below it are checked by R-MODULE-MOUNTS, and the case NTC TH302 (ntc_case, W2 MECH-6) lies under the carrier between them (3.8 air); x 161.7-172.4 keeps 1.6 to the S40 riser (x 174), y 7.5-35.5 keeps 2.7 to the S11/S23/S32/S34 run (y 38.2); 2.6 to the BMS, 3.0 below the blower, 3.3 under the front wall; board by PCB-SB2, fixing F39 (PCB-SB2)"
+        "_note": "W2 MECH-5 (B-09 / B-12): PACK_FUSE carrier (F101 in Keystone 3568, 18 AWG pads J116/J117, W2 GR-4) beside the right end of the battery tray, the pack positive side next to the BMS, on 2 PEM SO-M2.5-6ZI standoffs in the plate extension (M-07 PF1-PF2, module_mounts pack_fuse), fuse pointing +z: reached when the front half is lifted off (storage procedure through the seam, R-F101-ACCESS). Review: two envelopes - this one is the Keystone 3568 body (16.0 x 6.73, keystone_3568) with the MINI fuse above it, from the carrier top z 48.1 to 64.27 (3.3 under the front wall), centred on the carrier; pack_fuse_board is the carrier board with the screw heads; the case NTC TH302 (ntc_case, W2 MECH-6) lies under the board between the standoffs"
+      },
+      {
+        "id": "pack_fuse_board",
+        "part": "pack_fuse_carrier",
+        "box": [161.7, 11.5, 46.5, 10.7, 26.4, 3.5],
+        "mount": "plate_front",
+        "_note": "W2 MECH-5 review: PACK_FUSE carrier board (1.6) on the 6 mm PEM standoffs, z 46.5-48.1, plus the ISO 14580 M2.5 heads (k 1.85) and the J116/J117 wire ends up to z 50.0; x 161.7-172.4 keeps 0.5 to the battery tray and 1.6 to the S40 riser (x 174), y 11.5-37.9 keeps 0.5 to the front-shell plate boss PM4 (168, 7.5, D7) and 0.6 to the blower; the S11/S23/S32/S34 run (y 38.2, z 53) passes 3.0 above its top face, the S40 run (z 44.7) 1.8 below it"
       },
       {
         "id": "boni_a406",
@@ -838,7 +845,7 @@
     "tripod_clear": 3.0,
     "_tripod_clear_src": "design value of this package (W2 MECH-5 review): every rear-wall insert hole keeps >= 3.0 mm in plan from the captive 1/4-20 nut pocket (rear_face.tripod hex, taken as its circumscribed circle), the same 3 mm STACK D15 asks behind the nut, so the 100 % infill tripod boss is not weakened and heat-setting does not distort the pocket",
     "bundle_clear": 0.5,
-    "bundle_items": {"hub_ch334f": "HUB", "ina228": "INA", "veml7700": "VEML", "t7_insert": "T7A", "pack_fuse": "PACK", "boni_a406": "BONI"},
+    "bundle_items": {"hub_ch334f": "HUB", "ina228": "INA", "veml7700": "VEML", "t7_insert": "T7A", "pack_fuse": "PACK", "pack_fuse_board": "PACK", "boni_a406": "BONI"},
     "_bundle_src": "W2 MECH-5 review: the envelopes placed by this package keep bundle_od_mm / 2 + bundle_clear from every harness route centreline (generated/harness-routes.json) that does not end at their own unit; R-ROUTE-CLEAR itself stays centreline-only",
     "mounts": [
       {"item": "hub_ch334f", "on": "rear_wall", "seat_z": 6.0, "screws": [[84.38, 41.54], [84.38, 56.78], [58.98, 41.54], [58.98, 56.78]],
@@ -850,8 +857,8 @@
       {"item": "veml7700", "on": "top_wall", "pocket": [106.8, 48.78, 31.4, 19.3, 1.1], "seat_y": 159.1, "tape_t": 1.0,
        "rests": [[109.84, 51.824], [130.16, 51.824], [109.84, 64.524], [130.16, 64.524]], "spigots": [[109.84, 64.524], [130.16, 51.824]], "spigot_d": 2.2, "spigot_len": 2.0,
        "_src": "holes (2.54, 2.54), (22.86, 2.54), (2.54, 15.24), (22.86, 15.24) of parts.json adafruit_4162 (board u along x from 107.3, v along z from 49.284); pocket [x, z, w, h, depth] in the inner face of the top wall (running 0.5 into the front-wall inner face at the corner): the 3.0 mm parts + 0.3 air leave the board parts face at y 159.1, the wall keeps 1.4 over the pocket. W2 MECH-5 review: no insert joint fits here (an insert hole 1 mm deeper than the 4.0 insert would leave the outer top face -0.3; the M2.5 x 4 that fits engages 2.4 = 0.96 d), so the board is taped (VHB 4910 discs D6 with a D2.5 hole, 1.0 thick) to 4 printed rests D6 at its holes, the rest faces at y 160.1; two diagonal spigots D2.2 x 2.0 stand on two rests and enter the D2.5 holes 1.0 deep (board located +-0.15 under the D4 window)"},
-      {"item": "pack_fuse", "on": "plate_front", "standoffs": [[169.0, 10.5], [169.0, 32.5]], "fastener": "pem_so_m25_6",
-       "_src": "two holes 3.0 from the carrier ends; 6.0 from the plate-extension edge x 163 (PEM edge distance, parts.json pem_so_m25_6) and 7.5 from its bottom edge y 3.0; heads flush with the plate rear face; barrels 6.0 on the front face up to the carrier bottom z 46.5; the carrier screws (M2.5 x 6, tip 1.6 above the plate front face) and the carrier outline are PCB-SB2's (F39)"}
+      {"item": "pack_fuse", "on": "plate_front", "standoffs": [[169.0, 14.1], [169.0, 35.3]], "fastener": "pem_so_m25_6",
+       "_src": "two holes 2.6 from the carrier board ends (board 26.4: the D4.5 M2.5 heads clear the 16.0 Keystone body by 0.35); 6.0 from the plate-extension edge x 163 (PEM edge distance, parts.json pem_so_m25_6); PF1 barrel 1.0 from the plate boss PM4; heads flush with the plate rear face; barrels 6.0 on the front face up to the carrier bottom z 46.5; the carrier screws (M2.5 x 6, tip 1.6 above the plate front face) and the carrier outline are PCB-SB2's (F39)"}
     ]
   },
   "rf_bay": {
