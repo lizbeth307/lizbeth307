@@ -165,7 +165,7 @@
         "name": "PWR3A_BRANCH",
         "priority": 2,
         "clearance": 0.15,
-        "track_width": 0.6,
+        "track_width": 0.5,
         "via_diameter": 0.7,
         "via_drill": 0.3,
         "microvia_diameter": 0.3,
