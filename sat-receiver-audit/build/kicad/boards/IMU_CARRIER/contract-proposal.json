@@ -43,13 +43,29 @@
           5.9
         ],
         [
+          16.5,
+          5.9
+        ],
+        [
+          16.5,
+          11.5
+        ],
+        [
+          6.0,
+          11.5
+        ],
+        [
+          6.0,
+          5.9
+        ],
+        [
           0,
           5.9
         ]
       ],
-      "outline_note": "L shape: the strip x 0-40.28, y 0-5.9 is the imu_pack.json carrier_pcb reserve [2.0, 0.5, 40.28, 6.0] less 0.1 at its top (BNO085 standoff hex 5.0 AF at box (4.34, 9.34) reaches y 6.45); the arm x 25.0-40.28, y 5.9-14.5 lies under the RP2040-Zero (box x 24.5-42.5), which has no standoffs, right of the BNO085 standoffs (box x <= 25.0) and 6.7 from the 1/4-20 insert axis (box (22.14, 19.64)); the 16 wire pads at 4 mm pitch and the 8 parts do not fit the 40.28 x 6.0 strip (W2 GR-4 GR4-R1)",
+      "outline_note": "strip, tongue and arm: the strip x 0-40.28, y 0-5.9 is the imu_pack.json carrier_pcb reserve [2.0, 0.5, 40.28, 6.0] less 0.1 at its top (BNO085 standoff hex 5.0 AF at box (4.34, 9.34) reaches y 6.45); the tongue x 6.0-16.5, y 5.9-11.5 (box x 8.0-18.5) runs under the BNO085 between its two front standoffs (box x <= 7.23 and >= 19.23 with the hex corners) and carries only the BNO085 pull-ups and 3V3 capacitor (no supply current under the magnetometer); the arm x 25.0-40.28, y 5.9-14.5 lies under the RP2040-Zero (box x 24.5-42.5), which has no standoffs, right of the BNO085 standoffs (box x <= 25.0) and 6.7 from the 1/4-20 insert axis (box (22.14, 19.64)); the 16 wire pads at 4 mm pitch and the 8 parts do not fit the 40.28 x 6.0 strip (W2 GR-4 GR4-R1)",
       "cutouts_mm": [],
-      "area_mm2": 369.06,
+      "area_mm2": 427.86,
       "holes_mm": [
         [
           4.0,
@@ -74,7 +90,7 @@
           "edge": "strip",
           "span": [
             6,
-            32.5
+            33
           ],
           "use": "J321/J320 (RP2040-Zero leads) and J322 (BNO085 leads) up to the board pair on 13 mm standoffs"
         },

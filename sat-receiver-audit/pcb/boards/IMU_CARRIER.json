@@ -91,11 +91,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8.0,
+          20.0,
           1.5
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 180,
         "side": "F",
         "ref_text": {
           "at": [
@@ -105,7 +105,7 @@
           "angle": 0
         }
       },
-      "anchor_source": "strip, lower row: RP2040-Zero signal leads (IMU_TX, IMU_RX, CS_N, WAKE_N), pads x 8-20; pad 1 box 3.15 from the H1 axis (keepout 3.0)"
+      "anchor_source": "strip, lower row, rotated 180: pads 1 IMU_TX (20.0), 2 IMU_RX (16.0), 3 CS_N (12.0), 4 WAKE_N (8.0) - TX/RX towards the arm, CS/WAKE under their J322 pads; pad 4 box 3.15 from the H1 axis (keepout 3.0)"
     },
     {
       "ref": "J320",
@@ -133,11 +133,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8.6,
+          24.6,
           4.4
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 180,
         "side": "F",
         "ref_text": {
           "at": [
@@ -147,7 +147,7 @@
           "angle": 0
         }
       },
-      "anchor_source": "strip, upper row: BNO085 leads (3V3, GND, CS_N, WAKE_N, 3V3), pads x 8.6-24.6 under the BNO085"
+      "anchor_source": "strip, upper row, rotated 180: pads 1 3V3 (24.6), 2 GND (20.6), 3 CS_N (16.6), 4 WAKE_N (12.6), 5 3V3 (8.6) under the BNO085"
     },
     {
       "ref": "J518",
@@ -259,7 +259,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.6,
+          31.0,
           9.9
         ],
         "align": "origin",
@@ -267,7 +267,7 @@
         "side": "F",
         "ref_text": {
           "at": [
-            30.6,
+            31.0,
             9.9
           ],
           "angle": 0
@@ -276,67 +276,67 @@
       "anchor_source": "arm: 100 nF on E5_IMU_VIN"
     },
     {
-      "ref": "C341",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          34.0,
-          9.9
-        ],
-        "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            34.0,
-            9.9
-          ],
-          "angle": 0
-        }
-      },
-      "anchor_source": "arm: 100 nF on E3_IMU3V3"
-    },
-    {
       "ref": "R390",
       "source": "graph",
       "anchor": {
         "at": [
-          28.0,
-          4.3
+          15.3,
+          7.8
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F",
         "ref_text": {
           "at": [
-            28.0,
-            4.3
+            15.3,
+            10.4
           ],
           "angle": 0
         }
       },
-      "anchor_source": "strip right of J322: CS_N pull-up"
+      "anchor_source": "tongue above J322 pad 3: CS_N pull-up, pad 1 (CS_N) down, pad 2 (3V3) up"
     },
     {
       "ref": "R391",
       "source": "graph",
       "anchor": {
         "at": [
-          31.2,
-          4.3
+          12.0,
+          7.8
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F",
         "ref_text": {
           "at": [
-            31.2,
-            4.3
+            12.0,
+            10.4
           ],
           "angle": 0
         }
       },
-      "anchor_source": "strip right of J322: WAKE_N pull-up"
+      "anchor_source": "tongue above J322 pad 4: WAKE_N pull-up, pad 1 (WAKE_N) down, pad 2 (3V3) up"
+    },
+    {
+      "ref": "C341",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          8.8,
+          7.8
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            8.8,
+            10.4
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "tongue above J322 pad 5: 100 nF on E3_IMU3V3, pad 1 (3V3) up, pad 2 GND down"
     }
   ],
   "holes": {
