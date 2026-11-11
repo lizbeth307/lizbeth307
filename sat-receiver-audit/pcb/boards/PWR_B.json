@@ -2138,60 +2138,6 @@
   "pre_route": {
     "tracks": [
       {
-        "id": "LAB5-J209-3",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            87.05,
-            16.65
-          ],
-          [
-            87.05,
-            15.4
-          ]
-        ],
-        "locked": true,
-        "why": "out of J209 contact 3 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
-      },
-      {
-        "id": "LAB5-J209-7",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            88.05,
-            16.65
-          ],
-          [
-            88.05,
-            15.4
-          ]
-        ],
-        "locked": true,
-        "why": "out of J209 contact 7 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
-      },
-      {
-        "id": "LAB5-J209-11",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            89.05,
-            16.65
-          ],
-          [
-            89.05,
-            15.4
-          ]
-        ],
-        "locked": true,
-        "why": "out of J209 contact 11 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
-      },
-      {
         "id": "LAB5-J209-15",
         "net": "LAB5",
         "layer": "B.Cu",
@@ -2210,17 +2156,71 @@
         "why": "out of J209 contact 15 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
       },
       {
+        "id": "LAB5-J209-19",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            91.05,
+            16.65
+          ],
+          [
+            91.05,
+            15.4
+          ]
+        ],
+        "locked": true,
+        "why": "out of J209 contact 19 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
+      },
+      {
+        "id": "LAB5-J209-23",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            92.05,
+            16.65
+          ],
+          [
+            92.05,
+            15.4
+          ]
+        ],
+        "locked": true,
+        "why": "out of J209 contact 23 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
+      },
+      {
+        "id": "LAB5-J209-27",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            93.05,
+            16.65
+          ],
+          [
+            93.05,
+            15.4
+          ]
+        ],
+        "locked": true,
+        "why": "out of J209 contact 27 (lower row) between its GND neighbours to its via: one contact, at most 1 A"
+      },
+      {
         "id": "LAB5-PLATE",
         "net": "LAB5",
         "layer": "F.Cu",
         "width_mm": 2.0,
         "path": [
           [
-            87.05,
+            90.05,
             15.4
           ],
           [
-            90.05,
+            93.05,
             15.4
           ]
         ],
@@ -2234,11 +2234,11 @@
         "width_mm": 2.0,
         "path": [
           [
-            88.55,
+            91.55,
             15.4
           ],
           [
-            88.55,
+            91.55,
             13.2
           ]
         ],
@@ -2252,7 +2252,7 @@
         "width_mm": 2.0,
         "path": [
           [
-            88.55,
+            91.55,
             13.2
           ],
           [
@@ -4612,42 +4612,6 @@
     ],
     "vias": [
       {
-        "id": "LAB5-LV-3",
-        "net": "LAB5",
-        "at": [
-          87.05,
-          15.4
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "LAB5 via of J209 contact 3"
-      },
-      {
-        "id": "LAB5-LV-7",
-        "net": "LAB5",
-        "at": [
-          88.05,
-          15.4
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "LAB5 via of J209 contact 7"
-      },
-      {
-        "id": "LAB5-LV-11",
-        "net": "LAB5",
-        "at": [
-          89.05,
-          15.4
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "LAB5 via of J209 contact 11"
-      },
-      {
         "id": "LAB5-LV-15",
         "net": "LAB5",
         "at": [
@@ -4658,6 +4622,42 @@
         "diameter_mm": 0.7,
         "locked": true,
         "why": "LAB5 via of J209 contact 15"
+      },
+      {
+        "id": "LAB5-LV-19",
+        "net": "LAB5",
+        "at": [
+          91.05,
+          15.4
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "LAB5 via of J209 contact 19"
+      },
+      {
+        "id": "LAB5-LV-23",
+        "net": "LAB5",
+        "at": [
+          92.05,
+          15.4
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "LAB5 via of J209 contact 23"
+      },
+      {
+        "id": "LAB5-LV-27",
+        "net": "LAB5",
+        "at": [
+          93.05,
+          15.4
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "LAB5 via of J209 contact 27"
       },
       {
         "id": "K4-SW-V",
@@ -6038,7 +6038,7 @@
       "pin_map": "pin n of J208 (PWR-A) meets pin n+1 of J209 (PWR-B) for n odd and pin n-1 for n even; the map is its own inverse",
       "rule": "PWR_A has no board of record yet (W2 PCB-PWRA-2 not run: area study); when it has one, its spec places J208 on the PWR-A top under J209 (J209 = J208 mirrored about the strip axis, so J209 pad m lies over J208 pad m+1 for m odd and m-1 for m even, and the alignment holes coincide) and both specs get the check_boards b2b pair with that pin_map; a geometric pad-over-pad check is not in check_boards yet (OPEN, build/15 W2 B2B)"
     },
-    "source": "pcb/generated/b2b-nets.json sha256 82c307a9005a6656bd03e6303c3ce0b1691b076a0e6d5e10b494e687cf25570f",
+    "source": "pcb/generated/b2b-nets.json sha256 a825401b58ffac2588f67a65767c27848daffec19bc75cd6b656f3a897795455",
     "rule": "J209 pad nets are its graph pins, which equal b2b-nets.json contacts[].pwr_b_pin (make_spec.py b2b_pin_map stops on any difference); the map itself is pcb/prepare.py b2b_contacts (pin_map_rule, guard_rule in b2b-nets.json)",
     "contacts": 100,
     "used": 69,
