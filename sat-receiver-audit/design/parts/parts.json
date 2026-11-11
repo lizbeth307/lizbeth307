@@ -32,6 +32,7 @@
   "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech4-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-mech6-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src2-manual.json"
  ],
  "bom_v2_rows": {
@@ -258,8 +259,8 @@
   },
   "91": {
    "status": "partial",
-   "note": "Goobay 58814 (W401), Lindy 36700 (J541/J543), панельна SMA P8 із пігтейлом (J408), BNC (J405), F (J404), CAB.011 (W407) і збірки RG-316 W422–W424 — у базі; панельні SMA P1–P3, P6 — TBD у базі (J-SMA-PANEL-RFBOARD)",
-   "remaining": "набір пігтейлів RTL-SDR Blog; 4 пігтейли CH334F; перемички RG316 між модулями (кількість — таблиця джгутів build/16); 4 польові RG316 1–2 м; BNC M-M для Boni; перехідники. Не купувати за цим рядком: панельні SMA P1–P3, P6 і їхні пігтейли (TBD у базі, J-SMA-PANEL-RFBOARD), SMA P8 із пігтейлом (J408), BNC P5 (J405), F P4 (J404), P7 (W407 CAB.011), 10 пігтейлів RG316 20 см (замінено збірками бази)"
+   "note": "Goobay 58814 (W401), Lindy 36700 (J541/J543), панельна SMA P8 із пігтейлом (J408), BNC (J405), F (J404), CAB.01029 (W407) і збірки RG-316 W422–W424 — у базі; панельні SMA P1–P3, P6 — TBD у базі (J-SMA-PANEL-RFBOARD)",
+   "remaining": "набір пігтейлів RTL-SDR Blog; 4 пігтейли CH334F; перемички RG316 між модулями (кількість — таблиця джгутів build/16); 4 польові RG316 1–2 м; BNC M-M для Boni; перехідники. Не купувати за цим рядком: панельні SMA P1–P3, P6 і їхні пігтейли (TBD у базі, J-SMA-PANEL-RFBOARD), SMA P8 із пігтейлом (J408), BNC P5 (J405), F P4 (J404), P7 (W407 CAB.01029), 10 пігтейлів RG316 20 см (замінено збірками бази)"
   },
   "92": {
    "status": "db",
@@ -5598,7 +5599,7 @@
    "mount": "existing",
    "note": "Connectors/pads on the purchased Radxa Q6A; mating cables and leads are separate refs or extras. What is still open per port is in interface_open (the J301 mating socket is not selected).",
    "interface_open": {
-    "J301": "Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07).",
+    "J301": "Для Q6A J20 (2×20, крок 2.54 мм) — родина IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці, бокс XDFH-0254-2*20P J304 на CTRL. Зафіксовано (W2 MECH-6): стрічка — 3M 3365/40 (assembly_items AI-IDC-RIBBON-40: 40 × 28 AWG, крок 1.27, 50.80 × 0.89 мм, рядок SRC-1 digikey:19-3365/40300-DS-ND), дві половини по 20, укладені одна на одну, крізь проріз SL1 27.5 × 3.8 (M-07; R-PLATE-SLOT-FILL PASS, модель); S01 (UART7) за трасою моделі в межах 200 мм, а PPS/UART6 ідуть гілкою PPS (R-PPS-LEN PASS, модель, і в найгіршому випадку; mechanical/generated/harness-routes.json). Відкрито: висота бокса J304 проти CTRL 5.5 мм (креслення XDFH-0254 не читається, еталон 9.1 мм — R-HDR-HEIGHT OPEN), креслення гнізда XDFH-0258 (стикування зі стрічкою 1.27 мм) і орієнтація контакту 1 J20 (на карті розміщення Radxa V1.21 мітки немає) — тому запис лишається interface_open (запис J-Q6A-EXISTING охоплює вісім ref).",
     "J303": "Відповідна частина — 2-контактна вилка 1.25 мм на виводі 50 мм батареї BT301 (Electrokit 41036512, прочитано 07.11.2026, знімок 2026-11-07-w2-src1-manual.json web:electrokit-41036512; кріплення — власна клейка стрічка батареї). Відкрито: полярність вилки (сторінка її не дає; на Q6A J11 контакт 1 — GND, E3 J303) звірити до вставлення; місце батареї в межах 50 мм від J11 — механічний пакет.",
     "J511": "Кабелі до J5: USB3 до T7 (U540, через вставку T7_INSERT і гермоввід T7) і USB2 до RTL-B (J541) — окремі записи. У моделі (W2 MECH-4, 07.11.2026) штекери J5 стоять у резерві usb_plug_bay (x 116.6–139, y 38.5–56.5, z 14.65–30.65; mechanical.json layout) перед стеком USB Q6A, кабелі виходять у бік лючка (−x); F101 у цьому місці не розміщується (R-F101-ACCESS). Відкрито: фіксація штекерів у J5 (скоба або стяжка до пластини) і розвантаження натягу обох кабелів — конверти штекерів, кабелю T7 і вставки T7_INSERT не змодельовано (MECH-5, MECH-6).",
     "J512": "Кабелі C-HUB (P3 → CH334F JP5) і C-TOUCH (P2 → сенсорний контролер Wisecoco) — assembly_items AI-USB2-J512: Tensility 10-02333 з вилкою A в J2, відрізаним другим кінцем і відрізаним провідником VBUS (E5 J512). Відкрито: закінчення на JP5 і роз’єм сенсорного порту Wisecoco (не прочитано), фіксація вилок у J2 — механічний пакет.",
@@ -6175,9 +6176,9 @@
   {
    "id": "J-PANEL-OF-CABLE",
    "mount": "assembly",
-   "note": "SMA(f) bulkhead end of the Taoglas CAB.01075 cables W403/W404/W405 and of the CAB.011 pigtail W407 (J407).",
+   "note": "SMA(f) bulkhead end of the Taoglas CAB.01075 cables W403/W404/W405 and of the CAB.01029 pigtail W407 (J407).",
    "interface_open": {
-    "J407": "Панельний кінець Taoglas CAB.011 (W407, P7): довжину різьби й виріз з лискою (D-Cut) рядок READS-RF web:taoglas-cab011-datasheet-spe-11-8-068-f (07.11.2026) не містить, а пігтейл P7 замінює MECH-6 (B-06: 95 мм не дістає LC76G), тож виріз, різьба (R-SMA-THREAD OPEN для P7), ущільнення й момент — TBD.",
+    "J407": "Панельний кінець Taoglas CAB.01029 (W407, P7, W2 MECH-6): водозахищена родина каталогу Taoglas SPE-24-8-198-C с.11 (рядок READS-RF): різьба 1/4-36UNS-2A довжиною 11.4 ±0.3, деталі 5 (1.75 ±0.2) і 6 (1.1 ±0.3) зовні; на кресленні с.11 біля фланця показано круглий переріз ущільнення, але в BOM CAB.0243 (рядок READS-RF web:taoglas-cab0243-datasheet-spe-24-8-147-a) окремого кільця немає, а DigiKey ступеня IP не наводить — ущільнення фланця перевірити на вхідному контролі й на T-07 (IPX4, build/09); виріз ⌀6.5 (вибір конструкції 6.35 + 0.15, отвору креслення не дає; M-02 P7, mechanical/params/parts.json taoglas_mhf1_sma_wp); після стінки 4.5 і деталей 5 + 6 лишається 3.25 мм ≥ 3 витки (R-SMA-THREAD PASS, модель). Відкрито: момент гайки й ущільнення вирізу (T-07), стикування вилки I-PEX MHF I з гніздом IPEX Waveshare 24370 — вхідний контроль.",
     "J413": "Панельний кінець Taoglas CAB.01075 (W403, RX1, верхня грань): виріз ⌀6.5 і корпус пігтейла змодельовано за каталогом Taoglas SPE-24-8-198-C с.14 (рядок READS-RF web:taoglas-cable-assembly-catalog-spe-24-8-198-c, 07.11.2026: різьба 1/4-36UNS-2A довжиною 11.4 ±0.2, гайка з лицьового боку; mechanical/params/parts.json taoglas_cab01075). Відкриті: гайку й шайбу каталог не розмірює (на них і 3 витки лишається 4.58 мм — R-SMA-THREAD OPEN), діаметр корпусу — резерв ⌀10.2, ущільнення вирізу (T-07), момент гайки.",
     "J414": "Панельний кінець Taoglas CAB.01075 (W404, RX2, права стінка): виріз ⌀6.5 і корпус пігтейла змодельовано за каталогом Taoglas SPE-24-8-198-C с.14 (рядок READS-RF web:taoglas-cable-assembly-catalog-spe-24-8-198-c, 07.11.2026: різьба 1/4-36UNS-2A довжиною 11.4 ±0.2, гайка з лицьового боку; mechanical/params/parts.json taoglas_cab01075). Відкриті: гайку й шайбу каталог не розмірює (на них і 3 витки лишається 4.58 мм — R-SMA-THREAD OPEN), діаметр корпусу — резерв ⌀10.2, ущільнення вирізу (T-07), момент гайки.",
     "J415": "Панельний кінець Taoglas CAB.01075 (W405, REF IN, права стінка): виріз ⌀6.5 і корпус пігтейла змодельовано за каталогом Taoglas SPE-24-8-198-C с.14 (рядок READS-RF web:taoglas-cable-assembly-catalog-spe-24-8-198-c, 07.11.2026: різьба 1/4-36UNS-2A довжиною 11.4 ±0.2, гайка з лицьового боку; mechanical/params/parts.json taoglas_cab01075). Відкриті: гайку й шайбу каталог не розмірює (на них і 3 витки лишається 4.58 мм — R-SMA-THREAD OPEN), діаметр корпусу — резерв ⌀10.2, ущільнення вирізу (T-07), момент гайки."
@@ -6280,15 +6281,15 @@
    ]
   },
   {
-   "id": "W-CAB011",
+   "id": "W-CAB01029",
    "mount": "harness",
    "manufacturer": "Taoglas",
-   "mpn": "CAB.011",
+   "mpn": "CAB.01029",
    "sku": {
-    "digikey": "931-1098-ND"
+    "digikey": "931-CAB.01029-ND"
    },
-   "single_source": "Taoglas U.FL-SMA bulkhead pigtail; length 100 mm",
-   "note": "U.FL (MHF1) to SMA bulkhead; 10-bom row 91 option for P7 → LC76G. DigiKey DE EUR 3.90 @1 on 2026-10-24. The mechanical model puts the LC76G at the rear-left wall and P7 on the top face at x 163.5: the straight line from the nearest LC76G corner to P7 is at least 113 mm (fit-report), more than this 100 mm lead, so a longer U.FL-SMA bulkhead pigtail (≥200 mm, MPN TBD — no page read) is needed unless the LC76G moves (build/15 «Оболонка D15»).",
+   "single_source": "Taoglas IPEX MHF I → SMA(F) bulkhead straight, waterproof, 1.13 mm cable, 250 mm (Taoglas Cable Assembly Catalog SPE-24-8-198-C p.4/p.11, READS-RF row); the waterproof family of the J-SMA-PANEL-RFBOARD fallbacks",
+   "note": "W407: IPEX of the LC76G → panel port P7 (W2 MECH-6; build/15 «Пігтейл P7 і місце LC76G (W2 MECH-6)»). DigiKey DE 931-CAB.01029-ND re-read 07.11.2026: EUR 4.73 @1, 1025 in stock, 250.00 mm, 1.13 mm OD, U.FL (UMCC) I-PEX MHFI plug right angle → SMA jack bulkhead front-side nut, lead time 16 weeks (design/parts/snapshots/2026-11-07-w2-mech6-manual.json). Length from the coax route of the enclosure model (mechanical/generated/harness-routes.json coax W407, rule R-P7-PIGTAIL): 250 mm minus 3 % (as drawn for the 200 ±6 mm variant) leaves ≥30 mm over the route, CAB.01028 (200 mm) does not. Replaces CAB.011 (95 mm, READS-RF row web:taoglas-cab011-datasheet-spe-11-8-068-f), which did not reach. Panel end: thread 1/4-36UNS-2A 11.4 ±0.3, items 5 + 6 outside (R-SMA-THREAD PASS, model; mechanical/params/parts.json taoglas_mhf1_sma_wp); a round seal section is drawn at the flange (catalogue p.11), but the CAB.0243 BOM lists no O-ring and DigiKey states no IP rating, so the flange seal is checked at incoming inspection and at T-07. Mating of the I-PEX MHF I plug with the IPEX receptacle of the Waveshare 24370 (type not named by Waveshare) is checked at incoming inspection.",
    "refs": [
     "W407"
    ]
@@ -7191,14 +7192,6 @@
    "spares": 0,
    "for": "STACK.md:269 «завжди з заземленою обмоткою мідною стрічкою»: обидві стрічки HDMI, крім ділянки фериту; заземлення — до голої кромки пластини біля вирізу (plate.notches_right)",
    "tbd": "товар не прочитано: пошук DigiKey DE 07.11.2026 для 3M 1181 не дав рядка (знімок 2026-11-07-w2-mech4-manual.json web:digikey-de-copper-tape-search); ширина ≥25 мм для обмотки стрічки 10 мм"
-  },
-  {
-   "id": "AI-PIGTAIL-P7-LONG",
-   "item": "пігтейл U.FL (MHF1) → SMA bulkhead ≥200 мм для P7",
-   "qty": 1,
-   "spares": 0,
-   "for": "LC76G (задня стінка ліворуч) → P7 ≥113 мм по прямій (fit-report), W407 CAB.011 100 мм не дістає",
-   "tbd": "MPN і довжину не прочитано"
   },
   {
    "id": "AI-HAMMOND-1554U2GY",

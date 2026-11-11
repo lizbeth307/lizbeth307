@@ -19172,7 +19172,7 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">CAB.011</field>
+        <field name="MPN">CAB.01029</field>
         <field name="Manufacturer">Taoglas</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
@@ -19180,7 +19180,7 @@
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_W407" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CAB.011"/>
+      <property name="MPN" value="CAB.01029"/>
       <property name="Manufacturer" value="Taoglas"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>

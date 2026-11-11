@@ -209,7 +209,7 @@ class Checks(unittest.TestCase):
         if not path.exists():
             self.skipTest("build/16-dzhgut.csv not present")
         r = rules.plate_slot_fill(P)
-        self.assertTrue(r["result"].startswith("OPEN"), r)   # never PASS before the wire OD and the edge trim are chosen
+        self.assertFalse(r["result"].startswith("FAIL"), r)   # W2 MECH-6: wire OD and edge trim chosen, the fill is judged (SlotFillAndW2Mech6 below)
         with path.open(encoding="utf-8", newline="") as fh:
             rows = list(csv.DictReader(fh))
         for sl in P.mech["plate"]["slots"]:
@@ -980,3 +980,150 @@ class RoutesW2Mech4Review(unittest.TestCase):
         Q = self._copy()
         Q.parts["adafruit_flex"]["thickness"] = 0.8               # a measured bare flex thicker than the WE-FLAT slot
         self.assertTrue(self._rule(Q, "R-HDMI-ROUTE")["result"].startswith("FAIL"))
+
+
+class SlotFillAndW2Mech6(unittest.TestCase):
+    """W2 MECH-6: slot fill with the chosen wire and trim, the P7 pigtail, the PPS worst case, the VCC_3V3_MKEY tap,
+    the NTC markers and the header refs at the route ends."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def test_slot_fill_passes_with_the_trim_and_fails_when_too_small(self):
+        r = rules.plate_slot_fill(P)
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        for sid, v in r["value_mm"].items():
+            with self.subTest(slot=sid):
+                self.assertLessEqual(v["bundle_need_mm2"], v["inner_mm2"])
+                self.assertEqual(v["legs_clear"], "yes")
+        self.assertEqual(r["value_mm"]["SL1"]["ribbon"]["stack_mm"], 2 * P.parts["ribbon_3m_3365_40"]["t"])
+        Q = self._copy()
+        sl2 = next(s for s in Q.mech["plate"]["slots"] if s["id"] == "SL2")
+        sl2["rect"][3] = 5.0
+        r = rules.plate_slot_fill(Q)
+        self.assertTrue(r["result"].startswith("FAIL"), r["result"])
+
+    def test_a_grommet_leg_under_a_resting_part_fails(self):
+        Q = self._copy()
+        sl2 = next(s for s in Q.mech["plate"]["slots"] if s["id"] == "SL2")
+        sl2["trim"]["bottom"] = "grommet"                     # legs would sit under PWR-A (0.4 mm above the plate)
+        r = rules.plate_slot_fill(Q)
+        self.assertTrue(r["result"].startswith("FAIL"), r["result"])
+        self.assertIn("PWR.r0", r["value_mm"]["SL2"]["result"])
+
+    def test_every_slot_wire_has_a_read_od(self):
+        od = P.parts["hookup_wire_ptfe"]["od"]
+        path = HERE.parent / "build" / "16-dzhgut.csv"
+        if not path.exists():
+            self.skipTest("build/16-dzhgut.csv not present")
+        with path.open(encoding="utf-8", newline="") as fh:
+            rows = list(csv.DictReader(fh))
+        flat = set(P.mech["harness_routes"]["flat"])
+        for sl in P.mech["plate"]["slots"]:
+            for w in rows:
+                if w["segment"] in sl["segments"] and w["segment"] not in flat:
+                    self.assertIn(w["awg"], od, (sl["id"], w["wire"]))
+
+    def test_p7_pigtail_and_thread(self):
+        from srrx_mech import routes
+        res = routes.evaluate(P)
+        row = next(r for r in routes.route_rules(P, res) if r["id"] == "R-P7-PIGTAIL")
+        self.assertTrue(row["result"].startswith("PASS (model)"), row["result"])
+        fit, _ = routes.pigtail_choice(P, res, "W407")
+        self.assertEqual(fit["mpn"], P.mech["harness_routes"]["coax"]["W407"]["chosen"])
+        self.assertEqual(res["coax"]["W407"]["crossings"], [])
+        p7 = next(p for p in P.mech["top_face"]["ports"] if p["id"] == "P7")
+        self.assertEqual(p7["part"], "taoglas_mhf1_sma_wp")
+        thr = next(r for r in rules.evaluate(P) if r["id"] == "R-SMA-THREAD")
+        self.assertTrue(thr["value_mm"]["P7"].startswith("PASS (model)"), thr["value_mm"]["P7"])
+
+    def test_pps_passes_at_the_worst_case_and_fails_when_the_gnss_moves_far(self):
+        row = next(r for r in rules.evaluate(P) if r["id"] == "R-PPS-LEN")
+        self.assertTrue(row["result"].startswith("PASS (model)"), row["result"])
+        self.assertLessEqual(row["value_mm"]["branch_max_mm"], row["limit_mm"])
+        Q = self._copy()
+        it = next(i for i in Q.mech["layout"]["items"] if i["id"] == "lc76g")
+        it["box"][0] -= 50.0
+        row = next(r for r in rules.evaluate(Q) if r["id"] == "R-PPS-LEN")
+        self.assertTrue(row["result"].startswith("FAIL"), row["result"])
+
+    def test_s17_ends_on_the_mkey_tap(self):
+        from srrx_mech import routes
+        tap = P.parts["q6a"]["mkey_tap"]
+        self.assertEqual((tap["ref"], tap["net"], tap["side"]), ("C17", "VCC_3V3_MKEY", "bottom"))
+        self.assertIn("radxa_dragon_q6a_schematic_v1.21.pdf", tap["src"])
+        self.assertIn("components_placement_map_v1.21.pdf", tap["src"])
+        r = routes.evaluate(P)["segments"]["S17"]
+        pt = routes.points(P)["q6a.mkey_tap"][1][:3]
+        self.assertEqual(tuple(r["points_mm"][-1]), tuple(pt))
+        self.assertEqual(r["crossings"], [])
+
+    def test_ntc_markers_are_routed_and_in_the_collision_set(self):
+        from srrx_mech import routes
+        names = {n for _, n, _, _ in layout.item_boxes(P)}
+        self.assertTrue({"ntc_panel", "ntc_case"} <= names)
+        coll, _ = layout.fit_checks(P)
+        self.assertEqual([c for c in coll if c["gap_mm"] < 0], [])
+        res = routes.evaluate(P)
+        for sid in ("S39", "S40"):
+            with self.subTest(segment=sid):
+                self.assertIsNotNone(res["segments"][sid]["length_mm"])
+                self.assertEqual(res["segments"][sid]["crossings"], [])
+
+    def test_edge_ends_name_the_header_refs(self):
+        from srrx_mech import routes
+        if not (HERE.parent / "build" / "16-dzhgut-rozyemy.csv").exists():
+            self.skipTest("build/16-dzhgut-rozyemy.csv not present")
+        res = routes.evaluate(P)
+        self.assertTrue(any("J304" in p for p in res["segments"]["S01"]["provisional"]))
+        self.assertTrue(any("J207" in p and "PWR_B" in p for p in res["segments"]["S20"]["provisional"]))
+        self.assertTrue(any("J318" in p for p in res["segments"]["S39"]["provisional"]))
+
+
+class SlotFillW2Mech6Review(unittest.TestCase):
+    """W2 MECH-6 review: the Essentra MGS-2-01 legs reach the inside depth D onto each face, the loose wires must pack
+    beside / on the rigid S01 ribbon, and the SL3 edge next to the BMS takes the tape."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def test_edging_reach_is_the_inside_depth_d(self):
+        g = P.parts[P.mech["plate"]["slot_trim"]["grommet"]]
+        reach, proud = rules.trim_legs(P, g)
+        self.assertAlmostEqual(reach, 0.100 * 25.4, places=3)                 # D 0.100 in (catalogue p.276)
+        self.assertAlmostEqual(g["overall_h"], (0.055 + 0.100) * 25.4, places=3)  # C + D
+        self.assertAlmostEqual(reach, g["inside_d"], places=6)
+        self.assertGreater(proud, 0.0)
+
+    def test_loose_wires_pack_beside_and_on_the_ribbon(self):
+        r = rules.plate_slot_fill(P)
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        for sid, v in r["value_mm"].items():
+            with self.subTest(slot=sid):
+                self.assertEqual(v["packing"]["unplaced"], 0)
+        sl1 = r["value_mm"]["SL1"]
+        self.assertEqual(len(sl1["packing"]["regions_mm"]), 2)
+        Q = self._copy()
+        s = next(x for x in Q.mech["plate"]["slots"] if x["id"] == "SL1")
+        s["rect"] = [168.5, 93.2, 27.5, 3.8]                                  # the first size: area passed, the third wire had no place
+        v = rules.plate_slot_fill(Q)["value_mm"]["SL1"]
+        self.assertLessEqual(v["bundle_need_mm2"], v["inner_mm2"])
+        self.assertGreater(v["packing"]["unplaced"], 0)
+        self.assertIn("wire packing", v["result"])
+
+    def test_shelf_pack_counts_round_wires(self):
+        self.assertEqual(rules._shelf_pack([1.09] * 3, 1.9, 2.3), [1.09])     # two stacked fit, the third does not
+        self.assertEqual(rules._shelf_pack([1.09] * 4, 2.2, 2.2), [])
+        self.assertEqual(rules._shelf_pack([2.0], 1.9, 5.0), [2.0])
+
+    def test_sl3_bms_edge_takes_the_tape(self):
+        sl3 = next(x for x in P.mech["plate"]["slots"] if x["id"] == "SL3")
+        self.assertEqual(sl3["trim"]["left"], "tape")
+        self.assertEqual(sl3["trim"]["right"], "grommet")
+        Q = self._copy()
+        s = next(x for x in Q.mech["plate"]["slots"] if x["id"] == "SL3")
+        s["trim"]["left"] = "grommet"                                         # legs would sit under the BMS (0.5 mm above the plate)
+        v = rules.plate_slot_fill(Q)["value_mm"]["SL3"]
+        self.assertIn("bms", v["result"])
