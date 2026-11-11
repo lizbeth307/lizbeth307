@@ -3900,9 +3900,9 @@
             <pin num="44"/>
             <pin num="97"/>
             <pin num="98"/>
-            <pin num="23"/>
-            <pin num="26"/>
-            <pin num="35"/>
+            <pin num="30"/>
+            <pin num="34"/>
+            <pin num="38"/>
             <pin num="2"/>
             <pin num="3"/>
             <pin num="6"/>
@@ -3914,11 +3914,11 @@
             <pin num="18"/>
             <pin num="19"/>
             <pin num="22"/>
+            <pin num="23"/>
+            <pin num="26"/>
             <pin num="27"/>
-            <pin num="30"/>
             <pin num="31"/>
-            <pin num="34"/>
-            <pin num="38"/>
+            <pin num="35"/>
             <pin num="39"/>
             <pin num="42"/>
             <pin num="43"/>
@@ -33213,44 +33213,44 @@
         <pin num="1" name="3V3_Q6A" type="passive"/>
         <pin num="2" name="GND" type="passive"/>
         <pin num="3" name="GND" type="passive"/>
-        <pin num="4" name="LNA4V5" type="passive"/>
+        <pin num="4" name="LAB5" type="passive"/>
         <pin num="5" name="LNA4V5" type="passive"/>
         <pin num="6" name="GND" type="passive"/>
         <pin num="7" name="GND" type="passive"/>
-        <pin num="8" name="BIAS_CH1_DAMP" type="passive"/>
-        <pin num="9" name="BIAS_CH2_DAMP" type="passive"/>
+        <pin num="8" name="LAB5" type="passive"/>
+        <pin num="9" name="BIAS_CH1_DAMP" type="passive"/>
         <pin num="10" name="GND" type="passive"/>
         <pin num="11" name="GND" type="passive"/>
-        <pin num="12" name="BIAS_CH3_DAMP" type="passive"/>
-        <pin num="13" name="BIAS_CH4_DAMP" type="passive"/>
+        <pin num="12" name="LAB5" type="passive"/>
+        <pin num="13" name="E2_SB_DAMP" type="passive"/>
         <pin num="14" name="GND" type="passive"/>
         <pin num="15" name="GND" type="passive"/>
         <pin num="16" name="LAB5" type="passive"/>
-        <pin num="17" name="LAB5" type="passive"/>
+        <pin num="17" name="VBUS_RTLB_DAMP" type="passive"/>
         <pin num="18" name="GND" type="passive"/>
         <pin num="19" name="GND" type="passive"/>
-        <pin num="20" name="LAB5" type="passive"/>
-        <pin num="21" name="LAB5" type="passive"/>
+        <pin num="20" name="BIAS_CH2_DAMP" type="passive"/>
+        <pin num="21" name="VBUS_HFP" type="passive"/>
         <pin num="22" name="GND" type="passive"/>
         <pin num="23" name="GND" type="passive"/>
-        <pin num="24" name="LAB5_RLY" type="passive"/>
-        <pin num="25" name="LAB5_RLY" type="passive"/>
+        <pin num="24" name="LNA4V5" type="passive"/>
+        <pin num="25" name="BIAS_CH4_DAMP" type="passive"/>
         <pin num="26" name="GND" type="passive"/>
         <pin num="27" name="GND" type="passive"/>
-        <pin num="28" name="E2_SB_DAMP" type="passive"/>
-        <pin num="29" name="VBUS_HFP" type="passive"/>
+        <pin num="28" name="BIAS_CH3_DAMP" type="passive"/>
+        <pin num="29" name="LAB5_RLY" type="passive"/>
         <pin num="30" name="GND" type="passive"/>
         <pin num="31" name="GND" type="passive"/>
         <pin num="32" name="VBUS_LABPORT" type="passive"/>
-        <pin num="33" name="VBUS_RTLB_DAMP" type="passive"/>
+        <pin num="33" name="LAB5_RLY" type="passive"/>
         <pin num="34" name="GND" type="passive"/>
         <pin num="35" name="GND" type="passive"/>
-        <pin num="36" name="LNB13V2" type="passive"/>
-        <pin num="37" name="AUX12" type="passive"/>
+        <pin num="36" name="AUX12" type="passive"/>
+        <pin num="37" name="LNB13V2" type="passive"/>
         <pin num="38" name="GND" type="passive"/>
         <pin num="39" name="GND" type="passive"/>
-        <pin num="40" name="BONI13V8_PORT" type="passive"/>
-        <pin num="41" name="BONI13V8" type="passive"/>
+        <pin num="40" name="BONI13V8" type="passive"/>
+        <pin num="41" name="BONI13V8_PORT" type="passive"/>
         <pin num="42" name="GND" type="passive"/>
         <pin num="43" name="GND" type="passive"/>
         <pin num="44" name="CHG_INHIBIT" type="passive"/>
@@ -33325,46 +33325,46 @@
       <pins>
         <pin num="1" name="GND" type="passive"/>
         <pin num="2" name="3V3_Q6A" type="passive"/>
-        <pin num="3" name="LNA4V5" type="passive"/>
+        <pin num="3" name="LAB5" type="passive"/>
         <pin num="4" name="GND" type="passive"/>
         <pin num="5" name="GND" type="passive"/>
         <pin num="6" name="LNA4V5" type="passive"/>
-        <pin num="7" name="BIAS_CH1_DAMP" type="passive"/>
+        <pin num="7" name="LAB5" type="passive"/>
         <pin num="8" name="GND" type="passive"/>
         <pin num="9" name="GND" type="passive"/>
-        <pin num="10" name="BIAS_CH2_DAMP" type="passive"/>
-        <pin num="11" name="BIAS_CH3_DAMP" type="passive"/>
+        <pin num="10" name="BIAS_CH1_DAMP" type="passive"/>
+        <pin num="11" name="LAB5" type="passive"/>
         <pin num="12" name="GND" type="passive"/>
         <pin num="13" name="GND" type="passive"/>
-        <pin num="14" name="BIAS_CH4_DAMP" type="passive"/>
+        <pin num="14" name="E2_SB_DAMP" type="passive"/>
         <pin num="15" name="LAB5" type="passive"/>
         <pin num="16" name="GND" type="passive"/>
         <pin num="17" name="GND" type="passive"/>
-        <pin num="18" name="LAB5" type="passive"/>
-        <pin num="19" name="LAB5" type="passive"/>
+        <pin num="18" name="VBUS_RTLB_DAMP" type="passive"/>
+        <pin num="19" name="BIAS_CH2_DAMP" type="passive"/>
         <pin num="20" name="GND" type="passive"/>
         <pin num="21" name="GND" type="passive"/>
-        <pin num="22" name="LAB5" type="passive"/>
-        <pin num="23" name="LAB5_RLY" type="passive"/>
+        <pin num="22" name="VBUS_HFP" type="passive"/>
+        <pin num="23" name="LNA4V5" type="passive"/>
         <pin num="24" name="GND" type="passive"/>
         <pin num="25" name="GND" type="passive"/>
-        <pin num="26" name="LAB5_RLY" type="passive"/>
-        <pin num="27" name="E2_SB_DAMP" type="passive"/>
+        <pin num="26" name="BIAS_CH4_DAMP" type="passive"/>
+        <pin num="27" name="BIAS_CH3_DAMP" type="passive"/>
         <pin num="28" name="GND" type="passive"/>
         <pin num="29" name="GND" type="passive"/>
-        <pin num="30" name="VBUS_HFP" type="passive"/>
+        <pin num="30" name="LAB5_RLY" type="passive"/>
         <pin num="31" name="VBUS_LABPORT" type="passive"/>
         <pin num="32" name="GND" type="passive"/>
         <pin num="33" name="GND" type="passive"/>
-        <pin num="34" name="VBUS_RTLB_DAMP" type="passive"/>
-        <pin num="35" name="LNB13V2" type="passive"/>
+        <pin num="34" name="LAB5_RLY" type="passive"/>
+        <pin num="35" name="AUX12" type="passive"/>
         <pin num="36" name="GND" type="passive"/>
         <pin num="37" name="GND" type="passive"/>
-        <pin num="38" name="AUX12" type="passive"/>
-        <pin num="39" name="BONI13V8_PORT" type="passive"/>
+        <pin num="38" name="LNB13V2" type="passive"/>
+        <pin num="39" name="BONI13V8" type="passive"/>
         <pin num="40" name="GND" type="passive"/>
         <pin num="41" name="GND" type="passive"/>
-        <pin num="42" name="BONI13V8" type="passive"/>
+        <pin num="42" name="BONI13V8_PORT" type="passive"/>
         <pin num="43" name="CHG_INHIBIT" type="passive"/>
         <pin num="44" name="GND" type="passive"/>
         <pin num="45" name="E1_BAT_ADC" type="passive"/>
@@ -42501,8 +42501,8 @@
     </net>
     <net code="3" name="AUX12" class="Default">
       <node ref="C221" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="J208" pin="37" pinfunction="AUX12_37" pintype="passive"/>
-      <node ref="J209" pin="38" pinfunction="AUX12_38" pintype="passive"/>
+      <node ref="J208" pin="36" pinfunction="AUX12_36" pintype="passive"/>
+      <node ref="J209" pin="35" pinfunction="AUX12_35" pintype="passive"/>
       <node ref="J505" pin="1" pinfunction="AUX12_protected_1" pintype="passive"/>
       <node ref="J508" pin="3" pinfunction="AUX12_3" pintype="passive"/>
       <node ref="L204" pin="2" pinfunction="2_2" pintype="passive"/>
@@ -42527,8 +42527,8 @@
     </net>
     <net code="6" name="BIAS_CH1_DAMP" class="Default">
       <node ref="C235" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="8" pinfunction="BIAS_CH1_DAMP_8" pintype="passive"/>
-      <node ref="J209" pin="7" pinfunction="BIAS_CH1_DAMP_7" pintype="passive"/>
+      <node ref="J208" pin="9" pinfunction="BIAS_CH1_DAMP_9" pintype="passive"/>
+      <node ref="J209" pin="10" pinfunction="BIAS_CH1_DAMP_10" pintype="passive"/>
       <node ref="R232" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="7" name="BIAS_CH2" class="Default">
@@ -42542,8 +42542,8 @@
     </net>
     <net code="8" name="BIAS_CH2_DAMP" class="Default">
       <node ref="C239" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="9" pinfunction="BIAS_CH2_DAMP_9" pintype="passive"/>
-      <node ref="J209" pin="10" pinfunction="BIAS_CH2_DAMP_10" pintype="passive"/>
+      <node ref="J208" pin="20" pinfunction="BIAS_CH2_DAMP_20" pintype="passive"/>
+      <node ref="J209" pin="19" pinfunction="BIAS_CH2_DAMP_19" pintype="passive"/>
       <node ref="R237" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="9" name="BIAS_CH2_PORT" class="Default">
@@ -42568,8 +42568,8 @@
     </net>
     <net code="11" name="BIAS_CH3_DAMP" class="Default">
       <node ref="C243" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="12" pinfunction="BIAS_CH3_DAMP_12" pintype="passive"/>
-      <node ref="J209" pin="11" pinfunction="BIAS_CH3_DAMP_11" pintype="passive"/>
+      <node ref="J208" pin="28" pinfunction="BIAS_CH3_DAMP_28" pintype="passive"/>
+      <node ref="J209" pin="27" pinfunction="BIAS_CH3_DAMP_27" pintype="passive"/>
       <node ref="R242" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="12" name="BIAS_CH3_PORT" class="Default">
@@ -42595,8 +42595,8 @@
     </net>
     <net code="14" name="BIAS_CH4_DAMP" class="Default">
       <node ref="C247" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="13" pinfunction="BIAS_CH4_DAMP_13" pintype="passive"/>
-      <node ref="J209" pin="14" pinfunction="BIAS_CH4_DAMP_14" pintype="passive"/>
+      <node ref="J208" pin="25" pinfunction="BIAS_CH4_DAMP_25" pintype="passive"/>
+      <node ref="J209" pin="26" pinfunction="BIAS_CH4_DAMP_26" pintype="passive"/>
       <node ref="R247" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="15" name="BIAS_SB_LNA" class="Default">
@@ -42610,8 +42610,8 @@
     </net>
     <net code="16" name="BONI13V8" class="Default">
       <node ref="C272" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="J208" pin="41" pinfunction="BONI13V8_41" pintype="passive"/>
-      <node ref="J209" pin="42" pinfunction="BONI13V8_42" pintype="passive"/>
+      <node ref="J208" pin="40" pinfunction="BONI13V8_40" pintype="passive"/>
+      <node ref="J209" pin="39" pinfunction="BONI13V8_39" pintype="passive"/>
       <node ref="L214" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="Q2903" pin="7" pinfunction="D1_7" pintype="passive"/>
       <node ref="Q2903" pin="8" pinfunction="D1_8" pintype="passive"/>
@@ -42628,8 +42628,8 @@
       <node ref="A406" pin="DC" pinfunction="DC_DC" pintype="passive"/>
       <node ref="C2903" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="J207" pin="9" pinfunction="BONI13V8_PORT_9" pintype="passive"/>
-      <node ref="J208" pin="40" pinfunction="BONI13V8_PORT_40" pintype="passive"/>
-      <node ref="J209" pin="39" pinfunction="BONI13V8_PORT_39" pintype="passive"/>
+      <node ref="J208" pin="41" pinfunction="BONI13V8_PORT_41" pintype="passive"/>
+      <node ref="J209" pin="42" pinfunction="BONI13V8_PORT_42" pintype="passive"/>
       <node ref="Q2903" pin="5" pinfunction="D2_5" pintype="passive"/>
       <node ref="Q2903" pin="6" pinfunction="D2_6" pintype="passive"/>
       <node ref="TP2903" pin="1" pinfunction="TP_1" pintype="passive"/>
@@ -43243,8 +43243,8 @@
     </net>
     <net code="119" name="E2_SB_DAMP" class="Default">
       <node ref="C298" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="28" pinfunction="E2_SB_DAMP_28" pintype="passive"/>
-      <node ref="J209" pin="27" pinfunction="E2_SB_DAMP_27" pintype="passive"/>
+      <node ref="J208" pin="13" pinfunction="E2_SB_DAMP_13" pintype="passive"/>
+      <node ref="J209" pin="14" pinfunction="E2_SB_DAMP_14" pintype="passive"/>
       <node ref="R295" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="120" name="E2_SB_ILIM" class="Default">
@@ -45746,14 +45746,14 @@
       <node ref="J104" pin="3" pinfunction="LAB5_3" pintype="passive"/>
       <node ref="J104" pin="4" pinfunction="LAB5_4" pintype="passive"/>
       <node ref="J206" pin="2" pinfunction="LAB5_2" pintype="passive"/>
+      <node ref="J208" pin="12" pinfunction="LAB5_12" pintype="passive"/>
       <node ref="J208" pin="16" pinfunction="LAB5_16" pintype="passive"/>
-      <node ref="J208" pin="17" pinfunction="LAB5_17" pintype="passive"/>
-      <node ref="J208" pin="20" pinfunction="LAB5_20" pintype="passive"/>
-      <node ref="J208" pin="21" pinfunction="LAB5_21" pintype="passive"/>
+      <node ref="J208" pin="4" pinfunction="LAB5_4" pintype="passive"/>
+      <node ref="J208" pin="8" pinfunction="LAB5_8" pintype="passive"/>
+      <node ref="J209" pin="11" pinfunction="LAB5_11" pintype="passive"/>
       <node ref="J209" pin="15" pinfunction="LAB5_15" pintype="passive"/>
-      <node ref="J209" pin="18" pinfunction="LAB5_18" pintype="passive"/>
-      <node ref="J209" pin="19" pinfunction="LAB5_19" pintype="passive"/>
-      <node ref="J209" pin="22" pinfunction="LAB5_22" pintype="passive"/>
+      <node ref="J209" pin="3" pinfunction="LAB5_3" pintype="passive"/>
+      <node ref="J209" pin="7" pinfunction="LAB5_7" pintype="passive"/>
       <node ref="J305" pin="3" pinfunction="LAB5_3" pintype="passive"/>
       <node ref="J305" pin="4" pinfunction="LAB5_4" pintype="passive"/>
       <node ref="J314" pin="2" pinfunction="LAB5_2" pintype="passive"/>
@@ -45776,10 +45776,10 @@
       <node ref="D401" pin="3" pinfunction="K_COMMON_3" pintype="passive"/>
       <node ref="F104" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="J204" pin="7" pinfunction="LAB5_RLY_7" pintype="passive"/>
-      <node ref="J208" pin="24" pinfunction="LAB5_RLY_24" pintype="passive"/>
-      <node ref="J208" pin="25" pinfunction="LAB5_RLY_25" pintype="passive"/>
-      <node ref="J209" pin="23" pinfunction="LAB5_RLY_23" pintype="passive"/>
-      <node ref="J209" pin="26" pinfunction="LAB5_RLY_26" pintype="passive"/>
+      <node ref="J208" pin="29" pinfunction="LAB5_RLY_29" pintype="passive"/>
+      <node ref="J208" pin="33" pinfunction="LAB5_RLY_33" pintype="passive"/>
+      <node ref="J209" pin="30" pinfunction="LAB5_RLY_30" pintype="passive"/>
+      <node ref="J209" pin="34" pinfunction="LAB5_RLY_34" pintype="passive"/>
       <node ref="J420" pin="7" pinfunction="LAB5_RLY_7" pintype="passive"/>
       <node ref="K401" pin="1" pinfunction="COIL+_1" pintype="passive"/>
       <node ref="K402" pin="1" pinfunction="COIL+_1" pintype="passive"/>
@@ -45803,9 +45803,9 @@
       <node ref="C236" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="C240" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="C244" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="J208" pin="4" pinfunction="LNA4V5_4" pintype="passive"/>
+      <node ref="J208" pin="24" pinfunction="LNA4V5_24" pintype="passive"/>
       <node ref="J208" pin="5" pinfunction="LNA4V5_5" pintype="passive"/>
-      <node ref="J209" pin="3" pinfunction="LNA4V5_3" pintype="passive"/>
+      <node ref="J209" pin="23" pinfunction="LNA4V5_23" pintype="passive"/>
       <node ref="J209" pin="6" pinfunction="LNA4V5_6" pintype="passive"/>
       <node ref="R225" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="R226" pin="2" pinfunction="2_2" pintype="passive"/>
@@ -45818,8 +45818,8 @@
     <net code="450" name="LNB13V2" class="Default">
       <node ref="C261" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="J204" pin="8" pinfunction="LNB13V2_8" pintype="passive"/>
-      <node ref="J208" pin="36" pinfunction="LNB13V2_36" pintype="passive"/>
-      <node ref="J209" pin="35" pinfunction="LNB13V2_35" pintype="passive"/>
+      <node ref="J208" pin="37" pinfunction="LNB13V2_37" pintype="passive"/>
+      <node ref="J209" pin="38" pinfunction="LNB13V2_38" pintype="passive"/>
       <node ref="J420" pin="8" pinfunction="LNB13V2_8" pintype="passive"/>
       <node ref="L212" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="L406" pin="2" pinfunction="2_2" pintype="passive"/>
@@ -46024,8 +46024,8 @@
       <node ref="C511" pin="1" pinfunction="+_1" pintype="passive"/>
       <node ref="C513" pin="1" pinfunction="+_1" pintype="passive"/>
       <node ref="J207" pin="7" pinfunction="VBUS_HFP_7" pintype="passive"/>
-      <node ref="J208" pin="29" pinfunction="VBUS_HFP_29" pintype="passive"/>
-      <node ref="J209" pin="30" pinfunction="VBUS_HFP_30" pintype="passive"/>
+      <node ref="J208" pin="21" pinfunction="VBUS_HFP_21" pintype="passive"/>
+      <node ref="J209" pin="22" pinfunction="VBUS_HFP_22" pintype="passive"/>
       <node ref="J544" pin="1" pinfunction="VBUS_filtered_1" pintype="passive"/>
       <node ref="L501" pin="2" pinfunction="OUT_2" pintype="passive"/>
       <node ref="R512" pin="1" pinfunction="1_1" pintype="passive"/>
@@ -46060,8 +46060,8 @@
     </net>
     <net code="484" name="VBUS_RTLB_DAMP" class="Default">
       <node ref="C251" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="33" pinfunction="VBUS_RTLB_DAMP_33" pintype="passive"/>
-      <node ref="J209" pin="34" pinfunction="VBUS_RTLB_DAMP_34" pintype="passive"/>
+      <node ref="J208" pin="17" pinfunction="VBUS_RTLB_DAMP_17" pintype="passive"/>
+      <node ref="J209" pin="18" pinfunction="VBUS_RTLB_DAMP_18" pintype="passive"/>
       <node ref="R251" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="485" name="VCC_3V3_MKEY" class="Default">
