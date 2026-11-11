@@ -38,66 +38,63 @@
     "--gui.enabled=false",
     "--router.job_timeout=00:10:00",
     "--logging.file.enabled=false",
-    "--user_data_path=<temp>"
+    "--user_data_path=<temp>",
+    "--router.fanout.enabled=false"
   ],
   "exit_code": 0,
   "log_tail": [
-    "2026-11-07 21:03:40.424 INFO   [E4A6EF\\32691D] Auto-routing pass #17 on board 'baeac7fdab6a59e51637ca8eb7fd6ba5' was completed in 1.88 seconds with score 738.83 (19 unrouted and 0 violations), using 38.23 CPU seconds and the job allocated 51.00 GB of memory so far.",
-    "2026-11-07 21:03:42.385 INFO   [E4A6EF\\32691D] Auto-routing pass #18 on board '6a46ddb8afd9ee1960fccb63cd575433' was completed in 1.95 seconds with score 766.32 (17 unrouted and 0 violations), using 40.20 CPU seconds and the job allocated 54.07 GB of memory so far.",
-    "2026-11-07 21:03:44.340 INFO   [E4A6EF\\32691D] Auto-routing pass #19 on board 'c5916bd5c8b61f4eeb84dfe569aee8c8' was completed in 1.94 seconds with score 766.32 (17 unrouted and 0 violations), using 42.17 CPU seconds and the job allocated 57.10 GB of memory so far.",
-    "2026-11-07 21:03:46.247 INFO   [E4A6EF\\32691D] Auto-routing pass #20 on board 'baeac7fdab6a59e51637ca8eb7fd6ba5' was completed in 0.00 seconds with score 807.56 (14 unrouted and 0 violations), using 43.15 CPU seconds and the job allocated 58.67 GB of memory so far.",
-    "2026-11-07 21:03:48.144 INFO   [E4A6EF\\32691D] Auto-routing pass #21 on board 'baeac7fdab6a59e51637ca8eb7fd6ba5' was completed in 1.89 seconds with score 738.83 (19 unrouted and 0 violations), using 45.12 CPU seconds and the job allocated 61.76 GB of memory so far.",
-    "2026-11-07 21:03:49.974 INFO   [E4A6EF\\32691D] Auto-routing pass #22 on board 'b3e741e3325def1aa57697f2550522c9' was completed in 1.82 seconds with score 766.32 (17 unrouted and 0 violations), using 47.09 CPU seconds and the job allocated 64.96 GB of memory so far.",
-    "2026-11-07 21:03:51.847 INFO   [E4A6EF\\32691D] Auto-routing pass #23 on board '883eef88afb1d37b4b15d948d0bba517' was completed in 1.85 seconds with score 766.32 (17 unrouted and 0 violations), using 49.06 CPU seconds and the job allocated 68.14 GB of memory so far.",
-    "2026-11-07 21:03:53.811 INFO   [E4A6EF\\32691D] Auto-routing pass #24 on board 'baeac7fdab6a59e51637ca8eb7fd6ba5' was completed in 0.00 seconds with score 807.56 (14 unrouted and 0 violations), using 51.04 CPU seconds and the job allocated 71.28 GB of memory so far.",
-    "2026-11-07 21:03:55.669 INFO   [E4A6EF\\32691D] Auto-routing pass #25 on board 'baeac7fdab6a59e51637ca8eb7fd6ba5' was completed in 1.85 seconds with score 738.83 (19 unrouted and 0 violations), using 53.01 CPU seconds and the job allocated 74.34 GB of memory so far.",
-    "2026-11-07 21:03:57.607 INFO   [E4A6EF\\32691D] Auto-routing pass #26 on board '354402fede63817199c6509e023194b0' was completed in 1.93 seconds with score 766.32 (17 unrouted and 0 violations), using 54.98 CPU seconds and the job allocated 77.47 GB of memory so far.",
-    "2026-11-07 21:03:57.611 INFO   [E4A6EF\\32691D] The router's best score (807.56) has not improved by more than 0.5 points since pass #16. Stopping the auto-router after 26 passes (14 items still unconnected).",
-    "The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):",
+    "    - B2B2-69  ->  B2B2-59",
+    "    - B2B2-116  ->  B2B2-100",
+    "    - B2B2-116  ->  B2B2-111",
+    "    - B2B2-59  ->  B2B2-82",
+    "    - B2B2-59  ->  J115-1",
+    "    - C113-2  ->  U108-GND@2",
     "  Net 'E1_LAB5_DAMP' (1 unrouted connection):",
-    "    - R110-2  ->  C113-1",
+    "    - C113-1  ->  R110-2",
     "  Net 'E1_SW' (4 unrouted connections):",
     "    - U107-VIN@1  ->  U107-VIN",
     "    - U108-VIN  ->  U108-VIN@1",
     "    - U107-VIN@1  ->  U108-VIN",
     "    - U107-VIN  ->  J107-2",
     "  Net 'E2_BONI_IN' (1 unrouted connection):",
-    "    - U213-15  ->  U213-16",
+    "    - U213-16  ->  U213-15",
     "  Net 'E2_LNA_IN' (9 unrouted connections):",
-    "    - U205-3  ->  U205-4",
-    "    - U205-2  ->  U205-3",
-    "    - U205-1  ->  U205-2",
+    "    - U205-4  ->  U205-3",
+    "    - U205-3  ->  U205-2",
+    "    - U205-2  ->  U205-1",
     "    - U204-4  ->  U204-3",
     "    - U204-3  ->  U204-2",
-    "    - U204-2  ->  U204-1",
+    "    - U204-1  ->  U204-2",
     "    - U205-1  ->  U204-4",
     "    - U205-4  ->  U205-7",
-    "    - U204-7  ->  U204-4",
+    "    - U204-7  ->  U204-1",
     "  Net 'E2_LNB_IN' (1 unrouted connection):",
     "    - U211-16  ->  U211-15",
+    "  Net 'LAB5' (5 unrouted connections):",
+    "    - B2B2-117  ->  B2B2-119",
+    "    - B2B2-117  ->  B2B2-115",
+    "    - B2B2-115  ->  B2B2-113",
+    "    - J104-4  ->  J206-2",
+    "    - B2B2-113  ->  J206-2",
     "  Net 'SYS12' (1 unrouted connection):",
-    "    - U107-VOUT  ->  U107-VOUT@1",
-    "2026-11-07 21:03:57.671 INFO   [E4A6EF\\32691D] Auto-routing stage completed: started with 92 unrouted nets, completed in 56.28 seconds, final score: 807.56 (14 unrouted and 0 violations), using 54.98 total CPU seconds, 77.47 GB total allocated, and 368.3 MB peak heap usage.",
-    "2026-11-07 21:03:57.686 INFO   [E4A6EF\\32691D] Skipping optimization stage: the board has 14 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-07 21:03:57.702 INFO   [E4A6EF\\32691D] Job 'E4A6EF\\32691D' finished with state: COMPLETED (elapsed: 56.45 seconds, finished at UTC: 2026-11-07T21:03:57.701785632Z).",
-    "2026-11-07 21:03:57.714 INFO   Saving output file '/tmp/sr-rx-PWR_A-fe0wyt1_/PWR_A.ses' (SES)...",
-    "2026-11-07 21:03:57.716 INFO   Successfully saved output file '/tmp/sr-rx-PWR_A-fe0wyt1_/PWR_A.ses' (18124 bytes)."
+    "    - U107-VOUT@1  ->  U107-VOUT",
+    "2026-11-07 23:25:00.894 INFO   [E3AA19\\508197] Auto-routing stage completed: started with 79 unrouted nets, completed in 71.57 seconds, final score: 679.20 (29 unrouted and 10 violations), using 69.87 total CPU seconds, 40.44 GB total allocated, and 323.8 MB peak heap usage.",
+    "2026-11-07 23:25:00.991 INFO   [E3AA19\\508197] Skipping optimization stage: the board has 29 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-07 23:25:01.013 INFO   [E3AA19\\508197] Job 'E3AA19\\508197' finished with state: COMPLETED (elapsed: 1 minute 12.10 seconds, finished at UTC: 2026-11-07T23:25:01.011578114Z).",
+    "2026-11-07 23:25:01.042 INFO   Saving output file '/tmp/sr-rx-PWR_A-spqqj7hy/PWR_A.ses' (SES)...",
+    "2026-11-07 23:25:01.044 INFO   Successfully saved output file '/tmp/sr-rx-PWR_A-spqqj7hy/PWR_A.ses' (12724 bytes)."
   ],
-  "dsn_sha256": "b3f99035242f8a126cabffe4fae4fff608fd19c68f2cbaabbccc6f1fd66f6243",
-  "ses_sha256": "b5e1852a5c9ea4931abaeaf222db4f220343444d6ee07b1174680addb36221d6",
+  "dsn_sha256": "89518081b0d91f02b7261a06dc63292740dde74215de06994294de130aa700d1",
+  "ses_sha256": "9d7fdd7e6619411dadc9006a7f8234b67e920b7a44a576506419f9293e215be2",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 1,
+    "wires_fix": 11,
     "wires_protect": 0,
-    "keepouts": 64,
-    "planes": 2,
+    "keepouts": 72,
+    "planes": 4,
     "classes": {
       "kicad_default": {
         "width": "150",
-        "clearance": "150"
-      },
-      "PWR1A": {
-        "width": "350",
         "clearance": "150"
       },
       "BATT": {
@@ -111,12 +108,16 @@
       "PWR2A": {
         "width": "800",
         "clearance": "150"
+      },
+      "PWR1A": {
+        "width": "350",
+        "clearance": "150"
       }
     }
   },
   "locked_segments": {
-    "before_ses_import": 1,
-    "after_ses_import": 1
+    "before_ses_import": 11,
+    "after_ses_import": 11
   },
   "drc_command": [
     "kicad-cli",
@@ -131,7 +132,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "4da2d885f59fa786bd6a0ba5c5a40ccf9b40bdef1b94d9b633ad0ac33bd2a734",
+  "board_sha256": "6cf679af80df106eddb0e5faaa7c2aa793fbb50a77aefd269569077a31cc54b7",
   "previews": [
     "build/kicad/boards/PWR_A/PWR_A-top.svg",
     "build/kicad/boards/PWR_A/PWR_A-bottom.svg"
@@ -280,12 +281,18 @@
       "footprint": "SR_RX_Custom:TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm",
       "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm.kicad_mod",
       "sha256": "e37866768c11f6a268569a71bc7771ae6cb58afe655230a8b2b8d84985276a49"
+    },
+    {
+      "ref": "B2B2",
+      "footprint": "Connector_Hirose_FX8:Hirose_FX8-120S-SV_2x60_P0.6mm",
+      "file": "kicad-image:Connector_Hirose_FX8.pretty/Hirose_FX8-120S-SV_2x60_P0.6mm.kicad_mod",
+      "sha256": "82ef2a7f5fbd930b90d97ef39fd59bbc18f8f31c22ec51cee135ad045241a67b"
     }
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "42413833702",
-    "sha": "73f5e08b8a900229ca27e414318b17f043f7e10a",
-    "ref": "refs/heads/wip/w2-pwra1"
+    "run_id": "42424937979",
+    "sha": "7c5fea7f7026ac2997d570668c023ab4088d0922",
+    "ref": "refs/heads/wip/w2-pwra2"
   }
 }

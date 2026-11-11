@@ -5,15 +5,15 @@
   "label": "CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN",
   "passed": false,
   "result": {
-    "drc_errors": 36,
-    "drc_unconnected": 11,
-    "drc_warnings": 5,
+    "drc_errors": 0,
+    "drc_unconnected": 25,
+    "drc_warnings": 6,
     "ignored_checks": [],
     "source_pad_audit_errors": {
       "PWRA": 0
     },
     "boundary_audit": [
-      "fail: dangling E1_EN_SYS12, E1_LAB5_FUSED, E1_PG_LAB5, E1_PG_SYS12, E2_BONI_IN, E2_BONI_LDO, E2_BONI_NR, E2_LNA_IN, E2_LNA_SET, E2_LNB_IN, E2_LNB_LDO, E2_LNB_NR, E2_LT_OUT1, E2_LT_OUT2, EN_BONI, EN_LNB, SYS12"
+      "fail: dangling E1_EN_SYS12, E1_LAB5_FUSED, E1_PG_LAB5, E1_PG_SYS12, E2_BONI_IN, E2_BONI_LDO, E2_BONI_NR, E2_LNA_IN, E2_LNA_SET, E2_LNB_IN, E2_LNB_LDO, E2_LNB_NR, E2_LT_OUT1, E2_LT_OUT2, SYS12"
     ],
     "domain_audit": false,
     "keepout_audit": true,
@@ -23,18 +23,18 @@
   },
   "inputs": {
     "parts": {
-      "spec": "281999fd450db168c67de83a64b58282784841f9da98f42ad537092f9646e5bf",
-      "contract": "801b99a479a00d317fcb219adc2d842f2caa200eb4a348f02cb51b8dbcc7130d",
+      "spec": "70d75409a589b90438b49e50948e074ad0cf0ce9fa98bff857e164d04ef4e820",
+      "contract": "fd123c2abdd1cc4a589d43104e469218eeee3e2de03e3a1d8e422cc28b9d7a9f",
       "project_rules": "202ab44962f558762ad5fe3ac916d928247669a4cbe85bb255d21431fa716be4",
-      "template": "9d57450ae79c8d0927cc936d250671e4c721e837b126d92d2369841006548010",
-      "instances": "d576183b90f9298ad0b8b9f13dc42e1a08d961730c2e2a71a2b7623a65d93917"
+      "template": "37216b148a93b4988dd1035ad4af7b1f9b5044a01b6024eb6670b9d4ce04f5cb",
+      "instances": "15fb9d37c7d3d25f4f06d609fed358d83912f73c5ad381e0fae02f1df114175b"
     },
-    "sha256": "a10445b156dff4227b949212eace77b1c6be0a26831f53c0729f9d6354c641ea"
+    "sha256": "49ede2dc569b59ff4cf4969d2f7350bc7d5660cdf2b6b5e15f2779b1e3a959ae"
   },
   "board_file": "build/kicad/boards/PWR_A/PWR_A.kicad_pcb",
-  "board_sha256": "4da2d885f59fa786bd6a0ba5c5a40ccf9b40bdef1b94d9b633ad0ac33bd2a734",
+  "board_sha256": "6cf679af80df106eddb0e5faaa7c2aa793fbb50a77aefd269569077a31cc54b7",
   "project_file": "build/kicad/boards/PWR_A/PWR_A.kicad_pro",
-  "fp_lib_table_sha256": "5187065808e956191d6535080ad4ee47ff54ac5e71c7b6dcc4e472eade23b0b7",
+  "fp_lib_table_sha256": "94216deafd3cb1a25f3ad09cfe7ed1ba5b4df34a65c495511eed2319b663d291",
   "layers": {
     "copper": 4,
     "thickness_mm": 1.6,
@@ -42,10 +42,15 @@
     "plan": {
       "F.Cu": "L1: parts, signals; BATT/PWR3A pours (scripted where both ends are anchored)",
       "In1.Cu": "L2: solid GND (post-route pour over the whole outline)",
-      "In2.Cu": "L3: power pours (placement-dependent, OPEN)",
+      "In2.Cu": "L3: GND fill (pre-route plane) until the placement-dependent power pours take their areas (higher priority)",
       "B.Cu": "L4: signals; BATT/PWR3A pours paired with L1; GND bond copper in the four thermal_bond zones, solder mask on"
     },
-    "plan_source": "build/15 'План шарів (W2 PCB-RULES)'"
+    "plan_source": "build/15 'План шарів (W2 PCB-RULES)'",
+    "types": {
+      "In1.Cu": "power",
+      "In2.Cu": "power"
+    },
+    "types_why": "layer type power on both inner layers and a pre-route GND plane on each (as PWR_B): the DSN then carries the planes and Freerouting puts only vias through them. Probe 2 (sr-rx-pcb run 42424071774) and probe 3 (run 42424538187, layer type alone) routed LAB5, E1_N, E1_SHUNT_P and E1_LAB5_FUSED tracks on In1/In2, which the classes do not count (17 check_boards class_widths findings) and which cut the L2 GND plane. L3 power pours (layer plan) go in later as higher-priority zones inside the L3 GND fill"
   },
   "stackup_contract": {
     "t": 1.6,
@@ -173,11 +178,22 @@
         "U204": "U204",
         "U205": "U205",
         "U211": "U211",
-        "U213": "U213"
+        "U213": "U213",
+        "B2B2": null
       },
       "nets": {
+        "3V3_Q6A": "3V3_Q6A",
         "AON3V3": "AON3V3",
+        "AUX12": "AUX12",
+        "BIAS_CH1_DAMP": "BIAS_CH1_DAMP",
+        "BIAS_CH2_DAMP": "BIAS_CH2_DAMP",
+        "BIAS_CH3_DAMP": "BIAS_CH3_DAMP",
+        "BIAS_CH4_DAMP": "BIAS_CH4_DAMP",
+        "BONI13V8": "BONI13V8",
+        "BONI13V8_PORT": "BONI13V8_PORT",
+        "CHG_INHIBIT": "CHG_INHIBIT",
         "DISP12": "DISP12",
+        "E1_BAT_ADC": "E1_BAT_ADC",
         "E1_CHG_CC1": "E1_CHG_CC1",
         "E1_CHG_CC2": "E1_CHG_CC2",
         "E1_CHG_INHIBIT_LOW": "E1_CHG_INHIBIT_LOW",
@@ -199,6 +215,8 @@
         "E2_BONI_IN": "E2_BONI_IN",
         "E2_BONI_LDO": "E2_BONI_LDO",
         "E2_BONI_NR": "E2_BONI_NR",
+        "E2_LNA4_SHUNT": "E2_LNA4_SHUNT",
+        "E2_LNA4_SW": "E2_LNA4_SW",
         "E2_LNA_IN": "E2_LNA_IN",
         "E2_LNA_SET": "E2_LNA_SET",
         "E2_LNB_IN": "E2_LNB_IN",
@@ -206,19 +224,39 @@
         "E2_LNB_NR": "E2_LNB_NR",
         "E2_LT_OUT1": "E2_LT_OUT1",
         "E2_LT_OUT2": "E2_LT_OUT2",
+        "E2_SB_DAMP": "E2_SB_DAMP",
         "E5_IMU5V": "E5_IMU5V",
+        "EN_AUX12": "EN_AUX12",
         "EN_BONI": "EN_BONI",
+        "EN_HFP": "EN_HFP",
+        "EN_LIME3V3": "EN_LIME3V3",
         "EN_LNB": "EN_LNB",
+        "FAULT_HFP": "FAULT_HFP",
+        "FLT_BONI": "FLT_BONI",
+        "FLT_LIME3V3": "FLT_LIME3V3",
+        "FLT_LNB": "FLT_LNB",
         "GND": "GND",
         "I2C0_SCL": "I2C0_SCL",
         "I2C0_SDA": "I2C0_SDA",
+        "I2C2_SCL": "I2C2_SCL",
+        "I2C2_SDA": "I2C2_SDA",
         "IMU_RX": "IMU_RX",
         "IMU_TX": "IMU_TX",
         "INA228_ALERT": "INA228_ALERT",
         "J21": "J21",
         "LAB5": "LAB5",
+        "LAB5_RLY": "LAB5_RLY",
         "LIME3V3": "LIME3V3",
+        "LNA4V5": "LNA4V5",
+        "LNB13V2": "LNB13V2",
+        "OVP_LNB_N": "OVP_LNB_N",
+        "PICO_DISP_EN": "PICO_DISP_EN",
+        "PICO_OFF": "PICO_OFF",
+        "PWR_BUTTON": "PWR_BUTTON",
         "SYS12": "SYS12",
+        "VBUS_HFP": "VBUS_HFP",
+        "VBUS_LABPORT": "VBUS_LABPORT",
+        "VBUS_RTLB_DAMP": "VBUS_RTLB_DAMP",
         "VCC_3V3_MKEY": "VCC_3V3_MKEY"
       }
     }
@@ -650,10 +688,107 @@
         "EP": "GND"
       },
       "unused_pads": []
+    },
+    {
+      "ref": "B2B2",
+      "source": "pilot_placeholder",
+      "fpid": "Connector_Hirose_FX8:Hirose_FX8-120S-SV_2x60_P0.6mm",
+      "library": "kicad-image",
+      "file": null,
+      "sha256": "82ef2a7f5fbd930b90d97ef39fd59bbc18f8f31c22ec51cee135ad045241a67b",
+      "value": "B2B placeholder mate: Samtec QSH-060-01-L-D-A pending",
+      "pads": {
+        "100": "GND",
+        "101": "EN_HFP",
+        "102": "AUX12",
+        "103": "EN_BONI",
+        "104": "BONI13V8",
+        "105": "EN_AUX12",
+        "106": "E2_SB_DAMP",
+        "107": "E1_BAT_ADC",
+        "108": "VBUS_RTLB_DAMP",
+        "109": "CHG_INHIBIT",
+        "110": "BIAS_CH3_DAMP",
+        "111": "GND",
+        "112": "BIAS_CH2_DAMP",
+        "113": "LAB5",
+        "114": "BIAS_CH1_DAMP",
+        "115": "LAB5",
+        "116": "GND",
+        "117": "LAB5",
+        "118": "LNA4V5",
+        "119": "LAB5",
+        "120": "LNA4V5",
+        "14": "BIAS_CH4_DAMP",
+        "22": "E2_LNA4_SHUNT",
+        "32": "E2_LNA4_SW",
+        "59": "GND",
+        "61": "3V3_Q6A",
+        "63": "I2C2_SDA",
+        "65": "I2C2_SCL",
+        "67": "VBUS_LABPORT",
+        "69": "GND",
+        "71": "PWR_BUTTON",
+        "73": "PICO_OFF",
+        "75": "PICO_DISP_EN",
+        "77": "OVP_LNB_N",
+        "79": "INA228_ALERT",
+        "81": "IMU_TX",
+        "82": "GND",
+        "83": "IMU_RX",
+        "84": "LAB5_RLY",
+        "85": "I2C0_SDA",
+        "86": "LAB5_RLY",
+        "87": "I2C0_SCL",
+        "88": "GND",
+        "89": "FLT_LNB",
+        "90": "LNB13V2",
+        "91": "FLT_LIME3V3",
+        "92": "GND",
+        "93": "FLT_BONI",
+        "94": "VBUS_HFP",
+        "95": "FAULT_HFP",
+        "96": "GND",
+        "97": "EN_LNB",
+        "98": "BONI13V8_PORT",
+        "99": "EN_LIME3V3"
+      },
+      "unused_pads": []
     }
   ],
-  "placeholders": [],
+  "placeholders": [
+    {
+      "ref": "B2B2",
+      "footprint": "Connector_Hirose_FX8:Hirose_FX8-120S-SV_2x60_P0.6mm",
+      "replaced_by": "graph ref of the Samtec QSH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_a) once its land pattern is read and vendored (GR-4 / PCB-PWRA / PCB-PWRB lineage), keeping this pin map and the position under PWR_B B2B1",
+      "pending": "B2B ref pending: Samtec QSH-060-01-L-D-A land pattern not read, no graph ref yet (GR-3 OPEN)",
+      "pins_source": "copied contact for contact from pcb/boards/PWR_B.json parts[B2B1].pins (generated by build/kicad/boards/PWR_B/make_spec.py from pcb/generated/b2b-nets.json); pin_map identity, checked by placement_study.py b2b and pcb/check_boards.py b2b",
+      "why": "PWR_B B2B1 is the Hirose FX8-120P-SV plug land on the PWR-B bottom (W2 PCB-PWRB); its KiCad 10.0.7 socket land FX8-120S-SV on the PWR-A top lets the mate position, the pin map and the fan-out be checked now. Not the part to buy. The name B2B2 keeps the reference designators of the two stacked boards distinct in one assembly."
+    }
+  ],
   "placement": [
+    {
+      "ref": "B2B2",
+      "fpid": "Connector_Hirose_FX8:Hirose_FX8-120S-SV_2x60_P0.6mm",
+      "side": "F",
+      "rotation": 180.0,
+      "at": [
+        106.0,
+        18.5
+      ],
+      "courtyard_box": [
+        84.175,
+        14.275,
+        127.825,
+        22.725
+      ],
+      "fab_box": [
+        84.65,
+        15.65,
+        127.35,
+        21.35
+      ]
+    },
     {
       "ref": "C113",
       "fpid": "Capacitor_SMD:CP_Elec_6.3x5.9",
@@ -1021,20 +1156,20 @@
       "side": "F",
       "rotation": 90.0,
       "at": [
-        117.7,
-        14.15
+        104.63,
+        2.75
       ],
       "courtyard_box": [
-        115.475,
-        11.675,
-        121.025,
-        18.625
+        102.405,
+        0.275,
+        107.955,
+        7.225
       ],
       "fab_box": [
-        115.54,
-        11.74,
-        120.55,
-        18.15
+        102.47,
+        0.34,
+        107.48,
+        6.75
       ]
     },
     {
@@ -1065,20 +1200,20 @@
       "side": "F",
       "rotation": 90.0,
       "at": [
-        124.5,
-        15.29
+        111.4,
+        4.13
       ],
       "courtyard_box": [
-        121.505,
-        11.435,
-        128.325,
-        22.145
+        108.405,
+        0.275,
+        115.225,
+        10.985
       ],
       "fab_box": [
-        121.98,
-        11.915,
-        127.85,
-        21.665
+        108.88,
+        0.755,
+        114.75,
+        10.505
       ]
     },
     {
@@ -1303,6 +1438,984 @@
     }
   ],
   "pads": {
+    "B2B2": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          85.9,
+          16.7
+        ]
+      },
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          126.1,
+          16.7
+        ]
+      },
+      {
+        "number": "1",
+        "net": null,
+        "at": [
+          123.7,
+          15.65
+        ]
+      },
+      {
+        "number": "2",
+        "net": null,
+        "at": [
+          123.7,
+          21.35
+        ]
+      },
+      {
+        "number": "3",
+        "net": null,
+        "at": [
+          123.1,
+          15.65
+        ]
+      },
+      {
+        "number": "4",
+        "net": null,
+        "at": [
+          123.1,
+          21.35
+        ]
+      },
+      {
+        "number": "5",
+        "net": null,
+        "at": [
+          122.5,
+          15.65
+        ]
+      },
+      {
+        "number": "6",
+        "net": null,
+        "at": [
+          122.5,
+          21.35
+        ]
+      },
+      {
+        "number": "7",
+        "net": null,
+        "at": [
+          121.9,
+          15.65
+        ]
+      },
+      {
+        "number": "8",
+        "net": null,
+        "at": [
+          121.9,
+          21.35
+        ]
+      },
+      {
+        "number": "9",
+        "net": null,
+        "at": [
+          121.3,
+          15.65
+        ]
+      },
+      {
+        "number": "10",
+        "net": null,
+        "at": [
+          121.3,
+          21.35
+        ]
+      },
+      {
+        "number": "11",
+        "net": null,
+        "at": [
+          120.7,
+          15.65
+        ]
+      },
+      {
+        "number": "12",
+        "net": null,
+        "at": [
+          120.7,
+          21.35
+        ]
+      },
+      {
+        "number": "13",
+        "net": null,
+        "at": [
+          120.1,
+          15.65
+        ]
+      },
+      {
+        "number": "14",
+        "net": "BIAS_CH4_DAMP",
+        "at": [
+          120.1,
+          21.35
+        ]
+      },
+      {
+        "number": "15",
+        "net": null,
+        "at": [
+          119.5,
+          15.65
+        ]
+      },
+      {
+        "number": "16",
+        "net": null,
+        "at": [
+          119.5,
+          21.35
+        ]
+      },
+      {
+        "number": "17",
+        "net": null,
+        "at": [
+          118.9,
+          15.65
+        ]
+      },
+      {
+        "number": "18",
+        "net": null,
+        "at": [
+          118.9,
+          21.35
+        ]
+      },
+      {
+        "number": "19",
+        "net": null,
+        "at": [
+          118.3,
+          15.65
+        ]
+      },
+      {
+        "number": "20",
+        "net": null,
+        "at": [
+          118.3,
+          21.35
+        ]
+      },
+      {
+        "number": "21",
+        "net": null,
+        "at": [
+          117.7,
+          15.65
+        ]
+      },
+      {
+        "number": "22",
+        "net": "E2_LNA4_SHUNT",
+        "at": [
+          117.7,
+          21.35
+        ]
+      },
+      {
+        "number": "23",
+        "net": null,
+        "at": [
+          117.1,
+          15.65
+        ]
+      },
+      {
+        "number": "24",
+        "net": null,
+        "at": [
+          117.1,
+          21.35
+        ]
+      },
+      {
+        "number": "25",
+        "net": null,
+        "at": [
+          116.5,
+          15.65
+        ]
+      },
+      {
+        "number": "26",
+        "net": null,
+        "at": [
+          116.5,
+          21.35
+        ]
+      },
+      {
+        "number": "27",
+        "net": null,
+        "at": [
+          115.9,
+          15.65
+        ]
+      },
+      {
+        "number": "28",
+        "net": null,
+        "at": [
+          115.9,
+          21.35
+        ]
+      },
+      {
+        "number": "29",
+        "net": null,
+        "at": [
+          115.3,
+          15.65
+        ]
+      },
+      {
+        "number": "30",
+        "net": null,
+        "at": [
+          115.3,
+          21.35
+        ]
+      },
+      {
+        "number": "31",
+        "net": null,
+        "at": [
+          114.7,
+          15.65
+        ]
+      },
+      {
+        "number": "32",
+        "net": "E2_LNA4_SW",
+        "at": [
+          114.7,
+          21.35
+        ]
+      },
+      {
+        "number": "33",
+        "net": null,
+        "at": [
+          114.1,
+          15.65
+        ]
+      },
+      {
+        "number": "34",
+        "net": null,
+        "at": [
+          114.1,
+          21.35
+        ]
+      },
+      {
+        "number": "35",
+        "net": null,
+        "at": [
+          113.5,
+          15.65
+        ]
+      },
+      {
+        "number": "36",
+        "net": null,
+        "at": [
+          113.5,
+          21.35
+        ]
+      },
+      {
+        "number": "37",
+        "net": null,
+        "at": [
+          112.9,
+          15.65
+        ]
+      },
+      {
+        "number": "38",
+        "net": null,
+        "at": [
+          112.9,
+          21.35
+        ]
+      },
+      {
+        "number": "39",
+        "net": null,
+        "at": [
+          112.3,
+          15.65
+        ]
+      },
+      {
+        "number": "40",
+        "net": null,
+        "at": [
+          112.3,
+          21.35
+        ]
+      },
+      {
+        "number": "41",
+        "net": null,
+        "at": [
+          111.7,
+          15.65
+        ]
+      },
+      {
+        "number": "42",
+        "net": null,
+        "at": [
+          111.7,
+          21.35
+        ]
+      },
+      {
+        "number": "43",
+        "net": null,
+        "at": [
+          111.1,
+          15.65
+        ]
+      },
+      {
+        "number": "44",
+        "net": null,
+        "at": [
+          111.1,
+          21.35
+        ]
+      },
+      {
+        "number": "45",
+        "net": null,
+        "at": [
+          110.5,
+          15.65
+        ]
+      },
+      {
+        "number": "46",
+        "net": null,
+        "at": [
+          110.5,
+          21.35
+        ]
+      },
+      {
+        "number": "47",
+        "net": null,
+        "at": [
+          109.9,
+          15.65
+        ]
+      },
+      {
+        "number": "48",
+        "net": null,
+        "at": [
+          109.9,
+          21.35
+        ]
+      },
+      {
+        "number": "49",
+        "net": null,
+        "at": [
+          109.3,
+          15.65
+        ]
+      },
+      {
+        "number": "50",
+        "net": null,
+        "at": [
+          109.3,
+          21.35
+        ]
+      },
+      {
+        "number": "51",
+        "net": null,
+        "at": [
+          108.7,
+          15.65
+        ]
+      },
+      {
+        "number": "52",
+        "net": null,
+        "at": [
+          108.7,
+          21.35
+        ]
+      },
+      {
+        "number": "53",
+        "net": null,
+        "at": [
+          108.1,
+          15.65
+        ]
+      },
+      {
+        "number": "54",
+        "net": null,
+        "at": [
+          108.1,
+          21.35
+        ]
+      },
+      {
+        "number": "55",
+        "net": null,
+        "at": [
+          107.5,
+          15.65
+        ]
+      },
+      {
+        "number": "56",
+        "net": null,
+        "at": [
+          107.5,
+          21.35
+        ]
+      },
+      {
+        "number": "57",
+        "net": null,
+        "at": [
+          106.9,
+          15.65
+        ]
+      },
+      {
+        "number": "58",
+        "net": null,
+        "at": [
+          106.9,
+          21.35
+        ]
+      },
+      {
+        "number": "59",
+        "net": "GND",
+        "at": [
+          106.3,
+          15.65
+        ]
+      },
+      {
+        "number": "60",
+        "net": null,
+        "at": [
+          106.3,
+          21.35
+        ]
+      },
+      {
+        "number": "61",
+        "net": "3V3_Q6A",
+        "at": [
+          105.7,
+          15.65
+        ]
+      },
+      {
+        "number": "62",
+        "net": null,
+        "at": [
+          105.7,
+          21.35
+        ]
+      },
+      {
+        "number": "63",
+        "net": "I2C2_SDA",
+        "at": [
+          105.1,
+          15.65
+        ]
+      },
+      {
+        "number": "64",
+        "net": null,
+        "at": [
+          105.1,
+          21.35
+        ]
+      },
+      {
+        "number": "65",
+        "net": "I2C2_SCL",
+        "at": [
+          104.5,
+          15.65
+        ]
+      },
+      {
+        "number": "66",
+        "net": null,
+        "at": [
+          104.5,
+          21.35
+        ]
+      },
+      {
+        "number": "67",
+        "net": "VBUS_LABPORT",
+        "at": [
+          103.9,
+          15.65
+        ]
+      },
+      {
+        "number": "68",
+        "net": null,
+        "at": [
+          103.9,
+          21.35
+        ]
+      },
+      {
+        "number": "69",
+        "net": "GND",
+        "at": [
+          103.3,
+          15.65
+        ]
+      },
+      {
+        "number": "70",
+        "net": null,
+        "at": [
+          103.3,
+          21.35
+        ]
+      },
+      {
+        "number": "71",
+        "net": "PWR_BUTTON",
+        "at": [
+          102.7,
+          15.65
+        ]
+      },
+      {
+        "number": "72",
+        "net": null,
+        "at": [
+          102.7,
+          21.35
+        ]
+      },
+      {
+        "number": "73",
+        "net": "PICO_OFF",
+        "at": [
+          102.1,
+          15.65
+        ]
+      },
+      {
+        "number": "74",
+        "net": null,
+        "at": [
+          102.1,
+          21.35
+        ]
+      },
+      {
+        "number": "75",
+        "net": "PICO_DISP_EN",
+        "at": [
+          101.5,
+          15.65
+        ]
+      },
+      {
+        "number": "76",
+        "net": null,
+        "at": [
+          101.5,
+          21.35
+        ]
+      },
+      {
+        "number": "77",
+        "net": "OVP_LNB_N",
+        "at": [
+          100.9,
+          15.65
+        ]
+      },
+      {
+        "number": "78",
+        "net": null,
+        "at": [
+          100.9,
+          21.35
+        ]
+      },
+      {
+        "number": "79",
+        "net": "INA228_ALERT",
+        "at": [
+          100.3,
+          15.65
+        ]
+      },
+      {
+        "number": "80",
+        "net": null,
+        "at": [
+          100.3,
+          21.35
+        ]
+      },
+      {
+        "number": "81",
+        "net": "IMU_TX",
+        "at": [
+          99.7,
+          15.65
+        ]
+      },
+      {
+        "number": "82",
+        "net": "GND",
+        "at": [
+          99.7,
+          21.35
+        ]
+      },
+      {
+        "number": "83",
+        "net": "IMU_RX",
+        "at": [
+          99.1,
+          15.65
+        ]
+      },
+      {
+        "number": "84",
+        "net": "LAB5_RLY",
+        "at": [
+          99.1,
+          21.35
+        ]
+      },
+      {
+        "number": "85",
+        "net": "I2C0_SDA",
+        "at": [
+          98.5,
+          15.65
+        ]
+      },
+      {
+        "number": "86",
+        "net": "LAB5_RLY",
+        "at": [
+          98.5,
+          21.35
+        ]
+      },
+      {
+        "number": "87",
+        "net": "I2C0_SCL",
+        "at": [
+          97.9,
+          15.65
+        ]
+      },
+      {
+        "number": "88",
+        "net": "GND",
+        "at": [
+          97.9,
+          21.35
+        ]
+      },
+      {
+        "number": "89",
+        "net": "FLT_LNB",
+        "at": [
+          97.3,
+          15.65
+        ]
+      },
+      {
+        "number": "90",
+        "net": "LNB13V2",
+        "at": [
+          97.3,
+          21.35
+        ]
+      },
+      {
+        "number": "91",
+        "net": "FLT_LIME3V3",
+        "at": [
+          96.7,
+          15.65
+        ]
+      },
+      {
+        "number": "92",
+        "net": "GND",
+        "at": [
+          96.7,
+          21.35
+        ]
+      },
+      {
+        "number": "93",
+        "net": "FLT_BONI",
+        "at": [
+          96.1,
+          15.65
+        ]
+      },
+      {
+        "number": "94",
+        "net": "VBUS_HFP",
+        "at": [
+          96.1,
+          21.35
+        ]
+      },
+      {
+        "number": "95",
+        "net": "FAULT_HFP",
+        "at": [
+          95.5,
+          15.65
+        ]
+      },
+      {
+        "number": "96",
+        "net": "GND",
+        "at": [
+          95.5,
+          21.35
+        ]
+      },
+      {
+        "number": "97",
+        "net": "EN_LNB",
+        "at": [
+          94.9,
+          15.65
+        ]
+      },
+      {
+        "number": "98",
+        "net": "BONI13V8_PORT",
+        "at": [
+          94.9,
+          21.35
+        ]
+      },
+      {
+        "number": "99",
+        "net": "EN_LIME3V3",
+        "at": [
+          94.3,
+          15.65
+        ]
+      },
+      {
+        "number": "100",
+        "net": "GND",
+        "at": [
+          94.3,
+          21.35
+        ]
+      },
+      {
+        "number": "101",
+        "net": "EN_HFP",
+        "at": [
+          93.7,
+          15.65
+        ]
+      },
+      {
+        "number": "102",
+        "net": "AUX12",
+        "at": [
+          93.7,
+          21.35
+        ]
+      },
+      {
+        "number": "103",
+        "net": "EN_BONI",
+        "at": [
+          93.1,
+          15.65
+        ]
+      },
+      {
+        "number": "104",
+        "net": "BONI13V8",
+        "at": [
+          93.1,
+          21.35
+        ]
+      },
+      {
+        "number": "105",
+        "net": "EN_AUX12",
+        "at": [
+          92.5,
+          15.65
+        ]
+      },
+      {
+        "number": "106",
+        "net": "E2_SB_DAMP",
+        "at": [
+          92.5,
+          21.35
+        ]
+      },
+      {
+        "number": "107",
+        "net": "E1_BAT_ADC",
+        "at": [
+          91.9,
+          15.65
+        ]
+      },
+      {
+        "number": "108",
+        "net": "VBUS_RTLB_DAMP",
+        "at": [
+          91.9,
+          21.35
+        ]
+      },
+      {
+        "number": "109",
+        "net": "CHG_INHIBIT",
+        "at": [
+          91.3,
+          15.65
+        ]
+      },
+      {
+        "number": "110",
+        "net": "BIAS_CH3_DAMP",
+        "at": [
+          91.3,
+          21.35
+        ]
+      },
+      {
+        "number": "111",
+        "net": "GND",
+        "at": [
+          90.7,
+          15.65
+        ]
+      },
+      {
+        "number": "112",
+        "net": "BIAS_CH2_DAMP",
+        "at": [
+          90.7,
+          21.35
+        ]
+      },
+      {
+        "number": "113",
+        "net": "LAB5",
+        "at": [
+          90.1,
+          15.65
+        ]
+      },
+      {
+        "number": "114",
+        "net": "BIAS_CH1_DAMP",
+        "at": [
+          90.1,
+          21.35
+        ]
+      },
+      {
+        "number": "115",
+        "net": "LAB5",
+        "at": [
+          89.5,
+          15.65
+        ]
+      },
+      {
+        "number": "116",
+        "net": "GND",
+        "at": [
+          89.5,
+          21.35
+        ]
+      },
+      {
+        "number": "117",
+        "net": "LAB5",
+        "at": [
+          88.9,
+          15.65
+        ]
+      },
+      {
+        "number": "118",
+        "net": "LNA4V5",
+        "at": [
+          88.9,
+          21.35
+        ]
+      },
+      {
+        "number": "119",
+        "net": "LAB5",
+        "at": [
+          88.3,
+          15.65
+        ]
+      },
+      {
+        "number": "120",
+        "net": "LNA4V5",
+        "at": [
+          88.3,
+          21.35
+        ]
+      }
+    ],
     "C113": [
       {
         "number": "1",
@@ -1688,16 +2801,16 @@
         "number": "1",
         "net": "E1_CHG_CC1",
         "at": [
-          117.7,
-          14.15
+          104.63,
+          2.75
         ]
       },
       {
         "number": "2",
         "net": "E1_CHG_CC2",
         "at": [
-          117.7,
-          16.15
+          104.63,
+          4.75
         ]
       }
     ],
@@ -1740,32 +2853,32 @@
         "number": "",
         "net": null,
         "at": [
-          122.54,
-          12.29
+          109.44,
+          1.13
         ]
       },
       {
         "number": "",
         "net": null,
         "at": [
-          122.54,
-          21.29
+          109.44,
+          10.13
         ]
       },
       {
         "number": "1",
         "net": "GND",
         "at": [
-          124.5,
-          15.29
+          111.4,
+          4.13
         ]
       },
       {
         "number": "2",
         "net": "E1_SERVICE_P",
         "at": [
-          124.5,
-          18.29
+          111.4,
+          7.13
         ]
       }
     ],
@@ -2928,18 +4041,16 @@
   },
   "copper": {
     "tracks": {
-      "segments": 160,
-      "vias": 7,
-      "locked": 1,
+      "segments": 119,
+      "vias": 10,
+      "locked": 11,
       "by_layer": {
-        "B.Cu": 4,
-        "F.Cu": 69,
-        "In1.Cu": 34,
-        "In2.Cu": 53
+        "B.Cu": 14,
+        "F.Cu": 105
       },
       "widths_mm": [
-        0.1124,
         0.15,
+        0.35,
         1.85,
         3.2
       ]
@@ -2978,10 +4089,18 @@
         "locked": false
       },
       {
-        "name": "GND-L2",
+        "name": "GND-In1",
         "rule_area": false,
         "net": "GND",
         "layer": "In1.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "GND-In2",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "In2.Cu",
         "filled": true,
         "locked": false
       },
@@ -3229,688 +4348,22 @@
     "copper_layers": 4
   },
   "drc": {
-    "errors": 36,
-    "warnings": 5,
-    "unconnected": 11,
+    "errors": 0,
+    "warnings": 6,
+    "unconnected": 25,
     "schematic_parity": 0,
     "ignored_checks": [],
     "by_type": {
-      "connection_width": {
-        "severity": "error",
-        "count": 6
-      },
-      "silk_edge_clearance": {
-        "severity": "error",
-        "count": 8
-      },
       "silk_overlap": {
         "severity": "warning",
-        "count": 5
-      },
-      "starved_thermal": {
-        "severity": "error",
-        "count": 1
-      },
-      "track_width": {
-        "severity": "error",
-        "count": 20
+        "count": 6
       },
       "unconnected_items": {
         "severity": "error",
-        "count": 11
-      },
-      "via_dangling": {
-        "severity": "error",
-        "count": 1
+        "count": 25
       }
     },
-    "error_items": [
-      {
-        "section": "violations",
-        "type": "connection_width",
-        "severity": "error",
-        "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1124 mm) (F.Cu)",
-        "items": [
-          {
-            "description": "Pad 11 [GND] of U211 on F.Cu",
-            "pos": [
-              114.875,
-              194.75
-            ]
-          },
-          {
-            "description": "Track [GND] on F.Cu, length 0.3811 mm",
-            "pos": [
-              115.1445,
-              194.4805
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "connection_width",
-        "severity": "error",
-        "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1124 mm) (F.Cu)",
-        "items": [
-          {
-            "description": "Via [E2_LNA_SET] on F.Cu - B.Cu",
-            "pos": [
-              149.4578,
-              196.8806
-            ]
-          },
-          {
-            "description": "Track [E2_LNA_SET] on F.Cu, length 0.9534 mm",
-            "pos": [
-              149.4578,
-              196.8806
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "connection_width",
-        "severity": "error",
-        "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1152 mm) (F.Cu)",
-        "items": [
-          {
-            "description": "Track [E2_BONI_LDO] on F.Cu, length 0.3788 mm",
-            "pos": [
-              172.5767,
-              192.4195
-            ]
-          },
-          {
-            "description": "Track [E2_BONI_LDO] on F.Cu, length 0.6074 mm",
-            "pos": [
-              172.5767,
-              193.0269
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "connection_width",
-        "severity": "error",
-        "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1152 mm) (F.Cu)",
-        "items": [
-          {
-            "description": "Track [E2_LNA_SET] on F.Cu, length 0.7492 mm",
-            "pos": [
-              147.3064,
-              191.3294
-            ]
-          },
-          {
-            "description": "Track [E2_LNA_SET] on F.Cu, length 0.9224 mm",
-            "pos": [
-              147.3064,
-              192.2518
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "connection_width",
-        "severity": "error",
-        "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1152 mm) (F.Cu)",
-        "items": [
-          {
-            "description": "Track [E2_LNB_LDO] on F.Cu, length 0.6113 mm",
-            "pos": [
-              109.5739,
-              193.0308
-            ]
-          },
-          {
-            "description": "Track [E2_LNB_LDO] on F.Cu, length 0.3816 mm",
-            "pos": [
-              109.5739,
-              192.4195
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "connection_width",
-        "severity": "error",
-        "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1217 mm) (F.Cu)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 0.3811 mm",
-            "pos": [
-              114.6055,
-              194.4805
-            ]
-          },
-          {
-            "description": "Track [GND] on F.Cu, length 0.8635 mm",
-            "pos": [
-              113.742,
-              194.4805
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "silk_edge_clearance",
-        "severity": "error",
-        "description": "Silkscreen clipped by board edge",
-        "items": [
-          {
-            "description": "Segment on Edge.Cuts",
-            "pos": [
-              100.0,
-              100.0
-            ]
-          },
-          {
-            "description": "Reference field of F102",
-            "pos": [
-              99.55,
-              135.75
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "silk_edge_clearance",
-        "severity": "error",
-        "description": "Silkscreen clipped by board edge",
-        "items": [
-          {
-            "description": "Segment on Edge.Cuts",
-            "pos": [
-              100.0,
-              210.0
-            ]
-          },
-          {
-            "description": "Reference field of J109",
-            "pos": [
-              146.05,
-              210.4
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "silk_edge_clearance",
-        "severity": "error",
-        "description": "Silkscreen clipped by board edge",
-        "items": [
-          {
-            "description": "Segment on Edge.Cuts",
-            "pos": [
-              100.0,
-              210.0
-            ]
-          },
-          {
-            "description": "Reference field of J110",
-            "pos": [
-              168.95,
-              210.4
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "silk_edge_clearance",
-        "severity": "error",
-        "description": "Silkscreen clipped by board edge",
-        "items": [
-          {
-            "description": "Segment on Edge.Cuts",
-            "pos": [
-              100.0,
-              210.0
-            ]
-          },
-          {
-            "description": "Reference field of J111",
-            "pos": [
-              125.15,
-              210.4
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "silk_edge_clearance",
-        "severity": "error",
-        "description": "Silkscreen clipped by board edge",
-        "items": [
-          {
-            "description": "Segment on Edge.Cuts",
-            "pos": [
-              100.0,
-              210.0
-            ]
-          },
-          {
-            "description": "Reference field of J112",
-            "pos": [
-              193.85,
-              210.4
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "silk_edge_clearance",
-        "severity": "error",
-        "description": "Silkscreen clipped by board edge",
-        "items": [
-          {
-            "description": "Segment on Edge.Cuts",
-            "pos": [
-              142.0,
-              100.0
-            ]
-          },
-          {
-            "description": "Reference field of J205",
-            "pos": [
-              120.93,
-              99.5
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "silk_edge_clearance",
-        "severity": "error",
-        "description": "Silkscreen clipped by board edge",
-        "items": [
-          {
-            "description": "Segment on Edge.Cuts",
-            "pos": [
-              142.0,
-              175.0
-            ]
-          },
-          {
-            "description": "Reference field of C113",
-            "pos": [
-              142.3,
-              145.4
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "silk_edge_clearance",
-        "severity": "error",
-        "description": "Silkscreen clipped by board edge",
-        "items": [
-          {
-            "description": "Segment on Edge.Cuts",
-            "pos": [
-              236.0,
-              175.0
-            ]
-          },
-          {
-            "description": "Reference field of J206",
-            "pos": [
-              216.88,
-              174.5
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "starved_thermal",
-        "severity": "error",
-        "description": "Thermal relief connection to zone incomplete (layer B.Cu; zone min spoke count 2; actual 1)",
-        "items": [
-          {
-            "description": "Zone 'GND-BOND-2' [GND] on B.Cu, priority 1",
-            "pos": [
-              172.0,
-              206.0
-            ]
-          },
-          {
-            "description": "PTH pad 1 [GND] of J108",
-            "pos": [
-              178.65,
-              206.5
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [E2_BONI_LDO] on F.Cu, length 0.3788 mm",
-            "pos": [
-              172.5767,
-              192.4195
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [E2_BONI_LDO] on F.Cu, length 0.3811 mm",
-            "pos": [
-              172.9555,
-              192.4195
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [E2_LNA_SET] on F.Cu, length 0.3173 mm",
-            "pos": [
-              148.0556,
-              191.3294
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [E2_LNA_SET] on F.Cu, length 0.3173 mm",
-            "pos": [
-              148.5044,
-              196.8806
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [E2_LNA_SET] on F.Cu, length 0.7492 mm",
-            "pos": [
-              147.3064,
-              191.3294
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [E2_LNA_SET] on F.Cu, length 0.9534 mm",
-            "pos": [
-              149.4578,
-              196.8806
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [E2_LNB_LDO] on F.Cu, length 0.3811 mm",
-            "pos": [
-              109.9555,
-              192.4195
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [E2_LNB_LDO] on F.Cu, length 0.3816 mm",
-            "pos": [
-              109.5739,
-              192.4195
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 0.3173 mm",
-            "pos": [
-              144.2044,
-              191.5306
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 0.3173 mm",
-            "pos": [
-              144.2044,
-              197.5306
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 0.3173 mm",
-            "pos": [
-              148.0556,
-              190.2306
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 0.3173 mm",
-            "pos": [
-              148.0556,
-              196.2306
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 0.3811 mm",
-            "pos": [
-              114.6055,
-              194.4805
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 0.3811 mm",
-            "pos": [
-              115.1445,
-              194.4805
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 0.8635 mm",
-            "pos": [
-              113.742,
-              194.4805
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 1.3509 mm",
-            "pos": [
-              116.4954,
-              194.4805
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 1.4256 mm",
-            "pos": [
-              145.63,
-              191.5306
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 1.4256 mm",
-            "pos": [
-              145.63,
-              197.5306
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 1.4256 mm",
-            "pos": [
-              146.63,
-              190.2306
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "track_width",
-        "severity": "error",
-        "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
-        "items": [
-          {
-            "description": "Track [GND] on F.Cu, length 1.4256 mm",
-            "pos": [
-              146.63,
-              196.2306
-            ]
-          }
-        ]
-      },
-      {
-        "section": "violations",
-        "type": "via_dangling",
-        "severity": "error",
-        "description": "Via is not connected or connected on only one layer",
-        "items": [
-          {
-            "description": "Via [LAB5] on F.Cu - B.Cu",
-            "pos": [
-              137.93,
-              134.6955
-            ]
-          }
-        ]
-      }
-    ],
+    "error_items": [],
     "warning_items": [
       {
         "section": "violations",
@@ -3965,40 +4418,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Rectangle of J111 on F.Silkscreen",
-            "pos": [
-              129.21,
-              209.31
-            ]
-          },
-          {
-            "description": "Reference field of J105",
-            "pos": [
-              129.4,
-              206.5
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Rectangle of J113 on F.Silkscreen",
             "pos": [
-              215.89,
-              197.91
+              202.82,
+              209.31
             ]
           },
           {
             "description": "Reference field of J115",
             "pos": [
-              220.83,
-              193.21
+              207.73,
+              204.37
             ]
           }
         ],
@@ -4010,18 +4440,64 @@
         "severity": "warning",
         "description": "Silkscreen clearance",
         "items": [
+          {
+            "description": "Rectangle of J507 on F.Silkscreen",
+            "pos": [
+              215.89,
+              209.31
+            ]
+          },
           {
             "description": "Reference field of J114",
             "pos": [
               220.83,
               204.37
             ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of J105",
+            "pos": [
+              129.4,
+              206.5
+            ]
           },
           {
-            "description": "Rectangle of J507 on F.Silkscreen",
+            "description": "Rectangle of J111 on F.Silkscreen",
             "pos": [
-              215.89,
+              129.21,
               209.31
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of F102 on F.Silkscreen",
+            "pos": [
+              103.92,
+              136.5
+            ]
+          },
+          {
+            "description": "Reference field of F102",
+            "pos": [
+              103.92,
+              135.75
             ]
           }
         ],
@@ -4047,6 +4523,28 @@
             "pos": [
               121.97,
               168.73
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "PTH pad GND [GND] of U108",
+            "pos": [
+              119.43,
+              136.73
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C113 on F.Cu",
+            "pos": [
+              137.95,
+              148.2
             ]
           }
         ]
@@ -4146,6 +4644,116 @@
         "description": "Missing connection between items",
         "items": [
           {
+            "description": "Pad 100 [GND] of B2B2 on F.Cu",
+            "pos": [
+              194.3,
+              188.65
+            ]
+          },
+          {
+            "description": "Pad 96 [GND] of B2B2 on F.Cu",
+            "pos": [
+              195.5,
+              188.65
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 111 [GND] of B2B2 on F.Cu",
+            "pos": [
+              190.7,
+              194.35
+            ]
+          },
+          {
+            "description": "Pad 116 [GND] of B2B2 on F.Cu",
+            "pos": [
+              189.5,
+              188.65
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 113 [LAB5] of B2B2 on F.Cu",
+            "pos": [
+              190.1,
+              194.35
+            ]
+          },
+          {
+            "description": "Track [LAB5] on B.Cu, length 10.2977 mm",
+            "pos": [
+              207.537,
+              182.8884
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 115 [LAB5] of B2B2 on F.Cu",
+            "pos": [
+              189.5,
+              194.35
+            ]
+          },
+          {
+            "description": "Pad 113 [LAB5] of B2B2 on F.Cu",
+            "pos": [
+              190.1,
+              194.35
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 116 [GND] of B2B2 on F.Cu",
+            "pos": [
+              189.5,
+              188.65
+            ]
+          },
+          {
+            "description": "Pad 100 [GND] of B2B2 on F.Cu",
+            "pos": [
+              194.3,
+              188.65
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
             "description": "Pad 16 [E2_BONI_IN] of U213 on F.Cu",
             "pos": [
               176.85,
@@ -4197,10 +4805,10 @@
             ]
           },
           {
-            "description": "Track [E2_LNA_IN] on F.Cu, length 0.6500 mm",
+            "description": "Pad 1 [E2_LNA_IN] of U205 on F.Cu",
             "pos": [
               143.98,
-              195.155
+              194.505
             ]
           }
         ]
@@ -4234,6 +4842,50 @@
         "description": "Missing connection between items",
         "items": [
           {
+            "description": "Pad 59 [GND] of B2B2 on F.Cu",
+            "pos": [
+              206.3,
+              194.35
+            ]
+          },
+          {
+            "description": "PTH pad 1 [GND] of J115",
+            "pos": [
+              211.4,
+              205.87
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 59 [GND] of B2B2 on F.Cu",
+            "pos": [
+              206.3,
+              194.35
+            ]
+          },
+          {
+            "description": "Pad 69 [GND] of B2B2 on F.Cu",
+            "pos": [
+              203.3,
+              194.35
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
             "description": "Pad 7 [E2_LNA_IN] of U204 on F.Cu",
             "pos": [
               148.28,
@@ -4256,17 +4908,149 @@
         "description": "Missing connection between items",
         "items": [
           {
-            "description": "Track [LAB5] on In2.Cu, length 2.6993 mm",
+            "description": "Pad 81 [IMU_TX] of B2B2 on F.Cu",
             "pos": [
-              215.38,
-              178.17
+              199.7,
+              194.35
             ]
           },
           {
-            "description": "Via [LAB5] on F.Cu - B.Cu",
+            "description": "PTH pad 4 [IMU_TX] of J507",
             "pos": [
-              137.93,
-              134.6955
+              217.7,
+              201.25
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 82 [GND] of B2B2 on F.Cu",
+            "pos": [
+              199.7,
+              188.65
+            ]
+          },
+          {
+            "description": "Pad 69 [GND] of B2B2 on F.Cu",
+            "pos": [
+              203.3,
+              194.35
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 83 [IMU_RX] of B2B2 on F.Cu",
+            "pos": [
+              199.1,
+              194.35
+            ]
+          },
+          {
+            "description": "PTH pad 3 [IMU_RX] of J507",
+            "pos": [
+              217.7,
+              203.25
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 88 [GND] of B2B2 on F.Cu",
+            "pos": [
+              197.9,
+              188.65
+            ]
+          },
+          {
+            "description": "Pad 82 [GND] of B2B2 on F.Cu",
+            "pos": [
+              199.7,
+              188.65
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 92 [GND] of B2B2 on F.Cu",
+            "pos": [
+              196.7,
+              188.65
+            ]
+          },
+          {
+            "description": "Pad 88 [GND] of B2B2 on F.Cu",
+            "pos": [
+              197.9,
+              188.65
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Pad 92 [GND] of B2B2 on F.Cu",
+            "pos": [
+              196.7,
+              188.65
+            ]
+          },
+          {
+            "description": "Pad 96 [GND] of B2B2 on F.Cu",
+            "pos": [
+              195.5,
+              188.65
+            ]
+          }
+        ]
+      },
+      {
+        "section": "unconnected_items",
+        "type": "unconnected_items",
+        "severity": "error",
+        "description": "Missing connection between items",
+        "items": [
+          {
+            "description": "Via [GND] on F.Cu - B.Cu",
+            "pos": [
+              175.55,
+              194.775
+            ]
+          },
+          {
+            "description": "Track [GND] on F.Cu, length 0.6500 mm",
+            "pos": [
+              175.55,
+              195.775
             ]
           }
         ]
@@ -4861,8 +5645,25 @@
     "boundary": [
       {
         "instance": "PWRA",
-        "status": "fail: dangling E1_EN_SYS12, E1_LAB5_FUSED, E1_PG_LAB5, E1_PG_SYS12, E2_BONI_IN, E2_BONI_LDO, E2_BONI_NR, E2_LNA_IN, E2_LNA_SET, E2_LNB_IN, E2_LNB_LDO, E2_LNB_NR, E2_LT_OUT1, E2_LT_OUT2, EN_BONI, EN_LNB, SYS12",
+        "status": "fail: dangling E1_EN_SYS12, E1_LAB5_FUSED, E1_PG_LAB5, E1_PG_SYS12, E2_BONI_IN, E2_BONI_LDO, E2_BONI_NR, E2_LNA_IN, E2_LNA_SET, E2_LNB_IN, E2_LNB_LDO, E2_LNB_NR, E2_LT_OUT1, E2_LT_OUT2, SYS12",
         "nets": [
+          {
+            "net": "3V3_Q6A",
+            "graph_net": "3V3_Q6A",
+            "board_pads": [
+              "B2B2.61"
+            ],
+            "external_refs": 87,
+            "external_sample": [
+              "C277",
+              "C281",
+              "C283",
+              "C285",
+              "C287",
+              "C301"
+            ],
+            "status": "provisional"
+          },
           {
             "net": "AON3V3",
             "graph_net": "AON3V3",
@@ -4881,6 +5682,123 @@
             "status": "connector"
           },
           {
+            "net": "AUX12",
+            "graph_net": "AUX12",
+            "board_pads": [
+              "B2B2.102"
+            ],
+            "external_refs": 7,
+            "external_sample": [
+              "C221",
+              "J505",
+              "J508",
+              "L204",
+              "R223",
+              "R286"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "BIAS_CH1_DAMP",
+            "graph_net": "BIAS_CH1_DAMP",
+            "board_pads": [
+              "B2B2.114"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "C235",
+              "R232"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "BIAS_CH2_DAMP",
+            "graph_net": "BIAS_CH2_DAMP",
+            "board_pads": [
+              "B2B2.112"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "C239",
+              "R237"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "BIAS_CH3_DAMP",
+            "graph_net": "BIAS_CH3_DAMP",
+            "board_pads": [
+              "B2B2.110"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "C243",
+              "R242"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "BIAS_CH4_DAMP",
+            "graph_net": "BIAS_CH4_DAMP",
+            "board_pads": [
+              "B2B2.14"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "C247",
+              "R247"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "BONI13V8",
+            "graph_net": "BONI13V8",
+            "board_pads": [
+              "B2B2.104"
+            ],
+            "external_refs": 7,
+            "external_sample": [
+              "C272",
+              "L214",
+              "Q2903",
+              "R267",
+              "R283",
+              "R2923"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "BONI13V8_PORT",
+            "graph_net": "BONI13V8_PORT",
+            "board_pads": [
+              "B2B2.98"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "A406",
+              "C2903",
+              "J207",
+              "Q2903",
+              "TP2903"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "CHG_INHIBIT",
+            "graph_net": "CHG_INHIBIT",
+            "board_pads": [
+              "B2B2.109"
+            ],
+            "external_refs": 4,
+            "external_sample": [
+              "J202",
+              "J306",
+              "R122",
+              "U303"
+            ],
+            "status": "provisional"
+          },
+          {
             "net": "DISP12",
             "graph_net": "DISP12",
             "board_pads": [
@@ -4894,6 +5812,23 @@
               "U520"
             ],
             "status": "connector"
+          },
+          {
+            "net": "E1_BAT_ADC",
+            "graph_net": "E1_BAT_ADC",
+            "board_pads": [
+              "B2B2.107"
+            ],
+            "external_refs": 6,
+            "external_sample": [
+              "C114",
+              "J202",
+              "J306",
+              "R111",
+              "R112",
+              "U305"
+            ],
+            "status": "provisional"
           },
           {
             "net": "E1_CHG_CC1",
@@ -5078,9 +6013,10 @@
               "J105.2",
               "J106.2"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
               "F101",
+              "J117",
               "R101",
               "U102"
             ],
@@ -5193,6 +6129,35 @@
               "C268"
             ],
             "status": "dangling"
+          },
+          {
+            "net": "E2_LNA4_SHUNT",
+            "graph_net": "E2_LNA4_SHUNT",
+            "board_pads": [
+              "B2B2.22"
+            ],
+            "external_refs": 4,
+            "external_sample": [
+              "C245",
+              "L209",
+              "R246",
+              "R275"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "E2_LNA4_SW",
+            "graph_net": "E2_LNA4_SW",
+            "board_pads": [
+              "B2B2.32"
+            ],
+            "external_refs": 3,
+            "external_sample": [
+              "R246",
+              "R274",
+              "U209"
+            ],
+            "status": "provisional"
           },
           {
             "net": "E2_LNA_IN",
@@ -5314,27 +6279,57 @@
             "status": "dangling"
           },
           {
+            "net": "E2_SB_DAMP",
+            "graph_net": "E2_SB_DAMP",
+            "board_pads": [
+              "B2B2.106"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "C298",
+              "R295"
+            ],
+            "status": "provisional"
+          },
+          {
             "net": "E5_IMU5V",
             "graph_net": "E5_IMU5V",
             "board_pads": [
               "J507.2"
             ],
-            "external_refs": 7,
+            "external_refs": 8,
             "external_sample": [
               "C553",
               "D502",
               "J504",
+              "J518",
               "J550",
-              "U551",
-              "U552"
+              "U551"
             ],
             "status": "connector"
+          },
+          {
+            "net": "EN_AUX12",
+            "graph_net": "EN_AUX12",
+            "board_pads": [
+              "B2B2.105"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "J202",
+              "J306",
+              "Q202",
+              "R220",
+              "U301"
+            ],
+            "status": "provisional"
           },
           {
             "net": "EN_BONI",
             "graph_net": "EN_BONI",
             "board_pads": [
-              "U213.13"
+              "U213.13",
+              "B2B2.103"
             ],
             "external_refs": 6,
             "external_sample": [
@@ -5345,13 +6340,46 @@
               "U214",
               "U301"
             ],
-            "status": "dangling"
+            "status": "provisional"
+          },
+          {
+            "net": "EN_HFP",
+            "graph_net": "EN_HFP",
+            "board_pads": [
+              "B2B2.101"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "J202",
+              "J306",
+              "R510",
+              "U301",
+              "U503"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "EN_LIME3V3",
+            "graph_net": "EN_LIME3V3",
+            "board_pads": [
+              "B2B2.99"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "J202",
+              "J306",
+              "R218",
+              "U203",
+              "U303"
+            ],
+            "status": "provisional"
           },
           {
             "net": "EN_LNB",
             "graph_net": "EN_LNB",
             "board_pads": [
-              "U211.13"
+              "U211.13",
+              "B2B2.97"
             ],
             "external_refs": 5,
             "external_sample": [
@@ -5361,7 +6389,71 @@
               "R291",
               "U301"
             ],
-            "status": "dangling"
+            "status": "provisional"
+          },
+          {
+            "net": "FAULT_HFP",
+            "graph_net": "FAULT_HFP",
+            "board_pads": [
+              "B2B2.95"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "J202",
+              "J306",
+              "R323",
+              "U303",
+              "U503"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "FLT_BONI",
+            "graph_net": "FLT_BONI",
+            "board_pads": [
+              "B2B2.93"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "J203",
+              "J307",
+              "R314",
+              "U214",
+              "U302"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "FLT_LIME3V3",
+            "graph_net": "FLT_LIME3V3",
+            "board_pads": [
+              "B2B2.91"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "J203",
+              "J307",
+              "R325",
+              "U203",
+              "U303"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "FLT_LNB",
+            "graph_net": "FLT_LNB",
+            "board_pads": [
+              "B2B2.89"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "J203",
+              "J307",
+              "R313",
+              "U212",
+              "U302"
+            ],
+            "status": "provisional"
           },
           {
             "net": "GND",
@@ -5403,9 +6495,18 @@
               "U213.7",
               "U213.8",
               "U213.9",
-              "U213.EP"
+              "U213.EP",
+              "B2B2.100",
+              "B2B2.111",
+              "B2B2.116",
+              "B2B2.59",
+              "B2B2.69",
+              "B2B2.82",
+              "B2B2.88",
+              "B2B2.92",
+              "B2B2.96"
             ],
-            "external_refs": 505,
+            "external_refs": 510,
             "external_sample": [
               "A401",
               "A402",
@@ -5420,7 +6521,8 @@
             "net": "I2C0_SCL",
             "graph_net": "I2C0_SCL",
             "board_pads": [
-              "J110.3"
+              "J110.3",
+              "B2B2.87"
             ],
             "external_refs": 5,
             "external_sample": [
@@ -5436,7 +6538,8 @@
             "net": "I2C0_SDA",
             "graph_net": "I2C0_SDA",
             "board_pads": [
-              "J110.4"
+              "J110.4",
+              "B2B2.85"
             ],
             "external_refs": 5,
             "external_sample": [
@@ -5449,19 +6552,54 @@
             "status": "connector"
           },
           {
+            "net": "I2C2_SCL",
+            "graph_net": "I2C2_SCL",
+            "board_pads": [
+              "B2B2.65"
+            ],
+            "external_refs": 11,
+            "external_sample": [
+              "J201",
+              "J301",
+              "J302",
+              "J304",
+              "R304",
+              "U215"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "I2C2_SDA",
+            "graph_net": "I2C2_SDA",
+            "board_pads": [
+              "B2B2.63"
+            ],
+            "external_refs": 11,
+            "external_sample": [
+              "J201",
+              "J301",
+              "J302",
+              "J304",
+              "R303",
+              "U215"
+            ],
+            "status": "provisional"
+          },
+          {
             "net": "IMU_RX",
             "graph_net": "IMU_RX",
             "board_pads": [
-              "J507.3"
+              "J507.3",
+              "B2B2.83"
             ],
-            "external_refs": 8,
+            "external_refs": 10,
             "external_sample": [
               "J203",
               "J307",
+              "J321",
               "J504",
-              "J550",
-              "U305",
-              "U309"
+              "J518",
+              "J550"
             ],
             "status": "connector"
           },
@@ -5469,16 +6607,17 @@
             "net": "IMU_TX",
             "graph_net": "IMU_TX",
             "board_pads": [
-              "J507.4"
+              "J507.4",
+              "B2B2.81"
             ],
-            "external_refs": 8,
+            "external_refs": 10,
             "external_sample": [
               "J203",
               "J307",
+              "J321",
               "J504",
-              "J550",
-              "U305",
-              "U309"
+              "J518",
+              "J550"
             ],
             "status": "connector"
           },
@@ -5486,7 +6625,8 @@
             "net": "INA228_ALERT",
             "graph_net": "INA228_ALERT",
             "board_pads": [
-              "J110.5"
+              "J110.5",
+              "B2B2.79"
             ],
             "external_refs": 6,
             "external_sample": [
@@ -5523,7 +6663,11 @@
               "J104.3",
               "J104.4",
               "J206.2",
-              "R110.1"
+              "R110.1",
+              "B2B2.113",
+              "B2B2.115",
+              "B2B2.117",
+              "B2B2.119"
             ],
             "external_refs": 34,
             "external_sample": [
@@ -5535,6 +6679,24 @@
               "C321"
             ],
             "status": "connector"
+          },
+          {
+            "net": "LAB5_RLY",
+            "graph_net": "LAB5_RLY",
+            "board_pads": [
+              "B2B2.84",
+              "B2B2.86"
+            ],
+            "external_refs": 6,
+            "external_sample": [
+              "D401",
+              "F104",
+              "J204",
+              "J420",
+              "K401",
+              "K402"
+            ],
+            "status": "provisional"
           },
           {
             "net": "LIME3V3",
@@ -5554,6 +6716,106 @@
             "status": "connector"
           },
           {
+            "net": "LNA4V5",
+            "graph_net": "LNA4V5",
+            "board_pads": [
+              "B2B2.118",
+              "B2B2.120"
+            ],
+            "external_refs": 12,
+            "external_sample": [
+              "C231",
+              "C232",
+              "C236",
+              "C240",
+              "C244",
+              "R225"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "LNB13V2",
+            "graph_net": "LNB13V2",
+            "board_pads": [
+              "B2B2.90"
+            ],
+            "external_refs": 8,
+            "external_sample": [
+              "C261",
+              "J204",
+              "J420",
+              "L212",
+              "L406",
+              "R259"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "OVP_LNB_N",
+            "graph_net": "OVP_LNB_N",
+            "board_pads": [
+              "B2B2.77"
+            ],
+            "external_refs": 8,
+            "external_sample": [
+              "J203",
+              "J307",
+              "R291",
+              "R292",
+              "TP215",
+              "U212"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "PICO_DISP_EN",
+            "graph_net": "PICO_DISP_EN",
+            "board_pads": [
+              "B2B2.75"
+            ],
+            "external_refs": 5,
+            "external_sample": [
+              "J203",
+              "J307",
+              "R213",
+              "U202",
+              "U305"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "PICO_OFF",
+            "graph_net": "PICO_OFF",
+            "board_pads": [
+              "B2B2.73"
+            ],
+            "external_refs": 4,
+            "external_sample": [
+              "D102",
+              "J203",
+              "J307",
+              "U305"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "PWR_BUTTON",
+            "graph_net": "PWR_BUTTON",
+            "board_pads": [
+              "B2B2.71"
+            ],
+            "external_refs": 7,
+            "external_sample": [
+              "D103",
+              "D302",
+              "D303",
+              "J203",
+              "J307",
+              "J315"
+            ],
+            "status": "provisional"
+          },
+          {
             "net": "SYS12",
             "graph_net": "SYS12",
             "board_pads": [
@@ -5568,6 +6830,53 @@
               "R221"
             ],
             "status": "dangling"
+          },
+          {
+            "net": "VBUS_HFP",
+            "graph_net": "VBUS_HFP",
+            "board_pads": [
+              "B2B2.94"
+            ],
+            "external_refs": 8,
+            "external_sample": [
+              "A414",
+              "C511",
+              "C513",
+              "J207",
+              "J544",
+              "L501"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "VBUS_LABPORT",
+            "graph_net": "VBUS_LABPORT",
+            "board_pads": [
+              "B2B2.67"
+            ],
+            "external_refs": 6,
+            "external_sample": [
+              "C506",
+              "C507",
+              "J501",
+              "J506",
+              "R508",
+              "U502"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "VBUS_RTLB_DAMP",
+            "graph_net": "VBUS_RTLB_DAMP",
+            "board_pads": [
+              "B2B2.108"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "C251",
+              "R251"
+            ],
+            "status": "provisional"
           },
           {
             "net": "VCC_3V3_MKEY",
@@ -5590,6 +6899,16 @@
     ],
     "keepout": {
       "rows": [
+        {
+          "hole": "H1",
+          "ref": "B2B2",
+          "keepout_radius": 3.5,
+          "pad_distance": 84.584,
+          "courtyard_distance": 80.6009,
+          "body_distance": 81.2253,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
         {
           "hole": "H1",
           "ref": "C113",
@@ -5704,9 +7023,9 @@
           "hole": "H1",
           "ref": "J113",
           "keepout_radius": 3.5,
-          "pad_distance": 113.0773,
-          "courtyard_distance": 111.6194,
-          "body_distance": 111.6876,
+          "pad_distance": 99.7571,
+          "courtyard_distance": 98.405,
+          "body_distance": 98.47,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -5724,9 +7043,9 @@
           "hole": "H1",
           "ref": "J115",
           "keepout_radius": 3.5,
-          "pad_distance": 119.7948,
-          "courtyard_distance": 117.6306,
-          "body_distance": 118.1282,
+          "pad_distance": 106.3907,
+          "courtyard_distance": 104.405,
+          "body_distance": 104.88,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -5827,6 +7146,16 @@
           "pad_distance": 69.4481,
           "courtyard_distance": 68.9921,
           "body_distance": 69.4622,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "B2B2",
+          "keepout_radius": 3.5,
+          "pad_distance": 11.9773,
+          "courtyard_distance": 9.2686,
+          "body_distance": 10.7119,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -5944,9 +7273,9 @@
           "hole": "H2",
           "ref": "J113",
           "keepout_radius": 3.5,
-          "pad_distance": 15.4024,
-          "courtyard_distance": 12.3554,
-          "body_distance": 12.8082,
+          "pad_distance": 26.503,
+          "courtyard_distance": 24.045,
+          "body_distance": 24.52,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -5964,9 +7293,9 @@
           "hole": "H2",
           "ref": "J115",
           "keepout_radius": 3.5,
-          "pad_distance": 10.7262,
-          "courtyard_distance": 6.5609,
-          "body_distance": 7.2256,
+          "pad_distance": 19.5937,
+          "courtyard_distance": 16.775,
+          "body_distance": 17.25,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6067,6 +7396,16 @@
           "pad_distance": 54.514,
           "courtyard_distance": 54.0089,
           "body_distance": 54.4905,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H3",
+          "ref": "B2B2",
+          "keepout_radius": 3.5,
+          "pad_distance": 11.9773,
+          "courtyard_distance": 9.2686,
+          "body_distance": 10.7119,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6184,9 +7523,9 @@
           "hole": "H3",
           "ref": "J113",
           "keepout_radius": 3.5,
-          "pad_distance": 19.5779,
-          "courtyard_distance": 16.5406,
-          "body_distance": 17.2112,
+          "pad_distance": 36.8769,
+          "courtyard_distance": 33.8144,
+          "body_distance": 34.4861,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6204,9 +7543,9 @@
           "hole": "H3",
           "ref": "J115",
           "keepout_radius": 3.5,
-          "pad_distance": 13.6074,
-          "courtyard_distance": 9.5873,
-          "body_distance": 10.2159,
+          "pad_distance": 30.3035,
+          "courtyard_distance": 26.1151,
+          "body_distance": 26.7882,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6307,6 +7646,16 @@
           "pad_distance": 55.2986,
           "courtyard_distance": 54.6923,
           "body_distance": 55.198,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H4",
+          "ref": "B2B2",
+          "keepout_radius": 3.5,
+          "pad_distance": 43.0344,
+          "courtyard_distance": 39.0616,
+          "body_distance": 39.8365,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6424,9 +7773,9 @@
           "hole": "H4",
           "ref": "J113",
           "keepout_radius": 3.5,
-          "pad_distance": 72.2443,
-          "courtyard_distance": 70.5685,
-          "body_distance": 70.7173,
+          "pad_distance": 63.1946,
+          "courtyard_distance": 61.2109,
+          "body_distance": 61.4567,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6444,9 +7793,9 @@
           "hole": "H4",
           "ref": "J115",
           "keepout_radius": 3.5,
-          "pad_distance": 78.4075,
-          "courtyard_distance": 76.0225,
-          "body_distance": 76.5513,
+          "pad_distance": 68.415,
+          "courtyard_distance": 65.5361,
+          "body_distance": 66.1358,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6547,6 +7896,16 @@
           "pad_distance": 29.8294,
           "courtyard_distance": 28.9466,
           "body_distance": 29.5061,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H5",
+          "ref": "B2B2",
+          "keepout_radius": 3.5,
+          "pad_distance": 118.7411,
+          "courtyard_distance": 115.5974,
+          "body_distance": 116.919,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6664,9 +8023,9 @@
           "hole": "H5",
           "ref": "J113",
           "keepout_radius": 3.5,
-          "pad_distance": 143.8577,
-          "courtyard_distance": 141.6371,
-          "body_distance": 141.9817,
+          "pad_distance": 141.7091,
+          "courtyard_distance": 139.4276,
+          "body_distance": 139.8102,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6684,9 +8043,9 @@
           "hole": "H5",
           "ref": "J115",
           "keepout_radius": 3.5,
-          "pad_distance": 147.7833,
-          "courtyard_distance": 144.3575,
-          "body_distance": 145.023,
+          "pad_distance": 144.7286,
+          "courtyard_distance": 141.1675,
+          "body_distance": 141.8418,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6787,6 +8146,16 @@
           "pad_distance": 111.5297,
           "courtyard_distance": 110.3651,
           "body_distance": 110.9622,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H6",
+          "ref": "B2B2",
+          "keepout_radius": 3.5,
+          "pad_distance": 97.6471,
+          "courtyard_distance": 95.22,
+          "body_distance": 96.6532,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6904,9 +8273,9 @@
           "hole": "H6",
           "ref": "J113",
           "keepout_radius": 3.5,
-          "pad_distance": 119.0754,
-          "courtyard_distance": 116.7766,
-          "body_distance": 117.1754,
+          "pad_distance": 120.2254,
+          "courtyard_distance": 117.9174,
+          "body_distance": 118.3509,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -6924,9 +8293,9 @@
           "hole": "H6",
           "ref": "J115",
           "keepout_radius": 3.5,
-          "pad_distance": 121.945,
-          "courtyard_distance": 118.3416,
-          "body_distance": 119.0169,
+          "pad_distance": 121.9338,
+          "courtyard_distance": 118.257,
+          "body_distance": 118.9255,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -7027,6 +8396,16 @@
           "pad_distance": 93.9596,
           "courtyard_distance": 93.1309,
           "body_distance": 93.6836,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H7",
+          "ref": "B2B2",
+          "keepout_radius": 3.5,
+          "pad_distance": 60.4562,
+          "courtyard_distance": 56.9153,
+          "body_distance": 58.1106,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -7144,9 +8523,9 @@
           "hole": "H7",
           "ref": "J113",
           "keepout_radius": 3.5,
-          "pad_distance": 88.0565,
-          "courtyard_distance": 86.019,
-          "body_distance": 86.2848,
+          "pad_distance": 83.0009,
+          "courtyard_distance": 80.7899,
+          "body_distance": 81.1292,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -7164,9 +8543,9 @@
           "hole": "H7",
           "ref": "J115",
           "keepout_radius": 3.5,
-          "pad_distance": 93.1374,
-          "courtyard_distance": 90.1069,
-          "body_distance": 90.7278,
+          "pad_distance": 86.9244,
+          "courtyard_distance": 83.5656,
+          "body_distance": 84.2245,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -7286,8 +8665,8 @@
       "passed": true
     },
     "locked": {
-      "scripted_segments": 1,
-      "locked_on_board": 1,
+      "scripted_segments": 11,
+      "locked_on_board": 11,
       "kept": true,
       "note": "SES import before/after counts and the DSN probe are in route-log.json"
     }

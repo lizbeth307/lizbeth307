@@ -3,18 +3,18 @@
   "board_id": "PWR_A",
   "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
   "generator": "pcb/check_boards.py",
-  "result": "FINDINGS",
+  "result": "NO_FINDINGS",
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_A/PWR_A.kicad_pcb",
-      "sha256": "4da2d885f59fa786bd6a0ba5c5a40ccf9b40bdef1b94d9b633ad0ac33bd2a734"
+      "sha256": "6cf679af80df106eddb0e5faaa7c2aa793fbb50a77aefd269569077a31cc54b7"
     },
     "projection_sha256": {
-      "graph_refs_pins_nets": "e694d5147e3ff92162d84cae0111bdaede8858a05fb95a01263212ea23e63f4a",
+      "graph_refs_pins_nets": "f1a7e803ecbb452a6172ed0eec18c8d595e50ef1d70ecf4e62a91d5273ad5575",
       "footprints": "3375fa6e5efd44fd8e6c110689fce098ae0aa4af17f796693bc5908df8d29859",
       "contract_board": "3b101ded8781cae83235bfdd87719f6156073436420f5603fa9d9bc3cca4f3db",
-      "netclasses": "6d472ab0367c6a6284a3c368671dc7f02a77c6fb80aa492192e3e2b10339798d",
-      "spec": "b3b5d9fe4ef911ceb7b1850dd5cfbe6b132218f0d75836b97ce1b9e6e5b5a0a3"
+      "netclasses": "49cca597e2a499476bec3c1839bcef5eeabcd3bb294d129dbac3767274125c02",
+      "spec": "56ee74fc5fb4793542c3cc8ff4c8a98a8786f17fb04c60c61f87f66c8ea90079"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
@@ -27,12 +27,12 @@
     "source": "Edge.Cuts bounding box"
   },
   "counts": {
-    "footprints": 31,
-    "pads": 195,
-    "tracks": 160,
-    "vias": 7,
-    "zones": 35,
-    "holes": 17,
+    "footprints": 32,
+    "pads": 317,
+    "tracks": 119,
+    "vias": 10,
+    "zones": 36,
+    "holes": 19,
     "copper_layers": [
       "F.Cu",
       "In1.Cu",
@@ -49,7 +49,7 @@
     "holes": {
       "findings": 0,
       "contract_holes": 7,
-      "board_holes": 17
+      "board_holes": 19
     },
     "keepouts": {
       "findings": 0,
@@ -59,32 +59,32 @@
     "pad_nets": {
       "findings": 0,
       "expected_refs": 24,
-      "board_footprints": 31
+      "board_footprints": 32
     },
     "class_widths": {
-      "findings": 41,
-      "tracks_checked": 160,
+      "findings": 0,
+      "tracks_checked": 119,
       "pour_necks": [
         {
           "net": "E1_LAB5_RAW",
           "layer": "B.Cu",
-          "neck_mm": 1.027,
+          "neck_mm": 5.85,
           "limit_mm": 1.85,
           "grid_mm": 0.05,
           "at": [
-            103.825,
-            139.025
+            112.575,
+            136.375
           ]
         },
         {
           "net": "E1_LAB5_RAW",
           "layer": "F.Cu",
-          "neck_mm": 1.027,
+          "neck_mm": 5.85,
           "limit_mm": 1.85,
           "grid_mm": 0.05,
           "at": [
-            103.825,
-            139.025
+            112.575,
+            136.375
           ]
         }
       ],
@@ -110,14 +110,14 @@
     },
     "b2b": {
       "findings": 0,
-      "pairs": 0
+      "pairs": 1
     },
     "tht_pockets": {
       "findings": 0,
       "applies": true,
-      "tht_pads": 98,
-      "npth_pegs": 10,
-      "pockets": 20
+      "tht_pads": 100,
+      "npth_pegs": 12,
+      "pockets": 23
     },
     "heights": {
       "findings": 0,
@@ -129,481 +129,7 @@
       "fab_floor": "jlc_4l_1oz"
     }
   },
-  "findings": [
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        113.742,
-        194.481
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        145.63,
-        197.531
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        144.204,
-        191.531
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        148.056,
-        196.231
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        145.63,
-        191.531
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        116.495,
-        194.481
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        146.63,
-        190.231
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        115.144,
-        194.481
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        146.63,
-        196.231
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        114.606,
-        194.481
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        144.204,
-        197.531
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track GND",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        148.056,
-        190.231
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E2_LNB_LDO",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        109.574,
-        192.419
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E2_LNB_LDO",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        109.956,
-        192.419
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E2_LNA_SET",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        148.504,
-        196.881
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E2_LNA_SET",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        149.458,
-        196.881
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E2_LNA_SET",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        148.056,
-        191.329
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E2_LNA_SET",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        147.306,
-        191.329
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E2_BONI_LDO",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        172.577,
-        192.419
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E2_BONI_LDO",
-      "detail": "SIG copper narrower than 0.15 mm (class width) on F.Cu",
-      "at": [
-        172.956,
-        192.419
-      ],
-      "value": 0.112,
-      "limit": 0.15,
-      "layer": "F.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_N",
-      "detail": "BATT track on In1.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        151.122,
-        204.872
-      ],
-      "value": 3.2,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_N",
-      "detail": "BATT track on In1.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        156.95,
-        202.3
-      ],
-      "value": 3.2,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_N",
-      "detail": "BATT track on In1.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        114.072,
-        203.378
-      ],
-      "value": 3.2,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_N",
-      "detail": "BATT track on In1.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        110.95,
-        206.5
-      ],
-      "value": 3.2,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_N",
-      "detail": "BATT track on In1.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        152.75,
-        206.5
-      ],
-      "value": 3.2,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_N",
-      "detail": "BATT track on In1.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        147.27,
-        204.872
-      ],
-      "value": 3.2,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_N",
-      "detail": "BATT track on In1.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        145.776,
-        203.378
-      ],
-      "value": 3.2,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_SHUNT_P",
-      "detail": "BATT track on In2.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        141.16,
-        200.588
-      ],
-      "value": 3.2,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_SHUNT_P",
-      "detail": "BATT track on In2.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        138.35,
-        203.398
-      ],
-      "value": 3.2,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_SHUNT_P",
-      "detail": "BATT track on In2.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        155.44,
-        200.588
-      ],
-      "value": 3.2,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_SHUNT_P",
-      "detail": "BATT track on In2.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        158.25,
-        206.5
-      ],
-      "value": 3.2,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_SHUNT_P",
-      "detail": "BATT track on In2.Cu: inner copper not counted for BATT (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        138.35,
-        206.5
-      ],
-      "value": 3.2,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5",
-      "detail": "PWR3A track on In1.Cu: inner copper not counted for PWR3A (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        232.0,
-        187.17
-      ],
-      "value": 1.85,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5",
-      "detail": "PWR3A track on In1.Cu: inner copper not counted for PWR3A (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        232.0,
-        187.17
-      ],
-      "value": 1.85,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5",
-      "detail": "PWR3A track on In1.Cu: inner copper not counted for PWR3A (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        229.913,
-        187.17
-      ],
-      "value": 1.85,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5",
-      "detail": "PWR3A track on In1.Cu: inner copper not counted for PWR3A (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        226.671,
-        183.927
-      ],
-      "value": 1.85,
-      "layer": "In1.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5",
-      "detail": "PWR3A track on In2.Cu: inner copper not counted for PWR3A (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        217.289,
-        176.261
-      ],
-      "value": 1.85,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track LAB5",
-      "detail": "PWR3A track on In2.Cu: inner copper not counted for PWR3A (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        215.38,
-        178.17
-      ],
-      "value": 1.85,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "track E1_LAB5_FUSED",
-      "detail": "PWR3A track on In2.Cu: inner copper not counted for PWR3A (route it on F.Cu/B.Cu or pour; low-current branches go in branch_exempt)",
-      "at": [
-        105.62,
-        130.79
-      ],
-      "value": 1.85,
-      "layer": "In2.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "pour E1_LAB5_RAW",
-      "detail": "BATT pour neck below 1.85 mm (split L1+L4) on B.Cu (raster +/-0.05 mm)",
-      "at": [
-        103.825,
-        139.025
-      ],
-      "value": 1.027,
-      "limit": 1.85,
-      "layer": "B.Cu"
-    },
-    {
-      "check": "class_widths",
-      "item": "pour E1_LAB5_RAW",
-      "detail": "BATT pour neck below 1.85 mm (split L1+L4) on F.Cu (raster +/-0.05 mm)",
-      "at": [
-        103.825,
-        139.025
-      ],
-      "value": 1.027,
-      "limit": 1.85,
-      "layer": "F.Cu"
-    }
-  ],
+  "findings": [],
   "unverified": [
     {
       "check": "class_widths",
@@ -611,113 +137,8 @@
       "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 0 via(s) of the net on the board"
     },
     {
-      "check": "class_widths",
-      "item": "LAB5 vias",
-      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 2 via(s) of the net on the board"
-    },
-    {
-      "check": "heights",
-      "item": "J111",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U211",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U205",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J109",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U213",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
       "check": "heights",
       "item": "J113",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U107",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J106",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J108",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J205",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U108",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J112",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J105",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J104",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J507",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J107",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "F102",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "R110",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "J114",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "U204",
-      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
-    },
-    {
-      "check": "heights",
-      "item": "C113",
       "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
     },
     {
@@ -727,12 +148,117 @@
     },
     {
       "check": "heights",
-      "item": "J115",
+      "item": "U108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U211",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J112",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C113",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J105",
       "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
     },
     {
       "check": "heights",
       "item": "J206",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U204",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R110",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U213",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J507",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J109",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U205",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J205",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "F102",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "B2B2",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J111",
       "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
     }
   ]
