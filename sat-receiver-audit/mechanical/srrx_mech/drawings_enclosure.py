@@ -131,7 +131,7 @@ def _module_mounts_table(sh, P, x, y):
         return y
     sh.ptext((x, y), "Бобишки модулів усередині (W2 MECH-5; u як ззовні)", 2.4)
     y -= 4.0
-    names = {"screws": "бобишка ⌀{d}, вставка TC-M2,5x4, верх z {s}", "rests": "упор ⌀{d}, верх z {s}"}
+    names = {"screws": "бобишка ⌀{d}, вставка TC-M2,5x4 в отворі ⌀{hd} × {h}, верх z {s}", "rests": "упор ⌀{d}, верх z {s}"}
     k = 0
     for g in rows:
         k += 1
@@ -142,7 +142,7 @@ def _module_mounts_table(sh, P, x, y):
         else:
             cx, cy = g["c"]
             sh.circle((W - cx, cy), g["d"] / 2, "HIDDEN")
-            line = f"MB{k:<3d} u {fmt(W - cx, 2)} v {fmt(cy, 2)}  {g['item']}: " + names[g["kind"]].format(d=fmt(g["d"]), s=fmt(g["seat"]))
+            line = f"MB{k:<3d} u {fmt(W - cx, 2)} v {fmt(cy, 2)}  {g['item']}: " + names[g["kind"]].format(d=fmt(g["d"]), s=fmt(g["seat"]), hd=fmt(g["hole_d"]), h=fmt(g["hole_depth"]))
         sh.ptext((x, y), line[:96], 1.7, layer="TABLE")
         y -= 2.6
     return y
