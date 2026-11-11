@@ -5139,8 +5139,8 @@
     "tool": "freerouting",
     "max_passes": 60,
     "threads": 1,
-    "job_timeout": "00:25:00",
-    "timeout_s": 1620,
+    "job_timeout": "00:34:00",
+    "timeout_s": 2160,
     "fanout": false,
     "ignore_net_classes": [
       "SCRIPTED_GND",
@@ -5156,7 +5156,7 @@
         "B.Cu"
       ]
     },
-    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off; GND and E3_FAN5 are fully scripted and not autorouted (-inc); the 1.85 mm LAB5 feed and E3_BLOWER_GND rail are scripted and the router adds only the 0.5 mm branches (class PWR3A_BRANCH, branch_exempt)",
+    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off; GND and E3_FAN5 are fully scripted and not autorouted (-inc); the 1.85 mm LAB5 feed and E3_BLOWER_GND rail are scripted and the router adds only the 0.5 mm branches (class PWR3A_BRANCH, branch_exempt). Route run 43092258826 with these settings: 2 DRC errors and 15 unconnected when the 25 min job timeout stopped the router (artifact upload failed in a GitHub Actions outage), so the job timeout is 34 min, inside the 45 min CI job with routing, DRC and the fab set",
     "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no power copper lands on the inner layers"
   },
   "drc_policy": {
