@@ -1,0 +1,416 @@
+{
+  "schema": "srrx-fab-manifest-v1",
+  "board_id": "IMU_CARRIER",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "NOT RELEASED: model/CI only; bench gates OPEN",
+  "generator": "pcb/fab_export.py",
+  "kicad_version": "10.0.7",
+  "inputs": {
+    "board_file": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pcb",
+    "board_sha256": "dd2a8fb80f486f26f35de7b71e88a6d426acc88f4ab33eff3470b6e662a5cfe1",
+    "project_sha256": "91c3a1d2752d4b389c60c7980544efabd5d844378dd7a40f4b8e371a44718513",
+    "spec_projection_sha256": "88731e888471ef3e8b008adb2922d99d0f44caa828be7d422e5056a56cc8f097",
+    "report_projection_sha256": "41309a604adca8e3aa46f930352e2a5371f38cc8d8020353aa57fb5cc9e75cf6",
+    "jlc_bom_rows": [
+      {
+        "Board": "IMU_CARRIER",
+        "Comment": "0603WAF1001T5E",
+        "Designator": "R391",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C21190",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "IMU_CARRIER",
+        "Comment": "0603WAF1002T5E",
+        "Designator": "R390",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C25804",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "IMU_CARRIER",
+        "Comment": "CC0603KRX7R9BB104",
+        "Designator": "C341,C520",
+        "Footprint": "C_0603_1608Metric",
+        "LCSC Part #": "C14663",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "IMU_CARRIER",
+        "Comment": "CC0805KKX7R7BB106",
+        "Designator": "C519",
+        "Footprint": "C_0805_2012Metric",
+        "LCSC Part #": "C326595",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "IMU_CARRIER",
+        "Comment": "CL21A106KAYNNNE",
+        "Designator": "C340",
+        "Footprint": "C_0805_2012Metric",
+        "LCSC Part #": "C15850",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "IMU_CARRIER",
+        "Comment": "SS14-E3/61T",
+        "Designator": "D502",
+        "Footprint": "D_SMA",
+        "LCSC Part #": "C47460",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "IMU_CARRIER",
+        "Comment": "TPD4E1U06DBVR",
+        "Designator": "U552",
+        "Footprint": "SOT-23-6",
+        "LCSC Part #": "C124691",
+        "Mount": "SMD"
+      }
+    ],
+    "jlc_bom_rows_sha256": "7c75862ca52edb8255cd698525081af612525b3412af82a1bb1f99e20d4d55af",
+    "stackup": {
+      "id": "JLC standard 2-layer FR-4",
+      "material": "FR-4",
+      "copper_outer": "1 oz",
+      "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "note": "finished thickness from the spec layers.thickness_mm; JLC tolerance +/-10 % for boards >= 1.0 mm; 1 oz outer copper is the project choice (build/15 rows Шари and Мідь і струмові класи)",
+      "copper_layers": 2,
+      "thickness_mm": 1.6
+    },
+    "stackup_sha256": "5d4429eae592c730808058b5134bdf6fb5f9b87bf3e9f3435e687871bce8f37a",
+    "rf50_nets": [],
+    "note": "projections (F10): an unrelated build/10-jlc-bom.csv row, LCSC stock or spec edit does not stale this set"
+  },
+  "commands": [
+    {
+      "job": "gerbers",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "gerbers",
+        "--output",
+        "<temp>/raw/gerber/",
+        "--layers",
+        "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+        "--subtract-soldermask",
+        "--precision",
+        "6",
+        "<temp>/src/IMU_CARRIER.kicad_pcb"
+      ]
+    },
+    {
+      "job": "drill",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "drill",
+        "--output",
+        "<temp>/raw/drill/",
+        "--format",
+        "excellon",
+        "--drill-origin",
+        "absolute",
+        "--excellon-zeros-format",
+        "decimal",
+        "--excellon-oval-format",
+        "alternate",
+        "--excellon-units",
+        "mm",
+        "--excellon-separate-th",
+        "--generate-map",
+        "--map-format",
+        "gerberx2",
+        "<temp>/src/IMU_CARRIER.kicad_pcb"
+      ]
+    },
+    {
+      "job": "ipcd356",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "ipcd356",
+        "--output",
+        "<temp>/raw/IMU_CARRIER.ipc356",
+        "<temp>/src/IMU_CARRIER.kicad_pcb"
+      ]
+    },
+    {
+      "job": "pos",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "pos",
+        "--output",
+        "<temp>/raw/assembly/IMU_CARRIER-pos-kicad.csv",
+        "--side",
+        "both",
+        "--format",
+        "csv",
+        "--units",
+        "mm",
+        "--exclude-dnp",
+        "<temp>/src/IMU_CARRIER.kicad_pcb"
+      ]
+    }
+  ],
+  "normalisation": [
+    "Gerber and drill-map Gerber: the %TF.CreationDate attribute line (optional in Gerber X2) is removed; 'G04 Created by KiCad (...) date ...*' keeps the creator and loses the date",
+    "Excellon: the '; #@! TF.CreationDate' line is removed; \"; DRILL file KiCad ... date ...\" loses the date",
+    "Gerber job file (.gbrjob): Header.CreationDate is removed (JSON re-written with indent 2)",
+    "IPC-D-356: comment-record dates are removed and file paths become the board file name",
+    "KiCad build strings that start with 10.0.7 become 10.0.7 in generator lines",
+    "after normalisation no date/time stamp and no path of the export directory may remain (checked)"
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "dnp_excluded": [
+    "J320",
+    "J321",
+    "J322",
+    "J518"
+  ],
+  "coverage": {
+    "cpl": {
+      "rows": 8,
+      "placed_by_side_and_mount": {
+        "Top": {
+          "SMD": 8
+        }
+      },
+      "smd_refs_once_per_side": true
+    },
+    "bom": {
+      "rows": 7,
+      "designators": 8,
+      "tbd": [],
+      "boards": 1
+    },
+    "ipc356": {
+      "board_pad_nets": [
+        "E3_IMU3V3",
+        "E3_IMU_CS_N",
+        "E3_IMU_WAKE_N",
+        "E5_IMU5V",
+        "E5_IMU_VIN",
+        "GND",
+        "IMU_RX",
+        "IMU_TX"
+      ],
+      "ipc_nets": [
+        "E3_IMU3V3",
+        "E3_IMU_CS_N",
+        "E3_IMU_WAKE_N",
+        "E5_IMU5V",
+        "E5_IMU_VIN",
+        "GND",
+        "IMU_RX",
+        "IMU_TX"
+      ],
+      "aliases": {},
+      "missing": []
+    },
+    "gerber_x2": {
+      "files": {
+        "gerber/IMU_CARRIER-B_Cu.gbl": "Copper,L2,Bot",
+        "gerber/IMU_CARRIER-B_Mask.gbs": "Soldermask,Bot",
+        "gerber/IMU_CARRIER-B_Paste.gbp": "Paste,Bot",
+        "gerber/IMU_CARRIER-B_Silkscreen.gbo": "Legend,Bot",
+        "gerber/IMU_CARRIER-Edge_Cuts.gm1": "Profile,NP",
+        "gerber/IMU_CARRIER-F_Cu.gtl": "Copper,L1,Top",
+        "gerber/IMU_CARRIER-F_Mask.gts": "Soldermask,Top",
+        "gerber/IMU_CARRIER-F_Paste.gtp": "Paste,Top",
+        "gerber/IMU_CARRIER-F_Silkscreen.gto": "Legend,Top"
+      }
+    },
+    "drill": {
+      "pth_file": 1,
+      "npth_file": 1,
+      "pth_hits": 21,
+      "npth_hits": 2,
+      "board_pth_pads": 16,
+      "board_vias": 5,
+      "board_npth_pads": 2,
+      "maps": [
+        "drill/IMU_CARRIER-NPTH-drl_map.gbr",
+        "drill/IMU_CARRIER-PTH-drl_map.gbr"
+      ]
+    },
+    "passed": true,
+    "area_mm2": 427.86
+  },
+  "problems": [],
+  "sources": {
+    "jlc_bom": {
+      "url": "https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "required BOM columns Comment, Designator, Footprint; .csv/.xls/.xlsx; designators are upper-cased by JLC"
+    },
+    "jlc_cpl": {
+      "url": "https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "CPL columns Designator, Mid X, Mid Y (mm, component centroid), Layer (Top/Bottom), Rotation (degrees, positive counter-clockwise); the page names no coordinate origin and no rotation offsets"
+    },
+    "jlc_kicad": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad",
+      "read": "2026-11-07",
+      "used": "BOM Comment, Designator, Footprint, LCSC Part #; KiCad pos Ref/PosX/PosY/Rot/Side become Designator/Mid X/Mid Y/Rotation/Layer"
+    },
+    "jlc_gerber": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8",
+      "read": "2026-11-07",
+      "used": "layers F/B.Cu (+ inner), F/B.Paste, F/B.Silkscreen, F/B.Mask, Edge.Cuts; Protel extensions; subtract soldermask from silkscreen; drill: alternate oval mode, absolute origin, millimetres, decimal zeros, drill map recommended"
+    },
+    "jlc_capabilities": {
+      "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "used": "FR-4; thickness 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm, tolerance +/-10 % for >= 1.0 mm; 2-layer outer copper 1/2/2.5/3.5/4.5 oz; impedance control listed from 4 layers, standard +/-10 %"
+    },
+    "kicad_cli": {
+      "url": "https://docs.kicad.org/10.0/en/cli/cli.html",
+      "read": "2026-11-07",
+      "used": "options of pcb export gerbers/drill/ipcd356/pos and jobset run"
+    },
+    "kicad_jobs": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs",
+      "read": "2026-11-07",
+      "used": "jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp"
+    },
+    "kicad_d356": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp",
+      "read": "2026-11-07",
+      "used": "IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 characters); test record types 307/317/327/367"
+    }
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "f86c57c52f7adff3ee5d122070d2fe7e8c8cfd1a4f0eaa361fddee04152d0b82",
+      "bytes": 113
+    },
+    {
+      "path": "IMU_CARRIER-fab-notes.pdf",
+      "sha256": "96f6b23e3dfd101202c3f1936adba37edd38435fd7b2f2e958fdeefd08f5ba38",
+      "bytes": 8211
+    },
+    {
+      "path": "IMU_CARRIER.ipc356",
+      "sha256": "0dc837126274ae0c8d86ddd3b4f1670a69479f4769d92390cfbbbda77dfb0843",
+      "bytes": 3990
+    },
+    {
+      "path": "IMU_CARRIER.kicad_jobset",
+      "sha256": "1da6a7eaeea18190c47da7ceeef8a8e5f0772455a6ba50767cbe28554cb50b70",
+      "bytes": 3335
+    },
+    {
+      "path": "README.md",
+      "sha256": "353cfe786747b7564ddaf4af4521b825cf4aad464a2c68f96b8478d3fb8e5e18",
+      "bytes": 6716
+    },
+    {
+      "path": "assembly/IMU_CARRIER-bom-jlc.csv",
+      "sha256": "95c27599188508f38ca040f6f95987401248546ad04083704fddc189cf8c72fd",
+      "bytes": 788
+    },
+    {
+      "path": "assembly/IMU_CARRIER-cpl-jlc.csv",
+      "sha256": "b619497884e126077709cb3873b54e9a76165eda0e6158e2ccf972c4acfe96fe",
+      "bytes": 460
+    },
+    {
+      "path": "assembly/IMU_CARRIER-cpl-rotation-offsets.csv",
+      "sha256": "d3a7206c2f69e7cfe2e31a163c5fddce4b43e8da1182ce3c76fd212c74e0f620",
+      "bytes": 1754
+    },
+    {
+      "path": "assembly/IMU_CARRIER-instances.csv",
+      "sha256": "8ad56f1848a6b963252167bdb8a42fbf748c1c26bcf40b3668f76e907ffe5249",
+      "bytes": 512
+    },
+    {
+      "path": "assembly/IMU_CARRIER-pos-kicad.csv",
+      "sha256": "07b88773cb6c9ac29cbc5a6b83e518b5b22bab8edacdea997791468496ba5f18",
+      "bytes": 644
+    },
+    {
+      "path": "drill/IMU_CARRIER-NPTH-drl_map.gbr",
+      "sha256": "c155808e85110df11a658b0f6526ca6328e310c68deca1147b207b1823ee0a32",
+      "bytes": 22346
+    },
+    {
+      "path": "drill/IMU_CARRIER-NPTH.drl",
+      "sha256": "bc9d40c1340bc3eef48eafac219640699361ffae9cf4a0fcb2edb3afbbfaef0d",
+      "bytes": 284
+    },
+    {
+      "path": "drill/IMU_CARRIER-PTH-drl_map.gbr",
+      "sha256": "e09e0c41ca65a7f4dd7e7fae6858e4ecd0ddb6644d67336998ed65116641863b",
+      "bytes": 34057
+    },
+    {
+      "path": "drill/IMU_CARRIER-PTH.drl",
+      "sha256": "da127241f8f7490d62f8345ee4798fb5da23d9c2c534dfdb363cecd86c9ba6b5",
+      "bytes": 608
+    },
+    {
+      "path": "gerber/IMU_CARRIER-B_Cu.gbl",
+      "sha256": "ffd3d0cc1f23429e565278774e06e0443c97ee2f7e744de5e190b7f74d9e6637",
+      "bytes": 15494
+    },
+    {
+      "path": "gerber/IMU_CARRIER-B_Mask.gbs",
+      "sha256": "bcecc008904d259198617051f9a8d35232a19c587c2983773bf4909862dfbc82",
+      "bytes": 1812
+    },
+    {
+      "path": "gerber/IMU_CARRIER-B_Paste.gbp",
+      "sha256": "bdfe5c28e1671ae7bf8abfcd90473ca59a0aa0d9da458b82beec04fac4235ecf",
+      "bytes": 386
+    },
+    {
+      "path": "gerber/IMU_CARRIER-B_Silkscreen.gbo",
+      "sha256": "8a5d101903edfd1ee60ef078d1d6eb9abbdda77ca15b669cff867d94d41795b1",
+      "bytes": 1822
+    },
+    {
+      "path": "gerber/IMU_CARRIER-Edge_Cuts.gm1",
+      "sha256": "84da3b3d73cd3556f17c43ebfd4905bc628b40b55d1404c3a3655a63de4daecc",
+      "bytes": 936
+    },
+    {
+      "path": "gerber/IMU_CARRIER-F_Cu.gtl",
+      "sha256": "06e495804edc6d625249413ef0d0366ae4be699f3e72a634cde50f41eff44e90",
+      "bytes": 38806
+    },
+    {
+      "path": "gerber/IMU_CARRIER-F_Mask.gts",
+      "sha256": "397e6f3ce63f6e57ee455d817a8d1ab665215b696cbdab2496422ee5f3e899cf",
+      "bytes": 3149
+    },
+    {
+      "path": "gerber/IMU_CARRIER-F_Paste.gtp",
+      "sha256": "d495a8303b8cc51e25a086e06599d8355112b12f84a787a7194f1b9e41aec22f",
+      "bytes": 2268
+    },
+    {
+      "path": "gerber/IMU_CARRIER-F_Silkscreen.gto",
+      "sha256": "100fc871424ce6af149549557e48bdc7d62b5459905ec16ebfa54959ffd5de5c",
+      "bytes": 35780
+    },
+    {
+      "path": "gerber/IMU_CARRIER-job.gbrjob",
+      "sha256": "4f514bfb915cc4e95310fe5e88f81d75553799975acce9d1f862478bfe646a5b",
+      "bytes": 2672
+    }
+  ]
+}

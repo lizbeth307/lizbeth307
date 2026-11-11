@@ -1,0 +1,2232 @@
+{
+  "schema": "srrx-board-report-v1",
+  "board_id": "IMU_CARRIER",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN",
+  "passed": true,
+  "result": {
+    "drc_errors": 0,
+    "drc_unconnected": 0,
+    "drc_warnings": 20,
+    "ignored_checks": [],
+    "source_pad_audit_errors": {
+      "IMUPACK": 0
+    },
+    "boundary_audit": [
+      "pass"
+    ],
+    "domain_audit": true,
+    "keepout_audit": true,
+    "annular_audit": true,
+    "locked_copper_kept": true,
+    "group_audit": true
+  },
+  "inputs": {
+    "parts": {
+      "spec": "857c149d11b361bb05b26c647639035d7f86c2128efbbc405673c3689cbd88e8",
+      "contract": "eb8bdcc25136cd840e3aedb4f9c339180e06d73921852c0cdc50123f5b467768",
+      "project_rules": "91c3a1d2752d4b389c60c7980544efabd5d844378dd7a40f4b8e371a44718513",
+      "template": "81541eaa836e9e50fcd2aef99c8ba145a31a8c683d94b39cd034c199f8d8edf2",
+      "instances": "2f830c8f1d76411924a0f80d06bcae9df46ac653777a51ec759e9f7c8621fbc9"
+    },
+    "sha256": "23100cee2dc38ae286b7a5bd60630579550ac857c109cb2f69c6fa54d936e729"
+  },
+  "board_file": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pcb",
+  "board_sha256": "dd2a8fb80f486f26f35de7b71e88a6d426acc88f4ab33eff3470b6e662a5cfe1",
+  "project_file": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pro",
+  "fp_lib_table_sha256": "1ce2967209f89966ac934112ddc3253975e04ada72b477e026f62ea96e3f140b",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
+    "plan": {
+      "F.Cu": "all parts; E5_IMU_VIN scripted 0.4 mm (class SCRIPTED_VIN); short IMU_TX/IMU_RX/E5_IMU5V stubs to U552 and D502; routed CS/WAKE/3V3; GND pour",
+      "B.Cu": "IMU_TX / IMU_RX scripted 0.2 mm along the strip row gap, E5_IMU5V scripted 0.35 mm (class SCRIPTED_PWR1A = PWR1A width of pcb/generated/netclasses.json), GND pour"
+    }
+  },
+  "stackup_contract": {
+    "t": 1.6,
+    "layers": 2,
+    "fab": "JLC 2-layer FR-4 1.6 mm, 1 oz outer copper (standard; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)', build/15)",
+    "components": "top side only (SMD and THT)"
+  },
+  "outline_mm": [
+    [
+      0,
+      0
+    ],
+    [
+      40.28,
+      0
+    ],
+    [
+      40.28,
+      14.5
+    ],
+    [
+      25.0,
+      14.5
+    ],
+    [
+      25.0,
+      5.9
+    ],
+    [
+      16.5,
+      5.9
+    ],
+    [
+      16.5,
+      11.5
+    ],
+    [
+      6.0,
+      11.5
+    ],
+    [
+      6.0,
+      5.9
+    ],
+    [
+      0,
+      5.9
+    ]
+  ],
+  "holes": [
+    {
+      "ref": "H1",
+      "at": [
+        4.0,
+        3.5
+      ],
+      "d": 3.2,
+      "keepout_d": 6.0
+    },
+    {
+      "ref": "H2",
+      "at": [
+        36.28,
+        3.5
+      ],
+      "d": 3.2,
+      "keepout_d": 6.0
+    }
+  ],
+  "instances": [
+    {
+      "id": "IMUPACK",
+      "placement": "default",
+      "qty": 1,
+      "refs": {
+        "C340": "C340",
+        "C341": "C341",
+        "C519": "C519",
+        "C520": "C520",
+        "D502": "D502",
+        "J320": "J320",
+        "J321": "J321",
+        "J322": "J322",
+        "J518": "J518",
+        "R390": "R390",
+        "R391": "R391",
+        "U552": "U552"
+      },
+      "nets": {
+        "E3_IMU3V3": "E3_IMU3V3",
+        "E3_IMU_CS_N": "E3_IMU_CS_N",
+        "E3_IMU_WAKE_N": "E3_IMU_WAKE_N",
+        "E5_IMU5V": "E5_IMU5V",
+        "E5_IMU_VIN": "E5_IMU_VIN",
+        "GND": "GND",
+        "IMU_RX": "IMU_RX",
+        "IMU_TX": "IMU_TX"
+      }
+    }
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "template": [
+    {
+      "ref": "J321",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "0c7ad0be2489f1c3944a4b99c5987cd5a62c3a45f945ea8999e29d4cc3bb82e8",
+      "value": "Майданчики сигналів RP2040-Zero U309 на IMU_CARRIER",
+      "pads": {
+        "1": "IMU_TX",
+        "2": "IMU_RX",
+        "3": "E3_IMU_CS_N",
+        "4": "E3_IMU_WAKE_N"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J320",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "3aec59111aec53223d14e038df98ac794e3fdb901b1d9ca06d803c2e03750894",
+      "value": "Майданчики живлення RP2040-Zero U309 на IMU_CARRIER",
+      "pads": {
+        "1": "E5_IMU_VIN",
+        "2": "GND",
+        "3": "E3_IMU3V3"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J322",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "fd0bd049af6a685c3715ee6abbad0374ac1f7b4b568e02529e6e544bf9995a18",
+      "value": "Майданчики BNO085 U314 на IMU_CARRIER",
+      "pads": {
+        "1": "E3_IMU3V3",
+        "2": "GND",
+        "3": "E3_IMU_CS_N",
+        "4": "E3_IMU_WAKE_N",
+        "5": "E3_IMU3V3"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J518",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "0c7ad0be2489f1c3944a4b99c5987cd5a62c3a45f945ea8999e29d4cc3bb82e8",
+      "value": "Майданчики кабелю IMU HELU 49655 на IMU_CARRIER",
+      "pads": {
+        "1": "E5_IMU5V",
+        "2": "GND",
+        "3": "IMU_TX",
+        "4": "IMU_RX"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "D502",
+      "source": "graph",
+      "fpid": "Diode_SMD:D_SMA",
+      "library": "project",
+      "file": "build/kicad/footprints/Diode_SMD.pretty/D_SMA.kicad_mod",
+      "sha256": "f7cba3b52ed8b34dce89170722de58324eac04e9e61a095e0eab37b9ca93cb7f",
+      "value": "SS14-E3/61T IMU supply reverse isolation",
+      "pads": {
+        "1": "E5_IMU_VIN",
+        "2": "E5_IMU5V"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "U552",
+      "source": "graph",
+      "fpid": "Package_TO_SOT_SMD:SOT-23-6",
+      "library": "project",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "value": "TPD4E1U06DBVR",
+      "pads": {
+        "1": "IMU_TX",
+        "2": "GND",
+        "3": "E5_IMU5V",
+        "4": null,
+        "5": null,
+        "6": "IMU_RX"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C519",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:C_0805_2012Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb",
+      "value": "10uF X7R 10V",
+      "pads": {
+        "1": "E5_IMU_VIN",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C340",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:C_0805_2012Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb",
+      "value": "10u 10V",
+      "pads": {
+        "1": "E5_IMU_VIN",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C520",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "value": "100nF X7R 10V",
+      "pads": {
+        "1": "E5_IMU_VIN",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "R390",
+      "source": "graph",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "value": "10k",
+      "pads": {
+        "1": "E3_IMU_CS_N",
+        "2": "E3_IMU3V3"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "R391",
+      "source": "graph",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "value": "1k",
+      "pads": {
+        "1": "E3_IMU_WAKE_N",
+        "2": "E3_IMU3V3"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C341",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "value": "100n 16V",
+      "pads": {
+        "1": "E3_IMU3V3",
+        "2": "GND"
+      },
+      "unused_pads": []
+    }
+  ],
+  "placeholders": [],
+  "placement": [
+    {
+      "ref": "C340",
+      "fpid": "Capacitor_SMD:C_0805_2012Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        27.2,
+        9.9
+      ],
+      "courtyard_box": [
+        25.475,
+        8.895,
+        28.925,
+        10.905
+      ],
+      "fab_box": [
+        26.15,
+        9.225,
+        28.25,
+        10.575
+      ]
+    },
+    {
+      "ref": "C341",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "side": "F",
+      "rotation": -90.0,
+      "at": [
+        8.8,
+        7.8
+      ],
+      "courtyard_box": [
+        8.045,
+        6.295,
+        9.555,
+        9.305
+      ],
+      "fab_box": [
+        8.35,
+        6.95,
+        9.25,
+        8.65
+      ]
+    },
+    {
+      "ref": "C519",
+      "fpid": "Capacitor_SMD:C_0805_2012Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        30.6,
+        4.6
+      ],
+      "courtyard_box": [
+        28.875,
+        3.595,
+        32.325,
+        5.605
+      ],
+      "fab_box": [
+        29.55,
+        3.925,
+        31.65,
+        5.275
+      ]
+    },
+    {
+      "ref": "C520",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        31.0,
+        9.9
+      ],
+      "courtyard_box": [
+        29.495,
+        9.145,
+        32.505,
+        10.655
+      ],
+      "fab_box": [
+        30.15,
+        9.45,
+        31.85,
+        10.35
+      ]
+    },
+    {
+      "ref": "D502",
+      "fpid": "Diode_SMD:D_SMA",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        28.6,
+        12.75
+      ],
+      "courtyard_box": [
+        25.075,
+        10.975,
+        32.125,
+        14.525
+      ],
+      "fab_box": [
+        26.25,
+        11.2,
+        30.95,
+        14.3
+      ]
+    },
+    {
+      "ref": "H1",
+      "fpid": "NPTH_3.2mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        4.0,
+        3.5
+      ],
+      "courtyard_box": [
+        2.375,
+        1.875,
+        5.625,
+        5.125
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "H2",
+      "fpid": "NPTH_3.2mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        36.28,
+        3.5
+      ],
+      "courtyard_box": [
+        34.655,
+        1.875,
+        37.905,
+        5.125
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "J320",
+      "fpid": "Connector_Wire:SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm",
+      "side": "F",
+      "rotation": 180.0,
+      "at": [
+        31.5,
+        1.5
+      ],
+      "courtyard_box": [
+        21.975,
+        0.125,
+        33.025,
+        2.875
+      ],
+      "fab_box": [
+        22.7,
+        0.7,
+        32.3,
+        2.3
+      ]
+    },
+    {
+      "ref": "J321",
+      "fpid": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "side": "F",
+      "rotation": 180.0,
+      "at": [
+        20.0,
+        1.5
+      ],
+      "courtyard_box": [
+        6.475,
+        0.125,
+        21.525,
+        2.875
+      ],
+      "fab_box": [
+        7.2,
+        0.7,
+        20.8,
+        2.3
+      ]
+    },
+    {
+      "ref": "J322",
+      "fpid": "Connector_Wire:SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm",
+      "side": "F",
+      "rotation": 180.0,
+      "at": [
+        24.6,
+        4.4
+      ],
+      "courtyard_box": [
+        7.075,
+        3.025,
+        26.125,
+        5.775
+      ],
+      "fab_box": [
+        7.8,
+        3.6,
+        25.4,
+        5.2
+      ]
+    },
+    {
+      "ref": "J518",
+      "fpid": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        26.5,
+        7.5
+      ],
+      "courtyard_box": [
+        24.975,
+        6.125,
+        40.025,
+        8.875
+      ],
+      "fab_box": [
+        25.7,
+        6.7,
+        39.3,
+        8.3
+      ]
+    },
+    {
+      "ref": "R390",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "side": "F",
+      "rotation": 90.0,
+      "at": [
+        15.3,
+        7.8
+      ],
+      "courtyard_box": [
+        14.545,
+        6.295,
+        16.055,
+        9.305
+      ],
+      "fab_box": [
+        14.8375,
+        6.95,
+        15.7625,
+        8.65
+      ]
+    },
+    {
+      "ref": "R391",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "side": "F",
+      "rotation": 90.0,
+      "at": [
+        12.0,
+        7.8
+      ],
+      "courtyard_box": [
+        11.245,
+        6.295,
+        12.755,
+        9.305
+      ],
+      "fab_box": [
+        11.5375,
+        6.95,
+        12.4625,
+        8.65
+      ]
+    },
+    {
+      "ref": "U552",
+      "fpid": "Package_TO_SOT_SMD:SOT-23-6",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        34.8,
+        12.4
+      ],
+      "courtyard_box": [
+        32.725,
+        10.675,
+        36.875,
+        14.125
+      ],
+      "fab_box": [
+        33.95,
+        10.9,
+        35.65,
+        13.9
+      ]
+    }
+  ],
+  "pads": {
+    "C340": [
+      {
+        "number": "1",
+        "net": "E5_IMU_VIN",
+        "at": [
+          26.25,
+          9.9
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          28.15,
+          9.9
+        ]
+      }
+    ],
+    "C341": [
+      {
+        "number": "1",
+        "net": "E3_IMU3V3",
+        "at": [
+          8.8,
+          8.575
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          8.8,
+          7.025
+        ]
+      }
+    ],
+    "C519": [
+      {
+        "number": "1",
+        "net": "E5_IMU_VIN",
+        "at": [
+          29.65,
+          4.6
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          31.55,
+          4.6
+        ]
+      }
+    ],
+    "C520": [
+      {
+        "number": "1",
+        "net": "E5_IMU_VIN",
+        "at": [
+          30.225,
+          9.9
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          31.775,
+          9.9
+        ]
+      }
+    ],
+    "D502": [
+      {
+        "number": "1",
+        "net": "E5_IMU_VIN",
+        "at": [
+          26.6,
+          12.75
+        ]
+      },
+      {
+        "number": "2",
+        "net": "E5_IMU5V",
+        "at": [
+          30.6,
+          12.75
+        ]
+      }
+    ],
+    "H1": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          4.0,
+          3.5
+        ]
+      }
+    ],
+    "H2": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          36.28,
+          3.5
+        ]
+      }
+    ],
+    "J320": [
+      {
+        "number": "1",
+        "net": "E5_IMU_VIN",
+        "at": [
+          31.5,
+          1.5
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          27.5,
+          1.5
+        ]
+      },
+      {
+        "number": "3",
+        "net": "E3_IMU3V3",
+        "at": [
+          23.5,
+          1.5
+        ]
+      }
+    ],
+    "J321": [
+      {
+        "number": "1",
+        "net": "IMU_TX",
+        "at": [
+          20.0,
+          1.5
+        ]
+      },
+      {
+        "number": "2",
+        "net": "IMU_RX",
+        "at": [
+          16.0,
+          1.5
+        ]
+      },
+      {
+        "number": "3",
+        "net": "E3_IMU_CS_N",
+        "at": [
+          12.0,
+          1.5
+        ]
+      },
+      {
+        "number": "4",
+        "net": "E3_IMU_WAKE_N",
+        "at": [
+          8.0,
+          1.5
+        ]
+      }
+    ],
+    "J322": [
+      {
+        "number": "1",
+        "net": "E3_IMU3V3",
+        "at": [
+          24.6,
+          4.4
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          20.6,
+          4.4
+        ]
+      },
+      {
+        "number": "3",
+        "net": "E3_IMU_CS_N",
+        "at": [
+          16.6,
+          4.4
+        ]
+      },
+      {
+        "number": "4",
+        "net": "E3_IMU_WAKE_N",
+        "at": [
+          12.6,
+          4.4
+        ]
+      },
+      {
+        "number": "5",
+        "net": "E3_IMU3V3",
+        "at": [
+          8.6,
+          4.4
+        ]
+      }
+    ],
+    "J518": [
+      {
+        "number": "1",
+        "net": "E5_IMU5V",
+        "at": [
+          26.5,
+          7.5
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          30.5,
+          7.5
+        ]
+      },
+      {
+        "number": "3",
+        "net": "IMU_TX",
+        "at": [
+          34.5,
+          7.5
+        ]
+      },
+      {
+        "number": "4",
+        "net": "IMU_RX",
+        "at": [
+          38.5,
+          7.5
+        ]
+      }
+    ],
+    "R390": [
+      {
+        "number": "1",
+        "net": "E3_IMU_CS_N",
+        "at": [
+          15.3,
+          6.975
+        ]
+      },
+      {
+        "number": "2",
+        "net": "E3_IMU3V3",
+        "at": [
+          15.3,
+          8.625
+        ]
+      }
+    ],
+    "R391": [
+      {
+        "number": "1",
+        "net": "E3_IMU_WAKE_N",
+        "at": [
+          12.0,
+          6.975
+        ]
+      },
+      {
+        "number": "2",
+        "net": "E3_IMU3V3",
+        "at": [
+          12.0,
+          8.625
+        ]
+      }
+    ],
+    "U552": [
+      {
+        "number": "1",
+        "net": "IMU_TX",
+        "at": [
+          33.6625,
+          13.35
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          33.6625,
+          12.4
+        ]
+      },
+      {
+        "number": "3",
+        "net": "E5_IMU5V",
+        "at": [
+          33.6625,
+          11.45
+        ]
+      },
+      {
+        "number": "4",
+        "net": null,
+        "at": [
+          35.9375,
+          11.45
+        ]
+      },
+      {
+        "number": "5",
+        "net": null,
+        "at": [
+          35.9375,
+          12.4
+        ]
+      },
+      {
+        "number": "6",
+        "net": "IMU_RX",
+        "at": [
+          35.9375,
+          13.35
+        ]
+      }
+    ]
+  },
+  "copper": {
+    "tracks": {
+      "segments": 85,
+      "vias": 5,
+      "locked": 32,
+      "by_layer": {
+        "B.Cu": 25,
+        "F.Cu": 60
+      },
+      "widths_mm": [
+        0.2,
+        0.35,
+        0.4
+      ]
+    },
+    "zones": [
+      {
+        "name": "GND-B",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "B.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "GND-F",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "F.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_0_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_0_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_1_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_1_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_2_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_2_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_3_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_3_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_4_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_4_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_5_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_5_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_6_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_6_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_7_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_7_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_8_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_8_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_9_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_9_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H1_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H1_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H2_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H2_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      }
+    ],
+    "copper_layers": 2
+  },
+  "drc": {
+    "errors": 0,
+    "warnings": 20,
+    "unconnected": 0,
+    "schematic_parity": 0,
+    "ignored_checks": [],
+    "by_type": {
+      "silk_over_copper": {
+        "severity": "warning",
+        "count": 10
+      },
+      "silk_overlap": {
+        "severity": "warning",
+        "count": 10
+      }
+    },
+    "error_items": [],
+    "warning_items": [
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C340",
+            "pos": [
+              127.2,
+              104.6
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_IMU_VIN] of C340 on F.Cu",
+            "pos": [
+              126.25,
+              104.6
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C340",
+            "pos": [
+              127.2,
+              104.6
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C340 on F.Cu",
+            "pos": [
+              128.15,
+              104.6
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C519",
+            "pos": [
+              130.6,
+              109.9
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_IMU_VIN] of C519 on F.Cu",
+            "pos": [
+              129.65,
+              109.9
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C519",
+            "pos": [
+              130.6,
+              109.9
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C519 on F.Cu",
+            "pos": [
+              131.55,
+              109.9
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C520",
+            "pos": [
+              131.0,
+              104.6
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_IMU_VIN] of C520 on F.Cu",
+            "pos": [
+              130.225,
+              104.6
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C520",
+            "pos": [
+              131.0,
+              104.6
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C520 on F.Cu",
+            "pos": [
+              131.775,
+              104.6
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of D502",
+            "pos": [
+              128.6,
+              103.9
+            ]
+          },
+          {
+            "description": "Pad 1 [E5_IMU_VIN] of C520 on F.Cu",
+            "pos": [
+              130.225,
+              104.6
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of D502",
+            "pos": [
+              128.6,
+              103.9
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C340 on F.Cu",
+            "pos": [
+              128.15,
+              104.6
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of J321",
+            "pos": [
+              114.0,
+              111.5
+            ]
+          },
+          {
+            "description": "PTH pad 4 [E3_IMU_WAKE_N] of J322",
+            "pos": [
+              112.6,
+              110.1
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of J518",
+            "pos": [
+              132.5,
+              105.5
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C520 on F.Cu",
+            "pos": [
+              131.775,
+              104.6
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C340",
+            "pos": [
+              127.2,
+              104.6
+            ]
+          },
+          {
+            "description": "Reference field of D502",
+            "pos": [
+              128.6,
+              103.9
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C520",
+            "pos": [
+              131.0,
+              104.6
+            ]
+          },
+          {
+            "description": "Reference field of D502",
+            "pos": [
+              128.6,
+              103.9
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C520",
+            "pos": [
+              131.0,
+              104.6
+            ]
+          },
+          {
+            "description": "Reference field of J518",
+            "pos": [
+              132.5,
+              105.5
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C520",
+            "pos": [
+              131.0,
+              104.6
+            ]
+          },
+          {
+            "description": "Segment of C520 on F.Silkscreen",
+            "pos": [
+              130.8594,
+              104.09
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C520",
+            "pos": [
+              131.0,
+              104.6
+            ]
+          },
+          {
+            "description": "Segment of C520 on F.Silkscreen",
+            "pos": [
+              130.8594,
+              105.11
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of D502",
+            "pos": [
+              128.6,
+              103.9
+            ]
+          },
+          {
+            "description": "Segment of D502 on F.Silkscreen",
+            "pos": [
+              125.09,
+              103.4
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of J518",
+            "pos": [
+              132.5,
+              105.5
+            ]
+          },
+          {
+            "description": "Segment of C520 on F.Silkscreen",
+            "pos": [
+              130.8594,
+              105.11
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C340 on F.Silkscreen",
+            "pos": [
+              126.9387,
+              103.865
+            ]
+          },
+          {
+            "description": "Reference field of D502",
+            "pos": [
+              128.6,
+              103.9
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U552 on F.Silkscreen",
+            "pos": [
+              135.71,
+              103.61
+            ]
+          },
+          {
+            "description": "Reference field of U552",
+            "pos": [
+              135.4,
+              104.3
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U552 on F.Silkscreen",
+            "pos": [
+              135.71,
+              103.66
+            ]
+          },
+          {
+            "description": "Reference field of U552",
+            "pos": [
+              135.4,
+              104.3
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      }
+    ],
+    "unconnected_items": [],
+    "severities_reviewed": {
+      "errors": [
+        "annular_width",
+        "assertion_failure",
+        "clearance",
+        "connection_width",
+        "copper_edge_clearance",
+        "copper_sliver",
+        "courtyards_overlap",
+        "creepage",
+        "diff_pair_gap_out_of_range",
+        "diff_pair_uncoupled_length_too_long",
+        "drill_out_of_range",
+        "footprint",
+        "footprint_type_mismatch",
+        "generic_error",
+        "hole_clearance",
+        "hole_to_hole",
+        "holes_co_located",
+        "invalid_outline",
+        "isolated_copper",
+        "item_on_disabled_layer",
+        "items_not_allowed",
+        "length_out_of_range",
+        "lib_footprint_issues",
+        "lib_footprint_mismatch",
+        "malformed_courtyard",
+        "microvia_drill_out_of_range",
+        "mirrored_text_on_front_layer",
+        "missing_courtyard",
+        "nonmirrored_text_on_back_layer",
+        "npth_inside_courtyard",
+        "padstack",
+        "padstack_invalid",
+        "pth_inside_courtyard",
+        "shorting_items",
+        "silk_edge_clearance",
+        "skew_out_of_range",
+        "solder_mask_bridge",
+        "starved_thermal",
+        "text_height",
+        "text_on_edge_cuts",
+        "text_thickness",
+        "through_hole_pad_without_hole",
+        "too_many_vias",
+        "track_angle",
+        "track_dangling",
+        "track_not_centered_on_via",
+        "track_on_post_machined_layer",
+        "track_segment_length",
+        "track_width",
+        "tracks_crossing",
+        "unconnected_items",
+        "unresolved_variable",
+        "via_dangling",
+        "via_diameter",
+        "zones_intersect"
+      ],
+      "warnings": {
+        "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+        "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+        "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+        "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+        "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
+        "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board"
+      }
+    },
+    "kicad_version": "10.0.7",
+    "coordinate_units": "mm",
+    "passed": true
+  },
+  "audits": {
+    "domain": {
+      "domains": [
+        "IMU_CARRIER"
+      ],
+      "domain_refs": [
+        "C340",
+        "C341",
+        "C519",
+        "C520",
+        "D502",
+        "J320",
+        "J321",
+        "J322",
+        "J518",
+        "R390",
+        "R391",
+        "U552"
+      ],
+      "missing": [],
+      "foreign": [],
+      "passed": true
+    },
+    "source_pad": [
+      {
+        "instance": "IMUPACK",
+        "errors": [],
+        "passed": true
+      }
+    ],
+    "boundary": [
+      {
+        "instance": "IMUPACK",
+        "status": "pass",
+        "nets": [
+          {
+            "net": "E3_IMU3V3",
+            "graph_net": "E3_IMU3V3",
+            "board_pads": [
+              "J320.3",
+              "J322.1",
+              "J322.5",
+              "R390.2",
+              "R391.2",
+              "C341.1"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "U309",
+              "U314"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "E3_IMU_CS_N",
+            "graph_net": "E3_IMU_CS_N",
+            "board_pads": [
+              "J321.3",
+              "J322.3",
+              "R390.1"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "U309",
+              "U314"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "E3_IMU_WAKE_N",
+            "graph_net": "E3_IMU_WAKE_N",
+            "board_pads": [
+              "J321.4",
+              "J322.4",
+              "R391.1"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "U309",
+              "U314"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "E5_IMU5V",
+            "graph_net": "E5_IMU5V",
+            "board_pads": [
+              "J518.1",
+              "D502.2",
+              "U552.3"
+            ],
+            "external_refs": 6,
+            "external_sample": [
+              "C553",
+              "J504",
+              "J507",
+              "J550",
+              "U551",
+              "U553"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "E5_IMU_VIN",
+            "graph_net": "E5_IMU_VIN",
+            "board_pads": [
+              "J320.1",
+              "D502.1",
+              "C519.1",
+              "C340.1",
+              "C520.1"
+            ],
+            "external_refs": 1,
+            "external_sample": [
+              "U309"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "GND",
+            "graph_net": "GND",
+            "board_pads": [
+              "J320.2",
+              "J322.2",
+              "J518.2",
+              "U552.2",
+              "C519.2",
+              "C340.2",
+              "C520.2",
+              "C341.2"
+            ],
+            "external_refs": 519,
+            "external_sample": [
+              "A401",
+              "A402",
+              "A403",
+              "A404",
+              "A405",
+              "A406"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "IMU_RX",
+            "graph_net": "IMU_RX",
+            "board_pads": [
+              "J321.2",
+              "J518.4",
+              "U552.6"
+            ],
+            "external_refs": 8,
+            "external_sample": [
+              "J203",
+              "J307",
+              "J504",
+              "J507",
+              "J550",
+              "U305"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "IMU_TX",
+            "graph_net": "IMU_TX",
+            "board_pads": [
+              "J321.1",
+              "J518.3",
+              "U552.1"
+            ],
+            "external_refs": 8,
+            "external_sample": [
+              "J203",
+              "J307",
+              "J504",
+              "J507",
+              "J550",
+              "U305"
+            ],
+            "status": "connector"
+          }
+        ],
+        "hosted_contacts": []
+      }
+    ],
+    "keepout": {
+      "rows": [
+        {
+          "hole": "H1",
+          "ref": "C340",
+          "keepout_radius": 3.0,
+          "pad_distance": 22.4782,
+          "courtyard_distance": 22.1423,
+          "body_distance": 22.8779,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "C341",
+          "keepout_radius": 3.0,
+          "pad_distance": 5.3067,
+          "courtyard_distance": 4.9167,
+          "body_distance": 5.552,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "C519",
+          "keepout_radius": 3.0,
+          "pad_distance": 25.1528,
+          "courtyard_distance": 24.8752,
+          "body_distance": 25.5535,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "C520",
+          "keepout_radius": 3.0,
+          "pad_distance": 26.4472,
+          "courtyard_distance": 26.1125,
+          "body_distance": 26.8184,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "D502",
+          "keepout_radius": 3.0,
+          "pad_distance": 22.9248,
+          "courtyard_distance": 22.3614,
+          "body_distance": 23.5447,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J320",
+          "keepout_radius": 3.0,
+          "pad_distance": 18.6854,
+          "courtyard_distance": 17.9859,
+          "body_distance": 18.7385,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J321",
+          "keepout_radius": 3.0,
+          "pad_distance": 3.3534,
+          "courtyard_distance": 2.5527,
+          "body_distance": 3.4176,
+          "courtyard_intrudes": true,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J322",
+          "keepout_radius": 3.0,
+          "pad_distance": 3.7503,
+          "courtyard_distance": 3.075,
+          "body_distance": 3.8013,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J518",
+          "keepout_radius": 3.0,
+          "pad_distance": 21.878,
+          "courtyard_distance": 21.1386,
+          "body_distance": 21.9347,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "R390",
+          "keepout_radius": 3.0,
+          "pad_distance": 11.2533,
+          "courtyard_distance": 10.9091,
+          "body_distance": 11.3734,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "R391",
+          "keepout_radius": 3.0,
+          "pad_distance": 8.129,
+          "courtyard_distance": 7.7654,
+          "body_distance": 8.2895,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "U552",
+          "keepout_radius": 3.0,
+          "pad_distance": 29.992,
+          "courtyard_distance": 29.6075,
+          "body_distance": 30.8506,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "C340",
+          "keepout_radius": 3.0,
+          "pad_distance": 9.5091,
+          "courtyard_distance": 9.1215,
+          "body_distance": 9.8619,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "C341",
+          "keepout_radius": 3.0,
+          "pad_distance": 27.1795,
+          "courtyard_distance": 26.8708,
+          "body_distance": 27.2493,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "C519",
+          "keepout_radius": 3.0,
+          "pad_distance": 4.2466,
+          "courtyard_distance": 3.9561,
+          "body_distance": 4.6495,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "C520",
+          "keepout_radius": 3.0,
+          "pad_distance": 7.1797,
+          "courtyard_distance": 6.7909,
+          "body_distance": 7.418,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "D502",
+          "keepout_radius": 3.0,
+          "pad_distance": 9.4524,
+          "courtyard_distance": 8.5522,
+          "body_distance": 9.3648,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J320",
+          "keepout_radius": 3.0,
+          "pad_distance": 4.0948,
+          "courtyard_distance": 3.3145,
+          "body_distance": 4.157,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J321",
+          "keepout_radius": 3.0,
+          "pad_distance": 15.4728,
+          "courtyard_distance": 14.7682,
+          "body_distance": 15.5264,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J322",
+          "keepout_radius": 3.0,
+          "pad_distance": 10.8301,
+          "courtyard_distance": 10.155,
+          "body_distance": 10.8805,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J518",
+          "keepout_radius": 3.0,
+          "pad_distance": 3.2844,
+          "courtyard_distance": 2.625,
+          "body_distance": 3.2,
+          "courtyard_intrudes": true,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "R390",
+          "keepout_radius": 3.0,
+          "pad_distance": 20.7343,
+          "courtyard_distance": 20.4172,
+          "body_distance": 20.8055,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "R391",
+          "keepout_radius": 3.0,
+          "pad_distance": 24.0028,
+          "courtyard_distance": 23.6905,
+          "body_distance": 24.0661,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "U552",
+          "keepout_radius": 3.0,
+          "pad_distance": 7.65,
+          "courtyard_distance": 7.175,
+          "body_distance": 7.4268,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        }
+      ],
+      "errors": [],
+      "passed": true,
+      "note": "Keepout = copper rule area (tracks, vias, fills) on the listed layers. A courtyard box intrusion is reported, not failed, when pads and the F.Fab body clear the keepout."
+    },
+    "annular": {
+      "floor_mm": 0.18,
+      "below_floor": [],
+      "passed": true
+    },
+    "groups": {
+      "rows": [],
+      "errors": [],
+      "passed": true
+    },
+    "locked": {
+      "scripted_segments": 32,
+      "locked_on_board": 32,
+      "kept": true,
+      "note": "SES import before/after counts and the DSN probe are in route-log.json"
+    }
+  },
+  "router": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "runtime": "Eclipse Temurin JRE 25.0.5+8 (sha256 6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6)",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:06:00",
+    "fetch": "CI only, never committed or uploaded"
+  },
+  "heights": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "imu_pack.json carrier_pcb parts_h 2.5 (assumption)"
+    }
+  ],
+  "does_not_prove": [
+    "that the schematic is right",
+    "current capacity or temperature rise beyond the chosen class widths",
+    "impedance, RF loss or isolation, EMC or signal integrity",
+    "creepage beyond the encoded clearances",
+    "that the enclosure fits (only outline and hole checks; heights are not checked here)",
+    "that the fab's DFM accepts the board, or that CPL rotations are right",
+    "that the land patterns match the purchased MPNs",
+    "any function: hardware and bench gates stay OPEN"
+  ]
+}

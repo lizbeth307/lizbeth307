@@ -1,0 +1,423 @@
+{
+  "schema": "srrx-fab-manifest-v1",
+  "board_id": "T7_INSERT",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "NOT RELEASED: model/CI only; bench gates OPEN",
+  "generator": "pcb/fab_export.py",
+  "kicad_version": "10.0.7",
+  "inputs": {
+    "board_file": "build/kicad/boards/T7_INSERT/T7_INSERT.kicad_pcb",
+    "board_sha256": "91094ddc0601e9aa8f542a5fb6f8fad6234326e387679aacc77eb34130b5c88b",
+    "project_sha256": "218eaa6b22df4ea942c0c921221df012fd9fcfb91247ce4e576be6c17a7c6f1b",
+    "spec_projection_sha256": "6d4ca15a992d367cc767ae991388dbc6e9c54a1c1ae3a47b216a10988d42b00c",
+    "report_projection_sha256": "b3b35be5aba1e715fa8d88ab222c675a6e2d11cefa44ba2c37f5b7bc6766b8ce",
+    "jlc_bom_rows": [
+      {
+        "Board": "T7_INSERT",
+        "Comment": "0603WAF1002T5E",
+        "Designator": "R516,R517",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C25804",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "T7_INSERT",
+        "Comment": "0603WAF1003T5E",
+        "Designator": "R515",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C25803",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "T7_INSERT",
+        "Comment": "0603WAF1582T5E",
+        "Designator": "R514",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C22880",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "T7_INSERT",
+        "Comment": "16SVPC150M",
+        "Designator": "C516",
+        "Footprint": "CP_Elec_8x6.9",
+        "LCSC Part #": "C190722",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "T7_INSERT",
+        "Comment": "CC0603KRX7R9BB104",
+        "Designator": "C514",
+        "Footprint": "C_0603_1608Metric",
+        "LCSC Part #": "C14663",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "T7_INSERT",
+        "Comment": "CC0805KKX7R8BB475",
+        "Designator": "C515",
+        "Footprint": "C_0805_2012Metric",
+        "LCSC Part #": "C354262",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "T7_INSERT",
+        "Comment": "S3B-PH-K-S(LF)(SN)",
+        "Designator": "J514",
+        "Footprint": "JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+        "LCSC Part #": "C157929",
+        "Mount": "THT"
+      },
+      {
+        "Board": "T7_INSERT",
+        "Comment": "TPS2553DRVR",
+        "Designator": "U505",
+        "Footprint": "WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm",
+        "LCSC Part #": "C138719",
+        "Mount": "SMD"
+      }
+    ],
+    "jlc_bom_rows_sha256": "1a03d0cbd3eb9a0d5c6c1ceec61d2ff57fcf09e0cdce4428da64a370e22fd627",
+    "stackup": {
+      "id": "JLC standard 2-layer FR-4",
+      "material": "FR-4",
+      "copper_outer": "1 oz",
+      "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "note": "finished thickness from the spec layers.thickness_mm; JLC tolerance +/-10 % for boards >= 1.0 mm; 1 oz outer copper is the project choice (build/15 rows Шари and Мідь і струмові класи)",
+      "copper_layers": 2,
+      "thickness_mm": 1.6
+    },
+    "stackup_sha256": "5d4429eae592c730808058b5134bdf6fb5f9b87bf3e9f3435e687871bce8f37a",
+    "rf50_nets": [],
+    "note": "projections (F10): an unrelated build/10-jlc-bom.csv row, LCSC stock or spec edit does not stale this set"
+  },
+  "commands": [
+    {
+      "job": "gerbers",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "gerbers",
+        "--output",
+        "<temp>/raw/gerber/",
+        "--layers",
+        "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+        "--subtract-soldermask",
+        "--precision",
+        "6",
+        "<temp>/src/T7_INSERT.kicad_pcb"
+      ]
+    },
+    {
+      "job": "drill",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "drill",
+        "--output",
+        "<temp>/raw/drill/",
+        "--format",
+        "excellon",
+        "--drill-origin",
+        "absolute",
+        "--excellon-zeros-format",
+        "decimal",
+        "--excellon-oval-format",
+        "alternate",
+        "--excellon-units",
+        "mm",
+        "--excellon-separate-th",
+        "--generate-map",
+        "--map-format",
+        "gerberx2",
+        "<temp>/src/T7_INSERT.kicad_pcb"
+      ]
+    },
+    {
+      "job": "ipcd356",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "ipcd356",
+        "--output",
+        "<temp>/raw/T7_INSERT.ipc356",
+        "<temp>/src/T7_INSERT.kicad_pcb"
+      ]
+    },
+    {
+      "job": "pos",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "pos",
+        "--output",
+        "<temp>/raw/assembly/T7_INSERT-pos-kicad.csv",
+        "--side",
+        "both",
+        "--format",
+        "csv",
+        "--units",
+        "mm",
+        "--exclude-dnp",
+        "<temp>/src/T7_INSERT.kicad_pcb"
+      ]
+    }
+  ],
+  "normalisation": [
+    "Gerber and drill-map Gerber: the %TF.CreationDate attribute line (optional in Gerber X2) is removed; 'G04 Created by KiCad (...) date ...*' keeps the creator and loses the date",
+    "Excellon: the '; #@! TF.CreationDate' line is removed; \"; DRILL file KiCad ... date ...\" loses the date",
+    "Gerber job file (.gbrjob): Header.CreationDate is removed (JSON re-written with indent 2)",
+    "IPC-D-356: comment-record dates are removed and file paths become the board file name",
+    "KiCad build strings that start with 10.0.7 become 10.0.7 in generator lines",
+    "after normalisation no date/time stamp and no path of the export directory may remain (checked)"
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "dnp_excluded": [
+    "J515",
+    "J516",
+    "J517",
+    "TP501"
+  ],
+  "coverage": {
+    "cpl": {
+      "rows": 9,
+      "placed_by_side_and_mount": {
+        "Top": {
+          "SMD": 8,
+          "THT": 1
+        }
+      },
+      "smd_refs_once_per_side": true
+    },
+    "bom": {
+      "rows": 8,
+      "designators": 9,
+      "tbd": [],
+      "boards": 1
+    },
+    "ipc356": {
+      "board_pad_nets": [
+        "3V3_Q6A",
+        "E5_FAULT_T7",
+        "E5_U505_ILIM",
+        "E5_VBUS_J5",
+        "E5_VBUS_T7",
+        "EN_T7",
+        "GND"
+      ],
+      "ipc_nets": [
+        "3V3_Q6A",
+        "E5_FAULT_T7",
+        "E5_U505_ILIM",
+        "E5_VBUS_J5",
+        "E5_VBUS_T7",
+        "EN_T7",
+        "GND"
+      ],
+      "aliases": {},
+      "missing": []
+    },
+    "gerber_x2": {
+      "files": {
+        "gerber/T7_INSERT-B_Cu.gbl": "Copper,L2,Bot",
+        "gerber/T7_INSERT-B_Mask.gbs": "Soldermask,Bot",
+        "gerber/T7_INSERT-B_Paste.gbp": "Paste,Bot",
+        "gerber/T7_INSERT-B_Silkscreen.gbo": "Legend,Bot",
+        "gerber/T7_INSERT-Edge_Cuts.gm1": "Profile,NP",
+        "gerber/T7_INSERT-F_Cu.gtl": "Copper,L1,Top",
+        "gerber/T7_INSERT-F_Mask.gts": "Soldermask,Top",
+        "gerber/T7_INSERT-F_Paste.gtp": "Paste,Top",
+        "gerber/T7_INSERT-F_Silkscreen.gto": "Legend,Top"
+      }
+    },
+    "drill": {
+      "pth_file": 1,
+      "npth_file": 1,
+      "pth_hits": 15,
+      "npth_hits": 0,
+      "board_pth_pads": 6,
+      "board_vias": 9,
+      "board_npth_pads": 0,
+      "maps": [
+        "drill/T7_INSERT-NPTH-drl_map.gbr",
+        "drill/T7_INSERT-PTH-drl_map.gbr"
+      ]
+    },
+    "passed": true,
+    "area_mm2": 369.0
+  },
+  "problems": [],
+  "sources": {
+    "jlc_bom": {
+      "url": "https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "required BOM columns Comment, Designator, Footprint; .csv/.xls/.xlsx; designators are upper-cased by JLC"
+    },
+    "jlc_cpl": {
+      "url": "https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "CPL columns Designator, Mid X, Mid Y (mm, component centroid), Layer (Top/Bottom), Rotation (degrees, positive counter-clockwise); the page names no coordinate origin and no rotation offsets"
+    },
+    "jlc_kicad": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad",
+      "read": "2026-11-07",
+      "used": "BOM Comment, Designator, Footprint, LCSC Part #; KiCad pos Ref/PosX/PosY/Rot/Side become Designator/Mid X/Mid Y/Rotation/Layer"
+    },
+    "jlc_gerber": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8",
+      "read": "2026-11-07",
+      "used": "layers F/B.Cu (+ inner), F/B.Paste, F/B.Silkscreen, F/B.Mask, Edge.Cuts; Protel extensions; subtract soldermask from silkscreen; drill: alternate oval mode, absolute origin, millimetres, decimal zeros, drill map recommended"
+    },
+    "jlc_capabilities": {
+      "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "used": "FR-4; thickness 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm, tolerance +/-10 % for >= 1.0 mm; 2-layer outer copper 1/2/2.5/3.5/4.5 oz; impedance control listed from 4 layers, standard +/-10 %"
+    },
+    "kicad_cli": {
+      "url": "https://docs.kicad.org/10.0/en/cli/cli.html",
+      "read": "2026-11-07",
+      "used": "options of pcb export gerbers/drill/ipcd356/pos and jobset run"
+    },
+    "kicad_jobs": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs",
+      "read": "2026-11-07",
+      "used": "jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp"
+    },
+    "kicad_d356": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp",
+      "read": "2026-11-07",
+      "used": "IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 characters); test record types 307/317/327/367"
+    }
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "f86c57c52f7adff3ee5d122070d2fe7e8c8cfd1a4f0eaa361fddee04152d0b82",
+      "bytes": 113
+    },
+    {
+      "path": "README.md",
+      "sha256": "f01353b948be3a8a9c7d94327bbbedfb1e86889630b116fe6a3c1437150379c8",
+      "bytes": 6690
+    },
+    {
+      "path": "T7_INSERT-fab-notes.pdf",
+      "sha256": "8831bda48627f37c3947b1c0622a5ecea478818c431e001b0369d54814fdbdf3",
+      "bytes": 7655
+    },
+    {
+      "path": "T7_INSERT.ipc356",
+      "sha256": "59488663c667ed37174f3b8bc5667a0223c20bf266e848aaba36743dda2e3aa2",
+      "bytes": 3502
+    },
+    {
+      "path": "T7_INSERT.kicad_jobset",
+      "sha256": "e05f0d9fc09ae006f79b5df40dfded5e9e11e46b2bd01bef76f36ff9003675bb",
+      "bytes": 3331
+    },
+    {
+      "path": "assembly/T7_INSERT-bom-jlc.csv",
+      "sha256": "ce76779382fcda72d88ba5df65faa18cf88b0793ffe3f1be0d0754b2a9098a0d",
+      "bytes": 905
+    },
+    {
+      "path": "assembly/T7_INSERT-cpl-jlc.csv",
+      "sha256": "b06b7efa2069a6e3fb7cb9e86c659dd6fc9d086bee98ed609be70e24e12b18cd",
+      "bytes": 515
+    },
+    {
+      "path": "assembly/T7_INSERT-cpl-rotation-offsets.csv",
+      "sha256": "ce619cd1891603c88651753c04c796ae4c5235e97ba78d803c3d5ffb6e02fb8f",
+      "bytes": 2141
+    },
+    {
+      "path": "assembly/T7_INSERT-instances.csv",
+      "sha256": "b0fc41c66a348655d5265596d34aa40d13b47de3743254000928376f37c8847c",
+      "bytes": 500
+    },
+    {
+      "path": "assembly/T7_INSERT-pos-kicad.csv",
+      "sha256": "c41dadec0c5a1be4ed512af1a7b1880ae1f93caa0ad077b476f43a0f7f682bdd",
+      "bytes": 811
+    },
+    {
+      "path": "drill/T7_INSERT-NPTH-drl_map.gbr",
+      "sha256": "4db31b23992317b8f4a0cba4bfd10f152eb8311bbe636b1e8adb56663530da6a",
+      "bytes": 3935
+    },
+    {
+      "path": "drill/T7_INSERT-NPTH.drl",
+      "sha256": "35c59b5e8f2bf8e09d607c817dfd7cb8870656eb0860167f53f49c80b4c04bd4",
+      "bytes": 191
+    },
+    {
+      "path": "drill/T7_INSERT-PTH-drl_map.gbr",
+      "sha256": "97e878e3583013e2b2459fd07b90eab4b8600cc177f99510caee9f79c60aa420",
+      "bytes": 46530
+    },
+    {
+      "path": "drill/T7_INSERT-PTH.drl",
+      "sha256": "5626a8fdfa687c1c217aed3f819034cefacd636ceee0227995ff5f012d3c1aa5",
+      "bytes": 572
+    },
+    {
+      "path": "gerber/T7_INSERT-B_Cu.gbl",
+      "sha256": "afc574b4c5051dc6f8789c6b973a22b257a48a6f9ecc8e9e0390373adb74d964",
+      "bytes": 11059
+    },
+    {
+      "path": "gerber/T7_INSERT-B_Mask.gbs",
+      "sha256": "5e5066dd95d9ceb9d5a64b21235398e5cb3d92642a5fa82eb9b1d0d4e88c85d4",
+      "bytes": 1424
+    },
+    {
+      "path": "gerber/T7_INSERT-B_Paste.gbp",
+      "sha256": "69b3eeb5a40ae460ecce33d9a1b9b40a0dfb8f0eda4300e8f04cb61c68a008b6",
+      "bytes": 384
+    },
+    {
+      "path": "gerber/T7_INSERT-B_Silkscreen.gbo",
+      "sha256": "ca0f57b111ae8acfb92e07a3b4364503d49bb3761d1aefce386e81ff75b67634",
+      "bytes": 1434
+    },
+    {
+      "path": "gerber/T7_INSERT-Edge_Cuts.gm1",
+      "sha256": "8369823d201bce750866b1285efb55f5923b43fef431eca60d5d2e46b05ec5d4",
+      "bytes": 622
+    },
+    {
+      "path": "gerber/T7_INSERT-F_Cu.gtl",
+      "sha256": "8ebf3495de14d0b1f1ca370d4f9db441850ced68dd633b8724ca319a779f8a55",
+      "bytes": 30022
+    },
+    {
+      "path": "gerber/T7_INSERT-F_Mask.gts",
+      "sha256": "8bf4a44d7209700cc005a54aa0e2fc351b96bd81eba0cf5871f0c3f2cf48e434",
+      "bytes": 2900
+    },
+    {
+      "path": "gerber/T7_INSERT-F_Paste.gtp",
+      "sha256": "2c66de7c8a750e3a36a3f630d7dd4cdefcffafc0ce0721350755bd0b6afa7ebe",
+      "bytes": 2433
+    },
+    {
+      "path": "gerber/T7_INSERT-F_Silkscreen.gto",
+      "sha256": "1111d1cfe548fbe41d03722af466a937671e6b4ba783a5c3347740f73c9ff104",
+      "bytes": 35035
+    },
+    {
+      "path": "gerber/T7_INSERT-job.gbrjob",
+      "sha256": "a73643bbedb548e7e9790f0ce916bfa8e56fe3ce168bc49a2cbd33191251a979",
+      "bytes": 2651
+    }
+  ]
+}
