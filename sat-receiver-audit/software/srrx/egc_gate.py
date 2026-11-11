@@ -1,21 +1,35 @@
 """Inmarsat-C EGC SafetyNET header gate (STACK.md:120); headers only, never message text.
 
 Released by evidence only. decoder_policy keeps "egc-safetynet" DISABLED until
-the C2 service-code table is checked against the International SafetyNET
-Services Manual, the ПОЛ-06 mixed-recording test passes and the descriptor
-checksum algorithm is verified. Synthetic unit tests do not enable anything.
+a reviewer has checked the C2 service-code table and the descriptor checksum
+algorithm (both read from sources, RELEASE_EVIDENCE_SOURCES, unreviewed) and the
+ПОЛ-06 mixed-recording test passes. Synthetic unit tests do not enable anything.
 
 Rules: (1) class from byte 0: 0xxxxxxx short (never EGC), 10xxxxxx medium with
 length pkt[1]+2, 11xxxxxx long with length pkt[1..2]+3; type = byte0 & 0x3F;
-EGC types 0x30-0x32. (2) Service code at offset 2 (medium) or 3 (long).
-(3) Only SafetyNET codes pass; System, FleetNET and all others are rejected.
+EGC types 0x30-0x32. (2) Service code at offset 2 (medium) or 3 (long); the
+priority is bits 6-5 of the next byte (0 routine, 1 safety, 2 urgency,
+3 distress). (3) Only the SafetyNET codes of the IMO MSC.1/Circ.1364/Rev.2 C2
+table pass, C2 00 (all ships, general call) only at urgency or distress
+priority; System, FleetNET and all others (0x73 included) are rejected.
 (4) Multiframe 0x3D/0x3E: decided on the first fragment, inner descriptor at
 byte 2. (5) The 2-byte checksum is evaluated only for accepted packets; a
 rejected packet is neither checksummed nor copied.
 
-Conservative assumptions, to verify against SatDump packets_structs.h at 1aedd60
-(URL STACK.md:1955) before any release:
-- the long-form length pkt[1..2] is big-endian;
+Read 2026-11-07 (RELEASE_EVIDENCE_SOURCES; a reading, not a review):
+- SatDump 1aedd60 packets_structs.h: descriptor class and the big-endian long
+  length (:51-77), the checksum (:90-108, trailer :120, a sent 0 accepted :122)
+  and the EGC header: service code pkt[2], priority (pkt[3] & 0x60) >> 5 (:618-620,
+  medium form only; for the long form the gate reads the byte after its service
+  code at offset 3, an assumption); pkt_structs.cpp:538-555 names priorities 0-3;
+- IMO MSC.1/Circ.1364/Rev.2 annex pages 17-18: C2 00, 04, 13, 14, 24, 31, 34, 44
+  (0x73, which SatDump pkt_structs.cpp:531-532 names a SafetyNET chart correction
+  service, is not listed); appendix 2 part C §4 (annex page 32): a general call
+  is always C1 = 3 (distress) or 2 (urgency) with C2 = 00.
+
+Conservative assumptions, to verify against SatDump at 1aedd60 (URL STACK.md:1955)
+before any release:
+- the over-air priority bits carry the C1 priority code of the IMO manual;
 - 0x3D starts and 0x3E continues a multiframe; both are medium form (raw 0xBD /
   0xBE) because the inner descriptor sits at byte 2; long-form 0xFD/0xFE is
   rejected; a fragment carries outer header bytes 0-1, data, then 2 checksum
@@ -29,10 +43,23 @@ Conservative assumptions, to verify against SatDump packets_structs.h at 1aedd60
   wrapped or invalid frame number, a reported loss, a continuation anywhere else,
   a missing boundary or a fragment that overruns the declared inner length
   closes and zero-fills the open message, so after a lost frame a continuation
-  of another (e.g. FleetNET) multiframe is never appended; the completed inner
-  descriptor's own checksum must verify too;
-- the checksum algorithm is not in project sources: it is an injected
-  verifier(descriptor_bytes) -> True; without one nothing is checked or passed;
+  of another (e.g. FleetNET) multiframe is never appended (SatDump
+  pkt_parser.cpp:8-34 and :124-142 handle one 0x3D start and one 0x3E end with
+  outer bytes 0-1, data and 2 checksum bytes, and size only short and medium
+  inner descriptors);
+- the fragments carry the whole inner descriptor, its own 2 checksum bytes
+  included, and the completed inner descriptor must verify. SatDump reads the
+  stream differently: pkt_parser.cpp:19 zero-fills a buffer of the inner length
+  and :131 completes the message at inner length - 2, so the inner trailer is
+  never carried and passes there only through the sent-0 rule
+  (packets_structs.h:122). Laid out as SatDump reads it, every multiframe
+  SafetyNET message stays 2 bytes short here and the next descriptor or a frame
+  gap discards it, whatever the verifier; verify_inmarsat_c would also refuse
+  the zero trailer. This fails closed; ПОЛ-06 decides the layout;
+- the checksum stays an injected verifier(descriptor_bytes) -> True; without
+  one nothing is checked or passed. verify_inmarsat_c is the read algorithm,
+  passed explicitly until the review; unlike SatDump it refuses a sent 0x0000
+  (fail closed until ПОЛ-06 shows SafetyNET descriptors sent so);
 - N for NcsWatchdog is a required parameter set by the gate test.
 """
 from __future__ import annotations
@@ -42,18 +69,46 @@ from typing import NamedTuple
 MEDIUM, LONG = "MEDIUM", "LONG"
 EGC_TYPES = frozenset((0x30, 0x31, 0x32))
 MULTIFRAME_START, MULTIFRAME_CONTINUATION = 0x3D, 0x3E
-SAFETYNET_SERVICE_CODES = frozenset((0x04, 0x13, 0x14, 0x24, 0x31, 0x34, 0x44, 0x73))
-SYSTEM_SERVICE_CODES = frozenset((0x00, 0x11, 0x23, 0x33))
+# IMO MSC.1/Circ.1364/Rev.2 C2 table (annex pages 17-18); 0x00 passes only at GENERAL_CALL_MIN_PRIORITY.
+SAFETYNET_SERVICE_CODES = frozenset((0x00, 0x04, 0x13, 0x14, 0x24, 0x31, 0x34, 0x44))
+GENERAL_CALL = 0x00
+GENERAL_CALL_MIN_PRIORITY = 2  # urgency; appendix 2 part C §4: a general call is always C1 = 3 or 2
+PRIORITY_MASK, PRIORITY_SHIFT = 0x60, 5  # bits 6-5 of the byte after the service code
+SYSTEM_SERVICE_CODES = frozenset((0x11, 0x23, 0x33))
 FLEETNET_SERVICE_CODES = frozenset((0x02, 0x72))
 CHECKSUM_BYTES = 2
 # Each item is evidence outside this code; flipping one here is a reviewed change.
 RELEASE_EVIDENCE = {"c2_service_code_table_verified": False,
                     "pol06_mixed_recording_test_passed": False,
                     "descriptor_checksum_algorithm_verified": False}
+# What was read for each item. SOURCE_READ_UNREVIEWED is an agent's reading, never a review:
+# no flag above follows from it.
+RELEASE_EVIDENCE_SOURCES = {
+    "c2_service_code_table_verified": {
+        "status": "SOURCE_READ_UNREVIEWED", "read": "2026-11-07",
+        "source": "IMO MSC.1/Circ.1364/Rev.2 (11 November 2020), International SafetyNET Services Manual, 2021 edition",
+        "url": "https://wwwcdn.imo.org/localresources/en/OurWork/Safety/Documents/"
+               "Documents%20relevant%20to%20GMDSS/MSC.1-Circ.1364-Rev.2.pdf",
+        "sha256": "e809f9fd577b543c955145cf9688b1e24c3a85afb00f47e8763079ac70fd6342",
+        "where": "annex pages 17-18 (PDF pages 19-20) C1/C2 table; §6.4 (annex page 14); §6.8 (annex page 16); "
+                 "appendix 2 priority and service-code allocation (annex pages 25-26) and part C §4 (annex page 32)",
+        "open": "the 2022 edition of the manual is sold, not free, and was not read"},
+    "descriptor_checksum_algorithm_verified": {
+        "status": "SOURCE_READ_UNREVIEWED", "read": "2026-11-07",
+        "source": "SatDump 1aedd602055c154401384a8cc7876713bb371254 plugins/inmarsat_support/stdc/packets_structs.h",
+        "url": "https://github.com/SatDump/SatDump/blob/1aedd602055c154401384a8cc7876713bb371254/"
+               "plugins/inmarsat_support/stdc/packets_structs.h",
+        "where": "lines 90-108 (compute_crc), 119-125 (big-endian trailer, a sent 0 accepted), "
+                 "599-652 (EGC header: service code pkt[2], priority (pkt[3] & 0x60) >> 5)",
+        "open": "no real descriptor checked; the vectors belong to the ПОЛ-06 mixed recording"},
+    "pol06_mixed_recording_test_passed": {
+        "status": "OPEN", "read": None, "source": "build/09-testy.md ПОЛ-06",
+        "open": "mixed recording (on-air NCS, device, field) not made"},
+}
 REASONS = frozenset((
     "ACCEPT_SAFETYNET", "ACCEPT_SAFETYNET_MULTIFRAME_START", "INVALID_PACKET", "TRUNCATED_HEADER",
     "SHORT_DESCRIPTOR", "NOT_EGC_TYPE", "TRUNCATED_LENGTH", "LENGTH_TOO_SMALL",
-    "SYSTEM_SERVICE_CODE", "FLEETNET_SERVICE_CODE", "SERVICE_CODE_NOT_SAFETYNET",
+    "SYSTEM_SERVICE_CODE", "FLEETNET_SERVICE_CODE", "SERVICE_CODE_NOT_SAFETYNET", "GENERAL_CALL_BELOW_URGENCY",
     "MULTIFRAME_LONG_FORM_UNVERIFIED", "INNER_SHORT_DESCRIPTOR", "INNER_NOT_EGC_TYPE",
     "INNER_HEADER_NOT_IN_FIRST_FRAGMENT", "CONTINUATION_WITHOUT_ACCEPTED_START",
     "LENGTH_MISMATCH", "CHECKSUM_MISMATCH", "MESSAGE_SIZE_LIMIT", "FRAGMENT_LIMIT",
@@ -113,14 +168,21 @@ def _length(packet, base, cls, limit):
     second = 0 if cls == MEDIUM else _byte(packet, base + 2)
     if first is None or second is None:
         return "INVALID_PACKET"
-    return first + 2 if cls == MEDIUM else (first << 8 | second) + 3  # big-endian: assumption
+    return first + 2 if cls == MEDIUM else (first << 8 | second) + 3  # big-endian (SatDump packets_structs.h:72)
 
 
 def _class(value):
     return LONG if value & 0x40 else MEDIUM
 
 
-def _service(code, cls, ptype, length, inner_length=None):
+def _service(packet, code, priority_index, cls, ptype, length, inner_length=None):
+    """Decision for one service code; only C2 00 reads its priority byte (bounds checked by the caller)."""
+    if code == GENERAL_CALL:
+        value = _byte(packet, priority_index)
+        if value is None:
+            return _reject("INVALID_PACKET")
+        if (value & PRIORITY_MASK) >> PRIORITY_SHIFT < GENERAL_CALL_MIN_PRIORITY:
+            return _reject("GENERAL_CALL_BELOW_URGENCY")  # routine or safety: not a distress relay
     if code in SAFETYNET_SERVICE_CODES:
         reason = "ACCEPT_SAFETYNET" if inner_length is None else "ACCEPT_SAFETYNET_MULTIFRAME_START"
         return EgcDecision(True, reason, cls, ptype, code, length, inner_length)
@@ -132,7 +194,8 @@ def _service(code, cls, ptype, length, inner_length=None):
 
 
 def classify(packet):
-    """Header decision for one descriptor; reads bytes 0-3 (0-5 for a multiframe start).
+    """Header decision for one descriptor; reads bytes 0-3 (0-4 for a long C2 00; 0-5 for a
+    multiframe start, 0-6 when its inner descriptor is a long C2 00).
 
     Stateless: a continuation is rejected here and handled by EgcAssembler.
     """
@@ -163,7 +226,11 @@ def classify(packet):
         if length < offset + 1 + CHECKSUM_BYTES:
             return _reject("LENGTH_TOO_SMALL")
         code = _byte(packet, offset)
-        return _reject("INVALID_PACKET") if code is None else _service(code, cls, ptype, length)
+        if code is None:
+            return _reject("INVALID_PACKET")
+        if code == GENERAL_CALL and length < offset + 2 + CHECKSUM_BYTES:
+            return _reject("LENGTH_TOO_SMALL")  # its priority byte must precede the checksum
+        return _service(packet, code, offset + 1, cls, ptype, length)
     # Multiframe start: inner descriptor at byte 2, its header wholly before this fragment's checksum.
     limit = length - CHECKSUM_BYTES
     inner = _byte(packet, 2) if limit > 2 else None
@@ -183,7 +250,14 @@ def classify(packet):
     if inner_length < offset + 1 + CHECKSUM_BYTES:
         return _reject("LENGTH_TOO_SMALL")
     code = _byte(packet, 2 + offset)
-    return _reject("INVALID_PACKET") if code is None else _service(code, cls, ptype, length, inner_length)
+    if code is None:
+        return _reject("INVALID_PACKET")
+    if code == GENERAL_CALL:  # the priority byte, too, lies in the first fragment and the inner descriptor
+        if 3 + offset >= limit:
+            return _reject("INNER_HEADER_NOT_IN_FIRST_FRAGMENT")
+        if inner_length < offset + 2 + CHECKSUM_BYTES:
+            return _reject("LENGTH_TOO_SMALL")
+    return _service(packet, code, 3 + offset, cls, ptype, length, inner_length)
 
 
 def _verified(packet, length, verifier):
@@ -193,6 +267,46 @@ def _verified(packet, length, verifier):
         return verifier(descriptor) is True
     except Exception:
         return False
+
+
+def checksum_inmarsat_c(descriptor):
+    """16-bit Inmarsat-C descriptor checksum, own code after SatDump packets_structs.h:90-108 (1aedd60).
+
+    Two running sums C0 += byte, C1 += C0 over the whole descriptor with its last
+    two (checksum) bytes taken as zero; CB1 = (C0 - C1) mod 256 is the high and
+    CB2 = (C1 - 2*C0) mod 256 the low byte of the trailer (:105-107, :120). Read,
+    not reviewed: RELEASE_EVIDENCE stays False.
+    """
+    size = _size(descriptor)
+    if size is None or size <= CHECKSUM_BYTES:
+        raise EgcRefused("CHECKSUM_INPUT_INVALID")
+    c0 = c1 = 0
+    for index in range(size):
+        value = 0 if index >= size - CHECKSUM_BYTES else _byte(descriptor, index)
+        if value is None:
+            raise EgcRefused("CHECKSUM_INPUT_INVALID")
+        c0 = (c0 + value) & 0xFF
+        c1 = (c1 + c0) & 0xFF
+    return ((c0 - c1) & 0xFF) << 8 | ((c1 - 2 * c0) & 0xFF)
+
+
+def verify_inmarsat_c(descriptor):
+    """Verifier for checksum_ok/EgcAssembler: the big-endian trailer equals checksum_inmarsat_c.
+
+    Fails closed where SatDump does not: a sent 0x0000, which packets_structs.h:122
+    accepts unchecked, is a mismatch (so is a descriptor whose computed sum is 0)
+    until ПОЛ-06 shows SafetyNET descriptors sent so.
+    """
+    size = _size(descriptor)
+    try:
+        computed = checksum_inmarsat_c(descriptor)
+    except EgcRefused:
+        return False
+    high, low = _byte(descriptor, size - 2), _byte(descriptor, size - 1)
+    if high is None or low is None:
+        return False
+    sent = high << 8 | low
+    return sent != 0 and sent == computed
 
 
 def checksum_ok(packet, algorithm=None):
