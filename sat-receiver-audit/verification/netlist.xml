@@ -18693,7 +18693,7 @@
         <field name="ReviewStatus">module</field>
         <field name="MPN">CA-DKCA1-305L5-APAJ</field>
         <field name="Manufacturer">Adam Tech</field>
-        <field name="Alt_MPN">TE Connectivity Linx CSE-SGAM-305-SGFB</field>
+        <field name="Alt_MPN">TE Connectivity Linx CSE-SGAM-305-SGFB; Adam Tech CA-DKCA1-152L5-APAJ</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
@@ -18702,7 +18702,7 @@
       <property name="ReviewStatus" value="module"/>
       <property name="MPN" value="CA-DKCA1-305L5-APAJ"/>
       <property name="Manufacturer" value="Adam Tech"/>
-      <property name="Alt_MPN" value="TE Connectivity Linx CSE-SGAM-305-SGFB"/>
+      <property name="Alt_MPN" value="TE Connectivity Linx CSE-SGAM-305-SGFB; Adam Tech CA-DKCA1-152L5-APAJ"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
       <sheetpath names="/E4/" tstamps="/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d/"/>
@@ -19172,7 +19172,7 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">CAB.011</field>
+        <field name="MPN">CAB.01029</field>
         <field name="Manufacturer">Taoglas</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
@@ -19180,7 +19180,7 @@
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_W407" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CAB.011"/>
+      <property name="MPN" value="CAB.01029"/>
       <property name="Manufacturer" value="Taoglas"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
@@ -20971,12 +20971,16 @@
       <description>Functional cable assembly interface.</description>
       <fields>
         <field name="ReviewStatus">design</field>
+        <field name="MPN">10-03676</field>
+        <field name="Manufacturer">Tensility</field>
         <field name="Footprint"/>
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description">Functional cable assembly interface.</field>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_W425" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering.; The POD_5V power_out is the documented conductor output of this cable from protected BIAS_SB_LNA, not an independent supply or an assumed unknown rail."/>
       <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="10-03676"/>
+      <property name="Manufacturer" value="Tensility"/>
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
