@@ -13,7 +13,7 @@
       "bytes": 115484
     },
     "design/E2.json": {
-      "sha256": "54c59c57f6395d722b440fb255c415c95eeed9ba1e0db96ad7e7c01003bfefdb",
+      "sha256": "9194b3e72b6e644fa7791b4f89b8bea9f97980f49f831bf285afdbd00d567910",
       "bytes": 399635
     },
     "design/E3.json": {
@@ -15915,15 +15915,15 @@
         },
         {
           "number": "40",
-          "name": "BONI13V8_PORT",
-          "type": "passive",
-          "net": "BONI13V8_PORT"
-        },
-        {
-          "number": "41",
           "name": "BONI13V8",
           "type": "passive",
           "net": "BONI13V8"
+        },
+        {
+          "number": "41",
+          "name": "BONI13V8_PORT",
+          "type": "passive",
+          "net": "BONI13V8_PORT"
         },
         {
           "number": "42",
@@ -15945,171 +15945,171 @@
         },
         {
           "number": "45",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "46",
           "name": "E1_BAT_ADC",
           "type": "passive",
           "net": "E1_BAT_ADC"
         },
         {
-          "number": "46",
+          "number": "47",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "48",
           "name": "EN_AUX12",
           "type": "passive",
           "net": "EN_AUX12"
         },
         {
-          "number": "47",
+          "number": "49",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "50",
           "name": "EN_BONI",
           "type": "passive",
           "net": "EN_BONI"
         },
         {
-          "number": "48",
+          "number": "51",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "52",
           "name": "EN_HFP",
           "type": "passive",
           "net": "EN_HFP"
         },
         {
-          "number": "49",
+          "number": "53",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "54",
           "name": "EN_LIME3V3",
           "type": "passive",
           "net": "EN_LIME3V3"
         },
         {
-          "number": "50",
+          "number": "55",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "56",
           "name": "EN_LNB",
           "type": "passive",
           "net": "EN_LNB"
         },
         {
-          "number": "51",
+          "number": "57",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "58",
           "name": "FAULT_HFP",
           "type": "passive",
           "net": "FAULT_HFP"
         },
         {
-          "number": "52",
+          "number": "59",
           "name": "FLT_BONI",
           "type": "passive",
           "net": "FLT_BONI"
         },
         {
-          "number": "53",
+          "number": "60",
           "name": "FLT_LIME3V3",
           "type": "passive",
           "net": "FLT_LIME3V3"
         },
         {
-          "number": "54",
+          "number": "61",
           "name": "FLT_LNB",
           "type": "passive",
           "net": "FLT_LNB"
         },
         {
-          "number": "55",
+          "number": "62",
           "name": "I2C0_SCL",
           "type": "passive",
           "net": "I2C0_SCL"
         },
         {
-          "number": "56",
+          "number": "63",
           "name": "I2C0_SDA",
           "type": "passive",
           "net": "I2C0_SDA"
         },
         {
-          "number": "57",
+          "number": "64",
           "name": "I2C2_SCL",
           "type": "passive",
           "net": "I2C2_SCL"
         },
         {
-          "number": "58",
+          "number": "65",
           "name": "I2C2_SDA",
           "type": "passive",
           "net": "I2C2_SDA"
         },
         {
-          "number": "59",
+          "number": "66",
           "name": "IMU_RX",
           "type": "passive",
           "net": "IMU_RX"
         },
         {
-          "number": "60",
+          "number": "67",
           "name": "IMU_TX",
           "type": "passive",
           "net": "IMU_TX"
         },
         {
-          "number": "61",
+          "number": "68",
           "name": "INA228_ALERT",
           "type": "passive",
           "net": "INA228_ALERT"
         },
         {
-          "number": "62",
+          "number": "69",
           "name": "OVP_LNB_N",
           "type": "passive",
           "net": "OVP_LNB_N"
         },
         {
-          "number": "63",
+          "number": "70",
           "name": "PICO_DISP_EN",
           "type": "passive",
           "net": "PICO_DISP_EN"
         },
         {
-          "number": "64",
+          "number": "71",
           "name": "PICO_OFF",
           "type": "passive",
           "net": "PICO_OFF"
         },
         {
-          "number": "65",
+          "number": "72",
           "name": "PWR_BUTTON",
           "type": "passive",
           "net": "PWR_BUTTON"
-        },
-        {
-          "number": "66",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "67",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "68",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "69",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "70",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "71",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "72",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
         },
         {
           "number": "73",
@@ -16583,9 +16583,9 @@
         },
         {
           "number": "39",
-          "name": "BONI13V8_PORT",
+          "name": "BONI13V8",
           "type": "passive",
-          "net": "BONI13V8_PORT"
+          "net": "BONI13V8"
         },
         {
           "number": "40",
@@ -16601,9 +16601,9 @@
         },
         {
           "number": "42",
-          "name": "BONI13V8",
+          "name": "BONI13V8_PORT",
           "type": "passive",
-          "net": "BONI13V8"
+          "net": "BONI13V8_PORT"
         },
         {
           "number": "43",
@@ -16619,171 +16619,171 @@
         },
         {
           "number": "45",
-          "name": "EN_AUX12",
-          "type": "passive",
-          "net": "EN_AUX12"
-        },
-        {
-          "number": "46",
           "name": "E1_BAT_ADC",
           "type": "passive",
           "net": "E1_BAT_ADC"
         },
         {
-          "number": "47",
-          "name": "EN_HFP",
+          "number": "46",
+          "name": "NC",
           "type": "passive",
-          "net": "EN_HFP"
+          "nc": true
+        },
+        {
+          "number": "47",
+          "name": "EN_AUX12",
+          "type": "passive",
+          "net": "EN_AUX12"
         },
         {
           "number": "48",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "49",
           "name": "EN_BONI",
           "type": "passive",
           "net": "EN_BONI"
         },
         {
-          "number": "49",
-          "name": "EN_LNB",
+          "number": "50",
+          "name": "NC",
           "type": "passive",
-          "net": "EN_LNB"
+          "nc": true
         },
         {
-          "number": "50",
+          "number": "51",
+          "name": "EN_HFP",
+          "type": "passive",
+          "net": "EN_HFP"
+        },
+        {
+          "number": "52",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "53",
           "name": "EN_LIME3V3",
           "type": "passive",
           "net": "EN_LIME3V3"
         },
         {
-          "number": "51",
-          "name": "FLT_BONI",
+          "number": "54",
+          "name": "NC",
           "type": "passive",
-          "net": "FLT_BONI"
+          "nc": true
         },
         {
-          "number": "52",
+          "number": "55",
+          "name": "EN_LNB",
+          "type": "passive",
+          "net": "EN_LNB"
+        },
+        {
+          "number": "56",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "57",
           "name": "FAULT_HFP",
           "type": "passive",
           "net": "FAULT_HFP"
         },
         {
-          "number": "53",
-          "name": "FLT_LNB",
+          "number": "58",
+          "name": "NC",
           "type": "passive",
-          "net": "FLT_LNB"
+          "nc": true
         },
         {
-          "number": "54",
+          "number": "59",
           "name": "FLT_LIME3V3",
           "type": "passive",
           "net": "FLT_LIME3V3"
         },
         {
-          "number": "55",
-          "name": "I2C0_SDA",
+          "number": "60",
+          "name": "FLT_BONI",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "net": "FLT_BONI"
         },
         {
-          "number": "56",
+          "number": "61",
           "name": "I2C0_SCL",
           "type": "passive",
           "net": "I2C0_SCL"
         },
         {
-          "number": "57",
-          "name": "I2C2_SDA",
+          "number": "62",
+          "name": "FLT_LNB",
           "type": "passive",
-          "net": "I2C2_SDA"
+          "net": "FLT_LNB"
         },
         {
-          "number": "58",
+          "number": "63",
           "name": "I2C2_SCL",
           "type": "passive",
           "net": "I2C2_SCL"
         },
         {
-          "number": "59",
-          "name": "IMU_TX",
+          "number": "64",
+          "name": "I2C0_SDA",
           "type": "passive",
-          "net": "IMU_TX"
+          "net": "I2C0_SDA"
         },
         {
-          "number": "60",
+          "number": "65",
           "name": "IMU_RX",
           "type": "passive",
           "net": "IMU_RX"
         },
         {
-          "number": "61",
-          "name": "OVP_LNB_N",
+          "number": "66",
+          "name": "I2C2_SDA",
           "type": "passive",
-          "net": "OVP_LNB_N"
+          "net": "I2C2_SDA"
         },
         {
-          "number": "62",
+          "number": "67",
           "name": "INA228_ALERT",
           "type": "passive",
           "net": "INA228_ALERT"
         },
         {
-          "number": "63",
-          "name": "PICO_OFF",
+          "number": "68",
+          "name": "IMU_TX",
           "type": "passive",
-          "net": "PICO_OFF"
+          "net": "IMU_TX"
         },
         {
-          "number": "64",
+          "number": "69",
           "name": "PICO_DISP_EN",
           "type": "passive",
           "net": "PICO_DISP_EN"
         },
         {
-          "number": "65",
-          "name": "NC",
+          "number": "70",
+          "name": "OVP_LNB_N",
           "type": "passive",
-          "nc": true
+          "net": "OVP_LNB_N"
         },
         {
-          "number": "66",
+          "number": "71",
           "name": "PWR_BUTTON",
           "type": "passive",
           "net": "PWR_BUTTON"
         },
         {
-          "number": "67",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "68",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "69",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "70",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
-          "number": "71",
-          "name": "NC",
-          "type": "passive",
-          "nc": true
-        },
-        {
           "number": "72",
-          "name": "NC",
+          "name": "PICO_OFF",
           "type": "passive",
-          "nc": true
+          "net": "PICO_OFF"
         },
         {
           "number": "73",
@@ -34686,7 +34686,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "41",
+          "pin": "40",
           "name": "BONI13V8",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -34694,7 +34694,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "42",
+          "pin": "39",
           "name": "BONI13V8",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -34778,7 +34778,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "40",
+          "pin": "41",
           "name": "BONI13V8_PORT",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -34786,7 +34786,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "39",
+          "pin": "42",
           "name": "BONI13V8_PORT",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -35155,7 +35155,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "45",
+          "pin": "46",
           "name": "E1_BAT_ADC",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -35163,7 +35163,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "46",
+          "pin": "45",
           "name": "E1_BAT_ADC",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -48498,7 +48498,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "46",
+          "pin": "48",
           "name": "EN_AUX12",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -48506,7 +48506,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "45",
+          "pin": "47",
           "name": "EN_AUX12",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -48582,7 +48582,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "47",
+          "pin": "50",
           "name": "EN_BONI",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -48590,7 +48590,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "48",
+          "pin": "49",
           "name": "EN_BONI",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -48634,7 +48634,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "48",
+          "pin": "52",
           "name": "EN_HFP",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -48642,7 +48642,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "47",
+          "pin": "51",
           "name": "EN_HFP",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -48770,7 +48770,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "49",
+          "pin": "54",
           "name": "EN_LIME3V3",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -48778,7 +48778,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "50",
+          "pin": "53",
           "name": "EN_LIME3V3",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49070,7 +49070,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "50",
+          "pin": "56",
           "name": "EN_LNB",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49078,7 +49078,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "49",
+          "pin": "55",
           "name": "EN_LNB",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49330,7 +49330,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "51",
+          "pin": "58",
           "name": "FAULT_HFP",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49338,7 +49338,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "52",
+          "pin": "57",
           "name": "FAULT_HFP",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49770,7 +49770,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "52",
+          "pin": "59",
           "name": "FLT_BONI",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49778,7 +49778,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "51",
+          "pin": "60",
           "name": "FLT_BONI",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49838,7 +49838,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "53",
+          "pin": "60",
           "name": "FLT_LIME3V3",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49846,7 +49846,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "54",
+          "pin": "59",
           "name": "FLT_LIME3V3",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49906,7 +49906,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "54",
+          "pin": "61",
           "name": "FLT_LNB",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49914,7 +49914,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "53",
+          "pin": "62",
           "name": "FLT_LNB",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -55933,7 +55933,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "55",
+          "pin": "62",
           "name": "I2C0_SCL",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -55941,7 +55941,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "56",
+          "pin": "61",
           "name": "I2C0_SCL",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56010,7 +56010,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "56",
+          "pin": "63",
           "name": "I2C0_SDA",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56018,7 +56018,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "55",
+          "pin": "64",
           "name": "I2C0_SDA",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56095,7 +56095,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "57",
+          "pin": "64",
           "name": "I2C2_SCL",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56103,7 +56103,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "58",
+          "pin": "63",
           "name": "I2C2_SCL",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56214,7 +56214,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "58",
+          "pin": "65",
           "name": "I2C2_SDA",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56222,7 +56222,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "57",
+          "pin": "66",
           "name": "I2C2_SDA",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56403,7 +56403,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "59",
+          "pin": "66",
           "name": "IMU_RX",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56411,7 +56411,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "60",
+          "pin": "65",
           "name": "IMU_RX",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56521,7 +56521,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "60",
+          "pin": "67",
           "name": "IMU_TX",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56529,7 +56529,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "59",
+          "pin": "68",
           "name": "IMU_TX",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56655,7 +56655,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "61",
+          "pin": "68",
           "name": "INA228_ALERT",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -56663,7 +56663,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "62",
+          "pin": "67",
           "name": "INA228_ALERT",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -57903,7 +57903,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "62",
+          "pin": "69",
           "name": "OVP_LNB_N",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -57911,7 +57911,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "61",
+          "pin": "70",
           "name": "OVP_LNB_N",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -58076,7 +58076,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "63",
+          "pin": "70",
           "name": "PICO_DISP_EN",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -58084,7 +58084,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "64",
+          "pin": "69",
           "name": "PICO_DISP_EN",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -58136,7 +58136,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "64",
+          "pin": "71",
           "name": "PICO_OFF",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -58144,7 +58144,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "63",
+          "pin": "72",
           "name": "PICO_OFF",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -58248,7 +58248,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "65",
+          "pin": "72",
           "name": "PWR_BUTTON",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -58256,7 +58256,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "66",
+          "pin": "71",
           "name": "PWR_BUTTON",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -59990,7 +59990,7 @@
     {
       "sheet": "E2",
       "ref": "J208",
-      "pin": "66",
+      "pin": "45",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -59998,7 +59998,7 @@
     {
       "sheet": "E2",
       "ref": "J208",
-      "pin": "67",
+      "pin": "47",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60006,7 +60006,7 @@
     {
       "sheet": "E2",
       "ref": "J208",
-      "pin": "68",
+      "pin": "49",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60014,7 +60014,7 @@
     {
       "sheet": "E2",
       "ref": "J208",
-      "pin": "69",
+      "pin": "51",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60022,7 +60022,7 @@
     {
       "sheet": "E2",
       "ref": "J208",
-      "pin": "70",
+      "pin": "53",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60030,7 +60030,7 @@
     {
       "sheet": "E2",
       "ref": "J208",
-      "pin": "71",
+      "pin": "55",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60038,7 +60038,7 @@
     {
       "sheet": "E2",
       "ref": "J208",
-      "pin": "72",
+      "pin": "57",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60238,7 +60238,7 @@
     {
       "sheet": "E2",
       "ref": "J209",
-      "pin": "65",
+      "pin": "46",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60246,7 +60246,7 @@
     {
       "sheet": "E2",
       "ref": "J209",
-      "pin": "67",
+      "pin": "48",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60254,7 +60254,7 @@
     {
       "sheet": "E2",
       "ref": "J209",
-      "pin": "68",
+      "pin": "50",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60262,7 +60262,7 @@
     {
       "sheet": "E2",
       "ref": "J209",
-      "pin": "69",
+      "pin": "52",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60270,7 +60270,7 @@
     {
       "sheet": "E2",
       "ref": "J209",
-      "pin": "70",
+      "pin": "54",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60278,7 +60278,7 @@
     {
       "sheet": "E2",
       "ref": "J209",
-      "pin": "71",
+      "pin": "56",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60286,7 +60286,7 @@
     {
       "sheet": "E2",
       "ref": "J209",
-      "pin": "72",
+      "pin": "58",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
