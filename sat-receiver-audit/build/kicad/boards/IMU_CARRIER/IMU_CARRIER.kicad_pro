@@ -110,8 +110,8 @@
       {
         "name": "Default",
         "priority": 2147483647,
-        "clearance": 0.2,
-        "track_width": 0.25,
+        "clearance": 0.15,
+        "track_width": 0.2,
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "microvia_diameter": 0.3,
@@ -128,7 +128,7 @@
       {
         "name": "PWR1A",
         "priority": 0,
-        "clearance": 0.2,
+        "clearance": 0.15,
         "track_width": 0.35,
         "via_diameter": 0.6,
         "via_drill": 0.3,
