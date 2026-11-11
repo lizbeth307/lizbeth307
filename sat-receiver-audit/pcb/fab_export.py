@@ -13,7 +13,9 @@ board_sha256 must match), the spec pcb/boards/<B>.json (instances, spares, layer
 build/10-jlc-bom.csv for the graph refs on the board, and the stackup of pcb/generated/netclasses.json.
 KiCad stamps dates, absolute paths and its build string into the exports; those are normalised (rules listed in
 manifest.json) so --check is byte-stable. The fab notes PDF is written by this script (standard library, no date).
-Everything here is a CI/model output: NOT RELEASED, bench gates OPEN, CPL rotation offsets TBD at order time.
+Spec test coupons (check_boards 'coupons', the RF impedance coupons): their Edge.Cuts loops are separate pieces beside
+the board, so the outline size and area come from the board loop only, and the notes, README and manifest coverage
+list the pieces (W2 PCB-RF-2). Everything here is a CI/model output: NOT RELEASED, bench gates OPEN, CPL rotation offsets TBD at order time.
 """
 from __future__ import annotations
 
@@ -777,10 +779,60 @@ def rf50_nets(inputs):
     return sorted(out)
 
 
+def checker_frame(inputs):
+    """The check_boards view of the spec and its contract frame (contract_transform when the spec has one)."""
+    cspec = check_boards.normalize_spec(inputs['spec'])
+    cb = {'outline_mm': inputs['report']['outline_mm']}
+    return cspec, cb, check_boards.Frame(inputs['parsed'], cb, cspec)
+
+
+def coupon_pieces(inputs):
+    """Spec test coupons (check_boards 'coupons'): separate Edge.Cuts pieces beside the board. Per coupon its RF50 nets,
+    ground net, contract rect, KiCad box and the footprints inside it; [] for a board without coupons."""
+    cspec, _cb, frame = checker_frame(inputs)
+    out = []
+    for c, box in zip(cspec.get('coupons', []), check_boards.coupon_boxes(cspec, frame)):
+        refs = sorted((fp['ref'] for fp in inputs['parsed'].footprints
+                       if fp['ref'] and box[0] <= fp['x'] <= box[2] and box[1] <= fp['y'] <= box[3]), key=board_gen.sort_ref)
+        out.append({'rf50_nets': list(c.get('rf50_nets', [])), 'gnd_net': c.get('gnd_net'), 'rect': c['rect'],
+                    'box': box, 'refs': refs})
+    return out
+
+
+def board_edges(inputs, pieces):
+    """Edge.Cuts segments of the board itself: segments inside a coupon box are the coupon outlines."""
+    tol = check_boards.POS_TOL
+    return [e for e in inputs['parsed'].edges
+            if not any(all(b[0] - tol <= x <= b[2] + tol and b[1] - tol <= y <= b[3] + tol for x, y in e) for b in
+                       (p['box'] for p in pieces))]
+
+
+def coupon_lines(pieces):
+    """Fab-note lines for the test coupons (none without coupons)."""
+    if not pieces:
+        return []
+    n = len(pieces)
+    lines = [('h', 'Test coupons (separate pieces)'),
+             ('t', f'Edge.Cuts holds {n + 1} separate closed outlines: the board and {n} impedance test coupons. The '
+                   'coupons are not joined to the board (no tab or mouse-bite), are not boards and get no assembly; '
+                   f'make them with the board, same stack-up, and tell the fab at order time that the Gerber holds {n + 1} '
+                   'pieces (the panelisation is an order option, OPEN).')]
+    for p in pieces:
+        x0, y0, x1, y1 = p['box']
+        rx, ry, rw, rh = p['rect']
+        lines.append(('t', f'Coupon {", ".join(p["rf50_nets"])}: X {x0:.3f} to {x1:.3f}, Y {-y1:.3f} to {-y0:.3f} mm in the '
+                           f'Gerber/CPL frame (board frame x {rx:g} to {rx + rw:g}, y {ry:g} to {ry + rh:g} mm); an RF50 '
+                           f'CPWG thru line like the board lines, own ground net {p["gnd_net"]}; edge SMAs '
+                           f'{", ".join(p["refs"]) or "none"} are not in the CPL or BOM (hand-fitted for the bench).'))
+    return lines
+
+
 def notes_lines(inputs, stack, cov, bom_rows):
     spec, report, parsed, board = inputs['spec'], inputs['report'], inputs['parsed'], inputs['board']
-    xs = [p[0] for e in parsed.edges for p in e]
-    ys = [p[1] for e in parsed.edges for p in e]
+    pieces = coupon_pieces(inputs)
+    edges = board_edges(inputs, pieces)
+    xs = [p[0] for e in edges for p in e]
+    ys = [p[1] for e in edges for p in e]
     w, h = (max(xs) - min(xs), max(ys) - min(ys)) if xs else (0.0, 0.0)
     holes = parsed.holes
     rf = rf50_nets(inputs)
@@ -796,6 +848,7 @@ def notes_lines(inputs, stack, cov, bom_rows):
                    '(KiCad absolute origin, Y up).'),
              ('t', 'Holes: ' + (', '.join(sorted({f'{"PTH" if hh["plated"] else "NPTH"} {hh["d"]:.2f} mm' for hh in holes}))
                                 + f' ({len(holes)} mounting holes; NPTH unplated and without net)' if holes else 'no mounting holes') + '.'),
+             *coupon_lines(pieces),
              ('h', 'Fabrication'),
              ('t', f'Copper layers: {stack["copper_layers"]}; finished thickness {stack["thickness_mm"]} mm '
                    '(JLC tolerance +/-10 % for boards >= 1.0 mm).')]
@@ -873,9 +926,17 @@ def fab_notes_pdf(inputs, stack, cov, bom_rows, cpl_rows):
             pdf.line(ops, [(cx - 4, cy), (cx + 4, cy)], 0.4)
             pdf.line(ops, [(cx, cy - 4), (cx, cy + 4)], 0.4)
             pdf.text(ops, cx + 5, cy + 3, 7, f'{r["Designator"]} ({r["Layer"]})')
+        pieces = coupon_pieces(inputs)
+        bpts = [(a[0], -a[1]) for e in board_edges(inputs, pieces) for a in e] or pts
+        bminx, bmaxx = min(p[0] for p in bpts), max(p[0] for p in bpts)
+        bminy, bmaxy = min(p[1] for p in bpts), max(p[1] for p in bpts)
+        for pc in pieces:
+            cx, cy = T(pc['box'][0], -pc['box'][3])
+            pdf.text(ops, cx + 2, cy + 2, 7, 'coupon ' + ', '.join(pc['rf50_nets']))
         x0, y0 = T(minx, miny)
         x1, y1 = T(maxx, maxy)
-        pdf.text(ops, x0, y0 - 14, 8, f'Board extent {maxx - minx:.3f} mm (X) x {maxy - miny:.3f} mm (Y)')
+        pdf.text(ops, x0, y0 - 14, 8, f'Board extent {bmaxx - bminx:.3f} mm (X) x {bmaxy - bminy:.3f} mm (Y)'
+                 + (f' (without the {len(pieces)} coupons)' if pieces else ''))
     pdf.text(ops, 36, 48, 7, f'Top view, Edge.Cuts and holes of {board}.kicad_pcb; crosses = CPL positions (KiCad footprint '
                              'origins). Not to a fixed scale.')
     pdf.text(ops, 36, 38, 7, LABEL)
@@ -926,8 +987,17 @@ def readme(inputs, cov, bom_rows, files):
             lines.append(f'| `{key}` | {text} |')
     inst = ', '.join(f'{i["id"]} ×{i["qty"]}' for i in spec['instances']['list'])
     lines += ['', '## Замовлення', '',
-              f'- Плат: {q["total"]} = екземпляри ({inst}) + запасні {q["spares"]}; усі однакові й збираються однаково.',
-              '- Gerber і свердління: заархівувати `gerber/` і `drill/` разом під час замовлення (архів не комітиться, '
+              f'- Плат: {q["total"]} = екземпляри ({inst}) + запасні {q["spares"]}; усі однакові й збираються однаково.']
+    coupons = cov.get('coupons', [])
+    if coupons:
+        nets = ', '.join(n for c in coupons for n in c['rf50_nets'])
+        refs = ', '.join(r for c in coupons for r in c['refs_not_in_cpl_bom'])
+        pieces = cov['edge_cuts_pieces']
+        lines.append(f'- Купони імпедансу: Edge.Cuts має {pieces} окремі замкнені контури — плата й {len(coupons)} купони '
+                     f"({nets}). Купони не з'єднані з платою (без перемичок і mouse-bite), це не плати й не збираються: "
+                     f'під час замовлення сказати фабриці, що Gerber має {pieces} частини; панелізація — опція замовлення '
+                     f'(OPEN). Крайові SMA купонів ({refs}) не входять у CPL і BOM — їх паяють для стенда.')
+    lines += ['- Gerber і свердління: заархівувати `gerber/` і `drill/` разом під час замовлення (архів не комітиться, '
               'бо zip має мітки часу).',
               '- Mid X / Mid Y у CPL — початок посадкового місця KiCad, тоді як JLC визначає їх як центр компонента '
               '(сторінка CPL JLC, прочитано 2026-11-07); кут — сирий кут KiCad. Поправки кута й центру для кожного '
@@ -964,9 +1034,17 @@ def build_set(inputs, raw, commands):
     files[f'assembly/{board}-instances.csv'] = csv_bytes(['Instance', 'Placement', 'Qty', 'Template ref', 'Graph ref'],
                                                          instances_rows(spec, report))
     cov, problems = coverage(files, inputs, cpl_rows, bom_rows)
-    outline = check_boards.check_outline(inputs['parsed'], {'outline_mm': report['outline_mm']},
-                                         check_boards.Frame(inputs['parsed'], {'outline_mm': report['outline_mm']}, {}))[1]
+    # The spec view (contract_transform, coupons): coupon loops are pieces beside the board, not board cutouts.
+    cspec, cb, frame = checker_frame(inputs)
+    outline = check_boards.check_outline(inputs['parsed'], cb, frame, cspec)[1]
     cov['area_mm2'] = outline.get('area_mm2', 0.0)
+    pieces = coupon_pieces(inputs)
+    if pieces:  # only boards with spec coupons carry this key
+        cov['coupons'] = [{'rf50_nets': p['rf50_nets'], 'gnd_net': p['gnd_net'], 'rect_contract': p['rect'],
+                           'gerber_box': [board_gen.r4(p['box'][0]), board_gen.r4(-p['box'][3]),
+                                          board_gen.r4(p['box'][2]), board_gen.r4(-p['box'][1])],
+                           'refs_not_in_cpl_bom': p['refs']} for p in pieces]
+        cov['edge_cuts_pieces'] = 1 + len(pieces)
     stack = stackup_record(inputs)
     files[f'{board}-fab-notes.pdf'] = fab_notes_pdf(inputs, stack, cov, bom_rows, cpl_rows)
     files[f'{board}.kicad_jobset'] = (json.dumps(jobset(board, spec['layers']['copper']), indent=2) + '\n').encode('utf-8')

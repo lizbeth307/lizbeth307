@@ -576,5 +576,40 @@ class PwrBPinMapFollowsB2bNets(unittest.TestCase):
         self.assertEqual(pin_map['used'], b2b['totals']['contacts_needed'])
 
 
+class BondHoleAndCoupon(unittest.TestCase):
+    """W2 PCB-RF-2: optional spec keys bond_hole (plated, netted contract hole) and coupon (post-route test coupon)."""
+
+    def setUp(self):
+        if not bg.spec_path('RF').is_file():
+            self.skipTest('no RF spec')
+
+    def test_rf_bond_hole_is_plated_and_ends_chassis(self):
+        spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('RF')
+        plated = [(h['ref'], h['plated']['net']) for h in bg.holes(spec, contract) if h.get('plated')]
+        self.assertEqual(plated, [('H5', 'CHASSIS')])
+        rows = bg.boundary_audit(spec, template, graph, db)[0]['nets']
+        self.assertEqual(next(r for r in rows if r['net'] == 'CHASSIS')['status'], 'connector')
+        self.assertTrue(spec['coupon']['footprints'] and spec['coupon']['zones'])
+
+    def test_bad_bond_hole_and_coupon_are_refused(self):
+        spec = bg.read_json(bg.spec_path('RF'))
+        mutations = (lambda s: s['bond_hole'].update(net='NOPE'), lambda s: s['bond_hole'].pop('why'),
+                     lambda s: s['coupon'].pop('why'), lambda s: s['coupon']['footprints'][0].update(ref='C401'),
+                     lambda s: s['coupon']['tracks'][0].update(net='NOPE'),
+                     lambda s: s['coupon']['zones'][0].update(outline='board'),
+                     lambda s: s['coupon']['outlines'][0].__setitem__(2, -1.0))
+        for i, mutate in enumerate(mutations):
+            s = copy.deepcopy(spec)
+            mutate(s)
+            with self.assertRaises(SystemExit, msg=i):
+                bg.validate_spec(s, 'RF')
+        contract, _stack = bg.load_contract(spec)
+        for at, pad in (([93.0, 40.5], 7.0), ([92.0, 40.5], 8.0), ([92.0, 40.5], 3.0)):
+            s = copy.deepcopy(spec)
+            s['bond_hole'].update(at=at, pad_mm=pad)
+            with self.assertRaises(SystemExit, msg=(at, pad)):
+                bg.holes(s, contract)
+
+
 if __name__ == '__main__':
     unittest.main()
