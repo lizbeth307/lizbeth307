@@ -126,7 +126,7 @@
         "schematic_color": "rgba(0, 0, 0, 0.000)"
       },
       {
-        "name": "PWR1A",
+        "name": "SCRIPTED_PWR1A",
         "priority": 0,
         "clearance": 0.15,
         "track_width": 0.35,
@@ -160,6 +160,24 @@
         "line_style": 0,
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)"
+      },
+      {
+        "name": "SCRIPTED_SIG",
+        "priority": 2,
+        "clearance": 0.15,
+        "track_width": 0.2,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "diff_pair_width": 0.2,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "wire_width": 6,
+        "bus_width": 12,
+        "line_style": 0,
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)"
       }
     ],
     "meta": {
@@ -169,12 +187,20 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "E5_IMU5V"
       },
       {
         "netclass": "SCRIPTED_VIN",
         "pattern": "E5_IMU_VIN"
+      },
+      {
+        "netclass": "SCRIPTED_SIG",
+        "pattern": "IMU_TX"
+      },
+      {
+        "netclass": "SCRIPTED_SIG",
+        "pattern": "IMU_RX"
       }
     ]
   }

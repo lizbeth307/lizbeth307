@@ -179,6 +179,18 @@
       {
         "netclass": "SCRIPTED_SIG",
         "pattern": "3V3_Q6A"
+      },
+      {
+        "netclass": "SCRIPTED_SIG",
+        "pattern": "EN_T7"
+      },
+      {
+        "netclass": "SCRIPTED_SIG",
+        "pattern": "E5_FAULT_T7"
+      },
+      {
+        "netclass": "SCRIPTED_SIG",
+        "pattern": "E5_U505_ILIM"
       }
     ]
   }

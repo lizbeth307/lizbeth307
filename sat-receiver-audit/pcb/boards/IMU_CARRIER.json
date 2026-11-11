@@ -17,8 +17,8 @@
     "thickness_mm": 1.6,
     "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
     "plan": {
-      "F.Cu": "all parts; E5_IMU5V class PWR1A 0.35 mm (IMU_CARRIER.kicad_pro, pcb/generated/netclasses.json); E5_IMU_VIN scripted 0.4 mm (class SCRIPTED_VIN); signals; GND pour",
-      "B.Cu": "signals, GND pour"
+      "F.Cu": "all parts; E5_IMU_VIN scripted 0.4 mm (class SCRIPTED_VIN); short IMU_TX/IMU_RX/E5_IMU5V stubs to U552 and D502; routed CS/WAKE/3V3; GND pour",
+      "B.Cu": "IMU_TX / IMU_RX scripted 0.2 mm along the strip row gap, E5_IMU5V scripted 0.35 mm (class SCRIPTED_PWR1A = PWR1A width of pcb/generated/netclasses.json), GND pour"
     }
   },
   "project": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pro",
@@ -112,11 +112,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.5,
+          31.5,
           1.5
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 180,
         "side": "F",
         "ref_text": {
           "at": [
@@ -126,7 +126,7 @@
           "angle": 0
         }
       },
-      "anchor_source": "strip, lower row: RP2040-Zero supply leads (E5_IMU_VIN, GND, 3V3), pads x 23.5-31.5 (courtyard 22.0-33.0)"
+      "anchor_source": "strip, lower row, rotated 180: pads 1 E5_IMU_VIN (31.5), 2 GND (27.5), 3 E3_IMU3V3 (23.5) - VIN towards the arm, 3V3 under J322.1"
     },
     {
       "ref": "J322",
@@ -196,7 +196,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.4,
+          34.8,
           12.4
         ],
         "align": "origin",
@@ -204,8 +204,8 @@
         "side": "F",
         "ref_text": {
           "at": [
-            34.4,
-            10.6
+            35.4,
+            10.2
           ],
           "angle": 0
         }
@@ -217,7 +217,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.5,
+          30.6,
           4.6
         ],
         "align": "origin",
@@ -225,13 +225,13 @@
         "side": "F",
         "ref_text": {
           "at": [
-            30.5,
+            30.6,
             4.6
           ],
           "angle": 0
         }
       },
-      "anchor_source": "strip right of J322: 10 uF on E5_IMU_VIN beside the scripted VIN lane (pad 1 (29.55, 4.6))"
+      "anchor_source": "strip right of J322: 10 uF on E5_IMU_VIN beside the scripted VIN lane (pad 1 (29.65, 4.6))"
     },
     {
       "ref": "C340",
@@ -422,16 +422,16 @@
             3.1
           ],
           [
-            24.0,
+            30.0,
             3.1
           ],
           [
-            23.5,
+            31.5,
             1.5
           ]
         ],
         "locked": true,
-        "why": "E5_IMU_VIN (D502 cathode to C340/C520/C519 and the RP2040-Zero supply pad J320.1; at most the U553 limit 0.339 A of tools/assembly_data.py NET_CURRENT E5_IMU5V) scripted 0.4 mm, class SCRIPTED_VIN not autorouted: route run 43113738311 left it open; down between J518 pads 1 and 2 to the J320 row"
+        "why": "E5_IMU_VIN (D502 cathode to C340/C520/C519 and the RP2040-Zero supply pad J320.1; at most the U553 limit 0.339 A of tools/assembly_data.py NET_CURRENT E5_IMU5V) scripted 0.4 mm, class SCRIPTED_VIN not autorouted: route run 43113738311 left it open; down between J518 pads 1 and 2 to J320.1"
       },
       {
         "id": "VIN-C519",
@@ -444,12 +444,216 @@
             4.6
           ],
           [
-            29.55,
+            29.65,
             4.6
           ]
         ],
         "locked": true,
         "why": "stub to C519"
+      },
+      {
+        "id": "TX-F",
+        "net": "IMU_TX",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            34.5,
+            7.5
+          ],
+          [
+            32.6,
+            9.0
+          ],
+          [
+            32.6,
+            13.35
+          ],
+          [
+            33.6625,
+            13.35
+          ]
+        ],
+        "locked": true,
+        "why": "IMU_TX from J518.3 to the TVS U552 pin 1, left of its pad column"
+      },
+      {
+        "id": "TX-B",
+        "net": "IMU_TX",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            34.5,
+            7.5
+          ],
+          [
+            33.1,
+            6.2
+          ],
+          [
+            33.1,
+            2.75
+          ],
+          [
+            20.0,
+            2.75
+          ],
+          [
+            20.0,
+            1.5
+          ]
+        ],
+        "locked": true,
+        "why": "IMU_TX from J518.3 on B.Cu (3.08 from the H2 axis) along the strip row gap (y 2.75) to J321.1; the scripted long lanes replace router runs that left IMU_TX open in route runs 43111813288, 43112877328 and 43114278451"
+      },
+      {
+        "id": "RX-F",
+        "net": "IMU_RX",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            38.5,
+            7.5
+          ],
+          [
+            37.0,
+            9.0
+          ],
+          [
+            37.0,
+            13.35
+          ],
+          [
+            35.9375,
+            13.35
+          ]
+        ],
+        "locked": true,
+        "why": "IMU_RX from J518.4 to the TVS U552 pin 6, right of its pad column"
+      },
+      {
+        "id": "RX-B",
+        "net": "IMU_RX",
+        "layer": "B.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            38.5,
+            7.5
+          ],
+          [
+            38.5,
+            9.0
+          ],
+          [
+            32.3,
+            9.0
+          ],
+          [
+            32.3,
+            3.15
+          ],
+          [
+            16.0,
+            3.15
+          ],
+          [
+            16.0,
+            1.5
+          ]
+        ],
+        "locked": true,
+        "why": "IMU_RX from J518.4 on B.Cu over J518.3, down between J518 pads 2 and 3, along the row gap (y 3.15) to J321.2"
+      },
+      {
+        "id": "5V-B",
+        "net": "E5_IMU5V",
+        "layer": "B.Cu",
+        "width_mm": 0.35,
+        "path": [
+          [
+            26.5,
+            7.5
+          ],
+          [
+            29.0,
+            10.0
+          ],
+          [
+            31.2,
+            11.2
+          ],
+          [
+            33.6625,
+            10.6
+          ]
+        ],
+        "locked": true,
+        "why": "E5_IMU5V (class PWR1A 0.35, pcb/generated/netclasses.json) from J518.1 on B.Cu to the D502 anode via and the U552 pin 3 via (on F.Cu the VIN and IMU_TX lanes are in the way)"
+      },
+      {
+        "id": "5V-F-D502",
+        "net": "E5_IMU5V",
+        "layer": "F.Cu",
+        "width_mm": 0.35,
+        "path": [
+          [
+            31.2,
+            11.2
+          ],
+          [
+            30.6,
+            12.75
+          ]
+        ],
+        "locked": true,
+        "why": "via to the D502 anode (pad 2)"
+      },
+      {
+        "id": "5V-F-U552",
+        "net": "E5_IMU5V",
+        "layer": "F.Cu",
+        "width_mm": 0.35,
+        "path": [
+          [
+            33.6625,
+            10.6
+          ],
+          [
+            33.6625,
+            11.45
+          ]
+        ],
+        "locked": true,
+        "why": "via to U552 pin 3"
+      }
+    ],
+    "vias": [
+      {
+        "id": "5V-V1",
+        "net": "E5_IMU5V",
+        "at": [
+          31.2,
+          11.2
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.6,
+        "locked": true,
+        "why": "E5_IMU5V to the D502 anode"
+      },
+      {
+        "id": "5V-V2",
+        "net": "E5_IMU5V",
+        "at": [
+          33.6625,
+          10.6
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.6,
+        "locked": true,
+        "why": "E5_IMU5V to U552 pin 3"
       }
     ],
     "zones": []
@@ -520,9 +724,11 @@
     "timeout_s": 480,
     "fanout": false,
     "ignore_net_classes": [
-      "SCRIPTED_VIN"
+      "SCRIPTED_VIN",
+      "SCRIPTED_SIG",
+      "SCRIPTED_PWR1A"
     ],
-    "why": "E5_IMU_VIN is scripted and locked (class SCRIPTED_VIN, not autorouted); fan-out pre-pass off: on PWR_B it escaped SMD pins with necked-down stubs and dangling vias (pcb/boards/PWR_B.json router.why)"
+    "why": "the long nets are scripted and locked, not autorouted (class SCRIPTED_VIN: E5_IMU_VIN; SCRIPTED_SIG: IMU_TX, IMU_RX; SCRIPTED_PWR1A: E5_IMU5V): route runs 43111813288, 43112877328, 43113738311 and 43114278451 each left one of them open; the router joins E3_IMU3V3, E3_IMU_CS_N, E3_IMU_WAKE_N and GND; fan-out pre-pass off: on PWR_B it escaped SMD pins with necked-down stubs and dangling vias (pcb/boards/PWR_B.json router.why)"
   },
   "drc_policy": {
     "warning_checks": {
