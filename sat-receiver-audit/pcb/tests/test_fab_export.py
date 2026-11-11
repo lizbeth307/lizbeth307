@@ -413,5 +413,43 @@ class IpcNetNameTests(unittest.TestCase):
         self.assertTrue(any('IPC-D-356 lacks' in p and self.LONG in p for p in got), got)
 
 
+class CouponPiecesTests(unittest.TestCase):
+    """Spec test coupons (W2 PCB-RF-2): their Edge.Cuts loops are pieces beside the board, not board cutouts, and the
+    fab notes and README list them; a board without coupons keeps its outline, area and notes."""
+
+    def test_rf_coupons_are_separate_pieces(self):
+        if 'RF' not in fx.boards_with_outputs():
+            self.skipTest('no committed RF board')
+        inputs = fx.load_inputs('RF')
+        contract = json.loads((fx.BASE / 'mechanical/generated/contract/boards.json').read_text(encoding='utf-8'))['boards']['RF']
+        pieces = fx.coupon_pieces(inputs)
+        self.assertEqual(len(pieces), len(inputs['spec']['coupons']))
+        files, cov, problems = fx.build_set(inputs, synthetic_raw(inputs), [])
+        self.assertEqual(problems, [])
+        self.assertAlmostEqual(cov['area_mm2'], contract['area_mm2'], places=1)
+        self.assertEqual(cov['edge_cuts_pieces'], 1 + len(pieces))
+        xs = [p[0] for p in contract['outline_mm']]
+        ys = [p[1] for p in contract['outline_mm']]
+        text = ' '.join(s for _k, s in fx.notes_lines(inputs, fx.stackup_record(inputs), cov, fx.bom(inputs)[0]))
+        self.assertIn(f'{max(xs) - min(xs):.3f} x {max(ys) - min(ys):.3f} mm, area {contract["area_mm2"]:.1f} mm2', text)
+        self.assertIn(f'the Gerber holds {1 + len(pieces)} pieces', text)
+        cpl_refs = {r['Designator'] for r in fx.cpl(files['assembly/RF-pos-kicad.csv'])}
+        for p in pieces:
+            self.assertIn(f'Coupon {", ".join(p["rf50_nets"])}:', text)
+            self.assertTrue(p['refs'])
+            self.assertFalse(cpl_refs & set(p['refs']), p['refs'])
+        self.assertIn('Купони імпедансу', files['README.md'].decode())
+        self.assertLess(len(fx.board_edges(inputs, pieces)), len(inputs['parsed'].edges))
+
+    def test_board_without_coupons_is_unchanged(self):
+        inputs = fx.load_inputs('ENC')
+        self.assertEqual(fx.coupon_pieces(inputs), [])
+        self.assertEqual(fx.board_edges(inputs, []), inputs['parsed'].edges)
+        files, cov, problems = fx.build_set(inputs, synthetic_raw(inputs), [])
+        self.assertNotIn('coupons', cov)
+        self.assertNotIn('Купони імпедансу', files['README.md'].decode())
+        self.assertEqual(fx.coupon_lines([]), [])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -9,9 +9,10 @@ The layout is written here as code (anchors, packed rows, RF50 paths), so a plac
 the geometry checks below run on every write: courtyard overlaps, pads against the outline and the hole
 keepouts, scripted RF copper against foreign pads and tracks, tap and decoupling distances. PCB-RF-2 adds the
 scripted GND vias (exposed pads, pad fan-outs, RF50 fences, HMC rings, stitching; rf_copper.py), the DC_CORE SENSE
-copper, the BOND-RF plated hole and the breakaway impedance coupon, with their checks (RF50 fence pitch, SENSE length
-against the prototype, bleeds outside the DC_CORE keepout); the spec key rf_checks hands the tap, keepout and SENSE
-limits to pcb/check_boards.py, which measures them again on the routed board. pcb/board_gen.py reads only the written spec.
+copper, the BOND-RF plated hole and the impedance coupon (separate outlines), with their checks (RF50 fence pitch,
+five HMC7992 EPAD vias, SENSE length against the prototype, bleeds outside the DC_CORE keepout); the spec key rf_checks
+hands the tap, keepout and SENSE limits to pcb/check_boards.py, which measures them again on the routed board.
+pcb/board_gen.py reads only the written spec.
 CI/model geometry; no hardware or bench gate is closed by it.
 """
 from __future__ import annotations
@@ -59,7 +60,7 @@ PLACEHOLDERS = {
 # (board_gen bond_hole); NT401 sits outside the keepout and ties it to GND (the PCB-RF-1 land PH407 is gone).
 BOND = {'at': [92.0, 40.5], 'net': 'CHASSIS', 'pad_mm': 7.0}
 # Impedance coupon (W2 PCB-RF-2): two RF50 CPWG thru lines, 50 and 25 mm board edge to board edge, each between two
-# edge SMAs of the J409-J412 land, on separate outlines beside the board (a breakaway part of the same panel).
+# edge SMAs of the J409-J412 land, on separate outlines beside the board (separate pieces of the same Gerber set: no tab).
 SMA_FP = 'SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS'
 SMA_EDGE = 4.76                      # board edge at footprint x -4.76 (the J409-J412 placement)
 COUPON_Y = (-22.0, -4.0)             # coupon outline y span (board mm, below the board; SMA legend 2 mm inside)
@@ -531,6 +532,8 @@ PROJECT_ONLY = {'DCSENSE': ('E4_DCS_UHF_SENSE', 'E4_DCS_LBAND_SENSE', 'E4_DCS_HF
 DC_KEEPOUT_MM = 5.0                  # bleeds stay this far outside the DC_CORE courtyard box (DC-01, DC-02)
 BLEEDS = ['R4460', 'R4461', 'R4462', 'R4463', 'R4464', 'R4465', 'R4466', 'R4467', 'R4468', 'R4469', 'R4470', 'R4471']
 TAPS = (('R4420', 'C4420'), ('R4430', 'C4430'), ('R4440', 'C4440'))  # 26.7 k DC tap and its first 100 pF (DC-01)
+HMC_REFS = ('U405', 'U406', 'U407')  # HMC7992 SP4T switches
+EPAD_MIN_VIAS = 5                    # STACK.md:299 (Власні PCB): >= 5 vias in the HMC7992 EPAD
 
 
 def net_classes(nets):
@@ -579,15 +582,17 @@ def spec_doc(template_nets, parts, enc):
     floor = nc['fab_floor']['jlc_4l_1oz']
     log = {k: v for k, v in COPPER_LOG.items() if not k.startswith('_')}
     coupon_spec = {k: v for k, v in COUPON.items() if not k.startswith('_')}
-    coupon_spec = {'why': ('impedance coupon on a breakaway part of the RF panel (A-PCB-06 decision): two RF50 CPWG thru '
-                           'lines, 50 and 25 mm board edge to board edge between Molex 73251-1153 edge SMAs (the '
-                           'J409-J412 land), same stackup, lamination and etch as the board; TDR / S21 of the 25 mm '
-                           'difference is a bench measurement (OPEN)'), **coupon_spec}
+    coupon_spec = {'why': ('impedance coupon (A-PCB-06): two RF50 CPWG thru lines, 50 and 25 mm board edge to board edge '
+                           'between Molex 73251-1153 edge SMAs (the J409-J412 land), each on its own Edge.Cuts outline '
+                           '4 mm below the board with no tab or mouse-bite, in the same Gerber set and the same stackup '
+                           'as the board; the fab notes list the three pieces, and how the fab panelises them is an '
+                           'order-time choice (OPEN); TDR / S21 of the 25 mm difference is a bench measurement (OPEN)'),
+                   **coupon_spec}
     only_refs = {'H5': 'BOND-RF plated contract hole (92, 40.5) on CHASSIS (bond_hole; NT401 ties it to GND)'}
     only_pins = {'H5': {'1': 'CHASSIS'}}
     for net, x0, x1, left, right, gnd in COUPONS:
         for ref in (left, right):
-            only_refs[ref] = f'impedance coupon SMA of {net} ({x1 - x0:g} mm thru line), on the breakaway coupon outline'
+            only_refs[ref] = f'impedance coupon SMA of {net} ({x1 - x0:g} mm thru line), on the separate coupon outline'
             only_pins[ref] = {'CENTER': net, 'SHIELD': gnd}
     return {
         'schema': bg.SPEC_SCHEMA,
@@ -652,7 +657,7 @@ def spec_doc(template_nets, parts, enc):
         'board_only_refs': only_refs,
         'board_only_pins': only_pins,
         'coupons': [{'rect': [o[0], o[1], o[2] - o[0], o[3] - o[1]], 'rf50_nets': [c[0]], 'gnd_net': c[5],
-                     'reason': f'impedance coupon {c[0]} on its own breakaway outline, ground net {c[5]}'}
+                     'reason': f'impedance coupon {c[0]} on its own separate outline, ground net {c[5]}'}
                     for o, c in zip(COUPON['outlines'], COUPONS)],
         'groups': [],
         'rf50_taper': {ref: {'max_len_mm': TAPER_LEN, 'min_width_mm': TAPER_W,
@@ -692,11 +697,16 @@ def spec_doc(template_nets, parts, enc):
         'rf_copper': {
             'label': 'scripted copper of W2 PCB-RF-2 (rf_copper.py); counts are CI/model geometry',
             **log,
-            'epad_vias_source': ('project choice: 2 x 2 vias 0.6/0.3 at +/-0.425 mm in the 1.7 mm HMC7992 exposed pad, one '
-                                 'in the A407 pad; the ADI HMC7992 data sheet (https://www.analog.com/media/en/technical-'
-                                 'documentation/data-sheets/hmc7992.pdf) was not readable 2026-11-07 (connection reset; the '
-                                 'Farnell copy https://www.farnell.com/datasheets/2283884.pdf timed out), so its '
-                                 'evaluation-board via pattern is TBD and the array is not claimed to follow it'),
+            'epad_vias_source': ('STACK.md:299 asks for >= 5 vias in the HMC7992 EPAD: 5 vias 0.6/0.3 per 1.7 mm HMC7992 '
+                                 'exposed pad, the centre and four corners at +/-0.54 mm (via copper 0.01 mm inside the '
+                                 'pad; corner to centre 0.764 mm >= 0.75 = min_hole_to_hole 0.45 + 0.3 drill), one in the '
+                                 'A407 pad; rf_layout.py checks the count. The positions are a project choice: the ADI '
+                                 'HMC7992 data sheet (https://www.analog.com/media/en/technical-documentation/data-sheets/'
+                                 'hmc7992.pdf) was not readable 2026-11-07 (connection reset; the Farnell copy '
+                                 'https://www.farnell.com/datasheets/2283884.pdf timed out) nor 2026-11-11 (analog.com and '
+                                 'Farnell connection reset; https://www.lcsc.com/datasheet/C514406.pdf "Datasheet temporarily '
+                                 'unavailable"), so its evaluation-board via pattern is TBD and the array is not claimed to '
+                                 'follow it'),
             'open': ['solderable GND land and mask opening for a shield can over each HMC section: only the via ring '
                      'is drawn; the land waits for a can MPN (none chosen, A-PCB-06 decision)',
                      'via plugging / tenting of the exposed-pad vias (solder wicking) is an order-time fab option, not set here']},
@@ -707,10 +717,16 @@ def spec_doc(template_nets, parts, enc):
                        'the solderable can land waits for a can MPN',
              'reason': 'STACK.md names an optional shield wall or lid; a ring costs only copper and invents no MPN (A-PCB-06 decision)'},
             {'topic': 'Impedance coupon',
-             'choice': 'breakaway coupon of the RF panel: two RF50 CPWG thru lines 50 and 25 mm (edge to edge) between '
-                       'Molex 73251-1153 edge SMAs on two outlines below the board, in the same board file and fab set',
-             'reason': ('same lamination and etch as the board (A-PCB-06 decision); two lengths give the per-length loss and '
-                        'the launch by difference; board_gen draws the coupon after the SES import, so the router never sees it')},
+             'choice': ('two RF50 CPWG thru lines 50 and 25 mm (edge to edge) between Molex 73251-1153 edge SMAs, each on '
+                        'its own Edge.Cuts outline 4 mm below the board (separate pieces: no tab or mouse-bite), in the same '
+                        'board file, Gerber and fab set; the fab notes list the three pieces; the panelisation is an '
+                        'order-time choice (OPEN)'),
+             'reason': ('the plan asked for a breakaway tab; separate outlines keep the board outline equal to the contract '
+                        'outline (contract area 8188 mm2; contract and mechanical model unchanged) and leave no tab stub on '
+                        'the bottom edge, where RF.r0 is 0.4 mm from rfbay.wall.bottom (mechanical/generated/fit-report.md); '
+                        'ordered in the same Gerber set, the coupons are made to the same stackup JLC04161H-7628 as the '
+                        'board (A-PCB-06); two lengths give the per-length loss and the launch by difference; board_gen '
+                        'draws the coupon after the SES import, so the router never sees it')},
             {'topic': 'Edge SMA side (J409-J412, J426)',
              'choice': 'top edge (y 44.5), beside the U.FL ports, instead of the bottom edge [100,184]',
              'reason': ('the 73251-1153 body reaches 9.5 mm beyond the board edge (footprint courtyard -14.29 to -4.76 mm '
@@ -839,7 +855,9 @@ def copper(contract, classes):
         by_ref[p['ref']].append(p)
     # 1. exposed pads and the QFN GND pins tied to them
     epads = [(p['ref'], p) for p in pads if p['num'] in EPAD_NAMES and p['net'] == 'GND']
-    log['epad_vias'] = len(rc.epad_vias(cu, epads))
+    ep_vias = rc.epad_vias(cu, epads)
+    log['epad_vias'] = len(ep_vias)
+    log['epad_vias_per_pad'] = {ref: sum(1 for v in ep_vias if v['why'].startswith(ref + ' ')) for ref, _p in epads}
     stubs, no_stub = [], []
     for ref, ep in epads:
         for p in by_ref[ref]:
@@ -995,6 +1013,10 @@ def rf2_checks(classes, domain):
     problems = []
     for net, a, b, side, gap in COPPER_LOG['_gaps'] + COUPON['_gaps']:
         problems.append(f'RF50 fence gap {gap} mm > 2.0 on {net} {a}->{b} side {side}')
+    for ref in HMC_REFS:
+        n = COPPER_LOG['epad_vias_per_pad'].get(ref, 0)
+        if n < EPAD_MIN_VIAS:
+            problems.append(f'{ref} exposed pad has {n} vias, STACK.md:299 asks for >= {EPAD_MIN_VIAS}')
     proto = collections.Counter()
     for s in bg.read_json(PROTOTYPE_REVIEW)['routing']:
         proto[s['net']] += s['length_mm']

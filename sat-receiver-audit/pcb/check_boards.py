@@ -39,8 +39,8 @@ Checker keys (optional, in either form; contract frame mm, y up unless contract_
   tht_pockets [[x, y, w, h], ...] + tht_pocket_margin_mm (contract frame), height_zones [{rect, max_height, side}],
   heights {ref: mm}, sides ["top"] (default top only), max_height_bottom,
   coupons [{rect: [x, y, w, h] (contract frame), rf50_nets [...], gnd_net, reason}] (test coupons drawn beside the board in
-  the same file, e.g. the RF impedance coupon on a breakaway tab: Edge.Cuts loops inside a coupon rect are not board
-  cutouts and stay out of the outline and area checks; rf50_nets are checked as RF50 lines against the coupon's own ground
+  the same file, e.g. the RF impedance coupons on their own outlines: Edge.Cuts loops inside a coupon rect are not board
+  cutouts and stay out of the outline and area checks, here and in pcb/fab_export.py; rf50_nets are checked as RF50 lines against the coupon's own ground
   net gnd_net (default GND; a separate piece needs its own net, or KiCad reports the two GND islands unconnected); W2 PCB-RF-2),
   rf_checks {why, taps [{ref, pad, max_mm}] (pad edge to the RF50-width copper of its own RF50 net), tap_caps [{ref, to: [ref,
   pad], max_mm}] (a pad of ref on the net of the target pad, pad edge to pad edge), keepout {domains [...], margin_mm, refs [...]}

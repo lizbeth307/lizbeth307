@@ -15,6 +15,7 @@ VIA_D, VIA_DRILL = 0.6, 0.3          # project via (RF.kicad_pro min_via_diamete
 VIA_R = VIA_D / 2
 HOLE_PITCH = 0.75                    # via centre to drilled-hole centre: min_hole_to_hole 0.45 + 0.3 drill
 EDGE_CU = 0.3                        # RF.kicad_pro min_copper_edge_clearance
+EPAD_EDGE = 0.01                     # an exposed-pad via keeps its copper this far inside the pad (epad_vias)
 TRIM_IN = 0.2                        # an RF50 end stays this far inside its pad (pad entry, see trim_pad_entries)
 # RF50 fence (pcb/generated/netclasses.json RF50: width 0.36, gap 0.20, fence pitch <= 2.0, row <= 1.0 from the gap):
 # the band for a fence via centre is w/2 + s + via r = 0.68 to w/2 + s + 1.0 = 1.38 from the trace axis.
@@ -240,13 +241,21 @@ def trim_pad_entries(tracks, pads, is_rf50, rf_w):
 
 # ----------------------------------------------------------------------------------------------- vias
 def epad_vias(cu, parts):
-    """GND vias inside exposed pads: 2 x 2 at +/-0.425 mm in a pad of 1.5 mm or more, one at the centre of a smaller
-    one (project choice: the ADI HMC7992 land pattern was not readable on 2026-11-07, see rf_copper_note)."""
+    """GND vias inside exposed pads. STACK.md:299 asks for >= 5 vias in the HMC7992 EPAD: where five fit, the centre
+    and four corner vias, the corners as far out as the via copper stays EPAD_EDGE inside the pad, kept only when the
+    corner-to-centre pitch is HOLE_PITCH or more (the 1.7 mm HMC7992 pad: +/-0.54 mm, pitch 0.764 mm); else 2 x 2 at
+    +/-0.425 mm in a pad of 1.5 mm or more, one at the centre of a smaller one. Project choice: the ADI HMC7992 land
+    pattern was not readable (2026-11-07, 2026-11-11), see epad_vias_source in the spec."""
     out = []
     for ref, pad in parts:
         (cx, cy), (w, h) = pad['center'], (pad['box'][2] - pad['box'][0], pad['box'][3] - pad['box'][1])
-        pts = ([(cx + dx, cy + dy) for dx in (-0.425, 0.425) for dy in (-0.425, 0.425)] if min(w, h) >= 1.5
-               else [(cx, cy)])
+        off = round(min(w, h) / 2 - VIA_R - EPAD_EDGE, 4)
+        if off * math.sqrt(2) >= HOLE_PITCH - 1e-9:
+            pts = [(cx, cy)] + [(cx + dx, cy + dy) for dx in (-off, off) for dy in (-off, off)]
+        elif min(w, h) >= 1.5:
+            pts = [(cx + dx, cy + dy) for dx in (-0.425, 0.425) for dy in (-0.425, 0.425)]
+        else:
+            pts = [(cx, cy)]
         for p in pts:
             if cu.via_ok(p, allow=(pad,)):
                 out.append(cu.add_via(p, f'{ref} exposed pad to the In1.Cu GND plane'))
