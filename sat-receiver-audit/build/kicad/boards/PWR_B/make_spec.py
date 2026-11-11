@@ -237,10 +237,11 @@ HEADERS = {
     'J204': ((126.0, 28.25), 180),  # X04S1-PWR PH 8 (S04, RF bias) -> SL2 (top edge zone 108-128)
 }
 # J209 centre, bottom side, rotation 180: contact 1 at the left end of the lower row (odd contacts lower, even upper,
-# pads 2k-1 / 2k in one column, 0.5 mm pitch), so the rail block (columns 1-21 of b2b-nets.json) lies next to the end of
-# the LAB5 trunk and the left LNA channels, the signal block over the header J203 and the sense pair (column 50) under
-# the ch4 shunt R246. The FX8 placeholder sat at (106.0, 18.5); there the right alignment-post hole (footprint
-# (13.5, -0.85), 1.45 mm NPTH) lands in a top-side courtyard (L209 at rotation 0 or 180). On y 18.5 with rotation 180
+# pads 2k-1 / 2k in one column, 0.5 mm pitch). With the map of b2b-nets.json the upper row carries the rail contacts, each
+# beside its GND return, towards the top-edge headers and the left LNA channels; the lower row starts with the four LAB5
+# contacts next to the end of the LAB5 trunk and goes on with the signals towards J202 / J203; the sense pair (column 50)
+# sits under the ch4 shunt R246 and the spare columns under the ch4 cell. The FX8 placeholder sat at (106.0, 18.5);
+# there the right alignment-post hole (footprint (13.5, -0.85), 1.45 mm NPTH) lands in a top-side courtyard (L209 at rotation 0 or 180). On y 18.5 with rotation 180
 # both holes clear every top-side courtyard for x 98.46-99.14 (right hole between R244 and R243, left hole right of
 # R506); 98.8 is its middle. With rotation 0 only x 102.05-102.2 is legal, and there the LAB5 contacts lie under U209
 # (route run 43100556016: 21 connections open).
