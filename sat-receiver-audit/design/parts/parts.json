@@ -34,7 +34,8 @@
   "design/parts/snapshots/2026-11-07-w2-mech4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech6-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src2-manual.json",
-  "design/parts/snapshots/2026-11-11-w2-mech5-manual.json"
+  "design/parts/snapshots/2026-11-11-w2-mech5-manual.json",
+  "design/parts/snapshots/2026-11-11-w2-pcb-sb2-manual.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -7411,11 +7412,16 @@
   },
   {
    "id": "AI-STANDOFF-IMU-13",
-   "item": "стійки 13 мм під пару BNO085 + RP2040-Zero (набір)",
-   "qty": 1,
-   "spares": 0,
-   "for": "build/17 F36 (imu_pack.json boards.standoff_h 13.0; I-01)",
-   "tbd": "тип, кількість і MPN не обрано: кількість — за отворами обох плат (не перевірено)"
+   "item": "стійка Würth 970130155: M2.5 «мама-мама», 13 мм, поліамід, шестигранник 5.0, під BNO085 паку IMU",
+   "qty": 4,
+   "spares": 2,
+   "for": "build/17 F36 (mechanical/params/imu_pack.json boards.standoff_h 13.0): 4 металізовані отвори ⌀2.5 (MOUNTINGHOLE_2.5_PLATED) плати Adafruit 4754 BNO085 (25.4 × 22.86, отвори на 2.54 від країв: Adafruit_BNO08x.brd, github.com/adafruit/Adafruit-BNO08x-PCB be9dc99, CC BY-SA, лише прочитано 11.11.2026); Waveshare RP2040-Zero отворів не має (сторінка wiki RP2040-Zero, 11.11.2026: модуль з castellated-краями), тож стійок під неї немає — її кріплення OPEN для лінії IMU",
+   "manufacturer": "Würth Elektronik",
+   "mpn": "970130155",
+   "sku": {
+    "digikey": "732-13002-ND"
+   },
+   "note": "Поліамід, не сталь: немагнітна стійка поруч із магнітометром BNO085 (з тієї ж причини латунні гвинти кришки, STACK D12). Висота 13.00 = imu_pack.json standoff_h. Гвинти M2.5 до стійок і їх довжина TBD: стос IMU-BOARD-STANDOFFS (F36) залежить від друкованого носія (лінія IMU). Плата IMU_CARRIER (pcb/boards/IMU_CARRIER.json) стоїть поза стійками: її смуга закінчується на y 6.4 коробки, рукав — справа від x 27.0 (W2 PCB-SB2)."
   },
   {
    "id": "AI-INSERT-1420",
@@ -7437,11 +7443,16 @@
   },
   {
    "id": "AI-PACK-FUSE-FIX",
-   "item": "кріплення носійної плати F101 (PACK_FUSE) біля лотка батареї",
-   "qty": 1,
-   "spares": 0,
-   "for": "build/17 F39 (build/16 §2 PACK: «ізольованій і закріпленій біля лотка»)",
-   "tbd": "конверту носія в моделі механіки ще немає (mechanical/README)"
+   "item": "гвинт M2.5×6 ISO 14580 A2-70 TX8 носійної плати F101 (PACK_FUSE) у стійки PEM SO-M2.5-6ZI (пачка 25 шт.)",
+   "qty": 2,
+   "spares": 2,
+   "for": "build/17 F39: 2 отвори ⌀2.7 плати PACK_FUSE за 2.6 від торців (pcb/boards/PACK_FUSE.json, build/kicad/boards/PACK_FUSE/contract-proposal.json) над стійками PF1–PF2 (AI-PEM-SO-M25-6ZI); плата 1.6 + 4.4 у різьбі стійки, вікно 4.1–9.6 мм (mechanical/generated/fastener-stacks.json PACK-FUSE)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "TC-S-M2,5x6",
+   "sku": {
+    "web": "3djake-tc-s-m2,5x6"
+   },
+   "note": "Рядок знімка W2 SRC-2 (web:3djake-tc-s-m2,5x6); сторінку перечитано 11.11.2026 (W2 PCB-SB2): ISO 14580, A2-70, TX8, dk 4.5, k 1.85, 25 шт. у пачці, «In stock», довжини M2.5 — 4, 6, 10, 12, 18, 25, 30 (x 5 і x 8 вікна немає). Той самий артикул, що AI-M25X6-MODULES і AI-M25-DISPLAY-CLAMP: одна пачка 25 шт. покриває 2 + 2 цієї позиції разом з ними. Ізоляція носія — не гвинт: мідь плати на 2.5 мм від осей гвинтів і поліімідна стрічка на нижньому боці (AI-POLYIMIDE-TAPE; її власник додає F39 до «for»)."
   }
  ]
 }
