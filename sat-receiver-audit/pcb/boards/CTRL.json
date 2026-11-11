@@ -23,13 +23,13 @@
     "plan": {
       "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, PWR1A/PWR3A_BRANCH routes, GND pour after routing",
       "In1.Cu": "L2: GND plane (pre-route zone, DSN plane), no signals",
-      "In2.Cu": "L3: signals, the scripted 0.8/0.6 mm LAB5 branch run (J305.3 -> U315, C322, fan switch, D301), GND pour after routing",
-      "B.Cu": "L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm), scripted LAB5 branch ends, locked GND copper over the custom Pico GND pads, PWR1A/PWR3A_BRANCH routes, GND pour after routing"
+      "In2.Cu": "L3: signals, PWR3A_BRANCH router branches (LAB5, E3_BLOWER_GND), GND pour after routing",
+      "B.Cu": "L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm), scripted LAB5 islands, locked GND copper over the custom Pico GND pads, PWR1A/PWR3A_BRANCH routes, GND pour after routing"
     }
   },
   "project": "build/kicad/boards/CTRL/CTRL.kicad_pro",
   "rules_file": null,
-  "rules_note": "Rules live in the committed CTRL.kicad_pro: the project defaults of pcb/generated/netclasses.json project_defaults (track 0.15 / clearance 0.15, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias 0.7 / 0.3 (0.6 mm vias at 0.15 mm clearance sit 0.45 mm hole to hole, PCB-PWRB lesson), and the classes PWR1A (0.35 mm: E3_FAN5_P, E3_GNSS5V), PWR3A_BRANCH (0.5 mm router branches of E3_BLOWER_GND), SCRIPTED_GND (GND) and SCRIPTED_PWR3A (LAB5, E3_FAN5), the last two not autorouted. check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru files yet).",
+  "rules_note": "Rules live in the committed CTRL.kicad_pro: the project defaults of pcb/generated/netclasses.json project_defaults (track 0.15 / clearance 0.15, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias 0.7 / 0.3 (0.6 mm vias at 0.15 mm clearance sit 0.45 mm hole to hole, PCB-PWRB lesson), and the classes PWR1A (0.35 mm: E3_FAN5_P, E3_GNSS5V), PWR3A_BRANCH (0.6 mm router branches of LAB5 and E3_BLOWER_GND), SCRIPTED_GND (GND) and SCRIPTED_PWR3A (E3_FAN5), the last two not autorouted. check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru files yet).",
   "fab_floor": {
     "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 4-layer values (pcb/generated/netclasses.json fab_floor.jlc_4l_1oz)",
     "min_track_width": 0.09,
@@ -2337,89 +2337,19 @@
         "why": "LAB5 branch (branch_exempt, C342): via to the C342 LAB5 pad"
       },
       {
-        "id": "LAB5-L3",
-        "net": "LAB5",
-        "layer": "In2.Cu",
-        "width_mm": 0.8,
-        "path": [
-          [
-            9.47,
-            70.01
-          ],
-          [
-            11.15,
-            71.21
-          ],
-          [
-            11.15,
-            94.3
-          ],
-          [
-            26.2,
-            94.3
-          ],
-          [
-            32.4,
-            94.3
-          ],
-          [
-            44.0,
-            94.3
-          ],
-          [
-            44.0,
-            88.7
-          ]
-        ],
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, U315, C321, C322, Q304, R367, C320): inner L3 run to the GNSS switch and the fan switch, 0.8 mm (<= 0.44 A)"
-      },
-      {
-        "id": "LAB5-L3-U315",
-        "net": "LAB5",
-        "layer": "In2.Cu",
-        "width_mm": 0.8,
-        "path": [
-          [
-            26.2,
-            94.3
-          ],
-          [
-            26.2,
-            97.3
-          ]
-        ],
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, U315): L3 tap to the U315 via"
-      },
-      {
         "id": "LAB5-U315",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.6,
         "path": [
           [
-            26.2,
-            97.3
-          ],
-          [
-            24.1875,
-            97.3
-          ],
-          [
             24.1875,
             96.65
-          ]
-        ],
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, U315): via to the U315 IN pad from above"
-      },
-      {
-        "id": "LAB5-C321",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.6,
-        "path": [
+          ],
+          [
+            24.1875,
+            97.3
+          ],
           [
             26.2,
             97.3
@@ -2434,43 +2364,7 @@
           ]
         ],
         "locked": true,
-        "why": "LAB5 branch (branch_exempt, C321): U315 input capacitor"
-      },
-      {
-        "id": "LAB5-L3-C322",
-        "net": "LAB5",
-        "layer": "In2.Cu",
-        "width_mm": 0.8,
-        "path": [
-          [
-            32.4,
-            94.3
-          ],
-          [
-            32.4,
-            95.92
-          ]
-        ],
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, C322): L3 tap to the C322 via"
-      },
-      {
-        "id": "LAB5-C322",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.6,
-        "path": [
-          [
-            32.4,
-            95.92
-          ],
-          [
-            30.65,
-            95.92
-          ]
-        ],
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, C322): via to the C322 LAB5 pad"
+        "why": "LAB5 branch (branch_exempt, U315, C321): GNSS switch input and its capacitor, U315.1 left from above"
       },
       {
         "id": "LAB5-FAN",
@@ -2479,8 +2373,8 @@
         "width_mm": 0.6,
         "path": [
           [
-            44.0,
-            88.7
+            45.4,
+            86.325
           ],
           [
             45.4,
@@ -2496,25 +2390,7 @@
           ]
         ],
         "locked": true,
-        "why": "LAB5 branch (branch_exempt, C320): fan switch source capacitor, above C320"
-      },
-      {
-        "id": "LAB5-R367",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.6,
-        "path": [
-          [
-            45.4,
-            88.7
-          ],
-          [
-            45.4,
-            86.325
-          ]
-        ],
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, R367): gate pull-up of Q304"
+        "why": "LAB5 branch (branch_exempt, R367, C320): fan switch gate pull-up and source capacitor, above C320"
       },
       {
         "id": "LAB5-Q304",
@@ -2533,50 +2409,6 @@
         ],
         "locked": true,
         "why": "LAB5 branch (branch_exempt, Q304): fan switch source"
-      },
-      {
-        "id": "LAB5-L3-D301",
-        "net": "LAB5",
-        "layer": "In2.Cu",
-        "width_mm": 0.6,
-        "path": [
-          [
-            44.0,
-            88.7
-          ],
-          [
-            38.4,
-            88.7
-          ],
-          [
-            38.4,
-            56.4
-          ],
-          [
-            36.2,
-            55.6
-          ]
-        ],
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, D301): inner L3 run down the right strip to a via next to the Pico VSYS diode D301 (Pico VSYS current only)"
-      },
-      {
-        "id": "LAB5-D301",
-        "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.6,
-        "path": [
-          [
-            36.2,
-            55.6
-          ],
-          [
-            35.9,
-            53.4
-          ]
-        ],
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, D301): via to the D301 LAB5 pad"
       },
       {
         "id": "GND-U305.3-COVER0",
@@ -3305,8 +3137,8 @@
             92.65
           ],
           [
-            39.177,
-            93.312
+            37.791,
+            93.543
           ]
         ],
         "locked": true
@@ -3339,8 +3171,8 @@
             92.65
           ],
           [
-            41.587,
-            93.312
+            40.201,
+            93.543
           ]
         ],
         "locked": true
@@ -3373,8 +3205,8 @@
             92.65
           ],
           [
-            44.95,
-            93.863
+            42.611,
+            93.543
           ]
         ],
         "locked": true
@@ -3594,8 +3426,8 @@
             91.6
           ],
           [
-            45.212,
-            90.712
+            44.8,
+            91.6
           ]
         ],
         "locked": true
@@ -3662,8 +3494,8 @@
             91.6
           ],
           [
-            38.6,
-            89.675
+            39.072,
+            93.363
           ]
         ],
         "locked": true
@@ -3815,8 +3647,8 @@
             88.0
           ],
           [
-            39.56,
-            86.215
+            37.775,
+            87.075
           ]
         ],
         "locked": true
@@ -3890,7 +3722,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-44",
+        "id": "GND-SW302.2-40",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3924,7 +3756,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-46",
+        "id": "GND-SW303.2-42",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3958,7 +3790,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-48",
+        "id": "GND-SW304.2-44",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3992,7 +3824,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-50",
+        "id": "GND-SW305.2-46",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4026,7 +3858,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-52",
+        "id": "GND-SW306.2-48",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4060,7 +3892,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-54",
+        "id": "GND-SW307.2-50",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -4122,7 +3954,7 @@
           ],
           [
             11.215,
-            96.705
+            93.855
           ]
         ],
         "locked": true
@@ -4533,54 +4365,6 @@
         "why": "LAB5 branch (branch_exempt, C342): F.Cu to B.Cu"
       },
       {
-        "id": "LAB5-V-U315",
-        "net": "LAB5",
-        "at": [
-          26.2,
-          97.3
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, U315): L3 to B.Cu next to U315"
-      },
-      {
-        "id": "LAB5-V-C322",
-        "net": "LAB5",
-        "at": [
-          32.4,
-          95.92
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, C322): L3 to B.Cu next to C322"
-      },
-      {
-        "id": "LAB5-V-FAN",
-        "net": "LAB5",
-        "at": [
-          44.0,
-          88.7
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, Q304): L3 to B.Cu above the fan switch"
-      },
-      {
-        "id": "LAB5-V-D301",
-        "net": "LAB5",
-        "at": [
-          36.2,
-          55.6
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true,
-        "why": "LAB5 branch (branch_exempt, D301): L3 to B.Cu next to D301"
-      },
-      {
         "id": "GND-U310.2",
         "net": "GND",
         "at": [
@@ -4628,8 +4412,8 @@
         "id": "GND-C302.2",
         "net": "GND",
         "at": [
-          39.177,
-          93.312
+          37.791,
+          93.543
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -4650,8 +4434,8 @@
         "id": "GND-C304.2",
         "net": "GND",
         "at": [
-          41.587,
-          93.312
+          40.201,
+          93.543
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -4672,8 +4456,8 @@
         "id": "GND-C306.2",
         "net": "GND",
         "at": [
-          44.95,
-          93.863
+          42.611,
+          93.543
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -4815,8 +4599,8 @@
         "id": "GND-C319.2",
         "net": "GND",
         "at": [
-          45.212,
-          90.712
+          44.8,
+          91.6
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -4859,8 +4643,8 @@
         "id": "GND-D305.2",
         "net": "GND",
         "at": [
-          38.6,
-          89.675
+          39.072,
+          93.363
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -4958,8 +4742,8 @@
         "id": "GND-R366.2",
         "net": "GND",
         "at": [
-          39.56,
-          86.215
+          37.775,
+          87.075
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5010,7 +4794,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-44",
+        "id": "GND-SW302.2-40",
         "net": "GND",
         "at": [
           15.709,
@@ -5032,7 +4816,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-46",
+        "id": "GND-SW303.2-42",
         "net": "GND",
         "at": [
           37.709,
@@ -5054,7 +4838,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-48",
+        "id": "GND-SW304.2-44",
         "net": "GND",
         "at": [
           15.709,
@@ -5076,7 +4860,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-50",
+        "id": "GND-SW305.2-46",
         "net": "GND",
         "at": [
           37.683,
@@ -5098,7 +4882,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-52",
+        "id": "GND-SW306.2-48",
         "net": "GND",
         "at": [
           15.709,
@@ -5120,7 +4904,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-54",
+        "id": "GND-SW307.2-50",
         "net": "GND",
         "at": [
           37.709,
@@ -5157,7 +4941,7 @@
         "net": "GND",
         "at": [
           11.215,
-          96.705
+          93.855
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6116,54 +5900,54 @@
   ],
   "branch_exempt": {
     "C320": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "C321": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "C322": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "C342": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate) E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate) E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
     },
     "C343": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate) E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate) E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
     },
     "D301": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "D306": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "flyback diode D306 cathode on LAB5: it conducts the blower current only while the coil current decays after Q305 turns off (ms); scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
+      "reason": "flyback diode D306 cathode on LAB5: it conducts the blower current only while the coil current decays after Q305 turns off (ms); LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "Q304": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "R367": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     },
     "U315": {
-      "max_mm": 60.0,
+      "max_mm": 80.0,
       "min_width_mm": 0.5,
-      "reason": "scripted LAB5 branch from the 1.85 mm feed (J305 -> J314.2) to a low-current load (LAB5 is fully scripted, class SCRIPTED_PWR3A, not autorouted): 0.6 mm on L1/L4 and one 0.8 mm run on L3 (J305.3 -> GNSS switch -> fan switch -> Pico VSYS diode). Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); the L3 run carries at most U315 + fan, 0.44 A, and 0.8 mm of 0.5 oz inner copper carries about 0.62 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: short scripted pieces at D306, C342, C343, U315/C321 and C320/R367/Q304, joined by Freerouting in class PWR3A_BRANCH at 0.6 mm on L1, L3 and L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A + the Pico VSYS current; 0.6 mm of 0.5 oz inner copper carries about 0.50 A at +10 degC (IPC-2221 internal, k 0.024), 0.6 mm of 1 oz outer copper about 1.65 A (k 0.048); short-circuit current until the upstream fuse opens is not covered by these widths (bench gate)"
     }
   },
   "neck_exempt": {
@@ -6246,11 +6030,12 @@
       ],
       "PWR3A_BRANCH": [
         "F.Cu",
+        "In2.Cu",
         "B.Cu"
       ]
     },
-    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off and GND / E3_FAN5 scripted. Route run 43092258826 (2 errors, 15 unconnected at the 25 min timeout; artifact lost in a GitHub Actions outage) and 43100344071 (34 min: 2 errors, both router tracks too close to the custom Pico GND pads 8 and 13, 8 unconnected, 5 of them LAB5 branches): LAB5 is now fully scripted (feed, branches, five vias) and not autorouted, the custom Pico GND pads carry locked GND copper over their whole outline, only the E3_BLOWER_GND capacitor branches stay in class PWR3A_BRANCH (0.5 mm, branch_exempt); job timeout 34 min inside the 45 min CI job",
-    "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper lands on the inner layers (the scripted LAB5 L3 run is locked and branch_exempt)"
+    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches with L1/L4 only): the custom Pico GND pads now carry locked GND copper over their whole outline, and the LAB5 / E3_BLOWER_GND branches (class PWR3A_BRANCH, 0.6 mm) may use L3. Route run 43106410728 with a scripted L3 LAB5 run: DRC errors 0 but 36 of the 3V3_Q6A connections open, because the locked run walled off L3; it is replaced by short scripted islands that the router joins. Job timeout 34 min inside the 45 min CI job",
+    "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A (F.Cu B.Cu) and PWR3A_BRANCH (F.Cu In2.Cu B.Cu) (Freerouting 2.5.0 Circuit.java / Network.java): PWR1A stays on the outer layers, the branch class may use L3 (branch_exempt, current in its reason)"
   },
   "drc_policy": {
     "warning_checks": {
