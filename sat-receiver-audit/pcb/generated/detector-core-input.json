@@ -6361,7 +6361,19 @@
         },
         {
           "ref": "J208",
+          "pin": "4",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
           "pin": "7",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "8",
           "sheet": "E2",
           "name": "GND"
         },
@@ -6373,7 +6385,19 @@
         },
         {
           "ref": "J208",
+          "pin": "12",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
           "pin": "15",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "16",
           "sheet": "E2",
           "name": "GND"
         },
@@ -6457,31 +6481,7 @@
         },
         {
           "ref": "J208",
-          "pin": "71",
-          "sheet": "E2",
-          "name": "GND"
-        },
-        {
-          "ref": "J208",
-          "pin": "75",
-          "sheet": "E2",
-          "name": "GND"
-        },
-        {
-          "ref": "J208",
-          "pin": "79",
-          "sheet": "E2",
-          "name": "GND"
-        },
-        {
-          "ref": "J208",
-          "pin": "83",
-          "sheet": "E2",
-          "name": "GND"
-        },
-        {
-          "ref": "J208",
-          "pin": "85",
+          "pin": "69",
           "sheet": "E2",
           "name": "GND"
         },
@@ -6499,7 +6499,19 @@
         },
         {
           "ref": "J209",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
           "pin": "4",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "7",
           "sheet": "E2",
           "name": "GND"
         },
@@ -6511,7 +6523,19 @@
         },
         {
           "ref": "J209",
+          "pin": "11",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
           "pin": "12",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "15",
           "sheet": "E2",
           "name": "GND"
         },
@@ -6601,31 +6625,7 @@
         },
         {
           "ref": "J209",
-          "pin": "72",
-          "sheet": "E2",
-          "name": "GND"
-        },
-        {
-          "ref": "J209",
-          "pin": "76",
-          "sheet": "E2",
-          "name": "GND"
-        },
-        {
-          "ref": "J209",
-          "pin": "80",
-          "sheet": "E2",
-          "name": "GND"
-        },
-        {
-          "ref": "J209",
-          "pin": "84",
-          "sheet": "E2",
-          "name": "GND"
-        },
-        {
-          "ref": "J209",
-          "pin": "86",
+          "pin": "70",
           "sheet": "E2",
           "name": "GND"
         },
@@ -8986,7 +8986,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "f7df0056983ea7155c2d23062be3c1855e96cc4b8f02c757d42797754f8f8c5e"
+        "sha256": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db"
       },
       {
         "file": "design/E3.json",
@@ -9006,7 +9006,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "5c56c46f6f9290cf1e5143d6bb5fe233728eddab81b375728c2e8e0c5c4aa04e"
+        "sha256": "ac05a06f77f55061928086aa8f49e5061df3a29c77aff892e66c2cdcc46a1cac"
       }
     ],
     "source_documents": [

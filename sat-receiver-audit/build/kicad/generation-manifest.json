@@ -62,7 +62,7 @@
       "stem": "E2",
       "instance": "81984160-ffc1-5150-93ba-690a49e1cc5c",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/5)",
-      "components": 52,
+      "components": 37,
       "sheet": "E2",
       "notes": [
         "E2-05"
@@ -71,14 +71,14 @@
       "note_wrap_chars": {
         "E2-05": 110
       },
-      "fill": 0.809,
+      "fill": 0.788,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 161,
-        "ground_symbols": 35,
-        "junctions": 90,
-        "wire_crossings": 12,
-        "wires": 410
+        "global_labels": 141,
+        "ground_symbols": 23,
+        "junctions": 88,
+        "wire_crossings": 9,
+        "wires": 371
       }
     },
     {
@@ -112,7 +112,7 @@
       "stem": "E2_03",
       "instance": "c4c82d69-a1e5-5cf1-924c-73422e522133",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (3/5)",
-      "components": 45,
+      "components": 60,
       "sheet": "E2",
       "notes": [
         "E2-02",
@@ -123,14 +123,14 @@
         "E2-02": 110,
         "N-E2-03": 110
       },
-      "fill": 0.591,
+      "fill": 0.697,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 34,
-        "ground_symbols": 28,
-        "junctions": 31,
+        "global_labels": 52,
+        "ground_symbols": 40,
+        "junctions": 37,
         "wire_crossings": 3,
-        "wires": 141
+        "wires": 180
       }
     },
     {
@@ -441,10 +441,10 @@
   "nets": 486,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 1223,
+    "global_labels": 1221,
     "ground_symbols": 533,
-    "junctions": 551,
-    "wire_crossings": 61,
+    "junctions": 555,
+    "wire_crossings": 58,
     "wires": 3297
   },
   "sparse_last_pages": [],
@@ -1111,7 +1111,7 @@
   },
   "source_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
-    "E2.json": "f7df0056983ea7155c2d23062be3c1855e96cc4b8f02c757d42797754f8f8c5e",
+    "E2.json": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db",
     "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"

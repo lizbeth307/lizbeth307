@@ -3373,198 +3373,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C282">
-      <value>10nF 50V C0G C1608C0G1H103J080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">C1608C0G1H103J080AA</field>
-        <field name="Manufacturer">TDK</field>
-        <field name="LCSC">C2168383</field>
-        <field name="Alt_MPN">Murata Electronics GRM1885C1H103JA01D</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C282" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="C1608C0G1H103J080AA"/>
-      <property name="Manufacturer" value="TDK"/>
-      <property name="LCSC" value="C2168383"/>
-      <property name="Alt_MPN" value="Murata Electronics GRM1885C1H103JA01D"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>501da925-5b61-5776-90e4-863f8ebf4f0b</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C283">
-      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">C1608X7R1H104K080AA</field>
-        <field name="Manufacturer">TDK</field>
-        <field name="Alt_MPN">YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C283" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="C1608X7R1H104K080AA"/>
-      <property name="Manufacturer" value="TDK"/>
-      <property name="Alt_MPN" value="YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>036b91cb-48aa-594b-9b9f-b639d5ae17c5</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C284">
-      <value>10nF 50V C0G C1608C0G1H103J080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">C1608C0G1H103J080AA</field>
-        <field name="Manufacturer">TDK</field>
-        <field name="LCSC">C2168383</field>
-        <field name="Alt_MPN">Murata Electronics GRM1885C1H103JA01D</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C284" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="C1608C0G1H103J080AA"/>
-      <property name="Manufacturer" value="TDK"/>
-      <property name="LCSC" value="C2168383"/>
-      <property name="Alt_MPN" value="Murata Electronics GRM1885C1H103JA01D"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>1592a7f5-32bd-5547-9a89-a08834c92376</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C285">
-      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">C1608X7R1H104K080AA</field>
-        <field name="Manufacturer">TDK</field>
-        <field name="Alt_MPN">YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C285" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="C1608X7R1H104K080AA"/>
-      <property name="Manufacturer" value="TDK"/>
-      <property name="Alt_MPN" value="YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>be959f82-3159-5d57-9a89-74eaa5a1c083</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C286">
-      <value>10nF 50V C0G C1608C0G1H103J080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">C1608C0G1H103J080AA</field>
-        <field name="Manufacturer">TDK</field>
-        <field name="LCSC">C2168383</field>
-        <field name="Alt_MPN">Murata Electronics GRM1885C1H103JA01D</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C286" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="C1608C0G1H103J080AA"/>
-      <property name="Manufacturer" value="TDK"/>
-      <property name="LCSC" value="C2168383"/>
-      <property name="Alt_MPN" value="Murata Electronics GRM1885C1H103JA01D"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>dfd508ef-79e8-5519-8bf4-fa6b889e2aa1</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C287">
-      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">C1608X7R1H104K080AA</field>
-        <field name="Manufacturer">TDK</field>
-        <field name="Alt_MPN">YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C287" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="C1608X7R1H104K080AA"/>
-      <property name="Manufacturer" value="TDK"/>
-      <property name="Alt_MPN" value="YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>1fce23c6-f001-5633-a773-8270c254f4e4</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="C288">
       <value>100nF 50V X7R C1608X7R1H104K080AA</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
@@ -3726,17 +3534,17 @@
             <pin num="3"/>
             <pin num="4"/>
             <pin num="5"/>
-            <pin num="7"/>
-            <pin num="12"/>
-            <pin num="16"/>
             <pin num="6"/>
+            <pin num="7"/>
             <pin num="8"/>
             <pin num="9"/>
             <pin num="10"/>
             <pin num="11"/>
+            <pin num="12"/>
             <pin num="13"/>
             <pin num="14"/>
             <pin num="15"/>
+            <pin num="16"/>
             <pin num="17"/>
             <pin num="18"/>
             <pin num="19"/>
@@ -3770,26 +3578,26 @@
       <units>
         <unit name="A">
           <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-            <pin num="3"/>
-            <pin num="4"/>
-            <pin num="5"/>
-            <pin num="6"/>
-            <pin num="7"/>
-            <pin num="8"/>
-            <pin num="9"/>
-            <pin num="10"/>
             <pin num="11"/>
             <pin num="12"/>
             <pin num="13"/>
-            <pin num="14"/>
-            <pin num="15"/>
             <pin num="16"/>
             <pin num="17"/>
-            <pin num="18"/>
             <pin num="19"/>
+            <pin num="14"/>
+            <pin num="15"/>
+            <pin num="18"/>
             <pin num="20"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="7"/>
           </pins>
         </unit>
       </units>
@@ -3819,14 +3627,14 @@
       <units>
         <unit name="A">
           <pins>
-            <pin num="7"/>
-            <pin num="8"/>
-            <pin num="6"/>
-            <pin num="1"/>
             <pin num="2"/>
             <pin num="3"/>
             <pin num="4"/>
             <pin num="5"/>
+            <pin num="1"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="8"/>
           </pins>
         </unit>
       </units>
@@ -3965,20 +3773,16 @@
       <units>
         <unit name="A">
           <pins>
-            <pin num="30"/>
-            <pin num="28"/>
+            <pin num="46"/>
+            <pin num="44"/>
             <pin num="1"/>
             <pin num="2"/>
-            <pin num="4"/>
             <pin num="5"/>
             <pin num="6"/>
-            <pin num="8"/>
             <pin num="9"/>
             <pin num="10"/>
-            <pin num="12"/>
             <pin num="13"/>
             <pin num="14"/>
-            <pin num="16"/>
             <pin num="17"/>
             <pin num="18"/>
             <pin num="20"/>
@@ -3987,26 +3791,24 @@
             <pin num="24"/>
             <pin num="25"/>
             <pin num="26"/>
+            <pin num="28"/>
             <pin num="29"/>
+            <pin num="30"/>
             <pin num="32"/>
             <pin num="33"/>
-            <pin num="34"/>
-            <pin num="36"/>
             <pin num="37"/>
-            <pin num="38"/>
-            <pin num="40"/>
             <pin num="41"/>
-            <pin num="42"/>
-            <pin num="44"/>
             <pin num="45"/>
             <pin num="49"/>
-            <pin num="46"/>
-            <pin num="48"/>
-            <pin num="50"/>
+            <pin num="53"/>
             <pin num="3"/>
+            <pin num="4"/>
             <pin num="7"/>
+            <pin num="8"/>
             <pin num="11"/>
+            <pin num="12"/>
             <pin num="15"/>
+            <pin num="16"/>
             <pin num="19"/>
             <pin num="23"/>
             <pin num="27"/>
@@ -4020,40 +3822,46 @@
             <pin num="59"/>
             <pin num="63"/>
             <pin num="67"/>
-            <pin num="71"/>
-            <pin num="75"/>
-            <pin num="79"/>
-            <pin num="83"/>
-            <pin num="85"/>
+            <pin num="69"/>
             <pin num="97"/>
             <pin num="98"/>
-            <pin num="57"/>
-            <pin num="61"/>
-            <pin num="73"/>
-            <pin num="53"/>
-            <pin num="65"/>
-            <pin num="69"/>
-            <pin num="77"/>
-            <pin num="81"/>
-            <pin num="99"/>
-            <pin num="100"/>
+            <pin num="50"/>
             <pin num="52"/>
             <pin num="54"/>
             <pin num="56"/>
             <pin num="58"/>
             <pin num="60"/>
+            <pin num="34"/>
+            <pin num="36"/>
+            <pin num="38"/>
+            <pin num="40"/>
+            <pin num="42"/>
+            <pin num="48"/>
+            <pin num="57"/>
+            <pin num="61"/>
+            <pin num="65"/>
+            <pin num="99"/>
+            <pin num="100"/>
             <pin num="62"/>
             <pin num="64"/>
             <pin num="66"/>
             <pin num="68"/>
             <pin num="70"/>
+            <pin num="71"/>
             <pin num="72"/>
+            <pin num="73"/>
             <pin num="74"/>
+            <pin num="75"/>
             <pin num="76"/>
+            <pin num="77"/>
             <pin num="78"/>
+            <pin num="79"/>
             <pin num="80"/>
+            <pin num="81"/>
             <pin num="82"/>
+            <pin num="83"/>
             <pin num="84"/>
+            <pin num="85"/>
             <pin num="86"/>
             <pin num="87"/>
             <pin num="88"/>
@@ -4094,47 +3902,53 @@
       <units>
         <unit name="A">
           <pins>
-            <pin num="54"/>
-            <pin num="58"/>
-            <pin num="62"/>
-            <pin num="66"/>
-            <pin num="70"/>
-            <pin num="74"/>
-            <pin num="78"/>
-            <pin num="82"/>
-            <pin num="99"/>
-            <pin num="100"/>
+            <pin num="33"/>
+            <pin num="35"/>
+            <pin num="37"/>
+            <pin num="39"/>
+            <pin num="41"/>
+            <pin num="47"/>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="13"/>
+            <pin num="14"/>
+            <pin num="17"/>
+            <pin num="18"/>
+            <pin num="19"/>
+            <pin num="21"/>
+            <pin num="22"/>
+            <pin num="23"/>
+            <pin num="25"/>
+            <pin num="26"/>
+            <pin num="27"/>
+            <pin num="29"/>
+            <pin num="30"/>
+            <pin num="31"/>
+            <pin num="34"/>
+            <pin num="38"/>
+            <pin num="42"/>
+            <pin num="43"/>
+            <pin num="45"/>
+            <pin num="46"/>
+            <pin num="49"/>
+            <pin num="50"/>
             <pin num="51"/>
             <pin num="53"/>
+            <pin num="54"/>
             <pin num="55"/>
             <pin num="57"/>
             <pin num="59"/>
-            <pin num="61"/>
-            <pin num="63"/>
-            <pin num="65"/>
-            <pin num="67"/>
-            <pin num="69"/>
-            <pin num="71"/>
-            <pin num="73"/>
-            <pin num="75"/>
-            <pin num="77"/>
-            <pin num="79"/>
-            <pin num="81"/>
-            <pin num="83"/>
-            <pin num="85"/>
-            <pin num="87"/>
-            <pin num="88"/>
-            <pin num="89"/>
-            <pin num="90"/>
-            <pin num="91"/>
-            <pin num="92"/>
-            <pin num="93"/>
-            <pin num="94"/>
-            <pin num="95"/>
-            <pin num="96"/>
+            <pin num="3"/>
             <pin num="4"/>
+            <pin num="7"/>
             <pin num="8"/>
+            <pin num="11"/>
             <pin num="12"/>
+            <pin num="15"/>
             <pin num="16"/>
             <pin num="20"/>
             <pin num="24"/>
@@ -4149,51 +3963,45 @@
             <pin num="60"/>
             <pin num="64"/>
             <pin num="68"/>
-            <pin num="72"/>
-            <pin num="76"/>
-            <pin num="80"/>
-            <pin num="84"/>
-            <pin num="86"/>
+            <pin num="70"/>
             <pin num="97"/>
             <pin num="98"/>
-            <pin num="1"/>
-            <pin num="3"/>
-            <pin num="5"/>
-            <pin num="7"/>
-            <pin num="9"/>
-            <pin num="11"/>
-            <pin num="13"/>
-            <pin num="15"/>
-            <pin num="2"/>
-            <pin num="6"/>
-            <pin num="10"/>
-            <pin num="14"/>
-            <pin num="17"/>
-            <pin num="18"/>
-            <pin num="19"/>
-            <pin num="21"/>
-            <pin num="22"/>
-            <pin num="23"/>
-            <pin num="25"/>
-            <pin num="26"/>
-            <pin num="27"/>
-            <pin num="29"/>
-            <pin num="30"/>
-            <pin num="31"/>
-            <pin num="33"/>
-            <pin num="34"/>
-            <pin num="35"/>
-            <pin num="37"/>
-            <pin num="38"/>
-            <pin num="39"/>
-            <pin num="41"/>
-            <pin num="42"/>
-            <pin num="43"/>
-            <pin num="46"/>
-            <pin num="50"/>
-            <pin num="45"/>
-            <pin num="47"/>
-            <pin num="49"/>
+            <pin num="66"/>
+            <pin num="58"/>
+            <pin num="62"/>
+            <pin num="99"/>
+            <pin num="100"/>
+            <pin num="61"/>
+            <pin num="63"/>
+            <pin num="65"/>
+            <pin num="67"/>
+            <pin num="69"/>
+            <pin num="71"/>
+            <pin num="72"/>
+            <pin num="73"/>
+            <pin num="74"/>
+            <pin num="75"/>
+            <pin num="76"/>
+            <pin num="77"/>
+            <pin num="78"/>
+            <pin num="79"/>
+            <pin num="80"/>
+            <pin num="81"/>
+            <pin num="82"/>
+            <pin num="83"/>
+            <pin num="84"/>
+            <pin num="85"/>
+            <pin num="86"/>
+            <pin num="87"/>
+            <pin num="88"/>
+            <pin num="89"/>
+            <pin num="90"/>
+            <pin num="91"/>
+            <pin num="92"/>
+            <pin num="93"/>
+            <pin num="94"/>
+            <pin num="95"/>
+            <pin num="96"/>
           </pins>
         </unit>
       </units>
@@ -4451,202 +4259,6 @@
       <property name="Sheetfile" value="E2.kicad_sch"/>
       <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
       <tstamps>a42f8b31-5e1a-58dc-8704-6795b79b731b</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R280">
-      <value>85.6k 0.1%</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">RN73H1JTTD8562B25</field>
-        <field name="Manufacturer">KOA Speer</field>
-        <field name="LCSC">C6407688</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R280" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="RN73H1JTTD8562B25"/>
-      <property name="Manufacturer" value="KOA Speer"/>
-      <property name="LCSC" value="C6407688"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>e2684bd4-0262-5799-ac28-ea07838950e0</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R281">
-      <value>10.0k 0.1%</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">RT0603BRD0710KL</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C95204</field>
-        <field name="Alt_MPN">Viking Tech ARG03BTC1002</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R281" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="RT0603BRD0710KL"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C95204"/>
-      <property name="Alt_MPN" value="Viking Tech ARG03BTC1002"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>e6048bfe-b336-5ba8-94f6-647ba96dbdcc</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R283">
-      <value>90.9k 0.1%</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">RT0603BRE0790K9L</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C326737</field>
-        <field name="Alt_MPN">Panasonic ERJPB3B9092V</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R283" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="RT0603BRE0790K9L"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C326737"/>
-      <property name="Alt_MPN" value="Panasonic ERJPB3B9092V"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>59fbe232-b762-5641-a20e-c3560f643d10</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R284">
-      <value>10.0k 0.1%</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">RT0603BRD0710KL</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C95204</field>
-        <field name="Alt_MPN">Viking Tech ARG03BTC1002</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R284" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="RT0603BRD0710KL"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C95204"/>
-      <property name="Alt_MPN" value="Viking Tech ARG03BTC1002"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>1e6e8914-5c84-53c2-aff2-37af85ce259e</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R286">
-      <value>73.2k 0.1%</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">RT0603BRE0773K2L</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C862276</field>
-        <field name="Alt_MPN">YAGEO RT0603BRD0773K2L</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R286" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="RT0603BRE0773K2L"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C862276"/>
-      <property name="Alt_MPN" value="YAGEO RT0603BRD0773K2L"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>e8d40eb3-3fe2-5179-b095-04029ba27d74</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R287">
-      <value>10.0k 0.1%</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">RT0603BRD0710KL</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C95204</field>
-        <field name="Alt_MPN">Viking Tech ARG03BTC1002</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R287" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="RT0603BRD0710KL"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C95204"/>
-      <property name="Alt_MPN" value="Viking Tech ARG03BTC1002"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>2f3ce8e2-d8d7-5420-a471-1abe5656e36c</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -4924,111 +4536,6 @@
             <pin num="9"/>
             <pin num="3"/>
             <pin num="10"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U217">
-      <value>TLV3011BIDBVR</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">TLV3011BIDBVR</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C20345920</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U217" description="| design | Проєктна заміна старого TLV3011 на TLV3011B: вхід fail-safe дозволяє sense за вимкненого VDD і усуває фантомне живлення Q6A.; Відкритий стік: високий рівень означає напругу LNB вище приблизно 11.87 V. Стан дійсний лише після відповідної команди EN."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="TLV3011BIDBVR"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C20345920"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>cc12efa7-9fde-5f52-93a7-3f0b1dc12e73</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="3"/>
-            <pin num="4"/>
-            <pin num="6"/>
-            <pin num="2"/>
-            <pin num="1"/>
-            <pin num="5"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U218">
-      <value>TLV3011BIDBVR</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">TLV3011BIDBVR</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C20345920</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U218" description="| design | Проєктна заміна старого TLV3011 на TLV3011B: вхід fail-safe дозволяє sense за вимкненого VDD і усуває фантомне живлення Q6A.; Відкритий стік: високий рівень означає напругу Boni вище приблизно 12.53 V. Стан дійсний лише після відповідної команди EN."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="TLV3011BIDBVR"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C20345920"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>0cce404d-0645-542e-9943-f6e817fc0eb6</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="3"/>
-            <pin num="4"/>
-            <pin num="6"/>
-            <pin num="2"/>
-            <pin num="1"/>
-            <pin num="5"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U219">
-      <value>TLV3011BIDBVR</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">TLV3011BIDBVR</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C20345920</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U219" description="| design | Проєктна заміна старого TLV3011 на TLV3011B: вхід fail-safe дозволяє sense за вимкненого VDD і усуває фантомне живлення Q6A.; Відкритий стік: високий рівень означає напругу AUX12 вище приблизно 10.33 V. Стан дійсний лише після відповідної команди EN."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="TLV3011BIDBVR"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C20345920"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>e59080c6-057c-5bac-8d64-9240e731c747</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="3"/>
-            <pin num="4"/>
-            <pin num="6"/>
-            <pin num="2"/>
-            <pin num="1"/>
-            <pin num="5"/>
           </pins>
         </unit>
       </units>
@@ -7333,6 +6840,198 @@
         </unit>
       </units>
     </comp>
+    <comp ref="C282">
+      <value>10nF 50V C0G C1608C0G1H103J080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">C1608C0G1H103J080AA</field>
+        <field name="Manufacturer">TDK</field>
+        <field name="LCSC">C2168383</field>
+        <field name="Alt_MPN">Murata Electronics GRM1885C1H103JA01D</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C282" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="C1608C0G1H103J080AA"/>
+      <property name="Manufacturer" value="TDK"/>
+      <property name="LCSC" value="C2168383"/>
+      <property name="Alt_MPN" value="Murata Electronics GRM1885C1H103JA01D"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>cae72efb-8362-563d-ad88-a2c745506c10</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C283">
+      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">C1608X7R1H104K080AA</field>
+        <field name="Manufacturer">TDK</field>
+        <field name="Alt_MPN">YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C283" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="C1608X7R1H104K080AA"/>
+      <property name="Manufacturer" value="TDK"/>
+      <property name="Alt_MPN" value="YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>a9865343-2669-5f30-9884-a0fd6112a5ce</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C284">
+      <value>10nF 50V C0G C1608C0G1H103J080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">C1608C0G1H103J080AA</field>
+        <field name="Manufacturer">TDK</field>
+        <field name="LCSC">C2168383</field>
+        <field name="Alt_MPN">Murata Electronics GRM1885C1H103JA01D</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C284" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="C1608C0G1H103J080AA"/>
+      <property name="Manufacturer" value="TDK"/>
+      <property name="LCSC" value="C2168383"/>
+      <property name="Alt_MPN" value="Murata Electronics GRM1885C1H103JA01D"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>18d400f0-356f-5131-b4fa-1fbd2e026f43</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C285">
+      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">C1608X7R1H104K080AA</field>
+        <field name="Manufacturer">TDK</field>
+        <field name="Alt_MPN">YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C285" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="C1608X7R1H104K080AA"/>
+      <property name="Manufacturer" value="TDK"/>
+      <property name="Alt_MPN" value="YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>19a9dcec-c3c4-5c21-bebb-c5ed66066853</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C286">
+      <value>10nF 50V C0G C1608C0G1H103J080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">C1608C0G1H103J080AA</field>
+        <field name="Manufacturer">TDK</field>
+        <field name="LCSC">C2168383</field>
+        <field name="Alt_MPN">Murata Electronics GRM1885C1H103JA01D</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C286" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="C1608C0G1H103J080AA"/>
+      <property name="Manufacturer" value="TDK"/>
+      <property name="LCSC" value="C2168383"/>
+      <property name="Alt_MPN" value="Murata Electronics GRM1885C1H103JA01D"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>471692f2-d9f5-562c-9387-46f41b629e83</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C287">
+      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">C1608X7R1H104K080AA</field>
+        <field name="Manufacturer">TDK</field>
+        <field name="Alt_MPN">YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C287" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="C1608X7R1H104K080AA"/>
+      <property name="Manufacturer" value="TDK"/>
+      <property name="Alt_MPN" value="YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>c8654ec1-a1ed-5ed1-a034-0c31685104ce</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="C293">
       <value>22uF 50V X7R C3225X7R1H226M250AC</value>
       <footprint>Capacitor_SMD:C_1210_3225Metric</footprint>
@@ -8018,6 +7717,202 @@
         </unit>
       </units>
     </comp>
+    <comp ref="R280">
+      <value>85.6k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">RN73H1JTTD8562B25</field>
+        <field name="Manufacturer">KOA Speer</field>
+        <field name="LCSC">C6407688</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R280" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="RN73H1JTTD8562B25"/>
+      <property name="Manufacturer" value="KOA Speer"/>
+      <property name="LCSC" value="C6407688"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>c0d0209e-9a8e-517b-a3a5-00709c9c6b83</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R281">
+      <value>10.0k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">RT0603BRD0710KL</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C95204</field>
+        <field name="Alt_MPN">Viking Tech ARG03BTC1002</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R281" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="RT0603BRD0710KL"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C95204"/>
+      <property name="Alt_MPN" value="Viking Tech ARG03BTC1002"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>4cd7549d-381c-532a-a5c5-9ffdc45c7f55</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R283">
+      <value>90.9k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">RT0603BRE0790K9L</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C326737</field>
+        <field name="Alt_MPN">Panasonic ERJPB3B9092V</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R283" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="RT0603BRE0790K9L"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C326737"/>
+      <property name="Alt_MPN" value="Panasonic ERJPB3B9092V"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>9e136a62-ea63-5483-b4d2-f374532aedf8</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R284">
+      <value>10.0k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">RT0603BRD0710KL</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C95204</field>
+        <field name="Alt_MPN">Viking Tech ARG03BTC1002</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R284" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="RT0603BRD0710KL"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C95204"/>
+      <property name="Alt_MPN" value="Viking Tech ARG03BTC1002"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>42244a9c-f0a8-5ef0-af81-953580753588</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R286">
+      <value>73.2k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">RT0603BRE0773K2L</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C862276</field>
+        <field name="Alt_MPN">YAGEO RT0603BRD0773K2L</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R286" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="RT0603BRE0773K2L"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C862276"/>
+      <property name="Alt_MPN" value="YAGEO RT0603BRD0773K2L"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>8de92635-580a-53f3-b226-d579590f7247</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R287">
+      <value>10.0k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">RT0603BRD0710KL</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C95204</field>
+        <field name="Alt_MPN">Viking Tech ARG03BTC1002</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R287" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="RT0603BRD0710KL"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C95204"/>
+      <property name="Alt_MPN" value="Viking Tech ARG03BTC1002"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>a67fafb1-d40d-57c9-9679-0a3bb55eaed0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="R2901">
       <value>220k 1%</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -8310,6 +8205,111 @@
             <pin num="6"/>
             <pin num="5"/>
             <pin num="7"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U217">
+      <value>TLV3011BIDBVR</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">TLV3011BIDBVR</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C20345920</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U217" description="| design | Проєктна заміна старого TLV3011 на TLV3011B: вхід fail-safe дозволяє sense за вимкненого VDD і усуває фантомне живлення Q6A.; Відкритий стік: високий рівень означає напругу LNB вище приблизно 11.87 V. Стан дійсний лише після відповідної команди EN."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="TLV3011BIDBVR"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C20345920"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>ae6f45ef-d76c-534c-b3a6-c401bfe3ca8e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="6"/>
+            <pin num="2"/>
+            <pin num="1"/>
+            <pin num="5"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U218">
+      <value>TLV3011BIDBVR</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">TLV3011BIDBVR</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C20345920</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U218" description="| design | Проєктна заміна старого TLV3011 на TLV3011B: вхід fail-safe дозволяє sense за вимкненого VDD і усуває фантомне живлення Q6A.; Відкритий стік: високий рівень означає напругу Boni вище приблизно 12.53 V. Стан дійсний лише після відповідної команди EN."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="TLV3011BIDBVR"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C20345920"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>48cb1c54-9c74-5ab2-a13a-e4ea02c46ae6</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="6"/>
+            <pin num="2"/>
+            <pin num="1"/>
+            <pin num="5"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U219">
+      <value>TLV3011BIDBVR</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">TLV3011BIDBVR</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C20345920</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U219" description="| design | Проєктна заміна старого TLV3011 на TLV3011B: вхід fail-safe дозволяє sense за вимкненого VDD і усуває фантомне живлення Q6A.; Відкритий стік: високий рівень означає напругу AUX12 вище приблизно 10.33 V. Стан дійсний лише після відповідної команди EN."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="TLV3011BIDBVR"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C20345920"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>468da695-4989-5af3-880e-5d41c75c89b8</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="6"/>
+            <pin num="2"/>
+            <pin num="1"/>
+            <pin num="5"/>
           </pins>
         </unit>
       </units>
@@ -33211,90 +33211,90 @@
       </fields>
       <pins>
         <pin num="1" name="3V3_Q6A" type="passive"/>
-        <pin num="2" name="CHG_INHIBIT" type="passive"/>
+        <pin num="2" name="LAB5" type="passive"/>
         <pin num="3" name="GND" type="passive"/>
-        <pin num="4" name="E1_BAT_ADC" type="passive"/>
-        <pin num="5" name="LAB5" type="passive"/>
-        <pin num="6" name="EN_AUX12" type="passive"/>
+        <pin num="4" name="GND" type="passive"/>
+        <pin num="5" name="LNA4V5" type="passive"/>
+        <pin num="6" name="LAB5" type="passive"/>
         <pin num="7" name="GND" type="passive"/>
-        <pin num="8" name="EN_BONI" type="passive"/>
-        <pin num="9" name="LAB5" type="passive"/>
-        <pin num="10" name="EN_HFP" type="passive"/>
+        <pin num="8" name="GND" type="passive"/>
+        <pin num="9" name="LNA4V5" type="passive"/>
+        <pin num="10" name="LAB5" type="passive"/>
         <pin num="11" name="GND" type="passive"/>
-        <pin num="12" name="EN_LIME3V3" type="passive"/>
-        <pin num="13" name="LAB5" type="passive"/>
-        <pin num="14" name="EN_LNB" type="passive"/>
+        <pin num="12" name="GND" type="passive"/>
+        <pin num="13" name="BIAS_CH1_DAMP" type="passive"/>
+        <pin num="14" name="LAB5" type="passive"/>
         <pin num="15" name="GND" type="passive"/>
-        <pin num="16" name="FAULT_HFP" type="passive"/>
-        <pin num="17" name="LAB5" type="passive"/>
-        <pin num="18" name="FLT_BONI" type="passive"/>
+        <pin num="16" name="GND" type="passive"/>
+        <pin num="17" name="BIAS_CH2_DAMP" type="passive"/>
+        <pin num="18" name="CHG_INHIBIT" type="passive"/>
         <pin num="19" name="GND" type="passive"/>
-        <pin num="20" name="FLT_LIME3V3" type="passive"/>
-        <pin num="21" name="LNA4V5" type="passive"/>
-        <pin num="22" name="FLT_LNB" type="passive"/>
+        <pin num="20" name="E1_BAT_ADC" type="passive"/>
+        <pin num="21" name="BIAS_CH3_DAMP" type="passive"/>
+        <pin num="22" name="EN_AUX12" type="passive"/>
         <pin num="23" name="GND" type="passive"/>
-        <pin num="24" name="I2C0_SCL" type="passive"/>
-        <pin num="25" name="LNA4V5" type="passive"/>
-        <pin num="26" name="I2C0_SDA" type="passive"/>
+        <pin num="24" name="EN_BONI" type="passive"/>
+        <pin num="25" name="E2_SB_DAMP" type="passive"/>
+        <pin num="26" name="EN_HFP" type="passive"/>
         <pin num="27" name="GND" type="passive"/>
-        <pin num="28" name="I2C2_SCL" type="passive"/>
-        <pin num="29" name="BIAS_CH1_DAMP" type="passive"/>
-        <pin num="30" name="I2C2_SDA" type="passive"/>
+        <pin num="28" name="EN_LIME3V3" type="passive"/>
+        <pin num="29" name="VBUS_RTLB_DAMP" type="passive"/>
+        <pin num="30" name="EN_LNB" type="passive"/>
         <pin num="31" name="GND" type="passive"/>
-        <pin num="32" name="IMU_RX" type="passive"/>
-        <pin num="33" name="BIAS_CH2_DAMP" type="passive"/>
-        <pin num="34" name="IMU_TX" type="passive"/>
+        <pin num="32" name="FAULT_HFP" type="passive"/>
+        <pin num="33" name="VBUS_LABPORT" type="passive"/>
+        <pin num="34" name="FLT_BONI" type="passive"/>
         <pin num="35" name="GND" type="passive"/>
-        <pin num="36" name="INA228_ALERT" type="passive"/>
-        <pin num="37" name="BIAS_CH3_DAMP" type="passive"/>
-        <pin num="38" name="OVP_LNB_N" type="passive"/>
+        <pin num="36" name="FLT_LIME3V3" type="passive"/>
+        <pin num="37" name="VBUS_HFP" type="passive"/>
+        <pin num="38" name="FLT_LNB" type="passive"/>
         <pin num="39" name="GND" type="passive"/>
-        <pin num="40" name="PICO_DISP_EN" type="passive"/>
-        <pin num="41" name="E2_SB_DAMP" type="passive"/>
-        <pin num="42" name="PICO_OFF" type="passive"/>
+        <pin num="40" name="I2C0_SCL" type="passive"/>
+        <pin num="41" name="LAB5_RLY" type="passive"/>
+        <pin num="42" name="I2C0_SDA" type="passive"/>
         <pin num="43" name="GND" type="passive"/>
-        <pin num="44" name="PWR_BUTTON" type="passive"/>
-        <pin num="45" name="VBUS_RTLB_DAMP" type="passive"/>
-        <pin num="46" name="NC" type="passive"/>
+        <pin num="44" name="I2C2_SCL" type="passive"/>
+        <pin num="45" name="LAB5_RLY" type="passive"/>
+        <pin num="46" name="I2C2_SDA" type="passive"/>
         <pin num="47" name="GND" type="passive"/>
-        <pin num="48" name="NC" type="passive"/>
-        <pin num="49" name="VBUS_LABPORT" type="passive"/>
-        <pin num="50" name="NC" type="passive"/>
+        <pin num="48" name="IMU_RX" type="passive"/>
+        <pin num="49" name="BIAS_CH4_DAMP" type="passive"/>
+        <pin num="50" name="IMU_TX" type="passive"/>
         <pin num="51" name="GND" type="passive"/>
-        <pin num="52" name="NC" type="passive"/>
-        <pin num="53" name="VBUS_HFP" type="passive"/>
-        <pin num="54" name="NC" type="passive"/>
+        <pin num="52" name="INA228_ALERT" type="passive"/>
+        <pin num="53" name="BONI13V8" type="passive"/>
+        <pin num="54" name="OVP_LNB_N" type="passive"/>
         <pin num="55" name="GND" type="passive"/>
-        <pin num="56" name="NC" type="passive"/>
-        <pin num="57" name="LAB5_RLY" type="passive"/>
-        <pin num="58" name="NC" type="passive"/>
+        <pin num="56" name="PICO_DISP_EN" type="passive"/>
+        <pin num="57" name="LNB13V2" type="passive"/>
+        <pin num="58" name="PICO_OFF" type="passive"/>
         <pin num="59" name="GND" type="passive"/>
-        <pin num="60" name="NC" type="passive"/>
-        <pin num="61" name="LAB5_RLY" type="passive"/>
+        <pin num="60" name="PWR_BUTTON" type="passive"/>
+        <pin num="61" name="AUX12" type="passive"/>
         <pin num="62" name="NC" type="passive"/>
         <pin num="63" name="GND" type="passive"/>
         <pin num="64" name="NC" type="passive"/>
-        <pin num="65" name="BIAS_CH4_DAMP" type="passive"/>
+        <pin num="65" name="BONI13V8_PORT" type="passive"/>
         <pin num="66" name="NC" type="passive"/>
         <pin num="67" name="GND" type="passive"/>
         <pin num="68" name="NC" type="passive"/>
-        <pin num="69" name="BONI13V8" type="passive"/>
+        <pin num="69" name="GND" type="passive"/>
         <pin num="70" name="NC" type="passive"/>
-        <pin num="71" name="GND" type="passive"/>
+        <pin num="71" name="NC" type="passive"/>
         <pin num="72" name="NC" type="passive"/>
-        <pin num="73" name="LNB13V2" type="passive"/>
+        <pin num="73" name="NC" type="passive"/>
         <pin num="74" name="NC" type="passive"/>
-        <pin num="75" name="GND" type="passive"/>
+        <pin num="75" name="NC" type="passive"/>
         <pin num="76" name="NC" type="passive"/>
-        <pin num="77" name="AUX12" type="passive"/>
+        <pin num="77" name="NC" type="passive"/>
         <pin num="78" name="NC" type="passive"/>
-        <pin num="79" name="GND" type="passive"/>
+        <pin num="79" name="NC" type="passive"/>
         <pin num="80" name="NC" type="passive"/>
-        <pin num="81" name="BONI13V8_PORT" type="passive"/>
+        <pin num="81" name="NC" type="passive"/>
         <pin num="82" name="NC" type="passive"/>
-        <pin num="83" name="GND" type="passive"/>
+        <pin num="83" name="NC" type="passive"/>
         <pin num="84" name="NC" type="passive"/>
-        <pin num="85" name="GND" type="passive"/>
+        <pin num="85" name="NC" type="passive"/>
         <pin num="86" name="NC" type="passive"/>
         <pin num="87" name="NC" type="passive"/>
         <pin num="88" name="NC" type="passive"/>
@@ -33323,92 +33323,92 @@
         <field name="Description">| design | Половина стику B2B PWR-A/PWR-B (W2 B2B): та сама деталь Samtec LSHM-150-02.5-L-DV-A-N-K-TR на нижньому боці PWR-B, над J208. Контакт m несе коло контакту J208, який його зустрічає (m+1 для непарного m, m−1 для парного). Номери контактів і кола — pcb/generated/b2b-nets.json contacts; контакти без кола — резерв (nc).</field>
       </fields>
       <pins>
-        <pin num="1" name="CHG_INHIBIT" type="passive"/>
+        <pin num="1" name="LAB5" type="passive"/>
         <pin num="2" name="3V3_Q6A" type="passive"/>
-        <pin num="3" name="E1_BAT_ADC" type="passive"/>
+        <pin num="3" name="GND" type="passive"/>
         <pin num="4" name="GND" type="passive"/>
-        <pin num="5" name="EN_AUX12" type="passive"/>
-        <pin num="6" name="LAB5" type="passive"/>
-        <pin num="7" name="EN_BONI" type="passive"/>
+        <pin num="5" name="LAB5" type="passive"/>
+        <pin num="6" name="LNA4V5" type="passive"/>
+        <pin num="7" name="GND" type="passive"/>
         <pin num="8" name="GND" type="passive"/>
-        <pin num="9" name="EN_HFP" type="passive"/>
-        <pin num="10" name="LAB5" type="passive"/>
-        <pin num="11" name="EN_LIME3V3" type="passive"/>
+        <pin num="9" name="LAB5" type="passive"/>
+        <pin num="10" name="LNA4V5" type="passive"/>
+        <pin num="11" name="GND" type="passive"/>
         <pin num="12" name="GND" type="passive"/>
-        <pin num="13" name="EN_LNB" type="passive"/>
-        <pin num="14" name="LAB5" type="passive"/>
-        <pin num="15" name="FAULT_HFP" type="passive"/>
+        <pin num="13" name="LAB5" type="passive"/>
+        <pin num="14" name="BIAS_CH1_DAMP" type="passive"/>
+        <pin num="15" name="GND" type="passive"/>
         <pin num="16" name="GND" type="passive"/>
-        <pin num="17" name="FLT_BONI" type="passive"/>
-        <pin num="18" name="LAB5" type="passive"/>
-        <pin num="19" name="FLT_LIME3V3" type="passive"/>
+        <pin num="17" name="CHG_INHIBIT" type="passive"/>
+        <pin num="18" name="BIAS_CH2_DAMP" type="passive"/>
+        <pin num="19" name="E1_BAT_ADC" type="passive"/>
         <pin num="20" name="GND" type="passive"/>
-        <pin num="21" name="FLT_LNB" type="passive"/>
-        <pin num="22" name="LNA4V5" type="passive"/>
-        <pin num="23" name="I2C0_SCL" type="passive"/>
+        <pin num="21" name="EN_AUX12" type="passive"/>
+        <pin num="22" name="BIAS_CH3_DAMP" type="passive"/>
+        <pin num="23" name="EN_BONI" type="passive"/>
         <pin num="24" name="GND" type="passive"/>
-        <pin num="25" name="I2C0_SDA" type="passive"/>
-        <pin num="26" name="LNA4V5" type="passive"/>
-        <pin num="27" name="I2C2_SCL" type="passive"/>
+        <pin num="25" name="EN_HFP" type="passive"/>
+        <pin num="26" name="E2_SB_DAMP" type="passive"/>
+        <pin num="27" name="EN_LIME3V3" type="passive"/>
         <pin num="28" name="GND" type="passive"/>
-        <pin num="29" name="I2C2_SDA" type="passive"/>
-        <pin num="30" name="BIAS_CH1_DAMP" type="passive"/>
-        <pin num="31" name="IMU_RX" type="passive"/>
+        <pin num="29" name="EN_LNB" type="passive"/>
+        <pin num="30" name="VBUS_RTLB_DAMP" type="passive"/>
+        <pin num="31" name="FAULT_HFP" type="passive"/>
         <pin num="32" name="GND" type="passive"/>
-        <pin num="33" name="IMU_TX" type="passive"/>
-        <pin num="34" name="BIAS_CH2_DAMP" type="passive"/>
-        <pin num="35" name="INA228_ALERT" type="passive"/>
+        <pin num="33" name="FLT_BONI" type="passive"/>
+        <pin num="34" name="VBUS_LABPORT" type="passive"/>
+        <pin num="35" name="FLT_LIME3V3" type="passive"/>
         <pin num="36" name="GND" type="passive"/>
-        <pin num="37" name="OVP_LNB_N" type="passive"/>
-        <pin num="38" name="BIAS_CH3_DAMP" type="passive"/>
-        <pin num="39" name="PICO_DISP_EN" type="passive"/>
+        <pin num="37" name="FLT_LNB" type="passive"/>
+        <pin num="38" name="VBUS_HFP" type="passive"/>
+        <pin num="39" name="I2C0_SCL" type="passive"/>
         <pin num="40" name="GND" type="passive"/>
-        <pin num="41" name="PICO_OFF" type="passive"/>
-        <pin num="42" name="E2_SB_DAMP" type="passive"/>
-        <pin num="43" name="PWR_BUTTON" type="passive"/>
+        <pin num="41" name="I2C0_SDA" type="passive"/>
+        <pin num="42" name="LAB5_RLY" type="passive"/>
+        <pin num="43" name="I2C2_SCL" type="passive"/>
         <pin num="44" name="GND" type="passive"/>
-        <pin num="45" name="NC" type="passive"/>
-        <pin num="46" name="VBUS_RTLB_DAMP" type="passive"/>
-        <pin num="47" name="NC" type="passive"/>
+        <pin num="45" name="I2C2_SDA" type="passive"/>
+        <pin num="46" name="LAB5_RLY" type="passive"/>
+        <pin num="47" name="IMU_RX" type="passive"/>
         <pin num="48" name="GND" type="passive"/>
-        <pin num="49" name="NC" type="passive"/>
-        <pin num="50" name="VBUS_LABPORT" type="passive"/>
-        <pin num="51" name="NC" type="passive"/>
+        <pin num="49" name="IMU_TX" type="passive"/>
+        <pin num="50" name="BIAS_CH4_DAMP" type="passive"/>
+        <pin num="51" name="INA228_ALERT" type="passive"/>
         <pin num="52" name="GND" type="passive"/>
-        <pin num="53" name="NC" type="passive"/>
-        <pin num="54" name="VBUS_HFP" type="passive"/>
-        <pin num="55" name="NC" type="passive"/>
+        <pin num="53" name="OVP_LNB_N" type="passive"/>
+        <pin num="54" name="BONI13V8" type="passive"/>
+        <pin num="55" name="PICO_DISP_EN" type="passive"/>
         <pin num="56" name="GND" type="passive"/>
-        <pin num="57" name="NC" type="passive"/>
-        <pin num="58" name="LAB5_RLY" type="passive"/>
-        <pin num="59" name="NC" type="passive"/>
+        <pin num="57" name="PICO_OFF" type="passive"/>
+        <pin num="58" name="LNB13V2" type="passive"/>
+        <pin num="59" name="PWR_BUTTON" type="passive"/>
         <pin num="60" name="GND" type="passive"/>
         <pin num="61" name="NC" type="passive"/>
-        <pin num="62" name="LAB5_RLY" type="passive"/>
+        <pin num="62" name="AUX12" type="passive"/>
         <pin num="63" name="NC" type="passive"/>
         <pin num="64" name="GND" type="passive"/>
         <pin num="65" name="NC" type="passive"/>
-        <pin num="66" name="BIAS_CH4_DAMP" type="passive"/>
+        <pin num="66" name="BONI13V8_PORT" type="passive"/>
         <pin num="67" name="NC" type="passive"/>
         <pin num="68" name="GND" type="passive"/>
         <pin num="69" name="NC" type="passive"/>
-        <pin num="70" name="BONI13V8" type="passive"/>
+        <pin num="70" name="GND" type="passive"/>
         <pin num="71" name="NC" type="passive"/>
-        <pin num="72" name="GND" type="passive"/>
+        <pin num="72" name="NC" type="passive"/>
         <pin num="73" name="NC" type="passive"/>
-        <pin num="74" name="LNB13V2" type="passive"/>
+        <pin num="74" name="NC" type="passive"/>
         <pin num="75" name="NC" type="passive"/>
-        <pin num="76" name="GND" type="passive"/>
+        <pin num="76" name="NC" type="passive"/>
         <pin num="77" name="NC" type="passive"/>
-        <pin num="78" name="AUX12" type="passive"/>
+        <pin num="78" name="NC" type="passive"/>
         <pin num="79" name="NC" type="passive"/>
-        <pin num="80" name="GND" type="passive"/>
+        <pin num="80" name="NC" type="passive"/>
         <pin num="81" name="NC" type="passive"/>
-        <pin num="82" name="BONI13V8_PORT" type="passive"/>
+        <pin num="82" name="NC" type="passive"/>
         <pin num="83" name="NC" type="passive"/>
-        <pin num="84" name="GND" type="passive"/>
+        <pin num="84" name="NC" type="passive"/>
         <pin num="85" name="NC" type="passive"/>
-        <pin num="86" name="GND" type="passive"/>
+        <pin num="86" name="NC" type="passive"/>
         <pin num="87" name="NC" type="passive"/>
         <pin num="88" name="NC" type="passive"/>
         <pin num="89" name="NC" type="passive"/>
@@ -42501,8 +42501,8 @@
     </net>
     <net code="3" name="AUX12" class="Default">
       <node ref="C221" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="J208" pin="77" pinfunction="AUX12_77" pintype="passive"/>
-      <node ref="J209" pin="78" pinfunction="AUX12_78" pintype="passive"/>
+      <node ref="J208" pin="61" pinfunction="AUX12_61" pintype="passive"/>
+      <node ref="J209" pin="62" pinfunction="AUX12_62" pintype="passive"/>
       <node ref="J505" pin="1" pinfunction="AUX12_protected_1" pintype="passive"/>
       <node ref="J508" pin="3" pinfunction="AUX12_3" pintype="passive"/>
       <node ref="L204" pin="2" pinfunction="2_2" pintype="passive"/>
@@ -42527,8 +42527,8 @@
     </net>
     <net code="6" name="BIAS_CH1_DAMP" class="Default">
       <node ref="C235" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="29" pinfunction="BIAS_CH1_DAMP_29" pintype="passive"/>
-      <node ref="J209" pin="30" pinfunction="BIAS_CH1_DAMP_30" pintype="passive"/>
+      <node ref="J208" pin="13" pinfunction="BIAS_CH1_DAMP_13" pintype="passive"/>
+      <node ref="J209" pin="14" pinfunction="BIAS_CH1_DAMP_14" pintype="passive"/>
       <node ref="R232" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="7" name="BIAS_CH2" class="Default">
@@ -42542,8 +42542,8 @@
     </net>
     <net code="8" name="BIAS_CH2_DAMP" class="Default">
       <node ref="C239" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="33" pinfunction="BIAS_CH2_DAMP_33" pintype="passive"/>
-      <node ref="J209" pin="34" pinfunction="BIAS_CH2_DAMP_34" pintype="passive"/>
+      <node ref="J208" pin="17" pinfunction="BIAS_CH2_DAMP_17" pintype="passive"/>
+      <node ref="J209" pin="18" pinfunction="BIAS_CH2_DAMP_18" pintype="passive"/>
       <node ref="R237" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="9" name="BIAS_CH2_PORT" class="Default">
@@ -42568,8 +42568,8 @@
     </net>
     <net code="11" name="BIAS_CH3_DAMP" class="Default">
       <node ref="C243" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="37" pinfunction="BIAS_CH3_DAMP_37" pintype="passive"/>
-      <node ref="J209" pin="38" pinfunction="BIAS_CH3_DAMP_38" pintype="passive"/>
+      <node ref="J208" pin="21" pinfunction="BIAS_CH3_DAMP_21" pintype="passive"/>
+      <node ref="J209" pin="22" pinfunction="BIAS_CH3_DAMP_22" pintype="passive"/>
       <node ref="R242" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="12" name="BIAS_CH3_PORT" class="Default">
@@ -42595,8 +42595,8 @@
     </net>
     <net code="14" name="BIAS_CH4_DAMP" class="Default">
       <node ref="C247" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="65" pinfunction="BIAS_CH4_DAMP_65" pintype="passive"/>
-      <node ref="J209" pin="66" pinfunction="BIAS_CH4_DAMP_66" pintype="passive"/>
+      <node ref="J208" pin="49" pinfunction="BIAS_CH4_DAMP_49" pintype="passive"/>
+      <node ref="J209" pin="50" pinfunction="BIAS_CH4_DAMP_50" pintype="passive"/>
       <node ref="R247" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="15" name="BIAS_SB_LNA" class="Default">
@@ -42610,8 +42610,8 @@
     </net>
     <net code="16" name="BONI13V8" class="Default">
       <node ref="C272" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="J208" pin="69" pinfunction="BONI13V8_69" pintype="passive"/>
-      <node ref="J209" pin="70" pinfunction="BONI13V8_70" pintype="passive"/>
+      <node ref="J208" pin="53" pinfunction="BONI13V8_53" pintype="passive"/>
+      <node ref="J209" pin="54" pinfunction="BONI13V8_54" pintype="passive"/>
       <node ref="L214" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="Q2903" pin="7" pinfunction="D1_7" pintype="passive"/>
       <node ref="Q2903" pin="8" pinfunction="D1_8" pintype="passive"/>
@@ -42628,8 +42628,8 @@
       <node ref="A406" pin="DC" pinfunction="DC_DC" pintype="passive"/>
       <node ref="C2903" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="J207" pin="9" pinfunction="BONI13V8_PORT_9" pintype="passive"/>
-      <node ref="J208" pin="81" pinfunction="BONI13V8_PORT_81" pintype="passive"/>
-      <node ref="J209" pin="82" pinfunction="BONI13V8_PORT_82" pintype="passive"/>
+      <node ref="J208" pin="65" pinfunction="BONI13V8_PORT_65" pintype="passive"/>
+      <node ref="J209" pin="66" pinfunction="BONI13V8_PORT_66" pintype="passive"/>
       <node ref="Q2903" pin="5" pinfunction="D2_5" pintype="passive"/>
       <node ref="Q2903" pin="6" pinfunction="D2_6" pintype="passive"/>
       <node ref="TP2903" pin="1" pinfunction="TP_1" pintype="passive"/>
@@ -42642,8 +42642,8 @@
     </net>
     <net code="20" name="CHG_INHIBIT" class="Default">
       <node ref="J202" pin="1" pinfunction="CHG_INHIBIT_1" pintype="passive"/>
-      <node ref="J208" pin="2" pinfunction="CHG_INHIBIT_2" pintype="passive"/>
-      <node ref="J209" pin="1" pinfunction="CHG_INHIBIT_1" pintype="passive"/>
+      <node ref="J208" pin="18" pinfunction="CHG_INHIBIT_18" pintype="passive"/>
+      <node ref="J209" pin="17" pinfunction="CHG_INHIBIT_17" pintype="passive"/>
       <node ref="J306" pin="1" pinfunction="CHG_INHIBIT_1" pintype="passive"/>
       <node ref="R122" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U303" pin="5" pinfunction="GPB4_5" pintype="output"/>
@@ -42679,8 +42679,8 @@
     <net code="25" name="E1_BAT_ADC" class="Default">
       <node ref="C114" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="J202" pin="2" pinfunction="E1_BAT_ADC_2" pintype="passive"/>
-      <node ref="J208" pin="4" pinfunction="E1_BAT_ADC_4" pintype="passive"/>
-      <node ref="J209" pin="3" pinfunction="E1_BAT_ADC_3" pintype="passive"/>
+      <node ref="J208" pin="20" pinfunction="E1_BAT_ADC_20" pintype="passive"/>
+      <node ref="J209" pin="19" pinfunction="E1_BAT_ADC_19" pintype="passive"/>
       <node ref="J306" pin="2" pinfunction="E1_BAT_ADC_2" pintype="passive"/>
       <node ref="R111" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="R112" pin="1" pinfunction="1_1" pintype="passive"/>
@@ -43243,8 +43243,8 @@
     </net>
     <net code="119" name="E2_SB_DAMP" class="Default">
       <node ref="C298" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="41" pinfunction="E2_SB_DAMP_41" pintype="passive"/>
-      <node ref="J209" pin="42" pinfunction="E2_SB_DAMP_42" pintype="passive"/>
+      <node ref="J208" pin="25" pinfunction="E2_SB_DAMP_25" pintype="passive"/>
+      <node ref="J209" pin="26" pinfunction="E2_SB_DAMP_26" pintype="passive"/>
       <node ref="R295" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="120" name="E2_SB_ILIM" class="Default">
@@ -44654,8 +44654,8 @@
     </net>
     <net code="402" name="EN_AUX12" class="Default">
       <node ref="J202" pin="3" pinfunction="EN_AUX12_3" pintype="passive"/>
-      <node ref="J208" pin="6" pinfunction="EN_AUX12_6" pintype="passive"/>
-      <node ref="J209" pin="5" pinfunction="EN_AUX12_5" pintype="passive"/>
+      <node ref="J208" pin="22" pinfunction="EN_AUX12_22" pintype="passive"/>
+      <node ref="J209" pin="21" pinfunction="EN_AUX12_21" pintype="passive"/>
       <node ref="J306" pin="3" pinfunction="EN_AUX12_3" pintype="passive"/>
       <node ref="Q202" pin="1" pinfunction="G_1" pintype="input"/>
       <node ref="R220" pin="1" pinfunction="1_1" pintype="passive"/>
@@ -44663,8 +44663,8 @@
     </net>
     <net code="403" name="EN_BONI" class="Default">
       <node ref="J202" pin="4" pinfunction="EN_BONI_4" pintype="passive"/>
-      <node ref="J208" pin="8" pinfunction="EN_BONI_8" pintype="passive"/>
-      <node ref="J209" pin="7" pinfunction="EN_BONI_7" pintype="passive"/>
+      <node ref="J208" pin="24" pinfunction="EN_BONI_24" pintype="passive"/>
+      <node ref="J209" pin="23" pinfunction="EN_BONI_23" pintype="passive"/>
       <node ref="J306" pin="4" pinfunction="EN_BONI_4" pintype="passive"/>
       <node ref="Q2913" pin="1" pinfunction="G_1" pintype="input"/>
       <node ref="R261" pin="1" pinfunction="1_1" pintype="passive"/>
@@ -44674,8 +44674,8 @@
     </net>
     <net code="404" name="EN_HFP" class="Default">
       <node ref="J202" pin="5" pinfunction="EN_HFP_5" pintype="passive"/>
-      <node ref="J208" pin="10" pinfunction="EN_HFP_10" pintype="passive"/>
-      <node ref="J209" pin="9" pinfunction="EN_HFP_9" pintype="passive"/>
+      <node ref="J208" pin="26" pinfunction="EN_HFP_26" pintype="passive"/>
+      <node ref="J209" pin="25" pinfunction="EN_HFP_25" pintype="passive"/>
       <node ref="J306" pin="5" pinfunction="EN_HFP_5" pintype="passive"/>
       <node ref="R510" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U301" pin="25" pinfunction="GPA4_25" pintype="output"/>
@@ -44690,8 +44690,8 @@
     </net>
     <net code="406" name="EN_LIME3V3" class="Default">
       <node ref="J202" pin="7" pinfunction="EN_LIME3V3_7" pintype="passive"/>
-      <node ref="J208" pin="12" pinfunction="EN_LIME3V3_12" pintype="passive"/>
-      <node ref="J209" pin="11" pinfunction="EN_LIME3V3_11" pintype="passive"/>
+      <node ref="J208" pin="28" pinfunction="EN_LIME3V3_28" pintype="passive"/>
+      <node ref="J209" pin="27" pinfunction="EN_LIME3V3_27" pintype="passive"/>
       <node ref="J306" pin="7" pinfunction="EN_LIME3V3_7" pintype="passive"/>
       <node ref="R218" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U203" pin="1" pinfunction="EN/UVLO_1" pintype="input"/>
@@ -44729,8 +44729,8 @@
     </net>
     <net code="411" name="EN_LNB" class="Default">
       <node ref="J202" pin="12" pinfunction="EN_LNB_12" pintype="passive"/>
-      <node ref="J208" pin="14" pinfunction="EN_LNB_14" pintype="passive"/>
-      <node ref="J209" pin="13" pinfunction="EN_LNB_13" pintype="passive"/>
+      <node ref="J208" pin="30" pinfunction="EN_LNB_30" pintype="passive"/>
+      <node ref="J209" pin="29" pinfunction="EN_LNB_29" pintype="passive"/>
       <node ref="J306" pin="12" pinfunction="EN_LNB_12" pintype="passive"/>
       <node ref="R253" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="R291" pin="1" pinfunction="1_1" pintype="passive"/>
@@ -44767,8 +44767,8 @@
     </net>
     <net code="416" name="FAULT_HFP" class="Default">
       <node ref="J202" pin="16" pinfunction="FAULT_HFP_16" pintype="passive"/>
-      <node ref="J208" pin="16" pinfunction="FAULT_HFP_16" pintype="passive"/>
-      <node ref="J209" pin="15" pinfunction="FAULT_HFP_15" pintype="passive"/>
+      <node ref="J208" pin="32" pinfunction="FAULT_HFP_32" pintype="passive"/>
+      <node ref="J209" pin="31" pinfunction="FAULT_HFP_31" pintype="passive"/>
       <node ref="J306" pin="16" pinfunction="FAULT_HFP_16" pintype="passive"/>
       <node ref="R323" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U303" pin="2" pinfunction="GPB1_2" pintype="input"/>
@@ -44825,8 +44825,8 @@
     </net>
     <net code="424" name="FLT_BONI" class="Default">
       <node ref="J203" pin="4" pinfunction="FLT_BONI_4" pintype="passive"/>
-      <node ref="J208" pin="18" pinfunction="FLT_BONI_18" pintype="passive"/>
-      <node ref="J209" pin="17" pinfunction="FLT_BONI_17" pintype="passive"/>
+      <node ref="J208" pin="34" pinfunction="FLT_BONI_34" pintype="passive"/>
+      <node ref="J209" pin="33" pinfunction="FLT_BONI_33" pintype="passive"/>
       <node ref="J307" pin="4" pinfunction="FLT_BONI_4" pintype="passive"/>
       <node ref="R314" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U214" pin="6" pinfunction="FLT_6" pintype="open_collector"/>
@@ -44834,8 +44834,8 @@
     </net>
     <net code="425" name="FLT_LIME3V3" class="Default">
       <node ref="J203" pin="5" pinfunction="FLT_LIME3V3_5" pintype="passive"/>
-      <node ref="J208" pin="20" pinfunction="FLT_LIME3V3_20" pintype="passive"/>
-      <node ref="J209" pin="19" pinfunction="FLT_LIME3V3_19" pintype="passive"/>
+      <node ref="J208" pin="36" pinfunction="FLT_LIME3V3_36" pintype="passive"/>
+      <node ref="J209" pin="35" pinfunction="FLT_LIME3V3_35" pintype="passive"/>
       <node ref="J307" pin="5" pinfunction="FLT_LIME3V3_5" pintype="passive"/>
       <node ref="R325" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U203" pin="4" pinfunction="FLT_4" pintype="open_collector"/>
@@ -44843,8 +44843,8 @@
     </net>
     <net code="426" name="FLT_LNB" class="Default">
       <node ref="J203" pin="6" pinfunction="FLT_LNB_6" pintype="passive"/>
-      <node ref="J208" pin="22" pinfunction="FLT_LNB_22" pintype="passive"/>
-      <node ref="J209" pin="21" pinfunction="FLT_LNB_21" pintype="passive"/>
+      <node ref="J208" pin="38" pinfunction="FLT_LNB_38" pintype="passive"/>
+      <node ref="J209" pin="37" pinfunction="FLT_LNB_37" pintype="passive"/>
       <node ref="J307" pin="6" pinfunction="FLT_LNB_6" pintype="passive"/>
       <node ref="R313" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U212" pin="6" pinfunction="FLT_6" pintype="open_collector"/>
@@ -45126,7 +45126,9 @@
       <node ref="J207" pin="6" pinfunction="GND_6" pintype="passive"/>
       <node ref="J207" pin="8" pinfunction="GND_8" pintype="passive"/>
       <node ref="J208" pin="11" pinfunction="GND_11" pintype="passive"/>
+      <node ref="J208" pin="12" pinfunction="GND_12" pintype="passive"/>
       <node ref="J208" pin="15" pinfunction="GND_15" pintype="passive"/>
+      <node ref="J208" pin="16" pinfunction="GND_16" pintype="passive"/>
       <node ref="J208" pin="19" pinfunction="GND_19" pintype="passive"/>
       <node ref="J208" pin="23" pinfunction="GND_23" pintype="passive"/>
       <node ref="J208" pin="27" pinfunction="GND_27" pintype="passive"/>
@@ -45134,6 +45136,7 @@
       <node ref="J208" pin="31" pinfunction="GND_31" pintype="passive"/>
       <node ref="J208" pin="35" pinfunction="GND_35" pintype="passive"/>
       <node ref="J208" pin="39" pinfunction="GND_39" pintype="passive"/>
+      <node ref="J208" pin="4" pinfunction="GND_4" pintype="passive"/>
       <node ref="J208" pin="43" pinfunction="GND_43" pintype="passive"/>
       <node ref="J208" pin="47" pinfunction="GND_47" pintype="passive"/>
       <node ref="J208" pin="51" pinfunction="GND_51" pintype="passive"/>
@@ -45141,19 +45144,19 @@
       <node ref="J208" pin="59" pinfunction="GND_59" pintype="passive"/>
       <node ref="J208" pin="63" pinfunction="GND_63" pintype="passive"/>
       <node ref="J208" pin="67" pinfunction="GND_67" pintype="passive"/>
+      <node ref="J208" pin="69" pinfunction="GND_69" pintype="passive"/>
       <node ref="J208" pin="7" pinfunction="GND_7" pintype="passive"/>
-      <node ref="J208" pin="71" pinfunction="GND_71" pintype="passive"/>
-      <node ref="J208" pin="75" pinfunction="GND_75" pintype="passive"/>
-      <node ref="J208" pin="79" pinfunction="GND_79" pintype="passive"/>
-      <node ref="J208" pin="83" pinfunction="GND_83" pintype="passive"/>
-      <node ref="J208" pin="85" pinfunction="GND_85" pintype="passive"/>
+      <node ref="J208" pin="8" pinfunction="GND_8" pintype="passive"/>
       <node ref="J208" pin="97" pinfunction="GND_97" pintype="passive"/>
       <node ref="J208" pin="98" pinfunction="GND_98" pintype="passive"/>
+      <node ref="J209" pin="11" pinfunction="GND_11" pintype="passive"/>
       <node ref="J209" pin="12" pinfunction="GND_12" pintype="passive"/>
+      <node ref="J209" pin="15" pinfunction="GND_15" pintype="passive"/>
       <node ref="J209" pin="16" pinfunction="GND_16" pintype="passive"/>
       <node ref="J209" pin="20" pinfunction="GND_20" pintype="passive"/>
       <node ref="J209" pin="24" pinfunction="GND_24" pintype="passive"/>
       <node ref="J209" pin="28" pinfunction="GND_28" pintype="passive"/>
+      <node ref="J209" pin="3" pinfunction="GND_3" pintype="passive"/>
       <node ref="J209" pin="32" pinfunction="GND_32" pintype="passive"/>
       <node ref="J209" pin="36" pinfunction="GND_36" pintype="passive"/>
       <node ref="J209" pin="4" pinfunction="GND_4" pintype="passive"/>
@@ -45165,12 +45168,9 @@
       <node ref="J209" pin="60" pinfunction="GND_60" pintype="passive"/>
       <node ref="J209" pin="64" pinfunction="GND_64" pintype="passive"/>
       <node ref="J209" pin="68" pinfunction="GND_68" pintype="passive"/>
-      <node ref="J209" pin="72" pinfunction="GND_72" pintype="passive"/>
-      <node ref="J209" pin="76" pinfunction="GND_76" pintype="passive"/>
+      <node ref="J209" pin="7" pinfunction="GND_7" pintype="passive"/>
+      <node ref="J209" pin="70" pinfunction="GND_70" pintype="passive"/>
       <node ref="J209" pin="8" pinfunction="GND_8" pintype="passive"/>
-      <node ref="J209" pin="80" pinfunction="GND_80" pintype="passive"/>
-      <node ref="J209" pin="84" pinfunction="GND_84" pintype="passive"/>
-      <node ref="J209" pin="86" pinfunction="GND_86" pintype="passive"/>
       <node ref="J209" pin="97" pinfunction="GND_97" pintype="passive"/>
       <node ref="J209" pin="98" pinfunction="GND_98" pintype="passive"/>
       <node ref="J301" pin="14" pinfunction="GND_14" pintype="passive"/>
@@ -45592,8 +45592,8 @@
     <net code="432" name="I2C0_SCL" class="Default">
       <node ref="J110" pin="3" pinfunction="I2C0_SCL_3" pintype="passive"/>
       <node ref="J203" pin="8" pinfunction="I2C0_SCL_8" pintype="passive"/>
-      <node ref="J208" pin="24" pinfunction="I2C0_SCL_24" pintype="passive"/>
-      <node ref="J209" pin="23" pinfunction="I2C0_SCL_23" pintype="passive"/>
+      <node ref="J208" pin="40" pinfunction="I2C0_SCL_40" pintype="passive"/>
+      <node ref="J209" pin="39" pinfunction="I2C0_SCL_39" pintype="passive"/>
       <node ref="J301" pin="15" pinfunction="GPIO1_I2C0_SCL_15" pintype="bidirectional"/>
       <node ref="J304" pin="15" pinfunction="I2C0_SCL_15" pintype="passive"/>
       <node ref="J307" pin="8" pinfunction="I2C0_SCL_8" pintype="passive"/>
@@ -45602,8 +45602,8 @@
     <net code="433" name="I2C0_SDA" class="Default">
       <node ref="J110" pin="4" pinfunction="I2C0_SDA_4" pintype="passive"/>
       <node ref="J203" pin="9" pinfunction="I2C0_SDA_9" pintype="passive"/>
-      <node ref="J208" pin="26" pinfunction="I2C0_SDA_26" pintype="passive"/>
-      <node ref="J209" pin="25" pinfunction="I2C0_SDA_25" pintype="passive"/>
+      <node ref="J208" pin="42" pinfunction="I2C0_SDA_42" pintype="passive"/>
+      <node ref="J209" pin="41" pinfunction="I2C0_SDA_41" pintype="passive"/>
       <node ref="J301" pin="13" pinfunction="GPIO0_I2C0_SDA_13" pintype="bidirectional"/>
       <node ref="J304" pin="13" pinfunction="I2C0_SDA_13" pintype="passive"/>
       <node ref="J307" pin="9" pinfunction="I2C0_SDA_9" pintype="passive"/>
@@ -45611,8 +45611,8 @@
     </net>
     <net code="434" name="I2C2_SCL" class="Default">
       <node ref="J201" pin="4" pinfunction="I2C2_SCL_4" pintype="passive"/>
-      <node ref="J208" pin="28" pinfunction="I2C2_SCL_28" pintype="passive"/>
-      <node ref="J209" pin="27" pinfunction="I2C2_SCL_27" pintype="passive"/>
+      <node ref="J208" pin="44" pinfunction="I2C2_SCL_44" pintype="passive"/>
+      <node ref="J209" pin="43" pinfunction="I2C2_SCL_43" pintype="passive"/>
       <node ref="J301" pin="28" pinfunction="GPIO9_I2C2_SCL_28" pintype="bidirectional"/>
       <node ref="J302" pin="4" pinfunction="SCL_4" pintype="passive"/>
       <node ref="J304" pin="28" pinfunction="I2C2_SCL_28" pintype="passive"/>
@@ -45627,8 +45627,8 @@
     </net>
     <net code="435" name="I2C2_SDA" class="Default">
       <node ref="J201" pin="3" pinfunction="I2C2_SDA_3" pintype="passive"/>
-      <node ref="J208" pin="30" pinfunction="I2C2_SDA_30" pintype="passive"/>
-      <node ref="J209" pin="29" pinfunction="I2C2_SDA_29" pintype="passive"/>
+      <node ref="J208" pin="46" pinfunction="I2C2_SDA_46" pintype="passive"/>
+      <node ref="J209" pin="45" pinfunction="I2C2_SDA_45" pintype="passive"/>
       <node ref="J301" pin="27" pinfunction="GPIO8_I2C2_SDA_27" pintype="bidirectional"/>
       <node ref="J302" pin="3" pinfunction="SDA_3" pintype="passive"/>
       <node ref="J304" pin="27" pinfunction="I2C2_SDA_27" pintype="passive"/>
@@ -45654,8 +45654,8 @@
     </net>
     <net code="438" name="IMU_RX" class="Default">
       <node ref="J203" pin="10" pinfunction="IMU_RX_10" pintype="passive"/>
-      <node ref="J208" pin="32" pinfunction="IMU_RX_32" pintype="passive"/>
-      <node ref="J209" pin="31" pinfunction="IMU_RX_31" pintype="passive"/>
+      <node ref="J208" pin="48" pinfunction="IMU_RX_48" pintype="passive"/>
+      <node ref="J209" pin="47" pinfunction="IMU_RX_47" pintype="passive"/>
       <node ref="J307" pin="10" pinfunction="IMU_RX_10" pintype="passive"/>
       <node ref="J321" pin="2" pinfunction="→_U309.GP1_(RX)_2" pintype="passive"/>
       <node ref="J504" pin="4" pinfunction="PicoTX_→_packRX_4" pintype="passive"/>
@@ -45669,8 +45669,8 @@
     </net>
     <net code="439" name="IMU_TX" class="Default">
       <node ref="J203" pin="11" pinfunction="IMU_TX_11" pintype="passive"/>
-      <node ref="J208" pin="34" pinfunction="IMU_TX_34" pintype="passive"/>
-      <node ref="J209" pin="33" pinfunction="IMU_TX_33" pintype="passive"/>
+      <node ref="J208" pin="50" pinfunction="IMU_TX_50" pintype="passive"/>
+      <node ref="J209" pin="49" pinfunction="IMU_TX_49" pintype="passive"/>
       <node ref="J307" pin="11" pinfunction="IMU_TX_11" pintype="passive"/>
       <node ref="J321" pin="1" pinfunction="→_U309.GP0_(TX)_1" pintype="passive"/>
       <node ref="J504" pin="3" pinfunction="packTX_→_PicoRX_3" pintype="passive"/>
@@ -45685,8 +45685,8 @@
     <net code="440" name="INA228_ALERT" class="Default">
       <node ref="J110" pin="5" pinfunction="INA228_ALERT_5" pintype="passive"/>
       <node ref="J203" pin="12" pinfunction="INA228_ALERT_12" pintype="passive"/>
-      <node ref="J208" pin="36" pinfunction="INA228_ALERT_36" pintype="passive"/>
-      <node ref="J209" pin="35" pinfunction="INA228_ALERT_35" pintype="passive"/>
+      <node ref="J208" pin="52" pinfunction="INA228_ALERT_52" pintype="passive"/>
+      <node ref="J209" pin="51" pinfunction="INA228_ALERT_51" pintype="passive"/>
       <node ref="J301" pin="3" pinfunction="GPIO24_3" pintype="input"/>
       <node ref="J304" pin="3" pinfunction="INA228_ALERT_3" pintype="passive"/>
       <node ref="J307" pin="12" pinfunction="INA228_ALERT_12" pintype="passive"/>
@@ -45746,14 +45746,14 @@
       <node ref="J104" pin="3" pinfunction="LAB5_3" pintype="passive"/>
       <node ref="J104" pin="4" pinfunction="LAB5_4" pintype="passive"/>
       <node ref="J206" pin="2" pinfunction="LAB5_2" pintype="passive"/>
-      <node ref="J208" pin="13" pinfunction="LAB5_13" pintype="passive"/>
-      <node ref="J208" pin="17" pinfunction="LAB5_17" pintype="passive"/>
-      <node ref="J208" pin="5" pinfunction="LAB5_5" pintype="passive"/>
-      <node ref="J208" pin="9" pinfunction="LAB5_9" pintype="passive"/>
-      <node ref="J209" pin="10" pinfunction="LAB5_10" pintype="passive"/>
-      <node ref="J209" pin="14" pinfunction="LAB5_14" pintype="passive"/>
-      <node ref="J209" pin="18" pinfunction="LAB5_18" pintype="passive"/>
-      <node ref="J209" pin="6" pinfunction="LAB5_6" pintype="passive"/>
+      <node ref="J208" pin="10" pinfunction="LAB5_10" pintype="passive"/>
+      <node ref="J208" pin="14" pinfunction="LAB5_14" pintype="passive"/>
+      <node ref="J208" pin="2" pinfunction="LAB5_2" pintype="passive"/>
+      <node ref="J208" pin="6" pinfunction="LAB5_6" pintype="passive"/>
+      <node ref="J209" pin="1" pinfunction="LAB5_1" pintype="passive"/>
+      <node ref="J209" pin="13" pinfunction="LAB5_13" pintype="passive"/>
+      <node ref="J209" pin="5" pinfunction="LAB5_5" pintype="passive"/>
+      <node ref="J209" pin="9" pinfunction="LAB5_9" pintype="passive"/>
       <node ref="J305" pin="3" pinfunction="LAB5_3" pintype="passive"/>
       <node ref="J305" pin="4" pinfunction="LAB5_4" pintype="passive"/>
       <node ref="J314" pin="2" pinfunction="LAB5_2" pintype="passive"/>
@@ -45776,10 +45776,10 @@
       <node ref="D401" pin="3" pinfunction="K_COMMON_3" pintype="passive"/>
       <node ref="F104" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="J204" pin="7" pinfunction="LAB5_RLY_7" pintype="passive"/>
-      <node ref="J208" pin="57" pinfunction="LAB5_RLY_57" pintype="passive"/>
-      <node ref="J208" pin="61" pinfunction="LAB5_RLY_61" pintype="passive"/>
-      <node ref="J209" pin="58" pinfunction="LAB5_RLY_58" pintype="passive"/>
-      <node ref="J209" pin="62" pinfunction="LAB5_RLY_62" pintype="passive"/>
+      <node ref="J208" pin="41" pinfunction="LAB5_RLY_41" pintype="passive"/>
+      <node ref="J208" pin="45" pinfunction="LAB5_RLY_45" pintype="passive"/>
+      <node ref="J209" pin="42" pinfunction="LAB5_RLY_42" pintype="passive"/>
+      <node ref="J209" pin="46" pinfunction="LAB5_RLY_46" pintype="passive"/>
       <node ref="J420" pin="7" pinfunction="LAB5_RLY_7" pintype="passive"/>
       <node ref="K401" pin="1" pinfunction="COIL+_1" pintype="passive"/>
       <node ref="K402" pin="1" pinfunction="COIL+_1" pintype="passive"/>
@@ -45803,10 +45803,10 @@
       <node ref="C236" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="C240" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="C244" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="J208" pin="21" pinfunction="LNA4V5_21" pintype="passive"/>
-      <node ref="J208" pin="25" pinfunction="LNA4V5_25" pintype="passive"/>
-      <node ref="J209" pin="22" pinfunction="LNA4V5_22" pintype="passive"/>
-      <node ref="J209" pin="26" pinfunction="LNA4V5_26" pintype="passive"/>
+      <node ref="J208" pin="5" pinfunction="LNA4V5_5" pintype="passive"/>
+      <node ref="J208" pin="9" pinfunction="LNA4V5_9" pintype="passive"/>
+      <node ref="J209" pin="10" pinfunction="LNA4V5_10" pintype="passive"/>
+      <node ref="J209" pin="6" pinfunction="LNA4V5_6" pintype="passive"/>
       <node ref="R225" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="R226" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="TP205" pin="1" pinfunction="TP_1" pintype="passive"/>
@@ -45818,8 +45818,8 @@
     <net code="450" name="LNB13V2" class="Default">
       <node ref="C261" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="J204" pin="8" pinfunction="LNB13V2_8" pintype="passive"/>
-      <node ref="J208" pin="73" pinfunction="LNB13V2_73" pintype="passive"/>
-      <node ref="J209" pin="74" pinfunction="LNB13V2_74" pintype="passive"/>
+      <node ref="J208" pin="57" pinfunction="LNB13V2_57" pintype="passive"/>
+      <node ref="J209" pin="58" pinfunction="LNB13V2_58" pintype="passive"/>
       <node ref="J420" pin="8" pinfunction="LNB13V2_8" pintype="passive"/>
       <node ref="L212" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="L406" pin="2" pinfunction="2_2" pintype="passive"/>
@@ -45843,8 +45843,8 @@
     </net>
     <net code="453" name="OVP_LNB_N" class="Default">
       <node ref="J203" pin="13" pinfunction="OVP_LNB_N_13" pintype="passive"/>
-      <node ref="J208" pin="38" pinfunction="OVP_LNB_N_38" pintype="passive"/>
-      <node ref="J209" pin="37" pinfunction="OVP_LNB_N_37" pintype="passive"/>
+      <node ref="J208" pin="54" pinfunction="OVP_LNB_N_54" pintype="passive"/>
+      <node ref="J209" pin="53" pinfunction="OVP_LNB_N_53" pintype="passive"/>
       <node ref="J307" pin="13" pinfunction="OVP_LNB_N_13" pintype="passive"/>
       <node ref="R291" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="R292" pin="1" pinfunction="1_1" pintype="passive"/>
@@ -45869,8 +45869,8 @@
     </net>
     <net code="456" name="PICO_DISP_EN" class="Default">
       <node ref="J203" pin="16" pinfunction="PICO_DISP_EN_16" pintype="passive"/>
-      <node ref="J208" pin="40" pinfunction="PICO_DISP_EN_40" pintype="passive"/>
-      <node ref="J209" pin="39" pinfunction="PICO_DISP_EN_39" pintype="passive"/>
+      <node ref="J208" pin="56" pinfunction="PICO_DISP_EN_56" pintype="passive"/>
+      <node ref="J209" pin="55" pinfunction="PICO_DISP_EN_55" pintype="passive"/>
       <node ref="J307" pin="16" pinfunction="PICO_DISP_EN_16" pintype="passive"/>
       <node ref="R213" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="U202" pin="1" pinfunction="EN/UVLO_1" pintype="input"/>
@@ -45879,8 +45879,8 @@
     <net code="457" name="PICO_OFF" class="Default">
       <node ref="D102" pin="1" pinfunction="A_1" pintype="passive"/>
       <node ref="J203" pin="17" pinfunction="PICO_OFF_17" pintype="passive"/>
-      <node ref="J208" pin="42" pinfunction="PICO_OFF_42" pintype="passive"/>
-      <node ref="J209" pin="41" pinfunction="PICO_OFF_41" pintype="passive"/>
+      <node ref="J208" pin="58" pinfunction="PICO_OFF_58" pintype="passive"/>
+      <node ref="J209" pin="57" pinfunction="PICO_OFF_57" pintype="passive"/>
       <node ref="J307" pin="17" pinfunction="PICO_OFF_17" pintype="passive"/>
       <node ref="U305" pin="17" pinfunction="GP13_17" pintype="output"/>
     </net>
@@ -45896,8 +45896,8 @@
       <node ref="D302" pin="3" pinfunction="K_3" pintype="passive"/>
       <node ref="D303" pin="3" pinfunction="K_3" pintype="passive"/>
       <node ref="J203" pin="19" pinfunction="PWR_BUTTON_19" pintype="passive"/>
-      <node ref="J208" pin="44" pinfunction="PWR_BUTTON_44" pintype="passive"/>
-      <node ref="J209" pin="43" pinfunction="PWR_BUTTON_43" pintype="passive"/>
+      <node ref="J208" pin="60" pinfunction="PWR_BUTTON_60" pintype="passive"/>
+      <node ref="J209" pin="59" pinfunction="PWR_BUTTON_59" pintype="passive"/>
       <node ref="J307" pin="19" pinfunction="PWR_BUTTON_19" pintype="passive"/>
       <node ref="J315" pin="2" pinfunction="PWR_BUTTON_2" pintype="passive"/>
       <node ref="SW301" pin="1" pinfunction="A_1" pintype="passive"/>
@@ -46024,8 +46024,8 @@
       <node ref="C511" pin="1" pinfunction="+_1" pintype="passive"/>
       <node ref="C513" pin="1" pinfunction="+_1" pintype="passive"/>
       <node ref="J207" pin="7" pinfunction="VBUS_HFP_7" pintype="passive"/>
-      <node ref="J208" pin="53" pinfunction="VBUS_HFP_53" pintype="passive"/>
-      <node ref="J209" pin="54" pinfunction="VBUS_HFP_54" pintype="passive"/>
+      <node ref="J208" pin="37" pinfunction="VBUS_HFP_37" pintype="passive"/>
+      <node ref="J209" pin="38" pinfunction="VBUS_HFP_38" pintype="passive"/>
       <node ref="J544" pin="1" pinfunction="VBUS_filtered_1" pintype="passive"/>
       <node ref="L501" pin="2" pinfunction="OUT_2" pintype="passive"/>
       <node ref="R512" pin="1" pinfunction="1_1" pintype="passive"/>
@@ -46034,8 +46034,8 @@
     <net code="481" name="VBUS_LABPORT" class="Default">
       <node ref="C506" pin="1" pinfunction="+_1" pintype="passive"/>
       <node ref="C507" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="49" pinfunction="VBUS_LABPORT_49" pintype="passive"/>
-      <node ref="J209" pin="50" pinfunction="VBUS_LABPORT_50" pintype="passive"/>
+      <node ref="J208" pin="33" pinfunction="VBUS_LABPORT_33" pintype="passive"/>
+      <node ref="J209" pin="34" pinfunction="VBUS_LABPORT_34" pintype="passive"/>
       <node ref="J501" pin="1" pinfunction="VBUS_1" pintype="passive"/>
       <node ref="J506" pin="3" pinfunction="VBUS_LABPORT_3" pintype="passive"/>
       <node ref="R508" pin="1" pinfunction="1_1" pintype="passive"/>
@@ -46060,8 +46060,8 @@
     </net>
     <net code="484" name="VBUS_RTLB_DAMP" class="Default">
       <node ref="C251" pin="1" pinfunction="+_1" pintype="passive"/>
-      <node ref="J208" pin="45" pinfunction="VBUS_RTLB_DAMP_45" pintype="passive"/>
-      <node ref="J209" pin="46" pinfunction="VBUS_RTLB_DAMP_46" pintype="passive"/>
+      <node ref="J208" pin="29" pinfunction="VBUS_RTLB_DAMP_29" pintype="passive"/>
+      <node ref="J209" pin="30" pinfunction="VBUS_RTLB_DAMP_30" pintype="passive"/>
       <node ref="R251" pin="2" pinfunction="2_2" pintype="passive"/>
     </net>
     <net code="485" name="VCC_3V3_MKEY" class="Default">
@@ -46118,65 +46118,65 @@
     <net code="500" name="unconnected-(J207-NC-Pad12)" class="Default">
       <node ref="J207" pin="12" pinfunction="NC_12" pintype="passive+no_connect"/>
     </net>
-    <net code="501" name="unconnected-(J208-NC-Pad46)" class="Default">
-      <node ref="J208" pin="46" pinfunction="NC_46" pintype="passive+no_connect"/>
-    </net>
-    <net code="502" name="unconnected-(J208-NC-Pad48)" class="Default">
-      <node ref="J208" pin="48" pinfunction="NC_48" pintype="passive+no_connect"/>
-    </net>
-    <net code="503" name="unconnected-(J208-NC-Pad50)" class="Default">
-      <node ref="J208" pin="50" pinfunction="NC_50" pintype="passive+no_connect"/>
-    </net>
-    <net code="504" name="unconnected-(J208-NC-Pad52)" class="Default">
-      <node ref="J208" pin="52" pinfunction="NC_52" pintype="passive+no_connect"/>
-    </net>
-    <net code="505" name="unconnected-(J208-NC-Pad54)" class="Default">
-      <node ref="J208" pin="54" pinfunction="NC_54" pintype="passive+no_connect"/>
-    </net>
-    <net code="506" name="unconnected-(J208-NC-Pad56)" class="Default">
-      <node ref="J208" pin="56" pinfunction="NC_56" pintype="passive+no_connect"/>
-    </net>
-    <net code="507" name="unconnected-(J208-NC-Pad58)" class="Default">
-      <node ref="J208" pin="58" pinfunction="NC_58" pintype="passive+no_connect"/>
-    </net>
-    <net code="508" name="unconnected-(J208-NC-Pad60)" class="Default">
-      <node ref="J208" pin="60" pinfunction="NC_60" pintype="passive+no_connect"/>
-    </net>
-    <net code="509" name="unconnected-(J208-NC-Pad62)" class="Default">
+    <net code="501" name="unconnected-(J208-NC-Pad62)" class="Default">
       <node ref="J208" pin="62" pinfunction="NC_62" pintype="passive+no_connect"/>
     </net>
-    <net code="510" name="unconnected-(J208-NC-Pad64)" class="Default">
+    <net code="502" name="unconnected-(J208-NC-Pad64)" class="Default">
       <node ref="J208" pin="64" pinfunction="NC_64" pintype="passive+no_connect"/>
     </net>
-    <net code="511" name="unconnected-(J208-NC-Pad66)" class="Default">
+    <net code="503" name="unconnected-(J208-NC-Pad66)" class="Default">
       <node ref="J208" pin="66" pinfunction="NC_66" pintype="passive+no_connect"/>
     </net>
-    <net code="512" name="unconnected-(J208-NC-Pad68)" class="Default">
+    <net code="504" name="unconnected-(J208-NC-Pad68)" class="Default">
       <node ref="J208" pin="68" pinfunction="NC_68" pintype="passive+no_connect"/>
     </net>
-    <net code="513" name="unconnected-(J208-NC-Pad70)" class="Default">
+    <net code="505" name="unconnected-(J208-NC-Pad70)" class="Default">
       <node ref="J208" pin="70" pinfunction="NC_70" pintype="passive+no_connect"/>
     </net>
-    <net code="514" name="unconnected-(J208-NC-Pad72)" class="Default">
+    <net code="506" name="unconnected-(J208-NC-Pad71)" class="Default">
+      <node ref="J208" pin="71" pinfunction="NC_71" pintype="passive+no_connect"/>
+    </net>
+    <net code="507" name="unconnected-(J208-NC-Pad72)" class="Default">
       <node ref="J208" pin="72" pinfunction="NC_72" pintype="passive+no_connect"/>
     </net>
-    <net code="515" name="unconnected-(J208-NC-Pad74)" class="Default">
+    <net code="508" name="unconnected-(J208-NC-Pad73)" class="Default">
+      <node ref="J208" pin="73" pinfunction="NC_73" pintype="passive+no_connect"/>
+    </net>
+    <net code="509" name="unconnected-(J208-NC-Pad74)" class="Default">
       <node ref="J208" pin="74" pinfunction="NC_74" pintype="passive+no_connect"/>
     </net>
-    <net code="516" name="unconnected-(J208-NC-Pad76)" class="Default">
+    <net code="510" name="unconnected-(J208-NC-Pad75)" class="Default">
+      <node ref="J208" pin="75" pinfunction="NC_75" pintype="passive+no_connect"/>
+    </net>
+    <net code="511" name="unconnected-(J208-NC-Pad76)" class="Default">
       <node ref="J208" pin="76" pinfunction="NC_76" pintype="passive+no_connect"/>
     </net>
-    <net code="517" name="unconnected-(J208-NC-Pad78)" class="Default">
+    <net code="512" name="unconnected-(J208-NC-Pad77)" class="Default">
+      <node ref="J208" pin="77" pinfunction="NC_77" pintype="passive+no_connect"/>
+    </net>
+    <net code="513" name="unconnected-(J208-NC-Pad78)" class="Default">
       <node ref="J208" pin="78" pinfunction="NC_78" pintype="passive+no_connect"/>
     </net>
-    <net code="518" name="unconnected-(J208-NC-Pad80)" class="Default">
+    <net code="514" name="unconnected-(J208-NC-Pad79)" class="Default">
+      <node ref="J208" pin="79" pinfunction="NC_79" pintype="passive+no_connect"/>
+    </net>
+    <net code="515" name="unconnected-(J208-NC-Pad80)" class="Default">
       <node ref="J208" pin="80" pinfunction="NC_80" pintype="passive+no_connect"/>
     </net>
-    <net code="519" name="unconnected-(J208-NC-Pad82)" class="Default">
+    <net code="516" name="unconnected-(J208-NC-Pad81)" class="Default">
+      <node ref="J208" pin="81" pinfunction="NC_81" pintype="passive+no_connect"/>
+    </net>
+    <net code="517" name="unconnected-(J208-NC-Pad82)" class="Default">
       <node ref="J208" pin="82" pinfunction="NC_82" pintype="passive+no_connect"/>
     </net>
-    <net code="520" name="unconnected-(J208-NC-Pad84)" class="Default">
+    <net code="518" name="unconnected-(J208-NC-Pad83)" class="Default">
+      <node ref="J208" pin="83" pinfunction="NC_83" pintype="passive+no_connect"/>
+    </net>
+    <net code="519" name="unconnected-(J208-NC-Pad84)" class="Default">
       <node ref="J208" pin="84" pinfunction="NC_84" pintype="passive+no_connect"/>
+    </net>
+    <net code="520" name="unconnected-(J208-NC-Pad85)" class="Default">
+      <node ref="J208" pin="85" pinfunction="NC_85" pintype="passive+no_connect"/>
     </net>
     <net code="521" name="unconnected-(J208-NC-Pad86)" class="Default">
       <node ref="J208" pin="86" pinfunction="NC_86" pintype="passive+no_connect"/>
@@ -46211,68 +46211,68 @@
     <net code="531" name="unconnected-(J208-NC-Pad96)" class="Default">
       <node ref="J208" pin="96" pinfunction="NC_96" pintype="passive+no_connect"/>
     </net>
-    <net code="532" name="unconnected-(J209-NC-Pad45)" class="Default">
-      <node ref="J209" pin="45" pinfunction="NC_45" pintype="passive+no_connect"/>
-    </net>
-    <net code="533" name="unconnected-(J209-NC-Pad47)" class="Default">
-      <node ref="J209" pin="47" pinfunction="NC_47" pintype="passive+no_connect"/>
-    </net>
-    <net code="534" name="unconnected-(J209-NC-Pad49)" class="Default">
-      <node ref="J209" pin="49" pinfunction="NC_49" pintype="passive+no_connect"/>
-    </net>
-    <net code="535" name="unconnected-(J209-NC-Pad51)" class="Default">
-      <node ref="J209" pin="51" pinfunction="NC_51" pintype="passive+no_connect"/>
-    </net>
-    <net code="536" name="unconnected-(J209-NC-Pad53)" class="Default">
-      <node ref="J209" pin="53" pinfunction="NC_53" pintype="passive+no_connect"/>
-    </net>
-    <net code="537" name="unconnected-(J209-NC-Pad55)" class="Default">
-      <node ref="J209" pin="55" pinfunction="NC_55" pintype="passive+no_connect"/>
-    </net>
-    <net code="538" name="unconnected-(J209-NC-Pad57)" class="Default">
-      <node ref="J209" pin="57" pinfunction="NC_57" pintype="passive+no_connect"/>
-    </net>
-    <net code="539" name="unconnected-(J209-NC-Pad59)" class="Default">
-      <node ref="J209" pin="59" pinfunction="NC_59" pintype="passive+no_connect"/>
-    </net>
-    <net code="540" name="unconnected-(J209-NC-Pad61)" class="Default">
+    <net code="532" name="unconnected-(J209-NC-Pad61)" class="Default">
       <node ref="J209" pin="61" pinfunction="NC_61" pintype="passive+no_connect"/>
     </net>
-    <net code="541" name="unconnected-(J209-NC-Pad63)" class="Default">
+    <net code="533" name="unconnected-(J209-NC-Pad63)" class="Default">
       <node ref="J209" pin="63" pinfunction="NC_63" pintype="passive+no_connect"/>
     </net>
-    <net code="542" name="unconnected-(J209-NC-Pad65)" class="Default">
+    <net code="534" name="unconnected-(J209-NC-Pad65)" class="Default">
       <node ref="J209" pin="65" pinfunction="NC_65" pintype="passive+no_connect"/>
     </net>
-    <net code="543" name="unconnected-(J209-NC-Pad67)" class="Default">
+    <net code="535" name="unconnected-(J209-NC-Pad67)" class="Default">
       <node ref="J209" pin="67" pinfunction="NC_67" pintype="passive+no_connect"/>
     </net>
-    <net code="544" name="unconnected-(J209-NC-Pad69)" class="Default">
+    <net code="536" name="unconnected-(J209-NC-Pad69)" class="Default">
       <node ref="J209" pin="69" pinfunction="NC_69" pintype="passive+no_connect"/>
     </net>
-    <net code="545" name="unconnected-(J209-NC-Pad71)" class="Default">
+    <net code="537" name="unconnected-(J209-NC-Pad71)" class="Default">
       <node ref="J209" pin="71" pinfunction="NC_71" pintype="passive+no_connect"/>
     </net>
-    <net code="546" name="unconnected-(J209-NC-Pad73)" class="Default">
+    <net code="538" name="unconnected-(J209-NC-Pad72)" class="Default">
+      <node ref="J209" pin="72" pinfunction="NC_72" pintype="passive+no_connect"/>
+    </net>
+    <net code="539" name="unconnected-(J209-NC-Pad73)" class="Default">
       <node ref="J209" pin="73" pinfunction="NC_73" pintype="passive+no_connect"/>
     </net>
-    <net code="547" name="unconnected-(J209-NC-Pad75)" class="Default">
+    <net code="540" name="unconnected-(J209-NC-Pad74)" class="Default">
+      <node ref="J209" pin="74" pinfunction="NC_74" pintype="passive+no_connect"/>
+    </net>
+    <net code="541" name="unconnected-(J209-NC-Pad75)" class="Default">
       <node ref="J209" pin="75" pinfunction="NC_75" pintype="passive+no_connect"/>
     </net>
-    <net code="548" name="unconnected-(J209-NC-Pad77)" class="Default">
+    <net code="542" name="unconnected-(J209-NC-Pad76)" class="Default">
+      <node ref="J209" pin="76" pinfunction="NC_76" pintype="passive+no_connect"/>
+    </net>
+    <net code="543" name="unconnected-(J209-NC-Pad77)" class="Default">
       <node ref="J209" pin="77" pinfunction="NC_77" pintype="passive+no_connect"/>
     </net>
-    <net code="549" name="unconnected-(J209-NC-Pad79)" class="Default">
+    <net code="544" name="unconnected-(J209-NC-Pad78)" class="Default">
+      <node ref="J209" pin="78" pinfunction="NC_78" pintype="passive+no_connect"/>
+    </net>
+    <net code="545" name="unconnected-(J209-NC-Pad79)" class="Default">
       <node ref="J209" pin="79" pinfunction="NC_79" pintype="passive+no_connect"/>
     </net>
-    <net code="550" name="unconnected-(J209-NC-Pad81)" class="Default">
+    <net code="546" name="unconnected-(J209-NC-Pad80)" class="Default">
+      <node ref="J209" pin="80" pinfunction="NC_80" pintype="passive+no_connect"/>
+    </net>
+    <net code="547" name="unconnected-(J209-NC-Pad81)" class="Default">
       <node ref="J209" pin="81" pinfunction="NC_81" pintype="passive+no_connect"/>
     </net>
-    <net code="551" name="unconnected-(J209-NC-Pad83)" class="Default">
+    <net code="548" name="unconnected-(J209-NC-Pad82)" class="Default">
+      <node ref="J209" pin="82" pinfunction="NC_82" pintype="passive+no_connect"/>
+    </net>
+    <net code="549" name="unconnected-(J209-NC-Pad83)" class="Default">
       <node ref="J209" pin="83" pinfunction="NC_83" pintype="passive+no_connect"/>
     </net>
-    <net code="552" name="unconnected-(J209-NC-Pad85)" class="Default">
+    <net code="550" name="unconnected-(J209-NC-Pad84)" class="Default">
+      <node ref="J209" pin="84" pinfunction="NC_84" pintype="passive+no_connect"/>
+    </net>
+    <net code="551" name="unconnected-(J209-NC-Pad85)" class="Default">
       <node ref="J209" pin="85" pinfunction="NC_85" pintype="passive+no_connect"/>
+    </net>
+    <net code="552" name="unconnected-(J209-NC-Pad86)" class="Default">
+      <node ref="J209" pin="86" pinfunction="NC_86" pintype="passive+no_connect"/>
     </net>
     <net code="553" name="unconnected-(J209-NC-Pad87)" class="Default">
       <node ref="J209" pin="87" pinfunction="NC_87" pintype="passive+no_connect"/>

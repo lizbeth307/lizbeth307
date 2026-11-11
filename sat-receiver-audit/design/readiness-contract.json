@@ -122,12 +122,12 @@
       },
       {
         "ref": "J208",
-        "pin": "2",
+        "pin": "18",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "1",
+        "pin": "17",
         "type": "passive"
       },
       {
@@ -159,12 +159,12 @@
       },
       {
         "ref": "J208",
-        "pin": "40",
+        "pin": "56",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "39",
+        "pin": "55",
         "type": "passive"
       },
       {
@@ -196,12 +196,12 @@
       },
       {
         "ref": "J208",
-        "pin": "12",
+        "pin": "28",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "11",
+        "pin": "27",
         "type": "passive"
       },
       {
@@ -233,12 +233,12 @@
       },
       {
         "ref": "J208",
-        "pin": "6",
+        "pin": "22",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "5",
+        "pin": "21",
         "type": "passive"
       },
       {
@@ -420,12 +420,12 @@
       },
       {
         "ref": "J208",
-        "pin": "14",
+        "pin": "30",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "13",
+        "pin": "29",
         "type": "passive"
       },
       {
@@ -467,12 +467,12 @@
       },
       {
         "ref": "J208",
-        "pin": "8",
+        "pin": "24",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "7",
+        "pin": "23",
         "type": "passive"
       },
       {
@@ -521,12 +521,12 @@
       },
       {
         "ref": "J208",
-        "pin": "10",
+        "pin": "26",
         "type": "passive"
       },
       {
         "ref": "J209",
-        "pin": "9",
+        "pin": "25",
         "type": "passive"
       },
       {
