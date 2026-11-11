@@ -565,7 +565,7 @@ W_TRUNK, W_BRANCH, W_CURRENT, W_SENSE = 2.0, 0.6, 0.5, 0.35
 # GND neighbour in its row (b2b-nets.json guard_rule), so: GND contacts join a B.Cu spine between the rows (inwards), rail
 # and signal contacts escape outwards, and copper that enters a pad between two neighbours is at most W_PADSTUB wide.
 W_PADSTUB = 0.25          # into a 0.30 mm pad beside a neighbour: 0.225 mm gap (clearance 0.15 + margin 0.05)
-W_SPINE = 0.8             # GND spine on the connector centre line: 0.70 mm from the inner pad ends of both rows
+W_SPINE = 1.4             # GND spine on the connector centre line: 0.40 mm from the inner pad ends of both rows
 W_NECK = 0.8              # LAB5 F.Cu neck of the two upper contacts (2 A): PWR2A width 0.8 mm (netclasses.json)
 SPINE_VIAS_MIN = 4
 LAB5_UP_VY = 22.36        # upper LAB5 vias: on the top side between U209 pad 1 (y <= 21.75) and C244 (y >= 22.975)
