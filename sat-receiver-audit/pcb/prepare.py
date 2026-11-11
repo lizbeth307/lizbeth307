@@ -223,8 +223,9 @@ def b2b_contacts(out,bb):
     rail contact (power: ceil(I/I_pin) per net; sense/supply taps; rail nodes) in the order b2b.rail_order (unlisted rails after
     it, by name), the rail contact on the odd row in odd columns and on the even row in even columns, its GND return in the other
     row of the same column (a checkerboard: every in-row neighbour of a rail contact is GND); one GND guard after the last rail
-    contact in its row; the other nets in name order on the free contacts in contact order; the rest spare (nc). The PWR-B half
-    carries on contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
+    contact in its row; the other nets in name order, one per column on the free even contacts in contact order (the even row of
+    J208, the odd row of J209: on PWR-B the row that faces the harness headers); the rest spare (nc). The PWR-B half carries on
+    contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
     n_all=bb['contacts'];slots={};over=[]
     def put(pin,net,role):
         if 1<=pin<=n_all and pin not in slots:slots[pin]=(net,role)
@@ -241,7 +242,7 @@ def b2b_contacts(out,bb):
             put(rail,r['net'],r['kind']);put(gnd,'GND','gnd');last=rail;col+=1
     if last is not None:put(last+2,'GND','guard')
     rest=[(r['net'],r['kind']) for r in out if r['kind'] not in B2B_RAIL_KINDS+('declared sense pair',) and r['pins']]
-    free=[p for p in range(1,n_all+1) if p not in slots]
+    free=[p for p in range(2,n_all+1,2) if p not in slots]
     fits=not over and len(rest)<=len(free)
     slots.update(zip(free,rest))
     return [{'pwr_a_pin':str(i),'pwr_b_pin':str(b2b_mate(i)),'net':slots.get(i,('','spare'))[0],'role':slots.get(i,('','spare'))[1]} for i in range(1,n_all+1)],fits
