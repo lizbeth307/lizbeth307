@@ -6038,7 +6038,7 @@
       "pin_map": "pin n of J208 (PWR-A) meets pin n+1 of J209 (PWR-B) for n odd and pin n-1 for n even; the map is its own inverse",
       "rule": "PWR_A has no board of record yet (W2 PCB-PWRA-2 not run: area study); when it has one, its spec places J208 on the PWR-A top under J209 (J209 = J208 mirrored about the strip axis, so J209 pad m lies over J208 pad m+1 for m odd and m-1 for m even, and the alignment holes coincide) and both specs get the check_boards b2b pair with that pin_map; a geometric pad-over-pad check is not in check_boards yet (OPEN, build/15 W2 B2B)"
     },
-    "source": "pcb/generated/b2b-nets.json sha256 a825401b58ffac2588f67a65767c27848daffec19bc75cd6b656f3a897795455",
+    "source": "pcb/generated/b2b-nets.json sha256 24dde893126eae03271b66d8cd88f882b223a626f90fab23aada85abebfc05a1",
     "rule": "J209 pad nets are its graph pins, which equal b2b-nets.json contacts[].pwr_b_pin (make_spec.py b2b_pin_map stops on any difference); the map itself is pcb/prepare.py b2b_contacts (pin_map_rule, guard_rule in b2b-nets.json)",
     "contacts": 100,
     "used": 69,
