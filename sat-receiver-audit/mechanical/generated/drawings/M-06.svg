@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-06 Корпус: задня стінка, вид ззаду</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 041e1dec897f</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params a778f21c9148</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="44" y1="237" x2="246" y2="237" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="260" y1="223" x2="260" y2="87.2" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -269,6 +269,18 @@
 <line x1="186" y1="142" x2="186" y2="234" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <text x="188" y="222" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">тримач T7 (зовні): 3 гвинти M3 ззовні</text>
 <text x="188" y="225" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">у вставки майданчиків T7_PAD; знімати першим</text>
+<circle cx="175.62" cy="195.46" r="3.6" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="175.62" cy="180.22" r="3.6" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="201.02" cy="195.46" r="3.6" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="201.02" cy="180.22" r="3.6" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="228.76" cy="174.74" r="3.6" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="208.44" cy="174.74" r="3.6" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="226.7" cy="183.52" r="3" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="210.7" cy="183.52" r="3" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="150.54" y1="193" x2="162.54" y2="193" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="162.54" y1="193" x2="162.54" y2="179" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="162.54" y1="179" x2="150.54" y2="179" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="150.54" y1="179" x2="150.54" y2="193" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <text x="268" y="75" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця отворів</text>
 <text x="268" y="79.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">ID                 u       v  розмір</text>
 <text x="268" y="82.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">GX16_IMU            55      25  ⌀16</text>
@@ -302,6 +314,16 @@
 <text x="268" y="166.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">CLOSURE_12       222.7   156.5  ⌀3.4</text>
 <text x="268" y="169.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">CLOSURE_13       225.5     126  ⌀3.4</text>
 <text x="268" y="172.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">CLOSURE_14       225.5      99  ⌀3.4</text>
+<text x="268" y="179.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.36" text-anchor="start" fill="#000">Бобишки модулів усередині (W2 MECH-5; u як ззовні)</text>
+<text x="268" y="183.1" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB1   u 145.62 v 41.54  hub_ch334f: бобишка ⌀7.2, вставка TC-M2,5x4 в отворі ⌀4 × 5, верх z 6</text>
+<text x="268" y="185.7" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB2   u 145.62 v 56.78  hub_ch334f: бобишка ⌀7.2, вставка TC-M2,5x4 в отворі ⌀4 × 5, верх z 6</text>
+<text x="268" y="188.3" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB3   u 171.02 v 41.54  hub_ch334f: бобишка ⌀7.2, вставка TC-M2,5x4 в отворі ⌀4 × 5, верх z 6</text>
+<text x="268" y="190.9" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB4   u 171.02 v 56.78  hub_ch334f: бобишка ⌀7.2, вставка TC-M2,5x4 в отворі ⌀4 × 5, верх z 6</text>
+<text x="268" y="193.5" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB5   u 198.76 v 62.26  ina228: бобишка ⌀7.2, вставка TC-M2,5x4 в отворі ⌀4 × 5, верх z 6</text>
+<text x="268" y="196.1" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB6   u 178.44 v 62.26  ina228: бобишка ⌀7.2, вставка TC-M2,5x4 в отворі ⌀4 × 5, верх z 6</text>
+<text x="268" y="198.7" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB7   u 196.7 v 53.48  ina228: упор ⌀6, верх z 6</text>
+<text x="268" y="201.3" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB8   u 180.7 v 53.48  ina228: упор ⌀6, верх z 6</text>
+<text x="268" y="203.9" font-family="DejaVu Sans Mono, monospace" font-size="2.38" text-anchor="start" fill="#000">MB9   u 120.5..132.5 v 44..58  swm_2813: майданчик, верх z 4.5 + скотч 1</text>
 <line x1="8" y1="289" x2="412" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="412" y1="289" x2="412" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="412" y1="8" x2="8" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -330,7 +352,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-06 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: ASA (Polymaker PF01002), друк</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 041e1dec897f · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params a778f21c9148 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Корпус: задня стінка, вид ззаду</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">свердління/вирізи, 1:1</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Координати u/v — від лівої (A) і нижньої (B) кромок грані, як видно ззовні. Одиниці мм, допуск ±0.2.</text>

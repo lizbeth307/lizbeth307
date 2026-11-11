@@ -726,63 +726,166 @@
       "result": "OPEN: insert depth and panel thickness at the screws not read (P-01)"
     },
     {
-      "id": "PWR-BOND",
-      "build17_row": "F26",
-      "what": "BOND-RF and the other CHASSIS bond points (lug + serrated washer)",
-      "count": null,
-      "thread": "TBD",
-      "seat": "TBD",
-      "stack_mm": [],
-      "grip_mm": 0,
-      "receiver": {
-        "kind": "TBD",
-        "thread_mm": null,
-        "tip_limit": "TBD"
-      },
-      "min_engagement_mm": 0.0,
-      "length_window_mm": null,
-      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
-    },
-    {
       "id": "INA228",
       "build17_row": "F09",
-      "what": "INA228 5832 on stand-offs on the rear wall (W2 MECH-3 place)",
-      "count": null,
-      "thread": "TBD",
-      "seat": "TBD",
-      "stack_mm": [],
-      "grip_mm": 0,
+      "what": "INA228 5832 to the rear-wall bosses",
+      "count": 2,
+      "thread": "M2.5",
+      "seat": "ina228 board top face, z 7.6",
+      "stack_mm": [
+        [
+          "ina228 board",
+          1.6
+        ]
+      ],
+      "grip_mm": 1.6,
       "receiver": {
-        "kind": "TBD",
-        "thread_mm": null,
-        "tip_limit": "TBD"
+        "kind": "CNC Kitchen TC-M2,5x4 insert in a printed rear-wall boss (hole 5 deep from the boss top z 6)",
+        "thread_mm": 4.0,
+        "tip_limit": "blind insert hole bottom (insert + 1)"
       },
-      "min_engagement_mm": 0.0,
-      "length_window_mm": null,
-      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
-    },
-    {
-      "id": "SWM-2813",
-      "build17_row": "F05",
-      "what": "Pololu #2813 on stand-offs on the rear wall (W2 MECH-3 place)",
-      "count": null,
-      "thread": "TBD",
-      "seat": "TBD",
-      "stack_mm": [],
-      "grip_mm": 0,
-      "receiver": {
-        "kind": "TBD",
-        "thread_mm": null,
-        "tip_limit": "TBD"
+      "min_engagement_mm": 3.75,
+      "length_window_mm": [
+        5.35,
+        6.1
+      ],
+      "max_engagement_mm": 4.5,
+      "orderable_lengths": {
+        "series": "ISO 14580 M2.5",
+        "named_in_build17": true,
+        "in_window": [
+          6
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
       },
-      "min_engagement_mm": 0.0,
-      "length_window_mm": null,
-      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+      "result": "PASS (model): under-head length 5.35-6.1 mm; ISO 14580 M2.5 x 6 in the window",
+      "note": "M2.5 x 6 passes 0.4 beyond the insert into the empty hole (the full 4.0 insert thread engaged)"
     },
     {
       "id": "HUB-5997",
       "build17_row": "F10",
-      "what": "Adafruit 5997 CH334F",
+      "what": "Adafruit 5997 CH334F to the rear-wall bosses",
+      "count": 4,
+      "thread": "M2.5",
+      "seat": "hub_ch334f board top face, z 7.6",
+      "stack_mm": [
+        [
+          "hub_ch334f board",
+          1.6
+        ]
+      ],
+      "grip_mm": 1.6,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M2,5x4 insert in a printed rear-wall boss (hole 5 deep from the boss top z 6)",
+        "thread_mm": 4.0,
+        "tip_limit": "blind insert hole bottom (insert + 1)"
+      },
+      "min_engagement_mm": 3.75,
+      "length_window_mm": [
+        5.35,
+        6.1
+      ],
+      "max_engagement_mm": 4.5,
+      "orderable_lengths": {
+        "series": "ISO 14580 M2.5",
+        "named_in_build17": true,
+        "in_window": [
+          6
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "PASS (model): under-head length 5.35-6.1 mm; ISO 14580 M2.5 x 6 in the window",
+      "note": "M2.5 x 6 passes 0.4 beyond the insert into the empty hole (the full 4.0 insert thread engaged)"
+    },
+    {
+      "id": "SWM-2813",
+      "build17_row": "F05",
+      "what": "Pololu #2813 to the printed pad of the rear wall",
+      "count": 1,
+      "thread": "none (tape joint)",
+      "seat": "printed pad top",
+      "stack_mm": [
+        [
+          "3M VHB 4910 clear acrylic foam tape",
+          1.0
+        ]
+      ],
+      "grip_mm": null,
+      "receiver": {
+        "kind": "acrylic foam tape on a printed face (no screw)",
+        "thread_mm": null,
+        "tip_limit": null
+      },
+      "min_engagement_mm": null,
+      "length_window_mm": null,
+      "result": "OPEN: tape joint, no screw: 1 mm tape (parts.json vhb_4910, status listing); bond strength on ASA and on the board solder mask not read; hold under vibration and temperature - bench",
+      "note": "the wires are tied down next to the board (the tape does not carry the wire pull)"
+    },
+    {
+      "id": "VEML7700",
+      "build17_row": "F47",
+      "what": "Adafruit 4162 VEML7700 to 4 printed rests in the top-wall pocket",
+      "count": 4,
+      "thread": "none (tape joint)",
+      "seat": "printed rest faces",
+      "stack_mm": [
+        [
+          "3M VHB 4910 clear acrylic foam tape",
+          1.0
+        ]
+      ],
+      "grip_mm": null,
+      "receiver": {
+        "kind": "acrylic foam tape on a printed face (no screw)",
+        "thread_mm": null,
+        "tip_limit": null
+      },
+      "min_engagement_mm": null,
+      "length_window_mm": null,
+      "result": "OPEN: tape joint, no screw: 1 mm tape (parts.json vhb_4910, status listing); bond strength on ASA and on the board solder mask not read; hold under vibration and temperature - bench",
+      "note": "locating spigots in two board holes (mechanical.json module_mounts veml7700)"
+    },
+    {
+      "id": "PACK-FUSE",
+      "build17_row": "F39",
+      "what": "PACK_FUSE carrier (F101) to the PEM standoffs PF1-PF2",
+      "count": 2,
+      "thread": "M2.5",
+      "seat": "carrier top face",
+      "stack_mm": [
+        [
+          "PACK_FUSE carrier (thickness assumption, PCB-SB2)",
+          1.6
+        ]
+      ],
+      "grip_mm": 1.6,
+      "receiver": {
+        "kind": "PEM SO-M2.5-6ZI thru-threaded standoff, L 6 + its head flush in the plate",
+        "thread_mm": 8.0,
+        "tip_limit": "plate rear face (head flush with it)"
+      },
+      "min_engagement_mm": 2.5,
+      "length_window_mm": [
+        4.1,
+        9.6
+      ],
+      "max_engagement_mm": 8.0,
+      "orderable_lengths": {
+        "series": "ISO 14580 M2.5",
+        "named_in_build17": false,
+        "in_window": [
+          5,
+          6,
+          8
+        ],
+        "src": "mechanical/params/parts.json iso14580_lengths"
+      },
+      "result": "OPEN: under-head length window 4.1-9.6 mm; the carrier board, its screws and insulation are PCB-SB2's (build/17 F39); ISO 14580 M2.5 lengths in the window: x 5, x 6, x 8"
+    },
+    {
+      "id": "PWR-BOND",
+      "build17_row": "F26",
+      "what": "BOND-RF and the other CHASSIS bond points (lug + serrated washer)",
       "count": null,
       "thread": "TBD",
       "seat": "TBD",
@@ -870,24 +973,6 @@
       "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
     },
     {
-      "id": "PACK-FUSE",
-      "build17_row": "F39",
-      "what": "F101 carrier PACK_FUSE",
-      "count": null,
-      "thread": "TBD",
-      "seat": "TBD",
-      "stack_mm": [],
-      "grip_mm": 0,
-      "receiver": {
-        "kind": "TBD",
-        "thread_mm": null,
-        "tip_limit": "TBD"
-      },
-      "min_engagement_mm": 0.0,
-      "length_window_mm": null,
-      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
-    },
-    {
       "id": "POD-MODULES",
       "build17_row": "F42",
       "what": "cf2235 / LaNA WB in the pod",
@@ -925,8 +1010,8 @@
     "F15": "SMA mating torque"
   },
   "summary": {
-    "PASS": 9,
-    "OPEN": 25,
+    "PASS": 11,
+    "OPEN": 24,
     "FAIL": 0
   }
 }
