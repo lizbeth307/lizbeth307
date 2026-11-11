@@ -5753,6 +5753,120 @@
       ]
     },
     {
+      "ref": "J320",
+      "value": "Майданчики живлення RP2040-Zero U309 на IMU_CARRIER",
+      "kind": "connector",
+      "group": "External IMU",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "→ U309.5V",
+          "type": "passive",
+          "net": "E5_IMU_VIN"
+        },
+        {
+          "number": "2",
+          "name": "→ U309.GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "← U309.3V3",
+          "type": "passive",
+          "net": "E3_IMU3V3"
+        }
+      ],
+      "notes": [
+        "Майданчики носійної плати IMU_CARRIER (W2 GR-4), купувати нічого. Від кожного майданчика — один провід 26 AWG (Alpha Wire 5853: 7/34, жила 0.48 мм) до виводу модуля, названого в імені контакту; модулі стоять на стійках 13 мм над носієм (mechanical/params/imu_pack.json). SPI SCK/MOSI/MISO, INT і RST з'єднуються модуль–модуль, без носійної плати. Посадкове місце KiCad SolderWire 0.15 мм² (D 0.5 мм, отвір 0.7 мм)."
+      ]
+    },
+    {
+      "ref": "J321",
+      "value": "Майданчики сигналів RP2040-Zero U309 на IMU_CARRIER",
+      "kind": "connector",
+      "group": "External IMU",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "→ U309.GP0 (TX)",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "2",
+          "name": "→ U309.GP1 (RX)",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "3",
+          "name": "→ U309.GP5 (CS)",
+          "type": "passive",
+          "net": "E3_IMU_CS_N"
+        },
+        {
+          "number": "4",
+          "name": "→ U309.GP8 (WAKE)",
+          "type": "passive",
+          "net": "E3_IMU_WAKE_N"
+        }
+      ],
+      "notes": [
+        "Майданчики носійної плати IMU_CARRIER (W2 GR-4), купувати нічого. Від кожного майданчика — один провід 26 AWG (Alpha Wire 5853: 7/34, жила 0.48 мм) до виводу модуля, названого в імені контакту; модулі стоять на стійках 13 мм над носієм (mechanical/params/imu_pack.json). SPI SCK/MOSI/MISO, INT і RST з'єднуються модуль–модуль, без носійної плати. Посадкове місце KiCad SolderWire 0.15 мм² (D 0.5 мм, отвір 0.7 мм)."
+      ]
+    },
+    {
+      "ref": "J322",
+      "value": "Майданчики BNO085 U314 на IMU_CARRIER",
+      "kind": "connector",
+      "group": "External IMU",
+      "source": "W2 GR-4: KiCad 10.0.7 Connector_Wire SolderWire (build/kicad/footprints/manifest.json); Alpha Wire / HELUKABEL reads in design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+      "status": "design",
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "→ U314.VIN",
+          "type": "passive",
+          "net": "E3_IMU3V3"
+        },
+        {
+          "number": "2",
+          "name": "→ U314.GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "→ U314.CS",
+          "type": "passive",
+          "net": "E3_IMU_CS_N"
+        },
+        {
+          "number": "4",
+          "name": "→ U314.P0 (PS0/WAKE)",
+          "type": "passive",
+          "net": "E3_IMU_WAKE_N"
+        },
+        {
+          "number": "5",
+          "name": "→ U314.P1 (PS1)",
+          "type": "passive",
+          "net": "E3_IMU3V3"
+        }
+      ],
+      "notes": [
+        "Майданчики носійної плати IMU_CARRIER (W2 GR-4), купувати нічого. Від кожного майданчика — один провід 26 AWG (Alpha Wire 5853: 7/34, жила 0.48 мм) до виводу модуля, названого в імені контакту; модулі стоять на стійках 13 мм над носієм (mechanical/params/imu_pack.json). SPI SCK/MOSI/MISO, INT і RST з'єднуються модуль–модуль, без носійної плати. Посадкове місце KiCad SolderWire 0.15 мм² (D 0.5 мм, отвір 0.7 мм)."
+      ]
+    },
+    {
       "ref": "R392",
       "value": "10k",
       "kind": "resistor",

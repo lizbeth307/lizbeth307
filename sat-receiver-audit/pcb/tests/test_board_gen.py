@@ -480,102 +480,175 @@ class PlacementGroups(unittest.TestCase):
                 bg.validate_spec(candidate, 'ENC')
 
 
-class CutoutsLayerTypesAndDrillOffsets(unittest.TestCase):
-    """W2 PCB-CTRL additions: contract cut-outs, inner plane layer types, SMD drill offsets."""
+class CutoutsViasAndLayerTypes(unittest.TestCase):
+    """W2 PCB-PWRB: contract cutouts, scripted vias, zone pad connection and copper layer types (optional spec keys)."""
 
-    def test_cutout_rects_are_boxes(self):
-        self.assertEqual(bg.cutout_rects({'cutouts_mm': [[12.0, 68.5, 25.0, 25.0]]}), [[12.0, 68.5, 37.0, 93.5]])
-        self.assertEqual(bg.cutout_rects({}), [])
+    def enc(self):
+        return bg.read_json(bg.spec_path('ENC'))
 
-    def test_groups_keep_out_of_cutouts(self):
-        spec, template, geo = PlacementGroups().setup()
-        outline = [[0, 0], [30, 0], [30, 20], [0, 20]]
-        anchors, rows = bg.place_groups(spec, template, geo, [], outline, [[22.0, 2.0, 30.0, 14.0]])  # touching: accepted
-        self.assertEqual(sorted(anchors), ['C1', 'R1', 'R2'])
-        with self.assertRaises(SystemExit):  # the region overlaps a cut-out
-            bg.place_groups(spec, template, geo, [], outline, [[20.0, 2.0, 30.0, 14.0]])
-        with self.assertRaises(SystemExit):  # a cut-out in a corner of the region
-            bg.place_groups({'groups': [{'id': 'G1', 'region': [0.0, 0.0, 30.0, 20.0], 'members': [{'ref': 'R1'}]}]},
-                            template, geo, [], outline, [[0.0, 15.0, 3.0, 20.0]])
+    def test_cutout_boxes_read_x_y_w_h(self):
+        self.assertEqual(bg.cutout_boxes({'cutouts_mm': [[7.5, 39.5, 26.4, 26.4]]}), [[7.5, 39.5, 33.9, 65.9]])
+        self.assertEqual(bg.cutout_boxes({}), [])
+
+    def test_group_region_and_parts_stay_out_of_cutouts(self):
+        template = [{'ref': 'C1', 'anchor': None}]
+        geometry = {'C1': bg.footprint_geometry(C0603.read_text(encoding='utf-8'))}
+        outline = [[0, 0], [40, 0], [40, 20], [0, 20]]
+        spec = {'groups': [{'id': 'G', 'region': [2, 2, 12, 12], 'members': [{'ref': 'C1'}]}]}
+        anchors, _rows = bg.place_groups(spec, template, geometry, [], outline, bg.cutout_boxes({'cutouts_mm': [[20, 5, 10, 10]]}))
+        self.assertIn('C1', anchors)
+        spec['groups'][0]['region'] = [15, 2, 25, 12]
+        with self.assertRaises(SystemExit):
+            bg.place_groups(spec, template, geometry, [], outline, bg.cutout_boxes({'cutouts_mm': [[20, 5, 10, 10]]}))
+
+    def test_optional_keys_validate(self):
+        spec = self.enc()
+        spec['layers']['types'] = {'B.Cu': 'signal'}
+        spec['pre_route']['vias'] = [{'id': 'V1', 'net': 'GND', 'at': [12.0, 4.5], 'drill_mm': 0.3, 'diameter_mm': 0.6}]
+        spec['post_route_zones'][0]['pad_connection'] = 'tht_thermal'
+        bg.validate_spec(spec, 'ENC')
+        bad = []
+        for key, value in (('types', {'In1.Cu': 'power'}), ('types', {'F.Cu': 'plane'})):
+            s = copy.deepcopy(spec)
+            s['layers'][key] = value
+            bad.append(s)  # In1.Cu does not exist on a 2-layer board; unknown type
+        s = copy.deepcopy(spec)
+        s['pre_route']['vias'][0]['net'] = 'NOPE'
+        bad.append(s)
+        s = copy.deepcopy(spec)
+        s['pre_route']['vias'][0]['drill_mm'] = 0.7
+        bad.append(s)  # drill not below the diameter
+        s = copy.deepcopy(spec)
+        s['post_route_zones'][0]['pad_connection'] = 'spokes'
+        bad.append(s)
+        for i, candidate in enumerate(bad):
+            with self.assertRaises(SystemExit, msg=i):
+                bg.validate_spec(candidate, 'ENC')
+
+    def test_router_extras_and_edge_strips(self):
+        self.assertEqual(bg.router_extra({}), [])
+        self.assertEqual(bg.router_extra({'fanout': False, 'ignore_net_classes': ['SCRIPTED_A', 'B']}),
+                         ['--router.fanout.enabled=false', '-inc', 'SCRIPTED_A,B'])
+        cmd = bg.freerouting_command('/t/java', '/t/fr.jar', 'b.dsn', 'b.ses', 20, 1, '/t/u', '00:05:00', ['-inc', 'X'])
+        self.assertEqual(cmd[-2:], ['-inc', 'X'])
+        for bad in ({'fanout': 'no'}, {'ignore_net_classes': ['A B']}):
+            with self.assertRaises(SystemExit):
+                bg.router_extra(bad)
+        strip = bg.edge_strip((0.0, 0.0), (10.0, 0.0), 0.2)
+        xs, ys = [p[0] for p in strip], [p[1] for p in strip]
+        self.assertEqual((round(min(xs), 6), round(max(xs), 6), round(min(ys), 6), round(max(ys), 6)), (-0.2, 10.2, -0.2, 0.2))
+
+    def test_pwr_b_spec_resolves_with_the_b2b_placeholder(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('PWR_B')
+        self.assertTrue(contract['cutouts_mm'])
+        self.assertTrue(bg.domain_audit(spec, bg.read_json(bg.BASE / spec['partition']))['passed'])
+        b2b = next(t for t in template if t['ref'] == 'B2B1')
+        self.assertEqual(sum(1 for n in b2b['pads'].values() if n == 'LAB5'), 4)  # ceil(4 A / 1 A), b2b-nets.json
+        status = {b['status'] for b in bg.boundary_audit(spec, template, graph, db)}
+        self.assertEqual(len(status), 1)
+        self.assertTrue(next(iter(status)).startswith('provisional: B2B ref pending'))
+
+
+class PwrBPinMapFollowsB2bNets(unittest.TestCase):
+    """W2 PCB-PWRB: the committed PWR_B B2B pin map still matches pcb/generated/b2b-nets.json (CI does not run
+    build/kicad/boards/PWR_B/make_spec.py --check, which needs the FX8 library, and b2b-nets.json is no board_gen input)."""
+
+    def test_contacts_per_net_gnd_count_and_source_hash(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        import collections
+        import hashlib
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        path = bg.BASE / 'pcb/generated/b2b-nets.json'
+        b2b = bg.read_json(path)
+        want = collections.Counter({n['net']: int(n['pins']) for n in b2b['nets']})
+        self.assertEqual(sum(int(n.get('gnd_pins', 0)) for n in b2b['nets']), b2b['totals']['gnd_pins'])
+        want['GND'] += b2b['totals']['gnd_pins']
+        placeholder = next(p for p in spec['parts'] if p['ref'] == 'B2B1')
+        self.assertEqual(collections.Counter(placeholder['pins'].values()), want)
+        pin_map = spec['b2b_pin_map']
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.assertEqual(pin_map['source'], f'pcb/generated/b2b-nets.json sha256 {digest}')
+        self.assertIn(f'(sha256 {digest})', placeholder['pins_source'])
+        self.assertEqual((pin_map['used'], pin_map['spare']), (len(placeholder['pins']), pin_map['contacts'] - len(placeholder['pins'])))
+        self.assertEqual(pin_map['used'], b2b['totals']['contacts_needed'])
+
+
+PICO = bg.BASE / 'build/kicad/footprints/SR_RX_Custom.pretty/RaspberryPi_Pico_SMD_SWD.kicad_mod'
+
+
+class CtrlClassLayersCutoutAuditAndDrillOffsets(unittest.TestCase):
+    """W2 PCB-CTRL: router.class_layers (DSN use_layer), audit_cutouts, SMD drill offsets and the CTRL spec."""
+
+    def ctrl(self):
+        return copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
+
+    def test_dsn_class_layers_patch(self):
+        dsn = ('    (class kicad_default A B\n      (circuit\n        (use_via "V")\n      )\n    )\n'
+               '    (class PWR1A F5\n      (circuit\n        (use_via "V7")\n      )\n      (rule (width 350))\n    )\n')
+        out = bg.patch_dsn_class_layers(dsn, {'PWR1A': ['F.Cu', 'B.Cu']})
+        self.assertIn('(class PWR1A F5\n      (circuit\n        (use_layer F.Cu B.Cu)\n        (use_via "V7")', out)
+        self.assertEqual(out.count('use_layer'), 1)  # kicad_default untouched
+        with self.assertRaises(SystemExit):
+            bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu']})
+
+    def test_class_layers_and_audit_flag_validate(self):
+        spec = self.ctrl()
+        bg.validate_spec(spec, 'CTRL')
+        for key, value in (('class_layers', {'PWR1A': ['In3.Cu']}), ('class_layers', {'PWR1A': []}),
+                           ('class_layers', {'A B': ['F.Cu']})):
+            candidate = copy.deepcopy(spec)
+            candidate['router'][key] = value
+            with self.assertRaises(SystemExit):
+                bg.validate_spec(candidate, 'CTRL')
+        candidate = copy.deepcopy(spec)
+        candidate['audit_cutouts'] = 'yes'
+        with self.assertRaises(SystemExit):
+            bg.validate_spec(candidate, 'CTRL')
 
     def test_cutout_audit_flags_boxes_inside(self):
         facts = {'footprints': [
             {'ref': 'A', 'courtyard_box': [0, 0, 2, 2], 'fab_box': [0.5, 0.5, 1.5, 1.5], 'pads': [{'box': [0.6, 0.6, 1.0, 1.0]}]},
             {'ref': 'B', 'courtyard_box': [9, 9, 11, 11], 'fab_box': None, 'pads': []}]}
         template = [{'ref': 'A'}, {'ref': 'B'}]
-        audit = bg.cutout_audit(facts, {'cutouts_mm': [[2.0, 0.0, 3.0, 3.0]]}, template)
-        self.assertTrue(audit['passed'])  # edge contact is allowed
+        self.assertTrue(bg.cutout_audit(facts, {'cutouts_mm': [[2.0, 0.0, 3.0, 3.0]]}, template)['passed'])  # edge contact
         audit = bg.cutout_audit(facts, {'cutouts_mm': [[10.0, 10.0, 3.0, 3.0]]}, template)
         self.assertEqual([e['kind'] for e in audit['errors']], ['courtyard_in_cutout'])
-
-    def test_layer_types_are_validated(self):
-        spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
-        bg.validate_spec(spec, 'CTRL')
-        self.assertEqual(spec['layers']['types'], {'In1.Cu': 'power'})  # L2 GND plane; L3 routes signals
-        for bad in ({'F.Cu': 'power'}, {'In1.Cu': 'mixed'}):
-            candidate = copy.deepcopy(spec)
-            candidate['layers']['types'] = bad
-            with self.assertRaises(SystemExit):
-                bg.validate_spec(candidate, 'CTRL')
-        enc = bg.read_json(bg.spec_path('ENC'))
-        candidate = copy.deepcopy(enc)
-        candidate['layers']['types'] = {'In1.Cu': 'power'}
-        with self.assertRaises(SystemExit):  # a 2-layer board has no inner layer
-            bg.validate_spec(candidate, 'ENC')
-
-    def test_cutout_keepout_spec_is_validated(self):
-        spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
-        self.assertGreater(spec['cutouts']['keepout_margin_mm'], 0.3)  # above the copper-to-edge rule
-        for bad in ({'keepout_margin_mm': -1, 'keepout_layers': ['F.Cu']}, {'keepout_margin_mm': 0.35, 'keepout_layers': []},
-                    {'keepout_layers': ['F.Cu']}):
-            candidate = copy.deepcopy(spec)
-            candidate['cutouts'] = bad
-            with self.assertRaises(SystemExit):
-                bg.validate_spec(candidate, 'CTRL')
-
-    def test_dsn_class_layers_patch(self):
-        dsn = ('    (class kicad_default A B\n      (circuit\n        (use_via "V")\n      )\n    )\n'
-               '    (class PWR3A LAB5\n      (circuit\n        (use_via "V8")\n      )\n      (rule (width 1850))\n    )\n')
-        out = bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu', 'B.Cu']})
-        self.assertIn('(class PWR3A LAB5\n      (circuit\n        (use_layer F.Cu B.Cu)\n        (use_via "V8")', out)
-        self.assertEqual(out.count('use_layer'), 1)  # kicad_default untouched
-        with self.assertRaises(SystemExit):
-            bg.patch_dsn_class_layers(dsn, {'PWR1A': ['F.Cu']})
-        spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
-        spec['router']['class_layers'] = {'PWR3A': ['In3.Cu']}
-        with self.assertRaises(SystemExit):
-            bg.validate_spec(spec, 'CTRL')
-
-    def test_pre_route_vias_are_validated(self):
-        spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
-        self.assertTrue(spec['pre_route']['vias'])
-        for bad in ({'net': 'NOPE'}, {'drill_mm': 0.1}, {'diameter_mm': 0.2}, {'diameter_mm': 0.3, 'drill_mm': 0.3}):
-            candidate = copy.deepcopy(spec)
-            candidate['pre_route']['vias'][0].update(bad)
-            with self.assertRaises(SystemExit):
-                bg.validate_spec(candidate, 'CTRL')
 
     def test_smd_drill_offset_without_size(self):
         geo = bg.footprint_geometry(PICO.read_text(encoding='utf-8'))
         self.assertTrue(any(p['number'] == '1' for p in geo['pads']))
         self.assertTrue(all(isinstance(v, float) for p in geo['pads'] for v in p['drill']))
 
-    def test_ctrl_spec_resolves_and_covers_its_domain(self):
+    def test_ctrl_spec_places_inside_the_contract(self):
         spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('CTRL')
-        partition = bg.read_json(bg.BASE / spec['partition'])
-        audit = bg.domain_audit(spec, partition)
+        audit = bg.domain_audit(spec, bg.read_json(bg.BASE / spec['partition']))
         self.assertTrue(audit['passed'])
         self.assertEqual(len(audit['domain_refs']), len(template))
-        anchors, rows = bg.group_plan(spec, contract, template)
-        switches = {p['ref']: p['anchor']['at'] for p in spec['parts'] if p['ref'].startswith('SW')}
-        self.assertEqual(sorted(switches.values()), sorted([[13.5, 51.0], [35.5, 51.0], [13.5, 29.0], [35.5, 29.0],
-                                                             [13.5, 7.0], [35.5, 7.0]]))
-        cuts = bg.cutout_rects(contract)
-        for row in rows:
-            self.assertFalse(any(bg.rects_overlap(row['courtyard_box'], c) for c in cuts), row['ref'])
+        switches = sorted(p['anchor']['at'] for p in spec['parts'] if p['ref'].startswith('SW'))
+        self.assertEqual(switches, sorted([[13.5, 51.0], [35.5, 51.0], [13.5, 29.0], [35.5, 29.0], [13.5, 7.0], [35.5, 7.0]]))
+        anchors, _rows = bg.group_plan(spec, contract, template)
+        cuts = bg.cutout_boxes(contract)
+        for part in template:
+            anchor = part['anchor'] or anchors[part['ref']]
+            box = bg.placed_geometry(bg.footprint_geometry(bg.footprint_file(part).read_text(encoding='utf-8')), anchor)['box']
+            self.assertFalse(any(bg.rects_overlap(box, c) for c in cuts), part['ref'])
+        self.assertTrue(spec['audit_cutouts'])
 
-
-PICO = bg.BASE / 'build/kicad/footprints/SR_RX_Custom.pretty/RaspberryPi_Pico_SMD_SWD.kicad_mod'
+    def test_ctrl_scripted_classes_are_not_autorouted(self):
+        spec = self.ctrl()
+        router = spec['router']
+        self.assertFalse(router['fanout'])
+        self.assertEqual(bg.router_extra(router), ['--router.fanout.enabled=false', '-inc', 'SCRIPTED_GND,SCRIPTED_PWR3A'])
+        project = bg.read_json(bg.BASE / spec['project'])
+        patterns = {p['pattern']: p['netclass'] for p in project['net_settings']['netclass_patterns']}
+        self.assertEqual(patterns['GND'], 'SCRIPTED_GND')
+        self.assertEqual(patterns['E3_FAN5'], 'SCRIPTED_PWR3A')
+        vias = spec['pre_route']['vias']
+        self.assertTrue(vias and all(v['net'] == 'GND' and v['drill_mm'] >= spec['fab_floor']['min_drill'] for v in vias))
+        self.assertEqual(spec['pre_route']['gnd_vias_skipped'], [])
 
 
 if __name__ == '__main__':

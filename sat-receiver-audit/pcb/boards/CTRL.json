@@ -3,7 +3,7 @@
   "board_id": "CTRL",
   "status": "DESIGN_NOT_FOR_FABRICATION",
   "title": "CTRL control / HMI board (two-sided, 4 layers)",
-  "note": "W2 PCB-CTRL: control / HMI board, two-sided, 4 layers (A-PCB-07). Top: the six TL3145 at the contract switch points, MCP23017 U301-U303, PI4IOE5V9555 U306, the HMI resistors and TVS and the two ENC headers at the cut-outs. Bottom: the THT harness headers (hand-soldered from the top; pin field + 1.0 mm kept free on the top), the Raspberry Pi Pico U305 (its 23.1 x 53.9 mm courtyard does not fit the top between the switch columns and the cut-outs), the buzzer, the LED and the small SMD parts. CI/model output of pcb/board_gen.py; not a fabrication release; bench gates OPEN.",
+  "note": "W2 PCB-CTRL: control / HMI board, two-sided, 4 layers (A-PCB-07). Top: the six TL3145 at the contract switch points, MCP23017 U301-U303, PI4IOE5V9555 U306, the HMI resistors and TVS and the two ENC headers at the cut-outs. Bottom: the THT harness headers (hand-soldered from the top; pin field + 1.0 mm kept free on the top), the Raspberry Pi Pico U305 (its 23.1 x 53.9 mm courtyard does not fit the top between the switch columns and the cut-outs), the buzzer, the LED and the small SMD parts. Iteration 2: scripted LAB5 feed, blower return and fan copper, GND plane vias, fan cluster re-placed. CI/model output of pcb/board_gen.py; not a fabrication release; bench gates OPEN.",
   "contract": {
     "file": "mechanical/generated/contract/boards.json",
     "board": "CTRL"
@@ -19,7 +19,7 @@
     "types": {
       "In1.Cu": "power"
     },
-    "types_why": "In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) and Freerouting does not route on it. F.Cu, In2.Cu and B.Cu are routing layers; the power classes are held on B.Cu by router.class_layers (DSN use_layer), as pcb/check_boards.py requires (netclasses.json inner_min_width_mm).",
+    "types_why": "In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).",
     "plan": {
       "F.Cu": "L1: top parts, signals, GND pour after routing",
       "In1.Cu": "L2: GND plane (pre-route zone, DSN plane), no signals",
@@ -547,15 +547,45 @@
     },
     {
       "ref": "C318",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          47.6,
+          74.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "C319",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          46.5,
+          91.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "C320",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          48.2,
+          87.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "C321",
@@ -591,25 +621,55 @@
       "anchor": {
         "at": [
           48.04,
-          71.81
+          68.81
         ],
         "align": "origin",
         "rotation": 0,
         "side": "B"
       },
-      "anchor_source": "bottom over the plate zone x 37-50 y 68.5-83 (8.6 mm LED; outside the plate zones no zone is that high)"
+      "anchor_source": "bottom over the zones x 43.5-50 y 65.6-72 (15.98 / 17.98 mm >= 8.6 mm LED), between J304 (y <= 65.51) and J313; its pins + 1.0 mm stay clear of the top parts"
     },
     {
       "ref": "D305",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.6,
+          91.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "D306",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          14.5,
+          56.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "blower switch on the bottom band y 54.5-58.1 between the Pico and the J317 pin row (W2 PCB-CTRL iteration 2): the scripted E3_BLOWER_GND rail J314.1 -> D306.2 -> Q305.3 runs at y 59.25, below the J317 pins (y >= 60.8) and above D306.1 (LAB5)"
     },
     {
       "ref": "F301",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          48.0,
+          79.4
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "J302",
@@ -757,13 +817,13 @@
       "anchor": {
         "at": [
           40.43,
-          76.87
+          75.7
         ],
         "align": "origin",
         "rotation": 90,
         "side": "B"
       },
-      "anchor_source": "bottom, vertical KK over the plate zone x 37-50 y 68.5-83, next to the fan switch"
+      "anchor_source": "bottom, vertical KK over the plate zones x 37-46 y 68.5-83 (15.98 / 17.98 mm); courtyard y 73.93-82.55, below the lime band (y >= 83, 4.98 mm); its pin field + 1.0 mm (x <= 42.53) stays clear of the top TR3B parts; next to the fan switch"
     },
     {
       "ref": "J314",
@@ -859,15 +919,45 @@
     },
     {
       "ref": "Q303",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          42.0,
+          85.0
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "Q304",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          48.0,
+          84.3
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "Q305",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          20.23,
+          56.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "blower switch on the bottom band y 54.5-58.1 between the Pico and the J317 pin row (W2 PCB-CTRL iteration 2): the scripted E3_BLOWER_GND rail J314.1 -> D306.2 -> Q305.3 runs at y 59.25, below the J317 pins (y >= 60.8) and above D306.1 (LAB5)"
     },
     {
       "ref": "Q306",
@@ -1123,15 +1213,45 @@
     },
     {
       "ref": "R365",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          38.5,
+          85.0
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "R366",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          38.6,
+          88.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "R367",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          45.4,
+          85.5
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "B"
+      },
+      "anchor_source": "fan switch cluster on the bottom right strip, x 37-50 y 75-93.4 (W2 PCB-CTRL iteration 2): Q304 pin 3 faces the PTC F301 so the scripted E3_FAN5 copper is one 1.85 mm segment; F301.2 next to J313.2; the lime band (y >= 83, 4.98 mm) holds SMD parts only"
     },
     {
       "ref": "R368",
@@ -1359,7 +1479,7 @@
         "rotation": 0,
         "side": "B"
       },
-      "anchor_source": "bottom strip between the cut-outs; anchored for the LAB5-U315-IN stub"
+      "anchor_source": "bottom strip between the cut-outs, above cut-out 1 (GNSS 5 V switch next to its capacitors)"
     }
   ],
   "holes": {
@@ -1814,28 +1934,6 @@
       ]
     },
     {
-      "id": "BLOWER",
-      "side": "B",
-      "region": [
-        11.0,
-        54.6,
-        22.65,
-        59.7
-      ],
-      "gap_mm": 0.3,
-      "decouple_gap_mm": 0.25,
-      "members": [
-        {
-          "ref": "D306",
-          "rotation": 0
-        },
-        {
-          "ref": "Q305",
-          "rotation": 0
-        }
-      ]
-    },
-    {
       "id": "BLOWER2",
       "side": "B",
       "region": [
@@ -1870,85 +1968,17 @@
       ]
     },
     {
-      "id": "FAN",
-      "side": "B",
-      "region": [
-        37.05,
-        83.9,
-        49.95,
-        93.4
-      ],
-      "gap_mm": 0.3,
-      "decouple_gap_mm": 0.25,
-      "members": [
-        {
-          "ref": "F301",
-          "rotation": 90
-        },
-        {
-          "ref": "D305",
-          "rotation": 0
-        },
-        {
-          "ref": "C318",
-          "rotation": 0
-        },
-        {
-          "ref": "C320",
-          "rotation": 0
-        },
-        {
-          "ref": "C319",
-          "rotation": 90
-        },
-        {
-          "ref": "R367",
-          "rotation": 90
-        }
-      ]
-    },
-    {
-      "id": "FAN2",
-      "side": "B",
-      "region": [
-        44.05,
-        75.2,
-        49.95,
-        83.8
-      ],
-      "gap_mm": 0.3,
-      "decouple_gap_mm": 0.25,
-      "members": [
-        {
-          "ref": "Q303",
-          "rotation": 0
-        },
-        {
-          "ref": "Q304",
-          "rotation": 0
-        },
-        {
-          "ref": "R365",
-          "rotation": 90
-        }
-      ]
-    },
-    {
       "id": "FAN3",
       "side": "B",
       "region": [
         37.05,
         68.6,
         43.4,
-        74.9
+        73.9
       ],
       "gap_mm": 0.25,
       "decouple_gap_mm": 0.25,
       "members": [
-        {
-          "ref": "R366",
-          "rotation": 90
-        },
         {
           "ref": "R368",
           "rotation": 90
@@ -2127,25 +2157,99 @@
   "pre_route": {
     "tracks": [
       {
-        "id": "LAB5-U315-IN",
+        "id": "LAB5-TRUNK-F",
         "net": "LAB5",
-        "layer": "B.Cu",
-        "width_mm": 0.5,
+        "layer": "F.Cu",
+        "width_mm": 1.85,
         "path": [
           [
-            24.1875,
-            96.65
+            9.47,
+            70.01
           ],
           [
-            26.4,
-            96.65
+            9.47,
+            67.01
+          ],
+          [
+            12.2,
+            67.01
+          ],
+          [
+            12.2,
+            56.25
+          ],
+          [
+            9.47,
+            56.25
           ]
         ],
         "locked": true,
-        "why": "scripted locked stub into U315.1 (IN, SOT-23-6 at 0.95 mm pitch): a 1.85 mm PWR3A track cannot reach the pad without touching U315.2, so the router lands on the stub end; low-current branch (U315 limits at 0.144-0.192 A, netclasses.json E3_GNSS5V), listed in branch_exempt"
+        "why": "LAB5 feed of the blower: J305.3/J305.4 (input pair) to J314.2 on F.Cu at the PWR3A width; it crosses the B.Cu E3_BLOWER_GND return; locked, pad centre to pad centre, so Freerouting adds only the 0.5 mm PWR3A_BRANCH branches to the other LAB5 pads"
       },
       {
-        "id": "FAN-C301.2",
+        "id": "BLOWER-GND-RAIL",
+        "net": "E3_BLOWER_GND",
+        "layer": "B.Cu",
+        "width_mm": 1.85,
+        "path": [
+          [
+            9.47,
+            59.25
+          ],
+          [
+            12.5,
+            59.25
+          ],
+          [
+            19.2925,
+            59.25
+          ],
+          [
+            19.2925,
+            56.4
+          ]
+        ],
+        "locked": true,
+        "why": "blower return J314.1 to the low-side switch Q305 drain at the PWR3A width (pad centre to pad centre)"
+      },
+      {
+        "id": "BLOWER-GND-D306",
+        "net": "E3_BLOWER_GND",
+        "layer": "B.Cu",
+        "width_mm": 1.85,
+        "path": [
+          [
+            12.5,
+            59.25
+          ],
+          [
+            12.5,
+            56.3
+          ]
+        ],
+        "locked": true,
+        "why": "flyback diode D306 anode on the blower return at the PWR3A width"
+      },
+      {
+        "id": "FAN5-Q304-F301",
+        "net": "E3_FAN5",
+        "layer": "B.Cu",
+        "width_mm": 1.85,
+        "path": [
+          [
+            48.0,
+            83.3625
+          ],
+          [
+            48.0,
+            81.5375
+          ]
+        ],
+        "locked": true,
+        "why": "fan switch Q304 drain to the PTC F301 at the PWR3A width (one segment, pad centre to pad centre)"
+      },
+      {
+        "id": "GND-C301.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2155,15 +2259,14 @@
             106.84
           ],
           [
-            18.095,
-            106.84
+            17.963,
+            106.601
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C302.2",
+        "id": "GND-C302.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2173,15 +2276,14 @@
             92.65
           ],
           [
-            38.518,
-            93.828
+            37.791,
+            93.543
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C303.2",
+        "id": "GND-C303.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2191,15 +2293,14 @@
             9.07
           ],
           [
-            18.378,
-            10.017
+            18.531,
+            9.963
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C304.2",
+        "id": "GND-C304.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2209,15 +2310,14 @@
             92.65
           ],
           [
-            41.715,
-            92.65
+            40.201,
+            93.543
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C305.2",
+        "id": "GND-C305.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2227,15 +2327,14 @@
             27.72
           ],
           [
-            19.162,
-            28.667
+            18.77,
+            28.545
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C306.2",
+        "id": "GND-C306.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2245,15 +2344,14 @@
             92.65
           ],
           [
-            44.125,
-            92.65
+            42.611,
+            93.543
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C307.2",
+        "id": "GND-C307.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2263,15 +2361,14 @@
             29.46
           ],
           [
-            36.405,
-            29.46
+            34.891,
+            30.353
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C308.2",
+        "id": "GND-C308.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2281,15 +2378,14 @@
             29.505
           ],
           [
-            38.315,
-            29.505
+            36.402,
+            30.017
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C309.2",
+        "id": "GND-C309.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2299,15 +2395,14 @@
             29.505
           ],
           [
-            41.025,
+            38.275,
             29.505
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C310.2",
+        "id": "GND-C310.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2317,15 +2412,14 @@
             25.655
           ],
           [
-            35.905,
-            25.655
+            34.88,
+            26.48
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C311.2",
+        "id": "GND-C311.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2335,15 +2429,14 @@
             25.655
           ],
           [
-            37.515,
-            26.38
+            36.551,
+            26.548
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C312.2",
+        "id": "GND-C312.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2353,15 +2446,14 @@
             52.07
           ],
           [
-            30.246,
-            53.202
+            30.152,
+            53.044
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C313.2",
+        "id": "GND-C313.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2371,15 +2463,14 @@
             48.71
           ],
           [
-            20.58,
-            48.71
+            20.448,
+            48.471
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C314.2",
+        "id": "GND-C314.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2389,15 +2480,14 @@
             108.695
           ],
           [
-            22.555,
+            20.605,
             108.695
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C315.2",
+        "id": "GND-C315.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2407,15 +2497,14 @@
             108.695
           ],
           [
-            24.315,
-            108.695
+            22.397,
+            108.456
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C316.2",
+        "id": "GND-C316.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2425,15 +2514,14 @@
             108.695
           ],
           [
-            26.075,
-            108.695
+            24.157,
+            108.456
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C317.2",
+        "id": "GND-C317.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2443,69 +2531,65 @@
             108.695
           ],
           [
-            25.185,
-            108.695
+            25.917,
+            108.456
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C318.2",
+        "id": "GND-C318.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
-            41.32,
-            86.22
+            46.65,
+            74.6
           ],
           [
-            42.222,
-            87.122
+            45.725,
+            74.6
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C319.2",
+        "id": "GND-C319.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
-            37.78,
-            86.495
+            45.725,
+            91.6
           ],
           [
-            38.505,
-            87.22
+            44.8,
+            91.6
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C320.2",
+        "id": "GND-C320.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
-            45.02,
-            86.22
+            47.25,
+            87.3
           ],
           [
-            45.922,
-            87.122
+            46.325,
+            87.3
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C321.2",
+        "id": "GND-C321.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2515,15 +2599,14 @@
             99.87
           ],
           [
-            21.897,
-            100.817
+            20.68,
+            99.87
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-C322.2",
+        "id": "GND-C322.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2533,33 +2616,31 @@
             95.92
           ],
           [
-            29.652,
-            96.822
+            27.825,
+            95.92
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-D305.2",
+        "id": "GND-D305.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
-            42.75,
-            91.65
+            38.6,
+            91.6
           ],
           [
-            44.55,
-            91.65
+            39.072,
+            93.363
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-Q301.2",
+        "id": "GND-Q301.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2569,15 +2650,14 @@
             97.95
           ],
           [
-            31.778,
-            98.86
+            30.68,
+            97.25
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-Q302.2",
+        "id": "GND-Q302.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2587,51 +2667,48 @@
             35.9625
           ],
           [
-            34.9,
-            37.25
+            34.186,
+            35.55
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-Q303.2",
+        "id": "GND-Q303.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
-            46.9175,
-            81.15
+            41.0625,
+            85.95
           ],
           [
-            45.63,
-            81.15
+            40.875,
+            86.65
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-Q305.2",
+        "id": "GND-Q305.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
             21.1675,
-            57.05
+            55.45
           ],
           [
-            22.455,
-            57.05
+            22.458,
+            56.74
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-Q306.2",
+        "id": "GND-Q306.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2641,15 +2718,14 @@
             81.25
           ],
           [
-            42.682,
-            82.16
+            43.405,
+            80.55
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-R326.2",
+        "id": "GND-R326.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2659,15 +2735,14 @@
             99.945
           ],
           [
-            38.315,
-            99.945
+            37.076,
+            100.742
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-R329.2",
+        "id": "GND-R329.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2677,15 +2752,14 @@
             22.295
           ],
           [
-            37.515,
-            23.02
+            36.576,
+            23.092
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-R331.2",
+        "id": "GND-R331.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2695,33 +2769,31 @@
             18.885
           ],
           [
-            35.605,
-            19.61
+            34.666,
+            19.682
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-R366.2",
+        "id": "GND-R366.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
         "path": [
           [
-            39.49,
-            74.245
+            37.775,
+            88.0
           ],
           [
-            40.215,
-            74.97
+            37.775,
+            87.075
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-R371.2",
+        "id": "GND-R371.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2735,11 +2807,10 @@
             67.02
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-R394.2",
+        "id": "GND-R394.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2749,15 +2820,14 @@
             79.395
           ],
           [
-            44.848,
-            80.342
+            45.026,
+            80.192
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-R396.2",
+        "id": "GND-R396.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -2767,15 +2837,14 @@
             99.945
           ],
           [
-            39.997,
-            100.337
+            38.836,
+            100.742
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW302.2",
+        "id": "GND-SW302.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2785,15 +2854,14 @@
             49.0
           ],
           [
-            10.407,
-            50.432
+            10.709,
+            47.913
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW302.2",
+        "id": "GND-SW302.2-36",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2803,15 +2871,14 @@
             49.0
           ],
           [
-            16.593,
-            50.432
+            15.709,
+            47.913
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW303.2",
+        "id": "GND-SW303.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2821,15 +2888,14 @@
             49.0
           ],
           [
-            34.432,
-            49.593
+            31.42,
+            48.087
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW303.2",
+        "id": "GND-SW303.2-38",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2839,15 +2905,14 @@
             49.0
           ],
           [
-            38.593,
-            50.432
+            37.709,
+            47.913
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW304.2",
+        "id": "GND-SW304.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2857,15 +2922,14 @@
             27.0
           ],
           [
-            10.407,
-            28.432
+            10.709,
+            25.913
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW304.2",
+        "id": "GND-SW304.2-40",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2875,15 +2939,14 @@
             27.0
           ],
           [
-            17.55,
-            27.0
+            15.709,
+            25.913
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW305.2",
+        "id": "GND-SW305.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2893,15 +2956,14 @@
             27.0
           ],
           [
-            34.432,
-            26.407
+            35.793,
+            25.387
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW305.2",
+        "id": "GND-SW305.2-42",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2911,15 +2973,14 @@
             27.0
           ],
           [
-            36.45,
-            27.0
+            37.683,
+            25.817
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW306.2",
+        "id": "GND-SW306.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2929,15 +2990,14 @@
             5.0
           ],
           [
-            10.407,
-            6.432
+            10.709,
+            3.913
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW306.2",
+        "id": "GND-SW306.2-44",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2947,15 +3007,14 @@
             5.0
           ],
           [
-            17.55,
-            5.0
+            15.709,
+            3.913
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW307.2",
+        "id": "GND-SW307.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2965,15 +3024,14 @@
             5.0
           ],
           [
-            34.55,
-            5.0
+            34.376,
+            4.631
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-SW307.2",
+        "id": "GND-SW307.2-46",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -2983,15 +3041,14 @@
             5.0
           ],
           [
-            39.55,
-            5.0
+            37.709,
+            3.913
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U301.10",
+        "id": "GND-U301.10",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3001,15 +3058,14 @@
             104.58
           ],
           [
-            14.422,
-            106.035
+            14.63,
+            106.053
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U301.15",
+        "id": "GND-U301.15",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3019,15 +3075,14 @@
             95.28
           ],
           [
-            11.52,
+            9.22,
             95.28
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U301.16",
+        "id": "GND-U301.16",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3037,15 +3092,14 @@
             95.28
           ],
           [
-            12.79,
-            95.28
+            11.215,
+            93.855
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U301.17",
+        "id": "GND-U301.17",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3055,15 +3109,14 @@
             95.28
           ],
           [
-            13.088,
-            96.735
+            12.485,
+            96.705
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U302.10",
+        "id": "GND-U302.10",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3073,15 +3126,14 @@
             7.025
           ],
           [
-            19.575,
-            6.422
+            19.074,
+            6.501
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U302.15",
+        "id": "GND-U302.15",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3091,15 +3143,14 @@
             1.945
           ],
           [
-            31.905,
-            1.945
+            30.142,
+            1.245
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U302.17",
+        "id": "GND-U302.17",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3109,15 +3160,14 @@
             4.485
           ],
           [
-            28.875,
-            5.088
+            28.905,
+            4.485
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U303.10",
+        "id": "GND-U303.10",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3127,15 +3177,14 @@
             25.675
           ],
           [
-            22.605,
-            25.675
+            19.557,
+            25.28
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U303.17",
+        "id": "GND-U303.17",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3145,15 +3194,82 @@
             23.135
           ],
           [
-            28.875,
-            23.738
+            31.9,
+            22.714
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U305.3",
+        "id": "GND-U305.13",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            12.85,
+            34.2
+          ],
+          [
+            12.533,
+            35.383
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U305.18",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            12.85,
+            46.9
+          ],
+          [
+            12.533,
+            48.083
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U305.23",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            32.23,
+            46.9
+          ],
+          [
+            31.913,
+            45.717
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U305.28",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            32.23,
+            34.2
+          ],
+          [
+            31.913,
+            35.383
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U305.3",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -3163,105 +3279,14 @@
             8.8
           ],
           [
-            14.2,
-            8.8
+            12.533,
+            7.617
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U305.8",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            12.85,
-            21.5
-          ],
-          [
-            14.2,
-            21.5
-          ]
-        ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
-      },
-      {
-        "id": "FAN-U305.13",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            12.85,
-            34.2
-          ],
-          [
-            14.2,
-            34.2
-          ]
-        ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
-      },
-      {
-        "id": "FAN-U305.18",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            12.85,
-            46.9
-          ],
-          [
-            14.2,
-            46.9
-          ]
-        ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
-      },
-      {
-        "id": "FAN-U305.23",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            32.23,
-            46.9
-          ],
-          [
-            33.58,
-            46.9
-          ]
-        ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
-      },
-      {
-        "id": "FAN-U305.28",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            32.23,
-            34.2
-          ],
-          [
-            33.58,
-            34.2
-          ]
-        ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
-      },
-      {
-        "id": "FAN-U305.33",
+        "id": "GND-U305.33",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -3271,15 +3296,14 @@
             21.5
           ],
           [
-            33.58,
-            21.5
+            32.547,
+            20.317
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U305.38",
+        "id": "GND-U305.38",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -3289,15 +3313,31 @@
             8.8
           ],
           [
-            33.255,
-            7.775
+            31.913,
+            7.617
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U305.SWD_GND",
+        "id": "GND-U305.8",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            12.85,
+            21.5
+          ],
+          [
+            12.533,
+            20.317
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U305.SWD_GND",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -3308,50 +3348,13 @@
           ],
           [
             22.54,
-            53.1
+            49.625
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U306.2",
-        "net": "GND",
-        "layer": "F.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            21.6375,
-            45.475
-          ],
-          [
-            22.925,
-            45.475
-          ]
-        ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
-      },
-      {
-        "id": "FAN-U306.3",
-        "net": "GND",
-        "layer": "F.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            21.6375,
-            44.825
-          ],
-          [
-            20.448,
-            45.318
-          ]
-        ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
-      },
-      {
-        "id": "FAN-U306.12",
+        "id": "GND-U306.12",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3361,15 +3364,31 @@
             38.975
           ],
           [
-            22.925,
-            38.975
+            21.476,
+            38.371
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U306.21",
+        "id": "GND-U306.2",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            21.6375,
+            45.475
+          ],
+          [
+            20.512,
+            45.475
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U306.21",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3379,15 +3398,31 @@
             44.175
           ],
           [
-            28.65,
+            28.488,
             44.175
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U307.2",
+        "id": "GND-U306.3",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            21.6375,
+            44.825
+          ],
+          [
+            22.762,
+            44.825
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U307.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -3397,15 +3432,14 @@
             31.6525
           ],
           [
-            35.81,
-            32.563
+            35.6,
+            31.465
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U307.3",
+        "id": "GND-U307.3",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -3415,15 +3449,14 @@
             33.5275
           ],
           [
-            37.137,
-            33.528
+            35.136,
+            33.94
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U310.2",
+        "id": "GND-U310.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3433,15 +3466,31 @@
             54.9
           ],
           [
-            17.0,
-            54.9
+            17.126,
+            54.609
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U312.2",
+        "id": "GND-U311.2",
+        "net": "GND",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            22.7125,
+            54.9
+          ],
+          [
+            23.799,
+            54.609
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-U312.2",
         "net": "GND",
         "layer": "B.Cu",
         "width_mm": 0.25,
@@ -3451,15 +3500,14 @@
             98.9
           ],
           [
-            36.56,
-            99.402
+            36.434,
+            99.191
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
       },
       {
-        "id": "FAN-U313.2",
+        "id": "GND-U313.2",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -3469,827 +3517,865 @@
             123.5
           ],
           [
-            40.6,
+            40.688,
             123.5
           ]
         ],
-        "locked": true,
-        "why": "scripted GND plane fanout (via to L2 next to the SMD pad); generated, see pre_route.fanout_note"
+        "locked": true
+      },
+      {
+        "id": "GND-U315.2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            24.1875,
+            95.7
+          ],
+          [
+            27.303,
+            94.865
+          ]
+        ],
+        "locked": true
       }
     ],
     "vias": [
       {
-        "id": "FAN-C301.2",
+        "id": "GND-C301.2",
         "net": "GND",
         "at": [
-          18.095,
-          106.84
+          17.963,
+          106.601
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C302.2",
+        "id": "GND-C302.2",
         "net": "GND",
         "at": [
-          38.518,
-          93.828
+          37.791,
+          93.543
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C303.2",
+        "id": "GND-C303.2",
         "net": "GND",
         "at": [
-          18.378,
-          10.017
+          18.531,
+          9.963
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C304.2",
+        "id": "GND-C304.2",
         "net": "GND",
         "at": [
-          41.715,
-          92.65
+          40.201,
+          93.543
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C305.2",
+        "id": "GND-C305.2",
         "net": "GND",
         "at": [
-          19.162,
-          28.667
+          18.77,
+          28.545
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C306.2",
+        "id": "GND-C306.2",
         "net": "GND",
         "at": [
-          44.125,
-          92.65
+          42.611,
+          93.543
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C307.2",
+        "id": "GND-C307.2",
         "net": "GND",
         "at": [
-          36.405,
-          29.46
+          34.891,
+          30.353
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C308.2",
+        "id": "GND-C308.2",
         "net": "GND",
         "at": [
-          38.315,
+          36.402,
+          30.017
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "GND-C309.2",
+        "net": "GND",
+        "at": [
+          38.275,
           29.505
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C309.2",
+        "id": "GND-C310.2",
         "net": "GND",
         "at": [
-          41.025,
-          29.505
+          34.88,
+          26.48
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C310.2",
+        "id": "GND-C311.2",
         "net": "GND",
         "at": [
-          35.905,
-          25.655
+          36.551,
+          26.548
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C311.2",
+        "id": "GND-C312.2",
         "net": "GND",
         "at": [
-          37.515,
-          26.38
+          30.152,
+          53.044
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C312.2",
+        "id": "GND-C313.2",
         "net": "GND",
         "at": [
-          30.246,
-          53.202
+          20.448,
+          48.471
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C313.2",
+        "id": "GND-C314.2",
         "net": "GND",
         "at": [
-          20.58,
-          48.71
-        ],
-        "diameter_mm": 0.65,
-        "drill_mm": 0.3,
-        "locked": true
-      },
-      {
-        "id": "FAN-C314.2",
-        "net": "GND",
-        "at": [
-          22.555,
+          20.605,
           108.695
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C315.2",
+        "id": "GND-C315.2",
         "net": "GND",
         "at": [
-          24.315,
-          108.695
+          22.397,
+          108.456
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C316.2",
+        "id": "GND-C316.2",
         "net": "GND",
         "at": [
-          26.075,
-          108.695
+          24.157,
+          108.456
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C317.2",
+        "id": "GND-C317.2",
         "net": "GND",
         "at": [
-          25.185,
-          108.695
+          25.917,
+          108.456
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C318.2",
+        "id": "GND-C318.2",
         "net": "GND",
         "at": [
-          42.222,
-          87.122
+          45.725,
+          74.6
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C319.2",
+        "id": "GND-C319.2",
         "net": "GND",
         "at": [
-          38.505,
-          87.22
+          44.8,
+          91.6
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C320.2",
+        "id": "GND-C320.2",
         "net": "GND",
         "at": [
-          45.922,
-          87.122
+          46.325,
+          87.3
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C321.2",
+        "id": "GND-C321.2",
         "net": "GND",
         "at": [
-          21.897,
-          100.817
+          20.68,
+          99.87
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-C322.2",
+        "id": "GND-C322.2",
         "net": "GND",
         "at": [
-          29.652,
-          96.822
+          27.825,
+          95.92
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-D305.2",
+        "id": "GND-D305.2",
         "net": "GND",
         "at": [
-          44.55,
-          91.65
+          39.072,
+          93.363
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-Q301.2",
+        "id": "GND-Q301.2",
         "net": "GND",
         "at": [
-          31.778,
-          98.86
+          30.68,
+          97.25
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-Q302.2",
+        "id": "GND-Q302.2",
         "net": "GND",
         "at": [
-          34.9,
-          37.25
+          34.186,
+          35.55
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-Q303.2",
+        "id": "GND-Q303.2",
         "net": "GND",
         "at": [
-          45.63,
-          81.15
+          40.875,
+          86.65
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-Q305.2",
+        "id": "GND-Q305.2",
         "net": "GND",
         "at": [
-          22.455,
-          57.05
+          22.458,
+          56.74
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-Q306.2",
+        "id": "GND-Q306.2",
         "net": "GND",
         "at": [
-          42.682,
-          82.16
+          43.405,
+          80.55
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-R326.2",
+        "id": "GND-R326.2",
         "net": "GND",
         "at": [
-          38.315,
-          99.945
+          37.076,
+          100.742
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-R329.2",
+        "id": "GND-R329.2",
         "net": "GND",
         "at": [
-          37.515,
-          23.02
+          36.576,
+          23.092
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-R331.2",
+        "id": "GND-R331.2",
         "net": "GND",
         "at": [
-          35.605,
-          19.61
+          34.666,
+          19.682
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-R366.2",
+        "id": "GND-R366.2",
         "net": "GND",
         "at": [
-          40.215,
-          74.97
+          37.775,
+          87.075
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-R371.2",
+        "id": "GND-R371.2",
         "net": "GND",
         "at": [
           16.585,
           67.02
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-R394.2",
+        "id": "GND-R394.2",
         "net": "GND",
         "at": [
-          44.848,
-          80.342
+          45.026,
+          80.192
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-R396.2",
+        "id": "GND-R396.2",
         "net": "GND",
         "at": [
-          39.997,
-          100.337
+          38.836,
+          100.742
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW302.2",
+        "id": "GND-SW302.2",
         "net": "GND",
         "at": [
-          10.407,
-          50.432
+          10.709,
+          47.913
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW302.2",
+        "id": "GND-SW302.2-36",
         "net": "GND",
         "at": [
-          16.593,
-          50.432
+          15.709,
+          47.913
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW303.2",
+        "id": "GND-SW303.2",
         "net": "GND",
         "at": [
-          34.432,
-          49.593
+          31.42,
+          48.087
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW303.2",
+        "id": "GND-SW303.2-38",
         "net": "GND",
         "at": [
-          38.593,
-          50.432
+          37.709,
+          47.913
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW304.2",
+        "id": "GND-SW304.2",
         "net": "GND",
         "at": [
-          10.407,
-          28.432
+          10.709,
+          25.913
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW304.2",
+        "id": "GND-SW304.2-40",
         "net": "GND",
         "at": [
-          17.55,
-          27.0
+          15.709,
+          25.913
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW305.2",
+        "id": "GND-SW305.2",
         "net": "GND",
         "at": [
-          34.432,
-          26.407
+          35.793,
+          25.387
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW305.2",
+        "id": "GND-SW305.2-42",
         "net": "GND",
         "at": [
-          36.45,
-          27.0
+          37.683,
+          25.817
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW306.2",
+        "id": "GND-SW306.2",
         "net": "GND",
         "at": [
-          10.407,
-          6.432
+          10.709,
+          3.913
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW306.2",
+        "id": "GND-SW306.2-44",
         "net": "GND",
         "at": [
-          17.55,
-          5.0
+          15.709,
+          3.913
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW307.2",
+        "id": "GND-SW307.2",
         "net": "GND",
         "at": [
-          34.55,
-          5.0
+          34.376,
+          4.631
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-SW307.2",
+        "id": "GND-SW307.2-46",
         "net": "GND",
         "at": [
-          39.55,
-          5.0
+          37.709,
+          3.913
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U301.10",
+        "id": "GND-U301.10",
         "net": "GND",
         "at": [
-          14.422,
-          106.035
+          14.63,
+          106.053
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U301.15",
+        "id": "GND-U301.15",
         "net": "GND",
         "at": [
-          11.52,
+          9.22,
           95.28
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U301.16",
+        "id": "GND-U301.16",
         "net": "GND",
         "at": [
-          12.79,
-          95.28
+          11.215,
+          93.855
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U301.17",
+        "id": "GND-U301.17",
         "net": "GND",
         "at": [
-          13.088,
-          96.735
+          12.485,
+          96.705
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U302.10",
+        "id": "GND-U302.10",
         "net": "GND",
         "at": [
-          19.575,
-          6.422
+          19.074,
+          6.501
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U302.15",
+        "id": "GND-U302.15",
         "net": "GND",
         "at": [
-          31.905,
-          1.945
+          30.142,
+          1.245
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U302.17",
+        "id": "GND-U302.17",
         "net": "GND",
         "at": [
-          28.875,
-          5.088
+          28.905,
+          4.485
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U303.10",
+        "id": "GND-U303.10",
         "net": "GND",
         "at": [
-          22.605,
-          25.675
+          19.557,
+          25.28
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U303.17",
+        "id": "GND-U303.17",
         "net": "GND",
         "at": [
-          28.875,
-          23.738
+          31.9,
+          22.714
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.3",
+        "id": "GND-U305.13",
         "net": "GND",
         "at": [
-          14.2,
-          8.8
+          12.533,
+          35.383
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.8",
+        "id": "GND-U305.18",
         "net": "GND",
         "at": [
-          14.2,
-          21.5
+          12.533,
+          48.083
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.13",
+        "id": "GND-U305.23",
         "net": "GND",
         "at": [
-          14.2,
-          34.2
+          31.913,
+          45.717
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.18",
+        "id": "GND-U305.28",
         "net": "GND",
         "at": [
-          14.2,
-          46.9
+          31.913,
+          35.383
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.23",
+        "id": "GND-U305.3",
         "net": "GND",
         "at": [
-          33.58,
-          46.9
+          12.533,
+          7.617
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.28",
+        "id": "GND-U305.33",
         "net": "GND",
         "at": [
-          33.58,
-          34.2
+          32.547,
+          20.317
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.33",
+        "id": "GND-U305.38",
         "net": "GND",
         "at": [
-          33.58,
-          21.5
+          31.913,
+          7.617
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.38",
+        "id": "GND-U305.8",
         "net": "GND",
         "at": [
-          33.255,
-          7.775
+          12.533,
+          20.317
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U305.SWD_GND",
+        "id": "GND-U305.SWD_GND",
         "net": "GND",
         "at": [
           22.54,
-          53.1
+          49.625
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U306.2",
+        "id": "GND-U306.12",
         "net": "GND",
         "at": [
-          22.925,
+          21.476,
+          38.371
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "GND-U306.2",
+        "net": "GND",
+        "at": [
+          20.512,
           45.475
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U306.3",
+        "id": "GND-U306.21",
         "net": "GND",
         "at": [
-          20.448,
-          45.318
-        ],
-        "diameter_mm": 0.65,
-        "drill_mm": 0.3,
-        "locked": true
-      },
-      {
-        "id": "FAN-U306.12",
-        "net": "GND",
-        "at": [
-          22.925,
-          38.975
-        ],
-        "diameter_mm": 0.65,
-        "drill_mm": 0.3,
-        "locked": true
-      },
-      {
-        "id": "FAN-U306.21",
-        "net": "GND",
-        "at": [
-          28.65,
+          28.488,
           44.175
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U307.2",
+        "id": "GND-U306.3",
         "net": "GND",
         "at": [
-          35.81,
-          32.563
+          22.762,
+          44.825
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U307.3",
+        "id": "GND-U307.2",
         "net": "GND",
         "at": [
-          37.137,
-          33.528
+          35.6,
+          31.465
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U310.2",
+        "id": "GND-U307.3",
         "net": "GND",
         "at": [
-          17.0,
-          54.9
+          35.136,
+          33.94
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U312.2",
+        "id": "GND-U310.2",
         "net": "GND",
         "at": [
-          36.56,
-          99.402
+          17.126,
+          54.609
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FAN-U313.2",
+        "id": "GND-U311.2",
         "net": "GND",
         "at": [
-          40.6,
+          23.799,
+          54.609
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "GND-U312.2",
+        "net": "GND",
+        "at": [
+          36.434,
+          99.191
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "GND-U313.2",
+        "net": "GND",
+        "at": [
+          40.688,
           123.5
         ],
-        "diameter_mm": 0.65,
         "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "GND-U315.2",
+        "net": "GND",
+        "at": [
+          27.303,
+          94.865
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
         "locked": true
       }
     ],
@@ -4300,14 +4386,12 @@
         "layer": "In1.Cu",
         "outline": "board",
         "priority": 0,
-        "why": "solid GND plane L2 (build/15 \"План шарів\"); every GND pad joins it through a via or an outer pour"
+        "pad_connection": "solid",
+        "why": "solid GND plane L2 (build/15 \"План шарів\"); every SMD GND pad joins it through its scripted via, every THT GND pin directly (solid connection)"
       }
     ],
-    "fanout_note": "GND fanout: one locked 0.65/0.3 mm through via and a 0.25 mm stub per GND SMD pad, placed by a deterministic search (16 directions, growing radius) that keeps 0.2 mm from other-net pads on every layer the via spans (tented vias, board setup tenting front/back), avoids the Pico TP7 keepout, hole keepouts, the cut-out keepouts and the 0.3 mm edge rule, and keeps 0.85 mm between vias; Freerouting found no escape for many of these pads on the dense board (route runs 42418439341, 42421185867)",
-    "fanout_skipped": [
-      "U311.2",
-      "U315.2"
-    ]
+    "gnd_vias_note": "one locked 0.65/0.3 mm through via and a 0.25 mm stub per SMD GND pad, placed by a deterministic search (24 directions, growing radius, directions away from the part first) on the exact pad shapes: 0.2 mm to other-net copper on every layer the via spans, no via in a pad, 0.55 mm hole-to-hole margin, 0.95 mm between vias, outside the hole keepouts, the Pico TP keepouts and 0.35 mm from every edge; GND is in class SCRIPTED_GND and not autorouted (route run 42423914214: the router left 9 GND connections and dangling fan-out vias)",
+    "gnd_vias_skipped": []
   },
   "post_route_zones": [
     {
@@ -4315,21 +4399,27 @@
       "net": "GND",
       "layer": "F.Cu",
       "outline": "board",
-      "priority": 0
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)"
     },
     {
       "id": "GND-L3",
       "net": "GND",
       "layer": "In2.Cu",
       "outline": "board",
-      "priority": 0
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)"
     },
     {
       "id": "GND-B",
       "net": "GND",
       "layer": "B.Cu",
       "outline": "board",
-      "priority": 0
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)"
     }
   ],
   "height_zones": [
@@ -4922,8 +5012,8 @@
     "Micro-Fit right angle (J305, J314)": "mechanical/params/parts.json harness_headers MF_ra h_mated 6.98 (Molex product sheets 436500900 / 436500311, read 2026-11-07 by W2 MECH-1)"
   },
   "heights_open": {
-    "J304": "XDFH-0254-2*20P (C19193815) drawing not readable (mechanical/params/parts.json IDC_top h_src); the reference 2x20 box header Würth 61204021621 is 9.1 mm above the PCB, more than every CTRL bottom zone it can occupy (7.18 hdmi_route_front_up, 7.48 BMS; the plate zones are narrower than the 9.0 mm box): OPEN for W2 GR-4 / MECH (a lower box header or a larger dz), not checked here",
-    "J313": "Molex KK 254 22-27-2031 vertical header with the Noctua housing: height not read (mechanical/params/parts.json FAN3 TBD); placed over the plate zone (17.98 mm) next to the fan circuit, not checked here",
+    "J304": "XDFH-0254-2*20P (C19193815) drawing not readable (mechanical/params/parts.json IDC_top h_src): height not checked here; the reference 2x20 box header Würth 61204021621 (9.1 mm above the PCB) is below every bottom zone J304 occupies (12.98-17.98 mm after the W2 MECH-4 HDMI route, contract rear_zones), so only the J304 part read stays OPEN",
+    "J313": "Molex KK 254 22-27-2031 vertical header with the Noctua housing: height not read (mechanical/params/parts.json FAN3 TBD); placed over the bottom zones x 37-46 y 68.5-83 (15.98 / 17.98 mm) with its courtyard below the lime band (y >= 83, 4.98 mm), not checked here",
     "SW302-SW307": "TL3145BF350QJ actuator 5.2 mm is a repository value (mechanical/params/parts.json tl3145, STACK 5.8), not a data sheet read in this package; by design it sits gap_to_switch 0.3 mm under the 5.5 mm cap flange (mechanical.json hmi.buttons), and the 5.0 mm fits_mm of the flange zones applies to the other parts: not checked here",
     "SMD parts": "package heights of the SMD ICs, transistors, diodes, passives and the Pico module were not read in this package (the vendored footprints carry no Height): unverified in review.json"
   },
@@ -4931,99 +5021,86 @@
     "top",
     "bottom"
   ],
-  "cutouts": {
-    "keepout_margin_mm": 0.35,
-    "keepout_layers": [
-      "F.Cu",
-      "In1.Cu",
-      "In2.Cu",
-      "B.Cu"
-    ],
-    "why": "router keepout 0.35 mm around both ENC cut-outs: Freerouting keeps only its 0.15 mm clearance to the exported cut-out keepout, while the board rule is copper-to-edge 0.3 mm (route run 42415955022: 7 copper_edge_clearance errors along the cut-out edges)"
-  },
   "branch_exempt": {
-    "U315": {
-      "max_mm": 3.0,
+    "C320": {
+      "max_mm": 60.0,
       "min_width_mm": 0.5,
-      "reason": "LAB5 input stub of the GNSS 5 V switch U315 (IN pin between pins at 0.95 mm pitch); the switch limits its own current to 0.144-0.192 A (RILIM 162k, netclasses.json E3_GNSS5V); scripted pre-route LAB5-U315-IN"
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+    },
+    "C321": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+    },
+    "C322": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+    },
+    "C342": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
+    },
+    "C343": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; routed in class PWR3A_BRANCH at 0.5 mm"
+    },
+    "D301": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+    },
+    "D306": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "flyback diode D306 cathode on LAB5: it conducts the blower current only while the coil current decays after Q305 turns off (ms); LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+    },
+    "Q304": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+    },
+    "R367": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
+    },
+    "U315": {
+      "max_mm": 60.0,
+      "min_width_mm": 0.5,
+      "reason": "LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load, routed by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4: the CTRL loads on LAB5 besides the blower are the GNSS switch U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current); together below 1 A, the PWR1A capacity, and 0.5 mm is above the PWR1A outer width 0.35 mm"
     }
   },
   "neck_exempt": {
-    "J305": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "J314": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "D306": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "C342": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "C343": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "Q305": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "Q304": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "F301": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "C320": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "R367": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "U315": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "C321": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "C322": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "D301": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
-    "D305": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
-    },
     "C318": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+      "escape_mm": 1.5,
+      "reason": "pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may narrow next to the pad; the class width resumes within the escape length"
     },
     "C319": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+      "escape_mm": 1.5,
+      "reason": "pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may narrow next to the pad; the class width resumes within the escape length"
     },
-    "J313": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    "D305": {
+      "escape_mm": 1.5,
+      "reason": "pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may narrow next to the pad; the class width resumes within the escape length"
+    },
+    "F301": {
+      "escape_mm": 1.5,
+      "reason": "pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may narrow next to the pad; the class width resumes within the escape length"
     },
     "J311": {
-      "escape_mm": 2.5,
-      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+      "escape_mm": 1.5,
+      "reason": "pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may narrow next to the pad; the class width resumes within the escape length"
+    },
+    "J313": {
+      "escape_mm": 1.5,
+      "reason": "pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may narrow next to the pad; the class width resumes within the escape length"
+    },
+    "U315": {
+      "escape_mm": 1.5,
+      "reason": "pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may narrow next to the pad; the class width resumes within the escape length"
     }
   },
   "cable_exits": {
@@ -5064,15 +5141,23 @@
     "threads": 1,
     "job_timeout": "00:25:00",
     "timeout_s": 1620,
+    "fanout": false,
+    "ignore_net_classes": [
+      "SCRIPTED_GND",
+      "SCRIPTED_PWR3A"
+    ],
     "class_layers": {
-      "PWR3A": [
+      "PWR1A": [
+        "F.Cu",
         "B.Cu"
       ],
-      "PWR1A": [
+      "PWR3A_BRANCH": [
+        "F.Cu",
         "B.Cu"
       ]
     },
-    "class_layers_why": "netclasses.json counts no inner copper for PWR3A and asks 1.8 mm inner for PWR1A; every pad of these nets is a bottom SMD pad or a THT pad, so board_gen writes (use_layer B.Cu) into both DSN classes (Freerouting 2.5.0 Network.java createActiveTraceLayers) and they route on L4 without vias; with F.Cu/B.Cu Freerouting routed no PWR3A copper at all (route run 42421185867)"
+    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off; GND and E3_FAN5 are fully scripted and not autorouted (-inc); the 1.85 mm LAB5 feed and E3_BLOWER_GND rail are scripted and the router adds only the 0.5 mm branches (class PWR3A_BRANCH, branch_exempt)",
+    "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no power copper lands on the inner layers"
   },
   "drc_policy": {
     "warning_checks": {
@@ -5090,5 +5175,19 @@
       "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
       "silk_edge_clearance": "legend only: J306/J307 (PHD side entry) overhang the left edge by 1.5 mm by design (cable_exits) and some library legends reach the cut-out and board edges; the fab clips legend outside the outline; every instance is listed in report.json"
     }
-  }
+  },
+  "edge_keepout": {
+    "width_mm": 0.2,
+    "layers": [
+      "F.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ],
+    "blocks": [
+      "tracks",
+      "vias"
+    ],
+    "why": "rule-area strips (half-width 0.2 mm) on every outline and cut-out edge of the routing layers: Freerouting keeps only its clearance to the edge keepout, less than the copper-to-edge 0.3 mm (route run 42423914214: In2.Cu tracks at 0.28 mm from the left edge; PCB-PWRB lesson)"
+  },
+  "audit_cutouts": true
 }

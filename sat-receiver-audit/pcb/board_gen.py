@@ -55,6 +55,11 @@ ROUTE_TOKEN = re.compile(r'\[pcb-route ([A-Z][A-Z0-9_]*)\]')
 CONTRACT_FIELDS = ('outline_mm', 'cutouts_mm', 'holes_mm', 'hole_d', 'hole_keepout_d', 'max_component_height',
                    'edge_zones')
 PLACEMENT_FIELDS = ('origin', 'z_bottom', 'facing')
+# Optional spec keys (W2 PCB-PWRB): zone pad connection, copper layer type (a 'power' layer is a plane layer in the
+# Specctra export, specctra_export.cpp :1124-1138 at 10.0.7, so Freerouting routes no traces on it).
+ZONE_PAD_CONNECTIONS = {'thermal': 'ZONE_CONNECTION_THERMAL', 'solid': 'ZONE_CONNECTION_FULL',
+                        'tht_thermal': 'ZONE_CONNECTION_THT_THERMAL', 'none': 'ZONE_CONNECTION_NONE'}
+LAYER_TYPES = {'signal': 'LT_SIGNAL', 'power': 'LT_POWER', 'mixed': 'LT_MIXED'}
 
 # Release v2.5.0 of https://github.com/freerouting/freerouting (published 2026-10-05, GPL-3.0; licence from
 # gh api repos/freerouting/freerouting/license). Asset digests read from the GitHub release API
@@ -203,7 +208,25 @@ def outside_repository(path):
     return path != REPO_ROOT and REPO_ROOT not in path.parents
 
 
-def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout):
+def router_extra(router):
+    """Optional Freerouting arguments of a spec router block (W2 PCB-PWRB; docs/settings.md and
+    docs/command_line_arguments.md at v2.5.0): 'fanout': false turns the SMD fan-out pre-pass off
+    (--router.fanout.enabled=false); 'ignore_net_classes' [names] are not autorouted (-inc), for nets whose
+    copper is all scripted and locked (the router does not count locked copper that crosses a pad as a connection)."""
+    extra = []
+    if 'fanout' in router:
+        if not isinstance(router['fanout'], bool):
+            raise SpecError('router.fanout must be true or false')
+        extra.append(f'--router.fanout.enabled={str(router["fanout"]).lower()}')
+    names = router.get('ignore_net_classes') or []
+    if names:
+        if not all(isinstance(n, str) and re.fullmatch(r'[A-Za-z0-9_]+', n) for n in names):
+            raise SpecError('router.ignore_net_classes must be net class names ([A-Za-z0-9_])')
+        extra += ['-inc', ','.join(names)]
+    return extra
+
+
+def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout, extra=()):
     """Headless Freerouting call: analytics off (-da), no GUI, optimizer on one thread (-mt), bounded job."""
     if int(max_passes) < 1 or int(threads) < 1:
         raise SpecError('router.max_passes and router.threads must be >= 1')
@@ -215,7 +238,7 @@ def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_
             '-de', str(dsn), '-do', str(ses), f'--router.autorouter.max_passes={int(max_passes)}', '-mt', str(int(threads)),
             f'--router.optimizer.max_threads={int(threads)}', '--router.automatic_neckdown=false',
             '-da', '--gui.enabled=false', f'--router.job_timeout={job_timeout}', '--logging.file.enabled=false',
-            f'--user_data_path={user_dir}']
+            f'--user_data_path={user_dir}'] + [str(a) for a in extra]
 
 
 def _download(item, dest):
@@ -292,7 +315,7 @@ def footprint_geometry(text):
             drill = next((n for n in node if isinstance(n, list) and n[0] == 'drill'), None)
             pads.append({'number': node[1], 'type': node[2], 'at': [float(at[1]), float(at[2])],
                          'size': [float(size[1]), float(size[2])],
-                         # (drill (offset x y)) of an SMD pad (Pico castellations) has no size atom: skip sub-lists
+                         # (drill (offset x y)) of an SMD pad (Pico castellations, W2 PCB-CTRL) has no size atom: skip sub-lists
                          'drill': [float(x) for x in drill[1:] if isinstance(x, str) and re.fullmatch(r'-?[\d.]+', x)]
                          if drill else []})
         elif node[0] in ('fp_line', 'fp_rect', 'fp_circle', 'fp_poly', 'fp_arc'):
@@ -460,8 +483,8 @@ def point_in_outline(point, outline, eps=1e-6):
     return inside
 
 
-def cutout_rects(contract):
-    """Contract cut-outs [x, y, w, h] (board mm) as boxes [x0, y0, x1, y1]."""
+def cutout_boxes(contract):
+    """Contract cutouts [x, y, w, h] (board mm, as pcb/check_boards.py reads them) as boxes [x0, y0, x1, y1]."""
     return [[float(x), float(y), float(x) + float(w), float(y) + float(h)]
             for x, y, w, h in (contract.get('cutouts_mm') or [])]
 
@@ -473,8 +496,8 @@ def place_groups(spec, template, geometry, hole_list, outline, cutouts=()):
     obstacles. Groups run in spec order. In each group the members without 'decouple' are shelf-packed
     into the region (courtyard boxes after rotation and side); then every decoupling member goes next to
     its pin ({ref, pad, max_mm}) with place_near, nearest free side first, at most max_mm from the pin.
-    A placed courtyard box must not overlap another part on the same side, enter a hole keepout or a
-    contract cut-out (cutouts: boxes [x0, y0, x1, y1]; a region may touch a cut-out, not overlap it).
+    A placed courtyard box must not overlap another part on the same side, a contract cutout (cutouts:
+    boxes [x0, y0, x1, y1], cutout_boxes()) or enter a hole keepout; a region must not overlap a cutout.
     Returns ({ref: anchor}, rows); rows carry the plan that the KiCad group audit checks.
     """
     placed = {}
@@ -497,7 +520,7 @@ def place_groups(spec, template, geometry, hole_list, outline, cutouts=()):
                 raise PackError(f'group {group["id"]}: {member["ref"]} enters the keepout of {hole["ref"]}')
         for cut in cutouts:
             if rects_overlap(geo['box'], cut):
-                raise PackError(f'group {group["id"]}: {member["ref"]} enters the cut-out {cut}')
+                raise PackError(f'group {group["id"]}: {member["ref"]} overlaps the cutout {cut}')
         placed[member['ref']] = {'side': side, **geo}
         anchors[member['ref']] = anchor
         rows.append({'group': group['id'], 'ref': member['ref'], 'side': side, 'rotation': rotation,
@@ -511,7 +534,7 @@ def place_groups(spec, template, geometry, hole_list, outline, cutouts=()):
         if not all(point_in_outline(c, outline) for c in corners):
             raise SpecError(f'group {group["id"]}: region {region} is not inside the board outline')
         if any(rects_overlap(region, cut) for cut in cutouts):
-            raise SpecError(f'group {group["id"]}: region {region} overlaps a contract cut-out')
+            raise SpecError(f'group {group["id"]}: region {region} overlaps a contract cutout')
         local_boxes, items = {}, []
         for member in group['members']:
             geo = geometry[member['ref']]
@@ -672,19 +695,6 @@ def validate_spec(spec, board):
         raise SpecError(f'{board}: schema must be {SPEC_SCHEMA} and board_id {board}')
     if spec['layers']['copper'] not in (2, 4):
         raise SpecError(f'{board}: copper layers must be 2 or 4')
-    inner = {'In1.Cu', 'In2.Cu'} if spec['layers']['copper'] == 4 else set()
-    for name, kind in (spec['layers'].get('types') or {}).items():
-        if name not in inner or kind not in ('power', 'signal'):
-            raise SpecError(f'{board}: layers.types {name}: {kind!r} must be an inner copper layer typed power or signal')
-    copper_names = ['F.Cu', 'B.Cu'] + sorted(inner)
-    for cls, layers in (spec['router'].get('class_layers') or {}).items():
-        if not isinstance(layers, list) or not layers or any(n not in copper_names for n in layers):
-            raise SpecError(f'{board}: router.class_layers {cls}: {layers!r} must list copper layers of the board')
-    cut = spec.get('cutouts')
-    if cut is not None:
-        margin = cut.get('keepout_margin_mm') if isinstance(cut, dict) else None
-        if not isinstance(margin, (int, float)) or margin < 0 or not cut.get('keepout_layers'):
-            raise SpecError(f'{board}: cutouts needs keepout_margin_mm >= 0 and keepout_layers')
     if spec.get('rules_file') is not None:
         raise SpecError(f'{board}: rules_file is set, but copying it into build/kicad/boards/{board}/{board}.kicad_dru '
                         '(and hashing it) is not implemented in board_gen yet; keep it null')
@@ -733,13 +743,34 @@ def validate_spec(spec, board):
     for track in spec['pre_route'].get('tracks', []):
         if track['net'] not in nets or len(track['path']) < 2 or track['width_mm'] <= 0:
             raise SpecError(f'{board}: pre-route track {track.get("id")} is malformed')
-    floor = spec['fab_floor']
-    for via in spec['pre_route'].get('vias', []):
-        if via.get('net') not in nets or len(via.get('at', [])) != 2 or                 float(via.get('drill_mm', 0)) + 1e-9 < float(floor['min_drill']) or                 float(via.get('diameter_mm', 0)) + 1e-9 < float(floor['min_via_diameter']) or                 float(via['diameter_mm']) <= float(via['drill_mm']):
-            raise SpecError(f'{board}: pre-route via {via.get("id")} is malformed or below the fab floor')
     for zone in spec['post_route_zones'] + spec['pre_route'].get('zones', []):
         if zone['net'] not in nets:
             raise SpecError(f'{board}: zone {zone.get("id")} on unknown net {zone["net"]}')
+        if zone.get('pad_connection', 'thermal') not in ZONE_PAD_CONNECTIONS:
+            raise SpecError(f'{board}: zone {zone.get("id")} pad_connection must be one of {sorted(ZONE_PAD_CONNECTIONS)}')
+    for via in spec['pre_route'].get('vias', []):
+        at = via.get('at', [])
+        if via.get('net') not in nets or len(at) != 2 or not all(isinstance(v, (int, float)) for v in at) or \
+                not 0 < float(via.get('drill_mm', 0)) < float(via.get('diameter_mm', 0)):
+            raise SpecError(f'{board}: pre-route via {via.get("id")} needs a template net, at [x, y] and '
+                            '0 < drill_mm < diameter_mm')
+    copper = [f'In{i}.Cu' for i in range(1, int(spec['layers']['copper']) - 1)] + ['F.Cu', 'B.Cu']
+    router_extra(spec['router'])
+    edge = spec.get('edge_keepout')
+    if edge is not None and (not isinstance(edge, dict) or float(edge.get('width_mm', 0)) <= 0
+                             or not set(edge.get('layers', [])) <= set(copper) or not edge.get('layers')
+                             or not set(edge.get('blocks', [])) <= {'tracks', 'vias'} or not edge.get('blocks')):
+        raise SpecError(f'{board}: edge_keepout needs width_mm > 0, copper layers and blocks (tracks, vias)')
+    for layer, kind in (spec['layers'].get('types') or {}).items():
+        if layer not in copper or kind not in LAYER_TYPES:
+            raise SpecError(f'{board}: layers.types {layer!r}: {kind!r} must name a copper layer of the board and one '
+                            f'of {sorted(LAYER_TYPES)}')
+    for cls, layers in (spec['router'].get('class_layers') or {}).items():
+        if not re.fullmatch(r'[A-Za-z0-9_]+', str(cls)) or not isinstance(layers, list) or not layers \
+                or not set(layers) <= set(copper):
+            raise SpecError(f'{board}: router.class_layers {cls}: {layers!r} must list copper layers of the board')
+    if not isinstance(spec.get('audit_cutouts', False), bool):
+        raise SpecError(f'{board}: audit_cutouts must be true or false')
     for key, reason in spec['drc_policy'].get('warning_checks', {}).items():
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
@@ -1031,6 +1062,16 @@ def npth_footprint(name, d):
 '''
 
 
+def edge_strip(a, b, w):
+    """Rectangle of half-width w around the edge segment ab, extended by w at both ends (board mm)."""
+    (x1, y1), (x2, y2) = a, b
+    length = math.hypot(x2 - x1, y2 - y1)
+    ux, uy = (x2 - x1) / length, (y2 - y1) / length
+    nx, ny = -uy * w, ux * w
+    p, q = (x1 - ux * w, y1 - uy * w), (x2 + ux * w, y2 + uy * w)
+    return [(p[0] + nx, p[1] + ny), (q[0] + nx, q[1] + ny), (q[0] - nx, q[1] - ny), (p[0] - nx, p[1] - ny)]
+
+
 def circle_polygon(cx, cy, radius, n=48):
     """Polygon that contains the circle (circumscribed), board mm."""
     rr = radius / math.cos(math.pi / n)
@@ -1040,9 +1081,9 @@ def circle_polygon(cx, cy, radius, n=48):
 def patch_dsn_class_layers(text, class_layers):
     """Restrict net classes to routing layers in a KiCad Specctra DSN: '(use_layer ...)' in each class circuit.
 
-    KiCad 10.0.7 exports no per-class layer list; Freerouting 2.5.0 reads '(circuit (use_layer ...))' of a class
-    (io/specctra/parser/Circuit.java, Network.createActiveTraceLayers at v2.5.0). class_layers: {class: [layers]}.
-    Returns the patched text; refuses a class that the DSN does not carry.
+    W2 PCB-CTRL (optional spec key router.class_layers {class: [layers]}): KiCad 10.0.7 exports no per-class layer
+    list; Freerouting 2.5.0 reads '(circuit (use_layer ...))' of a class (io/specctra/parser/Circuit.java and
+    Network.createActiveTraceLayers at tag v2.5.0, read 2026-11-07). Refuses a class that the DSN does not carry.
     """
     for name, layers in sorted((class_layers or {}).items()):
         pattern = re.compile(r'(\(class\s+' + re.escape(name) + r'\s[^()]*\(circuit)')
@@ -1120,7 +1161,7 @@ def group_plan(spec, contract, template):
     if not spec['groups']:
         return {}, []
     geometry = {p['ref']: footprint_geometry(footprint_file(p).read_text(encoding='utf-8')) for p in template}
-    return place_groups(spec, template, geometry, holes(spec, contract), contract['outline_mm'], cutout_rects(contract))
+    return place_groups(spec, template, geometry, holes(spec, contract), contract['outline_mm'], cutout_boxes(contract))
 
 
 def load_footprint(pcb, part, temp):
@@ -1152,14 +1193,6 @@ def place(pcb, frame, fp, anchor):
     fp.SetPosition(pcb.VECTOR2I(fp.GetPosition().x + target.x - point.x, fp.GetPosition().y + target.y - point.y))
 
 
-def layer_id(board, name):
-    """Layer id of an enabled layer of the board; refuses an unknown name (a negative id would crash pcbnew)."""
-    layer = board.GetLayerID(name)
-    if layer < 0 or not board.IsLayerEnabled(layer):
-        raise SpecError(f'layer {name} is not enabled on the board ({board.GetCopperLayerCount()} copper layers)')
-    return layer
-
-
 def add_polygon_zone(pcb, board, frame, points, layer, name):
     zone = pcb.ZONE(board)
     zone.SetLayer(layer)
@@ -1184,10 +1217,9 @@ def build_board(pcb, spec, contract, template, temp):
     (Path(temp) / 'fp-lib-table').write_text(fp_lib_table(template), encoding='utf-8')
     board = pcb.LoadBoard(str(path))  # loads the committed project rules and net classes
     board.SetCopperLayerCount(spec['layers']['copper'])
-    # Optional layer types (spec layers.types {layer: 'power'}): a plane layer is exported to the Specctra DSN
-    # as '(type power)', which Freerouting does not route on (its pre-route plane zone is the copper there).
-    for name, kind in sorted((spec['layers'].get('types') or {}).items()):
-        board.SetLayerType(layer_id(board, name), pcb.LT_POWER if kind == 'power' else pcb.LT_SIGNAL)
+    for layer, kind in sorted((spec['layers'].get('types') or {}).items()):
+        if not board.SetLayerType(board.GetLayerID(layer), getattr(pcb, LAYER_TYPES[kind])):
+            raise SpecError(f'KiCad refused layer type {kind} for {layer}')
     block = pcb.TITLE_BLOCK()
     block.SetTitle(f'{board_id} - {spec["status"]}')
     block.SetComment(0, 'CI/model output of pcb/board_gen.py; not a fabrication release; bench gates OPEN.')
@@ -1207,7 +1239,7 @@ def build_board(pcb, spec, contract, template, temp):
         edge.SetEnd(frame.k(*b))
         edge.SetWidth(pcb.FromMM(0.05))
         board.Add(edge)
-    for x0, y0, x1, y1 in cutout_rects(contract):  # contract cut-outs: closed Edge.Cuts rectangles inside the outline
+    for x0, y0, x1, y1 in cutout_boxes(contract):  # inner Edge.Cuts loops; the DSN export makes them keepouts
         corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
         for a, b in zip(corners, corners[1:] + corners[:1]):
             edge = pcb.PCB_SHAPE(board)
@@ -1226,8 +1258,9 @@ def build_board(pcb, spec, contract, template, temp):
         nick, name = part['fpid'].split(':', 1)
         fp.SetFPID(pcb.LIB_ID(nick, name))
         anchor = part['anchor'] or group_anchors[part['ref']]
-        # On the board before place(): FOOTPRINT::Flip reads the parent board (copper layer count) and crashes without one.
-        board.Add(fp)
+        back = anchor.get('side', 'F') == 'B'
+        if back:  # KiCad flips texts and pads through the parent board (FlipLayer): a parentless Flip crashed (W2 PCB-PWRB)
+            board.Add(fp)
         place(pcb, frame, fp, anchor)
         ref_text = anchor.get('ref_text')
         if ref_text:  # legend position (board mm) when the footprint default lands on a hole or pad
@@ -1247,12 +1280,14 @@ def build_board(pcb, spec, contract, template, temp):
                 pad.SetNetCode(0)
         if set(part['pads']) - seen:
             raise SpecError(f'{part["ref"]}: pads {sorted(set(part["pads"]) - seen)} missing in {part["fpid"]}')
+        if not back:
+            board.Add(fp)
         sources.append({'ref': part['ref'], 'footprint': part['fpid'],
                         'file': rel(fpath) if part['library'] == 'project' else f'kicad-image:{nick}.pretty/{name}.kicad_mod',
                         'sha256': part['sha256']})
     lib = Path(temp) / 'SR_RX_Board_Holes.pretty'
     lib.mkdir(exist_ok=True)
-    layers = [layer_id(board, n) for n in spec['holes'].get('keepout_layers', [])]
+    layers = [board.GetLayerID(n) for n in spec['holes'].get('keepout_layers', [])]
     blocks = set(spec['holes'].get('keepout_blocks', []))
     for hole in holes(spec, contract):
         name = f'NPTH_{hole["d"]:g}mm'
@@ -1272,26 +1307,23 @@ def build_board(pcb, spec, contract, template, temp):
             zone.SetDoNotAllowPads('pads' in blocks)
             zone.SetDoNotAllowFootprints('footprints' in blocks)
             board.Add(zone)
-    # Optional router keepouts over the contract cut-outs (spec cutouts {keepout_margin_mm, keepout_layers}): the Specctra
-    # export marks a cut-out as a keepout, but Freerouting keeps only its own clearance to it, less than the copper-to-edge
-    # rule, so a rule area grown by the margin blocks tracks and vias next to the cut-out edges.
-    cut_spec = spec.get('cutouts') or {}
-    for i, (x0, y0, x1, y1) in enumerate(cutout_rects(contract), 1):
-        m = float(cut_spec.get('keepout_margin_mm', 0) or 0)
-        if m <= 0:
-            break
-        rect = [(x0 - m, y0 - m), (x1 + m, y0 - m), (x1 + m, y1 + m), (x0 - m, y1 + m)]
-        for name in cut_spec.get('keepout_layers', []):
-            zone = add_polygon_zone(pcb, board, frame, rect, layer_id(board, name), f'KO_CUT{i}_{name}')
-            zone.SetIsRuleArea(True)
-            zone.SetDoNotAllowTracks(True)
-            zone.SetDoNotAllowVias(True)
-            zone.SetDoNotAllowZoneFills(False)
-            zone.SetDoNotAllowPads(False)
-            zone.SetDoNotAllowFootprints(False)
-            board.Add(zone)
+    edge = spec.get('edge_keepout')
+    if edge:  # rule-area strips on every outline and cutout edge: the router keeps its copper off the edge clearance
+        loops = [contract['outline_mm']] + [[(x0, y0), (x1, y0), (x1, y1), (x0, y1)] for x0, y0, x1, y1 in cutout_boxes(contract)]
+        for li, loop in enumerate(loops):
+            for si, (a, b) in enumerate(zip(loop, loop[1:] + loop[:1])):
+                for name in edge['layers']:
+                    zone = add_polygon_zone(pcb, board, frame, edge_strip(a, b, float(edge['width_mm'])),
+                                            board.GetLayerID(name), f'KO_EDGE_{li}_{si}_{name}')
+                    zone.SetIsRuleArea(True)
+                    zone.SetDoNotAllowTracks('tracks' in edge['blocks'])
+                    zone.SetDoNotAllowVias('vias' in edge['blocks'])
+                    zone.SetDoNotAllowZoneFills(False)
+                    zone.SetDoNotAllowPads(False)
+                    zone.SetDoNotAllowFootprints(False)
+                    board.Add(zone)
     for track in spec['pre_route'].get('tracks', []):
-        layer = layer_id(board, track['layer'])
+        layer = board.GetLayerID(track['layer'])
         for a, b in zip(track['path'], track['path'][1:]):
             seg = pcb.PCB_TRACK(board)
             seg.SetStart(frame.k(*a))
@@ -1301,13 +1333,11 @@ def build_board(pcb, spec, contract, template, temp):
             seg.SetNet(nets[track['net']])
             seg.SetLocked(bool(track.get('locked', True)))
             board.Add(seg)
-    # Scripted through vias (spec pre_route.vias), locked like the scripted tracks: e.g. plane fanout of SMD pads
-    # whose escape the router cannot find on a dense board.
-    for item in spec['pre_route'].get('vias', []):
+    for item in spec['pre_route'].get('vias', []):  # through vias (F.Cu to B.Cu), scripted and locked
         via = pcb.PCB_VIA(board)
         via.SetViaType(pcb.VIATYPE_THROUGH)
-        via.SetLayerPair(pcb.F_Cu, pcb.B_Cu)
         via.SetPosition(frame.k(*item['at']))
+        via.SetLayerPair(pcb.F_Cu, pcb.B_Cu)
         via.SetWidth(pcb.FromMM(item['diameter_mm']))
         via.SetDrill(pcb.FromMM(item['drill_mm']))
         via.SetNet(nets[item['net']])
@@ -1327,9 +1357,11 @@ def build_board(pcb, spec, contract, template, temp):
 
 def add_copper_zone(pcb, board, frame, spec, contract, zone, nets):
     points = contract['outline_mm'] if zone.get('outline', 'board') == 'board' else zone['outline']
-    item = add_polygon_zone(pcb, board, frame, points, layer_id(board, zone['layer']), zone['id'])
+    item = add_polygon_zone(pcb, board, frame, points, board.GetLayerID(zone['layer']), zone['id'])
     item.SetNet(nets[zone['net']])
     item.SetAssignedPriority(int(zone.get('priority', 0)))
+    if 'pad_connection' in zone:
+        item.SetPadConnection(getattr(pcb, ZONE_PAD_CONNECTIONS[zone['pad_connection']]))
     board.Add(item)
     return item
 
@@ -1552,10 +1584,10 @@ def group_audit(facts, rows):
 
 
 def cutout_audit(facts, contract, template):
-    """No pad, courtyard box or F.Fab body box of a template part inside a contract cut-out (boards with cut-outs).
+    """No pad, courtyard box or F.Fab body box of a template part inside a contract cutout (spec audit_cutouts, W2 PCB-CTRL).
 
-    Boxes are axis-aligned bounding boxes, so the audit is conservative; touching the cut-out edge passes."""
-    cuts = cutout_rects(contract)
+    Boxes are axis-aligned bounding boxes, so the audit is conservative; touching the cutout edge passes."""
+    cuts = cutout_boxes(contract)
     refs = {p['ref'] for p in template}
     errors = []
     for fp in facts['footprints']:
@@ -1568,7 +1600,7 @@ def cutout_audit(facts, contract, template):
             if any(rects_overlap(p['box'], cut, -1e-3) for p in fp['pads']):
                 errors.append({'kind': 'pad_in_cutout', 'ref': fp['ref'], 'cutout': cut})
     return {'cutouts': cuts, 'errors': errors, 'passed': not errors,
-            'note': 'axis-aligned courtyard, F.Fab and pad boxes against the contract cut-outs (edge contact allowed)'}
+            'note': 'axis-aligned courtyard, F.Fab and pad boxes against the contract cutouts (edge contact allowed)'}
 
 
 def annular_audit(facts, template, floor):
@@ -1625,7 +1657,7 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'annular_audit': audits['annular']['passed'], 'locked_copper_kept': audits['locked']['kept'],
         'group_audit': audits['groups']['passed'],
     }
-    if 'cutouts' in audits:  # only boards whose contract has cut-outs carry this key (ENC reports stay unchanged)
+    if 'cutouts' in audits:  # only specs with audit_cutouts carry this key (ENC and PWR_B reports stay unchanged)
         result['cutout_audit'] = audits['cutouts']['passed']
     passed = (drc['passed'] and all(a['passed'] for a in source_pad) and audits['domain']['passed']
               and audits['keepout']['passed'] and audits['annular']['passed'] and audits['locked']['kept']
@@ -1638,7 +1670,9 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'inputs': proj, 'board_file': rel(board_path), 'board_sha256': sha256_file(board_path),
         'project_file': project_rel, 'fp_lib_table_sha256': sha256_file(board_path.parent / 'fp-lib-table'),
         'layers': spec['layers'], 'stackup_contract': stackup,
-        'outline_mm': contract['outline_mm'], 'holes': holes(spec, contract),
+        'outline_mm': contract['outline_mm'],
+        **({'cutouts_mm': contract['cutouts_mm']} if contract.get('cutouts_mm') else {}),
+        'holes': holes(spec, contract),
         'instances': [{'id': i['id'], 'placement': i.get('placement'), 'qty': i['qty'], 'refs': i['refs'], 'nets': i['nets']}
                       for i in spec['instances']['list']],
         'build_quantity': {'instances': sum(i['qty'] for i in spec['instances']['list']),
@@ -1672,7 +1706,8 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
     drc = drc_summary(drc_raw, policy, project['board']['design_settings']['rule_severities'])
     partition = read_json(BASE / spec['partition'])
     hole_list = holes(spec, contract)
-    want_locked = sum(len(t['path']) - 1 for t in spec['pre_route'].get('tracks', []) if t.get('locked', True)) +         sum(1 for v in spec['pre_route'].get('vias', []) if v.get('locked', True))
+    want_locked = (sum(len(t['path']) - 1 for t in spec['pre_route'].get('tracks', []) if t.get('locked', True))
+                   + sum(1 for v in spec['pre_route'].get('vias', []) if v.get('locked', True)))
     audits = {
         'domain': domain_audit(spec, partition),
         'source_pad': source_pad_audit(facts, spec, template, graph),
@@ -1684,7 +1719,7 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
                    'kept': facts['tracks']['locked'] >= want_locked,
                    'note': 'SES import before/after counts and the DSN probe are in route-log.json'},
     }
-    if contract.get('cutouts_mm'):
+    if spec.get('audit_cutouts'):
         audits['cutouts'] = cutout_audit(facts, contract, template)
     report = build_report(spec, contract, stackup, template, proj, facts, drc, audits, board_path, spec['project'])
     return report, connectors_doc(spec, contract, template, facts)
@@ -1772,12 +1807,12 @@ def route(board, freerouting):
         dsn, ses = temp / f'{board}.dsn', temp / f'{board}.ses'
         if not pcb.ExportSpecctraDSN(board_obj, str(dsn)) or not dsn.is_file():
             raise SystemExit('board_gen: Specctra DSN export failed')
-        if spec['router'].get('class_layers'):  # per-class routing layers (power classes on the outer layers)
+        if spec['router'].get('class_layers'):  # per-class routing layers (W2 PCB-CTRL: power classes on the outer layers)
             dsn.write_text(patch_dsn_class_layers(dsn.read_text(encoding='utf-8'), spec['router']['class_layers']),
                            encoding='utf-8')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
         cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
-                                  temp / 'fr-user', spec['router']['job_timeout'])
+                                  temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']))
         shown_cmd = [shown_arg(c) for c in cmd]
         print('Freerouting command:', ' '.join(shown_cmd), flush=True)
         art = os.environ.get('SR_RX_PCB_ARTIFACTS')
@@ -1874,7 +1909,7 @@ def check(board):
 
 
 def main(argv=None):
-    faulthandler.enable()  # a crash inside pcbnew prints the Python stack instead of a bare 'Segmentation fault'
+    faulthandler.enable()  # a crash inside pcbnew prints the Python stack (CI log) instead of a bare segfault
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--board')
     mode = ap.add_mutually_exclusive_group()

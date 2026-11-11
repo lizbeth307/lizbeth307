@@ -70,6 +70,17 @@
         "status": "assumption",
         "src": "components/mechanical_thermal.md: J13 M-key on the top side, top-left under the 40-pin header, card towards the bottom edge; not identified by name in the STEP (TBD: confirm on the board)"
       },
+      "mkey_tap": {
+        "ref": "C17",
+        "net": "VCC_3V3_MKEY",
+        "value": "22UF 6.3V",
+        "side": "bottom",
+        "uv": [9.14, 41.12],
+        "outline_mm": [1.32, 2.6],
+        "status": "datasheet (Radxa documents, fetch-only)",
+        "src": "Radxa Dragon Q6A schematic V1.21 https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf p.31 (text layer read with PyMuPDF 2026-11-07): VCC_3V3_MKEY is the output of U20 ETA3521 (VIN from VCC_5V_PERI, L24 1UH 4A, feedback R88 91K / R133 20K), with C13 100PF, C14 / C15 / C17 22UF 6.3V and C16 100NF beside U20 and C451 / C453 22UF 6.3V, C452 / C454 100NF at the M.2 M-key J13; components placement map V1.21 https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_components_placement_map_v1.21.pdf (vector at 1:1, outline 85.0 x 56.0, read 2026-11-07 with PyMuPDF): page 1 (top) C451 at uv (21.18, 36.21) and C453 at (7.46, 36.21), outline 0.60 x 1.15 mm each, under the card end of J13; page 2 (bottom, mirrored: u = 85 - x, checked on the 3.5 / 61.5 mounting holes) C17 / C14 / C15 at u 9.14 / 10.46 / 11.72, v 41.12, outline 1.32 x 2.60 mm each, U20 at (12.23, 43.48), L24 at (9.49, 43.80). Neither document names the capacitor packages (outline sizes only). Both files are fetch-only (licence not stated), not committed",
+        "_choice": "W2 MECH-6 (build/15): the largest pads on the net are the bottom-side output capacitors C14 / C15 / C17 (outline 1.32 x 2.60 against 0.60 x 1.15 for C451 / C453, which also lie under the riser's M.2 card end); C17 is the end of that row, farthest from U20 (3.9 mm centre to centre, u offset 3.1; C15 is next to it); never a U20 pin (STACK forbids switching VCC_3V3_MKEY); both S17 wires (VCC_3V3_MKEY and GND) go to the two C17 pads, soldered on the bench after the Q6A acceptance tests and before the board is mounted; which pad is VCC_3V3_MKEY is a continuity check on the received board (bench, OPEN)"
+      },
       "status": "datasheet",
       "src": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf (read 2026-10-24: 85.0 x 56.0, 4x d3.5 on 58.0 x 49.0, 3.5 from edges, connector overhang 3.3); heights and connector boxes from https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip (STEP product names 484060001, LPJG0926HENL, HDMI_1, PJ-332D, USB-16PIN-TYPEC, 1555298, PZ254V-11, BGA1287, BGA315 read with build123d 2026-10-24; heights above the board top face)"
     },
@@ -142,10 +153,14 @@
       "src": "no dimension found in components/nooelec_flamingo_fm_v2_100813.md; reserve = SAWbird+ NOAA case (same Nooelec cased family, assumption). TBD: measure"
     },
     "lc76g": {
-      "name": "Waveshare LC76G GNSS board (24370)",
-      "size": [63.6, 54.0, 13.1],
-      "status": "repo",
-      "src": "components/waveshare_lc76g_24370_rtc_cr2032_cell.md (54 x 63.6 x 13.1 mm; https://www.waveshare.com/lc76g-gnss-module.htm)"
+      "name": "Waveshare LC76G GNSS Module (SKU 24370)",
+      "size": [30.5, 25.5, 13.1],
+      "board": [30.5, 25.5],
+      "pins_v": {"VCC": 8.7, "GND": 9.94, "TX": 11.18, "RX": 12.43, "PPS": 13.67, "RST": 14.91, "SDA": 16.09, "SCL": 17.33},
+      "ipex_uv": [27.1, 3.5],
+      "_board_coords": "u right, v up in the drawing's top view, origin at the lower-left board corner; the MX1.25 8-pin side-entry connector is on the u = 0 edge (pins_v: pin centres along it), the IPEX antenna receptacle at ipex_uv",
+      "status": "datasheet+assumption",
+      "src": "Waveshare outline drawing https://www.waveshare.com/img/devkit/accBoard/LC76G-GNSS-Module/LC76G-GNSS-Module-details-size.jpg (the 'Outline Dimensions' image of https://www.waveshare.com/lc76g-gnss-module.htm; read 2026-11-07 with WebFetch and viewed as an image): board 30.50 x 25.50 mm; mounting hole diameter 2.25 mm (the 2.25 extension lines drop from the two edges of the drilled hole, inside the annular ring; W2 MECH-6 review, image zoomed 2026-11-07); the hole centre positions are not dimensioned (scaled about 2.4 mm from the two board edges, +-0.5); connector pin order from the top SCL, SDA, RST, PPS, RX, TX, GND, VCC (the wiki interface table lists VCC, GND, TX, RX, PPS, RST, SDA, SCL); pin and IPEX positions scaled on the image from the 30.50 / 25.50 dimension lines (+-0.5 mm). The drawing gives no height: the 13.1 height stays a reserve (assumption, measure the received module). The bundled ceramic patch antenna is not modelled: the model carries the P7 pigtail W407 on the IPEX; the lid option of STACK.md:173 (the kit patch on the lid, only if it passes the same C/N0 on/off test) would take the IPEX instead of W407. W2 MECH-6: the earlier 63.6 x 54.0 x 13.1 was the M5Stack GPS v2.1 board size quoted in components/waveshare_lc76g_24370_rtc_cr2032_cell.md, not this module"
     },
     "pololu_d36v50": {
       "name": "Pololu D36V50F12 / D36V50F5 (#4095 / #4091)",
@@ -359,12 +374,15 @@
       "below_bezel": 17.5,
       "below_bezel_tol": 0.5,
       "wire_reserve": 2.5,
-      "nut_d": 20.0,
-      "nut_t": 3.0,
+      "nut_d": 22.0,
+      "nut_t": 3.5,
+      "nut_status": "assumption",
+      "nut_part": "PV2PV3PV6HEX16",
+      "nut_src": "W2 MECH-4 (B-05, 2026-11-07): the nut is not dimensioned anywhere read: PV6.pdf (8.28.2025) pages 1-6 and the datasheet link of the separate nut, PV2.pdf (https://sten-eswitch-13110800-production.s3.amazonaws.com/system/asset/product_line/data_sheet/2/PV2.pdf, 6.10.2020, curl default User-Agent), pages 1-3 rendered with PyMuPDF 2026-11-07 (not committed), show bezel, thread, body and terminals but no nut; DigiKey DE 141-PV2PV3PV6HEX16-ND (WebFetch 2026-11-07) lists PV2PV3PV6HEX16 only as 'HEX NUT FOR PV2 SERIES' with no size; https://www.onlinecomponents.com/productfiles/mf-ec/pv-series-datasheets.pdf 403 and https://www.mouser.com/datasheet/2/140/E-Switch_07052018_T960109-1500421.pdf connection reset / timeout (2026-11-07). nut_d x nut_t = 22 x 3.5 is a reserve (assumption, replaces the D20 x 3 placeholder): the largest round reserve the place at the power key takes between the top Al angle below (z 38.5) and the display clamp plate above (module_back - clamp t), i.e. a hex nut up to 19 mm across flats (22 across corners) and 3.5 mm thick; measure the received nut at incoming inspection",
       "torque_Nm": 0.6,
       "ip": "IP65",
       "status": "datasheet+assumption",
-      "src": "https://configured-product-images.s3.amazonaws.com/Datasheets/PV6.pdf (8.28.2025, read 2026-11-06 and 2026-11-07: p.1 IP65, panel thickness 1-10 mm, recommended mounting torque 0.6 Nm, 2 A 48 VDC, SPST off-(on); p.3/6 recommended panel cut-out 16.00 +0.20/-0.00; p.5 non-illuminated body: bezel D18.00 x 1.50, M16 x 1.0 thread, 17.50 +-0.50 from the bezel to the terminal ends); the nut is not dimensioned on the datasheet: nut_d 20 x nut_t 3 is an assumption (TBD: measure); wire_reserve 2.5 for the soldered wires is a design value; part number and SKU in the parts database (SW-PV6F240SS)"
+      "src": "https://configured-product-images.s3.amazonaws.com/Datasheets/PV6.pdf (8.28.2025, read 2026-11-06 and 2026-11-07: p.1 IP65, panel thickness 1-10 mm, recommended mounting torque 0.6 Nm, 2 A 48 VDC, SPST off-(on); p.3/6 recommended panel cut-out 16.00 +0.20/-0.00; p.5 non-illuminated body: bezel D18.00 x 1.50, M16 x 1.0 thread, 17.50 +-0.50 from the bezel to the terminal ends); the nut is not dimensioned on the datasheet: nut_d x nut_t is a reserve (assumption, nut_src; TBD: measure); wire_reserve 2.5 for the soldered wires is a design value; part number and SKU in the parts database (SW-PV6F240SS)"
     },
     "harness_headers": {
       "name": "Board-side harness headers of build/16 section 4 (courtyard and frontage per family; w = a * (pins - 1) + b, d = depth)",
@@ -394,7 +412,7 @@
       "threaded_hole_min": 4.0
     },
     "taoglas_mhf1_sma_wp": {
-      "name": "Taoglas IPEX MHF I to SMA(F) bulkhead straight, waterproof, 1.13 mm cable: CAB.0243 150 mm, CAB.01028 200 mm, CAB.01029 250 mm (fallback geometry only: CAB.0243 and CAB.01028 are the fallbacks of parts DB J-SMA-PANEL-RFBOARD, whose chosen MPN is CAB.718 (W2 GR-2); no port uses this entry, it keeps the fallback stack of build/15 W2 MECH-2)",
+      "name": "Taoglas IPEX MHF I to SMA(F) bulkhead straight, waterproof, 1.13 mm cable: CAB.0243 150 mm, CAB.01028 200 mm, CAB.01029 250 mm (P7 / W407 is CAB.01029 of this family, W2 MECH-6; CAB.0243 and CAB.01028 stay the fallbacks of parts DB J-SMA-PANEL-RFBOARD, whose chosen MPN is CAB.718, W2 GR-2)",
       "thread": "1/4-36 UNS-2A",
       "pitch": 0.706,
       "thread_len": 11.4,
@@ -656,11 +674,122 @@
       "name": "P8 external inline accessory between the antenna and panel port P8: Flamingo+ FM #2 (A403) and LNA V2 (A404), ch4 bias over the coax (build/15 'Шлях P8 (W2 AREA)'); not in the enclosure, envelope handed to MECH-4 (CC-27)",
       "modules": {
         "A403": {"part": "flamingo_fm", "size": [73.7, 30.6, 18.7], "status": "assumption"},
-        "A404": {"size": null, "status": "TBD", "_tbd_reason": "no dimension of the LNA V2 read in this package"}
+        "A404": {"size": null, "status": "TBD", "_tbd_reason": "RTL-SDR Blog Wideband LNA V2: the maker's page https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/ (read 2026-11-07 with WebFetch) gives no dimensions and no connector genders; it lists '1x SMA male to SMA male adapter' in the package and 'Requires 3 - 5v bias tee power' (ch4 gives 4.3 V through P8, build/03 P8 row)"}
       },
+      "chain": ["J428 antenna feed (SMA input of A403)", "A403 Flamingo+ FM #2", "SMA male-male adapter from the LNA V2 package (A403 OUT -> A404 IN; assumption: both jacks SMA female, connector genders of A403/A404 not read, check at incoming inspection)", "A404 RTL-SDR Blog Wideband LNA V2", "coax A404 OUT -> P8 (W2 GR-2 net E4_RF_CH4; ch4 bias 4.3 V reaches A404 over it)"],
+      "envelope": {"length": null, "w": 30.6, "h": 18.7, "_tbd_reason": "length = A403 73.7 (reserve) + adapter + A404 (not read); box, adapters, cable and mounting items are SRC-2's (CC-27)"},
       "size": [73.7, 30.6, 18.7],
       "status": "assumption",
-      "src": "A403 = the flamingo_fm reserve of this file (no Nooelec dimension found, SAWbird+ case size); A404 TBD; box, SMA adapters and cable are SRC-2's, the accessory envelope, mounting and build/21 steps MECH-4's (W2 MECH-3 hand-off)"
+      "src": "A403 = the flamingo_fm reserve of this file (no Nooelec dimension found, SAWbird+ case size); A404 TBD; box, SMA adapters and cable are SRC-2's, the accessory envelope, mounting and build/21 steps MECH-4's (W2 MECH-3 hand-off); W2 MECH-4 (CC-27, 2026-11-07): the accessory stays outside the enclosure in the antenna line (rule R-P8-ACCESSORY, build/21 E9c); its envelope is the A403 reserve plus the unread A404 and stays TBD until A404 is measured"
+    },
+    "adafruit_3550": {
+      "name": "Adafruit 3550 DIY HDMI Cable Parts - Right Angle (L Bend) HDMI Plug Adapter (Q6A end of the HDMI FPC route, parts DB AI-HDMI-FPC); 3549 is the right-bend twin (AI-HDMI-FPC-R)",
+      "mpn": "3550",
+      "listed": [19.0, 17.0, 15.0],
+      "weight_g": 3.2,
+      "size": [17.0, 15.0, 19.0],
+      "plug_from_edge": 7.5,
+      "status": "listing+assumption",
+      "src": "maker's product page https://www.adafruit.com/product/3550 (read 2026-11-07 with WebFetch): 'Product Dimensions: 19.0mm x 17.0mm x 15.0mm', 'Product Weight: 3.2g', 'right angle (left bend) HDMI plug', 'Ribbon cable and other adapter not included'; https://www.adafruit.com/product/3549 (same day): 'Right Angle (R bend) HDMI Plug Adapter', 19.0 x 17.0 x 16.5, 3.3 g. The pages give no drawing. Axis assignment from the three product photos of the DigiKey copy of the page, https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5044/3550_Web.pdf (curl default User-Agent, rendered with PyMuPDF 2026-11-07, not committed), labelled assumption: the plug stands out of one face of a square adapter PCB with its two pin rows through it, and the flex clip lies along one PCB edge on the other face with its long axis along the plug width, so the flex leaves in the PCB plane across the plug width. As placed (size [x, y, z]): 17.0 along the plug width (x), 15.0 along the plug axis (y, no insertion credit), 19.0 along the flex exit (z), plug centre 7.5 from the PCB edge opposite the clip (estimated from the photos); the clip edge points to the rear wall. Which of 3550 / 3549 does that on the Q6A receptacle (its pin-1 side is not read) is checked on the board: both are bought (AI-HDMI-FPC, AI-HDMI-FPC-R), the other is the spare"
+    },
+    "adafruit_3548": {
+      "name": "Adafruit 3548 DIY HDMI Cable Parts - Straight HDMI Plug Adapter (display end of the HDMI FPC route, into the Wisecoco HDMI input; parts DB AI-HDMI-FPC-3548)",
+      "mpn": "3548",
+      "listed": [27.5, 17.3, 5.0],
+      "weight_g": 3.2,
+      "insertion": 2.0,
+      "size": [25.5, 17.3, 5.0],
+      "status": "listing+assumption",
+      "src": "maker's product page https://www.adafruit.com/product/3548 (read 2026-11-07 with WebFetch): 'Product Dimensions: 27.5mm x 17.3mm x 5.0mm', 'Product Weight: 3.2g', straight HDMI plug; the page notes that some pins may not be connected (a customer reports pin 14): pinout not published (GR-4 net set). As placed: 27.5 along the plug axis (x) less 2.0 credited inside the board's receptacle (assumption: the plug length is not given, any HDMI-A plug enters further), 17.3 along the plug width (y), 5.0 thick (z)"
+    },
+    "adafruit_flex": {
+      "name": "Adafruit DIY USB or HDMI Cable Parts - Ribbon Cable, 10 mm wide flex: 3560 10 cm, 3561 20 cm, 3562 30 cm, 3563 50 cm (parts DB AI-HDMI-FPC-FLEX)",
+      "width": 10.0,
+      "lengths": {"3560": 100.0, "3561": 200.0, "3562": 300.0, "3563": 500.0},
+      "weight_g": {"3560": 0.6, "3561": 1.1, "3562": 1.5, "3563": 2.9},
+      "thickness_reserve": 0.5,
+      "bend_r": 2.0,
+      "status": "listing+assumption",
+      "src": "maker's product pages read 2026-11-07 with WebFetch: https://www.adafruit.com/product/3560 ('Cable Length: 100mm', 'Cable Width: 10mm / 0.4\"', 'Weight: 0.6g'; 20/30/50 cm listed, 100 cm 'no longer stocked'), https://www.adafruit.com/product/3561 (200 mm, 1.1 g), https://www.adafruit.com/product/3562 (300 mm, 1.5 g), https://www.adafruit.com/product/3563 (500 mm, 2.9 g); all 'not going to be as durable or shielded as ready-made cables'. Thickness, bend radius, fold rating and pinout are not on the pages: thickness_reserve 0.5 (flex with the copper-tape wrap) and bend_r 2.0 are assumptions of this package (TBD: measure the received flex)"
+    },
+    "wurth_74278011": {
+      "name": "Wurth Elektronik WE-FLAT 74278011 flat ferrite core, one piece, for flat cables up to 11.5 mm wide (HDMI FPC ferrite, parts DB AI-HDMI-FERRITE)",
+      "mpn": "74278011",
+      "outer": [16.0, 5.0, 8.0],
+      "slot": [11.5, 0.5],
+      "cable_width_max": 11.5,
+      "z_ohm": {"25MHz": 31, "100MHz": 63},
+      "size": [8.0, 16.0, 5.0],
+      "status": "datasheet",
+      "src": "Wurth datasheet https://www.we-online.com/components/products/datasheet/74278011.pdf (fetched 2026-11-07 with the WebFetch tool after a default-curl 403 on the same URL; text layer and drawing read with PyMuPDF, not committed): WE-FLAT Flat Ferrite Core, outer width 16.0 +0.2/-0.5, height 5.0 +0/-0.6, length 8.0 +-0.3, slot 11.5 +0.5/-0 x 0.5 +0.5/-0, 'width 11,5mm max.' cable, impedance 31 Ohm @ 25 MHz and 63 Ohm @ 100 MHz (1 turn, +-25 %, test cable AWG26 50 mm), material 4 W 620 (initial permeability 620), -25 to +125 C. Other WE-FLAT cores read the same day (one reader per source: this package): 7427803 / 74278031 (31 x 12, cable 26.5), 74278021 (23 x 12, cable 19.2), 74278009 (28 x 15, cable 23.6), 74278043 (15.5 x 2.0 x 10, slot 13.0 x 0.5, 17/42 Ohm), 7427808 (cable 4.7): 74278011 is the narrowest core for a 10 mm flex with the higher impedance. As placed: 8.0 along the flex (x), 16.0 across it (y), 5.0 high (z). The 0.5 mm slot takes the flex only where it is not wrapped: flex thickness not read (measure), the copper wrap ends either side of the core"
+    },
+    "keystone_3568": {
+      "name": "Keystone 3568 MINI blade fuse holder, vertical fuse entry, through hole (F101 on the PACK_FUSE carrier; parts DB extra of F-0297007.5-WXNV)",
+      "mpn": "3568",
+      "body": [16.0, 6.73, 7.37],
+      "pins": 2.79,
+      "pin_pitch": [9.9, 3.4],
+      "status": "datasheet",
+      "src": "Keystone catalogue page 48 'MINI automotive fuse clips & holders', https://www.keyelco.com/userAssets/file/K75p48.pdf (datasheet link of DigiKey DE 36-3568-ND, curl default User-Agent, rendered with PyMuPDF 2026-11-07, not committed): MINI FUSE HOLDER Cat. No. 3568 (black), for Littelfuse Mini 297 or 997 / Bussmann ATM, vertical fuse entry, .630 [16.00] x .265 [6.73], .290 [7.37] above the board, pins .110 [2.79], mounting holes .390 [9.9] x .134 [3.40], dia .063 [1.60], UL 30 A at 500 V AC; DigiKey DE 36-3568-ND 'Fuse Holder 30 A 500V 1 Circuit Blade Through Hole', 87,921 in stock, EUR 1.34 @1 (WebFetch 2026-11-07)"
+    },
+    "littelfuse_mini_297": {
+      "name": "Littelfuse MINI 297 blade fuse 029707.5WXNV (F101, 7.5 A)",
+      "mpn": "029707.5WXNV",
+      "body": [10.9, 3.8, 8.8],
+      "status": "listing",
+      "src": "DigiKey DE F990-ND (WebFetch 2026-11-07): 'FUSE AUTO 7.5A 32VDC BLADE MINI', Size / Dimension '0.429\" L x 0.150\" W x 0.346\" H (10.90mm x 3.80mm x 8.80mm)', EUR 0.35 @1; the Littelfuse datasheet (DigiKey link https://www.littelfuse.com/assetdocs/littelfuse_datasheet_297_mini32v.pdf, and https://www.littelfuse.com/~/media/automotive/datasheets/fuses/passenger-car-and-commercial-vehicle/blade-fuses/littelfuse_mini_datasheet.pdf) answered 403 to curl 2026-11-07: the body is taken to sit fully above the holder (the blades enter the holder clips), so the 8.8 is counted above the 7.37 holder"
+    },
+    "iso14580_lengths": {
+      "name": "ISO 14580 (DIN EN ISO 14580) hexalobular socket cheese head screws: commercial nominal lengths l (under-head length), mm",
+      "M2.5": [3, 4, 5, 6, 8, 10, 12, 14, 16, 20, 25],
+      "M3": [4, 5, 6, 8, 10, 12, 14, 16, 20, 25, 30],
+      "k_max": {"M2.5": 1.85, "M3": 2.4},
+      "status": "datasheet",
+      "src": "fasten.it norm page DIN EN ISO 14580 https://www.fasten.it/pt/norms/norm/din_en_iso_14580 (read 2026-11-07: dimension table 'source Din 14580 2011', k nom=max M2.5 1.85 / M3 2.4, socket Nr 8 / 10; table 'Din 14580 - weigth in kg x1000 pcs - commercial items': the lengths above are the rows with a weight in the M 2.5 / M 3 columns); a secondary reproduction of the standard, the ISO text itself was not read. The countersunk pages of the same site (DIN EN ISO 10642 https://www.fasten.it/pt/norms/norm/din_en_iso_10642 and DIN EN ISO 14581 https://www.fasten.it/pt/norms/norm/din_en_iso_14581, read 2026-11-07) give head dimensions only, no length table (used by generated/fastener-stacks.json, W2 MECH-3 review)"
+    },
+    "heyco_ngsg_105": {
+      "name": "Heyco continuous grommet roll NGSG-105-100' (part 12417 natural, 12417B black): nylon, unserrated, with adhesive, 100 ft (30.5 m) roll, for 1.8-2.7 mm panels (read as a candidate; not the purchased trim: SRC-2 found no Heyco listing on DigiKey DE and chose essentra_mgs_2_01 for parts DB AI-EDGE-TRIM)",
+      "panel_t": [1.8, 2.7],
+      "overall_h": 4.4,
+      "base_t": 0.8,
+      "outer_w": 2.8,
+      "temp_c": [-40, 85],
+      "status": "datasheet",
+      "src": "Heyco 'Continuous Grommet Rolls' catalogue page 6-23 (https://www.heyco.com/Hole_Plugs/pdf/Grommet-Rolls.pdf, 301 to http://www.heyco.com/wp-content/uploads/wpallimport/files/Grommet-Rolls.pdf, PDF of 2020-04-07; read 2026-11-07 with WebFetch, the table rendered with PyMuPDF and read from the rendering): nylon roll, unserrated with adhesive, NGSG-105-100' fit panel .072-.105 in (1,8-2,7 mm), A overall height .17 in (4,4 mm), B bottom thickness .03 in (0,8 mm), C bottom width .11 in (2,8 mm); nylon 94HB, -40 to 185 F (-40 to 85 C); standard colour natural, black by special order. The leg thickness is not dimensioned: the model takes (C - plate t) / 2 as the height each leg stands proud of a plate face (upper bound at the U bottom) and A - B as the leg reach from the slot edge"
+    },
+    "essentra_mgs_2_01": {
+      "name": "Essentra (Richco) MGS-2-01 grommet edging, MS21266-2N, slotted U strip, PA66 natural UL94 V-2, 0.32 m strip (parts DB AI-EDGE-TRIM, W2 SRC-2)",
+      "panel_t": [1.32, 2.16],
+      "overall_h": 3.937,
+      "base_t": 1.397,
+      "inside_d": 2.54,
+      "outer_w": 4.445,
+      "inner_w": 2.286,
+      "status": "datasheet",
+      "src": "Essentra 'Fiber, Wire & Cable Management' catalogue, page 276 (PDF page 101; DigiKey-hosted copy https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/27/Fiber%2CWire%2CCable_Catalog.pdf, the datasheet link of DigiKey DE RP814-ND, PDF of 2020-01-29; read 2026-11-07 with curl (default User-Agent), the drawing rendered with PyMuPDF and read from the rendering; essentracomponents.com answered 403): MGS-2-01 / MS21266-2N panel 0.052-0.085 in, A (overall width) 0.175, B (inside width) 0.090, C (base thickness) 0.055, D (inside depth) 0.100 in (25.4 mm/in: 4.445, 2.286, 1.397, 2.54 mm); in the profile view D runs from the leg tips to the inner bottom of the U and C from there to the outer bottom (W2 MECH-6 review: the vector dimension lines read with PyMuPDF and the drawing rendered at 1400 dpi on 2026-11-07), so the overall height is C + D = 0.155 in (3.937 mm); slot pitch .067 (1.7) typ.; strip 12.620/12.750 in (320.5/323.9 mm); minimum hole diameter 1 in (round holes; straight slot edges take cut pieces). The model takes C as the opening loss per edge, overall_h - C = D (2.54 mm) as the leg reach from the edge onto each plate face and (A - B) / 2 + (B - plate t) as the height a leg stands proud of a plate face (worst case, panel against one leg)"
+    },
+    "hookup_wire_ptfe": {
+      "name": "PTFE hook-up wire of parts DB AI-WIRE-PTFE (Alpha Wire): insulation OD [nominal, tolerance] per AWG",
+      "od": {"18": [1.75, 0.13], "20": [1.47, 0.1], "22": [1.07, 0.05], "24": [0.91, 0.05], "26": [0.99, 0.1]},
+      "mpn": {"18": "5857", "20": "5856", "22": "2845/7", "24": "2844/7", "26": "5853"},
+      "status": "datasheet",
+      "src": "SRC-1 rows of design/parts/snapshots/2026-11-07-w2-src1-manual.json: web:alphawire-5857, web:alphawire-5856, web:alphawire-2845-7, web:alphawire-2844-7 and web:alphawire-5853 (Alpha Wire customer specifications, read 2026-11-07: OD 0.069 +-0.005, 0.058 +-0.004, 0.042 +-0.002, 0.036 +-0.002 and 0.039 +-0.004 in, 25.4 mm/in); the series per AWG are those of parts DB AI-WIRE-PTFE"
+    },
+    "ribbon_3m_3365_40": {
+      "name": "3M 3365/40 flat ribbon of parts DB AI-IDC-RIBBON-40: 40 x 28 AWG at 1.27 mm",
+      "w": 50.8,
+      "t": 0.89,
+      "conductors": 40,
+      "status": "listing",
+      "src": "SRC-1 row design/parts/snapshots/2026-11-07-w2-src1-manual.json digikey:19-3365/40300-DS-ND (DigiKey DE parent page 3365/40-ND, read 2026-11-07): width 50.80 mm, thickness 0.89 mm; the 3M data sheet TS-0080 was not read"
+    },
+    "ntc_mf52a": {
+      "name": "Semiware MF52A103F3950 leaded bead NTC (TH301, TH302)",
+      "bead_d": 2.2,
+      "body_l": 4.0,
+      "solder_from_bead_min": 6.0,
+      "status": "repo",
+      "src": "design/E3.json TH301 / TH302 notes (maker revA2.0, https://semiware.com/uploads/datasheet/MF52A103F3950.pdf as read there: bead diameter up to 2.2 mm, body length 4 mm, lead pitch 2.0 mm, solder at least 6 mm from the bead); not re-read in W2 MECH-6"
     }
   }
 }

@@ -6,7 +6,7 @@
       "stem": "E1",
       "instance": "a943ccec-2813-5b6f-9c47-b1bcb52cee7f",
       "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/2)",
-      "components": 73,
+      "components": 75,
       "sheet": "E1",
       "notes": [
         "E1-03",
@@ -25,14 +25,14 @@
         "E1-02": 110,
         "E1-06": 110
       },
-      "fill": 0.655,
+      "fill": 0.701,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 72,
         "ground_symbols": 38,
-        "junctions": 28,
+        "junctions": 30,
         "wire_crossings": 4,
-        "wires": 194
+        "wires": 198
       }
     },
     {
@@ -245,7 +245,7 @@
       "stem": "E3_03",
       "instance": "c85ad7f8-a0d1-5e29-929c-feed1fd251ab",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (3/3)",
-      "components": 22,
+      "components": 25,
       "sheet": "E3",
       "notes": [
         "E3-01"
@@ -254,14 +254,14 @@
       "note_wrap_chars": {
         "E3-01": 110
       },
-      "fill": 0.448,
+      "fill": 0.501,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 101,
-        "ground_symbols": 16,
-        "junctions": 19,
-        "wire_crossings": 7,
-        "wires": 155
+        "global_labels": 108,
+        "ground_symbols": 18,
+        "junctions": 20,
+        "wire_crossings": 10,
+        "wires": 176
       }
     },
     {
@@ -368,86 +368,86 @@
       "stem": "E5",
       "instance": "7961f449-97be-5318-9750-0d1b8f253ccf",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (1/2)",
-      "components": 56,
+      "components": 49,
       "sheet": "E5",
       "notes": [
-        "E5-10",
+        "E5-08",
+        "E5-02",
+        "N-E5-04",
+        "N-E5-05",
+        "E5-07",
+        "E5-01",
+        "E5-06",
         "E5-09",
-        "E5-04",
-        "N-E5-01",
-        "N-E5-02",
-        "E5-05",
-        "N-E5-03",
-        "E5-03"
+        "N-E5-02"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E5-10": 110,
+        "E5-08": 110,
+        "E5-02": 110,
+        "N-E5-04": 110,
+        "N-E5-05": 110,
+        "E5-07": 110,
+        "E5-01": 110,
+        "E5-06": 110,
         "E5-09": 110,
-        "E5-04": 110,
-        "N-E5-01": 110,
-        "N-E5-02": 110,
-        "E5-05": 110,
-        "N-E5-03": 110,
-        "E5-03": 110
+        "N-E5-02": 110
       },
-      "fill": 0.734,
+      "fill": 0.754,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 91,
-        "ground_symbols": 48,
-        "junctions": 36,
-        "wire_crossings": 2,
-        "wires": 255
+        "global_labels": 78,
+        "ground_symbols": 37,
+        "junctions": 45,
+        "wire_crossings": 3,
+        "wires": 238
       }
     },
     {
       "stem": "E5_02",
       "instance": "2f560f15-377c-5a7b-8d16-c38c753251d6",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (2/2)",
-      "components": 30,
+      "components": 42,
       "sheet": "E5",
       "notes": [
-        "E5-01",
-        "E5-06",
-        "E5-08",
-        "E5-02",
-        "N-E5-04",
-        "N-E5-05",
-        "E5-07"
+        "E5-05",
+        "N-E5-03",
+        "E5-10",
+        "E5-04",
+        "N-E5-01",
+        "E5-03"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E5-01": 110,
-        "E5-06": 110,
-        "E5-08": 110,
-        "E5-02": 110,
-        "N-E5-04": 110,
-        "N-E5-05": 110,
-        "E5-07": 110
+        "E5-05": 110,
+        "N-E5-03": 110,
+        "E5-10": 110,
+        "E5-04": 110,
+        "N-E5-01": 110,
+        "E5-03": 110
       },
-      "fill": 0.549,
+      "fill": 0.663,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 56,
-        "ground_symbols": 24,
-        "junctions": 30,
+        "global_labels": 73,
+        "ground_symbols": 38,
+        "junctions": 23,
         "wire_crossings": 0,
-        "wires": 155
+        "wires": 184
       }
     }
   ],
-  "components": 839,
+  "components": 849,
   "supply_annotations": 25,
-  "connected_contacts": 2555,
+  "connected_contacts": 2579,
   "nets": 486,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 1146,
-    "ground_symbols": 526,
-    "junctions": 485,
-    "wire_crossings": 46,
-    "wires": 3046
+    "global_labels": 1157,
+    "ground_symbols": 531,
+    "junctions": 490,
+    "wire_crossings": 50,
+    "wires": 3083
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -1112,10 +1112,10 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295",
+    "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
     "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
-    "E3.json": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b",
-    "E4.json": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17",
-    "E5.json": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
+    "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
+    "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
+    "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   }
 }

@@ -640,9 +640,12 @@ class Harness:
             for key, ukey, fkey in (("from", "from_unit", "family_from"), ("to", "to_unit", "family_to")):
                 unit = w[ukey]
                 m = re.match(r"([A-Z][A-Z0-9]*\d)\.(\S+)", w[key])
-                if not m or not self.model.is_board(unit) or m[1] not in self.model.by_ref:
+                if not m or m[1] not in self.model.by_ref:
                     continue
                 ref = m[1]
+                # a header of an insert board (W2 GR-4: J514 on T7_INSERT in the cable unit T7A) is a board connector too
+                if not self.model.is_board(unit) and ref not in D.HEADERS:
+                    continue
                 if ref not in D.HEADERS and ref not in EXPLICIT_SEGMENTS:
                     continue
                 found.setdefault(ref, {"unit": unit, "segments": set(), "used": set()})
@@ -768,8 +771,8 @@ def render_harness(model, h):
          "рішення asm; mechanical/params/mechanical.json harness_routes"),
         ("Розвантаження натягу", "стяжка до пластини або бобишки ≤30 мм від кожного роз'єму, далі кожні 50–80 мм; "
          "силові джгути не ближче 20 мм до РЧ-відсіку й фідера GNSS; джгути між лицьовим і тильним шаром — лише крізь прорізи пластини з кантом: "
-         "SL1 (стрічка S01 над верхнім краєм Q6A), SL2 (PWR/CTRL → тильний шар: S03, S04, S13–S15, S17, S18, S20–S22, S24, S25, S30, S35), SL3 (нижній ряд "
-         "портів, GX16, PD-провід: S11, S23, S32, S34); ширина й межі прорізів — креслення M-07", "рішення asm; mechanical/params/mechanical.json plate slots"),
+         "SL1 (стрічка S01 і кабель вентилятора S27 над верхнім краєм Q6A), SL2 (PWR/CTRL → тильний шар: S03, S04, S06, S07, S13–S15, S17, S18, S20–S22, S24, S25, S30, S35, S36), SL3 (нижній ряд "
+         "портів, GX16, PD-провід: S11, S23, S32, S34); кант — Essentra MGS-2-01 (AI-EDGE-TRIM) або поліімідна стрічка 3M 5413 (AI-POLYIMIDE-TAPE; plate.slot_trim); розміри — креслення M-07", "рішення asm; mechanical/params/mechanical.json plate slots"),
         ("Пайка до модулів", "лудити, паяти, термоусадка 2:1 на кожному з'єднанні (як J21, 08 крок 7.7); жилу не згинати біля пайки", "08 крок 7.7"),
         ("Інструмент", f"Mini-Fit Jr.: {mfj['tool']}; Micro-Fit: {mf['tool']}; PH: {ph['tool']}; PHD: {D.FAMILIES['PHD']['tool']}",
          "MOLEX-5556; MOLEX-43030; JST-PH; JST-PHD"),
@@ -798,7 +801,7 @@ def render_harness(model, h):
     lines.append("Кожен роз'єм джгута на платі — позиційне позначення графа `design/E[1-5].json` (W2 GR-3): контакт таблиці проводів = контакт "
                  "схеми й посадкового місця (`tools/assembly_data.py` HEADERS; генератор зупиняється на кінці проводу на платі без такого контакту). "
                  "Мітка — колишній ідентифікатор X хвилі 1 або назва зведення `pcb/partition-spec.json` (один роз'єм на напрям і зону виходу, джгут "
-                 "розходиться після прорізу); плата — фізична плата за доменом `pcb/prepare.py` (PWR_A, PWR_B, CTRL, RF, HATCH). Вилки на платі купуються "
+                 "розходиться після прорізу); плата — фізична плата за доменом `pcb/prepare.py` (PWR_A, PWR_B, CTRL, RF, HATCH, вставка T7_INSERT). Вилки на платі купуються "
                  "за базою деталей (10-zakupivlia, BOM JLC); розетки кабелю й клеми — лише за [16-dzhgut-pidsumok.csv](16-dzhgut-pidsumok.csv) "
                  "(одне джерело, без подвійного рахунку). Висоти: на CTRL усі вилки — на нижньому боці (PH і PHD бічного входу, Micro-Fit лише кутова "
                  "43650-0n00), на RF — лише PH бічного входу, на PWR-B — PH/PHD бічного входу, на PWR-A — Micro-Fit, Mini-Fit Jr. і PH верхнього входу "
@@ -975,7 +978,7 @@ HARNESS_FINDINGS = [
     "U506 (HDMI pin 18) і U505 (VBUS T7) — у прохідних вставках кабелів (домени pcb/prepare.py HDMI_INSERT і T7_INSERT); розкладка вставок — хвиля 2.",
     "IMU-пак містить деталі E5 (U552, D502, C519, C520) і E3 «External IMU» — носійна плата IMU_CARRIER у Hammond 1550Z101 (домен pcb/prepare.py, "
     "конверт у mechanical/params/imu_pack.json); розкладка — хвиля 2.",
-    "Точка відводу VCC_3V3_MKEY на Q6A (U500) не визначена — S17 TBD до прозвонки Q6A (E5/E2).",
+    "Відвід VCC_3V3_MKEY на Q6A (U500) — площадки C17 (22 мкФ, вихід U20, нижній бік; схема й карта розміщення Radxa V1.21, W2 MECH-6): паяти після приймальних тестів Q6A; котра площадка VCC — прозвонка на отриманій платі (OPEN).",
     "Стрічка IDC S01 не несе 5 V: контакти 2 і 4 J20 (VCC_5V_PERI) лишаються лише на Q6A, провідники 2 і 4 стрічки вирізано на обох розетках "
     "(N-E3-01, build/21 E5); якщо цей крок пропустити, 5 V Q6A без межі струму опиниться в стрічці 28 AWG. 3.3 V (контакти 1/17) захищені лише "
     "бортовими колами Q6A; у стрічці — лише логіка.",
@@ -995,9 +998,9 @@ HARNESS_FINDINGS = [
     "43045-0812 — 9.91 мм (J206), Mini-Fit Jr. 0039288020/0039288040 — 12.8 мм (J105–J108); висоти — LCSC C293547, C293740, C277661, C490534, "
     "C240829 «Z-Height of the Board» (пошук JLCPCB, 07.11.2026). Їхню зону висоти дає MECH-3 (pcb/partition-spec.json height_rule.finding) — "
     "OPEN; PH верхнього входу (8 мм з розеткою, каталог ePH) у межу 9.0 мм вміщується.",
-    "PPS (STACK §5.2, ≤20 см): S01 + S25 за моделлю 322 мм, тож PPS, UART6 і один GND ідуть гілкою PPS провідників 6/7/16/18 стрічки S01 одразу від "
-    "розетки J20 до P1 LC76G — 196 мм за моделлю з межею 200 мм (кінці попередні: розташування P1 на Waveshare 24370 і контакту 1 J20 не прочитано; "
-    "R-PPS-LEN OPEN, build/15 W2 MECH-1); S25 несе лише живлення й RESET LC76G. Пігтейл P7 W407 100 мм також не дістає (≥113 мм по прямій).",
+    "PPS (STACK §5.2, ≤20 см): S01 + S25 за моделлю понад 200 мм, тож PPS, UART6 і один GND ідуть гілкою PPS провідників 6/7/16/18 стрічки S01 одразу від "
+    "розетки J20 до P1 LC76G — у межах 200 мм за моделлю і в найгіршому випадку (контакт 1 J20 ±16.5 мм, висота P1 у резерві ±6.6 мм; R-PPS-LEN, модель; "
+    "build/15 W2 MECH-1, W2 MECH-6); S25 несе лише живлення й RESET LC76G. P7 — пігтейл W407 Taoglas CAB.01029 250 мм, запас ≥30 мм над трасою (R-P7-PIGTAIL).",
 ]
 
 
@@ -1258,6 +1261,22 @@ def render_labels_svg(model, h):
             + "\n".join(out) + "\n</svg>\n")
 
 
+# Physical boards of the bare-board check (build/19 §2, build/20 B0): PWR-A and PWR-B are one harness unit PWR but two
+# boards, powered up in stages (build/19 §4 п. 1, W2 DOCS-PCB).
+BRINGUP_BOARDS = ("PWR_A", "PWR_B", "RF", "CTRL")
+# Only the PWR pair is written with a hyphen in the docs; every other board keeps its pcb/boards/<B>.json name (T7_INSERT, HDMI_INSERT).
+BOARD_LABEL = {"PWR_A": "PWR-A", "PWR_B": "PWR-B"}
+
+
+def board_label(board):
+    return BOARD_LABEL.get(board, board)
+
+
+def physical_board(model, ref):
+    """Board a ref is soldered to: PHYSICAL_BOARD of its components.csv domain, else its unit (modules, inserts)."""
+    return D.PHYSICAL_BOARD.get(model.partition.get(ref, {}).get("board_candidate", ""), model.unit_of[ref])
+
+
 def tp_rows(model):
     rows = []
     for comp in sorted((c for c in model.components if c["kind"] == "testpoint"), key=lambda c: ref_key(c["ref"])):
@@ -1265,7 +1284,7 @@ def tp_rows(model):
         if net not in D.TP_EXPECT:
             fail(f"test point {comp['ref']} on {net} has no expected values in tools/assembly_data.py")
         expect, en, src = D.TP_EXPECT[net]
-        board = model.unit_of[comp["ref"]]
+        board = board_label(physical_board(model, comp["ref"]))
         rows.append((comp["ref"], board, net, en or "—") + tuple(expect.get(s[0], "—") for s in D.STATES[1:]) + (src,))
     return rows
 
@@ -1273,7 +1292,7 @@ def tp_rows(model):
 def board_rails(model, board):
     rails = []
     for net in sorted(model.nets):
-        pins = model.nets[net].get(board, [])
+        pins = [p for unit_pins in model.nets[net].values() for p in unit_pins if physical_board(model, p[0]) == board]
         if net in ("GND",) or not pins:
             continue
         if net in D.NET_CURRENT or any(p[2] == "power_out" for p in pins):
@@ -1291,23 +1310,33 @@ def render_bringup(model, h):
     lines.append("\n## 2. Гола плата: опір шин до GND (стан B0)\n")
     lines.append(f"До і після оплавлення, DMM у режимі опору, щуп «−» на GND. Записати значення; менше {D.SHORT_LIMIT_OHM} Ω — зупинитися і "
                  "шукати коротке (критерій asm). Значення другої плати порівнюються з першою.\n\n")
-    for board in ("PWR", "RF", "CTRL"):
+    for board in BRINGUP_BOARDS:
         rails = board_rails(model, board)
-        lines.append(f"**{board}:** " + ", ".join(rails) + "\n\n")
+        lines.append(f"**{board_label(board)}:** " + ", ".join(rails) + "\n\n")
+    lines.append("Шина, що переходить між PWR-A і PWR-B через стик B2B, стоїть в обох списках: кожну голу плату міряють окремо.\n\n")
     lines.append("\n## 3. Контрольні точки за станами\n")
     header = ["TP", "плата", "мережа", "EN для S4"] + [s[0] for s in D.STATES[1:]] + ["джерело"]
     lines.append(table(header, tp_rows(model)))
     lines.append("\n## 4. Порядок запуску кожної плати\n")
+    pwr_b_tps = ", ".join(r[0] for r in tp_rows(model) if r[1] == board_label("PWR_B"))
     lines.append(
-        "1. **PWR** (21 крок E2: гайки PEM у пластині, U107 і U108 впаяно в PWR, INA228 і #2813 під'єднані джгутами S06–S07). "
-        "Живлення — лише стендовим проводом у вхідний роз'єм S05 на PWR: розетка Mini-Fit Jr. 5557 (клема 0039000060), 18 AWG, "
-        "≤0.5 м, запобіжник 7.5 A у розриві, бо F101 стоїть у паку; пак від'єднано. TP104 — лише щуп вимірювання, не точка живлення. "
-        "Ступінь L0 → S0: TP104, TP106, TP105, TP108; потім кнопка → S1 (ступінь L1): TP201, TP205; TP101/TP102 — лише сервісно з 10k до 3.3 V.\n"
+        "1. **PWR-A, потім PWR-A + PWR-B** (21 крок E2: гайки PEM у пластині, U107 і U108 впаяно в PWR-A, INA228 і #2813 під'єднані "
+        "джгутами S06–S07 і лежать ізольовано на столі). Живлення — лише стендовим проводом у вхідний роз'єм S05 (J105) на PWR-A: "
+        "розетка Mini-Fit Jr. 5557 (клема 0039000060), 18 AWG, ≤0.5 м, запобіжник 7.5 A у розриві, бо F101 стоїть у паку; пак від'єднано. "
+        "TP104 — лише щуп вимірювання, не точка живлення. (а) **PWR-A сама**: PWR-B ще не встановлено, стик B2B вільний (контактів гнізда "
+        "QSH-060 з кроком 0.5 мм щупом не торкатися); EN-входи PWR-A тримають власні 100k на PWR-A. Ступінь L0 → S0: TP104, TP106, TP105, "
+        "TP108; потім вбудована кнопка модуля #2813 U106 → S1 (ступінь L1; кнопка перемикає ввімк./вимк. — pololu.com/product/2813, "
+        "прочитано 07.11.2026; SW301 на CTRL доходить до PWR-A лише через S02 і стик B2B і під'єднується в п. 3): TP201, TP205; "
+        "TP101/TP102 — лише сервісно з 10k до 3.3 V. (б) **PWR-A + PWR-B**: знеструмити (кнопкою #2813 → S0, стендовий провід "
+        "від'єднати), встановити PWR-B на стик B2B (21 крок E2), потім знову L0 → S0 і кнопка #2813 → S1 (L1): TP PWR-A — "
+        f"як у (а); TP PWR-B ({pwr_b_tps}) — за §3 у стані S1 (CTRL ще не під'єднано, усі EN низькі). Струм L1 записати окремо для (а) "
+        "і (б).\n"
         "2. **Q6A на J21** (21 крок E3): ступінь L2 → S2.\n"
-        "3. **PWR + CTRL + Q6A** (21 крок E6, після S01 і S02): у S2 усі EN низькі (100k). EN-тести — з Q6A по I2C2 (i2cset до MCP23017 "
+        "3. **PWR-A + PWR-B + CTRL + Q6A** (21 крок E6, після S01 і S02): у S2 усі EN низькі (100k). EN-тести — з Q6A по I2C2 (i2cset до MCP23017 "
         "#1 0x20, #3 0x22, #4 0x23 на CTRL за картою E3; labd зупинено): по одному EN=1 → стан S4 відповідного рядка §3; DISP12 "
         "(GP16 Pico) → S3 зі ступенем L3; кнопки й енкодери — через Pico.\n"
-        "4. **RF** (21 крок E4) — живлення лише через S03/S04 від PWR; HMC7992 — порядок GND → VDD → керування (08 крок 0); без генератора на портах.\n"
+        "4. **RF** (21 крок E4) — живлення лише через S04 від PWR-B (зміщення і LAB5_RLY котушок реле) і S03 від CTRL (керування); "
+        "HMC7992 — порядок GND → VDD → керування (08 крок 0); без генератора на портах.\n"
         "5. Після кожного кроку — бланк build/20.\n")
     lines.append("\n## 5. Ступені обмеження струму стенда\n")
     lines.append(table(["ступінь", "конфігурація", "обмеження, A", "очікування (модель)", "джерело"], D.STAGES))
@@ -1370,9 +1399,9 @@ def v21_row(rid, proc, threshold):
 def form_rows(model):
     contract = json.loads((model.base / "design/readiness-contract.json").read_text(encoding="utf-8"))
     rows = []
-    for board in ("PWR", "RF", "CTRL"):
+    for board in BRINGUP_BOARDS:
         for rail in board_rails(model, board):
-            rows.append(("B0", f"{board}/{rail}", f"опір {rail} до GND, гола плата", f"≥{D.SHORT_LIMIT_OHM} Ω; записати до і після оплавлення"))
+            rows.append(("B0", f"{board_label(board)}/{rail}", f"опір {rail} до GND, гола плата", f"≥{D.SHORT_LIMIT_OHM} Ω; записати до і після оплавлення"))
     for tp in tp_rows(model):
         for i, state in enumerate(D.STATES[1:]):
             expect = tp[4 + i]
@@ -1392,7 +1421,7 @@ def render_form(model):
              "Друкувати з цього файлу (pandoc → HTML/PDF) або з CSV [20-forma-stendu.csv](20-forma-stendu.csv). Поля результату порожні: їх заповнює стенд. "
              "PASS заздалегідь не вписаний; ворота з `design/readiness-contract.json` лишаються OPEN, доки доказ не записано за 09 §0 п. 8.\n",
              "\n## 1. Екземпляр\n",
-             table(["поле", "значення"], [("серійний номер пристрою", ""), ("ревізії плат PWR / RF / CTRL", ""), ("Q6A S/N, UFS", ""),
+             table(["поле", "значення"], [("серійний номер пристрою", ""), ("ревізії плат PWR-A / PWR-B / RF / CTRL", ""), ("Q6A S/N, UFS", ""),
                                           ("Pico / RP2040-Zero ID", ""), ("дата, виконавець", ""), ("температура / вологість", "")]),
              "\n## 2. Прилади\n",
              table(["прилад", "модель", "S/N або ID", "дата калібрування"], [("DMM", "", "", ""), ("лабораторне джерело", "", "", ""),
@@ -1447,8 +1476,10 @@ def render_order(model, h):
                  "4. microSD Q6A прорізу не має — лише з відкритим корпусом (після п. 3).\n"
                  "5. Джгути від'єднувати лише за корпус розетки (фіксатор Micro-Fit натиснути); PH — за корпус, не за дроти.\n"
                  "6. Зворотне збирання — крок E10: перевірка 19 §6, F101 — у тримач лише після неї, потім закриття (F12, F13) і тримач T7 (F33).\n"
-                 "7. Зберігання понад 2–4 тижні (наклейка L-F101): F101 виймається так само, тобто з відкриттям шва; доступ до F101 крізь лючок — "
-                 "питання хвилі 2 (build/15 «Ущільнення»).\n")
+                 "7. Зберігання понад 2–4 тижні (наклейка L-F101): F101 виймається так само, тобто з відкриттям шва (пп. 1 і 3): крізь лючок "
+                 "F101 недоступний — у нижній смузі лючка стос носія PACK_FUSE з тримачем і запобіжником (17.77 мм) не вміщується перед гніздом "
+                 "USB-A (11.65 мм), решту лючка займають плата лючка і кнопка EDL (правило R-F101-ACCESS, build/15 «Ущільнення»); перед повторним "
+                 "закриттям — огляд EPDM-шнура (п. 3), F101 повертається в тримач кроком E10.\n")
     return "".join(lines)
 
 

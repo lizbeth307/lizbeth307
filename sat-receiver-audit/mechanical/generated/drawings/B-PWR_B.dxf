@@ -185,7 +185,7 @@ TEXT
 40
 1.6
 1
-E1: CTRL harness S02 (two JST PHD side entry, consolidated S02-P
+E1: CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J20
 50
 0
 0
@@ -217,7 +217,7 @@ TEXT
 40
 1.6
 1
-E2: SL2-bound JST PH (consolidated SL2-PWR-PH: S20, S21, S22, S35, S36) an
+E2: J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 
 50
 0
 0

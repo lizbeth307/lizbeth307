@@ -1,0 +1,92 @@
+{
+ "schema": 1,
+ "date": "2026-11-07",
+ "note": "MECH-6 (wave 2) reads of 2026-11-07: DigiKey DE pages of the Taoglas P7 pigtails (re-read, the READS-RF rows of the same day give the catalogue), the Waveshare LC76G outline drawing, the Heyco grommet-roll catalogue page and the Radxa Dragon Q6A schematic and components placement map V1.21 (VCC_3V3_MKEY tap). A row records what the source showed; \"stock\": null means not shown, not zero. No browser User-Agent was sent (WebFetch); PDFs and images were read from a scratch directory (PyMuPDF text layer or rendering) and are not committed; the Radxa files are fetch-only (licence not stated).",
+ "entries": {
+  "digikey:931-CAB.01029-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/taoglas-limited/CAB-01029/25550248",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "CAB.01029",
+   "manufacturer": "Taoglas Limited",
+   "stock": 1025,
+   "stock_text": "1.025",
+   "status": "Active",
+   "price": "EUR 4.73 @1",
+   "note": "COAX CBL U.FL, MHF1 TO SMA 9.8\"; cable length 9.843\" (250.00 mm), 1.13 mm OD; 1st connector U.FL (UMCC), I-PEX MHFI plug, right angle; 2nd SMA jack, female, panel mount; lead time 16 weeks (manufacturer standard)"
+  },
+  "digikey:931-CAB.01028-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/taoglas-limited/CAB-01028/25550217",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "CAB.01028",
+   "manufacturer": "Taoglas Limited",
+   "stock": 668,
+   "status": "Active",
+   "price": "EUR 6.11 @1",
+   "note": "COAX CBL U.FL, MHF1 TO SMA 7.8\"; cable length 7.874\" (200.00 mm), 1.13 mm OD; U.FL (UMCC), I-PEX MHFI plug right angle to SMA jack panel mount; lead time 16 weeks; the 200 mm variant is shorter than the W407 route plus 30 mm (R-P7-PIGTAIL), so not chosen"
+  },
+  "web:waveshare-lc76g-outline": {
+   "distributor": "manufacturer drawing",
+   "url": "https://www.waveshare.com/img/devkit/accBoard/LC76G-GNSS-Module/LC76G-GNSS-Module-details-size.jpg",
+   "read": "2026-11-07",
+   "method": "WebFetch of the product page https://www.waveshare.com/lc76g-gnss-module.htm ('Outline Dimensions', SKU 24370, USD 14.99) and of the drawing image, viewed as an image",
+   "mpn": "24370",
+   "manufacturer": "Waveshare",
+   "title": "LC76G GNSS Module outline dimensions (unit: mm)",
+   "stock": null,
+   "price": null,
+   "note": "board 30.50 x 25.50 mm; mounting hole diameter 2.25 mm (the 2.25 extension lines drop from the two edges of the drilled hole, inside the annular ring; corrected in the W2 MECH-6 review after zooming the image, 2026-11-07); hole centre positions not dimensioned (scaled about 2.4 mm from the board edges, +-0.5); 8-pin MX1.25 connector on one short edge, pins from the top SCL, SDA, RST, PPS, RX, TX, GND, VCC; IPEX antenna receptacle near the opposite edge with the bundled ceramic patch antenna on a lead; no height or pin dimensions on the drawing (positions in mechanical/params/parts.json lc76g scaled on the image, +-0.5 mm). Package contents on the product page: LC76G GNSS Module, MX1.25 8PIN cable"
+  },
+  "web:heyco-grommet-rolls": {
+   "distributor": "manufacturer catalogue",
+   "url": "https://www.heyco.com/Hole_Plugs/pdf/Grommet-Rolls.pdf",
+   "read": "2026-11-07",
+   "method": "WebFetch (301 to http://www.heyco.com/wp-content/uploads/wpallimport/files/Grommet-Rolls.pdf, PDF of 2020-04-07); the table rendered with PyMuPDF and read from the rendering",
+   "mpn": "NGSG-105-100'",
+   "manufacturer": "Heyco",
+   "title": "Heyco Continuous Grommet Rolls, catalogue page 6-23",
+   "stock": null,
+   "price": null,
+   "note": "Nylon 100' (30.5 m) roll, unserrated with adhesive: NGSG-105-100' (12417 natural, 12417B black) fits panels .072-.105 in (1.8-2.7 mm), A overall height .17 in (4.4 mm), B bottom thickness .03 in (0.8 mm), C bottom width .11 in (2.8 mm); the serrated SNGS-105-100' (12421) has the same profile; polyethylene PGS-105-100' (12392) the same A/B/C at -40 to 65 C; nylon 94HB, -40 to 85 C; standard colour natural, black by special order"
+  },
+  "web:radxa-q6a-schematic-v1.21": {
+   "distributor": "manufacturer document (fetch-only)",
+   "url": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PDF (35 pages), text layer read with PyMuPDF",
+   "mpn": "Radxa Dragon Q6A V1.21",
+   "manufacturer": "Radxa",
+   "title": "Radxa Dragon Q6A schematic V1.21",
+   "stock": null,
+   "price": null,
+   "note": "p.31 (M.2 J13 'M2-M_KEY_SM_75_0D5'): VCC_3V3_MKEY = output of U20 ETA3521 (VIN VCC_5V_PERI, inductor L24 1UH 4A, feedback R88 91K 1% / R133 20K 1%), output capacitors C13 100PF 50V, C14 22UF 6.3V, C15 22UF 6.3V, C16 100NF 16V, C17 22UF 6.3V; at J13: C451 22UF 6.3V, C452 100NF 16V, C453 22UF 6.3V, C454 100NF 16V; J13 3.3V pins 2, 4, 12, 14, 16, 18, 70, 72, 74. No test point is named on the net; packages are not printed"
+  },
+  "web:radxa-q6a-placement-map-v1.21": {
+   "distributor": "manufacturer document (fetch-only)",
+   "url": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_components_placement_map_v1.21.pdf",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PDF (2 pages, vector at 1:1), outlines and labels read with PyMuPDF",
+   "mpn": "Radxa Dragon Q6A V1.21",
+   "manufacturer": "Radxa",
+   "title": "Radxa Dragon Q6A components placement map V1.21",
+   "stock": null,
+   "price": null,
+   "note": "board outline 85.0 x 56.0 mm on both pages. Page 1 (ASSM_TOP): C451 at uv (21.18, 36.21) and C453 at (7.46, 36.21) mm (top view, u from the left edge, v from the bottom edge), outline 0.60 x 1.15 mm each, below the J13 connector; C452 outline 0.30 x 0.70. Page 2 (bottom, mirrored: u = 85 - x, checked on the mounting holes 3.5 / 61.5): C17 / C14 / C15 at u 9.14 / 10.46 / 11.72, v 41.12, outline 1.32 x 2.60 mm each; U20 at (12.23, 43.48), outline 1.2 x 1.7; L24 at (9.49, 43.80), outline 2.5 x 2.5. J20 has no pin-1 mark on page 1"
+  },
+  "web:essentra-fwc-catalogue-mgs": {
+   "distributor": "manufacturer catalogue (DigiKey-hosted copy)",
+   "url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/27/Fiber%2CWire%2CCable_Catalog.pdf",
+   "read": "2026-11-07",
+   "method": "curl (default User-Agent) of the PDF linked as the datasheet of DigiKey DE RP814-ND (104 pages, PDF of 2020-01-29); page 101 (printed 276) text read and the drawing rendered with PyMuPDF; https://www.essentracomponents.com/en-ca/p/grommet-strips-ms21266-strips/mgs-2-01 and /en-us/... answered 403 on 2026-11-07",
+   "mpn": "MGS-2-01",
+   "manufacturer": "Essentra Components",
+   "title": "Essentra Fiber, Wire & Cable Management catalogue: MGS Series MS21266 Grommet Strip",
+   "stock": null,
+   "price": null,
+   "note": "MGS-2-01 / MS21266-2N: panel thickness 0.052-0.085 in, A 0.175, B 0.090, C 0.055, D 0.100 in (drawing: A overall width, B inside width, C base thickness, D inside depth from the leg tips to the inner bottom of the U, so the overall height is C + D = 0.155 in; D corrected in the W2 MECH-6 review from the vector dimension lines read with PyMuPDF and a 1400 dpi rendering, 2026-11-07); slot pitch .067 (1.7) typ.; strip 12.620/12.750 in (320.5/323.9 mm); UL94 V-2 nylon 6/6, natural; complies with NASM21266; minimum hole diameter 1 in; bulk pack 100"
+  }
+ }
+}

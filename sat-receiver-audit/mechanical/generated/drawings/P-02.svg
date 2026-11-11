@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>P-02 Зовнішній S-band вузол: свердління стінок</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params fe0187c59c26</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 041e1dec897f</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="30" y1="142" x2="150" y2="142" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="150" y1="142" x2="150" y2="66.5" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -158,7 +158,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення P-02 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: корпус PC (Hammond 1554U2GY)</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params fe0187c59c26 · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 041e1dec897f · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Зовнішній S-band вузол: свердління стінок</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">вид ззовні кожної стінки, 1:1; z — від дна корпусу</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SMA-прохідники RF_IN/RF_OUT: виріз ⌀6.47 з лискою 5.94 за кресленням прохідника гніздо-гніздо Fairview SM4955 (панель ≤6.35); RF_IN, RF_OUT і PWR — у торцевих стінках, товщину яких креслення Hammond 1554U не розмірює (≤3.94 за різницею довжин; переріз B-B дає 3 лише бічним стінкам); кільця в даташиті SM4955 немає — ущільнення й закупівельна позиція AI-SMA-BULK-POD — TBD (SRC-2).</text>
