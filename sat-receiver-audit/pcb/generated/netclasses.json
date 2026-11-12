@@ -314,6 +314,26 @@
       "vias_per_transition_status": "advisory design value: neither KiCad DRC nor pcb/check_boards.py counts vias per transition (review.json lists it under unverified)",
       "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
     },
+    "PWR06A": {
+      "kind": "power",
+      "capacity": {
+        "continuous_a": 0.45,
+        "continuous_dt_c": 10,
+        "protective_a": 0.6,
+        "protective_dt_c": 20,
+        "why": "CTRL only: right LAB5 group behind the TPS2553DRVR U316 (RILIM 49.9k: IOS 0.475-0.582 A, TI SLVS841G eq. 1 and 3); continuous budget fan 0.25 + GNSS 0.10 + Pico VSYS 0.10 A (W2 CTRL-4)"
+      },
+      "scope": "limited class: only the nets of LIMITED_NETS (E3_LAB5_LIM); width_class() never selects it",
+      "outer_min_width_mm": 0.15,
+      "outer_ipc_width_mm": 0.0999,
+      "split_outer_per_layer_mm": null,
+      "inner_min_width_mm": 0.6,
+      "inner_ipc_width_mm": 0.5981,
+      "clearance_mm": 0.15,
+      "vias_per_transition": 1,
+      "vias_per_transition_status": "advisory design value: neither KiCad DRC nor pcb/check_boards.py counts vias per transition (review.json lists it under unverified)",
+      "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC); outer width not below the project track"
+    },
     "RF50": {
       "kind": "rf",
       "layer": "F.Cu over In1.Cu GND (L1 over L2)",
@@ -604,7 +624,7 @@
           "segment": "S10",
           "continuous_a": 3.0,
           "protective_a": 7.5,
-          "source": "tools/assembly_data.py:537"
+          "source": "tools/assembly_data.py:539"
         }
       ],
       "required_outer_width_mm": 3.1766
@@ -989,6 +1009,20 @@
       },
       "in_graph": true,
       "required_outer_width_mm": 0.0203
+    },
+    "E3_LAB5_LIM": {
+      "class": "PWR06A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:534",
+      "inputs": {
+        "continuous_a": 0.45,
+        "protective_a": 0.582,
+        "protection": "U316 TPS2553DRVR, сталий струм (RILIM 49.9k: 0.475–0.582 A, TI SLVS841G рівн. 1 і 3)",
+        "current_source": "права група LAB5 на CTRL (D301, U315, Q304): вентилятор 0.25 + GNSS 0.10 + Pico VSYS 0.10 A — бюджет, рішення W2 CTRL-4, виміряти"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0999,
+      "required_inner_width_mm": 0.5981
     },
     "E3_PICO3V3": {
       "class": "SIG",
@@ -1891,13 +1925,13 @@
           "segment": "S28",
           "continuous_a": 0.5,
           "protective_a": 4.0,
-          "source": "tools/assembly_data.py:538"
+          "source": "tools/assembly_data.py:540"
         },
         {
           "segment": "S13",
           "continuous_a": 0.3,
           "protective_a": 4.0,
-          "source": "tools/assembly_data.py:539"
+          "source": "tools/assembly_data.py:541"
         }
       ],
       "required_outer_width_mm": 1.3348
@@ -2070,17 +2104,18 @@
     }
   },
   "summary": {
-    "nets": 152,
+    "nets": 153,
     "by_class": {
       "BATT": 13,
       "DCTAP": 12,
+      "PWR06A": 1,
       "PWR1A": 33,
       "PWR2A": 5,
       "PWR3A": 14,
       "RF50": 71,
       "SIG": 4
     },
-    "net_current_entries": 37,
+    "net_current_entries": 38,
     "seg_current_entries": 3,
     "not_in_graph": []
   },
@@ -2302,6 +2337,10 @@
       {
         "netclass": "PWR1A",
         "pattern": "E3_GNSS5V"
+      },
+      {
+        "netclass": "PWR06A",
+        "pattern": "E3_LAB5_LIM"
       },
       {
         "netclass": "RF50",

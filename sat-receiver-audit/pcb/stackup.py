@@ -184,6 +184,14 @@ CLASS_CAPACITY = collections.OrderedDict([
     ('BATT', (4.6, 7.5, 'battery path 4.6 A model and F101 7.5 A', True, False)),
 ])
 POWER_CLASSES = list(CLASS_CAPACITY)
+# Limited classes (W2 CTRL-4): a power class sized for the current limit of one load switch. A net reaches it only
+# through LIMITED_NETS, never through width_class(), so no other net and no other board changes class; the .kicad_dru
+# rules stay those of POWER_CLASSES (no board copies a rule file yet).
+LIMITED_CLASSES = collections.OrderedDict([
+    ('PWR06A', (0.45, 0.60, 'CTRL only: right LAB5 group behind the TPS2553DRVR U316 (RILIM 49.9k: IOS 0.475-0.582 A, TI SLVS841G '
+                'eq. 1 and 3); continuous budget fan 0.25 + GNSS 0.10 + Pico VSYS 0.10 A (W2 CTRL-4)', False, True)),
+])
+LIMITED_NETS = {'E3_LAB5_LIM': 'PWR06A'}
 RF_PIN_NAMES = {
     'ic': {'RF1', 'RF2', 'RF3', 'RF4', 'RFC'},
     'connector': {'CENTER'},
@@ -261,6 +269,21 @@ def class_table():
             'vias_per_transition_status': VIA_ADVISORY,
             'basis': 'IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)'}
         classes[name] = entry
+    for name, (cont, prot, why, split, inner) in LIMITED_CLASSES.items():
+        classes[name] = {
+            'kind': 'power', 'capacity': {'continuous_a': cont, 'continuous_dt_c': DT_CONT, 'protective_a': prot, 'protective_dt_c': DT_PROT, 'why': why},
+            'scope': 'limited class: only the nets of LIMITED_NETS (' + ', '.join(n for n, c in sorted(LIMITED_NETS.items()) if c == name) + '); '
+                     'width_class() never selects it',
+            'outer_min_width_mm': max(up(required_width(cont, prot)), PROJECT['track_width']),
+            'outer_ipc_width_mm': round(required_width(cont, prot), 4),
+            'split_outer_per_layer_mm': up(required_width(cont, prot, share=SPLIT_SHARE)) if split else None,
+            'inner_min_width_mm': up(required_width(cont, prot, INNER_CU, 'internal')) if inner else None,
+            'inner_ipc_width_mm': round(required_width(cont, prot, INNER_CU, 'internal'), 4) if inner else None,
+            'clearance_mm': PROJECT['clearance'],
+            'vias_per_transition': max(math.ceil(round(cont / i10, 6)), math.ceil(round(prot / i20, 6))),
+            'vias_per_transition_status': VIA_ADVISORY,
+            'basis': 'IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; '
+                     'at protective, +20 degC); outer width not below the project track'}
     z0, eps = cbcpw(RF['w'], RF['s'], RF['h'], RF['er'])
     spread = [cbcpw(w, RF['s'], h, er)[0] for w in (0.34, 0.36, 0.38) for h in (RF['h'] * 0.9, RF['h'], RF['h'] * 1.1) for er in (4.2, 4.4, 4.6)]
     lam = 299.792458 / math.sqrt(eps)  # guided wavelength (mm) at 1 GHz
@@ -408,6 +431,12 @@ def build():
         cont, prot = e['inputs']['continuous_a'], e['inputs']['protective_a']
         e['class'] = width_class(cont, prot)
         e['required_outer_width_mm'] = round(required_width(cont, prot), 4)
+        if n in LIMITED_NETS:
+            lim = LIMITED_NETS[n]
+            if cont > LIMITED_CLASSES[lim][0] + 1e-12 or prot > LIMITED_CLASSES[lim][1] + 1e-12:
+                raise SystemExit(f'stackup: {n} {cont}/{prot} A exceeds the limited class {lim} {LIMITED_CLASSES[lim][:2]}')
+            e['class'] = lim
+            e['required_inner_width_mm'] = round(required_width(cont, prot, INNER_CU, 'internal'), 4)
     rf = rf_nets(comps)
     all_nets = {**out_nets, **derived}
     for n, why in sorted(rf.items()):

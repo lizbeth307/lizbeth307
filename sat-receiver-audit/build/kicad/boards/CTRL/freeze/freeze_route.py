@@ -218,6 +218,8 @@ def main(argv=None):
                      help='remove the frozen copper of NET; it must be complete from the scripted copper (never routed here)')
     inc.add_argument('--l2', action='append', default=[], metavar='NET', help='NET may use L2 where three layers have no path')
     inc.add_argument('--l2-cascade', action='store_true', help='nets ripped on the way may use L2 too (as the first freeze)')
+    inc.add_argument('--renet', action='store_true',
+                     help='frozen islands that touch pads/scripted copper of exactly one other net take that net (a net split by a new part)')
     inc.add_argument('--allow-open', action='store_true', help='write the result with open connections left to Freerouting')
     inc.add_argument('--reason', default='', help='why (recorded in the increments list of route-frozen.json)')
     inc.add_argument('--check', action='store_true', help='compare the result with --out instead of writing it')

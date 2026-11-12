@@ -531,6 +531,8 @@ NET_CURRENT = {
     "3V3_Q6A": (0.10, 0.10, "PMIC Q6A (межа не опублікована)", "бюджет шини логіки — рішення asm"),
     "AON3V3": (0.01, 0.01, "TPS70933", "02 §4 (INA228 ≤750 мкА)"),
     "E3_PICO3V3": (0.02, 0.02, "LDO Pico", "VEML7700 — малий струм"),
+    "E3_LAB5_LIM": (0.45, 0.582, "U316 TPS2553DRVR, сталий струм (RILIM 49.9k: 0.475–0.582 A, TI SLVS841G рівн. 1 і 3)",
+                    "права група LAB5 на CTRL (D301, U315, Q304): вентилятор 0.25 + GNSS 0.10 + Pico VSYS 0.10 A — бюджет, рішення W2 CTRL-4, виміряти"),
 }
 # Per-segment overrides (segment, net) -> (cont, prot, protection, source)
 SEG_CURRENT = {

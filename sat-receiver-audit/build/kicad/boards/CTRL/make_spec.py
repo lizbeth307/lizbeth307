@@ -221,6 +221,17 @@ ANCHORS = {
     'D306': (anchor((14.5, 56.3), 0), BLOWER_NOTE),
     'Q305': (anchor((20.23, 56.4), 0), BLOWER_NOTE),
 }
+LIM_NOTE = ('top, right of the LAB5 trunk between SW302 (courtyard y <= 54.5), U310 (x >= 17.27) and J317 (y >= 59.83) '
+            '(W2 CTRL-4): U316 feeds the right LAB5 group through E3_LAB5_LIM; its EN and IN pads face the 1.85 mm trunk, OUT '
+            'drops to the via at the start of the L3 run between the D306 pads, ILIM goes right to R372, the PowerPAD, C344 and '
+            'R372 share the ground via at the B.Cu window below the blower return rail')
+NEW_PARTS = {  # W2 CTRL-4: the right LAB5 group limit (design/E3.json R-E3-18)
+    'U316': (anchor((14.45, 57.3), 180, 'F'), LIM_NOTE),
+    'R372': (anchor((16.27, 57.56), 90, 'F'), LIM_NOTE),
+    'C344': (anchor((13.6, 59.15), 0, 'F'), LIM_NOTE),
+}
+NEW_NETS = ['E3_LAB5_LIM', 'E3_U316_ILIM']
+LIM = 'E3_LAB5_LIM'
 U315_SOURCE = 'bottom strip between the cut-outs, above cut-out 1 (GNSS 5 V switch next to its capacitors)'
 BZ301_SOURCE = ('bottom, y 55-68 below cut-out 1 (courtyard x 22.7-35.8, y 54.98-68.03): over the bms zone (x 0-34, y 0-57; '
                 'fits_mm 7.48, free_mm 7.98) and the plate.main, hdmi_route_front_run, hdmi_route_front_turn and '
@@ -229,8 +240,28 @@ BZ301_SOURCE = ('bottom, y 55-68 below cut-out 1 (courtyard x 22.7-35.8, y 54.98
                 'and below free_mm 7.98: OPEN for MECH (W2 CTRL-R, review CTRL-8); it cannot move up, cut-out 1 starts at y 68.5')
 
 
+def add_parts(spec):
+    """The W2 CTRL-4 parts and nets join the template, the instance and its net map (graph refs and nets as named)."""
+    have = {p['ref'] for p in spec['parts']}
+    for ref, (anc, why) in NEW_PARTS.items():
+        if ref not in have:
+            spec['parts'].append({'ref': ref, 'source': 'graph', 'anchor': copy.deepcopy(anc), 'anchor_source': why})
+    inst = spec['instances']
+    inst['template_nets'] = sorted(set(inst['template_nets']) | set(NEW_NETS))
+    for item in inst['list']:
+        for ref in NEW_PARTS:
+            item['refs'][ref] = ref
+        item['refs'] = dict(sorted(item['refs'].items(), key=lambda kv: bg.sort_ref(kv[0])))
+        for n in NEW_NETS:
+            item['nets'][n] = n
+        item['nets'] = dict(sorted(item['nets'].items()))
+
+
 def edit_placement(spec):
+    add_parts(spec)
     for p in spec['parts']:
+        if p['ref'] in NEW_PARTS:
+            p['anchor'], p['anchor_source'] = copy.deepcopy(NEW_PARTS[p['ref']][0]), NEW_PARTS[p['ref']][1]
         if p['ref'] in ANCHORS:
             p['anchor'], p['anchor_source'] = copy.deepcopy(ANCHORS[p['ref']][0]), ANCHORS[p['ref']][1]
         if p['ref'] == 'U315':
@@ -427,6 +458,8 @@ class Copper:
 
 # ------------------------------------------------------------------ scripted copper
 BR = 'LAB5 branch (branch_exempt, '
+LIMB = ('E3_LAB5_LIM (the right LAB5 group behind U316, class PWR06A of pcb/generated/netclasses.json, measured by '
+        'pcb/check_boards.py; W2 CTRL-4; ')
 HARD = ('U310', 'U311', 'U315')  # middle GND pins of SOT-23-6 parts: placed first, they have the fewest via spots
 
 
@@ -466,11 +499,11 @@ def power_copper(cu):
     cu.track('LAB5-C342-B', 'LAB5', 'B.Cu', 0.6, [(21.9, 64.5), (21.9, 66.4), C342_1], BR + 'C342): via to the C342 LAB5 pad')
     # LAB5 islands without vias: route run 43106410728 with a scripted L3 run (J305.3 -> U315 -> fan -> D301) left 36 of
     # the 3V3_Q6A connections open (the run walled off L3); the router joins the islands in class PWR3A_BRANCH
-    cu.track('LAB5-U315', 'LAB5', 'B.Cu', 0.6, [U315_1, (U315_1[0], 97.3), (26.2, 97.3), (26.2, 99.87), C321_1],
-             BR + 'U315, C321): GNSS switch input and its capacitor, U315.1 left from above')
-    cu.track('LAB5-FAN', 'LAB5', 'B.Cu', 0.6, [R367_2, (R367_2[0], 88.7), (C320_1[0], 88.7), C320_1],
-             BR + 'R367, C320): fan switch gate pull-up and source capacitor, above C320')
-    cu.track('LAB5-Q304', 'LAB5', 'B.Cu', 0.6, [C320_1, Q304_2], BR + 'Q304): fan switch source')
+    cu.track('LIM-U315', LIM, 'B.Cu', 0.6, [U315_1, (U315_1[0], 97.3), (26.2, 97.3), (26.2, 99.87), C321_1],
+             LIMB + 'U315, C321): GNSS switch input and its capacitor, U315.1 left from above')
+    cu.track('LIM-FAN', LIM, 'B.Cu', 0.6, [R367_2, (R367_2[0], 88.7), (C320_1[0], 88.7), C320_1],
+             LIMB + 'R367, C320): fan switch gate pull-up and source capacitor, above C320')
+    cu.track('LIM-Q304', LIM, 'B.Cu', 0.6, [C320_1, Q304_2], LIMB + 'Q304): fan switch source')
     return {'D306_1': D306_1, 'YD': YD}
 
 
@@ -712,7 +745,8 @@ def scripted_copper(inp, log):
     log('Pico custom pad covers')
     pico_covers(cu)
     log('GND plane vias and 3V3_Q6A pieces')
-    gnd_smd = [p for p in inp.pads if p['net'] == 'GND' and p['kind'] == 'smd' and p['number']]
+    # the W2 CTRL-4 parts get their GND copper in ctrl4_copper(), after every search below, so the searches stay as routed
+    gnd_smd = [p for p in inp.pads if p['net'] == 'GND' and p['kind'] == 'smd' and p['number'] and p['ref'] not in NEW_PARTS]
     centroid = {}
     for part in inp.template:
         ps = [p['c'] for p in inp.pads if p['ref'] == part['ref']]
@@ -726,13 +760,12 @@ def scripted_copper(inp, log):
     # LAB5 to the Pico VSYS diode D301 on B.Cu below D306/Q305, after the GND vias of the SOT-23-6 middle pins above it
     D306_1, YD = pw['D306_1'], pw['YD']
     D301_2 = cu.pad('D301', '2')['c']
-    cu.via('LAB5-V-D306', 'LAB5', (D306_1[0], YD), BR + 'D301): B.Cu below D306 to L3')
-    cu.track('LAB5-L3-D301', 'LAB5', 'In2.Cu', 0.6, [(D306_1[0], YD), (D306_1[0], 56.4), (34.6, 56.4)],
-             BR + 'D301): 19.9 mm L3 run (0.5 oz) below cut-out 1, under the blower switch and the buzzer; on the routed '
-             'board it is the only LAB5 path to the right group (D301, U315/C321/C322, Q304/C320/R367), not the Pico VSYS '
-             'current alone (W2 CTRL-R, CTRL-4 OPEN)')
-    cu.via('LAB5-V-D301', 'LAB5', (34.6, 56.4), BR + 'D301): L3 to B.Cu above D301')
-    cu.track('LAB5-D301', 'LAB5', 'B.Cu', 0.6, [(34.6, 56.4), (D301_2[0], 55.1), D301_2], BR + 'D301): via to the D301 LAB5 pad')
+    # (the via and the first L3 corner keep their routed place during the GND via searches; ctrl4_copper() moves them)
+    cu.via('LAB5-V-D306', 'LAB5', (D306_1[0], YD), 'placeholder of the routed L3 start (removed by ctrl4_copper)')
+    cu.track('LAB5-L3-D301', LIM, 'In2.Cu', 0.6, [(D306_1[0], YD), (D306_1[0], 56.4), (34.6, 56.4)],
+             'placeholder of the routed L3 run (moved by ctrl4_copper)', check=False)
+    cu.via('LIM-V-D301', LIM, (34.6, 56.4), LIMB + 'D301): L3 to B.Cu above D301')
+    cu.track('LIM-D301', LIM, 'B.Cu', 0.6, [(34.6, 56.4), (D301_2[0], 55.1), D301_2], LIMB + 'D301): via to the D301 anode pad')
     gnd_vias(cu, [p for p in gnd_smd if p['ref'] not in HARD], centroid, skipped)
     # a skipped pad joins the nearest GND via with a stub when that is clear
     for name in list(skipped):
@@ -750,8 +783,52 @@ def scripted_copper(inp, log):
                 log(f'  joined {name} to {v["id"]}')
                 break
     log(f'  {len(cu.vias)} vias, still skipped {skipped}')
+    log('W2 CTRL-4: U316 limit of the right LAB5 group')
+    ctrl4_copper(cu)
     frozen_copper(cu, log)
     return cu, skipped
+
+
+LIM_VIA = (14.6, 55.75)  # start of the L3 run: between the D306 pads on B.Cu, left of the E3_FN_EXT diagonal on F.Cu
+LIM_GND_VIA = (17.0, 57.75)  # B.Cu window between the D306.1 pad (y <= 57.2) and the blower return rail (y >= 58.325)
+
+
+def ctrl4_copper(cu):
+    """W2 CTRL-4 (design/E3.json R-E3-18): the right LAB5 group (D301, U315, Q304) hangs on E3_LAB5_LIM behind the
+    current-limited switch U316 (TPS2553DRVR, R372 49.9k: IOS 0.475-0.582 A). Made after every GND via search, so the
+    scripted copper above stays as routed; the L3 run starts at LIM_VIA, its old start via at the D306 corner goes."""
+    P = cu.pad
+    old = [v for v in cu.vias if v['id'] == 'LAB5-V-D306']
+    assert len(old) == 1
+    cu.vias.remove(old[0])
+    l3 = [t for t in cu.tracks if t['id'] == 'LAB5-L3-D301']
+    assert len(l3) == 1
+    cu.tracks.remove(l3[0])
+    u_in, u_en, u_gnd, u_ep = P('U316', '6')['c'], P('U316', '4')['c'], P('U316', '5')['c'], P('U316', '7')['c']
+    u_out, u_ilim = P('U316', '1')['c'], P('U316', '2')['c']
+    r_ilim, r_gnd = P('R372', '1')['c'], P('R372', '2')['c']
+    c_lab5, c_gnd = P('C344', '1')['c'], P('C344', '2')['c']
+    XL = 12.2  # LAB5 trunk centre line on F.Cu (power_copper)
+    why_neck = ('LAB5 pad escape of {} into the 1.85 mm trunk (neck_exempt: the trunk carries F102 4 A, the escape only the '
+                'U316 input or a 100 nF bypass; W2 CTRL-4)')
+    cu.track('LIM-IN', 'LAB5', 'F.Cu', 0.45, [(u_in[0] - 0.1, u_in[1]), (XL + 0.4, u_in[1])], why_neck.format('U316 IN'))
+    cu.track('LIM-EN', 'LAB5', 'F.Cu', 0.45, [(u_en[0] - 0.1, u_en[1]), (XL + 0.4, u_en[1])], why_neck.format('U316 EN (EN tied to IN)'))
+    cu.track('LIM-C344', 'LAB5', 'F.Cu', 0.45, [c_lab5, (XL, c_lab5[1])], why_neck.format('C344'))
+    cu.track('LIM-OUT', LIM, 'F.Cu', 0.4, [(u_out[0] + 0.1, u_out[1]), (u_out[0] + 0.1, LIM_VIA[1] + 0.45), LIM_VIA],
+             LIMB + 'U316): OUT to the via at the start of the L3 run')
+    cu.via('LIM-V-OUT', LIM, LIM_VIA, LIMB + 'U316): F.Cu to L3 between the D306 pads')
+    cu.track('LIM-L3-D301', LIM, 'In2.Cu', 0.6, [LIM_VIA, (LIM_VIA[0], 56.4), (34.6, 56.4)],
+             LIMB + 'D301, U315, Q304): 0.6 mm L3 run (0.5 oz) below cut-out 1, under the blower switch and the buzzer, the '
+             'only path to the right group; carries at most the U316 limit IOS 0.582 A (TI SLVS841G eq. 1), within the PWR06A '
+             'inner width 0.6 mm (IPC-2221 internal 0.5981 mm at +20 degC, MODEL)')
+    cu.track('LIM-ILIM', 'E3_U316_ILIM', 'F.Cu', 0.2, [u_ilim, r_ilim], 'U316 ILIM to RILIM R372, shortest path (TI SLVS841G 9.4.1)')
+    cu.track('LIM-GND-PAD', 'GND', 'F.Cu', 0.3, [u_gnd, u_ep], 'U316 GND pin to its PowerPAD')
+    top = u_ep[1] + 1.3  # above the U316 pads (EN, FAULT), below C344
+    cu.track('LIM-GND-EP', 'GND', 'F.Cu', 0.3, [u_ep, (u_ep[0], top), (r_gnd[0], top), r_gnd],
+             'U316 PowerPAD up between the EN and FAULT pads and over FAULT to R372.2 (TI SLVS841G 9.4.1: PowerPAD to ground)')
+    cu.track('LIM-GND-C344', 'GND', 'F.Cu', 0.3, [c_gnd, (u_ep[0], top)], 'C344 ground to the U316 PowerPAD trace')
+    cu.track('LIM-GND-VIA', 'GND', 'F.Cu', 0.3, [r_gnd, (LIM_GND_VIA[0], r_gnd[1]), LIM_GND_VIA], 'R372.2, C344.2 and the U316 PowerPAD to the plane via')
+    cu.via('LIM-V-GND', 'GND', LIM_GND_VIA, 'ground via of U316, R372 and C344 (B.Cu window below the blower return rail)')
 
 
 FROZEN = BASE / 'build/kicad/boards/CTRL/route-frozen.json'
@@ -807,37 +884,27 @@ def frozen_copper(cu, log):
 
 
 # ------------------------------------------------------------------ spec texts, router settings, project
-LAB5_REFS = ['C320', 'C321', 'C322', 'C342', 'C343', 'D301', 'D306', 'Q304', 'R367', 'U315']
+LAB5_REFS = ['C342', 'C343', 'D306']  # trunk-side LAB5 branches; the right group moved to E3_LAB5_LIM (W2 CTRL-4)
 BG_REFS = ['C342', 'C343']
 BRANCH_REASON = {
-    'LAB5': ('LAB5 branch from the scripted 1.85 mm feed (J305.3 -> J314.2, F.Cu) to a low-current load. Measured on the '
-             'routed board of route run 43206372346 (W2 CTRL-R): D306, C342 and C343 sit on short scripted pieces on the trunk '
-             'side; the whole right group (the Pico VSYS diode D301, the GNSS switch U315 with C321/C322 and the fan switch Q304 '
-             'with C320/R367) hangs from J314.2 on one path: 7.9 mm of 0.6 mm B.Cu (LAB5-D306) to the via LAB5-V-D306, 19.9 mm '
-             'of 0.6 mm L3 (In2.Cu, 0.5 oz = 0.0152 mm; LAB5-L3-D301) to the via LAB5-V-D301 at D301, then 0.5 mm locked router '
-             'copper (33.9 mm shared by U315 and Q304, 35.3 mm to Q304 in all: 30.2 mm F.Cu, 5.1 mm B.Cu) and the 0.6 mm B.Cu '
-             'piece LAB5-FAN/LAB5-Q304 (9.6 mm) to Q304.2; J305.3 to Q304.2 is 91.9 mm of copper. Without the L3 run LAB5 splits '
-             'into {J305, J314.2, D306, C342, C343} and {D301, U315, C321, C322, Q304, R367, C320}. Loads on the L3 run: fan '
-             '0.25 A (E3_FAN5 continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), U315 0.10 A '
-             'continuous budget and 0.144-0.192 A limit (RILIM 162k), Pico VSYS (not in NET_CURRENT: TBD), capacitors no DC '
-             'current: 0.35 A continuous plus VSYS, 0.44 A plus VSYS at the U315 limit. IPC-2221 internal (k 0.024, 0.6 x 0.0152 mm '
-             '= 14.1 mil2; MODEL): the L3 run carries 0.45 A at +10 degC, 0.54 A at +15 degC and 0.61 A at +20 degC (+5.6 degC at '
-             '0.35 A, +9.6 degC at 0.44 A); 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, '
-             'k 0.048). A short at the end of a branch (a capacitor failing short, the E3_FAN5 node between Q304 and F301, a '
-             'fault behind D301) drives the current of the upstream fuse F102 (4 A, holds its rating): about +100 degC on 0.5 mm '
-             'outer copper and far outside the formula on the L3 run, which would fuse (the PWR3A rule needs 1.3348 mm outer at '
-             '4 A and +20 degC). Recorded layout deviation from the PWR3A sizing of netclasses.json, CTRL-4 OPEN with ranked '
-             'closure options (build/15 "Гілки LAB5 на CTRL (W2 PCB-CTRL)" and "CTRL-4: живлення правої групи LAB5 (W2 CTRL-R)"); '
-             'not a bench gate'),
+    'LAB5': ('LAB5 branch from the scripted 1.85 mm feed (J305.3 -> J314.2, F.Cu) to a load on the trunk side: the blower flyback '
+             'diode D306 (LAB5-D306, 0.6 mm B.Cu from J314.2, 9.6 mm) and the blower supply capacitors C342 (LAB5-C342-F/-B, 0.6 mm, '
+             'about 13 mm) and C343 (LAB5-C343, 0.6 mm, 2.4 mm). 0.6 mm of 1 oz outer copper carries about 1.65 A at +10 degC and '
+             '2.24 A at +20 degC (IPC-2221 external, k 0.048; MODEL); only a failure of the branch part itself (a capacitor or '
+             'D306 failing short) drives the F102 4 A protective current through it (about +75 degC, MODEL): recorded trunk-side '
+             'deviation from the PWR3A sizing, unchanged by W2 CTRL-4. Since W2 CTRL-4 the right LAB5 group (the Pico VSYS diode '
+             'D301, the GNSS switch U315 with C321/C322 and the fan switch Q304 with C320/R367) is no LAB5 branch: it hangs on '
+             'E3_LAB5_LIM behind the current-limited switch U316 (TPS2553DRVR, R372 49.9k: IOS 0.475-0.582 A, TI SLVS841G eq. 1 '
+             'and 3), whose pieces (the 0.6 mm L3 run, the 0.5 mm router branches, the 0.6 mm B.Cu pieces) pcb/check_boards.py '
+             'measures against the PWR06A widths of pcb/generated/netclasses.json without exemption. A fan-lead (S27) fault behind '
+             'F301, which the PTC carries indefinitely between Ihold 0.75 A and Itrip 1.50 A, is now held to IOS 0.582 A by U316 '
+             '(+17.9 degC on the L3 run, IPC-2221 internal, MODEL); not a bench gate'),
     'BG': ('E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower '
            'supply (C342 bulk, C343 decoupling): ripple current only, no DC path; scripted at 0.4 mm (C342, between the J317 pins '
            '3 and 2) and 0.3 mm (C343, between C343 and R363): 0.3 mm of 1 oz outer copper carries about 1.0 A at +10 degC '
            '(IPC-2221 external, k 0.048)'),
 }
 BRANCH_MIN_WIDTH = {'C342': 0.3, 'C343': 0.3}  # the scripted E3_BLOWER_GND branches; LAB5 branches stay >= 0.5 mm
-FAN_FEED = ('fan switch Q304 source on LAB5: E3_FAN5 (Q304 drain to F301) is sized for the F102 4 A protective current '
-            '(netclasses.json PWR3A, Q304 has no current limit), but the LAB5 feed of Q304 is the right-group branch through the '
-            '0.6 mm L3 run below: the deviation is recorded in build/15 "Гілки LAB5 на CTRL (W2 PCB-CTRL)" (CTRL-4 OPEN). ')
 NECK = ['C318', 'C319', 'D305', 'F301', 'J311', 'J313', 'U315']
 ROUTER_WHY = (
     'route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors '
@@ -877,8 +944,10 @@ ROUTER_WHY = (
     'dangling router stub) and 43206372346 (DRC 0 errors, 0 unconnected, ignored [], about 4.5 min; check-mode run '
     '43207377886 green), each with 0 unconnected; Freerouting still adds 69-72 redundant short wires per run, DRC-clean. '
     'After the completion the cut-out 1 band has no spare 0.15 mm crossing on L1/L3/L4 (model): any pad, net or '
-    'scripted-copper change stops make_spec at the guard of route-frozen.json and needs a new harvest. Job timeout 34 min '
-    'inside the 45 min CI job')
+    'scripted-copper change stops make_spec at the guard of route-frozen.json and needs a re-freeze: W2 CTRL-4 (PROTECT) '
+    'added U316/R372/C344 and moved the right LAB5 group onto E3_LAB5_LIM; build/kicad/boards/CTRL/freeze/freeze_route.py '
+    '--from-frozen --renet re-froze it from the board of route run 43214226431: 34 frozen LAB5 items renamed E3_LAB5_LIM, no '
+    'frozen item ripped, no new router copper (route-frozen.json increments). Job timeout 34 min inside the 45 min CI job')
 
 
 def spec_texts(spec, inp, cu, skipped):
@@ -889,13 +958,16 @@ def spec_texts(spec, inp, cu, skipped):
         if r == 'D306':
             reason = ('flyback diode D306 cathode on LAB5: it conducts the blower current only while the coil current decays after '
                       'Q305 turns off (ms); ' + BRANCH_REASON['LAB5'])
-        if r in ('Q304', 'C320', 'R367'):
-            reason = FAN_FEED + reason
         branch[r] = {'max_mm': 80.0, 'min_width_mm': BRANCH_MIN_WIDTH.get(r, 0.5), 'reason': reason}
     spec['branch_exempt'] = branch
     spec['neck_exempt'] = {r: {'escape_mm': 1.5, 'reason': (
         'pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may '
         'narrow next to the pad; the class width resumes within the escape length')} for r in NECK}
+    for r in ('C344', 'U316'):
+        spec['neck_exempt'][r] = {'escape_mm': 1.5, 'reason': (
+            'LAB5 pad escape into the 1.85 mm trunk (W2 CTRL-4): the U316 EN and IN pads and the C344 bypass pad sit next to the '
+            'trunk; their 0.45 mm stubs reach it within the escape length (0.4 mm of free copper between pad and trunk edge)')}
+    spec['neck_exempt'] = dict(sorted(spec['neck_exempt'].items(), key=lambda kv: bg.sort_ref(kv[0])))
     spec.pop('cutouts', None)
     spec['edge_keepout'] = {'width_mm': 0.2, 'layers': ['F.Cu', 'In2.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
                             'why': ('rule-area strips (half-width 0.2 mm) on every outline and cut-out edge of the routing layers: '
@@ -931,7 +1003,10 @@ def spec_texts(spec, inp, cu, skipped):
             'had no path). Tool: build/kicad/boards/CTRL/freeze/freeze_route.py (numpy, offline). '
             'Source: build/kicad/boards/CTRL/route-frozen.json. Valid only for this placement, netlist and scripted copper '
             '(guard: SHA256 of the pads and of the scripted copper geometry, texts excluded): a pad, net or scripted-copper '
-            'change needs a new route run and a new harvest. CI/model result, not a hardware PASS')
+            'change needs a re-freeze, freeze_route.py --from-frozen (incremental.py) from the committed GENERATED board, or a '
+            'new route run and harvest. W2 CTRL-4 increment (route-frozen.json increments): U316/R372/C344 placed and the right '
+            'LAB5 group on E3_LAB5_LIM; --renet renamed the 34 frozen LAB5 items of that group, nothing ripped or added. '
+            'CI/model result, not a hardware PASS')
     for z in spec['post_route_zones']:
         z['pad_connection'] = 'solid'
         z['why'] = 'GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)'
@@ -939,7 +1014,7 @@ def spec_texts(spec, inp, cu, skipped):
         'tool': 'freerouting', 'max_passes': 60, 'threads': 1, 'job_timeout': '00:34:00', 'timeout_s': 2160,
         'fanout': False,
         'ignore_net_classes': ['SCRIPTED_GND', 'SCRIPTED_PWR3A'],  # GND, E3_FAN5, E3_BLOWER_GND
-        'class_layers': {'PWR1A': ['F.Cu', 'B.Cu'], 'PWR3A_BRANCH': ['F.Cu', 'B.Cu']},
+        'class_layers': {'PWR1A': ['F.Cu', 'B.Cu'], 'PWR3A_BRANCH': ['F.Cu', 'B.Cu'], 'PWR06A': ['F.Cu', 'B.Cu']},
         'why': ROUTER_WHY,
         'class_layers_why': ('KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN '
                              'classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper '
@@ -990,12 +1065,12 @@ def spec_texts(spec, inp, cu, skipped):
         'E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru '
         'files yet).')
     spec['layers']['plan'] = {
-        'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the HMI pull-up row to C312 and U306, R361/R362), the frozen router copper of route run 43136394379 and its completion (route-frozen.json), GND pour after routing',
+        'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, the W2 CTRL-4 limit cluster U316/R372/C344 beside the trunk (LAB5 pad escapes, OUT to the L3 via, ILIM, PowerPAD ground), scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the HMI pull-up row to C312 and U306, R361/R362), the frozen router copper of route run 43136394379 and its completion (route-frozen.json), GND pour after routing',
         'In1.Cu': ('L2: GND plane (pre-route zone, DSN plane) with 5 locked slow signal links of the frozen route completion '
                    '(W2 CTRL-R; 81 mm in all): E3_PICO3V3 (0.2 mm, 35.6 mm up the right strip beside cut-out 1 between the vias '
                    'P33-V-R368 and P33-V-R4B), E3_PICO_SWCLK 21.2 mm, E3_REC_EXT 14.9 mm, PG_BONI 4.7 mm and E3_MARK_EXT 4.4 mm '
                    '(0.15 mm, under the Pico and the HMI rows); the plane flows around them'),
-        'In2.Cu': 'L3: signals, the scripted 19.9 mm, 0.6 mm LAB5 run below cut-out 1 (the only feed of the right LAB5 group D301, U315 and Q304; CTRL-4 OPEN), the scripted 3V3_Q6A bus of the left pull-up column, the frozen router copper and its completion, GND pour after routing',
+        'In2.Cu': 'L3: signals, the scripted 0.6 mm E3_LAB5_LIM run below cut-out 1 (the only feed of the right group D301, U315 and Q304, behind the U316 limit IOS <= 0.582 A: within the PWR06A inner width, W2 CTRL-4, MODEL), the scripted 3V3_Q6A bus of the left pull-up column, the frozen router copper and its completion, GND pour after routing',
         'B.Cu': 'L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor '
                 'branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top '
                 'edge to J312.4, branch to R362; Pico pin 36 escape via, R330/R327/C308), '
@@ -1022,13 +1097,14 @@ def project_json(project):
     ns['classes'][0]['via_diameter'] = 0.7
     ns['classes'][0]['via_drill'] = 0.3
     ns['classes'] = [ns['classes'][0], cls('PWR1A', 0.35, 0), cls('PWR3A', 1.85, 1), cls('PWR3A_BRANCH', 0.5, 2),
-                     cls('SCRIPTED_GND', 0.15, 3), cls('SCRIPTED_PWR3A', 1.85, 4)]
+                     cls('SCRIPTED_GND', 0.15, 3), cls('SCRIPTED_PWR3A', 1.85, 4), cls('PWR06A', 0.5, 5)]
     ns['netclass_patterns'] = [{'netclass': 'PWR3A_BRANCH', 'pattern': 'LAB5'},
                                {'netclass': 'SCRIPTED_PWR3A', 'pattern': 'E3_BLOWER_GND'},
                                {'netclass': 'SCRIPTED_PWR3A', 'pattern': 'E3_FAN5'},
                                {'netclass': 'PWR1A', 'pattern': 'E3_FAN5_P'},
                                {'netclass': 'PWR1A', 'pattern': 'E3_GNSS5V'},
-                               {'netclass': 'SCRIPTED_GND', 'pattern': 'GND'}]
+                               {'netclass': 'SCRIPTED_GND', 'pattern': 'GND'},
+                               {'netclass': 'PWR06A', 'pattern': LIM}]
     return json.dumps(pro, ensure_ascii=False, indent=2) + '\n'
 
 

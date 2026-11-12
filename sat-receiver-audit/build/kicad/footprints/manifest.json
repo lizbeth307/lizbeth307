@@ -1,6 +1,6 @@
 {
   "kicad_version": "10.0.7",
-  "assignments": 747,
+  "assignments": 750,
   "footprints": [
     {
       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
@@ -68,6 +68,7 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "C344",
         "C401",
         "C402",
         "C403",
@@ -1317,6 +1318,7 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "U316",
         "U505"
       ]
     },
@@ -1475,6 +1477,7 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "R372",
         "R4420",
         "R4421",
         "R4430",

@@ -1990,7 +1990,7 @@
           "number": "1",
           "name": "IN",
           "type": "power_in",
-          "net": "LAB5"
+          "net": "E3_LAB5_LIM"
         },
         {
           "number": "2",
@@ -2076,7 +2076,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E3_LAB5_LIM"
         },
         {
           "number": "2",
@@ -2106,7 +2106,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E3_LAB5_LIM"
         },
         {
           "number": "2",
@@ -2489,7 +2489,7 @@
           "number": "2",
           "name": "A",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E3_LAB5_LIM"
         }
       ],
       "footprint": "Diode_SMD:D_SMA"
@@ -4933,7 +4933,7 @@
           "number": "2",
           "name": "2",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E3_LAB5_LIM"
         }
       ]
     },
@@ -4959,7 +4959,7 @@
           "number": "2",
           "name": "S",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E3_LAB5_LIM"
         },
         {
           "number": "3",
@@ -5297,7 +5297,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E3_LAB5_LIM"
         },
         {
           "number": "2",
@@ -7117,6 +7117,127 @@
       "notes": [
         "Роз'єм джгута X40S1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S40; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
       ]
+    },
+    {
+      "ref": "U316",
+      "value": "TPS2553DRVR",
+      "kind": "ic",
+      "group": "LAB5 right-group limit",
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "status": "design",
+      "mpn": "TPS2553DRVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C138719",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E3_LAB5_LIM"
+        },
+        {
+          "number": "2",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E3_U316_ILIM"
+        },
+        {
+          "number": "3",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "nc": true
+        },
+        {
+          "number": "4",
+          "name": "EN",
+          "type": "input",
+          "net": "LAB5"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "7",
+          "name": "exposed pad",
+          "type": "power_in",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "DRV WSON-6 per TI SLVS841G (rev. G, October 2026, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-12) pin table: 1 OUT, 2 ILIM, 3 FAULT, 4 EN (active high on TPS2553), 5 GND, 6 IN, PowerPAD to GND.",
+        "Constant-current TPS2553DRVR (no -1) at the LAB5 trunk of CTRL feeds the whole right LAB5 group (D301 Pico VSYS diode, U315 GNSS switch, Q304 fan switch, C320/C321/C322/R367) on E3_LAB5_LIM. It limits any fault behind it, the S27 fan lead behind F301 and the E3_FAN5 node included, to IOS 0.475-0.582 A (R372 49.9k, SLVS841G eq. 1 and 3), so the 0.6 mm L3 run and the 0.5 mm branches stay inside the PWR06A widths of pcb/generated/netclasses.json (W2 CTRL-4, MODEL).",
+        "In an overload it holds IOS until thermal cycling (off at 135 C minimum in current limit, back after about 10 C, SLVS841G 8.3.1) and recovers by itself: a fan or GNSS short takes the Pico VSYS feed down with it until the fault is removed. EN tied to IN: on whenever LAB5 is present. FAULT_N not connected (no free Pico GPIO, E3 U305 note)."
+      ],
+      "footprint": "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm"
+    },
+    {
+      "ref": "R372",
+      "value": "49.9k 1%",
+      "kind": "resistor",
+      "group": "LAB5 right-group limit",
+      "source": "TI SLVS841G eq. 1-3 (RILIM to IOS); engineering design (W2 CTRL-4)",
+      "status": "design",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "0402WGF4992TCE",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25897",
+      "alt_mpn": "Vishay CRCW040249K9FKED",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_U316_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "RILIM of U316: IOS 474.9-582.3 mA by SLVS841G eq. 3 and 1 (table value at 49.9k: 475-565 mA, -40 to 125 C). Minimum above the 0.45 A continuous budget of the right group; maximum within the 0.6 mm L3 run at +20 degC (IPC-2221 internal, MODEL). As close to ILIM as the layout allows (SLVS841G 9.4.1). Bench gate: IOS and the right-group current (W2 CTRL-4)."
+      ]
+    },
+    {
+      "ref": "C344",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "LAB5 right-group limit",
+      "source": "TI SLVS841G pin table and 9.4.1 (0.1 uF or more from IN to GND close to the IC); engineering design",
+      "status": "design",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "CL05B104KO5NNNC",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C1525",
+      "alt_mpn": "YAGEO CC0402KRX7R7BB104",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Input bypass of U316 on the LAB5 trunk; its GND joins the U316 PowerPAD and ground via (W2 CTRL-4)."
+      ]
     }
   ],
   "open_items": [
@@ -7291,6 +7412,11 @@
       "id": "R-E3-17",
       "description": "Fan path 1 gets the PTC F301 = Bourns MF-MSMF075/24-2 between Q304 and the fan (E3_FAN5 -> E3_FAN5_P): Itrip 1.50 A at 23 C is below the 2.3 A of 1x26 AWG in the 3-wire S27 lead (ESCC 3901/001 bundle rule), Ihold 0.49 A at 70 C stays above the 0.25 A design current.",
       "source": "Bourns MF-MSMF REV. AO (read 2026-11-07). A passive limit never latches cooling off, needs no GPIO and rides through fan inrush; a TPS2553 in place of Q304 would change the gate polarity and could latch cooling off."
+    },
+    {
+      "id": "R-E3-18",
+      "description": "CTRL-4: the right LAB5 group of CTRL (D301, U315, Q304) is fed through a constant-current TPS2553DRVR U316 at the LAB5 trunk (net E3_LAB5_LIM, R372 49.9k: IOS 0.475-0.582 A) instead of straight from LAB5 behind F102 4 A. The protective current that can flow indefinitely downstream is IOS max 0.582 A, which the 0.6 mm L3 run carries at +20 degC (IPC-2221 internal, 0.5981 mm, MODEL); the 0.45 A continuous budget stays below IOS min. A PTC (Itrip/Ihold about 2 and cold-ambient Itrip higher still) and a fuse (carries its rating indefinitely) cannot fit between 0.45 A and 0.61 A; the latch-off -1 part would keep the Pico off after a fan fault until LAB5 is cycled. Unlike R-E3-17, U316 does not replace Q304: the fan keeps its P-FET and PTC F301.",
+      "source": "TI SLVS841G rev. G (https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-12): IOS eq. 1-3, IOS table (49.9k: 475-565 mA), 8.3.1 overcurrent and thermal cycling, 9.4.1 layout; Bourns MF-MSMF REV. BE 09/26 (F301); pcb/stackup.py PWR06A (W2 CTRL-4)."
     }
   ],
   "power_flags": [

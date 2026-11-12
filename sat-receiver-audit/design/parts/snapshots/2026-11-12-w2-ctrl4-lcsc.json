@@ -1,0 +1,243 @@
+{
+ "date": "2026-11-12",
+ "distributor": "LCSC",
+ "entries": {
+  "C138719": {
+   "attributes": {
+    "Control Input Logic": "Active High",
+    "Features": "Overvoltage Protection、Soft-start、Under-voltage lockout、Reverse voltage protection、Integrated charge pump、Overcurrent Protection、Over temperature protection、Latch protection、Short-Circuit  Protection、Reverse current blocking",
+    "Maximum Continuous Current": "1.5A",
+    "Number of Channels": "1",
+    "Operating Temperature\t-": "-40℃~+150℃",
+    "RDS(on)": "100mΩ",
+    "Type": "High Side Switch",
+    "Voltage - Supply": "2.5V~6.5V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810291812_Texas-Instruments-TPS2553DRVR_C138719.pdf",
+   "description": "-40℃~+150℃ 1 1.5A 100mΩ 2.5V~6.5V Active High High Side Switch Overvoltage Protection、Soft-start、Under-voltage lockout、Reverse voltage protection、Integrated charge pump、Overcurrent Protection、Over temperature protection、Latch protection、Short-Circuit  Protection、Reverse current blocking WSON-6-EP(2x2) Power Distribution Switches ROHS",
+   "fetched_utc": "2026-11-12T15:51:29Z",
+   "jlc_library": "extended",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS2553DRVR",
+   "package": "WSON-6-EP(2x2)",
+   "price_usd": [
+    [
+     1,
+     0.5823
+    ],
+    [
+     10,
+     0.4875
+    ],
+    [
+     30,
+     0.4449
+    ],
+    [
+     100,
+     0.3942
+    ],
+    [
+     500,
+     0.3713
+    ],
+    [
+     1000,
+     0.3583
+    ]
+   ],
+   "stock": 26526,
+   "url": "https://www.lcsc.com/product-detail/power-distribution-switches_texas-instruments-tps2553drvr_C138719.html"
+  },
+  "C1525": {
+   "attributes": {
+    "Capacitance": "100nF",
+    "Temperature Coefficient": "X7R",
+    "Tolerance": "±10%",
+    "Voltage Rating": "16V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL05B104KO5NNNC_C1525.pdf",
+   "description": "100nF 16V X7R ±10% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-12T15:51:30Z",
+   "jlc_library": "basic",
+   "manufacturer": "Samsung Electro-Mechanics",
+   "mpn": "CL05B104KO5NNNC",
+   "package": "0402",
+   "price_usd": [
+    [
+     1,
+     0.0029
+    ],
+    [
+     1000,
+     0.0022
+    ],
+    [
+     3000,
+     0.0018
+    ],
+    [
+     10000,
+     0.0016
+    ],
+    [
+     50000,
+     0.0014
+    ],
+    [
+     50200,
+     0.0014
+    ]
+   ],
+   "stock": 33116657,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl05b104ko5nnnc_C1525.html"
+  },
+  "C25897": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "62.5mW",
+    "Resistance": "49.9kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "50V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0402WGF4992TCE_C25897.pdf",
+   "description": "-55℃~+155℃ 49.9kΩ 50V 62.5mW Thick Film Resistor ±1% ±100ppm/℃ 0402 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T15:51:30Z",
+   "jlc_library": "preferred",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0402WGF4992TCE",
+   "package": "0402",
+   "price_usd": [
+    [
+     1,
+     0.0013
+    ],
+    [
+     1000,
+     0.001
+    ],
+    [
+     3000,
+     0.0009
+    ],
+    [
+     10000,
+     0.0008
+    ],
+    [
+     50000,
+     0.0007
+    ],
+    [
+     50200,
+     0.0007
+    ]
+   ],
+   "stock": 751140,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0402wgf4992tce_C25897.html"
+  },
+  "C350874": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "62.5mW",
+    "Resistance": "49.9kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "50V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1912111437_Vishay-Intertech-CRCW040249K9FKED_C350874.pdf",
+   "description": "-55℃~+155℃ 49.9kΩ 50V 62.5mW Thick Film Resistor ±1% ±100ppm/℃ 0402 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T15:51:31Z",
+   "jlc_library": "extended",
+   "manufacturer": "Vishay Intertech",
+   "mpn": "CRCW040249K9FKED",
+   "package": "0402",
+   "price_usd": [
+    [
+     1,
+     0.0031
+    ],
+    [
+     1000,
+     0.0024
+    ],
+    [
+     3000,
+     0.002
+    ],
+    [
+     10000,
+     0.0018
+    ],
+    [
+     50000,
+     0.0016
+    ],
+    [
+     50200,
+     0.0016
+    ]
+   ],
+   "stock": 26570,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_vishay-intertech-crcw040249k9fked_C350874.html"
+  },
+  "C60474": {
+   "attributes": {
+    "Capacitance": "100nF",
+    "Temperature Coefficient": "X7R",
+    "Tolerance": "±10%",
+    "Voltage Rating": "16V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2203221430_YAGEO-CC0402KRX7R7BB104_C60474.pdf",
+   "description": "100nF 16V X7R ±10% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-12T15:51:32Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0402KRX7R7BB104",
+   "package": "0402",
+   "price_usd": [
+    [
+     1,
+     0.004
+    ],
+    [
+     1000,
+     0.0028
+    ],
+    [
+     3000,
+     0.0021
+    ],
+    [
+     10000,
+     0.0016
+    ],
+    [
+     50000,
+     0.0012
+    ],
+    [
+     100000,
+     0.001
+    ]
+   ],
+   "stock": 9766214,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_yageo-cc0402krx7r7bb104_C60474.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C138719",
+  "C1525",
+  "C25897",
+  "C350874",
+  "C60474"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}

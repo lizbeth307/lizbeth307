@@ -33,7 +33,8 @@
   "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech6-manual.json",
-  "design/parts/snapshots/2026-11-07-w2-src2-manual.json"
+  "design/parts/snapshots/2026-11-07-w2-src2-manual.json",
+  "design/parts/snapshots/2026-11-12-w2-ctrl4-lcsc.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -2786,6 +2787,31 @@
    ]
   },
   {
+   "id": "C-0402-CL05B104KO5NNNC",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0402",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "manufacturer": "Samsung Electro-Mechanics",
+   "mpn": "CL05B104KO5NNNC",
+   "sku": {
+    "lcsc": "C1525"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC0402KRX7R7BB104",
+     "sku": {
+      "lcsc": "C60474"
+     }
+    }
+   ],
+   "note": "IN bypass of U316 (W2 CTRL-4): 100 nF 16 V X7R 0402, LCSC snapshot 2026-11-12-w2-ctrl4-lcsc.json.",
+   "refs": [
+    "C344"
+   ]
+  },
+  {
    "id": "C-0603-CC0603KRX7R9BB103",
    "mount": "pcb_smt",
    "kind": "capacitor",
@@ -3046,6 +3072,31 @@
     "R4421",
     "R4431",
     "R4441"
+   ]
+  },
+  {
+   "id": "R-0402-0402WGF4992TCE",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0402",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "manufacturer": "UNI-ROYAL",
+   "mpn": "0402WGF4992TCE",
+   "sku": {
+    "lcsc": "C25897"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay",
+     "mpn": "CRCW040249K9FKED",
+     "sku": {
+      "lcsc": "C350874"
+     }
+    }
+   ],
+   "note": "RILIM of U316 (W2 CTRL-4): 49.9 kOhm 1 % 62.5 mW 0402, LCSC snapshot 2026-11-12-w2-ctrl4-lcsc.json.",
+   "refs": [
+    "R372"
    ]
   },
   {
@@ -4568,9 +4619,10 @@
     "lcsc": "C138719"
    },
    "match": "TPS2553DRVR",
-   "single_source": "T7 VBUS switch package (WSON)",
+   "single_source": "T7 VBUS switch package (WSON); CTRL right LAB5 group limit U316 (W2 CTRL-4)",
    "refs": [
-    "U505"
+    "U505",
+    "U316"
    ]
   },
   {
