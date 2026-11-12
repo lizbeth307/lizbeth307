@@ -626,7 +626,10 @@ class PwrBLeavesPwrACutoutsFree(unittest.TestCase):
         spec = bg.read_json(bg.spec_path('PWR_B'))
         study = bg.BASE / 'build/kicad/boards/PWR_A/placement-study-shrink2.json'
         cut = spec['pwr_a_cutouts']
-        self.assertIn(hashlib.sha256(study.read_bytes()).hexdigest(), cut['source'])
+        rows = [{'ref': c['ref'], 'kind': c['kind'], 'rect': [float(v) for v in c['rect']]}
+                for c in bg.read_json(study)['pwr_b_cutouts']['placed']]
+        self.assertIn(hashlib.sha256(json.dumps(rows, sort_keys=True, separators=(',', ':')).encode('utf-8')).hexdigest(),
+                      cut['source'])
         want = [[c['rect'][0], c['rect'][1], round(c['rect'][2] - c['rect'][0], 4), round(c['rect'][3] - c['rect'][1], 4)]
                 for c in bg.read_json(study)['pwr_b_cutouts']['placed']]
         self.assertEqual([c['rect'] for c in cut['cutouts_mm']], want)

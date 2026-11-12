@@ -204,6 +204,12 @@ def edge_dist(pt, outline, cuts):
 
 
 # ------------------------------------------------------------------ inputs
+def cutouts_digest(placed):
+    """sha256 of the PWR-A cut-out list (ref, kind, rect) in canonical JSON."""
+    rows = [{'ref': c['ref'], 'kind': c['kind'], 'rect': [float(v) for v in c['rect']]} for c in placed]
+    return hashlib.sha256(json.dumps(rows, sort_keys=True, separators=(',', ':')).encode('utf-8')).hexdigest()
+
+
 class Inputs:
     def __init__(self):
         self.graph = bg.load_graph()
@@ -224,8 +230,8 @@ class Inputs:
         if B2B_REF not in self.refs:
             raise SystemExit(f'make_spec: {B2B_REF} is not a {BOARD} ref of pcb/generated/partition.json (rerun pcb/prepare.py)')
         study = read(PWRA_STUDY)
-        self.study_sha = hashlib.sha256(PWRA_STUDY.read_bytes()).hexdigest()
-        self.study_inputs = study.get('inputs', {})
+        # hash of the cut-out list only: the study itself hashes pcb/boards/PWR_B.json, so a file hash here would never settle
+        self.cutouts_sha = cutouts_digest(study['pwr_b_cutouts']['placed'])
         self.cutouts = [dict(c, rect=[float(v) for v in c['rect']]) for c in study['pwr_b_cutouts']['placed']]
         if study['pwr_b_cutouts'].get('unplaced_needing_one'):
             raise SystemExit(f'make_spec: PWR-A parts needing a PWR-B cut-out are unplaced in {PWRA_STUDY.name}')
@@ -245,8 +251,9 @@ class Inputs:
 #    J207 stands left, over the LAB5 switches whose outputs it takes, J204 right, over the J209 rail block (3V3_Q6A,
 #    LNB13V2, LAB5_RLY): the reverse of the MECH-7 order (J207 next to SL2), chosen because the first route with the
 #    MECH-7 order left the rail escapes towards J204 unrouted; MECH moves the start points of S04 and S20-S22 / S35 /
-#    S36 (build/15 W2 PCB-PWRB-2). Over the rail block stands only the ch4 damper C247 (GND pad on the spine); the LAB BUS
-#    buffer U507 stands in the arm with its I2C partners J201, U215 and J506.
+#    S36 (build/15 W2 PCB-PWRB-2). Over the rail block stands only the RTL-B filter inductor L210 (next to U210, below
+#    J207 pin 4); the SB filter inductor L215 stands below the LAB5 trunk next to U221; the LAB BUS buffer U507 stands in
+#    the arm with its I2C partners J201, U215 and J506.
 #  * The S02 headers J202 / J203 / J201 and the PH 9 J506 are parked: zone 0 (right edge) is covered by the PWR-A
 #    J104 / J113-J115 / J507 strips and two hole keep-outs, and zone 2 (bottom span x 93-114.5) by the PWR-A windows of
 #    C265, C512 and C511 (PCB-PWRA-3 placed them after MECH-7 set the span). J202 stands in the 10.6 mm column between
@@ -257,43 +264,45 @@ class Inputs:
 #    the upper arm; ch4 over the right half of J209 next to its sense contacts 99 / 100.
 #  * Three LAB5 switches stand on the F.Cu trunk at TY next to the lower-row LAB5 contacts of J209, the fourth west of
 #    J204 on a tap (LAB5_CELLS).
-#  * The ten 16SVPG47M (dampers C235 C239 C243 C247 C251 C298, C503, C506 C521 C522) take the free 6 x 8 mm places of
-#    the cut-out map; the remaining parts were packed next to the pads of their nets with 0.3 mm between courtyards.
+#  * The ten 16SVPG47M (dampers C235 C239 C243 C247 C251 C298, C503, C506 C521 C522), the two SOIC-8 blocking stages and
+#    L215 take the free 6 x 8 mm places of the cut-out map (there are as many places as parts; the assignment keeps each
+#    near its nets where it can); the remaining parts were packed next to the pads of their nets, 0.2 mm apart.
 PLACEMENT = {
-    'C232': (2.1, 59.2, 0), 'C233': (10.7, 54.5, 270), 'C234': (54.136, 33.186, 90), 'C235': (36, 19.5, 90),
-    'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (46.405, 26.472, 0), 'C239': (3, 22, 90),
-    'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (36.542, 43.906, 0), 'C243': (24, 45.5, 90),
-    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (109.048, 23.14, 0), 'C247': (90.2, 18.7, 0),
-    'C248': (80.5, 16.9, 0), 'C249': (61.197, 8.819, 0), 'C250': (112.837, 22.94, 0), 'C251': (37.5, 73, 0),
-    'C274': (14.562, 51.388, 90), 'C275': (37.175, 34.475, 90), 'C276': (12.738, 66.138, 90), 'C277': (20.434, 28.437, 90),
-    'C282': (43.15, 13.419, 90), 'C283': (38.967, 34.352, 90), 'C284': (20.225, 25.272, 90), 'C285': (37.217, 37.71, 90),
-    'C286': (49.496, 27.95, 90), 'C287': (26.276, 50.782, 0), 'C295': (72.5, 16.9, 0), 'C296': (51.447, 28.319, 90),
-    'C297': (112.402, 15.125, 90), 'C298': (30, 11.5, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
-    'C503': (10.5, 105, 90), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (30, 105, 90),
-    'C507': (31.5, 75.127, 0), 'C521': (11.5, 89, 90), 'C522': (36, 90.5, 0), 'C550': (22.622, 50.615, 0),
-    'C551': (12.292, 37.352, 90), 'C2901': (57.697, 17.897, 0), 'C2902': (53.5, 24.4, 90), 'C2911': (41.035, 18.289, 0),
-    'C2912': (37.089, 31.066, 90), 'D2901': (45.035, 19.225, 0), 'D2902': (42.725, 27.28, 90), 'J201': (2.95, 49.8, 0),
+    'C232': (2.1, 59.2, 0), 'C233': (10.7, 54.5, 270), 'C234': (51.737, 33.918, 0), 'C235': (18, 49.5, 0),
+    'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (37.467, 34.284, 90), 'C239': (30, 14, 90),
+    'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 0),
+    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (109.026, 22.84, 0), 'C247': (37.5, 26.5, 0),
+    'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (112.18, 15.097, 90), 'C251': (36, 12, 90),
+    'C274': (16.312, 60.638, 0), 'C275': (37.425, 37.725, 90), 'C276': (18.488, 72.388, 0), 'C277': (36.97, 46.405, 90),
+    'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
+    'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
+    'C297': (113.111, 23.259, 0), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
+    'C503': (38.5, 20.5, 0), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (37.5, 73, 0),
+    'C507': (36.46, 76.867, 0), 'C521': (31, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
+    'C551': (38.651, 50.429, 90), 'C2901': (55.363, 33.73, 0), 'C2902': (40.167, 77.567, 0), 'C2911': (20.334, 42.046, 0),
+    'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (2.95, 49.8, 0),
     'J202': (9.7, 9.7, 90), 'J203': (15.7, 39.95, 0), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
     'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.15, 55.4, 90), 'L206': (15.1, 56.2, 0), 'L207': (57.15, 13.2, 0),
-    'L208': (23.1, 80.7, 0), 'L209': (108, 16.4, 0), 'L210': (66.5, 9.5, 0), 'L215': (39, 48.5, 0),
-    'Q2901': (36, 11.5, 90), 'Q2902': (37, 26.5, 0), 'Q2911': (50.909, 20.794, 0), 'Q2912': (15.741, 44.244, 0),
-    'R228': (7.4, 54.6, 270), 'R229': (2.1, 52.9, 0), 'R231': (9.3, 57.6, 0), 'R232': (51.102, 32.58, 90),
-    'R233': (49.45, 11.6, 270), 'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (30.816, 28.738, 0),
-    'R238': (15.4, 79.1, 270), 'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (31.926, 43.385, 0),
-    'R243': (100.3, 14.8, 270), 'R244': (76.281, 16.475, 0), 'R246': (102.2, 17.8, 0), 'R247': (97.402, 19.78, 0),
-    'R248': (77.5, 19.5, 90), 'R249': (83.5, 18.9, 90), 'R251': (57.818, 33.58, 0), 'R268': (8, 60.3, 90),
-    'R269': (10.6, 60.3, 90), 'R270': (50.05, 17.3, 90), 'R271': (52.65, 17.3, 90), 'R272': (16, 84.8, 90),
-    'R273': (18.6, 84.8, 90), 'R280': (59.35, 30.651, 90), 'R281': (49.65, 8.994, 0), 'R283': (48, 20.356, 90),
-    'R284': (20.225, 21.68, 90), 'R286': (42.217, 34.038, 0), 'R287': (56.829, 31.358, 0), 'R293': (69.5, 19.5, 90),
-    'R294': (75.5, 18.9, 90), 'R295': (55.414, 20.76, 0), 'R501': (53.5, 27.8, 90), 'R502': (59.5, 27.2, 90),
-    'R504': (85.183, 20.659, 90), 'R505': (61.5, 19.5, 90), 'R506': (67.5, 18.9, 90), 'R508': (28.621, 75.627, 90),
-    'R550': (27.859, 42.893, 90), 'R551': (26.492, 29.166, 0), 'R2901': (46.812, 9.4, 90), 'R2902': (40.534, 40.566, 90),
-    'R2911': (30.135, 17.525, 0), 'R2912': (23.025, 26.865, 90), 'R2921': (48.115, 17.105, 90),
-    'R2922': (22.619, 56.54, 0), 'TP206': (50.636, 24.948, 0), 'TP207': (40.615, 9.272, 0), 'TP208': (37.952, 40.706, 0),
-    'TP209': (115.561, 20.39, 0), 'TP210': (118.349, 22.565, 0), 'TP216': (92, 13, 0), 'TP2901': (57.459, 8.522, 0),
-    'TP2902': (59.25, 20.537, 0), 'U206': (4.1, 56, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
-    'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (18, 49, 0), 'U217': (41, 21.5, 90), 'U218': (9.5, 32.5, 90),
-    'U219': (23, 22, 90), 'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90), 'U502': (64.5, 20, 90), 'U507': (4.5, 38.5, 0),
+    'L208': (23.1, 80.7, 0), 'L209': (108, 16.4, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
+    'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.119, 0), 'R228': (7.4, 54.6, 270),
+    'R229': (2.1, 52.9, 0), 'R231': (9.3, 57.6, 0), 'R232': (39.368, 40.813, 0), 'R233': (49.45, 11.6, 270),
+    'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (31.066, 28.988, 0), 'R238': (15.4, 79.1, 270),
+    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (22.251, 85.185, 0), 'R243': (100.3, 14.8, 270),
+    'R244': (76.281, 16.475, 0), 'R246': (102.2, 17.8, 0), 'R247': (95.835, 20.38, 0), 'R248': (77.5, 19.5, 90),
+    'R249': (83.5, 18.9, 90), 'R251': (59.385, 19.013, 90), 'R268': (8, 60.3, 90), 'R269': (10.6, 60.3, 90),
+    'R270': (50.05, 17.3, 90), 'R271': (52.65, 17.3, 90), 'R272': (16, 84.8, 90), 'R273': (18.6, 84.8, 90),
+    'R280': (85.517, 20.651, 90), 'R281': (53.817, 23.411, 90), 'R283': (51.5, 25.856, 90), 'R284': (20.217, 22.522, 90),
+    'R286': (42.217, 34.038, 0), 'R287': (44.996, 26.692, 0), 'R293': (69.5, 19.5, 90), 'R294': (75.5, 18.9, 90),
+    'R295': (56.789, 19.26, 90), 'R501': (53.5, 27.8, 90), 'R502': (59.5, 27.2, 90), 'R504': (71.783, 12.226, 0),
+    'R505': (61.5, 19.5, 90), 'R506': (67.5, 18.9, 90), 'R508': (32.581, 75.617, 90), 'R550': (33.859, 42.821, 90),
+    'R551': (35.826, 42.961, 90), 'R2901': (17.112, 44.38, 90), 'R2902': (1.931, 96.061, 90), 'R2911': (30.635, 43.025, 0),
+    'R2912': (2.025, 100.365, 90), 'R2921': (48.167, 27.094, 0), 'R2922': (17.073, 98.016, 90),
+    'TP206': (51.499, 31.293, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
+    'TP209': (115.663, 20.465, 0), 'TP210': (118.555, 20.609, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
+    'TP2902': (40.679, 80.317, 0), 'U206': (4.1, 56, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
+    'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
+    'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90), 'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90),
+    'U502': (64.5, 20, 90), 'U507': (4.5, 38.5, 0),
 }
 PLUG_ZONES = ('J204', 'J207')   # top-span headers: no part between the mating face and the board edge
 # Kelvin cell of each LNA channel (W2 PCB-PWRB lineage): TPS2553 switch, Kelvin shunt, XAL5030, input / shunt capacitors and,
@@ -881,6 +890,8 @@ def gnd_fanout(inp, parts, tracks, vias):
         vx, vy = via_at
         stubs = list(zip(path, path[1:]))
         r = VIA_D / 2
+        if any(edge_dist(q, outline, cuts) - W_GND / 2 < EDGE + MARGIN for q in path[1:]):
+            return False  # stub corners and ends keep the edge clearance (PWR-A cut-outs included, W2 PCB-PWRB-2)
         if new_via:
             if edge_dist(via_at, outline, cuts) - r < EDGE + MARGIN or not point_in_poly(via_at, outline):
                 return False
@@ -1169,7 +1180,8 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                       '(lengths in build/15 W2 PCB-PWRB), so INA3221 accuracy stays a bench gate; ch4 senses through the B2B to '
                       'U216 on PWR-A'},
         'pwr_a_cutouts': {
-            'source': f'{PWRA_STUDY.relative_to(BASE).as_posix()} pwr_b_cutouts (sha256 {inp.study_sha})',
+            'source': f'{PWRA_STUDY.relative_to(BASE).as_posix()} pwr_b_cutouts (sha256 of the list: {inp.cutouts_sha}; '
+                      'make_spec.py cutouts_digest)',
             'rule': 'window (courtyard + 0.5) over every PWR-A part taller than hA, the edge strips of the PWR-A harness '
                     'headers and the test-point probe windows (pcb/partition-spec.json keepouts, height_rule)',
             'hand_back': 'not Edge.Cuts yet: the W2 MECH-7 contract is the full L (cutouts_mm []) and check_boards requires the '
