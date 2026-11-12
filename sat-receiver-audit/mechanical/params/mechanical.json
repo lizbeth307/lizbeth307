@@ -1088,7 +1088,7 @@
           {"box": "PWR.r0", "at": [1.0, 0.9, 0.5], "off": [1.0, 0, 0], "keep": "xz"},
           {"edge": "PWR_B", "zone": 0, "s": 31.5}
         ],
-        "note": "front layer: CTRL left edge, down at y 78, west along y 74.25 to the PWR-B right edge zone (J201-J203 on PWR-B; the LAB5 pair to J104 on PWR-A breaks out at the same edge, W2 MECH-6 after GR-3)"
+        "note": "front layer: CTRL left edge, down at y 78, west along y 74.25 to the PWR-B right edge zone (J201-J203 on PWR-B; the LAB5 pair to J104 on PWR-A breaks out at the same edge, W2 MECH-6 after GR-3); W2 MECH-7 part 2: S02 stays three headers and copper wires, no FFC (W2 GR-5B ffc_adopted false: READS-P found no mating FFC), so its route is unchanged and its PWR-B home stays OPEN (boards PWR_B edge_zones[0])"
       },
       "S03": {
         "ends": ["CTRL", "RF"],
@@ -1113,8 +1113,10 @@
       "S04": {
         "ends": ["PWR", "RF"],
         "via": [
-          {"edge": "PWR_B", "zone": 1, "s": 10},
+          {"edge": "PWR_B", "zone": 1, "s": 13.0},
           {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL2", "at": [0.4722, 0.5, 0.5], "keep": "yz"},
           {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
           {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
           {"notch": "N4", "at": [0.65, 0.5, 0.5], "keep": "yz"},
@@ -1124,7 +1126,7 @@
           {"edge": "RF", "zone": 2, "s": 67.5, "dz": 2.4, "keep": "xy"},
           {"edge": "RF", "zone": 2, "s": 67.5, "dz": 2.4}
         ],
-        "note": "PWR-B top edge zone (J204) over SL2, rear layer, notch N4, RF bottom edge"
+        "note": "PWR-B top span (J204, W2 MECH-7 part 2: x 58-107, left of J207), down in front of the edge and east along the y 74.25 channel at z 42.5 to SL2 (x 124), rear layer, notch N4, RF bottom edge"
       },
       "S05": {
         "ends": ["PACK", "PWR"],
@@ -1185,7 +1187,7 @@
         "ends": ["USBC", "PWR"],
         "via": [
           {"port": "USB_C_IN"},
-          {"slot": "SL3", "at": [0.5, 0.167, 0.5], "keep": "xz"},
+          {"slot": "SL3", "at": [0.5, 0.7, 0.5], "keep": "xz"},
           {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
           {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
@@ -1194,17 +1196,19 @@
           {"edge": "PWR", "zone": 1, "s": 11.5}
         ],
         "end_status": [{"unit": "USBC", "provisional": "behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall"}],
-        "note": "bottom-face port, under the plate extension to SL3, front layer over the BMS, along y 38.2 to the PWR right edge"
+        "note": "bottom-face port, under the plate extension at y 17.55 (W2 MECH-7 part 2: between the LAB BUS nut envelope, y <= 13.3, and the HDMI flex rise, y >= 21.6) to SL3, front layer over the BMS, along y 38.2 to the PWR right edge (J113/J114 in the corner columns, no FFC)"
       },
       "S12": {
         "ends": ["PWR", "XT30"],
         "via": [
-          {"edge": "PWR", "zone": 0, "s": 74},
+          {"edge": "PWR", "zone": 1, "s": 16.8},
+          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
           {"box": "battery_pack", "at": [0.5, 1.0, 0.5], "keep": "xz"}
         ],
         "touch": ["battery_tray"],
         "end_status": [{"unit": "XT30", "provisional": "XT30 pigtail place in the battery compartment TBD: end on the pack top face"}],
-        "note": "service XT30 pigtail into the battery compartment"
+        "note": "W2 MECH-7 part 2: J115 stays in the third column of the PWR-A bottom-right corner and leaves by the right edge (no S02 FFC, boards PWR edge_zones[1]); down the gap at x 143 between PWR and the blower to y 38.2, then the service XT30 pigtail into the battery compartment"
       },
       "S13": {
         "ends": ["PWR", "HUB"],
@@ -1301,8 +1305,10 @@
       "S20": {
         "ends": ["PWR", "RTLA"],
         "via": [
-          {"edge": "PWR_B", "zone": 1, "s": 2.5},
+          {"edge": "PWR_B", "zone": 1, "s": 35.5},
           {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL2", "at": [0.0556, 0.5, 0.5], "keep": "yz"},
           {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
           {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
           {"notch": "N2", "at": [0.5, 0.5, 0.5], "keep": "yz"},
@@ -1310,13 +1316,15 @@
           {"notch": "N2", "at": [0.5, 0.5, 0.5]}
         ],
         "end_status": [{"unit": "RTLA", "provisional": "J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead"}],
-        "note": "SL2, rear layer along y 95.8 west to notch N2"
+        "note": "PWR-B top span (J207, W2 MECH-7 part 2), along the y 74.25 channel at z 42.5 to SL2, rear layer along y 95.8 west to notch N2"
       },
       "S21": {
         "ends": ["PWR", "RTLB"],
         "via": [
-          {"edge": "PWR_B", "zone": 1, "s": 6},
+          {"edge": "PWR_B", "zone": 1, "s": 35.5},
           {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL2", "at": [0.25, 0.5, 0.5], "keep": "yz"},
           {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
           {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
           {"notch": "N3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
@@ -1324,34 +1332,37 @@
           {"notch": "N3", "at": [0.5, 0.5, 0.5]}
         ],
         "end_status": [{"unit": "RTLB", "provisional": "J541 place TBD: end at notch N3 of the RTL-B USB lead"}],
-        "note": "SL2, rear layer along y 95.8 east to notch N3"
+        "note": "PWR-B top span (J207, W2 MECH-7 part 2), along the y 74.25 channel at z 42.5 to SL2, rear layer along y 95.8 east to notch N3"
       },
       "S22": {
         "ends": ["PWR", "HFP"],
         "via": [
-          {"edge": "PWR_B", "zone": 1, "s": 4.5},
+          {"edge": "PWR_B", "zone": 1, "s": 35.5},
           {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL2", "at": [0.1667, 0.5, 0.5], "keep": "yz"},
           {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
           {"box": "hfplus", "at": [1.0, 0.5, 0.5], "keep": "yz"}
         ],
         "end_status": [{"unit": "HFP", "provisional": "J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face"}],
-        "note": "SL2, rear layer to the right face of the HF+ can"
+        "note": "PWR-B top span (J207, W2 MECH-7 part 2), along the y 74.25 channel at z 42.5 to SL2, rear layer to the right face of the HF+ can"
       },
       "S23": {
         "ends": ["PWR", "LABUSB"],
         "via": [
-          {"edge": "PWR_B", "zone": 0, "s": 6.5},
-          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"edge": "PWR_B", "zone": 2, "s": 10.75},
           {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
           {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
-          {"slot": "SL3", "at": [0.5, 0.167, 0.5], "keep": "xz"},
+          {"slot": "SL3", "at": [0.5, 0.7, 0.5], "keep": "xz"},
           {"box": "gx16", "at": [0.5, 0.5, 0.0], "off": [0, 0, 17.5], "keep": "xy"},
+          {"box": "gx16", "at": [1.0, 0.5, 0.5], "off": [2.0, 0, 0], "keep": "yz"},
+          {"box": "gx16", "at": [0.5, 0.0, 0.5], "off": [0, -7.0, 0], "keep": "xz"},
           {"port": "LAB_USB_A", "keep": "yz"},
           {"port": "LAB_USB_A"}
         ],
         "end_status": [{"unit": "LABUSB", "provisional": "behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall"}],
-        "note": "PWR right edge, along y 38.2 over the BMS to SL3, rear layer under the plate extension to the bottom-face port"
+        "note": "W2 MECH-7 part 2: J506 (PH 9, W2 GR-5B) on the PWR-B bottom span x 93-114.5, along y 38.2 over the BMS to SL3, down at y 17.55 (between the LAB BUS nut envelope and the HDMI flex rise) to z 20, west right of the GX16 socket and along y 8 under the plate extension to the bottom-face port"
       },
       "S24": {
         "ends": ["CTRL", "T7A"],
@@ -1476,7 +1487,7 @@
           {"box": "gx16", "at": [0.5, 0.5, 0.8], "keep": "xy"},
           {"box": "gx16", "at": [1.0, 0.1, 0.8]}
         ],
-        "note": "PWR right edge, along y 38.2 over the BMS to SL3, rear layer to the GX16 socket"
+        "note": "PWR right edge (J507 in the corner column, no S02 FFC: W2 MECH-7 part 2), along y 38.2 over the BMS to SL3, rear layer to the GX16 socket"
       },
       "S33": {
         "kind": "external",
@@ -1487,37 +1498,40 @@
       "S34": {
         "ends": ["PWR", "LABBUS"],
         "via": [
-          {"edge": "PWR_B", "zone": 0, "s": 2.5},
-          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"edge": "PWR_B", "zone": 2, "s": 10.75},
           {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
           {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
-          {"slot": "SL3", "at": [0.5, 0.167, 0.5], "keep": "xz"},
+          {"slot": "SL3", "at": [0.5, 0.7, 0.5], "keep": "xz"},
           {"port": "LAB_BUS", "keep": "xy"},
           {"port": "LAB_BUS", "keep": "yz"},
-          {"port": "LAB_BUS"}
+          {"box": "nut.LAB_BUS", "at": [0.5, 1.0, 0.5]}
         ],
-        "end_status": [{"unit": "LABBUS", "provisional": "behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall"}],
-        "note": "PWR right edge, over the BMS to SL3, rear layer to the LAB BUS port"
+        "end_status": [{"unit": "LABBUS", "provisional": "KH-GX12-6P solder cups inside the receptacle not modelled: end at the rear (+y) face of its inner nut envelope (nut.LAB_BUS, READS-E drawing row), W2 MECH-7 part 2"}],
+        "note": "W2 MECH-7 part 2: J506 (PH 9, W2 GR-5B) on the PWR-B bottom span x 93-114.5, along y 38.2 over the BMS to SL3, down at y 17.55 to the LAB BUS port height and into the rear face of the receptacle's inner envelope"
       },
       "S35": {
         "ends": ["PWR", "BONI"],
         "via": [
-          {"edge": "PWR_B", "zone": 1, "s": 1.6},
+          {"edge": "PWR_B", "zone": 1, "s": 35.5},
           {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL2", "at": [0.0056, 0.5, 0.5], "keep": "yz"},
           {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
           {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
           {"box": "hfplus", "at": [0.3, 0.5, 0.5], "keep": "yz"},
           {"box": "hfplus", "at": [0.5, 1.0, 0.5], "keep": "xz"}
         ],
         "end_status": [{"unit": "BONI", "provisional": "Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge"}],
-        "note": "SL2, rear layer along y 95.8 to the HF+ can top edge (G6K side)"
+        "note": "PWR-B top span (J207, W2 MECH-7 part 2), along the y 74.25 channel at z 42.5 to SL2, rear layer along y 95.8 to the HF+ can top edge (G6K side)"
       },
       "S36": {
         "ends": ["PWR", "SBPWR"],
         "via": [
-          {"edge": "PWR_B", "zone": 1, "s": 3.5},
+          {"edge": "PWR_B", "zone": 1, "s": 35.5},
           {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL2", "at": [0.1111, 0.5, 0.5], "keep": "yz"},
           {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
           {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
           {"box": "nut.J551", "at": [0.0, 0.5, 0.5], "off": [-4.0, 0, 0], "keep": "yz"},
@@ -1525,7 +1539,7 @@
           {"box": "nut.J551", "at": [0.0, 0.5, 0.5]}
         ],
         "end_status": [{"unit": "SBPWR", "provisional": "J551 lead exit at the receptacle rear (0.2 m AWG 24 leads, soldered to the S36 wires, build/16): end at the rear face of the receptacle's inner envelope (nut.J551)"}],
-        "note": "SL2, rear layer along y 95.8 east past the riser window, between the RF-bay right wall (x 211.2) and the J551 envelope north to y 106, into the receptacle rear (W2 MECH-3)"
+        "note": "PWR-B top span (J207, W2 MECH-7 part 2), along the y 74.25 channel at z 42.5 to SL2, rear layer along y 95.8 east past the riser window, between the RF-bay right wall (x 211.2) and the J551 envelope north to y 106, into the receptacle rear (W2 MECH-3)"
       },
       "S37": {
         "ends": ["CTRL", "ENCM"],

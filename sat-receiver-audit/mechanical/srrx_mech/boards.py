@@ -97,6 +97,8 @@ def contract(P):
                                                  "h_max": pwr_bottom_h_max(P), "rule": b["bottom_side"]["rule"]}
         if "converter_zones" in b:
             out["boards"][bid]["converter_zones"] = b["converter_zones"]
+        if "converter_zone_refs" in b:      # W2 MECH-7 part 2: the graph refs (GR-5A) that each converter zone holds
+            out["boards"][bid]["converter_zone_refs"] = b["converter_zone_refs"]
         if "h_trim" in b:
             out["boards"][bid]["h_trim"] = {k: b["h_trim"][k] for k in ("protrusion_max", "zone_h_max", "zones", "gate")}
         if "windows" in b:
@@ -276,6 +278,10 @@ def area_check(P):
                     f"({', '.join(planned['owners'])}), so the graph's courtyards ({raw:.0f} mm2 raw) are not the decided content: the budget's planned "
                     f"{planned['board']} demand {p18:.0f} mm2 at fill {FILL[1]:g} against its usable {pu:.0f} mm2 (budget ratio_1.8 = usable / "
                     f"demand {planned['ratio_1_8']}, raw fill {planned['raw_fill']})")
+            if planned.get("budget_older_than_graph"):
+                head += (f"; the budget is older than the graph: {', '.join(planned['budget_older_than_graph'])} are in the graph already "
+                         "(GR-5A/GR-5B), so its planned demand still counts their reserved blocks or old parts until the AREA lineage reruns "
+                         "pcb/partition_budget.py (W2 MECH-7 part 2)")
             result = ("PASS (model estimate): " if p18 <= pu else "OPEN: ") + head + "; model estimate, the placement decides (PCB)"
         elif judge is None:
             result = f"OPEN: {basis}; outline {have:.0f} mm2 (model estimate)"
@@ -321,9 +327,66 @@ def planned_demand(bid):
     row = ((cand or {}).get("boards") or {}).get(mb)
     if not pend or not row:
         return None
-    return {"candidate": ch, "board": mb, "pending": len(pend), "owners": sorted({c.get("owner", "?") for c in pend}),
-            "demand_1_8_mm2": row.get("demand_1.8_mm2"), "usable_mm2": row.get("usable_mm2"), "ratio_1_8": row.get("ratio_1.8"),
-            "raw_fill": row.get("raw_fill")}
+    out = {"candidate": ch, "board": mb, "pending": len(pend), "owners": sorted({c.get("owner", "?") for c in pend}),
+           "demand_1_8_mm2": row.get("demand_1.8_mm2"), "usable_mm2": row.get("usable_mm2"), "ratio_1_8": row.get("ratio_1.8"),
+           "raw_fill": row.get("raw_fill")}
+    # W2 MECH-7 part 2: changes that the budget still counts pending although the graph already carries them (the budget is
+    # older than the graph until the AREA lineage reruns pcb/partition_budget.py): named, so the row says what it judges
+    live = planned_live()
+    stale = sorted(c["id"] for c in pend if live.get(c["id"], ("pending",))[0] == "in graph")
+    if stale:
+        out["budget_older_than_graph"] = stale
+    return out
+
+
+def graph_board_parts(root=None):
+    """ref -> pcb/generated/components.csv row of every bare board part that is fitted (DNP excluded)."""
+    import csv
+    p = (root or _root()) / "pcb" / "generated" / "components.csv"
+    if not p.exists():
+        return {}
+    with p.open(encoding="utf-8", newline="") as fh:
+        return {r["ref"]: r for r in csv.DictReader(fh) if r.get("category") == "bare_board_part" and r.get("dnp") != "True"}
+
+
+def planned_live(root=None):
+    """W2 MECH-7 part 2: status of each planned change of the chosen budget candidate against the graph of now, by the rule
+    of pcb/partition_budget.py Evaluator.planned (pcb/partition-spec.json candidates.<chosen>.planned.changes): 'pending'
+    while every ref still has the graph value it replaces (while_mpn in design/parts/parts.json, or while_footprint in
+    pcb/generated/components.csv), 'in graph' when none has, 'half-applied' otherwise; a reserve (refs [] and
+    until_mpn_in_graph) is 'in graph' once a fitted bare board part carries a listed MPN. So a budget that is older than the
+    graph keeps no retired block alive in the mechanical rules. Returns {change id: (status, [reserved block ids])}."""
+    import json
+    root = root or _root()
+    ch, _ = budget_candidate()
+    sp = root / "pcb" / "partition-spec.json"
+    db = root / "design" / "parts" / "parts.json"
+    if ch is None or not sp.exists() or not db.exists():
+        return {}
+    changes = ((json.loads(sp.read_text(encoding="utf-8")).get("candidates", {}).get(ch) or {}).get("planned") or {}).get("changes", [])
+    mpn = {r: p.get("mpn") for p in json.loads(db.read_text(encoding="utf-8")).get("parts", []) for r in p.get("refs", [])}
+    comp = graph_board_parts(root)
+    out = {}
+    for c in changes:
+        blocks = [b["id"] for b in (c.get("to") or {}).get("blocks", [])]
+        if "until_mpn_in_graph" in c:
+            st = "in graph" if any(mpn.get(r) in c["until_mpn_in_graph"] for r in comp) else "pending"
+        else:
+            def holds(r):
+                if r not in comp:
+                    return False
+                if "while_mpn" in c:
+                    return mpn.get(r) == c["while_mpn"]
+                return comp[r]["footprint"] == (c.get("while_footprint") or {}).get(r)
+            state = [holds(r) for r in c.get("refs", [])]
+            st = "pending" if state and all(state) else "in graph" if not any(state) else "half-applied"
+        out[c["id"]] = (st, blocks)
+    return out
+
+
+def retired_blocks(root=None):
+    """Reserved block ids of the budget whose planned change is in the graph now (planned_live), with the change id."""
+    return {b: cid for cid, (st, bl) in planned_live(root).items() if st == "in graph" for b in bl}
 
 
 SIDE_ENTRY = ("CTRL", "RF", "ENCM", "ENCV")   # tools/assembly_data.py SIDE_ENTRY_UNITS

@@ -542,9 +542,10 @@ def module_rules(P):
         return out
     # W2 MECH-7 (SHRINK-2): no module on a board; the PWR-A converters are reserved blocks of the partition budget until GR-5A
     # gives them graph refs: each block height inside the PWR-A envelope (hA, under the PWR-B mezzanine)
-    from .boards import budget_candidate
+    from .boards import budget_candidate, retired_blocks
     ch, cand = budget_candidate()
-    blocks = [bl for bl in ((cand or {}).get("planned") or {}).get("blocks", []) if bl.get("side") == "PWR_A"]
+    retired = retired_blocks()      # W2 MECH-7 part 2: blocks whose change GR-5A has put into the graph leave the rule
+    blocks = [bl for bl in ((cand or {}).get("planned") or {}).get("blocks", []) if bl.get("side") == "PWR_A" and bl["id"] not in retired]
     b = P.boards["boards"]["PWR"]
     if blocks:
         top = max(blocks, key=lambda bl: bl["h"])
@@ -555,9 +556,13 @@ def module_rules(P):
                     "result": _res(all(bl["h"] <= b["max_height"] + 1e-9 for bl in blocks)),
                     "source": f"pcb/partition-budget.json candidates.{ch}.planned.blocks (heights: READS-P rows, MODEL blocks until GR-5A); boards.json PWR max_height"})
     else:
+        gone = sorted(retired)
         out.append({"id": "R-PWR-MODULES", "rule": "no purchased module on a custom board (W2 MECH-7: SHRINK-2 replaced the Pololu U107/U108)",
-                    "value_mm": None, "limit_mm": b["max_height"], "result": "PASS (model): no module on a board; the converters are board parts (partition height rule)",
-                    "source": "boards.json modules_on_board; pcb/partition-budget.json"})
+                    "value_mm": None, "limit_mm": b["max_height"], "retired_blocks": gone,
+                    "result": "PASS (model): no module on a board; the converters are board parts (partition height rule)"
+                              + (f"; the reserved blocks {', '.join(gone)} are in the graph as real parts (GR-5A), so their heights are the "
+                                 "partition height rule's (pcb/partition-spec.json heights.by_mpn)" if gone else ""),
+                    "source": "boards.json modules_on_board; pcb/partition-budget.json; pcb/partition-spec.json candidates.<chosen>.planned (graph status)"})
     return out
 
 
@@ -1468,37 +1473,82 @@ def _budget_planned():
     return ch, cand or {}, (cand or {}).get("planned") or {}
 
 
+def _pack_in_zone(sizes, zw, zh):
+    """Best simple arrangement of courtyards (w, h) inside a zone zw x zh: every part turned 0 or 90 deg, all in one row
+    along x or one column along y; (margin, arrangement, dims) with margin = the smaller free length, or None."""
+    best = None
+    for flips in itertools.product((0, 1), repeat=len(sizes)):
+        dims = [(h, w) if f else (w, h) for (w, h), f in zip(sizes, flips)]
+        for how, W, H in (("row along x", sum(d[0] for d in dims), max(d[1] for d in dims)),
+                          ("column along y", max(d[0] for d in dims), sum(d[1] for d in dims))):
+            if W <= zw + 1e-9 and H <= zh + 1e-9:
+                m = min(zw - W, zh - H)
+                if best is None or m > best[0] + 1e-9:
+                    best = (m, how, dims)
+    return best
+
+
 def pwr_zones_rule(P):
-    """R-PWR-ZONES: every converter block of the partition budget fits inside its thermal_bond zone (boards.json PWR
-    converter_zones; block w x d in either orientation). MODEL: the blocks stand for the converter footprints until GR-5A."""
+    """R-PWR-ZONES: the converter of each PWR-A converter zone fits inside its thermal_bond zone (boards.json PWR
+    converter_zones). W2 MECH-7 part 2: once GR-5A has put the converter into the graph (its budget block is retired,
+    boards.planned_live), the graph courtyards of the zone refs (converter_zone_refs: the exposed-pad IC and its power
+    inductor) are packed into the zone, every part turned 0 or 90 deg, in one row or one column; until then the SHRINK-2
+    study block of the partition budget stands for it (block w x d in either orientation). MODEL: positions at placement."""
+    from .boards import footprint_courtyards, graph_board_parts, retired_blocks
     b = P.boards["boards"]["PWR"]
     ch, cand, planned = _budget_planned()
     blocks = {bl["id"]: bl for bl in planned.get("blocks", [])}
-    rule = {"id": "R-PWR-ZONES", "rule": "PWR-A converter blocks inside their thermal_bond zones (block w x d in either orientation)",
-            "source": f"boards.json PWR thermal_bond / converter_zones; pcb/partition-budget.json candidates.{ch}.planned.blocks (SHRINK-2 study blocks, MODEL)"}
+    retired = retired_blocks()
+    zrefs = b.get("converter_zone_refs", {})
+    rule = {"id": "R-PWR-ZONES", "rule": "PWR-A converters inside their thermal_bond zones (graph courtyards of the zone refs once GR-5A has "
+                                         "placed them in the graph, else the budget block; each part turned 0 or 90 deg)",
+            "source": f"boards.json PWR thermal_bond / converter_zones / converter_zone_refs; pcb/generated/components.csv and the vendored "
+                      f"KiCad 10.0.7 courtyards (build/kicad/footprints/manifest.json); pcb/partition-budget.json candidates.{ch}.planned.blocks "
+                      "(SHRINK-2 study blocks, MODEL) while a block is pending"}
     if not b.get("converter_zones"):
         return dict(rule, value_mm=None, result="OPEN: boards.json PWR has no converter_zones")
-    val, bad, opened = {}, [], []
+    graph = graph_board_parts()
+    cy = footprint_courtyards()
+    val, bad, opened, txt = {}, [], [], []
     for zn, bid in sorted(b["converter_zones"].items()):
         z = b["thermal_bond"][int(zn) - 1]
+        refs = zrefs.get(zn, [])
+        real = bool(refs) and all(r in graph and graph[r].get("mount") != "pcb_module" and cy.get(graph[r]["footprint"]) for r in refs)
+        if real and (bid in retired or bid not in blocks):
+            sizes = [(cy[graph[r]["footprint"]]["w"], cy[graph[r]["footprint"]]["h"]) for r in refs]
+            fit = _pack_in_zone(sizes, z[2], z[3])
+            row = {"zone_mm": z, "basis": "graph courtyards (GR-5A)", "refs": {r: [round(w, 2), round(h, 2)] for r, (w, h) in zip(refs, sizes)},
+                   "footprints": {r: graph[r]["footprint"] for r in refs}, "block_retired": bid,
+                   "budget_still_lists_block": bid in blocks,
+                   "margin_mm": None if fit is None else round(fit[0], 2), "arrangement": None if fit is None else fit[1]}
+            val[f"zone {zn}"] = row
+            parts = " + ".join(f"{r} {w:g} x {h:g}" for r, (w, h) in zip(refs, sizes))
+            if fit is None:
+                bad.append(f"zone {zn} {z[2]:g} x {z[3]:g} cannot hold {parts} in a row or a column")
+            else:
+                txt.append(f"zone {zn} {z[2]:g} x {z[3]:g} holds {parts} (graph courtyards, {fit[1]}, margin {fit[0]:.2f})")
+            continue
         bl = blocks.get(bid)
         if bl is None:
-            opened.append(f"zone {zn}: block {bid} not in the budget (retired by GR-5A: MECH-7 part 2 judges the real footprints)")
+            opened.append(f"zone {zn}: block {bid} not in the budget and the zone refs {', '.join(refs) or '(none)'} are not graph board parts")
             continue
         fits = [(z[2] - w, z[3] - d) for w, d in ((bl["w"], bl["d"]), (bl["d"], bl["w"])) if w <= z[2] + 1e-9 and d <= z[3] + 1e-9]
         margin = max((min(m) for m in fits), default=None)
-        val[f"zone {zn}"] = {"zone_mm": z, "block": bid, "block_mm": [bl["w"], bl["d"]], "block_h_mm": bl.get("h"),
+        val[f"zone {zn}"] = {"zone_mm": z, "basis": "budget block", "block": bid, "block_mm": [bl["w"], bl["d"]], "block_h_mm": bl.get("h"),
                              "margin_mm": None if margin is None else round(margin, 2)}
         if margin is None:
             bad.append(f"zone {zn} {z[2]:g} x {z[3]:g} < {bid} {bl['w']:g} x {bl['d']:g}")
+        else:
+            txt.append(f"zone {zn} {z[2]:g} x {z[3]:g} holds {bid} {bl['w']:g} x {bl['d']:g} (budget block, margin {margin:g})")
     if bad:
         return dict(rule, value_mm=val, result="FAIL (model): " + "; ".join(bad))
-    txt = "; ".join(f"{k} {v['zone_mm'][2]:g} x {v['zone_mm'][3]:g} holds {v['block']} {v['block_mm'][0]:g} x {v['block_mm'][1]:g} "
-                    f"(margin {v['margin_mm']:g})" for k, v in val.items())
     if opened:
-        return dict(rule, value_mm=val, result="OPEN: " + "; ".join(opened) + ("; " + txt if txt else ""))
-    return dict(rule, value_mm=val, limit_mm="block inside its zone",
-                result=f"PASS (model): {txt}; positions at the PCB-PWRA-3 placement, the real GR-5A footprints replace the blocks (MECH-7 part 2)")
+        return dict(rule, value_mm=val, result="OPEN: " + "; ".join(opened) + ("; " + "; ".join(txt) if txt else ""))
+    gone = sorted({v["block_retired"] for v in val.values() if v.get("budget_still_lists_block")})
+    note = (f"; the budget blocks {', '.join(gone)} retired with GR-5A, pcb/partition-budget.json still lists them until the AREA lineage "
+            "reruns pcb/partition_budget.py" if gone else "")
+    return dict(rule, value_mm=val, limit_mm="converter inside its zone",
+                result=f"PASS (model): {'; '.join(txt)}{note}; the power passives sit next to them (TI layout), positions at the PCB-PWRA-3 placement")
 
 
 def pwr_bottom_rule(P):
@@ -1702,6 +1752,81 @@ def mated_height_rule(P):
     return dict(rule, value_mm=val, limit_mm=z_lim, headers=rows, result=res)
 
 
+def pwr_b_exit_rule(P):
+    """R-PWRB-EXIT (W2 MECH-7 part 2): room in front of each PWR-B edge zone for its side-entry harness plugs. For every
+    zone of boards.json PWR_B edge_zones: the distance from the board edge, outwards, to the nearest layout envelope or
+    structure part that overlaps the zone span and the plug height band (PWR-B component face + the side-entry body height
+    of the zone's header families, parts.json harness_headers <family>_side h), against the distance the mated housing
+    stands proud of the header face (boards.json PWR_B exit_rule plug_proud_mm). The header set-back from the board edge
+    and the wire bend at the housing are placement and proof-fit items, so the rule reports (OPEN), never FAIL."""
+    import csv
+    from pathlib import Path
+    b = P.boards["boards"]["PWR_B"]
+    ex = b.get("exit_rule") or {}
+    rule = {"id": "R-PWRB-EXIT",
+            "rule": "PWR-B edge zones: free room in front of the edge in the plug height band against the mated side-entry housing proud of the "
+                    "header face (header set-back and wire bend: PCB-PWRB-2 placement, proof-fit)",
+            "source": "boards.json PWR_B edge_zones / exit_rule; parts.json harness_headers; build/16-dzhgut-rozyemy.csv (board PWR_B); mechanical.json layout"}
+    if not b.get("edge_zones") or not ex:
+        return dict(rule, value_mm=None, result="OPEN: boards.json PWR_B has no edge_zones or exit_rule")
+    root = Path(__file__).resolve().parents[2]
+    fam_of = {}
+    path = root / "build" / "16-dzhgut-rozyemy.csv"
+    if path.exists():
+        with path.open(encoding="utf-8", newline="") as fh:
+            fam_of = {r["connector"]: r["family"] for r in csv.DictReader(fh) if r.get("board") == "PWR_B"}
+    hh = P.parts["harness_headers"]
+    face = b["place"]["z_bottom"] + P.boards["stackup"]["t"]
+    ox, oy = b["place"]["origin"]
+    xs, ys = [p[0] for p in b["outline"]], [p[1] for p in b["outline"]]
+    obstacles = [(name, bx) for iid, name, bx, it in item_boxes(P) if it.get("board") not in ("PWR", "PWR_B") and not it.get("outside")]
+    from .layout import structure_boxes
+    obstacles += list(structure_boxes(P))
+    rows, txt = [], []
+    for i, ez in enumerate(b["edge_zones"]):
+        fams = sorted({fam_of[h] for h in ez.get("headers", []) if h in fam_of})
+        hs = [hh.get(f"{f}_side", {}).get("h") for f in fams]
+        band = (face, face + max([h for h in hs if h] or [b["max_height"]]))
+        a0, a1 = ez["span"]
+        if ez["edge"] in ("bottom", "top"):
+            e = oy + (min(ys) if ez["edge"] == "bottom" else ez.get("at", max(ys)))
+            lo, hi, ai, ci, sgn = ox + a0, ox + a1, 0, 1, (-1 if ez["edge"] == "bottom" else 1)
+        else:
+            e = ox + (max(xs) if ez["edge"] == "right" else min(xs))
+            lo, hi, ai, ci, sgn = oy + a0, oy + a1, 1, 0, (1 if ez["edge"] == "right" else -1)
+        best = None
+        for name, bx in obstacles:
+            if bx[ai + 3] <= lo + 1e-9 or bx[ai] >= hi - 1e-9 or bx[5] <= band[0] + 1e-9 or bx[2] >= band[1] - 1e-9:
+                continue                                         # beside the span or outside the plug height band
+            near, far = bx[ci], bx[ci + 3]                       # extent across the edge (y for top/bottom, x for left/right)
+            gap = (near - e) if sgn > 0 else (e - far)
+            if (sgn > 0 and far <= e + 1e-9) or (sgn < 0 and near >= e - 1e-9):
+                continue                                         # behind the edge (over the board)
+            gap = max(gap, 0.0)
+            if best is None or gap < best[0]:
+                best = (round(gap, 2), name)
+        proud = [ex["plug_proud_mm"].get(f) for f in fams]
+        p_max = max([p for p in proud if p is not None], default=None)
+        row = {"zone": i, "edge": ez["edge"], "span": ez["span"], "headers": ez.get("headers", []), "families": fams, "band_z": [round(v, 2) for v in band],
+               "room_mm": None if best is None else best[0], "nearest": None if best is None else best[1], "plug_proud_mm": p_max,
+               "plug_proud_tbd": [f for f, p in zip(fams, proud) if p is None]}
+        if best is None:
+            row["verdict"] = "no envelope in front of the edge in the band"
+        elif p_max is None:
+            row["verdict"] = f"room {best[0]:g} mm to {best[1]}; housing proud TBD ({', '.join(fams) or 'no header'})"
+        elif best[0] >= p_max:
+            row["verdict"] = f"room {best[0]:g} mm to {best[1]} >= housing proud {p_max:g}: header face at the edge; the wire bend needs the rest"
+        else:
+            row["verdict"] = (f"room {best[0]:g} mm to {best[1]} < housing proud {p_max:g}: the header face sits >= {p_max - best[0]:.2f} mm inboard "
+                              "of the board edge, and the wires turn within the room")
+        if row["plug_proud_tbd"] and p_max is not None:
+            row["verdict"] += f"; housing proud of {', '.join(row['plug_proud_tbd'])} TBD"
+        rows.append(row)
+        txt.append(f"zone {i} ({ez['edge']} {a0:g}-{a1:g}, {', '.join(ez.get('headers', [])) or 'no header'}): {row['verdict']}")
+    return dict(rule, value_mm={"zones": rows}, limit_mm=ex["plug_proud_mm"],
+                result="OPEN: " + "; ".join(txt) + f"; {ex.get('gate', 'header set-back and wire bend at the PCB-PWRB-2 placement and proof-fit')}")
+
+
 def w2_mech7_rules(P):
     """Rows added by W2 MECH-7 (registration list, append-only)."""
-    return [pwr_zones_rule(P), pwr_bottom_rule(P), h_trim_rule(P), mated_height_rule(P)]
+    return [pwr_zones_rule(P), pwr_bottom_rule(P), h_trim_rule(P), mated_height_rule(P), pwr_b_exit_rule(P)]

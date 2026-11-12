@@ -26,11 +26,13 @@
       "hole_d": 3.2,
       "hole_keepout_d": 7.0,
       "max_height": 4.5,
-      "_max_height_note": "W2 MECH-3: hA 4.5 of pcb/partition-spec.json parameters (B2B mated stack 5.00 minus 0.5 clearance), the height under the PWR-B mezzanine; PWR-A parts taller than hA stand in PWR-B windows (window ceiling 12.1 = stack 5.0 + board 1.6 + hB 5.5) or in uncovered edge strips (headers). W2 MECH-7 (SHRINK-2): no module stands on PWR-A any more (the Pololu U107/U108 and their two 12.1 mm height zones are gone; the LM61460AANRJRR and TPSM63606RDLR converters are ordinary top-side parts, blocks of 3.2 and 4.1 mm in pcb/partition-budget.json candidates.<chosen>.planned.blocks, both <= hA); the windows over the 15 taller PWR-A refs (pcb/partition-budget.json candidates.<chosen>.window_refs) are a placement rule that PCB-PWRB-2 cuts at the PCB-PWRA-3 placement, not contract cut-outs",
+      "_max_height_note": "W2 MECH-3: hA 4.5 of pcb/partition-spec.json parameters (B2B mated stack 5.00 minus 0.5 clearance), the height under the PWR-B mezzanine; PWR-A parts taller than hA stand in PWR-B windows (window ceiling 12.1 = stack 5.0 + board 1.6 + hB 5.5) or in uncovered edge strips (headers). W2 MECH-7 (SHRINK-2): no module stands on PWR-A any more (the Pololu U107/U108 and their two 12.1 mm height zones are gone; the LM61460AANRJRR and TPSM63606RDLR converters are ordinary top-side parts, U107 and U108 of the graph since W2 GR-5A, with their power inductor L102 SRP1040VA-4R7M; their heights are the partition height rule's, pcb/partition-spec.json heights.by_mpn); the windows over the 15 taller PWR-A refs (pcb/partition-budget.json candidates.<chosen>.window_refs) are a placement rule that PCB-PWRB-2 cuts at the PCB-PWRA-3 placement, not contract cut-outs",
       "thermal_bond": [[9, 4, 60, 23], [72, 4, 56, 23], [7, 39, 17, 24], [7, 73, 14, 14]],
-      "_thermal_bond_note": "placement contract for the PCB work: TPS7A4701 x2 and LT3045 x2 inside the two lower zones (their exposed pads stitched to bottom copper); W2 MECH-7 (SHRINK-2): zone 3 [7, 39, 17, 24] carries the SYS12 converter block (LM61460AANRJRR with its SRP7030-2R2M inductor and power passives) and zone 4 [7, 73, 14, 14] the LAB5 converter block (TPSM63606RDLR with its power passives) (converter_zones; the zone rectangles are candidates.shrink2.pwr_a_bottom.thermal_bond_planned of pcb/partition-spec.json, W2 AREA-2, and they hold the SHRINK-2 study blocks CONV_SYS12 [8, 40]-[23, 54.3] and CONV_LAB5 [8, 74]-[20, 85.6], MODEL); the exposed pads and the GND/VIN/VOUT copper of each converter are stitched to bottom copper over its zone; zones 1-2 are unchanged; each zone gets one Gelid pad of the same size; rules R-PWR-PADS, R-UFS-REG and R-PWR-ZONES",
+      "_thermal_bond_note": "placement contract for the PCB work: TPS7A4701 x2 and LT3045 x2 inside the two lower zones (their exposed pads stitched to bottom copper); W2 MECH-7 (SHRINK-2): zone 3 [7, 39, 17, 24] carries the SYS12 converter (U107 LM61460AANRJRR with its power inductor L102 SRP1040VA-4R7M, W2 GR-5A; the decided SRP7030-2R2M is NRND and 2.2 uH breaks LM61460 eq. (10), build/15 'Перетворювачі SYS12 і LAB5 (W2 GR-5A)') and zone 4 [7, 73, 14, 14] the LAB5 converter (U108 TPSM63606RDLR, inductor inside the module) (converter_zones, converter_zone_refs; the zone rectangles are candidates.shrink2.pwr_a_bottom.thermal_bond_planned of pcb/partition-spec.json, W2 AREA-2, and they hold the SHRINK-2 study blocks CONV_SYS12 [8, 40]-[23, 54.3] and CONV_LAB5 [8, 74]-[20, 85.6], MODEL; W2 MECH-7 part 2: and the graph courtyards of U107 + L102 and of U108, rule R-PWR-ZONES); the exposed pads and the GND/VIN/VOUT copper of each converter are stitched to bottom copper over its zone; zones 1-2 are unchanged; each zone gets one Gelid pad of the same size; rules R-PWR-PADS, R-UFS-REG and R-PWR-ZONES",
       "converter_zones": {"3": "CONV_SYS12", "4": "CONV_LAB5"},
-      "_converter_zones_note": "W2 MECH-7: thermal_bond zone number (1-based) -> reserved block id of pcb/partition-budget.json candidates.<chosen>.planned.blocks that must fit inside it (R-PWR-ZONES, block w x d in either orientation); after GR-5A the real converter footprints replace the blocks and the check moves to them (MECH-7 part 2)",
+      "_converter_zones_note": "W2 MECH-7: thermal_bond zone number (1-based) -> reserved block id of pcb/partition-budget.json candidates.<chosen>.planned.blocks that must fit inside it (R-PWR-ZONES, block w x d in either orientation) while its planned change is pending; once GR-5A has put the converter into the graph the block is retired (srrx_mech.boards.planned_live, the rule of pcb/partition_budget.py) and R-PWR-ZONES packs the graph courtyards of converter_zone_refs instead (MECH-7 part 2)",
+      "converter_zone_refs": {"3": ["U107", "L102"], "4": ["U108"]},
+      "_converter_zone_refs_note": "W2 MECH-7 part 2: the parts each converter zone holds over its Gelid pad, the heat sources of the converter (W2 GR-5A report: 'Thermal zones 3/4 hold U107, L102 and U108'): zone 3 the LM61460AANRJRR (exposed-pad VQFN-HR, SR_RX_Custom:TI_RJR0014A_VQFN-HR-14_4x3.5mm) and its 4.7 uH SRP1040VA-4R7M on the KiCad SRP1038C land; zone 4 the TPSM63606RDLR power module (SR_RX_Custom:TI_RDL0020A_B3QFN-20_5x5.5mm); their input and output capacitors sit next to them (SNVSBD5D / SLVSGB4B layout), inside or beside the zone at the PCB-PWRA-3 placement",
       "bottom_side": {
         "rule": "two-sided PWR-A (SHRINK-2 decision (6), W2 AREA-2 / MECH-7): the chip R/C listed in pcb/partition-budget.json candidates.<chosen>.pwr_a_bottom go on the bottom side; every bottom courtyard lies inside one plate pocket PB* (mechanical.json plate.pwr_bottom_pockets, computed by srrx_mech.rules.pwr_bottom_regions; board-coordinate list in mechanical/generated/contract/boards.json PWR bottom_side.keep_in_mm), so it is outside every thermal_bond zone and its land, outside the converter heat corridors and outside the plate-hole lands; it also stays outside every top THT pin field + 1.0 mm (pcb/partition-spec.json keepouts.pwr_a_bottom_parts); its height is at most the room h_max = shim gap + pocket depth - polyimide film - clearance (R-PWR-BOTTOM)",
         "clearance": 0.3,
@@ -41,20 +43,22 @@
         "rule": "rule H-TRIM (pcb/partition-spec.json keepouts.h_trim, W2 AREA-2): the THT pins of every PWR-B header and THT part are trimmed flush after soldering, protrusion_max below the PWR-B bottom face; PWR-A may then place parts up to zone_h_max under those pin fields (pin field + window_margin 0.5 each side), so the field costs no PWR-A area",
         "protrusion_max": 1.0,
         "zone_h_max": 2.7,
-        "zones": "under the PWR-B THT pin fields of pcb/partition-budget.json candidates.<chosen>.pwr_a_keepout_items at the PCB-PWRB-2 placement (positions TBD); the new PWR-B spans (boards PWR_B edge_zones 2 and 3: PHD 2x10 on the top span x 84-107, PH 9-pin on the bottom span) put two of them along those edges",
+        "zones": "under the PWR-B THT pin fields of pcb/partition-budget.json candidates.<chosen>.pwr_a_keepout_items at the PCB-PWRB-2 placement (positions TBD); the PWR-B spans (boards PWR_B edge_zones 1 and 2, W2 MECH-7 part 2: J204 + J207 on the top span x 58-107, the PH 9-pin J506 on the bottom span x 93-114.5) put three of them along those edges",
         "gate": "OPEN: the trimmed protrusion and the 1.3 mm clearance (stack 5.0 - protrusion 1.0 - zone part 2.7) are measured at proof-fit; PCB-PWRB-2 marks every PWR-B THT pin field for flush trim in its fab and assembly notes; if H-TRIM fails, F2-C fires (rule R-H-TRIM)"
       },
       "edge_zones": [
         {
           "edge": "bottom",
           "span": [0, 136],
-          "use": "battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads",
-          "headers": ["J105", "J106", "J107", "J108", "J109", "J110", "J111", "J112"]
+          "use": "battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads; W2 MECH-7 part 2: the PH headers J109-J112 turned by 90 deg (SHRINK-2 decision (8); wip/w2-pwra3 README: the row then needs 70.0 instead of 87.6 mm) and the row compacted towards x 0, so that its edge strips end at x <= row_end_max and the PWR-A edge from row_end_max to x 114.5 stays free of PWR-A headers under the PWR-B PH 9-pin span (boards PWR_B edge_zones[2])",
+          "headers": ["J105", "J106", "J107", "J108", "J109", "J110", "J111", "J112"],
+          "row_end_max": 92.5,
+          "_row_end_max_note": "W2 MECH-7 part 2 (contract for PCB-PWRA-3): the courtyards of J105-J112 + window_margin 0.5 end at x <= 92.5; turned, the row is 70.0 mm of courtyards from x 8.2, about 81.7 with the gaps of today, so about 10 mm of slack stay; at wip/w2-pwra3 9ecc26f2 probe 7 (not turned) J112 still ends at x 99.3 (MODEL)"
         },
         {
           "edge": "right",
           "span": [0, 35],
-          "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports and GX16 through plate slot SL3",
+          "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports, GX16 and the XT30 service pigtail through plate slot SL3 and the battery compartment; W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false: READS-P found no mating FFC) J113, J114, J115 and J507 keep the wip/w2-pwra1 80d92c28 place in the second and third column of the bottom-right corner and leave by this edge (S11, S12, S32)",
           "headers": ["J104", "J113", "J114", "J115", "J507"]
         },
         {
@@ -67,11 +71,11 @@
           "edge": "top",
           "at": 35,
           "span": [108, 128],
-          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22 and S35 leave from PWR-B J204/J207 (build/16-dzhgut-rozyemy.csv, W2 GR-3)",
+          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22, S35 and S36 leave from PWR-B J204/J207 on the PWR-B top span x 58-107 (boards PWR_B edge_zones[1], W2 MECH-7 part 2) and reach SL2 along the y 74.25 channel; PWR-B leaves a window over this span",
           "headers": ["J206"]
         }
       ],
-      "_edge_headers_note": "W2 MECH-7: exit edge of every PWR-A header of build/16-dzhgut-rozyemy.csv (board PWR_A), from the PCB-PWRA placement study (build/kicad/boards/PWR_A/placement-study.json anchors at wip/w2-pwra1 80d92c28, MODEL): J113, J114, J115 and J507 sit inboard in the bottom-right corner and leave by the right edge; the SHRINK-2 decided set (scratch study of 2026-11-11) moves them to the bottom edge, turned by 90 deg, only if GR-5B adopts the S02 FFC (that move and its edge zones are MECH-7 part 2); rule R-HDR-MATED judges each header on its edge",
+      "_edge_headers_note": "W2 MECH-7: exit edge of every PWR-A header of build/16-dzhgut-rozyemy.csv (board PWR_A), from the PCB-PWRA placement study (build/kicad/boards/PWR_A/placement-study.json anchors at wip/w2-pwra1 80d92c28, MODEL): J113, J114, J115 and J507 sit inboard in the bottom-right corner and leave by the right edge; the SHRINK-2 decided set (scratch study of 2026-11-11) moves them to the bottom edge, turned by 90 deg, only if GR-5B adopts the S02 FFC; W2 MECH-7 part 2: GR-5B did not adopt it (ffc_adopted false), so the right-edge exit is final and the bottom row ends at row_end_max for the PWR-B PH 9-pin span; rule R-HDR-MATED judges each header on its edge",
       "tht_pockets": {
         "rule": "every PWR-A THT pad group gets a relief pocket in the plate front face (M-07): pin field + margin on each side, depth >= depth_min, with a polyimide insulator over the pocket and the 0.4 mm shim gap (trimmed THT joints with a bottom fillet stand 0.3-1 mm proud and would pierce the 0.5 mm Gelid pad: pcb/partition-spec.json keepouts.pwr_a_tht_pockets); W2 MECH-7: a pin field that lies inside a bottom-part pocket PB* (mechanical.json plate.pwr_bottom_pockets, same depth) needs no pocket of its own",
         "margin": 1.0,
@@ -80,7 +84,7 @@
         "from_placement": "the PWR-A THT groups (radials, the Keystone 3568 holder of F102, the PWR-A harness headers: pcb/partition-budget.json candidates.<chosen> pwr_a_tht_pocket_items; W2 MECH-7: no Pololu rows any more, PK1/PK2 are deleted) whose pin fields lie outside the PB pockets, in a thermal_bond zone (the Gelid pad is cut there too), a land or a heat corridor get their own pocket at the PCB-PWRA-3 placement: OPEN until it exists (rule R-PWR-POCKETS prints the current count)",
         "insulator": "polyimide film into each pocket and across the shim gap: AI-POLYIMIDE-TAPE 3M 5413 (W2 MECH-7, mechanical.json plate.pwr_bottom_pockets film)"
       },
-      "notes": "Fastening (W2 MECH-3): the M3 male studs of the seven PWR-A/PWR-B standoffs F45 into PEM F-M3-1 self-clinching flush nuts in the plate (pressed flush with the plate front face, M-07; the 1.53 shank stops 0.47 short of the rear face and the stud tip at most flush with it, so nothing reaches the RF side; no cut thread in the plate, STACK 5.8); PWR-B sits on the standoffs (boards.json PWR_B, F46). W2 MECH-7 (SHRINK-2): no module on the board (the Pololu U107/U108 are replaced by the LM61460AANRJRR SYS12 converter in zone 3 and the TPSM63606RDLR LAB5 converter in zone 4; graph refs by GR-5A); the board is two-sided (bottom_side) over the plate pockets PB*. The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check with and without the build/16 harness headers: fit-report 'board_area'."
+      "notes": "Fastening (W2 MECH-3): the M3 male studs of the seven PWR-A/PWR-B standoffs F45 into PEM F-M3-1 self-clinching flush nuts in the plate (pressed flush with the plate front face, M-07; the 1.53 shank stops 0.47 short of the rear face and the stud tip at most flush with it, so nothing reaches the RF side; no cut thread in the plate, STACK 5.8); PWR-B sits on the standoffs (boards.json PWR_B, F46). W2 MECH-7 (SHRINK-2): no module on the board (the Pololu U107/U108 are replaced by the LM61460AANRJRR SYS12 converter U107 with L102 in zone 3 and the TPSM63606RDLR LAB5 converter U108 in zone 4, graph refs since W2 GR-5A; the reverse-polarity stage U111/Q102 and the NANO2 fuses F103/F201 are ordinary top-side parts); the board is two-sided (bottom_side) over the plate pockets PB*. The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check with and without the build/16 harness headers: fit-report 'board_area'."
     },
     "PWR_B": {
       "name": "power mezzanine PWR-B (PWR_BRANCH_SW + USB_POWER_SW)",
@@ -121,26 +125,28 @@
         {
           "edge": "right",
           "span": [0, 35],
-          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry), LAB PORT J506 (S23) and LAB BUS J508 (S34) leads towards plate slot SL3 (side entry at hB; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
+          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false, READS-P found no mating FFC) the three headers (58.7 mm of courtyards) have no conflict-free home: this 35 mm edge also carries the PWR-A J104 strip and the hole keep-outs, and the PWR-B bottom edge lies over the PWR-A bottom-row strips, so the recorded bottom-edge deviation of W2 PCB-PWRB stays OPEN (SHRINK-2 stays_open: 'S02 has a home only with a sourced FFC'); J506/J508 left this edge (edge zone 2)",
+          "headers": ["J201", "J202", "J203"]
         },
         {
           "edge": "top",
           "at": 35,
-          "span": [108, 128],
-          "use": "J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 X04S1-PWR (RF board lead S04) through plate slot SL2 (build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 MECH-7: used until GR-5B merges J204 + J207 into the PHD 2x10 of zone 2; this span lies over the PWR-A J206 edge strip (SL2), which PWR-B leaves uncovered"
-        },
-        {
-          "edge": "top",
-          "at": 35,
-          "span": [84, 107],
-          "use": "W2 MECH-7 (SHRINK-2): the JST PHD 2x10 side-entry header S20B-PHDSS that merges J204 (S04) and J207 (S20, S21, S22, S35, S36) (GR-5B), 22.9 mm along the edge; the harness runs along the y 74-77 channel to plate slot SL2; the PWR-A parts under its pin field follow H-TRIM (boards PWR h_trim)"
+          "span": [58, 107],
+          "use": "W2 MECH-7 part 2 (SHRINK-2 without the PHD merge): J207 SL2-PWR-PH (JST PH 12 side entry S12B-PH-K-S, KiCad courtyard 26.9 mm: S20, S21, S22, S35, S36) at the right end next to plate slot SL2 and J204 X04S1-PWR (JST PH 8 side entry S8B-PH-K-S, 18.9 mm: S04 to the RF board) left of it, 45.8 of 49 mm; the harness turns down in front of the edge and runs along the y 74.25 channel under the HDMI board (z 42.5) to plate slot SL2; when GR-5B merges J204 + J207 into the PHD 2x10 S20B-PHDSS (OPEN: the RF-end J420 has to become PHD first, build/15 'Роз'єми PWR-B (W2 GR-5B)') it takes x 84.1-107 (22.9 mm); the right end keeps 1.0 mm to the PWR-A J206 edge zone x 108-128 (boards PWR edge_zones[3]), over which PWR-B leaves a window (no PWR-B header there any more); the hole keep-out of (46, 31) ends at x 49.5; PWR-A parts under the pin fields follow H-TRIM (boards PWR h_trim)",
+          "headers": ["J204", "J207"]
         },
         {
           "edge": "bottom",
-          "span": [100.5, 128],
-          "use": "W2 MECH-7 (SHRINK-2): the JST PH 9-pin side-entry header S9B-PH-K-S that merges J506 (S23) and J508 (S34) (GR-5B; B 19.9 mm, READS-P row web:jst-ph-catalogue-lcsc), towards plate slot SL3; nominal span = the 27.5 mm that the SHRINK-2 study frees at the right end of the PWR-A bottom row when J109-J112 are turned by 90 deg (estimate, not re-run): PCB-PWRA-3 sets the final x range, and while J113-J115/J507 stay in the PWR-A bottom-right corner (no S02 FFC) the span collides with their edge strips (OPEN, MECH-7 part 2)"
+          "span": [93, 114.5],
+          "use": "W2 MECH-7 part 2 (SHRINK-2): J506 SL3-PWR-PH, the JST PH 9-pin side-entry header S9B-PH-K-S (KiCad courtyard 20.9 mm) that merged J506 (S23) and J508 (S34) (W2 GR-5B), towards plate slot SL3 along y 38.2; the span lies between the PWR-A bottom-row strips (they end at x <= 92.5: boards PWR edge_zones[0] row_end_max, J109-J112 turned by 90 deg) and the J507 / J113 corner strips (x >= 115.0, the wip/w2-pwra1 place that SHRINK-2 keeps without the S02 FFC; wip/w2-pwra3 9ecc26f2 probe 7: J507 courtyard from x 115.475, MODEL)",
+          "headers": ["J506"]
         }
       ],
+      "exit_rule": {
+        "plug_proud_mm": {"PH": 2.0},
+        "_src": "W2 MECH-7 part 2, model arithmetic from the JST ePH catalogue (PDF of 27.01.2026, read 2026-11-07, recorded in parts.json harness_headers): side-entry header 7.6 deep (harness_headers src) and (9.6) mated length (PH_side h_mated_src), so the PHR housing stands 2.0 mm proud of the header face; PHD side entry: the mated length is not read (S20B-PHDSS 9.5 overall, READS-P row web:jst-phd-catalogue-lcsc, parts.json PHD_side src), TBD; the wire bend radius at the housing is not read (TBD)",
+        "gate": "OPEN: PCB-PWRB-2 sets the header set-back from the board edge at its placement and the wire turn in front of the edge is checked at proof-fit (rule R-PWRB-EXIT)"
+      },
       "windows": "W2 MECH-7: a placement rule, not contract cut-outs: PCB-PWRB-2 leaves a window (courtyard + window_margin 0.5) over every PWR-A part taller than hA (pcb/partition-budget.json candidates.<chosen>.window_refs), the edge strips of the PWR-A harness headers, the test-point probe windows (tp_probe_window 3.0) and the B2B keepout, at the PCB-PWRA-3 placement",
       "notes": "Mezzanine of the W2 AREA decision 'Кількість плат' (four main boards): parts <= hB on the top side only (except the B2B half J209 on the bottom, b2b.bottom_side), no PWR-B part over a window (check_boards, PCB-PWRB). W2 MECH-7 (SHRINK-2): the outline is the full L; its outline and edge zones are the mechanical contract, the windows a placement rule (windows); MODEL FIT ONLY."
     },
