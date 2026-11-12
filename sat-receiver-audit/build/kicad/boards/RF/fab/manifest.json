@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/RF/RF.kicad_pcb",
-    "board_sha256": "04b538bdca2b6f729d6675b35f4595f871497e4eade3f807ca15388c3e5d00a3",
+    "board_sha256": "6063b24a6ea0826c67cf580682326926b824d3ef2ed57bf4134b6d2efecb87f8",
     "project_sha256": "1d34c17bd5a6235e64f328c4222d1fd47a65f78a88be0e4173b7d59fcc872cbf",
     "spec_projection_sha256": "05d901eb7e540c7a3197d0b3c2462f4f7b793c67747e7856927ba6e097abde00",
     "report_projection_sha256": "e107c8bac8c287bbe1319cfe5c0dcef8629c3703909270cb84f0ef1c4d071a31",
@@ -966,12 +966,12 @@
     },
     {
       "path": "RF-fab-notes.pdf",
-      "sha256": "04d3dbc9f332548b8a19aee9d8541f2f26c474dbd75fbfbfb08023abe1961278",
+      "sha256": "e784c31c7e44e4cc64489c7a74468b8b8e4e982b926d47a8b13bfdcd1528c699",
       "bytes": 36081
     },
     {
       "path": "RF.ipc356",
-      "sha256": "9e51d33f2fef53cfdcce782dce8da7bb92b773646c90fb55169ce952486255f3",
+      "sha256": "3b01aa378e9ea9da52a99664d9dbf3636dd8d90cccadb00f38c65348e470d390",
       "bytes": 159339
     },
     {
@@ -1026,23 +1026,23 @@
     },
     {
       "path": "gerber/RF-B_Cu.gbl",
-      "sha256": "5130325a92590dd6ee2792cc0e58409f8f51047c7861c2a64d0116c42df78a07",
-      "bytes": 253183
+      "sha256": "7cbeea9101fa4d43df4d5841474c2b6fd4d478defa88b79ce8decb1a265a5c3a",
+      "bytes": 253188
     },
     {
       "path": "gerber/RF-B_Mask.gbs",
-      "sha256": "cb99cf967690dfd96d40fb97a2f8037c2012c119a3811392b35e1d0196395443",
-      "bytes": 2703
+      "sha256": "6f42d1396bf2c8c974204f6feadafb3e41810713a4876172d80e0a3e7a0d019e",
+      "bytes": 2718
     },
     {
       "path": "gerber/RF-B_Paste.gbp",
-      "sha256": "c564d90689d3658f09fa8f86059f0fd846c740e67b0aa7ed0b0e9177bb39eeb7",
-      "bytes": 1087
+      "sha256": "c8c6e4a28a4e907aa77c18300111a0f2c56b60b8f58be6d6b20b957b9f8c14ef",
+      "bytes": 1102
     },
     {
       "path": "gerber/RF-B_Silkscreen.gbo",
-      "sha256": "f5246aff2273e9388b56f9c2f3e26ba2c7c8354ad2ef8ff62e3ba2f2e9011dc0",
-      "bytes": 2713
+      "sha256": "0ad664802a494301eea5ea8a54f45955ac497f5be29d90a37548022e7af39fcc",
+      "bytes": 2728
     },
     {
       "path": "gerber/RF-Edge_Cuts.gm1",
@@ -1051,33 +1051,33 @@
     },
     {
       "path": "gerber/RF-F_Cu.gtl",
-      "sha256": "03c1b729980611ac465e4e81b43ac0dbfd49ca3a4467a8582cc6abb84ca75057",
-      "bytes": 541226
+      "sha256": "af1ace20dfd554c8174dfd983301b391856a0c682080f67389af789f2b8c263e",
+      "bytes": 541364
     },
     {
       "path": "gerber/RF-F_Mask.gts",
-      "sha256": "a556a39b47228c84b54c7b334632fdd89eb81e50931ae6ac3c08c184a43d03f9",
-      "bytes": 24928
+      "sha256": "aac33108b3851420dbd37128700bef8be329b6be6e86274b2d3f4ccf7d262c50",
+      "bytes": 24938
     },
     {
       "path": "gerber/RF-F_Paste.gtp",
-      "sha256": "881cbbb341926227acbd7626ca19aa545b725f6f5e83847b074bde119861a2e4",
-      "bytes": 22681
+      "sha256": "6b9a84c5a91452caee604a1fd20e0ab8b2137328589f2d530afd2753a4117ec4",
+      "bytes": 22686
     },
     {
       "path": "gerber/RF-F_Silkscreen.gto",
-      "sha256": "2b0673998a3b88ec334b05eb1c7024032bd072cc0f3353e7ef2c25e0fe657c8d",
-      "bytes": 454087
+      "sha256": "6d47c9fc400f16cd637620587ec18a37604e358969d8f0c23c1871a6320f3e56",
+      "bytes": 454097
     },
     {
       "path": "gerber/RF-In1_Cu.g1",
-      "sha256": "aec20540bb41b335219bb6761e66c758813fd347f384fd5106b3b9ae41f47df3",
-      "bytes": 200605
+      "sha256": "218b1f11c7ca47320a90fa614ccf7a10a7e6c427daeb33990ac0539ae1abfb3f",
+      "bytes": 200610
     },
     {
       "path": "gerber/RF-In2_Cu.g2",
-      "sha256": "500a03e22769d3f81777a673705324cf44e3044534fbc156671611f82008c279",
-      "bytes": 200605
+      "sha256": "f8186d338c6c7630736989cbcee63028f123086853175e6d601b423682c351c8",
+      "bytes": 200610
     },
     {
       "path": "gerber/RF-job.gbrjob",

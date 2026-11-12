@@ -42,22 +42,22 @@
   ],
   "exit_code": 0,
   "log_tail": [
-    "2026-11-12 03:29:10.092 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
-    "2026-11-12 03:29:10.206 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
-    "2026-11-12 03:29:10.642 INFO   [9D6B6B\\975EF8] Loading board file 'HATCH.dsn'...",
-    "2026-11-12 03:29:10.774 INFO   [9D6B6B\\975EF8] Job '9D6B6B\\975EF8' started at 2026-11-12T03:29:10.774155069Z.",
-    "2026-11-12 03:29:10.847 INFO   [9D6B6B\\975EF8] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
-    "2026-11-12 03:29:10.889 INFO   [9D6B6B\\975EF8] Fanout stage is enabled but skipped because the board has no SMD pins.",
-    "2026-11-12 03:29:10.928 INFO   [9D6B6B\\975EF8] Auto-routing stage started on board 'e25aa08e5912652ee248636b29ce2a12' with baseline score 95.24 for 6 unrouted items.",
-    "2026-11-12 03:29:11.331 INFO   [9D6B6B\\975EF8] Auto-routing pass #1 on board 'e25aa08e5912652ee248636b29ce2a12' was completed in 0.36 seconds with score 1000.00 (0 unrouted and 0 violations).",
-    "2026-11-12 03:29:11.350 INFO   [9D6B6B\\975EF8] Auto-routing pass #2 on board 'ed27a3b974179ec037c26ce291c65cdb' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).",
-    "2026-11-12 03:29:11.383 INFO   [9D6B6B\\975EF8] Auto-routing stage completed: started with 6 unrouted nets, completed in 0.52 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
-    "2026-11-12 03:29:11.392 INFO   [9D6B6B\\975EF8] Skipping optimization stage: the board has no vias to eliminate and trace length (82.39 mm) is within 5% of theoretical minimum (93.52 mm).",
-    "2026-11-12 03:29:11.403 INFO   [9D6B6B\\975EF8] Job '9D6B6B\\975EF8' finished with state: COMPLETED (elapsed: 0.63 seconds, finished at UTC: 2026-11-12T03:29:11.402611177Z).",
-    "2026-11-12 03:29:11.440 INFO   Saving output file '/tmp/sr-rx-HATCH-i4y7_m17/HATCH.ses' (SES)...",
-    "2026-11-12 03:29:11.442 INFO   Successfully saved output file '/tmp/sr-rx-HATCH-i4y7_m17/HATCH.ses' (2868 bytes)."
+    "2026-11-12 12:23:00.793 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-12 12:23:00.915 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-12 12:23:01.340 INFO   [98D503\\8EC205] Loading board file 'HATCH.dsn'...",
+    "2026-11-12 12:23:01.495 INFO   [98D503\\8EC205] Job '98D503\\8EC205' started at 2026-11-12T12:23:01.495444890Z.",
+    "2026-11-12 12:23:01.593 INFO   [98D503\\8EC205] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-12 12:23:01.641 INFO   [98D503\\8EC205] Fanout stage is enabled but skipped because the board has no SMD pins.",
+    "2026-11-12 12:23:01.672 INFO   [98D503\\8EC205] Auto-routing stage started on board 'e25aa08e5912652ee248636b29ce2a12' with baseline score 95.24 for 6 unrouted items.",
+    "2026-11-12 12:23:02.123 INFO   [98D503\\8EC205] Auto-routing pass #1 on board 'e25aa08e5912652ee248636b29ce2a12' was completed in 0.41 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-12 12:23:02.138 INFO   [98D503\\8EC205] Auto-routing pass #2 on board 'ed27a3b974179ec037c26ce291c65cdb' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-12 12:23:02.171 INFO   [98D503\\8EC205] Auto-routing stage completed: started with 6 unrouted nets, completed in 0.56 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
+    "2026-11-12 12:23:02.181 INFO   [98D503\\8EC205] Skipping optimization stage: the board has no vias to eliminate and trace length (82.39 mm) is within 5% of theoretical minimum (93.52 mm).",
+    "2026-11-12 12:23:02.193 INFO   [98D503\\8EC205] Job '98D503\\8EC205' finished with state: COMPLETED (elapsed: 0.70 seconds, finished at UTC: 2026-11-12T12:23:02.192712564Z).",
+    "2026-11-12 12:23:02.236 INFO   Saving output file '/tmp/sr-rx-HATCH-vydhqha4/HATCH.ses' (SES)...",
+    "2026-11-12 12:23:02.238 INFO   Successfully saved output file '/tmp/sr-rx-HATCH-vydhqha4/HATCH.ses' (2868 bytes)."
   ],
-  "dsn_sha256": "c6991e8a5db29ec45ff4bd8f788172b291734c4a34de7639cdbf02cd93e2af81",
+  "dsn_sha256": "21e66f060402f0f8717acfea0ec10d05b3d028877ecc90a8a55ced4913bcd328",
   "ses_sha256": "8e3e816aad3932dcd78fb469c37c5eda8e81758c4f8601df6e61ae5beb8f8d45",
   "dsn_probe": {
     "resolution": "um 10",
@@ -90,7 +90,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "860ec0a2544f8bf331d22c2e5824d5beff6ea7b5c2f0cbfbe4adb0642cc872d5",
+  "board_sha256": "7fba021fee7f9f6f01776ae6f82cf0e8230785842bb424b38b8b7cbc3017fccd",
   "previews": [
     "build/kicad/boards/HATCH/HATCH-top.svg",
     "build/kicad/boards/HATCH/HATCH-bottom.svg"
@@ -129,8 +129,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43148317003",
-    "sha": "b9bcdd67786cb9fd790c87973d179597f3f1f7af",
-    "ref": "refs/heads/wip/w2-gr5a"
+    "run_id": "43217152021",
+    "sha": "22fa116b5276b8fc5658813994877b8a2bd15bdd",
+    "ref": "refs/heads/wip/w2-pwrb2"
   }
 }

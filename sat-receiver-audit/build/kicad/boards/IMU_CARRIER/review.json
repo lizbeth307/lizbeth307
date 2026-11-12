@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pcb",
-      "sha256": "462e3733e21fa58b54a5aac00b53da77fe3a92d065e6207a9a8df0380e1f4c47"
+      "sha256": "05eaba7ba00656f00fa32ff69936549c45d520275dfc58f778353b2de64ec6a8"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "a57360fb63aabd5cb2aa5cdece33e173e40c7d634a8606d8fe4809d8942616b2",

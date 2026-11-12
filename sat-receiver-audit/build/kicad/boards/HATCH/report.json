@@ -32,7 +32,7 @@
     "sha256": "a1b547de099b45573c121baa548f29891e83a760230d0df335e840b2e487d230"
   },
   "board_file": "build/kicad/boards/HATCH/HATCH.kicad_pcb",
-  "board_sha256": "860ec0a2544f8bf331d22c2e5824d5beff6ea7b5c2f0cbfbe4adb0642cc872d5",
+  "board_sha256": "7fba021fee7f9f6f01776ae6f82cf0e8230785842bb424b38b8b7cbc3017fccd",
   "project_file": "build/kicad/boards/HATCH/HATCH.kicad_pro",
   "fp_lib_table_sha256": "4624ebcd45ef537759b39969d89fdff6dc2bfe30eb5de430df4c223489ba2640",
   "layers": {
@@ -710,7 +710,7 @@
               "J502.1",
               "J513.1"
             ],
-            "external_refs": 545,
+            "external_refs": 546,
             "external_sample": [
               "A401",
               "A402",
