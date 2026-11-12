@@ -1,0 +1,703 @@
+{
+ "date": "2026-11-12",
+ "distributor": "LCSC",
+ "entries": {
+  "C105578": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "1MΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811071024_YAGEO-RC0603FR-071ML_C105578.pdf",
+   "description": "-55℃~+155℃ 100mW 1MΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:10Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-071ML",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0033
+    ],
+    [
+     1000,
+     0.0028
+    ],
+    [
+     5000,
+     0.0025
+    ],
+    [
+     10000,
+     0.0023
+    ],
+    [
+     50000,
+     0.0021
+    ],
+    [
+     50200,
+     0.0021
+    ]
+   ],
+   "stock": 1494423,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-071ml_C105578.html"
+  },
+  "C12447": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "40.2kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010216_UNI-ROYAL-Uniroyal-Elec-0603WAF4022T5E_C12447.pdf",
+   "description": "-55℃~+155℃ 100mW 40.2kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:11Z",
+   "jlc_library": "preferred",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF4022T5E",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0017
+    ],
+    [
+     1000,
+     0.0013
+    ],
+    [
+     5000,
+     0.0011
+    ],
+    [
+     10000,
+     0.001
+    ],
+    [
+     50000,
+     0.0009
+    ],
+    [
+     50200,
+     0.0009
+    ]
+   ],
+   "stock": 296993,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf4022t5e_C12447.html"
+  },
+  "C137723": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "40.2kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0740K2L_C137723.pdf",
+   "description": "-55℃~+155℃ 100mW 40.2kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:11Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-0740K2L",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0027
+    ],
+    [
+     1000,
+     0.0022
+    ],
+    [
+     5000,
+     0.002
+    ],
+    [
+     10000,
+     0.0018
+    ],
+    [
+     50000,
+     0.0017
+    ],
+    [
+     50200,
+     0.0017
+    ]
+   ],
+   "stock": 77345,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-0740k2l_C137723.html"
+  },
+  "C137806": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "115kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07115KL_C137806.pdf",
+   "description": "-55℃~+155℃ 100mW 115kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:12Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-07115KL",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0151
+    ],
+    [
+     500,
+     0.015
+    ],
+    [
+     1500,
+     0.0149
+    ],
+    [
+     5000,
+     0.0149
+    ],
+    [
+     5100,
+     0.0149
+    ],
+    [
+     5200,
+     0.0149
+    ]
+   ],
+   "stock": 15,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-07115kl_C137806.html"
+  },
+  "C1669": {
+   "attributes": {
+    "Capacitance": "4.7pF",
+    "Temperature Coefficient": "C0G",
+    "Voltage Rating": "50V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_FH--Guangdong-Fenghua-Advanced-Tech-0603CG4R7C500NT_C1669.pdf",
+   "description": "4.7pF 50V C0G 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-12T02:59:13Z",
+   "jlc_library": "preferred",
+   "manufacturer": "FH (Guangdong Fenghua Advanced Tech)",
+   "mpn": "0603CG4R7C500NT",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0054
+    ],
+    [
+     1000,
+     0.0043
+    ],
+    [
+     4000,
+     0.0035
+    ],
+    [
+     8000,
+     0.0031
+    ],
+    [
+     48000,
+     0.0028
+    ],
+    [
+     100000,
+     0.0026
+    ]
+   ],
+   "stock": 581458,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_fh-guangdong-fenghua-advanced-tech-0603cg4r7c500nt_C1669.html"
+  },
+  "C185371": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "147kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07147KL_C185371.pdf",
+   "description": "-55℃~+155℃ 100mW 147kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:13Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-07147KL",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0019
+    ],
+    [
+     1000,
+     0.0015
+    ],
+    [
+     5000,
+     0.0013
+    ],
+    [
+     10000,
+     0.0012
+    ],
+    [
+     50000,
+     0.0011
+    ],
+    [
+     50200,
+     0.0011
+    ]
+   ],
+   "stock": 0,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-07147kl_C185371.html"
+  },
+  "C1857863": {
+   "attributes": {
+    "Application Grade": "Automotive grade",
+    "Current - Saturation(Isat)": "15A",
+    "Current Rating": "13A",
+    "DC Resistance(DCR)": "14.3mΩ",
+    "Inductance": "4.7uH",
+    "Tolerance": "±20%"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2108030330_BOURNS-SRP1040VA-4R7M_C1857863.pdf",
+   "description": "13A 14.3mΩ 15A 4.7uH ±20% SMD,11x10mm Power Inductors ROHS",
+   "fetched_utc": "2026-11-12T02:59:14Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "SRP1040VA-4R7M",
+   "package": "SMD,11x10mm",
+   "price_usd": [
+    [
+     1,
+     2.9687
+    ],
+    [
+     10,
+     2.5156
+    ],
+    [
+     30,
+     2.2458
+    ],
+    [
+     100,
+     1.9743
+    ],
+    [
+     500,
+     1.8483
+    ],
+    [
+     1000,
+     1.7927
+    ]
+   ],
+   "stock": 53,
+   "url": "https://www.lcsc.com/product-detail/power-inductors_bourns-srp1040va-4r7m_C1857863.html"
+  },
+  "C22783": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "115kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1153T5E_C22783.pdf",
+   "description": "-55℃~+155℃ 100mW 115kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:15Z",
+   "jlc_library": "extended",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1153T5E",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0022
+    ],
+    [
+     1000,
+     0.0018
+    ],
+    [
+     5000,
+     0.0015
+    ],
+    [
+     10000,
+     0.0013
+    ],
+    [
+     50000,
+     0.0011
+    ],
+    [
+     50200,
+     0.0011
+    ]
+   ],
+   "stock": 47898,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1153t5e_C22783.html"
+  },
+  "C22799": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "14.3kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1432T5E_C22799.pdf",
+   "description": "-55℃~+155℃ 100mW 14.3kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:15Z",
+   "jlc_library": "extended",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1432T5E",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0027
+    ],
+    [
+     100,
+     0.0021
+    ],
+    [
+     300,
+     0.0018
+    ],
+    [
+     1000,
+     0.0016
+    ],
+    [
+     5000,
+     0.0015
+    ],
+    [
+     5020,
+     0.0015
+    ]
+   ],
+   "stock": 42884,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1432t5e_C22799.html"
+  },
+  "C22878": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "147kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1473T5E_C22878.pdf",
+   "description": "-55℃~+155℃ 100mW 147kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:16Z",
+   "jlc_library": "extended",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1473T5E",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0018
+    ],
+    [
+     1000,
+     0.0014
+    ],
+    [
+     5000,
+     0.0012
+    ],
+    [
+     10000,
+     0.001
+    ],
+    [
+     50000,
+     0.0008
+    ],
+    [
+     50200,
+     0.0008
+    ]
+   ],
+   "stock": 64426,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1473t5e_C22878.html"
+  },
+  "C22935": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "1MΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1004T5E_C22935.pdf",
+   "description": "-55℃~+155℃ 100mW 1MΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:17Z",
+   "jlc_library": "basic",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1004T5E",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0018
+    ],
+    [
+     1000,
+     0.0014
+    ],
+    [
+     5000,
+     0.0012
+    ],
+    [
+     10000,
+     0.001
+    ],
+    [
+     50000,
+     0.0009
+    ],
+    [
+     50200,
+     0.0009
+    ]
+   ],
+   "stock": 3927646,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1004t5e_C22935.html"
+  },
+  "C273750": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "100mW",
+    "Resistance": "14.3kΩ",
+    "Temperature Coefficient": "±100ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "75V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0714K3L_C273750.pdf",
+   "description": "-55℃~+155℃ 100mW 14.3kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:59:17Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-0714K3L",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0028
+    ],
+    [
+     1000,
+     0.0025
+    ],
+    [
+     5000,
+     0.0023
+    ],
+    [
+     10000,
+     0.0022
+    ],
+    [
+     50000,
+     0.0021
+    ],
+    [
+     50200,
+     0.0021
+    ]
+   ],
+   "stock": 2,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-0714k3l_C273750.html"
+  },
+  "C282071": {
+   "attributes": {
+    "Capacitance": "4.7pF",
+    "Temperature Coefficient": "NP0",
+    "Voltage Rating": "50V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_YAGEO-CC0603CRNPO9BN4R7_C282071.pdf",
+   "description": "4.7pF 50V NP0 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-12T02:59:18Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0603CRNPO9BN4R7",
+   "package": "0603",
+   "price_usd": [
+    [
+     1,
+     0.0047
+    ],
+    [
+     1000,
+     0.0037
+    ],
+    [
+     4000,
+     0.003
+    ],
+    [
+     8000,
+     0.0027
+    ],
+    [
+     48000,
+     0.0024
+    ],
+    [
+     100000,
+     0.0022
+    ]
+   ],
+   "stock": 17536,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_yageo-cc0603crnpo9bn4r7_C282071.html"
+  },
+  "C2932478": {
+   "attributes": {
+    "Capacitance": "47uF",
+    "Temperature Coefficient": "X7R",
+    "Tolerance": "±10%",
+    "Voltage Rating": "10V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2201121530_Samsung-Electro-Mechanics-CL32B476KPJNNNE_C2932478.pdf",
+   "description": "10V 47uF X7R ±10% 1210 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-12T02:59:19Z",
+   "jlc_library": "extended",
+   "manufacturer": "Samsung Electro-Mechanics",
+   "mpn": "CL32B476KPJNNNE",
+   "package": "1210",
+   "price_usd": [
+    [
+     1,
+     0.344
+    ],
+    [
+     50,
+     0.273
+    ],
+    [
+     150,
+     0.2428
+    ],
+    [
+     1000,
+     0.2048
+    ],
+    [
+     2000,
+     0.188
+    ],
+    [
+     5000,
+     0.1778
+    ]
+   ],
+   "stock": 1741,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl32b476kpjnnne_C2932478.html"
+  },
+  "C77102": {
+   "attributes": {
+    "Capacitance": "10uF",
+    "Temperature Coefficient": "X7R",
+    "Tolerance": "±10%",
+    "Voltage Rating": "50V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Murata-Electronics-GRM32ER71H106KA12L_C77102.pdf",
+   "description": "10uF 50V X7R ±10% 1210 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-12T02:59:20Z",
+   "jlc_library": "extended",
+   "manufacturer": "Murata Electronics",
+   "mpn": "GRM32ER71H106KA12L",
+   "package": "1210",
+   "price_usd": [
+    [
+     1,
+     0.38
+    ],
+    [
+     50,
+     0.3138
+    ],
+    [
+     150,
+     0.2853
+    ],
+    [
+     1000,
+     0.2459
+    ],
+    [
+     2000,
+     0.2302
+    ],
+    [
+     5000,
+     0.2207
+    ]
+   ],
+   "stock": 81665,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_murata-electronics-grm32er71h106ka12l_C77102.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C105578",
+  "C12447",
+  "C137723",
+  "C137806",
+  "C1669",
+  "C185371",
+  "C1857863",
+  "C22783",
+  "C22799",
+  "C22878",
+  "C22935",
+  "C273750",
+  "C282071",
+  "C2932478",
+  "C77102"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}

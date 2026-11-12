@@ -11,12 +11,12 @@
       "note": "Функції A/GND on-only, OFF active high >1 V, ON/CTRL та функціональні силові клеми."
     },
     {
-      "url": "https://www.pololu.com/product/4095",
-      "note": "D36V50F12: VIN/VRP/VOUT/GND/EN/PG; EN 1.2/1.35 V, внутрішнє100kдоVIN."
+      "url": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "note": "W2 GR-5A, прочитано 2026-11-12 (SNVSBD5D, ред. липня 2022; додаток пакета 4223976/H 06/2026): U107 LM61460AANRJRR — 14 виводів RJR0014A (1 BIAS, 2 VCC, 3 AGND, 4 FB, 5 PGOOD, 6 RT, 7 EN/SYNC, 8 VIN1, 9 PGND1, 10 SW, 11 PGND2, 12 VIN2, 13 RBOOT, 14 CBOOT); VEN 1.263 V ±5 %, гістерезис 24–32 %; RRT(kΩ) = (1/fSW(kHz) − 3.3·10⁻⁵)·1.346·10⁴; VREF 1 V; L ≥ 0.32·VOUT/fSW (рівн. 10), Isat ≥ IL-HS 11.5 A max; ≥10 µF кераміки на вході + 100 nF біля кожної пари VIN/PGND; CBOOT 100 nF, CVCC 1 µF; таблиця 9-2 (1 MHz: CFF 4.7 pF, RFF 1 kΩ)."
     },
     {
-      "url": "https://www.pololu.com/product/3782",
-      "note": "D36V28F5: VIN/VOUT/2xGND/EN/PG, струм і зовнішні клеми."
+      "url": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "note": "W2 GR-5A, прочитано 2026-11-12 (SLVSGB4B): U108 TPSM63606RDLR — 20 виводів RDL0020A (1/16 VIN, 2 SW, 3 CBOOT, 4 RBOOT, 5 VLDOIN, 6/11 AGND, 7 VCC, 8/9 VOUT, 10 FB, 12 RT, 13 PG, 14 EN/SYNC, 15 NC, 17–20 PGND); 5 V: RFBT 40.2 kΩ, RFBB 10 kΩ, fSW 0.8–1.2 MHz, COUT(min) 30 µF ефективно, CFF 22 pF (табл. 8-1); RRT(kΩ) = 13.46/fSW(MHz) − 0.44 (рівн. 5); VEN_RISE 1.161/1.263/1.365 V, VEN_FALL 0.91 V."
     },
     {
       "url": "https://www.ti.com/lit/ds/symlink/tps709.pdf",
@@ -64,7 +64,7 @@
     },
     {
       "url": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
-      "note": "35SVPF22M:22µF±20%,35V,ESR35mΩ,ripple2.6A@105°C/100kHz,Ø6.3×5.9mm."
+      "note": "35SVPF22M:22µF±20%,35V,ESR35mΩ,ripple2.6A@105°C/100kHz,Ø6.3×5.9mm. W2 GR-5A (SHRINK-2): у схемі більше не використовується — C111/C112 тепер MLCC C3225X7R1H226M250AC; лише історія (bom_changes)."
     },
     {
       "url": "https://industrial.panasonic.com/ww/products/pt/OS-CON/models/16SVPC100M",
@@ -80,7 +80,23 @@
     },
     {
       "url": "https://www.pololu.com/product/4091",
-      "note": "D36V50F5#4091,5V±4%, advertised5.5Atypconditional;6functionalconnectionsізVRP,25.4×25.4×9.5mm;новийLAB5default."
+      "note": "D36V50F5#4091,5V±4%, advertised5.5Atypconditional;6functionalconnectionsізVRP,25.4×25.4×9.5mm. W2 GR-5A (SHRINK-2): у схемі більше не використовується — U108 тепер TPSM63606RDLR; лише історія (bom_changes) і запасний план F2-ENV."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf",
+      "note": "W2 GR-5A, прочитано 2026-11-12 (SNOSD17G): U111 LM74700QDBVRQ1 DBV — 1 VCAP, 2 GND, 3 EN, 4 CATHODE, 5 GATE, 6 ANODE; EN до ANODE — завжди ввімкнено; ANODE −65…65 V; VCAP ≥0.1 µF і ≥10·CISS; MOSFET 60 V, VGS ±20 V, Vth ≤2–2.5 V, RDS(on) між 20 mV/I і 50 mV/I; приклад 12 V — DMT6007LFG."
+    },
+    {
+      "url": "https://www.diodes.com/assets/Datasheets/DMT6007LFG.pdf",
+      "note": "W2 GR-5A, прочитано 2026-11-12 (DS37335 Rev. 2-2): Q102 DMT6007LFG — PowerDI3333-8, 1–3 S, 4 G, 5–8 і нижня площадка D; 60 V, ±20 V; Vth 0.8–2 V; RDS(on) 6 mΩ max при 10 V, 8.5 mΩ max при 4.5 V; Ciss 2090 pF."
+    },
+    {
+      "url": "https://www.bourns.com/docs/product-datasheets/srp1040va.pdf",
+      "note": "W2 GR-5A, прочитано 2026-11-12 (REV. 10/26, AEC-Q200): L102 SRP1040VA-4R7M — 4.7 µH ±20 %, DCR 14.3/15.3 mΩ, Irms 13 A (нагрів 40 °C), Isat 15 A (спад L на 30 %); 10.0 × 11.0 × 3.8 ±0.2 мм; рекомендовані площадки 12.5 / 5.4 / 3.5 (як KiCad L_Bourns_SRP1038C_10.0x10.0mm)."
+    },
+    {
+      "url": "https://datasheet.lcsc.com/datasheet/pdf/64ff7c9a3f50498894e4bc5a89970379.pdf?productCode=C48467",
+      "note": "Копія LCSC даташита Littelfuse 451/453 NANO2 (рядок READS-P web:littelfuse-451-453, 2026-11-11): F103 0451005.MRL 5 A — 125 V, 300 A при 32 VDC, 12.5 mΩ холодний; 6.10 × 2.69 × 2.69 мм; площадки як KiCad Fuse_Littelfuse-NANO2-451_453."
     }
   ],
   "notes": [
@@ -91,7 +107,7 @@
     "SYS12 і LAB5 формуються тут. Захищені J21, DISP12, AUX12, LNB, Boni, LNA, Lime та два INA3221 належать E2.",
     "IC bypass розташувати біля виводів. Фільтри і transient-тести потребують конкретної плати. Немає PCB layout чи фізичних вимірів.",
     "U102, R101, C101 і C102 є деталізацією наявного Adafruit #5832. Не купувати їх вдруге. Зняти R6/R7, A0/A1 з’єднати з GND для 0x40, SJ1 замкнути.",
-    "PICO_OFF є імпульсом active high від GP13. UV працює від AON і утримує OFF нижче порога. Повторний запуск — кнопкою після відновлення ≥13.6 V. v2.1: EN-резерв SYS12 R108 4.99k/R109 562R 0.1% з внутрішніми 100 kΩ ±20% дає на E1_SW wake 12.61…12.88 V і sleep 11.21…11.45 V, із припущеними ±3% порога EN — 12.23…13.27 V / 10.87…11.79 V: wake нижче UV release (≥13.5 V), sleep нижче trip (≥12.7 V). Основне відсічення — UV trip U104; перевіряють E1-04 і Ж-03.",
+    "PICO_OFF є імпульсом active high від GP13. UV працює від AON і утримує OFF нижче порога. Повторний запуск — кнопкою після відновлення ≥13.6 V. W2 GR-5A: EN-резерв SYS12 тепер — поріг LM61460 U107 (1.263 V ±5 %, гістерезис 24–32 %) з дільником R108 1.00 MΩ / R109 115 kΩ 1 % від E1_CONV_IN: wake 11.4…13.1 V (ном. 12.25 V), sleep 7.8…9.9 V (ном. 8.8 V), MODEL. Wake нижче UV release (≥13.5 V). Sleep тепер нижче BMS UVP (10.8 V): резерв більше не знімає SYS12 раніше за BMS; основне відсічення — UV trip U104, далі BMS; перевіряють E1-04 і Ж-03. Попередні 4.99k/562R (v2.1) розраховано для EN Pololu.",
     "Стендові RF-джерела підключаються лише до навантаження або DUT. Ця силова схема не створює TX-трактів."
   ],
   "components": [
@@ -1055,74 +1071,126 @@
     },
     {
       "ref": "U107",
-      "value": "Pololu D36V50F12#4095",
-      "kind": "module",
+      "value": "LM61460AANRJRR",
+      "kind": "ic",
       "group": "SYS12",
-      "status": "module",
-      "source": "https://www.pololu.com/product/4095",
-      "mpn": "D36V50F12",
-      "manufacturer": "Pololu",
-      "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "SR_RX_Custom:TI_RJR0014A_VQFN-HR-14_4x3.5mm",
+      "mpn": "LM61460AANRJRR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C2864505",
       "pins": [
         {
-          "number": "VIN",
-          "name": "VIN",
+          "number": "1",
+          "name": "BIAS",
           "type": "power_in",
-          "net": "E1_SW"
-        },
-        {
-          "number": "VRP",
-          "name": "VRP",
-          "type": "no_connect",
-          "nc": true
-        },
-        {
-          "number": "VOUT",
-          "name": "VOUT",
-          "type": "power_out",
           "net": "SYS12"
         },
         {
-          "number": "GND",
-          "name": "GND",
+          "number": "2",
+          "name": "VCC",
+          "type": "power_out",
+          "net": "E1_SYS12_VCC"
+        },
+        {
+          "number": "3",
+          "name": "AGND",
           "type": "power_in",
           "net": "GND"
         },
         {
-          "number": "EN",
-          "name": "EN",
+          "number": "4",
+          "name": "FB",
+          "type": "input",
+          "net": "E1_SYS12_FB"
+        },
+        {
+          "number": "5",
+          "name": "PGOOD",
+          "type": "open_collector",
+          "net": "E1_PG_SYS12"
+        },
+        {
+          "number": "6",
+          "name": "RT",
+          "type": "passive",
+          "net": "E1_SYS12_RT"
+        },
+        {
+          "number": "7",
+          "name": "EN/SYNC",
           "type": "input",
           "net": "E1_EN_SYS12"
         },
         {
-          "number": "PG",
-          "name": "PG",
-          "type": "open_collector",
-          "net": "E1_PG_SYS12"
+          "number": "8",
+          "name": "VIN1",
+          "type": "power_in",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "9",
+          "name": "PGND1",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "10",
+          "name": "SW",
+          "type": "output",
+          "net": "E1_SYS12_SW"
+        },
+        {
+          "number": "11",
+          "name": "PGND2",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "VIN2",
+          "type": "power_in",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "13",
+          "name": "RBOOT",
+          "type": "passive",
+          "net": "E1_SYS12_RBOOT"
+        },
+        {
+          "number": "14",
+          "name": "CBOOT",
+          "type": "passive",
+          "net": "E1_SYS12_CBOOT"
         }
       ],
       "notes": [
-        "12 V без boost. PG резервний для тесту. Монітори захищених шин містить E2."
+        "W2 GR-5A (SHRINK-2, рішення 11.11.2026): замінює модуль Pololu D36V50F12 #4095. LM61460AAN — auto mode без spread spectrum (SNVSBD5D, табл. 5); FPWM — лише від зовнішнього такту на EN/SYNC (табл. 6-1). Джерело такту в E1/E3 не визначено: частота від RT R126 14.3 kΩ ≈913 kHz (рівн. 2, MODEL; допуск fADJ ±10 %), мережа такту TBD, тому на малому навантаженні можливий PFM — ворота C4 (1).",
+        "VOUT = 1 V·(1 + R124/R125) = 100k/9.09k → 12.00 V (рівн. 3); BIAS до SYS12 (VOUT 12 V, не вище 12 V — табл. 6-1); CBOOT C127 100 nF через RBOOT R127 100 Ω (≈2.7 ns фронт SW, розд. 9.2.2.7: менше EMI для приймача ціною ≈0.5 % ККД); CVCC C128 1 µF; CFF C129 4.7 pF + RFF R128 1 kΩ — стартові значення табл. 9-2 для 1 MHz (там 3.3/5 V); запас фази при 12 V не прочитано — стенд.",
+        "Дросель L102 4.7 µH: рівн. 10 (робота біля dropout, D 0.71…0.91) вимагає L ≥ 0.32·12/fSW = 4.21 µH при 913 kHz і 4.67 µH при −10 % частоти; Isat 15 A ≥ IL-HS 11.5 A max (MODEL, номінальна L). Вирішений SRP7030-2R2M (2.2 µH) не годиться: NRND/Obsolete і рівн. 10 лише від 1.75 MHz (READS-P).",
+        "Наявність 2026-11-11: TI, DigiKey DE (3000 очікується 27.05.2027) і LCSC C2864505 — 0 (рядки READS-P)."
       ],
-      "description": "Функціональні клеми модуля; дубльовані силові отвори належать спільним мережам."
+      "description": "Усі 14 фізичних виводів RJR0014A (VQFN-HR, без EP). Посадкове місце SR_RX_Custom за land pattern TI 4223976/H."
     },
     {
       "ref": "R108",
-      "value": "4.99k0.1%25ppm",
+      "value": "1.00M1%",
       "kind": "resistor",
       "group": "SYS12",
       "status": "design",
-      "source": "STACK §2.7,§5.1",
-      "mpn": "RT0603BRD074K99L",
-      "manufacturer": "YAGEO",
-      "lcsc": "C723532",
-      "alt_mpn": "Vishay Dale TNPW06034K99BEEA",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "mpn": "0603WAF1004T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22935",
+      "alt_mpn": "YAGEO RC0603FR-071ML",
       "pins": [
         {
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "E1_SW"
+          "net": "E1_CONV_IN"
         },
         {
           "number": "2",
@@ -1133,20 +1201,20 @@
       ],
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "notes": [
-        "v2.1, рішення власника (E1-04, R-E1-08): 4.99 kΩ 0.1% ≤25 ppm/K, тонка плівка 0603 (кандидат Panasonic ERA-3AEB4991V; MPN і наявність не перевірено). Паралельно внутрішнім 100 kΩ Pololu EN→VIN. При 16.4 V розсіює ≈43 mW (0603 0.1 W)."
+        "W2 GR-5A: верхнє плече дільника EN/UVLO U107 від E1_CONV_IN. G = 1 + 1000/115 = 9.70: wake 1.263 V·G = 12.25 V ном. (11.4…13.1 V з ±5 % VEN і 1 % резисторів), sleep 7.8…9.9 V (гістерезис 24–32 %), MODEL. Паралельно з R109 ≈103 kΩ — діапазон, який TI радить для AC-зв’язаного такту на EN/SYNC (розд. 8.3.2). Замінює 4.99k 0.1 % (R-E1-08, поріг Pololu)."
       ]
     },
     {
       "ref": "R109",
-      "value": "562R0.1%25ppm",
+      "value": "115k1%",
       "kind": "resistor",
       "group": "SYS12",
       "status": "design",
-      "source": "STACK §2.7,§5.1",
-      "mpn": "PTFR0603B562RP9",
-      "manufacturer": "RESI",
-      "lcsc": "C47115902",
-      "alt_mpn": "YAGEO RT0603BRD07562RL",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "mpn": "0603WAF1153T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22783",
+      "alt_mpn": "YAGEO RC0603FR-07115KL",
       "pins": [
         {
           "number": "1",
@@ -1163,8 +1231,7 @@
       ],
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "notes": [
-        "v2.1, рішення власника (E1-04, R-E1-08): 562 Ω 0.1% ≤25 ppm/K, 0603 (кандидат Panasonic ERA-3AEB5620V; знайдений лістинг має довгий термін поставки й великий MOQ — закупівлю перевірити).",
-        "Ж-03: якщо виміряний wake модуля >13.30 V, встановити 576 Ω (≈12.49/11.10 V ном.; обидва пороги нижчі ≈2.2%) і повторити розгортку 14 → 10.5 → 14 V при 25 і 50 °C; модуль проходить лише за wake ≤13.30 V і sleep ≥10.9 V після перепаювання, інакше — reject."
+        "W2 GR-5A: нижнє плече дільника EN/UVLO U107 (див. R108). Замінює 562R 0.1 % (R-E1-08)."
       ]
     },
     {
@@ -1204,7 +1271,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "E1_SW"
+          "net": "E1_CONV_IN"
         },
         {
           "number": "2",
@@ -1212,6 +1279,9 @@
           "type": "passive",
           "net": "GND"
         }
+      ],
+      "notes": [
+        "W2 GR-5A (SHRINK-2): спільна вхідна ємність U107 і U108 після каскаду захисту U111/Q102; C109 видалено. TI радить 68–100 µF електролітичної ємності на вході TPSM63606 для демпфування (SLVSGB4B розд. 8.3.3)."
       ]
     },
     {
@@ -1242,79 +1312,302 @@
       ]
     },
     {
-      "ref": "U108",
-      "value": "Pololu D36V50F5 #4091 — LAB5 default",
-      "kind": "module",
-      "group": "LAB5",
-      "status": "module",
-      "source": "https://www.pololu.com/product/4091",
-      "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
+      "ref": "U111",
+      "value": "LM74700QDBVRQ1",
+      "kind": "ic",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "LM74700QDBVRQ1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C2941042",
       "pins": [
         {
-          "number": "VIN",
-          "name": "VIN",
-          "type": "power_in",
-          "net": "E1_SW"
+          "number": "1",
+          "name": "VCAP",
+          "type": "output",
+          "net": "E1_RPP_VCAP"
         },
         {
-          "number": "VRP",
-          "name": "VRP",
-          "type": "no_connect",
-          "nc": true
-        },
-        {
-          "number": "VOUT",
-          "name": "VOUT",
-          "type": "power_out",
-          "net": "E1_LAB5_RAW"
-        },
-        {
-          "number": "GND",
+          "number": "2",
           "name": "GND",
           "type": "power_in",
           "net": "GND"
         },
         {
-          "number": "EN",
+          "number": "3",
           "name": "EN",
-          "type": "no_connect",
-          "nc": true
+          "type": "input",
+          "net": "E1_SW"
         },
         {
-          "number": "PG",
-          "name": "PG",
-          "type": "open_collector",
-          "net": "E1_PG_LAB5"
+          "number": "4",
+          "name": "CATHODE",
+          "type": "input",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "5",
+          "name": "GATE",
+          "type": "output",
+          "net": "E1_RPP_GATE"
+        },
+        {
+          "number": "6",
+          "name": "ANODE",
+          "type": "power_in",
+          "net": "E1_SW"
         }
       ],
       "notes": [
-        "Оновлений default LAB5 замість D36V28F5. Advertised 5.5 A typ є умовним терморейтингом, а не гарантією при 50 °C. Вихід 5 V ±4%; EN вільний із внутрішнім pull-up; VRP не підключено; PG лише на TP102.",
-        "Габарит 25.4×25.4×9.5 mm проти 17.8×20.3×8.8 mm старого модуля: +7.6×5.1×0.7 mm і +78.5% площі. Потрібне перекомпонування силової плати та кріплень.",
-        "Проєктний режим: сукупний LAB5 ≤3.2 A continuous; transient qualification ≤4 A. Це новий бюджет, не вимір. Перевірити кожний VBUS після ключа. Силові дроти паяти напряму або використовувати обидва парні силові піни: одиночний header rated 3 A непридатний.",
-        "D36V28F5 є legacy-варіантом лише обмежених профілів з окремим gate ≤2.5 A; у default BOM і схемі не встановлюється."
+        "W2 GR-5A: каскад захисту від переполюсування з умов STACK C4 для входу U107 і U108 (VIN абс. мін. −0.3 V; зворотний номінал #2813 не опубліковано, рядок READS-P web:pololu-2813-reverse). Ідеальний діод E1_SW → E1_CONV_IN з Q102; EN до ANODE — завжди ввімкнено (SNOSD17G розд. 5). E1_SW, E1_N і D104/D105 не змінюються."
       ],
-      "description": "Офіційний функціональний інтерфейс Pololu #4091. Дубльовані силові отвори належать спільним мережам; не одинарний header при струмі понад3A.",
-      "mpn": "D36V50F5",
-      "manufacturer": "Pololu"
+      "description": "Усі 6 виводів DBV (SOT-23-6)."
     },
     {
-      "ref": "C109",
-      "value": "100µF35VlowESR",
-      "kind": "capacitor",
-      "group": "LAB5",
+      "ref": "Q102",
+      "value": "DMT6007LFG-7",
+      "kind": "nfet",
+      "group": "SYS12",
       "status": "design",
-      "source": "STACK §2.7,§5.1",
-      "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
-      "mpn": "EEHZK1V101XP",
-      "manufacturer": "Panasonic",
-      "lcsc": "C454360",
-      "alt_mpn": "Lelon HBV101M1VTR-0608",
+      "source": "https://www.diodes.com/assets/Datasheets/DMT6007LFG.pdf",
+      "footprint": "Package_SON:Diodes_PowerDI3333-8",
+      "mpn": "DMT6007LFG-7",
+      "manufacturer": "Diodes Incorporated",
+      "lcsc": "C2802568",
+      "pins": [
+        {
+          "number": "1",
+          "name": "S1",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "2",
+          "name": "S2",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "3",
+          "name": "S3",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "4",
+          "name": "G",
+          "type": "input",
+          "net": "E1_RPP_GATE"
+        },
+        {
+          "number": "5",
+          "name": "D",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        }
+      ],
+      "notes": [
+        "MOSFET прикладу 12 V SNOSD17G: 60 V, ±20 V VGS, Vth ≤2 V, 8.5 mΩ max при 4.5 V. Правило SNOSD17G 20 mV/I ≤ RDS(on) ≤ 50 mV/I: при ≈3–5 A входу перетворювачів 4–17 mΩ (MODEL). Втрати ≈0.2 W при 5 A і 8.5 mΩ (MODEL); тепло — ворота E1-06."
+      ],
+      "description": "PowerDI3333-8: S1–S3 — виводи 1–3 (витік), 4 G; 5 — площадка KiCad Diodes_PowerDI3333-8, що об’єднує виводи 5–8 і нижню площадку D (стік)."
+    },
+    {
+      "ref": "C136",
+      "value": "100nF50VX7R VCAP",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
           "name": "1",
           "type": "passive",
+          "net": "E1_RPP_VCAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
           "net": "E1_SW"
+        }
+      ],
+      "notes": [
+        "Конденсатор підкачки VCAP–ANODE: ≥0.1 µF і ≥10·CISS (2.09 nF → 20.9 nF) за SNOSD17G розд. 10.1.1.2.3."
+      ]
+    },
+    {
+      "ref": "L102",
+      "value": "SRP1040VA-4R7M 4.7 µH ±20%",
+      "kind": "inductor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.bourns.com/docs/product-datasheets/srp1040va.pdf",
+      "footprint": "Inductor_SMD:L_Bourns_SRP1038C_10.0x10.0mm",
+      "mpn": "SRP1040VA-4R7M",
+      "manufacturer": "Bourns",
+      "lcsc": "C1857863",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SYS12_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "SYS12"
+        }
+      ],
+      "notes": [
+        "Bourns SRP1040VA-4R7M (AEC-Q200, REV. 10/26): DCR 15.3 mΩ max, Irms 13 A, Isat 15 A; 10.0 × 11.0 × 3.8 мм (≤4.0 мм, нижче hA 4.5 мм). Втрати DCR при 4.2 A ≈0.27 W (MODEL). Пульсації при 14.8 V і 913 kHz ≈0.53 A (≈9 % від 6 A; правило TI «близько 10 %»), MODEL."
+      ]
+    },
+    {
+      "ref": "C119",
+      "value": "10µF50VX7R 1210",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H106K250AC",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "CIN U107 (≥10 µF кераміки, розд. 9.2.2.5)."
+      ]
+    },
+    {
+      "ref": "C120",
+      "value": "10µF50VX7R 1210",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H106K250AC",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "CIN U107, друга сторона корпусу."
+      ]
+    },
+    {
+      "ref": "C121",
+      "value": "100nF50VX7R",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "ВЧ-байпас VIN1/PGND1 впритул до U107 (розд. 9.2.2.5)."
+      ]
+    },
+    {
+      "ref": "C122",
+      "value": "100nF50VX7R",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "ВЧ-байпас VIN2/PGND2 впритул до U107."
+      ]
+    },
+    {
+      "ref": "C123",
+      "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H226M250AC",
+      "manufacturer": "TDK",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "SYS12"
         },
         {
           "number": "2",
@@ -1323,6 +1616,449 @@
           "net": "GND"
         }
       ]
+    },
+    {
+      "ref": "C124",
+      "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H226M250AC",
+      "manufacturer": "TDK",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "SYS12"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C125",
+      "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H226M250AC",
+      "manufacturer": "TDK",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "SYS12"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C126",
+      "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H226M250AC",
+      "manufacturer": "TDK",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "SYS12"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "COUT U107: 4 × 22 µF 50 V 1210 за SHRINK-2; ефективна ємність при 12 V не прочитана (крива TDK — 403, READS-P), стабільність — стенд."
+      ]
+    },
+    {
+      "ref": "C127",
+      "value": "100nF50VX7R CBOOT",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SYS12_CBOOT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_SYS12_SW"
+        }
+      ]
+    },
+    {
+      "ref": "C128",
+      "value": "1µF16VX7R CVCC",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB105",
+      "manufacturer": "YAGEO",
+      "lcsc": "C559769",
+      "alt_mpn": "TDK CGA3E1X7R1E105KT0Y0E",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SYS12_VCC"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C129",
+      "value": "4.7pF50VC0G CFF",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "0603CG4R7C500NT",
+      "manufacturer": "FH",
+      "lcsc": "C1669",
+      "alt_mpn": "YAGEO CC0603CRNPO9BN4R7",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "SYS12"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_SYS12_FF"
+        }
+      ]
+    },
+    {
+      "ref": "R124",
+      "value": "100k1%",
+      "kind": "resistor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "SYS12"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_SYS12_FB"
+        }
+      ],
+      "notes": [
+        "RFBT (TI рекомендує 100 kΩ)."
+      ]
+    },
+    {
+      "ref": "R125",
+      "value": "9.09k0.1%",
+      "kind": "resistor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD079K09L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861611",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SYS12_FB"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "RFBB: 12.00 V з R124 (рівн. 3)."
+      ]
+    },
+    {
+      "ref": "R126",
+      "value": "14.3k1%",
+      "kind": "resistor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1432T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22799",
+      "alt_mpn": "YAGEO RC0603FR-0714K3L",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SYS12_RT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "RT: ≈913 kHz (рівн. 2). Точна частота синхронізації — з гармонічного сканування (C4)."
+      ]
+    },
+    {
+      "ref": "R127",
+      "value": "100Ω1% RBOOT",
+      "kind": "resistor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SYS12_CBOOT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_SYS12_RBOOT"
+        }
+      ]
+    },
+    {
+      "ref": "R128",
+      "value": "1.00k1% RFF",
+      "kind": "resistor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SYS12_FF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_SYS12_FB"
+        }
+      ]
+    },
+    {
+      "ref": "U108",
+      "value": "TPSM63606RDLR — LAB5 default",
+      "kind": "ic",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "SR_RX_Custom:TI_RDL0020A_B3QFN-20_5x5.5mm",
+      "mpn": "TPSM63606RDLR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C5219325",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VIN1",
+          "type": "power_in",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "SW",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "CBOOT",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "4",
+          "name": "RBOOT",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "VLDOIN",
+          "type": "power_in",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "6",
+          "name": "AGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "7",
+          "name": "VCC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "8",
+          "name": "VOUT1",
+          "type": "power_out",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "9",
+          "name": "VOUT2",
+          "type": "passive",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "10",
+          "name": "FB",
+          "type": "input",
+          "net": "E1_LAB5_FB"
+        },
+        {
+          "number": "11",
+          "name": "AGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "RT",
+          "type": "passive",
+          "net": "E1_LAB5_RT"
+        },
+        {
+          "number": "13",
+          "name": "PG",
+          "type": "open_collector",
+          "net": "E1_PG_LAB5"
+        },
+        {
+          "number": "14",
+          "name": "EN/SYNC",
+          "type": "input",
+          "net": "E1_EN_LAB5"
+        },
+        {
+          "number": "15",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "16",
+          "name": "VIN2",
+          "type": "power_in",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "17",
+          "name": "PGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "18",
+          "name": "PGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "19",
+          "name": "PGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "20",
+          "name": "PGND",
+          "type": "power_in",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "W2 GR-5A (SHRINK-2): замінює модуль Pololu D36V50F5 #4091 (STACK D11 називає родину TPSM6360x запасом). Без spread spectrum (TPSM63606, не 63606S). VOUT = 1 V·(1 + 40.2k/10.0k) = 5.02 V (±1 % VFB); fSW ≈913 kHz від RT R131 14.3 kΩ (рівн. 5, у межах 0.8–1.2 MHz табл. 8-1), такт на EN/SYNC TBD, як у U107.",
+        "EN/UVLO R132 1.00 MΩ / R133 147 kΩ від E1_CONV_IN: вмикання 9.9 V ном. (8.9…10.8 V з допуском VEN_RISE і 1 % резисторів), вимикання ≈7.1 V ном. (VEN_FALL 0.91 V), MODEL; зворотне живлення VIN близько 4.5 V (STACK D11) його не запускає.",
+        "SW, CBOOT, RBOOT і VCC без зовнішніх з’єднань (SLVSGB4B табл. 6-1: 100 nF і 100 Ω бутстрепа та 1 µF VCC усередині). COUT C133–C135 3 × 47 µF 10 V 1210 проти мінімуму 30 µF ефективно (табл. 8-1); криву DC-bias не прочитано (READS-P), тож CFF 22 pF не ставиться, а запас — стенд E1-05.",
+        "Наявність 2026-11-11: LCSC C5219325 — 1241; DigiKey DE — 0 (поставки 21.12.2026 і 04.01.2027), рядки READS-P."
+      ],
+      "description": "Усі 20 фізичних виводів RDL0020A (B3QFN, 4.1 мм max), включно з чотирма площадками PGND 17–20. Посадкове місце SR_RX_Custom за land pattern TI 4226416/B."
     },
     {
       "ref": "C110",
@@ -1383,32 +2119,31 @@
     },
     {
       "ref": "C111",
-      "value": "35SVPF22M 22 µF 35 V ±20% OS-CON",
+      "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
       "kind": "capacitor",
       "group": "LAB5",
       "status": "design",
-      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
-      "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
-      "lcsc": "C88142",
+      "source": "design/parts/parts.json C-1210-C3225X7R1H226M250AC (рядок DigiKey DE); рішення SHRINK-2 (3), W2 GR-5A",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H226M250AC",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
-          "name": "+",
+          "name": "1",
           "type": "passive",
           "net": "E1_LAB5_FUSED"
         },
         {
           "number": "2",
-          "name": "−",
+          "name": "2",
           "type": "passive",
           "net": "GND"
         }
       ],
-      "mpn": "35SVPF22M",
-      "manufacturer": "Panasonic",
       "notes": [
-        "Конкретний полярний polymer OS-CON замість generic X7R 22 µF. Початковий мінімум 17.6 µF. Не має властивої class-II MLCC втрати ємності від DC bias. Ефективний C у частоті/температурі та converter interaction ще перевіряються.",
-        "ESR≤35 mΩ при 100 kHz; ripple 2.6 A rms при 105 °C/100 kHz; корпус Ø6.3×5.9 mm, size C6. Плюс до рейки, мінус до GND. Це design-заміна, не результат A/B тесту."
+        "W2 GR-5A (SHRINK-2 (3)): TDK C3225X7R1H226M250AC 22 µF 50 V X7R 1210 замість полімерного 35SVPF22M. Ефективна ємність при 5 V не прочитана (характеристика TDK — 403, рядок READS-P web:tdk-c3225x7r1h226m250ac-dc-bias): E1-05 (≥10 µF ефективно) — OPEN, стенд.",
+        "Кераміка має інший ESR, ніж полімер: fLC і Z0 π-фільтра LAB5 (R-E1-05) змінюються з реальною ємністю; демпфер R110/C113 лишається, крок навантаження — стенд E1-05."
       ]
     },
     {
@@ -1444,32 +2179,31 @@
     },
     {
       "ref": "C112",
-      "value": "35SVPF22M 22 µF 35 V ±20% OS-CON",
+      "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
       "kind": "capacitor",
       "group": "LAB5",
       "status": "design",
-      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
-      "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
-      "lcsc": "C88142",
+      "source": "design/parts/parts.json C-1210-C3225X7R1H226M250AC (рядок DigiKey DE); рішення SHRINK-2 (3), W2 GR-5A",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H226M250AC",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
-          "name": "+",
+          "name": "1",
           "type": "passive",
           "net": "LAB5"
         },
         {
           "number": "2",
-          "name": "−",
+          "name": "2",
           "type": "passive",
           "net": "GND"
         }
       ],
-      "mpn": "35SVPF22M",
-      "manufacturer": "Panasonic",
       "notes": [
-        "Конкретний полярний polymer OS-CON замість generic X7R 22 µF. Початковий мінімум 17.6 µF. Не має властивої class-II MLCC втрати ємності від DC bias. Ефективний C у частоті/температурі та converter interaction ще перевіряються.",
-        "ESR≤35 mΩ при 100 kHz; ripple 2.6 A rms при 105 °C/100 kHz; корпус Ø6.3×5.9 mm, size C6. Плюс до рейки, мінус до GND. Це design-заміна, не результат A/B тесту."
+        "W2 GR-5A (SHRINK-2 (3)): TDK C3225X7R1H226M250AC 22 µF 50 V X7R 1210 замість полімерного 35SVPF22M. Ефективна ємність при 5 V не прочитана (характеристика TDK — 403, рядок READS-P web:tdk-c3225x7r1h226m250ac-dc-bias): E1-05 (≥10 µF ефективно) — OPEN, стенд.",
+        "Кераміка має інший ESR, ніж полімер: fLC і Z0 π-фільтра LAB5 (R-E1-05) змінюються з реальною ємністю; демпфер R110/C113 лишається, крок навантаження — стенд E1-05."
       ]
     },
     {
@@ -1553,6 +2287,327 @@
       ]
     },
     {
+      "ref": "C130",
+      "value": "10µF50VX7R 1210",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H106K250AC",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "CIN U108 біля VIN1 (SLVSGB4B табл. 8-2: 10 µF 50 V)."
+      ]
+    },
+    {
+      "ref": "C131",
+      "value": "10µF50VX7R 1210",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "C3225X7R1H106K250AC",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "CIN U108 біля VIN2, симетрично (розд. 8.3.3)."
+      ]
+    },
+    {
+      "ref": "C132",
+      "value": "100nF50VX7R",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C133",
+      "value": "47µF10VX7R 1210",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "GRM32ER71A476ME15L",
+      "manufacturer": "Murata",
+      "lcsc": "C415541",
+      "alt_mpn": "Samsung Electro-Mechanics CL32B476KPJNNNE",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C134",
+      "value": "47µF10VX7R 1210",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "GRM32ER71A476ME15L",
+      "manufacturer": "Murata",
+      "lcsc": "C415541",
+      "alt_mpn": "Samsung Electro-Mechanics CL32B476KPJNNNE",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C135",
+      "value": "47µF10VX7R 1210",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "mpn": "GRM32ER71A476ME15L",
+      "manufacturer": "Murata",
+      "lcsc": "C415541",
+      "alt_mpn": "Samsung Electro-Mechanics CL32B476KPJNNNE",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "COUT U108: Murata GRM32ER71A476ME15L (SLVSGB4B табл. 8-3)."
+      ]
+    },
+    {
+      "ref": "R129",
+      "value": "40.2k1%",
+      "kind": "resistor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF4022T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C12447",
+      "alt_mpn": "YAGEO RC0603FR-0740K2L",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_LAB5_FB"
+        }
+      ],
+      "notes": [
+        "RFBT для 5 V (табл. 8-1)."
+      ]
+    },
+    {
+      "ref": "R130",
+      "value": "10.0k1%",
+      "kind": "resistor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_LAB5_FB"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "RFBB 10 kΩ (рекомендоване, розд. 8.3.2)."
+      ]
+    },
+    {
+      "ref": "R131",
+      "value": "14.3k1%",
+      "kind": "resistor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1432T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22799",
+      "alt_mpn": "YAGEO RC0603FR-0714K3L",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_LAB5_RT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "RT: ≈913 kHz (рівн. 5)."
+      ]
+    },
+    {
+      "ref": "R132",
+      "value": "1.00M1%",
+      "kind": "resistor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1004T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22935",
+      "alt_mpn": "YAGEO RC0603FR-071ML",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_EN_LAB5"
+        }
+      ],
+      "notes": [
+        "Верхнє плече EN/UVLO U108 (≈9.9 V ном.)."
+      ]
+    },
+    {
+      "ref": "R133",
+      "value": "147k1%",
+      "kind": "resistor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1473T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22878",
+      "alt_mpn": "YAGEO RC0603FR-07147KL",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_EN_LAB5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Нижнє плече EN/UVLO U108; паралельно з R132 ≈128 kΩ (діапазон для такту, розд. 8.3.7)."
+      ]
+    },
+    {
       "ref": "F104",
       "value": "MF-MSMF075/24-2 0.75A",
       "kind": "fuse",
@@ -1584,16 +2639,15 @@
     },
     {
       "ref": "F103",
-      "value": "5A DC≥32V service",
+      "value": "5A DC≥32V service SMD 0451005.MRL",
       "kind": "fuse",
       "group": "Сервісний заряд",
       "status": "design",
-      "source": "STACK §2.7,§5.1",
-      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
-      "mpn": "0297005.WXNV",
+      "source": "https://datasheet.lcsc.com/datasheet/pdf/64ff7c9a3f50498894e4bc5a89970379.pdf?productCode=C48467",
+      "footprint": "Fuse:Fuse_Littelfuse-NANO2-451_453",
+      "mpn": "0451005.MRL",
       "manufacturer": "Littelfuse",
-      "lcsc": "C151093",
-      "alt_mpn": "Littelfuse 0297005.WXT",
+      "lcsc": "C48467",
       "pins": [
         {
           "number": "1",
@@ -1607,6 +2661,9 @@
           "type": "passive",
           "net": "E1_SERVICE_P"
         }
+      ],
+      "notes": [
+        "W2 GR-5A (SHRINK-2 (2)): Littelfuse NANO2 451 5 A SMD замість mini blade у тримачі: 125 V, відключення 300 A при 32 VDC, 12.5 mΩ холодний (рядок READS-P web:littelfuse-451-453). Очікуваний струм КЗ у точці F103 не прочитано (Daly дає лише DOCP 40 ±10 A; рівень КЗ не опубліковано) — OPEN."
       ]
     },
     {
@@ -3010,33 +4067,41 @@
       "id": "E1-04",
       "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
       "blocking": true,
-      "resolve": "До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту. Після UV release (13.5…13.7 V у спокої) одне натискання кнопки мусить одразу дати E1_PG_SYS12 без подальшого заряду — з реальним пусковим навантаженням (LAB5 з примусово ввімкненими вентиляторами, старт Q6A) при 25 і 50 °C, без повторного UV trip і без циклу програмної відсічки 13.05 V; інакше E1-04 не пройдено. v2.1, рішення власника: EN-резерв SYS12 R108 4.99k / R109 562R 0.1% 25 ppm/K, UV-мережа R103–R107 без змін; wake ≤13.27 V на E1_SW навіть за внутрішніх 100 kΩ ±20% і припущених ±3% порога EN. Порядок release > wake + спад E1_N→E1_SW (≈0.06 V) чинний, доки фактичний поріг EN наростання не більш як на 4.3% вище 1.35 V; його вимірює Ж-03 (wake >13.30 V → R109 576R і повторна розгортка; після перепаювання wake ≤13.30 V і sleep ≥10.9 V, інакше reject). Резервний sleep 10.9…11.8 V нижче точки стабільності Q6A 11.5 V: при відмові UV і Pico резерв уже не знімає SYS12 до просідання Q6A, тож основним відсіченням лишається UV trip U104. Якщо кнопка на піні A обходить утримуваний OFF, SYS12 тепер стартує вже від ≈12.2…13.3 V — тоді кнопку вести через супервізор. Симуляція відмови UV (вихід компаратора примусово low): резерв знімає SYS12 при 10.9…11.8 V без циклів sleep/wake. Порядок порогів на кожному екземплярі, разом з E3-07: за максимального й мінімального навантаження виміряна програмна відсічка, приведена до E1_N (13.05±0.1 V), мінус виміряний тут trip ≥0.10 V, а під час контрольованого розряду graceful shutdown (5 s dwell + завершення Linux) завершується до апаратного UV trip. Інакше — повторний trim R105 або reject.",
+      "resolve": "До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту. Після UV release (13.5…13.7 V у спокої) одне натискання кнопки мусить одразу дати E1_PG_SYS12 без подальшого заряду — з реальним пусковим навантаженням (LAB5 з примусово ввімкненими вентиляторами, старт Q6A) при 25 і 50 °C, без повторного UV trip і без циклу програмної відсічки 13.05 V; інакше E1-04 не пройдено. W2 GR-5A: EN-резерв SYS12 — поріг LM61460 U107 (1.263 V ±5 %, гістерезис 24–32 %, SNVSBD5D) з дільником R108 1.00 MΩ / R109 115 kΩ 1 % від E1_CONV_IN: wake 11.4…13.1 V (ном. 12.25 V), sleep 7.8…9.9 V, MODEL; UV-мережа R103–R107 без змін. Порядок release (≥13.5 V) > wake + спад E1_N→E1_CONV_IN (≈0.08 V з Q102) лишається; Ж-03 вимірює wake (≤13.30 V, інакше R109 → 121 kΩ і повторна розгортка 14 → 10.5 → 14 V). Критерій sleep ≥10.9 V попереднього резерву для LM61460 недосяжний (гістерезис EN 24–32 % при wake ≤13.3 V дає sleep ≤10.1 V): резерв тепер вимикається нижче BMS UVP 10.8 V, тож основним відсіченням лишаються UV trip U104 і далі BMS; симуляція відмови UV перевіряє, що SYS12 доходить до BMS UVP без циклів sleep/wake. Якщо кнопка на піні A обходить утримуваний OFF, SYS12 стартує вже від ≈11.4…13.1 V — тоді кнопку вести через супервізор. Порядок порогів на кожному екземплярі, разом з E3-07: за максимального й мінімального навантаження виміряна програмна відсічка, приведена до E1_N (13.05±0.1 V), мінус виміряний тут trip ≥0.10 V, а під час контрольованого розряду graceful shutdown (5 s dwell + завершення Linux) завершується до апаратного UV trip. Інакше — повторний trim R105 або reject.",
       "stack": "§5.1 (AON, UV); §8 (Супервізор AON)",
       "refs": [
         "U104",
-        "R105"
+        "R105",
+        "R108",
+        "R109"
       ]
     },
     {
       "id": "E1-05",
-      "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+      "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
       "blocking": true,
-      "resolve": "U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Пара LT3045 (E2-04, v2.1 VSET 4.30 V) окремої вимоги до LAB5 не має: її приймання — виміряний V(E2_LNA_IN)−V(OUTS) ≥0.40 V при 3.2 A LAB5 / 1 A пари / 50 °C. Відкрито: MPN F102 з холодним опором ≤10 mΩ і опір з'єднання LAB5 E1→E2 ≤10 mΩ (кожні 10 mΩ — 32 mV при 3.2 A). Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів.",
+      "resolve": "U108 TPSM63606RDLR (≈913 kHz від R131, UVLO ≈9.9 V R132/R133, VOUT 5.02 V ±1 % R129/R130); F102 4 A; L101 XAL6060-103MEC; C111/C112 C3225X7R1H226M250AC 22 µF 50 V 1210; COUT U108 C133–C135 3 × 47 µF 10 V (≥30 µF ефективно, табл. 8-1 SLVSGB4B); C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід U108 5.02 V ±1 % (VFB) плюс допуски R129/R130 і спад F102 + L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Пара LT3045 (E2-04, v2.1 VSET 4.30 V) окремої вимоги до LAB5 не має: її приймання — виміряний V(E2_LNA_IN)−V(OUTS) ≥0.40 V при 3.2 A LAB5 / 1 A пари / 50 °C. Відкрито: MPN F102 з холодним опором ≤10 mΩ і опір з'єднання LAB5 E1→E2 ≤10 mΩ (кожні 10 mΩ — 32 mV при 3.2 A). Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів.",
       "stack": "§5.1 (LAB5); §8 (LAB5); §8.1 (нагрів запобіжників)",
       "refs": [
         "U108",
         "F102",
-        "L101"
+        "L101",
+        "C111",
+        "C112"
       ]
     },
     {
       "id": "E1-06",
       "description": "Термо, transient, ESD та узгодження захистів не доведені на реальному PCB.",
       "blocking": true,
-      "resolve": "Силова плата reflow. Перевірити USB-PD OVLO≈22 V, ILIM≈3.5 A, hot-plug 0→20 V і reverse blocking. TVS E1_SW не вважати гарантією захисту 28 V eFuse. SYS12: C4 RF A/B і 60 min при 4.2 A, входи 14/16.4 V; батарейний шлях 4.6 A при case 50 °C. Перед виготовленням PCB потрібні layout, ERC і DRC.",
+      "resolve": "Силова плата reflow. Перевірити USB-PD OVLO≈22 V, ILIM≈3.5 A, hot-plug 0→20 V і reverse blocking. TVS E1_SW не вважати гарантією захисту 28 V eFuse. SYS12: C4 RF A/B і 60 min при 4.2 A, входи 14/16.4 V; батарейний шлях 4.6 A при case 50 °C. W2 GR-5A: ворота C4 тепер для U107 LM61460 і U108 TPSM63606 (вузькосмуговий A/B ±5 kHz від 40, 60, 77.5, 162, 490, 518, 4209.5 kHz; 60 хв при 4.2 A у закритому корпусі при 14.0 і 16.4 V; 4.6 A на батареї 30 хв при 50 °C), плюс вхідний перехідний процес зі спільною C107 і каскадом U111/Q102 (гаряче підключення, зворотна полярність на XT30). Перед виготовленням PCB потрібні layout, ERC і DRC. W2 GR-5A (без нового воріт: перелік 37 лишається): джерело такту FPWM для EN/SYNC U107/U108 не визначено — LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Гармонічне сканування (C4) вибирає такт ≤ близько 1.0 MHz, n·f поза захищеним списком (зокрема 1/7/14 MHz), і джерело (E1/E3, AC-зв’язок 1 nF у EN/SYNC за SNVSBD5D розд. 8.3.2); до того — ворота C4 (1) на RT ≈913 kHz з кроками SYS12/LAB5 0.3–3 A; рівн. 10 вимагає fSW ≥ 0.82 MHz для L102 4.7 µH. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI: перша плата звіряє площадки з корпусом, рентген паяння, тепло U107/L102/U108 (зони 3/4 тепловідводу).",
       "stack": "§5.1; §5.6; §8.1 (J21 і USB-C; просідання дисплея і Q6A)",
       "refs": [
-        "U109"
+        "U109",
+        "U107",
+        "U108",
+        "U111",
+        "L102"
       ]
     },
     {
@@ -3075,8 +4140,8 @@
     },
     {
       "id": "R-E1-05",
-      "description": "LAB5 π має конкретні parts: XAL6060-103MEC 10 µH; 35SVPF22M 22 µF×2; демпфер WSL2512R3300FEA 0.33 Ω +16SVPC100M 100 µF. Номінальні L/C/R збережено; MLCC замінено polymer як design-рішення.",
-      "source": "Офіційні Coilcraft/Panasonic/Vishay datasheets. fLC≈10.73 kHz, Z0≈0.674 Ω за C=22 µF. Дросель при 2.5 A: ≤74.5 mV /0.186 W при 25 °C. Heat, step response та real C залишаються E1-05."
+      "description": "LAB5 π має конкретні parts: XAL6060-103MEC 10 µH; C3225X7R1H226M250AC 22 µF 50 V 1210 ×2 (W2 GR-5A, SHRINK-2 (3), замість 35SVPF22M); демпфер WSL2512R3300FEA 0.33 Ω +16SVPC100M 100 µF. Номінальні L/R збережено.",
+      "source": "Офіційні Coilcraft/Panasonic/Vishay datasheets; TDK — рядок DigiKey DE бази деталей. fLC≈10.73 kHz, Z0≈0.674 Ω за C=22 µF номінально; ефективна ємність MLCC при 5 V нижча (крива TDK не прочитана). Heat, step response та real C залишаються E1-05."
     },
     {
       "id": "R-E1-06",
@@ -3096,6 +4161,21 @@
     {
       "id": "R-E1-09",
       "description": "W2 GR-3, 07.11.2026: живлення котушок реле RF (K401/K402, D401 K_COMMON) — окрема мережа LAB5_RLY після PTC F104 Bourns MF-MSMF075/24-2 (Itrip 1.50 A при 23 °C, Ihold 0.49 A при 70 °C; MF-MSMF REV. AO) на PWR-A замість прямого LAB5 після F102 4 A. Причина: межа захисту LAB5 4 A вимагала б Micro-Fit на RF-платі (build/15 «Живлення ≥2 A»), а вертикальна 43650 (9.9 мм) і кутова (6.98 мм з розеткою) вищі за 5.5 мм RF; з PTC провід S04 до RF — один контакт JST PH (2 A) бічного входу. Струм котушок ≈21.1 mA (08 крок 10)."
+    },
+    {
+      "id": "R-E1-10",
+      "description": "W2 GR-5A (SHRINK-2): SYS12 — TI LM61460AANRJRR U107 з Bourns SRP1040VA-4R7M L102 4.7 µH, RT 14.3 kΩ (≈913 kHz), VOUT 12.00 V (100k/9.09k), CBOOT через RBOOT 100 Ω, CFF 4.7 pF + RFF 1 kΩ; LAB5 — TI TPSM63606RDLR U108, 5.02 V (40.2k/10.0k), RT 14.3 kΩ. C109 видалено, C107 — спільна вхідна ємність. Дросель вирішеного SRP7030-2R2M замінено, бо він NRND/Obsolete, а 2.2 µH порушує рівн. 10 SNVSBD5D при такті ≤1.0 MHz; SRP7028A-3R3M/-4R7M не проходять рівн. 10 або Isat ≥ IL-HS.",
+      "source": "SNVSBD5D (рівн. 2, 3, 10; розд. 9.2.2), SLVSGB4B (рівн. 5; табл. 8-1), Bourns SRP1040VA REV. 10/26; рядки READS-P і W2 GR-5A у design/parts/snapshots. Усі розрахунки — MODEL; ворота C4 і E1-05 OPEN."
+    },
+    {
+      "id": "R-E1-11",
+      "description": "W2 GR-5A: каскад захисту від переполюсування з умов STACK C4 — TI LM74700QDBVRQ1 U111 (ідеальний діод, EN до ANODE) з Diodes DMT6007LFG-7 Q102 між E1_SW і новою мережею E1_CONV_IN; C107, U107, U108, CIN і дільники EN — після нього. E1_SW, D104/D105, C108/C110, R111 і гілки E2 від E1_SW не змінюються.",
+      "source": "SNOSD17G розд. 10.1.1 (приклад 12 V з DMT6007LFG, VCAP 0.1 µF); DS37335 Rev. 2-2; рядок READS-P web:pololu-2813-reverse (зворотний номінал #2813 не опубліковано)."
+    },
+    {
+      "id": "R-E1-12",
+      "description": "W2 GR-5A: пороги EN — U107 R108 1.00 MΩ / R109 115 kΩ (wake 12.25 V ном.), U108 R132 1.00 MΩ / R133 147 kΩ (вмикання 9.9 V ном.); 1 % товстоплівкові 0603 замість 0.1 % R-E1-08, бо допуск порога ±5 % (LM61460) і ±8 % (TPSM63606) домінує; паралельний опір ≈100 kΩ лишає місце для AC-зв’язаного такту. R-E1-08 стосувався порога Pololu.",
+      "source": "SNVSBD5D рівн. 1 і розд. 8.3.2; SLVSGB4B рівн. 7 і розд. 8.3.7. MODEL; Ж-03 і E1-04 вимірюють."
     }
   ],
   "power_flags": [
@@ -3111,13 +4191,23 @@
     },
     {
       "net": "LAB5",
-      "reason": "Реальний вихід Pololu U108 після F102 і L101; флаг не обходить їхній струмовий захист.",
-      "source": "U108 VOUT → F102 → L101 → LAB5"
+      "reason": "Реальний вихід U108 TPSM63606 (E1_LAB5_RAW) після F102 і L101; флаг не обходить їхній струмовий захист.",
+      "source": "U108 VOUT → F102 → L101 → LAB5 (W2 GR-5A)"
     },
     {
       "net": "E1_USB_PD_RAW",
       "reason": "Живлення від зовнішнього односпрямованого USB-PD адаптера до входу eFuse U109. Не джерело з боку IP2368.",
       "source": "J103 VBUS; STACK §2.7, §5.1"
+    },
+    {
+      "net": "SYS12",
+      "reason": "Реальний вихід U107 LM61460 через дросель L102 (passive); прапорець лише переносить ознаку джерела через passive для ERC.",
+      "source": "U107 SW → L102 → SYS12 (W2 GR-5A)"
+    },
+    {
+      "net": "E1_CONV_IN",
+      "reason": "Вхід U107/U108 після ідеального діода U111/Q102 від E1_SW (#2813 VOUT); прапорець лише переносить ознаку джерела через MOSFET для ERC.",
+      "source": "E1_SW → Q102 → E1_CONV_IN (W2 GR-5A)"
     }
   ],
   "bom_changes": [
@@ -3170,10 +4260,94 @@
         }
       ],
       "note": "Нові L/C/R замінюють generic позиції; не паралельні додаткові деталі. Ціни, landed totals і фінальний layout не оновлені цією правкою; потрібне центральне зведення. Нову запасну D36V28F5 не купувати."
+    },
+    {
+      "id": "E1-BOM-SHRINK2",
+      "removed": [
+        {
+          "ref": "U107",
+          "mpn": "D36V50F12",
+          "quantity": 1
+        },
+        {
+          "ref": "U108",
+          "mpn": "D36V50F5",
+          "quantity": 1
+        },
+        {
+          "ref": "C109",
+          "mpn": "EEHZK1V101XP",
+          "quantity": 1
+        },
+        {
+          "ref": "C111,C112",
+          "mpn": "35SVPF22M",
+          "quantity": 2
+        },
+        {
+          "ref": "F103",
+          "mpn": "0297005.WXNV",
+          "quantity": 1
+        }
+      ],
+      "added": [
+        {
+          "ref": "U107",
+          "mpn": "LM61460AANRJRR",
+          "manufacturer": "Texas Instruments",
+          "quantity": 1
+        },
+        {
+          "ref": "U108",
+          "mpn": "TPSM63606RDLR",
+          "manufacturer": "Texas Instruments",
+          "quantity": 1
+        },
+        {
+          "ref": "L102",
+          "mpn": "SRP1040VA-4R7M",
+          "manufacturer": "Bourns",
+          "quantity": 1
+        },
+        {
+          "ref": "U111",
+          "mpn": "LM74700QDBVRQ1",
+          "manufacturer": "Texas Instruments",
+          "quantity": 1
+        },
+        {
+          "ref": "Q102",
+          "mpn": "DMT6007LFG-7",
+          "manufacturer": "Diodes Incorporated",
+          "quantity": 1
+        },
+        {
+          "ref": "C111,C112,C123-C126",
+          "mpn": "C3225X7R1H226M250AC",
+          "quantity": 6
+        },
+        {
+          "ref": "C119,C120,C130,C131",
+          "mpn": "C3225X7R1H106K250AC",
+          "quantity": 4
+        },
+        {
+          "ref": "C133-C135",
+          "mpn": "GRM32ER71A476ME15L",
+          "quantity": 3
+        },
+        {
+          "ref": "F103",
+          "mpn": "0451005.MRL",
+          "manufacturer": "Littelfuse",
+          "quantity": 1
+        }
+      ],
+      "note": "W2 GR-5A, рішення SHRINK-2 від 11.11.2026: модулі Pololu U107/U108 замінено ІС TI на PWR-A; 0603-пасиви — у базі деталей. F201 (E2) теж переходить на 0451004.MRL (рядок бази F-0451004-MRL). Ціни й landed totals не перераховані."
     }
   ],
   "lab5_budget": {
-    "converter": "Pololu D36V50F5 #4091",
+    "converter": "TI TPSM63606RDLR (U108, W2 GR-5A)",
     "fuse_a": 4.0,
     "design_continuous_a": 3.2,
     "transient_qualification_a": 4.0,

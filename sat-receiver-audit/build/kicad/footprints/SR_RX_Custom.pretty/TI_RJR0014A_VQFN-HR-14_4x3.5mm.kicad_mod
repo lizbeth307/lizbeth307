@@ -1,0 +1,284 @@
+(footprint "TI_RJR0014A_VQFN-HR-14_4x3.5mm"
+	(version 20260206)
+	(generator "sr_rx_make_footprints")
+	(generator_version "10.0")
+	(layer "F.Cu")
+	(descr "TI RJR0014A VQFN-HR 14 pin 4.0 x 3.5 mm (LM61460); TI example board layout and stencil 4223976/H 06/2026: L-shaped VIN/PGND corner pads 1/5/9/11, SW pad 10 2.4x0.4, no exposed pad; pad corner radii omitted")
+	(tags "VQFN-HR RJR0014A LM61460")
+	(property "Reference" "REF**"
+		(at 0 -3 0)
+		(layer "F.SilkS")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "TI_RJR0014A_VQFN-HR-14_4x3.5mm"
+		(at 0 3 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_rect
+		(start -2 -1.75)
+		(end 2 1.75)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.Fab")
+	)
+	(fp_rect
+		(start -2.45 -2.2)
+		(end 2.45 2.2)
+		(stroke
+			(width 0.05)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.CrtYd")
+	)
+	(fp_circle
+		(center -2.55 -1.45)
+		(end -2.45 -1.45)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(fill no)
+		(layer "F.SilkS")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(effects
+			(font
+				(size 0.5 0.5)
+				(thickness 0.08)
+			)
+		)
+	)
+	(pad "1" smd custom
+		(at -1.675 -1.45)
+		(size 0.3 0.3)
+		(layers "F.Cu" "F.Mask")
+		(options
+			(clearance outline)
+			(anchor rect)
+		)
+		(primitives
+			(gr_poly
+				(pts
+					(xy -0.175 -0.5) (xy 0.175 -0.5) (xy 0.175 0.5) (xy -0.525 0.5) (xy -0.525 0.1) (xy -0.175 0.1)
+				)
+				(width 0)
+				(fill yes)
+			)
+		)
+	)
+	(pad "" smd roundrect
+		(at -1.65 -1.45)
+		(size 0.3 1)
+		(layers "F.Paste")
+		(roundrect_rratio 0.1)
+	)
+	(pad "" smd roundrect
+		(at -2 -1.125)
+		(size 0.4 0.35)
+		(layers "F.Paste")
+		(roundrect_rratio 0.1)
+	)
+	(pad "5" smd custom
+		(at -1.675 1.45)
+		(size 0.3 0.3)
+		(layers "F.Cu" "F.Mask")
+		(options
+			(clearance outline)
+			(anchor rect)
+		)
+		(primitives
+			(gr_poly
+				(pts
+					(xy -0.175 0.5) (xy 0.175 0.5) (xy 0.175 -0.5) (xy -0.525 -0.5) (xy -0.525 -0.1) (xy -0.175 -0.1)
+				)
+				(width 0)
+				(fill yes)
+			)
+		)
+	)
+	(pad "" smd roundrect
+		(at -1.65 1.45)
+		(size 0.3 1)
+		(layers "F.Paste")
+		(roundrect_rratio 0.1)
+	)
+	(pad "" smd roundrect
+		(at -2 1.125)
+		(size 0.4 0.35)
+		(layers "F.Paste")
+		(roundrect_rratio 0.1)
+	)
+	(pad "11" smd custom
+		(at 1.6 -1.45)
+		(size 0.3 0.3)
+		(layers "F.Cu" "F.Mask")
+		(options
+			(clearance outline)
+			(anchor rect)
+		)
+		(primitives
+			(gr_poly
+				(pts
+					(xy -0.2 -0.5) (xy 0.2 -0.5) (xy 0.2 0.1) (xy 0.6 0.1) (xy 0.6 0.5) (xy -0.2 0.5)
+				)
+				(width 0)
+				(fill yes)
+			)
+		)
+	)
+	(pad "" smd roundrect
+		(at 1.575 -1.45)
+		(size 0.35 1)
+		(layers "F.Paste")
+		(roundrect_rratio 0.1)
+	)
+	(pad "" smd roundrect
+		(at 1.975 -1.125)
+		(size 0.45 0.35)
+		(layers "F.Paste")
+		(roundrect_rratio 0.1)
+	)
+	(pad "9" smd custom
+		(at 1.6 1.45)
+		(size 0.3 0.3)
+		(layers "F.Cu" "F.Mask")
+		(options
+			(clearance outline)
+			(anchor rect)
+		)
+		(primitives
+			(gr_poly
+				(pts
+					(xy -0.2 0.5) (xy 0.2 0.5) (xy 0.2 -0.1) (xy 0.6 -0.1) (xy 0.6 -0.5) (xy -0.2 -0.5)
+				)
+				(width 0)
+				(fill yes)
+			)
+		)
+	)
+	(pad "" smd roundrect
+		(at 1.575 1.45)
+		(size 0.35 1)
+		(layers "F.Paste")
+		(roundrect_rratio 0.1)
+	)
+	(pad "" smd roundrect
+		(at 1.975 1.125)
+		(size 0.45 0.35)
+		(layers "F.Paste")
+		(roundrect_rratio 0.1)
+	)
+	(pad "2" smd roundrect
+		(at -1.85 -0.525)
+		(size 0.7 0.25)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.2)
+	)
+	(pad "3" smd roundrect
+		(at -1.85 0)
+		(size 0.7 0.3)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.2)
+	)
+	(pad "4" smd roundrect
+		(at -1.85 0.525)
+		(size 0.7 0.25)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.2)
+	)
+	(pad "14" smd roundrect
+		(at -1.125 -1.6)
+		(size 0.25 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.2)
+	)
+	(pad "13" smd roundrect
+		(at -0.625 -1.6)
+		(size 0.25 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.2)
+	)
+	(pad "6" smd roundrect
+		(at -1.125 1.6)
+		(size 0.25 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.2)
+	)
+	(pad "7" smd roundrect
+		(at -0.625 1.6)
+		(size 0.25 0.7)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.2)
+	)
+	(pad "12" smd roundrect
+		(at 0.45 -1.45)
+		(size 0.4 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.125)
+	)
+	(pad "8" smd roundrect
+		(at 0.45 1.45)
+		(size 0.4 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(roundrect_rratio 0.125)
+	)
+	(pad "10" smd roundrect
+		(at 1 0)
+		(size 2.4 0.4)
+		(layers "F.Cu" "F.Mask")
+		(roundrect_rratio 0.125)
+	)
+	(pad "" smd roundrect
+		(at 0.35 0)
+		(size 1.1 0.4)
+		(layers "F.Paste")
+		(roundrect_rratio 0.125)
+	)
+	(pad "" smd roundrect
+		(at 1.65 0)
+		(size 1.1 0.4)
+		(layers "F.Paste")
+		(roundrect_rratio 0.125)
+	)
+	(embedded_fonts no)
+)

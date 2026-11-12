@@ -39,6 +39,8 @@
   "design/parts/snapshots/2026-11-11-w2-pcb-sb2-manual.json",
   "design/parts/snapshots/2026-11-11-w2-readsp-manual.json",
   "design/parts/snapshots/2026-11-11-w2-readsp-lcsc.json",
+  "design/parts/snapshots/2026-11-12-w2-gr5a-manual.json",
+  "design/parts/snapshots/2026-11-12-w2-gr5a-lcsc.json",
   "design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json"
  ],
  "bom_v2_rows": {
@@ -160,13 +162,12 @@
    "note": "U110 (TBD у базі)"
   },
   "61": {
-   "status": "partial",
-   "note": "U107 у базі; запасний D36V50F12 — за цим рядком",
-   "remaining": "1× Pololu D36V50F12 #4095 (запасний)"
+   "status": "db",
+   "note": "W2 GR-5A (SHRINK-2): U107 is LM61460AANRJRR in the database; the D36V50F12 module and its spare are no longer bought"
   },
   "62": {
    "status": "db",
-   "note": "U108"
+   "note": "U108 — W2 GR-5A: TPSM63606RDLR in the database (was D36V50F5)"
   },
   "63": {
    "status": "partial",
@@ -1008,6 +1009,11 @@
     "C105",
     "C106",
     "C114",
+    "C121",
+    "C122",
+    "C127",
+    "C132",
+    "C136",
     "C301",
     "C303",
     "C305",
@@ -1173,6 +1179,7 @@
     "R106",
     "R111",
     "R123",
+    "R124",
     "R201",
     "R213",
     "R218",
@@ -1242,51 +1249,125 @@
    ]
   },
   {
-   "id": "R-0603-RT0603BRD074K99L",
+   "id": "R-0603-0603WAF1004T5E",
    "mount": "pcb_smt",
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "YAGEO",
-   "mpn": "RT0603BRD074K99L",
+   "manufacturer": "UNI-ROYAL",
+   "mpn": "0603WAF1004T5E",
    "sku": {
-    "lcsc": "C723532"
-   },
-   "alternates": [
-    {
-     "manufacturer": "Vishay Dale",
-     "mpn": "TNPW06034K99BEEA",
-     "sku": {
-      "lcsc": "C844461"
-     }
-    }
-   ],
-   "refs": [
-    "R108"
-   ]
-  },
-  {
-   "id": "R-0603-PTFR0603B562RP9",
-   "mount": "pcb_smt",
-   "kind": "resistor",
-   "package": "0603",
-   "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "RESI",
-   "mpn": "PTFR0603B562RP9",
-   "sku": {
-    "lcsc": "C47115902"
+    "lcsc": "C22935"
    },
    "alternates": [
     {
      "manufacturer": "YAGEO",
-     "mpn": "RT0603BRD07562RL",
+     "mpn": "RC0603FR-071ML",
      "sku": {
-      "lcsc": "C513658"
+      "lcsc": "C105578"
+     }
+    }
+   ],
+   "refs": [
+    "R108",
+    "R132"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1153T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL",
+   "mpn": "0603WAF1153T5E",
+   "sku": {
+    "lcsc": "C22783"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07115KL",
+     "sku": {
+      "lcsc": "C137806"
      }
     }
    ],
    "refs": [
     "R109"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1473T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL",
+   "mpn": "0603WAF1473T5E",
+   "sku": {
+    "lcsc": "C22878"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07147KL",
+     "sku": {
+      "lcsc": "C185371"
+     }
+    }
+   ],
+   "refs": [
+    "R133"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1432T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL",
+   "mpn": "0603WAF1432T5E",
+   "sku": {
+    "lcsc": "C22799"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0714K3L",
+     "sku": {
+      "lcsc": "C273750"
+     }
+    }
+   ],
+   "refs": [
+    "R126",
+    "R131"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF4022T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL",
+   "mpn": "0603WAF4022T5E",
+   "sku": {
+    "lcsc": "C12447"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0740K2L",
+     "sku": {
+      "lcsc": "C137723"
+     }
+    }
+   ],
+   "refs": [
+    "R129"
    ]
   },
   {
@@ -1632,6 +1713,7 @@
    ],
    "refs": [
     "R122",
+    "R128",
     "R391",
     "R395",
     "R440",
@@ -1832,8 +1914,9 @@
    "sku": {
     "lcsc": "C861611"
    },
-   "single_source": "9.09 kΩ 0.1 % 0603 thin film for the OVLO divider R263/R264 (R-E2-02); the only 0.1 % 9.09k 0603 listing read (LCSC snapshot 2026-11-07-w2-reads-e-lcsc.json); no alternate was read",
+   "single_source": "9.09 kΩ 0.1 % 0603 thin film for the OVLO divider R263/R264 (R-E2-02) and the U107 feedback divider R125 (W2 GR-5A); the only 0.1 % 9.09k 0603 listing read (LCSC snapshot 2026-11-07-w2-reads-e-lcsc.json); no alternate was read",
    "refs": [
+    "R125",
     "R264"
    ]
   },
@@ -1858,6 +1941,7 @@
     }
    ],
    "refs": [
+    "R130",
     "R206",
     "R212",
     "R221",
@@ -1936,6 +2020,10 @@
    ],
    "note": "MPN chosen by the E2 owner (graph mpn field, E2 notes: exact TDK MPN checked against the manufacturer page); kept primary. Graph value names TDK C3225X7R1H106K250AC; the attribute-checked, stocked equivalent is primary for JLC assembly.",
    "refs": [
+    "C119",
+    "C120",
+    "C130",
+    "C131",
     "C204",
     "C205",
     "C208",
@@ -2663,6 +2751,7 @@
     }
    ],
    "refs": [
+    "R127",
     "R336",
     "R338",
     "R340",
@@ -3225,8 +3314,33 @@
     }
    ],
    "refs": [
+    "C128",
     "C510",
     "C553"
+   ]
+  },
+  {
+   "id": "C-0603-0603CG4R7C500NT",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "FH",
+   "mpn": "0603CG4R7C500NT",
+   "sku": {
+    "lcsc": "C1669"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC0603CRNPO9BN4R7",
+     "sku": {
+      "lcsc": "C282071"
+     }
+    }
+   ],
+   "refs": [
+    "C129"
    ]
   },
   {
@@ -3543,6 +3657,12 @@
    "single_source": "graph-named TDK part; no 22 µF 50 V X7R 1210 at LCSC (keyword searches 22uF 50V 1210 / 1210X7R226 / CC1210X7R50V226, JLC parts API 2026-10-24: only 16 V and 25 V parts)",
    "note": "DigiKey DE showed stock 0 with 1000 expected 12-Apr-2027 on 2026-10-24: order on backorder or select a stocked 22 µF 50 V X7R 1210 after the same DC-bias derating check as E2 (graph owner decision).",
    "refs": [
+    "C111",
+    "C112",
+    "C123",
+    "C124",
+    "C125",
+    "C126",
     "C223",
     "C224",
     "C227",
@@ -3578,29 +3698,37 @@
      "note": "same D6.3xL7.7 SMD case"
     }
    ],
-   "note": "Hybrid polymer, D6.3×L7.7 SMD; \"low ESR\" in the graph value.",
+   "note": "Hybrid polymer, D6.3×L7.7 SMD; \"low ESR\" in the graph value. W2 GR-5A: C107 is the shared input bulk of U107/U108; C109 deleted (SHRINK-2).",
    "refs": [
-    "C107",
-    "C109"
+    "C107"
    ]
   },
   {
-   "id": "C-SMD-35SVPF22M",
+   "id": "C-1210-GRM32ER71A476ME15L",
    "mount": "pcb_smt",
    "kind": "capacitor",
-   "package": "SMD,D6.3xL5.9mm",
-   "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
-   "manufacturer": "Panasonic",
-   "mpn": "35SVPF22M",
+   "package": "1210",
+   "footprint": "Capacitor_SMD:C_1210_3225Metric",
+   "manufacturer": "Murata",
+   "mpn": "GRM32ER71A476ME15L",
    "sku": {
-    "lcsc": "C88142"
+    "lcsc": "C415541"
    },
-   "polarized": true,
-   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
-   "note": "OS-CON SVPF D6.3×L5.9 named in the graph.",
+   "alternates": [
+    {
+     "manufacturer": "Samsung Electro-Mechanics",
+     "mpn": "CL32B476KPJNNNE",
+     "sku": {
+      "lcsc": "C2932478"
+     },
+     "note": "47 uF 10 V X7R 1210, same land; DC-bias derating not read for either part"
+    }
+   ],
+   "note": "W2 GR-5A: COUT of U108 TPSM63606 (SLVSGB4B table 8-3 lists GRM32ER71A476ME15L); 3 x 47 uF against COUT(min) 30 uF effective at 5 V (table 8-1); the DC-bias curve was not readable (READS-P row web:murata-grm32er71a476me15-dc-bias), so the effective value is a bench item (E1-05).",
    "refs": [
-    "C111",
-    "C112"
+    "C133",
+    "C134",
+    "C135"
    ]
   },
   {
@@ -4821,46 +4949,61 @@
      "item": "PCB holder for the mini blade fuse"
     }
    ],
-   "note": "F102 is 4 A since the D36V50F5 change (v2.1).",
+   "note": "F102 is 4 A since the D36V50F5 change (v2.1). W2 GR-5A: F102 keeps the blade and the Keystone 3568 holder (SHRINK-2: no 4 A SMD fuse with cold R <= 10 mOhm, READS-P row web:readsp-f102-10mohm-search); F201 moved to F-0451004-MRL.",
    "refs": [
-    "F102",
-    "F201"
+    "F102"
    ]
   },
   {
-   "id": "F-0297005-WXNV",
-   "mount": "pcb_tht",
-   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "id": "F-0451005-MRL",
+   "mount": "pcb_smt",
+   "footprint": "Fuse:Fuse_Littelfuse-NANO2-451_453",
    "manufacturer": "Littelfuse",
-   "mpn": "0297005.WXNV",
+   "mpn": "0451005.MRL",
    "sku": {
-    "lcsc": "C151093"
+    "lcsc": "C48467"
    },
    "match": "5",
-   "alternates": [
+   "fallbacks": [
     {
-     "manufacturer": "Littelfuse",
-     "mpn": "0297005.WXT",
+     "manufacturer": "Bourns",
+     "mpn": "SF-2410FP500W-2",
      "sku": {
-      "lcsc": "C3662210"
+      "lcsc": "C1972619"
      },
-     "note": "same fuse, other packing code"
+     "note": "Bourns SinglFuse 2410, 5 A, 14.3 mOhm typ: pads 3.00 x 3.15 (outer 8.60) instead of 1.96 x 3.15, so the land changes; LCSC stock 1 on 2026-11-11; the PWR-A layout owner decides"
     }
    ],
-   "single_source": "Littelfuse MINI blade; never clone MINI fuses",
-   "extras": [
-    {
-     "manufacturer": "Keystone Electronics",
-     "mpn": "3568",
-     "sku": {
-      "digikey": "36-3568-ND"
-     },
-     "qty_per_ref": 1,
-     "item": "PCB holder for the mini blade fuse"
-    }
-   ],
+   "single_source": "Littelfuse NANO2 451 very fast-acting SMD fuse: 125 V, interrupting 300 A at 32 VDC (READS-P row web:littelfuse-451-453); the Bourns SF-2410FP fallback has another land",
+   "note": "W2 GR-5A (SHRINK-2 (2)): F103 service 5 A, was the 0297005.WXNV blade in a Keystone 3568 holder. The prospective short-circuit current at F103 is not read (Daly publishes DOCP 40 +/-10 A only): OPEN.",
    "refs": [
     "F103"
+   ]
+  },
+  {
+   "id": "F-0451004-MRL",
+   "mount": "pcb_smt",
+   "footprint": "Fuse:Fuse_Littelfuse-NANO2-451_453",
+   "manufacturer": "Littelfuse",
+   "mpn": "0451004.MRL",
+   "sku": {
+    "lcsc": "C27515"
+   },
+   "match": "4",
+   "fallbacks": [
+    {
+     "manufacturer": "Bourns",
+     "mpn": "SF-2410FP400W-2",
+     "sku": {
+      "lcsc": "C1972633"
+     },
+     "note": "Bourns SinglFuse 2410, 4 A, 17.1 mOhm typ: pads 3.00 x 3.15 instead of 1.96 x 3.15, so the land changes; LCSC stock 0 on 2026-11-11; the PWR-A layout owner decides"
+    }
+   ],
+   "single_source": "Littelfuse NANO2 451 very fast-acting SMD fuse: 125 V, interrupting 300 A at 32 VDC (READS-P row web:littelfuse-451-453); the Bourns SF-2410FP fallback has another land",
+   "note": "W2 GR-5A (SHRINK-2 (2)): F201 (E2, J21 branch 4 A), was the 0297004.WXNV blade in a Keystone 3568 holder; cold R 16.0 mOhm (READS-P).",
+   "refs": [
+    "F201"
    ]
   },
   {
@@ -5553,33 +5696,85 @@
    ]
   },
   {
-   "id": "U-POLOLU-4095",
-   "mount": "pcb_module",
-   "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
-   "manufacturer": "Pololu",
-   "mpn": "D36V50F12",
+   "id": "U-LM61460AANRJRR",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:TI_RJR0014A_VQFN-HR-14_4x3.5mm",
+   "manufacturer": "Texas Instruments",
+   "mpn": "LM61460AANRJRR",
    "sku": {
-    "web": "pololu-4095"
+    "lcsc": "C2864505",
+    "digikey": "296-LM61460AANRJRRCT-ND"
    },
-   "match": "D36V50F12",
-   "single_source": "Pololu only; gate C4 fallback TI LM61460 on a custom board",
-   "note": "Pololu #4095; Botland id 16387 per 10-bom row 61; Pololu shows \"Rationed\". Integration 2026-11-07 (build/15 «Кількість плат»): U107 is soldered into the PWR board like U108 (mechanical/params/boards.json modules_on_board), not mounted on the plate with a harness. Footprint from the Pololu dimension drawing https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf (reg24d, 24 December 2019; linked from https://www.pololu.com/product/4091/resources, read 2026-11-07): 12 holes D1.02 on a 0.1 in grid (VOUT, GND x4, VIN, VRP doubled; EN and PG single), three D2.18 M2 holes; the module has 1.8 mm parts on its bottom side, so it stands on its header spacer, not flat on the PWR board.",
+   "match": "LM61460AANRJRR",
+   "single_source": "TI only: LM61460AAN (auto mode, no spread spectrum, adjustable) with a TI-specific VQFN-HR pinout; the DigiKey substitutes LMQ61460AASRJRR / -AASQRJRRQ1 / -AFSQRJRRQ1 add spread spectrum or FPWM and were also out of stock (READS-P row digikey:296-LM61460AANRJRRCT-ND); reflow only",
+   "note": "W2 GR-5A (SHRINK-2): SYS12 converter U107, replaces Pololu D36V50F12 #4095. Not in stock at TI, DigiKey DE (3000 expected 27-May-2027) or LCSC on 2026-11-11 (READS-P rows web:ti-store-lm61460aanrjrr, digikey:296-LM61460AANRJRRCT-ND, LCSC C2864505): order on backorder. Footprint drawn from the TI RJR0014A land pattern 4223976/H (tools/make_footprints.py).",
    "refs": [
     "U107"
    ]
   },
   {
-   "id": "U-POLOLU-4091",
-   "mount": "pcb_module",
-   "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
-   "manufacturer": "Pololu",
-   "mpn": "D36V50F5",
+   "id": "L-SRP1040VA-4R7M",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_Bourns_SRP1038C_10.0x10.0mm",
+   "manufacturer": "Bourns",
+   "mpn": "SRP1040VA-4R7M",
    "sku": {
-    "web": "pololu-4091"
+    "lcsc": "C1857863"
    },
-   "match": "D36V50F5",
-   "single_source": "Pololu only",
-   "note": "Pololu #4091 (v2.1 LAB5 default); Pololu shows \"Rationed\". Soldered into the PWR board with both paired power pins (E1 U108); footprint from the Pololu dimension drawing https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf (reg24d, 24 December 2019; linked from https://www.pololu.com/product/4091/resources, read 2026-11-07); module bottom-side parts 1.8 mm, so it stands on its header spacer.",
+   "match": "SRP1040VA-4R7M",
+   "single_source": "Bourns SRP1040VA (AEC-Q200, REV. 10/26) chosen for LM61460 eq. (10) and Isat >= IL-HS 11.5 A at <= 4.5 mm height; a second source needs L >= 4.21 uH at 913 kHz, Isat >= 11.5 A, DCR <= 15.3 mOhm, h <= 4.5 mm and the same 12.5/5.4/3.5 land",
+   "note": "W2 GR-5A: replaces the SHRINK-2 SRP7030-2R2M (NRND/Obsolete, and 2.2 uH breaks LM61460 eq. (10) at a sync of 1.0 MHz or less: READS-P rows web:bourns-srp7030, web:ti-snvsbd5d-lm61460). Footprint: KiCad 10.0.7 L_Bourns_SRP1038C_10.0x10.0mm, whose pads (3.55 x 3.5 at +/-4.475) equal the SRP1040VA recommended layout 12.5/5.4/3.5 (row web:bourns-srp1040va of design/parts/snapshots/2026-11-12-w2-gr5a-manual.json).",
+   "refs": [
+    "L102"
+   ]
+  },
+  {
+   "id": "U-LM74700QDBVRQ1",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "LM74700QDBVRQ1",
+   "sku": {
+    "lcsc": "C2941042"
+   },
+   "match": "LM74700QDBVRQ1",
+   "single_source": "TI ideal-diode controller read by READS-P (row web:ti-snosd17g-lm74700-q1); the SOT-23-8 DDF variant has another pinout",
+   "note": "W2 GR-5A: reverse-polarity stage of STACK C4 for the U107/U108 input (E1_SW -> E1_CONV_IN), EN tied to ANODE.",
+   "refs": [
+    "U111"
+   ]
+  },
+  {
+   "id": "Q-DMT6007LFG-7",
+   "mount": "pcb_smt",
+   "footprint": "Package_SON:Diodes_PowerDI3333-8",
+   "manufacturer": "Diodes Incorporated",
+   "mpn": "DMT6007LFG-7",
+   "sku": {
+    "lcsc": "C2802568",
+    "digikey": "DMT6007LFG-7DICT-ND"
+   },
+   "match": "DMT6007LFG-7",
+   "single_source": "the LM74700-Q1 12 V design-example MOSFET (SNOSD17G 10.1.1.2.2); a substitute needs 60 V, +/-20 V VGS, Vth <= 2 V max and 4-10 mOhm at 4.5 V in PowerDI3333-8 (pads 1-3 S, 4 G, 5 D)",
+   "note": "W2 GR-5A: LCSC C2802568 stock 0 on 2026-11-11 (READS-P LCSC snapshot); DigiKey DE DMT6007LFG-7DICT-ND 1,614 (READS-P row).",
+   "refs": [
+    "Q102"
+   ]
+  },
+  {
+   "id": "U-TPSM63606RDLR",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:TI_RDL0020A_B3QFN-20_5x5.5mm",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPSM63606RDLR",
+   "sku": {
+    "lcsc": "C5219325",
+    "digikey": "296-TPSM63606RDLRCT-ND"
+   },
+   "match": "TPSM63606RDLR",
+   "single_source": "TI power module with a TI-specific B3QFN pinout; TPSM63606SRDLR adds spread spectrum (SLVSGB4B device comparison), so it is not a drop-in for the C4 A/B gate; reflow only",
+   "note": "W2 GR-5A (SHRINK-2): LAB5 converter U108, replaces Pololu D36V50F5 #4091 (STACK D11 names the TPSM6360x family as the fallback). LCSC C5219325 1241 in stock, DigiKey DE 0 on 2026-11-11 (READS-P rows). Footprint drawn from the TI RDL0020A land pattern 4226416/B.",
    "refs": [
     "U108"
    ]

@@ -314,6 +314,64 @@ class HarnessHeaderEntryTest(unittest.TestCase):
             self.assertFalse([e for e in extras if any(w in e for w in ("housing", "crimp", "header"))], pid)
 
 
+class ShrinkTwoPowerEntryTest(unittest.TestCase):
+    """W2 GR-5A (SHRINK-2): the E1 power entry without the Pololu modules. Design values only (MODEL); every bench gate stays OPEN."""
+
+    @classmethod
+    def setUpClass(cls):
+        import json
+        cls.e1 = {c["ref"]: c for c in json.loads((BASE / "design/E1.json").read_text(encoding="utf-8"))["components"]}
+        cls.e2 = {c["ref"]: c for c in json.loads((BASE / "design/E2.json").read_text(encoding="utf-8"))["components"]}
+
+    def nets(self, ref):
+        return {p["number"]: p.get("net") for p in self.e1[ref]["pins"]}
+
+    def test_no_pololu_modules_c109_or_polymer_c111_c112(self):
+        self.assertNotIn("C109", self.e1)
+        mpns = {c.get("mpn") for c in self.e1.values()}
+        self.assertFalse(mpns & {"D36V50F12", "D36V50F5", "35SVPF22M"})
+        self.assertEqual((self.e1["U107"]["mpn"], self.e1["U107"]["footprint"]), ("LM61460AANRJRR", "SR_RX_Custom:TI_RJR0014A_VQFN-HR-14_4x3.5mm"))
+        self.assertEqual((self.e1["U108"]["mpn"], self.e1["U108"]["footprint"]), ("TPSM63606RDLR", "SR_RX_Custom:TI_RDL0020A_B3QFN-20_5x5.5mm"))
+        self.assertEqual(sorted(self.nets("U107"), key=int), [str(i) for i in range(1, 15)])
+        self.assertEqual(sorted(self.nets("U108"), key=int), [str(i) for i in range(1, 21)])
+        for ref in ("C111", "C112"):
+            self.assertEqual((self.e1[ref]["mpn"], self.e1[ref]["footprint"]), ("C3225X7R1H226M250AC", "Capacitor_SMD:C_1210_3225Metric"))
+
+    def test_reverse_polarity_stage_feeds_both_converters(self):
+        self.assertEqual((self.nets("U111")["6"], self.nets("U111")["4"], self.nets("U111")["3"]), ("E1_SW", "E1_CONV_IN", "E1_SW"))
+        q = self.nets("Q102")
+        self.assertEqual(({q["1"], q["2"], q["3"]}, q["5"], q["4"]), ({"E1_SW"}, "E1_CONV_IN", self.nets("U111")["5"]))
+        for ref, pins in (("U107", ("8", "12")), ("U108", ("1", "16"))):
+            self.assertEqual({self.nets(ref)[p] for p in pins}, {"E1_CONV_IN"}, ref)
+        self.assertEqual(self.nets("C107")["1"], "E1_CONV_IN")
+
+    def test_dividers_and_frequency_follow_the_ti_equations(self):
+        r = lambda ref: parts.resistance(self.e1[ref]["value"])
+        self.assertAlmostEqual(1.0 * (1 + r("R124") / r("R125")), 12.0, delta=0.06)       # SNVSBD5D eq. (3), VREF 1 V
+        self.assertAlmostEqual(1.0 * (1 + r("R129") / r("R130")), 5.0, delta=0.05)        # SLVSGB4B eq. (1)
+        f_sys = 1e3 / (r("R126") / 1e3 / 1.346e4 + 3.3e-5)                                # SNVSBD5D eq. (2), Hz
+        f_lab = 1e6 * 13.46 / (r("R131") / 1e3 + 0.44)                                    # SLVSGB4B eq. (5), Hz
+        for f in (f_sys, f_lab):
+            self.assertTrue(0.8e6 <= f <= 1.0e6, f)                                       # STACK C4: sync at about 1.0 MHz or less
+        l102 = parts.inductance(self.e1["L102"]["value"])
+        self.assertGreaterEqual(l102, 0.32 * 12.0 / (0.9 * f_sys))                         # eq. (10) at the RT -10 % corner
+        wake = 1.263 * (1 + r("R108") / r("R109"))
+        self.assertTrue(11.0 < wake < 13.3, wake)                                         # below UV release 13.5 V (E1-04)
+        uvlo = 1.263 * (1 + r("R132") / r("R133"))
+        self.assertTrue(9.0 < uvlo < 11.0, uvlo)                                          # STACK D11: about 10 V
+
+    def test_fuses_and_database_entries(self):
+        model = parts.Model()
+        model.check()
+        self.assertEqual(model.errors, [])
+        self.assertEqual(self.e1["F103"]["mpn"], "0451005.MRL")
+        self.assertEqual(self.e2["F201"]["mpn"], "0451004.MRL")
+        self.assertEqual(self.e1["F102"]["footprint"], "Fuse:Fuseholder_Blade_Mini_Keystone_3568")
+        for pid, refs in (("U-LM61460AANRJRR", ["U107"]), ("U-TPSM63606RDLR", ["U108"]), ("L-SRP1040VA-4R7M", ["L102"]),
+                          ("U-LM74700QDBVRQ1", ["U111"]), ("Q-DMT6007LFG-7", ["Q102"]), ("F-0451005-MRL", ["F103"]), ("F-0451004-MRL", ["F201"])):
+            self.assertEqual(part(model.db, pid)["refs"], refs, pid)
+        self.assertFalse([p for p in model.db["parts"] if p["id"].startswith("U-POLOLU-40")])
+
 
 class Shrink2PowerSwapTest(unittest.TestCase):
     """W2 GR-5B (SHRINK-2, E2/E5): the low-profile swaps are database entries with read sources. A procurement record, not a

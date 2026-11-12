@@ -1,0 +1,98 @@
+{
+ "schema": 1,
+ "date": "2026-11-12",
+ "note": "W2 GR-5A (SHRINK-2) reads of 2026-11-12 for the E1 power entry without the Pololu modules: the SYS12 inductor choice (the decided SRP7030-2R2M is NRND/Obsolete and 2.2 uH breaks LM61460 eq. (10) at a sync of 1.0 MHz or less, READS-P), the circuit values of U107 LM61460, U108 TPSM63606 and the U111/Q102 reverse-polarity stage, and the official KiCad footprints vendored. Facts that READS-P already recorded (stock, fuses, NRND notes) are cited from design/parts/snapshots/2026-11-11-w2-readsp-manual.json, not repeated. A row records what the source showed; \"stock\": null means not shown; \"mpn\": null marks a decision or library row that confirms no part. No browser User-Agent was sent; Coilcraft pages answered 403 and were not bypassed. PDFs were read locally and are not committed. Arithmetic is labelled and is a MODEL input, not a measurement. LCSC listings of this package are in 2026-11-12-w2-gr5a-lcsc.json (tools/check_parts_availability.py --codes).",
+ "entries": {
+  "web:bourns-srp1040va": {
+   "item": "GR-5A SYS12 inductor L102",
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.bourns.com/docs/product-datasheets/srp1040va.pdf",
+   "read": "2026-11-12",
+   "method": "curl (default User-Agent) (HTTP 200), text via PyMuPDF; page 1 rendered with PyMuPDF and the table, dimensions and layout read from the image",
+   "mpn": "SRP1040VA-4R7M",
+   "manufacturer": "Bourns",
+   "title": "SRP1040VA Series - Shielded Power Inductors, REV. 10/26 (AEC-Q200, automotive grade)",
+   "stock": null,
+   "price": null,
+   "note": "SRP1040VA-4R7M: L 4.7 uH +/-20 % (100 kHz, 1 V), Q min 15, SRF 15 MHz typ, DCR 14.3 typ / 15.3 max mOhm, Irms 13 A typ, Isat 15 A typ; rated current: inductance drops 30 % at Isat; temperature rise 40 C at rated Irms; rated voltage 75 V; operating -55 to +180 C; metal alloy powder core; terminal Cu/Ni/Sn; 500 per reel. Same table: SRP1040VA-5R6M 5.6 uH, 15.5/17.5 mOhm, Irms 12 A, Isat 13 A. Dimensions: 10.0 +/-0.3 body, 11.0 +/-0.3 over the terminals, 10.0 +/-0.3, height 3.8 +/-0.2 mm. Recommended layout: 12.5 outer, 5.4 gap, 3.5 pad width (REF), i.e. two pads 3.55 x 3.5 at +/-4.475 mm, which is the KiCad 10.0.7 Inductor_SMD:L_Bourns_SRP1038C_10.0x10.0mm land (row web:kicad-10.0.7-gr5a-footprints). Requirement check for U107 (arithmetic, MODEL): LM61460 eq. (10) L >= 0.32 x 12 V / fSW = 4.21 uH at 913 kHz and 4.67 uH at -10 % (822 kHz); Isat 15 A >= IL-HS 11.5 A max (row web:ti-snvsbd5d-lm61460-gr5a); height 4.0 mm max <= hA 4.5 mm. LCSC C1857863 shows 53 in stock (2026-11-12-w2-gr5a-lcsc.json)."
+  },
+  "web:gr5a-sys12-inductor-search": {
+   "item": "GR-5A SYS12 inductor: candidates checked against LM61460 eq. (10) and Isat >= IL-HS",
+   "distributor": "search result and datasheets",
+   "url": "https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList",
+   "read": "2026-11-12",
+   "method": "keyword queries of the public JLCPCB parts search (User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py) for XAL7030-472, XAL7030-562, IHLP3232DZER4R7M11, IHLP4040DZER4R7M11, SRP1038C-4R7M, SRP1038CC-4R7M, SRP1040VA-4R7M/-5R6M, SRP7028A-4R7M, SRP7050WA-4R7M, XGL6030-472, 74437368047, 74439369047; Bourns datasheets srp7050wa.pdf, srp1038cc.pdf (curl, HTTP 200) and the LCSC-hosted SRP1038C sheet read",
+   "mpn": null,
+   "manufacturer": null,
+   "title": null,
+   "stock": null,
+   "price": null,
+   "note": "Decision record, no part confirmed by this row. Need: 4.7 uH (eq. (10) at <= 1.0 MHz), Isat >= 11.5 A, height <= hA 4.5 mm. Listing values (LCSC attributes, Isat definitions differ by maker): Coilcraft XAL7030-472MEC Isat 10.1 A, stock 0 (Coilcraft pages answered 403 to curl and WebFetch on 2026-11-12, so its datasheet was not read); Vishay IHLP3232DZER4R7M11 8.7 A; IHLP4040DZER4R7M11 7.6 A; Coilcraft XGL6030-472MEC 8.6 A; Bourns SRP7028A-4R7M 10 A (READS-P row web:bourns-srp7028a); Bourns SRP7050WA-4R7M 13.3 A but its datasheet (REV. 06/24) shows a 5.2 +/-0.2 mm tall body, above hA 4.5 mm; Bourns SRP1038C-4R7M 20 A but the sheet carries the banner \"not recommended for new designs\"; SRP1038CC-4R7M (sheet REV. 07/23: 14.5/15.5 mOhm, Irms 13 A, Isat 20 A, consumer grade; LCSC listing SMD 11x10mm, stock 84; height not read); Wurth 74437368047 19 A stock 0 and 74439369047 27 A stock 0 at LCSC. Chosen: SRP1040VA-4R7M (active REV. 10/26, AEC-Q200, Isat 15 A, 3.8 +/-0.2 mm read, LCSC stock 53, KiCad land available); SRP1038CC-4R7M is the recorded same-land candidate once its height is read."
+  },
+  "web:ti-snvsbd5d-lm61460-gr5a": {
+   "item": "GR-5A U107 circuit values",
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/lm61460.pdf",
+   "read": "2026-11-12",
+   "method": "curl (default User-Agent) (HTTP 200, 3093699 bytes), text via PyMuPDF; pages 55-57 (RJR0014A) rendered with PyMuPDF and read from the images",
+   "mpn": "LM61460AANRJRR",
+   "manufacturer": "Texas Instruments",
+   "title": "LM61460 3-V to 36-V, 6-A, Low EMI Synchronous Step-Down Converter, SNVSBD5D (revised July 2022)",
+   "stock": null,
+   "price": null,
+   "note": "Re-read for the circuit values (complements READS-P row web:ti-snvsbd5d-lm61460). Table 6-1: 1 BIAS (to VOUT; ground it if VOUT is above 12 V; optional 0.1-1 uF), 2 VCC (1 uF to AGND), 3 AGND, 4 FB, 5 PGOOD (open drain), 6 RT (5.76-66.5 kOhm, do not float), 7 EN/SYNC (precision enable; sync on the rising edge, AC coupling allowed; synchronized operation is forced PWM), 8 VIN1, 9 PGND1, 10 SW, 11 PGND2, 12 VIN2, 13 RBOOT, 14 CBOOT (100 nF to SW). Section 8.3.2: keep RENT || RENB in the 100 kOhm range for sync, 3.3 V pulse through 1 nF, clock range 200 kHz-2.2 MHz. Eq. (2): RRT(kOhm) = (1/fSW(kHz) - 3.3e-5) x 1.346e4 (14.3 kOhm -> 913 kHz, arithmetic). Eq. (3): RFBB = RFBT / (VOUT/1 V - 1), RFBT 100 kOhm recommended (100k / 9.09k -> 12.00 V, arithmetic). Electrical characteristics: VEN rising 1.263 V, deviation -5/+5 %, hysteresis 24/28/32 % of VEN; IEN 2.3 nA. Section 9.2.2.3: Isat >= IL-HS; eq. (10) L >= 0.32 x VOUT/fSW near dropout. 9.2.2.5: >= 10 uF ceramic input, rated preferably twice VIN max, plus a 100 nF 50 V X7R at each VIN/PGND pair. 9.2.2.6: CBOOT 100 nF X7R >= 10 V. 9.2.2.7: RBOOT 100 Ohm gives about 2.7 ns SW rise and about 0.5 % less efficiency at 2 MHz. 9.2.2.8: CVCC 1 uF 16 V. Table 9-2 (1000 kHz rows, 3.3/5 V): CFF 4.7 pF, RFF 1 kOhm. Package drawings 4223976/H 06/2026: body 3.9-4.1 x 3.4-3.6 x 0.8-1.0 mm; land pattern and stencil transcribed in tools/make_footprints.py rjr0014a()."
+  },
+  "web:ti-slvsgb4b-tpsm63606-gr5a": {
+   "item": "GR-5A U108 circuit values",
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf",
+   "read": "2026-11-12",
+   "method": "curl (default User-Agent) (HTTP 200, 2308958 bytes), text via PyMuPDF; pages 17-18 and 40-42 rendered with PyMuPDF and read from the images",
+   "mpn": "TPSM63606RDLR",
+   "manufacturer": "Texas Instruments",
+   "title": "TPSM63606 3-V to 36-V Input, 1-V to 16-V Output, 6-A Synchronous Buck Power Module, SLVSGB4B (revised April 2022)",
+   "stock": null,
+   "price": null,
+   "note": "Re-read for the circuit values (complements READS-P row web:ti-slvsgb4b-tpsm63606). Device comparison: TPSM63606RDLR no spread spectrum, TPSM63606SRDLR with spread spectrum. Table 6-1: 1/16 VIN1/VIN2, 2 SW (no external component), 3 CBOOT and 4 RBOOT (100 nF and 100 Ohm inside), 5 VLDOIN (to VOUT; optional 0.1-1 uF), 6/11 AGND, 7 VCC (1 uF inside), 8/9 VOUT1/VOUT2, 10 FB, 12 RT, 13 PG (open drain; may be left open), 14 EN/SYNC, 15 NC, 17-20 PGND. Table 8-1 (RFBB 10 kOhm): 5 V -> RFBT 40.2 kOhm, FSW 0.8-1.2 MHz, COUT(min) 30 uF effective, CFF 22 pF. Table 8-2 input capacitors include GRM32ER71H106KA12L (10 uF 50 V 1210); table 8-3 output capacitors include GRM32ER71A476ME15L. Eq. (5): RRT(kOhm) = 13.46/FSW(MHz) - 0.44 (14.3 kOhm -> 0.913 MHz, arithmetic). Eq. (7): RENB = RENT x VEN_RISE/(VIN(on) - VEN_RISE); VEN_RISE 1.161/1.263/1.365 V, VEN_FALL 0.91 V, VEN_HYS 0.303/0.353/0.404 V. Section 8.3.7: RENT || RENB about 100 kOhm for sync. Section 8.3.3: 68-100 uF electrolytic bulk for input damping. Package drawings 4226416/B 04/2021: body 4.9-5.1 x 5.4-5.6 x 3.9-4.1 mm; land pattern and stencil transcribed in tools/make_footprints.py rdl0020a()."
+  },
+  "web:ti-snosd17g-lm74700-q1-gr5a": {
+   "item": "GR-5A U111 reverse-polarity stage",
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf",
+   "read": "2026-11-12",
+   "method": "curl (default User-Agent) (HTTP 200, 2657068 bytes), text via PyMuPDF",
+   "mpn": "LM74700QDBVRQ1",
+   "manufacturer": "Texas Instruments",
+   "title": "LM74700-Q1 Low IQ Reverse Battery Protection Ideal Diode Controller, SNOSD17G (revised December 2020)",
+   "stock": null,
+   "price": null,
+   "note": "Re-read for the circuit (complements READS-P row web:ti-snosd17g-lm74700-q1). Table 5-1 (DBV): 1 VCAP, 2 GND, 3 EN (can be tied to ANODE for always-on), 4 CATHODE (to the MOSFET drain), 5 GATE, 6 ANODE (to the MOSFET source, input power). 10.1.1.2.2: 60 V MOSFET, VGS >= 15 V rating, Vth 2-2.5 V max, 20 mV/I <= RDS(on) <= 50 mV/I at the nominal current; DMT6007LFG selected in the 12 V example. 10.1.1.2.3: VCAP min 0.1 uF and >= 10 x CISS; CIN min 22 nF; COUT min 100 nF."
+  },
+  "web:diodes-dmt6007lfg": {
+   "item": "GR-5A Q102 MOSFET",
+   "distributor": "manufacturer datasheet",
+   "url": "https://www.diodes.com/assets/Datasheets/DMT6007LFG.pdf",
+   "read": "2026-11-12",
+   "method": "curl (default User-Agent) (HTTP 200), text via PyMuPDF",
+   "mpn": "DMT6007LFG",
+   "manufacturer": "Diodes Incorporated",
+   "title": "DMT6007LFG N-channel enhancement mode MOSFET, DS37335 Rev. 2-2 (November 2015)",
+   "stock": null,
+   "price": null,
+   "note": "POWERDI3333-8: pins 1-3 S, 4 G, 5-8 D and the bottom pad D. VDSS 60 V, VGSS +/-20 V; ID 15 A (TA 25 C); VGS(th) 0.8-2 V; RDS(on) 4.5 typ / 6 max mOhm at VGS 10 V, 6.5 typ / 8.5 max at 4.5 V; Ciss 2090 pF at VDS 30 V; VSD 0.9 typ / 1.2 max V at 20 A. Package outline dimensions (page 7): A 0.75 min / 0.85 max / 0.80 typ mm, D and E 3.25-3.35 mm. Ordering DMT6007LFG-13 3,000 per reel on this sheet; the -7 suffix is the DigiKey/LCSC listing (READS-P rows digikey:DMT6007LFG-7DICT-ND and LCSC C2802568)."
+  },
+  "web:kicad-10.0.7-gr5a-footprints": {
+   "item": "GR-5A official KiCad 10.0.7 footprints",
+   "distributor": "KiCad library repository",
+   "url": "https://gitlab.com/api/v4/projects/kicad%2Flibraries%2Fkicad-footprints/repository/tree?ref=10.0.7&path=Inductor_SMD.pretty",
+   "read": "2026-11-12",
+   "method": "curl (default User-Agent) of the GitLab tree API (Inductor_SMD.pretty, 693 names) and tools/make_footprints.py --fetch of https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/<lib>.pretty/<name>.kicad_mod; pads read from the files",
+   "mpn": null,
+   "manufacturer": null,
+   "title": null,
+   "stock": null,
+   "price": null,
+   "note": "Vendored byte-for-byte: Inductor_SMD:L_Bourns_SRP1038C_10.0x10.0mm (sha256 5d7a5b273fe08a1fa48a67136c29d86da9dd2965882d689fa0fcf7789d9c6dfa; pads 1/2 3.55 x 3.5 rect at +/-4.475 mm; F.CrtYd +/-6.5 x +/-2 around the pads and +/-5.25 around the body), Fuse:Fuse_Littelfuse-NANO2-451_453 (sha256 4d7971c5346420f32946d8f6f19189db0074a717fa4ad9566c72a60c7c21cb84, equal to the READS-P row web:kicad-10.0.7-footprint-check; pads 1.96 x 3.15 at +/-2.455), Package_SON:Diodes_PowerDI3333-8 (sha256 e868e39c4329b02aca12e4f1e25421231fa667922dea0c90c50f585b5ab32d1a; pads 1-4 0.7 x 0.42 at x -1.5 on 0.65 pitch, pad 5 a custom pad joining leads 5-8 and the bottom pad, plus unnumbered paste apertures). No SRP1040VA or SRP7050WA footprint in the 10.0.7 library; L_Coilcraft_XAL7030-472 exists."
+  }
+ }
+}
