@@ -10,7 +10,7 @@ image to the UFS is a separate, explicit bench step (recovery_kit.py write, neve
 The chroot gets a minimal /dev (no host disks) and a policy-rc.d that starts no service.
 
   plan   - ordered steps, sources and layout geometry (no root; host tests)
-  fetch  - download the locked base image and kernel debs into a cache and verify them
+  fetch  - download the locked base image and kernel debs (and the closure debs, venv wheels, pps-gpio.c) into a cache and verify them
   facts  - read-only facts of the locked r2 image (partition table, cmdline, ESP, dpkg, units)
   blank  - partitioned and formatted image without an OS (CI layout round trip)
   build  - the full golden image, image-manifest.json and the extent map for the recovery kit
@@ -55,7 +55,11 @@ CONFIG_KEYS = ("CONFIG_VIRTIO_BLK", "CONFIG_VIRTIO_PCI", "CONFIG_VIRTIO_MMIO", "
                "CONFIG_NLS_ISO8859_1", "CONFIG_QUOTA", "CONFIG_QFMT_V2", "CONFIG_QUOTACTL", "CONFIG_CGROUP_BPF", "CONFIG_PPS_CLIENT_GPIO",
                "CONFIG_BLK_DEV_LOOP", "CONFIG_RTC_DRV_PL031", "CONFIG_DRM_VIRTIO_GPU", "CONFIG_HW_RANDOM_VIRTIO", "CONFIG_ARM_SMMU_V3",
                # Module signing decides whether a builder-built out-of-tree module (DKMS pps-gpio) can load at all.
-               "CONFIG_MODULE_SIG", "CONFIG_MODULE_SIG_FORCE", "CONFIG_MODULE_SIG_ALL", "CONFIG_MODULE_SIG_HASH")
+               "CONFIG_MODULE_SIG", "CONFIG_MODULE_SIG_FORCE", "CONFIG_MODULE_SIG_ALL", "CONFIG_MODULE_SIG_HASH",
+               # W2 IMG-4: pps-gpio needs PPS core built in; the QEMU session model needs a firmware framebuffer DRM device
+               # (DRM_VIRTIO_GPU is not set in 6.18.2-4-qcom), a VT and USB input.
+               "CONFIG_PPS", "CONFIG_MODULE_UNLOAD", "CONFIG_MODULE_COMPRESS_ZSTD", "CONFIG_DRM_SIMPLEDRM", "CONFIG_SYSFB_SIMPLEFB",
+               "CONFIG_VT", "CONFIG_USB_XHCI_PCI", "CONFIG_USB_HID", "CONFIG_USER_NS")
 # The pin_only globs of receive-only-policy.json (libsnpe*, hexagon-dsp-binaries*, dragonwing-defaults) and tzdata
 # (chrony's tzdata-legacy closure) are listed too, so the facts name every package RX-01a could block.
 INTEREST = re.compile(r"(linux-(image|headers|modules|firmware)|systemd|embloader|sdboot|radxa|rsetup|u-boot|edk2|fastrpc|qcom|qnn|qairt|"
@@ -86,7 +90,14 @@ SNAPSHOT_URL = "https://snapshot.ubuntu.com/ubuntu/"
 # The packages the closure is resolved for (STACK.md:902, build/07 §1.2) and the accounts their postinst
 # creates with adduser: chrony -> _chrony (+ group), gpsd -> gpsd in group dialout (debian/postinst of
 # chrony 4.5-1ubuntu4.2 and gpsd 3.25-3ubuntu3.2, read from the snapshot debs 2026-11-07).
-CLOSURE_ROOTS = {"chrony": ("_chrony",), "gpsd": ("gpsd",)}
+# W2 IMG-4 (build/15 «Пакети сеансу в образі (W2 IMG-4)»): the touch session of STACK.md:160/:884. greetd's postinst
+# creates the system user and group _greetd (debian/greetd.postinst of 0.9.0-4ubuntu1); labwc 0.7.1-1build1, kanshi
+# 1.5.1-1, cage 0.1.5+20240127-2build1 and wlopm 0.1.0-1 have no maintainer script that creates an account (their
+# debian/ directories; all read 2026-11-12 from http://archive.ubuntu.com/ubuntu/pool/universe/, SHA-256 equal to the .dsc).
+CLOSURE_ROOTS = {"cage": (), "chrony": ("_chrony",), "gpsd": ("gpsd",), "greetd": ("_greetd",), "kanshi": (), "labwc": (), "wlopm": ()}
+# Where each root is specified (the "reason" of its closure entry); a root not listed is a STACK.md:902 package.
+SESSION_ROOT_SOURCE = "STACK.md:160, :884; W2 IMG-4"
+CLOSURE_ROOT_SOURCES = {name: SESSION_ROOT_SOURCE for name in ("cage", "greetd", "kanshi", "labwc", "wlopm")}
 CLOSURE_PACKAGE_KEYS = ("package", "version", "architecture", "filename", "suite", "sha256", "size", "r2_version", "reason")
 # Compared between the committed file and a fresh `closure --resolve` (resolved_on is the run date).
 CLOSURE_COMPARED = ("snapshot", "suites", "base", "roots", "packages", "expected_removed", "removed_because", "expected_accounts")
@@ -123,6 +134,19 @@ NUMPY_CODE = ("import json, sys\ntry:\n    import numpy\nexcept ImportError as e
 QT_CODE = ("import json\nfrom PySide6 import QtCore, QtGui, QtWidgets\napp = QtWidgets.QApplication(['srrx-image-check'])\n"
            "print(json.dumps({'qt': QtCore.qVersion(), 'platform': app.platformName()}))\n")
 QT_ENV = {"QT_QPA_PLATFORM": "offscreen", "XDG_RUNTIME_DIR": VENV_HOME + "/run"}
+# pps-gpio (W2 IMG-4, build/15 «Модуль pps-gpio в образі (W2 IMG-4)»): the held 6.18.2-4-qcom has CONFIG_PPS=y and
+# PPS_CLIENT_GPIO unset, so /dev/pps-gnss needs the out-of-tree module. The builder (never the device: no compiler in the
+# image) builds deployment/system/dkms/pps-gpio with dkms and gcc-12 against the locked headers deb, as the sr-rx-system
+# job does, checks its vermagic and installs the .ko under updates/srrx with depmod in the root A chroot. pps-gpio.c is
+# fetch-only (its header carries author e-mail addresses): it lives in the cache, never in the tree or the manifest.
+PPS_SOURCES = DEPLOYMENT / "system/system-sources.lock.json"
+PPS_CACHE = "pps-gpio"  # cache subdirectory of the fetched pps-gpio.c
+PPS_WORK = ("pps-headers", "pps-dkms-src", "pps-dkms-tree", "pps-gpio.ko")  # under --work, removed before each build
+PPS_TOOLS = ("dkms", "gcc-12", "make", "zstd", "xz", "dpkg-deb")
+PPS_MODULE_NAME = "pps_gpio"
+# modinfo fields recorded; author (MODULE_AUTHOR: names and e-mail addresses) and description are never read.
+PPS_MODINFO_FIELDS = ("filename", "name", "license", "vermagic", "depends", "srcversion")
+MODULE_SIG_KEYS = ("CONFIG_MODULE_SIG", "CONFIG_MODULE_SIG_FORCE", "CONFIG_MODULE_SIG_ALL", "CONFIG_MODULE_SIG_HASH")
 
 
 class BuildError(RuntimeError):
@@ -765,9 +789,12 @@ STEPS = (
     ("dtb", "package DTB from the locked linux-image deb; lab.dtb = + lab-q6a.dtbo, field.dtb = + lab-q6a.dtbo + field-q6a.dtbo via fdtoverlay when the IMG-05 overlays exist (compared with deployment/system/dt/dt-manifest.json), else the unmerged package DTB marked merged=false"),
     ("bootloader", "Route A: dpkg --purge sdboot-is-embloader, bootctl install --no-variables, embloader pinned -1; Route B: embloader kept (0.4 required)"),
     ("boot-config", "/etc/srrx/boot.json, /etc/srrx/slot, /etc/kernel/cmdline, tries, install.conf layout=other, 90-srrx-bls.install, boot-check unit (Route B: initramfs write-back and commit unit)"),
-    ("kernel", "dpkg -i the five locked 6.18.2-4 debs before any apt run; the plugin writes the slot A entry and ESP files"),
+    ("kernel", "dpkg -i the five locked 6.18.2-4 debs before any apt run; the plugin writes the slot A entry and ESP files; "
+               "pps-gpio (W2 IMG-4): dkms build with gcc-12 on the builder against the locked headers deb (no compiler in the image), "
+               "vermagic check, /lib/modules/<kver>/updates/srrx/pps-gpio.ko and depmod in root A, unless CONFIG_MODULE_SIG_FORCE=y"),
     ("closure", "step 8b: apt-get install --purge of the hash-locked package-closure.json debs (chrony, tzdata-legacy, tzdata, gpsd, "
-                "libgps30t64) with every apt source and preference disabled and policy-rc.d 101; the apt plan and the dpkg status "
+                "libgps30t64; greetd, labwc, kanshi, cage, wlopm and the libraries r2 lacks, W2 IMG-4) with every apt source and "
+                "preference disabled and policy-rc.d 101; the apt plan and the dpkg status "
                 "change must be exactly the closure (systemd-timesyncd purged); /etc/chrony/chrony.conf replaced by "
                 "system_files.chrony_conf() and parsed by chronyd -p (no network directive)"),
     ("accounts", "systemd-sysusers and systemd-tmpfiles --create of the staged SR-RX sysusers.d/tmpfiles.d in the root A chroot "
@@ -779,7 +806,10 @@ STEPS = (
                   "r2 SSH host keys removed"),
     ("enable", "srrx-radio-off.service, srrx-boot-check.service (Route B also srrx-ab-commit.service), srrx-ssh-hostkeys.service for a later "
                "sshd start; srrx.service is not enabled (IMG-06); every before.txt step is checked as replaced or skipped; "
-               "npu_payload (no QNN SDK/QAIRT) and mcu_firmware (staged firmware/dist/build-manifest.json SHA-256) recorded"),
+               "npu_payload (no QNN SDK/QAIRT) and mcu_firmware (staged firmware/dist/build-manifest.json SHA-256) recorded; "
+               "touch session (W2 IMG-4): every SYS-SESSION file still the bundle's after dpkg, no /etc/greetd/greetd.conf, "
+               "display-manager.service from the masked gdm3 unit to greetd.service, graphical.target default, srrx-menu.service "
+               "user preset disabled"),
     ("venvs", "step 11b (W2 IMG-3): /opt/srrx/venv (hmi-requirements.lock) and /opt/srrx/passes-venv (passes-requirements.lock) "
               "in the root A chroot: venv --copies --without-pip, pip from its locked wheel on PYTHONPATH, --no-index "
               "--require-hashes --no-compile, the project --no-deps --no-build-isolation; pip check, freeze = lock, no "
@@ -1120,9 +1150,11 @@ def hardening(root, recipe, route):
         else:
             run(["systemctl", "--root", str(root), "mask", unit])
         masked.append(unit)
-    # graphical.target wants display-manager.service, r2's alias of the gdm3 unit (W2 IMG-2): its target must be masked.
+    # graphical.target wants display-manager.service, r2's alias of the gdm3 unit (W2 IMG-2): its target must be masked,
+    # or be the recipe's session display manager (W2 IMG-4: greetd.service, which install_session links after this step).
     display_manager = _units(root)["display_manager"]
-    if display_manager not in (None, "file") and Path(display_manager).name not in masked:
+    session_manager = (recipe.get("session") or {}).get("display_manager")
+    if display_manager not in (None, "file") and Path(display_manager).name not in masked + [session_manager]:
         raise BuildError("display-manager.service points to " + display_manager + ", which the recipe does not mask")
     policy = load_json(POLICY)
     tokens = policy["apt"]["forbidden_list_name_tokens"]
@@ -1334,6 +1366,9 @@ BLOCKER_CLOSES_AT = (  # (blocker text prefix, id, tag); the selftest blocker is
     ("apt_keyring_absent", "apt_keyring_absent", "owner:key-ceremony"),
     ("npu_payload_present", "npu_payload_present", "recipe"),
     ("mcu_firmware_manifest", "mcu_firmware_manifest", "recipe"),
+    # W2 IMG-4: a locked kernel that enforces module signatures, or ships PPS differently, needs a recipe decision.
+    ("pps_gpio_signature_enforced", "pps_gpio_signature_enforced", "recipe"),
+    ("pps_gpio_kernel_config", "pps_gpio_kernel_config", "recipe"),
 )
 SELFTEST_BLOCKER = "selftest root A "
 SELFTEST_RULE_CLOSES_AT = {("RX-S2", "radio_off_binding_missing"): "commissioning",
@@ -1577,7 +1612,8 @@ def resolve_closure(stanzas, installed, lock, roots=None):
         options = [v for v in _versions(by_name, name, suites) if version_satisfies(v[0], op, wanted)]
         return ([v for v in options if v[0] in locked.get(name, {})] or options or [None])[0]
 
-    queue = [(name, "root (STACK.md:902, build/07 §1.2)", None, None) for name in sorted(CLOSURE_ROOTS if roots is None else roots)]
+    queue = [(name, "root (" + CLOSURE_ROOT_SOURCES.get(name, "STACK.md:902, build/07 §1.2") + ")", None, None)
+             for name in sorted(CLOSURE_ROOTS if roots is None else roots)]
     while queue:
         name, reason, op, wanted = queue.pop(0)
         if name in selected:
@@ -1650,7 +1686,8 @@ def resolve_closure(stanzas, installed, lock, roots=None):
 CLOSURE_DESCRIPTION = ("Packages the golden image adds to Radxa OS r2 (build_image.py step 8b): apt-get install --purge of exactly these "
                        "hash-locked debs of the pinned snapshot, with every apt source and preference disabled. chrony replaces r2's "
                        "systemd-timesyncd (Conflicts/Provides time-daemon) and needs tzdata-legacy; tzdata follows its source; gpsd needs "
-                       "libgps30t64. Their postinst scripts create _chrony and gpsd. Generated by `build_image.py closure --resolve`; "
+                       "libgps30t64. greetd, labwc, kanshi, cage and wlopm are the touch session (W2 IMG-4) with the libraries r2 lacks. "
+                       "The postinst scripts create _chrony, gpsd and _greetd. Generated by `build_image.py closure --resolve`; "
                        "never edited by hand.")
 CLOSURE_METHOD = ("build_image.py closure --resolve: gpgv of each suite InRelease against the pinned archive key (fetch_sources.signed_release), "
                   "equal to sources.lock.json apt_snapshot.releases; the signed SHA256 list checks every binary-arm64 Packages.xz; "
@@ -1792,10 +1829,17 @@ def closure_status_issues(changes, closure):
     return issues
 
 
-def install_closure(root, cache, closure):
+# dpkg's message for a file of an installed package that a new package also ships (archives.c, forcibleerr with --force-overwrite).
+_TAKEOVER = re.compile(r"(?:trying to overwrite|overwriting) '([^']+)', which is also in package ([a-z0-9][a-z0-9+.-]*)")
+
+
+def install_closure(root, cache, closure, takeovers=None):
     """Step 8b: apt-get install --purge of the closure debs in the chroot (policy-rc.d 101 starts nothing);
-    the simulated plan and the dpkg status change must both be exactly the closure."""
+    the simulated plan and the dpkg status change must both be exactly the closure. takeovers ({path: r2 package}, W2 IMG-4,
+    recipe.json closure_takeovers): files of an r2 package that a closure package also ships; only then dpkg runs with
+    --force-overwrite, and any other file it reports overwriting stops the build."""
     root = Path(root)
+    takeovers = dict(takeovers or {})
     before = _dpkg_status(root)
     plain = {n.split(":", 1)[0]: v for n, v in before.items()}
     drift = {p["package"]: plain.get(p["package"]) for p in closure["packages"] if plain.get(p["package"]) != p["r2_version"]}
@@ -1818,6 +1862,8 @@ def install_closure(root, cache, closure):
     for directory in (target, target / "parts.d"):
         os.chmod(directory, 0o755)
     argv = ["apt-get", "install", "-y", "-q", "--no-install-recommends", "--purge"] + apt_local_options("/" + CLOSURE_CHROOT_DIR + "/parts.d")
+    if takeovers:
+        argv += ["-o", "Dpkg::Options::=--force-overwrite"]
     simulated = chroot(root, argv[:2] + ["-s"] + argv[2:] + names, extra_env=CLOSURE_ENV)
     plan = apt_simulation(simulated.stdout)
     issues = closure_plan_issues(plan, closure)
@@ -1825,6 +1871,10 @@ def install_closure(root, cache, closure):
         raise BuildError("apt plan of the package closure: " + "; ".join(issues) + "\n" + simulated.stdout[-2000:])
     done = chroot(root, argv + names, extra_env=CLOSURE_ENV)
     shutil.rmtree(target)
+    overwritten = dict(_TAKEOVER.findall((done.stdout or "") + "\n" + (done.stderr or "")))
+    unexpected = {path: owner for path, owner in overwritten.items() if takeovers.get(path) != owner}
+    if unexpected:
+        raise BuildError("dpkg overwrote files of installed packages outside recipe.json closure_takeovers: " + json.dumps(unexpected))
     changes = status_changes(before, _dpkg_status(root))
     issues = closure_status_issues(changes, closure)
     if issues:
@@ -1840,7 +1890,8 @@ def install_closure(root, cache, closure):
             "deb_sha256": {p["package"]: p["sha256"] for p in closure["packages"]},
             "removed": sorted(n for n, (_, after) in changes.items() if after is None),
             "upgraded": {n: {"from": b, "to": a} for n, (b, a) in changes.items() if b and a},
-            "accounts": accounts, "apt_plan": plan, "apt_tail": done.stdout[-1500:]}
+            "accounts": accounts, "apt_plan": plan, "apt_tail": done.stdout[-1500:],
+            "takeovers": {"allowed": takeovers, "overwritten": overwritten, "not_seen": sorted(set(takeovers) - set(overwritten))}}
 
 
 def install_chrony_conf(root):
@@ -2253,6 +2304,193 @@ def build_manifest_draft(root, out):
             "next": "review, attach PASS evidence, set REVIEWED by hand (software/DEPLOYMENT.md)"}
 
 
+# ---------------------------------------------------------------- pps-gpio module (W2 IMG-4)
+
+def pps_pin():
+    """The system-sources.lock.json pin of pps-gpio.c: a raw file of radxa/kernel at the pinned commit, fetch-only."""
+    pin = load_json(PPS_SOURCES)["pps_gpio"]
+    if pin.get("committed") is not False or pin["url"] != "https://raw.githubusercontent.com/%s/%s/%s" % (pin["repository"], pin["commit"], pin["path"]):
+        raise BuildError("the pps-gpio.c pin must be a fetch-only raw.githubusercontent.com file of the pinned commit")
+    return pin
+
+
+def fetch_pps_source(cache):
+    """pps-gpio.c into cache/pps-gpio by the pin's URL, accepted only with its SHA-256 and size (never committed)."""
+    pin = pps_pin()
+    return _download(pin["url"], Path(cache) / PPS_CACHE / "pps-gpio.c", pin["sha256"], pin["size"], "pps-gpio.c")
+
+
+def pps_kernel_findings(kconfig):
+    """(record, blocker or None): can the locked kernel load an unsigned out-of-tree pps-gpio? (host-testable)"""
+    record = {k: kconfig.get(k) for k in MODULE_SIG_KEYS + ("CONFIG_PPS", "CONFIG_PPS_CLIENT_GPIO", "CONFIG_MODULE_UNLOAD")}
+    if kconfig.get("CONFIG_MODULE_SIG_FORCE") == "y":
+        return record, ("pps_gpio_signature_enforced: CONFIG_MODULE_SIG_FORCE=y in the locked kernel, so the unsigned builder-built "
+                        "module would not load (the kernel's signing key is not available)")
+    if kconfig.get("CONFIG_PPS") != "y":
+        return record, "pps_gpio_kernel_config: CONFIG_PPS is %r; the module needs the PPS core built in" % kconfig.get("CONFIG_PPS")
+    if kconfig.get("CONFIG_PPS_CLIENT_GPIO") in ("y", "m"):
+        return record, "pps_gpio_kernel_config: CONFIG_PPS_CLIENT_GPIO=%s; the kernel ships its own pps-gpio" % kconfig["CONFIG_PPS_CLIENT_GPIO"]
+    return record, None
+
+
+def modules_dir(root, kver):
+    """/lib/modules/<kver> of a root as a builder path: through usr/lib (merged /usr) or a real lib/, never through a link."""
+    root = Path(root).resolve()
+    for relative in ("usr/lib/modules", "lib/modules"):
+        if (root / relative.split("/", 1)[0]).is_symlink():
+            continue
+        path = root / relative / kver
+        if path.is_dir() and not path.is_symlink() and path.resolve().is_relative_to(root):
+            return path
+    raise BuildError("no /lib/modules/" + kver + " in the root (the locked linux-image deb installs it at the kernel step)")
+
+
+def module_path(path):
+    """A module file as kmod names it, /lib/modules/... (merged /usr: /usr/lib/modules/... is the same file)."""
+    return bootchain.module_path(path)
+
+
+def _modinfo(root, kver, field):
+    """One modinfo field of pps_gpio in the root's chroot (-n: the file depmod resolves); None when modinfo fails."""
+    done = chroot(root, ["modinfo", "-k", kver] + (["-n"] if field == "filename" else ["-F", field]) + [PPS_MODULE_NAME], check=False)
+    return done.stdout.strip() if done.returncode == 0 else None
+
+
+def build_pps_module(root, cache, work, recipe, kconfig):
+    """Kernel step, after the locked debs (W2 IMG-4): dkms add/build of deployment/system/dkms/pps-gpio (MAKE[0]: gcc-12) on
+    the builder against the locked headers deb, in trees under --work; vermagic must be recipe.json pps_gpio.vermagic; the .ko
+    goes to /lib/modules/<kver>/updates/srrx/pps-gpio.ko (0644) in root A and depmod runs in its chroot. Root B gets it with
+    the rsync and its own kernel-install depmod. Returns (record, blocker or None); the record never holds MODULE_AUTHOR."""
+    spec, kver = recipe["pps_gpio"], recipe["kernel_version"]
+    kernel, blocker = pps_kernel_findings(kconfig)
+    record = {"status": "BLOCKED", "source": spec["source"], "kernel_config": kernel, "path": spec["install_path"]}
+    if blocker:
+        return dict(record, why=blocker), blocker
+    missing = [tool for tool in PPS_TOOLS if shutil.which(tool) is None]
+    if missing:
+        raise BuildError("pps-gpio builder tools missing: " + ", ".join(missing) + " (sr-rx-image.yml installs them on the builder)")
+    if str(DEPLOYMENT / "system") not in sys.path:
+        sys.path.insert(0, str(DEPLOYMENT / "system"))
+    import pps_dkms
+    pin, fetched = pps_pin(), fetch_pps_source(cache)
+    headers, source_tree, dkms_tree, module = (Path(work) / name for name in PPS_WORK)
+    for path in (headers, source_tree, dkms_tree, module):
+        if path.is_dir() and not path.is_symlink():
+            shutil.rmtree(path)
+        elif os.path.lexists(path):
+            path.unlink()
+    dkms_tree.mkdir(parents=True)  # dkms 3.0.11 check_rw_dkms_tree: the tree must exist and be writable
+    run(["dpkg-deb", "-x", Path(cache) / lock_artifacts()[spec["headers_artifact"]]["cache_path"], headers])
+    kdir = headers / "usr/src" / ("linux-headers-" + kver)
+    if not (kdir / "Makefile").is_file():
+        raise BuildError("the locked headers deb has no usr/src/linux-headers-" + kver + "/Makefile")
+    assembled = pps_dkms.assemble(Path(cache) / PPS_CACHE / "pps-gpio.c", source_tree)
+    name, version = spec["dkms_package"], pps_dkms.package_version()
+    trees = ["--sourcetree", str(source_tree), "--dkmstree", str(dkms_tree)]
+    run(["dkms", "add", "-m", name, "-v", version] + trees)
+    built = run(["dkms", "build", "-m", name, "-v", version, "-k", kver, "--kernelsourcedir", str(kdir)] + trees, check=False)
+    if built.returncode:
+        logs = sorted(dkms_tree.glob(name + "/" + version + "/build/make.log"))
+        # Compiler output quotes source lines: address-like tokens of the upstream file never reach the manifest.
+        raise BuildError("dkms build of %s %s failed: %s" % (name, version, bootchain.redact_addresses(
+            (built.stdout or "")[-1200:] + (built.stderr or "")[-1200:] + (logs[0].read_text(errors="replace")[-1500:] if logs else ""))))
+    found = sorted(p for p in dkms_tree.glob(name + "/" + version + "/" + kver + "/*/module/pps-gpio.ko*") if p.is_file())
+    if len(found) != 1:
+        raise BuildError("dkms build left %d pps-gpio modules: %s" % (len(found), [p.name for p in found]))
+    if found[0].suffix == ".ko":
+        shutil.copyfile(found[0], module)
+    else:  # dkms compresses like the host's /lib/modules/<kver> (none on the builder, so normally a plain .ko)
+        decompress = {".zst": ["zstd", "-d", "-q", "-c"], ".xz": ["xz", "-d", "-c"]}.get(found[0].suffix)
+        if decompress is None:
+            raise BuildError("unexpected dkms module " + found[0].name)
+        with open(module, "xb") as handle:
+            if subprocess.run(decompress + [str(found[0])], stdout=handle, timeout=120).returncode:
+                raise BuildError("decompressing " + found[0].name + " failed")
+    vermagic = pps_dkms.check_vermagic(module, kver)["vermagic"]
+    if vermagic != spec["vermagic"]:
+        raise BuildError("pps-gpio vermagic %r differs from recipe.json pps_gpio.vermagic %r" % (vermagic, spec["vermagic"]))
+    relative = spec["install_path"].split("/" + kver + "/", 1)[1]
+    target = modules_dir(root, kver) / relative
+    install_file(module, target, 0o644)
+    chroot(root, ["depmod", "-a", kver])
+    listed = [line for line in (modules_dir(root, kver) / "modules.dep").read_text(errors="replace").splitlines()
+              if line.split(":", 1)[0] == relative]
+    modinfo = {field: _modinfo(root, kver, field) for field in PPS_MODINFO_FIELDS}
+    if len(listed) != 1 or module_path(modinfo["filename"]) != spec["install_path"] or modinfo["vermagic"] != vermagic:
+        raise BuildError("depmod/modinfo of pps_gpio in the root A chroot: " + json.dumps({"modules.dep": listed, "modinfo": modinfo}))
+    status = run(["dkms", "status", "-m", name, "-v", version, "-k", kver] + trees, check=False)
+    return dict(record, status="INSTALLED", why=None, sha256=sha256(target), size=target.stat().st_size, vermagic=vermagic,
+                modules_dep=listed[0], modinfo=modinfo, dkms_package=name + "/" + version, dkms_status=(status.stdout or "").strip()[-300:],
+                built_module=found[0].name, assembled_tree=Path(assembled["tree"]).name, source_fetch=fetched,
+                source_pin={k: pin[k] for k in ("repository", "commit", "path", "sha256", "size", "license")},
+                headers_deb=spec["headers_artifact"], compiler=run(["gcc-12", "--version"]).stdout.splitlines()[0],
+                dkms_version=run(["dkms", "--version"]).stdout.strip(), loaded_on_the_builder=False,
+                bench="OPEN: GPIO96 pinmux owner, /dev/pps-gnss and the chrony PPS selection on the Q6A (W1-2)"), None
+
+
+# ---------------------------------------------------------------- touch session (W2 IMG-4)
+
+def install_session(root, recipe, stage_dir):
+    """Enable step (W2 IMG-4): the closure installed greetd, labwc, kanshi, cage and wlopm, and the controller bundle carries
+    the SYS-SESSION files (system_files.session_files). Each of them must still be the bundle's after dpkg (--force-confold
+    keeps /etc/greetd/config.toml, the package's copy goes to config.toml.dpkg-dist); /etc/greetd/greetd.conf must not exist
+    (greetd 0.9.0 reads it before config.toml); display-manager.service moves from the masked gdm3 unit to greetd.service;
+    the default target must be graphical.target; srrx-menu.service stays disabled in the user preset (the administrator
+    enables the console after the venv review, software/HMI.md). Returns the manifest record; anything else stops the build."""
+    import deploy
+    system = deploy.system_files()
+    spec, root = recipe["session"], Path(root)
+    packages = {n.split(":", 1)[0]: v for n, v in _dpkg_status(root).items()}
+    missing = [p for p in spec["packages"] if p not in packages]
+    if missing:
+        raise BuildError("session packages not installed after the package closure: " + ", ".join(missing))
+    staged = load_json(Path(stage_dir) / "stage-files.json")["files"]
+    files, differs = {}, []
+    for relative in sorted(system.session_files()):
+        have = sha256(root / relative) if (root / relative).is_file() and not (root / relative).is_symlink() else None
+        if have is None or staged.get(relative) != have:
+            differs.append(relative)
+        files["/" + relative] = have
+    if differs:
+        raise BuildError("session files differ from the controller bundle after the package closure: " + ", ".join(differs))
+    present = [p for p in spec["must_not_exist"] if os.path.lexists(root / p.lstrip("/"))]
+    if present:
+        raise BuildError("session files that must not exist: " + ", ".join(present))
+    link = root / "etc/systemd/system/display-manager.service"
+    before = os.readlink(link) if link.is_symlink() else ("file" if os.path.lexists(link) else None)
+    if before == "file" or (before is not None and Path(before).name not in set(recipe["mask"]["units"]) | {spec["display_manager"]}):
+        raise BuildError("display-manager.service is %r before the session step" % before)
+    if before is not None:
+        link.unlink()
+    run(["systemctl", "--root", str(root), "enable", spec["display_manager"]])
+    after = os.readlink(link) if link.is_symlink() else None
+    if after is None or Path(after).name != spec["display_manager"]:
+        raise BuildError("display-manager.service is %r after enabling %s" % (after, spec["display_manager"]))
+    default = run(["systemctl", "--root", str(root), "get-default"]).stdout.strip()
+    if default != spec["default_target"]:
+        raise BuildError("default target %r: greetd starts with %s" % (default, spec["default_target"]))
+    # The console stays off until the administrator enables it: no .wants link in either user unit directory.
+    console_links = sorted(p.relative_to(root).as_posix() for d in ("etc/systemd/user", "usr/lib/systemd/user") if (root / d).is_dir()
+                           for p in (root / d).glob("*.wants/" + spec["console_unit"]))
+    if console_links:
+        raise BuildError("%s is enabled in the image (%s); the administrator enables it after the venv review"
+                         % (spec["console_unit"], ", ".join(console_links)))
+    done = run(["systemctl", "--root", str(root), "--global", "is-enabled", spec["console_unit"]], check=False)
+    console = ((done.stdout or "").strip() or (done.stderr or "").strip())[-200:]
+    passwd, group = _colon_table(root / "etc/passwd"), _colon_table(root / "etc/group")
+    user = passwd.get(system.SESSION_USER)
+    if user is None:
+        raise BuildError("the session user " + system.SESSION_USER + " is missing (step 9, systemd-sysusers)")
+    return {"source": spec["source"], "packages": {p: packages[p] for p in spec["packages"]}, "files": files,
+            "package_copies": sorted("/" + p.relative_to(root).as_posix() for p in (root / "etc/greetd").glob("*.dpkg-*")),
+            "must_not_exist": spec["must_not_exist"], "display_manager": {"before": before, "after": after},
+            "default_target": default, "console_unit": {spec["console_unit"]: console},
+            "session_user": {"name": system.SESSION_USER, "uid": int(user[2]), "home": user[5], "shell": user[6],
+                             "groups": sorted(name for name, entry in group.items() if system.SESSION_USER in entry[3].split(","))},
+            "x11_default_display_manager": _text(root / "etc/X11/default-display-manager", 200),
+            "bench": "OPEN: HDMI-A-1 mode, touch mapping and greetd recovery on the Q6A (W1-2, STACK.md:1442, :1486)"}
+
+
 # ---------------------------------------------------------------- build
 
 def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, data_bytes=None,
@@ -2383,8 +2621,14 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["kernel"] = {"packages": status, "slot_a_plugin_entry": entry_a,
                               "cache_only": sorted(set(recipe["kernel_artifacts"]) - set(recipe["kernel_debs_install"]["artifacts"])),
                               "why_cache_only": recipe["kernel_debs_install"]["source"]}
+        # W2 IMG-4: the builder-built pps-gpio module in root A, before the closure and long before the root B rsync.
+        manifest["pps_gpio"], blocker = build_pps_module(root_a, cache, work, recipe, kconfig)
+        if blocker:
+            manifest["blocking"].append(blocker)
+        LOG.step("pps-gpio", manifest["pps_gpio"]["status"], path=manifest["pps_gpio"]["path"],
+                 sha256=manifest["pps_gpio"].get("sha256"), vermagic=manifest["pps_gpio"].get("vermagic"))
         closure = load_closure()
-        manifest["package_closure"] = install_closure(root_a, cache, closure)
+        manifest["package_closure"] = install_closure(root_a, cache, closure, (recipe.get("closure_takeovers") or {}).get("files"))
         manifest["package_closure"]["chrony_conf"] = install_chrony_conf(root_a)
         manifest["package_closure"]["gnss_mode"] = staged_gnss_mode(root_a)
         LOG.step("closure", "DONE", installed=manifest["package_closure"]["installed"], removed=manifest["package_closure"]["removed"],
@@ -2421,7 +2665,9 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         rows, unhandled = first_boot_review(first_boot, recipe, root_a)
         manifest["rsetup_first_boot"] = {"before_txt_sha256": (first_boot or {}).get("sha256"), "commands": rows}
         manifest["blocking"] += unhandled
-        LOG.step("enable", "DONE")
+        manifest["session"] = install_session(root_a, recipe, stage_dir)
+        LOG.step("enable", "DONE", display_manager=manifest["session"]["display_manager"]["after"],
+                 default_target=manifest["session"]["default_target"])
         manifest["venvs"] = build_venvs(root_a, cache)
         qt = manifest["venvs"]["venvs"]["/opt/srrx/venv"]["qt_offscreen"]
         if qt["status"] != "OK":
@@ -2585,6 +2831,7 @@ def main():
                       "venvs": {"/" + v: [w["filename"] for w in wheels] for v, wheels in wheel_plan["venvs"].items()}}
         elif args.op == "fetch":
             result = fetch(args.cache)
+            result["pps_gpio_source"] = fetch_pps_source(args.cache)  # W2 IMG-4: fetch-only pps-gpio.c into cache/pps-gpio
         elif args.op == "facts":
             require_builder()
             result = facts(args.cache, args.work, args.output)

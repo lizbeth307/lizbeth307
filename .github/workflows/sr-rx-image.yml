@@ -238,6 +238,9 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y -q --no-install-recommends dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler \
             qemu-system-arm qemu-efi-aarch64 qemu-utils python3-numpy zstd
+          # W2 IMG-4: the builder builds pps-gpio with dkms and gcc-12 (the kernel's compiler line), as sr-rx-system's pps-gpio-dkms job.
+          sudo apt-get install -y -q --no-install-recommends gcc-12 make kmod dkms
+          dkms --version; gcc-12 --version | head -1
       - name: Work directory on the largest free filesystem
         if: steps.sel.outputs.run == 'true'
         run: |
@@ -282,6 +285,7 @@ jobs:
         if: steps.sel.outputs.run == 'true'
         run: python3 deployment/image/build_image.py fetch --cache "$CACHE"
       - name: Build the golden image (candidate)
+        id: build
         if: steps.sel.outputs.run == 'true'
         run: |
           mkdir -p "$OUT"
@@ -305,6 +309,8 @@ jobs:
                   print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "blocking_by_closes_at", "kernel", "package_closure", "bootloader", "entries", "enabled_units", "accounts", "hardening", "apt_sources", "npu_payload", "mcu_firmware", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:24000])
                   # W2 IMG-3: the venvs (freeze, tree SHA-256, Qt), each SR-RX python3 unit's interpreter, the build-manifest draft.
                   print(json.dumps({k: d.get(k) for k in ("venvs", "unit_interpreters", "build_manifest_draft", "target_python_numpy")}, indent=1)[:24000])
+                  # W2 IMG-4: the builder-built pps-gpio module (no author text is recorded) and the touch session.
+                  print(json.dumps({k: d.get(k) for k in ("pps_gpio", "session")}, indent=1)[:16000])
               else:
                   r = d.get("root", {})
                   print(json.dumps({"partitions": d.get("partitions"), "base_cmdline_status": d.get("base_cmdline_status"),
@@ -322,6 +328,14 @@ jobs:
           sudo python3 deployment/image/smoke_qemu.py --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
             --work "$W/smoke" --out "$OUT/smoke" --require-model
           python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/smoke-report.json"
+      # W2 IMG-4: a separate boot of its own copy (about 15 min under TCG), also after a failed A/B smoke of a built image:
+      # graphical.target with greetd, labwc and the console on a ramfb framebuffer (simpledrm) and USB input. A MODEL.
+      - name: QEMU session scenario of the Route A image (greetd, labwc, console)
+        if: always() && steps.build.outcome == 'success' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
+        run: |
+          sudo python3 deployment/image/smoke_qemu.py --session --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
+            --work "$W/smoke" --out "$OUT/smoke" --require-model
+          python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/session-report.json"
       - name: Pack the image data (sparse tar + zstd) and measure it
         if: steps.sel.outputs.run == 'true'
         run: |

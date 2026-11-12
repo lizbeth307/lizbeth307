@@ -246,12 +246,12 @@ DKMS pps-gpio: `deployment/system/dkms/pps-gpio/` має `dkms.conf` (пакет
 
 ```sh
 python3 deployment/system/pps_dkms.py assemble --source /path/to/pps-gpio.c --dest /tmp/srrx-dkms
-# на збирачі або цілі з утримуваними заголовками 6.18.2-4-qcom:
+# лише для встановлення не з еталонного образу (у ньому модуль уже є, нижче): на збирачі або цілі з gcc-12 і утримуваними заголовками 6.18.2-4-qcom:
 sudo cp -r /tmp/srrx-dkms/srrx-pps-gpio-1.2.0+lab1 /usr/src/ && sudo dkms install srrx-pps-gpio/1.2.0+lab1 -k 6.18.2-4-qcom
 python3 deployment/system/pps_dkms.py vermagic --module /path/to/pps-gpio.ko
 ```
 
-CI на нативному aarch64 кладе зібране `pps_dkms.py assemble` дерево в `/usr/src`, виконує `dkms add` і `dkms build -k 6.18.2-4-qcom --kernelsourcedir <заголовки>` (тобто `MAKE[0]` і `BUILT_MODULE_NAME` з `dkms.conf`) проти заголовків із закріпленого deb і перевіряє vermagic `6.18.2-4-qcom SMP preempt mod_unload aarch64` модуля, який зібрав dkms; `dkms install` (`DEST_MODULE_LOCATION`, depmod) на CI не виконується — це крок цілі; `auto.conf` заголовків підтверджує `CONFIG_CC_VERSION_TEXT=aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0` і `CONFIG_PPS=y` без `PPS_CLIENT_GPIO`, а gcc-12 noble — 12.4.0, тож kbuild лише попереджає про іншу підверсію компілятора; власник GPIO96 у pinmux, `/dev/pps-gnss` і вибір PPS chrony лишаються W1-2.
+CI на нативному aarch64 кладе зібране `pps_dkms.py assemble` дерево в `/usr/src`, виконує `dkms add` і `dkms build -k 6.18.2-4-qcom --kernelsourcedir <заголовки>` (тобто `MAKE[0]` і `BUILT_MODULE_NAME` з `dkms.conf`) проти заголовків із закріпленого deb і перевіряє vermagic `6.18.2-4-qcom SMP preempt mod_unload aarch64` модуля, який зібрав dkms; еталонний образ (W2 IMG-4) містить модуль готовим: збирач образу тими самими `dkms add`/`dkms build` (дерева DKMS під `--work`) проти того самого deb заголовків збирає його й ставить файлом `/lib/modules/6.18.2-4-qcom/updates/srrx/pps-gpio.ko` (0644) з `depmod` у chroot root A, а маніфест записує SHA-256 і vermagic без поля author ([deployment/image](../deployment/image/README.md), крок 8; [build/15](../build/15-rishennia-komplektu.md), «Модуль pps-gpio в образі (W2 IMG-4)»), тож на пристрої ні DKMS, ні gcc-12 не потрібні (r2 має лише gcc-13), а модель QEMU завантажує його `modprobe pps_gpio`; `dkms install` (`DEST_MODULE_LOCATION=/updates/dkms`, depmod) лишається кроком лише для встановлення не з образу; `auto.conf` заголовків підтверджує `CONFIG_CC_VERSION_TEXT=aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0` і `CONFIG_PPS=y` без `PPS_CLIENT_GPIO`, а gcc-12 noble — 12.4.0, тож kbuild лише попереджає про іншу підверсію компілятора; власник GPIO96 у pinmux, `/dev/pps-gnss` і вибір PPS chrony лишаються W1-2.
 
 ### Польовий EDID (`deployment/system/edid_field.py`)
 
