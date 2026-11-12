@@ -264,13 +264,14 @@ class Inputs:
 #    the upper arm; ch4 over the right half of J209 next to its sense contacts 99 / 100.
 #  * ch4 output (iteration 2, review F1 of W2 PCB-PWRB-2): route run 43241032279 left the 62 mm link from the damper C247
 #    in the arm to R247 open, and the J209 strip has no room for the ch4 cell, C247 and L210 side by side (each spans
-#    the alignment-hole rows y 16.9-18.4 between the holes x 86.0-111.6). So the ch4 cell stands 1.2 mm lower (C245
-#    pads keep 0.35 mm from the C512 window), C247 stands over L209 between the J204 courtyard and the J113 strip, with
-#    R247, TP209 and TP210 to its right above the J113 strip; C246 stands right of L209 below the alignment hole, C244
-#    and C250 (turned, GND pads towards the J209 spine) between L210 and U209, C297 next to the SB filter L215 below
-#    L207. No new via stands in the strip between the J209 upper row and the J204 pins, where the J209 contacts and the
-#    J204 pins escape (route run 43258433850 had C250 / C297 vias there and left 12 connections open). The ch4 SHUNT
-#    sense runs east between L209 and C247 (K4_SH_FY).
+#    the alignment-hole rows y 16.9-18.4 between the holes x 86.0-111.6). So L209 stands 1.2 mm lower than the cell
+#    template (LNA_ROW_OFFSETS), C247 stands over it between the J204 courtyard and the J113 strip, with R247, TP209 and
+#    TP210 to its right above the J113 strip; C246 stands right of L209 below the alignment hole, C250 (turned, GND pad
+#    towards the J209 spine) between L210 and U209, C297 next to the SB filter L215 below L207. The rest of the cell, C244
+#    and every via between the J209 rows and the J204 pins or in the B.Cu escape fan of the lower-row contacts 17-59
+#    stay as in route run 43241032279: route run 43258433850 had C250 / C297 vias between the upper row and the J204
+#    pins (12 connections open), route run 43261863661 the whole cell 1.2 mm lower with the U209 / C244 vias in the
+#    escape fan (7 open). The ch4 SHUNT sense runs east between L209 and C247 (K4_SH_FY).
 #  * Three LAB5 switches stand on the F.Cu trunk at TY next to the lower-row LAB5 contacts of J209, the fourth west of
 #    J207 on a tap (LAB5_CELLS).
 #  * The ten 16SVPG47M (dampers C235 C239 C243 C247 C251 C298, C503, C506 C521 C522), the two SOIC-8 blocking stages and
@@ -282,8 +283,8 @@ PLACEMENT = {
     'C232': (2.1, 59.2, 0), 'C233': (10.7, 54.5, 270), 'C234': (51.737, 33.918, 0), 'C235': (18, 49.5, 0),
     'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (37.467, 34.284, 90), 'C239': (30, 14, 90),
     'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 0),
-    'C244': (94.02, 16.0, 270), 'C245': (103.7, 13.5, 270), 'C246': (113.88, 13.7, 90), 'C247': (111.03, 21.325, 180),
-    'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.03, 19.5, 270), 'C251': (36, 12, 90),
+    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (113.88, 13.7, 90), 'C247': (111.03, 21.325, 180),
+    'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.03, 19.65, 270), 'C251': (36, 12, 90),
     'C274': (16.312, 60.638, 0), 'C275': (37.425, 37.725, 90), 'C276': (18.488, 72.388, 0), 'C277': (36.97, 46.405, 90),
     'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
     'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
@@ -294,12 +295,12 @@ PLACEMENT = {
     'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (2.95, 49.8, 0),
     'J202': (9.7, 9.7, 90), 'J203': (15.7, 39.95, 0), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
     'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.15, 55.4, 90), 'L206': (15.1, 56.2, 0), 'L207': (57.15, 13.2, 0),
-    'L208': (23.1, 80.7, 0), 'L209': (108.1, 15.2, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
+    'L208': (23.1, 80.7, 0), 'L209': (108, 15.2, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
     'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.119, 0), 'R228': (7.4, 54.6, 270),
     'R229': (2.1, 52.9, 0), 'R231': (9.3, 57.6, 0), 'R232': (39.368, 40.813, 0), 'R233': (49.45, 11.6, 270),
     'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (31.066, 28.988, 0), 'R238': (15.4, 79.1, 270),
-    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (22.251, 85.185, 0), 'R243': (100.4, 13.6, 270),
-    'R244': (76.281, 16.475, 0), 'R246': (102.3, 16.6, 0), 'R247': (117.33, 20.35, 180), 'R248': (77.5, 19.5, 90),
+    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (22.251, 85.185, 0), 'R243': (100.3, 14.8, 270),
+    'R244': (76.281, 16.475, 0), 'R246': (102.2, 17.8, 0), 'R247': (117.33, 20.35, 180), 'R248': (77.5, 19.5, 90),
     'R249': (83.5, 18.9, 90), 'R251': (59.385, 19.013, 90), 'R268': (8, 60.3, 90), 'R269': (10.6, 60.3, 90),
     'R270': (50.05, 17.3, 90), 'R271': (52.65, 17.3, 90), 'R272': (16, 84.8, 90), 'R273': (18.6, 84.8, 90),
     'R280': (85.517, 20.651, 90), 'R281': (53.817, 23.411, 90), 'R283': (51.5, 25.856, 90), 'R284': (20.217, 22.522, 90),
@@ -311,7 +312,7 @@ PLACEMENT = {
     'TP206': (51.499, 31.293, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
     'TP209': (116.3, 22.8, 0), 'TP210': (118.85, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
     'TP2902': (40.679, 80.317, 0), 'U206': (4.1, 56, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
-    'U209': (97.1, 15.0, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
+    'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
     'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90), 'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90),
     'U502': (64.5, 20, 90), 'U507': (4.5, 38.5, 0),
 }
@@ -325,16 +326,23 @@ LNA_CELLS = {'1': dict(U='U206', cin='C232', ren='R229', rilim='R228', rsh='R231
              '2': dict(U='U207', cin='C236', ren='R234', rilim='R233', rsh='R236', csh='C237', L='L207', rsp='R270', rsm='R271'),
              '3': dict(U='U208', cin='C240', ren='R239', rilim='R238', rsh='R241', csh='C241', L='L208', rsp='R272', rsm='R273'),
              '4': dict(U='U209', rilim='R243', rsh='R246', csh='C245', L='L209')}
+# Per-channel offsets from LNA_ROWS (mm): ch4's inductor L209 stands 1.2 mm lower than the template, so that the damper
+# C247 fits above it under the J206 strip and clear of the J209 alignment hole (iteration 2 of W2 PCB-PWRB-2, review F1);
+# its current path from the shunt runs down into the inductor pad (K{ch}-SH-I).
+LNA_ROW_OFFSETS = {'4': {'L': (0.0, -1.2)}}
 
 
 def kelvin_cells(anchors):
-    """Problems where a channel's parts are not at their LNA_ROWS offsets from its switch (rotation included)."""
+    """Problems where a channel's parts are not at their LNA_ROWS offsets (plus LNA_ROW_OFFSETS) from its switch (rotation
+    included)."""
     out = []
     for ch, refs in LNA_CELLS.items():
         u = anchors[refs['U']]
         ox, oy = u['at'][0] - 5.0, u['at'][1] - 5.0
         for key, x, y, rot in LNA_ROWS:
             ref = refs.get(key)
+            dx, dy = LNA_ROW_OFFSETS.get(ch, {}).get(key, (0.0, 0.0))
+            x, y = x + dx, y + dy
             if ref and (abs(anchors[ref]['at'][0] - (ox + x)) > 1e-6 or abs(anchors[ref]['at'][1] - (oy + y)) > 1e-6
                         or anchors[ref]['rotation'] != rot % 360 or anchors[ref]['side'] != 'F'):
                 out.append(f'LNA ch{ch}: {ref} is not at its Kelvin cell place ({key})')
@@ -700,8 +708,8 @@ SPINE_VIAS_MIN = 4
 SPINE_VIA_PITCH = 1.2     # spine plane vias at least this far apart: 0.5 mm between them for one F.Cu track
 W_PAIR = 0.8              # copper of one LAB5 contact pair (2 A): PWR2A width (netclasses.json)
 K4_UP_VY = 22.0           # ch4 SW sense: via above the upper J209 row (pad tops 21.1), below the J207 pins (23.4)
-K4_SH_FY = 19.0           # ch4 SHUNT sense: F.Cu east between L209 (pads to 17.55) and C247 (pads from 20.5) to its via
-                          # right of the alignment hole (hole box to 18.4)
+K4_SH_FY = 19.4           # ch4 SHUNT sense: F.Cu east above R246 (pads to 18.7), L209 (pads to 17.55) and the alignment
+                          # hole (box to 18.4), below C247 (pads from 20.5), to its via right of the alignment hole
 K4_LO_VY = 14.9           # ch4 SHUNT sense: B.Cu west under the lower J209 row (pad bottoms 15.9) into its contact
 
 
@@ -800,7 +808,7 @@ def scripted_copper(inp, parts, pins):
         u6, s1, s2, l1, c1 = P(u, '6'), P(rsh, '1'), P(rsh, '2'), P(ind, '1'), P(csh, '1')
         T(f'K{ch}-SW-I', sw, 'F.Cu', W_CURRENT, [u6, (s1[0] - 0.84, u6[1]), s1],
           f'{u} OUT to the {rsh} current pad (Kelvin: current enters from the side)')
-        T(f'K{ch}-SH-I', shunt, 'F.Cu', W_CURRENT, [s2, (l1[0], s2[1])], f'{rsh} to {ind} (current path)')
+        T(f'K{ch}-SH-I', shunt, 'F.Cu', W_CURRENT, [s2, (l1[0], s2[1]), l1], f'{rsh} to {ind} (current path)')
         T(f'K{ch}-SH-C', shunt, 'F.Cu', W_CURRENT, [c1, (c1[0], s2[1])], f'{csh} to the {rsh} shunt-side pad')
         if rsp:
             p1, m1 = P(rsp, '1'), P(rsm, '1')
@@ -1139,7 +1147,7 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                        'why': 'GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it'},
                       {'id': 'GND-In2', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
                        'why': 'second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). '
-                              'Cost: the THT GND pins of J201-J508 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)'}]},
+                              'Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)'}]},
         'post_route_zones': [
             {'id': 'GND-F', 'net': 'GND', 'layer': 'F.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
              'why': 'solid pad connection: thermal spokes of THT header GND pins were starved between the pins (route run 42414083566); '
