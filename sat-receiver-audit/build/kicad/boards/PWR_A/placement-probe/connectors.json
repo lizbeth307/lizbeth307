@@ -1,0 +1,2084 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "PWR_A",
+  "status": "PLACEMENT_PROBE_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "PWRA",
+      "placement": "default",
+      "board_origin_enclosure_mm": [
+        6.0,
+        38.5
+      ],
+      "z_bottom": 40.9,
+      "facing": "+z",
+      "connectors": [
+        {
+          "template_ref": "J104",
+          "ref": "J104",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            132.0,
+            13.83
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                132.0,
+                13.83
+              ],
+              "enclosure_xy": [
+                138.0,
+                52.33
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                132.0,
+                16.83
+              ],
+              "enclosure_xy": [
+                138.0,
+                55.33
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "LAB5",
+              "at": [
+                132.0,
+                19.83
+              ],
+              "enclosure_xy": [
+                138.0,
+                58.33
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "LAB5",
+              "at": [
+                132.0,
+                22.83
+              ],
+              "enclosure_xy": [
+                138.0,
+                61.33
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            138.0,
+            52.33
+          ]
+        },
+        {
+          "template_ref": "J105",
+          "ref": "J105",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            32.85,
+            3.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                32.85,
+                3.5
+              ],
+              "enclosure_xy": [
+                38.85,
+                42.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SHUNT_P",
+              "at": [
+                38.35,
+                3.5
+              ],
+              "enclosure_xy": [
+                44.35,
+                42.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            38.85,
+            42.0
+          ]
+        },
+        {
+          "template_ref": "J106",
+          "ref": "J106",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            52.75,
+            3.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_N",
+              "at": [
+                52.75,
+                3.5
+              ],
+              "enclosure_xy": [
+                58.75,
+                42.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SHUNT_P",
+              "at": [
+                58.25,
+                3.5
+              ],
+              "enclosure_xy": [
+                64.25,
+                42.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            58.75,
+            42.0
+          ]
+        },
+        {
+          "template_ref": "J107",
+          "ref": "J107",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            10.95,
+            3.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_N",
+              "at": [
+                10.95,
+                3.5
+              ],
+              "enclosure_xy": [
+                16.95,
+                42.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SW",
+              "at": [
+                16.45,
+                3.5
+              ],
+              "enclosure_xy": [
+                22.45,
+                42.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            16.95,
+            42.0
+          ]
+        },
+        {
+          "template_ref": "J108",
+          "ref": "J108",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            78.65,
+            3.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                78.65,
+                3.5
+              ],
+              "enclosure_xy": [
+                84.65,
+                42.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_N",
+              "at": [
+                78.65,
+                7.7
+              ],
+              "enclosure_xy": [
+                84.65,
+                46.2
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E1_USB_PD_SAFE",
+              "at": [
+                84.15,
+                3.5
+              ],
+              "enclosure_xy": [
+                90.15,
+                42.0
+              ]
+            },
+            {
+              "pad": "4",
+              "net": null,
+              "at": [
+                84.15,
+                7.7
+              ],
+              "enclosure_xy": [
+                90.15,
+                46.2
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            84.65,
+            42.0
+          ]
+        },
+        {
+          "template_ref": "J109",
+          "ref": "J109",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            47.05,
+            2.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_NTC",
+              "at": [
+                47.05,
+                2.5
+              ],
+              "enclosure_xy": [
+                53.05,
+                41.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": null,
+              "at": [
+                45.05,
+                2.5
+              ],
+              "enclosure_xy": [
+                51.05,
+                41.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            53.05,
+            41.0
+          ]
+        },
+        {
+          "template_ref": "J110",
+          "ref": "J110",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            72.95,
+            2.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                72.95,
+                2.5
+              ],
+              "enclosure_xy": [
+                78.95,
+                41.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "AON3V3",
+              "at": [
+                70.95,
+                2.5
+              ],
+              "enclosure_xy": [
+                76.95,
+                41.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "I2C0_SCL",
+              "at": [
+                68.95,
+                2.5
+              ],
+              "enclosure_xy": [
+                74.95,
+                41.0
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "I2C0_SDA",
+              "at": [
+                66.95,
+                2.5
+              ],
+              "enclosure_xy": [
+                72.95,
+                41.0
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "INA228_ALERT",
+              "at": [
+                64.95,
+                2.5
+              ],
+              "enclosure_xy": [
+                70.95,
+                41.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            78.95,
+            41.0
+          ]
+        },
+        {
+          "template_ref": "J111",
+          "ref": "J111",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            27.15,
+            2.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                27.15,
+                2.5
+              ],
+              "enclosure_xy": [
+                33.15,
+                41.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_MASTER_OFF",
+              "at": [
+                25.15,
+                2.5
+              ],
+              "enclosure_xy": [
+                31.15,
+                41.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E1_SWITCH_A",
+              "at": [
+                23.15,
+                2.5
+              ],
+              "enclosure_xy": [
+                29.15,
+                41.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            33.15,
+            41.0
+          ]
+        },
+        {
+          "template_ref": "J112",
+          "ref": "J112",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            96.85,
+            2.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_CC1",
+              "at": [
+                96.85,
+                2.5
+              ],
+              "enclosure_xy": [
+                102.85,
+                41.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_CHG_CC2",
+              "at": [
+                94.85,
+                2.5
+              ],
+              "enclosure_xy": [
+                100.85,
+                41.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E1_CHG_INHIBIT_LOW",
+              "at": [
+                92.85,
+                2.5
+              ],
+              "enclosure_xy": [
+                98.85,
+                41.0
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E1_CHG_NTC",
+              "at": [
+                90.85,
+                2.5
+              ],
+              "enclosure_xy": [
+                96.85,
+                41.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            102.85,
+            41.0
+          ]
+        },
+        {
+          "template_ref": "J113",
+          "ref": "J113",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            117.7,
+            14.15
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_CC1",
+              "at": [
+                117.7,
+                14.15
+              ],
+              "enclosure_xy": [
+                123.7,
+                52.65
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_CHG_CC2",
+              "at": [
+                117.7,
+                16.15
+              ],
+              "enclosure_xy": [
+                123.7,
+                54.65
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            123.7,
+            52.65
+          ]
+        },
+        {
+          "template_ref": "J114",
+          "ref": "J114",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            124.5,
+            4.13
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                124.5,
+                4.13
+              ],
+              "enclosure_xy": [
+                130.5,
+                42.63
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_USB_PD_RAW",
+              "at": [
+                124.5,
+                7.13
+              ],
+              "enclosure_xy": [
+                130.5,
+                45.63
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            130.5,
+            42.63
+          ]
+        },
+        {
+          "template_ref": "J115",
+          "ref": "J115",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            124.5,
+            15.29
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                124.5,
+                15.29
+              ],
+              "enclosure_xy": [
+                130.5,
+                53.79
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SERVICE_P",
+              "at": [
+                124.5,
+                18.29
+              ],
+              "enclosure_xy": [
+                130.5,
+                56.79
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            130.5,
+            53.79
+          ]
+        },
+        {
+          "template_ref": "J205",
+          "ref": "J205",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            19.43,
+            106.83
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                19.43,
+                106.83
+              ],
+              "enclosure_xy": [
+                25.43,
+                145.33
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "DISP12",
+              "at": [
+                22.43,
+                106.83
+              ],
+              "enclosure_xy": [
+                28.43,
+                145.33
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            25.43,
+            145.33
+          ]
+        },
+        {
+          "template_ref": "J206",
+          "ref": "J206",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            112.38,
+            31.83
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                112.38,
+                31.83
+              ],
+              "enclosure_xy": [
+                118.38,
+                70.33
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "LAB5",
+              "at": [
+                115.38,
+                31.83
+              ],
+              "enclosure_xy": [
+                121.38,
+                70.33
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "GND",
+              "at": [
+                118.38,
+                31.83
+              ],
+              "enclosure_xy": [
+                124.38,
+                70.33
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "J21",
+              "at": [
+                121.38,
+                31.83
+              ],
+              "enclosure_xy": [
+                127.38,
+                70.33
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "GND",
+              "at": [
+                112.38,
+                28.83
+              ],
+              "enclosure_xy": [
+                118.38,
+                67.33
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "VCC_3V3_MKEY",
+              "at": [
+                115.38,
+                28.83
+              ],
+              "enclosure_xy": [
+                121.38,
+                67.33
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "GND",
+              "at": [
+                118.38,
+                28.83
+              ],
+              "enclosure_xy": [
+                124.38,
+                67.33
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "LIME3V3",
+              "at": [
+                121.38,
+                28.83
+              ],
+              "enclosure_xy": [
+                127.38,
+                67.33
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            118.38,
+            70.33
+          ]
+        },
+        {
+          "template_ref": "J208",
+          "ref": "J208",
+          "kind": "graph",
+          "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            98.8,
+            18.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "3V3_Q6A",
+              "at": [
+                86.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                92.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "LAB5",
+              "at": [
+                86.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                92.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "GND",
+              "at": [
+                87.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                93.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "GND",
+              "at": [
+                87.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                93.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "LNA4V5",
+              "at": [
+                87.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                93.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "LAB5",
+              "at": [
+                87.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                93.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "GND",
+              "at": [
+                88.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                94.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "GND",
+              "at": [
+                88.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                94.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "LNA4V5",
+              "at": [
+                88.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                94.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "LAB5",
+              "at": [
+                88.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                94.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "11",
+              "net": "GND",
+              "at": [
+                89.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                95.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "12",
+              "net": "GND",
+              "at": [
+                89.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                95.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "13",
+              "net": "BIAS_CH1_DAMP",
+              "at": [
+                89.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                95.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "14",
+              "net": "LAB5",
+              "at": [
+                89.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                95.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "15",
+              "net": "GND",
+              "at": [
+                90.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                96.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "16",
+              "net": "GND",
+              "at": [
+                90.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                96.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "17",
+              "net": "BIAS_CH2_DAMP",
+              "at": [
+                90.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                96.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "18",
+              "net": "CHG_INHIBIT",
+              "at": [
+                90.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                96.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "19",
+              "net": "GND",
+              "at": [
+                91.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                97.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "20",
+              "net": "E1_BAT_ADC",
+              "at": [
+                91.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                97.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "21",
+              "net": "BIAS_CH3_DAMP",
+              "at": [
+                91.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                97.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "22",
+              "net": "EN_AUX12",
+              "at": [
+                91.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                97.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "23",
+              "net": "GND",
+              "at": [
+                92.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                98.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "24",
+              "net": "EN_BONI",
+              "at": [
+                92.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                98.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "25",
+              "net": "E2_SB_DAMP",
+              "at": [
+                92.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                98.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "26",
+              "net": "EN_HFP",
+              "at": [
+                92.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                98.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "27",
+              "net": "GND",
+              "at": [
+                93.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                99.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "28",
+              "net": "EN_LIME3V3",
+              "at": [
+                93.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                99.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "29",
+              "net": "VBUS_RTLB_DAMP",
+              "at": [
+                93.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                99.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "30",
+              "net": "EN_LNB",
+              "at": [
+                93.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                99.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "31",
+              "net": "GND",
+              "at": [
+                94.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                100.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "32",
+              "net": "FAULT_HFP",
+              "at": [
+                94.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                100.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "33",
+              "net": "VBUS_LABPORT",
+              "at": [
+                94.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                100.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "34",
+              "net": "FLT_BONI",
+              "at": [
+                94.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                100.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "35",
+              "net": "GND",
+              "at": [
+                95.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                101.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "36",
+              "net": "FLT_LIME3V3",
+              "at": [
+                95.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                101.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "37",
+              "net": "VBUS_HFP",
+              "at": [
+                95.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                101.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "38",
+              "net": "FLT_LNB",
+              "at": [
+                95.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                101.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "39",
+              "net": "GND",
+              "at": [
+                96.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                102.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "40",
+              "net": "I2C0_SCL",
+              "at": [
+                96.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                102.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "41",
+              "net": "LAB5_RLY",
+              "at": [
+                96.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                102.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "42",
+              "net": "I2C0_SDA",
+              "at": [
+                96.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                102.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "43",
+              "net": "GND",
+              "at": [
+                97.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                103.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "44",
+              "net": "I2C2_SCL",
+              "at": [
+                97.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                103.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "45",
+              "net": "LAB5_RLY",
+              "at": [
+                97.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                103.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "46",
+              "net": "I2C2_SDA",
+              "at": [
+                97.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                103.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "47",
+              "net": "GND",
+              "at": [
+                98.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                104.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "48",
+              "net": "IMU_RX",
+              "at": [
+                98.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                104.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "49",
+              "net": "BIAS_CH4_DAMP",
+              "at": [
+                98.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                104.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "50",
+              "net": "IMU_TX",
+              "at": [
+                98.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                104.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "51",
+              "net": "GND",
+              "at": [
+                99.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                105.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "52",
+              "net": "INA228_ALERT",
+              "at": [
+                99.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                105.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "53",
+              "net": "BONI13V8",
+              "at": [
+                99.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                105.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "54",
+              "net": "OVP_LNB_N",
+              "at": [
+                99.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                105.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "55",
+              "net": "GND",
+              "at": [
+                100.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                106.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "56",
+              "net": "PICO_DISP_EN",
+              "at": [
+                100.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                106.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "57",
+              "net": "LNB13V2",
+              "at": [
+                100.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                106.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "58",
+              "net": "PICO_OFF",
+              "at": [
+                100.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                106.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "59",
+              "net": "GND",
+              "at": [
+                101.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                107.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "60",
+              "net": "PWR_BUTTON",
+              "at": [
+                101.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                107.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "61",
+              "net": "AUX12",
+              "at": [
+                101.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                107.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "62",
+              "net": null,
+              "at": [
+                101.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                107.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "63",
+              "net": "GND",
+              "at": [
+                102.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                108.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "64",
+              "net": null,
+              "at": [
+                102.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                108.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "65",
+              "net": "BONI13V8_PORT",
+              "at": [
+                102.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                108.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "66",
+              "net": null,
+              "at": [
+                102.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                108.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "67",
+              "net": "GND",
+              "at": [
+                103.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                109.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "68",
+              "net": null,
+              "at": [
+                103.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                109.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "69",
+              "net": "GND",
+              "at": [
+                103.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                109.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "70",
+              "net": null,
+              "at": [
+                103.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                109.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "71",
+              "net": null,
+              "at": [
+                104.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                110.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "72",
+              "net": null,
+              "at": [
+                104.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                110.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "73",
+              "net": null,
+              "at": [
+                104.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                110.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "74",
+              "net": null,
+              "at": [
+                104.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                110.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "75",
+              "net": null,
+              "at": [
+                105.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                111.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "76",
+              "net": null,
+              "at": [
+                105.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                111.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "77",
+              "net": null,
+              "at": [
+                105.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                111.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "78",
+              "net": null,
+              "at": [
+                105.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                111.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "79",
+              "net": null,
+              "at": [
+                106.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                112.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "80",
+              "net": null,
+              "at": [
+                106.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                112.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "81",
+              "net": null,
+              "at": [
+                106.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                112.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "82",
+              "net": null,
+              "at": [
+                106.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                112.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "83",
+              "net": null,
+              "at": [
+                107.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                113.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "84",
+              "net": null,
+              "at": [
+                107.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                113.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "85",
+              "net": null,
+              "at": [
+                107.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                113.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "86",
+              "net": null,
+              "at": [
+                107.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                113.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "87",
+              "net": null,
+              "at": [
+                108.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                114.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "88",
+              "net": null,
+              "at": [
+                108.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                114.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "89",
+              "net": null,
+              "at": [
+                108.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                114.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "90",
+              "net": null,
+              "at": [
+                108.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                114.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "91",
+              "net": null,
+              "at": [
+                109.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                115.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "92",
+              "net": null,
+              "at": [
+                109.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                115.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "93",
+              "net": null,
+              "at": [
+                109.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                115.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "94",
+              "net": null,
+              "at": [
+                109.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                115.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "95",
+              "net": null,
+              "at": [
+                110.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                116.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "96",
+              "net": null,
+              "at": [
+                110.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                116.05,
+                55.15
+              ]
+            },
+            {
+              "pad": "97",
+              "net": "GND",
+              "at": [
+                110.55,
+                20.35
+              ],
+              "enclosure_xy": [
+                116.55,
+                58.85
+              ]
+            },
+            {
+              "pad": "98",
+              "net": "GND",
+              "at": [
+                110.55,
+                16.65
+              ],
+              "enclosure_xy": [
+                116.55,
+                55.15
+              ]
+            },
+            {
+              "pad": "99",
+              "net": "E2_LNA4_SW",
+              "at": [
+                111.05,
+                20.35
+              ],
+              "enclosure_xy": [
+                117.05,
+                58.85
+              ]
+            },
+            {
+              "pad": "100",
+              "net": "E2_LNA4_SHUNT",
+              "at": [
+                111.05,
+                16.65
+              ],
+              "enclosure_xy": [
+                117.05,
+                55.15
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            104.8,
+            57.0
+          ]
+        },
+        {
+          "template_ref": "J507",
+          "ref": "J507",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            117.7,
+            2.75
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                117.7,
+                2.75
+              ],
+              "enclosure_xy": [
+                123.7,
+                41.25
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E5_IMU5V",
+              "at": [
+                117.7,
+                4.75
+              ],
+              "enclosure_xy": [
+                123.7,
+                43.25
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "IMU_RX",
+              "at": [
+                117.7,
+                6.75
+              ],
+              "enclosure_xy": [
+                123.7,
+                45.25
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "IMU_TX",
+              "at": [
+                117.7,
+                8.75
+              ],
+              "enclosure_xy": [
+                123.7,
+                47.25
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            123.7,
+            41.25
+          ]
+        }
+      ]
+    }
+  ]
+}
