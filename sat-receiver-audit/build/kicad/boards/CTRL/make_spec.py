@@ -225,15 +225,15 @@ ANCHORS = {
         'the left pull-up column; VDD, I2C2, A0-A2, RESET and INT sit on the right half towards J304 (W2 CTRL-R placement '
         'study: the 8 GPA nets no longer wrap around the package from its right side)')),
     'U303': (anchor((25.68, 31.93), 0, 'F'), 'top middle column above U302 (y 22.7-41.15), decoupling C305 on the left'),
-    'U306': (anchor((24.5, 45.42), 0, 'F'), 'top middle column above U303 (y 41.25-49.6), next to the HMI resistors'),
+    'U306': (anchor((24.5, 45.72), 0, 'F'), 'top middle column above U303 (y 41.55-49.9; 0.4 mm above U303: route run 43190405456 found a 0.12 mm GND zone neck at U306.12 with 0.1 mm), next to the HMI resistors'),
 }
 U315_SOURCE = 'bottom strip between the cut-outs, above cut-out 1 (GNSS 5 V switch next to its capacitors)'
 
 # W2 CTRL-R placement study: groups that move or split (route runs up to 43136394379 failed in the lower region and in
 # the right strip; the pull-ups of the right column served nets whose other ends are all on the left)
 GROUP_EDITS = {
-    'HMI': {'region': [17.3, 49.7, 31.7, 56.62], 'drop': ('C313',)},  # top shelf where it was (y 56.62, 2.4 mm below the BZ301 GND pin at y 59.0); probe 1 at 58.95 shorted R335/R336 to it
-    'PICO': {'drop': ('R328',)},
+    'HMI': {'region': [17.3, 50.0, 31.7, 56.86], 'drop': ('C313',)},  # top shelf 2.1 mm below the BZ301 GND pin (y 59.0); probe 1 at 58.95 shorted R335/R336 to it
+    'PICO': {'region': [34.15, 27.3, 39.95, 54.9], 'drop': ('R328', 'R327', 'R332', 'R333', 'C308', 'C309', 'C310', 'C311', 'U307')},
     'MCP_DEC': {'region': [17.3, 0.3, 31.7, 49.9], 'rotation': {'C303': 270}},
     'RCOL': {'region': [39.35, 50.0, 41.75, 58.0], 'keep': ('R301', 'R302')},
     'AMB': {'drop': ('R306', 'R307')},
@@ -254,6 +254,16 @@ NEW_GROUPS = [
     # field: the top pocket between SW302 and J317, next to the HMI E3_PICO3V3 row
     {'id': 'HMI_DEC', 'side': 'F', 'region': [13.3, 54.7, 16.4, 56.6], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
      'members': [{'ref': 'C313', 'rotation': 180}]},
+    # the Pico ADC parts in rows next to the Pico pins they serve (bottom, x 34.15-39.95; the PICO group was packed
+    # from the top, so the thermistor dividers sat 5-10 mm away from pins 31/34 with other parts between them, and
+    # E3_CASE_TEMP / E3_PANEL_TEMP stayed open in route runs 43136394379, 43185550851 and 43190405456)
+    {'id': 'ADC_P', 'side': 'B', 'region': [34.15, 23.9, 39.95, 27.1], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
+     'members': [{'ref': 'C310', 'rotation': 90}, {'ref': 'R332', 'rotation': 90}]},  # pin 31 E3_PANEL_TEMP, y 26.58
+    {'id': 'ADC_C', 'side': 'B', 'region': [34.15, 17.6, 39.95, 20.7], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
+     'members': [{'ref': 'C311', 'rotation': 90}, {'ref': 'R333', 'rotation': 90}]},  # pin 34 E3_CASE_TEMP, y 18.96
+    {'id': 'ADC_R', 'side': 'B', 'region': [34.15, 8.5, 39.95, 16.95], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
+     'members': [{'ref': 'U307', 'rotation': 90}, {'ref': 'C308', 'rotation': 90}, {'ref': 'C309', 'rotation': 90},
+                 {'ref': 'R327', 'rotation': 90}]},  # pins 35 E3_ADC3V0 (y 16.42) and 36 E3_PICO3V3 (y 13.88)
     # 10 uF bulk of the MCP group: C302 and the reset pull-up R305 right of U301 (were in the right strip), C304/C306 in the
     # slot below U302 between SW306 and SW307, either side of C303 (the U302 I2C2 pins 12/13 leave downwards right of C306)
     {'id': 'MCPA', 'side': 'F', 'region': [27.6, 93.8, 32.9, 100.6], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
@@ -640,6 +650,13 @@ def q6a_copper(cu):
     for a, b in zip(rcol, rcol[1:]):
         cu.track(f'V33-{a["ref"]}-{b["ref"]}', '3V3_Q6A', 'F.Cu', 0.2, [a['c'], (XR3, a['c'][1]), (XR3, b['c'][1]), b['c']],
                  '3V3_Q6A chain of the right pull-ups R301/R302, left of the pads', clr=0.165)
+    # R301.2 to the 3V3_Q6A source pin J304.1 between the J304 pins 2 and 4 (route run 43190405456 left J304 and R301/R302
+    # apart once the right column was gone)
+    j1, j2, j4, r1 = P('J304', '1'), P('J304', '2'), P('J304', '4'), P('R301', '2')
+    assert j1['net'] == r1['net'] == '3V3_Q6A'
+    ym = (j2['c'][1] + j4['c'][1]) / 2
+    cu.track('V33-J304-R301', '3V3_Q6A', 'F.Cu', 0.25, [r1['c'], (r1['c'][0] + 0.9, ym), (j1['c'][0] - 1.27, ym), j1['c']],
+             '3V3_Q6A: source pin J304.1 to R301.2, between the J304 pins 2 and 4')
     # the FAULT / PG pull-ups moved left of U303 (group RCOL_L, two rows, pad 2 = 3V3_Q6A below pad 1): one F.Cu line
     # through the pad-2 centres of each row, the rows joined left of the group, a via above the top row and an L3 link
     # between the J307 pins 17/19 and 18/20 to the left pull-up bus
@@ -784,15 +801,16 @@ def pico3v3_copper(cu):
     # Pico: pin 36 (3V3 out) to a via just right of the pad (the router joins it on any layer), R330.2 - R327.1 - C308.1
     u36, r330, r327, c308 = P('U305', '36'), P('R330', '2'), P('R327', '1'), P('C308', '1')
     assert u36['net'] == P33
-    cu.track('P33-U305', P33, 'B.Cu', W, [u36['c'], (34.5, u36['c'][1])], 'E3_PICO3V3: Pico pin 36 to its escape via')
-    cu.via('P33-V-U305', P33, (34.5, u36['c'][1]), 'E3_PICO3V3: escape via of Pico pin 36 below the PICO column')
-    cu.track('P33-R330-R327', P33, 'B.Cu', W, [r330['c'], r327['c']], 'E3_PICO3V3: R330.2 to R327.1 (adjacent pads)')
-    # route run 43185550851 left the pin 36 escape via dangling: B.Cu up between the R332/R333 and R329/R330 pads to R330.2
-    xg = (P('R329', '1')['c'][0] + r330['c'][0]) / 2
-    cu.track('P33-U305-R330', P33, 'B.Cu', W, [(34.5, u36['c'][1]), (xg, u36['c'][1] + 1.3), (xg, r330['c'][1] - 0.8), r330['c']],
-             'E3_PICO3V3: Pico pin 36 escape via up the PICO column gap to R330.2')
-    cu.track('P33-C308-R327', P33, 'B.Cu', W, [c308['c'], (37.75, 27.2), (37.75, r327['c'][1]), r327['c']],
-             'E3_PICO3V3: C308.1 down between C311 and R327 to R327.1')
+    # W2 CTRL-R placement study: C308 and R327 sit in the ADC_R row next to pin 36 (they were 10-15 mm up the PICO
+    # column); one B.Cu line below the U307 pads joins pin 36 to C308.1 and, round the right side of R327, to R327.1.
+    # R330 (E3_BUTTON_SENSE pull-up) stays in the upper PICO group and is joined by the router; no escape via any more
+    # (route runs 43185550851 and 43190405456 left it dangling)
+    yl = P('R327', '2')['c'][1] + 1.0  # between the R327.2 / C309.2 pads and the U307 pads
+    xr7 = r327['c'][0] + 0.91
+    cu.track('P33-U305-C308', P33, 'B.Cu', W, [u36['c'], (u36['c'][0] + 1.52, yl), (c308['c'][0], yl), c308['c']],
+             'E3_PICO3V3: Pico pin 36 below the U307 pads to C308.1')
+    cu.track('P33-R327', P33, 'B.Cu', W, [(xr7, yl), (xr7, r327['c'][1]), r327['c']],
+             'E3_PICO3V3: the pin 36 line round the right side of R327 to R327.1')
     # HMI row (top side): the pull-ups R337/R339/R341 joined in the 0.85 mm gap between the pad rows (where the router
     # joined them in route run 43121860459), on to C312.1 and down to U306.24 (VDD)
     yc = round((P('R337', '1')['c'][1] + P('R337', '2')['c'][1]) / 2, 2)  # between the pad rows (51.32 before the HMI move)
