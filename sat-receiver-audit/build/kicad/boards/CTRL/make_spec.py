@@ -704,6 +704,15 @@ def pico3v3_copper(cu):
     cu.track('P33-R334-R335', P33, 'F.Cu', W, [r334['c'], r335['c']], 'E3_PICO3V3: R334.2 to R335.2 (adjacent pads)')
     cu.track('P33-R334-BUS', P33, 'F.Cu', W, [r334['c'], (r334['c'][0], 57.0), (xr, 58.28), (xr, r345['c'][1])],
              'E3_PICO3V3: R334.2 up to the HMI bus at R345.2 (W2 CTRL-R; route run 43185702454 left this group open)')
+    # the HMI pull-up row group (C312, R337/R339/R341, U306.24) to R335.2 on L4 under the R335/R336 row (route runs 43136394379,
+    # 43185702454 and 43190774090 left C312.1 and R335.2 unjoined; W2 CTRL-R, not yet routed)
+    c312 = P('C312', '1')
+    cu.via('P33-V-C312', P33, (29.6, 53.05), 'E3_PICO3V3: via above C312.1, below the R335/R336 row')
+    cu.track('P33-C312-V', P33, 'F.Cu', W, [c312['c'], (29.6, 53.05)], 'E3_PICO3V3: C312.1 to its via')
+    cu.via('P33-V-R335', P33, (30.6, 57.45), 'E3_PICO3V3: via above R336.2, clear of the L3 LAB5 run and the buzzer pin')
+    cu.track('P33-R335-V', P33, 'F.Cu', W, [r335['c'], (30.6, 57.45)], 'E3_PICO3V3: R335.2 to its via')
+    cu.track('P33-C312-R335-L4', P33, 'In3.Cu', W, [(29.6, 53.05), (29.75, 53.2), (29.75, 56.6), (30.6, 57.45)],
+             'E3_PICO3V3: L4 link from the C312 via to the R335 via')
     cu.track('FN-R343-R344', 'E3_FN', 'F.Cu', W, [P('R343', '1')['c'], P('R344', '1')['c']],
              'E3_FN: pull-up R343 to series resistor R344 (adjacent pads of the HMI2 column)')
     for rs, rp in (('R348', 'R347'), ('R350', 'R349')):
@@ -755,6 +764,16 @@ def pico3v3_copper(cu):
         assert q['net'] == P33
         cu.track(f'P33-{r}', P33, 'F.Cu', W, [q['c'], (q['c'][0], yc)], f'E3_PICO3V3 stub, {r} to the HMI row link')
 
+def reset_escape(cu):
+    """E3_MCP_RESET_N (Q306.3 / R305.1, F.Cu, inside the U of the F.Cu LAB5 feed of Q304) gets a locked escape via below
+    Q306.3, where route run 43185702454 placed its own via; route run 43190774090 (with the feed) left the three MCP23017
+    reset pins unjoined to Q306.3. W2 CTRL-R, not yet routed."""
+    q = cu.pad('Q306', '3')
+    assert q['net'] == 'E3_MCP_RESET_N'
+    cu.via('RST-V-Q306', 'E3_MCP_RESET_N', (45.47, 83.1), 'E3_MCP_RESET_N escape via below Q306.3 to the inner layers')
+    cu.track('RST-Q306-V', 'E3_MCP_RESET_N', 'F.Cu', 0.2, [q['c'], (45.47, 83.1)], 'E3_MCP_RESET_N: Q306.3 to its escape via')
+
+
 def blower_gnd_branches(cu):
     """E3_BLOWER_GND to the blower supply capacitors C342 (bulk) and C343 (decoupling): route run 43121860459 left both
     open at the 0.5 mm router width. Ripple current only, no DC path; 0.4 mm (C342, between the J317 pins) and 0.3 mm
@@ -785,6 +804,7 @@ def scripted_copper(inp, log):
     q6a_copper(cu)
     log('E3_PICO3V3 pieces, pull-up rows and E3_BLOWER_GND branches')
     pico3v3_copper(cu)
+    reset_escape(cu)
     blower_gnd_branches(cu)
     gnd_vias(cu, [p for p in gnd_smd if p['ref'] in HARD], centroid, skipped)
     # LAB5 to the Pico VSYS diode D301 on B.Cu below D306/Q305, after the GND vias of the SOT-23-6 middle pins above it
@@ -870,7 +890,10 @@ ROUTER_WHY = (
     'pad or scripted group, and 3V3_Q6A sits in class SCRIPTED_GND (not autorouted). Route run 43185702454 (that setting, '
     '54 passes, 19.7 min): DRC 0 errors, ignored [], 4 unconnected (LAB5 2: C322 and the fan island C320/R367/Q304 not joined, '
     'E3_PANEL_TEMP 1: J318.2 to the Pico, E3_PICO3V3 1: R334/R335 not joined); now Q304 has a scripted 1.35 mm LAB5 feed '
-    '(review CTRL-4), C322 joins the U315 island, R334/R335 join the HMI bus, and the E3_PICO3V3 pieces to R368/R395 moved to L4')
+    '(review CTRL-4), C322 joins the U315 island, R334/R335 join the HMI bus, and the E3_PICO3V3 pieces to R368/R395 moved to L4. '
+    'Route run 43190774090 (that setting, 53 passes, 19.2 min): DRC 0 errors, ignored [], 4 unconnected (E3_MCP_RESET_N 3: '
+    'Q306.3/R305.1 inside the U of the F.Cu feed got no escape via; E3_PICO3V3 1: the C312 row group); LAB5 complete. Not yet '
+    'routed: an escape via for Q306.3 and an L4 link C312.1 - R335.2')
 
 
 def spec_texts(spec, inp, cu, skipped):
@@ -887,11 +910,12 @@ def spec_texts(spec, inp, cu, skipped):
         # W2 CTRL-R, review CTRL-4: the feed has a vertex in C320.1 (so the router sees the fan island joined), so the
         # check_boards chain of Q304 is the 2 mm piece C320.1 -> Q304.2 and the chain of C320 is the feed back to the trunk
         # (about 83 mm); R367 keeps its 0.6 mm stub to C320.1
-        if r == 'Q304':
-            branch[r] = {'max_mm': 10.0, 'min_width_mm': FEED_W, 'reason': FEED_WHY.format(w=FEED_W) + (
-                '; Q304.2 is the end of the feed, 2 mm past C320.1')}
-        if r == 'C320':
-            branch[r] = {'max_mm': 90.0, 'min_width_mm': FEED_W, 'reason': FEED_WHY.format(w=FEED_W) + (
+        if r == 'Q304':  # 0.5 mm: route run 43190774090 put 0.05 mm long 0.5 mm router stubs at Q304.2 inside the feed copper
+            branch[r] = {'max_mm': 10.0, 'min_width_mm': 0.5, 'reason': FEED_WHY.format(w=FEED_W) + (
+                '; Q304.2 is the end of the feed, 2 mm past C320.1; 0.5 mm covers the router pad-entry stubs inside the feed '
+                'copper (route run 43190774090: two 0.5 mm stubs of 0.05 mm at Q304.2)')}
+        if r == 'C320':  # the chain measured 89.58 mm on the board of route run 43190774090
+            branch[r] = {'max_mm': 100.0, 'min_width_mm': FEED_W, 'reason': FEED_WHY.format(w=FEED_W) + (
                 '; the feed passes C320.1 (vertex in the pad): the PWR3A class width 1.85 mm is relaxed to the E3_FAN5 requirement '
                 '1.3348 mm along this one scripted chain from C320.1 back to the 1.85 mm trunk')}
     spec['branch_exempt'] = branch

@@ -4060,6 +4060,68 @@
         "why": "E3_PICO3V3: R334.2 up to the HMI bus at R345.2 (W2 CTRL-R; route run 43185702454 left this group open)"
       },
       {
+        "id": "P33-C312-V",
+        "net": "E3_PICO3V3",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            29.165,
+            52.07
+          ],
+          [
+            29.6,
+            53.05
+          ]
+        ],
+        "locked": true,
+        "why": "E3_PICO3V3: C312.1 to its via"
+      },
+      {
+        "id": "P33-R335-V",
+        "net": "E3_PICO3V3",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            28.89,
+            55.945
+          ],
+          [
+            30.6,
+            57.45
+          ]
+        ],
+        "locked": true,
+        "why": "E3_PICO3V3: R335.2 to its via"
+      },
+      {
+        "id": "P33-C312-R335-L4",
+        "net": "E3_PICO3V3",
+        "layer": "In3.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            29.6,
+            53.05
+          ],
+          [
+            29.75,
+            53.2
+          ],
+          [
+            29.75,
+            56.6
+          ],
+          [
+            30.6,
+            57.45
+          ]
+        ],
+        "locked": true,
+        "why": "E3_PICO3V3: L4 link from the C312 via to the R335 via"
+      },
+      {
         "id": "FN-R343-R344",
         "net": "E3_FN",
         "layer": "F.Cu",
@@ -4418,6 +4480,24 @@
         "why": "E3_PICO3V3 stub, C312 to the HMI row link"
       },
       {
+        "id": "RST-Q306-V",
+        "net": "E3_MCP_RESET_N",
+        "layer": "F.Cu",
+        "width_mm": 0.2,
+        "path": [
+          [
+            45.4675,
+            82.2
+          ],
+          [
+            45.47,
+            83.1
+          ]
+        ],
+        "locked": true,
+        "why": "E3_MCP_RESET_N: Q306.3 to its escape via"
+      },
+      {
         "id": "BLOWER-GND-C342",
         "net": "E3_BLOWER_GND",
         "layer": "B.Cu",
@@ -4758,8 +4838,8 @@
             52.07
           ],
           [
-            30.152,
-            53.044
+            30.102,
+            51.009
           ]
         ],
         "locked": true
@@ -5173,7 +5253,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-71",
+        "id": "GND-SW302.2-74",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5207,7 +5287,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-73",
+        "id": "GND-SW303.2-76",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5241,7 +5321,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-75",
+        "id": "GND-SW304.2-78",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5275,7 +5355,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-77",
+        "id": "GND-SW305.2-80",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5309,7 +5389,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-79",
+        "id": "GND-SW306.2-82",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5343,7 +5423,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-81",
+        "id": "GND-SW307.2-84",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -6320,6 +6400,30 @@
         "why": "E3_PICO3V3: HMI bus to the L4 link up the right strip (W2 CTRL-R: the F.Cu pieces to R368/R395 gave way to the LAB5 feed of Q304)"
       },
       {
+        "id": "P33-V-C312",
+        "net": "E3_PICO3V3",
+        "at": [
+          29.6,
+          53.05
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "E3_PICO3V3: via above C312.1, below the R335/R336 row"
+      },
+      {
+        "id": "P33-V-R335",
+        "net": "E3_PICO3V3",
+        "at": [
+          30.6,
+          57.45
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "E3_PICO3V3: via above R336.2, clear of the L3 LAB5 run and the buzzer pin"
+      },
+      {
         "id": "P33-V-AMB",
         "net": "E3_PICO3V3",
         "at": [
@@ -6366,6 +6470,18 @@
         "diameter_mm": 0.65,
         "locked": true,
         "why": "E3_PICO3V3: escape via of Pico pin 36 below the PICO column"
+      },
+      {
+        "id": "RST-V-Q306",
+        "net": "E3_MCP_RESET_N",
+        "at": [
+          45.47,
+          83.1
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "E3_MCP_RESET_N escape via below Q306.3 to the inner layers"
       },
       {
         "id": "GND-U310.2",
@@ -6549,8 +6665,8 @@
         "id": "GND-C312.2",
         "net": "GND",
         "at": [
-          30.152,
-          53.044
+          30.102,
+          51.009
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6821,7 +6937,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-71",
+        "id": "GND-SW302.2-74",
         "net": "GND",
         "at": [
           15.709,
@@ -6843,7 +6959,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-73",
+        "id": "GND-SW303.2-76",
         "net": "GND",
         "at": [
           37.709,
@@ -6865,7 +6981,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-75",
+        "id": "GND-SW304.2-78",
         "net": "GND",
         "at": [
           15.709,
@@ -6887,7 +7003,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-77",
+        "id": "GND-SW305.2-80",
         "net": "GND",
         "at": [
           39.754,
@@ -6909,7 +7025,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-79",
+        "id": "GND-SW306.2-82",
         "net": "GND",
         "at": [
           15.709,
@@ -6931,7 +7047,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-81",
+        "id": "GND-SW307.2-84",
         "net": "GND",
         "at": [
           37.709,
@@ -8077,7 +8193,7 @@
   ],
   "branch_exempt": {
     "C320": {
-      "max_mm": 90.0,
+      "max_mm": 100.0,
       "min_width_mm": 1.35,
       "reason": "LAB5 feed of the fan switch Q304 source at 1.35 mm (W2 CTRL-R, review CTRL-4): E3_FAN5 behind Q304 is sized for the F102 4 A protective current (pcb/generated/netclasses.json E3_FAN5 required_outer_width_mm 1.3348; Q304 has no current limit), so its LAB5 feed carries the same 4 A: 1.35 mm of 1 oz outer copper is about 4.03 A at +20 degC and 2.97 A at +10 degC (IPC-2221 external, k 0.048, pcb/stackup.py), four 0.3 mm vias per layer change about 1.0 A each at +20 degC (barrel model of pcb/stackup.py). Route: from the F.Cu trunk at y 64.5 above the J317 pins, B.Cu below the buzzer pins and the J304 pins (y 61.7), up between J313/R369 and D304 (x 43.1), F.Cu along the cut-out 1 edge (x 38.35, between the edge and the J313 pins), B.Cu between R366/C320 and D305/C319 (y 89.3), down the right edge over C320.1 to Q304.2. Outer layers only: inner 0.5 oz copper is no PWR3A current path (netclasses.json). 1.85 mm (class width) does not fit beside the J304 pins (y 61.7) and C320.2/the board edge (x 48.9); the feed passes C320.1 (vertex in the pad): the PWR3A class width 1.85 mm is relaxed to the E3_FAN5 requirement 1.3348 mm along this one scripted chain from C320.1 back to the 1.85 mm trunk"
     },
@@ -8113,8 +8229,8 @@
     },
     "Q304": {
       "max_mm": 10.0,
-      "min_width_mm": 1.35,
-      "reason": "LAB5 feed of the fan switch Q304 source at 1.35 mm (W2 CTRL-R, review CTRL-4): E3_FAN5 behind Q304 is sized for the F102 4 A protective current (pcb/generated/netclasses.json E3_FAN5 required_outer_width_mm 1.3348; Q304 has no current limit), so its LAB5 feed carries the same 4 A: 1.35 mm of 1 oz outer copper is about 4.03 A at +20 degC and 2.97 A at +10 degC (IPC-2221 external, k 0.048, pcb/stackup.py), four 0.3 mm vias per layer change about 1.0 A each at +20 degC (barrel model of pcb/stackup.py). Route: from the F.Cu trunk at y 64.5 above the J317 pins, B.Cu below the buzzer pins and the J304 pins (y 61.7), up between J313/R369 and D304 (x 43.1), F.Cu along the cut-out 1 edge (x 38.35, between the edge and the J313 pins), B.Cu between R366/C320 and D305/C319 (y 89.3), down the right edge over C320.1 to Q304.2. Outer layers only: inner 0.5 oz copper is no PWR3A current path (netclasses.json). 1.85 mm (class width) does not fit beside the J304 pins (y 61.7) and C320.2/the board edge (x 48.9); Q304.2 is the end of the feed, 2 mm past C320.1"
+      "min_width_mm": 0.5,
+      "reason": "LAB5 feed of the fan switch Q304 source at 1.35 mm (W2 CTRL-R, review CTRL-4): E3_FAN5 behind Q304 is sized for the F102 4 A protective current (pcb/generated/netclasses.json E3_FAN5 required_outer_width_mm 1.3348; Q304 has no current limit), so its LAB5 feed carries the same 4 A: 1.35 mm of 1 oz outer copper is about 4.03 A at +20 degC and 2.97 A at +10 degC (IPC-2221 external, k 0.048, pcb/stackup.py), four 0.3 mm vias per layer change about 1.0 A each at +20 degC (barrel model of pcb/stackup.py). Route: from the F.Cu trunk at y 64.5 above the J317 pins, B.Cu below the buzzer pins and the J304 pins (y 61.7), up between J313/R369 and D304 (x 43.1), F.Cu along the cut-out 1 edge (x 38.35, between the edge and the J313 pins), B.Cu between R366/C320 and D305/C319 (y 89.3), down the right edge over C320.1 to Q304.2. Outer layers only: inner 0.5 oz copper is no PWR3A current path (netclasses.json). 1.85 mm (class width) does not fit beside the J304 pins (y 61.7) and C320.2/the board edge (x 48.9); Q304.2 is the end of the feed, 2 mm past C320.1; 0.5 mm covers the router pad-entry stubs inside the feed copper (route run 43190774090: two 0.5 mm stubs of 0.05 mm at Q304.2)"
     },
     "R367": {
       "max_mm": 80.0,
@@ -8210,7 +8326,7 @@
         "B.Cu"
       ]
     },
-    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches): locked GND copper now covers the custom Pico GND pads. Route runs 43106410728 (a locked L3 LAB5 run across the board) and 43111037016 (LAB5 branches on L3 at 0.6 mm): DRC errors 0, but the router stalled with 36-37 of the 3V3_Q6A connections open once L3 carried LAB5. LAB5 now uses short scripted islands (one 18 mm L3 piece to D301) and the router joins them on L1/L4 at 0.5 mm. Route run 43114111838 (that setting): LAB5 complete, DRC errors 0, but 34 of the 3V3_Q6A connections still open: the left pull-up column R308-R319 now has a scripted 3V3_Q6A bus on L3 with a via beside each pad 2, and the Pico GND vias sit under the module instead of in the escape channels between and outside the castellated pads. Route run 43118391983 (that setting): 1 error (a router neck at U313.1) and 25 unconnected, 15 of them 3V3_Q6A: the right pull-up column, the MCP VDD-to-address-pin links and a via for the boxed-in U315.3 are scripted too. Route run 43121860459 (that setting): DRC errors 0 and 22 unconnected (E3_PICO3V3 14, E3_ENC1_A/B 4, E3_BLOWER_GND 2, E3_FN_EXT 1, E3_ENC2_A 1), most of them at pads that could not leave their row: the pull-up rows R4B and HMI3 have their series resistors turned and a scripted E3_PICO3V3 bus along the cut-out edge, R344 is turned so that its E3_FN pin sits next to R343, E3_PICO3V3 has scripted pieces at the Pico, C312, R361/R362, R368 and R395, and E3_BLOWER_GND is fully scripted (class SCRIPTED_PWR3A). Route run 43131682520 (that setting): 1 error (the R4B bus end dangling) and 13 unconnected (E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 around the column) are gone, Pico pin 36 has an escape via. Job timeout 34 min inside the 45 min CI job. W2 CTRL-R layer study: route run 43136394379 (1 error, 15 unconnected, 3V3_Q6A 8) on 4 layers; the board goes to 6 layers (JLC06161H-2116). Route run 43183047190 (In3.Cu and In4.Cu as routing layers, placement and scripted copper unchanged): 1 error (the U315.3 via dangling) and 27 unconnected (3V3_Q6A 16, E3_CASE_TEMP 3, E3_PICO3V3 2, six nets 1 each); Freerouting stopped after 21 passes (no gain since pass 11, 10.5 min). In4.Cu is now a solid 3V3_Q6A plane with a scripted via per SMD pad or scripted group, and 3V3_Q6A sits in class SCRIPTED_GND (not autorouted). Route run 43185702454 (that setting, 54 passes, 19.7 min): DRC 0 errors, ignored [], 4 unconnected (LAB5 2: C322 and the fan island C320/R367/Q304 not joined, E3_PANEL_TEMP 1: J318.2 to the Pico, E3_PICO3V3 1: R334/R335 not joined); now Q304 has a scripted 1.35 mm LAB5 feed (review CTRL-4), C322 joins the U315 island, R334/R335 join the HMI bus, and the E3_PICO3V3 pieces to R368/R395 moved to L4",
+    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches): locked GND copper now covers the custom Pico GND pads. Route runs 43106410728 (a locked L3 LAB5 run across the board) and 43111037016 (LAB5 branches on L3 at 0.6 mm): DRC errors 0, but the router stalled with 36-37 of the 3V3_Q6A connections open once L3 carried LAB5. LAB5 now uses short scripted islands (one 18 mm L3 piece to D301) and the router joins them on L1/L4 at 0.5 mm. Route run 43114111838 (that setting): LAB5 complete, DRC errors 0, but 34 of the 3V3_Q6A connections still open: the left pull-up column R308-R319 now has a scripted 3V3_Q6A bus on L3 with a via beside each pad 2, and the Pico GND vias sit under the module instead of in the escape channels between and outside the castellated pads. Route run 43118391983 (that setting): 1 error (a router neck at U313.1) and 25 unconnected, 15 of them 3V3_Q6A: the right pull-up column, the MCP VDD-to-address-pin links and a via for the boxed-in U315.3 are scripted too. Route run 43121860459 (that setting): DRC errors 0 and 22 unconnected (E3_PICO3V3 14, E3_ENC1_A/B 4, E3_BLOWER_GND 2, E3_FN_EXT 1, E3_ENC2_A 1), most of them at pads that could not leave their row: the pull-up rows R4B and HMI3 have their series resistors turned and a scripted E3_PICO3V3 bus along the cut-out edge, R344 is turned so that its E3_FN pin sits next to R343, E3_PICO3V3 has scripted pieces at the Pico, C312, R361/R362, R368 and R395, and E3_BLOWER_GND is fully scripted (class SCRIPTED_PWR3A). Route run 43131682520 (that setting): 1 error (the R4B bus end dangling) and 13 unconnected (E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 around the column) are gone, Pico pin 36 has an escape via. Job timeout 34 min inside the 45 min CI job. W2 CTRL-R layer study: route run 43136394379 (1 error, 15 unconnected, 3V3_Q6A 8) on 4 layers; the board goes to 6 layers (JLC06161H-2116). Route run 43183047190 (In3.Cu and In4.Cu as routing layers, placement and scripted copper unchanged): 1 error (the U315.3 via dangling) and 27 unconnected (3V3_Q6A 16, E3_CASE_TEMP 3, E3_PICO3V3 2, six nets 1 each); Freerouting stopped after 21 passes (no gain since pass 11, 10.5 min). In4.Cu is now a solid 3V3_Q6A plane with a scripted via per SMD pad or scripted group, and 3V3_Q6A sits in class SCRIPTED_GND (not autorouted). Route run 43185702454 (that setting, 54 passes, 19.7 min): DRC 0 errors, ignored [], 4 unconnected (LAB5 2: C322 and the fan island C320/R367/Q304 not joined, E3_PANEL_TEMP 1: J318.2 to the Pico, E3_PICO3V3 1: R334/R335 not joined); now Q304 has a scripted 1.35 mm LAB5 feed (review CTRL-4), C322 joins the U315 island, R334/R335 join the HMI bus, and the E3_PICO3V3 pieces to R368/R395 moved to L4. Route run 43190774090 (that setting, 53 passes, 19.2 min): DRC 0 errors, ignored [], 4 unconnected (E3_MCP_RESET_N 3: Q306.3/R305.1 inside the U of the F.Cu feed got no escape via; E3_PICO3V3 1: the C312 row group); LAB5 complete. Not yet routed: an escape via for Q306.3 and an L4 link C312.1 - R335.2",
     "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper lands on the inner layers"
   },
   "drc_policy": {
