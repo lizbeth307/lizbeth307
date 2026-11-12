@@ -219,24 +219,25 @@ ANCHORS = {
     'Q305': (anchor((20.23, 56.4), 0), BLOWER_NOTE),
     # W2 CTRL-R placement study (angle PLACE): the MCP23017 U302 turned 90 degrees into the band between the switch
     # rows (y 10.5-25.5), U303, U306 and the HMI group moved up to make room
-    'U302': (anchor((20.5, 17.0), 90, 'F'), (
-        'top, turned 90 degrees into the band between the switch rows (y 11.05-22.96, x 11.3-29.7): both GPIO banks (GPB pins '
+    'U302': (anchor((20.5, 16.65), 90, 'F'), (
+        'top, turned 90 degrees into the band between the switch rows (y 10.7-22.61, x 11.3-29.7): both GPIO banks (GPB pins '
         '1-8 on the lower edge, GPA pins 28-21 on the upper edge) sit on the left half and face the J306/J307 pin fields and '
         'the left pull-up column; VDD, I2C2, A0-A2, RESET and INT sit on the right half towards J304 (W2 CTRL-R placement '
         'study: the 8 GPA nets no longer wrap around the package from its right side)')),
-    'U303': (anchor((25.68, 32.28), 0, 'F'), 'top middle column above U302 (y 23.05-41.5), decoupling C305 on the left'),
-    'U306': (anchor((24.5, 45.77), 0, 'F'), 'top middle column above U303 (y 41.6-49.95), next to the HMI resistors'),
+    'U303': (anchor((25.68, 31.93), 0, 'F'), 'top middle column above U302 (y 22.7-41.15), decoupling C305 on the left'),
+    'U306': (anchor((24.5, 45.42), 0, 'F'), 'top middle column above U303 (y 41.25-49.6), next to the HMI resistors'),
 }
 U315_SOURCE = 'bottom strip between the cut-outs, above cut-out 1 (GNSS 5 V switch next to its capacitors)'
 
 # W2 CTRL-R placement study: groups that move or split (route runs up to 43136394379 failed in the lower region and in
 # the right strip; the pull-ups of the right column served nets whose other ends are all on the left)
 GROUP_EDITS = {
-    'HMI': {'region': [17.3, 50.05, 31.7, 58.95]},
+    'HMI': {'region': [17.3, 49.7, 31.7, 56.62], 'drop': ('C313',)},  # top shelf where it was (y 56.62, 2.4 mm below the BZ301 GND pin at y 59.0); probe 1 at 58.95 shorted R335/R336 to it
+    'PICO': {'drop': ('R328',)},
     'MCP_DEC': {'region': [17.3, 0.3, 31.7, 49.9], 'rotation': {'C303': 270}},
     'RCOL': {'region': [39.35, 50.0, 41.75, 58.0], 'keep': ('R301', 'R302')},
     'AMB': {'drop': ('R306', 'R307')},
-    'TR3B': {'drop': ('R305',)},
+    'TR3B': {'region': [31.9, 43.6, 41.85, 47.3], 'drop': ('R305',)},  # from the right strip (y 74-84) to the band between the right switches, next to the Pico GP17 pin and the MCP reset pins
 }
 DROP_GROUPS = ('TR3A',)
 NEW_GROUPS = [
@@ -244,9 +245,15 @@ NEW_GROUPS = [
     # the J306/J307 pin fields they serve (pad 1 on top: the GPIO net; pad 2 below: 3V3_Q6A)
     {'id': 'RCOL_L', 'side': 'F', 'region': [9.9, 33.0, 19.6, 47.3], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
      'members': [{'ref': r, 'rotation': 270} for r in ('R320', 'R321', 'R322', 'R323', 'R324', 'R325', 'R392')]},
-    # the E3_MCP_RESET_N pull-ups R306/R307 (were in the AMB group at the top right) next to the reset pins of U302/U303
+    # the E3_MCP_RESET_N pull-ups R306/R307 (were in the AMB group at the top right) next to the reset pins of U302/U303;
+    # R328 (3V3_Q6A to E3_Q6A_ON_SENSE, was in the bottom PICO column where route runs 43136394379 and 43185550851 left
+    # its 3V3_Q6A pad open) on the same 3V3_Q6A line, its sense pad joins R329 / the Pico through a via
     {'id': 'RST', 'side': 'F', 'region': [31.8, 11.2, 39.2, 25.3], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
-     'members': [{'ref': 'R306', 'rotation': 90}, {'ref': 'R307', 'rotation': 90}]},
+     'members': [{'ref': 'R306', 'rotation': 90}, {'ref': 'R307', 'rotation': 90}, {'ref': 'R328', 'rotation': 270}]},
+    # the U306 decoupling C313 (E3_PICO3V3) out of the HMI group, whose third shelf pushed the group into the BZ301 pin
+    # field: the top pocket between SW302 and J317, next to the HMI E3_PICO3V3 row
+    {'id': 'HMI_DEC', 'side': 'F', 'region': [13.3, 54.7, 16.4, 56.6], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
+     'members': [{'ref': 'C313', 'rotation': 180}]},
     # 10 uF bulk of the MCP group: C302 and the reset pull-up R305 right of U301 (were in the right strip), C304/C306 in the
     # slot below U302 between SW306 and SW307, either side of C303 (the U302 I2C2 pins 12/13 leave downwards right of C306)
     {'id': 'MCPA', 'side': 'F', 'region': [27.6, 93.8, 32.9, 100.6], 'gap_mm': 0.45, 'decouple_gap_mm': 0.25,
@@ -675,8 +682,11 @@ def q6a_copper(cu):
     c305 = P('C305', '1')
     cu.track('V33-U303-C305', '3V3_Q6A', 'F.Cu', W, [v9['c'], c305['c']], '3V3_Q6A: U303 VDD pin 9 to its decoupling C305')
     r6, r7 = P('R306', '2'), P('R307', '2')
-    cu.track('V33-RST', '3V3_Q6A', 'F.Cu', W, [r7['c'], r6['c'], (v16['c'][0] + 0.4, r6['c'][1])],
-             '3V3_Q6A: reset pull-ups R307/R306 to U303.15/16 (the line ends on the pad pair)')
+    r28 = P('R328', '1')
+    assert r28['net'] == '3V3_Q6A'
+    xr = v16['c'][0] + 1.27  # route run 43185550851: a line ending between the pads 15 and 16 dangled
+    cu.track('V33-RST', '3V3_Q6A', 'F.Cu', W, [r28['c'], r7['c'], r6['c'], (xr, r6['c'][1]), (xr, v16['c'][1]), v16['c']],
+             '3V3_Q6A: R328 and the reset pull-ups R307/R306 to U303.16')
     b4, b6 = P('C304', '1'), P('C306', '1')
     assert b4['net'] == b6['net'] == '3V3_Q6A'
     cu.track('V33-C306', '3V3_Q6A', 'F.Cu', W, [b6['c'], c303['c']], '3V3_Q6A: bulk C306 to C303.1, below the U302 pads')
@@ -755,9 +765,8 @@ def pico3v3_copper(cu):
     cu.track('P33-R368-F', P33, 'F.Cu', W, [(xe, 70.3), (vx, 71.7), (vx, vy)], 'E3_PICO3V3 from the HMI3 bus to a via above R368')
     cu.via('P33-V-R368', P33, (vx, vy), 'E3_PICO3V3: F.Cu to B.Cu above R368, left of J313.1')
     cu.track('P33-R368-B', P33, 'B.Cu', W, [(vx, vy), P('R368', '2')['c']], 'E3_PICO3V3: via to R368.2')
-    r395 = P('R395', '1')
-    cu.track('P33-R395', P33, 'F.Cu', W, [(xe, 70.3), (r395['c'][0], 70.3), r395['c']],
-             'E3_PICO3V3 from the HMI3 bus to R395.1, above the D304 pins')
+    # R395 moved with the TR3B group into the band between the right switches (W2 CTRL-R placement study): no scripted
+    # E3_PICO3V3 piece from the HMI3 bus any more; the router joins R395.1 to the HMI row or U306 next to it
     # R361 / R362 (AMB pull-ups, adjacent upper pads), joined to the right-strip bus on L4 along the right edge and
     # below the H4 keepout
     cu.track('P33-R361-R362', P33, 'F.Cu', W, [P('R361', '2')['c'], P('R362', '2')['c']], 'E3_PICO3V3: R361.2 to R362.2')
@@ -778,6 +787,10 @@ def pico3v3_copper(cu):
     cu.track('P33-U305', P33, 'B.Cu', W, [u36['c'], (34.5, u36['c'][1])], 'E3_PICO3V3: Pico pin 36 to its escape via')
     cu.via('P33-V-U305', P33, (34.5, u36['c'][1]), 'E3_PICO3V3: escape via of Pico pin 36 below the PICO column')
     cu.track('P33-R330-R327', P33, 'B.Cu', W, [r330['c'], r327['c']], 'E3_PICO3V3: R330.2 to R327.1 (adjacent pads)')
+    # route run 43185550851 left the pin 36 escape via dangling: B.Cu up between the R332/R333 and R329/R330 pads to R330.2
+    xg = (P('R329', '1')['c'][0] + r330['c'][0]) / 2
+    cu.track('P33-U305-R330', P33, 'B.Cu', W, [(34.5, u36['c'][1]), (xg, u36['c'][1] + 1.3), (xg, r330['c'][1] - 0.8), r330['c']],
+             'E3_PICO3V3: Pico pin 36 escape via up the PICO column gap to R330.2')
     cu.track('P33-C308-R327', P33, 'B.Cu', W, [c308['c'], (37.75, 27.2), (37.75, r327['c'][1]), r327['c']],
              'E3_PICO3V3: C308.1 down between C311 and R327 to R327.1')
     # HMI row (top side): the pull-ups R337/R339/R341 joined in the 0.85 mm gap between the pad rows (where the router
@@ -828,7 +841,7 @@ def scripted_copper(inp, log):
     D306_1, YD = pw['D306_1'], pw['YD']
     D301_2 = cu.pad('D301', '2')['c']
     cu.via('LAB5-V-D306', 'LAB5', (D306_1[0], YD), BR + 'D301): B.Cu below D306 to L3')
-    YL3 = 55.6  # W2 CTRL-R placement study: 0.8 mm lower than before, clear of the GND via of U311 (HMI group moved up)
+    YL3 = 56.4
     cu.track('LAB5-L3-D301', 'LAB5', 'In2.Cu', 0.6, [(D306_1[0], YD), (D306_1[0], YL3), (34.6, YL3)],
              BR + 'D301): short L3 run below cut-out 1, under the blower switch and the buzzer (Pico VSYS current only)')
     cu.via('LAB5-V-D301', 'LAB5', (34.6, YL3), BR + 'D301): L3 to B.Cu above D301')
