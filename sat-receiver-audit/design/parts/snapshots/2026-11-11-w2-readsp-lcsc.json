@@ -1,0 +1,803 @@
+{
+ "date": "2026-11-11",
+ "distributor": "LCSC",
+ "entries": {
+  "C1329572": {
+   "attributes": {
+    "Application Grade": "Consumer grade",
+    "Current - Saturation(Isat)": "12A",
+    "Current Rating": "8A",
+    "DC Resistance(DCR)": "20mΩ",
+    "Inductance": "2.2uH",
+    "Tolerance": "±20%"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_BOURNS-SRP7030-2R2M_C1329572.pdf",
+   "description": "12A 2.2uH 20mΩ 8A ±20% SMD,7x7.8mm Power Inductors ROHS",
+   "fetched_utc": "2026-11-11T21:21:47Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "SRP7030-2R2M",
+   "package": "SMD,7x7.8mm",
+   "price_usd": [
+    [
+     1,
+     1.3372
+    ],
+    [
+     10,
+     1.1116
+    ],
+    [
+     30,
+     0.9873
+    ],
+    [
+     100,
+     0.8484
+    ],
+    [
+     500,
+     0.7863
+    ],
+    [
+     1000,
+     0.7585
+    ]
+   ],
+   "stock": 0,
+   "url": "https://www.lcsc.com/product-detail/power-inductors_bourns-srp7030-2r2m_C1329572.html"
+  },
+  "C1329579": {
+   "attributes": {
+    "Application Grade": "Automotive grade",
+    "Current - Saturation(Isat)": "14A",
+    "Current Rating": "8A",
+    "DC Resistance(DCR)": "18mΩ",
+    "Inductance": "2.2uH",
+    "Tolerance": "±20%"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_BOURNS-SRP7028A-2R2M_C1329579.pdf",
+   "description": "14A 18mΩ 2.2uH 8A ±20% SMD,7.3x6.6mm Power Inductors ROHS",
+   "fetched_utc": "2026-11-11T21:21:48Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "SRP7028A-2R2M",
+   "package": "SMD,7.3x6.6mm",
+   "price_usd": [
+    [
+     1,
+     0.5591
+    ],
+    [
+     10,
+     0.4496
+    ],
+    [
+     30,
+     0.394
+    ],
+    [
+     100,
+     0.3384
+    ],
+    [
+     500,
+     0.3057
+    ],
+    [
+     1000,
+     0.2894
+    ]
+   ],
+   "stock": 943,
+   "url": "https://www.lcsc.com/product-detail/power-inductors_bourns-srp7028a-2r2m_C1329579.html"
+  },
+  "C1329838": {
+   "attributes": {
+    "Application Grade": "Automotive grade",
+    "Current - Saturation(Isat)": "3.5A",
+    "Current Rating": "3A",
+    "DC Resistance(DCR)": "45mΩ",
+    "Inductance": "1uH",
+    "Tolerance": "±20%"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_BOURNS-SRP2510A-1R0M_C1329838.pdf",
+   "description": "1uH 3.5A 3A 45mΩ ±20% 1008 Power Inductors ROHS",
+   "fetched_utc": "2026-11-11T21:21:49Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "SRP2510A-1R0M",
+   "package": "1008",
+   "price_usd": [
+    [
+     1,
+     0.6081
+    ],
+    [
+     10,
+     0.4937
+    ],
+    [
+     30,
+     0.4381
+    ],
+    [
+     100,
+     0.3809
+    ],
+    [
+     500,
+     0.3466
+    ],
+    [
+     1000,
+     0.3302
+    ]
+   ],
+   "stock": 75,
+   "url": "https://www.lcsc.com/product-detail/power-inductors_bourns-srp2510a-1r0m_C1329838.html"
+  },
+  "C157912": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "9",
+    "Number of Pins": "9P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x9P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "19.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S9B-PH-K-S-LF-SN_C157912.pdf",
+   "description": "-25℃~+85℃ 1 100V 19.9mm 1x9P 2A 2mm 4.8mm 7.6mm 9 9P Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-11T21:21:49Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S9B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1803
+    ],
+    [
+     50,
+     0.1509
+    ],
+    [
+     250,
+     0.1362
+    ],
+    [
+     500,
+     0.1253
+    ],
+    [
+     2500,
+     0.1164
+    ],
+    [
+     5000,
+     0.112
+    ]
+   ],
+   "stock": 5130,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s9b-ph-k-s-lf-sn_C157912.html"
+  },
+  "C1972619": {
+   "attributes": {
+    "Current Rating": "5A",
+    "Interrupt Rating": "50A",
+    "Length": "6.1mm",
+    "Melting I2t": "5.96",
+    "Operating Temperature": "-55℃~+125℃",
+    "Type": "Surface Mount Fuse",
+    "Voltage Rating (DC)": "125V",
+    "Width": "2.5mm"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_BOURNS-SF-2410FP500W-2_C1972619.pdf",
+   "description": "-55℃~+125℃ 125V 125V 2.5mm 5.96 50A 5A 6.1mm Surface Mount Fuse 2410 Disposable fuses ROHS",
+   "fetched_utc": "2026-11-11T21:21:50Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "SF-2410FP500W-2",
+   "package": "2410",
+   "price_usd": [
+    [
+     1,
+     0.7471
+    ],
+    [
+     10,
+     0.7291
+    ],
+    [
+     30,
+     0.7193
+    ],
+    [
+     100,
+     0.7078
+    ],
+    [
+     102,
+     0.7078
+    ],
+    [
+     104,
+     0.7078
+    ]
+   ],
+   "stock": 1,
+   "url": "https://www.lcsc.com/product-detail/disposable-fuses_bourns-sf-2410fp500w-2_C1972619.html"
+  },
+  "C1972633": {
+   "attributes": {
+    "Current Rating": "4A",
+    "Height": "2.2mm",
+    "Interrupt Rating": "50A",
+    "Length": "6.1mm",
+    "Melting I2t": "4.14",
+    "Operating Temperature": "-55℃~+125℃",
+    "Type": "Surface Mount Fuse",
+    "Voltage Rating (DC)": "125V",
+    "Width": "2.5mm"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_BOURNS-SF-2410FP400W-2_C1972633.pdf",
+   "description": "-55℃~+125℃ 125V 4A 50A 2410 Disposable fuses ROHS",
+   "fetched_utc": "2026-11-11T21:21:51Z",
+   "jlc_library": "extended",
+   "manufacturer": "BOURNS",
+   "mpn": "SF-2410FP400W-2",
+   "package": "2410",
+   "price_usd": [
+    [
+     1,
+     0.7536
+    ],
+    [
+     10,
+     0.7536
+    ],
+    [
+     12,
+     0.7536
+    ],
+    [
+     200,
+     0.2926
+    ],
+    [
+     500,
+     0.2828
+    ],
+    [
+     1000,
+     0.2779
+    ]
+   ],
+   "stock": 0,
+   "url": "https://www.lcsc.com/product-detail/disposable-fuses_bourns-sf-2410fp400w-2_C1972633.html"
+  },
+  "C202116": {
+   "attributes": {
+    "Contact Material": "Phosphor Bronze",
+    "Contact Plating": "Gold",
+    "Contact Type": "Bottom Contact",
+    "FFC, FCB Thickness": "0.3mm",
+    "Height Above Board": "2mm",
+    "Locking Feature": "Flip-Top",
+    "Mounting Type": "Surface Mount, Right Angle",
+    "Number of Contacts": "50P",
+    "Operating Temperature": "-40℃~+85℃",
+    "Pitch": "0.5mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811021331_HRS-Hirose-FH12-50S-0-5SH-55_C202116.pdf",
+   "description": "-40℃~+85℃ 0.3mm 0.5mm 2mm 50P Bottom Contact Gold Hinged Lid Phosphor bronze Surface Mount, Right Angle SMD,P=0.5mm,卧贴 FFC, FPC (Flat Flexible) Connector Assemblies ROHS",
+   "fetched_utc": "2026-11-11T21:21:52Z",
+   "jlc_library": "extended",
+   "manufacturer": "HRS(Hirose)",
+   "mpn": "FH12-50S-0.5SH(55)",
+   "package": "SMD,P=0.5mm,Surface Mount，Right Angle",
+   "price_usd": [
+    [
+     1,
+     0.8598
+    ],
+    [
+     10,
+     0.7013
+    ],
+    [
+     30,
+     0.6228
+    ],
+    [
+     100,
+     0.5444
+    ],
+    [
+     500,
+     0.4839
+    ],
+    [
+     1000,
+     0.4594
+    ]
+   ],
+   "stock": 4780,
+   "url": "https://www.lcsc.com/product-detail/ffc-fpc-flat-flexible-connector-assemblies_hrs-hirose-fh12-50s-0-5sh-55_C202116.html"
+  },
+  "C2161511": {
+   "attributes": {
+    "Capacitance": "47uF",
+    "Diameter": "5mm",
+    "Equivalent Series Resistance(ESR)": "25mΩ",
+    "Height - Seated (Max)": "4.5mm",
+    "Lifetime": "5000hrs@105℃",
+    "Mounting Type": "SMD",
+    "Operating Temperature": "-55℃~+105℃",
+    "Polarity type": "Polarized",
+    "Ripple Current": "160mA@120Hz",
+    "Tolerance": "±20%",
+    "Type": "Polymer",
+    "Voltage Rating": "16V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2403291719_PANASONIC-16SVPG47M_C2161511.pdf",
+   "description": "-55℃~+105℃ 160mA@120Hz 16V 25mΩ 4.5mm 47uF 5000hrs@105℃ 5mm Polarized Polymer SMD ±20% SMD,D5xL4.5mm Polymer Aluminum Capacitors ROHS",
+   "fetched_utc": "2026-11-11T21:21:53Z",
+   "jlc_library": "extended",
+   "manufacturer": "PANASONIC",
+   "mpn": "16SVPG47M",
+   "package": "SMD,D5xL4.5mm",
+   "price_usd": [
+    [
+     1,
+     0.819
+    ],
+    [
+     10,
+     0.6621
+    ],
+    [
+     30,
+     0.5836
+    ],
+    [
+     100,
+     0.5068
+    ],
+    [
+     500,
+     0.4594
+    ],
+    [
+     1000,
+     0.4349
+    ]
+   ],
+   "stock": 480,
+   "url": "https://www.lcsc.com/product-detail/polymer-aluminum-capacitors_panasonic-16svpg47m_C2161511.html"
+  },
+  "C2181731": {
+   "attributes": {
+    "Capacitance": "10uF",
+    "Temperature Coefficient": "X7R",
+    "Tolerance": "±10%",
+    "Voltage Rating": "50V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_TDK-C3225X7R1H106K250AC_C2181731.pdf",
+   "description": "10uF 50V X7R ±10% 1210 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-11T21:21:53Z",
+   "jlc_library": "extended",
+   "manufacturer": "TDK",
+   "mpn": "C3225X7R1H106K250AC",
+   "package": "1210",
+   "price_usd": [
+    [
+     1,
+     1.2227
+    ],
+    [
+     10,
+     1.1982
+    ],
+    [
+     30,
+     1.1819
+    ],
+    [
+     100,
+     1.1655
+    ],
+    [
+     102,
+     1.1655
+    ],
+    [
+     104,
+     1.1655
+    ]
+   ],
+   "stock": 0,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_tdk-c3225x7r1h106k250ac_C2181731.html"
+  },
+  "C27515": {
+   "attributes": {
+    "Current Rating": "4A",
+    "Interrupt Rating": "50A",
+    "Length": "6.1mm",
+    "Melting I2t": "0.0551",
+    "Operating Temperature": "-55℃~+125℃",
+    "Type": "Surface Mount Fuse",
+    "Voltage Rating (DC)": "125V",
+    "Width": "2.5mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Littelfuse-0451004-MRL_C27515.pdf",
+   "description": "-55℃~+125℃ 0.0551 125V 125V 2.5mm 4A 50A 6.1mm Surface Mount Fuse 2410 Disposable fuses ROHS",
+   "fetched_utc": "2026-11-11T21:21:54Z",
+   "jlc_library": "extended",
+   "manufacturer": "Littelfuse",
+   "mpn": "0451004.MRL",
+   "package": "2410",
+   "price_usd": [
+    [
+     1,
+     0.3727
+    ],
+    [
+     50,
+     0.2998
+    ],
+    [
+     150,
+     0.2686
+    ],
+    [
+     1000,
+     0.1866
+    ],
+    [
+     2000,
+     0.1692
+    ],
+    [
+     5000,
+     0.1588
+    ]
+   ],
+   "stock": 14007,
+   "url": "https://www.lcsc.com/product-detail/disposable-fuses_littelfuse-0451004-mrl_C27515.html"
+  },
+  "C2802568": {
+   "attributes": {
+    "Current - Continuous Drain(Id)": "80A",
+    "Drain to Source Voltage": "60V",
+    "Gate Charge(Qg)": "41.3nC@10V",
+    "Gate Threshold Voltage (Vgs(th))": "2V",
+    "Input Capacitance(Ciss)": "2.09nF",
+    "Number": "1 N-channel",
+    "Operating Temperature": "-55℃~+150℃",
+    "Output Capacitance(Coss)": "746pF",
+    "Pd - Power Dissipation": "62.5W",
+    "RDS(on)": "8.5mΩ@4.5V",
+    "Reverse Transfer Capacitance (Crss@Vds)": "38.5pF",
+    "Type": "N-Channel",
+    "Vgs": "±20V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Diodes-Incorporated-DMT6007LFG-7_C2802568.pdf",
+   "description": "-55℃~+150℃ 1 N-channel 2.09nF 2V 38.5pF 41.3nC@10V 60V 62.5W 746pF 8.5mΩ@4.5V 80A N-Channel ±20V PowerDI3333-8 MOSFETs ROHS",
+   "fetched_utc": "2026-11-11T21:21:55Z",
+   "jlc_library": "extended",
+   "manufacturer": "Diodes Incorporated",
+   "mpn": "DMT6007LFG-7",
+   "package": "PowerDI3333-8",
+   "price_usd": [
+    [
+     1,
+     1.9812
+    ],
+    [
+     10,
+     1.718
+    ],
+    [
+     30,
+     1.5546
+    ],
+    [
+     100,
+     1.3862
+    ],
+    [
+     500,
+     1.3094
+    ],
+    [
+     1000,
+     1.2767
+    ]
+   ],
+   "stock": 0,
+   "url": "https://www.lcsc.com/product-detail/mosfets_diodes-incorporated-dmt6007lfg-7_C2802568.html"
+  },
+  "C2864505": {
+   "attributes": {
+    "Features": "Operating status indication、Cycle-by-cycle current limiting、Frequency synchronization、Hiccup current limiting、Built-in LDO regulator",
+    "Frequency - Switching": "200kHz~2.2MHz",
+    "Function": "Step-down type",
+    "Number of Outputs": "1",
+    "Operating Temperature": "-40℃~+150℃@(TJ)",
+    "Output Current": "6A",
+    "Output Type": "Adjustable",
+    "Output Voltage": "1V~34.2V",
+    "Quiescent Current": "7uA",
+    "Switch tube (built-in/external)": "Built-in",
+    "Synchronous Rectifier": "Yes",
+    "Topology": "Buck",
+    "Voltage - Supply": "3V~36V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2302212330_Texas-Instruments-LM61460AANRJRR_C2864505.pdf",
+   "description": "-40℃~+150℃@(TJ) 1 200kHz~2.2MHz 3V~36V 6A 7uA Adjustable Buck Buck Built-in Yes VQFN-14-HR(3.5x4) DC-DC Converters ROHS",
+   "fetched_utc": "2026-11-11T21:21:55Z",
+   "jlc_library": "extended",
+   "manufacturer": "Texas Instruments",
+   "mpn": "LM61460AANRJRR",
+   "package": "VQFN-14-HR(3.5x4)",
+   "price_usd": [
+    [
+     1,
+     1.888
+    ],
+    [
+     10,
+     1.5954
+    ],
+    [
+     30,
+     1.4123
+    ],
+    [
+     100,
+     1.2244
+    ],
+    [
+     500,
+     1.1394
+    ],
+    [
+     1000,
+     1.1034
+    ]
+   ],
+   "stock": 0,
+   "url": "https://www.lcsc.com/product-detail/dc-dc-converters_texas-instruments-lm61460aanrjrr_C2864505.html"
+  },
+  "C2941042": {
+   "attributes": {
+    "FET Type": "External FET",
+    "Features": "Reverse current blocking、Reverse polarity protection、With enable",
+    "Gate Drive Voltage": "15V",
+    "Input Voltage (Vin)": "3.2V~65V",
+    "Number of Channels": "1",
+    "Operating Temperature": "-40℃~+150℃",
+    "Peak Output Current(Sink)": "2.37A",
+    "Peak Output Current(Source)": "11mA",
+    "Quiescent Current": "80uA",
+    "Reverse Breakdown Voltage": "65V",
+    "Voltage - Forward(Vf)": "20mV"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2302220108_Texas-Instruments-LM74700QDBVRQ1_C2941042.pdf",
+   "description": "-40℃~+150℃ 11mA 15V 2.37A 20mV 3.2V~65V 65V 80uA External FET Reverse current blocking、Reverse polarity protection、With enable SOT-23-6 ORing Controllers ROHS",
+   "fetched_utc": "2026-11-11T21:21:56Z",
+   "jlc_library": "extended",
+   "manufacturer": "Texas Instruments",
+   "mpn": "LM74700QDBVRQ1",
+   "package": "SOT-23-6",
+   "price_usd": [
+    [
+     1,
+     2.7282
+    ],
+    [
+     10,
+     2.4536
+    ],
+    [
+     30,
+     2.282
+    ],
+    [
+     100,
+     2.0515
+    ],
+    [
+     500,
+     1.973
+    ],
+    [
+     1000,
+     1.9387
+    ]
+   ],
+   "stock": 3818,
+   "url": "https://www.lcsc.com/product-detail/power-distribution-switches_texas-instruments-lm74700qdbvrq1_C2941042.html"
+  },
+  "C415541": {
+   "attributes": {
+    "Capacitance": "47uF",
+    "Temperature Coefficient": "X7R",
+    "Tolerance": "±20%",
+    "Voltage Rating": "10V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Murata-Electronics-GRM32ER71A476ME15L_C415541.pdf",
+   "description": "10V 47uF X7R ±20% 1210 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
+   "fetched_utc": "2026-11-11T21:21:58Z",
+   "jlc_library": "extended",
+   "manufacturer": "Murata Electronics",
+   "mpn": "GRM32ER71A476ME15L",
+   "package": "1210",
+   "price_usd": [
+    [
+     1,
+     0.9939
+    ],
+    [
+     10,
+     0.8402
+    ],
+    [
+     30,
+     0.7618
+    ],
+    [
+     100,
+     0.6849
+    ],
+    [
+     500,
+     0.5624
+    ],
+    [
+     1000,
+     0.5378
+    ]
+   ],
+   "stock": 675,
+   "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_murata-electronics-grm32er71a476me15l_C415541.html"
+  },
+  "C48467": {
+   "attributes": {
+    "Current Rating": "5A",
+    "Interrupt Rating": "50A",
+    "Length": "6.1mm",
+    "Melting I2t": "5.566",
+    "Operating Temperature": "-55℃~+125℃",
+    "Type": "Surface Mount Fuse",
+    "Voltage Rating (DC)": "125V",
+    "Width": "2.5mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809042025_Littelfuse-0451005-MRL_C48467.pdf",
+   "description": "-55℃~+125℃ 125V 125V 2.5mm 5.566 50A 5A 6.1mm Surface Mount Fuse 2410 Disposable fuses ROHS",
+   "fetched_utc": "2026-11-11T21:21:58Z",
+   "jlc_library": "extended",
+   "manufacturer": "Littelfuse",
+   "mpn": "0451005.MRL",
+   "package": "2410",
+   "price_usd": [
+    [
+     1,
+     0.247
+    ],
+    [
+     50,
+     0.1967
+    ],
+    [
+     150,
+     0.1721
+    ],
+    [
+     1000,
+     0.1452
+    ],
+    [
+     2000,
+     0.1392
+    ],
+    [
+     5000,
+     0.1356
+    ]
+   ],
+   "stock": 3982,
+   "url": "https://www.lcsc.com/product-detail/disposable-fuses_littelfuse-0451005-mrl_C48467.html"
+  },
+  "C5219325": {
+   "attributes": {
+    "Features": "Overcurrent Protection、Operating status indication、Cycle-by-cycle current limiting、Frequency synchronization、Hiccup current limiting、Built-in LDO regulator、EMI optimization (spread spectrum)",
+    "Frequency - Switching": "2.2MHz",
+    "Function": "Step-down type",
+    "Number of Outputs": "1",
+    "Operating Temperature": "-40℃~+125℃",
+    "Output Current": "6A",
+    "Output Type": "Adjustable",
+    "Output Voltage": "1V~16V",
+    "Quiescent Current": "7uA",
+    "Switch tube (built-in/external)": "Built-in",
+    "Synchronous Rectifier": "Yes",
+    "Topology": "Buck",
+    "Voltage - Supply": "3V~36V"
+   },
+   "datasheet": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf?ts=1677045909808&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FTPSM63606%252Fpart-details%252FTPSM63606RDLR%253FHQS%253Docb-tistore-invf-invftransact-invf-store-octopart-wwe%2526login-check%253Dtrue",
+   "description": "-40℃~+125℃ 1 1V~16V 2.2MHz 3V~36V 6A 7uA Adjustable Buck Built-in Overcurrent Protection、Operating status indication、Cycle-by-cycle current limiting、Frequency synchronization、Hiccup current limiting、Built-in LDO regulator、EMI optimization (spread spectrum) Step-down type Yes B3QFN-20(5x5.5) DC-DC Converters ROHS",
+   "fetched_utc": "2026-11-11T21:21:59Z",
+   "jlc_library": "extended",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPSM63606RDLR",
+   "package": "B3QFN-20(5x5.5)",
+   "price_usd": [
+    [
+     1,
+     19.2998
+    ],
+    [
+     10,
+     18.4351
+    ],
+    [
+     30,
+     16.9361
+    ],
+    [
+     100,
+     15.6285
+    ],
+    [
+     102,
+     15.6285
+    ],
+    [
+     104,
+     15.6285
+    ]
+   ],
+   "stock": 1241,
+   "url": null
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C1329572",
+  "C1329579",
+  "C1329838",
+  "C157912",
+  "C1972619",
+  "C1972633",
+  "C202116",
+  "C2161511",
+  "C2181731",
+  "C27515",
+  "C2802568",
+  "C2864505",
+  "C2941042",
+  "C415541",
+  "C48467",
+  "C5219325"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}
