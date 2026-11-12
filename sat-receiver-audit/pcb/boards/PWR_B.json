@@ -18,12 +18,13 @@
     "thickness_mm": 1.6,
     "source": "build/15 Шари (4-layer JLC04161H-7628, 1 oz outer) and mechanical/generated/contract/boards.json stackup",
     "types": {
-      "In1.Cu": "power"
+      "In1.Cu": "power",
+      "In2.Cu": "power"
     },
     "plan": {
       "F.Cu": "parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour",
       "In1.Cu": "solid GND plane (layer type power: the router puts only vias through it)",
-      "In2.Cu": "signals (autorouted; W2 PWRB-R: the S-G-S-S plan of CTRL, a third routing layer for the bar between J209 and the S02 headers), GND pour after routing",
+      "In2.Cu": "second GND plane (layer type power)",
       "B.Cu": "B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour"
     }
   },
@@ -754,19 +755,6 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.55,
-          61.925
-        ],
-        "align": "origin",
-        "rotation": 180,
-        "side": "F"
-      }
-    },
-    {
-      "ref": "C276",
-      "source": "graph",
-      "anchor": {
-        "at": [
           22.825,
           50.9
         ],
@@ -780,6 +768,19 @@
           ],
           "angle": 0
         }
+      }
+    },
+    {
+      "ref": "C276",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          22.55,
+          61.925
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -2477,8 +2478,15 @@
           58.5
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F"
+        "rotation": 180,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            21.5,
+            58.5
+          ],
+          "angle": 90
+        }
       }
     },
     {
@@ -5031,12 +5039,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            19.675,
-            58.175
+            23.325,
+            58.825
           ],
           [
-            20.6,
-            58.175
+            24.25,
+            58.825
           ]
         ],
         "locked": true,
@@ -5049,12 +5057,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            19.675,
-            58.175
+            23.325,
+            58.825
           ],
           [
             21.5,
-            58.175
+            58.825
           ]
         ],
         "locked": true,
@@ -6248,8 +6256,8 @@
         "id": "GND-U215-3-V",
         "net": "GND",
         "at": [
-          20.6,
-          58.175
+          24.25,
+          58.825
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6350,19 +6358,19 @@
         "priority": 0,
         "pad_connection": "solid",
         "why": "GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it"
+      },
+      {
+        "id": "GND-In2",
+        "net": "GND",
+        "layer": "In2.Cu",
+        "outline": "board",
+        "priority": 0,
+        "pad_connection": "solid",
+        "why": "second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)"
       }
     ]
   },
   "post_route_zones": [
-    {
-      "id": "GND-In2",
-      "net": "GND",
-      "layer": "In2.Cu",
-      "outline": "board",
-      "priority": 0,
-      "pad_connection": "solid",
-      "why": "W2 PWRB-R: In2.Cu is a signal layer (IN2_SIGNAL); its GND pour after routing joins the scripted GND vias"
-    },
     {
       "id": "GND-F",
       "net": "GND",
@@ -6385,7 +6393,6 @@
     "width_mm": 0.2,
     "layers": [
       "F.Cu",
-      "In2.Cu",
       "B.Cu"
     ],
     "blocks": [

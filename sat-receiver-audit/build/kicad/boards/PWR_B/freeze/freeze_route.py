@@ -133,6 +133,8 @@ def main(argv=None):
     ap.add_argument('--out', default=str(OUT))
     ap.add_argument('--rounds', type=int, default=200)
     ap.add_argument('--in2', action='store_true', help='let slow signal nets use In2.Cu where F.Cu and B.Cu have no path')
+    ap.add_argument('--in2-signal', action='store_true', help='In2.Cu is a signal layer (make_spec.py IN2_SIGNAL): signal nets '
+                    'are completed on F.Cu, In2.Cu and B.Cu, power-class nets on F.Cu and B.Cu only (inner class widths)')
     ap.add_argument('--in2-bias', type=float, default=1.0, help='extra cost per mm on In2.Cu (1.0: an In2 mm costs two)')
     ap.add_argument('--partial', action='store_true', help='write route-frozen.json even with open connections (listed under open)')
     args = ap.parse_args(argv)
@@ -145,6 +147,16 @@ def main(argv=None):
     m = M.Model(str(art / 'board/PWR_B.kicad_pcb'))
     fz = F.Finisher(m)
     widths, default_w = class_widths()
+    if args.in2_signal:
+        # power-class copper must stay on the outer layers (pcb/generated/netclasses.json inner widths: PWR1A 1.8 mm, PWR2A
+        # 4.7 mm): the router copper of power-class nets on In2.Cu is ripped here and those nets are completed outer only
+        moved = [it for it in m.items if it.alive and it.kind == 'track' and it.src == 'router' and it.layers[0] == 'In2.Cu'
+                 and it.net in widths and it.net not in never]
+        for it in moved:
+            m.remove(it)
+        for n in sorted({it.net for it in moved}):
+            F.prune(m, n)
+        print('power-class router tracks on In2.Cu ripped:', len(moved), sorted({it.net for it in moved}))
     nets = sorted({i.net for i in m.items if i.alive and i.net and i.net not in never})
     todo = [n for n in nets if len(m.islands(n)) > 1]
     print('open nets of the route run:', {n: len(m.islands(n)) - 1 for n in todo})
@@ -156,7 +168,11 @@ def main(argv=None):
         w = widths.get(net, default_w)
         # slow signal nets (Default class) may use In2.Cu where F.Cu and B.Cu have no path; power nets never (class widths
         # are outer-layer widths, pcb/generated/netclasses.json)
-        ok, ripped = fz.connect(net, width=w, max_iter=200, l2_bias=(args.in2_bias if args.in2 and net not in widths else None))
+        if args.in2_signal:  # S-G-S-S (make_spec.py IN2_SIGNAL): signal nets on three layers, power nets outer only
+            ok, ripped = fz.connect(net, width=w, max_iter=200,
+                                    layers=('F.Cu', 'B.Cu') if net in widths else ('F.Cu', 'In2.Cu', 'B.Cu'))
+        else:
+            ok, ripped = fz.connect(net, width=w, max_iter=200, l2_bias=(args.in2_bias if args.in2 and net not in widths else None))
         after = len(m.islands(net))
         print(f'{net}: {"OK" if ok else "FAILED"} islands {before} -> {after} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if ok:

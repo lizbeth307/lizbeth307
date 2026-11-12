@@ -69,10 +69,13 @@ CLEAR = 0.15          # project clearance (netclasses.json project_defaults)
 MARGIN = 0.05         # design margin of the scripted copper over the clearance
 EDGE = 0.3            # project copper-to-edge clearance
 CRT_GUARD = 0.05      # courtyard boxes here are centre lines; KiCad's include half the 0.05 mm line (review F12 of W2 PCB-PWRB-2)
-# W2 PWRB-R probe 3: In2.Cu as a third routing layer (the S-G-S-S plan of CTRL: In1.Cu solid GND, In2.Cu signals with a GND
-# pour after routing). Route runs 43288408383 and 43290779665 (two routing layers, the PWR-A cut-outs as rule areas) left
-# 98 and 89 connections open; the bar between J209 and the S02 headers has 13-17 mm per layer for 47 nets.
-IN2_SIGNAL = True
+# W2 PWRB-R: In2.Cu as a third routing layer (the S-G-S-S plan of CTRL: In1.Cu solid GND, In2.Cu signals with a GND pour
+# after routing). Route runs 43288408383 and 43290779665 (two routing layers, the PWR-A cut-outs as rule areas) left 98 and
+# 89 connections open; the bar between J209 and the S02 headers has 13-17 mm per layer for 47 nets. Route run 43308775349
+# with IN2_SIGNAL True left 73 open, and Freerouting put PWR1A copper on In2.Cu at 0.35 mm (88 check_boards findings: inner
+# PWR1A needs 1.8 mm, pcb/generated/netclasses.json), because the DSN gives no per-class layer limit; freeze/freeze_route.py
+# --in2-signal rips that copper and completes power nets on the outer layers only. False: the committed plan.
+IN2_SIGNAL = False
 VIA_D, VIA_DRILL = 0.7, 0.3   # 0.7 / 0.3: router vias at clearance 0.15 keep the 0.5 mm hole-to-hole rule (0.55)
 
 
@@ -309,14 +312,17 @@ class Inputs:
 #      L207 and the damper; C251 / R251 (VBUS_RTLB) and C298 / R295 (SB) stay where a 6 x 8 mm place exists (no place
 #      within 25 mm of L210 or L215, OPEN);
 #    - INA3221 (F4): U215 turned by 180 (ch1 inputs face the ch1 cell, ch2 inputs the bar), its filter capacitors C274,
-#      C275, C276 at its input pins.
+#      C275, C276 at its input pins. Defect found by route run 43290779665: the ch2 inputs (pins 14, 15) then face the
+#      PWR-A TP104 window 0.7 mm away and E2_U215_IP2 cannot leave pin 15; route run 43308775349 (U215 at 0 again, C275 at
+#      (22.55, 61.925, 180), C276 at (22.825, 50.9, 270)) reached both ch2 inputs. That fix changes pads, so it waits for
+#      the next route run (this table equals the spec of route run 43290779665, whose outputs are committed).
 PLACEMENT = {
     'C232': (2.1, 60.8, 0), 'C233': (10.7, 56.1, 270), 'C234': (15.805, 53.55, 180), 'C235': (18, 49.5, 0),
     'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (40.776, 8.8, 0), 'C239': (30, 14, 90),
     'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 180),
     'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (110.98, 21.325, 180),
     'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.03, 19.65, 270), 'C251': (36, 12, 90),
-    'C274': (19.675, 54.5, 270), 'C275': (22.55, 61.925, 180), 'C276': (22.825, 50.9, 270), 'C277': (36.97, 46.405, 90),
+    'C274': (19.675, 54.5, 270), 'C275': (22.825, 50.9, 270), 'C276': (22.55, 61.925, 180), 'C277': (36.97, 46.405, 90),
     'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
     'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
     'C297': (112.18, 15.097, 90), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
@@ -343,7 +349,7 @@ PLACEMENT = {
     'TP206': (12.755, 53.05, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0), 'TP209': (116.3, 22.8, 0),
     'TP210': (118.85, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0), 'TP2902': (40.679, 80.317, 0),
     'U206': (4.1, 57.6, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0), 'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90),
-    'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90), 'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90),
+    'U215': (21.5, 58.5, 180), 'U217': (44.5, 20, 90), 'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90),
     'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90), 'U502': (64.5, 20, 90), 'U507': (4.5, 51, 0),
 }
 PLUG_ZONES = ('J204', 'J207')   # top-span headers: no part between the mating face and the board edge
@@ -1354,9 +1360,10 @@ FROZEN_WHY = ('completion of the frozen route (build/kicad/boards/PWR_B/route-fr
               'B.Cu on the locked copper of the harvested route run, exact clearance check (freeze/freeze_route.py)')
 
 
-def frozen_guard(parts, tracks, vias):
-    """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers) and the scripted copper
-    (geometry only: its 'why' texts can be corrected without a new harvest), as W2 CTRL-R did for CTRL."""
+def frozen_guard(parts, tracks, vias, cutouts_sha):
+    """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers), the scripted copper
+    (geometry only: its 'why' texts can be corrected without a new harvest), as W2 CTRL-R did for CTRL, and the PWR-A
+    cut-out list (its rule areas are keepouts of the frozen copper; PCB-PWRA-4 may still move them)."""
     pads = sorted(f"{ref}.{p['number']}|{p['net']}|{p['at'][0]:.4f},{p['at'][1]:.4f}|{','.join(p['layers'])}"
                   for ref, pa in parts.items() for p in pa.pads if p['number'])
 
@@ -1364,26 +1371,28 @@ def frozen_guard(parts, tracks, vias):
         return json.dumps({k: v for k, v in item.items() if k != 'why'}, sort_keys=True)
     scripted = [geometry(t) for t in tracks] + [geometry(v) for v in vias]
     return {'pads_sha256': hashlib.sha256('\n'.join(pads).encode()).hexdigest(),
-            'scripted_sha256': hashlib.sha256('\n'.join(scripted).encode()).hexdigest()}
+            'scripted_sha256': hashlib.sha256('\n'.join(scripted).encode()).hexdigest(), 'cutouts_sha256': cutouts_sha}
 
 
 def frozen_guard_of_spec():
     """The guard of the spec this file makes now without the frozen copper (freeze/freeze_route.py writes it)."""
-    _a, _m, _p, parts, tracks, vias, _e = build(Inputs(), frozen=False)
-    return frozen_guard(parts, tracks, vias)
+    inp = Inputs()
+    _a, _m, _p, parts, tracks, vias, _e = build(inp, frozen=False)
+    return frozen_guard(parts, tracks, vias, inp.cutouts_sha)
 
 
-def frozen_copper(parts, tracks, vias):
+def frozen_copper(inp, parts, tracks, vias):
     """The frozen route: the router copper of a harvested route run, locked, and the scripted completion of its open
     connections, from route-frozen.json. It goes in after the scripted copper, which stays exactly as in that run; the
-    guard stops make_spec when a pad, a net or the scripted copper changed (route again without the frozen copper)."""
+    guard stops make_spec when a pad, a net, the scripted copper or the PWR-A cut-out list changed (route again without
+    the frozen copper)."""
     if not FROZEN.is_file():
         return [], [], None
     doc = json.loads(FROZEN.read_text(encoding='utf-8'))
-    have = frozen_guard(parts, tracks, vias)
+    have = frozen_guard(parts, tracks, vias, inp.cutouts_sha)
     for key, value in have.items():
-        if doc['guard'][key] != value:
-            raise SystemExit(f'make_spec: route-frozen.json was routed on another {key} ({doc["guard"][key][:12]}... != '
+        if doc['guard'].get(key) != value:
+            raise SystemExit(f'make_spec: route-frozen.json was routed on another {key} ({str(doc["guard"].get(key))[:12]}... != '
                              f'{value[:12]}...): route again with [pcb-route PWR_B] without the frozen copper and harvest anew')
     ft, fv = [], []
     for prefix, key, why in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', FROZEN_WHY)):
@@ -1406,7 +1415,7 @@ def build(inp, frozen=True):
     move_edge_references(inp, anchors, parts)
     tracks, vias, exempt = scripted_copper(inp, parts, pins)
     if frozen:
-        ft, fv, _doc = frozen_copper(parts, tracks, vias)
+        ft, fv, _doc = frozen_copper(inp, parts, tracks, vias)
         tracks, vias = tracks + ft, vias + fv
     return anchors, missing, pins, parts, tracks, vias, exempt
 
