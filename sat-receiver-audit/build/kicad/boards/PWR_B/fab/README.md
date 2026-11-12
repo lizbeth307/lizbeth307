@@ -23,10 +23,8 @@
 - Плат: 1 = екземпляри (PWRB ×1) + запасні 0; усі однакові й збираються однаково.
 - Gerber і свердління: заархівувати `gerber/` і `drill/` разом під час замовлення (архів не комітиться, бо zip має мітки часу).
 - Mid X / Mid Y у CPL — початок посадкового місця KiCad, тоді як JLC визначає їх як центр компонента (сторінка CPL JLC, прочитано 2026-11-07); кут — сирий кут KiCad. Поправки кута й центру для кожного посадкового місця — TBD, у CI не перевіряються: кожну деталь перевіряє той, хто замовляє, у переглядачі JLC перед оплатою (крок збирання; у build/21 його додає власник STEPS).
-- Позиції BOM з TBD: B2B1, C274,C275,C276,C277,C283,C285,C287,C2911,C2912.
-  - B2B1 (B2B placeholder: Samtec QTH-060-01-L-D-A pending): TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by graph ref of the Samtec QTH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_b) once its land, derived from the dimensions of the Samtec recommended PCB layout Rev M, is vendored (GR-4 / PCB-PWRA lineage); only the contact numbers of this pin map carry over, then PWR_B and PWR_A are re-routed.
+- Позиції BOM з TBD: C274,C275,C276,C277,C283,C285,C287,C2911,C2912.
   - C274,C275,C276,C277,C283,C285,C287,C2911,C2912 (C1608X7R1H104K080AA): TBD: build/10-jlc-bom.csv row has no LCSC code.
-- Заглушка `B2B1` (Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm): її замінить graph ref of the Samtec QTH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_b) once its land, derived from the dimensions of the Samtec recommended PCB layout Rev M, is vendored (GR-4 / PCB-PWRA lineage); only the contact numbers of this pin map carry over, then PWR_B and PWR_A are re-routed; доти набір не для виробництва.
 
 ## Що цей набір не доводить (OPEN)
 

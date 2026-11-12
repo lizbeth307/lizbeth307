@@ -31,9 +31,12 @@
   "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-b2b-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-mech4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech6-manual.json",
-  "design/parts/snapshots/2026-11-07-w2-src2-manual.json"
+  "design/parts/snapshots/2026-11-07-w2-src2-manual.json",
+  "design/parts/snapshots/2026-11-11-w2-mech5-manual.json",
+  "design/parts/snapshots/2026-11-11-w2-pcb-sb2-manual.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -5256,6 +5259,22 @@
    "note": "Board-side harness headers: J506 X23S1-PWR on PWR_B (W2 GR-3) and J514 X24S1-T7A on T7_INSERT (W2 GR-4, segment S24). Part, LCSC SKU and footprint as harness_families PH 3 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
+   "id": "J-B2B-LSHM150",
+   "mount": "pcb_smt",
+   "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+   "manufacturer": "Samtec",
+   "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR",
+   "sku": {
+    "lcsc": "C2940507"
+   },
+   "single_source": "self-mating Samtec Razor Beam LSHM: both halves are this one part; decision build/15 «Стик PWR-A/PWR-B (W2 AREA)», rewritten by W2 B2B",
+   "refs": [
+    "J208",
+    "J209"
+   ],
+   "note": "Board-to-board pair PWR-A/PWR-B (W2 B2B): J208 on the PWR-A top, J209 on the PWR-B bottom, the same hermaphroditic part, 2 x 50 contacts at 0.50 mm, mated height 5.00 mm with two -02.5 halves (catalogue F-224 Rev 20NOV24, https://suddendocs.samtec.com/catalog_english/lshm.pdf), 2.0 A per pin with one pin powered per row (spec Rev H, https://suddendocs.samtec.com/productspecs/lshm.pdf), no ground plane; -N no shield, -K polyimide pick and place pad, -TR tape and reel. Contact map in pcb/generated/b2b-nets.json: pin n of J208 meets pin n+1 (n odd) or n-1 (n even) of J209 (print Rev Z note 4, https://suddendocs.samtec.com/prints/lshm-1xx-xx.x-xxx-dv-a-x-x-tr-mkt.pdf). Footprint: the official KiCad 10.0.7 -DV-N file, with the two 1.45 NPTH of the alignment pins, as the Samtec Rev G layout https://suddendocs.samtec.com/prints/lshm-1xx-xx.x-x-dv-a-x-x-tr-footprint.pdf (all read 2026-11-07). Two per unit, one on each board; Samtec spec 7.3 advises against several LSXX connectors mated at the same time on one board, and only this one pair is used."
+  },
+  {
    "id": "WP-SOLDERWIRE-1SQMM",
    "mount": "pcb_pad",
    "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
@@ -6671,6 +6690,45 @@
    "note": "ставиться пресом (build/21 E2); нержавіюча альтернатива SOS-M3-3 — сторінку не прочитано"
   },
   {
+   "id": "AI-PEM-SO-M25-6ZI",
+   "item": "самоклінчувальна наскрізна стійка PEM SO-M2.5-6ZI, 6 мм",
+   "qty": 2,
+   "spares": 2,
+   "for": "M-07: PF1-PF2 (169.0, 14.1) і (169.0, 35.3) — носій PACK_FUSE на розширенні пластини, mechanical.json module_mounts; гвинти й ізоляція — build/17 F39, AI-PACK-FUSE-FIX; отвір 4.22 +0.08, голівка врівень з тильною гранню, 6.0 мм від кромки (значення сторінки SO-M3-3ZI того самого корпусу: на сторінці M2.5 відстані до кромки немає, перечитано 11.11.2026)",
+   "manufacturer": "PennEngineering (PEM)",
+   "mpn": "SO-M2.5-6ZI",
+   "sku": {
+    "web": "pem-so-m2-5-6zi"
+   },
+   "note": "ставиться пресом разом з F-M3-1 і SO-M3-3ZI (build/21 E2, AI-PEM-PRESS); коротшої M2.5 SO у каталозі немає"
+  },
+  {
+   "id": "AI-M25X6-MODULES",
+   "item": "гвинт M2.5×6 ISO 14580 A2-70 TX8 модулів заднього шару у вставки TC-M2,5x4 (пачка 25 шт.)",
+   "qty": 6,
+   "spares": 2,
+   "for": "build/17 F09 (INA228 5832 ×2) і F10 (CH334F 5997 ×4): mechanical/generated/fastener-stacks.json INA228/HUB-5997, вікно 5.35–6.1 мм (плата 1.6 + вставка 4.0, отвір бобишки 5.0 = вставка + 1.0, mechanical.json module_mounts)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "TC-S-M2,5x6",
+   "sku": {
+    "web": "3djake-tc-s-m2,5x6"
+   },
+   "note": "Рядок знімка W2 SRC-2 (web:3djake-tc-s-m2,5x6, 07.11.2026), той самий артикул, що AI-M25-DISPLAY-CLAMP: одна пачка 25 шт. покриває обидві позиції (4 + 2 запасні і 6 + 2 запасні); 6 вставок цих бобишок не входять у кількість AI-INSERT-M25 (10 = CTRL 6 + ENC 4) — додає власник запису (W2 MECH-5)."
+  },
+  {
+   "id": "AI-VHB-4910-MODULES",
+   "item": "двосторонній акриловий скотч 3M VHB 4910 прозорий, 3/4\" × 15 yd (19.05 мм × 13.7 м), 1.016 мм",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/17 F05 (Pololu #2813: смужка 12 × 14 на майданчику задньої стінки) і F47 (VEML7700: 4 диски ⌀6 з отвором ⌀2.5 на упорах верхньої стінки); mechanical.json module_mounts",
+   "manufacturer": "3M",
+   "mpn": "4910 3/4\"X15YD",
+   "sku": {
+    "digikey": "3M5648-ND"
+   },
+   "note": "Найменший рулон 4910 на сторінці DigiKey BE (11.11.2026): 3/4\" × 15 yd; товщина 1.016 мм збігається з mechanical/params/parts.json vhb_4910 (1.0); робоча температура на сторінці 93 °C; міцність на ASA і на масці плат не прочитано — стенд (W2 MECH-5)."
+  },
+  {
    "id": "AI-M3X4-ISO14580",
    "item": "гвинт M3×4 ISO 14580 A2-70 TX10 (пачка 25 шт.)",
    "qty": 8,
@@ -7010,10 +7068,10 @@
   },
   {
    "id": "AI-PEM-PRESS",
-   "item": "запресування PEM F-M3-1 і SO-M3-3ZI у пластину M-07 — послуга майстерні, що виготовляє M-07 (власного преса не купують)",
+   "item": "запресування PEM F-M3-1, SO-M3-3ZI і SO-M2.5-6ZI у пластину M-07 — послуга майстерні, що виготовляє M-07 (власного преса не купують)",
    "qty": 1,
    "spares": 0,
-   "for": "AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI (build/21 E2)",
+   "for": "AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI, AI-PEM-SO-M25-6ZI (build/21 E2)",
    "tbd": "рішення (build/15 «Провід, стрічка й інструмент (W2 SRC-1)»): F-M3-1 і SO-M3-3ZI запресовує майстерня, що виготовляє пластину M-07 (прес PEMSERTER або інший з паралельними пуансоном і матрицею), — послуга без MPN; власний ручний прес не обрано, бо зусилля встановлення й оснастку PEM 07.11.2026 не прочитано (pemnet.com: бюлетень F і сторінки product finder за WAF-викликом, знімок 2026-11-07-w2-src1-manual.json web:pem-type-f-installation)"
   },
   {
@@ -7371,11 +7429,16 @@
   },
   {
    "id": "AI-STANDOFF-IMU-13",
-   "item": "стійки 13 мм під пару BNO085 + RP2040-Zero (набір)",
-   "qty": 1,
-   "spares": 0,
-   "for": "build/17 F36 (imu_pack.json boards.standoff_h 13.0; I-01)",
-   "tbd": "тип, кількість і MPN не обрано: кількість — за отворами обох плат (не перевірено)"
+   "item": "стійка Würth 970130155: M2.5 «мама-мама», 13 мм, поліамід, шестигранник 5.0, під BNO085 паку IMU",
+   "qty": 4,
+   "spares": 2,
+   "for": "build/17 F36 (mechanical/params/imu_pack.json boards.standoff_h 13.0): 4 металізовані отвори ⌀2.5 (MOUNTINGHOLE_2.5_PLATED) плати Adafruit 4754 BNO085 (25.4 × 22.86, отвори на 2.54 від країв: Adafruit_BNO08x.brd, github.com/adafruit/Adafruit-BNO08x-PCB be9dc99, CC BY-SA, лише прочитано 11.11.2026); Waveshare RP2040-Zero отворів не має (сторінка wiki RP2040-Zero, 11.11.2026: модуль з castellated-краями), тож стійок під неї немає — її кріплення OPEN для лінії IMU",
+   "manufacturer": "Würth Elektronik",
+   "mpn": "970130155",
+   "sku": {
+    "digikey": "732-13002-ND"
+   },
+   "note": "Поліамід, не сталь: немагнітна стійка поруч із магнітометром BNO085 (з тієї ж причини латунні гвинти кришки, STACK D12). Висота 13.00 = imu_pack.json standoff_h. Гвинти M2.5 до стійок і їх довжина TBD: стос IMU-BOARD-STANDOFFS (F36) залежить від друкованого носія (лінія IMU). Плата IMU_CARRIER (pcb/boards/IMU_CARRIER.json) стоїть поза стійками: її смуга закінчується на y 6.4 коробки, рукав — справа від x 27.0 (W2 PCB-SB2)."
   },
   {
    "id": "AI-INSERT-1420",
@@ -7397,11 +7460,16 @@
   },
   {
    "id": "AI-PACK-FUSE-FIX",
-   "item": "кріплення носійної плати F101 (PACK_FUSE) біля лотка батареї",
-   "qty": 1,
-   "spares": 0,
-   "for": "build/17 F39 (build/16 §2 PACK: «ізольованій і закріпленій біля лотка»)",
-   "tbd": "конверту носія в моделі механіки ще немає (mechanical/README)"
+   "item": "гвинт M2.5×6 ISO 14580 A2-70 TX8 носійної плати F101 (PACK_FUSE) у стійки PEM SO-M2.5-6ZI (пачка 25 шт.)",
+   "qty": 2,
+   "spares": 2,
+   "for": "build/17 F39: 2 отвори ⌀2.7 плати PACK_FUSE за 2.6 від торців (pcb/boards/PACK_FUSE.json, build/kicad/boards/PACK_FUSE/contract-proposal.json) над стійками PF1–PF2 (AI-PEM-SO-M25-6ZI); плата 1.6 + 4.4 у різьбі стійки, вікно 4.1–9.6 мм (mechanical/generated/fastener-stacks.json PACK-FUSE)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "TC-S-M2,5x6",
+   "sku": {
+    "web": "3djake-tc-s-m2,5x6"
+   },
+   "note": "Рядок знімка W2 SRC-2 (web:3djake-tc-s-m2,5x6); сторінку перечитано 11.11.2026 (W2 PCB-SB2): ISO 14580, A2-70, TX8, dk 4.5, k 1.85, 25 шт. у пачці, «In stock», довжини M2.5 — 4, 6, 10, 12, 18, 25, 30 (x 5 і x 8 вікна немає). Той самий артикул, що AI-M25X6-MODULES і AI-M25-DISPLAY-CLAMP: одна пачка 25 шт. покриває 2 + 2 цієї позиції разом з ними. Ізоляція носія — не гвинт: мідь плати на 2.5 мм від осей гвинтів і поліімідна стрічка на нижньому боці (AI-POLYIMIDE-TAPE; її власник додає F39 до «for»)."
   }
  ]
 }

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schemas.kicad.org/drc.v1.json",
+  "coordinate_units": "mm",
+  "ignored_checks": [],
+  "included_severities": [
+    "error",
+    "warning",
+    "exclusion"
+  ],
+  "kicad_version": "10.0.7",
+  "schematic_parity": [],
+  "unconnected_items": [],
+  "violations": [
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of F101",
+          "pos": {
+            "x": 105.35,
+            "y": 113.2
+          },
+          "uuid": "65b1be9f-5f02-40b9-a6c5-99d1405a099d"
+        },
+        {
+          "description": "Segment of F101 on F.Silkscreen",
+          "pos": {
+            "x": 105.35,
+            "y": 113.95
+          },
+          "uuid": "9976d3d4-280a-49ea-9603-55e6651044f1"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Reference field of J116",
+          "pos": {
+            "x": 101.0,
+            "y": 120.8
+          },
+          "uuid": "f9269d3e-5602-42bd-a09a-58aa5eef6763"
+        },
+        {
+          "description": "PTH pad 1 [E1_CELL4] of J116",
+          "pos": {
+            "x": 102.4,
+            "y": 123.8
+          },
+          "uuid": "b492f79c-7719-469e-89e1-9ffbdc86bd75"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    }
+  ],
+  "source": "see report.json board_file"
+}

@@ -6,19 +6,16 @@ M48
 FMAT,2
 METRIC
 ; #@! TA.AperFunction,NonPlated,NPTH,ComponentDrill
-T1C0.700
+T1C1.450
 ; #@! TA.AperFunction,NonPlated,NPTH,ComponentDrill
-T2C1.100
-; #@! TA.AperFunction,NonPlated,NPTH,ComponentDrill
-T3C3.200
+T2C3.200
 %
 G90
 G05
 T1
-X185.9Y-193.0
+X185.3Y-192.35
+X212.3Y-192.35
 T2
-X226.1Y-193.0
-T3
 X104.0Y-104.0
 X104.0Y-204.0
 X138.0Y-104.0

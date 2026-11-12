@@ -1,0 +1,204 @@
+{
+  "schema": "srrx-board-route-log-v1",
+  "board_id": "T7_INSERT",
+  "label": "Frozen route provenance (CI run); --check does not re-route",
+  "tool": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "source_read": "GitHub release API v2.5.0 asset digests, read 2026-11-07"
+  },
+  "runtime": {
+    "name": "Eclipse Temurin JRE",
+    "version": "25.0.5+8",
+    "licence": "GPL-2.0-with-classpath-exception",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jre_x64_linux_hotspot_25.0.5_8.tar.gz",
+    "sha256": "6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6",
+    "source_read": "Adoptium API and GitHub release API, read 2026-11-07"
+  },
+  "command": [
+    "java",
+    "-Djava.awt.headless=true",
+    "-cp",
+    "freerouting-2.5.0.jar",
+    "app.freerouting.cli.FreeroutingCli",
+    "-de",
+    "T7_INSERT.dsn",
+    "-do",
+    "T7_INSERT.ses",
+    "--router.autorouter.max_passes=30",
+    "-mt",
+    "1",
+    "--router.optimizer.max_threads=1",
+    "--router.automatic_neckdown=false",
+    "-da",
+    "--gui.enabled=false",
+    "--router.job_timeout=00:06:00",
+    "--logging.file.enabled=false",
+    "--user_data_path=<temp>",
+    "--router.fanout.enabled=false",
+    "-inc",
+    "SCRIPTED_VBUS,SCRIPTED_SIG"
+  ],
+  "exit_code": 0,
+  "log_tail": [
+    "2026-11-12 00:46:10.825 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-12 00:46:10.936 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-12 00:46:10.940 WARN   Deprecated settings path '-inc / --router.ignore_net_classes'; use '--router.autorouter.ignore_net_classes' instead. The old path will be removed in a future release.",
+    "2026-11-12 00:46:11.067 WARN   The '-inc' command-line flag is deprecated; use '--router.autorouter.ignore_net_classes' instead.",
+    "2026-11-12 00:46:11.338 INFO   [3BF1E4\\D560F8] Loading board file 'T7_INSERT.dsn'...",
+    "2026-11-12 00:46:11.431 INFO   [3BF1E4\\D560F8] Job '3BF1E4\\D560F8' started at 2026-11-12T00:46:11.431326909Z.",
+    "2026-11-12 00:46:11.474 WARN   Design Warning: Board has 2 pre-existing clearance violation(s) in the loaded design (before routing):",
+    "  - 2 unfixable violation(s) (cannot be resolved by Freerouting):",
+    "      * 2 fixed trace/via clearance violations:",
+    "          - U505.7 [net GND] <-> FixedVia#153 [net GND]",
+    "          - U505.7 [net GND] <-> FixedVia#152 [net GND]",
+    "  - 0 potentially fixable violations",
+    "Notice: Freerouting does not modify component placement, board outlines, or fixed items.",
+    "Resolving these 2 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).",
+    "2026-11-12 00:46:11.516 INFO   [3BF1E4\\D560F8] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-12 00:46:11.590 INFO   [3BF1E4\\D560F8] Auto-routing stage started on board '7861875c8ed527826bb0d3550eab1632' with baseline score 92.74 for 18 unrouted items.",
+    "2026-11-12 00:46:12.111 INFO   [3BF1E4\\D560F8] Auto-routing pass #1 on board '7861875c8ed527826bb0d3550eab1632' was completed in 0.49 seconds with score 426.07 (9 unrouted and 2 violations).",
+    "2026-11-12 00:46:12.131 INFO   [3BF1E4\\D560F8] Auto-routing pass #2 on board 'f3cad822fa744fbb9067ebd2da914f4f' was completed in 0.00 seconds with score 426.07 (9 unrouted and 2 violations).",
+    "2026-11-12 00:46:12.153 INFO   [3BF1E4\\D560F8] Auto-routing stage completed: started with 18 unrouted nets, completed in 0.63 seconds, final score: 426.07 (9 unrouted and 2 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
+    "2026-11-12 00:46:12.162 INFO   [3BF1E4\\D560F8] Skipping optimization stage: the board has 9 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-12 00:46:12.173 INFO   [3BF1E4\\D560F8] Job '3BF1E4\\D560F8' finished with state: COMPLETED (elapsed: 0.74 seconds, finished at UTC: 2026-11-12T00:46:12.172487917Z).",
+    "2026-11-12 00:46:12.219 INFO   Saving output file '/tmp/sr-rx-T7_INSERT-t4pbu9oy/T7_INSERT.ses' (SES)...",
+    "2026-11-12 00:46:12.220 INFO   Successfully saved output file '/tmp/sr-rx-T7_INSERT-t4pbu9oy/T7_INSERT.ses' (3971 bytes)."
+  ],
+  "dsn_sha256": "6d7c98b0bc1a4f3fa35bc104da1c14a39aca809789e8884c0b029c5009d7c2bc",
+  "ses_sha256": "a62374e4056eb70cfc288cd73c7d5c30476f591571f66356371e807bd2084973",
+  "dsn_probe": {
+    "resolution": "um 10",
+    "wires_fix": 31,
+    "wires_protect": 0,
+    "keepouts": 8,
+    "planes": 0,
+    "classes": {
+      "kicad_default": {
+        "width": "200",
+        "clearance": "150"
+      },
+      "SCRIPTED_VBUS": {
+        "width": "800",
+        "clearance": "150"
+      },
+      "SCRIPTED_SIG": {
+        "width": "200",
+        "clearance": "150"
+      }
+    }
+  },
+  "locked_segments": {
+    "before_ses_import": 31,
+    "after_ses_import": 31
+  },
+  "via_centre_stubs": [],
+  "drc_command": [
+    "kicad-cli",
+    "pcb",
+    "drc",
+    "--format",
+    "json",
+    "--severity-all",
+    "--all-track-errors",
+    "--units",
+    "mm",
+    "--refill-zones",
+    "--save-board"
+  ],
+  "board_sha256": "9527c6322554604e989b905a76e6eb1911bbfbce25f3e08468e0be89dd816f2c",
+  "previews": [
+    "build/kicad/boards/T7_INSERT/T7_INSERT-top.svg",
+    "build/kicad/boards/T7_INSERT/T7_INSERT-bottom.svg"
+  ],
+  "footprint_sources": [
+    {
+      "ref": "J517",
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm.kicad_mod",
+      "sha256": "6602297c1c068f4578341b36eec1b9042cf28a5c831dc791e06fa381f5e8e887"
+    },
+    {
+      "ref": "J515",
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm.kicad_mod",
+      "sha256": "6602297c1c068f4578341b36eec1b9042cf28a5c831dc791e06fa381f5e8e887"
+    },
+    {
+      "ref": "C515",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C514",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "U505",
+      "footprint": "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm",
+      "file": "build/kicad/footprints/Package_SON.pretty/WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm.kicad_mod",
+      "sha256": "5b7efafe23ba0a80faf2aa5786e7ceed526eb3802b254bc28577f1fc06abb633"
+    },
+    {
+      "ref": "R515",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R514",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "TP501",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "R516",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R517",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "J516",
+      "footprint": "Connector_Wire:SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.75sqmm_1x01_D1.25mm_OD2.3mm.kicad_mod",
+      "sha256": "6602297c1c068f4578341b36eec1b9042cf28a5c831dc791e06fa381f5e8e887"
+    },
+    {
+      "ref": "C516",
+      "footprint": "Capacitor_SMD:CP_Elec_8x6.9",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_8x6.9.kicad_mod",
+      "sha256": "88b7f133b4073d129781e0f54ba37008807d67b0cf309597ad793716f1ef1786"
+    },
+    {
+      "ref": "J514",
+      "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "e1536f71fadb2bcb735cc91360ecf558f92ed45bcc42831e606aa2c128c38c63"
+    }
+  ],
+  "kicad_version": "10.0.7",
+  "github": {
+    "run_id": "43129454692",
+    "sha": "00ae32804e4c489707fca79cc987bec529cc91e0",
+    "ref": "refs/heads/wip/w2-int"
+  }
+}

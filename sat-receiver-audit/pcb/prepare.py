@@ -37,7 +37,7 @@ RF_PORT_BOARD = {'J423':'RF_INJECTOR','J424':'RF_INJECTOR','J425':'RF_HF','J426'
 BOARDS = {
  'PWR_MAIN': {'purpose':'Main eFuse, AON/UV, charge inhibit and converter interconnect passives; commercial converters stay separate.', 'source':['design/E1-review.md','STACK.md §5.1']},
  'PWR_BRANCH': {'purpose':'E2 protected branches, current monitors and low-noise regulators. Candidate sub-board thermal split remains open.', 'source':['design/E2-review.md','STACK.md §5.1']},
- 'PWR_BRANCH_SW': {'purpose':'PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec QSH/QTH pair (b2b-nets.json).', 'source':['pcb/partition-spec.json','design/E2-review.md']},
+ 'PWR_BRANCH_SW': {'purpose':'PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec LSHM-150 pair J208 (PWR-A top) / J209 (PWR-B bottom) (b2b-nets.json, W2 B2B).', 'source':['pcb/partition-spec.json','design/E2-review.md']},
  'USB_POWER_SW': {'purpose':'PWR-B mezzanine (W2 AREA/GR-3): the E5 groups VBUS RTL-A/LAB PORT and LAB BUS I2C buffer no taller than hB, plus the PWR-B side-entry harness headers of E5.', 'source':['pcb/partition-spec.json','design/E5-review.md']},
  'CTRL_HMI': {'purpose':'Bare MCP/HMI control, input protection, cooling drivers and local interface passives; purchased Pico/sensors remain modules.', 'source':['design/E3-review.md','STACK.md §5.2']},
  'USB_POWER': {'purpose':'USB VBUS switches, HF+ LC damping, HDMI reverse isolation and LAB I2C buffer; intact high-speed cables retained.', 'source':['design/E5-review.md','design/E5-connection-guide.md']},
@@ -72,8 +72,9 @@ def pwr_b_overrides():
 # (tools/assembly_data.py HEADERS); the other PWR headers keep their sheet domain on PWR-A.
 # W2 GR-4: the boundary refs of the insert boards (S24 header J514, solder-wire pads J515-J517, J518, J320-J322, J116/J117)
 # sit on their insert board, so every off-board net of T7_INSERT, IMU_CARRIER and PACK_FUSE ends on a connector of that board.
+# W2 B2B: J209, the PWR-B half of the Samtec LSHM-150 board-to-board pair (bottom side of PWR-B), sits on PWR-B; J208 keeps E2 PWR-A.
 DOMAIN_OVERRIDE = {**pwr_b_overrides(), **{r:'ENC' for r in ('ENC301','ENC302')}, **{r:'HATCH' for r in ('J502','J503','J509','J510','J513')},
- **{r:'PWR_BRANCH_SW' for r in ('J201','J202','J203','J204','J207')}, **{r:'USB_POWER_SW' for r in ('J506','J508')},
+ **{r:'PWR_BRANCH_SW' for r in ('J201','J202','J203','J204','J207','J209')}, **{r:'USB_POWER_SW' for r in ('J506','J508')},
  **{r:'T7_INSERT' for r in ('U505','R514','R515','R516','R517','C514','C515','C516','TP501','J514','J515','J516','J517')},
  **{r:'HDMI_INSERT' for r in ('U506','C517','C518','R552','TP502')},
  **{r:'IMU_CARRIER' for r in ('U552','D502','C519','C520','C340','C341','R390','R391','J518','J320','J321','J322')},
@@ -82,7 +83,7 @@ CONSTRAINTS = [
  {'id':'PWR-01','boards':['PWR_MAIN','PWR_BRANCH','PWR_BRANCH_SW','USB_POWER_SW'],'requirement':'4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.','source':'design/E1-review.md; E1-05/E1-06'},
  {'id':'PWR-02','boards':['PWR_MAIN'],'requirement':'Keep raw E1_CELL0/B- distinct from GND/P-. No accidental copper, mounting-hole or balance-cable BMS bypass. J102 remains DNP/service-only.','source':'design/E1-review.md; design/charger-bms-review.md'},
  {'id':'PWR-03','boards':['PWR_BRANCH','PWR_BRANCH_SW'],'requirement':'LT3045 pair <=1 A physical total; Kelvin current-shunt routes, low-drop high-current planes, regulator exposed-pad heat flow and vendor capacitor placement are release work. LNB precision OVP and switch ratings need full temperature validation.','source':'design/E2-review.md'},
- {'id':'PWR-04','boards':['PWR_MAIN','PWR_BRANCH','USB_POWER','PWR_BRANCH_SW','USB_POWER_SW'],'requirement':'PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec QSH-060-01-L-D-A / QTH-060-01-L-D-A pair (pcb/generated/b2b-nets.json: ceil(I_protection / 1 A) contacts per power net plus one adjacent GND, 25 A ground plane); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).','source':'pcb/partition-spec.json (W2 AREA); Samtec QSH/QTH specification Rev K'},
+ {'id':'PWR-04','boards':['PWR_MAIN','PWR_BRANCH','USB_POWER','PWR_BRANCH_SW','USB_POWER_SW'],'requirement':'PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec LSHM-150-02.5-L-DV-A-N-K-TR pair J208 (PWR-A top) / J209 (PWR-B bottom), 5.00 mm mated (pcb/generated/b2b-nets.json contacts: ceil(I_protection / 1 A) contacts per power net, no ground plane, so every rail contact (power, sense/supply tap, rail node) has its GND return in the same column and only GND contacts beside it in its row (b2b.guard_rule); pin n of J208 meets pin n+1 (n odd) / n-1 (n even) of J209); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).','source':'pcb/partition-spec.json (W2 AREA, W2 B2B); Samtec LSHM specification Rev H, catalogue F-224, print Rev Z note 4'},
  {'id':'DC-01','boards':['DC_CORE','RF_INJECTOR'],'requirement':'Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.','source':'design/E4-review.md; E4.json DC detector groups'},
  {'id':'DC-02','boards':['DC_CORE'],'requirement':'Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.','source':'design/E4-review.md; design/E4-detector-analysis.py'},
  {'id':'DC-03','boards':['DC_CORE'],'requirement':'Local100nF per comparator;1nF on each used internal reference; reference shunt/clamps/ground paths close. DCS HIGH=unsafe; LOW requires both window and both reference-good decisions. No signal pullup added on detector board; existing pullups belong E3.','source':'E4.json; https://www.ti.com/lit/ds/symlink/tlv3011.pdf'},
@@ -183,11 +184,81 @@ def sense_nets(components,currents):
         if len(refs)>=2 and ic_input and n!='GND' and not rail:precision.add(n)
     return kelvin,precision-{'GND'},flags
 
+def b2b_mate(n):
+    """Contact of the other LSHM-DV half that meets contact n (W2 B2B). Samtec print LSHM-1XX-XX.X-XXX-DV-A-X-X-TR Rev Z note 4: when two
+    LSHM-DV mate, pin 01 mates contact 02 of the mating connector. Both halves are the same part (odd contacts in one row, even contacts in
+    the other, contacts 2k-1 and 2k at the same place along the strip), so the mating half is turned over about the strip axis and every
+    column pairs the same way: n odd meets n+1, n even meets n-1. The map is its own inverse, so it holds from either board."""
+    return n+1 if n%2 else n-1
+
+B2B_RAIL_KINDS=('power','sense/supply tap','rail node')
+
+def low_ohm_links(components,max_ohm):
+    """W2 B2B review R2: nets that a resistor below max_ohm joins to a net other than GND, {net: 'Rref value to NET'} (lowest ref
+    first). Such a node sits at the potential of the net it is joined to: the 0.22 ohm damper nodes (BIAS_CH1_DAMP: R232 from
+    BIAS_CH1, C235 to GND) are rail nodes of b2b.guard_rule. A resistor to GND (a low-side shunt) does not count."""
+    out={}
+    for c in sorted(components,key=lambda c:sort_ref(c['ref'])):
+        m=re.match(r'\s*(\d+(?:\.\d+)?)\s*(R|Ω|m)',c.get('value','')) if c.get('kind')=='resistor' else None
+        if not m:continue
+        nets=[p.get('net') for p in c['pins'] if p.get('net')]
+        if float(m.group(1))*(1e-3 if m.group(2)=='m' else 1.0)>=max_ohm or len(set(nets))!=2 or 'GND' in nets:continue
+        a,b=nets
+        out.setdefault(a,f"{c['ref']} {c['value']} to {b}");out.setdefault(b,f"{c['ref']} {c['value']} to {a}")
+    return out
+
+def b2b_pairs(out,bb):
+    """Declared sense pairs whose nets both cross (pcb/partition-spec.json b2b.declared_sense_pairs)."""
+    return [pair['nets'] for pair in bb['declared_sense_pairs'] if all(any(r['net']==n for r in out) for n in pair['nets'])]
+
+def b2b_guards(out,bb):
+    """GND guard contacts of b2b.guard_rule: a GND column (2 contacts) beside each crossing declared sense pair, and one GND
+    contact after the last rail column, in the row of that rail contact."""
+    return 2*len(b2b_pairs(out,bb))+(1 if any(r['kind'] in B2B_RAIL_KINDS and r['pins'] for r in out) else 0)
+
+def b2b_contacts(out,bb):
+    """Contact map of the two B2B halves (W2 B2B, pcb/partition-spec.json b2b.pin_map_rule and b2b.guard_rule), J208 column c =
+    contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last
+    column, the next pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail
+    block (power: ceil(I/I_pin) per net; sense/supply taps; rail nodes) in the order b2b.rail_order, which lists the rail contacts
+    one by one (a net listed once keeps all its contacts together; unlisted rails after it, by name), each rail contact followed
+    by its GND return on the same row (rail, GND, rail, GND, ...: every in-row neighbour of a rail contact is GND), then one GND
+    guard; the rails of b2b.rail_row_even the same way from contact 2 on the even row; the other nets in name order on the free
+    contacts of the even row, one per column, then on any free contact; the rest spare (nc). The PWR-B half carries on contact m the net of PWR-A contact b2b_mate(m). Returns (map, fits)."""
+    n_all=bb['contacts'];slots={};over=[]
+    def put(pin,net,role):
+        if 1<=pin<=n_all and pin not in slots:slots[pin]=(net,role)
+        else:over.append(net)
+    end=n_all//2
+    for k,pair in enumerate(b2b_pairs(out,bb)):
+        c=end-2*k
+        put(2*c-1,pair[0],'sense pair');put(2*c,pair[1],'sense pair');put(2*c-3,'GND','guard');put(2*c-2,'GND','guard')
+    col=1
+    order=bb['rail_order'];last=None
+    rails=[r for r in out if r['kind'] in B2B_RAIL_KINDS and r['pins']];kind={r['net']:r['kind'] for r in rails}
+    left={r['net']:r['pins'] for r in rails};seq=[]
+    for i,n in enumerate(order):
+        if not left.get(n):continue
+        k=1 if n in order[i+1:] else left[n];seq+=[n]*k;left[n]-=k
+    for r in sorted(rails,key=lambda r:r['net']):seq+=[r['net']]*left[r['net']];left[r['net']]=0
+    even=set(bb.get('rail_row_even',[]));ecol=1
+    for net in seq:
+        if net in even:put(2*ecol,net,kind[net]);put(2*ecol+2,'GND','gnd');ecol+=2;continue
+        put(2*col-1,net,kind[net]);put(2*col+1,'GND','gnd');last=2*col+1;col+=2
+    if last is not None:put(last+2,'GND','guard')
+    rest=[(r['net'],r['kind']) for r in out if r['kind'] not in B2B_RAIL_KINDS+('declared sense pair',) and r['pins']]
+    free=[p for p in range(2,n_all+1,2) if p not in slots]+[p for p in range(1,n_all+1,2) if p not in slots]
+    fits=not over and len(rest)<=len(free)
+    slots.update(zip(free,rest))
+    return [{'pwr_a_pin':str(i),'pwr_b_pin':str(b2b_mate(i)),'net':slots.get(i,('','spare'))[0],'role':slots.get(i,('','spare'))[1]} for i in range(1,n_all+1)],fits
+
 def b2b_nets(components,rows,currents):
-    """Nets with pins on PWR-A and PWR-B bare board parts (W2 GR-3): the B2B net list by pcb/partition-spec.json b2b.rule."""
+    """Nets with pins on PWR-A and PWR-B bare board parts (W2 GR-3): the B2B net list by pcb/partition-spec.json b2b.rule. W2 B2B: the
+    contact map of both halves (b2b_contacts), audited against the graph refs b2b.graph_refs, which are left out of the net list."""
     spec=json.loads(PARTITION_SPEC.read_text(encoding='utf-8'));bb=spec['b2b'];i_pin=spec['parameters']['b2b_i_pin_A']
+    halves=bb['graph_refs'];b2b_refs=set(halves.values())
     side={r['ref']:('PWR_A' if r['board_candidate'] in PWR_A_DOMAINS else 'PWR_B') for r in rows
-          if r['category']=='bare_board_part' and r['board_candidate'] in PWR_A_DOMAINS+PWR_B_DOMAINS and not r['dnp']}
+          if r['category']=='bare_board_part' and r['board_candidate'] in PWR_A_DOMAINS+PWR_B_DOMAINS and not r['dnp'] and r['ref'] not in b2b_refs}
     by_ref={c['ref']:c for c in components}
     pins=collections.defaultdict(lambda:collections.defaultdict(list))
     for ref,s in side.items():
@@ -195,11 +266,13 @@ def b2b_nets(components,rows,currents):
     cross={n:v for n,v in pins.items() if n!='GND' and len(v)==2}
     kelvin,precision,flags=sense_nets(components,currents)
     declared={n for pair in bb['declared_sense_pairs'] for n in pair['nets']}
+    links=low_ohm_links(components,bb['rail_node_max_ohm'])
     extra=bb['net_current_extra'];out=[];errors=[]
+    if bb['gnd_pins_per_power_contact']!=1:errors.append('b2b.guard_rule: one GND return beside each rail contact (the next contact of its row), so gnd_pins_per_power_contact must be 1')
     for n in sorted(cross):
         row={'net':n,'pwr_a':sorted(cross[n]['PWR_A'],key=sort_ref),'pwr_b':sorted(cross[n]['PWR_B'],key=sort_ref)}
         if n in declared:row.update(kind='declared sense pair',pins=1)
-        elif n in bb['sense_taps']:row.update(kind='sense/supply tap',pins=1,why=bb['sense_taps'][n])
+        elif n in bb['sense_taps']:row.update(kind='sense/supply tap',pins=1,gnd_pins=1,why=bb['sense_taps'][n])
         elif n in kelvin or n in precision:
             row.update(kind='Kelvin/precision (refused)',pins=None);errors.append(f'{n}: Kelvin/precision net crosses PWR-A/PWR-B and is not a declared sense pair')
         else:
@@ -208,18 +281,34 @@ def b2b_nets(components,rows,currents):
             power=prot is not None or n in flags or any(p.get('net')==n and p.get('type') in ('power_in','power_out') for r in cross[n]['PWR_A']+cross[n]['PWR_B'] for p in by_ref[r]['pins'])
             if power and prot is None:
                 row.update(kind='power (no current)',pins=None);errors.append(f'{n}: power net crosses PWR-A/PWR-B without a protection current (tools/assembly_data.py NET_CURRENT)')
-            elif power:row.update(kind='power',prot_A=round(prot,3),pins=math.ceil(prot/i_pin-1e-9),gnd_pins=bb['gnd_pins_per_power_net'])
+            elif power:
+                n_pins=math.ceil(prot/i_pin-1e-9);row.update(kind='power',prot_A=round(prot,3),pins=n_pins,gnd_pins=n_pins*bb['gnd_pins_per_power_contact'])
+            elif n in links:row.update(kind='rail node',pins=1,gnd_pins=1,why=links[n])
             else:row.update(kind='signal',pins=1)
         out.append(row)
     signal=sum(r['pins'] or 0 for r in out if r['kind']!='power');power=sum(r['pins'] for r in out if r['kind']=='power')
-    gnd=sum(r.get('gnd_pins',0) for r in out);need=signal+power+gnd;spare=math.ceil(need*(1+bb['spare_fraction'])-1e-9)
-    return {'schema':'srrx-b2b-nets-v1','status':'DESIGN INPUT (W2 GR-3): nets with pins on PWR-A and PWR-B bare board parts of components.csv; '
-            'the board packages derive the QSH/QTH pin map from it. Not a placement and not a measured current.',
-            'generator':'pcb/prepare.py','rule':bb['rule'],'i_pin_A':i_pin,'mpn':{k:bb['mpn'][k] for k in ('pwr_a','pwr_b','read')},
+    guards=b2b_guards(out,bb);gnd=sum(r.get('gnd_pins',0) for r in out)+guards;need=signal+power+gnd;spare=math.ceil(need*(1+bb['spare_fraction'])-1e-9)
+    contacts,placed=b2b_contacts(out,bb)
+    if not placed:errors.append(f'B2B contact map: {need} contacts (with the sense pair and guard columns) exceed the {bb["contacts"]} contacts of the pair')
+    # The graph refs carry the map pin for pin (design/E2.json) and sit on PWR-A and PWR-B.
+    board_of={r['ref']:r['board_candidate'] for r in rows}
+    for half,ref,doms in (('pwr_a',halves['pwr_a'],PWR_A_DOMAINS),('pwr_b',halves['pwr_b'],PWR_B_DOMAINS)):
+        if ref not in by_ref:
+            errors.append(f'{ref}: B2B half {half} is not a graph ref');continue
+        if board_of.get(ref) not in doms:errors.append(f'{ref}: B2B half {half} has domain {board_of.get(ref)!r}, not one of {", ".join(doms)}')
+        want={c[half+'_pin']:c['net'] for c in contacts}
+        got={str(p['number']):p.get('net','') for p in by_ref[ref]['pins']}
+        diff=[f'{ref}.{x} graph {got.get(x)!r} map {want.get(x)!r}' for x in sorted(set(want)|set(got),key=sort_ref) if got.get(x)!=want.get(x)]
+        if diff:errors.append(f'{ref}: graph pins differ from the B2B contact map ({len(diff)}; rewrite J208/J209 from the map with '
+                              f'python -I pcb/write_b2b_graph.py, then rerun the chain): '+'; '.join(diff[:6]))
+    return {'schema':'srrx-b2b-nets-v1','status':'DESIGN INPUT (W2 GR-3, W2 B2B): nets with pins on PWR-A and PWR-B bare board parts of components.csv '
+            '(the B2B halves themselves left out) and the contact map of both halves, which the graph refs carry pin for pin. Not a placement and not a measured current.',
+            'generator':'pcb/prepare.py','rule':bb['rule'],'i_pin_A':i_pin,'i_pin_note':bb['i_pin_note'],'mpn':{k:bb['mpn'][k] for k in ('pwr_a','pwr_b','read')},
             'contacts_available':bb['contacts'],'pwr_a_domains':list(PWR_A_DOMAINS),'pwr_b_domains':list(PWR_B_DOMAINS),
             'totals':{'crossing_nets':len(out),'power_nets':sum(r['kind']=='power' for r in out),'power_pins':power,'signal_pins':signal,'gnd_pins':gnd,
-                      'contacts_needed':need,'contacts_with_spare':spare,'fits':need<=bb['contacts'] and not errors},
-            'nets':out,'errors':errors}
+                      'guard_pins':guards,'contacts_needed':need,'contacts_with_spare':spare,'fits':need<=bb['contacts'] and not errors,'meets_spare_rule':spare<=bb['contacts']},
+            'nets':out,'graph_refs':halves,'footprint':bb['footprint'],'mating_map':bb['mating_map'],'pin_map_rule':bb['pin_map_rule'],
+            'guard_rule':bb['guard_rule'],'rail_order':bb['rail_order'],'contacts':contacts,'errors':errors}
 
 def board(c,cat):
     if cat!='bare_board_part':return ''

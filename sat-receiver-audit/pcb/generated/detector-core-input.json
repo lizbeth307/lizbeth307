@@ -4006,6 +4006,18 @@
           "name": "3V3_Q6A"
         },
         {
+          "ref": "J208",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "3V3_Q6A"
+        },
+        {
+          "ref": "J209",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "3V3_Q6A"
+        },
+        {
           "ref": "J301",
           "pin": "1",
           "sheet": "E3",
@@ -6338,6 +6350,294 @@
         {
           "ref": "J207",
           "pin": "10",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "4",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "7",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "11",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "12",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "15",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "16",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "19",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "23",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "27",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "31",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "35",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "39",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "43",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "47",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "51",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "55",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "59",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "63",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "67",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "69",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "97",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "98",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "4",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "7",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "11",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "12",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "15",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "16",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "20",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "24",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "28",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "32",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "36",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "40",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "44",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "48",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "52",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "56",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "60",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "64",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "68",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "70",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "97",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "98",
           "sheet": "E2",
           "name": "GND"
         },
@@ -8686,7 +8986,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721"
+        "sha256": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db"
       },
       {
         "file": "design/E3.json",
@@ -8702,11 +9002,11 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "2359c03ba0e9e32355e105286c61dcb3463dd69322f3443c894da88289203209"
+        "sha256": "6b9b480ac6f99aaaad27011715b89d5041b16991208551979465eed412dc4748"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "c6e9d9c1104f2ee390e72d72e3cc612beddf0aabb4b2ece2e159694ed36b82b6"
+        "sha256": "ac05a06f77f55061928086aa8f49e5061df3a29c77aff892e66c2cdcc46a1cac"
       }
     ],
     "source_documents": [
