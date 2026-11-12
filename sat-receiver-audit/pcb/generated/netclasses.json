@@ -648,6 +648,18 @@
       "in_graph": true,
       "required_outer_width_mm": 3.1766
     },
+    "E1_SYS12_SW": {
+      "class": "BATT",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 4.0,
+        "protective_a": 7.5,
+        "via": "L102 (inductor) from SYS12"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
     "E1_USB_PD_RAW": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
@@ -2070,9 +2082,9 @@
     }
   },
   "summary": {
-    "nets": 152,
+    "nets": 153,
     "by_class": {
-      "BATT": 13,
+      "BATT": 14,
       "DCTAP": 12,
       "PWR1A": 33,
       "PWR2A": 5,
@@ -2190,6 +2202,10 @@
       {
         "netclass": "BATT",
         "pattern": "E1_SW"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E1_SYS12_SW"
       },
       {
         "netclass": "PWR3A",
