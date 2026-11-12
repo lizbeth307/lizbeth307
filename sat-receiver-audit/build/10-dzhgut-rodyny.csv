@@ -21,6 +21,8 @@
 "PH","8","header_top","JST","B8B-PH-K-S(LF)(SN)","C157974","50938","0.0865","Connector_JST:JST_PH_B8B-PH-K_1x08_P2.00mm_Vertical",""
 "PH","8","header_side","JST","S8B-PH-K-S(LF)(SN)","C157915","13978","0.1191","Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",""
 "PH","8","housing","JST","PHR-8","C157950","96674","0.029","",""
+"PH","9","header_side","JST","S9B-PH-K-S(LF)(SN)","C157912","5130","0.1803","Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal",""
+"PH","9","housing","JST","PHR-9","C157949","7717","0.0329","",""
 "PH","12","header_top","JST","B12B-PH-K-S(LF)(SN)","C158028","7678","0.1315","Connector_JST:JST_PH_B12B-PH-K_1x12_P2.00mm_Vertical",""
 "PH","12","header_side","JST","S12B-PH-K-S(LF)(SN)","C157943","15","0.1762","Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal",""
 "PH","12","housing","JST","PHR-12","C157960","3009","0.0955","",""
