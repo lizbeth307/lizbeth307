@@ -29,70 +29,70 @@
     "PWR_B.dsn",
     "-do",
     "PWR_B.ses",
-    "--router.autorouter.max_passes=60",
+    "--router.autorouter.max_passes=90",
     "-mt",
     "1",
     "--router.optimizer.max_threads=1",
     "--router.automatic_neckdown=false",
     "-da",
     "--gui.enabled=false",
-    "--router.job_timeout=00:25:00",
+    "--router.job_timeout=00:33:00",
     "--logging.file.enabled=false",
     "--user_data_path=<temp>",
     "--router.fanout.enabled=false",
     "-inc",
-    "SCRIPTED_GND,SCRIPTED_PWR1A,SCRIPTED_PWR3A,SCRIPTED_SIG"
+    "SCRIPTED_GND,SCRIPTED_PWR1A,SCRIPTED_PWR3A"
   ],
   "exit_code": 0,
   "log_tail": [
-    "          - C504.2 [net GND] <-> FixedVia#1579 [net GND]",
-    "          - R281.2 [net GND] <-> FixedVia#1592 [net GND]",
-    "          - R284.2 [net GND] <-> FixedVia#1590 [net GND]",
-    "          ... and 10 more",
-    "  - 0 potentially fixable violations",
-    "Notice: Freerouting does not modify component placement, board outlines, or fixed items.",
-    "Resolving these 15 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).",
-    "2026-11-12 03:29:10.236 INFO   [D02F4A\\77E77D] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
-    "2026-11-12 03:29:10.950 INFO   [D02F4A\\77E77D] Auto-routing stage started on board '1d4ec7daa3a24505a4675226375ebf7a' with baseline score 141.61 for 272 unrouted items.",
-    "2026-11-12 03:29:49.356 INFO   [D02F4A\\77E77D] Auto-routing pass #1 on board '1d4ec7daa3a24505a4675226375ebf7a' was completed in 38.06 seconds with score 498.00 (130 unrouted and 16 violations), using 37.78 CPU seconds and the job allocated 15.88 GB of memory so far.",
-    "2026-11-12 03:30:12.589 INFO   [D02F4A\\77E77D] Auto-routing pass #2 on board '9ea9d2f4ff9f5548b6c0a74cf3a3c15d' was completed in 22.83 seconds with score 528.83 (122 unrouted and 16 violations), using 61.56 CPU seconds and the job allocated 31.07 GB of memory so far.",
-    "2026-11-12 03:30:34.266 INFO   [D02F4A\\77E77D] Auto-routing pass #3 on board 'ad5b6b2d733e8824362323cf40837a26' was completed in 21.30 seconds with score 521.16 (124 unrouted and 16 violations), using 82.39 CPU seconds and the job allocated 44.56 GB of memory so far.",
-    "2026-11-12 03:31:00.771 INFO   [D02F4A\\77E77D] Auto-routing pass #4 on board '942b991396ff61c8f27d8ee75cba7700' was completed in 26.12 seconds with score 513.48 (126 unrouted and 15 violations), using 109.15 CPU seconds and the job allocated 62.60 GB of memory so far.",
-    "2026-11-12 03:31:30.376 INFO   [D02F4A\\77E77D] Auto-routing pass #5 on board '1ca1fa5d2fb1fe9da07041b48e70e709' was completed in 29.22 seconds with score 555.87 (115 unrouted and 15 violations), using 137.86 CPU seconds and the job allocated 82.40 GB of memory so far.",
-    "2026-11-12 03:31:52.885 INFO   [D02F4A\\77E77D] Auto-routing pass #6 on board 'c59ec35351a9b27d0c13992d9b3dd5c9' was completed in 22.12 seconds with score 594.40 (105 unrouted and 15 violations), using 160.66 CPU seconds and the job allocated 97.66 GB of memory so far.",
-    "2026-11-12 03:32:14.739 INFO   [D02F4A\\77E77D] Auto-routing pass #7 on board '3210723b439f8ab283fd9204643821ac' was completed in 21.44 seconds with score 617.53 (99 unrouted and 15 violations), using 182.46 CPU seconds and the job allocated 112.44 GB of memory so far.",
-    "2026-11-12 03:32:38.310 INFO   [D02F4A\\77E77D] Auto-routing pass #8 on board '86e70a32cb2a210264a2fdbed4c574ba' was completed in 23.15 seconds with score 625.23 (97 unrouted and 15 violations), using 205.21 CPU seconds and the job allocated 128.42 GB of memory so far.",
-    "2026-11-12 03:32:59.407 INFO   [D02F4A\\77E77D] Auto-routing pass #9 on board '08658f9313664a68e96061f88f31d8e2' was completed in 20.67 seconds with score 625.23 (97 unrouted and 15 violations), using 225.99 CPU seconds and the job allocated 142.67 GB of memory so far.",
-    "2026-11-12 03:33:17.791 INFO   [D02F4A\\77E77D] Auto-routing pass #10 on board '5e23a1c494026eb132ccd38bdbd26a11' was completed in 17.95 seconds with score 675.33 (84 unrouted and 15 violations), using 244.82 CPU seconds and the job allocated 154.96 GB of memory so far.",
-    "2026-11-12 03:33:28.468 INFO   [D02F4A\\77E77D] Auto-routing pass #11 on board '2075ef15899e086b105ae408e8f23ed5' was completed in 10.23 seconds with score 690.74 (80 unrouted and 15 violations), using 254.75 CPU seconds and the job allocated 161.41 GB of memory so far.",
-    "2026-11-12 03:33:43.128 INFO   [D02F4A\\77E77D] Auto-routing pass #12 on board '9253a40272c9455c024353522eea53af' was completed in 14.21 seconds with score 690.74 (80 unrouted and 15 violations), using 269.56 CPU seconds and the job allocated 171.78 GB of memory so far.",
-    "2026-11-12 03:33:53.095 INFO   [D02F4A\\77E77D] Auto-routing pass #13 on board '68a649e0ff3378d782b15437a6743c18' was completed in 9.52 seconds with score 702.30 (77 unrouted and 15 violations), using 279.45 CPU seconds and the job allocated 178.27 GB of memory so far.",
-    "2026-11-12 03:34:01.662 INFO   [D02F4A\\77E77D] Auto-routing pass #14 on board 'f66edf9b488d2606d364f033e5f6cf66' was completed in 8.11 seconds with score 706.16 (76 unrouted and 15 violations), using 288.36 CPU seconds and the job allocated 183.86 GB of memory so far.",
-    "2026-11-12 03:34:11.978 INFO   [D02F4A\\77E77D] Auto-routing pass #15 on board 'fe20af3d3047ef7a4678eb8a42e150fd' was completed in 9.86 seconds with score 698.45 (78 unrouted and 15 violations), using 298.26 CPU seconds and the job allocated 190.46 GB of memory so far.",
-    "2026-11-12 03:34:21.710 INFO   [D02F4A\\77E77D] Auto-routing pass #16 on board '0a3b212fe089ed0b22b847e6bb7d8b48' was completed in 9.28 seconds with score 706.16 (76 unrouted and 15 violations), using 308.15 CPU seconds and the job allocated 196.77 GB of memory so far.",
-    "2026-11-12 03:34:28.682 INFO   [D02F4A\\77E77D] Auto-routing pass #17 on board '91d76e8d6864427179071c49301cb442' was completed in 6.51 seconds with score 702.30 (77 unrouted and 15 violations), using 315.10 CPU seconds and the job allocated 200.98 GB of memory so far.",
-    "2026-11-12 03:34:34.104 INFO   [D02F4A\\77E77D] Auto-routing pass #18 on board 'a5845f0c22f19400d37621d20609bc46' was completed in 4.97 seconds with score 710.01 (75 unrouted and 15 violations), using 320.07 CPU seconds and the job allocated 203.60 GB of memory so far.",
-    "2026-11-12 03:34:39.157 INFO   [D02F4A\\77E77D] Auto-routing pass #19 on board '93706ea8b7fc3e274a68f492f5bbf7da' was completed in 4.60 seconds with score 710.01 (75 unrouted and 15 violations), using 325.05 CPU seconds and the job allocated 206.38 GB of memory so far.",
-    "2026-11-12 03:34:47.321 INFO   [D02F4A\\77E77D] Auto-routing pass #20 on board '0c63195c25d2fceb515bf048e18085b1' was completed in 7.70 seconds with score 710.01 (75 unrouted and 15 violations), using 332.96 CPU seconds and the job allocated 211.43 GB of memory so far.",
-    "2026-11-12 03:34:55.442 INFO   [D02F4A\\77E77D] Auto-routing pass #21 on board 'bb6d857ad7a909277be9905b63a6cca6' was completed in 7.66 seconds with score 710.01 (75 unrouted and 15 violations), using 340.89 CPU seconds and the job allocated 216.44 GB of memory so far.",
-    "2026-11-12 03:34:57.964 INFO   [D02F4A\\77E77D] Auto-routing pass #22 on board 'fb3db0d91f4e99de6d63722d48680b76' was completed in 2.06 seconds with score 717.72 (73 unrouted and 15 violations), using 343.88 CPU seconds and the job allocated 217.54 GB of memory so far.",
-    "2026-11-12 03:35:00.374 INFO   [D02F4A\\77E77D] Auto-routing pass #23 on board '2f919eee11eaa6667d41f607fc24aa86' was completed in 1.94 seconds with score 713.86 (74 unrouted and 15 violations), using 345.87 CPU seconds and the job allocated 218.34 GB of memory so far.",
-    "2026-11-12 03:35:02.831 INFO   [D02F4A\\77E77D] Auto-routing pass #24 on board '19327267be86030a8b8e3599c4224599' was completed in 1.99 seconds with score 717.72 (73 unrouted and 15 violations), using 348.87 CPU seconds and the job allocated 219.41 GB of memory so far.",
-    "2026-11-12 03:35:05.287 INFO   [D02F4A\\77E77D] Auto-routing pass #25 on board '0f8e6ef8d264bb0b2822b98e52d5198b' was completed in 1.99 seconds with score 725.43 (71 unrouted and 15 violations), using 350.86 CPU seconds and the job allocated 220.19 GB of memory so far.",
-    "2026-11-12 03:35:06.202 INFO   [D02F4A\\77E77D] Auto-routing pass #26 on board '0b2a34da7cb9aa238af5a150b574c160' was completed in 0.45 seconds with score 725.43 (71 unrouted and 15 violations), using 351.86 CPU seconds and the job allocated 220.46 GB of memory so far.",
-    "2026-11-12 03:35:07.536 INFO   [D02F4A\\77E77D] Auto-routing stage completed: started with 272 unrouted nets, completed in 356.86 seconds, final score: 725.43 (71 unrouted and 15 violations), using 353.85 total CPU seconds, 220.95 GB total allocated, and 462.5 MB peak heap usage.",
-    "2026-11-12 03:35:08.069 INFO   [D02F4A\\77E77D] Skipping optimization stage: the board has 71 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-12 03:35:08.100 INFO   [D02F4A\\77E77D] Job 'D02F4A\\77E77D' finished with state: COMPLETED (elapsed: 5 minutes 58.72 seconds, finished at UTC: 2026-11-12T03:35:08.099663161Z).",
-    "2026-11-12 03:35:08.116 INFO   Saving output file '/tmp/sr-rx-PWR_B-3kq0trn2/PWR_B.ses' (SES)...",
-    "2026-11-12 03:35:08.118 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-3kq0trn2/PWR_B.ses' (89887 bytes)."
+    "  Net 'E2_LNA2_SHUNT' (3 unrouted connections):",
+    "    - R236-2  ->  R271-1",
+    "    - C237-1  ->  R236-2",
+    "    - L207-1  ->  C237-1",
+    "  Net 'E2_LNA2_SW' (2 unrouted connections):",
+    "    - R270-1  ->  R236-1",
+    "    - R236-1  ->  U207-6",
+    "  Net 'E2_LNA3_SHUNT' (3 unrouted connections):",
+    "    - R273-1  ->  R241-2",
+    "    - C241-1  ->  R241-2",
+    "    - L208-1  ->  C241-1",
+    "  Net 'E2_LNA3_SW' (2 unrouted connections):",
+    "    - R272-1  ->  R241-1",
+    "    - R241-1  ->  U208-6",
+    "  Net 'E2_LNA4_SHUNT' (3 unrouted connections):",
+    "    - R246-2  ->  C245-1",
+    "    - L209-1  ->  C245-1",
+    "    - L209-1  ->  J209-99",
+    "  Net 'E2_LNA4_SW' (2 unrouted connections):",
+    "    - R246-1  ->  U209-6",
+    "    - via  ->  R246-1",
+    "  Net 'LAB5' (13 unrouted connections):",
+    "    - via  ->  via",
+    "    - via  ->  via",
+    "    - via  ->  via",
+    "    - U501-1  ->  C502-1",
+    "    - U502-1  ->  C505-1",
+    "    - C295-1  ->  U221-1",
+    "    - C502-1  ->  C501-1",
+    "    - C505-1  ->  C504-1",
+    "    - C295-1  ->  C504-1",
+    "    - C501-1  ->  U502-1",
+    "    - J209-1  ->  C248-1",
+    "    - C295-1  ->  C248-1",
+    "    - U221-1  ->  U210-1",
+    "2026-11-12 15:06:13.561 INFO   [99A904\\50D065] Auto-routing stage completed: started with 268 unrouted nets, completed in 954.11 seconds, final score: 751.69 (65 unrouted and 13 violations), using 940.68 total CPU seconds, 880.69 GB total allocated, and 693.6 MB peak heap usage.",
+    "2026-11-12 15:06:13.985 INFO   [99A904\\50D065] Skipping optimization stage: the board has 65 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-12 15:06:14.015 INFO   [99A904\\50D065] Job '99A904\\50D065' finished with state: COMPLETED (elapsed: 15 minutes 55.76 seconds, finished at UTC: 2026-11-12T15:06:14.014814223Z).",
+    "2026-11-12 15:06:14.032 INFO   Saving output file '/tmp/sr-rx-PWR_B-83wokglo/PWR_B.ses' (SES)...",
+    "2026-11-12 15:06:14.034 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-83wokglo/PWR_B.ses' (117997 bytes)."
   ],
-  "dsn_sha256": "abdf711b3a8b5525503e582ab8f0e2ca65e171c64a130b37a6f366a70ff14f91",
-  "ses_sha256": "af2109a0fb0d3e693027341ff51dab4c8b47958c9bcf4345d30616b32d2c6d3e",
+  "dsn_sha256": "fe1b0a36fec15e543a780dc5c1c8cd9ca193b9cbc21ab9622b0ccf71d8e53a3d",
+  "ses_sha256": "948a8c1c643f1f5b21e6b99b995d4adcb9f628177c445e66e1c13a860c0c80e5",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 249,
+    "wires_fix": 252,
     "wires_protect": 0,
-    "keepouts": 70,
+    "keepouts": 52,
     "planes": 2,
     "classes": {
       "kicad_default": {
@@ -107,10 +107,6 @@
         "width": "150",
         "clearance": "150"
       },
-      "SCRIPTED_SIG": {
-        "width": "150",
-        "clearance": "150"
-      },
       "SCRIPTED_PWR1A": {
         "width": "350",
         "clearance": "150"
@@ -122,8 +118,8 @@
     }
   },
   "locked_segments": {
-    "before_ses_import": 249,
-    "after_ses_import": 249
+    "before_ses_import": 252,
+    "after_ses_import": 252
   },
   "via_centre_stubs": [],
   "drc_command": [
@@ -139,7 +135,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "4c0c172d2c9013d57f388e547ec5e40159bd7681028d9d52e72037c88d3135f1",
+  "board_sha256": "dabf89fd2563dde52510bb0a773d1a1807e8ecb67cdbbd4143d9ed88482719a4",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -164,6 +160,12 @@
       "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
     },
     {
+      "ref": "C235",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+    },
+    {
       "ref": "C236",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
@@ -180,6 +182,12 @@
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
       "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C239",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
     },
     {
       "ref": "C240",
@@ -200,6 +208,12 @@
       "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
     },
     {
+      "ref": "C243",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+    },
+    {
       "ref": "C244",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
@@ -218,6 +232,12 @@
       "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
     },
     {
+      "ref": "C247",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+    },
+    {
       "ref": "C248",
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
@@ -234,6 +254,12 @@
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
       "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C251",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
     },
     {
       "ref": "C274",
@@ -314,6 +340,12 @@
       "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
     },
     {
+      "ref": "C298",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+    },
+    {
       "ref": "C501",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
@@ -344,10 +376,28 @@
       "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
     },
     {
+      "ref": "C506",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+    },
+    {
       "ref": "C507",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
       "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C521",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+    },
+    {
+      "ref": "C522",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
     },
     {
       "ref": "C550",
@@ -435,15 +485,9 @@
     },
     {
       "ref": "J506",
-      "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
-      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal.kicad_mod",
-      "sha256": "e1536f71fadb2bcb735cc91360ecf558f92ed45bcc42831e606aa2c128c38c63"
-    },
-    {
-      "ref": "J508",
-      "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
-      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal.kicad_mod",
-      "sha256": "643b4b1d7051026fb1c659f0419b14a5661d9806a9468bc176c8b11449d7c1c3"
+      "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "5f66e17ce30e395f6100c8f83b87e5cab7a9cc680a9ef3554d30f4c83c261ab0"
     },
     {
       "ref": "L206",
@@ -922,8 +966,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43148317003",
-    "sha": "b9bcdd67786cb9fd790c87973d179597f3f1f7af",
-    "ref": "refs/heads/wip/w2-gr5a"
+    "run_id": "43241032279",
+    "sha": "7575bc42ea3f9cb6fc07477de902ddd427f37e14",
+    "ref": "refs/heads/wip/w2-pwrb2"
   }
 }
