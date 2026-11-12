@@ -5,6 +5,7 @@ import model as M
 from model import cb
 
 VIA_D, VIA_DRILL = 0.65, 0.3
+PAD_INSET = 0.0  # incremental.py sets it: a path may start or end in a pad only this far inside its edge (KiCad connection_width)
 
 
 def cap_dist(X, Y, x1, y1, x2, y2, r):
@@ -176,7 +177,17 @@ class Grid:
                 s = cb.Capsule(it.a[0], it.a[1], it.b[0], it.b[1], it.width / 6)
             elif it.kind == 'via':
                 s = cb.Capsule(it.at[0], it.at[1], it.at[0], it.at[1], it.size / 4)
-            cov[w] |= shape_dist(self.X[w], self.Y[w], s) <= 0.0
+            inside = shape_dist(self.X[w], self.Y[w], s) <= 0.0
+            if it.kind == 'pad' and PAD_INSET > 0:
+                # eroded pad: the cell and its four neighbours PAD_INSET away are inside (a track end well inside the pad);
+                # a pad too small for that keeps the cells near its anchor
+                core = inside.copy()
+                for dx, dy in ((PAD_INSET, 0), (-PAD_INSET, 0), (0, PAD_INSET), (0, -PAD_INSET)):
+                    core &= shape_dist(self.X[w] + dx, self.Y[w] + dy, s) <= 0.0
+                if not core.any():
+                    core = inside & (np.hypot(self.X[w] - it.at[0], self.Y[w] - it.at[1]) <= self.g * 1.5)
+                inside = core
+            cov[w] |= inside
         return cov
 
     def pt(self, i, j):

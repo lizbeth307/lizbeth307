@@ -25,6 +25,7 @@ from pathlib import Path
 
 import model as M
 import fin as F
+import plane as PL
 from model import cb
 
 HERE = Path(__file__).resolve().parent
@@ -173,6 +174,25 @@ def chains(segs):
     return FR.chains(segs)
 
 
+def snap_points(segs, centres, tol=3e-4):
+    """Board-mm segments after rounding: ends within tol of a via centre take the centre, ends within tol of each other
+    take one value, and segments that become a point are dropped (a 0.0001 mm piece reads as a dangling track in KiCad)."""
+    reps = [tuple(c) for c in centres]
+    out = []
+
+    def snap(p):
+        for r in reps:
+            if abs(p[0] - r[0]) <= tol and abs(p[1] - r[1]) <= tol:
+                return r
+        reps.append(tuple(p))
+        return tuple(p)
+    for a, b in segs:
+        a, b = snap(tuple(a)), snap(tuple(b))
+        if a != b:
+            out.append((a, b))
+    return out
+
+
 def export(m, doc, guard, history):
     """The new route-frozen.json document: untouched records verbatim, changed records re-chained, new copper appended."""
     alive = collections.defaultdict(list)
@@ -201,8 +221,12 @@ def export(m, doc, guard, history):
         for k, rec in enumerate(doc[key]):
             if alive.get((key, k)):
                 vias[key].append(rec)
+    vcentre = collections.defaultdict(list)
+    for it in m.items:
+        if it.alive and it.kind == 'via':
+            vcentre[it.net].append(B(it.at))
     for (key, net, layer, w), segs in sorted(loose.items()):
-        for path in chains([(tuple(a), tuple(b)) for a, b in segs]):
+        for path in chains(snap_points(segs, vcentre[net])):
             tracks[key].append([net, layer, w, [list(p) for p in path]])
     for key in tracks:
         tracks[key].sort()
@@ -224,6 +248,14 @@ def export(m, doc, guard, history):
         if key == 'drop_scripted' and history:
             out['increments'] = doc.get('increments', []) + [history]
     return out
+
+
+def outer_only_nets():
+    """Nets of the classes the spec keeps on the outer layers (router.class_layers, CTRL.kicad_pro patterns)."""
+    spec = json.loads((HERE.parents[4] / 'pcb/boards/CTRL.json').read_text(encoding='utf-8'))
+    pro = json.loads((HERE.parent / 'CTRL.kicad_pro').read_text(encoding='utf-8'))['net_settings']
+    outer = {c for c, lays in spec['router'].get('class_layers', {}).items() if set(lays) <= {'F.Cu', 'B.Cu'}}
+    return {p['pattern'] for p in pro['netclass_patterns'] if p['netclass'] in outer}
 
 
 def segments_of(doc):
@@ -256,6 +288,8 @@ def copper_diff(old, new):
 
 def run(args, log=print):
     import freeze_route as FR
+    import router as R
+    R.PAD_INSET = args.pad_inset
     t0 = time.time()
     out_path = Path(args.out)
     base_path = Path(args.base) if args.base else OUT
@@ -291,13 +325,30 @@ def run(args, log=print):
             F.prune(m, n)
     fz = F.Finisher(m, log=log)
     widths, default_w = FR.class_widths()
+    outer_only = outer_only_nets()
+    planes0 = PL.split_count(m) if args.plane_guard else 0
+    if args.plane_guard:
+        log(f'L2 plane components with GND vias before the joins: {planes0}')
     queue = collections.deque(n for n in nets if n not in scripted_only)
     fallback = set(args.l2) | (set(queue) if args.l2_touched else set())
     rounds, failed = 0, []
     while queue and rounds < args.max_rounds:
         net = queue.popleft()
         rounds += 1
-        ok, ripped = fz.connect(net, l2_bias=FR.L2_BIAS if net in fallback else None, width=widths.get(net, default_w))
+        n0, alive0 = len(m.items), [it.id for it in m.items if it.alive]
+        if net in outer_only:  # power classes route on F.Cu/B.Cu only (spec router.class_layers; check_boards inner widths)
+            ok, ripped = fz.connect(net, l2_bias=None, width=widths.get(net, default_w), layers=('F.Cu', 'B.Cu'))
+        else:
+            ok, ripped = fz.connect(net, l2_bias=FR.L2_BIAS if net in fallback else None, width=widths.get(net, default_w))
+        if args.plane_guard and any(it.alive and it.kind == 'track' and 'In1.Cu' in it.layers for it in m.items[n0:])                 and PL.split_count(m) > planes0:
+            # the L2 links of this join split the GND plane: undo the join and join the net again without L2
+            for it in m.items[n0:]:
+                it.alive = False
+            for i in alive0:
+                m.items[i].alive = True
+            log(f'{net}: L2 link would split the GND plane, joined again without L2')
+            ok, ripped = fz.connect(net, l2_bias=None, width=widths.get(net, default_w),
+                                    layers=('F.Cu', 'B.Cu') if net in outer_only else ('F.Cu', 'In2.Cu', 'B.Cu'))
         log(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)')
         if not ok and net not in failed:
             failed.append(net)
@@ -324,7 +375,10 @@ def run(args, log=print):
         if n not in scripted_only:
             F.prune(m, n)
     open_, bad = FR.verify(m)
-    log(f'open connections {open_}, clearance/dangling problems {len(bad)}')
+    planes = PL.split_count(m)
+    if planes > 1:
+        bad.append(('L2 GND plane split', planes, 'components with GND vias'))
+    log(f'open connections {open_}, clearance/dangling problems {len(bad)}, L2 plane components {planes}')
     for b_ in bad[:20]:
         log('   ', b_)
     if bad or (open_ and not args.allow_open):

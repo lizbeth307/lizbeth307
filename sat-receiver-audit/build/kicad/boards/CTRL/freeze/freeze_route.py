@@ -222,8 +222,12 @@ def main(argv=None):
     inc.add_argument('--retry', action='store_true', help='nets that found no path are joined once more at the end')
     inc.add_argument('--retry-l2', action='store_true', help='with --retry: the retried nets may use L2')
     inc.add_argument('--retry-rip-new', action='store_true', help='with --retry: copper added by this run may be ripped too')
+    inc.add_argument('--plane-guard', action='store_true',
+                     help='undo a join whose L2 links split the L2 GND plane and join that net without L2 (plane.py)')
     inc.add_argument('--max-rounds', type=int, default=120, help='limit of net joins (default 120)')
     inc.add_argument('--allow-open', action='store_true', help='write the result with open connections left to Freerouting')
+    inc.add_argument('--pad-inset', type=float, default=0.13,
+                     help='a new path starts or ends at least this far inside a pad edge (KiCad connection_width; default 0.13)')
     inc.add_argument('--reason', default='', help='why (recorded in the increments list of route-frozen.json)')
     inc.add_argument('--check', action='store_true', help='compare the result with --out instead of writing it')
     args = ap.parse_args(argv)
