@@ -1068,16 +1068,15 @@
     },
     {
       "ref": "C506",
-      "value": "150uF 10V low-ESR",
+      "value": "47uF 10V 16SVPG47M",
       "kind": "capacitor",
       "group": "VBUS RTL-A і LAB PORT",
-      "source": "STACK.md §5.2 / engineering design",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_SMD:CP_Elec_8x6.9",
-      "mpn": "16SVPC150M",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "mpn": "16SVPG47M",
       "manufacturer": "Panasonic",
-      "lcsc": "C190722",
-      "alt_mpn": "Panasonic 10SVQP150M",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -1093,7 +1092,66 @@
         }
       ],
       "notes": [
-        "At least120uF at downstream external USB port after gate, not only on common hub supply."
+        "At least120uF at downstream external USB port after gate, not only on common hub supply.",
+        "W2 GR-5B, SHRINK-2: C506, C521 і C522 — три полімерні Panasonic 16SVPG47M (47 мкФ/16 V, ESR 25 мОм, 4.5 мм; рядки READS-P web:panasonic-svpg-sheet-lcsc, web:panasonic-16svpg47m-page) паралельно на VBUS_LABPORT, разом 141 мкФ ≥120 мкФ, замість одного 16SVPC150M (150 мкФ, 6.9 мм). Висота 4.5 мм ≤ hB 5.5 мм, тож уся група «VBUS RTL-A і LAB PORT» лягає на PWR-B і VBUS_LABPORT не перетинає B2B. Кидок струму обмежує U502 (0.678–0.825 A); поведінка з меншим ESR на порту — OPEN (крокові тести)."
+      ]
+    },
+    {
+      "ref": "C521",
+      "value": "47uF 10V 16SVPG47M",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
+      "status": "design",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "mpn": "16SVPG47M",
+      "manufacturer": "Panasonic",
+      "lcsc": "C2161511",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "VBUS_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Друга частина (C521) трійки C506/C521/C522 на VBUS_LABPORT (W2 GR-5B): див. примітку C506."
+      ]
+    },
+    {
+      "ref": "C522",
+      "value": "47uF 10V 16SVPG47M",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
+      "status": "design",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "mpn": "16SVPG47M",
+      "manufacturer": "Panasonic",
+      "lcsc": "C2161511",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "VBUS_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Третя частина (C522) трійки C506/C521/C522 на VBUS_LABPORT (W2 GR-5B): див. примітку C506."
       ]
     },
     {
@@ -3475,15 +3533,15 @@
     },
     {
       "ref": "J506",
-      "value": "X23S1-PWR: JST PH 3, боковий вхід, S23",
+      "value": "SL3-PWR-PH: JST PH 9, боковий вхід, S23, S34",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR і HATCH",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3, W2 GR-5B)",
       "status": "design",
-      "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
-      "mpn": "S3B-PH-K-S(LF)(SN)",
+      "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal",
+      "mpn": "S9B-PH-K-S(LF)(SN)",
       "manufacturer": "JST",
-      "lcsc": "C157929",
+      "lcsc": "C157912",
       "pins": [
         {
           "number": "1",
@@ -3502,10 +3560,47 @@
           "name": "VBUS_LABPORT",
           "type": "passive",
           "net": "VBUS_LABPORT"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "AUX12",
+          "type": "passive",
+          "net": "AUX12"
+        },
+        {
+          "number": "7",
+          "name": "I2CB_SCL",
+          "type": "passive",
+          "net": "I2CB_SCL"
+        },
+        {
+          "number": "8",
+          "name": "I2CB_SDA",
+          "type": "passive",
+          "net": "I2CB_SDA"
+        },
+        {
+          "number": "9",
+          "name": "SLED_DET",
+          "type": "passive",
+          "net": "SLED_DET"
         }
       ],
       "notes": [
-        "Роз'єм джгута X23S1-PWR (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S23; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута SL3-PWR-PH (build/16 §4; W2 GR-3, злиття W2 GR-5B за SHRINK-2): на PWR-B, сегмент(и) S23, S34; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 GR-5B: J506 (S23, PH 3) і J508 (S34, PH 6) зведено в одну вилку JST PH 9 бічного входу S9B-PH-K-S(LF)(SN) (рядок READS-P web:jst-ph-catalogue-lcsc, LCSC C157912); контакти 1–3 — S23 як раніше J506, 4–9 — S34 у порядку колишньої J508; джгут розходиться на дальніх кінцях (J501 і J505)."
       ]
     },
     {
@@ -3547,59 +3642,6 @@
       ],
       "notes": [
         "Роз'єм джгута X32S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S32; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
-      ]
-    },
-    {
-      "ref": "J508",
-      "value": "X34S1-PWR: JST PH 6, боковий вхід, S34",
-      "kind": "connector",
-      "group": "Роз'єми джгутів PWR і HATCH",
-      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
-      "status": "design",
-      "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
-      "mpn": "S6B-PH-K-S(LF)(SN)",
-      "manufacturer": "JST",
-      "lcsc": "C157920",
-      "pins": [
-        {
-          "number": "1",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "3",
-          "name": "AUX12",
-          "type": "passive",
-          "net": "AUX12"
-        },
-        {
-          "number": "4",
-          "name": "I2CB_SCL",
-          "type": "passive",
-          "net": "I2CB_SCL"
-        },
-        {
-          "number": "5",
-          "name": "I2CB_SDA",
-          "type": "passive",
-          "net": "I2CB_SDA"
-        },
-        {
-          "number": "6",
-          "name": "SLED_DET",
-          "type": "passive",
-          "net": "SLED_DET"
-        }
-      ],
-      "notes": [
-        "Роз'єм джгута X34S1-PWR (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S34; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
       ]
     },
     {
@@ -3854,6 +3896,11 @@
       "id": "R-E5-09",
       "description": "W425 enters the main case through J551, a keyed panel receptacle binder M8 A-coded 3-pin (76 6618 1111 00003-0200) with the mating field-wireable plug 99 3379 100 03 on W425: BIAS_SB_LNA on contact 1 (brown lead), GND on contact 3 (blue), contact 4 (black) unused. S36 ends at J551, S41 is the W425 cable.",
       "source": "binder data sheets read 2026-11-07 (parts snapshot 2026-11-07-w2-reads-e-manual.json); the M8 shell family differs from GX16 (J504) and GX12 (J505, its drawing read the same day), so no IMU or LAB BUS plug fits; a captive pod gland stays at the pod end only. build/15 'Ключування панельних роз'ємів J504/J505/J551 (W2 GR-1)'."
+    },
+    {
+      "id": "R-E5-10",
+      "description": "W2 GR-5B, SHRINK-2: C506 стає трьома 16SVPG47M (C506, C521, C522; 141 µF на VBUS_LABPORT, ≥120 µF за приміткою C506), щоб група «VBUS RTL-A і LAB PORT» цілком лягла на PWR-B (hB 5.5 мм) і VBUS_LABPORT не перетинав B2B; J506 і J508 — одна вилка JST PH 9 S9B-PH-K-S(LF)(SN) (J506 SL3-PWR-PH: S23 контакти 1–3, S34 контакти 4–9).",
+      "source": "pcb/partition-spec.json candidates.shrink2.planned (C506-3x, J506+J508-PH9); READS-P rows web:panasonic-svpg-sheet-lcsc and web:jst-ph-catalogue-lcsc; build/15 «Демпфери і C506 (W2 GR-5B)», «Роз'єми PWR-B (W2 GR-5B)»"
     }
   ],
   "power_flags": [

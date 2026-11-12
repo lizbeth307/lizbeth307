@@ -13,16 +13,26 @@ def poly_area(pts):
 
 def board_sheet(P, bid):
     b = P.boards["boards"][bid]
+    notes = ["Координати — від лівого нижнього кута контуру, вид з боку компонентів (деталі лише зверху, build/15).",
+             f"Отвори ⌀{fmt(b['hole_d'])}, зона заборони міді/деталей ⌀{fmt(b['hole_keepout_d'])}; висота деталей ≤{fmt(b['max_height'])} мм.",
+             f"Кріплення: {b['place']['mount']}" + (f"; гвинт {b['screw']}" if b.get("screw") else "") + ".",
+             "boards/<id>-edge-cuts.dxf — лише контур (CUT) і отвори (HOLE) для KiCad Edge.Cuts; 1 одиниця = 1 мм.",
+             "Пунктир: зони термопрокладок, модулі на платі, перемикачі/енкодер; рамки по краях — зони роз'ємів (contract/boards.json)."]
+    regions = []
+    if "bottom_side" in b:      # W2 MECH-7: two-sided PWR-A, bottom keep-in = the plate pockets PB* (M-07)
+        from .rules import pwr_bottom_regions, pwr_bottom_h_max
+        regions = pwr_bottom_regions(P)
+        notes[0] = "Координати — від лівого нижнього кута контуру, вид з боку компонентів; PWR-A двобічна (W2 MECH-7, SHRINK-2)."
+        notes.append(f"Деталі нижнього боку — лише в зонах PB1-PB{len(regions)} (кишені пластини M-07 під ними), висота ≤{fmt(pwr_bottom_h_max(P))} мм; "
+                     "під полями THT PWR-B — деталі ≤2.7 мм (H-TRIM).")
     sh = Sheet(f"B-{bid}", f"Плата {bid}: контур Edge.Cuts і кріпильні отвори", b["name"], (420.0, 297.0), 1.0, (40.0, 60.0),
-               "FR-4, 4 шари, 1.6 мм (build/15)",
-               ["Координати — від лівого нижнього кута контуру, вид з боку компонентів (деталі лише зверху, build/15).",
-                f"Отвори ⌀{fmt(b['hole_d'])}, зона заборони міді/деталей ⌀{fmt(b['hole_keepout_d'])}; висота деталей ≤{fmt(b['max_height'])} мм.",
-                f"Кріплення: {b['place']['mount']}" + (f"; гвинт {b['screw']}" if b.get("screw") else "") + ".",
-                "boards/<id>-edge-cuts.dxf — лише контур (CUT) і отвори (HOLE) для KiCad Edge.Cuts; 1 одиниця = 1 мм.",
-                "Пунктир: зони термопрокладок, модулі на платі, перемикачі/енкодер; рамки по краях — зони роз'ємів (contract/boards.json)."])
+               "FR-4, 4 шари, 1.6 мм (build/15)", notes)
     for (x, y, w, h) in b.get("thermal_bond", []):
         sh.rect(x, y, w, h, "HIDDEN")
         sh.label((x + 1, y + h - 3), "термопрокладка", 1.6)
+    for pid, (x, y, w, h) in regions:
+        sh.rect(x, y, w, h, "HIDDEN")
+        sh.label((x + 0.5, y + 0.5), f"низ {pid}", 1.2)
     xs0 = [p[0] for p in b["outline"]]
     ys0 = [p[1] for p in b["outline"]]
     for i, ez in enumerate(b.get("edge_zones", [])):
@@ -79,6 +89,20 @@ def contract(P):
             "height_zones": b.get("height_zones", []), "rear_zones": b.get("rear_zones", []),
             "dxf": f"boards/{bid.lower()}-edge-cuts.dxf",
         }
+        # W2 MECH-7: two-sided PWR-A (bottom keep-in = the plate pockets PB*, board coordinates), H-TRIM, PWR-B windows rule
+        if "bottom_side" in b:
+            from .rules import pwr_bottom_regions, pwr_bottom_h_max
+            regs = pwr_bottom_regions(P)
+            out["boards"][bid]["bottom_side"] = {"keep_in_mm": [r for _, r in regs], "pockets": [pid for pid, _ in regs],
+                                                 "h_max": pwr_bottom_h_max(P), "rule": b["bottom_side"]["rule"]}
+        if "converter_zones" in b:
+            out["boards"][bid]["converter_zones"] = b["converter_zones"]
+        if "converter_zone_refs" in b:      # W2 MECH-7 part 2: the graph refs (GR-5A) that each converter zone holds
+            out["boards"][bid]["converter_zone_refs"] = b["converter_zone_refs"]
+        if "h_trim" in b:
+            out["boards"][bid]["h_trim"] = {k: b["h_trim"][k] for k in ("protrusion_max", "zone_h_max", "zones", "gate")}
+        if "windows" in b:
+            out["boards"][bid]["windows_rule"] = b["windows"]
     return out
 
 
@@ -240,11 +264,25 @@ def area_check(P):
                 judge = usable
                 basis = (f"usable {usable:.0f} mm2 of pcb/partition-budget.json candidates.{ch} boards.{USABLE_FROM_BUDGET[bid]} (outline minus holes, "
                          f"windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline {have:.0f} mm2 "
-                         "minus only the Pololu windows is an upper bound)")
+                         "is only an upper bound)")
             else:
                 judge, basis = None, "usable area not computed: pcb/partition-budget.json has no usable_mm2 for this board"
+        # W2 MECH-7 (AREA-2 review R4): while planned content changes of the chosen budget candidate are pending (SHRINK-2 swaps
+        # not yet in the graph), the graph's courtyards are not the decided content: judge against the budget's planned demand
+        planned = planned_demand(bid)
         if not any(refs.get(d) for d in b["domains"]):
             result = f"OPEN: no part of pcb/generated/components.csv in the domains {', '.join(b['domains'])} yet (pcb/prepare.py creates them, GR-3)"
+        elif planned and planned["demand_1_8_mm2"] is not None and planned["usable_mm2"]:
+            p18, pu = planned["demand_1_8_mm2"], planned["usable_mm2"]
+            head = (f"{planned['pending']} planned content changes of pcb/partition-budget.json candidates.{planned['candidate']} are pending "
+                    f"({', '.join(planned['owners'])}), so the graph's courtyards ({raw:.0f} mm2 raw) are not the decided content: the budget's planned "
+                    f"{planned['board']} demand {p18:.0f} mm2 at fill {FILL[1]:g} against its usable {pu:.0f} mm2 (budget ratio_1.8 = usable / "
+                    f"demand {planned['ratio_1_8']}, raw fill {planned['raw_fill']})")
+            if planned.get("budget_older_than_graph"):
+                head += (f"; the budget is older than the graph: {', '.join(planned['budget_older_than_graph'])} are in the graph already "
+                         "(GR-5A/GR-5B), so its planned demand still counts their reserved blocks or old parts until the AREA lineage reruns "
+                         "pcb/partition_budget.py (W2 MECH-7 part 2)")
+            result = ("PASS (model estimate): " if p18 <= pu else "OPEN: ") + head + "; model estimate, the placement decides (PCB)"
         elif judge is None:
             result = f"OPEN: {basis}; outline {have:.0f} mm2 (model estimate)"
         elif n18 <= judge:
@@ -267,8 +305,88 @@ def area_check(P):
         if usable is not None:
             res["boards"][bid]["usable_mm2"] = round(usable, 0)
             res["boards"][bid]["ratio_basis"] = "usable_mm2 (pcb/partition-budget.json)"
+        if planned:
+            res["boards"][bid]["planned_budget"] = planned
     res["with_harness"] = harness_check(P, res, root, cy)
     return res
+
+
+# Mech board -> board row of pcb/partition-budget.json candidates.<chosen>.boards whose planned demand is judged while planned
+# content changes are pending (W2 MECH-7): PWR-B is the mezzanine row, PWR-A its top side (the bottom side is R-PWR-BOTTOM).
+PLANNED_FROM_BUDGET = {"PWR_B": "PWR_B", "PWR": "PWR_A"}
+
+
+def planned_demand(bid):
+    """Planned demand of mech board bid while the chosen budget candidate has pending planned changes, else None."""
+    mb = PLANNED_FROM_BUDGET.get(bid)
+    if mb is None:
+        return None
+    ch, cand = budget_candidate()
+    changes = ((cand or {}).get("planned") or {}).get("changes", [])
+    pend = [c for c in changes if c.get("status") == "pending"]
+    row = ((cand or {}).get("boards") or {}).get(mb)
+    if not pend or not row:
+        return None
+    out = {"candidate": ch, "board": mb, "pending": len(pend), "owners": sorted({c.get("owner", "?") for c in pend}),
+           "demand_1_8_mm2": row.get("demand_1.8_mm2"), "usable_mm2": row.get("usable_mm2"), "ratio_1_8": row.get("ratio_1.8"),
+           "raw_fill": row.get("raw_fill")}
+    # W2 MECH-7 part 2: changes that the budget still counts pending although the graph already carries them (the budget is
+    # older than the graph until the AREA lineage reruns pcb/partition_budget.py): named, so the row says what it judges
+    live = planned_live()
+    stale = sorted(c["id"] for c in pend if live.get(c["id"], ("pending",))[0] == "in graph")
+    if stale:
+        out["budget_older_than_graph"] = stale
+    return out
+
+
+def graph_board_parts(root=None):
+    """ref -> pcb/generated/components.csv row of every bare board part that is fitted (DNP excluded)."""
+    import csv
+    p = (root or _root()) / "pcb" / "generated" / "components.csv"
+    if not p.exists():
+        return {}
+    with p.open(encoding="utf-8", newline="") as fh:
+        return {r["ref"]: r for r in csv.DictReader(fh) if r.get("category") == "bare_board_part" and r.get("dnp") != "True"}
+
+
+def planned_live(root=None):
+    """W2 MECH-7 part 2: status of each planned change of the chosen budget candidate against the graph of now, by the rule
+    of pcb/partition_budget.py Evaluator.planned (pcb/partition-spec.json candidates.<chosen>.planned.changes): 'pending'
+    while every ref still has the graph value it replaces (while_mpn in design/parts/parts.json, or while_footprint in
+    pcb/generated/components.csv), 'in graph' when none has, 'half-applied' otherwise; a reserve (refs [] and
+    until_mpn_in_graph) is 'in graph' once a fitted bare board part carries a listed MPN. So a budget that is older than the
+    graph keeps no retired block alive in the mechanical rules. Returns {change id: (status, [reserved block ids])}."""
+    import json
+    root = root or _root()
+    ch, _ = budget_candidate()
+    sp = root / "pcb" / "partition-spec.json"
+    db = root / "design" / "parts" / "parts.json"
+    if ch is None or not sp.exists() or not db.exists():
+        return {}
+    changes = ((json.loads(sp.read_text(encoding="utf-8")).get("candidates", {}).get(ch) or {}).get("planned") or {}).get("changes", [])
+    mpn = {r: p.get("mpn") for p in json.loads(db.read_text(encoding="utf-8")).get("parts", []) for r in p.get("refs", [])}
+    comp = graph_board_parts(root)
+    out = {}
+    for c in changes:
+        blocks = [b["id"] for b in (c.get("to") or {}).get("blocks", [])]
+        if "until_mpn_in_graph" in c:
+            st = "in graph" if any(mpn.get(r) in c["until_mpn_in_graph"] for r in comp) else "pending"
+        else:
+            def holds(r):
+                if r not in comp:
+                    return False
+                if "while_mpn" in c:
+                    return mpn.get(r) == c["while_mpn"]
+                return comp[r]["footprint"] == (c.get("while_footprint") or {}).get(r)
+            state = [holds(r) for r in c.get("refs", [])]
+            st = "pending" if state and all(state) else "in graph" if not any(state) else "half-applied"
+        out[c["id"]] = (st, blocks)
+    return out
+
+
+def retired_blocks(root=None):
+    """Reserved block ids of the budget whose planned change is in the graph now (planned_live), with the change id."""
+    return {b: cid for cid, (st, bl) in planned_live(root).items() if st == "in graph" for b in bl}
 
 
 SIDE_ENTRY = ("CTRL", "RF", "ENCM", "ENCV")   # tools/assembly_data.py SIDE_ENTRY_UNITS
@@ -542,11 +660,14 @@ def header_height_rule(P):
             bid = UNIT_BOARD.get(r["unit"])
             if bid is None:
                 continue
+            own = None
+            if r.get("board") == "PWR_B":      # W2 MECH-7: a PWR-B header is judged on PWR-B in its build/16 orientation (GR-3: side entry)
+                bid, own = "PWR_B", r.get("orientation")
             b = P.boards["boards"][bid]
             pins = int(r["pins"])
-            h, orient, key = header_height(P, r["family"], r["unit"])
+            h, orient, key = header_height(P, r["family"], r["unit"], own)
             basis = header_height_basis(P, key)
-            size = header_size(P, r["family"], pins, r["unit"], cy)
+            size = header_size(P, r["family"], pins, r["unit"], cy, own)
             row = {"connector": r["connector"], "board": bid, "family": r["family"], "orientation": orient, "h_mm": h, "h_basis": basis,
                    "h_status": hh.get(key, {}).get("h_status", hh.get("status")),
                    "courtyard_mm": [round(v, 2) for v in size[:2]] if size else None, "max_height": b["max_height"]}
@@ -557,6 +678,8 @@ def header_height_rule(P):
                 rows.append(row)
                 continue
             front, rear, fits, verdict = judge(b, h, size)
+            if r.get("board") == "PWR_A" and h > b["max_height"] + 1e-9:
+                verdict += "; W2 MECH-7: it stands in a PWR-B edge strip (no PWR-B over it), its mated top under the display is rule R-HDR-MATED"
             row.update(best_front_zone_mm=front, best_rear_zone_mm=rear, verdict=verdict)
             if basis == "body":
                 body.setdefault(key, []).append(r["connector"])

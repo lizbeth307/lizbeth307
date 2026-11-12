@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>B-PWR_B Плата PWR_B: контур Edge.Cuts і кріпильні отвори</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 5ccb5c406ecc</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 2fe404e780cd</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="178" y1="237" x2="178" y2="202" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <text x="179" y="201" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E1: CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J20</text>
-<line x1="148" y1="200" x2="168" y2="200" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="148" y="195" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E2: J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 </text>
+<line x1="98" y1="200" x2="147" y2="200" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="98" y="195" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E2: W2 MECH-7 part 2 (SHRINK-2 without the PHD merge): J207 SL2-PWR-PH (JS</text>
+<line x1="133" y1="239" x2="154.5" y2="239" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="133" y="249.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E3: W2 MECH-7 part 2 (SHRINK-2): J506 SL3-PWR-PH, the JST PH 9-pin side-en</text>
 <line x1="40" y1="237" x2="176" y2="237" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="176" y1="237" x2="176" y2="202" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="176" y1="202" x2="82" y2="202" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="82" y1="202" x2="82" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="82" y1="127" x2="40" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="40" y1="127" x2="40" y2="237" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="47.5" y1="197.5" x2="73.9" y2="197.5" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="73.9" y1="197.5" x2="73.9" y2="171.1" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="73.9" y1="171.1" x2="47.5" y2="171.1" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="47.5" y1="171.1" x2="47.5" y2="197.5" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="47.5" y1="165.5" x2="73.9" y2="165.5" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="73.9" y1="165.5" x2="73.9" y2="139.1" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="73.9" y1="139.1" x2="47.5" y2="139.1" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="47.5" y1="139.1" x2="47.5" y2="165.5" stroke="#000" stroke-width="0.5" fill="none"/>
 <circle cx="44" cy="231" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
 <line x1="40.9" y1="231" x2="47.1" y2="231" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="44" y1="234.1" x2="44" y2="227.9" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
@@ -100,7 +94,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення B-PWR_B · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: FR-4, 4 шари, 1.6 мм (build/15)</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 5ccb5c406ecc · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 2fe404e780cd · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Плата PWR_B: контур Edge.Cuts і кріпильні отвори</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">power mezzanine PWR-B (PWR_BRANCH_SW + USB_POWER_SW)</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Координати — від лівого нижнього кута контуру, вид з боку компонентів (деталі лише зверху, build/15).</text>

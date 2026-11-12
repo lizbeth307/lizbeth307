@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-07 Середня пластина (шасі), шаблон 1:1</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 5ccb5c406ecc</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 2fe404e780cd</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="28.5" y1="198.5" x2="188" y2="198.5" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="188" y1="198.5" x2="188" y2="234" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -220,16 +220,71 @@
 <line x1="194" y1="205.31" x2="194" y2="198.09" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <text x="197.61" y="198.09" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">PF2</text>
 <circle cx="141" cy="141" r="5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="43.5" y1="159.08" x2="59.9" y2="159.08" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="59.9" y1="159.08" x2="59.9" y2="152.84" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="59.9" y1="152.84" x2="43.5" y2="152.84" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="43.5" y1="152.84" x2="43.5" y2="159.08" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<text x="43.5" y="151.84" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">PK1 кишеня 1</text>
-<line x1="43.5" y1="127.08" x2="59.9" y2="127.08" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="59.9" y1="127.08" x2="59.9" y2="120.84" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="59.9" y1="120.84" x2="43.5" y2="120.84" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="43.5" y1="120.84" x2="43.5" y2="127.08" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<text x="43.5" y="119.84" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">PK2 кишеня 1</text>
+<line x1="31" y1="186.5" x2="38" y2="186.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="38" y1="186.5" x2="38" y2="169.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="38" y1="169.5" x2="31" y2="169.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="31" y1="169.5" x2="31" y2="186.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="31.3" y="186.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB1</text>
+<line x1="161" y1="186.5" x2="167" y2="186.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="167" y1="186.5" x2="167" y2="173.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="167" y1="173.5" x2="161" y2="173.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="161" y1="173.5" x2="161" y2="186.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="161.3" y="186.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB2</text>
+<line x1="31" y1="169.5" x2="71" y2="169.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="71" y1="169.5" x2="71" y2="161.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="71" y1="161.5" x2="31" y2="161.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="31" y1="161.5" x2="31" y2="169.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="31.3" y="169.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB3</text>
+<line x1="83" y1="169.5" x2="157" y2="169.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="157" y1="169.5" x2="157" y2="164.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="157" y1="164.4" x2="83" y2="164.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="83" y1="164.4" x2="83" y2="169.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="83.3" y="169.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB4</text>
+<line x1="31" y1="161.5" x2="36" y2="161.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="36" y1="161.5" x2="36" y2="133.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="36" y1="133.5" x2="31" y2="133.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="31" y1="133.5" x2="31" y2="161.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="31.3" y="161.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB5</text>
+<line x1="31" y1="133.5" x2="40.6" y2="133.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="40.6" y1="133.5" x2="40.6" y2="128" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="40.6" y1="128" x2="31" y2="128" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="31" y1="128" x2="31" y2="133.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="31.3" y="133.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB6</text>
+<line x1="52.6" y1="133.5" x2="73" y2="133.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="73" y1="133.5" x2="73" y2="128" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="73" y1="128" x2="52.6" y2="128" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="52.6" y1="128" x2="52.6" y2="133.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="52.9" y="133.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB7</text>
+<line x1="31" y1="127.5" x2="36" y2="127.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="36" y1="127.5" x2="36" y2="109.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="36" y1="109.5" x2="31" y2="109.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="31" y1="109.5" x2="31" y2="127.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="31.3" y="127.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB8</text>
+<line x1="31" y1="109.5" x2="73" y2="109.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="73" y1="109.5" x2="73" y2="103.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="73" y1="103.5" x2="31" y2="103.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="31" y1="103.5" x2="31" y2="109.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="31.3" y="109.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB9</text>
+<line x1="31" y1="103.5" x2="40.6" y2="103.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="40.6" y1="103.5" x2="40.6" y2="98.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="40.6" y1="98.5" x2="31" y2="98.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="31" y1="98.5" x2="31" y2="103.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="31.3" y="103.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB10</text>
+<line x1="52.6" y1="103.5" x2="73" y2="103.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="73" y1="103.5" x2="73" y2="98.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="73" y1="98.5" x2="52.6" y2="98.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="52.6" y1="98.5" x2="52.6" y2="103.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="52.9" y="103.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB11</text>
+<line x1="52.6" y1="98.5" x2="63" y2="98.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="63" y1="98.5" x2="63" y2="91.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="63" y1="91.5" x2="52.6" y2="91.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="52.6" y1="91.5" x2="52.6" y2="98.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="52.9" y="98.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB12</text>
+<line x1="41" y1="91.5" x2="63" y2="91.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="63" y1="91.5" x2="63" y2="88.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="63" y1="88.5" x2="41" y2="88.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="41" y1="88.5" x2="41" y2="91.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="41.3" y="91.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">PB13</text>
 <line x1="31" y1="198.5" x2="167" y2="198.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="167" y1="198.5" x2="167" y2="163.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="167" y1="163.5" x2="73" y2="163.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
@@ -250,14 +305,14 @@
 <line x1="159" y1="194.5" x2="159" y2="171.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="159" y1="171.5" x2="103" y2="171.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="103" y1="171.5" x2="103" y2="194.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="35" y1="160.5" x2="65" y2="160.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="65" y1="160.5" x2="65" y2="130.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="65" y1="130.5" x2="35" y2="130.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="35" y1="130.5" x2="35" y2="160.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="35" y1="128.5" x2="65" y2="128.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="65" y1="128.5" x2="65" y2="98.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="65" y1="98.5" x2="35" y2="98.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="35" y1="98.5" x2="35" y2="128.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="38" y1="159.5" x2="55" y2="159.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="55" y1="159.5" x2="55" y2="135.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="55" y1="135.5" x2="38" y2="135.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="38" y1="135.5" x2="38" y2="159.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="38" y1="125.5" x2="52" y2="125.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="52" y1="125.5" x2="52" y2="111.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="52" y1="111.5" x2="38" y2="111.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="38" y1="111.5" x2="38" y2="125.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="167" y1="198.5" x2="252" y2="198.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="252" y1="198.5" x2="252" y2="142.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="252" y1="142.5" x2="167" y2="142.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
@@ -359,8 +414,19 @@
 <text x="262" y="135.45" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL1: X 165..192.5, Y 89.6..94</text>
 <text x="262" y="138" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL2: X 112..130, Y 70.6..78.8</text>
 <text x="262" y="140.55" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">проріз джгутів SL3: X 207.5..213, Y 6.5..18</text>
-<text x="262" y="143.1" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PK1 (D36V50F12), глибина 1: X 15..31.4, Y 74.92..81.16</text>
-<text x="262" y="145.65" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PK2 (D36V50F5), глибина 1: X 15..31.4, Y 106.92..113.16</text>
+<text x="262" y="143.1" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB1 (низ PWR-A), глибина 1: X 2.5..9.5, Y 47.5..64.5</text>
+<text x="262" y="145.65" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB2 (низ PWR-A), глибина 1: X 132.5..138.5, Y 47.5..60.5</text>
+<text x="262" y="148.2" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB3 (низ PWR-A), глибина 1: X 2.5..42.5, Y 64.5..72.5</text>
+<text x="262" y="150.75" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB4 (низ PWR-A), глибина 1: X 54.5..128.5, Y 64.5..69.6</text>
+<text x="262" y="153.3" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB5 (низ PWR-A), глибина 1: X 2.5..7.5, Y 72.5..100.5</text>
+<text x="262" y="155.85" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB6 (низ PWR-A), глибина 1: X 2.5..12.1, Y 100.5..106</text>
+<text x="262" y="158.4" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB7 (низ PWR-A), глибина 1: X 24.1..44.5, Y 100.5..106</text>
+<text x="262" y="160.95" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB8 (низ PWR-A), глибина 1: X 2.5..7.5, Y 106.5..124.5</text>
+<text x="262" y="163.5" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB9 (низ PWR-A), глибина 1: X 2.5..44.5, Y 124.5..130.5</text>
+<text x="262" y="166.05" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB10 (низ PWR-A), глибина 1: X 2.5..12.1, Y 130.5..135.5</text>
+<text x="262" y="168.6" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB11 (низ PWR-A), глибина 1: X 24.1..44.5, Y 130.5..135.5</text>
+<text x="262" y="171.15" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB12 (низ PWR-A), глибина 1: X 24.1..34.5, Y 135.5..142.5</text>
+<text x="262" y="173.7" font-family="DejaVu Sans Mono, monospace" font-size="2.45" text-anchor="start" fill="#000">кишеня PB13 (низ PWR-A), глибина 1: X 12.5..34.5, Y 142.5..145.5</text>
 <line x1="8" y1="289" x2="412" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="412" y1="289" x2="412" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="412" y1="8" x2="8" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -389,7 +455,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-07 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-5754 (AlMg3) 2.0 mm, mill finish; alt. 1050…</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 5ccb5c406ecc · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 2fe404e780cd · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Середня пластина (шасі), шаблон 1:1</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">лазер/фрезер; отвори ±0.2; площинність ≤0.2 під Q6A, п'єдесталом і регуляторами</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Контур і отвори — з mechanical/params; DXF того самого аркуша — для різання. Різьбу в пластині не нарізати (STACK 5.8).</text>
@@ -399,7 +465,7 @@
 <text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Ребра шляху 2 (смуги Al 1 x 3.5) — на лицьовій грані під HDMI-платою, уздовж потоку; точки з'єднання — голий метал.</text>
 <text x="12" y="43" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SL1-SL3: прорізи джгутів між лицьовим і тильним шаром (build/16 §1), кромки — кант або грумет; гайки PEM ставити пресом.</text>
 <text x="12" y="46.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Пунктир: контури плат, Q6A, бобишки UFS (тильна грань), п'єдесталу Lime і зон термопрокладок PWR.</text>
-<text x="12" y="50.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">PK1-PK2: глухі кишені 1.0 мм у лицьовій грані під рядами виводів Pololu U107/U108 (поле виводів + 1.0 з кожного боку); поверх — поліімід через зазор 0.4 мм; прокладка Gelid зони 3/4 — з вирізом над кишенею. Кишені під інші THT-групи PWR-A — за розкладкою PCB-PWRA (R-PWR-POCKETS).</text>
+<text x="12" y="50.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">PB*: глухі кишені 1.0 мм у лицьовій грані під нижнім боком двобічної PWR-A (W2 MECH-7), фрезерувати як накреслено; дно і зазор 0.4 мм вистелити поліімідом 3M 5413; навколо зон термопрокладок 2.0 і коридорів тепла перетворювачів (зони 3/4 до правого краю ніжки) пластина повна. Кишені під THT-групи PWR-A поза PB* і в зонах прокладок — за розкладкою PCB-PWRA-3 (R-PWR-POCKETS).</text>
 <text x="12" y="53.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">PF1-PF2: стійки PEM SO-M2.5-6ZI (4.22 +0.08) носія PACK_FUSE, голівка врівень з тильною гранню, стійка 6 мм з лицьового боку (W2 MECH-5; модулі задньої і верхньої стінок кріпляться не до пластини — таблиця M-06).</text>
 <text x="12" y="57.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-5754 (AlMg3) 2.0 mm, mill finish; alt. 1050A-H14 or 6082-T6</text>
 </svg>

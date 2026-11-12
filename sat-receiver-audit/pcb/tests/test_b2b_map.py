@@ -210,22 +210,26 @@ class GuardRuleTests(unittest.TestCase):
                 self.assertNotIn(n, low, n)
             if kind == 'rail node':
                 self.assertIn(n, low, n)
-        self.assertEqual(sorted(n for n, k in kinds.items() if k == 'rail node'),
-                         ['BIAS_CH1_DAMP', 'BIAS_CH2_DAMP', 'BIAS_CH3_DAMP', 'BIAS_CH4_DAMP', 'E2_SB_DAMP', 'VBUS_RTLB_DAMP'])
+        # W2 GR-5B (SHRINK-2): the damper capacitors of BIAS_CH1-4, VBUS_RTLB and BIAS_SB_LNA became 16SVPG47M and sit on PWR-B
+        # with their 0.15 ohm resistors, so the six damper nodes (BIAS_CH1-4_DAMP, VBUS_RTLB_DAMP, E2_SB_DAMP) no longer cross
+        self.assertEqual(sorted(n for n, k in kinds.items() if k == 'rail node'), [])
+        self.assertTrue({'BIAS_CH1_DAMP', 'BIAS_CH4_DAMP', 'VBUS_RTLB_DAMP', 'E2_SB_DAMP'} <= low)
+        self.assertFalse({'BIAS_CH1_DAMP', 'BIAS_CH4_DAMP', 'VBUS_RTLB_DAMP', 'E2_SB_DAMP', 'VBUS_LABPORT'} & set(kinds))
 
     def test_layout_quoted_in_pin_map_rule(self):
         # pcb/partition-spec.json b2b.pin_map_rule quotes the layout of (a); a crossing-net change must update that text
         role = {int(r['pwr_a_pin']): r['role'] for r in NETS['contacts']}
         # (sense pair at the end of the strip since 11.11.2026, for the PWR-B board of record)
-        self.assertIn('odd 1-65 the 17 rail contacts (1, 5, ... 65) with their GND returns (3, 7, ... 67), 69 guard, even 2-14 the '
+        # (W2 GR-5B: 10 rail contacts instead of 17 once the six damper nodes and VBUS_LABPORT stopped crossing)
+        self.assertIn('odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the '
                       '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets',
                       SPEC['pin_map_rule'])
-        self.assertTrue({role[p] for p in range(1, 66, 4)} <= set(prepare.B2B_RAIL_KINDS))
-        self.assertEqual({role[p] for p in range(3, 68, 4)} | {role[p] for p in range(4, 17, 4)}, {'gnd'})
-        self.assertEqual(role[69], 'guard')
+        self.assertTrue({role[p] for p in range(1, 38, 4)} <= set(prepare.B2B_RAIL_KINDS))
+        self.assertEqual({role[p] for p in range(3, 40, 4)} | {role[p] for p in range(4, 17, 4)}, {'gnd'})
+        self.assertEqual(role[41], 'guard')
         self.assertEqual({role[p] for p in range(2, 15, 4)}, {'power'})
         self.assertEqual({role[p] for p in range(18, 61, 2)}, {'signal'})
-        self.assertEqual({role[p] for p in list(range(62, 97, 2)) + list(range(71, 97, 2))}, {'spare'})
+        self.assertEqual({role[p] for p in list(range(62, 97, 2)) + list(range(43, 97, 2))}, {'spare'})
         self.assertEqual([role[p] for p in (97, 98, 99, 100)], ['guard', 'guard', 'sense pair', 'sense pair'])
 
 

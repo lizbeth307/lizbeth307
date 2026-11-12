@@ -258,6 +258,9 @@ class Review(unittest.TestCase):
     def test_pwr_modules_must_fit_the_board_envelope(self):
         Q = self._copy()
         Q.boards["boards"]["PWR"]["height_zones"] = []        # back to the 9.0 mm board envelope
+        Q.boards["boards"]["PWR"]["max_height"] = 3.0         # W2 MECH-7: no module any more; the 4.1 mm LAB5 converter block no longer fits
+        if not [b for b in ((boards.budget_candidate()[1] or {}).get("planned") or {}).get("blocks", []) if b["id"] not in boards.retired_blocks()]:
+            Q.boards["boards"]["PWR"]["modules_on_board"] = [{"id": "M1", "part": "pololu_d36v50", "at": [10, 10]}]   # part 2: blocks retired with GR-5A, a module must still fit
         r = [x for x in rules.evaluate(Q) if x["id"] == "R-PWR-MODULES"][0]
         self.assertTrue(r["result"].startswith("FAIL"), r)
         r = [x for x in rules.evaluate(P) if x["id"] == "R-PWR-MODULES"][0]
@@ -367,9 +370,9 @@ class CourtyardArea(unittest.TestCase):
         r = cy["Resistor_SMD:R_0603_1608Metric"]
         self.assertAlmostEqual(r["w"], 2.96, places=3)
         self.assertAlmostEqual(r["h"], 1.46, places=3)
-        p = cy["SR_RX_Custom:Pololu_D36V50Fx"]
-        self.assertAlmostEqual(p["w"], 25.9, places=3)
-        self.assertAlmostEqual(p["h"], 25.9, places=3)
+        p = cy["SR_RX_Custom:TI_RDL0020A_B3QFN-20_5x5.5mm"]      # W2 GR-5A merge: Pololu_D36V50Fx left the library with SHRINK-2; U108 TPSM63606 F.CrtYd rect +/-2.95 x +/-3.0
+        self.assertAlmostEqual(p["w"], 5.9, places=3)
+        self.assertAlmostEqual(p["h"], 6.0, places=3)
 
     def test_board_total_is_the_sum_over_its_domain_refs(self):
         path = HERE.parent / "pcb" / "generated" / "components.csv"
@@ -383,7 +386,7 @@ class CourtyardArea(unittest.TestCase):
         self.assertEqual(res["boards"]["CTRL"]["courtyard_raw_mm2"], round(ctrl, 0))
         mods = sum(cy[r["footprint"]]["area"] for r in rows if r["board_candidate"] in P.boards["boards"]["PWR"]["domains"] and r["mount"] == "pcb_module")
         self.assertEqual(res["boards"]["PWR"]["modules_mm2"], round(mods, 0))
-        for m in P.boards["boards"]["PWR"]["modules_on_board"]:      # every modules_on_board part is a pcb_module ref, counted once
+        for m in P.boards["boards"]["PWR"].get("modules_on_board", []):      # every modules_on_board part is a pcb_module ref, counted once (none since W2 MECH-7)
             self.assertEqual(m["part"], "pololu_d36v50")
         self.assertAlmostEqual(res["boards"]["PWR"]["need_1_8_mm2"], round(mods + (res["boards"]["PWR"]["courtyard_raw_mm2"] - mods) * 1.8, 0), delta=1.0)
 
@@ -753,7 +756,7 @@ class EnvelopeW2Mech3(unittest.TestCase):
         self.assertEqual(b["max_height"], par["hB"])
         self.assertEqual(b["holes"], a["holes"])                             # coaxial F45 standoffs
         self.assertEqual(b["place"]["origin"], a["place"]["origin"])
-        for mo in a["modules_on_board"]:
+        for mo in a.get("modules_on_board", []):        # none since W2 MECH-7 (SHRINK-2: PWR-B is the full L)
             mx, my = mo["at"]
             mw, mh = P.parts[mo["part"]]["size"][:2]
             self.assertTrue(any(c[0] <= mx - par["window_margin"] + 1e-9 and mx + mw + par["window_margin"] <= c[0] + c[2] + 1e-9
@@ -782,7 +785,9 @@ class EnvelopeW2Mech3(unittest.TestCase):
     def test_pololu_pin_rows_are_pocketed(self):
         r = [x for x in rules.evaluate(P) if x["id"] == "R-PWR-POCKETS"][0]
         self.assertFalse(r["result"].startswith("FAIL"), r["result"])
-        self.assertEqual(sorted(r["value_mm"]), ["PK1", "PK2"])
+        # W2 MECH-7: the Pololu rows PK1/PK2 are gone with the modules; the bottom-part pockets PB* take their place
+        self.assertTrue(r["value_mm"])
+        self.assertTrue(all(k.startswith("PB") for k in r["value_mm"]), sorted(r["value_mm"]))
         Q = self._copy()
         Q.boards["boards"]["PWR"]["tht_pockets"]["depth"] = 0.5               # below the 1.0 mm rule
         r = [x for x in rules.evaluate(Q) if x["id"] == "R-PWR-POCKETS"][0]
@@ -823,7 +828,9 @@ class EnvelopeW2Mech3Review(unittest.TestCase):
         usable = self._budget()["boards"]["PWR_B"]["usable_mm2"]
         self.assertEqual(row["usable_mm2"], round(usable, 0))
         self.assertLess(row["usable_mm2"], row["area_mm2"])                    # the outline minus the Pololu windows is an upper bound
-        self.assertEqual(row["result"].startswith("PASS"), row["need_1_8_mm2"] <= usable, row["result"])
+        planned = row.get("planned_budget")                                     # W2 MECH-7: pending SHRINK-2 changes judge the planned demand
+        need = planned["demand_1_8_mm2"] if planned else row["need_1_8_mm2"]
+        self.assertEqual(row["result"].startswith("PASS"), need <= usable, row["result"])
         self.assertIn("partition-budget.json", row["result"])
 
     def test_envelope_reason_is_computed_from_the_stack(self):
@@ -1291,3 +1298,306 @@ class ModulesW2Mech5Review(unittest.TestCase):
         self.assertTrue(all(x["gap_mm"] >= 0.5 for x in r["value_mm"]["plate_standoffs"]["pack_fuse"]))
         coll, _ = layout.fit_checks(P)
         self.assertEqual([c for c in coll if "pack_fuse" in c["a"] + c["b"]], [])       # PM4 plate boss included (no allowance)
+
+
+class ContractW2Mech7(unittest.TestCase):
+    """W2 MECH-7 (SHRINK-2), part 1: PWR-A without modules, zones 3/4, two-sided pockets, full-L PWR-B, H-TRIM, mated heights."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def _spec(self):
+        return json.loads((HERE.parent / "pcb" / "partition-spec.json").read_text(encoding="utf-8"))
+
+    def test_pwr_a_has_no_module_and_zones_3_4_hold_the_converters(self):
+        a = P.boards["boards"]["PWR"]
+        self.assertNotIn("modules_on_board", a)
+        self.assertFalse([z for z in a.get("height_zones", []) if z["max_height"] > a["max_height"]])
+        planned = self._spec()["candidates"]["shrink2"]["pwr_a_bottom"]["thermal_bond_planned"]
+        for zn, rect in planned.items():
+            self.assertEqual(a["thermal_bond"][int(zn) - 1], rect, zn)
+        self.assertTrue(self._rule(P, "R-PWR-ZONES")["result"].startswith("PASS (model)"))
+        self.assertTrue(self._rule(P, "R-PWR-PADS")["result"].startswith("PASS (model)"))
+        self.assertTrue(self._rule(P, "R-UFS-REG")["result"].startswith("PASS (model)"))
+        Q = self._copy()
+        Q.boards["boards"]["PWR"]["thermal_bond"][3] = [7, 73, 5, 5]                 # zone 4 smaller than U108 (part 2: graph courtyard 5.9 x 6.0)
+        self.assertTrue(self._rule(Q, "R-PWR-ZONES")["result"].startswith("FAIL"))
+
+    def test_pwr_b_is_the_full_l_with_the_new_spans(self):
+        a, b = P.boards["boards"]["PWR"], P.boards["boards"]["PWR_B"]
+        self.assertNotIn("cutouts", b)
+        self.assertEqual(b["outline"], a["outline"])
+        self.assertAlmostEqual(sum(r[2] * r[3] for r in b["rects"]), boards.poly_area([tuple(p) for p in b["outline"]]), places=6)
+        spans = [(z["edge"], z["span"]) for z in b["edge_zones"]]
+        self.assertTrue(any(e == "top" and s[0] <= 84 and s[1] >= 107 for e, s in spans))    # part 2: the top span holds the PHD place x 84-107
+        self.assertTrue(any(e == "bottom" and s[1] - s[0] >= 20.9 for e, s in spans))
+        self.assertEqual(boards.contract(P)["boards"]["PWR_B"]["cutouts_mm"], [])
+
+    def test_bottom_pockets_keep_the_lands_and_corridors(self):
+        a = P.boards["boards"]["PWR"]
+        sp = P.mech["plate"]["pwr_bottom_pockets"]
+        regions = rules.pwr_bottom_regions(P)
+        self.assertTrue(regions)
+        land = sp["bond_land"]
+        for pid, (x, y, w, h) in regions:
+            self.assertGreaterEqual(min(w, h), sp["min_w"] - 1e-9, pid)
+            for cx, cy in ((x, y), (x + w, y), (x, y + h), (x + w, y + h)):     # inside the PWR-A L
+                self.assertTrue(any(r[0] - 1e-9 <= cx <= r[0] + r[2] + 1e-9 and r[1] - 1e-9 <= cy <= r[1] + r[3] + 1e-9 for r in a["rects"]), pid)
+            for z in a["thermal_bond"]:
+                g = rules._rect_gap((x, y, x + w, y + h), (z[0], z[1], z[0] + z[2], z[1] + z[3]))
+                self.assertGreaterEqual(g, land - 1e-6, (pid, z))
+            for k in sp["keep_full"]:
+                kr = k["rect"]
+                self.assertGreaterEqual(rules._rect_gap((x, y, x + w, y + h), (kr[0], kr[1], kr[0] + kr[2], kr[1] + kr[3])), -1e-9, (pid, kr))
+        r = self._rule(P, "R-PWR-POCKETS")
+        self.assertTrue(r["result"].startswith("OPEN"), r["result"])
+        Q = self._copy()
+        Q.boards["boards"]["PWR"]["tht_pockets"]["depth"] = 1.6                     # web 0.4 < web_min 1.0
+        self.assertTrue(self._rule(Q, "R-PWR-POCKETS")["result"].startswith("FAIL"))
+
+    def test_bottom_room_and_area(self):
+        r = self._rule(P, "R-PWR-BOTTOM")
+        sp, bs = P.mech["plate"]["pwr_bottom_pockets"], P.boards["boards"]["PWR"]["bottom_side"]
+        depth = P.boards["boards"]["PWR"]["tht_pockets"]["depth"]
+        self.assertAlmostEqual(r["value_mm"]["h_max_mm"], P.mech["pwr_bond"]["shim"] + depth - sp["film_t"] - bs["clearance"], places=6)
+        self.assertLessEqual(r["value_mm"]["budget_raw_mm2"], r["value_mm"]["pocket_area_mm2"])
+        self.assertTrue(r["result"].startswith("OPEN"), r["result"])                  # per-part heights are not read
+        boxes = [bx for _, n, bx, _ in layout.item_boxes(P) if n.startswith("PWR.b")]
+        self.assertEqual(len(boxes), len(rules.pwr_bottom_regions(P)))
+        floor = P.mech["stack_z"]["plate_front"] - depth
+        for bx in boxes:                                                              # the bottom envelope sits in its pocket, above the film
+            self.assertGreaterEqual(bx[2], floor + sp["film_t"] - 1e-9)
+        coll, _ = layout.fit_checks(P)
+        self.assertEqual([c for c in coll if c["gap_mm"] < 0], [])
+
+    def test_h_trim_matches_the_partition_spec(self):
+        r = self._rule(P, "R-H-TRIM")
+        self.assertTrue(r["result"].startswith("OPEN"), r["result"])
+        self.assertAlmostEqual(r["value_mm"]["clearance_mm"], self._spec()["keepouts"]["h_trim"]["clearance_mm"], places=6)
+        Q = self._copy()
+        Q.boards["boards"]["PWR"]["h_trim"]["zone_h_max"] = 3.5
+        self.assertTrue(self._rule(Q, "R-H-TRIM")["result"].startswith("FAIL"))
+
+    def test_mated_height_rule_covers_every_pwr_a_header(self):
+        with (HERE.parent / "build" / "16-dzhgut-rozyemy.csv").open(encoding="utf-8", newline="") as fh:
+            want = {row["connector"] for row in csv.DictReader(fh) if row["board"] == "PWR_A"}
+        r = self._rule(P, "R-HDR-MATED")
+        rows = {x["connector"]: x for x in r["headers"]}
+        self.assertEqual(set(rows), want)
+        self.assertAlmostEqual(r["limit_mm"], P.mech["stack_z"]["module_back"] - self._spec()["envelope"]["air_channel"], places=6)
+        j104 = rows["J104"]
+        self.assertTrue(j104["under_display"])
+        self.assertTrue(j104["verdict"].startswith("FAIL as specified"), j104["verdict"])   # vertical 43650: 42.5 + 17.27 = 59.77
+        self.assertTrue(j104["alternative"]["fits"])                                       # right-angle 43650: 49.48
+        self.assertFalse(rows["J105"]["under_display"])                                    # bottom edge strip below the display
+        self.assertFalse(r["result"].startswith("FAIL"))
+        Q = self._copy()
+        Q.mech["stack_z"]["module_back"] += 5.0                                            # a deeper display stack lets J104 pass
+        rows = {x["connector"]: x for x in self._rule(Q, "R-HDR-MATED")["headers"]}
+        self.assertTrue(rows["J104"]["verdict"].startswith("PASS"), rows["J104"]["verdict"])
+
+    def test_area_rows_use_the_planned_budget_while_changes_are_pending(self):
+        d = json.loads((HERE.parent / "pcb" / "partition-budget.json").read_text(encoding="utf-8"))
+        cand = d["candidates"][d["chosen"]]
+        pending = [c for c in (cand.get("planned") or {}).get("changes", []) if c.get("status") == "pending"]
+        row = boards.area_check(P)["boards"]["PWR_B"]
+        if not pending:
+            self.assertNotIn("planned_budget", row)
+            return
+        self.assertEqual(row["planned_budget"]["pending"], len(pending))
+        self.assertEqual(row["result"].startswith("PASS"), cand["boards"]["PWR_B"]["demand_1.8_mm2"] <= cand["boards"]["PWR_B"]["usable_mm2"])
+
+
+class ContractW2Mech7Part2(unittest.TestCase):
+    """W2 MECH-7 (SHRINK-2), part 2: real converter footprints in zones 3/4, the PWR-B exit spans after GR-5B (no PHD merge,
+    no S02 FFC), the routes of S02/S04/S11/S12/S20-S23/S32/S34-S36 and the exit room in front of the PWR-B edges."""
+
+    SHRINK2 = ("S02", "S04", "S11", "S12", "S20", "S21", "S22", "S23", "S32", "S34", "S35", "S36")
+
+    @classmethod
+    def setUpClass(cls):
+        from srrx_mech import routes
+        cls.res = routes.evaluate(P)
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def _rows16(self):
+        with (HERE.parent / "build" / "16-dzhgut-rozyemy.csv").open(encoding="utf-8", newline="") as fh:
+            return list(csv.DictReader(fh))
+
+    def test_planned_live_follows_the_graph(self):
+        live = boards.planned_live()
+        graph = boards.graph_board_parts()
+        spec = json.loads((HERE.parent / "pcb" / "partition-spec.json").read_text(encoding="utf-8"))
+        ch = json.loads((HERE.parent / "pcb" / "partition-budget.json").read_text(encoding="utf-8"))["chosen"]
+        for c in spec["candidates"][ch]["planned"]["changes"]:
+            st = live[c["id"]][0]
+            self.assertIn(st, ("pending", "in graph"), c["id"])                       # never half-applied in the tree
+            if "while_footprint" in c:
+                held = all(r in graph and graph[r]["footprint"] == c["while_footprint"][r] for r in c["refs"])
+                self.assertEqual(st == "pending", held, c["id"])
+        for bid, cid in boards.retired_blocks().items():
+            self.assertEqual(live[cid][0], "in graph", bid)
+
+    def test_converter_zones_hold_the_graph_parts(self):
+        a = P.boards["boards"]["PWR"]
+        graph = boards.graph_board_parts()
+        r = self._rule(P, "R-PWR-ZONES")
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        for zn, refs in a["converter_zone_refs"].items():
+            self.assertIn(zn, a["converter_zones"])
+            row = r["value_mm"][f"zone {zn}"]
+            if all(x in graph for x in refs) and a["converter_zones"][zn] in boards.retired_blocks():
+                self.assertEqual(row["basis"], "graph courtyards (GR-5A)", zn)
+                self.assertEqual(set(row["refs"]), set(refs))
+                self.assertGreater(row["margin_mm"], 0.0)
+        Q = self._copy()
+        Q.boards["boards"]["PWR"]["thermal_bond"][2] = [7, 39, 12, 12]                # zone 3 smaller than L102 (13.0 x 10.5) + U107
+        self.assertTrue(self._rule(Q, "R-PWR-ZONES")["result"].startswith("FAIL"))
+        self.assertTrue(self._rule(P, "R-PWR-PADS")["result"].startswith("PASS (model)"))
+        self.assertTrue(self._rule(P, "R-UFS-REG")["result"].startswith("PASS (model)"))
+        mods = self._rule(P, "R-PWR-MODULES")
+        self.assertTrue(mods["result"].startswith("PASS (model)"), mods["result"])
+
+    def test_pwr_b_spans_hold_their_headers(self):
+        a, b = P.boards["boards"]["PWR"], P.boards["boards"]["PWR_B"]
+        cy = boards.footprint_courtyards()
+        graph = boards.graph_board_parts()
+        pwr_b = [x["connector"] for x in self._rows16() if x["board"] == "PWR_B"]
+        listed = [h for ez in b["edge_zones"] for h in ez.get("headers", [])]
+        self.assertEqual(sorted(listed), sorted(pwr_b))                                  # every PWR-B header has one exit zone
+        j206 = [ez for ez in a["edge_zones"] if "J206" in ez.get("headers", [])][0]
+        row = a["edge_zones"][0]
+        for ez in b["edge_zones"]:
+            need = sum(cy[graph[h]["footprint"]]["w"] for h in ez["headers"] if h in graph)
+            if ez["edge"] == "right":
+                continue                                                                 # S02: no home without the FFC (OPEN)
+            self.assertLessEqual(need, ez["span"][1] - ez["span"][0] + 1e-9, ez["headers"])
+            if ez["edge"] == "top":
+                self.assertLessEqual(ez["span"][1], j206["span"][0] - 0.5)               # window over the PWR-A J206 strip
+                self.assertFalse(ez["span"][1] > j206["span"][0] and ez["span"][0] < j206["span"][1])
+            if ez["edge"] == "bottom":
+                self.assertGreaterEqual(ez["span"][0], row["row_end_max"])               # past the compacted PWR-A bottom row
+
+    def test_shrink2_routes_clear_and_use_their_slots(self):
+        segs = self.res["segments"]
+        for sid in self.SHRINK2:
+            r = segs[sid]
+            self.assertTrue(r.get("points_mm"), sid)
+            self.assertEqual(r.get("crossings"), [], (sid, r.get("crossings")))
+        hr = P.mech["harness_routes"]["segments"]
+        for sid in ("S04", "S20", "S21", "S22", "S35", "S36"):
+            self.assertIn("SL2", segs[sid]["through"], sid)
+            self.assertEqual((hr[sid]["via"][0]["edge"], hr[sid]["via"][0]["zone"]), ("PWR_B", 1), sid)
+        for sid in ("S11", "S23", "S32", "S34"):
+            self.assertIn("SL3", segs[sid]["through"], sid)
+        for sid in ("S23", "S34"):
+            self.assertEqual((hr[sid]["via"][0]["edge"], hr[sid]["via"][0]["zone"]), ("PWR_B", 2), sid)
+        self.assertEqual((hr["S12"]["via"][0]["edge"], hr["S12"]["via"][0]["zone"]), ("PWR", 1))   # J115 on the right edge (no FFC)
+        fill = self._rule(P, "R-PLATE-SLOT-FILL")
+        self.assertTrue(fill["result"].startswith("PASS (model)"), fill["result"])
+
+    def test_exit_room_is_reported_per_zone(self):
+        r = self._rule(P, "R-PWRB-EXIT")
+        self.assertTrue(r["result"].startswith("OPEN"), r["result"])
+        zones = {z["zone"]: z for z in r["value_mm"]["zones"]}
+        self.assertEqual(set(zones), set(range(len(P.boards["boards"]["PWR_B"]["edge_zones"]))))
+        for z in zones.values():
+            self.assertIsNotNone(z["room_mm"], z)
+            self.assertGreaterEqual(z["room_mm"], 0.0)
+        Q = self._copy()
+        Q.boards["boards"]["PWR_B"]["exit_rule"]["plug_proud_mm"]["PH"] = 0.1
+        zq = {z["zone"]: z for z in self._rule(Q, "R-PWRB-EXIT")["value_mm"]["zones"]}
+        for i, z in zq.items():                    # review F2: the set-back also counts the bundle OD, so a lower housing only moves it by 1.9
+            if "set_back_min_mm" in z:
+                self.assertAlmostEqual(z["set_back_min_mm"], max(zones[i]["set_back_min_mm"] - 1.9, 0.0), places=6)
+
+
+class ContractW2Mech7Review(unittest.TestCase):
+    """W2 MECH-7 review fixes: F1 (the area cost of the passing right-angle Micro-Fit against the SHRINK-2 fill margin, and
+    the runs of the exit edges outside the display) and F2 (S23/S34 leave the 0.55 mm slot in front of the PWR-B bottom
+    edge; R-PWRB-EXIT counts the bundle OD and checks each exit leg with its bundle)."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def test_mated_alternative_is_costed_against_the_fill_margin(self):
+        r = self._rule(P, "R-HDR-MATED")
+        v = r["value_mm"]
+        rows = {x["connector"]: x for x in r["headers"]}
+        cy = boards.footprint_courtyards()
+        hh = P.parts["harness_headers"]["MF_ra"]
+        with (HERE.parent / "pcb" / "generated" / "components.csv").open(encoding="utf-8", newline="") as fh:
+            fps = {row["ref"]: row["footprint"] for row in csv.DictReader(fh)}
+        for ref in v["alternative_passes"]:
+            c = cy[fps[ref]]
+            pins = round((max(c["w"], c["h"]) - hh["b"]) / hh["a"]) + 1
+            want = (hh["a"] * (pins - 1) + hh["b"]) * hh["d"] - c["w"] * c["h"]
+            self.assertAlmostEqual(rows[ref]["alternative"]["area_delta_mm2"], round(want, 1), places=6, msg=ref)
+        d = json.loads((HERE.parent / "pcb" / "partition-budget.json").read_text(encoding="utf-8"))
+        pa = d["candidates"][d["chosen"]]["boards"]["PWR_A"]
+        self.assertAlmostEqual(v["pwr_a_margin_mm2"], round(rules.FILL_TRIGGER * pa["usable_mm2"] - pa["demand_1_mm2"], 1), places=6)
+        self.assertEqual(v["all_within_margin"], v["alternative_area_total_mm2"] <= v["pwr_a_margin_mm2"])
+        if not v["all_within_margin"]:
+            self.assertIn("F2-C", r["result"])
+        for s in v["largest_sets_within_margin"]:
+            self.assertLessEqual(sum(v["alternative_area_delta_mm2"][x] for x in s), v["pwr_a_margin_mm2"] + 1e-9)
+        self.assertNotIn("alternative", rows["J206"])                                        # MF2: no passing part read
+        self.assertIn("J206", r["result"].split("no passing part read for", 1)[1])
+        right = rows["J104"]["off_display_run_mm"]                                         # the right edge below the display
+        disp = [bx for i, _, bx, _ in layout.item_boxes(P) if i == "display"][0]
+        self.assertAlmostEqual(right["run_mm"], disp[1] - (P.boards["boards"]["PWR"]["place"]["origin"][1]), places=2)
+        self.assertEqual(rows["J206"]["off_display_run_mm"]["run_mm"], 0.0)                 # the SL2 span lies under the display
+
+    def test_s23_s34_leave_the_slot_in_front_of_the_bottom_edge(self):
+        from srrx_mech import routes
+        res = routes.evaluate(P)
+        named = routes.boxes(P)
+        tray = named["battery_tray"][1]
+        for sid in ("S23", "S34"):
+            r = res["segments"][sid]
+            self.assertEqual(r["crossings"], [], sid)
+            self.assertIn("SL3", r["through"], sid)
+            rad = r["bundle_od_mm"] / 2
+            pts = r["points_mm"]
+            for a, b in zip(pts, pts[1:]):
+                piece = tuple(min(a[i], b[i]) for i in range(3)) + tuple(max(a[i], b[i]) for i in range(3))
+                self.assertGreaterEqual(layout.gap(piece, tray), rad - 1e-6, (sid, a, b))    # the bundle, not only its centreline
+        legs = rules._pwr_b_exit_legs(P)
+        for sid in ("S23", "S34"):
+            self.assertGreaterEqual(legs[sid]["clear_mm"], 0.0, (sid, legs[sid]))
+
+    def test_exit_rule_counts_the_bundle_od(self):
+        r = self._rule(P, "R-PWRB-EXIT")
+        ex = P.boards["boards"]["PWR_B"]["exit_rule"]
+        legs = rules._pwr_b_exit_legs(P)
+        for z in r["value_mm"]["zones"]:
+            if z["room_mm"] is None or z["plug_proud_mm"] is None:
+                continue
+            od = max(v["bundle_od_mm"] for v in legs.values() if v["zone"] == z["zone"])
+            self.assertEqual(z["bundle_od_max_mm"], od)
+            need = z["plug_proud_mm"] + od + ex["bundle_clearance_mm"]
+            self.assertAlmostEqual(z["set_back_min_mm"], round(max(need - z["room_mm"], 0.0), 2), places=6)
+            if od > z["room_mm"]:
+                self.assertIn("cannot turn in front of the edge", z["verdict"])
+        self.assertNotIn("the wires turn within the room", r["result"])
+        Q = self._copy()
+        hr = Q.mech["harness_routes"]["segments"]
+        for sid in ("S23", "S34"):                                                         # the part-2 route: along y 38.2 in the slot
+            hr[sid]["via"][0:5] = [{"edge": "PWR_B", "zone": 2, "s": 10.75},
+                                   {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"}]
+        zq = [z for z in self._rule(Q, "R-PWRB-EXIT")["value_mm"]["zones"] if z["zone"] == 2][0]
+        self.assertTrue(any(v["clear_mm"] < 0 for v in zq["legs"].values()), zq["legs"])
