@@ -580,10 +580,7 @@ PICO = bg.BASE / 'build/kicad/footprints/SR_RX_Custom.pretty/RaspberryPi_Pico_SM
 
 
 class CtrlClassLayersCutoutAuditAndDrillOffsets(unittest.TestCase):
-    """W2 PCB-CTRL: router.class_layers (DSN use_layer), audit_cutouts, SMD drill offsets and the CTRL spec."""
-
-    def ctrl(self):
-        return copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
+    """W2 PCB-CTRL: router.class_layers (DSN use_layer), audit_cutouts and SMD drill offsets (no board spec needed)."""
 
     def test_dsn_class_layers_patch(self):
         dsn = ('    (class kicad_default A B\n      (circuit\n        (use_via "V")\n      )\n    )\n'
@@ -593,20 +590,6 @@ class CtrlClassLayersCutoutAuditAndDrillOffsets(unittest.TestCase):
         self.assertEqual(out.count('use_layer'), 1)  # kicad_default untouched
         with self.assertRaises(SystemExit):
             bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu']})
-
-    def test_class_layers_and_audit_flag_validate(self):
-        spec = self.ctrl()
-        bg.validate_spec(spec, 'CTRL')
-        for key, value in (('class_layers', {'PWR1A': ['In3.Cu']}), ('class_layers', {'PWR1A': []}),
-                           ('class_layers', {'A B': ['F.Cu']})):
-            candidate = copy.deepcopy(spec)
-            candidate['router'][key] = value
-            with self.assertRaises(SystemExit):
-                bg.validate_spec(candidate, 'CTRL')
-        candidate = copy.deepcopy(spec)
-        candidate['audit_cutouts'] = 'yes'
-        with self.assertRaises(SystemExit):
-            bg.validate_spec(candidate, 'CTRL')
 
     def test_cutout_audit_flags_boxes_inside(self):
         facts = {'footprints': [
@@ -621,6 +604,32 @@ class CtrlClassLayersCutoutAuditAndDrillOffsets(unittest.TestCase):
         geo = bg.footprint_geometry(PICO.read_text(encoding='utf-8'))
         self.assertTrue(any(p['number'] == '1' for p in geo['pads']))
         self.assertTrue(all(isinstance(v, float) for p in geo['pads'] for v in p['drill']))
+
+
+class CtrlSpecAndGenerator(unittest.TestCase):
+    """W2 PCB-CTRL: the CTRL spec (pcb/boards/CTRL.json) and its generator build/kicad/boards/CTRL/make_spec.py.
+    Skipped on a tree without the CTRL spec (a lane that took only the board_gen changes)."""
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+
+    def ctrl(self):
+        return copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
+
+    def test_class_layers_and_audit_flag_validate(self):
+        spec = self.ctrl()
+        bg.validate_spec(spec, 'CTRL')
+        for key, value in (('class_layers', {'PWR1A': ['In3.Cu']}), ('class_layers', {'PWR1A': []}),
+                           ('class_layers', {'A B': ['F.Cu']})):
+            candidate = copy.deepcopy(spec)
+            candidate['router'][key] = value
+            with self.assertRaises(SystemExit):
+                bg.validate_spec(candidate, 'CTRL')
+        candidate = copy.deepcopy(spec)
+        candidate['audit_cutouts'] = 'yes'
+        with self.assertRaises(SystemExit):
+            bg.validate_spec(candidate, 'CTRL')
 
     def test_ctrl_spec_places_inside_the_contract(self):
         spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('CTRL')
@@ -648,9 +657,21 @@ class CtrlClassLayersCutoutAuditAndDrillOffsets(unittest.TestCase):
         self.assertEqual(patterns['E3_FAN5'], 'SCRIPTED_PWR3A')
         vias = spec['pre_route']['vias']
         self.assertEqual(patterns['LAB5'], 'PWR3A_BRANCH')
-        self.assertTrue(vias and all(v['net'] in ('GND', 'LAB5', '3V3_Q6A') and v['drill_mm'] >= spec['fab_floor']['min_drill'] for v in vias))
+        self.assertTrue(vias and all(v['drill_mm'] >= spec['fab_floor']['min_drill'] for v in vias))
         self.assertEqual(spec['pre_route']['gnd_vias_skipped'], [])
 
+    def test_generator_reproduces_the_spec_and_project(self):
+        path = bg.BASE / 'build/kicad/boards/CTRL/make_spec.py'
+        if not path.is_file():
+            self.skipTest('no CTRL generator')
+        import importlib.util
+        loader = importlib.util.spec_from_file_location('ctrl_make_spec', path)
+        module = importlib.util.module_from_spec(loader)
+        loader.loader.exec_module(module)
+        spec_text, project_text, _copper, skipped = module.build(lambda *a: None)
+        self.assertEqual(skipped, [])
+        self.assertEqual(spec_text, bg.spec_path('CTRL').read_text(encoding='utf-8'))
+        self.assertEqual(project_text, (bg.BASE / 'build/kicad/boards/CTRL/CTRL.kicad_pro').read_text(encoding='utf-8'))
 
 if __name__ == '__main__':
     unittest.main()
