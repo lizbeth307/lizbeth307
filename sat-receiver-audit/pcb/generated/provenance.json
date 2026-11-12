@@ -6,7 +6,7 @@
     },
     {
       "file": "design/E2.json",
-      "sha256": "5ec323a8a3b020da7f0d03876535599680b5caaed3f46604b76e70cd146763d3"
+      "sha256": "0a94cb5920ca983515b5e3cd24d0ba57a353c5639c00ba5b1ef92e23f2d65686"
     },
     {
       "file": "design/E3.json",
@@ -26,7 +26,7 @@
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "a2a8a427d2fbb363e32c59c1b3d08893145191ae0a45877f5428490ad2029ec3"
+      "sha256": "375ff0ee37ac756877d79159f713e80e91c5a701f587b2ba2f59484522adfd61"
     }
   ],
   "source_documents": [

@@ -4437,7 +4437,7 @@
       <footprint>Fuse:Fuse_Littelfuse-NANO2-451_453</footprint>
       <datasheet>STACK.md §§2.7, 5.1; Littelfuse 451/453 (копія LCSC, рядок READS-P web:littelfuse-451-453); W2 GR-5A</datasheet>
       <fields>
-        <field name="ReviewStatus">verified</field>
+        <field name="ReviewStatus">design</field>
         <field name="MPN">0451004.MRL</field>
         <field name="Manufacturer">Littelfuse</field>
         <field name="LCSC">C27515</field>
@@ -4445,8 +4445,8 @@
         <field name="Datasheet">STACK.md §§2.7, 5.1; Littelfuse 451/453 (копія LCSC, рядок READS-P web:littelfuse-451-453); W2 GR-5A</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_F201" description="| verified | W2 GR-5A (SHRINK-2 (2)): SMD-запобіжник Littelfuse NANO2 451 4 A у гілці J21 замість mini blade у тримачі: 125 V, відключення 300 A при 32 VDC, 16.0 mΩ холодний (рядок READS-P web:littelfuse-451-453). Очікуваний струм КЗ у точці F201 не прочитано — OPEN."/>
-      <property name="ReviewStatus" value="verified"/>
+      <libsource lib="sr_rx_v2_completed" part="C_F201" description="| design | W2 GR-5A (SHRINK-2 (2)): SMD-запобіжник Littelfuse NANO2 451 4 A у гілці J21 замість mini blade у тримачі: 125 V, відключення 300 A при 32 VDC, 16.0 mΩ холодний (рядок READS-P web:littelfuse-451-453). Очікуваний струм КЗ у точці F201 не прочитано — OPEN."/>
+      <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0451004.MRL"/>
       <property name="Manufacturer" value="Littelfuse"/>
       <property name="LCSC" value="C27515"/>
@@ -33937,14 +33937,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_F201">
-      <description>| verified | W2 GR-5A (SHRINK-2 (2)): SMD-запобіжник Littelfuse NANO2 451 4 A у гілці J21 замість mini blade у тримачі: 125 V, відключення 300 A при 32 VDC, 16.0 mΩ холодний (рядок READS-P web:littelfuse-451-453). Очікуваний струм КЗ у точці F201 не прочитано — OPEN.</description>
+      <description>| design | W2 GR-5A (SHRINK-2 (2)): SMD-запобіжник Littelfuse NANO2 451 4 A у гілці J21 замість mini blade у тримачі: 125 V, відключення 300 A при 32 VDC, 16.0 mΩ холодний (рядок READS-P web:littelfuse-451-453). Очікуваний струм КЗ у точці F201 не прочитано — OPEN.</description>
       <docs>STACK.md §§2.7, 5.1; Littelfuse 451/453 (копія LCSC, рядок READS-P web:littelfuse-451-453); W2 GR-5A</docs>
       <fields>
         <field name="Reference">F201</field>
         <field name="Value">Littelfuse 0451004.MRL 4A</field>
         <field name="Footprint">Fuse:Fuse_Littelfuse-NANO2-451_453</field>
         <field name="Datasheet">STACK.md §§2.7, 5.1; Littelfuse 451/453 (копія LCSC, рядок READS-P web:littelfuse-451-453); W2 GR-5A</field>
-        <field name="Description">| verified | W2 GR-5A (SHRINK-2 (2)): SMD-запобіжник Littelfuse NANO2 451 4 A у гілці J21 замість mini blade у тримачі: 125 V, відключення 300 A при 32 VDC, 16.0 mΩ холодний (рядок READS-P web:littelfuse-451-453). Очікуваний струм КЗ у точці F201 не прочитано — OPEN.</field>
+        <field name="Description">| design | W2 GR-5A (SHRINK-2 (2)): SMD-запобіжник Littelfuse NANO2 451 4 A у гілці J21 замість mini blade у тримачі: 125 V, відключення 300 A при 32 VDC, 16.0 mΩ холодний (рядок READS-P web:littelfuse-451-453). Очікуваний струм КЗ у точці F201 не прочитано — OPEN.</field>
       </fields>
       <pins>
         <pin num="1" name="1" type="passive"/>
