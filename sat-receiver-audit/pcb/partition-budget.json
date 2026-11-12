@@ -18552,7 +18552,18 @@
       ],
       "status": "pending",
       "owner": "GR-5A",
-      "effect": "reserved blocks CONV_SYS12, RPP"
+      "effect": "reserved blocks CONV_SYS12"
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "status": "pending",
+      "owner": "GR-5A",
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "graph_refs": [],
+      "effect": "reserved blocks RPP"
      },
      {
       "id": "U108-LAB5",
@@ -18679,9 +18690,7 @@
       "d": 6.7,
       "area_mm2": 50.25,
       "h": 2.7,
-      "stands_for": [
-       "U107"
-      ]
+      "stands_for": []
      },
      {
       "id": "CONV_LAB5",
@@ -18775,7 +18784,8 @@
     "tht_margin_mm": 1.0,
     "refs": 94,
     "chip_refs_left_on_top": [],
-    "bottom_refs_with_tht": []
+    "bottom_refs_with_tht": [],
+    "refs_not_moved": []
    },
    "headers": [],
    "fits": false,
@@ -20016,7 +20026,18 @@
       ],
       "status": "pending",
       "owner": "GR-5A",
-      "effect": "reserved blocks CONV_SYS12, RPP"
+      "effect": "reserved blocks CONV_SYS12"
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "status": "pending",
+      "owner": "GR-5A",
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "graph_refs": [],
+      "effect": "reserved blocks RPP"
      },
      {
       "id": "U108-LAB5",
@@ -20143,9 +20164,7 @@
       "d": 6.7,
       "area_mm2": 50.25,
       "h": 2.7,
-      "stands_for": [
-       "U107"
-      ]
+      "stands_for": []
      },
      {
       "id": "CONV_LAB5",
@@ -20239,7 +20258,8 @@
     "tht_margin_mm": 1.0,
     "refs": 94,
     "chip_refs_left_on_top": [],
-    "bottom_refs_with_tht": []
+    "bottom_refs_with_tht": [],
+    "refs_not_moved": []
    },
    "headers": [],
    "fits": false,
@@ -21512,7 +21532,18 @@
       ],
       "status": "pending",
       "owner": "GR-5A",
-      "effect": "reserved blocks CONV_SYS12, RPP"
+      "effect": "reserved blocks CONV_SYS12"
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "status": "pending",
+      "owner": "GR-5A",
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "graph_refs": [],
+      "effect": "reserved blocks RPP"
      },
      {
       "id": "U108-LAB5",
@@ -21639,9 +21670,7 @@
       "d": 6.7,
       "area_mm2": 50.25,
       "h": 2.7,
-      "stands_for": [
-       "U107"
-      ]
+      "stands_for": []
      },
      {
       "id": "CONV_LAB5",
@@ -21735,7 +21764,8 @@
     "tht_margin_mm": 1.0,
     "refs": 94,
     "chip_refs_left_on_top": [],
-    "bottom_refs_with_tht": []
+    "bottom_refs_with_tht": [],
+    "refs_not_moved": []
    },
    "headers": [],
    "fits": false,

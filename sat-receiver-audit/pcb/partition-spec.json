@@ -44,10 +44,10 @@
    "RP-ONE (W2 AREA-2, SHRINK-2 study): one PWR board under the raised HDMI board; its zone sits on the bonded plate fins (mechanical/params/mechanical.json fins: x 52-144, y 78-154, h 3.5) and the raised HDMI board leaves 0.58 mm of path-2 channel against the 4.0 mm minimum",
    "top-entry PWR-B headers (judge graft, W2 AREA-2): without the slab bay their mated height (z 57.1-57.9) enters the 4.0 mm path-2 channel under the display"
   ],
-  "next_decision": "CLOSED (W2 AREA-2, 12.11.2026) by candidate shrink2, the orchestrator decision SHRINK-2 of 11.11.2026 (design study of 4 proposals and 3 judges; scratch evidence, not committed), after PCB-PWRA-1/2 raised F2 by placement: fill 0.959 with 160 of 256 PWR-A refs placed; F2a 0.783, F2b 0.915, both 0.740 against 0.60 (build/kicad/boards/PWR_A/placement-study.json of the PWR-A lineage, MODEL; with the B2B2 placeholder 0.963, 161/257; F2a 0.787, F2b 0.919, both 0.744). The envelope (230 x 163.8 x 70.08 mm), the PWR-A/PWR-B mezzanine on the LSHM-150 pair J208/J209, the RF board, DC_CORE 71/187/40 and receive-only stay; PWR-A gets its room from smaller content (candidates.shrink2.planned), the bottom side (pwr_a_bottom) and rule H-TRIM (keepouts.h_trim). Placement re-run of 2026-11-11 (orchestrator re-check with the board_gen planner of build/kicad/boards/PWR_A/placement_study.py and its obstacle fix, on a detached scratch worktree of wip/w2-pwra1 80d92c28; not committed): top fill_all_refs 0.5882, 150 of 150 refs placed, 22 anchor rows with 0 errors, 0 headers off their edge; bottom 0.132, 94 of 94 placed (MODEL). This tool gives the shrink2 PWR-A top raw fill 0.588 (decision.placement_study checks the agreement within 0.01). Implemented by GR-5A (E1), GR-5B (E2/E5), MECH-7 (mechanical contract), PCB-PWRA-3/4 (PWR-A spec, placement, route) and PCB-PWRB-2 (PWR-B on the full L); the fallbacks are F2-C first and F2-ENV second, with their triggers",
+  "next_decision": "CLOSED (W2 AREA-2, 12.11.2026) by candidate shrink2, the orchestrator decision SHRINK-2 of 11.11.2026 (design study of 4 proposals and 3 judges; scratch evidence, not committed), after PCB-PWRA-1/2 raised F2 by placement: fill 0.959 with 160 of 256 PWR-A refs placed; F2a 0.783, F2b 0.915, both 0.740 against 0.60 (build/kicad/boards/PWR_A/placement-study.json fill at wip/w2-pwra1 80d92c28, PCB-PWRA-1, MODEL; with the B2B2 placeholder, the same file at wip/w2-pwra2 4b0e2f3f, PCB-PWRA-2: 0.963, 161/257; F2a 0.787, F2b 0.919, both 0.744). The envelope (230 x 163.8 x 70.08 mm), the PWR-A/PWR-B mezzanine on the LSHM-150 pair J208/J209, the RF board, DC_CORE 71/187/40 and receive-only stay; PWR-A gets its room from smaller content (candidates.shrink2.planned), the bottom side (pwr_a_bottom) and rule H-TRIM (keepouts.h_trim). Placement re-run of 2026-11-11 (orchestrator re-check with the board_gen planner of build/kicad/boards/PWR_A/placement_study.py and its obstacle fix, on a detached scratch worktree of wip/w2-pwra1 80d92c28; not committed): top fill_all_refs 0.5882, 150 of 150 refs placed, 22 anchor rows with 0 errors, 0 headers off their edge; bottom 0.132, 94 of 94 placed (MODEL). This tool gives the shrink2 PWR-A top raw fill 0.588 (decision.placement_study checks the agreement within 0.01). Implemented by GR-5A (E1), GR-5B (E2/E5), MECH-7 (mechanical contract), PCB-PWRA-3/4 (PWR-A spec, placement, route) and PCB-PWRB-2 (PWR-B on the full L); the fallbacks are F2-C first and F2-ENV second, with their triggers",
   "recomputed_w2_gr3": "W2 GR-3, 07.11.2026: the harness headers are graph refs counted with their vendored KiCad 10.0.7 courtyards on the board of their pcb/prepare.py domain (PWR-B side-entry headers; PWR-A Micro-Fit/Mini-Fit/PH top entry with a PWR-B edge strip; CTRL bottom), F104 joins PWR-A and the RF Micro-Fit header is gone. The computed numbers above (ratios_1_8, shortfall_1_8_mm2, b2b, ctrl_headers_unresolved, envelope dz) replace the figures quoted in the summary, why_a and rejected texts, which keep the AREA reasoning; the verdict is unchanged: no evaluated partition fits at 1.8 (MODEL ESTIMATE)",
   "recomputed_w2_b2b": "W2 B2B, 07.11.2026: the B2B is the Samtec LSHM-150-02.5 pair J208/J209 (graph refs, counted by the KiCad 10.0.7 courtyard 30.70 x 6.20 on each board as b2b_raw, not as parts) and the GND rule is b2b.guard_rule (no ground plane: a GND return beside every rail contact plus the guard contacts; W2 B2B review R2); ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_chosen and the fallback ratios are recomputed and replace the figures in the texts above; the verdict is unchanged: no evaluated partition fits at 1.8 (MODEL ESTIMATE). (b) now needs 119 contacts, more than the 100 of the pair",
-  "recomputed_w2_area2": "W2 AREA-2, 12.11.2026: chosen becomes shrink2. partition_budget.py evaluates planned content changes (they count until GR-5A/GR-5B put the parts into the graph), reserved blocks, a two-sided PWR-A and rule H-TRIM; the existing candidates reproduce unchanged. ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_planned and the fallback ratios are computed; partition.domain_override_pwr_a and b2b.budget_chosen stay the graph of record that pcb/prepare.py, pcb/generated/b2b-nets.json and pcb/tests/test_b2b_map.py follow (candidates.shrink2 planned.graph_of_record in pcb/partition-budget.json), and the *_planned keys hold the SHRINK-2 state. The figures in the texts of the earlier records above are history; the computed keys win",
+  "recomputed_w2_area2": "W2 AREA-2, 12.11.2026: chosen becomes shrink2. partition_budget.py evaluates planned content changes (they count until GR-5A/GR-5B put the parts into the graph), reserved blocks, a two-sided PWR-A and rule H-TRIM; the existing candidates reproduce unchanged. ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_planned and the fallback ratios are computed; partition.domain_override_pwr_a and b2b.budget_chosen stay the graph of record that pcb/prepare.py, pcb/generated/b2b-nets.json and pcb/tests/test_b2b_map.py follow (candidates.shrink2 planned.graph_of_record in pcb/partition-budget.json), and the *_planned keys hold the SHRINK-2 state. The figures in the texts of the earlier records above are history; the computed keys win. Review fixes of 12.11.2026: the RPP block is the reserve RPP-SYS12 (it no longer leaves with U107), and the F2/F3 texts cite their sources by commit and read the computed numbers in the right direction",
   "placement_study": {
    "candidate": "shrink2",
    "top_fill_all_refs": 0.5882,
@@ -654,7 +654,7 @@
    "contacts_needed": 55,
    "contacts_with_spare": 66
   },
-  "budget_note": "W2 AREA-2: budget_chosen is the B2B of the chosen candidate on the graph of record (pcb/generated/b2b-nets.json totals, checked by pcb/tests/test_b2b_map.py); budget_planned is the same candidate with its planned SHRINK-2 changes: the six damper rail nodes (BIAS_CH1-4_DAMP, VBUS_RTLB_DAMP, E2_SB_DAMP) and VBUS_LABPORT stop crossing once GR-5B moves C235/C239/C243/C247/C251/C298 and C506 to PWR-B; then pcb/prepare.py rewrites the contact map and budget_chosen takes these numbers"
+  "budget_note": "W2 AREA-2: budget_chosen is the B2B of the chosen candidate on the graph of record (pcb/generated/b2b-nets.json totals, checked by pcb/tests/test_b2b_map.py); budget_planned is the same candidate with its planned SHRINK-2 changes: the six damper rail nodes (BIAS_CH1-4_DAMP, VBUS_RTLB_DAMP, E2_SB_DAMP) and VBUS_LABPORT stop crossing once GR-5B moves C235/C239/C243/C247/C251/C298 and C506 to PWR-B; then pcb/prepare.py and pcb/write_b2b_graph.py rewrite the contact map and budget_chosen takes the new totals, in the GR-5B swap commit (partition.domain_override_note)"
  },
  "ctrl": {
   "bottom_footprint_prefixes": [
@@ -1527,7 +1527,7 @@
    ],
    "h_trim": true,
    "planned": {
-    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
+    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. A reserve (refs [] and until_mpn_in_graph; RPP-SYS12, W2 AREA-2 review R3) is a change of its own for a stage that has no graph ref yet: it stays until a bare board part of the graph carries one of its MPNs, so it does not leave with another change; a part that GR-5A or GR-5B leaves TBD without a graph ref keeps its area only through such a reserve (AREA lineage). F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
     "changes": [
      {
       "id": "U107-SYS12",
@@ -1536,7 +1536,7 @@
       ],
       "while_mpn": "D36V50F12",
       "owner": "GR-5A",
-      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts, plus the reverse-polarity stage of STACK C4 (MPN TBD), replace the Pololu D36V50F12 module",
+      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts replace the Pololu D36V50F12 module; the reverse-polarity stage of STACK C4 is the reserve RPP-SYS12",
       "to": {
        "blocks": [
         {
@@ -1547,7 +1547,20 @@
          "h": 3.2,
          "what": "LM61460AANRJRR (RJR0014A, 1.0 mm max) + 2.2 uH inductor (SRP7030-2R2M as decided, 3.2 mm max; NRND, Bourns names SRP7028A 2.8 mm; value open by LM61460 eq. (10), GR-5A) + 2 x 10 uF/50 V 1210 + 2 x 100 nF + 4 x 22 uF/50 V 1210 + 6 x 0603: courtyard sum 214.4 mm2",
          "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); heights: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) rows web:ti-snvsbd5d-lm61460 and web:bourns-srp7030 (the tallest part, 3.2 mm max)"
-        },
+        }
+       ]
+      }
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "owner": "GR-5A",
+      "what": "reverse-polarity stage of the LM61460 input (STACK C4), a reserve of its own (W2 AREA-2 review R3): it is not part of U107-SYS12, so it stays counted while the stage has no graph ref (GR-5A may leave the MPN TBD with a reserved block and an unresolved.csv record). It leaves when a bare board part of the graph carries a listed MPN: the controller LM74700QDBVRQ1 read by READS-P (row web:ti-snosd17g-lm74700-q1), whose N-MOSFET comes into the graph with it. Another controller MPN is added here in the AREA lineage; until then the block and the real parts both count (the demand is overstated, never understated)",
+      "to": {
+       "blocks": [
         {
          "id": "RPP",
          "side": "PWR_A",
@@ -1938,7 +1951,7 @@
    ],
    "h_trim": false,
    "planned": {
-    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
+    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. A reserve (refs [] and until_mpn_in_graph; RPP-SYS12, W2 AREA-2 review R3) is a change of its own for a stage that has no graph ref yet: it stays until a bare board part of the graph carries one of its MPNs, so it does not leave with another change; a part that GR-5A or GR-5B leaves TBD without a graph ref keeps its area only through such a reserve (AREA lineage). F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
     "changes": [
      {
       "id": "U107-SYS12",
@@ -1947,7 +1960,7 @@
       ],
       "while_mpn": "D36V50F12",
       "owner": "GR-5A",
-      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts, plus the reverse-polarity stage of STACK C4 (MPN TBD), replace the Pololu D36V50F12 module",
+      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts replace the Pololu D36V50F12 module; the reverse-polarity stage of STACK C4 is the reserve RPP-SYS12",
       "to": {
        "blocks": [
         {
@@ -1958,7 +1971,20 @@
          "h": 3.2,
          "what": "LM61460AANRJRR (RJR0014A, 1.0 mm max) + 2.2 uH inductor (SRP7030-2R2M as decided, 3.2 mm max; NRND, Bourns names SRP7028A 2.8 mm; value open by LM61460 eq. (10), GR-5A) + 2 x 10 uF/50 V 1210 + 2 x 100 nF + 4 x 22 uF/50 V 1210 + 6 x 0603: courtyard sum 214.4 mm2",
          "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); heights: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) rows web:ti-snvsbd5d-lm61460 and web:bourns-srp7030 (the tallest part, 3.2 mm max)"
-        },
+        }
+       ]
+      }
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "owner": "GR-5A",
+      "what": "reverse-polarity stage of the LM61460 input (STACK C4), a reserve of its own (W2 AREA-2 review R3): it is not part of U107-SYS12, so it stays counted while the stage has no graph ref (GR-5A may leave the MPN TBD with a reserved block and an unresolved.csv record). It leaves when a bare board part of the graph carries a listed MPN: the controller LM74700QDBVRQ1 read by READS-P (row web:ti-snosd17g-lm74700-q1), whose N-MOSFET comes into the graph with it. Another controller MPN is added here in the AREA lineage; until then the block and the real parts both count (the demand is overstated, never understated)",
+      "to": {
+       "blocks": [
         {
          "id": "RPP",
          "side": "PWR_A",
@@ -2349,7 +2375,7 @@
    ],
    "h_trim": true,
    "planned": {
-    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
+    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. A reserve (refs [] and until_mpn_in_graph; RPP-SYS12, W2 AREA-2 review R3) is a change of its own for a stage that has no graph ref yet: it stays until a bare board part of the graph carries one of its MPNs, so it does not leave with another change; a part that GR-5A or GR-5B leaves TBD without a graph ref keeps its area only through such a reserve (AREA lineage). F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
     "changes": [
      {
       "id": "U107-SYS12",
@@ -2358,7 +2384,7 @@
       ],
       "while_mpn": "D36V50F12",
       "owner": "GR-5A",
-      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts, plus the reverse-polarity stage of STACK C4 (MPN TBD), replace the Pololu D36V50F12 module",
+      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts replace the Pololu D36V50F12 module; the reverse-polarity stage of STACK C4 is the reserve RPP-SYS12",
       "to": {
        "blocks": [
         {
@@ -2369,7 +2395,20 @@
          "h": 3.2,
          "what": "LM61460AANRJRR (RJR0014A, 1.0 mm max) + 2.2 uH inductor (SRP7030-2R2M as decided, 3.2 mm max; NRND, Bourns names SRP7028A 2.8 mm; value open by LM61460 eq. (10), GR-5A) + 2 x 10 uF/50 V 1210 + 2 x 100 nF + 4 x 22 uF/50 V 1210 + 6 x 0603: courtyard sum 214.4 mm2",
          "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); heights: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) rows web:ti-snvsbd5d-lm61460 and web:bourns-srp7030 (the tallest part, 3.2 mm max)"
-        },
+        }
+       ]
+      }
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "owner": "GR-5A",
+      "what": "reverse-polarity stage of the LM61460 input (STACK C4), a reserve of its own (W2 AREA-2 review R3): it is not part of U107-SYS12, so it stays counted while the stage has no graph ref (GR-5A may leave the MPN TBD with a reserved block and an unresolved.csv record). It leaves when a bare board part of the graph carries a listed MPN: the controller LM74700QDBVRQ1 read by READS-P (row web:ti-snosd17g-lm74700-q1), whose N-MOSFET comes into the graph with it. Another controller MPN is added here in the AREA lineage; until then the block and the real parts both count (the demand is overstated, never understated)",
+      "to": {
+       "blocks": [
         {
          "id": "RPP",
          "side": "PWR_A",
@@ -2854,7 +2893,7 @@
    "C506"
   ],
   "domain_override_pwr_a_planned": [],
-  "domain_override_note": "W2 AREA-2: domain_override_pwr_a is what pcb/prepare.py reads now (the radials EEU-FR1H470 C235/C239/C243/C247/C251/C298 and 16SVPC150M C506 are taller than hB in the graph). Removing them here before their swap would put 11.2 mm parts on PWR-B and change the J208/J209 contact map. domain_override_pwr_a_planned is the SHRINK-2 list: in the commit that swaps them to 16SVPG47M, GR-5B sets domain_override_pwr_a to it and runs pcb/prepare.py, pcb/write_b2b_graph.py and the protocol chain (pcb/partition_budget.py --check reports the mismatch until then)"
+  "domain_override_note": "W2 AREA-2: domain_override_pwr_a is what pcb/prepare.py reads now (the radials EEU-FR1H470 C235/C239/C243/C247/C251/C298 and 16SVPC150M C506 are taller than hB in the graph). Removing them here before their swap would put 11.2 mm parts on PWR-B and change the J208/J209 contact map. domain_override_pwr_a_planned is the SHRINK-2 list. In the commit that swaps them to 16SVPG47M (coupled to its refreeze), GR-5B (1) sets domain_override_pwr_a to it, (2) runs pcb/prepare.py and pcb/write_b2b_graph.py (J208/J209 of design/E2.json), (3) sets b2b.budget_chosen to the new pcb/generated/b2b-nets.json totals (b2b.budget_planned is the model expectation), (4) updates the layout of (a) quoted in b2b.pin_map_rule and the rail-node and pin_map_rule assertions of pcb/tests/test_b2b_map.py (the six damper rail nodes stop crossing), and (5) runs the protocol chain and pcb/partition_budget.py. Those hunks of this file and of pcb/tests/test_b2b_map.py are outside the GR-5B paths of the SHRINK-2 plan, so the orchestrator grants them (W2 AREA-2 review R1); pcb/partition_budget.py --check reports the mismatch until then"
  },
  "fallbacks": [
   {
@@ -2869,7 +2908,7 @@
     "F2b": "rear-tier board PCB-REAR in x 71.6-116, y 38.5-94.5, z 4.8-17.5 (2486 mm2, parts <= 10.6 mm) taking the rear-load groups E5 'VBUS HF+', 'VBUS RTL-A і LAB PORT', 'LAB BUS I2C buffer' and E2 'RTL-B', 'S-band'; their radials (11.0-11.2 mm) cannot go there and stay on PWR-A; the rear board's own harness headers are not counted yet"
    },
    "trigger": "courtyard fill of PWR-A or PWR-B > 0.60 in placement, or unrouted nets after two placement iterations (PCB-PWRA-1/2, PCB-PWRB). The area model of (a) exceeds it: raw fill PWR-A 0.94, PWR-B 1.118 (pcb/partition-budget.json candidates.a)",
-   "verdict": "fired and measured (W2 AREA-2 records it): PCB-PWRA-1/2 raised F2 by placement: fill 0.959 with 160 of 256 PWR-A refs placed; F2a 0.783, F2b 0.915, both 0.740 against 0.60 (build/kicad/boards/PWR_A/placement-study.json of the PWR-A lineage, MODEL; with the B2B2 placeholder 0.963, 161/257; F2a 0.787, F2b 0.919, both 0.744). Neither option reaches 0.60, so F2 is superseded by SHRINK-2 (decision.next_decision); its fallbacks are F2-C and F2-ENV",
+   "verdict": "fired and measured (W2 AREA-2 records it): PCB-PWRA-1/2 raised F2 by placement: fill 0.959 with 160 of 256 PWR-A refs placed; F2a 0.783, F2b 0.915, both 0.740 against 0.60 (build/kicad/boards/PWR_A/placement-study.json fill at wip/w2-pwra1 80d92c28, PCB-PWRA-1, MODEL; with the B2B2 placeholder, the same file at wip/w2-pwra2 4b0e2f3f, PCB-PWRA-2: 0.963, 161/257; F2a 0.787, F2b 0.919, both 0.744). Neither option reaches 0.60, so F2 is superseded by SHRINK-2 (decision.next_decision); its fallbacks are F2-C and F2-ENV",
    "cost": "integration_plan step 8: +10-12 h (PCB-REAR board, MECH envelope step, GR-3 partition update)",
    "ratios_1_8": {
     "c": {
@@ -2899,7 +2938,7 @@
      "F2b": 0.919,
      "F2a_plus_F2b": 0.744
     },
-    "src": "PCB-PWRA-1 / PCB-PWRA-2 placement study (build/kicad/boards/PWR_A/placement-study.json of the PWR-A lineage, wip/w2-pwra2 4b0e2f3f; MODEL)"
+    "src": "PCB-PWRA-1 placement study: build/kicad/boards/PWR_A/placement-study.json fill at wip/w2-pwra1 80d92c28 (fill_all_refs 0.9586, 160 of 256 placed; f2_options F2a 0.783, F2b 0.9152, both 0.7396); with_b2b2_placeholder: PCB-PWRA-2, the same file at wip/w2-pwra2 4b0e2f3f (fill_all_refs 0.9629, 161 of 257; 0.7873, 0.9194, 0.7438); read with git show on 12.11.2026; MODEL. PCB-PWRA-3 regenerates that file for SHRINK-2, so the two commits are the record"
    }
   },
   {
@@ -2911,7 +2950,7 @@
    ],
    "option": "MCP23017 #1/#3/#4 (E3 group 'MCP23017 control') from CTRL to the power side (PWR-B), as STACK.md:277 allows (MCP23017-E/SO 'на силовій платі'); needs an E3/E2 review of the EN/FAULT logic",
    "trigger": "CTRL fill > 0.60 on either side in placement (PCB-CTRL). The area model of (a) is at raw fill 0.617 (top) / 0.612 (bottom), pcb/partition-budget.json candidates.a ctrl",
-   "verdict": "at 1.8 CTRL top 1.124 and bottom 0.946 (computed, candidate f3): it closes the top but not the bottom, and leaves decision.ctrl_headers_unresolved as they are. On SHRINK-2 (candidate s2f3) the MCP23017 group lifts the PWR-B raw fill from 0.572 to 0.598 with S02 unchanged; with the S02 FFC (not adopted: no mating FFC pair established, W2 READS-P) PWR-B would have more room. Apply only if PCB-CTRL shows the fill",
+   "verdict": "at 1.8 the CTRL top already fits without F3 (candidate a 1.117, f3 1.124) and F3 does not close the bottom (0.908 -> 0.946); against the 0.60 placement trigger it is the other way round: F3 brings the CTRL bottom raw fill from 0.612 to 0.587 and leaves the top at 0.614 (computed, candidates a and f3). It leaves decision.ctrl_headers_unresolved as they are. On SHRINK-2 (candidate s2f3) the MCP23017 group lifts the PWR-B raw fill from 0.572 to 0.598 with S02 unchanged, 0.002 below the 0.60 trigger (the SHRINK-2 decision estimated about 0.62), so F3 on PWR-B needs the S02 FFC (not adopted: no mating FFC pair established, W2 READS-P) or a PWR-B placement check (PCB-PWRB-2) first. Apply only if PCB-CTRL shows the fill",
    "ratios_1_8": {
     "f3": {
      "PWR_A": 0.661,

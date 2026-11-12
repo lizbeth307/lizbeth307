@@ -30,7 +30,8 @@ decides, and the fallbacks of the spec fire on the triggers it states.
 W2 AREA-2 (SHRINK-2): a candidate may carry planned content changes (candidates.<id>.planned.changes: footprint/MPN
 swaps, deletions, header merges and reserved blocks that stand in for parts without a graph ref yet). A change counts
 while every one of its refs still has the graph value it replaces; once GR-5A/GR-5B put the new part into the graph it is
-'in graph' and the graph counts. Such a candidate is also evaluated on the graph of record (no planned change), because
+'in graph' and the graph counts; a reserve (refs [], until_mpn_in_graph) holds the area of a stage without a graph ref until a
+graph part carries one of its MPNs. Such a candidate is also evaluated on the graph of record (no planned change), because
 pcb/prepare.py (domain_override_pwr_a) and pcb/generated/b2b-nets.json follow the graph. pwr_a_bottom makes PWR-A
 two-sided: the listed chip refs count on the bottom side (board PWR_A_BOTTOM), whose usable area is the outline minus the
 hole keep-outs, the thermal_bond zones and the top THT pin fields plus the pocket margin (an area sum: the pin fields
@@ -402,7 +403,9 @@ class Evaluator:
         """(parts, rows, blocks) of a candidate with candidates.<id>.planned.changes applied. A change is 'pending' while
         every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header) and is then
         applied; it is 'in graph' when none has (GR-5A/GR-5B have put the new part into the graph, so the graph counts);
-        a half-applied change stops the tool. rows: one status row per change; blocks: the reserved blocks of the pending
+        a half-applied change stops the tool. A reserve (refs [] and until_mpn_in_graph, W2 AREA-2 review R3) stands for a
+        stage that has no graph ref yet: it is 'pending' until a bare board part of the graph carries one of the listed MPNs,
+        so it does not leave with another change. rows: one status row per change; blocks: the reserved blocks of the pending
         changes that stand in for parts without a graph ref yet."""
         parts, rows, blocks = dict(self.D.parts), [], []
         for ch in cand.get("planned", {}).get("changes", []):
@@ -413,15 +416,24 @@ class Evaluator:
                 if "while_mpn" in ch:
                     return self.D.mpn.get(r) == ch["while_mpn"]
                 return p["footprint"] == ch["while_footprint"][r]
-            state = [holds(r) for r in ch["refs"]]
-            if all(state):
-                status = "pending"
-            elif not any(state):
-                status = "in graph"
+            hits = None
+            if "until_mpn_in_graph" in ch:
+                if ch["refs"] or "blocks" not in ch["to"]:
+                    raise SystemExit(f"planned change {ch['id']}: a reserve (until_mpn_in_graph) has refs [] and reserved blocks only")
+                hits = sorted(r for r in self.D.parts if self.D.mpn.get(r) in ch["until_mpn_in_graph"])
+                status = "in graph" if hits else "pending"
             else:
-                raise SystemExit(f"planned change {ch['id']}: only some of {ch['refs']} still have the graph value it replaces "
-                                 "(a half-applied change): finish it in the graph or update candidates.<id>.planned")
+                state = [holds(r) for r in ch["refs"]]
+                if all(state):
+                    status = "pending"
+                elif not any(state):
+                    status = "in graph"
+                else:
+                    raise SystemExit(f"planned change {ch['id']}: only some of {ch['refs']} still have the graph value it replaces "
+                                     "(a half-applied change): finish it in the graph or update candidates.<id>.planned")
             row = {"id": ch["id"], "refs": ch["refs"], "status": status, "owner": ch.get("owner")}
+            if hits is not None:
+                row.update(until_mpn_in_graph=ch["until_mpn_in_graph"], graph_refs=hits)
             rows.append(row)
             if status != "pending":
                 continue
@@ -481,16 +493,20 @@ class Evaluator:
                     header_family=to.get("family", p["header_family"]))
 
     def move_to_bottom(self, cand, side):
-        """Two-sided PWR-A (candidates.<id>.pwr_a_bottom): the listed chip refs move from PWR_A to PWR_A_BOTTOM."""
+        """Two-sided PWR-A (candidates.<id>.pwr_a_bottom): the listed chip refs move from PWR_A to PWR_A_BOTTOM. A listed ref
+        that has left the graph or is no longer a PWR-A chip part of footprint_prefixes (a later GR change) stays where assign()
+        put it and is returned, so the budget still builds and check_spec names it (W2 AREA-2 review R2)."""
         B = cand["pwr_a_bottom"]
         pref = tuple(B["footprint_prefixes"])
+        left = []
         for ref in B["refs"]:
             p = self.cur.get(ref)
             if p is None or side.get(ref) != "PWR_A" or p["tp"] or p["header"] or p["tht"] or \
                     not p["footprint"].split(":", 1)[-1].startswith(pref):
-                raise SystemExit(f"pwr_a_bottom: {ref} is not a PWR-A chip part of footprint_prefixes "
-                                 f"({p and p['footprint']}, side {side.get(ref)})")
+                left.append(f"{ref} ({p['footprint'] if p else 'not in the graph'}, side {side.get(ref)})")
+                continue
             side[ref] = "PWR_A_BOTTOM"
+        return left
 
     def pwr_a_bottom(self, cand, side, pockets):
         """Bottom usable area of a two-sided PWR-A = outline - hole keep-outs - thermal_bond zones (boards.json PWR, with
@@ -758,8 +774,7 @@ class Evaluator:
         else:
             self.cur, changes, blocks = self.D.parts, [], []
         side, override, rear_override = self.assign(cand)
-        if "pwr_a_bottom" in cand:
-            self.move_to_bottom(cand, side)
+        bottom_left = self.move_to_bottom(cand, side) if "pwr_a_bottom" in cand else []
         hdrs = self.place_headers(side, cand)
         cross = self.crossing(side, hdrs)
         b2b = self.b2b_budget(cross, bb["contacts"])
@@ -879,7 +894,7 @@ class Evaluator:
                                           "h": b["h"], "stands_for": b["stands_for"]} for b in blocks],
                               "graph_of_record": graph}
         if bottom is not None:
-            res["pwr_a_bottom"] = bottom
+            res["pwr_a_bottom"] = dict(bottom, refs_not_moved=bottom_left)
         fits_all = True
         for name in sorted(boards):
             b = boards[name]
@@ -1175,8 +1190,12 @@ def check_spec(spec, report):
     g_over = graph["height_overrides_to_pwr_a"] if graph else res["height_overrides_to_pwr_a"]
     if sorted(rec["domain_override_pwr_a"]) != sorted(g_over + pinned):
         errs.append("partition.domain_override_pwr_a differs from the computed height overrides (graph of record) plus pinned refs: "
-                    + json.dumps(sorted(g_over + pinned)) + (" (a planned change is in the graph now: take partition.domain_override_pwr_a_planned "
-                                                             "and rerun pcb/prepare.py, pcb/write_b2b_graph.py and the protocol chain)" if graph else ""))
+                    + json.dumps(sorted(g_over + pinned)) + (" (a planned change is in the graph now: in the same commit take partition."
+                                                             "domain_override_pwr_a_planned, run pcb/prepare.py and pcb/write_b2b_graph.py, set "
+                                                             "b2b.budget_chosen to the new pcb/generated/b2b-nets.json totals, update the layout "
+                                                             "quoted in b2b.pin_map_rule and the rail-node and pin_map_rule assertions of "
+                                                             "pcb/tests/test_b2b_map.py, then run the protocol chain and this tool; "
+                                                             "partition.domain_override_note)" if graph else ""))
     if graph is not None and sorted(rec.get("domain_override_pwr_a_planned", [None])) != sorted(res["height_overrides_to_pwr_a"] + pinned):
         errs.append("partition.domain_override_pwr_a_planned differs from the computed planned overrides: "
                     + json.dumps(sorted(res["height_overrides_to_pwr_a"] + pinned)))
@@ -1244,6 +1263,19 @@ def check_spec(spec, report):
             got.update({f"CTRL_{name}": row["ratio_1.8"] for name, row in r["ctrl"]["sides"].items()})
             if want.get(cid) != got:
                 errs.append(f"fallback {fb['id']}: ratios_1_8[{cid}] {want.get(cid)} differs from the computed {got}")
+    for cid, r in report["candidates"].items():
+        left = (r.get("pwr_a_bottom") or {}).get("refs_not_moved")
+        if left:
+            errs.append(f"candidate {cid}: pwr_a_bottom.refs lists refs that are no longer PWR-A chip parts of footprint_prefixes, "
+                        f"so they stay on top: {'; '.join(left)} (update candidates.{cid}.pwr_a_bottom.refs in the AREA lineage)")
+    # W2 AREA-2 review R2: the decision record above was computed with every planned change pending; once GR-5A/GR-5B put a
+    # change into the graph the numbers move, and the AREA-lineage pass after that merge records them
+    moved = [f"{c['id']} ({c.get('owner')})" for c in (res.get("planned") or {}).get("changes", []) if c["status"] == "in graph"]
+    if errs and moved:
+        errs.insert(0, f"planned changes of {ch} now in the graph: {', '.join(moved)}. The decision record (decision.ratios_1_8, "
+                       "shortfall_1_8_mm2, b2b_contacts_quoted, placement_study, b2b.budget_*, fallbacks[].ratios_1_8, pwr_a_bottom.refs and "
+                       "the build/15 rows that quote them) was computed with them pending: the AREA-lineage pass after the GR-5A/GR-5B "
+                       "merge reruns this tool, updates the record and reruns pcb/prepare.py (GENERATED) and the mech patch")
     return errs
 
 
