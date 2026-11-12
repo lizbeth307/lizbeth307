@@ -1,0 +1,298 @@
+{
+  "schema": "srrx-board-route-log-v1",
+  "board_id": "PWR_A",
+  "label": "Frozen route provenance (CI run); --check does not re-route",
+  "tool": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "source_read": "GitHub release API v2.5.0 asset digests, read 2026-11-07"
+  },
+  "runtime": {
+    "name": "Eclipse Temurin JRE",
+    "version": "25.0.5+8",
+    "licence": "GPL-2.0-with-classpath-exception",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jre_x64_linux_hotspot_25.0.5_8.tar.gz",
+    "sha256": "6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6",
+    "source_read": "Adoptium API and GitHub release API, read 2026-11-07"
+  },
+  "command": [
+    "java",
+    "-Djava.awt.headless=true",
+    "-cp",
+    "freerouting-2.5.0.jar",
+    "app.freerouting.cli.FreeroutingCli",
+    "-de",
+    "PWR_A.dsn",
+    "-do",
+    "PWR_A.ses",
+    "--router.autorouter.max_passes=30",
+    "-mt",
+    "1",
+    "--router.optimizer.max_threads=1",
+    "--router.automatic_neckdown=false",
+    "-da",
+    "--gui.enabled=false",
+    "--router.job_timeout=00:10:00",
+    "--logging.file.enabled=false",
+    "--user_data_path=<temp>",
+    "--router.fanout.enabled=false"
+  ],
+  "exit_code": 0,
+  "log_tail": [
+    "    - B2B2-69  ->  B2B2-59",
+    "    - B2B2-116  ->  B2B2-100",
+    "    - B2B2-116  ->  B2B2-111",
+    "    - B2B2-59  ->  B2B2-82",
+    "    - B2B2-59  ->  J115-1",
+    "    - C113-2  ->  U108-GND@2",
+    "  Net 'E1_LAB5_DAMP' (1 unrouted connection):",
+    "    - C113-1  ->  R110-2",
+    "  Net 'E1_SW' (4 unrouted connections):",
+    "    - U107-VIN@1  ->  U107-VIN",
+    "    - U108-VIN  ->  U108-VIN@1",
+    "    - U107-VIN@1  ->  U108-VIN",
+    "    - U107-VIN  ->  J107-2",
+    "  Net 'E2_BONI_IN' (1 unrouted connection):",
+    "    - U213-16  ->  U213-15",
+    "  Net 'E2_LNA_IN' (9 unrouted connections):",
+    "    - U205-4  ->  U205-3",
+    "    - U205-3  ->  U205-2",
+    "    - U205-2  ->  U205-1",
+    "    - U204-4  ->  U204-3",
+    "    - U204-3  ->  U204-2",
+    "    - U204-1  ->  U204-2",
+    "    - U205-1  ->  U204-4",
+    "    - U205-4  ->  U205-7",
+    "    - U204-7  ->  U204-1",
+    "  Net 'E2_LNB_IN' (1 unrouted connection):",
+    "    - U211-16  ->  U211-15",
+    "  Net 'LAB5' (5 unrouted connections):",
+    "    - B2B2-117  ->  B2B2-119",
+    "    - B2B2-117  ->  B2B2-115",
+    "    - B2B2-115  ->  B2B2-113",
+    "    - J104-4  ->  J206-2",
+    "    - B2B2-113  ->  J206-2",
+    "  Net 'SYS12' (1 unrouted connection):",
+    "    - U107-VOUT@1  ->  U107-VOUT",
+    "2026-11-07 23:25:00.894 INFO   [E3AA19\\508197] Auto-routing stage completed: started with 79 unrouted nets, completed in 71.57 seconds, final score: 679.20 (29 unrouted and 10 violations), using 69.87 total CPU seconds, 40.44 GB total allocated, and 323.8 MB peak heap usage.",
+    "2026-11-07 23:25:00.991 INFO   [E3AA19\\508197] Skipping optimization stage: the board has 29 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-07 23:25:01.013 INFO   [E3AA19\\508197] Job 'E3AA19\\508197' finished with state: COMPLETED (elapsed: 1 minute 12.10 seconds, finished at UTC: 2026-11-07T23:25:01.011578114Z).",
+    "2026-11-07 23:25:01.042 INFO   Saving output file '/tmp/sr-rx-PWR_A-spqqj7hy/PWR_A.ses' (SES)...",
+    "2026-11-07 23:25:01.044 INFO   Successfully saved output file '/tmp/sr-rx-PWR_A-spqqj7hy/PWR_A.ses' (12724 bytes)."
+  ],
+  "dsn_sha256": "89518081b0d91f02b7261a06dc63292740dde74215de06994294de130aa700d1",
+  "ses_sha256": "9d7fdd7e6619411dadc9006a7f8234b67e920b7a44a576506419f9293e215be2",
+  "dsn_probe": {
+    "resolution": "um 10",
+    "wires_fix": 11,
+    "wires_protect": 0,
+    "keepouts": 72,
+    "planes": 4,
+    "classes": {
+      "kicad_default": {
+        "width": "150",
+        "clearance": "150"
+      },
+      "BATT": {
+        "width": "3200",
+        "clearance": "150"
+      },
+      "PWR3A": {
+        "width": "1850",
+        "clearance": "150"
+      },
+      "PWR2A": {
+        "width": "800",
+        "clearance": "150"
+      },
+      "PWR1A": {
+        "width": "350",
+        "clearance": "150"
+      }
+    }
+  },
+  "locked_segments": {
+    "before_ses_import": 11,
+    "after_ses_import": 11
+  },
+  "drc_command": [
+    "kicad-cli",
+    "pcb",
+    "drc",
+    "--format",
+    "json",
+    "--severity-all",
+    "--all-track-errors",
+    "--units",
+    "mm",
+    "--refill-zones",
+    "--save-board"
+  ],
+  "board_sha256": "6cf679af80df106eddb0e5faaa7c2aa793fbb50a77aefd269569077a31cc54b7",
+  "previews": [
+    "build/kicad/boards/PWR_A/PWR_A-top.svg",
+    "build/kicad/boards/PWR_A/PWR_A-bottom.svg"
+  ],
+  "footprint_sources": [
+    {
+      "ref": "C113",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_6.3x5.9.kicad_mod",
+      "sha256": "efe6ce7548c27034d3ee899c6d00ac17e75879f562c4f5b40d445e4770b8bdcd"
+    },
+    {
+      "ref": "F102",
+      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuseholder_Blade_Mini_Keystone_3568.kicad_mod",
+      "sha256": "ce9f2576e0604a938518a57905b3876e023afe3a4493bd80dbe5a56b171d068d"
+    },
+    {
+      "ref": "J104",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical.kicad_mod",
+      "sha256": "9dc8529b288dff1cfbc3efe7b49cb9110ebfae665b8e7705dcc91fd305deaa2b"
+    },
+    {
+      "ref": "J105",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical.kicad_mod",
+      "sha256": "0b8945d43b6a2a9282971785c2b7d23b50eea9795bbb8c0398390b37883a1278"
+    },
+    {
+      "ref": "J106",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical.kicad_mod",
+      "sha256": "0b8945d43b6a2a9282971785c2b7d23b50eea9795bbb8c0398390b37883a1278"
+    },
+    {
+      "ref": "J107",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical.kicad_mod",
+      "sha256": "0b8945d43b6a2a9282971785c2b7d23b50eea9795bbb8c0398390b37883a1278"
+    },
+    {
+      "ref": "J108",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical.kicad_mod",
+      "sha256": "1f4aa9a92dea496e784b2fa2ec1b8145a153a88c644cd010a2eac5c14b85edb4"
+    },
+    {
+      "ref": "J109",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd59286748b9a6fa9174237072608f811cf3169dddf00eab54a5c196fcb6f7e8"
+    },
+    {
+      "ref": "J110",
+      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical.kicad_mod",
+      "sha256": "03211833fb2e60a511e2fe68e1604d057517e1315ad0221909895d20be5cd7fc"
+    },
+    {
+      "ref": "J111",
+      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c"
+    },
+    {
+      "ref": "J112",
+      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical.kicad_mod",
+      "sha256": "f5488d79bbafc8c929bcfacf8e960e81dcfc126c598e03083de317607937b58e"
+    },
+    {
+      "ref": "J113",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd59286748b9a6fa9174237072608f811cf3169dddf00eab54a5c196fcb6f7e8"
+    },
+    {
+      "ref": "J114",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6"
+    },
+    {
+      "ref": "J115",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6"
+    },
+    {
+      "ref": "J205",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6"
+    },
+    {
+      "ref": "J206",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical.kicad_mod",
+      "sha256": "1aaa5ed421b2f1c499e2f293531216e3eb6d548960cc7941d6669c8ce52ddc75"
+    },
+    {
+      "ref": "J507",
+      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical.kicad_mod",
+      "sha256": "f5488d79bbafc8c929bcfacf8e960e81dcfc126c598e03083de317607937b58e"
+    },
+    {
+      "ref": "R110",
+      "footprint": "Resistor_SMD:R_2512_6332Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_2512_6332Metric.kicad_mod",
+      "sha256": "abab4bf8eeb3ed03061d8eeb56b542cdac074ce8a0ace0f9b06e933c0b48f297"
+    },
+    {
+      "ref": "U107",
+      "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/Pololu_D36V50Fx.kicad_mod",
+      "sha256": "ca57b6cbe52f704f5d0ec8da14faf6525a02fcd895b0d4e71902722b866fdb84"
+    },
+    {
+      "ref": "U108",
+      "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/Pololu_D36V50Fx.kicad_mod",
+      "sha256": "ca57b6cbe52f704f5d0ec8da14faf6525a02fcd895b0d4e71902722b866fdb84"
+    },
+    {
+      "ref": "U204",
+      "footprint": "Package_SO:MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias",
+      "file": "build/kicad/footprints/Package_SO.pretty/MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias.kicad_mod",
+      "sha256": "8b6bece92cec10d1e5c523200e161f3cb727242f49f594c2b6474cf657f6e53b"
+    },
+    {
+      "ref": "U205",
+      "footprint": "Package_SO:MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias",
+      "file": "build/kicad/footprints/Package_SO.pretty/MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias.kicad_mod",
+      "sha256": "8b6bece92cec10d1e5c523200e161f3cb727242f49f594c2b6474cf657f6e53b"
+    },
+    {
+      "ref": "U211",
+      "footprint": "SR_RX_Custom:TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm.kicad_mod",
+      "sha256": "e37866768c11f6a268569a71bc7771ae6cb58afe655230a8b2b8d84985276a49"
+    },
+    {
+      "ref": "U213",
+      "footprint": "SR_RX_Custom:TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm.kicad_mod",
+      "sha256": "e37866768c11f6a268569a71bc7771ae6cb58afe655230a8b2b8d84985276a49"
+    },
+    {
+      "ref": "B2B2",
+      "footprint": "Connector_Hirose_FX8:Hirose_FX8-120S-SV_2x60_P0.6mm",
+      "file": "kicad-image:Connector_Hirose_FX8.pretty/Hirose_FX8-120S-SV_2x60_P0.6mm.kicad_mod",
+      "sha256": "82ef2a7f5fbd930b90d97ef39fd59bbc18f8f31c22ec51cee135ad045241a67b"
+    }
+  ],
+  "kicad_version": "10.0.7",
+  "github": {
+    "run_id": "42424937979",
+    "sha": "7c5fea7f7026ac2997d570668c023ab4088d0922",
+    "ref": "refs/heads/wip/w2-pwra2"
+  }
+}

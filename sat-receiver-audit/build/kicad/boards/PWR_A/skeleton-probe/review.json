@@ -1,0 +1,265 @@
+{
+  "schema": "srrx-board-review-v1",
+  "board_id": "PWR_A",
+  "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "pcb/check_boards.py",
+  "result": "NO_FINDINGS",
+  "inputs": {
+    "board_file": {
+      "path": "build/kicad/boards/PWR_A/PWR_A.kicad_pcb",
+      "sha256": "6cf679af80df106eddb0e5faaa7c2aa793fbb50a77aefd269569077a31cc54b7"
+    },
+    "projection_sha256": {
+      "graph_refs_pins_nets": "f1a7e803ecbb452a6172ed0eec18c8d595e50ef1d70ecf4e62a91d5273ad5575",
+      "footprints": "3375fa6e5efd44fd8e6c110689fce098ae0aa4af17f796693bc5908df8d29859",
+      "contract_board": "3b101ded8781cae83235bfdd87719f6156073436420f5603fa9d9bc3cca4f3db",
+      "netclasses": "49cca597e2a499476bec3c1839bcef5eeabcd3bb294d129dbac3767274125c02",
+      "spec": "56ee74fc5fb4793542c3cc8ff4c8a98a8786f17fb04c60c61f87f66c8ea90079"
+    },
+    "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
+  },
+  "frame": {
+    "origin": [
+      100.0,
+      210.0
+    ],
+    "y": "up",
+    "source": "Edge.Cuts bounding box"
+  },
+  "counts": {
+    "footprints": 32,
+    "pads": 317,
+    "tracks": 119,
+    "vias": 10,
+    "zones": 36,
+    "holes": 19,
+    "copper_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ]
+  },
+  "checks": {
+    "outline": {
+      "findings": 0,
+      "area_mm2": 7910.0,
+      "loops": 1
+    },
+    "holes": {
+      "findings": 0,
+      "contract_holes": 7,
+      "board_holes": 19
+    },
+    "keepouts": {
+      "findings": 0,
+      "keepout_r_mm": 3.5,
+      "tolerance_mm": 0.005
+    },
+    "pad_nets": {
+      "findings": 0,
+      "expected_refs": 24,
+      "board_footprints": 32
+    },
+    "class_widths": {
+      "findings": 0,
+      "tracks_checked": 119,
+      "pour_necks": [
+        {
+          "net": "E1_LAB5_RAW",
+          "layer": "B.Cu",
+          "neck_mm": 5.85,
+          "limit_mm": 1.85,
+          "grid_mm": 0.05,
+          "at": [
+            112.575,
+            136.375
+          ]
+        },
+        {
+          "net": "E1_LAB5_RAW",
+          "layer": "F.Cu",
+          "neck_mm": 5.85,
+          "limit_mm": 1.85,
+          "grid_mm": 0.05,
+          "at": [
+            112.575,
+            136.375
+          ]
+        }
+      ],
+      "split_nets": {
+        "E1_LAB5_RAW": {
+          "layers": [
+            "F.Cu",
+            "B.Cu"
+          ],
+          "verified": true,
+          "detail": "4 via/THT transition(s) joined alike on ['F.Cu', 'B.Cu']"
+        }
+      }
+    },
+    "rf50": {
+      "findings": 0,
+      "rf50_segments": 0
+    },
+    "gnd_chassis_ties": {
+      "findings": 0,
+      "ties": [],
+      "expected": 0
+    },
+    "b2b": {
+      "findings": 0,
+      "pairs": 1
+    },
+    "tht_pockets": {
+      "findings": 0,
+      "applies": true,
+      "tht_pads": 100,
+      "npth_pegs": 12,
+      "pockets": 23
+    },
+    "heights": {
+      "findings": 0,
+      "checked": 0
+    },
+    "pth_annular": {
+      "findings": 0,
+      "floor_mm": 0.15,
+      "fab_floor": "jlc_4l_1oz"
+    }
+  },
+  "findings": [],
+  "unverified": [
+    {
+      "check": "class_widths",
+      "item": "E1_LAB5_RAW vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 0 via(s) of the net on the board"
+    },
+    {
+      "check": "heights",
+      "item": "J113",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J110",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U211",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J112",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C113",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J206",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U204",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R110",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U213",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J507",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J109",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U205",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J205",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "F102",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "B2B2",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J111",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    }
+  ]
+}
