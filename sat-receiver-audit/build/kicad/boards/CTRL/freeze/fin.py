@@ -203,21 +203,8 @@ def prune(m, net, srcs=('router', 'new'), log=print):
             if not it.alive or it.src not in srcs:
                 continue
             if it.kind == 'track':
-                lay = it.layers[0]
                 for e in (it.a, it.b):
-                    ok = False
-                    for ot in m.near(lay, (e[0] - 0.5, e[1] - 0.5, e[0] + 0.5, e[1] + 0.5)):
-                        if ot.id == it.id or ot.net != net or ot.kind not in ('pad', 'track', 'via'):
-                            continue
-                        if ot.kind in ('pad', 'via'):
-                            if ot.shape.dist(*e) <= 1e-4:
-                                ok = True
-                                break
-                        else:
-                            if M.seg_dist(e[0], e[1], ot.a[0], ot.a[1], ot.b[0], ot.b[1]) <= ot.width / 2 + 1e-4:
-                                ok = True
-                                break
-                    if not ok:
+                    if not end_joined(m, it, e, net):
                         m.remove(it)
                         removed += 1
                         changed = True
@@ -258,12 +245,8 @@ def dangling(m):
             continue
         net = it.net
         if it.kind == 'track':
-            lay = it.layers[0]
             for e in (it.a, it.b):
-                ok = any((ot.kind in ('pad', 'via') and ot.shape.dist(*e) <= 1e-4) or
-                         (ot.kind == 'track' and M.seg_dist(e[0], e[1], ot.a[0], ot.a[1], ot.b[0], ot.b[1]) <= ot.width / 2 + 1e-4)
-                         for ot in m.near(lay, (e[0] - .5, e[1] - .5, e[0] + .5, e[1] + .5)) if ot.id != it.id and ot.net == net)
-                if not ok:
+                if not end_joined(m, it, e, net):
                     out.append(('track end', net, e))
         else:
             lays = {'In1.Cu'} if net == 'GND' else set()
@@ -277,3 +260,24 @@ def dangling(m):
             if len(lays) < 2:
                 out.append(('via', net, it.at))
     return out
+
+
+def end_joined(m, it, e, net):
+    """KiCad 10 track_dangling, strict: the end of track it is joined when a pad or via of the net contains it, another
+    track of the net ends on it, or a track of the net that does not share its other end covers it (KiCad anchor test)."""
+    other = it.b if e == it.a else it.a
+    lay = it.layers[0]
+    for ot in m.near(lay, (e[0] - 0.5, e[1] - 0.5, e[0] + 0.5, e[1] + 0.5)):
+        if ot.id == it.id or ot.net != net or not ot.alive:
+            continue
+        if ot.kind in ('pad', 'via'):
+            if ot.shape.dist(*e) <= 1e-4:
+                return True
+        elif ot.kind == 'track':
+            if min(math.hypot(e[0] - q[0], e[1] - q[1]) for q in (ot.a, ot.b)) <= 1e-4:
+                return True
+            if min(math.hypot(other[0] - q[0], other[1] - q[1]) for q in (ot.a, ot.b)) <= 1e-4:
+                continue  # the adjacent segment of the same chain
+            if M.seg_dist(e[0], e[1], ot.a[0], ot.a[1], ot.b[0], ot.b[1]) <= ot.width / 2:
+                return True
+    return False

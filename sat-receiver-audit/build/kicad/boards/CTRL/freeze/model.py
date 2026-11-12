@@ -129,6 +129,17 @@ class Model:
         for z in self.b.zones:
             if z['keepout'] and len(z['outline']) >= 3:
                 self.keepouts.append({'layers': [l for l in z['layers'] if l in LAYERS], 'poly': cb.Poly(z['outline']), 'name': z['name']})
+        # keepout zones inside footprints (the Pico TP7 pad keepouts): absolute board coordinates in the board file
+        for fnode in cb.kids(tree0, 'footprint'):
+            for z in cb.kids(fnode, 'zone'):
+                if cb.kid(z, 'keepout') is None:
+                    continue
+                lay = cb.kid(z, 'layers') or cb.kid(z, 'layer')
+                pts = [(float(q[1]), float(q[2])) for q in cb.kid(cb.kid(z, 'polygon'), 'pts')[1:] if isinstance(q, list) and q[0] == 'xy']
+                name = cb.kid(z, 'name')
+                if len(pts) >= 3:
+                    self.keepouts.append({'layers': [str(l) for l in lay[1:] if str(l) in LAYERS], 'poly': cb.Poly(pts),
+                                          'name': str(name[1]) if name else 'footprint keepout'})
         self.edges = [(tuple(a), tuple(c)) for a, c in self.b.edges]
         self.outline_loops = cb.loops(self.b.edges)
 

@@ -841,9 +841,10 @@ ROUTER_WHY = (
     'copper is now frozen and locked (build/kicad/boards/CTRL/route-frozen.json) and completed by a scripted grid A* pass '
     'with the exact clearance check (build/kicad/boards/CTRL/freeze/freeze_route.py): the V33-U315 via and stub and the '
     'P33-RIGHT-F link are dropped, E3_PICO3V3 crosses the cut-out 1 band on L2 between the vias P33-V-R4B and P33-V-R368, '
-    'the router copper of 13 nets is ripped where the completion needed its place (85 of 2278 segments and 12 of 234 vias '
+    'the router copper of 15 nets is ripped where the completion needed its place (112 of 2278 segments and 14 of 234 vias '
     'with their dangling ends) and those nets are joined again, and L2 carries 5 slow signals where three layers had no '
-    'path (E3_PICO3V3 35.6 mm, E3_REC_EXT 14.9 mm, PG_BONI 11.2 mm, E3_MARK_EXT 4.3 mm, PG_LNB 3.8 mm). Freerouting finds no '
+    'path (E3_PICO3V3 35.6 mm, E3_PICO_SWCLK 21.2 mm, E3_REC_EXT 14.9 mm, PG_BONI 4.7 mm, E3_MARK_EXT 4.4 mm). Freerouting '
+    'finds no '
     'open connection of its own to route, so a re-route of the same inputs gives the same copper. Job timeout 34 min '
     'inside the 45 min CI job')
 
@@ -894,7 +895,7 @@ def spec_texts(spec, inp, cu, skipped):
             'W2 CTRL-R route study: the tracks RT-* and vias RV-* are the router copper of route run 43136394379 (Freerouting 2.5.0, '
             'inputs sha256 fd468b58...), harvested from that run board and locked; the tracks FIN-* and vias FINV-* complete its 15 '
             'open connections (grid A* on the locked copper, exact clearance check 0.15 mm, 0.3 mm to edges, 0.5 mm hole to hole, '
-            'track ends on via centres; router copper of 13 nets ripped where needed and joined again; L2 only where three layers '
+            'track ends on via centres; router copper of 15 nets ripped where needed and joined again; L2 only where three layers '
             'had no path). Tool: build/kicad/boards/CTRL/freeze/freeze_route.py (numpy, offline). '
             'Source: build/kicad/boards/CTRL/route-frozen.json. Valid only for this placement and netlist: a placement or '
             'netlist change needs a new route run and a new harvest. CI/model result, not a hardware PASS')
@@ -943,9 +944,9 @@ def spec_texts(spec, inp, cu, skipped):
     spec['layers']['plan'] = {
         'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the HMI pull-up row to C312 and U306, R361/R362), the frozen router copper of route run 43136394379 and its completion (route-frozen.json), GND pour after routing',
         'In1.Cu': ('L2: GND plane (pre-route zone, DSN plane) with 5 locked slow signal links of the frozen route completion '
-                   '(W2 CTRL-R; 70 mm in all): E3_PICO3V3 (0.2 mm, 35.6 mm up the right strip beside cut-out 1 between the vias '
-                   'P33-V-R368 and P33-V-R4B), E3_REC_EXT 14.9 mm, PG_BONI 11.2 mm, E3_MARK_EXT 4.3 mm and PG_LNB 3.8 mm (0.15 mm, '
-                   'under the Pico and the HMI rows); the plane flows around them'),
+                   '(W2 CTRL-R; 81 mm in all): E3_PICO3V3 (0.2 mm, 35.6 mm up the right strip beside cut-out 1 between the vias '
+                   'P33-V-R368 and P33-V-R4B), E3_PICO_SWCLK 21.2 mm, E3_REC_EXT 14.9 mm, PG_BONI 4.7 mm and E3_MARK_EXT 4.4 mm '
+                   '(0.15 mm, under the Pico and the HMI rows); the plane flows around them'),
         'In2.Cu': 'L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, the frozen router copper and its completion, GND pour after routing',
         'B.Cu': 'L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor '
                 'branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top '
