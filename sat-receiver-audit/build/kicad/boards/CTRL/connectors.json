@@ -1,0 +1,1934 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "CTRL",
+  "status": "DESIGN_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "CTRL",
+      "placement": "default",
+      "board_origin_enclosure_mm": [
+        176.0,
+        13.0
+      ],
+      "z_bottom": 58.98,
+      "facing": "+z",
+      "connectors": [
+        {
+          "template_ref": "J302",
+          "ref": "J302",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 90.0,
+          "at": [
+            6.8,
+            82.39
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "3V3_Q6A",
+              "at": [
+                6.8,
+                82.39
+              ],
+              "enclosure_xy": [
+                182.8,
+                95.39
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                6.8,
+                84.39
+              ],
+              "enclosure_xy": [
+                182.8,
+                97.39
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "I2C2_SDA",
+              "at": [
+                6.8,
+                86.39
+              ],
+              "enclosure_xy": [
+                182.8,
+                99.39
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "I2C2_SCL",
+              "at": [
+                6.8,
+                88.39
+              ],
+              "enclosure_xy": [
+                182.8,
+                101.39
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "MCP_INT",
+              "at": [
+                6.8,
+                90.39
+              ],
+              "enclosure_xy": [
+                182.8,
+                103.39
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            182.8,
+            95.39
+          ]
+        },
+        {
+          "template_ref": "J304",
+          "ref": "J304",
+          "kind": "graph",
+          "footprint": "Connector_IDC:IDC-Header_2x20_P2.54mm_Vertical",
+          "side": "B",
+          "rotation": 180.0,
+          "at": [
+            46.27,
+            59.91
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "3V3_Q6A",
+              "at": [
+                46.27,
+                59.91
+              ],
+              "enclosure_xy": [
+                222.27,
+                72.91
+              ]
+            },
+            {
+              "pad": "2",
+              "net": null,
+              "at": [
+                43.73,
+                59.91
+              ],
+              "enclosure_xy": [
+                219.73,
+                72.91
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "INA228_ALERT",
+              "at": [
+                46.27,
+                57.37
+              ],
+              "enclosure_xy": [
+                222.27,
+                70.37
+              ]
+            },
+            {
+              "pad": "4",
+              "net": null,
+              "at": [
+                43.73,
+                57.37
+              ],
+              "enclosure_xy": [
+                219.73,
+                70.37
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "MCP_INT",
+              "at": [
+                46.27,
+                54.83
+              ],
+              "enclosure_xy": [
+                222.27,
+                67.83
+              ]
+            },
+            {
+              "pad": "6",
+              "net": null,
+              "at": [
+                43.73,
+                54.83
+              ],
+              "enclosure_xy": [
+                219.73,
+                67.83
+              ]
+            },
+            {
+              "pad": "7",
+              "net": null,
+              "at": [
+                46.27,
+                52.29
+              ],
+              "enclosure_xy": [
+                222.27,
+                65.29
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "UART5_TX",
+              "at": [
+                43.73,
+                52.29
+              ],
+              "enclosure_xy": [
+                219.73,
+                65.29
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "GND",
+              "at": [
+                46.27,
+                49.75
+              ],
+              "enclosure_xy": [
+                222.27,
+                62.75
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "UART5_RX",
+              "at": [
+                43.73,
+                49.75
+              ],
+              "enclosure_xy": [
+                219.73,
+                62.75
+              ]
+            },
+            {
+              "pad": "11",
+              "net": null,
+              "at": [
+                46.27,
+                47.21
+              ],
+              "enclosure_xy": [
+                222.27,
+                60.21
+              ]
+            },
+            {
+              "pad": "12",
+              "net": "E3_PICO_SWCLK",
+              "at": [
+                43.73,
+                47.21
+              ],
+              "enclosure_xy": [
+                219.73,
+                60.21
+              ]
+            },
+            {
+              "pad": "13",
+              "net": "I2C0_SDA",
+              "at": [
+                46.27,
+                44.67
+              ],
+              "enclosure_xy": [
+                222.27,
+                57.67
+              ]
+            },
+            {
+              "pad": "14",
+              "net": "GND",
+              "at": [
+                43.73,
+                44.67
+              ],
+              "enclosure_xy": [
+                219.73,
+                57.67
+              ]
+            },
+            {
+              "pad": "15",
+              "net": "I2C0_SCL",
+              "at": [
+                46.27,
+                42.13
+              ],
+              "enclosure_xy": [
+                222.27,
+                55.13
+              ]
+            },
+            {
+              "pad": "16",
+              "net": null,
+              "at": [
+                43.73,
+                42.13
+              ],
+              "enclosure_xy": [
+                219.73,
+                55.13
+              ]
+            },
+            {
+              "pad": "17",
+              "net": "3V3_Q6A",
+              "at": [
+                46.27,
+                39.59
+              ],
+              "enclosure_xy": [
+                222.27,
+                52.59
+              ]
+            },
+            {
+              "pad": "18",
+              "net": null,
+              "at": [
+                43.73,
+                39.59
+              ],
+              "enclosure_xy": [
+                219.73,
+                52.59
+              ]
+            },
+            {
+              "pad": "19",
+              "net": null,
+              "at": [
+                46.27,
+                37.05
+              ],
+              "enclosure_xy": [
+                222.27,
+                50.05
+              ]
+            },
+            {
+              "pad": "20",
+              "net": "GND",
+              "at": [
+                43.73,
+                37.05
+              ],
+              "enclosure_xy": [
+                219.73,
+                50.05
+              ]
+            },
+            {
+              "pad": "21",
+              "net": null,
+              "at": [
+                46.27,
+                34.51
+              ],
+              "enclosure_xy": [
+                222.27,
+                47.51
+              ]
+            },
+            {
+              "pad": "22",
+              "net": null,
+              "at": [
+                43.73,
+                34.51
+              ],
+              "enclosure_xy": [
+                219.73,
+                47.51
+              ]
+            },
+            {
+              "pad": "23",
+              "net": null,
+              "at": [
+                46.27,
+                31.97
+              ],
+              "enclosure_xy": [
+                222.27,
+                44.97
+              ]
+            },
+            {
+              "pad": "24",
+              "net": null,
+              "at": [
+                43.73,
+                31.97
+              ],
+              "enclosure_xy": [
+                219.73,
+                44.97
+              ]
+            },
+            {
+              "pad": "25",
+              "net": "GND",
+              "at": [
+                46.27,
+                29.43
+              ],
+              "enclosure_xy": [
+                222.27,
+                42.43
+              ]
+            },
+            {
+              "pad": "26",
+              "net": null,
+              "at": [
+                43.73,
+                29.43
+              ],
+              "enclosure_xy": [
+                219.73,
+                42.43
+              ]
+            },
+            {
+              "pad": "27",
+              "net": "I2C2_SDA",
+              "at": [
+                46.27,
+                26.89
+              ],
+              "enclosure_xy": [
+                222.27,
+                39.89
+              ]
+            },
+            {
+              "pad": "28",
+              "net": "I2C2_SCL",
+              "at": [
+                43.73,
+                26.89
+              ],
+              "enclosure_xy": [
+                219.73,
+                39.89
+              ]
+            },
+            {
+              "pad": "29",
+              "net": "UART7_RX",
+              "at": [
+                46.27,
+                24.35
+              ],
+              "enclosure_xy": [
+                222.27,
+                37.35
+              ]
+            },
+            {
+              "pad": "30",
+              "net": "GND",
+              "at": [
+                43.73,
+                24.35
+              ],
+              "enclosure_xy": [
+                219.73,
+                37.35
+              ]
+            },
+            {
+              "pad": "31",
+              "net": null,
+              "at": [
+                46.27,
+                21.81
+              ],
+              "enclosure_xy": [
+                222.27,
+                34.81
+              ]
+            },
+            {
+              "pad": "32",
+              "net": "UART7_TX",
+              "at": [
+                43.73,
+                21.81
+              ],
+              "enclosure_xy": [
+                219.73,
+                34.81
+              ]
+            },
+            {
+              "pad": "33",
+              "net": null,
+              "at": [
+                46.27,
+                19.27
+              ],
+              "enclosure_xy": [
+                222.27,
+                32.27
+              ]
+            },
+            {
+              "pad": "34",
+              "net": "GND",
+              "at": [
+                43.73,
+                19.27
+              ],
+              "enclosure_xy": [
+                219.73,
+                32.27
+              ]
+            },
+            {
+              "pad": "35",
+              "net": "E3_PICO_SWDIO",
+              "at": [
+                46.27,
+                16.73
+              ],
+              "enclosure_xy": [
+                222.27,
+                29.73
+              ]
+            },
+            {
+              "pad": "36",
+              "net": null,
+              "at": [
+                43.73,
+                16.73
+              ],
+              "enclosure_xy": [
+                219.73,
+                29.73
+              ]
+            },
+            {
+              "pad": "37",
+              "net": null,
+              "at": [
+                46.27,
+                14.19
+              ],
+              "enclosure_xy": [
+                222.27,
+                27.19
+              ]
+            },
+            {
+              "pad": "38",
+              "net": "E3_PICO_RUN",
+              "at": [
+                43.73,
+                14.19
+              ],
+              "enclosure_xy": [
+                219.73,
+                27.19
+              ]
+            },
+            {
+              "pad": "39",
+              "net": "GND",
+              "at": [
+                46.27,
+                11.65
+              ],
+              "enclosure_xy": [
+                222.27,
+                24.65
+              ]
+            },
+            {
+              "pad": "40",
+              "net": "SAFE_BOOT",
+              "at": [
+                43.73,
+                11.65
+              ],
+              "enclosure_xy": [
+                219.73,
+                24.65
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            222.27,
+            72.91
+          ]
+        },
+        {
+          "template_ref": "J305",
+          "ref": "J305",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0400_1x04_P3.00mm_Horizontal",
+          "side": "B",
+          "rotation": -90.0,
+          "at": [
+            9.47,
+            76.01
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                9.47,
+                76.01
+              ],
+              "enclosure_xy": [
+                185.47,
+                89.01
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                9.47,
+                73.01
+              ],
+              "enclosure_xy": [
+                185.47,
+                86.01
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "LAB5",
+              "at": [
+                9.47,
+                70.01
+              ],
+              "enclosure_xy": [
+                185.47,
+                83.01
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "LAB5",
+              "at": [
+                9.47,
+                67.01
+              ],
+              "enclosure_xy": [
+                185.47,
+                80.01
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            185.47,
+            89.01
+          ]
+        },
+        {
+          "template_ref": "J306",
+          "ref": "J306",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 90.0,
+          "at": [
+            8.0,
+            8.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "CHG_INHIBIT",
+              "at": [
+                8.0,
+                8.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                21.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_BAT_ADC",
+              "at": [
+                6.0,
+                8.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                21.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "EN_AUX12",
+              "at": [
+                8.0,
+                10.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                23.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "EN_BONI",
+              "at": [
+                6.0,
+                10.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                23.5
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "EN_HFP",
+              "at": [
+                8.0,
+                12.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                25.5
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "EN_LABPORT",
+              "at": [
+                6.0,
+                12.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                25.5
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "EN_LIME3V3",
+              "at": [
+                8.0,
+                14.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                27.5
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "EN_LNA1",
+              "at": [
+                6.0,
+                14.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                27.5
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "EN_LNA2",
+              "at": [
+                8.0,
+                16.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                29.5
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "EN_LNA3",
+              "at": [
+                6.0,
+                16.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                29.5
+              ]
+            },
+            {
+              "pad": "11",
+              "net": "EN_LNA4",
+              "at": [
+                8.0,
+                18.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                31.5
+              ]
+            },
+            {
+              "pad": "12",
+              "net": "EN_LNB",
+              "at": [
+                6.0,
+                18.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                31.5
+              ]
+            },
+            {
+              "pad": "13",
+              "net": "EN_RTLA",
+              "at": [
+                8.0,
+                20.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                33.5
+              ]
+            },
+            {
+              "pad": "14",
+              "net": "EN_RTLB",
+              "at": [
+                6.0,
+                20.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                33.5
+              ]
+            },
+            {
+              "pad": "15",
+              "net": "EN_SB_LNA",
+              "at": [
+                8.0,
+                22.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                35.5
+              ]
+            },
+            {
+              "pad": "16",
+              "net": "FAULT_HFP",
+              "at": [
+                6.0,
+                22.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                35.5
+              ]
+            },
+            {
+              "pad": "17",
+              "net": "FAULT_LABPORT",
+              "at": [
+                8.0,
+                24.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                37.5
+              ]
+            },
+            {
+              "pad": "18",
+              "net": "FAULT_LNA1",
+              "at": [
+                6.0,
+                24.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                37.5
+              ]
+            },
+            {
+              "pad": "19",
+              "net": "FAULT_LNA2",
+              "at": [
+                8.0,
+                26.5
+              ],
+              "enclosure_xy": [
+                184.0,
+                39.5
+              ]
+            },
+            {
+              "pad": "20",
+              "net": "FAULT_LNA3",
+              "at": [
+                6.0,
+                26.5
+              ],
+              "enclosure_xy": [
+                182.0,
+                39.5
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            184.0,
+            21.5
+          ]
+        },
+        {
+          "template_ref": "J307",
+          "ref": "J307",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 90.0,
+          "at": [
+            8.0,
+            31.6
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "FAULT_LNA4",
+              "at": [
+                8.0,
+                31.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                44.6
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "FAULT_RTLA",
+              "at": [
+                6.0,
+                31.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                44.6
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "FAULT_RTLB",
+              "at": [
+                8.0,
+                33.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                46.6
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "FLT_BONI",
+              "at": [
+                6.0,
+                33.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                46.6
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "FLT_LIME3V3",
+              "at": [
+                8.0,
+                35.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                48.6
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "FLT_LNB",
+              "at": [
+                6.0,
+                35.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                48.6
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "FLT_SB_LNA",
+              "at": [
+                8.0,
+                37.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                50.6
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "I2C0_SCL",
+              "at": [
+                6.0,
+                37.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                50.6
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "I2C0_SDA",
+              "at": [
+                8.0,
+                39.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                52.6
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "IMU_RX",
+              "at": [
+                6.0,
+                39.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                52.6
+              ]
+            },
+            {
+              "pad": "11",
+              "net": "IMU_TX",
+              "at": [
+                8.0,
+                41.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                54.6
+              ]
+            },
+            {
+              "pad": "12",
+              "net": "INA228_ALERT",
+              "at": [
+                6.0,
+                41.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                54.6
+              ]
+            },
+            {
+              "pad": "13",
+              "net": "OVP_LNB_N",
+              "at": [
+                8.0,
+                43.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                56.6
+              ]
+            },
+            {
+              "pad": "14",
+              "net": "PG_BONI",
+              "at": [
+                6.0,
+                43.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                56.6
+              ]
+            },
+            {
+              "pad": "15",
+              "net": "PG_LNB",
+              "at": [
+                8.0,
+                45.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                58.6
+              ]
+            },
+            {
+              "pad": "16",
+              "net": "PICO_DISP_EN",
+              "at": [
+                6.0,
+                45.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                58.6
+              ]
+            },
+            {
+              "pad": "17",
+              "net": "PICO_OFF",
+              "at": [
+                8.0,
+                47.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                60.6
+              ]
+            },
+            {
+              "pad": "18",
+              "net": "PTC_AUX",
+              "at": [
+                6.0,
+                47.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                60.6
+              ]
+            },
+            {
+              "pad": "19",
+              "net": "PWR_BUTTON",
+              "at": [
+                8.0,
+                49.6
+              ],
+              "enclosure_xy": [
+                184.0,
+                62.6
+              ]
+            },
+            {
+              "pad": "20",
+              "net": "SLED_DET",
+              "at": [
+                6.0,
+                49.6
+              ],
+              "enclosure_xy": [
+                182.0,
+                62.6
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            184.0,
+            44.6
+          ]
+        },
+        {
+          "template_ref": "J308",
+          "ref": "J308",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 90.0,
+          "at": [
+            6.8,
+            105.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                6.8,
+                105.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                118.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "DCS_HF",
+              "at": [
+                6.8,
+                107.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                120.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "DCS_LBAND",
+              "at": [
+                6.8,
+                109.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                122.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "DCS_UHF",
+              "at": [
+                6.8,
+                111.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                124.5
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "K1_ON",
+              "at": [
+                6.8,
+                113.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                126.5
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "K2_ON",
+              "at": [
+                6.8,
+                115.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                128.5
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "SW_LIME_A",
+              "at": [
+                6.8,
+                117.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                130.5
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "SW_LIME_B",
+              "at": [
+                6.8,
+                119.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                132.5
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            182.8,
+            118.5
+          ]
+        },
+        {
+          "template_ref": "J309",
+          "ref": "J309",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 90.0,
+          "at": [
+            6.8,
+            124.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "SW_RTLA_A",
+              "at": [
+                6.8,
+                124.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                137.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "SW_RTLA_B",
+              "at": [
+                6.8,
+                126.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                139.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "SW_RTLB_A",
+              "at": [
+                6.8,
+                128.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                141.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "SW_RTLB_B",
+              "at": [
+                6.8,
+                130.5
+              ],
+              "enclosure_xy": [
+                182.8,
+                143.5
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            182.8,
+            137.5
+          ]
+        },
+        {
+          "template_ref": "J310",
+          "ref": "J310",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 0.0,
+          "at": [
+            41.5,
+            127.2
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "PWR_ON_KEY",
+              "at": [
+                41.5,
+                127.2
+              ],
+              "enclosure_xy": [
+                217.5,
+                140.2
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                43.5,
+                127.2
+              ],
+              "enclosure_xy": [
+                219.5,
+                140.2
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "UART5_RX",
+              "at": [
+                45.5,
+                127.2
+              ],
+              "enclosure_xy": [
+                221.5,
+                140.2
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "UART5_TX",
+              "at": [
+                47.5,
+                127.2
+              ],
+              "enclosure_xy": [
+                223.5,
+                140.2
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            217.5,
+            140.2
+          ]
+        },
+        {
+          "template_ref": "J311",
+          "ref": "J311",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": -90.0,
+          "at": [
+            38.9,
+            122.05
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                38.9,
+                122.05
+              ],
+              "enclosure_xy": [
+                214.9,
+                135.05
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "3V3_Q6A",
+              "at": [
+                38.9,
+                120.05
+              ],
+              "enclosure_xy": [
+                214.9,
+                133.05
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "EN_T7",
+              "at": [
+                38.9,
+                118.05
+              ],
+              "enclosure_xy": [
+                214.9,
+                131.05
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "GND",
+              "at": [
+                38.9,
+                116.05
+              ],
+              "enclosure_xy": [
+                214.9,
+                129.05
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "E3_GNSS5V",
+              "at": [
+                38.9,
+                114.05
+              ],
+              "enclosure_xy": [
+                214.9,
+                127.05
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "E3_GNSS_RESET_N",
+              "at": [
+                38.9,
+                112.05
+              ],
+              "enclosure_xy": [
+                214.9,
+                125.05
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            214.9,
+            135.05
+          ]
+        },
+        {
+          "template_ref": "J312",
+          "ref": "J312",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 0.0,
+          "at": [
+            8.5,
+            137.2
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                8.5,
+                137.2
+              ],
+              "enclosure_xy": [
+                184.5,
+                150.2
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E3_BEZEL_SCL",
+              "at": [
+                10.5,
+                137.2
+              ],
+              "enclosure_xy": [
+                186.5,
+                150.2
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_BEZEL_SDA",
+              "at": [
+                12.5,
+                137.2
+              ],
+              "enclosure_xy": [
+                188.5,
+                150.2
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E3_PICO3V3",
+              "at": [
+                14.5,
+                137.2
+              ],
+              "enclosure_xy": [
+                190.5,
+                150.2
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            184.5,
+            150.2
+          ]
+        },
+        {
+          "template_ref": "J313",
+          "ref": "J313",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical",
+          "side": "B",
+          "rotation": 90.0,
+          "at": [
+            40.43,
+            75.7
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                40.43,
+                75.7
+              ],
+              "enclosure_xy": [
+                216.43,
+                88.7
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E3_FAN5_P",
+              "at": [
+                40.43,
+                78.24
+              ],
+              "enclosure_xy": [
+                216.43,
+                91.24
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_FAN_TACH_RAW",
+              "at": [
+                40.43,
+                80.78
+              ],
+              "enclosure_xy": [
+                216.43,
+                93.78
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            216.43,
+            88.7
+          ]
+        },
+        {
+          "template_ref": "J314",
+          "ref": "J314",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0200_1x02_P3.00mm_Horizontal",
+          "side": "B",
+          "rotation": -90.0,
+          "at": [
+            9.47,
+            59.25
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E3_BLOWER_GND",
+              "at": [
+                9.47,
+                59.25
+              ],
+              "enclosure_xy": [
+                185.47,
+                72.25
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "LAB5",
+              "at": [
+                9.47,
+                56.25
+              ],
+              "enclosure_xy": [
+                185.47,
+                69.25
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            185.47,
+            72.25
+          ]
+        },
+        {
+          "template_ref": "J315",
+          "ref": "J315",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 0.0,
+          "at": [
+            19.6,
+            137.2
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                19.6,
+                137.2
+              ],
+              "enclosure_xy": [
+                195.6,
+                150.2
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "PWR_BUTTON",
+              "at": [
+                21.6,
+                137.2
+              ],
+              "enclosure_xy": [
+                197.6,
+                150.2
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            195.6,
+            150.2
+          ]
+        },
+        {
+          "template_ref": "J316",
+          "ref": "J316",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            41.55,
+            102.7
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                41.55,
+                102.7
+              ],
+              "enclosure_xy": [
+                217.55,
+                115.7
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E3_ENC1_A_RAW",
+              "at": [
+                39.55,
+                102.7
+              ],
+              "enclosure_xy": [
+                215.55,
+                115.7
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_ENC1_B_RAW",
+              "at": [
+                37.55,
+                102.7
+              ],
+              "enclosure_xy": [
+                213.55,
+                115.7
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E3_ENC1_PRESS_EXT",
+              "at": [
+                35.55,
+                102.7
+              ],
+              "enclosure_xy": [
+                211.55,
+                115.7
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            217.55,
+            115.7
+          ]
+        },
+        {
+          "template_ref": "J317",
+          "ref": "J317",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            21.05,
+            61.7
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                21.05,
+                61.7
+              ],
+              "enclosure_xy": [
+                197.05,
+                74.7
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E3_ENC2_A_RAW",
+              "at": [
+                19.05,
+                61.7
+              ],
+              "enclosure_xy": [
+                195.05,
+                74.7
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_ENC2_B_RAW",
+              "at": [
+                17.05,
+                61.7
+              ],
+              "enclosure_xy": [
+                193.05,
+                74.7
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E3_ENC2_PRESS_EXT",
+              "at": [
+                15.05,
+                61.7
+              ],
+              "enclosure_xy": [
+                191.05,
+                74.7
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            197.05,
+            74.7
+          ]
+        },
+        {
+          "template_ref": "J318",
+          "ref": "J318",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 0.0,
+          "at": [
+            26.7,
+            137.2
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                26.7,
+                137.2
+              ],
+              "enclosure_xy": [
+                202.7,
+                150.2
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E3_PANEL_TEMP",
+              "at": [
+                28.7,
+                137.2
+              ],
+              "enclosure_xy": [
+                204.7,
+                150.2
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            202.7,
+            150.2
+          ]
+        },
+        {
+          "template_ref": "J319",
+          "ref": "J319",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+          "side": "B",
+          "rotation": 0.0,
+          "at": [
+            33.8,
+            137.2
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                33.8,
+                137.2
+              ],
+              "enclosure_xy": [
+                209.8,
+                150.2
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E3_CASE_TEMP",
+              "at": [
+                35.8,
+                137.2
+              ],
+              "enclosure_xy": [
+                211.8,
+                150.2
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            209.8,
+            150.2
+          ]
+        }
+      ]
+    }
+  ]
+}
