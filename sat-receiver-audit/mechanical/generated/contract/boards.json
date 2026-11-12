@@ -95,7 +95,7 @@
             0,
             136
           ],
-          "use": "battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads",
+          "use": "battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads; W2 MECH-7 part 2: the PH headers J109-J112 turned by 90 deg (SHRINK-2 decision (8); wip/w2-pwra3 README: the row then needs 70.0 instead of 87.6 mm) and the row compacted towards x 0, so that its edge strips end at x <= row_end_max and the PWR-A edge from row_end_max to x 114.5 stays free of PWR-A headers under the PWR-B PH 9-pin span (boards PWR_B edge_zones[2])",
           "headers": [
             "J105",
             "J106",
@@ -105,7 +105,9 @@
             "J110",
             "J111",
             "J112"
-          ]
+          ],
+          "row_end_max": 92.5,
+          "_row_end_max_note": "W2 MECH-7 part 2 (contract for PCB-PWRA-3): the courtyards of J105-J112 + window_margin 0.5 end at x <= 92.5; turned, the row is 70.0 mm of courtyards from x 8.2, about 81.7 with the gaps of today, so about 10 mm of slack stay; at wip/w2-pwra3 9ecc26f2 probe 7 (not turned) J112 still ends at x 99.3 (MODEL)"
         },
         {
           "edge": "right",
@@ -113,7 +115,7 @@
             0,
             35
           ],
-          "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports and GX16 through plate slot SL3",
+          "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports, GX16 and the XT30 service pigtail through plate slot SL3 and the battery compartment; W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false: READS-P found no mating FFC) J113, J114, J115 and J507 keep the wip/w2-pwra1 80d92c28 place in the second and third column of the bottom-right corner and leave by this edge (S11, S12, S32)",
           "headers": [
             "J104",
             "J113",
@@ -140,7 +142,7 @@
             108,
             128
           ],
-          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22 and S35 leave from PWR-B J204/J207 (build/16-dzhgut-rozyemy.csv, W2 GR-3)",
+          "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22, S35 and S36 leave from PWR-B J204/J207 on the PWR-B top span x 58-107 (boards PWR_B edge_zones[1], W2 MECH-7 part 2) and reach SL2 along the y 74.25 channel; PWR-B leaves a window over this span",
           "headers": [
             "J206"
           ]
@@ -279,10 +281,19 @@
         "3": "CONV_SYS12",
         "4": "CONV_LAB5"
       },
+      "converter_zone_refs": {
+        "3": [
+          "U107",
+          "L102"
+        ],
+        "4": [
+          "U108"
+        ]
+      },
       "h_trim": {
         "protrusion_max": 1.0,
         "zone_h_max": 2.7,
-        "zones": "under the PWR-B THT pin fields of pcb/partition-budget.json candidates.<chosen>.pwr_a_keepout_items at the PCB-PWRB-2 placement (positions TBD); the new PWR-B spans (boards PWR_B edge_zones 2 and 3: PHD 2x10 on the top span x 84-107, PH 9-pin on the bottom span) put two of them along those edges",
+        "zones": "under the PWR-B THT pin fields of pcb/partition-budget.json candidates.<chosen>.pwr_a_keepout_items at the PCB-PWRB-2 placement (positions TBD); the PWR-B spans (boards PWR_B edge_zones 1 and 2, W2 MECH-7 part 2: J204 + J207 on the top span x 58-107, the PH 9-pin J506 on the bottom span x 93-114.5) put three of them along those edges",
         "gate": "OPEN: the trimmed protrusion and the 1.3 mm clearance (stack 5.0 - protrusion 1.0 - zone part 2.7) are measured at proof-fit; PCB-PWRB-2 marks every PWR-B THT pin field for flush trim in its fab and assembly notes; if H-TRIM fails, F2-C fires (rule R-H-TRIM)"
       }
     },
@@ -371,33 +382,36 @@
             0,
             35
           ],
-          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry), LAB PORT J506 (S23) and LAB BUS J508 (S34) leads towards plate slot SL3 (side entry at hB; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
+          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false, READS-P found no mating FFC) the three headers (58.7 mm of courtyards) have no conflict-free home: this 35 mm edge also carries the PWR-A J104 strip and the hole keep-outs, and the PWR-B bottom edge lies over the PWR-A bottom-row strips, so the recorded bottom-edge deviation of W2 PCB-PWRB stays OPEN (SHRINK-2 stays_open: 'S02 has a home only with a sourced FFC'); J506/J508 left this edge (edge zone 2)",
+          "headers": [
+            "J201",
+            "J202",
+            "J203"
+          ]
         },
         {
           "edge": "top",
           "at": 35,
           "span": [
-            108,
-            128
-          ],
-          "use": "J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 X04S1-PWR (RF board lead S04) through plate slot SL2 (build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 MECH-7: used until GR-5B merges J204 + J207 into the PHD 2x10 of zone 2; this span lies over the PWR-A J206 edge strip (SL2), which PWR-B leaves uncovered"
-        },
-        {
-          "edge": "top",
-          "at": 35,
-          "span": [
-            84,
+            58,
             107
           ],
-          "use": "W2 MECH-7 (SHRINK-2): the JST PHD 2x10 side-entry header S20B-PHDSS that merges J204 (S04) and J207 (S20, S21, S22, S35, S36) (GR-5B), 22.9 mm along the edge; the harness runs along the y 74-77 channel to plate slot SL2; the PWR-A parts under its pin field follow H-TRIM (boards PWR h_trim)"
+          "use": "W2 MECH-7 part 2 (SHRINK-2 without the PHD merge): J207 SL2-PWR-PH (JST PH 12 side entry S12B-PH-K-S, KiCad courtyard 26.9 mm: S20, S21, S22, S35, S36) at the right end next to plate slot SL2 and J204 X04S1-PWR (JST PH 8 side entry S8B-PH-K-S, 18.9 mm: S04 to the RF board) left of it, 45.8 of 49 mm; the harness turns down in front of the edge and runs along the y 74.25 channel under the HDMI board (z 42.5) to plate slot SL2; when GR-5B merges J204 + J207 into the PHD 2x10 S20B-PHDSS (OPEN: the RF-end J420 has to become PHD first, build/15 'Роз'єми PWR-B (W2 GR-5B)') it takes x 84.1-107 (22.9 mm); the right end keeps 1.0 mm to the PWR-A J206 edge zone x 108-128 (boards PWR edge_zones[3]), over which PWR-B leaves a window (no PWR-B header there any more); the hole keep-out of (46, 31) ends at x 49.5; PWR-A parts under the pin fields follow H-TRIM (boards PWR h_trim)",
+          "headers": [
+            "J204",
+            "J207"
+          ]
         },
         {
           "edge": "bottom",
           "span": [
-            100.5,
-            128
+            93,
+            114.5
           ],
-          "use": "W2 MECH-7 (SHRINK-2): the JST PH 9-pin side-entry header S9B-PH-K-S that merges J506 (S23) and J508 (S34) (GR-5B; B 19.9 mm, READS-P row web:jst-ph-catalogue-lcsc), towards plate slot SL3; nominal span = the 27.5 mm that the SHRINK-2 study frees at the right end of the PWR-A bottom row when J109-J112 are turned by 90 deg (estimate, not re-run): PCB-PWRA-3 sets the final x range, and while J113-J115/J507 stay in the PWR-A bottom-right corner (no S02 FFC) the span collides with their edge strips (OPEN, MECH-7 part 2)"
+          "use": "W2 MECH-7 part 2 (SHRINK-2): J506 SL3-PWR-PH, the JST PH 9-pin side-entry header S9B-PH-K-S (KiCad courtyard 20.9 mm) that merged J506 (S23) and J508 (S34) (W2 GR-5B), towards plate slot SL3 along y 38.2; the span lies between the PWR-A bottom-row strips (they end at x <= 92.5: boards PWR edge_zones[0] row_end_max, J109-J112 turned by 90 deg) and the J507 / J113 corner strips (x >= 115.0, the wip/w2-pwra1 place that SHRINK-2 keeps without the S02 FFC; wip/w2-pwra3 9ecc26f2 probe 7: J507 courtyard from x 115.475, MODEL)",
+          "headers": [
+            "J506"
+          ]
         }
       ],
       "thermal_bond_mm": [],

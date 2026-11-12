@@ -193,39 +193,7 @@ LINE
 8
 CENTER
 10
-108
-20
-37
-30
-0
-11
-128
-21
-37
-31
-0
-0
-TEXT
-8
-TEXT
-10
-108
-20
-42
-30
-0
-40
-1.6
-1
-E2: J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 
-50
-0
-0
-LINE
-8
-CENTER
-10
-84
+58
 20
 37
 30
@@ -241,15 +209,15 @@ TEXT
 8
 TEXT
 10
-84
+58
 20
-45.5
+42
 30
 0
 40
 1.6
 1
-E3: W2 MECH-7 (SHRINK-2): the JST PHD 2x10 side-entry header S20B-PHDSS th
+E2: W2 MECH-7 part 2 (SHRINK-2 without the PHD merge): J207 SL2-PWR-PH (JS
 50
 0
 0
@@ -257,13 +225,13 @@ LINE
 8
 CENTER
 10
-100.5
+93
 20
 -2
 30
 0
 11
-128
+114.5
 21
 -2
 31
@@ -273,15 +241,15 @@ TEXT
 8
 TEXT
 10
-100.5
+93
 20
--16
+-12.5
 30
 0
 40
 1.6
 1
-E4: W2 MECH-7 (SHRINK-2): the JST PH 9-pin side-entry header S9B-PH-K-S th
+E3: W2 MECH-7 part 2 (SHRINK-2): J506 SL3-PWR-PH, the JST PH 9-pin side-en
 50
 0
 0
