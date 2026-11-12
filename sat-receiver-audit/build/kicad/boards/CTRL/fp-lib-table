@@ -7,6 +7,7 @@
   (lib (name "Diode_SMD")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Diode_SMD.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
   (lib (name "Fuse")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Fuse.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
   (lib (name "Package_SO")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Package_SO.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+  (lib (name "Package_SON")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Package_SON.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
   (lib (name "Package_TO_SOT_SMD")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Package_TO_SOT_SMD.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
   (lib (name "Resistor_SMD")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Resistor_SMD.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
   (lib (name "SR_RX_Custom")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/SR_RX_Custom.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
