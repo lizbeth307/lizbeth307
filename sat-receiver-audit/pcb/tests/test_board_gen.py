@@ -538,22 +538,24 @@ class CutoutsViasAndLayerTypes(unittest.TestCase):
         xs, ys = [p[0] for p in strip], [p[1] for p in strip]
         self.assertEqual((round(min(xs), 6), round(max(xs), 6), round(min(ys), 6), round(max(ys), 6)), (-0.2, 10.2, -0.2, 0.2))
 
-    def test_pwr_b_spec_resolves_with_the_b2b_placeholder(self):
+    def test_pwr_b_spec_resolves_with_the_b2b_half_j209(self):
+        # W2 B2B: the graph ref J209 (Samtec LSHM-150) replaced the FX8 pilot placeholder B2B1 on the PWR-B bottom
         if not bg.spec_path('PWR_B').is_file():
             self.skipTest('no PWR_B spec')
         spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('PWR_B')
         self.assertTrue(contract['cutouts_mm'])
         self.assertTrue(bg.domain_audit(spec, bg.read_json(bg.BASE / spec['partition']))['passed'])
-        b2b = next(t for t in template if t['ref'] == 'B2B1')
+        self.assertFalse([p['ref'] for p in spec['parts'] if p['source'] == 'pilot_placeholder'])
+        b2b = next(t for t in template if t['ref'] == 'J209')
+        self.assertEqual((b2b['source'], b2b['anchor']['side']), ('graph', 'B'))
         self.assertEqual(sum(1 for n in b2b['pads'].values() if n == 'LAB5'), 4)  # ceil(4 A / 1 A), b2b-nets.json
         status = {b['status'] for b in bg.boundary_audit(spec, template, graph, db)}
-        self.assertEqual(len(status), 1)
-        self.assertTrue(next(iter(status)).startswith('provisional: B2B ref pending'))
+        self.assertEqual(status, {'pass'})
 
 
 class PwrBPinMapFollowsB2bNets(unittest.TestCase):
-    """W2 PCB-PWRB: the committed PWR_B B2B pin map still matches pcb/generated/b2b-nets.json (CI does not run
-    build/kicad/boards/PWR_B/make_spec.py --check, which needs the FX8 library, and b2b-nets.json is no board_gen input)."""
+    """W2 PCB-PWRB, W2 B2B: the PWR_B B2B half J209 carries pcb/generated/b2b-nets.json contacts pin for pin (CI does not run
+    build/kicad/boards/PWR_B/make_spec.py --check, and b2b-nets.json is no board_gen input)."""
 
     def test_contacts_per_net_gnd_count_and_source_hash(self):
         if not bg.spec_path('PWR_B').is_file():
@@ -563,17 +565,18 @@ class PwrBPinMapFollowsB2bNets(unittest.TestCase):
         spec = bg.read_json(bg.spec_path('PWR_B'))
         path = bg.BASE / 'pcb/generated/b2b-nets.json'
         b2b = bg.read_json(path)
+        ref = b2b['graph_refs']['pwr_b']
+        self.assertTrue(any(p['ref'] == ref and p['source'] == 'graph' and p['anchor']['side'] == 'B' for p in spec['parts']))
+        pins = {str(p['number']): (None if p.get('nc') else p.get('net')) for p in bg.load_graph()[ref]['pins']}
+        self.assertEqual(pins, {str(c['pwr_b_pin']): (c['net'] or None) for c in b2b['contacts']})
         want = collections.Counter({n['net']: int(n['pins']) for n in b2b['nets']})
-        self.assertEqual(sum(int(n.get('gnd_pins', 0)) for n in b2b['nets']), b2b['totals']['gnd_pins'])
         want['GND'] += b2b['totals']['gnd_pins']
-        placeholder = next(p for p in spec['parts'] if p['ref'] == 'B2B1')
-        self.assertEqual(collections.Counter(placeholder['pins'].values()), want)
+        self.assertEqual(collections.Counter(n for n in pins.values() if n), want)
         pin_map = spec['b2b_pin_map']
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         self.assertEqual(pin_map['source'], f'pcb/generated/b2b-nets.json sha256 {digest}')
-        self.assertIn(f'(sha256 {digest})', placeholder['pins_source'])
-        self.assertEqual((pin_map['used'], pin_map['spare']), (len(placeholder['pins']), pin_map['contacts'] - len(placeholder['pins'])))
-        self.assertEqual(pin_map['used'], b2b['totals']['contacts_needed'])
+        self.assertEqual((pin_map['used'], pin_map['spare']), (b2b['totals']['contacts_needed'],
+                                                               b2b['contacts_available'] - b2b['totals']['contacts_needed']))
 
 
 class BondHoleAndCoupon(unittest.TestCase):

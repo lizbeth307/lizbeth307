@@ -296,7 +296,7 @@
           "facing": "+z"
         }
       },
-      "mount": "on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec QTH-060-01-L-D-A on the PWR-B bottom mates the QSH-060-01-L-D-A on the PWR-A top at 5.00 mm (pcb/partition-spec.json b2b)",
+      "mount": "on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec LSHM-150-02.5-L-DV-A-N-K-TR J209 on the PWR-B bottom mates the same part J208 on the PWR-A top at 5.00 mm (two -02.5 halves, catalogue F-224; pcb/partition-spec.json b2b, W2 B2B)",
       "edge_zones": [
         {
           "edge": "right",

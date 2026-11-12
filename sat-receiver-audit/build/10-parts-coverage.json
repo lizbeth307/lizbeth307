@@ -17,14 +17,15 @@
   "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-b2b-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-mech4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech6-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src2-manual.json",
   "design/parts/snapshots/2026-11-11-w2-mech5-manual.json",
   "design/parts/snapshots/2026-11-11-w2-pcb-sb2-manual.json"
  ],
- "refs": 849,
- "parts": 256,
+ "refs": 851,
+ "parts": 257,
  "refs_by_mount": {
   "assembly": 8,
   "existing": 9,
@@ -34,29 +35,29 @@
   "panel": 14,
   "pcb_module": 3,
   "pcb_pad": 41,
-  "pcb_smt": 628,
+  "pcb_smt": 630,
   "pcb_tht": 74,
   "remote": 9,
   "rework": 5,
   "virtual": 2
  },
- "bare_board_parts": 746,
- "bare_board_parts_with_footprint": 746,
- "board_refs": 746,
- "board_refs_with_footprint": 746,
+ "bare_board_parts": 748,
+ "bare_board_parts_with_footprint": 748,
+ "board_refs": 748,
+ "board_refs_with_footprint": 748,
  "board_footprint_origin": {
-  "KiCad 10.0.7": 704,
+  "KiCad 10.0.7": 706,
   "SR_RX_Custom": 42
  },
- "purchased_refs": 781,
+ "purchased_refs": 783,
  "purchased_refs_by_availability": {
   "TBD": 2,
-  "в наявності": 674,
+  "в наявності": 676,
   "з 10-bom": 17,
   "склад 0": 66,
   "у каталозі": 22
  },
- "purchased_refs_with_mpn": 779,
+ "purchased_refs_with_mpn": 781,
  "harness_family_items": 57,
  "tbd": [
   {

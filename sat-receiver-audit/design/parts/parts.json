@@ -31,6 +31,7 @@
   "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-b2b-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-mech4-manual.json",
   "design/parts/snapshots/2026-11-07-w2-mech6-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src2-manual.json",
@@ -5256,6 +5257,22 @@
     "J514"
    ],
    "note": "Board-side harness headers: J506 X23S1-PWR on PWR_B (W2 GR-3) and J514 X24S1-T7A on T7_INSERT (W2 GR-4, segment S24). Part, LCSC SKU and footprint as harness_families PH 3 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-B2B-LSHM150",
+   "mount": "pcb_smt",
+   "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+   "manufacturer": "Samtec",
+   "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR",
+   "sku": {
+    "lcsc": "C2940507"
+   },
+   "single_source": "self-mating Samtec Razor Beam LSHM: both halves are this one part; decision build/15 «Стик PWR-A/PWR-B (W2 AREA)», rewritten by W2 B2B",
+   "refs": [
+    "J208",
+    "J209"
+   ],
+   "note": "Board-to-board pair PWR-A/PWR-B (W2 B2B): J208 on the PWR-A top, J209 on the PWR-B bottom, the same hermaphroditic part, 2 x 50 contacts at 0.50 mm, mated height 5.00 mm with two -02.5 halves (catalogue F-224 Rev 20NOV24, https://suddendocs.samtec.com/catalog_english/lshm.pdf), 2.0 A per pin with one pin powered per row (spec Rev H, https://suddendocs.samtec.com/productspecs/lshm.pdf), no ground plane; -N no shield, -K polyimide pick and place pad, -TR tape and reel. Contact map in pcb/generated/b2b-nets.json: pin n of J208 meets pin n+1 (n odd) or n-1 (n even) of J209 (print Rev Z note 4, https://suddendocs.samtec.com/prints/lshm-1xx-xx.x-xxx-dv-a-x-x-tr-mkt.pdf). Footprint: the official KiCad 10.0.7 -DV-N file, with the two 1.45 NPTH of the alignment pins, as the Samtec Rev G layout https://suddendocs.samtec.com/prints/lshm-1xx-xx.x-x-dv-a-x-x-tr-footprint.pdf (all read 2026-11-07). Two per unit, one on each board; Samtec spec 7.3 advises against several LSXX connectors mated at the same time on one board, and only this one pair is used."
   },
   {
    "id": "WP-SOLDERWIRE-1SQMM",
