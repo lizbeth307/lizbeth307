@@ -460,7 +460,7 @@ def power_copper(cu):
 
     # LAB5 capacitors of the trunk side at the class width too (W2 CTRL-4): C343 next to J305.4 from below (C343.2 sits above
     # C343.1), C342 off the trunk above the J317 pins through four vias
-    cu.track('LAB5-C343', 'LAB5', 'B.Cu', FEED_W, [J305_4, (9.6, 65.3), (11.3, 65.3)],
+    cu.track('LAB5-C343', 'LAB5', 'B.Cu', FEED_W, [J305_4, (9.6, 65.3), (11.3, 65.3), (11.3, 65.75)],
              'LAB5 to the decoupling capacitor C343 next to J305.4, entering C343.1 from below (W2 CTRL-4). ' + FEED_RATING.format(w=FEED_W))
     cu.track('LAB5-C342-F', 'LAB5', 'F.Cu', FEED_W, [(XL, 64.5), (21.9, 64.5)],
              'LAB5 to the bulk capacitor C342: from the F.Cu trunk above the J317 pins to four vias next to C342 (W2 CTRL-4). '
@@ -468,7 +468,7 @@ def power_copper(cu):
     for k, at in enumerate(((21.4, 64.0), (22.4, 64.0), (21.4, 65.0), (22.4, 65.0))):
         cu.via(f'LAB5-V-C342{"abcd"[k]}', 'LAB5', at, 'LAB5 C342 branch F.Cu to B.Cu: four 0.7/0.3 mm vias, about 1.0 A each at '
                '+20 degC (barrel model of pcb/stackup.py), 4 A for the F102 protective current (W2 CTRL-4)', d=0.7)
-    cu.track('LAB5-C342-B', 'LAB5', 'B.Cu', FEED_W, [(21.9, 64.5), (21.4, 66.4)],
+    cu.track('LAB5-C342-B', 'LAB5', 'B.Cu', FEED_W, [(21.9, 64.5), (21.3, 66.8)],
              'LAB5: the C342 vias to C342.1 (W2 CTRL-4). ' + FEED_RATING.format(w=FEED_W))
     lab5_feed(cu)
     return {}
@@ -484,29 +484,42 @@ FEED_W = 1.85
 FEED_RATING = ('LAB5 PWR3A copper at the class width {w} mm on B.Cu (1 oz): IPC-2221 external (k 0.048; MODEL) about 5.1 A at '
                '+20 degC and 3.7 A at +10 degC, above the F102 4 A protective current at +20 degC and the 1.0 A continuous LAB5 '
                'budget at +10 degC (netclasses.json LAB5 required_outer_width_mm 1.3348); no via, no inner copper (W2 CTRL-4)')
-FEED = [  # (id, layer, width, path: board mm or 'REF.PAD' for a pad centre); every LAB5 load of the right group on B.Cu
+FEED = [  # (id, layer, width, path: board mm or 'REF.PAD' for a pad centre); the right LAB5 group, outer layers only
     ('LAB5-FEED-D', 'B.Cu', FEED_W,
      ['J314.2', (10.35, 54.65), (11.25, 53.95), (14.95, 53.95), (15.65, 53.15), (19.35, 47.45), (19.95, 46.95), (24.75, 47.35),
       (27.05, 49.65), (28.25, 53.85), (29.05, 54.55), (34.05, 54.25), (34.85, 53.45), 'D301.2', (44.3, 74.4), (43.85, 74.85),
-      (43.85, 88.9), (48.7, 88.9), (48.7, 86.4)]),
+      (43.85, 88.9), (48.7, 88.9), (48.7, 85.9)]),
     ('LAB5-FEED-D306', 'B.Cu', FEED_W, [(14.95, 53.95), 'D306.1']),
-    ('LAB5-FEED-C320', 'B.Cu', FEED_W, [(43.85, 88.9), (41.95, 88.9)]),
-    ('LAB5-FEED-R367', 'B.Cu', FEED_W, [(45.5, 88.9), (45.5, 87.1)]),
-    ('LAB5-FEED-U', 'B.Cu', FEED_W,
-     ['J305.3', (7.05, 67.15), (4.95, 65.45), (1.35, 69.05), (5.15, 93.35), (11.45, 99.55), (21.65, 98.15), (23.15, 98.1), (26.6, 98.1)]),
-    ('LAB5-FEED-U315', 'B.Cu', FEED_W, [(24.5, 98.1), (24.5, 97.4)]),
-    ('LAB5-FEED-C321', 'B.Cu', FEED_W, [(23.2, 98.1), (23.2, 99.3)]),
+    ('LAB5-FEED-C320', 'B.Cu', FEED_W, [(43.85, 88.9), 'C320.1']),
+    ('LAB5-FEED-R367', 'B.Cu', FEED_W, [(45.5, 88.9), (45.5, 86.6)]),
+    ('LAB5-FEED-R', 'F.Cu', FEED_W, [(46.5, 88.9), (46.5, 95.5), (30.4, 95.5), (28.5, 97.45)]),
+    ('LAB5-FEED-U', 'B.Cu', FEED_W, [(28.5, 97.45), 'C322.1', (24.5, 97.45)]),
+    ('LAB5-FEED-C321', 'B.Cu', FEED_W, [(24.5, 97.45), (23.2, 98.6), (23.2, 99.5)]),
+    # every LAB5 piece ends inside its pad: Freerouting credits a locked connection only at a track end inside the pad (route
+    # run 43251521806 counted 8 LAB5 connections as unrouted); U315.1 sits 0.35 mm from U315.2, so a pad-centre stub inside the
+    # 1.85 mm track end and the pad joins it (U315 is in neck_exempt)
+    ('LAB5-STUB-U315', 'B.Cu', 0.6, [(24.5, 97.45), 'U315.1']),
 ]
-FEED_VIAS = []     # (id, (x, y)): none, the feed stays on B.Cu
+FEED_VIAS = [  # (id, (x, y)): four 0.7/0.3 mm vias per layer change, inside the 1.85 mm track
+    ('LAB5-V-FAN-a', (46.0, 88.4)), ('LAB5-V-FAN-b', (47.0, 88.4)), ('LAB5-V-FAN-c', (46.0, 89.4)), ('LAB5-V-FAN-d', (47.0, 89.4)),
+    ('LAB5-V-GNSS-a', (28.0, 96.95)), ('LAB5-V-GNSS-b', (29.0, 96.95)), ('LAB5-V-GNSS-c', (28.0, 97.95)), ('LAB5-V-GNSS-d', (29.0, 97.95)),
+]
+NECK_LAB5 = {}  # ref -> escape_mm of a LAB5 pad-centre stub; the only stub (U315.1) is covered by NECK
 FEED_WHY = {
     'LAB5-FEED-D': ('LAB5 feed D (W2 CTRL-4): J314.2 on B.Cu below D306 (spur LAB5-FEED-D306), under the Pico between its SWD '
                     'pads and pin 20/21, through the Pico VSYS diode pad D301.2, up the right strip beside cut-out 1 (x 43.85, '
                     'between the J313 pins and C318/F301) and along y 88.9 above the fan switch to Q304.2 (spurs to C320.1 and '
                     'R367.2). ' + FEED_RATING.format(w=FEED_W)),
-    'LAB5-FEED-U': ('LAB5 feed U (W2 CTRL-4): J305.3 on B.Cu below J305, up the left board edge beside cut-out 1, past the H5 '
-                    'keepout into the band between the cut-outs to the GNSS switch group: C321.1, U315.1 and C322.1 (spurs). '
-                    + FEED_RATING.format(w=FEED_W)),
+    'LAB5-FEED-R': ('LAB5 riser to the GNSS switch group (W2 CTRL-4): from four vias in the y 88.9 fan bus on F.Cu up the right '
+                    'strip (x 46.5, below the H6 keepout) and along y 95.5 above cut-out 1 to four vias right of C322. '
+                    + FEED_RATING.format(w=FEED_W).replace('on B.Cu', 'on F.Cu').replace('no via, ', '')),
+    'LAB5-FEED-U': ('LAB5 to the GNSS switch group on B.Cu (W2 CTRL-4): the riser vias, C322.1 and U315.1 (bus y 97.45), spur to '
+                    'C321.1. ' + FEED_RATING.format(w=FEED_W).replace('no via, ', '')),
     '*': 'LAB5 spur of the W2 CTRL-4 feed to a right-group pad at the class width. ' + FEED_RATING.format(w=FEED_W),
+    'S': ('pad-centre stub of the W2 CTRL-4 LAB5 feed: inside the 1.85 mm track end and the pad, it adds no copper outside them; '
+          'Freerouting credits a locked connection only at a track end inside the pad (neck_exempt of the part)'),
+    'V': ('LAB5 layer change of the W2 CTRL-4 feed: four 0.7/0.3 mm vias inside the 1.85 mm track, about 1.0 A each at +20 degC '
+          '(barrel model of pcb/stackup.py), 4 A for the F102 protective current'),
 }
 GND_JOINED = {('U315', '2'): ('C322', '2')}  # GND pad -> GND pad with its own plane via (W2 CTRL-4: C322 took the U315.2 via spot)
 
@@ -514,9 +527,9 @@ GND_JOINED = {('U315', '2'): ('C322', '2')}  # GND pad -> GND pad with its own p
 def lab5_feed(cu):
     for tid, layer, width, path in FEED:
         cu.track(tid, 'LAB5', layer, width, [tuple(p) if not isinstance(p, str) else cu.pad(*p.split('.'))['c'] for p in path],
-                 FEED_WHY.get(tid, FEED_WHY['*']))
+                 FEED_WHY.get(tid, FEED_WHY['S' if tid.startswith('LAB5-STUB') else '*']))
     for vid, at in FEED_VIAS:
-        cu.via(vid, 'LAB5', at, FEED_WHY.get(vid, FEED_WHY['*']), d=0.7)
+        cu.via(vid, 'LAB5', at, FEED_WHY['V'], d=0.7)
     for (ra, na), (rb, nb) in GND_JOINED.items():
         a, b = cu.pad(ra, na), cu.pad(rb, nb)
         assert a['net'] == b['net'] == 'GND'
@@ -915,16 +928,23 @@ BRANCH_REASON = {
 BRANCH_MIN_WIDTH = {'C342': 0.3, 'C343': 0.3}  # the scripted E3_BLOWER_GND branches
 BRANCH_MAX = {'C342': 10.0, 'C343': 10.0}
 NECK = ['C318', 'C319', 'D305', 'F301', 'J311', 'J313', 'U315']
-CTRL4_RUNS = ''  # route runs of the W2 CTRL-4 probe, filled per run
+CTRL4_RUNS = (  # route runs of the W2 CTRL-4 probe
+    ' Route run 43251521806 (LAB5-FEED-U then ran on B.Cu up the left board edge from J305.3): DRC 0 errors, ignored [], 15 '
+    'unconnected (E3_PANEL_TEMP 4, DCS_LBAND 2, DCS_UHF 2, E3_BEZEL_SCL 2, E3_CASE_TEMP 2, DCS_HF 1, E3_BEZEL_SDA 1, E3_ADC3V0 1, '
+    'E3_FAN_TACH_RAW 1); Freerouting stopped after 37 passes (no gain since pass 27, 16.7 min) counting 8 LAB5 connections '
+    'unrouted, because the 1.85 mm track ends sat beside, not inside, the small pads: every LAB5 piece now ends inside its pad '
+    '(a pad-centre stub at U315.1), and the left-edge feed gave way to the F.Cu riser from the fan bus (the left band carries the thermistor, '
+    'DCS and bezel nets).')
 ROUTER_WHY_6L = (
     ' W2 CTRL-R layer study (6 layers, JLC06161H-2116): route run 43183047190 (In3.Cu and In4.Cu as routing layers) 1 error '
     'and 27 unconnected (3V3_Q6A 16); In4.Cu became a solid 3V3_Q6A plane with a scripted via per SMD pad or scripted group '
     '(3V3_Q6A in class SCRIPTED_GND, not autorouted): route run 43185702454 DRC 0 errors, ignored [], 4 unconnected; route run '
     '43190774090 (with a 1.35 mm F.Cu/B.Cu LAB5 feed of Q304) DRC 0 errors, 4 unconnected (E3_MCP_RESET_N 3, E3_PICO3V3 1). '
     'W2 CTRL-4 on the CTRL-R board-of-record inputs: 6 layers, the 4-layer frozen route (route-frozen.json) does not apply; '
-    'the whole right LAB5 group and D306 are fed on B.Cu at the PWR3A class width 1.85 mm without vias (LAB5-FEED-D: J314.2, '
-    'under the Pico, D301.2, up the right strip to Q304.2, C320.1 and R367.2; LAB5-FEED-U: J305.3 up the left edge to C321.1, '
-    'U315.1 and C322.1), C342/C343 at 1.85 mm too, the L3 run is gone; Q303, R367, C320 and C322 moved for the feed; the '
+    'the whole right LAB5 group and D306 are fed on outer copper at the PWR3A class width 1.85 mm (LAB5-FEED-D on B.Cu: J314.2, '
+    'under the Pico, D301.2, up the right strip to Q304.2, C320.1 and R367.2; LAB5-FEED-R on F.Cu from four vias in the fan bus '
+    'up the right strip and along y 95.5 above cut-out 1 to four vias at C322; LAB5-FEED-U on B.Cu to C322.1, U315.1 and C321.1), '
+    'C342/C343 at 1.85 mm too, the L3 run is gone; Q303, R365, R367, C320 and C322 moved for the feed; the '
     'E3_PICO3V3 link up the right strip and the R395 branch run on L4 (In3.Cu), the C312 group joins R335 on L4. Class '
     'PWR3A_BRANCH (LAB5) has the track width 1.85 mm, so any router copper of LAB5 is at the class width.'
     + CTRL4_RUNS)
@@ -978,6 +998,11 @@ def spec_texts(spec, inp, cu, skipped):
     spec['neck_exempt'] = {r: {'escape_mm': 1.5, 'reason': (
         'pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may '
         'narrow next to the pad; the class width resumes within the escape length')} for r in NECK}
+    for r, esc in sorted(NECK_LAB5.items(), key=lambda kv: bg.sort_ref(kv[0])):
+        spec['neck_exempt'][r] = {'escape_mm': esc, 'reason': (
+            'W2 CTRL-4: the LAB5 pad of this part is entered by the 1.85 mm feed; a narrower pad-centre stub (LAB5-STUB-*) lies '
+            'inside the 1.85 mm track end and the pad and adds no copper outside them, so it is no current neck')}
+    spec['neck_exempt'] = dict(sorted(spec['neck_exempt'].items(), key=lambda kv: bg.sort_ref(kv[0])))
     spec.pop('cutouts', None)
     spec['edge_keepout'] = {'width_mm': 0.2, 'layers': list(ROUTING), 'blocks': ['tracks', 'vias'],
                             'why': ('rule-area strips (half-width 0.2 mm) on every outline and cut-out edge of the routing layers: '
@@ -1102,14 +1127,14 @@ def spec_texts(spec, inp, cu, skipped):
         'https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, multilayer values (pcb/generated/netclasses.json '
         'fab_floor.jlc_4l_1oz); re-read 2026-11-12 for 6 layers: unchanged (pcb/generated/stackup-6l.json capabilities)')
     spec['layers']['plan'] = {
-        'F.Cu': 'L1: top parts, signals, scripted LAB5 trunk J305 -> J314.2 (1.85 mm) and the 1.85 mm C342 branch to its four vias, scripted 3V3_Q6A pieces (right pull-up column, MCP pins, the C302-C306 row, stubs to the L5 plane vias), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to the L4 link via, R334/R335, the HMI pull-up row to C312 and U306, R361/R362), PWR1A routes, GND pour after routing',
+        'F.Cu': 'L1: top parts, signals, scripted LAB5 trunk J305 -> J314.2 (1.85 mm) and the 1.85 mm C342 branch to its four vias, the 1.85 mm LAB5 riser LAB5-FEED-R (fan bus vias, x 46.5, y 95.5 above cut-out 1, vias at C322), scripted 3V3_Q6A pieces (right pull-up column, MCP pins, the C302-C306 row, stubs to the L5 plane vias), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to the L4 link via, R334/R335, the HMI pull-up row to C312 and U306, R361/R362), PWR1A routes, GND pour after routing',
         'In1.Cu': 'L2: GND plane (pre-route zone, DSN plane), no signals',
         'In2.Cu': 'L3: signals, GND pour after routing (no LAB5 copper since W2 CTRL-4)',
         'In3.Cu': 'L4 (added by the 6-layer stackup, W2 CTRL-R): signals, the scripted E3_PICO3V3 link up the right strip (between the J316 pins, past C302/C304, beside the cut-out 1 edge to the via at the HMI bus end) with its branch to R395, the C312-R335 link, GND pour after routing',
         'In4.Cu': 'L5 (added by the 6-layer stackup, W2 CTRL-R): solid 3V3_Q6A plane (pre-route zone, DSN plane), no signals',
         'B.Cu': 'L6: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor '
                 'branches, the 1.85 mm LAB5 feeds of W2 CTRL-4 (LAB5-FEED-D: J314.2, D306, under the Pico, D301, up the right strip '
-                'to C320/R367/Q304; LAB5-FEED-U: J305.3 up the left edge to C321/U315/C322; C343, C342), scripted E3_PICO3V3 pieces '
+                'to C320/R367/Q304; LAB5-FEED-U from the riser vias to C322/U315/C321; C343, C342), scripted E3_PICO3V3 pieces '
                 '(R4B bus along cut-out 2, up the right strip and along the top edge to J312.4, branch to R362; Pico pin 36 escape '
                 'via, R330/R327/C308), locked GND copper over the custom Pico GND pads, PWR1A routes, GND pour after routing'}
     ce = spec['cable_exits']
