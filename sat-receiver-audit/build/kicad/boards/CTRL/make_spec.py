@@ -820,17 +820,18 @@ def spec_texts(spec, inp, cu, skipped):
                                     'Freerouting keeps only its clearance to the edge keepout, less than the copper-to-edge 0.3 mm '
                                     '(route run 42423914214: In2.Cu tracks at 0.28 mm from the left edge; PCB-PWRB lesson)')}
     spec['audit_cutouts'] = True
+    spec['layers'].pop('types', None)
     spec['layers']['types_why'] = (
-        'In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) '
-        'and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing '
-        'layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires '
-        '(netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).')
+        'No layer is typed power: In1.Cu (L2) is a routing layer for the two low-current supply nets 3V3_Q6A (0.1 A) and '
+        'E3_PICO3V3 (0.02 A) only (class SUPPLY_L2, router.class_layers) and gets its GND pour after routing; every SMD GND pad has '
+        'its own scripted via to the GND pours of all four layers. The signal class (kicad_default) routes on F.Cu, In2.Cu and '
+        'B.Cu, the power classes on F.Cu/B.Cu only, as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, '
+        '1.8 mm inner for PWR1A). Route runs 42423914214 to 43139850456 with a solid L2 plane and three routing layers left 13 to '
+        '22 connections open (build/15 "План шарів CTRL (W2 PCB-CTRL)")')
     spec['pre_route'] = {
         'tracks': cu.tracks,
         'vias': cu.vias,
-        'zones': [{'id': 'GND-L2', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
-                   'why': 'solid GND plane L2 (build/15 "План шарів"); every SMD GND pad joins it through its scripted via, every THT '
-                          'GND pin directly (solid connection)'}],
+        'zones': [],
         'gnd_vias_note': ('one locked 0.65/0.3 mm through via and a 0.25 mm stub per SMD GND pad, placed by a deterministic search '
                           '(24 directions, growing radius, directions away from the part first) on the exact pad shapes: 0.2 mm to '
                           'other-net copper on every layer the via spans, no via in a pad, 0.55 mm hole-to-hole margin, 0.95 mm '
@@ -840,6 +841,8 @@ def spec_texts(spec, inp, cu, skipped):
                           'dangling fan-out vias)'),
         'gnd_vias_skipped': skipped,
     }
+    if not any(z['layer'] == 'In1.Cu' for z in spec['post_route_zones']):
+        spec['post_route_zones'].insert(1, {'id': 'GND-L2', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0})
     for z in spec['post_route_zones']:
         z['pad_connection'] = 'solid'
         z['why'] = 'GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)'
@@ -847,11 +850,13 @@ def spec_texts(spec, inp, cu, skipped):
         'tool': 'freerouting', 'max_passes': 60, 'threads': 1, 'job_timeout': '00:34:00', 'timeout_s': 2160,
         'fanout': False,
         'ignore_net_classes': ['SCRIPTED_GND', 'SCRIPTED_PWR3A'],  # GND, E3_FAN5, E3_BLOWER_GND
-        'class_layers': {'PWR1A': ['F.Cu', 'B.Cu'], 'PWR3A_BRANCH': ['F.Cu', 'B.Cu']},
+        'class_layers': {'PWR1A': ['F.Cu', 'B.Cu'], 'PWR3A_BRANCH': ['F.Cu', 'B.Cu'], 'SUPPLY_L2': ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'],
+                         'kicad_default': ['F.Cu', 'In2.Cu', 'B.Cu']},
         'why': ROUTER_WHY,
-        'class_layers_why': ('KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN '
-                             'classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper '
-                             'lands on the inner layers'),
+        'class_layers_why': ('KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer ...) into the DSN classes '
+                             '(Freerouting 2.5.0 Circuit.java / Network.java): PWR1A and PWR3A_BRANCH on F.Cu/B.Cu only, so no router '
+                             'power copper lands on the inner layers; the signal class kicad_default on F.Cu/In2.Cu/B.Cu; only SUPPLY_L2 '
+                             '(3V3_Q6A, E3_PICO3V3) may use In1.Cu, so L2 stays a GND pour with the traces of two supply nets'),
     }
     ho = spec['heights_open']
     ho['J304'] = ('XDFH-0254-2*20P (C19193815) drawing not readable (mechanical/params/parts.json IDC_top h_src): height not '
@@ -876,16 +881,16 @@ def spec_texts(spec, inp, cu, skipped):
     spec['height_zones'] = zones  # from the current contract (rear zones changed with the W2 MECH-4 HDMI route)
     spec['rules_note'] = (
         'Rules live in the committed CTRL.kicad_pro: the project defaults of pcb/generated/netclasses.json project_defaults '
-        '(track 0.15 / clearance 0.15, except the Default signal class and the board minimums of CTRL at 0.127 / 0.127, above '
-        'the JLC 4-layer floor 0.09 / 0.09 / pad to track 0.10 (build/15 "Правила CTRL (W2 PCB-CTRL)"), copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias '
+        '(track 0.15 / clearance 0.15, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias '
         '0.7 / 0.3 (0.6 mm vias at 0.15 mm clearance sit 0.45 mm hole to hole, PCB-PWRB lesson), and the classes PWR1A (0.35 mm: '
-        'E3_FAN5_P, E3_GNSS5V), PWR3A_BRANCH (0.5 mm router branches of LAB5), SCRIPTED_GND (GND) and '
+        'E3_FAN5_P, E3_GNSS5V), PWR3A_BRANCH (0.5 mm router branches of LAB5), SUPPLY_L2 (0.15 mm: 3V3_Q6A, E3_PICO3V3, the '
+        'only nets allowed on L2), SCRIPTED_GND (GND) and '
         'SCRIPTED_PWR3A (E3_FAN5, E3_BLOWER_GND), the last two not autorouted. check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, '
         'E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru '
         'files yet).')
     spec['layers']['plan'] = {
         'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the link up the right strip between C302/C304 and the J316 pins, the HMI pull-up row to C312 and U306, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing',
-        'In1.Cu': 'L2: GND plane (pre-route zone, DSN plane), no signals',
+        'In1.Cu': 'L2: GND pour after routing; only the supply nets 3V3_Q6A and E3_PICO3V3 (class SUPPLY_L2) route here',
         'In2.Cu': 'L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, GND pour after routing',
         'B.Cu': 'L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor '
                 'branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top '
@@ -898,12 +903,9 @@ def spec_texts(spec, inp, cu, skipped):
                                 if k == key_old else k): v for k, v in ce.items()}
 
 
-# Default (signal) class of CTRL: 0.127 / 0.127 mm instead of the project default 0.15 / 0.15 (W2 PCB-CTRL decision,
-# build/15 'Правила CTRL'): routes 43121860459, 43131682520 and 43136394379 at 0.15 left 22, 13 and 15 connections open on
-# the densest board; JLC 4-layer floor 0.09 track / 0.09 spacing / 0.10 pad to track (pcb/generated/netclasses.json
-# fab_floor.jlc_4l_1oz, read 2026-11-07). Power and scripted classes keep 0.15; vias stay 0.7 / 0.3 (hole to hole >= 0.5).
-DEFAULT_TRACK = DEFAULT_CLEARANCE = 0.127
-CLASS_CLEARANCE = 0.15  # power and scripted classes: project default (netclasses.json project_defaults)
+# Project default (pcb/generated/netclasses.json project_defaults) for every class. Route run 43139850456 tried 0.127 / 0.127
+# for the signal class: Freerouting logged degenerate polylines and left 17 connections open, so CTRL keeps 0.15 / 0.15.
+DEFAULT_TRACK = DEFAULT_CLEARANCE = CLASS_CLEARANCE = 0.15
 
 
 def project_json(project):
@@ -924,13 +926,15 @@ def project_json(project):
     ns['classes'][0]['via_diameter'] = 0.7
     ns['classes'][0]['via_drill'] = 0.3
     ns['classes'] = [ns['classes'][0], cls('PWR1A', 0.35, 0), cls('PWR3A', 1.85, 1), cls('PWR3A_BRANCH', 0.5, 2),
-                     cls('SCRIPTED_GND', 0.15, 3), cls('SCRIPTED_PWR3A', 1.85, 4)]
+                     cls('SCRIPTED_GND', 0.15, 3), cls('SCRIPTED_PWR3A', 1.85, 4), cls('SUPPLY_L2', 0.15, 5)]
     ns['netclass_patterns'] = [{'netclass': 'PWR3A_BRANCH', 'pattern': 'LAB5'},
                                {'netclass': 'SCRIPTED_PWR3A', 'pattern': 'E3_BLOWER_GND'},
                                {'netclass': 'SCRIPTED_PWR3A', 'pattern': 'E3_FAN5'},
                                {'netclass': 'PWR1A', 'pattern': 'E3_FAN5_P'},
                                {'netclass': 'PWR1A', 'pattern': 'E3_GNSS5V'},
-                               {'netclass': 'SCRIPTED_GND', 'pattern': 'GND'}]
+                               {'netclass': 'SCRIPTED_GND', 'pattern': 'GND'},
+                               {'netclass': 'SUPPLY_L2', 'pattern': '3V3_Q6A'},
+                               {'netclass': 'SUPPLY_L2', 'pattern': 'E3_PICO3V3'}]
     return json.dumps(pro, ensure_ascii=False, indent=2) + '\n'
 
 
