@@ -120,7 +120,7 @@ class Finisher:
                 fixed = False
                 for pd in pads:
                     for lay in pd.layers:
-                        if lay == 'In1.Cu':
+                        if lay in M.PLANES.values():
                             continue
                         # find an A point inside this pad on this layer
                         pts = []
@@ -212,7 +212,7 @@ def prune(m, net, srcs=('router', 'new'), log=print):
             elif it.kind == 'via':
                 lays = set()
                 for lay in M.LAYERS:
-                    if lay == 'In1.Cu' and net == 'GND':
+                    if lay == M.PLANES.get(net):
                         continue
                     for ot in m.near(lay, (it.at[0] - 1, it.at[1] - 1, it.at[0] + 1, it.at[1] + 1)):
                         if ot.id == it.id or ot.net != net:
@@ -221,8 +221,8 @@ def prune(m, net, srcs=('router', 'new'), log=print):
                             lays.add(lay)
                         elif ot.kind == 'pad' and ot.shape.dist(*it.at) <= 1e-4:
                             lays.add(lay)
-                if net == 'GND':
-                    lays.add('In1.Cu')
+                if net in M.PLANES:
+                    lays.add(M.PLANES[net])
                 if len(lays) < 2:
                     m.remove(it)
                     removed += 1
@@ -249,7 +249,7 @@ def dangling(m):
                 if not end_joined(m, it, e, net):
                     out.append(('track end', net, e))
         else:
-            lays = {'In1.Cu'} if net == 'GND' else set()
+            lays = {M.PLANES[net]} if net in M.PLANES else set()
             for lay in M.LAYERS:
                 for ot in m.near(lay, (it.at[0] - 1, it.at[1] - 1, it.at[0] + 1, it.at[1] + 1)):
                     if ot.id == it.id or ot.net != net:

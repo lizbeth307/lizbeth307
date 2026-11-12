@@ -864,6 +864,12 @@ FROZEN = BASE / 'build/kicad/boards/CTRL/route-frozen.json'
 # W2 CTRL-4 (6 layers): route-frozen.json holds the 4-layer router copper of route run 43136394379 (L2 links, L3 copper on
 # In2.Cu of the 4-layer stackup); it does not apply to the 6-layer board, whose copper Freerouting routes afresh
 FROZEN_APPLIES = len(LAYERS) == 4
+# W2 CTRL-4: the 6-layer frozen route (a 6-layer route run harvested and completed by freeze/freeze6.py), used when present
+FROZEN6 = BASE / 'build/kicad/boards/CTRL/route-frozen-6l.json'
+
+
+def frozen_file():
+    return FROZEN if FROZEN_APPLIES else FROZEN6
 
 
 def frozen_guard(cu):
@@ -888,13 +894,16 @@ def frozen_copper(cu, log):
     scripted completion of its open connections, from build/kicad/boards/CTRL/route-frozen.json. It goes in last, so the
     scripted copper and the GND via search above stay exactly as they were in that run; the scripted pieces the
     completion replaces (drop_scripted) are removed by id. Freerouting then finds no open connection to route."""
-    if not FROZEN.is_file() or not FROZEN_APPLIES:
+    src = frozen_file()
+    if not src.is_file():
         return
-    doc = json.loads(FROZEN.read_text(encoding='utf-8'))
+    doc = json.loads(src.read_text(encoding='utf-8'))
     have = frozen_guard(cu)
+    if not doc.get('guard'):
+        raise SystemExit(f'make_spec: {src.name} has no guard (a freeze6.py --no-guard trial): harvest again with the guard')
     for key, value in have.items():  # the frozen copper fits only the placement, netlist and scripted copper it was routed on
         if doc['guard'][key] != value:
-            raise SystemExit(f'make_spec: route-frozen.json was routed on another {key} ({doc["guard"][key][:12]}... != '
+            raise SystemExit(f'make_spec: {src.name} was routed on another {key} ({doc["guard"][key][:12]}... != '
                              f'{value[:12]}...): route again with [pcb-route CTRL] without the frozen copper and harvest anew')
     for kind, items in (('tracks', cu.tracks), ('vias', cu.vias)):
         for name in doc['drop_scripted'][kind]:
@@ -902,7 +911,10 @@ def frozen_copper(cu, log):
             if len(hits) != 1:
                 raise SystemExit(f'make_spec: route-frozen.json drops scripted {kind} {name}, found {len(hits)}')
             items.remove(hits[0])
-    for prefix, key, why in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', FROZEN_WHY)):
+    fin_why = FROZEN_WHY if FROZEN_APPLIES else (
+        f'completion of the 6-layer frozen route ({src.name}, W2 CTRL-4): grid A* on the locked copper of route run '
+        f'{doc["source"]["route_run"]} (build/kicad/boards/CTRL/freeze/freeze6.py), exact clearance check')
+    for prefix, key, why in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', fin_why)):
         for k, (net, layer, width, path) in enumerate(doc[key]):
             t = {'id': f'{prefix}-{k + 1:04d}', 'net': net, 'layer': layer, 'width_mm': width, 'path': path, 'locked': True}
             if why:
@@ -934,7 +946,13 @@ CTRL4_RUNS = (  # route runs of the W2 CTRL-4 probe
     'E3_FAN_TACH_RAW 1); Freerouting stopped after 37 passes (no gain since pass 27, 16.7 min) counting 8 LAB5 connections '
     'unrouted, because the 1.85 mm track ends sat beside, not inside, the small pads: every LAB5 piece now ends inside its pad '
     '(a pad-centre stub at U315.1), and the left-edge feed gave way to the F.Cu riser from the fan bus (the left band carries the thermistor, '
-    'DCS and bezel nets).')
+    'DCS and bezel nets). Route run 43256687765 (that setting): DRC 1 error (a router UART7_TX track 0.002 mm inside the '
+    'clearance of the Pico test pad TP4), ignored [], 9 unconnected (E3_PANEL_TEMP 2, DCS_HF 2, E3_FAN_TACH_RAW 2, '
+    'E3_CASE_TEMP 2, E3_PICO3V3 1); Freerouting still counts LAB5 as unrouted (it does not credit the locked joints) and '
+    'stopped after no gain in 10 passes (22.7 min). Its router copper is now frozen and locked (route-frozen-6l.json, '
+    'freeze/freeze6.py): the UART7_TX track is removed and the 6 nets are joined by the grid A* completion on F.Cu, In2.Cu, '
+    'In3.Cu and B.Cu without ripping other copper (122 completion segments, 20 vias; DCS_HF 96 mm, E3_CASE_TEMP 120 mm and '
+    'E3_PANEL_TEMP 130 mm detours, slow signals), so Freerouting finds no open connection of its own.')
 ROUTER_WHY_6L = (
     ' W2 CTRL-R layer study (6 layers, JLC06161H-2116): route run 43183047190 (In3.Cu and In4.Cu as routing layers) 1 error '
     'and 27 unconnected (3V3_Q6A 16); In4.Cu became a solid 3V3_Q6A plane with a scripted via per SMD pad or scripted group '
@@ -1055,7 +1073,7 @@ def spec_texts(spec, inp, cu, skipped):
     for layer, zid in (('In3.Cu', 'GND-L4'),):  # the routing layer the 6-layer stackup adds
         pz.setdefault(layer, {'id': zid, 'net': 'GND', 'layer': layer, 'outline': 'board', 'priority': 0})
     spec['post_route_zones'] = [pz[n] for n in ROUTING]
-    if FROZEN.is_file() and FROZEN_APPLIES:
+    if FROZEN.is_file() and FROZEN_APPLIES:  # (the 6-layer frozen route note follows below)
         spec['pre_route']['frozen_route_note'] = (
             'W2 CTRL-R route study: the tracks RT-* and vias RV-* are the router copper of route run 43136394379 (Freerouting 2.5.0, '
             'inputs sha256 fd468b58...), harvested from that run board and locked; the tracks FIN-* and vias FINV-* complete its 15 '
@@ -1065,6 +1083,17 @@ def spec_texts(spec, inp, cu, skipped):
             'Source: build/kicad/boards/CTRL/route-frozen.json. Valid only for this placement, netlist and scripted copper '
             '(guard: SHA256 of the pads and of the scripted copper geometry, texts excluded): a pad, net or scripted-copper '
             'change needs a new route run and a new harvest. CI/model result, not a hardware PASS')
+    if FROZEN6.is_file() and not FROZEN_APPLIES:
+        doc6 = json.loads(FROZEN6.read_text(encoding='utf-8'))
+        spec['pre_route']['frozen_route_note'] = (
+            f'W2 CTRL-4 (6 layers): the tracks RT-* and vias RV-* are the router copper of route run {doc6["source"]["route_run"]} '
+            f'(Freerouting 2.5.0, inputs sha256 {doc6["source"]["inputs_sha256"][:8]}...), harvested from that run board and locked; '
+            'the tracks FIN-* and vias FINV-* complete its open connections (grid A* on the routing layers F.Cu, In2.Cu, In3.Cu, '
+            'B.Cu; exact clearance check 0.15 mm, 0.3 mm to edges, 0.5 mm hole to hole). Tool: '
+            'build/kicad/boards/CTRL/freeze/freeze6.py (numpy, offline). Source: build/kicad/boards/CTRL/route-frozen-6l.json. '
+            'Valid only for this placement, netlist and scripted copper (guard: SHA256 of the pads and of the scripted copper '
+            'geometry): a pad, net or scripted-copper change needs a route run without that file and a new harvest. CI/model '
+            'result, not a hardware PASS')
     for z in spec['post_route_zones']:
         z['pad_connection'] = 'solid'
         z['why'] = 'GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)'

@@ -10,6 +10,16 @@ import check_boards as cb  # noqa: E402
 
 LAYERS = ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu']
 RLAYERS = ['F.Cu', 'In2.Cu', 'B.Cu']  # routing layers (In1.Cu is the GND plane)
+PLANES = {'GND': 'In1.Cu'}  # net -> plane layer that joins every via and THT pad of the net
+
+
+def configure(layers, planes):
+    """W2 CTRL-4: switch the model to another stackup (the 6-layer CTRL board: GND plane In1.Cu, 3V3_Q6A plane In4.Cu). The
+    lists are changed in place, so router.py and fin.py see them; the defaults above are the 4-layer board of W2 CTRL-R."""
+    LAYERS[:] = list(layers)
+    RLAYERS[:] = [l for l in layers if l not in planes.values()]
+    PLANES.clear()
+    PLANES.update(planes)
 CLR = 0.15          # board clearance
 EDGE_CLR = 0.30     # copper to edge
 HOLE_HOLE = 0.50    # hole edge to hole edge
@@ -284,8 +294,8 @@ class Model:
                         continue
                     if touches(it, ot):
                         parent[find(ot.id)] = find(it.id)
-        if net == 'GND':  # the In1.Cu plane joins every GND via and THT pad
-            plane = [it.id for it in its if 'In1.Cu' in it.layers]
+        if net in PLANES:  # the plane layer of the net (In1.Cu for GND) joins every via and THT pad of the net
+            plane = [it.id for it in its if PLANES[net] in it.layers]
             for i in plane[1:]:
                 parent[find(i)] = find(plane[0])
         groups = collections.defaultdict(list)
