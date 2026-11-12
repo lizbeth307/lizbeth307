@@ -44,7 +44,8 @@ PROJECT = BASE / 'build/kicad/boards/CTRL/CTRL.kicad_pro'
 VIA_D, VIA_DRILL, STUB_W = 0.65, 0.3, 0.25   # scripted GND vias and stubs
 CLR = 0.2          # design clearance of scripted copper to other-net copper (board rule 0.15)
 EDGE = 0.35        # scripted copper to board and cut-out edges (rule 0.3)
-LAYERS = ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu']
+LAYERS = ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']  # 6 layers, JLC06161H-2116 (W2 CTRL-R)
+ROUTING = ['F.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']             # In1.Cu is the solid GND plane (type power)
 
 
 # ------------------------------------------------------------------ footprint pads placed like board_gen.place()
@@ -784,7 +785,9 @@ ROUTER_WHY = (
     '(E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 '
     'with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their '
     'pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 '
-    'around the column) are gone, Pico pin 36 has an escape via. Job timeout 34 min inside the 45 min CI job')
+    'around the column) are gone, Pico pin 36 has an escape via. Job timeout 34 min inside the 45 min CI job. '
+    'W2 CTRL-R layer study: route run 43136394379 (1 error, 15 unconnected, 3V3_Q6A 8) on 4 layers; the board goes to 6 layers '
+    '(JLC06161H-2116) with In3.Cu and In4.Cu as two more routing layers, the placement and the scripted copper unchanged')
 
 
 def spec_texts(spec, inp, cu, skipped):
@@ -803,16 +806,26 @@ def spec_texts(spec, inp, cu, skipped):
         'pad escape of a PWR1A net (E3_FAN5_P, E3_GNSS5V) into a pad narrower than 0.35 mm plus clearance: a router track may '
         'narrow next to the pad; the class width resumes within the escape length')} for r in NECK}
     spec.pop('cutouts', None)
-    spec['edge_keepout'] = {'width_mm': 0.2, 'layers': ['F.Cu', 'In2.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
+    spec['edge_keepout'] = {'width_mm': 0.2, 'layers': list(ROUTING), 'blocks': ['tracks', 'vias'],
                             'why': ('rule-area strips (half-width 0.2 mm) on every outline and cut-out edge of the routing layers: '
                                     'Freerouting keeps only its clearance to the edge keepout, less than the copper-to-edge 0.3 mm '
                                     '(route run 42423914214: In2.Cu tracks at 0.28 mm from the left edge; PCB-PWRB lesson)')}
     spec['audit_cutouts'] = True
+    spec['layers']['copper'] = 6
+    spec['layers']['thickness_mm'] = 1.6
+    spec['layers']['source'] = (
+        'W2 CTRL-R layer study: 6 layers, JLC06161H-2116 1.6 mm (pcb/generated/stackup-6l.json and pcb/rules/jlc-6l-1oz.kicad_dru '
+        'from pcb/stackup.py; jlcpcb.com/impedance read 2026-11-12): outer 1 oz, inner 0.5 oz. The contract stackup '
+        '(mechanical/generated/contract/boards.json: t 1.6, layers 4, JLC04161H-7628) keeps the thickness 1.6 mm the mechanics '
+        'use; its layer count is the 4-layer default of the other boards')
+    spec['holes']['keepout_layers'] = list(LAYERS)
     spec['layers']['types_why'] = (
         'In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) '
-        'and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing '
-        'layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires '
-        '(netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).')
+        'and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu (L1, 0.2234 mm above L2) and '
+        'In2.Cu (L3, 0.3 mm below L2) face the plane; In3.Cu (L4) and In4.Cu (L5) are the two routing layers the 6-layer stackup '
+        'adds; F.Cu, In2.Cu, In3.Cu, In4.Cu and B.Cu are routing layers, all with a GND pour after routing. The power classes route '
+        'on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, '
+        '1.8 mm inner for PWR1A).')
     spec['pre_route'] = {
         'tracks': cu.tracks,
         'vias': cu.vias,
@@ -828,6 +841,10 @@ def spec_texts(spec, inp, cu, skipped):
                           'dangling fan-out vias)'),
         'gnd_vias_skipped': skipped,
     }
+    pz = {z['layer']: z for z in spec['post_route_zones']}
+    for layer, zid in (('In3.Cu', 'GND-L4'), ('In4.Cu', 'GND-L5')):  # the routing layers the 6-layer stackup adds
+        pz.setdefault(layer, {'id': zid, 'net': 'GND', 'layer': layer, 'outline': 'board', 'priority': 0})
+    spec['post_route_zones'] = [pz[n] for n in ROUTING]
     for z in spec['post_route_zones']:
         z['pad_connection'] = 'solid'
         z['why'] = 'GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)'
@@ -869,12 +886,17 @@ def spec_texts(spec, inp, cu, skipped):
         'E3_FAN5_P, E3_GNSS5V), PWR3A_BRANCH (0.5 mm router branches of LAB5), SCRIPTED_GND (GND) and '
         'SCRIPTED_PWR3A (E3_FAN5, E3_BLOWER_GND), the last two not autorouted. check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, '
         'E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru '
-        'files yet).')
+        'files yet); the 6-layer rule file of the same defaults is pcb/rules/jlc-6l-1oz.kicad_dru (W2 CTRL-R).')
+    spec['fab_floor']['source'] = (
+        'https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, multilayer values (pcb/generated/netclasses.json '
+        'fab_floor.jlc_4l_1oz); re-read 2026-11-12 for 6 layers: unchanged (pcb/generated/stackup-6l.json capabilities)')
     spec['layers']['plan'] = {
         'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the link up the right strip between C302/C304 and the J316 pins, the HMI pull-up row to C312 and U306, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing',
         'In1.Cu': 'L2: GND plane (pre-route zone, DSN plane), no signals',
         'In2.Cu': 'L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, GND pour after routing',
-        'B.Cu': 'L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor '
+        'In3.Cu': 'L4 (added by the 6-layer stackup, W2 CTRL-R): signals (router only), GND pour after routing',
+        'In4.Cu': 'L5 (added by the 6-layer stackup, W2 CTRL-R): signals (router only), GND pour after routing',
+        'B.Cu': 'L6: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor '
                 'branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top '
                 'edge to J312.4, branch to R362; Pico pin 36 escape via, R330/R327/C308), '
                 'locked GND copper over the custom Pico GND pads, PWR1A/PWR3A_BRANCH routes, GND pour after routing'}

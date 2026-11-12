@@ -2,7 +2,8 @@
 """Stackup, impedance and current-width calculators; net classes and JLC DRC rule files (MODEL values).
 
 Run from any directory: python pcb/stackup.py [--check]
-Writes pcb/generated/netclasses.json, pcb/rules/jlc-4l-1oz.kicad_dru and pcb/rules/jlc-2l.kicad_dru;
+Writes pcb/generated/netclasses.json, pcb/rules/jlc-4l-1oz.kicad_dru and pcb/rules/jlc-2l.kicad_dru, and for the
+6-layer CTRL board (W2 CTRL-R) pcb/generated/stackup-6l.json and pcb/rules/jlc-6l-1oz.kicad_dru;
 --check compares them with the committed files. Stdlib only; no CI job runs --check yet (PCB-FAB wires it into sr-rx-pcb).
 
 Nothing here is a measurement. The impedance is a closed-form quasi-static model (t = 0, no solder mask),
@@ -54,6 +55,59 @@ STACKUP = {
     'note': 'Layer thicknesses sum to 1.5862 mm (computed). Copper weights: outer 0.035 mm = 1 oz, inner 0.0152 mm = 0.5 oz finished (JLC "H/HOZ").',
 }
 OUTER_CU, INNER_CU, PREPREG_H, PREPREG_ER = 0.035, 0.0152, 0.2104, 4.4
+
+# --- W2 CTRL-R (CTRL only): JLC06161H-2116, 6 layers 1.6 mm (jlcpcb.com/impedance, read 2026-11-12). The page lists
+# under "6-Layer Impedance Control Stackup" (thickness options 1.2/1.6/2.0 mm; outer 1/2 oz, inner 0.5/1/2 oz):
+# Top copper 0.035 mm; prepreg 2116x1 0.127 mm; prepreg 2313x1 0.0964 mm; L2 copper 0.0152; core 0.3 mm ("H/HOZ
+# without copper"); L3 copper 0.0152; prepreg 7628x1 0.2084; prepreg 7628x1 0.2084; L4 copper 0.0152; core 0.3 mm;
+# L5 copper 0.0152; prepreg 2313x1 0.0964; prepreg 2116x1 0.127; bottom copper 0.035. Dk on the page: 2116 4.16,
+# 7628 4.4, core 4.6; 2313: not given (None). The page states no impedance tolerance for 6 layers.
+# Written only to pcb/generated/stackup-6l.json and pcb/rules/jlc-6l-1oz.kicad_dru: netclasses.json and the 4-/2-layer
+# rule files (every other board) do not change.
+READ_6L = '2026-11-12'
+STACKUP_6L = {
+    'id': 'JLC06161H-2116', 'board_thickness_mm': 1.6, 'source': URL_STACKUP, 'read': READ_6L, 'boards': ['CTRL'],
+    'layers': [
+        {'kicad': 'F.Cu', 'plan': 'L1', 'copper_mm': 0.035},
+        {'dielectric': 'prepreg 2116x1 + 2313x1', 'thickness_mm': 0.2234, 'er': None,
+         'parts': [{'prepreg': '2116x1', 'thickness_mm': 0.127, 'er': 4.16}, {'prepreg': '2313x1', 'thickness_mm': 0.0964, 'er': None}]},
+        {'kicad': 'In1.Cu', 'plan': 'L2', 'copper_mm': 0.0152},
+        {'dielectric': 'core', 'thickness_mm': 0.3, 'er': 4.6},
+        {'kicad': 'In2.Cu', 'plan': 'L3', 'copper_mm': 0.0152},
+        {'dielectric': 'prepreg 7628x1 + 7628x1', 'thickness_mm': 0.4168, 'er': 4.4,
+         'parts': [{'prepreg': '7628x1', 'thickness_mm': 0.2084, 'er': 4.4}, {'prepreg': '7628x1', 'thickness_mm': 0.2084, 'er': 4.4}]},
+        {'kicad': 'In3.Cu', 'plan': 'L4', 'copper_mm': 0.0152},
+        {'dielectric': 'core', 'thickness_mm': 0.3, 'er': 4.6},
+        {'kicad': 'In4.Cu', 'plan': 'L5', 'copper_mm': 0.0152},
+        {'dielectric': 'prepreg 2313x1 + 2116x1', 'thickness_mm': 0.2234, 'er': None,
+         'parts': [{'prepreg': '2313x1', 'thickness_mm': 0.0964, 'er': None}, {'prepreg': '2116x1', 'thickness_mm': 0.127, 'er': 4.16}]},
+        {'kicad': 'B.Cu', 'plan': 'L6', 'copper_mm': 0.035},
+    ],
+    'note': ('Layer thicknesses sum to 1.5944 mm (computed). Copper: outer 0.035 mm = 1 oz, inner 0.0152 mm = 0.5 oz finished '
+             '(the inner default on jlcpcb.com/capabilities/pcb-capabilities: "Finished copper weight of inner layer is 0.5oz by '
+             'default"), so the inner widths of netclasses.json (0.5 oz) hold unchanged. Er of 2313 is not on the page (None): '
+             'CTRL carries no RF50 net, so no impedance is modelled or ordered for it.'),
+    'why': ('W2 CTRL-R layer study: L1-L2 0.2234 mm (close to the 0.2104 mm L1-L2 of JLC04161H-7628) and L2-L3 0.3 mm keep L1 '
+            'and L3 next to the solid L2 GND plane; L3-L4 0.4168 mm and L5-L6 0.2234 mm keep the adjacent signal layers apart; '
+            'the 1.5944 mm sum is 0.0056 mm under the contract board thickness 1.6 mm (JLC tolerance +/-10 %); of the other '
+            'tables read, JLC06161H-1080 (1.5940 mm) puts L3 0.55 mm from L2 and L5 0.0764 mm from L6, JLC06161H-7628 sums to '
+            '1.5544 mm'),
+}
+CAPS_6L = {  # jlcpcb.com/capabilities/pcb-capabilities, read 2026-11-12: the multilayer rows, quoted as printed
+    'source': URL_CAPS, 'read': READ_6L,
+    'layer_count': '1-32 Layers; impedance control for 4/6/8/.../32 layers, +/-10 % standard (+/-5 % on special request)',
+    'track_width_spacing_1oz': 'Multilayer: 0.09 / 0.09 mm (3.5 / 3.5 mil)',
+    'via': 'Multilayer: 0.15 mm hole size / 0.25 mm via diameter; via hole-to-hole 0.2 mm',
+    'pth_annular_1oz': 'multilayer: recommended 0.20 mm or above; absolute minimum 0.15 mm',
+    'inner_clearance': 'Inner layer via hole to copper 0.2 mm; inner layer PTH pad hole to copper 0.3 mm',
+    'copper': 'outer multi-layer 1 oz / 2 oz; inner 0.5 oz / 1 oz / 2 oz; finished inner copper 0.5 oz by default',
+    'thickness': 'FR4 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm; tolerance +/-10 % for >= 1.0 mm',
+    'via_in_pad': ('JLCPCB Via-in-Pad Process: vias filled with epoxy resin or copper paste and plated over; "This process is '
+                   'the default for 6-layer and above multilayer boards"; compatible with via diameters 0.15 to 0.55 mm'),
+    'floor_note': ('the multilayer floors equal jlc_4l_1oz of netclasses.json fab_floor (read 2026-11-07); the 6-layer board '
+                   'uses those values'),
+}
+OUT_6L = {'json': ROOT / 'pcb/generated/stackup-6l.json', 'rules': ROOT / 'pcb/rules/jlc-6l-1oz.kicad_dru'}
 
 # --- JLC rigid PCB capabilities (jlcpcb.com/capabilities/pcb-capabilities, read 2026-11-07). Hard floors.
 # key: (multilayer 1 oz value, 2-layer 1 oz value, quoted row)
@@ -509,17 +563,21 @@ def fmt(v):
 
 
 def rules(kind, doc):
-    four = kind == '4l'
+    four = kind in ('4l', '6l')  # multilayer floors and inner-layer rules; RF50/DCTAP/BOND only in the 4-layer file
     col = 0 if four else 1
     floor = {k: v[col] for k, v in CAPS.items()}
     cls = doc['classes']
-    hdr = 'JLC04161H-7628 4 layers 1.6 mm, outer 1 oz / inner 0.5 oz' if four else 'JLC 2 layers 1.6 mm, 1 oz'
+    hdr = {'4l': 'JLC04161H-7628 4 layers 1.6 mm, outer 1 oz / inner 0.5 oz', '2l': 'JLC 2 layers 1.6 mm, 1 oz',
+           '6l': 'JLC06161H-2116 6 layers 1.6 mm, outer 1 oz / inner 0.5 oz (W2 CTRL-R: CTRL only)'}[kind]
     out = ['(version 1)',
            f'# GENERATED by pcb/stackup.py; do not edit (rerun: python pcb/stackup.py). {hdr}.',
            f'# Fab floors: {URL_CAPS} (read {READ}); they belong in Board Setup (absolute minimums, see netclasses.json',
-           f'# fab_floor.board_setup_floor_{kind}). The rules below are the project defaults (floor + margin) and the net classes.',
+           f'# fab_floor.board_setup_floor_{"4l" if kind == "6l" else kind}). The rules below are the project defaults (floor + margin) and the net classes.',
            '# Values are MODEL/design rules: DRC 0 proves rule compliance only; bench gates stay OPEN.',
            '# KiCad: later rules take precedence; once a matching rule is found no further rules are checked.', '']
+    if kind == '6l':
+        out[-1:-1] = [f'# 6 layers: stackup {URL_STACKUP} (read {READ_6L}, pcb/generated/stackup-6l.json); the multilayer floors re-read on',
+                      f'# {URL_CAPS} {READ_6L} equal the 4-layer values; vias are filled and capped by default from 6 layers (same page).']
 
     def rule(name, cons, cond=None, layer=None, comments=()):
         out.extend('# ' + c for c in comments)
@@ -567,7 +625,7 @@ def rules(kind, doc):
         rule(f'mounting hole {d} keepout', [f'hole_clearance (min {fmt((keep - d) / 2)})'],
              cond=f"A.Pad_Type == 'NPTH, mechanical' && A.Hole_Size_X >= {fmt(d - 0.05)} && A.Hole_Size_X <= {fmt(d + 0.05)}",
              comments=[f'contract hole_d {d} / hole_keepout_d {keep} (mechanical/generated/contract/boards.json): ({keep} - {d}) / 2 from the hole edge'])
-    if four:  # the RF board (4 layers) carries the single bond
+    if kind == '4l':  # the RF board (4 layers) carries the single bond
         rule('BOND-RF hole keepout', [f'hole_clearance (min {fmt((7.0 - 3.2) / 2)})'],
              cond="A.memberOfFootprint('HB*')",
              comments=['BOND-RF exception: the single GND/CHASSIS bond hole (footprint reference HB*) is plated and netted (CHASSIS);',
@@ -589,7 +647,7 @@ def rules(kind, doc):
         elif four:
             rule(f'{name} no inner tracks', ['disallow track'],
                  cond=f"A.hasNetclass('{name}') && !A.intersectsArea('{BRANCH_AREA}')", layer='inner',
-                 comments=[f'{name}: inner 0.5 oz copper is not counted as a current path, so no {name} track on In1/In2 (a thin inner',
+                 comments=[f'{name}: inner 0.5 oz copper is not counted as a current path, so no {name} track on {"In1-In4" if kind == "6l" else "In1/In2"} (a thin inner',
                            f'track would carry the current in series); inner pours stay allowed and uncounted; {BRANCH_AREA} rule areas excepted'])
     power_cond = ' || '.join(f"A.hasNetclass('{n}')" for n in POWER_CLASSES)
     rule('power branch area', [f'track_width (min {fmt(p["track_width"])})'],
@@ -597,7 +655,7 @@ def rules(kind, doc):
          comments=[f'project rule: low-current branches of power nets (Kelvin sense lines, decoupling stubs) inside rule areas named {BRANCH_AREA}',
                    f'take the project default track {fmt(p["track_width"])} (JLC floor {fmt(floor["track_width_min"])}, {URL_CAPS}, {READ}); each is listed in the board',
                    'spec branch_exempt {ref: {max_mm, min_width_mm, reason}} and bounded by pcb/check_boards.py'])
-    if four:
+    if kind == '4l':
         rf = cls['RF50']
         rule('RF50 CPWG on L1', [f'track_width (min {fmt(rf["width_mm"] - rf["width_tol_mm"])}) (opt {fmt(rf["width_mm"])}) (max {fmt(rf["width_mm"] + rf["width_tol_mm"])})',
                                  f'clearance (min {fmt(rf["gap_mm"])})'],
@@ -620,10 +678,25 @@ def rules(kind, doc):
     return '\n'.join(out).rstrip('\n') + '\n'
 
 
+def stackup_6l(doc):
+    """pcb/generated/stackup-6l.json (W2 CTRL-R): the JLC 6-layer stackup of CTRL, the multilayer rows re-read for it and
+    the inner widths of the power classes (0.5 oz inner copper, as on 4 layers). netclasses.json stays the 4-/2-layer file."""
+    return {
+        'schema': 'srrx-stackup-6l-v1', 'generator': 'pcb/stackup.py',
+        'status': 'MODEL: layer table as read; no impedance is modelled (no RF50 net on CTRL); bench gates OPEN',
+        'stackup': STACKUP_6L, 'capabilities': CAPS_6L,
+        'fab_floor': 'pcb/generated/netclasses.json fab_floor.jlc_4l_1oz (multilayer values, unchanged on the 2026-11-12 re-read)',
+        'power_classes': {name: {'outer_min_width_mm': doc['classes'][name]['outer_min_width_mm'],
+                                 'inner_min_width_mm': doc['classes'][name]['inner_min_width_mm']} for name in POWER_CLASSES},
+        'rules_file': rel(OUT_6L['rules']),
+    }
+
+
 def outputs():
     doc = build()
     return {OUT_JSON: json.dumps(doc, ensure_ascii=False, indent=2) + '\n',
-            OUT_RULES['4l']: rules('4l', doc), OUT_RULES['2l']: rules('2l', doc)}
+            OUT_RULES['4l']: rules('4l', doc), OUT_RULES['2l']: rules('2l', doc),
+            OUT_6L['json']: json.dumps(stackup_6l(doc), ensure_ascii=False, indent=2) + '\n', OUT_6L['rules']: rules('6l', doc)}
 
 
 def main(argv=None):

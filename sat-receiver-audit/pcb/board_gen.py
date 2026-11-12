@@ -693,8 +693,8 @@ def validate_spec(spec, board):
         raise SpecError(f'{board}: spec lacks {missing}')
     if spec['schema'] != SPEC_SCHEMA or spec['board_id'] != board:
         raise SpecError(f'{board}: schema must be {SPEC_SCHEMA} and board_id {board}')
-    if spec['layers']['copper'] not in (2, 4):
-        raise SpecError(f'{board}: copper layers must be 2 or 4')
+    if spec['layers']['copper'] not in (2, 4, 6):  # 6: W2 CTRL-R (CTRL, pcb/generated/stackup-6l.json)
+        raise SpecError(f'{board}: copper layers must be 2, 4 or 6')
     if spec.get('rules_file') is not None:
         raise SpecError(f'{board}: rules_file is set, but copying it into build/kicad/boards/{board}/{board}.kicad_dru '
                         '(and hashing it) is not implemented in board_gen yet; keep it null')
@@ -769,6 +769,10 @@ def validate_spec(spec, board):
         if not re.fullmatch(r'[A-Za-z0-9_]+', str(cls)) or not isinstance(layers, list) or not layers \
                 or not set(layers) <= set(copper):
             raise SpecError(f'{board}: router.class_layers {cls}: {layers!r} must list copper layers of the board')
+        # W2 CTRL-R: a power class keeps its router copper on the outer layers on any layer count (netclasses.json: inner
+        # copper is no current path for PWR3A/BATT, and the inner PWR1A/PWR2A widths are far above the router class widths)
+        if re.match(r'(PWR|BATT)', str(cls)) and set(layers) - {'F.Cu', 'B.Cu'}:
+            raise SpecError(f'{board}: router.class_layers {cls}: a power class routes on F.Cu/B.Cu only, not {sorted(set(layers) - {"F.Cu", "B.Cu"})}')
     if not isinstance(spec.get('audit_cutouts', False), bool):
         raise SpecError(f'{board}: audit_cutouts must be true or false')
     for key, reason in spec['drc_policy'].get('warning_checks', {}).items():
