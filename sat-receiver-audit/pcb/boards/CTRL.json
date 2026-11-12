@@ -16,10 +16,13 @@
     "copper": 4,
     "thickness_mm": 1.6,
     "source": "mechanical/generated/contract/boards.json stackup (4 layers, JLC04161H-7628, build/15 \"Шари\") and pcb/generated/netclasses.json stackup",
-    "types_why": "No layer is typed power: In1.Cu (L2) carries one scripted E3_PICO3V3 link (beside the cut-out 1 edge) and gets its GND pour after routing; no net class may route on it (router.class_layers), so Freerouting routes on F.Cu, In2.Cu and B.Cu, the power classes on F.Cu/B.Cu only, as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A); every SMD GND pad has its own scripted via to the GND pours of all four layers (build/15 \"План шарів CTRL (W2 PCB-CTRL)\")",
+    "types": {
+      "In1.Cu": "power"
+    },
+    "types_why": "In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).",
     "plan": {
-      "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins, TR3A capacitors), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the HMI pull-up row to C312 and U306, R334/R335, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing",
-      "In1.Cu": "L2: GND pour after routing around one scripted E3_PICO3V3 link beside the cut-out 1 edge; no router copper",
+      "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the link up the right strip between C302/C304 and the J316 pins, the HMI pull-up row to C312 and U306, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing",
+      "In1.Cu": "L2: GND plane (pre-route zone, DSN plane), no signals",
       "In2.Cu": "L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, GND pour after routing",
       "B.Cu": "L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top edge to J312.4, branch to R362; Pico pin 36 escape via, R330/R327/C308), locked GND copper over the custom Pico GND pads, PWR1A/PWR3A_BRANCH routes, GND pour after routing"
     }
@@ -3594,28 +3597,6 @@
         "why": "3V3_Q6A of U302: VDD pin 9 to the address pins tied high, under the body"
       },
       {
-        "id": "V33-TR3A",
-        "net": "3V3_Q6A",
-        "layer": "F.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            38.03,
-            90.75
-          ],
-          [
-            40.44,
-            90.75
-          ],
-          [
-            42.85,
-            90.75
-          ]
-        ],
-        "locked": true,
-        "why": "3V3_Q6A: C302.1 - C304.1 - C306.1 through the gaps between the pads"
-      },
-      {
         "id": "V33-U315",
         "net": "3V3_Q6A",
         "layer": "B.Cu",
@@ -4086,9 +4067,9 @@
         "why": "E3_PICO3V3: via to R362.2"
       },
       {
-        "id": "P33-RIGHT-L2",
+        "id": "P33-RIGHT-F",
         "net": "E3_PICO3V3",
-        "layer": "In1.Cu",
+        "layer": "F.Cu",
         "width_mm": 0.2,
         "path": [
           [
@@ -4096,16 +4077,24 @@
             109.6
           ],
           [
-            42.8,
-            106.5
+            40.55,
+            104.5
           ],
           [
-            42.8,
-            95.0
+            40.55,
+            101.0
+          ],
+          [
+            39.235,
+            97.0
+          ],
+          [
+            39.235,
+            89.5
           ],
           [
             38.6,
-            90.8
+            88.8
           ],
           [
             38.6,
@@ -4113,7 +4102,7 @@
           ]
         ],
         "locked": true,
-        "why": "E3_PICO3V3 on L2 from the right-strip bus, right of the J316 pins and beside the cut-out 1 edge, to the via above R368 (build/15 \"План шарів CTRL (W2 PCB-CTRL)\")"
+        "why": "E3_PICO3V3 on L1 from the right-strip bus between the J316 pins 2 and 1, between C302 and C304, then down beside the cut-out 1 edge to the via above R368 (route runs 43121860459 and 43131682520 left this link open)"
       },
       {
         "id": "P33-U305",
@@ -4202,46 +4191,6 @@
         ],
         "locked": true,
         "why": "E3_PICO3V3: HMI pull-ups R337/R339/R341 in the gap between the pad rows, C312.1, U306.24 (VDD)"
-      },
-      {
-        "id": "P33-R334-R335",
-        "net": "E3_PICO3V3",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            27.03,
-            55.945
-          ],
-          [
-            28.89,
-            55.945
-          ]
-        ],
-        "locked": true,
-        "why": "E3_PICO3V3: R334.2 to R335.2 (adjacent upper pads; route run 43136394379 left them apart)"
-      },
-      {
-        "id": "BACK-EXT-R338-U310",
-        "net": "E3_BACK_EXT",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
-        "path": [
-          [
-            19.89,
-            52.145
-          ],
-          [
-            19.89,
-            53.0
-          ],
-          [
-            18.2125,
-            53.95
-          ]
-        ],
-        "locked": true,
-        "why": "E3_BACK_EXT: series resistor R338 to its TVS pin U310.3 (adjacent pads; route run 43142598283 left it open)"
       },
       {
         "id": "P33-R337",
@@ -4843,8 +4792,8 @@
             91.6
           ],
           [
-            39.072,
-            93.363
+            38.076,
+            89.644
           ]
         ],
         "locked": true
@@ -5903,7 +5852,7 @@
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true,
-        "why": "E3_PICO3V3: right-strip bus to L2 above R358"
+        "why": "E3_PICO3V3: right-strip bus B.Cu to F.Cu above R358"
       },
       {
         "id": "P33-V-U305",
@@ -6220,8 +6169,8 @@
         "id": "GND-D305.2",
         "net": "GND",
         "at": [
-          39.072,
-          93.363
+          38.076,
+          89.644
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6778,7 +6727,17 @@
         "locked": true
       }
     ],
-    "zones": [],
+    "zones": [
+      {
+        "id": "GND-L2",
+        "net": "GND",
+        "layer": "In1.Cu",
+        "outline": "board",
+        "priority": 0,
+        "pad_connection": "solid",
+        "why": "solid GND plane L2 (build/15 \"План шарів\"); every SMD GND pad joins it through its scripted via, every THT GND pin directly (solid connection)"
+      }
+    ],
     "gnd_vias_note": "one locked 0.65/0.3 mm through via and a 0.25 mm stub per SMD GND pad, placed by a deterministic search (24 directions, growing radius, directions away from the part first) on the exact pad shapes: 0.2 mm to other-net copper on every layer the via spans, no via in a pad, 0.55 mm hole-to-hole margin, 0.95 mm between vias, outside the hole keepouts, the Pico TP keepouts and 0.35 mm from every edge; the Pico GND pins get their via straight inwards under the module, past the pad end; GND is in class SCRIPTED_GND and not autorouted (route run 42423914214: the router left 9 GND connections and dangling fan-out vias)",
     "gnd_vias_skipped": []
   },
@@ -6787,15 +6746,6 @@
       "id": "GND-F",
       "net": "GND",
       "layer": "F.Cu",
-      "outline": "board",
-      "priority": 0,
-      "pad_connection": "solid",
-      "why": "GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)"
-    },
-    {
-      "id": "GND-L2",
-      "net": "GND",
-      "layer": "In1.Cu",
       "outline": "board",
       "priority": 0,
       "pad_connection": "solid",
@@ -7607,15 +7557,10 @@
       "PWR3A_BRANCH": [
         "F.Cu",
         "B.Cu"
-      ],
-      "kicad_default": [
-        "F.Cu",
-        "In2.Cu",
-        "B.Cu"
       ]
     },
-    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches): locked GND copper now covers the custom Pico GND pads. Route runs 43106410728 (a locked L3 LAB5 run across the board) and 43111037016 (LAB5 branches on L3 at 0.6 mm): DRC errors 0, but the router stalled with 36-37 of the 3V3_Q6A connections open once L3 carried LAB5. LAB5 now uses short scripted islands (one 18 mm L3 piece to D301) and the router joins them on L1/L4 at 0.5 mm. Route run 43114111838 (that setting): LAB5 complete, DRC errors 0, but 34 of the 3V3_Q6A connections still open: the left pull-up column R308-R319 now has a scripted 3V3_Q6A bus on L3 with a via beside each pad 2, and the Pico GND vias sit under the module instead of in the escape channels between and outside the castellated pads. Route run 43118391983 (that setting): 1 error (a router neck at U313.1) and 25 unconnected, 15 of them 3V3_Q6A: the right pull-up column, the MCP VDD-to-address-pin links and a via for the boxed-in U315.3 are scripted too. Route run 43121860459 (that setting): DRC errors 0 and 22 unconnected (E3_PICO3V3 14, E3_ENC1_A/B 4, E3_BLOWER_GND 2, E3_FN_EXT 1, E3_ENC2_A 1), most of them at pads that could not leave their row: the pull-up rows R4B and HMI3 have their series resistors turned and a scripted E3_PICO3V3 bus along the cut-out edge, R344 is turned so that its E3_FN pin sits next to R343, E3_PICO3V3 has scripted pieces at the Pico, C312, R361/R362, R368 and R395, and E3_BLOWER_GND is fully scripted (class SCRIPTED_PWR3A). Route run 43131682520 (that setting): 1 error (the R4B bus end dangling) and 13 unconnected (E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 around the column) are gone, Pico pin 36 has an escape via. Route run 43136394379 (that setting): E3_PICO3V3 down to 1 open connection, but 15 unconnected (3V3_Q6A 8: the L1 link between the J316 pins and C302/C304 took their corridor) and a dangling 3V3_Q6A via. Route run 43139850456 (signal class 0.127/0.127): degenerate Freerouting polylines, 17 unconnected; reverted. Route run 43142598283 (3V3_Q6A and E3_PICO3V3 allowed on L2): 18 unconnected; reverted. Now L2 carries only the scripted E3_PICO3V3 link beside the cut-out 1 edge (GND pour after routing), the TR3A 3V3_Q6A pads, R334/R335 and R338-U310.3 (E3_BACK_EXT) are scripted. Job timeout 34 min inside the 45 min CI job",
-    "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer ...) into the DSN classes (Freerouting 2.5.0 Circuit.java / Network.java): PWR1A and PWR3A_BRANCH on F.Cu/B.Cu only, so no router power copper lands on the inner layers; the signal class kicad_default on F.Cu/In2.Cu/B.Cu, so no router copper lands on L2"
+    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches): locked GND copper now covers the custom Pico GND pads. Route runs 43106410728 (a locked L3 LAB5 run across the board) and 43111037016 (LAB5 branches on L3 at 0.6 mm): DRC errors 0, but the router stalled with 36-37 of the 3V3_Q6A connections open once L3 carried LAB5. LAB5 now uses short scripted islands (one 18 mm L3 piece to D301) and the router joins them on L1/L4 at 0.5 mm. Route run 43114111838 (that setting): LAB5 complete, DRC errors 0, but 34 of the 3V3_Q6A connections still open: the left pull-up column R308-R319 now has a scripted 3V3_Q6A bus on L3 with a via beside each pad 2, and the Pico GND vias sit under the module instead of in the escape channels between and outside the castellated pads. Route run 43118391983 (that setting): 1 error (a router neck at U313.1) and 25 unconnected, 15 of them 3V3_Q6A: the right pull-up column, the MCP VDD-to-address-pin links and a via for the boxed-in U315.3 are scripted too. Route run 43121860459 (that setting): DRC errors 0 and 22 unconnected (E3_PICO3V3 14, E3_ENC1_A/B 4, E3_BLOWER_GND 2, E3_FN_EXT 1, E3_ENC2_A 1), most of them at pads that could not leave their row: the pull-up rows R4B and HMI3 have their series resistors turned and a scripted E3_PICO3V3 bus along the cut-out edge, R344 is turned so that its E3_FN pin sits next to R343, E3_PICO3V3 has scripted pieces at the Pico, C312, R361/R362, R368 and R395, and E3_BLOWER_GND is fully scripted (class SCRIPTED_PWR3A). Route run 43131682520 (that setting): 1 error (the R4B bus end dangling) and 13 unconnected (E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 around the column) are gone, Pico pin 36 has an escape via. Job timeout 34 min inside the 45 min CI job",
+    "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper lands on the inner layers"
   },
   "drc_policy": {
     "warning_checks": {

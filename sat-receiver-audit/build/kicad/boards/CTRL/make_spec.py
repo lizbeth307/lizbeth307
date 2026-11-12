@@ -591,10 +591,6 @@ def q6a_copper(cu):
         p9, p16 = P(ref, '9')['c'], P(ref, '16')['c']
         path = [p9, (24.0, p9[1]), (24.0, p16[1]), p16] + ([P(ref, '15')['c']] if '15' in pins else [])
         cu.track(f'V33-{ref}', '3V3_Q6A', 'F.Cu', 0.25, path, f'3V3_Q6A of {ref}: VDD pin 9 to the address pins tied high, under the body')
-    # TR3A capacitors C302/C304/C306 (3V3_Q6A pads in one row): joined through the gaps between them
-    tr = [P(r, '1') for r in ('C302', 'C304', 'C306')]
-    assert all(c['net'] == '3V3_Q6A' for c in tr)
-    cu.track('V33-TR3A', '3V3_Q6A', 'F.Cu', 0.25, [c['c'] for c in tr], '3V3_Q6A: C302.1 - C304.1 - C306.1 through the gaps between the pads')
     # U315 pin 3 (3V3_Q6A) is boxed in by the cut-out edge, U315 pin 2's GND stub and the U301 pads above
     cu.via('V33-U315', '3V3_Q6A', (27.5, 94.45), '3V3_Q6A via for U315 pin 3, right of the U301 pads')
     cu.track('V33-U315', '3V3_Q6A', 'B.Cu', 0.25, [P('U315', '3')['c'], (27.5, 94.45)], '3V3_Q6A stub, U315.3 to its via')
@@ -658,13 +654,11 @@ def pico3v3_copper(cu):
              'E3_PICO3V3: right-strip bus to a via right of R362, below the H4 keepout and along the right edge')
     cu.via('P33-V-AMB', P33, (xa, r362['c'][1]), 'E3_PICO3V3: B.Cu to F.Cu right of R362')
     cu.track('P33-AMB-F', P33, 'F.Cu', W, [(xa, r362['c'][1]), r362['c']], 'E3_PICO3V3: via to R362.2')
-    # the R4B / right-strip bus to the HMI3 branch on L2 (the only copper on L2 besides the GND pour): via above R358,
-    # right of the J316 pins, down beside the cut-out 1 edge to the via above R368. On L1/L3/L4 this link took the
-    # corridor of 3V3_Q6A (route runs 43136394379 and 43139850456: 8 open 3V3_Q6A connections each)
-    cu.via('P33-V-R4B', P33, (xd, 109.6), 'E3_PICO3V3: right-strip bus to L2 above R358')
-    cu.track('P33-RIGHT-L2', P33, 'In1.Cu', W, [(xd, 109.6), (42.8, 106.5), (42.8, 95.0), (vx, 90.8), (vx, vy)],
-             'E3_PICO3V3 on L2 from the right-strip bus, right of the J316 pins and beside the cut-out 1 edge, to the via above R368 '
-             '(build/15 "План шарів CTRL (W2 PCB-CTRL)")')
+    # the R4B / right-strip bus to the HMI3 branch: via above R358, L1 between the J316 pins and down beside cut-out 1
+    cu.via('P33-V-R4B', P33, (xd, 109.6), 'E3_PICO3V3: right-strip bus B.Cu to F.Cu above R358')
+    cu.track('P33-RIGHT-F', P33, 'F.Cu', W, [(xd, 109.6), (40.55, 104.5), (40.55, 101.0), (39.235, 97.0), (39.235, 89.5), (vx, 88.8), (vx, vy)],
+             'E3_PICO3V3 on L1 from the right-strip bus between the J316 pins 2 and 1, between C302 and C304, then down beside the cut-out 1 edge to '
+             'the via above R368 (route runs 43121860459 and 43131682520 left this link open)')
     # Pico: pin 36 (3V3 out) to a via just right of the pad (the router joins it on any layer), R330.2 - R327.1 - C308.1
     u36, r330, r327, c308 = P('U305', '36'), P('R330', '2'), P('R327', '1'), P('C308', '1')
     assert u36['net'] == P33
@@ -680,10 +674,6 @@ def pico3v3_copper(cu):
     cu.track('P33-HMI-ROW', P33, 'F.Cu', W, [(P('R337', '2')['c'][0], yc), (c312['c'][0], yc), (c312['c'][0], u306['c'][1]),
                                             u306['c']],
              'E3_PICO3V3: HMI pull-ups R337/R339/R341 in the gap between the pad rows, C312.1, U306.24 (VDD)')
-    r334, r335 = P('R334', '2'), P('R335', '2')
-    cu.track('P33-R334-R335', P33, 'F.Cu', W, [r334['c'], r335['c']], 'E3_PICO3V3: R334.2 to R335.2 (adjacent upper pads; route run 43136394379 left them apart)')
-    cu.track('BACK-EXT-R338-U310', 'E3_BACK_EXT', 'F.Cu', W, [P('R338', '2')['c'], (P('R338', '2')['c'][0], 53.0), P('U310', '3')['c']],
-             'E3_BACK_EXT: series resistor R338 to its TVS pin U310.3 (adjacent pads; route run 43142598283 left it open)')
     for r in ('R337', 'R339', 'R341', 'C312'):
         q = P(r, '2' if r != 'C312' else '1')
         assert q['net'] == P33
@@ -794,12 +784,7 @@ ROUTER_WHY = (
     '(E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 '
     'with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their '
     'pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 '
-    'around the column) are gone, Pico pin 36 has an escape via. Route run 43136394379 (that setting): E3_PICO3V3 down to 1 open '
-    'connection, but 15 unconnected (3V3_Q6A 8: the L1 link between the J316 pins and C302/C304 took their corridor) and a '
-    'dangling 3V3_Q6A via. Route run 43139850456 (signal class 0.127/0.127): degenerate Freerouting polylines, 17 unconnected; '
-    'reverted. Route run 43142598283 (3V3_Q6A and E3_PICO3V3 allowed on L2): 18 unconnected; reverted. Now L2 carries only the '
-    'scripted E3_PICO3V3 link beside the cut-out 1 edge (GND pour after routing), the TR3A 3V3_Q6A pads, R334/R335 and '
-    'R338-U310.3 (E3_BACK_EXT) are scripted. Job timeout 34 min inside the 45 min CI job')
+    'around the column) are gone, Pico pin 36 has an escape via. Job timeout 34 min inside the 45 min CI job')
 
 
 def spec_texts(spec, inp, cu, skipped):
@@ -823,17 +808,17 @@ def spec_texts(spec, inp, cu, skipped):
                                     'Freerouting keeps only its clearance to the edge keepout, less than the copper-to-edge 0.3 mm '
                                     '(route run 42423914214: In2.Cu tracks at 0.28 mm from the left edge; PCB-PWRB lesson)')}
     spec['audit_cutouts'] = True
-    spec['layers'].pop('types', None)
     spec['layers']['types_why'] = (
-        'No layer is typed power: In1.Cu (L2) carries one scripted E3_PICO3V3 link (beside the cut-out 1 edge) and gets its GND '
-        'pour after routing; no net class may route on it (router.class_layers), so Freerouting routes on F.Cu, In2.Cu and B.Cu, '
-        'the power classes on F.Cu/B.Cu only, as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, 1.8 mm '
-        'inner for PWR1A); every SMD GND pad has its own scripted via to the GND pours of all four layers (build/15 "План шарів '
-        'CTRL (W2 PCB-CTRL)")')
+        'In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) '
+        'and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing '
+        'layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires '
+        '(netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).')
     spec['pre_route'] = {
         'tracks': cu.tracks,
         'vias': cu.vias,
-        'zones': [],
+        'zones': [{'id': 'GND-L2', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+                   'why': 'solid GND plane L2 (build/15 "План шарів"); every SMD GND pad joins it through its scripted via, every THT '
+                          'GND pin directly (solid connection)'}],
         'gnd_vias_note': ('one locked 0.65/0.3 mm through via and a 0.25 mm stub per SMD GND pad, placed by a deterministic search '
                           '(24 directions, growing radius, directions away from the part first) on the exact pad shapes: 0.2 mm to '
                           'other-net copper on every layer the via spans, no via in a pad, 0.55 mm hole-to-hole margin, 0.95 mm '
@@ -843,8 +828,6 @@ def spec_texts(spec, inp, cu, skipped):
                           'dangling fan-out vias)'),
         'gnd_vias_skipped': skipped,
     }
-    if not any(z['layer'] == 'In1.Cu' for z in spec['post_route_zones']):
-        spec['post_route_zones'].insert(1, {'id': 'GND-L2', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0})
     for z in spec['post_route_zones']:
         z['pad_connection'] = 'solid'
         z['why'] = 'GND pour after routing; solid pad connection (thermal spokes of THT GND pins starve between pins, PCB-PWRB lesson)'
@@ -852,12 +835,11 @@ def spec_texts(spec, inp, cu, skipped):
         'tool': 'freerouting', 'max_passes': 60, 'threads': 1, 'job_timeout': '00:34:00', 'timeout_s': 2160,
         'fanout': False,
         'ignore_net_classes': ['SCRIPTED_GND', 'SCRIPTED_PWR3A'],  # GND, E3_FAN5, E3_BLOWER_GND
-        'class_layers': {'PWR1A': ['F.Cu', 'B.Cu'], 'PWR3A_BRANCH': ['F.Cu', 'B.Cu'], 'kicad_default': ['F.Cu', 'In2.Cu', 'B.Cu']},
+        'class_layers': {'PWR1A': ['F.Cu', 'B.Cu'], 'PWR3A_BRANCH': ['F.Cu', 'B.Cu']},
         'why': ROUTER_WHY,
-        'class_layers_why': ('KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer ...) into the DSN classes '
-                             '(Freerouting 2.5.0 Circuit.java / Network.java): PWR1A and PWR3A_BRANCH on F.Cu/B.Cu only, so no router '
-                             'power copper lands on the inner layers; the signal class kicad_default on F.Cu/In2.Cu/B.Cu, so no router '
-                             'copper lands on L2'),
+        'class_layers_why': ('KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN '
+                             'classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper '
+                             'lands on the inner layers'),
     }
     ho = spec['heights_open']
     ho['J304'] = ('XDFH-0254-2*20P (C19193815) drawing not readable (mechanical/params/parts.json IDC_top h_src): height not '
@@ -889,8 +871,8 @@ def spec_texts(spec, inp, cu, skipped):
         'E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru '
         'files yet).')
     spec['layers']['plan'] = {
-        'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins, TR3A capacitors), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the HMI pull-up row to C312 and U306, R334/R335, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing',
-        'In1.Cu': 'L2: GND pour after routing around one scripted E3_PICO3V3 link beside the cut-out 1 edge; no router copper',
+        'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the link up the right strip between C302/C304 and the J316 pins, the HMI pull-up row to C312 and U306, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing',
+        'In1.Cu': 'L2: GND plane (pre-route zone, DSN plane), no signals',
         'In2.Cu': 'L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, GND pour after routing',
         'B.Cu': 'L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor '
                 'branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top '
@@ -903,11 +885,6 @@ def spec_texts(spec, inp, cu, skipped):
                                 if k == key_old else k): v for k, v in ce.items()}
 
 
-# Project default (pcb/generated/netclasses.json project_defaults) for every class. Route run 43139850456 tried 0.127 / 0.127
-# for the signal class: Freerouting logged degenerate polylines and left 17 connections open, so CTRL keeps 0.15 / 0.15.
-DEFAULT_TRACK = DEFAULT_CLEARANCE = CLASS_CLEARANCE = 0.15
-
-
 def project_json(project):
     pro = copy.deepcopy(project)
     ns = pro['net_settings']
@@ -916,13 +893,10 @@ def project_json(project):
 
     def cls(name, width, prio):
         c = copy.deepcopy(base)
-        c['name'], c['track_width'], c['priority'], c['clearance'] = name, width, prio, CLASS_CLEARANCE
+        c['name'], c['track_width'], c['priority'] = name, width, prio
         c['via_diameter'], c['via_drill'] = 0.7, 0.3
         return c
-    ns['classes'][0]['track_width'] = DEFAULT_TRACK
-    ns['classes'][0]['clearance'] = DEFAULT_CLEARANCE
-    rules = pro['board']['design_settings']['rules']
-    rules['min_clearance'], rules['min_track_width'] = DEFAULT_CLEARANCE, DEFAULT_TRACK
+    ns['classes'][0]['track_width'] = 0.15
     ns['classes'][0]['via_diameter'] = 0.7
     ns['classes'][0]['via_drill'] = 0.3
     ns['classes'] = [ns['classes'][0], cls('PWR1A', 0.35, 0), cls('PWR3A', 1.85, 1), cls('PWR3A_BRANCH', 0.5, 2),
