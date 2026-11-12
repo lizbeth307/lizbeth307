@@ -322,6 +322,36 @@ jobs:
           sudo python3 deployment/image/smoke_qemu.py --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
             --work "$W/smoke" --out "$OUT/smoke" --require-model
           python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/smoke-report.json"
+      - name: Update model A->B with a test-key srrx-mirror, then QEMU scenario 4 (W2 IMG-UPD)
+        if: steps.sel.outputs.run == 'true' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
+        run: |
+          # deployment/image/update_slot.py on a fresh copy of the Route A image (build_image.update_model): the srrx-mirror
+          # publication of the package closure signed by a TEST key that exists only in this step, then one QEMU boot of the
+          # trial slot B. A CI model: the record says NOT_RELEASE; the owner's key, +lab packages and the Q6A stay OPEN (ОБР-10).
+          sudo apt-get install -y -q --no-install-recommends aptly gnupg gpgv
+          dpkg-query -W aptly gnupg gpgv | tee "$RUNNER_TEMP/update-host-tools.txt"
+          export GNUPGHOME="$RUNNER_TEMP/update-gnupg"
+          mkdir -m 700 "$GNUPGHOME"
+          gpg --batch --pinentry-mode loopback --passphrase '' --quick-gen-key 'SR-RX lab CI TEST KEY - not for release' ed25519 sign 2d
+          fpr=$(gpg --batch --with-colons --list-keys 'SR-RX lab CI TEST KEY' | awk -F: '$1 == "fpr" {print $10; exit}')
+          gpg --batch --export "$fpr" > "$RUNNER_TEMP/srrx-update-TEST.gpg"
+          # build_image.py --release-keyring never takes the CI test key (ОБР-09).
+          if python3 deployment/image/build_image.py release-keyring --check "$RUNNER_TEMP/srrx-update-TEST.gpg" 2> "$RUNNER_TEMP/release-keyring-refusal.txt"; then
+            echo "::error::build_image.py release-keyring accepted the CI test key"; exit 1
+          fi
+          grep "CI test key" "$RUNNER_TEMP/release-keyring-refusal.txt"
+          mapfile -t debs < <(python3 -c "import json, sys; [print(sys.argv[1] + '/closure/' + p['filename'].rsplit('/', 1)[-1]) for p in json.load(open('deployment/image/package-closure.json'))['packages']]" "$CACHE")
+          sh deployment/repo/publish.sh --mirror "$W/update-repo" "$fpr" "${debs[@]}"
+          # Only the public keyring checks the publication from here on: the private test key is discarded.
+          gpgconf --kill all
+          rm -rf "$GNUPGHOME"
+          rc=0
+          sudo python3 deployment/image/smoke_qemu.py --update-model --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
+            --mirror-repo "$W/update-repo/public" --ci-test-key "$RUNNER_TEMP/srrx-update-TEST.gpg" "$fpr" \
+            --work "$W/smoke-update" --out "$OUT/smoke" --require-model || rc=$?
+          sudo cp "$RUNNER_TEMP/update-host-tools.txt" "$RUNNER_TEMP/release-keyring-refusal.txt" "$OUT/smoke/" || true
+          python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/update-smoke-report.json"
+          exit $rc
       - name: Pack the image data (sparse tar + zstd) and measure it
         if: steps.sel.outputs.run == 'true'
         run: |
