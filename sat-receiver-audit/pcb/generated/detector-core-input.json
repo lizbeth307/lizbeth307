@@ -7086,6 +7086,30 @@
           "name": "GND"
         },
         {
+          "ref": "U316",
+          "pin": "5",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U316",
+          "pin": "7",
+          "sheet": "E3",
+          "name": "exposed pad"
+        },
+        {
+          "ref": "R372",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C344",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
           "ref": "A401",
           "pin": "SHIELDS",
           "sheet": "E4",
@@ -8690,7 +8714,7 @@
       },
       {
         "file": "design/E3.json",
-        "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0"
+        "sha256": "4e8c1ec3fb0825ff38f9db4cd398ec4857a76148e3627296fdb69c958fefa155"
       },
       {
         "file": "design/E4.json",
@@ -8702,11 +8726,11 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "2359c03ba0e9e32355e105286c61dcb3463dd69322f3443c894da88289203209"
+        "sha256": "b9c66b7b8d780e3a6555eee0ada84d31c62d389ee5374fb1643facc8d57dee0d"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "c6e9d9c1104f2ee390e72d72e3cc612beddf0aabb4b2ece2e159694ed36b82b6"
+        "sha256": "2b77379f026a8d343711286738b590e0949b65abd64ea371758dedf930cedb71"
       }
     ],
     "source_documents": [

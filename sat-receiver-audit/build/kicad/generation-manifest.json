@@ -183,7 +183,7 @@
       "stem": "E3",
       "instance": "815659b2-9f99-5caa-9e97-34b4cd398135",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/3)",
-      "components": 76,
+      "components": 79,
       "sheet": "E3",
       "notes": [
         "E3-04",
@@ -204,14 +204,14 @@
         "N-E3-02": 110,
         "E3-06": 110
       },
-      "fill": 0.747,
+      "fill": 0.764,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 116,
-        "ground_symbols": 34,
-        "junctions": 63,
+        "global_labels": 119,
+        "ground_symbols": 37,
+        "junctions": 64,
         "wire_crossings": 10,
-        "wires": 371
+        "wires": 382
       }
     },
     {
@@ -231,7 +231,7 @@
         "E3-07": 110,
         "E3-03": 110
       },
-      "fill": 0.633,
+      "fill": 0.638,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 104,
@@ -437,17 +437,17 @@
       }
     }
   ],
-  "components": 849,
+  "components": 852,
   "supply_annotations": 25,
-  "connected_contacts": 2579,
-  "nets": 486,
+  "connected_contacts": 2589,
+  "nets": 488,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 1157,
-    "ground_symbols": 531,
-    "junctions": 490,
+    "global_labels": 1160,
+    "ground_symbols": 534,
+    "junctions": 491,
     "wire_crossings": 50,
-    "wires": 3083
+    "wires": 3094
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -1114,7 +1114,7 @@
   "source_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
     "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
-    "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
+    "E3.json": "4e8c1ec3fb0825ff38f9db4cd398ec4857a76148e3627296fdb69c958fefa155",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   }

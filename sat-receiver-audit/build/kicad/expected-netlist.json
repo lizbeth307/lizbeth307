@@ -2375,6 +2375,30 @@
       "type": "passive"
     },
     {
+      "ref": "U316",
+      "pin": "5",
+      "sheet": "E3",
+      "type": "power_in"
+    },
+    {
+      "ref": "U316",
+      "pin": "7",
+      "sheet": "E3",
+      "type": "power_in"
+    },
+    {
+      "ref": "R372",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "C344",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
       "ref": "A401",
       "pin": "SHIELDS",
       "sheet": "E4",
@@ -4959,49 +4983,7 @@
       "type": "passive"
     },
     {
-      "ref": "U315",
-      "pin": "1",
-      "sheet": "E3",
-      "type": "power_in"
-    },
-    {
-      "ref": "C321",
-      "pin": "1",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
-      "ref": "C322",
-      "pin": "1",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
-      "ref": "D301",
-      "pin": "2",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
-      "ref": "R367",
-      "pin": "2",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
-      "ref": "Q304",
-      "pin": "2",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
       "ref": "D306",
-      "pin": "1",
-      "sheet": "E3",
-      "type": "passive"
-    },
-    {
-      "ref": "C320",
       "pin": "1",
       "sheet": "E3",
       "type": "passive"
@@ -5039,6 +5021,24 @@
     {
       "ref": "J314",
       "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "U316",
+      "pin": "4",
+      "sheet": "E3",
+      "type": "input"
+    },
+    {
+      "ref": "U316",
+      "pin": "6",
+      "sheet": "E3",
+      "type": "power_in"
+    },
+    {
+      "ref": "C344",
+      "pin": "1",
       "sheet": "E3",
       "type": "passive"
     },
@@ -11373,6 +11373,56 @@
       "type": "passive"
     }
   ],
+  "E3_LAB5_LIM": [
+    {
+      "ref": "U315",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "power_in"
+    },
+    {
+      "ref": "C321",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "C322",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "D301",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "R367",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "Q304",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "C320",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    },
+    {
+      "ref": "U316",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "power_out"
+    }
+  ],
   "E3_GNSS_FAULT": [
     {
       "ref": "U315",
@@ -13006,6 +13056,20 @@
     },
     {
       "ref": "R394",
+      "pin": "1",
+      "sheet": "E3",
+      "type": "passive"
+    }
+  ],
+  "E3_U316_ILIM": [
+    {
+      "ref": "U316",
+      "pin": "2",
+      "sheet": "E3",
+      "type": "output"
+    },
+    {
+      "ref": "R372",
       "pin": "1",
       "sheet": "E3",
       "type": "passive"
