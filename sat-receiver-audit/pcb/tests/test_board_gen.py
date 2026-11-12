@@ -719,5 +719,39 @@ class CtrlSixLayers(unittest.TestCase):
         self.assertEqual(set(doc['power_classes']), set(stackup.POWER_CLASSES))
 
 
+class CtrlLab5Feed(unittest.TestCase):
+    """W2 CTRL-4: every scripted LAB5 track of the CTRL spec is outer copper at the PWR3A class width (pad-centre stubs only
+    inside neck_exempt), no LAB5 branch_exempt, and the 6-layer fab stackup record (pcb/fab_export.py)."""
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+        self.spec = bg.read_json(bg.spec_path('CTRL'))
+        if self.spec['layers']['copper'] != 6:
+            self.skipTest('CTRL is not the 6-layer board')
+
+    def test_lab5_copper_is_outer_and_class_wide(self):
+        nc = bg.read_json(bg.BASE / 'pcb/generated/netclasses.json')
+        need = nc['classes'][nc['nets']['LAB5']['class']]['outer_min_width_mm']
+        tracks = [t for t in self.spec['pre_route']['tracks'] if t['net'] == 'LAB5']
+        self.assertTrue(tracks)
+        for t in tracks:
+            self.assertIn(t['layer'], ('F.Cu', 'B.Cu'), t['id'])
+            if t['width_mm'] < need:
+                self.assertTrue(t['id'].startswith('LAB5-STUB-'), t['id'])
+                ref = t['id'].split('-')[-1]
+                self.assertIn(ref, self.spec['neck_exempt'])
+                self.assertLessEqual(sum(((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2) ** 0.5
+                                         for a, b in zip(t['path'], t['path'][1:])), 1.5)
+        lab5_parts = {p['ref'] for p in self.spec['parts']} & {'C320', 'C321', 'C322', 'D301', 'D306', 'Q304', 'R367', 'U315'}
+        self.assertFalse(lab5_parts & set(self.spec['branch_exempt']))
+
+    def test_six_layer_stackup_record(self):
+        import fab_export
+        rec = fab_export.stackup_record({'spec': self.spec, 'netclasses': bg.read_json(bg.BASE / 'pcb/generated/netclasses.json')})
+        self.assertEqual((rec['id'], rec['copper_layers']), ('JLC06161H-2116', 6))
+        self.assertIn('default for 6-layer', rec['fab_note'])
+
+
 if __name__ == '__main__':
     unittest.main()
