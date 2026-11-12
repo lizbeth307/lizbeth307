@@ -639,5 +639,76 @@ class PwrBLeavesPwrACutoutsFree(unittest.TestCase):
         self.assertEqual(cut['overlay']['overlap_mm2'], 0.0)
 
 
+class CopperKeepoutAreas(unittest.TestCase):
+    """W2 PWRB-R: spec copper_keepouts (rule areas for the router, DRC and zone filler, plus the copper audit of the routed
+    board); PWR_B carries one area per PWR-A cut-out, grown by the copper-to-edge clearance; no other spec has the key."""
+
+    BOARD = '''(kicad_pcb (version 20260206) (net 0 "") (net 1 "A")
+  (segment (start 100 200) (end 110 200) (width 0.2) (layer "F.Cu") (net 1))
+  (segment (start 100 195) (end 104.6 195) (width 0.2) (layer "B.Cu") (net 1))
+  (via (at 108 204.75) (size 0.7) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1))
+  (zone (net 1) (layer "In1.Cu") (polygon (pts (xy 0 0) (xy 1 0) (xy 1 1)))
+    (filled_polygon (layer "In1.Cu") (pts (xy 103 203) (xy 103 207) (xy 113 207) (xy 113 203))))
+  (zone (net 0) (layer "F.Cu") (keepout (tracks not_allowed)) (polygon (pts (xy 0 0) (xy 1 0) (xy 1 1))))
+)'''
+
+    def spec(self, grow=0.3):
+        return {'copper_keepouts': {'why': 'test', 'grow_mm': grow, 'layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'],
+                                    'blocks': ['tracks', 'vias'], 'areas': [{'id': 'W1', 'kind': 'window', 'rect': [5, 5, 8, 8]}]}}
+
+    def test_audit_measures_tracks_vias_fills_and_pads(self):
+        # board mm (y up, oy 210): track F.Cu y 10 (3 mm from the window), B.Cu x 0-4.6 at y 15 (0.6 mm from x 5 ...),
+        # via at (8, 5.25) inside the window, fill polygon x 3-13 y 3-7 overlapping it
+        facts = {'footprints': [{'ref': 'R1', 'side': 'F', 'pads': [
+            {'number': '1', 'net': 'A', 'at': [4.6, 6], 'box': [4.4, 5.8, 4.8, 6.2], 'npth': False},
+            {'number': '', 'net': None, 'at': [6, 6], 'box': [5.5, 5.5, 6.5, 6.5], 'npth': True}]}]}
+        res = bg.copper_keepout_audit(self.BOARD, 210.0, self.spec(), facts)
+        kinds = sorted(h['kind'] for h in res['items'])
+        self.assertEqual(kinds, ['pad', 'via', 'zone_fill'])
+        self.assertFalse(res['passed'])
+        self.assertEqual(res['checked'], {'track_segments': 2, 'vias': 1, 'pads': 1, 'fill_polygons': 1})
+        self.assertEqual(res['by_area'], {'W1': {'pad': 1, 'via': 1, 'zone_fill': 1}})
+        clean = bg.copper_keepout_audit(self.BOARD.replace('(xy 103 203) (xy 103 207) (xy 113 207) (xy 113 203)',
+                                                           '(xy 113 203) (xy 113 207) (xy 120 207) (xy 120 203)')
+                                        .replace('(at 108 204.75)', '(at 120 204.75)'), 210.0, self.spec(), {'footprints': []})
+        self.assertTrue(clean['passed'], clean['items'])
+
+    def test_exact_segment_distance(self):
+        rect = (0.0, 0.0, 2.0, 1.0)
+        self.assertEqual(bg.seg_rect_distance((-1, 0.5), (3, 0.5), rect), 0.0)   # crosses
+        self.assertEqual(bg.seg_rect_distance((1, -1), (1, 3), rect), 0.0)
+        self.assertAlmostEqual(bg.seg_rect_distance((-1, 1.4), (3, 1.4), rect), 0.4)  # passes over the middle: ends far away
+        self.assertAlmostEqual(bg.seg_rect_distance((3, 3), (4, 4), rect), (1 + 4) ** 0.5)
+
+    def test_validation_and_polygons(self):
+        base = self.spec()
+        self.assertEqual(bg.copper_keepout_polygons(base), [('W1', [(4.7, 4.7), (8.3, 4.7), (8.3, 8.3), (4.7, 8.3)])])
+        bg.validate_copper_keepouts(base, 'T', ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'])
+        bg.validate_copper_keepouts({}, 'T', ['F.Cu', 'B.Cu'])
+        for mutate in (lambda s: s['copper_keepouts'].update(grow_mm=-1), lambda s: s['copper_keepouts'].update(layers=['In3.Cu']),
+                       lambda s: s['copper_keepouts'].update(blocks=['footprints']), lambda s: s['copper_keepouts'].update(areas=[]),
+                       lambda s: s['copper_keepouts']['areas'][0].update(rect=[5, 5, 4, 8]),
+                       lambda s: s['copper_keepouts']['areas'].append(dict(s['copper_keepouts']['areas'][0])),
+                       lambda s: s['copper_keepouts'].pop('why')):
+            s = copy.deepcopy(base)
+            mutate(s)
+            with self.assertRaises(SystemExit):
+                bg.validate_copper_keepouts(s, 'T', ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'])
+
+    def test_pwr_b_areas_are_the_cutouts_and_no_other_board_has_them(self):
+        for board in bg.list_boards():
+            spec = bg.read_json(bg.spec_path(board))
+            if board != 'PWR_B':
+                self.assertNotIn('copper_keepouts', spec, board)
+                continue
+            ko = spec['copper_keepouts']
+            want = [[c['rect'][0], c['rect'][1], round(c['rect'][0] + c['rect'][2], 4), round(c['rect'][1] + c['rect'][3], 4)]
+                    for c in spec['pwr_a_cutouts']['cutouts_mm']]
+            self.assertEqual([[round(v, 4) for v in a['rect']] for a in ko['areas']], want)
+            self.assertEqual(ko['grow_mm'], 0.3)
+            self.assertEqual(set(ko['blocks']), {'tracks', 'vias', 'pads', 'zone_fills'})
+            self.assertEqual(ko['layers'], ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -759,6 +759,7 @@ def validate_spec(spec, board):
                              or not set(edge.get('layers', [])) <= set(copper) or not edge.get('layers')
                              or not set(edge.get('blocks', [])) <= {'tracks', 'vias'} or not edge.get('blocks')):
         raise SpecError(f'{board}: edge_keepout needs width_mm > 0, copper layers and blocks (tracks, vias)')
+    validate_copper_keepouts(spec, board, copper)
     for layer, kind in (spec['layers'].get('types') or {}).items():
         if layer not in copper or kind not in LAYER_TYPES:
             raise SpecError(f'{board}: layers.types {layer!r}: {kind!r} must name a copper layer of the board and one '
@@ -767,6 +768,215 @@ def validate_spec(spec, board):
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
     validate_bond_and_coupon(spec, board, nets)
+
+
+COPPER_KEEPOUT_BLOCKS = ('tracks', 'vias', 'pads', 'zone_fills')
+
+
+def validate_copper_keepouts(spec, board, copper):
+    """Optional spec key copper_keepouts (W2 PWRB-R; standard library): board areas that must stay free of copper.
+
+    copper_keepouts {why, source, grow_mm >= 0, layers [copper layers], blocks [subset of COPPER_KEEPOUT_BLOCKS],
+    areas [{id, kind, rect [x0, y0, x1, y1] board mm}]}: every area becomes a KiCad rule area on each listed layer (the
+    rectangle grown by grow_mm), so the Specctra export hands it to the router as a keepout, the zone filler leaves it
+    empty and DRC reports tracks, vias or pads inside it (items_not_allowed); copper_keepout_audit() then measures every
+    copper item of the routed board against the rectangles (copper closer than grow_mm fails the board). Used for areas
+    that become holes or notches later (the PWR-A cut-outs of PWR_B, W2 PWRB-R). Specs without the key are unchanged.
+    """
+    ko = spec.get('copper_keepouts')
+    if ko is None:
+        return
+    if not isinstance(ko, dict) or not isinstance(ko.get('grow_mm'), (int, float)) or ko['grow_mm'] < 0 \
+            or not ko.get('layers') or not set(ko['layers']) <= set(copper) or not ko.get('blocks') \
+            or not set(ko['blocks']) <= set(COPPER_KEEPOUT_BLOCKS) or not isinstance(ko.get('areas'), list) \
+            or not ko['areas'] or not str(ko.get('why', '')).strip():
+        raise SpecError(f'{board}: copper_keepouts needs why, grow_mm >= 0, copper layers, blocks '
+                        f'{list(COPPER_KEEPOUT_BLOCKS)} and a list of areas')
+    ids = set()
+    for area in ko['areas']:
+        rect = area.get('rect') if isinstance(area, dict) else None
+        if not isinstance(rect, list) or len(rect) != 4 or not all(isinstance(v, (int, float)) for v in rect) \
+                or not (rect[2] > rect[0] and rect[3] > rect[1]) or not re.fullmatch(r'[A-Za-z0-9_]+', str(area.get('id', ''))) \
+                or area['id'] in ids:
+            raise SpecError(f'{board}: copper_keepouts area {area!r} needs a unique id ([A-Za-z0-9_]) and rect '
+                            '[x0, y0, x1, y1] with x1 > x0, y1 > y0')
+        ids.add(area['id'])
+
+
+def copper_keepout_polygons(spec):
+    """(area id, polygon board mm) of the copper_keepouts rule areas: each rectangle grown by grow_mm (square corners)."""
+    ko = spec.get('copper_keepouts')
+    if not ko:
+        return []
+    g = float(ko['grow_mm'])
+    out = []
+    for area in ko['areas']:
+        x0, y0, x1, y1 = (float(v) for v in area['rect'])
+        out.append((area['id'], [(x0 - g, y0 - g), (x1 + g, y0 - g), (x1 + g, y1 + g), (x0 - g, y1 + g)]))
+    return out
+
+
+def _pt_rect(px, py, rect):
+    x0, y0, x1, y1 = rect
+    return math.hypot(max(x0 - px, 0.0, px - x1), max(y0 - py, 0.0, py - y1))
+
+
+def _segments_cross(p, q, r, s):
+    def orient(a, b, c):
+        return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+    o1, o2, o3, o4 = orient(p, q, r), orient(p, q, s), orient(r, s, p), orient(r, s, q)
+    return o1 * o2 < 0 and o3 * o4 < 0  # proper crossing; touching is measured by the end-point distances
+
+
+def _pt_seg(px, py, a, b):
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    n = dx * dx + dy * dy
+    t = 0.0 if n == 0 else max(0.0, min(1.0, ((px - a[0]) * dx + (py - a[1]) * dy) / n))
+    return math.hypot(px - (a[0] + t * dx), py - (a[1] + t * dy))
+
+
+def seg_rect_distance(a, b, rect):
+    """Exact distance from segment ab to an axis-aligned rectangle [x0, y0, x1, y1] (0 when they touch or overlap)."""
+    x0, y0, x1, y1 = rect
+    if _pt_rect(a[0], a[1], rect) == 0.0 or _pt_rect(b[0], b[1], rect) == 0.0:
+        return 0.0
+    corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    edges = list(zip(corners, corners[1:] + corners[:1]))
+    if any(_segments_cross(a, b, c, d) for c, d in edges):
+        return 0.0
+    return min([_pt_rect(a[0], a[1], rect), _pt_rect(b[0], b[1], rect)] + [_pt_seg(c[0], c[1], a, b) for c in corners])
+
+
+def _pt_in_poly(px, py, pts):
+    inside = False
+    for (xa, ya), (xb, yb) in zip(pts, pts[1:] + pts[:1]):
+        if (ya > py) != (yb > py) and px < xa + (py - ya) * (xb - xa) / (yb - ya):
+            inside = not inside
+    return inside
+
+
+def poly_rect_overlap(pts, rect):
+    """True when the polygon (one fractured KiCad fill outline) and the open rectangle share area."""
+    x0, y0, x1, y1 = rect
+    if any(x0 < x < x1 and y0 < y < y1 for x, y in pts):
+        return True
+    if _pt_in_poly((x0 + x1) / 2, (y0 + y1) / 2, pts):
+        return True
+    corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    edges = list(zip(corners, corners[1:] + corners[:1]))
+    for a, b in zip(pts, pts[1:] + pts[:1]):
+        if max(a[0], b[0]) <= x0 or min(a[0], b[0]) >= x1 or max(a[1], b[1]) <= y0 or min(a[1], b[1]) >= y1:
+            continue
+        if any(_segments_cross(a, b, c, d) for c, d in edges):
+            return True
+        mx, my = (a[0] + b[0]) / 2, (a[1] + b[1]) / 2
+        if x0 < mx < x1 and y0 < my < y1:
+            return True
+    return False
+
+
+def board_copper_items(text, oy, ox=100.0):
+    """Tracks, vias and zone fills of a saved .kicad_pcb in board mm (y up; Frame of this file): standard library."""
+    tree = sexpr(text)
+    nets = {}
+    for node in tree:
+        if isinstance(node, list) and node and node[0] == 'net' and len(node) >= 3:
+            nets[node[1]] = node[2]
+
+    def net_of(node):
+        n = next((c for c in node if isinstance(c, list) and c and c[0] == 'net'), None)
+        if not n or len(n) < 2:
+            return None
+        return (n[2] if len(n) >= 3 else nets.get(n[1], n[1])) or None
+
+    def child(node, key):
+        return next((c for c in node if isinstance(c, list) and c and c[0] == key), None)
+
+    def bm(x, y):
+        return (r4(float(x) - ox), r4(oy - float(y)))
+    segs, vias, fills = [], [], []
+    for node in tree:
+        if not isinstance(node, list) or not node:
+            continue
+        if node[0] in ('segment', 'arc'):
+            pts = [child(node, 'start'), child(node, 'mid'), child(node, 'end')]
+            pts = [bm(p[1], p[2]) for p in pts if p]
+            layer = child(node, 'layer')[1]
+            width = float(child(node, 'width')[1])
+            for a, b in zip(pts, pts[1:]):
+                segs.append({'net': net_of(node), 'layer': layer, 'width': width, 'a': a, 'b': b})
+        elif node[0] == 'via':
+            at = child(node, 'at')
+            vias.append({'net': net_of(node), 'at': bm(at[1], at[2]), 'size': float(child(node, 'size')[1])})
+        elif node[0] == 'zone' and child(node, 'keepout') is None:
+            for fp in (c for c in node if isinstance(c, list) and c and c[0] == 'filled_polygon'):
+                pts = child(fp, 'pts')
+                poly = [bm(q[1], q[2]) for q in pts[1:] if isinstance(q, list) and q and q[0] == 'xy']
+                if len(poly) >= 3:
+                    fills.append({'net': net_of(node), 'layer': child(fp, 'layer')[1], 'pts': poly})
+    return segs, vias, fills
+
+
+def copper_keepout_audit(text, oy, spec, facts, tol=1e-3):
+    """Every copper item of the saved board against the copper_keepouts rectangles (W2 PWRB-R; standard library).
+
+    A track (segment capsule), via (disc), pad (KiCad bounding box, on the layers it has) or zone fill (filled polygon)
+    closer than grow_mm to an area rectangle (less tol) is a violation: copper that a later hole or notch there would
+    cut or leave under its copper-to-edge clearance. Counts per area and kind; the first 200 items are listed."""
+    ko = spec['copper_keepouts']
+    clear = float(ko['grow_mm']) - tol
+    layers = set(ko['layers'])
+    rects = [(a['id'], tuple(float(v) for v in a['rect'])) for a in ko['areas']]
+    segs, vias, fills = board_copper_items(text, oy)
+    hits = []
+    for s in segs:
+        if s['layer'] not in layers:
+            continue
+        for aid, rect in rects:
+            d = seg_rect_distance(s['a'], s['b'], rect) - s['width'] / 2
+            if d < clear:
+                hits.append({'area': aid, 'kind': 'track', 'net': s['net'], 'layer': s['layer'], 'at': list(s['a']),
+                             'distance_mm': r4(d)})
+    for v in vias:
+        for aid, rect in rects:
+            d = _pt_rect(v['at'][0], v['at'][1], rect) - v['size'] / 2
+            if d < clear:
+                hits.append({'area': aid, 'kind': 'via', 'net': v['net'], 'layer': '*', 'at': list(v['at']), 'distance_mm': r4(d)})
+    npads = 0
+    for fp in facts['footprints']:
+        for p in fp['pads']:
+            if p['npth']:
+                continue  # a bare hole carries no copper
+            npads += 1
+            x0, y0, x1, y1 = p['box']
+            for aid, rect in rects:
+                d = math.hypot(max(rect[0] - x1, 0.0, x0 - rect[2]), max(rect[1] - y1, 0.0, y0 - rect[3]))
+                if d < clear:
+                    hits.append({'area': aid, 'kind': 'pad', 'net': p['net'], 'layer': fp['side'],
+                                 'at': list(p['at']), 'distance_mm': r4(d), 'pad': f'{fp["ref"]}.{p["number"]}'})
+    for f in fills:
+        if f['layer'] not in layers:
+            continue
+        xs, ys = [q[0] for q in f['pts']], [q[1] for q in f['pts']]
+        for aid, rect in rects:
+            grown = (rect[0] - clear, rect[1] - clear, rect[2] + clear, rect[3] + clear)
+            if max(xs) <= grown[0] or min(xs) >= grown[2] or max(ys) <= grown[1] or min(ys) >= grown[3]:
+                continue
+            if poly_rect_overlap(f['pts'], grown):
+                hits.append({'area': aid, 'kind': 'zone_fill', 'net': f['net'], 'layer': f['layer'], 'at': None,
+                             'distance_mm': None})
+    hits.sort(key=lambda h: (h['area'], h['kind'], h['layer'], str(h['net']), h['at'] or []))
+    by_area = {}
+    for h in hits:
+        row = by_area.setdefault(h['area'], {})
+        row[h['kind']] = row.get(h['kind'], 0) + 1
+    return {'grow_mm': ko['grow_mm'], 'areas': len(rects), 'layers': sorted(layers),
+            'checked': {'track_segments': len(segs), 'vias': len(vias), 'pads': npads, 'fill_polygons': len(fills)},
+            'violations': len(hits), 'by_area': dict(sorted(by_area.items())), 'items': hits[:200],
+            'passed': not hits,
+            'note': ('copper closer than grow_mm to a copper_keepouts rectangle: tracks and vias exact (capsule, disc), pads by '
+                     'their KiCad bounding box, zone fills by their filled polygons; a later hole or notch there needs this '
+                     'clearance (copper to edge)')}
 
 
 def validate_bond_and_coupon(spec, board, nets):
@@ -1374,6 +1584,17 @@ def build_board(pcb, spec, contract, template, temp):
                     zone.SetDoNotAllowPads(False)
                     zone.SetDoNotAllowFootprints(False)
                     board.Add(zone)
+    ko = spec.get('copper_keepouts')
+    for area_id, poly in copper_keepout_polygons(spec):  # areas that become holes or notches later (W2 PWRB-R)
+        for name in ko['layers']:
+            zone = add_polygon_zone(pcb, board, frame, poly, board.GetLayerID(name), f'KO_AREA_{area_id}_{name}')
+            zone.SetIsRuleArea(True)
+            zone.SetDoNotAllowTracks('tracks' in ko['blocks'])
+            zone.SetDoNotAllowVias('vias' in ko['blocks'])
+            zone.SetDoNotAllowPads('pads' in ko['blocks'])
+            zone.SetDoNotAllowZoneFills('zone_fills' in ko['blocks'])
+            zone.SetDoNotAllowFootprints(False)
+            board.Add(zone)
     for track in spec['pre_route'].get('tracks', []):
         layer = board.GetLayerID(track['layer'])
         for a, b in zip(track['path'], track['path'][1:]):
@@ -1813,9 +2034,13 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'annular_audit': audits['annular']['passed'], 'locked_copper_kept': audits['locked']['kept'],
         'group_audit': audits['groups']['passed'],
     }
+    if 'copper_keepouts' in audits:  # only specs with copper_keepouts carry it (W2 PWRB-R); other reports stay as they were
+        result['copper_keepout_audit'] = audits['copper_keepouts']['passed']
+        result['copper_keepout_violations'] = audits['copper_keepouts']['violations']
     passed = (drc['passed'] and all(a['passed'] for a in source_pad) and audits['domain']['passed']
               and audits['keepout']['passed'] and audits['annular']['passed'] and audits['locked']['kept']
-              and audits['groups']['passed'] and not any(b['status'].startswith('fail') for b in boundary))
+              and audits['groups']['passed'] and audits.get('copper_keepouts', {'passed': True})['passed']
+              and not any(b['status'].startswith('fail') for b in boundary))
     return {
         'schema': REPORT_SCHEMA, 'board_id': spec['board_id'], 'status': spec['status'],
         'label': 'CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN',
@@ -1872,6 +2097,8 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
                    'kept': facts['tracks']['locked'] >= want_locked,
                    'note': 'SES import before/after counts and the DSN probe are in route-log.json'},
     }
+    if spec.get('copper_keepouts'):  # W2 PWRB-R: copper of the saved board against the keep-out rectangles
+        audits['copper_keepouts'] = copper_keepout_audit(Path(board_path).read_text(encoding='utf-8'), frame.oy, spec, facts)
     report = build_report(spec, contract, stackup, template, proj, facts, drc, audits, board_path, spec['project'])
     return report, connectors_doc(spec, contract, template, facts)
 
