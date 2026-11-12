@@ -26,6 +26,16 @@ power net needs ceil(I_protection / I_pin) B2B contacts. A CTRL bottom header ta
 height fits the gap over BMS/IP2368 within the depth cap (dz_ctrl = the largest such term); a header without
 one is listed as unresolved. Nothing here is a placement: the fill of a real placement (PCB-PWRA/PWRB/CTRL)
 decides, and the fallbacks of the spec fire on the triggers it states.
+
+W2 AREA-2 (SHRINK-2): a candidate may carry planned content changes (candidates.<id>.planned.changes: footprint/MPN
+swaps, deletions, header merges and reserved blocks that stand in for parts without a graph ref yet). A change counts
+while every one of its refs still has the graph value it replaces; once GR-5A/GR-5B put the new part into the graph it is
+'in graph' and the graph counts. Such a candidate is also evaluated on the graph of record (no planned change), because
+pcb/prepare.py (domain_override_pwr_a) and pcb/generated/b2b-nets.json follow the graph. pwr_a_bottom makes PWR-A
+two-sided: the listed chip refs count on the bottom side (board PWR_A_BOTTOM), whose usable area is the outline minus the
+hole keep-outs, the thermal_bond zones and the top THT pin fields plus the pocket margin (an area sum: the pin fields
+have no positions here, so their overlap with the bond zones is not taken back). h_trim (rule H-TRIM) turns the PWR-A
+keep-outs under the PWR-B THT pin fields into a height zone (low-profile parts allowed), so they cost no area.
 """
 from __future__ import annotations
 
@@ -182,6 +192,17 @@ def rect_overlap(a, b):
     return max(w, 0.0) * max(h, 0.0)
 
 
+def circle_rect_overlap(c, r, rc, step=0.01):
+    """Area of a circle (centre c, radius r) inside the rectangle rc = (x0, y0, x1, y1), by vertical chords."""
+    x0, x1 = max(c[0] - r, rc[0]), min(c[0] + r, rc[2])
+    a, n = 0.0, int(max(x1 - x0, 0.0) / step + 0.5)
+    for i in range(n):
+        x = x0 + (i + 0.5) * step
+        h = math.sqrt(max(r * r - (x - c[0]) ** 2, 0.0))
+        a += max(min(c[1] + h, rc[3]) - max(c[1] - h, rc[1]), 0.0) * step
+    return a
+
+
 # ------------------------------------------------------------------------------------------ inputs
 def net_currents():
     tree = ast.parse((ROOT / "tools/assembly_data.py").read_text(encoding="utf-8"))
@@ -230,8 +251,11 @@ class Design:
     def height(self, ref, fp):
         """(height, source, lower_bound): lower_bound marks a read value that is only a part of the stack
         (a fuse holder without its fuse), so the real height is above it."""
+        return self.height_for(self.mpn.get(ref), fp)
+
+    def height_for(self, mpn, fp):
+        """height() of an MPN and footprint (also of a planned part that has no graph ref yet)."""
         h = self.spec["heights"]
-        mpn = self.mpn.get(ref)
         if mpn in h["by_mpn"]:
             e = h["by_mpn"][mpn]
             return e["h"], f"MPN {mpn}: {e['src']}", bool(e.get("lower_bound"))
@@ -371,6 +395,131 @@ class Evaluator:
             raise SystemExit(f"found {n_tp} PWR test points, partition-spec test_points.expected_pwr says "
                              f"{self.S['test_points']['expected_pwr']}: check the test-point classification, then the spec")
         self.ctrl_hdrs = self.ctrl_bottom_headers()
+        self.cur = design.parts         # the parts of the candidate being evaluated (graph, or with its planned changes)
+
+    # -- planned content (W2 AREA-2) ---------------------------------------------------------------------------
+    def planned(self, cand):
+        """(parts, rows, blocks) of a candidate with candidates.<id>.planned.changes applied. A change is 'pending' while
+        every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header) and is then
+        applied; it is 'in graph' when none has (GR-5A/GR-5B have put the new part into the graph, so the graph counts);
+        a half-applied change stops the tool. rows: one status row per change; blocks: the reserved blocks of the pending
+        changes that stand in for parts without a graph ref yet."""
+        parts, rows, blocks = dict(self.D.parts), [], []
+        for ch in cand.get("planned", {}).get("changes", []):
+            def holds(r):
+                p = self.D.parts.get(r)
+                if p is None:
+                    return False
+                if "while_mpn" in ch:
+                    return self.D.mpn.get(r) == ch["while_mpn"]
+                return p["footprint"] == ch["while_footprint"][r]
+            state = [holds(r) for r in ch["refs"]]
+            if all(state):
+                status = "pending"
+            elif not any(state):
+                status = "in graph"
+            else:
+                raise SystemExit(f"planned change {ch['id']}: only some of {ch['refs']} still have the graph value it replaces "
+                                 "(a half-applied change): finish it in the graph or update candidates.<id>.planned")
+            row = {"id": ch["id"], "refs": ch["refs"], "status": status, "owner": ch.get("owner")}
+            rows.append(row)
+            if status != "pending":
+                continue
+            to = ch["to"]
+            if to.get("delete"):
+                for r in ch["refs"]:
+                    parts.pop(r)
+                row["effect"] = "deleted"
+            elif "blocks" in to:
+                for r in ch["refs"]:
+                    parts.pop(r)
+                for b in to["blocks"]:
+                    blocks.append(dict(b, stands_for=ch["refs"], area=b["w"] * b["d"]))
+                row["effect"] = "reserved blocks " + ", ".join(b["id"] for b in to["blocks"])
+            elif "merge_into" in to:
+                keep = to["merge_into"]
+                new = self.swapped(self.D.parts[keep], to)
+                new.update(nets=sorted({n for r in ch["refs"] for n in self.D.parts[r]["nets"]}), merged_from=list(ch["refs"]))
+                for r in ch["refs"]:
+                    parts.pop(r)
+                parts[keep] = new
+                row["effect"] = f"merged into {keep} ({new['footprint']})"
+            else:
+                for r in ch["refs"]:
+                    parts[r] = self.swapped(self.D.parts[r], to)
+                row["effect"] = f"{to['footprint']} {to.get('mpn') or ''}".strip() + (f" x {to['count']}" if to.get("count", 1) > 1 else "")
+        return parts, rows, blocks
+
+    def swapped(self, p, to):
+        """A part with the footprint, MPN, height and count of a planned change. A footprint that is not vendored yet is
+        given as a linear series of two vendored footprints of the same family (to.series), at to.pins contacts."""
+        fps = self.D.fps
+        if "series" in to:
+            (n0, f0), (n1, f1) = to["series"]["from"]
+            i0, i1 = fps.get(f0), fps.get(f1)
+            if not (i0 and i1 and i0["crtyd"] and i1["crtyd"]) or abs(i0["crtyd"][1] - i1["crtyd"][1]) > 1e-6:
+                raise SystemExit(f"planned series {f0} / {f1}: not vendored, or not one family")
+            k = (to["pins"] - n0) / (n1 - n0)
+            w = i0["crtyd"][0] + (i1["crtyd"][0] - i0["crtyd"][0]) * k
+            d = i0["crtyd"][1]
+            field = (i0["tht_field"][0] + (i1["tht_field"][0] - i0["tht_field"][0]) * k, i0["tht_field"][1])
+            pads, fp = to["pins"], to["series"]["footprint"]
+        else:
+            fp = to["footprint"]
+            info = fps.get(fp)
+            if info is None or info["crtyd"] is None:
+                raise SystemExit(f"planned footprint {fp}: not in the vendored library (or no F.CrtYd)")
+            (w, d), field, pads = info["crtyd"], info["tht_field"], info["tht_pads"]
+        if "family" in to:
+            f = dict(self.D.hh.get(to["family"]) or {}, **self.S["header_families"].get(to["family"], {}))
+            h, hsrc, lb = f.get("h_mated", f.get("h")), f"harness header {to['family']}: " + (f.get("src") or ""), False
+        else:
+            h, hsrc, lb = self.D.height_for(to.get("mpn"), fp)
+        n = to.get("count", 1)
+        return dict(p, footprint=fp, w=w, d=d, area=w * d * n, count=n, h=h, h_src=hsrc, h_lower_bound=lb, module=False,
+                    tht=pads > 0, tht_field=field, tht_pads=pads * n, planned_mpn=to.get("mpn"),
+                    header_family=to.get("family", p["header_family"]))
+
+    def move_to_bottom(self, cand, side):
+        """Two-sided PWR-A (candidates.<id>.pwr_a_bottom): the listed chip refs move from PWR_A to PWR_A_BOTTOM."""
+        B = cand["pwr_a_bottom"]
+        pref = tuple(B["footprint_prefixes"])
+        for ref in B["refs"]:
+            p = self.cur.get(ref)
+            if p is None or side.get(ref) != "PWR_A" or p["tp"] or p["header"] or p["tht"] or \
+                    not p["footprint"].split(":", 1)[-1].startswith(pref):
+                raise SystemExit(f"pwr_a_bottom: {ref} is not a PWR-A chip part of footprint_prefixes "
+                                 f"({p and p['footprint']}, side {side.get(ref)})")
+            side[ref] = "PWR_A_BOTTOM"
+
+    def pwr_a_bottom(self, cand, side, pockets):
+        """Bottom usable area of a two-sided PWR-A = outline - hole keep-outs - thermal_bond zones (boards.json PWR, with
+        the planned zones of the candidate) - every top THT pin field + tht_margin on each side (an area sum: no positions,
+        so a field that lies in a bond zone is counted twice; the bottom usable area is a lower bound)."""
+        B = cand["pwr_a_bottom"]
+        pref = tuple(B["footprint_prefixes"])
+        mech = self.D.mech["PWR"]
+        poly = [tuple(q) for q in mech["outline"]]
+        zones = [list(z) for z in mech["thermal_bond"]]
+        for k, z in B.get("thermal_bond_planned", {}).items():
+            zones[int(k) - 1] = list(z)
+        rects = [(x, y, x + w, y + h) for x, y, w, h in zones]
+        if any(rect_overlap(a, b) > 0 for i, a in enumerate(rects) for b in rects[i + 1:]):
+            raise SystemExit("pwr_a_bottom: thermal_bond zones overlap")
+        r = mech["hole_keepout_d"] / 2
+        bond = sum(poly_area(clip(poly, *rc)) for rc in rects)
+        holes_in_bond = sum(circle_rect_overlap(c, r, rc) for c in mech["holes"] for rc in rects)
+        geo = poly_area(poly) - len(mech["holes"]) * math.pi * r * r - bond + holes_in_bond
+        m = B["tht_margin"]
+        tht = sum((it["pin_field_mm"][0] + 2 * m) * (it["pin_field_mm"][1] + 2 * m) for it in pockets)
+        tchk = [ref for ref in B["refs"] if any(ref == it["item"] for it in pockets)]
+        top_chips = sorted(ref for ref, s in side.items() if s == "PWR_A" and not self.cur[ref]["tp"]
+                           and self.cur[ref]["footprint"].split(":", 1)[-1].startswith(pref))
+        return geo - tht, {"thermal_bond_zones_mm": [[rnd(v, 2) for v in z] for z in zones], "bond_zones_mm2": rnd(bond),
+                           "hole_keepouts_mm2": rnd(len(mech["holes"]) * math.pi * r * r - holes_in_bond),
+                           "outline_minus_holes_and_bond_mm2": rnd(geo), "top_tht_fields_plus_margin_mm2": rnd(tht),
+                           "top_tht_items": len(pockets), "tht_margin_mm": m, "refs": len(B["refs"]),
+                           "chip_refs_left_on_top": top_chips, "bottom_refs_with_tht": tchk}
 
     def group_domain(self, p):
         """Domain of the bare board parts of the same group (where a test point of that group lands)."""
@@ -413,7 +562,7 @@ class Evaluator:
         hB = cand.get("hB", P["hB"])
         side, override, rear_override = {}, [], []
         what_if = cand.get("what_if_height", {})
-        for ref, p in sorted(self.pwr_parts.items()):
+        for ref, p in sorted((r, self.cur[r]) for r in self.pwr_parts if r in self.cur):
             key = (p["sheet"], p["group"])
             if self.D.mpn.get(ref) in what_if:      # hypothetical replacement, reported as WHAT-IF only
                 p = dict(p, h=what_if[self.D.mpn[ref]])
@@ -453,8 +602,8 @@ class Evaluator:
         hdrs = self.D.consolidated_headers("PWR")
         home = {}
         for ref, s in side.items():
-            for n in self.D.parts[ref]["nets"]:
-                home.setdefault(n, set()).add(s)
+            for n in self.cur[ref]["nets"]:
+                home.setdefault(n, set()).add("PWR_A" if s == "PWR_A_BOTTOM" else s)
         pinned = cand.get("header_side", {})
         power = cand.get("pwr_a_families", self.S["header_orientation"]["pwr_a_families"])
         free = []
@@ -500,9 +649,10 @@ class Evaluator:
     def crossing(self, side, hdrs):
         pins = {}
         for ref, s in side.items():
+            s = "PWR_A" if s == "PWR_A_BOTTOM" else s     # both sides of PWR-A are one board
             if s not in ("PWR_A", "PWR_B"):
                 continue
-            for n in self.D.parts[ref]["nets"]:
+            for n in self.cur[ref]["nets"]:
                 pins.setdefault(n, {}).setdefault(s, []).append(ref)
         for h in hdrs:
             for n in h["nets"]:
@@ -557,9 +707,10 @@ class Evaluator:
                     else:
                         prot = e["prot_A"]
                     src = e["src"]
+                refs = [o for ref in cross[net]["PWR_A"] + cross[net]["PWR_B"] for o in self.cur.get(ref, {}).get("merged_from", [ref])]
                 is_power = prot is not None or net in self.D.power_flags or any(
                     pin.get("net") == net and pin.get("type") in power_types
-                    for ref in cross[net]["PWR_A"] + cross[net]["PWR_B"] if ref in self.D.comp for pin in self.D.comp[ref]["pins"])
+                    for ref in refs if ref in self.D.comp for pin in self.D.comp[ref]["pins"])
                 if is_power and prot is None:
                     row.update(kind="power (no current)", pins=None)
                     errors.append(f"{net}: power net crosses PWR-A/PWR-B without a protection current")
@@ -594,7 +745,21 @@ class Evaluator:
         stack = cand.get("stack", P["stack"])
         bb = dict(self.S["b2b"])
         bb.update(cand.get("b2b", {}))       # a candidate may evaluate another B2B size (contacts, courtyards)
+        graph = None
+        if "planned" in cand:
+            # W2 AREA-2: the graph of record (no planned change) gives what pcb/prepare.py and b2b-nets.json follow today
+            self.cur = self.D.parts
+            g_side, g_override, _ = self.assign(cand)
+            g_b2b = self.b2b_budget(self.crossing(g_side, self.place_headers(g_side, cand)), bb["contacts"])
+            graph = {"height_overrides_to_pwr_a": g_override,
+                     "b2b": {k: g_b2b[k] for k in ("power_pins", "signal_pins", "gnd_pins", "contacts_needed", "contacts_with_spare",
+                                                   "meets_spare_rule", "fits", "errors")} | {"crossing_nets": len(g_b2b["nets"])}}
+            self.cur, changes, blocks = self.planned(cand)
+        else:
+            self.cur, changes, blocks = self.D.parts, [], []
         side, override, rear_override = self.assign(cand)
+        if "pwr_a_bottom" in cand:
+            self.move_to_bottom(cand, side)
         hdrs = self.place_headers(side, cand)
         cross = self.crossing(side, hdrs)
         b2b = self.b2b_budget(cross, bb["contacts"])
@@ -614,14 +779,21 @@ class Evaluator:
                                              "tps_raw": 0.0, "keepouts": 0.0, "refs": 0, "headers": 0, "tht_pads": 0})
         windows, tp_windows, strips = 0.0, 0.0, 0.0
         win_refs, win_lower_bound = [], []
+        for blk in blocks:
+            # reserved blocks (W2 AREA-2) count as part area on their side; one taller than hA would need a PWR-B window
+            b = acc(blk["side"])
+            b["blocks_raw"] = b.get("blocks_raw", 0.0) + blk["area"]
+            if blk["side"] == "PWR_A" and blk["h"] > hA:
+                windows += (blk["w"] + 2 * m) * (blk["d"] + 2 * m)
+                win_refs.append(blk["id"])
         for ref, s in sorted(side.items()):
-            p = self.D.parts[ref]
+            p = self.cur[ref]
             if s == "CTRL":
                 continue
             if s == "PLATE":
                 continue
             b = acc(s)
-            b["refs"] += 1
+            b["refs"] += p.get("count", 1)
             b["tht_pads"] += p["tht_pads"] if p["tht"] else 0
             if p["header"]:
                 b["headers_raw"] += p["area"]
@@ -640,7 +812,7 @@ class Evaluator:
             lower_bound = p["h_lower_bound"] and not what_if
             # a lower-bound height (holder without its fuse) always gets a window: the real height is above it
             if s == "PWR_A" and h_eff is not None and (h_eff > hA or lower_bound) and not p["tp"]:
-                windows += (p["w"] + 2 * m) * (p["d"] + 2 * m)
+                windows += (p["w"] + 2 * m) * (p["d"] + 2 * m) * p.get("count", 1)
                 win_refs.append(ref)
                 if lower_bound:
                     win_lower_bound.append(ref)
@@ -659,7 +831,7 @@ class Evaluator:
         # PWR-A keepouts under the THT pin fields of PWR-B parts and headers (their tails reach into the stack)
         keep, keep_items, pockets = 0.0, [], []
         for ref, s in sorted(side.items()):
-            p = self.D.parts[ref]
+            p = self.cur[ref]
             if s == "PWR_B" and p["tht"] and p["tht_field"]:
                 keep += (p["tht_field"][0] + 2 * m) * (p["tht_field"][1] + 2 * m)
                 keep_items.append({"item": ref, "pin_field_mm": [rnd(p["tht_field"][0], 2), rnd(p["tht_field"][1], 2)]})
@@ -672,13 +844,20 @@ class Evaluator:
                 keep_items.append({"item": h["id"], "pin_field_mm": [rnd(fw, 2), rnd(fh, 2)]})
             else:
                 pockets.append({"item": h["id"], "tht_pads": h["pins"], "pin_field_mm": [rnd(fw, 2), rnd(fh, 2)]})
-        acc("PWR_A")["keepouts"] += keep
+        # rule H-TRIM (W2 AREA-2, candidates.<id>.h_trim): PWR-B THT pins trimmed to the protrusion limit, so the field
+        # under them is a height zone for low-profile PWR-A parts and costs no area; otherwise the keepout counts at 1.0
+        h_trim = bool(cand.get("h_trim"))
+        acc("PWR_A")["keepouts"] += 0.0 if h_trim else keep
         usable = {"PWR_A": outline - holes,
                   "PWR_B": outline - holes - windows - strips - tp_windows}
+        bottom = None
+        if "pwr_a_bottom" in cand:
+            usable["PWR_A_BOTTOM"], bottom = self.pwr_a_bottom(cand, side, pockets)
+            acc("PWR_A_BOTTOM")
         if "PCB_REAR" in boards:
             usable["PCB_REAR"] = P["rear_board"]["area"] - P["rear_board"]["holes"] * math.pi * (P["rear_board"]["hole_keepout_d"] / 2) ** 2
-        rear_links = sorted(n for n in {n for r, s in side.items() if s == "PCB_REAR" for n in self.D.parts[r]["nets"]} - {"GND"}
-                            if any(side.get(r) in ("PWR_A", "PWR_B") and n in self.D.parts[r]["nets"] for r in side))
+        rear_links = sorted(n for n in {n for r, s in side.items() if s == "PCB_REAR" for n in self.cur[r]["nets"]} - {"GND"}
+                            if any(side.get(r) in ("PWR_A", "PWR_B") and n in self.cur[r]["nets"] for r in side))
         env = self.S["envelope"]
         res = {"title": cand["title"], "hA": hA, "hB": hB, "stack": stack,
                "window_ceiling_mm": rnd(stack + P["board_t"] + hB, 2),
@@ -688,17 +867,28 @@ class Evaluator:
                "ctrl_headers_moved_to_pwr_a": [h["id"] for h in hdrs if h.get("moved_from") == "CTRL"],
                "pcb_rear_harness_nets": rear_links,
                "edge_strips_mm2": rnd(strips), "tp_probe_windows_mm2": rnd(tp_windows),
-               "pwr_a_keepouts_mm2": rnd(keep), "pwr_a_keepout_items": keep_items, "pwr_a_tht_pocket_items": pockets,
+               "pwr_a_keepouts_mm2": rnd(0.0 if h_trim else keep), "pwr_a_keepout_items": keep_items, "pwr_a_tht_pocket_items": pockets,
                "height_overrides_to_pwr_a": override, "rear_overrides_to_pwr_a": rear_override,
                "b2b": b2b}
+        if "h_trim" in cand:
+            res["h_trim"] = {"applied": h_trim, "pin_field_zone_mm2": rnd(keep), "zone_h_max_mm": self.S["keepouts"]["h_trim"]["zone_h_max_mm"],
+                             "counted_keepout_mm2": rnd(0.0 if h_trim else keep)}
+        if "planned" in cand:
+            res["planned"] = {"changes": changes,
+                              "blocks": [{"id": b["id"], "side": b["side"], "w": b["w"], "d": b["d"], "area_mm2": rnd(b["area"], 2),
+                                          "h": b["h"], "stands_for": b["stands_for"]} for b in blocks],
+                              "graph_of_record": graph}
+        if bottom is not None:
+            res["pwr_a_bottom"] = bottom
         fits_all = True
         for name in sorted(boards):
             b = boards[name]
-            raw = b["parts_raw"] + b["headers_raw"] + b["b2b_raw"] + b["tps_raw"]
+            raw = b["parts_raw"] + b["headers_raw"] + b["b2b_raw"] + b["tps_raw"] + b.get("blocks_raw", 0.0)
             u = usable[name]
             row = {"usable_mm2": rnd(u), "refs": b["refs"], "harness_headers": b["headers"], "tht_pads": b["tht_pads"],
                    "parts_raw_mm2": rnd(b["parts_raw"]), "headers_raw_mm2": rnd(b["headers_raw"]), "b2b_raw_mm2": rnd(b["b2b_raw"]),
                    "tps_raw_mm2": rnd(b["tps_raw"]), "modules_at_1_0_mm2": rnd(b["modules"]), "keepouts_at_1_0_mm2": rnd(b["keepouts"]),
+                   **({"blocks_raw_mm2": rnd(b["blocks_raw"])} if "blocks_raw" in b else {}),
                    "raw_fill": rnd((raw + b["modules"] + b["keepouts"]) / u, 3)}
             for f in P["factors"]:
                 need = f * raw + b["modules"] + b["keepouts"]
@@ -713,6 +903,7 @@ class Evaluator:
                                **({"moved_from": "CTRL"} if h.get("moved_from") else {})) for h in hdrs]
         res["fits"] = fits_all and b2b["fits"]
         res["side"] = side
+        self.cur = self.D.parts
         return res
 
     def pin_field(self, h):
@@ -977,17 +1168,40 @@ def check_spec(spec, report):
     cand_b = {(g["sheet"], g["group"]) for g in spec["candidates"][ch]["pwr_b_groups"]}
     if cand_b != listed_b:
         errs.append("partition.PWR_B_groups differs from the chosen candidate's pwr_b_groups")
-    if sorted(rec["domain_override_pwr_a"]) != sorted(res["height_overrides_to_pwr_a"] + spec["candidates"][ch].get("pinned_pwr_a", [])):
-        errs.append("partition.domain_override_pwr_a differs from the computed height overrides plus pinned refs: "
-                    + json.dumps(sorted(res["height_overrides_to_pwr_a"] + spec["candidates"][ch].get("pinned_pwr_a", []))))
+    # W2 AREA-2: with planned changes the graph of record (what pcb/prepare.py and b2b-nets.json follow) and the planned state
+    # are both recorded: domain_override_pwr_a / b2b.budget_chosen for the graph, the *_planned keys for the plan
+    pinned = spec["candidates"][ch].get("pinned_pwr_a", [])
+    graph = (res.get("planned") or {}).get("graph_of_record")
+    g_over = graph["height_overrides_to_pwr_a"] if graph else res["height_overrides_to_pwr_a"]
+    if sorted(rec["domain_override_pwr_a"]) != sorted(g_over + pinned):
+        errs.append("partition.domain_override_pwr_a differs from the computed height overrides (graph of record) plus pinned refs: "
+                    + json.dumps(sorted(g_over + pinned)) + (" (a planned change is in the graph now: take partition.domain_override_pwr_a_planned "
+                                                             "and rerun pcb/prepare.py, pcb/write_b2b_graph.py and the protocol chain)" if graph else ""))
+    if graph is not None and sorted(rec.get("domain_override_pwr_a_planned", [None])) != sorted(res["height_overrides_to_pwr_a"] + pinned):
+        errs.append("partition.domain_override_pwr_a_planned differs from the computed planned overrides: "
+                    + json.dumps(sorted(res["height_overrides_to_pwr_a"] + pinned)))
     b = res["b2b"]
-    want = spec["b2b"]["budget_chosen"]
     got = {"crossing_nets": len(b["nets"]), "power_pins": b["power_pins"], "signal_pins": b["signal_pins"],
            "gnd_pins": b["gnd_pins"], "contacts_needed": b["contacts_needed"], "contacts_with_spare": b["contacts_with_spare"]}
-    if want != got:
-        errs.append(f"b2b.budget_chosen {want} differs from the computed {got}")
+    if graph is not None:
+        g = graph["b2b"]
+        got_g = {k: g[k] for k in ("crossing_nets", "power_pins", "signal_pins", "gnd_pins", "contacts_needed", "contacts_with_spare")}
+        if spec["b2b"]["budget_chosen"] != got_g:
+            errs.append(f"b2b.budget_chosen {spec['b2b']['budget_chosen']} differs from the computed graph-of-record {got_g}")
+        if not g["meets_spare_rule"] or g["errors"]:
+            errs.append(f"chosen candidate {ch} on the graph of record: spare rule or B2B rule fails: {g['errors']}")
+        if spec["b2b"].get("budget_planned") != got:
+            errs.append(f"b2b.budget_planned {spec['b2b'].get('budget_planned')} differs from the computed {got}")
+    elif spec["b2b"]["budget_chosen"] != got:
+        errs.append(f"b2b.budget_chosen {spec['b2b']['budget_chosen']} differs from the computed {got}")
     if not b["meets_spare_rule"]:
         errs.append(f"chosen candidate {ch}: {b['contacts_with_spare']} contacts with spare exceed the {b['contacts_available']} of the B2B")
+    ps = spec["decision"].get("placement_study")
+    if ps:
+        got_f = report["candidates"][ps["candidate"]]["boards"]["PWR_A"]["raw_fill"]
+        if abs(got_f - ps["top_fill_all_refs"]) > ps["tolerance"] + 1e-9:
+            errs.append(f"candidate {ps['candidate']} PWR_A raw_fill {got_f} is more than {ps['tolerance']} from the placement-study "
+                        f"fill {ps['top_fill_all_refs']}")
     for half, row in report.get("b2b_footprints", {}).items():
         if row["footprint"] != spec["b2b"]["footprint"]:
             errs.append(f"B2B half {half} {row['ref']}: graph footprint {row['footprint']!r} is not b2b.footprint {spec['b2b']['footprint']!r}")
