@@ -4,10 +4,10 @@
   "status": "MODEL: copper resistance from geometry (IACS copper, finished 1 oz outer); no PWR-A board exists, no measurement; E1-05 and every bench gate stay OPEN",
   "generator": "build/kicad/boards/PWR_A/lab5_budget.py",
   "inputs": {
-    "spec_sha256": "27506fcf422d51524aa28610d77c458c5429c6176c1ddc364694ed4c3f470eeb",
-    "pwr_b_board_sha256": "476ddc3a3aed59c428beebc74c1a5fd645f9a833de3e5b5dbcefd0709dcf0808",
-    "pwr_b_mate_pins_sha256": "f9afdda223e58f55797938b6948a2de3092b0483d40d9bab5f3d8b1ca24d7351",
-    "netclasses_sha256": "ebc29f03e604a2414ac69c5de1cca1ae73aa48e84c438bffe26e0ffcc613e02e",
+    "spec_sha256": "643945921282dacbdc7b35a6f84bcfe8959576a03e937478afec4de58bce3da8",
+    "pwr_b_board_sha256": "4c0c172d2c9013d57f388e547ec5e40159bd7681028d9d52e72037c88d3135f1",
+    "pwr_b_mate_pins_sha256": "db96a57ff4815c02eee75ab7fc03f0467957012f3a10723e2af32ef2a3a7302a",
+    "netclasses_sha256": "95b4858058b99d613ed90219bc1ceba892dcf5edb10bc8b989493109240f3061",
     "e1_05": "Відкрито: MPN F102 з холодним опором ≤10 mΩ і опір з'єднання LAB5 E1→E2 ≤10 mΩ (кожні 10 mΩ — 32 mV при 3.2 A)."
   },
   "constants": {
@@ -228,71 +228,71 @@
   },
   "pwr_a_paths": {
     "A_E1_to_LT3045": {
-      "what": "F102.2 (E1 LAB5 end; L101 adjacent) -> U204/U205 IN pads (E2_LNA_IN via L205): the E1-05 headroom path, PWR-A only",
+      "what": "L101.2 (E1 LAB5 end) -> U204/U205 IN pads (E2_LNA_IN via L205): the E1-05 headroom path, PWR-A only",
       "from": [
-        3.92,
-        79.21
+        4.0,
+        90.02
       ],
       "to": [
         43.98,
         17.52
       ],
-      "straight_mm": 73.5558,
-      "orthogonal_mm": 101.75,
+      "straight_mm": 82.7928,
+      "orthogonal_mm": 112.48,
       "by_temperature": {
         "20C": {
           "narrowest_legal_mohm": {
-            "straight": 19.5862,
-            "orthogonal": 27.0936
+            "straight": 22.0457,
+            "orthogonal": 29.9507
           },
           "width_x_outer_layers_mm_for_whole_budget": {
-            "straight": 3.6234,
-            "orthogonal": 5.0123
+            "straight": 4.0785,
+            "orthogonal": 5.5409
           }
         },
         "50C": {
           "narrowest_legal_mohm": {
-            "straight": 21.8954,
-            "orthogonal": 30.2879
+            "straight": 24.6449,
+            "orthogonal": 33.4819
           },
           "width_x_outer_layers_mm_for_whole_budget": {
-            "straight": 4.0506,
-            "orthogonal": 5.6033
+            "straight": 4.5593,
+            "orthogonal": 6.1942
           }
         }
       }
     },
     "B_E1_to_B2B": {
-      "what": "F102.2 -> J208 LAB5 contacts (PWR-A part of the path to the PWR-B loads)",
+      "what": "L101.2 -> J208 LAB5 contacts (PWR-A part of the path to the PWR-B loads)",
       "from": [
-        3.92,
-        79.21
+        4.0,
+        90.02
       ],
       "to": [
         88.05,
         16.65
       ],
-      "straight_mm": 104.8409,
-      "orthogonal_mm": 146.69,
+      "straight_mm": 111.5686,
+      "orthogonal_mm": 157.42,
       "by_temperature": {
         "20C": {
           "narrowest_legal_mohm": {
-            "straight": 27.9166,
-            "orthogonal": 39.06
+            "straight": 29.7081,
+            "orthogonal": 41.9172
           },
           "width_x_outer_layers_mm_for_whole_budget": {
-            "straight": 5.1646,
-            "orthogonal": 7.2261
+            "straight": 5.496,
+            "orthogonal": 7.7547
           }
         },
         "50C": {
           "narrowest_legal_mohm": {
-            "straight": 31.208,
-            "orthogonal": 43.6652
+            "straight": 33.2106,
+            "orthogonal": 46.8592
           },
           "width_x_outer_layers_mm_for_whole_budget": {
-            "straight": 5.7735,
-            "orthogonal": 8.0781
+            "straight": 6.144,
+            "orthogonal": 8.669
           }
         }
       }
@@ -345,20 +345,57 @@
     }
   },
   "upstream_e1_lab5_raw": {
-    "what": "E1_LAB5_RAW (LAB5 converter output -> F102.1, before F102; not part of the E1-05 connection figure)",
-    "value": "TBD: the SHRINK-2 LAB5 converter (TPSM63606RDLR) is the reserved block CONV_LAB5 until GR-5A puts it into the graph; PCB-PWRA-3 part 2 scripts the pour from its output to F102.1",
-    "spec_planned_change": {
-      "id": "U108-LAB5",
-      "refs": [
-        "U108"
-      ],
-      "owner": "GR-5A",
-      "status": "pending",
-      "effect": "reserved blocks CONV_LAB5"
-    }
+    "what": "E1_LAB5_RAW pours (scripted): U108 VOUT (8, 9) -> F102.1, before F102 (not part of the E1-05 connection figure; adds to the total drop)",
+    "from": [
+      14.0,
+      77.85
+    ],
+    "to": [
+      3.92,
+      69.29
+    ],
+    "orthogonal_mm": 18.64,
+    "narrowest_pour_width_mm": 3.2,
+    "pours": [
+      "LAB5RAW-BAR",
+      "LAB5RAW-F102",
+      "LAB5RAW-VOUT1",
+      "LAB5RAW-VOUT2"
+    ],
+    "outer_layers": 1,
+    "by_temperature_upper_bound": {
+      "20C": 2.8695,
+      "50C": 3.2078
+    },
+    "unit": "mOhm",
+    "label": "MODEL upper bound: the whole orthogonal path at the narrowest scripted pour width, F.Cu only"
   },
+  "upstream_e1_lab5_fused": {
+    "what": "E1_LAB5_FUSED pour (scripted): F102.2 -> L101.1 (inside the E1 chain U108 -> F102 -> L101)",
+    "from": [
+      3.92,
+      79.21
+    ],
+    "to": [
+      4.0,
+      90.02
+    ],
+    "orthogonal_mm": 10.89,
+    "narrowest_pour_width_mm": 6.8,
+    "pours": [
+      "LAB5FUSED"
+    ],
+    "outer_layers": 1,
+    "by_temperature_upper_bound": {
+      "20C": 0.7889,
+      "50C": 0.8819
+    },
+    "unit": "mOhm",
+    "label": "MODEL upper bound: the whole orthogonal path at the narrowest scripted pour width, F.Cu only"
+  },
+  "e1_end": "L101.2",
   "findings": [
-    "A (E1 -> LT3045, PWR-A only): the narrowest legal LAB5 copper (PWR3A 1.85 mm, one outer layer) gives 27.0936 mOhm on the orthogonal path at 20 C; the 10 mOhm budget needs width x outer layers >= 5.0123 mm there",
+    "A (E1 -> LT3045, PWR-A only): the narrowest legal LAB5 copper (PWR3A 1.85 mm, one outer layer) gives 29.9507 mOhm on the orthogonal path at 20 C; the 10 mOhm budget needs width x outer layers >= 5.5409 mm there",
     "B (E1 -> U210.1 on PWR-B): PWR-B copper 12.2449 mOhm (of it 8.499 mOhm up to its 0.6 mm branch) + B2B delta <= 3.75 mOhm already exceed 10 mOhm before any PWR-A copper",
     "B (E1 -> U221.1 on PWR-B): PWR-B copper 10.6439 mOhm (of it 6.898 mOhm up to its 0.6 mm branch) + B2B delta <= 3.75 mOhm already exceed 10 mOhm before any PWR-A copper"
   ]
