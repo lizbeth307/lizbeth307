@@ -573,8 +573,8 @@ class Evaluator:
         n_power = sum(1 for r in rows if r["kind"] == "power")
         pins = sum(r["pins"] or 0 for r in rows)
         # W2 B2B: the LSHM pair has no ground plane. b2b.guard_rule (review R2): every rail contact (power, sense/supply tap,
-        # rail node) has its GND return in its column, plus a GND guard column after each crossing declared sense pair and
-        # one GND guard after the rail block
+        # rail node) has its GND return beside it (since 11.11.2026 the next contact of its row), plus a GND guard column beside
+        # each crossing declared sense pair and one GND guard after the rail block
         rail = sum(r["pins"] or 0 for r in rows if r["kind"] in ("power", "sense/supply tap", "rail node"))
         pairs = sum(1 for pair in S["b2b"]["declared_sense_pairs"] if all(n in cross for n in pair["nets"]))
         guards = 2 * pairs + (1 if rail else 0)

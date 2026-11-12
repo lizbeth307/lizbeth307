@@ -268,7 +268,7 @@ def b2b_nets(components,rows,currents):
     declared={n for pair in bb['declared_sense_pairs'] for n in pair['nets']}
     links=low_ohm_links(components,bb['rail_node_max_ohm'])
     extra=bb['net_current_extra'];out=[];errors=[]
-    if bb['gnd_pins_per_power_contact']!=1:errors.append('b2b.guard_rule: the checkerboard has one GND contact beside each rail contact, so gnd_pins_per_power_contact must be 1')
+    if bb['gnd_pins_per_power_contact']!=1:errors.append('b2b.guard_rule: one GND return beside each rail contact (the next contact of its row), so gnd_pins_per_power_contact must be 1')
     for n in sorted(cross):
         row={'net':n,'pwr_a':sorted(cross[n]['PWR_A'],key=sort_ref),'pwr_b':sorted(cross[n]['PWR_B'],key=sort_ref)}
         if n in declared:row.update(kind='declared sense pair',pins=1)
