@@ -2138,6 +2138,42 @@ class SessionImageTests(unittest.TestCase):
         with patch.object(build_image, "run", fake_run):
             return build_image.install_session(root, self.recipe, stage)
 
+    def test_the_greetd_config_takeover_is_the_only_overwrite_allowed(self):
+        # Image run 43148918724: r2's radxa-system-config-common 0.6.30 owns /etc/greetd/config.toml.
+        self.assertEqual(self.recipe["closure_takeovers"]["files"], {"/etc/greetd/config.toml": "radxa-system-config-common"})
+        fixture = ClosureInstallTests()
+        after = fixture.STATUS.replace("2025b-0ubuntu0.24.04.1", "2026e-0ubuntu0.24.04.1").replace(
+            "Package: systemd-timesyncd\nStatus: install ok installed\nVersion: 255.4-1ubuntu8.12\n\n",
+            "Package: chrony\nStatus: install ok installed\nVersion: 4.5-1ubuntu4.2\n\n")
+        warning = ("dpkg: warning: overriding problem because --force enabled:\n"
+                   "dpkg: warning: trying to overwrite '%s', which is also in package %s 0.6.30\n")
+        allowed = self.recipe["closure_takeovers"]["files"]
+        for path, owner, error in (("/etc/greetd/config.toml", "radxa-system-config-common", None),
+                                   ("/usr/bin/agreety", "radxa-system-config-common", "outside recipe.json closure_takeovers"),
+                                   ("/etc/greetd/config.toml", "other-package", "outside recipe.json closure_takeovers")):
+            with tempfile.TemporaryDirectory() as temp:
+                root, calls = fixture.root(temp), []
+                closure = fixture.closure(Path(temp) / "cache")
+                plain = fixture.fake_chroot(root, calls, after)
+
+                def chroot(where, argv, extra_env=None, check=True):
+                    done = plain(where, argv, extra_env, check)
+                    return done if "-s" in argv else subprocess.CompletedProcess(argv, 0, done.stdout, warning % (path, owner))
+                with patch.object(build_image, "chroot", chroot):
+                    if error:
+                        with self.assertRaisesRegex(build_image.BuildError, error):
+                            build_image.install_closure(root, Path(temp) / "cache", closure, allowed)
+                        continue
+                    record = build_image.install_closure(root, Path(temp) / "cache", closure, allowed)
+            self.assertEqual(record["takeovers"], {"allowed": allowed, "overwritten": {path: owner}, "not_seen": []})
+            self.assertTrue(all("Dpkg::Options::=--force-overwrite" in argv for argv, _ in calls))
+        with tempfile.TemporaryDirectory() as temp:  # without takeovers dpkg never gets --force-overwrite
+            root, calls = fixture.root(temp), []
+            with patch.object(build_image, "chroot", fixture.fake_chroot(root, calls, after)):
+                record = build_image.install_closure(root, Path(temp) / "cache", fixture.closure(Path(temp) / "cache"))
+            self.assertFalse(any("Dpkg::Options::=--force-overwrite" in argv for argv, _ in calls))
+            self.assertEqual(record["takeovers"]["overwritten"], {})
+
     def test_install_session_moves_the_display_manager_to_greetd(self):
         with tempfile.TemporaryDirectory() as temp:
             try:

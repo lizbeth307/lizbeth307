@@ -149,5 +149,9 @@
     "default_target": "graphical.target",
     "must_not_exist": ["/etc/greetd/greetd.conf"],
     "console_unit": "srrx-menu.service"
+  },
+  "closure_takeovers": {
+    "source": "W2 IMG-4 (build/15 «Пакети сеансу в образі (W2 IMG-4)»): r2's radxa-system-config-common 0.6.30 ships /etc/greetd/config.toml (an agreety/sway example for the _greetd user, https://raw.githubusercontent.com/radxa-pkg/radxa-system-config/0.6.30/radxa-system-config-common/etc/greetd/config.toml, read 2026-11-12) without Replaces: greetd, so dpkg refused greetd 0.9.0-4ubuntu1 (image run 43148918724: trying to overwrite '/etc/greetd/config.toml', which is also in package radxa-system-config-common 0.6.30). Only these files may pass to the closure package with --force-overwrite; the content stays the controller bundle's (system_files.greetd_config, kept by --force-confold) and radxa-system-config-* stays held",
+    "files": {"/etc/greetd/config.toml": "radxa-system-config-common"}
   }
 }

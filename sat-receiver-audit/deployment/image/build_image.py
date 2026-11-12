@@ -1829,10 +1829,17 @@ def closure_status_issues(changes, closure):
     return issues
 
 
-def install_closure(root, cache, closure):
+# dpkg's message for a file of an installed package that a new package also ships (archives.c, forcibleerr with --force-overwrite).
+_TAKEOVER = re.compile(r"(?:trying to overwrite|overwriting) '([^']+)', which is also in package ([a-z0-9][a-z0-9+.-]*)")
+
+
+def install_closure(root, cache, closure, takeovers=None):
     """Step 8b: apt-get install --purge of the closure debs in the chroot (policy-rc.d 101 starts nothing);
-    the simulated plan and the dpkg status change must both be exactly the closure."""
+    the simulated plan and the dpkg status change must both be exactly the closure. takeovers ({path: r2 package}, W2 IMG-4,
+    recipe.json closure_takeovers): files of an r2 package that a closure package also ships; only then dpkg runs with
+    --force-overwrite, and any other file it reports overwriting stops the build."""
     root = Path(root)
+    takeovers = dict(takeovers or {})
     before = _dpkg_status(root)
     plain = {n.split(":", 1)[0]: v for n, v in before.items()}
     drift = {p["package"]: plain.get(p["package"]) for p in closure["packages"] if plain.get(p["package"]) != p["r2_version"]}
@@ -1855,6 +1862,8 @@ def install_closure(root, cache, closure):
     for directory in (target, target / "parts.d"):
         os.chmod(directory, 0o755)
     argv = ["apt-get", "install", "-y", "-q", "--no-install-recommends", "--purge"] + apt_local_options("/" + CLOSURE_CHROOT_DIR + "/parts.d")
+    if takeovers:
+        argv += ["-o", "Dpkg::Options::=--force-overwrite"]
     simulated = chroot(root, argv[:2] + ["-s"] + argv[2:] + names, extra_env=CLOSURE_ENV)
     plan = apt_simulation(simulated.stdout)
     issues = closure_plan_issues(plan, closure)
@@ -1862,6 +1871,10 @@ def install_closure(root, cache, closure):
         raise BuildError("apt plan of the package closure: " + "; ".join(issues) + "\n" + simulated.stdout[-2000:])
     done = chroot(root, argv + names, extra_env=CLOSURE_ENV)
     shutil.rmtree(target)
+    overwritten = dict(_TAKEOVER.findall((done.stdout or "") + "\n" + (done.stderr or "")))
+    unexpected = {path: owner for path, owner in overwritten.items() if takeovers.get(path) != owner}
+    if unexpected:
+        raise BuildError("dpkg overwrote files of installed packages outside recipe.json closure_takeovers: " + json.dumps(unexpected))
     changes = status_changes(before, _dpkg_status(root))
     issues = closure_status_issues(changes, closure)
     if issues:
@@ -1877,7 +1890,8 @@ def install_closure(root, cache, closure):
             "deb_sha256": {p["package"]: p["sha256"] for p in closure["packages"]},
             "removed": sorted(n for n, (_, after) in changes.items() if after is None),
             "upgraded": {n: {"from": b, "to": a} for n, (b, a) in changes.items() if b and a},
-            "accounts": accounts, "apt_plan": plan, "apt_tail": done.stdout[-1500:]}
+            "accounts": accounts, "apt_plan": plan, "apt_tail": done.stdout[-1500:],
+            "takeovers": {"allowed": takeovers, "overwritten": overwritten, "not_seen": sorted(set(takeovers) - set(overwritten))}}
 
 
 def install_chrony_conf(root):
@@ -2614,7 +2628,7 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         LOG.step("pps-gpio", manifest["pps_gpio"]["status"], path=manifest["pps_gpio"]["path"],
                  sha256=manifest["pps_gpio"].get("sha256"), vermagic=manifest["pps_gpio"].get("vermagic"))
         closure = load_closure()
-        manifest["package_closure"] = install_closure(root_a, cache, closure)
+        manifest["package_closure"] = install_closure(root_a, cache, closure, (recipe.get("closure_takeovers") or {}).get("files"))
         manifest["package_closure"]["chrony_conf"] = install_chrony_conf(root_a)
         manifest["package_closure"]["gnss_mode"] = staged_gnss_mode(root_a)
         LOG.step("closure", "DONE", installed=manifest["package_closure"]["installed"], removed=manifest["package_closure"]["removed"],
