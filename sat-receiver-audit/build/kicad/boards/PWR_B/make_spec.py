@@ -271,11 +271,11 @@ PLACEMENT = {
     'C232': (2.1, 59.2, 0), 'C233': (10.7, 54.5, 270), 'C234': (51.737, 33.918, 0), 'C235': (18, 49.5, 0),
     'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (37.467, 34.284, 90), 'C239': (30, 14, 90),
     'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 0),
-    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (109.026, 22.84, 0), 'C247': (37.5, 26.5, 180),
+    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (109.026, 22.84, 0), 'C247': (37.5, 26.5, 0),
     'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (112.18, 15.097, 90), 'C251': (36, 12, 90),
     'C274': (16.312, 60.638, 0), 'C275': (37.425, 37.725, 90), 'C276': (18.488, 72.388, 0), 'C277': (36.97, 46.405, 90),
-    'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.388, 29.109, 0), 'C285': (38.734, 47.163, 90),
-    'C286': (47.246, 20.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
+    'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
+    'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
     'C297': (113.111, 23.259, 0), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
     'C503': (38.5, 20.5, 0), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (37.5, 73, 0),
     'C507': (36.46, 76.867, 0), 'C521': (31, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
@@ -291,13 +291,13 @@ PLACEMENT = {
     'R244': (76.281, 16.475, 0), 'R246': (102.2, 17.8, 0), 'R247': (95.835, 20.38, 0), 'R248': (77.5, 19.5, 90),
     'R249': (83.5, 18.9, 90), 'R251': (59.385, 19.013, 90), 'R268': (8, 60.3, 90), 'R269': (10.6, 60.3, 90),
     'R270': (50.05, 17.3, 90), 'R271': (52.65, 17.3, 90), 'R272': (16, 84.8, 90), 'R273': (18.6, 84.8, 90),
-    'R280': (85.517, 20.651, 90), 'R281': (51.817, 19.911, 0), 'R283': (51.5, 24.856, 0), 'R284': (11.963, 36.443, 90),
-    'R286': (50.717, 23.038, 0), 'R287': (47.413, 17.192, 90), 'R293': (69.5, 19.5, 90), 'R294': (75.5, 18.9, 90),
+    'R280': (85.517, 20.651, 90), 'R281': (53.817, 23.411, 90), 'R283': (51.5, 25.856, 90), 'R284': (20.217, 22.522, 90),
+    'R286': (42.217, 34.038, 0), 'R287': (44.996, 26.692, 0), 'R293': (69.5, 19.5, 90), 'R294': (75.5, 18.9, 90),
     'R295': (56.789, 19.26, 90), 'R501': (53.5, 27.8, 90), 'R502': (59.5, 27.2, 90), 'R504': (71.783, 12.226, 0),
     'R505': (61.5, 19.5, 90), 'R506': (67.5, 18.9, 90), 'R508': (32.581, 75.617, 90), 'R550': (33.859, 42.821, 90),
     'R551': (35.826, 42.961, 90), 'R2901': (17.112, 44.38, 90), 'R2902': (1.931, 96.061, 90), 'R2911': (30.635, 43.025, 0),
-    'R2912': (2.025, 100.365, 90), 'R2921': (20.167, 28.594, 90), 'R2922': (17.073, 98.016, 90),
-    'TP206': (40.499, 34.293, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
+    'R2912': (2.025, 100.365, 90), 'R2921': (48.167, 27.094, 0), 'R2922': (17.073, 98.016, 90),
+    'TP206': (51.499, 31.293, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
     'TP209': (115.663, 20.465, 0), 'TP210': (118.555, 20.609, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
     'TP2902': (40.679, 80.317, 0), 'U206': (4.1, 56, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
     'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
@@ -691,9 +691,6 @@ W_PAIR = 0.8              # copper of one LAB5 contact pair (2 A): PWR2A width (
 K4_UP_VY = 22.0           # ch4 SW sense: via above the upper J209 row (pad tops 21.1), below the J207 pins (23.4)
 K4_SH_FY = 21.2           # ch4 SHUNT sense: F.Cu east above L209 (pads to 18.8) to its via right of the alignment hole
 K4_LO_VY = 14.9           # ch4 SHUNT sense: B.Cu west under the lower J209 row (pad bottoms 15.9) into its contact
-DAMP4_RISE_X = 97.55      # ch4 damper link: rise between the J204 pins at x 96.55 and 98.55 (pads 1.2 mm wide)
-DAMP4_RUN_Y = 31.5        # run in the plug zone (header courtyards end at 30.99, the TP212 / TP2903 windows start at 32.05)
-DAMP4_X = 51.0            # drop east of the hole keep-out of (46, 31) and west of the fourth LAB5 cell
 
 
 def via_spot_ok(inp, parts, tracks, vias, at, net):
@@ -831,15 +828,6 @@ def scripted_copper(inp, parts, pins):
         T('K4-SH-P', shunt, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksh} between its neighbours')
         pins['scripted_nets'][sw] = [(u, '6'), (rsh, '1'), (B2B_REF, ksw)]
         pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'), (B2B_REF, ksh)]
-    # ch4 damper (W2 PCB-PWRB-2): C247 has no 6 x 8 mm place near ch4, it stands west of J204 / J207; route runs 43236259234
-    # and the next left its BIAS_CH4_DAMP link to R247 open, so it is scripted: up from R247 pad 2 between the J204 pins
-    # 96.55 / 98.55, west in the plug zone in front of J204 / J207 (no parts there, below the TP212 / TP2903 probe
-    # windows), down at DAMP4_X and west under the hole keep-out of (46, 31), above the TP202 / TP214 windows, into pad 1
-    r2, c1 = P('R247', '2'), P('C247', '1')
-    T('DAMP4', 'BIAS_CH4_DAMP', 'F.Cu', W_SENSE,
-      [r2, (DAMP4_RISE_X, r2[1]), (DAMP4_RISE_X, DAMP4_RUN_Y), (DAMP4_X, DAMP4_RUN_Y), (DAMP4_X, c1[1]), c1],
-      'ch4 damper R247 to C247 (BIAS_CH4_DAMP, PWR1A width 0.35 mm)')
-    pins['scripted_nets']['BIAS_CH4_DAMP'] = [('R247', '2'), ('C247', '1')]
     # J209 GND spine: every GND contact (b2b-nets.json guard_rule: the return beside each rail contact and the guards)
     # stubs inwards to a B.Cu track on the connector centre line, between the two rows; plane vias on the spine where a
     # via clears every pad and the other copper. The rail and signal contacts all escape outwards.
@@ -1275,7 +1263,7 @@ def project_json(inp, pins):
 # reach its contacts either).
 BOARD_CLASSES = {'LNA4V5': 'PWR1A'}
 # Nets whose copper is all scripted and locked: widths of their netclasses.json class, not autorouted (router -inc).
-SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A', 'BIAS_CH4_DAMP': 'SCRIPTED_PWR1A',
+SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
                     **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')}}
 
 
