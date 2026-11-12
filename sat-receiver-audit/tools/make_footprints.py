@@ -60,18 +60,19 @@ class FP:
     def text(self, s, x, y, layer, size=1.0):
         self.items.append(f'\t(fp_text user "{s}"\n\t\t{xy(x, y)}\n\t\t(layer "{layer}")\n\t\t(effects\n\t\t\t(font\n\t\t\t\t(size {fmt(size)} {fmt(size)})\n\t\t\t\t(thickness {fmt(size * 0.15)})\n\t\t\t)\n\t\t)\n\t)')
 
-    def smd(self, num, x, y, w, h, shape='roundrect', paste=True):
+    def smd(self, num, x, y, w, h, shape='roundrect', paste=True, rratio=0.25):
         layers = '"F.Cu" "F.Mask" "F.Paste"' if paste else '"F.Cu" "F.Mask"'
-        extra = '\n\t\t(roundrect_rratio 0.25)' if shape == 'roundrect' else ''
+        extra = f'\n\t\t(roundrect_rratio {fmt(rratio)})' if shape == 'roundrect' else ''
         self.pads.append(f'\t(pad "{num}" smd {shape}\n\t\t{xy(x, y)}\n\t\t(size {fmt(w)} {fmt(h)})\n\t\t(layers {layers}){extra}\n\t)')
 
-    def paste(self, x, y, w, h):
-        self.pads.append(f'\t(pad "" smd roundrect\n\t\t{xy(x, y)}\n\t\t(size {fmt(w)} {fmt(h)})\n\t\t(layers "F.Paste")\n\t\t(roundrect_rratio 0.25)\n\t)')
+    def paste(self, x, y, w, h, rratio=0.25):
+        self.pads.append(f'\t(pad "" smd roundrect\n\t\t{xy(x, y)}\n\t\t(size {fmt(w)} {fmt(h)})\n\t\t(layers "F.Paste")\n\t\t(roundrect_rratio {fmt(rratio)})\n\t)')
 
-    def poly_pad(self, num, ax, ay, pts, aw, ah):
+    def poly_pad(self, num, ax, ay, pts, aw, ah, paste=True):
         """Custom SMD pad: anchor rectangle aw x ah at (ax, ay) plus a polygon (absolute coords)."""
         rel = ' '.join(f'(xy {fmt(px - ax)} {fmt(py - ay)})' for px, py in pts)
-        self.pads.append(f'\t(pad "{num}" smd custom\n\t\t{xy(ax, ay)}\n\t\t(size {fmt(aw)} {fmt(ah)})\n\t\t(layers "F.Cu" "F.Mask" "F.Paste")\n\t\t(options\n\t\t\t(clearance outline)\n\t\t\t(anchor rect)\n\t\t)\n\t\t(primitives\n\t\t\t(gr_poly\n\t\t\t\t(pts\n\t\t\t\t\t{rel}\n\t\t\t\t)\n\t\t\t\t(width 0)\n\t\t\t\t(fill yes)\n\t\t\t)\n\t\t)\n\t)')
+        layers = '"F.Cu" "F.Mask" "F.Paste"' if paste else '"F.Cu" "F.Mask"'
+        self.pads.append(f'\t(pad "{num}" smd custom\n\t\t{xy(ax, ay)}\n\t\t(size {fmt(aw)} {fmt(ah)})\n\t\t(layers {layers})\n\t\t(options\n\t\t\t(clearance outline)\n\t\t\t(anchor rect)\n\t\t)\n\t\t(primitives\n\t\t\t(gr_poly\n\t\t\t\t(pts\n\t\t\t\t\t{rel}\n\t\t\t\t)\n\t\t\t\t(width 0)\n\t\t\t\t(fill yes)\n\t\t\t)\n\t\t)\n\t)')
 
     def tht(self, num, x, y, size, drill, shape='circle', drill_oval=None):
         sx, sy = (size, size) if not isinstance(size, tuple) else size
@@ -141,6 +142,76 @@ def rpw0010a():
     fp.smd('6', 0.25, 0, 0.3, 2.4, shape='rect')
     ex, ey = box(fp, 2.0, 2.0, 1.2, 1.2)
     fp.circle(-1.45, -0.7, 0.1, 'F.SilkS', 0.12)
+    return fp.render(-ey - 0.8, ey + 0.8)
+
+
+def rjr0014a():
+    """TI RJR0014A VQFN-HR-14 (LM61460), example board layout and stencil 4223976/H (W2 GR-5A).
+
+    Coordinates from the land pattern (reference dimensions): small left pads (pins 2-4) 0.7 long centred 1.85 left of the
+    package centre line at 0.525 pitch (pin 3 0.3 wide, pins 2/4 0.25); top/bottom pads (13/14, 6/7) 0.25 x 0.7 on the
+    3.2 row span at 1.125/0.625 left; VIN pads 12/8 0.4 x 1 at 0.45 right on the 2.9 span; SW pad 10 2.4 x 0.4 centred 1 right;
+    L pads 1/5 (0.35 arm + 0.35 x 0.4 foot) and 9/11 (0.4 arm + 0.4 x 0.4 foot), 1 tall. Paste of pads 1, 5, 9, 11 and 10 as the
+    stencil example (0.1 mm stencil: L arms 0.3 / 0.35, feet 0.35; pad 10 as two 1.1 x 0.4 apertures). Corner radii R0.05 and
+    the R0.12/R0.17 inner fillets are not drawn."""
+    fp = FP('TI_RJR0014A_VQFN-HR-14_4x3.5mm', 'TI RJR0014A VQFN-HR 14 pin 4.0 x 3.5 mm (LM61460); TI example board layout and stencil 4223976/H 06/2026: '
+            'L-shaped VIN/PGND corner pads 1/5/9/11, SW pad 10 2.4x0.4, no exposed pad; pad corner radii omitted', 'VQFN-HR RJR0014A LM61460')
+
+    def lpad(num, arm_x0, arm_x1, foot_x0, foot_x1, sy, paste_arm, paste_foot_x):
+        # sy = -1 for the top row (pins 1, 11), +1 for the bottom row (pins 5, 9); the foot sits on the inner end of the arm
+        y_out, y_in, y_foot = 1.95 * sy, 0.95 * sy, 1.35 * sy
+        pts = [(arm_x0, y_out), (arm_x1, y_out), (arm_x1, y_in), (foot_x0, y_in), (foot_x0, y_foot), (foot_x1, y_foot)] if foot_x1 == arm_x0 else \
+              [(arm_x0, y_out), (arm_x1, y_out), (arm_x1, y_foot), (foot_x1, y_foot), (foot_x1, y_in), (arm_x0, y_in)]
+        fp.poly_pad(num, (arm_x0 + arm_x1) / 2, 1.45 * sy, pts, 0.3, 0.3, paste=False)
+        ax0, ax1 = paste_arm
+        fp.paste((ax0 + ax1) / 2, 1.45 * sy, ax1 - ax0, 1.0, rratio=0.1)
+        fx0, fx1 = paste_foot_x
+        fp.paste((fx0 + fx1) / 2, 1.125 * sy, fx1 - fx0, 0.35, rratio=0.1)
+
+    lpad('1', -1.85, -1.5, -2.2, -1.85, -1, (-1.8, -1.5), (-2.2, -1.8))
+    lpad('5', -1.85, -1.5, -2.2, -1.85, 1, (-1.8, -1.5), (-2.2, -1.8))
+    lpad('11', 1.4, 1.8, 1.8, 2.2, -1, (1.4, 1.75), (1.75, 2.2))
+    lpad('9', 1.4, 1.8, 1.8, 2.2, 1, (1.4, 1.75), (1.75, 2.2))
+    for num, y, h in (('2', -0.525, 0.25), ('3', 0, 0.3), ('4', 0.525, 0.25)):
+        fp.smd(num, -1.85, y, 0.7, h, rratio=0.2)
+    for num, x, y in (('14', -1.125, -1.6), ('13', -0.625, -1.6), ('6', -1.125, 1.6), ('7', -0.625, 1.6)):
+        fp.smd(num, x, y, 0.25, 0.7, rratio=0.2)
+    fp.smd('12', 0.45, -1.45, 0.4, 1.0, rratio=0.125)
+    fp.smd('8', 0.45, 1.45, 0.4, 1.0, rratio=0.125)
+    fp.smd('10', 1.0, 0, 2.4, 0.4, paste=False, rratio=0.125)
+    fp.paste(0.35, 0, 1.1, 0.4, rratio=0.125)
+    fp.paste(1.65, 0, 1.1, 0.4, rratio=0.125)
+    ex, ey = box(fp, 4.0, 3.5, 2.2, 1.95)
+    # pads reach past the body on all four sides, so the silkscreen is the pin 1 mark only
+    fp.circle(-2.55, -1.45, 0.1, 'F.SilkS', 0.12)
+    return fp.render(-ey - 0.8, ey + 0.8)
+
+
+def rdl0020a():
+    """TI RDL0020A B3QFN-20 (TPSM63606), package outline, example board layout and stencil 4226416/B (W2 GR-5A).
+
+    Corner pads 1/8/9/16 1.4 x 0.5 centred 2.0 left/right, 2.15 up/down (0.925 / 0.875 from the next signal pad); signal pads
+    0.9 x 0.25 at 0.5 pitch on the 4.5 column span, from 1.225 up to 1.275 down; PGND pads 17-20 1.58 x 0.875 at 1.075 pitch
+    (0.5375 / 1.6125). Paste as the 0.125 mm stencil example: 1.35 x 0.45, 0.85 x 0.2 and 1.53 x 0.825. The optional
+    0.2 mm vias of pads 17-20 (land pattern, note 5) are a layout item and are not drawn."""
+    fp = FP('TI_RDL0020A_B3QFN-20_5x5.5mm', 'TI RDL0020A B3QFN 20 pin 5.0 x 5.5 x 4.1 mm (TPSM63606); TI example board layout and stencil 4226416/B 04/2021: '
+            'corner pads 1.4x0.5, signal pads 0.9x0.25 at 0.5 pitch, PGND pads 17-20 1.58x0.875; optional thermal vias not drawn', 'B3QFN RDL0020A TPSM63606')
+    for num, x, y in (('1', -2.0, -2.15), ('8', -2.0, 2.15), ('9', 2.0, 2.15), ('16', 2.0, -2.15)):
+        fp.smd(num, x, y, 1.4, 0.5, paste=False, rratio=0.1)
+        fp.paste(x, y, 1.35, 0.45, rratio=0.1)
+    ys = [-1.225 + 0.5 * i for i in range(6)]
+    for i, y in enumerate(ys):
+        for num, x in ((str(2 + i), -2.25), (str(15 - i), 2.25)):
+            fp.smd(num, x, y, 0.9, 0.25, paste=False, rratio=0.2)
+            fp.paste(x, y, 0.85, 0.2, rratio=0.2)
+    for num, y in (('17', -1.6125), ('18', -0.5375), ('19', 0.5375), ('20', 1.6125)):
+        fp.smd(num, 0, y, 1.58, 0.875, paste=False, rratio=0.06)
+        fp.paste(0, y, 1.53, 0.825, rratio=0.06)
+    ex, ey = box(fp, 5.0, 5.5, 2.7, 2.4)
+    for sx in (-1, 1):
+        fp.line(2.61 * sx, -2.86, 2.61 * sx, -2.55, 'F.SilkS', 0.12); fp.line(2.61 * sx, 2.86, 2.61 * sx, 2.55, 'F.SilkS', 0.12)
+    fp.line(-2.61, -2.86, 2.61, -2.86, 'F.SilkS', 0.12); fp.line(-2.61, 2.86, 2.61, 2.86, 'F.SilkS', 0.12)
+    fp.circle(-3.05, -2.15, 0.1, 'F.SilkS', 0.12)
     return fp.render(-ey - 0.8, ey + 0.8)
 
 
@@ -272,7 +343,9 @@ CUSTOM_BUILDERS = {
     'SW_E-Switch_TL3145_6.45x6.45mm': tl3145,
     'RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx': pec11r_s,
     'Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm': cpt1207,
-    'Pololu_D36V50Fx': pololu_d36v50fx,
+    # Pololu_D36V50Fx (pololu_d36v50fx) is not vendored since W2 GR-5A: no graph ref uses it (SHRINK-2); fallback F2-ENV would re-register it.
+    'TI_RJR0014A_VQFN-HR-14_4x3.5mm': rjr0014a,
+    'TI_RDL0020A_B3QFN-20_5x5.5mm': rdl0020a,
 }
 
 # name -> (official source 'Lib:Name', pad renames, note)
@@ -297,7 +370,8 @@ PROVENANCE = {
     'SW_E-Switch_TL3145_6.45x6.45mm': {'kind': 'custom', 'source': 'https://configured-product-images.s3.amazonaws.com/Datasheets/TL3145.pdf', 'drawing': 'Recommended PCB Layout, page 2 (datasheet 4.2.2024)', 'read': '2026-10-24'},
     'RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx': {'kind': 'custom', 'source': 'https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf', 'drawing': 'PEC11R-4xxxF-Sxxxx PCB layout, page 2', 'read': '2026-10-24'},
     'Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm': {'kind': 'custom', 'source': 'https://www.sameskydevices.com/product/resource/cpt-1207-3th.pdf', 'drawing': 'Recommended PCB Layout (Top View), page 2 (07/22/2025)', 'read': '2026-10-24'},
-    'Pololu_D36V50Fx': {'kind': 'custom', 'source': 'https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf', 'drawing': 'D36V50Fx Step-Down Voltage Regulator, dev code reg24d, drawing date 24 December 2019: views 1 (board, 3x D2.18), 2 (12x D1.02 connector callouts, 2.54/1.27/6.35 mm) and 3 (pin labels PG, EN, VRP, VIN, GND, VOUT); linked from https://www.pololu.com/product/4091/resources', 'read': '2026-11-07'},
+    'TI_RJR0014A_VQFN-HR-14_4x3.5mm': {'kind': 'custom', 'source': 'https://www.ti.com/lit/ds/symlink/lm61460.pdf', 'drawing': 'RJR0014A package outline, example board layout and example stencil design 4223976/H 06/2026 (pages 55-57 of the SNVSBD5D download; pin names table 6-1 page 3); rendered with PyMuPDF and read from the images', 'read': '2026-11-12'},
+    'TI_RDL0020A_B3QFN-20_5x5.5mm': {'kind': 'custom', 'source': 'https://www.ti.com/lit/ds/symlink/tpsm63606.pdf', 'drawing': 'RDL0020A package outline, example board layout and example stencil design 4226416/B 04/2021 (SLVSGB4B pages 40-42; pin names table 6-1 pages 3-4); rendered with PyMuPDF and read from the images', 'read': '2026-11-12'},
 }
 
 

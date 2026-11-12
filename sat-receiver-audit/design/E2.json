@@ -133,16 +133,15 @@
   "components": [
     {
       "ref": "F201",
-      "value": "Littelfuse0297004.WXNV 4A",
+      "value": "Littelfuse 0451004.MRL 4A",
       "kind": "fuse",
       "group": "J21: захищене живлення 12 V",
-      "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
+      "source": "STACK.md §§2.7, 5.1; Littelfuse 451/453 (копія LCSC, рядок READS-P web:littelfuse-451-453); W2 GR-5A",
       "status": "verified",
-      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
-      "mpn": "0297004.WXNV",
+      "footprint": "Fuse:Fuse_Littelfuse-NANO2-451_453",
+      "mpn": "0451004.MRL",
       "manufacturer": "Littelfuse",
-      "lcsc": "C178940",
-      "alt_mpn": "Littelfuse 0297004.WXT",
+      "lcsc": "C27515",
       "pins": [
         {
           "number": "1",
@@ -158,7 +157,7 @@
         }
       ],
       "notes": [
-        "Mini blade 4A у гілці J21; точний номер і тримач за STACK.md."
+        "W2 GR-5A (SHRINK-2 (2)): SMD-запобіжник Littelfuse NANO2 451 4 A у гілці J21 замість mini blade у тримачі: 125 V, відключення 300 A при 32 VDC, 16.0 mΩ холодний (рядок READS-P web:littelfuse-451-453). Очікуваний струм КЗ у точці F201 не прочитано — OPEN."
       ]
     },
     {
@@ -11147,7 +11146,7 @@
   "power_flags": [
     {
       "net": "E2_J21_FUSED",
-      "reason": "Реальний силовий шлях: SYS12 → F201 blade 4A. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "reason": "Реальний силовий шлях: SYS12 → F201 SMD 4A (Littelfuse 451). Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
       "source": "E2.json: силовий шлях; STACK.md §5.1"
     },
     {
