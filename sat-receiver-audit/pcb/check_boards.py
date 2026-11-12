@@ -48,6 +48,8 @@ Checker keys (optional, in either form; contract frame mm, y up unless contract_
   sense {nets [...], prototype <routed prototype review json>} (track length on the board > 0 and <= the prototype's routing
   length of that net)} (W2 PCB-RF-2). With bond_hole, each GND-CHASSIS tie must also reach the plated bond hole land through
   copper of the bond net.
+  planned_cutouts {margin_mm, rects [{id, rect [x, y, w, h]}]} (W2 PWRB-R; the same key makes pcb/board_gen.py rule areas):
+  areas that become cut-outs later; no copper of any kind on any layer inside a rect or within margin_mm of it.
 """
 from __future__ import annotations
 
@@ -683,9 +685,9 @@ class Frame:
 NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
                'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
                'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
-               'sides', 'max_height_bottom', 'coupons', 'rf_checks')
+               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'planned_cutouts')
 DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
-             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks')
+             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'planned_cutouts')
 LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides', 'coupons')
 
 
@@ -987,6 +989,38 @@ def check_keepouts(board, cb, frame, spec):
             out.append(finding('keepouts', what, f'copper inside the hole keepout (d {2 * r} mm)', contract_at=frame.to_contract(cx, cy),
                                net=it.net, layer=it.layer, distance=it.shape.dist(cx, cy)))
     return out, {'keepout_r_mm': r, 'tolerance_mm': KEEPOUT_TOL}
+
+
+def check_planned_cutouts(board, frame, spec):
+    """planned_cutouts {margin_mm, rects [{id, rect [x, y, w, h] contract mm}]} (W2 PWRB-R; pcb/board_gen.py makes each rect
+    grown by margin_mm a rule area): areas that become board cut-outs later. No copper item of any kind or layer (pads,
+    tracks, arcs, vias, zone fills, footprint and board copper) may lie inside a rect or closer than margin_mm to it, the
+    copper-to-edge clearance the cut will need. Every item is measured edge to edge against the rect."""
+    pc = spec['planned_cutouts']
+    if not isinstance(pc.get('rects'), list) or not isinstance(pc.get('margin_mm'), (int, float)):
+        spec_error(spec, 'planned_cutouts needs margin_mm and rects [{id, rect [x, y, w, h]}]')
+    m = float(pc['margin_mm'])
+    out, rows = [], []
+    for r in pc['rects']:
+        x0, y0, x1, y1 = frame.rect(r['rect'])
+        box = Poly([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+        inside, near, closest = 0, 0, None
+        for it in board.copper:
+            bb = it.shape.bbox
+            if bb[0] > x1 + m or bb[2] < x0 - m or bb[1] > y1 + m or bb[3] < y0 - m:
+                continue
+            d = shape_gap(it.shape, box)
+            closest = d if closest is None else min(closest, d)
+            if d >= m - KEEPOUT_TOL:
+                continue
+            inside += d <= 0.0
+            near += d > 0.0
+            what = f'{it.kind} {it.ref}.{it.pad}' if it.kind == 'pad' else it.kind
+            out.append(finding('planned_cutouts', what, f"copper {r3(d)} mm from the planned cut-out {r['id']} (needs {m} mm)",
+                               contract_at=r['rect'][:2], net=it.net, layer=it.layer, distance=d))
+        rows.append({'id': r['id'], 'items_inside': inside, 'items_within_margin': near,
+                     'closest_copper_mm': r3(closest) if closest is not None else None})
+    return out, {'margin_mm': m, 'rects': len(pc['rects']), 'tolerance_mm': KEEPOUT_TOL, 'per_rect': rows}
 
 
 def expected_views(spec, graph, components_csv=None):
@@ -2060,6 +2094,8 @@ def review_board(board, spec, contract, graph, netclasses, mates=None, component
     run('outline', check_outline(board, cb, frame, spec))
     run('holes', check_holes(board, cb, frame, spec))
     run('keepouts', check_keepouts(board, cb, frame, spec))
+    if 'planned_cutouts' in spec:
+        run('planned_cutouts', check_planned_cutouts(board, frame, spec))
     run('pad_nets', check_pad_nets(board, spec, graph, views))
     run('class_widths', check_classes(board, spec, netclasses, views))
     run('rf50', check_rf50(board, spec, netclasses, views))

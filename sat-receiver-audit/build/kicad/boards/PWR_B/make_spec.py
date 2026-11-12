@@ -63,6 +63,7 @@ B2B_REF, B2B_MATE_BOARD, B2B_MATE_REF = 'J209', 'PWR_A', 'J208'
 CLEAR = 0.15          # project clearance (netclasses.json project_defaults)
 MARGIN = 0.05         # design margin of the scripted copper over the clearance
 EDGE = 0.3            # project copper-to-edge clearance
+CRT_GUARD = 0.05      # courtyard boxes here are centre lines; KiCad's include half the 0.05 mm line (review F12 of W2 PCB-PWRB-2)
 VIA_D, VIA_DRILL = 0.7, 0.3   # 0.7 / 0.3: router vias at clearance 0.15 keep the 0.5 mm hole-to-hole rule (0.55)
 
 
@@ -293,20 +294,20 @@ PLACEMENT = {
     'C232': (2.1, 59.2, 0), 'C233': (10.7, 54.5, 270), 'C234': (51.737, 33.918, 0), 'C235': (18, 49.5, 0),
     'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (37.467, 34.284, 90), 'C239': (30, 14, 90),
     'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 0),
-    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (111.03, 21.325, 180),
+    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (110.98, 21.325, 180),
     'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.03, 19.65, 270), 'C251': (36, 12, 90),
     'C274': (16.312, 60.638, 0), 'C275': (37.425, 37.725, 90), 'C276': (18.488, 72.388, 0), 'C277': (36.97, 46.405, 90),
     'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
     'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
     'C297': (112.18, 15.097, 90), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
     'C503': (38.5, 20.5, 0), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (37.5, 73, 0),
-    'C507': (36.46, 76.867, 0), 'C521': (31, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
+    'C507': (36.46, 76.867, 0), 'C521': (30.95, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
     'C551': (38.651, 50.429, 90), 'C2901': (55.363, 33.73, 0), 'C2902': (40.167, 77.567, 0), 'C2911': (20.334, 42.046, 0),
     'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (2.95, 49.8, 0),
-    'J202': (9.7, 9.7, 90), 'J203': (15.7, 39.95, 0), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
-    'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.15, 55.4, 90), 'L206': (15.1, 56.2, 0), 'L207': (57.15, 13.2, 0),
+    'J202': (9.7, 9.75, 90), 'J203': (15.7, 39.95, 0), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
+    'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.2, 55.4, 90), 'L206': (15.1, 56.2, 0), 'L207': (57.15, 13.2, 0),
     'L208': (23.1, 80.7, 0), 'L209': (108, 15.2, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
-    'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.119, 0), 'R228': (7.4, 54.6, 270),
+    'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.069, 0), 'R228': (7.4, 54.6, 270),
     'R229': (2.1, 52.9, 0), 'R231': (9.3, 57.6, 0), 'R232': (39.368, 40.813, 0), 'R233': (49.45, 11.6, 270),
     'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (31.066, 28.988, 0), 'R238': (15.4, 79.1, 270),
     'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (22.251, 85.185, 0), 'R243': (100.3, 14.8, 270),
@@ -462,8 +463,8 @@ def check_placement(inp, parts):
         if not all(point_in_poly(q, outline) for q in corners):
             problems.append(f'{a}: courtyard {pa.box} leaves the outline')
         for cut in cuts:
-            if pa.side == 'F' and bg.rects_overlap(pa.box, cut):
-                problems.append(f'{a}: courtyard over the cutout {cut}')
+            if pa.side == 'F' and bg.rects_overlap(pa.box, cut, CRT_GUARD):
+                problems.append(f'{a}: courtyard within {CRT_GUARD} mm of the cutout {cut}')
         for name in PLUG_ZONES:
             hb = parts[name].box
             if a not in PLUG_ZONES and pa.side == 'F' and bg.rects_overlap(pa.box, (hb[0], hb[3], hb[2], c['outline_mm'][2][1])):
@@ -1166,6 +1167,17 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
         'edge_keepout': {'width_mm': 0.2, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
                          'why': 'rule-area strips (half-width 0.2) on every outline and cutout edge: the router keeps its copper '
                                 '0.35 mm off the edge, above the project copper-to-edge 0.3 (route run 42414083566 had 0.23)'},
+        'planned_cutouts': {
+            'why': ('W2 PWRB-R (review F2 of W2 PCB-PWRB-2): the PWR-A cut-outs (pwr_a_cutouts) become holes and notches of this '
+                    'board once the MECH lineage writes them into the contract, so no copper may cross them now: each rect grown '
+                    f'by margin_mm (the project copper-to-edge clearance {EDGE}) is a rule area on all four copper layers that '
+                    'blocks tracks, vias, pads and zone fills, so Freerouting routes around it, the GND planes and pours leave '
+                    'it free and KiCad DRC reports any copper in it; pcb/check_boards.py planned_cutouts measures every copper '
+                    'item of the routed board against the rects'),
+            'margin_mm': EDGE, 'layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias', 'zone_fills', 'pads'],
+            'rects': [{'id': cu['ref'], 'kind': cu['kind'],
+                       'rect': [cu['rect'][0], cu['rect'][1], r4(cu['rect'][2] - cu['rect'][0]), r4(cu['rect'][3] - cu['rect'][1])]}
+                      for cu in inp.cutouts]},
         'height_zones': [
             {'region': 'board', 'max_height_mm_from_contract': 'max_component_height', 'side': 'top', 'checked': True,
              'why': 'hB 5.5 (pcb/partition-spec.json parameters.hB): parts on the top side; heights from heights below'},

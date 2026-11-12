@@ -670,7 +670,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          111.03,
+          110.98,
           21.325
         ],
         "align": "origin",
@@ -1085,7 +1085,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          31,
+          30.95,
           105
         ],
         "align": "origin",
@@ -1093,7 +1093,7 @@
         "side": "F",
         "ref_text": {
           "at": [
-            31.0,
+            30.95,
             105.0
           ],
           "angle": 0
@@ -1306,7 +1306,7 @@
       "anchor": {
         "at": [
           9.7,
-          9.7
+          9.75
         ],
         "align": "origin",
         "rotation": 90,
@@ -1314,7 +1314,7 @@
         "ref_text": {
           "at": [
             13.9,
-            18.7
+            18.75
           ],
           "angle": 90
         }
@@ -1377,7 +1377,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          26.15,
+          26.2,
           55.4
         ],
         "align": "origin",
@@ -1385,7 +1385,7 @@
         "side": "F",
         "ref_text": {
           "at": [
-            28.6,
+            28.65,
             63.4
           ],
           "angle": 90
@@ -1522,7 +1522,7 @@
       "anchor": {
         "at": [
           10.491,
-          66.119
+          66.069
         ],
         "align": "origin",
         "rotation": 0,
@@ -1530,7 +1530,7 @@
         "ref_text": {
           "at": [
             10.491,
-            66.119
+            66.069
           ],
           "angle": 90
         }
@@ -3975,11 +3975,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            108.83,
+            108.78,
             21.325
           ],
           [
-            110.2796,
+            110.2296,
             22.7746
           ]
         ],
@@ -4397,11 +4397,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            31.0,
+            30.95,
             107.2
           ],
           [
-            32.35,
+            32.3,
             107.2
           ]
         ],
@@ -4524,11 +4524,11 @@
         "path": [
           [
             9.5535,
-            65.169
+            65.119
           ],
           [
             10.841,
-            65.169
+            65.119
           ]
         ],
         "locked": true,
@@ -5562,7 +5562,7 @@
         "id": "GND-C247-2-V",
         "net": "GND",
         "at": [
-          110.2796,
+          110.2296,
           22.7746
         ],
         "drill_mm": 0.3,
@@ -5838,7 +5838,7 @@
         "id": "GND-C521-2-V",
         "net": "GND",
         "at": [
-          32.35,
+          32.3,
           107.2
         ],
         "drill_mm": 0.3,
@@ -5923,7 +5923,7 @@
         "net": "GND",
         "at": [
           10.841,
-          65.169
+          65.119
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6414,6 +6414,524 @@
       "vias"
     ],
     "why": "rule-area strips (half-width 0.2) on every outline and cutout edge: the router keeps its copper 0.35 mm off the edge, above the project copper-to-edge 0.3 (route run 42414083566 had 0.23)"
+  },
+  "planned_cutouts": {
+    "why": "W2 PWRB-R (review F2 of W2 PCB-PWRB-2): the PWR-A cut-outs (pwr_a_cutouts) become holes and notches of this board once the MECH lineage writes them into the contract, so no copper may cross them now: each rect grown by margin_mm (the project copper-to-edge clearance 0.3) is a rule area on all four copper layers that blocks tracks, vias, pads and zone fills, so Freerouting routes around it, the GND planes and pours leave it free and KiCad DRC reports any copper in it; pcb/check_boards.py planned_cutouts measures every copper item of the routed board against the rects",
+    "margin_mm": 0.3,
+    "layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ],
+    "blocks": [
+      "tracks",
+      "vias",
+      "zone_fills",
+      "pads"
+    ],
+    "rects": [
+      {
+        "id": "C107",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          13.8,
+          63.1,
+          10.4,
+          8.1
+        ]
+      },
+      {
+        "id": "C113",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          33.9,
+          59.3,
+          8.1,
+          10.6
+        ]
+      },
+      {
+        "id": "C206",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          33.9,
+          95.0,
+          7.8,
+          7.8
+        ]
+      },
+      {
+        "id": "C207",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          28.1,
+          77.8,
+          9.5,
+          9.5
+        ]
+      },
+      {
+        "id": "C210",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          7.3,
+          93.1,
+          7.8,
+          7.8
+        ]
+      },
+      {
+        "id": "C222",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          28.1,
+          45.0,
+          7.8,
+          7.8
+        ]
+      },
+      {
+        "id": "C254",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          25.15,
+          19.5,
+          7.8,
+          7.8
+        ]
+      },
+      {
+        "id": "C262",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          19.25,
+          10.55,
+          7.8,
+          7.8
+        ]
+      },
+      {
+        "id": "C265",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          89.6,
+          3.7,
+          7.8,
+          7.8
+        ]
+      },
+      {
+        "id": "C273",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          27.5,
+          7.8,
+          7.8
+        ]
+      },
+      {
+        "id": "C511",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          106.4,
+          5.0,
+          6.5,
+          6.5
+        ]
+      },
+      {
+        "id": "C512",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          99.1,
+          3.7,
+          7.8,
+          7.8
+        ]
+      },
+      {
+        "id": "F102",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          65.5,
+          8.24,
+          17.5
+        ]
+      },
+      {
+        "id": "J104",
+        "kind": "header_edge_strip",
+        "rect": [
+          128.53,
+          9.5,
+          7.77,
+          17.66
+        ]
+      },
+      {
+        "id": "J105",
+        "kind": "header_edge_strip",
+        "rect": [
+          26.2,
+          -0.2,
+          13.0,
+          7.4
+        ]
+      },
+      {
+        "id": "J106",
+        "kind": "header_edge_strip",
+        "rect": [
+          44.7,
+          -0.2,
+          13.0,
+          7.4
+        ]
+      },
+      {
+        "id": "J107",
+        "kind": "header_edge_strip",
+        "rect": [
+          7.7,
+          -0.2,
+          13.0,
+          7.4
+        ]
+      },
+      {
+        "id": "J108",
+        "kind": "header_edge_strip",
+        "rect": [
+          70.6,
+          -0.2,
+          13.0,
+          11.6
+        ]
+      },
+      {
+        "id": "J109",
+        "kind": "header_edge_strip",
+        "rect": [
+          38.7,
+          -0.2,
+          6.5,
+          7.9
+        ]
+      },
+      {
+        "id": "J110",
+        "kind": "header_edge_strip",
+        "rect": [
+          57.2,
+          -0.2,
+          13.9,
+          6.5
+        ]
+      },
+      {
+        "id": "J111",
+        "kind": "header_edge_strip",
+        "rect": [
+          20.2,
+          -0.2,
+          6.5,
+          9.9
+        ]
+      },
+      {
+        "id": "J112",
+        "kind": "header_edge_strip",
+        "rect": [
+          83.1,
+          -0.2,
+          6.5,
+          11.9
+        ]
+      },
+      {
+        "id": "J113",
+        "kind": "header_edge_strip",
+        "rect": [
+          115.0,
+          11.2,
+          6.5,
+          7.9
+        ]
+      },
+      {
+        "id": "J114",
+        "kind": "header_edge_strip",
+        "rect": [
+          121.03,
+          -0.2,
+          7.77,
+          11.66
+        ]
+      },
+      {
+        "id": "J115",
+        "kind": "header_edge_strip",
+        "rect": [
+          121.03,
+          10.96,
+          7.77,
+          11.66
+        ]
+      },
+      {
+        "id": "J205",
+        "kind": "header_edge_strip",
+        "rect": [
+          15.1,
+          102.53,
+          11.66,
+          7.77
+        ]
+      },
+      {
+        "id": "J206",
+        "kind": "header_edge_strip",
+        "rect": [
+          107.8,
+          24.52,
+          18.16,
+          10.78
+        ]
+      },
+      {
+        "id": "J507",
+        "kind": "header_edge_strip",
+        "rect": [
+          115.0,
+          -0.2,
+          6.5,
+          11.9
+        ]
+      },
+      {
+        "id": "L101",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.13,
+          83.97,
+          8.26,
+          8.06
+        ]
+      },
+      {
+        "id": "L501",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          17.9,
+          86.9,
+          14.0,
+          14.0
+        ]
+      },
+      {
+        "id": "TP101",
+        "kind": "test_point_probe_window",
+        "rect": [
+          10.15,
+          39.45,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP102",
+        "kind": "test_point_probe_window",
+        "rect": [
+          4.0,
+          99.45,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP103",
+        "kind": "test_point_probe_window",
+        "rect": [
+          3.45,
+          10.65,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP104",
+        "kind": "test_point_probe_window",
+        "rect": [
+          21.25,
+          52.65,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP105",
+        "kind": "test_point_probe_window",
+        "rect": [
+          17.95,
+          43.1,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP106",
+        "kind": "test_point_probe_window",
+        "rect": [
+          38.51,
+          35.99,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP107",
+        "kind": "test_point_probe_window",
+        "rect": [
+          17.35,
+          73.43,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP108",
+        "kind": "test_point_probe_window",
+        "rect": [
+          20.35,
+          73.43,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP201",
+        "kind": "test_point_probe_window",
+        "rect": [
+          39.25,
+          13.77,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP202",
+        "kind": "test_point_probe_window",
+        "rect": [
+          42.75,
+          22.25,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP203",
+        "kind": "test_point_probe_window",
+        "rect": [
+          10.01,
+          67.85,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP204",
+        "kind": "test_point_probe_window",
+        "rect": [
+          38.55,
+          42.25,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP205",
+        "kind": "test_point_probe_window",
+        "rect": [
+          60.35,
+          9.95,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP211",
+        "kind": "test_point_probe_window",
+        "rect": [
+          2.51,
+          14.55,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP212",
+        "kind": "test_point_probe_window",
+        "rect": [
+          88.75,
+          32.05,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP213",
+        "kind": "test_point_probe_window",
+        "rect": [
+          39.25,
+          10.77,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP214",
+        "kind": "test_point_probe_window",
+        "rect": [
+          45.75,
+          22.25,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP215",
+        "kind": "test_point_probe_window",
+        "rect": [
+          5.51,
+          14.55,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP503",
+        "kind": "test_point_probe_window",
+        "rect": [
+          39.25,
+          29.75,
+          3.0,
+          3.0
+        ]
+      },
+      {
+        "id": "TP2903",
+        "kind": "test_point_probe_window",
+        "rect": [
+          91.75,
+          32.05,
+          3.0,
+          3.0
+        ]
+      }
+    ]
   },
   "height_zones": [
     {
@@ -7898,9 +8416,9 @@
         "pins": 20,
         "field_mm": [
           9.1,
-          9.1,
+          9.15,
           12.3,
-          28.3
+          28.35
         ]
       },
       {
@@ -7937,9 +8455,9 @@
         "ref": "J506",
         "pins": 9,
         "field_mm": [
-          25.275,
+          25.325,
           54.8,
-          27.025,
+          27.075,
           72.0
         ]
       }

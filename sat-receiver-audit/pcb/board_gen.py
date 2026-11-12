@@ -60,6 +60,8 @@ PLACEMENT_FIELDS = ('origin', 'z_bottom', 'facing')
 ZONE_PAD_CONNECTIONS = {'thermal': 'ZONE_CONNECTION_THERMAL', 'solid': 'ZONE_CONNECTION_FULL',
                         'tht_thermal': 'ZONE_CONNECTION_THT_THERMAL', 'none': 'ZONE_CONNECTION_NONE'}
 LAYER_TYPES = {'signal': 'LT_SIGNAL', 'power': 'LT_POWER', 'mixed': 'LT_MIXED'}
+# Optional spec key planned_cutouts (W2 PWRB-R): what each rule area of a planned cut-out may block.
+PLANNED_CUTOUT_BLOCKS = ('tracks', 'vias', 'zone_fills', 'pads')
 
 # Release v2.5.0 of https://github.com/freerouting/freerouting (published 2026-10-05, GPL-3.0; licence from
 # gh api repos/freerouting/freerouting/license). Asset digests read from the GitHub release API
@@ -759,6 +761,7 @@ def validate_spec(spec, board):
                              or not set(edge.get('layers', [])) <= set(copper) or not edge.get('layers')
                              or not set(edge.get('blocks', [])) <= {'tracks', 'vias'} or not edge.get('blocks')):
         raise SpecError(f'{board}: edge_keepout needs width_mm > 0, copper layers and blocks (tracks, vias)')
+    validate_planned_cutouts(spec, board, copper)
     for layer, kind in (spec['layers'].get('types') or {}).items():
         if layer not in copper or kind not in LAYER_TYPES:
             raise SpecError(f'{board}: layers.types {layer!r}: {kind!r} must name a copper layer of the board and one '
@@ -767,6 +770,43 @@ def validate_spec(spec, board):
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
     validate_bond_and_coupon(spec, board, nets)
+
+
+def validate_planned_cutouts(spec, board, copper):
+    """Optional spec key of W2 PWRB-R (standard library).
+
+    planned_cutouts {why, margin_mm > 0, layers [copper layers], blocks [tracks, vias, zone_fills, pads], rects [{id, rect
+    [x, y, w, h] board mm (contract frame, as cutouts_mm), why}]}: areas that become board cut-outs later (another board's
+    tall parts, header strips, probe windows) but are not Edge.Cuts yet. Each rect, grown by margin_mm (the copper-to-edge
+    clearance the cut will need), becomes a rule area on every listed layer, so the router, the pours and KiCad DRC keep
+    all copper out of it; pcb/check_boards.py audits the drawn copper against the rects.
+    """
+    pc = spec.get('planned_cutouts')
+    if pc is None:
+        return
+    if not isinstance(pc, dict) or not float(pc.get('margin_mm', 0)) > 0 or not str(pc.get('why', '')).strip() \
+            or not pc.get('layers') or not set(pc['layers']) <= set(copper) \
+            or not pc.get('blocks') or not set(pc['blocks']) <= set(PLANNED_CUTOUT_BLOCKS) \
+            or not isinstance(pc.get('rects'), list) or not pc['rects']:
+        raise SpecError(f'{board}: planned_cutouts needs why, margin_mm > 0, copper layers, blocks out of '
+                        f'{list(PLANNED_CUTOUT_BLOCKS)} and rects')
+    ids = [r.get('id') for r in pc['rects']]
+    if len(set(ids)) != len(ids) or not all(isinstance(i, str) and re.fullmatch(r'[A-Za-z0-9_]+', i) for i in ids):
+        raise SpecError(f'{board}: planned_cutouts rect ids must be unique [A-Za-z0-9_]+ names')
+    for r in pc['rects']:
+        rect = r.get('rect', [])
+        if len(rect) != 4 or not all(isinstance(v, (int, float)) for v in rect) or not (rect[2] > 0 and rect[3] > 0):
+            raise SpecError(f'{board}: planned_cutouts rect {r.get("id")} must be [x, y, w, h] with w, h > 0')
+
+
+def planned_cutout_boxes(spec):
+    """(id, box [x0, y0, x1, y1] grown by margin_mm) of every spec planned_cutouts rect (board mm); [] without the key."""
+    pc = spec.get('planned_cutouts')
+    if not pc:
+        return []
+    m = float(pc['margin_mm'])
+    return [(r['id'], (r['rect'][0] - m, r['rect'][1] - m, r['rect'][0] + r['rect'][2] + m, r['rect'][1] + r['rect'][3] + m))
+            for r in pc['rects']]
 
 
 def validate_bond_and_coupon(spec, board, nets):
@@ -1374,6 +1414,18 @@ def build_board(pcb, spec, contract, template, temp):
                     zone.SetDoNotAllowPads(False)
                     zone.SetDoNotAllowFootprints(False)
                     board.Add(zone)
+    pc = spec.get('planned_cutouts')
+    for cid, (x0, y0, x1, y1) in planned_cutout_boxes(spec):  # W2 PWRB-R: planned cut-outs, not Edge.Cuts yet
+        for name in pc['layers']:
+            zone = add_polygon_zone(pcb, board, frame, [(x0, y0), (x1, y0), (x1, y1), (x0, y1)], board.GetLayerID(name),
+                                    f'KO_CUT_{cid}_{name}')
+            zone.SetIsRuleArea(True)
+            zone.SetDoNotAllowTracks('tracks' in pc['blocks'])
+            zone.SetDoNotAllowVias('vias' in pc['blocks'])
+            zone.SetDoNotAllowZoneFills('zone_fills' in pc['blocks'])
+            zone.SetDoNotAllowPads('pads' in pc['blocks'])
+            zone.SetDoNotAllowFootprints(False)
+            board.Add(zone)
     for track in spec['pre_route'].get('tracks', []):
         layer = board.GetLayerID(track['layer'])
         for a, b in zip(track['path'], track['path'][1:]):
@@ -1825,6 +1877,11 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'layers': spec['layers'], 'stackup_contract': stackup,
         'outline_mm': contract['outline_mm'],
         **({'cutouts_mm': contract['cutouts_mm']} if contract.get('cutouts_mm') else {}),
+        **({'planned_cutouts': {'margin_mm': spec['planned_cutouts']['margin_mm'],
+                                'rule_areas': [{'id': cid, 'box_mm': [r4(v) for v in box]} for cid, box in planned_cutout_boxes(spec)],
+                                'note': 'rule areas (spec blocks) on the spec layers; DRC reports copper inside one, '
+                                        'pcb/check_boards.py planned_cutouts measures every copper item against the rects'}}
+           if spec.get('planned_cutouts') else {}),
         'holes': holes(spec, contract),
         'instances': [{'id': i['id'], 'placement': i.get('placement'), 'qty': i['qty'], 'refs': i['refs'], 'nets': i['nets']}
                       for i in spec['instances']['list']],
