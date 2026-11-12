@@ -6,7 +6,7 @@
     "t": 1.6,
     "layers": 4,
     "fab": "JLC JLC04161H-7628 (build/15)",
-    "components": "top side only (build/15), with two exceptions: PWR-A is two-sided (SHRINK-2, W2 MECH-7: chip R/C on the bottom over the plate pockets, boards PWR bottom_side) and the B2B half J209 sits on the PWR-B bottom (boards PWR_B b2b.bottom_side)"
+    "components": "top side only (build/15)"
   },
   "boards": {
     "PWR": {
