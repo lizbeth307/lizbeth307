@@ -631,11 +631,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          95.211,
-          13.033
+          95.2,
+          17.75
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 180,
         "side": "F"
       }
     },
@@ -645,11 +645,18 @@
       "anchor": {
         "at": [
           103.6,
-          14.7
+          13.5
         ],
         "align": "origin",
         "rotation": 270,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            103.6,
+            13.5
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -657,16 +664,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          109.026,
-          22.84
+          113.88,
+          13.7
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F",
         "ref_text": {
           "at": [
-            109.026,
-            22.84
+            113.88,
+            13.7
           ],
           "angle": 0
         }
@@ -677,19 +684,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          37.5,
-          26.5
+          111.03,
+          21.325
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            37.5,
-            26.5
-          ],
-          "angle": 0
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -730,11 +730,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          112.18,
-          15.097
+          94.75,
+          20.48
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 0,
         "side": "F"
       }
     },
@@ -961,19 +961,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          113.111,
-          23.259
+          98.25,
+          20.58
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            113.111,
-            23.259
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -981,19 +974,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.5,
-          22
+          37.5,
+          26.5
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            5.5,
-            22.0
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -1458,7 +1444,7 @@
       "anchor": {
         "at": [
           108,
-          16.4
+          15.2
         ],
         "align": "origin",
         "rotation": 0,
@@ -1761,11 +1747,18 @@
       "anchor": {
         "at": [
           100.3,
-          14.8
+          13.6
         ],
         "align": "origin",
         "rotation": 270,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            100.3,
+            13.6
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -1787,7 +1780,7 @@
       "anchor": {
         "at": [
           102.2,
-          17.8
+          16.6
         ],
         "align": "origin",
         "rotation": 0,
@@ -1799,12 +1792,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          95.835,
-          20.38
+          117.33,
+          20.35
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F"
+        "rotation": 180,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            117.33,
+            20.35
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -2344,12 +2344,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          115.663,
-          20.465
+          116.3,
+          22.8
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            116.3,
+            22.8
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -2357,16 +2364,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          118.555,
-          20.609
+          118.85,
+          22.8
         ],
         "align": "origin",
         "rotation": 0,
         "side": "F",
         "ref_text": {
           "at": [
-            118.555,
-            20.609
+            118.85,
+            22.8
           ],
           "angle": 0
         }
@@ -2477,7 +2484,7 @@
       "anchor": {
         "at": [
           97,
-          16.2
+          15.0
         ],
         "align": "origin",
         "rotation": 0,
@@ -3187,15 +3194,15 @@
         "path": [
           [
             98.1375,
-            17.15
+            15.95
           ],
           [
             99.8975,
-            17.15
+            15.95
           ],
           [
             100.7375,
-            17.8
+            16.6
           ]
         ],
         "locked": true,
@@ -3209,11 +3216,11 @@
         "path": [
           [
             103.6625,
-            17.8
+            16.6
           ],
           [
             106.345,
-            17.8
+            16.6
           ]
         ],
         "locked": true,
@@ -3227,11 +3234,11 @@
         "path": [
           [
             103.6,
-            15.65
+            14.45
           ],
           [
             103.6,
-            17.8
+            16.6
           ]
         ],
         "locked": true,
@@ -3245,7 +3252,7 @@
         "path": [
           [
             100.7375,
-            18.675
+            17.475
           ],
           [
             100.7375,
@@ -3303,15 +3310,15 @@
         "path": [
           [
             103.6625,
-            18.675
+            17.475
           ],
           [
             103.6625,
-            21.2
+            19.0
           ],
           [
             113.75,
-            21.2
+            19.0
           ]
         ],
         "locked": true,
@@ -3325,7 +3332,7 @@
         "path": [
           [
             113.75,
-            21.2
+            19.0
           ],
           [
             113.75,
@@ -3912,12 +3919,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            96.161,
-            13.033
+            94.25,
+            17.75
           ],
           [
-            97.211,
-            13.033
+            94.25,
+            19.025
           ]
         ],
         "locked": true,
@@ -3931,11 +3938,11 @@
         "path": [
           [
             103.6,
-            13.75
+            12.55
           ],
           [
             104.875,
-            13.75
+            12.55
           ]
         ],
         "locked": true,
@@ -3948,12 +3955,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            109.976,
-            22.84
+            113.88,
+            14.65
           ],
           [
-            111.026,
-            22.84
+            112.731,
+            15.799
           ]
         ],
         "locked": true,
@@ -3966,12 +3973,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            39.7,
-            26.5
+            108.83,
+            21.325
           ],
           [
-            37.65,
-            26.5
+            110.2796,
+            22.7746
           ]
         ],
         "locked": true,
@@ -4020,16 +4027,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            112.18,
-            16.047
+            95.7,
+            20.48
           ],
           [
-            112.18,
-            15.147
-          ],
-          [
-            112.8871,
-            15.8541
+            95.7,
+            21.755
           ]
         ],
         "locked": true,
@@ -4222,12 +4225,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            114.061,
-            23.259
+            99.2,
+            20.58
           ],
           [
-            115.111,
-            23.259
+            99.2,
+            21.855
           ]
         ],
         "locked": true,
@@ -4240,12 +4243,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            5.5,
-            24.2
+            35.3,
+            26.5
           ],
           [
-            6.85,
-            24.2
+            37.35,
+            26.5
           ]
         ],
         "locked": true,
@@ -4637,11 +4640,11 @@
         "path": [
           [
             100.3,
-            13.975
+            12.775
           ],
           [
             101.325,
-            13.975
+            12.775
           ]
         ],
         "locked": true,
@@ -4997,15 +5000,11 @@
         "path": [
           [
             95.8625,
-            16.2
+            15.0
           ],
           [
-            96.925,
-            16.2
-          ],
-          [
-            96.925,
-            14.0
+            94.65,
+            15.0
           ]
         ],
         "locked": true,
@@ -5274,7 +5273,7 @@
         "net": "E2_LNA4_SHUNT",
         "at": [
           113.75,
-          21.2
+          19.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5309,7 +5308,7 @@
         "id": "GND-J209-V3",
         "net": "GND",
         "at": [
-          94.0,
+          97.2,
           18.5
         ],
         "drill_mm": 0.3,
@@ -5321,7 +5320,7 @@
         "id": "GND-J209-V4",
         "net": "GND",
         "at": [
-          95.2,
+          98.4,
           18.5
         ],
         "drill_mm": 0.3,
@@ -5333,7 +5332,7 @@
         "id": "GND-J209-V5",
         "net": "GND",
         "at": [
-          96.4,
+          99.6,
           18.5
         ],
         "drill_mm": 0.3,
@@ -5345,7 +5344,7 @@
         "id": "GND-J209-V6",
         "net": "GND",
         "at": [
-          97.6,
+          101.5,
           18.5
         ],
         "drill_mm": 0.3,
@@ -5357,31 +5356,7 @@
         "id": "GND-J209-V7",
         "net": "GND",
         "at": [
-          98.8,
-          18.5
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "plane via on the J209 GND spine"
-      },
-      {
-        "id": "GND-J209-V8",
-        "net": "GND",
-        "at": [
-          101.9,
-          18.5
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true,
-        "why": "plane via on the J209 GND spine"
-      },
-      {
-        "id": "GND-J209-V9",
-        "net": "GND",
-        "at": [
-          107.5,
+          102.7,
           18.5
         ],
         "drill_mm": 0.3,
@@ -5537,8 +5512,8 @@
         "id": "GND-C244-2-V",
         "net": "GND",
         "at": [
-          97.211,
-          13.033
+          94.25,
+          19.025
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5550,7 +5525,7 @@
         "net": "GND",
         "at": [
           104.875,
-          13.75
+          12.55
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5561,8 +5536,8 @@
         "id": "GND-C246-2-V",
         "net": "GND",
         "at": [
-          111.026,
-          22.84
+          112.731,
+          15.799
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5573,8 +5548,8 @@
         "id": "GND-C247-2-V",
         "net": "GND",
         "at": [
-          37.65,
-          26.5
+          110.2796,
+          22.7746
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5609,8 +5584,8 @@
         "id": "GND-C250-2-V",
         "net": "GND",
         "at": [
-          112.8871,
-          15.8541
+          95.7,
+          21.755
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5741,8 +5716,8 @@
         "id": "GND-C297-2-V",
         "net": "GND",
         "at": [
-          115.111,
-          23.259
+          99.2,
+          21.855
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5753,8 +5728,8 @@
         "id": "GND-C298-2-V",
         "net": "GND",
         "at": [
-          6.85,
-          24.2
+          37.35,
+          26.5
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6018,7 +5993,7 @@
         "net": "GND",
         "at": [
           101.325,
-          13.975
+          12.775
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6257,8 +6232,8 @@
         "id": "GND-U209-2-V",
         "net": "GND",
         "at": [
-          96.925,
-          14.0
+          94.65,
+          15.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -7358,7 +7333,7 @@
       "board": "PWR_A",
       "ref": "J208",
       "pin_map": "pin n of J208 (PWR-A) meets pin n+1 of J209 (PWR-B) for n odd and pin n-1 for n even; the map is its own inverse",
-      "rule": "PWR_A has no board of record yet (W2 PCB-PWRA-3 placed it in a study: build/kicad/boards/PWR_A/placement-study-shrink2.json, J208 at [98.8, 18.5] rotation 0 on the top, its b2b check against J209 0 net differences); J209 = J208 mirrored about the strip axis, so J209 pad m lies over J208 pad m+1 for m odd and m-1 for m even, and the alignment holes coincide; the check_boards b2b pair joins both specs once PWR_A has a board of record (W2 PCB-PWRA-4); a geometric pad-over-pad check is not in check_boards yet (OPEN, build/15 W2 B2B)"
+      "rule": "PWR_A has no board of record yet (W2 PCB-PWRA-3 placed it in a study: build/kicad/boards/PWR_A/placement-study-shrink2.json, J208 at [98.8, 18.5] rotation 0 on the top, its b2b check against J209 0 net differences); J209 = J208 mirrored about the strip axis, so J209 pad m lies over J208 pad m+1 for m odd and m-1 for m even, and its alignment-post holes are mirrored too, they do not coincide: J208 has them at (+/-13.5, +0.85) and J209 at (+/-13.5, -0.85) off the strip centre (b2b-nets.json mating_map.placement); the check_boards b2b pair joins both specs once PWR_A has a board of record (W2 PCB-PWRA-4); a geometric pad-over-pad check is not in check_boards yet (OPEN, build/15 W2 B2B)"
     },
     "source": "pcb/generated/b2b-nets.json sha256 e5e6500288f924365530277f1b857d054c7b455260791d6499935e8709975802",
     "rule": "J209 pad nets are its graph pins, which equal b2b-nets.json contacts[].pwr_b_pin (make_spec.py b2b_pin_map stops on any difference); the map itself is pcb/prepare.py b2b_contacts (pin_map_rule, guard_rule in b2b-nets.json)",
@@ -7370,7 +7345,7 @@
   "placement_rules": {
     "edges": "W2 PCB-PWRB-2 (SHRINK-2 without the S02 FFC and without the J204 + J207 PHD merge): J204 and J207 on the top span x 58-107 of contract edge zone 1 (mechanical/generated/contract/boards.json PWR_B), mating faces 4.51 mm inboard of the edge (R-PWRB-EXIT set_back_min_mm of zone 1) and no part in front of them (plug zones). The S02 headers J202, J203 and J201 and the PH 9 J506 are parked inside the board without a harness exit: zone 0 (right edge) is covered by the PWR-A strips of J104, J113-J115 and J507 and two hole keep-outs, zone 2 (bottom span x 93-114.5) by the PWR-A windows of C265, C512 and C511 of the PCB-PWRA-3 placement. OPEN for MECH and PCB-PWRA-4 (build/15 W2 PCB-PWRB-2); check_boards does not check edge zones",
     "cutouts": "no top courtyard over a PWR-A cut-out (pwr_a_cutouts); pads, scripted copper and scripted vias keep the edge clearance 0.35 mm from them as from a board edge; the router does not know them until they are Edge.Cuts, so the routed copper of record may cross them (re-route after the contract change, OPEN)",
-    "kelvin": "INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL); every shunt net is scripted copper (current path plus sense take-off from the shunt pads) up to the 10 ohm INA3221 filter resistors next to each shunt; the filtered input nets E2_U215_IP1-3 / IM1-3 from those resistors to U215 are autorouted as separate nets, not as pairs (lengths in build/15 W2 PCB-PWRB), so INA3221 accuracy stays a bench gate; ch4 senses through the B2B to U216 on PWR-A"
+    "kelvin": "INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL; a deviation from the W2 PCB-PWRB-2 brief, which asked for U215 at its shunts, accepted in build/15 W2 PCB-PWRB-2); every shunt net is scripted copper (current path plus sense take-off from the shunt pads) up to the 10 ohm INA3221 filter resistors next to each shunt; the filtered input nets E2_U215_IP1-3 / IM1-3 from those resistors to U215 are autorouted as separate nets, not as pairs (routed lengths of the board of record in build/kicad/boards/PWR_B/README.md and build/15 W2 PCB-PWRB-2), so INA3221 accuracy stays a bench gate; ch4 senses through the B2B to U216 on PWR-A"
   },
   "pwr_a_cutouts": {
     "source": "build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts (sha256 of the list: 28e103fbd0b2eb88bb76724c156b129b85da0e9b0dc3a3e6946a04c09da4b67a; make_spec.py cutouts_digest)",

@@ -262,33 +262,41 @@ class Inputs:
 #  * LNA ch1-ch3 keep the Kelvin cell of the W2 PCB-PWRB lineage (LNA_ROWS) without its output parts (cout, rdamp, test
 #    point, damper), which stand near their nets: ch1 in the arm, ch2 between the J105 / J106 strips and J204, ch3 in
 #    the upper arm; ch4 over the right half of J209 next to its sense contacts 99 / 100.
+#  * ch4 output (iteration 2, review F1 of W2 PCB-PWRB-2): route run 43241032279 left the 62 mm link from the damper C247
+#    in the arm to R247 open, and the J209 strip has no room for the ch4 cell, C247 and L210 side by side (each spans
+#    the alignment-hole rows y 16.9-18.4 between the holes x 86.0-111.6). So the ch4 cell stands 1.2 mm lower (C245
+#    pads keep 0.35 mm from the C512 window), C247 stands over L209 between the J204 courtyard and the J113 strip, with
+#    R247, TP209 and TP210 to its right above the J113 strip; C246 stands right of L209 below the alignment hole, and
+#    C244, C250 and C297 take the place R247 had over J209. The ch4 SHUNT sense runs east between L209 and C247
+#    (K4_SH_FY).
 #  * Three LAB5 switches stand on the F.Cu trunk at TY next to the lower-row LAB5 contacts of J209, the fourth west of
-#    J204 on a tap (LAB5_CELLS).
+#    J207 on a tap (LAB5_CELLS).
 #  * The ten 16SVPG47M (dampers C235 C239 C243 C247 C251 C298, C503, C506 C521 C522), the two SOIC-8 blocking stages and
-#    L215 take the free 6 x 8 mm places of the cut-out map (there are as many places as parts; the assignment keeps each
-#    near its nets where it can); the remaining parts were packed next to the pads of their nets, 0.2 mm apart.
+#    L215 take 6 x 8 mm places: C247 the place over L209 above, the others the free places of the cut-out map (C298 the
+#    arm place C247 had before iteration 2, 18 mm from R295 instead of 51 mm; the assignment keeps each near its nets
+#    where it can); the remaining parts were packed next to the pads of their nets, 0.2 mm apart.
 PLACEMENT = {
     'C232': (2.1, 59.2, 0), 'C233': (10.7, 54.5, 270), 'C234': (51.737, 33.918, 0), 'C235': (18, 49.5, 0),
     'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (37.467, 34.284, 90), 'C239': (30, 14, 90),
     'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 0),
-    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (109.026, 22.84, 0), 'C247': (37.5, 26.5, 0),
-    'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (112.18, 15.097, 90), 'C251': (36, 12, 90),
+    'C244': (95.2, 17.75, 180), 'C245': (103.6, 13.5, 270), 'C246': (113.88, 13.7, 90), 'C247': (111.03, 21.325, 180),
+    'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.75, 20.48, 0), 'C251': (36, 12, 90),
     'C274': (16.312, 60.638, 0), 'C275': (37.425, 37.725, 90), 'C276': (18.488, 72.388, 0), 'C277': (36.97, 46.405, 90),
     'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
     'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
-    'C297': (113.111, 23.259, 0), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
+    'C297': (98.25, 20.58, 0), 'C298': (37.5, 26.5, 180), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
     'C503': (38.5, 20.5, 0), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (37.5, 73, 0),
     'C507': (36.46, 76.867, 0), 'C521': (31, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
     'C551': (38.651, 50.429, 90), 'C2901': (55.363, 33.73, 0), 'C2902': (40.167, 77.567, 0), 'C2911': (20.334, 42.046, 0),
     'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (2.95, 49.8, 0),
     'J202': (9.7, 9.7, 90), 'J203': (15.7, 39.95, 0), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
     'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.15, 55.4, 90), 'L206': (15.1, 56.2, 0), 'L207': (57.15, 13.2, 0),
-    'L208': (23.1, 80.7, 0), 'L209': (108, 16.4, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
+    'L208': (23.1, 80.7, 0), 'L209': (108, 15.2, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
     'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.119, 0), 'R228': (7.4, 54.6, 270),
     'R229': (2.1, 52.9, 0), 'R231': (9.3, 57.6, 0), 'R232': (39.368, 40.813, 0), 'R233': (49.45, 11.6, 270),
     'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (31.066, 28.988, 0), 'R238': (15.4, 79.1, 270),
-    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (22.251, 85.185, 0), 'R243': (100.3, 14.8, 270),
-    'R244': (76.281, 16.475, 0), 'R246': (102.2, 17.8, 0), 'R247': (95.835, 20.38, 0), 'R248': (77.5, 19.5, 90),
+    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (22.251, 85.185, 0), 'R243': (100.3, 13.6, 270),
+    'R244': (76.281, 16.475, 0), 'R246': (102.2, 16.6, 0), 'R247': (117.33, 20.35, 180), 'R248': (77.5, 19.5, 90),
     'R249': (83.5, 18.9, 90), 'R251': (59.385, 19.013, 90), 'R268': (8, 60.3, 90), 'R269': (10.6, 60.3, 90),
     'R270': (50.05, 17.3, 90), 'R271': (52.65, 17.3, 90), 'R272': (16, 84.8, 90), 'R273': (18.6, 84.8, 90),
     'R280': (85.517, 20.651, 90), 'R281': (53.817, 23.411, 90), 'R283': (51.5, 25.856, 90), 'R284': (20.217, 22.522, 90),
@@ -298,9 +306,9 @@ PLACEMENT = {
     'R551': (35.826, 42.961, 90), 'R2901': (17.112, 44.38, 90), 'R2902': (1.931, 96.061, 90), 'R2911': (30.635, 43.025, 0),
     'R2912': (2.025, 100.365, 90), 'R2921': (48.167, 27.094, 0), 'R2922': (17.073, 98.016, 90),
     'TP206': (51.499, 31.293, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
-    'TP209': (115.663, 20.465, 0), 'TP210': (118.555, 20.609, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
+    'TP209': (116.3, 22.8, 0), 'TP210': (118.85, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
     'TP2902': (40.679, 80.317, 0), 'U206': (4.1, 56, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
-    'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
+    'U209': (97, 15.0, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
     'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90), 'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90),
     'U502': (64.5, 20, 90), 'U507': (4.5, 38.5, 0),
 }
@@ -337,7 +345,7 @@ LAB5_VY = 15.35  # LAB5 vias below the lower J209 contact row
 # input capacitor cA; the 100 nF cB sits with pad 1 on the run; the current-limit resistor stands left of the switch.
 # Three cells stand on the trunk (run = TY). The fourth (U501, RTL-A) has no place on the trunk: east of U210 the
 # J209 alignment hole and the GND spine under the rail block leave no fan-out for its GND pin, west of U502 stand the
-# PWR-A TP205 probe window and the ch2 Kelvin cell; it stands west of J204 instead, fed by a LAB5 tap off the west end of
+# PWR-A TP205 probe window and the ch2 Kelvin cell; it stands west of J207 instead, fed by a LAB5 tap off the west end of
 # the trunk (x LAB5_TAP_X, up to the run y LAB5_TAP_Y under the cell).
 LAB5_CELLS = [  # switch axis x, run y, refs
     (64.5, TY, dict(U='U502', cA='C505', cB='C504', ren='R506', rilim='R505')),
@@ -345,7 +353,7 @@ LAB5_CELLS = [  # switch axis x, run y, refs
     (80.5, TY, dict(U='U210', cA='C248', ren='R249', rilim='R248')),
     (56.5, 22.6, dict(U='U501', cA='C502', cB='C501', ren='R502', rilim='R501'))]
 LAB5_TAP_X = 62.6   # LAB5 tap: west end of the trunk, between R505 and the U502 branch
-LAB5_TAP_Y = 22.6   # run of the fourth cell: below the J204 pin 8 pad (y >= 23.37), above U502's current-limit resistor
+LAB5_TAP_Y = 22.6   # run of the fourth cell: below the J207 pin 12 pad (y >= 23.37), above U502's current-limit resistor
 
 
 def placement(inp):
@@ -689,7 +697,8 @@ SPINE_VIAS_MIN = 4
 SPINE_VIA_PITCH = 1.2     # spine plane vias at least this far apart: 0.5 mm between them for one F.Cu track
 W_PAIR = 0.8              # copper of one LAB5 contact pair (2 A): PWR2A width (netclasses.json)
 K4_UP_VY = 22.0           # ch4 SW sense: via above the upper J209 row (pad tops 21.1), below the J207 pins (23.4)
-K4_SH_FY = 21.2           # ch4 SHUNT sense: F.Cu east above L209 (pads to 18.8) to its via right of the alignment hole
+K4_SH_FY = 19.0           # ch4 SHUNT sense: F.Cu east between L209 (pads to 17.55) and C247 (pads from 20.5) to its via
+                          # right of the alignment hole (hole box to 18.4)
 K4_LO_VY = 14.9           # ch4 SHUNT sense: B.Cu west under the lower J209 row (pad bottoms 15.9) into its contact
 
 
@@ -799,7 +808,7 @@ def scripted_copper(inp, parts, pins):
             continue
         # ch4: the sense pair crosses the B2B to INA3221 #2 U216 on PWR-A (declared sense pair, partition-spec b2b). Its
         # contacts are J209 column 50 at the right end of the strip: SW in the upper row, SHUNT in the lower row. The shunt
-        # R246 stands over J209 between the rows, where the B.Cu carries the GND spine, so each take-off leaves the top of
+        # R246 stands over the J209 contact rows, where no via fits and the B.Cu carries the GND spine, so each take-off leaves the top of
         # its shunt pad on F.Cu (the current path enters pad 1 from the left and leaves pad 2 to the right and below):
         #  * SW: F.Cu up to a via above the upper row (K4_UP_VY), B.Cu east over the spare upper contacts and down into its
         #    contact from above;
@@ -852,7 +861,8 @@ def scripted_copper(inp, parts, pins):
     # B.Cu between the rows carries only the spine, every rail and signal contact escapes outwards)
     k, last, x = 0, None, x0
     while x <= x1 + 1e-9:
-        if (last is None or x - last >= SPINE_VIA_PITCH - 1e-9) and                 min(abs(x - x0), abs(x - x1)) >= VIA_D / 2 + 0.05 and via_spot_ok(inp, parts, tracks, vias, (x, sy), 'GND'):
+        if (last is None or x - last >= SPINE_VIA_PITCH - 1e-9) and min(abs(x - x0), abs(x - x1)) >= VIA_D / 2 + 0.05 \
+                and via_spot_ok(inp, parts, tracks, vias, (x, sy), 'GND'):
             k += 1
             V(f'GND-J209-V{k}', 'GND', (x, sy), 'plane via on the J209 GND spine')
             last = x
@@ -1159,7 +1169,9 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                               f'{PWRA_STUDY.relative_to(BASE).as_posix()}, {B2B_MATE_REF} at {list(B2B_AT)} rotation 0 on the top, '
                               f'its b2b check against {B2B_REF} 0 net differences); {B2B_REF} = {B2B_MATE_REF} mirrored about '
                               f'the strip axis, so {B2B_REF} pad m lies over {B2B_MATE_REF} pad m+1 for m odd and m-1 for m even, '
-                              'and the alignment holes coincide; the check_boards b2b pair joins both specs once PWR_A has a board '
+                              'and its alignment-post holes are mirrored too, they do not coincide: J208 has them at (+/-13.5, '
+                              '+0.85) and J209 at (+/-13.5, -0.85) off the strip centre (b2b-nets.json mating_map.placement); '
+                              'the check_boards b2b pair joins both specs once PWR_A has a board '
                               'of record (W2 PCB-PWRA-4); a geometric pad-over-pad check is not in check_boards yet (OPEN, '
                               'build/15 W2 B2B)')},
             'source': f'pcb/generated/b2b-nets.json sha256 {b2b_sha}',
@@ -1180,11 +1192,13 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
             'cutouts': 'no top courtyard over a PWR-A cut-out (pwr_a_cutouts); pads, scripted copper and scripted vias keep the '
                        'edge clearance 0.35 mm from them as from a board edge; the router does not know them until they are '
                        'Edge.Cuts, so the routed copper of record may cross them (re-route after the contract change, OPEN)',
-            'kelvin': 'INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL); every shunt net is scripted copper (current path plus sense '
+            'kelvin': 'INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL; a deviation from the '
+                      'W2 PCB-PWRB-2 brief, which asked for U215 at its shunts, accepted in build/15 W2 PCB-PWRB-2); every shunt '
+                      'net is scripted copper (current path plus sense '
                       'take-off from the shunt pads) up to the 10 ohm INA3221 filter resistors next to each shunt; the filtered '
                       'input nets E2_U215_IP1-3 / IM1-3 from those resistors to U215 are autorouted as separate nets, not as pairs '
-                      '(lengths in build/15 W2 PCB-PWRB), so INA3221 accuracy stays a bench gate; ch4 senses through the B2B to '
-                      'U216 on PWR-A'},
+                      '(routed lengths of the board of record in build/kicad/boards/PWR_B/README.md and build/15 W2 PCB-PWRB-2), '
+                      'so INA3221 accuracy stays a bench gate; ch4 senses through the B2B to U216 on PWR-A'},
         'pwr_a_cutouts': {
             'source': f'{PWRA_STUDY.relative_to(BASE).as_posix()} pwr_b_cutouts (sha256 of the list: {inp.cutouts_sha}; '
                       'make_spec.py cutouts_digest)',
