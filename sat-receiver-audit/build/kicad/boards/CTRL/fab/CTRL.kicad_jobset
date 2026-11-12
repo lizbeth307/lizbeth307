@@ -1,0 +1,117 @@
+{
+  "jobs": [
+    {
+      "id": "0215e31e-3faa-5ae0-8184-7ab0547e8f71",
+      "type": "pcb_export_gerbers",
+      "description": "Gerber X2 (netlist attributes, Protel extensions)",
+      "settings": {
+        "description": "",
+        "output_filename": "gerber",
+        "layers": [
+          "F.Cu",
+          "In1.Cu",
+          "In2.Cu",
+          "B.Cu",
+          "F.Paste",
+          "B.Paste",
+          "F.SilkS",
+          "B.SilkS",
+          "F.Mask",
+          "B.Mask",
+          "Edge.Cuts"
+        ],
+        "layers_to_include_on_all_layers": [],
+        "mirror": false,
+        "black_and_white": false,
+        "negative": false,
+        "plot_footprint_values": true,
+        "plot_ref_des": true,
+        "hide_dnp_footprints_on_fab_layers": false,
+        "sketch_dnp_footprints_on_fab_layers": true,
+        "crossout_dnp_footprints_on_fab_layers": true,
+        "sketch_pads_on_fab_layers": false,
+        "plot_pad_numbers": false,
+        "plot_drawing_sheet": false,
+        "subtract_solder_mask_from_silk": true,
+        "use_drill_origin": false,
+        "drawing_sheet": "",
+        "check_zones": false,
+        "variant": "",
+        "drill_shape": "none",
+        "include_netlist_attributes": true,
+        "use_x2_format": true,
+        "disable_aperture_macros": false,
+        "use_protel_file_extension": true,
+        "precision": 6,
+        "create_gerber_job_file": true
+      }
+    },
+    {
+      "id": "d7533b74-36c1-51e7-b094-4278f6b053ae",
+      "type": "pcb_export_drill",
+      "description": "Excellon PTH/NPTH, mm, decimal, Gerber X2 map",
+      "settings": {
+        "description": "",
+        "output_dir": "drill",
+        "excellon.mirror_y": false,
+        "excellon.minimal_header": false,
+        "excellon.combine_pth_npth": false,
+        "excellon.oval_drill_route": false,
+        "format": "excellon",
+        "drill_origin": "abs",
+        "units": "mm",
+        "zero_format": "decimal",
+        "generate_map": true,
+        "generate_tenting": false,
+        "map_format": "gerberx2",
+        "gerber_precision": 6,
+        "generate_report": false,
+        "report_filename": ""
+      }
+    },
+    {
+      "id": "1a5de9a5-40b4-5bda-a72a-e3d93afcdb89",
+      "type": "pcb_export_ipcd356",
+      "description": "IPC-D-356 netlist",
+      "settings": {
+        "description": "",
+        "output_filename": "CTRL.ipc356"
+      }
+    },
+    {
+      "id": "98e62d70-394d-5d38-ac26-fc323f6dc4c0",
+      "type": "pcb_export_pos",
+      "description": "Positions, CSV, mm, both sides, DNP excluded",
+      "settings": {
+        "description": "",
+        "output_filename": "assembly/CTRL-pos-kicad.csv",
+        "use_drill_place_file_origin": false,
+        "smd_only": false,
+        "exclude_footprints_with_th": false,
+        "exclude_dnp": true,
+        "exclude_bom": false,
+        "negate_bottom_x": false,
+        "single_file": true,
+        "gerber_board_edge": true,
+        "side": "both",
+        "units": "mm",
+        "format": "csv",
+        "variant": ""
+      }
+    }
+  ],
+  "meta": {
+    "version": 1
+  },
+  "outputs": [
+    {
+      "id": "03ea37ca-03d8-5ac4-a8c4-fd1ba3420888",
+      "type": "folder",
+      "description": "raw KiCad exports (dates not normalised)",
+      "only": [],
+      "settings": {
+        "output_path": "${KIPRJMOD}/fab-jobset-raw"
+      }
+    }
+  ]
+}

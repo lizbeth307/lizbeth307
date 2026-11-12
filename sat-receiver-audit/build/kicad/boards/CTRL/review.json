@@ -1,0 +1,885 @@
+{
+  "schema": "srrx-board-review-v1",
+  "board_id": "CTRL",
+  "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "pcb/check_boards.py",
+  "result": "NO_FINDINGS",
+  "inputs": {
+    "board_file": {
+      "path": "build/kicad/boards/CTRL/CTRL.kicad_pcb",
+      "sha256": "ef220b4b494ba209370723bb9d6950b00d108271665355dbb3393be6256498c2"
+    },
+    "projection_sha256": {
+      "graph_refs_pins_nets": "6eb8d51bfb194ad771d71c709ba5644074201d003cda028cc8734b12b0771caa",
+      "footprints": "0de7c77db8fc3bc419ee86990374d14aaea960250557b0857cd9ede3c585764a",
+      "contract_board": "96fe8c877caa82bebdfce32af0e7d734ce2e6e5017bedd287c056513312cebb8",
+      "netclasses": "3361c7b41deccf729d806f1dabc5f19442c8b60a15c7e821bbf14cfba7252284",
+      "spec": "8674bc954b938ead70333ef8441dca8cef408d99e1fc5cda9c7ba928f067958b"
+    },
+    "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
+  },
+  "frame": {
+    "origin": [
+      100.0,
+      244.0
+    ],
+    "y": "up",
+    "source": "Edge.Cuts bounding box"
+  },
+  "counts": {
+    "footprints": 153,
+    "pads": 637,
+    "tracks": 2922,
+    "vias": 382,
+    "zones": 67,
+    "holes": 9,
+    "copper_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ]
+  },
+  "checks": {
+    "outline": {
+      "findings": 0,
+      "area_mm2": 5915.0,
+      "loops": 3
+    },
+    "holes": {
+      "findings": 0,
+      "contract_holes": 6,
+      "board_holes": 9
+    },
+    "keepouts": {
+      "findings": 0,
+      "keepout_r_mm": 3.0,
+      "tolerance_mm": 0.005
+    },
+    "pad_nets": {
+      "findings": 0,
+      "expected_refs": 147,
+      "board_footprints": 153
+    },
+    "class_widths": {
+      "findings": 0,
+      "tracks_checked": 2859,
+      "pour_necks": [],
+      "split_nets": {}
+    },
+    "rf50": {
+      "findings": 0,
+      "rf50_segments": 0
+    },
+    "gnd_chassis_ties": {
+      "findings": 0,
+      "ties": [],
+      "expected": 0
+    },
+    "b2b": {
+      "findings": 0,
+      "pairs": 0
+    },
+    "tht_pockets": {
+      "findings": 0,
+      "applies": false
+    },
+    "heights": {
+      "findings": 0,
+      "checked": 17
+    },
+    "pth_annular": {
+      "findings": 0,
+      "floor_mm": 0.15,
+      "fab_floor": "jlc_4l_1oz"
+    }
+  },
+  "findings": [],
+  "unverified": [
+    {
+      "check": "class_widths",
+      "item": "C320 branch on LAB5",
+      "reason": "branch_exempt: 4 track piece(s), path 8.9 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: fan switch Q304 source on LAB5: E3_FAN5 (Q304 drain to F301) is sized for the F102 4 A protective current (netclasses.json PWR3A, Q304 has no current limit), but the LAB5 feed of Q304 is this branch: the deviation is recorded in build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\". LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "C321 branch on LAB5",
+      "reason": "branch_exempt: 12 track piece(s), path 11.449 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "C322 branch on LAB5",
+      "reason": "branch_exempt: 35 track piece(s), path 77.289 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "C342 branch on E3_BLOWER_GND",
+      "reason": "branch_exempt: 3 track piece(s), path 13.46 mm <= 80.0 mm, width >= 0.3 mm left out of the PWR3A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\") E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; scripted at 0.4 mm (C342, between the J317 pins 3 and 2) and 0.3 mm (C343, between C343 and R363): 0.3 mm of 1 oz outer copper carries about 1.0 A at +10 degC (IPC-2221 external, k 0.048)"
+    },
+    {
+      "check": "class_widths",
+      "item": "C342 branch on LAB5",
+      "reason": "branch_exempt: 7 track piece(s), path 29.402 mm <= 80.0 mm, width >= 0.3 mm left out of the PWR3A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\") E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; scripted at 0.4 mm (C342, between the J317 pins 3 and 2) and 0.3 mm (C343, between C343 and R363): 0.3 mm of 1 oz outer copper carries about 1.0 A at +10 degC (IPC-2221 external, k 0.048)"
+    },
+    {
+      "check": "class_widths",
+      "item": "C343 branch on E3_BLOWER_GND",
+      "reason": "branch_exempt: 2 track piece(s), path 17.78 mm <= 80.0 mm, width >= 0.3 mm left out of the PWR3A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\") E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; scripted at 0.4 mm (C342, between the J317 pins 3 and 2) and 0.3 mm (C343, between C343 and R363): 0.3 mm of 1 oz outer copper carries about 1.0 A at +10 degC (IPC-2221 external, k 0.048)"
+    },
+    {
+      "check": "class_widths",
+      "item": "C343 branch on LAB5",
+      "reason": "branch_exempt: 1 track piece(s), path 2.42 mm <= 80.0 mm, width >= 0.3 mm left out of the PWR3A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\") E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower supply (C342 bulk, C343 decoupling): ripple current only, no DC path; scripted at 0.4 mm (C342, between the J317 pins 3 and 2) and 0.3 mm (C343, between C343 and R363): 0.3 mm of 1 oz outer copper carries about 1.0 A at +10 degC (IPC-2221 external, k 0.048)"
+    },
+    {
+      "check": "class_widths",
+      "item": "D301 branch on LAB5",
+      "reason": "branch_exempt: 25 track piece(s), path 67.384 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "D306 branch on E3_BLOWER_GND",
+      "reason": "branch_exempt: 4 track piece(s), path 16.535 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: flyback diode D306 cathode on LAB5: it conducts the blower current only while the coil current decays after Q305 turns off (ms); LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "D306 branch on LAB5",
+      "reason": "branch_exempt: 25 track piece(s), path 77.189 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: flyback diode D306 cathode on LAB5: it conducts the blower current only while the coil current decays after Q305 turns off (ms); LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "Q304 branch on E3_FAN5",
+      "reason": "branch_exempt: 1 track piece(s), path 1.825 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: fan switch Q304 source on LAB5: E3_FAN5 (Q304 drain to F301) is sized for the F102 4 A protective current (netclasses.json PWR3A, Q304 has no current limit), but the LAB5 feed of Q304 is this branch: the deviation is recorded in build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\". LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "Q304 branch on LAB5",
+      "reason": "branch_exempt: 3 track piece(s), path 2.072 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: fan switch Q304 source on LAB5: E3_FAN5 (Q304 drain to F301) is sized for the F102 4 A protective current (netclasses.json PWR3A, Q304 has no current limit), but the LAB5 feed of Q304 is this branch: the deviation is recorded in build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\". LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "R367 branch on LAB5",
+      "reason": "branch_exempt: 28 track piece(s), path 71.543 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: fan switch Q304 source on LAB5: E3_FAN5 (Q304 drain to F301) is sized for the F102 4 A protective current (netclasses.json PWR3A, Q304 has no current limit), but the LAB5 feed of Q304 is this branch: the deviation is recorded in build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\". LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "U315 branch on E3_GNSS5V",
+      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR1A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "U315 branch on LAB5",
+      "reason": "branch_exempt: 14 track piece(s), path 8.397 mm <= 80.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: LAB5 branch from the scripted 1.85 mm feed (J305 -> J314.2) to a low-current load: scripted pieces at D306, C342, C343, U315/C321, C320/R367/Q304 and D301 (a 0.6 mm L3 run of 18 mm below cut-out 1), joined by Freerouting in class PWR3A_BRANCH at 0.5 mm on L1/L4. Besides the blower (fed by the 1.85 mm feed) the CTRL loads on LAB5 are U315 (limit 0.144-0.192 A, RILIM 162k), the fan switch Q304 (E3_FAN5 0.25 A continuous, tools/assembly_data.py NET_CURRENT via pcb/generated/netclasses.json), the Pico VSYS diode D301 and decoupling capacitors (no DC current): a branch carries at most 0.44 A plus the Pico VSYS current; 0.5 mm of 1 oz outer copper carries about 1.45 A at +10 degC (IPC-2221 external, k 0.048), and the L3 run to D301 carries the Pico VSYS current only. A short at the end of a branch (a capacitor failing short, or the E3_FAN5 node between Q304 and F301) drives the current of the upstream fuse F102 (4 A, holds its rating) through 0.5 mm copper (about +100 degC by IPC-2221): a recorded layout deviation from the PWR3A sizing of netclasses.json, not a bench gate (build/15 \"Гілки LAB5 на CTRL (W2 PCB-CTRL)\")"
+    },
+    {
+      "check": "class_widths",
+      "item": "E3_GNSS5V vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "LAB5 vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 9 via(s) of the net on the board"
+    },
+    {
+      "check": "heights",
+      "item": "R348",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R324",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "SW302",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R321",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R336",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R310",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R316",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R344",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R335",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R343",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R308",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U301",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R359",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R313",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U303",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R306",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R341",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R337",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R323",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "SW305",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R312",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "SW306",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C303",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R302",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R393",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R342",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U306",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R392",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U313",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R311",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R360",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "SW304",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R345",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R307",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C312",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R346",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U302",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R325",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R317",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R350",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R349",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q306",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R315",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R362",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R339",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R334",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C304",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C313",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C302",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C306",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R305",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "SW307",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C301",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U310",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C305",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "SW303",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R309",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R395",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R301",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R319",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R347",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R322",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R318",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U311",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R320",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R394",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R361",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R340",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R338",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.0 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R314",
+      "reason": "height unknown (spec heights or footprint property Height); limit 5.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D302",
+      "reason": "height unknown (spec heights or footprint property Height); limit 16.88 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C314",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C342",
+      "reason": "height unknown (spec heights or footprint property Height); limit 16.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C316",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R354",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C320",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R351",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C315",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R363",
+      "reason": "height unknown (spec heights or footprint property Height); limit 16.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R329",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C321",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R358",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R332",
+      "reason": "height unknown (spec heights or footprint property Height); limit 14.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U312",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C322",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C318",
+      "reason": "height unknown (spec heights or footprint property Height); limit 15.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D306",
+      "reason": "height unknown (spec heights or footprint property Height); limit 7.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R333",
+      "reason": "height unknown (spec heights or footprint property Height); limit 14.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R364",
+      "reason": "height unknown (spec heights or footprint property Height); limit 15.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "TP301",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q305",
+      "reason": "height unknown (spec heights or footprint property Height); limit 7.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R327",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R370",
+      "reason": "height unknown (spec heights or footprint property Height); limit 16.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R396",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R365",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R328",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q302",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R331",
+      "reason": "height unknown (spec heights or footprint property Height); limit 14.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J304",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R357",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C343",
+      "reason": "height unknown (spec heights or footprint property Height); limit 16.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R356",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q304",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C319",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R330",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C307",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U315",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R355",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C310",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J313",
+      "reason": "height unknown (spec heights or footprint property Height); limit 15.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R353",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D303",
+      "reason": "height unknown (spec heights or footprint property Height); limit 16.88 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R371",
+      "reason": "height unknown (spec heights or footprint property Height); limit 16.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R368",
+      "reason": "height unknown (spec heights or footprint property Height); limit 15.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "F301",
+      "reason": "height unknown (spec heights or footprint property Height); limit 17.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q301",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D305",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C309",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D301",
+      "reason": "height unknown (spec heights or footprint property Height); limit 16.88 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R366",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C308",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q303",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U305",
+      "reason": "height unknown (spec heights or footprint property Height); limit 7.48 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R367",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C311",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C317",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R369",
+      "reason": "height unknown (spec heights or footprint property Height); limit 15.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R352",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U307",
+      "reason": "height unknown (spec heights or footprint property Height); limit 12.98 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R326",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.98 mm"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.1",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.3",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.8",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.13",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.18",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.23",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.28",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.33",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.38",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U305.SWD_GND",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    }
+  ]
+}
