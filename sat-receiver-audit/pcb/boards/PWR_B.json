@@ -9046,13 +9046,8 @@
       "SCRIPTED_PWR1A",
       "SCRIPTED_PWR3A"
     ],
-    "class_layers": {
-      "PWR1A": [
-        "F.Cu",
-        "B.Cu"
-      ]
-    },
-    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)"
+    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)",
+    "diagnostic": "diagnostic route (W2 PWRB-R probe 2): router.class_layers left out, so PWR1A may use the 0.5 oz inner layers at 0.35 mm against the 1.8 mm inner rule; it measures the share of the open connections of route run 43289131388 (59, PWR1A on F.Cu/B.Cu only) that the outer-only power rule causes; not a candidate board"
   },
   "drc_policy": {
     "warning_checks": {

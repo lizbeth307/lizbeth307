@@ -655,7 +655,9 @@ class PwrBSixLayersAndCutoutRuleAreas(unittest.TestCase):
         self.assertEqual(spec['layers']['types'], {'In1.Cu': 'power', 'In4.Cu': 'power'})
         planes = {(z['layer'], z['net']) for z in spec['pre_route']['zones']}
         self.assertEqual(planes, {('In1.Cu', 'GND'), ('In4.Cu', '3V3_Q6A')})
-        for cls, layers in spec['router']['class_layers'].items():
+        if not spec['router'].get('diagnostic'):  # a diagnostic route run may leave class_layers out (W2 PWRB-R probe 2)
+            self.assertIn('PWR1A', spec['router']['class_layers'])
+        for cls, layers in spec['router'].get('class_layers', {}).items():
             if cls.startswith(('PWR', 'BATT')):
                 self.assertEqual(sorted(layers), ['B.Cu', 'F.Cu'])
         stack = bg.read_json(bg.BASE / 'pcb/generated/stackup-6l.json')

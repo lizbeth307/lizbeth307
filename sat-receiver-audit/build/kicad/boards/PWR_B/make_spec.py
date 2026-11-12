@@ -1113,7 +1113,7 @@ def template_nets(inp, pins):
     return sorted(nets)
 
 
-def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
+def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None):
     c = inp.contract
     overlay = cutout_overlay(inp, pparts)
     nets = template_nets(inp, pins)
@@ -1318,6 +1318,11 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                           'the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)'},
         'drc_policy': {'warning_checks': WARNINGS},
     }
+    if DIAG_POWER_INNER:  # W2 PWRB-R probe 2: a diagnostic, not a candidate board
+        del spec['router']['class_layers']
+        spec['router']['diagnostic'] = DIAG_POWER_INNER
+    if frozen_note:  # W2 PWRB-R: the frozen 6-layer route is part of pre_route
+        spec['pre_route']['frozen_route_note'] = frozen_note
     return json.dumps(spec, ensure_ascii=False, indent=2) + '\n'
 
 
@@ -1376,9 +1381,76 @@ COPPER = ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']
 # Power classes route on the outer 1 oz copper only (pcb/board_gen.py router.class_layers, as CTRL): the 0.5 oz inner layers
 # would need 1.8 mm for PWR1A (netclasses.json inner_min_width_mm) and do not count for PWR3A.
 CLASS_LAYERS = {'PWR1A': ['F.Cu', 'B.Cu']}
+# W2 PWRB-R probe 2 (diagnostic only): without class_layers Freerouting may put PWR1A on In2.Cu/In3.Cu at the outer width
+# 0.35 mm, which the 0.5 oz inner rule (1.8 mm) forbids; the run measures how much of probe 1's 59 open connections the
+# outer-only power rule causes. Not a candidate board: pcb/check_boards.py class_widths flags every inner PWR1A piece.
+DIAG_POWER_INNER = ('diagnostic route (W2 PWRB-R probe 2): router.class_layers left out, so PWR1A may use the 0.5 oz inner '
+                    'layers at 0.35 mm against the 1.8 mm inner rule; it measures the share of the open connections of route '
+                    'run 43289131388 (59, PWR1A on F.Cu/B.Cu only) that the outer-only power rule causes; not a candidate board')
 # PWR-A cut-out rule areas: the rect grown by the copper-to-edge clearance 0.3 plus 0.03; the scripted copper keeps 0.35
 # (EDGE + MARGIN), so it never touches a rule area, and router copper and pours stay >= 0.33 from the future edge
 KEEPOUT_GROW = EDGE + 0.03
+
+
+# ------------------------------------------------------------------ frozen route (W2 PWRB-R, the CTRL-R / CTRL-4 toolkit)
+FROZEN6 = BASE / 'build/kicad/boards/PWR_B/route-frozen-6l.json'
+
+
+def frozen_guard(parts, tracks, vias, cuts):
+    """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers), the scripted copper
+    (by geometry: id, net, layer, width, path, via position and size; the 'why' texts may change without a new harvest) and
+    the PWR-A cut-outs (a PWR-A placement change moves the keepout_rects, so the frozen copper must be harvested anew)."""
+    pads = sorted(f'{ref}.{p["number"]}|{p["net"]}|{p["at"][0]:.4f},{p["at"][1]:.4f}|{",".join(p["layers"])}'
+                  for ref, pa in parts.items() for p in pa.pads if p['number'] and p['type'] != 'np_thru_hole')
+
+    def geometry(item):
+        return json.dumps({k: v for k, v in item.items() if k != 'why'}, sort_keys=True)
+    scripted = [geometry(t) for t in tracks] + [geometry(v) for v in vias]
+    return {'pads_sha256': hashlib.sha256('\n'.join(pads).encode()).hexdigest(),
+            'scripted_sha256': hashlib.sha256('\n'.join(scripted).encode()).hexdigest(),
+            'cutouts_sha256': cutouts_digest(cuts)}
+
+
+def frozen_guard_of_spec():
+    """The guard of the current inputs (freeze/freeze6.py writes it into route-frozen-6l.json)."""
+    inp = Inputs()
+    _a, _m, _p, parts, tracks, vias, _e = build(inp)
+    return frozen_guard(parts, tracks, vias, inp.cutouts)
+
+
+def frozen_copper(inp, parts, tracks, vias):
+    """The frozen 6-layer route (W2 PWRB-R): the router copper of one route run, harvested and locked, plus the grid A*
+    completion of its open connections (freeze/freeze6.py), from route-frozen-6l.json when present. It goes in after the
+    scripted copper, which it does not change; make_spec's own clearance checks cover the scripted copper only, the frozen
+    copper is checked by freeze6.py (model) and by KiCad DRC in the CI route run. Returns (tracks, vias, note)."""
+    if not FROZEN6.is_file():
+        return [], [], None
+    doc = json.loads(FROZEN6.read_text(encoding='utf-8'))
+    if not doc.get('guard'):
+        raise SystemExit(f'make_spec: {FROZEN6.name} has no guard (a freeze6.py --no-guard trial): harvest again with the guard')
+    have = frozen_guard(parts, tracks, vias, inp.cutouts)
+    for key, value in have.items():
+        if doc['guard'][key] != value:
+            raise SystemExit(f'make_spec: {FROZEN6.name} was routed on another {key} ({doc["guard"][key][:12]}... != '
+                             f'{value[:12]}...): route again with [pcb-route PWR_B] without the frozen copper and harvest anew')
+    why = (f'completion of the 6-layer frozen route ({FROZEN6.name}, W2 PWRB-R): grid A* on the locked copper of route run '
+           f'{doc["source"]["route_run"]} (build/kicad/boards/PWR_B/freeze/freeze6.py), exact clearance check')
+    ft, fv = [], []
+    for prefix, key, text in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', why)):
+        for k, (net, layer, width, path) in enumerate(doc[key]):
+            t = {'id': f'{prefix}-{k + 1:04d}', 'net': net, 'layer': layer, 'width_mm': width, 'path': path, 'locked': True}
+            if text:
+                t['why'] = text
+            ft.append(t)
+    for prefix, key in (('RV', 'router_vias'), ('FINV', 'completion_vias')):
+        for k, (net, x, y, d, drill) in enumerate(doc[key]):
+            fv.append({'id': f'{prefix}-{k + 1:04d}', 'net': net, 'at': [x, y], 'drill_mm': drill, 'diameter_mm': d, 'locked': True})
+    note = (f'W2 PWRB-R: the router copper of route run {doc["source"]["route_run"]} is frozen and locked (RT-/RV- items) and its '
+            f'open connections are joined by the grid A* completion (FIN-/FINV- items) of build/kicad/boards/PWR_B/freeze/freeze6.py '
+            f'(numpy, offline; tools copied from the CTRL-4 freeze of origin/wip/w2-ctrl4-layers6). Source: '
+            f'build/kicad/boards/PWR_B/{FROZEN6.name}; valid only for this placement, netlist and scripted copper (guard: SHA256 '
+            f'of the pads and of the scripted copper). Freezer result: {json.dumps(doc.get("result", {}), sort_keys=True)}')
+    return ft, fv, note
 
 
 # ------------------------------------------------------------------ main
@@ -1429,7 +1501,11 @@ def main(argv=None):
         return 1 if problems else 0
     if problems:
         return 1
-    spec_text, project_text = spec_json(inp, anchors, pins, tracks, vias, exempt, parts), project_json(inp, pins)
+    ft, fv, frozen_note = frozen_copper(inp, parts, tracks, vias)
+    if frozen_note:
+        print(f'frozen route: {len(ft)} tracks, {len(fv)} vias')
+    spec_text = spec_json(inp, anchors, pins, tracks + ft, vias + fv, exempt, parts, frozen_note)
+    project_text = project_json(inp, pins)
     if args.check:
         bad = [p for p, text in ((SPEC, spec_text), (PROJECT, project_text)) if not p.is_file() or p.read_text(encoding='utf-8') != text]
         for p in bad:
