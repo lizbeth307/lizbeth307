@@ -2,7 +2,7 @@
 """Freeze a CTRL route run and complete it (W2 CTRL-R route study). Needs numpy; offline tool, not run by CI.
 
   python build/kicad/boards/CTRL/freeze/freeze_route.py --artifact <unzipped pcb-regenerated-CTRL> [--out FILE]
-  python build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen [--rip NET] [--scripted NET] [--check]   (incremental.py)
+  python build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen [--rip NET] [--scripted NET] [--renet] [--check]   (incremental.py)
 
 The artifact holds board/CTRL.kicad_pcb and board/report.json of a route run whose inputs equal the spec made by
 build/kicad/boards/CTRL/make_spec.py without route-frozen.json. The tool

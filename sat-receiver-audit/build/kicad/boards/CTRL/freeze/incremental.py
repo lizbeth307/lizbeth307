@@ -16,6 +16,10 @@ pad, net or scripted-copper change this mode starts from the committed frozen co
   5. every item is checked again (open connections, dangling copper, clearance) and route-frozen.json is written: records
      the step left untouched stay byte for byte as they were, changed router records are re-chained, new copper goes to
      the completion lists; the guard is the one make_spec.py computes now.
+--renet (W2 CTRL-4 PROTECT) handles a net split by a new part: pads that only changed nets keep their exact board shapes (only
+their nets follow the spec), and an island of frozen copper of net N that touches pads or scripted copper of exactly one
+other net M takes M (export keeps such records in place under the new net). Used for U316/E3_LAB5_LIM: 34 frozen LAB5
+items renamed, nothing ripped; --from-frozen --renet --check then reproduces the committed file on the new board.
 With no change (same pads, same scripted copper, nothing ripped) the output is the committed route-frozen.json byte for byte:
   python build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen --check
 CI/model input only: the CI route run with '[pcb-route CTRL]' is the check (KiCad 10.0.7 DRC); bench gates stay OPEN.
