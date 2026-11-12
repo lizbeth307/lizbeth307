@@ -11,7 +11,7 @@
     "template_sha256": "2b0f95839dd71549f01dd82b1f5ff0fd395f05081cf310e5ac411b5385d87809",
     "project_sha256": "202ab44962f558762ad5fe3ac916d928247669a4cbe85bb255d21431fa716be4",
     "pwr_b_placeholders": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-    "pwr_b_spec_sha256": "e1d41b151671ae929363abd8592201b3581d3e14b4943f1aad1f7e00566d2c6f",
+    "pwr_b_spec_sha256": "1b3d87da0f894b341f776c2414c97e52701162e0a2626bcf5ab0629257b351d0",
     "pwr_b_connectors_sha256": "149dcf057e4df0f04d8c6dd4eaef352157f94692d5d5dc9268f42b9154d053b2"
   },
   "spec_checks": {
