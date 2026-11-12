@@ -1,0 +1,2 @@
+#!/bin/sh
+echo 'WSJT-X 2.7.0'

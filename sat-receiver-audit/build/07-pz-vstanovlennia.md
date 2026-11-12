@@ -446,7 +446,7 @@ cmake -S . -B build -G Ninja -DPLUGINS_ALL=OFF -DCMAKE_INSTALL_PREFIX=/usr -DCMA
 
 | інструмент | версія / джерело |
 |---|---|
-| jt9, wsprd | пакет **lab-wsjt-decoders** (+lab, тег wsjtx-2.7.0, b4f9a43, власний chroot sbuild з libhamlib-dev; лише `make jt9 wsprd`) |
+| jt9, wsprd | пакет **lab-wsjt-decoders** 2.7.0+lab1 (рецепт `deployment/recipes/wsjt-decoders`: внутрішній архів `src/wsjtx.tgz` релізу wsjtx-2.7.0 — спільні файли побайтово дорівнюють тегу wsjtx-2.7.0, b4f9a43, бракує лише `.gitattributes`, `plots/`, `samples/`; власний chroot, єдиний з libhamlib-dev, яка потрібна лише configure; лише цілі `jt9` і `wsprd` (`cmake --build … --target jt9 wsprd`, без GUI й утиліт), `forbid_needed libhamlib*`, Depends від `dpkg-shlibdeps` — libc6, libfftw3-single3, libgcc-s1, libgfortran5, libgomp1, libqt5core5t64, libstdc++6, без Hamlib і без Boost.Log (CI, run 42405046284); 2-рядкова заглушка `/usr/bin/wsjtx_app_version` з `files/` рецепта, яку перевіряє selftest RX-01b; декодування FT8/WSPR зі зразків тегу — модель CI; CI_BUILT_UNREVIEWED) |
 | SSTV | slowrxd (sjlongland slowrx-daemon c94327ae40ab970b0bea20ebb378d71f8e69b98a), FM-аудіо від labrx через snd-aloop або віртуальне джерело PipeWire |
 | DAB+ / RDS | welle-cli з noble welle.io 2.4 (на +lab .so.2); redsea 1.3.1 |
 | наука / навігація | Virgo v3.8.9; GNSS-SDR 0.0.19 (0.0.22 — опційно); GNU Radio 3.10.9.2-1.1ubuntu2, VOLK 3.1.2-1.1build1 |
