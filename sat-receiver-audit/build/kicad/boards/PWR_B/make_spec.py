@@ -494,14 +494,20 @@ def move_edge_references(inp, anchors, parts):
     for ref, pa in parts.items():
         x, y = pa.map(inp.refpos[ref])
         n = max(2, len(ref))
-        # the legend turns with the footprint (W2 PCB-PWRB-2: route run 43222835469 had three legends of turned parts
-        # over the board edge)
-        if fits(x, y, n, anchors[ref]['rotation'] % 180 == 90):
-            continue
         b = pa.box
+        near = min(edge_dist(q, outline, []) for q in ((b[0], b[1]), (b[2], b[1]), (b[2], b[3]), (b[0], b[3])))
+        # the legend turns with the footprint (W2 PCB-PWRB-2: route run 43222835469 had three legends of turned parts
+        # over the board edge); within 3 mm of the outline the legend goes to the part centre, along the nearest edge
+        # (route run 43236259234: one more legend over the arm edge)
+        if near >= 3.0 and fits(x, y, n, anchors[ref]['rotation'] % 180 == 90):
+            continue
         cx, cy = r4((b[0] + b[2]) / 2), r4((b[1] + b[3]) / 2)
-        angle = 0 if fits(cx, cy, n, False) or not fits(cx, cy, n, True) else 90
-        anchors[ref]['ref_text'] = {'at': [cx, cy], 'angle': angle}
+        edges = list(zip(outline, outline[1:] + outline[:1]))
+        e = min(edges, key=lambda ab: point_seg((cx, cy), ab[0], ab[1]))
+        vertical = abs(e[0][0] - e[1][0]) < 1e-9
+        if not fits(cx, cy, n, vertical) and fits(cx, cy, n, not vertical):
+            vertical = not vertical
+        anchors[ref]['ref_text'] = {'at': [cx, cy], 'angle': 90 if vertical else 0}
 
 
 def copper_items(parts):
@@ -1201,7 +1207,7 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                     'these pin fields (1.3 mm clearance in the 5.0 mm stack). Gate OPEN: measured at proof-fit',
             'pin_fields': [{'ref': ref, 'pins': n, 'field_mm': f}
                            for ref, n, f in sorted(tht_fields(pparts), key=lambda t: bg.sort_ref(t[0]))]},
-        'router': {'tool': 'freerouting', 'max_passes': 60, 'threads': 1, 'job_timeout': '00:33:00', 'timeout_s': 2100,
+        'router': {'tool': 'freerouting', 'max_passes': 90, 'threads': 1, 'job_timeout': '00:33:00', 'timeout_s': 2100,
                    'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())),
                    'why': 'the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and '
                           'the router re-routed the scripted nets because locked copper that crosses a pad is no connection '
