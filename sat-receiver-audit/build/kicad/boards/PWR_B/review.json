@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "dabf89fd2563dde52510bb0a773d1a1807e8ecb67cdbbd4143d9ed88482719a4"
+      "sha256": "adc2f821e8116ab4463dfc7d8932c017b2c9c0cd71b34c7ee09dbf56531a6c6b"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "f82bfa88ec8f01282b717d50d80fc511fcb14be450154fdcc7eecca8a2ba3903",
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1917,
-    "vias": 300,
+    "tracks": 1774,
+    "vias": 255,
     "zones": 44,
     "holes": 9,
     "copper_layers": [
@@ -63,7 +63,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1879,
+      "tracks_checked": 1729,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -99,17 +99,17 @@
     {
       "check": "class_widths",
       "item": "J209 branch on AUX12",
-      "reason": "branch_exempt: 3 track piece(s), path 7.291 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 5 track piece(s), path 6.873 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
       "item": "J209 branch on BONI13V8_PORT",
-      "reason": "branch_exempt: 1 track piece(s), path 9.336 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 5 track piece(s), path 6.935 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
       "item": "J209 branch on E2_LNA4_SHUNT",
-      "reason": "branch_exempt: 3 track piece(s), path 7.15 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 4 track piece(s), path 8.95 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
@@ -124,7 +124,7 @@
     {
       "check": "class_widths",
       "item": "J209 branch on LAB5_RLY",
-      "reason": "branch_exempt: 9 track piece(s), path 8.672 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 9 track piece(s), path 5.418 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
@@ -134,7 +134,7 @@
     {
       "check": "class_widths",
       "item": "J209 branch on VBUS_HFP",
-      "reason": "branch_exempt: 2 track piece(s), path 7.544 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 2 track piece(s), path 8.552 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
@@ -179,37 +179,37 @@
     {
       "check": "class_widths",
       "item": "AUX12 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 8 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_CH1 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 10 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_CH1_DAMP vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_CH2_PORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 7 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_CH3_PORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 7 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
-      "item": "BIAS_CH4 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 5 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BIAS_SB_LNA vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 9 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "BONI13V8_PORT vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -238,23 +238,33 @@
     },
     {
       "check": "class_widths",
+      "item": "LAB5_RLY vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "VBUS_HFP vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
       "item": "VBUS_LABPORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 5 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "VBUS_RTLA vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "VBUS_RTLB vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "VBUS_RTLB_DAMP vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
     }
   ]
 }
