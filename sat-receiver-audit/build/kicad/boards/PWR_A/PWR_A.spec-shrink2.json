@@ -6694,7 +6694,8 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "PWR3A 2.0 mm: onto C111.1 at the F102.2/L101.1 node (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "PWR3A 2.0 mm: onto C111.1 at the F102.2/L101.1 node (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "branch": true
       },
       {
         "id": "LAB5-L101",
@@ -6746,7 +6747,8 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "PWR3A 3.35 mm: onto F104.1 (LAB5_RLY PTC) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "PWR3A 3.35 mm: onto F104.1 (LAB5_RLY PTC) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "branch": true
       },
       {
         "id": "LAB5-B-TOP",

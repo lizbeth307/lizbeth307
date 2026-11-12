@@ -4,7 +4,7 @@
   "status": "MODEL: copper resistance from geometry (IACS copper, finished 1 oz outer); no PWR-A board exists, no measurement; E1-05 and every bench gate stay OPEN",
   "generator": "build/kicad/boards/PWR_A/lab5_budget.py",
   "inputs": {
-    "spec_sha256": "ddaffbde4e73b918d1df7dea353f69ceb90b606bdc7eba16d184a2f727927758",
+    "spec_sha256": "f4388d982cccab6c99c70a145b33b5c83b220df86ec83c0198ad62ea249fd80e",
     "pwr_b_board_sha256": "4c0c172d2c9013d57f388e547ec5e40159bd7681028d9d52e72037c88d3135f1",
     "pwr_b_mate_pins_sha256": "db96a57ff4815c02eee75ab7fc03f0467957012f3a10723e2af32ef2a3a7302a",
     "netclasses_sha256": "95b4858058b99d613ed90219bc1ceba892dcf5edb10bc8b989493109240f3061",
@@ -358,7 +358,9 @@
     "narrowest_pour_width_mm": 3.2,
     "pours": [
       "LAB5RAW-BAR",
-      "LAB5RAW-F102",
+      "LAB5RAW-F102"
+    ],
+    "not_in_the_series_path": [
       "LAB5RAW-VOUT1",
       "LAB5RAW-VOUT2"
     ],
@@ -381,15 +383,17 @@
       90.02
     ],
     "orthogonal_mm": 10.89,
-    "narrowest_pour_width_mm": 2.0,
+    "narrowest_pour_width_mm": 6.8,
     "pours": [
-      "LAB5FUSED",
+      "LAB5FUSED"
+    ],
+    "not_in_the_series_path": [
       "LAB5FUSED-C111"
     ],
     "outer_layers": 1,
     "by_temperature_upper_bound": {
-      "20C": 2.6823,
-      "50C": 2.9985
+      "20C": 0.7889,
+      "50C": 0.8819
     },
     "unit": "mOhm",
     "label": "MODEL upper bound: the whole orthogonal path at the narrowest scripted pour width, F.Cu only"
