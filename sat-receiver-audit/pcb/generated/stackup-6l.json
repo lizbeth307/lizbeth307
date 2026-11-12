@@ -1,0 +1,142 @@
+{
+  "schema": "srrx-stackup-6l-v1",
+  "generator": "pcb/stackup.py",
+  "status": "MODEL: layer table as read; no impedance is modelled (no RF50 net on CTRL); bench gates OPEN",
+  "stackup": {
+    "id": "JLC06161H-2116",
+    "board_thickness_mm": 1.6,
+    "source": "https://jlcpcb.com/impedance",
+    "read": "2026-11-12",
+    "boards": [
+      "CTRL"
+    ],
+    "layers": [
+      {
+        "kicad": "F.Cu",
+        "plan": "L1",
+        "copper_mm": 0.035
+      },
+      {
+        "dielectric": "prepreg 2116x1 + 2313x1",
+        "thickness_mm": 0.2234,
+        "er": null,
+        "parts": [
+          {
+            "prepreg": "2116x1",
+            "thickness_mm": 0.127,
+            "er": 4.16
+          },
+          {
+            "prepreg": "2313x1",
+            "thickness_mm": 0.0964,
+            "er": null
+          }
+        ]
+      },
+      {
+        "kicad": "In1.Cu",
+        "plan": "L2",
+        "copper_mm": 0.0152
+      },
+      {
+        "dielectric": "core",
+        "thickness_mm": 0.3,
+        "er": 4.6
+      },
+      {
+        "kicad": "In2.Cu",
+        "plan": "L3",
+        "copper_mm": 0.0152
+      },
+      {
+        "dielectric": "prepreg 7628x1 + 7628x1",
+        "thickness_mm": 0.4168,
+        "er": 4.4,
+        "parts": [
+          {
+            "prepreg": "7628x1",
+            "thickness_mm": 0.2084,
+            "er": 4.4
+          },
+          {
+            "prepreg": "7628x1",
+            "thickness_mm": 0.2084,
+            "er": 4.4
+          }
+        ]
+      },
+      {
+        "kicad": "In3.Cu",
+        "plan": "L4",
+        "copper_mm": 0.0152
+      },
+      {
+        "dielectric": "core",
+        "thickness_mm": 0.3,
+        "er": 4.6
+      },
+      {
+        "kicad": "In4.Cu",
+        "plan": "L5",
+        "copper_mm": 0.0152
+      },
+      {
+        "dielectric": "prepreg 2313x1 + 2116x1",
+        "thickness_mm": 0.2234,
+        "er": null,
+        "parts": [
+          {
+            "prepreg": "2313x1",
+            "thickness_mm": 0.0964,
+            "er": null
+          },
+          {
+            "prepreg": "2116x1",
+            "thickness_mm": 0.127,
+            "er": 4.16
+          }
+        ]
+      },
+      {
+        "kicad": "B.Cu",
+        "plan": "L6",
+        "copper_mm": 0.035
+      }
+    ],
+    "note": "Layer thicknesses sum to 1.5944 mm (computed). Copper: outer 0.035 mm = 1 oz, inner 0.0152 mm = 0.5 oz finished (the inner default on jlcpcb.com/capabilities/pcb-capabilities: \"Finished copper weight of inner layer is 0.5oz by default\"), so the inner widths of netclasses.json (0.5 oz) hold unchanged. Er of 2313 is not on the page (None): CTRL carries no RF50 net, so no impedance is modelled or ordered for it.",
+    "why": "W2 CTRL-R layer study: L1-L2 0.2234 mm (close to the 0.2104 mm L1-L2 of JLC04161H-7628) and L2-L3 0.3 mm keep L1 and L3 next to the solid L2 GND plane; L3-L4 0.4168 mm and L5-L6 0.2234 mm keep the adjacent signal layers apart; the 1.5944 mm sum is 0.0056 mm under the contract board thickness 1.6 mm (JLC tolerance +/-10 %); of the other tables read, JLC06161H-1080 (1.5940 mm) puts L3 0.55 mm from L2 and L5 0.0764 mm from L6, JLC06161H-7628 sums to 1.5544 mm"
+  },
+  "capabilities": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+    "read": "2026-11-12",
+    "layer_count": "1-32 Layers; impedance control for 4/6/8/.../32 layers, +/-10 % standard (+/-5 % on special request)",
+    "track_width_spacing_1oz": "Multilayer: 0.09 / 0.09 mm (3.5 / 3.5 mil)",
+    "via": "Multilayer: 0.15 mm hole size / 0.25 mm via diameter; via hole-to-hole 0.2 mm",
+    "pth_annular_1oz": "multilayer: recommended 0.20 mm or above; absolute minimum 0.15 mm",
+    "inner_clearance": "Inner layer via hole to copper 0.2 mm; inner layer PTH pad hole to copper 0.3 mm",
+    "copper": "outer multi-layer 1 oz / 2 oz; inner 0.5 oz / 1 oz / 2 oz; finished inner copper 0.5 oz by default",
+    "thickness": "FR4 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm; tolerance +/-10 % for >= 1.0 mm",
+    "via_in_pad": "JLCPCB Via-in-Pad Process: vias filled with epoxy resin or copper paste and plated over; \"This process is the default for 6-layer and above multilayer boards\"; compatible with via diameters 0.15 to 0.55 mm",
+    "floor_note": "the multilayer floors equal jlc_4l_1oz of netclasses.json fab_floor (read 2026-11-07); the 6-layer board uses those values"
+  },
+  "fab_floor": "pcb/generated/netclasses.json fab_floor.jlc_4l_1oz (multilayer values, unchanged on the 2026-11-12 re-read)",
+  "power_classes": {
+    "PWR1A": {
+      "outer_min_width_mm": 0.35,
+      "inner_min_width_mm": 1.8
+    },
+    "PWR2A": {
+      "outer_min_width_mm": 0.8,
+      "inner_min_width_mm": 4.7
+    },
+    "PWR3A": {
+      "outer_min_width_mm": 1.85,
+      "inner_min_width_mm": null
+    },
+    "BATT": {
+      "outer_min_width_mm": 3.2,
+      "inner_min_width_mm": null
+    }
+  },
+  "rules_file": "pcb/rules/jlc-6l-1oz.kicad_dru"
+}

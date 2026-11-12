@@ -673,5 +673,51 @@ class CtrlSpecAndGenerator(unittest.TestCase):
         self.assertEqual(spec_text, bg.spec_path('CTRL').read_text(encoding='utf-8'))
         self.assertEqual(project_text, (bg.BASE / 'build/kicad/boards/CTRL/CTRL.kicad_pro').read_text(encoding='utf-8'))
 
+class CtrlSixLayers(unittest.TestCase):
+    """W2 CTRL-R: 6 copper layers (CTRL layer study), the power-class layer guard of router.class_layers and the
+    JLC06161H-2116 outputs of pcb/stackup.py (no board spec needed)."""
+
+    def enc6(self):
+        spec = copy.deepcopy(bg.read_json(bg.spec_path('ENC')))
+        spec['layers']['copper'] = 6
+        return spec
+
+    def test_six_layers_accepted_eight_refused(self):
+        spec = self.enc6()
+        spec['layers']['types'] = {'In1.Cu': 'power', 'In4.Cu': 'power'}
+        bg.validate_spec(spec, 'ENC')
+        spec['layers']['copper'] = 8
+        with self.assertRaises(SystemExit):
+            bg.validate_spec(spec, 'ENC')
+
+    def test_power_classes_stay_on_the_outer_layers(self):
+        spec = self.enc6()
+        spec['router']['class_layers'] = {'SIG_REF': ['F.Cu', 'In2.Cu'], 'PWR1A': ['F.Cu', 'B.Cu']}
+        bg.validate_spec(spec, 'ENC')
+        for cls in ('PWR1A', 'PWR3A_BRANCH', 'BATT'):
+            candidate = copy.deepcopy(spec)
+            candidate['router']['class_layers'] = {cls: ['F.Cu', 'In3.Cu']}
+            with self.assertRaises(SystemExit):
+                bg.validate_spec(candidate, 'ENC')
+
+    def test_six_layer_stackup_outputs(self):
+        import stackup
+        layers = stackup.STACKUP_6L['layers']
+        self.assertEqual([x['kicad'] for x in layers if 'kicad' in x], ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu'])
+        self.assertAlmostEqual(sum(x.get('copper_mm', 0) + x.get('thickness_mm', 0) for x in layers), 1.5944, places=4)
+        for x in layers:
+            if 'parts' in x:
+                self.assertAlmostEqual(sum(q['thickness_mm'] for q in x['parts']), x['thickness_mm'], places=6)
+        outs = stackup.outputs()
+        rules = outs[stackup.OUT_6L['rules']]
+        self.assertIn('JLC06161H-2116', rules)
+        self.assertNotIn('RF50', rules)
+        self.assertNotIn('BOND-RF', rules)
+        self.assertIn('In1-In4', rules)
+        doc = json.loads(outs[stackup.OUT_6L['json']])
+        self.assertEqual(doc['stackup']['id'], 'JLC06161H-2116')
+        self.assertEqual(set(doc['power_classes']), set(stackup.POWER_CLASSES))
+
+
 if __name__ == '__main__':
     unittest.main()
