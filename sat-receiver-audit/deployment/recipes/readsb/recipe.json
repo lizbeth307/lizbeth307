@@ -1,0 +1,44 @@
+{
+  "schema_version": 2,
+  "component": "readsb",
+  "summary": "readsb 3.16.17+lab1: wiedehopf/readsb v3.16.17 (0947209) for RTL-SDR only against the lab librtlsdr2, bias tee compiled out, no interactive mode, no viewadsb; the readsb binary only",
+  "source": {"patch": null, "patches": [], "member": null},
+  "build_system": "make",
+  "build_depends": ["libusb-1.0-0-dev", "libzstd-dev", "zlib1g-dev"],
+  "lab_build_depends": ["librtlsdr2", "librtlsdr-dev"],
+  "cmake": null,
+  "autotools": null,
+  "build": [["make", "-C", "{src}", "-j{jobs}", "readsb", "RTLSDR=yes", "HAVE_BIASTEE=no", "BLADERF=no", "HACKRF=no", "PLUTOSDR=no", "SOAPYSDR=no", "DISABLE_INTERACTIVE=yes", "DISABLE_RTLSDR_ZEROCOPY_WORKAROUND=yes", "READSB_VERSION=3.16.17+lab1"]],
+  "install": {
+    "cmake_install": false,
+    "make_install": false,
+    "copy": [
+      {"from": "{src}/readsb", "to": "usr/bin"}
+    ]
+  },
+  "hooks": {"source_check": null, "package": null},
+  "packages": [
+    {
+      "name": "readsb",
+      "section": "net",
+      "description": "Mode S/ADS-B 1090 MHz decoder, receive-only lab build: RTL-SDR only, bias tee compiled out, run only in srrx-lease-readsb@.service behind srrx.adsb_filter",
+      "files": ["usr/bin/readsb"],
+      "depends": [],
+      "shlibs_depends": true
+    }
+  ],
+  "drop": [],
+  "ci": {"heavy": false, "runtime_depends": ["binutils"], "tag_samples": []},
+  "checks": [
+    {"kind": "forbid_needed", "files": ["usr/bin/readsb"], "needed": ["librtlsdr.so.0*", "libbladeRF*", "libhackrf*", "libiio*", "libad9361*", "libSoapySDR*", "libairspy*", "libncurses*", "libtinfo*", "libssl*", "libcrypto*"]},
+    {"kind": "forbid_strings", "file": "usr/bin/readsb", "substrings": ["rtlsdr_set_bias_tee", "bladerf_open", "hackrf_open", "SoapySDRDevice_make", "iio_create_context"]},
+    {"kind": "forbid_paths", "globs": ["usr/bin/viewadsb", "usr/sbin/*", "etc/*", "lib/*", "usr/lib/*", "usr/share/*", "*.service", "*tar1090*"]}
+  ],
+  "notes": [
+    "Upstream Makefile at 0947209: RTLSDR ?= no (:4) and the other SDR switches default to no (:5-8); RTLSDR=yes adds sdr_rtlsdr.o and pkg-config librtlsdr from the lab librtlsdr-dev (:126-148). HAVE_BIASTEE=no keeps ENABLE_RTLSDR_BIASTEE undefined (:130-132), so sdr_rtlsdr.c never calls rtlsdr_set_bias_tee (sdr_rtlsdr.c:329-332); the hidden --enable-biastee option text stays in help.h:103 but only sets a flag nothing reads for RTL-SDR, so the check forbids the call's symbol, not the word biastee. The other SDR switches are passed as no explicitly.",
+    "READSB_VERSION on the command line replaces Makefile:2, which would embed git describe or the build date (`date +%y%m%d`) when the tree has no .git; a value without spaces needs none of the shell quoting of Makefile:2 and :26. READSB_SHORT_COMMIT (:28) falls back to nogit in the chroot, which has no repository above the source tree; both builds of --repeat see the same text.",
+    "Only the readsb target is built (Makefile:191-196): viewadsb, a copy of the binary (:198-200), is not. DISABLE_INTERACTIVE=yes drops ncurses (:62-70). DISABLE_RTLSDR_ZEROCOPY_WORKAROUND=yes because the lab librtlsdr is built with ENABLE_ZEROCOPY=OFF (rtlsdr recipe), as Makefile:72-75 asks.",
+    "Upstream CFLAGS are kept (-O2 -g -fstack-protector-strong -D_FORTIFY_SOURCE=2, Makefile:25-35); the debian/ directory of the tree (systemd service, default file, adduser postinst) is not used: the only unit is software/systemd/srrx-lease-readsb@.service, and no tar1090 web UI is packaged.",
+    "GPL v3 or later (LICENSE of the pinned tree). CI build only (CI_BUILT_UNREVIEWED): 1090 MHz reception on a Q6A and the accepted aircraft.csv.gz at the home base stay OPEN."
+  ]
+}

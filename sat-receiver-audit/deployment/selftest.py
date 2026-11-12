@@ -109,6 +109,12 @@ CATALOGUE = (
     ("RX-12", 12, "OFFLINE", "Lease units (systemd precedence): DevicePolicy=closed, ProtectSystem=strict, /data read-only, products lease, localhost only",
      (_B07 + ":532", _B07 + ":534", _B07 + ":557")),
     ("RX-12-runtime", 12, "DEVICE", "Lease EPERM/EROFS/EGL behaviour on the Q6A", (_B07 + ":557", _B09 + ":62")),
+    # W2 SW-ADSB: the plan named this row RX-17, which is the kernel command line row; it extends row 12 (leases).
+    ("RX-12-readsb", 12, "OFFLINE", "readsb ADS-B lease: RTL-SDR-only binary (allowlisted DT_NEEDED, no bias-tee call), exactly the reviewed readsb "
+     "argv between the srrx.adsb_filter steps and no other Exec command, the reviewed environment without PATH or mount overrides, "
+     "its output discarded, no other unit runs readsb, no tar1090 web UI",
+     ("STACK.md:621-622", "STACK.md:825", "STACK.md:882", "STACK.md:2180-2181", _B07 + ":439", "software/srrx/adsb_filter.py",
+      "deployment/recipes/readsb/recipe.json")),
     ("RX-13", 13, "OFFLINE", "Band mask CPU path: 20 kHz, 300 MHz, 406.05 MHz, 1544.5 MHz bins invalid; annotate refuses",
      (_B07 + ":558", _B09 + ":73", "STACK.md:626", "software/srrx/spectrum.py mask_frame")),
     ("RX-13-npu", 13, "DEVICE", "NPU class-signal mask on the device", (_B07 + ":558",)),
@@ -120,7 +126,7 @@ CATALOGUE = (
     ("RX-17", 17, "OFFLINE", "/etc/kernel/cmdline SHA-256 equals the reviewed record", (_B07 + ":181-193", _B07 + ":562")),
     ("RX-17-proc", 17, "DEVICE", "/proc/cmdline on the running device", (_B07 + ":193", _B07 + ":562")),
     ("RX-18", 18, "DEVICE", "labbar visible over every full-screen Expert GUI", (_B07 + ":563", "STACK.md:884")),
-    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, AIS, ADS-B presets disabled; SatDump installation-gated (unavailable offline)",
+    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, AIS presets disabled; SatDump and ADS-B installation-gated (unavailable offline)",
      ("software/srrx/decoder_policy.py availability", "STACK.md:85")),
     ("RX-S2", None, "OFFLINE", "Field/QUIET Wi-Fi/BT off as staged: AIC8800/btusb blacklist + install /bin/false, FE1.1s port-4 authorized=0 rule, "
      "rfkill oneshot required by srrx.service only", ("STACK.md:726", "STACK.md:2167", "STACK.md:125", _B09 + ":69", "deployment/deploy.py stage")),
@@ -199,6 +205,9 @@ POLICY_SCHEMA = {
                          tle_update={"file_globs": (_text,), "section": _text, "key": _text, "required": _text}),
         # W2 SW-WSJT: jt9/wsprd and the wsjtx_app_version stub kept in files/ for review (RX-01b, _wsjt_app_version).
         "lab-wsjt-decoders": {"footprint": (_text,), "app_version_stub": {"basename": _text, "lines": (_text,)}, "sources": [_text]},
+        "readsb": dict(_COMMON, binaries=(_text,), allowed_needed=(_text,), forbidden_symbols=(_text,), forbidden_dirs=[_text], lease_unit=_text,
+                       exec_start=_text, exec_start_pre=(_text,), exec_start_post=(_text,), exec_stop_post=(_text,), required_settings=_scalars,
+                       environment=(_text,), environment_files=(_text,), forbidden_settings=(_text,), filter_module=_text),
     },
     "lime": {"runtime_library_globs": [_text], "sources": [_text]},
     "librtlsdr": {"library_glob": _text, "old_library_glob": _text, "soname": _text, "export_prefix": _text, "exports": int, "forbidden_strings": [_text], "sources": [_text]},
@@ -1558,6 +1567,141 @@ def check_12(ctx, r):
     r.note("EPERM_EROFS_behaviour_is_RX-12-runtime")
 
 
+def _exec_lines(texts, key):
+    """Command lines of one Exec*= key (or the values of another list setting with the same reset
+    rule, such as Environment=) in the [Service] section of a unit fragment and its drop-ins, in
+    order; an empty assignment resets the list (systemd.service(5), systemd.exec(5)); continuation
+    lines as _unit_settings joins them."""
+    lines = []
+    for text in texts:
+        section, joined = None, ""
+        for raw in text.splitlines():
+            stripped = raw.strip()
+            if stripped[:1] in ("#", ";"):
+                continue
+            if stripped.endswith("\\"):
+                joined += stripped[:-1] + " "
+                continue
+            line, joined = joined + stripped, ""
+            if line.startswith("[") and line.endswith("]"):
+                section = line[1:-1]
+                continue
+            name, sep, value = line.partition("=")
+            if section == "Service" and sep and name.strip() == key:
+                lines = lines + [value.strip()] if value.strip() else []
+    return lines
+
+
+_ENGINE_EXEC_KEYS = ("ExecCondition", "ExecStartPre", "ExecStart", "ExecStartPost", "ExecReload", "ExecStop", "ExecStopPost")
+
+
+def check_12_readsb(ctx, r):
+    """readsb ADS-B lease (W2 SW-ADSB; STACK.md:621-622, :2181, build/07 §16): the binary links only
+    the allowlisted libraries and imports no bias-tee or other-SDR call; the lease template and each
+    instance with its drop-ins run exactly the reviewed readsb argv between the srrx.adsb_filter steps
+    and no other Exec*= command, with exactly the reviewed Environment=/EnvironmentFile= lists, no
+    setting that brings in other environment, $PATH or mounts, the private RuntimeDirectory and
+    StandardOutput/StandardError null; no other unit starts readsb; no tar1090 web UI; the target
+    srrx.adsb_filter equals the checker's. Static only: the filter's behaviour is its host tests."""
+    comp = ctx.comp("readsb")
+    binaries = set(ctx.globs(comp["binaries"])) | {k for k in ctx.keys if k.rsplit("/", 1)[-1] == "readsb" and k.split("/")[-2:-1] in (["bin"], ["sbin"])}
+    found = sorted(set(ctx.globs(comp["footprint"])) | binaries)
+    _presence(ctx, r, found, "readsb")
+    for rel in ctx.globs(comp["forbidden_dirs"]):
+        r.fail(rel, "web_ui_present")
+    evaluated = 0
+    for rel in sorted(binaries):
+        final = ctx.file(rel)
+        if final is None:
+            continue
+        if not ctx.is_elf(final):
+            r.block(rel, "not_elf")
+            continue
+        info = ctx.elf(final, r)
+        if info is None:
+            continue
+        evaluated += 1
+        if any(name not in comp["allowed_needed"] for name in info["needed"]):
+            r.fail(rel, "dependency_outside_allowlist")  # the DT_NEEDED text itself is never echoed
+        for name, _, _, ndx in info["symbols"]:
+            if ndx == "UND" and name.split("@", 1)[0] in comp["forbidden_symbols"]:
+                r.fail(rel, "forbidden_symbol_imported", name.split("@", 1)[0])
+    if found and not evaluated:
+        r.block(found[0], "readsb_binary_not_found")
+    dirs = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in ctx.policy["units"]["system_unit_paths"]) if d is not None))
+    stem = comp["lease_unit"].split("@", 1)[0] + "@"
+    names = {comp["lease_unit"]}
+    for directory in dirs:
+        for child in ctx.children(directory):
+            base = child[:-2] if child.endswith(".service.d") else child
+            if base.startswith(stem) and base.endswith(".service") and base != stem + ".service":
+                names.add(base)
+    leases, own = 0, set()
+    for name in sorted(names):
+        fragment = _unit_fragment(ctx, r, dirs, name)
+        if fragment is None:
+            continue
+        leases += 1
+        listed, final = fragment
+        dropins = _unit_dropins(ctx, r, dirs, [name])
+        own.update([final] + dropins)
+        texts = [ctx.text(final)] + [ctx.text(f) for f in dropins]
+        if posixpath.basename(listed) != name:  # an instance evaluated through its template
+            listed = next((d + "/" + name + ".d" for d in dirs if d + "/" + name + ".d" in ctx.entries), listed)
+        starts = _exec_lines(texts, "ExecStart")
+        if starts != [comp["exec_start"]]:
+            r.fail(listed, "exec_start_not_allowlisted")
+        for line in starts:  # second layer: a policy edit cannot let a network or bias option through
+            for word in line.split()[2:]:
+                if word.split("=", 1)[0] in comp["deny_tokens"]:
+                    r.fail(listed, "denied_option", word.split("=", 1)[0].lstrip("-"))  # item: no leading dash (_SAFE_ITEM)
+        pinned = {"ExecStartPre": comp["exec_start_pre"], "ExecStartPost": comp["exec_start_post"], "ExecStopPost": comp["exec_stop_post"]}
+        for key, expected in pinned.items():
+            if _exec_lines(texts, key) != expected:
+                r.fail(listed, "filter_step_not_allowlisted", key)
+        for key in _ENGINE_EXEC_KEYS:  # any other command (ExecStop, ExecReload, ExecCondition) runs beside the filter
+            if key != "ExecStart" and key not in pinned and _exec_lines(texts, key):
+                r.fail(listed, "exec_key_not_allowlisted", key)
+        # Environment= and EnvironmentFile= accumulate over the drop-ins (systemd.exec(5)): a later PATH,
+        # PYTHONPATH or LD_PRELOAD would swap readsb or srrx.adsb_filter, so both lists are exact.
+        for key, expected in (("Environment", comp["environment"]), ("EnvironmentFile", comp["environment_files"])):
+            if _exec_lines(texts, key) != expected:
+                r.fail(listed, "lease_setting", key)
+        for key in comp["forbidden_settings"]:  # manager environment, ExecSearchPath= ($PATH), mounts over the reviewed files
+            if _exec_lines(texts, key):
+                r.fail(listed, "lease_setting", key)
+        settings = _unit_settings(texts)
+        for key, value in comp["required_settings"].items():
+            if settings.get(key) != value:
+                r.fail(listed, "lease_setting", key)
+    for listed, final in ctx.unit_texts():
+        if final in own:
+            continue
+        lines = [line.split("=", 1)[1] for line in ctx.text(final).splitlines() if "=" in line and line.split("=", 1)[0].strip() in _ENGINE_EXEC_KEYS]
+        if any(posixpath.basename(word.strip("'\"").lstrip(_EXEC_PREFIXES)) in ("readsb", "viewadsb") for line in lines for word in line.split()):
+            r.fail(listed, "readsb_outside_lease")
+    if not leases:
+        if found:
+            r.fail(found[0], "readsb_without_filter_lease")
+        elif ctx.profile == "controller":
+            r.note("readsb_lease_unit_absent")
+        else:
+            r.block(".", "readsb_lease_unit_missing")
+    else:
+        _relative(comp["filter_module"], "readsb.filter_module")
+        rel = ctx.policy["srrx_root"] + "/" + comp["filter_module"]
+        final = ctx.file(rel)
+        if final is None:
+            r.fail(rel, "adsb_filter_missing")
+        else:
+            digest = deploy.sha(deploy.PROJECT / comp["filter_module"])
+            ctx.evaluated[comp["filter_module"]] = digest
+            if ctx.digest(final) != digest:
+                r.block(rel, "adsb_filter_differs")
+    r.note("filter_behaviour_is_software_tests_test_adsb_filter")
+    r.note("reception_and_accepted_database_are_device_evidence")
+
+
 def _synthetic_frame(center, rate, size=64):
     width = rate / size
     return {"v": 1, "kind": "spectrum", "center_hz": center, "sample_rate_hz": rate, "fft_size": size,
@@ -1805,8 +1949,9 @@ def check_17(ctx, r):
     r.note("proc_cmdline_is_RX-17-proc")
 
 
-# v2.1: only satdump-weather is installation-gated (UNAVAILABLE_* offline); every other gated preset stays DISABLED_*.
-_INSTALLATION_GATED = frozenset(("satdump-weather",))
+# v2.1: satdump-weather and (W2 SW-ADSB) adsb-public are installation-gated (UNAVAILABLE_* offline); every other
+# gated preset stays DISABLED_*.
+_INSTALLATION_GATED = frozenset(("satdump-weather", "adsb-public"))
 
 
 def check_s1(ctx, r):
@@ -2495,7 +2640,7 @@ def check_14(ctx, r):
 
 CHECKS = {"RX-00": check_00, "RX-01a": check_01a, "RX-01b": check_01b, "RX-01c": check_01c, "RX-02": check_02, "RX-03": check_03,
           "RX-04": check_04, "RX-04-bb": check_04bb, "RX-05": check_05, "RX-06": check_06, "RX-07": check_07, "RX-08": check_08, "RX-09": check_09,
-          "RX-10": check_10, "RX-11": check_11, "RX-12": check_12, "RX-13": check_13, "RX-14": check_14, "RX-15": check_15,
+          "RX-10": check_10, "RX-11": check_11, "RX-12": check_12, "RX-12-readsb": check_12_readsb, "RX-13": check_13, "RX-14": check_14, "RX-15": check_15,
           "RX-16": check_16, "RX-17": check_17, "RX-S1": check_s1, "RX-S2": check_s2}
 
 

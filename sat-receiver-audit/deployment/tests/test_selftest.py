@@ -1778,5 +1778,128 @@ class WsjtDecodersTests(unittest.TestCase):
         self.assertEqual(found, {("wsjtx_app_version_not_a_file", "usr/bin/wsjtx_app_version")})
 
 
+class AdsbLeaseRowTests(unittest.TestCase):
+    """W2 SW-ADSB: RX-12-readsb on a deploy.stage root (the staged srrx-lease-readsb@.service and
+    srrx.adsb_filter), with a fake readsb ELF and a fake readelf where the binary matters. Offline
+    unit text only; reception and the accepted database are device evidence."""
+
+    GOOD = readelf(None, ["librtlsdr.so.2", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6", "ld-linux-aarch64.so.1"])  # run 42406849942
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="srrx-selftest-adsb-")
+        cls.root = Path(cls.temp.name)
+        deploy.stage(cls.root / "stage", devices())
+        cls.clean = cls.root / "stage/rootfs"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp.cleanup()
+
+    def copy(self, files=None, remove=()):
+        work = Path(tempfile.mkdtemp(prefix="case-", dir=self.root))
+        self.addCleanup(shutil.rmtree, work, True)
+        rootfs = work / "rootfs"
+        shutil.copytree(self.clean, rootfs, symlinks=True)
+        for rel, data in (files or {}).items():
+            path = rootfs / rel
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data if isinstance(data, bytes) else data.encode("utf-8"))
+        for rel in remove:
+            (rootfs / rel).unlink()
+        return rootfs
+
+    def row(self, rootfs, profile="controller", policy=POLICY, outputs=None):
+        report = selftest.run_offline(rootfs, profile, policy, runner=FakeTools({"readsb": self.GOOD} if outputs is None else outputs))
+        self.assertFalse(report["hardware_ready"] or report["receive_only_proven"])
+        return next(c for c in report["checks"] if c["id"] == "RX-12-readsb")
+
+    @staticmethod
+    def rules(row):
+        return {(f["rule"], f.get("item")) for f in row["findings"]}
+
+    def test_catalogue_row_extends_the_lease_row_and_keeps_rx17(self):
+        rows = {c[0]: c for c in selftest.CATALOGUE}
+        self.assertEqual((rows["RX-12-readsb"][1], rows["RX-12-readsb"][2]), (12, "OFFLINE"))
+        self.assertIn("kernel/cmdline", rows["RX-17"][3])  # RX-17 stays the command line row
+        self.assertIs(selftest.CHECKS["RX-12-readsb"], selftest.check_12_readsb)
+
+    def test_staged_template_passes_and_readsb_follows_the_profile_rule(self):
+        row = self.row(self.clean)
+        self.assertEqual((row["status"], row["findings"]), ("PASS", []), row)
+        self.assertIn("readsb_absent", row["notes"])
+        full = self.row(self.clean, "full")
+        self.assertEqual((full["status"], self.rules(full)), ("BLOCKED", {("component_not_found", "readsb")}))
+        rootfs = self.copy({"usr/bin/readsb": FAKE_ELF})
+        self.assertEqual(self.row(rootfs, "full")["status"], "PASS")
+        self.assertEqual(self.rules(self.row(rootfs)), {("radio_application_in_controller_profile", None)})
+
+    def test_each_defect_flips_the_row(self):
+        lease = "etc/systemd/system/srrx-lease-readsb@rtla.service.d/50-x.conf"
+        net = deploy.load(POLICY)["components"]["readsb"]["exec_start"] + " --net --net-sbs-port 30003"
+        cases = [
+            ("dependency_outside_allowlist", None, {"usr/bin/readsb": FAKE_ELF}, (),
+             {"readsb": readelf(None, ["librtlsdr.so.2", "libSoapySDR.so.0.8", "libc.so.6"])}),
+            ("forbidden_symbol_imported", "rtlsdr_set_bias_tee", {"usr/bin/readsb": FAKE_ELF}, (),
+             {"readsb": self.GOOD.replace("UND rtlsdr_undefined_import", "UND rtlsdr_set_bias_tee")}),
+            ("exec_start_not_allowlisted", None, {lease: "[Service]\nExecStart=\nExecStart=" + net + "\n"}, (), None),
+            ("denied_option", "net-sbs-port", {lease: "[Service]\nExecStart=\nExecStart=" + net + "\n"}, (), None),
+            ("lease_setting", "StandardError", {lease: "[Service]\nStandardError=journal\n"}, (), None),
+            ("filter_step_not_allowlisted", "ExecStartPost", {lease: "[Service]\nExecStartPost=\n"}, (), None),
+            ("filter_step_not_allowlisted", "ExecStartPre", {lease: "[Service]\nExecStartPre=-/bin/true\n"}, (), None),
+            # Review SWADSB-R1: a command beside the filter steps, or an environment or mount that swaps what runs.
+            ("exec_key_not_allowlisted", "ExecStop", {lease: "[Service]\nExecStop=/bin/cp /run/srrx-lease-readsb-rtla/json/aircraft.json "
+                                                             "/data/products/readsb-rtla/raw.json\n"}, (), None),
+            ("exec_key_not_allowlisted", "ExecReload", {lease: "[Service]\nExecReload=/bin/true\n"}, (), None),
+            ("exec_key_not_allowlisted", "ExecCondition", {lease: "[Service]\nExecCondition=/bin/true\n"}, (), None),
+            ("lease_setting", "Environment", {lease: "[Service]\nEnvironment=PYTHONPATH=/var/tmp/other\n"}, (), None),
+            ("lease_setting", "Environment", {lease: "[Service]\nEnvironment=\nEnvironment=HOME=/var/tmp\n"}, (), None),
+            ("lease_setting", "EnvironmentFile", {lease: "[Service]\nEnvironmentFile=\nEnvironmentFile=/var/tmp/x.env\n"
+                                                         "EnvironmentFile=-%t/srrx-lease-readsb-%i/readsb.env\n"}, (), None),
+            ("lease_setting", "PassEnvironment", {lease: "[Service]\nPassEnvironment=PYTHONPATH\n"}, (), None),
+            ("lease_setting", "UnsetEnvironment", {lease: "[Service]\nUnsetEnvironment=PYTHONPATH\n"}, (), None),
+            ("lease_setting", "ExecSearchPath", {lease: "[Service]\nExecSearchPath=/var/tmp/bin\n"}, (), None),
+            ("lease_setting", "BindReadOnlyPaths", {lease: "[Service]\nBindReadOnlyPaths=/var/tmp/srrx:/opt/srrx/software/srrx\n"}, (), None),
+            ("lease_setting", "RuntimeDirectoryMode", {lease: "[Service]\nRuntimeDirectoryMode=0755\n"}, (), None),
+            ("lease_setting", "UMask", {lease: "[Service]\nUMask=0000\n"}, (), None),
+            ("readsb_outside_lease", None, {"etc/systemd/system/adsb.service": "[Service]\nExecStart=/usr/bin/env readsb --net\n"}, (), None),
+            ("web_ui_present", None, {"usr/share/tar1090/html/index.html": "<html></html>\n"}, (), None),
+            ("adsb_filter_missing", None, {}, ("opt/srrx/software/srrx/adsb_filter.py",), None),
+        ]
+        for rule, item, files, remove, outputs in cases:
+            with self.subTest(rule=rule, item=item):
+                row = self.row(self.copy(files, remove), "full" if "usr/bin/readsb" in files else "controller", outputs=outputs)
+                self.assertEqual(row["status"], "FAIL", row)
+                self.assertIn((rule, item), self.rules(row))
+        changed = self.copy({"opt/srrx/software/srrx/adsb_filter.py": (deploy.PROJECT / "software/srrx/adsb_filter.py").read_text(encoding="utf-8") + "\n# changed\n"})
+        row = self.row(changed)
+        self.assertEqual((row["status"], self.rules(row)), ("BLOCKED", {("adsb_filter_differs", None)}))
+        # readsb present without its filter lease.
+        row = self.row(self.copy({"usr/bin/readsb": FAKE_ELF}, ("etc/systemd/system/srrx-lease-readsb@.service",)), "full")
+        self.assertIn(("readsb_without_filter_lease", None), self.rules(row))
+
+    def test_deny_layer_catches_a_policy_that_allowlists_a_network_option(self):
+        policy = deploy.load(POLICY)
+        component = policy["components"]["readsb"]
+        component["exec_start"] += " --net-json-port 30047"
+        work = Path(tempfile.mkdtemp(prefix="case-", dir=self.root))
+        self.addCleanup(shutil.rmtree, work, True)
+        edited = work / "policy.json"
+        edited.write_text(json.dumps(policy), encoding="utf-8")
+        unit = self.clean / "etc/systemd/system/srrx-lease-readsb@.service"
+        rootfs = self.copy({"etc/systemd/system/srrx-lease-readsb@.service": unit.read_text(encoding="utf-8").replace(
+            "--net-bind-address 127.0.0.1 --quiet", "--net-bind-address 127.0.0.1 --quiet --net-json-port 30047")})
+        row = self.row(rootfs, policy=edited)
+        self.assertEqual(self.rules(row), {("denied_option", "net-json-port")})
+
+    def test_rx_s1_accepts_adsb_public_unavailable_offline(self):
+        sys.path.insert(0, str(deploy.PROJECT / "software"))
+        import srrx.decoder_policy as decoder_policy
+        self.assertEqual(decoder_policy.availability()["adsb-public"], "UNAVAILABLE_NO_ACCEPTED_INSTALLATION")
+        report = selftest.run_offline(self.clean, "controller", POLICY)
+        self.assertEqual(next(c for c in report["checks"] if c["id"] == "RX-S1")["status"], "PASS")
+        self.assertIn("adsb-public", selftest._INSTALLATION_GATED)
+
+
 if __name__ == "__main__":
     unittest.main()
