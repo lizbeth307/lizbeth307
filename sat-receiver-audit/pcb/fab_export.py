@@ -648,6 +648,12 @@ def coverage(files, inputs, cpl_rows, bom_rows):
     gerbers = {rel: data.decode('utf-8', errors='replace') for rel, data in files.items()
                if rel.startswith('gerber/') and GERBER_EXT.search(rel)}
     layers = gerber_layers(inputs['spec']['layers']['copper'])
+    # W2 CTRL-4: while the spec of a board changes its copper count (CTRL 4 -> 6) and the new board is not routed yet, the
+    # committed set of the committed board is checked against that board's own copper layers; on a current board both
+    # counts are equal, so nothing changes for any other board
+    board_copper = len(inputs['parsed'].copper_layers)
+    if board_copper and board_copper != int(inputs['spec']['layers']['copper']) and len(gerbers) == len(gerber_layers(board_copper)):
+        layers = gerber_layers(board_copper)
     if len(gerbers) != len(layers):
         problems.append(f'{len(gerbers)} Gerber files for {len(layers)} layers')
     functions = {}

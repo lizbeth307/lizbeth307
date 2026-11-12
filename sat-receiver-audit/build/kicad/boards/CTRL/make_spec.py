@@ -998,9 +998,10 @@ def spec_texts(spec, inp, cu, skipped):
         'so the Specctra export marks them (type power) and Freerouting does not route on them; every SMD GND pad has its own '
         'scripted via to L2, every SMD 3V3_Q6A pad (or scripted 3V3_Q6A group) its own scripted via to L5, THT pads join the '
         'planes directly. Every routing layer faces a solid plane: F.Cu (L1) 0.2234 mm above L2, In2.Cu (L3) 0.3 mm below L2, '
-        'In3.Cu (L4) 0.3 mm above L5, B.Cu (L6) 0.2234 mm below L5 (JLC06161H-2116; the SIG/GND/SIG/SIG/PWR/SIG order of the '
-        'typical 6-layer stackup on jlcpcb.com/6-layer-pcb, read 2026-11-12, with L3/L4 as signal pair). In3.Cu is the routing '
-        'layer the 6-layer stackup adds. Route run 43183047190 (In3.Cu and In4.Cu both routing layers, 3V3_Q6A routed) gave 1 '
+        'In3.Cu (L4) 0.3 mm above L5, B.Cu (L6) 0.2234 mm below L5 (JLC06161H-2116). jlcpcb.com/6-layer-pcb (read 2026-11-12, '
+        'W2 CTRL-4) gives "SIG/GND/PWR/SIG/GND/SIG" as the typical 6-layer stackup; CTRL uses SIG/GND/SIG/SIG/PWR/SIG instead, '
+        'four routing layers each next to a plane, because route run 43183047190 showed the board needs routing layers more '
+        'than a second GND plane. In3.Cu is the routing layer the 6-layer stackup adds. Route run 43183047190 (In3.Cu and In4.Cu both routing layers, 3V3_Q6A routed) gave 1 '
         'error and 27 unconnected (3V3_Q6A 16) against 1 and 15 on 4 layers (43136394379), so 3V3_Q6A became a plane. The power '
         'classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: no inner copper '
         'for PWR3A, 1.8 mm inner for PWR1A).')
