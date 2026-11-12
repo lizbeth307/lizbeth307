@@ -706,6 +706,15 @@ class _Partition:
         self.loop.detach()
 
 
+def update_check(name, run_result, expect, manifest):
+    """check() of the scenario-4 boot with the manifest's expectations of every boot: the service accounts, the package
+    closure and (W2 IMG-4, merged first on the lane) pps_gpio and the session's display manager. Without the session the
+    booted slot's display-manager.service, greetd.service in an image with the session, would count as an unmasked
+    GNOME greeter."""
+    return check(name, run_result, expect, None, (manifest.get("accounts") or {}).get("service_accounts") or {},
+                 manifest.get("package_closure") or {}, None, manifest.get("pps_gpio") or {}, manifest.get("session"))
+
+
 def smoke_update(image, manifest_path, facts_path, work, out, mirror_repo=None, lab_repo=None, build_records=(), ci_test_key=None,
                  timeout=1800):
     """Scenario 4 (W2 IMG-UPD): the update model on a fresh copy, then one QEMU boot of the trial slot B."""
@@ -755,7 +764,7 @@ def smoke_update(image, manifest_path, facts_path, work, out, mirror_repo=None, 
         guest = guest_plan(Path(log).read_text(encoding="utf-8", errors="replace") if Path(log).is_file() else "")
     else:
         guest = None
-    checked = check(name, run_result, expect, None, (manifest.get("accounts") or {}).get("service_accounts") or {}, closure, None)
+    checked = update_check(name, run_result, expect, manifest)
     mismatches = (checked["mismatches"] if run_result["report"] is not None or record.get("status") == update_slot.STATUS_UPDATED else []) \
         + update_mismatches(record, closure, guest)
     checked.update(status="MODEL_FAIL" if mismatches else "MODEL_PASS", mismatches=mismatches, guest_plan=guest)

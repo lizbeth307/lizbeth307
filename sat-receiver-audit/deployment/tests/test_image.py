@@ -3158,5 +3158,47 @@ class UpdateSlotLabPublicationTests(unittest.TestCase):
         self.assertIn("is not a key of the CI test keyring", " ".join(other[1]))
 
 
+class SmokeUpdateAfterSessionTests(unittest.TestCase):
+    """INT-SW after IMG-4 and IMG-UPD: the scenario-4 boot of the trial slot B carries the expectations IMG-4 gives every boot
+    (pps_gpio as built, greetd.service as display-manager.service), so an image with the session is not an unmasked greeter."""
+
+    def setUp(self):
+        import smoke_qemu
+        self.smoke = smoke_qemu
+        self.recipe = json.loads((HERE / "image/recipe.json").read_text(encoding="utf-8"))
+        self.pps = SmokePpsAndSessionTests.PPS
+        self.session = SmokePpsAndSessionTests.SESSION
+        self.manifest = {"accounts": {"service_accounts": {"srrx-ui": {"kind": "u", "uid": 985, "primary_gid": 985}}},
+                         "package_closure": {"installed": {"greetd": "0.9.0-4ubuntu1"}}, "pps_gpio": self.pps, "session": self.session}
+
+    def booted_trial(self, display_manager):
+        units = {"srrx-boot-check.service": {"ActiveState": "active"}, "boot-complete.target": {"ActiveState": "active"},
+                 "systemd-bless-boot.service": {"ActiveState": "active"}, "srrx.service": {"ActiveState": "inactive", "UnitFileState": "disabled"}}
+        pps = {"modprobe": {"exit_code": 0, "stderr": ""}, "loaded": True, "initstate": "live", "filename": self.pps["path"],
+               "sha256": self.pps["sha256"], "vermagic": _VERMAGIC, "uname_r": _KVER}
+        report = {"boot_check": {"slot": "B", "status": "BOOT_SELF_CHECK_OK"}, "units": units, "bless_boot_status": "good", "pending_jobs": [],
+                  "masked_units": {u: {"LoadState": "masked"} for u in self.recipe["mask"]["units"]}, "failed_units": [],
+                  "display_manager": display_manager, "pps_gpio": pps}
+        return {"qemu_exit": 0, "report": report, "entries_after": self.smoke.UPDATE_SCENARIO[1]["entries_after"]}
+
+    def test_update_check_passes_the_manifest_pps_and_session(self):
+        name, expect = self.smoke.UPDATE_SCENARIO
+        result = self.booted_trial({"Id": "greetd.service", "LoadState": "loaded", "ActiveState": "inactive"})
+        with patch.object(self.smoke, "check", return_value={"status": "MODEL_PASS", "mismatches": []}) as check:
+            self.smoke.update_check(name, result, expect, self.manifest)
+        self.assertEqual(check.call_args.args, (name, result, expect, None, self.manifest["accounts"]["service_accounts"],
+                                                self.manifest["package_closure"], None, self.pps, self.session))
+
+    def test_greetd_display_manager_on_the_booted_trial(self):
+        name, expect = self.smoke.UPDATE_SCENARIO
+        result = self.booted_trial({"Id": "greetd.service", "LoadState": "loaded", "ActiveState": "inactive"})
+        self.assertEqual(self.smoke.check(name, result, expect, None, None, None, None, self.pps, self.session)["mismatches"], [])
+        unmasked = self.smoke.check(name, result, expect, None, None, None, None, None, None)["mismatches"]
+        self.assertEqual(unmasked, ["display-manager.service LoadState 'loaded': the GNOME greeter is not masked"])
+        del result["report"]["pps_gpio"]
+        self.assertIn("no pps_gpio report from the booted slot: None",
+                      self.smoke.check(name, result, expect, None, None, None, None, self.pps, self.session)["mismatches"])
+
+
 if __name__ == "__main__":
     unittest.main()
