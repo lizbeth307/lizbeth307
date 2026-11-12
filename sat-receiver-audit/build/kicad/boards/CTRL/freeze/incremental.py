@@ -258,6 +258,61 @@ def outer_only_nets():
     return {p['pattern'] for p in pro['netclass_patterns'] if p['netclass'] in outer}
 
 
+def t_junctions(m, log):
+    """Explicit joints for new track ends that lie on the body of another track of the net (route run 43276220883: KiCad
+    flagged such an end, 0.012 mm off the other centre line, as track_dangling): the other track is split at the
+    projection of the end and the end moves onto it (after the exact clearance check)."""
+    fixed = 0
+    for it in list(m.items):
+        if not (it.alive and it.kind == 'track' and (it.src == 'new' or (it.src == 'router' and it.tag is None))):
+            continue  # copper this run made (the retry relabels it 'router' without a record tag)
+        for e in (it.a, it.b):
+            if not it.alive:
+                break
+            o = it.b if e == it.a else it.a
+            lay = it.layers[0]
+            near = [q for q in m.near(lay, (e[0] - 0.5, e[1] - 0.5, e[0] + 0.5, e[1] + 0.5)) if q.alive and q.net == it.net and q.id != it.id]
+            if any(q.kind in ('pad', 'via') and q.shape.dist(*e) <= 1e-4 for q in near):
+                continue
+            if any(q.kind == 'track' and min(math.hypot(e[0] - c[0], e[1] - c[1]) for c in (q.a, q.b)) <= 1e-4 for q in near):
+                continue
+            host = [q for q in near if q.kind == 'track' and M.seg_dist(e[0], e[1], q.a[0], q.a[1], q.b[0], q.b[1]) <= q.width / 2 + 1e-4
+                    and min(math.hypot(o[0] - c[0], o[1] - c[1]) for c in (q.a, q.b)) > 1e-4]
+            if not host:
+                continue
+            q = host[0]
+            n_before = len(m.items)
+            local = lambda: [x for x in m.near(lay, (e[0] - 1, e[1] - 1, e[0] + 1, e[1] + 1))
+                             if x.alive and x.kind == 'track' and x.net == it.net]
+            loose_before = sum(1 for x in local() for c in (x.a, x.b) if not F.end_joined(m, x, c, x.net))
+            dx, dy = q.b[0] - q.a[0], q.b[1] - q.a[1]
+            L2 = dx * dx + dy * dy
+            t = max(0.0, min(1.0, ((e[0] - q.a[0]) * dx + (e[1] - q.a[1]) * dy) / L2)) if L2 > 0 else 0.0
+            j = (round(q.a[0] + t * dx, 6), round(q.a[1] + t * dy, 6))
+            if min(math.hypot(j[0] - c[0], j[1] - c[1]) for c in (q.a, q.b)) <= 1e-3:
+                j = q.a if math.hypot(j[0] - q.a[0], j[1] - q.a[1]) <= 1e-3 else q.b
+            else:
+                m.remove(q)
+                m.add_track(q.net, lay, q.width, q.a, j, src='new')
+                m.add_track(q.net, lay, q.width, j, q.b, src='new')
+            mg, why = m.track_margin(it.net, lay, it.width, o, j, ignore={it.id})
+            if mg < -0.0005:
+                raise RuntimeError(f't-junction of {it.net} at {e}: {mg:.3f} {why}')
+            old_it = it
+            m.remove(it)
+            it = m.add_track(it.net, lay, it.width, o, j, src='new')
+            if sum(1 for x in local() for c in (x.a, x.b) if not F.end_joined(m, x, c, x.net)) > loose_before:
+                for x in m.items[n_before:]:  # the joint would leave another end loose: undo it
+                    x.alive = False
+                old_it.alive = True
+                q.alive = True
+                it = old_it
+                continue
+            fixed += 1
+    log(f'explicit t-junctions: {fixed}')
+    return fixed
+
+
 def segments_of(doc):
     out = set()
     for key in ('router_tracks', 'completion_tracks'):
@@ -374,6 +429,7 @@ def run(args, log=print):
     for n in sorted(n for n in touched if n):
         if n not in scripted_only:
             F.prune(m, n)
+    t_junctions(m, log)
     open_, bad = FR.verify(m)
     planes = PL.split_count(m)
     if planes > 1:
