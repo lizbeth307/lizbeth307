@@ -639,5 +639,66 @@ class PwrBLeavesPwrACutoutsFree(unittest.TestCase):
         self.assertEqual(cut['overlay']['overlap_mm2'], 0.0)
 
 
+class PlannedCutoutRuleAreas(unittest.TestCase):
+    """W2 PWRB-R: spec key planned_cutouts (cut-outs that are not Edge.Cuts yet become rule areas grown by margin_mm) and the
+    copper audit of pcb/check_boards.py against the same rects."""
+
+    KEY = {'why': 'test', 'margin_mm': 0.3, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
+           'rects': [{'id': 'C1', 'rect': [2.0, 4.0, 1.0, 1.0]}]}
+
+    def test_boxes_and_validation(self):
+        spec = {'planned_cutouts': copy.deepcopy(self.KEY)}
+        bg.validate_planned_cutouts(spec, 'T', ['F.Cu', 'B.Cu'])
+        (cid, box), = bg.planned_cutout_boxes(spec)
+        self.assertEqual(cid, 'C1')
+        for got, want in zip(box, (1.7, 3.7, 3.3, 5.3)):
+            self.assertAlmostEqual(got, want)
+        self.assertEqual(bg.planned_cutout_boxes({}), [])
+        bg.validate_planned_cutouts({}, 'T', ['F.Cu', 'B.Cu'])
+        mutations = (lambda k: k.update(margin_mm=0), lambda k: k.update(why=''), lambda k: k.update(layers=['In9.Cu']),
+                     lambda k: k.update(blocks=['footprints']), lambda k: k.update(rects=[]),
+                     lambda k: k['rects'].append(dict(k['rects'][0])), lambda k: k['rects'][0].update(id='C 1'),
+                     lambda k: k['rects'][0].update(rect=[0, 0, -1, 1]))
+        for i, mutate in enumerate(mutations):
+            k = copy.deepcopy(self.KEY)
+            mutate(k)
+            with self.assertRaises(SystemExit, msg=i):
+                bg.validate_planned_cutouts({'planned_cutouts': k}, 'T', ['F.Cu', 'B.Cu'])
+
+    def test_check_boards_measures_copper_against_the_rects(self):
+        import importlib.util
+        loader = importlib.util.spec_from_file_location('srrx_check_boards_pc', bg.BASE / 'pcb/check_boards.py')
+        cb = importlib.util.module_from_spec(loader)
+        loader.loader.exec_module(cb)
+        edges = ''.join(f'(gr_line (start {a} {b}) (end {c} {d}) (layer "Edge.Cuts") (stroke (width 0.05)))'
+                        for a, b, c, d in ((100, 100, 110, 100), (110, 100, 110, 110), (110, 110, 100, 110), (100, 110, 100, 100)))
+        # contract rect [2, 4, 1, 1] (y up) = KiCad x 102-103, y 105-106; one track crosses it, one passes 0.2 mm off
+        # its right edge (inside the 0.3 mm margin), one stays 1 mm away
+        tracks = ('(segment (start 101 105.5) (end 104 105.5) (width 0.2) (layer "F.Cu") (net 1))'
+                  '(segment (start 103.3 104) (end 103.3 107) (width 0.2) (layer "B.Cu") (net 1))'
+                  '(segment (start 101 108) (end 104 108) (width 0.2) (layer "F.Cu") (net 1))')
+        text = (f'(kicad_pcb (version 20241229) (layers (0 "F.Cu" signal) (31 "B.Cu" signal)) (net 0 "") (net 1 "A") '
+                f'{edges}{tracks})')
+        board = cb.Board(cb.parse(text))
+        spec = {'board_id': 'T', 'planned_cutouts': copy.deepcopy(self.KEY)}
+        contract = {'outline_mm': [[0, 0], [10, 0], [10, 10], [0, 10]]}
+        out, info = cb.check_planned_cutouts(board, cb.Frame(board, contract, spec), spec)
+        self.assertEqual(len(out), 2)
+        self.assertEqual(info['per_rect'][0]['items_inside'], 1)
+        self.assertEqual(info['per_rect'][0]['items_within_margin'], 1)
+        self.assertEqual(cb.normalize_spec(dict(spec, schema=cb.SPEC_SCHEMA_V1))['planned_cutouts'], self.KEY)
+
+    def test_pwr_b_spec_keeps_every_pwr_a_cutout_as_rule_area(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        pc = spec['planned_cutouts']
+        self.assertEqual([r['rect'] for r in pc['rects']], [c['rect'] for c in spec['pwr_a_cutouts']['cutouts_mm']])
+        self.assertEqual(pc['layers'], ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'])
+        self.assertEqual(set(pc['blocks']), {'tracks', 'vias', 'zone_fills', 'pads'})
+        self.assertGreaterEqual(pc['margin_mm'], 0.3)
+        bg.validate_spec(spec, 'PWR_B')
+
+
 if __name__ == '__main__':
     unittest.main()
