@@ -34,5 +34,23 @@
       "before_sha256": "9dda7312e6e8a2c968d28470b6ef16e1625331598f2e583f9f33bb4e4f08a438",
       "after_sha256": "917f85c70d59b816aff3d3bde54eddc3aace92a88aaa23a17c34726a8c5d1e20"
     }
+  },
+  "sdrangel": {
+    "CMakeLists.txt": {
+      "before_sha256": "b719077d6793c693103b3d5acfc00309fb3cf1a171dcf7f832ff1013f06dc4b6",
+      "after_sha256": "1d5fbb3a41a7d09112476938c69716a6a6765168a1569244fb907f123bcf860f"
+    },
+    "plugins/CMakeLists.txt": {
+      "before_sha256": "c098ff1a939ad1da7c7909ae88f2100a8a0fc8f7ee73ee98717f3083ae768a88",
+      "after_sha256": "e3846fa6cf36eb7b13d97fed6439c3b15fa033ac99cbbc8483110ecaf0888e8f"
+    },
+    "plugins/channelrx/CMakeLists.txt": {
+      "before_sha256": "4a2e023aec9183659c987343570e84f85998cdf6cc017d40e28a9329a2e9735f",
+      "after_sha256": "1dea9b3d77beead4e8c34dd7aaabc17baec1f3a3f6063f3b620339ffb676aff9"
+    },
+    "plugins/samplesource/CMakeLists.txt": {
+      "before_sha256": "7b7c5a3f740018f01a8f29b96f6b8fdb451914169a606add0c8124cfe7b373d3",
+      "after_sha256": "96f82eabaed869ea4674020446d6c55d5cb733ac78984198a2a7ef1b65079e24"
+    }
   }
 }
