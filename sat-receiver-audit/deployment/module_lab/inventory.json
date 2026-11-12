@@ -9,8 +9,8 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "dfff95f1f8f53514b25c43b52541c9f5f49abb4fde1e6e4d7cb06a45c452ce6d",
-      "bytes": 155158
+      "sha256": "b21d1683701fdb205e3c84e6420497cd703c36dc4d3e2c10449d8b87cc569c94",
+      "bytes": 154974
     },
     "design/E2.json": {
       "sha256": "5ec323a8a3b020da7f0d03876535599680b5caaed3f46604b76e70cd146763d3",
@@ -29,7 +29,7 @@
       "bytes": 123087
     },
     "STACK.md": {
-      "sha256": "e9eacf29019e193ace2f885155e729db43f1bfdb23f26ef17d2d3ec476ec7bcc",
+      "sha256": "aad06c88f0f8d475630b77a07b67a3162c747abce92aa3aa27af0795c170a330",
       "bytes": 1965830
     },
     "build/12-revision-v2.1.md": {
@@ -165,11 +165,6 @@
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
           "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
-          "blocking": true
         }
       ],
       "coverage_constraints": [
@@ -272,11 +267,6 @@
         {
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
-          "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
           "blocking": true
         }
       ],
@@ -429,11 +419,6 @@
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
           "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
-          "blocking": true
         }
       ],
       "coverage_constraints": [
@@ -541,11 +526,6 @@
         {
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
-          "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
           "blocking": true
         }
       ],
@@ -802,11 +782,6 @@
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
           "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
-          "blocking": true
         }
       ],
       "coverage_constraints": [
@@ -1030,11 +1005,6 @@
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
           "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
-          "blocking": true
         }
       ],
       "coverage_constraints": [
@@ -1121,11 +1091,6 @@
         {
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
-          "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
           "blocking": true
         }
       ],
@@ -1220,11 +1185,6 @@
         {
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
-          "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
           "blocking": true
         }
       ],
@@ -1355,11 +1315,6 @@
         {
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
-          "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
           "blocking": true
         }
       ],
@@ -1496,11 +1451,6 @@
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
           "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
-          "blocking": true
         }
       ],
       "coverage_constraints": [
@@ -1604,11 +1554,6 @@
         {
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
-          "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
           "blocking": true
         }
       ],
@@ -1720,11 +1665,6 @@
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
           "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
-          "blocking": true
         }
       ],
       "coverage_constraints": [
@@ -1823,11 +1763,6 @@
         {
           "id": "E1-07",
           "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
-          "blocking": true
-        },
-        {
-          "id": "E1-08",
-          "description": "W2 GR-5A: джерело такту FPWM для EN/SYNC U107/U108 не визначено; LM61460AAN без такту працює в auto mode (PFM на малому навантаженні), частота RT має допуск ±10 %. Посадкові місця RJR0014A/RDL0020A намальовано з land pattern TI, на платі не перевірено.",
           "blocking": true
         }
       ],
