@@ -10,6 +10,7 @@ PAD_INSET = 0.0  # incremental.py sets it: a path may start or end in a pad only
 # track (0.35 mm) can leave a 0.30 mm J209 contact along its axis between neighbours 0.20 mm away (exact gap 0.175 mm);
 # every committed segment is checked exactly, and fin.py routes again at 0.75 when a commit fails.
 MARGIN_STEPS = 0.75
+MAX_NODES = 6_000_000  # A* pop limit per link (freeze_route.py --max-nodes)
 
 
 def cap_dist(X, Y, x1, y1, x2, y2, r):
@@ -351,7 +352,7 @@ def simplify(m, net, lay, width, pts, clr=M.CLR + 0.005, ignore=()):
 
 
 def route_link(m, net, isl_a, isl_b, box, width=0.15, g=0.05, via_cost=1.5, layers=('F.Cu', 'B.Cu'), bias=None,
-               ignore=(), verbose=True, max_nodes=6_000_000, soft_src=(), soft_cost=3.0):
+               ignore=(), verbose=True, max_nodes=None, soft_src=(), soft_cost=3.0):
     t = time.time()
     grid = Grid(m, box, g)
     soft = {l: np.zeros(grid.X.shape, dtype=bool) for l in layers} if soft_src else None
@@ -361,7 +362,7 @@ def route_link(m, net, isl_a, isl_b, box, width=0.15, g=0.05, via_cost=1.5, laye
     src = {l: grid.covered(isl_a, l) for l in layers}
     dst = {l: grid.covered(isl_b, l) for l in layers}
     t1 = time.time()
-    path, why = astar(grid, list(layers), blk, vblk, src, dst, via_cost=via_cost, bias=bias, max_nodes=max_nodes,
+    path, why = astar(grid, list(layers), blk, vblk, src, dst, via_cost=via_cost, bias=bias, max_nodes=max_nodes or MAX_NODES,
                       soft=soft, vsoft=vsoft, soft_cost=soft_cost)
     if verbose:
         print(f'  {net}: grid {grid.nx}x{grid.ny} raster {t1 - t:.1f}s astar {time.time() - t1:.1f}s {why}')

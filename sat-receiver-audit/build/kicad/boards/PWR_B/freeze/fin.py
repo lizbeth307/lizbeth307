@@ -248,11 +248,13 @@ def prune(m, net, srcs=('router', 'new'), log=print):
             return removed
 
 
-def dangling(m):
-    """Report (no removal) track ends that touch nothing and vias joined on fewer than two layers."""
+def dangling(m, srcs=None):
+    """Report (no removal) track ends that touch nothing and vias joined on fewer than two layers (only items whose src
+    is in srcs when given: W2 PWRB-R checks router and completion copper; the scripted J209 GND spine vias sit on the
+    spine track, which KiCad joins by its anchors and this strict rule does not)."""
     out = []
     for it in m.items:
-        if not it.alive or it.kind not in ('track', 'via'):
+        if not it.alive or it.kind not in ('track', 'via') or (srcs and it.src not in srcs):
             continue
         net = it.net
         if it.kind == 'track':

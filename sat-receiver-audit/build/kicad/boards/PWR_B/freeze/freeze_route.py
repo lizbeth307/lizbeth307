@@ -63,7 +63,7 @@ def verify(m):
     """Open connections, dangling copper and clearance of every track and via (exact checks)."""
     nets = sorted({i.net for i in m.items if i.alive and i.net})
     open_ = {n: len(m.islands(n)) - 1 for n in nets if len(m.islands(n)) > 1}
-    bad = [('dangling',) + d for d in F.dangling(m)]
+    bad = [('dangling',) + d for d in F.dangling(m, srcs=('router', 'new'))]
     ends = collections.defaultdict(list)
     for it in m.items:
         if it.alive and it.kind == 'track':
@@ -178,23 +178,29 @@ def replace_keepouts(m, ms, log=print):
     return removed
 
 
-def frozen_to_router(m, cur):
+def frozen_to_router(m, cur, tol=0.002):
     """Locked board copper that is not scripted copper of the current spec (the frozen copper of a spec that had
-    route-frozen.json, for example the pre-route of prefreeze.py) is taken as router copper: harvested, rippable."""
-    key = lambda p: (round(p[0], 3), round(p[1], 3))
-    segs = set()
+    route-frozen.json, for example the pre-route of prefreeze.py) is taken as router copper: harvested, rippable.
+    Ends match within tol mm (KiCad keeps nanometres, the spec 0.1 um)."""
+    near = lambda p, q: abs(p[0] - q[0]) <= tol and abs(p[1] - q[1]) <= tol
+    segs, vias = collections.defaultdict(list), collections.defaultdict(list)
     for t in cur['tracks']:
         pts = [K(*p) for p in t['path']]
-        for a, b in zip(pts, pts[1:]):
-            segs.add((t['net'], t['layer'], frozenset((key(a), key(b)))))
-    vias = {(v['net'], key(K(*v['at']))) for v in cur['vias']}
+        segs[(t['net'], t['layer'])] += list(zip(pts, pts[1:]))
+    for v in cur['vias']:
+        vias[v['net']].append(K(*v['at']))
     moved = 0
     for it in m.items:
         if not (it.alive and it.src == 'scripted'):
             continue
-        if it.kind == 'track' and (it.net, it.layers[0], frozenset((key(it.a), key(it.b)))) not in segs:
-            it.src, moved = 'router', moved + 1
-        elif it.kind == 'via' and (it.net, key(it.at)) not in vias:
+        if it.kind == 'track':
+            hit = any((near(it.a, a) and near(it.b, b)) or (near(it.a, b) and near(it.b, a))
+                      for a, b in segs.get((it.net, it.layers[0]), ()))
+        elif it.kind == 'via':
+            hit = any(near(it.at, q) for q in vias.get(it.net, ()))
+        else:
+            continue
+        if not hit:
             it.src, moved = 'router', moved + 1
     return moved
 
@@ -220,12 +226,17 @@ def main(argv=None):
     ap.add_argument('--allow-open', action='store_true', help='write the result even with open connections (study only)')
     ap.add_argument('--margin-steps', type=float, default=0.25,
                     help='raster margin over the exact clearance in grid steps (default 0.25; 0.75 again after a refused commit)')
+    ap.add_argument('--no-rip', action='store_true', help='join only where a free path exists; never rip router copper')
+    ap.add_argument('--max-nodes', type=int, default=6_000_000, help='A* pop limit per link')
+    ap.add_argument('--transactional', type=int, default=0, metavar='N',
+                    help='after the first pass, up to N rounds of all-or-nothing rip-up joins of the nets still open')
     ap.add_argument('--keepouts-from-spec', action='store_true',
                     help="replace the board's KO_AREA_* keep-outs by the spec's and remove the router copper that breaks them")
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     R.PAD_INSET = args.pad_inset
     R.MARGIN_STEPS = args.margin_steps
+    R.MAX_NODES = args.max_nodes
     art = Path(args.artifact)
     report = json.loads((art / 'board/report.json').read_text(encoding='utf-8'))
     ms = load_make_spec()
@@ -261,7 +272,8 @@ def main(argv=None):
         if net in cur['never']:
             raise SystemExit(f'freeze_route: {net} is scripted copper; it is never routed here')
         signal = classes.get(net, 'Default') == 'Default'
-        ok, ripped = fz.connect(net, width=widths.get(net, default_w), layers=SIGNAL_LAYERS if signal else POWER_LAYERS)
+        ok, ripped = fz.connect(net, allow_rip=not args.no_rip, width=widths.get(net, default_w),
+                                layers=SIGNAL_LAYERS if signal else POWER_LAYERS)
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if not ok:
             failed.append(net)
@@ -269,6 +281,39 @@ def main(argv=None):
         if bad:
             raise SystemExit(f'freeze_route: ripped scripted nets {bad}')
         queue.extend(n for n in ripped if n not in queue)
+    for rnd in range(args.transactional):
+        # W2 PWRB-R: a rip-up join is kept only when every net it ripped joins again without ripping (all or nothing), so
+        # the open count never grows; the greedy rip cascade of W2 CTRL-R did not settle on PWR_B (route run 43294945712)
+        still = [n for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in cur['never']})
+                 if len(m.islands(n)) > 1]
+        print(f'transactional round {rnd + 1}: {len(still)} open nets', flush=True)
+        gained = 0
+        for net in still:
+            if len(m.islands(net)) < 2:
+                continue
+            n0, alive = len(m.items), [it.alive for it in m.items]
+            signal = classes.get(net, 'Default') == 'Default'
+            ok, ripped = fz.connect(net, allow_rip=True, width=widths.get(net, default_w),
+                                    layers=SIGNAL_LAYERS if signal else POWER_LAYERS)
+            if ok and not any(n in cur['never'] for n in ripped):
+                for r in ripped:
+                    sig = classes.get(r, 'Default') == 'Default'
+                    ok_r, _rr = fz.connect(r, allow_rip=False, width=widths.get(r, default_w),
+                                           layers=SIGNAL_LAYERS if sig else POWER_LAYERS)
+                    if not ok_r:
+                        ok = False
+                        break
+            if ok:
+                gained += 1
+                print(f'  {net}: joined, ripped and rejoined {ripped} ({time.time() - t0:.0f} s)', flush=True)
+            else:
+                for it, was in zip(m.items, alive):
+                    it.alive = was
+                for it in m.items[n0:]:
+                    it.alive = False
+                print(f'  {net}: no change ({time.time() - t0:.0f} s)', flush=True)
+        if not gained:
+            break
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net != 'GND'}):
         F.prune(m, n)
     open_, bad = verify(m)
@@ -303,9 +348,10 @@ def main(argv=None):
     run = args.route_run or (int(art.name.rsplit('-', 1)[-1]) if art.name.rsplit('-', 1)[-1].isdigit() else None)
     ripped = dict(sorted(fz.ripped.items()))
     summary = (f'Route run {run} left {sum(open0.values())} open connections on {len(open0)} nets '
-               f'({", ".join(f"{n} {k}" for n, k in sorted(open0.items()))}); the completion joined them with '
+               f'({", ".join(f"{n} {k}" for n, k in sorted(open0.items()))}); the completion added '
                f'{nseg["new"]} segments and {len(vias["new"])} vias, ripping {sum(ripped.values())} router items of '
-               f'{len(ripped)} nets where it needed their place and joining those again; inner-layer signal copper '
+               f'{len(ripped)} nets where it needed their place and joining those again; {sum(open_.values())} connections stay open; '
+               f'inner-layer signal copper '
                f'{ {k: round(v, 1) for k, v in sorted(inner.items())} } mm (In2.Cu).')
     doc = {
         'schema': 'srrx-pwrb-frozen-route-v1',

@@ -1292,7 +1292,8 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen=None):
             f'W2 PWRB-R route study: the tracks RT-* and vias RV-* are the Freerouting copper of route run {src["route_run"]} '
             f'(inputs sha256 {src["inputs_sha256"][:12]}..., the PWR-A cut-outs as copper keep-outs), harvested from that run '
             f'board and locked; the tracks FIN-* and vias FINV-* complete its open connections ({frozen["completion"]}). '
-            f'{frozen["summary"]} Source: {FROZEN.relative_to(BASE).as_posix()}, tool build/kicad/boards/PWR_B/freeze/'
+            f'{frozen["summary"]} Open after the completion (model): {frozen.get("open_after") or "none"}. '
+            f'Source: {FROZEN.relative_to(BASE).as_posix()}, tool build/kicad/boards/PWR_B/freeze/'
             'freeze_route.py (numpy, offline). Valid only for this placement, netlist, scripted copper and keep-out list '
             '(guard: SHA256 of the pads, of the scripted copper geometry and of the cut-out rectangles): any change stops '
             'make_spec until the route is frozen again. CI/model result, not a hardware PASS')
