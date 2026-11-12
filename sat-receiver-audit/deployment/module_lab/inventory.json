@@ -47,9 +47,9 @@
       "E4": 221,
       "E5": 89
     },
-    "top_level_circuit_assemblies": 69,
+    "top_level_circuit_assemblies": 70,
     "source_kind_module_count": 57,
-    "detailed_subinterfaces": 229,
+    "detailed_subinterfaces": 230,
     "catalogue_only_or_factory_internal_entities": 30,
     "catalogue_documents": 102,
     "partition_refs_assigned_exactly_once": true,
