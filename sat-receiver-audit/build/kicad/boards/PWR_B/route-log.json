@@ -45,52 +45,52 @@
   ],
   "exit_code": 0,
   "log_tail": [
-    "  Net 'E2_LNA2_SHUNT' (3 unrouted connections):",
-    "    - R236-2  ->  R271-1",
-    "    - C237-1  ->  R236-2",
-    "    - L207-1  ->  C237-1",
-    "  Net 'E2_LNA2_SW' (2 unrouted connections):",
-    "    - R270-1  ->  R236-1",
-    "    - R236-1  ->  U207-6",
-    "  Net 'E2_LNA3_SHUNT' (3 unrouted connections):",
     "    - R273-1  ->  R241-2",
-    "    - C241-1  ->  R241-2",
-    "    - L208-1  ->  C241-1",
+    "    - R241-2  ->  C241-1",
+    "    - C241-1  ->  L208-1",
     "  Net 'E2_LNA3_SW' (2 unrouted connections):",
     "    - R272-1  ->  R241-1",
     "    - R241-1  ->  U208-6",
     "  Net 'E2_LNA4_SHUNT' (3 unrouted connections):",
     "    - R246-2  ->  C245-1",
-    "    - L209-1  ->  C245-1",
-    "    - L209-1  ->  J209-99",
+    "    - C245-1  ->  L209-1",
+    "    - J209-99  ->  L209-1",
     "  Net 'E2_LNA4_SW' (2 unrouted connections):",
-    "    - R246-1  ->  U209-6",
+    "    - U209-6  ->  R246-1",
     "    - via  ->  R246-1",
+    "  Net 'I2C2_SCL' (2 unrouted connections):",
+    "    - J201-4  ->  U215-6",
+    "    - J209-43  ->  U215-6",
+    "  Net 'I2C2_SDA' (2 unrouted connections):",
+    "    - J201-3  ->  U215-7",
+    "    - U215-7  ->  J209-45",
     "  Net 'LAB5' (13 unrouted connections):",
     "    - via  ->  via",
-    "    - via  ->  via",
+    "    - J209-5  ->  J209-9",
     "    - via  ->  via",
     "    - U501-1  ->  C502-1",
     "    - U502-1  ->  C505-1",
     "    - C295-1  ->  U221-1",
-    "    - C502-1  ->  C501-1",
+    "    - C501-1  ->  C502-1",
     "    - C505-1  ->  C504-1",
     "    - C295-1  ->  C504-1",
     "    - C501-1  ->  U502-1",
     "    - J209-1  ->  C248-1",
-    "    - C295-1  ->  C248-1",
-    "    - U221-1  ->  U210-1",
-    "2026-11-12 15:06:13.561 INFO   [99A904\\50D065] Auto-routing stage completed: started with 268 unrouted nets, completed in 954.11 seconds, final score: 751.69 (65 unrouted and 13 violations), using 940.68 total CPU seconds, 880.69 GB total allocated, and 693.6 MB peak heap usage.",
-    "2026-11-12 15:06:13.985 INFO   [99A904\\50D065] Skipping optimization stage: the board has 65 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-12 15:06:14.015 INFO   [99A904\\50D065] Job '99A904\\50D065' finished with state: COMPLETED (elapsed: 15 minutes 55.76 seconds, finished at UTC: 2026-11-12T15:06:14.014814223Z).",
-    "2026-11-12 15:06:14.032 INFO   Saving output file '/tmp/sr-rx-PWR_B-83wokglo/PWR_B.ses' (SES)...",
-    "2026-11-12 15:06:14.034 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-83wokglo/PWR_B.ses' (117997 bytes)."
+    "    - C248-1  ->  C295-1",
+    "    - U210-1  ->  U221-1",
+    "  Net 'PWR_BUTTON' (1 unrouted connection):",
+    "    - J203-19  ->  J209-59",
+    "2026-11-12 18:01:53.215 INFO   [0D570F\\344A41] Auto-routing stage completed: started with 268 unrouted nets, completed in 714.18 seconds, final score: 747.81 (66 unrouted and 14 violations), using 704.44 total CPU seconds, 519.45 GB total allocated, and 664.3 MB peak heap usage.",
+    "2026-11-12 18:01:53.750 INFO   [0D570F\\344A41] Skipping optimization stage: the board has 66 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-12 18:01:53.780 INFO   [0D570F\\344A41] Job '0D570F\\344A41' finished with state: COMPLETED (elapsed: 11 minutes 56.36 seconds, finished at UTC: 2026-11-12T18:01:53.779898914Z).",
+    "2026-11-12 18:01:53.827 INFO   Saving output file '/tmp/sr-rx-PWR_B-367assr6/PWR_B.ses' (SES)...",
+    "2026-11-12 18:01:53.829 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-367assr6/PWR_B.ses' (107838 bytes)."
   ],
-  "dsn_sha256": "fe1b0a36fec15e543a780dc5c1c8cd9ca193b9cbc21ab9622b0ccf71d8e53a3d",
-  "ses_sha256": "948a8c1c643f1f5b21e6b99b995d4adcb9f628177c445e66e1c13a860c0c80e5",
+  "dsn_sha256": "e7695d3aeef1ae7e2d6ea4498077e3110f1524c9c3b3e471b728b62cd387c986",
+  "ses_sha256": "17a7357ece925b58bbf7934e27aa5af1e7e013875d8acd35f3a2a2d346a7424f",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 252,
+    "wires_fix": 255,
     "wires_protect": 0,
     "keepouts": 52,
     "planes": 2,
@@ -118,10 +118,23 @@
     }
   },
   "locked_segments": {
-    "before_ses_import": 252,
-    "after_ses_import": 252
+    "before_ses_import": 255,
+    "after_ses_import": 255
   },
-  "via_centre_stubs": [],
+  "via_centre_stubs": [
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "end": [
+        195.155,
+        191.3
+      ],
+      "centre": [
+        195.35,
+        191.5
+      ]
+    }
+  ],
   "drc_command": [
     "kicad-cli",
     "pcb",
@@ -135,7 +148,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "dabf89fd2563dde52510bb0a773d1a1807e8ecb67cdbbd4143d9ed88482719a4",
+  "board_sha256": "adc2f821e8116ab4463dfc7d8932c017b2c9c0cd71b34c7ee09dbf56531a6c6b",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -966,8 +979,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43241032279",
-    "sha": "7575bc42ea3f9cb6fc07477de902ddd427f37e14",
+    "run_id": "43273190849",
+    "sha": "2aab8f09bf554703eb91849b94761daab977c44c",
     "ref": "refs/heads/wip/w2-pwrb2"
   }
 }
