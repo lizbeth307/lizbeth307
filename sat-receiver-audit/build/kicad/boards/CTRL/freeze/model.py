@@ -74,7 +74,9 @@ class RoundRect:
 
 
 class Item:
-    __slots__ = ('id', 'kind', 'net', 'layers', 'shape', 'bbox', 'locked', 'width', 'a', 'b', 'at', 'size', 'drill', 'ref', 'pad', 'src', 'alive')
+    # tag: where a frozen item comes from in route-frozen.json (list name, record index); set by incremental.py only
+    __slots__ = ('id', 'kind', 'net', 'layers', 'shape', 'bbox', 'locked', 'width', 'a', 'b', 'at', 'size', 'drill', 'ref', 'pad', 'src', 'alive',
+                 'tag')
 
     def __init__(self, **k):
         for s in self.__slots__:
@@ -155,13 +157,13 @@ class Model:
                     self.grid[(lay, ix, iy)].append(it.id)
         return it
 
-    def add_track(self, net, layer, width, a, b, locked=True, src='new'):
+    def add_track(self, net, layer, width, a, b, locked=True, src='new', tag=None):
         return self.add(Item(kind='track', net=net, layers=[layer], shape=cb.Capsule(a[0], a[1], b[0], b[1], width / 2), width=width,
-                             a=tuple(a), b=tuple(b), locked=locked, src=src))
+                             a=tuple(a), b=tuple(b), locked=locked, src=src, tag=tag))
 
-    def add_via(self, net, at, size, drill, locked=True, src='new'):
+    def add_via(self, net, at, size, drill, locked=True, src='new', tag=None):
         return self.add(Item(kind='via', net=net, layers=list(LAYERS), shape=cb.Capsule(at[0], at[1], at[0], at[1], size / 2), at=tuple(at),
-                             size=size, drill=drill, locked=locked, src=src))
+                             size=size, drill=drill, locked=locked, src=src, tag=tag))
 
     def remove(self, it):
         it.alive = False

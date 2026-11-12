@@ -2,6 +2,7 @@
 """Freeze a CTRL route run and complete it (W2 CTRL-R route study). Needs numpy; offline tool, not run by CI.
 
   python build/kicad/boards/CTRL/freeze/freeze_route.py --artifact <unzipped pcb-regenerated-CTRL> [--out FILE]
+  python build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen [--rip NET] [--scripted NET] [--check]   (incremental.py)
 
 The artifact holds board/CTRL.kicad_pcb and board/report.json of a route run whose inputs equal the spec made by
 build/kicad/boards/CTRL/make_spec.py without route-frozen.json. The tool
@@ -186,12 +187,55 @@ def dump(doc):
     return '\n'.join(lines) + '\n'
 
 
+def from_frozen(args):
+    """--from-frozen (W2 CTRL-4, review RV-CTRLR-5): re-freeze from the committed frozen copper; see incremental.py."""
+    import incremental as I
+    rc, text = I.run(args)
+    if rc or text is None:
+        return rc or 1
+    out = Path(args.out)
+    if args.check:
+        same = out.is_file() and out.read_text(encoding='utf-8') == text
+        print('route-frozen.json reproduced byte for byte' if same else f'{out} differs from the incremental result')
+        return 0 if same else 1
+    out.write_text(text, encoding='utf-8', newline='\n')
+    print('wrote', out)
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument('--artifact', required=True, help='unzipped pcb-regenerated-CTRL artifact (board/CTRL.kicad_pcb, board/report.json)')
+    ap.add_argument('--artifact', help='unzipped pcb-regenerated-CTRL artifact (board/CTRL.kicad_pcb, board/report.json)')
     ap.add_argument('--out', default=str(OUT))
+    inc = ap.add_argument_group('--from-frozen (incremental, W2 CTRL-4): start from the committed route-frozen.json')
+    inc.add_argument('--from-frozen', action='store_true', help='re-freeze from the committed frozen copper (incremental.py)')
+    inc.add_argument('--board', default=str(HERE.parent / 'CTRL.kicad_pcb'),
+                     help='routed board for pads, keepouts and edges (default: the committed GENERATED CTRL.kicad_pcb)')
+    inc.add_argument('--board-label', default='', help='provenance text for the board (for example its route run)')
+    inc.add_argument('--base', default='', help='frozen route to start from (default: the committed route-frozen.json)')
+    inc.add_argument('--rip', action='append', default=[], metavar='NET', help='remove the frozen copper of NET and join it again')
+    inc.add_argument('--scripted', action='append', default=[], metavar='NET',
+                     help='remove the frozen copper of NET; it must be complete from the scripted copper (never routed here)')
+    inc.add_argument('--l2', action='append', default=[], metavar='NET', help='NET may use L2 where three layers have no path')
+    inc.add_argument('--l2-cascade', action='store_true', help='nets ripped on the way may use L2 too (as the first freeze)')
+    inc.add_argument('--l2-touched', action='store_true', help='every net the change touches may use L2 where three layers have no path')
+    inc.add_argument('--retry', action='store_true', help='nets that found no path are joined once more at the end')
+    inc.add_argument('--retry-l2', action='store_true', help='with --retry: the retried nets may use L2')
+    inc.add_argument('--retry-rip-new', action='store_true', help='with --retry: copper added by this run may be ripped too')
+    inc.add_argument('--plane-guard', action='store_true',
+                     help='undo a join whose L2 links split the L2 GND plane and join that net without L2 (plane.py)')
+    inc.add_argument('--max-rounds', type=int, default=120, help='limit of net joins (default 120)')
+    inc.add_argument('--allow-open', action='store_true', help='write the result with open connections left to Freerouting')
+    inc.add_argument('--pad-inset', type=float, default=0.13,
+                     help='a new path starts or ends at least this far inside a pad edge (KiCad connection_width; default 0.13)')
+    inc.add_argument('--reason', default='', help='why (recorded in the increments list of route-frozen.json)')
+    inc.add_argument('--check', action='store_true', help='compare the result with --out instead of writing it')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
+    if args.from_frozen:
+        return from_frozen(args)
+    if not args.artifact:
+        ap.error('--artifact is required without --from-frozen')
     art = Path(args.artifact)
     report = json.loads((art / 'board/report.json').read_text(encoding='utf-8'))
     m = M.Model(str(art / 'board/CTRL.kicad_pcb'))
