@@ -1517,4 +1517,87 @@ class ContractW2Mech7Part2(unittest.TestCase):
         Q = self._copy()
         Q.boards["boards"]["PWR_B"]["exit_rule"]["plug_proud_mm"]["PH"] = 0.1
         zq = {z["zone"]: z for z in self._rule(Q, "R-PWRB-EXIT")["value_mm"]["zones"]}
-        self.assertTrue(all("header face at the edge" in z["verdict"] for z in zq.values() if z["plug_proud_mm"] is not None and z["room_mm"] >= 0.1))
+        for i, z in zq.items():                    # review F2: the set-back also counts the bundle OD, so a lower housing only moves it by 1.9
+            if "set_back_min_mm" in z:
+                self.assertAlmostEqual(z["set_back_min_mm"], max(zones[i]["set_back_min_mm"] - 1.9, 0.0), places=6)
+
+
+class ContractW2Mech7Review(unittest.TestCase):
+    """W2 MECH-7 review fixes: F1 (the area cost of the passing right-angle Micro-Fit against the SHRINK-2 fill margin, and
+    the runs of the exit edges outside the display) and F2 (S23/S34 leave the 0.55 mm slot in front of the PWR-B bottom
+    edge; R-PWRB-EXIT counts the bundle OD and checks each exit leg with its bundle)."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def test_mated_alternative_is_costed_against_the_fill_margin(self):
+        r = self._rule(P, "R-HDR-MATED")
+        v = r["value_mm"]
+        rows = {x["connector"]: x for x in r["headers"]}
+        cy = boards.footprint_courtyards()
+        hh = P.parts["harness_headers"]["MF_ra"]
+        with (HERE.parent / "pcb" / "generated" / "components.csv").open(encoding="utf-8", newline="") as fh:
+            fps = {row["ref"]: row["footprint"] for row in csv.DictReader(fh)}
+        for ref in v["alternative_passes"]:
+            c = cy[fps[ref]]
+            pins = round((max(c["w"], c["h"]) - hh["b"]) / hh["a"]) + 1
+            want = (hh["a"] * (pins - 1) + hh["b"]) * hh["d"] - c["w"] * c["h"]
+            self.assertAlmostEqual(rows[ref]["alternative"]["area_delta_mm2"], round(want, 1), places=6, msg=ref)
+        d = json.loads((HERE.parent / "pcb" / "partition-budget.json").read_text(encoding="utf-8"))
+        pa = d["candidates"][d["chosen"]]["boards"]["PWR_A"]
+        self.assertAlmostEqual(v["pwr_a_margin_mm2"], round(rules.FILL_TRIGGER * pa["usable_mm2"] - pa["demand_1_mm2"], 1), places=6)
+        self.assertEqual(v["all_within_margin"], v["alternative_area_total_mm2"] <= v["pwr_a_margin_mm2"])
+        if not v["all_within_margin"]:
+            self.assertIn("F2-C", r["result"])
+        for s in v["largest_sets_within_margin"]:
+            self.assertLessEqual(sum(v["alternative_area_delta_mm2"][x] for x in s), v["pwr_a_margin_mm2"] + 1e-9)
+        self.assertNotIn("alternative", rows["J206"])                                        # MF2: no passing part read
+        self.assertIn("J206", r["result"].split("no passing part read for", 1)[1])
+        right = rows["J104"]["off_display_run_mm"]                                         # the right edge below the display
+        disp = [bx for i, _, bx, _ in layout.item_boxes(P) if i == "display"][0]
+        self.assertAlmostEqual(right["run_mm"], disp[1] - (P.boards["boards"]["PWR"]["place"]["origin"][1]), places=2)
+        self.assertEqual(rows["J206"]["off_display_run_mm"]["run_mm"], 0.0)                 # the SL2 span lies under the display
+
+    def test_s23_s34_leave_the_slot_in_front_of_the_bottom_edge(self):
+        from srrx_mech import routes
+        res = routes.evaluate(P)
+        named = routes.boxes(P)
+        tray = named["battery_tray"][1]
+        for sid in ("S23", "S34"):
+            r = res["segments"][sid]
+            self.assertEqual(r["crossings"], [], sid)
+            self.assertIn("SL3", r["through"], sid)
+            rad = r["bundle_od_mm"] / 2
+            pts = r["points_mm"]
+            for a, b in zip(pts, pts[1:]):
+                piece = tuple(min(a[i], b[i]) for i in range(3)) + tuple(max(a[i], b[i]) for i in range(3))
+                self.assertGreaterEqual(layout.gap(piece, tray), rad - 1e-6, (sid, a, b))    # the bundle, not only its centreline
+        legs = rules._pwr_b_exit_legs(P)
+        for sid in ("S23", "S34"):
+            self.assertGreaterEqual(legs[sid]["clear_mm"], 0.0, (sid, legs[sid]))
+
+    def test_exit_rule_counts_the_bundle_od(self):
+        r = self._rule(P, "R-PWRB-EXIT")
+        ex = P.boards["boards"]["PWR_B"]["exit_rule"]
+        legs = rules._pwr_b_exit_legs(P)
+        for z in r["value_mm"]["zones"]:
+            if z["room_mm"] is None or z["plug_proud_mm"] is None:
+                continue
+            od = max(v["bundle_od_mm"] for v in legs.values() if v["zone"] == z["zone"])
+            self.assertEqual(z["bundle_od_max_mm"], od)
+            need = z["plug_proud_mm"] + od + ex["bundle_clearance_mm"]
+            self.assertAlmostEqual(z["set_back_min_mm"], round(max(need - z["room_mm"], 0.0), 2), places=6)
+            if od > z["room_mm"]:
+                self.assertIn("cannot turn in front of the edge", z["verdict"])
+        self.assertNotIn("the wires turn within the room", r["result"])
+        Q = self._copy()
+        hr = Q.mech["harness_routes"]["segments"]
+        for sid in ("S23", "S34"):                                                         # the part-2 route: along y 38.2 in the slot
+            hr[sid]["via"][0:5] = [{"edge": "PWR_B", "zone": 2, "s": 10.75},
+                                   {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"}]
+        zq = [z for z in self._rule(Q, "R-PWRB-EXIT")["value_mm"]["zones"] if z["zone"] == 2][0]
+        self.assertTrue(any(v["clear_mm"] < 0 for v in zq["legs"].values()), zq["legs"])

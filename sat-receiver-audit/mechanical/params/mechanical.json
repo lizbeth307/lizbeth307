@@ -1350,8 +1350,11 @@
       "S23": {
         "ends": ["PWR", "LABUSB"],
         "via": [
-          {"edge": "PWR_B", "zone": 2, "s": 10.75},
-          {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
+          {"edge": "PWR_B", "zone": 2, "s": 10.75, "off": [0, 1.7, 0]},
+          {"box": "blower", "at": [0.5, 0.5, 1.0], "off": [0, 0, 3.5], "keep": "xy"},
+          {"box": "display", "at": [0.5, 0.0, 0.5], "off": [0, -6.3, 0], "keep": "xz"},
+          {"box": "battery_tray", "at": [1.0, 0.5, 0.5], "off": [3.8, 0, 0], "keep": "yz"},
+          {"box": "blower", "at": [0.5, 0.0, 0.5], "off": [0, -2.5, 0], "keep": "xz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
           {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
           {"slot": "SL3", "at": [0.5, 0.7, 0.5], "keep": "xz"},
@@ -1362,7 +1365,7 @@
           {"port": "LAB_USB_A"}
         ],
         "end_status": [{"unit": "LABUSB", "provisional": "behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall"}],
-        "note": "W2 MECH-7 part 2: J506 (PH 9, W2 GR-5B) on the PWR-B bottom span x 93-114.5, along y 38.2 over the BMS to SL3, down at y 17.55 (between the LAB BUS nut envelope and the HDMI flex rise) to z 20, west right of the GX16 socket and along y 8 under the plate extension to the bottom-face port"
+        "note": "W2 MECH-7 part 2: J506 (PH 9, W2 GR-5B) on the PWR-B bottom span x 93-114.5; the plug exit 1.7 inboard of the bottom edge (header set back, rule R-PWRB-EXIT: the 0.55 mm slot between the battery-tray wall and the PWR-B edge takes no bundle), up over PWR-B to z 59 (3.5 above the blower), along y 44 (between the tray wall, y 37.95, and the display, y >= 50.3) over PWR-B and the blower to x 165 past the tray end, down at y 36 (between the pack-fuse carrier, y <= 32.7, and the blower, y >= 38.5) to z 53 and along y 36 over the BMS to SL3 (W2 MECH-7 review F2); down at y 17.55 (between the LAB BUS nut envelope and the HDMI flex rise) to z 20, west right of the GX16 socket and along y 8 under the plate extension to the bottom-face port"
       },
       "S24": {
         "ends": ["CTRL", "T7A"],
@@ -1498,8 +1501,11 @@
       "S34": {
         "ends": ["PWR", "LABBUS"],
         "via": [
-          {"edge": "PWR_B", "zone": 2, "s": 10.75},
-          {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
+          {"edge": "PWR_B", "zone": 2, "s": 10.75, "off": [0, 1.7, 0]},
+          {"box": "blower", "at": [0.5, 0.5, 1.0], "off": [0, 0, 3.5], "keep": "xy"},
+          {"box": "display", "at": [0.5, 0.0, 0.5], "off": [0, -6.3, 0], "keep": "xz"},
+          {"box": "battery_tray", "at": [1.0, 0.5, 0.5], "off": [3.8, 0, 0], "keep": "yz"},
+          {"box": "blower", "at": [0.5, 0.0, 0.5], "off": [0, -2.5, 0], "keep": "xz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
           {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
           {"slot": "SL3", "at": [0.5, 0.7, 0.5], "keep": "xz"},
@@ -1508,7 +1514,7 @@
           {"box": "nut.LAB_BUS", "at": [0.5, 1.0, 0.5]}
         ],
         "end_status": [{"unit": "LABBUS", "provisional": "KH-GX12-6P solder cups inside the receptacle not modelled: end at the rear (+y) face of its inner nut envelope (nut.LAB_BUS, READS-E drawing row), W2 MECH-7 part 2"}],
-        "note": "W2 MECH-7 part 2: J506 (PH 9, W2 GR-5B) on the PWR-B bottom span x 93-114.5, along y 38.2 over the BMS to SL3, down at y 17.55 to the LAB BUS port height and into the rear face of the receptacle's inner envelope"
+        "note": "W2 MECH-7 part 2: J506 (PH 9, W2 GR-5B) on the PWR-B bottom span x 93-114.5; the plug exit 1.7 inboard of the bottom edge (header set back, rule R-PWRB-EXIT: the 0.55 mm slot between the battery-tray wall and the PWR-B edge takes no bundle), up over PWR-B to z 59 (3.5 above the blower), along y 44 (between the tray wall, y 37.95, and the display, y >= 50.3) over PWR-B and the blower to x 165 past the tray end, down at y 36 (between the pack-fuse carrier, y <= 32.7, and the blower, y >= 38.5) to z 53 and along y 36 over the BMS to SL3 (W2 MECH-7 review F2); down at y 17.55 to the LAB BUS port height and into the rear face of the receptacle's inner envelope"
       },
       "S35": {
         "ends": ["PWR", "BONI"],

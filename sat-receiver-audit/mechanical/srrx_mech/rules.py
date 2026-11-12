@@ -1730,17 +1730,39 @@ def mated_height_rule(P):
                         row["verdict"] += f"; as {fam}_{alt} (mated {ha:g}) {ta:g}: " + ("passes" if ok else "fails")
                         if ok:
                             alt_ok.append(ref)
+                        # W2 MECH-7 review F1: the alternative's courtyard against the one of the specified part (PWR-A top area)
+                        sa = header_size(P, fam, int(r["pins"]), "PWR", cy, orient=alt)
+                        now = c["w"] * c["h"] if c else (size[0] * size[1] if size else None)
+                        if sa and now is not None:
+                            row["alternative"].update(courtyard_mm=[round(sa[0], 2), round(sa[1], 2)], courtyard_from=sa[2],
+                                                      area_delta_mm2=round(sa[0] * sa[1] - now, 1))
+                    else:
+                        row["verdict"] += "; no lower-mated part of this family read (TBD)"
+                # W2 MECH-7 review F1: the longest run of the exit edge zone whose strip lies outside the display footprint
+                row["off_display_run_mm"] = _off_display_run(enc, ez["edge"], disp)
             rows.append(row)
     passed = [x["connector"] for x in rows if x.get("verdict", "").startswith("PASS")]
     outside = [x["connector"] for x in rows if x.get("under_display") is False]
     val = {"channel_floor_z": z_lim, "pwr_a_face_z": face, "under_display_pass": passed, "fails_as_specified": fail,
            "alternative_passes": alt_ok, "tbd": tbd, "outside_display": outside}
+    cost = _alternative_area_cost(rows, alt_ok)
+    val.update(cost)
     parts = []
     if passed:
         parts.append(f"{len(passed)} pass ({', '.join(passed)})")
     if fail:
         parts.append(f"{len(fail)} fail as specified ({', '.join(fail)})"
                      + (f", as the right-angle Micro-Fit 43650 (MF_ra) {', '.join(alt_ok)} pass" if alt_ok else ""))
+        parts.append(cost["text"])
+        no_alt = [x["connector"] for x in rows if x.get("verdict", "").startswith("FAIL") and "alternative" not in x]
+        if no_alt:
+            parts.append(f"no passing part read for {', '.join(no_alt)} (TBD: a lower-mated part or a place outside the display)")
+        runs =[f"{x['connector']} {x['edge']} {x['off_display_run_mm']['run_mm']:g} mm"
+                + (f" (enclosure {x['off_display_run_mm']['axis']} {x['off_display_run_mm']['at'][0]:g}-{x['off_display_run_mm']['at'][1]:g})"
+                   if x["off_display_run_mm"]["run_mm"] > 0 else "")
+                for x in rows if x.get("verdict", "").startswith("FAIL") and "off_display_run_mm" in x]
+        parts.append("places outside the display, the longest run of each failing header's exit edge zone clear of the display "
+                     f"footprint: {', '.join(runs)} (shared with the other headers of that zone; positions at the PCB-PWRA-3 placement)")
     if tbd:
         parts.append(f"TBD: {', '.join(tbd)}")
     if outside:
@@ -1752,24 +1774,92 @@ def mated_height_rule(P):
     return dict(rule, value_mm=val, limit_mm=z_lim, headers=rows, result=res)
 
 
+# Placement fill trigger of PWR-A (pcb/partition-spec.json fallbacks F2 and F2-C: 'courtyard fill ... > 0.60 in placement',
+# 'a sourced part or block grows the PWR-A top demand by more than the 90.4 mm2 left below 0.60'); W2 MECH-7 review F1.
+FILL_TRIGGER = 0.60
+
+
+def _off_display_run(enc, edge, disp):
+    """Longest run along the edge (mm) of a header edge strip (enclosure x0, y0, x1, y1) that lies outside the display
+    footprint (layout display box): where a header of that zone could stand with no channel limit (W2 MECH-7 review F1)."""
+    if edge in ("bottom", "top"):
+        lo, hi, a0, a1, d_lo, d_hi, e0, e1, axis = enc[0], enc[2], enc[1], enc[3], disp[0], disp[3], disp[1], disp[4], "x"
+    else:
+        lo, hi, a0, a1, d_lo, d_hi, e0, e1, axis = enc[1], enc[3], enc[0], enc[2], disp[1], disp[4], disp[0], disp[3], "y"
+    if a0 >= e1 or a1 <= e0:                                     # the strip lies beside the display across the edge
+        return {"run_mm": round(hi - lo, 2), "axis": axis, "at": [round(lo, 2), round(hi, 2)]}
+    runs = [(lo, min(hi, d_lo)), (max(lo, d_hi), hi)]
+    best = max(runs, key=lambda r: r[1] - r[0])
+    if best[1] - best[0] <= 1e-9:
+        return {"run_mm": 0.0, "axis": axis, "at": []}
+    return {"run_mm": round(best[1] - best[0], 2), "axis": axis, "at": [round(best[0], 2), round(best[1], 2)]}
+
+
+def _alternative_area_cost(rows, alt_ok):
+    """W2 MECH-7 review F1: PWR-A top courtyard area that the passing alternative (MF_ra) adds per failing header, against the
+    margin of pcb/partition-budget.json candidates.<chosen> PWR_A below the placement fill trigger (F2-C fires when a sourced
+    part grows the demand by more than that margin); the largest header sets that stay within it."""
+    from .boards import budget_candidate
+    ch, cand = budget_candidate()
+    pa = ((cand or {}).get("boards") or {}).get("PWR_A") or {}
+    usable, demand = pa.get("usable_mm2"), pa.get("demand_1_mm2")
+    delta = {x["connector"]: x["alternative"]["area_delta_mm2"] for x in rows
+             if x["connector"] in alt_ok and "area_delta_mm2" in x.get("alternative", {})}
+    total = round(sum(delta.values()), 1)
+    out = {"alternative_area_delta_mm2": delta, "alternative_area_total_mm2": total, "fill_trigger": FILL_TRIGGER}
+    if not delta:
+        out["text"] = "the passing alternative has no courtyard area (TBD)"
+        return out
+    if usable is None or demand is None:
+        out["text"] = (f"MF_ra adds {total:g} mm2 of PWR-A top courtyards; the margin below the fill trigger is not computed "
+                       "(pcb/partition-budget.json has no PWR_A row)")
+        return out
+    margin = round(FILL_TRIGGER * usable - demand, 1)
+    refs = sorted(delta)
+    within = [set(s) for k in range(len(refs), 0, -1) for s in itertools.combinations(refs, k)
+              if sum(delta[r] for r in s) <= margin + 1e-9]
+    maximal = [sorted(s) for s in within if not any(s < t for t in within)]
+    out.update(pwr_a_margin_mm2=margin, budget=f"candidates.{ch} PWR_A usable {usable:g}, demand {demand:g}",
+               all_within_margin=total <= margin + 1e-9, largest_sets_within_margin=maximal)
+    each = ", ".join(f"{r} {delta[r]:g}" for r in refs)
+    head = (f"MF_ra adds PWR-A top courtyard area ({each}; total {total:g} mm2) against the {margin:g} mm2 left below the fill "
+            f"trigger {FILL_TRIGGER:.2f} (pcb/partition-budget.json candidates.{ch} PWR_A: {FILL_TRIGGER:.2f} x {usable:g} - {demand:g})")
+    if total <= margin + 1e-9:
+        out["text"] = head + ": all of them fit the margin"
+    else:
+        sets = "; ".join("{" + ", ".join(s) + "}" for s in maximal) or "none"
+        out["text"] = (head + f": MF_ra on all of them would fire F2-C (pcb/partition-spec.json fallbacks F2-C); the largest sets within "
+                       f"the margin: {sets}; the others need a place outside the display or F2-C")
+    return out
+
+
 def pwr_b_exit_rule(P):
     """R-PWRB-EXIT (W2 MECH-7 part 2): room in front of each PWR-B edge zone for its side-entry harness plugs. For every
     zone of boards.json PWR_B edge_zones: the distance from the board edge, outwards, to the nearest layout envelope or
     structure part that overlaps the zone span and the plug height band (PWR-B component face + the side-entry body height
     of the zone's header families, parts.json harness_headers <family>_side h), against the distance the mated housing
-    stands proud of the header face (boards.json PWR_B exit_rule plug_proud_mm). The header set-back from the board edge
-    and the wire bend at the housing are placement and proof-fit items, so the rule reports (OPEN), never FAIL."""
+    stands proud of the header face (boards.json PWR_B exit_rule plug_proud_mm). W2 MECH-7 review F2: the room is also
+    compared with the largest bundle OD of the zone's harness segments (generated harness-routes.json bundle_od_mm): a
+    bundle wider than the room cannot turn in front of the edge, so the header face sits at least proud + OD + clearance -
+    room inboard and the wires turn over the board; and each segment's leg from the PWR-B edge to its first plate opening
+    or panel port is checked with its bundle (centreline + OD/2) against the envelopes, since R-ROUTE-CLEAR checks
+    centrelines only. The header set-back from the board edge and the wire bend radius (not read) are placement and
+    proof-fit items, so the rule reports (OPEN), never FAIL."""
     import csv
     from pathlib import Path
     b = P.boards["boards"]["PWR_B"]
     ex = b.get("exit_rule") or {}
     rule = {"id": "R-PWRB-EXIT",
             "rule": "PWR-B edge zones: free room in front of the edge in the plug height band against the mated side-entry housing proud of the "
-                    "header face (header set-back and wire bend: PCB-PWRB-2 placement, proof-fit)",
-            "source": "boards.json PWR_B edge_zones / exit_rule; parts.json harness_headers; build/16-dzhgut-rozyemy.csv (board PWR_B); mechanical.json layout"}
+                    "header face plus the bundle OD of the zone's segments; bundle clearance of each segment's leg to its first opening "
+                    "(header set-back and wire bend: PCB-PWRB-2 placement, proof-fit)",
+            "source": "boards.json PWR_B edge_zones / exit_rule; parts.json harness_headers; build/16-dzhgut-rozyemy.csv (board PWR_B); "
+                      "mechanical.json layout, harness_routes; generated/harness-routes.json bundle_od_mm"}
     if not b.get("edge_zones") or not ex:
         return dict(rule, value_mm=None, result="OPEN: boards.json PWR_B has no edge_zones or exit_rule")
     root = Path(__file__).resolve().parents[2]
+    legs = _pwr_b_exit_legs(P)
+    clr = ex.get("bundle_clearance_mm", 0.0)
     fam_of = {}
     path = root / "build" / "16-dzhgut-rozyemy.csv"
     if path.exists():
@@ -1807,24 +1897,85 @@ def pwr_b_exit_rule(P):
                 best = (round(gap, 2), name)
         proud = [ex["plug_proud_mm"].get(f) for f in fams]
         p_max = max([p for p in proud if p is not None], default=None)
+        zl = {sid: v for sid, v in legs.items() if v["zone"] == i}
+        od = max([v["bundle_od_mm"] for v in zl.values()], default=None)
+        od_seg = [sid for sid, v in zl.items() if v["bundle_od_mm"] == od]
         row = {"zone": i, "edge": ez["edge"], "span": ez["span"], "headers": ez.get("headers", []), "families": fams, "band_z": [round(v, 2) for v in band],
                "room_mm": None if best is None else best[0], "nearest": None if best is None else best[1], "plug_proud_mm": p_max,
-               "plug_proud_tbd": [f for f, p in zip(fams, proud) if p is None]}
+               "plug_proud_tbd": [f for f, p in zip(fams, proud) if p is None], "segments": sorted(zl),
+               "bundle_od_max_mm": od, "bundle_clearance_mm": clr,
+               "legs": {sid: {k: v[k] for k in ("bundle_od_mm", "pieces", "clear_mm", "nearest")} for sid, v in sorted(zl.items())}}
         if best is None:
             row["verdict"] = "no envelope in front of the edge in the band"
         elif p_max is None:
             row["verdict"] = f"room {best[0]:g} mm to {best[1]}; housing proud TBD ({', '.join(fams) or 'no header'})"
-        elif best[0] >= p_max:
-            row["verdict"] = f"room {best[0]:g} mm to {best[1]} >= housing proud {p_max:g}: header face at the edge; the wire bend needs the rest"
         else:
-            row["verdict"] = (f"room {best[0]:g} mm to {best[1]} < housing proud {p_max:g}: the header face sits >= {p_max - best[0]:.2f} mm inboard "
-                              "of the board edge, and the wires turn within the room")
+            need = p_max + (od or 0.0) + (clr if od else 0.0)
+            row["set_back_min_mm"] = round(max(need - best[0], 0.0), 2)
+            what = f"housing proud {p_max:g}" + (f" + bundle OD {od:g} ({', '.join(od_seg)}) + clearance {clr:g}" if od else "")
+            if best[0] >= need - 1e-9:
+                row["verdict"] = f"room {best[0]:g} mm to {best[1]} >= {what}: header face at the edge; the wire bend radius (TBD) needs the rest"
+            else:
+                row["verdict"] = (f"room {best[0]:g} mm to {best[1]} < {what} = {need:g}"
+                                  + (f" (bundle OD {od:g} > room {best[0]:g}: the bundle cannot turn in front of the edge)" if od and od > best[0] else "")
+                                  + f": the header face sits >= {row['set_back_min_mm']:g} mm inboard of the board edge and the wires turn over the board "
+                                  "(bend radius TBD)")
         if row["plug_proud_tbd"] and p_max is not None:
             row["verdict"] += f"; housing proud of {', '.join(row['plug_proud_tbd'])} TBD"
+        if zl:
+            bad = [f"{sid} reaches {-v['clear_mm']:g} into {v['nearest']}" for sid, v in sorted(zl.items())
+                   if v["clear_mm"] is not None and v["clear_mm"] < -1e-9]
+            ok = [f"{sid} {v['clear_mm']:g}" for sid, v in sorted(zl.items()) if v["clear_mm"] is not None and v["clear_mm"] >= -1e-9]
+            row["verdict"] += ("; leg to the first opening, bundle (centreline + OD/2) against the envelopes: "
+                               + "; ".join(([", ".join(bad)] if bad else []) + ([f"clear: {', '.join(ok)} mm"] if ok else [])))
         rows.append(row)
         txt.append(f"zone {i} ({ez['edge']} {a0:g}-{a1:g}, {', '.join(ez.get('headers', [])) or 'no header'}): {row['verdict']}")
     return dict(rule, value_mm={"zones": rows}, limit_mm=ex["plug_proud_mm"],
                 result="OPEN: " + "; ".join(txt) + f"; {ex.get('gate', 'header set-back and wire bend at the PCB-PWRB-2 placement and proof-fit')}")
+
+
+def _pwr_b_exit_legs(P):
+    """W2 MECH-7 review F2: for every harness segment with an end on a PWR-B edge zone, its bundle OD and the bundle clearance
+    of its leg (the pieces from the PWR-B end to its first plate slot, notch, window or panel port, else the whole route)
+    against every envelope and structure part except the envelopes of its own ends and its 'touch' list. Pieces are taken as
+    their bounding boxes (exact for the axis-parallel pieces of these routes)."""
+    from . import routes
+    from .layout import gap
+    res = routes.evaluate(P)
+    if res is None:
+        return {}
+    named = routes.boxes(P)
+    out = {}
+    for sid, spec in P.mech["harness_routes"]["segments"].items():
+        via = spec.get("via") or []
+        r = res["segments"].get(sid, {})
+        pts = r.get("points_mm") or []
+        if not via or len(pts) != len(via):
+            continue
+        ends = [k for k in (0, len(via) - 1) if "edge" in via[k] and via[k]["edge"] == "PWR_B"]
+        if not ends:
+            continue
+        seq = list(range(len(via))) if ends[0] == 0 else list(range(len(via)))[::-1]
+        leg = [seq[0]]
+        for k in seq[1:]:
+            leg.append(k)
+            if any(key in via[k] for key in ("slot", "notch", "window", "port")):
+                break
+        exempt = routes._end_boxes(P, via[0], named) | routes._end_boxes(P, via[-1], named) | set(spec.get("touch", []))
+        rad = (r.get("bundle_od_mm") or 0.0) / 2
+        worst = None
+        for a, b in zip(leg, leg[1:]):
+            pa, pb = pts[a], pts[b]
+            piece = tuple(min(pa[i], pb[i]) for i in range(3)) + tuple(max(pa[i], pb[i]) for i in range(3))
+            for name, (iid, bx, it) in named.items():
+                if name in exempt or iid in exempt or it.get("outside") or tuple(bx[:3]) == tuple(bx[3:]):
+                    continue
+                d = max(gap(piece, bx), 0.0) - rad
+                if worst is None or d < worst[0] - 1e-9:
+                    worst = (d, name)
+        out[sid] = {"zone": via[ends[0]]["zone"], "bundle_od_mm": r.get("bundle_od_mm"), "pieces": len(leg) - 1,
+                    "clear_mm": None if worst is None else round(worst[0], 2), "nearest": None if worst is None else worst[1]}
+    return out
 
 
 def w2_mech7_rules(P):

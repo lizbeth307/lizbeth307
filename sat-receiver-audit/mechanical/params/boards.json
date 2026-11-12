@@ -138,14 +138,16 @@
         {
           "edge": "bottom",
           "span": [93, 114.5],
-          "use": "W2 MECH-7 part 2 (SHRINK-2): J506 SL3-PWR-PH, the JST PH 9-pin side-entry header S9B-PH-K-S (KiCad courtyard 20.9 mm) that merged J506 (S23) and J508 (S34) (W2 GR-5B), towards plate slot SL3 along y 38.2; the span lies between the PWR-A bottom-row strips (they end at x <= 92.5: boards PWR edge_zones[0] row_end_max, J109-J112 turned by 90 deg) and the J507 / J113 corner strips (x >= 115.0, the wip/w2-pwra1 place that SHRINK-2 keeps without the S02 FFC; wip/w2-pwra3 9ecc26f2 probe 7: J507 courtyard from x 115.475, MODEL)",
+          "use": "W2 MECH-7 part 2 (SHRINK-2): J506 SL3-PWR-PH, the JST PH 9-pin side-entry header S9B-PH-K-S (KiCad courtyard 20.9 mm) that merged J506 (S23) and J508 (S34) (W2 GR-5B), towards plate slot SL3: the header face set back from the edge (R-PWRB-EXIT; the 0.55 mm slot to the battery-tray wall takes no bundle), the S23/S34 bundle rises over PWR-B and runs at z 59 along y 44 over the blower to x 165, then down to z 53 at y 36 (mechanical.json harness_routes, W2 MECH-7 review F2); the span lies between the PWR-A bottom-row strips (they end at x <= 92.5: boards PWR edge_zones[0] row_end_max, J109-J112 turned by 90 deg) and the J507 / J113 corner strips (x >= 115.0, the wip/w2-pwra1 place that SHRINK-2 keeps without the S02 FFC; wip/w2-pwra3 9ecc26f2 probe 7: J507 courtyard from x 115.475, MODEL)",
           "headers": ["J506"]
         }
       ],
       "exit_rule": {
         "plug_proud_mm": {"PH": 2.0},
+        "bundle_clearance_mm": 0.5,
+        "_bundle_clearance_note": "W2 MECH-7 review F2 (design value, the 0.5 mm model gap of the envelope check): the room in front of an edge must take the housing proud + the largest bundle OD of the zone's segments (generated/harness-routes.json bundle_od_mm) + this clearance; otherwise the header face sits that sum minus the room inboard and the wires turn over the board",
         "_src": "W2 MECH-7 part 2, model arithmetic from the JST ePH catalogue (PDF of 27.01.2026, read 2026-11-07, recorded in parts.json harness_headers): side-entry header 7.6 deep (harness_headers src) and (9.6) mated length (PH_side h_mated_src), so the PHR housing stands 2.0 mm proud of the header face; PHD side entry: the mated length is not read (S20B-PHDSS 9.5 overall, READS-P row web:jst-phd-catalogue-lcsc, parts.json PHD_side src), TBD; the wire bend radius at the housing is not read (TBD)",
-        "gate": "OPEN: PCB-PWRB-2 sets the header set-back from the board edge at its placement and the wire turn in front of the edge is checked at proof-fit (rule R-PWRB-EXIT)"
+        "gate": "OPEN: PCB-PWRB-2 sets the header set-back from the board edge at its placement (at least the R-PWRB-EXIT set_back_min_mm of the zone, plus the bend radius, TBD) and the wire turn is checked at proof-fit (rule R-PWRB-EXIT)"
       },
       "windows": "W2 MECH-7: a placement rule, not contract cut-outs: PCB-PWRB-2 leaves a window (courtyard + window_margin 0.5) over every PWR-A part taller than hA (pcb/partition-budget.json candidates.<chosen>.window_refs), the edge strips of the PWR-A harness headers, the test-point probe windows (tp_probe_window 3.0) and the B2B keepout, at the PCB-PWRA-3 placement",
       "notes": "Mezzanine of the W2 AREA decision 'Кількість плат' (four main boards): parts <= hB on the top side only (except the B2B half J209 on the bottom, b2b.bottom_side), no PWR-B part over a window (check_boards, PCB-PWRB). W2 MECH-7 (SHRINK-2): the outline is the full L; its outline and edge zones are the mechanical contract, the windows a placement rule (windows); MODEL FIT ONLY."
