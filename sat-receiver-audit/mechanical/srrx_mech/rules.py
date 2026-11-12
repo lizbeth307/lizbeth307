@@ -309,6 +309,7 @@ def evaluate(P):
     out += w2_mech3_rules(P)
     out += w2_mech4_rules(P)
     out += w2_mech5_rules(P)
+    out += w2_mech7_rules(P)
     return out
 
 
@@ -538,6 +539,25 @@ def module_rules(P):
         out.append({"id": "R-PWR-MODULES", "rule": "modules on a board (height + mount standoff) inside the board envelope height there (worst module)",
                     "value_mm": round(worst[2], 2), "limit_mm": worst[3], "module": worst[1], "result": _res(worst[0] >= -1e-9),
                     "source": "boards.json modules_on_board / height_zones; parts.json pololu_d36v50"})
+        return out
+    # W2 MECH-7 (SHRINK-2): no module on a board; the PWR-A converters are reserved blocks of the partition budget until GR-5A
+    # gives them graph refs: each block height inside the PWR-A envelope (hA, under the PWR-B mezzanine)
+    from .boards import budget_candidate
+    ch, cand = budget_candidate()
+    blocks = [bl for bl in ((cand or {}).get("planned") or {}).get("blocks", []) if bl.get("side") == "PWR_A"]
+    b = P.boards["boards"]["PWR"]
+    if blocks:
+        top = max(blocks, key=lambda bl: bl["h"])
+        out.append({"id": "R-PWR-MODULES", "rule": "no purchased module on a custom board (W2 MECH-7: SHRINK-2 replaced the Pololu U107/U108); the reserved PWR-A "
+                                                   "blocks of the partition budget (converters, RPP, SMD fuses) inside the PWR-A envelope height (tallest block)",
+                    "value_mm": top["h"], "limit_mm": b["max_height"], "module": top["id"],
+                    "blocks_mm": {bl["id"]: [bl["w"], bl["d"], bl["h"]] for bl in blocks},
+                    "result": _res(all(bl["h"] <= b["max_height"] + 1e-9 for bl in blocks)),
+                    "source": f"pcb/partition-budget.json candidates.{ch}.planned.blocks (heights: READS-P rows, MODEL blocks until GR-5A); boards.json PWR max_height"})
+    else:
+        out.append({"id": "R-PWR-MODULES", "rule": "no purchased module on a custom board (W2 MECH-7: SHRINK-2 replaced the Pololu U107/U108)",
+                    "value_mm": None, "limit_mm": b["max_height"], "result": "PASS (model): no module on a board; the converters are board parts (partition height rule)",
+                    "source": "boards.json modules_on_board; pcb/partition-budget.json"})
     return out
 
 
@@ -832,9 +852,88 @@ def w2_mech2_rules(P):
 
 
 # ---- W2 MECH-3: PWR-A relief pockets, the J551 pod power entry --------------------------------------------
+def _merge_cells(cells):
+    """Rectangles (x0, x1, y0, y1) from grid cells: merge along x in each row, then rows with the same x extent along y."""
+    rows = {}
+    for x0, x1, y0, y1 in sorted(cells, key=lambda c: (c[2], c[0])):
+        row = rows.setdefault((y0, y1), [])
+        if row and abs(row[-1][1] - x0) < 1e-9:
+            row[-1][1] = x1
+        else:
+            row.append([x0, x1, y0, y1])
+    rects, open_ = [], {}
+    for key in sorted(rows):
+        nxt = {}
+        for x0, x1, y0, y1 in rows[key]:
+            k = (round(x0, 6), round(x1, 6))
+            if k in open_ and abs(open_[k][3] - y0) < 1e-9:
+                r = open_.pop(k)
+                r[3] = y1
+                nxt[k] = r
+            else:
+                nxt[k] = [x0, x1, y0, y1]
+        rects += list(open_.values())
+        open_ = nxt
+    return rects + list(open_.values())
+
+
+def pwr_bottom_regions(P):
+    """W2 MECH-7: plate pockets PB* under the bottom side of the two-sided PWR-A (mechanical.json plate.pwr_bottom_pockets).
+
+    PWR-A outline (boards.json PWR rects, board coordinates) minus every thermal_bond zone grown by bond_land, minus the
+    keep_full rectangles (converter heat corridors), minus a square of half-side edge_min (else the hole diameter) around every
+    plate hole, minus edge_web from the plate outline, the slots and the windows; regions narrower than min_w are dropped.
+    Returns [(id, [x, y, w, h] board coordinates)], or [] when the plate has no pwr_bottom_pockets entry."""
+    spec = P.mech["plate"].get("pwr_bottom_pockets")
+    if not spec:
+        return []
+    b = P.boards["boards"]["PWR"]
+    ox, oy = b["place"]["origin"]
+    land, web, minw = spec["bond_land"], spec["edge_web"], spec["min_w"]
+    excl = [(z[0] - land, z[1] - land, z[0] + z[2] + land, z[1] + z[3] + land) for z in b["thermal_bond"]]
+    excl += [(k["rect"][0], k["rect"][1], k["rect"][0] + k["rect"][2], k["rect"][1] + k["rect"][3]) for k in spec.get("keep_full", [])]
+    for h in plate_holes(P):
+        r = h.get("edge_min") or h["d"]
+        cx, cy = h["c"][0] - ox, h["c"][1] - oy
+        excl.append((cx - r, cy - r, cx + r, cy + r))
+    for _, poly in plate_windows(P):
+        xs_, ys_ = [p[0] - ox for p in poly], [p[1] - oy for p in poly]
+        excl.append((min(xs_) - web, min(ys_) - web, max(xs_) + web, max(ys_) + web))
+    outline = plate_outline(P)
+    xs0, ys0 = [p[0] for p in b["outline"]], [p[1] for p in b["outline"]]
+    xmin, xmax, ymin, ymax = min(xs0), max(xs0), min(ys0), max(ys0)
+    xs = sorted({xmin, xmax} | {r[0] for r in b["rects"]} | {r[0] + r[2] for r in b["rects"]}
+                | {v for e in excl for v in (e[0], e[2]) if xmin < v < xmax}
+                | {v + s * web for v in (p[0] - ox for p in outline) for s in (-1, 1) if xmin < v + s * web < xmax})
+    ys = sorted({ymin, ymax} | {r[1] for r in b["rects"]} | {r[1] + r[3] for r in b["rects"]}
+                | {v for e in excl for v in (e[1], e[3]) if ymin < v < ymax}
+                | {v + s * web for v in (p[1] - oy for p in outline) for s in (-1, 1) if ymin < v + s * web < ymax})
+
+    def keep(x, y):
+        if not any(r[0] < x < r[0] + r[2] and r[1] < y < r[1] + r[3] for r in b["rects"]):
+            return False
+        if any(e[0] < x < e[2] and e[1] < y < e[3] for e in excl):
+            return False
+        X, Y = x + ox, y + oy
+        if not _inside((X, Y), outline):
+            return False
+        return min(_seg_dist((X, Y), a, c) for a, c in zip(outline, outline[1:] + outline[:1])) >= web - 1e-9
+
+    cells = []
+    for y0, y1 in zip(ys, ys[1:]):
+        for x0, x1 in zip(xs, xs[1:]):
+            if keep((x0 + x1) / 2, (y0 + y1) / 2):
+                cells.append((x0, x1, y0, y1))
+    rects = [r for r in _merge_cells(cells) if min(r[1] - r[0], r[3] - r[2]) >= minw - 1e-9]
+    rects.sort(key=lambda r: (r[2], r[0]))
+    return [(f"PB{i + 1}", [round(r[0], 2), round(r[2], 2), round(r[1] - r[0], 2), round(r[3] - r[2], 2)]) for i, r in enumerate(rects)]
+
+
 def pwr_pockets(P):
-    """Plate relief pockets under the PWR-A THT pin fields that have a placement contract (boards.json modules_on_board
-    pin_field): (id, module, (x0, y0, x1, y1) enclosure, depth)."""
+    """Plate relief pockets in the front face under PWR-A: (id, what, (x0, y0, x1, y1) enclosure, depth).
+
+    The THT pin fields with a placement contract (boards.json modules_on_board pin_field, PK*; none since W2 MECH-7) and the
+    bottom-part pockets PB* (pwr_bottom_regions, W2 MECH-7)."""
     b = P.boards["boards"]["PWR"]
     tp = b.get("tht_pockets", {})
     mg, depth = tp.get("margin", 1.0), tp.get("depth", 1.0)
@@ -843,25 +942,35 @@ def pwr_pockets(P):
     for i, mo in enumerate(m for m in b.get("modules_on_board", []) if "pin_field" in m):
         x, y, w, h = mo["pin_field"]
         out.append((f"PK{i + 1}", mo["id"], (ox + x - mg, oy + y - mg, ox + x + w + mg, oy + y + h + mg), depth))
+    for pid, (x, y, w, h) in pwr_bottom_regions(P):      # same depth as every M-07 relief pocket (tht_pockets.depth)
+        out.append((pid, "PWR-A bottom side", (ox + x, oy + y, ox + x + w, oy + y + h), depth))
     return out
 
 
 def pwr_pocket_rule(P):
-    """R-PWR-POCKETS: every PWR-A THT pin field with a placement contract has a plate relief pocket (M-07) of at least
-    depth_min, inside the plate and clear of the plate holes; the other PWR-A THT groups wait for the PCB-PWRA placement."""
+    """R-PWR-POCKETS: every plate relief pocket under PWR-A (M-07: the bottom-part pockets PB*, W2 MECH-7, and any THT pin field
+    with a placement contract) is at least depth_min deep with web_min of plate left, inside the plate and clear of the plate
+    holes, and the PB pockets keep bond_land from every thermal_bond zone; the THT groups outside the PB pockets wait for the
+    PCB-PWRA-3 placement (OPEN)."""
     b = P.boards["boards"]["PWR"]
     tp = b.get("tht_pockets", {})
     pl = P.mech["plate"]
+    bp = pl.get("pwr_bottom_pockets", {})
     poly = plate_outline(P)
     holes = plate_holes(P)
+    ox, oy = b["place"]["origin"]
+    web_min = bp.get("web_min", 0.0)
     val, bad = {}, []
     for pid, mod, (x0, y0, x1, y1), depth in pwr_pockets(P):
         inside = all(_inside(c, poly) for c in ((x0, y0), (x1, y0), (x1, y1), (x0, y1)))
         gap = min(_rect_gap((x0, y0, x1, y1), (h["c"][0] - h["d"] / 2, h["c"][1] - h["d"] / 2, h["c"][0] + h["d"] / 2, h["c"][1] + h["d"] / 2))
                   for h in holes)
-        ok = inside and tp.get("depth_min", 1.0) <= depth < pl["t"] and gap >= 0.5
+        bond = min(_rect_gap((x0, y0, x1, y1), (ox + z[0], oy + z[1], ox + z[0] + z[2], oy + z[1] + z[3])) for z in b["thermal_bond"])
+        ok = inside and tp.get("depth_min", 1.0) <= depth < pl["t"] and pl["t"] - depth >= web_min - 1e-9 and gap >= 0.5
+        if pid.startswith("PB"):
+            ok = ok and bond >= bp["bond_land"] - 1e-6
         val[pid] = (f"{mod}: {x1 - x0:.2f} x {y1 - y0:.2f} x {depth:g} deep at x {x0:.2f}..{x1:.2f}, y {y0:.2f}..{y1:.2f}; "
-                    f"{gap:.1f} mm to the nearest plate hole")
+                    f"{gap:.1f} mm to the nearest plate hole, {bond:.1f} mm to the nearest bond zone")
         if not ok:
             bad.append(pid)
     from .boards import budget_candidate
@@ -873,15 +982,20 @@ def pwr_pocket_rule(P):
                 f"{sum(x['tht_pads'] for x in items)} THT pads" + (f", {'/'.join(drawn)} of them pocketed here" if drawn else "") + ")")
     else:
         live = " (pcb/partition-budget.json pwr_a_tht_pocket_items not found)"
+    pb = [k for k in val if k.startswith("PB")]
+    area = sum((x1 - x0) * (y1 - y0) for pid, _, (x0, y0, x1, y1), _ in pwr_pockets(P) if pid.startswith("PB"))
     if bad:
         res = "FAIL (model): " + ", ".join(bad)
     else:
-        res = ("OPEN: the Pololu pin rows are pocketed (M-07 " + ", ".join(val) + "); "
-               + tp.get("from_placement", "the other THT groups wait for the placement") + live)
+        res = (f"OPEN: {len(pb)} bottom-part pockets PB1-PB{len(pb)} ({area:.0f} mm2, {tp.get('depth', 1.0):g} deep, web {pl['t'] - tp.get('depth', 1.0):g}, "
+               f">= {bp.get('bond_land', 0):g} from every bond zone, outside the converter heat corridors and the plate-hole lands) are drawn (M-07); "
+               if pb else "OPEN: ") + tp.get("from_placement", "the THT groups wait for the placement") + live
     return {"id": "R-PWR-POCKETS",
-            "rule": f"plate relief pocket >= {tp.get('depth_min', 1.0):g} mm under every PWR-A THT pad group (pin field + {tp.get('margin', 1.0):g} mm), polyimide over it",
-            "value_mm": val, "limit_mm": {"depth_min": tp.get("depth_min", 1.0), "plate_t": pl["t"]}, "result": res,
-            "source": "boards.json PWR tht_pockets / modules_on_board pin_field; pcb/partition-spec.json keepouts.pwr_a_tht_pockets; "
+            "rule": f"plate relief pockets under PWR-A (M-07): bottom-part pockets PB* (W2 MECH-7) and a pocket >= {tp.get('depth_min', 1.0):g} mm under every PWR-A THT pad group "
+                    f"(pin field + {tp.get('margin', 1.0):g} mm) outside them; polyimide film in every pocket",
+            "value_mm": val, "limit_mm": {"depth_min": tp.get("depth_min", 1.0), "plate_t": pl["t"], "web_min": web_min, "bond_land": bp.get("bond_land")},
+            "result": res,
+            "source": "mechanical.json plate.pwr_bottom_pockets; boards.json PWR tht_pockets, thermal_bond; pcb/partition-spec.json keepouts.pwr_a_tht_pockets; "
                       "pcb/partition-budget.json pwr_a_tht_pocket_items"}
 
 
@@ -1345,3 +1459,249 @@ def module_mounts_rule(P):
 def w2_mech5_rules(P):
     """Rows added by W2 MECH-5 (registration list, append-only)."""
     return [module_mounts_rule(P)]
+
+
+# ---- W2 MECH-7 (SHRINK-2): converter zones, two-sided PWR-A, H-TRIM, mated header heights under the display ----
+def _budget_planned():
+    from .boards import budget_candidate
+    ch, cand = budget_candidate()
+    return ch, cand or {}, (cand or {}).get("planned") or {}
+
+
+def pwr_zones_rule(P):
+    """R-PWR-ZONES: every converter block of the partition budget fits inside its thermal_bond zone (boards.json PWR
+    converter_zones; block w x d in either orientation). MODEL: the blocks stand for the converter footprints until GR-5A."""
+    b = P.boards["boards"]["PWR"]
+    ch, cand, planned = _budget_planned()
+    blocks = {bl["id"]: bl for bl in planned.get("blocks", [])}
+    rule = {"id": "R-PWR-ZONES", "rule": "PWR-A converter blocks inside their thermal_bond zones (block w x d in either orientation)",
+            "source": f"boards.json PWR thermal_bond / converter_zones; pcb/partition-budget.json candidates.{ch}.planned.blocks (SHRINK-2 study blocks, MODEL)"}
+    if not b.get("converter_zones"):
+        return dict(rule, value_mm=None, result="OPEN: boards.json PWR has no converter_zones")
+    val, bad, opened = {}, [], []
+    for zn, bid in sorted(b["converter_zones"].items()):
+        z = b["thermal_bond"][int(zn) - 1]
+        bl = blocks.get(bid)
+        if bl is None:
+            opened.append(f"zone {zn}: block {bid} not in the budget (retired by GR-5A: MECH-7 part 2 judges the real footprints)")
+            continue
+        fits = [(z[2] - w, z[3] - d) for w, d in ((bl["w"], bl["d"]), (bl["d"], bl["w"])) if w <= z[2] + 1e-9 and d <= z[3] + 1e-9]
+        margin = max((min(m) for m in fits), default=None)
+        val[f"zone {zn}"] = {"zone_mm": z, "block": bid, "block_mm": [bl["w"], bl["d"]], "block_h_mm": bl.get("h"),
+                             "margin_mm": None if margin is None else round(margin, 2)}
+        if margin is None:
+            bad.append(f"zone {zn} {z[2]:g} x {z[3]:g} < {bid} {bl['w']:g} x {bl['d']:g}")
+    if bad:
+        return dict(rule, value_mm=val, result="FAIL (model): " + "; ".join(bad))
+    txt = "; ".join(f"{k} {v['zone_mm'][2]:g} x {v['zone_mm'][3]:g} holds {v['block']} {v['block_mm'][0]:g} x {v['block_mm'][1]:g} "
+                    f"(margin {v['margin_mm']:g})" for k, v in val.items())
+    if opened:
+        return dict(rule, value_mm=val, result="OPEN: " + "; ".join(opened) + ("; " + txt if txt else ""))
+    return dict(rule, value_mm=val, limit_mm="block inside its zone",
+                result=f"PASS (model): {txt}; positions at the PCB-PWRA-3 placement, the real GR-5A footprints replace the blocks (MECH-7 part 2)")
+
+
+def pwr_bottom_rule(P):
+    """R-PWR-BOTTOM: the bottom side of the two-sided PWR-A (boards.json PWR bottom_side) has room: the PB pockets hold the
+    budget's bottom refs (raw and at the 1.8 planning factor), and the room h_max = shim gap + pocket depth - film - clearance."""
+    b = P.boards["boards"]["PWR"]
+    bs = b.get("bottom_side")
+    spec = P.mech["plate"].get("pwr_bottom_pockets")
+    rule = {"id": "R-PWR-BOTTOM", "rule": "bottom-side parts of PWR-A: inside the plate pockets PB*, no taller than shim gap + pocket depth - polyimide film - clearance",
+            "source": "boards.json PWR bottom_side; mechanical.json plate.pwr_bottom_pockets, pwr_bond.shim; pcb/partition-budget.json candidates.<chosen>.boards.PWR_A_BOTTOM"}
+    if not bs or not spec:
+        return dict(rule, value_mm=None, result="OPEN: boards.json PWR bottom_side or mechanical.json plate.pwr_bottom_pockets missing")
+    shim = P.mech["pwr_bond"]["shim"]
+    h_max = pwr_bottom_h_max(P)
+    regions = pwr_bottom_regions(P)
+    area = sum(r[2] * r[3] for _, r in regions)
+    ch, cand, _ = _budget_planned()
+    row = (cand.get("boards") or {}).get("PWR_A_BOTTOM") or {}
+    refs = (cand.get("pwr_a_bottom") or {}).get("refs")
+    raw, d18 = row.get("parts_raw_mm2"), row.get("demand_1.8_mm2")
+    depth = b.get("tht_pockets", {}).get("depth", 1.0)
+    val = {"pockets": len(regions), "pocket_area_mm2": round(area, 1), "h_room_mm": round(shim + depth, 3), "film_mm": spec["film_t"],
+           "clearance_mm": bs["clearance"], "h_max_mm": h_max, "bottom_refs": refs, "budget_raw_mm2": raw, "budget_demand_1_8_mm2": d18,
+           "raw_fill": round(raw / area, 3) if raw and area else None, "ratio_1_8": round(d18 / area, 3) if d18 and area else None,
+           "budget_bottom_usable_mm2": row.get("usable_mm2")}
+    if raw is None or not area:
+        return dict(rule, value_mm=val, result=f"OPEN: pcb/partition-budget.json candidates.{ch} has no PWR_A_BOTTOM row or no PB pocket; "
+                                               f"{len(regions)} pockets, {area:.0f} mm2, h_max {h_max:g}")
+    if raw > area + 1e-9:
+        return dict(rule, value_mm=val, result=f"FAIL (model): bottom courtyards {raw:g} mm2 > the PB pockets {area:.0f} mm2")
+    fit18 = "fits" if d18 <= area + 1e-9 else "does NOT fit"
+    return dict(rule, value_mm=val, limit_mm={"h_max": h_max, "pocket_area_mm2": round(area, 1)},
+                result=(f"OPEN: {refs} bottom refs, courtyards {raw:g} mm2 = {raw / area:.2f} of the {len(regions)} PB pockets ({area:.0f} mm2; "
+                        f"{d18:g} at 1.8 {fit18}, ratio {d18 / area:.2f}); room {shim + depth:g} - film {spec['film_t']:g} - clearance "
+                        f"{bs['clearance']:g} = h_max {h_max:g} mm; {bs.get('heights', 'per-part heights TBD')}; positions at the PCB-PWRA-3 placement"))
+
+
+def pwr_bottom_h_max(P):
+    """Room of a PWR-A bottom-side part: shim gap + pocket depth - polyimide film - clearance (boards.json PWR bottom_side)."""
+    bs = P.boards["boards"]["PWR"].get("bottom_side")
+    spec = P.mech["plate"].get("pwr_bottom_pockets")
+    if not bs or not spec:
+        return None
+    depth = P.boards["boards"]["PWR"].get("tht_pockets", {}).get("depth", 1.0)
+    return round(P.mech["pwr_bond"]["shim"] + depth - spec["film_t"] - bs["clearance"], 3)
+
+
+def h_trim_rule(P):
+    """R-H-TRIM: the H-TRIM stack (boards.json PWR h_trim = pcb/partition-spec.json keepouts.h_trim): PWR-B bottom face -
+    trimmed pin protrusion - (PWR-A component face + zone part height) leaves at least the 0.5 mm model gap; the trim is a
+    proof-fit gate (OPEN)."""
+    import json
+    from pathlib import Path
+    a, bb = P.boards["boards"]["PWR"], P.boards["boards"]["PWR_B"]
+    ht = a.get("h_trim")
+    rule = {"id": "R-H-TRIM", "rule": "rule H-TRIM: PWR-A parts <= zone_h_max under the PWR-B THT pin fields, pins trimmed to <= protrusion_max; clearance >= 0.5 (model gap)",
+            "source": "boards.json PWR h_trim, PWR_B place; pcb/partition-spec.json keepouts.h_trim (W2 AREA-2)"}
+    if not ht:
+        return dict(rule, value_mm=None, result="OPEN: boards.json PWR has no h_trim")
+    t = P.boards["stackup"]["t"]
+    face = a["place"]["z_bottom"] + t
+    under = bb["place"]["z_bottom"]
+    clear = round(under - ht["protrusion_max"] - (face + ht["zone_h_max"]), 3)
+    p = Path(__file__).resolve().parents[2] / "pcb" / "partition-spec.json"
+    spec = json.loads(p.read_text(encoding="utf-8"))["keepouts"].get("h_trim", {}) if p.exists() else {}
+    diff = [k for k, s in (("protrusion_max", "protrusion_max_mm"), ("zone_h_max", "zone_h_max_mm"))
+            if s in spec and abs(ht[k] - spec[s]) > 1e-9]
+    if "clearance_mm" in spec and abs(clear - spec["clearance_mm"]) > 1e-6:
+        diff.append("clearance")
+    val = {"pwr_a_face_z": face, "pwr_b_bottom_z": under, "protrusion_max": ht["protrusion_max"], "zone_h_max": ht["zone_h_max"], "clearance_mm": clear,
+           "spec_clearance_mm": spec.get("clearance_mm")}
+    if diff or clear < 0.5 - 1e-9:
+        return dict(rule, value_mm=val, limit_mm=0.5, result="FAIL (model): " + (f"differs from pcb/partition-spec.json keepouts.h_trim: {', '.join(diff)}" if diff
+                                                                                 else f"clearance {clear:g} < 0.5"))
+    return dict(rule, value_mm=val, limit_mm=0.5,
+                result=(f"OPEN: stack {under:g} - {ht['protrusion_max']:g} - ({face:g} + {ht['zone_h_max']:g}) = {clear:g} mm clearance (model arithmetic, "
+                        f"equal to pcb/partition-spec.json keepouts.h_trim); {ht['gate']}"))
+
+
+def _channel_floor(P):
+    """z of the path-2 channel floor under the display: module back - air_channel (pcb/partition-spec.json envelope, else 4.0)."""
+    import json
+    from pathlib import Path
+    p = Path(__file__).resolve().parents[2] / "pcb" / "partition-spec.json"
+    need = 4.0
+    if p.exists():
+        need = json.loads(p.read_text(encoding="utf-8")).get("envelope", {}).get("air_channel", need)
+    return round(P.mech["stack_z"]["module_back"] - need, 3), need
+
+
+def mated_height_rule(P):
+    """R-HDR-MATED (W2 MECH-7): every PWR-A header of build/16 (board PWR_A) whose edge strip lies under the display module
+    has its mated top (PWR-A component face + header and plug height) at or below the floor of the path-2 channel
+    (display module back - air_channel). The edge comes from boards.json PWR edge_zones 'headers'; the strip is the zone span
+    x the header courtyard depth (smaller courtyard side, the long side along the edge), so 'under the display' is the
+    possible worst case until the PCB-PWRA-3 placement. Reported per header; OPEN while a header fails as specified or has no
+    read mated height (family and orientation are GR's, build/16); never FAIL."""
+    import csv
+    from pathlib import Path
+    from .boards import footprint_courtyards, header_size, header_height_basis, HEADER_ALT
+    root = Path(__file__).resolve().parents[2]
+    a = P.boards["boards"]["PWR"]
+    t = P.boards["stackup"]["t"]
+    face = round(a["place"]["z_bottom"] + t, 3)
+    ox, oy = a["place"]["origin"]
+    z_lim, need = _channel_floor(P)
+    disp = [bx for iid, _, bx, _ in item_boxes(P) if iid == "display"][0]
+    hh = P.parts["harness_headers"]
+    rule = {"id": "R-HDR-MATED",
+            "rule": f"PWR-A headers under the display: mated top (PWR-A face {face:g} + header and plug) <= the path-2 channel floor "
+                    f"{z_lim:g} (display module back {P.mech['stack_z']['module_back']:g} - channel {need:g})",
+            "source": "build/16-dzhgut-rozyemy.csv (board PWR_A); boards.json PWR edge_zones headers; parts.json harness_headers h_mated; "
+                      "mechanical.json stack_z.module_back, layout display; pcb/partition-spec.json envelope.air_channel"}
+    path = root / "build" / "16-dzhgut-rozyemy.csv"
+    if not path.exists():
+        return dict(rule, value_mm=None, result="OPEN: build/16-dzhgut-rozyemy.csv not found")
+    edge_of = {h: i for i, ez in enumerate(a.get("edge_zones", [])) for h in ez.get("headers", [])}
+    fps = {}
+    comp = root / "pcb" / "generated" / "components.csv"
+    if comp.exists():
+        with comp.open(encoding="utf-8", newline="") as fh:
+            fps = {r["ref"]: r["footprint"] for r in csv.DictReader(fh)}
+    cy = footprint_courtyards()
+    xs0, ys0 = [p[0] for p in a["outline"]], [p[1] for p in a["outline"]]
+    rows, fail, tbd, alt_ok = [], [], [], []
+    with path.open(encoding="utf-8", newline="") as fh:
+        for r in csv.DictReader(fh):
+            if r.get("board") != "PWR_A":
+                continue
+            ref, fam, orient = r["connector"], r["family"], r["orientation"]
+            key = f"{fam}_{orient}"
+            hm = hh.get(key, {}).get("h_mated")
+            c = cy.get(fps[ref]) if ref in fps else None
+            if c:
+                depth, how = min(c["w"], c["h"]), "KiCad courtyard"
+            else:
+                size = header_size(P, fam, int(r["pins"]), "PWR", cy)
+                depth, how = (size[1], "parts.json") if size else (None, None)
+            row = {"connector": ref, "segment": r["segment"], "family": key, "h_mated_mm": hm, "h_basis": header_height_basis(P, key)}
+            zi = edge_of.get(ref)
+            if zi is None or depth is None:
+                row["verdict"] = "TBD: no exit edge in boards.json PWR edge_zones headers" if zi is None else "TBD: no courtyard depth"
+                tbd.append(ref)
+                rows.append(row)
+                continue
+            ez = a["edge_zones"][zi]
+            s0, s1 = ez["span"]
+            if ez["edge"] == "bottom":
+                strip = (s0, min(ys0), s1, min(ys0) + depth)
+            elif ez["edge"] == "top":
+                yt = ez.get("at", max(ys0))
+                strip = (s0, yt - depth, s1, yt)
+            elif ez["edge"] == "right":
+                strip = (max(xs0) - depth, s0, max(xs0), s1)
+            else:
+                strip = (min(xs0), s0, min(xs0) + depth, s1)
+            enc = (ox + strip[0], oy + strip[1], ox + strip[2], oy + strip[3])
+            under = enc[0] < disp[3] and enc[2] > disp[0] and enc[1] < disp[4] and enc[3] > disp[1]
+            row.update(edge_zone=zi, edge=ez["edge"], depth_mm=round(depth, 2), depth_from=how, strip_xy=[round(v, 2) for v in enc], under_display=under)
+            if not under:
+                row["verdict"] = "outside the display footprint (no channel limit)" + ("" if hm is not None else "; mated height not read (TBD)")
+            elif hm is None:
+                row["verdict"] = "TBD: under the display, mated height not read"
+                tbd.append(ref)
+            else:
+                top = round(face + hm, 2)
+                row["mated_top_z"] = top
+                if top <= z_lim + 1e-9:
+                    row["verdict"] = f"PASS (model): mated top {top:g} <= {z_lim:g}"
+                else:
+                    row["verdict"] = f"FAIL as specified: mated top {top:g} > {z_lim:g}"
+                    fail.append(f"{ref} {key} {top:g}")
+                    alt = HEADER_ALT.get(fam)
+                    ha = hh.get(f"{fam}_{alt}", {}).get("h_mated") if alt else None
+                    if ha is not None:
+                        ta = round(face + ha, 2)
+                        ok = ta <= z_lim + 1e-9
+                        row["alternative"] = {"family": f"{fam}_{alt}", "h_mated_mm": ha, "mated_top_z": ta, "fits": ok}
+                        row["verdict"] += f"; as {fam}_{alt} (mated {ha:g}) {ta:g}: " + ("passes" if ok else "fails")
+                        if ok:
+                            alt_ok.append(ref)
+            rows.append(row)
+    passed = [x["connector"] for x in rows if x.get("verdict", "").startswith("PASS")]
+    outside = [x["connector"] for x in rows if x.get("under_display") is False]
+    val = {"channel_floor_z": z_lim, "pwr_a_face_z": face, "under_display_pass": passed, "fails_as_specified": fail,
+           "alternative_passes": alt_ok, "tbd": tbd, "outside_display": outside}
+    parts = []
+    if passed:
+        parts.append(f"{len(passed)} pass ({', '.join(passed)})")
+    if fail:
+        parts.append(f"{len(fail)} fail as specified ({', '.join(fail)})"
+                     + (f", as the right-angle Micro-Fit 43650 (MF_ra) {', '.join(alt_ok)} pass" if alt_ok else ""))
+    if tbd:
+        parts.append(f"TBD: {', '.join(tbd)}")
+    if outside:
+        parts.append(f"outside the display footprint: {', '.join(outside)}")
+    if fail or tbd:
+        res = "OPEN: " + "; ".join(parts) + "; the header family and orientation are GR's (build/16), the exit edge and position PCB-PWRA-3's"
+    else:
+        res = "PASS (model): " + "; ".join(parts)
+    return dict(rule, value_mm=val, limit_mm=z_lim, headers=rows, result=res)
+
+
+def w2_mech7_rules(P):
+    """Rows added by W2 MECH-7 (registration list, append-only)."""
+    return [pwr_zones_rule(P), pwr_bottom_rule(P), h_trim_rule(P), mated_height_rule(P)]

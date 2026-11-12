@@ -235,8 +235,9 @@ def plate_sheet(P):
                 "Ребра шляху 2 (смуги Al 1 x 3.5) — на лицьовій грані під HDMI-платою, уздовж потоку; точки з'єднання — голий метал.",
                 "SL1-SL3: прорізи джгутів між лицьовим і тильним шаром (build/16 §1), кромки — кант або грумет; гайки PEM ставити пресом.",
                 "Пунктир: контури плат, Q6A, бобишки UFS (тильна грань), п'єдесталу Lime і зон термопрокладок PWR.",
-                "PK1-PK2: глухі кишені 1.0 мм у лицьовій грані під рядами виводів Pololu U107/U108 (поле виводів + 1.0 з кожного боку); поверх — поліімід "
-                "через зазор 0.4 мм; прокладка Gelid зони 3/4 — з вирізом над кишенею. Кишені під інші THT-групи PWR-A — за розкладкою PCB-PWRA (R-PWR-POCKETS).",
+                "PB*: глухі кишені 1.0 мм у лицьовій грані під нижнім боком двобічної PWR-A (W2 MECH-7), фрезерувати як накреслено; дно і зазор 0.4 мм "
+                "вистелити поліімідом 3M 5413; навколо зон термопрокладок 2.0 і коридорів тепла перетворювачів (зони 3/4 до правого краю ніжки) пластина повна. "
+                "Кишені під THT-групи PWR-A поза PB* і в зонах прокладок — за розкладкою PCB-PWRA-3 (R-PWR-POCKETS).",
                 "PF1-PF2: стійки PEM SO-M2.5-6ZI (4.22 +0.08) носія PACK_FUSE, голівка врівень з тильною гранню, стійка 6 мм з лицьового боку "
                 "(W2 MECH-5; модулі задньої і верхньої стінок кріпляться не до пластини — таблиця M-06)."])
     sh.poly(plate_outline(P), True, "CUT")
@@ -260,7 +261,10 @@ def plate_sheet(P):
     pockets = pwr_pockets(P)
     for pid, mod, (x0, y0, x1, y1), d in pockets:
         sh.rect(x0, y0, x1 - x0, y1 - y0, "HIDDEN")
-        sh.label((x0, y1 + 1), f"{pid} кишеня {fmt(d)}", 1.6)
+        if pid.startswith("PB"):      # W2 MECH-7: bottom-part pockets, label inside (depth in the table)
+            sh.label((x0 + 0.3, y0 + 0.3), pid, 1.4)
+        else:
+            sh.label((x0, y1 + 1), f"{pid} кишеня {fmt(d)}", 1.6)
     for bid in ("PWR", "RF"):
         b = P.boards["boards"][bid]
         ox, oy = b["place"]["origin"]
@@ -307,7 +311,8 @@ def plate_sheet(P):
         sh.ptext((tx, ty), f"{label}: X {fmt(rx - dx)}..{fmt(rx + rw_ - dx)}, Y {fmt(ry - dy)}..{fmt(ry + rh_ - dy)}", 1.75, layer="TABLE")
         ty -= 2.55
     for pid, mod, (x0, y0, x1, y1), d in pockets:
-        sh.ptext((tx, ty), f"кишеня {pid} ({mod}), глибина {fmt(d)}: X {fmt(x0 - dx)}..{fmt(x1 - dx)}, Y {fmt(y0 - dy)}..{fmt(y1 - dy)}", 1.75, layer="TABLE")
+        what = "низ PWR-A" if pid.startswith("PB") else mod
+        sh.ptext((tx, ty), f"кишеня {pid} ({what}), глибина {fmt(d)}: X {fmt(x0 - dx)}..{fmt(x1 - dx)}, Y {fmt(y0 - dy)}..{fmt(y1 - dy)}", 1.75, layer="TABLE")
         ty -= 2.55
     return sh
 
