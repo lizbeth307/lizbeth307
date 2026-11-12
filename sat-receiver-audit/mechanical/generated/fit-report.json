@@ -1602,7 +1602,7 @@
         "depth_min": 1.0,
         "plate_t": 2.0
       },
-      "result": "OPEN: the Pololu pin rows are pocketed (M-07 PK1, PK2); the other PWR-A THT groups (radials, Keystone 3568 fuse holders, the PWR-A harness headers: pcb/partition-budget.json candidates.<chosen> pwr_a_tht_pocket_items, which also list U107/U108) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS prints the current count) (pcb/partition-budget.json candidates.a pwr_a_tht_pocket_items now: 38 items with 120 THT pads, U107/U108 of them pocketed here)",
+      "result": "OPEN: the Pololu pin rows are pocketed (M-07 PK1, PK2); the other PWR-A THT groups (radials, Keystone 3568 fuse holders, the PWR-A harness headers: pcb/partition-budget.json candidates.<chosen> pwr_a_tht_pocket_items, which also list U107/U108) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS prints the current count) (pcb/partition-budget.json candidates.shrink2 pwr_a_tht_pocket_items now: 26 items with 72 THT pads)",
       "source": "boards.json PWR tht_pockets / modules_on_board pin_field; pcb/partition-spec.json keepouts.pwr_a_tht_pockets; pcb/partition-budget.json pwr_a_tht_pocket_items"
     },
     {
@@ -2339,11 +2339,11 @@
         "need_1_5_mm2": 3840.0,
         "need_1_8_mm2": 4608.0,
         "estimate_mm2": 4608.0,
-        "ratio_1_5": 1.68,
-        "ratio_1_8": 2.01,
+        "ratio_1_5": 0.78,
+        "ratio_1_8": 0.94,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 4608 mm2 at fill 1.8 > usable 2290 mm2 of pcb/partition-budget.json candidates.a boards.PWR_B (outline minus holes, windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline 6516 mm2 minus only the Pololu windows is an upper bound) (model estimate; partition and placement decide, AREA / PCB)",
-        "usable_mm2": 2290.0,
+        "result": "PASS (model estimate) against the usable 4892 mm2 of pcb/partition-budget.json candidates.shrink2 boards.PWR_B (outline minus holes, windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline 6516 mm2 minus only the Pololu windows is an upper bound)",
+        "usable_mm2": 4892.0,
         "ratio_basis": "usable_mm2 (pcb/partition-budget.json)"
       },
       "RF": {
@@ -4980,7 +4980,7 @@
     "rules_open": 9,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
-    "board_area_open": 3,
+    "board_area_open": 2,
     "board_area_harness_open": 0,
     "thermal_failures": 0,
     "thermal_open": 3,

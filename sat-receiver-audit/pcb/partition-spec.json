@@ -1,28 +1,30 @@
 {
  "schema": "srrx-partition-spec-v1",
  "status": "DECISION RECORD (W2 AREA, D-AREA), MODEL ESTIMATE: every area number is a courtyard sum computed by pcb/partition_budget.py into pcb/partition-budget.json; no placement, no proof-fit; hardware gates stay OPEN",
- "date": "2026-11-07",
+ "date": "2026-11-12",
  "decision": {
-  "chosen": "a",
+  "chosen": "shrink2",
   "fits_at_1_8": false,
   "ratios_1_8": {
-   "PWR_A": 0.661,
-   "PWR_B": 0.497,
+   "PWR_A": 0.945,
+   "PWR_A_BOTTOM": 3.542,
+   "PWR_B": 0.972,
    "CTRL_top": 1.117,
    "CTRL_bottom": 0.908
   },
-  "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2), PWR-B (mezzanine on the PWR-A footprint, Samtec LSHM-150-02.5 pair J208/J209, 5.00 mm stack (W2 B2B; was QSH/QTH-060-01)), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a): the draft PWR-B list, with the LNB OVP comparator (U220 group) kept on PWR-A next to U212 so that E1_SW and the LNB LDO rail do not cross. Computed verdict (MODEL ESTIMATE): no evaluated partition fits at 1.8. Candidate (a) gives PWR-A 0.640 and PWR-B 0.427 (usable / demand), because every PWR-A part taller than hA and every PWR-A power header costs PWR-B a window or an edge strip (3.8k + 1.4k of the 7.6k outline). CTRL two-sided gives top 1.003 and bottom 0.979 by area, and five CTRL bottom headers have no height-valid variant under the depth cap (ctrl_headers_unresolved), so CTRL is NOT FIT as well.",
+  "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2, two-sided since W2 AREA-2), PWR-B (mezzanine on the PWR-A footprint, Samtec LSHM-150-02.5 pair J208/J209, 5.00 mm stack), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a) (the draft PWR-B group list, with the LNB OVP comparator U220 kept on PWR-A next to U212) with the SHRINK-2 content (candidate shrink2, W2 AREA-2): TI converters instead of the Pololu modules, SMD F103/F201, low-profile 5 V dampers, 2520 inductors, 1210 C111/C112, C109 deleted, C506 as three 16SVPG47M on PWR-B, merged PWR-B headers, a two-sided PWR-A and rule H-TRIM. Computed (MODEL ESTIMATE, pcb/partition-budget.json): PWR-A top raw fill 0.588 (150 refs, demand 4494 mm2 incl. 461.7 mm2 of reserved blocks), bottom 0.157 (94 refs), PWR-B 0.572 (135 refs); B2B 55 contacts, 66 with the spare, of 100. The 0.60 placement trigger of F2 is met with 90.4 mm2 to spare; the 1.8 planning factor is not (ratios_1_8), so the placement fill and the route are the record (next_decision). CTRL is unchanged (two-sided; the bottom headers without a height-valid variant are decision.ctrl_headers_unresolved)",
   "why_a": "(a) and (b) leave almost the same total shortfall (about 7.3k mm2 at 1.8), but (a) needs 53 B2B contacts against 81, moves no fused high-current internal net (E2_J21_FUSED) across the boards, and keeps the J21/display/Lime/AUX12 eFuses with their fuse holders and bulk capacitors; moving more groups to PWR-B overfills PWR-B, whose usable area is set by the windows",
   "b2b_contacts_quoted": {
    "a": 69,
-   "b": 119
+   "b": 119,
+   "shrink2": 55
   },
   "shortfall_1_8_mm2": {
-   "PWR_A": 3924,
-   "PWR_B": 2318,
+   "PWR_A": 449,
+   "PWR_B": 141,
    "CTRL_bottom": 471
   },
-  "shortfall_note": "demand at 1.8 minus usable area, candidate (a), pcb/partition-budget.json; the PWR harness headers alone are 2.7k mm2 raw (about 4.9k at 1.8), two thirds of the PWR shortfall",
+  "shortfall_note": "demand at 1.8 minus usable area of the chosen candidate shrink2 (pcb/partition-budget.json); the 1.8 factor is a planning ratio, not the trigger: the trigger is the placement fill 0.60 (fallbacks F2, F2-C)",
   "ctrl_headers_unresolved": [
    "J304",
    "J313"
@@ -36,11 +38,27 @@
    "(h8) hB 8.0 instead of 5.5: PWR-A 0.650, PWR-B 0.491 for 2.5 mm more depth (dz_mezz 4.6); still short, and the radials (11.0-11.5 mm) stay above it",
    "(s8) the 8.00 mm stack (W2 B2B: two LSHM-150-04.0 halves; AREA: QTH-060-02 with QSH-060-01; hA 7.5, window ceiling 15.1 mm): PWR-B 0.427 -> 0.560 (windows 3.8k -> 3.1k mm2: the polymer capacitors, XAL6060, SRR1260 and C506 no longer need one; the Keystone 3568 holders keep theirs, their height being a lower bound), PWR-A unchanged 0.640, dz_mezz 5.1 <= cap 6.0. It is the strongest PWR-B lever but is not adopted alone: PWR-B stays short, it costs 3 mm more depth, and the 8.00 mm part is thin in stock (W2 B2B: LSHM-150-04.0-L-DV-A-N-K-TR C5753117 14 on 2026-11-07; AREA: QTH-060-02-L-D-A 0, -K 33, -TR 5); it goes into next_decision together with a PWR-A lever (s8c)",
    "(a80) the 80-contact LSHM-140 pair (W2 B2B; it replaces (a60), the 60-contact QSH-030/QTH-030 pair of AREA): PWR-A 0.664, PWR-B 0.503 against 0.661 / 0.497 of the LSHM-150 (56 mm2 less demand at 1.8 on each board); it takes the 69 contacts of (a) but misses the spare rule (83 > 80 under b2b.guard_rule, W2 B2B review R2), and neither size covers (b) (119)",
-   "(am) the five unresolved CTRL bottom headers moved to PWR-A (rule_gr3: the function moves to PWR): PWR-A 0.566, PWR-B 0.245 (their edge strips), CTRL top 1.218, bottom 1.460; S01 (IDC to the Q6A) and the LAB5 input of CTRL cannot move by function, so their area stays on CTRL"
+   "(am) the five unresolved CTRL bottom headers moved to PWR-A (rule_gr3: the function moves to PWR): PWR-A 0.566, PWR-B 0.245 (their edge strips), CTRL top 1.218, bottom 1.460; S01 (IDC to the Q6A) and the LAB5 input of CTRL cannot move by function, so their area stays on CTRL",
+   "ENV-SLAB-29 (W2 AREA-2, SHRINK-2 study): a 29 mm slab above the battery bay that grows PWR-A, PWR-B and CTRL; it has the strongest placement evidence (256 of 256 placed at 0.595, re-run by judge 3 with the obstacle fix) but takes dh 29 against envelope.cap.dh_max 4.0, which returns it to the owner row Оболонка D15; kept only as F2-ENV (E = 30)",
+   "PWR-C+R (W2 AREA-2, SHRINK-2 study): two added power boards; 0.2 mm z reserve under the HF+ can, two more PCBAs, no placement run and no LAB5 feed for C552/U553; its front slab, verified empty by judges 2 and 3, becomes F2-C",
+   "RP-ONE (W2 AREA-2, SHRINK-2 study): one PWR board under the raised HDMI board; its zone sits on the bonded plate fins (mechanical/params/mechanical.json fins: x 52-144, y 78-154, h 3.5) and the raised HDMI board leaves 0.58 mm of path-2 channel against the 4.0 mm minimum",
+   "top-entry PWR-B headers (judge graft, W2 AREA-2): without the slab bay their mated height (z 57.1-57.9) enters the 4.0 mm path-2 channel under the display"
   ],
-  "next_decision": "OPEN for INT/owner (integration_plan step 8, F2): the PWR function needs about 7.3k mm2 more board area at 1.8 than PWR-A + PWR-B give in the plan's face, or a smaller PWR connector/circuit set. Best combinations evaluated (MODEL ESTIMATE): s8c (8.00 mm stack + Pololu modules off PWR-A + PCB-REAR) PWR-A 0.755, PWR-B 1.012; w2 (hypothetical radials <= hB + (b) + Pololu off) PWR-A 0.874. PWR-A stays short in every one (about 2.5k mm2 at best, s8c), so the owner lever is PWR-A area (a larger or second rear board, or face growth) or fewer PWR-A parts and headers; the 8.00 mm stack (s8, dz_mezz 5.1) is the PWR-B lever to take with it. GR-3, MECH-3 and the board packages implement (a) as the working partition; the real placement fill of PCB-PWRA-1/2 and PCB-PWRB is the trigger record.",
+  "next_decision": "CLOSED (W2 AREA-2, 12.11.2026) by candidate shrink2, the orchestrator decision SHRINK-2 of 11.11.2026 (design study of 4 proposals and 3 judges; scratch evidence, not committed), after PCB-PWRA-1/2 raised F2 by placement: fill 0.959 with 160 of 256 PWR-A refs placed; F2a 0.783, F2b 0.915, both 0.740 against 0.60 (build/kicad/boards/PWR_A/placement-study.json fill at wip/w2-pwra1 80d92c28, PCB-PWRA-1, MODEL; with the B2B2 placeholder, the same file at wip/w2-pwra2 4b0e2f3f, PCB-PWRA-2: 0.963, 161/257; F2a 0.787, F2b 0.919, both 0.744). The envelope (230 x 163.8 x 70.08 mm), the PWR-A/PWR-B mezzanine on the LSHM-150 pair J208/J209, the RF board, DC_CORE 71/187/40 and receive-only stay; PWR-A gets its room from smaller content (candidates.shrink2.planned), the bottom side (pwr_a_bottom) and rule H-TRIM (keepouts.h_trim). Placement re-run of 2026-11-11 (orchestrator re-check with the board_gen planner of build/kicad/boards/PWR_A/placement_study.py and its obstacle fix, on a detached scratch worktree of wip/w2-pwra1 80d92c28; not committed): top fill_all_refs 0.5882, 150 of 150 refs placed, 22 anchor rows with 0 errors, 0 headers off their edge; bottom 0.132, 94 of 94 placed (MODEL). This tool gives the shrink2 PWR-A top raw fill 0.588 (decision.placement_study checks the agreement within 0.01). Implemented by GR-5A (E1), GR-5B (E2/E5), MECH-7 (mechanical contract), PCB-PWRA-3/4 (PWR-A spec, placement, route) and PCB-PWRB-2 (PWR-B on the full L); the fallbacks are F2-C first and F2-ENV second, with their triggers",
   "recomputed_w2_gr3": "W2 GR-3, 07.11.2026: the harness headers are graph refs counted with their vendored KiCad 10.0.7 courtyards on the board of their pcb/prepare.py domain (PWR-B side-entry headers; PWR-A Micro-Fit/Mini-Fit/PH top entry with a PWR-B edge strip; CTRL bottom), F104 joins PWR-A and the RF Micro-Fit header is gone. The computed numbers above (ratios_1_8, shortfall_1_8_mm2, b2b, ctrl_headers_unresolved, envelope dz) replace the figures quoted in the summary, why_a and rejected texts, which keep the AREA reasoning; the verdict is unchanged: no evaluated partition fits at 1.8 (MODEL ESTIMATE)",
-  "recomputed_w2_b2b": "W2 B2B, 07.11.2026: the B2B is the Samtec LSHM-150-02.5 pair J208/J209 (graph refs, counted by the KiCad 10.0.7 courtyard 30.70 x 6.20 on each board as b2b_raw, not as parts) and the GND rule is b2b.guard_rule (no ground plane: a GND return beside every rail contact plus the guard contacts; W2 B2B review R2); ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_chosen and the fallback ratios are recomputed and replace the figures in the texts above; the verdict is unchanged: no evaluated partition fits at 1.8 (MODEL ESTIMATE). (b) now needs 119 contacts, more than the 100 of the pair"
+  "recomputed_w2_b2b": "W2 B2B, 07.11.2026: the B2B is the Samtec LSHM-150-02.5 pair J208/J209 (graph refs, counted by the KiCad 10.0.7 courtyard 30.70 x 6.20 on each board as b2b_raw, not as parts) and the GND rule is b2b.guard_rule (no ground plane: a GND return beside every rail contact plus the guard contacts; W2 B2B review R2); ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_chosen and the fallback ratios are recomputed and replace the figures in the texts above; the verdict is unchanged: no evaluated partition fits at 1.8 (MODEL ESTIMATE). (b) now needs 119 contacts, more than the 100 of the pair",
+  "recomputed_w2_area2": "W2 AREA-2, 12.11.2026: chosen becomes shrink2. partition_budget.py evaluates planned content changes (they count until GR-5A/GR-5B put the parts into the graph), reserved blocks, a two-sided PWR-A and rule H-TRIM; the existing candidates reproduce unchanged. ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_planned and the fallback ratios are computed; partition.domain_override_pwr_a and b2b.budget_chosen stay the graph of record that pcb/prepare.py, pcb/generated/b2b-nets.json and pcb/tests/test_b2b_map.py follow (candidates.shrink2 planned.graph_of_record in pcb/partition-budget.json), and the *_planned keys hold the SHRINK-2 state. The figures in the texts of the earlier records above are history; the computed keys win. Review fixes of 12.11.2026: the RPP block is the reserve RPP-SYS12 (it no longer leaves with U107), and the F2/F3 texts cite their sources by commit and read the computed numbers in the right direction",
+  "placement_study": {
+   "candidate": "shrink2",
+   "top_fill_all_refs": 0.5882,
+   "top_placed": "150/150",
+   "bottom_fill": 0.132,
+   "bottom_placed": "94/94",
+   "bottom_usable_mm2": 3758.6,
+   "tolerance": 0.01,
+   "src": "placement re-run of 2026-11-11 (orchestrator re-check with the board_gen planner of build/kicad/boards/PWR_A/placement_study.py and its obstacle fix, on a detached scratch worktree of wip/w2-pwra1 80d92c28; not committed); MODEL",
+   "note": "the tool's bottom usable area 3163.4 mm2 is a lower bound (top THT pin fields summed without positions, so their overlap with the bond zones is counted twice); the placement raster with positions gave 3758.6 mm2. PCB-PWRA-3 re-measures both sides on the real two-sided spec"
+  }
  },
  "parameters": {
   "hA": 4.5,
@@ -132,6 +150,10 @@
    "D36V50F5": {
     "h": 10.17,
     "src": "as D36V50F12"
+   },
+   "SRP2510PA-1R0M": {
+    "h": 1.0,
+    "src": "Bourns SRP2510PA datasheet REV. 06/26: 2.5 x 2.0 mm, height 1.0 max (design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11), row web:bourns-srp2510pa)"
    }
   },
   "by_footprint": {
@@ -623,7 +645,16 @@
    "AUX12",
    "BONI13V8_PORT"
   ],
-  "guard_rule": "W2 B2B review R2 (07.11.2026): the pads are 0.30 mm wide at 0.50 mm pitch, so neighbouring pads of a row are 0.20 mm apart (b2b.footprint, Samtec Rev G), and a solder bridge between them is the likely defect at this pitch. So no contact at a supply-rail potential has a neighbour in its row other than GND. (1) Rail contacts are the power contacts, the sense/supply taps and the rail nodes: crossing nets that a resistor below rail_node_max_ohm joins to a net other than GND, such as the 0.22 ohm damper nodes (BIAS_CH1_DAMP: R232 from BIAS_CH1, C235 47 uF to GND; pcb/prepare.py low_ohm_links). They sit on the odd row of J208, each followed by its GND return on the same row (rail, GND, rail, GND, ...; the return is the next contact, 0.5 mm away), in the order rail_order (until 11.11.2026 a checkerboard over both rows with the return in the same column; both keep GND beside every rail contact). (2) One GND guard contact follows the rail block in its row; the rails of rail_row_even (LAB5) start the even row the same way, and the signal nets follow them on the even row. (3) Each declared sense pair (at the potential of its rail) takes one column at the end of the strip, with a GND guard column before it. A bridge from a rail contact can then only short that rail to GND, where its protection (tools/assembly_data.py NET_CURRENT) acts; it cannot join two rails, a rail and a sense line, or a rail and a signal line. rail_order puts 3V3_Q6A first and the 12-13.8 V rails of the net names (the BONI13V8 tap, LNB13V2, AUX12 and BONI13V8_PORT) last; between them, for the PWR-B board of record, the rails that leave to the west (LNA4V5, the LNA bias dampers, E2_SB_DAMP, VBUS_RTLB_DAMP, VBUS_LABPORT), to the top edge (VBUS_HFP) and to the right (LAB5_RLY, BIAS_CH4_DAMP); the four LAB5 contacts sit on the even row (rail_row_even). The damper nodes also get their AC return beside them: the 47 uF capacitor sits on PWR-A and the 0.22 ohm resistor on PWR-B. Cost for (a): 10 GND contacts more than one per power contact (6 rail nodes, 1 tap, 3 guards). Design value; signal nets still neighbour signal nets"
+  "guard_rule": "W2 B2B review R2 (07.11.2026): the pads are 0.30 mm wide at 0.50 mm pitch, so neighbouring pads of a row are 0.20 mm apart (b2b.footprint, Samtec Rev G), and a solder bridge between them is the likely defect at this pitch. So no contact at a supply-rail potential has a neighbour in its row other than GND. (1) Rail contacts are the power contacts, the sense/supply taps and the rail nodes: crossing nets that a resistor below rail_node_max_ohm joins to a net other than GND, such as the 0.22 ohm damper nodes (BIAS_CH1_DAMP: R232 from BIAS_CH1, C235 47 uF to GND; pcb/prepare.py low_ohm_links). They sit on the odd row of J208, each followed by its GND return on the same row (rail, GND, rail, GND, ...; the return is the next contact, 0.5 mm away), in the order rail_order (until 11.11.2026 a checkerboard over both rows with the return in the same column; both keep GND beside every rail contact). (2) One GND guard contact follows the rail block in its row; the rails of rail_row_even (LAB5) start the even row the same way, and the signal nets follow them on the even row. (3) Each declared sense pair (at the potential of its rail) takes one column at the end of the strip, with a GND guard column before it. A bridge from a rail contact can then only short that rail to GND, where its protection (tools/assembly_data.py NET_CURRENT) acts; it cannot join two rails, a rail and a sense line, or a rail and a signal line. rail_order puts 3V3_Q6A first and the 12-13.8 V rails of the net names (the BONI13V8 tap, LNB13V2, AUX12 and BONI13V8_PORT) last; between them, for the PWR-B board of record, the rails that leave to the west (LNA4V5, the LNA bias dampers, E2_SB_DAMP, VBUS_RTLB_DAMP, VBUS_LABPORT), to the top edge (VBUS_HFP) and to the right (LAB5_RLY, BIAS_CH4_DAMP); the four LAB5 contacts sit on the even row (rail_row_even). The damper nodes also get their AC return beside them: the 47 uF capacitor sits on PWR-A and the 0.22 ohm resistor on PWR-B. Cost for (a): 10 GND contacts more than one per power contact (6 rail nodes, 1 tap, 3 guards). Design value; signal nets still neighbour signal nets",
+  "budget_planned": {
+   "crossing_nets": 33,
+   "power_pins": 13,
+   "signal_pins": 25,
+   "gnd_pins": 17,
+   "contacts_needed": 55,
+   "contacts_with_spare": 66
+  },
+  "budget_note": "W2 AREA-2: budget_chosen is the B2B of the chosen candidate on the graph of record (pcb/generated/b2b-nets.json totals, checked by pcb/tests/test_b2b_map.py); budget_planned is the same candidate with its planned SHRINK-2 changes: the six damper rail nodes (BIAS_CH1-4_DAMP, VBUS_RTLB_DAMP, E2_SB_DAMP) and VBUS_LABPORT stop crossing once GR-5B moves C235/C239/C243/C247/C251/C298 and C506 to PWR-B; then pcb/prepare.py and pcb/write_b2b_graph.py rewrite the contact map and budget_chosen takes the new totals, in the GR-5B swap commit (partition.domain_override_note)"
  },
  "ctrl": {
   "bottom_footprint_prefixes": [
@@ -1439,6 +1470,1284 @@
     }
    ],
    "ctrl_unresolved_to_pwr_a": true
+  },
+  "shrink2": {
+   "title": "SHRINK-2 (W2 AREA-2, 12.11.2026; orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed)): partition (a) with smaller PWR-A content (TI converters for the Pololu modules, SMD F103/F201, low-profile 5 V dampers, 2520 inductors, 1210 C111/C112, C109 deleted, C506 as three 16SVPG47M on PWR-B, merged PWR-B headers), a two-sided PWR-A (pwr_a_bottom) and rule H-TRIM (keepouts.h_trim)",
+   "pololu": "pwr_a",
+   "pinned_pwr_a": [],
+   "pwr_b_groups": [
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 1"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 2"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 4"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    },
+    {
+     "sheet": "E2",
+     "group": "INA3221: струми LNA1–3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNB: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "Boni: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "AUX12: контроль напруги після PTC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    }
+   ],
+   "h_trim": true,
+   "planned": {
+    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. A reserve (refs [] and until_mpn_in_graph; RPP-SYS12, W2 AREA-2 review R3) is a change of its own for a stage that has no graph ref yet: it stays until a bare board part of the graph carries one of its MPNs, so it does not leave with another change; a part that GR-5A or GR-5B leaves TBD without a graph ref keeps its area only through such a reserve (AREA lineage). F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
+    "changes": [
+     {
+      "id": "U107-SYS12",
+      "refs": [
+       "U107"
+      ],
+      "while_mpn": "D36V50F12",
+      "owner": "GR-5A",
+      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts replace the Pololu D36V50F12 module; the reverse-polarity stage of STACK C4 is the reserve RPP-SYS12",
+      "to": {
+       "blocks": [
+        {
+         "id": "CONV_SYS12",
+         "side": "PWR_A",
+         "w": 15.0,
+         "d": 14.3,
+         "h": 3.2,
+         "what": "LM61460AANRJRR (RJR0014A, 1.0 mm max) + 2.2 uH inductor (SRP7030-2R2M as decided, 3.2 mm max; NRND, Bourns names SRP7028A 2.8 mm; value open by LM61460 eq. (10), GR-5A) + 2 x 10 uF/50 V 1210 + 2 x 100 nF + 4 x 22 uF/50 V 1210 + 6 x 0603: courtyard sum 214.4 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); heights: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) rows web:ti-snvsbd5d-lm61460 and web:bourns-srp7030 (the tallest part, 3.2 mm max)"
+        }
+       ]
+      }
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "owner": "GR-5A",
+      "what": "reverse-polarity stage of the LM61460 input (STACK C4), a reserve of its own (W2 AREA-2 review R3): it is not part of U107-SYS12, so it stays counted while the stage has no graph ref (GR-5A may leave the MPN TBD with a reserved block and an unresolved.csv record). It leaves when a bare board part of the graph carries a listed MPN: the controller LM74700QDBVRQ1 read by READS-P (row web:ti-snosd17g-lm74700-q1), whose N-MOSFET comes into the graph with it. Another controller MPN is added here in the AREA lineage; until then the block and the real parts both count (the demand is overstated, never understated)",
+      "to": {
+       "blocks": [
+        {
+         "id": "RPP",
+         "side": "PWR_A",
+         "w": 7.5,
+         "d": 6.7,
+         "h": 2.7,
+         "what": "reverse-polarity stage of the LM61460 input (STACK C4), MPN TBD (READS-P candidate LM74700-Q1 SOT-23-6 with a 60 V N-MOSFET, row web:ti-snosd17g-lm74700-q1; GR-5A decides): 50 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: heights.low_profile class (SOT-23 / SON), MPN TBD"
+        }
+       ]
+      }
+     },
+     {
+      "id": "U108-LAB5",
+      "refs": [
+       "U108"
+      ],
+      "while_mpn": "D36V50F5",
+      "owner": "GR-5A",
+      "what": "LAB5: TI TPSM63606RDLR and its capacitors replace the Pololu D36V50F5 module (STACK D11 names TPSM63604)",
+      "to": {
+       "blocks": [
+        {
+         "id": "CONV_LAB5",
+         "side": "PWR_A",
+         "w": 12.0,
+         "d": 11.6,
+         "h": 4.1,
+         "what": "TPSM63606RDLR (RDL0020A B3QFN, 4.1 mm max) + 2 x 10 uF/50 V 1210 + 100 nF + 3 x 47 uF/10 V 1210 GRM32ER71A476ME15L + 5 x 0603: courtyard sum 138.5 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:ti-slvsgb4b-tpsm63606"
+        }
+       ]
+      }
+     },
+     {
+      "id": "F103-SMD",
+      "refs": [
+       "F103"
+      ],
+      "while_mpn": "0297005.WXNV",
+      "owner": "GR-5A",
+      "what": "F103 (5 A, service charge) becomes a 2410-class SMD fuse (32 V DC or more); MPN TBD (READS-P candidate 0451005.MRL)",
+      "to": {
+       "blocks": [
+        {
+         "id": "FUSE_F103",
+         "side": "PWR_A",
+         "w": 7.8,
+         "d": 3.7,
+         "h": 2.69,
+         "what": "SMD fuse 5 A, 2410 class: 28.9 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: Littelfuse 451 6.10 x 2.69 x 2.69 mm, design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:littelfuse-451-453"
+        }
+       ]
+      }
+     },
+     {
+      "id": "F201-SMD",
+      "refs": [
+       "F201"
+      ],
+      "while_mpn": "0297004.WXNV",
+      "owner": "GR-5A",
+      "what": "F201 (4 A, J21) becomes a 2410-class SMD fuse (32 V DC or more); MPN TBD (READS-P candidate 0451004.MRL)",
+      "to": {
+       "blocks": [
+        {
+         "id": "FUSE_F201",
+         "side": "PWR_A",
+         "w": 3.7,
+         "d": 7.8,
+         "h": 2.69,
+         "what": "SMD fuse 4 A, 2410 class: 28.9 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:littelfuse-451-453"
+        }
+       ]
+      }
+     },
+     {
+      "id": "C109-out",
+      "refs": [
+       "C109"
+      ],
+      "while_mpn": "EEHZK1V101XP",
+      "owner": "GR-5A",
+      "what": "C109 is deleted: C107 becomes the shared input bulk of both converters",
+      "to": {
+       "delete": true
+      }
+     },
+     {
+      "id": "C111-C112-1210",
+      "refs": [
+       "C111",
+       "C112"
+      ],
+      "while_mpn": "35SVPF22M",
+      "owner": "GR-5A",
+      "what": "C111/C112 become TDK C3225X7R1H226M250AC (22 uF 50 V 1210); E1-05 (>= 10 uF effective at 5 V) stays OPEN",
+      "to": {
+       "footprint": "Capacitor_SMD:C_1210_3225Metric",
+       "mpn": "C3225X7R1H226M250AC"
+      }
+     },
+     {
+      "id": "dampers-5V",
+      "refs": [
+       "C219",
+       "C225",
+       "C235",
+       "C239",
+       "C243",
+       "C247",
+       "C251",
+       "C298"
+      ],
+      "while_mpn": "EEU-FR1H470",
+      "owner": "GR-5B",
+      "what": "the RC dampers on rails of 5 V or less become Panasonic 16SVPG47M (as C503); C235, C239, C243, C247, C251 and C298 are then no taller than hB and go home to PWR-B",
+      "to": {
+       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+       "mpn": "16SVPG47M"
+      }
+     },
+     {
+      "id": "C506-3x",
+      "refs": [
+       "C506"
+      ],
+      "while_mpn": "16SVPC150M",
+      "owner": "GR-5B",
+      "what": "C506 becomes three 16SVPG47M (141 uF on VBUS_LABPORT) on PWR-B, in group VBUS RTL-A і LAB PORT",
+      "to": {
+       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+       "mpn": "16SVPG47M",
+       "count": 3
+      }
+     },
+     {
+      "id": "L-1uH-2520",
+      "refs": [
+       "L202",
+       "L204",
+       "L211",
+       "L212",
+       "L213",
+       "L214"
+      ],
+      "while_mpn": "XAL5030-102MEC",
+      "owner": "GR-5B",
+      "what": "the 1 uH XAL5030 inductors (branches protected at 1.7 A or less) become the Bourns SRP2510 1 uH class (READS-P read SRP2510PA-1R0M; GR-5B checks the rail currents); KiCad L_1008_2520Metric is the area proxy",
+      "to": {
+       "footprint": "Inductor_SMD:L_1008_2520Metric",
+       "mpn": "SRP2510PA-1R0M"
+      }
+     },
+     {
+      "id": "J204+J207-PHD",
+      "refs": [
+       "J204",
+       "J207"
+      ],
+      "owner": "GR-5B",
+      "while_footprint": {
+       "J204": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+       "J207": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal"
+      },
+      "what": "J204 (S04) and J207 (S20-S22, S35, S36) merge into one JST PHD 2x10 side entry S20B-PHDSS (as J202/J203)",
+      "to": {
+       "merge_into": "J204",
+       "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+       "family": "PHD_side"
+      }
+     },
+     {
+      "id": "J506+J508-PH9",
+      "refs": [
+       "J506",
+       "J508"
+      ],
+      "owner": "GR-5B",
+      "while_footprint": {
+       "J506": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+       "J508": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal"
+      },
+      "what": "J506 (S23) and J508 (S34) merge into one JST PH 9-pin side entry S9B-PH-K-S(LF)(SN) (READS-P row web:jst-ph-catalogue-lcsc, LCSC C157912); its KiCad 10.0.7 footprint is not vendored yet (GR-5B), so its courtyard is the linear series of the vendored S8B and S12B",
+      "to": {
+       "merge_into": "J506",
+       "pins": 9,
+       "family": "PH_side",
+       "series": {
+        "from": [
+         [
+          8,
+          "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal"
+         ],
+         [
+          12,
+          "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal"
+         ]
+        ],
+        "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal"
+       }
+      }
+     }
+    ]
+   },
+   "pwr_a_bottom": {
+    "rule": "PWR-A is two-sided (W2 AREA-2): these 94 chip R/C (0603 R and C, 0805/1206 R) of E1_CTRL, E1_USBPD, J21, DISP, LIME, AUX12, INA3221 #2, HFP, E5 service, SYS12 (R108/R109), LNB, Boni and LNA4V5 go on the bottom side; they sit outside the thermal_bond zones and outside every top THT pin field + tht_margin, over plate pockets with polyimide (M-07 extended), and must fit h_room_mm. The list is the SHRINK-2 study set; chip refs that are new later (GR-5A converter passives) stay on top until a later regeneration lists them",
+    "refs": [
+     "C105",
+     "C106",
+     "C114",
+     "C115",
+     "C201",
+     "C211",
+     "C214",
+     "C258",
+     "C269",
+     "C278",
+     "C279",
+     "C280",
+     "C281",
+     "C288",
+     "C508",
+     "C510",
+     "C513",
+     "C552",
+     "C553",
+     "C2913",
+     "R103",
+     "R104",
+     "R105",
+     "R106",
+     "R107",
+     "R108",
+     "R109",
+     "R111",
+     "R112",
+     "R113",
+     "R114",
+     "R115",
+     "R116",
+     "R121",
+     "R122",
+     "R123",
+     "R201",
+     "R202",
+     "R203",
+     "R204",
+     "R205",
+     "R206",
+     "R207",
+     "R208",
+     "R209",
+     "R210",
+     "R211",
+     "R212",
+     "R213",
+     "R214",
+     "R215",
+     "R216",
+     "R218",
+     "R219",
+     "R220",
+     "R221",
+     "R222",
+     "R223",
+     "R224",
+     "R225",
+     "R226",
+     "R227",
+     "R252",
+     "R253",
+     "R254",
+     "R255",
+     "R256",
+     "R258",
+     "R259",
+     "R260",
+     "R261",
+     "R262",
+     "R263",
+     "R264",
+     "R266",
+     "R267",
+     "R274",
+     "R275",
+     "R276",
+     "R277",
+     "R278",
+     "R279",
+     "R288",
+     "R289",
+     "R290",
+     "R291",
+     "R292",
+     "R509",
+     "R510",
+     "R513",
+     "R553",
+     "R2903",
+     "R2913",
+     "R2923"
+    ],
+    "footprint_prefixes": [
+     "R_0402",
+     "R_0603",
+     "R_0805",
+     "R_1206",
+     "C_0402",
+     "C_0603"
+    ],
+    "thermal_bond_planned": {
+     "3": [
+      7,
+      39,
+      17,
+      24
+     ],
+     "4": [
+      7,
+      73,
+      14,
+      14
+     ]
+    },
+    "thermal_bond_src": "mechanical/params/boards.json PWR thermal_bond [x, y, w, h] zones 1-2; zones 3 and 4 shrink to the converter blocks (SHRINK-2; MECH-7 writes them into boards.json)",
+    "tht_margin": 1.0,
+    "tht_margin_src": "mechanical/params/boards.json PWR tht_pockets margin 1.0 (M-07)",
+    "h_room_mm": 1.4,
+    "h_room_formula": "shim gap 0.4 (mechanical/params/boards.json PWR place.mount) + pocket depth 1.0 (tht_pockets.depth) under the PWR-A bottom face, minus the polyimide film (product TBD, SRC-2 C-18) and a clearance; the heights of the chip refs are not read (TBD per MPN): PCB-PWRA-3 and MECH-7 check them against it"
+   }
+  },
+  "s2nt": {
+   "title": "shrink2 without H-TRIM (W2 AREA-2): the PWR-A keepout under the PWR-B THT pin fields stays (the F2-C trigger 'H-TRIM fails at proof-fit')",
+   "pololu": "pwr_a",
+   "pinned_pwr_a": [],
+   "pwr_b_groups": [
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 1"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 2"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 4"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    },
+    {
+     "sheet": "E2",
+     "group": "INA3221: струми LNA1–3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNB: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "Boni: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "AUX12: контроль напруги після PTC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    }
+   ],
+   "h_trim": false,
+   "planned": {
+    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. A reserve (refs [] and until_mpn_in_graph; RPP-SYS12, W2 AREA-2 review R3) is a change of its own for a stage that has no graph ref yet: it stays until a bare board part of the graph carries one of its MPNs, so it does not leave with another change; a part that GR-5A or GR-5B leaves TBD without a graph ref keeps its area only through such a reserve (AREA lineage). F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
+    "changes": [
+     {
+      "id": "U107-SYS12",
+      "refs": [
+       "U107"
+      ],
+      "while_mpn": "D36V50F12",
+      "owner": "GR-5A",
+      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts replace the Pololu D36V50F12 module; the reverse-polarity stage of STACK C4 is the reserve RPP-SYS12",
+      "to": {
+       "blocks": [
+        {
+         "id": "CONV_SYS12",
+         "side": "PWR_A",
+         "w": 15.0,
+         "d": 14.3,
+         "h": 3.2,
+         "what": "LM61460AANRJRR (RJR0014A, 1.0 mm max) + 2.2 uH inductor (SRP7030-2R2M as decided, 3.2 mm max; NRND, Bourns names SRP7028A 2.8 mm; value open by LM61460 eq. (10), GR-5A) + 2 x 10 uF/50 V 1210 + 2 x 100 nF + 4 x 22 uF/50 V 1210 + 6 x 0603: courtyard sum 214.4 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); heights: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) rows web:ti-snvsbd5d-lm61460 and web:bourns-srp7030 (the tallest part, 3.2 mm max)"
+        }
+       ]
+      }
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "owner": "GR-5A",
+      "what": "reverse-polarity stage of the LM61460 input (STACK C4), a reserve of its own (W2 AREA-2 review R3): it is not part of U107-SYS12, so it stays counted while the stage has no graph ref (GR-5A may leave the MPN TBD with a reserved block and an unresolved.csv record). It leaves when a bare board part of the graph carries a listed MPN: the controller LM74700QDBVRQ1 read by READS-P (row web:ti-snosd17g-lm74700-q1), whose N-MOSFET comes into the graph with it. Another controller MPN is added here in the AREA lineage; until then the block and the real parts both count (the demand is overstated, never understated)",
+      "to": {
+       "blocks": [
+        {
+         "id": "RPP",
+         "side": "PWR_A",
+         "w": 7.5,
+         "d": 6.7,
+         "h": 2.7,
+         "what": "reverse-polarity stage of the LM61460 input (STACK C4), MPN TBD (READS-P candidate LM74700-Q1 SOT-23-6 with a 60 V N-MOSFET, row web:ti-snosd17g-lm74700-q1; GR-5A decides): 50 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: heights.low_profile class (SOT-23 / SON), MPN TBD"
+        }
+       ]
+      }
+     },
+     {
+      "id": "U108-LAB5",
+      "refs": [
+       "U108"
+      ],
+      "while_mpn": "D36V50F5",
+      "owner": "GR-5A",
+      "what": "LAB5: TI TPSM63606RDLR and its capacitors replace the Pololu D36V50F5 module (STACK D11 names TPSM63604)",
+      "to": {
+       "blocks": [
+        {
+         "id": "CONV_LAB5",
+         "side": "PWR_A",
+         "w": 12.0,
+         "d": 11.6,
+         "h": 4.1,
+         "what": "TPSM63606RDLR (RDL0020A B3QFN, 4.1 mm max) + 2 x 10 uF/50 V 1210 + 100 nF + 3 x 47 uF/10 V 1210 GRM32ER71A476ME15L + 5 x 0603: courtyard sum 138.5 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:ti-slvsgb4b-tpsm63606"
+        }
+       ]
+      }
+     },
+     {
+      "id": "F103-SMD",
+      "refs": [
+       "F103"
+      ],
+      "while_mpn": "0297005.WXNV",
+      "owner": "GR-5A",
+      "what": "F103 (5 A, service charge) becomes a 2410-class SMD fuse (32 V DC or more); MPN TBD (READS-P candidate 0451005.MRL)",
+      "to": {
+       "blocks": [
+        {
+         "id": "FUSE_F103",
+         "side": "PWR_A",
+         "w": 7.8,
+         "d": 3.7,
+         "h": 2.69,
+         "what": "SMD fuse 5 A, 2410 class: 28.9 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: Littelfuse 451 6.10 x 2.69 x 2.69 mm, design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:littelfuse-451-453"
+        }
+       ]
+      }
+     },
+     {
+      "id": "F201-SMD",
+      "refs": [
+       "F201"
+      ],
+      "while_mpn": "0297004.WXNV",
+      "owner": "GR-5A",
+      "what": "F201 (4 A, J21) becomes a 2410-class SMD fuse (32 V DC or more); MPN TBD (READS-P candidate 0451004.MRL)",
+      "to": {
+       "blocks": [
+        {
+         "id": "FUSE_F201",
+         "side": "PWR_A",
+         "w": 3.7,
+         "d": 7.8,
+         "h": 2.69,
+         "what": "SMD fuse 4 A, 2410 class: 28.9 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:littelfuse-451-453"
+        }
+       ]
+      }
+     },
+     {
+      "id": "C109-out",
+      "refs": [
+       "C109"
+      ],
+      "while_mpn": "EEHZK1V101XP",
+      "owner": "GR-5A",
+      "what": "C109 is deleted: C107 becomes the shared input bulk of both converters",
+      "to": {
+       "delete": true
+      }
+     },
+     {
+      "id": "C111-C112-1210",
+      "refs": [
+       "C111",
+       "C112"
+      ],
+      "while_mpn": "35SVPF22M",
+      "owner": "GR-5A",
+      "what": "C111/C112 become TDK C3225X7R1H226M250AC (22 uF 50 V 1210); E1-05 (>= 10 uF effective at 5 V) stays OPEN",
+      "to": {
+       "footprint": "Capacitor_SMD:C_1210_3225Metric",
+       "mpn": "C3225X7R1H226M250AC"
+      }
+     },
+     {
+      "id": "dampers-5V",
+      "refs": [
+       "C219",
+       "C225",
+       "C235",
+       "C239",
+       "C243",
+       "C247",
+       "C251",
+       "C298"
+      ],
+      "while_mpn": "EEU-FR1H470",
+      "owner": "GR-5B",
+      "what": "the RC dampers on rails of 5 V or less become Panasonic 16SVPG47M (as C503); C235, C239, C243, C247, C251 and C298 are then no taller than hB and go home to PWR-B",
+      "to": {
+       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+       "mpn": "16SVPG47M"
+      }
+     },
+     {
+      "id": "C506-3x",
+      "refs": [
+       "C506"
+      ],
+      "while_mpn": "16SVPC150M",
+      "owner": "GR-5B",
+      "what": "C506 becomes three 16SVPG47M (141 uF on VBUS_LABPORT) on PWR-B, in group VBUS RTL-A і LAB PORT",
+      "to": {
+       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+       "mpn": "16SVPG47M",
+       "count": 3
+      }
+     },
+     {
+      "id": "L-1uH-2520",
+      "refs": [
+       "L202",
+       "L204",
+       "L211",
+       "L212",
+       "L213",
+       "L214"
+      ],
+      "while_mpn": "XAL5030-102MEC",
+      "owner": "GR-5B",
+      "what": "the 1 uH XAL5030 inductors (branches protected at 1.7 A or less) become the Bourns SRP2510 1 uH class (READS-P read SRP2510PA-1R0M; GR-5B checks the rail currents); KiCad L_1008_2520Metric is the area proxy",
+      "to": {
+       "footprint": "Inductor_SMD:L_1008_2520Metric",
+       "mpn": "SRP2510PA-1R0M"
+      }
+     },
+     {
+      "id": "J204+J207-PHD",
+      "refs": [
+       "J204",
+       "J207"
+      ],
+      "owner": "GR-5B",
+      "while_footprint": {
+       "J204": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+       "J207": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal"
+      },
+      "what": "J204 (S04) and J207 (S20-S22, S35, S36) merge into one JST PHD 2x10 side entry S20B-PHDSS (as J202/J203)",
+      "to": {
+       "merge_into": "J204",
+       "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+       "family": "PHD_side"
+      }
+     },
+     {
+      "id": "J506+J508-PH9",
+      "refs": [
+       "J506",
+       "J508"
+      ],
+      "owner": "GR-5B",
+      "while_footprint": {
+       "J506": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+       "J508": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal"
+      },
+      "what": "J506 (S23) and J508 (S34) merge into one JST PH 9-pin side entry S9B-PH-K-S(LF)(SN) (READS-P row web:jst-ph-catalogue-lcsc, LCSC C157912); its KiCad 10.0.7 footprint is not vendored yet (GR-5B), so its courtyard is the linear series of the vendored S8B and S12B",
+      "to": {
+       "merge_into": "J506",
+       "pins": 9,
+       "family": "PH_side",
+       "series": {
+        "from": [
+         [
+          8,
+          "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal"
+         ],
+         [
+          12,
+          "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal"
+         ]
+        ],
+        "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal"
+       }
+      }
+     }
+    ]
+   },
+   "pwr_a_bottom": {
+    "rule": "PWR-A is two-sided (W2 AREA-2): these 94 chip R/C (0603 R and C, 0805/1206 R) of E1_CTRL, E1_USBPD, J21, DISP, LIME, AUX12, INA3221 #2, HFP, E5 service, SYS12 (R108/R109), LNB, Boni and LNA4V5 go on the bottom side; they sit outside the thermal_bond zones and outside every top THT pin field + tht_margin, over plate pockets with polyimide (M-07 extended), and must fit h_room_mm. The list is the SHRINK-2 study set; chip refs that are new later (GR-5A converter passives) stay on top until a later regeneration lists them",
+    "refs": [
+     "C105",
+     "C106",
+     "C114",
+     "C115",
+     "C201",
+     "C211",
+     "C214",
+     "C258",
+     "C269",
+     "C278",
+     "C279",
+     "C280",
+     "C281",
+     "C288",
+     "C508",
+     "C510",
+     "C513",
+     "C552",
+     "C553",
+     "C2913",
+     "R103",
+     "R104",
+     "R105",
+     "R106",
+     "R107",
+     "R108",
+     "R109",
+     "R111",
+     "R112",
+     "R113",
+     "R114",
+     "R115",
+     "R116",
+     "R121",
+     "R122",
+     "R123",
+     "R201",
+     "R202",
+     "R203",
+     "R204",
+     "R205",
+     "R206",
+     "R207",
+     "R208",
+     "R209",
+     "R210",
+     "R211",
+     "R212",
+     "R213",
+     "R214",
+     "R215",
+     "R216",
+     "R218",
+     "R219",
+     "R220",
+     "R221",
+     "R222",
+     "R223",
+     "R224",
+     "R225",
+     "R226",
+     "R227",
+     "R252",
+     "R253",
+     "R254",
+     "R255",
+     "R256",
+     "R258",
+     "R259",
+     "R260",
+     "R261",
+     "R262",
+     "R263",
+     "R264",
+     "R266",
+     "R267",
+     "R274",
+     "R275",
+     "R276",
+     "R277",
+     "R278",
+     "R279",
+     "R288",
+     "R289",
+     "R290",
+     "R291",
+     "R292",
+     "R509",
+     "R510",
+     "R513",
+     "R553",
+     "R2903",
+     "R2913",
+     "R2923"
+    ],
+    "footprint_prefixes": [
+     "R_0402",
+     "R_0603",
+     "R_0805",
+     "R_1206",
+     "C_0402",
+     "C_0603"
+    ],
+    "thermal_bond_planned": {
+     "3": [
+      7,
+      39,
+      17,
+      24
+     ],
+     "4": [
+      7,
+      73,
+      14,
+      14
+     ]
+    },
+    "thermal_bond_src": "mechanical/params/boards.json PWR thermal_bond [x, y, w, h] zones 1-2; zones 3 and 4 shrink to the converter blocks (SHRINK-2; MECH-7 writes them into boards.json)",
+    "tht_margin": 1.0,
+    "tht_margin_src": "mechanical/params/boards.json PWR tht_pockets margin 1.0 (M-07)",
+    "h_room_mm": 1.4,
+    "h_room_formula": "shim gap 0.4 (mechanical/params/boards.json PWR place.mount) + pocket depth 1.0 (tht_pockets.depth) under the PWR-A bottom face, minus the polyimide film (product TBD, SRC-2 C-18) and a clearance; the heights of the chip refs are not read (TBD per MPN): PCB-PWRA-3 and MECH-7 check them against it"
+   }
+  },
+  "s2f3": {
+   "title": "shrink2 with F3 (W2 AREA-2): the MCP23017 control group of E3 on PWR-B; S02 unchanged (no FFC, READS-P: no mating FFC pair established)",
+   "pololu": "pwr_a",
+   "pinned_pwr_a": [],
+   "pwr_b_groups": [
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 1"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 2"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 4"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    },
+    {
+     "sheet": "E2",
+     "group": "INA3221: струми LNA1–3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNB: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "Boni: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "AUX12: контроль напруги після PTC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    }
+   ],
+   "h_trim": true,
+   "planned": {
+    "rule": "a change counts while every one of its refs still has the graph value it names (while_mpn, or while_footprint for a header); GR-5A (E1) and GR-5B (E2/E5) put the new parts into the graph, and from then the change is 'in graph' and the graph counts. Reserved blocks stand in for parts that have no graph ref or vendored footprint yet (estimated courtyard rectangles of the SHRINK-2 study, MODEL); they leave with the change they belong to. A reserve (refs [] and until_mpn_in_graph; RPP-SYS12, W2 AREA-2 review R3) is a change of its own for a stage that has no graph ref yet: it stays until a bare board part of the graph carries one of its MPNs, so it does not leave with another change; a part that GR-5A or GR-5B leaves TBD without a graph ref keeps its area only through such a reserve (AREA lineage). F102 keeps its Keystone 3568 holder and blade (E1-05 OPEN; no 4 A SMD fuse with cold R <= 10 mOhm found, READS-P row web:readsp-f102-10mohm-search). C206/C210/C222 (12 V rails) and C254/C262/C265/C273 stay radial.",
+    "changes": [
+     {
+      "id": "U107-SYS12",
+      "refs": [
+       "U107"
+      ],
+      "while_mpn": "D36V50F12",
+      "owner": "GR-5A",
+      "what": "SYS12: TI LM61460AANRJRR and its inductor, input/output capacitors and 0603 parts replace the Pololu D36V50F12 module; the reverse-polarity stage of STACK C4 is the reserve RPP-SYS12",
+      "to": {
+       "blocks": [
+        {
+         "id": "CONV_SYS12",
+         "side": "PWR_A",
+         "w": 15.0,
+         "d": 14.3,
+         "h": 3.2,
+         "what": "LM61460AANRJRR (RJR0014A, 1.0 mm max) + 2.2 uH inductor (SRP7030-2R2M as decided, 3.2 mm max; NRND, Bourns names SRP7028A 2.8 mm; value open by LM61460 eq. (10), GR-5A) + 2 x 10 uF/50 V 1210 + 2 x 100 nF + 4 x 22 uF/50 V 1210 + 6 x 0603: courtyard sum 214.4 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); heights: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) rows web:ti-snvsbd5d-lm61460 and web:bourns-srp7030 (the tallest part, 3.2 mm max)"
+        }
+       ]
+      }
+     },
+     {
+      "id": "RPP-SYS12",
+      "refs": [],
+      "until_mpn_in_graph": [
+       "LM74700QDBVRQ1"
+      ],
+      "owner": "GR-5A",
+      "what": "reverse-polarity stage of the LM61460 input (STACK C4), a reserve of its own (W2 AREA-2 review R3): it is not part of U107-SYS12, so it stays counted while the stage has no graph ref (GR-5A may leave the MPN TBD with a reserved block and an unresolved.csv record). It leaves when a bare board part of the graph carries a listed MPN: the controller LM74700QDBVRQ1 read by READS-P (row web:ti-snosd17g-lm74700-q1), whose N-MOSFET comes into the graph with it. Another controller MPN is added here in the AREA lineage; until then the block and the real parts both count (the demand is overstated, never understated)",
+      "to": {
+       "blocks": [
+        {
+         "id": "RPP",
+         "side": "PWR_A",
+         "w": 7.5,
+         "d": 6.7,
+         "h": 2.7,
+         "what": "reverse-polarity stage of the LM61460 input (STACK C4), MPN TBD (READS-P candidate LM74700-Q1 SOT-23-6 with a 60 V N-MOSFET, row web:ti-snosd17g-lm74700-q1; GR-5A decides): 50 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: heights.low_profile class (SOT-23 / SON), MPN TBD"
+        }
+       ]
+      }
+     },
+     {
+      "id": "U108-LAB5",
+      "refs": [
+       "U108"
+      ],
+      "while_mpn": "D36V50F5",
+      "owner": "GR-5A",
+      "what": "LAB5: TI TPSM63606RDLR and its capacitors replace the Pololu D36V50F5 module (STACK D11 names TPSM63604)",
+      "to": {
+       "blocks": [
+        {
+         "id": "CONV_LAB5",
+         "side": "PWR_A",
+         "w": 12.0,
+         "d": 11.6,
+         "h": 4.1,
+         "what": "TPSM63606RDLR (RDL0020A B3QFN, 4.1 mm max) + 2 x 10 uF/50 V 1210 + 100 nF + 3 x 47 uF/10 V 1210 GRM32ER71A476ME15L + 5 x 0603: courtyard sum 138.5 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:ti-slvsgb4b-tpsm63606"
+        }
+       ]
+      }
+     },
+     {
+      "id": "F103-SMD",
+      "refs": [
+       "F103"
+      ],
+      "while_mpn": "0297005.WXNV",
+      "owner": "GR-5A",
+      "what": "F103 (5 A, service charge) becomes a 2410-class SMD fuse (32 V DC or more); MPN TBD (READS-P candidate 0451005.MRL)",
+      "to": {
+       "blocks": [
+        {
+         "id": "FUSE_F103",
+         "side": "PWR_A",
+         "w": 7.8,
+         "d": 3.7,
+         "h": 2.69,
+         "what": "SMD fuse 5 A, 2410 class: 28.9 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: Littelfuse 451 6.10 x 2.69 x 2.69 mm, design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:littelfuse-451-453"
+        }
+       ]
+      }
+     },
+     {
+      "id": "F201-SMD",
+      "refs": [
+       "F201"
+      ],
+      "while_mpn": "0297004.WXNV",
+      "owner": "GR-5A",
+      "what": "F201 (4 A, J21) becomes a 2410-class SMD fuse (32 V DC or more); MPN TBD (READS-P candidate 0451004.MRL)",
+      "to": {
+       "blocks": [
+        {
+         "id": "FUSE_F201",
+         "side": "PWR_A",
+         "w": 3.7,
+         "d": 7.8,
+         "h": 2.69,
+         "what": "SMD fuse 4 A, 2410 class: 28.9 mm2",
+         "src": "block rectangle of the orchestrator decision SHRINK-2 of 11.11.2026 (design study: 4 proposals, 3 judges; re-check by the board_gen planner on a detached scratch worktree of wip/w2-pwra1 80d92c28; scratch evidence, not committed); height: design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11) row web:littelfuse-451-453"
+        }
+       ]
+      }
+     },
+     {
+      "id": "C109-out",
+      "refs": [
+       "C109"
+      ],
+      "while_mpn": "EEHZK1V101XP",
+      "owner": "GR-5A",
+      "what": "C109 is deleted: C107 becomes the shared input bulk of both converters",
+      "to": {
+       "delete": true
+      }
+     },
+     {
+      "id": "C111-C112-1210",
+      "refs": [
+       "C111",
+       "C112"
+      ],
+      "while_mpn": "35SVPF22M",
+      "owner": "GR-5A",
+      "what": "C111/C112 become TDK C3225X7R1H226M250AC (22 uF 50 V 1210); E1-05 (>= 10 uF effective at 5 V) stays OPEN",
+      "to": {
+       "footprint": "Capacitor_SMD:C_1210_3225Metric",
+       "mpn": "C3225X7R1H226M250AC"
+      }
+     },
+     {
+      "id": "dampers-5V",
+      "refs": [
+       "C219",
+       "C225",
+       "C235",
+       "C239",
+       "C243",
+       "C247",
+       "C251",
+       "C298"
+      ],
+      "while_mpn": "EEU-FR1H470",
+      "owner": "GR-5B",
+      "what": "the RC dampers on rails of 5 V or less become Panasonic 16SVPG47M (as C503); C235, C239, C243, C247, C251 and C298 are then no taller than hB and go home to PWR-B",
+      "to": {
+       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+       "mpn": "16SVPG47M"
+      }
+     },
+     {
+      "id": "C506-3x",
+      "refs": [
+       "C506"
+      ],
+      "while_mpn": "16SVPC150M",
+      "owner": "GR-5B",
+      "what": "C506 becomes three 16SVPG47M (141 uF on VBUS_LABPORT) on PWR-B, in group VBUS RTL-A і LAB PORT",
+      "to": {
+       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+       "mpn": "16SVPG47M",
+       "count": 3
+      }
+     },
+     {
+      "id": "L-1uH-2520",
+      "refs": [
+       "L202",
+       "L204",
+       "L211",
+       "L212",
+       "L213",
+       "L214"
+      ],
+      "while_mpn": "XAL5030-102MEC",
+      "owner": "GR-5B",
+      "what": "the 1 uH XAL5030 inductors (branches protected at 1.7 A or less) become the Bourns SRP2510 1 uH class (READS-P read SRP2510PA-1R0M; GR-5B checks the rail currents); KiCad L_1008_2520Metric is the area proxy",
+      "to": {
+       "footprint": "Inductor_SMD:L_1008_2520Metric",
+       "mpn": "SRP2510PA-1R0M"
+      }
+     },
+     {
+      "id": "J204+J207-PHD",
+      "refs": [
+       "J204",
+       "J207"
+      ],
+      "owner": "GR-5B",
+      "while_footprint": {
+       "J204": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+       "J207": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal"
+      },
+      "what": "J204 (S04) and J207 (S20-S22, S35, S36) merge into one JST PHD 2x10 side entry S20B-PHDSS (as J202/J203)",
+      "to": {
+       "merge_into": "J204",
+       "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+       "family": "PHD_side"
+      }
+     },
+     {
+      "id": "J506+J508-PH9",
+      "refs": [
+       "J506",
+       "J508"
+      ],
+      "owner": "GR-5B",
+      "while_footprint": {
+       "J506": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+       "J508": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal"
+      },
+      "what": "J506 (S23) and J508 (S34) merge into one JST PH 9-pin side entry S9B-PH-K-S(LF)(SN) (READS-P row web:jst-ph-catalogue-lcsc, LCSC C157912); its KiCad 10.0.7 footprint is not vendored yet (GR-5B), so its courtyard is the linear series of the vendored S8B and S12B",
+      "to": {
+       "merge_into": "J506",
+       "pins": 9,
+       "family": "PH_side",
+       "series": {
+        "from": [
+         [
+          8,
+          "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal"
+         ],
+         [
+          12,
+          "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal"
+         ]
+        ],
+        "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal"
+       }
+      }
+     }
+    ]
+   },
+   "pwr_a_bottom": {
+    "rule": "PWR-A is two-sided (W2 AREA-2): these 94 chip R/C (0603 R and C, 0805/1206 R) of E1_CTRL, E1_USBPD, J21, DISP, LIME, AUX12, INA3221 #2, HFP, E5 service, SYS12 (R108/R109), LNB, Boni and LNA4V5 go on the bottom side; they sit outside the thermal_bond zones and outside every top THT pin field + tht_margin, over plate pockets with polyimide (M-07 extended), and must fit h_room_mm. The list is the SHRINK-2 study set; chip refs that are new later (GR-5A converter passives) stay on top until a later regeneration lists them",
+    "refs": [
+     "C105",
+     "C106",
+     "C114",
+     "C115",
+     "C201",
+     "C211",
+     "C214",
+     "C258",
+     "C269",
+     "C278",
+     "C279",
+     "C280",
+     "C281",
+     "C288",
+     "C508",
+     "C510",
+     "C513",
+     "C552",
+     "C553",
+     "C2913",
+     "R103",
+     "R104",
+     "R105",
+     "R106",
+     "R107",
+     "R108",
+     "R109",
+     "R111",
+     "R112",
+     "R113",
+     "R114",
+     "R115",
+     "R116",
+     "R121",
+     "R122",
+     "R123",
+     "R201",
+     "R202",
+     "R203",
+     "R204",
+     "R205",
+     "R206",
+     "R207",
+     "R208",
+     "R209",
+     "R210",
+     "R211",
+     "R212",
+     "R213",
+     "R214",
+     "R215",
+     "R216",
+     "R218",
+     "R219",
+     "R220",
+     "R221",
+     "R222",
+     "R223",
+     "R224",
+     "R225",
+     "R226",
+     "R227",
+     "R252",
+     "R253",
+     "R254",
+     "R255",
+     "R256",
+     "R258",
+     "R259",
+     "R260",
+     "R261",
+     "R262",
+     "R263",
+     "R264",
+     "R266",
+     "R267",
+     "R274",
+     "R275",
+     "R276",
+     "R277",
+     "R278",
+     "R279",
+     "R288",
+     "R289",
+     "R290",
+     "R291",
+     "R292",
+     "R509",
+     "R510",
+     "R513",
+     "R553",
+     "R2903",
+     "R2913",
+     "R2923"
+    ],
+    "footprint_prefixes": [
+     "R_0402",
+     "R_0603",
+     "R_0805",
+     "R_1206",
+     "C_0402",
+     "C_0603"
+    ],
+    "thermal_bond_planned": {
+     "3": [
+      7,
+      39,
+      17,
+      24
+     ],
+     "4": [
+      7,
+      73,
+      14,
+      14
+     ]
+    },
+    "thermal_bond_src": "mechanical/params/boards.json PWR thermal_bond [x, y, w, h] zones 1-2; zones 3 and 4 shrink to the converter blocks (SHRINK-2; MECH-7 writes them into boards.json)",
+    "tht_margin": 1.0,
+    "tht_margin_src": "mechanical/params/boards.json PWR tht_pockets margin 1.0 (M-07)",
+    "h_room_mm": 1.4,
+    "h_room_formula": "shim gap 0.4 (mechanical/params/boards.json PWR place.mount) + pocket depth 1.0 (tht_pockets.depth) under the PWR-A bottom face, minus the polyimide film (product TBD, SRC-2 C-18) and a clearance; the heights of the chip refs are not read (TBD per MPN): PCB-PWRA-3 and MECH-7 check them against it"
+   },
+   "ctrl_groups_to_pwr_b": [
+    {
+     "sheet": "E3",
+     "group": "MCP23017 control"
+    }
+   ]
   }
  },
  "partition": {
@@ -1582,7 +2891,9 @@
    "C251",
    "C298",
    "C506"
-  ]
+  ],
+  "domain_override_pwr_a_planned": [],
+  "domain_override_note": "W2 AREA-2: domain_override_pwr_a is what pcb/prepare.py reads now (the radials EEU-FR1H470 C235/C239/C243/C247/C251/C298 and 16SVPC150M C506 are taller than hB in the graph). Removing them here before their swap would put 11.2 mm parts on PWR-B and change the J208/J209 contact map. domain_override_pwr_a_planned is the SHRINK-2 list. In the commit that swaps them to 16SVPG47M (coupled to its refreeze), GR-5B (1) sets domain_override_pwr_a to it, (2) runs pcb/prepare.py and pcb/write_b2b_graph.py (J208/J209 of design/E2.json), (3) sets b2b.budget_chosen to the new pcb/generated/b2b-nets.json totals (b2b.budget_planned is the model expectation), (4) updates the layout of (a) quoted in b2b.pin_map_rule and the rail-node and pin_map_rule assertions of pcb/tests/test_b2b_map.py (the six damper rail nodes stop crossing), and (5) runs the protocol chain and pcb/partition_budget.py. Those hunks of this file and of pcb/tests/test_b2b_map.py are outside the GR-5B paths of the SHRINK-2 plan, so the orchestrator grants them (W2 AREA-2 review R1); pcb/partition_budget.py --check reports the mismatch until then"
  },
  "fallbacks": [
   {
@@ -1596,8 +2907,8 @@
     "F2a (c)": "Pololu D36V50F12/F5 off PWR-A on plate standoffs, keeping their bond-zone path; needs a plate location the model does not have (rejected now, kept as an option if MECH-3 finds one)",
     "F2b": "rear-tier board PCB-REAR in x 71.6-116, y 38.5-94.5, z 4.8-17.5 (2486 mm2, parts <= 10.6 mm) taking the rear-load groups E5 'VBUS HF+', 'VBUS RTL-A і LAB PORT', 'LAB BUS I2C buffer' and E2 'RTL-B', 'S-band'; their radials (11.0-11.2 mm) cannot go there and stay on PWR-A; the rear board's own harness headers are not counted yet"
    },
-   "trigger": "courtyard fill of PWR-A or PWR-B > 0.60 in placement, or unrouted nets after two placement iterations (PCB-PWRA-1/2, PCB-PWRB). The model already exceeds it: raw fill PWR-A 0.972, PWR-B 1.302 for (a)",
-   "verdict": "fired at the model level in wave 1; neither option closes the shortfall at 1.8 (see ratios_1_8), so F2 alone is not the fix: decision.next_decision stays OPEN",
+   "trigger": "courtyard fill of PWR-A or PWR-B > 0.60 in placement, or unrouted nets after two placement iterations (PCB-PWRA-1/2, PCB-PWRB). The area model of (a) exceeds it: raw fill PWR-A 0.94, PWR-B 1.118 (pcb/partition-budget.json candidates.a)",
+   "verdict": "fired and measured (W2 AREA-2 records it): PCB-PWRA-1/2 raised F2 by placement: fill 0.959 with 160 of 256 PWR-A refs placed; F2a 0.783, F2b 0.915, both 0.740 against 0.60 (build/kicad/boards/PWR_A/placement-study.json fill at wip/w2-pwra1 80d92c28, PCB-PWRA-1, MODEL; with the B2B2 placeholder, the same file at wip/w2-pwra2 4b0e2f3f, PCB-PWRA-2: 0.963, 161/257; F2a 0.787, F2b 0.919, both 0.744). Neither option reaches 0.60, so F2 is superseded by SHRINK-2 (decision.next_decision); its fallbacks are F2-C and F2-ENV",
    "cost": "integration_plan step 8: +10-12 h (PCB-REAR board, MECH envelope step, GR-3 partition update)",
    "ratios_1_8": {
     "c": {
@@ -1613,21 +2924,44 @@
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
+   },
+   "measured": {
+    "pwra1_fill": 0.959,
+    "pwra1_placed": "160/256",
+    "F2a": 0.783,
+    "F2b": 0.915,
+    "F2a_plus_F2b": 0.74,
+    "with_b2b2_placeholder": {
+     "fill": 0.963,
+     "placed": "161/257",
+     "F2a": 0.787,
+     "F2b": 0.919,
+     "F2a_plus_F2b": 0.744
+    },
+    "src": "PCB-PWRA-1 placement study: build/kicad/boards/PWR_A/placement-study.json fill at wip/w2-pwra1 80d92c28 (fill_all_refs 0.9586, 160 of 256 placed; f2_options F2a 0.783, F2b 0.9152, both 0.7396); with_b2b2_placeholder: PCB-PWRA-2, the same file at wip/w2-pwra2 4b0e2f3f (fill_all_refs 0.9629, 161 of 257; 0.7873, 0.9194, 0.7438); read with git show on 12.11.2026; MODEL. PCB-PWRA-3 regenerates that file for SHRINK-2, so the two commits are the record"
    }
   },
   {
    "id": "F3",
    "relieves": "CTRL",
    "candidates": [
-    "f3"
+    "f3",
+    "s2f3"
    ],
    "option": "MCP23017 #1/#3/#4 (E3 group 'MCP23017 control') from CTRL to the power side (PWR-B), as STACK.md:277 allows (MCP23017-E/SO 'на силовій платі'); needs an E3/E2 review of the EN/FAULT logic",
-   "trigger": "CTRL fill > 0.60 on either side in placement (PCB-CTRL). The model is at raw fill 0.684 (top) / 0.568 (bottom) for (a)",
-   "verdict": "closes the CTRL area at 1.8 (top 1.008, bottom 1.024) but adds about 0.23k mm2 to PWR-B, which is already short, and leaves the five unresolved CTRL bottom headers (decision.ctrl_headers_unresolved) as they are; apply only if PCB-CTRL shows the fill and PWR gets more area",
+   "trigger": "CTRL fill > 0.60 on either side in placement (PCB-CTRL). The area model of (a) is at raw fill 0.617 (top) / 0.612 (bottom), pcb/partition-budget.json candidates.a ctrl",
+   "verdict": "at 1.8 the CTRL top already fits without F3 (candidate a 1.117, f3 1.124) and F3 does not close the bottom (0.908 -> 0.946); against the 0.60 placement trigger it is the other way round: F3 brings the CTRL bottom raw fill from 0.612 to 0.587 and leaves the top at 0.614 (computed, candidates a and f3). It leaves decision.ctrl_headers_unresolved as they are. On SHRINK-2 (candidate s2f3) the MCP23017 group lifts the PWR-B raw fill from 0.572 to 0.598 with S02 unchanged, 0.002 below the 0.60 trigger (the SHRINK-2 decision estimated about 0.62), so F3 on PWR-B needs the S02 FFC (not adopted: no mating FFC pair established, W2 READS-P) or a PWR-B placement check (PCB-PWRB-2) first. Apply only if PCB-CTRL shows the fill",
    "ratios_1_8": {
     "f3": {
      "PWR_A": 0.661,
      "PWR_B": 0.473,
+     "CTRL_top": 1.124,
+     "CTRL_bottom": 0.946
+    },
+    "s2f3": {
+     "PWR_A": 0.945,
+     "PWR_A_BOTTOM": 3.542,
+     "PWR_B": 0.929,
      "CTRL_top": 1.124,
      "CTRL_bottom": 0.946
     }
@@ -1695,6 +3029,37 @@
      "CTRL_bottom": 1.175
     }
    }
+  },
+  {
+   "id": "F2-C",
+   "relieves": "PWR-A (first fallback of SHRINK-2; inside the envelope)",
+   "candidates": [
+    "s2nt"
+   ],
+   "option": "a third power board PWR-C in the empty front slab in front of the battery tray (enclosure x 4-160, y 4-37.5, z 58.4-67.58; parts up to 6.5 mm; an 18 mm hole for the V2 vent at (80, 21)) that takes the E1 battery front-end and the INA228 5832 / Pololu #2813 modules; S06/S07 are deleted",
+   "evidence": "judges 2 and 3 of the SHRINK-2 study found no layout item, structure box or harness route in that slab on wip/w2-int 4d459155; model fill 0.511 (PWR-C+R study, reproduced by the judges; MODEL, not computed by this tool)",
+   "to_fix_before_use": "a LAB5 feed for C552/U553, an F103 part of 6.5 mm or less, module mounting at 6.5 mm or less (unverified)",
+   "trigger": "PCB-PWRA-3/4 measures a PWR-A top fill above 0.60, or leaves refs unplaced or nets unrouted after two iterations; or H-TRIM fails at proof-fit (candidate s2nt: top raw fill 0.632); or a sourced part or block grows the PWR-A top demand by more than the 90.4 mm2 left below 0.60 (candidate shrink2)",
+   "cost": "about +12-16 h by estimate (AREA, GR, MECH and a new PCB-PWRC)",
+   "verdict": "not fired (MODEL): shrink2 top raw fill 0.588 <= 0.60",
+   "ratios_1_8": {
+    "s2nt": {
+     "PWR_A": 0.907,
+     "PWR_A_BOTTOM": 3.542,
+     "PWR_B": 0.972,
+     "CTRL_top": 1.117,
+     "CTRL_bottom": 0.908
+    }
+   }
+  },
+  {
+   "id": "F2-ENV",
+   "relieves": "PWR-A, PWR-B and CTRL (second fallback; needs the owner)",
+   "option": "ENV-SLAB at E = 30 mm: a slab above the battery bay (height 163.8 -> 193.8 mm) that grows PWR-A, PWR-B and CTRL; the Pololu modules stay on PWR-A and CTRL is extended",
+   "evidence": "model fill 0.587 with the LSHM B2B, 0.599 with QSH; at E = 29 judge 3 re-ran it with the placement_study obstacle fix: 256 of 256 placed (SHRINK-2 study, MODEL, not computed by this tool)",
+   "trigger": "the TI converters fail a C4 gate (narrowband A/B or the 60 min thermal at 4.2 A) and frequency or layout fixes do not clear it, or F2-C cannot reach 0.60",
+   "owner": "it breaks D-ENV (dh 30 against envelope.cap.dh_max 4.0), so it needs the owner's acceptance in build/15 'Оболонка D15'; the intake air path and the SL4 cable corridor (x 164-175) stay separate",
+   "verdict": "not fired"
   }
  ],
  "domains": {
@@ -1705,7 +3070,7 @@
     "PWR_BRANCH",
     "USB_POWER"
    ],
-   "mech": "plate-bonded L board, mechanical/params/boards.json PWR outline (7910 mm2), z_bottom 40.9, Gelid pads in the four thermal_bond zones"
+   "mech": "plate-bonded L board, mechanical/params/boards.json PWR outline (7910 mm2), z_bottom 40.9, Gelid pads in the four thermal_bond zones; two-sided since W2 AREA-2 (bottom chip parts over plate pockets, candidates.<chosen>.pwr_a_bottom)"
   },
   "PWR_B": {
    "physical_board": "PWR_B",
@@ -1721,13 +3086,25 @@
   "rule": "a PWR part goes to PWR-B only if its schematic group is in partition.PWR_B_groups and its read or class height (heights) is <= hB; otherwise it stays on PWR-A (DOMAIN_OVERRIDE). Every PWR-A part taller than hA gets a window in PWR-B (courtyard + window_margin each side); inside a window a PWR-A part may reach stack + board_t + hB = 12.1 mm",
   "window_ceiling_mm": 12.1,
   "pwr_b_header_rule": "a PWR-B header takes the first family variant whose mated height is <= hB (side entry at hB 5.5); PWR-A headers sit in uncovered edge strips (courtyard + margin), because every one of them is taller than hA",
-  "finding": "at 72ee71b 17 THT radials with read heights (EEU-FR1H470 x15 11.2 mm, UHE1E221MPD C207 11.5 mm, EEU-FR1C101 C511 11.0 mm; LCSC via the JLCPCB search, read 2026-11-07) already exceed the PWR max_height 9.0 of mechanical/params/boards.json:28; the 18th radial C512 (EEU-FR1C221) has no read height (class 7.0 from the KiCad footprint, TBD). Read PWR-A harness headers exceed it too: Micro-Fit 3.0 vertical 43650 9.9 mm (LCSC C293740/C293547; X02P1, X04P1, X11P1, X12P1, X19P1 and X32P1-PWR; the dual-row SL2-PWR-MF at 9.9 is an assumption) and Mini-Fit Jr. 5566 39288020 12.8 mm (LCSC C490534; X05J1, X10J1 and S06-07-PWR). Under this rule the radials stay on PWR-A inside PWR-B windows (ceiling 12.1 mm) and the headers sit in uncovered edge strips; MECH-3 gives both their height zones"
+  "finding": "at 72ee71b 17 THT radials with read heights (EEU-FR1H470 x15 11.2 mm, UHE1E221MPD C207 11.5 mm, EEU-FR1C101 C511 11.0 mm; LCSC via the JLCPCB search, read 2026-11-07) already exceed the PWR max_height 9.0 of mechanical/params/boards.json:28; the 18th radial C512 (EEU-FR1C221) has no read height (class 7.0 from the KiCad footprint, TBD). Read PWR-A harness headers exceed it too: Micro-Fit 3.0 vertical 43650 9.9 mm (LCSC C293740/C293547; X02P1, X04P1, X11P1, X12P1, X19P1 and X32P1-PWR; the dual-row SL2-PWR-MF at 9.9 is an assumption) and Mini-Fit Jr. 5566 39288020 12.8 mm (LCSC C490534; X05J1, X10J1 and S06-07-PWR). Under this rule the radials stay on PWR-A inside PWR-B windows (ceiling 12.1 mm) and the headers sit in uncovered edge strips; MECH-3 gives both their height zones",
+  "pwr_a_two_sided": "W2 AREA-2 (SHRINK-2): PWR-A is two-sided. The chip refs of candidates.<chosen>.pwr_a_bottom go on the bottom side; bottom parts must fit the pocket depth (pwr_a_bottom.h_room_mm), sit outside the thermal_bond zones and stay outside the top THT pin fields + 1.0 mm (keepouts.pwr_a_bottom_parts). Top-side PWR-A parts keep hA and the PWR-B windows; parts under a PWR-B THT pin field keep keepouts.h_trim.zone_h_max_mm"
  },
  "keepouts": {
-  "pwr_a_under_pwr_b_tht": "no PWR-A component under any PWR-B THT pin field (pin field + window_margin each side; copper and mask allowed); the list is pcb/partition-budget.json candidates.<chosen>.pwr_a_keepout_items",
+  "pwr_a_under_pwr_b_tht": "under every PWR-B THT pin field (pin field + window_margin each side): with rule H-TRIM (keepouts.h_trim, candidates.<id>.h_trim) a height zone where PWR-A parts of at most h_trim.zone_h_max_mm (2.7 mm) may stand, so it costs no PWR-A area; without H-TRIM the old keepout (no PWR-A component there; copper and mask allowed). The list is pcb/partition-budget.json candidates.<chosen>.pwr_a_keepout_items, the zone area candidates.<chosen>.h_trim.pin_field_zone_mm2",
   "pwr_a_under_b2b": "no PWR-A component under the mated LSHM stack outside the J208 courtyard (counted as b2b_raw on both boards; W2 B2B)",
   "pwr_a_tht_pockets": "every PWR-A THT pad (candidates.<chosen>.pwr_a_tht_pocket_items: radials, Keystone 3568 holders, both Pololu pin rows, the PWR-A headers) gets a plate relief pocket >= 1.0 mm deep in M-07 plus a polyimide insulator over the 0.4 mm shim gap (mechanical/params/boards.json:21); MECH-3 draws them",
-  "pwr_a_test_points": "PWR-A test points sit under probe windows of PWR-B (tp_probe_window), so they stay reachable with PWR-B fitted"
+  "pwr_a_test_points": "PWR-A test points sit under probe windows of PWR-B (tp_probe_window), so they stay reachable with PWR-B fitted",
+  "h_trim": {
+   "rule": "H-TRIM (W2 AREA-2, SHRINK-2): after soldering, the THT pins of the PWR-B headers (and of any PWR-B THT part) are trimmed flush, so they protrude at most protrusion_max_mm below the PWR-B bottom face, as the Pololu pins are today; PWR-A may then place parts up to zone_h_max_mm under those pin fields",
+   "protrusion_max_mm": 1.0,
+   "zone_h_max_mm": 2.7,
+   "clearance_mm": 1.3,
+   "clearance_formula": "parameters.stack 5.0 - protrusion 1.0 - zone part 2.7 = 1.3 mm",
+   "zone_h_src": "heights.low_profile h_max 2.7 (class height of chip, SOT, SO, MSOP and (V)QFN packages)",
+   "tails": "untrimmed tails, design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11): JST PH 3.4 mm below the housing seating face (row web:jst-ph-catalogue-lcsc), so 1.8 mm below a 1.6 mm board and at least 0.8 mm to trim; JST PHD (3) mm reference (row web:jst-phd-catalogue-lcsc), so about 1.4 mm and at least about 0.4 mm to trim",
+   "gate": "OPEN: the trimmed protrusion and the 1.3 mm clearance over PWR-A parts are measured at proof-fit; PCB-PWRB-2 marks every PWR-B THT pin field for flush trim in the fab and assembly notes. If H-TRIM fails, F2-C fires (candidate s2nt gives the fill without it)"
+  },
+  "pwr_a_bottom_parts": "two-sided PWR-A (candidates.<id>.pwr_a_bottom, W2 AREA-2): a bottom-side part sits outside every thermal_bond zone and outside every top THT pin field + 1.0 mm, over a plate pocket >= 1.0 mm deep with polyimide (M-07 extended to bottom parts; MECH-7 draws the pockets), and is no taller than pwr_a_bottom.h_room_mm minus the film and a clearance (per-part heights TBD)"
  },
  "p8": {
   "decision": "external inline accessory",

@@ -139,7 +139,7 @@
   },
   "partition": {
     "file": "pcb/partition-spec.json",
-    "sha256": "c5dc33f4ea564298336c7b49940187e63de0d3637a33760e6503a3f197e32290",
+    "sha256": "c7a0b21ae331d6138db1d22f9ef9db2ea77eb03fa36e67e456e2581ee9b8bd02",
     "b2b_currents": "tools/assembly_data.py NET_CURRENT"
   }
 }
