@@ -315,7 +315,9 @@ def footprint_geometry(text):
             drill = next((n for n in node if isinstance(n, list) and n[0] == 'drill'), None)
             pads.append({'number': node[1], 'type': node[2], 'at': [float(at[1]), float(at[2])],
                          'size': [float(size[1]), float(size[2])],
-                         'drill': [float(x) for x in drill[1:] if re.fullmatch(r'-?[\d.]+', x)] if drill else []})
+                         # (drill (offset x y)) of an SMD pad (Pico castellations, W2 PCB-CTRL) has no size atom: skip sub-lists
+                         'drill': [float(x) for x in drill[1:] if isinstance(x, str) and re.fullmatch(r'-?[\d.]+', x)]
+                         if drill else []})
         elif node[0] in ('fp_line', 'fp_rect', 'fp_circle', 'fp_poly', 'fp_arc'):
             layer = next((n[1] for n in node if isinstance(n, list) and n[0] == 'layer'), '')
             if layer != 'F.CrtYd':
@@ -763,6 +765,12 @@ def validate_spec(spec, board):
         if layer not in copper or kind not in LAYER_TYPES:
             raise SpecError(f'{board}: layers.types {layer!r}: {kind!r} must name a copper layer of the board and one '
                             f'of {sorted(LAYER_TYPES)}')
+    for cls, layers in (spec['router'].get('class_layers') or {}).items():
+        if not re.fullmatch(r'[A-Za-z0-9_]+', str(cls)) or not isinstance(layers, list) or not layers \
+                or not set(layers) <= set(copper):
+            raise SpecError(f'{board}: router.class_layers {cls}: {layers!r} must list copper layers of the board')
+    if not isinstance(spec.get('audit_cutouts', False), bool):
+        raise SpecError(f'{board}: audit_cutouts must be true or false')
     for key, reason in spec['drc_policy'].get('warning_checks', {}).items():
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
@@ -1140,6 +1148,21 @@ def circle_polygon(cx, cy, radius, n=48):
     """Polygon that contains the circle (circumscribed), board mm."""
     rr = radius / math.cos(math.pi / n)
     return [(cx + rr * math.cos(2 * math.pi * k / n), cy + rr * math.sin(2 * math.pi * k / n)) for k in range(n)]
+
+
+def patch_dsn_class_layers(text, class_layers):
+    """Restrict net classes to routing layers in a KiCad Specctra DSN: '(use_layer ...)' in each class circuit.
+
+    W2 PCB-CTRL (optional spec key router.class_layers {class: [layers]}): KiCad 10.0.7 exports no per-class layer
+    list; Freerouting 2.5.0 reads '(circuit (use_layer ...))' of a class (io/specctra/parser/Circuit.java and
+    Network.createActiveTraceLayers at tag v2.5.0, read 2026-11-07). Refuses a class that the DSN does not carry.
+    """
+    for name, layers in sorted((class_layers or {}).items()):
+        pattern = re.compile(r'(\(class\s+' + re.escape(name) + r'\s[^()]*\(circuit)')
+        if len(pattern.findall(text)) != 1:
+            raise SpecError(f'router.class_layers: the DSN has no single class {name}')
+        text = pattern.sub(lambda m: m.group(1) + '\n        (use_layer ' + ' '.join(layers) + ')', text)
+    return text
 
 
 def dsn_probe(text):
@@ -1759,6 +1782,26 @@ def group_audit(facts, rows):
     return {'rows': out, 'errors': errors, 'passed': not errors}
 
 
+def cutout_audit(facts, contract, template):
+    """No pad, courtyard box or F.Fab body box of a template part inside a contract cutout (spec audit_cutouts, W2 PCB-CTRL).
+
+    Boxes are axis-aligned bounding boxes, so the audit is conservative; touching the cutout edge passes."""
+    cuts = cutout_boxes(contract)
+    refs = {p['ref'] for p in template}
+    errors = []
+    for fp in facts['footprints']:
+        if fp['ref'] not in refs:
+            continue
+        for cut in cuts:
+            for what, box in (('courtyard', fp['courtyard_box']), ('body', fp['fab_box'])):
+                if box and rects_overlap(box, cut, -1e-3):
+                    errors.append({'kind': f'{what}_in_cutout', 'ref': fp['ref'], 'cutout': cut, 'box': box})
+            if any(rects_overlap(p['box'], cut, -1e-3) for p in fp['pads']):
+                errors.append({'kind': 'pad_in_cutout', 'ref': fp['ref'], 'cutout': cut})
+    return {'cutouts': cuts, 'errors': errors, 'passed': not errors,
+            'note': 'axis-aligned courtyard, F.Fab and pad boxes against the contract cutouts (edge contact allowed)'}
+
+
 def annular_audit(facts, template, floor):
     refs = {p['ref'] for p in template}
     low = [{'ref': f['ref'], 'pad': p['number'], 'annular_mm': p['annular_mm']} for f in facts['footprints']
@@ -1813,9 +1856,12 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'annular_audit': audits['annular']['passed'], 'locked_copper_kept': audits['locked']['kept'],
         'group_audit': audits['groups']['passed'],
     }
+    if 'cutouts' in audits:  # only specs with audit_cutouts carry this key (ENC and PWR_B reports stay unchanged)
+        result['cutout_audit'] = audits['cutouts']['passed']
     passed = (drc['passed'] and all(a['passed'] for a in source_pad) and audits['domain']['passed']
               and audits['keepout']['passed'] and audits['annular']['passed'] and audits['locked']['kept']
-              and audits['groups']['passed'] and not any(b['status'].startswith('fail') for b in boundary))
+              and audits['groups']['passed'] and audits.get('cutouts', {'passed': True})['passed']
+              and not any(b['status'].startswith('fail') for b in boundary))
     return {
         'schema': REPORT_SCHEMA, 'board_id': spec['board_id'], 'status': spec['status'],
         'label': 'CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN',
@@ -1872,6 +1918,8 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
                    'kept': facts['tracks']['locked'] >= want_locked,
                    'note': 'SES import before/after counts and the DSN probe are in route-log.json'},
     }
+    if spec.get('audit_cutouts'):
+        audits['cutouts'] = cutout_audit(facts, contract, template)
     report = build_report(spec, contract, stackup, template, proj, facts, drc, audits, board_path, spec['project'])
     return report, connectors_doc(spec, contract, template, facts)
 
@@ -1958,6 +2006,9 @@ def route(board, freerouting):
         dsn, ses = temp / f'{board}.dsn', temp / f'{board}.ses'
         if not pcb.ExportSpecctraDSN(board_obj, str(dsn)) or not dsn.is_file():
             raise SystemExit('board_gen: Specctra DSN export failed')
+        if spec['router'].get('class_layers'):  # per-class routing layers (W2 PCB-CTRL: power classes on the outer layers)
+            dsn.write_text(patch_dsn_class_layers(dsn.read_text(encoding='utf-8'), spec['router']['class_layers']),
+                           encoding='utf-8')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
         cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
                                   temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']))

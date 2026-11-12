@@ -614,5 +614,102 @@ class BondHoleAndCoupon(unittest.TestCase):
                 bg.holes(s, contract)
 
 
+PICO = bg.BASE / 'build/kicad/footprints/SR_RX_Custom.pretty/RaspberryPi_Pico_SMD_SWD.kicad_mod'
+
+
+class CtrlClassLayersCutoutAuditAndDrillOffsets(unittest.TestCase):
+    """W2 PCB-CTRL: router.class_layers (DSN use_layer), audit_cutouts and SMD drill offsets (no board spec needed)."""
+
+    def test_dsn_class_layers_patch(self):
+        dsn = ('    (class kicad_default A B\n      (circuit\n        (use_via "V")\n      )\n    )\n'
+               '    (class PWR1A F5\n      (circuit\n        (use_via "V7")\n      )\n      (rule (width 350))\n    )\n')
+        out = bg.patch_dsn_class_layers(dsn, {'PWR1A': ['F.Cu', 'B.Cu']})
+        self.assertIn('(class PWR1A F5\n      (circuit\n        (use_layer F.Cu B.Cu)\n        (use_via "V7")', out)
+        self.assertEqual(out.count('use_layer'), 1)  # kicad_default untouched
+        with self.assertRaises(SystemExit):
+            bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu']})
+
+    def test_cutout_audit_flags_boxes_inside(self):
+        facts = {'footprints': [
+            {'ref': 'A', 'courtyard_box': [0, 0, 2, 2], 'fab_box': [0.5, 0.5, 1.5, 1.5], 'pads': [{'box': [0.6, 0.6, 1.0, 1.0]}]},
+            {'ref': 'B', 'courtyard_box': [9, 9, 11, 11], 'fab_box': None, 'pads': []}]}
+        template = [{'ref': 'A'}, {'ref': 'B'}]
+        self.assertTrue(bg.cutout_audit(facts, {'cutouts_mm': [[2.0, 0.0, 3.0, 3.0]]}, template)['passed'])  # edge contact
+        audit = bg.cutout_audit(facts, {'cutouts_mm': [[10.0, 10.0, 3.0, 3.0]]}, template)
+        self.assertEqual([e['kind'] for e in audit['errors']], ['courtyard_in_cutout'])
+
+    def test_smd_drill_offset_without_size(self):
+        geo = bg.footprint_geometry(PICO.read_text(encoding='utf-8'))
+        self.assertTrue(any(p['number'] == '1' for p in geo['pads']))
+        self.assertTrue(all(isinstance(v, float) for p in geo['pads'] for v in p['drill']))
+
+
+class CtrlSpecAndGenerator(unittest.TestCase):
+    """W2 PCB-CTRL: the CTRL spec (pcb/boards/CTRL.json) and its generator build/kicad/boards/CTRL/make_spec.py.
+    Skipped on a tree without the CTRL spec (a lane that took only the board_gen changes)."""
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+
+    def ctrl(self):
+        return copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
+
+    def test_class_layers_and_audit_flag_validate(self):
+        spec = self.ctrl()
+        bg.validate_spec(spec, 'CTRL')
+        for key, value in (('class_layers', {'PWR1A': ['In3.Cu']}), ('class_layers', {'PWR1A': []}),
+                           ('class_layers', {'A B': ['F.Cu']})):
+            candidate = copy.deepcopy(spec)
+            candidate['router'][key] = value
+            with self.assertRaises(SystemExit):
+                bg.validate_spec(candidate, 'CTRL')
+        candidate = copy.deepcopy(spec)
+        candidate['audit_cutouts'] = 'yes'
+        with self.assertRaises(SystemExit):
+            bg.validate_spec(candidate, 'CTRL')
+
+    def test_ctrl_spec_places_inside_the_contract(self):
+        spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('CTRL')
+        audit = bg.domain_audit(spec, bg.read_json(bg.BASE / spec['partition']))
+        self.assertTrue(audit['passed'])
+        self.assertEqual(len(audit['domain_refs']), len(template))
+        switches = sorted(p['anchor']['at'] for p in spec['parts'] if p['ref'].startswith('SW'))
+        self.assertEqual(switches, sorted([[13.5, 51.0], [35.5, 51.0], [13.5, 29.0], [35.5, 29.0], [13.5, 7.0], [35.5, 7.0]]))
+        anchors, _rows = bg.group_plan(spec, contract, template)
+        cuts = bg.cutout_boxes(contract)
+        for part in template:
+            anchor = part['anchor'] or anchors[part['ref']]
+            box = bg.placed_geometry(bg.footprint_geometry(bg.footprint_file(part).read_text(encoding='utf-8')), anchor)['box']
+            self.assertFalse(any(bg.rects_overlap(box, c) for c in cuts), part['ref'])
+        self.assertTrue(spec['audit_cutouts'])
+
+    def test_ctrl_scripted_classes_are_not_autorouted(self):
+        spec = self.ctrl()
+        router = spec['router']
+        self.assertFalse(router['fanout'])
+        self.assertEqual(bg.router_extra(router), ['--router.fanout.enabled=false', '-inc', 'SCRIPTED_GND,SCRIPTED_PWR3A'])
+        project = bg.read_json(bg.BASE / spec['project'])
+        patterns = {p['pattern']: p['netclass'] for p in project['net_settings']['netclass_patterns']}
+        self.assertEqual(patterns['GND'], 'SCRIPTED_GND')
+        self.assertEqual(patterns['E3_FAN5'], 'SCRIPTED_PWR3A')
+        vias = spec['pre_route']['vias']
+        self.assertEqual(patterns['LAB5'], 'PWR3A_BRANCH')
+        self.assertTrue(vias and all(v['drill_mm'] >= spec['fab_floor']['min_drill'] for v in vias))
+        self.assertEqual(spec['pre_route']['gnd_vias_skipped'], [])
+
+    def test_generator_reproduces_the_spec_and_project(self):
+        path = bg.BASE / 'build/kicad/boards/CTRL/make_spec.py'
+        if not path.is_file():
+            self.skipTest('no CTRL generator')
+        import importlib.util
+        loader = importlib.util.spec_from_file_location('ctrl_make_spec', path)
+        module = importlib.util.module_from_spec(loader)
+        loader.loader.exec_module(module)
+        spec_text, project_text, _copper, skipped = module.build(lambda *a: None)
+        self.assertEqual(skipped, [])
+        self.assertEqual(spec_text, bg.spec_path('CTRL').read_text(encoding='utf-8'))
+        self.assertEqual(project_text, (bg.BASE / 'build/kicad/boards/CTRL/CTRL.kicad_pro').read_text(encoding='utf-8'))
+
 if __name__ == '__main__':
     unittest.main()

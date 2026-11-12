@@ -1,0 +1,972 @@
+{
+  "schema": "srrx-fab-manifest-v1",
+  "board_id": "CTRL",
+  "status": "DESIGN_NOT_FOR_FABRICATION",
+  "label": "NOT RELEASED: model/CI only; bench gates OPEN",
+  "generator": "pcb/fab_export.py",
+  "kicad_version": "10.0.7",
+  "inputs": {
+    "board_file": "build/kicad/boards/CTRL/CTRL.kicad_pcb",
+    "board_sha256": "5dc9ddba980a372430e493cac89ed823b3a7c310d7e61c5a91f0a99900fc2e55",
+    "project_sha256": "dd5c7f1f79cfddb444150ffc14097817c62fb8609b19e56e325c86522d8f0ad0",
+    "spec_projection_sha256": "277f6ab81d65757bf370416f73383553f8f992ea4b40244f2ae820191d86d76d",
+    "report_projection_sha256": "b8456e0e14e72290abad4b9aa81ff88421ec2f35bd309af334a0c0b6039cdb27",
+    "jlc_bom_rows": [
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF1000T5E",
+        "Designator": "R336,R338,R340,R342,R344,R346,R348,R350,R359,R360,R365,R370,R393",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C22775",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF1001T5E",
+        "Designator": "R395",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C21190",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF1002T5E",
+        "Designator": "R301,R302,R305,R306,R307,R308,R309,R310,R311,R312,R313,R314,R315,R316,R317,R318,R319,R320,R321,R322,R323,R324,R325,R328,R330,R332,R333,R334,R351,R352,R353,R354,R355,R356,R357,R358,R368,R392",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C25804",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF1003T5E",
+        "Designator": "R326,R329,R331,R366,R367,R371,R394",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C25803",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF1500T5E",
+        "Designator": "R363",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C22808",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF2000T5E",
+        "Designator": "R327",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C8218",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF2201T5E",
+        "Designator": "R335,R337,R339,R341,R343,R345,R347,R349,R369",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C4190",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF4701T5E",
+        "Designator": "R361,R362",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C23162",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "0603WAF6800T5E",
+        "Designator": "R364",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C23228",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "22-27-2031",
+        "Designator": "J313",
+        "Footprint": "Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical",
+        "LCSC Part #": "C471416",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "2N7002,215",
+        "Designator": "Q301,Q302,Q306",
+        "Footprint": "SOT-23",
+        "LCSC Part #": "C65189",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "43650-0200",
+        "Designator": "J314",
+        "Footprint": "Molex_Micro-Fit_3.0_43650-0200_1x02_P3.00mm_Horizontal",
+        "LCSC Part #": "C192562",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "43650-0400",
+        "Designator": "J305",
+        "Footprint": "Molex_Micro-Fit_3.0_43650-0400_1x04_P3.00mm_Horizontal",
+        "LCSC Part #": "C277684",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "AO3400A",
+        "Designator": "Q303,Q305",
+        "Footprint": "SOT-23",
+        "LCSC Part #": "C20917",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "AO3401A",
+        "Designator": "Q304",
+        "Footprint": "SOT-23",
+        "LCSC Part #": "C15127",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "BAT54,215",
+        "Designator": "D302,D303",
+        "Footprint": "SOT-23",
+        "LCSC Part #": "C85084",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "CC0603KRX7R9BB104",
+        "Designator": "C301,C303,C305,C308,C309,C310,C311,C312,C319,C321,C343",
+        "Footprint": "C_0603_1608Metric",
+        "LCSC Part #": "C14663",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "CC0805KKX7R8BB475",
+        "Designator": "C322",
+        "Footprint": "C_0805_2012Metric",
+        "LCSC Part #": "C354262",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "CL10A105KB8NNNC",
+        "Designator": "C313",
+        "Footprint": "C_0603_1608Metric",
+        "LCSC Part #": "C15849",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "CL21A106KAYNNNE",
+        "Designator": "C302,C304,C306,C307,C318,C320,C342",
+        "Footprint": "C_0805_2012Metric",
+        "LCSC Part #": "C15850",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "CPT-1207-3TH",
+        "Designator": "BZ301",
+        "Footprint": "Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm",
+        "LCSC Part #": "",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "GRM1885C1H103JA01D",
+        "Designator": "C314,C315,C316,C317",
+        "Footprint": "C_0603_1608Metric",
+        "LCSC Part #": "C85973",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "LM4040C30IDBZR",
+        "Designator": "U307",
+        "Footprint": "SOT-23",
+        "LCSC Part #": "C181416",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "MCP23017-E/SO",
+        "Designator": "U301,U302,U303",
+        "Footprint": "SOIC-28W_7.5x17.9mm_P1.27mm",
+        "LCSC Part #": "C47023",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "MF-MSMF075/24-2",
+        "Designator": "F301",
+        "Footprint": "Fuse_1812_4532Metric",
+        "LCSC Part #": "C208467",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "PI4IOE5V9555LEX",
+        "Designator": "U306",
+        "Footprint": "TSSOP-24_4.4x7.8mm_P0.65mm",
+        "LCSC Part #": "C3194482",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "RC0603FR-07162KL",
+        "Designator": "R396",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C165760",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "S20B-PHDSS(LF)(SN)",
+        "Designator": "J306,J307",
+        "Footprint": "JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+        "LCSC Part #": "C2983880",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "S2B-PH-K-S(LF)(SN)",
+        "Designator": "J315,J318,J319",
+        "Footprint": "JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+        "LCSC Part #": "C173752",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "S4B-PH-K-S(LF)(SN)",
+        "Designator": "J309,J310,J312,J316,J317",
+        "Footprint": "JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+        "LCSC Part #": "C157926",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "S5B-PH-K-S(LF)(SN)",
+        "Designator": "J302",
+        "Footprint": "JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
+        "LCSC Part #": "C157923",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "S6B-PH-K-S(LF)(SN)",
+        "Designator": "J311",
+        "Footprint": "JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+        "LCSC Part #": "C157920",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "S8B-PH-K-S(LF)(SN)",
+        "Designator": "J308",
+        "Footprint": "JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+        "LCSC Part #": "C157915",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "SS14-E3/61T",
+        "Designator": "D301,D305,D306",
+        "Footprint": "D_SMA",
+        "LCSC Part #": "C47460",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "TL3145BF350QJ",
+        "Designator": "SW302,SW303,SW304,SW305,SW306,SW307",
+        "Footprint": "SW_E-Switch_TL3145_6.45x6.45mm",
+        "LCSC Part #": "C2886884",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "TPD4E1U06DBVR",
+        "Designator": "U310,U311,U312,U313",
+        "Footprint": "SOT-23-6",
+        "LCSC Part #": "C124691",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "TPS2553DBVR-1",
+        "Designator": "U315",
+        "Footprint": "SOT-23-6",
+        "LCSC Part #": "C111738",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "WP7113LSECK/J3",
+        "Designator": "D304",
+        "Footprint": "LED_D5.0mm_KA",
+        "LCSC Part #": "C6001438",
+        "Mount": "THT"
+      },
+      {
+        "Board": "CTRL",
+        "Comment": "XDFH-0254-2*20P",
+        "Designator": "J304",
+        "Footprint": "IDC-Header_2x20_P2.54mm_Vertical",
+        "LCSC Part #": "C19193815",
+        "Mount": "THT"
+      }
+    ],
+    "jlc_bom_rows_sha256": "177e11c17a65df97197a5e4b3c1bdc781a832305f17e13f060ecde49ae9cf230",
+    "stackup": {
+      "id": "JLC04161H-7628",
+      "copper_layers": 4,
+      "thickness_mm": 1.6,
+      "source": "https://jlcpcb.com/impedance",
+      "read": "2026-11-07",
+      "layers": [
+        {
+          "kicad": "F.Cu",
+          "plan": "L1",
+          "copper_mm": 0.035
+        },
+        {
+          "dielectric": "prepreg 7628x1",
+          "thickness_mm": 0.2104,
+          "er": 4.4
+        },
+        {
+          "kicad": "In1.Cu",
+          "plan": "L2",
+          "copper_mm": 0.0152
+        },
+        {
+          "dielectric": "core",
+          "thickness_mm": 1.065,
+          "er": 4.6
+        },
+        {
+          "kicad": "In2.Cu",
+          "plan": "L3",
+          "copper_mm": 0.0152
+        },
+        {
+          "dielectric": "prepreg 7628x1",
+          "thickness_mm": 0.2104,
+          "er": 4.4
+        },
+        {
+          "kicad": "B.Cu",
+          "plan": "L4",
+          "copper_mm": 0.035
+        }
+      ],
+      "note": "Layer thicknesses sum to 1.5862 mm (computed). Copper weights: outer 0.035 mm = 1 oz, inner 0.0152 mm = 0.5 oz finished (JLC \"H/HOZ\").",
+      "via": "pcb/generated/netclasses.json stackup (pcb/stackup.py)"
+    },
+    "stackup_sha256": "28f6efbd402fd0b50bc422019ce4b24ee930e41f63e63f3c3a51cdea8ac1d77f",
+    "rf50_nets": [],
+    "note": "projections (F10): an unrelated build/10-jlc-bom.csv row, LCSC stock or spec edit does not stale this set"
+  },
+  "commands": [
+    {
+      "job": "gerbers",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "gerbers",
+        "--output",
+        "<temp>/raw/gerber/",
+        "--layers",
+        "F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+        "--subtract-soldermask",
+        "--precision",
+        "6",
+        "<temp>/src/CTRL.kicad_pcb"
+      ]
+    },
+    {
+      "job": "drill",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "drill",
+        "--output",
+        "<temp>/raw/drill/",
+        "--format",
+        "excellon",
+        "--drill-origin",
+        "absolute",
+        "--excellon-zeros-format",
+        "decimal",
+        "--excellon-oval-format",
+        "alternate",
+        "--excellon-units",
+        "mm",
+        "--excellon-separate-th",
+        "--generate-map",
+        "--map-format",
+        "gerberx2",
+        "<temp>/src/CTRL.kicad_pcb"
+      ]
+    },
+    {
+      "job": "ipcd356",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "ipcd356",
+        "--output",
+        "<temp>/raw/CTRL.ipc356",
+        "<temp>/src/CTRL.kicad_pcb"
+      ]
+    },
+    {
+      "job": "pos",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "pos",
+        "--output",
+        "<temp>/raw/assembly/CTRL-pos-kicad.csv",
+        "--side",
+        "both",
+        "--format",
+        "csv",
+        "--units",
+        "mm",
+        "--exclude-dnp",
+        "<temp>/src/CTRL.kicad_pcb"
+      ]
+    }
+  ],
+  "normalisation": [
+    "Gerber and drill-map Gerber: the %TF.CreationDate attribute line (optional in Gerber X2) is removed; 'G04 Created by KiCad (...) date ...*' keeps the creator and loses the date",
+    "Excellon: the '; #@! TF.CreationDate' line is removed; \"; DRILL file KiCad ... date ...\" loses the date",
+    "Gerber job file (.gbrjob): Header.CreationDate is removed (JSON re-written with indent 2)",
+    "IPC-D-356: comment-record dates are removed and file paths become the board file name",
+    "KiCad build strings that start with 10.0.7 become 10.0.7 in generator lines",
+    "after normalisation no date/time stamp and no path of the export directory may remain (checked)"
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "dnp_excluded": [
+    "TP301"
+  ],
+  "coverage": {
+    "cpl": {
+      "rows": 146,
+      "placed_by_side_and_mount": {
+        "Bottom": {
+          "THT": 17,
+          "SMD": 57
+        },
+        "Top": {
+          "SMD": 70,
+          "THT": 2
+        }
+      },
+      "smd_refs_once_per_side": true
+    },
+    "bom": {
+      "rows": 40,
+      "designators": 146,
+      "tbd": [
+        "BZ301",
+        "U305"
+      ],
+      "boards": 1
+    },
+    "ipc356": {
+      "board_pad_nets": [
+        "3V3_Q6A",
+        "CHG_INHIBIT",
+        "DCS_HF",
+        "DCS_LBAND",
+        "DCS_UHF",
+        "E1_BAT_ADC",
+        "E3_ADC3V0",
+        "E3_BACK",
+        "E3_BACK_EXT",
+        "E3_BEZEL_SCL",
+        "E3_BEZEL_SDA",
+        "E3_BLOWER_EN",
+        "E3_BLOWER_GATE",
+        "E3_BLOWER_GND",
+        "E3_BUTTON_SENSE",
+        "E3_CASE_TEMP",
+        "E3_ENC1_A",
+        "E3_ENC1_A_RAW",
+        "E3_ENC1_B",
+        "E3_ENC1_B_RAW",
+        "E3_ENC1_PRESS",
+        "E3_ENC1_PRESS_EXT",
+        "E3_ENC2_A",
+        "E3_ENC2_A_RAW",
+        "E3_ENC2_B",
+        "E3_ENC2_B_RAW",
+        "E3_ENC2_PRESS",
+        "E3_ENC2_PRESS_EXT",
+        "E3_FAN5",
+        "E3_FAN5_P",
+        "E3_FAN_EN",
+        "E3_FAN_NG",
+        "E3_FAN_PG",
+        "E3_FAN_TACH",
+        "E3_FAN_TACH_RAW",
+        "E3_FN",
+        "E3_FN_EXT",
+        "E3_GNSS5V",
+        "E3_GNSS_FAULT",
+        "E3_GNSS_RESET_GATE",
+        "E3_GNSS_RESET_N",
+        "E3_HMI_INT",
+        "E3_HMI_SCL",
+        "E3_HMI_SDA",
+        "E3_HOME",
+        "E3_HOME_EXT",
+        "E3_LED_A",
+        "E3_LED_DRIVE",
+        "E3_LOCK",
+        "E3_LOCK_EXT",
+        "E3_MARK",
+        "E3_MARK_EXT",
+        "E3_MCP_RESET_ASSERT",
+        "E3_MCP_RESET_GATE",
+        "E3_MCP_RESET_N",
+        "E3_PANEL_TEMP",
+        "E3_PICO3V3",
+        "E3_PICO_RUN",
+        "E3_PICO_SWCLK",
+        "E3_PICO_SWDIO",
+        "E3_PICO_VSYS",
+        "E3_PIEZO_DRIVE",
+        "E3_PIEZO_OUT",
+        "E3_Q6A_KEY_GATE",
+        "E3_Q6A_ON_SENSE",
+        "E3_REC",
+        "E3_REC_EXT",
+        "E3_U315_ILIM",
+        "EN_AUX12",
+        "EN_BONI",
+        "EN_HFP",
+        "EN_LABPORT",
+        "EN_LIME3V3",
+        "EN_LNA1",
+        "EN_LNA2",
+        "EN_LNA3",
+        "EN_LNA4",
+        "EN_LNB",
+        "EN_RTLA",
+        "EN_RTLB",
+        "EN_SB_LNA",
+        "EN_T7",
+        "FAULT_HFP",
+        "FAULT_LABPORT",
+        "FAULT_LNA1",
+        "FAULT_LNA2",
+        "FAULT_LNA3",
+        "FAULT_LNA4",
+        "FAULT_RTLA",
+        "FAULT_RTLB",
+        "FLT_BONI",
+        "FLT_LIME3V3",
+        "FLT_LNB",
+        "FLT_SB_LNA",
+        "GND",
+        "I2C0_SCL",
+        "I2C0_SDA",
+        "I2C2_SCL",
+        "I2C2_SDA",
+        "IMU_RX",
+        "IMU_TX",
+        "INA228_ALERT",
+        "K1_ON",
+        "K2_ON",
+        "LAB5",
+        "MCP_INT",
+        "OVP_LNB_N",
+        "PG_BONI",
+        "PG_LNB",
+        "PICO_DISP_EN",
+        "PICO_OFF",
+        "PTC_AUX",
+        "PWR_BUTTON",
+        "PWR_ON_KEY",
+        "SAFE_BOOT",
+        "SLED_DET",
+        "SW_LIME_A",
+        "SW_LIME_B",
+        "SW_RTLA_A",
+        "SW_RTLA_B",
+        "SW_RTLB_A",
+        "SW_RTLB_B",
+        "UART5_RX",
+        "UART5_TX",
+        "UART7_RX",
+        "UART7_TX"
+      ],
+      "ipc_nets": [
+        "3V3_Q6A",
+        "CHG_INHIBIT",
+        "DCS_HF",
+        "DCS_LBAND",
+        "DCS_UHF",
+        "E1_BAT_ADC",
+        "E3_ADC3V0",
+        "E3_BACK",
+        "E3_BACK_EXT",
+        "E3_BEZEL_SCL",
+        "E3_BEZEL_SDA",
+        "E3_BLOWER_EN",
+        "E3_BLOWER_GATE",
+        "E3_BLOWER_GND",
+        "E3_BUTTON_SENSE",
+        "E3_CASE_TEMP",
+        "E3_ENC1_A",
+        "E3_ENC1_A_RAW",
+        "E3_ENC1_B",
+        "E3_ENC1_B_RAW",
+        "E3_ENC1_PRESS",
+        "E3_ENC1_PRESS_EXT",
+        "E3_ENC2_A",
+        "E3_ENC2_A_RAW",
+        "E3_ENC2_B",
+        "E3_ENC2_B_RAW",
+        "E3_ENC2_PRESS",
+        "E3_ENC2_PRESS_EXT",
+        "E3_FAN5",
+        "E3_FAN5_P",
+        "E3_FAN_EN",
+        "E3_FAN_NG",
+        "E3_FAN_PG",
+        "E3_FAN_TACH",
+        "E3_FAN_TACH_RAW",
+        "E3_FN",
+        "E3_FN_EXT",
+        "E3_GNSS5V",
+        "E3_GNSS_FAULT",
+        "E3_GNSS_RESET_GATE",
+        "E3_GNSS_RESET_N",
+        "E3_HMI_INT",
+        "E3_HMI_SCL",
+        "E3_HMI_SDA",
+        "E3_HOME",
+        "E3_HOME_EXT",
+        "E3_LED_A",
+        "E3_LED_DRIVE",
+        "E3_LOCK",
+        "E3_LOCK_EXT",
+        "E3_MARK",
+        "E3_MARK_EXT",
+        "E3_MCP_RESET_ASSERT",
+        "E3_MCP_RESET_GATE",
+        "E3_MCP_RESET_N",
+        "E3_PANEL_TEMP",
+        "E3_PICO3V3",
+        "E3_PICO_RUN",
+        "E3_PICO_SWCLK",
+        "E3_PICO_SWDIO",
+        "E3_PICO_VSYS",
+        "E3_PIEZO_DRIVE",
+        "E3_PIEZO_OUT",
+        "E3_Q6A_KEY_GATE",
+        "E3_Q6A_ON_SENSE",
+        "E3_REC",
+        "E3_REC_EXT",
+        "E3_U315_ILIM",
+        "EN_AUX12",
+        "EN_BONI",
+        "EN_HFP",
+        "EN_LABPORT",
+        "EN_LIME3V3",
+        "EN_LNA1",
+        "EN_LNA2",
+        "EN_LNA3",
+        "EN_LNA4",
+        "EN_LNB",
+        "EN_RTLA",
+        "EN_RTLB",
+        "EN_SB_LNA",
+        "EN_T7",
+        "FAULT_HFP",
+        "FAULT_LABPORT",
+        "FAULT_LNA1",
+        "FAULT_LNA2",
+        "FAULT_LNA3",
+        "FAULT_LNA4",
+        "FAULT_RTLA",
+        "FAULT_RTLB",
+        "FLT_BONI",
+        "FLT_LIME3V3",
+        "FLT_LNB",
+        "FLT_SB_LNA",
+        "GND",
+        "I2C0_SCL",
+        "I2C0_SDA",
+        "I2C2_SCL",
+        "I2C2_SDA",
+        "IMU_RX",
+        "IMU_TX",
+        "INA228_ALERT",
+        "K1_ON",
+        "K2_ON",
+        "LAB5",
+        "MCP_INT",
+        "OVP_LNB_N",
+        "PG_BONI",
+        "PG_LNB",
+        "PICO_DISP_EN",
+        "PICO_OFF",
+        "PTC_AUX",
+        "PWR_BUTTON",
+        "PWR_ON_KEY",
+        "SAFE_BOOT",
+        "SLED_DET",
+        "SW_LIME_A",
+        "SW_LIME_B",
+        "SW_RTLA_A",
+        "SW_RTLA_B",
+        "SW_RTLB_A",
+        "SW_RTLB_B",
+        "UART5_RX",
+        "UART5_TX",
+        "UART7_RX",
+        "UART7_TX"
+      ],
+      "aliases": {
+        "M0000": "E3_BUTTON_SENSE",
+        "M0001": "E3_ENC1_PRESS_EXT",
+        "M0002": "E3_ENC2_PRESS_EXT",
+        "M0003": "E3_FAN_TACH_RAW",
+        "M0004": "E3_GNSS_RESET_GATE",
+        "M0005": "E3_GNSS_RESET_N",
+        "M0006": "E3_MCP_RESET_ASSERT",
+        "M0007": "E3_MCP_RESET_GATE",
+        "M0008": "E3_Q6A_KEY_GATE",
+        "M0009": "E3_Q6A_ON_SENSE"
+      },
+      "missing": []
+    },
+    "gerber_x2": {
+      "files": {
+        "gerber/CTRL-B_Cu.gbl": "Copper,L4,Bot",
+        "gerber/CTRL-B_Mask.gbs": "Soldermask,Bot",
+        "gerber/CTRL-B_Paste.gbp": "Paste,Bot",
+        "gerber/CTRL-B_Silkscreen.gbo": "Legend,Bot",
+        "gerber/CTRL-Edge_Cuts.gm1": "Profile,NP",
+        "gerber/CTRL-F_Cu.gtl": "Copper,L1,Top",
+        "gerber/CTRL-F_Mask.gts": "Soldermask,Top",
+        "gerber/CTRL-F_Paste.gtp": "Paste,Top",
+        "gerber/CTRL-F_Silkscreen.gto": "Legend,Top",
+        "gerber/CTRL-In1_Cu.g1": "Copper,L2,Inr",
+        "gerber/CTRL-In2_Cu.g2": "Copper,L3,Inr"
+      }
+    },
+    "drill": {
+      "pth_file": 1,
+      "npth_file": 1,
+      "pth_hits": 520,
+      "npth_hits": 9,
+      "board_pth_pads": 138,
+      "board_vias": 382,
+      "board_npth_pads": 9,
+      "maps": [
+        "drill/CTRL-NPTH-drl_map.gbr",
+        "drill/CTRL-PTH-drl_map.gbr"
+      ]
+    },
+    "passed": true,
+    "area_mm2": 5915.0
+  },
+  "problems": [],
+  "sources": {
+    "jlc_bom": {
+      "url": "https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "required BOM columns Comment, Designator, Footprint; .csv/.xls/.xlsx; designators are upper-cased by JLC"
+    },
+    "jlc_cpl": {
+      "url": "https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "CPL columns Designator, Mid X, Mid Y (mm, component centroid), Layer (Top/Bottom), Rotation (degrees, positive counter-clockwise); the page names no coordinate origin and no rotation offsets"
+    },
+    "jlc_kicad": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad",
+      "read": "2026-11-07",
+      "used": "BOM Comment, Designator, Footprint, LCSC Part #; KiCad pos Ref/PosX/PosY/Rot/Side become Designator/Mid X/Mid Y/Rotation/Layer"
+    },
+    "jlc_gerber": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8",
+      "read": "2026-11-07",
+      "used": "layers F/B.Cu (+ inner), F/B.Paste, F/B.Silkscreen, F/B.Mask, Edge.Cuts; Protel extensions; subtract soldermask from silkscreen; drill: alternate oval mode, absolute origin, millimetres, decimal zeros, drill map recommended"
+    },
+    "jlc_capabilities": {
+      "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "used": "FR-4; thickness 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm, tolerance +/-10 % for >= 1.0 mm; 2-layer outer copper 1/2/2.5/3.5/4.5 oz; impedance control listed from 4 layers, standard +/-10 %"
+    },
+    "kicad_cli": {
+      "url": "https://docs.kicad.org/10.0/en/cli/cli.html",
+      "read": "2026-11-07",
+      "used": "options of pcb export gerbers/drill/ipcd356/pos and jobset run"
+    },
+    "kicad_jobs": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs",
+      "read": "2026-11-07",
+      "used": "jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp"
+    },
+    "kicad_d356": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp",
+      "read": "2026-11-07",
+      "used": "IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 characters); test record types 307/317/327/367"
+    }
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "f86c57c52f7adff3ee5d122070d2fe7e8c8cfd1a4f0eaa361fddee04152d0b82",
+      "bytes": 113
+    },
+    {
+      "path": "CTRL-fab-notes.pdf",
+      "sha256": "8073de494c771a46a85d3cb669c82b2fe40bee75ea775a69a5facc3d96342a7d",
+      "bytes": 29282
+    },
+    {
+      "path": "CTRL.ipc356",
+      "sha256": "d66fbe039f7cf2a4d4fd0282b432b5745247754b73de30b0637f0706fd7e8219",
+      "bytes": 80366
+    },
+    {
+      "path": "CTRL.kicad_jobset",
+      "sha256": "0812730d990377c73d8bc38449e527b23e91b94272b6335c7a8c808865ccceda",
+      "bytes": 3361
+    },
+    {
+      "path": "README.md",
+      "sha256": "55a78b42ab300b3c5e7467c7260e66e8ccd2cbcafa9e5ac89468d4ab66df8ada",
+      "bytes": 6813
+    },
+    {
+      "path": "assembly/CTRL-bom-jlc.csv",
+      "sha256": "012b51dbc351d0e0dbf82ab1914d59978447aaa1f561ae20999df314971f9673",
+      "bytes": 6535
+    },
+    {
+      "path": "assembly/CTRL-cpl-jlc.csv",
+      "sha256": "03f5e21a28ac696c84a9aae374b722577e7099bd51d1b04cbf474aa05a57bcf1",
+      "bytes": 7877
+    },
+    {
+      "path": "assembly/CTRL-cpl-rotation-offsets.csv",
+      "sha256": "cdfdc2722dec5bafdabb05047eaec2a71c619dd419151fd79689e4e38d22ac5d",
+      "bytes": 8670
+    },
+    {
+      "path": "assembly/CTRL-instances.csv",
+      "sha256": "d1d89be58261844d9ad0f3702f717d999e46021d8911562768e5d124a6e77dce",
+      "bytes": 5217
+    },
+    {
+      "path": "assembly/CTRL-pos-kicad.csv",
+      "sha256": "d005f9c3aabd3da3f1332736546650fad0edd2112ddc5bc3395d8351c6fe2a6f",
+      "bytes": 12155
+    },
+    {
+      "path": "drill/CTRL-NPTH-drl_map.gbr",
+      "sha256": "974018bd600b0efa5575f3f16ca6665380fdf4484978747e615830f1fea6c034",
+      "bytes": 41563
+    },
+    {
+      "path": "drill/CTRL-NPTH.drl",
+      "sha256": "d39485f14988a25ddf7b66cd54d8ce38e51b0e2efeb1304d669c5586d8fe65db",
+      "bytes": 451
+    },
+    {
+      "path": "drill/CTRL-PTH-drl_map.gbr",
+      "sha256": "abc98e217950e6da5ae1489916ef1fbb6250918ea8f52cdfe542a23b3a64eb6d",
+      "bytes": 142187
+    },
+    {
+      "path": "drill/CTRL-PTH.drl",
+      "sha256": "6835696bd4ecab9d1c219edcb5e01f92ae1f3b4349d87fe223cfc650b8dadecd",
+      "bytes": 9172
+    },
+    {
+      "path": "gerber/CTRL-B_Cu.gbl",
+      "sha256": "5219cbe5ccd4e9bd458eb36581e06adb2449a8d7ee06573157ca8c2bddf3f128",
+      "bytes": 476790
+    },
+    {
+      "path": "gerber/CTRL-B_Mask.gbs",
+      "sha256": "ea3d6193adf40eae2038bc09ec833f3247da1896c8720dfab73a9f8826a3f45e",
+      "bytes": 17048
+    },
+    {
+      "path": "gerber/CTRL-B_Paste.gbp",
+      "sha256": "ada92fddafcd7bbdde76d9ddf223b1c4108580ab51115f7b5650e8fded2c8cf1",
+      "bytes": 8780
+    },
+    {
+      "path": "gerber/CTRL-B_Silkscreen.gbo",
+      "sha256": "22b46e5e9b5c1892c367998c22358ad88d8e04dfdb18849ec95abf260f43ca83",
+      "bytes": 246903
+    },
+    {
+      "path": "gerber/CTRL-Edge_Cuts.gm1",
+      "sha256": "3f8b7560cde9039ce4d8f985ba0a647a9491956b52cc4afb9ed6aba973430815",
+      "bytes": 1085
+    },
+    {
+      "path": "gerber/CTRL-F_Cu.gtl",
+      "sha256": "beed1aeb9ba9ed2ff1ade9c0cd712bd9d5ecc7393a6dbafdd82f866bbf4721ba",
+      "bytes": 454139
+    },
+    {
+      "path": "gerber/CTRL-F_Mask.gts",
+      "sha256": "e7caaa770f21f6ef975390c0bd2faa49d454c42d0f05793f0aa72803e07805b9",
+      "bytes": 16066
+    },
+    {
+      "path": "gerber/CTRL-F_Paste.gtp",
+      "sha256": "ead2a321c4a3574c7b30389c16536ba8680a9fdc5f7ee97331a4f08ef2ae9c61",
+      "bytes": 10418
+    },
+    {
+      "path": "gerber/CTRL-F_Silkscreen.gto",
+      "sha256": "4f98af912e4eae36348dad1d27e3a1a21094fb9ab1837dc7468720c2260a78b2",
+      "bytes": 220142
+    },
+    {
+      "path": "gerber/CTRL-In1_Cu.g1",
+      "sha256": "f349a9d82c70bacf13040304526378b674bf32a792e344ce920a65af6a58d1e5",
+      "bytes": 638063
+    },
+    {
+      "path": "gerber/CTRL-In2_Cu.g2",
+      "sha256": "0e3d05ba8562b374016e18556737cd6271bb12baa90396227bbfaffd5d026bc4",
+      "bytes": 258352
+    },
+    {
+      "path": "gerber/CTRL-job.gbrjob",
+      "sha256": "915a69b50638736a09b662901036fc44e093e96376672d859e3e3981be601e36",
+      "bytes": 3584
+    }
+  ]
+}
