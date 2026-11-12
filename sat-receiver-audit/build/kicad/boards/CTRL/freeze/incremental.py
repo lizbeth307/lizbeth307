@@ -226,6 +226,34 @@ def export(m, doc, guard, history):
     return out
 
 
+def segments_of(doc):
+    out = set()
+    for key in ('router_tracks', 'completion_tracks'):
+        for net, layer, width, path in doc[key]:
+            for a, b in zip(path, path[1:]):
+                out.add((net, layer, width) + tuple(sorted((tuple(a), tuple(b)))))
+    return out
+
+
+def copper_diff(old, new):
+    """Copper the increment added and removed (segment by segment against the base file), mm per layer, and L2 per net."""
+    a, b = segments_of(old), segments_of(new)
+    length = lambda s: math.hypot(s[3][0] - s[4][0], s[3][1] - s[4][1])
+    added, gone, l2 = collections.Counter(), collections.Counter(), collections.Counter()
+    for s in b - a:
+        added[s[1]] += length(s)
+        if s[1] == 'In1.Cu':
+            l2[s[0]] += length(s)
+    for s in a - b:
+        gone[s[1]] += length(s)
+    va = {tuple(v) for k in ('router_vias', 'completion_vias') for v in old[k]}
+    vb = {tuple(v) for k in ('router_vias', 'completion_vias') for v in new[k]}
+    return {'added_copper_mm': {k: round(v, 1) for k, v in sorted(added.items())},
+            'removed_copper_mm': {k: round(v, 1) for k, v in sorted(gone.items())},
+            'added_vias': len(vb - va), 'removed_vias': len(va - vb),
+            'added_l2_mm': {k: round(v, 1) for k, v in sorted(l2.items())}}
+
+
 def run(args, log=print):
     import freeze_route as FR
     t0 = time.time()
@@ -264,13 +292,15 @@ def run(args, log=print):
     fz = F.Finisher(m, log=log)
     widths, default_w = FR.class_widths()
     queue = collections.deque(n for n in nets if n not in scripted_only)
-    fallback = set(args.l2)
-    rounds = 0
-    while queue and rounds < 120:
+    fallback = set(args.l2) | (set(queue) if args.l2_touched else set())
+    rounds, failed = 0, []
+    while queue and rounds < args.max_rounds:
         net = queue.popleft()
         rounds += 1
         ok, ripped = fz.connect(net, l2_bias=FR.L2_BIAS if net in fallback else None, width=widths.get(net, default_w))
         log(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)')
+        if not ok and net not in failed:
+            failed.append(net)
         for n in ripped:
             touched[n] += 1
             if n in scripted_only:
@@ -279,6 +309,17 @@ def run(args, log=print):
                 queue.append(n)
         if args.l2_cascade:
             fallback |= set(ripped)
+        if not queue and failed and args.retry:
+            # nets that found no path go once more at the end (the copper around them has changed), L2 allowed if --retry-l2
+            queue.extend(failed)
+            fallback |= set(failed) if args.retry_l2 else set()
+            if args.retry_rip_new:
+                # the copper this run added becomes rippable too (it goes to the completion lists either way)
+                for it in m.items:
+                    if it.alive and it.src == 'new':
+                        it.src = 'router'
+            failed, args.retry = [], False
+            log(f'retry: {list(queue)}')
     for n in sorted(n for n in touched if n):
         if n not in scripted_only:
             F.prune(m, n)
@@ -291,14 +332,6 @@ def run(args, log=print):
     changed = bool(moved or removed or cur['guard'] != doc['guard'] or fz.records)
     history = None
     if changed:
-        new_l2 = collections.Counter()
-        new_mm = collections.Counter()
-        for it in m.items:
-            if it.alive and it.kind == 'track' and it.src == 'new':
-                L = math.hypot(it.a[0] - it.b[0], it.a[1] - it.b[1])
-                new_mm[it.layers[0]] += L
-                if it.layers[0] == 'In1.Cu':
-                    new_l2[it.net] += L
         history = {
             'tool': 'build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen (W2 CTRL-4)',
             'base_sha256': hashlib.sha256(base_text.encode('utf-8')).hexdigest(),
@@ -307,11 +340,11 @@ def run(args, log=print):
             'rip': sorted(args.rip), 'scripted': sorted(args.scripted), 'moved_refs': moved,
             'removed_frozen_items': dict(sorted(removed.items())),
             'rejoined_nets': sorted(fz.tag),
-            'new_copper_mm': {k: round(v, 1) for k, v in sorted(new_mm.items())},
-            'new_l2_mm': {k: round(v, 1) for k, v in sorted(new_l2.items())},
             'left_open_for_freerouting': open_,
         }
     new = export(m, doc, cur['guard'], history)
+    if history is not None:
+        history.update(copper_diff(doc, new))
     text = FR.dump(new)
     log(f'done in {time.time() - t0:.0f} s; changed: {changed}')
     return 0, text
