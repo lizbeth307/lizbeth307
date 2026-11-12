@@ -20,7 +20,7 @@
             "x": 146.77,
             "y": 175.19
           },
-          "uuid": "623834c2-1a49-43ed-a0d4-1858f5d496c4"
+          "uuid": "462a4684-7d8d-469a-a1e9-b360e53e287e"
         },
         {
           "description": "Reference field of J304",
@@ -28,53 +28,7 @@
             "x": 145.0,
             "y": 177.99
           },
-          "uuid": "8301a73a-29d0-43b2-a949-c49d586d110e"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Circle of D304 on B.Silkscreen",
-          "pos": {
-            "x": 146.77,
-            "y": 175.19
-          },
-          "uuid": "7d0dfbee-adc3-42d3-a432-bc7d9e36cbe9"
-        },
-        {
-          "description": "Reference field of J304",
-          "pos": {
-            "x": 145.0,
-            "y": 177.99
-          },
-          "uuid": "8301a73a-29d0-43b2-a949-c49d586d110e"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Circle of TP301 on B.Silkscreen",
-          "pos": {
-            "x": 141.33,
-            "y": 144.65
-          },
-          "uuid": "2103794d-1c1d-4702-97ab-f36d92ed3fd7"
-        },
-        {
-          "description": "Reference field of R396",
-          "pos": {
-            "x": 140.48,
-            "y": 144.88
-          },
-          "uuid": "f3abab17-9f3a-480e-9270-1c53bf7ac612"
+          "uuid": "b49d4d59-e220-4421-aacb-717b26a6ba45"
         }
       ],
       "severity": "warning",
@@ -89,7 +43,7 @@
             "x": 117.9,
             "y": 187.59
           },
-          "uuid": "18d3f023-1363-4359-b73b-feaf3a09b0cd"
+          "uuid": "c59afec9-7ccb-477d-811c-7af7ec8e0e38"
         },
         {
           "description": "Reference field of U310",
@@ -97,30 +51,7 @@
             "x": 119.35,
             "y": 186.7
           },
-          "uuid": "fab11331-4903-4f7c-85ce-e4368d1334af"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Polygon of U311 on F.Silkscreen",
-          "pos": {
-            "x": 122.4,
-            "y": 187.59
-          },
-          "uuid": "93a3c6c2-1680-499c-b998-c2165fe0153d"
-        },
-        {
-          "description": "Reference field of U311",
-          "pos": {
-            "x": 123.85,
-            "y": 186.7
-          },
-          "uuid": "e10067e4-6e1b-4d1c-83f1-4cae908bb4a8"
+          "uuid": "f78117a0-2b93-45c1-bd29-f0ef79420111"
         }
       ],
       "severity": "warning",
@@ -135,7 +66,7 @@
             "x": 135.66,
             "y": 143.59
           },
-          "uuid": "d373442b-5a54-4acf-864e-88d7a9b0b1ca"
+          "uuid": "16053edf-c162-44ca-97b5-bb0cf736f619"
         },
         {
           "description": "Reference field of U312",
@@ -143,7 +74,7 @@
             "x": 134.21,
             "y": 142.7
           },
-          "uuid": "fbf038b9-1a5c-42a6-8745-d61ca3c1b7e2"
+          "uuid": "594e8ccb-e4fb-4d98-9802-a0dc66239310"
         }
       ],
       "severity": "warning",
@@ -158,7 +89,7 @@
             "x": 124.5,
             "y": 146.79
           },
-          "uuid": "0c7cca69-2c0e-4db4-bab7-1ae0f5ddcdaa"
+          "uuid": "6d6e35e1-101b-41b8-86f9-ed1599a3b69d"
         },
         {
           "description": "Reference field of U315",
@@ -166,7 +97,7 @@
             "x": 123.05,
             "y": 145.9
           },
-          "uuid": "85b23ac7-732d-4f46-8689-4542a49120a1"
+          "uuid": "d9b6a215-b828-44fd-a071-776a80700953"
         }
       ],
       "severity": "warning",
@@ -181,7 +112,7 @@
             "x": 110.17,
             "y": 189.67
           },
-          "uuid": "00882fd7-16f5-49ed-8b6a-a5cbecb1ccb2"
+          "uuid": "6d2a862e-d766-47ba-b130-7445b861f586"
         },
         {
           "description": "Reference field of R337",
@@ -189,7 +120,7 @@
             "x": 116.6,
             "y": 192.68
           },
-          "uuid": "a3abdf17-6754-4f49-b9d7-893936888017"
+          "uuid": "bbc3ddb7-baa5-4c11-8171-7e60fc04aff7"
         }
       ],
       "severity": "warning",
@@ -204,7 +135,7 @@
             "x": 132.17,
             "y": 189.67
           },
-          "uuid": "2a6bbcff-b7a5-40e4-87c2-5b49650bc2b9"
+          "uuid": "0124696b-99a4-43c4-b9f4-23fb9282272f"
         },
         {
           "description": "Reference field of R302",
@@ -212,7 +143,7 @@
             "x": 138.65,
             "y": 191.04
           },
-          "uuid": "aa12f6f0-80eb-4ca2-97c3-5a4f4aeb53aa"
+          "uuid": "67de8d4b-3c5f-42d8-ab5d-d5f4b8d0160b"
         }
       ],
       "severity": "warning",
@@ -227,7 +158,7 @@
             "x": 132.17,
             "y": 189.67
           },
-          "uuid": "2a6bbcff-b7a5-40e4-87c2-5b49650bc2b9"
+          "uuid": "0124696b-99a4-43c4-b9f4-23fb9282272f"
         },
         {
           "description": "Reference field of R320",
@@ -235,30 +166,7 @@
             "x": 138.65,
             "y": 194.6
           },
-          "uuid": "e5c84dd2-9d07-40ad-9371-87cab0474d06"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Rectangle of SW304 on F.Silkscreen",
-          "pos": {
-            "x": 110.17,
-            "y": 211.67
-          },
-          "uuid": "66ba9707-8bad-4354-88c6-e85bfd84215a"
-        },
-        {
-          "description": "Reference field of C305",
-          "pos": {
-            "x": 117.34,
-            "y": 217.055
-          },
-          "uuid": "c34b8032-0564-4e70-b7d4-28619d5c653a"
+          "uuid": "dde530e1-3ddb-4368-b6ee-7b340388dad0"
         }
       ],
       "severity": "warning",
@@ -273,7 +181,7 @@
             "x": 132.17,
             "y": 211.67
           },
-          "uuid": "60c936c0-a1f8-4fa2-bd1d-a413813a9e03"
+          "uuid": "aa6c7eb1-2182-4121-ad77-944e5cf2de26"
         },
         {
           "description": "Reference field of R325",
@@ -281,7 +189,30 @@
             "x": 138.65,
             "y": 212.4
           },
-          "uuid": "db947889-fb6d-4937-a95b-736dbeae4c63"
+          "uuid": "cdd432ed-f3dc-4f94-8313-b5cc6255f79d"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Rectangle of SW305 on F.Silkscreen",
+          "pos": {
+            "x": 132.17,
+            "y": 211.67
+          },
+          "uuid": "aa6c7eb1-2182-4121-ad77-944e5cf2de26"
+        },
+        {
+          "description": "Reference field of R392",
+          "pos": {
+            "x": 138.65,
+            "y": 215.96
+          },
+          "uuid": "e8aadf99-0fb7-442a-a9bb-0740cebf1235"
         }
       ],
       "severity": "warning",
@@ -296,7 +227,7 @@
             "x": 110.17,
             "y": 233.67
           },
-          "uuid": "a5bcfdd1-5094-404e-8b96-a16cdeddaae0"
+          "uuid": "01bc63fb-3d40-4116-947c-18e5bc9305d0"
         },
         {
           "description": "Reference field of C303",
@@ -304,7 +235,7 @@
             "x": 117.34,
             "y": 235.705
           },
-          "uuid": "cfe48c41-8b2f-4e79-b75d-a6be40542f86"
+          "uuid": "6a4b91d9-06df-480d-aa1d-3fcb162b66dc"
         }
       ],
       "severity": "warning",
@@ -314,20 +245,89 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of C306",
+          "description": "Reference field of C304",
           "pos": {
-            "x": 141.17,
+            "x": 138.76,
             "y": 152.3
           },
-          "uuid": "73a572e5-0ffb-4203-b08e-4d2bfcfe88a7"
+          "uuid": "0bf32f71-64a8-4b4f-aab4-4ffe438f58e3"
         },
         {
-          "description": "Segment of C304 on F.Silkscreen",
+          "description": "Segment of C302 on F.Silkscreen",
           "pos": {
-            "x": 141.175,
+            "x": 138.765,
             "y": 152.561252
           },
-          "uuid": "fe134b14-74e5-4977-ad13-83344af1cdd7"
+          "uuid": "8ecf3d86-b9ea-47ce-9fdd-6e815acf9774"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of C305",
+          "pos": {
+            "x": 117.34,
+            "y": 217.055
+          },
+          "uuid": "333da0dc-27cd-498c-bbd6-22faba9fc4e0"
+        },
+        {
+          "description": "Rectangle of SW304 on F.Silkscreen",
+          "pos": {
+            "x": 110.17,
+            "y": 211.67
+          },
+          "uuid": "46abd735-4f37-4971-82ad-55bad56da9bb"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of C307",
+          "pos": {
+            "x": 136.81,
+            "y": 215.49
+          },
+          "uuid": "796aae8d-271a-42c3-a962-d29ebefd26bc"
+        },
+        {
+          "description": "Reference field of C310",
+          "pos": {
+            "x": 136.31,
+            "y": 219.12
+          },
+          "uuid": "986358d0-7993-4000-97d3-fc87b0eb7011"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of C307",
+          "pos": {
+            "x": 136.81,
+            "y": 215.49
+          },
+          "uuid": "796aae8d-271a-42c3-a962-d29ebefd26bc"
+        },
+        {
+          "description": "Segment of C308 on B.Silkscreen",
+          "pos": {
+            "x": 136.78,
+            "y": 215.41058
+          },
+          "uuid": "be7de649-110c-41b4-a9a5-f8b4fe9fbc57"
         }
       ],
       "severity": "warning",
@@ -342,7 +342,7 @@
             "x": 138.72,
             "y": 215.27
           },
-          "uuid": "0e59b626-0d2d-4d86-b88a-98ac4b07a192"
+          "uuid": "1b9de954-03db-42f6-be16-deea1ef7487b"
         },
         {
           "description": "Segment of C309 on B.Silkscreen",
@@ -350,30 +350,7 @@
             "x": 138.69,
             "y": 215.41058
           },
-          "uuid": "2c81e4cb-82a0-4db2-b4e0-f43235af4be0"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of C309",
-          "pos": {
-            "x": 140.63,
-            "y": 215.27
-          },
-          "uuid": "22470119-bb61-4879-bd09-d3f92f570b39"
-        },
-        {
-          "description": "Segment of J304 on B.Silkscreen",
-          "pos": {
-            "x": 140.44,
-            "y": 178.88
-          },
-          "uuid": "fb4e429b-06f6-4992-825d-7c51de7ee73b"
+          "uuid": "bf397891-adeb-4a70-a95b-5792856e7f85"
         }
       ],
       "severity": "warning",
@@ -388,15 +365,15 @@
             "x": 136.31,
             "y": 219.12
           },
-          "uuid": "d082f453-50d1-42a5-8dd0-933993641c01"
+          "uuid": "986358d0-7993-4000-97d3-fc87b0eb7011"
         },
         {
-          "description": "Reference field of C307",
+          "description": "Segment of C311 on B.Silkscreen",
           "pos": {
-            "x": 136.81,
-            "y": 215.49
+            "x": 136.28,
+            "y": 219.26058
           },
-          "uuid": "df7562ac-c905-47c0-81fa-fe8d9cbe1114"
+          "uuid": "d38dda1a-504f-4af3-9943-2060387a9547"
         }
       ],
       "severity": "warning",
@@ -411,7 +388,7 @@
             "x": 138.22,
             "y": 219.12
           },
-          "uuid": "208bba69-6ec9-457a-a9fa-e50a756c65d5"
+          "uuid": "050aca43-ee48-4f75-891b-882ac8ae5790"
         },
         {
           "description": "Reference field of R329",
@@ -419,7 +396,7 @@
             "x": 138.22,
             "y": 222.53
           },
-          "uuid": "e60896fe-e88f-4634-ae96-1de76c8eccf0"
+          "uuid": "6dcdd46f-1286-4968-a8fe-bba4dc2c7b03"
         }
       ],
       "severity": "warning",
@@ -434,7 +411,7 @@
             "x": 138.22,
             "y": 219.12
           },
-          "uuid": "208bba69-6ec9-457a-a9fa-e50a756c65d5"
+          "uuid": "050aca43-ee48-4f75-891b-882ac8ae5790"
         },
         {
           "description": "Segment of R327 on B.Silkscreen",
@@ -442,7 +419,7 @@
             "x": 138.1775,
             "y": 219.357258
           },
-          "uuid": "767219a8-53cd-4b73-8e16-2b511569b0d1"
+          "uuid": "49e927fb-3d1e-4c92-85cf-7d4d8a44f1dc"
         }
       ],
       "severity": "warning",
@@ -457,15 +434,15 @@
             "x": 118.78,
             "y": 193.86
           },
-          "uuid": "a76f86e3-1601-463c-9191-459cee624e28"
+          "uuid": "9378fe88-b869-42ae-8cbd-22a8ca7a78fc"
         },
         {
-          "description": "Reference field of R339",
+          "description": "Reference field of R337",
           "pos": {
-            "x": 120.32,
+            "x": 116.6,
             "y": 192.68
           },
-          "uuid": "bc8e8da8-c73a-471f-84fd-6c99377aa242"
+          "uuid": "bbc3ddb7-baa5-4c11-8171-7e60fc04aff7"
         }
       ],
       "severity": "warning",
@@ -475,66 +452,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of C315",
+          "description": "Reference field of C313",
           "pos": {
-            "x": 124.72,
-            "y": 136.62
+            "x": 118.78,
+            "y": 193.86
           },
-          "uuid": "303dc339-302d-4425-b9e9-d75103271278"
+          "uuid": "9378fe88-b869-42ae-8cbd-22a8ca7a78fc"
         },
         {
-          "description": "Segment of C316 on B.Silkscreen",
+          "description": "Reference field of R338",
           "pos": {
-            "x": 124.54,
-            "y": 136.76058
+            "x": 118.46,
+            "y": 192.68
           },
-          "uuid": "a2f8dca0-7818-48c9-b48c-4f43bd31725c"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of C316",
-          "pos": {
-            "x": 126.48,
-            "y": 136.62
-          },
-          "uuid": "93c64048-0450-4882-bb45-84cda6958225"
-        },
-        {
-          "description": "Segment of C317 on B.Silkscreen",
-          "pos": {
-            "x": 126.3,
-            "y": 136.76058
-          },
-          "uuid": "c1eba154-168c-42c5-96e3-6a8c6e8066e1"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of C317",
-          "pos": {
-            "x": 128.24,
-            "y": 136.62
-          },
-          "uuid": "60418511-952f-4db7-b9ea-03fb93e07ab4"
-        },
-        {
-          "description": "Segment of R351 on B.Silkscreen",
-          "pos": {
-            "x": 128.0475,
-            "y": 136.857258
-          },
-          "uuid": "79cd7ee9-88c9-4d9b-b01a-dcc8eaaf49f4"
+          "uuid": "ca41884c-454f-4563-bee4-d77b1121fec8"
         }
       ],
       "severity": "warning",
@@ -549,7 +480,7 @@
             "x": 129.7,
             "y": 146.4
           },
-          "uuid": "b31ecc9e-f7d7-484b-900a-62a6a91fd3a2"
+          "uuid": "8463323a-4101-47a9-811b-1853fa6f6ac8"
         },
         {
           "description": "Segment of Q301 on B.Silkscreen",
@@ -557,7 +488,30 @@
             "x": 129.17,
             "y": 145.66
           },
-          "uuid": "f1b9d4da-d190-49f7-82d0-4370c7055041"
+          "uuid": "ca6f4759-af0d-4a89-8dcd-3acff8a693b7"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of C342",
+          "pos": {
+            "x": 120.14,
+            "y": 174.9
+          },
+          "uuid": "52170086-9594-4c4d-8977-a04e84565f30"
+        },
+        {
+          "description": "Reference field of R371",
+          "pos": {
+            "x": 118.74,
+            "y": 177.08
+          },
+          "uuid": "e31ed27c-ab89-4006-8de4-2d4c8537dba0"
         }
       ],
       "severity": "warning",
@@ -572,7 +526,7 @@
             "x": 113.16,
             "y": 177.08
           },
-          "uuid": "31201367-3825-4ab7-8761-11b33aa8f295"
+          "uuid": "1aa39a5c-7f3a-415a-8660-4d3bbe69abee"
         },
         {
           "description": "Segment of R363 on B.Silkscreen",
@@ -580,7 +534,7 @@
             "x": 113.0675,
             "y": 177.317258
           },
-          "uuid": "ad242d14-a089-4589-ae64-4238a2076328"
+          "uuid": "9db7771f-3b42-4184-89d2-7242dc1fc3f5"
         }
       ],
       "severity": "warning",
@@ -595,7 +549,7 @@
             "x": 145.35,
             "y": 164.6
           },
-          "uuid": "5af04233-8a18-4661-b7d2-8ac2283d1322"
+          "uuid": "ca536470-1173-4daf-9269-dbec291c5282"
         },
         {
           "description": "Reference field of J313",
@@ -603,7 +557,7 @@
             "x": 144.55,
             "y": 165.76
           },
-          "uuid": "910e54e8-92d9-417b-9dcc-324d0f586e11"
+          "uuid": "f3441778-f1d0-4139-8eef-b69a1379e8a6"
         }
       ],
       "severity": "warning",
@@ -613,43 +567,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of J310",
+          "description": "Reference field of J304",
           "pos": {
-            "x": 144.5,
-            "y": 119.35
+            "x": 145.0,
+            "y": 177.99
           },
-          "uuid": "5d8e2f9c-611a-42f1-8c5a-8190a6defb38"
+          "uuid": "b49d4d59-e220-4421-aacb-717b26a6ba45"
         },
         {
-          "description": "Segment of J311 on B.Silkscreen",
+          "description": "Circle of D304 on B.Silkscreen",
           "pos": {
-            "x": 137.44,
-            "y": 119.89
+            "x": 146.77,
+            "y": 175.19
           },
-          "uuid": "b815d261-815f-4181-a1fd-52ec3799322b"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of J310",
-          "pos": {
-            "x": 144.5,
-            "y": 119.35
-          },
-          "uuid": "5d8e2f9c-611a-42f1-8c5a-8190a6defb38"
-        },
-        {
-          "description": "Segment of J311 on B.Silkscreen",
-          "pos": {
-            "x": 145.26,
-            "y": 119.89
-          },
-          "uuid": "dcd3f27c-b270-43e6-9b63-56d6865e1afb"
+          "uuid": "d4279737-4c82-444a-bf5a-75af0fc9db93"
         }
       ],
       "severity": "warning",
@@ -664,7 +595,7 @@
             "x": 142.0,
             "y": 161.4
           },
-          "uuid": "6f0ceada-d2e1-46d9-bb4a-2e02323c59fc"
+          "uuid": "29e853b4-ee1e-4964-9138-a108657a74a6"
         },
         {
           "description": "Rectangle of J313 on B.Silkscreen",
@@ -672,7 +603,7 @@
             "x": 143.46,
             "y": 169.68
           },
-          "uuid": "dac8fa55-980e-4751-8ab3-2dd882297f89"
+          "uuid": "ae093fdc-c454-45c9-8173-690e3c1d0a3b"
         }
       ],
       "severity": "warning",
@@ -687,7 +618,7 @@
             "x": 144.53,
             "y": 159.4
           },
-          "uuid": "77b3dc0a-7fdf-4a1e-a4cc-a9b4b5c25a2f"
+          "uuid": "1bff33cf-15db-4028-8bdd-f33c01811780"
         },
         {
           "description": "Reference field of R305",
@@ -695,7 +626,7 @@
             "x": 146.21,
             "y": 161.58
           },
-          "uuid": "b96cdbaf-73d8-42f8-9a16-16368cb69242"
+          "uuid": "473cf3c5-249b-4ff0-a7b1-3a3c15bc9626"
         }
       ],
       "severity": "warning",
@@ -704,21 +635,21 @@
     {
       "description": "Silkscreen clearance",
       "items": [
+        {
+          "description": "Reference field of R302",
+          "pos": {
+            "x": 138.65,
+            "y": 191.04
+          },
+          "uuid": "67de8d4b-3c5f-42d8-ab5d-d5f4b8d0160b"
+        },
         {
           "description": "Reference field of R301",
           "pos": {
             "x": 138.65,
             "y": 187.48
           },
-          "uuid": "73d9fd3e-0762-4f28-9fd9-1a6493718d35"
-        },
-        {
-          "description": "Reference field of R302",
-          "pos": {
-            "x": 138.65,
-            "y": 191.04
-          },
-          "uuid": "aa12f6f0-80eb-4ca2-97c3-5a4f4aeb53aa"
+          "uuid": "ffb6fa6e-d0a5-4605-8656-84c816361d18"
         }
       ],
       "severity": "warning",
@@ -733,7 +664,7 @@
             "x": 138.65,
             "y": 191.04
           },
-          "uuid": "aa12f6f0-80eb-4ca2-97c3-5a4f4aeb53aa"
+          "uuid": "67de8d4b-3c5f-42d8-ab5d-d5f4b8d0160b"
         },
         {
           "description": "Reference field of R320",
@@ -741,7 +672,7 @@
             "x": 138.65,
             "y": 194.6
           },
-          "uuid": "e5c84dd2-9d07-40ad-9371-87cab0474d06"
+          "uuid": "dde530e1-3ddb-4368-b6ee-7b340388dad0"
         }
       ],
       "severity": "warning",
@@ -756,7 +687,7 @@
             "x": 144.6,
             "y": 120.28
           },
-          "uuid": "3b8b7fee-f388-4165-8627-340b02e29740"
+          "uuid": "857c40b7-bf20-4795-a590-2235a1f7b5af"
         },
         {
           "description": "Reference field of U313",
@@ -764,7 +695,7 @@
             "x": 142.95,
             "y": 118.1
           },
-          "uuid": "98f248aa-9e70-467d-83ec-7d46d6685f6f"
+          "uuid": "8b361c30-ea22-4793-b670-3987c3996c30"
         }
       ],
       "severity": "warning",
@@ -773,36 +704,13 @@
     {
       "description": "Silkscreen clearance",
       "items": [
-        {
-          "description": "Reference field of R309",
-          "pos": {
-            "x": 99.55,
-            "y": 196.99
-          },
-          "uuid": "8fc1ef53-6fb1-4b2a-8e75-7e8cf61b47f0"
-        },
         {
           "description": "Reference field of R308",
           "pos": {
             "x": 99.55,
             "y": 193.58
           },
-          "uuid": "d68c9dc5-0eee-4415-a972-57fe0d84feb4"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R310",
-          "pos": {
-            "x": 99.55,
-            "y": 200.4
-          },
-          "uuid": "69c367d4-1ca4-45fe-ad4f-6e3f28c39134"
+          "uuid": "03e47cd4-2204-4a82-9368-7676edcc24f4"
         },
         {
           "description": "Reference field of R309",
@@ -810,7 +718,30 @@
             "x": 99.55,
             "y": 196.99
           },
-          "uuid": "8fc1ef53-6fb1-4b2a-8e75-7e8cf61b47f0"
+          "uuid": "b3fde67b-6be8-4490-8607-1fb1e063ba71"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R310",
+          "pos": {
+            "x": 99.55,
+            "y": 200.4
+          },
+          "uuid": "8eb6abbe-7333-47e4-b815-39339c3cc0c8"
+        },
+        {
+          "description": "Reference field of R309",
+          "pos": {
+            "x": 99.55,
+            "y": 196.99
+          },
+          "uuid": "b3fde67b-6be8-4490-8607-1fb1e063ba71"
         }
       ],
       "severity": "warning",
@@ -825,7 +756,7 @@
             "x": 99.55,
             "y": 203.81
           },
-          "uuid": "1e7a40b6-9e7a-492b-a917-0705865102fd"
+          "uuid": "172a9271-d905-489d-9af3-737ac3292f9d"
         },
         {
           "description": "Reference field of R310",
@@ -833,7 +764,7 @@
             "x": 99.55,
             "y": 200.4
           },
-          "uuid": "69c367d4-1ca4-45fe-ad4f-6e3f28c39134"
+          "uuid": "8eb6abbe-7333-47e4-b815-39339c3cc0c8"
         }
       ],
       "severity": "warning",
@@ -848,7 +779,7 @@
             "x": 99.55,
             "y": 203.81
           },
-          "uuid": "1e7a40b6-9e7a-492b-a917-0705865102fd"
+          "uuid": "172a9271-d905-489d-9af3-737ac3292f9d"
         },
         {
           "description": "Reference field of R312",
@@ -856,7 +787,7 @@
             "x": 99.55,
             "y": 207.22
           },
-          "uuid": "bed09667-b316-46ea-8056-986e284f071b"
+          "uuid": "de5c96bb-19c6-4668-91ac-9497b14a5076"
         }
       ],
       "severity": "warning",
@@ -871,7 +802,7 @@
             "x": 99.55,
             "y": 210.63
           },
-          "uuid": "53da9cde-6721-4da3-880a-04a37ce2ab9a"
+          "uuid": "bdc20c48-aa7c-4222-9bfe-e5365a3d6f9a"
         },
         {
           "description": "Reference field of R312",
@@ -879,7 +810,7 @@
             "x": 99.55,
             "y": 207.22
           },
-          "uuid": "bed09667-b316-46ea-8056-986e284f071b"
+          "uuid": "de5c96bb-19c6-4668-91ac-9497b14a5076"
         }
       ],
       "severity": "warning",
@@ -888,21 +819,21 @@
     {
       "description": "Silkscreen clearance",
       "items": [
+        {
+          "description": "Reference field of R314",
+          "pos": {
+            "x": 99.55,
+            "y": 214.04
+          },
+          "uuid": "b040a906-717b-492f-a64a-033f171a0440"
+        },
         {
           "description": "Reference field of R313",
           "pos": {
             "x": 99.55,
             "y": 210.63
           },
-          "uuid": "53da9cde-6721-4da3-880a-04a37ce2ab9a"
-        },
-        {
-          "description": "Reference field of R314",
-          "pos": {
-            "x": 99.55,
-            "y": 214.04
-          },
-          "uuid": "b3746774-3f83-4bef-a1d5-6f464499eeed"
+          "uuid": "bdc20c48-aa7c-4222-9bfe-e5365a3d6f9a"
         }
       ],
       "severity": "warning",
@@ -917,7 +848,7 @@
             "x": 99.55,
             "y": 217.45
           },
-          "uuid": "9919c6f8-3039-435b-9f1e-7789e7b4f73a"
+          "uuid": "52e91397-7122-4c6e-b302-a066c30546a8"
         },
         {
           "description": "Reference field of R314",
@@ -925,7 +856,7 @@
             "x": 99.55,
             "y": 214.04
           },
-          "uuid": "b3746774-3f83-4bef-a1d5-6f464499eeed"
+          "uuid": "b040a906-717b-492f-a64a-033f171a0440"
         }
       ],
       "severity": "warning",
@@ -934,21 +865,44 @@
     {
       "description": "Silkscreen clearance",
       "items": [
+        {
+          "description": "Reference field of R316",
+          "pos": {
+            "x": 99.55,
+            "y": 220.86
+          },
+          "uuid": "269f3067-c877-4490-9724-35ff6507672e"
+        },
         {
           "description": "Reference field of R315",
           "pos": {
             "x": 99.55,
             "y": 217.45
           },
-          "uuid": "9919c6f8-3039-435b-9f1e-7789e7b4f73a"
-        },
+          "uuid": "52e91397-7122-4c6e-b302-a066c30546a8"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
         {
           "description": "Reference field of R316",
           "pos": {
             "x": 99.55,
             "y": 220.86
           },
-          "uuid": "d29367ca-e7bd-49fc-afdb-49cf5ce89911"
+          "uuid": "269f3067-c877-4490-9724-35ff6507672e"
+        },
+        {
+          "description": "Reference field of R317",
+          "pos": {
+            "x": 99.55,
+            "y": 224.27
+          },
+          "uuid": "5e31e09a-f65f-4bed-be8a-d5dd5be0eb82"
         }
       ],
       "severity": "warning",
@@ -963,15 +917,15 @@
             "x": 99.55,
             "y": 224.27
           },
-          "uuid": "8f36aeb8-d394-49fe-a2ca-cb6a68862c73"
+          "uuid": "5e31e09a-f65f-4bed-be8a-d5dd5be0eb82"
         },
         {
-          "description": "Reference field of R316",
+          "description": "Reference field of R318",
           "pos": {
             "x": 99.55,
-            "y": 220.86
+            "y": 227.68
           },
-          "uuid": "d29367ca-e7bd-49fc-afdb-49cf5ce89911"
+          "uuid": "d3ce169c-5519-452e-b52d-aaccff79a25e"
         }
       ],
       "severity": "warning",
@@ -980,44 +934,21 @@
     {
       "description": "Silkscreen clearance",
       "items": [
-        {
-          "description": "Reference field of R318",
-          "pos": {
-            "x": 99.55,
-            "y": 227.68
-          },
-          "uuid": "4d9f7c52-0a1d-488b-8503-dce22f72cbd3"
-        },
-        {
-          "description": "Reference field of R317",
-          "pos": {
-            "x": 99.55,
-            "y": 224.27
-          },
-          "uuid": "8f36aeb8-d394-49fe-a2ca-cb6a68862c73"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R318",
-          "pos": {
-            "x": 99.55,
-            "y": 227.68
-          },
-          "uuid": "4d9f7c52-0a1d-488b-8503-dce22f72cbd3"
-        },
         {
           "description": "Reference field of R319",
           "pos": {
             "x": 99.55,
             "y": 231.09
           },
-          "uuid": "decfa540-1518-4c8d-b1ac-eeb0779892d9"
+          "uuid": "70a1d0da-92ec-43ae-aae6-3e44d49d83b3"
+        },
+        {
+          "description": "Reference field of R318",
+          "pos": {
+            "x": 99.55,
+            "y": 227.68
+          },
+          "uuid": "d3ce169c-5519-452e-b52d-aaccff79a25e"
         }
       ],
       "severity": "warning",
@@ -1032,7 +963,7 @@
             "x": 138.65,
             "y": 198.16
           },
-          "uuid": "9b176544-d5a2-4873-bdad-8ef45095aa50"
+          "uuid": "826b18c0-1175-4576-9e8e-8a53707d9a48"
         },
         {
           "description": "Reference field of R320",
@@ -1040,7 +971,7 @@
             "x": 138.65,
             "y": 194.6
           },
-          "uuid": "e5c84dd2-9d07-40ad-9371-87cab0474d06"
+          "uuid": "dde530e1-3ddb-4368-b6ee-7b340388dad0"
         }
       ],
       "severity": "warning",
@@ -1049,21 +980,21 @@
     {
       "description": "Silkscreen clearance",
       "items": [
+        {
+          "description": "Reference field of R322",
+          "pos": {
+            "x": 138.65,
+            "y": 201.72
+          },
+          "uuid": "4d64885c-36b5-48bd-a2a2-0776be176e01"
+        },
         {
           "description": "Reference field of R321",
           "pos": {
             "x": 138.65,
             "y": 198.16
           },
-          "uuid": "9b176544-d5a2-4873-bdad-8ef45095aa50"
-        },
-        {
-          "description": "Reference field of R322",
-          "pos": {
-            "x": 138.65,
-            "y": 201.72
-          },
-          "uuid": "e030653f-6faa-4e52-bb7e-72bbbf02fa3b"
+          "uuid": "826b18c0-1175-4576-9e8e-8a53707d9a48"
         }
       ],
       "severity": "warning",
@@ -1078,7 +1009,7 @@
             "x": 138.65,
             "y": 205.28
           },
-          "uuid": "aa585274-8729-45c8-bd81-e7d3b93f938e"
+          "uuid": "2a718f4e-f11b-43a9-85d9-be9a60b7706b"
         },
         {
           "description": "Reference field of R322",
@@ -1086,7 +1017,7 @@
             "x": 138.65,
             "y": 201.72
           },
-          "uuid": "e030653f-6faa-4e52-bb7e-72bbbf02fa3b"
+          "uuid": "4d64885c-36b5-48bd-a2a2-0776be176e01"
         }
       ],
       "severity": "warning",
@@ -1095,21 +1026,21 @@
     {
       "description": "Silkscreen clearance",
       "items": [
-        {
-          "description": "Reference field of R324",
-          "pos": {
-            "x": 138.65,
-            "y": 208.84
-          },
-          "uuid": "2d244127-505d-42be-9fc2-cd3379ff09ef"
-        },
         {
           "description": "Reference field of R323",
           "pos": {
             "x": 138.65,
             "y": 205.28
           },
-          "uuid": "aa585274-8729-45c8-bd81-e7d3b93f938e"
+          "uuid": "2a718f4e-f11b-43a9-85d9-be9a60b7706b"
+        },
+        {
+          "description": "Reference field of R324",
+          "pos": {
+            "x": 138.65,
+            "y": 208.84
+          },
+          "uuid": "7cc3e4ee-6c34-4af0-b839-6b4b30f9c338"
         }
       ],
       "severity": "warning",
@@ -1124,7 +1055,7 @@
             "x": 138.65,
             "y": 208.84
           },
-          "uuid": "2d244127-505d-42be-9fc2-cd3379ff09ef"
+          "uuid": "7cc3e4ee-6c34-4af0-b839-6b4b30f9c338"
         },
         {
           "description": "Reference field of R325",
@@ -1132,7 +1063,53 @@
             "x": 138.65,
             "y": 212.4
           },
-          "uuid": "db947889-fb6d-4937-a95b-736dbeae4c63"
+          "uuid": "cdd432ed-f3dc-4f94-8313-b5cc6255f79d"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R325",
+          "pos": {
+            "x": 138.65,
+            "y": 212.4
+          },
+          "uuid": "cdd432ed-f3dc-4f94-8313-b5cc6255f79d"
+        },
+        {
+          "description": "Reference field of R392",
+          "pos": {
+            "x": 138.65,
+            "y": 215.96
+          },
+          "uuid": "e8aadf99-0fb7-442a-a9bb-0740cebf1235"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R326",
+          "pos": {
+            "x": 138.72,
+            "y": 144.88
+          },
+          "uuid": "49461bc9-94e9-4ded-9b24-9f70634486e6"
+        },
+        {
+          "description": "Segment of R396 on B.Silkscreen",
+          "pos": {
+            "x": 138.5275,
+            "y": 145.117258
+          },
+          "uuid": "56225ed8-e46c-4cba-864c-cad1ff00af0f"
         }
       ],
       "severity": "warning",
@@ -1147,7 +1124,7 @@
             "x": 140.13,
             "y": 219.12
           },
-          "uuid": "2159f7a8-0583-45d0-b844-4f1aeb5c7a01"
+          "uuid": "4efae67d-a5b7-4c0c-b704-7a71c9435f8d"
         },
         {
           "description": "Reference field of R330",
@@ -1155,7 +1132,7 @@
             "x": 140.13,
             "y": 222.53
           },
-          "uuid": "9787e2f5-7658-46f4-bace-bca2fda00966"
+          "uuid": "cc350829-ed58-47ad-bb9a-f85af0cbe8f9"
         }
       ],
       "severity": "warning",
@@ -1170,7 +1147,7 @@
             "x": 140.13,
             "y": 219.12
           },
-          "uuid": "2159f7a8-0583-45d0-b844-4f1aeb5c7a01"
+          "uuid": "4efae67d-a5b7-4c0c-b704-7a71c9435f8d"
         },
         {
           "description": "Segment of J304 on B.Silkscreen",
@@ -1178,7 +1155,7 @@
             "x": 140.44,
             "y": 178.88
           },
-          "uuid": "fb4e429b-06f6-4992-825d-7c51de7ee73b"
+          "uuid": "7516d521-97df-47bb-b0ea-0962ed779221"
         }
       ],
       "severity": "warning",
@@ -1193,7 +1170,7 @@
             "x": 136.31,
             "y": 222.53
           },
-          "uuid": "09231e3f-2e04-4946-8fc5-89b394f3b790"
+          "uuid": "8ee4c58a-bef6-4eaf-96fb-ef89344c7192"
         },
         {
           "description": "Reference field of C310",
@@ -1201,7 +1178,7 @@
             "x": 136.31,
             "y": 219.12
           },
-          "uuid": "d082f453-50d1-42a5-8dd0-933993641c01"
+          "uuid": "986358d0-7993-4000-97d3-fc87b0eb7011"
         }
       ],
       "severity": "warning",
@@ -1216,30 +1193,7 @@
             "x": 136.31,
             "y": 222.53
           },
-          "uuid": "09231e3f-2e04-4946-8fc5-89b394f3b790"
-        },
-        {
-          "description": "Reference field of R331",
-          "pos": {
-            "x": 136.31,
-            "y": 225.94
-          },
-          "uuid": "4b313b51-040a-4b9f-bb90-da060fa98e05"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R328",
-          "pos": {
-            "x": 136.31,
-            "y": 222.53
-          },
-          "uuid": "09231e3f-2e04-4946-8fc5-89b394f3b790"
+          "uuid": "8ee4c58a-bef6-4eaf-96fb-ef89344c7192"
         },
         {
           "description": "Segment of R329 on B.Silkscreen",
@@ -1247,7 +1201,7 @@
             "x": 136.2675,
             "y": 222.767258
           },
-          "uuid": "62bafe26-5220-4751-9e29-b2bec4f0992b"
+          "uuid": "bcf0a85f-2a68-482b-8a2d-aaceaaa37a26"
         }
       ],
       "severity": "warning",
@@ -1256,44 +1210,90 @@
     {
       "description": "Silkscreen clearance",
       "items": [
-        {
-          "description": "Reference field of R330",
-          "pos": {
-            "x": 140.13,
-            "y": 222.53
-          },
-          "uuid": "9787e2f5-7658-46f4-bace-bca2fda00966"
-        },
-        {
-          "description": "Segment of J304 on B.Silkscreen",
-          "pos": {
-            "x": 140.44,
-            "y": 178.88
-          },
-          "uuid": "fb4e429b-06f6-4992-825d-7c51de7ee73b"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R332",
-          "pos": {
-            "x": 138.22,
-            "y": 225.94
-          },
-          "uuid": "6c80d5b9-3f73-4deb-bcf9-45f3fb292343"
-        },
         {
           "description": "Reference field of R329",
           "pos": {
             "x": 138.22,
             "y": 222.53
           },
-          "uuid": "e60896fe-e88f-4634-ae96-1de76c8eccf0"
+          "uuid": "6dcdd46f-1286-4968-a8fe-bba4dc2c7b03"
+        },
+        {
+          "description": "Reference field of R332",
+          "pos": {
+            "x": 138.22,
+            "y": 225.94
+          },
+          "uuid": "ad14a2e5-bcea-4c6a-8a62-7cd1db805653"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R329",
+          "pos": {
+            "x": 138.22,
+            "y": 222.53
+          },
+          "uuid": "6dcdd46f-1286-4968-a8fe-bba4dc2c7b03"
+        },
+        {
+          "description": "Segment of R330 on B.Silkscreen",
+          "pos": {
+            "x": 138.1775,
+            "y": 222.767258
+          },
+          "uuid": "721e4b72-3b1c-45b9-919b-44f1ee86f5e4"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R331",
+          "pos": {
+            "x": 136.31,
+            "y": 225.94
+          },
+          "uuid": "601e4466-7006-42c2-8a20-895b21900554"
+        },
+        {
+          "description": "Reference field of R328",
+          "pos": {
+            "x": 136.31,
+            "y": 222.53
+          },
+          "uuid": "8ee4c58a-bef6-4eaf-96fb-ef89344c7192"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R331",
+          "pos": {
+            "x": 136.31,
+            "y": 225.94
+          },
+          "uuid": "601e4466-7006-42c2-8a20-895b21900554"
+        },
+        {
+          "description": "Segment of R332 on B.Silkscreen",
+          "pos": {
+            "x": 136.2675,
+            "y": 226.177258
+          },
+          "uuid": "69551833-ec17-486e-8bd5-2046cda5edfb"
         }
       ],
       "severity": "warning",
@@ -1308,7 +1308,7 @@
             "x": 140.13,
             "y": 225.94
           },
-          "uuid": "0e62ca24-12c6-4fe8-a65f-91beaa57d61b"
+          "uuid": "a5233538-fe62-474a-a5f2-f156651f040f"
         },
         {
           "description": "Reference field of R330",
@@ -1316,53 +1316,7 @@
             "x": 140.13,
             "y": 222.53
           },
-          "uuid": "9787e2f5-7658-46f4-bace-bca2fda00966"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R333",
-          "pos": {
-            "x": 140.13,
-            "y": 225.94
-          },
-          "uuid": "0e62ca24-12c6-4fe8-a65f-91beaa57d61b"
-        },
-        {
-          "description": "Segment of J304 on B.Silkscreen",
-          "pos": {
-            "x": 140.44,
-            "y": 178.88
-          },
-          "uuid": "fb4e429b-06f6-4992-825d-7c51de7ee73b"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R334",
-          "pos": {
-            "x": 125.6,
-            "y": 188.88
-          },
-          "uuid": "ba636585-2ddb-41f1-a848-9e6b21cb0b20"
-        },
-        {
-          "description": "Reference field of U311",
-          "pos": {
-            "x": 123.85,
-            "y": 186.7
-          },
-          "uuid": "e10067e4-6e1b-4d1c-83f1-4cae908bb4a8"
+          "uuid": "cc350829-ed58-47ad-bb9a-f85af0cbe8f9"
         }
       ],
       "severity": "warning",
@@ -1377,7 +1331,7 @@
             "x": 129.32,
             "y": 188.88
           },
-          "uuid": "d3cacf12-ea93-45a2-8f64-b9a690c57ef3"
+          "uuid": "266bedda-641c-4b8a-a929-7001f1342a85"
         },
         {
           "description": "Reference field of C312",
@@ -1385,7 +1339,7 @@
             "x": 129.94,
             "y": 190.5
           },
-          "uuid": "f5eaeb05-272d-440a-94ea-45b3654e511d"
+          "uuid": "e8f9dea7-7b03-427b-973c-086122fd5ae1"
         }
       ],
       "severity": "warning",
@@ -1400,7 +1354,7 @@
             "x": 129.32,
             "y": 188.88
           },
-          "uuid": "d3cacf12-ea93-45a2-8f64-b9a690c57ef3"
+          "uuid": "266bedda-641c-4b8a-a929-7001f1342a85"
         },
         {
           "description": "Segment of R335 on F.Silkscreen",
@@ -1408,53 +1362,7 @@
             "x": 129.4125,
             "y": 189.117258
           },
-          "uuid": "d93b2412-b1b4-4305-9b2c-896a4c036e73"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R337",
-          "pos": {
-            "x": 116.6,
-            "y": 192.68
-          },
-          "uuid": "a3abdf17-6754-4f49-b9d7-893936888017"
-        },
-        {
-          "description": "Reference field of C313",
-          "pos": {
-            "x": 118.78,
-            "y": 193.86
-          },
-          "uuid": "a76f86e3-1601-463c-9191-459cee624e28"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R338",
-          "pos": {
-            "x": 118.46,
-            "y": 192.68
-          },
-          "uuid": "927a0784-0fd1-4e66-8427-a2b59959101e"
-        },
-        {
-          "description": "Reference field of C313",
-          "pos": {
-            "x": 118.78,
-            "y": 193.86
-          },
-          "uuid": "a76f86e3-1601-463c-9191-459cee624e28"
+          "uuid": "625c98cc-db75-4b48-a208-6e7d27d720ab"
         }
       ],
       "severity": "warning",
@@ -1469,7 +1377,30 @@
             "x": 120.32,
             "y": 192.68
           },
-          "uuid": "bc8e8da8-c73a-471f-84fd-6c99377aa242"
+          "uuid": "7ad97593-8e8f-4a8f-a19b-4244129a579c"
+        },
+        {
+          "description": "Reference field of C313",
+          "pos": {
+            "x": 118.78,
+            "y": 193.86
+          },
+          "uuid": "9378fe88-b869-42ae-8cbd-22a8ca7a78fc"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R339",
+          "pos": {
+            "x": 120.32,
+            "y": 192.68
+          },
+          "uuid": "7ad97593-8e8f-4a8f-a19b-4244129a579c"
         },
         {
           "description": "Segment of R338 on F.Silkscreen",
@@ -1477,7 +1408,7 @@
             "x": 120.4125,
             "y": 192.917258
           },
-          "uuid": "e10c832d-679c-47ad-95a5-f362894fbd2a"
+          "uuid": "de52a59e-086e-4786-9183-1f3aaa3a593d"
         }
       ],
       "severity": "warning",
@@ -1487,20 +1418,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of R345",
+          "description": "Reference field of R341",
           "pos": {
-            "x": 123.1,
-            "y": 183.5
+            "x": 124.04,
+            "y": 192.68
           },
-          "uuid": "393774d8-fbda-4a56-b52f-38758f833b2e"
+          "uuid": "01d3388c-24ac-4647-8e7f-8f72caa08da7"
         },
         {
-          "description": "Segment of J317 on F.Silkscreen",
+          "description": "Segment of R340 on F.Silkscreen",
           "pos": {
-            "x": 122.19,
-            "y": 183.76
+            "x": 124.1325,
+            "y": 192.917258
           },
-          "uuid": "9be56ebd-4079-49fe-b13c-6f78da4e5c02"
+          "uuid": "1263aa90-094d-4a5c-a211-4a43fa1fb061"
         }
       ],
       "severity": "warning",
@@ -1510,20 +1441,66 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of R345",
+          "description": "Reference field of R342",
+          "pos": {
+            "x": 125.9,
+            "y": 192.68
+          },
+          "uuid": "25fe8b55-bb12-4d21-bfd6-c73e02d0a526"
+        },
+        {
+          "description": "Segment of R341 on F.Silkscreen",
+          "pos": {
+            "x": 125.9925,
+            "y": 192.917258
+          },
+          "uuid": "54236d4d-31d0-46d5-b4b1-7ea401179a8c"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R343",
           "pos": {
             "x": 123.1,
-            "y": 183.5
+            "y": 177.08
           },
-          "uuid": "393774d8-fbda-4a56-b52f-38758f833b2e"
+          "uuid": "92de9f62-cfcc-4685-8fa8-d35d62ef7ffc"
         },
         {
           "description": "Segment of J317 on F.Silkscreen",
           "pos": {
             "x": 123.11,
-            "y": 182.16
+            "y": 175.94
           },
-          "uuid": "75301851-295b-4e76-bfad-22f0b13ac5cd"
+          "uuid": "b34a8f33-61c5-4ef0-976b-0fd1b3a85d45"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R343",
+          "pos": {
+            "x": 123.1,
+            "y": 177.08
+          },
+          "uuid": "92de9f62-cfcc-4685-8fa8-d35d62ef7ffc"
+        },
+        {
+          "description": "Segment of J317 on F.Silkscreen",
+          "pos": {
+            "x": 123.11,
+            "y": 183.76
+          },
+          "uuid": "f155ae8b-f797-446a-be04-6f4d06ddae5a"
         }
       ],
       "severity": "warning",
@@ -1538,7 +1515,7 @@
             "x": 123.1,
             "y": 183.5
           },
-          "uuid": "393774d8-fbda-4a56-b52f-38758f833b2e"
+          "uuid": "89c6a85a-877a-4f50-937f-27f411bf5249"
         },
         {
           "description": "Segment of J317 on F.Silkscreen",
@@ -1546,30 +1523,7 @@
             "x": 123.11,
             "y": 183.76
           },
-          "uuid": "6348d6ef-3800-4c20-a19f-8e9875888810"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R347",
-          "pos": {
-            "x": 132.66,
-            "y": 177.525
-          },
-          "uuid": "533428fd-430b-44eb-a6ee-df8205f8aa1e"
-        },
-        {
-          "description": "Segment of R346 on F.Silkscreen",
-          "pos": {
-            "x": 132.9525,
-            "y": 177.762258
-          },
-          "uuid": "9a5b6a52-69c2-4e15-a002-b2fed89a0dd6"
+          "uuid": "f155ae8b-f797-446a-be04-6f4d06ddae5a"
         }
       ],
       "severity": "warning",
@@ -1584,7 +1538,7 @@
             "x": 137.18,
             "y": 177.525
           },
-          "uuid": "be961675-2771-4c0a-95cc-c234f77ff0f6"
+          "uuid": "18008076-c1ad-4ad1-b969-27f4cddeb50f"
         },
         {
           "description": "Segment of R349 on F.Silkscreen",
@@ -1592,76 +1546,7 @@
             "x": 136.8875,
             "y": 177.762258
           },
-          "uuid": "dea600a2-7d3f-4761-b205-7ea358d2a6fe"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R349",
-          "pos": {
-            "x": 135.98,
-            "y": 177.525
-          },
-          "uuid": "3b127f93-a012-400c-8647-025b98e37f9d"
-        },
-        {
-          "description": "Segment of R348 on F.Silkscreen",
-          "pos": {
-            "x": 136.2725,
-            "y": 177.287742
-          },
-          "uuid": "79b39625-869d-4c96-bf24-e3454b49451d"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R351",
-          "pos": {
-            "x": 130.0,
-            "y": 136.62
-          },
-          "uuid": "00ea9199-f618-4ef2-9492-3b081d9e8029"
-        },
-        {
-          "description": "Reference field of R352",
-          "pos": {
-            "x": 128.9,
-            "y": 136.62
-          },
-          "uuid": "142d2acf-d7d3-4681-ab56-186e09141c48"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R351",
-          "pos": {
-            "x": 130.0,
-            "y": 136.62
-          },
-          "uuid": "00ea9199-f618-4ef2-9492-3b081d9e8029"
-        },
-        {
-          "description": "Segment of R352 on B.Silkscreen",
-          "pos": {
-            "x": 129.8075,
-            "y": 136.382742
-          },
-          "uuid": "d74f7276-0693-4478-b5eb-afe273448e28"
+          "uuid": "4afbbc8c-0a7d-4db5-8888-592225905db9"
         }
       ],
       "severity": "warning",
@@ -1676,7 +1561,7 @@
             "x": 128.9,
             "y": 136.62
           },
-          "uuid": "142d2acf-d7d3-4681-ab56-186e09141c48"
+          "uuid": "0edcbc4c-0820-44da-8c0d-822f95a0737e"
         },
         {
           "description": "Reference field of C317",
@@ -1684,7 +1569,7 @@
             "x": 128.24,
             "y": 136.62
           },
-          "uuid": "60418511-952f-4db7-b9ea-03fb93e07ab4"
+          "uuid": "236037fb-88b6-4f85-bd03-7121ba0d5b0a"
         }
       ],
       "severity": "warning",
@@ -1699,7 +1584,30 @@
             "x": 128.9,
             "y": 136.62
           },
-          "uuid": "142d2acf-d7d3-4681-ab56-186e09141c48"
+          "uuid": "0edcbc4c-0820-44da-8c0d-822f95a0737e"
+        },
+        {
+          "description": "Reference field of R351",
+          "pos": {
+            "x": 130.0,
+            "y": 136.62
+          },
+          "uuid": "dd8d5e26-99e3-4635-82c5-36faf123317a"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R352",
+          "pos": {
+            "x": 128.9,
+            "y": 136.62
+          },
+          "uuid": "0edcbc4c-0820-44da-8c0d-822f95a0737e"
         },
         {
           "description": "Segment of R351 on B.Silkscreen",
@@ -1707,7 +1615,7 @@
             "x": 129.0925,
             "y": 136.857258
           },
-          "uuid": "62b674c8-bc5c-4dc5-9322-d9e42326462d"
+          "uuid": "a6e8deb3-eb67-46be-8e52-02a699347ab9"
         }
       ],
       "severity": "warning",
@@ -1722,7 +1630,7 @@
             "x": 133.52,
             "y": 136.62
           },
-          "uuid": "87e706f6-824c-4f80-8b1f-b5d42224d4b1"
+          "uuid": "d8b05ca8-7644-45d5-b13f-296cfe0bc67a"
         },
         {
           "description": "Segment of R354 on B.Silkscreen",
@@ -1730,7 +1638,7 @@
             "x": 133.3275,
             "y": 136.382742
           },
-          "uuid": "98d6e8f5-1d48-4720-acfe-9f0122703aed"
+          "uuid": "f8a197ca-4128-46fa-bc8a-b8a14f6021bc"
         }
       ],
       "severity": "warning",
@@ -1745,7 +1653,7 @@
             "x": 132.42,
             "y": 136.62
           },
-          "uuid": "3f05ad95-a556-4eb9-a910-f678cdf78729"
+          "uuid": "d3f35857-409b-433b-a3d8-36904bf57a2d"
         },
         {
           "description": "Reference field of R353",
@@ -1753,7 +1661,7 @@
             "x": 133.52,
             "y": 136.62
           },
-          "uuid": "87e706f6-824c-4f80-8b1f-b5d42224d4b1"
+          "uuid": "d8b05ca8-7644-45d5-b13f-296cfe0bc67a"
         }
       ],
       "severity": "warning",
@@ -1762,44 +1670,21 @@
     {
       "description": "Silkscreen clearance",
       "items": [
-        {
-          "description": "Reference field of R354",
-          "pos": {
-            "x": 132.42,
-            "y": 136.62
-          },
-          "uuid": "3f05ad95-a556-4eb9-a910-f678cdf78729"
-        },
-        {
-          "description": "Segment of R353 on B.Silkscreen",
-          "pos": {
-            "x": 132.6125,
-            "y": 136.857258
-          },
-          "uuid": "73eb66de-1a6b-4115-a811-d9ff6bd3d033"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R356",
-          "pos": {
-            "x": 135.94,
-            "y": 136.62
-          },
-          "uuid": "bd178cac-25c0-43f4-8426-0a476711e036"
-        },
         {
           "description": "Reference field of R355",
           "pos": {
             "x": 137.04,
             "y": 136.62
           },
-          "uuid": "e4936694-9a0e-404f-80e1-be58a2507f6d"
+          "uuid": "bb74e20c-6edc-4828-9db2-947a58a10110"
+        },
+        {
+          "description": "Reference field of R356",
+          "pos": {
+            "x": 135.94,
+            "y": 136.62
+          },
+          "uuid": "bfd98ae3-bcb0-4527-8976-218f679bec22"
         }
       ],
       "severity": "warning",
@@ -1809,20 +1694,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of R357",
-          "pos": {
-            "x": 140.56,
-            "y": 136.62
-          },
-          "uuid": "8ab0f9d7-a160-402c-abe3-35b518c9a727"
-        },
-        {
           "description": "Reference field of R358",
           "pos": {
             "x": 139.46,
             "y": 136.62
           },
-          "uuid": "db7caec6-24bb-4e7e-8d2c-c2d7f4d9ed60"
+          "uuid": "acaf8b6d-9f83-46a4-b1df-af1134d09ca3"
+        },
+        {
+          "description": "Reference field of R357",
+          "pos": {
+            "x": 140.56,
+            "y": 136.62
+          },
+          "uuid": "f588c0ee-2228-4ea7-90eb-810ef19f6a39"
         }
       ],
       "severity": "warning",
@@ -1837,7 +1722,7 @@
             "x": 141.96,
             "y": 123.98
           },
-          "uuid": "725ee66b-8bdd-46b7-873d-5d11916a3b6c"
+          "uuid": "ca4579c2-255d-43f7-b616-784c250abe81"
         },
         {
           "description": "Segment of R359 on F.Silkscreen",
@@ -1845,7 +1730,7 @@
             "x": 142.1525,
             "y": 124.217258
           },
-          "uuid": "853ff74f-9789-4a03-b316-9abd6bbd7af0"
+          "uuid": "d7f8d90f-c2bb-4439-b35a-8c3f94d86ab5"
         }
       ],
       "severity": "warning",
@@ -1860,7 +1745,7 @@
             "x": 145.48,
             "y": 123.98
           },
-          "uuid": "377cfb24-4767-49fb-a8d9-7fc926d6a556"
+          "uuid": "49b36217-9677-436e-bbe0-34cec3a3c02d"
         },
         {
           "description": "Segment of R361 on F.Silkscreen",
@@ -1868,7 +1753,7 @@
             "x": 145.6725,
             "y": 124.217258
           },
-          "uuid": "a9067cfe-427f-4f77-80d4-4d23539c106f"
+          "uuid": "7a8df188-f9cd-409a-8420-d4ab63fedbb9"
         }
       ],
       "severity": "warning",
@@ -1883,7 +1768,7 @@
             "x": 115.02,
             "y": 177.08
           },
-          "uuid": "096be5ef-8727-4918-963c-b2e44575443d"
+          "uuid": "247cc2a3-0028-47c9-85a5-efbbc4805b53"
         },
         {
           "description": "Segment of R370 on B.Silkscreen",
@@ -1891,7 +1776,53 @@
             "x": 114.9275,
             "y": 177.317258
           },
-          "uuid": "9520600d-4833-4ff1-ab0a-3941c0a83ca9"
+          "uuid": "69c8c0ac-ddec-44d9-b855-8ebc1948b308"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R364",
+          "pos": {
+            "x": 139.21,
+            "y": 171.58
+          },
+          "uuid": "34b64e78-8e0c-4dda-823f-d01144488df6"
+        },
+        {
+          "description": "Segment of J313 on B.Silkscreen",
+          "pos": {
+            "x": 142.43,
+            "y": 169.97
+          },
+          "uuid": "ec4ae8b2-1431-40cf-bdaf-883b0fd763a9"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R364",
+          "pos": {
+            "x": 139.21,
+            "y": 171.58
+          },
+          "uuid": "34b64e78-8e0c-4dda-823f-d01144488df6"
+        },
+        {
+          "description": "Segment of R368 on B.Silkscreen",
+          "pos": {
+            "x": 138.9675,
+            "y": 171.817258
+          },
+          "uuid": "480e9604-a494-4140-af04-d47058f4f47e"
         }
       ],
       "severity": "warning",
@@ -1906,7 +1837,7 @@
             "x": 139.93,
             "y": 159.0
           },
-          "uuid": "401cae31-d8d3-4f85-83b3-378823bc2524"
+          "uuid": "15d516e1-93f4-4f80-af80-eac1eb568cbb"
         },
         {
           "description": "Reference field of Q303",
@@ -1914,7 +1845,30 @@
             "x": 142.0,
             "y": 161.4
           },
-          "uuid": "6f0ceada-d2e1-46d9-bb4a-2e02323c59fc"
+          "uuid": "29e853b4-ee1e-4964-9138-a108657a74a6"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of R366",
+          "pos": {
+            "x": 138.6,
+            "y": 154.57
+          },
+          "uuid": "1c5e667c-682f-4ed3-ad8c-24c04240f842"
+        },
+        {
+          "description": "Segment of D305 on B.Silkscreen",
+          "pos": {
+            "x": 144.11,
+            "y": 154.05
+          },
+          "uuid": "7635a28c-9389-483f-b6ee-5ec58a024cfe"
         }
       ],
       "severity": "warning",
@@ -1929,7 +1883,7 @@
             "x": 146.83,
             "y": 158.5
           },
-          "uuid": "16e3fcd5-2d68-46b0-8a83-0c7f0ace154f"
+          "uuid": "1a820aff-4a7a-4646-b483-0caa51ab4cf5"
         },
         {
           "description": "Segment of Q304 on B.Silkscreen",
@@ -1937,7 +1891,7 @@
             "x": 146.44,
             "y": 158.94
           },
-          "uuid": "41868504-2ae3-4891-9689-c8c7d5210ba4"
+          "uuid": "6512e89a-65aa-454b-97e5-3139746297e9"
         }
       ],
       "severity": "warning",
@@ -1952,7 +1906,7 @@
             "x": 146.83,
             "y": 158.5
           },
-          "uuid": "16e3fcd5-2d68-46b0-8a83-0c7f0ace154f"
+          "uuid": "1a820aff-4a7a-4646-b483-0caa51ab4cf5"
         },
         {
           "description": "Segment of Q304 on B.Silkscreen",
@@ -1960,7 +1914,7 @@
             "x": 146.49,
             "y": 158.94
           },
-          "uuid": "db7e2c04-9481-4da7-9791-af2d91f4e4ea"
+          "uuid": "41f345e9-d5af-49eb-a151-e0bf3ab2d8d4"
         }
       ],
       "severity": "warning",
@@ -1975,7 +1929,7 @@
             "x": 140.92,
             "y": 171.58
           },
-          "uuid": "34d7c3bd-8b89-4590-94d9-9b64686d0be2"
+          "uuid": "5bd6cad0-e667-4d0f-ad42-821f444e1bac"
         },
         {
           "description": "Segment of J313 on B.Silkscreen",
@@ -1983,7 +1937,7 @@
             "x": 142.43,
             "y": 169.97
           },
-          "uuid": "3cbb13a0-08c1-484b-9d2e-08faf517dc4f"
+          "uuid": "ec4ae8b2-1431-40cf-bdaf-883b0fd763a9"
         }
       ],
       "severity": "warning",
@@ -1998,7 +1952,7 @@
             "x": 140.92,
             "y": 171.58
           },
-          "uuid": "34d7c3bd-8b89-4590-94d9-9b64686d0be2"
+          "uuid": "5bd6cad0-e667-4d0f-ad42-821f444e1bac"
         },
         {
           "description": "Segment of R369 on B.Silkscreen",
@@ -2006,7 +1960,7 @@
             "x": 140.6775,
             "y": 171.817258
           },
-          "uuid": "5fdb5b79-6d3d-48e6-9f60-02b004210dd9"
+          "uuid": "fd73115c-93b8-477a-92ea-c1b4f77c5f0a"
         }
       ],
       "severity": "warning",
@@ -2021,7 +1975,7 @@
             "x": 142.63,
             "y": 171.58
           },
-          "uuid": "0a2d867e-103f-4a33-8511-26f71d2379f0"
+          "uuid": "2a22e355-728c-4a51-94e2-358fff790190"
         },
         {
           "description": "Segment of J313 on B.Silkscreen",
@@ -2029,7 +1983,7 @@
             "x": 142.43,
             "y": 169.97
           },
-          "uuid": "3cbb13a0-08c1-484b-9d2e-08faf517dc4f"
+          "uuid": "ec4ae8b2-1431-40cf-bdaf-883b0fd763a9"
         }
       ],
       "severity": "warning",
@@ -2039,20 +1993,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of R371",
+          "description": "Reference field of R370",
           "pos": {
-            "x": 118.74,
+            "x": 116.88,
             "y": 177.08
           },
-          "uuid": "4c2b4771-1af1-444a-b9fe-8f6bce9960f3"
+          "uuid": "7272d5e9-b3ca-48cb-9af8-89beba3f79be"
         },
         {
-          "description": "Reference field of C342",
+          "description": "Segment of R371 on B.Silkscreen",
           "pos": {
-            "x": 120.14,
-            "y": 174.9
+            "x": 116.7875,
+            "y": 177.317258
           },
-          "uuid": "59770954-ce1b-4ab1-8962-4fb8684ac26d"
+          "uuid": "badff232-6182-400e-869c-1c8652235fe0"
         }
       ],
       "severity": "warning",
@@ -2061,67 +2015,21 @@
     {
       "description": "Silkscreen clearance",
       "items": [
-        {
-          "description": "Reference field of R392",
-          "pos": {
-            "x": 138.65,
-            "y": 215.96
-          },
-          "uuid": "01387030-5d5d-48c1-b1db-ea02f2096e28"
-        },
-        {
-          "description": "Rectangle of SW305 on F.Silkscreen",
-          "pos": {
-            "x": 132.17,
-            "y": 211.67
-          },
-          "uuid": "60c936c0-a1f8-4fa2-bd1d-a413813a9e03"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of R392",
-          "pos": {
-            "x": 138.65,
-            "y": 215.96
-          },
-          "uuid": "01387030-5d5d-48c1-b1db-ea02f2096e28"
-        },
-        {
-          "description": "Reference field of R325",
-          "pos": {
-            "x": 138.65,
-            "y": 212.4
-          },
-          "uuid": "db947889-fb6d-4937-a95b-736dbeae4c63"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of TP301",
-          "pos": {
-            "x": 141.33,
-            "y": 143.002
-          },
-          "uuid": "d2e466e0-d537-4749-bee2-a2ec62e892ff"
-        },
         {
           "description": "Reference field of R396",
           "pos": {
             "x": 140.48,
             "y": 144.88
           },
-          "uuid": "f3abab17-9f3a-480e-9270-1c53bf7ac612"
+          "uuid": "35bd486e-70fd-4b42-b8db-85573b7b1171"
+        },
+        {
+          "description": "Circle of TP301 on B.Silkscreen",
+          "pos": {
+            "x": 141.33,
+            "y": 144.65
+          },
+          "uuid": "a9c00556-9ae7-405e-9c94-ca22622cdb23"
         }
       ],
       "severity": "warning",
@@ -2131,20 +2039,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of U303",
+          "description": "Reference field of R396",
           "pos": {
-            "x": 125.68,
-            "y": 205.25
+            "x": 140.48,
+            "y": 144.88
           },
-          "uuid": "f28a952c-13ba-45dc-af9c-dc80cade2b3f"
+          "uuid": "35bd486e-70fd-4b42-b8db-85573b7b1171"
         },
         {
-          "description": "Segment of U306 on F.Silkscreen",
+          "description": "Reference field of TP301",
           "pos": {
-            "x": 126.81,
-            "y": 205.485
+            "x": 141.33,
+            "y": 143.002
           },
-          "uuid": "f67f54f4-e837-4912-8771-3d642a03fe56"
+          "uuid": "76fac4f4-0d58-4932-81e4-333de49ba69d"
         }
       ],
       "severity": "warning",
@@ -2159,7 +2067,7 @@
             "x": 134.2875,
             "y": 191.385
           },
-          "uuid": "89feb9a9-54f8-4997-99c2-d71816dd8440"
+          "uuid": "9a8e3ac5-5c0f-430d-b988-53979c7dee2f"
         },
         {
           "description": "Reference field of D301",
@@ -2167,7 +2075,76 @@
             "x": 138.4,
             "y": 192.6
           },
-          "uuid": "c1644be6-6b9a-4697-a21b-c67d21e21780"
+          "uuid": "a34365ff-6d24-4196-a5b7-48af9eab1396"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of U305",
+          "pos": {
+            "x": 134.2875,
+            "y": 191.385
+          },
+          "uuid": "9a8e3ac5-5c0f-430d-b988-53979c7dee2f"
+        },
+        {
+          "description": "Segment of D301 on B.Silkscreen",
+          "pos": {
+            "x": 137.55,
+            "y": 196.11
+          },
+          "uuid": "cf8c02fd-2d28-4b57-8c7b-3f6afb414b38"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of U311",
+          "pos": {
+            "x": 123.85,
+            "y": 186.7
+          },
+          "uuid": "48960a83-b9d9-44d1-a115-3bf26c80b969"
+        },
+        {
+          "description": "Polygon of U311 on F.Silkscreen",
+          "pos": {
+            "x": 122.4,
+            "y": 187.59
+          },
+          "uuid": "9da19969-df72-4aca-9e34-916f5e9bd89b"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of U311",
+          "pos": {
+            "x": 123.85,
+            "y": 186.7
+          },
+          "uuid": "48960a83-b9d9-44d1-a115-3bf26c80b969"
+        },
+        {
+          "description": "Reference field of R334",
+          "pos": {
+            "x": 125.6,
+            "y": 188.88
+          },
+          "uuid": "de32d54f-1c96-419b-924b-e2806f987823"
         }
       ],
       "severity": "warning",
@@ -2182,7 +2159,7 @@
             "x": 142.95,
             "y": 118.1
           },
-          "uuid": "98f248aa-9e70-467d-83ec-7d46d6685f6f"
+          "uuid": "8b361c30-ea22-4793-b670-3987c3996c30"
         },
         {
           "description": "Polygon of U313 on F.Silkscreen",
@@ -2190,7 +2167,7 @@
             "x": 141.5,
             "y": 118.99
           },
-          "uuid": "f75c1c5c-b9b8-44f2-8719-ed98328c5a0c"
+          "uuid": "da03e72d-bcd2-4b6e-b77d-27ffe488eefd"
         }
       ],
       "severity": "warning",
@@ -2200,66 +2177,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Segment of C302 on F.Silkscreen",
+          "description": "Segment of C304 on F.Silkscreen",
           "pos": {
-            "x": 138.765,
+            "x": 141.175,
             "y": 152.561252
           },
-          "uuid": "68a06284-5f58-470b-ab74-6e4897766fba"
+          "uuid": "39c204da-fd6c-4c73-af81-e6fa096c7cdf"
         },
         {
-          "description": "Reference field of C304",
+          "description": "Reference field of C306",
           "pos": {
-            "x": 138.76,
+            "x": 141.17,
             "y": 152.3
           },
-          "uuid": "7111043f-3b18-4dd5-ae10-6de0ed86bf6e"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Segment of C308 on B.Silkscreen",
-          "pos": {
-            "x": 136.78,
-            "y": 215.41058
-          },
-          "uuid": "cba047fe-41aa-4f3e-929b-d60720ea4ba1"
-        },
-        {
-          "description": "Reference field of C307",
-          "pos": {
-            "x": 136.81,
-            "y": 215.49
-          },
-          "uuid": "df7562ac-c905-47c0-81fa-fe8d9cbe1114"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Segment of C311 on B.Silkscreen",
-          "pos": {
-            "x": 136.28,
-            "y": 219.26058
-          },
-          "uuid": "84d05464-8aaa-49b9-8c3e-9e015502e5f8"
-        },
-        {
-          "description": "Reference field of C310",
-          "pos": {
-            "x": 136.31,
-            "y": 219.12
-          },
-          "uuid": "d082f453-50d1-42a5-8dd0-933993641c01"
+          "uuid": "4f4a410f-c17d-454f-9732-13ab2ec47d11"
         }
       ],
       "severity": "warning",
@@ -2274,7 +2205,7 @@
             "x": 122.78,
             "y": 136.76058
           },
-          "uuid": "57a67b7a-cde7-4507-a6d8-dc36fd156bb2"
+          "uuid": "72a732a0-6948-449c-b7cd-6dc42f37e58b"
         },
         {
           "description": "Reference field of C314",
@@ -2282,7 +2213,7 @@
             "x": 122.96,
             "y": 136.62
           },
-          "uuid": "9427893a-71db-452d-9433-2a4d3b42bbdd"
+          "uuid": "85b82a76-0464-4328-8088-e41b0a8bd38b"
         }
       ],
       "severity": "warning",
@@ -2292,20 +2223,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Segment of D301 on B.Silkscreen",
+          "description": "Segment of C316 on B.Silkscreen",
           "pos": {
-            "x": 137.55,
-            "y": 196.11
+            "x": 124.54,
+            "y": 136.76058
           },
-          "uuid": "166c44f2-775a-4ba3-81f8-7b8ff3d61413"
+          "uuid": "3e98fb6f-bb6e-49d7-ba93-133b2b783080"
         },
         {
-          "description": "Reference field of U305",
+          "description": "Reference field of C315",
           "pos": {
-            "x": 134.2875,
-            "y": 191.385
+            "x": 124.72,
+            "y": 136.62
           },
-          "uuid": "89feb9a9-54f8-4997-99c2-d71816dd8440"
+          "uuid": "b0635ebd-293b-4c23-b86b-51ec8508cdc6"
         }
       ],
       "severity": "warning",
@@ -2315,20 +2246,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Segment of D305 on B.Silkscreen",
+          "description": "Segment of C317 on B.Silkscreen",
           "pos": {
-            "x": 144.11,
-            "y": 154.05
+            "x": 126.3,
+            "y": 136.76058
           },
-          "uuid": "9ded550c-969b-4019-94f8-b1ba1b7ec921"
+          "uuid": "68460cba-d190-48c7-8b09-125481f45359"
         },
         {
-          "description": "Reference field of R366",
+          "description": "Reference field of C316",
           "pos": {
-            "x": 138.6,
-            "y": 154.57
+            "x": 126.48,
+            "y": 136.62
           },
-          "uuid": "fce0e554-316e-4106-b41e-88210165be61"
+          "uuid": "9db62f0e-efb3-488f-862c-fd8d637f1944"
         }
       ],
       "severity": "warning",
@@ -2338,20 +2269,112 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Segment of J313 on B.Silkscreen",
+          "description": "Segment of J304 on B.Silkscreen",
           "pos": {
-            "x": 142.43,
-            "y": 169.97
+            "x": 140.44,
+            "y": 178.88
           },
-          "uuid": "3cbb13a0-08c1-484b-9d2e-08faf517dc4f"
+          "uuid": "7516d521-97df-47bb-b0ea-0962ed779221"
         },
         {
-          "description": "Reference field of R364",
+          "description": "Reference field of C309",
           "pos": {
-            "x": 139.21,
-            "y": 171.58
+            "x": 140.63,
+            "y": 215.27
           },
-          "uuid": "fed77555-1580-40e9-b580-8193438ed4ae"
+          "uuid": "caa0dffa-8f49-4b49-9bea-e7f9c972874f"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of J304 on B.Silkscreen",
+          "pos": {
+            "x": 140.44,
+            "y": 178.88
+          },
+          "uuid": "7516d521-97df-47bb-b0ea-0962ed779221"
+        },
+        {
+          "description": "Reference field of R330",
+          "pos": {
+            "x": 140.13,
+            "y": 222.53
+          },
+          "uuid": "cc350829-ed58-47ad-bb9a-f85af0cbe8f9"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of J304 on B.Silkscreen",
+          "pos": {
+            "x": 140.44,
+            "y": 178.88
+          },
+          "uuid": "7516d521-97df-47bb-b0ea-0962ed779221"
+        },
+        {
+          "description": "Reference field of R333",
+          "pos": {
+            "x": 140.13,
+            "y": 225.94
+          },
+          "uuid": "a5233538-fe62-474a-a5f2-f156651f040f"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of J311 on B.Silkscreen",
+          "pos": {
+            "x": 137.44,
+            "y": 119.89
+          },
+          "uuid": "0ef2d4c5-6852-4fc7-8a4c-091bb7ccfbd0"
+        },
+        {
+          "description": "Reference field of J310",
+          "pos": {
+            "x": 144.5,
+            "y": 119.35
+          },
+          "uuid": "f5bfd2f3-659e-4da4-9a08-05647acc5656"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of J311 on B.Silkscreen",
+          "pos": {
+            "x": 145.26,
+            "y": 119.89
+          },
+          "uuid": "b878d974-d2c1-47b9-b156-3e64c4ec2602"
+        },
+        {
+          "description": "Reference field of J310",
+          "pos": {
+            "x": 144.5,
+            "y": 119.35
+          },
+          "uuid": "f5bfd2f3-659e-4da4-9a08-05647acc5656"
         }
       ],
       "severity": "warning",
@@ -2363,41 +2386,41 @@
         {
           "description": "Segment of J317 on F.Silkscreen",
           "pos": {
-            "x": 123.11,
-            "y": 175.94
-          },
-          "uuid": "58e7268c-1996-40af-872b-d815fa60e3c6"
-        },
-        {
-          "description": "Reference field of R343",
-          "pos": {
-            "x": 123.1,
-            "y": 177.08
-          },
-          "uuid": "960e52cb-1260-4920-8d82-c7c172ef6791"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Segment of J317 on F.Silkscreen",
-          "pos": {
-            "x": 123.11,
+            "x": 122.19,
             "y": 183.76
           },
-          "uuid": "6348d6ef-3800-4c20-a19f-8e9875888810"
+          "uuid": "37425b43-d465-4102-8d98-4175244ba2e6"
         },
         {
-          "description": "Reference field of R343",
+          "description": "Reference field of R345",
           "pos": {
             "x": 123.1,
-            "y": 177.08
+            "y": 183.5
           },
-          "uuid": "960e52cb-1260-4920-8d82-c7c172ef6791"
+          "uuid": "89c6a85a-877a-4f50-937f-27f411bf5249"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of J317 on F.Silkscreen",
+          "pos": {
+            "x": 123.11,
+            "y": 182.16
+          },
+          "uuid": "471b6e1e-fa1d-4497-b009-0869dab19a42"
+        },
+        {
+          "description": "Reference field of R345",
+          "pos": {
+            "x": 123.1,
+            "y": 183.5
+          },
+          "uuid": "89c6a85a-877a-4f50-937f-27f411bf5249"
         }
       ],
       "severity": "warning",
@@ -2412,7 +2435,7 @@
             "x": 129.17,
             "y": 146.66
           },
-          "uuid": "23b03d23-e100-4a1f-958e-a71e7f5e4a35"
+          "uuid": "0a88a302-2e40-44bd-98b4-b759130e1893"
         },
         {
           "description": "Reference field of C322",
@@ -2420,7 +2443,7 @@
             "x": 129.7,
             "y": 146.4
           },
-          "uuid": "b31ecc9e-f7d7-484b-900a-62a6a91fd3a2"
+          "uuid": "8463323a-4101-47a9-811b-1853fa6f6ac8"
         }
       ],
       "severity": "warning",
@@ -2435,7 +2458,7 @@
             "x": 146.5525,
             "y": 120.517258
           },
-          "uuid": "a98c1e4b-f4a4-4117-b3be-4bc4209a0763"
+          "uuid": "42e4834b-e417-49bf-b7d9-7485771be7d2"
         },
         {
           "description": "Reference field of R307",
@@ -2443,53 +2466,7 @@
             "x": 146.36,
             "y": 120.28
           },
-          "uuid": "b0411f63-3a77-415b-9e5e-cb694ff19e87"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Segment of R330 on B.Silkscreen",
-          "pos": {
-            "x": 138.1775,
-            "y": 222.767258
-          },
-          "uuid": "d531048a-95e7-4c79-9549-fdb138cb198b"
-        },
-        {
-          "description": "Reference field of R329",
-          "pos": {
-            "x": 138.22,
-            "y": 222.53
-          },
-          "uuid": "e60896fe-e88f-4634-ae96-1de76c8eccf0"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Segment of R332 on B.Silkscreen",
-          "pos": {
-            "x": 136.2675,
-            "y": 226.177258
-          },
-          "uuid": "3c13460f-0ca9-407f-9e62-5eeee77ae2e3"
-        },
-        {
-          "description": "Reference field of R331",
-          "pos": {
-            "x": 136.31,
-            "y": 225.94
-          },
-          "uuid": "4b313b51-040a-4b9f-bb90-da060fa98e05"
+          "uuid": "9639a4fb-5fdf-4c38-8ae9-8616e738f200"
         }
       ],
       "severity": "warning",
@@ -2504,7 +2481,7 @@
             "x": 138.1775,
             "y": 226.177258
           },
-          "uuid": "52244c5f-1b7d-470d-9c82-e54e32eab2bf"
+          "uuid": "390e33aa-4ba3-4d17-9973-8fba77c4de0b"
         },
         {
           "description": "Reference field of R332",
@@ -2512,7 +2489,7 @@
             "x": 138.22,
             "y": 225.94
           },
-          "uuid": "6c80d5b9-3f73-4deb-bcf9-45f3fb292343"
+          "uuid": "ad14a2e5-bcea-4c6a-8a62-7cd1db805653"
         }
       ],
       "severity": "warning",
@@ -2527,7 +2504,7 @@
             "x": 127.5525,
             "y": 189.117258
           },
-          "uuid": "13b02d83-863a-4919-a445-77651f849d36"
+          "uuid": "1d7e82e6-03af-4a82-98e1-11b4b4a6d2ba"
         },
         {
           "description": "Reference field of R335",
@@ -2535,7 +2512,7 @@
             "x": 127.46,
             "y": 188.88
           },
-          "uuid": "c26911a6-00d7-4dfa-afe1-2e695f86de20"
+          "uuid": "27ee2921-3093-4fc9-8504-9c8c8ee5496b"
         }
       ],
       "severity": "warning",
@@ -2550,7 +2527,7 @@
             "x": 118.5525,
             "y": 192.917258
           },
-          "uuid": "8450ab8b-0f58-43e6-ab95-97683491d11c"
+          "uuid": "6b65d09b-a467-4e9f-8e82-3ee77b07d06d"
         },
         {
           "description": "Reference field of R338",
@@ -2558,7 +2535,7 @@
             "x": 118.46,
             "y": 192.68
           },
-          "uuid": "927a0784-0fd1-4e66-8427-a2b59959101e"
+          "uuid": "ca41884c-454f-4563-bee4-d77b1121fec8"
         }
       ],
       "severity": "warning",
@@ -2573,7 +2550,7 @@
             "x": 122.2725,
             "y": 192.917258
           },
-          "uuid": "48602b3c-e01a-4af7-bc20-7b643ee51cdc"
+          "uuid": "8bc3cd49-ccbf-4980-ace9-4ff96e10d5d4"
         },
         {
           "description": "Reference field of R340",
@@ -2581,7 +2558,7 @@
             "x": 122.18,
             "y": 192.68
           },
-          "uuid": "dec419c0-e12d-4faa-8c89-ab8fce168896"
+          "uuid": "96e995cb-97d6-4eb1-a5e4-176a06e2f404"
         }
       ],
       "severity": "warning",
@@ -2591,20 +2568,20 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Segment of R340 on F.Silkscreen",
+          "description": "Segment of R346 on F.Silkscreen",
           "pos": {
-            "x": 124.1325,
-            "y": 192.917258
+            "x": 132.9525,
+            "y": 177.762258
           },
-          "uuid": "3b956c51-fc3a-4bf7-b79d-1b27c72a566c"
+          "uuid": "d0ab4b67-5379-4087-a5ea-728986f03b22"
         },
         {
-          "description": "Reference field of R341",
+          "description": "Reference field of R347",
           "pos": {
-            "x": 124.04,
-            "y": 192.68
+            "x": 132.66,
+            "y": 177.525
           },
-          "uuid": "6e475ef8-4ce7-4c69-955d-906be105702a"
+          "uuid": "e5d96da6-b4cc-4a4e-b7bc-a25bc3be80c3"
         }
       ],
       "severity": "warning",
@@ -2614,20 +2591,89 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Segment of R341 on F.Silkscreen",
+          "description": "Segment of R348 on F.Silkscreen",
           "pos": {
-            "x": 125.9925,
-            "y": 192.917258
+            "x": 136.2725,
+            "y": 177.287742
           },
-          "uuid": "bfd456ed-52af-4b68-a555-fe0ba69eb20c"
+          "uuid": "7d67398e-60c5-45b7-85cf-05cca8a0a76f"
         },
         {
-          "description": "Reference field of R342",
+          "description": "Reference field of R349",
           "pos": {
-            "x": 125.9,
-            "y": 192.68
+            "x": 135.98,
+            "y": 177.525
           },
-          "uuid": "d58397a9-d639-4c57-8afb-42628678ec9f"
+          "uuid": "d9eeb65c-62db-426f-8ad6-0318288f154b"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of R351 on B.Silkscreen",
+          "pos": {
+            "x": 128.0475,
+            "y": 136.857258
+          },
+          "uuid": "138cebeb-6709-4adc-b3e0-63fdf3568a3c"
+        },
+        {
+          "description": "Reference field of C317",
+          "pos": {
+            "x": 128.24,
+            "y": 136.62
+          },
+          "uuid": "236037fb-88b6-4f85-bd03-7121ba0d5b0a"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of R352 on B.Silkscreen",
+          "pos": {
+            "x": 129.8075,
+            "y": 136.382742
+          },
+          "uuid": "4e266d9d-76b9-46fb-be21-97bad7ced812"
+        },
+        {
+          "description": "Reference field of R351",
+          "pos": {
+            "x": 130.0,
+            "y": 136.62
+          },
+          "uuid": "dd8d5e26-99e3-4635-82c5-36faf123317a"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of R353 on B.Silkscreen",
+          "pos": {
+            "x": 132.6125,
+            "y": 136.857258
+          },
+          "uuid": "8ceed0d0-7d4b-43d5-b76e-642b3c2dfbae"
+        },
+        {
+          "description": "Reference field of R354",
+          "pos": {
+            "x": 132.42,
+            "y": 136.62
+          },
+          "uuid": "d3f35857-409b-433b-a3d8-36904bf57a2d"
         }
       ],
       "severity": "warning",
@@ -2642,7 +2688,7 @@
             "x": 136.1325,
             "y": 136.857258
           },
-          "uuid": "21648a18-f48f-48c6-bda4-0824416bee4c"
+          "uuid": "8f9a099b-7bc9-4ac0-942d-46ba9b0de4e2"
         },
         {
           "description": "Reference field of R356",
@@ -2650,7 +2696,7 @@
             "x": 135.94,
             "y": 136.62
           },
-          "uuid": "bd178cac-25c0-43f4-8426-0a476711e036"
+          "uuid": "bfd98ae3-bcb0-4527-8976-218f679bec22"
         }
       ],
       "severity": "warning",
@@ -2665,7 +2711,7 @@
             "x": 136.8475,
             "y": 136.382742
           },
-          "uuid": "b62b9c18-8b10-4b4b-8501-78dafafe6c89"
+          "uuid": "aae6c6d5-581e-42b1-8f6e-86fd9b413ec7"
         },
         {
           "description": "Reference field of R355",
@@ -2673,7 +2719,7 @@
             "x": 137.04,
             "y": 136.62
           },
-          "uuid": "e4936694-9a0e-404f-80e1-be58a2507f6d"
+          "uuid": "bb74e20c-6edc-4828-9db2-947a58a10110"
         }
       ],
       "severity": "warning",
@@ -2688,7 +2734,7 @@
             "x": 139.6525,
             "y": 136.857258
           },
-          "uuid": "8aad415a-e74c-4112-adbe-fdf08d5ac670"
+          "uuid": "6dfd8107-30ee-4230-96af-54a696dc45e3"
         },
         {
           "description": "Reference field of R358",
@@ -2696,7 +2742,7 @@
             "x": 139.46,
             "y": 136.62
           },
-          "uuid": "db7caec6-24bb-4e7e-8d2c-c2d7f4d9ed60"
+          "uuid": "acaf8b6d-9f83-46a4-b1df-af1134d09ca3"
         }
       ],
       "severity": "warning",
@@ -2711,7 +2757,7 @@
             "x": 140.3675,
             "y": 136.382742
           },
-          "uuid": "516ed332-5ddd-4f03-865a-ba63335f68dd"
+          "uuid": "2f890c3a-8810-4e6a-8495-07db85781a99"
         },
         {
           "description": "Reference field of R357",
@@ -2719,7 +2765,7 @@
             "x": 140.56,
             "y": 136.62
           },
-          "uuid": "8ab0f9d7-a160-402c-abe3-35b518c9a727"
+          "uuid": "f588c0ee-2228-4ea7-90eb-810ef19f6a39"
         }
       ],
       "severity": "warning",
@@ -2734,7 +2780,7 @@
             "x": 143.9125,
             "y": 124.217258
           },
-          "uuid": "48063e5d-bea8-4497-b8cf-6b239985e4ba"
+          "uuid": "c8648056-f792-4ca6-b0cd-2933e2fc8ec2"
         },
         {
           "description": "Reference field of R361",
@@ -2742,7 +2788,7 @@
             "x": 143.72,
             "y": 123.98
           },
-          "uuid": "72291982-5e7a-4515-9cac-b9455b3d4e2f"
+          "uuid": "fe25c83b-0e5d-4e48-baf8-d62a29056e7f"
         }
       ],
       "severity": "warning",
@@ -2757,7 +2803,7 @@
             "x": 145.9225,
             "y": 158.737258
           },
-          "uuid": "b1abf4c9-e73c-4d3b-bd43-9dd5a9b5fc8d"
+          "uuid": "513be2c9-45ce-4d16-9d3d-ac9a14ca5c3b"
         },
         {
           "description": "Reference field of Q304",
@@ -2765,53 +2811,7 @@
             "x": 145.6,
             "y": 159.7
           },
-          "uuid": "d981414b-6a69-4c30-a414-20f549ad1371"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Segment of R368 on B.Silkscreen",
-          "pos": {
-            "x": 138.9675,
-            "y": 171.817258
-          },
-          "uuid": "80e8d40e-de83-4606-b3b7-ec7191dec897"
-        },
-        {
-          "description": "Reference field of R364",
-          "pos": {
-            "x": 139.21,
-            "y": 171.58
-          },
-          "uuid": "fed77555-1580-40e9-b580-8193438ed4ae"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Segment of R371 on B.Silkscreen",
-          "pos": {
-            "x": 116.7875,
-            "y": 177.317258
-          },
-          "uuid": "1c7512d9-8296-445e-b8fd-d54acfdcc879"
-        },
-        {
-          "description": "Reference field of R370",
-          "pos": {
-            "x": 116.88,
-            "y": 177.08
-          },
-          "uuid": "ce2fc9aa-a8c2-43fb-b45f-03309ba65d16"
+          "uuid": "c01401f2-36e5-46bf-acb0-f8fa0c1e21e9"
         }
       ],
       "severity": "warning",
@@ -2826,7 +2826,7 @@
             "x": 143.8525,
             "y": 165.667258
           },
-          "uuid": "0db6a7bb-9051-43d5-b91f-7b86173c5afe"
+          "uuid": "187b2ebf-d6d1-4b64-b189-abe501b2ceec"
         },
         {
           "description": "Reference field of R394",
@@ -2834,7 +2834,7 @@
             "x": 143.81,
             "y": 165.43
           },
-          "uuid": "ae12c96f-8bac-40bf-862d-d6edcc5040d3"
+          "uuid": "68bfba4f-252f-424b-aabe-84cdb669e8dd"
         }
       ],
       "severity": "warning",
@@ -2849,7 +2849,7 @@
             "x": 145.7625,
             "y": 165.667258
           },
-          "uuid": "11ea263d-3b1f-4720-9a21-75f508163d70"
+          "uuid": "c0760e71-fcf9-4d6c-a157-1d3f8fd6f8a2"
         },
         {
           "description": "Reference field of R395",
@@ -2857,30 +2857,7 @@
             "x": 145.72,
             "y": 165.43
           },
-          "uuid": "67c8b583-a24e-4812-8740-e974ddfef930"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Segment of R396 on B.Silkscreen",
-          "pos": {
-            "x": 138.5275,
-            "y": 145.117258
-          },
-          "uuid": "0c45b129-7033-4fa2-836c-98d756be8304"
-        },
-        {
-          "description": "Reference field of R326",
-          "pos": {
-            "x": 138.72,
-            "y": 144.88
-          },
-          "uuid": "2cdb7d50-5536-4219-83d9-891b6a583690"
+          "uuid": "ee19e6a0-1494-4796-8fdd-a7d7dea0bce9"
         }
       ],
       "severity": "warning",
@@ -2895,7 +2872,7 @@
             "x": 129.54,
             "y": 224.21
           },
-          "uuid": "05ad488a-46bc-4535-bda3-dbd5d9a555c0"
+          "uuid": "76d08f01-833f-4270-ad36-b5abd76824e6"
         },
         {
           "description": "Reference field of U302",
@@ -2903,7 +2880,30 @@
             "x": 125.68,
             "y": 223.9
           },
-          "uuid": "b9fb0439-1d53-4085-9bad-82fa7c199da2"
+          "uuid": "c0c43827-75c9-477a-a6b8-2c70403908aa"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of U306 on F.Silkscreen",
+          "pos": {
+            "x": 126.81,
+            "y": 205.485
+          },
+          "uuid": "67c3d2e8-adb6-4fcf-a4e0-f7799ab324ed"
+        },
+        {
+          "description": "Reference field of U303",
+          "pos": {
+            "x": 125.68,
+            "y": 205.25
+          },
+          "uuid": "691bf2ce-18a9-488a-93d8-7ceca43ed550"
         }
       ],
       "severity": "warning",
@@ -2918,7 +2918,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R308",
@@ -2926,7 +2926,7 @@
             "x": 99.55,
             "y": 193.58
           },
-          "uuid": "d68c9dc5-0eee-4415-a972-57fe0d84feb4"
+          "uuid": "03e47cd4-2204-4a82-9368-7676edcc24f4"
         }
       ],
       "severity": "warning",
@@ -2941,7 +2941,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R309",
@@ -2949,7 +2949,7 @@
             "x": 99.55,
             "y": 196.99
           },
-          "uuid": "8fc1ef53-6fb1-4b2a-8e75-7e8cf61b47f0"
+          "uuid": "b3fde67b-6be8-4490-8607-1fb1e063ba71"
         }
       ],
       "severity": "warning",
@@ -2964,7 +2964,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R310",
@@ -2972,7 +2972,7 @@
             "x": 99.55,
             "y": 200.4
           },
-          "uuid": "69c367d4-1ca4-45fe-ad4f-6e3f28c39134"
+          "uuid": "8eb6abbe-7333-47e4-b815-39339c3cc0c8"
         }
       ],
       "severity": "warning",
@@ -2987,7 +2987,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R311",
@@ -2995,7 +2995,7 @@
             "x": 99.55,
             "y": 203.81
           },
-          "uuid": "1e7a40b6-9e7a-492b-a917-0705865102fd"
+          "uuid": "172a9271-d905-489d-9af3-737ac3292f9d"
         }
       ],
       "severity": "warning",
@@ -3010,7 +3010,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R312",
@@ -3018,7 +3018,7 @@
             "x": 99.55,
             "y": 207.22
           },
-          "uuid": "bed09667-b316-46ea-8056-986e284f071b"
+          "uuid": "de5c96bb-19c6-4668-91ac-9497b14a5076"
         }
       ],
       "severity": "warning",
@@ -3033,7 +3033,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R313",
@@ -3041,7 +3041,7 @@
             "x": 99.55,
             "y": 210.63
           },
-          "uuid": "53da9cde-6721-4da3-880a-04a37ce2ab9a"
+          "uuid": "bdc20c48-aa7c-4222-9bfe-e5365a3d6f9a"
         }
       ],
       "severity": "warning",
@@ -3056,7 +3056,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R314",
@@ -3064,7 +3064,7 @@
             "x": 99.55,
             "y": 214.04
           },
-          "uuid": "b3746774-3f83-4bef-a1d5-6f464499eeed"
+          "uuid": "b040a906-717b-492f-a64a-033f171a0440"
         }
       ],
       "severity": "warning",
@@ -3079,7 +3079,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R315",
@@ -3087,7 +3087,7 @@
             "x": 99.55,
             "y": 217.45
           },
-          "uuid": "9919c6f8-3039-435b-9f1e-7789e7b4f73a"
+          "uuid": "52e91397-7122-4c6e-b302-a066c30546a8"
         }
       ],
       "severity": "warning",
@@ -3102,7 +3102,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R316",
@@ -3110,7 +3110,7 @@
             "x": 99.55,
             "y": 220.86
           },
-          "uuid": "d29367ca-e7bd-49fc-afdb-49cf5ce89911"
+          "uuid": "269f3067-c877-4490-9724-35ff6507672e"
         }
       ],
       "severity": "warning",
@@ -3125,7 +3125,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R317",
@@ -3133,7 +3133,7 @@
             "x": 99.55,
             "y": 224.27
           },
-          "uuid": "8f36aeb8-d394-49fe-a2ca-cb6a68862c73"
+          "uuid": "5e31e09a-f65f-4bed-be8a-d5dd5be0eb82"
         }
       ],
       "severity": "warning",
@@ -3148,7 +3148,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R318",
@@ -3156,7 +3156,7 @@
             "x": 99.55,
             "y": 227.68
           },
-          "uuid": "4d9f7c52-0a1d-488b-8503-dce22f72cbd3"
+          "uuid": "d3ce169c-5519-452e-b52d-aaccff79a25e"
         }
       ],
       "severity": "warning",
@@ -3171,7 +3171,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Reference field of R319",
@@ -3179,7 +3179,7 @@
             "x": 99.55,
             "y": 231.09
           },
-          "uuid": "decfa540-1518-4c8d-b1ac-eeb0779892d9"
+          "uuid": "70a1d0da-92ec-43ae-aae6-3e44d49d83b3"
         }
       ],
       "severity": "warning",
@@ -3194,7 +3194,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Segment of J306 on B.Silkscreen",
@@ -3202,7 +3202,7 @@
             "x": 108.61,
             "y": 215.44
           },
-          "uuid": "77641a36-6ba1-430e-9067-c1a7d36f8dec"
+          "uuid": "0149d365-daa2-4368-a271-79a656ae6c98"
         }
       ],
       "severity": "warning",
@@ -3217,7 +3217,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Segment of J306 on B.Silkscreen",
@@ -3225,7 +3225,7 @@
             "x": 108.61,
             "y": 237.56
           },
-          "uuid": "a7f85141-aee5-4d36-a3c1-25e5f9ebb999"
+          "uuid": "d8c0991c-10f5-49fc-a8d2-980a2c147d4b"
         }
       ],
       "severity": "warning",
@@ -3240,7 +3240,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Segment of J307 on B.Silkscreen",
@@ -3248,7 +3248,7 @@
             "x": 108.61,
             "y": 192.34
           },
-          "uuid": "5b029d46-5d5f-40a8-8190-a895a68b891e"
+          "uuid": "99e664a0-83e1-4a77-bbff-cab74aac65a9"
         }
       ],
       "severity": "warning",
@@ -3263,7 +3263,7 @@
             "x": 100.0,
             "y": 100.0
           },
-          "uuid": "037c0bc3-ac1b-4d26-b53b-6f6cf4552047"
+          "uuid": "8201bdff-be54-475e-9621-61ff81c9ace2"
         },
         {
           "description": "Segment of J307 on B.Silkscreen",
@@ -3271,7 +3271,7 @@
             "x": 108.61,
             "y": 214.46
           },
-          "uuid": "a08e44a3-1784-4b37-826d-9daf0b93e2d4"
+          "uuid": "fe2a576d-05f8-4afd-82f9-918b1dbee148"
         }
       ],
       "severity": "warning",
@@ -3286,7 +3286,7 @@
             "x": 112.0,
             "y": 109.5
           },
-          "uuid": "685f7ef2-27ea-445f-ad7f-a39adb33733b"
+          "uuid": "cd72a7f0-e66e-42b1-aae7-a58b325129d0"
         },
         {
           "description": "Reference field of J312",
@@ -3294,7 +3294,7 @@
             "x": 111.5,
             "y": 109.35
           },
-          "uuid": "c2bb9d43-a8ea-4513-840d-77a8a27676d6"
+          "uuid": "e8eeb040-468e-4954-953f-981bdf75ee73"
         }
       ],
       "severity": "warning",
@@ -3309,7 +3309,7 @@
             "x": 112.0,
             "y": 175.5
           },
-          "uuid": "c5471530-ebb9-4bdd-8316-2f07fd195272"
+          "uuid": "3ff8e04c-37cf-49c0-ae42-934cda701add"
         },
         {
           "description": "Reference field of BZ301",
@@ -3317,7 +3317,7 @@
             "x": 129.25,
             "y": 175.2
           },
-          "uuid": "abea123b-029e-4469-8143-dba02fc319e3"
+          "uuid": "95179f2f-b38a-47ee-99cc-2815a82143a4"
         }
       ],
       "severity": "warning",
@@ -3332,7 +3332,7 @@
             "x": 112.0,
             "y": 175.5
           },
-          "uuid": "c5471530-ebb9-4bdd-8316-2f07fd195272"
+          "uuid": "3ff8e04c-37cf-49c0-ae42-934cda701add"
         },
         {
           "description": "Reference field of C343",
@@ -3340,7 +3340,7 @@
             "x": 113.16,
             "y": 177.08
           },
-          "uuid": "31201367-3825-4ab7-8761-11b33aa8f295"
+          "uuid": "1aa39a5c-7f3a-415a-8660-4d3bbe69abee"
         }
       ],
       "severity": "warning",
@@ -3355,7 +3355,7 @@
             "x": 112.0,
             "y": 175.5
           },
-          "uuid": "c5471530-ebb9-4bdd-8316-2f07fd195272"
+          "uuid": "3ff8e04c-37cf-49c0-ae42-934cda701add"
         },
         {
           "description": "Reference field of R343",
@@ -3363,7 +3363,7 @@
             "x": 123.1,
             "y": 177.08
           },
-          "uuid": "960e52cb-1260-4920-8d82-c7c172ef6791"
+          "uuid": "92de9f62-cfcc-4685-8fa8-d35d62ef7ffc"
         }
       ],
       "severity": "warning",
@@ -3378,7 +3378,7 @@
             "x": 112.0,
             "y": 175.5
           },
-          "uuid": "c5471530-ebb9-4bdd-8316-2f07fd195272"
+          "uuid": "3ff8e04c-37cf-49c0-ae42-934cda701add"
         },
         {
           "description": "Reference field of R363",
@@ -3386,7 +3386,7 @@
             "x": 115.02,
             "y": 177.08
           },
-          "uuid": "096be5ef-8727-4918-963c-b2e44575443d"
+          "uuid": "247cc2a3-0028-47c9-85a5-efbbc4805b53"
         }
       ],
       "severity": "warning",
@@ -3401,7 +3401,7 @@
             "x": 112.0,
             "y": 175.5
           },
-          "uuid": "c5471530-ebb9-4bdd-8316-2f07fd195272"
+          "uuid": "3ff8e04c-37cf-49c0-ae42-934cda701add"
         },
         {
           "description": "Reference field of R370",
@@ -3409,7 +3409,7 @@
             "x": 116.88,
             "y": 177.08
           },
-          "uuid": "ce2fc9aa-a8c2-43fb-b45f-03309ba65d16"
+          "uuid": "7272d5e9-b3ca-48cb-9af8-89beba3f79be"
         }
       ],
       "severity": "warning",
@@ -3424,7 +3424,7 @@
             "x": 112.0,
             "y": 175.5
           },
-          "uuid": "c5471530-ebb9-4bdd-8316-2f07fd195272"
+          "uuid": "3ff8e04c-37cf-49c0-ae42-934cda701add"
         },
         {
           "description": "Reference field of R371",
@@ -3432,7 +3432,7 @@
             "x": 118.74,
             "y": 177.08
           },
-          "uuid": "4c2b4771-1af1-444a-b9fe-8f6bce9960f3"
+          "uuid": "e31ed27c-ab89-4006-8de4-2d4c8537dba0"
         }
       ],
       "severity": "warning",
@@ -3447,7 +3447,7 @@
             "x": 137.0,
             "y": 109.5
           },
-          "uuid": "30b6b9df-7140-4fcb-8286-7a49b2e839c5"
+          "uuid": "48490073-fa3a-4bd6-8aa5-27283804c7e1"
         },
         {
           "description": "Reference field of J315",
@@ -3455,7 +3455,7 @@
             "x": 120.6,
             "y": 109.35
           },
-          "uuid": "85e96eb0-8b84-4100-85e5-ebd47f0de7b2"
+          "uuid": "6b1aa851-e6d4-4185-a0bd-b79bf2d10aeb"
         }
       ],
       "severity": "warning",
@@ -3470,7 +3470,7 @@
             "x": 137.0,
             "y": 109.5
           },
-          "uuid": "30b6b9df-7140-4fcb-8286-7a49b2e839c5"
+          "uuid": "48490073-fa3a-4bd6-8aa5-27283804c7e1"
         },
         {
           "description": "Reference field of J318",
@@ -3478,7 +3478,7 @@
             "x": 127.7,
             "y": 109.35
           },
-          "uuid": "a5cb4ae2-6dbd-4e4c-aebe-3383ea9806f1"
+          "uuid": "f3de52fa-0014-434f-97d4-01753ef3efc2"
         }
       ],
       "severity": "warning",
@@ -3493,7 +3493,7 @@
             "x": 137.0,
             "y": 109.5
           },
-          "uuid": "30b6b9df-7140-4fcb-8286-7a49b2e839c5"
+          "uuid": "48490073-fa3a-4bd6-8aa5-27283804c7e1"
         },
         {
           "description": "Reference field of J319",
@@ -3501,7 +3501,7 @@
             "x": 134.8,
             "y": 109.35
           },
-          "uuid": "a8723275-0a21-4454-ad2b-a2cd76fe23e7"
+          "uuid": "e5efaa4a-a05c-47b9-9b78-838198067355"
         }
       ],
       "severity": "warning",
@@ -3516,7 +3516,7 @@
             "x": 137.0,
             "y": 150.5
           },
-          "uuid": "101543bf-c2b5-48a1-b685-94c9654de86f"
+          "uuid": "7280d9a3-fed5-4548-b5e9-c664c7e388f9"
         },
         {
           "description": "Reference field of C302",
@@ -3524,7 +3524,7 @@
             "x": 136.35,
             "y": 152.3
           },
-          "uuid": "e4d59f01-c62c-4b31-b552-6990721a8159"
+          "uuid": "49211831-fd31-4ffe-b95f-9b46f4d4ad25"
         }
       ],
       "severity": "warning",
@@ -3539,7 +3539,7 @@
             "x": 137.0,
             "y": 175.5
           },
-          "uuid": "898ab85a-0e2c-4b4a-b7c4-6f29a6e69662"
+          "uuid": "bcf5150e-7a29-4327-a4fe-f2c28ad09d0e"
         },
         {
           "description": "Reference field of R366",
@@ -3547,7 +3547,7 @@
             "x": 138.6,
             "y": 154.57
           },
-          "uuid": "fce0e554-316e-4106-b41e-88210165be61"
+          "uuid": "1c5e667c-682f-4ed3-ad8c-24c04240f842"
         }
       ],
       "severity": "warning",
@@ -3562,7 +3562,7 @@
             "x": 150.0,
             "y": 244.0
           },
-          "uuid": "48ceae2b-db64-4d15-9f83-40e3fee49c03"
+          "uuid": "588faea0-9b3b-481a-880e-6c3d77cabbcf"
         },
         {
           "description": "Reference field of C320",
@@ -3570,7 +3570,7 @@
             "x": 148.2,
             "y": 155.02
           },
-          "uuid": "c0f59947-c064-464e-a448-8c19262516ce"
+          "uuid": "6fdb4b7d-5bd8-48fa-baed-c5b5461e3ef9"
         }
       ],
       "severity": "warning",
@@ -3585,7 +3585,7 @@
             "x": 150.0,
             "y": 244.0
           },
-          "uuid": "48ceae2b-db64-4d15-9f83-40e3fee49c03"
+          "uuid": "588faea0-9b3b-481a-880e-6c3d77cabbcf"
         },
         {
           "description": "Segment of J304 on B.Silkscreen",
@@ -3593,7 +3593,7 @@
             "x": 149.95,
             "y": 184.09
           },
-          "uuid": "a13aedb5-4ff4-41cc-acd4-9db756b995fb"
+          "uuid": "9d2f9f75-ca7b-4b67-931d-66a72105c5d6"
         }
       ],
       "severity": "warning",
@@ -3608,7 +3608,7 @@
             "x": 150.0,
             "y": 244.0
           },
-          "uuid": "48ceae2b-db64-4d15-9f83-40e3fee49c03"
+          "uuid": "588faea0-9b3b-481a-880e-6c3d77cabbcf"
         },
         {
           "description": "Segment of J304 on B.Silkscreen",
@@ -3616,7 +3616,7 @@
             "x": 150.95,
             "y": 184.59
           },
-          "uuid": "a20d1340-10d8-4f07-96e5-a3a1d03b31b2"
+          "uuid": "832614dd-8671-4d8b-ad77-2e12186a26b1"
         }
       ],
       "severity": "warning",
@@ -3631,7 +3631,7 @@
             "x": 110.17,
             "y": 189.67
           },
-          "uuid": "00882fd7-16f5-49ed-8b6a-a5cbecb1ccb2"
+          "uuid": "6d2a862e-d766-47ba-b130-7445b861f586"
         },
         {
           "description": "Pad 1 [E3_HOME_EXT] of SW302 on F.Cu",
@@ -3639,7 +3639,7 @@
             "x": 111.0,
             "y": 191.0
           },
-          "uuid": "ce211c23-b8a3-4482-a92f-ae3ee627f426"
+          "uuid": "7b29af54-29ce-4c7c-8a75-035cd9634fa2"
         }
       ],
       "severity": "warning",
@@ -3654,7 +3654,7 @@
             "x": 110.17,
             "y": 189.67
           },
-          "uuid": "00882fd7-16f5-49ed-8b6a-a5cbecb1ccb2"
+          "uuid": "6d2a862e-d766-47ba-b130-7445b861f586"
         },
         {
           "description": "Pad 1 [E3_HOME_EXT] of SW302 on F.Cu",
@@ -3662,7 +3662,7 @@
             "x": 116.0,
             "y": 191.0
           },
-          "uuid": "48e37f6d-d3e0-469e-9214-35a7cd8c1183"
+          "uuid": "d30cb953-de18-4e7a-9980-2535e12efa95"
         }
       ],
       "severity": "warning",
@@ -3677,7 +3677,7 @@
             "x": 110.17,
             "y": 189.67
           },
-          "uuid": "00882fd7-16f5-49ed-8b6a-a5cbecb1ccb2"
+          "uuid": "6d2a862e-d766-47ba-b130-7445b861f586"
         },
         {
           "description": "Pad 2 [GND] of SW302 on F.Cu",
@@ -3685,7 +3685,7 @@
             "x": 111.0,
             "y": 195.0
           },
-          "uuid": "cc322090-7e84-4a5b-8948-8a7d890c7d01"
+          "uuid": "b9c1afd7-05a1-453d-ba00-0dc2709a2b03"
         }
       ],
       "severity": "warning",
@@ -3700,7 +3700,7 @@
             "x": 110.17,
             "y": 189.67
           },
-          "uuid": "00882fd7-16f5-49ed-8b6a-a5cbecb1ccb2"
+          "uuid": "6d2a862e-d766-47ba-b130-7445b861f586"
         },
         {
           "description": "Pad 2 [GND] of SW302 on F.Cu",
@@ -3708,7 +3708,7 @@
             "x": 116.0,
             "y": 195.0
           },
-          "uuid": "5e0c1681-6460-476e-b9cf-ae410a33705c"
+          "uuid": "6fb49520-4a86-47a5-b6a2-5bea0c6ef6af"
         }
       ],
       "severity": "warning",
@@ -3723,7 +3723,7 @@
             "x": 132.17,
             "y": 189.67
           },
-          "uuid": "2a6bbcff-b7a5-40e4-87c2-5b49650bc2b9"
+          "uuid": "0124696b-99a4-43c4-b9f4-23fb9282272f"
         },
         {
           "description": "Pad 1 [E3_BACK_EXT] of SW303 on F.Cu",
@@ -3731,7 +3731,7 @@
             "x": 133.0,
             "y": 191.0
           },
-          "uuid": "cf4ff00f-aa12-48a7-a0bb-9ccdffa118f8"
+          "uuid": "2678d0a9-db40-4239-a608-3ed41ed30534"
         }
       ],
       "severity": "warning",
@@ -3746,7 +3746,7 @@
             "x": 132.17,
             "y": 189.67
           },
-          "uuid": "2a6bbcff-b7a5-40e4-87c2-5b49650bc2b9"
+          "uuid": "0124696b-99a4-43c4-b9f4-23fb9282272f"
         },
         {
           "description": "Pad 1 [E3_BACK_EXT] of SW303 on F.Cu",
@@ -3754,7 +3754,7 @@
             "x": 138.0,
             "y": 191.0
           },
-          "uuid": "10bc797d-5d65-4f3a-ac1c-a1c673a865f2"
+          "uuid": "47d0a0f8-11ea-42bc-8ba6-1b15439debf2"
         }
       ],
       "severity": "warning",
@@ -3769,7 +3769,7 @@
             "x": 132.17,
             "y": 189.67
           },
-          "uuid": "2a6bbcff-b7a5-40e4-87c2-5b49650bc2b9"
+          "uuid": "0124696b-99a4-43c4-b9f4-23fb9282272f"
         },
         {
           "description": "Pad 2 [GND] of SW303 on F.Cu",
@@ -3777,7 +3777,7 @@
             "x": 133.0,
             "y": 195.0
           },
-          "uuid": "25dad830-f3d8-4b90-ad60-513319fb705a"
+          "uuid": "36015bd6-bf14-4dff-b43b-df1e8a30a21c"
         }
       ],
       "severity": "warning",
@@ -3792,7 +3792,7 @@
             "x": 132.17,
             "y": 189.67
           },
-          "uuid": "2a6bbcff-b7a5-40e4-87c2-5b49650bc2b9"
+          "uuid": "0124696b-99a4-43c4-b9f4-23fb9282272f"
         },
         {
           "description": "Pad 2 [GND] of SW303 on F.Cu",
@@ -3800,7 +3800,7 @@
             "x": 138.0,
             "y": 195.0
           },
-          "uuid": "a6dfb95e-137c-4bf0-b35b-edcde621eeb6"
+          "uuid": "4a1f1d3c-9429-465a-abe8-9fe204030620"
         }
       ],
       "severity": "warning",
@@ -3815,7 +3815,7 @@
             "x": 110.17,
             "y": 211.67
           },
-          "uuid": "66ba9707-8bad-4354-88c6-e85bfd84215a"
+          "uuid": "46abd735-4f37-4971-82ad-55bad56da9bb"
         },
         {
           "description": "Pad 1 [E3_REC_EXT] of SW304 on F.Cu",
@@ -3823,7 +3823,7 @@
             "x": 111.0,
             "y": 213.0
           },
-          "uuid": "e60031ce-008f-49f8-9f74-6a7958645ba8"
+          "uuid": "4334dea5-fb5b-475a-a6fb-7e452eed8a7c"
         }
       ],
       "severity": "warning",
@@ -3838,7 +3838,7 @@
             "x": 110.17,
             "y": 211.67
           },
-          "uuid": "66ba9707-8bad-4354-88c6-e85bfd84215a"
+          "uuid": "46abd735-4f37-4971-82ad-55bad56da9bb"
         },
         {
           "description": "Pad 1 [E3_REC_EXT] of SW304 on F.Cu",
@@ -3846,7 +3846,7 @@
             "x": 116.0,
             "y": 213.0
           },
-          "uuid": "64194454-6630-4962-8830-b7b319eecd7f"
+          "uuid": "eb5399e4-44e6-413e-be9a-b3e6c5ef4e6d"
         }
       ],
       "severity": "warning",
@@ -3861,7 +3861,7 @@
             "x": 110.17,
             "y": 211.67
           },
-          "uuid": "66ba9707-8bad-4354-88c6-e85bfd84215a"
+          "uuid": "46abd735-4f37-4971-82ad-55bad56da9bb"
         },
         {
           "description": "Pad 2 [GND] of SW304 on F.Cu",
@@ -3869,7 +3869,7 @@
             "x": 111.0,
             "y": 217.0
           },
-          "uuid": "02699c1d-1a5c-44df-9a92-878a7341d037"
+          "uuid": "a9bbaf41-677a-4597-86dd-cd9c3b53bfb7"
         }
       ],
       "severity": "warning",
@@ -3884,7 +3884,7 @@
             "x": 110.17,
             "y": 211.67
           },
-          "uuid": "66ba9707-8bad-4354-88c6-e85bfd84215a"
+          "uuid": "46abd735-4f37-4971-82ad-55bad56da9bb"
         },
         {
           "description": "Pad 2 [GND] of SW304 on F.Cu",
@@ -3892,7 +3892,7 @@
             "x": 116.0,
             "y": 217.0
           },
-          "uuid": "128ab5b0-ed5f-4fc3-8fde-447890b91c4d"
+          "uuid": "03d0d03b-e0b3-45c4-a56f-e23f10548424"
         }
       ],
       "severity": "warning",
@@ -3907,7 +3907,7 @@
             "x": 132.17,
             "y": 211.67
           },
-          "uuid": "60c936c0-a1f8-4fa2-bd1d-a413813a9e03"
+          "uuid": "aa6c7eb1-2182-4121-ad77-944e5cf2de26"
         },
         {
           "description": "Pad 1 [E3_MARK_EXT] of SW305 on F.Cu",
@@ -3915,7 +3915,7 @@
             "x": 133.0,
             "y": 213.0
           },
-          "uuid": "30a7faab-2cdf-4300-ad98-4d00c0841c58"
+          "uuid": "416551f1-2f1e-4951-966e-98caebc625c5"
         }
       ],
       "severity": "warning",
@@ -3930,7 +3930,7 @@
             "x": 132.17,
             "y": 211.67
           },
-          "uuid": "60c936c0-a1f8-4fa2-bd1d-a413813a9e03"
+          "uuid": "aa6c7eb1-2182-4121-ad77-944e5cf2de26"
         },
         {
           "description": "Pad 1 [E3_MARK_EXT] of SW305 on F.Cu",
@@ -3938,7 +3938,7 @@
             "x": 138.0,
             "y": 213.0
           },
-          "uuid": "63ddd6e7-e17d-48e7-81c6-bd1e5b5cdc93"
+          "uuid": "d89174a6-0d13-4713-b327-a07dbf1654c6"
         }
       ],
       "severity": "warning",
@@ -3953,7 +3953,7 @@
             "x": 132.17,
             "y": 211.67
           },
-          "uuid": "60c936c0-a1f8-4fa2-bd1d-a413813a9e03"
+          "uuid": "aa6c7eb1-2182-4121-ad77-944e5cf2de26"
         },
         {
           "description": "Pad 2 [GND] of SW305 on F.Cu",
@@ -3961,7 +3961,7 @@
             "x": 133.0,
             "y": 217.0
           },
-          "uuid": "d9c49a69-551f-4bd6-a03a-cfae666c5e62"
+          "uuid": "f9a10b0b-b8c8-4b44-926b-58c73450a154"
         }
       ],
       "severity": "warning",
@@ -3976,7 +3976,7 @@
             "x": 132.17,
             "y": 211.67
           },
-          "uuid": "60c936c0-a1f8-4fa2-bd1d-a413813a9e03"
+          "uuid": "aa6c7eb1-2182-4121-ad77-944e5cf2de26"
         },
         {
           "description": "Pad 2 [GND] of SW305 on F.Cu",
@@ -3984,7 +3984,7 @@
             "x": 138.0,
             "y": 217.0
           },
-          "uuid": "7f695570-aeef-40b8-b9ed-57e29f08027f"
+          "uuid": "1e77f8e4-0241-482e-860f-2a53275a1db6"
         }
       ],
       "severity": "warning",
@@ -3999,7 +3999,7 @@
             "x": 110.17,
             "y": 233.67
           },
-          "uuid": "a5bcfdd1-5094-404e-8b96-a16cdeddaae0"
+          "uuid": "01bc63fb-3d40-4116-947c-18e5bc9305d0"
         },
         {
           "description": "Pad 1 [E3_FN_EXT] of SW306 on F.Cu",
@@ -4007,7 +4007,7 @@
             "x": 111.0,
             "y": 235.0
           },
-          "uuid": "c446a781-6833-4bf0-838d-4f660b45d54b"
+          "uuid": "8997051d-0239-40df-9d4b-0f467506ae7d"
         }
       ],
       "severity": "warning",
@@ -4022,7 +4022,7 @@
             "x": 110.17,
             "y": 233.67
           },
-          "uuid": "a5bcfdd1-5094-404e-8b96-a16cdeddaae0"
+          "uuid": "01bc63fb-3d40-4116-947c-18e5bc9305d0"
         },
         {
           "description": "Pad 1 [E3_FN_EXT] of SW306 on F.Cu",
@@ -4030,7 +4030,7 @@
             "x": 116.0,
             "y": 235.0
           },
-          "uuid": "1d38b38b-c67a-4845-b7cd-31da63fba1a6"
+          "uuid": "935e943c-0091-4e1c-8c78-5e6d5bc1959d"
         }
       ],
       "severity": "warning",
@@ -4045,7 +4045,7 @@
             "x": 110.17,
             "y": 233.67
           },
-          "uuid": "a5bcfdd1-5094-404e-8b96-a16cdeddaae0"
+          "uuid": "01bc63fb-3d40-4116-947c-18e5bc9305d0"
         },
         {
           "description": "Pad 2 [GND] of SW306 on F.Cu",
@@ -4053,7 +4053,7 @@
             "x": 111.0,
             "y": 239.0
           },
-          "uuid": "41730d5a-7a53-478a-8f7e-c4789d72bcac"
+          "uuid": "088c60f8-a656-4438-b486-277977f65562"
         }
       ],
       "severity": "warning",
@@ -4068,7 +4068,7 @@
             "x": 110.17,
             "y": 233.67
           },
-          "uuid": "a5bcfdd1-5094-404e-8b96-a16cdeddaae0"
+          "uuid": "01bc63fb-3d40-4116-947c-18e5bc9305d0"
         },
         {
           "description": "Pad 2 [GND] of SW306 on F.Cu",
@@ -4076,7 +4076,7 @@
             "x": 116.0,
             "y": 239.0
           },
-          "uuid": "de107e6c-45ef-4c1a-95e8-9ee58021578e"
+          "uuid": "6ea7b9c4-3431-4750-a9a0-e8647fee0996"
         }
       ],
       "severity": "warning",
@@ -4091,7 +4091,7 @@
             "x": 132.17,
             "y": 233.67
           },
-          "uuid": "aeb3b2d8-1ba0-47b5-b867-41652fd7bcf0"
+          "uuid": "6d856388-d501-45be-a9e9-8ddcffa3de6c"
         },
         {
           "description": "Pad 1 [E3_LOCK_EXT] of SW307 on F.Cu",
@@ -4099,7 +4099,7 @@
             "x": 133.0,
             "y": 235.0
           },
-          "uuid": "a0a3b745-456f-4537-ae2e-665b3a06d718"
+          "uuid": "0d311b1b-db22-4196-a08f-7b957f6d0dc3"
         }
       ],
       "severity": "warning",
@@ -4114,7 +4114,7 @@
             "x": 132.17,
             "y": 233.67
           },
-          "uuid": "aeb3b2d8-1ba0-47b5-b867-41652fd7bcf0"
+          "uuid": "6d856388-d501-45be-a9e9-8ddcffa3de6c"
         },
         {
           "description": "Pad 1 [E3_LOCK_EXT] of SW307 on F.Cu",
@@ -4122,7 +4122,7 @@
             "x": 138.0,
             "y": 235.0
           },
-          "uuid": "00648fc8-29f3-4a70-8795-e981842e8284"
+          "uuid": "54adc361-a477-437a-aff4-224adff5bfd7"
         }
       ],
       "severity": "warning",
@@ -4137,7 +4137,7 @@
             "x": 132.17,
             "y": 233.67
           },
-          "uuid": "aeb3b2d8-1ba0-47b5-b867-41652fd7bcf0"
+          "uuid": "6d856388-d501-45be-a9e9-8ddcffa3de6c"
         },
         {
           "description": "Pad 2 [GND] of SW307 on F.Cu",
@@ -4145,7 +4145,7 @@
             "x": 133.0,
             "y": 239.0
           },
-          "uuid": "623565cf-a208-41ad-a6cd-1619ce1ca89e"
+          "uuid": "cf51d1c2-585d-4d08-909e-c6e5a56df607"
         }
       ],
       "severity": "warning",
@@ -4160,7 +4160,7 @@
             "x": 132.17,
             "y": 233.67
           },
-          "uuid": "aeb3b2d8-1ba0-47b5-b867-41652fd7bcf0"
+          "uuid": "6d856388-d501-45be-a9e9-8ddcffa3de6c"
         },
         {
           "description": "Pad 2 [GND] of SW307 on F.Cu",
@@ -4168,7 +4168,7 @@
             "x": 138.0,
             "y": 239.0
           },
-          "uuid": "e3323a5d-0578-48f9-b3d1-d8966500cf3c"
+          "uuid": "6f5f00d7-fdd4-4cdc-994c-a4caf74a1d16"
         }
       ],
       "severity": "warning",
@@ -4183,7 +4183,7 @@
             "x": 117.34,
             "y": 235.705
           },
-          "uuid": "cfe48c41-8b2f-4e79-b75d-a6be40542f86"
+          "uuid": "6a4b91d9-06df-480d-aa1d-3fcb162b66dc"
         },
         {
           "description": "Pad 1 [E3_FN_EXT] of SW306 on F.Cu",
@@ -4191,7 +4191,7 @@
             "x": 116.0,
             "y": 235.0
           },
-          "uuid": "1d38b38b-c67a-4845-b7cd-31da63fba1a6"
+          "uuid": "935e943c-0091-4e1c-8c78-5e6d5bc1959d"
         }
       ],
       "severity": "warning",
@@ -4206,7 +4206,7 @@
             "x": 138.76,
             "y": 152.3
           },
-          "uuid": "7111043f-3b18-4dd5-ae10-6de0ed86bf6e"
+          "uuid": "0bf32f71-64a8-4b4f-aab4-4ffe438f58e3"
         },
         {
           "description": "Pad 1 [3V3_Q6A] of C302 on F.Cu",
@@ -4214,7 +4214,7 @@
             "x": 138.03,
             "y": 153.25
           },
-          "uuid": "278ca3d8-6d5a-4711-ab78-8245d1ff6989"
+          "uuid": "53b852df-1eb1-4041-a369-c571f58926ac"
         }
       ],
       "severity": "warning",
@@ -4229,7 +4229,7 @@
             "x": 138.76,
             "y": 152.3
           },
-          "uuid": "7111043f-3b18-4dd5-ae10-6de0ed86bf6e"
+          "uuid": "0bf32f71-64a8-4b4f-aab4-4ffe438f58e3"
         },
         {
           "description": "Pad 2 [GND] of C302 on F.Cu",
@@ -4237,7 +4237,7 @@
             "x": 138.03,
             "y": 151.35
           },
-          "uuid": "6b789a50-31c0-488a-8ccd-d352d1e11330"
+          "uuid": "4e3831de-2afc-41b9-b1bc-883ce6d885b9"
         }
       ],
       "severity": "warning",
@@ -4252,7 +4252,7 @@
             "x": 117.34,
             "y": 217.055
           },
-          "uuid": "c34b8032-0564-4e70-b7d4-28619d5c653a"
+          "uuid": "333da0dc-27cd-498c-bbd6-22faba9fc4e0"
         },
         {
           "description": "Pad 2 [GND] of SW304 on F.Cu",
@@ -4260,7 +4260,7 @@
             "x": 116.0,
             "y": 217.0
           },
-          "uuid": "128ab5b0-ed5f-4fc3-8fde-447890b91c4d"
+          "uuid": "03d0d03b-e0b3-45c4-a56f-e23f10548424"
         }
       ],
       "severity": "warning",
@@ -4275,7 +4275,7 @@
             "x": 141.17,
             "y": 152.3
           },
-          "uuid": "73a572e5-0ffb-4203-b08e-4d2bfcfe88a7"
+          "uuid": "4f4a410f-c17d-454f-9732-13ab2ec47d11"
         },
         {
           "description": "Pad 1 [3V3_Q6A] of C304 on F.Cu",
@@ -4283,7 +4283,7 @@
             "x": 140.44,
             "y": 153.25
           },
-          "uuid": "4469e11a-4e0b-4d66-87ea-224ed3590ce5"
+          "uuid": "6d4d962d-171e-4fe0-9109-11e0ba99b24c"
         }
       ],
       "severity": "warning",
@@ -4298,7 +4298,7 @@
             "x": 141.17,
             "y": 152.3
           },
-          "uuid": "73a572e5-0ffb-4203-b08e-4d2bfcfe88a7"
+          "uuid": "4f4a410f-c17d-454f-9732-13ab2ec47d11"
         },
         {
           "description": "Pad 2 [GND] of C304 on F.Cu",
@@ -4306,7 +4306,7 @@
             "x": 140.44,
             "y": 151.35
           },
-          "uuid": "2d3babd1-15fa-40f9-a3d9-738a2ab8df0c"
+          "uuid": "f6c88375-16b2-4b91-bf40-33e13e5546b0"
         }
       ],
       "severity": "warning",
@@ -4321,7 +4321,7 @@
             "x": 136.81,
             "y": 215.49
           },
-          "uuid": "df7562ac-c905-47c0-81fa-fe8d9cbe1114"
+          "uuid": "796aae8d-271a-42c3-a962-d29ebefd26bc"
         },
         {
           "description": "Pad 1 [E3_PICO3V3] of C308 on B.Cu",
@@ -4329,7 +4329,7 @@
             "x": 137.29,
             "y": 216.045
           },
-          "uuid": "32e3e0dc-fba4-443b-8c42-8e31e2ce0560"
+          "uuid": "cd7f28aa-c04e-411e-8fe6-aa707e41d420"
         }
       ],
       "severity": "warning",
@@ -4344,7 +4344,7 @@
             "x": 136.81,
             "y": 215.49
           },
-          "uuid": "df7562ac-c905-47c0-81fa-fe8d9cbe1114"
+          "uuid": "796aae8d-271a-42c3-a962-d29ebefd26bc"
         },
         {
           "description": "Pad 2 [GND] of C308 on B.Cu",
@@ -4352,7 +4352,7 @@
             "x": 137.29,
             "y": 214.495
           },
-          "uuid": "0a61c7e8-920b-4504-bb19-3738b16380f4"
+          "uuid": "08d16f8c-c914-4db6-a4c9-be599f201a99"
         }
       ],
       "severity": "warning",
@@ -4367,7 +4367,7 @@
             "x": 138.72,
             "y": 215.27
           },
-          "uuid": "0e59b626-0d2d-4d86-b88a-98ac4b07a192"
+          "uuid": "1b9de954-03db-42f6-be16-deea1ef7487b"
         },
         {
           "description": "Pad 1 [E3_ADC3V0] of C309 on B.Cu",
@@ -4375,7 +4375,7 @@
             "x": 139.2,
             "y": 216.045
           },
-          "uuid": "c177838a-9c1b-4210-b1be-50dc3b32caa5"
+          "uuid": "1faed58f-6e15-414a-85d6-928ba58b04ef"
         }
       ],
       "severity": "warning",
@@ -4390,7 +4390,7 @@
             "x": 138.72,
             "y": 215.27
           },
-          "uuid": "0e59b626-0d2d-4d86-b88a-98ac4b07a192"
+          "uuid": "1b9de954-03db-42f6-be16-deea1ef7487b"
         },
         {
           "description": "Pad 2 [GND] of C309 on B.Cu",
@@ -4398,7 +4398,7 @@
             "x": 139.2,
             "y": 214.495
           },
-          "uuid": "9da320e1-4356-4ef8-aa8b-576bb031b7be"
+          "uuid": "6c8618c0-974a-401c-854f-f78e5d463754"
         }
       ],
       "severity": "warning",
@@ -4413,7 +4413,7 @@
             "x": 136.31,
             "y": 219.12
           },
-          "uuid": "d082f453-50d1-42a5-8dd0-933993641c01"
+          "uuid": "986358d0-7993-4000-97d3-fc87b0eb7011"
         },
         {
           "description": "Pad 1 [E3_CASE_TEMP] of C311 on B.Cu",
@@ -4421,7 +4421,7 @@
             "x": 136.79,
             "y": 219.895
           },
-          "uuid": "8a1ab3e1-0b15-4c68-a2ab-64528b8ddef2"
+          "uuid": "2a251d18-6f68-4821-b6ed-b7368885e6f9"
         }
       ],
       "severity": "warning",
@@ -4436,7 +4436,7 @@
             "x": 136.31,
             "y": 219.12
           },
-          "uuid": "d082f453-50d1-42a5-8dd0-933993641c01"
+          "uuid": "986358d0-7993-4000-97d3-fc87b0eb7011"
         },
         {
           "description": "Pad 2 [GND] of C311 on B.Cu",
@@ -4444,7 +4444,7 @@
             "x": 136.79,
             "y": 218.345
           },
-          "uuid": "fd73b9cd-2b43-4684-9773-bbabb416a597"
+          "uuid": "13d7f000-bd93-4a41-84ce-57f166e6d0c2"
         }
       ],
       "severity": "warning",
@@ -4459,7 +4459,7 @@
             "x": 138.22,
             "y": 219.12
           },
-          "uuid": "208bba69-6ec9-457a-a9fa-e50a756c65d5"
+          "uuid": "050aca43-ee48-4f75-891b-882ac8ae5790"
         },
         {
           "description": "Pad 1 [E3_PICO3V3] of R327 on B.Cu",
@@ -4467,7 +4467,7 @@
             "x": 138.7,
             "y": 219.945
           },
-          "uuid": "6a05dcbe-8f96-4706-9557-253ef6426ba4"
+          "uuid": "f7a9636b-c072-466c-a5a7-e61f61ab5b32"
         }
       ],
       "severity": "warning",
@@ -4482,7 +4482,7 @@
             "x": 138.22,
             "y": 219.12
           },
-          "uuid": "208bba69-6ec9-457a-a9fa-e50a756c65d5"
+          "uuid": "050aca43-ee48-4f75-891b-882ac8ae5790"
         },
         {
           "description": "Pad 2 [E3_ADC3V0] of R327 on B.Cu",
@@ -4490,7 +4490,7 @@
             "x": 138.7,
             "y": 218.295
           },
-          "uuid": "d23c3ac2-317b-42b0-8436-7a6cc5cd0255"
+          "uuid": "5822f9d1-ae62-43cc-891a-12ccec420e61"
         }
       ],
       "severity": "warning",
@@ -4505,7 +4505,7 @@
             "x": 129.94,
             "y": 190.5
           },
-          "uuid": "f5eaeb05-272d-440a-94ea-45b3654e511d"
+          "uuid": "e8f9dea7-7b03-427b-973c-086122fd5ae1"
         },
         {
           "description": "Pad 1 [E3_HOME] of R335 on F.Cu",
@@ -4513,7 +4513,7 @@
             "x": 128.89,
             "y": 189.705
           },
-          "uuid": "454938e0-2ada-406e-830f-06265792fc51"
+          "uuid": "c4669217-80c5-4ad1-b9f3-e0a10d8316cd"
         }
       ],
       "severity": "warning",
@@ -4528,7 +4528,7 @@
             "x": 129.94,
             "y": 190.5
           },
-          "uuid": "f5eaeb05-272d-440a-94ea-45b3654e511d"
+          "uuid": "e8f9dea7-7b03-427b-973c-086122fd5ae1"
         },
         {
           "description": "Pad 1 [E3_HOME] of R336 on F.Cu",
@@ -4536,7 +4536,7 @@
             "x": 130.75,
             "y": 189.705
           },
-          "uuid": "ed55cc02-854d-4a35-8ead-9365394f9dd9"
+          "uuid": "357e1224-8d64-44db-beb6-c18ef2c3b264"
         }
       ],
       "severity": "warning",
@@ -4551,7 +4551,7 @@
             "x": 118.78,
             "y": 193.86
           },
-          "uuid": "a76f86e3-1601-463c-9191-459cee624e28"
+          "uuid": "9378fe88-b869-42ae-8cbd-22a8ca7a78fc"
         },
         {
           "description": "Pad 1 [E3_BACK] of R337 on F.Cu",
@@ -4559,7 +4559,7 @@
             "x": 118.03,
             "y": 193.505
           },
-          "uuid": "b7bb484b-de8d-4faa-90f7-bf1cae9856e1"
+          "uuid": "14817c25-26fe-4774-b66b-5f2a508f4715"
         }
       ],
       "severity": "warning",
@@ -4574,7 +4574,7 @@
             "x": 118.78,
             "y": 193.86
           },
-          "uuid": "a76f86e3-1601-463c-9191-459cee624e28"
+          "uuid": "9378fe88-b869-42ae-8cbd-22a8ca7a78fc"
         },
         {
           "description": "Pad 1 [E3_BACK] of R338 on F.Cu",
@@ -4582,7 +4582,7 @@
             "x": 119.89,
             "y": 193.505
           },
-          "uuid": "8473750d-8eff-45bd-a0c1-ef8739265f08"
+          "uuid": "97809bd2-a743-4f7f-bfe3-ab75e7f15225"
         }
       ],
       "severity": "warning",
@@ -4597,7 +4597,7 @@
             "x": 122.96,
             "y": 136.62
           },
-          "uuid": "9427893a-71db-452d-9433-2a4d3b42bbdd"
+          "uuid": "85b82a76-0464-4328-8088-e41b0a8bd38b"
         },
         {
           "description": "Pad 1 [E3_ENC1_B] of C315 on B.Cu",
@@ -4605,7 +4605,7 @@
             "x": 123.29,
             "y": 137.395
           },
-          "uuid": "45b40c7b-6e59-41cf-bf0c-5bdbe33721a1"
+          "uuid": "cd782634-fff5-4b67-b9e1-fa7cf749e3e4"
         }
       ],
       "severity": "warning",
@@ -4620,7 +4620,7 @@
             "x": 122.96,
             "y": 136.62
           },
-          "uuid": "9427893a-71db-452d-9433-2a4d3b42bbdd"
+          "uuid": "85b82a76-0464-4328-8088-e41b0a8bd38b"
         },
         {
           "description": "Pad 2 [GND] of C315 on B.Cu",
@@ -4628,7 +4628,7 @@
             "x": 123.29,
             "y": 135.845
           },
-          "uuid": "abdeb280-0802-49ad-b476-54070923176d"
+          "uuid": "419b6a02-8829-4863-a584-d7f1661578e6"
         }
       ],
       "severity": "warning",
@@ -4643,7 +4643,7 @@
             "x": 124.72,
             "y": 136.62
           },
-          "uuid": "303dc339-302d-4425-b9e9-d75103271278"
+          "uuid": "b0635ebd-293b-4c23-b86b-51ec8508cdc6"
         },
         {
           "description": "Pad 1 [E3_ENC2_A] of C316 on B.Cu",
@@ -4651,7 +4651,7 @@
             "x": 125.05,
             "y": 137.395
           },
-          "uuid": "9f813b3b-3fd9-463b-97a6-7253c6c39729"
+          "uuid": "a2f9ee93-ccc6-4de0-83fb-47b0c6f7da31"
         }
       ],
       "severity": "warning",
@@ -4666,7 +4666,7 @@
             "x": 124.72,
             "y": 136.62
           },
-          "uuid": "303dc339-302d-4425-b9e9-d75103271278"
+          "uuid": "b0635ebd-293b-4c23-b86b-51ec8508cdc6"
         },
         {
           "description": "Pad 2 [GND] of C316 on B.Cu",
@@ -4674,7 +4674,7 @@
             "x": 125.05,
             "y": 135.845
           },
-          "uuid": "59e23a93-121a-4ef6-b21e-2871cd26f107"
+          "uuid": "0b3d6e47-f2b7-401e-b3de-2f50e47f024b"
         }
       ],
       "severity": "warning",
@@ -4689,7 +4689,7 @@
             "x": 126.48,
             "y": 136.62
           },
-          "uuid": "93c64048-0450-4882-bb45-84cda6958225"
+          "uuid": "9db62f0e-efb3-488f-862c-fd8d637f1944"
         },
         {
           "description": "Pad 1 [E3_ENC2_B] of C317 on B.Cu",
@@ -4697,7 +4697,7 @@
             "x": 126.81,
             "y": 137.395
           },
-          "uuid": "b6ddb775-b545-4d87-804d-6500a73bb521"
+          "uuid": "af4c3001-0661-4974-a19c-041f453c9c3d"
         }
       ],
       "severity": "warning",
@@ -4712,7 +4712,7 @@
             "x": 126.48,
             "y": 136.62
           },
-          "uuid": "93c64048-0450-4882-bb45-84cda6958225"
+          "uuid": "9db62f0e-efb3-488f-862c-fd8d637f1944"
         },
         {
           "description": "Pad 2 [GND] of C317 on B.Cu",
@@ -4720,7 +4720,7 @@
             "x": 126.81,
             "y": 135.845
           },
-          "uuid": "710001de-e484-433a-8769-04f258331407"
+          "uuid": "0d63687a-ddcd-4986-9e0b-bddc662b3ad1"
         }
       ],
       "severity": "warning",
@@ -4735,7 +4735,7 @@
             "x": 128.24,
             "y": 136.62
           },
-          "uuid": "60418511-952f-4db7-b9ea-03fb93e07ab4"
+          "uuid": "236037fb-88b6-4f85-bd03-7121ba0d5b0a"
         },
         {
           "description": "Pad 1 [E3_ENC1_A_RAW] of R351 on B.Cu",
@@ -4743,7 +4743,7 @@
             "x": 128.57,
             "y": 137.445
           },
-          "uuid": "0fcd8ad7-2dec-4e8f-99c3-a733916eb3db"
+          "uuid": "036f6eb5-b20a-4670-ab01-2aa49a290b7f"
         }
       ],
       "severity": "warning",
@@ -4758,7 +4758,7 @@
             "x": 128.24,
             "y": 136.62
           },
-          "uuid": "60418511-952f-4db7-b9ea-03fb93e07ab4"
+          "uuid": "236037fb-88b6-4f85-bd03-7121ba0d5b0a"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R351 on B.Cu",
@@ -4766,7 +4766,7 @@
             "x": 128.57,
             "y": 135.795
           },
-          "uuid": "d6c95c56-9087-4a94-9ff1-c675d92633c4"
+          "uuid": "f1781a4d-2568-4897-b2b7-359399a2831b"
         }
       ],
       "severity": "warning",
@@ -4781,7 +4781,7 @@
             "x": 147.6,
             "y": 167.72
           },
-          "uuid": "e9dfed7d-5f8e-463f-ba04-0d8f70acd8e4"
+          "uuid": "27311072-33fa-49e1-beee-d82922d062c4"
         },
         {
           "description": "Pad 2 [E3_FAN5_P] of F301 on B.Cu",
@@ -4789,7 +4789,7 @@
             "x": 148.0,
             "y": 166.7375
           },
-          "uuid": "86435958-d3fa-4c2b-b25a-d756aec902dd"
+          "uuid": "419fbb74-b94d-48b8-8ef1-843681ad2f70"
         }
       ],
       "severity": "warning",
@@ -4804,7 +4804,7 @@
             "x": 129.7,
             "y": 146.4
           },
-          "uuid": "b31ecc9e-f7d7-484b-900a-62a6a91fd3a2"
+          "uuid": "8463323a-4101-47a9-811b-1853fa6f6ac8"
         },
         {
           "description": "Pad 2 [GND] of Q301 on B.Cu",
@@ -4812,7 +4812,7 @@
             "x": 130.8675,
             "y": 146.05
           },
-          "uuid": "cb5607f6-2fcd-4afc-9a9a-88d044dd735c"
+          "uuid": "1ab2166f-7d17-459a-a8ea-ea6760535499"
         }
       ],
       "severity": "warning",
@@ -4827,7 +4827,7 @@
             "x": 113.16,
             "y": 177.08
           },
-          "uuid": "31201367-3825-4ab7-8761-11b33aa8f295"
+          "uuid": "1aa39a5c-7f3a-415a-8660-4d3bbe69abee"
         },
         {
           "description": "Pad 1 [E3_PIEZO_DRIVE] of R363 on B.Cu",
@@ -4835,7 +4835,7 @@
             "x": 113.59,
             "y": 177.905
           },
-          "uuid": "3aaa7f5d-89e2-483b-b915-5666c3519d5c"
+          "uuid": "6268c709-c2b6-4ac9-8007-ba14706d1d07"
         }
       ],
       "severity": "warning",
@@ -4850,7 +4850,7 @@
             "x": 113.16,
             "y": 177.08
           },
-          "uuid": "31201367-3825-4ab7-8761-11b33aa8f295"
+          "uuid": "1aa39a5c-7f3a-415a-8660-4d3bbe69abee"
         },
         {
           "description": "Pad 2 [E3_PIEZO_OUT] of R363 on B.Cu",
@@ -4858,7 +4858,7 @@
             "x": 113.59,
             "y": 176.255
           },
-          "uuid": "9e68568e-1674-43fa-8420-121ca99a244e"
+          "uuid": "879d5641-6b90-4f11-8bed-d5d424125b58"
         }
       ],
       "severity": "warning",
@@ -4873,7 +4873,7 @@
             "x": 145.6,
             "y": 159.7
           },
-          "uuid": "d981414b-6a69-4c30-a414-20f549ad1371"
+          "uuid": "c01401f2-36e5-46bf-acb0-f8fa0c1e21e9"
         },
         {
           "description": "Pad 1 [E3_FAN_PG] of R367 on B.Cu",
@@ -4881,7 +4881,7 @@
             "x": 145.4,
             "y": 159.325
           },
-          "uuid": "d064c709-8b73-473b-8d29-5506d32de379"
+          "uuid": "85957362-3d3a-4f51-b11e-a7df897854a6"
         }
       ],
       "severity": "warning",
@@ -4896,7 +4896,7 @@
             "x": 145.6,
             "y": 159.7
           },
-          "uuid": "d981414b-6a69-4c30-a414-20f549ad1371"
+          "uuid": "c01401f2-36e5-46bf-acb0-f8fa0c1e21e9"
         },
         {
           "description": "Pad 2 [LAB5] of R367 on B.Cu",
@@ -4904,7 +4904,7 @@
             "x": 145.4,
             "y": 157.675
           },
-          "uuid": "c109d849-5626-474e-9fc9-225def334aff"
+          "uuid": "9d36ff6c-ed75-47a0-bf1c-429197fd4473"
         }
       ],
       "severity": "warning",
@@ -4919,7 +4919,7 @@
             "x": 138.65,
             "y": 191.04
           },
-          "uuid": "aa12f6f0-80eb-4ca2-97c3-5a4f4aeb53aa"
+          "uuid": "67de8d4b-3c5f-42d8-ab5d-d5f4b8d0160b"
         },
         {
           "description": "Pad 1 [E3_BACK_EXT] of SW303 on F.Cu",
@@ -4927,7 +4927,7 @@
             "x": 138.0,
             "y": 191.0
           },
-          "uuid": "10bc797d-5d65-4f3a-ac1c-a1c673a865f2"
+          "uuid": "47d0a0f8-11ea-42bc-8ba6-1b15439debf2"
         }
       ],
       "severity": "warning",
@@ -4942,7 +4942,7 @@
             "x": 146.21,
             "y": 161.58
           },
-          "uuid": "b96cdbaf-73d8-42f8-9a16-16368cb69242"
+          "uuid": "473cf3c5-249b-4ff0-a7b1-3a3c15bc9626"
         },
         {
           "description": "Pad 3 [E3_MCP_RESET_N] of Q306 on F.Cu",
@@ -4950,7 +4950,7 @@
             "x": 145.4675,
             "y": 161.8
           },
-          "uuid": "0f2487b5-9f96-4aab-a6b3-8573709af1a9"
+          "uuid": "42d50403-228d-499e-8759-c505831a365d"
         }
       ],
       "severity": "warning",
@@ -4965,7 +4965,7 @@
             "x": 144.6,
             "y": 120.28
           },
-          "uuid": "3b8b7fee-f388-4165-8627-340b02e29740"
+          "uuid": "857c40b7-bf20-4795-a590-2235a1f7b5af"
         },
         {
           "description": "Pad 4 [<no net>] of U313 on F.Cu",
@@ -4973,7 +4973,7 @@
             "x": 144.0875,
             "y": 121.45
           },
-          "uuid": "df7718a4-2946-4a73-9feb-0e2fb6e2d82c"
+          "uuid": "213de241-0aa2-49ba-8cd4-1a00f803c457"
         }
       ],
       "severity": "warning",
@@ -4988,7 +4988,7 @@
             "x": 144.6,
             "y": 120.28
           },
-          "uuid": "3b8b7fee-f388-4165-8627-340b02e29740"
+          "uuid": "857c40b7-bf20-4795-a590-2235a1f7b5af"
         },
         {
           "description": "Pad 5 [<no net>] of U313 on F.Cu",
@@ -4996,7 +4996,7 @@
             "x": 144.0875,
             "y": 120.5
           },
-          "uuid": "f69dea47-4981-4d90-b782-397284c4708e"
+          "uuid": "9ea47cb1-db75-41e9-99d7-0645bac6c537"
         }
       ],
       "severity": "warning",
@@ -5011,7 +5011,7 @@
             "x": 144.6,
             "y": 120.28
           },
-          "uuid": "3b8b7fee-f388-4165-8627-340b02e29740"
+          "uuid": "857c40b7-bf20-4795-a590-2235a1f7b5af"
         },
         {
           "description": "Pad 6 [<no net>] of U313 on F.Cu",
@@ -5019,7 +5019,7 @@
             "x": 144.0875,
             "y": 119.55
           },
-          "uuid": "d0e75a2d-c1d8-4a10-ab00-5f1a38b48d86"
+          "uuid": "5ce33d3a-9f36-4b0d-92bb-aa5b019d4f5f"
         }
       ],
       "severity": "warning",
@@ -5034,7 +5034,7 @@
             "x": 146.36,
             "y": 120.28
           },
-          "uuid": "b0411f63-3a77-415b-9e5e-cb694ff19e87"
+          "uuid": "9639a4fb-5fdf-4c38-8ae9-8616e738f200"
         },
         {
           "description": "Pad 1 [E3_MCP_RESET_N] of R306 on F.Cu",
@@ -5042,7 +5042,7 @@
             "x": 146.03,
             "y": 121.105
           },
-          "uuid": "40f0580b-2ef1-46b0-bb0c-4c50e295b9bf"
+          "uuid": "e82843ad-89b4-4913-88ff-9b5a10c2663c"
         }
       ],
       "severity": "warning",
@@ -5057,7 +5057,7 @@
             "x": 146.36,
             "y": 120.28
           },
-          "uuid": "b0411f63-3a77-415b-9e5e-cb694ff19e87"
+          "uuid": "9639a4fb-5fdf-4c38-8ae9-8616e738f200"
         },
         {
           "description": "Pad 2 [3V3_Q6A] of R306 on F.Cu",
@@ -5065,7 +5065,7 @@
             "x": 146.03,
             "y": 119.455
           },
-          "uuid": "b4718000-7df7-47ac-bab2-e48e78bfcefb"
+          "uuid": "05d31e70-60f7-4b0c-a97b-ae8e1e4e27bf"
         }
       ],
       "severity": "warning",
@@ -5080,7 +5080,7 @@
             "x": 138.65,
             "y": 194.6
           },
-          "uuid": "e5c84dd2-9d07-40ad-9371-87cab0474d06"
+          "uuid": "dde530e1-3ddb-4368-b6ee-7b340388dad0"
         },
         {
           "description": "Pad 2 [GND] of SW303 on F.Cu",
@@ -5088,7 +5088,7 @@
             "x": 138.0,
             "y": 195.0
           },
-          "uuid": "a6dfb95e-137c-4bf0-b35b-edcde621eeb6"
+          "uuid": "4a1f1d3c-9429-465a-abe8-9fe204030620"
         }
       ],
       "severity": "warning",
@@ -5103,7 +5103,7 @@
             "x": 138.65,
             "y": 212.4
           },
-          "uuid": "db947889-fb6d-4937-a95b-736dbeae4c63"
+          "uuid": "cdd432ed-f3dc-4f94-8313-b5cc6255f79d"
         },
         {
           "description": "Pad 1 [E3_MARK_EXT] of SW305 on F.Cu",
@@ -5111,7 +5111,7 @@
             "x": 138.0,
             "y": 213.0
           },
-          "uuid": "63ddd6e7-e17d-48e7-81c6-bd1e5b5cdc93"
+          "uuid": "d89174a6-0d13-4713-b327-a07dbf1654c6"
         }
       ],
       "severity": "warning",
@@ -5126,7 +5126,7 @@
             "x": 138.72,
             "y": 144.88
           },
-          "uuid": "2cdb7d50-5536-4219-83d9-891b6a583690"
+          "uuid": "49461bc9-94e9-4ded-9b24-9f70634486e6"
         },
         {
           "description": "Pad 1 [E3_U315_ILIM] of R396 on B.Cu",
@@ -5134,7 +5134,7 @@
             "x": 139.05,
             "y": 145.705
           },
-          "uuid": "f8d80ea9-74f1-454c-bee3-cf3f1d297252"
+          "uuid": "8bf1ca4c-565c-4a43-b04d-40c77d582700"
         }
       ],
       "severity": "warning",
@@ -5149,7 +5149,7 @@
             "x": 138.72,
             "y": 144.88
           },
-          "uuid": "2cdb7d50-5536-4219-83d9-891b6a583690"
+          "uuid": "49461bc9-94e9-4ded-9b24-9f70634486e6"
         },
         {
           "description": "Pad 2 [GND] of R396 on B.Cu",
@@ -5157,7 +5157,7 @@
             "x": 139.05,
             "y": 144.055
           },
-          "uuid": "d39a0df7-13bb-4dd4-9e26-ef93da365957"
+          "uuid": "00dcb06a-58b0-4fbf-ac6c-54505dd55ec2"
         }
       ],
       "severity": "warning",
@@ -5172,7 +5172,7 @@
             "x": 136.31,
             "y": 222.53
           },
-          "uuid": "09231e3f-2e04-4946-8fc5-89b394f3b790"
+          "uuid": "8ee4c58a-bef6-4eaf-96fb-ef89344c7192"
         },
         {
           "description": "Pad 1 [E3_Q6A_ON_SENSE] of R329 on B.Cu",
@@ -5180,7 +5180,7 @@
             "x": 136.79,
             "y": 223.355
           },
-          "uuid": "1b454d7b-4aed-4606-a486-cf190918d7c4"
+          "uuid": "d7e5ba3c-2da0-4db5-89e1-9c180a13d99e"
         }
       ],
       "severity": "warning",
@@ -5195,7 +5195,7 @@
             "x": 136.31,
             "y": 222.53
           },
-          "uuid": "09231e3f-2e04-4946-8fc5-89b394f3b790"
+          "uuid": "8ee4c58a-bef6-4eaf-96fb-ef89344c7192"
         },
         {
           "description": "Pad 2 [GND] of R329 on B.Cu",
@@ -5203,7 +5203,7 @@
             "x": 136.79,
             "y": 221.705
           },
-          "uuid": "3d794f64-86bf-437f-bbb5-5b0e067c0fab"
+          "uuid": "f21676a5-2a52-44e8-998d-9dfde4a19709"
         }
       ],
       "severity": "warning",
@@ -5218,7 +5218,7 @@
             "x": 138.22,
             "y": 222.53
           },
-          "uuid": "e60896fe-e88f-4634-ae96-1de76c8eccf0"
+          "uuid": "6dcdd46f-1286-4968-a8fe-bba4dc2c7b03"
         },
         {
           "description": "Pad 1 [E3_BUTTON_SENSE] of R330 on B.Cu",
@@ -5226,7 +5226,7 @@
             "x": 138.7,
             "y": 223.355
           },
-          "uuid": "c281294a-dcbe-4500-9b75-1abb7b4914ae"
+          "uuid": "f2365bbf-3aaa-440d-bba2-c1f17d5e7894"
         }
       ],
       "severity": "warning",
@@ -5241,7 +5241,7 @@
             "x": 138.22,
             "y": 222.53
           },
-          "uuid": "e60896fe-e88f-4634-ae96-1de76c8eccf0"
+          "uuid": "6dcdd46f-1286-4968-a8fe-bba4dc2c7b03"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R330 on B.Cu",
@@ -5249,7 +5249,7 @@
             "x": 138.7,
             "y": 221.705
           },
-          "uuid": "44074d53-886b-45dc-afb1-74b9956e1a60"
+          "uuid": "baa9f423-b39f-429f-ad12-dd60fca073bc"
         }
       ],
       "severity": "warning",
@@ -5264,7 +5264,7 @@
             "x": 136.31,
             "y": 225.94
           },
-          "uuid": "4b313b51-040a-4b9f-bb90-da060fa98e05"
+          "uuid": "601e4466-7006-42c2-8a20-895b21900554"
         },
         {
           "description": "Pad 1 [E3_ADC3V0] of R332 on B.Cu",
@@ -5272,7 +5272,7 @@
             "x": 136.79,
             "y": 226.765
           },
-          "uuid": "18822335-9b14-4fab-a74a-cd45e82a6862"
+          "uuid": "b0c83e8a-3c87-4ae1-8368-d984eeab8a04"
         }
       ],
       "severity": "warning",
@@ -5287,7 +5287,7 @@
             "x": 136.31,
             "y": 225.94
           },
-          "uuid": "4b313b51-040a-4b9f-bb90-da060fa98e05"
+          "uuid": "601e4466-7006-42c2-8a20-895b21900554"
         },
         {
           "description": "Pad 2 [E3_PANEL_TEMP] of R332 on B.Cu",
@@ -5295,7 +5295,7 @@
             "x": 136.79,
             "y": 225.115
           },
-          "uuid": "3c10d104-83a5-40f5-8fca-9ac221109fb5"
+          "uuid": "727c3241-656c-4f78-9f3a-f87446462fa7"
         }
       ],
       "severity": "warning",
@@ -5310,7 +5310,7 @@
             "x": 138.22,
             "y": 225.94
           },
-          "uuid": "6c80d5b9-3f73-4deb-bcf9-45f3fb292343"
+          "uuid": "ad14a2e5-bcea-4c6a-8a62-7cd1db805653"
         },
         {
           "description": "Pad 1 [E3_ADC3V0] of R333 on B.Cu",
@@ -5318,7 +5318,7 @@
             "x": 138.7,
             "y": 226.765
           },
-          "uuid": "44d001ce-fbdb-4572-871d-86f7c24e53d5"
+          "uuid": "0fcd0b44-2c03-441f-9a01-776a45ea7010"
         }
       ],
       "severity": "warning",
@@ -5333,7 +5333,7 @@
             "x": 138.22,
             "y": 225.94
           },
-          "uuid": "6c80d5b9-3f73-4deb-bcf9-45f3fb292343"
+          "uuid": "ad14a2e5-bcea-4c6a-8a62-7cd1db805653"
         },
         {
           "description": "Pad 2 [E3_CASE_TEMP] of R333 on B.Cu",
@@ -5341,7 +5341,7 @@
             "x": 138.7,
             "y": 225.115
           },
-          "uuid": "9bb7fa94-1f4f-4dbe-955e-a45b93b4653c"
+          "uuid": "59cc345f-cd61-4275-96ee-773346436a87"
         }
       ],
       "severity": "warning",
@@ -5356,7 +5356,7 @@
             "x": 125.6,
             "y": 188.88
           },
-          "uuid": "ba636585-2ddb-41f1-a848-9e6b21cb0b20"
+          "uuid": "de32d54f-1c96-419b-924b-e2806f987823"
         },
         {
           "description": "Pad 4 [E3_ENC1_PRESS_EXT] of U311 on F.Cu",
@@ -5364,7 +5364,7 @@
             "x": 124.9875,
             "y": 190.05
           },
-          "uuid": "1e8f985d-d3e7-4a13-9b69-4c2aa4ee5654"
+          "uuid": "475c595a-039a-4099-b750-21ad8a9fbf1c"
         }
       ],
       "severity": "warning",
@@ -5379,7 +5379,7 @@
             "x": 125.6,
             "y": 188.88
           },
-          "uuid": "ba636585-2ddb-41f1-a848-9e6b21cb0b20"
+          "uuid": "de32d54f-1c96-419b-924b-e2806f987823"
         },
         {
           "description": "Pad 5 [<no net>] of U311 on F.Cu",
@@ -5387,7 +5387,7 @@
             "x": 124.9875,
             "y": 189.1
           },
-          "uuid": "09fc050c-58ac-4dc0-8924-172576e09f8b"
+          "uuid": "078551ab-5d64-4ad0-87d1-1d74c0786638"
         }
       ],
       "severity": "warning",
@@ -5402,7 +5402,7 @@
             "x": 125.6,
             "y": 188.88
           },
-          "uuid": "ba636585-2ddb-41f1-a848-9e6b21cb0b20"
+          "uuid": "de32d54f-1c96-419b-924b-e2806f987823"
         },
         {
           "description": "Pad 6 [E3_ENC2_PRESS_EXT] of U311 on F.Cu",
@@ -5410,7 +5410,7 @@
             "x": 124.9875,
             "y": 188.15
           },
-          "uuid": "7216d128-3348-4adc-88d9-5a471418afde"
+          "uuid": "d178e0d9-350c-442b-9ffa-f503be70ba67"
         }
       ],
       "severity": "warning",
@@ -5425,7 +5425,7 @@
             "x": 127.46,
             "y": 188.88
           },
-          "uuid": "c26911a6-00d7-4dfa-afe1-2e695f86de20"
+          "uuid": "27ee2921-3093-4fc9-8504-9c8c8ee5496b"
         },
         {
           "description": "Pad 1 [E3_HMI_INT] of R334 on F.Cu",
@@ -5433,7 +5433,7 @@
             "x": 127.03,
             "y": 189.705
           },
-          "uuid": "b2611cb7-e37f-4f6e-b076-401be284e773"
+          "uuid": "98af7d65-8242-4597-a339-ab7d7b16e6d0"
         }
       ],
       "severity": "warning",
@@ -5448,7 +5448,7 @@
             "x": 127.46,
             "y": 188.88
           },
-          "uuid": "c26911a6-00d7-4dfa-afe1-2e695f86de20"
+          "uuid": "27ee2921-3093-4fc9-8504-9c8c8ee5496b"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R334 on F.Cu",
@@ -5456,7 +5456,7 @@
             "x": 127.03,
             "y": 188.055
           },
-          "uuid": "dc01e90a-bf7b-489a-b76b-a8c58392d384"
+          "uuid": "e87c6771-da58-48c3-b8a6-b09881797d79"
         }
       ],
       "severity": "warning",
@@ -5471,7 +5471,7 @@
             "x": 129.32,
             "y": 188.88
           },
-          "uuid": "d3cacf12-ea93-45a2-8f64-b9a690c57ef3"
+          "uuid": "266bedda-641c-4b8a-a929-7001f1342a85"
         },
         {
           "description": "Pad 1 [E3_HOME] of R335 on F.Cu",
@@ -5479,7 +5479,7 @@
             "x": 128.89,
             "y": 189.705
           },
-          "uuid": "454938e0-2ada-406e-830f-06265792fc51"
+          "uuid": "c4669217-80c5-4ad1-b9f3-e0a10d8316cd"
         }
       ],
       "severity": "warning",
@@ -5494,7 +5494,7 @@
             "x": 129.32,
             "y": 188.88
           },
-          "uuid": "d3cacf12-ea93-45a2-8f64-b9a690c57ef3"
+          "uuid": "266bedda-641c-4b8a-a929-7001f1342a85"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R335 on F.Cu",
@@ -5502,7 +5502,7 @@
             "x": 128.89,
             "y": 188.055
           },
-          "uuid": "bb40cb11-87b2-4067-9218-9f2669abe63f"
+          "uuid": "3455dc2c-a2ea-43d0-9a95-989cfb197fcd"
         }
       ],
       "severity": "warning",
@@ -5517,7 +5517,7 @@
             "x": 116.6,
             "y": 192.68
           },
-          "uuid": "a3abdf17-6754-4f49-b9d7-893936888017"
+          "uuid": "bbc3ddb7-baa5-4c11-8171-7e60fc04aff7"
         },
         {
           "description": "Pad 1 [E3_HOME_EXT] of SW302 on F.Cu",
@@ -5525,7 +5525,7 @@
             "x": 116.0,
             "y": 191.0
           },
-          "uuid": "48e37f6d-d3e0-469e-9214-35a7cd8c1183"
+          "uuid": "d30cb953-de18-4e7a-9980-2535e12efa95"
         }
       ],
       "severity": "warning",
@@ -5540,7 +5540,7 @@
             "x": 116.6,
             "y": 192.68
           },
-          "uuid": "a3abdf17-6754-4f49-b9d7-893936888017"
+          "uuid": "bbc3ddb7-baa5-4c11-8171-7e60fc04aff7"
         },
         {
           "description": "Pad 2 [GND] of SW302 on F.Cu",
@@ -5548,7 +5548,7 @@
             "x": 116.0,
             "y": 195.0
           },
-          "uuid": "5e0c1681-6460-476e-b9cf-ae410a33705c"
+          "uuid": "6fb49520-4a86-47a5-b6a2-5bea0c6ef6af"
         }
       ],
       "severity": "warning",
@@ -5563,7 +5563,7 @@
             "x": 118.46,
             "y": 192.68
           },
-          "uuid": "927a0784-0fd1-4e66-8427-a2b59959101e"
+          "uuid": "ca41884c-454f-4563-bee4-d77b1121fec8"
         },
         {
           "description": "Pad 1 [E3_BACK] of R337 on F.Cu",
@@ -5571,7 +5571,7 @@
             "x": 118.03,
             "y": 193.505
           },
-          "uuid": "b7bb484b-de8d-4faa-90f7-bf1cae9856e1"
+          "uuid": "14817c25-26fe-4774-b66b-5f2a508f4715"
         }
       ],
       "severity": "warning",
@@ -5586,7 +5586,7 @@
             "x": 118.46,
             "y": 192.68
           },
-          "uuid": "927a0784-0fd1-4e66-8427-a2b59959101e"
+          "uuid": "ca41884c-454f-4563-bee4-d77b1121fec8"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R337 on F.Cu",
@@ -5594,7 +5594,7 @@
             "x": 118.03,
             "y": 191.855
           },
-          "uuid": "0c1e8612-3405-4fac-b34e-bef81e220389"
+          "uuid": "977329dd-eded-4c30-ba8e-78f962da19ee"
         }
       ],
       "severity": "warning",
@@ -5609,7 +5609,7 @@
             "x": 120.32,
             "y": 192.68
           },
-          "uuid": "bc8e8da8-c73a-471f-84fd-6c99377aa242"
+          "uuid": "7ad97593-8e8f-4a8f-a19b-4244129a579c"
         },
         {
           "description": "Pad 1 [E3_BACK] of R338 on F.Cu",
@@ -5617,7 +5617,7 @@
             "x": 119.89,
             "y": 193.505
           },
-          "uuid": "8473750d-8eff-45bd-a0c1-ef8739265f08"
+          "uuid": "97809bd2-a743-4f7f-bfe3-ab75e7f15225"
         }
       ],
       "severity": "warning",
@@ -5632,7 +5632,7 @@
             "x": 120.32,
             "y": 192.68
           },
-          "uuid": "bc8e8da8-c73a-471f-84fd-6c99377aa242"
+          "uuid": "7ad97593-8e8f-4a8f-a19b-4244129a579c"
         },
         {
           "description": "Pad 2 [E3_BACK_EXT] of R338 on F.Cu",
@@ -5640,7 +5640,7 @@
             "x": 119.89,
             "y": 191.855
           },
-          "uuid": "eee7c196-f0a6-4eeb-a7be-d3a38909cfae"
+          "uuid": "2bc415ba-c0b4-408a-bb7f-282e162ff7cc"
         }
       ],
       "severity": "warning",
@@ -5655,7 +5655,7 @@
             "x": 122.18,
             "y": 192.68
           },
-          "uuid": "dec419c0-e12d-4faa-8c89-ab8fce168896"
+          "uuid": "96e995cb-97d6-4eb1-a5e4-176a06e2f404"
         },
         {
           "description": "Pad 1 [E3_REC] of R339 on F.Cu",
@@ -5663,7 +5663,7 @@
             "x": 121.75,
             "y": 193.505
           },
-          "uuid": "e2dcc560-e8e8-4605-9d6d-cab74a7e2eae"
+          "uuid": "b013775d-e006-4cd2-a21a-7a42607517d5"
         }
       ],
       "severity": "warning",
@@ -5678,7 +5678,7 @@
             "x": 122.18,
             "y": 192.68
           },
-          "uuid": "dec419c0-e12d-4faa-8c89-ab8fce168896"
+          "uuid": "96e995cb-97d6-4eb1-a5e4-176a06e2f404"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R339 on F.Cu",
@@ -5686,7 +5686,7 @@
             "x": 121.75,
             "y": 191.855
           },
-          "uuid": "3d0a4b44-ede3-4a5f-b63a-8d43974eb5b4"
+          "uuid": "fa99766b-8c1d-4549-b751-e9e8c37a06ac"
         }
       ],
       "severity": "warning",
@@ -5701,7 +5701,7 @@
             "x": 124.04,
             "y": 192.68
           },
-          "uuid": "6e475ef8-4ce7-4c69-955d-906be105702a"
+          "uuid": "01d3388c-24ac-4647-8e7f-8f72caa08da7"
         },
         {
           "description": "Pad 1 [E3_REC] of R340 on F.Cu",
@@ -5709,7 +5709,7 @@
             "x": 123.61,
             "y": 193.505
           },
-          "uuid": "688c3728-f463-4405-ab17-cededcd88233"
+          "uuid": "0ef79f2d-3d6e-4ed2-ae33-f0aba489a927"
         }
       ],
       "severity": "warning",
@@ -5724,7 +5724,7 @@
             "x": 124.04,
             "y": 192.68
           },
-          "uuid": "6e475ef8-4ce7-4c69-955d-906be105702a"
+          "uuid": "01d3388c-24ac-4647-8e7f-8f72caa08da7"
         },
         {
           "description": "Pad 2 [E3_REC_EXT] of R340 on F.Cu",
@@ -5732,7 +5732,7 @@
             "x": 123.61,
             "y": 191.855
           },
-          "uuid": "99902f12-7d1d-483c-9424-90c9a19d6c38"
+          "uuid": "e242f858-8d15-4a79-82fa-2f5183598a29"
         }
       ],
       "severity": "warning",
@@ -5747,7 +5747,7 @@
             "x": 125.9,
             "y": 192.68
           },
-          "uuid": "d58397a9-d639-4c57-8afb-42628678ec9f"
+          "uuid": "25fe8b55-bb12-4d21-bfd6-c73e02d0a526"
         },
         {
           "description": "Pad 1 [E3_MARK] of R341 on F.Cu",
@@ -5755,7 +5755,7 @@
             "x": 125.47,
             "y": 193.505
           },
-          "uuid": "c52baadf-25a7-4f26-b0df-d0dc9e3382fc"
+          "uuid": "cfd85463-8020-4362-877f-c3350c1ce8ce"
         }
       ],
       "severity": "warning",
@@ -5770,7 +5770,7 @@
             "x": 125.9,
             "y": 192.68
           },
-          "uuid": "d58397a9-d639-4c57-8afb-42628678ec9f"
+          "uuid": "25fe8b55-bb12-4d21-bfd6-c73e02d0a526"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R341 on F.Cu",
@@ -5778,7 +5778,7 @@
             "x": 125.47,
             "y": 191.855
           },
-          "uuid": "8e571349-6718-4aab-95af-9909bf54dc84"
+          "uuid": "79ac5c2c-2b91-4b78-8eab-f78758d62fd1"
         }
       ],
       "severity": "warning",
@@ -5793,7 +5793,7 @@
             "x": 131.0,
             "y": 177.525
           },
-          "uuid": "b505d712-1774-45be-afb9-7fd7d0ca720e"
+          "uuid": "409b0eff-5bb9-4782-9626-d2bcbe540dc7"
         },
         {
           "description": "PTH pad + [E3_PIEZO_OUT] of BZ301",
@@ -5801,7 +5801,7 @@
             "x": 129.25,
             "y": 180.0
           },
-          "uuid": "d85276ba-ca46-4d33-8a78-506f8a539a4b"
+          "uuid": "27cf6136-d0f1-437d-8e09-3fb1224b8018"
         }
       ],
       "severity": "warning",
@@ -5816,7 +5816,7 @@
             "x": 132.66,
             "y": 177.525
           },
-          "uuid": "533428fd-430b-44eb-a6ee-df8205f8aa1e"
+          "uuid": "e5d96da6-b4cc-4a4e-b7bc-a25bc3be80c3"
         },
         {
           "description": "Pad 1 [E3_LOCK] of R346 on F.Cu",
@@ -5824,7 +5824,7 @@
             "x": 132.43,
             "y": 178.35
           },
-          "uuid": "44b20451-a976-4106-98b2-d91718b6d84b"
+          "uuid": "8d89de71-c31c-47c1-8c95-c2814cb725b9"
         }
       ],
       "severity": "warning",
@@ -5839,7 +5839,7 @@
             "x": 132.66,
             "y": 177.525
           },
-          "uuid": "533428fd-430b-44eb-a6ee-df8205f8aa1e"
+          "uuid": "e5d96da6-b4cc-4a4e-b7bc-a25bc3be80c3"
         },
         {
           "description": "Pad 2 [E3_LOCK_EXT] of R346 on F.Cu",
@@ -5847,7 +5847,7 @@
             "x": 132.43,
             "y": 176.7
           },
-          "uuid": "89453dc3-3bed-40d8-bdd8-94224d1b3157"
+          "uuid": "c035756a-7ecb-42d1-b912-c13b3381d7ad"
         }
       ],
       "severity": "warning",
@@ -5862,7 +5862,7 @@
             "x": 137.18,
             "y": 177.525
           },
-          "uuid": "be961675-2771-4c0a-95cc-c234f77ff0f6"
+          "uuid": "18008076-c1ad-4ad1-b969-27f4cddeb50f"
         },
         {
           "description": "Pad 1 [E3_ENC2_PRESS] of R349 on F.Cu",
@@ -5870,7 +5870,7 @@
             "x": 137.41,
             "y": 178.35
           },
-          "uuid": "b48d9cbe-2e5b-4bbe-bc9d-e48fe16a904f"
+          "uuid": "8a4e5f30-5798-4aaf-9d7d-8c108835b7d9"
         }
       ],
       "severity": "warning",
@@ -5885,7 +5885,7 @@
             "x": 137.18,
             "y": 177.525
           },
-          "uuid": "be961675-2771-4c0a-95cc-c234f77ff0f6"
+          "uuid": "18008076-c1ad-4ad1-b969-27f4cddeb50f"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R349 on F.Cu",
@@ -5893,7 +5893,7 @@
             "x": 137.41,
             "y": 176.7
           },
-          "uuid": "43ed808c-e2b2-4538-9fdb-52e4c92959c2"
+          "uuid": "86993379-c32b-4f03-a66f-883cd521680d"
         }
       ],
       "severity": "warning",
@@ -5908,7 +5908,7 @@
             "x": 135.98,
             "y": 177.525
           },
-          "uuid": "3b127f93-a012-400c-8647-025b98e37f9d"
+          "uuid": "d9eeb65c-62db-426f-8ad6-0318288f154b"
         },
         {
           "description": "Pad 1 [E3_ENC1_PRESS] of R348 on F.Cu",
@@ -5916,7 +5916,7 @@
             "x": 135.75,
             "y": 176.7
           },
-          "uuid": "61d95bbb-a417-425a-b6de-beeef1013380"
+          "uuid": "e45936df-a193-4f7d-aec2-c70b8494d892"
         }
       ],
       "severity": "warning",
@@ -5931,7 +5931,7 @@
             "x": 135.98,
             "y": 177.525
           },
-          "uuid": "3b127f93-a012-400c-8647-025b98e37f9d"
+          "uuid": "d9eeb65c-62db-426f-8ad6-0318288f154b"
         },
         {
           "description": "Pad 2 [E3_ENC1_PRESS_EXT] of R348 on F.Cu",
@@ -5939,7 +5939,7 @@
             "x": 135.75,
             "y": 178.35
           },
-          "uuid": "c354dcc6-0b31-4ad8-bb7a-cb314752a15f"
+          "uuid": "181acba4-fed4-4d91-8d11-db4eb5525389"
         }
       ],
       "severity": "warning",
@@ -5954,7 +5954,7 @@
             "x": 130.0,
             "y": 136.62
           },
-          "uuid": "00ea9199-f618-4ef2-9492-3b081d9e8029"
+          "uuid": "dd8d5e26-99e3-4635-82c5-36faf123317a"
         },
         {
           "description": "Pad 1 [E3_ENC1_A_RAW] of R352 on B.Cu",
@@ -5962,7 +5962,7 @@
             "x": 130.33,
             "y": 135.795
           },
-          "uuid": "f890295b-e399-4c40-a5e6-95065e741042"
+          "uuid": "e8f62713-89ad-4375-a3db-ede8d2d8b0d8"
         }
       ],
       "severity": "warning",
@@ -5977,7 +5977,7 @@
             "x": 130.0,
             "y": 136.62
           },
-          "uuid": "00ea9199-f618-4ef2-9492-3b081d9e8029"
+          "uuid": "dd8d5e26-99e3-4635-82c5-36faf123317a"
         },
         {
           "description": "Pad 2 [E3_ENC1_A] of R352 on B.Cu",
@@ -5985,7 +5985,7 @@
             "x": 130.33,
             "y": 137.445
           },
-          "uuid": "4df8b857-b168-40a7-aa5c-f9a113c2711c"
+          "uuid": "0215f448-1455-4e1a-ab93-f19beca5197b"
         }
       ],
       "severity": "warning",
@@ -6000,7 +6000,7 @@
             "x": 128.9,
             "y": 136.62
           },
-          "uuid": "142d2acf-d7d3-4681-ab56-186e09141c48"
+          "uuid": "0edcbc4c-0820-44da-8c0d-822f95a0737e"
         },
         {
           "description": "Pad 1 [E3_ENC1_A_RAW] of R351 on B.Cu",
@@ -6008,7 +6008,7 @@
             "x": 128.57,
             "y": 137.445
           },
-          "uuid": "0fcd8ad7-2dec-4e8f-99c3-a733916eb3db"
+          "uuid": "036f6eb5-b20a-4670-ab01-2aa49a290b7f"
         }
       ],
       "severity": "warning",
@@ -6023,7 +6023,7 @@
             "x": 128.9,
             "y": 136.62
           },
-          "uuid": "142d2acf-d7d3-4681-ab56-186e09141c48"
+          "uuid": "0edcbc4c-0820-44da-8c0d-822f95a0737e"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R351 on B.Cu",
@@ -6031,7 +6031,7 @@
             "x": 128.57,
             "y": 135.795
           },
-          "uuid": "d6c95c56-9087-4a94-9ff1-c675d92633c4"
+          "uuid": "f1781a4d-2568-4897-b2b7-359399a2831b"
         }
       ],
       "severity": "warning",
@@ -6046,7 +6046,7 @@
             "x": 133.52,
             "y": 136.62
           },
-          "uuid": "87e706f6-824c-4f80-8b1f-b5d42224d4b1"
+          "uuid": "d8b05ca8-7644-45d5-b13f-296cfe0bc67a"
         },
         {
           "description": "Pad 1 [E3_ENC1_B_RAW] of R354 on B.Cu",
@@ -6054,7 +6054,7 @@
             "x": 133.85,
             "y": 135.795
           },
-          "uuid": "2324ed0c-0235-4060-bb40-2823ffcbbe47"
+          "uuid": "f8ece4de-d6d2-43d8-bb80-0740dc6c6eed"
         }
       ],
       "severity": "warning",
@@ -6069,7 +6069,7 @@
             "x": 133.52,
             "y": 136.62
           },
-          "uuid": "87e706f6-824c-4f80-8b1f-b5d42224d4b1"
+          "uuid": "d8b05ca8-7644-45d5-b13f-296cfe0bc67a"
         },
         {
           "description": "Pad 2 [E3_ENC1_B] of R354 on B.Cu",
@@ -6077,7 +6077,7 @@
             "x": 133.85,
             "y": 137.445
           },
-          "uuid": "b7acf403-1567-42b0-8462-1999531c14f8"
+          "uuid": "a496197d-1988-4bd7-9e3c-38f757e6a19c"
         }
       ],
       "severity": "warning",
@@ -6092,7 +6092,7 @@
             "x": 132.42,
             "y": 136.62
           },
-          "uuid": "3f05ad95-a556-4eb9-a910-f678cdf78729"
+          "uuid": "d3f35857-409b-433b-a3d8-36904bf57a2d"
         },
         {
           "description": "Pad 1 [E3_ENC1_B_RAW] of R353 on B.Cu",
@@ -6100,7 +6100,7 @@
             "x": 132.09,
             "y": 137.445
           },
-          "uuid": "37134920-ec30-4a47-9b0c-e1738fb1e8c4"
+          "uuid": "a9293cb2-4895-4a9e-a525-0301484e87af"
         }
       ],
       "severity": "warning",
@@ -6115,7 +6115,7 @@
             "x": 132.42,
             "y": 136.62
           },
-          "uuid": "3f05ad95-a556-4eb9-a910-f678cdf78729"
+          "uuid": "d3f35857-409b-433b-a3d8-36904bf57a2d"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R353 on B.Cu",
@@ -6123,7 +6123,7 @@
             "x": 132.09,
             "y": 135.795
           },
-          "uuid": "ee6ea1b2-9ebd-4c40-801f-26178cf6a70d"
+          "uuid": "5207720c-9f4d-44ab-b220-41ce137b9ac0"
         }
       ],
       "severity": "warning",
@@ -6138,7 +6138,7 @@
             "x": 137.04,
             "y": 136.62
           },
-          "uuid": "e4936694-9a0e-404f-80e1-be58a2507f6d"
+          "uuid": "bb74e20c-6edc-4828-9db2-947a58a10110"
         },
         {
           "description": "Pad 1 [E3_ENC2_A_RAW] of R356 on B.Cu",
@@ -6146,7 +6146,7 @@
             "x": 137.37,
             "y": 135.795
           },
-          "uuid": "43cd5696-212d-4cbe-8cab-ff1c4eae6d5d"
+          "uuid": "5f06d1aa-4ab9-474e-b874-a4b1dc8f83d0"
         }
       ],
       "severity": "warning",
@@ -6161,7 +6161,7 @@
             "x": 137.04,
             "y": 136.62
           },
-          "uuid": "e4936694-9a0e-404f-80e1-be58a2507f6d"
+          "uuid": "bb74e20c-6edc-4828-9db2-947a58a10110"
         },
         {
           "description": "Pad 2 [E3_ENC2_A] of R356 on B.Cu",
@@ -6169,7 +6169,7 @@
             "x": 137.37,
             "y": 137.445
           },
-          "uuid": "6d9650b4-6a8c-4d5e-b6c2-6f82475038c2"
+          "uuid": "81b9bae9-da2f-42de-af75-114819736de9"
         }
       ],
       "severity": "warning",
@@ -6184,7 +6184,7 @@
             "x": 135.94,
             "y": 136.62
           },
-          "uuid": "bd178cac-25c0-43f4-8426-0a476711e036"
+          "uuid": "bfd98ae3-bcb0-4527-8976-218f679bec22"
         },
         {
           "description": "Pad 1 [E3_ENC2_A_RAW] of R355 on B.Cu",
@@ -6192,7 +6192,7 @@
             "x": 135.61,
             "y": 137.445
           },
-          "uuid": "5a7b6433-806d-44c0-845d-a65b1e02adc8"
+          "uuid": "c1a78bf4-27b7-4816-b71c-737082e490c4"
         }
       ],
       "severity": "warning",
@@ -6207,7 +6207,7 @@
             "x": 135.94,
             "y": 136.62
           },
-          "uuid": "bd178cac-25c0-43f4-8426-0a476711e036"
+          "uuid": "bfd98ae3-bcb0-4527-8976-218f679bec22"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R355 on B.Cu",
@@ -6215,7 +6215,7 @@
             "x": 135.61,
             "y": 135.795
           },
-          "uuid": "36b7e9d3-af98-4d78-b5ea-c61266ed2b9c"
+          "uuid": "d78ac7a3-094e-46de-b5f8-2c68e37a4a6a"
         }
       ],
       "severity": "warning",
@@ -6230,7 +6230,7 @@
             "x": 140.56,
             "y": 136.62
           },
-          "uuid": "8ab0f9d7-a160-402c-abe3-35b518c9a727"
+          "uuid": "f588c0ee-2228-4ea7-90eb-810ef19f6a39"
         },
         {
           "description": "Pad 1 [E3_ENC2_B_RAW] of R358 on B.Cu",
@@ -6238,7 +6238,7 @@
             "x": 140.89,
             "y": 135.795
           },
-          "uuid": "757ffb3e-42fa-4313-b685-8611862478dc"
+          "uuid": "78ade13b-3b8f-45b7-a5cf-f31a6fc9fd93"
         }
       ],
       "severity": "warning",
@@ -6253,7 +6253,7 @@
             "x": 140.56,
             "y": 136.62
           },
-          "uuid": "8ab0f9d7-a160-402c-abe3-35b518c9a727"
+          "uuid": "f588c0ee-2228-4ea7-90eb-810ef19f6a39"
         },
         {
           "description": "Pad 2 [E3_ENC2_B] of R358 on B.Cu",
@@ -6261,7 +6261,7 @@
             "x": 140.89,
             "y": 137.445
           },
-          "uuid": "02631f99-2bf0-4eb2-8e92-b7624ed5a674"
+          "uuid": "cc66725a-3f29-4a8f-ba33-00d66eb68ea0"
         }
       ],
       "severity": "warning",
@@ -6276,7 +6276,7 @@
             "x": 139.46,
             "y": 136.62
           },
-          "uuid": "db7caec6-24bb-4e7e-8d2c-c2d7f4d9ed60"
+          "uuid": "acaf8b6d-9f83-46a4-b1df-af1134d09ca3"
         },
         {
           "description": "Pad 1 [E3_ENC2_B_RAW] of R357 on B.Cu",
@@ -6284,7 +6284,7 @@
             "x": 139.13,
             "y": 137.445
           },
-          "uuid": "77244a10-909d-48da-a749-1a8ae7d37d6e"
+          "uuid": "2f07ae32-c038-40ca-9cd4-252bd5fb1b73"
         }
       ],
       "severity": "warning",
@@ -6299,7 +6299,7 @@
             "x": 139.46,
             "y": 136.62
           },
-          "uuid": "db7caec6-24bb-4e7e-8d2c-c2d7f4d9ed60"
+          "uuid": "acaf8b6d-9f83-46a4-b1df-af1134d09ca3"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R357 on B.Cu",
@@ -6307,7 +6307,7 @@
             "x": 139.13,
             "y": 135.795
           },
-          "uuid": "0acb1b0b-b578-4373-a620-b13fd11365f2"
+          "uuid": "ef1fd553-f428-4872-b116-e15e0373af82"
         }
       ],
       "severity": "warning",
@@ -6322,7 +6322,7 @@
             "x": 140.2,
             "y": 123.98
           },
-          "uuid": "754acf3c-bf8c-4803-9e7e-287c16ccc402"
+          "uuid": "4793a2dc-3033-4b51-a90f-3ec968dd897e"
         },
         {
           "description": "PTH pad 1 [GND] of J311",
@@ -6330,7 +6330,7 @@
             "x": 138.9,
             "y": 121.95
           },
-          "uuid": "62bff4e9-79b2-4f09-8d51-648474335266"
+          "uuid": "1688d80c-37e9-4594-b797-51bc239da947"
         }
       ],
       "severity": "warning",
@@ -6345,7 +6345,7 @@
             "x": 140.2,
             "y": 123.98
           },
-          "uuid": "754acf3c-bf8c-4803-9e7e-287c16ccc402"
+          "uuid": "4793a2dc-3033-4b51-a90f-3ec968dd897e"
         },
         {
           "description": "PTH pad 2 [3V3_Q6A] of J311",
@@ -6353,7 +6353,7 @@
             "x": 138.9,
             "y": 123.95
           },
-          "uuid": "eb5c24b1-2533-4ef4-9cf8-786e30efdd26"
+          "uuid": "74aa5316-6ebb-42b7-91a8-0f696b437a66"
         }
       ],
       "severity": "warning",
@@ -6368,7 +6368,7 @@
             "x": 140.2,
             "y": 123.98
           },
-          "uuid": "754acf3c-bf8c-4803-9e7e-287c16ccc402"
+          "uuid": "4793a2dc-3033-4b51-a90f-3ec968dd897e"
         },
         {
           "description": "PTH pad 3 [EN_T7] of J311",
@@ -6376,7 +6376,7 @@
             "x": 138.9,
             "y": 125.95
           },
-          "uuid": "340a9322-cd80-4448-bde2-3a32fd490d43"
+          "uuid": "99d472e9-e98f-4cbc-ac8b-3a1e69533dd6"
         }
       ],
       "severity": "warning",
@@ -6391,7 +6391,7 @@
             "x": 141.96,
             "y": 123.98
           },
-          "uuid": "725ee66b-8bdd-46b7-873d-5d11916a3b6c"
+          "uuid": "ca4579c2-255d-43f7-b616-784c250abe81"
         },
         {
           "description": "Pad 1 [E3_HMI_SDA] of R359 on F.Cu",
@@ -6399,7 +6399,7 @@
             "x": 141.63,
             "y": 124.805
           },
-          "uuid": "f0a0700d-6a97-43bd-b458-6ec30d3f603a"
+          "uuid": "8539a5ce-4f95-4d2c-a959-66e8e4d8c315"
         }
       ],
       "severity": "warning",
@@ -6414,7 +6414,7 @@
             "x": 141.96,
             "y": 123.98
           },
-          "uuid": "725ee66b-8bdd-46b7-873d-5d11916a3b6c"
+          "uuid": "ca4579c2-255d-43f7-b616-784c250abe81"
         },
         {
           "description": "Pad 2 [E3_BEZEL_SDA] of R359 on F.Cu",
@@ -6422,7 +6422,7 @@
             "x": 141.63,
             "y": 123.155
           },
-          "uuid": "15dda833-bdd9-4d0b-852a-174c7d55bae5"
+          "uuid": "4b438e7d-49eb-401a-b9ca-d6e1ac4b71c1"
         }
       ],
       "severity": "warning",
@@ -6437,7 +6437,7 @@
             "x": 143.72,
             "y": 123.98
           },
-          "uuid": "72291982-5e7a-4515-9cac-b9455b3d4e2f"
+          "uuid": "fe25c83b-0e5d-4e48-baf8-d62a29056e7f"
         },
         {
           "description": "Pad 1 [E3_HMI_SCL] of R360 on F.Cu",
@@ -6445,7 +6445,7 @@
             "x": 143.39,
             "y": 124.805
           },
-          "uuid": "e3cab40c-7a73-4651-81da-30d819065f08"
+          "uuid": "ba80b16e-d3f7-4db3-af3d-4e6370aceb39"
         }
       ],
       "severity": "warning",
@@ -6460,7 +6460,7 @@
             "x": 143.72,
             "y": 123.98
           },
-          "uuid": "72291982-5e7a-4515-9cac-b9455b3d4e2f"
+          "uuid": "fe25c83b-0e5d-4e48-baf8-d62a29056e7f"
         },
         {
           "description": "Pad 2 [E3_BEZEL_SCL] of R360 on F.Cu",
@@ -6468,7 +6468,7 @@
             "x": 143.39,
             "y": 123.155
           },
-          "uuid": "8b4c03bc-b16e-431d-886b-95a764a9523d"
+          "uuid": "fd0d0fc7-7fa0-46e9-bbc3-c1de36ee7cd4"
         }
       ],
       "severity": "warning",
@@ -6483,7 +6483,7 @@
             "x": 145.48,
             "y": 123.98
           },
-          "uuid": "377cfb24-4767-49fb-a8d9-7fc926d6a556"
+          "uuid": "49b36217-9677-436e-bbe0-34cec3a3c02d"
         },
         {
           "description": "Pad 1 [E3_HMI_SDA] of R361 on F.Cu",
@@ -6491,7 +6491,7 @@
             "x": 145.15,
             "y": 124.805
           },
-          "uuid": "18e58171-db3d-445d-b9a1-07d995873335"
+          "uuid": "92f88c5c-15de-4a6d-bce1-d8cc3ccb6f3f"
         }
       ],
       "severity": "warning",
@@ -6506,7 +6506,7 @@
             "x": 145.48,
             "y": 123.98
           },
-          "uuid": "377cfb24-4767-49fb-a8d9-7fc926d6a556"
+          "uuid": "49b36217-9677-436e-bbe0-34cec3a3c02d"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R361 on F.Cu",
@@ -6514,7 +6514,7 @@
             "x": 145.15,
             "y": 123.155
           },
-          "uuid": "bb3c318a-7862-43d3-a242-f5e0c03ed5e6"
+          "uuid": "140f849f-a6ca-42e9-ae28-68c91988a1cd"
         }
       ],
       "severity": "warning",
@@ -6529,7 +6529,7 @@
             "x": 115.02,
             "y": 177.08
           },
-          "uuid": "096be5ef-8727-4918-963c-b2e44575443d"
+          "uuid": "247cc2a3-0028-47c9-85a5-efbbc4805b53"
         },
         {
           "description": "Pad 1 [E3_BLOWER_EN] of R370 on B.Cu",
@@ -6537,7 +6537,7 @@
             "x": 115.45,
             "y": 177.905
           },
-          "uuid": "74d6a3d1-07d0-4157-84c1-a5a180f2f277"
+          "uuid": "71748491-0f63-4bce-930c-a96e3109a5fd"
         }
       ],
       "severity": "warning",
@@ -6552,7 +6552,7 @@
             "x": 115.02,
             "y": 177.08
           },
-          "uuid": "096be5ef-8727-4918-963c-b2e44575443d"
+          "uuid": "247cc2a3-0028-47c9-85a5-efbbc4805b53"
         },
         {
           "description": "Pad 2 [E3_BLOWER_GATE] of R370 on B.Cu",
@@ -6560,7 +6560,7 @@
             "x": 115.45,
             "y": 176.255
           },
-          "uuid": "580445f2-9d98-4412-bd26-ab62dba9420d"
+          "uuid": "06c5eb1a-f4ae-45e0-b08c-3587dc593f12"
         }
       ],
       "severity": "warning",
@@ -6575,7 +6575,7 @@
             "x": 139.21,
             "y": 171.58
           },
-          "uuid": "fed77555-1580-40e9-b580-8193438ed4ae"
+          "uuid": "34b64e78-8e0c-4dda-823f-d01144488df6"
         },
         {
           "description": "Pad 1 [E3_FAN_TACH_RAW] of R368 on B.Cu",
@@ -6583,7 +6583,7 @@
             "x": 139.49,
             "y": 172.405
           },
-          "uuid": "f7a13a6f-6795-4bc9-a692-5ec9bc92367d"
+          "uuid": "85cff29e-76eb-4f5a-898e-87970ce8c92d"
         }
       ],
       "severity": "warning",
@@ -6598,7 +6598,7 @@
             "x": 139.21,
             "y": 171.58
           },
-          "uuid": "fed77555-1580-40e9-b580-8193438ed4ae"
+          "uuid": "34b64e78-8e0c-4dda-823f-d01144488df6"
         },
         {
           "description": "Pad 2 [E3_PICO3V3] of R368 on B.Cu",
@@ -6606,7 +6606,7 @@
             "x": 139.49,
             "y": 170.755
           },
-          "uuid": "4ae75617-2930-4cf7-a3be-1cc8a69631e7"
+          "uuid": "27f02b90-fdd8-4324-af2e-1b6005beb7ad"
         }
       ],
       "severity": "warning",
@@ -6621,7 +6621,7 @@
             "x": 139.93,
             "y": 159.0
           },
-          "uuid": "401cae31-d8d3-4f85-83b3-378823bc2524"
+          "uuid": "15d516e1-93f4-4f80-af80-eac1eb568cbb"
         },
         {
           "description": "Pad 1 [E3_FAN_NG] of Q303 on B.Cu",
@@ -6629,7 +6629,7 @@
             "x": 141.0625,
             "y": 159.95
           },
-          "uuid": "9d13fe99-42aa-4bbe-98fd-9c488a705e42"
+          "uuid": "e506a316-93d8-4813-a486-4e2c72ec6306"
         }
       ],
       "severity": "warning",
@@ -6644,7 +6644,7 @@
             "x": 139.93,
             "y": 159.0
           },
-          "uuid": "401cae31-d8d3-4f85-83b3-378823bc2524"
+          "uuid": "15d516e1-93f4-4f80-af80-eac1eb568cbb"
         },
         {
           "description": "Pad 2 [GND] of Q303 on B.Cu",
@@ -6652,7 +6652,7 @@
             "x": 141.0625,
             "y": 158.05
           },
-          "uuid": "28730d4a-d8b7-4502-86b8-14257d8d6165"
+          "uuid": "d5b1ce5c-d974-4c86-84e6-07fd15ba475b"
         }
       ],
       "severity": "warning",
@@ -6667,7 +6667,7 @@
             "x": 146.83,
             "y": 158.5
           },
-          "uuid": "16e3fcd5-2d68-46b0-8a83-0c7f0ace154f"
+          "uuid": "1a820aff-4a7a-4646-b483-0caa51ab4cf5"
         },
         {
           "description": "Pad 1 [E3_FAN_PG] of Q304 on B.Cu",
@@ -6675,7 +6675,7 @@
             "x": 147.05,
             "y": 158.7625
           },
-          "uuid": "e5151e94-b769-4c43-8124-3e7320d01150"
+          "uuid": "79065aab-26c5-435f-98b1-f4d2989a4ec8"
         }
       ],
       "severity": "warning",
@@ -6690,7 +6690,7 @@
             "x": 146.83,
             "y": 158.5
           },
-          "uuid": "16e3fcd5-2d68-46b0-8a83-0c7f0ace154f"
+          "uuid": "1a820aff-4a7a-4646-b483-0caa51ab4cf5"
         },
         {
           "description": "Pad 2 [GND] of C320 on B.Cu",
@@ -6698,7 +6698,7 @@
             "x": 147.25,
             "y": 156.7
           },
-          "uuid": "6b879b57-7e95-4f48-b5e1-9f13fe25f8dc"
+          "uuid": "967d0b1a-c493-4ac3-b252-9d26286d41af"
         }
       ],
       "severity": "warning",
@@ -6713,7 +6713,7 @@
             "x": 140.92,
             "y": 171.58
           },
-          "uuid": "34d7c3bd-8b89-4590-94d9-9b64686d0be2"
+          "uuid": "5bd6cad0-e667-4d0f-ad42-821f444e1bac"
         },
         {
           "description": "Pad 1 [E3_FAN_TACH_RAW] of R369 on B.Cu",
@@ -6721,7 +6721,7 @@
             "x": 141.2,
             "y": 172.405
           },
-          "uuid": "2e4e288f-68ae-42ba-9761-987e51c48030"
+          "uuid": "909e633e-af58-45d3-8f64-08a6ee9c1e4d"
         }
       ],
       "severity": "warning",
@@ -6736,7 +6736,7 @@
             "x": 140.92,
             "y": 171.58
           },
-          "uuid": "34d7c3bd-8b89-4590-94d9-9b64686d0be2"
+          "uuid": "5bd6cad0-e667-4d0f-ad42-821f444e1bac"
         },
         {
           "description": "Pad 2 [E3_FAN_TACH] of R369 on B.Cu",
@@ -6744,7 +6744,7 @@
             "x": 141.2,
             "y": 170.755
           },
-          "uuid": "ca5d0e57-7334-463f-b703-ae08648721a9"
+          "uuid": "bce68ced-b503-4aac-93cb-2c8a57acc191"
         }
       ],
       "severity": "warning",
@@ -6759,7 +6759,7 @@
             "x": 116.88,
             "y": 177.08
           },
-          "uuid": "ce2fc9aa-a8c2-43fb-b45f-03309ba65d16"
+          "uuid": "7272d5e9-b3ca-48cb-9af8-89beba3f79be"
         },
         {
           "description": "Pad 1 [E3_BLOWER_GATE] of R371 on B.Cu",
@@ -6767,7 +6767,7 @@
             "x": 117.31,
             "y": 177.905
           },
-          "uuid": "eaf32b70-80c0-4967-898d-e335d2c28741"
+          "uuid": "959d3a71-6e9a-4ac3-9f64-d971f235f906"
         }
       ],
       "severity": "warning",
@@ -6782,7 +6782,7 @@
             "x": 116.88,
             "y": 177.08
           },
-          "uuid": "ce2fc9aa-a8c2-43fb-b45f-03309ba65d16"
+          "uuid": "7272d5e9-b3ca-48cb-9af8-89beba3f79be"
         },
         {
           "description": "Pad 2 [GND] of R371 on B.Cu",
@@ -6790,7 +6790,7 @@
             "x": 117.31,
             "y": 176.255
           },
-          "uuid": "ac39db1c-8a7b-4c85-bd9c-ea2bd67eac3b"
+          "uuid": "55a7f757-96b8-45b8-a917-163441d3edb4"
         }
       ],
       "severity": "warning",
@@ -6805,7 +6805,7 @@
             "x": 118.74,
             "y": 177.08
           },
-          "uuid": "4c2b4771-1af1-444a-b9fe-8f6bce9960f3"
+          "uuid": "e31ed27c-ab89-4006-8de4-2d4c8537dba0"
         },
         {
           "description": "Pad 2 [E3_BLOWER_GND] of C342 on B.Cu",
@@ -6813,7 +6813,7 @@
             "x": 119.19,
             "y": 176.58
           },
-          "uuid": "fe0304f3-9d2a-4e7e-ba39-67f0cd6dc191"
+          "uuid": "8fd322c7-bc13-4424-8bcb-acfde546e744"
         }
       ],
       "severity": "warning",
@@ -6828,7 +6828,7 @@
             "x": 138.65,
             "y": 215.96
           },
-          "uuid": "01387030-5d5d-48c1-b1db-ea02f2096e28"
+          "uuid": "e8aadf99-0fb7-442a-a9bb-0740cebf1235"
         },
         {
           "description": "Pad 2 [GND] of SW305 on F.Cu",
@@ -6836,7 +6836,7 @@
             "x": 138.0,
             "y": 217.0
           },
-          "uuid": "7f695570-aeef-40b8-b9ed-57e29f08027f"
+          "uuid": "1e77f8e4-0241-482e-860f-2a53275a1db6"
         }
       ],
       "severity": "warning",
@@ -6851,7 +6851,7 @@
             "x": 141.9,
             "y": 165.43
           },
-          "uuid": "2264ff98-c97f-44bb-84ee-a229952933d8"
+          "uuid": "df017b5f-d4df-4efc-9a30-9fa74aa7ca87"
         },
         {
           "description": "PTH pad 2 [E3_FAN5_P] of J313",
@@ -6859,7 +6859,7 @@
             "x": 140.43,
             "y": 165.76
           },
-          "uuid": "57b473ab-56dc-4dbc-93df-fe5db7d7b12d"
+          "uuid": "e0e846db-1f5a-49b7-960b-cd5a968f2ff9"
         }
       ],
       "severity": "warning",
@@ -6874,7 +6874,7 @@
             "x": 141.9,
             "y": 165.43
           },
-          "uuid": "2264ff98-c97f-44bb-84ee-a229952933d8"
+          "uuid": "df017b5f-d4df-4efc-9a30-9fa74aa7ca87"
         },
         {
           "description": "PTH pad 3 [E3_FAN_TACH_RAW] of J313",
@@ -6882,7 +6882,7 @@
             "x": 140.43,
             "y": 163.22
           },
-          "uuid": "447996e6-e246-4988-95c0-5ee408717c91"
+          "uuid": "834baf06-52f2-44d8-94e5-2dfaeba07d69"
         }
       ],
       "severity": "warning",
@@ -6897,7 +6897,7 @@
             "x": 143.81,
             "y": 165.43
           },
-          "uuid": "ae12c96f-8bac-40bf-862d-d6edcc5040d3"
+          "uuid": "68bfba4f-252f-424b-aabe-84cdb669e8dd"
         },
         {
           "description": "Pad 1 [E3_MCP_RESET_ASSERT] of R393 on F.Cu",
@@ -6905,7 +6905,7 @@
             "x": 143.33,
             "y": 166.255
           },
-          "uuid": "c57cc055-0ab5-45d7-bac5-6f48b86a9378"
+          "uuid": "5c764646-58e8-4be6-b4ef-818b6ce5d0ce"
         }
       ],
       "severity": "warning",
@@ -6920,7 +6920,7 @@
             "x": 143.81,
             "y": 165.43
           },
-          "uuid": "ae12c96f-8bac-40bf-862d-d6edcc5040d3"
+          "uuid": "68bfba4f-252f-424b-aabe-84cdb669e8dd"
         },
         {
           "description": "Pad 2 [E3_MCP_RESET_GATE] of R393 on F.Cu",
@@ -6928,7 +6928,7 @@
             "x": 143.33,
             "y": 164.605
           },
-          "uuid": "61dd816f-0061-4033-b600-1c3d0326c164"
+          "uuid": "5e583bd1-0479-49b5-9ef9-3d085cbd9a74"
         }
       ],
       "severity": "warning",
@@ -6943,7 +6943,7 @@
             "x": 145.72,
             "y": 165.43
           },
-          "uuid": "67c8b583-a24e-4812-8740-e974ddfef930"
+          "uuid": "ee19e6a0-1494-4796-8fdd-a7d7dea0bce9"
         },
         {
           "description": "Pad 1 [E3_MCP_RESET_GATE] of R394 on F.Cu",
@@ -6951,7 +6951,7 @@
             "x": 145.24,
             "y": 166.255
           },
-          "uuid": "893403cb-298e-4784-af64-1e0ccfb71a29"
+          "uuid": "8220bae8-a980-4833-bc63-8ff669927734"
         }
       ],
       "severity": "warning",
@@ -6966,7 +6966,7 @@
             "x": 145.72,
             "y": 165.43
           },
-          "uuid": "67c8b583-a24e-4812-8740-e974ddfef930"
+          "uuid": "ee19e6a0-1494-4796-8fdd-a7d7dea0bce9"
         },
         {
           "description": "Pad 2 [GND] of R394 on F.Cu",
@@ -6974,7 +6974,7 @@
             "x": 145.24,
             "y": 164.605
           },
-          "uuid": "f7c7d93f-f9fe-4b85-963c-204906579158"
+          "uuid": "8f3de721-91fd-4df0-b875-4df7817e4beb"
         }
       ],
       "severity": "warning",
@@ -6989,7 +6989,7 @@
             "x": 140.48,
             "y": 144.88
           },
-          "uuid": "f3abab17-9f3a-480e-9270-1c53bf7ac612"
+          "uuid": "35bd486e-70fd-4b42-b8db-85573b7b1171"
         },
         {
           "description": "Pad 1 [E3_GNSS_FAULT] of TP301 on B.Cu",
@@ -6997,7 +6997,7 @@
             "x": 141.33,
             "y": 144.65
           },
-          "uuid": "6d035603-69b6-4fc4-b60d-4096c8457c07"
+          "uuid": "da3160bc-bd14-4b4f-ad8a-4cd0d2c84d47"
         }
       ],
       "severity": "warning",
@@ -7012,7 +7012,7 @@
             "x": 125.68,
             "y": 205.25
           },
-          "uuid": "f28a952c-13ba-45dc-af9c-dc80cade2b3f"
+          "uuid": "691bf2ce-18a9-488a-93d8-7ceca43ed550"
         },
         {
           "description": "Pad 13 [<no net>] of U306 on F.Cu",
@@ -7020,7 +7020,7 @@
             "x": 127.3625,
             "y": 205.025
           },
-          "uuid": "25f9fc49-e27d-4a60-9f6b-d858c02cc7fe"
+          "uuid": "46e64e48-510e-41db-8ab3-0ccc548ca0ac"
         }
       ],
       "severity": "warning",
@@ -7035,7 +7035,7 @@
             "x": 134.2875,
             "y": 191.385
           },
-          "uuid": "89feb9a9-54f8-4997-99c2-d71816dd8440"
+          "uuid": "9a8e3ac5-5c0f-430d-b988-53979c7dee2f"
         },
         {
           "description": "Pad 2 [LAB5] of D301 on B.Cu",
@@ -7043,7 +7043,7 @@
             "x": 135.9,
             "y": 190.6
           },
-          "uuid": "c051ba22-f9d3-4f58-9f4e-b53196c581aa"
+          "uuid": "354e54df-fcdd-49d1-b7f2-e10bb4da5fe5"
         }
       ],
       "severity": "warning",
@@ -7058,7 +7058,7 @@
             "x": 134.21,
             "y": 142.7
           },
-          "uuid": "fbf038b9-1a5c-42a6-8745-d61ca3c1b7e2"
+          "uuid": "594e8ccb-e4fb-4d98-9802-a0dc66239310"
         },
         {
           "description": "PTH pad 4 [E3_ENC1_PRESS_EXT] of J316",
@@ -7066,7 +7066,7 @@
             "x": 135.55,
             "y": 141.3
           },
-          "uuid": "970fed30-037b-46b9-9dc7-32c3dcdfa807"
+          "uuid": "68f86f2e-c08c-4641-b445-8b2e111da6ed"
         }
       ],
       "severity": "warning",
@@ -7081,7 +7081,7 @@
             "x": 142.95,
             "y": 118.1
           },
-          "uuid": "98f248aa-9e70-467d-83ec-7d46d6685f6f"
+          "uuid": "8b361c30-ea22-4793-b670-3987c3996c30"
         },
         {
           "description": "PTH pad 1 [PWR_ON_KEY] of J310",
@@ -7089,7 +7089,7 @@
             "x": 141.5,
             "y": 116.8
           },
-          "uuid": "220dfbfe-8b5f-4cbc-9f19-a09e62dad0f7"
+          "uuid": "b163ea08-fbfc-484e-8c61-ce3376f44202"
         }
       ],
       "severity": "warning",
@@ -7104,7 +7104,7 @@
             "x": 142.95,
             "y": 118.1
           },
-          "uuid": "98f248aa-9e70-467d-83ec-7d46d6685f6f"
+          "uuid": "8b361c30-ea22-4793-b670-3987c3996c30"
         },
         {
           "description": "PTH pad 2 [GND] of J310",
@@ -7112,7 +7112,7 @@
             "x": 143.5,
             "y": 116.8
           },
-          "uuid": "944fd408-350f-4391-8269-36fe4ff4a46e"
+          "uuid": "ac91e884-959b-4c4e-a6eb-ac197cd7f82e"
         }
       ],
       "severity": "warning",
