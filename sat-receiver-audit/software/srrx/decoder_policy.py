@@ -61,7 +61,6 @@ _DISABLED = {
     "egc-safetynet": "DISABLED_NO_VERIFIED_HEADER_PARSER_AND_TEST_VECTORS",
     "dsc-safety": "DISABLED_NO_VERIFIED_FORMAT_CATEGORY_PARSER_AND_TEST_VECTORS",
     "amateur-digital": "DISABLED_NO_VERIFIED_DECODE_ONLY_PRESET",
-    "ais-public": "DISABLED_NO_VERIFIED_PRE_PAYLOAD_MILITARY_FILTER",
 }
 # Installation-gated presets that run only as an engine lease: never a file plan here.
 ADSB_PRESET = "adsb-public"
@@ -179,7 +178,7 @@ def load_installation(path):
     return record
 
 
-def availability(installation=None, satdump_installation=None, adsb_acceptance=None):
+def availability(installation=None, satdump_installation=None, adsb_acceptance=None, ais_installation=None):
     """No device probing, decoder launch, header parsing or PATH discovery."""
     status = "UNAVAILABLE_NO_ACCEPTED_INSTALLATION"
     if installation is not None:
@@ -204,7 +203,14 @@ def availability(installation=None, satdump_installation=None, adsb_acceptance=N
             adsb = "LEASE_PRESET_ACCEPTED_FILTER_CHECKS_AT_START"
         except (adsb_filter.FilterRefused, OSError):
             adsb = "UNAVAILABLE_INSTALLATION_NOT_QUALIFIED"
-    return {PRESET: status, SATDUMP_PRESET: satdump, ADSB_PRESET: adsb, **_DISABLED}
+    ais = "UNAVAILABLE_NO_ACCEPTED_INSTALLATION"
+    if ais_installation is not None:
+        try:
+            _validate_ais_installation(ais_installation)
+            ais = "LEASE_PRESET_ACCEPTED_RECEIVER_LEASE_REQUIRED_AT_RUN"
+        except (DecoderRefused, OSError):
+            ais = "UNAVAILABLE_INSTALLATION_NOT_QUALIFIED"
+    return {PRESET: status, SATDUMP_PRESET: satdump, ADSB_PRESET: adsb, AIS_PRESET: ais, **_DISABLED}
 
 
 def load_adsb_acceptance(root=None):
@@ -379,6 +385,63 @@ def load_satdump_installation(path):
     return record
 
 
+# ---------------------------------------------------------------- ais-public (W2 SW-AIS)
+
+AIS_PRESET = "ais-public"
+AIS_COMMIT = "8833c64b3da0c42e9a724b9bd13eaab2fffadcca"
+AIS_VERSION = "0.70+lab1"
+AIS_EXECUTABLE = "/usr/bin/AIS-catcher"
+# The deployed tree's privacy filter, lease template and build recipe (deploy.stage: /opt/srrx/...,
+# /etc/systemd/system); the record binds each by SHA256, so another filter, unit or recipe is not accepted.
+AIS_FILTER = str(Path(__file__).resolve().parent / "ais_filter.py")
+AIS_UNIT = "/etc/systemd/system/srrx-lease-aiscatcher@.service"
+AIS_RECIPE = str(Path(__file__).resolve().parents[2] / "deployment/recipes/ais-catcher/recipe.json")
+_AIS_FIELDS = {"v", "tool_id", "version", "source_commit", "executable", "sha256", "evidence_id",
+               "filter_sha256", "unit_sha256", "recipe_sha256"}
+
+
+def _validate_ais_installation(record):
+    """ais-public is installation-gated like satdump-weather: an administrator record binds the
+    AIS-catcher ELF of the +lab package, srrx/ais_filter.py, the lease template and the recipe. It
+    has no file plan here: the engine runs only in srrx-lease-aiscatcher@<alias>.service (labd
+    engine_lease) behind srrx.ais_filter, which publishes a vessel only after a static report
+    with a known ship type other than 35 (STACK.md:599)."""
+    _keys(record, _AIS_FIELDS, "INSTALLATION_SCHEMA")
+    if (type(record["v"]) is not int or record["v"] != 1 or record["tool_id"] != "ais-catcher" or
+            record["version"] != AIS_VERSION or record["source_commit"] != AIS_COMMIT or
+            not all(_digest(record[key]) for key in ("sha256", "filter_sha256", "unit_sha256", "recipe_sha256")) or
+            not isinstance(record["evidence_id"], str) or not _EVIDENCE.fullmatch(record["evidence_id"])):
+        _refuse("INSTALLATION_VERSION_OR_PROVENANCE_UNVERIFIED")
+    if record["executable"] != AIS_EXECUTABLE:
+        _refuse("EXECUTABLE_NOT_ALLOWLISTED")
+    path = _file(record["executable"], executable=True)
+    _admin_directories(path)
+    with path.open("rb") as stream:
+        if stream.read(4) != b"\x7fELF":
+            _refuse("NATIVE_VENDOR_EXECUTABLE_REQUIRED")
+    if _hash_file(path, MAX_INPUT_BYTES)[0] != record["sha256"]:
+        _refuse("EXECUTABLE_DIGEST_CHANGED")
+    for key, source in (("filter_sha256", AIS_FILTER), ("unit_sha256", AIS_UNIT), ("recipe_sha256", AIS_RECIPE)):
+        if _admin_file(Path(source), 1024 * 1024) != record[key]:
+            _refuse("AIS_" + key[:-7].upper() + "_DIGEST_CHANGED")
+    return path
+
+
+def load_ais_installation(path):
+    """One root-owned, non-writable AIS-catcher installation record (deployment/recipes/ais-catcher)."""
+    path = _file(path)
+    info = path.stat()
+    if info.st_uid != 0 or info.st_mode & 0o022 or info.st_size > 8192:
+        _refuse("TRUSTED_ADMIN_INSTALLATION_RECORD_REQUIRED")
+    _admin_directories(path)
+    try:
+        record = json.loads(path.read_text())
+    except (OSError, UnicodeError, ValueError):
+        _refuse("INSTALLATION_SCHEMA")
+    _validate_ais_installation(record)
+    return record
+
+
 def satdump_executable(installation):
     """Revalidate the installation (ELF, plugin and pipeline sets, config); the ELF path."""
     return _validate_satdump_installation(installation)
@@ -526,6 +589,8 @@ def make_plan(preset, source, metadata, installation, *, scope=None):
         _refuse(_DISABLED[preset])  # Happens before source/header/address access.
     if preset in _ENGINE_ONLY:
         _refuse(_ENGINE_ONLY[preset])  # the readsb lease (srrx.adsb_filter), before any file access
+    if preset == AIS_PRESET:
+        _refuse("DISABLED_FILE_PLAN_AIS_RUNS_ONLY_AS_LEASE_ENGINE")  # srrx.ais_filter, never a file plan
     if preset == SATDUMP_PRESET:
         _refuse("SATDUMP_PRESET_IS_SATDUMP_PLAN")  # LRPT baseband only, through srrx.satdump_pass
     if preset != PRESET:
@@ -725,6 +790,8 @@ def main(argv=None):
                 _refuse(_DISABLED[args.preset])
             if args.preset in _ENGINE_ONLY:
                 _refuse(_ENGINE_ONLY[args.preset])
+            if args.preset == AIS_PRESET:
+                _refuse("DISABLED_FILE_PLAN_AIS_RUNS_ONLY_AS_LEASE_ENGINE")
             if args.preset == SATDUMP_PRESET:
                 _refuse("SATDUMP_PRESET_IS_SATDUMP_PLAN")
             if args.metadata.stat().st_size > 8192:
