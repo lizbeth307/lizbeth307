@@ -577,7 +577,7 @@ NPTH_CLEAR = 0.25 + 0.05  # copper to the J209 alignment-post holes (KiCad hole 
 SPINE_VIAS_MIN = 4
 SPINE_VIA_PITCH = 1.2     # spine plane vias at least this far apart: 0.5 mm between them for one F.Cu track
 LAB5_UP_VY = 22.2         # upper LAB5 vias above the upper contact row (top side free there)
-LAB5_LO_VY = 15.4         # lower LAB5 vias below the lower contact row, clear of the GND contacts beside them
+LAB5_LO_VY = 15.35        # lower LAB5 vias below the lower contact row, clear of the GND contacts beside them
 W_PAIR = 0.8              # copper of one LAB5 contact pair (2 A): PWR2A width (netclasses.json)
 K4_KLO = 15.2             # ch4 SHUNT sense: B.Cu right of the J209 hole, under the lower row into its contact
 
