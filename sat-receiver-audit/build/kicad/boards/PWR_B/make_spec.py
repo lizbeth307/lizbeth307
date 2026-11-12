@@ -265,17 +265,23 @@ class Inputs:
 #  * ch4 output (iteration 2, review F1 of W2 PCB-PWRB-2): route run 43241032279 left the 62 mm link from the damper C247
 #    in the arm to R247 open, and the J209 strip has no room for the ch4 cell, C247 and L210 side by side (each spans
 #    the alignment-hole rows y 16.9-18.4 between the holes x 86.0-111.6). So L209 stands 1.2 mm lower than the cell
-#    template (LNA_ROW_OFFSETS), C247 stands over it between the J204 courtyard and the J113 strip, with R247, TP210 and
-#    TP209 to its right above the J113 strip (TP209 over the BIAS_CH4 pad of R247). C250 (west, next to the L210 output pad) and C246 (east, nearer L209) take
+#    template (LNA_ROW_OFFSETS), C247 stands over it between the J204 courtyard and the J113 strip, with R247, TP209 and
+#    TP210 to its right above the J113 strip. C250 (west, next to the L210 output pad) and C246 (east, nearer L209) take
 #    the place R247 had over J209, turned so that their GND pads face the J209 spine, and C297 takes the C250 place right
-#    of L209 (route runs 43268279241 and 43270598656 with C246 / C297 in the R247 place: 1 zone-neck error and 1 open,
-#    3 open; route run 43273190849 with TP209 left of TP210: 2 open; route run 43276182228 with TP210 in the R247
-#    place: 17 open). Every other part, and every via
-#    between the J209 upper row and the J204 pins or in the B.Cu escape fan of the lower-row contacts 17-59, stays as in
-#    route run 43241032279: route run 43258433850 had C250 / C297 vias between the upper row and the J204 pins (12
-#    connections open), route run 43261863661 the whole cell 1.2 mm lower with the U209 / C244 vias in the escape fan
-#    (7 open), route run 43264707739 C297 next to L215 with its via in the B.Cu fan towards the arm (7 open). The ch4
-#    SHUNT sense runs east between L209 and C247 (K4_SH_FY).
+#    of L209. Every other part, and every via between the J209 upper row and the J204 pins or in the B.Cu escape fan of
+#    the lower-row contacts 17-59, stays as in route run 43241032279. The ch4 SHUNT sense runs east between L209 and
+#    C247 (K4_SH_FY). Route runs of iteration 2 (DRC errors / unconnected; the BIAS_CH4_DAMP link routed in each):
+#      43258433850  0 / 12  C250 / C297 vias between the J209 upper row and the J204 pins, C298 in the arm place
+#      43261863661  0 / 7   whole ch4 cell 1.2 mm lower, U209 / C244 vias in the lower-row escape fan
+#      43264707739  0 / 7   C297 next to L215, its via in the B.Cu fan towards the arm
+#      43268279241  1 / 1   only seven ch4 parts moved, C246 west / C297 east in the R247 place (GND-F zone neck)
+#      43270598656  0 / 3   C297 west / C246 east in the R247 place
+#      43273190849  0 / 2   this placement (board of record: PICO_OFF and I2C2_SCL open, J209 lower row to the arm)
+#      43276182228  0 / 17  TP210 in the R247 place
+#      43278805983  0 / 11  TP209 and TP210 swapped
+#    Freerouting stops after ten passes without a better score, so each small change gives another set of open long
+#    nets between the bar and the arm (J209 rows, J204 and U502 to the parked S02 headers, J506, U507 and U218 there);
+#    DRC 0 / 0 stays OPEN (build/15 W2 PCB-PWRB-2).
 #  * Three LAB5 switches stand on the F.Cu trunk at TY next to the lower-row LAB5 contacts of J209, the fourth west of
 #    J207 on a tap (LAB5_CELLS).
 #  * The ten 16SVPG47M (dampers C235 C239 C243 C247 C251 C298, C503, C506 C521 C522), the two SOIC-8 blocking stages and
@@ -314,7 +320,7 @@ PLACEMENT = {
     'R551': (35.826, 42.961, 90), 'R2901': (17.112, 44.38, 90), 'R2902': (1.931, 96.061, 90), 'R2911': (30.635, 43.025, 0),
     'R2912': (2.025, 100.365, 90), 'R2921': (48.167, 27.094, 0), 'R2922': (17.073, 98.016, 90),
     'TP206': (51.499, 31.293, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
-    'TP209': (118.85, 22.8, 0), 'TP210': (116.3, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
+    'TP209': (116.3, 22.8, 0), 'TP210': (118.85, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
     'TP2902': (40.679, 80.317, 0), 'U206': (4.1, 56, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
     'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
     'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90), 'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90),
