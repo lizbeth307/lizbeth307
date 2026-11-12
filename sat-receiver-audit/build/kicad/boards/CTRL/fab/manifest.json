@@ -7,10 +7,10 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/CTRL/CTRL.kicad_pcb",
-    "board_sha256": "7f9ab1373b279a58fb809fd73a01f364b69976be575c8cd24c9f3e545dedca99",
-    "project_sha256": "dd5c7f1f79cfddb444150ffc14097817c62fb8609b19e56e325c86522d8f0ad0",
-    "spec_projection_sha256": "277f6ab81d65757bf370416f73383553f8f992ea4b40244f2ae820191d86d76d",
-    "report_projection_sha256": "b8456e0e14e72290abad4b9aa81ff88421ec2f35bd309af334a0c0b6039cdb27",
+    "board_sha256": "f49c1fffc91778e4421a67f389d483469841a388ac6162d2421cde223fd61349",
+    "project_sha256": "594a8f3416ee8a771d1d819927327343374f873edc58308d2f52546762c0b0c1",
+    "spec_projection_sha256": "dcd1e228d1296d35e7416bb59e726c9e742c34561aed9b06e8686fe905a5b543",
+    "report_projection_sha256": "be5ebe92f90bfb98f06940062ea1860249afbd2181d7bb27f654e19982af2afd",
     "jlc_bom_rows": [
       {
         "Board": "CTRL",
@@ -327,11 +327,11 @@
     ],
     "jlc_bom_rows_sha256": "177e11c17a65df97197a5e4b3c1bdc781a832305f17e13f060ecde49ae9cf230",
     "stackup": {
-      "id": "JLC04161H-7628",
-      "copper_layers": 4,
+      "id": "JLC06161H-2116",
+      "copper_layers": 6,
       "thickness_mm": 1.6,
       "source": "https://jlcpcb.com/impedance",
-      "read": "2026-11-07",
+      "read": "2026-11-12",
       "layers": [
         {
           "kicad": "F.Cu",
@@ -339,9 +339,21 @@
           "copper_mm": 0.035
         },
         {
-          "dielectric": "prepreg 7628x1",
-          "thickness_mm": 0.2104,
-          "er": 4.4
+          "dielectric": "prepreg 2116x1 + 2313x1",
+          "thickness_mm": 0.2234,
+          "er": null,
+          "parts": [
+            {
+              "prepreg": "2116x1",
+              "thickness_mm": 0.127,
+              "er": 4.16
+            },
+            {
+              "prepreg": "2313x1",
+              "thickness_mm": 0.0964,
+              "er": null
+            }
+          ]
         },
         {
           "kicad": "In1.Cu",
@@ -350,7 +362,7 @@
         },
         {
           "dielectric": "core",
-          "thickness_mm": 1.065,
+          "thickness_mm": 0.3,
           "er": 4.6
         },
         {
@@ -359,20 +371,65 @@
           "copper_mm": 0.0152
         },
         {
-          "dielectric": "prepreg 7628x1",
-          "thickness_mm": 0.2104,
-          "er": 4.4
+          "dielectric": "prepreg 7628x1 + 7628x1",
+          "thickness_mm": 0.4168,
+          "er": 4.4,
+          "parts": [
+            {
+              "prepreg": "7628x1",
+              "thickness_mm": 0.2084,
+              "er": 4.4
+            },
+            {
+              "prepreg": "7628x1",
+              "thickness_mm": 0.2084,
+              "er": 4.4
+            }
+          ]
+        },
+        {
+          "kicad": "In3.Cu",
+          "plan": "L4",
+          "copper_mm": 0.0152
+        },
+        {
+          "dielectric": "core",
+          "thickness_mm": 0.3,
+          "er": 4.6
+        },
+        {
+          "kicad": "In4.Cu",
+          "plan": "L5",
+          "copper_mm": 0.0152
+        },
+        {
+          "dielectric": "prepreg 2313x1 + 2116x1",
+          "thickness_mm": 0.2234,
+          "er": null,
+          "parts": [
+            {
+              "prepreg": "2313x1",
+              "thickness_mm": 0.0964,
+              "er": null
+            },
+            {
+              "prepreg": "2116x1",
+              "thickness_mm": 0.127,
+              "er": 4.16
+            }
+          ]
         },
         {
           "kicad": "B.Cu",
-          "plan": "L4",
+          "plan": "L6",
           "copper_mm": 0.035
         }
       ],
-      "note": "Layer thicknesses sum to 1.5862 mm (computed). Copper weights: outer 0.035 mm = 1 oz, inner 0.0152 mm = 0.5 oz finished (JLC \"H/HOZ\").",
-      "via": "pcb/generated/netclasses.json stackup (pcb/stackup.py)"
+      "note": "Layer thicknesses sum to 1.5944 mm (computed). Copper: outer 0.035 mm = 1 oz, inner 0.0152 mm = 0.5 oz finished (the inner default on jlcpcb.com/capabilities/pcb-capabilities: \"Finished copper weight of inner layer is 0.5oz by default\"), so the inner widths of netclasses.json (0.5 oz) hold unchanged. Er of 2313 is not on the page (None): CTRL carries no RF50 net, so no impedance is modelled or ordered for it.",
+      "via": "pcb/generated/stackup-6l.json (pcb/stackup.py)",
+      "fab_note": "6 layers: JLCPCB Via-in-Pad Process: vias filled with epoxy resin or copper paste and plated over; \"This process is the default for 6-layer and above multilayer boards\"; compatible with via diameters 0.15 to 0.55 mm (https://jlcpcb.com/capabilities/pcb-capabilities, read 2026-11-12); order without impedance control (no RF50 net on this board)."
     },
-    "stackup_sha256": "28f6efbd402fd0b50bc422019ce4b24ee930e41f63e63f3c3a51cdea8ac1d77f",
+    "stackup_sha256": "a348c3f457cf680ad018288914d7f9c206763f9d84379b8429989aea262dcd0f",
     "rf50_nets": [],
     "note": "projections (F10): an unrelated build/10-jlc-bom.csv row, LCSC stock or spec edit does not stale this set"
   },
@@ -387,7 +444,7 @@
         "--output",
         "<temp>/raw/gerber/",
         "--layers",
-        "F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+        "F.Cu,In1.Cu,In2.Cu,In3.Cu,In4.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
         "--subtract-soldermask",
         "--precision",
         "6",
@@ -765,7 +822,7 @@
     },
     "gerber_x2": {
       "files": {
-        "gerber/CTRL-B_Cu.gbl": "Copper,L4,Bot",
+        "gerber/CTRL-B_Cu.gbl": "Copper,L6,Bot",
         "gerber/CTRL-B_Mask.gbs": "Soldermask,Bot",
         "gerber/CTRL-B_Paste.gbp": "Paste,Bot",
         "gerber/CTRL-B_Silkscreen.gbo": "Legend,Bot",
@@ -775,16 +832,18 @@
         "gerber/CTRL-F_Paste.gtp": "Paste,Top",
         "gerber/CTRL-F_Silkscreen.gto": "Legend,Top",
         "gerber/CTRL-In1_Cu.g1": "Copper,L2,Inr",
-        "gerber/CTRL-In2_Cu.g2": "Copper,L3,Inr"
+        "gerber/CTRL-In2_Cu.g2": "Copper,L3,Inr",
+        "gerber/CTRL-In3_Cu.g3": "Copper,L4,Inr",
+        "gerber/CTRL-In4_Cu.g4": "Copper,L5,Inr"
       }
     },
     "drill": {
       "pth_file": 1,
       "npth_file": 1,
-      "pth_hits": 520,
+      "pth_hits": 494,
       "npth_hits": 9,
       "board_pth_pads": 138,
-      "board_vias": 382,
+      "board_vias": 356,
       "board_npth_pads": 9,
       "maps": [
         "drill/CTRL-NPTH-drl_map.gbr",
@@ -845,18 +904,18 @@
     },
     {
       "path": "CTRL-fab-notes.pdf",
-      "sha256": "475e82998de3ec57276f9710034e822ada134a15aeb78a69785306460ce3ebb1",
-      "bytes": 29282
+      "sha256": "9101ce7766e2c487b82d05aa18916412fc96021974b9b85ca0974b7cc0ad726d",
+      "bytes": 30491
     },
     {
       "path": "CTRL.ipc356",
-      "sha256": "d088cd719f23c71d19eebe5b8c4c12777c682ab96a93db71310aa7d57f03fe1a",
-      "bytes": 80366
+      "sha256": "3466c2c318cef9585938b6fcb6dec4df009041c6caad9cd73dcce6c4ec74bd11",
+      "bytes": 78260
     },
     {
       "path": "CTRL.kicad_jobset",
-      "sha256": "0812730d990377c73d8bc38449e527b23e91b94272b6335c7a8c808865ccceda",
-      "bytes": 3361
+      "sha256": "127e7585981341690e735f9f7e605f50ff4bf686fc16ed2315e39ff950911b4e",
+      "bytes": 3401
     },
     {
       "path": "README.md",
@@ -870,7 +929,7 @@
     },
     {
       "path": "assembly/CTRL-cpl-jlc.csv",
-      "sha256": "03f5e21a28ac696c84a9aae374b722577e7099bd51d1b04cbf474aa05a57bcf1",
+      "sha256": "54ea14ee01ce401fb62739d3c689a5bcdb7edb9ab1de18d8a03f4632efa95cc5",
       "bytes": 7877
     },
     {
@@ -885,7 +944,7 @@
     },
     {
       "path": "assembly/CTRL-pos-kicad.csv",
-      "sha256": "d005f9c3aabd3da3f1332736546650fad0edd2112ddc5bc3395d8351c6fe2a6f",
+      "sha256": "f5be57baacfd8dfb09a551e7b26cbbd57872524e8a3c8c36370f42b9e77dd714",
       "bytes": 12155
     },
     {
@@ -895,38 +954,38 @@
     },
     {
       "path": "drill/CTRL-NPTH.drl",
-      "sha256": "d39485f14988a25ddf7b66cd54d8ce38e51b0e2efeb1304d669c5586d8fe65db",
+      "sha256": "519da5122833b361637dcc5d776d162ea7030d83df59a27cbf1600b35ca1e789",
       "bytes": 451
     },
     {
       "path": "drill/CTRL-PTH-drl_map.gbr",
-      "sha256": "abc98e217950e6da5ae1489916ef1fbb6250918ea8f52cdfe542a23b3a64eb6d",
-      "bytes": 142187
+      "sha256": "23cfccd03f384d5c8f4195baa4dde7695b14dc59ff74e36f556c250783e1f7b8",
+      "bytes": 139451
     },
     {
       "path": "drill/CTRL-PTH.drl",
-      "sha256": "6835696bd4ecab9d1c219edcb5e01f92ae1f3b4349d87fe223cfc650b8dadecd",
-      "bytes": 9172
+      "sha256": "152d04bbe3271b1c55e6dfeefbeec957d4b297b0099563f9eaa06c2a1d04f81b",
+      "bytes": 8748
     },
     {
       "path": "gerber/CTRL-B_Cu.gbl",
-      "sha256": "e8f266da182ea7174c3a0b4de9adb924c8b1c33f82dc842e77210e963cc692a8",
-      "bytes": 476791
+      "sha256": "9467e1cf2bdf640ef3cc7c07ff4afe69468ab1eeea63b19005e7e7364ce647a7",
+      "bytes": 591973
     },
     {
       "path": "gerber/CTRL-B_Mask.gbs",
-      "sha256": "d61d535ca676d2c27c95e7ce2229a086680c955041b827a87d81f4894778ab12",
-      "bytes": 17038
+      "sha256": "bca20b17f66e8c0324d098db308af3651fc5b818cb3265ac5ac3e086f5cc328f",
+      "bytes": 17128
     },
     {
       "path": "gerber/CTRL-B_Paste.gbp",
-      "sha256": "417f502ba566ebad80d6f9ac64a0ca105779fadf89cee7585685f4eed6a6ab7e",
-      "bytes": 8800
+      "sha256": "e19e3af3e41c6b561dfcabcefde185666d7c8db23142e4a52e783a020749ff5c",
+      "bytes": 8880
     },
     {
       "path": "gerber/CTRL-B_Silkscreen.gbo",
-      "sha256": "97367a47f350a5f4ed6b50f21b201df0db11646fc4b1256c8c94c8db3cf95988",
-      "bytes": 246893
+      "sha256": "24f9f8c4b25cff876826ec3351b27f8fec279c8a911a6690a2cc85bf07eb9634",
+      "bytes": 246983
     },
     {
       "path": "gerber/CTRL-Edge_Cuts.gm1",
@@ -935,38 +994,48 @@
     },
     {
       "path": "gerber/CTRL-F_Cu.gtl",
-      "sha256": "048dcaeafe4f65642bebc57ee300ab4565c2285ebeacf13790b29ba3edae2379",
-      "bytes": 454080
+      "sha256": "4d5d8702ba0a2ac6f47416c250e3dd5e1aded18097a692de5f34dbd9a039be58",
+      "bytes": 520778
     },
     {
       "path": "gerber/CTRL-F_Mask.gts",
-      "sha256": "749b8b887809a2856e35a97cd2d6369366832fe7da170b0ba0196140763ccc88",
-      "bytes": 16096
+      "sha256": "29e8f138d01f6526141c6ad7837999cf9617e922dd6d72a77476cb1963d19fdb",
+      "bytes": 16076
     },
     {
       "path": "gerber/CTRL-F_Paste.gtp",
-      "sha256": "38fbd4598be120480862e9f75b239cf23ec894ee611f418d9f9108d33f34cca2",
-      "bytes": 10433
+      "sha256": "82784fd92fe62764421473d6eedc0104f5de80b6a1d6c691a73f4e223c5dbe31",
+      "bytes": 10428
     },
     {
       "path": "gerber/CTRL-F_Silkscreen.gto",
-      "sha256": "218986926d2dcc2bf101144da4838bb9bae4851c4ed79f2e4b8e8179843e34e1",
-      "bytes": 220172
+      "sha256": "fce9b8243bfdba0501601fa621a43fd295cca22888f323625e339fba2258d1a1",
+      "bytes": 220152
     },
     {
       "path": "gerber/CTRL-In1_Cu.g1",
-      "sha256": "e9a0391b983d7e32ca9fdec7f56844add9006a6abd5776e085fad17a82052929",
-      "bytes": 638053
+      "sha256": "a41b7aa240d38ecb272a4c4fc7ec8543167daa46719aec19b3bb97ea11b9156a",
+      "bytes": 618186
     },
     {
       "path": "gerber/CTRL-In2_Cu.g2",
-      "sha256": "933f6639ddcba68c099b0e7d4fe705094d167248e2efcadb01ce01bfb0f197e0",
-      "bytes": 258306
+      "sha256": "07ff2d19aee55edc9efb3d10dc136b0656dd44644291bdc24c4806a7a113beb7",
+      "bytes": 326794
+    },
+    {
+      "path": "gerber/CTRL-In3_Cu.g3",
+      "sha256": "442af964069f2a21767baa190312dfdacc5bd4cb9db94fd716c4761c96b76ab0",
+      "bytes": 416554
+    },
+    {
+      "path": "gerber/CTRL-In4_Cu.g4",
+      "sha256": "9f1dfb7dd1230359a3ced63d8adea751d1e8acb2118e9706345e74ae7e695c42",
+      "bytes": 686102
     },
     {
       "path": "gerber/CTRL-job.gbrjob",
-      "sha256": "915a69b50638736a09b662901036fc44e093e96376672d859e3e3981be601e36",
-      "bytes": 3584
+      "sha256": "27d1599e7878db9327fb6a14bcdbbec64b7cf0b42c2a4ea0072db24fa909b425",
+      "bytes": 4371
     }
   ]
 }

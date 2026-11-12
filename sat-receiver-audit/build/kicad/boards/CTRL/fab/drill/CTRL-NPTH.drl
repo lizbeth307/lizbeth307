@@ -2,7 +2,7 @@ M48
 ; DRILL file KiCad 10.0.7
 ; FORMAT={-:-/ absolute / metric / decimal}
 ; #@! TF.GenerationSoftware,Kicad,Pcbnew,10.0.7
-; #@! TF.FileFunction,NonPlated,1,4,NPTH
+; #@! TF.FileFunction,NonPlated,1,6,NPTH
 FMAT,2
 METRIC
 ; #@! TA.AperFunction,NonPlated,NPTH,ComponentDrill
