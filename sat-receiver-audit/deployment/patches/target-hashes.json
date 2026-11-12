@@ -33,6 +33,18 @@
     "src/boards/LimeSDR_Micro/calibrations.cpp": {
       "before_sha256": "9dda7312e6e8a2c968d28470b6ef16e1625331598f2e583f9f33bb4e4f08a438",
       "after_sha256": "917f85c70d59b816aff3d3bde54eddc3aace92a88aaa23a17c34726a8c5d1e20"
+    },
+    "src/boards/BoardSupportLoader.in.cpp": {
+      "before_sha256": "0a9d2a1440742f9b2bc5cfa9d26f9aa0493ab4b709a008082de54a1f3805c781",
+      "after_sha256": "072f4a8c904465189c62c8f62236a3909a3d8fca231cf0406e8df8afe1e5739a"
+    },
+    "src/boards/CMakeLists.txt": {
+      "before_sha256": "b2b8e0db5bde601dc3203a2aa5fd60460b887bdadb374ef1703810c56f9b765a",
+      "after_sha256": "1969ba765e95dc99befaf95bca436216ff18dc634edc6a7323beddfb117ee386"
+    },
+    "src/boards/LimeSDR_Micro/LA9310_TRX.cpp": {
+      "before_sha256": "6b08913c85268f02f4d0d654624c9adc0768842ea5c81b8f3c59439870990874",
+      "after_sha256": "2c3d28208da2903f24e1ed564785ce2a95d940acc497e43c5af61d645bcf9ebf"
     }
   },
   "sdrangel": {

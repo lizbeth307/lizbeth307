@@ -416,5 +416,303 @@ class LimeTxReviewFixCompileTests(unittest.TestCase):
         compile_and_run(self, code, self.root, "configure_tx_path_lpf_guard")
 
 
+# TX audit part 2 (W2 SW-LIME-2): sections F-M of TX-AUDIT.md, the three part-2 patch targets and the
+# audited export lists (recipes/limesuiteng/exports.json, AUDIT_DRAFT_CI_CHECKED) behind the recipe's export_count checks.
+PART2_ROW = re.compile(r"^\| ([F-M]-\d\d) \| (.+?) \| ([^|`]+?):(\d+) \| `([^`]+)` \| (\S+) \| (.+) \|$")
+PART2_VERDICTS = {"blocked", "reachable→patched", "internal-only", "no-TX", "open"}
+PART2_TARGETS = ("src/boards/BoardSupportLoader.in.cpp", "src/boards/CMakeLists.txt", "src/boards/LimeSDR_Micro/LA9310_TRX.cpp")
+EXPORTS = HERE / "recipes/limesuiteng/exports.json"
+LIB_FILE = "usr/lib/aarch64-linux-gnu/liblimesuiteng.so.0.3-1"
+SOAPY_FILE = "usr/lib/aarch64-linux-gnu/SoapySDR/modules0.8/liblimesuitengSupport.so"
+LIME_NAME = re.compile(r"^_Z(?:T[VIS])?NK?4lime(\d+)")
+
+
+def part2_rows():
+    rows = []
+    for line in AUDIT.read_text(encoding="utf-8").splitlines():
+        match = PART2_ROW.match(line)
+        if match:
+            rows.append(dict(zip(("id", "entry", "file", "line", "anchor", "verdict", "note"), match.groups())))
+    return rows
+
+
+def section_l():
+    text = AUDIT.read_text(encoding="utf-8")
+    return text[text.index("### L. "):text.index("### M. ")]
+
+
+def lime_names(symbols):
+    """The lime-namespace names (classes and free functions) the mangled symbols define."""
+    names = set()
+    for symbol in symbols:
+        match = LIME_NAME.match(symbol)
+        if match:
+            names.add(symbol[match.end():match.end() + int(match.group(1))])
+    return names
+
+
+class LimeTxAuditPartTwoTests(unittest.TestCase):
+    def test_part_two_rows_parse_with_known_verdicts(self):
+        text = AUDIT.read_text(encoding="utf-8")
+        self.assertIn("## Частина II", text)
+        table_lines = [line for line in text.splitlines() if re.match(r"^\| [F-M]-\d\d \|", line)]
+        rows = part2_rows()
+        self.assertEqual(len(rows), len(table_lines))
+        self.assertGreaterEqual(len(rows), 50)
+        self.assertEqual(len({row["id"] for row in rows}), len(rows))
+        for row in rows:
+            self.assertIn(row["verdict"], PART2_VERDICTS, row["id"])
+        self.assertEqual({row["id"][0] for row in rows}, set("FGHIJKLM"))
+        self.assertNotIn("REVIEWED.**", text)
+
+    def test_part_two_anchors_stand_at_their_lines(self):
+        trees = [FIXTURE]
+        if os.environ.get("SRRX_LIMESUITENG_TREE"):  # an unpacked locked archive checks every row
+            trees.append(Path(os.environ["SRRX_LIMESUITENG_TREE"]))
+        checked = 0
+        for row in part2_rows():
+            for tree in trees:
+                path = tree / row["file"]
+                if not path.is_file():
+                    continue
+                lines = path.read_text(encoding="utf-8").split("\n")
+                self.assertIn(row["anchor"], lines[int(row["line"]) - 1], "%s %s:%s" % (row["id"], row["file"], row["line"]))
+                checked += 1
+                break
+        self.assertGreaterEqual(checked, len(part2_rows()) if len(trees) > 1 else 6)
+
+    def test_part_two_patched_rows_are_guarded_or_gone_after_the_patch(self):
+        targets = set(json.loads((HERE / "patches/target-hashes.json").read_text(encoding="utf-8"))["limesuiteng"])
+        self.assertLessEqual(set(PART2_TARGETS), targets)
+        with tempfile.TemporaryDirectory() as tmp:
+            tree = patched_tree(Path(tmp))
+            patched = [row for row in part2_rows() if row["verdict"] == "reachable→patched"]
+            self.assertGreaterEqual(len(patched), 4)
+            for row in patched:
+                self.assertIn(row["file"], targets, row["id"])
+                text = (tree / row["file"]).read_text(encoding="utf-8")
+                if "::" in row["anchor"] and row["anchor"].endswith(("(", ")")):  # a C++ definition: each one is guarded
+                    start = text.find(row["anchor"])
+                    self.assertNotEqual(start, -1, row["id"])
+                    while start != -1:
+                        self.assertIn("SRRX_RX_ONLY", body(text, row["anchor"], start), row["id"])
+                        start = text.find(row["anchor"], start + 1)
+                else:  # a statement: the patch removed it
+                    self.assertNotIn(row["anchor"].strip(), [line.strip() for line in text.split("\n")], row["id"])
+
+    def test_part_one_open_rows_name_their_part_two_closure(self):
+        notes = {row["id"]: row["note"] for row in audit_rows()}
+        self.assertIn("G-06", notes["B-41"])
+        self.assertIn("M-01", notes["E-05"])
+        ids = {row["id"] for row in part2_rows()}
+        self.assertLessEqual({"G-05", "G-06", "J-01", "M-01", "M-02", "F-09", "K-01", "K-02", "H-05"}, ids)
+
+
+class LimeTxPartTwoGuardTextTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        tree = patched_tree(Path(cls.tmp.name))
+        cls.files = {name: (tree / name).read_text(encoding="utf-8") for name in PART2_TARGETS}
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_micro_stream_rejects_tx_setup_and_transmit(self):
+        trx = self.files["src/boards/LimeSDR_Micro/LA9310_TRX.cpp"]
+        setup = body(trx, "OpStatus LA9310_TRX::Setup(const StreamConfig& cfg)")
+        guard = setup.index("if (needTx)\n        return ReportError(OpStatus::NotSupported")
+        self.assertLess(guard, setup.index("mConfig = cfg;"))
+        self.assertLess(guard, setup.index("TxSetup()"))
+        start, seen = trx.find("uint32_t LA9310_TRX::Transmit("), 0
+        while start != -1:
+            transmit = body(trx, "uint32_t LA9310_TRX::Transmit(", start)
+            self.assertTrue(first_statement(transmit).startswith("return 0;"))
+            self.assertNotIn("StreamTxTemplate", transmit)
+            seen += 1
+            start = trx.find("uint32_t LA9310_TRX::Transmit(", start + 1)
+        self.assertEqual(seen, 3)
+        upstream = (FIXTURE / "src/boards/LimeSDR_Micro/LA9310_TRX.cpp").read_text(encoding="utf-8")
+        self.assertEqual(upstream.count("return StreamTxTemplate(samples, count, meta, chrono::microseconds("), 3)
+
+    def test_only_the_micro_board_and_its_factory_are_built(self):
+        def pcie_block(text):
+            block = text[text.index("if(LIMESUITENG_PCIE)\n") + len("if(LIMESUITENG_PCIE)\n"):]
+            block = block[:block.index("endif()")]
+            return [line.strip() for line in block.split("\n") if line.strip() and not line.strip().startswith("#")]
+        self.assertEqual(pcie_block(self.files["src/boards/CMakeLists.txt"]),
+                         ["target_sources(limesuiteng PRIVATE DeviceFactoryLA9310.cpp)", "add_subdirectory(LimeSDR_Micro)"])
+        upstream = pcie_block((FIXTURE / "src/boards/CMakeLists.txt").read_text(encoding="utf-8"))
+        self.assertLessEqual({"add_subdirectory(LimeSDR_X3)", "add_subdirectory(LimeSDR_XTRX)", "add_subdirectory(MMX8)",
+                              "add_subdirectory(sSDR)"}, set(upstream))
+        loader = [line.strip() for line in body(self.files["src/boards/BoardSupportLoader.in.cpp"], "void __loadBoardSupport()").split("\n")]
+        self.assertNotIn("__loadDeviceFactoryPCIe();", loader)
+        self.assertIn("__loadDeviceFactoryLA9310();", loader)
+        self.assertNotRegex(self.files["src/boards/BoardSupportLoader.in.cpp"], r"@\w+@|\$\{")  # configure_file substitutes nothing new
+
+
+class LimeExportAllowlistTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.exports = json.loads(EXPORTS.read_text(encoding="utf-8"))
+        cls.recipe = json.loads(RECIPE.read_text(encoding="utf-8"))
+
+    def test_lists_are_the_audit_draft(self):
+        self.assertEqual((self.exports["kind"], self.exports["status"], self.exports["hardware_ready"]),
+                         ("srrx_limesuiteng_export_allowlist", "AUDIT_DRAFT_CI_CHECKED", False))
+        self.assertEqual(set(self.exports["files"]), {LIB_FILE, SOAPY_FILE})
+        for entry in self.exports["files"].values():
+            self.assertEqual(entry["defined"], sorted(set(entry["defined"])))
+        imports = self.exports["files"][SOAPY_FILE]["imports_from_liblimesuiteng"]
+        self.assertEqual(imports, sorted(set(imports)))
+        self.assertLessEqual(set(imports), set(self.exports["files"][LIB_FILE]["defined"]))
+
+    def test_recipe_export_counts_follow_the_lists_and_cover_every_symbol(self):
+        counts = [c for c in self.recipe["checks"] if c["kind"] == "export_count"]
+        self.assertGreaterEqual(len(counts), 20)
+        for check in counts:
+            symbols = self.exports["files"][check["file"]]["defined"]
+            self.assertEqual(sum(s.startswith(check["prefix"]) for s in symbols), check["equals"], check["prefix"])
+        for name, entry in self.exports["files"].items():
+            prefixes = {c["prefix"] for c in counts if c["file"] == name}
+            self.assertIn("_Z", prefixes, name)
+            self.assertEqual(set(s for s in entry["defined"] if not s.startswith("_Z")) - prefixes, set(), name)
+        for name in ("LMS7002M", "LimeSDR_Micro", "MCU_BD", "LA9310_PCIe", "LA9310_IQStreamer", "VSPA_mailbox", "LimePCIe"):
+            self.assertIn("_ZN4lime%d%s" % (len(name), name), {c["prefix"] for c in counts if c["file"] == LIB_FILE})
+
+    def test_every_exported_lime_name_is_reviewed_in_section_l(self):
+        text = section_l()
+        names = lime_names(self.exports["files"][LIB_FILE]["defined"])
+        self.assertGreaterEqual(len(names), 40)
+        for name in sorted(names):
+            self.assertRegex(text, r"`%s`|\b%s\b" % (re.escape(name), re.escape(name)), name)
+        for symbol in self.exports["files"][LIB_FILE]["defined"]:
+            if not symbol.startswith("_Z"):
+                self.assertIn(symbol, AUDIT.read_text(encoding="utf-8"))
+
+    def test_soapy_module_reaches_no_raw_access_class(self):
+        forbidden = next(c["substrings"] for c in self.recipe["checks"]
+                         if c["kind"] == "forbid_strings" and c["file"] == SOAPY_FILE)
+        for name in ("LMS7002M", "LimeSDR_Micro", "MCU_BD", "LA9310", "LA9310_PCIe", "LA9310_IQStreamer", "LA9310_FW_Impl",
+                     "VSPA_mailbox", "PHYTimer", "PHYTimerControl", "LimePCIe"):
+            self.assertIn("%d%s" % (len(name), name), forbidden, name)
+        entry = self.exports["files"][SOAPY_FILE]
+        for symbol in entry["imports_from_liblimesuiteng"] + entry["defined"]:
+            for text in forbidden:
+                self.assertNotIn(text.lower(), symbol.lower(), symbol)
+        self.assertEqual(lime_names(entry["imports_from_liblimesuiteng"]),
+                         {"DeviceHandle", "DeviceRegistry", "StreamConfig", "Timespec", "ToEnumClass", "ToString",
+                          "registerLogHandler", "GetLastErrorMessage", "GetLastErrorMessageCString"})
+        removed = next(c["substrings"] for c in self.recipe["checks"] if c["kind"] == "forbid_strings" and c["file"] == LIB_FILE)
+        for board in ("LimeSDR_X3", "LimeSDR_XTRX", "LimeSDR_MMX8", "sSDR", "DeviceFactoryPCIe"):
+            self.assertIn("N4lime%d%sE" % (len(board), board), removed)
+
+
+# W2 SW-LIME-2 review fixes: the whole export count of each file is pinned (a new extern "C" export
+# fails the build too), section H names both kernel modules of drivers/linux/la9310_limesdr, and
+# recipes/limesuiteng/export_lists.py rebuilds exports.json from the CI .deb files.
+EXPORT_LISTS = HERE / "recipes/limesuiteng/export_lists.py"
+
+
+def load_export_lists():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("srrx_lime_export_lists", EXPORT_LISTS)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def tiny_elf(symbols):
+    """A little-endian ELF64 file with one .dynsym: [(name, defined)]."""
+    import struct
+    dynstr = b"\0" + b"".join(name.encode() + b"\0" for name, _ in symbols)
+    entries, offset = [bytes(24)], 1
+    for name, defined in symbols:
+        entries.append(struct.pack("<IBBHQQ", offset, 0x12, 0, 12 if defined else 0, 0, 0))
+        offset += len(name) + 1
+    dynsym, shstr = b"".join(entries), b"\0.dynstr\0.dynsym\0.shstrtab\0"
+    at_dynsym = 64 + len(dynstr)
+    at_shstr = at_dynsym + len(dynsym)
+    shoff = at_shstr + len(shstr)
+    header = b"\x7fELF\x02\x01\x01" + bytes(9) + struct.pack("<HHIQQQIHHHHHH", 3, 183, 1, 0, 0, shoff, 0, 64, 0, 0, 64, 4, 3)
+
+    def section(name, kind, at, size, link, entsize):
+        return struct.pack("<IIQQQQIIQQ", name, kind, 0, 0, at, size, link, 0, 1, entsize)
+    return (header + dynstr + dynsym + shstr + section(0, 0, 0, 0, 0, 0) + section(1, 3, 64, len(dynstr), 0, 0)
+            + section(9, 11, at_dynsym, len(dynsym), 1, 24) + section(17, 3, at_shstr, len(shstr), 0, 0))
+
+
+def tiny_deb(files):
+    """An ar .deb with debian-binary and a data.tar.xz holding {path: bytes} as ./path."""
+    import io
+    import tarfile
+    data = io.BytesIO()
+    with tarfile.open(fileobj=data, mode="w:xz") as tar:
+        for path, content in files.items():
+            info = tarfile.TarInfo("./" + path)
+            info.size = len(content)
+            tar.addfile(info, io.BytesIO(content))
+    out = b"!<arch>\n"
+    for name, content in (("debian-binary", b"2.0\n"), ("data.tar.xz", data.getvalue())):
+        out += ("%-16s%-12d%-6d%-6d%-8s%-10d`\n" % (name, 0, 0, 0, "100644", len(content))).encode() + content
+        out += b"\n" if len(content) % 2 else b""
+    return out
+
+
+class LimeExportTotalTests(unittest.TestCase):
+    def test_each_file_pins_its_whole_export_count(self):
+        exports = json.loads(EXPORTS.read_text(encoding="utf-8"))
+        recipe = json.loads(RECIPE.read_text(encoding="utf-8"))
+        for name, entry in exports["files"].items():
+            totals = [c for c in recipe["checks"] if c["kind"] == "export_count" and c["file"] == name and c["prefix"] == ""]
+            self.assertEqual(len(totals), 1, name)
+            self.assertEqual(totals[0]["equals"], len(entry["defined"]), name)
+        self.assertEqual({len(e["defined"]) for e in exports["files"].values()}, {753, 14})
+
+    def test_section_h_names_the_uart_module_and_its_tty_node(self):
+        text = AUDIT.read_text(encoding="utf-8")
+        section = text[text.index("### H. "):text.index("### I. ")]
+        for name in ("la9310_uart_module", "ttyLA9310_UART", "la9310-uart", "dialout"):
+            self.assertIn(name, section, name)
+        rows = {row["id"]: row for row in part2_rows()}
+        self.assertEqual((rows["H-06"]["file"], rows["H-06"]["verdict"]), ("drivers/linux/la9310_limesdr/la9310_uart.c", "open"))
+        for row_id in ("F-12", "G-11", "K-04"):  # no compiled caller: blocked by the document's own definition
+            self.assertEqual(rows[row_id]["verdict"], "blocked", row_id)
+
+
+class LimeExportListsScriptTests(unittest.TestCase):
+    def setUp(self):
+        self.script = load_export_lists()
+
+    def test_lists_come_from_the_deb_dynsym(self):
+        lib = tiny_deb({self.script.LIB_FILE: tiny_elf([("_ZN4lime4TypeEv", True), ("c_entry", True), ("memcpy", False)])})
+        soapy = tiny_deb({self.script.SOAPY_FILE: tiny_elf([("_ZNSt4copyEv", True), ("_ZN4lime4TypeEv", False),
+                                                            ("strlen", False)])})
+        self.assertEqual(self.script.lists([soapy, lib]),
+                         {self.script.LIB_FILE: {"defined": ["_ZN4lime4TypeEv", "c_entry"]},
+                          self.script.SOAPY_FILE: {"defined": ["_ZNSt4copyEv"], "imports_from_liblimesuiteng": ["_ZN4lime4TypeEv"]}})
+        with self.assertRaises(ValueError):
+            self.script.lists([lib])  # the module is missing
+        with self.assertRaises(ValueError):
+            self.script.lists([lib, lib, soapy])  # the library twice
+
+    def test_differences_name_every_added_and_removed_symbol(self):
+        exports = json.loads(EXPORTS.read_text(encoding="utf-8"))
+        same = {path: {key: entry[key] for key in ("defined", "imports_from_liblimesuiteng") if key in entry}
+                for path, entry in exports["files"].items()}
+        self.assertEqual(self.script.differences(exports, same), [])
+        changed = json.loads(json.dumps(same))
+        changed[LIB_FILE]["defined"] = changed[LIB_FILE]["defined"][1:] + ["srrx_raw_write"]
+        diff = self.script.differences(exports, changed)
+        self.assertIn("+ %s defined srrx_raw_write" % LIB_FILE, diff)
+        self.assertEqual(len(diff), 2)
+
+    def test_exports_json_is_in_the_format_write_produces(self):
+        text = EXPORTS.read_text(encoding="utf-8")
+        self.assertEqual(json.dumps(json.loads(text), indent=2, ensure_ascii=False) + "\n", text)
+        self.assertIn("export_lists.py", json.loads(text)["source"])
+
+
 if __name__ == "__main__":
     unittest.main()
