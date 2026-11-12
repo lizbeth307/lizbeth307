@@ -2252,9 +2252,16 @@ class UpdateSlotTrustAndPlanTests(unittest.TestCase):
         clean = build_image.apt_simulation(text.splitlines()[0] + "\n")
         self.assertEqual(update_slot.plan_issues(clean, "", {"gpsd"}, globs, packages), [])
         self.assertIn("held packages", update_slot.plan_issues(clean, "The following held packages will be changed:\n  gpsd", set(), [], packages)[0])
-        # recipe holds (chrony, gpsd), repo-policy never_in_lab_repo_globs and the boot chain never change in an update
-        for name in ("chrony", "gpsd", "linux-image-6.18.2-4-qcom", "edk2-qcs6490", "embloader", "sdboot-is-embloader", "systemd-boot-efi"):
+        # repo-policy never_in_lab_repo_globs and the boot chain never change in an update; the recipe holds
+        # (chrony, gpsd) are held in dpkg by the image builder and checked by the +labN rule (UpdateSlotLabSetTests)
+        for name in ("linux-image-6.18.2-4-qcom", "edk2-qcs6490", "embloader", "sdboot-is-embloader", "systemd-boot-efi"):
             self.assertTrue(any(_fnmatch.fnmatchcase(name, g) for g in globs), name)
+        holds = update_slot.recipe_hold_globs()
+        for name in ("chrony", "gpsd", "librtlsdr2", "labwc"):
+            self.assertFalse(any(_fnmatch.fnmatchcase(name, g) for g in globs), name)
+            self.assertTrue(any(_fnmatch.fnmatchcase(name, g) for g in holds), name)
+        joined = " | ".join(update_slot.plan_issues(plan, text, set(), globs, packages, holds))
+        self.assertIn("recipe-held package gpsd to 3.25-3ubuntu3.3: only to the +labN build", joined)  # not held: the +labN rule
 
     def test_applied_change_must_equal_the_plan(self):
         plan = {"install": {"tzdata": "2026f"}, "remove": ["oldpkg"]}
@@ -2411,6 +2418,319 @@ class SmokeUpdateScenarioTests(unittest.TestCase):
         self.assertEqual(self.smoke.check(name, result, expect)["status"], "MODEL_PASS")
         report["failed_units"] = [self.smoke.PLAN_UNIT + " loaded failed failed SR-RX QEMU smoke only"]
         self.assertIn("failed units: " + self.smoke.PLAN_UNIT, self.smoke.check(name, result, expect)["mismatches"])
+
+
+# ---------------------------------------------------------------- W2 IMG-UPD review fixes: the +lab set, recipe holds, trial, srrx-lab
+
+_RTL_VERSION = next(c for c in json.loads((HERE / "sources.lock.json").read_text(encoding="utf-8"))["components"]
+                    if c["id"] == "rtlsdr")["version"]
+_GPG_TOOLS = bool(shutil.which("gpg") and shutil.which("gpgv") and os.name == "posix")
+
+
+def _lab_set():
+    """A verified srrx-lab publication's packages (name, version, architecture), shaped like the lane recipes."""
+    return {("librtlsdr2", _RTL_VERSION, "arm64"), ("librtlsdr-dev", _RTL_VERSION, "arm64"), ("satdump", "1.0+lab1", "arm64"),
+            ("labwc", "0.7.4+lab1", "arm64"), ("limesuiteng-dev", "1.0+lab1", "arm64"), ("sdrangel-dbgsym", "1.0+lab1", "arm64")}
+
+
+class UpdateSlotLabSetTests(unittest.TestCase):
+    """Review R1/R2: the updater installs the srrx-lab packages the target lacks (SYS-HOST commissioning), recipe
+    holds go through the dpkg hold status and the +labN rule, and units new packages enable are removed again."""
+
+    def test_install_names_are_the_lab_set_without_build_dependencies_and_debug_symbols(self):
+        packages = {"srrx-lab": _lab_set(), "srrx-mirror": {("tzdata", "2026e-0ubuntu0.24.04.1", "all")}}
+        installed = {"tzdata": "2026e-0ubuntu0.24.04.1", "satdump": "1.0+lab1", "libc6:arm64": "2.39-0ubuntu8.6"}
+        self.assertEqual(update_slot.install_names(packages, installed), ["labwc", "librtlsdr2"])
+        self.assertEqual(update_slot.install_names({"srrx-mirror": packages["srrx-mirror"]}, {}), [])  # the mirror adds no name
+
+    def test_a_fresh_recipe_held_lab_build_is_accepted_and_any_other_version_refused(self):
+        text = ("Inst librtlsdr2 (%s srrx-lab:noble-lab [arm64])\n"
+                "Inst labwc [0.7.1-1build1] (0.7.4+lab1 srrx-lab:noble-lab [arm64])\n"
+                "Inst satdump (1.0+lab1 srrx-lab:noble-lab [arm64])\n" % _RTL_VERSION)
+        plan = build_image.apt_simulation(text)
+        packages = {"srrx-lab": _lab_set()}
+        globs, holds = update_slot.protected_globs(), update_slot.recipe_hold_globs()
+        self.assertEqual(update_slot.plan_issues(plan, text, set(), globs, packages, holds), [])
+        # a dpkg-held labwc (the image builder holds every installed recipe-held package) never changes
+        self.assertIn("held package labwc", " | ".join(update_slot.plan_issues(plan, text, {"labwc"}, globs, packages, holds)))
+        # a recipe-held name only at the +labN build srrx-lab publishes: not a mirror version, not another lab build
+        other = "Inst librtlsdr2 (2.0.3-1 srrx-mirror:noble-mirror [arm64])\nInst labwc (0.7.4+lab2 srrx-lab:noble-lab [arm64])\n"
+        found = {"srrx-lab": _lab_set() | {("labwc", "0.7.4+lab2", "arm64")}, "srrx-mirror": {("librtlsdr2", "2.0.3-1", "arm64")}}
+        joined = " | ".join(update_slot.plan_issues(build_image.apt_simulation(other), other, set(), globs, found, holds))
+        self.assertIn("recipe-held package librtlsdr2 to 2.0.3-1: only to the +labN build", joined)
+        self.assertNotIn("labwc", joined)  # 0.7.4+lab2 is a +labN build the verified srrx-lab lists
+        removal = build_image.apt_simulation("Remv librtlsdr2 [%s]\n" % _RTL_VERSION)
+        self.assertIn("remove the held or protected package librtlsdr2", update_slot.plan_issues(removal, "", set(), globs, packages, holds)[0])
+
+    def test_units_the_upgrade_enables_are_removed_and_a_lost_mask_is_reported(self):
+        wants = "etc/systemd/system/multi-user.target.wants/"
+        before = {wants + "gpsd.service": "/lib/systemd/system/gpsd.service", "etc/systemd/system/ModemManager.service": "/dev/null"}
+        after = {wants + "gpsd.service": "/usr/lib/systemd/system/gpsd.service", wants + "sdrangelsrv.service": "/usr/lib/systemd/system/sdrangelsrv.service",
+                 "etc/systemd/system/dbus-org.example.service": "/usr/lib/systemd/system/example.service"}
+        added, lost = update_slot.enablement_changes(before, after)
+        self.assertEqual(sorted(added), ["etc/systemd/system/dbus-org.example.service", wants + "sdrangelsrv.service"])  # a moved link stays
+        self.assertEqual(lost, ["etc/systemd/system/ModemManager.service"])
+        self.assertEqual(update_slot.enablement_changes(before, dict(before)), ({}, []))
+
+    @unittest.skipUnless(os.name == "posix", "symlinks")
+    def test_enablement_links_of_a_root(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "etc/systemd/system/sockets.target.wants").mkdir(parents=True)
+            os.symlink("/lib/systemd/system/gpsd.socket", root / "etc/systemd/system/sockets.target.wants/gpsd.socket")
+            os.symlink("/dev/null", root / "etc/systemd/system/ModemManager.service")
+            (root / "etc/systemd/system/srrx.service").write_text("[Unit]\n")
+            self.assertEqual(update_slot.enablement_links(root), {"etc/systemd/system/ModemManager.service": "/dev/null",
+                                                                  "etc/systemd/system/sockets.target.wants/gpsd.socket": "/lib/systemd/system/gpsd.socket"})
+
+
+class UpdateSlotTrialTests(unittest.TestCase):
+    """Review R3: arming and disarming the trial on a temporary ESP (Route A counted entry; Route B marker and
+    loader.conf on a golden ESP without srrx/ab), and the entry removal that keeps the rescue entries."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.esp = Path(self.tmp.name) / "esp"
+        self.target = Path(self.tmp.name) / "target"
+        (self.target / "etc/kernel").mkdir(parents=True)
+
+    def golden(self, route):
+        cfg = bootchain.validate_ab(config(route=route))
+        bootchain.write_tree(self.esp, bootchain.entries(cfg))  # a golden ESP: both slots blessed, no trial
+        self.assertFalse((self.esp / "srrx/ab").exists())
+        return cfg
+
+    def entries(self):
+        return sorted(p.name for p in (self.esp / "loader/entries").glob("*.conf"))
+
+    def test_remove_slot_entries_keeps_the_rescue_entries(self):
+        self.golden("A")
+        (self.esp / "loader/entries/labB+2-1.conf").write_text("version 3\n")
+        self.assertEqual(update_slot.remove_slot_entries(self.esp, "B"), ["labB+2-1.conf", "labB.conf"])
+        self.assertEqual(self.entries(), ["labA-rescue.conf", "labA.conf", "labB-rescue.conf"])
+
+    def test_route_a_arm_and_disarm(self):
+        cfg = self.golden("A")
+        (self.target / "etc/kernel/tries").write_text("3\n")
+        update_slot.remove_slot_entries(self.esp, "B")
+        (self.esp / "loader/entries/labB+3.conf").write_text(bootchain.entry_text(cfg, "B", 3))  # what kernel-install writes
+        trial = update_slot.arm_trial(cfg, "B", self.esp, self.target)
+        self.assertEqual((trial["route"], trial["entry"]), ("A", "labB+3.conf"))
+        self.assertEqual((self.esp / "loader/loader.conf").read_text(), bootchain.loader_conf(cfg))  # default lab*: unchanged
+        self.assertEqual(update_slot.disarm_trial(cfg, "B", self.esp, "A"), ["labB+3.conf"])
+        self.assertEqual(self.entries(), ["labA-rescue.conf", "labA.conf", "labB-rescue.conf"])
+        (self.esp / "loader/entries/labB.conf").write_text(bootchain.entry_text(cfg, "B", 3))
+        with self.assertRaises(update_slot.UpdateError):  # an uncounted entry is no Route A trial
+            update_slot.arm_trial(cfg, "B", self.esp, self.target)
+
+    def test_route_b_arm_on_a_golden_esp_and_disarm(self):
+        cfg = self.golden("B")
+        self.assertIn("default labA\n", (self.esp / "loader/loader.conf").read_text())
+        trial = update_slot.arm_trial(cfg, "B", self.esp, self.target)  # kernel-install rewrote labB.conf in place
+        self.assertEqual((trial["route"], trial["entry"]), ("B", "labB.conf"))
+        self.assertEqual((self.esp / bootchain.TRIAL_MARK).read_text(), "B\n")
+        self.assertIn("default labB\n", (self.esp / "loader/loader.conf").read_text())
+        (self.esp / bootchain.BOOTING_MARK).write_text("B\n")  # a stale marker would suppress the initramfs write-back
+        update_slot.arm_trial(cfg, "B", self.esp, self.target)
+        self.assertFalse((self.esp / bootchain.BOOTING_MARK).exists())
+        self.assertEqual(update_slot.disarm_trial(cfg, "B", self.esp, "A"), ["labB.conf"])
+        self.assertFalse((self.esp / bootchain.TRIAL_MARK).exists())
+        self.assertIn("default labA\n", (self.esp / "loader/loader.conf").read_text())
+        self.assertEqual(self.entries(), ["labA-rescue.conf", "labA.conf", "labB-rescue.conf"])
+
+
+class UpdateSlotApplyTests(unittest.TestCase):
+    """Review R1/R4: apply --execute with the root-only steps patched (rsync, mount, chroot, e2fsck). The +lab set
+    joins the dist-upgrade, a fresh recipe-held package is held, and every outcome but UPDATED removes the
+    counted entry kernel-install wrote (Route A loader.conf default lab* would boot it)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        base = Path(self.tmp.name)
+        self.root, self.target = base / "root", base / "target"
+        self.esp = self.root / "boot/efi"
+        self.cfg = bootchain.validate_ab(config())
+        bootchain.write_tree(self.esp, bootchain.entries(self.cfg))
+        (self.root / "data/srrx-updates").mkdir(parents=True)
+        (self.target / "etc/kernel").mkdir(parents=True)
+        (self.target / "etc/kernel/tries").write_text("3\n")
+        keyring = base / "test.gpg"
+        keyring.write_bytes(_keyring("SR-RX lab CI TEST KEY - not for release"))
+        self.report = {"status": "PLAN_ONLY", "kind": update_slot.KIND, "root": str(self.root), "route": "A", "active_slot": "A",
+                       "running_slot": None, "target_slot": "B", "trust": {"mode": "ci-test-key", "release": "NOT_RELEASE", "keyring": str(keyring)},
+                       "release": "NOT_RELEASE", "refusals": [], "checks": {"records_on_data": True}, "last_record": None,
+                       "records": str(self.root / "data/srrx-updates"), "hardware_ready": False,
+                       "_internal": {"config": self.cfg, "packages": {"srrx-lab": _lab_set()}, "device": "/dev/fake-root-b"}}
+        self.status = {"base-files": "13ubuntu10.3", "satdump": "1.0+lab1"}
+        self.calls = []
+
+    def chroot(self, root, argv, extra_env=None, check=True):
+        self.calls.append(list(argv))
+        out = ""
+        if argv[:2] == ["apt-get", "-s"]:
+            if self.unresolvable:
+                return _NS(returncode=100, stdout="The following packages have unmet dependencies:\n", stderr="E: Unable to correct problems\n")
+            out = "".join("Inst %s (%s srrx-lab:noble-lab [arm64])\n" % (n, v) for n, v, _ in sorted(_lab_set()) if n in ("labwc", "librtlsdr2"))
+        elif argv[:2] == ["apt-get", "dist-upgrade"]:
+            self.status.update({"labwc": "0.7.4+lab1", "librtlsdr2": _RTL_VERSION})
+        elif argv[0] == "kernel-install":
+            (self.esp / "loader/entries/labB+3.conf").write_text(bootchain.entry_text(self.cfg, "B", 3))
+            out = '{"status": "SLOT_ENTRY_WRITTEN", "entry": "loader/entries/labB+3.conf"}\n'
+        return _NS(returncode=0, stdout=out, stderr="")
+
+    def apply(self, arm_trial=None):
+        runs = []
+        with patch.object(update_slot, "plan", side_effect=lambda *a, **k: copy.deepcopy(self.report)), \
+                patch.object(update_slot, "TARGET_MOUNT", self.target), \
+                patch.object(update_slot.os, "geteuid", create=True, return_value=0), \
+                patch.object(update_slot, "per_slot_findings", return_value=({}, [])), \
+                patch.object(update_slot, "carried_files", return_value={}), \
+                patch.object(update_slot, "arm_trial", side_effect=arm_trial or update_slot.arm_trial), \
+                patch.object(build_image, "run", side_effect=lambda argv, check=True, **k: runs.append([str(a) for a in argv]) or _NS(returncode=0)), \
+                patch.object(build_image, "chroot_api"), patch.object(build_image, "chroot", side_effect=self.chroot), \
+                patch.object(build_image, "_dpkg_status", side_effect=lambda root: dict(self.status)), \
+                patch.object(build_image, "_dpkg_holds", return_value=["base-files"]):
+            record = update_slot.apply(self.root, lab_repo=Path(self.tmp.name) / "lab", execute=True, online=False)
+        return record, runs
+
+    def entries(self):
+        return sorted(p.name for p in (self.esp / "loader/entries").glob("*.conf"))
+
+    def test_the_lab_set_joins_the_dist_upgrade_and_a_fresh_recipe_held_package_is_held(self):
+        self.unresolvable = False
+        record, runs = self.apply()
+        self.assertEqual(record["status"], update_slot.STATUS_UPDATED, record.get("error"))
+        simulate = next(c for c in self.calls if c[:2] == ["apt-get", "-s"])
+        self.assertEqual((simulate[3], simulate[-2:]), ("dist-upgrade", ["labwc", "librtlsdr2"]))
+        self.assertEqual(next(c for c in self.calls if c[:2] == ["apt-get", "dist-upgrade"])[-2:], ["labwc", "librtlsdr2"])
+        self.assertEqual(record["apt"]["install_names"], ["labwc", "librtlsdr2"])  # satdump is installed, -dev/-dbgsym are not for the device
+        self.assertEqual(sorted(record["apt"]["plan"]["install"]), ["labwc", "librtlsdr2"])
+        self.assertIn(["apt-mark", "hold", "labwc", "librtlsdr2"], self.calls)  # recipe holds, as the image builder holds them
+        self.assertEqual(record["apt"]["held_after_install"], ["labwc", "librtlsdr2"])
+        self.assertEqual((record["packages_outside_publications"], record["trial"]["entry"], record["trial_disarmed"]), ([], "labB+3.conf", None))
+        self.assertIn(["e2fsck", "-fn", "/dev/fake-root-b"], runs)
+        self.assertEqual(self.entries(), ["labA-rescue.conf", "labA.conf", "labB+3.conf", "labB-rescue.conf"])
+        sources = (self.target / update_slot.CHROOT_WORK / "sources.list").read_text()
+        self.assertEqual(sources, "deb [arch=arm64 signed-by=/run/srrx-update/srrx-update.gpg] file:/run/srrx-update/repo/srrx-lab noble-lab main\n")
+
+    def test_a_failure_after_kernel_install_removes_the_counted_entry(self):
+        self.unresolvable = False
+        record, runs = self.apply(arm_trial=update_slot.UpdateError("arm_trial failed after kernel-install"))
+        self.assertEqual(record["status"], "FAILED")
+        self.assertIn("arm_trial failed", record["error"])
+        self.assertEqual(record["trial_disarmed"], ["labB+3.conf"])
+        self.assertEqual(self.entries(), ["labA-rescue.conf", "labA.conf", "labB-rescue.conf"])
+        self.assertFalse(any(r[:1] == ["e2fsck"] for r in runs))
+        written = json.loads(Path(record["record_path"]).read_text())
+        self.assertEqual((written["status"], written["trial_disarmed"]), ("FAILED", ["labB+3.conf"]))
+
+    def test_a_plan_apt_cannot_resolve_is_refused_before_anything_is_installed(self):
+        self.unresolvable = True
+        record, _ = self.apply()
+        self.assertEqual(record["status"], "REFUSED")
+        self.assertIn("apt cannot plan the update (exit 100)", record["error"])
+        self.assertIn("unmet dependencies", record["apt"]["simulation_tail"])
+        self.assertFalse(any(c[:2] == ["apt-get", "dist-upgrade"] or c[0] == "kernel-install" for c in self.calls))
+        self.assertEqual(record["trial_disarmed"], [])
+        self.assertEqual(self.entries(), ["labA-rescue.conf", "labA.conf", "labB-rescue.conf"])
+
+
+class UpdateSlotLabPublicationTests(unittest.TestCase):
+    """Review R5: the srrx-lab path of verify_publications (CI trust and the release record's snapshot build
+    records), the generated source list, and on Linux a gpg-signed one-component srrx-lab publication through the
+    real deploy.verify_repo (test_repo.py fixtures)."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.base = Path(self.tmp.name)
+        self.root = self.base / "root"
+        build_image.write_text(self.root / "var/lib/dpkg/status", "Package: base-files\nStatus: install ok installed\nArchitecture: arm64\n"
+                               "Version: 13ubuntu10.3\n")
+        self.keyring = self.base / "test.gpg"
+        self.keyring.write_bytes(_keyring("SR-RX lab CI TEST KEY - not for release"))
+
+    def test_ci_trust_passes_the_cli_build_records_to_verify_repo(self):
+        trust = update_slot.trust_findings(self.root, (str(self.keyring), _KEY_FPR))[0]
+        record, repo = self.base / "rtlsdr.build-record.json", self.base / "lab"
+        found = {("librtlsdr2", _RTL_VERSION, "arm64")}
+        with patch.object(update_slot.deploy, "verify_repo", return_value={"status": "SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS"}) as verify, \
+                patch.object(update_slot, "publication_packages", return_value=found):
+            results, packages, issues = update_slot.verify_publications(self.root, trust, lab_repo=repo, build_records=[record])
+        verify.assert_called_once_with(repo, str(self.keyring), _KEY_FPR, [record], self.root / update_slot.SOURCES["srrx-lab"], None,
+                                       self.root / "var/lib/dpkg/status", release=False)
+        self.assertEqual((issues, packages, results["srrx-lab"]["package_versions"], results["srrx-mirror"]),
+                         ([], {"srrx-lab": found}, ["librtlsdr2=" + _RTL_VERSION], None))
+        refusal = update_slot.deploy.DeploymentError("package is not one of the build records: librtlsdr2")
+        with patch.object(update_slot.deploy, "verify_repo", side_effect=refusal):
+            results, packages, issues = update_slot.verify_publications(self.root, trust, lab_repo=repo, build_records=[record])
+        self.assertEqual((results["srrx-lab"]["status"], packages), ("REFUSED", {}))
+        self.assertIn("srrx-lab refused: package is not one of the build records", issues[0])
+
+    def test_the_release_path_uses_the_release_record_build_records_and_inrelease_pin(self):
+        owner = self.root / build_image.SRRX_KEYRING
+        owner.parent.mkdir(parents=True)
+        owner.write_bytes(_keyring("SR-RX lab repository signing key"))
+        build = self.root / "var/lib/srrx/records/rtlsdr.build-record.json"
+        build.parent.mkdir(parents=True)
+        build.write_text("{}\n")
+        record = json.loads((HERE / "release.template.json").read_text())
+        record["status"] = "REVIEWED"
+        record["offline_snapshot"].update(status="REVIEWED", repo="/srv/srrx-repo/lab", signing_fingerprint=_KEY_FPR.lower(),
+                                          inrelease_sha256="1" * 64,
+                                          build_records=[{"path": "/var/lib/srrx/records/rtlsdr.build-record.json", "sha256": update_slot.sha256(build)}])
+        build_image.write_text(self.root / update_slot.RELEASE_RECORD, json.dumps(record))
+        trust, issues = update_slot.trust_findings(self.root, release=True)
+        self.assertEqual((issues, trust["release"], trust["build_records"], trust["fingerprint"]), ([], "RELEASE_PATH", [str(build)], _KEY_FPR))
+        with patch.object(update_slot.deploy, "verify_repo", return_value={"status": "SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS"}) as verify, \
+                patch.object(update_slot, "publication_packages", return_value=set()):
+            update_slot.verify_publications(self.root, trust, lab_repo=self.base / "lab", build_records=[self.base / "ignored.json"])
+        args, kwargs = verify.call_args
+        self.assertEqual((args[3], args[5], kwargs), ([str(build)], "1" * 64, {"release": True}))  # never the CLI records on the release path
+        build.write_text("{\"changed\": true}\n")
+        self.assertIn("build record differs", update_slot.trust_findings(self.root, release=True)[1][0])
+
+    def test_source_list_of_each_publication_subset(self):
+        lab = "deb [arch=arm64 signed-by=K] file:/run/srrx-update/repo/srrx-lab noble-lab main\n"
+        mirror = "deb [arch=arm64 signed-by=K] file:/run/srrx-update/repo/srrx-mirror noble-mirror main\n"
+        for packages, text in (({"srrx-lab": set()}, lab), ({"srrx-mirror": set()}, mirror), ({"srrx-mirror": set(), "srrx-lab": set()}, lab + mirror),
+                               ({}, "\n")):
+            self.assertEqual(update_slot.source_list(packages, "K"), text)
+
+    @unittest.skipUnless(_GPG_TOOLS, "gpg/gpgv are needed to sign the srrx-lab publication")
+    def test_a_signed_srrx_lab_publication_through_verify_repo(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import test_repo
+        fixture = _NS(root=self.base, keys=test_repo.Keys(), packages=[("librtlsdr2", _RTL_VERSION, test_repo.rtl_deb("librtlsdr2")),
+                                                                        ("librtlsdr-dev", _RTL_VERSION, test_repo.rtl_deb("librtlsdr-dev"))])
+        self.addCleanup(fixture.keys.close)
+        fixture.fpr = fixture.keys.new_key("SR-RX lab CI TEST KEY - not for release")
+        keyring = self.base / "ci.gpg"
+        fixture.keys.export(fixture.fpr, keyring)
+        repo = test_repo.SignedRepositoryTests.publish(fixture)
+        build_record = test_repo.SignedRepositoryTests.record(fixture)
+        (self.root / "etc/apt/sources.list.d").mkdir(parents=True)
+        shutil.copyfile(HERE / "repo/srrx-lab.sources", self.root / update_slot.SOURCES["srrx-lab"])
+        trust, issues = update_slot.trust_findings(self.root, (str(keyring), fixture.fpr))
+        self.assertEqual((issues, trust["release"]), ([], "NOT_RELEASE"))
+        results, packages, issues = update_slot.verify_publications(self.root, trust, lab_repo=repo, build_records=[build_record])
+        self.assertEqual((issues, results["srrx-lab"]["status"]), ([], "SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS"))
+        self.assertEqual(packages["srrx-lab"], {("librtlsdr2", _RTL_VERSION, "arm64"), ("librtlsdr-dev", _RTL_VERSION, "arm64")})
+        self.assertEqual(update_slot.install_names(packages, build_image._dpkg_status(self.root)), ["librtlsdr2"])
+        text = "Inst librtlsdr2 (%s srrx-lab:noble-lab [arm64])\n" % _RTL_VERSION
+        self.assertEqual(update_slot.plan_issues(build_image.apt_simulation(text), text, set(), update_slot.protected_globs(), packages,
+                                                 update_slot.recipe_hold_globs()), [])
+        # the same publication against a target that holds librtlsdr2 at another version is refused whole
+        (self.root / "var/lib/dpkg/status").write_text("Package: librtlsdr2\nStatus: hold ok installed\nArchitecture: arm64\nVersion: 2.0.1-2build1\n")
+        results, packages, issues = update_slot.verify_publications(self.root, trust, lab_repo=repo, build_records=[build_record])
+        self.assertEqual((results["srrx-lab"]["status"], packages), ("REFUSED", {}))
+        self.assertIn("held package: librtlsdr2", issues[0])
+        wrong = self.base / "other.gpg"
+        fixture.keys.export(fixture.keys.new_key("SR-RX lab CI TEST KEY other"), wrong)
+        other = update_slot.trust_findings(self.root, (str(wrong), fixture.fpr))
+        self.assertIn("is not a key of the CI test keyring", " ".join(other[1]))
 
 
 if __name__ == "__main__":

@@ -23,13 +23,19 @@ that is NOT running. That slot then boots as a counted trial and is blessed only
        target, except PER_SLOT_FILES; the per-unit files (CARRIED) arrive with the copy and are checked.
     5. Chroot of the target (minimal /dev, policy-rc.d 101): apt-get update from the verified
        publications only (a generated source list; the target's own lab.pref pins), apt-get -s
-       dist-upgrade. Refused: any change of a held, recipe-held or never_in_lab_repo package and any
+       dist-upgrade plus the srrx-lab packages the target does not have yet (install_names: the
+       commissioning install of the +lab set, build/15 «Пакети +lab на пристрої (W2 SYS-HOST)»).
+       Refused: a plan apt cannot resolve, any change of a dpkg-held or never_in_lab_repo/boot-chain
+       package, a recipe-held package at any version but the +labN one srrx-lab publishes, and any
        package version that no verified publication lists (foreign origin). Then the same
-       dist-upgrade; the dpkg status change must equal the simulated plan.
+       dist-upgrade; the dpkg status change must equal the simulated plan. Units the new packages
+       enable are disabled again (an update enables nothing), a lost unit mask fails the update, and a
+       newly installed recipe-held package is held (apt-mark hold, as the image builder holds them).
     6. kernel-install add of the pinned kernel in the chroot (90-srrx-bls.install writes the slot
        entry and ESP files). Trial: Route A labT+<tries>.conf of a newer generation; Route B ESP
        srrx/ab/trial = T and loader.conf default labT.
-    7. Target unmounted, e2fsck -fn (a failure disarms the trial); the record goes to
+    7. Target unmounted, e2fsck -fn; any outcome but UPDATED removes the target's entries (and the
+       Route B trial) again once step 4 has touched the ESP. The record goes to
        /data/srrx-updates/<UTC>.json whatever the outcome (UPDATED, REFUSED or FAILED).
 Nothing here writes EFI variables or partitions, or touches the running slot. The rollback on a Q6A is
 bench gate W-03 (OPEN); the CI model is not hardware evidence.
@@ -82,8 +88,14 @@ CLOSURE = "opt/srrx/deployment/image/package-closure.json"
 TARGET_MOUNT = Path("/run/srrx-update-target")
 CHROOT_WORK = "run/srrx-update"  # in the target chroot's /run tmpfs (build_image.chroot_api)
 # Never changed by an update, whatever the publication: the boot chain and the pins of the image route
-# (recipe.json routes.A apt_pin_minus_one) on top of repo-policy never_in_lab_repo_globs and recipe holds.
+# (recipe.json routes.A apt_pin_minus_one) on top of repo-policy never_in_lab_repo_globs. Recipe holds are
+# enforced through the target's dpkg hold status (the image builder holds every installed one) and, for a
+# name the image does not have (librtlsdr2, labwc: build/07 §1.2 pins +lab1 builds), the +labN rule.
 BOOT_CHAIN_GLOBS = ("embloader*", "sdboot-is-embloader", "systemd-boot*")
+# srrx-lab packages an update never installs fresh: build dependencies for the lab builder chroots only
+# (recipes: librtlsdr-dev, limesuiteng-dev) and debug symbols. Every other package of the verified
+# publication is the +lab set of the device (check_repo.py publishable chose it).
+NOT_INSTALLED_GLOBS = ("*-dev", "*-dbg", "*-dbgsym")
 CI_TEST_UID = build_image.CI_TEST_KEY_UID
 PLAN_BEGIN, PLAN_END = "SRRX-UPDATE-PLAN-BEGIN", "SRRX-UPDATE-PLAN-END"
 STATUS_UPDATED = "INACTIVE_SLOT_UPDATED_TRIAL_ARMED"
@@ -386,17 +398,34 @@ def verify_publications(root, trust, lab_repo=None, mirror_repo=None, build_reco
     return results, packages, issues
 
 
-def protected_globs(recipe=None, policy=None):
-    recipe = build_image.load_json(build_image.RECIPE) if recipe is None else recipe
+def protected_globs(policy=None):
+    """Names no update changes: repo-policy never_in_lab_repo_globs (kernel, boot loader, board and DSP
+    firmware) and the boot chain."""
     policy = deploy.load(deploy.REPO_POLICY) if policy is None else policy
-    return sorted(set(policy["never_in_lab_repo_globs"]) | set(recipe["holds"]["names"]) | set(recipe["holds"]["globs"])
-                  | set(BOOT_CHAIN_GLOBS))
+    return sorted(set(policy["never_in_lab_repo_globs"]) | set(BOOT_CHAIN_GLOBS))
 
 
-def plan_issues(apt_plan, apt_text, held, globs, packages):
-    """Refusals of a simulated dist-upgrade: a held or protected package changed, a version in no verified
-    publication (foreign origin)."""
+def recipe_hold_globs(recipe=None):
+    recipe = build_image.load_json(build_image.RECIPE) if recipe is None else recipe
+    return sorted(set(recipe["holds"]["names"]) | set(recipe["holds"]["globs"]))
+
+
+def install_names(packages, installed):
+    """The srrx-lab packages the target does not have yet: every package of the verified srrx-lab
+    publication except NOT_INSTALLED_GLOBS (SYS-HOST: the golden image has no +lab package, the updater
+    installs them at commissioning). srrx-mirror is exactly the image closure, all of it installed, so
+    it adds no name; the installed packages of both publications change through dist-upgrade."""
+    have = {n.split(":", 1)[0] for n in installed}
+    return sorted({n for n, _, _ in packages.get("srrx-lab", ()) if n not in have
+                   and not any(fnmatch.fnmatchcase(n, g) for g in NOT_INSTALLED_GLOBS)})
+
+
+def plan_issues(apt_plan, apt_text, held, globs, packages, recipe_holds=()):
+    """Refusals of a simulated dist-upgrade: a dpkg-held or protected (globs) package changed, a recipe-held
+    package at a version other than the +labN build the verified srrx-lab publishes, a version in no
+    verified publication (foreign origin)."""
     available = {(n, v) for found in packages.values() for n, v, _ in found}
+    lab = {(n, v) for n, v, _ in packages.get("srrx-lab", ())}
     issues = []
     if "held packages will be changed" in (apt_text or ""):
         issues.append("apt would change held packages")
@@ -404,14 +433,38 @@ def plan_issues(apt_plan, apt_text, held, globs, packages):
         if name in held:
             issues.append("apt would change the held package %s to %s" % (name, version))
         elif any(fnmatch.fnmatchcase(name, g) for g in globs):
-            issues.append("apt would change %s to %s: kernel, boot chain, firmware or a recipe-held package never changes in an update"
-                          % (name, version))
+            issues.append("apt would change %s to %s: kernel, boot chain or firmware never changes in an update" % (name, version))
+        elif any(fnmatch.fnmatchcase(name, g) for g in recipe_holds) and ((name, version) not in lab or not deploy.LAB_BUILD.search(version)):
+            issues.append("apt would change the recipe-held package %s to %s: only to the +labN build the verified srrx-lab "
+                          "publishes (build/07 section 1.2)" % (name, version))
         if (name, version) not in available:
             issues.append("foreign origin: %s %s is in no verified publication (%s)" % (name, version, ", ".join(sorted(packages)) or "none"))
     for name in apt_plan["remove"]:
-        if name in held or any(fnmatch.fnmatchcase(name, g) for g in globs):
+        if name in held or any(fnmatch.fnmatchcase(name, g) for g in tuple(globs) + tuple(recipe_holds)):
             issues.append("apt would remove the held or protected package " + name)
     return issues
+
+
+def enablement_links(root):
+    """{path under root: link target} of every symbolic link below etc/systemd/system: .wants/.requires
+    enablement, aliases and /dev/null masks."""
+    root = Path(root)
+    base = root / "etc/systemd/system"
+    found = {}
+    if base.is_dir():
+        for path in sorted(base.rglob("*")):
+            if path.is_symlink():
+                found[path.relative_to(root).as_posix()] = os.readlink(path)
+    return found
+
+
+def enablement_changes(before, after):
+    """(links the upgrade added, masks it lost) between two enablement_links() listings. An update enables
+    nothing (recipe not_enabled; build/15 «gpsd в еталонному образі»: every unit outside the receive-only
+    layer is enabled on purpose after acceptance), so the added links are removed again."""
+    added = {p: t for p, t in after.items() if p not in before and t != "/dev/null"}
+    lost = sorted(p for p, t in before.items() if t == "/dev/null" and after.get(p) != "/dev/null")
+    return added, lost
 
 
 def change_issues(apt_plan, changes):
@@ -531,7 +584,8 @@ def plan(root=Path("/"), target_device=None, lab_repo=None, mirror_repo=None, bu
             "route": slots["route"], "active_slot": slots["active_slot"], "running_slot": slots["running_slot"],
             "target_slot": slots["target_slot"], "target": target, "esp": esp, "preconditions": pre,
             "trust": {k: v for k, v in (trust or {}).items() if k != "uids"} or None, "release": (trust or {}).get("release"),
-            "publications": publications, "per_slot_files": list(PER_SLOT_FILES), "carried": sorted(carried_files(root)),
+            "publications": publications, "lab_install": install_names(packages, build_image._dpkg_status(root)),
+            "per_slot_files": list(PER_SLOT_FILES), "carried": sorted(carried_files(root)),
             "records": str(records), "last_record": last_record(records), "checks": checks, "refusals": refusals,
             "hardware_ready": False, "bench_gates_open": ["W-03"],
             "_internal": {"config": config, "packages": packages, "device": device}}
@@ -578,6 +632,8 @@ def arm_trial(config, slot, esp, target_root):
                 "boot-complete.target (srrx-boot-check)" % tries}
     if entries != ["lab%s.conf" % slot]:
         raise UpdateError("slot %s entries after kernel-install are %r" % (slot, entries))
+    # A golden ESP has no srrx/ab yet: its boot.json has no trial slot, so bootchain.entries wrote no marker.
+    (Path(esp) / bootchain.TRIAL_MARK).parent.mkdir(parents=True, exist_ok=True)
     bootchain._atomic_write(Path(esp) / bootchain.TRIAL_MARK, (slot + "\n").encode())
     bootchain._atomic_write(Path(esp) / "loader/loader.conf", bootchain.loader_conf(config, slot).encode())
     if (Path(esp) / bootchain.BOOTING_MARK).exists():
@@ -608,20 +664,21 @@ def apply(root=Path("/"), target_device=None, lab_repo=None, mirror_repo=None, b
     root, config, slot, active = Path(report["root"]), internal["config"], report["target_slot"], report["active_slot"]
     record = {k: v for k, v in report.items() if k not in ("status", "last_record", "checks")}
     record.update(schema_version=1, status="REFUSED", started_at=started, apt=None, kernel_install=None, trial=None,
-                  target_entries_removed=[], publication_packages={p: sorted("%s=%s" % (n, v) for n, v, _ in found)
-                                                                   for p, found in internal["packages"].items()})
+                  target_entries_removed=[], trial_disarmed=None,
+                  publication_packages={p: sorted("%s=%s" % (n, v) for n, v, _ in found) for p, found in internal["packages"].items()})
     if report["refusals"]:
         record["finished_at"] = utc_now()
         # A record outside the mounted /data would land in a root slot: then it is only printed.
         record["record_path"] = str(write_record(report["records"], record)) if report["checks"]["records_on_data"] else None
         return record
     mounts, device, esp = build_image.Mounts(), internal["device"], root / "boot/efi"
-    armed = created_policy = False
+    esp_touched = created_policy = False
     policy_file = TARGET_MOUNT / "usr/sbin/policy-rc.d"
     try:
         if TARGET_MOUNT.exists() and bootchain._is_mountpoint(TARGET_MOUNT):
             raise UpdateError(str(TARGET_MOUNT) + " is already a mount point")
         record["status"] = "FAILED"  # from here on the target slot changes; a rule refusal below says REFUSED
+        esp_touched = True  # from here on, any outcome but UPDATED removes the target's entries again
         record["target_entries_removed"] = remove_slot_entries(esp, slot)
         mounts.mount(device, TARGET_MOUNT, "ext4")
         source = carried_files(root)
@@ -648,26 +705,46 @@ def apply(root=Path("/"), target_device=None, lab_repo=None, mirror_repo=None, b
         options = _apt_options("/" + CHROOT_WORK)
         before = build_image._dpkg_status(TARGET_MOUNT)
         held = build_image._dpkg_holds(TARGET_MOUNT)
+        links = enablement_links(TARGET_MOUNT)
+        # dist-upgrade NAMES (apt 2.7.14 DoCacheManipulationFromCommandLine): the names are marked for
+        # install first, then the dist-upgrade is resolved, so one plan covers both.
+        names = install_names(internal["packages"], before)
+        record["apt"] = {"install_names": names, "held": held}
         build_image.chroot(TARGET_MOUNT, ["apt-get", "update", "-q"] + options, extra_env=build_image.CLOSURE_ENV)
-        simulated = build_image.chroot(TARGET_MOUNT, ["apt-get", "-s", "-q", "dist-upgrade"] + options, extra_env=build_image.CLOSURE_ENV)
+        simulated = build_image.chroot(TARGET_MOUNT, ["apt-get", "-s", "-q", "dist-upgrade"] + options + names,
+                                       extra_env=build_image.CLOSURE_ENV, check=False)
+        record["apt"]["simulation_tail"] = ((simulated.stdout or "") + (simulated.stderr or ""))[-1500:]
+        if simulated.returncode:
+            # e.g. a +lab package whose noble dependency is neither installed nor in the image closure
+            raise Refused("apt cannot plan the update (exit %d): %s" % (simulated.returncode, record["apt"]["simulation_tail"][-600:]))
         apt_plan = build_image.apt_simulation(simulated.stdout)
-        record["apt"] = {"plan": apt_plan, "held": held, "simulation_tail": simulated.stdout[-1500:]}
-        issues = plan_issues(apt_plan, simulated.stdout, set(held), protected_globs(), internal["packages"])
+        record["apt"]["plan"] = apt_plan
+        issues = plan_issues(apt_plan, simulated.stdout, set(held), protected_globs(), internal["packages"], recipe_hold_globs())
         if issues:
             record["refusals"] = issues
             raise Refused("apt plan refused: " + "; ".join(issues))
-        done = build_image.chroot(TARGET_MOUNT, ["apt-get", "dist-upgrade", "-y", "-q"] + options, extra_env=build_image.CLOSURE_ENV)
+        done = build_image.chroot(TARGET_MOUNT, ["apt-get", "dist-upgrade", "-y", "-q"] + options + names, extra_env=build_image.CLOSURE_ENV)
         changes = build_image.status_changes(before, build_image._dpkg_status(TARGET_MOUNT))
         record["apt"].update(changes={n: {"from": b, "to": a} for n, (b, a) in changes.items()}, apply_tail=done.stdout[-1500:])
         issues = change_issues(apt_plan, changes)
         if issues:
             raise UpdateError("dpkg status after the upgrade: " + "; ".join(issues))
+        added, lost = enablement_changes(links, enablement_links(TARGET_MOUNT))
+        for relative in sorted(added):
+            (TARGET_MOUNT / relative).unlink()
+        record["apt"]["units"] = {"enablement_removed": added, "masks_lost": lost}
+        if lost:
+            raise UpdateError("unit masks lost in the upgrade: " + ", ".join(lost))
+        hold = sorted(n for n, (b, a) in changes.items() if b is None and a is not None
+                      and any(fnmatch.fnmatchcase(n, g) for g in recipe_hold_globs()))
+        if hold:  # the image builder holds every installed recipe-held package (build_image.hardening)
+            build_image.chroot(TARGET_MOUNT, ["apt-mark", "hold"] + hold)
+        record["apt"]["held_after_install"] = hold
         kver = config["kernel_version"]
         installed = build_image.chroot(TARGET_MOUNT, ["kernel-install", "add", kver, "/boot/vmlinuz-" + kver, "/boot/initrd.img-" + kver])
         lines = [l for l in installed.stdout.splitlines() if l.startswith("{")]
         record["kernel_install"] = json.loads(lines[-1]) if lines else {"stdout_tail": installed.stdout[-600:]}
         record["trial"] = arm_trial(config, slot, esp, TARGET_MOUNT)
-        armed = True
     except Refused as exc:
         record.update(status="REFUSED", error=str(exc)[-3000:],
                       target_state="copy of the active root without its boot entries; the next update rewrites it")
@@ -683,8 +760,14 @@ def apply(root=Path("/"), target_device=None, lab_repo=None, mirror_repo=None, b
             record.update(status="FAILED", error="e2fsck -fn of the target exited %d" % record["target_fsck"])
         else:
             record["status"] = STATUS_UPDATED
-    if record["status"] != STATUS_UPDATED and armed:
-        record["trial_disarmed"] = disarm_trial(config, slot, esp, active)
+    if record["status"] != STATUS_UPDATED and esp_touched:
+        # kernel-install may have written a counted entry before a later step failed: on Route A
+        # (loader.conf default lab*) it would boot next. The target's entries were removed in step 4, so
+        # removing them again (and the Route B trial) is right whatever step failed.
+        try:
+            record["trial_disarmed"] = disarm_trial(config, slot, esp, active)
+        except OSError as exc:
+            record["trial_disarm_error"] = (type(exc).__name__ + ": " + str(exc))[-600:]
     packages = internal["packages"]
     changed = sorted(n for n, c in ((record.get("apt") or {}).get("changes") or {}).items() if c["to"] is not None)
     record["packages_outside_publications"] = sorted(n for n in changed if not any(n == p for found in packages.values() for p, _, _ in found))
