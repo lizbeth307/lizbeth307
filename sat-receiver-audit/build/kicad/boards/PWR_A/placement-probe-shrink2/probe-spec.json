@@ -677,8 +677,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          28.14,
-          97.31
+          53.48,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -691,8 +691,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          31.6,
-          97.31
+          56.94,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -754,35 +754,28 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.6,
-          94.2
+          9.3,
+          80.05
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            2.6,
-            94.2
-          ],
-          "angle": 90
-        }
+        "rotation": 90,
+        "side": "F"
       },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "C112",
       "source": "graph",
       "anchor": {
         "at": [
-          45.3,
-          9.8
+          5.85,
+          94.9
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "C113",
@@ -810,8 +803,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          35.06,
-          97.31
+          60.4,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -824,24 +817,31 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.69,
-          93.52
+          105.04,
+          30.61
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            40.69,
-            93.52
-          ],
-          "angle": 90
-        }
+        "rotation": 0.0,
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
     {
       "ref": "C116",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          85.15,
+          12.42
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "F"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "C117",
       "source": "graph",
       "anchor": {
         "at": [
@@ -855,26 +855,12 @@
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
     {
-      "ref": "C117",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          32.88,
-          94.8
-        ],
-        "align": "origin",
-        "rotation": 90.0,
-        "side": "F"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
       "ref": "C119",
       "source": "graph",
       "anchor": {
         "at": [
-          11.95,
-          46.5
+          9.15,
+          48.2
         ],
         "align": "origin",
         "rotation": 90,
@@ -887,8 +873,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          20.05,
-          46.5
+          22.85,
+          48.2
         ],
         "align": "origin",
         "rotation": 90,
@@ -901,28 +887,28 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.88,
-          41.47
+          18.93,
+          47.525
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "C122",
       "source": "graph",
       "anchor": {
         "at": [
-          16.34,
-          41.47
+          13.07,
+          47.525
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "C123",
@@ -985,7 +971,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          19.8,
+          14.88,
           41.47
         ],
         "align": "origin",
@@ -999,8 +985,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.88,
-          38.47
+          18.34,
+          41.47
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1013,8 +999,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          13.34,
-          38.47
+          21.8,
+          41.47
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1125,7 +1111,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          27.6,
+          33.04,
           94.27
         ],
         "align": "origin",
@@ -1140,7 +1126,7 @@
       "anchor": {
         "at": [
           29.58,
-          55.12
+          70.8
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1153,8 +1139,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          32.04,
-          55.12
+          40.48,
+          18.72
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1167,19 +1153,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.2,
-          85.2
+          30.2,
+          75.3
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            38.2,
-            85.2
-          ],
-          "angle": 90
-        }
+        "rotation": 90.0,
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1188,11 +1167,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.2,
-          59.62
+          45.3,
+          9.8
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1202,12 +1181,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.75,
-          83.4
+          37.8,
+          97.65
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F"
+        "rotation": 90.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            37.8,
+            98.9
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1217,7 +1203,7 @@
       "anchor": {
         "at": [
           31.1,
-          48.05
+          82.55
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1321,19 +1307,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.78,
-          92.31
+          3.79,
+          63.52
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            1.78,
-            92.31
-          ],
-          "angle": 90
-        }
+        "rotation": 90.0,
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1426,8 +1405,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          67.42,
-          29.2
+          30.9,
+          43.4
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1440,8 +1419,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          72.52,
-          29.2
+          36.0,
+          43.4
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1454,11 +1433,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          11.6,
-          30.15
+          30.75,
+          48.9
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1468,7 +1447,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          66.98,
+          61.1,
           24.8
         ],
         "align": "origin",
@@ -1482,8 +1461,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          51.9,
-          18.32
+          66.2,
+          24.8
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1496,7 +1475,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          60.23,
+          54.35,
           23.5
         ],
         "align": "origin",
@@ -1510,8 +1489,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          57.0,
-          18.32
+          52.7,
+          18.5
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1524,8 +1503,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          62.1,
-          18.32
+          57.8,
+          18.5
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1538,8 +1517,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          67.2,
-          18.32
+          62.9,
+          18.5
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1552,8 +1531,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          51.9,
-          14.62
+          68.0,
+          18.5
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1566,8 +1545,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          57.0,
-          14.62
+          52.7,
+          14.8
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1580,8 +1559,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          62.1,
-          14.62
+          57.8,
+          14.8
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -1594,11 +1573,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          35.6,
-          17.9
+          28.65,
+          15.55
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1608,11 +1587,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.05,
-          12.0
+          32.35,
+          15.55
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1622,11 +1601,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          21.9,
-          23.4
+          29.05,
+          22.15
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1636,11 +1615,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          27.15,
-          12.0
+          11.2,
+          24.5
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1650,11 +1629,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          32.25,
-          12.0
+          11.2,
+          11.0
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1664,8 +1643,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          41.13,
-          20.1
+          14.28,
+          25.1
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1678,19 +1657,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          80.24,
-          33.37
+          31.84,
+          30.75
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            80.24,
-            33.37
-          ],
-          "angle": 0
-        }
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1699,8 +1671,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          41.13,
-          16.2
+          14.28,
+          11.6
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1713,8 +1685,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          41.13,
-          12.3
+          7.68,
+          20.0
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1727,12 +1699,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.58,
-          11.6
+          1.28,
+          15.6
         ],
         "align": "origin",
         "rotation": 90.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            1.28,
+            15.6
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1741,11 +1720,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.2,
-          23.4
+          23.15,
+          13.2
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1755,7 +1734,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          90.11,
+          92.2,
           13.3
         ],
         "align": "origin",
@@ -1769,7 +1748,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          95.21,
+          97.3,
           13.3
         ],
         "align": "origin",
@@ -1797,7 +1776,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          100.31,
+          102.4,
           13.3
         ],
         "align": "origin",
@@ -1811,7 +1790,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          105.41,
+          107.5,
           13.3
         ],
         "align": "origin",
@@ -1825,12 +1804,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          80.5,
-          12.26
+          91.08,
+          2.0
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F"
+        "rotation": 90.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            91.08,
+            2.0
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1839,12 +1825,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.79,
-          22.46
+          99.46,
+          33.37
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B"
+        "rotation": 0.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            99.46,
+            33.37
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1853,12 +1846,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          93.15,
-          25.42
+          93.54,
+          2.0
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F"
+        "rotation": 90.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            93.54,
+            2.0
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1867,12 +1867,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          97.05,
-          25.42
+          96.0,
+          2.0
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F"
+        "rotation": 90.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            96.0,
+            2.0
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1881,12 +1888,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          100.95,
-          25.42
+          96.7,
+          33.82
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            96.7,
+            33.82
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -1895,16 +1909,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.7,
-          13.2
+          2.45,
+          31.4
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F",
         "ref_text": {
           "at": [
             3.7,
-            14.45
+            31.4
           ],
           "angle": 90
         }
@@ -1913,6 +1927,55 @@
     },
     {
       "ref": "C278",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          11.48,
+          108.97
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            11.48,
+            108.97
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "C279",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          22.33,
+          69.02
+        ],
+        "align": "origin",
+        "rotation": 90.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "C280",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          22.84,
+          94.27
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "C281",
       "source": "graph",
       "anchor": {
         "at": [
@@ -1933,72 +1996,16 @@
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
     {
-      "ref": "C279",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          5.24,
-          34.31
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "C280",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          1.78,
-          32.35
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            1.78,
-            32.35
-          ],
-          "angle": 90
-        }
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "C281",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          5.24,
-          32.35
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
       "ref": "C288",
       "source": "graph",
       "anchor": {
         "at": [
-          83.7,
-          33.37
+          35.3,
+          30.75
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            83.7,
-            33.37
-          ],
-          "angle": 0
-        }
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2007,8 +2014,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          67.2,
-          14.62
+          62.9,
+          14.8
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2021,8 +2028,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          51.9,
-          10.92
+          68.0,
+          14.8
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2035,8 +2042,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          57.0,
-          10.92
+          52.7,
+          11.1
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2049,8 +2056,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          62.1,
-          10.92
+          57.8,
+          11.1
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2063,12 +2070,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          37.35,
-          12.0
+          1.9,
+          24.5
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F"
+        "rotation": 90.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            1.9,
+            24.5
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2077,7 +2091,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          110.51,
+          112.6,
           13.3
         ],
         "align": "origin",
@@ -2091,7 +2105,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.78,
+          2.08,
           94.27
         ],
         "align": "origin",
@@ -2099,7 +2113,7 @@
         "side": "B",
         "ref_text": {
           "at": [
-            1.78,
+            2.08,
             94.27
           ],
           "angle": 90
@@ -2126,7 +2140,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.24,
+          5.54,
           94.27
         ],
         "align": "origin",
@@ -2168,7 +2182,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8.7,
+          9.0,
           94.27
         ],
         "align": "origin",
@@ -2182,8 +2196,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          53.48,
-          30.61
+          8.7,
+          36.27
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2196,8 +2210,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          56.94,
-          30.61
+          12.16,
+          36.27
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2210,12 +2224,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          104.85,
-          25.42
+          100.6,
+          33.82
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            100.6,
+            33.82
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2224,12 +2245,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.75,
-          22.46
+          102.92,
+          33.37
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B"
+        "rotation": 0.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            102.92,
+            33.37
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2238,19 +2266,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          51.93,
-          33.1
+          85.03,
+          29.1
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            51.93,
-            33.1
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2259,19 +2280,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          56.29,
-          33.1
+          89.39,
+          29.1
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            56.29,
-            33.1
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2280,19 +2294,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          60.65,
-          33.1
+          93.75,
+          29.1
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            60.65,
-            33.1
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2301,11 +2308,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36.65,
-          91.97
+          11.25,
+          32.55
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -2315,7 +2322,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          35.6,
+          32.35,
           30.25
         ],
         "align": "origin",
@@ -2329,12 +2336,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.85,
-          66.07
+          69.95,
+          32.55
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "F"
+        "rotation": 0.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            69.95,
+            32.55
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2343,8 +2357,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          41.25,
-          24.55
+          35.55,
+          15.6
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2357,7 +2371,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          88.7,
+          103.22,
           25.3
         ],
         "align": "origin",
@@ -2372,7 +2386,7 @@
       "anchor": {
         "at": [
           85.38,
-          13.2
+          24.7
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2407,11 +2421,18 @@
       "anchor": {
         "at": [
           30.19,
-          104.87
+          107.87
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            30.19,
+            107.87
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2424,17 +2445,10 @@
           99.25
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            2.25,
-            99.25
-          ],
-          "angle": 90
-        }
+        "rotation": 90,
+        "side": "F"
       },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "F201",
@@ -2442,25 +2456,32 @@
       "anchor": {
         "at": [
           30.43,
-          73.91
+          64.9
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "F202",
       "source": "graph",
       "anchor": {
         "at": [
-          52.95,
-          28.85
+          38.85,
+          50.35
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            38.85,
+            50.35
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2734,7 +2755,7 @@
       "anchor": {
         "at": [
           37.39,
-          99.21
+          91.91
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2742,7 +2763,7 @@
         "ref_text": {
           "at": [
             37.39,
-            99.21
+            91.91
           ],
           "angle": 90
         }
@@ -2789,12 +2810,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          77.27,
-          29.45
+          56.31,
+          33.45
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            56.31,
+            33.45
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2803,26 +2831,33 @@
       "source": "graph",
       "anchor": {
         "at": [
-          52.69,
+          39.91,
           23.41
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 270,
         "side": "F"
       },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "L211",
       "source": "graph",
       "anchor": {
         "at": [
-          10.95,
-          24.85
+          1.65,
+          19.75
         ],
         "align": "origin",
         "rotation": 90.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            1.65,
+            19.75
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2831,8 +2866,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          14.15,
-          24.85
+          4.85,
+          19.75
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2845,11 +2880,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          80.15,
-          24.45
+          94.12,
+          25.05
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -2859,11 +2894,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          80.15,
-          20.05
+          98.52,
+          25.05
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -2887,19 +2922,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          65.01,
-          33.1
+          36.33,
+          37.04
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            65.01,
-            33.1
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2922,26 +2950,33 @@
       "source": "graph",
       "anchor": {
         "at": [
-          58.33,
-          29.1
+          30.53,
+          56.6
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 180,
         "side": "F"
       },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "Q202",
       "source": "graph",
       "anchor": {
         "at": [
-          62.69,
-          29.1
+          51.93,
+          33.1
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            51.93,
+            33.1
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2950,19 +2985,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.0,
-          32.1
+          76.3,
+          23.7
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            4.0,
-            32.1
-          ],
-          "angle": 90
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2971,11 +2999,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          80.5,
-          15.67
+          89.74,
+          24.7
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -2985,12 +3013,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.88,
-          96.91
+          72.92,
+          32.97
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B"
+        "side": "B",
+        "ref_text": {
+          "at": [
+            72.92,
+            32.97
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -2999,19 +3034,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.52,
-          97.31
+          63.86,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            38.52,
-            97.31
-          ],
-          "angle": 90
-        }
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3020,8 +3048,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.0,
-          99.27
+          67.32,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3034,8 +3062,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          33.46,
-          99.27
+          70.78,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3048,8 +3076,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36.92,
-          99.27
+          74.24,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3111,19 +3139,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.78,
-          90.35
+          77.7,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            1.78,
-            90.35
-          ],
-          "angle": 90
-        }
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3132,8 +3153,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.24,
-          90.35
+          81.16,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3146,8 +3167,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.54,
-          36.27
+          27.98,
+          67.01
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3160,8 +3181,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          26.0,
-          36.27
+          31.44,
+          67.01
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3174,8 +3195,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.46,
-          36.27
+          34.9,
+          67.01
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3188,12 +3209,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          32.92,
-          36.27
+          38.36,
+          67.01
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B"
+        "side": "B",
+        "ref_text": {
+          "at": [
+            38.36,
+            67.01
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3202,12 +3230,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8.7,
-          90.35
+          77.18,
+          33.37
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B"
+        "side": "B",
+        "ref_text": {
+          "at": [
+            77.18,
+            33.37
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3216,12 +3251,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          19.08,
-          92.31
+          80.64,
+          33.37
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B"
+        "side": "B",
+        "ref_text": {
+          "at": [
+            80.64,
+            33.37
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3230,12 +3272,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          19.08,
-          90.35
+          1.03,
+          20.6
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
+        "rotation": 90.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            1.03,
+            20.6
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3244,7 +3293,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          16.8,
+          11.88,
           38.47
         ],
         "align": "origin",
@@ -3258,7 +3307,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          20.26,
+          15.34,
           38.47
         ],
         "align": "origin",
@@ -3272,11 +3321,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.97,
-          40.72
+          18.8,
+          38.47
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -3286,11 +3335,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.23,
-          53.92
+          22.26,
+          38.47
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -3300,11 +3349,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.98,
-          51.21
+          11.43,
+          44.37
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -3384,7 +3433,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          31.06,
+          36.5,
           94.27
         ],
         "align": "origin",
@@ -3398,12 +3447,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          34.52,
+          39.96,
           94.27
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B"
+        "side": "B",
+        "ref_text": {
+          "at": [
+            39.96,
+            94.27
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3412,8 +3468,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          37.98,
-          94.27
+          27.98,
+          91.51
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3426,7 +3482,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.54,
+          31.44,
           91.51
         ],
         "align": "origin",
@@ -3440,7 +3496,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          26.0,
+          34.9,
           91.51
         ],
         "align": "origin",
@@ -3454,12 +3510,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.46,
+          38.36,
           91.51
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B"
+        "side": "B",
+        "ref_text": {
+          "at": [
+            38.36,
+            91.51
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3468,7 +3531,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.34,
+          28.78,
           93.87
         ],
         "align": "origin",
@@ -3524,19 +3587,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          87.52
+          23.08,
+          99.27
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            1.03,
-            87.52
-          ],
-          "angle": 90
-        }
+        "rotation": 0.0,
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3545,6 +3601,111 @@
       "source": "graph",
       "anchor": {
         "at": [
+          26.54,
+          99.27
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R212",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          30.0,
+          99.27
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R213",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          33.46,
+          99.27
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R214",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          1.03,
+          58.46
+        ],
+        "align": "origin",
+        "rotation": 90.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            1.03,
+            58.46
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R215",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          2.99,
+          58.46
+        ],
+        "align": "origin",
+        "rotation": 90.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            2.99,
+            58.46
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R216",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          1.03,
+          87.52
+        ],
+        "align": "origin",
+        "rotation": 90.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            1.03,
+            87.52
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R218",
+      "source": "graph",
+      "anchor": {
+        "at": [
           2.99,
           87.52
         ],
@@ -3562,120 +3723,22 @@
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
     {
-      "ref": "R212",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          1.03,
-          84.06
-        ],
-        "align": "origin",
-        "rotation": 90.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            1.03,
-            84.06
-          ],
-          "angle": 90
-        }
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R213",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          2.99,
-          84.06
-        ],
-        "align": "origin",
-        "rotation": 90.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            2.99,
-            84.06
-          ],
-          "angle": 90
-        }
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R214",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          5.24,
-          92.31
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R215",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          8.7,
-          92.31
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R216",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          12.16,
-          92.31
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R218",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          15.62,
-          92.31
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
       "ref": "R219",
       "source": "graph",
       "anchor": {
         "at": [
-          12.28,
-          108.57
+          1.43,
+          62.72
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B",
         "ref_text": {
           "at": [
-            12.28,
-            108.57
+            1.43,
+            62.72
           ],
-          "angle": 0
+          "angle": 90
         }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -3685,8 +3748,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          28.14,
-          67.01
+          33.04,
+          69.77
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3699,8 +3762,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          31.6,
-          67.01
+          36.5,
+          69.77
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3713,12 +3776,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          35.06,
-          67.01
+          39.96,
+          69.77
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B"
+        "side": "B",
+        "ref_text": {
+          "at": [
+            39.96,
+            69.77
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -3727,8 +3797,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.88,
-          66.61
+          28.78,
+          69.37
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -3738,69 +3808,6 @@
     },
     {
       "ref": "R224",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          23.88,
-          69.37
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R225",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          28.94,
-          69.37
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R226",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          34.0,
-          69.37
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B"
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R227",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          38.26,
-          69.77
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            38.26,
-            69.77
-          ],
-          "angle": 90
-        }
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R252",
       "source": "graph",
       "anchor": {
         "at": [
@@ -3821,91 +3828,7 @@
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
     {
-      "ref": "R253",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          87.16,
-          33.37
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            87.16,
-            33.37
-          ],
-          "angle": 0
-        }
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R254",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          90.62,
-          33.37
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            90.62,
-            33.37
-          ],
-          "angle": 0
-        }
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R255",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          94.08,
-          33.37
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            94.08,
-            33.37
-          ],
-          "angle": 0
-        }
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R256",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          97.54,
-          33.37
-        ],
-        "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            97.54,
-            33.37
-          ],
-          "angle": 0
-        }
-      },
-      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
-    },
-    {
-      "ref": "R258",
+      "ref": "R225",
       "source": "graph",
       "anchor": {
         "at": [
@@ -3926,7 +3849,7 @@
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
     {
-      "ref": "R259",
+      "ref": "R226",
       "source": "graph",
       "anchor": {
         "at": [
@@ -3947,22 +3870,162 @@
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
     {
-      "ref": "R260",
+      "ref": "R227",
       "source": "graph",
       "anchor": {
         "at": [
-          1.43,
-          26.72
+          68.66,
+          33.37
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            68.66,
+            33.37
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R252",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          28.78,
+          35.87
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R253",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          1.03,
+          27.52
         ],
         "align": "origin",
         "rotation": 90.0,
         "side": "B",
         "ref_text": {
           "at": [
-            1.43,
-            26.72
+            1.03,
+            27.52
           ],
           "angle": 90
+        }
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R254",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          2.99,
+          27.52
+        ],
+        "align": "origin",
+        "rotation": 90.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            2.99,
+            27.52
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R255",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          4.95,
+          27.52
+        ],
+        "align": "origin",
+        "rotation": 90.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R256",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          1.03,
+          24.06
+        ],
+        "align": "origin",
+        "rotation": 90.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            1.03,
+            24.06
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R258",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          33.84,
+          35.87
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R259",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          28.78,
+          33.11
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B"
+      },
+      "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
+    },
+    {
+      "ref": "R260",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          85.08,
+          32.97
+        ],
+        "align": "origin",
+        "rotation": 0.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            85.08,
+            32.97
+          ],
+          "angle": 0
         }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -3972,18 +4035,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          17.4
+          106.38,
+          33.37
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            1.03,
-            17.4
+            106.38,
+            33.37
           ],
-          "angle": 90
+          "angle": 0
         }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -3993,19 +4056,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          63.52
+          84.28,
+          30.61
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            1.03,
-            63.52
-          ],
-          "angle": 90
-        }
+        "rotation": 0.0,
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4014,19 +4070,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.99,
-          63.52
+          87.74,
+          30.61
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            2.99,
-            63.52
-          ],
-          "angle": 90
-        }
+        "rotation": 0.0,
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4035,19 +4084,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          60.06
+          91.2,
+          30.61
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            1.03,
-            60.06
-          ],
-          "angle": 90
-        }
+        "rotation": 0.0,
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4056,12 +4098,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.19,
-          26.72
+          90.14,
+          32.97
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B"
+        "rotation": 0.0,
+        "side": "B",
+        "ref_text": {
+          "at": [
+            90.14,
+            32.97
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4070,18 +4119,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.43,
-          21.66
+          95.2,
+          32.97
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "B",
         "ref_text": {
           "at": [
-            1.43,
-            21.66
+            95.2,
+            32.97
           ],
-          "angle": 90
+          "angle": 0
         }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -4091,19 +4140,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.78,
-          30.39
+          5.24,
+          34.31
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            1.78,
-            30.39
-          ],
-          "angle": 90
-        }
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4112,8 +4154,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.24,
-          30.39
+          8.7,
+          34.31
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4126,8 +4168,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8.7,
-          36.27
+          12.16,
+          34.31
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4140,8 +4182,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.16,
-          36.27
+          15.62,
+          34.31
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4154,8 +4196,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          15.62,
-          36.27
+          19.08,
+          34.31
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4168,8 +4210,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          19.08,
-          36.27
+          22.54,
+          34.31
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4182,19 +4224,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          68.86,
-          33.15
+          33.24,
+          33.29
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            68.86,
-            33.15
-          ],
-          "angle": 0
-        }
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4203,19 +4238,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          72.72,
-          33.15
+          37.1,
+          33.29
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            72.72,
-            33.15
-          ],
-          "angle": 0
-        }
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4224,19 +4252,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          76.58,
-          33.15
+          28.18,
+          30.53
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            76.58,
-            33.15
-          ],
-          "angle": 0
-        }
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4245,18 +4266,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          101.0,
-          33.37
+          2.99,
+          24.06
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B",
         "ref_text": {
           "at": [
-            101.0,
-            33.37
+            2.99,
+            24.06
           ],
-          "angle": 0
+          "angle": 90
         }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -4266,19 +4287,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          104.46,
-          33.37
+          4.95,
+          24.06
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            104.46,
-            33.37
-          ],
-          "angle": 0
-        }
+        "rotation": 90.0,
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4287,7 +4301,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.16,
+          12.46,
           94.27
         ],
         "align": "origin",
@@ -4301,7 +4315,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          15.62,
+          15.92,
           94.27
         ],
         "align": "origin",
@@ -4336,7 +4350,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          19.08,
+          19.38,
           94.27
         ],
         "align": "origin",
@@ -4350,8 +4364,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          60.4,
-          30.61
+          15.62,
+          36.27
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4364,19 +4378,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.99,
-          60.06
+          94.66,
+          30.61
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "B",
-        "ref_text": {
-          "at": [
-            2.99,
-            60.06
-          ],
-          "angle": 90
-        }
+        "rotation": 0.0,
+        "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4385,8 +4392,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.08,
-          99.27
+          98.12,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4399,8 +4406,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          26.54,
-          99.27
+          101.58,
+          30.61
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4413,7 +4420,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.65,
+          11.65,
           40.95
         ],
         "align": "origin",
@@ -4427,7 +4434,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.95,
+          5.5,
           100.95
         ],
         "align": "origin",
@@ -4441,11 +4448,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.05,
-          78.55
+          4.95,
+          12.15
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -4455,19 +4462,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          77.89,
-          33.55
+          22.75,
+          54.15
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            77.89,
-            33.55
-          ],
-          "angle": 0
-        }
+        "rotation": 90.0,
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4476,19 +4476,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          90.25,
-          33.55
+          19.45,
+          44.6
         ],
         "align": "origin",
-        "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            90.25,
-            33.55
-          ],
-          "angle": 0
-        }
+        "rotation": 90.0,
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4497,18 +4490,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          93.25,
-          33.55
+          40.01,
+          37.49
         ],
         "align": "origin",
         "rotation": 0.0,
         "side": "F",
         "ref_text": {
           "at": [
-            93.25,
-            33.55
+            40.01,
+            37.49
           ],
-          "angle": 0
+          "angle": 90
         }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -4518,19 +4511,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          96.25,
-          33.55
+          18.85,
+          74.93
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            96.25,
-            33.55
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4539,19 +4525,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          99.25,
-          33.55
+          21.85,
+          74.93
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            99.25,
-            33.55
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4560,11 +4539,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          44.25,
-          25.55
+          40.75,
+          15.27
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -4574,19 +4553,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          27.75,
-          108.45
+          44.25,
+          23.75
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            27.75,
-            108.45
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4609,12 +4581,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          80.97,
-          29.55
+          40.05,
+          43.75
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            40.05,
+            43.75
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4623,8 +4602,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          66.15,
-          11.27
+          61.85,
+          11.45
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4637,8 +4616,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.85,
-          21.15
+          4.01,
+          16.05
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -4651,12 +4630,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          84.7,
-          25.15
+          90.25,
+          33.55
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            90.25,
+            33.55
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4665,11 +4651,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          47.25,
-          25.55
+          40.75,
+          12.27
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -4679,19 +4665,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.75,
-          108.45
+          47.25,
+          23.75
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            30.75,
-            108.45
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4700,8 +4679,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          13.85,
-          21.15
+          7.01,
+          16.05
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -4714,11 +4693,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.2,
+          40.75,
           31.25
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -4728,16 +4707,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          91.35,
-          2.45
+          93.25,
+          33.55
         ],
         "align": "origin",
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F",
         "ref_text": {
           "at": [
-            91.35,
-            2.45
+            93.25,
+            33.55
           ],
           "angle": 0
         }
@@ -4749,19 +4728,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          69.49,
-          33.1
+          98.23,
+          29.1
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            69.49,
-            33.1
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4770,19 +4742,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          74.09,
-          33.1
+          102.83,
+          29.1
         ],
         "align": "origin",
         "rotation": 0.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            74.09,
-            33.1
-          ],
-          "angle": 0
-        }
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4819,12 +4784,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.25,
-          81.75
+          1.75,
+          11.95
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "F"
+        "rotation": 0.0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            1.75,
+            11.95
+          ],
+          "angle": 90
+        }
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -4848,7 +4820,7 @@
       "anchor": {
         "at": [
           39.05,
-          50.85
+          85.35
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4856,7 +4828,7 @@
         "ref_text": {
           "at": [
             39.05,
-            50.85
+            85.35
           ],
           "angle": 90
         }
@@ -4945,11 +4917,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.975,
-          16.8
+          22.45,
+          22.575
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -4973,19 +4945,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.0,
-          22.575
+          23.975,
+          29.8
         ],
         "align": "origin",
-        "rotation": 90.0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            3.0,
-            22.575
-          ],
-          "angle": 90
-        }
+        "rotation": 0.0,
+        "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
     },
@@ -5008,11 +4973,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.75,
-          17.8
+          5.7,
+          24.75
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -5043,8 +5008,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          21.8,
-          30.8
+          54.45,
+          29.1
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -5057,8 +5022,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          26.4,
-          30.8
+          59.05,
+          29.1
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -5229,8 +5194,8 @@
         "id": "U107-PGND-L1",
         "net": "GND",
         "at": [
-          8.9,
-          48.1
+          8.3,
+          48.2
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -5241,8 +5206,8 @@
         "id": "U107-PGND-L2",
         "net": "GND",
         "at": [
-          9.85,
-          48.1
+          9.3,
+          48.2
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -5253,8 +5218,8 @@
         "id": "U107-PGND-R1",
         "net": "GND",
         "at": [
-          22.15,
-          48.1
+          22.7,
+          48.2
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -5265,8 +5230,8 @@
         "id": "U107-PGND-R2",
         "net": "GND",
         "at": [
-          23.1,
-          48.1
+          23.7,
+          48.2
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -5428,6 +5393,450 @@
         "drill_mm": 0.3,
         "locked": true,
         "why": "W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND planes and the L4 bond copper of zones 3'/4'; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "C111-GND",
+        "net": "GND",
+        "at": [
+          9.3,
+          82.55
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND planes and the L4 bond copper of zones 3'/4'; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-L1",
+        "net": "E1_CONV_IN",
+        "at": [
+          7.7,
+          38.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-L2",
+        "net": "E1_CONV_IN",
+        "at": [
+          8.65,
+          38.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-L3",
+        "net": "E1_CONV_IN",
+        "at": [
+          9.6,
+          38.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-R1",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          44.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-R2",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          45.35
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-R3",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          46.3
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-LO1",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          55.9
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-LO2",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          56.8
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-LO3",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          57.7
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-UP1",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          63.25
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-UP2",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          64.15
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-UP3",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          65.05
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-1",
+        "net": "LAB5",
+        "at": [
+          1.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-2",
+        "net": "LAB5",
+        "at": [
+          2.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-3",
+        "net": "LAB5",
+        "at": [
+          3.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-4",
+        "net": "LAB5",
+        "at": [
+          4.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-5",
+        "net": "LAB5",
+        "at": [
+          5.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-6",
+        "net": "LAB5",
+        "at": [
+          6.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-1",
+        "net": "LAB5",
+        "at": [
+          39.9,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-2",
+        "net": "LAB5",
+        "at": [
+          39.9,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-3",
+        "net": "LAB5",
+        "at": [
+          40.85,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-4",
+        "net": "LAB5",
+        "at": [
+          40.85,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-5",
+        "net": "LAB5",
+        "at": [
+          41.8,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-6",
+        "net": "LAB5",
+        "at": [
+          41.8,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-1",
+        "net": "LAB5",
+        "at": [
+          50.0,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-2",
+        "net": "LAB5",
+        "at": [
+          50.0,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-3",
+        "net": "LAB5",
+        "at": [
+          50.95,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-4",
+        "net": "LAB5",
+        "at": [
+          50.95,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-5",
+        "net": "LAB5",
+        "at": [
+          51.9,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-6",
+        "net": "LAB5",
+        "at": [
+          51.9,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-1",
+        "net": "LAB5",
+        "at": [
+          80.8,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-2",
+        "net": "LAB5",
+        "at": [
+          80.8,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-3",
+        "net": "LAB5",
+        "at": [
+          81.6,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-4",
+        "net": "LAB5",
+        "at": [
+          81.6,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-5",
+        "net": "LAB5",
+        "at": [
+          82.4,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-6",
+        "net": "LAB5",
+        "at": [
+          82.4,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
       }
     ],
     "zones": [
@@ -5473,7 +5882,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.6 mm: J107.2 (battery feed after the main switch) up past U211 to the leg (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.6 mm: J107.2 (battery feed after the main switch) up past U211 to the leg (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "E1SW-BAR",
@@ -5499,7 +5908,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.2 mm: across to the source pins of Q102 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.2 mm: across to the source pins of Q102 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "E1SW-Q102",
@@ -5525,7 +5934,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "stem onto Q102 S1-S3 (pins 0.42 mm, gate pad 0.215 mm away): within half the class width of the pins (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "stem onto Q102 S1-S3 (pins 0.42 mm, gate pad 0.215 mm away): within half the class width of the pins (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "Q102.1",
           "Q102.2",
@@ -5547,6 +5956,32 @@
           ],
           [
             28.2,
+            58.4
+          ],
+          [
+            24.8,
+            58.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "3.4 mm: Q102 drain (after the LM74700 stage) up the leg to U107 and to the SYS12 crossing (E1_CONV_IN has no NET_CURRENT entry yet: scripted at the BATT width of E1_SW, W2 GR-5A review GR5A-03) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-SPINE-UP",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            24.8,
+            62.55
+          ],
+          [
+            28.2,
+            62.55
+          ],
+          [
+            28.2,
             86.6
           ],
           [
@@ -5556,33 +5991,255 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "3.4 mm: Q102 drain (after the LM74700 stage) up the leg to both converters (E1_CONV_IN has no NET_CURRENT entry yet: scripted at the BATT width of E1_SW, W2 GR-5A review GR5A-03) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "3.4 mm: from the In2 bridge over the SYS12 crossing up to C107 and U108 (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
-        "id": "CONVIN-C120",
+        "id": "CONVIN-BRIDGE",
         "net": "E1_CONV_IN",
-        "layer": "F.Cu",
+        "layer": "In2.Cu",
         "outline": [
           [
-            18.7,
-            42.45
+            24.8,
+            55.4
           ],
           [
             28.2,
-            42.45
+            55.4
           ],
           [
             28.2,
-            45.65
+            65.55
           ],
           [
-            18.7,
-            45.65
+            24.8,
+            65.55
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "3.2 mm: spine to C120.1 next to U107 VIN1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "In2.Cu 3.4 mm: the spine under the F.Cu SYS12 crossing (U108 input, about 1.2 A at 3.2 A LAB5: MODEL), three vias on each side (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-U107-R",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            21.5,
+            43.9
+          ],
+          [
+            28.2,
+            43.9
+          ],
+          [
+            28.2,
+            47.2
+          ],
+          [
+            21.5,
+            47.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "3.3 mm: spine to C120.1 (CIN1) (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-U107-R-BAR",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            18.455,
+            46.15
+          ],
+          [
+            21.7,
+            46.15
+          ],
+          [
+            21.7,
+            47.2
+          ],
+          [
+            18.455,
+            47.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C120.1 to C121.1 (CIN_HF1) along the VIN1 level, within half the class width of the two pads; the RT/EN pins 6/7 escape below it (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "C121.1",
+          "C120.1"
+        ]
+      },
+      {
+        "id": "CONVIN-U107-VIN1",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            17.55,
+            46.75
+          ],
+          [
+            18.7,
+            46.75
+          ],
+          [
+            18.7,
+            47.15
+          ],
+          [
+            17.55,
+            47.15
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto U107 VIN1 (pin 8, 1.0 x 0.4 mm) from C121.1 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "U107.8"
+        ]
+      },
+      {
+        "id": "CONVIN-U107-L",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            7.2,
+            38.1
+          ],
+          [
+            10.4,
+            38.1
+          ],
+          [
+            10.4,
+            47.2
+          ],
+          [
+            7.2,
+            47.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "3.2 mm: C119.1 (CIN2) down to the In2 strap vias below thermal_bond zone 3' (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-U107-L-BAR",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            10.2,
+            46.15
+          ],
+          [
+            13.545,
+            46.15
+          ],
+          [
+            13.545,
+            47.2
+          ],
+          [
+            10.2,
+            47.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C119.1 to C122.1 (CIN_HF2) along the VIN2 level, within half the class width of the two pads; the CBOOT/RBOOT pins 13/14 escape below it (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "C119.1",
+          "C122.1"
+        ]
+      },
+      {
+        "id": "CONVIN-U107-VIN2",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            13.3,
+            46.75
+          ],
+          [
+            14.45,
+            46.75
+          ],
+          [
+            14.45,
+            47.15
+          ],
+          [
+            13.3,
+            47.15
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto U107 VIN2 (pin 12, 1.0 x 0.4 mm) from C122.1 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "U107.12"
+        ]
+      },
+      {
+        "id": "CONVIN-STRAP",
+        "net": "E1_CONV_IN",
+        "layer": "In2.Cu",
+        "outline": [
+          [
+            7.2,
+            43.9
+          ],
+          [
+            28.2,
+            43.9
+          ],
+          [
+            28.2,
+            46.75
+          ],
+          [
+            7.2,
+            46.75
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "In2.Cu 2.85 mm VIN strap under U107: VIN2/CIN2 side to the spine (SNVSBD5D figure 11-2; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-STRAP-L",
+        "net": "E1_CONV_IN",
+        "layer": "In2.Cu",
+        "outline": [
+          [
+            7.2,
+            38.1
+          ],
+          [
+            10.4,
+            38.1
+          ],
+          [
+            10.4,
+            46.75
+          ],
+          [
+            7.2,
+            46.75
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "In2.Cu 3.2 mm: the VIN strap down to its left vias below thermal_bond zone 3' (non-GND vias stay outside the bond zones; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "CONVIN-C107",
@@ -5608,7 +6265,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "3.2 mm: spine to the shared bulk C107.1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "3.2 mm: spine to the shared bulk C107.1 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "CONVIN-U108",
@@ -5634,7 +6291,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "3.2 mm: spine to C130.1/C131.1 above U108 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "3.2 mm: spine to C130.1/C131.1 above U108 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "CONVIN-U108-VIN1",
@@ -5660,7 +6317,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "onto U108 VIN1 (pad 1.4 mm) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "onto U108 VIN1 (pad 1.4 mm) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U108.1"
         ]
@@ -5689,7 +6346,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "onto U108 VIN2 (pad 1.4 mm) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "onto U108 VIN2 (pad 1.4 mm) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U108.16"
         ]
@@ -5718,7 +6375,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "over U107 SW (0.4 mm pin between the PGND pins): within half the class width of the pin (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "over U107 SW (0.4 mm pin between the PGND pins): within half the class width of the pin (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U107.10"
         ]
@@ -5747,7 +6404,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.5 mm: U107 SW to L102.1 (minimal SW copper) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.5 mm: U107 SW to L102.1 (minimal SW copper) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "SYS12-BAR",
@@ -5773,7 +6430,62 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.55 mm: L102.2 over the pads 1 of C123-C126 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.55 mm: L102.2 over the pads 1 of C123-C126 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "SYS12-CROSS",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            24.0,
+            58.7
+          ],
+          [
+            32.6,
+            58.7
+          ],
+          [
+            32.6,
+            62.25
+          ],
+          [
+            24.0,
+            62.25
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "BATT 3.55 mm: across the spine gap (the spine runs on In2 there) to the SYS12 node right of the spine: F201.1 (J21) and Q201.2 (AUX12) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "SYS12-Q201",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            30.73,
+            57.5
+          ],
+          [
+            32.205,
+            57.5
+          ],
+          [
+            32.205,
+            58.9
+          ],
+          [
+            30.73,
+            58.9
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto Q201.2 (source) from the SYS12 node (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "Q201.2"
+        ]
       },
       {
         "id": "LAB5RAW-F102",
@@ -5799,7 +6511,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 6.8 mm: onto both THT pads of F102.1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 6.8 mm: onto both THT pads of F102.1 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "LAB5RAW-BAR",
@@ -5825,7 +6537,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.2 mm: U108 VOUT over C133-C135 to F102.1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.2 mm: U108 VOUT over C133-C135 to F102.1 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "LAB5RAW-VOUT1",
@@ -5851,7 +6563,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "onto U108 VOUT1 (pad 1.4 mm) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "onto U108 VOUT1 (pad 1.4 mm) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U108.8"
         ]
@@ -5880,7 +6592,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "onto U108 VOUT2 (pad 1.4 mm) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "onto U108 VOUT2 (pad 1.4 mm) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U108.9"
         ]
@@ -5909,7 +6621,435 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "PWR3A 6.8 mm: F102.2 (both THT pads) to L101.1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "PWR3A 6.8 mm: F102.2 (both THT pads) to L101.1 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5FUSED-C111",
+        "net": "E1_LAB5_FUSED",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            7.1,
+            77.4
+          ],
+          [
+            10.65,
+            77.4
+          ],
+          [
+            10.65,
+            79.4
+          ],
+          [
+            7.1,
+            79.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.0 mm: onto C111.1 at the F102.2/L101.1 node (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-L101",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            0.6,
+            89.0
+          ],
+          [
+            7.4,
+            89.0
+          ],
+          [
+            7.4,
+            94.0
+          ],
+          [
+            0.6,
+            94.0
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 5.0 mm: L101.2 (the E1 LAB5 end) and C112.1, six vias to the B.Cu trunk (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-F104",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            0.6,
+            93.6
+          ],
+          [
+            3.95,
+            93.6
+          ],
+          [
+            3.95,
+            97.675
+          ],
+          [
+            0.6,
+            97.675
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 3.35 mm: onto F104.1 (LAB5_RLY PTC) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-B-TOP",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            0.6,
+            90.4
+          ],
+          [
+            26.5,
+            90.4
+          ],
+          [
+            26.5,
+            92.6
+          ],
+          [
+            0.6,
+            92.6
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "B.Cu PWR3A 2.2 mm: the LAB5 trunk from L101.2 across the leg above thermal_bond zone 4' (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-B-SPINE",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            24.3,
+            27.3
+          ],
+          [
+            26.5,
+            27.3
+          ],
+          [
+            26.5,
+            92.6
+          ],
+          [
+            24.3,
+            92.6
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "B.Cu PWR3A 2.2 mm: the LAB5 trunk down the leg under the F.Cu E1_CONV_IN spine, between zones 3'/4' and the right column (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-B-BAND",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            24.3,
+            27.3
+          ],
+          [
+            42.2,
+            27.3
+          ],
+          [
+            42.2,
+            29.5
+          ],
+          [
+            24.3,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "B.Cu PWR3A 2.2 mm: along the band above thermal_bond zone 1 up to the hole at (46, 31) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-RISE-L",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            39.5,
+            25.0
+          ],
+          [
+            42.2,
+            25.0
+          ],
+          [
+            42.2,
+            29.5
+          ],
+          [
+            39.5,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.7 mm: six vias up from the B.Cu trunk (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-DETOUR",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            39.5,
+            25.0
+          ],
+          [
+            50.4,
+            25.0
+          ],
+          [
+            50.4,
+            27.2
+          ],
+          [
+            39.5,
+            27.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.2 mm: L205.1 (the LT3045 feed) and below the hole keep-out at (46, 31) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-RISE-R",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            49.5,
+            26.6
+          ],
+          [
+            52.4,
+            26.6
+          ],
+          [
+            52.4,
+            29.5
+          ],
+          [
+            49.5,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.9 mm: six vias down to the B.Cu trunk (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-B-BAND-R",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            49.5,
+            27.3
+          ],
+          [
+            82.8,
+            27.3
+          ],
+          [
+            82.8,
+            29.5
+          ],
+          [
+            49.5,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "B.Cu PWR3A 2.2 mm: along the band above thermal_bond zones 1/2 to the J208 drop (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-DROP",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            80.4,
+            13.4
+          ],
+          [
+            82.8,
+            13.4
+          ],
+          [
+            82.8,
+            29.5
+          ],
+          [
+            80.4,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.4 mm: six vias up from the B.Cu trunk, down left of J208 (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-J208-BAR",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            80.4,
+            13.4
+          ],
+          [
+            89.9,
+            13.4
+          ],
+          [
+            89.9,
+            15.5
+          ],
+          [
+            80.4,
+            15.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.1 mm: under the J208 bottom row to its four LAB5 contacts (path B to PWR-B; review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-J208-2",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            86.4,
+            15.3
+          ],
+          [
+            86.7,
+            15.3
+          ],
+          [
+            86.7,
+            16.4
+          ],
+          [
+            86.4,
+            16.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto J208.2 between the GND contacts (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "J208.2"
+        ]
+      },
+      {
+        "id": "LAB5-J208-6",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            87.4,
+            15.3
+          ],
+          [
+            87.7,
+            15.3
+          ],
+          [
+            87.7,
+            16.4
+          ],
+          [
+            87.4,
+            16.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto J208.6 between the GND contacts (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "J208.6"
+        ]
+      },
+      {
+        "id": "LAB5-J208-10",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            88.4,
+            15.3
+          ],
+          [
+            88.7,
+            15.3
+          ],
+          [
+            88.7,
+            16.4
+          ],
+          [
+            88.4,
+            16.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto J208.10 between the GND contacts (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "J208.10"
+        ]
+      },
+      {
+        "id": "LAB5-J208-14",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            89.4,
+            15.3
+          ],
+          [
+            89.7,
+            15.3
+          ],
+          [
+            89.7,
+            16.4
+          ],
+          [
+            89.4,
+            16.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto J208.14 between the GND contacts (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "J208.14"
+        ]
       },
       {
         "id": "GND-U107-L",
@@ -5917,25 +7057,51 @@
         "layer": "F.Cu",
         "outline": [
           [
-            8.4,
-            47.35
+            7.55,
+            47.5
           ],
           [
             15.05,
-            47.35
+            47.5
           ],
           [
             15.05,
-            48.95
+            49.0
           ],
           [
-            8.4,
-            48.95
+            7.55,
+            49.0
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "U107 PGND2 to C119.2 and two vias to In1/In2/L4 (zone 3') (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "U107 PGND2 to C122.2 and C119.2 and two vias to In1/In2/L4 (zone 3'; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "GND-C119",
+        "net": "GND",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            7.55,
+            49.0
+          ],
+          [
+            10.75,
+            49.0
+          ],
+          [
+            10.75,
+            50.5
+          ],
+          [
+            7.55,
+            50.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C119.2 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-U107-R",
@@ -5944,24 +7110,50 @@
         "outline": [
           [
             16.95,
-            47.35
+            47.5
           ],
           [
-            23.6,
-            47.35
+            24.45,
+            47.5
           ],
           [
-            23.6,
-            48.95
+            24.45,
+            49.0
           ],
           [
             16.95,
-            48.95
+            49.0
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "U107 PGND1 to C120.2 and two vias to In1/In2/L4 (zone 3') (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "U107 PGND1 to C121.2 and C120.2 and two vias to In1/In2/L4 (zone 3'; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "GND-C120",
+        "net": "GND",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            21.25,
+            49.0
+          ],
+          [
+            24.45,
+            49.0
+          ],
+          [
+            24.45,
+            50.5
+          ],
+          [
+            21.25,
+            50.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C120.2 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-COUT-SYS12",
@@ -5987,7 +7179,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "pads 2 of C123-C125 and their vias (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "pads 2 of C123-C125 and their vias (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-COUT-C126",
@@ -6013,7 +7205,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "pad 2 of C126 and its via (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "pad 2 of C126 and its via (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-COUT-LAB5",
@@ -6039,7 +7231,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "pads 2 of C133-C135 and their vias (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "pads 2 of C133-C135 and their vias (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-CIN-U108",
@@ -6065,7 +7257,33 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "pads 2 of C130/C131 and their vias (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "pads 2 of C130/C131 and their vias (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "GND-C111",
+        "net": "GND",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            7.95,
+            80.95
+          ],
+          [
+            10.65,
+            80.95
+          ],
+          [
+            10.65,
+            83.05
+          ],
+          [
+            7.95,
+            83.05
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C111.2 and its via (zone 4'; review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       }
     ]
   },
@@ -6339,8 +7557,12 @@
   "power_stages": {
     "anchors": [
       "C107",
+      "C111",
+      "C112",
       "C119",
       "C120",
+      "C121",
+      "C122",
       "C123",
       "C124",
       "C125",
@@ -6350,9 +7572,13 @@
       "C133",
       "C134",
       "C135",
+      "F104",
+      "F201",
       "L101",
       "L102",
+      "L205",
       "Q102",
+      "Q201",
       "U107",
       "U108"
     ],
@@ -6366,31 +7592,68 @@
       ]
     },
     "pours": [
+      "CONVIN-BRIDGE",
       "CONVIN-C107",
-      "CONVIN-C120",
       "CONVIN-SPINE",
+      "CONVIN-SPINE-UP",
+      "CONVIN-STRAP",
+      "CONVIN-STRAP-L",
+      "CONVIN-U107-L",
+      "CONVIN-U107-L-BAR",
+      "CONVIN-U107-R",
+      "CONVIN-U107-R-BAR",
+      "CONVIN-U107-VIN1",
+      "CONVIN-U107-VIN2",
       "CONVIN-U108",
       "CONVIN-U108-VIN1",
       "CONVIN-U108-VIN2",
       "E1SW-BAR",
       "E1SW-Q102",
       "E1SW-RISE",
+      "GND-C111",
+      "GND-C119",
+      "GND-C120",
       "GND-CIN-U108",
       "GND-COUT-C126",
       "GND-COUT-LAB5",
       "GND-COUT-SYS12",
       "GND-U107-L",
       "GND-U107-R",
+      "LAB5-B-BAND",
+      "LAB5-B-BAND-R",
+      "LAB5-B-SPINE",
+      "LAB5-B-TOP",
+      "LAB5-DETOUR",
+      "LAB5-DROP",
+      "LAB5-F104",
+      "LAB5-J208-10",
+      "LAB5-J208-14",
+      "LAB5-J208-2",
+      "LAB5-J208-6",
+      "LAB5-J208-BAR",
+      "LAB5-L101",
+      "LAB5-RISE-L",
+      "LAB5-RISE-R",
       "LAB5FUSED",
+      "LAB5FUSED-C111",
       "LAB5RAW-BAR",
       "LAB5RAW-F102",
       "LAB5RAW-VOUT1",
       "LAB5RAW-VOUT2",
       "SYS12-BAR",
+      "SYS12-CROSS",
+      "SYS12-Q201",
       "SYS12SW-L102",
       "SYS12SW-PIN"
     ],
     "vias": [
+      "BRIDGE-LO1",
+      "BRIDGE-LO2",
+      "BRIDGE-LO3",
+      "BRIDGE-UP1",
+      "BRIDGE-UP2",
+      "BRIDGE-UP3",
+      "C111-GND",
       "CIN-U108-1",
       "CIN-U108-2",
       "COUT-C126",
@@ -6400,6 +7663,36 @@
       "COUT-SYS12-1",
       "COUT-SYS12-2",
       "COUT-SYS12-3",
+      "LAB5-DROP-1",
+      "LAB5-DROP-2",
+      "LAB5-DROP-3",
+      "LAB5-DROP-4",
+      "LAB5-DROP-5",
+      "LAB5-DROP-6",
+      "LAB5-L101-1",
+      "LAB5-L101-2",
+      "LAB5-L101-3",
+      "LAB5-L101-4",
+      "LAB5-L101-5",
+      "LAB5-L101-6",
+      "LAB5-RL-1",
+      "LAB5-RL-2",
+      "LAB5-RL-3",
+      "LAB5-RL-4",
+      "LAB5-RL-5",
+      "LAB5-RL-6",
+      "LAB5-RR-1",
+      "LAB5-RR-2",
+      "LAB5-RR-3",
+      "LAB5-RR-4",
+      "LAB5-RR-5",
+      "LAB5-RR-6",
+      "STRAP-L1",
+      "STRAP-L2",
+      "STRAP-L3",
+      "STRAP-R1",
+      "STRAP-R2",
+      "STRAP-R3",
       "U107-PGND-L1",
       "U107-PGND-L2",
       "U107-PGND-R1",
@@ -6409,7 +7702,89 @@
       "U108-PGND-19",
       "U108-PGND-20"
     ],
-    "note": "W2 PCB-PWRA-3 part 2 (design choice): anchored power stages and their scripted copper; the IC pin breakouts of U107/U108 to their small parts (FB, RT, EN, CBOOT, VCC), the U107 VIN2 link to C119.1 and the long SYS12/LAB5 distribution are left to the router (PCB-PWRA-4)"
+    "branch_pads": {
+      "SYS12": {
+        "pads": [
+          "U107.1",
+          "R124.1",
+          "C129.1",
+          "R221.1"
+        ],
+        "why": "U107 BIAS, the feedback divider top R124, the CFF C129 and the Q201 gate pull-up R221 (mA)"
+      },
+      "E1_CONV_IN": {
+        "pads": [
+          "R108.1"
+        ],
+        "why": "top of the U107 EN divider R108 (uA)"
+      },
+      "E1_SYS12_SW": {
+        "pads": [
+          "C127.2"
+        ],
+        "why": "the CBOOT capacitor C127 (gate-drive charge only)"
+      }
+    },
+    "trunks": {
+      "E1_SW": [
+        "J107.2",
+        "Q102.1",
+        "Q102.2",
+        "Q102.3"
+      ],
+      "E1_CONV_IN": [
+        "Q102.5",
+        "U107.8",
+        "U107.12",
+        "C119.1",
+        "C120.1",
+        "C121.1",
+        "C122.1",
+        "C107.1",
+        "C130.1",
+        "C131.1",
+        "U108.1",
+        "U108.16"
+      ],
+      "E1_SYS12_SW": [
+        "U107.10",
+        "L102.1"
+      ],
+      "SYS12": [
+        "L102.2",
+        "C123.1",
+        "C124.1",
+        "C125.1",
+        "C126.1",
+        "F201.1",
+        "Q201.2"
+      ],
+      "E1_LAB5_RAW": [
+        "U108.8",
+        "U108.9",
+        "C133.1",
+        "C134.1",
+        "C135.1",
+        "F102.1"
+      ],
+      "E1_LAB5_FUSED": [
+        "F102.2",
+        "C111.1",
+        "L101.1"
+      ],
+      "LAB5": [
+        "L101.2",
+        "C112.1",
+        "F104.1",
+        "L205.1",
+        "J208.2",
+        "J208.6",
+        "J208.10",
+        "J208.14"
+      ]
+    },
+    "u107_input_source": "TI LM61460 data sheet SNVSBD5D (rev. D, July 2022) section 11.1 Layout Guidelines and figure 11-2 Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf read 2026-11-12 (curl default User-Agent, HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d; fetch-only, not committed)",
+    "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, F104.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201"
   },
   "sides": [
     "top",
@@ -6419,14 +7794,14 @@
   "max_height_bottom_note": "mechanical/generated/contract/boards.json PWR bottom_side h_max (MECH-7: shim gap 0.4 + pocket depth 1.0 - polyimide film 0.07 - clearance 0.3); the heights of the bottom chip parts are not read (TBD per MPN), so check_boards lists them as unverified",
   "tht_pockets": [
     [
-      28.9,
-      81.55,
-      6.2,
-      3.7
+      35.95,
+      95.8,
+      3.7,
+      6.2
     ],
     [
       29.25,
-      46.2,
+      80.7,
       7.2,
       3.7
     ],
@@ -6437,22 +7812,22 @@
       3.7
     ],
     [
-      9.75,
-      28.3,
+      28.9,
+      47.05,
+      6.2,
+      3.7
+    ],
+    [
+      27.2,
+      20.3,
       3.7,
       6.2
     ],
     [
-      20.05,
-      21.55,
-      6.2,
-      3.7
-    ],
-    [
-      27.35,
-      21.55,
-      6.2,
-      3.7
+      21.3,
+      11.35,
+      3.7,
+      6.2
     ],
     [
       91.65,
@@ -6461,10 +7836,10 @@
       6.2
     ],
     [
-      1.85,
-      11.35,
-      3.7,
-      6.2
+      0.6,
+      29.55,
+      6.2,
+      3.7
     ],
     [
       106.8,

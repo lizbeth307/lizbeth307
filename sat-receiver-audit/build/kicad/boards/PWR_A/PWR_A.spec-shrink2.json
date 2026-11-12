@@ -684,11 +684,31 @@
     },
     {
       "ref": "C111",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          9.3,
+          80.05
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "C112",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          5.85,
+          94.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "C113",
@@ -732,8 +752,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          11.95,
-          46.5
+          9.15,
+          48.2
         ],
         "align": "origin",
         "rotation": 90,
@@ -746,8 +766,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          20.05,
-          46.5
+          22.85,
+          48.2
         ],
         "align": "origin",
         "rotation": 90,
@@ -757,11 +777,31 @@
     },
     {
       "ref": "C121",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.93,
+          47.525
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "C122",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          13.07,
+          47.525
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "C123",
@@ -1268,11 +1308,31 @@
     },
     {
       "ref": "F104",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          2.25,
+          99.25
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "F201",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          30.43,
+          64.9
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "F202",
@@ -1560,7 +1620,17 @@
     },
     {
       "ref": "L205",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          39.91,
+          23.41
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      },
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "L211",
@@ -1602,7 +1672,17 @@
     },
     {
       "ref": "Q201",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          30.53,
+          56.6
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): beside its converter, pads on the scripted copper"
     },
     {
       "ref": "Q202",
@@ -2286,13 +2366,15 @@
     {
       "id": "SYS12",
       "region": [
-        8.4,
+        10.4,
         36.3,
         24.3,
         42.2
       ],
       "region_name": "LEG_SYS12_LOW",
       "alt_regions": [
+        "LEG_U107_L",
+        "LEG_U107_R",
         "LEG_Z3_R",
         "LEG_Z3_L",
         "LEG_ENTRY"
@@ -2302,14 +2384,6 @@
       "members": [
         {
           "ref": "TP101",
-          "rotation": 0
-        },
-        {
-          "ref": "C121",
-          "rotation": 0
-        },
-        {
-          "ref": "C122",
           "rotation": 0
         },
         {
@@ -2355,9 +2429,7 @@
         83.1
       ],
       "region_name": "LEG_Z4_R",
-      "alt_regions": [
-        "LEG_Z4_L"
-      ],
+      "alt_regions": [],
       "side": "F",
       "gap_mm": 0.5,
       "members": [
@@ -2388,11 +2460,85 @@
       ]
     },
     {
+      "id": "LNA4V5",
+      "region": [
+        50.4,
+        7.0,
+        72.3,
+        26.4
+      ],
+      "region_name": "BAND_LNA",
+      "alt_regions": [
+        "BAND_LT_LOW",
+        "BAND_LT_HIGH"
+      ],
+      "side": "F",
+      "gap_mm": 0.5,
+      "members": [
+        {
+          "ref": "C223",
+          "rotation": 0
+        },
+        {
+          "ref": "C224",
+          "rotation": 0
+        },
+        {
+          "ref": "C225",
+          "rotation": 0
+        },
+        {
+          "ref": "C226",
+          "rotation": 0
+        },
+        {
+          "ref": "C227",
+          "rotation": 0
+        },
+        {
+          "ref": "C228",
+          "rotation": 0
+        },
+        {
+          "ref": "C229",
+          "rotation": 0
+        },
+        {
+          "ref": "C230",
+          "rotation": 0
+        },
+        {
+          "ref": "C231",
+          "rotation": 0
+        },
+        {
+          "ref": "C289",
+          "rotation": 0
+        },
+        {
+          "ref": "C290",
+          "rotation": 0
+        },
+        {
+          "ref": "C291",
+          "rotation": 0
+        },
+        {
+          "ref": "C292",
+          "rotation": 0
+        },
+        {
+          "ref": "TP205",
+          "rotation": 0
+        }
+      ]
+    },
+    {
       "id": "LNB",
       "region": [
         19.75,
         7.5,
-        42.6,
+        36.82,
         26.8
       ],
       "region_name": "BAND_LNB",
@@ -2479,93 +2625,16 @@
       ]
     },
     {
-      "id": "LNA4V5",
-      "region": [
-        49.6,
-        7.0,
-        72.3,
-        26.4
-      ],
-      "region_name": "BAND_LNA",
-      "alt_regions": [
-        "BAND_LT_LOW",
-        "BAND_LT_HIGH"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C223",
-          "rotation": 0
-        },
-        {
-          "ref": "C224",
-          "rotation": 0
-        },
-        {
-          "ref": "C225",
-          "rotation": 0
-        },
-        {
-          "ref": "C226",
-          "rotation": 0
-        },
-        {
-          "ref": "C227",
-          "rotation": 0
-        },
-        {
-          "ref": "C228",
-          "rotation": 0
-        },
-        {
-          "ref": "C229",
-          "rotation": 0
-        },
-        {
-          "ref": "C230",
-          "rotation": 0
-        },
-        {
-          "ref": "C231",
-          "rotation": 0
-        },
-        {
-          "ref": "C289",
-          "rotation": 0
-        },
-        {
-          "ref": "C290",
-          "rotation": 0
-        },
-        {
-          "ref": "C291",
-          "rotation": 0
-        },
-        {
-          "ref": "C292",
-          "rotation": 0
-        },
-        {
-          "ref": "L205",
-          "rotation": 0
-        },
-        {
-          "ref": "TP205",
-          "rotation": 0
-        }
-      ]
-    },
-    {
       "id": "BONI",
       "region": [
-        83.45,
+        89.9,
         11.2,
         115.2,
         14.9
       ],
       "region_name": "BAND_B2B_BELOW",
       "alt_regions": [
+        "BAND_U213_UP",
         "BAND_BONI",
         "BAND_B2B_ABOVE",
         "BAND_BOTTOM_M",
@@ -2662,6 +2731,138 @@
       ]
     },
     {
+      "id": "J21",
+      "region": [
+        28.6,
+        77.8,
+        41.8,
+        86.8
+      ],
+      "region_name": "LEG_RIGHT_MID",
+      "alt_regions": [
+        "LEG_RIGHT_HIGH",
+        "LEG_SPINE_R",
+        "LEG_RIGHT_LOW2"
+      ],
+      "side": "F",
+      "gap_mm": 0.5,
+      "members": [
+        {
+          "ref": "C202",
+          "rotation": 0
+        },
+        {
+          "ref": "C203",
+          "rotation": 0
+        },
+        {
+          "ref": "C204",
+          "rotation": 0
+        },
+        {
+          "ref": "C205",
+          "rotation": 0
+        },
+        {
+          "ref": "C206",
+          "rotation": 0
+        },
+        {
+          "ref": "C207",
+          "rotation": 0
+        },
+        {
+          "ref": "D201",
+          "rotation": 0
+        },
+        {
+          "ref": "L201",
+          "rotation": 0
+        },
+        {
+          "ref": "TP201",
+          "rotation": 0
+        },
+        {
+          "ref": "TP213",
+          "rotation": 0
+        },
+        {
+          "ref": "U201",
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "id": "AUX12",
+      "region": [
+        28.6,
+        41.4,
+        41.8,
+        52.3
+      ],
+      "region_name": "LEG_RIGHT_LOW",
+      "alt_regions": [
+        "LEG_RIGHT_LOW2",
+        "BAND_TOP_MID3",
+        "BAND_TOP_LEFT"
+      ],
+      "side": "F",
+      "gap_mm": 0.5,
+      "members": [
+        {
+          "ref": "C220",
+          "rotation": 0
+        },
+        {
+          "ref": "C221",
+          "rotation": 0
+        },
+        {
+          "ref": "C222",
+          "rotation": 0
+        },
+        {
+          "ref": "F202",
+          "rotation": 0
+        },
+        {
+          "ref": "L204",
+          "rotation": 0
+        },
+        {
+          "ref": "Q202",
+          "rotation": 0
+        },
+        {
+          "ref": "TP204",
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "id": "E1_SERVICE",
+      "region": [
+        26.5,
+        102.8,
+        34.3,
+        109.7
+      ],
+      "region_name": "LEG_TOP_R",
+      "alt_regions": [
+        "BAND_TOP_MID3",
+        "BAND_TOP_MID"
+      ],
+      "side": "F",
+      "gap_mm": 0.5,
+      "members": [
+        {
+          "ref": "F103",
+          "rotation": 0
+        }
+      ]
+    },
+    {
       "id": "DISP",
       "region": [
         7.8,
@@ -2721,7 +2922,7 @@
       "region": [
         0.3,
         35.2,
-        8.1,
+        7.2,
         55.3
       ],
       "region_name": "LEG_LEFT_LOW",
@@ -2769,100 +2970,20 @@
     {
       "id": "LAB5",
       "region": [
-        0.3,
-        91.8,
-        7.75,
+        4.25,
+        97.2,
+        7.4,
         102.2
       ],
       "region_name": "LEG_LEFT_HIGH",
       "alt_regions": [
-        "LEG_Z4_L",
         "LEG_MID_L"
       ],
       "side": "F",
       "gap_mm": 0.5,
       "members": [
         {
-          "ref": "C111",
-          "rotation": 0
-        },
-        {
-          "ref": "C112",
-          "rotation": 0
-        },
-        {
-          "ref": "F104",
-          "rotation": 0
-        },
-        {
           "ref": "TP102",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "J21",
-      "region": [
-        28.6,
-        41.4,
-        41.8,
-        52.3
-      ],
-      "region_name": "LEG_RIGHT_LOW",
-      "alt_regions": [
-        "LEG_RIGHT_MID",
-        "LEG_SPINE_R",
-        "LEG_RIGHT_LOW2"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C202",
-          "rotation": 0
-        },
-        {
-          "ref": "C203",
-          "rotation": 0
-        },
-        {
-          "ref": "C204",
-          "rotation": 0
-        },
-        {
-          "ref": "C205",
-          "rotation": 0
-        },
-        {
-          "ref": "C206",
-          "rotation": 0
-        },
-        {
-          "ref": "C207",
-          "rotation": 0
-        },
-        {
-          "ref": "D201",
-          "rotation": 0
-        },
-        {
-          "ref": "F201",
-          "rotation": 0
-        },
-        {
-          "ref": "L201",
-          "rotation": 0
-        },
-        {
-          "ref": "TP201",
-          "rotation": 0
-        },
-        {
-          "ref": "TP213",
-          "rotation": 0
-        },
-        {
-          "ref": "U201",
           "rotation": 0
         }
       ]
@@ -2919,65 +3040,16 @@
       ]
     },
     {
-      "id": "AUX12",
-      "region": [
-        50.0,
-        26.9,
-        107.8,
-        30.8
-      ],
-      "region_name": "BAND_TOP_MID",
-      "alt_regions": [
-        "BAND_TOP_LEFT",
-        "BAND_TOP_MID3"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C220",
-          "rotation": 0
-        },
-        {
-          "ref": "C221",
-          "rotation": 0
-        },
-        {
-          "ref": "C222",
-          "rotation": 0
-        },
-        {
-          "ref": "F202",
-          "rotation": 0
-        },
-        {
-          "ref": "L204",
-          "rotation": 0
-        },
-        {
-          "ref": "Q201",
-          "rotation": 0
-        },
-        {
-          "ref": "Q202",
-          "rotation": 0
-        },
-        {
-          "ref": "TP204",
-          "rotation": 0
-        }
-      ]
-    },
-    {
       "id": "E1_CTRL",
       "region": [
         19.75,
         27.0,
-        42.2,
+        39.5,
         32.5
       ],
       "region_name": "BAND_TOP_LEFT_R",
       "alt_regions": [
+        "BAND_TOP_MID4",
         "BAND_TOP_LEFT",
         "BAND_TOP_LEFT_R2",
         "BAND_TOP_MID3"
@@ -3081,48 +3153,31 @@
       ]
     },
     {
-      "id": "E1_SERVICE",
-      "region": [
-        50.0,
-        26.9,
-        107.8,
-        30.8
-      ],
-      "region_name": "BAND_TOP_MID",
-      "alt_regions": [
-        "BAND_TOP_MID2",
-        "BAND_B2B_ABOVE"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "F103",
-          "rotation": 0
-        }
-      ]
-    },
-    {
       "id": "HFP_BOT",
       "region": [
-        0.3,
-        89.0,
-        41.7,
+        0.6,
+        92.6,
+        26.5,
         95.0
       ],
-      "region_name": "PB9",
+      "region_name": "PB9b",
       "alt_regions": [
+        "PB9",
         "PB11",
+        "PB9c",
         "PB12",
         "PB13",
         "PB10",
         "PB8",
         "PB7",
+        "PB7b",
         "PB6",
         "PB5",
+        "PB3b",
         "PB3",
-        "PB4",
+        "PB4b",
         "PB1",
+        "PB4",
         "PB2"
       ],
       "side": "B",
@@ -3159,21 +3214,26 @@
       "region": [
         0.3,
         29.0,
-        40.0,
+        24.3,
         37.0
       ],
       "region_name": "PB3",
       "alt_regions": [
+        "PB3b",
         "PB5",
         "PB1",
-        "PB7",
+        "PB7b",
         "PB6",
+        "PB7",
         "PB8",
-        "PB4",
+        "PB4b",
+        "PB9c",
         "PB9",
+        "PB9b",
         "PB11",
         "PB10",
         "PB12",
+        "PB4",
         "PB13",
         "PB2"
       ],
@@ -3191,22 +3251,76 @@
       ]
     },
     {
+      "id": "LNA4V5_BOT",
+      "region": [
+        52.0,
+        29.5,
+        82.8,
+        34.1
+      ],
+      "region_name": "PB4b",
+      "alt_regions": [
+        "PB4",
+        "PB3b",
+        "PB3",
+        "PB7",
+        "PB1",
+        "PB5",
+        "PB7b",
+        "PB2",
+        "PB6",
+        "PB9",
+        "PB8",
+        "PB11",
+        "PB9c",
+        "PB9b",
+        "PB12",
+        "PB10",
+        "PB13"
+      ],
+      "side": "B",
+      "gap_mm": 0.5,
+      "members": [
+        {
+          "ref": "R224",
+          "rotation": 0
+        },
+        {
+          "ref": "R225",
+          "rotation": 0
+        },
+        {
+          "ref": "R226",
+          "rotation": 0
+        },
+        {
+          "ref": "R227",
+          "rotation": 0
+        }
+      ]
+    },
+    {
       "id": "LNB_BOT",
       "region": [
-        0.3,
-        29.0,
+        26.5,
+        29.5,
         40.0,
         37.0
       ],
-      "region_name": "PB3",
+      "region_name": "PB3b",
       "alt_regions": [
-        "PB4",
+        "PB3",
         "PB1",
+        "PB4b",
         "PB5",
         "PB7",
+        "PB7b",
         "PB6",
+        "PB4",
         "PB8",
         "PB9",
+        "PB9c",
+        "PB9b",
         "PB11",
         "PB10",
         "PB12",
@@ -3275,67 +3389,28 @@
       ]
     },
     {
-      "id": "LNA4V5_BOT",
-      "region": [
-        52.0,
-        29.0,
-        126.0,
-        34.1
-      ],
-      "region_name": "PB4",
-      "alt_regions": [
-        "PB3",
-        "PB7",
-        "PB1",
-        "PB5",
-        "PB2",
-        "PB6",
-        "PB9",
-        "PB8",
-        "PB11",
-        "PB12",
-        "PB10",
-        "PB13"
-      ],
-      "side": "B",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "R224",
-          "rotation": 0
-        },
-        {
-          "ref": "R225",
-          "rotation": 0
-        },
-        {
-          "ref": "R226",
-          "rotation": 0
-        },
-        {
-          "ref": "R227",
-          "rotation": 0
-        }
-      ]
-    },
-    {
       "id": "BONI_BOT",
       "region": [
-        52.0,
+        82.8,
         29.0,
         126.0,
         34.1
       ],
       "region_name": "PB4",
       "alt_regions": [
+        "PB4b",
         "PB2",
+        "PB3b",
         "PB3",
         "PB7",
+        "PB7b",
         "PB1",
         "PB9",
         "PB5",
         "PB11",
         "PB6",
+        "PB9c",
+        "PB9b",
         "PB12",
         "PB8",
         "PB13",
@@ -3395,25 +3470,144 @@
       ]
     },
     {
-      "id": "DISP_BOT",
+      "id": "J21_BOT",
       "region": [
-        0.3,
+        26.5,
         89.0,
         41.7,
         95.0
       ],
       "region_name": "PB9",
       "alt_regions": [
+        "PB7",
+        "PB11",
+        "PB9c",
+        "PB9b",
+        "PB7b",
+        "PB12",
+        "PB13",
+        "PB6",
         "PB10",
+        "PB8",
+        "PB5",
+        "PB3b",
+        "PB3",
+        "PB4b",
+        "PB1",
+        "PB4",
+        "PB2"
+      ],
+      "side": "B",
+      "gap_mm": 0.5,
+      "members": [
+        {
+          "ref": "C201",
+          "rotation": 0
+        },
+        {
+          "ref": "R201",
+          "rotation": 0
+        },
+        {
+          "ref": "R202",
+          "rotation": 0
+        },
+        {
+          "ref": "R203",
+          "rotation": 0
+        },
+        {
+          "ref": "R204",
+          "rotation": 0
+        },
+        {
+          "ref": "R205",
+          "rotation": 0
+        },
+        {
+          "ref": "R206",
+          "rotation": 0
+        },
+        {
+          "ref": "R207",
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "id": "AUX12_BOT",
+      "region": [
+        26.5,
+        29.5,
+        40.0,
+        37.0
+      ],
+      "region_name": "PB3b",
+      "alt_regions": [
+        "PB3",
+        "PB7",
+        "PB4b",
+        "PB7b",
+        "PB5",
+        "PB6",
+        "PB1",
+        "PB8",
+        "PB9",
+        "PB9c",
+        "PB9b",
+        "PB11",
+        "PB4",
+        "PB12",
+        "PB10",
+        "PB13",
+        "PB2"
+      ],
+      "side": "B",
+      "gap_mm": 0.5,
+      "members": [
+        {
+          "ref": "R220",
+          "rotation": 0
+        },
+        {
+          "ref": "R221",
+          "rotation": 0
+        },
+        {
+          "ref": "R222",
+          "rotation": 0
+        },
+        {
+          "ref": "R223",
+          "rotation": 0
+        }
+      ]
+    },
+    {
+      "id": "DISP_BOT",
+      "region": [
+        0.6,
+        92.6,
+        26.5,
+        95.0
+      ],
+      "region_name": "PB9b",
+      "alt_regions": [
+        "PB10",
+        "PB9c",
         "PB11",
         "PB12",
         "PB8",
         "PB13",
+        "PB9",
         "PB6",
+        "PB7b",
         "PB7",
         "PB5",
         "PB3",
+        "PB3b",
         "PB1",
+        "PB4b",
         "PB4",
         "PB2"
       ],
@@ -3463,14 +3657,19 @@
         "PB3",
         "PB1",
         "PB6",
+        "PB3b",
         "PB8",
+        "PB7b",
         "PB7",
+        "PB9c",
+        "PB9b",
         "PB9",
-        "PB4",
+        "PB4b",
         "PB10",
         "PB11",
         "PB12",
         "PB13",
+        "PB4",
         "PB2"
       ],
       "side": "B",
@@ -3503,69 +3702,9 @@
       ]
     },
     {
-      "id": "J21_BOT",
-      "region": [
-        0.3,
-        29.0,
-        40.0,
-        37.0
-      ],
-      "region_name": "PB3",
-      "alt_regions": [
-        "PB7",
-        "PB4",
-        "PB5",
-        "PB6",
-        "PB1",
-        "PB8",
-        "PB9",
-        "PB11",
-        "PB12",
-        "PB10",
-        "PB13",
-        "PB2"
-      ],
-      "side": "B",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C201",
-          "rotation": 0
-        },
-        {
-          "ref": "R201",
-          "rotation": 0
-        },
-        {
-          "ref": "R202",
-          "rotation": 0
-        },
-        {
-          "ref": "R203",
-          "rotation": 0
-        },
-        {
-          "ref": "R204",
-          "rotation": 0
-        },
-        {
-          "ref": "R205",
-          "rotation": 0
-        },
-        {
-          "ref": "R206",
-          "rotation": 0
-        },
-        {
-          "ref": "R207",
-          "rotation": 0
-        }
-      ]
-    },
-    {
       "id": "INA3221_2_BOT",
       "region": [
-        0.3,
+        26.5,
         89.0,
         41.7,
         95.0
@@ -3574,15 +3713,20 @@
       "alt_regions": [
         "PB11",
         "PB12",
+        "PB9b",
         "PB13",
+        "PB9c",
         "PB7",
+        "PB7b",
         "PB10",
         "PB8",
         "PB6",
         "PB5",
+        "PB3b",
         "PB3",
-        "PB4",
+        "PB4b",
         "PB1",
+        "PB4",
         "PB2"
       ],
       "side": "B",
@@ -3642,14 +3786,19 @@
       "alt_regions": [
         "PB5",
         "PB8",
+        "PB7b",
         "PB7",
+        "PB9c",
+        "PB9b",
         "PB9",
         "PB10",
         "PB3",
         "PB11",
+        "PB3b",
         "PB12",
         "PB1",
         "PB13",
+        "PB4b",
         "PB4",
         "PB2"
       ],
@@ -3671,66 +3820,27 @@
       ]
     },
     {
-      "id": "AUX12_BOT",
-      "region": [
-        52.0,
-        29.0,
-        126.0,
-        34.1
-      ],
-      "region_name": "PB4",
-      "alt_regions": [
-        "PB3",
-        "PB2",
-        "PB7",
-        "PB9",
-        "PB1",
-        "PB5",
-        "PB11",
-        "PB6",
-        "PB8",
-        "PB12",
-        "PB13",
-        "PB10"
-      ],
-      "side": "B",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "R220",
-          "rotation": 0
-        },
-        {
-          "ref": "R221",
-          "rotation": 0
-        },
-        {
-          "ref": "R222",
-          "rotation": 0
-        },
-        {
-          "ref": "R223",
-          "rotation": 0
-        }
-      ]
-    },
-    {
       "id": "E1_CTRL_BOT",
       "region": [
-        0.3,
-        29.0,
+        26.5,
+        29.5,
         40.0,
         37.0
       ],
-      "region_name": "PB3",
+      "region_name": "PB3b",
       "alt_regions": [
-        "PB4",
+        "PB3",
+        "PB4b",
         "PB1",
         "PB5",
         "PB7",
+        "PB7b",
         "PB6",
         "PB8",
+        "PB4",
         "PB9",
+        "PB9c",
+        "PB9b",
         "PB11",
         "PB10",
         "PB12",
@@ -3806,13 +3916,18 @@
       "alt_regions": [
         "PB3",
         "PB5",
+        "PB3b",
         "PB6",
-        "PB4",
+        "PB4b",
+        "PB7b",
         "PB7",
         "PB8",
+        "PB9c",
         "PB9",
+        "PB9b",
         "PB10",
         "PB11",
+        "PB4",
         "PB12",
         "PB13",
         "PB2"
@@ -3867,8 +3982,14 @@
       "BAND_LNB": [
         19.75,
         7.5,
-        42.6,
+        36.82,
         26.8
+      ],
+      "BAND_LNBb": [
+        39.5,
+        7.5,
+        42.2,
+        20.42
       ],
       "BAND_LT_LOW": [
         43.0,
@@ -3880,10 +4001,10 @@
         43.0,
         22.4,
         49.4,
-        26.8
+        25.0
       ],
       "BAND_LNA": [
-        49.6,
+        50.4,
         7.0,
         72.3,
         26.4
@@ -3891,14 +4012,32 @@
       "BAND_BONI": [
         78.8,
         11.2,
-        82.95,
+        80.4,
+        26.4
+      ],
+      "BAND_BONIb": [
+        80.4,
+        11.2,
+        82.8,
+        13.4
+      ],
+      "BAND_U213_UP": [
+        72.6,
+        19.8,
+        80.1,
         26.4
       ],
       "BAND_B2B_BELOW": [
-        83.45,
+        89.9,
         11.2,
         115.2,
         14.9
+      ],
+      "BAND_B2B_BELOWb": [
+        83.45,
+        11.2,
+        89.9,
+        13.4
       ],
       "BAND_B2B_ABOVE": [
         83.45,
@@ -3945,6 +4084,12 @@
       "BAND_TOP_LEFT_R": [
         19.75,
         27.0,
+        39.5,
+        32.5
+      ],
+      "BAND_TOP_LEFT_Rb": [
+        39.5,
+        29.5,
         42.2,
         32.5
       ],
@@ -3955,9 +4100,9 @@
         34.8
       ],
       "BAND_TOP_MID": [
-        50.0,
+        52.4,
         26.9,
-        107.8,
+        66.0,
         30.8
       ],
       "BAND_TOP_MID2": [
@@ -3969,20 +4114,38 @@
       "BAND_TOP_MID3": [
         50.0,
         30.9,
-        80.8,
+        66.0,
         34.8
+      ],
+      "BAND_TOP_MID4": [
+        66.3,
+        26.9,
+        80.1,
+        34.8
+      ],
+      "BAND_TOP_MID_R": [
+        83.1,
+        26.9,
+        107.8,
+        30.8
       ],
       "LEG_LEFT_LOW": [
         0.3,
         35.2,
-        8.1,
+        7.2,
         55.3
       ],
       "LEG_SYS12_LOW": [
-        8.4,
+        10.4,
         36.3,
         24.3,
         42.2
+      ],
+      "LEG_SYS12_LOWb": [
+        8.4,
+        36.3,
+        10.4,
+        38.1
       ],
       "LEG_ENTRY": [
         8.4,
@@ -3992,15 +4155,27 @@
       ],
       "LEG_Z3_L": [
         8.3,
-        49.5,
+        50.5,
         10.5,
         55.3
       ],
       "LEG_Z3_R": [
         21.5,
-        49.5,
-        24.55,
+        50.5,
+        24.45,
         55.4
+      ],
+      "LEG_U107_L": [
+        10.7,
+        42.3,
+        13.8,
+        45.85
+      ],
+      "LEG_U107_R": [
+        18.2,
+        42.3,
+        21.2,
+        45.85
       ],
       "LEG_MID_L": [
         0.3,
@@ -4013,12 +4188,6 @@
         62.5,
         14.0,
         70.6
-      ],
-      "LEG_Z4_L": [
-        7.8,
-        77.0,
-        10.85,
-        83.2
       ],
       "LEG_Z4_R": [
         17.6,
@@ -4046,9 +4215,21 @@
       ],
       "LEG_SPINE_R": [
         28.6,
+        68.59,
+        32.26,
+        77.6
+      ],
+      "LEG_SPINE_Rb": [
+        32.6,
         52.5,
         34.2,
         77.6
+      ],
+      "LEG_SPINE_Rc": [
+        28.6,
+        52.5,
+        30.73,
+        54.9
       ],
       "LEG_RIGHT_MID": [
         28.6,
@@ -4075,9 +4256,9 @@
         100.4
       ],
       "LEG_LEFT_HIGH": [
-        0.3,
-        91.8,
-        7.75,
+        4.25,
+        97.2,
+        7.4,
         102.2
       ],
       "LEG_TOP": [
@@ -4115,13 +4296,25 @@
       "PB3": [
         0.3,
         29.0,
+        24.3,
+        37.0
+      ],
+      "PB3b": [
+        26.5,
+        29.5,
         40.0,
         37.0
       ],
       "PB4": [
-        52.0,
+        82.8,
         29.0,
         126.0,
+        34.1
+      ],
+      "PB4b": [
+        52.0,
+        29.5,
+        82.8,
         34.1
       ],
       "PB5": [
@@ -4137,9 +4330,15 @@
         70.5
       ],
       "PB7": [
-        21.6,
+        26.5,
         65.0,
         41.7,
+        70.5
+      ],
+      "PB7b": [
+        21.6,
+        65.0,
+        24.3,
         70.5
       ],
       "PB8": [
@@ -4149,10 +4348,22 @@
         89.0
       ],
       "PB9": [
-        0.3,
+        26.5,
         89.0,
         41.7,
         95.0
+      ],
+      "PB9b": [
+        0.6,
+        92.6,
+        26.5,
+        95.0
+      ],
+      "PB9c": [
+        0.6,
+        89.0,
+        24.3,
+        90.4
       ],
       "PB10": [
         0.3,
@@ -4191,7 +4402,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_SW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_SW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4204,7 +4415,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_SW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_SW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4217,7 +4428,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_SW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_SW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4226,24 +4437,102 @@
         24.8,
         38.2,
         28.2,
+        58.4
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_CONVIN-SPINE-UP",
+      "rect": [
+        24.8,
+        62.55,
+        28.2,
         86.6
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_CONV_IN pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
-      "id": "CU_CONVIN-C120",
+      "id": "CU_CONVIN-U107-R",
       "rect": [
-        18.7,
-        42.45,
+        21.5,
+        43.9,
         28.2,
-        45.65
+        47.2
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_CONV_IN pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_CONVIN-U107-R-BAR",
+      "rect": [
+        18.455,
+        46.15,
+        21.7,
+        47.2
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_CONVIN-U107-VIN1",
+      "rect": [
+        17.55,
+        46.75,
+        18.7,
+        47.15
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_CONVIN-U107-L",
+      "rect": [
+        7.2,
+        38.1,
+        10.4,
+        47.2
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_CONVIN-U107-L-BAR",
+      "rect": [
+        10.2,
+        46.15,
+        13.545,
+        47.2
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_CONVIN-U107-VIN2",
+      "rect": [
+        13.3,
+        46.75,
+        14.45,
+        47.15
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4256,7 +4545,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_CONV_IN pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4269,7 +4558,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_CONV_IN pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4282,7 +4571,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_CONV_IN pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4295,7 +4584,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_CONV_IN pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_CONV_IN pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4308,7 +4597,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_SYS12_SW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_SYS12_SW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4321,7 +4610,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_SYS12_SW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_SYS12_SW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4334,7 +4623,33 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted SYS12 pour (planner keep-out, not a courtyard)",
+      "what": "scripted SYS12 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_SYS12-CROSS",
+      "rect": [
+        24.0,
+        58.7,
+        32.6,
+        62.25
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted SYS12 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_SYS12-Q201",
+      "rect": [
+        30.73,
+        57.5,
+        32.205,
+        58.9
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted SYS12 pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4347,7 +4662,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_LAB5_RAW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_LAB5_RAW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4360,7 +4675,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_LAB5_RAW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_LAB5_RAW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4373,7 +4688,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_LAB5_RAW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_LAB5_RAW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4386,7 +4701,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_LAB5_RAW pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_LAB5_RAW pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4399,33 +4714,267 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted E1_LAB5_FUSED pour (planner keep-out, not a courtyard)",
+      "what": "scripted E1_LAB5_FUSED pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5FUSED-C111",
+      "rect": [
+        7.1,
+        77.4,
+        10.65,
+        79.4
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted E1_LAB5_FUSED pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-L101",
+      "rect": [
+        0.6,
+        89.0,
+        7.4,
+        94.0
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-F104",
+      "rect": [
+        0.6,
+        93.6,
+        3.95,
+        97.675
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-B-TOP",
+      "rect": [
+        0.6,
+        90.4,
+        26.5,
+        92.6
+      ],
+      "side": "B",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on B.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-B-SPINE",
+      "rect": [
+        24.3,
+        27.3,
+        26.5,
+        92.6
+      ],
+      "side": "B",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on B.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-B-BAND",
+      "rect": [
+        24.3,
+        27.3,
+        42.2,
+        29.5
+      ],
+      "side": "B",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on B.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-RISE-L",
+      "rect": [
+        39.5,
+        25.0,
+        42.2,
+        29.5
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-DETOUR",
+      "rect": [
+        39.5,
+        25.0,
+        50.4,
+        27.2
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-RISE-R",
+      "rect": [
+        49.5,
+        26.6,
+        52.4,
+        29.5
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-B-BAND-R",
+      "rect": [
+        49.5,
+        27.3,
+        82.8,
+        29.5
+      ],
+      "side": "B",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on B.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-DROP",
+      "rect": [
+        80.4,
+        13.4,
+        82.8,
+        29.5
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-J208-BAR",
+      "rect": [
+        80.4,
+        13.4,
+        89.9,
+        15.5
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-J208-2",
+      "rect": [
+        86.4,
+        15.3,
+        86.7,
+        16.4
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-J208-6",
+      "rect": [
+        87.4,
+        15.3,
+        87.7,
+        16.4
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-J208-10",
+      "rect": [
+        88.4,
+        15.3,
+        88.7,
+        16.4
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_LAB5-J208-14",
+      "rect": [
+        89.4,
+        15.3,
+        89.7,
+        16.4
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted LAB5 pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
       "id": "CU_GND-U107-L",
       "rect": [
-        8.4,
-        47.35,
+        7.55,
+        47.5,
         15.05,
-        48.95
+        49.0
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted GND pour (planner keep-out, not a courtyard)",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_GND-C119",
+      "rect": [
+        7.55,
+        49.0,
+        10.75,
+        50.5
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
       "id": "CU_GND-U107-R",
       "rect": [
         16.95,
-        47.35,
-        23.6,
-        48.95
+        47.5,
+        24.45,
+        49.0
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted GND pour (planner keep-out, not a courtyard)",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_GND-C120",
+      "rect": [
+        21.25,
+        49.0,
+        24.45,
+        50.5
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4438,7 +4987,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted GND pour (planner keep-out, not a courtyard)",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4451,7 +5000,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted GND pour (planner keep-out, not a courtyard)",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4464,7 +5013,7 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted GND pour (planner keep-out, not a courtyard)",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4477,7 +5026,20 @@
       ],
       "side": "F",
       "kind": "copper",
-      "what": "scripted GND pour (planner keep-out, not a courtyard)",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
+      "source": "make_spec.py POWER_POURS"
+    },
+    {
+      "id": "CU_GND-C111",
+      "rect": [
+        7.95,
+        80.95,
+        10.65,
+        83.05
+      ],
+      "side": "F",
+      "kind": "copper",
+      "what": "scripted GND pour on F.Cu (planner keep-out, not a courtyard)",
       "source": "make_spec.py POWER_POURS"
     },
     {
@@ -4679,8 +5241,8 @@
         "id": "U107-PGND-L1",
         "net": "GND",
         "at": [
-          8.9,
-          48.1
+          8.3,
+          48.2
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -4691,8 +5253,8 @@
         "id": "U107-PGND-L2",
         "net": "GND",
         "at": [
-          9.85,
-          48.1
+          9.3,
+          48.2
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -4703,8 +5265,8 @@
         "id": "U107-PGND-R1",
         "net": "GND",
         "at": [
-          22.15,
-          48.1
+          22.7,
+          48.2
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -4715,8 +5277,8 @@
         "id": "U107-PGND-R2",
         "net": "GND",
         "at": [
-          23.1,
-          48.1
+          23.7,
+          48.2
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -4878,6 +5440,450 @@
         "drill_mm": 0.3,
         "locked": true,
         "why": "W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND planes and the L4 bond copper of zones 3'/4'; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "C111-GND",
+        "net": "GND",
+        "at": [
+          9.3,
+          82.55
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND planes and the L4 bond copper of zones 3'/4'; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-L1",
+        "net": "E1_CONV_IN",
+        "at": [
+          7.7,
+          38.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-L2",
+        "net": "E1_CONV_IN",
+        "at": [
+          8.65,
+          38.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-L3",
+        "net": "E1_CONV_IN",
+        "at": [
+          9.6,
+          38.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-R1",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          44.4
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-R2",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          45.35
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "STRAP-R3",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          46.3
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-LO1",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          55.9
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-LO2",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          56.8
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-LO3",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          57.7
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-UP1",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          63.25
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-UP2",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          64.15
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "BRIDGE-UP3",
+        "net": "E1_CONV_IN",
+        "at": [
+          27.5,
+          65.05
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix E1_CONV_IN via (make_spec.py POWER_VIAS): In2.Cu VIN strap/bridge of the LM61460 input; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-1",
+        "net": "LAB5",
+        "at": [
+          1.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-2",
+        "net": "LAB5",
+        "at": [
+          2.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-3",
+        "net": "LAB5",
+        "at": [
+          3.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-4",
+        "net": "LAB5",
+        "at": [
+          4.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-5",
+        "net": "LAB5",
+        "at": [
+          5.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-L101-6",
+        "net": "LAB5",
+        "at": [
+          6.3,
+          91.75
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-1",
+        "net": "LAB5",
+        "at": [
+          39.9,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-2",
+        "net": "LAB5",
+        "at": [
+          39.9,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-3",
+        "net": "LAB5",
+        "at": [
+          40.85,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-4",
+        "net": "LAB5",
+        "at": [
+          40.85,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-5",
+        "net": "LAB5",
+        "at": [
+          41.8,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RL-6",
+        "net": "LAB5",
+        "at": [
+          41.8,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-1",
+        "net": "LAB5",
+        "at": [
+          50.0,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-2",
+        "net": "LAB5",
+        "at": [
+          50.0,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-3",
+        "net": "LAB5",
+        "at": [
+          50.95,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-4",
+        "net": "LAB5",
+        "at": [
+          50.95,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-5",
+        "net": "LAB5",
+        "at": [
+          51.9,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-RR-6",
+        "net": "LAB5",
+        "at": [
+          51.9,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-1",
+        "net": "LAB5",
+        "at": [
+          80.8,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-2",
+        "net": "LAB5",
+        "at": [
+          80.8,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-3",
+        "net": "LAB5",
+        "at": [
+          81.6,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-4",
+        "net": "LAB5",
+        "at": [
+          81.6,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-5",
+        "net": "LAB5",
+        "at": [
+          82.4,
+          27.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "LAB5-DROP-6",
+        "net": "LAB5",
+        "at": [
+          82.4,
+          28.95
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 review fix LAB5 via (make_spec.py POWER_VIAS): F.Cu <-> B.Cu trunk transition; size = the project via 0.6/0.3"
       }
     ],
     "zones": [
@@ -4923,7 +5929,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.6 mm: J107.2 (battery feed after the main switch) up past U211 to the leg (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.6 mm: J107.2 (battery feed after the main switch) up past U211 to the leg (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "E1SW-BAR",
@@ -4949,7 +5955,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.2 mm: across to the source pins of Q102 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.2 mm: across to the source pins of Q102 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "E1SW-Q102",
@@ -4975,7 +5981,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "stem onto Q102 S1-S3 (pins 0.42 mm, gate pad 0.215 mm away): within half the class width of the pins (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "stem onto Q102 S1-S3 (pins 0.42 mm, gate pad 0.215 mm away): within half the class width of the pins (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "Q102.1",
           "Q102.2",
@@ -4997,6 +6003,32 @@
           ],
           [
             28.2,
+            58.4
+          ],
+          [
+            24.8,
+            58.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "3.4 mm: Q102 drain (after the LM74700 stage) up the leg to U107 and to the SYS12 crossing (E1_CONV_IN has no NET_CURRENT entry yet: scripted at the BATT width of E1_SW, W2 GR-5A review GR5A-03) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-SPINE-UP",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            24.8,
+            62.55
+          ],
+          [
+            28.2,
+            62.55
+          ],
+          [
+            28.2,
             86.6
           ],
           [
@@ -5006,33 +6038,255 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "3.4 mm: Q102 drain (after the LM74700 stage) up the leg to both converters (E1_CONV_IN has no NET_CURRENT entry yet: scripted at the BATT width of E1_SW, W2 GR-5A review GR5A-03) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "3.4 mm: from the In2 bridge over the SYS12 crossing up to C107 and U108 (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
-        "id": "CONVIN-C120",
+        "id": "CONVIN-BRIDGE",
         "net": "E1_CONV_IN",
-        "layer": "F.Cu",
+        "layer": "In2.Cu",
         "outline": [
           [
-            18.7,
-            42.45
+            24.8,
+            55.4
           ],
           [
             28.2,
-            42.45
+            55.4
           ],
           [
             28.2,
-            45.65
+            65.55
           ],
           [
-            18.7,
-            45.65
+            24.8,
+            65.55
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "3.2 mm: spine to C120.1 next to U107 VIN1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "In2.Cu 3.4 mm: the spine under the F.Cu SYS12 crossing (U108 input, about 1.2 A at 3.2 A LAB5: MODEL), three vias on each side (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-U107-R",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            21.5,
+            43.9
+          ],
+          [
+            28.2,
+            43.9
+          ],
+          [
+            28.2,
+            47.2
+          ],
+          [
+            21.5,
+            47.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "3.3 mm: spine to C120.1 (CIN1) (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-U107-R-BAR",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            18.455,
+            46.15
+          ],
+          [
+            21.7,
+            46.15
+          ],
+          [
+            21.7,
+            47.2
+          ],
+          [
+            18.455,
+            47.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C120.1 to C121.1 (CIN_HF1) along the VIN1 level, within half the class width of the two pads; the RT/EN pins 6/7 escape below it (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "C121.1",
+          "C120.1"
+        ]
+      },
+      {
+        "id": "CONVIN-U107-VIN1",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            17.55,
+            46.75
+          ],
+          [
+            18.7,
+            46.75
+          ],
+          [
+            18.7,
+            47.15
+          ],
+          [
+            17.55,
+            47.15
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto U107 VIN1 (pin 8, 1.0 x 0.4 mm) from C121.1 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "U107.8"
+        ]
+      },
+      {
+        "id": "CONVIN-U107-L",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            7.2,
+            38.1
+          ],
+          [
+            10.4,
+            38.1
+          ],
+          [
+            10.4,
+            47.2
+          ],
+          [
+            7.2,
+            47.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "3.2 mm: C119.1 (CIN2) down to the In2 strap vias below thermal_bond zone 3' (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-U107-L-BAR",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            10.2,
+            46.15
+          ],
+          [
+            13.545,
+            46.15
+          ],
+          [
+            13.545,
+            47.2
+          ],
+          [
+            10.2,
+            47.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C119.1 to C122.1 (CIN_HF2) along the VIN2 level, within half the class width of the two pads; the CBOOT/RBOOT pins 13/14 escape below it (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "C119.1",
+          "C122.1"
+        ]
+      },
+      {
+        "id": "CONVIN-U107-VIN2",
+        "net": "E1_CONV_IN",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            13.3,
+            46.75
+          ],
+          [
+            14.45,
+            46.75
+          ],
+          [
+            14.45,
+            47.15
+          ],
+          [
+            13.3,
+            47.15
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto U107 VIN2 (pin 12, 1.0 x 0.4 mm) from C122.1 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "U107.12"
+        ]
+      },
+      {
+        "id": "CONVIN-STRAP",
+        "net": "E1_CONV_IN",
+        "layer": "In2.Cu",
+        "outline": [
+          [
+            7.2,
+            43.9
+          ],
+          [
+            28.2,
+            43.9
+          ],
+          [
+            28.2,
+            46.75
+          ],
+          [
+            7.2,
+            46.75
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "In2.Cu 2.85 mm VIN strap under U107: VIN2/CIN2 side to the spine (SNVSBD5D figure 11-2; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "CONVIN-STRAP-L",
+        "net": "E1_CONV_IN",
+        "layer": "In2.Cu",
+        "outline": [
+          [
+            7.2,
+            38.1
+          ],
+          [
+            10.4,
+            38.1
+          ],
+          [
+            10.4,
+            46.75
+          ],
+          [
+            7.2,
+            46.75
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "In2.Cu 3.2 mm: the VIN strap down to its left vias below thermal_bond zone 3' (non-GND vias stay outside the bond zones; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "CONVIN-C107",
@@ -5058,7 +6312,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "3.2 mm: spine to the shared bulk C107.1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "3.2 mm: spine to the shared bulk C107.1 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "CONVIN-U108",
@@ -5084,7 +6338,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "3.2 mm: spine to C130.1/C131.1 above U108 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "3.2 mm: spine to C130.1/C131.1 above U108 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "CONVIN-U108-VIN1",
@@ -5110,7 +6364,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "onto U108 VIN1 (pad 1.4 mm) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "onto U108 VIN1 (pad 1.4 mm) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U108.1"
         ]
@@ -5139,7 +6393,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "onto U108 VIN2 (pad 1.4 mm) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "onto U108 VIN2 (pad 1.4 mm) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U108.16"
         ]
@@ -5168,7 +6422,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "over U107 SW (0.4 mm pin between the PGND pins): within half the class width of the pin (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "over U107 SW (0.4 mm pin between the PGND pins): within half the class width of the pin (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U107.10"
         ]
@@ -5197,7 +6451,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.5 mm: U107 SW to L102.1 (minimal SW copper) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.5 mm: U107 SW to L102.1 (minimal SW copper) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "SYS12-BAR",
@@ -5223,7 +6477,62 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.55 mm: L102.2 over the pads 1 of C123-C126 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.55 mm: L102.2 over the pads 1 of C123-C126 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "SYS12-CROSS",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            24.0,
+            58.7
+          ],
+          [
+            32.6,
+            58.7
+          ],
+          [
+            32.6,
+            62.25
+          ],
+          [
+            24.0,
+            62.25
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "BATT 3.55 mm: across the spine gap (the spine runs on In2 there) to the SYS12 node right of the spine: F201.1 (J21) and Q201.2 (AUX12) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "SYS12-Q201",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            30.73,
+            57.5
+          ],
+          [
+            32.205,
+            57.5
+          ],
+          [
+            32.205,
+            58.9
+          ],
+          [
+            30.73,
+            58.9
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto Q201.2 (source) from the SYS12 node (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "Q201.2"
+        ]
       },
       {
         "id": "LAB5RAW-F102",
@@ -5249,7 +6558,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 6.8 mm: onto both THT pads of F102.1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 6.8 mm: onto both THT pads of F102.1 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "LAB5RAW-BAR",
@@ -5275,7 +6584,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.2 mm: U108 VOUT over C133-C135 to F102.1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.2 mm: U108 VOUT over C133-C135 to F102.1 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "LAB5RAW-VOUT1",
@@ -5301,7 +6610,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "onto U108 VOUT1 (pad 1.4 mm) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "onto U108 VOUT1 (pad 1.4 mm) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U108.8"
         ]
@@ -5330,7 +6639,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "onto U108 VOUT2 (pad 1.4 mm) (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)",
+        "why": "onto U108 VOUT2 (pad 1.4 mm) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
         "pin_entry": [
           "U108.9"
         ]
@@ -5359,7 +6668,435 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "PWR3A 6.8 mm: F102.2 (both THT pads) to L101.1 (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "PWR3A 6.8 mm: F102.2 (both THT pads) to L101.1 (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5FUSED-C111",
+        "net": "E1_LAB5_FUSED",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            7.1,
+            77.4
+          ],
+          [
+            10.65,
+            77.4
+          ],
+          [
+            10.65,
+            79.4
+          ],
+          [
+            7.1,
+            79.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.0 mm: onto C111.1 at the F102.2/L101.1 node (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-L101",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            0.6,
+            89.0
+          ],
+          [
+            7.4,
+            89.0
+          ],
+          [
+            7.4,
+            94.0
+          ],
+          [
+            0.6,
+            94.0
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 5.0 mm: L101.2 (the E1 LAB5 end) and C112.1, six vias to the B.Cu trunk (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-F104",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            0.6,
+            93.6
+          ],
+          [
+            3.95,
+            93.6
+          ],
+          [
+            3.95,
+            97.675
+          ],
+          [
+            0.6,
+            97.675
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 3.35 mm: onto F104.1 (LAB5_RLY PTC) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-B-TOP",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            0.6,
+            90.4
+          ],
+          [
+            26.5,
+            90.4
+          ],
+          [
+            26.5,
+            92.6
+          ],
+          [
+            0.6,
+            92.6
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "B.Cu PWR3A 2.2 mm: the LAB5 trunk from L101.2 across the leg above thermal_bond zone 4' (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-B-SPINE",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            24.3,
+            27.3
+          ],
+          [
+            26.5,
+            27.3
+          ],
+          [
+            26.5,
+            92.6
+          ],
+          [
+            24.3,
+            92.6
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "B.Cu PWR3A 2.2 mm: the LAB5 trunk down the leg under the F.Cu E1_CONV_IN spine, between zones 3'/4' and the right column (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-B-BAND",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            24.3,
+            27.3
+          ],
+          [
+            42.2,
+            27.3
+          ],
+          [
+            42.2,
+            29.5
+          ],
+          [
+            24.3,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "B.Cu PWR3A 2.2 mm: along the band above thermal_bond zone 1 up to the hole at (46, 31) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-RISE-L",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            39.5,
+            25.0
+          ],
+          [
+            42.2,
+            25.0
+          ],
+          [
+            42.2,
+            29.5
+          ],
+          [
+            39.5,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.7 mm: six vias up from the B.Cu trunk (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-DETOUR",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            39.5,
+            25.0
+          ],
+          [
+            50.4,
+            25.0
+          ],
+          [
+            50.4,
+            27.2
+          ],
+          [
+            39.5,
+            27.2
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.2 mm: L205.1 (the LT3045 feed) and below the hole keep-out at (46, 31) (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-RISE-R",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            49.5,
+            26.6
+          ],
+          [
+            52.4,
+            26.6
+          ],
+          [
+            52.4,
+            29.5
+          ],
+          [
+            49.5,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.9 mm: six vias down to the B.Cu trunk (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-B-BAND-R",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            49.5,
+            27.3
+          ],
+          [
+            82.8,
+            27.3
+          ],
+          [
+            82.8,
+            29.5
+          ],
+          [
+            49.5,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "B.Cu PWR3A 2.2 mm: along the band above thermal_bond zones 1/2 to the J208 drop (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-DROP",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            80.4,
+            13.4
+          ],
+          [
+            82.8,
+            13.4
+          ],
+          [
+            82.8,
+            29.5
+          ],
+          [
+            80.4,
+            29.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.4 mm: six vias up from the B.Cu trunk, down left of J208 (review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-J208-BAR",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            80.4,
+            13.4
+          ],
+          [
+            89.9,
+            13.4
+          ],
+          [
+            89.9,
+            15.5
+          ],
+          [
+            80.4,
+            15.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "PWR3A 2.1 mm: under the J208 bottom row to its four LAB5 contacts (path B to PWR-B; review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "LAB5-J208-2",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            86.4,
+            15.3
+          ],
+          [
+            86.7,
+            15.3
+          ],
+          [
+            86.7,
+            16.4
+          ],
+          [
+            86.4,
+            16.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto J208.2 between the GND contacts (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "J208.2"
+        ]
+      },
+      {
+        "id": "LAB5-J208-6",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            87.4,
+            15.3
+          ],
+          [
+            87.7,
+            15.3
+          ],
+          [
+            87.7,
+            16.4
+          ],
+          [
+            87.4,
+            16.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto J208.6 between the GND contacts (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "J208.6"
+        ]
+      },
+      {
+        "id": "LAB5-J208-10",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            88.4,
+            15.3
+          ],
+          [
+            88.7,
+            15.3
+          ],
+          [
+            88.7,
+            16.4
+          ],
+          [
+            88.4,
+            16.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto J208.10 between the GND contacts (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "J208.10"
+        ]
+      },
+      {
+        "id": "LAB5-J208-14",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            89.4,
+            15.3
+          ],
+          [
+            89.7,
+            15.3
+          ],
+          [
+            89.7,
+            16.4
+          ],
+          [
+            89.4,
+            16.4
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "onto J208.14 between the GND contacts (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)",
+        "pin_entry": [
+          "J208.14"
+        ]
       },
       {
         "id": "GND-U107-L",
@@ -5367,25 +7104,51 @@
         "layer": "F.Cu",
         "outline": [
           [
-            8.4,
-            47.35
+            7.55,
+            47.5
           ],
           [
             15.05,
-            47.35
+            47.5
           ],
           [
             15.05,
-            48.95
+            49.0
           ],
           [
-            8.4,
-            48.95
+            7.55,
+            49.0
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "U107 PGND2 to C119.2 and two vias to In1/In2/L4 (zone 3') (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "U107 PGND2 to C122.2 and C119.2 and two vias to In1/In2/L4 (zone 3'; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "GND-C119",
+        "net": "GND",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            7.55,
+            49.0
+          ],
+          [
+            10.75,
+            49.0
+          ],
+          [
+            10.75,
+            50.5
+          ],
+          [
+            7.55,
+            50.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C119.2 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-U107-R",
@@ -5394,24 +7157,50 @@
         "outline": [
           [
             16.95,
-            47.35
+            47.5
           ],
           [
-            23.6,
-            47.35
+            24.45,
+            47.5
           ],
           [
-            23.6,
-            48.95
+            24.45,
+            49.0
           ],
           [
             16.95,
-            48.95
+            49.0
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "U107 PGND1 to C120.2 and two vias to In1/In2/L4 (zone 3') (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "U107 PGND1 to C121.2 and C120.2 and two vias to In1/In2/L4 (zone 3'; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "GND-C120",
+        "net": "GND",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            21.25,
+            49.0
+          ],
+          [
+            24.45,
+            49.0
+          ],
+          [
+            24.45,
+            50.5
+          ],
+          [
+            21.25,
+            50.5
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C120.2 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-COUT-SYS12",
@@ -5437,7 +7226,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "pads 2 of C123-C125 and their vias (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "pads 2 of C123-C125 and their vias (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-COUT-C126",
@@ -5463,7 +7252,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "pad 2 of C126 and its via (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "pad 2 of C126 and its via (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-COUT-LAB5",
@@ -5489,7 +7278,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "pads 2 of C133-C135 and their vias (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "pads 2 of C133-C135 and their vias (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-CIN-U108",
@@ -5515,7 +7304,33 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "pads 2 of C130/C131 and their vias (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "pads 2 of C130/C131 and their vias (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+      },
+      {
+        "id": "GND-C111",
+        "net": "GND",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            7.95,
+            80.95
+          ],
+          [
+            10.65,
+            80.95
+          ],
+          [
+            10.65,
+            83.05
+          ],
+          [
+            7.95,
+            83.05
+          ]
+        ],
+        "priority": 2,
+        "pad_connection": "solid",
+        "why": "C111.2 and its via (zone 4'; review fix F2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       }
     ]
   },
@@ -6000,7 +7815,9 @@
     ],
     "bottom_refs_missing": [],
     "tht_margin_mm": 1.0,
-    "h_room_mm": 1.4,
+    "h_room_mm": 1.03,
+    "h_room_source": "mechanical/generated/contract/boards.json PWR bottom_side h_max (MECH-7)",
+    "h_room_mm_planning_superseded": 1.4,
     "thermal_bond_zones": [
       [
         9,
@@ -6149,8 +7966,12 @@
   "power_stages": {
     "anchors": [
       "C107",
+      "C111",
+      "C112",
       "C119",
       "C120",
+      "C121",
+      "C122",
       "C123",
       "C124",
       "C125",
@@ -6160,9 +7981,13 @@
       "C133",
       "C134",
       "C135",
+      "F104",
+      "F201",
       "L101",
       "L102",
+      "L205",
       "Q102",
+      "Q201",
       "U107",
       "U108"
     ],
@@ -6176,31 +8001,68 @@
       ]
     },
     "pours": [
+      "CONVIN-BRIDGE",
       "CONVIN-C107",
-      "CONVIN-C120",
       "CONVIN-SPINE",
+      "CONVIN-SPINE-UP",
+      "CONVIN-STRAP",
+      "CONVIN-STRAP-L",
+      "CONVIN-U107-L",
+      "CONVIN-U107-L-BAR",
+      "CONVIN-U107-R",
+      "CONVIN-U107-R-BAR",
+      "CONVIN-U107-VIN1",
+      "CONVIN-U107-VIN2",
       "CONVIN-U108",
       "CONVIN-U108-VIN1",
       "CONVIN-U108-VIN2",
       "E1SW-BAR",
       "E1SW-Q102",
       "E1SW-RISE",
+      "GND-C111",
+      "GND-C119",
+      "GND-C120",
       "GND-CIN-U108",
       "GND-COUT-C126",
       "GND-COUT-LAB5",
       "GND-COUT-SYS12",
       "GND-U107-L",
       "GND-U107-R",
+      "LAB5-B-BAND",
+      "LAB5-B-BAND-R",
+      "LAB5-B-SPINE",
+      "LAB5-B-TOP",
+      "LAB5-DETOUR",
+      "LAB5-DROP",
+      "LAB5-F104",
+      "LAB5-J208-10",
+      "LAB5-J208-14",
+      "LAB5-J208-2",
+      "LAB5-J208-6",
+      "LAB5-J208-BAR",
+      "LAB5-L101",
+      "LAB5-RISE-L",
+      "LAB5-RISE-R",
       "LAB5FUSED",
+      "LAB5FUSED-C111",
       "LAB5RAW-BAR",
       "LAB5RAW-F102",
       "LAB5RAW-VOUT1",
       "LAB5RAW-VOUT2",
       "SYS12-BAR",
+      "SYS12-CROSS",
+      "SYS12-Q201",
       "SYS12SW-L102",
       "SYS12SW-PIN"
     ],
     "vias": [
+      "BRIDGE-LO1",
+      "BRIDGE-LO2",
+      "BRIDGE-LO3",
+      "BRIDGE-UP1",
+      "BRIDGE-UP2",
+      "BRIDGE-UP3",
+      "C111-GND",
       "CIN-U108-1",
       "CIN-U108-2",
       "COUT-C126",
@@ -6210,6 +8072,36 @@
       "COUT-SYS12-1",
       "COUT-SYS12-2",
       "COUT-SYS12-3",
+      "LAB5-DROP-1",
+      "LAB5-DROP-2",
+      "LAB5-DROP-3",
+      "LAB5-DROP-4",
+      "LAB5-DROP-5",
+      "LAB5-DROP-6",
+      "LAB5-L101-1",
+      "LAB5-L101-2",
+      "LAB5-L101-3",
+      "LAB5-L101-4",
+      "LAB5-L101-5",
+      "LAB5-L101-6",
+      "LAB5-RL-1",
+      "LAB5-RL-2",
+      "LAB5-RL-3",
+      "LAB5-RL-4",
+      "LAB5-RL-5",
+      "LAB5-RL-6",
+      "LAB5-RR-1",
+      "LAB5-RR-2",
+      "LAB5-RR-3",
+      "LAB5-RR-4",
+      "LAB5-RR-5",
+      "LAB5-RR-6",
+      "STRAP-L1",
+      "STRAP-L2",
+      "STRAP-L3",
+      "STRAP-R1",
+      "STRAP-R2",
+      "STRAP-R3",
       "U107-PGND-L1",
       "U107-PGND-L2",
       "U107-PGND-R1",
@@ -6219,7 +8111,89 @@
       "U108-PGND-19",
       "U108-PGND-20"
     ],
-    "note": "W2 PCB-PWRA-3 part 2 (design choice): anchored power stages and their scripted copper; the IC pin breakouts of U107/U108 to their small parts (FB, RT, EN, CBOOT, VCC), the U107 VIN2 link to C119.1 and the long SYS12/LAB5 distribution are left to the router (PCB-PWRA-4)"
+    "branch_pads": {
+      "SYS12": {
+        "pads": [
+          "U107.1",
+          "R124.1",
+          "C129.1",
+          "R221.1"
+        ],
+        "why": "U107 BIAS, the feedback divider top R124, the CFF C129 and the Q201 gate pull-up R221 (mA)"
+      },
+      "E1_CONV_IN": {
+        "pads": [
+          "R108.1"
+        ],
+        "why": "top of the U107 EN divider R108 (uA)"
+      },
+      "E1_SYS12_SW": {
+        "pads": [
+          "C127.2"
+        ],
+        "why": "the CBOOT capacitor C127 (gate-drive charge only)"
+      }
+    },
+    "trunks": {
+      "E1_SW": [
+        "J107.2",
+        "Q102.1",
+        "Q102.2",
+        "Q102.3"
+      ],
+      "E1_CONV_IN": [
+        "Q102.5",
+        "U107.8",
+        "U107.12",
+        "C119.1",
+        "C120.1",
+        "C121.1",
+        "C122.1",
+        "C107.1",
+        "C130.1",
+        "C131.1",
+        "U108.1",
+        "U108.16"
+      ],
+      "E1_SYS12_SW": [
+        "U107.10",
+        "L102.1"
+      ],
+      "SYS12": [
+        "L102.2",
+        "C123.1",
+        "C124.1",
+        "C125.1",
+        "C126.1",
+        "F201.1",
+        "Q201.2"
+      ],
+      "E1_LAB5_RAW": [
+        "U108.8",
+        "U108.9",
+        "C133.1",
+        "C134.1",
+        "C135.1",
+        "F102.1"
+      ],
+      "E1_LAB5_FUSED": [
+        "F102.2",
+        "C111.1",
+        "L101.1"
+      ],
+      "LAB5": [
+        "L101.2",
+        "C112.1",
+        "F104.1",
+        "L205.1",
+        "J208.2",
+        "J208.6",
+        "J208.10",
+        "J208.14"
+      ]
+    },
+    "u107_input_source": "TI LM61460 data sheet SNVSBD5D (rev. D, July 2022) section 11.1 Layout Guidelines and figure 11-2 Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf read 2026-11-12 (curl default User-Agent, HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d; fetch-only, not committed)",
+    "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, F104.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201"
   },
   "sides": [
     "top",
