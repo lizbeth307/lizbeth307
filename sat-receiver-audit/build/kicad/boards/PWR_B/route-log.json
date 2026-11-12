@@ -41,56 +41,56 @@
     "--user_data_path=<temp>",
     "--router.fanout.enabled=false",
     "-inc",
-    "SCRIPTED_GND,SCRIPTED_PWR1A,SCRIPTED_PWR3A"
+    "SCRIPTED_GND,SCRIPTED_PWR1A,SCRIPTED_PWR3A,SCRIPTED_SIG"
   ],
   "exit_code": 0,
   "log_tail": [
-    "2026-11-11 19:49:10.397 INFO   [0D52FB\\71B499] Auto-routing pass #5 on board '2b92db5c621b1510d827a4175f18a474' was completed in 17.14 seconds with score 640.56 (89 unrouted and 15 violations), using 97.34 CPU seconds and the job allocated 71.30 GB of memory so far.",
-    "2026-11-11 19:49:27.380 INFO   [0D52FB\\71B499] Auto-routing pass #6 on board 'a63e83e2c2878cfa37876fe05c40bb70' was completed in 16.61 seconds with score 668.75 (82 unrouted and 15 violations), using 114.15 CPU seconds and the job allocated 85.73 GB of memory so far.",
-    "2026-11-11 19:49:44.681 INFO   [0D52FB\\71B499] Auto-routing pass #7 on board 'f7a52ad4a0ff97aabeb631883a76731b' was completed in 16.90 seconds with score 692.92 (76 unrouted and 15 violations), using 130.96 CPU seconds and the job allocated 100.34 GB of memory so far.",
-    "2026-11-11 19:49:56.035 INFO   [0D52FB\\71B499] Auto-routing pass #8 on board 'e22cce3d05bc6c8e6629d774c09f9203' was completed in 10.96 seconds with score 700.98 (74 unrouted and 15 violations), using 142.86 CPU seconds and the job allocated 109.50 GB of memory so far.",
-    "2026-11-11 19:50:07.088 INFO   [0D52FB\\71B499] Auto-routing pass #9 on board 'e8569529a739479e7e6c18c17b5fbacf' was completed in 10.66 seconds with score 709.04 (72 unrouted and 15 violations), using 153.76 CPU seconds and the job allocated 118.13 GB of memory so far.",
-    "2026-11-11 19:50:22.189 INFO   [0D52FB\\71B499] Auto-routing pass #10 on board 'be21f2f6ad4698088205f007036d1393' was completed in 14.71 seconds with score 733.21 (66 unrouted and 15 violations), using 168.59 CPU seconds and the job allocated 131.33 GB of memory so far.",
-    "2026-11-11 19:50:29.806 INFO   [0D52FB\\71B499] Auto-routing pass #11 on board '82b867b769af24ebf11f3d4ac7222933' was completed in 7.22 seconds with score 733.21 (66 unrouted and 15 violations), using 175.52 CPU seconds and the job allocated 137.02 GB of memory so far.",
-    "2026-11-11 19:50:37.779 INFO   [0D52FB\\71B499] Auto-routing pass #12 on board '82b867b769af24ebf11f3d4ac7222933' was completed in 0.00 seconds with score 733.21 (66 unrouted and 15 violations), using 183.46 CPU seconds and the job allocated 143.00 GB of memory so far.",
-    "2026-11-11 19:50:44.668 INFO   [0D52FB\\71B499] Auto-routing pass #13 on board '82b867b769af24ebf11f3d4ac7222933' was completed in 6.87 seconds with score 733.21 (66 unrouted and 15 violations), using 190.35 CPU seconds and the job allocated 148.96 GB of memory so far.",
-    "2026-11-11 19:50:51.646 INFO   [0D52FB\\71B499] Auto-routing pass #14 on board 'b68339966b6b750d4f2def8009448095' was completed in 6.61 seconds with score 725.15 (68 unrouted and 15 violations), using 197.27 CPU seconds and the job allocated 154.87 GB of memory so far.",
-    "2026-11-11 19:51:01.011 INFO   [0D52FB\\71B499] Auto-routing pass #15 on board 'da160987ba767d8286857129e98cf77f' was completed in 9.00 seconds with score 725.15 (68 unrouted and 15 violations), using 207.17 CPU seconds and the job allocated 163.35 GB of memory so far.",
-    "2026-11-11 19:51:12.238 INFO   [0D52FB\\71B499] Auto-routing pass #16 on board 'a1882eebbb2a295fab519933c2776c45' was completed in 10.87 seconds with score 753.35 (61 unrouted and 15 violations), using 218.02 CPU seconds and the job allocated 173.65 GB of memory so far.",
-    "2026-11-11 19:51:19.216 INFO   [0D52FB\\71B499] Auto-routing pass #17 on board '9d10f12d944222b034d3b2d8a75f84e1' was completed in 6.61 seconds with score 709.04 (72 unrouted and 15 violations), using 224.95 CPU seconds and the job allocated 179.71 GB of memory so far.",
-    "2026-11-11 19:51:27.104 INFO   [0D52FB\\71B499] Auto-routing pass #18 on board 'e732be759a7966b761291f81db9e1d0b' was completed in 7.51 seconds with score 733.21 (66 unrouted and 15 violations), using 232.88 CPU seconds and the job allocated 186.25 GB of memory so far.",
-    "2026-11-11 19:51:34.383 INFO   [0D52FB\\71B499] Auto-routing pass #19 on board '023d8eaf712d550596fa11d802b7e32e' was completed in 6.90 seconds with score 793.63 (51 unrouted and 15 violations), using 239.82 CPU seconds and the job allocated 192.33 GB of memory so far.",
-    "2026-11-11 19:51:39.568 INFO   [0D52FB\\71B499] Auto-routing pass #20 on board '3f07e45d2a0bf9e9f7192469a55748fd' was completed in 4.80 seconds with score 793.63 (51 unrouted and 15 violations), using 244.75 CPU seconds and the job allocated 196.45 GB of memory so far.",
-    "2026-11-11 19:51:42.845 INFO   [0D52FB\\71B499] Auto-routing pass #21 on board '3f07e45d2a0bf9e9f7192469a55748fd' was completed in 3.26 seconds with score 785.57 (53 unrouted and 15 violations), using 247.69 CPU seconds and the job allocated 198.88 GB of memory so far.",
-    "2026-11-11 19:51:49.311 INFO   [0D52FB\\71B499] Auto-routing pass #22 on board 'db786018434fd0802faf17b8a2e0848b' was completed in 6.08 seconds with score 797.66 (50 unrouted and 15 violations), using 254.55 CPU seconds and the job allocated 205.14 GB of memory so far.",
-    "2026-11-11 19:51:52.117 INFO   [0D52FB\\71B499] Auto-routing pass #23 on board '98d7e42d485b5c4773c128be0c819c6b' was completed in 2.45 seconds with score 797.66 (50 unrouted and 15 violations), using 257.52 CPU seconds and the job allocated 207.24 GB of memory so far.",
-    "2026-11-11 19:51:56.195 INFO   [0D52FB\\71B499] Auto-routing pass #24 on board '627cf018bb8a420b6c4e2e1f0c2671a4' was completed in 3.71 seconds with score 797.66 (50 unrouted and 15 violations), using 261.46 CPU seconds and the job allocated 210.71 GB of memory so far.",
-    "2026-11-11 19:52:00.510 INFO   [0D52FB\\71B499] Auto-routing pass #25 on board 'c8e102cc5af5f67e3e11bf9d54a48e62' was completed in 3.95 seconds with score 789.60 (52 unrouted and 15 violations), using 265.42 CPU seconds and the job allocated 214.34 GB of memory so far.",
-    "2026-11-11 19:52:07.483 INFO   [0D52FB\\71B499] Auto-routing pass #26 on board '41468498c02b56711bff245d8d1f2103' was completed in 6.61 seconds with score 789.60 (52 unrouted and 15 violations), using 272.32 CPU seconds and the job allocated 221.17 GB of memory so far.",
-    "2026-11-11 19:52:12.396 INFO   [0D52FB\\71B499] Auto-routing pass #27 on board '733922ec880ddeaf867691e4cc4f8a2e' was completed in 4.55 seconds with score 797.66 (50 unrouted and 15 violations), using 277.25 CPU seconds and the job allocated 225.61 GB of memory so far.",
-    "2026-11-11 19:52:17.192 INFO   [0D52FB\\71B499] Auto-routing pass #28 on board '90d5bddabd65e8e1f0b43e729f189921' was completed in 4.44 seconds with score 797.66 (50 unrouted and 15 violations), using 282.19 CPU seconds and the job allocated 230.00 GB of memory so far.",
-    "2026-11-11 19:52:22.072 INFO   [0D52FB\\71B499] Auto-routing pass #29 on board '51395057ff6c48f5953d3685c849eb49' was completed in 4.52 seconds with score 805.71 (48 unrouted and 15 violations), using 287.12 CPU seconds and the job allocated 234.45 GB of memory so far.",
-    "2026-11-11 19:52:25.906 INFO   [0D52FB\\71B499] Auto-routing pass #30 on board 'b50ef8808af32839d036c917fe9e63a9' was completed in 3.47 seconds with score 805.71 (48 unrouted and 15 violations), using 290.06 CPU seconds and the job allocated 237.19 GB of memory so far.",
-    "2026-11-11 19:52:29.756 INFO   [0D52FB\\71B499] Auto-routing pass #31 on board 'ee177c563420a29769267dad3a3abbba' was completed in 3.49 seconds with score 805.71 (48 unrouted and 15 violations), using 294.00 CPU seconds and the job allocated 240.58 GB of memory so far.",
-    "2026-11-11 19:52:32.342 INFO   [0D52FB\\71B499] Auto-routing pass #32 on board 'deaa5c2a02e72d542124acf290915f81' was completed in 2.22 seconds with score 805.71 (48 unrouted and 15 violations), using 296.97 CPU seconds and the job allocated 242.56 GB of memory so far.",
-    "2026-11-11 19:52:36.479 INFO   [0D52FB\\71B499] Auto-routing pass #33 on board 'f647d05d8e234a7c87d533731ebf64ce' was completed in 3.42 seconds with score 797.66 (50 unrouted and 15 violations), using 300.93 CPU seconds and the job allocated 245.79 GB of memory so far.",
-    "2026-11-11 19:52:42.816 INFO   [0D52FB\\71B499] Auto-routing pass #34 on board '8ba494fde1604502bbe5683c65e2705a' was completed in 5.63 seconds with score 793.63 (51 unrouted and 15 violations), using 306.86 CPU seconds and the job allocated 251.23 GB of memory so far.",
-    "2026-11-11 19:52:47.533 INFO   [0D52FB\\71B499] Auto-routing pass #35 on board 'aaf4c7fc7d251adc93354d70eca7c9bd' was completed in 4.01 seconds with score 801.69 (49 unrouted and 15 violations), using 311.78 CPU seconds and the job allocated 255.41 GB of memory so far.",
-    "2026-11-11 19:52:52.395 INFO   [0D52FB\\71B499] Auto-routing pass #36 on board '7c5276e817cc58472ac37a0ec21f278c' was completed in 4.15 seconds with score 805.71 (48 unrouted and 15 violations), using 316.72 CPU seconds and the job allocated 259.58 GB of memory so far.",
-    "2026-11-11 19:52:56.575 INFO   [0D52FB\\71B499] Auto-routing pass #37 on board 'e106b8fb29dd0003afc490e0ba8ed6a9' was completed in 3.48 seconds with score 805.71 (48 unrouted and 15 violations), using 320.66 CPU seconds and the job allocated 262.89 GB of memory so far.",
-    "2026-11-11 19:52:59.261 INFO   [0D52FB\\71B499] Auto-routing pass #38 on board 'b5fd950494c58b2a5a9d5e0cdfb40a22' was completed in 1.98 seconds with score 809.74 (47 unrouted and 15 violations), using 323.63 CPU seconds and the job allocated 264.73 GB of memory so far.",
-    "2026-11-11 19:53:00.334 INFO   [0D52FB\\71B499] Auto-routing pass #39 on board '9bbcba8057214bb7fc186f32d319fbd0' was completed in 0.36 seconds with score 809.74 (47 unrouted and 15 violations), using 324.63 CPU seconds and the job allocated 265.08 GB of memory so far.",
-    "2026-11-11 19:53:01.418 INFO   [0D52FB\\71B499] Auto-routing stage completed: started with 249 unrouted nets, completed in 329.52 seconds, final score: 809.74 (47 unrouted and 15 violations), using 325.63 total CPU seconds, 265.42 GB total allocated, and 595.7 MB peak heap usage.",
-    "2026-11-11 19:53:01.794 INFO   [0D52FB\\71B499] Skipping optimization stage: the board has 47 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-11 19:53:01.823 INFO   [0D52FB\\71B499] Job '0D52FB\\71B499' finished with state: COMPLETED (elapsed: 5 minutes 30.97 seconds, finished at UTC: 2026-11-11T19:53:01.822221805Z).",
-    "2026-11-11 19:53:01.825 INFO   Saving output file '/tmp/sr-rx-PWR_B-v74tmps0/PWR_B.ses' (SES)...",
-    "2026-11-11 19:53:01.826 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-v74tmps0/PWR_B.ses' (89244 bytes)."
+    "          - C504.2 [net GND] <-> FixedVia#1579 [net GND]",
+    "          - R281.2 [net GND] <-> FixedVia#1592 [net GND]",
+    "          - R284.2 [net GND] <-> FixedVia#1590 [net GND]",
+    "          ... and 10 more",
+    "  - 0 potentially fixable violations",
+    "Notice: Freerouting does not modify component placement, board outlines, or fixed items.",
+    "Resolving these 15 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).",
+    "2026-11-12 00:19:14.723 INFO   [565C5B\\E73867] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-12 00:19:15.450 INFO   [565C5B\\E73867] Auto-routing stage started on board '1d4ec7daa3a24505a4675226375ebf7a' with baseline score 141.61 for 272 unrouted items.",
+    "2026-11-12 00:19:54.066 INFO   [565C5B\\E73867] Auto-routing pass #1 on board '1d4ec7daa3a24505a4675226375ebf7a' was completed in 38.26 seconds with score 498.00 (130 unrouted and 16 violations), using 38.87 CPU seconds and the job allocated 16.37 GB of memory so far.",
+    "2026-11-12 00:20:17.278 INFO   [565C5B\\E73867] Auto-routing pass #2 on board '9ea9d2f4ff9f5548b6c0a74cf3a3c15d' was completed in 22.81 seconds with score 528.83 (122 unrouted and 16 violations), using 61.67 CPU seconds and the job allocated 31.48 GB of memory so far.",
+    "2026-11-12 00:20:39.291 INFO   [565C5B\\E73867] Auto-routing pass #3 on board 'ad5b6b2d733e8824362323cf40837a26' was completed in 21.58 seconds with score 521.16 (124 unrouted and 16 violations), using 83.50 CPU seconds and the job allocated 45.44 GB of memory so far.",
+    "2026-11-12 00:21:06.073 INFO   [565C5B\\E73867] Auto-routing pass #4 on board '942b991396ff61c8f27d8ee75cba7700' was completed in 26.38 seconds with score 513.48 (126 unrouted and 15 violations), using 110.25 CPU seconds and the job allocated 63.67 GB of memory so far.",
+    "2026-11-12 00:21:35.826 INFO   [565C5B\\E73867] Auto-routing pass #5 on board '1ca1fa5d2fb1fe9da07041b48e70e709' was completed in 29.35 seconds with score 555.87 (115 unrouted and 15 violations), using 138.97 CPU seconds and the job allocated 83.95 GB of memory so far.",
+    "2026-11-12 00:21:58.646 INFO   [565C5B\\E73867] Auto-routing pass #6 on board 'c59ec35351a9b27d0c13992d9b3dd5c9' was completed in 22.40 seconds with score 594.40 (105 unrouted and 15 violations), using 161.75 CPU seconds and the job allocated 99.35 GB of memory so far.",
+    "2026-11-12 00:22:21.064 INFO   [565C5B\\E73867] Auto-routing pass #7 on board '3210723b439f8ab283fd9204643821ac' was completed in 21.98 seconds with score 617.53 (99 unrouted and 15 violations), using 183.53 CPU seconds and the job allocated 114.28 GB of memory so far.",
+    "2026-11-12 00:22:45.080 INFO   [565C5B\\E73867] Auto-routing pass #8 on board '86e70a32cb2a210264a2fdbed4c574ba' was completed in 23.56 seconds with score 625.23 (97 unrouted and 15 violations), using 207.26 CPU seconds and the job allocated 130.87 GB of memory so far.",
+    "2026-11-12 00:23:06.459 INFO   [565C5B\\E73867] Auto-routing pass #9 on board '08658f9313664a68e96061f88f31d8e2' was completed in 20.92 seconds with score 625.23 (97 unrouted and 15 violations), using 229.05 CPU seconds and the job allocated 145.78 GB of memory so far.",
+    "2026-11-12 00:23:25.270 INFO   [565C5B\\E73867] Auto-routing pass #10 on board '5e23a1c494026eb132ccd38bdbd26a11' was completed in 18.36 seconds with score 675.33 (84 unrouted and 15 violations), using 247.87 CPU seconds and the job allocated 158.20 GB of memory so far.",
+    "2026-11-12 00:23:36.116 INFO   [565C5B\\E73867] Auto-routing pass #11 on board '2075ef15899e086b105ae408e8f23ed5' was completed in 10.37 seconds with score 690.74 (80 unrouted and 15 violations), using 257.79 CPU seconds and the job allocated 164.79 GB of memory so far.",
+    "2026-11-12 00:23:50.950 INFO   [565C5B\\E73867] Auto-routing pass #12 on board '9253a40272c9455c024353522eea53af' was completed in 14.36 seconds with score 690.74 (80 unrouted and 15 violations), using 272.59 CPU seconds and the job allocated 175.40 GB of memory so far.",
+    "2026-11-12 00:24:01.087 INFO   [565C5B\\E73867] Auto-routing pass #13 on board '68a649e0ff3378d782b15437a6743c18' was completed in 9.65 seconds with score 702.30 (77 unrouted and 15 violations), using 282.49 CPU seconds and the job allocated 182.04 GB of memory so far.",
+    "2026-11-12 00:24:09.842 INFO   [565C5B\\E73867] Auto-routing pass #14 on board 'f66edf9b488d2606d364f033e5f6cf66' was completed in 8.25 seconds with score 706.16 (76 unrouted and 15 violations), using 291.39 CPU seconds and the job allocated 187.71 GB of memory so far.",
+    "2026-11-12 00:24:20.395 INFO   [565C5B\\E73867] Auto-routing pass #15 on board 'fe20af3d3047ef7a4678eb8a42e150fd' was completed in 10.07 seconds with score 698.45 (78 unrouted and 15 violations), using 302.28 CPU seconds and the job allocated 194.74 GB of memory so far.",
+    "2026-11-12 00:24:30.305 INFO   [565C5B\\E73867] Auto-routing pass #16 on board '0a3b212fe089ed0b22b847e6bb7d8b48' was completed in 9.42 seconds with score 706.16 (76 unrouted and 15 violations), using 312.17 CPU seconds and the job allocated 201.16 GB of memory so far.",
+    "2026-11-12 00:24:37.435 INFO   [565C5B\\E73867] Auto-routing pass #17 on board '91d76e8d6864427179071c49301cb442' was completed in 6.64 seconds with score 702.30 (77 unrouted and 15 violations), using 319.12 CPU seconds and the job allocated 205.45 GB of memory so far.",
+    "2026-11-12 00:24:43.022 INFO   [565C5B\\E73867] Auto-routing pass #18 on board 'a5845f0c22f19400d37621d20609bc46' was completed in 5.10 seconds with score 710.01 (75 unrouted and 15 violations), using 324.10 CPU seconds and the job allocated 208.11 GB of memory so far.",
+    "2026-11-12 00:24:48.241 INFO   [565C5B\\E73867] Auto-routing pass #19 on board '93706ea8b7fc3e274a68f492f5bbf7da' was completed in 4.72 seconds with score 710.01 (75 unrouted and 15 violations), using 330.06 CPU seconds and the job allocated 211.17 GB of memory so far.",
+    "2026-11-12 00:24:56.629 INFO   [565C5B\\E73867] Auto-routing pass #20 on board '0c63195c25d2fceb515bf048e18085b1' was completed in 7.89 seconds with score 710.01 (75 unrouted and 15 violations), using 337.98 CPU seconds and the job allocated 216.30 GB of memory so far.",
+    "2026-11-12 00:25:05.052 INFO   [565C5B\\E73867] Auto-routing pass #21 on board 'bb6d857ad7a909277be9905b63a6cca6' was completed in 7.93 seconds with score 710.01 (75 unrouted and 15 violations), using 345.88 CPU seconds and the job allocated 221.44 GB of memory so far.",
+    "2026-11-12 00:25:07.753 INFO   [565C5B\\E73867] Auto-routing pass #22 on board 'fb3db0d91f4e99de6d63722d48680b76' was completed in 2.20 seconds with score 717.72 (73 unrouted and 15 violations), using 348.88 CPU seconds and the job allocated 222.47 GB of memory so far.",
+    "2026-11-12 00:25:10.294 INFO   [565C5B\\E73867] Auto-routing pass #23 on board '2f919eee11eaa6667d41f607fc24aa86' was completed in 2.04 seconds with score 713.86 (74 unrouted and 15 violations), using 351.87 CPU seconds and the job allocated 223.51 GB of memory so far.",
+    "2026-11-12 00:25:12.896 INFO   [565C5B\\E73867] Auto-routing pass #24 on board '19327267be86030a8b8e3599c4224599' was completed in 2.10 seconds with score 717.72 (73 unrouted and 15 violations), using 353.86 CPU seconds and the job allocated 224.27 GB of memory so far.",
+    "2026-11-12 00:25:15.498 INFO   [565C5B\\E73867] Auto-routing pass #25 on board '0f8e6ef8d264bb0b2822b98e52d5198b' was completed in 2.10 seconds with score 725.43 (71 unrouted and 15 violations), using 356.86 CPU seconds and the job allocated 225.32 GB of memory so far.",
+    "2026-11-12 00:25:16.478 INFO   [565C5B\\E73867] Auto-routing pass #26 on board '0b2a34da7cb9aa238af5a150b574c160' was completed in 0.48 seconds with score 725.43 (71 unrouted and 15 violations), using 357.85 CPU seconds and the job allocated 225.55 GB of memory so far.",
+    "2026-11-12 00:25:17.916 INFO   [565C5B\\E73867] Auto-routing stage completed: started with 272 unrouted nets, completed in 362.72 seconds, final score: 725.43 (71 unrouted and 15 violations), using 358.85 total CPU seconds, 225.79 GB total allocated, and 444.5 MB peak heap usage.",
+    "2026-11-12 00:25:18.398 INFO   [565C5B\\E73867] Skipping optimization stage: the board has 71 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-12 00:25:18.428 INFO   [565C5B\\E73867] Job '565C5B\\E73867' finished with state: COMPLETED (elapsed: 6 minutes 4.42 seconds, finished at UTC: 2026-11-12T00:25:18.427251357Z).",
+    "2026-11-12 00:25:18.463 INFO   Saving output file '/tmp/sr-rx-PWR_B-u43ue3rn/PWR_B.ses' (SES)...",
+    "2026-11-12 00:25:18.465 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-u43ue3rn/PWR_B.ses' (89887 bytes)."
   ],
-  "dsn_sha256": "a6249d0c692fea84fc4ce3159eff1a32404e1c87b6bbfaf370e127862e9c1bf9",
-  "ses_sha256": "bf34c03a706d037d2b4a735e6ecd3f058e781193757a4d9ef9acb7762312fd8e",
+  "dsn_sha256": "d193e811370c09c29c43fe20815dbbdc7a31132d90203004e7501e7efcb9a379",
+  "ses_sha256": "af2109a0fb0d3e693027341ff51dab4c8b47958c9bcf4345d30616b32d2c6d3e",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 217,
+    "wires_fix": 249,
     "wires_protect": 0,
     "keepouts": 70,
     "planes": 2,
@@ -107,6 +107,10 @@
         "width": "150",
         "clearance": "150"
       },
+      "SCRIPTED_SIG": {
+        "width": "150",
+        "clearance": "150"
+      },
       "SCRIPTED_PWR1A": {
         "width": "350",
         "clearance": "150"
@@ -118,8 +122,8 @@
     }
   },
   "locked_segments": {
-    "before_ses_import": 217,
-    "after_ses_import": 217
+    "before_ses_import": 249,
+    "after_ses_import": 249
   },
   "drc_command": [
     "kicad-cli",
@@ -134,7 +138,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "1cfcb89bddef060d434013324d60a1298a85f35fecfeaf80654c67c3e09d9480",
+  "board_sha256": "476ddc3a3aed59c428beebc74c1a5fd645f9a833de3e5b5dbcefd0709dcf0808",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -421,6 +425,12 @@
       "footprint": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal",
       "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal.kicad_mod",
       "sha256": "a17fef9af3538fb73a6e15de40cbb9c3674f04c7f1fb750101a103c205d33ee2"
+    },
+    {
+      "ref": "J209",
+      "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Samtec.pretty/Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical.kicad_mod",
+      "sha256": "ff556995775651c9e6395aaa029847ad24251f121cbd478fd464f46bd691cec1"
     },
     {
       "ref": "J506",
@@ -907,18 +917,12 @@
       "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
       "file": "build/kicad/footprints/Package_SO.pretty/SOIC-8_3.9x4.9mm_P1.27mm.kicad_mod",
       "sha256": "074ecb2092b24fa4b4b9cdd7c926fc587b0d7d6d21e7341e57935fd42d36894f"
-    },
-    {
-      "ref": "B2B1",
-      "footprint": "Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm",
-      "file": "kicad-image:Connector_Hirose_FX8.pretty/Hirose_FX8-120P-SV_2x60_P0.6mm.kicad_mod",
-      "sha256": "9037e84fbb6b50960b888d23e8ba8dea9d7cd6d705ad00ea4d6b2893bffb586f"
     }
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43090213258",
-    "sha": "d2a8a99a3963bed99cf5c43b92845a5a879e23d3",
-    "ref": "refs/heads/wip/w2-int"
+    "run_id": "43126226601",
+    "sha": "5ebf2138c2b4bb479cf156d7f3364a28f128fa51",
+    "ref": "refs/heads/wip/w2-b2b-route-v2"
   }
 }
