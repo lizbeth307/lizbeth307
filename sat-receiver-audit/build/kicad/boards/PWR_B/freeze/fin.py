@@ -173,6 +173,17 @@ class Finisher:
             try:
                 recs = R.commit(self.m, net, res, tag, lambda *a: None)
             except RuntimeError as e:
+                if R.MARGIN_STEPS < 0.75:  # W2 PWRB-R: the fine raster margin found a path the exact check refuses; once more at 0.75
+                    self.log(f'    {net}: commit failed at raster margin {R.MARGIN_STEPS} ({e}); routing again at 0.75')
+                    keep = R.MARGIN_STEPS
+                    R.MARGIN_STEPS = 0.75
+                    try:
+                        ok, more = self.connect(net, allow_rip=allow_rip, width=width, soft_cost=soft_cost, margin=margin, g=g,
+                                                via_cost=via_cost, first=first, max_iter=max_iter, layers=layers, bias=bias,
+                                                l2_bias=l2_bias)
+                    finally:
+                        R.MARGIN_STEPS = keep
+                    return ok, ripped + [n for n in more if n not in ripped]
                 self.log(f'    {net}: commit failed {e}')
                 return False, ripped
             self.records += recs

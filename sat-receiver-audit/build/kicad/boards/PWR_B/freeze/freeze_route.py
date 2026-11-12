@@ -178,6 +178,27 @@ def replace_keepouts(m, ms, log=print):
     return removed
 
 
+def frozen_to_router(m, cur):
+    """Locked board copper that is not scripted copper of the current spec (the frozen copper of a spec that had
+    route-frozen.json, for example the pre-route of prefreeze.py) is taken as router copper: harvested, rippable."""
+    key = lambda p: (round(p[0], 3), round(p[1], 3))
+    segs = set()
+    for t in cur['tracks']:
+        pts = [K(*p) for p in t['path']]
+        for a, b in zip(pts, pts[1:]):
+            segs.add((t['net'], t['layer'], frozenset((key(a), key(b)))))
+    vias = {(v['net'], key(K(*v['at']))) for v in cur['vias']}
+    moved = 0
+    for it in m.items:
+        if not (it.alive and it.src == 'scripted'):
+            continue
+        if it.kind == 'track' and (it.net, it.layers[0], frozenset((key(it.a), key(it.b)))) not in segs:
+            it.src, moved = 'router', moved + 1
+        elif it.kind == 'via' and (it.net, key(it.at)) not in vias:
+            it.src, moved = 'router', moved + 1
+    return moved
+
+
 def scripted_matches(m, cur):
     """The locked copper of the board is the scripted copper of the current spec (same segment and via count)."""
     segs = sum(len(t['path']) - 1 for t in cur['tracks'])
@@ -197,16 +218,22 @@ def main(argv=None):
     ap.add_argument('--pad-inset', type=float, default=0.13,
                     help='a new path starts or ends at least this far inside a pad edge (KiCad connection_width; default 0.13)')
     ap.add_argument('--allow-open', action='store_true', help='write the result even with open connections (study only)')
+    ap.add_argument('--margin-steps', type=float, default=0.25,
+                    help='raster margin over the exact clearance in grid steps (default 0.25; 0.75 again after a refused commit)')
     ap.add_argument('--keepouts-from-spec', action='store_true',
                     help="replace the board's KO_AREA_* keep-outs by the spec's and remove the router copper that breaks them")
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     R.PAD_INSET = args.pad_inset
+    R.MARGIN_STEPS = args.margin_steps
     art = Path(args.artifact)
     report = json.loads((art / 'board/report.json').read_text(encoding='utf-8'))
     ms = load_make_spec()
     cur = current(ms)
     m = M.Model(str(art / 'board/PWR_B.kicad_pcb'))
+    moved = frozen_to_router(m, cur)
+    if moved:
+        print(f'{moved} locked items of an earlier route-frozen.json taken as router copper')
     ok, counts = scripted_matches(m, cur)
     if not ok:
         raise SystemExit(f'freeze_route: the board locked copper is not the scripted copper of the current spec {counts}: '

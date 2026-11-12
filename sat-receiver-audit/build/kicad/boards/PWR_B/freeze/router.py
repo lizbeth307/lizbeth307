@@ -6,6 +6,10 @@ from model import cb
 
 VIA_D, VIA_DRILL = 0.7, 0.3  # PWR_B vias (make_spec.py VIA_D / VIA_DRILL, PWR_B.kicad_pro classes)
 PAD_INSET = 0.0  # incremental.py sets it: a path may start or end in a pad only this far inside its edge (KiCad connection_width)
+# Raster margin over the exact clearance, in grid steps (W2 CTRL-R: 0.75). W2 PWRB-R starts at 0.25, so that a PWR1A
+# track (0.35 mm) can leave a 0.30 mm J209 contact along its axis between neighbours 0.20 mm away (exact gap 0.175 mm);
+# every committed segment is checked exactly, and fin.py routes again at 0.75 when a commit fails.
+MARGIN_STEPS = 0.75
 
 
 def cap_dist(X, Y, x1, y1, x2, y2, r):
@@ -47,6 +51,8 @@ class Grid:
     def __init__(self, m, box, g=0.05):
         self.m, self.g = m, g
         x0, y0, x1, y1 = box
+        # origin on the global grid lattice (W2 PWRB-R): pad centres on a 0.05 mm lattice (most PWR_B pads) are grid nodes
+        x0, y0 = math.floor(x0 / g + 1e-9) * g, math.floor(y0 / g + 1e-9) * g
         self.x0, self.y0 = x0, y0
         self.nx = int(math.ceil((x1 - x0) / g)) + 1
         self.ny = int(math.ceil((y1 - y0) / g)) + 1
@@ -78,7 +84,7 @@ class Grid:
 
     def blocked_track(self, net, layer, width, clr=M.CLR, margin=None, ignore=(), soft=None, soft_src=()):
         g = self.g
-        margin = g * 0.75 if margin is None else margin
+        margin = g * MARGIN_STEPS if margin is None else margin
         blk = np.zeros(self.X.shape, dtype=bool)
         r = width / 2
         bx = self.box()
@@ -108,7 +114,7 @@ class Grid:
 
     def blocked_via(self, net, d=VIA_D, drill=VIA_DRILL, clr=M.CLR, margin=None, ignore=(), soft=None, soft_src=()):
         g = self.g
-        margin = g * 0.75 if margin is None else margin
+        margin = g * MARGIN_STEPS if margin is None else margin
         r = d / 2
         blk = np.zeros(self.X.shape, dtype=bool)
         bx = self.box()
