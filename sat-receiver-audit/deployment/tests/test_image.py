@@ -1951,6 +1951,10 @@ class PpsGpioImageTests(unittest.TestCase):
         self.assertEqual(spec["dkms_package"], "srrx-pps-gpio")
         self.assertEqual(self.pps_dkms.KERNEL_RELEASE, self.recipe["kernel_version"])
         self.assertFalse({"author", "description"} & set(build_image.PPS_MODINFO_FIELDS))  # MODULE_AUTHOR carries addresses
+        # merged /usr: kmod may name the installed file under /usr/lib/modules; both are the recipe's path
+        for name in (spec["install_path"], "/usr" + spec["install_path"]):
+            self.assertEqual(bootchain.module_path(name), spec["install_path"])
+        self.assertIsNone(bootchain.module_path(""))
         for key in ("CONFIG_PPS", "CONFIG_PPS_CLIENT_GPIO", "CONFIG_DRM_SIMPLEDRM", "CONFIG_SYSFB_SIMPLEFB", "CONFIG_VT",
                     "CONFIG_USB_XHCI_PCI", "CONFIG_USB_HID"):
             self.assertIn(key, build_image.CONFIG_KEYS)

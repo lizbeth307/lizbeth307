@@ -641,6 +641,12 @@ SESSION_SETTLE = 60  # seconds both must then keep their PIDs
 SESSION_JOURNAL_TAGS = ("lab-session", "labwc", "cage")
 
 
+def module_path(path):
+    """A module file as /lib/modules/...: with merged /usr, kmod may name the same file under /usr/lib/modules/."""
+    text = str(path or "")
+    return "/lib/modules/" + text[len("/usr/lib/modules/"):] if text.startswith("/usr/lib/modules/") else (text or None)
+
+
 def pps_report(out):
     """QEMU smoke only (W2 IMG-4): `modprobe pps_gpio` on the booted slot kernel, then the loaded module's state, file and
     vermagic (modinfo -n/-F; the author field is never read). The module stays loaded until the poweroff."""
@@ -660,7 +666,7 @@ def pps_report(out):
         except OSError:
             return None
     return {"modprobe": modprobe, "loaded": sysfs.is_dir(), "initstate": read("initstate"), "taint": read("taint"),
-            "filename": filename, "sha256": hashlib.sha256(path.read_bytes()).hexdigest() if path and path.is_file() else None,
+            "filename": module_path(filename), "sha256": hashlib.sha256(path.read_bytes()).hexdigest() if path and path.is_file() else None,
             "vermagic": out(["modinfo", "-F", "vermagic", PPS_MODULE]), "uname_r": platform.release(),
             "pps_devices": sorted(p.name for p in Path("/sys/class/pps").iterdir()) if Path("/sys/class/pps").is_dir() else []}
 

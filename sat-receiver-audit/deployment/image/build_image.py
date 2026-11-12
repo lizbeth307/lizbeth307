@@ -2331,6 +2331,11 @@ def modules_dir(root, kver):
     raise BuildError("no /lib/modules/" + kver + " in the root (the locked linux-image deb installs it at the kernel step)")
 
 
+def module_path(path):
+    """A module file as kmod names it, /lib/modules/... (merged /usr: /usr/lib/modules/... is the same file)."""
+    return bootchain.module_path(path)
+
+
 def _modinfo(root, kver, field):
     """One modinfo field of pps_gpio in the root's chroot (-n: the file depmod resolves); None when modinfo fails."""
     done = chroot(root, ["modinfo", "-k", kver] + (["-n"] if field == "filename" else ["-F", field]) + [PPS_MODULE_NAME], check=False)
@@ -2360,6 +2365,7 @@ def build_pps_module(root, cache, work, recipe, kconfig):
             shutil.rmtree(path)
         elif os.path.lexists(path):
             path.unlink()
+    dkms_tree.mkdir(parents=True)  # dkms 3.0.11 check_rw_dkms_tree: the tree must exist and be writable
     run(["dpkg-deb", "-x", Path(cache) / lock_artifacts()[spec["headers_artifact"]]["cache_path"], headers])
     kdir = headers / "usr/src" / ("linux-headers-" + kver)
     if not (kdir / "Makefile").is_file():
@@ -2396,7 +2402,7 @@ def build_pps_module(root, cache, work, recipe, kconfig):
     listed = [line for line in (modules_dir(root, kver) / "modules.dep").read_text(errors="replace").splitlines()
               if line.split(":", 1)[0] == relative]
     modinfo = {field: _modinfo(root, kver, field) for field in PPS_MODINFO_FIELDS}
-    if len(listed) != 1 or modinfo["filename"] != spec["install_path"] or modinfo["vermagic"] != vermagic:
+    if len(listed) != 1 or module_path(modinfo["filename"]) != spec["install_path"] or modinfo["vermagic"] != vermagic:
         raise BuildError("depmod/modinfo of pps_gpio in the root A chroot: " + json.dumps({"modules.dep": listed, "modinfo": modinfo}))
     status = run(["dkms", "status", "-m", name, "-v", version, "-k", kver] + trees, check=False)
     return dict(record, status="INSTALLED", why=None, sha256=sha256(target), size=target.stat().st_size, vermagic=vermagic,
