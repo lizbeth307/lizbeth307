@@ -263,12 +263,12 @@
       "sha256": "209b40db4d6e8c3f172eb537ff136e5b098944ab1b9ffd231d6ca7a5167f0d98"
     },
     "fit-report.json": {
-      "bytes": 135286,
-      "sha256": "e0ceaf98a73e05a4036b419b86a30a6fee453f6bc655c924a668f5e5d6a727ea"
+      "bytes": 135420,
+      "sha256": "c9380e70bd11664fcf78c9b19ac6d9707f4b9e76c55a578dbaff4d6ce2fd2eec"
     },
     "fit-report.md": {
-      "bytes": 67373,
-      "sha256": "6f38f68595ef1093b212b647cbb2b73b500b4890827700825f633c154b14831c"
+      "bytes": 67413,
+      "sha256": "35eeab8cf0f4570cc8c78387db92a0b71145d3915cd9d7d2d0fd9158dcf86bb9"
     },
     "harness-routes.json": {
       "bytes": 57325,

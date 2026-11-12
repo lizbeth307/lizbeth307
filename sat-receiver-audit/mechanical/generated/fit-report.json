@@ -4,7 +4,7 @@
   "generator": {
     "version": "1.0.0",
     "params_sha256": "041e1dec897f5ed94d3328fe2fa0f3433b9097f34dca3e083a1d3cf89fb460d2",
-    "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
+    "pcb_components_sha256": "d4030f096af7bd2511a9bb92ea2af79c72d1196946044161d69ebc6b52635136"
   },
   "envelope": {
     "model": [
@@ -2187,10 +2187,10 @@
       },
       "CTRL": {
         "area_mm2": 5915.0,
-        "courtyard_raw_mm2": 5675.0,
+        "courtyard_raw_mm2": 5685.0,
         "modules_mm2": 1221.0,
         "per_domain_raw_mm2": {
-          "CTRL_HMI": 5675.0
+          "CTRL_HMI": 5685.0
         },
         "per_group_raw_mm2": {
           "E3 Роз'єми джгутів CTRL": 2368.0,
@@ -2205,7 +2205,8 @@
           "E3 Pico power control": 48.0,
           "E3 Ambient sensor": 31.0,
           "E3 MCP hardware watchdog reset": 26.0,
-          "E3 Thermal sensors": 17.0
+          "E3 Thermal sensors": 17.0,
+          "E3 LAB5 right-group limit": 10.0
         },
         "per_group_need_mm2": {
           "E3 Роз'єми джгутів CTRL": [
@@ -2259,16 +2260,20 @@
           "E3 Thermal sensors": [
             26.0,
             31.0
+          ],
+          "E3 LAB5 right-group limit": [
+            15.0,
+            18.0
           ]
         },
-        "parts": 147,
-        "need_1_5_mm2": 7901.0,
-        "need_1_8_mm2": 9238.0,
-        "estimate_mm2": 9238.0,
+        "parts": 150,
+        "need_1_5_mm2": 7917.0,
+        "need_1_8_mm2": 9256.0,
+        "estimate_mm2": 9256.0,
         "ratio_1_5": 1.34,
         "ratio_1_8": 1.56,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 9238 mm2 at fill 1.8 > outline 5915 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        "result": "OPEN: need 9256 mm2 at fill 1.8 > outline 5915 mm2 (model estimate; partition and placement decide, AREA / PCB)"
       }
     },
     "with_harness": {
