@@ -40,10 +40,10 @@
    "total_raw_mm2": 2768.5
   },
   "CTRL": {
-   "refs": 146,
-   "parts_raw_mm2": 4447.3,
+   "refs": 149,
+   "parts_raw_mm2": 4457.4,
    "modules_mm2": 1242.9,
-   "total_raw_mm2": 5690.2
+   "total_raw_mm2": 5700.3
   }
  },
  "pwr_groups": [
@@ -1927,18 +1927,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -3425,18 +3425,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -4878,18 +4878,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -6278,18 +6278,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -7624,18 +7624,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -9084,18 +9084,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1582.1,
+      "parts_raw_mm2": 1592.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.614,
-      "demand_1_mm2": 2831.2,
-      "ratio_1": 1.628,
-      "demand_1.5_mm2": 3625.4,
-      "ratio_1.5": 1.271,
-      "demand_1.8_mm2": 4101.9,
-      "ratio_1.8": 1.124,
+      "raw_fill": 0.616,
+      "demand_1_mm2": 2841.3,
+      "ratio_1": 1.622,
+      "demand_1.5_mm2": 3640.5,
+      "ratio_1.5": 1.266,
+      "demand_1.8_mm2": 4120.1,
+      "ratio_1.8": 1.119,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -10443,18 +10443,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -11785,18 +11785,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -13263,18 +13263,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -14586,18 +14586,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -16017,18 +16017,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4608.9,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 1136.4,
-      "raw_fill": 0.617,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.62,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.264,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.117,
+      "raw_fill": 0.619,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.615,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.259,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.112,
       "fits_at_1_8": true
      },
      "bottom": {
@@ -17450,18 +17450,18 @@
     "sides": {
      "top": {
       "usable_mm2": 4970.1,
-      "parts_raw_mm2": 1595.1,
+      "parts_raw_mm2": 1605.2,
       "headers_raw_mm2": 0.0,
       "tps_raw_mm2": 6.2,
       "modules_at_1_0_mm2": 1242.9,
       "tht_fields_of_other_side_mm2": 775.2,
-      "raw_fill": 0.572,
-      "demand_1_mm2": 2844.2,
-      "ratio_1": 1.747,
-      "demand_1.5_mm2": 3644.9,
-      "ratio_1.5": 1.364,
-      "demand_1.8_mm2": 4125.3,
-      "ratio_1.8": 1.205,
+      "raw_fill": 0.574,
+      "demand_1_mm2": 2854.3,
+      "ratio_1": 1.741,
+      "demand_1.5_mm2": 3660.0,
+      "ratio_1.5": 1.358,
+      "demand_1.8_mm2": 4143.4,
+      "ratio_1.8": 1.2,
       "fits_at_1_8": true
      },
      "bottom": {
