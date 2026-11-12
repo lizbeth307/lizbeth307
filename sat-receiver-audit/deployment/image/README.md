@@ -194,7 +194,7 @@ sudo python3 /opt/srrx/deployment/image/update_slot.py apply --execute --mirror-
 
 | ID | Тест | Критерій | Стан |
 |---|---|---|---|
-| ОБР-09 | Оновлення A→B на збирачі (тестовий ключ, `srrx-mirror`) і QEMU сценарій 4; хост-тести відмов | `MODEL_PASS`; запис `INACTIVE_SLOT_UPDATED_TRIAL_ARMED`, `NOT_RELEASE`, пакети лише з публікацій; `labB+3.conf` → `labB.conf`; план гостя: B робочий, ціль A; `release-keyring --check` відхиляє тестовий ключ | CI-модель, не Q6A: прогін 43148456848 (12.11.2026, коміт bb2613b) — `MODEL_PASS`: запис `INACTIVE_SLOT_UPDATED_TRIAL_ARMED`, `NOT_RELEASE`, `srrx-mirror` — 5 пакетів закриття, план apt порожній, `labB+3.conf` (покоління 3) → `labB.conf`, план гостя — B робочий, ціль A; `release-keyring --check` відхилив тестовий ключ; крок CI — 5 хв 25 с |
+| ОБР-09 | Оновлення A→B на збирачі (тестовий ключ, `srrx-mirror`) і QEMU сценарій 4; хост-тести відмов | `MODEL_PASS`; запис `INACTIVE_SLOT_UPDATED_TRIAL_ARMED`, `NOT_RELEASE`, пакети лише з публікацій; `labB+3.conf` → `labB.conf`; план гостя: B робочий, ціль A; `release-keyring --check` відхиляє тестовий ключ | CI-модель, не Q6A: прогін 43164321513 (12.11.2026, коміт f4d2298) — `MODEL_PASS`: запис `INACTIVE_SLOT_UPDATED_TRIAL_ARMED`, `NOT_RELEASE`, `srrx-mirror` — 5 пакетів закриття, план apt і набір встановлення порожні, `labB+3.conf` (покоління 3) → `labB.conf`, план гостя — B робочий, ціль A; `release-keyring --check` відхилив тестовий ключ; крок CI — 5 хв 32 с |
 | ОБР-10 | Оновлення на Q6A з носія USB, підписаного ключем власника (`srrx-lab` і `srrx-mirror`) | живлення за правилом, `verify-repo --release`, проба, благословення; зламана ціль → відкат на робочий слот | СТЕНД, OPEN (W-03, церемонія ключа, RM-6) |
 
 ## Відкрите для інших пакетів
