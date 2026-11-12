@@ -1,6 +1,6 @@
 # Вставка HDMI_INSERT, 16 × 18 мм — W2 PCB-SB2 (контур і розміщення; гнізда FPC — OPEN)
 
-**Статус: `SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION`.** Плату розміщено й розведено в `sr-rx-pcb` (KiCad 10.0.7, Freerouting 2.5.0; прогін розведення 43111813288 на e7c7763f): DRC — помилок 0, непідключених 0, попереджень 4 (лише шовкографія), `ignored_checks` порожній; аудит source-pad — 0 помилок; аудит меж — **`provisional: FPC socket ref pending GR-4 (Adafruit 3548/3550/3560 FPC pinout and socket MPN unpublished)`**; `pcb/check_boards.py` — 0 знахідок. Це результат CI/моделі, не випуск у виробництво: на цьому етапі плата — лише острів контакту 18 (+5 V) між двома гніздами FPC, тест лінії HDMI лишається OPEN.
+**Статус: `SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION`.** Плату розміщено й розведено в `sr-rx-pcb` (KiCad 10.0.7, Freerouting 2.5.0; прогін розведення 43129454692 на 00ae328 — повторне розведення на смузі wip/w2-int після злиття B2B: входи ті самі, аудит межі тепер рахує J208/J209; результат той самий, що в прогоні 43111813288 на e7c7763f, лише відрізків 40 замість 41): DRC — помилок 0, непідключених 0, попереджень 4 (лише шовкографія), `ignored_checks` порожній; аудит source-pad — 0 помилок; аудит меж — **`provisional: FPC socket ref pending GR-4 (Adafruit 3548/3550/3560 FPC pinout and socket MPN unpublished)`**; `pcb/check_boards.py` — 0 знахідок. Це результат CI/моделі, не випуск у виробництво: на цьому етапі плата — лише острів контакту 18 (+5 V) між двома гніздами FPC, тест лінії HDMI лишається OPEN.
 
 ## Що на платі і чого немає
 
