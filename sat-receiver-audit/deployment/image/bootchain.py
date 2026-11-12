@@ -719,6 +719,7 @@ def session_report(out, model, user, limit=SESSION_LIMIT, settle=SESSION_SETTLE)
     """QEMU session scenario only: wait until the session user's labwc runs and its console unit is active, check that both
     keep their PIDs for `settle` seconds, then report the session (smoke_qemu.session_mismatches compares it)."""
     import pwd
+    import subprocess
     import time
     try:
         entry = pwd.getpwnam(user)
@@ -760,7 +761,15 @@ def session_report(out, model, user, limit=SESSION_LIMIT, settle=SESSION_SETTLE)
     for line in out(["loginctl", "list-sessions", "--no-legend"]).splitlines()[:6]:
         if line.split():
             sid = line.split()[0]
-            sessions[sid] = unit_properties(out(["loginctl", "show-session", sid, "--property=Name,Class,Type,Service,Seat,VTNr,Active,State,Remote"]))
+            # One -p per property (image run 43149697672 printed nothing for a comma list); the raw text if nothing parses.
+            argv = ["loginctl", "--no-pager", "show-session", sid] + [word for name in ("Name", "Class", "Type", "Service", "Seat", "VTNr",
+                                                                                          "Active", "State", "Remote") for word in ("-p", name)]
+            try:
+                done = subprocess.run(argv, capture_output=True, text=True, timeout=60)
+                text, error = done.stdout, done.stderr
+            except (OSError, subprocess.SubprocessError) as exc:
+                text, error = "", type(exc).__name__
+            sessions[sid] = unit_properties(text) or {"raw": redact_addresses(line + " | " + text + " | " + error)[:400]}
     drm = {}
     for path in sorted(Path("/sys/class/drm").glob("card*")) if Path("/sys/class/drm").is_dir() else []:
         status = path / "status"
@@ -779,6 +788,9 @@ def session_report(out, model, user, limit=SESSION_LIMIT, settle=SESSION_SETTLE)
             "greetd_conf_present": os.path.lexists("/etc/greetd/greetd.conf"),
             "journal": redact_addresses(out(["journalctl", "-b", "-o", "cat", "--no-pager", "-n", "120"] + tags))[-4000:],
             "greetd_journal": redact_addresses(out(["journalctl", "-b", "-u", "greetd.service", "-o", "cat", "--no-pager", "-n", "40"]))[-2000:],
+            # the framebuffer and DRM lines of this boot's kernel log (the cmdline has quiet: they are not on the console)
+            "kernel_display_journal": redact_addresses(out(["journalctl", "-b", "-k", "-o", "cat", "--no-pager", "-n", "40", "--grep",
+                                                            "drm|framebuffer|simpledrm|efifb|fb0|ramfb|input:"]))[-2500:],
             "console_journal": redact_addresses(out(["journalctl", "-b", "_SYSTEMD_USER_UNIT=" + CONSOLE_UNIT, "-o", "cat", "--no-pager",
                                                      "-n", "40"]))[-2000:]}
 

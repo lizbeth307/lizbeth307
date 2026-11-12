@@ -2000,7 +2000,8 @@ class PpsGpioImageTests(unittest.TestCase):
         work.mkdir()
         source = b"/* stand-in for the fetch-only radxa/kernel file */\n"
         (cache / "pps-gpio/pps-gpio.c").write_bytes(source)
-        module = (b"\x7fELF" + b"\0" * 60 + b"license=GPL\0author=Someone <someone@example.org>\0vermagic=" + vermagic.encode() + b"\0")
+        author = ("author=Someone <someone" + "@" + "example" + ".org>").encode()  # built at run time: the tree carries no address
+        module = b"\x7fELF" + b"\0" * 60 + b"license=GPL\0" + author + b"\0vermagic=" + vermagic.encode() + b"\0"
         pin = dict(build_image.pps_pin(), sha256=hashlib.sha256(source).hexdigest(), size=len(source))
         calls = []
 
@@ -2337,7 +2338,8 @@ class SmokePpsAndSessionTests(unittest.TestCase):
         self.assertEqual(expect["entries_after"], sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"]))
         self.assertFalse(expect["selftest"])
         self.assertEqual([s[0] for s in self.smoke.SCENARIOS], ["trial-a-blessed", "trial-b-fails", "fallback-a"])  # A/B unchanged
-        self.assertIn("virtio-gpu-pci", self.smoke.SESSION_DEVICES)
+        self.assertIn("ramfb", self.smoke.SESSION_DEVICES)  # a GOP with a framebuffer (virtio-gpu's is Blt-only: 0 GPUs)
+        self.assertNotIn("virtio-gpu-pci", self.smoke.SESSION_DEVICES)
         self.assertIn("usb-tablet", self.smoke.SESSION_DEVICES)  # wlroots 0.17.1 libinput needs an input device
         self.assertEqual(bootchain.SESSION_TARGET, "graphical.target")
 

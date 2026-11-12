@@ -461,12 +461,16 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
 # ---------------------------------------------------------------- touch session scenario (W2 IMG-4)
 # A separate QEMU boot of its own sparse copy (smoke_qemu.py --session, its own CI step after the A/B smoke: about 15 min
 # under TCG). The golden labA.conf is rewritten in place (as scenario 3 rewrites the blessed one) with the session report
-# command, which starts graphical.target. virtio-gpu-pci gives the UEFI GOP framebuffer, which 6.18.2-4-qcom drives with
-# simpledrm (it has no DRM_VIRTIO_GPU; CONFIG_DRM_SIMPLEDRM=y and CONFIG_SYSFB_SIMPLEFB=y in boot/config-6.18.2-4-qcom, read
-# 2026-11-12), and a USB keyboard and tablet stand in for the field touch panel: wlroots 0.17.1's libinput backend does not
-# start without an input device unless WLR_LIBINPUT_NO_DEVICES is set (backend/libinput/backend.c:109-115 of the noble
-# source). WLR_RENDERER=pixman and the runtime console link are bootchain.session_model_setup. A MODEL, not Q6A hardware.
-SESSION_DEVICES = ("-device", "virtio-gpu-pci", "-device", "qemu-xhci", "-device", "usb-kbd", "-device", "usb-tablet")
+# command, which starts graphical.target. The display is QEMU's ramfb: AAVMF's QemuRamfbDxe gives a UEFI GOP with a linear
+# framebuffer in reserved memory (edk2-stable202402 OvmfPkg/QemuRamfbDxe/QemuRamfb.c:300; noble's qemu-efi-aarch64 is
+# 2024.02-2ubuntu0.10), which 6.18.2-4-qcom drives with simpledrm (CONFIG_DRM_SIMPLEDRM=y, CONFIG_SYSFB_SIMPLEFB=y in
+# boot/config-6.18.2-4-qcom, read 2026-11-12). virtio-gpu-pci, the plan's choice, gives nothing here: the kernel has no
+# DRM_VIRTIO_GPU and VirtioGpuDxe's GOP is PixelBltOnly (Gop.c:262, :332), so the EFI stub finds no framebuffer and wlroots
+# found 0 GPUs (image run 43149697672). A USB keyboard and tablet stand in for the field touch panel: wlroots 0.17.1's
+# libinput backend does not start without an input device unless WLR_LIBINPUT_NO_DEVICES is set
+# (backend/libinput/backend.c:109-115 of the noble source). WLR_RENDERER=pixman and the runtime console link are
+# bootchain.session_model_setup. A MODEL, not Q6A hardware.
+SESSION_DEVICES = ("-device", "ramfb", "-device", "qemu-xhci", "-device", "usb-kbd", "-device", "usb-tablet")
 SESSION_NEEDED_CONFIG = ("CONFIG_DRM_SIMPLEDRM", "CONFIG_SYSFB_SIMPLEFB", "CONFIG_VT", "CONFIG_USB_XHCI_PCI", "CONFIG_USB_HID")
 SESSION_ENTRY = ("labA.conf", "A", 2)  # golden labA: blessed, version 2 (bootchain.entries), so it stays the newest
 SESSION_SCENARIO = ("session-greetd-labwc", {"slot": "A", "boot_check": "BOOT_SELF_CHECK_OK", "boot_complete": None, "bless": "inactive",
@@ -521,7 +525,7 @@ def session_mismatches(observed, recorded):
     if observed.get("greetd_conf_present") is not False:
         bad.append("/etc/greetd/greetd.conf exists on the booted slot (greetd 0.9.0 would read it before config.toml)")
     if bad:  # what the session printed, so a failure is diagnosable from the report alone
-        for key in ("journal", "greetd_journal", "console_journal"):
+        for key in ("journal", "greetd_journal", "console_journal", "kernel_display_journal"):
             if observed.get(key):
                 bad.append("%s: %s" % (key, observed[key][-1500:]))
     return bad

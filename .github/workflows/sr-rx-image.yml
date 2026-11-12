@@ -329,7 +329,7 @@ jobs:
             --work "$W/smoke" --out "$OUT/smoke" --require-model
           python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/smoke-report.json"
       # W2 IMG-4: a separate boot of its own copy (about 15 min under TCG), also after a failed A/B smoke of a built image:
-      # graphical.target with greetd, labwc and the console under a virtio-gpu framebuffer and USB input. A MODEL.
+      # graphical.target with greetd, labwc and the console on a ramfb framebuffer (simpledrm) and USB input. A MODEL.
       - name: QEMU session scenario of the Route A image (greetd, labwc, console)
         if: always() && steps.build.outcome == 'success' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
         run: |
