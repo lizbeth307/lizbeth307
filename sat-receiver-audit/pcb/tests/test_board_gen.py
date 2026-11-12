@@ -675,3 +675,53 @@ class CtrlSpecAndGenerator(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class CtrlRightGroupLimit(unittest.TestCase):
+    """W2 CTRL-4 (PROTECT): the right LAB5 group of CTRL hangs on E3_LAB5_LIM behind the current-limited switch U316
+    (design/E3.json R-E3-18); its copper is measured against the limited class PWR06A, not exempted.
+    Skipped on a tree without the CTRL spec or without the change."""
+
+    RIGHT = ('C320', 'C321', 'C322', 'D301', 'Q304', 'R367', 'U315')
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+        self.nc = bg.read_json(bg.BASE / 'pcb/generated/netclasses.json')
+        if 'E3_LAB5_LIM' not in self.nc['nets']:
+            self.skipTest('no E3_LAB5_LIM')
+
+    def test_limited_class_covers_the_switch_limit(self):
+        net = self.nc['nets']['E3_LAB5_LIM']
+        cls = self.nc['classes'][net['class']]
+        self.assertEqual(net['class'], 'PWR06A')
+        self.assertEqual(cls['kind'], 'power')
+        self.assertLessEqual(net['inputs']['protective_a'], cls['capacity']['protective_a'])
+        self.assertLessEqual(net['inputs']['continuous_a'], cls['capacity']['continuous_a'])
+        self.assertLessEqual(net['required_inner_width_mm'], cls['inner_min_width_mm'] + 1e-9)
+        self.assertLessEqual(net['required_outer_width_mm'], cls['outer_min_width_mm'] + 1e-9)
+        # RILIM 49.9k: TI SLVS841G eq. 1 (IOS max) and eq. 3 (IOS min), mA with RILIM in kOhm
+        graph = bg.load_graph()
+        self.assertEqual(graph['U316']['value'], 'TPS2553DRVR')  # constant current, not the latch-off -1
+        r = 49.9
+        self.assertTrue(graph['R372']['value'].startswith('49.9k'))
+        self.assertLessEqual(22980 / r ** 0.94 / 1000, net['inputs']['protective_a'] + 5e-4)
+        self.assertGreaterEqual(25230 / r ** 1.016 / 1000, net['inputs']['continuous_a'])
+        pins = {p['number']: p.get('net') for p in graph['U316']['pins']}
+        self.assertEqual((pins['6'], pins['4'], pins['1'], pins['7']), ('LAB5', 'LAB5', 'E3_LAB5_LIM', 'GND'))
+        for ref in self.RIGHT:
+            self.assertIn('E3_LAB5_LIM', {p.get('net') for p in graph[ref]['pins']}, ref)
+            self.assertNotIn('LAB5', {p.get('net') for p in graph[ref]['pins']}, ref)
+
+    def test_right_group_is_measured_not_exempted(self):
+        spec = bg.read_json(bg.spec_path('CTRL'))
+        self.assertFalse(set(spec['branch_exempt']) & set(self.RIGHT))
+        cls = self.nc['classes']['PWR06A']
+        tracks = [t for t in spec['pre_route']['tracks'] if t['net'] == 'E3_LAB5_LIM']
+        self.assertTrue(any(t['layer'] == 'In2.Cu' for t in tracks))
+        for t in tracks:
+            need = cls['inner_min_width_mm'] if t['layer'].startswith('In') else cls['outer_min_width_mm']
+            self.assertGreaterEqual(t['width_mm'] + 1e-9, need, t['id'])
+        project = bg.read_json(bg.BASE / spec['project'])
+        patterns = {p['pattern']: p['netclass'] for p in project['net_settings']['netclass_patterns']}
+        self.assertEqual(patterns['E3_LAB5_LIM'], 'PWR06A')

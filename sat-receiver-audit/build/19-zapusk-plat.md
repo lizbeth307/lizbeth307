@@ -27,7 +27,7 @@
 
 **RF:** 3V3_Q6A, BIAS_CH1, BIAS_CH2_PORT, BIAS_CH3_PORT, BIAS_CH4, LAB5_RLY, LNB13V2
 
-**CTRL:** 3V3_Q6A, E3_ADC3V0, E3_BLOWER_GND, E3_FAN5, E3_FAN5_P, E3_GNSS5V, E3_PICO3V3, LAB5
+**CTRL:** 3V3_Q6A, E3_ADC3V0, E3_BLOWER_GND, E3_FAN5, E3_FAN5_P, E3_GNSS5V, E3_LAB5_LIM, E3_PICO3V3, LAB5
 
 Шина, що переходить між PWR-A і PWR-B через стик B2B, стоїть в обох списках: кожну голу плату міряють окремо.
 
