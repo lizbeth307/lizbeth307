@@ -591,6 +591,10 @@ def q6a_copper(cu):
         p9, p16 = P(ref, '9')['c'], P(ref, '16')['c']
         path = [p9, (24.0, p9[1]), (24.0, p16[1]), p16] + ([P(ref, '15')['c']] if '15' in pins else [])
         cu.track(f'V33-{ref}', '3V3_Q6A', 'F.Cu', 0.25, path, f'3V3_Q6A of {ref}: VDD pin 9 to the address pins tied high, under the body')
+    # TR3A capacitors C302/C304/C306 (3V3_Q6A pads in one row): joined through the gaps between them
+    tr = [P(r, '1') for r in ('C302', 'C304', 'C306')]
+    assert all(c['net'] == '3V3_Q6A' for c in tr)
+    cu.track('V33-TR3A', '3V3_Q6A', 'F.Cu', 0.25, [c['c'] for c in tr], '3V3_Q6A: C302.1 - C304.1 - C306.1 through the gaps between the pads')
     # U315 pin 3 (3V3_Q6A) is boxed in by the cut-out edge, U315 pin 2's GND stub and the U301 pads above
     cu.via('V33-U315', '3V3_Q6A', (27.5, 94.45), '3V3_Q6A via for U315 pin 3, right of the U301 pads')
     cu.track('V33-U315', '3V3_Q6A', 'B.Cu', 0.25, [P('U315', '3')['c'], (27.5, 94.45)], '3V3_Q6A stub, U315.3 to its via')
@@ -656,9 +660,15 @@ def pico3v3_copper(cu):
     cu.track('P33-AMB-F', P33, 'F.Cu', W, [(xa, r362['c'][1]), r362['c']], 'E3_PICO3V3: via to R362.2')
     # the R4B / right-strip bus to the HMI3 branch: via above R358, L1 between the J316 pins and down beside cut-out 1
     cu.via('P33-V-R4B', P33, (xd, 109.6), 'E3_PICO3V3: right-strip bus B.Cu to F.Cu above R358')
-    cu.track('P33-RIGHT-F', P33, 'F.Cu', W, [(xd, 109.6), (40.55, 104.5), (40.55, 101.0), (39.235, 97.0), (39.235, 89.5), (vx, 88.8), (vx, vy)],
-             'E3_PICO3V3 on L1 from the right-strip bus between the J316 pins 2 and 1, between C302 and C304, then down beside the cut-out 1 edge to '
-             'the via above R368 (route runs 43121860459 and 43131682520 left this link open)')
+    cu.track('P33-RIGHT-F', P33, 'F.Cu', W, [(xd, 109.6), (40.55, 104.5), (40.55, 101.0), (39.235, 97.0), (39.235, 94.6)],
+             'E3_PICO3V3 on L1 from the right-strip bus between the J316 pins 2 and 1 to a via above the TR3A capacitors '
+             '(route runs 43121860459 and 43131682520 left the link to the HMI3 branch open)')
+    cu.via('P33-V-TR3A-N', P33, (39.235, 94.6), 'E3_PICO3V3: L1 to L3 above C302/C304')
+    cu.track('P33-RIGHT-L3', P33, 'In2.Cu', W, [(39.235, 94.6), (vx, 93.9), (vx, 89.3)],
+             'E3_PICO3V3 on L3 under the TR3A capacitors beside the cut-out 1 edge (route run 43136394379: the L1 link between '
+             'C302 and C304 cut their 3V3_Q6A join)')
+    cu.via('P33-V-TR3A-S', P33, (vx, 89.3), 'E3_PICO3V3: L3 to L1 below C302')
+    cu.track('P33-RIGHT-F2', P33, 'F.Cu', W, [(vx, 89.3), (vx, vy)], 'E3_PICO3V3 on L1 beside the cut-out 1 edge to the via above R368')
     # Pico: pin 36 (3V3 out) to a via just right of the pad (the router joins it on any layer), R330.2 - R327.1 - C308.1
     u36, r330, r327, c308 = P('U305', '36'), P('R330', '2'), P('R327', '1'), P('C308', '1')
     assert u36['net'] == P33
@@ -674,6 +684,8 @@ def pico3v3_copper(cu):
     cu.track('P33-HMI-ROW', P33, 'F.Cu', W, [(P('R337', '2')['c'][0], yc), (c312['c'][0], yc), (c312['c'][0], u306['c'][1]),
                                             u306['c']],
              'E3_PICO3V3: HMI pull-ups R337/R339/R341 in the gap between the pad rows, C312.1, U306.24 (VDD)')
+    r334, r335 = P('R334', '2'), P('R335', '2')
+    cu.track('P33-R334-R335', P33, 'F.Cu', W, [r334['c'], r335['c']], 'E3_PICO3V3: R334.2 to R335.2 (adjacent upper pads; route run 43136394379 left them apart)')
     for r in ('R337', 'R339', 'R341', 'C312'):
         q = P(r, '2' if r != 'C312' else '1')
         assert q['net'] == P33
@@ -864,7 +876,8 @@ def spec_texts(spec, inp, cu, skipped):
     spec['height_zones'] = zones  # from the current contract (rear zones changed with the W2 MECH-4 HDMI route)
     spec['rules_note'] = (
         'Rules live in the committed CTRL.kicad_pro: the project defaults of pcb/generated/netclasses.json project_defaults '
-        '(track 0.15 / clearance 0.15, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias '
+        '(track 0.15 / clearance 0.15, except the Default signal class and the board minimums of CTRL at 0.127 / 0.127, above '
+        'the JLC 4-layer floor 0.09 / 0.09 / pad to track 0.10 (build/15 "Правила CTRL (W2 PCB-CTRL)"), copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15) with router vias '
         '0.7 / 0.3 (0.6 mm vias at 0.15 mm clearance sit 0.45 mm hole to hole, PCB-PWRB lesson), and the classes PWR1A (0.35 mm: '
         'E3_FAN5_P, E3_GNSS5V), PWR3A_BRANCH (0.5 mm router branches of LAB5), SCRIPTED_GND (GND) and '
         'SCRIPTED_PWR3A (E3_FAN5, E3_BLOWER_GND), the last two not autorouted. check_boards widths follow netclasses.json (LAB5, E3_BLOWER_GND, '
@@ -885,6 +898,14 @@ def spec_texts(spec, inp, cu, skipped):
                                 if k == key_old else k): v for k, v in ce.items()}
 
 
+# Default (signal) class of CTRL: 0.127 / 0.127 mm instead of the project default 0.15 / 0.15 (W2 PCB-CTRL decision,
+# build/15 'Правила CTRL'): routes 43121860459, 43131682520 and 43136394379 at 0.15 left 22, 13 and 15 connections open on
+# the densest board; JLC 4-layer floor 0.09 track / 0.09 spacing / 0.10 pad to track (pcb/generated/netclasses.json
+# fab_floor.jlc_4l_1oz, read 2026-11-07). Power and scripted classes keep 0.15; vias stay 0.7 / 0.3 (hole to hole >= 0.5).
+DEFAULT_TRACK = DEFAULT_CLEARANCE = 0.127
+CLASS_CLEARANCE = 0.15  # power and scripted classes: project default (netclasses.json project_defaults)
+
+
 def project_json(project):
     pro = copy.deepcopy(project)
     ns = pro['net_settings']
@@ -893,10 +914,13 @@ def project_json(project):
 
     def cls(name, width, prio):
         c = copy.deepcopy(base)
-        c['name'], c['track_width'], c['priority'] = name, width, prio
+        c['name'], c['track_width'], c['priority'], c['clearance'] = name, width, prio, CLASS_CLEARANCE
         c['via_diameter'], c['via_drill'] = 0.7, 0.3
         return c
-    ns['classes'][0]['track_width'] = 0.15
+    ns['classes'][0]['track_width'] = DEFAULT_TRACK
+    ns['classes'][0]['clearance'] = DEFAULT_CLEARANCE
+    rules = pro['board']['design_settings']['rules']
+    rules['min_clearance'], rules['min_track_width'] = DEFAULT_CLEARANCE, DEFAULT_TRACK
     ns['classes'][0]['via_diameter'] = 0.7
     ns['classes'][0]['via_drill'] = 0.3
     ns['classes'] = [ns['classes'][0], cls('PWR1A', 0.35, 0), cls('PWR3A', 1.85, 1), cls('PWR3A_BRANCH', 0.5, 2),
