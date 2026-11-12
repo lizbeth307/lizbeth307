@@ -227,7 +227,7 @@
         "pattern": "LAB5"
       },
       {
-        "netclass": "PWR3A_BRANCH",
+        "netclass": "SCRIPTED_PWR3A",
         "pattern": "E3_BLOWER_GND"
       },
       {
