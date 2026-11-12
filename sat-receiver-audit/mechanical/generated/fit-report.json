@@ -4,7 +4,7 @@
   "generator": {
     "version": "1.0.0",
     "params_sha256": "5ccb5c406ecc1cddeb10e4c85201e3d535dbc9f4d5bd188d4992f1cbda17abbb",
-    "pcb_components_sha256": "be0953f767d7d71194636e0895ebb95f5ed1451c9348f01c00bb30d9fb2d4cb3"
+    "pcb_components_sha256": "81f0704f245ad22cf7af6e518ba3ee1c1903a0d97d3dca2e814c7a8e205fe66b"
   },
   "envelope": {
     "model": [
@@ -2083,27 +2083,26 @@
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "courtyard_raw_mm2": 6822.0,
-        "modules_mm2": 1342.0,
+        "courtyard_raw_mm2": 5580.0,
+        "modules_mm2": 0.0,
         "per_domain_raw_mm2": {
-          "PWR_MAIN": 3234.0,
-          "PWR_BRANCH": 3072.0,
+          "PWR_MAIN": 2085.0,
+          "PWR_BRANCH": 2980.0,
           "USB_POWER": 516.0
         },
         "per_group_raw_mm2": {
-          "E1 LAB5": 1178.0,
           "E1 Роз'єми джгутів PWR": 870.0,
-          "E1 SYS12": 759.0,
           "E2 Boni: малошумна захищена шина": 512.0,
+          "E1 LAB5": 469.0,
           "E2 Роз'єми джгутів PWR": 430.0,
           "E2 LNB: малошумна захищена шина": 416.0,
-          "E2 J21: захищене живлення 12 V": 412.0,
+          "E1 SYS12": 412.0,
           "E2 LNA4V5: паралельні LT3045": 358.0,
+          "E2 J21: захищене живлення 12 V": 320.0,
           "E5 VBUS HF+ з демпфованим LC": 306.0,
           "E2 AUX12: верхній ключ і PTC": 191.0,
           "E2 Дисплей: захищене живлення 12 V": 183.0,
           "E2 Lime M.2: комутована шина 3.3 V": 173.0,
-          "E1 Сервісний заряд": 119.0,
           "E5 VBUS RTL-A і LAB PORT": 102.0,
           "E1 AON і UV": 94.0,
           "E1 Головний вимикач": 92.0,
@@ -2119,25 +2118,22 @@
           "E2 RTL-B: комутований VBUS": 46.0,
           "E2 S-band LaNA WB: захищена шина 5 V": 46.0,
           "E1 Контрольні точки": 31.0,
+          "E1 Сервісний заряд": 27.0,
           "E1 Інгібування заряду": 26.0,
           "E1 Аварійний ADC": 13.0
         },
         "per_group_need_mm2": {
-          "E1 LAB5": [
-            1432.0,
-            1584.0
-          ],
           "E1 Роз'єми джгутів PWR": [
             1306.0,
             1567.0
           ],
-          "E1 SYS12": [
-            803.0,
-            830.0
-          ],
           "E2 Boni: малошумна захищена шина": [
             768.0,
             922.0
+          ],
+          "E1 LAB5": [
+            703.0,
+            844.0
           ],
           "E2 Роз'єми джгутів PWR": [
             645.0,
@@ -2147,13 +2143,17 @@
             624.0,
             748.0
           ],
-          "E2 J21: захищене живлення 12 V": [
+          "E1 SYS12": [
             618.0,
             742.0
           ],
           "E2 LNA4V5: паралельні LT3045": [
             537.0,
             645.0
+          ],
+          "E2 J21: захищене живлення 12 V": [
+            479.0,
+            575.0
           ],
           "E5 VBUS HF+ з демпфованим LC": [
             460.0,
@@ -2170,10 +2170,6 @@
           "E2 Lime M.2: комутована шина 3.3 V": [
             259.0,
             311.0
-          ],
-          "E1 Сервісний заряд": [
-            179.0,
-            215.0
           ],
           "E5 VBUS RTL-A і LAB PORT": [
             153.0,
@@ -2235,6 +2231,10 @@
             47.0,
             56.0
           ],
+          "E1 Сервісний заряд": [
+            41.0,
+            49.0
+          ],
           "E1 Інгібування заряду": [
             39.0,
             47.0
@@ -2244,14 +2244,14 @@
             23.0
           ]
         },
-        "parts": 257,
-        "need_1_5_mm2": 9562.0,
-        "need_1_8_mm2": 11206.0,
-        "estimate_mm2": 11206.0,
-        "ratio_1_5": 1.21,
-        "ratio_1_8": 1.42,
+        "parts": 287,
+        "need_1_5_mm2": 8370.0,
+        "need_1_8_mm2": 10044.0,
+        "estimate_mm2": 10044.0,
+        "ratio_1_5": 1.06,
+        "ratio_1_8": 1.27,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 11206 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        "result": "OPEN: need 10044 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
       },
       "PWR_B": {
         "area_mm2": 6516.0,
