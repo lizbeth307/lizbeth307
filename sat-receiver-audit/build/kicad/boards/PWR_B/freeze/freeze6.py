@@ -176,6 +176,7 @@ def main(argv=None):
     ap.add_argument('--no-guard', action='store_true', help='trial: write no guard (make_spec refuses the file)')
     ap.add_argument('--rounds', type=int, default=400)
     ap.add_argument('--no-rip', action='store_true', help='join only where a free path exists (no rip-up of router copper)')
+    ap.add_argument('--order', choices=('class', 'short'), default='class', help='completion order of the open nets')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     art = Path(args.artifact)
@@ -212,8 +213,15 @@ def main(argv=None):
             viol.add(it.net)
     for n in sorted(viol):
         F.prune(m, n)
-    # power-class nets first: they have only the outer layers
-    first = sorted(set(kicad_open) | viol, key=lambda n: (layers(n) != OUTER, n))
+    # power-class nets first: they have only the outer layers (--order class); or the shortest nets first (--order short:
+    # the long links take the free corridor space last, so fewer short links are walled in)
+    def span(n):
+        pts = [i.at for i in m.items if i.alive and i.kind == 'pad' and i.net == n]
+        return math.hypot(max(p[0] for p in pts) - min(p[0] for p in pts), max(p[1] for p in pts) - min(p[1] for p in pts)) if pts else 0.0
+    if args.order == 'short':
+        first = sorted(set(kicad_open) | viol, key=lambda n: (span(n), n))
+    else:
+        first = sorted(set(kicad_open) | viol, key=lambda n: (layers(n) != OUTER, n))
     queue, rounds, t0 = collections.deque(first), 0, time.time()
     touched, failed = set(first), []
     while queue and rounds < args.rounds:
@@ -231,7 +239,7 @@ def main(argv=None):
         queue.extend(n for n in ripped if n not in queue)
         touched |= set(ripped)
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in M.PLANES}):
-        F.prune(m, n)
+        F.prune(m, n, srcs=('router', 'new', 'escape'))  # an escape stub whose link failed goes too
     open_, bad = verify(m)
     open_ = {n: k for n, k in open_.items() if n in touched}
     bad = [b for b in bad if not (b[0] == 'dangling' and (b[2] in NEVER or b[2] in model_only))]

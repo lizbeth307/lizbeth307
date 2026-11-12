@@ -1384,9 +1384,9 @@ CLASS_LAYERS = {'PWR1A': ['F.Cu', 'B.Cu']}
 # W2 PWRB-R probe 2 (diagnostic only): without class_layers Freerouting may put PWR1A on In2.Cu/In3.Cu at the outer width
 # 0.35 mm, which the 0.5 oz inner rule (1.8 mm) forbids; the run measures how much of probe 1's 59 open connections the
 # outer-only power rule causes. Not a candidate board: pcb/check_boards.py class_widths flags every inner PWR1A piece.
-DIAG_POWER_INNER = ('diagnostic route (W2 PWRB-R probe 2): router.class_layers left out, so PWR1A may use the 0.5 oz inner '
-                    'layers at 0.35 mm against the 1.8 mm inner rule; it measures the share of the open connections of route '
-                    'run 43289131388 (59, PWR1A on F.Cu/B.Cu only) that the outer-only power rule causes; not a candidate board')
+# Route run 43301060296 (that diagnostic): DRC 0 errors, 45 unconnected (against 59), 140 class_widths findings (PWR1A
+# at 0.35 mm on In2.Cu/In3.Cu); Freerouting stopped at its job timeout with 112 unrouted items. Off again (None) since.
+DIAG_POWER_INNER = None
 # PWR-A cut-out rule areas: the rect grown by the copper-to-edge clearance 0.3 plus 0.03; the scripted copper keeps 0.35
 # (EDGE + MARGIN), so it never touches a rule area, and router copper and pours stay >= 0.33 from the future edge
 KEEPOUT_GROW = EDGE + 0.03
