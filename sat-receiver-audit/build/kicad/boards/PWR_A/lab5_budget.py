@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""LAB5 E1 -> E2 copper resistance against E1-05 (W2 PCB-PWRA-2, CC-36 item 12): a MODEL, standard library only.
+"""LAB5 E1 -> E2 copper resistance against E1-05 (W2 PCB-PWRA-2, CC-36 item 12; LSHM B2B W2 PCB-PWRA-3): a MODEL,
+standard library only.
 
   python3 build/kicad/boards/PWR_A/lab5_budget.py           write lab5-budget.json next to this file
   python3 build/kicad/boards/PWR_A/lab5_budget.py --check   fail unless lab5-budget.json reproduces
@@ -12,17 +13,18 @@ cold resistance (its own <= 10 mOhm item) and the L101 DCR (R-E1-05). Two E2 des
 What is measured and what is modelled:
   - PWR-B copper: the CI-routed board build/kicad/boards/PWR_B/PWR_B.kicad_pcb (pcb/check_boards.py reader); every LAB5
     track and via becomes a resistor network (tracks rho*L/(w*t), via barrels rho*h/(pi*(r^2-(r-p)^2))), pads and
-    overlapping copper are ideal joints; resistance from the four shorted B2B1 LAB5 contacts to each LAB5 load pad.
-  - B2B: Samtec QSH/QTH-060 contact resistance. The product specification states only the change after the tests
-    (LLCR delta <= 15 mOhm per contact); the initial value is not stated there, so it stays TBD.
-  - PWR-A copper: no placed or routed PWR-A exists (F2, placement-study.json). From the anchors of PWR_A.spec-draft.json
-    (F102 for the E1 end, U204/U205 IN pads, the B2B2 LAB5 contacts) the straight and the orthogonal path lengths
-    give the resistance of the narrowest legal copper (PWR3A 1.85 mm, one outer layer) and the copper width x outer
-    layers that the remaining budget needs. L101, L205 and C111/C112 are not anchored: F102.2 and the U204/U205 IN
-    pads stand for the two ends.
-  - E1_LAB5_RAW (U108 VOUT -> F102.1, upstream of the E1-05 figure): the scripted 9.6 mm pours on L1 and L4.
+    overlapping copper are ideal joints; resistance from the shorted LAB5 contacts of the B2B mate (J209 since W2 B2B)
+    to each LAB5 load pad.
+  - B2B: Samtec LSHM-150 contact resistance (W2 B2B, J208/J209). The product specification states only the change
+    after the tests (LLCR delta <= 15 mOhm per contact); the initial value is not stated there, so it stays TBD.
+  - PWR-A copper: no routed PWR-A exists. From the anchors of the SHRINK-2 planner spec PWR_A.spec-shrink2.json
+    (make_spec.py: F102 for the E1 end, U204/U205 IN pads, the J208 LAB5 contacts) the straight and the orthogonal
+    path lengths give the resistance of the narrowest legal copper (PWR3A 1.85 mm, one outer layer) and the copper
+    width x outer layers that the remaining budget needs. L101, L205 and C111/C112 are not anchored: F102.2 and the
+    U204/U205 IN pads stand for the two ends.
+  - E1_LAB5_RAW (LAB5 converter output -> F102.1, upstream of the E1-05 figure): measured from the scripted pours of
+    the spec when the converter is anchored; TBD while the SHRINK-2 converter is a reserved block (GR-5A pending).
 Copper: annealed copper (IACS) at 20 C and at 50 C (the E1-05 thermal test ambient; the copper itself runs warmer).
-Needs KICAD10_FOOTPRINT_DIR for the FX8 placeholder land of B2B2 (board_gen.image_library_dir).
 """
 from __future__ import annotations
 
@@ -39,7 +41,7 @@ import board_gen as bg  # noqa: E402
 import check_boards as cb  # noqa: E402
 
 OUT = HERE / 'lab5-budget.json'
-DRAFT = HERE / 'PWR_A.spec-draft.json'
+SPEC = HERE / 'PWR_A.spec-shrink2.json'
 PWR_B_BOARD = BASE / 'build/kicad/boards/PWR_B/PWR_B.kicad_pcb'
 PWR_B_SPEC = BASE / 'pcb/boards/PWR_B.json'
 NETCLASSES = BASE / 'pcb/generated/netclasses.json'
@@ -53,9 +55,10 @@ ALPHA_SRC = ('https://en.wikipedia.org/wiki/Electrical_resistivity_and_conductiv
              '"Annealed copper 1.72x10^-8 58.0x10^6 3.93x10^-3"')
 T_HOT = 50.0               # C, E1-05 thermal test ambient (design/E1.json E1-05 resolve text)
 B2B_DELTA = 0.015          # Ohm per contact, Samtec LLCR delta maximum
-B2B_SRC = ('Samtec QSH/QTH product specification Rev K (2025-02-20) section 3.5, '
-           'https://suddendocs.samtec.com/productspecs/qsh-qth.pdf read 2026-11-07: "Contact Resistance (LLCR) EIA-364-23 '
-           'delta 15 mOhm maximum (Samtec defined)"; current rating 2 A (one pin powered per row); no initial value stated')
+B2B_SRC = ('Samtec LSHM product specification Revision H (dated September 9, 2026) section 3.4, '
+           'https://suddendocs.samtec.com/productspecs/lshm.pdf read 2026-11-12 (sha256 935cb14c85a2635b69b4f00bfd1568d3b8933'
+           'c51386286aeaaa9b167188eef2d, the copy W2 B2B read): "Contact Resistance (LLCR) EIA-364-23 delta 15 mOhm maximum '
+           '(Samtec defined)"; section 3.1 current rating 2 A (one pin powered per row); no initial value stated')
 BUDGET = 0.010             # Ohm, E1-05
 NET = 'LAB5'
 PWR_A_ENDS = {'E1': [('F102', '2')], 'E2_LT3045': [('U204', p) for p in '1234'] + [('U205', p) for p in '1234']}
@@ -215,7 +218,9 @@ def pwr_b_network(board, temp_c, t_outer, plating, thickness):
 
 
 def pad_centres(spec, ref, numbers):
-    part = next(p for p in spec['parts'] if p['ref'] == ref)
+    part = next((p for p in spec['parts'] if p['ref'] == ref and p.get('anchor')), None)
+    if part is None:
+        return None
     graph = bg.load_graph() if part['source'] == 'graph' else None
     if part['source'] == 'graph':
         manifest = bg.read_json(bg.MANIFEST)
@@ -236,7 +241,7 @@ def centroid(points):
 
 
 def build():
-    spec = bg.read_json(DRAFT)
+    spec = bg.read_json(SPEC)
     netclasses = bg.read_json(NETCLASSES)
     e1 = bg.read_json(E1)
     e105 = next(o for o in e1['open_items'] if o['id'] == 'E1-05')
@@ -247,20 +252,26 @@ def build():
     plating = netclasses['formulas']['via']['plating_mm']
     w_class = netclasses['classes'][netclasses['nets'][NET]['class']]['outer_min_width_mm']
     pwr_b_spec = bg.read_json(PWR_B_SPEC)
-    b2b1 = next(p for p in pwr_b_spec['parts'] if p['ref'] == 'B2B1')
-    lab5_contacts = sorted((k for k, v in b2b1['pins'].items() if v == NET), key=int)
+    graph = bg.load_graph()
+    pair = spec['b2b'][0]
+    mine, mate_ref = pair['ref'], pair['mate_ref']
+    mate = next(p for p in pwr_b_spec['parts'] if p['ref'] == mate_ref)
+    mate_pins = ({str(p['number']): p.get('net') for p in graph[mate_ref]['pins']} if mate['source'] == 'graph'
+                 else mate['pins'])
+    lab5_contacts = sorted((k for k, v in mate_pins.items() if v == NET), key=int)
+    inverse = {v: k for k, v in pair['pin_map'].items()} if isinstance(pair['pin_map'], dict) else None
+    my_contacts = sorted((inverse[c] if inverse else c for c in lab5_contacts), key=int)
     board = cb.load_board(PWR_B_BOARD)
 
     temps = {'20C': 20.0, f'{int(T_HOT)}C': T_HOT}
     pwr_b = {}
-    loads = sorted({(p['ref'], p['number']) for p in board.pads if p['net'] == NET and p['ref'] != 'B2B1'},
+    loads = sorted({(p['ref'], p['number']) for p in board.pads if p['net'] == NET and p['ref'] != mate_ref},
                    key=lambda x: (bg.sort_ref(x[0]), x[1]))
-    graph = bg.load_graph()
     for tk, tc in temps.items():
         net, info = pwr_b_network(board, tc, t_outer, plating, thickness)
         rows = []
         for ref, num in loads:
-            src = [('pad', 'B2B1', c) for c in lab5_contacts]
+            src = [('pad', mate_ref, c) for c in lab5_contacts]
             r = net.resistance(src, ('pad', ref, num))
             width, far = net.branch.get(('pad', ref, num), (None, None))
             shared = net.resistance(src, far) if far is not None else None
@@ -274,14 +285,9 @@ def build():
     # --- PWR-A: anchored ends only ---
     e1_end = centroid(pad_centres(spec, 'F102', ['2']))
     lt_end = centroid(pad_centres(spec, 'U204', list('1234')) + pad_centres(spec, 'U205', list('1234')))
-    b2b_end = centroid(pad_centres(spec, 'B2B2', lab5_contacts))
-    raw_a = centroid(pad_centres(spec, 'U108', ['VOUT']))
-    raw_b = centroid(pad_centres(spec, 'F102', ['1']))
-    raw_zone = next(z for z in spec['pre_route']['zones'] if z['id'] == 'LAB5-RAW-F')
-    zx = [p[0] for p in raw_zone['outline']]
-    zy = [p[1] for p in raw_zone['outline']]
-    raw_w = min(max(zx) - min(zx), max(zy) - min(zy))
-    raw_layers = len([z for z in spec['pre_route']['zones'] if z['net'] == 'E1_LAB5_RAW'])
+    b2b_end = centroid(pad_centres(spec, mine, my_contacts))
+    raw_pads = pad_centres(spec, 'U108', ['VOUT'])
+    raw_zones = [z for z in spec['pre_route'].get('zones', []) if z['net'] == 'E1_LAB5_RAW']
 
     def path(a, b):
         return {'from': [r4(a[0]), r4(a[1])], 'to': [r4(b[0]), r4(b[1])],
@@ -298,7 +304,7 @@ def build():
     for key, (a, b, what) in {
         'A_E1_to_LT3045': (e1_end, lt_end, 'F102.2 (E1 LAB5 end; L101 adjacent) -> U204/U205 IN pads (E2_LNA_IN via L205): '
                                            'the E1-05 headroom path, PWR-A only'),
-        'B_E1_to_B2B2': (e1_end, b2b_end, 'F102.2 -> B2B2 LAB5 contacts (PWR-A part of the path to the PWR-B loads)'),
+        'B_E1_to_B2B': (e1_end, b2b_end, f'F102.2 -> {mine} LAB5 contacts (PWR-A part of the path to the PWR-B loads)'),
     }.items():
         p = path(a, b)
         row = {'what': what, **p, 'by_temperature': {}}
@@ -320,7 +326,7 @@ def build():
             if r['pad'] not in e2_loads:
                 continue
             left = BUDGET - b2b_delta - r['resistance_mohm'] / 1e3
-            orth = out_paths['B_E1_to_B2B2']['orthogonal_mm']
+            orth = out_paths['B_E1_to_B2B']['orthogonal_mm']
             rows[r['pad']] = {
                 'pwr_b_copper_mohm': r['resistance_mohm'],
                 'pwr_b_copper_to_branch_start_mohm': r['to_start_of_last_track_mohm'],
@@ -332,13 +338,24 @@ def build():
                 'fits': left > 0,
             }
         remaining[tk] = rows
-    raw_len = math.hypot(raw_b[0] - raw_a[0], raw_b[1] - raw_a[1])
-    upstream = {'what': 'E1_LAB5_RAW pours LAB5-RAW-F/B (scripted): U108 VOUT -> F102.1, before F102 (not part of the '
-                        'E1-05 connection figure; adds to the total drop)',
-                'from': [r4(raw_a[0]), r4(raw_a[1])], 'to': [r4(raw_b[0]), r4(raw_b[1])], 'length_mm': r4(raw_len),
-                'pour_width_mm': r4(raw_w), 'outer_layers': raw_layers,
-                'by_temperature': {tk: r4(copper(raw_len, raw_w, raw_layers, tc) * 1e3) for tk, tc in temps.items()},
-                'unit': 'mOhm'}
+    if raw_pads and raw_zones:
+        raw_a, raw_b = centroid(raw_pads), centroid(pad_centres(spec, 'F102', ['1']))
+        zx = [p[0] for p in raw_zones[0]['outline']]
+        zy = [p[1] for p in raw_zones[0]['outline']]
+        raw_w = min(max(zx) - min(zx), max(zy) - min(zy))
+        raw_len = math.hypot(raw_b[0] - raw_a[0], raw_b[1] - raw_a[1])
+        upstream = {'what': 'E1_LAB5_RAW pours (scripted): LAB5 converter output -> F102.1, before F102 (not part of the '
+                            'E1-05 connection figure; adds to the total drop)',
+                    'from': [r4(raw_a[0]), r4(raw_a[1])], 'to': [r4(raw_b[0]), r4(raw_b[1])], 'length_mm': r4(raw_len),
+                    'pour_width_mm': r4(raw_w), 'outer_layers': len(raw_zones),
+                    'by_temperature': {tk: r4(copper(raw_len, raw_w, len(raw_zones), tc) * 1e3) for tk, tc in temps.items()},
+                    'unit': 'mOhm'}
+    else:
+        upstream = {'what': 'E1_LAB5_RAW (LAB5 converter output -> F102.1, before F102; not part of the E1-05 connection '
+                            'figure)',
+                    'value': 'TBD: the SHRINK-2 LAB5 converter (TPSM63606RDLR) is the reserved block CONV_LAB5 until GR-5A '
+                             'puts it into the graph; PCB-PWRA-3 part 2 scripts the pour from its output to F102.1',
+                    'spec_planned_change': next((c for c in spec.get('planned_changes', []) if c['id'] == 'U108-LAB5'), None)}
     shared_b = {tk: rows for tk, rows in pwr_b.items()}
 
     return {
@@ -350,7 +367,7 @@ def build():
         'inputs': {
             'spec_sha256': bg.sha256_bytes(bg.canonical(spec)),
             'pwr_b_board_sha256': bg.sha256_file(PWR_B_BOARD),
-            'pwr_b_spec_b2b1_pins_sha256': bg.sha256_bytes(bg.canonical(b2b1['pins'])),
+            'pwr_b_mate_pins_sha256': bg.sha256_bytes(bg.canonical(mate_pins)),
             'netclasses_sha256': bg.sha256_file(NETCLASSES),
             'e1_05': e105['resolve'][e105['resolve'].find('Відкрито'):].split('Якщо')[0].strip(),
         },
@@ -366,11 +383,12 @@ def build():
             'budget_mohm': BUDGET * 1e3, 'design_current_a': i_design,
             'drop_per_10_mohm_mv': r4(0.010 * i_design * 1e3),
             'b2b_delta_per_contact_mohm': B2B_DELTA * 1e3, 'b2b_source': B2B_SRC,
-            'b2b_lab5_contacts': lab5_contacts,
+            'b2b_pair': {'pwr_a': mine, 'pwr_b': mate_ref},
+            'b2b_lab5_contacts': lab5_contacts, 'b2b_lab5_contacts_pwr_a': my_contacts,
         },
         'pwr_b_copper': {
             'label': 'MEASURED on the CI-routed PWR_B board (geometry of the drawn copper, not a bench value): resistance '
-                     'from the four shorted B2B1 LAB5 contacts to each LAB5 pad, and to the start of the narrowest track '
+                     f'from the {len(lab5_contacts)} shorted {mate_ref} LAB5 contacts to each LAB5 pad, and to the start of the narrowest track '
                      'that reaches the pad (the branch that carries only that load; the rest is shared trunk)',
             'board': PWR_B_BOARD.relative_to(BASE).as_posix(),
             'network': pwr_b_network(board, 20.0, t_outer, plating, thickness)[1],

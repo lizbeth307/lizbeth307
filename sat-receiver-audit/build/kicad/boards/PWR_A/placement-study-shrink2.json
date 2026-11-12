@@ -1,0 +1,7970 @@
+{
+  "schema": "srrx-pwra-placement-study-v1",
+  "board_id": "PWR_A",
+  "spec": "PWR_A.spec-shrink2.json",
+  "status": "MODEL / planning result of the board_gen planner (standard library); no KiCad board, no routing, no hardware result; bench gates OPEN",
+  "generator": "build/kicad/boards/PWR_A/placement_study.py",
+  "inputs": {
+    "spec_sha256": "e9f92be94b839bac75bb0e8b9ed7070fd4574551c044b496efb0edc15b39fc9d",
+    "contract_pwr": "00bf8c302e39b748b918c2bbf8af3fe139209ac5c113675f699c3ebfdcc01fb6",
+    "contract_pwr_b_outline": "162a3b5c88a8f0dfb87102136b57a0938ce02ed85d2cd3f0b5ca2d275d5cbd9d",
+    "template_sha256": "380b8033cb676e996ac1680d96e17c92ad6aa355c692558a961dce60cb777f00",
+    "project_sha256": "202ab44962f558762ad5fe3ac916d928247669a4cbe85bb255d21431fa716be4",
+    "pwr_b_placeholders": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "pwr_b_spec_sha256": "2d4ac38982ba4803c9937d890c94c41b8e269414c18ebf73e6b065d27cef4d2d",
+    "pwr_b_connectors_sha256": "fbb12f3edaa042995f31e2eb9c2711a5da1af0a6898c90d33fdce9e7e64dce39"
+  },
+  "spec_checks": {
+    "validate_spec": "passed",
+    "project_rules": "passed",
+    "domain_audit": {
+      "passed": false,
+      "refs": 257,
+      "missing": [
+        "C109",
+        "C235",
+        "C239",
+        "C243",
+        "C247",
+        "C251",
+        "C298",
+        "C506",
+        "F103",
+        "F201",
+        "U107",
+        "U108"
+      ],
+      "foreign": []
+    }
+  },
+  "fill": {
+    "label": "MODEL: courtyard boxes of the vendored KiCad 10.0.7 footprints (F.CrtYd), not a routed board",
+    "budget_candidate": "shrink2",
+    "outline_mm2": 7910.0,
+    "hole_keepouts_mm2": 269.3916,
+    "usable_mm2": 7640.6084,
+    "refs": 245,
+    "graph_refs": 245,
+    "placeholder_refs": [],
+    "top_refs": 151,
+    "courtyard_sum_mm2": 4032.3564,
+    "reserved_rects_mm2": 461.67,
+    "reserved_area_only_mm2": 0.0,
+    "demand_mm2": 4494.0264,
+    "fill_all_refs": 0.5882,
+    "budget_raw_fill": 0.588,
+    "anchored_refs": 23,
+    "anchored_mm2": 1704.406,
+    "free_after_anchors_and_reserves_mm2": 5474.5324,
+    "remaining_demand_mm2": 2327.9504,
+    "free_regions_of_spec_mm2": 4509.903,
+    "placed_refs": 245,
+    "placed_top_refs": 151,
+    "placed_mm2": 4494.0264,
+    "fill_placed": 0.5882,
+    "unplaced_refs": 0,
+    "unplaced_mm2": 0.0,
+    "area_to_remove_for_0_60_mm2": -90.3387,
+    "trigger_id": "F2-C",
+    "f2_trigger": "PCB-PWRA-3/4 measures a PWR-A top fill above 0.60, or leaves refs unplaced or nets unrouted after two iterations; or H-TRIM fails at proof-fit (candidate s2nt: top raw fill 0.632); or a sourced part or block grows the PWR-A top demand by more than the 90.4 mm2 left below 0.60 (candidate shrink2)",
+    "f2_fired": false,
+    "f2_fired_why": [],
+    "bottom": {
+      "label": "MODEL: bottom side of the two-sided PWR-A; usable = outline - hole keepouts - thermal_bond zones - THT pin fields of the placed top parts + tht_margin (exact along x, rows of 0.05 mm)",
+      "refs": 94,
+      "courtyard_sum_mm2": 496.1936,
+      "usable_mm2": 3569.5926,
+      "fill": 0.139,
+      "placed_refs": 94,
+      "unplaced_refs": [],
+      "thermal_bond_zones": [
+        [
+          9,
+          4,
+          69,
+          27
+        ],
+        [
+          72,
+          4,
+          128,
+          27
+        ],
+        [
+          7,
+          39,
+          24,
+          63
+        ],
+        [
+          7,
+          73,
+          21,
+          87
+        ]
+      ],
+      "top_tht_fields": 29,
+      "tht_margin_mm": 1.0,
+      "h_room_mm": 1.4
+    },
+    "unplaced_top_refs": [],
+    "f2c": {
+      "reference_demand_mm2": 4494.0,
+      "reference": "pcb/partition-budget.json candidates.shrink2.boards.PWR_A.demand_1_mm2 (the decided SHRINK-2 top demand, MODEL)",
+      "demand_minus_reference_mm2": 0.0264,
+      "margin_to_0_60_mm2": 90.3387
+    }
+  },
+  "anchors": {
+    "rows": [
+      {
+        "ref": "C113",
+        "at": [
+          37.95,
+          64.6
+        ],
+        "rotation": 270,
+        "courtyard_box": [
+          34.4,
+          59.8,
+          41.5,
+          69.4
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true
+        }
+      },
+      {
+        "ref": "F102",
+        "at": [
+          2.22,
+          69.29
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          0.3,
+          66.0,
+          7.54,
+          82.5
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true
+        }
+      },
+      {
+        "ref": "J104",
+        "at": [
+          132.0,
+          13.83
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          129.03,
+          10.0,
+          135.8,
+          26.66
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "J105",
+        "at": [
+          32.85,
+          3.5
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          30.1,
+          0.3,
+          42.1,
+          6.7
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J106",
+        "at": [
+          52.75,
+          3.5
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          50.0,
+          0.3,
+          62.0,
+          6.7
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J107",
+        "at": [
+          10.95,
+          3.5
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          8.2,
+          0.3,
+          20.2,
+          6.7
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J108",
+        "at": [
+          78.65,
+          3.5
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          75.9,
+          0.3,
+          87.9,
+          10.9
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J109",
+        "at": [
+          47.05,
+          2.5
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          42.6,
+          0.3,
+          49.5,
+          5.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J110",
+        "at": [
+          72.95,
+          2.5
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          62.5,
+          0.3,
+          75.4,
+          5.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J111",
+        "at": [
+          27.15,
+          2.5
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          20.7,
+          0.3,
+          29.6,
+          5.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J112",
+        "at": [
+          96.85,
+          2.5
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          88.4,
+          0.3,
+          99.3,
+          5.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J113",
+        "at": [
+          117.7,
+          14.15
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          115.5,
+          11.7,
+          121.0,
+          18.6
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "J114",
+        "at": [
+          124.5,
+          4.13
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          121.53,
+          0.3,
+          128.3,
+          10.96
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "J115",
+        "at": [
+          124.5,
+          15.29
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          121.53,
+          11.46,
+          128.3,
+          22.12
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "J205",
+        "at": [
+          19.43,
+          106.83
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          15.6,
+          103.03,
+          26.26,
+          109.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "top_left"
+        }
+      },
+      {
+        "ref": "J206",
+        "at": [
+          112.38,
+          31.83
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          108.3,
+          25.02,
+          125.46,
+          34.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "top_sl2"
+        }
+      },
+      {
+        "ref": "J208",
+        "at": [
+          98.8,
+          18.5
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          83.45,
+          15.4,
+          114.15,
+          21.6
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true
+        }
+      },
+      {
+        "ref": "J507",
+        "at": [
+          117.7,
+          2.75
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          115.5,
+          0.3,
+          121.0,
+          11.2
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "R110",
+        "at": [
+          37.93,
+          73.63
+        ],
+        "rotation": 270,
+        "courtyard_box": [
+          36.0,
+          69.8,
+          39.86,
+          77.46
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true
+        }
+      },
+      {
+        "ref": "U204",
+        "at": [
+          46.13,
+          19.87
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          43.0,
+          17.6,
+          49.26,
+          22.14
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "inside_thermal_bond_zone": [
+            1
+          ]
+        }
+      },
+      {
+        "ref": "U205",
+        "at": [
+          46.13,
+          13.87
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          43.0,
+          11.6,
+          49.26,
+          16.14
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "inside_thermal_bond_zone": [
+            1
+          ]
+        }
+      },
+      {
+        "ref": "U211",
+        "at": [
+          12.55,
+          16.55
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          9.6,
+          13.6,
+          15.5,
+          19.5
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "inside_thermal_bond_zone": [
+            1
+          ]
+        }
+      },
+      {
+        "ref": "U213",
+        "at": [
+          75.55,
+          16.55
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          72.6,
+          13.6,
+          78.5,
+          19.5
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "inside_thermal_bond_zone": [
+            2
+          ]
+        }
+      }
+    ],
+    "errors": [],
+    "passed": true,
+    "headers_off_their_edge": [
+      "J113",
+      "J114",
+      "J115",
+      "J507"
+    ]
+  },
+  "reserved": {
+    "rects": [
+      {
+        "id": "CONV_SYS12",
+        "rect": [
+          8.0,
+          40.0,
+          23.0,
+          54.3
+        ],
+        "area_mm2": 214.5,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "F"
+      },
+      {
+        "id": "RPP",
+        "rect": [
+          8.0,
+          55.0,
+          15.5,
+          61.7
+        ],
+        "area_mm2": 50.25,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "F"
+      },
+      {
+        "id": "CONV_LAB5",
+        "rect": [
+          8.0,
+          74.0,
+          20.0,
+          85.6
+        ],
+        "area_mm2": 139.2,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "F"
+      },
+      {
+        "id": "FUSE_F103",
+        "rect": [
+          81.0,
+          31.0,
+          88.8,
+          34.7
+        ],
+        "area_mm2": 28.86,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "F"
+      },
+      {
+        "id": "FUSE_F201",
+        "rect": [
+          16.0,
+          55.0,
+          19.7,
+          62.8
+        ],
+        "area_mm2": 28.86,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "F"
+      },
+      {
+        "id": "BOND1",
+        "rect": [
+          9,
+          4,
+          69,
+          27
+        ],
+        "area_mm2": 1380.0,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "B"
+      },
+      {
+        "id": "BOND2",
+        "rect": [
+          72,
+          4,
+          128,
+          27
+        ],
+        "area_mm2": 1288.0,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "B"
+      },
+      {
+        "id": "BOND3",
+        "rect": [
+          7,
+          39,
+          24,
+          63
+        ],
+        "area_mm2": 408.0,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "B"
+      },
+      {
+        "id": "BOND4",
+        "rect": [
+          7,
+          73,
+          21,
+          87
+        ],
+        "area_mm2": 196.0,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": [],
+        "side": "B"
+      }
+    ],
+    "area_only": [
+      {
+        "id": "PWR_B_THT_KEEPOUTS",
+        "area_mm2": 0.0,
+        "source": "pcb/partition-budget.json candidates.shrink2.pwr_a_keepouts_mm2"
+      }
+    ]
+  },
+  "groups": [
+    {
+      "group": "HFP",
+      "members": 6,
+      "courtyard_mm2": 280.5036,
+      "placed_refs": 6,
+      "chunks": [
+        {
+          "region": "LEG_HFL",
+          "refs": 1,
+          "courtyard_mm2": 169.0,
+          "region_mm2": 184.265
+        },
+        {
+          "region": "BAND_BOTTOM_R",
+          "refs": 5,
+          "courtyard_mm2": 111.5036,
+          "region_mm2": 166.92
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": []
+    },
+    {
+      "group": "LNB",
+      "members": 18,
+      "courtyard_mm2": 295.766,
+      "placed_refs": 18,
+      "chunks": [
+        {
+          "region": "BAND_LNB",
+          "refs": 18,
+          "courtyard_mm2": 295.766,
+          "region_mm2": 530.64
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": []
+    },
+    {
+      "group": "LNA4V5",
+      "members": 15,
+      "courtyard_mm2": 265.6664,
+      "placed_refs": 15,
+      "chunks": [
+        {
+          "region": "BAND_LNA",
+          "refs": 15,
+          "courtyard_mm2": 265.6664,
+          "region_mm2": 440.38
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": []
+    },
+    {
+      "group": "BONI",
+      "members": 21,
+      "courtyard_mm2": 354.698,
+      "placed_refs": 21,
+      "chunks": [
+        {
+          "region": "BAND_BONI",
+          "refs": 3,
+          "courtyard_mm2": 44.16,
+          "region_mm2": 63.08
+        },
+        {
+          "region": "BAND_B2B_BELOW",
+          "refs": 7,
+          "courtyard_mm2": 83.412,
+          "region_mm2": 117.475
+        },
+        {
+          "region": "BAND_B2B_ABOVE",
+          "refs": 6,
+          "courtyard_mm2": 42.806,
+          "region_mm2": 104.705
+        },
+        {
+          "region": "BAND_LEFT",
+          "refs": 2,
+          "courtyard_mm2": 92.48,
+          "region_mm2": 153.0
+        },
+        {
+          "region": "BAND_LT_LOW",
+          "refs": 1,
+          "courtyard_mm2": 6.25,
+          "region_mm2": 28.16
+        },
+        {
+          "region": "BAND_TOP_LEFT",
+          "refs": 2,
+          "courtyard_mm2": 85.59,
+          "region_mm2": 326.82
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_BONI",
+          "first_refusal": "C265 (6.800000000000001 x 6.800000000000001) does not fit region [78.8, 11.2, 82.95, 26.4]"
+        },
+        {
+          "region": "BAND_BONI",
+          "first_refusal": "C273 (6.800000000000001 x 6.800000000000001) does not fit region [78.8, 11.2, 82.95, 26.4]"
+        },
+        {
+          "region": "BAND_BONI",
+          "first_refusal": "U214 (5.4 x 8.45) does not fit region [78.8, 11.2, 82.95, 26.4]"
+        },
+        {
+          "region": "BAND_BONI",
+          "first_refusal": "Q2903 (5.4 x 7.4) does not fit region [78.8, 11.2, 82.95, 26.4]"
+        },
+        {
+          "region": "BAND_B2B_BELOW",
+          "first_refusal": "C265 (6.800000000000001 x 6.800000000000001) does not fit region [83.45, 11.2, 115.2, 14.9]"
+        },
+        {
+          "region": "BAND_B2B_BELOW",
+          "first_refusal": "C273 (6.800000000000001 x 6.800000000000001) does not fit region [83.45, 11.2, 115.2, 14.9]"
+        },
+        {
+          "region": "BAND_B2B_BELOW",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [83.45, 11.2, 115.2, 14.9]"
+        },
+        {
+          "region": "BAND_B2B_BELOW",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [83.45, 11.2, 115.2, 14.9]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE",
+          "first_refusal": "C265 (6.800000000000001 x 6.800000000000001) does not fit region [83.45, 22.1, 107.8, 26.4]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE",
+          "first_refusal": "C273 (6.800000000000001 x 6.800000000000001) does not fit region [83.45, 22.1, 107.8, 26.4]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [83.45, 22.1, 107.8, 26.4]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [83.45, 22.1, 107.8, 26.4]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "TP2903 (2.5 x 2.5) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LT_LOW",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [43.0, 7.0, 49.4, 11.4]"
+        },
+        {
+          "region": "BAND_LT_LOW",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [43.0, 7.0, 49.4, 11.4]"
+        },
+        {
+          "region": "BAND_LT_HIGH",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [43.0, 22.4, 49.4, 26.8]"
+        },
+        {
+          "region": "BAND_LT_HIGH",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [43.0, 22.4, 49.4, 26.8]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [87.3, 6.3, 99.3, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [87.3, 6.3, 99.3, 11.0]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [115.5, 19.1, 121.0, 24.5]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [115.5, 19.1, 121.0, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        }
+      ]
+    },
+    {
+      "group": "INA3221_2",
+      "members": 1,
+      "courtyard_mm2": 24.01,
+      "placed_refs": 1,
+      "chunks": [
+        {
+          "region": "LEG_RIGHT_LOW",
+          "refs": 1,
+          "courtyard_mm2": 24.01,
+          "region_mm2": 135.09
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": []
+    },
+    {
+      "group": "LAB5",
+      "members": 6,
+      "courtyard_mm2": 116.6196,
+      "placed_refs": 6,
+      "chunks": [
+        {
+          "region": "LEG_RIGHT_HIGH",
+          "refs": 6,
+          "courtyard_mm2": 116.6196,
+          "region_mm2": 193.55
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": []
+    },
+    {
+      "group": "SYS12",
+      "members": 3,
+      "courtyard_mm2": 79.654,
+      "placed_refs": 3,
+      "chunks": [
+        {
+          "region": "LEG_P2",
+          "refs": 3,
+          "courtyard_mm2": 79.654,
+          "region_mm2": 162.0
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": []
+    },
+    {
+      "group": "J21",
+      "members": 11,
+      "courtyard_mm2": 251.9744,
+      "placed_refs": 11,
+      "chunks": [
+        {
+          "region": "BAND_TOP_MID",
+          "refs": 7,
+          "courtyard_mm2": 63.678,
+          "region_mm2": 225.42
+        },
+        {
+          "region": "LEG_LEFT_LOW",
+          "refs": 3,
+          "courtyard_mm2": 116.0464,
+          "region_mm2": 225.735
+        },
+        {
+          "region": "LEG_P1",
+          "refs": 1,
+          "courtyard_mm2": 72.25,
+          "region_mm2": 273.79
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_TOP_MID",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [50.0, 26.9, 107.8, 30.8]"
+        },
+        {
+          "region": "BAND_TOP_MID",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [50.0, 26.9, 107.8, 30.8]"
+        },
+        {
+          "region": "BAND_TOP_MID",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [50.0, 26.9, 107.8, 30.8]"
+        },
+        {
+          "region": "BAND_TOP_MID",
+          "first_refusal": "D201 (7.3 x 4.5) does not fit region [50.0, 26.9, 107.8, 30.8]"
+        },
+        {
+          "region": "BAND_LT_HIGH",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [43.0, 22.4, 49.4, 26.8]"
+        },
+        {
+          "region": "BAND_LT_HIGH",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [43.0, 22.4, 49.4, 26.8]"
+        },
+        {
+          "region": "BAND_LT_HIGH",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [43.0, 22.4, 49.4, 26.8]"
+        },
+        {
+          "region": "BAND_LT_HIGH",
+          "first_refusal": "D201 (7.3 x 4.5) does not fit region [43.0, 22.4, 49.4, 26.8]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "D201 (7.3 x 4.5) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [87.3, 6.3, 99.3, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [87.3, 6.3, 99.3, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [87.3, 6.3, 99.3, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group J21@BAND_BOTTOM_M: D201 overlaps J108"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [115.5, 19.1, 121.0, 24.5]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [115.5, 19.1, 121.0, 24.5]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [115.5, 19.1, 121.0, 24.5]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "D201 (7.3 x 4.5) does not fit region [115.5, 19.1, 121.0, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "D201 (7.3 x 4.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_TOP_MID2",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [89.0, 30.9, 107.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID2",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [89.0, 30.9, 107.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID2",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [89.0, 30.9, 107.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID2",
+          "first_refusal": "D201 (7.3 x 4.5) does not fit region [89.0, 30.9, 107.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID3",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [50.0, 30.9, 80.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID3",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [50.0, 30.9, 80.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID3",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [50.0, 30.9, 80.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID3",
+          "first_refusal": "D201 (7.3 x 4.5) does not fit region [50.0, 30.9, 80.8, 34.8]"
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [7.75, 35.2, 33.65, 39.6]"
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [7.75, 35.2, 33.65, 39.6]"
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [7.75, 35.2, 33.65, 39.6]"
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "first_refusal": "D201 (7.3 x 4.5) does not fit region [7.75, 35.2, 33.65, 39.6]"
+        },
+        {
+          "region": "LEG_LEFT_LOW",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [0.3, 35.2, 7.75, 65.5]"
+        },
+        {
+          "region": "LEG_LEFT_LOW+",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [0.3, 35.2, 7.75, 43.72]"
+        },
+        {
+          "region": "LEG_LEFT_HIGH",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [0.3, 83.0, 7.75, 102.2]"
+        }
+      ]
+    },
+    {
+      "group": "DISP",
+      "members": 9,
+      "courtyard_mm2": 120.448,
+      "placed_refs": 9,
+      "chunks": [
+        {
+          "region": "LEG_TOP",
+          "refs": 6,
+          "courtyard_mm2": 61.708,
+          "region_mm2": 129.85
+        },
+        {
+          "region": "LEG_P3",
+          "refs": 3,
+          "courtyard_mm2": 58.74,
+          "region_mm2": 183.92
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "LEG_TOP",
+          "first_refusal": "C210 (6.800000000000001 x 6.800000000000001) does not fit region [7.8, 97.9, 34.3, 102.8]"
+        }
+      ]
+    },
+    {
+      "group": "LIME",
+      "members": 8,
+      "courtyard_mm2": 140.2044,
+      "placed_refs": 8,
+      "chunks": [
+        {
+          "region": "BAND_LT_HIGH",
+          "refs": 1,
+          "courtyard_mm2": 14.72,
+          "region_mm2": 28.16
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "refs": 1,
+          "courtyard_mm2": 6.664,
+          "region_mm2": 17.04
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "refs": 1,
+          "courtyard_mm2": 14.72,
+          "region_mm2": 29.7
+        },
+        {
+          "region": "BAND_TOP_MID2",
+          "refs": 3,
+          "courtyard_mm2": 21.324,
+          "region_mm2": 73.32
+        },
+        {
+          "region": "LEG_LEFT_HIGH",
+          "refs": 2,
+          "courtyard_mm2": 82.7764,
+          "region_mm2": 143.04
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_LT_HIGH",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [43.0, 22.4, 49.4, 26.8]"
+        },
+        {
+          "region": "BAND_LT_HIGH",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [43.0, 22.4, 49.4, 26.8]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "C218 (4.6 x 3.2) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R",
+          "first_refusal": "U203 (2.9 x 2.9) does not fit region [107.9, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [87.3, 6.3, 99.3, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [87.3, 6.3, 99.3, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group LIME@BAND_BOTTOM_M: C218 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group LIME@BAND_BOTTOM_M: U203 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group LIME@BAND_BOTTOM_M: C216 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group LIME@BAND_BOTTOM_M: TP203 overlaps J108"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [115.5, 19.1, 121.0, 24.5]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [115.5, 19.1, 121.0, 24.5]"
+        },
+        {
+          "region": "BAND_COL3_TOP+",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [115.5, 19.1, 121.0, 20.8]"
+        },
+        {
+          "region": "BAND_COL3_TOP+",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [115.5, 19.1, 121.0, 20.8]"
+        },
+        {
+          "region": "BAND_COL3_TOP+",
+          "first_refusal": "U203 (2.9 x 2.9) does not fit region [115.5, 19.1, 121.0, 20.8]"
+        },
+        {
+          "region": "BAND_COL3_TOP+",
+          "first_refusal": "C216 (3.4 x 1.96) does not fit region [115.5, 19.1, 121.0, 20.8]"
+        },
+        {
+          "region": "BAND_COL3_TOP+",
+          "first_refusal": "TP203 (2.5 x 2.5) does not fit region [115.5, 19.1, 121.0, 20.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "U203 (2.9 x 2.9) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C216 (3.4 x 1.96) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP203 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_TOP_MID2",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [89.0, 30.9, 107.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID2",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [89.0, 30.9, 107.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID3",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [50.0, 30.9, 80.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID3",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [50.0, 30.9, 80.8, 34.8]"
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "first_refusal": "C219 (7.9 x 5.8) does not fit region [7.75, 35.2, 33.65, 39.6]"
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [7.75, 35.2, 33.65, 39.6]"
+        }
+      ]
+    },
+    {
+      "group": "AUX12",
+      "members": 8,
+      "courtyard_mm2": 141.718,
+      "placed_refs": 8,
+      "chunks": [
+        {
+          "region": "BAND_TOP_MID3",
+          "refs": 6,
+          "courtyard_mm2": 72.468,
+          "region_mm2": 120.12
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "refs": 1,
+          "courtyard_mm2": 23.01,
+          "region_mm2": 113.96
+        },
+        {
+          "region": "LEG_P5",
+          "refs": 1,
+          "courtyard_mm2": 46.24,
+          "region_mm2": 139.2
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "C222 (6.800000000000001 x 6.800000000000001) does not fit region [87.3, 6.3, 99.3, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group AUX12@BAND_BOTTOM_M: F202 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group AUX12@BAND_BOTTOM_M: C220 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group AUX12@BAND_BOTTOM_M: C221 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group AUX12@BAND_BOTTOM_M: Q201 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group AUX12@BAND_BOTTOM_M: Q202 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group AUX12@BAND_BOTTOM_M: L204 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group AUX12@BAND_BOTTOM_M: TP204 overlaps J108"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C222 (6.800000000000001 x 6.800000000000001) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "F202 (5.9 x 3.9) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C220 (4.6 x 3.2) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C221 (4.6 x 3.2) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "Q201 (3.86 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "Q202 (3.86 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "L204 (3.9 x 2.7) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP204 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_TOP_MID3",
+          "first_refusal": "C222 (6.800000000000001 x 6.800000000000001) does not fit region [50.0, 30.9, 80.8, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID3",
+          "first_refusal": "F202 (5.9 x 3.9) does not fit region [50.0, 30.9, 80.8, 34.8]"
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "first_refusal": "C222 (6.800000000000001 x 6.800000000000001) does not fit region [7.75, 35.2, 33.65, 39.6]"
+        }
+      ]
+    },
+    {
+      "group": "E1_CTRL",
+      "members": 15,
+      "courtyard_mm2": 194.57,
+      "placed_refs": 15,
+      "chunks": [
+        {
+          "region": "LEG_Z3R",
+          "refs": 2,
+          "courtyard_mm2": 16.83,
+          "region_mm2": 25.73
+        },
+        {
+          "region": "LEG_TOP_L",
+          "refs": 1,
+          "courtyard_mm2": 32.85,
+          "region_mm2": 51.75
+        },
+        {
+          "region": "LEG_TOP_R",
+          "refs": 1,
+          "courtyard_mm2": 32.85,
+          "region_mm2": 53.82
+        },
+        {
+          "region": "BAND_LNB+",
+          "refs": 1,
+          "courtyard_mm2": 6.664,
+          "region_mm2": 65.392
+        },
+        {
+          "region": "LEG_RIGHT_LOW+",
+          "refs": 6,
+          "courtyard_mm2": 66.628,
+          "region_mm2": 92.43
+        },
+        {
+          "region": "LEG_LEFT_LOW+",
+          "refs": 4,
+          "courtyard_mm2": 38.748,
+          "region_mm2": 63.474
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: D104 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: D105 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: U103 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: U104 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: D101 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: D102 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: D103 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: Q101 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: C103 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: C104 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: TP104 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: TP105 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: TP106 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: TP107 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M: TP108 overlaps J108"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C103 (4.6 x 2.3) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C104 (3.4 x 1.96) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP104 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP105 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP106 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP107 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP108 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "LEG_Z3R",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [19.9, 54.5, 23.0, 62.8]"
+        },
+        {
+          "region": "LEG_Z3R",
+          "first_refusal": "D105 (4.5 x 7.3) does not fit region [19.9, 54.5, 23.0, 62.8]"
+        },
+        {
+          "region": "LEG_Z3R",
+          "first_refusal": "U103 (3.4 x 4.1) does not fit region [19.9, 54.5, 23.0, 62.8]"
+        },
+        {
+          "region": "LEG_Z3R",
+          "first_refusal": "U104 (3.4 x 4.1) does not fit region [19.9, 54.5, 23.0, 62.8]"
+        },
+        {
+          "region": "LEG_Z3R",
+          "first_refusal": "D101 (3.4 x 3.86) does not fit region [19.9, 54.5, 23.0, 62.8]"
+        },
+        {
+          "region": "LEG_Z3R",
+          "first_refusal": "D102 (3.4 x 3.86) does not fit region [19.9, 54.5, 23.0, 62.8]"
+        },
+        {
+          "region": "LEG_Z3R",
+          "first_refusal": "D103 (3.4 x 3.86) does not fit region [19.9, 54.5, 23.0, 62.8]"
+        },
+        {
+          "region": "LEG_Z3R",
+          "first_refusal": "Q101 (3.4 x 3.86) does not fit region [19.9, 54.5, 23.0, 62.8]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "C104 (3.4 x 1.96) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "TP105 (2.5 x 2.5) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "TP106 (2.5 x 2.5) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "TP107 (2.5 x 2.5) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "first_refusal": "TP108 (2.5 x 2.5) does not fit region [7.8, 102.8, 15.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "C104 (3.4 x 1.96) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "TP105 (2.5 x 2.5) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "TP106 (2.5 x 2.5) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "TP107 (2.5 x 2.5) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "TP108 (2.5 x 2.5) does not fit region [26.5, 102.8, 34.3, 104.7]"
+        },
+        {
+          "region": "BAND_LNB+",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [15.8, 7.0, 42.6, 9.44]"
+        },
+        {
+          "region": "BAND_LNB+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [15.8, 7.0, 42.6, 9.44]"
+        },
+        {
+          "region": "BAND_LNB+",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [15.8, 7.0, 42.6, 9.44]"
+        },
+        {
+          "region": "BAND_LNB+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [15.8, 7.0, 42.6, 9.44]"
+        },
+        {
+          "region": "BAND_LNB+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [15.8, 7.0, 42.6, 9.44]"
+        },
+        {
+          "region": "BAND_LNB+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [15.8, 7.0, 42.6, 9.44]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "TP105 (2.5 x 2.5) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "TP106 (2.5 x 2.5) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "TP107 (2.5 x 2.5) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "TP108 (2.5 x 2.5) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "TP105 (2.5 x 2.5) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "TP106 (2.5 x 2.5) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "TP107 (2.5 x 2.5) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "TP108 (2.5 x 2.5) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "TP105 (2.5 x 2.5) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "TP106 (2.5 x 2.5) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "TP107 (2.5 x 2.5) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "TP108 (2.5 x 2.5) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "TP107 (2.5 x 2.5) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "TP108 (2.5 x 2.5) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        }
+      ]
+    },
+    {
+      "group": "E1_USBPD",
+      "members": 4,
+      "courtyard_mm2": 27.988,
+      "placed_refs": 4,
+      "chunks": [
+        {
+          "region": "BAND_LEFT+",
+          "refs": 2,
+          "courtyard_mm2": 13.328,
+          "region_mm2": 21.6
+        },
+        {
+          "region": "LEG_P1+",
+          "refs": 2,
+          "courtyard_mm2": 14.66,
+          "region_mm2": 179.74
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_USBPD@BAND_BOTTOM_M: U109 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_USBPD@BAND_BOTTOM_M: C116 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_USBPD@BAND_BOTTOM_M: C117 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E1_USBPD@BAND_BOTTOM_M: TP103 overlaps J108"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "U109 (2.9 x 2.9) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C116 (3.4 x 1.96) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C117 (3.4 x 1.96) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP103 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "U109 (2.9 x 2.9) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "C116 (3.4 x 1.96) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "C117 (3.4 x 1.96) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "TP103 (2.5 x 2.5) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U109 (2.9 x 2.9) does not fit region [0.3, 9.8, 9.3, 12.2]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "U109 (2.9 x 2.9) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "TP103 (2.5 x 2.5) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "U109 (2.9 x 2.9) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "TP103 (2.5 x 2.5) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        }
+      ]
+    },
+    {
+      "group": "E5_SERVICE",
+      "members": 3,
+      "courtyard_mm2": 34.13,
+      "placed_refs": 3,
+      "chunks": [
+        {
+          "region": "LEG_P3+",
+          "refs": 3,
+          "courtyard_mm2": 34.13,
+          "region_mm2": 76.285
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E5_SERVICE@BAND_BOTTOM_M: U551 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E5_SERVICE@BAND_BOTTOM_M: U553 overlaps J108"
+        },
+        {
+          "region": "BAND_BOTTOM_M",
+          "first_refusal": "group E5_SERVICE@BAND_BOTTOM_M: TP503 overlaps J108"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "U551 (4.1 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "U553 (4.1 x 3.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "TP503 (2.5 x 2.5) does not fit region [121.53, 22.6, 128.3, 24.5]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "U551 (4.1 x 3.4) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "U553 (4.1 x 3.4) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_LNA+",
+          "first_refusal": "TP503 (2.5 x 2.5) does not fit region [49.6, 7.0, 72.3, 8.82]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "U551 (4.1 x 3.4) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "U553 (4.1 x 3.4) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "TP503 (2.5 x 2.5) does not fit region [0.3, 27.0, 42.2, 28.9]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "U551 (4.1 x 3.4) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "U553 (4.1 x 3.4) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "TP503 (2.5 x 2.5) does not fit region [33.9, 77.8, 41.8, 80.04]"
+        }
+      ]
+    },
+    {
+      "group": "HFP_BOT",
+      "members": 6,
+      "courtyard_mm2": 25.9296,
+      "placed_refs": 6,
+      "chunks": [
+        {
+          "region": "BL_M2",
+          "refs": 6,
+          "courtyard_mm2": 25.9296,
+          "region_mm2": 748.0
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "LNB_BOT",
+      "members": 14,
+      "courtyard_mm2": 84.6416,
+      "placed_refs": 14,
+      "chunks": [
+        {
+          "region": "BB_TOP1",
+          "refs": 14,
+          "courtyard_mm2": 84.6416,
+          "region_mm2": 315.0
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "LNA4V5_BOT",
+      "members": 4,
+      "courtyard_mm2": 35.2384,
+      "placed_refs": 4,
+      "chunks": [
+        {
+          "region": "BB_GAP",
+          "refs": 4,
+          "courtyard_mm2": 35.2384,
+          "region_mm2": 59.28
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "BONI_BOT",
+      "members": 12,
+      "courtyard_mm2": 69.8112,
+      "placed_refs": 12,
+      "chunks": [
+        {
+          "region": "BB_TOP2",
+          "refs": 12,
+          "courtyard_mm2": 69.8112,
+          "region_mm2": 435.75
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "INA3221_2_BOT",
+      "members": 10,
+      "courtyard_mm2": 43.216,
+      "placed_refs": 10,
+      "chunks": [
+        {
+          "region": "BL_M1",
+          "refs": 10,
+          "courtyard_mm2": 43.216,
+          "region_mm2": 234.08
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "SYS12_BOT",
+      "members": 2,
+      "courtyard_mm2": 8.6432,
+      "placed_refs": 2,
+      "chunks": [
+        {
+          "region": "BL_M4",
+          "refs": 2,
+          "courtyard_mm2": 8.6432,
+          "region_mm2": 163.2
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "J21_BOT",
+      "members": 8,
+      "courtyard_mm2": 40.5568,
+      "placed_refs": 8,
+      "chunks": [
+        {
+          "region": "BB_LEFT",
+          "refs": 8,
+          "courtyard_mm2": 40.5568,
+          "region_mm2": 146.2
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "DISP_BOT",
+      "members": 7,
+      "courtyard_mm2": 36.2352,
+      "placed_refs": 7,
+      "chunks": [
+        {
+          "region": "BL_M5",
+          "refs": 7,
+          "courtyard_mm2": 36.2352,
+          "region_mm2": 256.7
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "LIME_BOT",
+      "members": 6,
+      "courtyard_mm2": 31.9136,
+      "placed_refs": 6,
+      "chunks": [
+        {
+          "region": "BL_BOT",
+          "refs": 6,
+          "courtyard_mm2": 31.9136,
+          "region_mm2": 125.28
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "AUX12_BOT",
+      "members": 4,
+      "courtyard_mm2": 23.2704,
+      "placed_refs": 4,
+      "chunks": [
+        {
+          "region": "BL_TOPR",
+          "refs": 4,
+          "courtyard_mm2": 23.2704,
+          "region_mm2": 56.16
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "E1_CTRL_BOT",
+      "members": 13,
+      "courtyard_mm2": 62.1648,
+      "placed_refs": 13,
+      "chunks": [
+        {
+          "region": "BL_LEFT",
+          "refs": 13,
+          "courtyard_mm2": 62.1648,
+          "region_mm2": 435.5
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "E1_USBPD_BOT",
+      "members": 5,
+      "courtyard_mm2": 21.608,
+      "placed_refs": 5,
+      "chunks": [
+        {
+          "region": "BL_M3",
+          "refs": 5,
+          "courtyard_mm2": 21.608,
+          "region_mm2": 71.71
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    },
+    {
+      "group": "E5_SERVICE_BOT",
+      "members": 3,
+      "courtyard_mm2": 12.9648,
+      "placed_refs": 3,
+      "chunks": [
+        {
+          "region": "BL_TOPL",
+          "refs": 3,
+          "courtyard_mm2": 12.9648,
+          "region_mm2": 54.72
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [],
+      "side": "B"
+    }
+  ],
+  "unplaced_refs": [],
+  "exit_edges": {
+    "bottom": {
+      "edge": "bottom",
+      "at": null,
+      "span": [
+        0,
+        136
+      ],
+      "use": "battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads",
+      "hole_keepout_chords": [
+        [
+          0.5,
+          7.5
+        ],
+        [
+          128.5,
+          135.5
+        ]
+      ],
+      "free_length_mm": 122.0,
+      "pwr_a_headers": [
+        {
+          "ref": "J105",
+          "extent_mm": 12.0
+        },
+        {
+          "ref": "J106",
+          "extent_mm": 12.0
+        },
+        {
+          "ref": "J107",
+          "extent_mm": 12.0
+        },
+        {
+          "ref": "J108",
+          "extent_mm": 12.0
+        },
+        {
+          "ref": "J109",
+          "extent_mm": 6.9
+        },
+        {
+          "ref": "J110",
+          "extent_mm": 12.9
+        },
+        {
+          "ref": "J111",
+          "extent_mm": 8.9
+        },
+        {
+          "ref": "J112",
+          "extent_mm": 10.9
+        }
+      ],
+      "pwr_b_headers_long_side": [],
+      "pwr_a_need_mm": 87.6,
+      "pwr_a_plus_pwr_b_need_mm": 87.6,
+      "single_row_fits": true
+    },
+    "right": {
+      "edge": "right",
+      "at": null,
+      "span": [
+        0,
+        35
+      ],
+      "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports and GX16 through plate slot SL3",
+      "hole_keepout_chords": [
+        [
+          2.5,
+          9.5
+        ],
+        [
+          27.5,
+          34.5
+        ]
+      ],
+      "free_length_mm": 21.0,
+      "pwr_a_headers": [
+        {
+          "ref": "J104",
+          "extent_mm": 16.66
+        },
+        {
+          "ref": "J113",
+          "extent_mm": 6.9
+        },
+        {
+          "ref": "J114",
+          "extent_mm": 10.66
+        },
+        {
+          "ref": "J115",
+          "extent_mm": 10.66
+        },
+        {
+          "ref": "J507",
+          "extent_mm": 10.9
+        }
+      ],
+      "pwr_b_headers_long_side": [
+        {
+          "ref": "J201",
+          "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
+          "extent_mm": 12.9
+        },
+        {
+          "ref": "J202",
+          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "extent_mm": 22.9
+        },
+        {
+          "ref": "J203",
+          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "extent_mm": 22.9
+        },
+        {
+          "ref": "J506",
+          "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+          "extent_mm": 8.9
+        },
+        {
+          "ref": "J508",
+          "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+          "extent_mm": 14.9
+        }
+      ],
+      "pwr_a_need_mm": 55.78,
+      "pwr_a_plus_pwr_b_need_mm": 138.28,
+      "single_row_fits": false
+    },
+    "top_left": {
+      "edge": "top",
+      "at": null,
+      "span": [
+        0,
+        42
+      ],
+      "use": "DISP12 to the HDMI board (Micro-Fit 3.0)",
+      "hole_keepout_chords": [
+        [
+          0.5,
+          7.5
+        ],
+        [
+          34.5,
+          41.5
+        ]
+      ],
+      "free_length_mm": 28.0,
+      "pwr_a_headers": [
+        {
+          "ref": "J205",
+          "extent_mm": 10.66
+        }
+      ],
+      "pwr_b_headers_long_side": [],
+      "pwr_a_need_mm": 10.66,
+      "pwr_a_plus_pwr_b_need_mm": 10.66,
+      "single_row_fits": true
+    },
+    "top_sl2": {
+      "edge": "top",
+      "at": 35,
+      "span": [
+        108,
+        128
+      ],
+      "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22 and S35 leave from PWR-B J204/J207 (build/16-dzhgut-rozyemy.csv, W2 GR-3)",
+      "hole_keepout_chords": [],
+      "free_length_mm": 20.0,
+      "pwr_a_headers": [
+        {
+          "ref": "J206",
+          "extent_mm": 17.16
+        }
+      ],
+      "pwr_b_headers_long_side": [
+        {
+          "ref": "J204",
+          "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+          "extent_mm": 18.9
+        },
+        {
+          "ref": "J207",
+          "footprint": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal",
+          "extent_mm": 26.9
+        }
+      ],
+      "pwr_a_need_mm": 17.16,
+      "pwr_a_plus_pwr_b_need_mm": 62.96,
+      "single_row_fits": false
+    }
+  },
+  "pwr_b_cutouts": {
+    "rule": "pcb/partition-spec.json height_rule and keepouts: courtyard + window_margin for parts taller than hA and for the PWR-A headers; a probe window of tp_probe_window for a test point",
+    "placed": [
+      {
+        "ref": "C107",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          7.5,
+          66.2,
+          17.9,
+          74.3
+        ],
+        "area_mm2": 84.24
+      },
+      {
+        "ref": "C113",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          33.9,
+          59.3,
+          42.0,
+          69.9
+        ],
+        "area_mm2": 85.86
+      },
+      {
+        "ref": "C206",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          50.4,
+          7.6,
+          58.2
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C207",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          22.7,
+          57.0,
+          32.2,
+          66.5
+        ],
+        "area_mm2": 90.25
+      },
+      {
+        "ref": "C210",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          22.7,
+          76.5,
+          30.5,
+          84.3
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C222",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          7.5,
+          90.4,
+          15.3,
+          98.2
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C254",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          15.3,
+          19.5,
+          23.1,
+          27.3
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C262",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          22.6,
+          19.5,
+          30.4,
+          27.3
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C265",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          19.5,
+          7.6,
+          27.3
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C273",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          12.2,
+          7.6,
+          20.0
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C511",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          106.4,
+          5.0,
+          112.9,
+          11.5
+        ],
+        "area_mm2": 42.25
+      },
+      {
+        "ref": "C512",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          99.1,
+          3.7,
+          106.9,
+          11.5
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "F102",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          65.5,
+          8.04,
+          83.0
+        ],
+        "area_mm2": 144.2
+      },
+      {
+        "ref": "J104",
+        "kind": "header_edge_strip",
+        "rect": [
+          128.53,
+          9.5,
+          136.3,
+          27.16
+        ],
+        "area_mm2": 137.2182
+      },
+      {
+        "ref": "J105",
+        "kind": "header_edge_strip",
+        "rect": [
+          29.6,
+          -0.2,
+          42.6,
+          7.2
+        ],
+        "area_mm2": 96.2
+      },
+      {
+        "ref": "J106",
+        "kind": "header_edge_strip",
+        "rect": [
+          49.5,
+          -0.2,
+          62.5,
+          7.2
+        ],
+        "area_mm2": 96.2
+      },
+      {
+        "ref": "J107",
+        "kind": "header_edge_strip",
+        "rect": [
+          7.7,
+          -0.2,
+          20.7,
+          7.2
+        ],
+        "area_mm2": 96.2
+      },
+      {
+        "ref": "J108",
+        "kind": "header_edge_strip",
+        "rect": [
+          75.4,
+          -0.2,
+          88.4,
+          11.4
+        ],
+        "area_mm2": 150.8
+      },
+      {
+        "ref": "J109",
+        "kind": "header_edge_strip",
+        "rect": [
+          42.1,
+          -0.2,
+          50.0,
+          6.3
+        ],
+        "area_mm2": 51.35
+      },
+      {
+        "ref": "J110",
+        "kind": "header_edge_strip",
+        "rect": [
+          62.0,
+          -0.2,
+          75.9,
+          6.3
+        ],
+        "area_mm2": 90.35
+      },
+      {
+        "ref": "J111",
+        "kind": "header_edge_strip",
+        "rect": [
+          20.2,
+          -0.2,
+          30.1,
+          6.3
+        ],
+        "area_mm2": 64.35
+      },
+      {
+        "ref": "J112",
+        "kind": "header_edge_strip",
+        "rect": [
+          87.9,
+          -0.2,
+          99.8,
+          6.3
+        ],
+        "area_mm2": 77.35
+      },
+      {
+        "ref": "J113",
+        "kind": "header_edge_strip",
+        "rect": [
+          115.0,
+          11.2,
+          121.5,
+          19.1
+        ],
+        "area_mm2": 51.35
+      },
+      {
+        "ref": "J114",
+        "kind": "header_edge_strip",
+        "rect": [
+          121.03,
+          -0.2,
+          128.8,
+          11.46
+        ],
+        "area_mm2": 90.5982
+      },
+      {
+        "ref": "J115",
+        "kind": "header_edge_strip",
+        "rect": [
+          121.03,
+          10.96,
+          128.8,
+          22.62
+        ],
+        "area_mm2": 90.5982
+      },
+      {
+        "ref": "J205",
+        "kind": "header_edge_strip",
+        "rect": [
+          15.1,
+          102.53,
+          26.76,
+          110.3
+        ],
+        "area_mm2": 90.5982
+      },
+      {
+        "ref": "J206",
+        "kind": "header_edge_strip",
+        "rect": [
+          107.8,
+          24.52,
+          125.96,
+          35.3
+        ],
+        "area_mm2": 195.7648
+      },
+      {
+        "ref": "J507",
+        "kind": "header_edge_strip",
+        "rect": [
+          115.0,
+          -0.2,
+          121.5,
+          11.7
+        ],
+        "area_mm2": 77.35
+      },
+      {
+        "ref": "L101",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          33.4,
+          94.54,
+          41.46,
+          102.8
+        ],
+        "area_mm2": 66.5756
+      },
+      {
+        "ref": "L501",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          19.7,
+          84.2,
+          33.7,
+          98.2
+        ],
+        "area_mm2": 196.0
+      },
+      {
+        "ref": "TP101",
+        "kind": "test_point_probe_window",
+        "rect": [
+          17.65,
+          71.05,
+          20.65,
+          74.05
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP102",
+        "kind": "test_point_probe_window",
+        "rect": [
+          33.65,
+          80.29,
+          36.65,
+          83.29
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP103",
+        "kind": "test_point_probe_window",
+        "rect": [
+          26.35,
+          54.25,
+          29.35,
+          57.25
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP104",
+        "kind": "test_point_probe_window",
+        "rect": [
+          19.65,
+          54.95,
+          22.65,
+          57.95
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP105",
+        "kind": "test_point_probe_window",
+        "rect": [
+          33.65,
+          35.19,
+          36.65,
+          38.19
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP106",
+        "kind": "test_point_probe_window",
+        "rect": [
+          36.65,
+          35.19,
+          39.65,
+          38.19
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP107",
+        "kind": "test_point_probe_window",
+        "rect": [
+          0.05,
+          36.61,
+          3.05,
+          39.61
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP108",
+        "kind": "test_point_probe_window",
+        "rect": [
+          3.05,
+          36.61,
+          6.05,
+          39.61
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP201",
+        "kind": "test_point_probe_window",
+        "rect": [
+          63.35,
+          28.05,
+          66.35,
+          31.05
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP202",
+        "kind": "test_point_probe_window",
+        "rect": [
+          30.25,
+          81.05,
+          33.25,
+          84.05
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP203",
+        "kind": "test_point_probe_window",
+        "rect": [
+          92.15,
+          32.05,
+          95.15,
+          35.05
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP204",
+        "kind": "test_point_probe_window",
+        "rect": [
+          73.07,
+          32.05,
+          76.07,
+          35.05
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP205",
+        "kind": "test_point_probe_window",
+        "rect": [
+          64.65,
+          9.77,
+          67.65,
+          12.77
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP211",
+        "kind": "test_point_probe_window",
+        "rect": [
+          29.45,
+          12.85,
+          32.45,
+          15.85
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP212",
+        "kind": "test_point_probe_window",
+        "rect": [
+          83.2,
+          23.65,
+          86.2,
+          26.65
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP213",
+        "kind": "test_point_probe_window",
+        "rect": [
+          66.35,
+          28.05,
+          69.35,
+          31.05
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP214",
+        "kind": "test_point_probe_window",
+        "rect": [
+          22.95,
+          73.75,
+          25.95,
+          76.75
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP215",
+        "kind": "test_point_probe_window",
+        "rect": [
+          32.45,
+          12.85,
+          35.45,
+          15.85
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP503",
+        "kind": "test_point_probe_window",
+        "rect": [
+          22.95,
+          66.85,
+          25.95,
+          69.85
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP2903",
+        "kind": "test_point_probe_window",
+        "rect": [
+          42.75,
+          8.65,
+          45.75,
+          11.65
+        ],
+        "area_mm2": 9.0
+      }
+    ],
+    "area_mm2": 2832.3732,
+    "unplaced_needing_one": []
+  },
+  "tht_pads": {
+    "rule": "every PWR-A THT pad and NPTH connector peg gets a plate relief pocket >= 1.0 mm and polyimide over the 0.4 mm gap (mechanical/params/boards.json tht_pockets); pin_field = pads and pegs; rows inside a thermal_bond zone also cut the Gelid pad",
+    "placed": [
+      {
+        "ref": "C206",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          2.9,
+          52.25,
+          4.5,
+          56.35
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "C207",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          26.65,
+          59.2,
+          28.25,
+          64.3
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "C210",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          25.8,
+          78.35,
+          27.4,
+          82.45
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "C222",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          9.35,
+          93.5,
+          13.45,
+          95.1
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "C254",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          17.15,
+          22.6,
+          21.25,
+          24.2
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "C262",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          24.45,
+          22.6,
+          28.55,
+          24.2
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "C265",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          2.9,
+          21.35,
+          4.5,
+          25.45
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "C273",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          2.9,
+          14.05,
+          4.5,
+          18.15
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "C511",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          107.85,
+          7.45,
+          111.45,
+          9.05
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "C512",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          100.95,
+          6.8,
+          105.05,
+          8.4
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "F102",
+        "tht_pads": 4,
+        "npth_pegs": 0,
+        "pin_field": [
+          0.83,
+          67.9,
+          7.01,
+          80.6
+        ],
+        "thermal_bond_zones": [
+          4
+        ]
+      },
+      {
+        "ref": "J104",
+        "tht_pads": 4,
+        "npth_pegs": 2,
+        "pin_field": [
+          129.405,
+          10.195,
+          133.01,
+          26.465
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J105",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          31.2,
+          2.15,
+          40.0,
+          4.85
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "J106",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          51.1,
+          2.15,
+          59.9,
+          4.85
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "J107",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          9.3,
+          2.15,
+          18.1,
+          4.85
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "J108",
+        "tht_pads": 4,
+        "npth_pegs": 0,
+        "pin_field": [
+          77.0,
+          2.15,
+          85.8,
+          9.05
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J109",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          44.45,
+          1.625,
+          47.65,
+          3.375
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J110",
+        "tht_pads": 5,
+        "npth_pegs": 0,
+        "pin_field": [
+          64.35,
+          1.625,
+          73.55,
+          3.375
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J111",
+        "tht_pads": 3,
+        "npth_pegs": 0,
+        "pin_field": [
+          22.55,
+          1.625,
+          27.75,
+          3.375
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J112",
+        "tht_pads": 4,
+        "npth_pegs": 0,
+        "pin_field": [
+          90.25,
+          1.625,
+          97.45,
+          3.375
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J113",
+        "tht_pads": 2,
+        "npth_pegs": 0,
+        "pin_field": [
+          116.825,
+          13.55,
+          118.575,
+          16.75
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J114",
+        "tht_pads": 2,
+        "npth_pegs": 2,
+        "pin_field": [
+          121.905,
+          0.495,
+          125.51,
+          10.765
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J115",
+        "tht_pads": 2,
+        "npth_pegs": 2,
+        "pin_field": [
+          121.905,
+          11.655,
+          125.51,
+          21.925
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J205",
+        "tht_pads": 2,
+        "npth_pegs": 2,
+        "pin_field": [
+          15.795,
+          105.82,
+          26.065,
+          109.425
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J206",
+        "tht_pads": 8,
+        "npth_pegs": 2,
+        "pin_field": [
+          108.87,
+          27.38,
+          124.89,
+          32.58
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J208",
+        "tht_pads": 0,
+        "npth_pegs": 2,
+        "pin_field": [
+          84.575,
+          18.625,
+          113.025,
+          20.075
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J507",
+        "tht_pads": 4,
+        "npth_pegs": 0,
+        "pin_field": [
+          116.825,
+          2.15,
+          118.575,
+          9.35
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "U204",
+        "tht_pads": 6,
+        "npth_pegs": 0,
+        "pin_field": [
+          45.38,
+          18.62,
+          46.88,
+          21.12
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "U205",
+        "tht_pads": 6,
+        "npth_pegs": 0,
+        "pin_field": [
+          45.38,
+          12.62,
+          46.88,
+          15.12
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      }
+    ],
+    "unplaced": []
+  },
+  "scripted_copper_precheck": {
+    "label": "geometry of the spec copper against the planned pads; KiCad fill, thermal spokes and neck widths are checked only on the routed board",
+    "items": [
+      {
+        "id": "LAB5-DAMP",
+        "kind": "track",
+        "net": "E1_LAB5_DAMP",
+        "class": "PWR3A",
+        "width_mm": 1.85,
+        "class_outer_width_mm": 1.85,
+        "width_ok": true,
+        "end_pads": [
+          [
+            "C113.1"
+          ],
+          [
+            "R110.2"
+          ]
+        ],
+        "ends_on_net_pads": true,
+        "locked": true
+      },
+      {
+        "id": "GND-In1",
+        "kind": "plane",
+        "net": "GND",
+        "layer": "In1.Cu",
+        "pad_connection": "solid",
+        "outline": "board"
+      },
+      {
+        "id": "GND-In2",
+        "kind": "plane",
+        "net": "GND",
+        "layer": "In2.Cu",
+        "pad_connection": "solid",
+        "outline": "board"
+      }
+    ]
+  },
+  "b2b": {
+    "rule": "spec b2b pin_map: contact k of the PWR-A half on the PWR-A top under contact pin_map(k) of the PWR-B half on the PWR-B bottom, same net; MODEL geometry of the two KiCad 10.0.7 lands",
+    "pairs": [
+      {
+        "ref": "J208",
+        "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+        "mate_board": "PWR_B",
+        "mate_ref": "J209",
+        "mate_footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+        "pin_map": "pcb/generated/b2b-nets.json contacts (pwr_a_pin -> pwr_b_pin)",
+        "contacts": 100,
+        "netted_contacts": 69,
+        "mate_netted_contacts": 69,
+        "net_differences": [],
+        "pins_without_mate": [],
+        "mate_pins_without_pin": [],
+        "max_dx_along_row_mm": 0.0,
+        "max_row_offset_mm": 0.0,
+        "same_row_every_contact": true,
+        "row_axis_y": {
+          "mine": 18.5,
+          "mate": 18.5
+        },
+        "pin1": {
+          "mine": [
+            86.55,
+            20.35
+          ],
+          "mate": [
+            86.55,
+            16.65
+          ]
+        },
+        "bosses_x_y_drill": {
+          "mine": [
+            [
+              85.3,
+              19.35,
+              1.45
+            ],
+            [
+              112.3,
+              19.35,
+              1.45
+            ]
+          ],
+          "mate": [
+            [
+              85.3,
+              17.65,
+              1.45
+            ],
+            [
+              112.3,
+              17.65,
+              1.45
+            ]
+          ]
+        },
+        "larger_boss_at_pin1_end": {
+          "mine": null,
+          "mate": null
+        },
+        "against_pwr_b_connectors_json": {
+          "contacts": 100,
+          "max_dx_mm": 0.0,
+          "max_row_offset_mm": 0.0
+        },
+        "stack": {
+          "pwr_a_top_z": 42.5,
+          "pwr_b_bottom_z": 47.5,
+          "gap_mm": 5.0,
+          "partition_spec_stack": 5.0
+        },
+        "tolerances_mm": {
+          "along_row": 0.01,
+          "row": 0.2,
+          "bosses": 0.05
+        },
+        "passed": true,
+        "bosses_mirrored_about_row_axis": true
+      }
+    ],
+    "passed": true
+  },
+  "positions": {
+    "note": "planned footprint origins (board mm, y up; align origin), the planner result above, not an acceptable placement for the group-placed refs",
+    "refs": [
+      {
+        "ref": "C103",
+        "at": [
+          21.05,
+          60.5
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          19.9,
+          58.2,
+          22.2,
+          62.8
+        ]
+      },
+      {
+        "ref": "C104",
+        "at": [
+          17.5,
+          8.46
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          15.8,
+          7.48,
+          19.2,
+          9.44
+        ]
+      },
+      {
+        "ref": "C105",
+        "at": [
+          3.79,
+          100.72
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          3.06,
+          99.24,
+          4.52,
+          102.2
+        ]
+      },
+      {
+        "ref": "C106",
+        "at": [
+          5.75,
+          100.72
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          5.02,
+          99.24,
+          6.48,
+          102.2
+        ]
+      },
+      {
+        "ref": "C107",
+        "at": [
+          12.7,
+          70.25
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          8.0,
+          66.7,
+          17.4,
+          73.8
+        ]
+      },
+      {
+        "ref": "C108",
+        "at": [
+          9.7,
+          65.22
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          8.0,
+          64.24,
+          11.4,
+          66.2
+        ]
+      },
+      {
+        "ref": "C110",
+        "at": [
+          38.58,
+          86.44
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          37.6,
+          84.74,
+          39.56,
+          88.14
+        ]
+      },
+      {
+        "ref": "C111",
+        "at": [
+          39.9,
+          92.24
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          38.3,
+          89.94,
+          41.5,
+          94.54
+        ]
+      },
+      {
+        "ref": "C112",
+        "at": [
+          35.5,
+          85.84
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          33.9,
+          83.54,
+          37.1,
+          88.14
+        ]
+      },
+      {
+        "ref": "C113",
+        "at": [
+          37.95,
+          64.6
+        ],
+        "rotation": 270,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          34.4,
+          59.8,
+          41.5,
+          69.4
+        ]
+      },
+      {
+        "ref": "C114",
+        "at": [
+          1.03,
+          95.66
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          94.18,
+          1.76,
+          97.14
+        ]
+      },
+      {
+        "ref": "C115",
+        "at": [
+          25.68,
+          58.87
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          24.2,
+          58.14,
+          27.16,
+          59.6
+        ]
+      },
+      {
+        "ref": "C116",
+        "at": [
+          2.0,
+          11.22
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          10.24,
+          3.7,
+          12.2
+        ]
+      },
+      {
+        "ref": "C117",
+        "at": [
+          5.9,
+          11.22
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          4.2,
+          10.24,
+          7.6,
+          12.2
+        ]
+      },
+      {
+        "ref": "C201",
+        "at": [
+          3.79,
+          25.52
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          3.06,
+          24.04,
+          4.52,
+          27.0
+        ]
+      },
+      {
+        "ref": "C202",
+        "at": [
+          71.3,
+          29.82
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          69.6,
+          28.84,
+          73.0,
+          30.8
+        ]
+      },
+      {
+        "ref": "C203",
+        "at": [
+          75.2,
+          29.82
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          73.5,
+          28.84,
+          76.9,
+          30.8
+        ]
+      },
+      {
+        "ref": "C204",
+        "at": [
+          52.3,
+          29.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          50.0,
+          27.6,
+          54.6,
+          30.8
+        ]
+      },
+      {
+        "ref": "C205",
+        "at": [
+          57.4,
+          29.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          55.1,
+          27.6,
+          59.7,
+          30.8
+        ]
+      },
+      {
+        "ref": "C206",
+        "at": [
+          3.7,
+          53.05
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          50.9,
+          7.1,
+          57.7
+        ]
+      },
+      {
+        "ref": "C207",
+        "at": [
+          27.45,
+          60.0
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          23.2,
+          57.5,
+          31.7,
+          66.0
+        ]
+      },
+      {
+        "ref": "C208",
+        "at": [
+          10.1,
+          101.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          7.8,
+          99.6,
+          12.4,
+          102.8
+        ]
+      },
+      {
+        "ref": "C209",
+        "at": [
+          15.2,
+          101.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          12.9,
+          99.6,
+          17.5,
+          102.8
+        ]
+      },
+      {
+        "ref": "C210",
+        "at": [
+          26.6,
+          79.15
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          23.2,
+          77.0,
+          30.0,
+          83.8
+        ]
+      },
+      {
+        "ref": "C211",
+        "at": [
+          13.54,
+          101.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          12.06,
+          100.84,
+          15.02,
+          102.3
+        ]
+      },
+      {
+        "ref": "C212",
+        "at": [
+          27.5,
+          101.82
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          25.8,
+          100.84,
+          29.2,
+          102.8
+        ]
+      },
+      {
+        "ref": "C213",
+        "at": [
+          31.4,
+          101.82
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          29.7,
+          100.84,
+          33.1,
+          102.8
+        ]
+      },
+      {
+        "ref": "C214",
+        "at": [
+          13.54,
+          38.07
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          12.06,
+          37.34,
+          15.02,
+          38.8
+        ]
+      },
+      {
+        "ref": "C215",
+        "at": [
+          109.6,
+          23.52
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          107.9,
+          22.54,
+          111.3,
+          24.5
+        ]
+      },
+      {
+        "ref": "C216",
+        "at": [
+          97.1,
+          33.82
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          95.4,
+          32.84,
+          98.8,
+          34.8
+        ]
+      },
+      {
+        "ref": "C217",
+        "at": [
+          45.3,
+          25.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          43.0,
+          23.6,
+          47.6,
+          26.8
+        ]
+      },
+      {
+        "ref": "C218",
+        "at": [
+          117.8,
+          22.9
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          115.5,
+          21.3,
+          120.1,
+          24.5
+        ]
+      },
+      {
+        "ref": "C219",
+        "at": [
+          3.2,
+          98.25
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          94.3,
+          6.1,
+          102.2
+        ]
+      },
+      {
+        "ref": "C220",
+        "at": [
+          61.02,
+          33.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          58.72,
+          31.6,
+          63.32,
+          34.8
+        ]
+      },
+      {
+        "ref": "C221",
+        "at": [
+          66.12,
+          33.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          63.82,
+          31.6,
+          68.42,
+          34.8
+        ]
+      },
+      {
+        "ref": "C222",
+        "at": [
+          10.15,
+          94.3
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          8.0,
+          90.9,
+          14.8,
+          97.7
+        ]
+      },
+      {
+        "ref": "C223",
+        "at": [
+          66.98,
+          24.8
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          64.68,
+          23.2,
+          69.28,
+          26.4
+        ]
+      },
+      {
+        "ref": "C224",
+        "at": [
+          51.9,
+          18.32
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          49.6,
+          16.72,
+          54.2,
+          19.92
+        ]
+      },
+      {
+        "ref": "C225",
+        "at": [
+          60.23,
+          23.5
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          56.28,
+          20.6,
+          64.18,
+          26.4
+        ]
+      },
+      {
+        "ref": "C226",
+        "at": [
+          57.0,
+          18.32
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          54.7,
+          16.72,
+          59.3,
+          19.92
+        ]
+      },
+      {
+        "ref": "C227",
+        "at": [
+          62.1,
+          18.32
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          59.8,
+          16.72,
+          64.4,
+          19.92
+        ]
+      },
+      {
+        "ref": "C228",
+        "at": [
+          67.2,
+          18.32
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          64.9,
+          16.72,
+          69.5,
+          19.92
+        ]
+      },
+      {
+        "ref": "C229",
+        "at": [
+          51.9,
+          14.62
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          49.6,
+          13.02,
+          54.2,
+          16.22
+        ]
+      },
+      {
+        "ref": "C230",
+        "at": [
+          57.0,
+          14.62
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          54.7,
+          13.02,
+          59.3,
+          16.22
+        ]
+      },
+      {
+        "ref": "C231",
+        "at": [
+          62.1,
+          14.62
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          59.8,
+          13.02,
+          64.4,
+          16.22
+        ]
+      },
+      {
+        "ref": "C252",
+        "at": [
+          22.7,
+          17.9
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          20.4,
+          16.3,
+          25.0,
+          19.5
+        ]
+      },
+      {
+        "ref": "C253",
+        "at": [
+          27.8,
+          17.9
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          25.5,
+          16.3,
+          30.1,
+          19.5
+        ]
+      },
+      {
+        "ref": "C254",
+        "at": [
+          17.95,
+          23.4
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          15.8,
+          20.0,
+          22.6,
+          26.8
+        ]
+      },
+      {
+        "ref": "C255",
+        "at": [
+          32.9,
+          17.9
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          30.6,
+          16.3,
+          35.2,
+          19.5
+        ]
+      },
+      {
+        "ref": "C256",
+        "at": [
+          38.0,
+          17.9
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          35.7,
+          16.3,
+          40.3,
+          19.5
+        ]
+      },
+      {
+        "ref": "C257",
+        "at": [
+          17.5,
+          10.92
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          15.8,
+          9.94,
+          19.2,
+          11.9
+        ]
+      },
+      {
+        "ref": "C258",
+        "at": [
+          28.54,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          27.06,
+          33.24,
+          30.02,
+          34.7
+        ]
+      },
+      {
+        "ref": "C259",
+        "at": [
+          21.4,
+          10.92
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          19.7,
+          9.94,
+          23.1,
+          11.9
+        ]
+      },
+      {
+        "ref": "C260",
+        "at": [
+          25.3,
+          10.92
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          23.6,
+          9.94,
+          27.0,
+          11.9
+        ]
+      },
+      {
+        "ref": "C261",
+        "at": [
+          29.2,
+          10.92
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          27.5,
+          9.94,
+          30.9,
+          11.9
+        ]
+      },
+      {
+        "ref": "C262",
+        "at": [
+          25.25,
+          23.4
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          23.1,
+          20.0,
+          29.9,
+          26.8
+        ]
+      },
+      {
+        "ref": "C263",
+        "at": [
+          80.4,
+          24.1
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          78.8,
+          21.8,
+          82.0,
+          26.4
+        ]
+      },
+      {
+        "ref": "C264",
+        "at": [
+          80.4,
+          19.0
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          78.8,
+          16.7,
+          82.0,
+          21.3
+        ]
+      },
+      {
+        "ref": "C265",
+        "at": [
+          3.7,
+          22.15
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          20.0,
+          7.1,
+          26.8
+        ]
+      },
+      {
+        "ref": "C266",
+        "at": [
+          80.4,
+          13.9
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          78.8,
+          11.6,
+          82.0,
+          16.2
+        ]
+      },
+      {
+        "ref": "C267",
+        "at": [
+          94.47,
+          13.3
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          92.17,
+          11.7,
+          96.77,
+          14.9
+        ]
+      },
+      {
+        "ref": "C268",
+        "at": [
+          112.87,
+          13.92
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          111.17,
+          12.94,
+          114.57,
+          14.9
+        ]
+      },
+      {
+        "ref": "C269",
+        "at": [
+          66.36,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          64.88,
+          33.24,
+          67.84,
+          34.7
+        ]
+      },
+      {
+        "ref": "C270",
+        "at": [
+          93.15,
+          25.42
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          91.45,
+          24.44,
+          94.85,
+          26.4
+        ]
+      },
+      {
+        "ref": "C271",
+        "at": [
+          97.05,
+          25.42
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          95.35,
+          24.44,
+          98.75,
+          26.4
+        ]
+      },
+      {
+        "ref": "C272",
+        "at": [
+          100.95,
+          25.42
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          99.25,
+          24.44,
+          102.65,
+          26.4
+        ]
+      },
+      {
+        "ref": "C273",
+        "at": [
+          3.7,
+          14.85
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          12.7,
+          7.1,
+          19.5
+        ]
+      },
+      {
+        "ref": "C278",
+        "at": [
+          25.68,
+          51.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          24.2,
+          50.84,
+          27.16,
+          52.3
+        ]
+      },
+      {
+        "ref": "C279",
+        "at": [
+          29.14,
+          51.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          27.66,
+          50.84,
+          30.62,
+          52.3
+        ]
+      },
+      {
+        "ref": "C280",
+        "at": [
+          32.6,
+          51.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          31.12,
+          50.84,
+          34.08,
+          52.3
+        ]
+      },
+      {
+        "ref": "C281",
+        "at": [
+          36.06,
+          51.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          34.58,
+          50.84,
+          37.54,
+          52.3
+        ]
+      },
+      {
+        "ref": "C288",
+        "at": [
+          32.0,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          30.52,
+          33.24,
+          33.48,
+          34.7
+        ]
+      },
+      {
+        "ref": "C289",
+        "at": [
+          67.2,
+          14.62
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          64.9,
+          13.02,
+          69.5,
+          16.22
+        ]
+      },
+      {
+        "ref": "C290",
+        "at": [
+          51.9,
+          10.92
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          49.6,
+          9.32,
+          54.2,
+          12.52
+        ]
+      },
+      {
+        "ref": "C291",
+        "at": [
+          57.0,
+          10.92
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          54.7,
+          9.32,
+          59.3,
+          12.52
+        ]
+      },
+      {
+        "ref": "C292",
+        "at": [
+          62.1,
+          10.92
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          59.8,
+          9.32,
+          64.4,
+          12.52
+        ]
+      },
+      {
+        "ref": "C293",
+        "at": [
+          18.1,
+          14.0
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          15.8,
+          12.4,
+          20.4,
+          15.6
+        ]
+      },
+      {
+        "ref": "C294",
+        "at": [
+          99.57,
+          13.3
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          97.27,
+          11.7,
+          101.87,
+          14.9
+        ]
+      },
+      {
+        "ref": "C508",
+        "at": [
+          24.93,
+          100.82
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          24.2,
+          99.34,
+          25.66,
+          102.3
+        ]
+      },
+      {
+        "ref": "C509",
+        "at": [
+          110.96,
+          2.72
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          109.26,
+          1.74,
+          112.66,
+          3.7
+        ]
+      },
+      {
+        "ref": "C510",
+        "at": [
+          26.89,
+          100.82
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          26.16,
+          99.34,
+          27.62,
+          102.3
+        ]
+      },
+      {
+        "ref": "C511",
+        "at": [
+          108.65,
+          8.25
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          106.9,
+          5.5,
+          112.4,
+          11.0
+        ]
+      },
+      {
+        "ref": "C512",
+        "at": [
+          101.75,
+          7.6
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          99.6,
+          4.2,
+          106.4,
+          11.0
+        ]
+      },
+      {
+        "ref": "C513",
+        "at": [
+          28.85,
+          100.82
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          28.12,
+          99.34,
+          29.58,
+          102.3
+        ]
+      },
+      {
+        "ref": "C552",
+        "at": [
+          9.08,
+          108.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          7.6,
+          108.24,
+          10.56,
+          109.7
+        ]
+      },
+      {
+        "ref": "C553",
+        "at": [
+          12.54,
+          108.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          11.06,
+          108.24,
+          14.02,
+          109.7
+        ]
+      },
+      {
+        "ref": "C2903",
+        "at": [
+          104.85,
+          25.42
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          103.15,
+          24.44,
+          106.55,
+          26.4
+        ]
+      },
+      {
+        "ref": "C2913",
+        "at": [
+          69.82,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          68.34,
+          33.24,
+          71.3,
+          34.7
+        ]
+      },
+      {
+        "ref": "D101",
+        "at": [
+          35.6,
+          40.37
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          33.9,
+          38.44,
+          37.3,
+          42.3
+        ]
+      },
+      {
+        "ref": "D102",
+        "at": [
+          39.5,
+          40.37
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          37.8,
+          38.44,
+          41.2,
+          42.3
+        ]
+      },
+      {
+        "ref": "D103",
+        "at": [
+          2.0,
+          41.79
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          39.86,
+          3.7,
+          43.72
+        ]
+      },
+      {
+        "ref": "D104",
+        "at": [
+          11.45,
+          107.45
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          7.8,
+          105.2,
+          15.1,
+          109.7
+        ]
+      },
+      {
+        "ref": "D105",
+        "at": [
+          30.15,
+          107.45
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          26.5,
+          105.2,
+          33.8,
+          109.7
+        ]
+      },
+      {
+        "ref": "D201",
+        "at": [
+          2.55,
+          61.85
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          58.2,
+          4.8,
+          65.5
+        ]
+      },
+      {
+        "ref": "D202",
+        "at": [
+          37.95,
+          14.5
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          35.7,
+          13.4,
+          40.2,
+          15.6
+        ]
+      },
+      {
+        "ref": "D203",
+        "at": [
+          88.7,
+          25.3
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          86.45,
+          24.2,
+          90.95,
+          26.4
+        ]
+      },
+      {
+        "ref": "D2903",
+        "at": [
+          85.38,
+          13.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          83.45,
+          11.5,
+          87.31,
+          14.9
+        ]
+      },
+      {
+        "ref": "F102",
+        "at": [
+          2.22,
+          69.29
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          0.3,
+          66.0,
+          7.54,
+          82.5
+        ]
+      },
+      {
+        "ref": "F104",
+        "at": [
+          35.85,
+          91.59
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          33.9,
+          88.64,
+          37.8,
+          94.54
+        ]
+      },
+      {
+        "ref": "F202",
+        "at": [
+          10.7,
+          37.65
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          7.75,
+          35.7,
+          13.65,
+          39.6
+        ]
+      },
+      {
+        "ref": "J104",
+        "at": [
+          132.0,
+          13.83
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          129.03,
+          10.0,
+          135.8,
+          26.66
+        ]
+      },
+      {
+        "ref": "J105",
+        "at": [
+          32.85,
+          3.5
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          30.1,
+          0.3,
+          42.1,
+          6.7
+        ]
+      },
+      {
+        "ref": "J106",
+        "at": [
+          52.75,
+          3.5
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          50.0,
+          0.3,
+          62.0,
+          6.7
+        ]
+      },
+      {
+        "ref": "J107",
+        "at": [
+          10.95,
+          3.5
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          8.2,
+          0.3,
+          20.2,
+          6.7
+        ]
+      },
+      {
+        "ref": "J108",
+        "at": [
+          78.65,
+          3.5
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          75.9,
+          0.3,
+          87.9,
+          10.9
+        ]
+      },
+      {
+        "ref": "J109",
+        "at": [
+          47.05,
+          2.5
+        ],
+        "rotation": 180,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          42.6,
+          0.3,
+          49.5,
+          5.8
+        ]
+      },
+      {
+        "ref": "J110",
+        "at": [
+          72.95,
+          2.5
+        ],
+        "rotation": 180,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          62.5,
+          0.3,
+          75.4,
+          5.8
+        ]
+      },
+      {
+        "ref": "J111",
+        "at": [
+          27.15,
+          2.5
+        ],
+        "rotation": 180,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          20.7,
+          0.3,
+          29.6,
+          5.8
+        ]
+      },
+      {
+        "ref": "J112",
+        "at": [
+          96.85,
+          2.5
+        ],
+        "rotation": 180,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          88.4,
+          0.3,
+          99.3,
+          5.8
+        ]
+      },
+      {
+        "ref": "J113",
+        "at": [
+          117.7,
+          14.15
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          115.5,
+          11.7,
+          121.0,
+          18.6
+        ]
+      },
+      {
+        "ref": "J114",
+        "at": [
+          124.5,
+          4.13
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          121.53,
+          0.3,
+          128.3,
+          10.96
+        ]
+      },
+      {
+        "ref": "J115",
+        "at": [
+          124.5,
+          15.29
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          121.53,
+          11.46,
+          128.3,
+          22.12
+        ]
+      },
+      {
+        "ref": "J205",
+        "at": [
+          19.43,
+          106.83
+        ],
+        "rotation": 0,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          15.6,
+          103.03,
+          26.26,
+          109.8
+        ]
+      },
+      {
+        "ref": "J206",
+        "at": [
+          112.38,
+          31.83
+        ],
+        "rotation": 0,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          108.3,
+          25.02,
+          125.46,
+          34.8
+        ]
+      },
+      {
+        "ref": "J208",
+        "at": [
+          98.8,
+          18.5
+        ],
+        "rotation": 0,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          83.45,
+          15.4,
+          114.15,
+          21.6
+        ]
+      },
+      {
+        "ref": "J507",
+        "at": [
+          117.7,
+          2.75
+        ],
+        "rotation": 90,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          115.5,
+          0.3,
+          121.0,
+          11.2
+        ]
+      },
+      {
+        "ref": "L101",
+        "at": [
+          37.43,
+          98.67
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          33.9,
+          95.04,
+          40.96,
+          102.3
+        ]
+      },
+      {
+        "ref": "L201",
+        "at": [
+          3.29,
+          47.31
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          44.22,
+          6.28,
+          50.4
+        ]
+      },
+      {
+        "ref": "L202",
+        "at": [
+          23.35,
+          101.45
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          21.4,
+          100.1,
+          25.3,
+          102.8
+        ]
+      },
+      {
+        "ref": "L203",
+        "at": [
+          3.29,
+          90.71
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          87.62,
+          6.28,
+          93.8
+        ]
+      },
+      {
+        "ref": "L204",
+        "at": [
+          70.87,
+          33.45
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          68.92,
+          32.1,
+          72.82,
+          34.8
+        ]
+      },
+      {
+        "ref": "L205",
+        "at": [
+          52.69,
+          23.41
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          49.6,
+          20.42,
+          55.78,
+          26.4
+        ]
+      },
+      {
+        "ref": "L211",
+        "at": [
+          22.85,
+          14.25
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          20.9,
+          12.9,
+          24.8,
+          15.6
+        ]
+      },
+      {
+        "ref": "L212",
+        "at": [
+          27.25,
+          14.25
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          25.3,
+          12.9,
+          29.2,
+          15.6
+        ]
+      },
+      {
+        "ref": "L213",
+        "at": [
+          104.32,
+          13.55
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          102.37,
+          12.2,
+          106.27,
+          14.9
+        ]
+      },
+      {
+        "ref": "L214",
+        "at": [
+          108.72,
+          13.55
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          106.77,
+          12.2,
+          110.67,
+          14.9
+        ]
+      },
+      {
+        "ref": "L501",
+        "at": [
+          26.7,
+          91.2
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          20.2,
+          84.7,
+          33.2,
+          97.7
+        ]
+      },
+      {
+        "ref": "Q101",
+        "at": [
+          5.9,
+          41.79
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          4.2,
+          39.86,
+          7.6,
+          43.72
+        ]
+      },
+      {
+        "ref": "Q201",
+        "at": [
+          51.93,
+          33.1
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          50.0,
+          31.4,
+          53.86,
+          34.8
+        ]
+      },
+      {
+        "ref": "Q202",
+        "at": [
+          56.29,
+          33.1
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          54.36,
+          31.4,
+          58.22,
+          34.8
+        ]
+      },
+      {
+        "ref": "Q2903",
+        "at": [
+          4.0,
+          32.1
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          29.4,
+          7.7,
+          34.8
+        ]
+      },
+      {
+        "ref": "Q2913",
+        "at": [
+          89.74,
+          13.2
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          87.81,
+          11.5,
+          91.67,
+          14.9
+        ]
+      },
+      {
+        "ref": "R103",
+        "at": [
+          1.43,
+          99.92
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          97.64,
+          2.56,
+          102.2
+        ]
+      },
+      {
+        "ref": "R104",
+        "at": [
+          2.99,
+          95.66
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          2.26,
+          94.18,
+          3.72,
+          97.14
+        ]
+      },
+      {
+        "ref": "R105",
+        "at": [
+          4.95,
+          95.66
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          4.22,
+          94.18,
+          5.68,
+          97.14
+        ]
+      },
+      {
+        "ref": "R106",
+        "at": [
+          1.03,
+          92.2
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          90.72,
+          1.76,
+          93.68
+        ]
+      },
+      {
+        "ref": "R107",
+        "at": [
+          2.99,
+          92.2
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          2.26,
+          90.72,
+          3.72,
+          93.68
+        ]
+      },
+      {
+        "ref": "R108",
+        "at": [
+          8.48,
+          72.07
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          7.0,
+          71.34,
+          9.96,
+          72.8
+        ]
+      },
+      {
+        "ref": "R109",
+        "at": [
+          11.94,
+          72.07
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          10.46,
+          71.34,
+          13.42,
+          72.8
+        ]
+      },
+      {
+        "ref": "R110",
+        "at": [
+          37.93,
+          73.63
+        ],
+        "rotation": 270,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          36.0,
+          69.8,
+          39.86,
+          77.46
+        ]
+      },
+      {
+        "ref": "R111",
+        "at": [
+          4.95,
+          92.2
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          4.22,
+          90.72,
+          5.68,
+          93.68
+        ]
+      },
+      {
+        "ref": "R112",
+        "at": [
+          1.03,
+          88.74
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          87.26,
+          1.76,
+          90.22
+        ]
+      },
+      {
+        "ref": "R113",
+        "at": [
+          29.14,
+          58.87
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          27.66,
+          58.14,
+          30.62,
+          59.6
+        ]
+      },
+      {
+        "ref": "R114",
+        "at": [
+          32.6,
+          58.87
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          31.12,
+          58.14,
+          34.08,
+          59.6
+        ]
+      },
+      {
+        "ref": "R115",
+        "at": [
+          25.68,
+          56.91
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          24.2,
+          56.18,
+          27.16,
+          57.64
+        ]
+      },
+      {
+        "ref": "R116",
+        "at": [
+          29.14,
+          56.91
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          27.66,
+          56.18,
+          30.62,
+          57.64
+        ]
+      },
+      {
+        "ref": "R121",
+        "at": [
+          2.99,
+          88.74
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          2.26,
+          87.26,
+          3.72,
+          90.22
+        ]
+      },
+      {
+        "ref": "R122",
+        "at": [
+          4.95,
+          88.74
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          4.22,
+          87.26,
+          5.68,
+          90.22
+        ]
+      },
+      {
+        "ref": "R123",
+        "at": [
+          1.03,
+          85.28
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          83.8,
+          1.76,
+          86.76
+        ]
+      },
+      {
+        "ref": "R201",
+        "at": [
+          5.75,
+          25.52
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          5.02,
+          24.04,
+          6.48,
+          27.0
+        ]
+      },
+      {
+        "ref": "R202",
+        "at": [
+          7.71,
+          25.52
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          6.98,
+          24.04,
+          8.44,
+          27.0
+        ]
+      },
+      {
+        "ref": "R203",
+        "at": [
+          1.03,
+          20.46
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          18.98,
+          1.76,
+          21.94
+        ]
+      },
+      {
+        "ref": "R204",
+        "at": [
+          2.99,
+          20.46
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          2.26,
+          18.98,
+          3.72,
+          21.94
+        ]
+      },
+      {
+        "ref": "R205",
+        "at": [
+          4.95,
+          20.46
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          4.22,
+          18.98,
+          5.68,
+          21.94
+        ]
+      },
+      {
+        "ref": "R206",
+        "at": [
+          6.91,
+          20.46
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          6.18,
+          18.98,
+          7.64,
+          21.94
+        ]
+      },
+      {
+        "ref": "R207",
+        "at": [
+          1.43,
+          24.72
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          22.44,
+          2.56,
+          27.0
+        ]
+      },
+      {
+        "ref": "R208",
+        "at": [
+          9.28,
+          101.17
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          7.0,
+          100.04,
+          11.56,
+          102.3
+        ]
+      },
+      {
+        "ref": "R209",
+        "at": [
+          17.0,
+          101.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          15.52,
+          100.84,
+          18.48,
+          102.3
+        ]
+      },
+      {
+        "ref": "R210",
+        "at": [
+          20.46,
+          101.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          18.98,
+          100.84,
+          21.94,
+          102.3
+        ]
+      },
+      {
+        "ref": "R211",
+        "at": [
+          8.48,
+          98.81
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          7.0,
+          98.08,
+          9.96,
+          99.54
+        ]
+      },
+      {
+        "ref": "R212",
+        "at": [
+          11.94,
+          98.81
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          10.46,
+          98.08,
+          13.42,
+          99.54
+        ]
+      },
+      {
+        "ref": "R213",
+        "at": [
+          15.4,
+          98.81
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          13.92,
+          98.08,
+          16.88,
+          99.54
+        ]
+      },
+      {
+        "ref": "R214",
+        "at": [
+          17.0,
+          38.07
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          15.52,
+          37.34,
+          18.48,
+          38.8
+        ]
+      },
+      {
+        "ref": "R215",
+        "at": [
+          20.46,
+          38.07
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          18.98,
+          37.34,
+          21.94,
+          38.8
+        ]
+      },
+      {
+        "ref": "R216",
+        "at": [
+          23.92,
+          38.07
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          22.44,
+          37.34,
+          25.4,
+          38.8
+        ]
+      },
+      {
+        "ref": "R218",
+        "at": [
+          27.38,
+          38.07
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          25.9,
+          37.34,
+          28.86,
+          38.8
+        ]
+      },
+      {
+        "ref": "R219",
+        "at": [
+          9.28,
+          37.67
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          7.0,
+          36.54,
+          11.56,
+          38.8
+        ]
+      },
+      {
+        "ref": "R220",
+        "at": [
+          27.98,
+          106.21
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          26.5,
+          105.48,
+          29.46,
+          106.94
+        ]
+      },
+      {
+        "ref": "R221",
+        "at": [
+          31.44,
+          106.21
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          29.96,
+          105.48,
+          32.92,
+          106.94
+        ]
+      },
+      {
+        "ref": "R222",
+        "at": [
+          27.98,
+          104.25
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          26.5,
+          103.52,
+          29.46,
+          104.98
+        ]
+      },
+      {
+        "ref": "R223",
+        "at": [
+          28.78,
+          108.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          26.5,
+          107.44,
+          31.06,
+          109.7
+        ]
+      },
+      {
+        "ref": "R224",
+        "at": [
+          70.33,
+          24.72
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          69.2,
+          22.44,
+          71.46,
+          27.0
+        ]
+      },
+      {
+        "ref": "R225",
+        "at": [
+          70.33,
+          19.66
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          69.2,
+          17.38,
+          71.46,
+          21.94
+        ]
+      },
+      {
+        "ref": "R226",
+        "at": [
+          70.33,
+          14.6
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          69.2,
+          12.32,
+          71.46,
+          16.88
+        ]
+      },
+      {
+        "ref": "R227",
+        "at": [
+          69.93,
+          10.34
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          69.2,
+          8.86,
+          70.66,
+          11.82
+        ]
+      },
+      {
+        "ref": "R252",
+        "at": [
+          2.58,
+          33.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          32.44,
+          4.86,
+          34.7
+        ]
+      },
+      {
+        "ref": "R253",
+        "at": [
+          35.46,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          33.98,
+          33.24,
+          36.94,
+          34.7
+        ]
+      },
+      {
+        "ref": "R254",
+        "at": [
+          38.92,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          37.44,
+          33.24,
+          40.4,
+          34.7
+        ]
+      },
+      {
+        "ref": "R255",
+        "at": [
+          1.78,
+          31.21
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          30.48,
+          3.26,
+          31.94
+        ]
+      },
+      {
+        "ref": "R256",
+        "at": [
+          5.24,
+          31.21
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          3.76,
+          30.48,
+          6.72,
+          31.94
+        ]
+      },
+      {
+        "ref": "R258",
+        "at": [
+          7.64,
+          33.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          5.36,
+          32.44,
+          9.92,
+          34.7
+        ]
+      },
+      {
+        "ref": "R259",
+        "at": [
+          12.7,
+          33.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          10.42,
+          32.44,
+          14.98,
+          34.7
+        ]
+      },
+      {
+        "ref": "R260",
+        "at": [
+          51.98,
+          33.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          49.7,
+          32.44,
+          54.26,
+          34.7
+        ]
+      },
+      {
+        "ref": "R261",
+        "at": [
+          73.28,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          71.8,
+          33.24,
+          74.76,
+          34.7
+        ]
+      },
+      {
+        "ref": "R262",
+        "at": [
+          76.74,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          75.26,
+          33.24,
+          78.22,
+          34.7
+        ]
+      },
+      {
+        "ref": "R263",
+        "at": [
+          80.2,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          78.72,
+          33.24,
+          81.68,
+          34.7
+        ]
+      },
+      {
+        "ref": "R264",
+        "at": [
+          83.66,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          82.18,
+          33.24,
+          85.14,
+          34.7
+        ]
+      },
+      {
+        "ref": "R266",
+        "at": [
+          57.04,
+          33.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          54.76,
+          32.44,
+          59.32,
+          34.7
+        ]
+      },
+      {
+        "ref": "R267",
+        "at": [
+          62.1,
+          33.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          59.82,
+          32.44,
+          64.38,
+          34.7
+        ]
+      },
+      {
+        "ref": "R274",
+        "at": [
+          39.52,
+          51.57
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          38.04,
+          50.84,
+          41.0,
+          52.3
+        ]
+      },
+      {
+        "ref": "R275",
+        "at": [
+          25.68,
+          49.61
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          24.2,
+          48.88,
+          27.16,
+          50.34
+        ]
+      },
+      {
+        "ref": "R276",
+        "at": [
+          29.14,
+          49.61
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          27.66,
+          48.88,
+          30.62,
+          50.34
+        ]
+      },
+      {
+        "ref": "R277",
+        "at": [
+          32.6,
+          49.61
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          31.12,
+          48.88,
+          34.08,
+          50.34
+        ]
+      },
+      {
+        "ref": "R278",
+        "at": [
+          36.06,
+          49.61
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          34.58,
+          48.88,
+          37.54,
+          50.34
+        ]
+      },
+      {
+        "ref": "R279",
+        "at": [
+          39.52,
+          49.61
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          38.04,
+          48.88,
+          41.0,
+          50.34
+        ]
+      },
+      {
+        "ref": "R288",
+        "at": [
+          17.16,
+          33.75
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          15.48,
+          32.8,
+          18.84,
+          34.7
+        ]
+      },
+      {
+        "ref": "R289",
+        "at": [
+          21.02,
+          33.75
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          19.34,
+          32.8,
+          22.7,
+          34.7
+        ]
+      },
+      {
+        "ref": "R290",
+        "at": [
+          24.88,
+          33.75
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          23.2,
+          32.8,
+          26.56,
+          34.7
+        ]
+      },
+      {
+        "ref": "R291",
+        "at": [
+          8.7,
+          31.21
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          7.22,
+          30.48,
+          10.18,
+          31.94
+        ]
+      },
+      {
+        "ref": "R292",
+        "at": [
+          12.16,
+          31.21
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          10.68,
+          30.48,
+          13.64,
+          31.94
+        ]
+      },
+      {
+        "ref": "R509",
+        "at": [
+          30.81,
+          100.82
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          30.08,
+          99.34,
+          31.54,
+          102.3
+        ]
+      },
+      {
+        "ref": "R510",
+        "at": [
+          32.77,
+          100.82
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          32.04,
+          99.34,
+          33.5,
+          102.3
+        ]
+      },
+      {
+        "ref": "R512",
+        "at": [
+          106.48,
+          2.12
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          104.2,
+          0.54,
+          108.76,
+          3.7
+        ]
+      },
+      {
+        "ref": "R513",
+        "at": [
+          34.73,
+          100.82
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          34.0,
+          99.34,
+          35.46,
+          102.3
+        ]
+      },
+      {
+        "ref": "R553",
+        "at": [
+          9.08,
+          107.01
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          7.6,
+          106.28,
+          10.56,
+          107.74
+        ]
+      },
+      {
+        "ref": "R2903",
+        "at": [
+          87.12,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          85.64,
+          33.24,
+          88.6,
+          34.7
+        ]
+      },
+      {
+        "ref": "R2913",
+        "at": [
+          90.58,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          89.1,
+          33.24,
+          92.06,
+          34.7
+        ]
+      },
+      {
+        "ref": "R2923",
+        "at": [
+          94.04,
+          33.97
+        ],
+        "rotation": 0.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          92.56,
+          33.24,
+          95.52,
+          34.7
+        ]
+      },
+      {
+        "ref": "TP101",
+        "at": [
+          19.15,
+          72.55
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          17.9,
+          71.3,
+          20.4,
+          73.8
+        ]
+      },
+      {
+        "ref": "TP102",
+        "at": [
+          35.15,
+          81.79
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          33.9,
+          80.54,
+          36.4,
+          83.04
+        ]
+      },
+      {
+        "ref": "TP103",
+        "at": [
+          27.85,
+          55.75
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          26.6,
+          54.5,
+          29.1,
+          57.0
+        ]
+      },
+      {
+        "ref": "TP104",
+        "at": [
+          21.15,
+          56.45
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          19.9,
+          55.2,
+          22.4,
+          57.7
+        ]
+      },
+      {
+        "ref": "TP105",
+        "at": [
+          35.15,
+          36.69
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          33.9,
+          35.44,
+          36.4,
+          37.94
+        ]
+      },
+      {
+        "ref": "TP106",
+        "at": [
+          38.15,
+          36.69
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          36.9,
+          35.44,
+          39.4,
+          37.94
+        ]
+      },
+      {
+        "ref": "TP107",
+        "at": [
+          1.55,
+          38.11
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          36.86,
+          2.8,
+          39.36
+        ]
+      },
+      {
+        "ref": "TP108",
+        "at": [
+          4.55,
+          38.11
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          3.3,
+          36.86,
+          5.8,
+          39.36
+        ]
+      },
+      {
+        "ref": "TP201",
+        "at": [
+          64.85,
+          29.55
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          63.6,
+          28.3,
+          66.1,
+          30.8
+        ]
+      },
+      {
+        "ref": "TP202",
+        "at": [
+          31.75,
+          82.55
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          30.5,
+          81.3,
+          33.0,
+          83.8
+        ]
+      },
+      {
+        "ref": "TP203",
+        "at": [
+          93.65,
+          33.55
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          92.4,
+          32.3,
+          94.9,
+          34.8
+        ]
+      },
+      {
+        "ref": "TP204",
+        "at": [
+          74.57,
+          33.55
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          73.32,
+          32.3,
+          75.82,
+          34.8
+        ]
+      },
+      {
+        "ref": "TP205",
+        "at": [
+          66.15,
+          11.27
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          64.9,
+          10.02,
+          67.4,
+          12.52
+        ]
+      },
+      {
+        "ref": "TP211",
+        "at": [
+          30.95,
+          14.35
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          29.7,
+          13.1,
+          32.2,
+          15.6
+        ]
+      },
+      {
+        "ref": "TP212",
+        "at": [
+          84.7,
+          25.15
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          83.45,
+          23.9,
+          85.95,
+          26.4
+        ]
+      },
+      {
+        "ref": "TP213",
+        "at": [
+          67.85,
+          29.55
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          66.6,
+          28.3,
+          69.1,
+          30.8
+        ]
+      },
+      {
+        "ref": "TP214",
+        "at": [
+          24.45,
+          75.25
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          23.2,
+          74.0,
+          25.7,
+          76.5
+        ]
+      },
+      {
+        "ref": "TP215",
+        "at": [
+          33.95,
+          14.35
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          32.7,
+          13.1,
+          35.2,
+          15.6
+        ]
+      },
+      {
+        "ref": "TP503",
+        "at": [
+          24.45,
+          68.35
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          23.2,
+          67.1,
+          25.7,
+          69.6
+        ]
+      },
+      {
+        "ref": "TP2903",
+        "at": [
+          44.25,
+          10.15
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          43.0,
+          8.9,
+          45.5,
+          11.4
+        ]
+      },
+      {
+        "ref": "U103",
+        "at": [
+          35.6,
+          44.85
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          33.9,
+          42.8,
+          37.3,
+          46.9
+        ]
+      },
+      {
+        "ref": "U104",
+        "at": [
+          39.5,
+          44.85
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          37.8,
+          42.8,
+          41.2,
+          46.9
+        ]
+      },
+      {
+        "ref": "U109",
+        "at": [
+          24.65,
+          55.55
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          23.2,
+          54.1,
+          26.1,
+          57.0
+        ]
+      },
+      {
+        "ref": "U201",
+        "at": [
+          61.65,
+          29.35
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          60.2,
+          27.9,
+          63.1,
+          30.8
+        ]
+      },
+      {
+        "ref": "U202",
+        "at": [
+          19.45,
+          101.35
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          18.0,
+          99.9,
+          20.9,
+          102.8
+        ]
+      },
+      {
+        "ref": "U203",
+        "at": [
+          90.45,
+          33.35
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          89.0,
+          31.9,
+          91.9,
+          34.8
+        ]
+      },
+      {
+        "ref": "U204",
+        "at": [
+          46.13,
+          19.87
+        ],
+        "rotation": 0,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          43.0,
+          17.6,
+          49.26,
+          22.14
+        ]
+      },
+      {
+        "ref": "U205",
+        "at": [
+          46.13,
+          13.87
+        ],
+        "rotation": 0,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          43.0,
+          11.6,
+          49.26,
+          16.14
+        ]
+      },
+      {
+        "ref": "U211",
+        "at": [
+          12.55,
+          16.55
+        ],
+        "rotation": 0,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          9.6,
+          13.6,
+          15.5,
+          19.5
+        ]
+      },
+      {
+        "ref": "U212",
+        "at": [
+          34.625,
+          24.1
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          30.4,
+          21.4,
+          38.85,
+          26.8
+        ]
+      },
+      {
+        "ref": "U213",
+        "at": [
+          75.55,
+          16.55
+        ],
+        "rotation": 0,
+        "side": "F",
+        "how": "anchor",
+        "courtyard_box": [
+          72.6,
+          13.6,
+          78.5,
+          19.5
+        ]
+      },
+      {
+        "ref": "U214",
+        "at": [
+          12.425,
+          32.1
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          8.2,
+          29.4,
+          16.65,
+          34.8
+        ]
+      },
+      {
+        "ref": "U216",
+        "at": [
+          36.35,
+          49.85
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          33.9,
+          47.4,
+          38.8,
+          52.3
+        ]
+      },
+      {
+        "ref": "U220",
+        "at": [
+          17.85,
+          17.8
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          15.8,
+          16.1,
+          19.9,
+          19.5
+        ]
+      },
+      {
+        "ref": "U503",
+        "at": [
+          101.65,
+          2.0
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          99.6,
+          0.3,
+          103.7,
+          3.7
+        ]
+      },
+      {
+        "ref": "U551",
+        "at": [
+          25.25,
+          71.8
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          23.2,
+          70.1,
+          27.3,
+          73.5
+        ]
+      },
+      {
+        "ref": "U553",
+        "at": [
+          29.85,
+          71.8
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          27.8,
+          70.1,
+          31.9,
+          73.5
+        ]
+      }
+    ]
+  },
+  "boundary": {
+    "dangling_nets": [
+      "E1_EN_SYS12",
+      "E1_LAB5_RAW",
+      "E1_PG_LAB5",
+      "E1_PG_SYS12",
+      "E2_J21_FUSED",
+      "SYS12"
+    ],
+    "b2b_nets": 40,
+    "dangling_not_in_b2b": [
+      "E1_EN_SYS12",
+      "E1_LAB5_RAW",
+      "E1_PG_LAB5",
+      "E1_PG_SYS12",
+      "E2_J21_FUSED",
+      "SYS12"
+    ],
+    "b2b_not_dangling": [
+      "3V3_Q6A",
+      "AUX12",
+      "BIAS_CH1_DAMP",
+      "BIAS_CH2_DAMP",
+      "BIAS_CH3_DAMP",
+      "BIAS_CH4_DAMP",
+      "BONI13V8",
+      "BONI13V8_PORT",
+      "CHG_INHIBIT",
+      "E1_BAT_ADC",
+      "E2_LNA4_SHUNT",
+      "E2_LNA4_SW",
+      "E2_SB_DAMP",
+      "EN_AUX12",
+      "EN_BONI",
+      "EN_HFP",
+      "EN_LIME3V3",
+      "EN_LNB",
+      "FAULT_HFP",
+      "FLT_BONI",
+      "FLT_LIME3V3",
+      "FLT_LNB",
+      "I2C0_SCL",
+      "I2C0_SDA",
+      "I2C2_SCL",
+      "I2C2_SDA",
+      "IMU_RX",
+      "IMU_TX",
+      "INA228_ALERT",
+      "LAB5",
+      "LAB5_RLY",
+      "LNA4V5",
+      "LNB13V2",
+      "OVP_LNB_N",
+      "PICO_DISP_EN",
+      "PICO_OFF",
+      "PWR_BUTTON",
+      "VBUS_HFP",
+      "VBUS_LABPORT",
+      "VBUS_RTLB_DAMP"
+    ],
+    "note": "nets with pins on other boards that end on no graph connector pin of PWR-A"
+  },
+  "planned": {
+    "footprints": {
+      "C111": {
+        "footprint": "Capacitor_SMD:C_1210_3225Metric",
+        "mpn": "C3225X7R1H226M250AC",
+        "change": "C111-C112-1210",
+        "graph_footprint": "Capacitor_SMD:CP_Elec_6.3x5.9"
+      },
+      "C112": {
+        "footprint": "Capacitor_SMD:C_1210_3225Metric",
+        "mpn": "C3225X7R1H226M250AC",
+        "change": "C111-C112-1210",
+        "graph_footprint": "Capacitor_SMD:CP_Elec_6.3x5.9"
+      },
+      "C219": {
+        "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+        "mpn": "16SVPG47M",
+        "change": "dampers-5V",
+        "graph_footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm"
+      },
+      "C225": {
+        "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+        "mpn": "16SVPG47M",
+        "change": "dampers-5V",
+        "graph_footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm"
+      },
+      "L202": {
+        "footprint": "Inductor_SMD:L_1008_2520Metric",
+        "mpn": "SRP2510PA-1R0M",
+        "change": "L-1uH-2520",
+        "graph_footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX"
+      },
+      "L204": {
+        "footprint": "Inductor_SMD:L_1008_2520Metric",
+        "mpn": "SRP2510PA-1R0M",
+        "change": "L-1uH-2520",
+        "graph_footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX"
+      },
+      "L211": {
+        "footprint": "Inductor_SMD:L_1008_2520Metric",
+        "mpn": "SRP2510PA-1R0M",
+        "change": "L-1uH-2520",
+        "graph_footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX"
+      },
+      "L212": {
+        "footprint": "Inductor_SMD:L_1008_2520Metric",
+        "mpn": "SRP2510PA-1R0M",
+        "change": "L-1uH-2520",
+        "graph_footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX"
+      },
+      "L213": {
+        "footprint": "Inductor_SMD:L_1008_2520Metric",
+        "mpn": "SRP2510PA-1R0M",
+        "change": "L-1uH-2520",
+        "graph_footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX"
+      },
+      "L214": {
+        "footprint": "Inductor_SMD:L_1008_2520Metric",
+        "mpn": "SRP2510PA-1R0M",
+        "change": "L-1uH-2520",
+        "graph_footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX"
+      }
+    },
+    "changes": [
+      {
+        "id": "U107-SYS12",
+        "refs": [
+          "U107"
+        ],
+        "owner": "GR-5A",
+        "status": "pending",
+        "effect": "reserved blocks CONV_SYS12"
+      },
+      {
+        "id": "RPP-SYS12",
+        "refs": [],
+        "owner": "GR-5A",
+        "status": "pending",
+        "effect": "reserved blocks RPP"
+      },
+      {
+        "id": "U108-LAB5",
+        "refs": [
+          "U108"
+        ],
+        "owner": "GR-5A",
+        "status": "pending",
+        "effect": "reserved blocks CONV_LAB5"
+      },
+      {
+        "id": "F103-SMD",
+        "refs": [
+          "F103"
+        ],
+        "owner": "GR-5A",
+        "status": "pending",
+        "effect": "reserved blocks FUSE_F103"
+      },
+      {
+        "id": "F201-SMD",
+        "refs": [
+          "F201"
+        ],
+        "owner": "GR-5A",
+        "status": "pending",
+        "effect": "reserved blocks FUSE_F201"
+      },
+      {
+        "id": "C109-out",
+        "refs": [
+          "C109"
+        ],
+        "owner": "GR-5A",
+        "status": "pending",
+        "effect": "dropped (deleted by the change)"
+      },
+      {
+        "id": "C111-C112-1210",
+        "refs": [
+          "C111",
+          "C112"
+        ],
+        "owner": "GR-5A",
+        "status": "pending",
+        "effect": "planned footprint Capacitor_SMD:C_1210_3225Metric"
+      },
+      {
+        "id": "dampers-5V",
+        "refs": [
+          "C219",
+          "C225",
+          "C235",
+          "C239",
+          "C243",
+          "C247",
+          "C251",
+          "C298"
+        ],
+        "owner": "GR-5B",
+        "status": "pending",
+        "effect": "planned footprint Capacitor_SMD:CP_Elec_5x4.5"
+      },
+      {
+        "id": "C506-3x",
+        "refs": [
+          "C506"
+        ],
+        "owner": "GR-5B",
+        "status": "pending",
+        "effect": "PWR-B (not on PWR-A)"
+      },
+      {
+        "id": "L-1uH-2520",
+        "refs": [
+          "L202",
+          "L204",
+          "L211",
+          "L212",
+          "L213",
+          "L214"
+        ],
+        "owner": "GR-5B",
+        "status": "pending",
+        "effect": "planned footprint Inductor_SMD:L_1008_2520Metric"
+      },
+      {
+        "id": "J204+J207-PHD",
+        "refs": [
+          "J204",
+          "J207"
+        ],
+        "owner": "GR-5B",
+        "status": "pending",
+        "effect": "PWR-B (not on PWR-A)"
+      },
+      {
+        "id": "J506+J508-PH9",
+        "refs": [
+          "J506",
+          "J508"
+        ],
+        "owner": "GR-5B",
+        "status": "pending",
+        "effect": "PWR-B (not on PWR-A)"
+      }
+    ],
+    "note": "SHRINK-2 changes that are not in the graph yet (status from pcb/partition-budget.json); the study counts their planned footprints and reserved blocks"
+  },
+  "turn_whatif": {
+    "rule": "each header turned by 90 degrees about its origin and set back onto the bottom edge; extent = courtyard length along the edge, depth = courtyard depth from the edge; the PWR-B edge strip over a PWR-A header is its depth + window_margin (pcb/partition-spec.json parameters)",
+    "headers": [
+      {
+        "ref": "J109",
+        "rotation_now": 180,
+        "rotation_turned": 270.0,
+        "extent_now_mm": 6.9,
+        "depth_now_mm": 5.5,
+        "extent_turned_mm": 5.5,
+        "depth_turned_mm": 6.9
+      },
+      {
+        "ref": "J110",
+        "rotation_now": 180,
+        "rotation_turned": 270.0,
+        "extent_now_mm": 12.9,
+        "depth_now_mm": 5.5,
+        "extent_turned_mm": 5.5,
+        "depth_turned_mm": 12.9
+      },
+      {
+        "ref": "J111",
+        "rotation_now": 180,
+        "rotation_turned": 270.0,
+        "extent_now_mm": 8.9,
+        "depth_now_mm": 5.5,
+        "extent_turned_mm": 5.5,
+        "depth_turned_mm": 8.9
+      },
+      {
+        "ref": "J112",
+        "rotation_now": 180,
+        "rotation_turned": 270.0,
+        "extent_now_mm": 10.9,
+        "depth_now_mm": 5.5,
+        "extent_turned_mm": 5.5,
+        "depth_turned_mm": 10.9
+      }
+    ],
+    "bottom_need_now_mm": 87.6,
+    "bottom_need_turned_mm": 70.0,
+    "bottom_free_length_mm": 122.0,
+    "edge_length_freed_mm": 17.6,
+    "pwr_b_strip_depth_now_mm": 6.0,
+    "pwr_b_strip_depth_turned_mm": 13.4,
+    "label": "MODEL: courtyard boxes; not re-placed (a turned header changes its pin order along the edge and its harness exit, GR-5B/MECH-7)"
+  },
+  "h_trim": {
+    "rule": "H-TRIM (pcb/partition-spec.json keepouts.h_trim): PWR-A top parts under a PWR-B THT pin field + window_margin must be no taller than zone_h_max_mm; zones from the current pcb/boards/PWR_B.json placement (PCB-PWRB-2 re-places PWR-B); heights from pcb/partition-spec.json heights (MPN, footprint or class; TBD where none is read)",
+    "zone_h_max_mm": 2.7,
+    "pwr_b_tht_fields": [
+      {
+        "ref": "J201",
+        "pin_field": [
+          107.4,
+          5.875,
+          116.6,
+          7.625
+        ],
+        "zone": [
+          106.9,
+          5.375,
+          117.1,
+          8.125
+        ]
+      },
+      {
+        "ref": "J202",
+        "pin_field": [
+          61.4,
+          6.9,
+          80.6,
+          10.1
+        ],
+        "zone": [
+          60.9,
+          6.4,
+          81.1,
+          10.6
+        ]
+      },
+      {
+        "ref": "J203",
+        "pin_field": [
+          84.4,
+          6.9,
+          103.6,
+          10.1
+        ],
+        "zone": [
+          83.9,
+          6.4,
+          104.1,
+          10.6
+        ]
+      },
+      {
+        "ref": "J204",
+        "pin_field": [
+          111.4,
+          27.375,
+          126.6,
+          29.125
+        ],
+        "zone": [
+          110.9,
+          26.875,
+          127.1,
+          29.625
+        ]
+      },
+      {
+        "ref": "J207",
+        "pin_field": [
+          84.4,
+          27.375,
+          107.6,
+          29.125
+        ],
+        "zone": [
+          83.9,
+          26.875,
+          108.1,
+          29.625
+        ]
+      },
+      {
+        "ref": "J506",
+        "pin_field": [
+          120.4,
+          5.875,
+          125.6,
+          7.625
+        ],
+        "zone": [
+          119.9,
+          5.375,
+          126.1,
+          8.125
+        ]
+      },
+      {
+        "ref": "J508",
+        "pin_field": [
+          128.375,
+          12.9,
+          130.125,
+          24.1
+        ],
+        "zone": [
+          127.875,
+          12.4,
+          130.625,
+          24.6
+        ]
+      }
+    ],
+    "parts_under": [
+      {
+        "ref": "C292",
+        "under": [
+          "J202"
+        ],
+        "h_mm": 2.7,
+        "h_lower_bound": false,
+        "ok": true
+      }
+    ],
+    "violations": [],
+    "passed": true,
+    "pwr_b_fields_over_needed_cutouts": [
+      {
+        "ref": "C511",
+        "cutout": "window_taller_than_hA",
+        "pwr_b_pin_fields": [
+          "J201"
+        ]
+      },
+      {
+        "ref": "C512",
+        "cutout": "window_taller_than_hA",
+        "pwr_b_pin_fields": [
+          "J203"
+        ]
+      },
+      {
+        "ref": "J104",
+        "cutout": "header_edge_strip",
+        "pwr_b_pin_fields": [
+          "J508"
+        ]
+      },
+      {
+        "ref": "J106",
+        "cutout": "header_edge_strip",
+        "pwr_b_pin_fields": [
+          "J202"
+        ]
+      },
+      {
+        "ref": "J108",
+        "cutout": "header_edge_strip",
+        "pwr_b_pin_fields": [
+          "J202",
+          "J203"
+        ]
+      },
+      {
+        "ref": "J114",
+        "cutout": "header_edge_strip",
+        "pwr_b_pin_fields": [
+          "J506"
+        ]
+      },
+      {
+        "ref": "J115",
+        "cutout": "header_edge_strip",
+        "pwr_b_pin_fields": [
+          "J508"
+        ]
+      },
+      {
+        "ref": "J206",
+        "cutout": "header_edge_strip",
+        "pwr_b_pin_fields": [
+          "J204"
+        ]
+      },
+      {
+        "ref": "J507",
+        "cutout": "header_edge_strip",
+        "pwr_b_pin_fields": [
+          "J201",
+          "J506"
+        ]
+      },
+      {
+        "ref": "TP205",
+        "cutout": "test_point_probe_window",
+        "pwr_b_pin_fields": [
+          "J202"
+        ]
+      }
+    ],
+    "cutout_note": "PWR-A parts that need a PWR-B cut-out (pwr_b_cutouts) do not lie under PWR-B and are not H-TRIM parts; a current PWR_B THT pin field over such a cut-out is listed for PCB-PWRB-2, which re-places PWR-B against these cut-outs"
+  }
+}
