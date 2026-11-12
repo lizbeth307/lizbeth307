@@ -30,7 +30,11 @@ inside a VM (systemd-detect-virt), so every other extra token of an edited entry
 and ESP (bootchain.live_selftest) under the image's /opt/srrx/passes-venv (W2 IMG-3): its FAIL/BLOCKED rows must equal the
 build-time rows on root A, plus INTERPRETER_ROWS only when the interpreter lacks numpy; the same boot reports each
 venv's numpy and an offscreen PySide6 QApplication of /opt/srrx/venv (bootchain.venv_report), compared with the
-manifest's venvs (venv_mismatches). Bench gates W-03 (rollback on the Q6A) and W-10 (DTB provenance) stay OPEN.
+manifest's venvs (venv_mismatches). Every boot also runs `modprobe pps_gpio` after the rest of the report (W2 IMG-4): the
+builder-built module must load, and its file, SHA-256 and vermagic must be the manifest's (pps_mismatches); with the
+session in the image, display-manager.service must resolve to greetd.service, gdm staying masked. --session runs the
+separate greetd/labwc scenario instead (session_smoke, session-report.json). Bench gates W-03 (rollback on the Q6A),
+W-10 (DTB provenance) and the display/touch gates of W1-2 stay OPEN.
 """
 import argparse
 import json
@@ -94,25 +98,25 @@ class Esp:
         run(["losetup", "-d", self.loop], check=False)
 
 
-def smoke_options(config, slot, drop=None, selftest=False):
+def smoke_options(config, slot, drop=None, selftest=False, session=False):
     tokens = bootchain.cmdline(config["base_cmdline_without_root"], bootchain.root_partuuid(config, slot), config["lime_build"]).split(" ")
     if drop:
         tokens.remove(drop)
-    return " ".join(tokens + bootchain.smoke_tokens(selftest))
+    return " ".join(tokens + bootchain.smoke_tokens(selftest, session))
 
 
-def smoke_entry(config, slot, version, drop=None, selftest=False):
+def smoke_entry(config, slot, version, drop=None, selftest=False, session=False):
     files = config["slots"][slot]
     return ("title SR-RX slot {s} QEMU smoke ({k})\nsort-key {sk}\nversion {v}\nlinux {l}\ninitrd {i}\noptions {o}\n"
             .format(s=slot, k=config["kernel_version"], sk=bootchain.SORT_KEY, v=version, l=files["kernel"], i=files["initrd"],
-                    o=smoke_options(config, slot, drop, selftest)))
+                    o=smoke_options(config, slot, drop, selftest, session)))
 
 
 def lab_entries(esp):
     return sorted(p.name for p in (Path(esp) / "loader/entries").glob("lab*.conf"))
 
 
-def qemu(image, vars_file, log, timeout, accel):
+def qemu(image, vars_file, log, timeout, accel, extra=()):
     argv = ["qemu-system-aarch64", "-machine", "virt", "-accel", accel, "-cpu", "host" if accel == "kvm" else "max",
             "-smp", "4", "-m", "4096", "-nodefaults", "-display", "none", "-monitor", "none", "-no-reboot", "-nic", "none",
             "-serial", "file:" + str(log),
@@ -120,7 +124,7 @@ def qemu(image, vars_file, log, timeout, accel):
             "-drive", "if=pflash,format=raw,unit=1,file=" + str(vars_file),
             "-drive", "if=none,id=disk0,format=raw,cache=unsafe,file=" + str(image),
             "-device", "virtio-blk-pci,drive=disk0,logical_block_size=4096,physical_block_size=4096,bootindex=0",
-            "-device", "virtio-rng-pci"]
+            "-device", "virtio-rng-pci"] + list(extra)
     started = time.monotonic()
     try:
         done = subprocess.run(argv, capture_output=True, text=True, timeout=timeout)
@@ -299,11 +303,33 @@ def venv_mismatches(observed, recorded, selftest):
     return bad
 
 
-def check(scenario, result, expect, build_rows=None, accounts=None, closure=None, venvs=None):
+def pps_mismatches(observed, recorded):
+    """W2 IMG-4: bootchain.pps_report of the booted slot against image-manifest.json pps_gpio: modprobe pps_gpio succeeds,
+    the module is live, and its file, SHA-256 and vermagic are the built ones (QEMU virt has no /pps-gnss node: no device)."""
+    if not recorded or recorded.get("status") != "INSTALLED":
+        return ["image-manifest.json records no installed pps-gpio module (build_image.build_pps_module): %r" % ((recorded or {}).get("status"),)]
+    if not observed or "unavailable" in observed:
+        return ["no pps_gpio report from the booted slot: %r" % (observed,)]
+    bad = []
+    if (observed.get("modprobe") or {}).get("exit_code") != 0:
+        bad.append("modprobe pps_gpio failed on the booted slot: %s" % json.dumps(observed.get("modprobe"))[:400])
+    if not observed.get("loaded") or observed.get("initstate") != "live":
+        bad.append("pps_gpio is not live on the booted slot (loaded %r, initstate %r)" % (observed.get("loaded"), observed.get("initstate")))
+    for key, want in (("filename", recorded.get("path")), ("sha256", recorded.get("sha256")), ("vermagic", recorded.get("vermagic"))):
+        if observed.get(key) != want:
+            bad.append("pps_gpio %s %r on the booted slot, %r in the image manifest" % (key, observed.get(key), want))
+    if (observed.get("vermagic") or "").split(" ")[0] != observed.get("uname_r"):
+        bad.append("pps_gpio vermagic %r does not name the running kernel %r" % (observed.get("vermagic"), observed.get("uname_r")))
+    return bad
+
+
+def check(scenario, result, expect, build_rows=None, accounts=None, closure=None, venvs=None, pps=None, session=None):
     """Compare one boot with its expectation; every mismatch is listed (host-testable).
     accounts: image-manifest.json accounts.service_accounts (None: not compared);
     closure: image-manifest.json package_closure (None: not compared);
-    venvs: image-manifest.json venvs.venvs, compared on the selftest boot (None: not compared)."""
+    venvs: image-manifest.json venvs.venvs, compared on the selftest boot (None: not compared);
+    pps: image-manifest.json pps_gpio, compared on every boot (None: not compared; W2 IMG-4);
+    session: image-manifest.json session: display-manager.service must then be its display manager (W2 IMG-4), else masked."""
     report = result["report"] or {}
     bc = report.get("boot_check") or {}
     units = report.get("units") or {}
@@ -348,9 +374,17 @@ def check(scenario, result, expect, build_rows=None, accounts=None, closure=None
         bad += closure_mismatches(report.get("package_closure"), closure)
     if venvs is not None and report and expect["selftest"]:
         bad += venv_mismatches(report.get("venvs"), venvs, report.get("selftest"))
-    # graphical.target wants display-manager.service: r2's gdm3 alias must resolve to the recipe's gdm mask.
+    if pps is not None and report:
+        bad += pps_mismatches(report.get("pps_gpio"), pps)
+    # graphical.target wants display-manager.service: r2's gdm3 alias must resolve to the recipe's gdm mask, or, once the
+    # image has the session (W2 IMG-4), to its display manager (greetd.service; gdm stays masked: masked_units above).
     display_manager = report.get("display_manager")
-    if display_manager is not None and display_manager.get("LoadState") not in ("masked", "not-found"):
+    if session is not None and report:
+        want = Path((session.get("display_manager") or {}).get("after") or "").name or None
+        got = display_manager or {}
+        if want is None or got.get("Id") != want or got.get("LoadState") != "loaded" or got.get("ActiveState") == "failed":
+            bad.append("display-manager.service %s on the booted slot, expected %s (image manifest session)" % (json.dumps(got)[:200], want))
+    elif display_manager is not None and display_manager.get("LoadState") not in ("masked", "not-found"):
         bad.append("display-manager.service LoadState %r: the GNOME greeter is not masked" % display_manager.get("LoadState"))
     if expect["selftest"]:
         selftest = report.get("selftest") or {}
@@ -404,6 +438,8 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
     accounts = (manifest.get("accounts") or {}).get("service_accounts") or {}  # empty: every boot reports the gap
     closure = manifest.get("package_closure") or {}  # likewise
     venvs = (manifest.get("venvs") or {}).get("venvs") or {}  # likewise, on the selftest boot
+    pps = manifest.get("pps_gpio") or {}  # W2 IMG-4: every boot loads pps_gpio
+    session = manifest.get("session")  # W2 IMG-4: display-manager.service resolves to greetd.service (None: gdm mask only)
     for index, ((name, expect), plan) in enumerate(zip(SCENARIOS, entry_plan(config)), 1):
         with Esp(copy, esp_dir) as esp:
             apply_entry_plan(esp / "loader/entries", plan)
@@ -414,10 +450,136 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
         run_result = qemu(copy, vars_file, log, timeout + (bootchain.SMOKE_SELFTEST_LIMIT if expect["selftest"] else 0), accel)
         with Esp(copy, esp_dir, read_only=True) as esp:
             run_result["entries_before"], run_result["entries_after"] = before, lab_entries(esp)
-        result["scenarios"].append(check(name, run_result, expect, build_rows, accounts, closure, venvs))
+        result["scenarios"].append(check(name, run_result, expect, build_rows, accounts, closure, venvs, pps, session))
         (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     result["status"] = "MODEL_PASS" if all(s["status"] == "MODEL_PASS" for s in result["scenarios"]) else "MODEL_FAIL"
     (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    copy.unlink()
+    return result
+
+
+# ---------------------------------------------------------------- touch session scenario (W2 IMG-4)
+# A separate QEMU boot of its own sparse copy (smoke_qemu.py --session, its own CI step after the A/B smoke: about 15 min
+# under TCG). The golden labA.conf is rewritten in place (as scenario 3 rewrites the blessed one) with the session report
+# command, which starts graphical.target. virtio-gpu-pci gives the UEFI GOP framebuffer, which 6.18.2-4-qcom drives with
+# simpledrm (it has no DRM_VIRTIO_GPU; CONFIG_DRM_SIMPLEDRM=y and CONFIG_SYSFB_SIMPLEFB=y in boot/config-6.18.2-4-qcom, read
+# 2026-11-12), and a USB keyboard and tablet stand in for the field touch panel: wlroots 0.17.1's libinput backend does not
+# start without an input device unless WLR_LIBINPUT_NO_DEVICES is set (backend/libinput/backend.c:109-115 of the noble
+# source). WLR_RENDERER=pixman and the runtime console link are bootchain.session_model_setup. A MODEL, not Q6A hardware.
+SESSION_DEVICES = ("-device", "virtio-gpu-pci", "-device", "qemu-xhci", "-device", "usb-kbd", "-device", "usb-tablet")
+SESSION_NEEDED_CONFIG = ("CONFIG_DRM_SIMPLEDRM", "CONFIG_SYSFB_SIMPLEFB", "CONFIG_VT", "CONFIG_USB_XHCI_PCI", "CONFIG_USB_HID")
+SESSION_ENTRY = ("labA.conf", "A", 2)  # golden labA: blessed, version 2 (bootchain.entries), so it stays the newest
+SESSION_SCENARIO = ("session-greetd-labwc", {"slot": "A", "boot_check": "BOOT_SELF_CHECK_OK", "boot_complete": None, "bless": "inactive",
+                                             "bless_status": "clean", "entries_after": sorted(["labA.conf", "labB.conf"] + RESCUE_ENTRIES),
+                                             "selftest": False})
+
+
+def session_mismatches(observed, recorded):
+    """bootchain.session_report of the session boot against image-manifest.json session (W2 IMG-4): greetd running as the
+    display manager without a restart; the session user's labwc running and the console unit active (labd is absent in the
+    model: the console keeps running and shows labd unavailable, the defined labd-absent state), both with unchanged PIDs
+    after bootchain.SESSION_SETTLE; lab-session in normal mode with no failure; no failed user unit; an active greeter-class
+    logind session of the user on seat0, VT 1; the built config.toml and no greetd.conf; the model's environment bound."""
+    if not recorded:
+        return ["image-manifest.json records no session (build_image.install_session)"]
+    if not observed or "unavailable" in observed:
+        return ["no session report from the booted slot: %s" % json.dumps(observed)[:600]]
+    bad = []
+    model = observed.get("model") or {}
+    if not (model.get("environment") or {}).get("bound"):
+        bad.append("the model's %s was not bound over /etc/environment: %r" % (bootchain.SESSION_ENV, model.get("environment")))
+    units = observed.get("units") or {}
+
+    def state(unit, key):
+        return (units.get(unit) or {}).get(key)
+    if (state("greetd.service", "ActiveState"), state("greetd.service", "SubState"), state("greetd.service", "NRestarts")) != ("active", "running", "0"):
+        bad.append("greetd.service %s, expected active, running, no restart" % json.dumps(units.get("greetd.service"))[:300])
+    want = Path((recorded.get("display_manager") or {}).get("after") or "").name
+    if state("display-manager.service", "Id") != want:
+        bad.append("display-manager.service is %r, expected %s" % (state("display-manager.service", "Id"), want))
+    if state(bootchain.SESSION_TARGET, "ActiveState") != "active":
+        bad.append("%s %r, expected active" % (bootchain.SESSION_TARGET, state(bootchain.SESSION_TARGET, "ActiveState")))
+    user = (observed.get("user") or {}).get("name")
+    if not observed.get("up"):
+        bad.append("labwc of %s and %s were not both up within %d s" % (user, bootchain.CONSOLE_UNIT, bootchain.SESSION_LIMIT))
+    elif observed.get("stable") is not True:
+        bad.append("labwc or %s changed its PID within %d s (a session restart)" % (bootchain.CONSOLE_UNIT, bootchain.SESSION_SETTLE))
+    console = observed.get("console") or {}
+    if console.get("ActiveState") != "active":
+        bad.append("%s %s, expected active (labd absent: the console runs and shows labd unavailable)"
+                   % (bootchain.CONSOLE_UNIT, json.dumps(console)[:300]))
+    lab = observed.get("lab_session_state") or {}
+    if lab.get("mode") not in (None, "normal") or lab.get("failures"):
+        bad.append("lab-session left normal mode or counted failures: %s" % json.dumps(lab)[:300])
+    if observed.get("user_failed_units"):
+        bad.append("failed user units: " + "; ".join(observed["user_failed_units"])[:300])
+    greeters = [s for s in (observed.get("logind_sessions") or {}).values() if s.get("Name") == user and s.get("Class") == "greeter"]
+    if len(greeters) != 1 or (greeters[0].get("Active"), greeters[0].get("Seat"), greeters[0].get("VTNr")) != ("yes", "seat0", "1"):
+        bad.append("logind greeter session of %s: %s, expected one, active on seat0 VT 1" % (user, json.dumps(greeters)[:400]))
+    if observed.get("greetd_config_sha256") != (recorded.get("files") or {}).get("/etc/greetd/config.toml"):
+        bad.append("/etc/greetd/config.toml on the booted slot %r is not the built one" % observed.get("greetd_config_sha256"))
+    if observed.get("greetd_conf_present") is not False:
+        bad.append("/etc/greetd/greetd.conf exists on the booted slot (greetd 0.9.0 would read it before config.toml)")
+    if bad:  # what the session printed, so a failure is diagnosable from the report alone
+        for key in ("journal", "greetd_journal", "console_journal"):
+            if observed.get(key):
+                bad.append("%s: %s" % (key, observed[key][-1500:]))
+    return bad
+
+
+def session_smoke(image, manifest_path, facts_path, work, out, timeout=1800):
+    """The session scenario: one QEMU boot of a fresh sparse copy; SMOKE_NOT_FEASIBLE as smoke() when the kernel config,
+    QEMU or AAVMF cannot run it. Writes session-report.json."""
+    if sys.platform != "linux" or platform.machine() != "aarch64" or os.geteuid() != 0:
+        raise SmokeError("the smoke runs as root on an aarch64 Linux builder")
+    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    if manifest.get("status") != "CANDIDATE_IMAGE_BUILT" or manifest.get("route") != "A":
+        raise SmokeError("needs a built Route A candidate (image-manifest.json)")
+    kconfig = json.loads(Path(facts_path).read_text(encoding="utf-8")).get("kernel_deb_config") or {}
+    work, out = Path(work), Path(out)
+    work.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
+    report_path = out / "session-report.json"
+    needed = NEEDED_CONFIG + SESSION_NEEDED_CONFIG
+    result = {"schema_version": 1, "kind": "QEMU virt + AAVMF model of the greetd/labwc touch session (not Q6A hardware)",
+              "kernel_config": {k: kconfig.get(k) for k in needed}, "hardware_ready": False, "devices": list(SESSION_DEVICES),
+              "bench_gates_open": ["W1-2 display and touch", "STACK.md:1486 greetd recovery"], "scenarios": []}
+    missing = [k for k in needed if kconfig.get(k) != "y"]
+    if missing or not shutil.which("qemu-system-aarch64") or not FIRMWARE_CODE.is_file():
+        result.update(status="SMOKE_NOT_FEASIBLE", why="kernel config lacks " + ",".join(missing) if missing else "QEMU or AAVMF missing")
+        report_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        return result
+    accel = "kvm" if os.path.exists("/dev/kvm") else "tcg"
+    result.update(accel=accel, qemu=run(["qemu-system-aarch64", "--version"]).stdout.splitlines()[0])
+    config = bootchain.validate_ab(manifest["boot_config"])
+    copy = work / "session.raw"
+    for stale in (copy, work / "smoke.raw"):  # smoke.raw: an A/B copy that a stopped smoke() left behind (disk space)
+        if stale.exists():
+            stale.unlink()
+    recovery_kit.sparse_copy(image, copy)
+    esp_dir = work / "esp-session"
+    fname, slot, version = SESSION_ENTRY
+    name, expect = SESSION_SCENARIO
+    with Esp(copy, esp_dir) as esp:
+        apply_entry_plan(esp / "loader/entries", ("", {}, {fname: (config, slot, version, None, False, True)}))
+        before = lab_entries(esp)
+        rewritten = "--session" in (esp / "loader/entries" / fname).read_text(encoding="ascii")
+    vars_file = work / "vars-session.fd"
+    shutil.copyfile(FIRMWARE_VARS, vars_file)
+    run_result = qemu(copy, vars_file, out / ("console-session-%s.log" % name), timeout + bootchain.SESSION_LIMIT + bootchain.SESSION_SETTLE,
+                      accel, SESSION_DEVICES)
+    with Esp(copy, esp_dir, read_only=True) as esp:
+        run_result["entries_before"], run_result["entries_after"] = before, lab_entries(esp)
+    recorded = manifest.get("session")
+    scenario = check(name, run_result, expect, None, (manifest.get("accounts") or {}).get("service_accounts") or {},
+                     manifest.get("package_closure") or {}, None, manifest.get("pps_gpio") or {}, recorded)
+    extra = ([] if rewritten else ["the golden " + fname + " was not on the ESP to rewrite"])
+    extra += session_mismatches((run_result["report"] or {}).get("session"), recorded)
+    scenario["mismatches"] += extra
+    scenario["status"] = "MODEL_FAIL" if scenario["mismatches"] else "MODEL_PASS"
+    result["scenarios"].append(scenario)
+    result["status"] = scenario["status"]
+    report_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     copy.unlink()
     return result
 
@@ -432,9 +594,12 @@ def main():
     parser.add_argument("--timeout", type=int, default=1800, help="seconds per QEMU boot")
     parser.add_argument("--require-model", action="store_true",
                         help="CI: SMOKE_NOT_FEASIBLE is a failure (otherwise only MODEL_FAIL is); nothing booted is never green")
+    parser.add_argument("--session", action="store_true",
+                        help="W2 IMG-4: only the separate greetd/labwc session scenario (session-report.json) instead of the A/B boots")
     args = parser.parse_args()
     try:
-        result = smoke(args.image, args.manifest, args.facts or args.manifest.with_name("image-facts.json"), args.work, args.out, args.timeout)
+        result = (session_smoke if args.session else smoke)(args.image, args.manifest, args.facts or args.manifest.with_name("image-facts.json"),
+                                                            args.work, args.out, args.timeout)
     except (OSError, ValueError, SmokeError, subprocess.SubprocessError) as exc:
         print("BLOCKED: " + str(exc), file=sys.stderr)
         return 2

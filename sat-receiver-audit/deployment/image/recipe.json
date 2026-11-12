@@ -133,5 +133,21 @@
       "srrx-boot-check.service": "deployment/image/bootchain.py boot-check: standard library only",
       "srrx-ab-commit.service": "deployment/image/bootchain.py route-b-commit (Route B only): standard library only"
     }
+  },
+  "pps_gpio": {
+    "source": "W2 IMG-4 (build/15 «Модуль pps-gpio в образі (W2 IMG-4)»): STACK.md C13, build/07 §5.2; 6.18.2-4-qcom has CONFIG_PPS=y, PPS_CLIENT_GPIO not set and CONFIG_MODULE_SIG not set (boot/config-6.18.2-4-qcom of the locked linux-image deb, read 2026-11-12; image-facts.json kernel_deb_config). The builder builds deployment/system/dkms/pps-gpio with dkms (dkms.conf MAKE[0], gcc-12) against the locked headers deb, as .github/workflows/sr-rx-system.yml job pps-gpio-dkms does, and installs the .ko as a file: the image carries no compiler for it",
+    "dkms_package": "srrx-pps-gpio",
+    "headers_artifact": "linux-headers-6.18.2-4-qcom",
+    "install_path": "/lib/modules/6.18.2-4-qcom/updates/srrx/pps-gpio.ko",
+    "vermagic": "6.18.2-4-qcom SMP preempt mod_unload aarch64",
+    "vermagic_source": "sr-rx-system pps-gpio-dkms CI record (software/DEPLOYMENT.md, DKMS pps-gpio); the kernel config gives SMP, PREEMPT_DYNAMIC=y, MODULE_UNLOAD=y and no MODVERSIONS"
+  },
+  "session": {
+    "source": "W2 IMG-4 (build/15 «Сеанс greetd і labwc в образі (W2 IMG-4)»): STACK.md:160, :884; the session files are W2 SYS-SESSION's (deployment/system/system_files.py session_files, software/HMI.md «Сеанс на дисплеї»); greetd.service of greetd 0.9.0-4ubuntu1 has [Install] Alias=display-manager.service and the Debian rules run dh_installsystemd --no-start (greetd.service, debian/rules, read 2026-11-12 from http://archive.ubuntu.com/ubuntu/pool/universe/g/greetd/, SHA-256 equal to the .dsc)",
+    "packages": ["cage", "greetd", "kanshi", "labwc", "wlopm"],
+    "display_manager": "greetd.service",
+    "default_target": "graphical.target",
+    "must_not_exist": ["/etc/greetd/greetd.conf"],
+    "console_unit": "srrx-menu.service"
   }
 }
