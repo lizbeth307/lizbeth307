@@ -543,7 +543,7 @@ class CutoutsViasAndLayerTypes(unittest.TestCase):
         if not bg.spec_path('PWR_B').is_file():
             self.skipTest('no PWR_B spec')
         spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('PWR_B')
-        self.assertTrue(contract['cutouts_mm'])
+        self.assertEqual(contract['cutouts_mm'], [])  # W2 MECH-7 full L; the PWR-A cut-outs are spec height zones (W2 PCB-PWRB-2)
         self.assertTrue(bg.domain_audit(spec, bg.read_json(bg.BASE / spec['partition']))['passed'])
         self.assertFalse([p['ref'] for p in spec['parts'] if p['source'] == 'pilot_placeholder'])
         b2b = next(t for t in template if t['ref'] == 'J209')
@@ -612,6 +612,31 @@ class BondHoleAndCoupon(unittest.TestCase):
             s['bond_hole'].update(at=at, pad_mm=pad)
             with self.assertRaises(SystemExit, msg=(at, pad)):
                 bg.holes(s, contract)
+
+
+
+class PwrBLeavesPwrACutoutsFree(unittest.TestCase):
+    """W2 PCB-PWRB-2: on the full-L contract no PWR_B top courtyard reaches a PWR-A cut-out of the PCB-PWRA-3 placement study;
+    every cut-out is a 0 mm height zone of the spec, so pcb/check_boards.py reports a part over it."""
+
+    def test_cutouts_are_zero_height_zones_and_free(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        import hashlib
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        study = bg.BASE / 'build/kicad/boards/PWR_A/placement-study-shrink2.json'
+        cut = spec['pwr_a_cutouts']
+        rows = [{'ref': c['ref'], 'kind': c['kind'], 'rect': [float(v) for v in c['rect']]}
+                for c in bg.read_json(study)['pwr_b_cutouts']['placed']]
+        self.assertIn(hashlib.sha256(json.dumps(rows, sort_keys=True, separators=(',', ':')).encode('utf-8')).hexdigest(),
+                      cut['source'])
+        want = [[c['rect'][0], c['rect'][1], round(c['rect'][2] - c['rect'][0], 4), round(c['rect'][3] - c['rect'][1], 4)]
+                for c in bg.read_json(study)['pwr_b_cutouts']['placed']]
+        self.assertEqual([c['rect'] for c in cut['cutouts_mm']], want)
+        zones = [z['region'] for z in spec['height_zones'] if z.get('max_height_mm') == 0.0 and z['side'] == 'top']
+        self.assertEqual(zones, want)
+        self.assertEqual(cut['overlay']['overlaps'], [])
+        self.assertEqual(cut['overlay']['overlap_mm2'], 0.0)
 
 
 if __name__ == '__main__':
