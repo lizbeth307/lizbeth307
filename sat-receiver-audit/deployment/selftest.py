@@ -1868,6 +1868,14 @@ def check_04bb(ctx, r):
         r.note("baseband_tmpfiles_not_staged")
     elif ctx.read(staged, 64 * 1024).decode("utf-8", "replace") != glue.tmpfiles():
         r.fail("etc/tmpfiles.d/srrx-satdump.conf", "baseband_tmpfiles_differs")
+    # W2 IMG-3: the sweep service and timer are the generator's text, so the 24 h deletion runs the reviewed
+    # interpreter, r2's /usr/bin/python3 without NumPy (deployment/image/recipe.json unit_interpreters.stdlib).
+    for rel, expected in sorted(glue.sweep_units().items()):
+        final = ctx.file(rel)
+        if final is None:
+            r.note("sweep_units_not_staged")
+        elif ctx.read(final, 64 * 1024).decode("utf-8", "replace") != expected:
+            r.fail(rel, "sweep_unit_differs")
     r.note("live_localhost_behaviour_is_RX-04-live")
     r.note("device_recording_needs_labd_utc_verified")
     # The unit, template and rule checks above need no NumPy; the filter and tone probes do.

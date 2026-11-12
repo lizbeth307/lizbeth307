@@ -14,6 +14,7 @@ The chroot gets a minimal /dev (no host disks) and a policy-rc.d that starts no 
   facts  - read-only facts of the locked r2 image (partition table, cmdline, ESP, dpkg, units)
   blank  - partitioned and formatted image without an OS (CI layout round trip)
   build  - the full golden image, image-manifest.json and the extent map for the recovery kit
+  venvs  - --check: the two venv locks against the guest lock and the wheelhouse manifest (offline, W2 IMG-3)
 
 The result is a CANDIDATE: hardware_ready is always false, bench gates W-01/W-02/W-03/W-08/W-09/W-10
 stay OPEN, and the image contains Radxa OS and Qualcomm material that must not be published.
@@ -26,6 +27,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import posixpath
 import re
 import shlex
 import shutil
@@ -90,6 +92,37 @@ CLOSURE_PACKAGE_KEYS = ("package", "version", "architecture", "filename", "suite
 CLOSURE_COMPARED = ("snapshot", "suites", "base", "roots", "packages", "expected_removed", "removed_because", "expected_accounts")
 # r2's apt hooks (needrestart 3.6, apt-listchanges 3.27 in image-facts.json) stay quiet in the chroot; ucf keeps a local file.
 CLOSURE_ENV = {"NEEDRESTART_SUSPEND": "1", "APT_LISTCHANGES_FRONTEND": "none", "UCF_FORCE_CONFFOLD": "1"}
+# Python venvs (W2 IMG-3, build/15 «Python venv в еталонному образі (W2 IMG-3)»): /opt/srrx/venv (touch console,
+# record unit) and /opt/srrx/passes-venv (srrx-passes@.service, the QEMU live selftest) are built in root A from the
+# hash-locked wheels of the guest wheelhouse: venv --copies --without-pip, pip run from its locked wheel through
+# PYTHONPATH (never installed), --no-index --require-hashes --no-compile, then the project --no-deps
+# --no-build-isolation from a copy in /tmp (setuptools writes build/ and *.egg-info next to its sources).
+WHEELHOUSE = DEPLOYMENT / "linux_lab/wheelhouse-manifest.json"
+GUEST_LOCK = DEPLOYMENT / "linux_lab/wheelhouse-requirements.txt"
+VENVS = {"opt/srrx/venv": {"lock": "software/config/hmi-requirements.lock", "qt": True},
+         "opt/srrx/passes-venv": {"lock": "software/config/passes-requirements.lock", "qt": False}}
+PIP_BOOTSTRAP = "pip"  # the guest-lock pip wheel: on PYTHONPATH of the install commands only
+WHEEL_CACHE = "wheels"  # cache subdirectory of the venv wheels (sr-rx-image.yml caches it under its own key)
+WHEEL_URL = "https://files.pythonhosted.org/packages/"
+WHEELS_CHROOT_DIR = "var/cache/srrx-wheels"
+BUILD_COPY = "tmp/srrx-software-build"  # chroot /tmp is a tmpfs (chroot_api)
+PROJECT_DIST = "srrx-control"
+VENV_HOME = "/tmp/srrx-venv-home"
+VENV_ENV = {"PYTHONDONTWRITEBYTECODE": "1", "HOME": VENV_HOME, "XDG_CACHE_HOME": VENV_HOME + "/cache"}
+PIP_OPTIONS = ["--isolated", "--disable-pip-version-check", "--no-input"]  # general options; --root-user-action is install-only
+BUILD_MANIFEST_DRAFT = "build-manifest.draft.json"  # next to image-manifest.json; always OPEN
+# SR-RX units whose Exec lines start python3 (unit_interpreters, recipe.json unit_interpreters).
+UNIT_SEARCH = ("etc/systemd/system", "usr/lib/systemd/system", "etc/systemd/user", "usr/lib/systemd/user")
+EXEC_KEYS = ("ExecCondition", "ExecStartPre", "ExecStart", "ExecStartPost", "ExecReload", "ExecStop", "ExecStopPost")
+EXEC_PREFIXES = "-@:+!|"  # systemd.service(5) command prefixes
+PYTHON_NAME = re.compile(r"python3(?:\.[0-9]+)?\Z")
+FREEZE_CODE = "import importlib.metadata as m, json; print(json.dumps(sorted([d.metadata['Name'], d.version] for d in m.distributions())))"
+NUMPY_CODE = ("import json, sys\ntry:\n    import numpy\nexcept ImportError as error:\n"
+              "    print(json.dumps({'python': sys.version.split()[0], 'numpy': None, 'error': type(error).__name__}))\n"
+              "else:\n    print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__}))\n")
+QT_CODE = ("import json\nfrom PySide6 import QtCore, QtGui, QtWidgets\napp = QtWidgets.QApplication(['srrx-image-check'])\n"
+           "print(json.dumps({'qt': QtCore.qVersion(), 'platform': app.platformName()}))\n")
+QT_ENV = {"QT_QPA_PLATFORM": "offscreen", "XDG_RUNTIME_DIR": VENV_HOME + "/run"}
 
 
 class BuildError(RuntimeError):
@@ -202,11 +235,12 @@ def _download(url, target, expected_sha, expected_size, label):
     return "FETCHED"
 
 
-def fetch(cache, ids=None, closure=True):
-    """Download locked artifacts into cache_path and the package closure debs into cache/closure;
-    size and SHA-256 are checked before the rename. A package-closure.json that closure_issues refuses
-    (a root added to CLOSURE_ROOTS, a new lock pin) downloads no deb and is reported, not raised: build()
-    records image-facts.json before it stops on it, so `closure --resolve` can propose the new file."""
+def fetch(cache, ids=None, closure=True, wheels=True):
+    """Download locked artifacts into cache_path, the package closure debs into cache/closure and the
+    venv wheels (W2 IMG-3) into cache/wheels; size and SHA-256 are checked before the rename. A
+    package-closure.json that closure_issues refuses (a root added to CLOSURE_ROOTS, a new lock pin)
+    downloads no deb and is reported, not raised: build() records image-facts.json before it stops on it,
+    so `closure --resolve` can propose the new file."""
     cache = Path(cache)
     artifacts = lock_artifacts()
     ids = list(artifacts) if ids is None else ids
@@ -226,6 +260,8 @@ def fetch(cache, ids=None, closure=True):
         issues = closure_issues(document, load_json(LOCK))
         result["closure"] = {"status": "CLOSURE_INCONSISTENT", "issues": issues} if issues else \
             {"status": "CLOSURE_DEBS_VERIFIED", "debs": fetch_closure(cache, document)}
+    if wheels:
+        result["wheels"] = fetch_wheels(cache)
     return result
 
 
@@ -744,6 +780,12 @@ STEPS = (
     ("enable", "srrx-radio-off.service, srrx-boot-check.service (Route B also srrx-ab-commit.service), srrx-ssh-hostkeys.service for a later "
                "sshd start; srrx.service is not enabled (IMG-06); every before.txt step is checked as replaced or skipped; "
                "npu_payload (no QNN SDK/QAIRT) and mcu_firmware (staged firmware/dist/build-manifest.json SHA-256) recorded"),
+    ("venvs", "step 11b (W2 IMG-3): /opt/srrx/venv (hmi-requirements.lock) and /opt/srrx/passes-venv (passes-requirements.lock) "
+              "in the root A chroot: venv --copies --without-pip, pip from its locked wheel on PYTHONPATH, --no-index "
+              "--require-hashes --no-compile, the project --no-deps --no-build-isolation; pip check, freeze = lock, no "
+              "__pycache__, srrx copy = staged tree, tree SHA-256; offscreen PySide6 import; unit_interpreters (each SR-RX "
+              "python3 unit: interpreter present, NumPy where recipe.json says the unit needs it); OPEN build-manifest draft "
+              "of /opt/srrx (deployment/system/build_manifest.py)"),
     ("data", "/etc/fstab of slot A, /data directories, the locked cache copied to /data/srrx-cache (read-only bind at /srv/srrx-cache)"),
     ("selftest", "deployment/selftest.py offline --profile controller on root A (policy DRAFT: BLOCKED expected)"),
     ("root-b", "rsync root A to root B, slot B fstab/cmdline/slot file, kernel-install add in a root B chroot (slot B entry and ESP files)"),
@@ -1283,7 +1325,12 @@ BLOCKER_CLOSES_AT = (  # (blocker text prefix, id, tag); the selftest blocker is
     ("package_accounts_missing", "package_accounts_missing", "recipe"),
     ("rsetup_first_boot_", "rsetup_first_boot", "recipe"),
     ("locked cache not on /data", "locked_cache_not_on_data", "recipe"),
-    ("target_python_without_numpy", "target_python_without_numpy", "recipe"),
+    # W2 IMG-3: unit_interpreters replaces target_python_without_numpy (the image python3 still has no numpy).
+    ("unit_interpreter_missing", "unit_interpreter_missing", "recipe"),
+    ("unit_interpreter_without_numpy", "unit_interpreter_without_numpy", "recipe"),
+    ("unit_interpreter_unclassified", "unit_interpreter_unclassified", "recipe"),
+    ("hmi_venv_qt_offscreen_failed", "hmi_venv_qt_offscreen_failed", "recipe"),
+    ("build_manifest_draft_blocked", "build_manifest_draft_blocked", "recipe"),
     ("apt_keyring_absent", "apt_keyring_absent", "owner:key-ceremony"),
     ("npu_payload_present", "npu_payload_present", "recipe"),
     ("mcu_firmware_manifest", "mcu_firmware_manifest", "recipe"),
@@ -1858,6 +1905,354 @@ def closure_resolve(facts_path, keyring, work, write=None):
             "differs": differs, "issues": issues, "dpkg_holds": facts["root"].get("dpkg_holds"), "proposed": proposed}
 
 
+# ---------------------------------------------------------------- Python venvs (W2 IMG-3)
+
+_LOCK_LINE = re.compile(r"([A-Za-z0-9][A-Za-z0-9_.-]*)==(\S+) --hash=sha256:([0-9a-f]{64})\Z")
+
+
+def normalized(name):
+    """PEP 503 normalized distribution name (PySide6_Essentials -> pyside6-essentials)."""
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def lock_lines(path):
+    """[(name, version, sha256, line)] of a hashed requirements file; comments and blank lines are skipped."""
+    rows = []
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        match = _LOCK_LINE.fullmatch(line)
+        if match is None:
+            raise BuildError("unparsable lock line in " + Path(path).name + ": " + line[:80])
+        rows.append(match.groups() + (line,))
+    return rows
+
+
+def venv_lock_issues(lock, guest_lines, wheels):
+    """Why a venv lock is not a verbatim, dependency-closed subset of the guest lock whose every wheel the
+    wheelhouse manifest records with that version and SHA-256 (host-testable; the build refuses any issue).
+    wheels: {normalized name: wheelhouse-manifest.json entry}."""
+    names = {normalized(name) for name, _, _, _ in lock}
+    issues = [] if len(names) == len(lock) else ["duplicate distribution names"]
+    for name, version, digest, line in lock:
+        if line not in guest_lines:
+            issues.append(name + ": line differs from deployment/linux_lab/wheelhouse-requirements.txt")
+        wheel = wheels.get(normalized(name))
+        if wheel is None or wheel["version"] != version or wheel["sha256"] != digest or not wheel.get("hash_verified"):
+            issues.append(name + ": wheelhouse-manifest.json has no hash-verified wheel " + version + " with this SHA-256")
+            continue
+        if not wheel["url"].startswith(WHEEL_URL):
+            issues.append(name + ": wheel URL is not on files.pythonhosted.org")
+        for requirement in wheel["requires_dist"]:
+            if ";" in requirement:
+                continue  # environment-marked: python < 3.11 or an extra
+            dependency = normalized(re.split(r"[\s=<>!~(\[]", requirement.strip(), maxsplit=1)[0])
+            if dependency not in names:
+                issues.append(name + " needs " + requirement)
+    return issues
+
+
+def venv_plan(manifest=None):
+    """{"pip": bootstrap wheel, "venvs": {venv: [wheel entries]}} from the two locks and the wheelhouse manifest;
+    raises BuildError on any venv_lock_issues."""
+    manifest = load_json(WHEELHOUSE) if manifest is None else manifest
+    wheels = {normalized(w["name"]): w for w in manifest["wheels"]}
+    guest = lock_lines(GUEST_LOCK)
+    guest_lines = {row[3] for row in guest}
+    pip = [row for row in guest if normalized(row[0]) == PIP_BOOTSTRAP]
+    issues = venv_lock_issues(pip, guest_lines, wheels) if len(pip) == 1 else ["the guest lock has no single pip line"]
+    plan = {"pip": wheels.get(PIP_BOOTSTRAP), "venvs": {}}
+    for venv, spec in VENVS.items():
+        lock = lock_lines(PROJECT / spec["lock"])
+        issues += [spec["lock"] + ": " + issue for issue in venv_lock_issues(lock, guest_lines, wheels)]
+        if PIP_BOOTSTRAP in {normalized(row[0]) for row in lock}:
+            issues.append(spec["lock"] + ": pip is a build tool here, never a venv package")
+        plan["venvs"][venv] = [wheels[normalized(row[0])] for row in lock if normalized(row[0]) in wheels]
+    if issues:
+        raise BuildError("venv locks: " + "; ".join(issues))
+    return plan
+
+
+def plan_wheels(plan):
+    """Every distinct wheel of a venv_plan (the pip bootstrap first), by file name."""
+    out = {plan["pip"]["filename"]: plan["pip"]}
+    for wheels in plan["venvs"].values():
+        out.update((w["filename"], w) for w in wheels)
+    return out
+
+
+def fetch_wheels(cache, plan=None):
+    """Each venv wheel from its wheelhouse-manifest.json URL, accepted only with its SHA-256 and size."""
+    plan = venv_plan() if plan is None else plan
+    return {name: _download(w["url"], Path(cache) / WHEEL_CACHE / name, w["sha256"], w["size_bytes"], "wheel " + w["name"])
+            for name, w in plan_wheels(plan).items()}
+
+
+def project_version():
+    import tomllib
+    return tomllib.loads((PROJECT / "software/pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+
+
+def expected_freeze(lock_path, version):
+    """{normalized name: version} a venv must hold: the lock pins plus the project (pip is never installed)."""
+    want = {normalized(name): pin for name, pin, _, _ in lock_lines(lock_path)}
+    want[normalized(PROJECT_DIST)] = version
+    return want
+
+
+def freeze_issues(freeze, want):
+    """Differences between a venv's distributions ([[name, version], ...]) and expected_freeze."""
+    have = {}
+    for name, version in freeze:
+        if normalized(name) in have:
+            return ["distribution listed twice: " + name]
+        have[normalized(name)] = version
+    extra = sorted(set(have) - set(want))
+    missing = sorted(set(want) - set(have))
+    wrong = sorted(n for n in set(have) & set(want) if have[n] != want[n])
+    return (["not in the lock: " + ", ".join("%s %s" % (n, have[n]) for n in extra)] if extra else []) + \
+           (["missing: " + ", ".join(missing)] if missing else []) + \
+           (["versions differ: " + ", ".join("%s %s != %s" % (n, have[n], want[n]) for n in wrong)] if wrong else [])
+
+
+def _site_packages(venv):
+    found = sorted(Path(venv).glob("lib/python3*/site-packages"))
+    if len(found) != 1:
+        raise BuildError("expected one site-packages in " + str(venv) + ", found " + str(len(found)))
+    return found[0]
+
+
+def package_copy_issues(installed, staged):
+    """The venv's srrx package must be the staged /opt/srrx/software/srrx byte for byte (file names and SHA-256)."""
+    def tree(path):
+        return {p.relative_to(path).as_posix(): sha256(p) for p in sorted(Path(path).rglob("*")) if p.is_file()}
+    have, want = tree(installed), tree(staged)
+    if have == want:
+        return []
+    differs = sorted(set(have) ^ set(want)) + sorted(k for k in set(have) & set(want) if have[k] != want[k])
+    return ["srrx copy differs from the staged tree: " + ", ".join(differs[:10])]
+
+
+def unrecorded_bytecode(venv):
+    """__pycache__ files of a venv that no installed distribution's RECORD lists, i.e. written by the build
+    (--no-compile and -B everywhere) rather than shipped in a wheel (pyside6_essentials 6.12.0 ships
+    PySide6/support/__pycache__/*.cpython-312.pyc)."""
+    site = _site_packages(venv)
+    recorded = set()
+    for record in site.glob("*.dist-info/RECORD"):
+        for line in record.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                recorded.add(posixpath.normpath(line.rsplit(",", 2)[0]))
+    found = []
+    for path in sorted(Path(venv).rglob("*")):
+        if path.is_file() and "__pycache__" in path.parts:
+            rel = path.relative_to(site).as_posix() if path.is_relative_to(site) else None
+            if rel is None or rel not in recorded:
+                found.append(path.relative_to(venv).as_posix())
+    return found
+
+
+def tree_record(path):
+    """deploy.build_inventory of a venv (the walk verify-build compares) and its SHA-256 over the sorted file map."""
+    import deploy
+    files, modules = deploy.build_inventory(path)
+    size = sum(p.stat().st_size for p in Path(path).rglob("*") if p.is_file() and not p.is_symlink())
+    return {"tree_sha256": hashlib.sha256(json.dumps(files, sort_keys=True).encode()).hexdigest(), "files": len(files),
+            "bytes": size, "so_modules": len(modules)}
+
+
+def _chroot_json(root, argv, extra_env=None):
+    """(returncode, last stdout line parsed as JSON or None, output tail) of a bounded chroot command."""
+    done = chroot(root, argv, extra_env=extra_env, check=False)
+    lines = (done.stdout or "").strip().splitlines()
+    try:
+        value = json.loads(lines[-1]) if lines else None
+    except ValueError:
+        value = None
+    return done.returncode, value, ((done.stdout or "")[-600:] + (done.stderr or "")[-600:]).strip()
+
+
+def build_venvs(root, cache, plan=None):
+    """Step 11b in the root A chroot (W2 IMG-3). The wheels and the project copy are removed afterwards. A venv that is
+    not exactly its lock (pip check, freeze, a __pycache__, a srrx copy other than the staged tree) stops the build;
+    the offscreen PySide6 check of the HMI venv is recorded and becomes a blocker in build()."""
+    root = Path(root)
+    plan = venv_plan() if plan is None else plan
+    wheel_dir, build_copy, home = root / WHEELS_CHROOT_DIR, root / BUILD_COPY, root / VENV_HOME.lstrip("/")
+    for path in (wheel_dir, build_copy, home):
+        if path.exists():
+            shutil.rmtree(path)
+    wheel_dir.mkdir(parents=True)
+    for name, wheel in plan_wheels(plan).items():
+        dest = wheel_dir / name
+        shutil.copyfile(Path(cache) / WHEEL_CACHE / name, dest)
+        os.chmod(dest, 0o644)
+        if dest.stat().st_size != wheel["size_bytes"] or sha256(dest) != wheel["sha256"]:
+            raise BuildError("venv wheel differs from wheelhouse-manifest.json: " + name)
+    os.chmod(wheel_dir, 0o755)
+    shutil.copytree(root / "opt/srrx/software", build_copy, ignore=shutil.ignore_patterns("__pycache__", "build", "*.egg-info"))
+    (home / "run").mkdir(parents=True, mode=0o700)
+    pip_env = dict(VENV_ENV, PYTHONPATH="/" + WHEELS_CHROOT_DIR + "/" + plan["pip"]["filename"])
+    version = project_version()
+    record = {"pip_bootstrap": {"wheel": plan["pip"]["filename"], "sha256": plan["pip"]["sha256"], "installed_in_venv": False},
+              "wheelhouse_manifest_sha256": sha256(WHEELHOUSE), "venvs": {}}
+    try:
+        for venv, spec in VENVS.items():
+            target = root / venv
+            if os.path.lexists(target):
+                raise BuildError("/" + venv + " already exists before the venv step (the controller bundle never carries one)")
+            chroot(root, ["/usr/bin/python3", "-P", "-B", "-m", "venv", "--copies", "--without-pip", "/" + venv], extra_env=VENV_ENV)
+            python = "/" + venv + "/bin/python3"
+            pip = [python, "-P", "-B", "-m", "pip"] + PIP_OPTIONS
+            install = pip + ["install", "--root-user-action=ignore", "--no-index", "--no-cache-dir", "--no-compile"]
+            chroot(root, install + ["--find-links", "/" + WHEELS_CHROOT_DIR, "--only-binary", ":all:", "--require-hashes",
+                                    "-r", "/opt/srrx/" + spec["lock"]], extra_env=pip_env)
+            chroot(root, install + ["--no-deps", "--no-build-isolation", "/" + BUILD_COPY], extra_env=pip_env)
+            check = chroot(root, pip + ["check"], extra_env=pip_env, check=False)
+            code, freeze, tail = _chroot_json(root, [python, "-I", "-B", "-c", FREEZE_CODE], VENV_ENV)
+            issues = [] if check.returncode == 0 else ["pip check: " + ((check.stdout or "") + (check.stderr or ""))[-600:]]
+            issues += freeze_issues(freeze or [], expected_freeze(PROJECT / spec["lock"], version)) if code == 0 else ["freeze: " + tail]
+            cached = unrecorded_bytecode(target)
+            if cached:
+                issues.append("byte-compiled files outside every RECORD: " + ", ".join(cached[:5]))
+            issues += package_copy_issues(_site_packages(target) / "srrx", root / "opt/srrx/software/srrx")
+            if issues:
+                raise BuildError("venv /" + venv + ": " + "; ".join(issues))
+            code, numpy, tail = _chroot_json(root, [python, "-I", "-B", "-c", NUMPY_CODE], VENV_ENV)
+            entry = {"lock": spec["lock"], "lock_sha256": sha256(PROJECT / spec["lock"]), "python": python,
+                     "pyvenv_cfg": (target / "pyvenv.cfg").read_text(encoding="utf-8").splitlines(),
+                     "freeze": [[name, pin] for name, pin in sorted(freeze, key=lambda row: normalized(row[0]))],
+                     "freeze_matches_lock": True, "pip_check": (check.stdout or "").strip()[-300:],
+                     "numpy": (numpy or {}).get("numpy"), "python_version": (numpy or {}).get("python")}
+            if spec["qt"]:
+                plugins = _site_packages(target) / "PySide6/Qt/plugins/platforms"
+                code, qt, tail = _chroot_json(root, [python, "-I", "-B", "-c", QT_CODE], dict(VENV_ENV, **QT_ENV))
+                entry["qt_offscreen"] = {"status": "OK" if code == 0 and qt and qt.get("platform") == "offscreen" else "FAILED",
+                                         "result": qt, "exit_code": code, "tail": None if code == 0 else tail[-800:],
+                                         "env": dict(QT_ENV)}
+                entry["qt_platform_plugins"] = sorted(p.name for p in plugins.iterdir()) if plugins.is_dir() else None
+            entry.update(tree_record(target))
+            record["venvs"]["/" + venv] = entry
+    finally:
+        for path in (wheel_dir, build_copy, home):
+            shutil.rmtree(path, ignore_errors=True)
+    return record
+
+
+def unit_exec_words(text):
+    """[(key, words)] of the Exec*= lines of one unit fragment or drop-in (SR-RX units use no line continuation)."""
+    out = []
+    for line in text.splitlines():
+        key, sep, value = line.partition("=")
+        if sep and key.strip() in EXEC_KEYS and value.split():
+            out.append((key.strip(), value.split()))
+    return out
+
+
+def exec_interpreter(words):
+    """The python3 interpreter an Exec line starts: its first word, or the command behind env(1) NAME=value; else None."""
+    chain = [words[0].lstrip(EXEC_PREFIXES)]
+    if chain[0].rsplit("/", 1)[-1] == "env":
+        rest = words[1:]
+        while rest and "=" in rest[0] and not rest[0].startswith(("-", "/")):
+            rest = rest[1:]
+        if rest and not rest[0].startswith("-"):
+            chain.append(rest[0])
+    found = [word for word in chain if PYTHON_NAME.fullmatch(word.rsplit("/", 1)[-1])]
+    return found[-1] if found else None
+
+
+def python_units(root):
+    """{unit: {"files", "interpreters", "commands"}} of each SR-RX unit (name srrx*: fragment or <unit>.d/*.conf drop-in,
+    system or user) whose Exec lines start python3. A masked unit (symlink) runs nothing and is skipped."""
+    root = Path(root)
+    units = {}
+    for directory in UNIT_SEARCH:
+        base = root / directory
+        for path in sorted(base.iterdir()) if base.is_dir() and not base.is_symlink() else []:
+            if not path.name.startswith("srrx") or path.is_symlink():
+                continue
+            if path.is_file():
+                pairs = [(path, path.name)]
+            elif path.is_dir() and path.name.endswith(".d"):
+                pairs = [(p, path.name[:-2]) for p in sorted(path.glob("*.conf")) if p.is_file() and not p.is_symlink()]
+            else:
+                continue
+            for file, unit in pairs:
+                for key, words in unit_exec_words(file.read_text(encoding="utf-8", errors="replace")):
+                    interpreter = exec_interpreter(words)
+                    if interpreter is None:
+                        continue
+                    entry = units.setdefault(unit, {"files": [], "interpreters": [], "commands": []})
+                    rel = file.relative_to(root).as_posix()
+                    if rel not in entry["files"]:
+                        entry["files"].append(rel)
+                    if interpreter not in entry["interpreters"]:
+                        entry["interpreters"].append(interpreter)
+                    module = words[words.index("-m") + 1] if "-m" in words[:-1] else None
+                    entry["commands"].append({"key": key, "interpreter": interpreter, "module": module})
+    return units
+
+
+def unit_interpreter_findings(units, probes, classes):
+    """(per-unit record, blockers) of python_units against the interpreter probes ({path: {"present", "numpy"}}) and
+    recipe.json unit_interpreters (numpy: the unit imports NumPy; stdlib: it needs none). Host-testable."""
+    record, missing, without, unclassified = {}, [], [], []
+    for unit, entry in sorted(units.items()):
+        needs = "numpy" if unit in classes["numpy"] else "stdlib" if unit in classes["stdlib"] else None
+        found = {path: probes.get(path) or {"present": False, "numpy": None} for path in entry["interpreters"]}
+        record[unit] = dict(entry, needs=needs, why=(classes.get(needs) or {}).get(unit), interpreter_probe=found)
+        if needs is None:
+            unclassified.append(unit)
+        for path, probe in found.items():
+            if not probe["present"]:
+                missing.append("%s (%s)" % (unit, path))
+            elif needs == "numpy" and not probe.get("numpy"):
+                without.append("%s (%s)" % (unit, path))
+    # Listed but absent (srrx-ab-commit.service on Route A): recorded only; the host test keeps the lists exact.
+    stale = sorted((set(classes["numpy"]) | set(classes["stdlib"])) - set(units))
+    blockers = []
+    if missing:
+        blockers.append("unit_interpreter_missing: " + ", ".join(missing))
+    if without:
+        blockers.append("unit_interpreter_without_numpy: " + ", ".join(without) + " (recipe.json unit_interpreters.numpy)")
+    if unclassified:
+        blockers.append("unit_interpreter_unclassified: " + ", ".join(unclassified) + " (neither list of recipe.json unit_interpreters)")
+    return {"units": record, "classified_not_staged": stale}, blockers
+
+
+def unit_interpreters(root, recipe):
+    """Step 11b: each SR-RX python3 unit's interpreters probed in the root A chroot (present; NumPy imports), then
+    unit_interpreter_findings. Replaces the target_python_numpy blocker (the image python3 still has no NumPy)."""
+    units = python_units(root)
+    probes = {}
+    for path in sorted({p for entry in units.values() for p in entry["interpreters"]}):
+        code, value, tail = _chroot_json(root, [path, "-I", "-B", "-c", NUMPY_CODE], VENV_ENV)
+        probes[path] = {"present": code == 0 and value is not None, "numpy": (value or {}).get("numpy"),
+                        "python": (value or {}).get("python"), "exit_code": code}
+    found, blockers = unit_interpreter_findings(units, probes, recipe["unit_interpreters"])
+    return dict(found, probes=probes, source=recipe["unit_interpreters"]["source"]), blockers
+
+
+def build_manifest_draft(root, out):
+    """The OPEN build-manifest draft of root A's /opt/srrx after the venvs (deployment/system/build_manifest.py, the
+    deploy.build_inventory walk verify-build compares), next to image-manifest.json. Never PASS or REVIEWED: a reviewer
+    attaches the evidence and sets REVIEWED by hand (software/DEPLOYMENT.md)."""
+    if str(DEPLOYMENT / "system") not in sys.path:
+        sys.path.insert(0, str(DEPLOYMENT / "system"))
+    import build_manifest
+    target = Path(out) / BUILD_MANIFEST_DRAFT
+    try:
+        draft = build_manifest.generate(Path(root) / "opt/srrx")
+    except (OSError, ValueError) as exc:  # deploy.DeploymentError: a refusal of verify-build's own walk
+        return {"status": "BLOCKED", "error": str(exc)[:600], "path": None}
+    target.write_text(json.dumps(draft, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    return {"status": draft["status"], "path": BUILD_MANIFEST_DRAFT, "sha256": sha256(target), "prefix": "/opt/srrx",
+            "files": len(draft["files"]), "allowed_modules": len(draft["allowed_modules"]),
+            "evidence": {name: draft[name]["status"] for name in ("source_audit", "tx_negative_tests")},
+            "next": "review, attach PASS evidence, set REVIEWED by hand (software/DEPLOYMENT.md)"}
+
+
 # ---------------------------------------------------------------- build
 
 def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, data_bytes=None,
@@ -1888,7 +2283,9 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
                  stage_files=staged["stage"]["files"])
         manifest["inputs"] = {"locked_artifacts": {a["id"]: a["sha256"] for a in load_json(LOCK)["artifacts"]},
                               "sources_lock_sha256": sha256(LOCK), "recipe_sha256": sha256(RECIPE), "package_closure_sha256": sha256(CLOSURE),
-                              "layout_sha256": sha256(layoutlib.LAYOUT), "controller_bundle": staged}
+                              "layout_sha256": sha256(layoutlib.LAYOUT), "controller_bundle": staged,
+                              "wheelhouse_manifest_sha256": sha256(WHEELHOUSE),
+                              "venv_locks_sha256": {spec["lock"]: sha256(PROJECT / spec["lock"]) for spec in VENVS.values()}}
         base = facts(cache, work, out / "image-facts.json", keep_mounted=keep)
         base_mounts, base_loop, base_root, base_esp = keep
         LOG.step("base-facts", "DONE", base_cmdline=base["base_cmdline_status"], rescue=base["rescue"]["status"])
@@ -2025,6 +2422,20 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["rsetup_first_boot"] = {"before_txt_sha256": (first_boot or {}).get("sha256"), "commands": rows}
         manifest["blocking"] += unhandled
         LOG.step("enable", "DONE")
+        manifest["venvs"] = build_venvs(root_a, cache)
+        qt = manifest["venvs"]["venvs"]["/opt/srrx/venv"]["qt_offscreen"]
+        if qt["status"] != "OK":
+            manifest["blocking"].append("hmi_venv_qt_offscreen_failed: QT_QPA_PLATFORM=offscreen QApplication in /opt/srrx/venv: "
+                                        + str(qt["tail"] or qt["result"])[-300:])
+        manifest["unit_interpreters"], blockers = unit_interpreters(root_a, recipe)
+        manifest["blocking"] += blockers
+        manifest["build_manifest_draft"] = build_manifest_draft(root_a, out)
+        if manifest["build_manifest_draft"]["status"] != "OPEN":
+            manifest["blocking"].append("build_manifest_draft_blocked: deployment/system/build_manifest.py refused /opt/srrx: "
+                                        + manifest["build_manifest_draft"]["error"][-300:])
+        LOG.step("venvs", "DONE", venvs={v: {"numpy": e["numpy"], "files": e["files"], "tree_sha256": e["tree_sha256"]}
+                                         for v, e in manifest["venvs"]["venvs"].items()},
+                 qt=qt["status"], unit_interpreter_blockers=blockers, build_manifest_draft=manifest["build_manifest_draft"]["status"])
         data = work / "mnt/data"
         mounts.mount(devices["data"], data, "ext4")
         for name in layout["partitions"][3]["directories"]:
@@ -2044,13 +2455,9 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["blocking"].append("selftest root A " + str(manifest["selftest_root_a"]["status"]) + ": "
                                     + json.dumps(manifest["selftest_root_a"]["fail_or_blocked_rows"], sort_keys=True))
         LOG.step("selftest", "DONE", report=manifest["selftest_root_a"])
-        # selftest.py ran with the builder's python3 (python3-numpy installed): RX-14 and RX-04-bb import
-        # numpy, which the image's own python3 lacks until the HMI venv (IMG-10); the QEMU smoke expects
-        # those rows live (smoke_qemu.INTERPRETER_ROWS).
+        # A fact since W2 IMG-3, no blocker: the image python3 has no numpy, and each unit that imports it runs a
+        # venv interpreter (unit_interpreters above); the QEMU live selftest runs under /opt/srrx/passes-venv.
         manifest["target_python_numpy"] = (root_a / "usr/lib/python3/dist-packages/numpy/__init__.py").is_file()
-        if not manifest["target_python_numpy"]:
-            manifest["blocking"].append("target_python_without_numpy: RX-14 and RX-04-bb were evaluated with the builder's "
-                                        "python3-numpy; on the image python3 they are BLOCKED numpy_unavailable (HMI venv, IMG-10)")
         mounts.umount_under(root_a / "boot/efi")
         root_b = work / "mnt/root_b"
         mounts.mount(devices["root_b"], root_b, "ext4")
@@ -2155,6 +2562,8 @@ def main():
     p.add_argument("--keyring", type=Path, help="--resolve: keyring holding the pinned archive key")
     p.add_argument("--work", type=Path, help="--resolve: directory for the downloaded InRelease and indices")
     p.add_argument("--write", type=Path, help="--resolve: also write the proposed package-closure.json here")
+    p = sub.add_parser("venvs", help="W2 IMG-3: --check the venv locks against the guest lock and the wheelhouse manifest (offline)")
+    p.add_argument("--check", action="store_true", required=True)
     args = parser.parse_args()
     try:
         if args.op == "plan":
@@ -2170,6 +2579,10 @@ def main():
                 result = closure_resolve(args.facts, args.keyring, args.work, args.write)
                 print(json.dumps(result, indent=2, ensure_ascii=False))
                 return 0 if result["status"] == "CLOSURE_MATCHES_COMMITTED" else 2
+        elif args.op == "venvs":
+            wheel_plan = venv_plan()
+            result = {"status": "VENV_LOCKS_CONSISTENT", "pip_bootstrap": wheel_plan["pip"]["filename"],
+                      "venvs": {"/" + v: [w["filename"] for w in wheels] for v, wheels in wheel_plan["venvs"].items()}}
         elif args.op == "fetch":
             result = fetch(args.cache)
         elif args.op == "facts":

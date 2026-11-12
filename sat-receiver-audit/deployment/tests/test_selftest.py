@@ -1459,6 +1459,41 @@ class ImageAptAndPinOnlyTests(unittest.TestCase):
         self.assertIn(("lab_pref_structure", None), self.run_row("RX-16", broken)[0])
 
 
+class SweepInterpreterRowTests(unittest.TestCase):
+    """W2 IMG-3: RX-04-bb holds the staged srrx-baseband-sweep.service/.timer to srrx.satdump_pass.sweep_units(), so the
+    24 h deletion runs its reviewed interpreter (r2's /usr/bin/python3; deployment/image/recipe.json unit_interpreters).
+    Reuses the SelftestTests fixture; three RX runs (TCG-cheap)."""
+    setUpClass = classmethod(SelftestTests.setUpClass.__func__)
+    tearDownClass = classmethod(SelftestTests.tearDownClass.__func__)
+    setUp, put, run_check = SelftestTests.setUp, SelftestTests.put, SelftestTests.run_check
+    check = staticmethod(SelftestTests.check)
+    checker_module = staticmethod(SelftestTests.checker_module)
+
+    from importlib.util import find_spec as _find_spec
+
+    def row(self, rootfs=None):
+        return self.check(self.run_check(rootfs=rootfs), "RX-04-bb")
+
+    @unittest.skipUnless(_find_spec("numpy"), "RX-04-bb probes need NumPy")
+    def test_staged_sweep_unit_passes_and_another_interpreter_fails(self):
+        glue = self.checker_module("satdump_pass")
+        units = glue.sweep_units()
+        service = "etc/systemd/system/srrx-baseband-sweep.service"
+        self.assertIn("\nExecStart=/usr/bin/python3 -P -s -B -m srrx.baseband sweep ", units[service])
+        row = self.row(self.clean)
+        self.assertEqual(row["status"], "PASS", row)
+        self.assertNotIn("sweep_units_not_staged", row["notes"])
+        self.put(service, units[service].replace("ExecStart=/usr/bin/python3 ", "ExecStart=/usr/bin/env /opt/srrx/passes-venv/bin/python3 "))
+        row = self.row()
+        self.assertEqual(row["status"], "FAIL", row)
+        self.assertIn(("sweep_unit_differs", service), {(f["rule"], f["path"]) for f in row["findings"]})
+        self.setUp()
+        (self.rootfs / "etc/systemd/system/srrx-baseband-sweep.timer").unlink()  # a root without it: noted, not failed
+        row = self.row()
+        self.assertEqual(row["status"], "PASS", row)
+        self.assertIn("sweep_units_not_staged", row["notes"])
+
+
 class LabShellMenuRowTests(unittest.TestCase):
     """W2 SW-MENU: RX-11 evaluates srrx.lab_shell_menu (STACK.md:884) on the same root as the console model:
     capability check from the root, hidden leaves listed with reasons, visible leaves reached in depth.
