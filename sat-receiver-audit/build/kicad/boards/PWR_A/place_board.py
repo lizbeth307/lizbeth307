@@ -181,10 +181,13 @@ class Model:
                 self.stubs[side].append((min(a[0], b[0]) - w, min(a[1], b[1]) - w, max(a[0], b[0]) + w, max(a[1], b[1]) + w))
         self.fanout_fixed = {'vias': len(fv), 'stubs': len(ft)}
 
+        # each pocket clipped to the inset L (route iteration 2, sr-rx-pcb run 43295500516: R123 stood at the inner edge
+        # x 42 of the leg, copper_edge_clearance)
         self.pockets = []
         for x, y, w, h in contract['bottom_side']['keep_in_mm']:
-            self.pockets.append((max(x, EDGE_INSET), max(y, EDGE_INSET), min(x + w, xs[-1] - EDGE_INSET),
-                                 min(y + h, ys[-1] - EDGE_INSET)))
+            cuts = [(max(x, a[0]), max(y, a[1]), min(x + w, a[2]), min(y + h, a[3])) for a in self.areas_top]
+            cuts = [c for c in cuts if c[2] > c[0] and c[3] > c[1]]
+            self.pockets.append(max(cuts, key=lambda c: ((c[2] - c[0]) * (c[3] - c[1]), c)))
         margin = float(self.spec['two_sided']['tht_margin_mm'])
         self.tht_fields = [(b[0] - margin, b[1] - margin, b[2] + margin, b[3] + margin) for b in self.tht.values()]
         zmax = pspec['keepouts']['h_trim']['zone_h_max_mm']

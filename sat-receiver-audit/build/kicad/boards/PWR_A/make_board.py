@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """PWR-A board spec for routing (W2 PCB-PWRA-4), standard library.
 
-  python3 build/kicad/boards/PWR_A/make_board.py            write pcb/boards/PWR_A.json and PWR_A.kicad_pro
-  python3 build/kicad/boards/PWR_A/make_board.py --check    fail unless both reproduce
+  python3 build/kicad/boards/PWR_A/make_board.py            write board-spec.json and PWR_A.kicad_pro next to this file
+  python3 build/kicad/boards/PWR_A/make_board.py --install  also copy board-spec.json to pcb/boards/PWR_A.json (a route
+                                                            commit '[pcb-route PWR_A]', or the board of record)
+  python3 build/kicad/boards/PWR_A/make_board.py --check    fail unless they reproduce (pcb/boards/PWR_A.json if present)
   python3 build/kicad/boards/PWR_A/make_board.py --svg F    also write a preview SVG (courtyards, pads, scripted copper)
 
 The board spec of the SHRINK-2 PWR-A that sr-rx-pcb places and routes ('[pcb-route PWR_A]'). It starts from the
@@ -42,7 +44,8 @@ import board_gen as bg  # noqa: E402
 import make_probe_spec as mps  # noqa: E402
 
 BOARD = 'PWR_A'
-SPEC = BASE / 'pcb/boards/PWR_A.json'
+SPEC = BASE / 'pcb/boards/PWR_A.json'   # installed only for a route run or a board of record (sr-rx-pcb routes and checks it)
+SPEC_OUT = HERE / 'board-spec.json'     # the generated board spec, always written and checked
 PROJECT = HERE / 'PWR_A.kicad_pro'
 ENC_PROJECT = BASE / 'build/kicad/boards/ENC/ENC.kicad_pro'
 NETCLASSES = BASE / 'pcb/generated/netclasses.json'
@@ -58,6 +61,7 @@ VIA_D, VIA_DRILL = 0.7, 0.3   # as PWR_B: router vias at clearance 0.15 keep the
 HOLE_GAP = 0.55       # drill edge to drill edge, the 0.5 mm hole-to-hole rule plus margin
 W_GND = 0.25          # GND fan-out stub width (as PWR_B)
 EPS = 1e-6            # mm, rounding tolerance of the clearance tests (a stub as wide as its pad keeps the pad's own gap)
+JOINT_OVERLAP = 0.05  # mm, two scripted tracks of one net count as joined when they overlap at least this much
 
 # Placement changes of W2 PCB-PWRA-4 (design choices; ref -> (x, y, rotation, side, reason)), applied after the
 # positions of board-placement.json (place_board.py, net-aware re-placement; route iteration 2). Route iteration 1 used
@@ -342,6 +346,7 @@ def board_copper(pre, inp=None):
     Returns (pre_route, notes)."""
     tracks, zones, notes = list(pre['tracks']), [], []
     inner = {}
+    converted = []  # (pour id, net, layer, rect, track)
     pads = [q for pa in inp.parts.values() for q in pa.pads] if inp else []
     for z in pre['zones']:
         if z['outline'] == 'board':
@@ -362,6 +367,7 @@ def board_copper(pre, inp=None):
         tracks.append({'id': f'CU-{z["id"]}', 'net': z['net'], 'layer': z['layer'], 'width_mm': r4(width), 'path': path,
                        'locked': True, 'why': f'scripted pour {z["id"]} of PWR_A.spec-shrink2.json as a locked track '
                                               '(make_board.py board_copper)'})
+        converted.append((z['id'], z['net'], z['layer'], (x0, y0, x1, y1), tracks[-1]))
         side = z['layer'][0]
         for q in pads:
             if q['net'] != z['net'] or side not in q['layers']:
@@ -380,6 +386,50 @@ def board_copper(pre, inp=None):
                            'path': [[r4(px), r4(py)], [r4(cx), r4(cy)]], 'locked': True,
                            'why': f'joins pad {q["number"]}, which pour {z["id"]} touched and its track misses'})
             notes.append(f'{z["id"]}: stub to pad {q["number"]} at ({r4(cx)}, {r4(cy)}), {r4(sw)} mm')
+    # Joints (after route iteration 2, sr-rx-pcb run 43295500516: pours that met edge to edge became tracks that only
+    # touch, so KiCad left them apart: E1_LAB5_RAW, E1_SW, E1_CONV_IN, E1_SYS12_SW and LAB5 stems unconnected, 2
+    # track_dangling, 2 connection_width): for every pair of same-net pours that overlap or touch and whose tracks do not
+    # overlap by JOINT_OVERLAP, a locked track from the nearest axis point of one to the nearest axis point of the other
+    # through the centre of their common edge or area, as wide as the narrower pour and the common length allow.
+    for i, (ida, net, layer, ra, ta) in enumerate(converted):
+        for idb, netb, layerb, rb, tb in converted[i + 1:]:
+            if netb != net or layerb != layer or not bg.rects_overlap(ra, rb, EPS):
+                continue
+            pa, pb = [tuple(p) for p in ta['path']], [tuple(p) for p in tb['path']]
+            if seg_seg_dist(pa[0], pa[1], pb[0], pb[1]) <= (ta['width_mm'] + tb['width_mm']) / 2 - JOINT_OVERLAP:
+                continue
+            cx0, cy0, cx1, cy1 = max(ra[0], rb[0]), max(ra[1], rb[1]), min(ra[2], rb[2]), min(ra[3], rb[3])
+            c = ((cx0 + cx1) / 2, (cy0 + cy1) / 2)
+            common = max(cx1 - cx0, cy1 - cy0)
+            ends = []
+            for (a, b) in (pa, pb):
+                L2 = (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2
+                tt = 0.0 if L2 == 0 else max(0.0, min(1.0, ((c[0] - a[0]) * (b[0] - a[0]) + (c[1] - a[1]) * (b[1] - a[1])) / L2))
+                ends.append((r4(a[0] + tt * (b[0] - a[0])), r4(a[1] + tt * (b[1] - a[1]))))
+            path = [list(ends[0]), [r4(c[0]), r4(c[1])], list(ends[1])]
+            path = [p for k, p in enumerate(path) if k == 0 or p != path[k - 1]]
+            if len(path) < 2:
+                continue
+            # as wide as the narrower track, less where another net's pad or scripted copper of the layer comes closer
+            # than CLEAR + MARGIN (never below the common length of the two pours)
+            w = min(ta['width_mm'], tb['width_mm'])
+            side = layer[0]
+            for q in pads:
+                if q['net'] == net or side not in q['layers']:
+                    continue
+                d = min(seg_box_dist(tuple(a), tuple(b), q['box']) for a, b in zip(path, path[1:]))
+                w = min(w, 2 * (d - CLEAR - MARGIN))
+            for o in tracks:
+                if o['net'] == net or o['layer'] != layer:
+                    continue
+                for oa, ob in zip(o['path'], o['path'][1:]):
+                    d = min(seg_seg_dist(tuple(a), tuple(b), tuple(oa), tuple(ob)) for a, b in zip(path, path[1:]))
+                    w = min(w, 2 * (d - o['width_mm'] / 2 - CLEAR - MARGIN))
+            w = r4(max(min(common, ta['width_mm'], tb['width_mm']), math.floor(w * 100) / 100))
+            tracks.append({'id': f'CU-{ida}-J-{idb}', 'net': net, 'layer': layer, 'width_mm': w, 'path': path, 'locked': True,
+                           'why': f'joint of the scripted pours {ida} and {idb}, which meet edge to edge (make_board.py '
+                                  'board_copper)'})
+            notes.append(f'joint {ida} - {idb} ({net}, {w} mm)')
     for (net, layer, _pri, _pc), group in sorted(inner.items(), key=lambda kv: (kv[0][0], kv[0][1])):
         rest = list(group)
         while rest:
@@ -418,16 +468,17 @@ def stem_exemptions(inp, tracks, netclasses):
         need = width.get(t['net'])
         if need is None or t['width_mm'] + 1e-9 >= need or not t['id'].startswith('CU-'):
             continue
-        a, b = tuple(t['path'][0]), tuple(t['path'][-1])
+        ends = [tuple(p) for p in t['path']]
+        a, b = ends[0], ends[-1]
         best = None
         for pa in inp.parts.values():
             for q in pa.pads:
                 if q['net'] != t['net'] or t['layer'][0] not in q['layers']:
                     continue
-                if not capsule_hits_box(a, b, t['width_mm'] / 2, q['box']):
+                if not any(capsule_hits_box(p, r, t['width_mm'] / 2 + 3.0, q['box']) for p, r in zip(ends, ends[1:])):
                     continue
                 half = max(q['box'][2] - q['box'][0], q['box'][3] - q['box'][1]) / 2
-                esc = max(math.dist(a, q['at']), math.dist(b, q['at'])) - half
+                esc = max(math.dist(p, q['at']) for p in ends) - half
                 if best is None or esc < best[0]:
                     best = (esc, pa.ref, q['number'])
         if best is None:
@@ -440,6 +491,55 @@ def stem_exemptions(inp, tracks, netclasses):
                   'reason': 'scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 '
                             'scripted copper, kept within half the class width of the pins): ' + ', '.join(row['stems'])}
             for ref, row in sorted(out.items(), key=lambda kv: bg.sort_ref(kv[0]))}
+
+
+def scripted_joined(inp, pre):
+    """Per net with converted pours: the scripted tracks (CU-*) and the pads they reach, joined by geometric overlap of
+    at least JOINT_OVERLAP (tracks) or contact (pads, vias), must form one piece. Returns problems."""
+    problems = []
+    tracks = [t for t in pre['tracks'] if t['id'].startswith('CU-')]
+    for net in sorted({t['net'] for t in tracks}):
+        mine = [t for t in tracks if t['net'] == net]
+        segs = [(tuple(a), tuple(b), t['width_mm'] / 2, t['layer'][0], t['id']) for t in mine for a, b in zip(t['path'], t['path'][1:])]
+        vias = [(tuple(v['at']), v['diameter_mm'] / 2) for v in pre['vias'] if v['net'] == net]
+        pads = [(pa.ref, q) for pa in inp.parts.values() for q in pa.pads if q['net'] == net]
+        nodes = [('s', k) for k in range(len(segs))] + [('v', k) for k in range(len(vias))] + [('p', k) for k in range(len(pads))]
+        parent = {n: n for n in nodes}
+
+        def find(n):
+            while parent[n] != n:
+                parent[n] = parent[parent[n]]
+                n = parent[n]
+            return n
+
+        def union(a, b):
+            parent[find(a)] = find(b)
+        for i, (a, b, r, lay, _id) in enumerate(segs):
+            for j in range(i + 1, len(segs)):
+                c, d, r2, lay2, _id2 = segs[j]
+                if lay == lay2 and seg_seg_dist(a, b, c, d) <= r + r2 - JOINT_OVERLAP:
+                    union(('s', i), ('s', j))
+            for k, (c, rv) in enumerate(vias):
+                if seg_seg_dist(a, b, c, c) <= r + rv - JOINT_OVERLAP:
+                    union(('s', i), ('v', k))
+            for k, (_ref, q) in enumerate(pads):
+                if lay in q['layers'] and capsule_hits_box(a, b, r, q['box']):
+                    union(('s', i), ('p', k))
+        # inner zones and planes of the net join the vias inside them (E1_CONV_IN strap and bridge on In2, GND planes)
+        for z in pre['zones']:
+            if z['net'] != net or z['layer'] in ('F.Cu', 'B.Cu'):
+                continue
+            inside = [k for k, (c, _rv) in enumerate(vias) if z['outline'] == 'board' or bg.point_in_outline(c, z['outline'])]
+            for k in inside[1:]:
+                union(('v', inside[0]), ('v', k))
+        reached = {find(('s', i)) for i in range(len(segs))}
+        if len(reached) > 1:
+            groups = {}
+            for i, s in enumerate(segs):
+                groups.setdefault(find(('s', i)), set()).add(s[4][3:])
+            problems.append(f'scripted {net} copper falls into {len(reached)} pieces: '
+                            + ' | '.join(', '.join(sorted(g)) for g in groups.values()))
+    return problems
 
 
 # ------------------------------------------------------------------ scripted copper as obstacles
@@ -772,11 +872,10 @@ def heights_block(inp):
 def height_zones(inp):
     hr = inp.pspec['height_rule']
     margin = inp.pspec['parameters']['window_margin']
-    zones = [{'region': 'board', 'max_height_mm_from_contract': 'max_component_height', 'side': 'top', 'checked': True,
-              'why': 'hA 4.5 (pcb/partition-spec.json parameters.hA): top parts outside the PWR-B windows'},
-             {'region': 'board', 'max_height_mm': inp.contract['bottom_side']['h_max'], 'side': 'bottom', 'checked': True,
-              'why': 'bottom chip parts in the plate pockets: contract bottom_side h_max (MECH-7: shim gap 0.4 + pocket '
-                     'depth 1.0 - polyimide 0.07 - clearance 0.3)'}]
+    # No 'board' zone: pcb/check_boards.py applies the contract max_component_height (hA 4.5) to a top part that lies
+    # inside no zone and max_height_bottom to a bottom part, while a 'board' zone would also cap the parts inside the
+    # PWR-B windows at hA (route iteration 1 review: 15 radials and inductors reported against 4.5 mm).
+    zones = []
     for cu in inp.study['pwr_b_cutouts']['placed']:
         x0, y0, x1, y1 = cu['rect']
         if cu['kind'] == 'window_taller_than_hA':
@@ -840,6 +939,7 @@ def build():
     inp = Inputs(spec)
     problems = check_placement(inp)
     pre, copper_notes = board_copper(spec['pre_route'], inp)
+    problems += scripted_joined(inp, pre)
     gt, gv, skipped = gnd_fanout(inp, pre, first=fixed_refs(study))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])
@@ -865,6 +965,12 @@ def build():
                         'connections open); the budget fits the 45 min board job of sr-rx-pcb with DRC and audits after it'}
         elif k == 'height_zones':
             v = height_zones(inp)
+        elif k == 'post_route_zones':
+            v = [{**z, 'pad_connection': 'solid',
+                  'why': z.get('why', '') + '; solid pad connection (W2 PCB-PWRA-4: route iteration 2, sr-rx-pcb run '
+                         '43295500516, starved the thermal spokes of the THT GND pins of J108, J110, J111 and J507 between '
+                         'router tracks; as GND-F on PWR_B, the solid THT joints are an assembly gate, OPEN)'}
+                 if z['net'] == 'GND' and z['id'].startswith('GND-BOND') else z for z in v]
         out[k] = v
     out['neck_exempt'] = stem_exemptions(inp, out['pre_route']['tracks'], inp.netclasses)
     out['edge_keepout'] = {'width_mm': 0.2, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
@@ -918,6 +1024,7 @@ def svg(inp, spec, path):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--check', action='store_true')
+    ap.add_argument('--install', action='store_true')
     ap.add_argument('--svg')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
@@ -931,7 +1038,10 @@ def main(argv=None):
     if args.svg:
         svg(inp, spec, args.svg)
     status = 0
-    for path, data in ((SPEC, text), (PROJECT, proj)):
+    targets = [(SPEC_OUT, text), (PROJECT, proj)]
+    if args.install or (args.check and SPEC.is_file()):
+        targets.append((SPEC, text))
+    for path, data in targets:
         name = path.relative_to(BASE).as_posix()
         if args.check:
             if not path.is_file() or path.read_text(encoding='utf-8') != data:

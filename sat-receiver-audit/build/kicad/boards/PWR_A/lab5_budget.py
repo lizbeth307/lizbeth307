@@ -159,13 +159,14 @@ def project(px, py, x1, y1, x2, y2):
     return t, (x1 + t * dx, y1 + t * dy)
 
 
-def pwr_b_network(board, temp_c, t_outer, plating, thickness):
-    """LAB5 copper of PWR_B as a network. Track pieces are split at every via, pad or track end that touches them."""
+def pwr_b_network(board, temp_c, t_outer, plating, thickness, net_name=NET):
+    """LAB5 copper of PWR_B (or net_name of any routed board, W2 PCB-PWRA-4 board_audit.py) as a network. Track pieces
+    are split at every via, pad or track end that touches them."""
     net = Net()
-    tracks = [t for t in board.tracks if t.net == NET]
-    vias = [v for v in board.vias if v['net'] == NET]
-    pads = [p for p in board.pads if p['net'] == NET]
-    unmodelled = [z['name'] or 'zone' for z in board.zones if z['net'] == NET and not z['keepout']]
+    tracks = [t for t in board.tracks if t.net == net_name]
+    vias = [v for v in board.vias if v['net'] == net_name]
+    pads = [p for p in board.pads if p['net'] == net_name]
+    unmodelled = [z['name'] or 'zone' for z in board.zones if z['net'] == net_name and not z['keepout']]
     branch = {}  # pad key -> (track width, far end node of the narrowest track that touches the pad)
     for t in tracks:
         s = t.shape
