@@ -710,5 +710,24 @@ class CopperKeepoutAreas(unittest.TestCase):
             self.assertEqual(ko['layers'], ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'])
 
 
+class PwrBRouterClassLayers(unittest.TestCase):
+    """W2 PWRB-R: router.class_layers (the DSN patch of the W2 PCB-CTRL lineage) keeps PWR1A on the outer layers of PWR_B
+    once In2.Cu routes signals; a class missing from the DSN is refused."""
+
+    DSN = '(network\n    (class kicad_default A B\n      (circuit\n        (use_via V)\n      )\n    )\n    (class PWR1A P Q\n      (circuit\n        (use_via V)\n      )\n    )\n)'
+
+    def test_patch_and_spec(self):
+        out = bg.patch_dsn_class_layers(self.DSN, {'PWR1A': ['F.Cu', 'B.Cu']})
+        self.assertIn('(class PWR1A P Q\n      (circuit\n        (use_layer F.Cu B.Cu)', out)
+        self.assertEqual(out.count('use_layer'), 1)
+        with self.assertRaises(SystemExit):
+            bg.patch_dsn_class_layers(self.DSN, {'PWR3A': ['F.Cu']})
+        if bg.spec_path('PWR_B').is_file():
+            spec = bg.read_json(bg.spec_path('PWR_B'))
+            self.assertEqual(spec['router']['class_layers'], {'PWR1A': ['F.Cu', 'B.Cu']})
+            self.assertEqual(spec['layers']['types'], {'In1.Cu': 'power', 'In2.Cu': 'mixed'})
+            self.assertIn('In2.Cu', spec['edge_keepout']['layers'])
+
+
 if __name__ == '__main__':
     unittest.main()

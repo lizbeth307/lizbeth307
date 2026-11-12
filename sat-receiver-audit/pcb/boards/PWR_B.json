@@ -19,14 +19,15 @@
     "source": "build/15 Шари (4-layer JLC04161H-7628, 1 oz outer) and mechanical/generated/contract/boards.json stackup",
     "types": {
       "In1.Cu": "power",
-      "In2.Cu": "power"
+      "In2.Cu": "mixed"
     },
     "plan": {
-      "F.Cu": "parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour",
+      "F.Cu": "parts (top side only), LAB5 trunk and Kelvin copper, signals and power classes, GND pour",
       "In1.Cu": "solid GND plane (layer type power: the router puts only vias through it)",
-      "In2.Cu": "second GND plane (layer type power)",
-      "B.Cu": "B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour"
-    }
+      "In2.Cu": "signals (Default class only: router.class_layers keeps PWR1A on F.Cu / B.Cu) and a GND pour after routing (layer type mixed). W2 PWRB-R: with the 50 PWR-A cut-outs as copper keep-outs the two outer layers alone left 89 connections open (route run 43288017730, Freerouting timed out at pass 25 with 153 unrouted), so the second GND plane of the W2 PCB-PWRB lineage became a signal layer with a GND pour; In1.Cu stays the solid reference plane under F.Cu",
+      "B.Cu": "B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals and power classes, GND pour"
+    },
+    "types_why": "In1.Cu is a solid GND plane laid before routing and typed power, so the Specctra export makes it a plane and Freerouting routes nothing on it; In2.Cu is a routing layer for the Default (signal) class with a GND pour after routing; the power classes route on F.Cu / B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: 1.8 mm inner width for PWR1A, no inner copper for PWR3A)"
   },
   "project": "build/kicad/boards/PWR_B/PWR_B.kicad_pro",
   "rules_file": null,
@@ -6372,19 +6373,19 @@
         "priority": 0,
         "pad_connection": "solid",
         "why": "GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it"
-      },
-      {
-        "id": "GND-In2",
-        "net": "GND",
-        "layer": "In2.Cu",
-        "outline": "board",
-        "priority": 0,
-        "pad_connection": "solid",
-        "why": "second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)"
       }
     ]
   },
   "post_route_zones": [
+    {
+      "id": "GND-In2",
+      "net": "GND",
+      "layer": "In2.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "GND pour on the In2.Cu signal layer after routing (W2 PWRB-R; before: the second GND plane, laid before routing); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)"
+    },
     {
       "id": "GND-F",
       "net": "GND",
@@ -6407,6 +6408,7 @@
     "width_mm": 0.2,
     "layers": [
       "F.Cu",
+      "In2.Cu",
       "B.Cu"
     ],
     "blocks": [
@@ -8476,7 +8478,13 @@
       "SCRIPTED_PWR1A",
       "SCRIPTED_PWR3A"
     ],
-    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)"
+    "class_layers": {
+      "PWR1A": [
+        "F.Cu",
+        "B.Cu"
+      ]
+    },
+    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open); class_layers keeps the PWR1A class on F.Cu / B.Cu now that In2.Cu routes signals (W2 PWRB-R; the DSN patch of pcb/board_gen.py, from the W2 PCB-CTRL lineage)"
   },
   "drc_policy": {
     "warning_checks": {

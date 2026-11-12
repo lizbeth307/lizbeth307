@@ -764,6 +764,12 @@ def validate_spec(spec, board):
         if layer not in copper or kind not in LAYER_TYPES:
             raise SpecError(f'{board}: layers.types {layer!r}: {kind!r} must name a copper layer of the board and one '
                             f'of {sorted(LAYER_TYPES)}')
+    for cls, layers in (spec['router'].get('class_layers') or {}).items():
+        if not re.fullmatch(r'[A-Za-z0-9_]+', str(cls)) or not isinstance(layers, list) or not layers \
+                or not set(layers) <= set(copper):
+            raise SpecError(f'{board}: router.class_layers {cls}: {layers!r} must list copper layers of the board')
+    if not isinstance(spec.get('audit_cutouts', False), bool):
+        raise SpecError(f'{board}: audit_cutouts must be true or false')
     for key, reason in spec['drc_policy'].get('warning_checks', {}).items():
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
@@ -977,6 +983,16 @@ def copper_keepout_audit(text, oy, spec, facts, tol=1e-3):
             'note': ('copper closer than grow_mm to a copper_keepouts rectangle: tracks and vias exact (capsule, disc), pads by '
                      'their KiCad bounding box, zone fills by their filled polygons; a later hole or notch there needs this '
                      'clearance (copper to edge)')}
+
+
+def add_copper_keepout_audit(report, audit):
+    """The copper keep-out audit in a board report (only specs with copper_keepouts): audits.copper_keepouts, two result
+    keys after the others, and the board passes only without violations; reports of other specs stay as they were."""
+    report['audits']['copper_keepouts'] = audit
+    report['result']['copper_keepout_audit'] = audit['passed']
+    report['result']['copper_keepout_violations'] = audit['violations']
+    report['passed'] = report['passed'] and audit['passed']
+    return report
 
 
 def validate_bond_and_coupon(spec, board, nets):
@@ -1350,6 +1366,21 @@ def circle_polygon(cx, cy, radius, n=48):
     """Polygon that contains the circle (circumscribed), board mm."""
     rr = radius / math.cos(math.pi / n)
     return [(cx + rr * math.cos(2 * math.pi * k / n), cy + rr * math.sin(2 * math.pi * k / n)) for k in range(n)]
+
+
+def patch_dsn_class_layers(text, class_layers):
+    """Restrict net classes to routing layers in a KiCad Specctra DSN: '(use_layer ...)' in each class circuit.
+
+    W2 PCB-CTRL (optional spec key router.class_layers {class: [layers]}): KiCad 10.0.7 exports no per-class layer
+    list; Freerouting 2.5.0 reads '(circuit (use_layer ...))' of a class (io/specctra/parser/Circuit.java and
+    Network.createActiveTraceLayers at tag v2.5.0, read 2026-11-07). Refuses a class that the DSN does not carry.
+    """
+    for name, layers in sorted((class_layers or {}).items()):
+        pattern = re.compile(r'(\(class\s+' + re.escape(name) + r'\s[^()]*\(circuit)')
+        if len(pattern.findall(text)) != 1:
+            raise SpecError(f'router.class_layers: the DSN has no single class {name}')
+        text = pattern.sub(lambda m: m.group(1) + '\n        (use_layer ' + ' '.join(layers) + ')', text)
+    return text
 
 
 def dsn_probe(text):
@@ -2034,13 +2065,9 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'annular_audit': audits['annular']['passed'], 'locked_copper_kept': audits['locked']['kept'],
         'group_audit': audits['groups']['passed'],
     }
-    if 'copper_keepouts' in audits:  # only specs with copper_keepouts carry it (W2 PWRB-R); other reports stay as they were
-        result['copper_keepout_audit'] = audits['copper_keepouts']['passed']
-        result['copper_keepout_violations'] = audits['copper_keepouts']['violations']
     passed = (drc['passed'] and all(a['passed'] for a in source_pad) and audits['domain']['passed']
               and audits['keepout']['passed'] and audits['annular']['passed'] and audits['locked']['kept']
-              and audits['groups']['passed'] and audits.get('copper_keepouts', {'passed': True})['passed']
-              and not any(b['status'].startswith('fail') for b in boundary))
+              and audits['groups']['passed'] and not any(b['status'].startswith('fail') for b in boundary))
     return {
         'schema': REPORT_SCHEMA, 'board_id': spec['board_id'], 'status': spec['status'],
         'label': 'CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN',
@@ -2097,9 +2124,9 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
                    'kept': facts['tracks']['locked'] >= want_locked,
                    'note': 'SES import before/after counts and the DSN probe are in route-log.json'},
     }
-    if spec.get('copper_keepouts'):  # W2 PWRB-R: copper of the saved board against the keep-out rectangles
-        audits['copper_keepouts'] = copper_keepout_audit(Path(board_path).read_text(encoding='utf-8'), frame.oy, spec, facts)
     report = build_report(spec, contract, stackup, template, proj, facts, drc, audits, board_path, spec['project'])
+    if spec.get('copper_keepouts'):  # W2 PWRB-R: copper of the saved board against the keep-out rectangles
+        add_copper_keepout_audit(report, copper_keepout_audit(Path(board_path).read_text(encoding='utf-8'), frame.oy, spec, facts))
     return report, connectors_doc(spec, contract, template, facts)
 
 
@@ -2185,6 +2212,9 @@ def route(board, freerouting):
         dsn, ses = temp / f'{board}.dsn', temp / f'{board}.ses'
         if not pcb.ExportSpecctraDSN(board_obj, str(dsn)) or not dsn.is_file():
             raise SystemExit('board_gen: Specctra DSN export failed')
+        if spec['router'].get('class_layers'):  # per-class routing layers (W2 PCB-CTRL: power classes on the outer layers)
+            dsn.write_text(patch_dsn_class_layers(dsn.read_text(encoding='utf-8'), spec['router']['class_layers']),
+                           encoding='utf-8')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
         cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
                                   temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']))
