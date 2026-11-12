@@ -38,7 +38,10 @@ What it reports (MODEL / CI-free planning result, not a KiCad board, not a hardw
   0.60 of pcb/partition-spec.json (F2 for the draft, F2-C for SHRINK-2), and the free area left after the anchors;
 - the exit-edge length demand of the PWR-A and PWR-B harness headers, the PWR-B cut-outs this placement needs
   (windows over PWR-A parts taller than hA, header edge strips, test-point probe windows), the THT pads inside the
-  thermal_bond zones (plate pockets, M-07) and a geometric pre-check of the scripted copper;
+  thermal_bond zones (plate pockets, M-07) and a geometric pre-check of the scripted copper (review fixes F1/F2: with
+  the trunk check of spec power_stages.trunks and inner-layer pours that only THT pads meet);
+- a corridor report (review fix F2, not a gate): for every BATT/PWR3A net, which pads class-width copper on F.Cu/B.Cu
+  can reach from the net's scripted copper at the planned positions (raster CORRIDOR_STEP mm);
 - the B2B pair (spec b2b): every contact of the PWR_A mate against its PWR_B mate, pin for pin (nets) and in position
   (planner geometry of both lands, and the contact positions in PWR_B connectors.json from its CI route run);
 - the planned origin of every placed ref (positions), the input of lab5_budget.py.
@@ -227,6 +230,266 @@ def bottom_usable(outline, hole_list, boxes):
                 cuts.append([b[0], b[2]])
         total += free_length(spans, cuts) * ROW_STEP
     return total
+
+
+def _touch(a, b, eps=1e-6):
+    return a[0] <= b[2] + eps and b[0] <= a[2] + eps and a[1] <= b[3] + eps and b[1] <= a[3] + eps
+
+
+def _box_point_dist(b, x, y):
+    return math.hypot(max(b[0] - x, 0, x - b[2]), max(b[1] - y, 0, y - b[3]))
+
+
+def trunk_check(spec, pad_index):
+    """Review fixes F1/F2 (W2 PCB-PWRA-3): the scripted copper of every net of spec power_stages.trunks joins the named pads
+    by itself. Pours join when they share a layer and touch or overlap; a through via joins every pour and pad it touches;
+    a pad joins a pour of its layer (THT pads every layer). Geometry of the planned pads, no KiCad fill."""
+    trunks = (spec.get('power_stages') or {}).get('trunks') or {}
+    pre = spec['pre_route']
+    rows = []
+    for net, targets in sorted(trunks.items()):
+        nodes = []
+        for z in pre.get('zones', []):
+            if z['net'] == net and z.get('outline', 'board') != 'board':
+                xs, ys = [p[0] for p in z['outline']], [p[1] for p in z['outline']]
+                nodes.append(('zone', z['id'], z['layer'], [min(xs), min(ys), max(xs), max(ys)]))
+        for v in pre.get('vias', []):
+            if v['net'] == net:
+                nodes.append(('via', v['id'], None, (v['at'][0], v['at'][1], v['diameter_mm'] / 2)))
+        for p in pad_index:
+            if p['net'] == net:
+                nodes.append(('pad', f'{p["ref"]}.{p["pad"]}', None if p['tht'] else ('F.Cu' if p['side'] == 'F' else 'B.Cu'),
+                              p['box']))
+        parent = list(range(len(nodes)))
+
+        def find(i):
+            while parent[i] != i:
+                parent[i] = parent[parent[i]]
+                i = parent[i]
+            return i
+        for i, a in enumerate(nodes):
+            for j in range(i + 1, len(nodes)):
+                b = nodes[j]
+                if a[0] == 'via' and b[0] == 'via' or a[0] == 'pad' and b[0] == 'pad':
+                    continue
+                if a[0] == 'via' or b[0] == 'via':
+                    v, o = (a, b) if a[0] == 'via' else (b, a)
+                    hit = _box_point_dist(o[3], v[3][0], v[3][1]) <= v[3][2] + 1e-9
+                else:
+                    hit = (a[2] is None or b[2] is None or a[2] == b[2]) and _touch(a[3], b[3])
+                if hit:
+                    parent[find(i)] = find(j)
+        comp_of = {}
+        for i, n in enumerate(nodes):
+            if n[0] == 'pad':
+                comp_of.setdefault(n[1], set()).add(find(i))
+        copper_roots = {find(i) for i, n in enumerate(nodes) if n[0] != 'pad'}
+        missing = [t for t in targets if t not in comp_of]
+        roots = [sorted(comp_of[t] & copper_roots) for t in targets if t in comp_of]
+        common = set.intersection(*[set(r) for r in roots]) if roots and all(roots) else set()
+        unjoined = [t for t in targets if t in comp_of and not (comp_of[t] & common)]
+        rows.append({'net': net, 'targets': targets, 'scripted_items': sum(1 for n in nodes if n[0] != 'pad'),
+                     'targets_not_placed': missing, 'targets_not_joined': unjoined,
+                     'joined': not missing and not unjoined and bool(common)})
+    return {'rule': 'spec power_stages.trunks: the scripted pours and vias of each net join all its listed pads by themselves '
+                    '(MODEL geometry of the planned pads, no KiCad fill)',
+            'nets': rows, 'passed': all(r['joined'] for r in rows)}
+
+
+CORRIDOR_STEP = 0.2       # mm raster pitch of the corridor pre-check
+CORRIDOR_MARGIN = 15.0    # mm around the terminals and scripted copper of a net
+CORRIDOR_CLEARANCE = 0.15  # mm, netclasses.json clearance of the power classes
+CORRIDOR_DESIGN_CLASS = {'E1_CONV_IN': 'BATT'}  # no NET_CURRENT entry yet (GR5A-03): the class it is scripted at
+
+
+def corridor_check(spec, pad_index, netclasses, outline, hole_list):
+    """Review fix F2 (W2 PCB-PWRA-3): for every BATT/PWR3A net of PWR-A, can copper of the class width reach its
+    router-left pads on the outer layers? A raster search (CORRIDOR_STEP) from the scripted copper of the net (else from
+    its largest pad) over F.Cu and B.Cu, a layer change anywhere both layers are free (a router via). Obstacles: pads, scripted
+    pours and vias of other nets (+ half the width + clearance), the hole keep-outs, the outline inset (edge clearance 0.3) and
+    on B.Cu the GND bond copper of the thermal_bond zones; around an own pad the copper may narrow within half the width (the
+    check_boards pin-entry rule). Pads listed in power_stages.branch_pads carry no power current and are not checked here.
+    MODEL: planner positions, not a routed board; the router may still need other paths."""
+    import collections
+    cls_of = {n: v['class'] for n, v in netclasses['nets'].items()}
+    width_of = {c: v.get('outer_min_width_mm') for c, v in netclasses['classes'].items()}
+    branch = {n: set(v['pads']) for n, v in ((spec.get('power_stages') or {}).get('branch_pads') or {}).items()}
+    pre = spec['pre_route']
+    step = CORRIDOR_STEP
+    xs, ys = [p[0] for p in outline], [p[1] for p in outline]
+    nx, ny = int(round((max(xs) - min(xs)) / step)) + 1, int(round((max(ys) - min(ys)) / step)) + 1
+    ox, oy = min(xs), min(ys)
+    size = nx * ny
+    edges = list(zip(outline, outline[1:] + outline[:1]))
+    bonds = [z for z in spec.get('post_route_zones', []) if z['layer'] == 'B.Cu' and z['net'] == 'GND']
+    base_cache = {}
+
+    def paint(arr, box, inf, value=1):
+        i0, i1 = max(0, math.ceil((box[0] - inf - ox) / step - 1e-9)), min(nx - 1, math.floor((box[2] + inf - ox) / step + 1e-9))
+        j0, j1 = max(0, math.ceil((box[1] - inf - oy) / step - 1e-9)), min(ny - 1, math.floor((box[3] + inf - oy) / step + 1e-9))
+        if i1 < i0 or j1 < j0:
+            return
+        row = bytes([value]) * (j1 - j0 + 1)
+        for i in range(i0, i1 + 1):
+            arr[i * ny + j0:i * ny + j1 + 1] = row
+
+    def base(w):
+        if w in base_cache:
+            return base_cache[w]
+        inset = 0.3 + w / 2
+        layer = bytearray(size)
+        for i in range(nx):
+            x = ox + i * step
+            for j in range(ny):
+                y = oy + j * step
+                if not bg.point_in_outline((x, y), outline) or any(
+                        math.hypot(max(min(ax, bx) - x, 0, x - max(ax, bx)), max(min(ay, by) - y, 0, y - max(ay, by))) < inset
+                        for (ax, ay), (bx, by) in edges):
+                    layer[i * ny + j] = 1
+        for h in hole_list:
+            r = h['keepout_d'] / 2 + w / 2
+            cx, cy = h['at']
+            for i in range(max(0, math.ceil((cx - r - ox) / step)), min(nx - 1, math.floor((cx + r - ox) / step)) + 1):
+                dx = ox + i * step - cx
+                half = math.sqrt(max(r * r - dx * dx, 0.0))
+                paint(layer, [ox + i * step, cy - half, ox + i * step, cy + half], 0.0)
+        bot = bytearray(layer)
+        for z in bonds:
+            zx, zy = [p[0] for p in z['outline']], [p[1] for p in z['outline']]
+            paint(bot, [min(zx), min(zy), max(zx), max(zy)], w / 2 + CORRIDOR_CLEARANCE)
+        base_cache[w] = (layer, bot)
+        return base_cache[w]
+
+    layer_of = {'F.Cu': 0, 'B.Cu': 1}
+    rows = []
+    nets = sorted({p['net'] for p in pad_index if p['net'] and
+                   (cls_of.get(p['net']) in ('BATT', 'PWR3A') or p['net'] in CORRIDOR_DESIGN_CLASS)})
+    for net in nets:
+        cls = cls_of.get(net) or CORRIDOR_DESIGN_CLASS[net]
+        w = width_of[cls]
+        inf = w / 2 + CORRIDOR_CLEARANCE
+        terms = [p for p in pad_index if p['net'] == net and f'{p["ref"]}.{p["pad"]}' not in branch.get(net, set())]
+        names = sorted({f'{p["ref"]}.{p["pad"]}' for p in terms}, key=lambda s: (bg.sort_ref(s.split('.')[0]), s))
+        if len(names) < 2:
+            continue
+        own_zones = [z for z in pre.get('zones', []) if z['net'] == net and z['layer'] in layer_of]
+        own_vias = [v for v in pre.get('vias', []) if v['net'] == net]
+        boxes = [p['box'] for p in terms] + [[min(q[0] for q in z['outline']), min(q[1] for q in z['outline']),
+                                              max(q[0] for q in z['outline']), max(q[1] for q in z['outline'])]
+                                             for z in own_zones]
+        win = [max(ox, min(b[0] for b in boxes) - CORRIDOR_MARGIN), max(oy, min(b[1] for b in boxes) - CORRIDOR_MARGIN),
+               min(ox + (nx - 1) * step, max(b[2] for b in boxes) + CORRIDOR_MARGIN),
+               min(oy + (ny - 1) * step, max(b[3] for b in boxes) + CORRIDOR_MARGIN)]
+        top, bot = base(w)
+        blocked = [bytearray(top), bytearray(bot)]
+        for p in pad_index:
+            if p['net'] == net:
+                continue
+            for li in ((0, 1) if p['tht'] else ((0,) if p['side'] == 'F' else (1,))):
+                paint(blocked[li], p['box'], inf)
+        for z in pre.get('zones', []):
+            if z['net'] != net and z['layer'] in layer_of:
+                zx, zy = [q[0] for q in z['outline']], [q[1] for q in z['outline']]
+                paint(blocked[layer_of[z['layer']]], [min(zx), min(zy), max(zx), max(zy)], inf)
+        for v in pre.get('vias', []):
+            if v['net'] != net:
+                x, y = v['at']
+                r = v['diameter_mm'] / 2
+                for li in (0, 1):
+                    paint(blocked[li], [x - r, y - r, x + r, y + r], inf)
+        # own copper and pads are free; around an own pad the copper may narrow (pin entry within half the width)
+        foreign = [[], []]
+        for p in pad_index:
+            if p['net'] != net:
+                for li in ((0, 1) if p['tht'] else ((0,) if p['side'] == 'F' else (1,))):
+                    foreign[li].append(p['box'])
+        cells = {}
+        for p in terms:
+            name = f'{p["ref"]}.{p["pad"]}'
+            for li in ((0, 1) if p['tht'] else ((0,) if p['side'] == 'F' else (1,))):
+                b = p['box']
+                ent = [b[0] - w / 2, b[1] - w / 2, b[2] + w / 2, b[3] + w / 2]
+                hit = [f for f in foreign[li] if _touch(f, [ent[0] - CORRIDOR_CLEARANCE, ent[1] - CORRIDOR_CLEARANCE,
+                                                           ent[2] + CORRIDOR_CLEARANCE, ent[3] + CORRIDOR_CLEARANCE])]
+                tmp = bytearray(size)
+                paint(tmp, ent, 0.0)
+                for f in hit:
+                    paint(tmp, f, CORRIDOR_CLEARANCE, 0)
+                i0, i1 = max(0, math.floor((ent[0] - ox) / step)), min(nx - 1, math.ceil((ent[2] - ox) / step))
+                j0, j1 = max(0, math.floor((ent[1] - oy) / step)), min(ny - 1, math.ceil((ent[3] - oy) / step))
+                own = set()
+                for i in range(i0, i1 + 1):
+                    for j in range(j0, j1 + 1):
+                        k = i * ny + j
+                        if tmp[k]:
+                            blocked[li][k] = 0
+                            x, y = ox + i * step, oy + j * step
+                            if b[0] - 1e-9 <= x <= b[2] + 1e-9 and b[1] - 1e-9 <= y <= b[3] + 1e-9:
+                                own.add(li * size + k)
+                if not own:  # a pad smaller than the raster: its centre cell
+                    k = int(round((p['at'][0] - ox) / step)) * ny + int(round((p['at'][1] - oy) / step))
+                    blocked[li][k] = 0
+                    own.add(li * size + k)
+                cells.setdefault(name, set()).update(own)
+        seed = set()
+        for z in own_zones:
+            zx, zy = [q[0] for q in z['outline']], [q[1] for q in z['outline']]
+            li = layer_of[z['layer']]
+            for i in range(max(0, math.ceil((min(zx) - ox) / step)), min(nx - 1, math.floor((max(zx) - ox) / step)) + 1):
+                for j in range(max(0, math.ceil((min(zy) - oy) / step)), min(ny - 1, math.floor((max(zy) - oy) / step)) + 1):
+                    blocked[li][i * ny + j] = 0
+                    seed.add(li * size + i * ny + j)
+        for v in own_vias:
+            k = int(round((v['at'][0] - ox) / step)) * ny + int(round((v['at'][1] - oy) / step))
+            for li in (0, 1):
+                blocked[li][k] = 0
+                seed.add(li * size + k)
+        wi0, wi1 = int((win[0] - ox) / step), int(math.ceil((win[2] - ox) / step))
+        wj0, wj1 = int((win[1] - oy) / step), int(math.ceil((win[3] - oy) / step))
+        flat = blocked[0] + blocked[1]
+        seen = bytearray(2 * size)
+
+        def search(start):
+            q = collections.deque(start)
+            for s in start:
+                seen[s] = 1
+            while q:
+                c = q.popleft()
+                li, k = divmod(c, size)
+                i, j = divmod(k, ny)
+                for ni, nj in ((i + 1, j), (i - 1, j), (i, j + 1), (i, j - 1)):
+                    if wi0 <= ni <= wi1 and wj0 <= nj <= wj1:
+                        n = li * size + ni * ny + nj
+                        if not seen[n] and not flat[n]:
+                            seen[n] = 1
+                            q.append(n)
+                o = (1 - li) * size + k
+                if not seen[o] and not flat[o]:
+                    seen[o] = 1
+                    q.append(o)
+        comps = []
+        start = seed or cells[max(names, key=lambda n: max(len(cells[n]), 0))]
+        search(start)
+        while True:
+            got = [n for n in names if any(seen[c] for c in cells[n])]
+            comps.append(sorted(set(got) - {x for cp in comps for x in cp}, key=names.index))
+            rest = [n for n in names if not any(seen[c] for c in cells[n])]
+            if not rest or len(comps) >= 8:
+                if rest:
+                    comps.append(rest)
+                break
+            search(cells[rest[0]])
+        rows.append({'net': net, 'class': cls, 'width_mm': w, 'scripted_seed': bool(seed), 'terminals': len(names),
+                     'branch_pads_not_checked': sorted(branch.get(net, set())),
+                     'components': comps, 'connected': len(comps) == 1})
+    return {'rule': 'BATT/PWR3A nets (E1_CONV_IN at BATT, the width it is scripted at): class-width corridor on F.Cu/B.Cu from '
+                    'the scripted copper of the net (else its largest pad) to every other pad; components = pad sets one '
+                    'corridor joins (MODEL raster, CORRIDOR_STEP mm; planner positions, not a routed board)',
+            'step_mm': step, 'clearance_mm': CORRIDOR_CLEARANCE, 'nets': rows,
+            'split_nets': [r['net'] for r in rows if not r['connected']],
+            'all_connected': all(r['connected'] for r in rows),
+            'note': 'report for W2 PCB-PWRA-4, not a gate: a split net needs a re-placement or a narrower entry there; the '
+                    'scripted trunks themselves are checked by scripted_copper_precheck.trunks'}
 
 
 def study(spec_name):
@@ -804,10 +1067,10 @@ def study(spec_name):
         zx, zy = [p[0] for p in poly], [p[1] for p in poly]
         zb = [min(zx), min(zy), max(zx), max(zy)]
         zone_boxes.append((zone['id'], zone['net'], zone['layer'], zb))
-        zside = 'B' if zone['layer'] == 'B.Cu' else ('F' if zone['layer'] == 'F.Cu' else None)
+        zside = 'B' if zone['layer'] == 'B.Cu' else ('F' if zone['layer'] == 'F.Cu' else 'inner')
         # a pad meets the pour when it is a THT pad, or an SMD pad on the pour's side (W2 PCB-PWRA-3 part 2: the bottom
-        # chips under an F.Cu pour do not)
-        meets = [p for p in pad_index if bg.rects_overlap(p['box'], zb) and (p['tht'] or zside is None or p['side'] == zside)]
+        # chips under an F.Cu pour do not; review fix F1: no SMD pad meets an inner-layer pour such as the In2 VIN strap)
+        meets = [p for p in pad_index if bg.rects_overlap(p['box'], zb) and (p['tht'] or p['side'] == zside)]
         cls = cls_of.get(zone['net'], netclasses['default_class'])
         on_net = sorted(f'{p["ref"]}.{p["pad"]}' for p in meets if p['net'] == zone['net'])
         foreign = sorted(f'{p["ref"]}.{p["pad"]}:{p["net"]}' for p in meets if p['net'] != zone['net'])
@@ -852,6 +1115,8 @@ def study(spec_name):
                       math.hypot(max(b[0] - x, 0, x - b[2]), max(b[1] - y, 0, y - b[3])) < rv + 0.15]
         copper.append({'id': via['id'], 'kind': 'via', 'net': via['net'], 'at': via['at'], 'foreign_pads_within_0_15': hits,
                        'other_net_pours_within_0_15': near_other, 'in_pours_of_its_net': in_pour})
+    trunks = trunk_check(spec, pad_index)
+    corridors = corridor_check(spec, pad_index, netclasses, outline, hole_list)
 
     # --- boundary: nets that leave PWR-A without a connector pin here ---
     boundary = bg.boundary_audit(spec, template, graph, db)[0]
@@ -1084,11 +1349,14 @@ def study(spec_name):
                                               'thermal spokes and neck widths are checked only on the routed board',
                                      'items': copper,
                                      'pour_pairs_closer_than_mm': POUR_GAP, 'pour_pairs': pour_pairs,
-                                     'passed': (not pour_pairs and all(c.get('width_ok', True) is not False and
-                                                                       not c.get('foreign_pads_inside') and
-                                                                       not c.get('foreign_pads_within_0_15') and
-                                                                       not c.get('other_net_pours_within_0_15')
-                                                                       for c in copper))},
+                                     'trunks': trunks,
+                                     'passed': (not pour_pairs and trunks['passed'] and
+                                                all(c.get('width_ok', True) is not False and
+                                                    not c.get('foreign_pads_inside') and
+                                                    not c.get('foreign_pads_within_0_15') and
+                                                    not c.get('other_net_pours_within_0_15')
+                                                    for c in copper))},
+        'corridor_precheck': corridors,
         'b2b': {'rule': 'spec b2b pin_map: contact k of the PWR-A half on the PWR-A top under contact pin_map(k) of the PWR-B '
                         'half on the PWR-B bottom, same net; MODEL geometry of the two KiCad 10.0.7 lands',
                 'pairs': b2b_rows, 'passed': bool(b2b_rows) and all(r['passed'] for r in b2b_rows)},
