@@ -2152,14 +2152,29 @@
       "placed_refs": 2,
       "chunks": [
         {
-          "region": "BL_M4",
-          "refs": 2,
-          "courtyard_mm2": 8.6432,
-          "region_mm2": 163.2
+          "region": "BB_LEFT",
+          "refs": 1,
+          "courtyard_mm2": 4.3216,
+          "region_mm2": 146.2
+        },
+        {
+          "region": "BB_LEFT+",
+          "refs": 1,
+          "courtyard_mm2": 4.3216,
+          "region_mm2": 116.79
         }
       ],
       "unplaced_refs": [],
-      "regions_refused": [],
+      "regions_refused": [
+        {
+          "region": "BL_M4",
+          "first_refusal": "group SYS12_BOT@BL_M4: R108 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group SYS12_BOT@BL_M4: R109 overlaps __THT_F102"
+        }
+      ],
       "side": "B"
     },
     {
@@ -2169,10 +2184,10 @@
       "placed_refs": 8,
       "chunks": [
         {
-          "region": "BB_LEFT",
+          "region": "BL_LEFT",
           "refs": 8,
           "courtyard_mm2": 40.5568,
-          "region_mm2": 146.2
+          "region_mm2": 435.5
         }
       ],
       "unplaced_refs": [],
@@ -2220,14 +2235,63 @@
       "placed_refs": 4,
       "chunks": [
         {
-          "region": "BL_TOPR",
+          "region": "BL_TOPL",
           "refs": 4,
           "courtyard_mm2": 23.2704,
-          "region_mm2": 56.16
+          "region_mm2": 54.72
         }
       ],
       "unplaced_refs": [],
-      "regions_refused": [],
+      "regions_refused": [
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group AUX12_BOT@BL_TOPR: R223 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group AUX12_BOT@BL_TOPR: R220 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group AUX12_BOT@BL_TOPR: R221 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group AUX12_BOT@BL_TOPR: R222 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group AUX12_BOT@BL_M3: R223 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group AUX12_BOT@BL_M3: R220 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group AUX12_BOT@BL_M3: R221 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group AUX12_BOT@BL_M3: R222 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group AUX12_BOT@BL_M4: R223 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group AUX12_BOT@BL_M4: R220 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group AUX12_BOT@BL_M4: R221 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group AUX12_BOT@BL_M4: R222 overlaps __THT_F102"
+        }
+      ],
       "side": "B"
     },
     {
@@ -2237,14 +2301,171 @@
       "placed_refs": 13,
       "chunks": [
         {
-          "region": "BL_LEFT",
+          "region": "BL_M2+",
           "refs": 13,
           "courtyard_mm2": 62.1648,
-          "region_mm2": 435.5
+          "region_mm2": 687.104
         }
       ],
       "unplaced_refs": [],
-      "regions_refused": [],
+      "regions_refused": [
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R103 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: C105 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: C106 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: C114 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R104 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R105 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R106 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R107 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R111 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R112 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R121 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R122 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_CTRL_BOT@BL_M3: R123 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R103 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: C105 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: C106 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: C114 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R104 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R105 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R106 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R107 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R111 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R112 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R121 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R122 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_CTRL_BOT@BL_M4: R123 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R103 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: C105 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: C106 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: C114 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R104 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R105 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R106 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R107 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R111 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R112 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R121 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R122 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_CTRL_BOT@BL_TOPR: R123 overlaps __THT_J205"
+        }
+      ],
       "side": "B"
     },
     {
@@ -2254,14 +2475,75 @@
       "placed_refs": 5,
       "chunks": [
         {
-          "region": "BL_M3",
+          "region": "BB_TOP1+",
           "refs": 5,
           "courtyard_mm2": 21.608,
-          "region_mm2": 71.71
+          "region_mm2": 116.76
         }
       ],
       "unplaced_refs": [],
-      "regions_refused": [],
+      "regions_refused": [
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_USBPD_BOT@BL_M3: C115 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_USBPD_BOT@BL_M3: R113 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_USBPD_BOT@BL_M3: R114 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_USBPD_BOT@BL_M3: R115 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E1_USBPD_BOT@BL_M3: R116 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_USBPD_BOT@BL_M4: C115 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_USBPD_BOT@BL_M4: R113 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_USBPD_BOT@BL_M4: R114 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_USBPD_BOT@BL_M4: R115 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E1_USBPD_BOT@BL_M4: R116 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_USBPD_BOT@BL_TOPR: C115 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_USBPD_BOT@BL_TOPR: R113 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_USBPD_BOT@BL_TOPR: R114 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_USBPD_BOT@BL_TOPR: R115 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E1_USBPD_BOT@BL_TOPR: R116 overlaps __THT_J205"
+        }
+      ],
       "side": "B"
     },
     {
@@ -2271,17 +2553,65 @@
       "placed_refs": 3,
       "chunks": [
         {
-          "region": "BL_TOPL",
-          "refs": 3,
-          "courtyard_mm2": 12.9648,
-          "region_mm2": 54.72
+          "region": "BB_GAP+",
+          "refs": 1,
+          "courtyard_mm2": 4.3216,
+          "region_mm2": 10.816
+        },
+        {
+          "region": "BB_TOP2+",
+          "refs": 2,
+          "courtyard_mm2": 8.6432,
+          "region_mm2": 275.394
         }
       ],
       "unplaced_refs": [],
-      "regions_refused": [],
+      "regions_refused": [
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E5_SERVICE_BOT@BL_M3: C552 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E5_SERVICE_BOT@BL_M3: C553 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M3",
+          "first_refusal": "group E5_SERVICE_BOT@BL_M3: R553 overlaps __THT_C207"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E5_SERVICE_BOT@BL_M4: C552 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E5_SERVICE_BOT@BL_M4: C553 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_M4",
+          "first_refusal": "group E5_SERVICE_BOT@BL_M4: R553 overlaps __THT_F102"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E5_SERVICE_BOT@BL_TOPR: C552 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E5_SERVICE_BOT@BL_TOPR: C553 overlaps __THT_J205"
+        },
+        {
+          "region": "BL_TOPR",
+          "first_refusal": "group E5_SERVICE_BOT@BL_TOPR: R553 overlaps __THT_J205"
+        }
+      ],
       "side": "B"
     }
   ],
+  "placement_checks": {
+    "rule": "per side, every placed courtyard box against every other one (anchor pairs: see anchors.errors) and against the reserved areas of that side; on side B also against the THT pin fields of the placed top parts + tht_margin",
+    "overlaps": [],
+    "passed": true
+  },
   "unplaced_refs": [],
   "exit_edges": {
     "bottom": {
@@ -3583,33 +3913,33 @@
       {
         "ref": "C105",
         "at": [
-          3.79,
-          100.72
+          27.69,
+          97.36
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          3.06,
-          99.24,
-          4.52,
-          102.2
+          26.96,
+          95.88,
+          28.42,
+          98.84
         ]
       },
       {
         "ref": "C106",
         "at": [
-          5.75,
-          100.72
+          29.65,
+          97.36
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          5.02,
-          99.24,
-          6.48,
-          102.2
+          28.92,
+          95.88,
+          30.38,
+          98.84
         ]
       },
       {
@@ -3711,33 +4041,33 @@
       {
         "ref": "C114",
         "at": [
-          1.03,
-          95.66
+          31.61,
+          97.36
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          0.3,
-          94.18,
-          1.76,
-          97.14
+          30.88,
+          95.88,
+          32.34,
+          98.84
         ]
       },
       {
         "ref": "C115",
         "at": [
-          25.68,
-          58.87
+          1.78,
+          29.25
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          24.2,
-          58.14,
-          27.16,
-          59.6
+          0.3,
+          28.52,
+          3.26,
+          29.98
         ]
       },
       {
@@ -3776,16 +4106,16 @@
         "ref": "C201",
         "at": [
           3.79,
-          25.52
+          100.72
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
           3.06,
-          24.04,
+          99.24,
           4.52,
-          27.0
+          102.2
         ]
       },
       {
@@ -4895,33 +5225,33 @@
       {
         "ref": "C552",
         "at": [
-          9.08,
-          108.97
+          69.93,
+          6.88
         ],
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          7.6,
-          108.24,
-          10.56,
-          109.7
+          69.2,
+          5.4,
+          70.66,
+          8.36
         ]
       },
       {
         "ref": "C553",
         "at": [
-          12.54,
-          108.97
+          51.18,
+          31.21
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          11.06,
-          108.24,
-          14.02,
-          109.7
+          49.7,
+          30.48,
+          52.66,
+          31.94
         ]
       },
       {
@@ -5663,113 +5993,113 @@
       {
         "ref": "R103",
         "at": [
-          1.43,
-          99.92
+          25.33,
+          96.56
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          0.3,
-          97.64,
-          2.56,
-          102.2
+          24.2,
+          94.28,
+          26.46,
+          98.84
         ]
       },
       {
         "ref": "R104",
         "at": [
-          2.99,
-          95.66
+          33.57,
+          97.36
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          2.26,
-          94.18,
-          3.72,
-          97.14
+          32.84,
+          95.88,
+          34.3,
+          98.84
         ]
       },
       {
         "ref": "R105",
         "at": [
-          4.95,
-          95.66
+          35.53,
+          97.36
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          4.22,
-          94.18,
-          5.68,
-          97.14
+          34.8,
+          95.88,
+          36.26,
+          98.84
         ]
       },
       {
         "ref": "R106",
         "at": [
+          37.49,
+          97.36
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          36.76,
+          95.88,
+          38.22,
+          98.84
+        ]
+      },
+      {
+        "ref": "R107",
+        "at": [
+          39.45,
+          97.36
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          38.72,
+          95.88,
+          40.18,
+          98.84
+        ]
+      },
+      {
+        "ref": "R108",
+        "at": [
           1.03,
-          92.2
+          25.52
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
           0.3,
-          90.72,
+          24.04,
           1.76,
-          93.68
-        ]
-      },
-      {
-        "ref": "R107",
-        "at": [
-          2.99,
-          92.2
-        ],
-        "rotation": 90.0,
-        "side": "B",
-        "how": "group",
-        "courtyard_box": [
-          2.26,
-          90.72,
-          3.72,
-          93.68
-        ]
-      },
-      {
-        "ref": "R108",
-        "at": [
-          8.48,
-          72.07
-        ],
-        "rotation": 0.0,
-        "side": "B",
-        "how": "group",
-        "courtyard_box": [
-          7.0,
-          71.34,
-          9.96,
-          72.8
+          27.0
         ]
       },
       {
         "ref": "R109",
         "at": [
-          11.94,
-          72.07
+          1.03,
+          22.06
         ],
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          10.46,
-          71.34,
-          13.42,
-          72.8
+          0.3,
+          20.58,
+          1.76,
+          23.54
         ]
       },
       {
@@ -5791,257 +6121,257 @@
       {
         "ref": "R111",
         "at": [
-          4.95,
-          92.2
+          24.93,
+          92.3
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          4.22,
-          90.72,
-          5.68,
-          93.68
+          24.2,
+          90.82,
+          25.66,
+          93.78
         ]
       },
       {
         "ref": "R112",
         "at": [
-          1.03,
-          88.74
+          26.89,
+          92.3
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          0.3,
-          87.26,
-          1.76,
-          90.22
+          26.16,
+          90.82,
+          27.62,
+          93.78
         ]
       },
       {
         "ref": "R113",
         "at": [
-          29.14,
-          58.87
+          5.24,
+          29.25
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          27.66,
-          58.14,
-          30.62,
-          59.6
+          3.76,
+          28.52,
+          6.72,
+          29.98
         ]
       },
       {
         "ref": "R114",
         "at": [
-          32.6,
-          58.87
+          8.7,
+          29.25
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          31.12,
-          58.14,
-          34.08,
-          59.6
+          7.22,
+          28.52,
+          10.18,
+          29.98
         ]
       },
       {
         "ref": "R115",
         "at": [
-          25.68,
-          56.91
+          12.16,
+          29.25
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          24.2,
-          56.18,
-          27.16,
-          57.64
+          10.68,
+          28.52,
+          13.64,
+          29.98
         ]
       },
       {
         "ref": "R116",
         "at": [
-          29.14,
-          56.91
+          15.62,
+          29.25
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          27.66,
-          56.18,
-          30.62,
-          57.64
+          14.14,
+          28.52,
+          17.1,
+          29.98
         ]
       },
       {
         "ref": "R121",
         "at": [
-          2.99,
-          88.74
+          28.85,
+          92.3
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          2.26,
-          87.26,
-          3.72,
-          90.22
+          28.12,
+          90.82,
+          29.58,
+          93.78
         ]
       },
       {
         "ref": "R122",
         "at": [
-          4.95,
-          88.74
+          30.81,
+          92.3
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          4.22,
-          87.26,
-          5.68,
-          90.22
+          30.08,
+          90.82,
+          31.54,
+          93.78
         ]
       },
       {
         "ref": "R123",
         "at": [
-          1.03,
-          85.28
+          32.77,
+          92.3
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          0.3,
-          83.8,
-          1.76,
-          86.76
+          32.04,
+          90.82,
+          33.5,
+          93.78
         ]
       },
       {
         "ref": "R201",
         "at": [
           5.75,
-          25.52
+          100.72
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
           5.02,
-          24.04,
+          99.24,
           6.48,
-          27.0
+          102.2
         ]
       },
       {
         "ref": "R202",
         "at": [
-          7.71,
-          25.52
-        ],
-        "rotation": 90.0,
-        "side": "B",
-        "how": "group",
-        "courtyard_box": [
-          6.98,
-          24.04,
-          8.44,
-          27.0
-        ]
-      },
-      {
-        "ref": "R203",
-        "at": [
           1.03,
-          20.46
+          95.66
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
           0.3,
-          18.98,
+          94.18,
           1.76,
-          21.94
+          97.14
         ]
       },
       {
-        "ref": "R204",
+        "ref": "R203",
         "at": [
           2.99,
-          20.46
+          95.66
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
           2.26,
-          18.98,
+          94.18,
           3.72,
-          21.94
+          97.14
         ]
       },
       {
-        "ref": "R205",
+        "ref": "R204",
         "at": [
           4.95,
-          20.46
+          95.66
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
           4.22,
-          18.98,
+          94.18,
           5.68,
-          21.94
+          97.14
         ]
       },
       {
-        "ref": "R206",
+        "ref": "R205",
         "at": [
-          6.91,
-          20.46
-        ],
-        "rotation": 90.0,
-        "side": "B",
-        "how": "group",
-        "courtyard_box": [
-          6.18,
-          18.98,
-          7.64,
-          21.94
-        ]
-      },
-      {
-        "ref": "R207",
-        "at": [
-          1.43,
-          24.72
+          1.03,
+          92.2
         ],
         "rotation": 90.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
           0.3,
-          22.44,
+          90.72,
+          1.76,
+          93.68
+        ]
+      },
+      {
+        "ref": "R206",
+        "at": [
+          2.99,
+          92.2
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          2.26,
+          90.72,
+          3.72,
+          93.68
+        ]
+      },
+      {
+        "ref": "R207",
+        "at": [
+          1.43,
+          99.92
+        ],
+        "rotation": 90.0,
+        "side": "B",
+        "how": "group",
+        "courtyard_box": [
+          0.3,
+          97.64,
           2.56,
-          27.0
+          102.2
         ]
       },
       {
@@ -6223,64 +6553,64 @@
       {
         "ref": "R220",
         "at": [
-          27.98,
+          9.08,
           106.21
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          26.5,
+          7.6,
           105.48,
-          29.46,
+          10.56,
           106.94
         ]
       },
       {
         "ref": "R221",
         "at": [
-          31.44,
+          12.54,
           106.21
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          29.96,
+          11.06,
           105.48,
-          32.92,
+          14.02,
           106.94
         ]
       },
       {
         "ref": "R222",
         "at": [
-          27.98,
+          9.08,
           104.25
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          26.5,
+          7.6,
           103.52,
-          29.46,
+          10.56,
           104.98
         ]
       },
       {
         "ref": "R223",
         "at": [
-          28.78,
+          9.88,
           108.57
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          26.5,
+          7.6,
           107.44,
-          31.06,
+          12.16,
           109.7
         ]
       },
@@ -6815,17 +7145,17 @@
       {
         "ref": "R553",
         "at": [
-          9.08,
-          107.01
+          54.64,
+          31.21
         ],
         "rotation": 0.0,
         "side": "B",
         "how": "group",
         "courtyard_box": [
-          7.6,
-          106.28,
-          10.56,
-          107.74
+          53.16,
+          30.48,
+          56.12,
+          31.94
         ]
       },
       {

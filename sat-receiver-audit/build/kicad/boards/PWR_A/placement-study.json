@@ -1551,6 +1551,11 @@
       "regions_refused": []
     }
   ],
+  "placement_checks": {
+    "rule": "per side, every placed courtyard box against every other one (anchor pairs: see anchors.errors) and against the reserved areas of that side; on side B also against the THT pin fields of the placed top parts + tht_margin",
+    "overlaps": [],
+    "passed": true
+  },
   "unplaced_refs": [
     "C103",
     "C104",

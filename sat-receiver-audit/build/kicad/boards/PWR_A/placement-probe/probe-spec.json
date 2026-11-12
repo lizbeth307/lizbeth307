@@ -620,8 +620,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          3.79,
-          100.72
+          27.69,
+          97.36
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -634,8 +634,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.75,
-          100.72
+          29.65,
+          97.36
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -711,8 +711,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          95.66
+          31.61,
+          97.36
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -725,8 +725,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          25.68,
-          58.87
+          1.78,
+          29.25
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -768,7 +768,7 @@
       "anchor": {
         "at": [
           3.79,
-          25.52
+          100.72
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -1719,11 +1719,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.08,
-          108.97
+          69.93,
+          6.88
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -1733,8 +1733,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.54,
-          108.97
+          51.18,
+          31.21
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2350,8 +2350,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.43,
-          99.92
+          25.33,
+          96.56
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2364,8 +2364,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.99,
-          95.66
+          33.57,
+          97.36
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2378,8 +2378,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.95,
-          95.66
+          35.53,
+          97.36
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2392,8 +2392,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          92.2
+          37.49,
+          97.36
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2406,8 +2406,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.99,
-          92.2
+          39.45,
+          97.36
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2420,11 +2420,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8.48,
-          72.07
+          1.03,
+          25.52
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -2434,11 +2434,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          11.94,
-          72.07
+          1.03,
+          22.06
         ],
         "align": "origin",
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "B"
       },
       "anchor_source": "placement-study-shrink2.json position (board_gen planner, chunked first-fit)"
@@ -2462,8 +2462,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.95,
-          92.2
+          24.93,
+          92.3
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2476,8 +2476,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          88.74
+          26.89,
+          92.3
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2490,8 +2490,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.14,
-          58.87
+          5.24,
+          29.25
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2504,8 +2504,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          32.6,
-          58.87
+          8.7,
+          29.25
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2518,8 +2518,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          25.68,
-          56.91
+          12.16,
+          29.25
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2532,8 +2532,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.14,
-          56.91
+          15.62,
+          29.25
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -2546,8 +2546,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.99,
-          88.74
+          28.85,
+          92.3
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2560,8 +2560,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.95,
-          88.74
+          30.81,
+          92.3
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2574,8 +2574,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          85.28
+          32.77,
+          92.3
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2589,7 +2589,7 @@
       "anchor": {
         "at": [
           5.75,
-          25.52
+          100.72
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2602,8 +2602,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          7.71,
-          25.52
+          1.03,
+          95.66
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2616,8 +2616,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.03,
-          20.46
+          2.99,
+          95.66
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2630,8 +2630,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.99,
-          20.46
+          4.95,
+          95.66
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2644,8 +2644,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.95,
-          20.46
+          1.03,
+          92.2
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2658,8 +2658,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          6.91,
-          20.46
+          2.99,
+          92.2
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2673,7 +2673,7 @@
       "anchor": {
         "at": [
           1.43,
-          24.72
+          99.92
         ],
         "align": "origin",
         "rotation": 90.0,
@@ -2840,7 +2840,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          27.98,
+          9.08,
           106.21
         ],
         "align": "origin",
@@ -2854,7 +2854,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          31.44,
+          12.54,
           106.21
         ],
         "align": "origin",
@@ -2868,7 +2868,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          27.98,
+          9.08,
           104.25
         ],
         "align": "origin",
@@ -2882,7 +2882,7 @@
       "source": "graph",
       "anchor": {
         "at": [
-          28.78,
+          9.88,
           108.57
         ],
         "align": "origin",
@@ -3358,8 +3358,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.08,
-          107.01
+          54.64,
+          31.21
         ],
         "align": "origin",
         "rotation": 0.0,
@@ -4183,31 +4183,6 @@
       ],
       "priority": 1,
       "why": "GND copper on L4 over thermal_bond zone 3 (SHRINK-2 converter zone); mask on"
-    },
-    {
-      "id": "GND-BOND-4",
-      "net": "GND",
-      "layer": "B.Cu",
-      "outline": [
-        [
-          7,
-          73
-        ],
-        [
-          21,
-          73
-        ],
-        [
-          21,
-          87
-        ],
-        [
-          7,
-          87
-        ]
-      ],
-      "priority": 1,
-      "why": "GND copper on L4 over thermal_bond zone 4 (SHRINK-2 converter zone); mask on"
     }
   ],
   "height_zones": [
@@ -4554,5 +4529,8 @@
     "L212",
     "L213",
     "L214"
+  ],
+  "probe_post_route_zones_left_out": [
+    "GND-BOND-4"
   ]
 }

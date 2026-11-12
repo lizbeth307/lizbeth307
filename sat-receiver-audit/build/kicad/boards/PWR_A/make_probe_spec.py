@@ -181,7 +181,6 @@ def build_placement():
         nets |= {pin['net'] for pin in graph[p['ref']]['pins'] if pin.get('net') and not pin.get('nc')}
     pre = spec['pre_route']
     pre_route = {k: [x for x in pre.get(k, []) if x['net'] in nets] for k in ('tracks', 'vias', 'zones')}
-    post = [z for z in spec['post_route_zones'] if z['net'] in nets]
     item = spec['instances']['list'][0]
     probe_inst = {'template_nets': sorted(nets),
                   'list': [{**{k: v for k, v in item.items() if k not in ('refs', 'nets', 'source')},
@@ -193,11 +192,30 @@ def build_placement():
     spec_for_geo = {**spec, 'parts': keep, 'instances': probe_inst, 'groups': []}
     template = bg.resolve(spec_for_geo, graph, manifest)
     pockets = []
+    geos = {}
     for t in template:
+        geos[t['ref']] = geo = bg.footprint_geometry(bg.footprint_file(t).read_text(encoding='utf-8'))
         if t['anchor'].get('side', 'F') != 'F':
             continue
-        geo = bg.footprint_geometry(bg.footprint_file(t).read_text(encoding='utf-8'))
         pockets += pockets_for(geo, t['anchor'])
+    # A post-route pour that no pad of its net can reach would only be isolated copper (the GND bond pours of zones 3'/4'
+    # on B.Cu while their converters are reserved blocks): it stays out of the probe. A pad reaches a pour when its part
+    # has a pin on the net, its courtyard overlaps the pour and it sits on the pour's side or has THT pads.
+    boxes = {q['ref']: q['courtyard_box'] for q in study['positions']['refs']}
+    post, post_left_out = [], []
+    for z in spec['post_route_zones']:
+        if z['net'] not in nets:
+            continue
+        zside = 'B' if z['layer'] == 'B.Cu' else 'F'
+        zx, zy = [q[0] for q in z['outline']], [q[1] for q in z['outline']]
+        zb = [min(zx), min(zy), max(zx), max(zy)]
+        hit = [t['ref'] for t in template if any(pin.get('net') == z['net'] for pin in graph[t['ref']]['pins'])
+               and bg.rects_overlap(boxes[t['ref']], zb)
+               and (t['anchor'].get('side', 'F') == zside or any(q['type'] == 'thru_hole' for q in geos[t['ref']]['pads']))]
+        if hit:
+            post.append(z)
+        else:
+            post_left_out.append(z['id'])
     out = {}
     for k, v in spec.items():
         if k in PLANNER_KEYS:
@@ -234,6 +252,7 @@ def build_placement():
                                '1.0 mm (mechanical/params/boards.json tht_pockets margin), rounded outward to 0.05 mm; '
                                'margin boxes less than 3 mm apart share one pocket (make_probe_spec.py RIB)')
     out['probe_left_out'] = sorted(left_out, key=bg.sort_ref)
+    out['probe_post_route_zones_left_out'] = post_left_out
     bg.validate_spec(out, 'PWR_A')
     return out
 

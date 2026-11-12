@@ -348,9 +348,19 @@ def study(spec_name):
     group_rows = []
 
     def as_obstacles(boxes, side):
-        parts = [{'ref': ref, 'anchor': {'at': [0.0, 0.0], 'align': 'origin', 'rotation': 0, 'side': side}}
-                 for ref in boxes]
-        geo = {ref: {'pads': [], 'courtyard': [b[0], -b[3], b[2], -b[1]]} for ref, b in boxes.items()}
+        # A fixed box as a pad-less part at the origin whose courtyard lands on the box: board_gen.placed_geometry turns
+        # local (x, y) into board (x, -y) on side F and, flipped, into (-x, -y) on side B (placement probe 5 of W2
+        # PCB-PWRA-3 found the side-B obstacles mirrored to negative x, off the board, before this was handled).
+        anchor = {'at': [0.0, 0.0], 'align': 'origin', 'rotation': 0, 'side': side}
+        parts = [{'ref': ref, 'anchor': dict(anchor)} for ref in boxes]
+        if side == 'B':
+            geo = {ref: {'pads': [], 'courtyard': [-b[2], -b[3], -b[0], -b[1]]} for ref, b in boxes.items()}
+        else:
+            geo = {ref: {'pads': [], 'courtyard': [b[0], -b[3], b[2], -b[1]]} for ref, b in boxes.items()}
+        for ref, b in boxes.items():
+            got = bg.placed_geometry(geo[ref], anchor)['box']
+            if any(abs(u - v) > 1e-6 for u, v in zip(got, b)):
+                raise SystemExit(f'placement_study: obstacle {ref} on side {side} lands at {got}, not {b}')
         return parts, geo
 
     fixed = {'F': {}, 'B': {}}
@@ -466,6 +476,22 @@ def study(spec_name):
         g = bg.placed_geometry(geometry[row['ref']], group_anchors[row['ref']])
         if g['box'] != placed[row['ref']]['box']:
             raise SystemExit(f'placement_study: the joint re-run moved {row["ref"]}')
+    # Independent overlap check of the plan of record (board boxes, not the planner's obstacle parts): per side, every
+    # placed courtyard against every other one and against the reserved areas of that side; on side B also against the
+    # THT pin fields of the top parts + tht_margin. Anchor-anchor overlaps are reported under anchors.errors.
+    overlap_rows = []
+    for side in ('F', 'B'):
+        items = [(ref, p['box']) for ref, p in sorted(placed.items()) if p['side'] == side and p['box']]
+        fixed_items = [(o['ref'][2:], o['box']) for o in obstacles if o['side'] == side]
+        if side == 'B':
+            fixed_items += [(k[2:], b) for k, b in sorted(tht_obstacles.items())]
+        for i, (a, ba) in enumerate(items):
+            for b, bb in items[i + 1:]:
+                if bg.rects_overlap(ba, bb) and not (a in anchored and b in anchored):
+                    overlap_rows.append({'side': side, 'a': a, 'b': b})
+            for b, bb in fixed_items:
+                if bg.rects_overlap(ba, bb) and not (b.startswith('THT_') and b[4:] == a):
+                    overlap_rows.append({'side': side, 'a': a, 'b': b})
 
     # --- fill ---
     all_refs = [p['ref'] for p in template]
@@ -932,6 +958,10 @@ def study(spec_name):
                     'headers_off_their_edge': edge_rows_off},
         'reserved': {'rects': reserved_rows, 'area_only': reserve_rows},
         'groups': group_rows,
+        'placement_checks': {'rule': 'per side, every placed courtyard box against every other one (anchor pairs: see '
+                                     'anchors.errors) and against the reserved areas of that side; on side B also against '
+                                     'the THT pin fields of the placed top parts + tht_margin',
+                             'overlaps': overlap_rows, 'passed': not overlap_rows},
         'unplaced_refs': unplaced,
         'exit_edges': edges,
         'pwr_b_cutouts': {'rule': 'pcb/partition-spec.json height_rule and keepouts: courtyard + window_margin for parts '
