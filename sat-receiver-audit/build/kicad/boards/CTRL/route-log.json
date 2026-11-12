@@ -45,7 +45,7 @@
   ],
   "exit_code": 0,
   "log_tail": [
-    "    - U311-1  ->  SW306-1@1",
+    "    - SW306-1@1  ->  U311-1",
     "  Net 'E3_HMI_SDA' (1 unrouted connection):",
     "    - via  ->  U306-23",
     "  Net 'E3_HOME' (1 unrouted connection):",
@@ -56,18 +56,18 @@
     "    - U305-31  ->  C310-1",
     "  Net 'E3_PICO3V3' (10 unrouted connections):",
     "    - via  ->  C312-1",
-    "    - R357-2  ->  via",
+    "    - via  ->  R357-2",
     "    - R349-2  ->  R347-2",
     "    - R353-2  ->  R351-2",
     "    - R355-2  ->  R353-2",
     "    - R341-2  ->  C312-1",
     "    - R337-2  ->  R339-2",
-    "    - C312-1  ->  R335-2",
+    "    - R335-2  ->  C312-1",
     "    - U306-24  ->  via",
-    "    - R349-2  ->  R368-2",
+    "    - R368-2  ->  R349-2",
     "  Net 'E3_PICO_SWCLK' (2 unrouted connections):",
-    "    - via  ->  U305-SWCLK",
-    "    - J304-12  ->  via",
+    "    - U305-SWCLK  ->  via",
+    "    - via  ->  J304-12",
     "  Net 'E3_PICO_SWDIO' (1 unrouted connection):",
     "    - via  ->  U305-SWDIO",
     "  Net 'E3_PICO_VSYS' (1 unrouted connection):",
@@ -80,13 +80,13 @@
     "    - U310-4  ->  via",
     "  Net 'MCP_INT' (1 unrouted connection):",
     "    - via  ->  R302-1",
-    "2026-11-12 12:07:50.231 INFO   [426341\\5275E6] Auto-routing stage completed: started with 129 unrouted nets, completed in 219.22 seconds, final score: 800.52 (59 unrouted and 201 violations), using 218.33 total CPU seconds, 175.29 GB total allocated, and 431.2 MB peak heap usage.",
-    "2026-11-12 12:07:50.526 INFO   [426341\\5275E6] Skipping optimization stage: the board has 59 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-12 12:07:50.567 INFO   [426341\\5275E6] Job '426341\\5275E6' finished with state: COMPLETED (elapsed: 3 minutes 40.54 seconds, finished at UTC: 2026-11-12T12:07:50.566584807Z).",
-    "2026-11-12 12:07:50.611 INFO   Saving output file '/tmp/sr-rx-CTRL-cua1ebzt/CTRL.ses' (SES)...",
-    "2026-11-12 12:07:50.612 INFO   Successfully saved output file '/tmp/sr-rx-CTRL-cua1ebzt/CTRL.ses' (20291 bytes)."
+    "2026-11-12 21:23:38.026 INFO   [20C2CC\\957845] Auto-routing stage completed: started with 129 unrouted nets, completed in 333.52 seconds, final score: 800.52 (59 unrouted and 201 violations), using 331.68 total CPU seconds, 181.18 GB total allocated, and 438.8 MB peak heap usage.",
+    "2026-11-12 21:23:38.486 INFO   [20C2CC\\957845] Skipping optimization stage: the board has 59 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-12 21:23:38.549 INFO   [20C2CC\\957845] Job '20C2CC\\957845' finished with state: COMPLETED (elapsed: 5 minutes 35.63 seconds, finished at UTC: 2026-11-12T21:23:38.547996429Z).",
+    "2026-11-12 21:23:38.550 INFO   Saving output file '/tmp/sr-rx-CTRL-sl15fm8n/CTRL.ses' (SES)...",
+    "2026-11-12 21:23:38.550 INFO   Successfully saved output file '/tmp/sr-rx-CTRL-sl15fm8n/CTRL.ses' (20291 bytes)."
   ],
-  "dsn_sha256": "28e41843b4713cc6247e88b0ee87c0f0b361bd28acc0e3579f7dfceb67d66a1d",
+  "dsn_sha256": "970d5da4460370e6bf3f66b23a48b46955e31f2df81ce6126ead635eb94e3048",
   "ses_sha256": "cc10df0a9d3e81915c31c9313c5a28a5155d0d19f5fe7e6ba0c35df0cd0900b4",
   "dsn_probe": {
     "resolution": "um 10",
@@ -121,6 +121,7 @@
     "before_ses_import": 3203,
     "after_ses_import": 3203
   },
+  "via_centre_stubs": [],
   "drc_command": [
     "kicad-cli",
     "pcb",
@@ -134,7 +135,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "7f9ab1373b279a58fb809fd73a01f364b69976be575c8cd24c9f3e545dedca99",
+  "board_sha256": "5dc9ddba980a372430e493cac89ed823b3a7c310d7e61c5a91f0a99900fc2e55",
   "previews": [
     "build/kicad/boards/CTRL/CTRL-top.svg",
     "build/kicad/boards/CTRL/CTRL-bottom.svg"
@@ -1025,8 +1026,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43214226431",
-    "sha": "f4cc2be014397179941df0d7170e7f5d5b153107",
+    "run_id": "43308544848",
+    "sha": "22969eee58f86a05f0380a54e887f1320b8decb1",
     "ref": "refs/heads/wip/w2-ctrl"
   }
 }
