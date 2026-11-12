@@ -1,0 +1,31 @@
+{
+ "schema": 1,
+ "date": "2026-11-11",
+ "note": "MECH-5 (wave 2) review-fix reads of 2026-11-11 with WebFetch (no browser User-Agent was sent): the PEM catalogue page of the PACK_FUSE standoff SO-M2.5-6ZI (re-read; the page shows no stock or price) and the DigiKey BE page of the 3M VHB 4910 roll for the taped modules (#2813, VEML7700). A row records what the source showed; \"stock\": null means not shown, not zero.",
+ "entries": {
+  "web:pem-so-m2-5-6zi": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m2-5-6zi",
+   "read": "2026-11-11",
+   "method": "WebFetch of the PEM product catalogue page",
+   "mpn": "SO-M2.5-6ZI",
+   "manufacturer": "PennEngineering (PEM)",
+   "title": "Part # SO-M2.5-6ZI, Self-Clinching, Thru Threaded Standoff - Types SO, SOA, SOS - Metric",
+   "stock": null,
+   "price": null,
+   "note": "M2.5 x 0.45 - 6H (internal, ANSI/ASME B1.13M, 6H); L 6 mm +0.05 -0.13; min sheet thickness 1.00 mm; hole size in sheet 4.22 +0.08 mm; C 4.20 -0.13 mm; H nom 4.8 mm; min distance hole C/L to edge not shown; heat-treated carbon steel (12L14 or equivalent), zinc plated 5 um colorless (clear chromate); sheet hardness HRB 80 (HB 150)"
+  },
+  "digikey:3M5648-ND": {
+   "distributor": "DigiKey BE",
+   "url": "https://www.digikey.be/de/products/detail/3m/4910-3-4-X15YD/1642532",
+   "read": "2026-11-11",
+   "method": "WebFetch of the DigiKey BE product page (found from the DigiKey BE product-highlight page VHB 4910 Tape)",
+   "mpn": "4910 3/4\"X15YD",
+   "manufacturer": "3M",
+   "stock": 24,
+   "status": "Active",
+   "price": "EUR 73.03 @1 (excl. VAT)",
+   "note": "TAPE DBL SIDED CLR 3/4\"X15YDS; double coated, acrylic adhesive, acrylic foam carrier; thickness 0.0400\" (40.0 mils, 1.016 mm); width 0.75\" (19.05 mm); length 45' (13.7 m) 15 yds; clear; operating temperature 200 F (93 C); general purpose. The product-highlight page lists the other 4910 rolls (1/2\" x 36 yd EUR 110.74, 1\" x 36 yd EUR 174.31, 3/4\" x 36 yd EUR 150.87)"
+  }
+ }
+}

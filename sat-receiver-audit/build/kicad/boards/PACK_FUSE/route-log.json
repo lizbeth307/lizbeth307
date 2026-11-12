@@ -1,0 +1,136 @@
+{
+  "schema": "srrx-board-route-log-v1",
+  "board_id": "PACK_FUSE",
+  "label": "Frozen route provenance (CI run); --check does not re-route",
+  "tool": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "source_read": "GitHub release API v2.5.0 asset digests, read 2026-11-07"
+  },
+  "runtime": {
+    "name": "Eclipse Temurin JRE",
+    "version": "25.0.5+8",
+    "licence": "GPL-2.0-with-classpath-exception",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jre_x64_linux_hotspot_25.0.5_8.tar.gz",
+    "sha256": "6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6",
+    "source_read": "Adoptium API and GitHub release API, read 2026-11-07"
+  },
+  "command": [
+    "java",
+    "-Djava.awt.headless=true",
+    "-cp",
+    "freerouting-2.5.0.jar",
+    "app.freerouting.cli.FreeroutingCli",
+    "-de",
+    "PACK_FUSE.dsn",
+    "-do",
+    "PACK_FUSE.ses",
+    "--router.autorouter.max_passes=30",
+    "-mt",
+    "1",
+    "--router.optimizer.max_threads=1",
+    "--router.automatic_neckdown=false",
+    "-da",
+    "--gui.enabled=false",
+    "--router.job_timeout=00:06:00",
+    "--logging.file.enabled=false",
+    "--user_data_path=<temp>",
+    "--router.fanout.enabled=false",
+    "-inc",
+    "SCRIPTED_BATT"
+  ],
+  "exit_code": 0,
+  "log_tail": [
+    "2026-11-11 22:28:25.311 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-11 22:28:25.415 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-11 22:28:25.419 WARN   Deprecated settings path '-inc / --router.ignore_net_classes'; use '--router.autorouter.ignore_net_classes' instead. The old path will be removed in a future release.",
+    "2026-11-11 22:28:25.548 WARN   The '-inc' command-line flag is deprecated; use '--router.autorouter.ignore_net_classes' instead.",
+    "2026-11-11 22:28:25.820 INFO   [129835\\6EE48B] Loading board file 'PACK_FUSE.dsn'...",
+    "2026-11-11 22:28:25.920 INFO   [129835\\6EE48B] Job '129835\\6EE48B' started at 2026-11-11T22:28:25.920605582Z.",
+    "2026-11-11 22:28:25.981 INFO   [129835\\6EE48B] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-11 22:28:26.018 INFO   [129835\\6EE48B] Auto-routing stage started on board 'be41a7cfa525c564fdd7c3cc2cc8ae8e' with baseline score 1000.00 for 0 unrouted items.",
+    "2026-11-11 22:28:26.088 INFO   [129835\\6EE48B] Auto-routing pass #1 on board 'be41a7cfa525c564fdd7c3cc2cc8ae8e' was completed in 0.01 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-11 22:28:26.121 INFO   [129835\\6EE48B] Auto-routing stage completed: started with 0 unrouted nets, completed in 0.13 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
+    "2026-11-11 22:28:26.154 INFO   [129835\\6EE48B] Optimization stage started on board 'be41a7cfa525c564fdd7c3cc2cc8ae8e'. Baseline router score: 1000.00, optimizer score: 216.35, incomplete connections: 0, clearance violations: 0.",
+    "2026-11-11 22:28:26.175 INFO   [129835\\6EE48B] Optimizer pass #1 candidate rejected: OPTIMIZER_SCORE_NOT_IMPROVED. Restoring incumbent (optimizer score 216.35, incomplete connections: 0, clearance violations: 0).",
+    "2026-11-11 22:28:26.197 INFO   [129835\\6EE48B] Optimizer pass #1: optimizer score 216.35 -> 216.35 (UNCHANGED, 0.0000%), router score: 1000.00, incomplete connections: 0, clearance violations: 0.",
+    "2026-11-11 22:28:26.212 INFO   [129835\\6EE48B] Optimizer pass #2 candidate rejected: OPTIMIZER_SCORE_NOT_IMPROVED. Restoring incumbent (optimizer score 216.35, incomplete connections: 0, clearance violations: 0).",
+    "2026-11-11 22:28:26.231 INFO   [129835\\6EE48B] Optimizer pass #2: optimizer score 216.35 -> 216.35 (UNCHANGED, 0.0000%), router score: 1000.00, incomplete connections: 0, clearance violations: 0.",
+    "2026-11-11 22:28:26.231 INFO   [129835\\6EE48B] Stopping optimizer because the improvement in this pass (0.0000%) is below the threshold (2.50%).",
+    "2026-11-11 22:28:26.239 INFO   [129835\\6EE48B] Optimization stage completed:. Baseline router score: 1000.00, baseline optimizer score: 216.35, final router score: 1000.00, final optimizer score: 216.35, completed in 0.08 seconds, using 0.08 total CPU seconds, 0.02 GB total allocated, and 43.4 MB peak heap usage.",
+    "2026-11-11 22:28:26.244 INFO   [129835\\6EE48B] Job '129835\\6EE48B' finished with state: COMPLETED (elapsed: 0.32 seconds, finished at UTC: 2026-11-11T22:28:26.243852918Z).",
+    "2026-11-11 22:28:26.255 INFO   Saving output file '/tmp/sr-rx-PACK_FUSE-ec6jbi2h/PACK_FUSE.ses' (SES)...",
+    "2026-11-11 22:28:26.257 INFO   Successfully saved output file '/tmp/sr-rx-PACK_FUSE-ec6jbi2h/PACK_FUSE.ses' (845 bytes)."
+  ],
+  "dsn_sha256": "5d3627064efe052c598cc873fe5b1197dedd297dc162bbd41a2e39ba1de13bf6",
+  "ses_sha256": "b4f3e6c841668f0baf29e88e93c4622e02b4b9d5e68732c50d5c62d025ef9f27",
+  "dsn_probe": {
+    "resolution": "um 10",
+    "wires_fix": 8,
+    "wires_protect": 0,
+    "keepouts": 14,
+    "planes": 0,
+    "classes": {
+      "kicad_default": {
+        "width": "250",
+        "clearance": "200"
+      },
+      "SCRIPTED_BATT": {
+        "width": "3200",
+        "clearance": "200"
+      }
+    }
+  },
+  "locked_segments": {
+    "before_ses_import": 8,
+    "after_ses_import": 8
+  },
+  "drc_command": [
+    "kicad-cli",
+    "pcb",
+    "drc",
+    "--format",
+    "json",
+    "--severity-all",
+    "--all-track-errors",
+    "--units",
+    "mm",
+    "--refill-zones",
+    "--save-board"
+  ],
+  "board_sha256": "bb250b01be958eac4cc32c0eea38ac1b1ba36dadbd211a5d044ed580ef03f06d",
+  "previews": [
+    "build/kicad/boards/PACK_FUSE/PACK_FUSE-top.svg",
+    "build/kicad/boards/PACK_FUSE/PACK_FUSE-bottom.svg"
+  ],
+  "footprint_sources": [
+    {
+      "ref": "F101",
+      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuseholder_Blade_Mini_Keystone_3568.kicad_mod",
+      "sha256": "ce9f2576e0604a938518a57905b3876e023afe3a4493bd80dbe5a56b171d068d"
+    },
+    {
+      "ref": "J116",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm.kicad_mod",
+      "sha256": "7ada10a576fca83ea24c69fe1e5d72ea6e96d2278db67c21186aa5616432856f"
+    },
+    {
+      "ref": "J117",
+      "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm.kicad_mod",
+      "sha256": "7ada10a576fca83ea24c69fe1e5d72ea6e96d2278db67c21186aa5616432856f"
+    }
+  ],
+  "kicad_version": "10.0.7",
+  "github": {
+    "run_id": "43111813288",
+    "sha": "e7c7763f16d449863bc1747e72a56498eee8edaf",
+    "ref": "refs/heads/wip/w2-sb2"
+  }
+}

@@ -1,0 +1,392 @@
+{
+  "schema": "srrx-fab-manifest-v1",
+  "board_id": "HATCH",
+  "status": "SB1_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "NOT RELEASED: model/CI only; bench gates OPEN",
+  "generator": "pcb/fab_export.py",
+  "kicad_version": "10.0.7",
+  "inputs": {
+    "board_file": "build/kicad/boards/HATCH/HATCH.kicad_pcb",
+    "board_sha256": "fcf62294ab531ea859559f1e1e39b35158344062d6790c7c52bfc18670b31b31",
+    "project_sha256": "1279fb9f09911b2db6a4743a86aa096afd1a4727022f1e0a128b20330b874f3f",
+    "spec_projection_sha256": "4c8f8b75da9e77c68ee0dd8b3091def1ddac3105b2c3fe87c20302ee8a429139",
+    "report_projection_sha256": "4f2e3f8d20cb561caef778c0501173f51d249347d8312a6a70bf7d3a13fcd7a9",
+    "jlc_bom_rows": [
+      {
+        "Board": "HATCH",
+        "Comment": "43650-0215",
+        "Designator": "J509",
+        "Footprint": "Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+        "LCSC Part #": "C293740",
+        "Mount": "THT"
+      },
+      {
+        "Board": "HATCH",
+        "Comment": "43650-0315",
+        "Designator": "J503",
+        "Footprint": "Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",
+        "LCSC Part #": "C293546",
+        "Mount": "THT"
+      },
+      {
+        "Board": "HATCH",
+        "Comment": "B2B-PH-K-S(LF)(SN)",
+        "Designator": "J510",
+        "Footprint": "JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+        "LCSC Part #": "C131337",
+        "Mount": "THT"
+      },
+      {
+        "Board": "HATCH",
+        "Comment": "B3B-PH-K-S(LF)(SN)",
+        "Designator": "J502",
+        "Footprint": "JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+        "LCSC Part #": "C131339",
+        "Mount": "THT"
+      },
+      {
+        "Board": "HATCH",
+        "Comment": "B3B-PH-K-S(LF)(SN)",
+        "Designator": "J513",
+        "Footprint": "JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+        "LCSC Part #": "C131339",
+        "Mount": "THT"
+      }
+    ],
+    "jlc_bom_rows_sha256": "1af993f8d99b1f70b6682fb3c81f95c2ff03507699ce4be920c8ad0382d68273",
+    "stackup": {
+      "id": "JLC standard 2-layer FR-4",
+      "material": "FR-4",
+      "copper_outer": "1 oz",
+      "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "note": "finished thickness from the spec layers.thickness_mm; JLC tolerance +/-10 % for boards >= 1.0 mm; 1 oz outer copper is the project choice (build/15 rows Шари and Мідь і струмові класи)",
+      "copper_layers": 2,
+      "thickness_mm": 1.6
+    },
+    "stackup_sha256": "5d4429eae592c730808058b5134bdf6fb5f9b87bf3e9f3435e687871bce8f37a",
+    "rf50_nets": [],
+    "note": "projections (F10): an unrelated build/10-jlc-bom.csv row, LCSC stock or spec edit does not stale this set"
+  },
+  "commands": [
+    {
+      "job": "gerbers",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "gerbers",
+        "--output",
+        "<temp>/raw/gerber/",
+        "--layers",
+        "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+        "--subtract-soldermask",
+        "--precision",
+        "6",
+        "<temp>/src/HATCH.kicad_pcb"
+      ]
+    },
+    {
+      "job": "drill",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "drill",
+        "--output",
+        "<temp>/raw/drill/",
+        "--format",
+        "excellon",
+        "--drill-origin",
+        "absolute",
+        "--excellon-zeros-format",
+        "decimal",
+        "--excellon-oval-format",
+        "alternate",
+        "--excellon-units",
+        "mm",
+        "--excellon-separate-th",
+        "--generate-map",
+        "--map-format",
+        "gerberx2",
+        "<temp>/src/HATCH.kicad_pcb"
+      ]
+    },
+    {
+      "job": "ipcd356",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "ipcd356",
+        "--output",
+        "<temp>/raw/HATCH.ipc356",
+        "<temp>/src/HATCH.kicad_pcb"
+      ]
+    },
+    {
+      "job": "pos",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "pos",
+        "--output",
+        "<temp>/raw/assembly/HATCH-pos-kicad.csv",
+        "--side",
+        "both",
+        "--format",
+        "csv",
+        "--units",
+        "mm",
+        "--exclude-dnp",
+        "<temp>/src/HATCH.kicad_pcb"
+      ]
+    }
+  ],
+  "normalisation": [
+    "Gerber and drill-map Gerber: the %TF.CreationDate attribute line (optional in Gerber X2) is removed; 'G04 Created by KiCad (...) date ...*' keeps the creator and loses the date",
+    "Excellon: the '; #@! TF.CreationDate' line is removed; \"; DRILL file KiCad ... date ...\" loses the date",
+    "Gerber job file (.gbrjob): Header.CreationDate is removed (JSON re-written with indent 2)",
+    "IPC-D-356: comment-record dates are removed and file paths become the board file name",
+    "KiCad build strings that start with 10.0.7 become 10.0.7 in generator lines",
+    "after normalisation no date/time stamp and no path of the export directory may remain (checked)"
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "dnp_excluded": [],
+  "coverage": {
+    "cpl": {
+      "rows": 5,
+      "placed_by_side_and_mount": {
+        "Bottom": {
+          "THT": 1
+        },
+        "Top": {
+          "THT": 4
+        }
+      },
+      "smd_refs_once_per_side": true
+    },
+    "bom": {
+      "rows": 4,
+      "designators": 5,
+      "tbd": [],
+      "boards": 1
+    },
+    "ipc356": {
+      "board_pad_nets": [
+        "GND",
+        "J21",
+        "PWR_ON_KEY",
+        "UART5_RX",
+        "UART5_TX"
+      ],
+      "ipc_nets": [
+        "GND",
+        "J21",
+        "PWR_ON_KEY",
+        "UART5_RX",
+        "UART5_TX"
+      ],
+      "aliases": {},
+      "missing": []
+    },
+    "gerber_x2": {
+      "files": {
+        "gerber/HATCH-B_Cu.gbl": "Copper,L2,Bot",
+        "gerber/HATCH-B_Mask.gbs": "Soldermask,Bot",
+        "gerber/HATCH-B_Paste.gbp": "Paste,Bot",
+        "gerber/HATCH-B_Silkscreen.gbo": "Legend,Bot",
+        "gerber/HATCH-Edge_Cuts.gm1": "Profile,NP",
+        "gerber/HATCH-F_Cu.gtl": "Copper,L1,Top",
+        "gerber/HATCH-F_Mask.gts": "Soldermask,Top",
+        "gerber/HATCH-F_Paste.gtp": "Paste,Top",
+        "gerber/HATCH-F_Silkscreen.gto": "Legend,Top"
+      }
+    },
+    "drill": {
+      "pth_file": 1,
+      "npth_file": 1,
+      "pth_hits": 13,
+      "npth_hits": 6,
+      "board_pth_pads": 13,
+      "board_vias": 0,
+      "board_npth_pads": 6,
+      "maps": [
+        "drill/HATCH-NPTH-drl_map.gbr",
+        "drill/HATCH-PTH-drl_map.gbr"
+      ]
+    },
+    "passed": true,
+    "area_mm2": 633.0
+  },
+  "problems": [],
+  "sources": {
+    "jlc_bom": {
+      "url": "https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "required BOM columns Comment, Designator, Footprint; .csv/.xls/.xlsx; designators are upper-cased by JLC"
+    },
+    "jlc_cpl": {
+      "url": "https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "CPL columns Designator, Mid X, Mid Y (mm, component centroid), Layer (Top/Bottom), Rotation (degrees, positive counter-clockwise); the page names no coordinate origin and no rotation offsets"
+    },
+    "jlc_kicad": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad",
+      "read": "2026-11-07",
+      "used": "BOM Comment, Designator, Footprint, LCSC Part #; KiCad pos Ref/PosX/PosY/Rot/Side become Designator/Mid X/Mid Y/Rotation/Layer"
+    },
+    "jlc_gerber": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8",
+      "read": "2026-11-07",
+      "used": "layers F/B.Cu (+ inner), F/B.Paste, F/B.Silkscreen, F/B.Mask, Edge.Cuts; Protel extensions; subtract soldermask from silkscreen; drill: alternate oval mode, absolute origin, millimetres, decimal zeros, drill map recommended"
+    },
+    "jlc_capabilities": {
+      "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "used": "FR-4; thickness 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm, tolerance +/-10 % for >= 1.0 mm; 2-layer outer copper 1/2/2.5/3.5/4.5 oz; impedance control listed from 4 layers, standard +/-10 %"
+    },
+    "kicad_cli": {
+      "url": "https://docs.kicad.org/10.0/en/cli/cli.html",
+      "read": "2026-11-07",
+      "used": "options of pcb export gerbers/drill/ipcd356/pos and jobset run"
+    },
+    "kicad_jobs": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs",
+      "read": "2026-11-07",
+      "used": "jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp"
+    },
+    "kicad_d356": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp",
+      "read": "2026-11-07",
+      "used": "IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 characters); test record types 307/317/327/367"
+    }
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "f86c57c52f7adff3ee5d122070d2fe7e8c8cfd1a4f0eaa361fddee04152d0b82",
+      "bytes": 113
+    },
+    {
+      "path": "HATCH-fab-notes.pdf",
+      "sha256": "4e6c04dfde3327c90d8ca98c5ebb206047f04929e6faf7d3088733aa6561e6f8",
+      "bytes": 8567
+    },
+    {
+      "path": "HATCH.ipc356",
+      "sha256": "ac6258e8b778bcfc41e9088aa569e2de57ee453db30a1afdf501c7476101ee95",
+      "bytes": 2040
+    },
+    {
+      "path": "HATCH.kicad_jobset",
+      "sha256": "2db9abc135f06e0d5eff64e6288533a6ff552980edfbcebae03524fc5974fa4d",
+      "bytes": 3323
+    },
+    {
+      "path": "README.md",
+      "sha256": "1a3168fb953d9cb9645cd3cba2b4f18a1701877d3a3e46cdba79dd9608564d5b",
+      "bytes": 6648
+    },
+    {
+      "path": "assembly/HATCH-bom-jlc.csv",
+      "sha256": "d41f496d4a25b39310803a5bfbb4845c8838dcd7d082f8a53db6367b9769c661",
+      "bytes": 623
+    },
+    {
+      "path": "assembly/HATCH-cpl-jlc.csv",
+      "sha256": "97d889895ad866c951ee2f7eb912c5a82d4767bb07071b226451bde2cad93881",
+      "bytes": 308
+    },
+    {
+      "path": "assembly/HATCH-cpl-rotation-offsets.csv",
+      "sha256": "cb29d6498f4bed7abb1625517d612c68a5195b30002539ccd6764032743edb90",
+      "bytes": 1545
+    },
+    {
+      "path": "assembly/HATCH-instances.csv",
+      "sha256": "9951f7fbca88e1943701c2b314c15ad75ec5466cf810e0dcb5a4e454a2166985",
+      "bytes": 236
+    },
+    {
+      "path": "assembly/HATCH-pos-kicad.csv",
+      "sha256": "f6b6dbb1de1bda197c419925cf42904268345621d0ca99932578cda02a386388",
+      "bytes": 724
+    },
+    {
+      "path": "drill/HATCH-NPTH-drl_map.gbr",
+      "sha256": "f496a5ca809d229dd8d84740bbd1389024b0419021c4110c0b11146ff2bcfc31",
+      "bytes": 39653
+    },
+    {
+      "path": "drill/HATCH-NPTH.drl",
+      "sha256": "cc77929c7d4d0e6b57985ca31a86c3afff1b30578eded626ae4b4cf4941cd9e2",
+      "bytes": 411
+    },
+    {
+      "path": "drill/HATCH-PTH-drl_map.gbr",
+      "sha256": "2059a471f8b9846a8dd23cd71c710db8b5a6ff64e35fbf25b70119cb47b69212",
+      "bytes": 32070
+    },
+    {
+      "path": "drill/HATCH-PTH.drl",
+      "sha256": "3dea8418c49f1b2999dfa59e89a34939bb3fbe8e9f0cf90793f709d35c617ed5",
+      "bytes": 497
+    },
+    {
+      "path": "gerber/HATCH-B_Cu.gbl",
+      "sha256": "82ae7edeb5253800ccf678148a8f0620229dbaba891667519e43e0b26cd6fdc8",
+      "bytes": 35620
+    },
+    {
+      "path": "gerber/HATCH-B_Mask.gbs",
+      "sha256": "898b4ebadb0954fb2b2a301e9c579903b00316dbe754a7e5f5c28040fb00ac8d",
+      "bytes": 2032
+    },
+    {
+      "path": "gerber/HATCH-B_Paste.gbp",
+      "sha256": "6ddd011a8b785e203214ca169d1fcf1f762d292634b6adf9d300b332ff4a9575",
+      "bytes": 380
+    },
+    {
+      "path": "gerber/HATCH-B_Silkscreen.gbo",
+      "sha256": "2512b70575b1035671a3c72e90579b540242b3d9b17539d9eed29bf5602ca7f0",
+      "bytes": 6139
+    },
+    {
+      "path": "gerber/HATCH-Edge_Cuts.gm1",
+      "sha256": "0978c2a7fe19e8d0f9f1ccc815ba0da39ae0e40567486320dc1b12bd036c7e86",
+      "bytes": 826
+    },
+    {
+      "path": "gerber/HATCH-F_Cu.gtl",
+      "sha256": "f1df575f078ba0095aabde8ee8446e351c03d1a7bef22a27ca935fb78d1d73a0",
+      "bytes": 34550
+    },
+    {
+      "path": "gerber/HATCH-F_Mask.gts",
+      "sha256": "b60e19de3e37c3349aaf48e3e3654eea73a9f1d163219a86583815f4fc71183b",
+      "bytes": 2032
+    },
+    {
+      "path": "gerber/HATCH-F_Paste.gtp",
+      "sha256": "58f3eaeecacdeab0b1ee8f8749865792d73f8e9c05856606edc76c877c333d76",
+      "bytes": 380
+    },
+    {
+      "path": "gerber/HATCH-F_Silkscreen.gto",
+      "sha256": "d140adb376fb50bf3f71a0cfbf7d9231543391344d0a35b7aa04b4d836fc4bd4",
+      "bytes": 15876
+    },
+    {
+      "path": "gerber/HATCH-job.gbrjob",
+      "sha256": "7c4e5e35254b4e1a6eadf47f56d84672e4a6cae8b047657f276ecd50a37c63fd",
+      "bytes": 2610
+    }
+  ]
+}

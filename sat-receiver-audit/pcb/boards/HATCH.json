@@ -1,0 +1,149 @@
+{
+  "schema": "srrx-board-spec-v1",
+  "board_id": "HATCH",
+  "status": "SB1_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "title": "HATCH service-hatch board 38 x 21.5: J502 UART5 console (hatch side), J503 J21/S16, J509 S14, J510 S15, J513 S30",
+  "note": "W2 PCB-SB1. Two-sided through-hole board in the hatch opening (enclosure x 116-138, y 68.5-90, z 11.9-13.5) with two fixing ears behind the rear wall. Outline, holes and placement come from build/kicad/boards/HATCH/contract-proposal.json (no HATCH entry in the mechanical contract yet): the mechanical fit, the two rear-wall bosses and the interior-side envelope of the headers stay OPEN for the mechanical lineage. SW501 (PV6F240SS) is not on this board: the five graph headers do not fit beside its bezel and nut in the hatch opening (decision 'Плата лючка HATCH (W2 PCB-SB1)' in build/15). CI/model output only; nothing here is a fabrication release and the bench gates stay OPEN.",
+  "contract": {
+    "file": "build/kicad/boards/HATCH/contract-proposal.json",
+    "board": "HATCH"
+  },
+  "domains": ["HATCH"],
+  "partition": "pcb/generated/partition.json",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "PCB-SB1 plan: 2-layer 1.6 mm 1 oz JLC standard for the small boards (final-plan.json PCB-SB1 decisions); decision 'Шари малих плат ENC і HATCH (W2 PCB-SB1)' in build/15",
+    "plan": {
+      "F.Cu": "interior side: J503, J509, J510, J513; J21 scripted 2.0 mm (PWR3A), signals, GND pour",
+      "B.Cu": "hatch side: J502; signals, GND pour"
+    }
+  },
+  "project": "build/kicad/boards/HATCH/HATCH.kicad_pro",
+  "rules_file": null,
+  "rules_note": "The rules live in the committed HATCH.kicad_pro, the same set as ENC.kicad_pro (track 0.25 / clearance 0.2, minimum 0.15 / 0.15, via 0.6 / 0.3, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15). pcb/rules/jlc-2l.kicad_dru is not attached: pcb/board_gen.py refuses a non-null rules_file (validate_spec). The J21 width of class PWR3A (pcb/generated/netclasses.json: 1.85 mm on one outer layer) is met by the scripted 2.0 mm track and checked by pcb/check_boards.py.",
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 1-2 layer values (as pcb/boards/ENC.json; pcb/generated/netclasses.json fab_floor.jlc_2l_1oz)",
+    "min_track_width": 0.10,
+    "min_clearance": 0.10,
+    "min_drill": 0.15,
+    "min_via_diameter": 0.25,
+    "min_hole_to_hole": 0.45,
+    "min_hole_to_hole_note": "0.45 = pad hole-to-hole of different nets; via hole-to-hole is 0.2",
+    "min_copper_edge_clearance": 0.20,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "npth_min_diameter": 0.50,
+    "pth_annular_min": 0.18,
+    "pth_annular_recommended": 0.25
+  },
+  "instances": {
+    "template_nets": ["GND", "J21", "PWR_ON_KEY", "UART5_RX", "UART5_TX"],
+    "list": [
+      {
+        "id": "HATCH",
+        "placement": "default",
+        "qty": 1,
+        "refs": {"J502": "J502", "J503": "J503", "J509": "J509", "J510": "J510", "J513": "J513"},
+        "nets": {"GND": "GND", "J21": "J21", "PWR_ON_KEY": "PWR_ON_KEY", "UART5_RX": "UART5_RX", "UART5_TX": "UART5_TX"},
+        "source": "pcb/generated/partition.json board_candidate HATCH (J502, J503 and the W2 GR-3 headers J509, J510, J513); design/E5.json pins; tools/assembly_data.py HEADERS J509 X14P1-HATCH S14 1-2, J510 X15S1-HATCH S15 1, J513 X30S1-HATCH S30 1-3"
+      }
+    ],
+    "spares": 0,
+    "spares_source": "one board per device (tools/assembly_data.py UNITS HATCH); the JLC minimum order quantity gives spare bare boards"
+  },
+  "parts": [
+    {
+      "ref": "J503",
+      "source": "graph",
+      "anchor": {"at": [15.33, 18.23], "align": {"pad": "1"}, "rotation": 0, "side": "F",
+                 "ref_text": {"at": [27.6, 18.2], "angle": 0}},
+      "anchor_source": "top row next to the hole line y 16.5 (Micro-Fit mating force ~ at the fixings); pad 1 (J21) straight above J509 pad 2 for the scripted J21 track; courtyard x 11.5-25.16, y 14.43-21.2"
+    },
+    {
+      "ref": "J509",
+      "source": "graph",
+      "anchor": {"at": [12.33, 11.3], "align": {"pad": "1"}, "rotation": 0, "side": "F",
+                 "ref_text": {"at": [21.0, 13.0], "angle": 0}},
+      "anchor_source": "below J503 (courtyard y 7.5-14.27), under the SL2 harness shaft (enclosure x 114.6-119 = board x 6.6-11)"
+    },
+    {
+      "ref": "J502",
+      "source": "graph",
+      "anchor": {"at": [27.4, 10.0], "align": {"pad": "1"}, "rotation": 0, "side": "B",
+                 "ref_text": {"at": [25.4, 13.6], "angle": 0}},
+      "anchor_source": "hatch side (B), reached through the opening for the external USB-UART adapter; courtyard x 20.95-29.85, y 6.7-12.2, clear in x/y of every top-side part (through-hole pins on both sides)"
+    },
+    {
+      "ref": "J513",
+      "source": "graph",
+      "anchor": {"at": [11.0, 3.8], "align": {"pad": "1"}, "rotation": 0, "side": "F",
+                 "ref_text": {"at": [13.0, 6.75], "angle": 0}},
+      "anchor_source": "bottom row (courtyard x 8.55-17.45, y 0.5-6.0)"
+    },
+    {
+      "ref": "J510",
+      "source": "graph",
+      "anchor": {"at": [20.5, 3.8], "align": {"pad": "1"}, "rotation": 0, "side": "F",
+                 "ref_text": {"at": [21.5, 6.75], "angle": 0}},
+      "anchor_source": "bottom row (courtyard x 18.05-24.95, y 0.5-6.0)"
+    }
+  ],
+  "holes": {
+    "from_contract": true,
+    "ref_prefix": "H",
+    "keepout_layers": ["F.Cu", "B.Cu"],
+    "keepout_blocks": ["tracks", "vias", "zone_fills"]
+  },
+  "groups": [],
+  "pre_route": {
+    "tracks": [
+      {
+        "id": "J21-J509-J503",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 2.0,
+        "path": [[15.33, 11.3], [15.33, 18.23]],
+        "locked": true,
+        "why": "scripted locked copper: J21 (2.5 A continuous, 4 A protective; class PWR3A, 1.85 mm on one outer layer, pcb/generated/netclasses.json) from J509.2 (S14) to J503.1 (S16 to the Q6A J21)"
+      }
+    ],
+    "zones": []
+  },
+  "post_route_zones": [
+    {"id": "GND-F", "net": "GND", "layer": "F.Cu", "outline": "board", "priority": 0},
+    {"id": "GND-B", "net": "GND", "layer": "B.Cu", "outline": "board", "priority": 0}
+  ],
+  "height_zones": [
+    {"region": "board", "max_height_mm_from_contract": "max_component_height", "side": "top", "checked": true,
+     "why": "interior side: board top z 13.5 to the plate rear face z 38.5 (contract-proposal.json); body heights in 'heights', mated heights in heights_note"}
+  ],
+  "sides": ["top", "bottom"],
+  "max_height_bottom": 9.4,
+  "max_height_bottom_note": "hatch side: board bottom z 11.9 to the rear-wall inner face z 2.5 (mechanical/params/mechanical.json wall 2.5); inside the opening the free depth to the cover is 11.9",
+  "heights": {"J503": 9.9, "J509": 9.9, "J510": 6.0, "J513": 6.0, "J502": 6.0},
+  "heights_note": "unmated body heights above the board: Micro-Fit 3.0 vertical 9.9 (mated 17.27), JST PH top entry 6.0 (mated 8.0), mechanical/params/parts.json harness_headers MF_top / PH_top with their sources; the mated pairs and the wire bend need the interior-side envelope that the mechanical lineage adds (OPEN)",
+  "router": {
+    "tool": "freerouting",
+    "max_passes": 20,
+    "threads": 1,
+    "job_timeout": "00:05:00",
+    "timeout_s": 420
+  },
+  "drc_policy": {
+    "warning_checks": {
+      "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+      "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+      "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board",
+      "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+      "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+      "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+    }
+  }
+}

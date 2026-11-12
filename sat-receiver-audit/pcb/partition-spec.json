@@ -6,20 +6,20 @@
   "chosen": "a",
   "fits_at_1_8": false,
   "ratios_1_8": {
-   "PWR_A": 0.646,
-   "PWR_B": 0.475,
+   "PWR_A": 0.661,
+   "PWR_B": 0.497,
    "CTRL_top": 1.117,
    "CTRL_bottom": 0.908
   },
-  "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2), PWR-B (mezzanine on the PWR-A footprint, Samtec QSH/QTH-060-01 5.00 mm stack), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a): the draft PWR-B list, with the LNB OVP comparator (U220 group) kept on PWR-A next to U212 so that E1_SW and the LNB LDO rail do not cross. Computed verdict (MODEL ESTIMATE): no evaluated partition fits at 1.8. Candidate (a) gives PWR-A 0.640 and PWR-B 0.427 (usable / demand), because every PWR-A part taller than hA and every PWR-A power header costs PWR-B a window or an edge strip (3.8k + 1.4k of the 7.6k outline). CTRL two-sided gives top 1.003 and bottom 0.979 by area, and five CTRL bottom headers have no height-valid variant under the depth cap (ctrl_headers_unresolved), so CTRL is NOT FIT as well.",
+  "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2), PWR-B (mezzanine on the PWR-A footprint, Samtec LSHM-150-02.5 pair J208/J209, 5.00 mm stack (W2 B2B; was QSH/QTH-060-01)), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a): the draft PWR-B list, with the LNB OVP comparator (U220 group) kept on PWR-A next to U212 so that E1_SW and the LNB LDO rail do not cross. Computed verdict (MODEL ESTIMATE): no evaluated partition fits at 1.8. Candidate (a) gives PWR-A 0.640 and PWR-B 0.427 (usable / demand), because every PWR-A part taller than hA and every PWR-A power header costs PWR-B a window or an edge strip (3.8k + 1.4k of the 7.6k outline). CTRL two-sided gives top 1.003 and bottom 0.979 by area, and five CTRL bottom headers have no height-valid variant under the depth cap (ctrl_headers_unresolved), so CTRL is NOT FIT as well.",
   "why_a": "(a) and (b) leave almost the same total shortfall (about 7.3k mm2 at 1.8), but (a) needs 53 B2B contacts against 81, moves no fused high-current internal net (E2_J21_FUSED) across the boards, and keeps the J21/display/Lime/AUX12 eFuses with their fuse holders and bulk capacitors; moving more groups to PWR-B overfills PWR-B, whose usable area is set by the windows",
   "b2b_contacts_quoted": {
-   "a": 54,
-   "b": 82
+   "a": 69,
+   "b": 119
   },
   "shortfall_1_8_mm2": {
-   "PWR_A": 4183,
-   "PWR_B": 2530,
+   "PWR_A": 3924,
+   "PWR_B": 2318,
    "CTRL_bottom": 471
   },
   "shortfall_note": "demand at 1.8 minus usable area, candidate (a), pcb/partition-budget.json; the PWR harness headers alone are 2.7k mm2 raw (about 4.9k at 1.8), two thirds of the PWR shortfall",
@@ -34,12 +34,13 @@
    "bigger single PWR board or larger face: the face is fixed by the plan (D-ENV width unchanged, STACK.md:109 HMI layouts); depth growth adds no area",
    "radials or headers on the RF board: RF max height 5.5 (mechanical/params/boards.json:91) and constraints DC-02/RF-01 (pcb/generated/constraints.json:52-92)",
    "(h8) hB 8.0 instead of 5.5: PWR-A 0.650, PWR-B 0.491 for 2.5 mm more depth (dz_mezz 4.6); still short, and the radials (11.0-11.5 mm) stay above it",
-   "(s8) the 8.00 mm stack (QTH-060-02 with QSH-060-01, hA 7.5, window ceiling 15.1 mm): PWR-B 0.427 -> 0.560 (windows 3.8k -> 3.1k mm2: the polymer capacitors, XAL6060, SRR1260 and C506 no longer need one; the Keystone 3568 holders keep theirs, their height being a lower bound), PWR-A unchanged 0.640, dz_mezz 5.1 <= cap 6.0. It is the strongest PWR-B lever but is not adopted alone: PWR-B stays short, it costs 3 mm more depth, and the QTH-060-02-L-D-A terminal was 0 in stock on 2026-11-07 (the -K variant 33, -TR 5); it goes into next_decision together with a PWR-A lever (s8c)",
-   "(a60) the 60-contact QSH-030/QTH-030 pair: PWR-A 0.656, PWR-B 0.450 (288 and 274 mm2 less demand at 1.8), but the 53 contacts of (a) with the 20 % spare need 64 > 60 (b2b.spare_rule), and (b) needs 81",
+   "(s8) the 8.00 mm stack (W2 B2B: two LSHM-150-04.0 halves; AREA: QTH-060-02 with QSH-060-01; hA 7.5, window ceiling 15.1 mm): PWR-B 0.427 -> 0.560 (windows 3.8k -> 3.1k mm2: the polymer capacitors, XAL6060, SRR1260 and C506 no longer need one; the Keystone 3568 holders keep theirs, their height being a lower bound), PWR-A unchanged 0.640, dz_mezz 5.1 <= cap 6.0. It is the strongest PWR-B lever but is not adopted alone: PWR-B stays short, it costs 3 mm more depth, and the 8.00 mm part is thin in stock (W2 B2B: LSHM-150-04.0-L-DV-A-N-K-TR C5753117 14 on 2026-11-07; AREA: QTH-060-02-L-D-A 0, -K 33, -TR 5); it goes into next_decision together with a PWR-A lever (s8c)",
+   "(a80) the 80-contact LSHM-140 pair (W2 B2B; it replaces (a60), the 60-contact QSH-030/QTH-030 pair of AREA): PWR-A 0.664, PWR-B 0.503 against 0.661 / 0.497 of the LSHM-150 (56 mm2 less demand at 1.8 on each board); it takes the 69 contacts of (a) but misses the spare rule (83 > 80 under b2b.guard_rule, W2 B2B review R2), and neither size covers (b) (119)",
    "(am) the five unresolved CTRL bottom headers moved to PWR-A (rule_gr3: the function moves to PWR): PWR-A 0.566, PWR-B 0.245 (their edge strips), CTRL top 1.218, bottom 1.460; S01 (IDC to the Q6A) and the LAB5 input of CTRL cannot move by function, so their area stays on CTRL"
   ],
   "next_decision": "OPEN for INT/owner (integration_plan step 8, F2): the PWR function needs about 7.3k mm2 more board area at 1.8 than PWR-A + PWR-B give in the plan's face, or a smaller PWR connector/circuit set. Best combinations evaluated (MODEL ESTIMATE): s8c (8.00 mm stack + Pololu modules off PWR-A + PCB-REAR) PWR-A 0.755, PWR-B 1.012; w2 (hypothetical radials <= hB + (b) + Pololu off) PWR-A 0.874. PWR-A stays short in every one (about 2.5k mm2 at best, s8c), so the owner lever is PWR-A area (a larger or second rear board, or face growth) or fewer PWR-A parts and headers; the 8.00 mm stack (s8, dz_mezz 5.1) is the PWR-B lever to take with it. GR-3, MECH-3 and the board packages implement (a) as the working partition; the real placement fill of PCB-PWRA-1/2 and PCB-PWRB is the trigger record.",
-  "recomputed_w2_gr3": "W2 GR-3, 07.11.2026: the harness headers are graph refs counted with their vendored KiCad 10.0.7 courtyards on the board of their pcb/prepare.py domain (PWR-B side-entry headers; PWR-A Micro-Fit/Mini-Fit/PH top entry with a PWR-B edge strip; CTRL bottom), F104 joins PWR-A and the RF Micro-Fit header is gone. The computed numbers above (ratios_1_8, shortfall_1_8_mm2, b2b, ctrl_headers_unresolved, envelope dz) replace the figures quoted in the summary, why_a and rejected texts, which keep the AREA reasoning; the verdict is unchanged: no evaluated partition fits at 1.8 (MODEL ESTIMATE)"
+  "recomputed_w2_gr3": "W2 GR-3, 07.11.2026: the harness headers are graph refs counted with their vendored KiCad 10.0.7 courtyards on the board of their pcb/prepare.py domain (PWR-B side-entry headers; PWR-A Micro-Fit/Mini-Fit/PH top entry with a PWR-B edge strip; CTRL bottom), F104 joins PWR-A and the RF Micro-Fit header is gone. The computed numbers above (ratios_1_8, shortfall_1_8_mm2, b2b, ctrl_headers_unresolved, envelope dz) replace the figures quoted in the summary, why_a and rejected texts, which keep the AREA reasoning; the verdict is unchanged: no evaluated partition fits at 1.8 (MODEL ESTIMATE)",
+  "recomputed_w2_b2b": "W2 B2B, 07.11.2026: the B2B is the Samtec LSHM-150-02.5 pair J208/J209 (graph refs, counted by the KiCad 10.0.7 courtyard 30.70 x 6.20 on each board as b2b_raw, not as parts) and the GND rule is b2b.guard_rule (no ground plane: a GND return beside every rail contact plus the guard contacts; W2 B2B review R2); ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_chosen and the fallback ratios are recomputed and replace the figures in the texts above; the verdict is unchanged: no evaluated partition fits at 1.8 (MODEL ESTIMATE). (b) now needs 119 contacts, more than the 100 of the pair"
  },
  "parameters": {
   "hA": 4.5,
@@ -64,10 +65,10 @@
    "hA": "max part height on PWR-A outside the PWR-B windows = B2B mated stack 5.00 mm minus 0.5 mm clearance (design value)",
    "hB": "max part height on the PWR-B top side; JST PH side entry 4.8 and PHD side entry 5.0 fit; equals the RF/CTRL height limit 5.5 (mechanical/params/boards.json:91, :127)",
    "board_t": "JLC04161H-7628 1.6 mm (mechanical/params/boards.json:6)",
-   "stack": "Samtec QSH-060-01 / QTH-060-01 mated height 5.00 mm with lead style -01 (Samtec catalogue F-226 qth.pdf, read 2026-11-07)",
+   "stack": "Samtec LSHM-150-02.5 x 2 mated height 5.00 mm with lead styles -02.5 & -02.5 (Samtec catalogue F-224 lshm.pdf, read 2026-11-07; spec Rev H 7.9 nominal .197 [5.00]); W2 B2B, was QSH-060-01 / QTH-060-01",
    "window_margin": "design value: clearance between a PWR-B cut edge and a PWR-A courtyard, also the courtyard margin of a pin-field keepout",
    "factors": "placement factors of the area model; 1.8 = the factor of mechanical/params/parts.json harness_headers.density; modules and keepouts count at 1.0",
-   "b2b_i_pin_A": "design derating: half of the Samtec QTH/QSH 2 A per pin (2 pins powered) rating, because many adjacent contacts carry current at once",
+   "b2b_i_pin_A": "design derating: half of the Samtec LSHM 2.0 A per pin rating (one pin powered per row), b2b.i_pin_note",
    "tp_probe_window": "design value: a PWR-A test point needs a probe opening in PWR-B of its 2.5 mm courtyard plus 0.25 mm each side",
    "rear_board": "fallback F2b envelope x 71.6-116, y 38.5-94.5, z 4.8-17.5 (mechanical/generated/fit-report.md layout: between lc76g, tripod_boss, hatch_parts and hfplus); 44.4 x 56.0 mm; h_max = 12.7 - 1.6 board - 0.5 clearance"
   }
@@ -481,18 +482,18 @@
   "implemented": "W2 GR-3, 07.11.2026: the map below is implemented in design/E1-E5.json as graph header refs (graph_refs; tools/assembly_data.py HEADERS, build/16-dzhgut-rozyemy.csv label column); pcb/partition_budget.py counts these headers as bare board parts with their vendored KiCad 10.0.7 courtyards and skips an entry that carries graph_refs"
  },
  "b2b": {
-  "contacts": 120,
+  "contacts": 100,
   "courtyard_pwr_a": [
-   41.77,
-   7.99
+   30.7,
+   6.2
   ],
   "courtyard_pwr_b": [
-   40.5,
-   7.61
+   30.7,
+   6.2
   ],
-  "gnd_pins_per_power_net": 1,
+  "gnd_pins_per_power_contact": 1,
   "spare_fraction": 0.2,
-  "spare_rule": "design value: the B2B needs ceil(contacts_needed x (1 + spare_fraction)) contacts, because GR-3's header refs and placement can add crossing nets and the owner decision (decision.next_decision) may move groups ((b) needs 81)",
+  "spare_rule": "design value: the B2B needs ceil(contacts_needed x (1 + spare_fraction)) contacts, because placement can add crossing nets and the owner decision (decision.next_decision) may move groups (W2 B2B: under guard_rule (a) needs 69 and 83 with the spare, 59 and 71 before review R2; (b) needs 119, more than the 100 contacts of the pair, so moving the switch groups to PWR-B would reopen the B2B choice)",
   "declared_sense_pairs": [
    {
     "nets": [
@@ -523,65 +524,106 @@
    "crossing_nets": 40,
    "power_pins": 14,
    "signal_pins": 31,
-   "gnd_pins": 9,
-   "contacts_needed": 54,
-   "contacts_with_spare": 65
+   "gnd_pins": 24,
+   "contacts_needed": 69,
+   "contacts_with_spare": 83
   },
   "sense_taps": {
    "BONI13V8": "only the divider R283 of the Boni voltage monitor U218 (group 'Boni: контроль напруги') taps the rail"
   },
   "mpn": {
    "pwr_a": {
-    "mpn": "QSH-060-01-L-D-A",
+    "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR",
     "manufacturer": "Samtec",
-    "lcsc": "C5199901",
-    "stock": 270,
-    "role": "socket strip 0.50 mm, 2 x 60 = 120 contacts + ground plane"
+    "lcsc": "C2940507",
+    "stock": 243,
+    "role": "hermaphroditic terminal/socket strip 0.50 mm, 2 x 50 = 100 contacts, no ground plane, lead style -02.5; J208 on the PWR-A top"
    },
    "pwr_b": {
-    "mpn": "QTH-060-01-L-D-A",
+    "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR",
     "manufacturer": "Samtec",
-    "lcsc": "C116054",
-    "stock": 314,
-    "role": "terminal strip, lead style -01, 120 contacts + ground plane"
+    "lcsc": "C2940507",
+    "stock": 243,
+    "role": "the same part (self-mating), J209 on the PWR-B bottom"
    },
    "read": "2026-11-07",
    "src": [
-    "Samtec QSH/QTH product specification Rev K (2025-02-20), https://suddendocs.samtec.com/productspecs/qsh-qth.pdf (read 2026-11-07): signal current 2 A (one pin powered per row), 175 VAC, -55..+125 C, data for the 5 mm mated height vertical configuration",
-    "Samtec catalogue page F-226, https://suddendocs.samtec.com/catalog_english/qth.pdf (2025-10-24, read 2026-11-07): lead style -01 = 5.00 mm with QSH; 2 A per pin (2 pins powered); 25 A per ground plane (1 powered); -030/-060/-090 = 60/120/180 pins per bank; QSH length (pins per row/30) x 20.00 + 1.27, width 7.49; QTH length (pins per row/30) x 20.00, width 7.11; max 100 cycles",
-    "LCSC stock by the JLCPCB parts search (no API key, the User-Agent of tools/check_parts_availability.py), 2026-11-07: QSH-060-01-L-D-A C5199901 270, QTH-060-01-L-D-A C116054 314, QSH-030-01-L-D-A C2909821 72, QTH-030-01-L-D-A C2843756 713",
-    "Samtec catalogue F-226 qth.pdf (PDF of 2025-10-24), re-read 2026-11-07 for the review fix: QTH lead style -02 A 7.26, height with QSH 8.00 mm; the QSH part number has the single lead style -01, so the QTH lead style sets the mated height; 'Some lengths, styles and options are non-standard, non-returnable'",
-    "LCSC stock by the JLCPCB parts search (no API key, User-Agent sr-rx-parts-snapshot), 2026-11-07: QTH-060-02-L-D-A C116053 0 ('System Fit Height' 8mm), QTH-060-02-L-D-A-K C7267810 33, QTH-060-02-L-D-A-TR C5852170 5"
+    "Samtec catalogue page F-224 (Rev 20NOV24), https://suddendocs.samtec.com/catalog_english/lshm.pdf (read 2026-11-07): LSHM 2.0 A per pin, 160 VAC/226 VDC, -55 to +125 C; -DV = vertical, -N = without shield, -K = 3.50 mm polyimide film pick and place pad, -TR = tape and reel; mated height of lead styles -02.5 & -02.5 (5.00) mm and -04.0 & -04.0 (8.00) mm, \"processing conditions will affect mated height\"; -DV-N body length = positions x 0.50 + 4.70 (29.70 for -150), width 4.98; lead style -02.5: A 3.95, B 1.00",
+    "Samtec LSHM product specification Rev H (September 9, 2026), https://suddendocs.samtec.com/productspecs/lshm.pdf (read 2026-11-07): current rating 2 A (one pin powered per row), 160 VAC, -55 to +125 C, durability 100 cycles; its data are for two LSHM in a 2.50 mm mated height vertical configuration unless otherwise noted; 7.3 advises against several LSXX connectors mated at the same time on one board (one pair here); 7.9 lead style -02.5 with -02.5: nominal connector stack height .197 [5.00], standoff code XXXX-0515",
+    "Samtec recommended PCB layout for LSHM-1XX-XX.X-X-DV-A-X-X-TR, Rev G (12/17/2018, ECN-343532), https://suddendocs.samtec.com/prints/lshm-1xx-xx.x-x-dv-a-x-x-tr-footprint.pdf (read 2026-11-07): pads 0.30 x 1.50 at 0.500 pitch; 1.95 from the inner edge of the far row to the hole centre line and 0.25 from that line to the inner edge of the pin-1 row (row centres 3.70 apart); two 1.45 NPTH (2 places) at \"B\" 27.00 for 50 positions, pad span \"A\" 24.50; envelope \"E\" 29.70 (without shield) by 4.98 REF; the 1.00 PTH is for the -S shield option only; stencil 0.13; note 3: two or more connectors per board need a Samtec review",
+    "Samtec print LSHM-1XX-XX.X-XXX-DV-A-X-X-TR Rev Z, https://suddendocs.samtec.com/prints/lshm-1xx-xx.x-xxx-dv-a-x-x-tr-mkt.pdf (read 2026-11-07): note 4 \"when mating with another LSHM-DV, pin 01 will mate with contact 02 on mating connector\"; shield option S with shield, N no shield; -K polyimide film; -TR tape and reel",
+    "KiCad 10.0.7 official footprint Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical, https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Samtec.pretty/Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical.kicad_mod (read 2026-11-07, sha256 ff556995775651c9e6395aaa029847ad24251f121cbd478fd464f46bd691cec1): 100 SMD pads 0.3 x 1.5, odd pads at y -1.85 and even pads at y +1.85, x -12.25 to +12.25 at 0.5, pads 2k-1 and 2k at the same x; two NPTH 1.45 at (+/-13.5, -0.85), on the pin-1 row side; F.CrtYd 30.70 x 6.20; F.Fab 29.70 x 4.98; its descr cites the Rev G drawing, and these values agree with it. The -DV-S variant of the same library adds the two shield PTH and is not used. Vendored byte-for-byte (CC-BY-SA 4.0 with the design exception, build/kicad/footprints/LICENSE.md)",
+    "LCSC stock by the JLCPCB parts search (tools/check_parts_availability.py, partial snapshot design/parts/snapshots/2026-11-07-w2-b2b-lcsc.json), 2026-11-07: LSHM-150-02.5-L-DV-A-N-K-TR C2940507 243 (USD 9.9338 at 1, 2 A, 100P); LSHM-140-02.5-L-DV-A-N-K-TR C2941242 430; LSHM-150-04.0-L-DV-A-N-K-TR C5753117 14"
    ],
-   "why": "the only family found with a read datasheet that meets >= 50 contacts, >= 1 A per contact and a stack of about hA + 0.5 with LCSC stock on both halves. 120 contacts (-060) by b2b.spare_rule: the computed boundary of (a) needs 53, with the 20 % spare 64 > 60, so the 60-contact QSH-030/QTH-030 does not qualify, and (b), still open to the owner, needs 81. The 120-contact pair costs area on two boards that are already short: 288 mm2 of PWR-A and 274 mm2 of PWR-B demand at 1.8 against the 60-contact pair (candidate a60: PWR-A 0.656, PWR-B 0.450 instead of 0.640 / 0.427). Re-decide when the partition is frozen: if contacts_with_spare <= 60 then, GR-3 takes the -030 pair. Stock (QSH-060 270, QTH-060 314, QSH-030 72, QTH-030 713, JLCPCB search 2026-11-07) is evidence only: either size is enough for one build. GND returns through the 25 A ground plane plus one GND contact next to each power net",
-   "courtyard_note": "courtyard_pwr_a / courtyard_pwr_b = catalogue body outline + 0.25 mm each side (design value) until GR-3 vendors the Samtec footprints",
+   "why": "W2 B2B (orchestrator decision, 07.11.2026): one hermaphroditic part on both boards instead of the QSH/QTH pair of W2 AREA (b2b.superseded). For QSH/QTH the land patterns are readable (Samtec Rev M drawings, b2b.superseded.src), but no first-party document states the QTH-over-QSH mating pin map, so the pin map would stay an owner action. The LSHM has an official KiCad 10.0.7 footprint that matches the Samtec Rev G drawing, a documented mating map (print Rev Z note 4, b2b.mating_map), a smaller courtyard (30.70 x 6.20 against 41.77 x 7.99 and 40.50 x 7.61) and one MPN for both halves. Cost: no ground plane, so every rail contact has its GND return beside it and the rail block is guarded by GND (guard_rule, W2 B2B review R2). 100 contacts (-150) against the 80 of LSHM-140 (candidate a80): (a) needs 69, 83 with the spare; the -150 keeps 17 contacts beyond the spare rule for nets that placement may add, the -140 takes the 69 but misses the spare rule (83 > 80); the -150 costs 0.003 of the PWR-A and 0.006 of the PWR-B ratio at 1.8 (MODEL ESTIMATE). Neither covers (b), which needs 119 contacts (143 with the spare): if the owner moves the switch groups to PWR-B, the B2B choice reopens. Two -02.5 halves give the 5.00 mm stack, so hA, the windows and the F45 standoffs stay. Stock is evidence only",
+   "courtyard_note": "courtyard_pwr_a / courtyard_pwr_b = the F.CrtYd of the vendored KiCad 10.0.7 footprint b2b.footprint (30.70 x 6.20 = body 29.70 plus the 0.5 courtyard rule); pcb/partition_budget.py --check compares them with the footprint of b2b.graph_refs",
    "stack_8": {
-    "pwr_a": "QSH-060-01-L-D-A (unchanged: the QSH has the single lead style -01)",
-    "pwr_b": {
-     "mpn": "QTH-060-02-L-D-A",
+    "pwr_a": {
+     "mpn": "LSHM-150-04.0-L-DV-A-N-K-TR",
      "manufacturer": "Samtec",
-     "lcsc": "C116053",
-     "stock": 0,
-     "alternatives": [
-      {
-       "mpn": "QTH-060-02-L-D-A-K",
-       "lcsc": "C7267810",
-       "stock": 33,
-       "note": "-K = polyimide pick and place pad"
-      },
-      {
-       "mpn": "QTH-060-02-L-D-A-TR",
-       "lcsc": "C5852170",
-       "stock": 5,
-       "note": "-TR = tape and reel"
-      }
-     ]
+     "lcsc": "C5753117",
+     "stock": 14
+    },
+    "pwr_b": {
+     "mpn": "LSHM-150-04.0-L-DV-A-N-K-TR",
+     "manufacturer": "Samtec",
+     "lcsc": "C5753117",
+     "stock": 14,
+     "note": "the same part on both boards: lead styles -04.0 & -04.0 = (8.00) mm (F-224); stock is thin"
     },
     "read": "2026-11-07",
-    "use": "candidates s8 and s8c only (not chosen); the courtyards are the same catalogue outlines (length and width do not depend on the lead style)"
+    "use": "candidates s8 and s8c only (not chosen); the Rev G drawing covers every lead style, so the footprint and the courtyards stay the same"
    }
   },
-  "rule": "contacts per crossing power net = ceil(I_protection / b2b_i_pin_A), I_protection from tools/assembly_data.py NET_CURRENT or net_current_extra; every other crossing net 1 contact; plus gnd_pins_per_power_net; Kelvin and precision nets (shunt nets, INA inputs, precision divider mid-points) never cross except declared_sense_pairs and sense_taps; GR-3 writes pcb/generated/b2b-nets.json by the same rule"
+  "rule": "contacts per crossing power net = ceil(I_protection / b2b_i_pin_A), I_protection from tools/assembly_data.py NET_CURRENT or net_current_extra; every other crossing net 1 contact; plus the GND contacts of guard_rule (W2 B2B: the LSHM has no ground plane; review R2): gnd_pins_per_power_contact (1) beside every rail contact (power contacts, sense/supply taps and rail nodes) and the guard contacts; Kelvin and precision nets (shunt nets, INA inputs, precision divider mid-points) never cross except declared_sense_pairs and sense_taps; pcb/prepare.py writes pcb/generated/b2b-nets.json by the same rule, with the contact map",
+  "i_pin_note": "b2b_i_pin_A 1.0 A per contact is a design derating: half the Samtec LSHM rating of 2 A per pin, which spec Rev H states for one pin powered per row only; in the power block every column carries a power contact and its GND return, and neighbouring columns carry current at the same time. Samtec gives no rating for many powered pins, so 1.0 A is not a rating; the B2B temperature rise is a bench gate (OPEN)",
+  "graph_refs": {
+   "pwr_a": "J208",
+   "pwr_b": "J209"
+  },
+  "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+  "mating_map": {
+   "formula": "pin n of J208 (PWR-A) meets pin n+1 of J209 (PWR-B) for n odd and pin n-1 for n even; the map is its own inverse",
+   "source": "Samtec print Rev Z note 4 (https://suddendocs.samtec.com/prints/lshm-1xx-xx.x-xxx-dv-a-x-x-tr-mkt.pdf, read 2026-11-07): pin 01 mates contact 02 of the other LSHM-DV",
+   "derivation": "both halves are the same footprint (odd pads in one row, even pads in the other, pads 2k-1 and 2k at the same x); pin 01 meeting contact 02 means the upper half is turned over about the strip axis, so every column k pairs 2k-1 with 2k; pcb/tests/test_b2b_map.py checks it on the vendored footprint",
+   "placement": "J209 on the PWR-B bottom over J208 (same centre in the shared PWR-A/PWR-B frame), so that its pad m lies over J208 pad b2b_mate(m): seen from the PWR-A top, J209 is J208 mirrored about the strip axis (y -> -y in the J208 frame); its pin-1 row lies over the even row of J208 and its alignment holes at (+/-13.5, +0.85) against (+/-13.5, -0.85) of J208. A bottom-side footprint flipped top/bottom, or flipped left/right and turned 180 degrees, is that mirror; pcb/check_boards.py b2b with pin_map from b2b-nets.json contacts checks it"
+  },
+  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; the rest spare (nc in the graph). For (a): odd 1-65 the 17 rail contacts (1, 5, ... 65) with their GND returns (3, 7, ... 67), 69 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets, the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair. J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
+  "superseded": {
+   "what": "W2 AREA choice Samtec QSH-060-01-L-D-A (PWR-A, LCSC C5199901) with QTH-060-01-L-D-A (PWR-B, LCSC C116054), 120 contacts plus a ground plane, 5.00 mm",
+   "by": "W2 B2B, 07.11.2026",
+   "why": "the W2 B2B research of 2026-11-07 found no first-party Samtec document that states the QTH-over-QSH mating pin map, so the pin map of both halves would stay an owner action; the reads of the old pair stay in design/parts/snapshots/2026-11-07-w2-area-manual.json",
+   "src": [
+    "Samtec RECOMMENDED PCB LAYOUT FOR QSH-XXX-01-X-D-XXX, REVISION M (4 sheets), https://suddendocs.samtec.com/prints/qsh-xxx-01-x-d-xx-footprint.pdf (read 2026-11-07, HTTP 200, sha256 a2527b2574184254dd059d63c053980949e60a910b87eca43bb506edb794eea2): the land pattern is readable; every sheet carries a Samtec PROPRIETARY NOTE",
+    "Samtec RECOMMENDED PCB LAYOUT FOR QTH-XXX-XX-X-D-XXX, REVISION M (2 sheets), https://suddendocs.samtec.com/prints/qth-xxx-xx-x-d-xxx-footprint.pdf (read 2026-11-07, HTTP 200, sha256 760bae556d5d0a48ea78e64ae13546df505c678c1f8ea287137b0136804269c2): the land pattern is readable; every sheet carries a Samtec PROPRIETARY NOTE"
+   ]
+  },
+  "rail_node_max_ohm": 1.0,
+  "rail_row_even": [
+   "LAB5"
+  ],
+  "rail_row_even_why": "W2 B2B (11.11.2026): the four LAB5 contacts take the start of the even row (each followed by its GND return), so on the PWR-B board of record they sit in the J209 row that faces the LAB5 trunk below the strip and reach it by a via each and an F.Cu plate; above the strip the row of the other rails then has no LAB5 vias in the way of the rails that leave to the west (route runs 43118324282, 43119630792 and 43121336632 with LAB5 in the rail row left 2 to 4 of them open). Design value",
+  "rail_order": [
+   "3V3_Q6A",
+   "LNA4V5",
+   "LNA4V5",
+   "BIAS_CH1_DAMP",
+   "BIAS_CH2_DAMP",
+   "BIAS_CH3_DAMP",
+   "E2_SB_DAMP",
+   "VBUS_RTLB_DAMP",
+   "VBUS_LABPORT",
+   "VBUS_HFP",
+   "LAB5_RLY",
+   "LAB5_RLY",
+   "BIAS_CH4_DAMP",
+   "LAB5",
+   "BONI13V8",
+   "LNB13V2",
+   "AUX12",
+   "BONI13V8_PORT"
+  ],
+  "guard_rule": "W2 B2B review R2 (07.11.2026): the pads are 0.30 mm wide at 0.50 mm pitch, so neighbouring pads of a row are 0.20 mm apart (b2b.footprint, Samtec Rev G), and a solder bridge between them is the likely defect at this pitch. So no contact at a supply-rail potential has a neighbour in its row other than GND. (1) Rail contacts are the power contacts, the sense/supply taps and the rail nodes: crossing nets that a resistor below rail_node_max_ohm joins to a net other than GND, such as the 0.22 ohm damper nodes (BIAS_CH1_DAMP: R232 from BIAS_CH1, C235 47 uF to GND; pcb/prepare.py low_ohm_links). They sit on the odd row of J208, each followed by its GND return on the same row (rail, GND, rail, GND, ...; the return is the next contact, 0.5 mm away), in the order rail_order (until 11.11.2026 a checkerboard over both rows with the return in the same column; both keep GND beside every rail contact). (2) One GND guard contact follows the rail block in its row; the rails of rail_row_even (LAB5) start the even row the same way, and the signal nets follow them on the even row. (3) Each declared sense pair (at the potential of its rail) takes one column at the end of the strip, with a GND guard column before it. A bridge from a rail contact can then only short that rail to GND, where its protection (tools/assembly_data.py NET_CURRENT) acts; it cannot join two rails, a rail and a sense line, or a rail and a signal line. rail_order puts 3V3_Q6A first and the 12-13.8 V rails of the net names (the BONI13V8 tap, LNB13V2, AUX12 and BONI13V8_PORT) last; between them, for the PWR-B board of record, the rails that leave to the west (LNA4V5, the LNA bias dampers, E2_SB_DAMP, VBUS_RTLB_DAMP, VBUS_LABPORT), to the top edge (VBUS_HFP) and to the right (LAB5_RLY, BIAS_CH4_DAMP); the four LAB5 contacts sit on the even row (rail_row_even). The damper nodes also get their AC return beside them: the 47 uF capacitor sits on PWR-A and the 0.22 ohm resistor on PWR-B. Cost for (a): 10 GND contacts more than one per power contact (6 rail nodes, 1 tap, 3 guards). Design value; signal nets still neighbour signal nets"
  },
  "ctrl": {
   "bottom_footprint_prefixes": [
@@ -1140,7 +1182,7 @@
    }
   },
   "s8": {
-   "title": "(a) with the 8.00 mm B2B stack (QTH lead style -02): hA 7.5, window ceiling 15.1 mm, dz_mezz 5.1",
+   "title": "(a) with the 8.00 mm B2B stack (two LSHM-150-04.0 halves): hA 7.5, window ceiling 15.1 mm, dz_mezz 5.1",
    "pololu": "pwr_a",
    "pinned_pwr_a": [],
    "pwr_b_groups": [
@@ -1275,8 +1317,8 @@
    "hA": 7.5,
    "stack": 8.0
   },
-  "a60": {
-   "title": "(a) with the 60-contact pair QSH-030-01-L-D-A / QTH-030-01-L-D-A (the area that the 120-contact choice costs)",
+  "a80": {
+   "title": "(a) with the 80-contact pair LSHM-140-02.5-L-DV-A-N-K-TR x2 (the area that the 100-contact choice costs; W2 B2B)",
    "pololu": "pwr_a",
    "pinned_pwr_a": [],
    "pwr_b_groups": [
@@ -1330,15 +1372,16 @@
     }
    ],
    "b2b": {
-    "contacts": 60,
+    "contacts": 80,
     "courtyard_pwr_a": [
-     21.77,
-     7.99
+     25.7,
+     6.2
     ],
     "courtyard_pwr_b": [
-     20.5,
-     7.61
-    ]
+     25.7,
+     6.2
+    ],
+    "src": "KiCad 10.0.7 Connector_Samtec.pretty/Samtec_LSHM-140-xx.x-x-DV-N_2x40_P0.50mm_Vertical.kicad_mod F.CrtYd 25.70 x 6.20, https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Samtec.pretty/Samtec_LSHM-140-xx.x-x-DV-N_2x40_P0.50mm_Vertical.kicad_mod (read 2026-11-07); LCSC C2941242, stock 430 (2026-11-07)"
    }
   },
   "am": {
@@ -1558,15 +1601,15 @@
    "cost": "integration_plan step 8: +10-12 h (PCB-REAR board, MECH envelope step, GR-3 partition update)",
    "ratios_1_8": {
     "c": {
-     "PWR_A": 0.729,
-     "PWR_B": 0.775,
+     "PWR_A": 0.747,
+     "PWR_B": 0.811,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "f2b": {
      "PCB_REAR": 1.75,
-     "PWR_A": 0.686,
-     "PWR_B": 0.644,
+     "PWR_A": 0.702,
+     "PWR_B": 0.679,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
@@ -1583,8 +1626,8 @@
    "verdict": "closes the CTRL area at 1.8 (top 1.008, bottom 1.024) but adds about 0.23k mm2 to PWR-B, which is already short, and leaves the five unresolved CTRL bottom headers (decision.ctrl_headers_unresolved) as they are; apply only if PCB-CTRL shows the fill and PWR gets more area",
    "ratios_1_8": {
     "f3": {
-     "PWR_A": 0.646,
-     "PWR_B": 0.453,
+     "PWR_A": 0.661,
+     "PWR_B": 0.473,
      "CTRL_top": 1.124,
      "CTRL_bottom": 0.946
     }
@@ -1601,14 +1644,14 @@
    "verdict": "even w2 stays short (PWR-A 0.874, PWR-B 0.611): replacing the radials alone does not close the budget; no MPN is implied",
    "ratios_1_8": {
     "w1": {
-     "PWR_A": 0.67,
-     "PWR_B": 0.499,
+     "PWR_A": 0.686,
+     "PWR_B": 0.52,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "w2": {
-     "PWR_A": 0.886,
-     "PWR_B": 0.657,
+     "PWR_A": 0.914,
+     "PWR_B": 0.678,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
@@ -1620,34 +1663,34 @@
    "candidates": [
     "s8",
     "s8c",
-    "a60",
+    "a80",
     "am"
    ],
-   "option": "s8 = (a) with the 8.00 mm stack (PWR-B lever); s8c = s8 with (c) and F2b (WHAT-IF: the Pololu modules have no plate location); a60 = (a) with the 60-contact B2B (the area the 120-contact choice costs); am = (a) with the unresolved CTRL bottom headers counted on PWR-A",
-   "verdict": "s8 lifts PWR-B from 0.427 to 0.560 for dz_mezz 5.1; only s8c brings PWR-B above 1.0 (1.012), and PWR-A stays at 0.755 there: the PWR-A shortfall needs the owner's area or parts decision; a60 gains 0.016 / 0.023 but breaks the spare rule; am costs PWR-A 0.074 and PWR-B 0.182",
+   "option": "s8 = (a) with the 8.00 mm stack (PWR-B lever); s8c = s8 with (c) and F2b (WHAT-IF: the Pololu modules have no plate location); a80 = (a) with the 80-contact LSHM-140 pair (the area the 100-contact choice costs); am = (a) with the unresolved CTRL bottom headers counted on PWR-A",
+   "verdict": "s8 lifts PWR-B from 0.427 to 0.560 for dz_mezz 5.1; only s8c brings PWR-B above 1.0 (1.012), and PWR-A stays at 0.755 there: the PWR-A shortfall needs the owner's area or parts decision; a80 gains 0.003 / 0.006 but misses the spare rule for (a) (83 > 80 under b2b.guard_rule, W2 B2B review R2); am costs PWR-A 0.074 and PWR-B 0.182",
    "ratios_1_8": {
     "s8": {
-     "PWR_A": 0.646,
-     "PWR_B": 0.621,
+     "PWR_A": 0.661,
+     "PWR_B": 0.65,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "s8c": {
      "PCB_REAR": 1.75,
-     "PWR_A": 0.78,
-     "PWR_B": 1.072,
+     "PWR_A": 0.801,
+     "PWR_B": 1.13,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
-    "a60": {
-     "PWR_A": 0.662,
-     "PWR_B": 0.504,
+    "a80": {
+     "PWR_A": 0.664,
+     "PWR_B": 0.503,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "am": {
-     "PWR_A": 0.588,
-     "PWR_B": 0.325,
+     "PWR_A": 0.6,
+     "PWR_B": 0.34,
      "CTRL_top": 1.205,
      "CTRL_bottom": 1.175
     }
@@ -1670,7 +1713,7 @@
     "PWR_BRANCH_SW",
     "USB_POWER_SW"
    ],
-   "mech": "mezzanine on the PWR-A L footprint minus windows and edge strips; bottom face at PWR-A top + stack (z 47.5 = 42.5 + 5.0 with dz 0), top face z 49.1 (+ board 1.6); parts on the top side only"
+   "mech": "mezzanine on the PWR-A L footprint minus windows and edge strips; bottom face at PWR-A top + stack (z 47.5 = 42.5 + 5.0 with dz 0), top face z 49.1 (+ board 1.6); parts on the top side only, except the B2B half J209 on the bottom side (W2 B2B)"
   },
   "mapping": "pcb/prepare.py: E2 parts of the PWR_B groups -> PWR_BRANCH_SW, E5 parts of the PWR_B groups -> USB_POWER_SW; DOMAIN_OVERRIDE keeps partition.domain_override_pwr_a on their old domain; tools/assembly_data.py BOARD_OF_DOMAIN and tools/build_parts.py BOARD3 map both new domains to PWR_B; mechanical/params/boards.json PWR_B lists the same two names (CC-12)"
  },
@@ -1682,7 +1725,7 @@
  },
  "keepouts": {
   "pwr_a_under_pwr_b_tht": "no PWR-A component under any PWR-B THT pin field (pin field + window_margin each side; copper and mask allowed); the list is pcb/partition-budget.json candidates.<chosen>.pwr_a_keepout_items",
-  "pwr_a_under_b2b": "no PWR-A component under the mated QSH/QTH stack outside the QSH courtyard (counted as b2b_raw on both boards)",
+  "pwr_a_under_b2b": "no PWR-A component under the mated LSHM stack outside the J208 courtyard (counted as b2b_raw on both boards; W2 B2B)",
   "pwr_a_tht_pockets": "every PWR-A THT pad (candidates.<chosen>.pwr_a_tht_pocket_items: radials, Keystone 3568 holders, both Pololu pin rows, the PWR-A headers) gets a plate relief pocket >= 1.0 mm deep in M-07 plus a polyimide insulator over the 0.4 mm shim gap (mechanical/params/boards.json:21); MECH-3 draws them",
   "pwr_a_test_points": "PWR-A test points sit under probe windows of PWR-B (tp_probe_window), so they stay reachable with PWR-B fitted"
  },
