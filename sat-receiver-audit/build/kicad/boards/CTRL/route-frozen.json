@@ -3,7 +3,7 @@
   "label": "CI/model input for pcb/boards/CTRL.json (W2 CTRL-R route study); not a hardware PASS; bench gates OPEN",
   "source": {"route_run": 43136394379, "inputs_sha256": "fd468b581443dd885d80e5b0ea3c4e562347c815b62a87eb1c795394371a16bd", "board_sha256": "8827c73dca42adc9b3b2cea24ae7efa8c34ddc383e6878f8935bcf8e571c0003", "router": "Freerouting 2.5.0 (sr-rx-pcb job Board CTRL)", "harvest": "every unlocked track and via of that run, board mm (y up), coordinates as routed"},
   "completion": "grid A* completion on the frozen copper (0.05 mm grid, exact clearance check 0.15 mm, 0.3 mm to edges, 0.5 mm hole to hole, keepouts; through vias 0.65/0.3 mm; L2 only where three layers have no path) by build/kicad/boards/CTRL/freeze/freeze_route.py",
-  "guard": {"pads_sha256": "59640b2e022549efb1d77acc354f4fe3bf564a9dfac9058e55d781bb09b8b0c6", "scripted_sha256": "f2e40c0f36b9698e1e1dd72c5a7c0253027aaecfa141eec32ab1a64c93bd8066"},
+  "guard": {"pads_sha256": "59640b2e022549efb1d77acc354f4fe3bf564a9dfac9058e55d781bb09b8b0c6", "scripted_sha256": "6c9298446a8713ecddd8e1a11d0649142682d6f01f2bb0daefec47d88df8092c"},
   "drop_scripted": {"tracks": ["V33-U315", "P33-RIGHT-F"], "vias": ["V33-U315"]},
   "segments": {"new": 407, "router": 2166},
   "router_tracks": [
