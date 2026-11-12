@@ -15,6 +15,8 @@ The chroot gets a minimal /dev (no host disks) and a policy-rc.d that starts no 
   blank  - partitioned and formatted image without an OS (CI layout round trip)
   build  - the full golden image, image-manifest.json and the extent map for the recovery kit
   venvs  - --check: the two venv locks against the guest lock and the wheelhouse manifest (offline, W2 IMG-3)
+  release-keyring --check - the owner keyring as build --release-keyring takes it; a 'CI TEST KEY' uid is refused (W2 IMG-UPD)
+  update-model - update_slot.py apply A->B on an image copy with a CI test key: the CI model of the updater (W2 IMG-UPD)
 
 The result is a CANDIDATE: hardware_ready is always false, bench gates W-01/W-02/W-03/W-08/W-09/W-10
 stay OPEN, and the image contains Radxa OS and Qualcomm material that must not be published.
@@ -2494,8 +2496,10 @@ def install_session(root, recipe, stage_dir):
 # ---------------------------------------------------------------- build
 
 def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, data_bytes=None,
-          allow_unmerged_dtb=False, copy_locked_cache=True, keep_base=False):
+          allow_unmerged_dtb=False, copy_locked_cache=True, keep_base=False, release_keyring_path=None):
     require_builder()
+    # W2 IMG-UPD: the owner's public key after the ceremony; checked before anything is built.
+    keyring = release_keyring(release_keyring_path) if release_keyring_path else None
     started = utc_now()
     recipe, layout = load_json(RECIPE), layoutlib.load()
     work, out = Path(work).resolve(), Path(out).resolve()
@@ -2642,6 +2646,8 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
                                         + " (neither r2 nor the package closure, step 8b, created them)")
         LOG.step("accounts", "DONE", service=len(manifest["accounts"]["service_accounts"]),
                  missing=manifest["accounts"]["service_accounts_missing"] + manifest["accounts"]["package_accounts_missing"])
+        if keyring:  # before hardening, so apt_sources records the keyring as present (no apt_keyring_absent)
+            manifest["release_keyring"] = install_release_keyring(root_a, keyring)
         manifest["hardening"] = hardening(root_a, recipe, route)
         manifest["apt_sources"] = manifest["hardening"].pop("apt_sources")
         if not manifest["apt_sources"]["keyring"]["present"]:
@@ -2773,6 +2779,182 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         dump(out / "image-manifest.json", manifest)
 
 
+# ---------------------------------------------------------------- release keyring and update model (W2 IMG-UPD)
+
+# deployment/repo/README.md: the CI test key carries this in its uid and must never become the image keyring.
+CI_TEST_KEY_UID = "CI TEST KEY"
+_PUBLIC_KEY, _PUBLIC_SUBKEY, _USER_ID, _SECRET_KEY, _SECRET_SUBKEY = 6, 14, 13, 5, 7
+
+
+def openpgp_packets(data):
+    """[(tag, body)] of a binary OpenPGP keyring (RFC 9580 section 4.2: old and new packet headers;
+    keyrings use no partial body lengths)."""
+    out, i = [], 0
+    while i < len(data):
+        header = data[i]
+        i += 1
+        if not header & 0x80:
+            raise ValueError("not an OpenPGP packet at byte %d" % (i - 1))
+        if header & 0x40:  # new format
+            tag = header & 0x3F
+            first = data[i] if i < len(data) else None
+            if first is None:
+                raise ValueError("truncated packet header")
+            if first < 192:
+                length, i = first, i + 1
+            elif first < 224:
+                if i + 1 >= len(data):
+                    raise ValueError("truncated packet header")
+                length, i = ((first - 192) << 8) + data[i + 1] + 192, i + 2
+            elif first == 255:
+                length, i = int.from_bytes(data[i + 1:i + 5], "big"), i + 5
+            else:
+                raise ValueError("partial body length in a keyring")
+        else:
+            tag, kind = (header >> 2) & 0x0F, header & 3
+            if kind == 3:
+                raise ValueError("indeterminate packet length in a keyring")
+            size = (1, 2, 4)[kind]
+            length, i = int.from_bytes(data[i:i + size], "big"), i + size
+        body = data[i:i + length]
+        if len(body) != length:
+            raise ValueError("truncated packet body")
+        out.append((tag, body))
+        i += length
+    return out
+
+
+def dearmor(data):
+    """Binary bytes of an ASCII-armored OpenPGP block (the base64 body, CRC line dropped); binary input unchanged."""
+    import base64
+    import binascii
+    if data.lstrip()[:5] != b"-----":
+        return data, None
+    lines = data.lstrip().decode("ascii").replace("\r", "").split("\n")
+    kind = lines[0].strip("- ").replace("BEGIN ", "")
+    i = 1
+    while i < len(lines) and lines[i].strip() and ":" in lines[i]:
+        i += 1  # armor headers (Version:, Comment:), then one empty line
+    if i < len(lines) and not lines[i].strip():
+        i += 1
+    body = []
+    for line in lines[i:]:
+        if line.startswith("-----END"):
+            break
+        if not line.startswith("="):  # the CRC-24 line; base64 itself never starts with '='
+            body.append(line.strip())
+    try:
+        return base64.b64decode("".join(body), validate=True), kind
+    except binascii.Error as exc:
+        raise ValueError("armored keyring body is not base64: " + str(exc)) from exc
+
+
+def _key_fingerprint(body):
+    if body[:1] == b"\x04":
+        return hashlib.sha1(b"\x99" + len(body).to_bytes(2, "big") + body).hexdigest().upper()
+    if body[:1] == b"\x06":
+        return hashlib.sha256(b"\x9b" + len(body).to_bytes(4, "big") + body).hexdigest().upper()
+    raise ValueError("unsupported OpenPGP key version %r" % body[:1])
+
+
+def keyring_info(data):
+    """Primary and subkey fingerprints (v4 SHA-1, v6 SHA-256), user ids and whether secret key material is
+    present, of an OpenPGP keyring (armored or binary); "binary" is what apt reads as a .gpg keyring."""
+    binary, armor = dearmor(data)
+    packets = openpgp_packets(binary)
+    tags = [t for t, _ in packets]
+    return {"sha256": hashlib.sha256(binary).hexdigest(), "armor": armor, "binary": binary,
+            "fingerprints": [_key_fingerprint(b) for t, b in packets if t in (_PUBLIC_KEY, _SECRET_KEY)],
+            "subkeys": [_key_fingerprint(b) for t, b in packets if t in (_PUBLIC_SUBKEY, _SECRET_SUBKEY)],
+            "uids": [b.decode("utf-8", errors="replace") for t, b in packets if t == _USER_ID],
+            "secret": _SECRET_KEY in tags or _SECRET_SUBKEY in tags or (armor or "").find("PRIVATE") >= 0}
+
+
+def release_keyring_issues(info):
+    """Why a keyring cannot be the image's release keyring /usr/share/keyrings/srrx-lab.gpg."""
+    issues = []
+    if info["secret"]:
+        issues.append("the keyring carries secret key material: only the public key goes into an image")
+    if not info["fingerprints"]:
+        issues.append("the keyring has no primary public key")
+    if not info["uids"]:
+        issues.append("the keyring has no user id")
+    test = [u for u in info["uids"] if CI_TEST_KEY_UID.lower() in u.lower()]
+    if test:
+        issues.append("uid %r is a CI test key ('%s'): never the release keyring" % (test[0], CI_TEST_KEY_UID))
+    return issues
+
+
+def release_keyring(path):
+    """The record of an owner keyring for --release-keyring (deployment/repo/srrx-lab.pub.asc after the
+    ceremony); refused: secret material, no key or uid, a uid with 'CI TEST KEY'."""
+    data = Path(path).read_bytes()
+    try:
+        info = keyring_info(data)
+    except ValueError as exc:
+        raise BuildError("--release-keyring is not an OpenPGP keyring: " + str(exc)) from exc
+    issues = release_keyring_issues(info)
+    if issues:
+        raise BuildError("--release-keyring refused: " + "; ".join(issues))
+    return {"path": SRRX_KEYRING, "source_sha256": hashlib.sha256(data).hexdigest(), "sha256": info["sha256"],
+            "armored_input": info["armor"] is not None, "fingerprints": info["fingerprints"], "subkeys": info["subkeys"],
+            "uids": info["uids"], "binary": info["binary"]}
+
+
+def install_release_keyring(root, record):
+    """/usr/share/keyrings/srrx-lab.gpg (0644, binary: apt's Signed-By reads .gpg keyrings) in the image root."""
+    target = Path(root) / SRRX_KEYRING
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(record["binary"])
+    os.chmod(target, 0o644)
+    if sha256(target) != record["sha256"]:
+        raise BuildError("installed release keyring differs from the checked one")
+    return {k: v for k, v in record.items() if k != "binary"}
+
+
+def _blkid_value(device, key):
+    done = run(["blkid", "-p", "-o", "value", "-s", key, device], check=False)
+    return done.stdout.strip().lower() or None
+
+
+def update_model(image, work, mirror_repo=None, lab_repo=None, build_records=(), ci_test_key=None,
+                 power_note="CI model on the image builder: no battery, no labd"):
+    """CI model of the inactive-slot updater (W2 IMG-UPD, update_slot.py) on an image COPY, never the built
+    image: root A (read-only), its ESP and /data are mounted as the active system, and update_slot.apply
+    copies root A into root B and upgrades it in a chroot from the publications signed by a job-only test
+    key (the record says NOT_RELEASE). smoke_qemu.py scenario 4 then boots the trial."""
+    require_builder()
+    import update_slot
+    image, work = Path(image).resolve(), Path(work).resolve()
+    for path in (image, work):
+        refuse_block_path(path)
+    if not image.is_file():
+        raise BuildError("update model needs an image copy (regular file): " + str(image))
+    if not ci_test_key:
+        raise BuildError("the update model runs with a job-only CI test key (--ci-test-key KEYRING FINGERPRINT)")
+    work.mkdir(parents=True, exist_ok=True)
+    loop, mounts = Loop(image), Mounts()
+    try:
+        devices = {role: loop.part(i) for i, role in enumerate(layoutlib.ROLES, 1)}
+        partitions = {}
+        for device in devices.values():
+            partuuid, uuid = _blkid_value(device, "PART_ENTRY_UUID"), _blkid_value(device, "UUID")
+            if not partuuid:
+                raise BuildError("no PARTUUID on " + device)
+            partitions[device] = ["by-partuuid/" + partuuid] + (["by-uuid/" + uuid] if uuid else [])
+        active = work / "mnt/active"
+        mounts.mount(devices["root_a"], active, "ext4", "ro")
+        mounts.mount(devices["esp"], active / "boot/efi", "vfat", "umask=0077")
+        mounts.mount(devices["data"], active / "data", "ext4")
+        record = update_slot.apply(root=active, target_device=devices["root_b"], lab_repo=lab_repo, mirror_repo=mirror_repo,
+                                   build_records=build_records, ci_test_key=ci_test_key, external_power=power_note,
+                                   partitions=partitions, execute=True, online=False)
+    finally:
+        mounts.umount_all()
+        loop.detach()
+    return record
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="op", required=True)
@@ -2800,6 +2982,8 @@ def main():
     p.add_argument("--allow-unmerged-dtb", action="store_true", help="CI candidate only: package DTB without the IMG-05 overlays")
     p.add_argument("--no-cache-copy", action="store_true")
     p.add_argument("--keep-base", action="store_true")
+    p.add_argument("--release-keyring", type=Path, help="W2 IMG-UPD: the owner's public key (srrx-lab.pub.asc or .gpg) installed as "
+                   "/" + SRRX_KEYRING + "; a uid with 'CI TEST KEY' or secret material is refused")
     p = sub.add_parser("closure", help="package-closure.json: --check (offline, against the lock) or --resolve (CI, network)")
     mode = p.add_mutually_exclusive_group(required=True)
     mode.add_argument("--check", action="store_true")
@@ -2810,6 +2994,15 @@ def main():
     p.add_argument("--write", type=Path, help="--resolve: also write the proposed package-closure.json here")
     p = sub.add_parser("venvs", help="W2 IMG-3: --check the venv locks against the guest lock and the wheelhouse manifest (offline)")
     p.add_argument("--check", action="store_true", required=True)
+    p = sub.add_parser("release-keyring", help="W2 IMG-UPD: --check a keyring the way build --release-keyring does (offline)")
+    p.add_argument("--check", type=Path, required=True)
+    p = sub.add_parser("update-model", help="W2 IMG-UPD: update_slot.py apply A->B on an image COPY with a CI test key (root, CI)")
+    p.add_argument("--image", type=Path, required=True)
+    p.add_argument("--work", type=Path, required=True)
+    p.add_argument("--mirror-repo", type=Path)
+    p.add_argument("--lab-repo", type=Path)
+    p.add_argument("--build-record", type=Path, action="append", default=[])
+    p.add_argument("--ci-test-key", nargs=2, metavar=("KEYRING", "FINGERPRINT"), required=True)
     args = parser.parse_args()
     try:
         if args.op == "plan":
@@ -2829,6 +3022,12 @@ def main():
             wheel_plan = venv_plan()
             result = {"status": "VENV_LOCKS_CONSISTENT", "pip_bootstrap": wheel_plan["pip"]["filename"],
                       "venvs": {"/" + v: [w["filename"] for w in wheels] for v, wheels in wheel_plan["venvs"].items()}}
+        elif args.op == "release-keyring":
+            result = dict({k: v for k, v in release_keyring(args.check).items() if k != "binary"}, status="RELEASE_KEYRING_ACCEPTABLE")
+        elif args.op == "update-model":
+            result = update_model(args.image, args.work, args.mirror_repo, args.lab_repo, args.build_record, args.ci_test_key)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+            return 0 if result["status"] == "INACTIVE_SLOT_UPDATED_TRIAL_ARMED" else 1
         elif args.op == "fetch":
             result = fetch(args.cache)
             result["pps_gpio_source"] = fetch_pps_source(args.cache)  # W2 IMG-4: fetch-only pps-gpio.c into cache/pps-gpio
@@ -2841,7 +3040,7 @@ def main():
             result = blank(args.work, args.output, args.test_sizes)
         else:
             result = build(args.cache, args.work, args.out, args.route, args.dt_profile, not args.no_lime, args.uuid_seed,
-                           args.data_bytes, args.allow_unmerged_dtb, not args.no_cache_copy, args.keep_base)
+                           args.data_bytes, args.allow_unmerged_dtb, not args.no_cache_copy, args.keep_base, args.release_keyring)
             result = {k: result[k] for k in ("status", "route", "image", "blocking", "blocking_by_closes_at", "hardware_ready")}
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0 if result.get("status") not in ("BLOCKED",) else 2

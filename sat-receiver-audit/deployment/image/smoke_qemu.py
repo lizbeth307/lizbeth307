@@ -18,6 +18,8 @@ Scenarios, one QEMU boot each (-no-reboot; systemd.run_*_action=poweroff ends th
   2 trial-b-fails    labB+1 newest with one required token removed: boot-check fails, no bless,
                      systemd-boot leaves labB+0-1.conf (no tries left)
   3 fallback-a       the bad labB sorts last: the blessed labA boots again
+  4 update-b-trial-blessed (--update-model, W2 IMG-UPD; its own fresh copy) update_slot.py A->B on the
+                     builder, the trial labB+3 boots, boot-check passes, bless -> labB.conf; the guest only plans
 Every boot also checks: no pending jobs, no failed unit beyond the scenario's expected ones (only
 srrx-boot-check.service on the boot that must fail), srrx.service inactive and disabled, the recipe
 masks in effect (gdm.service and gdm3.service among them, and display-manager.service resolves to
@@ -51,6 +53,7 @@ HERE = Path(__file__).resolve().parent
 sys.path[:0] = [str(HERE), str(HERE.parent)]
 import bootchain  # noqa: E402
 import recovery_kit  # noqa: E402
+import update_slot  # noqa: E402  (W2 IMG-UPD scenario 4)
 
 FIRMWARE_CODE = Path("/usr/share/AAVMF/AAVMF_CODE.fd")
 FIRMWARE_VARS = Path("/usr/share/AAVMF/AAVMF_VARS.fd")
@@ -588,6 +591,181 @@ def session_smoke(image, manifest_path, facts_path, work, out, timeout=1800):
     return result
 
 
+# ---------------------------------------------------------------- scenario 4: the updater's trial (W2 IMG-UPD)
+# A fresh sparse copy of the Route A image (never the copy of scenarios 1-3): build_image.update_model runs
+# update_slot.py apply A->B on the builder with the job's CI test key (srrx-mirror; the record says
+# NOT_RELEASE), which leaves labB+3.conf as a counted trial of a newer generation. The smoke rewrites that
+# entry in place (name and version kept) and adds one smoke-only oneshot unit to root B that runs
+# `update_slot.py plan --markers` on the booted slot: the guest only plans, it never applies. One boot:
+# labB+3 boots, srrx-boot-check passes, systemd-bless-boot -> labB.conf; the plan sees slot B running and
+# slot A as the target, not mounted, and the builder's record on /data.
+
+UPDATE_SCENARIO = ("update-b-trial-blessed", {"slot": "B", "boot_check": "BOOT_SELF_CHECK_OK", "boot_complete": "active", "bless": "active",
+                                              "bless_status": "good", "entries_after": sorted(["labA.conf", "labB.conf"] + RESCUE_ENTRIES),
+                                              "selftest": False})
+PLAN_UNIT = "srrx-update-plan-smoke.service"
+GUEST_PLAN = re.compile(re.escape(update_slot.PLAN_BEGIN) + r"(.*?)" + re.escape(update_slot.PLAN_END), re.S)
+GUEST_PLAN_CHECKS = ("target_not_running", "target_not_mounted", "srrx_inactive", "labd_disarmed", "records_on_data")
+
+
+def plan_unit_text():
+    return ("[Unit]\nDescription=SR-RX QEMU smoke only: update_slot.py plan on the booted slot (W2 IMG-UPD scenario 4)\n"
+            "After=local-fs.target\n\n[Service]\nType=oneshot\n"
+            "ExecStart=/usr/bin/python3 -I -B /opt/srrx/deployment/image/update_slot.py plan --markers\n"
+            "StandardOutput=journal+console\nTimeoutStartSec=600\n\n[Install]\nWantedBy=multi-user.target\n")
+
+
+def install_plan_unit(root):
+    units = Path(root) / "etc/systemd/system"
+    (units / PLAN_UNIT).write_text(plan_unit_text(), encoding="ascii", newline="\n")
+    link = units / "multi-user.target.wants" / PLAN_UNIT
+    link.parent.mkdir(exist_ok=True)
+    if link.is_symlink() or link.exists():
+        link.unlink()
+    os.symlink("/etc/systemd/system/" + PLAN_UNIT, link)
+    return PLAN_UNIT
+
+
+def trial_entry_rewrite(config, entries_dir):
+    """The updater's trial entry labB+N.conf becomes the smoke entry in place: the same name and version."""
+    names = sorted(p.name for p in Path(entries_dir).glob("labB+*.conf"))
+    if len(names) != 1:
+        return None
+    path = Path(entries_dir) / names[0]
+    versions = [line[8:].strip() for line in path.read_text(encoding="utf-8", errors="replace").splitlines() if line.startswith("version ")]
+    if len(versions) != 1 or not versions[0].isdigit():
+        return None
+    path.write_text(smoke_entry(config, "B", int(versions[0]), None, False), encoding="ascii", newline="\n")
+    return {"entry": names[0], "version": int(versions[0])}
+
+
+def guest_plan(console_text):
+    found = GUEST_PLAN.findall(console_text or "")
+    if not found:
+        return None
+    try:
+        return json.loads(found[-1].replace("\r", "").replace("\n", ""))
+    except ValueError:
+        return {"unparsed": found[-1][:2000]}
+
+
+def update_mismatches(record, closure, guest):
+    """The builder's update record and the guest's plan of scenario 4 (host-testable)."""
+    if not record:
+        return ["no update record from update_slot.apply"]
+    bad = []
+    if record.get("status") != update_slot.STATUS_UPDATED:
+        bad.append("update record status %r: %s" % (record.get("status"), str(record.get("error") or record.get("refusals"))[-800:]))
+    if record.get("release") != "NOT_RELEASE":
+        bad.append("update record release %r, expected NOT_RELEASE (CI test key)" % record.get("release"))
+    if (record.get("active_slot"), record.get("target_slot")) != ("A", "B"):
+        bad.append("update record slots %r -> %r, expected A -> B" % (record.get("active_slot"), record.get("target_slot")))
+    used = sorted(k for k, v in (record.get("publications") or {}).items() if v)
+    if not used or not set(used) <= set(update_slot.PUBLICATIONS):
+        bad.append("update record publications %r: only srrx-lab and srrx-mirror" % used)
+    mirror = (record.get("publication_packages") or {}).get("srrx-mirror")
+    want = sorted("%s=%s" % item for item in ((closure or {}).get("installed") or {}).items())
+    if mirror is not None and mirror != want:
+        bad.append("srrx-mirror packages %r are not the image package closure %r" % (mirror, want))
+    if record.get("packages_outside_publications"):
+        bad.append("packages changed outside the publications: %r" % record["packages_outside_publications"])
+    trial = record.get("trial") or {}
+    if trial.get("slot") != "B" or not str(trial.get("entry", "")).startswith("labB+"):
+        bad.append("update record trial %r, expected a counted labB+N.conf" % trial)
+    if guest is None:
+        return bad + ["no update_slot.py plan output on the console of the booted slot"]
+    for key, wanted in (("status", "PLAN_ONLY"), ("mode", "running-system"), ("active_slot", "B"), ("running_slot", "B"), ("target_slot", "A")):
+        if guest.get(key) != wanted:
+            bad.append("guest plan %s %r, expected %r" % (key, guest.get(key), wanted))
+    checks = guest.get("checks") or {}
+    bad += ["guest plan check %s is %r" % (k, checks.get(k)) for k in GUEST_PLAN_CHECKS if checks.get(k) is not True]
+    last = guest.get("last_record") or {}
+    if last.get("name") != Path(str(record.get("record_path") or "")).name or last.get("status") != update_slot.STATUS_UPDATED:
+        bad.append("guest plan sees the update record %r, the builder wrote %r" % (last, Path(str(record.get("record_path") or "")).name))
+    return bad
+
+
+class _Partition:
+    """One partition of the update copy mounted read-write (root B, to add the smoke's plan unit)."""
+
+    def __init__(self, image, number, mountpoint, fstype):
+        self.image, self.number, self.mountpoint, self.fstype = image, number, Path(mountpoint), fstype
+
+    def __enter__(self):
+        import build_image
+        self.loop, self.mounts = build_image.Loop(self.image), build_image.Mounts()
+        try:
+            self.mounts.mount(self.loop.part(self.number), self.mountpoint, self.fstype)
+        except BaseException:
+            self.loop.detach()
+            raise
+        return self.mountpoint
+
+    def __exit__(self, *exc):
+        self.mounts.umount_all()
+        self.loop.detach()
+
+
+def smoke_update(image, manifest_path, facts_path, work, out, mirror_repo=None, lab_repo=None, build_records=(), ci_test_key=None,
+                 timeout=1800):
+    """Scenario 4 (W2 IMG-UPD): the update model on a fresh copy, then one QEMU boot of the trial slot B."""
+    if sys.platform != "linux" or platform.machine() != "aarch64" or os.geteuid() != 0:
+        raise SmokeError("the smoke runs as root on an aarch64 Linux builder")
+    manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
+    if manifest.get("status") != "CANDIDATE_IMAGE_BUILT" or manifest.get("route") != "A":
+        raise SmokeError("needs a built Route A candidate (image-manifest.json)")
+    kconfig = json.loads(Path(facts_path).read_text(encoding="utf-8")).get("kernel_deb_config") or {}
+    work, out = Path(work), Path(out)
+    work.mkdir(parents=True, exist_ok=True)
+    out.mkdir(parents=True, exist_ok=True)
+    report_path = out / "update-smoke-report.json"
+    result = {"schema_version": 1, "kind": "QEMU virt + AAVMF model of the inactive-slot update (W2 IMG-UPD scenario 4; not Q6A hardware)",
+              "hardware_ready": False, "bench_gates_open": ["W-03"], "scenarios": []}
+    missing = [k for k in NEEDED_CONFIG if kconfig.get(k) != "y"]
+    if missing or not shutil.which("qemu-system-aarch64") or not FIRMWARE_CODE.is_file():
+        result.update(status="SMOKE_NOT_FEASIBLE", why="kernel config lacks " + ",".join(missing) if missing else "QEMU or AAVMF missing")
+        report_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+        return result
+    import build_image
+    accel = "kvm" if os.path.exists("/dev/kvm") else "tcg"
+    result.update(accel=accel, qemu=run(["qemu-system-aarch64", "--version"]).stdout.splitlines()[0])
+    config = bootchain.validate_ab(manifest["boot_config"])
+    copy = work / "update.raw"
+    if copy.exists():
+        copy.unlink()
+    recovery_kit.sparse_copy(image, copy)
+    name, expect = UPDATE_SCENARIO
+    closure = manifest.get("package_closure") or {}
+    record = build_image.update_model(copy, work / "update", mirror_repo, lab_repo, build_records, ci_test_key)
+    result["update_record"] = record
+    run_result = {"qemu_exit": None, "report": None, "entries_after": None}
+    if record.get("status") == update_slot.STATUS_UPDATED:
+        esp_dir = work / "esp"
+        with Esp(copy, esp_dir) as esp:
+            rewrite = trial_entry_rewrite(config, esp / "loader/entries")
+            before = lab_entries(esp)
+        with _Partition(copy, 3, work / "root_b", "ext4") as root_b:
+            install_plan_unit(root_b)
+        vars_file = work / "vars-4.fd"
+        shutil.copyfile(FIRMWARE_VARS, vars_file)
+        log = out / ("console-4-%s.log" % name)
+        run_result = qemu(copy, vars_file, log, timeout, accel)
+        with Esp(copy, esp_dir, read_only=True) as esp:
+            run_result.update(entries_before=before, entries_after=lab_entries(esp), trial_entry=rewrite)
+        guest = guest_plan(Path(log).read_text(encoding="utf-8", errors="replace") if Path(log).is_file() else "")
+    else:
+        guest = None
+    checked = check(name, run_result, expect, None, (manifest.get("accounts") or {}).get("service_accounts") or {}, closure, None)
+    mismatches = (checked["mismatches"] if run_result["report"] is not None or record.get("status") == update_slot.STATUS_UPDATED else []) \
+        + update_mismatches(record, closure, guest)
+    checked.update(status="MODEL_FAIL" if mismatches else "MODEL_PASS", mismatches=mismatches, guest_plan=guest)
+    result["scenarios"].append(checked)
+    result["status"] = checked["status"]
+    report_path.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    copy.unlink()
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--image", type=Path, required=True)
@@ -600,10 +778,22 @@ def main():
                         help="CI: SMOKE_NOT_FEASIBLE is a failure (otherwise only MODEL_FAIL is); nothing booted is never green")
     parser.add_argument("--session", action="store_true",
                         help="W2 IMG-4: only the separate greetd/labwc session scenario (session-report.json) instead of the A/B boots")
+    # W2 IMG-UPD: scenario 4 (the updater's trial of slot B) instead of scenarios 1-3; update-smoke-report.json.
+    parser.add_argument("--update-model", action="store_true", help="scenario 4: update_slot.py A->B on a fresh copy, boot the trial")
+    parser.add_argument("--mirror-repo", type=Path, help="--update-model: the srrx-mirror publication signed by the CI test key")
+    parser.add_argument("--lab-repo", type=Path, help="--update-model: an srrx-lab publication (with --build-record)")
+    parser.add_argument("--build-record", type=Path, action="append", default=[])
+    parser.add_argument("--ci-test-key", nargs=2, metavar=("KEYRING", "FINGERPRINT"), help="--update-model: the job-only test key")
     args = parser.parse_args()
+    if args.session and args.update_model:
+        parser.error("--session and --update-model are separate scenarios (one CI step each)")
     try:
-        result = (session_smoke if args.session else smoke)(args.image, args.manifest, args.facts or args.manifest.with_name("image-facts.json"),
-                                                            args.work, args.out, args.timeout)
+        facts = args.facts or args.manifest.with_name("image-facts.json")
+        if args.update_model:
+            result = smoke_update(args.image, args.manifest, facts, args.work, args.out, args.mirror_repo, args.lab_repo, args.build_record,
+                                  args.ci_test_key, args.timeout)
+        else:
+            result = (session_smoke if args.session else smoke)(args.image, args.manifest, facts, args.work, args.out, args.timeout)
     except (OSError, ValueError, SmokeError, subprocess.SubprocessError) as exc:
         print("BLOCKED: " + str(exc), file=sys.stderr)
         return 2
