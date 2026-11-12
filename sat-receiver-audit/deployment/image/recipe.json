@@ -131,6 +131,7 @@
       "srrx-satdump-decode@.service": "srrx.satdump_unit decode: SatDump decodes; srrx.baseband and srrx.voice_mask import numpy only inside try/except ImportError (software/srrx/baseband.py:54-57) (W2 SW-SCHED, build/15 «Інтерпретатор шаблонів (W2 SW-SCHED)»)",
       "srrx-baseband-sweep.service": "srrx.baseband sweep: BasebandStore.sweep lists the class directory, reads each metadata file and stats each data file (_sweep_locked, _keep), no NumPy call; the guarded import keeps the module importable without NumPy (deployment/tests/test_image.py VenvAndUnitInterpreterTests runs the sweep with NumPy blocked)",
       "srrx-lease-readsb@.service": "srrx.adsb_filter prepare, run --detach and stop (ExecStartPre, ExecStartPost, ExecStopPost of the readsb lease, W2 SW-ADSB): standard library only, no srrx or NumPy import (software/srrx/adsb_filter.py); readsb itself is ExecStart via /usr/bin/env",
+      "srrx-lease-aiscatcher@.service": "srrx.ais_filter prepare and serve --detach (ExecStartPre, ExecStartPost of the AIS-catcher lease, W2 SW-AIS): standard library only, no srrx or NumPy import (software/srrx/ais_filter.py); AIS-catcher itself is ExecStart via /usr/bin/env",
       "srrx-boot-check.service": "deployment/image/bootchain.py boot-check: standard library only",
       "srrx-ab-commit.service": "deployment/image/bootchain.py route-b-commit (Route B only): standard library only"
     }
