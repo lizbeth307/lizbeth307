@@ -265,7 +265,7 @@
         "pattern": "BIAS_CH4"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "BIAS_CH4_DAMP"
       },
       {
