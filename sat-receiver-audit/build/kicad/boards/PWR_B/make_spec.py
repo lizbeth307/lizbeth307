@@ -241,10 +241,10 @@ HEADERS = {
 # beside its GND return, towards the top-edge headers and the left LNA channels; the lower row starts with the four LAB5
 # contacts next to the end of the LAB5 trunk and goes on with the signals towards J202 / J203; the sense pair (column 50)
 # sits under the ch4 shunt R246 and the spare columns under the ch4 cell. The FX8 placeholder sat at (106.0, 18.5);
-# there the right alignment-post hole (footprint (13.5, -0.85), 1.45 mm NPTH) lands in a top-side courtyard (L209 at rotation 0 or 180). On y 18.5 with rotation 180
-# both holes clear every top-side courtyard for x 98.46-99.14 (right hole between R244 and R243, left hole right of
-# R506); 98.8 is its middle. With rotation 0 only x 102.05-102.2 is legal, and there the LAB5 contacts lie under U209
-# (route run 43100556016: 21 connections open).
+# there the right alignment-post hole (footprint (13.5, -0.85), 1.45 mm NPTH) lands in a top-side courtyard (L209 at
+# rotation 0 or 180). On y 18.5 with rotation 180 both holes clear every top-side courtyard for x 98.46-99.14 (right
+# hole between R244 and R243, left hole right of R506); 98.8 is its middle. With rotation 0 only x 102.05-102.2 is
+# legal, and there the LAB5 contacts lie under U209 (route run 43100556016: 21 connections open).
 B2B_AT = (98.8, 18.5)
 B2B_ROT = 180
 TX, TY = 72.0, 13.2      # LAB5 F.Cu trunk: vertical at x = TX, horizontal at y = TY (to the J209 via blocks)
@@ -569,6 +569,7 @@ W_TRUNK, W_BRANCH, W_CURRENT, W_SENSE = 2.0, 0.6, 0.5, 0.35
 # J209 escape copper (W2 B2B). The LSHM pads are 0.30 mm wide at 0.50 mm pitch (0.20 mm gaps), and every rail contact has a
 # GND neighbour in its row (b2b-nets.json guard_rule), so: GND contacts join a B.Cu spine between the rows (inwards), rail
 # and signal contacts escape outwards, and copper that enters a pad between two neighbours is at most W_PADSTUB wide.
+W_SIG = 0.2               # scripted signal copper (FAULT_LABPORT), above the SIG minimum 0.15 mm
 W_PADSTUB = 0.25          # into a 0.30 mm pad beside a neighbour: 0.225 mm gap (clearance 0.15 + margin 0.05)
 W_SPINE = 1.4             # GND spine on the connector centre line: 0.40 mm from the inner pad ends of both rows
 SPINE_STUB = 0.5          # GND stubs end 0.5 mm off the spine centre line, so no stub end lies inside a spine via
@@ -733,6 +734,20 @@ def scripted_copper(inp, parts, pins):
         T('K4-SH-P', shunt, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksh} between its neighbours')
         pins['scripted_nets'][sw] = [(u, '6'), (rsh, '1'), (B2B_REF, ksw)]
         pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'), (B2B_REF, ksh)]
+    # FAULT_LABPORT (U502 FAULT to J202 pin 17, W2 B2B): the J202 signals from J209 run west under the LAB5 trunk on B.Cu
+    # and left this net, which must cross both, without a path in route runs 43123026213 and 43123819057 (DRC 0 errors,
+    # 1 open). Scripted: F.Cu from U502 pad 4 to a via right of the switch, B.Cu down left of the J209 alignment hole and
+    # diagonally under the trunk into the pin (SIG width 0.2 mm, not autorouted).
+    fx, fy = P('U502', '4')
+    fv = (r4(parts['U502'].pad('4')['box'][2] + 0.75), r4(fy + 0.365))
+    jx, jy = P('J202', '17')
+    T('FAULT-LABPORT-F', 'FAULT_LABPORT', 'F.Cu', W_SIG, [(fx, fy), fv], 'U502 FAULT (pad 4) to its via right of the switch')
+    V('FAULT-LABPORT-V', 'FAULT_LABPORT', fv, 'FAULT_LABPORT to B.Cu, between U502 and R506')
+    T('FAULT-LABPORT-B', 'FAULT_LABPORT', 'B.Cu', W_SIG,
+      [fv, (r4(fv[0] + 0.85), r4(fv[1] - 0.85)), (r4(fv[0] + 0.85), r4(jy + 6.15)), (r4(jx + 1.2), r4(jy + 2.0)),
+       (jx, r4(jy + 0.8)), (jx, jy)],
+      'down left of the J209 hole and under the LAB5 trunk into J202 pin 17')
+    pins['scripted_nets']['FAULT_LABPORT'] = [('U502', '4'), ('J202', '17')]
     # J209 GND spine: every GND contact (b2b-nets.json guard_rule: the return beside each rail contact and the guards)
     # stubs inwards to a B.Cu track on the connector centre line, between the two rows; plane vias on the spine where a
     # via clears every pad and the other copper. The rail and signal contacts all escape outwards.
@@ -1099,7 +1114,8 @@ def project_json(inp, pins):
     classes = []
     for name, cls in (('Default', nc['classes']['SIG']), ('PWR1A', nc['classes']['PWR1A']), ('PWR2A', nc['classes']['PWR2A']),
                       ('PWR3A', nc['classes']['PWR3A']), ('SCRIPTED_GND', nc['classes']['SIG']),
-                      ('SCRIPTED_PWR1A', nc['classes']['PWR1A']), ('SCRIPTED_PWR3A', nc['classes']['PWR3A'])):
+                      ('SCRIPTED_PWR1A', nc['classes']['PWR1A']), ('SCRIPTED_PWR3A', nc['classes']['PWR3A']),
+                      ('SCRIPTED_SIG', nc['classes']['SIG'])):
         row = copy.deepcopy(default)
         row['name'] = name
         row['track_width'] = cls['outer_min_width_mm']
@@ -1134,7 +1150,7 @@ def project_json(inp, pins):
 # reach its contacts either).
 BOARD_CLASSES = {'LNA4V5': 'PWR1A'}
 # Nets whose copper is all scripted and locked: widths of their netclasses.json class, not autorouted (router -inc).
-SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
+SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A', 'FAULT_LABPORT': 'SCRIPTED_SIG',
                     **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')}}
 
 
