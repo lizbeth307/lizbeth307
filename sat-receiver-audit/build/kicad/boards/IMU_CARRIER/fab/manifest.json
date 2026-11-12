@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/IMU_CARRIER/IMU_CARRIER.kicad_pcb",
-    "board_sha256": "dd2a8fb80f486f26f35de7b71e88a6d426acc88f4ab33eff3470b6e662a5cfe1",
+    "board_sha256": "a053850cd54deee8509bcdb061bdab1b12a788921134cdb09aaed23f01cf769a",
     "project_sha256": "91c3a1d2752d4b389c60c7980544efabd5d844378dd7a40f4b8e371a44718513",
     "spec_projection_sha256": "88731e888471ef3e8b008adb2922d99d0f44caa828be7d422e5056a56cc8f097",
     "report_projection_sha256": "41309a604adca8e3aa46f930352e2a5371f38cc8d8020353aa57fb5cc9e75cf6",
@@ -299,12 +299,12 @@
     },
     {
       "path": "IMU_CARRIER-fab-notes.pdf",
-      "sha256": "96f6b23e3dfd101202c3f1936adba37edd38435fd7b2f2e958fdeefd08f5ba38",
+      "sha256": "6cf5cb1003fa5b465bdffbfcfc7730c20a0e2afe669ae8f326395e643e2b6cd1",
       "bytes": 8211
     },
     {
       "path": "IMU_CARRIER.ipc356",
-      "sha256": "0dc837126274ae0c8d86ddd3b4f1670a69479f4769d92390cfbbbda77dfb0843",
+      "sha256": "338310202ca33ae62542f683b98304b3a214ae9fe2a79199de6d018afe741323",
       "bytes": 3990
     },
     {
@@ -364,12 +364,12 @@
     },
     {
       "path": "gerber/IMU_CARRIER-B_Cu.gbl",
-      "sha256": "ffd3d0cc1f23429e565278774e06e0443c97ee2f7e744de5e190b7f74d9e6637",
+      "sha256": "feb06e78ea6b4e42d4dd310dfc74a6070b8a458afa5c560928ef9fcb5da781aa",
       "bytes": 15494
     },
     {
       "path": "gerber/IMU_CARRIER-B_Mask.gbs",
-      "sha256": "bcecc008904d259198617051f9a8d35232a19c587c2983773bf4909862dfbc82",
+      "sha256": "81f31b1ef0562536ee34b91f8dd974371bed6b672c811f91c4cf2b0fbb918993",
       "bytes": 1812
     },
     {
@@ -379,7 +379,7 @@
     },
     {
       "path": "gerber/IMU_CARRIER-B_Silkscreen.gbo",
-      "sha256": "8a5d101903edfd1ee60ef078d1d6eb9abbdda77ca15b669cff867d94d41795b1",
+      "sha256": "a72e1224a53b32c871967c3b477d0ca6acb2c3588bdf30bb8cf09a8b4f03e7ab",
       "bytes": 1822
     },
     {
@@ -389,23 +389,23 @@
     },
     {
       "path": "gerber/IMU_CARRIER-F_Cu.gtl",
-      "sha256": "06e495804edc6d625249413ef0d0366ae4be699f3e72a634cde50f41eff44e90",
-      "bytes": 38806
+      "sha256": "07cca5d524752ae40bb25da07f3eabf8acabe76efc0a6e8ee7fb197123593a21",
+      "bytes": 38780
     },
     {
       "path": "gerber/IMU_CARRIER-F_Mask.gts",
-      "sha256": "397e6f3ce63f6e57ee455d817a8d1ab665215b696cbdab2496422ee5f3e899cf",
-      "bytes": 3149
+      "sha256": "8abc01357a386bbec50affeb146e5eda2a466eb2e15ea83195763b93a3b99ec5",
+      "bytes": 3154
     },
     {
       "path": "gerber/IMU_CARRIER-F_Paste.gtp",
-      "sha256": "d495a8303b8cc51e25a086e06599d8355112b12f84a787a7194f1b9e41aec22f",
-      "bytes": 2268
+      "sha256": "3ac678f6c386432b6c67ee84e25ae40068f3335e9250d5671f0b53f46168e0f0",
+      "bytes": 2273
     },
     {
       "path": "gerber/IMU_CARRIER-F_Silkscreen.gto",
-      "sha256": "100fc871424ce6af149549557e48bdc7d62b5459905ec16ebfa54959ffd5de5c",
-      "bytes": 35780
+      "sha256": "e60d99f1dd6e6035b7e542395815d956ae30e8cd53a0334ca15c3dcb24017ad3",
+      "bytes": 35785
     },
     {
       "path": "gerber/IMU_CARRIER-job.gbrjob",

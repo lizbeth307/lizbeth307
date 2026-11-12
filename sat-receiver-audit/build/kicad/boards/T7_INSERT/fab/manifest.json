@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/T7_INSERT/T7_INSERT.kicad_pcb",
-    "board_sha256": "91094ddc0601e9aa8f542a5fb6f8fad6234326e387679aacc77eb34130b5c88b",
+    "board_sha256": "9527c6322554604e989b905a76e6eb1911bbfbce25f3e08468e0be89dd816f2c",
     "project_sha256": "218eaa6b22df4ea942c0c921221df012fd9fcfb91247ce4e576be6c17a7c6f1b",
     "spec_projection_sha256": "6d4ca15a992d367cc767ae991388dbc6e9c54a1c1ae3a47b216a10988d42b00c",
     "report_projection_sha256": "b3b35be5aba1e715fa8d88ab222c675a6e2d11cefa44ba2c37f5b7bc6766b8ce",
@@ -316,7 +316,7 @@
     },
     {
       "path": "T7_INSERT.ipc356",
-      "sha256": "59488663c667ed37174f3b8bc5667a0223c20bf266e848aaba36743dda2e3aa2",
+      "sha256": "a87ecafaaf0d611216bed74459d671cce3656fc852c29891b4229cf88cf78671",
       "bytes": 3502
     },
     {
@@ -371,12 +371,12 @@
     },
     {
       "path": "gerber/T7_INSERT-B_Cu.gbl",
-      "sha256": "afc574b4c5051dc6f8789c6b973a22b257a48a6f9ecc8e9e0390373adb74d964",
+      "sha256": "1f6124d64168216c0612442b986900759b9c2a74236c7c029520c50b4cc0554a",
       "bytes": 11059
     },
     {
       "path": "gerber/T7_INSERT-B_Mask.gbs",
-      "sha256": "5e5066dd95d9ceb9d5a64b21235398e5cb3d92642a5fa82eb9b1d0d4e88c85d4",
+      "sha256": "1cf4b9f0fb3836dafbbf725eeaa77058c59975465b6913ab7d34addc36272a48",
       "bytes": 1424
     },
     {
@@ -386,7 +386,7 @@
     },
     {
       "path": "gerber/T7_INSERT-B_Silkscreen.gbo",
-      "sha256": "ca0f57b111ae8acfb92e07a3b4364503d49bb3761d1aefce386e81ff75b67634",
+      "sha256": "a2201b10ec7b080eb816b7ae7387de7d6899fd228826cda9b639496e8c1f9375",
       "bytes": 1434
     },
     {
@@ -396,22 +396,22 @@
     },
     {
       "path": "gerber/T7_INSERT-F_Cu.gtl",
-      "sha256": "8ebf3495de14d0b1f1ca370d4f9db441850ced68dd633b8724ca319a779f8a55",
-      "bytes": 30022
+      "sha256": "3875c02520a366aed74554c9ecfcb872ed8fc496d96650bf91a361b014d240d3",
+      "bytes": 30027
     },
     {
       "path": "gerber/T7_INSERT-F_Mask.gts",
-      "sha256": "8bf4a44d7209700cc005a54aa0e2fc351b96bd81eba0cf5871f0c3f2cf48e434",
+      "sha256": "b6863b57e6aaa964063d20c4980b4d17d2cc07313a3b995a7205ebb87b8cf90a",
       "bytes": 2900
     },
     {
       "path": "gerber/T7_INSERT-F_Paste.gtp",
-      "sha256": "2c66de7c8a750e3a36a3f630d7dd4cdefcffafc0ce0721350755bd0b6afa7ebe",
-      "bytes": 2433
+      "sha256": "502dd77b71031c9a5a948979009c72a583aad4085128e59d79dd1f097246d782",
+      "bytes": 2428
     },
     {
       "path": "gerber/T7_INSERT-F_Silkscreen.gto",
-      "sha256": "1111d1cfe548fbe41d03722af466a937671e6b4ba783a5c3347740f73c9ff104",
+      "sha256": "712bf4b03431a53c61ea5aa897f101d036ed8035a92a2e6dcbd1c3311cf58576",
       "bytes": 35035
     },
     {

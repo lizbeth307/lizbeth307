@@ -45,13 +45,13 @@
   ],
   "exit_code": 0,
   "log_tail": [
-    "2026-11-11 22:53:42.398 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
-    "2026-11-11 22:53:42.467 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
-    "2026-11-11 22:53:42.470 WARN   Deprecated settings path '-inc / --router.ignore_net_classes'; use '--router.autorouter.ignore_net_classes' instead. The old path will be removed in a future release.",
-    "2026-11-11 22:53:42.564 WARN   The '-inc' command-line flag is deprecated; use '--router.autorouter.ignore_net_classes' instead.",
-    "2026-11-11 22:53:42.829 INFO   [3BEF67\\7ADAE7] Loading board file 'T7_INSERT.dsn'...",
-    "2026-11-11 22:53:42.899 INFO   [3BEF67\\7ADAE7] Job '3BEF67\\7ADAE7' started at 2026-11-11T22:53:42.898900120Z.",
-    "2026-11-11 22:53:42.927 WARN   Design Warning: Board has 2 pre-existing clearance violation(s) in the loaded design (before routing):",
+    "2026-11-12 00:46:10.825 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-12 00:46:10.936 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-12 00:46:10.940 WARN   Deprecated settings path '-inc / --router.ignore_net_classes'; use '--router.autorouter.ignore_net_classes' instead. The old path will be removed in a future release.",
+    "2026-11-12 00:46:11.067 WARN   The '-inc' command-line flag is deprecated; use '--router.autorouter.ignore_net_classes' instead.",
+    "2026-11-12 00:46:11.338 INFO   [3BF1E4\\D560F8] Loading board file 'T7_INSERT.dsn'...",
+    "2026-11-12 00:46:11.431 INFO   [3BF1E4\\D560F8] Job '3BF1E4\\D560F8' started at 2026-11-12T00:46:11.431326909Z.",
+    "2026-11-12 00:46:11.474 WARN   Design Warning: Board has 2 pre-existing clearance violation(s) in the loaded design (before routing):",
     "  - 2 unfixable violation(s) (cannot be resolved by Freerouting):",
     "      * 2 fixed trace/via clearance violations:",
     "          - U505.7 [net GND] <-> FixedVia#153 [net GND]",
@@ -59,17 +59,17 @@
     "  - 0 potentially fixable violations",
     "Notice: Freerouting does not modify component placement, board outlines, or fixed items.",
     "Resolving these 2 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).",
-    "2026-11-11 22:53:42.954 INFO   [3BEF67\\7ADAE7] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
-    "2026-11-11 22:53:42.994 INFO   [3BEF67\\7ADAE7] Auto-routing stage started on board '7861875c8ed527826bb0d3550eab1632' with baseline score 92.74 for 18 unrouted items.",
-    "2026-11-11 22:53:43.380 INFO   [3BEF67\\7ADAE7] Auto-routing pass #1 on board '7861875c8ed527826bb0d3550eab1632' was completed in 0.36 seconds with score 426.07 (9 unrouted and 2 violations).",
-    "2026-11-11 22:53:43.398 INFO   [3BEF67\\7ADAE7] Auto-routing pass #2 on board 'f3cad822fa744fbb9067ebd2da914f4f' was completed in 0.01 seconds with score 426.07 (9 unrouted and 2 violations).",
-    "2026-11-11 22:53:43.413 INFO   [3BEF67\\7ADAE7] Auto-routing stage completed: started with 18 unrouted nets, completed in 0.45 seconds, final score: 426.07 (9 unrouted and 2 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
-    "2026-11-11 22:53:43.420 INFO   [3BEF67\\7ADAE7] Skipping optimization stage: the board has 9 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-11 22:53:43.427 INFO   [3BEF67\\7ADAE7] Job '3BEF67\\7ADAE7' finished with state: COMPLETED (elapsed: 0.53 seconds, finished at UTC: 2026-11-11T22:53:43.426273335Z).",
-    "2026-11-11 22:53:43.431 INFO   Saving output file '/tmp/sr-rx-T7_INSERT-0d80z6tt/T7_INSERT.ses' (SES)...",
-    "2026-11-11 22:53:43.433 INFO   Successfully saved output file '/tmp/sr-rx-T7_INSERT-0d80z6tt/T7_INSERT.ses' (3971 bytes)."
+    "2026-11-12 00:46:11.516 INFO   [3BF1E4\\D560F8] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-12 00:46:11.590 INFO   [3BF1E4\\D560F8] Auto-routing stage started on board '7861875c8ed527826bb0d3550eab1632' with baseline score 92.74 for 18 unrouted items.",
+    "2026-11-12 00:46:12.111 INFO   [3BF1E4\\D560F8] Auto-routing pass #1 on board '7861875c8ed527826bb0d3550eab1632' was completed in 0.49 seconds with score 426.07 (9 unrouted and 2 violations).",
+    "2026-11-12 00:46:12.131 INFO   [3BF1E4\\D560F8] Auto-routing pass #2 on board 'f3cad822fa744fbb9067ebd2da914f4f' was completed in 0.00 seconds with score 426.07 (9 unrouted and 2 violations).",
+    "2026-11-12 00:46:12.153 INFO   [3BF1E4\\D560F8] Auto-routing stage completed: started with 18 unrouted nets, completed in 0.63 seconds, final score: 426.07 (9 unrouted and 2 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
+    "2026-11-12 00:46:12.162 INFO   [3BF1E4\\D560F8] Skipping optimization stage: the board has 9 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-12 00:46:12.173 INFO   [3BF1E4\\D560F8] Job '3BF1E4\\D560F8' finished with state: COMPLETED (elapsed: 0.74 seconds, finished at UTC: 2026-11-12T00:46:12.172487917Z).",
+    "2026-11-12 00:46:12.219 INFO   Saving output file '/tmp/sr-rx-T7_INSERT-t4pbu9oy/T7_INSERT.ses' (SES)...",
+    "2026-11-12 00:46:12.220 INFO   Successfully saved output file '/tmp/sr-rx-T7_INSERT-t4pbu9oy/T7_INSERT.ses' (3971 bytes)."
   ],
-  "dsn_sha256": "af433a32f348d85fa6ab5016065ab21694020f626c9bc2afd5d502c6a5ec4803",
+  "dsn_sha256": "6d7c98b0bc1a4f3fa35bc104da1c14a39aca809789e8884c0b029c5009d7c2bc",
   "ses_sha256": "a62374e4056eb70cfc288cd73c7d5c30476f591571f66356371e807bd2084973",
   "dsn_probe": {
     "resolution": "um 10",
@@ -96,6 +96,7 @@
     "before_ses_import": 31,
     "after_ses_import": 31
   },
+  "via_centre_stubs": [],
   "drc_command": [
     "kicad-cli",
     "pcb",
@@ -109,7 +110,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "91094ddc0601e9aa8f542a5fb6f8fad6234326e387679aacc77eb34130b5c88b",
+  "board_sha256": "9527c6322554604e989b905a76e6eb1911bbfbce25f3e08468e0be89dd816f2c",
   "previews": [
     "build/kicad/boards/T7_INSERT/T7_INSERT-top.svg",
     "build/kicad/boards/T7_INSERT/T7_INSERT-bottom.svg"
@@ -196,8 +197,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43115230745",
-    "sha": "01d143237cc7d32a611433147528b3bd5dd511e3",
-    "ref": "refs/heads/wip/w2-sb2"
+    "run_id": "43129454692",
+    "sha": "00ae32804e4c489707fca79cc987bec529cc91e0",
+    "ref": "refs/heads/wip/w2-int"
   }
 }

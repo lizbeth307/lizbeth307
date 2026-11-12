@@ -15,58 +15,12 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of C340",
-          "pos": {
-            "x": 127.2,
-            "y": 104.6
-          },
-          "uuid": "76bccea5-8252-44e1-b524-633e550e2e89"
-        },
-        {
-          "description": "Reference field of D502",
-          "pos": {
-            "x": 128.6,
-            "y": 103.9
-          },
-          "uuid": "dd5f7538-8e82-4fde-812d-85194ac0c08d"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
           "description": "Reference field of C520",
           "pos": {
             "x": 131.0,
             "y": 104.6
           },
-          "uuid": "237d83a1-d22e-4aa8-9ecc-5cddf22f23a6"
-        },
-        {
-          "description": "Reference field of D502",
-          "pos": {
-            "x": 128.6,
-            "y": 103.9
-          },
-          "uuid": "dd5f7538-8e82-4fde-812d-85194ac0c08d"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of C520",
-          "pos": {
-            "x": 131.0,
-            "y": 104.6
-          },
-          "uuid": "237d83a1-d22e-4aa8-9ecc-5cddf22f23a6"
+          "uuid": "82476041-f1da-4870-8315-4d124550ff62"
         },
         {
           "description": "Reference field of J518",
@@ -74,7 +28,7 @@
             "x": 132.5,
             "y": 105.5
           },
-          "uuid": "d946f4b8-2e0f-4b8e-9013-e38ca4acc827"
+          "uuid": "cdf1b376-3057-44a0-a76a-49171620a7fd"
         }
       ],
       "severity": "warning",
@@ -89,7 +43,7 @@
             "x": 131.0,
             "y": 104.6
           },
-          "uuid": "237d83a1-d22e-4aa8-9ecc-5cddf22f23a6"
+          "uuid": "82476041-f1da-4870-8315-4d124550ff62"
         },
         {
           "description": "Segment of C520 on F.Silkscreen",
@@ -97,30 +51,7 @@
             "x": 130.85942,
             "y": 104.09
           },
-          "uuid": "d28f9eaa-f6f8-44af-8a2c-fdb398dbbe49"
-        }
-      ],
-      "severity": "warning",
-      "type": "silk_overlap"
-    },
-    {
-      "description": "Silkscreen clearance",
-      "items": [
-        {
-          "description": "Reference field of C520",
-          "pos": {
-            "x": 131.0,
-            "y": 104.6
-          },
-          "uuid": "237d83a1-d22e-4aa8-9ecc-5cddf22f23a6"
-        },
-        {
-          "description": "Segment of C520 on F.Silkscreen",
-          "pos": {
-            "x": 130.85942,
-            "y": 105.11
-          },
-          "uuid": "fba8eef6-9642-490f-950b-a47e5606e0f9"
+          "uuid": "b65dfd7d-5352-4952-af87-ff559668eb25"
         }
       ],
       "severity": "warning",
@@ -135,15 +66,15 @@
             "x": 128.6,
             "y": 103.9
           },
-          "uuid": "dd5f7538-8e82-4fde-812d-85194ac0c08d"
+          "uuid": "5a453e2c-41b7-4635-b5f2-8d8871d895f7"
         },
         {
-          "description": "Segment of D502 on F.Silkscreen",
+          "description": "Reference field of C340",
           "pos": {
-            "x": 125.09,
-            "y": 103.4
+            "x": 127.2,
+            "y": 104.6
           },
-          "uuid": "eaf43a4e-2f0d-4e51-a0a9-0e600afafadc"
+          "uuid": "ec073158-b35c-4089-8460-b9338f1fd698"
         }
       ],
       "severity": "warning",
@@ -153,20 +84,43 @@
       "description": "Silkscreen clearance",
       "items": [
         {
-          "description": "Reference field of J518",
+          "description": "Reference field of D502",
           "pos": {
-            "x": 132.5,
-            "y": 105.5
+            "x": 128.6,
+            "y": 103.9
           },
-          "uuid": "d946f4b8-2e0f-4b8e-9013-e38ca4acc827"
+          "uuid": "5a453e2c-41b7-4635-b5f2-8d8871d895f7"
         },
         {
-          "description": "Segment of C520 on F.Silkscreen",
+          "description": "Reference field of C520",
           "pos": {
-            "x": 130.85942,
-            "y": 105.11
+            "x": 131.0,
+            "y": 104.6
           },
-          "uuid": "fba8eef6-9642-490f-950b-a47e5606e0f9"
+          "uuid": "82476041-f1da-4870-8315-4d124550ff62"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of D502",
+          "pos": {
+            "x": 128.6,
+            "y": 103.9
+          },
+          "uuid": "5a453e2c-41b7-4635-b5f2-8d8871d895f7"
+        },
+        {
+          "description": "Segment of D502 on F.Silkscreen",
+          "pos": {
+            "x": 125.09,
+            "y": 103.4
+          },
+          "uuid": "a9b24400-4f85-4ec3-a8d9-18c00d30e342"
         }
       ],
       "severity": "warning",
@@ -181,7 +135,7 @@
             "x": 126.938748,
             "y": 103.865
           },
-          "uuid": "3f0026c7-dd5f-4fa9-be78-bccd94f5fe8f"
+          "uuid": "0c783d61-ffaf-46e8-8984-530923b75dc3"
         },
         {
           "description": "Reference field of D502",
@@ -189,7 +143,53 @@
             "x": 128.6,
             "y": 103.9
           },
-          "uuid": "dd5f7538-8e82-4fde-812d-85194ac0c08d"
+          "uuid": "5a453e2c-41b7-4635-b5f2-8d8871d895f7"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of C520 on F.Silkscreen",
+          "pos": {
+            "x": 130.85942,
+            "y": 105.11
+          },
+          "uuid": "01419d29-fbe9-4fd4-ac2b-de90d9517e01"
+        },
+        {
+          "description": "Reference field of C520",
+          "pos": {
+            "x": 131.0,
+            "y": 104.6
+          },
+          "uuid": "82476041-f1da-4870-8315-4d124550ff62"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Segment of C520 on F.Silkscreen",
+          "pos": {
+            "x": 130.85942,
+            "y": 105.11
+          },
+          "uuid": "01419d29-fbe9-4fd4-ac2b-de90d9517e01"
+        },
+        {
+          "description": "Reference field of J518",
+          "pos": {
+            "x": 132.5,
+            "y": 105.5
+          },
+          "uuid": "cdf1b376-3057-44a0-a76a-49171620a7fd"
         }
       ],
       "severity": "warning",
@@ -204,7 +204,7 @@
             "x": 135.71,
             "y": 103.61
           },
-          "uuid": "6a60b2a7-3776-40a1-9135-882bba6088b0"
+          "uuid": "6c83c079-86e9-44d1-b041-1a1e44376806"
         },
         {
           "description": "Reference field of U552",
@@ -212,7 +212,7 @@
             "x": 135.4,
             "y": 104.3
           },
-          "uuid": "ea05aace-e504-4aa3-8f7f-a6fb74b99d05"
+          "uuid": "c8b2cd1d-f861-4a6b-bd26-493111bbfef9"
         }
       ],
       "severity": "warning",
@@ -227,7 +227,7 @@
             "x": 135.71,
             "y": 103.66
           },
-          "uuid": "6a6ad05a-9d99-40f3-9ba8-3e840352b10f"
+          "uuid": "2220b96a-5ca7-4117-87e9-bba017441f02"
         },
         {
           "description": "Reference field of U552",
@@ -235,7 +235,7 @@
             "x": 135.4,
             "y": 104.3
           },
-          "uuid": "ea05aace-e504-4aa3-8f7f-a6fb74b99d05"
+          "uuid": "c8b2cd1d-f861-4a6b-bd26-493111bbfef9"
         }
       ],
       "severity": "warning",
@@ -250,7 +250,7 @@
             "x": 127.2,
             "y": 104.6
           },
-          "uuid": "76bccea5-8252-44e1-b524-633e550e2e89"
+          "uuid": "ec073158-b35c-4089-8460-b9338f1fd698"
         },
         {
           "description": "Pad 1 [E5_IMU_VIN] of C340 on F.Cu",
@@ -258,7 +258,7 @@
             "x": 126.25,
             "y": 104.6
           },
-          "uuid": "061388e0-1990-4496-85cf-d6d425f00414"
+          "uuid": "e8fd33c7-6b13-4093-a06b-ebd8181c51d1"
         }
       ],
       "severity": "warning",
@@ -273,7 +273,7 @@
             "x": 127.2,
             "y": 104.6
           },
-          "uuid": "76bccea5-8252-44e1-b524-633e550e2e89"
+          "uuid": "ec073158-b35c-4089-8460-b9338f1fd698"
         },
         {
           "description": "Pad 2 [GND] of C340 on F.Cu",
@@ -281,7 +281,7 @@
             "x": 128.15,
             "y": 104.6
           },
-          "uuid": "87f96b95-bd84-4e50-ba0f-57cc652953ee"
+          "uuid": "9aa9b1b2-bb2c-4539-b0da-d46518cda122"
         }
       ],
       "severity": "warning",
@@ -296,7 +296,7 @@
             "x": 130.6,
             "y": 109.9
           },
-          "uuid": "e46b81d7-e236-41a1-951d-916316d6ad7b"
+          "uuid": "a0d1eee6-001a-40ea-ab26-3ce634c185c1"
         },
         {
           "description": "Pad 1 [E5_IMU_VIN] of C519 on F.Cu",
@@ -304,7 +304,7 @@
             "x": 129.65,
             "y": 109.9
           },
-          "uuid": "a72178b1-06f1-42bf-86be-a3c685043edc"
+          "uuid": "9d50edb2-0ff1-4361-a2ba-053ebd896af8"
         }
       ],
       "severity": "warning",
@@ -319,7 +319,7 @@
             "x": 130.6,
             "y": 109.9
           },
-          "uuid": "e46b81d7-e236-41a1-951d-916316d6ad7b"
+          "uuid": "a0d1eee6-001a-40ea-ab26-3ce634c185c1"
         },
         {
           "description": "Pad 2 [GND] of C519 on F.Cu",
@@ -327,7 +327,7 @@
             "x": 131.55,
             "y": 109.9
           },
-          "uuid": "27a98085-334f-4fb4-ac63-8a165fb37176"
+          "uuid": "5807a6bf-5e15-4082-bf65-0bb8c9b3a598"
         }
       ],
       "severity": "warning",
@@ -342,7 +342,7 @@
             "x": 131.0,
             "y": 104.6
           },
-          "uuid": "237d83a1-d22e-4aa8-9ecc-5cddf22f23a6"
+          "uuid": "82476041-f1da-4870-8315-4d124550ff62"
         },
         {
           "description": "Pad 1 [E5_IMU_VIN] of C520 on F.Cu",
@@ -350,7 +350,7 @@
             "x": 130.225,
             "y": 104.6
           },
-          "uuid": "b5e88b04-46df-45aa-93be-5dbe2ced9a6c"
+          "uuid": "3dc641c0-c0c0-43ce-adbc-617c3c38f3ed"
         }
       ],
       "severity": "warning",
@@ -365,7 +365,7 @@
             "x": 131.0,
             "y": 104.6
           },
-          "uuid": "237d83a1-d22e-4aa8-9ecc-5cddf22f23a6"
+          "uuid": "82476041-f1da-4870-8315-4d124550ff62"
         },
         {
           "description": "Pad 2 [GND] of C520 on F.Cu",
@@ -373,7 +373,7 @@
             "x": 131.775,
             "y": 104.6
           },
-          "uuid": "af5ac734-9b1f-4ab6-a2be-de42c2abc7ab"
+          "uuid": "288f85c5-0a0c-4e4e-b377-71090d6eb4c2"
         }
       ],
       "severity": "warning",
@@ -388,7 +388,7 @@
             "x": 128.6,
             "y": 103.9
           },
-          "uuid": "dd5f7538-8e82-4fde-812d-85194ac0c08d"
+          "uuid": "5a453e2c-41b7-4635-b5f2-8d8871d895f7"
         },
         {
           "description": "Pad 1 [E5_IMU_VIN] of C520 on F.Cu",
@@ -396,7 +396,7 @@
             "x": 130.225,
             "y": 104.6
           },
-          "uuid": "b5e88b04-46df-45aa-93be-5dbe2ced9a6c"
+          "uuid": "3dc641c0-c0c0-43ce-adbc-617c3c38f3ed"
         }
       ],
       "severity": "warning",
@@ -411,7 +411,7 @@
             "x": 128.6,
             "y": 103.9
           },
-          "uuid": "dd5f7538-8e82-4fde-812d-85194ac0c08d"
+          "uuid": "5a453e2c-41b7-4635-b5f2-8d8871d895f7"
         },
         {
           "description": "Pad 2 [GND] of C340 on F.Cu",
@@ -419,7 +419,7 @@
             "x": 128.15,
             "y": 104.6
           },
-          "uuid": "87f96b95-bd84-4e50-ba0f-57cc652953ee"
+          "uuid": "9aa9b1b2-bb2c-4539-b0da-d46518cda122"
         }
       ],
       "severity": "warning",
@@ -434,7 +434,7 @@
             "x": 114.0,
             "y": 111.5
           },
-          "uuid": "72acb12b-f617-477e-ae34-5f7dd90f2c09"
+          "uuid": "26eb2881-0645-49e4-810e-fbdc4c1c0c64"
         },
         {
           "description": "PTH pad 4 [E3_IMU_WAKE_N] of J322",
@@ -442,7 +442,7 @@
             "x": 112.6,
             "y": 110.1
           },
-          "uuid": "c9344523-441a-4f9d-9198-5e5371732994"
+          "uuid": "eeb1f0e3-433f-4fd8-a0a1-7be3334c0c1b"
         }
       ],
       "severity": "warning",
@@ -457,7 +457,7 @@
             "x": 132.5,
             "y": 105.5
           },
-          "uuid": "d946f4b8-2e0f-4b8e-9013-e38ca4acc827"
+          "uuid": "cdf1b376-3057-44a0-a76a-49171620a7fd"
         },
         {
           "description": "Pad 2 [GND] of C520 on F.Cu",
@@ -465,7 +465,7 @@
             "x": 131.775,
             "y": 104.6
           },
-          "uuid": "af5ac734-9b1f-4ab6-a2be-de42c2abc7ab"
+          "uuid": "288f85c5-0a0c-4e4e-b377-71090d6eb4c2"
         }
       ],
       "severity": "warning",

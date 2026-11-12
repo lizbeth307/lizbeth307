@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pcb",
-      "sha256": "2f455914e52667821eb40bd92ea255851c54d8752af6fb955102d39c3ad5da75"
+      "sha256": "70d646061f4e1df3dc970c12afbc67577399e0a82bf0674915304f93f32d0d94"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "e03ef3fa2c72080f6806e3c6fbe2ff4e933c9dc7e93868e900d19feea2c1fb4e",
@@ -29,7 +29,7 @@
   "counts": {
     "footprints": 7,
     "pads": 17,
-    "tracks": 41,
+    "tracks": 40,
     "vias": 2,
     "zones": 10,
     "holes": 0,
@@ -60,7 +60,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 41,
+      "tracks_checked": 40,
       "pour_necks": [],
       "split_nets": {}
     },
