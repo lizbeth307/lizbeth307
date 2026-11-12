@@ -128,8 +128,9 @@ def rect(x0, y0, x1, y1):
     return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]
 
 
-def pour(net, outline, why, pin_entry=None, layer='F.Cu'):
-    return {'net': net, 'outline': outline, 'why': why, 'pin_entry': pin_entry, 'layer': layer}
+def pour(net, outline, why, pin_entry=None, layer='F.Cu', branch=False):
+    # branch: the pour feeds a side part (a capacitor, a PTC) and is not in the series path of its net (lab5_budget.py)
+    return {'net': net, 'outline': outline, 'why': why, 'pin_entry': pin_entry, 'layer': layer, 'branch': branch}
 
 
 # Scripted pours, priority 2, solid pad connection (W2 PCB-PWRA-2 probes 2-4: thermal spokes gave a 1.03 mm neck): id ->
@@ -193,10 +194,11 @@ POWER_POURS = {
     'LAB5RAW-VOUT2': pour('E1_LAB5_RAW', rect(15.3, 76.8, 16.7, 78.1), 'onto U108 VOUT2 (pad 1.4 mm)', ['U108.9']),
     'LAB5FUSED': pour('E1_LAB5_FUSED', rect(0.6, 77.5, 7.4, 87.6), 'PWR3A 6.8 mm: F102.2 (both THT pads) to L101.1'),
     'LAB5FUSED-C111': pour('E1_LAB5_FUSED', rect(7.1, 77.4, 10.65, 79.4),
-                           'PWR3A 2.0 mm: onto C111.1 at the F102.2/L101.1 node (review fix F2)'),
+                           'PWR3A 2.0 mm: onto C111.1 at the F102.2/L101.1 node (review fix F2)', branch=True),
     'LAB5-L101': pour('LAB5', rect(0.6, 89.0, 7.4, 94.0),
                       'PWR3A 5.0 mm: L101.2 (the E1 LAB5 end) and C112.1, six vias to the B.Cu trunk (review fix F2)'),
-    'LAB5-F104': pour('LAB5', rect(0.6, 93.6, 3.95, 97.675), 'PWR3A 3.35 mm: onto F104.1 (LAB5_RLY PTC) (review fix F2)'),
+    'LAB5-F104': pour('LAB5', rect(0.6, 93.6, 3.95, 97.675), 'PWR3A 3.35 mm: onto F104.1 (LAB5_RLY PTC) (review fix F2)',
+                      branch=True),
     'LAB5-B-TOP': pour('LAB5', rect(0.6, 90.4, 26.5, 92.6),
                        'B.Cu PWR3A 2.2 mm: the LAB5 trunk from L101.2 across the leg above thermal_bond zone 4\' (review fix '
                        'F2)', layer='B.Cu'),
@@ -570,6 +572,8 @@ def build():
                     'why': why + ' (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)'}
             if item['pin_entry']:
                 zone['pin_entry'] = item['pin_entry']
+            if item['branch']:
+                zone['branch'] = True
             copper_zones.append(zone)
             if layer in ('F.Cu', 'B.Cu'):  # inner copper is no placement obstacle
                 xs, ys = [p[0] for p in outline], [p[1] for p in outline]

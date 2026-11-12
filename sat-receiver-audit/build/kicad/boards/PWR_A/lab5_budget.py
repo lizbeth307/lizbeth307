@@ -344,7 +344,8 @@ def build():
         remaining[tk] = rows
     def pour_path(net, a, b, what):
         zones = [z for z in spec['pre_route'].get('zones', []) if z['net'] == net and z.get('outline') != 'board']
-        main = [z for z in zones if not z.get('pin_entry')]
+        # pin-entry stems and branch pours (a side capacitor, review fix F2) are not the series path of the net
+        main = [z for z in zones if not z.get('pin_entry') and not z.get('branch')]
         if not main:
             return None
         widths = []
@@ -354,7 +355,8 @@ def build():
         w = min(widths)
         length = abs(b[0] - a[0]) + abs(b[1] - a[1])
         return {'what': what, 'from': [r4(a[0]), r4(a[1])], 'to': [r4(b[0]), r4(b[1])], 'orthogonal_mm': r4(length),
-                'narrowest_pour_width_mm': r4(w), 'pours': sorted(z['id'] for z in zones), 'outer_layers': 1,
+                'narrowest_pour_width_mm': r4(w), 'pours': sorted(z['id'] for z in main),
+                'not_in_the_series_path': sorted(z['id'] for z in zones if z not in main), 'outer_layers': 1,
                 'by_temperature_upper_bound': {tk: r4(copper(length, w, 1, tc) * 1e3) for tk, tc in temps.items()},
                 'unit': 'mOhm',
                 'label': 'MODEL upper bound: the whole orthogonal path at the narrowest scripted pour width, F.Cu only'}
