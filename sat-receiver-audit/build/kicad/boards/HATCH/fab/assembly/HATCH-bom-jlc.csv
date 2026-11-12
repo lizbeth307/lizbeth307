@@ -1,0 +1,5 @@
+"Comment","Designator","Footprint","LCSC Part #","Quantity","Boards","Total quantity","Mount","Graph refs","Note"
+"B3B-PH-K-S(LF)(SN)","J502,J513","JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical","C131339","2","1","2","THT","J502: HATCH J502; J513: HATCH J513",""
+"43650-0315","J503","Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical","C293546","1","1","1","THT","J503: HATCH J503",""
+"43650-0215","J509","Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical","C293740","1","1","1","THT","J509: HATCH J509",""
+"B2B-PH-K-S(LF)(SN)","J510","JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical","C131337","1","1","1","THT","J510: HATCH J510",""

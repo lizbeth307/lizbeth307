@@ -1,0 +1,201 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "IMU_CARRIER",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "IMUPACK",
+      "placement": "default",
+      "board_origin_enclosure_mm": null,
+      "z_bottom": null,
+      "facing": null,
+      "connectors": [
+        {
+          "template_ref": "J321",
+          "ref": "J321",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            20.0,
+            1.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "IMU_TX",
+              "at": [
+                20.0,
+                1.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "IMU_RX",
+              "at": [
+                16.0,
+                1.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_IMU_CS_N",
+              "at": [
+                12.0,
+                1.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E3_IMU_WAKE_N",
+              "at": [
+                8.0,
+                1.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J320",
+          "ref": "J320",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            31.5,
+            1.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E5_IMU_VIN",
+              "at": [
+                31.5,
+                1.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                27.5,
+                1.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_IMU3V3",
+              "at": [
+                23.5,
+                1.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J322",
+          "ref": "J322",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            24.6,
+            4.4
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E3_IMU3V3",
+              "at": [
+                24.6,
+                4.4
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                20.6,
+                4.4
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_IMU_CS_N",
+              "at": [
+                16.6,
+                4.4
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E3_IMU_WAKE_N",
+              "at": [
+                12.6,
+                4.4
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "E3_IMU3V3",
+              "at": [
+                8.6,
+                4.4
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J518",
+          "ref": "J518",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            26.5,
+            7.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E5_IMU5V",
+              "at": [
+                26.5,
+                7.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                30.5,
+                7.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "IMU_TX",
+              "at": [
+                34.5,
+                7.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "IMU_RX",
+              "at": [
+                38.5,
+                7.5
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

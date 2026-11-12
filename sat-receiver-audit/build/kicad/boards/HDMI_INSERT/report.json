@@ -1,0 +1,959 @@
+{
+  "schema": "srrx-board-report-v1",
+  "board_id": "HDMI_INSERT",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN",
+  "passed": true,
+  "result": {
+    "drc_errors": 0,
+    "drc_unconnected": 0,
+    "drc_warnings": 4,
+    "ignored_checks": [],
+    "source_pad_audit_errors": {
+      "HDMIA": 0
+    },
+    "boundary_audit": [
+      "provisional: FPC socket ref pending GR-4 (Adafruit 3548/3550/3560 FPC pinout and socket MPN unpublished)"
+    ],
+    "domain_audit": true,
+    "keepout_audit": true,
+    "annular_audit": true,
+    "locked_copper_kept": true,
+    "group_audit": true
+  },
+  "inputs": {
+    "parts": {
+      "spec": "0a1a6c3da2f53ffad65ffb868b4727ac84fc6879460000cbc96bda36e503834c",
+      "contract": "3ca2c97f637fae7f341e0d6b7e2bf3814a79643d1df57e5786928e1be495c54a",
+      "project_rules": "9c6b51914209dcf6e402366b9cfd8abd3faf7fc8ad7464a313b8d3fec876a300",
+      "template": "db3fb92addba824860df5d758e7c82d5f308d26f944ce559d3dd00c277213e9e",
+      "instances": "477ce1ea8dfbeeb704d06775627b63b02ddd86bc769111cebbcb4ee7970b2174"
+    },
+    "sha256": "d67aeb9ea2caa01b218948b5a734c814ca035c258c4667415d21143c1b87e57b"
+  },
+  "board_file": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pcb",
+  "board_sha256": "70d646061f4e1df3dc970c12afbc67577399e0a82bf0674915304f93f32d0d94",
+  "project_file": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pro",
+  "fp_lib_table_sha256": "4587afb7ba0ffb710a9df3bcd16a4e77b8df3ea2d017a21825be536944e99734",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
+    "plan": {
+      "F.Cu": "parts, signals, GND pour",
+      "B.Cu": "signals, GND pour"
+    }
+  },
+  "stackup_contract": {
+    "t": 1.6,
+    "layers": 2,
+    "fab": "JLC 2-layer FR-4 1.6 mm, 1 oz outer copper (standard; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)', build/15)",
+    "components": "top side only (SMD and THT)"
+  },
+  "outline_mm": [
+    [
+      0,
+      0
+    ],
+    [
+      16.0,
+      0
+    ],
+    [
+      16.0,
+      18.0
+    ],
+    [
+      0,
+      18.0
+    ]
+  ],
+  "holes": [],
+  "instances": [
+    {
+      "id": "HDMIA",
+      "placement": "default",
+      "qty": 1,
+      "refs": {
+        "J1": null,
+        "J2": null,
+        "U506": "U506",
+        "C517": "C517",
+        "C518": "C518",
+        "R552": "R552",
+        "TP502": "TP502"
+      },
+      "nets": {
+        "E5_HDMI_5V_Q6A": "E5_HDMI_5V_Q6A",
+        "E5_HDMI_5V_DISP": "E5_HDMI_5V_DISP",
+        "E5_HDMI_ST_N": "E5_HDMI_ST_N",
+        "GND": "GND"
+      }
+    }
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "template": [
+    {
+      "ref": "J1",
+      "source": "pilot_placeholder",
+      "fpid": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+      "library": "kicad-image",
+      "file": null,
+      "sha256": "3fb9d4d7de927c5ce8ddecff227a5f36e9a2e9b2bd1184b9c1d53c807998e92e",
+      "value": "FPC socket A placeholder (pin 18 in, GND), nothing fitted",
+      "pads": {
+        "1": "E5_HDMI_5V_Q6A",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J2",
+      "source": "pilot_placeholder",
+      "fpid": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+      "library": "kicad-image",
+      "file": null,
+      "sha256": "3fb9d4d7de927c5ce8ddecff227a5f36e9a2e9b2bd1184b9c1d53c807998e92e",
+      "value": "FPC socket B placeholder (pin 18 out, GND), nothing fitted",
+      "pads": {
+        "1": "E5_HDMI_5V_DISP",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "U506",
+      "source": "graph",
+      "fpid": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+      "library": "project",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-363_SC-70-6.kicad_mod",
+      "sha256": "0659d885e00b786968c3ba29152b808777240a91c1fb49ab8d814eb03530115c",
+      "value": "LM66100DCKR HDMI5V ideal diode",
+      "pads": {
+        "1": "E5_HDMI_5V_Q6A",
+        "2": "GND",
+        "3": "E5_HDMI_5V_DISP",
+        "4": null,
+        "5": "E5_HDMI_ST_N",
+        "6": "E5_HDMI_5V_DISP"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C517",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "value": "100nF X7R 10V",
+      "pads": {
+        "1": "E5_HDMI_5V_Q6A",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "C518",
+      "source": "graph",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "value": "100nF X7R 10V",
+      "pads": {
+        "1": "E5_HDMI_5V_DISP",
+        "2": "GND"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "R552",
+      "source": "graph",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "library": "project",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "value": "100k 1%",
+      "pads": {
+        "1": "E5_HDMI_ST_N",
+        "2": "E5_HDMI_5V_Q6A"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "TP502",
+      "source": "graph",
+      "fpid": "TestPoint:TestPoint_Pad_D1.5mm",
+      "library": "project",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042",
+      "value": "HDMI ideal diode ST_N diagnostic",
+      "pads": {
+        "1": "E5_HDMI_ST_N"
+      },
+      "unused_pads": []
+    }
+  ],
+  "placeholders": [
+    {
+      "ref": "J1",
+      "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+      "replaced_by": "FPC socket A for flex 1 (MPN TBD; W2 GR-4 OPEN): its pin-18 and GND contacts",
+      "pending": "FPC socket ref pending GR-4 (Adafruit 3548/3550/3560 FPC pinout and socket MPN unpublished)",
+      "pins_source": "design/E5.json U506 pins 1 (E5_HDMI_5V_Q6A: HDMI pin 18 from the Q6A side) and 3/6 (E5_HDMI_5V_DISP: pin 18 to the display side) and GND; the FPC contact numbers of these conductors are not published (W2 GR-4)",
+      "why": "The boundary nets E5_HDMI_5V_Q6A, E5_HDMI_5V_DISP and GND leave the board through the two FPC sockets, which have no graph ref, no MPN and no published pinout (W2 GR-4). Two 2-pad 2.0 mm lands (KiCad 10.0.7 PinHeader_1x02_P2.00mm_Vertical, drill 0.8, pad 1.35) mark where the socket A / socket B pin-18 and GND contacts join the island, so the boundary audit reads 'provisional' (OPEN) instead of 'dangling'. Nothing is fitted in them; the TMDS, clock, DDC, CEC, HPD and shield conductors stay OPEN with the sockets."
+    },
+    {
+      "ref": "J2",
+      "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+      "replaced_by": "FPC socket B for flex 2 (MPN TBD; W2 GR-4 OPEN): its pin-18 and GND contacts",
+      "pending": "FPC socket ref pending GR-4 (Adafruit 3548/3550/3560 FPC pinout and socket MPN unpublished)",
+      "pins_source": "design/E5.json U506 pins 1 (E5_HDMI_5V_Q6A: HDMI pin 18 from the Q6A side) and 3/6 (E5_HDMI_5V_DISP: pin 18 to the display side) and GND; the FPC contact numbers of these conductors are not published (W2 GR-4)",
+      "why": "The boundary nets E5_HDMI_5V_Q6A, E5_HDMI_5V_DISP and GND leave the board through the two FPC sockets, which have no graph ref, no MPN and no published pinout (W2 GR-4). Two 2-pad 2.0 mm lands (KiCad 10.0.7 PinHeader_1x02_P2.00mm_Vertical, drill 0.8, pad 1.35) mark where the socket A / socket B pin-18 and GND contacts join the island, so the boundary audit reads 'provisional' (OPEN) instead of 'dangling'. Nothing is fitted in them; the TMDS, clock, DDC, CEC, HPD and shield conductors stay OPEN with the sockets."
+    }
+  ],
+  "placement": [
+    {
+      "ref": "C517",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        4.6,
+        9.65
+      ],
+      "courtyard_box": [
+        3.095,
+        8.895,
+        6.105,
+        10.405
+      ],
+      "fab_box": [
+        3.75,
+        9.2,
+        5.45,
+        10.1
+      ]
+    },
+    {
+      "ref": "C518",
+      "fpid": "Capacitor_SMD:C_0603_1608Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        11.4,
+        9.65
+      ],
+      "courtyard_box": [
+        9.895,
+        8.895,
+        12.905,
+        10.405
+      ],
+      "fab_box": [
+        10.55,
+        9.2,
+        12.25,
+        10.1
+      ]
+    },
+    {
+      "ref": "J1",
+      "fpid": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+      "side": "F",
+      "rotation": -90.0,
+      "at": [
+        7.0,
+        2.2
+      ],
+      "courtyard_box": [
+        3.475,
+        0.675,
+        8.525,
+        3.725
+      ],
+      "fab_box": [
+        3.95,
+        1.15,
+        8.05,
+        3.25
+      ]
+    },
+    {
+      "ref": "J2",
+      "fpid": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+      "side": "F",
+      "rotation": -90.0,
+      "at": [
+        7.0,
+        15.8
+      ],
+      "courtyard_box": [
+        3.475,
+        14.275,
+        8.525,
+        17.325
+      ],
+      "fab_box": [
+        3.95,
+        14.75,
+        8.05,
+        16.85
+      ]
+    },
+    {
+      "ref": "R552",
+      "fpid": "Resistor_SMD:R_0603_1608Metric",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        8.0,
+        6.3
+      ],
+      "courtyard_box": [
+        6.495,
+        5.545,
+        9.505,
+        7.055
+      ],
+      "fab_box": [
+        7.15,
+        5.8375,
+        8.85,
+        6.7625
+      ]
+    },
+    {
+      "ref": "TP502",
+      "fpid": "TestPoint:TestPoint_Pad_D1.5mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        12.6,
+        6.3
+      ],
+      "courtyard_box": [
+        11.325,
+        5.025,
+        13.875,
+        7.575
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "U506",
+      "fpid": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        8.0,
+        9.0
+      ],
+      "courtyard_box": [
+        6.525,
+        7.875,
+        9.475,
+        10.125
+      ],
+      "fab_box": [
+        7.325,
+        7.95,
+        8.675,
+        10.05
+      ]
+    }
+  ],
+  "pads": {
+    "C517": [
+      {
+        "number": "1",
+        "net": "E5_HDMI_5V_Q6A",
+        "at": [
+          3.825,
+          9.65
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          5.375,
+          9.65
+        ]
+      }
+    ],
+    "C518": [
+      {
+        "number": "1",
+        "net": "E5_HDMI_5V_DISP",
+        "at": [
+          10.625,
+          9.65
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          12.175,
+          9.65
+        ]
+      }
+    ],
+    "J1": [
+      {
+        "number": "1",
+        "net": "E5_HDMI_5V_Q6A",
+        "at": [
+          7.0,
+          2.2
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          5.0,
+          2.2
+        ]
+      }
+    ],
+    "J2": [
+      {
+        "number": "1",
+        "net": "E5_HDMI_5V_DISP",
+        "at": [
+          7.0,
+          15.8
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          5.0,
+          15.8
+        ]
+      }
+    ],
+    "R552": [
+      {
+        "number": "1",
+        "net": "E5_HDMI_ST_N",
+        "at": [
+          7.175,
+          6.3
+        ]
+      },
+      {
+        "number": "2",
+        "net": "E5_HDMI_5V_Q6A",
+        "at": [
+          8.825,
+          6.3
+        ]
+      }
+    ],
+    "TP502": [
+      {
+        "number": "1",
+        "net": "E5_HDMI_ST_N",
+        "at": [
+          12.6,
+          6.3
+        ]
+      }
+    ],
+    "U506": [
+      {
+        "number": "1",
+        "net": "E5_HDMI_5V_Q6A",
+        "at": [
+          7.1625,
+          9.65
+        ]
+      },
+      {
+        "number": "2",
+        "net": "GND",
+        "at": [
+          7.1625,
+          9.0
+        ]
+      },
+      {
+        "number": "3",
+        "net": "E5_HDMI_5V_DISP",
+        "at": [
+          7.1625,
+          8.35
+        ]
+      },
+      {
+        "number": "4",
+        "net": null,
+        "at": [
+          8.8375,
+          8.35
+        ]
+      },
+      {
+        "number": "5",
+        "net": "E5_HDMI_ST_N",
+        "at": [
+          8.8375,
+          9.0
+        ]
+      },
+      {
+        "number": "6",
+        "net": "E5_HDMI_5V_DISP",
+        "at": [
+          8.8375,
+          9.65
+        ]
+      }
+    ]
+  },
+  "copper": {
+    "tracks": {
+      "segments": 40,
+      "vias": 2,
+      "locked": 0,
+      "by_layer": {
+        "B.Cu": 6,
+        "F.Cu": 34
+      },
+      "widths_mm": [
+        0.25
+      ]
+    },
+    "zones": [
+      {
+        "name": "GND-B",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "B.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "GND-F",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "F.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_0_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_0_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_1_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_1_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_2_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_2_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_3_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_3_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      }
+    ],
+    "copper_layers": 2
+  },
+  "drc": {
+    "errors": 0,
+    "warnings": 4,
+    "unconnected": 0,
+    "schematic_parity": 0,
+    "ignored_checks": [],
+    "by_type": {
+      "silk_over_copper": {
+        "severity": "warning",
+        "count": 2
+      },
+      "silk_overlap": {
+        "severity": "warning",
+        "count": 2
+      }
+    },
+    "error_items": [],
+    "warning_items": [
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of J1",
+            "pos": [
+              104.0,
+              115.8
+            ]
+          },
+          {
+            "description": "PTH pad 2 [GND] of J1",
+            "pos": [
+              105.0,
+              115.8
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of J2",
+            "pos": [
+              104.0,
+              102.2
+            ]
+          },
+          {
+            "description": "PTH pad 2 [GND] of J2",
+            "pos": [
+              105.0,
+              102.2
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C517",
+            "pos": [
+              104.6,
+              106.9
+            ]
+          },
+          {
+            "description": "Reference field of U506",
+            "pos": [
+              108.0,
+              106.4
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C518",
+            "pos": [
+              111.4,
+              106.9
+            ]
+          },
+          {
+            "description": "Reference field of U506",
+            "pos": [
+              108.0,
+              106.4
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      }
+    ],
+    "unconnected_items": [],
+    "severities_reviewed": {
+      "errors": [
+        "annular_width",
+        "assertion_failure",
+        "clearance",
+        "connection_width",
+        "copper_edge_clearance",
+        "copper_sliver",
+        "courtyards_overlap",
+        "creepage",
+        "diff_pair_gap_out_of_range",
+        "diff_pair_uncoupled_length_too_long",
+        "drill_out_of_range",
+        "footprint",
+        "footprint_type_mismatch",
+        "generic_error",
+        "hole_clearance",
+        "hole_to_hole",
+        "holes_co_located",
+        "invalid_outline",
+        "isolated_copper",
+        "item_on_disabled_layer",
+        "items_not_allowed",
+        "length_out_of_range",
+        "lib_footprint_issues",
+        "lib_footprint_mismatch",
+        "malformed_courtyard",
+        "microvia_drill_out_of_range",
+        "mirrored_text_on_front_layer",
+        "missing_courtyard",
+        "nonmirrored_text_on_back_layer",
+        "npth_inside_courtyard",
+        "padstack",
+        "padstack_invalid",
+        "pth_inside_courtyard",
+        "shorting_items",
+        "silk_edge_clearance",
+        "skew_out_of_range",
+        "solder_mask_bridge",
+        "starved_thermal",
+        "text_height",
+        "text_on_edge_cuts",
+        "text_thickness",
+        "through_hole_pad_without_hole",
+        "too_many_vias",
+        "track_angle",
+        "track_dangling",
+        "track_not_centered_on_via",
+        "track_on_post_machined_layer",
+        "track_segment_length",
+        "track_width",
+        "tracks_crossing",
+        "unconnected_items",
+        "unresolved_variable",
+        "via_dangling",
+        "via_diameter",
+        "zones_intersect"
+      ],
+      "warnings": {
+        "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+        "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+        "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+        "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+        "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
+        "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board"
+      }
+    },
+    "kicad_version": "10.0.7",
+    "coordinate_units": "mm",
+    "passed": true
+  },
+  "audits": {
+    "domain": {
+      "domains": [
+        "HDMI_INSERT"
+      ],
+      "domain_refs": [
+        "C517",
+        "C518",
+        "R552",
+        "TP502",
+        "U506"
+      ],
+      "missing": [],
+      "foreign": [],
+      "passed": true
+    },
+    "source_pad": [
+      {
+        "instance": "HDMIA",
+        "errors": [],
+        "passed": true
+      }
+    ],
+    "boundary": [
+      {
+        "instance": "HDMIA",
+        "status": "provisional: FPC socket ref pending GR-4 (Adafruit 3548/3550/3560 FPC pinout and socket MPN unpublished)",
+        "nets": [
+          {
+            "net": "E5_HDMI_5V_DISP",
+            "graph_net": "E5_HDMI_5V_DISP",
+            "board_pads": [
+              "J2.1",
+              "U506.3",
+              "U506.6",
+              "C518.1"
+            ],
+            "external_refs": 1,
+            "external_sample": [
+              "U520"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "E5_HDMI_5V_Q6A",
+            "graph_net": "E5_HDMI_5V_Q6A",
+            "board_pads": [
+              "J1.1",
+              "U506.1",
+              "C517.1",
+              "R552.2"
+            ],
+            "external_refs": 1,
+            "external_sample": [
+              "J520"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "E5_HDMI_ST_N",
+            "graph_net": "E5_HDMI_ST_N",
+            "board_pads": [
+              "U506.5",
+              "R552.1",
+              "TP502.1"
+            ],
+            "external_refs": 0,
+            "external_sample": [],
+            "status": "internal"
+          },
+          {
+            "net": "GND",
+            "graph_net": "GND",
+            "board_pads": [
+              "J1.2",
+              "J2.2",
+              "U506.2",
+              "C517.2",
+              "C518.2"
+            ],
+            "external_refs": 526,
+            "external_sample": [
+              "A401",
+              "A402",
+              "A403",
+              "A404",
+              "A405",
+              "A406"
+            ],
+            "status": "provisional"
+          }
+        ],
+        "hosted_contacts": []
+      }
+    ],
+    "keepout": {
+      "rows": [],
+      "errors": [],
+      "passed": true,
+      "note": "Keepout = copper rule area (tracks, vias, fills) on the listed layers. A courtyard box intrusion is reported, not failed, when pads and the F.Fab body clear the keepout."
+    },
+    "annular": {
+      "floor_mm": 0.18,
+      "below_floor": [],
+      "passed": true
+    },
+    "groups": {
+      "rows": [],
+      "errors": [],
+      "passed": true
+    },
+    "locked": {
+      "scripted_segments": 0,
+      "locked_on_board": 0,
+      "kept": true,
+      "note": "SES import before/after counts and the DSN probe are in route-log.json"
+    }
+  },
+  "router": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "runtime": "Eclipse Temurin JRE 25.0.5+8 (sha256 6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6)",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:06:00",
+    "fetch": "CI only, never committed or uploaded"
+  },
+  "heights": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "reserve hdmi_insert top z 45.5 (contract-proposal max_component_height)"
+    }
+  ],
+  "does_not_prove": [
+    "that the schematic is right",
+    "current capacity or temperature rise beyond the chosen class widths",
+    "impedance, RF loss or isolation, EMC or signal integrity",
+    "creepage beyond the encoded clearances",
+    "that the enclosure fits (only outline and hole checks; heights are not checked here)",
+    "that the fab's DFM accepts the board, or that CPL rotations are right",
+    "that the land patterns match the purchased MPNs",
+    "any function: hardware and bench gates stay OPEN"
+  ]
+}

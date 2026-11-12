@@ -1,0 +1,6 @@
+"Comment","Designator","Footprint","LCSC Part #","Quantity","Boards","Total quantity","Mount","Graph refs","Note"
+"CC0603KRX7R9BB104","C517,C518","C_0603_1608Metric","C14663","2","1","2","SMD","C517: HDMIA C517; C518: HDMIA C518",""
+"0603WAF1003T5E","R552","R_0603_1608Metric","C25803","1","1","1","SMD","R552: HDMIA R552",""
+"LM66100DCKR","U506","SOT-363_SC-70-6","C2869734","1","1","1","SMD","U506: HDMIA U506",""
+"FPC socket A placeholder (pin 18 in, GND), nothing fitted","J1","PinHeader_1x02_P2.00mm_Vertical","TBD","1","1","1","THT","J1: none","TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by FPC socket A for flex 1 (MPN TBD; W2 GR-4 OPEN): its pin-18 and GND contacts"
+"FPC socket B placeholder (pin 18 out, GND), nothing fitted","J2","PinHeader_1x02_P2.00mm_Vertical","TBD","1","1","1","THT","J2: none","TBD: pilot_placeholder, no graph ref and no MPN yet; replaced by FPC socket B for flex 2 (MPN TBD; W2 GR-4 OPEN): its pin-18 and GND contacts"
