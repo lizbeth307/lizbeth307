@@ -191,6 +191,13 @@ def board_boxes(P, bid, at=None):
             if x1 > x0 and y1 > y0:
                 za, zb = zspan(zn["max_height"])
                 out.append((f"{bid}.r{i}z{j}", (ox + x0, oy + y0, za, ox + x1, oy + y1, zb)))
+    # W2 MECH-7: the bottom side of a two-sided board (PWR-A): one envelope per plate pocket PB*, h_max below the board face
+    # that faces the plate (boards.json PWR bottom_side; the plate solid has the pockets cut, cad.plate)
+    if "bottom_side" in b and pl["facing"] == "+z":
+        from .rules import pwr_bottom_regions, pwr_bottom_h_max
+        h = pwr_bottom_h_max(P)
+        for k, (pid, (x, y, w, hh)) in enumerate(pwr_bottom_regions(P)):
+            out.append((f"{bid}.b{k}", (ox + x, oy + y, z0 - h, ox + x + w, oy + y + hh, z0)))
     return out
 
 
