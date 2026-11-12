@@ -2,23 +2,23 @@
   "passed": true,
   "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
   "graph_sha256": {
-    "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
-    "E2.json": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db",
+    "E1.json": "1b66154dd72b4e8bf8673968f86758e2f5c2e028c1ed92bce2116e002a57ba99",
+    "E2.json": "22d7f2ef8ffaf1d8c5e934c4eed8137aa96c09b86f99d9b4893bef2c8cf02a19",
     "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
-    "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
+    "E5.json": "e31f686e1fcad7a02e32a449b1876d08af3d7164130ef55fd37d0d3ffcf52cff"
   },
-  "netlist_sha256": "ac05a06f77f55061928086aa8f49e5061df3a29c77aff892e66c2cdcc46a1cac",
+  "netlist_sha256": "dafe6727e7c15e0ed2f7bc31f194a7ada05608b532332d25fee3f1d641057fe3",
   "counts": {
-    "hardware_components": 851,
-    "hardware_pin_declarations": 2942,
-    "connected_hardware_pins": 2717,
-    "connected_hardware_nets": 486,
-    "declared_nc_pins": 225,
-    "xml_hardware_components": 851,
-    "xml_pin_nodes": 2942,
-    "xml_nets": 711,
-    "explicit_power_flags": 25
+    "hardware_components": 882,
+    "hardware_pin_declarations": 3035,
+    "connected_hardware_pins": 2780,
+    "connected_hardware_nets": 499,
+    "declared_nc_pins": 255,
+    "xml_hardware_components": 882,
+    "xml_pin_nodes": 3035,
+    "xml_nets": 754,
+    "explicit_power_flags": 27
   },
   "dnp_components": [
     "J102",
@@ -43,8 +43,8 @@
     {
       "sheet": "E1",
       "net": "LAB5",
-      "reason": "Реальний вихід Pololu U108 після F102 і L101; флаг не обходить їхній струмовий захист.",
-      "source": "U108 VOUT → F102 → L101 → LAB5"
+      "reason": "Реальний вихід U108 TPSM63606 (E1_LAB5_RAW) після F102 і L101; флаг не обходить їхній струмовий захист.",
+      "source": "U108 VOUT → F102 → L101 → LAB5 (W2 GR-5A)"
     },
     {
       "sheet": "E1",
@@ -53,9 +53,21 @@
       "source": "J103 VBUS; STACK §2.7, §5.1"
     },
     {
+      "sheet": "E1",
+      "net": "SYS12",
+      "reason": "Реальний вихід U107 LM61460 через дросель L102 (passive); прапорець лише переносить ознаку джерела через passive для ERC.",
+      "source": "U107 SW → L102 → SYS12 (W2 GR-5A)"
+    },
+    {
+      "sheet": "E1",
+      "net": "E1_CONV_IN",
+      "reason": "Вхід U107/U108 після ідеального діода U111/Q102 від E1_SW (#2813 VOUT); прапорець лише переносить ознаку джерела через MOSFET для ERC.",
+      "source": "E1_SW → Q102 → E1_CONV_IN (W2 GR-5A)"
+    },
+    {
       "sheet": "E2",
       "net": "E2_J21_FUSED",
-      "reason": "Реальний силовий шлях: SYS12 → F201 blade 4A. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "reason": "Реальний силовий шлях: SYS12 → F201 SMD 4A (Littelfuse 451). Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
       "source": "E2.json: силовий шлях; STACK.md §5.1"
     },
     {

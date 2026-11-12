@@ -368,9 +368,9 @@ class CourtyardArea(unittest.TestCase):
         r = cy["Resistor_SMD:R_0603_1608Metric"]
         self.assertAlmostEqual(r["w"], 2.96, places=3)
         self.assertAlmostEqual(r["h"], 1.46, places=3)
-        p = cy["SR_RX_Custom:Pololu_D36V50Fx"]
-        self.assertAlmostEqual(p["w"], 25.9, places=3)
-        self.assertAlmostEqual(p["h"], 25.9, places=3)
+        p = cy["SR_RX_Custom:TI_RDL0020A_B3QFN-20_5x5.5mm"]      # W2 GR-5A merge: Pololu_D36V50Fx left the library with SHRINK-2; U108 TPSM63606 F.CrtYd rect +/-2.95 x +/-3.0
+        self.assertAlmostEqual(p["w"], 5.9, places=3)
+        self.assertAlmostEqual(p["h"], 6.0, places=3)
 
     def test_board_total_is_the_sum_over_its_domain_refs(self):
         path = HERE.parent / "pcb" / "generated" / "components.csv"

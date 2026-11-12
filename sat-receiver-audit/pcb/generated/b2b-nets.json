@@ -33,14 +33,14 @@
     "USB_POWER_SW"
   ],
   "totals": {
-    "crossing_nets": 40,
-    "power_nets": 9,
-    "power_pins": 14,
-    "signal_pins": 31,
-    "gnd_pins": 24,
+    "crossing_nets": 33,
+    "power_nets": 8,
+    "power_pins": 13,
+    "signal_pins": 25,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 69,
-    "contacts_with_spare": 83,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "fits": true,
     "meets_spare_rule": true
   },
@@ -84,65 +84,13 @@
         "TP204"
       ],
       "pwr_b": [
-        "J508",
+        "J506",
         "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "pins": 1,
       "gnd_pins": 1
-    },
-    {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-        "C235"
-      ],
-      "pwr_b": [
-        "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "gnd_pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-    },
-    {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-        "C239"
-      ],
-      "pwr_b": [
-        "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "gnd_pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-    },
-    {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-        "C243"
-      ],
-      "pwr_b": [
-        "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "gnd_pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-    },
-    {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-        "C247"
-      ],
-      "pwr_b": [
-        "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "gnd_pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
     },
     {
       "net": "BONI13V8",
@@ -225,19 +173,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-    },
-    {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-        "C298"
-      ],
-      "pwr_b": [
-        "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "gnd_pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
     },
     {
       "net": "EN_AUX12",
@@ -581,35 +516,6 @@
       "prot_A": 0.989,
       "pins": 1,
       "gnd_pins": 1
-    },
-    {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-        "C506"
-      ],
-      "pwr_b": [
-        "C507",
-        "J506",
-        "R508",
-        "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "pins": 1,
-      "gnd_pins": 1
-    },
-    {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-        "C251"
-      ],
-      "pwr_b": [
-        "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "gnd_pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
     }
   ],
   "graph_refs": {
@@ -623,7 +529,7 @@
     "derivation": "both halves are the same footprint (odd pads in one row, even pads in the other, pads 2k-1 and 2k at the same x); pin 01 meeting contact 02 means the upper half is turned over about the strip axis, so every column k pairs 2k-1 with 2k; pcb/tests/test_b2b_map.py checks it on the vendored footprint",
     "placement": "J209 on the PWR-B bottom over J208 (same centre in the shared PWR-A/PWR-B frame), so that its pad m lies over J208 pad b2b_mate(m): seen from the PWR-A top, J209 is J208 mirrored about the strip axis (y -> -y in the J208 frame); its pin-1 row lies over the even row of J208 and its alignment holes at (+/-13.5, +0.85) against (+/-13.5, -0.85) of J208. A bottom-side footprint flipped top/bottom, or flipped left/right and turned 180 degrees, is that mirror; pcb/check_boards.py b2b with pin_map from b2b-nets.json contacts checks it"
   },
-  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; the rest spare (nc in the graph). For (a): odd 1-65 the 17 rail contacts (1, 5, ... 65) with their GND returns (3, 7, ... 67), 69 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets, the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair. J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
+  "pin_map_rule": "pcb/prepare.py b2b_contacts (W2 B2B, review R2; sense pairs at the end since 11.11.2026): J208 column c = contacts 2c-1 (odd row) and 2c (even row). Each declared sense pair takes one column at the end of the strip (the last column, a further pair two columns before it), with a GND guard column before it. From contact 1 on the odd row: the rail block of guard_rule in the order rail_order, which lists the rail contacts one by one (a net listed once keeps its contacts together; unlisted rails after it, by name), each rail contact followed by its GND return on the same row; one GND guard after the rail block, in that row; the rails of rail_row_even the same way from contact 2 on the even row; the other crossing nets in name order on the free contacts of the even row, one per column, one contact each; the rest spare (nc in the graph). For (a) (since W2 GR-5B, when the six damper rail nodes and VBUS_LABPORT stopped crossing): odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the 4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets, the other contacts up to 96 spare, 97-98 guard, 99-100 the LNA4 sense pair (until W2 GR-5B: odd 1-65 the 17 rail contacts with their returns to 67, 69 guard). J209 contact m carries the net of J208 contact b2b_mate(m). python -I pcb/write_b2b_graph.py writes the map into the graph refs (--check compares). Design value. Why the rails take one row and the sense pair the end: on the PWR-B board of record (build/kicad/boards/PWR_B/make_spec.py) J209 lies on the bottom side turned so that column 50 is under the ch4 shunt R246 and column 1 next to the end of the LAB5 trunk; the rail row faces the top-edge headers and the LNA channels, the signal row the harness headers J202/J203 below the strip, the LAB5 contacts sit next to the end of the trunk and the Kelvin pair reaches its shunt, as on the FX8 placeholder map that routed (rails mostly in one row, signals in the other). The checkerboard maps of 07-11.11.2026 (rails in both rows) left 3 to 15 connections open in route runs 43103920112, 43106418931, 43109754670, 43112965018 and 43115627813. PWR-A places J208 under J209 (b2b.mating_map)",
   "guard_rule": "W2 B2B review R2 (07.11.2026): the pads are 0.30 mm wide at 0.50 mm pitch, so neighbouring pads of a row are 0.20 mm apart (b2b.footprint, Samtec Rev G), and a solder bridge between them is the likely defect at this pitch. So no contact at a supply-rail potential has a neighbour in its row other than GND. (1) Rail contacts are the power contacts, the sense/supply taps and the rail nodes: crossing nets that a resistor below rail_node_max_ohm joins to a net other than GND, such as the 0.22 ohm damper nodes (BIAS_CH1_DAMP: R232 from BIAS_CH1, C235 47 uF to GND; pcb/prepare.py low_ohm_links). They sit on the odd row of J208, each followed by its GND return on the same row (rail, GND, rail, GND, ...; the return is the next contact, 0.5 mm away), in the order rail_order (until 11.11.2026 a checkerboard over both rows with the return in the same column; both keep GND beside every rail contact). (2) One GND guard contact follows the rail block in its row; the rails of rail_row_even (LAB5) start the even row the same way, and the signal nets follow them on the even row. (3) Each declared sense pair (at the potential of its rail) takes one column at the end of the strip, with a GND guard column before it. A bridge from a rail contact can then only short that rail to GND, where its protection (tools/assembly_data.py NET_CURRENT) acts; it cannot join two rails, a rail and a sense line, or a rail and a signal line. rail_order puts 3V3_Q6A first and the 12-13.8 V rails of the net names (the BONI13V8 tap, LNB13V2, AUX12 and BONI13V8_PORT) last; between them, for the PWR-B board of record, the rails that leave to the west (LNA4V5, the LNA bias dampers, E2_SB_DAMP, VBUS_RTLB_DAMP, VBUS_LABPORT), to the top edge (VBUS_HFP) and to the right (LAB5_RLY, BIAS_CH4_DAMP); the four LAB5 contacts sit on the even row (rail_row_even). The damper nodes also get their AC return beside them: the 47 uF capacitor sits on PWR-A and the 0.22 ohm resistor on PWR-B. Cost for (a): 10 GND contacts more than one per power contact (6 rail nodes, 1 tap, 3 guards). Design value; signal nets still neighbour signal nets",
   "rail_order": [
     "3V3_Q6A",
@@ -721,8 +627,8 @@
     {
       "pwr_a_pin": "13",
       "pwr_b_pin": "14",
-      "net": "BIAS_CH1_DAMP",
-      "role": "rail node"
+      "net": "VBUS_HFP",
+      "role": "power"
     },
     {
       "pwr_a_pin": "14",
@@ -745,8 +651,8 @@
     {
       "pwr_a_pin": "17",
       "pwr_b_pin": "18",
-      "net": "BIAS_CH2_DAMP",
-      "role": "rail node"
+      "net": "LAB5_RLY",
+      "role": "power"
     },
     {
       "pwr_a_pin": "18",
@@ -769,8 +675,8 @@
     {
       "pwr_a_pin": "21",
       "pwr_b_pin": "22",
-      "net": "BIAS_CH3_DAMP",
-      "role": "rail node"
+      "net": "LAB5_RLY",
+      "role": "power"
     },
     {
       "pwr_a_pin": "22",
@@ -793,8 +699,8 @@
     {
       "pwr_a_pin": "25",
       "pwr_b_pin": "26",
-      "net": "E2_SB_DAMP",
-      "role": "rail node"
+      "net": "BONI13V8",
+      "role": "sense/supply tap"
     },
     {
       "pwr_a_pin": "26",
@@ -817,8 +723,8 @@
     {
       "pwr_a_pin": "29",
       "pwr_b_pin": "30",
-      "net": "VBUS_RTLB_DAMP",
-      "role": "rail node"
+      "net": "LNB13V2",
+      "role": "power"
     },
     {
       "pwr_a_pin": "30",
@@ -841,7 +747,7 @@
     {
       "pwr_a_pin": "33",
       "pwr_b_pin": "34",
-      "net": "VBUS_LABPORT",
+      "net": "AUX12",
       "role": "power"
     },
     {
@@ -865,7 +771,7 @@
     {
       "pwr_a_pin": "37",
       "pwr_b_pin": "38",
-      "net": "VBUS_HFP",
+      "net": "BONI13V8_PORT",
       "role": "power"
     },
     {
@@ -889,8 +795,8 @@
     {
       "pwr_a_pin": "41",
       "pwr_b_pin": "42",
-      "net": "LAB5_RLY",
-      "role": "power"
+      "net": "GND",
+      "role": "guard"
     },
     {
       "pwr_a_pin": "42",
@@ -901,8 +807,8 @@
     {
       "pwr_a_pin": "43",
       "pwr_b_pin": "44",
-      "net": "GND",
-      "role": "gnd"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "44",
@@ -913,8 +819,8 @@
     {
       "pwr_a_pin": "45",
       "pwr_b_pin": "46",
-      "net": "LAB5_RLY",
-      "role": "power"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "46",
@@ -925,8 +831,8 @@
     {
       "pwr_a_pin": "47",
       "pwr_b_pin": "48",
-      "net": "GND",
-      "role": "gnd"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "48",
@@ -937,8 +843,8 @@
     {
       "pwr_a_pin": "49",
       "pwr_b_pin": "50",
-      "net": "BIAS_CH4_DAMP",
-      "role": "rail node"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "50",
@@ -949,8 +855,8 @@
     {
       "pwr_a_pin": "51",
       "pwr_b_pin": "52",
-      "net": "GND",
-      "role": "gnd"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "52",
@@ -961,8 +867,8 @@
     {
       "pwr_a_pin": "53",
       "pwr_b_pin": "54",
-      "net": "BONI13V8",
-      "role": "sense/supply tap"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "54",
@@ -973,8 +879,8 @@
     {
       "pwr_a_pin": "55",
       "pwr_b_pin": "56",
-      "net": "GND",
-      "role": "gnd"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "56",
@@ -985,8 +891,8 @@
     {
       "pwr_a_pin": "57",
       "pwr_b_pin": "58",
-      "net": "LNB13V2",
-      "role": "power"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "58",
@@ -997,8 +903,8 @@
     {
       "pwr_a_pin": "59",
       "pwr_b_pin": "60",
-      "net": "GND",
-      "role": "gnd"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "60",
@@ -1009,8 +915,8 @@
     {
       "pwr_a_pin": "61",
       "pwr_b_pin": "62",
-      "net": "AUX12",
-      "role": "power"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "62",
@@ -1021,8 +927,8 @@
     {
       "pwr_a_pin": "63",
       "pwr_b_pin": "64",
-      "net": "GND",
-      "role": "gnd"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "64",
@@ -1033,8 +939,8 @@
     {
       "pwr_a_pin": "65",
       "pwr_b_pin": "66",
-      "net": "BONI13V8_PORT",
-      "role": "power"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "66",
@@ -1045,8 +951,8 @@
     {
       "pwr_a_pin": "67",
       "pwr_b_pin": "68",
-      "net": "GND",
-      "role": "gnd"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "68",
@@ -1057,8 +963,8 @@
     {
       "pwr_a_pin": "69",
       "pwr_b_pin": "70",
-      "net": "GND",
-      "role": "guard"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "70",

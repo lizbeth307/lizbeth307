@@ -428,5 +428,37 @@ class InsertBoardBoundaryTests(unittest.TestCase):
         self.assertEqual((rows["J514"]["board"], rows["J514"]["orientation"]), ("T7_INSERT", "side"))
 
 
+
+class Shrink2PwrBHeaderTests(unittest.TestCase):
+    """W2 GR-5B (SHRINK-2): J506 + J508 are one JST PH 9 side-entry header on PWR-B; J204 (S04) stays PH while its RF end J420 is
+    PH (one wire cannot take a PHD and a PH crimp). Design data only, no hardware claim."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.model, cls.h, cls.files = gen.build_all(BASE)
+
+    def test_headers_map_s23_and_s34_onto_j506(self):
+        self.assertEqual(D.HEADERS["J506"][1], {"S23": "1-3", "S34": "4-9"})
+        self.assertNotIn("J508", D.HEADERS)
+        self.assertNotIn("J508", self.model.by_ref)
+
+    def test_s23_and_s34_wires_land_on_j506(self):
+        ends = {}
+        for w in self.h.wires:
+            if w["segment"] in ("S23", "S34"):
+                ref, pin = w["from"].split(" ")[0].split(".")
+                self.assertEqual(ref, "J506", w["wire"])
+                ends.setdefault(w["segment"], set()).add(int(pin))
+        self.assertEqual(ends, {"S23": {1, 2, 3}, "S34": {4, 5, 6, 7, 8, 9}})
+        rows = {r["connector"]: r for r in csv.DictReader(io.StringIO(self.files[gen.OUT["connectors_csv"]]))}
+        self.assertEqual((rows["J506"]["board"], rows["J506"]["orientation"], rows["J506"]["pins"]), ("PWR_B", "side", "9"))
+        self.assertNotIn("J508", rows)
+
+    def test_s04_keeps_one_crimp_family_per_wire(self):
+        # PHD (SPHD-001T, 22 AWG only) at one end and PH (AWG 30-24) at the other end cannot share a wire, so S04 stays PH-PH
+        fams = {(w["family_from"], w["family_to"]) for w in self.h.wires if w["segment"] == "S04"}
+        self.assertEqual(fams, {("PH", "PH")})
+
+
 if __name__ == "__main__":
     unittest.main()

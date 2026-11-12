@@ -46,7 +46,7 @@ class RefreshInventoryTests(unittest.TestCase):
 
     def test_graph_edit_rewrites_only_the_copied_fields(self):
         def change(comps, graph):
-            comps["C109"]["value"] = "100µF35VlowESR (refresh fixture)"
+            comps["C110"]["value"] = "1µF50VX7R (refresh fixture)"
             comps["U108"]["notes"] = ["Refresh fixture note."]
             comps["U108"].pop("description", None)
             graph["open_items"][0]["description"] = "Refresh fixture gate text."
@@ -64,8 +64,8 @@ class RefreshInventoryTests(unittest.TestCase):
         self.assertEqual((u108["source_notes"], u108["source_description"]), (["Refresh fixture note."], ""))
         e1 = [a for a in after["assemblies"] if a["sheet"] == "E1"]
         self.assertTrue(all(a["sheet_hardware_gates"][0]["description"] == "Refresh fixture gate text." for a in e1))
-        self.assertIn({"ref": "C109", "kind": "capacitor", "value": "100µF35VlowESR (refresh fixture)", "status": "design"},
-                      next(a for a in e1 if "C109" in a["refs"])["passive_parameters"])
+        self.assertIn({"ref": "C110", "kind": "capacitor", "value": "1µF50VX7R (refresh fixture)", "status": "design"},
+                      next(a for a in e1 if "C110" in a["refs"])["passive_parameters"])
         self.assertNotEqual(after["source_snapshots"]["design/E1.json"], before["source_snapshots"]["design/E1.json"])
         self.assertEqual(after["source_snapshots"]["design/E1.json"], refresh.snapshot(self.root / "design/E1.json"))
         self.assertEqual(after["source_snapshots"]["STACK.md"], refresh.snapshot(self.root / "STACK.md"))
@@ -110,9 +110,9 @@ class RefreshInventoryTests(unittest.TestCase):
         added = lambda comps, graph: graph["components"].append(
             {"ref": "R1999", "value": "10k", "kind": "resistor", "group": "LAB5", "status": "design", "source": "fixture",
              "pins": [{"number": "1", "name": "1", "type": "passive", "net": "GND"}, {"number": "2", "name": "2", "type": "passive", "nc": True}]})
-        removed = lambda comps, graph: graph["components"].remove(comps["C109"])
-        reclassed = lambda comps, graph: comps["C109"].update(kind="ic")
-        regrouped = lambda comps, graph: comps["C109"].update(group="Refresh fixture split")
+        removed = lambda comps, graph: graph["components"].remove(comps["C110"])
+        reclassed = lambda comps, graph: comps["C110"].update(kind="ic")
+        regrouped = lambda comps, graph: comps["C110"].update(group="Refresh fixture split")
         renamed = lambda comps, graph: [p.update(net="E1_CELL1_RENAMED") for p in comps["BT101"]["pins"] if p.get("net") == "E1_CELL1"]
         for change, message in ((added, "ref set changed"), (removed, "ref set changed"), (reclassed, "class changed"),
                                 (regrouped, "spans graph groups"), (renamed, "interface_signals of BT101")):

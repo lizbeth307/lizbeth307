@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/HATCH/HATCH.kicad_pcb",
-      "sha256": "fcf62294ab531ea859559f1e1e39b35158344062d6790c7c52bfc18670b31b31"
+      "sha256": "860ec0a2544f8bf331d22c2e5824d5beff6ea7b5c2f0cbfbe4adb0642cc872d5"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "29a840d606deb77cab4b7c649bb7f93202ea0cd5b1b91efe890c095a0c663684",

@@ -24,10 +24,13 @@
   "design/parts/snapshots/2026-11-11-w2-mech5-manual.json",
   "design/parts/snapshots/2026-11-11-w2-pcb-sb2-manual.json",
   "design/parts/snapshots/2026-11-11-w2-readsp-manual.json",
-  "design/parts/snapshots/2026-11-11-w2-readsp-lcsc.json"
+  "design/parts/snapshots/2026-11-11-w2-readsp-lcsc.json",
+  "design/parts/snapshots/2026-11-12-w2-gr5a-manual.json",
+  "design/parts/snapshots/2026-11-12-w2-gr5a-lcsc.json",
+  "design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json"
  ],
- "refs": 851,
- "parts": 257,
+ "refs": 882,
+ "parts": 268,
  "refs_by_mount": {
   "assembly": 8,
   "existing": 9,
@@ -35,32 +38,32 @@
   "module": 33,
   "on_module": 4,
   "panel": 14,
-  "pcb_module": 3,
+  "pcb_module": 1,
   "pcb_pad": 41,
-  "pcb_smt": 630,
-  "pcb_tht": 74,
+  "pcb_smt": 674,
+  "pcb_tht": 63,
   "remote": 9,
   "rework": 5,
   "virtual": 2
  },
- "bare_board_parts": 748,
- "bare_board_parts_with_footprint": 748,
- "board_refs": 748,
- "board_refs_with_footprint": 748,
+ "bare_board_parts": 779,
+ "bare_board_parts_with_footprint": 779,
+ "board_refs": 779,
+ "board_refs_with_footprint": 779,
  "board_footprint_origin": {
-  "KiCad 10.0.7": 706,
+  "KiCad 10.0.7": 737,
   "SR_RX_Custom": 42
  },
- "purchased_refs": 783,
+ "purchased_refs": 814,
  "purchased_refs_by_availability": {
   "TBD": 2,
-  "в наявності": 676,
+  "в наявності": 703,
   "з 10-bom": 17,
-  "склад 0": 66,
-  "у каталозі": 22
+  "склад 0": 72,
+  "у каталозі": 20
  },
- "purchased_refs_with_mpn": 781,
- "harness_family_items": 57,
+ "purchased_refs_with_mpn": 812,
+ "harness_family_items": 59,
  "tbd": [
   {
    "part": "J-BALANCE-DNP",
@@ -460,6 +463,22 @@
    ],
    "mpn": "G6K-2F-RF DC5",
    "note": "стандартна RF-версія без -S (рядок 18 10-bom): інша площадка, не drop-in — потрібен інший футпринт і перевірка RF-переходу; 24.10.2026 не перечитано."
+  },
+  {
+   "part": "F-0451005-MRL",
+   "refs": [
+    "F103"
+   ],
+   "mpn": "SF-2410FP500W-2",
+   "note": "Bourns SinglFuse 2410, 5 A, 14.3 mOhm typ: pads 3.00 x 3.15 (outer 8.60) instead of 1.96 x 3.15, so the land changes; LCSC stock 1 on 2026-11-11; the PWR-A layout owner decides"
+  },
+  {
+   "part": "F-0451004-MRL",
+   "refs": [
+    "F201"
+   ],
+   "mpn": "SF-2410FP400W-2",
+   "note": "Bourns SinglFuse 2410, 4 A, 17.1 mOhm typ: pads 3.00 x 3.15 instead of 1.96 x 3.15, so the land changes; LCSC stock 0 on 2026-11-11; the PWR-A layout owner decides"
   },
   {
    "part": "A-AXING-CFA1100",

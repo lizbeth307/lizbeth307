@@ -9,12 +9,12 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
-      "bytes": 115484
+      "sha256": "1b66154dd72b4e8bf8673968f86758e2f5c2e028c1ed92bce2116e002a57ba99",
+      "bytes": 155324
     },
     "design/E2.json": {
-      "sha256": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db",
-      "bytes": 399635
+      "sha256": "22d7f2ef8ffaf1d8c5e934c4eed8137aa96c09b86f99d9b4893bef2c8cf02a19",
+      "bytes": 414365
     },
     "design/E3.json": {
       "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
@@ -25,12 +25,12 @@
       "bytes": 229605
     },
     "design/E5.json": {
-      "sha256": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f",
-      "bytes": 123087
+      "sha256": "e31f686e1fcad7a02e32a449b1876d08af3d7164130ef55fd37d0d3ffcf52cff",
+      "bytes": 125823
     },
     "STACK.md": {
-      "sha256": "a9475a40d0f735e392b9bc7b3ebbff8cd6193af1276d316238180cca79def48e",
-      "bytes": 1967181
+      "sha256": "7b37be7be97c2d1845215199cf455fd1c496aa83aa933bdc60defa266bfdbb19",
+      "bytes": 1965841
     },
     "build/12-revision-v2.1.md": {
       "sha256": "56f71210b0d3e3f4547ebfc2cabe35fb746866183493882612da9707cbc806e5",
@@ -38,27 +38,27 @@
     }
   },
   "scope": {
-    "graph_components": 851,
-    "graph_pins": 2942,
+    "graph_components": 882,
+    "graph_pins": 3035,
     "graph_sheets": {
-      "E1": 91,
+      "E1": 121,
       "E2": 278,
       "E3": 172,
       "E4": 221,
-      "E5": 89
+      "E5": 90
     },
     "top_level_circuit_assemblies": 69,
-    "source_kind_module_count": 57,
+    "source_kind_module_count": 55,
     "detailed_subinterfaces": 231,
     "catalogue_only_or_factory_internal_entities": 30,
     "catalogue_documents": 102,
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2717,
-    "graph_nc_pins": 225,
-    "canonical_nets": 486,
-    "cross_assembly_nets": 238
+    "graph_connected_pins": 2780,
+    "graph_nc_pins": 255,
+    "canonical_nets": 499,
+    "cross_assembly_nets": 233
   },
   "critical_constraints": [
     "Every one of the 750 source component references is assigned exactly once to a circuit assembly. Circuit passives remain parameters, not fictitious software registers.",
@@ -153,7 +153,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -256,7 +256,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -407,7 +407,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -515,7 +515,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -545,31 +545,59 @@
         "R109",
         "TP101",
         "C107",
-        "C108"
+        "C108",
+        "U111",
+        "Q102",
+        "C136",
+        "L102",
+        "C119",
+        "C120",
+        "C121",
+        "C122",
+        "C123",
+        "C124",
+        "C125",
+        "C126",
+        "C127",
+        "C128",
+        "C129",
+        "R124",
+        "R125",
+        "R126",
+        "R127",
+        "R128"
       ],
-      "component_count": 6,
+      "component_count": 26,
       "named_nets": [
+        "E1_CONV_IN",
         "E1_EN_SYS12",
         "E1_PG_SYS12",
+        "E1_RPP_GATE",
+        "E1_RPP_VCAP",
         "E1_SW",
+        "E1_SYS12_CBOOT",
+        "E1_SYS12_FB",
+        "E1_SYS12_FF",
+        "E1_SYS12_RBOOT",
+        "E1_SYS12_RT",
+        "E1_SYS12_SW",
+        "E1_SYS12_VCC",
         "GND",
         "SYS12"
       ],
       "protocol_or_special_subinterfaces": [],
-      "commercial_or_functional_module_refs": [
-        "U107"
-      ],
+      "commercial_or_functional_module_refs": [],
       "passive_parameters": [
         {
           "ref": "R108",
           "kind": "resistor",
-          "value": "4.99k0.1%25ppm",
+          "value": "1.00M1%",
           "status": "design"
         },
         {
           "ref": "R109",
           "kind": "resistor",
-          "value": "562R0.1%25ppm",
+          "value": "115k1%",
           "status": "design"
         },
         {
@@ -588,6 +616,120 @@
           "ref": "C108",
           "kind": "capacitor",
           "value": "1µF50VX7R",
+          "status": "design"
+        },
+        {
+          "ref": "Q102",
+          "kind": "nfet",
+          "value": "DMT6007LFG-7",
+          "status": "design"
+        },
+        {
+          "ref": "C136",
+          "kind": "capacitor",
+          "value": "100nF50VX7R VCAP",
+          "status": "design"
+        },
+        {
+          "ref": "L102",
+          "kind": "inductor",
+          "value": "SRP1040VA-4R7M 4.7 µH ±20%",
+          "status": "design"
+        },
+        {
+          "ref": "C119",
+          "kind": "capacitor",
+          "value": "10µF50VX7R 1210",
+          "status": "design"
+        },
+        {
+          "ref": "C120",
+          "kind": "capacitor",
+          "value": "10µF50VX7R 1210",
+          "status": "design"
+        },
+        {
+          "ref": "C121",
+          "kind": "capacitor",
+          "value": "100nF50VX7R",
+          "status": "design"
+        },
+        {
+          "ref": "C122",
+          "kind": "capacitor",
+          "value": "100nF50VX7R",
+          "status": "design"
+        },
+        {
+          "ref": "C123",
+          "kind": "capacitor",
+          "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
+          "status": "design"
+        },
+        {
+          "ref": "C124",
+          "kind": "capacitor",
+          "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
+          "status": "design"
+        },
+        {
+          "ref": "C125",
+          "kind": "capacitor",
+          "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
+          "status": "design"
+        },
+        {
+          "ref": "C126",
+          "kind": "capacitor",
+          "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
+          "status": "design"
+        },
+        {
+          "ref": "C127",
+          "kind": "capacitor",
+          "value": "100nF50VX7R CBOOT",
+          "status": "design"
+        },
+        {
+          "ref": "C128",
+          "kind": "capacitor",
+          "value": "1µF16VX7R CVCC",
+          "status": "design"
+        },
+        {
+          "ref": "C129",
+          "kind": "capacitor",
+          "value": "4.7pF50VC0G CFF",
+          "status": "design"
+        },
+        {
+          "ref": "R124",
+          "kind": "resistor",
+          "value": "100k1%",
+          "status": "design"
+        },
+        {
+          "ref": "R125",
+          "kind": "resistor",
+          "value": "9.09k0.1%",
+          "status": "design"
+        },
+        {
+          "ref": "R126",
+          "kind": "resistor",
+          "value": "14.3k1%",
+          "status": "design"
+        },
+        {
+          "ref": "R127",
+          "kind": "resistor",
+          "value": "100Ω1% RBOOT",
+          "status": "design"
+        },
+        {
+          "ref": "R128",
+          "kind": "resistor",
+          "value": "1.00k1% RFF",
           "status": "design"
         }
       ],
@@ -628,7 +770,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -654,7 +796,6 @@
       "model_boundary": "power_battery_charge_analog_assembly",
       "refs": [
         "U108",
-        "C109",
         "C110",
         "F102",
         "C111",
@@ -663,13 +804,28 @@
         "R110",
         "C113",
         "TP102",
+        "C130",
+        "C131",
+        "C132",
+        "C133",
+        "C134",
+        "C135",
+        "R129",
+        "R130",
+        "R131",
+        "R132",
+        "R133",
         "F104"
       ],
-      "component_count": 11,
+      "component_count": 21,
       "named_nets": [
+        "E1_CONV_IN",
+        "E1_EN_LAB5",
         "E1_LAB5_DAMP",
+        "E1_LAB5_FB",
         "E1_LAB5_FUSED",
         "E1_LAB5_RAW",
+        "E1_LAB5_RT",
         "E1_PG_LAB5",
         "E1_SW",
         "GND",
@@ -677,16 +833,8 @@
         "LAB5_RLY"
       ],
       "protocol_or_special_subinterfaces": [],
-      "commercial_or_functional_module_refs": [
-        "U108"
-      ],
+      "commercial_or_functional_module_refs": [],
       "passive_parameters": [
-        {
-          "ref": "C109",
-          "kind": "capacitor",
-          "value": "100µF35VlowESR",
-          "status": "design"
-        },
         {
           "ref": "C110",
           "kind": "capacitor",
@@ -702,7 +850,7 @@
         {
           "ref": "C111",
           "kind": "capacitor",
-          "value": "35SVPF22M 22 µF 35 V ±20% OS-CON",
+          "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
           "status": "design"
         },
         {
@@ -714,7 +862,7 @@
         {
           "ref": "C112",
           "kind": "capacitor",
-          "value": "35SVPF22M 22 µF 35 V ±20% OS-CON",
+          "value": "22µF50VX7R 1210 C3225X7R1H226M250AC",
           "status": "design"
         },
         {
@@ -733,6 +881,72 @@
           "ref": "TP102",
           "kind": "testpoint",
           "value": "PG_LAB5резерв",
+          "status": "design"
+        },
+        {
+          "ref": "C130",
+          "kind": "capacitor",
+          "value": "10µF50VX7R 1210",
+          "status": "design"
+        },
+        {
+          "ref": "C131",
+          "kind": "capacitor",
+          "value": "10µF50VX7R 1210",
+          "status": "design"
+        },
+        {
+          "ref": "C132",
+          "kind": "capacitor",
+          "value": "100nF50VX7R",
+          "status": "design"
+        },
+        {
+          "ref": "C133",
+          "kind": "capacitor",
+          "value": "47µF10VX7R 1210",
+          "status": "design"
+        },
+        {
+          "ref": "C134",
+          "kind": "capacitor",
+          "value": "47µF10VX7R 1210",
+          "status": "design"
+        },
+        {
+          "ref": "C135",
+          "kind": "capacitor",
+          "value": "47µF10VX7R 1210",
+          "status": "design"
+        },
+        {
+          "ref": "R129",
+          "kind": "resistor",
+          "value": "40.2k1%",
+          "status": "design"
+        },
+        {
+          "ref": "R130",
+          "kind": "resistor",
+          "value": "10.0k1%",
+          "status": "design"
+        },
+        {
+          "ref": "R131",
+          "kind": "resistor",
+          "value": "14.3k1%",
+          "status": "design"
+        },
+        {
+          "ref": "R132",
+          "kind": "resistor",
+          "value": "1.00M1%",
+          "status": "design"
+        },
+        {
+          "ref": "R133",
+          "kind": "resistor",
+          "value": "147k1%",
           "status": "design"
         },
         {
@@ -779,7 +993,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -825,7 +1039,7 @@
         {
           "ref": "F103",
           "kind": "fuse",
-          "value": "5A DC≥32V service",
+          "value": "5A DC≥32V service SMD 0451005.MRL",
           "status": "design"
         }
       ],
@@ -866,7 +1080,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -960,7 +1174,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -1090,7 +1304,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -1225,7 +1439,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -1329,7 +1543,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -1439,7 +1653,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -1538,7 +1752,7 @@
         },
         {
           "id": "E1-05",
-          "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+          "description": "Default LAB5: TI TPSM63606RDLR (U108, W2 GR-5A) + F102 4 A; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
           "blocking": true
         },
         {
@@ -1605,8 +1819,8 @@
         {
           "ref": "F201",
           "kind": "fuse",
-          "value": "Littelfuse0297004.WXNV 4A",
-          "status": "verified"
+          "value": "Littelfuse 0451004.MRL 4A",
+          "status": "design"
         },
         {
           "ref": "R201",
@@ -1812,7 +2026,7 @@
         {
           "ref": "L202",
           "kind": "inductor",
-          "value": "1uH XAL5030-102MEC",
+          "value": "1uH SRP2510PA-1R0M",
           "status": "design"
         },
         {
@@ -2040,13 +2254,13 @@
         {
           "ref": "R219",
           "kind": "resistor",
-          "value": "0.22R 1% 0.25W",
+          "value": "0.15R 1% 0.25W",
           "status": "design"
         },
         {
           "ref": "C219",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -2181,7 +2395,7 @@
         {
           "ref": "L204",
           "kind": "inductor",
-          "value": "1uH XAL5030-102MEC",
+          "value": "1uH SRP2510PA-1R0M",
           "status": "design"
         },
         {
@@ -2318,13 +2532,13 @@
         {
           "ref": "R224",
           "kind": "resistor",
-          "value": "0.22R 1% 0.25W",
+          "value": "0.15R 1% 0.25W",
           "status": "design"
         },
         {
           "ref": "C225",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -2537,13 +2751,13 @@
         {
           "ref": "R232",
           "kind": "resistor",
-          "value": "0.22R 1% 0.25W",
+          "value": "0.15R 1% 0.25W",
           "status": "design"
         },
         {
           "ref": "C235",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -2691,13 +2905,13 @@
         {
           "ref": "R237",
           "kind": "resistor",
-          "value": "0.22R 1% 0.25W",
+          "value": "0.15R 1% 0.25W",
           "status": "design"
         },
         {
           "ref": "C239",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -2899,13 +3113,13 @@
         {
           "ref": "R242",
           "kind": "resistor",
-          "value": "0.22R 1% 0.25W",
+          "value": "0.15R 1% 0.25W",
           "status": "design"
         },
         {
           "ref": "C243",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -3094,13 +3308,13 @@
         {
           "ref": "R247",
           "kind": "resistor",
-          "value": "0.22R 1% 0.25W",
+          "value": "0.15R 1% 0.25W",
           "status": "design"
         },
         {
           "ref": "C247",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -3227,13 +3441,13 @@
         {
           "ref": "R251",
           "kind": "resistor",
-          "value": "0.22R 1% 0.25W",
+          "value": "0.15R 1% 0.25W",
           "status": "design"
         },
         {
           "ref": "C251",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -3352,7 +3566,7 @@
         {
           "ref": "L211",
           "kind": "inductor",
-          "value": "1uH XAL5030-102MEC",
+          "value": "1uH SRP2510PA-1R0M",
           "status": "design"
         },
         {
@@ -3448,7 +3662,7 @@
         {
           "ref": "L212",
           "kind": "inductor",
-          "value": "1uH XAL5030-102MEC",
+          "value": "1uH SRP2510PA-1R0M",
           "status": "design"
         },
         {
@@ -3604,7 +3818,7 @@
         {
           "ref": "L213",
           "kind": "inductor",
-          "value": "1uH XAL5030-102MEC",
+          "value": "1uH SRP2510PA-1R0M",
           "status": "design"
         },
         {
@@ -3700,7 +3914,7 @@
         {
           "ref": "L214",
           "kind": "inductor",
-          "value": "1uH XAL5030-102MEC",
+          "value": "1uH SRP2510PA-1R0M",
           "status": "design"
         },
         {
@@ -4610,13 +4824,13 @@
         {
           "ref": "R295",
           "kind": "resistor",
-          "value": "0.22R 1%0.25W",
+          "value": "0.15R 1% 0.25W",
           "status": "design"
         },
         {
           "ref": "C298",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -4693,13 +4907,9 @@
         "3V3_Q6A",
         "AUX12",
         "BIAS_CH1",
-        "BIAS_CH1_DAMP",
-        "BIAS_CH2_DAMP",
         "BIAS_CH2_PORT",
-        "BIAS_CH3_DAMP",
         "BIAS_CH3_PORT",
         "BIAS_CH4",
-        "BIAS_CH4_DAMP",
         "BIAS_SB_LNA",
         "BONI13V8",
         "BONI13V8_PORT",
@@ -4708,7 +4918,6 @@
         "E1_BAT_ADC",
         "E2_LNA4_SHUNT",
         "E2_LNA4_SW",
-        "E2_SB_DAMP",
         "EN_AUX12",
         "EN_BONI",
         "EN_HFP",
@@ -4757,10 +4966,8 @@
         "PWR_BUTTON",
         "SLED_DET",
         "VBUS_HFP",
-        "VBUS_LABPORT",
         "VBUS_RTLA",
         "VBUS_RTLB",
-        "VBUS_RTLB_DAMP",
         "VCC_3V3_MKEY"
       ],
       "protocol_or_special_subinterfaces": [],
@@ -9616,10 +9823,12 @@
         "C504",
         "C505",
         "C506",
+        "C521",
+        "C522",
         "C507",
         "R508"
       ],
-      "component_count": 15,
+      "component_count": 17,
       "named_nets": [
         "E5_U501_ILIM",
         "E5_U502_ILIM",
@@ -9698,7 +9907,19 @@
         {
           "ref": "C506",
           "kind": "capacitor",
-          "value": "150uF 10V low-ESR",
+          "value": "47uF 10V 16SVPG47M",
+          "status": "design"
+        },
+        {
+          "ref": "C521",
+          "kind": "capacitor",
+          "value": "47uF 10V 16SVPG47M",
+          "status": "design"
+        },
+        {
+          "ref": "C522",
+          "kind": "capacitor",
+          "value": "47uF 10V 16SVPG47M",
           "status": "design"
         },
         {
@@ -10664,12 +10885,11 @@
       "refs": [
         "J506",
         "J507",
-        "J508",
         "J509",
         "J510",
         "J513"
       ],
-      "component_count": 6,
+      "component_count": 5,
       "named_nets": [
         "AUX12",
         "E5_IMU5V",
@@ -11464,75 +11684,206 @@
       "module_id": "E1/U107",
       "parent_assembly": "E1-CIR-05",
       "ref": "U107",
-      "value": "Pololu D36V50F12#4095",
-      "source_kind": "module",
-      "source_status": "module",
-      "interface_family": "power_module_enable_pg_analog",
+      "value": "LM61460AANRJRR",
+      "source_kind": "ic",
+      "source_status": "design",
+      "interface_family": "analog_or_discrete_control_ic",
       "software_interface_specified": false,
       "interface_signals": [
-        "E1_SW",
         "SYS12",
+        "E1_SYS12_VCC",
         "GND",
+        "E1_SYS12_FB",
+        "E1_PG_SYS12",
+        "E1_SYS12_RT",
         "E1_EN_SYS12",
-        "E1_PG_SYS12"
+        "E1_CONV_IN",
+        "E1_SYS12_SW",
+        "E1_SYS12_RBOOT",
+        "E1_SYS12_CBOOT"
       ],
       "configuration_from_source": {},
-      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
+      "pinout_status": "source_numbered_pin_map",
       "pinout_gate": null,
       "source_pins": [
         {
-          "number": "VIN",
-          "name": "VIN",
+          "number": "1",
+          "name": "BIAS",
           "type": "power_in",
-          "net": "E1_SW"
-        },
-        {
-          "number": "VRP",
-          "name": "VRP",
-          "type": "no_connect",
-          "nc": true
-        },
-        {
-          "number": "VOUT",
-          "name": "VOUT",
-          "type": "power_out",
           "net": "SYS12"
         },
         {
-          "number": "GND",
-          "name": "GND",
+          "number": "2",
+          "name": "VCC",
+          "type": "power_out",
+          "net": "E1_SYS12_VCC"
+        },
+        {
+          "number": "3",
+          "name": "AGND",
           "type": "power_in",
           "net": "GND"
         },
         {
-          "number": "EN",
-          "name": "EN",
+          "number": "4",
+          "name": "FB",
+          "type": "input",
+          "net": "E1_SYS12_FB"
+        },
+        {
+          "number": "5",
+          "name": "PGOOD",
+          "type": "open_collector",
+          "net": "E1_PG_SYS12"
+        },
+        {
+          "number": "6",
+          "name": "RT",
+          "type": "passive",
+          "net": "E1_SYS12_RT"
+        },
+        {
+          "number": "7",
+          "name": "EN/SYNC",
           "type": "input",
           "net": "E1_EN_SYS12"
         },
         {
-          "number": "PG",
-          "name": "PG",
-          "type": "open_collector",
-          "net": "E1_PG_SYS12"
+          "number": "8",
+          "name": "VIN1",
+          "type": "power_in",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "9",
+          "name": "PGND1",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "10",
+          "name": "SW",
+          "type": "output",
+          "net": "E1_SYS12_SW"
+        },
+        {
+          "number": "11",
+          "name": "PGND2",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "VIN2",
+          "type": "power_in",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "13",
+          "name": "RBOOT",
+          "type": "passive",
+          "net": "E1_SYS12_RBOOT"
+        },
+        {
+          "number": "14",
+          "name": "CBOOT",
+          "type": "passive",
+          "net": "E1_SYS12_CBOOT"
         }
       ],
       "sources": [
         {
           "path": "design/E1.json",
           "ref": "U107",
-          "component_source": "https://www.pololu.com/product/4095"
+          "component_source": "https://www.ti.com/lit/ds/symlink/lm61460.pdf"
         },
         {
           "path": "components/pololu_d36v50f12_sys12.md"
         }
       ],
-      "source_description": "Функціональні клеми модуля; дубльовані силові отвори належать спільним мережам.",
+      "source_description": "Усі 14 фізичних виводів RJR0014A (VQFN-HR, без EP). Посадкове місце SR_RX_Custom за land pattern TI 4223976/H.",
       "source_notes": [
-        "12 V без boost. PG резервний для тесту. Монітори захищених шин містить E2."
+        "W2 GR-5A (SHRINK-2, рішення 11.11.2026): замінює модуль Pololu D36V50F12 #4095. LM61460AAN — auto mode без spread spectrum (SNVSBD5D, табл. 5); FPWM — лише від зовнішнього такту на EN/SYNC (табл. 6-1). Джерело такту в E1/E3 не визначено: частота від RT R126 14.3 kΩ ≈913 kHz (рівн. 2, MODEL; допуск fADJ ±10 %), мережа такту TBD, тому на малому навантаженні можливий PFM — ворота C4 (1).",
+        "VOUT = 1 V·(1 + R124/R125) = 100k/9.09k → 12.00 V (рівн. 3); BIAS до SYS12 (VOUT 12 V, не вище 12 V — табл. 6-1); CBOOT C127 100 nF через RBOOT R127 100 Ω (≈2.7 ns фронт SW, розд. 9.2.2.7: менше EMI для приймача ціною ≈0.5 % ККД); CVCC C128 1 µF; CFF C129 4.7 pF + RFF R128 1 kΩ — стартові значення табл. 9-2 для 1 MHz (там 3.3/5 V); запас фази при 12 V не прочитано — стенд.",
+        "Дросель L102 4.7 µH: рівн. 10 (робота біля dropout, D 0.71…0.91) вимагає L ≥ 0.32·12/fSW = 4.21 µH при 913 kHz і 4.67 µH при −10 % частоти; Isat 15 A ≥ IL-HS 11.5 A max (MODEL, номінальна L). Вирішений SRP7030-2R2M (2.2 µH) не годиться: NRND/Obsolete і рівн. 10 лише від 1.75 MHz (READS-P).",
+        "Наявність 2026-11-11: TI, DigiKey DE (3000 очікується 27.05.2027) і LCSC C2864505 — 0 (рядки READS-P)."
       ],
       "coverage_constraints": [
-        "VIN/VOUT/EN/PG/latching state and faults; no software register bus.",
+        "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E1/U111",
+      "parent_assembly": "E1-CIR-05",
+      "ref": "U111",
+      "value": "LM74700QDBVRQ1",
+      "source_kind": "ic",
+      "source_status": "design",
+      "interface_family": "analog_or_discrete_control_ic",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "E1_RPP_VCAP",
+        "GND",
+        "E1_SW",
+        "E1_CONV_IN",
+        "E1_RPP_GATE"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_numbered_pin_map",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "VCAP",
+          "type": "output",
+          "net": "E1_RPP_VCAP"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "E1_SW"
+        },
+        {
+          "number": "4",
+          "name": "CATHODE",
+          "type": "input",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "5",
+          "name": "GATE",
+          "type": "output",
+          "net": "E1_RPP_GATE"
+        },
+        {
+          "number": "6",
+          "name": "ANODE",
+          "type": "power_in",
+          "net": "E1_SW"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E1.json",
+          "ref": "U111",
+          "component_source": "https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf"
+        }
+      ],
+      "source_description": "Усі 6 виводів DBV (SOT-23-6).",
+      "source_notes": [
+        "W2 GR-5A: каскад захисту від переполюсування з умов STACK C4 для входу U107 і U108 (VIN абс. мін. −0.3 V; зворотний номінал #2813 не опубліковано, рядок READS-P web:pololu-2813-reverse). Ідеальний діод E1_SW → E1_CONV_IN з Q102; EN до ANODE — завжди ввімкнено (SNOSD17G розд. 5). E1_SW, E1_N і D104/D105 не змінюються."
+      ],
+      "coverage_constraints": [
+        "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
         "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
       ],
       "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
@@ -11541,63 +11892,150 @@
       "module_id": "E1/U108",
       "parent_assembly": "E1-CIR-06",
       "ref": "U108",
-      "value": "Pololu D36V50F5 #4091 — LAB5 default",
-      "source_kind": "module",
-      "source_status": "module",
-      "interface_family": "power_module_enable_pg_analog",
+      "value": "TPSM63606RDLR — LAB5 default",
+      "source_kind": "ic",
+      "source_status": "design",
+      "interface_family": "analog_or_discrete_control_ic",
       "software_interface_specified": false,
       "interface_signals": [
-        "E1_SW",
+        "E1_CONV_IN",
         "E1_LAB5_RAW",
         "GND",
-        "E1_PG_LAB5"
+        "E1_LAB5_FB",
+        "E1_LAB5_RT",
+        "E1_PG_LAB5",
+        "E1_EN_LAB5"
       ],
       "configuration_from_source": {},
-      "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
+      "pinout_status": "source_numbered_pin_map",
       "pinout_gate": null,
       "source_pins": [
         {
-          "number": "VIN",
-          "name": "VIN",
+          "number": "1",
+          "name": "VIN1",
           "type": "power_in",
-          "net": "E1_SW"
+          "net": "E1_CONV_IN"
         },
         {
-          "number": "VRP",
-          "name": "VRP",
+          "number": "2",
+          "name": "SW",
           "type": "no_connect",
           "nc": true
         },
         {
-          "number": "VOUT",
-          "name": "VOUT",
-          "type": "power_out",
+          "number": "3",
+          "name": "CBOOT",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "4",
+          "name": "RBOOT",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "VLDOIN",
+          "type": "power_in",
           "net": "E1_LAB5_RAW"
         },
         {
-          "number": "GND",
-          "name": "GND",
+          "number": "6",
+          "name": "AGND",
           "type": "power_in",
           "net": "GND"
         },
         {
-          "number": "EN",
-          "name": "EN",
+          "number": "7",
+          "name": "VCC",
           "type": "no_connect",
           "nc": true
         },
         {
-          "number": "PG",
+          "number": "8",
+          "name": "VOUT1",
+          "type": "power_out",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "9",
+          "name": "VOUT2",
+          "type": "passive",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "10",
+          "name": "FB",
+          "type": "input",
+          "net": "E1_LAB5_FB"
+        },
+        {
+          "number": "11",
+          "name": "AGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "RT",
+          "type": "passive",
+          "net": "E1_LAB5_RT"
+        },
+        {
+          "number": "13",
           "name": "PG",
           "type": "open_collector",
           "net": "E1_PG_LAB5"
+        },
+        {
+          "number": "14",
+          "name": "EN/SYNC",
+          "type": "input",
+          "net": "E1_EN_LAB5"
+        },
+        {
+          "number": "15",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "16",
+          "name": "VIN2",
+          "type": "power_in",
+          "net": "E1_CONV_IN"
+        },
+        {
+          "number": "17",
+          "name": "PGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "18",
+          "name": "PGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "19",
+          "name": "PGND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "20",
+          "name": "PGND",
+          "type": "power_in",
+          "net": "GND"
         }
       ],
       "sources": [
         {
           "path": "design/E1.json",
           "ref": "U108",
-          "component_source": "https://www.pololu.com/product/4091"
+          "component_source": "https://www.ti.com/lit/ds/symlink/tpsm63606.pdf"
         },
         {
           "path": "components/pololu_d36v28f5_2_for_a_5_v_only_display.md"
@@ -11606,15 +12044,15 @@
           "path": "components/pololu_d36v28f5_lab5.md"
         }
       ],
-      "source_description": "Офіційний функціональний інтерфейс Pololu #4091. Дубльовані силові отвори належать спільним мережам; не одинарний header при струмі понад3A.",
+      "source_description": "Усі 20 фізичних виводів RDL0020A (B3QFN, 4.1 мм max), включно з чотирма площадками PGND 17–20. Посадкове місце SR_RX_Custom за land pattern TI 4226416/B.",
       "source_notes": [
-        "Оновлений default LAB5 замість D36V28F5. Advertised 5.5 A typ є умовним терморейтингом, а не гарантією при 50 °C. Вихід 5 V ±4%; EN вільний із внутрішнім pull-up; VRP не підключено; PG лише на TP102.",
-        "Габарит 25.4×25.4×9.5 mm проти 17.8×20.3×8.8 mm старого модуля: +7.6×5.1×0.7 mm і +78.5% площі. Потрібне перекомпонування силової плати та кріплень.",
-        "Проєктний режим: сукупний LAB5 ≤3.2 A continuous; transient qualification ≤4 A. Це новий бюджет, не вимір. Перевірити кожний VBUS після ключа. Силові дроти паяти напряму або використовувати обидва парні силові піни: одиночний header rated 3 A непридатний.",
-        "D36V28F5 є legacy-варіантом лише обмежених профілів з окремим gate ≤2.5 A; у default BOM і схемі не встановлюється."
+        "W2 GR-5A (SHRINK-2): замінює модуль Pololu D36V50F5 #4091 (STACK D11 називає родину TPSM6360x запасом). Без spread spectrum (TPSM63606, не 63606S). VOUT = 1 V·(1 + 40.2k/10.0k) = 5.02 V (±1 % VFB); fSW ≈913 kHz від RT R131 14.3 kΩ (рівн. 5, у межах 0.8–1.2 MHz табл. 8-1), такт на EN/SYNC TBD, як у U107.",
+        "EN/UVLO R132 1.00 MΩ / R133 147 kΩ від E1_CONV_IN: вмикання 9.9 V ном. (8.9…10.8 V з допуском VEN_RISE і 1 % резисторів), вимикання ≈7.1 V ном. (VEN_FALL 0.91 V), MODEL; зворотне живлення VIN близько 4.5 V (STACK D11) його не запускає.",
+        "SW, CBOOT, RBOOT і VCC без зовнішніх з’єднань (SLVSGB4B табл. 6-1: 100 nF і 100 Ω бутстрепа та 1 µF VCC усередині). COUT C133–C135 3 × 47 µF 10 V 1210 проти мінімуму 30 µF ефективно (табл. 8-1); криву DC-bias не прочитано (READS-P), тож CFF 22 pF не ставиться, а запас — стенд E1-05.",
+        "Наявність 2026-11-11: LCSC C5219325 — 1241; DigiKey DE — 0 (поставки 21.12.2026 і 04.01.2027), рядки READS-P."
       ],
       "coverage_constraints": [
-        "VIN/VOUT/EN/PG/latching state and faults; no software register bus.",
+        "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
         "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
       ],
       "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
@@ -15635,17 +16073,12 @@
       "interface_signals": [
         "3V3_Q6A",
         "AUX12",
-        "BIAS_CH1_DAMP",
-        "BIAS_CH2_DAMP",
-        "BIAS_CH3_DAMP",
-        "BIAS_CH4_DAMP",
         "BONI13V8",
         "BONI13V8_PORT",
         "CHG_INHIBIT",
         "E1_BAT_ADC",
         "E2_LNA4_SHUNT",
         "E2_LNA4_SW",
-        "E2_SB_DAMP",
         "EN_AUX12",
         "EN_BONI",
         "EN_HFP",
@@ -15671,9 +16104,7 @@
         "PICO_DISP_EN",
         "PICO_OFF",
         "PWR_BUTTON",
-        "VBUS_HFP",
-        "VBUS_LABPORT",
-        "VBUS_RTLB_DAMP"
+        "VBUS_HFP"
       ],
       "configuration_from_source": {},
       "pinout_status": "project_harness_assignment_not_factory_pinout",
@@ -15753,9 +16184,9 @@
         },
         {
           "number": "13",
-          "name": "BIAS_CH1_DAMP",
+          "name": "VBUS_HFP",
           "type": "passive",
-          "net": "BIAS_CH1_DAMP"
+          "net": "VBUS_HFP"
         },
         {
           "number": "14",
@@ -15777,9 +16208,9 @@
         },
         {
           "number": "17",
-          "name": "BIAS_CH2_DAMP",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "BIAS_CH2_DAMP"
+          "net": "LAB5_RLY"
         },
         {
           "number": "18",
@@ -15801,9 +16232,9 @@
         },
         {
           "number": "21",
-          "name": "BIAS_CH3_DAMP",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "BIAS_CH3_DAMP"
+          "net": "LAB5_RLY"
         },
         {
           "number": "22",
@@ -15825,9 +16256,9 @@
         },
         {
           "number": "25",
-          "name": "E2_SB_DAMP",
+          "name": "BONI13V8",
           "type": "passive",
-          "net": "E2_SB_DAMP"
+          "net": "BONI13V8"
         },
         {
           "number": "26",
@@ -15849,9 +16280,9 @@
         },
         {
           "number": "29",
-          "name": "VBUS_RTLB_DAMP",
+          "name": "LNB13V2",
           "type": "passive",
-          "net": "VBUS_RTLB_DAMP"
+          "net": "LNB13V2"
         },
         {
           "number": "30",
@@ -15873,9 +16304,9 @@
         },
         {
           "number": "33",
-          "name": "VBUS_LABPORT",
+          "name": "AUX12",
           "type": "passive",
-          "net": "VBUS_LABPORT"
+          "net": "AUX12"
         },
         {
           "number": "34",
@@ -15897,9 +16328,9 @@
         },
         {
           "number": "37",
-          "name": "VBUS_HFP",
+          "name": "BONI13V8_PORT",
           "type": "passive",
-          "net": "VBUS_HFP"
+          "net": "BONI13V8_PORT"
         },
         {
           "number": "38",
@@ -15921,9 +16352,9 @@
         },
         {
           "number": "41",
-          "name": "LAB5_RLY",
+          "name": "GND",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "net": "GND"
         },
         {
           "number": "42",
@@ -15933,9 +16364,9 @@
         },
         {
           "number": "43",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "44",
@@ -15945,9 +16376,9 @@
         },
         {
           "number": "45",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "46",
@@ -15957,9 +16388,9 @@
         },
         {
           "number": "47",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "48",
@@ -15969,9 +16400,9 @@
         },
         {
           "number": "49",
-          "name": "BIAS_CH4_DAMP",
+          "name": "NC",
           "type": "passive",
-          "net": "BIAS_CH4_DAMP"
+          "nc": true
         },
         {
           "number": "50",
@@ -15981,9 +16412,9 @@
         },
         {
           "number": "51",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "52",
@@ -15993,9 +16424,9 @@
         },
         {
           "number": "53",
-          "name": "BONI13V8",
+          "name": "NC",
           "type": "passive",
-          "net": "BONI13V8"
+          "nc": true
         },
         {
           "number": "54",
@@ -16005,9 +16436,9 @@
         },
         {
           "number": "55",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "56",
@@ -16017,9 +16448,9 @@
         },
         {
           "number": "57",
-          "name": "LNB13V2",
+          "name": "NC",
           "type": "passive",
-          "net": "LNB13V2"
+          "nc": true
         },
         {
           "number": "58",
@@ -16029,9 +16460,9 @@
         },
         {
           "number": "59",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "60",
@@ -16041,9 +16472,9 @@
         },
         {
           "number": "61",
-          "name": "AUX12",
+          "name": "NC",
           "type": "passive",
-          "net": "AUX12"
+          "nc": true
         },
         {
           "number": "62",
@@ -16053,9 +16484,9 @@
         },
         {
           "number": "63",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "64",
@@ -16065,9 +16496,9 @@
         },
         {
           "number": "65",
-          "name": "BONI13V8_PORT",
+          "name": "NC",
           "type": "passive",
-          "net": "BONI13V8_PORT"
+          "nc": true
         },
         {
           "number": "66",
@@ -16077,9 +16508,9 @@
         },
         {
           "number": "67",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "68",
@@ -16089,9 +16520,9 @@
         },
         {
           "number": "69",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "70",
@@ -16309,17 +16740,12 @@
       "interface_signals": [
         "3V3_Q6A",
         "AUX12",
-        "BIAS_CH1_DAMP",
-        "BIAS_CH2_DAMP",
-        "BIAS_CH3_DAMP",
-        "BIAS_CH4_DAMP",
         "BONI13V8",
         "BONI13V8_PORT",
         "CHG_INHIBIT",
         "E1_BAT_ADC",
         "E2_LNA4_SHUNT",
         "E2_LNA4_SW",
-        "E2_SB_DAMP",
         "EN_AUX12",
         "EN_BONI",
         "EN_HFP",
@@ -16345,9 +16771,7 @@
         "PICO_DISP_EN",
         "PICO_OFF",
         "PWR_BUTTON",
-        "VBUS_HFP",
-        "VBUS_LABPORT",
-        "VBUS_RTLB_DAMP"
+        "VBUS_HFP"
       ],
       "configuration_from_source": {},
       "pinout_status": "project_harness_assignment_not_factory_pinout",
@@ -16433,9 +16857,9 @@
         },
         {
           "number": "14",
-          "name": "BIAS_CH1_DAMP",
+          "name": "VBUS_HFP",
           "type": "passive",
-          "net": "BIAS_CH1_DAMP"
+          "net": "VBUS_HFP"
         },
         {
           "number": "15",
@@ -16457,9 +16881,9 @@
         },
         {
           "number": "18",
-          "name": "BIAS_CH2_DAMP",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "BIAS_CH2_DAMP"
+          "net": "LAB5_RLY"
         },
         {
           "number": "19",
@@ -16481,9 +16905,9 @@
         },
         {
           "number": "22",
-          "name": "BIAS_CH3_DAMP",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "BIAS_CH3_DAMP"
+          "net": "LAB5_RLY"
         },
         {
           "number": "23",
@@ -16505,9 +16929,9 @@
         },
         {
           "number": "26",
-          "name": "E2_SB_DAMP",
+          "name": "BONI13V8",
           "type": "passive",
-          "net": "E2_SB_DAMP"
+          "net": "BONI13V8"
         },
         {
           "number": "27",
@@ -16529,9 +16953,9 @@
         },
         {
           "number": "30",
-          "name": "VBUS_RTLB_DAMP",
+          "name": "LNB13V2",
           "type": "passive",
-          "net": "VBUS_RTLB_DAMP"
+          "net": "LNB13V2"
         },
         {
           "number": "31",
@@ -16553,9 +16977,9 @@
         },
         {
           "number": "34",
-          "name": "VBUS_LABPORT",
+          "name": "AUX12",
           "type": "passive",
-          "net": "VBUS_LABPORT"
+          "net": "AUX12"
         },
         {
           "number": "35",
@@ -16577,9 +17001,9 @@
         },
         {
           "number": "38",
-          "name": "VBUS_HFP",
+          "name": "BONI13V8_PORT",
           "type": "passive",
-          "net": "VBUS_HFP"
+          "net": "BONI13V8_PORT"
         },
         {
           "number": "39",
@@ -16601,9 +17025,9 @@
         },
         {
           "number": "42",
-          "name": "LAB5_RLY",
+          "name": "GND",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "net": "GND"
         },
         {
           "number": "43",
@@ -16613,9 +17037,9 @@
         },
         {
           "number": "44",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "45",
@@ -16625,9 +17049,9 @@
         },
         {
           "number": "46",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "47",
@@ -16637,9 +17061,9 @@
         },
         {
           "number": "48",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "49",
@@ -16649,9 +17073,9 @@
         },
         {
           "number": "50",
-          "name": "BIAS_CH4_DAMP",
+          "name": "NC",
           "type": "passive",
-          "net": "BIAS_CH4_DAMP"
+          "nc": true
         },
         {
           "number": "51",
@@ -16661,9 +17085,9 @@
         },
         {
           "number": "52",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "53",
@@ -16673,9 +17097,9 @@
         },
         {
           "number": "54",
-          "name": "BONI13V8",
+          "name": "NC",
           "type": "passive",
-          "net": "BONI13V8"
+          "nc": true
         },
         {
           "number": "55",
@@ -16685,9 +17109,9 @@
         },
         {
           "number": "56",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "57",
@@ -16697,9 +17121,9 @@
         },
         {
           "number": "58",
-          "name": "LNB13V2",
+          "name": "NC",
           "type": "passive",
-          "net": "LNB13V2"
+          "nc": true
         },
         {
           "number": "59",
@@ -16709,9 +17133,9 @@
         },
         {
           "number": "60",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "61",
@@ -16721,9 +17145,9 @@
         },
         {
           "number": "62",
-          "name": "AUX12",
+          "name": "NC",
           "type": "passive",
-          "net": "AUX12"
+          "nc": true
         },
         {
           "number": "63",
@@ -16733,9 +17157,9 @@
         },
         {
           "number": "64",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "65",
@@ -16745,9 +17169,9 @@
         },
         {
           "number": "66",
-          "name": "BONI13V8_PORT",
+          "name": "NC",
           "type": "passive",
-          "net": "BONI13V8_PORT"
+          "nc": true
         },
         {
           "number": "67",
@@ -16757,9 +17181,9 @@
         },
         {
           "number": "68",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "69",
@@ -16769,9 +17193,9 @@
         },
         {
           "number": "70",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "71",
@@ -29909,13 +30333,17 @@
       "module_id": "E5/J506",
       "parent_assembly": "E5-CIR-10",
       "ref": "J506",
-      "value": "X23S1-PWR: JST PH 3, боковий вхід, S23",
+      "value": "SL3-PWR-PH: JST PH 9, боковий вхід, S23, S34",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
       "software_interface_specified": false,
       "interface_signals": [
+        "AUX12",
         "GND",
+        "I2CB_SCL",
+        "I2CB_SDA",
+        "SLED_DET",
         "VBUS_LABPORT"
       ],
       "configuration_from_source": {},
@@ -29939,18 +30367,55 @@
           "name": "VBUS_LABPORT",
           "type": "passive",
           "net": "VBUS_LABPORT"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "AUX12",
+          "type": "passive",
+          "net": "AUX12"
+        },
+        {
+          "number": "7",
+          "name": "I2CB_SCL",
+          "type": "passive",
+          "net": "I2CB_SCL"
+        },
+        {
+          "number": "8",
+          "name": "I2CB_SDA",
+          "type": "passive",
+          "net": "I2CB_SDA"
+        },
+        {
+          "number": "9",
+          "name": "SLED_DET",
+          "type": "passive",
+          "net": "SLED_DET"
         }
       ],
       "sources": [
         {
           "path": "design/E5.json",
           "ref": "J506",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
+          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3, W2 GR-5B)"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута X23S1-PWR (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S23; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута SL3-PWR-PH (build/16 §4; W2 GR-3, злиття W2 GR-5B за SHRINK-2): на PWR-B, сегмент(и) S23, S34; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 GR-5B: J506 (S23, PH 3) і J508 (S34, PH 6) зведено в одну вилку JST PH 9 бічного входу S9B-PH-K-S(LF)(SN) (рядок READS-P web:jst-ph-catalogue-lcsc, LCSC C157912); контакти 1–3 — S23 як раніше J506, 4–9 — S34 у порядку колишньої J508; джгут розходиться на дальніх кінцях (J501 і J505)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -30012,80 +30477,6 @@
       "source_description": "",
       "source_notes": [
         "Роз'єм джгута X32S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S32; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
-      ],
-      "coverage_constraints": [
-        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
-        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
-      ],
-      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
-    },
-    {
-      "module_id": "E5/J508",
-      "parent_assembly": "E5-CIR-10",
-      "ref": "J508",
-      "value": "X34S1-PWR: JST PH 6, боковий вхід, S34",
-      "source_kind": "connector",
-      "source_status": "design",
-      "interface_family": "passive_connector_or_named_boundary",
-      "software_interface_specified": false,
-      "interface_signals": [
-        "AUX12",
-        "GND",
-        "I2CB_SCL",
-        "I2CB_SDA",
-        "SLED_DET"
-      ],
-      "configuration_from_source": {},
-      "pinout_status": "project_harness_assignment_not_factory_pinout",
-      "pinout_gate": "project harness header assignment (build/16 §4, tools/assembly_data.py HEADERS); header position and orientation by the board layout",
-      "source_pins": [
-        {
-          "number": "1",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "2",
-          "name": "GND",
-          "type": "passive",
-          "net": "GND"
-        },
-        {
-          "number": "3",
-          "name": "AUX12",
-          "type": "passive",
-          "net": "AUX12"
-        },
-        {
-          "number": "4",
-          "name": "I2CB_SCL",
-          "type": "passive",
-          "net": "I2CB_SCL"
-        },
-        {
-          "number": "5",
-          "name": "I2CB_SDA",
-          "type": "passive",
-          "net": "I2CB_SDA"
-        },
-        {
-          "number": "6",
-          "name": "SLED_DET",
-          "type": "passive",
-          "net": "SLED_DET"
-        }
-      ],
-      "sources": [
-        {
-          "path": "design/E5.json",
-          "ref": "J508",
-          "component_source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)"
-        }
-      ],
-      "source_description": "",
-      "source_notes": [
-        "Роз'єм джгута X34S1-PWR (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S34; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -32082,8 +32473,27 @@
     "TP101": "E1-CIR-05",
     "C107": "E1-CIR-05",
     "C108": "E1-CIR-05",
+    "U111": "E1-CIR-05",
+    "Q102": "E1-CIR-05",
+    "C136": "E1-CIR-05",
+    "L102": "E1-CIR-05",
+    "C119": "E1-CIR-05",
+    "C120": "E1-CIR-05",
+    "C121": "E1-CIR-05",
+    "C122": "E1-CIR-05",
+    "C123": "E1-CIR-05",
+    "C124": "E1-CIR-05",
+    "C125": "E1-CIR-05",
+    "C126": "E1-CIR-05",
+    "C127": "E1-CIR-05",
+    "C128": "E1-CIR-05",
+    "C129": "E1-CIR-05",
+    "R124": "E1-CIR-05",
+    "R125": "E1-CIR-05",
+    "R126": "E1-CIR-05",
+    "R127": "E1-CIR-05",
+    "R128": "E1-CIR-05",
     "U108": "E1-CIR-06",
-    "C109": "E1-CIR-06",
     "C110": "E1-CIR-06",
     "F102": "E1-CIR-06",
     "C111": "E1-CIR-06",
@@ -32092,6 +32502,17 @@
     "R110": "E1-CIR-06",
     "C113": "E1-CIR-06",
     "TP102": "E1-CIR-06",
+    "C130": "E1-CIR-06",
+    "C131": "E1-CIR-06",
+    "C132": "E1-CIR-06",
+    "C133": "E1-CIR-06",
+    "C134": "E1-CIR-06",
+    "C135": "E1-CIR-06",
+    "R129": "E1-CIR-06",
+    "R130": "E1-CIR-06",
+    "R131": "E1-CIR-06",
+    "R132": "E1-CIR-06",
+    "R133": "E1-CIR-06",
     "F104": "E1-CIR-06",
     "F103": "E1-CIR-07",
     "J101": "E1-CIR-07",
@@ -32832,6 +33253,8 @@
     "C504": "E5-CIR-03",
     "C505": "E5-CIR-03",
     "C506": "E5-CIR-03",
+    "C521": "E5-CIR-03",
+    "C522": "E5-CIR-03",
     "C507": "E5-CIR-03",
     "R508": "E5-CIR-03",
     "U503": "E5-CIR-04",
@@ -32894,7 +33317,6 @@
     "C551": "E5-CIR-09",
     "J506": "E5-CIR-10",
     "J507": "E5-CIR-10",
-    "J508": "E5-CIR-10",
     "J509": "E5-CIR-10",
     "J510": "E5-CIR-10",
     "J513": "E5-CIR-10"
@@ -33854,7 +34276,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "61",
+          "pin": "33",
           "name": "AUX12",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -33862,7 +34284,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "62",
+          "pin": "34",
           "name": "AUX12",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -33877,8 +34299,8 @@
         },
         {
           "sheet": "E5",
-          "ref": "J508",
-          "pin": "3",
+          "ref": "J506",
+          "pin": "6",
           "name": "AUX12",
           "electrical_type": "passive",
           "assembly": "E5-CIR-10"
@@ -34021,29 +34443,12 @@
           "name": "+",
           "electrical_type": "passive",
           "assembly": "E2-CIR-06"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "13",
-          "name": "BIAS_CH1_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "14",
-          "name": "BIAS_CH1_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         }
       ],
       "assemblies": [
-        "E2-CIR-06",
-        "E2-CIR-20"
+        "E2-CIR-06"
       ],
-      "cross_assembly": true
+      "cross_assembly": false
     },
     {
       "net": "BIAS_CH2",
@@ -34128,29 +34533,12 @@
           "name": "+",
           "electrical_type": "passive",
           "assembly": "E2-CIR-07"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "17",
-          "name": "BIAS_CH2_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "18",
-          "name": "BIAS_CH2_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         }
       ],
       "assemblies": [
-        "E2-CIR-07",
-        "E2-CIR-20"
+        "E2-CIR-07"
       ],
-      "cross_assembly": true
+      "cross_assembly": false
     },
     {
       "net": "BIAS_CH2_PORT",
@@ -34320,29 +34708,12 @@
           "name": "+",
           "electrical_type": "passive",
           "assembly": "E2-CIR-08"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "21",
-          "name": "BIAS_CH3_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "22",
-          "name": "BIAS_CH3_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         }
       ],
       "assemblies": [
-        "E2-CIR-08",
-        "E2-CIR-20"
+        "E2-CIR-08"
       ],
-      "cross_assembly": true
+      "cross_assembly": false
     },
     {
       "net": "BIAS_CH3_PORT",
@@ -34524,29 +34895,12 @@
           "name": "+",
           "electrical_type": "passive",
           "assembly": "E2-CIR-09"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "49",
-          "name": "BIAS_CH4_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "50",
-          "name": "BIAS_CH4_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         }
       ],
       "assemblies": [
-        "E2-CIR-09",
-        "E2-CIR-20"
+        "E2-CIR-09"
       ],
-      "cross_assembly": true
+      "cross_assembly": false
     },
     {
       "net": "BIAS_SB_LNA",
@@ -34686,7 +35040,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "53",
+          "pin": "25",
           "name": "BONI13V8",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -34694,7 +35048,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "54",
+          "pin": "26",
           "name": "BONI13V8",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -34778,7 +35132,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "65",
+          "pin": "37",
           "name": "BONI13V8_PORT",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -34786,7 +35140,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "66",
+          "pin": "38",
           "name": "BONI13V8_PORT",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -35730,13 +36084,184 @@
       "cross_assembly": false
     },
     {
+      "net": "E1_CONV_IN",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "8",
+          "name": "VIN1",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "12",
+          "name": "VIN2",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R108",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C107",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U111",
+          "pin": "4",
+          "name": "CATHODE",
+          "electrical_type": "input",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "Q102",
+          "pin": "5",
+          "name": "D",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C119",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C120",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C121",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C122",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "1",
+          "name": "VIN1",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "16",
+          "name": "VIN2",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C130",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C131",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C132",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R132",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05",
+        "E1-CIR-06"
+      ],
+      "cross_assembly": true
+    },
+    {
+      "net": "E1_EN_LAB5",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "14",
+          "name": "EN/SYNC",
+          "electrical_type": "input",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R132",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R133",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-06"
+      ],
+      "cross_assembly": false
+    },
+    {
       "net": "E1_EN_SYS12",
       "pins": [
         {
           "sheet": "E1",
           "ref": "U107",
-          "pin": "EN",
-          "name": "EN",
+          "pin": "7",
+          "name": "EN/SYNC",
           "electrical_type": "input",
           "assembly": "E1-CIR-05"
         },
@@ -35788,6 +36313,39 @@
       "cross_assembly": false
     },
     {
+      "net": "E1_LAB5_FB",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "10",
+          "name": "FB",
+          "electrical_type": "input",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R129",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R130",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-06"
+      ],
+      "cross_assembly": false
+    },
+    {
       "net": "E1_LAB5_FUSED",
       "pins": [
         {
@@ -35802,7 +36360,7 @@
           "sheet": "E1",
           "ref": "C111",
           "pin": "1",
-          "name": "+",
+          "name": "1",
           "electrical_type": "passive",
           "assembly": "E1-CIR-06"
         },
@@ -35826,14 +36384,87 @@
         {
           "sheet": "E1",
           "ref": "U108",
-          "pin": "VOUT",
-          "name": "VOUT",
+          "pin": "5",
+          "name": "VLDOIN",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "8",
+          "name": "VOUT1",
           "electrical_type": "power_out",
           "assembly": "E1-CIR-06"
         },
         {
           "sheet": "E1",
+          "ref": "U108",
+          "pin": "9",
+          "name": "VOUT2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
           "ref": "F102",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C133",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C134",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C135",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R129",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-06"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_LAB5_RT",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "12",
+          "name": "RT",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R131",
           "pin": "1",
           "name": "1",
           "electrical_type": "passive",
@@ -36146,7 +36777,7 @@
         {
           "sheet": "E1",
           "ref": "U108",
-          "pin": "PG",
+          "pin": "13",
           "name": "PG",
           "electrical_type": "open_collector",
           "assembly": "E1-CIR-06"
@@ -36171,8 +36802,8 @@
         {
           "sheet": "E1",
           "ref": "U107",
-          "pin": "PG",
-          "name": "PG",
+          "pin": "5",
+          "name": "PGOOD",
           "electrical_type": "open_collector",
           "assembly": "E1-CIR-05"
         },
@@ -36181,6 +36812,56 @@
           "ref": "TP101",
           "pin": "1",
           "name": "PG",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_RPP_GATE",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U111",
+          "pin": "5",
+          "name": "GATE",
+          "electrical_type": "output",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "Q102",
+          "pin": "4",
+          "name": "G",
+          "electrical_type": "input",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_RPP_VCAP",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U111",
+          "pin": "1",
+          "name": "VCAP",
+          "electrical_type": "output",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C136",
+          "pin": "1",
+          "name": "1",
           "electrical_type": "passive",
           "assembly": "E1-CIR-05"
         }
@@ -36312,30 +36993,6 @@
         },
         {
           "sheet": "E1",
-          "ref": "U107",
-          "pin": "VIN",
-          "name": "VIN",
-          "electrical_type": "power_in",
-          "assembly": "E1-CIR-05"
-        },
-        {
-          "sheet": "E1",
-          "ref": "R108",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-05"
-        },
-        {
-          "sheet": "E1",
-          "ref": "C107",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-05"
-        },
-        {
-          "sheet": "E1",
           "ref": "C108",
           "pin": "1",
           "name": "1",
@@ -36344,19 +37001,51 @@
         },
         {
           "sheet": "E1",
-          "ref": "U108",
-          "pin": "VIN",
-          "name": "VIN",
-          "electrical_type": "power_in",
-          "assembly": "E1-CIR-06"
+          "ref": "U111",
+          "pin": "3",
+          "name": "EN",
+          "electrical_type": "input",
+          "assembly": "E1-CIR-05"
         },
         {
           "sheet": "E1",
-          "ref": "C109",
+          "ref": "U111",
+          "pin": "6",
+          "name": "ANODE",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "Q102",
           "pin": "1",
-          "name": "1",
+          "name": "S1",
           "electrical_type": "passive",
-          "assembly": "E1-CIR-06"
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "Q102",
+          "pin": "2",
+          "name": "S2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "Q102",
+          "pin": "3",
+          "name": "S3",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C136",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
         },
         {
           "sheet": "E1",
@@ -36485,6 +37174,213 @@
         "E1-CIR-13"
       ],
       "cross_assembly": true
+    },
+    {
+      "net": "E1_SYS12_CBOOT",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "14",
+          "name": "CBOOT",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C127",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R127",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_SYS12_FB",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "4",
+          "name": "FB",
+          "electrical_type": "input",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R124",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R125",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R128",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_SYS12_FF",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "C129",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R128",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_SYS12_RBOOT",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "13",
+          "name": "RBOOT",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R127",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_SYS12_RT",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "6",
+          "name": "RT",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R126",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_SYS12_SW",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "10",
+          "name": "SW",
+          "electrical_type": "output",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "L102",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C127",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E1_SYS12_VCC",
+      "pins": [
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "2",
+          "name": "VCC",
+          "electrical_type": "power_out",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C128",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        }
+      ],
+      "assemblies": [
+        "E1-CIR-05"
+      ],
+      "cross_assembly": false
     },
     {
       "net": "E1_USB_PD_RAW",
@@ -39050,29 +39946,12 @@
           "name": "+",
           "electrical_type": "passive",
           "assembly": "E2-CIR-19"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "25",
-          "name": "E2_SB_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "26",
-          "name": "E2_SB_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         }
       ],
       "assemblies": [
-        "E2-CIR-19",
-        "E2-CIR-20"
+        "E2-CIR-19"
       ],
-      "cross_assembly": true
+      "cross_assembly": false
     },
     {
       "net": "E2_SB_ILIM",
@@ -50138,8 +51017,24 @@
         {
           "sheet": "E1",
           "ref": "U107",
-          "pin": "GND",
-          "name": "GND",
+          "pin": "3",
+          "name": "AGND",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "9",
+          "name": "PGND1",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U107",
+          "pin": "11",
+          "name": "PGND2",
           "electrical_type": "power_in",
           "assembly": "E1-CIR-05"
         },
@@ -50169,18 +51064,146 @@
         },
         {
           "sheet": "E1",
-          "ref": "U108",
-          "pin": "GND",
+          "ref": "U111",
+          "pin": "2",
           "name": "GND",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C119",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C120",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C121",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C122",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C123",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C124",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C125",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C126",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C128",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R125",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R126",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "6",
+          "name": "AGND",
           "electrical_type": "power_in",
           "assembly": "E1-CIR-06"
         },
         {
           "sheet": "E1",
-          "ref": "C109",
-          "pin": "2",
-          "name": "2",
-          "electrical_type": "passive",
+          "ref": "U108",
+          "pin": "11",
+          "name": "AGND",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "17",
+          "name": "PGND",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "18",
+          "name": "PGND",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "19",
+          "name": "PGND",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "U108",
+          "pin": "20",
+          "name": "PGND",
+          "electrical_type": "power_in",
           "assembly": "E1-CIR-06"
         },
         {
@@ -50195,7 +51218,7 @@
           "sheet": "E1",
           "ref": "C111",
           "pin": "2",
-          "name": "−",
+          "name": "2",
           "electrical_type": "passive",
           "assembly": "E1-CIR-06"
         },
@@ -50203,7 +51226,7 @@
           "sheet": "E1",
           "ref": "C112",
           "pin": "2",
-          "name": "−",
+          "name": "2",
           "electrical_type": "passive",
           "assembly": "E1-CIR-06"
         },
@@ -50212,6 +51235,78 @@
           "ref": "C113",
           "pin": "2",
           "name": "−",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C130",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C131",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C132",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C133",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C134",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C135",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R130",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R131",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-06"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R133",
+          "pin": "2",
+          "name": "2",
           "electrical_type": "passive",
           "assembly": "E1-CIR-06"
         },
@@ -52114,63 +53209,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "43",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "47",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "51",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "55",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "59",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "63",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "67",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "69",
+          "pin": "41",
           "name": "GND",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -52306,63 +53345,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "44",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "48",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "52",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "56",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "60",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "64",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "68",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "70",
+          "pin": "42",
           "name": "GND",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -55193,6 +56176,22 @@
         },
         {
           "sheet": "E5",
+          "ref": "C521",
+          "pin": "2",
+          "name": "−",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-03"
+        },
+        {
+          "sheet": "E5",
+          "ref": "C522",
+          "pin": "2",
+          "name": "−",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-03"
+        },
+        {
+          "sheet": "E5",
           "ref": "C507",
           "pin": "2",
           "name": "−",
@@ -55681,24 +56680,24 @@
         },
         {
           "sheet": "E5",
+          "ref": "J506",
+          "pin": "4",
+          "name": "GND",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-10"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J506",
+          "pin": "5",
+          "name": "GND",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-10"
+        },
+        {
+          "sheet": "E5",
           "ref": "J507",
           "pin": "1",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E5-CIR-10"
-        },
-        {
-          "sheet": "E5",
-          "ref": "J508",
-          "pin": "1",
-          "name": "GND",
-          "electrical_type": "passive",
-          "assembly": "E5-CIR-10"
-        },
-        {
-          "sheet": "E5",
-          "ref": "J508",
-          "pin": "2",
           "name": "GND",
           "electrical_type": "passive",
           "assembly": "E5-CIR-10"
@@ -56332,8 +57331,8 @@
         },
         {
           "sheet": "E5",
-          "ref": "J508",
-          "pin": "4",
+          "ref": "J506",
+          "pin": "7",
           "name": "I2CB_SCL",
           "electrical_type": "passive",
           "assembly": "E5-CIR-10"
@@ -56375,8 +57374,8 @@
         },
         {
           "sheet": "E5",
-          "ref": "J508",
-          "pin": "5",
+          "ref": "J506",
+          "pin": "8",
           "name": "I2CB_SDA",
           "electrical_type": "passive",
           "assembly": "E5-CIR-10"
@@ -56938,7 +57937,7 @@
           "sheet": "E1",
           "ref": "C112",
           "pin": "1",
-          "name": "+",
+          "name": "1",
           "electrical_type": "passive",
           "assembly": "E1-CIR-06"
         },
@@ -57351,7 +58350,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "41",
+          "pin": "17",
           "name": "LAB5_RLY",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -57359,7 +58358,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "45",
+          "pin": "21",
           "name": "LAB5_RLY",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -57367,7 +58366,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "42",
+          "pin": "18",
           "name": "LAB5_RLY",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -57375,7 +58374,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "46",
+          "pin": "22",
           "name": "LAB5_RLY",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -57710,7 +58709,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "57",
+          "pin": "29",
           "name": "LNB13V2",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -57718,7 +58717,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "58",
+          "pin": "30",
           "name": "LNB13V2",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -58588,8 +59587,8 @@
         },
         {
           "sheet": "E5",
-          "ref": "J508",
-          "pin": "6",
+          "ref": "J506",
+          "pin": "9",
           "name": "SLED_DET",
           "electrical_type": "passive",
           "assembly": "E5-CIR-10"
@@ -58874,9 +59873,65 @@
         {
           "sheet": "E1",
           "ref": "U107",
-          "pin": "VOUT",
-          "name": "VOUT",
-          "electrical_type": "power_out",
+          "pin": "1",
+          "name": "BIAS",
+          "electrical_type": "power_in",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "L102",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C123",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C124",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C125",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C126",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "C129",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E1-CIR-05"
+        },
+        {
+          "sheet": "E1",
+          "ref": "R124",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
           "assembly": "E1-CIR-05"
         },
         {
@@ -59168,7 +60223,7 @@
         {
           "sheet": "E2",
           "ref": "J208",
-          "pin": "37",
+          "pin": "13",
           "name": "VBUS_HFP",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -59176,7 +60231,7 @@
         {
           "sheet": "E2",
           "ref": "J209",
-          "pin": "38",
+          "pin": "14",
           "name": "VBUS_HFP",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -59250,22 +60305,6 @@
       "net": "VBUS_LABPORT",
       "pins": [
         {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "33",
-          "name": "VBUS_LABPORT",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "34",
-          "name": "VBUS_LABPORT",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
           "sheet": "E5",
           "ref": "J501",
           "pin": "1",
@@ -59284,6 +60323,22 @@
         {
           "sheet": "E5",
           "ref": "C506",
+          "pin": "1",
+          "name": "+",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-03"
+        },
+        {
+          "sheet": "E5",
+          "ref": "C521",
+          "pin": "1",
+          "name": "+",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-03"
+        },
+        {
+          "sheet": "E5",
+          "ref": "C522",
           "pin": "1",
           "name": "+",
           "electrical_type": "passive",
@@ -59315,7 +60370,6 @@
         }
       ],
       "assemblies": [
-        "E2-CIR-20",
         "E5-CIR-02",
         "E5-CIR-03",
         "E5-CIR-10"
@@ -59468,29 +60522,12 @@
           "name": "+",
           "electrical_type": "passive",
           "assembly": "E2-CIR-10"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J208",
-          "pin": "29",
-          "name": "VBUS_RTLB_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
-        },
-        {
-          "sheet": "E2",
-          "ref": "J209",
-          "pin": "30",
-          "name": "VBUS_RTLB_DAMP",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-20"
         }
       ],
       "assemblies": [
-        "E2-CIR-10",
-        "E2-CIR-20"
+        "E2-CIR-10"
       ],
-      "cross_assembly": true
+      "cross_assembly": false
     },
     {
       "net": "VCC_3V3_MKEY",
@@ -59645,25 +60682,41 @@
     },
     {
       "sheet": "E1",
-      "ref": "U107",
-      "pin": "VRP",
-      "name": "VRP",
-      "electrical_type": "no_connect",
-      "assembly": "E1-CIR-05"
-    },
-    {
-      "sheet": "E1",
       "ref": "U108",
-      "pin": "VRP",
-      "name": "VRP",
+      "pin": "2",
+      "name": "SW",
       "electrical_type": "no_connect",
       "assembly": "E1-CIR-06"
     },
     {
       "sheet": "E1",
       "ref": "U108",
-      "pin": "EN",
-      "name": "EN",
+      "pin": "3",
+      "name": "CBOOT",
+      "electrical_type": "no_connect",
+      "assembly": "E1-CIR-06"
+    },
+    {
+      "sheet": "E1",
+      "ref": "U108",
+      "pin": "4",
+      "name": "RBOOT",
+      "electrical_type": "no_connect",
+      "assembly": "E1-CIR-06"
+    },
+    {
+      "sheet": "E1",
+      "ref": "U108",
+      "pin": "7",
+      "name": "VCC",
+      "electrical_type": "no_connect",
+      "assembly": "E1-CIR-06"
+    },
+    {
+      "sheet": "E1",
+      "ref": "U108",
+      "pin": "15",
+      "name": "NC",
       "electrical_type": "no_connect",
       "assembly": "E1-CIR-06"
     },
@@ -59990,7 +61043,95 @@
     {
       "sheet": "E2",
       "ref": "J208",
+      "pin": "43",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "45",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "47",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "49",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "51",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "53",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "55",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "57",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "59",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "61",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
       "pin": "62",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "63",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60006,6 +61147,14 @@
     {
       "sheet": "E2",
       "ref": "J208",
+      "pin": "65",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
       "pin": "66",
       "name": "NC",
       "electrical_type": "passive",
@@ -60014,7 +61163,23 @@
     {
       "sheet": "E2",
       "ref": "J208",
+      "pin": "67",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
       "pin": "68",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J208",
+      "pin": "69",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60238,7 +61403,87 @@
     {
       "sheet": "E2",
       "ref": "J209",
+      "pin": "44",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "46",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "48",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "50",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "52",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "54",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "56",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "58",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "60",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
       "pin": "61",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "62",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60254,7 +61499,23 @@
     {
       "sheet": "E2",
       "ref": "J209",
+      "pin": "64",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
       "pin": "65",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "66",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -60270,7 +61531,23 @@
     {
       "sheet": "E2",
       "ref": "J209",
+      "pin": "68",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
       "pin": "69",
+      "name": "NC",
+      "electrical_type": "passive",
+      "assembly": "E2-CIR-20"
+    },
+    {
+      "sheet": "E2",
+      "ref": "J209",
+      "pin": "70",
       "name": "NC",
       "electrical_type": "passive",
       "assembly": "E2-CIR-20"
@@ -61482,9 +62759,9 @@
   "validation": {
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
-    "all851refs_assigned_once": true,
-    "all2717connected_pin_net_triples_exact": true,
-    "all225NCpins_exact": true,
+    "all882refs_assigned_once": true,
+    "all2780connected_pin_net_triples_exact": true,
+    "all255NCpins_exact": true,
     "all231subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
     "no_project_files_written_by_inventory_task": true,
