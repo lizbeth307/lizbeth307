@@ -245,6 +245,10 @@
       {
         "netclass": "SCRIPTED_GND",
         "pattern": "GND"
+      },
+      {
+        "netclass": "SCRIPTED_GND",
+        "pattern": "3V3_Q6A"
       }
     ]
   }
