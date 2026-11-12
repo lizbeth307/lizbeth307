@@ -410,6 +410,13 @@ def build():
     if ffc:
         out['exit_edges'] = {r: 'bottom' for r in FFC_PLACES}
     out['turn_whatif'] = TURN_WHATIF
+    # pcb/check_boards.py keys of a two-sided board: parts on both sides, bottom height limit = the room under PWR-A
+    out['sides'] = ['top', 'bottom']
+    out['max_height_bottom'] = cand['pwr_a_bottom']['h_room_mm']
+    out['max_height_bottom_note'] = ('pcb/partition-spec.json candidates.shrink2.pwr_a_bottom.h_room_mm (shim gap 0.4 + pocket '
+                                     'depth 1.0): an upper bound, the polyimide film and a clearance (TBD) come off it; the '
+                                     'heights of the bottom chip parts are not read (TBD per MPN), so check_boards lists '
+                                     'them as unverified')
     out['generator'] = 'build/kicad/boards/PWR_A/make_spec.py'
     bg.validate_spec(out, 'PWR_A')
     return out

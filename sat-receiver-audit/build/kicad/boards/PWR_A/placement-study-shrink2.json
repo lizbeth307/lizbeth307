@@ -5,7 +5,7 @@
   "status": "MODEL / planning result of the board_gen planner (standard library); no KiCad board, no routing, no hardware result; bench gates OPEN",
   "generator": "build/kicad/boards/PWR_A/placement_study.py",
   "inputs": {
-    "spec_sha256": "e9f92be94b839bac75bb0e8b9ed7070fd4574551c044b496efb0edc15b39fc9d",
+    "spec_sha256": "27506fcf422d51524aa28610d77c458c5429c6176c1ddc364694ed4c3f470eeb",
     "contract_pwr": "00bf8c302e39b748b918c2bbf8af3fe139209ac5c113675f699c3ebfdcc01fb6",
     "contract_pwr_b_outline": "162a3b5c88a8f0dfb87102136b57a0938ce02ed85d2cd3f0b5ca2d275d5cbd9d",
     "template_sha256": "380b8033cb676e996ac1680d96e17c92ad6aa355c692558a961dce60cb777f00",

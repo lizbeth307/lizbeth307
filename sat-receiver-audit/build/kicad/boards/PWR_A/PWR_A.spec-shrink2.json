@@ -4375,5 +4375,11 @@
     "J111",
     "J112"
   ],
+  "sides": [
+    "top",
+    "bottom"
+  ],
+  "max_height_bottom": 1.4,
+  "max_height_bottom_note": "pcb/partition-spec.json candidates.shrink2.pwr_a_bottom.h_room_mm (shim gap 0.4 + pocket depth 1.0): an upper bound, the polyimide film and a clearance (TBD) come off it; the heights of the bottom chip parts are not read (TBD per MPN), so check_boards lists them as unverified",
   "generator": "build/kicad/boards/PWR_A/make_spec.py"
 }

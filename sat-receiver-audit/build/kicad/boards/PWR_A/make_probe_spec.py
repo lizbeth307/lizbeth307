@@ -20,7 +20,9 @@ The placement probe (W2 PCB-PWRA-3) is one sr-rx-pcb route run of the SHRINK-2 p
 overlaps on both sides, holes, edges), the J208 mate against PWR_B J209 and the THT pockets, and Freerouting gives a first
 route of the SHRINK-2 layout. Refs with a pending planned footprint (planned_footprints: the graph still has the old part)
 and the reserved blocks of pending changes have no KiCad footprint of their own yet and stay out; the domain and boundary
-audits fail by construction. pcb/boards/PWR_A.json is removed again by the next commit.
+audits fail by construction. A planner-placed part within EDGE_TEXT_MM of the outline gets its reference text at its
+courtyard centre, parallel to that edge; a post-route pour that no pad of its net reaches stays out (isolated copper).
+pcb/boards/PWR_A.json is removed again by the next commit.
 
 tht_pockets: one proposed plate relief pocket (M-07) per cluster of THT pads and NPTH pegs of a placed part:
 the pad boxes + tht_pocket_margin_mm, rounded outward to 0.05 mm; margin boxes less than 3 mm apart share a pocket.
@@ -153,6 +155,27 @@ def build():
     return out
 
 
+EDGE_TEXT_MM = 2.5  # a planner-placed part this close to the outline gets its reference text along that edge
+
+
+def edge_text(box, outline):
+    """Reference text of a planner-placed part near the board edge: at the courtyard centre, parallel to the nearest
+    outline edge (placement probe 5 had 28 silk_edge_clearance errors from default legends of such parts), else None."""
+    best = None
+    for (ax, ay), (bx, by) in zip(outline, outline[1:] + outline[:1]):
+        if ay == by and min(ax, bx) < box[2] and max(ax, bx) > box[0]:
+            d, angle = min(abs(box[1] - ay), abs(box[3] - ay)), 0
+        elif ax == bx and min(ay, by) < box[3] and max(ay, by) > box[1]:
+            d, angle = min(abs(box[0] - ax), abs(box[2] - ax)), 90
+        else:
+            continue
+        if best is None or d < best[0]:
+            best = (d, angle)
+    if best is None or best[0] > EDGE_TEXT_MM:
+        return None
+    return {'at': [bg.r4((box[0] + box[2]) / 2), bg.r4((box[1] + box[3]) / 2)], 'angle': best[1]}
+
+
 def build_placement():
     spec = bg.read_json(SHRINK2)
     study = bg.read_json(SHRINK2_STUDY)
@@ -160,6 +183,7 @@ def build_placement():
         raise SystemExit('placement-study-shrink2.json is not the study of PWR_A.spec-shrink2.json: rerun placement_study.py')
     graph = bg.load_graph()
     manifest = bg.read_json(bg.MANIFEST)
+    outline = bg.read_json(BASE / spec['contract']['file'])['boards'][spec['contract']['board']]['outline_mm']
     pos = {r['ref']: r for r in study['positions']['refs']}
     pending = set(spec.get('planned_footprints', {}))
     keep, left_out = [], []
@@ -172,8 +196,11 @@ def build_placement():
             keep.append(p)
             continue
         r = pos[ref]
-        keep.append({'ref': ref, 'source': p['source'],
-                     'anchor': {'at': r['at'], 'align': 'origin', 'rotation': r['rotation'], 'side': r['side']},
+        anchor = {'at': r['at'], 'align': 'origin', 'rotation': r['rotation'], 'side': r['side']}
+        text = edge_text(r['courtyard_box'], outline)
+        if text:
+            anchor['ref_text'] = text
+        keep.append({'ref': ref, 'source': p['source'], 'anchor': anchor,
                      'anchor_source': 'placement-study-shrink2.json position (board_gen planner, chunked first-fit)'})
     refs = {p['ref'] for p in keep}
     nets = set()
@@ -199,19 +226,25 @@ def build_placement():
             continue
         pockets += pockets_for(geo, t['anchor'])
     # A post-route pour that no pad of its net can reach would only be isolated copper (the GND bond pours of zones 3'/4'
-    # on B.Cu while their converters are reserved blocks): it stays out of the probe. A pad reaches a pour when its part
-    # has a pin on the net, its courtyard overlaps the pour and it sits on the pour's side or has THT pads.
-    boxes = {q['ref']: q['courtyard_box'] for q in study['positions']['refs']}
+    # on B.Cu while their converters are reserved blocks; placement probe 5): it stays out of the probe. A pad reaches a
+    # pour when it carries the pour's net, its centre lies inside the pour outline and it is a THT pad or an SMD pad on
+    # the pour's side.
     post, post_left_out = [], []
     for z in spec['post_route_zones']:
         if z['net'] not in nets:
             continue
         zside = 'B' if z['layer'] == 'B.Cu' else 'F'
-        zx, zy = [q[0] for q in z['outline']], [q[1] for q in z['outline']]
-        zb = [min(zx), min(zy), max(zx), max(zy)]
-        hit = [t['ref'] for t in template if any(pin.get('net') == z['net'] for pin in graph[t['ref']]['pins'])
-               and bg.rects_overlap(boxes[t['ref']], zb)
-               and (t['anchor'].get('side', 'F') == zside or any(q['type'] == 'thru_hole' for q in geos[t['ref']]['pads']))]
+        hit = []
+        for t in template:
+            where = bg.placed_geometry(geos[t['ref']], t['anchor'])['pads']
+            for q in geos[t['ref']]['pads']:
+                num = str(q['number'])
+                if not num or t['pads'].get(num) != z['net']:
+                    continue
+                if q['type'] != 'thru_hole' and t['anchor'].get('side', 'F') != zside:
+                    continue
+                if any(bg.point_in_outline(tuple(c), z['outline']) for c in where.get(num, [])):
+                    hit.append(f'{t["ref"]}.{num}')
         if hit:
             post.append(z)
         else:
