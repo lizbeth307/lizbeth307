@@ -608,8 +608,12 @@ def pico3v3_copper(cu):
     y4 = 108.95
     pull = [P(r, '2') for r in ('R351', 'R353', 'R355', 'R357')]
     assert all(p['net'] == P33 for p in pull)
-    cu.track('P33-R4B-BUS', P33, 'B.Cu', W, [(pull[0]['c'][0], y4), (41.8, y4)],
-             'E3_PICO3V3 bus of the R4B pull-ups between their pads and the cut-out 2 edge, open to the right strip')
+    xd = 40.3  # right of cut-out 2, between the J311 pins (x 38.9) and the J310 pins (x >= 40.9)
+    j312 = P('J312', '4')
+    cu.track('P33-R4B-BUS', P33, 'B.Cu', W, [(pull[0]['c'][0], y4), (xd, y4), (xd, 109.6), (xd, 132.8), (xd, 134.6), (39.0, 135.9), (39.0, 139.8),
+                                            (j312['c'][0], 139.8), j312['c']],
+             'E3_PICO3V3 bus of the R4B pull-ups between their pads and the cut-out 2 edge, then up the right strip beside the '
+             'J311 pins and along the top edge above the header pins to J312.4 (route run 43131682520 left both open)')
     for p in pull:
         cu.track(f'P33-{p["ref"]}', P33, 'B.Cu', W, [p['c'], (p['c'][0], y4)], 'E3_PICO3V3 stub, pull-up pad 2 to the R4B bus')
     for rs, rp in (('R352', 'R351'), ('R354', 'R353'), ('R356', 'R355'), ('R358', 'R357')):
@@ -641,20 +645,39 @@ def pico3v3_copper(cu):
     r395 = P('R395', '1')
     cu.track('P33-R395', P33, 'F.Cu', W, [(xe, 70.3), (r395['c'][0], 70.3), r395['c']],
              'E3_PICO3V3 from the HMI3 bus to R395.1, above the D304 pins')
-    # R361 / R362 (AMB pull-ups, adjacent upper pads)
+    # R361 / R362 (AMB pull-ups, adjacent upper pads), joined to the right-strip bus on L4 along the right edge and
+    # below the H4 keepout
     cu.track('P33-R361-R362', P33, 'F.Cu', W, [P('R361', '2')['c'], P('R362', '2')['c']], 'E3_PICO3V3: R361.2 to R362.2')
-    # Pico: U305.36 (3V3 out) below the PICO column to R330.2, then R327.1
-    u36, r330, r327 = P('U305', '36'), P('R330', '2'), P('R327', '1')
+    r362 = P('R362', '2')
+    xa = 48.6
+    cu.track('P33-AMB-B', P33, 'B.Cu', W, [(xd, 132.8), (xa, 132.8), (xa, r362['c'][1])],
+             'E3_PICO3V3: right-strip bus to a via right of R362, below the H4 keepout and along the right edge')
+    cu.via('P33-V-AMB', P33, (xa, r362['c'][1]), 'E3_PICO3V3: B.Cu to F.Cu right of R362')
+    cu.track('P33-AMB-F', P33, 'F.Cu', W, [(xa, r362['c'][1]), r362['c']], 'E3_PICO3V3: via to R362.2')
+    # the R4B / right-strip bus to the HMI3 branch: via above R358, L1 between the J316 pins and down beside cut-out 1
+    cu.via('P33-V-R4B', P33, (xd, 109.6), 'E3_PICO3V3: right-strip bus B.Cu to F.Cu above R358')
+    cu.track('P33-RIGHT-F', P33, 'F.Cu', W, [(xd, 109.6), (40.55, 104.5), (40.55, 101.0), (39.235, 97.0), (39.235, 89.5), (vx, 88.8), (vx, vy)],
+             'E3_PICO3V3 on L1 from the right-strip bus between the J316 pins 2 and 1, between C302 and C304, then down beside the cut-out 1 edge to '
+             'the via above R368 (route runs 43121860459 and 43131682520 left this link open)')
+    # Pico: pin 36 (3V3 out) to a via just right of the pad (the router joins it on any layer), R330.2 - R327.1 - C308.1
+    u36, r330, r327, c308 = P('U305', '36'), P('R330', '2'), P('R327', '1'), P('C308', '1')
     assert u36['net'] == P33
-    cu.track('P33-U305-R330', P33, 'B.Cu', W, [u36['c'], (40.25, u36['c'][1]), (40.25, r330['c'][1]), r330['c']],
-             'E3_PICO3V3: Pico pin 36 below the PICO column and up its right side to R330.2')
+    cu.track('P33-U305', P33, 'B.Cu', W, [u36['c'], (34.5, u36['c'][1])], 'E3_PICO3V3: Pico pin 36 to its escape via')
+    cu.via('P33-V-U305', P33, (34.5, u36['c'][1]), 'E3_PICO3V3: escape via of Pico pin 36 below the PICO column')
     cu.track('P33-R330-R327', P33, 'B.Cu', W, [r330['c'], r327['c']], 'E3_PICO3V3: R330.2 to R327.1 (adjacent pads)')
-    # HMI: C312.1 to R334.2 / R335.2 between R334 and R335
-    c312, r334, r335 = P('C312', '1'), P('R334', '2'), P('R335', '2')
-    xm = (r334['c'][0] + r335['c'][0]) / 2
-    cu.track('P33-C312-R334', P33, 'F.Cu', W, [c312['c'], (xm, 53.2), (xm, r334['c'][1])], 'E3_PICO3V3: C312.1 up between R334 and R335')
-    cu.track('P33-R334-R335', P33, 'F.Cu', W, [r334['c'], r335['c']], 'E3_PICO3V3: R334.2 to R335.2')
-
+    cu.track('P33-C308-R327', P33, 'B.Cu', W, [c308['c'], (37.75, 27.2), (37.75, r327['c'][1]), r327['c']],
+             'E3_PICO3V3: C308.1 down between C311 and R327 to R327.1')
+    # HMI row (top side): the pull-ups R337/R339/R341 joined in the 0.85 mm gap between the pad rows (where the router
+    # joined them in route run 43121860459), on to C312.1 and down to U306.24 (VDD)
+    yc = 51.32
+    c312, u306 = P('C312', '1'), P('U306', '24')
+    cu.track('P33-HMI-ROW', P33, 'F.Cu', W, [(P('R337', '2')['c'][0], yc), (c312['c'][0], yc), (c312['c'][0], u306['c'][1]),
+                                            u306['c']],
+             'E3_PICO3V3: HMI pull-ups R337/R339/R341 in the gap between the pad rows, C312.1, U306.24 (VDD)')
+    for r in ('R337', 'R339', 'R341', 'C312'):
+        q = P(r, '2' if r != 'C312' else '1')
+        assert q['net'] == P33
+        cu.track(f'P33-{r}', P33, 'F.Cu', W, [q['c'], (q['c'][0], yc)], f'E3_PICO3V3 stub, {r} to the HMI row link')
 
 def blower_gnd_branches(cu):
     """E3_BLOWER_GND to the blower supply capacitors C342 (bulk) and C343 (decoupling): route run 43121860459 left both
@@ -757,7 +780,11 @@ ROUTER_WHY = (
     'E3_ENC2_A 1), most of them at pads that could not leave their row: the pull-up rows R4B and HMI3 have their series '
     'resistors turned and a scripted E3_PICO3V3 bus along the cut-out edge, R344 is turned so that its E3_FN pin sits next '
     'to R343, E3_PICO3V3 has scripted pieces at the Pico, C312, R361/R362, R368 and R395, and E3_BLOWER_GND is fully scripted '
-    '(class SCRIPTED_PWR3A). Job timeout 34 min inside the 45 min CI job')
+    '(class SCRIPTED_PWR3A). Route run 43131682520 (that setting): 1 error (the R4B bus end dangling) and 13 unconnected '
+    '(E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 '
+    'with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their '
+    'pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 '
+    'around the column) are gone, Pico pin 36 has an escape via. Job timeout 34 min inside the 45 min CI job')
 
 
 def spec_texts(spec, inp, cu, skipped):
@@ -844,11 +871,12 @@ def spec_texts(spec, inp, cu, skipped):
         'E3_FAN5: PWR3A 1.85 mm outer, branches in branch_exempt). rules_file stays null (board_gen does not copy .kicad_dru '
         'files yet).')
     spec['layers']['plan'] = {
-        'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1, R368/R395, C312, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing',
+        'F.Cu': 'L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the link up the right strip between C302/C304 and the J316 pins, the HMI pull-up row to C312 and U306, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing',
         'In1.Cu': 'L2: GND plane (pre-route zone, DSN plane), no signals',
         'In2.Cu': 'L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, GND pour after routing',
         'B.Cu': 'L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor '
-                'branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, Pico pin 36 to R330/R327), '
+                'branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top '
+                'edge to J312.4, branch to R362; Pico pin 36 escape via, R330/R327/C308), '
                 'locked GND copper over the custom Pico GND pads, PWR1A/PWR3A_BRANCH routes, GND pour after routing'}
     ce = spec['cable_exits']
     key_old = 'vertical, over the plate zone x 37-50 y 68.5-83 (bottom side)'
