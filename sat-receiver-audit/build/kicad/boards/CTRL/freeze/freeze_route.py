@@ -37,6 +37,14 @@ L2_LINK = {'net': 'E3_PICO3V3', 'from': (40.3, 109.6), 'to': (38.6, 74.3), 'widt
 ORDER = ['3V3_Q6A', 'E3_PANEL_TEMP', 'E3_Q6A_KEY_GATE', 'E3_PICO3V3', 'E3_CASE_TEMP', 'E3_REC_EXT']
 L2_FALLBACK = {'E3_REC_EXT'}  # and every net whose router copper was ripped: L2 only when three layers have no path
 L2_BIAS = 1.0                 # extra cost per mm on L2 (a L2 millimetre costs twice a millimetre on L1/L3/L4)
+NEVER = {'GND', 'E3_FAN5', 'E3_BLOWER_GND'}  # scripted classes (SCRIPTED_GND, SCRIPTED_PWR3A): never routed here
+
+
+def class_widths():
+    """Track width per net from the committed CTRL.kicad_pro (net class patterns; Default 0.15 mm)."""
+    pro = json.loads((HERE.parent / 'CTRL.kicad_pro').read_text(encoding='utf-8'))['net_settings']
+    width = {c['name']: c['track_width'] for c in pro['classes']}
+    return {p['pattern']: width[p['netclass']] for p in pro['netclass_patterns']}, width['Default']
 K = lambda x, y: (round(x + 100, 4), round(244 - y, 4))  # board mm -> KiCad mm (frame of pcb/board_gen.py)
 B = lambda p: [round(p[0] - 100.0, 4), round(244.0 - p[1], 4)]
 
@@ -85,13 +93,24 @@ def verify(m):
     if len(m.islands('GND')) > 1:
         open_['GND'] = len(m.islands('GND')) - 1
     bad = [('dangling',) + d for d in F.dangling(m)]
-    for it in m.items:  # KiCad 10 DRC track_not_centered_on_via (router copper as routed passed it; completion copper is strict)
-        if it.alive and it.kind == 'track' and it.src == 'new':
-            for e in (it.a, it.b):
-                for v in m.near(it.layers[0], (e[0] - 0.5, e[1] - 0.5, e[0] + 0.5, e[1] + 0.5)):
-                    if v.kind == 'via' and v.net == it.net and v.shape.dist(*e) <= 0 and math.hypot(e[0] - v.at[0], e[1] - v.at[1]) > 1e-4:
-                        bad.append(('track end not on via centre', it.net, e, 'via', v.at, v.src, round(math.hypot(e[0] - v.at[0], e[1] - v.at[1]), 4),
-                                    'track', it.a, it.b))
+    # KiCad 10 DRC track_not_centered_on_via: a track end inside a via off its centre is accepted only in the pattern the
+    # router itself leaves (another track of the net joins that end to the via centre); checked for every new via and
+    # every completion track
+    ends = collections.defaultdict(list)
+    for it in m.items:
+        if it.alive and it.kind == 'track':
+            for e, o in ((it.a, it.b), (it.b, it.a)):
+                ends[(it.net, round(e[0], 5), round(e[1], 5))].append(o)
+    for it in m.items:
+        if not (it.alive and it.kind == 'track'):
+            continue
+        for e in (it.a, it.b):
+            for v in m.near(it.layers[0], (e[0] - 0.5, e[1] - 0.5, e[0] + 0.5, e[1] + 0.5)):
+                if v.kind != 'via' or v.net != it.net or (it.src != 'new' and v.src != 'new'):
+                    continue
+                if v.shape.dist(*e) <= 0 and math.hypot(e[0] - v.at[0], e[1] - v.at[1]) > 1e-4:
+                    if not any(math.hypot(o[0] - v.at[0], o[1] - v.at[1]) <= 1e-4 for o in ends[(it.net, round(e[0], 5), round(e[1], 5))]):
+                        bad.append(('track end not on via centre', it.net, e, 'via', v.at, v.src))
     for it in m.items:
         if not it.alive:
             continue
@@ -181,10 +200,13 @@ def main(argv=None):
     fz = F.Finisher(m)
     queue, rounds, t0 = collections.deque(ORDER), 0, time.time()
     fallback = set(L2_FALLBACK)
+    widths, default_w = class_widths()
     while queue and rounds < 80:
         net = queue.popleft()
         rounds += 1
-        ok, ripped = fz.connect(net, l2_bias=L2_BIAS if net in fallback else None)
+        if net in NEVER:
+            raise SystemExit(f'freeze_route: {net} is scripted copper; it is never routed here')
+        ok, ripped = fz.connect(net, l2_bias=L2_BIAS if net in fallback else None, width=widths.get(net, default_w))
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)')
         queue.extend(n for n in ripped if n not in queue)
         fallback |= set(ripped)

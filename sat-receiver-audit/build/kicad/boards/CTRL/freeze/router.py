@@ -127,8 +127,23 @@ class Grid:
                 if it.kind == 'npth':
                     continue
                 if it.net == net:
+                    tgt = blk  # same-net rules are never ripped
                     if it.kind == 'pad' and not it.drill:
                         infl = r + 0.02 + margin
+                    elif it.kind == 'track':
+                        # a new via either sits on a same-net track centre line (an explicit joint follows) or keeps off
+                        # that track and its ends: no via over a track end, no via that only overlaps the track copper
+                        # (KiCad 10 track_not_centered_on_via, no hidden anchor-free overlaps)
+                        hw = it.width / 2
+                        w = self.win(it.bbox, r + 0.01 + margin)
+                        if w is not None:
+                            d = cap_dist(self.X[w], self.Y[w], it.a[0], it.a[1], it.b[0], it.b[1], 0.0)
+                            blk[w] |= (d > hw * 0.5) & (d < r + hw + 0.01 + margin)
+                        for e in (it.a, it.b):
+                            w = self.win((e[0], e[1], e[0], e[1]), r + 0.01 + margin)
+                            if w is not None:
+                                blk[w] |= np.hypot(self.X[w] - e[0], self.Y[w] - e[1]) < r + 0.01 + margin
+                        continue
                     else:
                         continue
                 else:
@@ -384,30 +399,38 @@ def snap_to_vias(m, net, res):
 
 
 def via_joints(m, net, vias, width):
-    """A new via whose centre lies on a same-net track away from the track ends gets an explicit joint: a router or
-    new track is split at the via centre; a scripted track (made by make_spec.py, kept as it is) gets a short track
-    from the via centre to its nearer end, inside its copper. KiCad would join the via by its anchor anyway; the
-    explicit joint keeps the connectivity independent of that rule."""
+    """Explicit joints at every new via (KiCad 10 DRC track_not_centered_on_via, and connectivity that does not lean on
+    KiCad's anchor rule): a same-net track end inside the via moves onto its centre (or, where that move breaks a
+    clearance, gets a short track to the centre); a track that crosses the via centre away from its ends is split
+    there (router or new copper) or joined by a short track to its nearer end inside its own copper (scripted copper,
+    made by make_spec.py and kept as it is)."""
+    r = VIA_D / 2
     for v in vias:
-        for it in list(m.near('F.Cu', (v[0] - 1, v[1] - 1, v[0] + 1, v[1] + 1))) + list(m.near('In2.Cu', (v[0] - 1, v[1] - 1, v[0] + 1, v[1] + 1))) +                 list(m.near('B.Cu', (v[0] - 1, v[1] - 1, v[0] + 1, v[1] + 1))) + list(m.near('In1.Cu', (v[0] - 1, v[1] - 1, v[0] + 1, v[1] + 1))):
-            if not it.alive or it.kind != 'track' or it.net != net:
+        near = []
+        for lay in M.LAYERS:
+            near += [it for it in m.near(lay, (v[0] - 1, v[1] - 1, v[0] + 1, v[1] + 1)) if it.alive and it.kind == 'track' and it.net == net]
+        for it in near:
+            if not it.alive:
+                continue
+            if any(math.hypot(v[0] - e[0], v[1] - e[1]) <= 1e-6 for e in (it.a, it.b)):
+                continue
+            inside = [e for e in (it.a, it.b) if math.hypot(v[0] - e[0], v[1] - e[1]) <= r + 1e-6]
+            if inside:
+                e = inside[0]
+                o = it.b if e == it.a else it.a
+                if it.src in ('router', 'new'):
+                    mg, why = m.track_margin(net, it.layers[0], it.width, o, v, ignore={it.id})
+                    if mg >= 0:
+                        m.remove(it)
+                        m.add_track(net, it.layers[0], it.width, o, v, src=it.src)
+                        continue
+                mg, why = m.track_margin(net, it.layers[0], min(width, it.width), e, v)
+                if mg < 0:
+                    raise RuntimeError(f'track end inside the via at {v}: no joint to its centre ({mg:.3f} {why})')
+                m.add_track(net, it.layers[0], min(width, it.width), e, v, src='new')
                 continue
             if M.seg_dist(v[0], v[1], it.a[0], it.a[1], it.b[0], it.b[1]) > it.width / 2:
                 continue
-            ends = [e for e in (it.a, it.b) if math.hypot(v[0] - e[0], v[1] - e[1]) <= 1e-6]
-            if ends:
-                continue
-            inside = [e for e in (it.a, it.b) if math.hypot(v[0] - e[0], v[1] - e[1]) <= VIA_D / 2]
-            if inside and it.src in ('router', 'new'):
-                # a track end inside the new via but off its centre: move that end onto the centre
-                e = inside[0]
-                o = it.b if e == it.a else it.a
-                mg, why = m.track_margin(net, it.layers[0], it.width, o, v, ignore={it.id})
-                if mg >= 0:
-                    m.remove(it)
-                    m.add_track(net, it.layers[0], it.width, o, v, src=it.src)
-                    continue
-                raise RuntimeError(f'track end inside the via at {v} cannot move to its centre: {mg:.3f} {why}')
             if it.src in ('router', 'new'):
                 m.remove(it)
                 m.add_track(net, it.layers[0], it.width, it.a, v, src=it.src)

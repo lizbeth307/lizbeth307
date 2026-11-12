@@ -22,7 +22,7 @@
     "types_why": "In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).",
     "plan": {
       "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the HMI pull-up row to C312 and U306, R361/R362), the frozen router copper of route run 43136394379 and its completion (route-frozen.json), GND pour after routing",
-      "In1.Cu": "L2: GND plane (pre-route zone, DSN plane) with 4 locked slow signal links of the frozen route completion (W2 CTRL-R; 76 mm in all): E3_PICO3V3 (0.2 mm, 35.6 mm up the right strip beside cut-out 1 between the vias P33-V-R368 and P33-V-R4B), E3_PICO_SWCLK 21.1 mm, E3_REC_EXT 14.9 mm and PG_BONI 4.7 mm (0.15 mm, under the Pico and the HMI rows); the plane flows around them",
+      "In1.Cu": "L2: GND plane (pre-route zone, DSN plane) with 5 locked slow signal links of the frozen route completion (W2 CTRL-R; 70 mm in all): E3_PICO3V3 (0.2 mm, 35.6 mm up the right strip beside cut-out 1 between the vias P33-V-R368 and P33-V-R4B), E3_REC_EXT 14.9 mm, PG_BONI 11.2 mm, E3_MARK_EXT 4.3 mm and PG_LNB 3.8 mm (0.15 mm, under the Pico and the HMI rows); the plane flows around them",
       "In2.Cu": "L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, the frozen router copper and its completion, GND pour after routing",
       "B.Cu": "L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top edge to J312.4, branch to R362; Pico pin 36 escape via, R330/R327/C308), locked GND copper over the custom Pico GND pads, the frozen router copper and its completion, GND pour after routing"
     }
@@ -6562,15 +6562,11 @@
         "width_mm": 0.15,
         "path": [
           [
-            27.9527,
-            20.9842
-          ],
-          [
-            31.0085,
+            32.23,
             24.04
           ],
           [
-            32.23,
+            31.0085,
             24.04
           ]
         ],
@@ -6578,118 +6574,78 @@
       },
       {
         "id": "RT-0033",
-        "net": "E1_BAT_ADC",
-        "layer": "In2.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            6.0,
-            8.5
-          ],
-          [
-            7.0,
-            9.5
-          ],
-          [
-            7.0,
-            10.6855
-          ],
-          [
-            7.6561,
-            11.3416
-          ],
-          [
-            26.9364,
-            11.3416
-          ],
-          [
-            27.587,
-            10.691
-          ],
-          [
-            28.286,
-            10.691
-          ],
-          [
-            29.1493,
-            11.5543
-          ],
-          [
-            29.1493,
-            19.7876
-          ],
-          [
-            27.9527,
-            20.9842
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0034",
         "net": "E3_ADC3V0",
         "layer": "B.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            32.23,
-            16.42
-          ],
-          [
-            35.975,
-            16.42
-          ],
-          [
-            36.79,
-            17.235
-          ],
-          [
-            38.7,
-            17.235
-          ],
-          [
-            40.4365,
-            18.9715
-          ],
-          [
-            40.4365,
-            22.0619
-          ],
-          [
-            40.2932,
-            22.2052
-          ],
-          [
-            40.2932,
-            24.1118
-          ],
-          [
-            38.7,
-            25.705
-          ],
-          [
-            38.7,
-            27.455
-          ],
-          [
-            39.2,
-            27.955
-          ],
-          [
-            39.9085,
-            28.6635
-          ],
-          [
-            39.9085,
-            29.9562
+            36.8,
+            31.6525
           ],
           [
             38.2122,
             31.6525
           ],
           [
-            36.8,
-            31.6525
+            39.9085,
+            29.9562
+          ],
+          [
+            39.9085,
+            28.6635
+          ],
+          [
+            39.2,
+            27.955
+          ],
+          [
+            38.7,
+            27.455
+          ],
+          [
+            38.7,
+            25.705
+          ],
+          [
+            40.2932,
+            24.1118
+          ],
+          [
+            40.2932,
+            22.2052
+          ],
+          [
+            40.4365,
+            22.0619
+          ],
+          [
+            40.4365,
+            18.9715
+          ],
+          [
+            38.7,
+            17.235
+          ],
+          [
+            36.79,
+            17.235
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "RT-0034",
+        "net": "E3_BACK",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            18.03,
+            50.495
+          ],
+          [
+            18.8495,
+            50.495
           ]
         ],
         "locked": true
@@ -6701,16 +6657,20 @@
         "width_mm": 0.15,
         "path": [
           [
-            19.89,
-            50.495
-          ],
-          [
             18.8495,
             50.495
           ],
           [
-            18.03,
-            50.495
+            18.8495,
+            45.7393
+          ],
+          [
+            21.0638,
+            43.525
+          ],
+          [
+            21.6375,
+            43.525
           ]
         ],
         "locked": true
@@ -6722,12 +6682,12 @@
         "width_mm": 0.15,
         "path": [
           [
-            21.0638,
-            43.525
+            18.8495,
+            50.495
           ],
           [
-            21.6375,
-            43.525
+            19.89,
+            50.495
           ]
         ],
         "locked": true
@@ -12122,51 +12082,22 @@
         "width_mm": 0.15,
         "path": [
           [
-            28.1061,
-            9.3591
-          ],
-          [
-            28.1061,
-            7.2035
-          ],
-          [
-            28.7998,
-            6.5098
+            30.33,
+            5.755
           ],
           [
             29.5546,
             5.755
           ],
           [
-            30.33,
-            5.755
+            28.7998,
+            6.5098
           ]
         ],
         "locked": true
       },
       {
         "id": "RT-0213",
-        "net": "E3_MCP_RESET_N",
-        "layer": "F.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            28.4798,
-            23.9156
-          ],
-          [
-            28.9692,
-            24.405
-          ],
-          [
-            30.33,
-            24.405
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0214",
         "net": "E3_MCP_RESET_N",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -12183,7 +12114,7 @@
         "locked": true
       },
       {
-        "id": "RT-0215",
+        "id": "RT-0214",
         "net": "E3_MCP_RESET_N",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -12208,7 +12139,7 @@
         "locked": true
       },
       {
-        "id": "RT-0216",
+        "id": "RT-0215",
         "net": "E3_MCP_RESET_N",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -12233,7 +12164,7 @@
         "locked": true
       },
       {
-        "id": "RT-0217",
+        "id": "RT-0216",
         "net": "E3_MCP_RESET_N",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -12250,7 +12181,7 @@
         "locked": true
       },
       {
-        "id": "RT-0218",
+        "id": "RT-0217",
         "net": "E3_MCP_RESET_N",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -12303,32 +12234,7 @@
         "locked": true
       },
       {
-        "id": "RT-0219",
-        "net": "E3_MCP_RESET_N",
-        "layer": "In2.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            28.4798,
-            23.9156
-          ],
-          [
-            29.8014,
-            22.594
-          ],
-          [
-            29.8014,
-            11.0544
-          ],
-          [
-            28.1061,
-            9.3591
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0220",
+        "id": "RT-0218",
         "net": "E3_MCP_RESET_N",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -12421,7 +12327,7 @@
         "locked": true
       },
       {
-        "id": "RT-0221",
+        "id": "RT-0219",
         "net": "E3_MCP_RESET_N",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -12470,7 +12376,7 @@
         "locked": true
       },
       {
-        "id": "RT-0222",
+        "id": "RT-0220",
         "net": "E3_PANEL_TEMP",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -12503,7 +12409,7 @@
         "locked": true
       },
       {
-        "id": "RT-0223",
+        "id": "RT-0221",
         "net": "E3_PICO3V3",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -12528,7 +12434,7 @@
         "locked": true
       },
       {
-        "id": "RT-0224",
+        "id": "RT-0222",
         "net": "E3_PICO3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -12557,7 +12463,7 @@
         "locked": true
       },
       {
-        "id": "RT-0225",
+        "id": "RT-0223",
         "net": "E3_PICO3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -12586,7 +12492,7 @@
         "locked": true
       },
       {
-        "id": "RT-0226",
+        "id": "RT-0224",
         "net": "E3_PICO3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -12631,32 +12537,24 @@
         "locked": true
       },
       {
-        "id": "RT-0227",
+        "id": "RT-0225",
         "net": "E3_PICO3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            36.0166,
-            21.5527
-          ],
-          [
             36.2399,
             21.3294
           ],
           [
-            36.2399,
-            15.6199
-          ],
-          [
-            34.5,
-            13.88
+            36.0166,
+            21.5527
           ]
         ],
         "locked": true
       },
       {
-        "id": "RT-0228",
+        "id": "RT-0226",
         "net": "E3_PICO3V3",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -12697,74 +12595,114 @@
         "locked": true
       },
       {
-        "id": "RT-0229",
+        "id": "RT-0227",
         "net": "E3_PICO_RUN",
         "layer": "B.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            28.9562,
-            26.3332
+            32.23,
+            29.12
           ],
           [
             31.743,
             29.12
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "RT-0228",
+        "net": "E3_PICO_SWCLK",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            20.0,
+            51.75
           ],
           [
-            32.23,
-            29.12
+            18.8894,
+            50.6394
+          ],
+          [
+            18.8894,
+            44.6482
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "RT-0229",
+        "net": "E3_PICO_SWCLK",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            18.8894,
+            44.6482
+          ],
+          [
+            19.4205,
+            44.1171
+          ],
+          [
+            21.1359,
+            44.1171
+          ],
+          [
+            21.3341,
+            43.9189
+          ],
+          [
+            23.552,
+            43.9189
+          ],
+          [
+            23.7603,
+            44.1272
+          ],
+          [
+            25.0221,
+            44.1272
+          ],
+          [
+            25.8923,
+            43.257
+          ],
+          [
+            30.0352,
+            43.257
+          ],
+          [
+            31.2163,
+            44.4381
+          ],
+          [
+            35.249,
+            44.4381
+          ],
+          [
+            35.9949,
+            45.184
+          ],
+          [
+            41.6065,
+            45.184
+          ],
+          [
+            43.6325,
+            47.21
+          ],
+          [
+            43.73,
+            47.21
           ]
         ],
         "locked": true
       },
       {
         "id": "RT-0230",
-        "net": "E3_PICO_RUN",
-        "layer": "In2.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            43.73,
-            14.19
-          ],
-          [
-            39.3734,
-            14.19
-          ],
-          [
-            29.3582,
-            24.2052
-          ],
-          [
-            29.3582,
-            25.9312
-          ],
-          [
-            28.9562,
-            26.3332
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0231",
-        "net": "E3_PICO_SWCLK",
-        "layer": "In2.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            43.73,
-            47.21
-          ],
-          [
-            43.6325,
-            47.21
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0232",
         "net": "E3_PICO_SWDIO",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -12781,28 +12719,7 @@
         "locked": true
       },
       {
-        "id": "RT-0233",
-        "net": "E3_PICO_VSYS",
-        "layer": "B.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            28.9366,
-            25.4783
-          ],
-          [
-            26.7526,
-            23.2943
-          ],
-          [
-            26.7526,
-            9.9563
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0234",
+        "id": "RT-0231",
         "net": "E3_PICO_VSYS",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -12838,66 +12755,32 @@
           [
             28.9366,
             25.4783
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0235",
-        "net": "E3_PICO_VSYS",
-        "layer": "B.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            32.23,
-            6.26
-          ],
-          [
-            30.3662,
-            6.26
-          ],
-          [
-            28.944,
-            7.6822
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0236",
-        "net": "E3_PICO_VSYS",
-        "layer": "B.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            35.13,
-            27.56
-          ],
-          [
-            35.0404,
-            27.6496
-          ],
-          [
-            30.9863,
-            27.6496
-          ],
-          [
-            30.0986,
-            26.7619
           ],
           [
             30.0986,
             26.6403
           ],
           [
-            28.9366,
-            25.4783
+            30.0986,
+            26.7619
+          ],
+          [
+            30.9863,
+            27.6496
+          ],
+          [
+            35.0404,
+            27.6496
+          ],
+          [
+            35.13,
+            27.56
           ]
         ],
         "locked": true
       },
       {
-        "id": "RT-0237",
+        "id": "RT-0232",
         "net": "E3_PICO_VSYS",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -12930,28 +12813,7 @@
         "locked": true
       },
       {
-        "id": "RT-0238",
-        "net": "E3_PICO_VSYS",
-        "layer": "In2.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            26.7526,
-            9.9563
-          ],
-          [
-            26.7526,
-            9.8736
-          ],
-          [
-            28.944,
-            7.6822
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0239",
+        "id": "RT-0233",
         "net": "E3_PICO_VSYS",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -12980,7 +12842,7 @@
         "locked": true
       },
       {
-        "id": "RT-0240",
+        "id": "RT-0234",
         "net": "E3_PIEZO_DRIVE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13001,7 +12863,7 @@
         "locked": true
       },
       {
-        "id": "RT-0241",
+        "id": "RT-0235",
         "net": "E3_PIEZO_DRIVE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13022,7 +12884,7 @@
         "locked": true
       },
       {
-        "id": "RT-0242",
+        "id": "RT-0236",
         "net": "E3_PIEZO_DRIVE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13043,7 +12905,7 @@
         "locked": true
       },
       {
-        "id": "RT-0243",
+        "id": "RT-0237",
         "net": "E3_PIEZO_DRIVE",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13076,7 +12938,7 @@
         "locked": true
       },
       {
-        "id": "RT-0244",
+        "id": "RT-0238",
         "net": "E3_PIEZO_DRIVE",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13093,7 +12955,7 @@
         "locked": true
       },
       {
-        "id": "RT-0245",
+        "id": "RT-0239",
         "net": "E3_PIEZO_DRIVE",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13105,10 +12967,6 @@
           [
             18.5215,
             40.5631
-          ],
-          [
-            18.879,
-            40.545
           ],
           [
             23.8697,
@@ -13138,7 +12996,7 @@
         "locked": true
       },
       {
-        "id": "RT-0246",
+        "id": "RT-0240",
         "net": "E3_PIEZO_OUT",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13155,7 +13013,7 @@
         "locked": true
       },
       {
-        "id": "RT-0247",
+        "id": "RT-0241",
         "net": "E3_PIEZO_OUT",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13184,7 +13042,7 @@
         "locked": true
       },
       {
-        "id": "RT-0248",
+        "id": "RT-0242",
         "net": "E3_Q6A_KEY_GATE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13201,7 +13059,7 @@
         "locked": true
       },
       {
-        "id": "RT-0249",
+        "id": "RT-0243",
         "net": "E3_Q6A_KEY_GATE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13226,7 +13084,7 @@
         "locked": true
       },
       {
-        "id": "RT-0250",
+        "id": "RT-0244",
         "net": "E3_Q6A_KEY_GATE",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13279,7 +13137,7 @@
         "locked": true
       },
       {
-        "id": "RT-0251",
+        "id": "RT-0245",
         "net": "E3_Q6A_ON_SENSE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13328,7 +13186,7 @@
         "locked": true
       },
       {
-        "id": "RT-0252",
+        "id": "RT-0246",
         "net": "E3_Q6A_ON_SENSE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13361,7 +13219,7 @@
         "locked": true
       },
       {
-        "id": "RT-0253",
+        "id": "RT-0247",
         "net": "E3_Q6A_ON_SENSE",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13406,7 +13264,7 @@
         "locked": true
       },
       {
-        "id": "RT-0254",
+        "id": "RT-0248",
         "net": "E3_REC",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13447,7 +13305,7 @@
         "locked": true
       },
       {
-        "id": "RT-0255",
+        "id": "RT-0249",
         "net": "E3_REC_EXT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13472,7 +13330,7 @@
         "locked": true
       },
       {
-        "id": "RT-0256",
+        "id": "RT-0250",
         "net": "E3_REC_EXT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13497,7 +13355,7 @@
         "locked": true
       },
       {
-        "id": "RT-0257",
+        "id": "RT-0251",
         "net": "E3_REC_EXT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13526,7 +13384,7 @@
         "locked": true
       },
       {
-        "id": "RT-0258",
+        "id": "RT-0252",
         "net": "E3_REC_EXT",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13547,7 +13405,7 @@
         "locked": true
       },
       {
-        "id": "RT-0259",
+        "id": "RT-0253",
         "net": "E3_U315_ILIM",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13572,7 +13430,7 @@
         "locked": true
       },
       {
-        "id": "RT-0260",
+        "id": "RT-0254",
         "net": "E3_U315_ILIM",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13589,7 +13447,7 @@
         "locked": true
       },
       {
-        "id": "RT-0261",
+        "id": "RT-0255",
         "net": "E3_U315_ILIM",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13606,7 +13464,7 @@
         "locked": true
       },
       {
-        "id": "RT-0262",
+        "id": "RT-0256",
         "net": "E3_U315_ILIM",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13627,7 +13485,7 @@
         "locked": true
       },
       {
-        "id": "RT-0263",
+        "id": "RT-0257",
         "net": "E3_U315_ILIM",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13652,7 +13510,7 @@
         "locked": true
       },
       {
-        "id": "RT-0264",
+        "id": "RT-0258",
         "net": "E3_U315_ILIM",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13693,7 +13551,7 @@
         "locked": true
       },
       {
-        "id": "RT-0265",
+        "id": "RT-0259",
         "net": "E3_U315_ILIM",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13714,7 +13572,7 @@
         "locked": true
       },
       {
-        "id": "RT-0266",
+        "id": "RT-0260",
         "net": "EN_AUX12",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -13743,7 +13601,7 @@
         "locked": true
       },
       {
-        "id": "RT-0267",
+        "id": "RT-0261",
         "net": "EN_AUX12",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13764,7 +13622,7 @@
         "locked": true
       },
       {
-        "id": "RT-0268",
+        "id": "RT-0262",
         "net": "EN_AUX12",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13825,7 +13683,7 @@
         "locked": true
       },
       {
-        "id": "RT-0269",
+        "id": "RT-0263",
         "net": "EN_BONI",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13842,7 +13700,7 @@
         "locked": true
       },
       {
-        "id": "RT-0270",
+        "id": "RT-0264",
         "net": "EN_BONI",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -13923,7 +13781,7 @@
         "locked": true
       },
       {
-        "id": "RT-0271",
+        "id": "RT-0265",
         "net": "EN_HFP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13944,7 +13802,7 @@
         "locked": true
       },
       {
-        "id": "RT-0272",
+        "id": "RT-0266",
         "net": "EN_HFP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -13969,7 +13827,7 @@
         "locked": true
       },
       {
-        "id": "RT-0273",
+        "id": "RT-0267",
         "net": "EN_HFP",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14018,7 +13876,7 @@
         "locked": true
       },
       {
-        "id": "RT-0274",
+        "id": "RT-0268",
         "net": "EN_LABPORT",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -14075,7 +13933,7 @@
         "locked": true
       },
       {
-        "id": "RT-0275",
+        "id": "RT-0269",
         "net": "EN_LABPORT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14124,7 +13982,7 @@
         "locked": true
       },
       {
-        "id": "RT-0276",
+        "id": "RT-0270",
         "net": "EN_LABPORT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14145,7 +14003,7 @@
         "locked": true
       },
       {
-        "id": "RT-0277",
+        "id": "RT-0271",
         "net": "EN_LIME3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14174,7 +14032,7 @@
         "locked": true
       },
       {
-        "id": "RT-0278",
+        "id": "RT-0272",
         "net": "EN_LIME3V3",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14223,7 +14081,7 @@
         "locked": true
       },
       {
-        "id": "RT-0279",
+        "id": "RT-0273",
         "net": "EN_LNA1",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14248,7 +14106,7 @@
         "locked": true
       },
       {
-        "id": "RT-0280",
+        "id": "RT-0274",
         "net": "EN_LNA1",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14277,7 +14135,7 @@
         "locked": true
       },
       {
-        "id": "RT-0281",
+        "id": "RT-0275",
         "net": "EN_LNA1",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14318,7 +14176,7 @@
         "locked": true
       },
       {
-        "id": "RT-0282",
+        "id": "RT-0276",
         "net": "EN_LNA2",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -14359,7 +14217,7 @@
         "locked": true
       },
       {
-        "id": "RT-0283",
+        "id": "RT-0277",
         "net": "EN_LNA2",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14380,7 +14238,7 @@
         "locked": true
       },
       {
-        "id": "RT-0284",
+        "id": "RT-0278",
         "net": "EN_LNA2",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14413,7 +14271,7 @@
         "locked": true
       },
       {
-        "id": "RT-0285",
+        "id": "RT-0279",
         "net": "EN_LNA3",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -14446,7 +14304,7 @@
         "locked": true
       },
       {
-        "id": "RT-0286",
+        "id": "RT-0280",
         "net": "EN_LNA3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14479,7 +14337,7 @@
         "locked": true
       },
       {
-        "id": "RT-0287",
+        "id": "RT-0281",
         "net": "EN_LNA3",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14512,7 +14370,7 @@
         "locked": true
       },
       {
-        "id": "RT-0288",
+        "id": "RT-0282",
         "net": "EN_LNA4",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14545,7 +14403,7 @@
         "locked": true
       },
       {
-        "id": "RT-0289",
+        "id": "RT-0283",
         "net": "EN_LNA4",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14578,7 +14436,7 @@
         "locked": true
       },
       {
-        "id": "RT-0290",
+        "id": "RT-0284",
         "net": "EN_LNB",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14599,7 +14457,7 @@
         "locked": true
       },
       {
-        "id": "RT-0291",
+        "id": "RT-0285",
         "net": "EN_LNB",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14668,7 +14526,7 @@
         "locked": true
       },
       {
-        "id": "RT-0292",
+        "id": "RT-0286",
         "net": "EN_RTLA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14769,7 +14627,7 @@
         "locked": true
       },
       {
-        "id": "RT-0293",
+        "id": "RT-0287",
         "net": "EN_RTLB",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -14798,7 +14656,7 @@
         "locked": true
       },
       {
-        "id": "RT-0294",
+        "id": "RT-0288",
         "net": "EN_RTLB",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14819,7 +14677,7 @@
         "locked": true
       },
       {
-        "id": "RT-0295",
+        "id": "RT-0289",
         "net": "EN_RTLB",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14852,7 +14710,7 @@
         "locked": true
       },
       {
-        "id": "RT-0296",
+        "id": "RT-0290",
         "net": "EN_SB_LNA",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -14885,7 +14743,7 @@
         "locked": true
       },
       {
-        "id": "RT-0297",
+        "id": "RT-0291",
         "net": "EN_SB_LNA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -14906,7 +14764,7 @@
         "locked": true
       },
       {
-        "id": "RT-0298",
+        "id": "RT-0292",
         "net": "EN_SB_LNA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -14951,7 +14809,7 @@
         "locked": true
       },
       {
-        "id": "RT-0299",
+        "id": "RT-0293",
         "net": "EN_T7",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -14996,7 +14854,7 @@
         "locked": true
       },
       {
-        "id": "RT-0300",
+        "id": "RT-0294",
         "net": "EN_T7",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15017,7 +14875,7 @@
         "locked": true
       },
       {
-        "id": "RT-0301",
+        "id": "RT-0295",
         "net": "EN_T7",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -15090,7 +14948,7 @@
         "locked": true
       },
       {
-        "id": "RT-0302",
+        "id": "RT-0296",
         "net": "FAULT_HFP",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -15127,7 +14985,7 @@
         "locked": true
       },
       {
-        "id": "RT-0303",
+        "id": "RT-0297",
         "net": "FAULT_HFP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15160,7 +15018,7 @@
         "locked": true
       },
       {
-        "id": "RT-0304",
+        "id": "RT-0298",
         "net": "FAULT_HFP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15177,7 +15035,7 @@
         "locked": true
       },
       {
-        "id": "RT-0305",
+        "id": "RT-0299",
         "net": "FAULT_HFP",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -15230,7 +15088,7 @@
         "locked": true
       },
       {
-        "id": "RT-0306",
+        "id": "RT-0300",
         "net": "FAULT_HFP",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -15271,7 +15129,7 @@
         "locked": true
       },
       {
-        "id": "RT-0307",
+        "id": "RT-0301",
         "net": "FAULT_LABPORT",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -15308,7 +15166,7 @@
         "locked": true
       },
       {
-        "id": "RT-0308",
+        "id": "RT-0302",
         "net": "FAULT_LABPORT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15333,7 +15191,7 @@
         "locked": true
       },
       {
-        "id": "RT-0309",
+        "id": "RT-0303",
         "net": "FAULT_LABPORT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15362,7 +15220,7 @@
         "locked": true
       },
       {
-        "id": "RT-0310",
+        "id": "RT-0304",
         "net": "FAULT_LABPORT",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -15391,7 +15249,7 @@
         "locked": true
       },
       {
-        "id": "RT-0311",
+        "id": "RT-0305",
         "net": "FAULT_LNA1",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15444,7 +15302,7 @@
         "locked": true
       },
       {
-        "id": "RT-0312",
+        "id": "RT-0306",
         "net": "FAULT_LNA1",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15465,7 +15323,7 @@
         "locked": true
       },
       {
-        "id": "RT-0313",
+        "id": "RT-0307",
         "net": "FAULT_LNA1",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -15522,7 +15380,7 @@
         "locked": true
       },
       {
-        "id": "RT-0314",
+        "id": "RT-0308",
         "net": "FAULT_LNA2",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -15567,7 +15425,7 @@
         "locked": true
       },
       {
-        "id": "RT-0315",
+        "id": "RT-0309",
         "net": "FAULT_LNA2",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15588,7 +15446,7 @@
         "locked": true
       },
       {
-        "id": "RT-0316",
+        "id": "RT-0310",
         "net": "FAULT_LNA2",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15609,7 +15467,7 @@
         "locked": true
       },
       {
-        "id": "RT-0317",
+        "id": "RT-0311",
         "net": "FAULT_LNA2",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -15654,7 +15512,7 @@
         "locked": true
       },
       {
-        "id": "RT-0318",
+        "id": "RT-0312",
         "net": "FAULT_LNA3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15675,7 +15533,7 @@
         "locked": true
       },
       {
-        "id": "RT-0319",
+        "id": "RT-0313",
         "net": "FAULT_LNA3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15700,7 +15558,7 @@
         "locked": true
       },
       {
-        "id": "RT-0320",
+        "id": "RT-0314",
         "net": "FAULT_LNA3",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -15753,7 +15611,7 @@
         "locked": true
       },
       {
-        "id": "RT-0321",
+        "id": "RT-0315",
         "net": "FAULT_LNA4",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -15786,7 +15644,7 @@
         "locked": true
       },
       {
-        "id": "RT-0322",
+        "id": "RT-0316",
         "net": "FAULT_LNA4",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15807,7 +15665,7 @@
         "locked": true
       },
       {
-        "id": "RT-0323",
+        "id": "RT-0317",
         "net": "FAULT_LNA4",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15832,7 +15690,7 @@
         "locked": true
       },
       {
-        "id": "RT-0324",
+        "id": "RT-0318",
         "net": "FAULT_LNA4",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -15865,7 +15723,7 @@
         "locked": true
       },
       {
-        "id": "RT-0325",
+        "id": "RT-0319",
         "net": "FAULT_RTLA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15922,7 +15780,7 @@
         "locked": true
       },
       {
-        "id": "RT-0326",
+        "id": "RT-0320",
         "net": "FAULT_RTLA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -15943,7 +15801,7 @@
         "locked": true
       },
       {
-        "id": "RT-0327",
+        "id": "RT-0321",
         "net": "FAULT_RTLA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16008,7 +15866,7 @@
         "locked": true
       },
       {
-        "id": "RT-0328",
+        "id": "RT-0322",
         "net": "FAULT_RTLA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16057,7 +15915,7 @@
         "locked": true
       },
       {
-        "id": "RT-0329",
+        "id": "RT-0323",
         "net": "FAULT_RTLB",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -16082,7 +15940,7 @@
         "locked": true
       },
       {
-        "id": "RT-0330",
+        "id": "RT-0324",
         "net": "FAULT_RTLB",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16103,7 +15961,7 @@
         "locked": true
       },
       {
-        "id": "RT-0331",
+        "id": "RT-0325",
         "net": "FAULT_RTLB",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16124,7 +15982,7 @@
         "locked": true
       },
       {
-        "id": "RT-0332",
+        "id": "RT-0326",
         "net": "FAULT_RTLB",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16157,7 +16015,7 @@
         "locked": true
       },
       {
-        "id": "RT-0333",
+        "id": "RT-0327",
         "net": "FAULT_RTLB",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16174,7 +16032,7 @@
         "locked": true
       },
       {
-        "id": "RT-0334",
+        "id": "RT-0328",
         "net": "FAULT_RTLB",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16195,7 +16053,7 @@
         "locked": true
       },
       {
-        "id": "RT-0335",
+        "id": "RT-0329",
         "net": "FLT_BONI",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16216,7 +16074,7 @@
         "locked": true
       },
       {
-        "id": "RT-0336",
+        "id": "RT-0330",
         "net": "FLT_BONI",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16233,7 +16091,7 @@
         "locked": true
       },
       {
-        "id": "RT-0337",
+        "id": "RT-0331",
         "net": "FLT_BONI",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16282,7 +16140,7 @@
         "locked": true
       },
       {
-        "id": "RT-0338",
+        "id": "RT-0332",
         "net": "FLT_LIME3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16307,7 +16165,7 @@
         "locked": true
       },
       {
-        "id": "RT-0339",
+        "id": "RT-0333",
         "net": "FLT_LIME3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16324,7 +16182,7 @@
         "locked": true
       },
       {
-        "id": "RT-0340",
+        "id": "RT-0334",
         "net": "FLT_LIME3V3",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16341,7 +16199,7 @@
         "locked": true
       },
       {
-        "id": "RT-0341",
+        "id": "RT-0335",
         "net": "FLT_LIME3V3",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16362,7 +16220,7 @@
         "locked": true
       },
       {
-        "id": "RT-0342",
+        "id": "RT-0336",
         "net": "FLT_LIME3V3",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16407,7 +16265,7 @@
         "locked": true
       },
       {
-        "id": "RT-0343",
+        "id": "RT-0337",
         "net": "FLT_LNB",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16432,7 +16290,7 @@
         "locked": true
       },
       {
-        "id": "RT-0344",
+        "id": "RT-0338",
         "net": "FLT_LNB",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16469,7 +16327,7 @@
         "locked": true
       },
       {
-        "id": "RT-0345",
+        "id": "RT-0339",
         "net": "FLT_LNB",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16530,7 +16388,7 @@
         "locked": true
       },
       {
-        "id": "RT-0346",
+        "id": "RT-0340",
         "net": "FLT_SB_LNA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16551,7 +16409,7 @@
         "locked": true
       },
       {
-        "id": "RT-0347",
+        "id": "RT-0341",
         "net": "FLT_SB_LNA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -16576,7 +16434,7 @@
         "locked": true
       },
       {
-        "id": "RT-0348",
+        "id": "RT-0342",
         "net": "FLT_SB_LNA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16629,7 +16487,7 @@
         "locked": true
       },
       {
-        "id": "RT-0349",
+        "id": "RT-0343",
         "net": "FLT_SB_LNA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16654,7 +16512,7 @@
         "locked": true
       },
       {
-        "id": "RT-0350",
+        "id": "RT-0344",
         "net": "FLT_SB_LNA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16691,7 +16549,7 @@
         "locked": true
       },
       {
-        "id": "RT-0351",
+        "id": "RT-0345",
         "net": "I2C0_SCL",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16784,7 +16642,7 @@
         "locked": true
       },
       {
-        "id": "RT-0352",
+        "id": "RT-0346",
         "net": "I2C0_SDA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -16865,7 +16723,7 @@
         "locked": true
       },
       {
-        "id": "RT-0353",
+        "id": "RT-0347",
         "net": "I2C2_SCL",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -16902,7 +16760,7 @@
         "locked": true
       },
       {
-        "id": "RT-0354",
+        "id": "RT-0348",
         "net": "I2C2_SCL",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -16927,7 +16785,7 @@
         "locked": true
       },
       {
-        "id": "RT-0355",
+        "id": "RT-0349",
         "net": "I2C2_SCL",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17000,7 +16858,7 @@
         "locked": true
       },
       {
-        "id": "RT-0356",
+        "id": "RT-0350",
         "net": "I2C2_SCL",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17021,7 +16879,7 @@
         "locked": true
       },
       {
-        "id": "RT-0357",
+        "id": "RT-0351",
         "net": "I2C2_SCL",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17062,7 +16920,7 @@
         "locked": true
       },
       {
-        "id": "RT-0358",
+        "id": "RT-0352",
         "net": "I2C2_SCL",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -17099,7 +16957,7 @@
         "locked": true
       },
       {
-        "id": "RT-0359",
+        "id": "RT-0353",
         "net": "I2C2_SCL",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -17132,7 +16990,7 @@
         "locked": true
       },
       {
-        "id": "RT-0360",
+        "id": "RT-0354",
         "net": "I2C2_SDA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17189,7 +17047,7 @@
         "locked": true
       },
       {
-        "id": "RT-0361",
+        "id": "RT-0355",
         "net": "I2C2_SDA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17246,7 +17104,7 @@
         "locked": true
       },
       {
-        "id": "RT-0362",
+        "id": "RT-0356",
         "net": "I2C2_SDA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17271,7 +17129,7 @@
         "locked": true
       },
       {
-        "id": "RT-0363",
+        "id": "RT-0357",
         "net": "I2C2_SDA",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17288,7 +17146,7 @@
         "locked": true
       },
       {
-        "id": "RT-0364",
+        "id": "RT-0358",
         "net": "I2C2_SDA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -17353,7 +17211,7 @@
         "locked": true
       },
       {
-        "id": "RT-0365",
+        "id": "RT-0359",
         "net": "I2C2_SDA",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -17382,7 +17240,7 @@
         "locked": true
       },
       {
-        "id": "RT-0366",
+        "id": "RT-0360",
         "net": "IMU_RX",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -17423,7 +17281,7 @@
         "locked": true
       },
       {
-        "id": "RT-0367",
+        "id": "RT-0361",
         "net": "IMU_TX",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -17448,7 +17306,7 @@
         "locked": true
       },
       {
-        "id": "RT-0368",
+        "id": "RT-0362",
         "net": "INA228_ALERT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17473,7 +17331,7 @@
         "locked": true
       },
       {
-        "id": "RT-0369",
+        "id": "RT-0363",
         "net": "INA228_ALERT",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -17562,7 +17420,7 @@
         "locked": true
       },
       {
-        "id": "RT-0370",
+        "id": "RT-0364",
         "net": "K1_ON",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17579,7 +17437,7 @@
         "locked": true
       },
       {
-        "id": "RT-0371",
+        "id": "RT-0365",
         "net": "K1_ON",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -17628,7 +17486,7 @@
         "locked": true
       },
       {
-        "id": "RT-0372",
+        "id": "RT-0366",
         "net": "K2_ON",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -17653,7 +17511,7 @@
         "locked": true
       },
       {
-        "id": "RT-0373",
+        "id": "RT-0367",
         "net": "K2_ON",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -17702,7 +17560,7 @@
         "locked": true
       },
       {
-        "id": "RT-0374",
+        "id": "RT-0368",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -17719,7 +17577,7 @@
         "locked": true
       },
       {
-        "id": "RT-0375",
+        "id": "RT-0369",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -17740,7 +17598,7 @@
         "locked": true
       },
       {
-        "id": "RT-0376",
+        "id": "RT-0370",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -17777,7 +17635,7 @@
         "locked": true
       },
       {
-        "id": "RT-0377",
+        "id": "RT-0371",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -17798,7 +17656,7 @@
         "locked": true
       },
       {
-        "id": "RT-0378",
+        "id": "RT-0372",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -17819,7 +17677,7 @@
         "locked": true
       },
       {
-        "id": "RT-0379",
+        "id": "RT-0373",
         "net": "LAB5",
         "layer": "B.Cu",
         "width_mm": 0.5,
@@ -17836,7 +17694,7 @@
         "locked": true
       },
       {
-        "id": "RT-0380",
+        "id": "RT-0374",
         "net": "LAB5",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -17861,7 +17719,7 @@
         "locked": true
       },
       {
-        "id": "RT-0381",
+        "id": "RT-0375",
         "net": "LAB5",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -17882,7 +17740,7 @@
         "locked": true
       },
       {
-        "id": "RT-0382",
+        "id": "RT-0376",
         "net": "LAB5",
         "layer": "F.Cu",
         "width_mm": 0.5,
@@ -17931,7 +17789,7 @@
         "locked": true
       },
       {
-        "id": "RT-0383",
+        "id": "RT-0377",
         "net": "MCP_INT",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -17980,48 +17838,61 @@
         "locked": true
       },
       {
-        "id": "RT-0384",
+        "id": "RT-0378",
         "net": "MCP_INT",
         "layer": "F.Cu",
         "width_mm": 0.15,
         "path": [
-          [
-            30.33,
-            7.025
-          ],
-          [
-            30.33,
-            8.295
-          ],
           [
             30.6324,
             8.295
           ],
           [
-            31.6118,
-            9.2744
+            30.33,
+            8.295
           ],
           [
-            31.6118,
-            9.6742
-          ],
-          [
-            32.4671,
-            10.5295
-          ],
-          [
-            32.4671,
-            23.8474
+            30.33,
+            7.025
           ]
         ],
         "locked": true
       },
       {
-        "id": "RT-0385",
+        "id": "RT-0379",
         "net": "MCP_INT",
         "layer": "F.Cu",
         "width_mm": 0.15,
         "path": [
+          [
+            42.0835,
+            50.1315
+          ],
+          [
+            40.08,
+            52.135
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "RT-0380",
+        "net": "MCP_INT",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            42.0835,
+            50.1315
+          ],
+          [
+            42.0835,
+            27.0906
+          ],
+          [
+            38.8403,
+            23.8474
+          ],
           [
             32.4671,
             23.8474
@@ -18042,49 +17913,7 @@
         "locked": true
       },
       {
-        "id": "RT-0386",
-        "net": "MCP_INT",
-        "layer": "F.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            42.0835,
-            50.1315
-          ],
-          [
-            40.08,
-            52.135
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0387",
-        "net": "MCP_INT",
-        "layer": "F.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            42.0835,
-            50.1315
-          ],
-          [
-            42.0835,
-            27.0906
-          ],
-          [
-            38.8403,
-            23.8474
-          ],
-          [
-            32.4671,
-            23.8474
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0388",
+        "id": "RT-0381",
         "net": "MCP_INT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -18117,7 +17946,7 @@
         "locked": true
       },
       {
-        "id": "RT-0389",
+        "id": "RT-0382",
         "net": "MCP_INT",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18214,7 +18043,7 @@
         "locked": true
       },
       {
-        "id": "RT-0390",
+        "id": "RT-0383",
         "net": "OVP_LNB_N",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -18243,7 +18072,7 @@
         "locked": true
       },
       {
-        "id": "RT-0391",
+        "id": "RT-0384",
         "net": "OVP_LNB_N",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18264,7 +18093,7 @@
         "locked": true
       },
       {
-        "id": "RT-0392",
+        "id": "RT-0385",
         "net": "PG_BONI",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -18285,7 +18114,7 @@
         "locked": true
       },
       {
-        "id": "RT-0393",
+        "id": "RT-0386",
         "net": "PG_BONI",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -18302,7 +18131,7 @@
         "locked": true
       },
       {
-        "id": "RT-0394",
+        "id": "RT-0387",
         "net": "PG_BONI",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18327,7 +18156,7 @@
         "locked": true
       },
       {
-        "id": "RT-0395",
+        "id": "RT-0388",
         "net": "PG_LNB",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -18392,24 +18221,7 @@
         "locked": true
       },
       {
-        "id": "RT-0396",
-        "net": "PG_LNB",
-        "layer": "F.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            21.03,
-            18.455
-          ],
-          [
-            21.03,
-            19.2736
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "RT-0397",
+        "id": "RT-0389",
         "net": "PG_LNB",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18421,24 +18233,12 @@
           [
             6.8975,
             25.3267
-          ],
-          [
-            8.9032,
-            25.3267
-          ],
-          [
-            14.9563,
-            19.2736
-          ],
-          [
-            21.03,
-            19.2736
           ]
         ],
         "locked": true
       },
       {
-        "id": "RT-0398",
+        "id": "RT-0390",
         "net": "PICO_DISP_EN",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -18459,7 +18259,7 @@
         "locked": true
       },
       {
-        "id": "RT-0399",
+        "id": "RT-0391",
         "net": "PICO_DISP_EN",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18500,7 +18300,7 @@
         "locked": true
       },
       {
-        "id": "RT-0400",
+        "id": "RT-0392",
         "net": "PICO_OFF",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -18525,7 +18325,7 @@
         "locked": true
       },
       {
-        "id": "RT-0401",
+        "id": "RT-0393",
         "net": "PTC_AUX",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -18558,7 +18358,7 @@
         "locked": true
       },
       {
-        "id": "RT-0402",
+        "id": "RT-0394",
         "net": "PTC_AUX",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -18575,7 +18375,7 @@
         "locked": true
       },
       {
-        "id": "RT-0403",
+        "id": "RT-0395",
         "net": "PTC_AUX",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18628,7 +18428,7 @@
         "locked": true
       },
       {
-        "id": "RT-0404",
+        "id": "RT-0396",
         "net": "PTC_AUX",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18645,7 +18445,7 @@
         "locked": true
       },
       {
-        "id": "RT-0405",
+        "id": "RT-0397",
         "net": "PTC_AUX",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18690,7 +18490,7 @@
         "locked": true
       },
       {
-        "id": "RT-0406",
+        "id": "RT-0398",
         "net": "PWR_BUTTON",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -18715,7 +18515,7 @@
         "locked": true
       },
       {
-        "id": "RT-0407",
+        "id": "RT-0399",
         "net": "PWR_BUTTON",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18848,7 +18648,7 @@
         "locked": true
       },
       {
-        "id": "RT-0408",
+        "id": "RT-0400",
         "net": "PWR_ON_KEY",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -18889,7 +18689,7 @@
         "locked": true
       },
       {
-        "id": "RT-0409",
+        "id": "RT-0401",
         "net": "PWR_ON_KEY",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -18986,7 +18786,7 @@
         "locked": true
       },
       {
-        "id": "RT-0410",
+        "id": "RT-0402",
         "net": "SAFE_BOOT",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -19031,60 +18831,24 @@
         "locked": true
       },
       {
-        "id": "RT-0411",
+        "id": "RT-0403",
         "net": "SAFE_BOOT",
         "layer": "In2.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            43.73,
-            11.65
-          ],
-          [
-            41.4736,
-            11.65
-          ],
-          [
-            29.0565,
-            24.0671
-          ],
-          [
-            29.0565,
-            24.1545
-          ],
-          [
-            27.5626,
-            25.6484
-          ],
-          [
-            27.2577,
-            25.6484
-          ],
-          [
-            26.9198,
-            25.9863
-          ],
-          [
-            26.9198,
-            26.2912
-          ],
-          [
-            21.1187,
-            32.0923
+            18.7858,
+            31.9376
           ],
           [
             18.9405,
             32.0923
-          ],
-          [
-            18.7858,
-            31.9376
           ]
         ],
         "locked": true
       },
       {
-        "id": "RT-0412",
+        "id": "RT-0404",
         "net": "SLED_DET",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19117,7 +18881,7 @@
         "locked": true
       },
       {
-        "id": "RT-0413",
+        "id": "RT-0405",
         "net": "SLED_DET",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19138,7 +18902,7 @@
         "locked": true
       },
       {
-        "id": "RT-0414",
+        "id": "RT-0406",
         "net": "SLED_DET",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -19223,7 +18987,7 @@
         "locked": true
       },
       {
-        "id": "RT-0415",
+        "id": "RT-0407",
         "net": "SW_LIME_A",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -19260,7 +19024,7 @@
         "locked": true
       },
       {
-        "id": "RT-0416",
+        "id": "RT-0408",
         "net": "SW_LIME_A",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19313,7 +19077,7 @@
         "locked": true
       },
       {
-        "id": "RT-0417",
+        "id": "RT-0409",
         "net": "SW_LIME_A",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -19378,7 +19142,7 @@
         "locked": true
       },
       {
-        "id": "RT-0418",
+        "id": "RT-0410",
         "net": "SW_LIME_B",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19451,7 +19215,7 @@
         "locked": true
       },
       {
-        "id": "RT-0419",
+        "id": "RT-0411",
         "net": "SW_LIME_B",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19480,7 +19244,7 @@
         "locked": true
       },
       {
-        "id": "RT-0420",
+        "id": "RT-0412",
         "net": "SW_LIME_B",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -19517,7 +19281,7 @@
         "locked": true
       },
       {
-        "id": "RT-0421",
+        "id": "RT-0413",
         "net": "SW_RTLA_A",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19534,7 +19298,7 @@
         "locked": true
       },
       {
-        "id": "RT-0422",
+        "id": "RT-0414",
         "net": "SW_RTLA_A",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -19571,7 +19335,7 @@
         "locked": true
       },
       {
-        "id": "RT-0423",
+        "id": "RT-0415",
         "net": "SW_RTLA_B",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19592,7 +19356,7 @@
         "locked": true
       },
       {
-        "id": "RT-0424",
+        "id": "RT-0416",
         "net": "SW_RTLA_B",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -19633,7 +19397,7 @@
         "locked": true
       },
       {
-        "id": "RT-0425",
+        "id": "RT-0417",
         "net": "SW_RTLB_A",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19654,7 +19418,7 @@
         "locked": true
       },
       {
-        "id": "RT-0426",
+        "id": "RT-0418",
         "net": "SW_RTLB_A",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -19719,7 +19483,7 @@
         "locked": true
       },
       {
-        "id": "RT-0427",
+        "id": "RT-0419",
         "net": "SW_RTLB_B",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -19772,7 +19536,7 @@
         "locked": true
       },
       {
-        "id": "RT-0428",
+        "id": "RT-0420",
         "net": "UART5_RX",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -19793,7 +19557,7 @@
         "locked": true
       },
       {
-        "id": "RT-0429",
+        "id": "RT-0421",
         "net": "UART5_RX",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -19822,7 +19586,7 @@
         "locked": true
       },
       {
-        "id": "RT-0430",
+        "id": "RT-0422",
         "net": "UART5_RX",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -19887,7 +19651,7 @@
         "locked": true
       },
       {
-        "id": "RT-0431",
+        "id": "RT-0423",
         "net": "UART5_TX",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -20000,7 +19764,7 @@
         "locked": true
       },
       {
-        "id": "RT-0432",
+        "id": "RT-0424",
         "net": "UART7_RX",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -20021,7 +19785,7 @@
         "locked": true
       },
       {
-        "id": "RT-0433",
+        "id": "RT-0425",
         "net": "UART7_RX",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -20074,7 +19838,7 @@
         "locked": true
       },
       {
-        "id": "RT-0434",
+        "id": "RT-0426",
         "net": "UART7_TX",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -20095,7 +19859,7 @@
         "locked": true
       },
       {
-        "id": "RT-0435",
+        "id": "RT-0427",
         "net": "UART7_TX",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -20264,12 +20028,12 @@
             8.565
           ],
           [
-            24.3548,
-            7.8414
+            24.78,
+            8.565
           ],
           [
-            24.05,
-            7.715
+            24.45,
+            8.565
           ]
         ],
         "locked": true,
@@ -20294,12 +20058,12 @@
             25.0
           ],
           [
-            28.6142,
-            22.5466
+            28.5713,
+            22.6402
           ],
           [
-            28.395,
-            22.3
+            28.345,
+            22.4
           ]
         ],
         "locked": true,
@@ -20356,12 +20120,16 @@
         "width_mm": 0.15,
         "path": [
           [
-            24.05,
-            7.715
+            24.45,
+            8.565
+          ],
+          [
+            24.1615,
+            8.4047
           ],
           [
             24.0,
-            8.295
+            8.315
           ]
         ],
         "locked": true,
@@ -20374,15 +20142,15 @@
         "width_mm": 0.15,
         "path": [
           [
-            28.395,
-            22.3
+            28.345,
+            22.4
           ],
           [
-            28.395,
-            21.97
+            28.345,
+            22.07
           ],
           [
-            28.395,
+            28.345,
             21.9
           ]
         ],
@@ -20665,29 +20433,33 @@
       },
       {
         "id": "FIN-0019",
-        "net": "E3_BACK",
-        "layer": "F.Cu",
+        "net": "E1_BAT_ADC",
+        "layer": "B.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            18.405,
-            50.145
+            24.65,
+            23.79
           ],
           [
-            18.755,
-            48.745
+            24.4477,
+            23.5293
           ],
           [
-            18.955,
-            45.945
+            14.25,
+            10.39
           ],
           [
-            20.455,
-            44.145
+            13.3,
+            10.24
           ],
           [
-            20.905,
-            43.645
+            7.15,
+            9.29
+          ],
+          [
+            6.55,
+            8.69
           ]
         ],
         "locked": true,
@@ -20695,17 +20467,253 @@
       },
       {
         "id": "FIN-0020",
+        "net": "E1_BAT_ADC",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            32.75,
+            23.24
+          ],
+          [
+            32.75,
+            23.17
+          ],
+          [
+            32.75,
+            22.84
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0021",
+        "net": "E1_BAT_ADC",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            27.45,
+            26.59
+          ],
+          [
+            27.2167,
+            26.3567
+          ],
+          [
+            24.8833,
+            24.0233
+          ],
+          [
+            24.65,
+            23.79
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0022",
+        "net": "E1_BAT_ADC",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            32.75,
+            22.84
+          ],
+          [
+            32.4806,
+            23.0306
+          ],
+          [
+            27.7194,
+            26.3994
+          ],
+          [
+            27.45,
+            26.59
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0023",
+        "net": "E3_ADC3V0",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            27.43,
+            27.49
+          ],
+          [
+            27.232,
+            27.226
+          ],
+          [
+            26.83,
+            26.69
+          ],
+          [
+            26.43,
+            24.34
+          ],
+          [
+            26.28,
+            12.69
+          ],
+          [
+            25.117,
+            10.1402
+          ],
+          [
+            24.98,
+            9.84
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0024",
+        "net": "E3_ADC3V0",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            35.53,
+            7.84
+          ],
+          [
+            35.5043,
+            8.169
+          ],
+          [
+            35.03,
+            14.24
+          ],
+          [
+            33.48,
+            15.79
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0025",
+        "net": "E3_ADC3V0",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            36.53,
+            32.29
+          ],
+          [
+            34.83,
+            32.69
+          ],
+          [
+            34.38,
+            32.54
+          ],
+          [
+            33.93,
+            30.99
+          ],
+          [
+            33.28,
+            30.59
+          ],
+          [
+            29.38,
+            29.74
+          ],
+          [
+            29.0233,
+            29.413
+          ],
+          [
+            28.78,
+            29.19
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0026",
+        "net": "E3_ADC3V0",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            28.78,
+            29.19
+          ],
+          [
+            28.5748,
+            28.9316
+          ],
+          [
+            27.6352,
+            27.7484
+          ],
+          [
+            27.43,
+            27.49
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0027",
+        "net": "E3_ADC3V0",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            24.98,
+            9.84
+          ],
+          [
+            25.2434,
+            9.6412
+          ],
+          [
+            27.63,
+            7.84
+          ],
+          [
+            35.2,
+            7.84
+          ],
+          [
+            35.53,
+            7.84
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0028",
         "net": "E3_CASE_TEMP",
         "layer": "B.Cu",
         "width_mm": 0.15,
         "path": [
           [
             35.68,
-            23.105
+            23.055
           ],
           [
-            35.9045,
-            23.3468
+            35.8961,
+            23.3044
           ],
           [
             36.33,
@@ -20716,7 +20724,29 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0021",
+        "id": "FIN-0029",
+        "net": "E3_CASE_TEMP",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            35.83,
+            17.905
+          ],
+          [
+            35.83,
+            17.135
+          ],
+          [
+            35.83,
+            16.805
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0030",
         "net": "E3_CASE_TEMP",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -20746,7 +20776,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0022",
+        "id": "FIN-0031",
         "net": "E3_CASE_TEMP",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -20784,37 +20814,41 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0023",
+        "id": "FIN-0032",
         "net": "E3_CASE_TEMP",
         "layer": "F.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            33.23,
-            17.755
+            35.83,
+            16.805
           ],
           [
-            33.3604,
-            18.0582
+            35.6515,
+            17.0826
           ],
           [
-            35.38,
-            22.755
+            34.03,
+            19.605
           ],
           [
-            35.4652,
-            22.8544
+            35.33,
+            22.705
+          ],
+          [
+            35.4467,
+            22.8217
           ],
           [
             35.68,
-            23.105
+            23.055
           ]
         ],
         "locked": true,
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0024",
+        "id": "FIN-0033",
         "net": "E3_CASE_TEMP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -20896,7 +20930,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0025",
+        "id": "FIN-0034",
         "net": "E3_CASE_TEMP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -20918,7 +20952,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0026",
+        "id": "FIN-0035",
         "net": "E3_FN",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -20948,7 +20982,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0027",
+        "id": "FIN-0036",
         "net": "E3_FN",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -20958,12 +20992,12 @@
             47.195
           ],
           [
-            18.008,
-            46.9053
+            17.9051,
+            46.8696
           ],
           [
-            20.85,
-            41.695
+            18.35,
+            44.245
           ],
           [
             20.9,
@@ -20974,7 +21008,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0028",
+        "id": "FIN-0037",
         "net": "E3_FN",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21000,61 +21034,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0029",
-        "net": "E3_MARK_EXT",
-        "layer": "B.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            24.3835,
-            40.8648
-          ],
-          [
-            24.4859,
-            41.2047
-          ],
-          [
-            25.9,
-            48.2753
-          ],
-          [
-            27.35,
-            49.6253
-          ],
-          [
-            30.1,
-            49.7753
-          ],
-          [
-            30.35,
-            50.3253
-          ],
-          [
-            29.55,
-            53.1253
-          ],
-          [
-            29.8,
-            53.5753
-          ],
-          [
-            30.65,
-            53.6753
-          ],
-          [
-            30.7167,
-            53.6086
-          ],
-          [
-            30.95,
-            53.3753
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
-      },
-      {
-        "id": "FIN-0030",
+        "id": "FIN-0038",
         "net": "E3_MARK_EXT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21080,7 +21060,139 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0031",
+        "id": "FIN-0039",
+        "net": "E3_MARK_EXT",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            34.5,
+            32.0753
+          ],
+          [
+            34.6,
+            35.0753
+          ],
+          [
+            34.8,
+            35.5753
+          ],
+          [
+            34.95,
+            43.6253
+          ],
+          [
+            30.8,
+            47.9253
+          ],
+          [
+            30.3072,
+            48.8351
+          ],
+          [
+            30.15,
+            49.1253
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0040",
+        "net": "E3_MARK_EXT",
+        "layer": "In1.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            30.15,
+            49.1253
+          ],
+          [
+            30.211,
+            49.4496
+          ],
+          [
+            30.889,
+            53.051
+          ],
+          [
+            30.95,
+            53.3753
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0041",
+        "net": "E3_MCP_RESET_N",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            31.355,
+            5.895
+          ],
+          [
+            35.055,
+            8.195
+          ],
+          [
+            35.155,
+            9.195
+          ],
+          [
+            33.905,
+            13.945
+          ],
+          [
+            33.405,
+            17.545
+          ],
+          [
+            33.305,
+            23.145
+          ],
+          [
+            32.855,
+            23.445
+          ],
+          [
+            31.855,
+            23.645
+          ],
+          [
+            31.305,
+            24.145
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0042",
+        "net": "E3_PANEL_TEMP",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            28.58,
+            24.53
+          ],
+          [
+            28.8306,
+            24.7448
+          ],
+          [
+            30.68,
+            26.33
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0043",
         "net": "E3_PANEL_TEMP",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -21090,31 +21202,23 @@
             20.43
           ],
           [
-            27.68,
+            28.08,
             20.38
           ],
           [
-            27.33,
-            20.83
+            27.7302,
+            22.6538
           ],
           [
-            27.63,
-            22.43
-          ],
-          [
-            29.08,
-            23.63
-          ],
-          [
-            31.08,
-            25.88
+            27.68,
+            22.98
           ]
         ],
         "locked": true,
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0032",
+        "id": "FIN-0044",
         "net": "E3_PANEL_TEMP",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -21136,7 +21240,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0033",
+        "id": "FIN-0045",
         "net": "E3_PANEL_TEMP",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -21170,7 +21274,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0034",
+        "id": "FIN-0046",
         "net": "E3_PANEL_TEMP",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -21236,7 +21340,33 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0035",
+        "id": "FIN-0047",
+        "net": "E3_PANEL_TEMP",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            27.68,
+            22.98
+          ],
+          [
+            27.8457,
+            23.2654
+          ],
+          [
+            28.4143,
+            24.2446
+          ],
+          [
+            28.58,
+            24.53
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0048",
         "net": "E3_PANEL_TEMP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21262,7 +21392,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0036",
+        "id": "FIN-0049",
         "net": "E3_PANEL_TEMP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21300,7 +21430,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0037",
+        "id": "FIN-0050",
         "net": "E3_PANEL_TEMP",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21338,7 +21468,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0038",
+        "id": "FIN-0051",
         "net": "E3_PANEL_TEMP",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -21376,7 +21506,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0039",
+        "id": "FIN-0052",
         "net": "E3_PANEL_TEMP",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -21402,26 +21532,26 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0040",
+        "id": "FIN-0053",
         "net": "E3_PICO3V3",
         "layer": "B.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            28.05,
-            55.55
+            31.0,
+            59.45
           ],
           [
-            28.1566,
-            55.2377
+            30.9287,
+            59.1278
           ],
           [
-            28.75,
-            53.5
+            29.55,
+            52.9
           ],
           [
-            29.6501,
-            50.6645
+            29.7242,
+            50.679
           ],
           [
             29.75,
@@ -21432,29 +21562,33 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0041",
+        "id": "FIN-0054",
         "net": "E3_PICO3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            28.05,
-            55.95
+            29.25,
+            56.3
           ],
           [
-            28.05,
-            55.88
+            30.75,
+            58.55
           ],
           [
-            28.05,
-            55.55
+            30.9117,
+            59.132
+          ],
+          [
+            31.0,
+            59.45
           ]
         ],
         "locked": true,
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0042",
+        "id": "FIN-0055",
         "net": "E3_PICO3V3",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21476,7 +21610,41 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0043",
+        "id": "FIN-0056",
+        "net": "E3_PICO3V3",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            36.0166,
+            21.5527
+          ],
+          [
+            36.2519,
+            21.2869
+          ],
+          [
+            36.4,
+            16.4
+          ],
+          [
+            36.05,
+            15.35
+          ],
+          [
+            34.7277,
+            14.1189
+          ],
+          [
+            34.5,
+            13.88
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0057",
         "net": "E3_PICO3V3",
         "layer": "In1.Cu",
         "width_mm": 0.2,
@@ -21514,207 +21682,615 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0044",
-        "net": "E3_PICO_SWCLK",
+        "id": "FIN-0058",
+        "net": "E3_PICO_RUN",
         "layer": "B.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            22.25,
-            48.7
+            33.78,
+            28.87
           ],
           [
-            22.0335,
-            48.949
+            35.6023,
+            28.5589
           ],
           [
-            20.25,
+            35.93,
+            28.52
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0059",
+        "net": "E3_PICO_RUN",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            27.43,
+            30.52
+          ],
+          [
+            27.4147,
+            30.1904
+          ],
+          [
+            27.3453,
+            28.6996
+          ],
+          [
+            27.33,
+            28.37
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0060",
+        "net": "E3_PICO_RUN",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            27.33,
+            28.37
+          ],
+          [
+            27.1469,
+            28.0954
+          ],
+          [
+            26.83,
+            27.62
+          ],
+          [
+            26.88,
+            26.27
+          ],
+          [
+            29.18,
+            24.82
+          ],
+          [
+            33.23,
+            20.47
+          ],
+          [
+            34.73,
+            18.77
+          ],
+          [
+            42.93,
+            14.47
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0061",
+        "net": "E3_PICO_RUN",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            35.93,
+            28.52
+          ],
+          [
+            35.6088,
+            28.5956
+          ],
+          [
+            27.7512,
+            30.4444
+          ],
+          [
+            27.43,
+            30.52
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0062",
+        "net": "E3_PICO_SWDIO",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            11.05,
+            24.9
+          ],
+          [
+            10.9642,
+            24.5813
+          ],
+          [
+            10.35,
+            22.3
+          ],
+          [
+            10.722,
+            17.9288
+          ],
+          [
+            10.75,
+            17.6
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0063",
+        "net": "E3_PICO_SWDIO",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            25.35,
             51.0
+          ],
+          [
+            25.5,
+            46.7
+          ],
+          [
+            25.1,
+            44.15
+          ],
+          [
+            24.4,
+            26.1
+          ],
+          [
+            22.8333,
+            24.5333
+          ],
+          [
+            22.6,
+            24.3
           ]
         ],
         "locked": true,
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0045",
-        "net": "E3_PICO_SWCLK",
-        "layer": "In1.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            42.95,
-            47.5
-          ],
-          [
-            40.9,
-            48.45
-          ],
-          [
-            28.6,
-            48.7
-          ],
-          [
-            27.45,
-            48.35
-          ],
-          [
-            24.8,
-            49.1
-          ],
-          [
-            22.576,
-            48.7511
-          ],
-          [
-            22.25,
-            48.7
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
-      },
-      {
-        "id": "FIN-0046",
-        "net": "E3_PICO_SWDIO",
-        "layer": "B.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            25.6,
-            53.95
-          ],
-          [
-            27.85,
-            56.15
-          ],
-          [
-            34.2817,
-            60.7578
-          ],
-          [
-            34.55,
-            60.95
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
-      },
-      {
-        "id": "FIN-0047",
-        "net": "E3_PICO_SWDIO",
-        "layer": "B.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            36.9,
-            63.3
-          ],
-          [
-            37.0907,
-            63.0307
-          ],
-          [
-            37.75,
-            62.1
-          ],
-          [
-            42.25,
-            57.45
-          ],
-          [
-            43.5,
-            55.95
-          ],
-          [
-            44.2,
-            55.9
-          ],
-          [
-            44.8,
-            55.3
-          ],
-          [
-            45.5,
-            53.95
-          ],
-          [
-            47.15,
-            53.05
-          ],
-          [
-            47.4,
-            52.35
-          ],
-          [
-            47.35,
-            18.25
-          ],
-          [
-            46.6,
-            17.5
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
-      },
-      {
-        "id": "FIN-0048",
+        "id": "FIN-0064",
         "net": "E3_PICO_SWDIO",
         "layer": "F.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            34.55,
-            60.95
+            10.75,
+            17.6
           ],
           [
-            34.7833,
-            61.1833
+            10.75,
+            17.27
           ],
           [
-            36.6667,
-            63.0667
+            10.75,
+            12.93
           ],
           [
-            36.9,
-            63.3
+            10.75,
+            12.6
           ]
         ],
         "locked": true,
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0049",
+        "id": "FIN-0065",
+        "net": "E3_PICO_SWDIO",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            22.6,
+            24.3
+          ],
+          [
+            22.3384,
+            24.0988
+          ],
+          [
+            21.95,
+            23.8
+          ],
+          [
+            19.2,
+            23.6
+          ],
+          [
+            18.8833,
+            23.2833
+          ],
+          [
+            18.65,
+            23.05
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0066",
+        "net": "E3_PICO_SWDIO",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            24.6,
+            11.15
+          ],
+          [
+            24.8333,
+            10.9167
+          ],
+          [
+            25.6167,
+            10.1333
+          ],
+          [
+            25.85,
+            9.9
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0067",
+        "net": "E3_PICO_SWDIO",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            38.75,
+            10.25
+          ],
+          [
+            38.9692,
+            10.4966
+          ],
+          [
+            43.15,
+            15.2
+          ],
+          [
+            45.5,
+            16.4
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0068",
+        "net": "E3_PICO_SWDIO",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            10.75,
+            12.6
+          ],
+          [
+            11.08,
+            12.5974
+          ],
+          [
+            23.25,
+            12.5
+          ],
+          [
+            24.3667,
+            11.3833
+          ],
+          [
+            24.6,
+            11.15
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0069",
+        "net": "E3_PICO_SWDIO",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            18.65,
+            23.05
+          ],
+          [
+            18.3294,
+            23.128
+          ],
+          [
+            11.3706,
+            24.822
+          ],
+          [
+            11.05,
+            24.9
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0070",
+        "net": "E3_PICO_SWDIO",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            25.85,
+            9.9
+          ],
+          [
+            26.093,
+            9.6767
+          ],
+          [
+            27.7,
+            8.2
+          ],
+          [
+            33.4,
+            8.4
+          ],
+          [
+            34.3,
+            9.2
+          ],
+          [
+            38.4288,
+            10.1742
+          ],
+          [
+            38.75,
+            10.25
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0071",
+        "net": "E3_PICO_VSYS",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            27.8742,
+            8.8
+          ],
+          [
+            28.1292,
+            8.5905
+          ],
+          [
+            30.6742,
+            6.5
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0072",
+        "net": "E3_PICO_VSYS",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            28.7742,
+            25.65
+          ],
+          [
+            27.9742,
+            24.7
+          ],
+          [
+            27.0742,
+            23.05
+          ],
+          [
+            26.7242,
+            17.25
+          ],
+          [
+            26.7242,
+            10.28
+          ],
+          [
+            26.7242,
+            9.95
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0073",
+        "net": "E3_PICO_VSYS",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            26.7242,
+            9.95
+          ],
+          [
+            26.9575,
+            9.7167
+          ],
+          [
+            27.6409,
+            9.0333
+          ],
+          [
+            27.8742,
+            8.8
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0074",
+        "net": "E3_PIEZO_DRIVE",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            16.95,
+            46.345
+          ],
+          [
+            16.965,
+            46.0153
+          ],
+          [
+            17.15,
+            41.945
+          ],
+          [
+            17.5,
+            40.295
+          ],
+          [
+            17.55,
+            32.045
+          ],
+          [
+            18.15,
+            31.295
+          ],
+          [
+            18.7863,
+            30.1815
+          ],
+          [
+            18.95,
+            29.895
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0075",
+        "net": "E3_PIEZO_DRIVE",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            34.35,
+            41.495
+          ],
+          [
+            34.1506,
+            41.2321
+          ],
+          [
+            33.25,
+            40.045
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0076",
         "net": "E3_PIEZO_DRIVE",
         "layer": "F.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            16.979,
-            46.345
+            18.95,
+            29.895
           ],
           [
-            17.1223,
-            46.0477
+            19.1942,
+            29.673
           ],
           [
-            18.329,
-            43.545
+            20.05,
+            28.895
           ],
           [
-            18.8195,
-            40.8696
+            22.15,
+            28.945
           ],
           [
-            18.879,
-            40.545
+            23.15,
+            29.445
+          ],
+          [
+            26.4125,
+            31.283
+          ],
+          [
+            26.7,
+            31.445
           ]
         ],
         "locked": true,
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0050",
+        "id": "FIN-0077",
+        "net": "E3_PIEZO_DRIVE",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            28.95,
+            31.445
+          ],
+          [
+            29.2799,
+            31.4515
+          ],
+          [
+            31.5,
+            31.495
+          ],
+          [
+            31.95,
+            33.045
+          ],
+          [
+            33.65,
+            40.795
+          ],
+          [
+            34.1167,
+            41.2617
+          ],
+          [
+            34.35,
+            41.495
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0078",
         "net": "E3_PIEZO_DRIVE",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -21724,27 +22300,23 @@
             48.4055
           ],
           [
-            9.6185,
-            48.4484
+            9.6096,
+            48.495
           ],
           [
-            14.929,
-            48.545
+            16.0,
+            48.495
           ],
           [
-            16.079,
-            48.445
+            16.3,
+            48.045
           ],
           [
-            16.329,
-            47.895
+            16.8321,
+            46.6532
           ],
           [
-            16.8514,
-            46.6493
-          ],
-          [
-            16.979,
+            16.95,
             46.345
           ]
         ],
@@ -21752,7 +22324,33 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0051",
+        "id": "FIN-0079",
+        "net": "E3_PIEZO_DRIVE",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            26.7,
+            31.445
+          ],
+          [
+            27.03,
+            31.445
+          ],
+          [
+            28.62,
+            31.445
+          ],
+          [
+            28.95,
+            31.445
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0080",
         "net": "E3_Q6A_KEY_GATE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -21774,7 +22372,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0052",
+        "id": "FIN-0081",
         "net": "E3_Q6A_KEY_GATE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -21800,7 +22398,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0053",
+        "id": "FIN-0082",
         "net": "E3_Q6A_KEY_GATE",
         "layer": "B.Cu",
         "width_mm": 0.15,
@@ -21842,7 +22440,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0054",
+        "id": "FIN-0083",
         "net": "E3_Q6A_KEY_GATE",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21868,7 +22466,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0055",
+        "id": "FIN-0084",
         "net": "E3_Q6A_KEY_GATE",
         "layer": "In2.Cu",
         "width_mm": 0.15,
@@ -21898,7 +22496,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0056",
+        "id": "FIN-0085",
         "net": "E3_REC_EXT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21924,7 +22522,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0057",
+        "id": "FIN-0086",
         "net": "E3_REC_EXT",
         "layer": "F.Cu",
         "width_mm": 0.15,
@@ -21946,7 +22544,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0058",
+        "id": "FIN-0087",
         "net": "E3_REC_EXT",
         "layer": "In1.Cu",
         "width_mm": 0.15,
@@ -21972,60 +22570,146 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0059",
-        "net": "PG_BONI",
+        "id": "FIN-0088",
+        "net": "MCP_INT",
         "layer": "B.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            8.5,
-            21.5
+            44.95,
+            45.29
           ],
           [
-            8.7151,
-            21.7503
+            44.948,
+            44.96
           ],
           [
-            11.55,
-            25.05
+            44.85,
+            28.89
           ],
           [
-            13.75,
-            25.15
+            43.65,
+            28.04
           ],
           [
-            14.45,
-            24.8
+            42.95,
+            27.74
           ],
           [
-            14.75,
-            24.1
+            42.6,
+            27.09
           ],
           [
-            15.1178,
-            22.6696
+            41.0,
+            18.24
           ],
           [
-            15.2,
-            22.35
+            39.3,
+            16.19
+          ],
+          [
+            35.9951,
+            13.2109
+          ],
+          [
+            35.75,
+            12.99
           ]
         ],
         "locked": true,
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0060",
+        "id": "FIN-0089",
+        "net": "MCP_INT",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            33.65,
+            12.54
+          ],
+          [
+            33.4637,
+            12.2676
+          ],
+          [
+            31.7,
+            9.69
+          ],
+          [
+            31.4,
+            8.79
+          ],
+          [
+            31.2,
+            8.59
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0090",
+        "net": "MCP_INT",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            35.75,
+            12.99
+          ],
+          [
+            35.4273,
+            12.9209
+          ],
+          [
+            33.9727,
+            12.6091
+          ],
+          [
+            33.65,
+            12.54
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0091",
+        "net": "MCP_INT",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            44.95,
+            45.74
+          ],
+          [
+            44.95,
+            45.62
+          ],
+          [
+            44.95,
+            45.29
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0092",
         "net": "PG_BONI",
         "layer": "F.Cu",
         "width_mm": 0.15,
         "path": [
           [
-            15.2,
-            22.35
+            14.95,
+            22.6
           ],
           [
-            15.4333,
-            22.1167
+            15.1833,
+            22.3667
           ],
           [
             20.1,
@@ -22036,7 +22720,7 @@
         "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
       },
       {
-        "id": "FIN-0061",
+        "id": "FIN-0093",
         "net": "PG_BONI",
         "layer": "In1.Cu",
         "width_mm": 0.15,
@@ -22046,20 +22730,248 @@
             22.6274
           ],
           [
-            4.417,
-            22.4509
+            4.4327,
+            22.7731
           ],
           [
-            5.85,
-            21.6
+            6.0,
+            23.4
           ],
           [
-            8.1702,
-            21.5124
+            14.35,
+            23.15
           ],
           [
-            8.5,
-            21.5
+            14.7067,
+            22.823
+          ],
+          [
+            14.95,
+            22.6
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0094",
+        "net": "PG_LNB",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            19.75,
+            19.0
+          ],
+          [
+            19.9833,
+            18.7667
+          ],
+          [
+            20.05,
+            18.7
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0095",
+        "net": "PG_LNB",
+        "layer": "In1.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            11.3,
+            20.35
+          ],
+          [
+            11.6194,
+            20.2669
+          ],
+          [
+            14.6306,
+            19.4831
+          ],
+          [
+            14.95,
+            19.4
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0096",
+        "net": "PG_LNB",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            6.8267,
+            25.3975
+          ],
+          [
+            6.9544,
+            25.0663
+          ],
+          [
+            7.3,
+            23.9
+          ],
+          [
+            8.1,
+            23.55
+          ],
+          [
+            11.1,
+            20.7
+          ],
+          [
+            11.1363,
+            20.6365
+          ],
+          [
+            11.3,
+            20.35
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0097",
+        "net": "PG_LNB",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            14.95,
+            19.4
+          ],
+          [
+            15.2789,
+            19.3726
+          ],
+          [
+            19.4211,
+            19.0274
+          ],
+          [
+            19.75,
+            19.0
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0098",
+        "net": "SAFE_BOOT",
+        "layer": "B.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            24.65,
+            22.53
+          ],
+          [
+            24.6397,
+            22.2002
+          ],
+          [
+            24.45,
+            16.13
+          ],
+          [
+            23.9298,
+            15.8049
+          ],
+          [
+            23.65,
+            15.63
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0099",
+        "net": "SAFE_BOOT",
+        "layer": "F.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            23.65,
+            15.63
+          ],
+          [
+            23.8494,
+            15.3671
+          ],
+          [
+            28.0006,
+            9.8929
+          ],
+          [
+            28.2,
+            9.63
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0100",
+        "net": "SAFE_BOOT",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            18.7858,
+            31.9376
+          ],
+          [
+            19.107,
+            32.0887
+          ],
+          [
+            19.85,
+            32.13
+          ],
+          [
+            21.5,
+            29.48
+          ],
+          [
+            24.4669,
+            22.8045
+          ],
+          [
+            24.65,
+            22.53
+          ]
+        ],
+        "locked": true,
+        "why": "completion of the frozen route (build/kicad/boards/CTRL/route-frozen.json, W2 CTRL-R): grid A* on the locked copper of route run 43136394379, exact clearance check"
+      },
+      {
+        "id": "FIN-0101",
+        "net": "SAFE_BOOT",
+        "layer": "In2.Cu",
+        "width_mm": 0.15,
+        "path": [
+          [
+            28.2,
+            9.63
+          ],
+          [
+            28.5278,
+            9.6678
+          ],
+          [
+            42.95,
+            11.33
           ]
         ],
         "locked": true,
@@ -23276,17 +24188,6 @@
       },
       {
         "id": "RV-0014",
-        "net": "E1_BAT_ADC",
-        "at": [
-          27.9527,
-          20.9842
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true
-      },
-      {
-        "id": "RV-0015",
         "net": "E3_BACK_EXT",
         "at": [
           16.8445,
@@ -23297,7 +24198,7 @@
         "locked": true
       },
       {
-        "id": "RV-0016",
+        "id": "RV-0015",
         "net": "E3_BACK_EXT",
         "at": [
           33.2822,
@@ -23308,7 +24209,7 @@
         "locked": true
       },
       {
-        "id": "RV-0017",
+        "id": "RV-0016",
         "net": "E3_BEZEL_SCL",
         "at": [
           42.9552,
@@ -23319,7 +24220,7 @@
         "locked": true
       },
       {
-        "id": "RV-0018",
+        "id": "RV-0017",
         "net": "E3_BEZEL_SDA",
         "at": [
           42.5984,
@@ -23330,7 +24231,7 @@
         "locked": true
       },
       {
-        "id": "RV-0019",
+        "id": "RV-0018",
         "net": "E3_BLOWER_EN",
         "at": [
           13.3381,
@@ -23341,7 +24242,7 @@
         "locked": true
       },
       {
-        "id": "RV-0020",
+        "id": "RV-0019",
         "net": "E3_BLOWER_EN",
         "at": [
           14.698,
@@ -23352,7 +24253,7 @@
         "locked": true
       },
       {
-        "id": "RV-0021",
+        "id": "RV-0020",
         "net": "E3_BLOWER_EN",
         "at": [
           14.8394,
@@ -23363,7 +24264,7 @@
         "locked": true
       },
       {
-        "id": "RV-0022",
+        "id": "RV-0021",
         "net": "E3_BLOWER_EN",
         "at": [
           28.5535,
@@ -23374,7 +24275,7 @@
         "locked": true
       },
       {
-        "id": "RV-0023",
+        "id": "RV-0022",
         "net": "E3_BLOWER_GATE",
         "at": [
           17.31,
@@ -23385,7 +24286,7 @@
         "locked": true
       },
       {
-        "id": "RV-0024",
+        "id": "RV-0023",
         "net": "E3_BLOWER_GATE",
         "at": [
           21.1675,
@@ -23396,7 +24297,7 @@
         "locked": true
       },
       {
-        "id": "RV-0025",
+        "id": "RV-0024",
         "net": "E3_BUTTON_SENSE",
         "at": [
           11.4754,
@@ -23407,7 +24308,7 @@
         "locked": true
       },
       {
-        "id": "RV-0026",
+        "id": "RV-0025",
         "net": "E3_BUTTON_SENSE",
         "at": [
           36.8723,
@@ -23418,7 +24319,7 @@
         "locked": true
       },
       {
-        "id": "RV-0027",
+        "id": "RV-0026",
         "net": "E3_BUTTON_SENSE",
         "at": [
           39.6774,
@@ -23429,7 +24330,7 @@
         "locked": true
       },
       {
-        "id": "RV-0028",
+        "id": "RV-0027",
         "net": "E3_ENC1_A",
         "at": [
           0.7966,
@@ -23440,7 +24341,7 @@
         "locked": true
       },
       {
-        "id": "RV-0029",
+        "id": "RV-0028",
         "net": "E3_ENC1_A",
         "at": [
           22.9064,
@@ -23451,7 +24352,7 @@
         "locked": true
       },
       {
-        "id": "RV-0030",
+        "id": "RV-0029",
         "net": "E3_ENC1_A_RAW",
         "at": [
           31.18,
@@ -23462,7 +24363,7 @@
         "locked": true
       },
       {
-        "id": "RV-0031",
+        "id": "RV-0030",
         "net": "E3_ENC1_B",
         "at": [
           12.4535,
@@ -23473,7 +24374,7 @@
         "locked": true
       },
       {
-        "id": "RV-0032",
+        "id": "RV-0031",
         "net": "E3_ENC1_B",
         "at": [
           24.065,
@@ -23484,7 +24385,7 @@
         "locked": true
       },
       {
-        "id": "RV-0033",
+        "id": "RV-0032",
         "net": "E3_ENC1_B",
         "at": [
           27.4413,
@@ -23495,7 +24396,7 @@
         "locked": true
       },
       {
-        "id": "RV-0034",
+        "id": "RV-0033",
         "net": "E3_ENC1_B",
         "at": [
           30.0826,
@@ -23506,7 +24407,7 @@
         "locked": true
       },
       {
-        "id": "RV-0035",
+        "id": "RV-0034",
         "net": "E3_ENC1_B",
         "at": [
           33.85,
@@ -23517,7 +24418,7 @@
         "locked": true
       },
       {
-        "id": "RV-0036",
+        "id": "RV-0035",
         "net": "E3_ENC1_PRESS",
         "at": [
           24.7236,
@@ -23528,7 +24429,7 @@
         "locked": true
       },
       {
-        "id": "RV-0037",
+        "id": "RV-0036",
         "net": "E3_ENC1_PRESS",
         "at": [
           33.7369,
@@ -23539,7 +24440,7 @@
         "locked": true
       },
       {
-        "id": "RV-0038",
+        "id": "RV-0037",
         "net": "E3_ENC1_PRESS_EXT",
         "at": [
           26.417,
@@ -23550,7 +24451,7 @@
         "locked": true
       },
       {
-        "id": "RV-0039",
+        "id": "RV-0038",
         "net": "E3_ENC1_PRESS_EXT",
         "at": [
           27.8261,
@@ -23561,7 +24462,7 @@
         "locked": true
       },
       {
-        "id": "RV-0040",
+        "id": "RV-0039",
         "net": "E3_ENC1_PRESS_EXT",
         "at": [
           35.7821,
@@ -23572,7 +24473,7 @@
         "locked": true
       },
       {
-        "id": "RV-0041",
+        "id": "RV-0040",
         "net": "E3_ENC1_PRESS_EXT",
         "at": [
           44.7066,
@@ -23583,7 +24484,7 @@
         "locked": true
       },
       {
-        "id": "RV-0042",
+        "id": "RV-0041",
         "net": "E3_ENC1_PRESS_EXT",
         "at": [
           45.4223,
@@ -23594,7 +24495,7 @@
         "locked": true
       },
       {
-        "id": "RV-0043",
+        "id": "RV-0042",
         "net": "E3_ENC2_A",
         "at": [
           9.5814,
@@ -23605,7 +24506,7 @@
         "locked": true
       },
       {
-        "id": "RV-0044",
+        "id": "RV-0043",
         "net": "E3_ENC2_A",
         "at": [
           10.4859,
@@ -23616,7 +24517,7 @@
         "locked": true
       },
       {
-        "id": "RV-0045",
+        "id": "RV-0044",
         "net": "E3_ENC2_A",
         "at": [
           11.0074,
@@ -23627,7 +24528,7 @@
         "locked": true
       },
       {
-        "id": "RV-0046",
+        "id": "RV-0045",
         "net": "E3_ENC2_A",
         "at": [
           28.595,
@@ -23638,7 +24539,7 @@
         "locked": true
       },
       {
-        "id": "RV-0047",
+        "id": "RV-0046",
         "net": "E3_ENC2_A",
         "at": [
           37.319,
@@ -23649,7 +24550,7 @@
         "locked": true
       },
       {
-        "id": "RV-0048",
+        "id": "RV-0047",
         "net": "E3_ENC2_A_RAW",
         "at": [
           32.1849,
@@ -23660,7 +24561,7 @@
         "locked": true
       },
       {
-        "id": "RV-0049",
+        "id": "RV-0048",
         "net": "E3_ENC2_B",
         "at": [
           17.3039,
@@ -23671,7 +24572,7 @@
         "locked": true
       },
       {
-        "id": "RV-0050",
+        "id": "RV-0049",
         "net": "E3_ENC2_B",
         "at": [
           23.5354,
@@ -23682,7 +24583,7 @@
         "locked": true
       },
       {
-        "id": "RV-0051",
+        "id": "RV-0050",
         "net": "E3_ENC2_B",
         "at": [
           23.5354,
@@ -23693,7 +24594,7 @@
         "locked": true
       },
       {
-        "id": "RV-0052",
+        "id": "RV-0051",
         "net": "E3_ENC2_B",
         "at": [
           27.0037,
@@ -23704,7 +24605,7 @@
         "locked": true
       },
       {
-        "id": "RV-0053",
+        "id": "RV-0052",
         "net": "E3_ENC2_B",
         "at": [
           27.5532,
@@ -23715,7 +24616,7 @@
         "locked": true
       },
       {
-        "id": "RV-0054",
+        "id": "RV-0053",
         "net": "E3_ENC2_B",
         "at": [
           29.3237,
@@ -23726,7 +24627,7 @@
         "locked": true
       },
       {
-        "id": "RV-0055",
+        "id": "RV-0054",
         "net": "E3_ENC2_B",
         "at": [
           37.7792,
@@ -23737,7 +24638,7 @@
         "locked": true
       },
       {
-        "id": "RV-0056",
+        "id": "RV-0055",
         "net": "E3_ENC2_B",
         "at": [
           38.4091,
@@ -23748,7 +24649,7 @@
         "locked": true
       },
       {
-        "id": "RV-0057",
+        "id": "RV-0056",
         "net": "E3_ENC2_B",
         "at": [
           40.3306,
@@ -23759,7 +24660,7 @@
         "locked": true
       },
       {
-        "id": "RV-0058",
+        "id": "RV-0057",
         "net": "E3_ENC2_B",
         "at": [
           41.9887,
@@ -23770,7 +24671,7 @@
         "locked": true
       },
       {
-        "id": "RV-0059",
+        "id": "RV-0058",
         "net": "E3_ENC2_B",
         "at": [
           42.0459,
@@ -23781,7 +24682,7 @@
         "locked": true
       },
       {
-        "id": "RV-0060",
+        "id": "RV-0059",
         "net": "E3_ENC2_B_RAW",
         "at": [
           33.7426,
@@ -23792,7 +24693,7 @@
         "locked": true
       },
       {
-        "id": "RV-0061",
+        "id": "RV-0060",
         "net": "E3_ENC2_PRESS",
         "at": [
           24.857,
@@ -23803,7 +24704,7 @@
         "locked": true
       },
       {
-        "id": "RV-0062",
+        "id": "RV-0061",
         "net": "E3_ENC2_PRESS",
         "at": [
           34.7334,
@@ -23814,7 +24715,7 @@
         "locked": true
       },
       {
-        "id": "RV-0063",
+        "id": "RV-0062",
         "net": "E3_ENC2_PRESS_EXT",
         "at": [
           25.0043,
@@ -23825,7 +24726,7 @@
         "locked": true
       },
       {
-        "id": "RV-0064",
+        "id": "RV-0063",
         "net": "E3_ENC2_PRESS_EXT",
         "at": [
           37.7752,
@@ -23836,7 +24737,7 @@
         "locked": true
       },
       {
-        "id": "RV-0065",
+        "id": "RV-0064",
         "net": "E3_FAN_EN",
         "at": [
           34.3328,
@@ -23847,7 +24748,7 @@
         "locked": true
       },
       {
-        "id": "RV-0066",
+        "id": "RV-0065",
         "net": "E3_FAN_EN",
         "at": [
           39.4947,
@@ -23858,7 +24759,7 @@
         "locked": true
       },
       {
-        "id": "RV-0067",
+        "id": "RV-0066",
         "net": "E3_FAN_TACH",
         "at": [
           36.6123,
@@ -23869,7 +24770,7 @@
         "locked": true
       },
       {
-        "id": "RV-0068",
+        "id": "RV-0067",
         "net": "E3_FAN_TACH",
         "at": [
           38.2052,
@@ -23880,7 +24781,7 @@
         "locked": true
       },
       {
-        "id": "RV-0069",
+        "id": "RV-0068",
         "net": "E3_FAN_TACH",
         "at": [
           41.94,
@@ -23891,7 +24792,7 @@
         "locked": true
       },
       {
-        "id": "RV-0070",
+        "id": "RV-0069",
         "net": "E3_GNSS5V",
         "at": [
           18.9792,
@@ -23902,7 +24803,7 @@
         "locked": true
       },
       {
-        "id": "RV-0071",
+        "id": "RV-0070",
         "net": "E3_GNSS_FAULT",
         "at": [
           23.0271,
@@ -23913,7 +24814,7 @@
         "locked": true
       },
       {
-        "id": "RV-0072",
+        "id": "RV-0071",
         "net": "E3_GNSS_FAULT",
         "at": [
           38.609,
@@ -23924,7 +24825,7 @@
         "locked": true
       },
       {
-        "id": "RV-0073",
+        "id": "RV-0072",
         "net": "E3_GNSS_RESET_GATE",
         "at": [
           30.9724,
@@ -23935,7 +24836,7 @@
         "locked": true
       },
       {
-        "id": "RV-0074",
+        "id": "RV-0073",
         "net": "E3_GNSS_RESET_GATE",
         "at": [
           36.5414,
@@ -23946,7 +24847,7 @@
         "locked": true
       },
       {
-        "id": "RV-0075",
+        "id": "RV-0074",
         "net": "E3_GNSS_RESET_GATE",
         "at": [
           37.6919,
@@ -23957,7 +24858,7 @@
         "locked": true
       },
       {
-        "id": "RV-0076",
+        "id": "RV-0075",
         "net": "E3_GNSS_RESET_GATE",
         "at": [
           41.5052,
@@ -23968,7 +24869,7 @@
         "locked": true
       },
       {
-        "id": "RV-0077",
+        "id": "RV-0076",
         "net": "E3_GNSS_RESET_GATE",
         "at": [
           42.6099,
@@ -23979,7 +24880,7 @@
         "locked": true
       },
       {
-        "id": "RV-0078",
+        "id": "RV-0077",
         "net": "E3_GNSS_RESET_N",
         "at": [
           28.3955,
@@ -23990,7 +24891,7 @@
         "locked": true
       },
       {
-        "id": "RV-0079",
+        "id": "RV-0078",
         "net": "E3_HMI_INT",
         "at": [
           14.9416,
@@ -24001,7 +24902,7 @@
         "locked": true
       },
       {
-        "id": "RV-0080",
+        "id": "RV-0079",
         "net": "E3_HMI_INT",
         "at": [
           19.4032,
@@ -24012,7 +24913,7 @@
         "locked": true
       },
       {
-        "id": "RV-0081",
+        "id": "RV-0080",
         "net": "E3_HMI_INT",
         "at": [
           21.9437,
@@ -24023,7 +24924,7 @@
         "locked": true
       },
       {
-        "id": "RV-0082",
+        "id": "RV-0081",
         "net": "E3_HMI_INT",
         "at": [
           27.03,
@@ -24034,7 +24935,7 @@
         "locked": true
       },
       {
-        "id": "RV-0083",
+        "id": "RV-0082",
         "net": "E3_HMI_SCL",
         "at": [
           16.5161,
@@ -24045,7 +24946,7 @@
         "locked": true
       },
       {
-        "id": "RV-0084",
+        "id": "RV-0083",
         "net": "E3_HMI_SCL",
         "at": [
           26.0592,
@@ -24056,7 +24957,7 @@
         "locked": true
       },
       {
-        "id": "RV-0085",
+        "id": "RV-0084",
         "net": "E3_HMI_SCL",
         "at": [
           26.3426,
@@ -24067,7 +24968,7 @@
         "locked": true
       },
       {
-        "id": "RV-0086",
+        "id": "RV-0085",
         "net": "E3_HMI_SCL",
         "at": [
           43.7896,
@@ -24078,7 +24979,7 @@
         "locked": true
       },
       {
-        "id": "RV-0087",
+        "id": "RV-0086",
         "net": "E3_HMI_SDA",
         "at": [
           17.441,
@@ -24089,7 +24990,7 @@
         "locked": true
       },
       {
-        "id": "RV-0088",
+        "id": "RV-0087",
         "net": "E3_HMI_SDA",
         "at": [
           28.377,
@@ -24100,7 +25001,7 @@
         "locked": true
       },
       {
-        "id": "RV-0089",
+        "id": "RV-0088",
         "net": "E3_HMI_SDA",
         "at": [
           29.3348,
@@ -24111,7 +25012,7 @@
         "locked": true
       },
       {
-        "id": "RV-0090",
+        "id": "RV-0089",
         "net": "E3_HMI_SDA",
         "at": [
           42.4317,
@@ -24122,7 +25023,7 @@
         "locked": true
       },
       {
-        "id": "RV-0091",
+        "id": "RV-0090",
         "net": "E3_HMI_SDA",
         "at": [
           44.3198,
@@ -24133,7 +25034,7 @@
         "locked": true
       },
       {
-        "id": "RV-0092",
+        "id": "RV-0091",
         "net": "E3_HOME",
         "at": [
           22.7955,
@@ -24144,7 +25045,7 @@
         "locked": true
       },
       {
-        "id": "RV-0093",
+        "id": "RV-0092",
         "net": "E3_HOME",
         "at": [
           28.1138,
@@ -24155,7 +25056,7 @@
         "locked": true
       },
       {
-        "id": "RV-0094",
+        "id": "RV-0093",
         "net": "E3_HOME_EXT",
         "at": [
           11.0,
@@ -24166,7 +25067,7 @@
         "locked": true
       },
       {
-        "id": "RV-0095",
+        "id": "RV-0094",
         "net": "E3_HOME_EXT",
         "at": [
           15.5406,
@@ -24177,7 +25078,7 @@
         "locked": true
       },
       {
-        "id": "RV-0096",
+        "id": "RV-0095",
         "net": "E3_HOME_EXT",
         "at": [
           31.6712,
@@ -24188,7 +25089,7 @@
         "locked": true
       },
       {
-        "id": "RV-0097",
+        "id": "RV-0096",
         "net": "E3_LED_DRIVE",
         "at": [
           34.094,
@@ -24199,7 +25100,7 @@
         "locked": true
       },
       {
-        "id": "RV-0098",
+        "id": "RV-0097",
         "net": "E3_LED_DRIVE",
         "at": [
           37.78,
@@ -24210,7 +25111,7 @@
         "locked": true
       },
       {
-        "id": "RV-0099",
+        "id": "RV-0098",
         "net": "E3_LED_DRIVE",
         "at": [
           37.9336,
@@ -24221,7 +25122,7 @@
         "locked": true
       },
       {
-        "id": "RV-0100",
+        "id": "RV-0099",
         "net": "E3_LED_DRIVE",
         "at": [
           38.1948,
@@ -24232,7 +25133,7 @@
         "locked": true
       },
       {
-        "id": "RV-0101",
+        "id": "RV-0100",
         "net": "E3_LOCK",
         "at": [
           22.888,
@@ -24243,7 +25144,7 @@
         "locked": true
       },
       {
-        "id": "RV-0102",
+        "id": "RV-0101",
         "net": "E3_LOCK",
         "at": [
           26.3709,
@@ -24254,7 +25155,7 @@
         "locked": true
       },
       {
-        "id": "RV-0103",
+        "id": "RV-0102",
         "net": "E3_LOCK",
         "at": [
           32.43,
@@ -24265,7 +25166,7 @@
         "locked": true
       },
       {
-        "id": "RV-0104",
+        "id": "RV-0103",
         "net": "E3_LOCK_EXT",
         "at": [
           34.5099,
@@ -24276,7 +25177,7 @@
         "locked": true
       },
       {
-        "id": "RV-0105",
+        "id": "RV-0104",
         "net": "E3_LOCK_EXT",
         "at": [
           35.8922,
@@ -24287,7 +25188,7 @@
         "locked": true
       },
       {
-        "id": "RV-0106",
+        "id": "RV-0105",
         "net": "E3_LOCK_EXT",
         "at": [
           38.0,
@@ -24298,7 +25199,7 @@
         "locked": true
       },
       {
-        "id": "RV-0107",
+        "id": "RV-0106",
         "net": "E3_LOCK_EXT",
         "at": [
           39.3565,
@@ -24309,7 +25210,7 @@
         "locked": true
       },
       {
-        "id": "RV-0108",
+        "id": "RV-0107",
         "net": "E3_MARK_EXT",
         "at": [
           16.875,
@@ -24320,7 +25221,7 @@
         "locked": true
       },
       {
-        "id": "RV-0109",
+        "id": "RV-0108",
         "net": "E3_MARK_EXT",
         "at": [
           24.3835,
@@ -24331,7 +25232,7 @@
         "locked": true
       },
       {
-        "id": "RV-0110",
+        "id": "RV-0109",
         "net": "E3_MCP_RESET_ASSERT",
         "at": [
           41.4264,
@@ -24342,7 +25243,7 @@
         "locked": true
       },
       {
-        "id": "RV-0111",
+        "id": "RV-0110",
         "net": "E3_MCP_RESET_ASSERT",
         "at": [
           43.33,
@@ -24353,7 +25254,7 @@
         "locked": true
       },
       {
-        "id": "RV-0112",
+        "id": "RV-0111",
         "net": "E3_MCP_RESET_N",
         "at": [
           24.3212,
@@ -24364,29 +25265,7 @@
         "locked": true
       },
       {
-        "id": "RV-0113",
-        "net": "E3_MCP_RESET_N",
-        "at": [
-          28.1061,
-          9.3591
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true
-      },
-      {
-        "id": "RV-0114",
-        "net": "E3_MCP_RESET_N",
-        "at": [
-          28.4798,
-          23.9156
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true
-      },
-      {
-        "id": "RV-0115",
+        "id": "RV-0112",
         "net": "E3_MCP_RESET_N",
         "at": [
           28.7998,
@@ -24397,7 +25276,7 @@
         "locked": true
       },
       {
-        "id": "RV-0116",
+        "id": "RV-0113",
         "net": "E3_MCP_RESET_N",
         "at": [
           42.0199,
@@ -24408,7 +25287,7 @@
         "locked": true
       },
       {
-        "id": "RV-0117",
+        "id": "RV-0114",
         "net": "E3_MCP_RESET_N",
         "at": [
           45.7757,
@@ -24419,7 +25298,7 @@
         "locked": true
       },
       {
-        "id": "RV-0118",
+        "id": "RV-0115",
         "net": "E3_PICO3V3",
         "at": [
           27.1965,
@@ -24430,7 +25309,7 @@
         "locked": true
       },
       {
-        "id": "RV-0119",
+        "id": "RV-0116",
         "net": "E3_PICO3V3",
         "at": [
           36.0166,
@@ -24441,40 +25320,18 @@
         "locked": true
       },
       {
-        "id": "RV-0120",
-        "net": "E3_PICO_RUN",
+        "id": "RV-0117",
+        "net": "E3_PICO_SWCLK",
         "at": [
-          28.9562,
-          26.3332
+          18.8894,
+          44.6482
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
         "locked": true
       },
       {
-        "id": "RV-0121",
-        "net": "E3_PICO_VSYS",
-        "at": [
-          26.7526,
-          9.9563
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true
-      },
-      {
-        "id": "RV-0122",
-        "net": "E3_PICO_VSYS",
-        "at": [
-          28.944,
-          7.6822
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true
-      },
-      {
-        "id": "RV-0123",
+        "id": "RV-0118",
         "net": "E3_PICO_VSYS",
         "at": [
           28.9537,
@@ -24485,7 +25342,7 @@
         "locked": true
       },
       {
-        "id": "RV-0124",
+        "id": "RV-0119",
         "net": "E3_PICO_VSYS",
         "at": [
           36.6794,
@@ -24496,7 +25353,7 @@
         "locked": true
       },
       {
-        "id": "RV-0125",
+        "id": "RV-0120",
         "net": "E3_PIEZO_DRIVE",
         "at": [
           8.329,
@@ -24507,7 +25364,7 @@
         "locked": true
       },
       {
-        "id": "RV-0126",
+        "id": "RV-0121",
         "net": "E3_PIEZO_DRIVE",
         "at": [
           9.2661,
@@ -24518,7 +25375,7 @@
         "locked": true
       },
       {
-        "id": "RV-0127",
+        "id": "RV-0122",
         "net": "E3_PIEZO_DRIVE",
         "at": [
           13.6414,
@@ -24529,7 +25386,7 @@
         "locked": true
       },
       {
-        "id": "RV-0128",
+        "id": "RV-0123",
         "net": "E3_PIEZO_DRIVE",
         "at": [
           30.5751,
@@ -24540,7 +25397,7 @@
         "locked": true
       },
       {
-        "id": "RV-0129",
+        "id": "RV-0124",
         "net": "E3_PIEZO_OUT",
         "at": [
           14.3316,
@@ -24551,7 +25408,7 @@
         "locked": true
       },
       {
-        "id": "RV-0130",
+        "id": "RV-0125",
         "net": "E3_Q6A_KEY_GATE",
         "at": [
           14.9555,
@@ -24562,7 +25419,7 @@
         "locked": true
       },
       {
-        "id": "RV-0131",
+        "id": "RV-0126",
         "net": "E3_Q6A_KEY_GATE",
         "at": [
           38.4384,
@@ -24573,7 +25430,7 @@
         "locked": true
       },
       {
-        "id": "RV-0132",
+        "id": "RV-0127",
         "net": "E3_Q6A_ON_SENSE",
         "at": [
           17.5062,
@@ -24584,7 +25441,7 @@
         "locked": true
       },
       {
-        "id": "RV-0133",
+        "id": "RV-0128",
         "net": "E3_Q6A_ON_SENSE",
         "at": [
           37.3863,
@@ -24595,7 +25452,7 @@
         "locked": true
       },
       {
-        "id": "RV-0134",
+        "id": "RV-0129",
         "net": "E3_REC_EXT",
         "at": [
           10.8187,
@@ -24606,7 +25463,7 @@
         "locked": true
       },
       {
-        "id": "RV-0135",
+        "id": "RV-0130",
         "net": "E3_REC_EXT",
         "at": [
           15.8333,
@@ -24617,7 +25474,7 @@
         "locked": true
       },
       {
-        "id": "RV-0136",
+        "id": "RV-0131",
         "net": "E3_U315_ILIM",
         "at": [
           20.3905,
@@ -24628,7 +25485,7 @@
         "locked": true
       },
       {
-        "id": "RV-0137",
+        "id": "RV-0132",
         "net": "E3_U315_ILIM",
         "at": [
           24.2311,
@@ -24639,7 +25496,7 @@
         "locked": true
       },
       {
-        "id": "RV-0138",
+        "id": "RV-0133",
         "net": "E3_U315_ILIM",
         "at": [
           25.2783,
@@ -24650,7 +25507,7 @@
         "locked": true
       },
       {
-        "id": "RV-0139",
+        "id": "RV-0134",
         "net": "E3_U315_ILIM",
         "at": [
           30.9412,
@@ -24661,7 +25518,7 @@
         "locked": true
       },
       {
-        "id": "RV-0140",
+        "id": "RV-0135",
         "net": "E3_U315_ILIM",
         "at": [
           31.7961,
@@ -24672,7 +25529,7 @@
         "locked": true
       },
       {
-        "id": "RV-0141",
+        "id": "RV-0136",
         "net": "E3_U315_ILIM",
         "at": [
           38.3124,
@@ -24683,7 +25540,7 @@
         "locked": true
       },
       {
-        "id": "RV-0142",
+        "id": "RV-0137",
         "net": "EN_AUX12",
         "at": [
           4.9457,
@@ -24694,7 +25551,7 @@
         "locked": true
       },
       {
-        "id": "RV-0143",
+        "id": "RV-0138",
         "net": "EN_AUX12",
         "at": [
           17.7377,
@@ -24705,7 +25562,7 @@
         "locked": true
       },
       {
-        "id": "RV-0144",
+        "id": "RV-0139",
         "net": "EN_BONI",
         "at": [
           25.185,
@@ -24716,7 +25573,7 @@
         "locked": true
       },
       {
-        "id": "RV-0145",
+        "id": "RV-0140",
         "net": "EN_HFP",
         "at": [
           6.9438,
@@ -24727,7 +25584,7 @@
         "locked": true
       },
       {
-        "id": "RV-0146",
+        "id": "RV-0141",
         "net": "EN_HFP",
         "at": [
           19.6534,
@@ -24738,7 +25595,7 @@
         "locked": true
       },
       {
-        "id": "RV-0147",
+        "id": "RV-0142",
         "net": "EN_LABPORT",
         "at": [
           9.4206,
@@ -24749,7 +25606,7 @@
         "locked": true
       },
       {
-        "id": "RV-0148",
+        "id": "RV-0143",
         "net": "EN_LABPORT",
         "at": [
           16.7888,
@@ -24760,7 +25617,7 @@
         "locked": true
       },
       {
-        "id": "RV-0149",
+        "id": "RV-0144",
         "net": "EN_LIME3V3",
         "at": [
           27.0488,
@@ -24771,7 +25628,7 @@
         "locked": true
       },
       {
-        "id": "RV-0150",
+        "id": "RV-0145",
         "net": "EN_LNA1",
         "at": [
           4.1489,
@@ -24782,7 +25639,7 @@
         "locked": true
       },
       {
-        "id": "RV-0151",
+        "id": "RV-0146",
         "net": "EN_LNA1",
         "at": [
           17.1389,
@@ -24793,7 +25650,7 @@
         "locked": true
       },
       {
-        "id": "RV-0152",
+        "id": "RV-0147",
         "net": "EN_LNA2",
         "at": [
           3.421,
@@ -24804,7 +25661,7 @@
         "locked": true
       },
       {
-        "id": "RV-0153",
+        "id": "RV-0148",
         "net": "EN_LNA2",
         "at": [
           22.2881,
@@ -24815,7 +25672,7 @@
         "locked": true
       },
       {
-        "id": "RV-0154",
+        "id": "RV-0149",
         "net": "EN_LNA3",
         "at": [
           1.3551,
@@ -24826,7 +25683,7 @@
         "locked": true
       },
       {
-        "id": "RV-0155",
+        "id": "RV-0150",
         "net": "EN_LNA3",
         "at": [
           22.8502,
@@ -24837,7 +25694,7 @@
         "locked": true
       },
       {
-        "id": "RV-0156",
+        "id": "RV-0151",
         "net": "EN_LNA4",
         "at": [
           23.8718,
@@ -24848,7 +25705,7 @@
         "locked": true
       },
       {
-        "id": "RV-0157",
+        "id": "RV-0152",
         "net": "EN_LNB",
         "at": [
           26.7964,
@@ -24859,7 +25716,7 @@
         "locked": true
       },
       {
-        "id": "RV-0158",
+        "id": "RV-0153",
         "net": "EN_RTLB",
         "at": [
           2.9626,
@@ -24870,7 +25727,7 @@
         "locked": true
       },
       {
-        "id": "RV-0159",
+        "id": "RV-0154",
         "net": "EN_RTLB",
         "at": [
           18.3404,
@@ -24881,7 +25738,7 @@
         "locked": true
       },
       {
-        "id": "RV-0160",
+        "id": "RV-0155",
         "net": "EN_SB_LNA",
         "at": [
           14.9709,
@@ -24892,7 +25749,7 @@
         "locked": true
       },
       {
-        "id": "RV-0161",
+        "id": "RV-0156",
         "net": "EN_SB_LNA",
         "at": [
           27.3774,
@@ -24903,7 +25760,7 @@
         "locked": true
       },
       {
-        "id": "RV-0162",
+        "id": "RV-0157",
         "net": "EN_T7",
         "at": [
           17.991,
@@ -24914,7 +25771,7 @@
         "locked": true
       },
       {
-        "id": "RV-0163",
+        "id": "RV-0158",
         "net": "EN_T7",
         "at": [
           26.5645,
@@ -24925,7 +25782,7 @@
         "locked": true
       },
       {
-        "id": "RV-0164",
+        "id": "RV-0159",
         "net": "FAULT_HFP",
         "at": [
           16.9226,
@@ -24936,7 +25793,7 @@
         "locked": true
       },
       {
-        "id": "RV-0165",
+        "id": "RV-0160",
         "net": "FAULT_HFP",
         "at": [
           20.2749,
@@ -24947,7 +25804,7 @@
         "locked": true
       },
       {
-        "id": "RV-0166",
+        "id": "RV-0161",
         "net": "FAULT_HFP",
         "at": [
           40.819,
@@ -24958,7 +25815,7 @@
         "locked": true
       },
       {
-        "id": "RV-0167",
+        "id": "RV-0162",
         "net": "FAULT_LABPORT",
         "at": [
           4.4585,
@@ -24969,7 +25826,7 @@
         "locked": true
       },
       {
-        "id": "RV-0168",
+        "id": "RV-0163",
         "net": "FAULT_LABPORT",
         "at": [
           27.3361,
@@ -24980,7 +25837,7 @@
         "locked": true
       },
       {
-        "id": "RV-0169",
+        "id": "RV-0164",
         "net": "FAULT_LNA1",
         "at": [
           27.8851,
@@ -24991,7 +25848,7 @@
         "locked": true
       },
       {
-        "id": "RV-0170",
+        "id": "RV-0165",
         "net": "FAULT_LNA2",
         "at": [
           4.4107,
@@ -25002,7 +25859,7 @@
         "locked": true
       },
       {
-        "id": "RV-0171",
+        "id": "RV-0166",
         "net": "FAULT_LNA2",
         "at": [
           28.2708,
@@ -25013,7 +25870,7 @@
         "locked": true
       },
       {
-        "id": "RV-0172",
+        "id": "RV-0167",
         "net": "FAULT_LNA3",
         "at": [
           4.6525,
@@ -25024,7 +25881,7 @@
         "locked": true
       },
       {
-        "id": "RV-0173",
+        "id": "RV-0168",
         "net": "FAULT_LNA3",
         "at": [
           27.9691,
@@ -25035,7 +25892,7 @@
         "locked": true
       },
       {
-        "id": "RV-0174",
+        "id": "RV-0169",
         "net": "FAULT_LNA4",
         "at": [
           5.0366,
@@ -25046,7 +25903,7 @@
         "locked": true
       },
       {
-        "id": "RV-0175",
+        "id": "RV-0170",
         "net": "FAULT_LNA4",
         "at": [
           27.3371,
@@ -25057,7 +25914,7 @@
         "locked": true
       },
       {
-        "id": "RV-0176",
+        "id": "RV-0171",
         "net": "FAULT_RTLA",
         "at": [
           19.5563,
@@ -25068,7 +25925,7 @@
         "locked": true
       },
       {
-        "id": "RV-0177",
+        "id": "RV-0172",
         "net": "FAULT_RTLA",
         "at": [
           23.5333,
@@ -25079,7 +25936,7 @@
         "locked": true
       },
       {
-        "id": "RV-0178",
+        "id": "RV-0173",
         "net": "FAULT_RTLA",
         "at": [
           40.7992,
@@ -25090,7 +25947,7 @@
         "locked": true
       },
       {
-        "id": "RV-0179",
+        "id": "RV-0174",
         "net": "FAULT_RTLB",
         "at": [
           20.5948,
@@ -25101,7 +25958,7 @@
         "locked": true
       },
       {
-        "id": "RV-0180",
+        "id": "RV-0175",
         "net": "FAULT_RTLB",
         "at": [
           37.283,
@@ -25112,7 +25969,7 @@
         "locked": true
       },
       {
-        "id": "RV-0181",
+        "id": "RV-0176",
         "net": "FAULT_RTLB",
         "at": [
           40.9056,
@@ -25123,7 +25980,7 @@
         "locked": true
       },
       {
-        "id": "RV-0182",
+        "id": "RV-0177",
         "net": "FLT_BONI",
         "at": [
           27.9691,
@@ -25134,7 +25991,7 @@
         "locked": true
       },
       {
-        "id": "RV-0183",
+        "id": "RV-0178",
         "net": "FLT_LIME3V3",
         "at": [
           19.5002,
@@ -25145,7 +26002,7 @@
         "locked": true
       },
       {
-        "id": "RV-0184",
+        "id": "RV-0179",
         "net": "FLT_LIME3V3",
         "at": [
           40.8144,
@@ -25156,7 +26013,7 @@
         "locked": true
       },
       {
-        "id": "RV-0185",
+        "id": "RV-0180",
         "net": "FLT_LNB",
         "at": [
           28.2708,
@@ -25167,7 +26024,7 @@
         "locked": true
       },
       {
-        "id": "RV-0186",
+        "id": "RV-0181",
         "net": "FLT_SB_LNA",
         "at": [
           28.7979,
@@ -25178,7 +26035,7 @@
         "locked": true
       },
       {
-        "id": "RV-0187",
+        "id": "RV-0182",
         "net": "FLT_SB_LNA",
         "at": [
           41.1862,
@@ -25189,7 +26046,7 @@
         "locked": true
       },
       {
-        "id": "RV-0188",
+        "id": "RV-0183",
         "net": "I2C2_SCL",
         "at": [
           8.4094,
@@ -25200,7 +26057,7 @@
         "locked": true
       },
       {
-        "id": "RV-0189",
+        "id": "RV-0184",
         "net": "I2C2_SCL",
         "at": [
           19.4904,
@@ -25211,7 +26068,7 @@
         "locked": true
       },
       {
-        "id": "RV-0190",
+        "id": "RV-0185",
         "net": "I2C2_SCL",
         "at": [
           19.4921,
@@ -25222,7 +26079,7 @@
         "locked": true
       },
       {
-        "id": "RV-0191",
+        "id": "RV-0186",
         "net": "I2C2_SCL",
         "at": [
           22.5693,
@@ -25233,7 +26090,7 @@
         "locked": true
       },
       {
-        "id": "RV-0192",
+        "id": "RV-0187",
         "net": "I2C2_SCL",
         "at": [
           25.2539,
@@ -25244,7 +26101,7 @@
         "locked": true
       },
       {
-        "id": "RV-0193",
+        "id": "RV-0188",
         "net": "I2C2_SCL",
         "at": [
           45.5902,
@@ -25255,7 +26112,7 @@
         "locked": true
       },
       {
-        "id": "RV-0194",
+        "id": "RV-0189",
         "net": "I2C2_SDA",
         "at": [
           7.3728,
@@ -25266,7 +26123,7 @@
         "locked": true
       },
       {
-        "id": "RV-0195",
+        "id": "RV-0190",
         "net": "I2C2_SDA",
         "at": [
           22.3857,
@@ -25277,7 +26134,7 @@
         "locked": true
       },
       {
-        "id": "RV-0196",
+        "id": "RV-0191",
         "net": "I2C2_SDA",
         "at": [
           23.0421,
@@ -25288,7 +26145,7 @@
         "locked": true
       },
       {
-        "id": "RV-0197",
+        "id": "RV-0192",
         "net": "K1_ON",
         "at": [
           23.915,
@@ -25299,7 +26156,7 @@
         "locked": true
       },
       {
-        "id": "RV-0198",
+        "id": "RV-0193",
         "net": "K2_ON",
         "at": [
           20.5436,
@@ -25310,7 +26167,7 @@
         "locked": true
       },
       {
-        "id": "RV-0199",
+        "id": "RV-0194",
         "net": "LAB5",
         "at": [
           26.8959,
@@ -25321,7 +26178,7 @@
         "locked": true
       },
       {
-        "id": "RV-0200",
+        "id": "RV-0195",
         "net": "LAB5",
         "at": [
           28.6598,
@@ -25332,7 +26189,7 @@
         "locked": true
       },
       {
-        "id": "RV-0201",
+        "id": "RV-0196",
         "net": "LAB5",
         "at": [
           40.2148,
@@ -25343,7 +26200,7 @@
         "locked": true
       },
       {
-        "id": "RV-0202",
+        "id": "RV-0197",
         "net": "LAB5",
         "at": [
           42.6909,
@@ -25354,7 +26211,7 @@
         "locked": true
       },
       {
-        "id": "RV-0203",
+        "id": "RV-0198",
         "net": "LAB5",
         "at": [
           42.7078,
@@ -25365,7 +26222,7 @@
         "locked": true
       },
       {
-        "id": "RV-0204",
+        "id": "RV-0199",
         "net": "LAB5",
         "at": [
           44.1255,
@@ -25376,7 +26233,7 @@
         "locked": true
       },
       {
-        "id": "RV-0205",
+        "id": "RV-0200",
         "net": "MCP_INT",
         "at": [
           4.7021,
@@ -25387,7 +26244,7 @@
         "locked": true
       },
       {
-        "id": "RV-0206",
+        "id": "RV-0201",
         "net": "OVP_LNB_N",
         "at": [
           17.6718,
@@ -25398,7 +26255,7 @@
         "locked": true
       },
       {
-        "id": "RV-0207",
+        "id": "RV-0202",
         "net": "PG_BONI",
         "at": [
           4.109,
@@ -25409,7 +26266,7 @@
         "locked": true
       },
       {
-        "id": "RV-0208",
+        "id": "RV-0203",
         "net": "PG_LNB",
         "at": [
           6.8267,
@@ -25420,18 +26277,7 @@
         "locked": true
       },
       {
-        "id": "RV-0209",
-        "net": "PG_LNB",
-        "at": [
-          21.03,
-          19.2736
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.7,
-        "locked": true
-      },
-      {
-        "id": "RV-0210",
+        "id": "RV-0204",
         "net": "PICO_DISP_EN",
         "at": [
           32.1318,
@@ -25442,7 +26288,7 @@
         "locked": true
       },
       {
-        "id": "RV-0211",
+        "id": "RV-0205",
         "net": "PTC_AUX",
         "at": [
           15.7251,
@@ -25453,7 +26299,7 @@
         "locked": true
       },
       {
-        "id": "RV-0212",
+        "id": "RV-0206",
         "net": "PTC_AUX",
         "at": [
           40.8261,
@@ -25464,7 +26310,7 @@
         "locked": true
       },
       {
-        "id": "RV-0213",
+        "id": "RV-0207",
         "net": "PWR_BUTTON",
         "at": [
           34.9199,
@@ -25475,7 +26321,7 @@
         "locked": true
       },
       {
-        "id": "RV-0214",
+        "id": "RV-0208",
         "net": "PWR_ON_KEY",
         "at": [
           37.3486,
@@ -25486,7 +26332,7 @@
         "locked": true
       },
       {
-        "id": "RV-0215",
+        "id": "RV-0209",
         "net": "SAFE_BOOT",
         "at": [
           18.7858,
@@ -25497,7 +26343,7 @@
         "locked": true
       },
       {
-        "id": "RV-0216",
+        "id": "RV-0210",
         "net": "SLED_DET",
         "at": [
           14.6603,
@@ -25508,7 +26354,7 @@
         "locked": true
       },
       {
-        "id": "RV-0217",
+        "id": "RV-0211",
         "net": "SLED_DET",
         "at": [
           41.061,
@@ -25519,7 +26365,7 @@
         "locked": true
       },
       {
-        "id": "RV-0218",
+        "id": "RV-0212",
         "net": "SW_LIME_A",
         "at": [
           9.4052,
@@ -25530,7 +26376,7 @@
         "locked": true
       },
       {
-        "id": "RV-0219",
+        "id": "RV-0213",
         "net": "SW_LIME_A",
         "at": [
           23.9991,
@@ -25541,7 +26387,7 @@
         "locked": true
       },
       {
-        "id": "RV-0220",
+        "id": "RV-0214",
         "net": "SW_LIME_B",
         "at": [
           7.9243,
@@ -25552,7 +26398,7 @@
         "locked": true
       },
       {
-        "id": "RV-0221",
+        "id": "RV-0215",
         "net": "SW_LIME_B",
         "at": [
           30.0949,
@@ -25563,7 +26409,7 @@
         "locked": true
       },
       {
-        "id": "RV-0222",
+        "id": "RV-0216",
         "net": "SW_RTLA_A",
         "at": [
           21.375,
@@ -25574,7 +26420,7 @@
         "locked": true
       },
       {
-        "id": "RV-0223",
+        "id": "RV-0217",
         "net": "SW_RTLA_B",
         "at": [
           19.8894,
@@ -25585,7 +26431,7 @@
         "locked": true
       },
       {
-        "id": "RV-0224",
+        "id": "RV-0218",
         "net": "SW_RTLB_A",
         "at": [
           18.8921,
@@ -25596,7 +26442,7 @@
         "locked": true
       },
       {
-        "id": "RV-0225",
+        "id": "RV-0219",
         "net": "UART5_RX",
         "at": [
           41.5242,
@@ -25607,7 +26453,7 @@
         "locked": true
       },
       {
-        "id": "RV-0226",
+        "id": "RV-0220",
         "net": "UART5_RX",
         "at": [
           42.8587,
@@ -25618,7 +26464,7 @@
         "locked": true
       },
       {
-        "id": "RV-0227",
+        "id": "RV-0221",
         "net": "UART7_RX",
         "at": [
           17.5064,
@@ -25629,7 +26475,7 @@
         "locked": true
       },
       {
-        "id": "RV-0228",
+        "id": "RV-0222",
         "net": "UART7_TX",
         "at": [
           14.963,
@@ -25665,8 +26511,8 @@
         "id": "FINV-0003",
         "net": "3V3_Q6A",
         "at": [
-          24.05,
-          7.715
+          24.45,
+          8.565
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -25687,8 +26533,8 @@
         "id": "FINV-0005",
         "net": "3V3_Q6A",
         "at": [
-          28.395,
-          22.3
+          28.345,
+          22.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -25751,10 +26597,10 @@
       },
       {
         "id": "FINV-0011",
-        "net": "E3_CASE_TEMP",
+        "net": "E1_BAT_ADC",
         "at": [
-          33.23,
-          17.755
+          24.65,
+          23.79
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -25762,10 +26608,10 @@
       },
       {
         "id": "FINV-0012",
-        "net": "E3_CASE_TEMP",
+        "net": "E1_BAT_ADC",
         "at": [
-          35.68,
-          23.105
+          27.45,
+          26.59
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -25773,6 +26619,83 @@
       },
       {
         "id": "FINV-0013",
+        "net": "E1_BAT_ADC",
+        "at": [
+          32.75,
+          22.84
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0014",
+        "net": "E3_ADC3V0",
+        "at": [
+          24.98,
+          9.84
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0015",
+        "net": "E3_ADC3V0",
+        "at": [
+          27.43,
+          27.49
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0016",
+        "net": "E3_ADC3V0",
+        "at": [
+          28.78,
+          29.19
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0017",
+        "net": "E3_ADC3V0",
+        "at": [
+          35.53,
+          7.84
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0018",
+        "net": "E3_CASE_TEMP",
+        "at": [
+          35.68,
+          23.055
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0019",
+        "net": "E3_CASE_TEMP",
+        "at": [
+          35.83,
+          16.805
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0020",
         "net": "E3_CASE_TEMP",
         "at": [
           39.83,
@@ -25783,7 +26706,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0014",
+        "id": "FINV-0021",
         "net": "E3_CASE_TEMP",
         "at": [
           40.93,
@@ -25794,7 +26717,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0015",
+        "id": "FINV-0022",
         "net": "E3_CASE_TEMP",
         "at": [
           44.03,
@@ -25805,7 +26728,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0016",
+        "id": "FINV-0023",
         "net": "E3_FN",
         "at": [
           17.85,
@@ -25816,7 +26739,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0017",
+        "id": "FINV-0024",
         "net": "E3_FN",
         "at": [
           17.85,
@@ -25827,7 +26750,18 @@
         "locked": true
       },
       {
-        "id": "FINV-0018",
+        "id": "FINV-0025",
+        "net": "E3_MARK_EXT",
+        "at": [
+          30.15,
+          49.1253
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0026",
         "net": "E3_MARK_EXT",
         "at": [
           30.95,
@@ -25838,7 +26772,29 @@
         "locked": true
       },
       {
-        "id": "FINV-0019",
+        "id": "FINV-0027",
+        "net": "E3_PANEL_TEMP",
+        "at": [
+          27.68,
+          22.98
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0028",
+        "net": "E3_PANEL_TEMP",
+        "at": [
+          28.58,
+          24.53
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0029",
         "net": "E3_PANEL_TEMP",
         "at": [
           37.705,
@@ -25849,7 +26805,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0020",
+        "id": "FINV-0030",
         "net": "E3_PANEL_TEMP",
         "at": [
           37.755,
@@ -25860,7 +26816,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0021",
+        "id": "FINV-0031",
         "net": "E3_PANEL_TEMP",
         "at": [
           39.155,
@@ -25871,7 +26827,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0022",
+        "id": "FINV-0032",
         "net": "E3_PANEL_TEMP",
         "at": [
           39.705,
@@ -25882,7 +26838,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0023",
+        "id": "FINV-0033",
         "net": "E3_PANEL_TEMP",
         "at": [
           39.755,
@@ -25893,7 +26849,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0024",
+        "id": "FINV-0034",
         "net": "E3_PANEL_TEMP",
         "at": [
           40.555,
@@ -25904,7 +26860,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0025",
+        "id": "FINV-0035",
         "net": "E3_PANEL_TEMP",
         "at": [
           40.805,
@@ -25915,18 +26871,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0026",
-        "net": "E3_PICO3V3",
-        "at": [
-          28.05,
-          55.55
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "FINV-0027",
+        "id": "FINV-0036",
         "net": "E3_PICO3V3",
         "at": [
           29.75,
@@ -25937,43 +26882,164 @@
         "locked": true
       },
       {
-        "id": "FINV-0028",
-        "net": "E3_PICO_SWCLK",
+        "id": "FINV-0037",
+        "net": "E3_PICO3V3",
         "at": [
-          22.25,
-          48.7
+          31.0,
+          59.45
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FINV-0029",
+        "id": "FINV-0038",
+        "net": "E3_PICO_RUN",
+        "at": [
+          27.33,
+          28.37
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0039",
+        "net": "E3_PICO_RUN",
+        "at": [
+          27.43,
+          30.52
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0040",
+        "net": "E3_PICO_RUN",
+        "at": [
+          35.93,
+          28.52
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0041",
         "net": "E3_PICO_SWDIO",
         "at": [
-          34.55,
-          60.95
+          10.75,
+          12.6
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FINV-0030",
+        "id": "FINV-0042",
         "net": "E3_PICO_SWDIO",
         "at": [
-          36.9,
-          63.3
+          10.75,
+          17.6
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FINV-0031",
+        "id": "FINV-0043",
+        "net": "E3_PICO_SWDIO",
+        "at": [
+          11.05,
+          24.9
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0044",
+        "net": "E3_PICO_SWDIO",
+        "at": [
+          18.65,
+          23.05
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0045",
+        "net": "E3_PICO_SWDIO",
+        "at": [
+          22.6,
+          24.3
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0046",
+        "net": "E3_PICO_SWDIO",
+        "at": [
+          24.6,
+          11.15
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0047",
+        "net": "E3_PICO_SWDIO",
+        "at": [
+          25.85,
+          9.9
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0048",
+        "net": "E3_PICO_SWDIO",
+        "at": [
+          38.75,
+          10.25
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0049",
+        "net": "E3_PICO_VSYS",
+        "at": [
+          26.7242,
+          9.95
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0050",
+        "net": "E3_PICO_VSYS",
+        "at": [
+          27.8742,
+          8.8
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0051",
         "net": "E3_PIEZO_DRIVE",
         "at": [
-          16.979,
+          16.95,
           46.345
         ],
         "drill_mm": 0.3,
@@ -25981,18 +27047,51 @@
         "locked": true
       },
       {
-        "id": "FINV-0032",
+        "id": "FINV-0052",
         "net": "E3_PIEZO_DRIVE",
         "at": [
-          18.879,
-          40.545
+          18.95,
+          29.895
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FINV-0033",
+        "id": "FINV-0053",
+        "net": "E3_PIEZO_DRIVE",
+        "at": [
+          26.7,
+          31.445
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0054",
+        "net": "E3_PIEZO_DRIVE",
+        "at": [
+          28.95,
+          31.445
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0055",
+        "net": "E3_PIEZO_DRIVE",
+        "at": [
+          34.35,
+          41.495
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0056",
         "net": "E3_Q6A_KEY_GATE",
         "at": [
           34.0,
@@ -26003,7 +27102,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0034",
+        "id": "FINV-0057",
         "net": "E3_Q6A_KEY_GATE",
         "at": [
           35.6,
@@ -26014,7 +27113,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0035",
+        "id": "FINV-0058",
         "net": "E3_Q6A_KEY_GATE",
         "at": [
           41.1,
@@ -26025,7 +27124,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0036",
+        "id": "FINV-0059",
         "net": "E3_Q6A_KEY_GATE",
         "at": [
           43.0,
@@ -26036,7 +27135,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0037",
+        "id": "FINV-0060",
         "net": "E3_REC_EXT",
         "at": [
           15.7,
@@ -26047,7 +27146,7 @@
         "locked": true
       },
       {
-        "id": "FINV-0038",
+        "id": "FINV-0061",
         "net": "E3_REC_EXT",
         "at": [
           21.5,
@@ -26058,22 +27157,110 @@
         "locked": true
       },
       {
-        "id": "FINV-0039",
-        "net": "PG_BONI",
+        "id": "FINV-0062",
+        "net": "MCP_INT",
         "at": [
-          8.5,
-          21.5
+          33.65,
+          12.54
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
         "locked": true
       },
       {
-        "id": "FINV-0040",
+        "id": "FINV-0063",
+        "net": "MCP_INT",
+        "at": [
+          35.75,
+          12.99
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0064",
+        "net": "MCP_INT",
+        "at": [
+          44.95,
+          45.29
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0065",
         "net": "PG_BONI",
         "at": [
-          15.2,
-          22.35
+          14.95,
+          22.6
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0066",
+        "net": "PG_LNB",
+        "at": [
+          11.3,
+          20.35
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0067",
+        "net": "PG_LNB",
+        "at": [
+          14.95,
+          19.4
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0068",
+        "net": "PG_LNB",
+        "at": [
+          19.75,
+          19.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0069",
+        "net": "SAFE_BOOT",
+        "at": [
+          23.65,
+          15.63
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0070",
+        "net": "SAFE_BOOT",
+        "at": [
+          24.65,
+          22.53
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true
+      },
+      {
+        "id": "FINV-0071",
+        "net": "SAFE_BOOT",
+        "at": [
+          28.2,
+          9.63
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -26093,7 +27280,7 @@
     ],
     "gnd_vias_note": "one locked 0.65/0.3 mm through via and a 0.25 mm stub per SMD GND pad, placed by a deterministic search (24 directions, growing radius, directions away from the part first) on the exact pad shapes: 0.2 mm to other-net copper on every layer the via spans, no via in a pad, 0.55 mm hole-to-hole margin, 0.95 mm between vias, outside the hole keepouts, the Pico TP keepouts and 0.35 mm from every edge; the Pico GND pins get their via straight inwards under the module, past the pad end; GND is in class SCRIPTED_GND and not autorouted (route run 42423914214: the router left 9 GND connections and dangling fan-out vias)",
     "gnd_vias_skipped": [],
-    "frozen_route_note": "W2 CTRL-R route study: the tracks RT-* and vias RV-* are the router copper of route run 43136394379 (Freerouting 2.5.0, inputs sha256 fd468b58...), harvested from that run board and locked; the tracks FIN-* and vias FINV-* complete its 15 open connections (grid A* on the locked copper, exact clearance check 0.15 mm, 0.3 mm to edges, 0.5 mm hole to hole, track ends on via centres; 9 router segments of 7 nets ripped and joined again; L2 only where three layers had no path). Tool: build/kicad/boards/CTRL/freeze/freeze_route.py (numpy, offline). Source: build/kicad/boards/CTRL/route-frozen.json. Valid only for this placement and netlist: a placement or netlist change needs a new route run and a new harvest. CI/model result, not a hardware PASS"
+    "frozen_route_note": "W2 CTRL-R route study: the tracks RT-* and vias RV-* are the router copper of route run 43136394379 (Freerouting 2.5.0, inputs sha256 fd468b58...), harvested from that run board and locked; the tracks FIN-* and vias FINV-* complete its 15 open connections (grid A* on the locked copper, exact clearance check 0.15 mm, 0.3 mm to edges, 0.5 mm hole to hole, track ends on via centres; router copper of 13 nets ripped where needed and joined again; L2 only where three layers had no path). Tool: build/kicad/boards/CTRL/freeze/freeze_route.py (numpy, offline). Source: build/kicad/boards/CTRL/route-frozen.json. Valid only for this placement and netlist: a placement or netlist change needs a new route run and a new harvest. CI/model result, not a hardware PASS"
   },
   "post_route_zones": [
     {
@@ -26913,7 +28100,7 @@
         "B.Cu"
       ]
     },
-    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches): locked GND copper now covers the custom Pico GND pads. Route runs 43106410728 (a locked L3 LAB5 run across the board) and 43111037016 (LAB5 branches on L3 at 0.6 mm): DRC errors 0, but the router stalled with 36-37 of the 3V3_Q6A connections open once L3 carried LAB5. LAB5 now uses short scripted islands (one 18 mm L3 piece to D301) and the router joins them on L1/L4 at 0.5 mm. Route run 43114111838 (that setting): LAB5 complete, DRC errors 0, but 34 of the 3V3_Q6A connections still open: the left pull-up column R308-R319 now has a scripted 3V3_Q6A bus on L3 with a via beside each pad 2, and the Pico GND vias sit under the module instead of in the escape channels between and outside the castellated pads. Route run 43118391983 (that setting): 1 error (a router neck at U313.1) and 25 unconnected, 15 of them 3V3_Q6A: the right pull-up column, the MCP VDD-to-address-pin links and a via for the boxed-in U315.3 are scripted too. Route run 43121860459 (that setting): DRC errors 0 and 22 unconnected (E3_PICO3V3 14, E3_ENC1_A/B 4, E3_BLOWER_GND 2, E3_FN_EXT 1, E3_ENC2_A 1), most of them at pads that could not leave their row: the pull-up rows R4B and HMI3 have their series resistors turned and a scripted E3_PICO3V3 bus along the cut-out edge, R344 is turned so that its E3_FN pin sits next to R343, E3_PICO3V3 has scripted pieces at the Pico, C312, R361/R362, R368 and R395, and E3_BLOWER_GND is fully scripted (class SCRIPTED_PWR3A). Route run 43131682520 (that setting): 1 error (the R4B bus end dangling) and 13 unconnected (E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 around the column) are gone, Pico pin 36 has an escape via. Route run 43136394379 (that setting): 1 error (the scripted 3V3_Q6A via at U315.3 left dangling) and 15 unconnected (3V3_Q6A 8, E3_PANEL_TEMP 2, E3_CASE_TEMP 2, E3_PICO3V3 1, E3_Q6A_KEY_GATE 1, E3_REC_EXT 1); five runs gave 13-22 unconnected because every scripted fix moved Freerouting failures to other nets at the saturated band entrances beside cut-out 1 (W2 CTRL-R study). Its router copper is now frozen and locked (build/kicad/boards/CTRL/route-frozen.json) and completed by a scripted grid A* pass with the exact clearance check (build/kicad/boards/CTRL/freeze/freeze_route.py): the V33-U315 via and stub and the P33-RIGHT-F link are dropped, E3_PICO3V3 crosses the cut-out 1 band on L2 between the vias P33-V-R4B and P33-V-R368, 9 router segments of 7 nets are ripped and those nets joined again, and L2 carries 4 slow signals where three layers had no path (E3_PICO3V3 35.6 mm, E3_PICO_SWCLK 21.1 mm, E3_REC_EXT 14.9 mm, PG_BONI 4.7 mm). Freerouting finds no open connection of its own to route, so a re-route of the same inputs gives the same copper. Job timeout 34 min inside the 45 min CI job",
+    "why": "route run 42423914214 (fan-out on, power classes autorouted) stopped at 60 unrouted connections with 20 DRC errors (dangling fan-out vias, off-centre GND joints, LAB5 with 12 open connections): fan-out off, GND and E3_FAN5 scripted. Route run 43100344071 (34 min): 2 errors (router tracks too close to the custom Pico GND pads 8 and 13, the DSN carries the anchor only) and 8 unconnected (5 LAB5 branches): locked GND copper now covers the custom Pico GND pads. Route runs 43106410728 (a locked L3 LAB5 run across the board) and 43111037016 (LAB5 branches on L3 at 0.6 mm): DRC errors 0, but the router stalled with 36-37 of the 3V3_Q6A connections open once L3 carried LAB5. LAB5 now uses short scripted islands (one 18 mm L3 piece to D301) and the router joins them on L1/L4 at 0.5 mm. Route run 43114111838 (that setting): LAB5 complete, DRC errors 0, but 34 of the 3V3_Q6A connections still open: the left pull-up column R308-R319 now has a scripted 3V3_Q6A bus on L3 with a via beside each pad 2, and the Pico GND vias sit under the module instead of in the escape channels between and outside the castellated pads. Route run 43118391983 (that setting): 1 error (a router neck at U313.1) and 25 unconnected, 15 of them 3V3_Q6A: the right pull-up column, the MCP VDD-to-address-pin links and a via for the boxed-in U315.3 are scripted too. Route run 43121860459 (that setting): DRC errors 0 and 22 unconnected (E3_PICO3V3 14, E3_ENC1_A/B 4, E3_BLOWER_GND 2, E3_FN_EXT 1, E3_ENC2_A 1), most of them at pads that could not leave their row: the pull-up rows R4B and HMI3 have their series resistors turned and a scripted E3_PICO3V3 bus along the cut-out edge, R344 is turned so that its E3_FN pin sits next to R343, E3_PICO3V3 has scripted pieces at the Pico, C312, R361/R362, R368 and R395, and E3_BLOWER_GND is fully scripted (class SCRIPTED_PWR3A). Route run 43131682520 (that setting): 1 error (the R4B bus end dangling) and 13 unconnected (E3_PICO3V3 8, E3_BACK_EXT 2, E3_FAN_EN 1, E3_GNSS5V 1, 3V3_Q6A 1): the R4B bus now runs up the right strip to J312.4 with branches to R362 and, on L1, to the HMI3 branch; the HMI pull-ups R337/R339/R341 are joined in the gap between their pad rows to C312 and U306; the scripted links that walled in BACK_EXT and the PICO column (C312 to R334, Pico pin 36 around the column) are gone, Pico pin 36 has an escape via. Route run 43136394379 (that setting): 1 error (the scripted 3V3_Q6A via at U315.3 left dangling) and 15 unconnected (3V3_Q6A 8, E3_PANEL_TEMP 2, E3_CASE_TEMP 2, E3_PICO3V3 1, E3_Q6A_KEY_GATE 1, E3_REC_EXT 1); five runs gave 13-22 unconnected because every scripted fix moved Freerouting failures to other nets at the saturated band entrances beside cut-out 1 (W2 CTRL-R study). Its router copper is now frozen and locked (build/kicad/boards/CTRL/route-frozen.json) and completed by a scripted grid A* pass with the exact clearance check (build/kicad/boards/CTRL/freeze/freeze_route.py): the V33-U315 via and stub and the P33-RIGHT-F link are dropped, E3_PICO3V3 crosses the cut-out 1 band on L2 between the vias P33-V-R4B and P33-V-R368, the router copper of 13 nets is ripped where the completion needed its place (85 of 2278 segments and 12 of 234 vias with their dangling ends) and those nets are joined again, and L2 carries 5 slow signals where three layers had no path (E3_PICO3V3 35.6 mm, E3_REC_EXT 14.9 mm, PG_BONI 11.2 mm, E3_MARK_EXT 4.3 mm, PG_LNB 3.8 mm). Freerouting finds no open connection of its own to route, so a re-route of the same inputs gives the same copper. Job timeout 34 min inside the 45 min CI job",
     "class_layers_why": "KiCad 10.0.7 exports no per-class layer list; board_gen writes (use_layer F.Cu B.Cu) into the DSN classes PWR1A and PWR3A_BRANCH (Freerouting 2.5.0 Circuit.java / Network.java), so no router power copper lands on the inner layers"
   },
   "drc_policy": {
