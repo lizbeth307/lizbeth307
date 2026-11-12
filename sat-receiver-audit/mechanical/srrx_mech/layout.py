@@ -305,6 +305,8 @@ ALLOWED = [
     ("hdmi_route", "hdmi_fpc"), ("hdmi_route", "hdmi_ferrite"), ("hdmi_route", "hdmi_insert"), ("hdmi_insert", "plate."),
     ("hdmi_fpc_disp", "hdmi_board"),
     ("t7_gland_body", "rear"), ("t7_gland_outside", "rear"),
+    ("pack_fuse", "pack_fuse_board"),   # W2 MECH-5: the F101 holder body stands on its carrier board
+    ("ntc_panel", "display"), ("ntc_case", "plate."),   # W2 MECH-6: the NTC beads are taped to the panel back and to the plate
 ]
 
 STRUCT = ("plate.", "angle.", "rfbay.")

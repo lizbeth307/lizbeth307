@@ -1,0 +1,266 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "HATCH",
+  "status": "SB1_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "HATCH",
+      "placement": "default",
+      "board_origin_enclosure_mm": [
+        108.0,
+        68.5
+      ],
+      "z_bottom": 11.9,
+      "facing": "+z",
+      "connectors": [
+        {
+          "template_ref": "J503",
+          "ref": "J503",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            15.33,
+            18.23
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "J21",
+              "at": [
+                15.33,
+                18.23
+              ],
+              "enclosure_xy": [
+                123.33,
+                86.73
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                18.33,
+                18.23
+              ],
+              "enclosure_xy": [
+                126.33,
+                86.73
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "PWR_ON_KEY",
+              "at": [
+                21.33,
+                18.23
+              ],
+              "enclosure_xy": [
+                129.33,
+                86.73
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            123.33,
+            86.73
+          ]
+        },
+        {
+          "template_ref": "J509",
+          "ref": "J509",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            12.33,
+            11.3
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                12.33,
+                11.3
+              ],
+              "enclosure_xy": [
+                120.33,
+                79.8
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "J21",
+              "at": [
+                15.33,
+                11.3
+              ],
+              "enclosure_xy": [
+                123.33,
+                79.8
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            120.33,
+            79.8
+          ]
+        },
+        {
+          "template_ref": "J502",
+          "ref": "J502",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+          "side": "B",
+          "rotation": 180.0,
+          "at": [
+            27.4,
+            10.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                27.4,
+                10.0
+              ],
+              "enclosure_xy": [
+                135.4,
+                78.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "UART5_TX",
+              "at": [
+                25.4,
+                10.0
+              ],
+              "enclosure_xy": [
+                133.4,
+                78.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "UART5_RX",
+              "at": [
+                23.4,
+                10.0
+              ],
+              "enclosure_xy": [
+                131.4,
+                78.5
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            135.4,
+            78.5
+          ]
+        },
+        {
+          "template_ref": "J513",
+          "ref": "J513",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            11.0,
+            3.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                11.0,
+                3.8
+              ],
+              "enclosure_xy": [
+                119.0,
+                72.3
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "UART5_RX",
+              "at": [
+                13.0,
+                3.8
+              ],
+              "enclosure_xy": [
+                121.0,
+                72.3
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "UART5_TX",
+              "at": [
+                15.0,
+                3.8
+              ],
+              "enclosure_xy": [
+                123.0,
+                72.3
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            119.0,
+            72.3
+          ]
+        },
+        {
+          "template_ref": "J510",
+          "ref": "J510",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            20.5,
+            3.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "PWR_ON_KEY",
+              "at": [
+                20.5,
+                3.8
+              ],
+              "enclosure_xy": [
+                128.5,
+                72.3
+              ]
+            },
+            {
+              "pad": "2",
+              "net": null,
+              "at": [
+                22.5,
+                3.8
+              ],
+              "enclosure_xy": [
+                130.5,
+                72.3
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            128.5,
+            72.3
+          ]
+        }
+      ]
+    }
+  ]
+}

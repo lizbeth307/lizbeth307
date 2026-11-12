@@ -1,0 +1,7 @@
+Ref,Val,Package,PosX,PosY,Rot,Side
+"C517","100nF X7R 10V","C_0603_1608Metric",104.600000,-108.350000,0.000000,top
+"C518","100nF X7R 10V","C_0603_1608Metric",111.400000,-108.350000,0.000000,top
+"J1","FPC socket A placeholder (pin 18 in, GND), nothing fitted","PinHeader_1x02_P2.00mm_Vertical",107.000000,-115.800000,-90.000000,top
+"J2","FPC socket B placeholder (pin 18 out, GND), nothing fitted","PinHeader_1x02_P2.00mm_Vertical",107.000000,-102.200000,-90.000000,top
+"R552","100k 1%","R_0603_1608Metric",108.000000,-111.700000,0.000000,top
+"U506","LM66100DCKR HDMI5V ideal diode","SOT-363_SC-70-6",108.000000,-109.000000,0.000000,top

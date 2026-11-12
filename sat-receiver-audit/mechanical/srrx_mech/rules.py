@@ -132,6 +132,16 @@ def plate_holes(P):
     for i, s in enumerate((-1, 1)):
         out.append({"id": f"UB{i + 1}", "c": ((ux0 + ux1) / 2 + s * 5.0, (uy0 + uy1) / 2), "d": 2.9,
                     "use": "M2.5 countersunk from the front face into the UFS boss (tapped M2.5)"})
+    # W2 MECH-5 (B-13): PEM standoffs of boards mounted on the plate without a boards.json place (module_mounts, on plate_front)
+    k = 0
+    for mt in m.get("module_mounts", {}).get("mounts", []):
+        if mt["on"] != "plate_front":
+            continue
+        f = P.parts[mt["fastener"]]
+        for (hx, hy) in mt["standoffs"]:
+            k += 1
+            out.append({"id": f"PF{k}", "c": (hx, hy), "d": f["hole_d"], "edge_min": f["edge_min"],
+                        "use": f"PEM {f['mpn']}, head flush with the rear face ({mt['item']})"})
     return out
 
 
@@ -298,6 +308,7 @@ def evaluate(P):
     out += w2_mech2_rules(P)
     out += w2_mech3_rules(P)
     out += w2_mech4_rules(P)
+    out += w2_mech5_rules(P)
     return out
 
 
@@ -343,39 +354,167 @@ def plate_slot_rule(P, web_min=1.5):
             "source": "mechanical.json plate.slots (harness pass-throughs, build/16 §1)"}
 
 
-def plate_slot_fill(P):
-    """Harness bundle through each plate slot: wires per AWG of the slot's build/16 segments against the bare opening.
+def _slot_trim_legs(P, sl):
+    """Leg footprints of the grommet strip on each 'grommet' edge of a slot: (edge, face, (x0, y0, z0, x1, y1, z1))."""
+    tr = P.mech["plate"]["slot_trim"]
+    g = P.parts[tr["grommet"]]
+    reach, proud = trim_legs(P, g)
+    x, y, w, h = sl["rect"]
+    sz = P.mech["stack_z"]
+    pr, pf = sz["plate_rear"], sz["plate_front"]
+    rects = {"bottom": (x, y - reach, x + w, y), "top": (x, y + h, x + w, y + h + reach),
+             "left": (x - reach, y, x, y + h), "right": (x + w, y, x + w + reach, y + h)}
+    out = []
+    for edge, kind in sl.get("trim", {}).items():
+        if kind != "grommet":
+            continue
+        a = rects[edge]
+        out.append((edge, "rear", (a[0], a[1], pr - proud, a[2], a[3], pr)))
+        out.append((edge, "front", (a[0], a[1], pf, a[2], a[3], pf + proud)))
+    return out
 
-    Reported OPEN, never PASS: the PTFE wire type (outer diameter) and the edge-trim profile that narrows the opening are not
-    chosen (parts DB AI-WIRE-PTFE, AI-EDGE-TRIM). A slot segment that build/16 does not have is a FAIL (stale slot list)."""
+
+def trim_legs(P, g):
+    """(leg reach from the slot edge, leg height proud of a plate face) of a U edging profile (parts.json semantic keys):
+    reach = overall height - base (the inside depth of the U: the plate edge bottoms on the base, the legs run that far onto
+    each face; for the Essentra MGS-2-01 the drawing's D, W2 MECH-6 review); proud = (outer - inner width) / 2 + (inner width
+    - plate) with an inner width (worst case, panel against one leg), else (outer width - plate) / 2 (the profile's base width
+    as an upper bound)."""
+    t = P.mech["plate"]["t"]
+    reach = g["overall_h"] - g["base_t"]
+    proud = (g["outer_w"] - g["inner_w"]) / 2.0 + (g["inner_w"] - t) if "inner_w" in g else (g["outer_w"] - t) / 2.0
+    return reach, proud
+
+
+def _shelf_pack(diams, w, h):
+    """Wire diameters left over after packing round wires into a w x h rectangle (next-fit decreasing shelves, no nesting of
+    one row into the next, so a lower bound of what fits); both orientations are tried, the one leaving fewer wins."""
+    best = None
+    for a, b in ((w, h), (h, w)):
+        left, used, row_w, row_h = [], 0.0, 0.0, 0.0
+        for d in sorted(diams, reverse=True):
+            if row_h > 0.0 and row_w + d <= a + 1e-9:
+                row_w += d
+            elif d <= a + 1e-9 and used + row_h + d <= b + 1e-9:
+                used, row_w, row_h = used + row_h, d, d
+            else:
+                left.append(d)
+        if best is None or len(left) < len(best):
+            best = left
+    return best
+
+
+def plate_slot_fill(P):
+    """R-PLATE-SLOT-FILL (W2 MECH-6): the harness bundle of each plate slot fits the opening left by the edge trim.
+
+    Bundle = sum of the wire cross-sections of the slot's build/16 segments (OD = nominal + tolerance of the chosen PTFE wire,
+    parts.json hookup_wire_ptfe) / fill + the S01 ribbon stack (two 20-way halves of parts.json ribbon_3m_3365_40). Opening =
+    (w - loss_left - loss_right) x (h - loss_bottom - loss_top), loss = grommet bottom B or the tape allowance per edge
+    (plate.slot_trim). The ribbon width, the stack and the largest wire must also fit the inner width / height; the loose
+    wires must also pack as round wires (_shelf_pack) into what the rigid ribbon leaves: beside it ((inner w - ribbon w) x
+    inner h) and on it (ribbon w x (inner h - stack)), or into the whole inner opening when the slot has no ribbon. Every
+    grommet leg (trim_legs: overall height - base from the edge, the Essentra inside depth D; leg thickness plus the panel
+    play proud on both faces) must clear the envelopes, the structure and the fastener footprints of the plate holes. A slot
+    segment that build/16 does not have, or a wire without a read OD, is FAIL."""
     import csv
     from pathlib import Path
+    from .layout import item_boxes, structure_boxes, gap
     path = Path(__file__).resolve().parents[2] / "build" / "16-dzhgut.csv"
-    slots = P.mech["plate"].get("slots", [])
-    rule = {"id": "R-PLATE-SLOT-FILL", "rule": "harness wires through each plate slot (build/16-dzhgut.csv rows of the slot segments) against the bare opening",
-            "source": "mechanical.json plate.slots[].segments; build/16-dzhgut.csv"}
+    pl = P.mech["plate"]
+    slots = pl.get("slots", [])
+    tr = pl["slot_trim"]
+    g = P.parts[tr["grommet"]]
+    wod = P.parts["hookup_wire_ptfe"]["od"]
+    rib = P.parts["ribbon_3m_3365_40"]
+    flat = P.mech["harness_routes"].get("flat", {})
+    rule = {"id": "R-PLATE-SLOT-FILL",
+            "rule": f"harness bundle through each plate slot (wire areas / {tr['fill']:g} + ribbon stack) inside the opening left by the edge trim "
+                    f"(edging {tr['grommet']} base {g['base_t']:g} per edge, tape {tr['tape_mm']:g}); ribbon, stack and largest wire fit the inner size; "
+                    f"loose wires pack as round wires beside / on the ribbon; edging legs ({trim_legs(P, g)[0]:.2f} onto each face) clear",
+            "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json essentra_mgs_2_01 (Essentra catalogue p.276 read 2026-11-07), "
+                      "hookup_wire_ptfe and ribbon_3m_3365_40 (SRC-1 rows read 2026-11-07)"}
     if not path.exists():
         return dict(rule, value_mm=None, result="OPEN: build/16-dzhgut.csv not found, bundle not counted")
     wires = {}
     with path.open(encoding="utf-8", newline="") as fh:
         for r in csv.DictReader(fh):
             wires.setdefault(r["segment"], []).append(r["awg"])
-    value, missing = {}, []
+    obstacles = [(name, bx) for iid, name, bx, it in item_boxes(P) if not it.get("outside")]
+    obstacles += [(name, bx) for name, bx in structure_boxes(P) if not name.startswith("plate.main") and not name.startswith("plate.ext")]
+    holes = plate_holes(P)
+    value, missing, bad = {}, [], []
     for sl in slots:
-        counts = {}
+        x, y, w, h = sl["rect"]
+        loss = {e: (g["base_t"] if sl.get("trim", {}).get(e) == "grommet" else tr["tape_mm"]) for e in ("bottom", "top", "left", "right")}
+        iw, ih = w - loss["left"] - loss["right"], h - loss["bottom"] - loss["top"]
+        counts, area, dmax, loose = {}, 0.0, 0.0, 0
+        ribbon, ds = None, []
         for seg in sl.get("segments", []):
             if seg not in wires:
                 missing.append(f"{sl['id']}: {seg}")
-            for awg in wires.get(seg, []):
+                continue
+            if seg in flat:                                    # the S01 IDC ribbon: two stacked 20-way halves
+                ribbon = {"segment": seg, "w_mm": round(rib["w"] / 2.0, 2), "stack_mm": round(2 * rib["t"], 2),
+                          "conductors_in_build16": len(wires[seg])}
+                for awg in wires[seg]:
+                    counts[awg] = counts.get(awg, 0) + 1
+                continue
+            for awg in wires[seg]:
                 counts[awg] = counts.get(awg, 0) + 1
-        value[sl["id"]] = {"opening_mm2": round(sl["rect"][2] * sl["rect"][3], 1), "wires": sum(counts.values()),
-                           "wires_per_awg": {k: counts[k] for k in sorted(counts, key=int)}}
+                loose += 1
+                od = wod.get(awg)
+                if od is None:
+                    missing.append(f"{sl['id']}: {seg} {awg} AWG has no read wire OD")
+                    continue
+                d = od[0] + od[1]
+                dmax = max(dmax, d)
+                area += math.pi * d * d / 4.0
+                ds.append(d)
+        need = area / tr["fill"] + (ribbon["w_mm"] * ribbon["stack_mm"] if ribbon else 0.0)
+        have = max(iw, 0.0) * max(ih, 0.0)
+        fits = [("bundle", need <= have + 1e-9), ("largest wire", dmax <= min(iw, ih) + 1e-9)]
+        if ribbon:
+            fits += [("ribbon width", ribbon["w_mm"] <= iw + 1e-9), ("ribbon stack", ribbon["stack_mm"] <= ih + 1e-9)]
+            regions = [(iw - ribbon["w_mm"], ih), (ribbon["w_mm"], ih - ribbon["stack_mm"])]
+        else:
+            regions = [(iw, ih)]
+        left = ds
+        for rw_, rh_ in regions:
+            left = _shelf_pack(left, max(rw_, 0.0), max(rh_, 0.0)) if left else left
+        packing = {"regions_mm": [[round(max(a, 0.0), 2), round(max(b, 0.0), 2)] for a, b in regions],
+                   "method": "round wires, next-fit decreasing shelves, no nesting (beside the ribbon, then on it)" if ribbon
+                   else "round wires, next-fit decreasing shelves, no nesting", "unplaced": len(left)}
+        fits.append(("wire packing", not left))
+        legs = []
+        for edge, face, bx in _slot_trim_legs(P, sl):
+            for name, ob in obstacles:
+                if gap(bx, ob) <= 0.0:
+                    legs.append(f"{edge} leg ({face}) on {name}")
+            for ho in holes:
+                rr = ho["d"] if tr["fastener_footprint"] == "d" else float(tr["fastener_footprint"])
+                cx, cy = ho["c"]
+                dx = max(bx[0] - cx, 0.0, cx - bx[3])
+                dy = max(bx[1] - cy, 0.0, cy - bx[4])
+                if math.hypot(dx, dy) < rr - 1e-9 and f"{edge} leg on hole {ho['id']}" not in legs:
+                    legs.append(f"{edge} leg on hole {ho['id']}")
+        ok = all(f for _, f in fits) and not legs
+        if not ok:
+            bad.append(sl["id"])
+        value[sl["id"]] = {"opening_mm": [w, h], "trim": sl.get("trim", {}), "inner_mm": [round(iw, 2), round(ih, 2)],
+                           "inner_mm2": round(have, 1), "wires": sum(counts.values()), "loose_wires": loose,
+                           "wires_per_awg": {k: counts[k] for k in sorted(counts, key=int)}, "wire_area_mm2": round(area, 1),
+                           "ribbon": ribbon, "bundle_need_mm2": round(need, 1), "fill_of_inner": round(need / have, 2) if have else None,
+                           "largest_wire_mm": round(dmax, 2), "packing": packing, "legs_clear": legs or "yes",
+                           "result": ("PASS (model)" if ok else "FAIL (model): " + ", ".join([n for n, f in fits if not f] + legs))}
     if missing:
-        return dict(rule, value_mm=value, result="FAIL (model): slot segments not in build/16: " + ", ".join(missing))
-    return dict(rule, value_mm=value, limit_mm="bundle OD with edge trim inside the opening",
-                result="OPEN: wire outer diameter (AI-WIRE-PTFE) and edge-trim profile (AI-EDGE-TRIM) not chosen, so the fill is not checked "
-                       "(SL1 carries the whole 40-way S01 ribbon as two stacked 20-way halves; build/16 rows count only its connected conductors); "
-                       "resize SL1/SL2 or add a slot once both are read (wave 2)")
+        return dict(rule, value_mm=value, result="FAIL (model): " + ", ".join(missing))
+    txt = "; ".join(f"{k} {v['bundle_need_mm2']:g} <= {v['inner_mm2']:g} mm2 ({v['fill_of_inner']:g} of the inner opening "
+                    f"{v['inner_mm'][0]:g} x {v['inner_mm'][1]:g})" for k, v in value.items())
+    if bad:
+        return dict(rule, value_mm=value, limit_mm="bundle inside the trimmed opening", result="FAIL (model): " + ", ".join(
+            f"{k}: {value[k]['result']}" for k in bad))
+    return dict(rule, value_mm=value, limit_mm="bundle inside the trimmed opening",
+                result=f"PASS (model): {txt}; loose wires pack beside / on the ribbon; edging legs clear of the envelopes, the structure and the plate-hole footprints")
 
 
 def module_rules(P):
@@ -839,9 +978,36 @@ def pwr_key_nut_rule(P):
         "incoming inspection: a nut wider than the reserve needs the top Al angle notched or the key moved"))
 
 
+def _harness_near(P, envs, named):
+    """Harness routes next to the given envelopes. R-ROUTE-CLEAR checks centrelines only, so this gives the nearest centreline gap
+    and the pieces whose bundle (bundle_od_mm / 2 about the centreline) reaches into an envelope. A piece is taken as its bounding
+    box: exact for the axis-parallel pieces, a lower bound of the distance otherwise."""
+    from . import routes
+    from .layout import gap
+    res = routes.evaluate(P)
+    if res is None:
+        return None
+    near, over = None, []
+    for sid, r in list(res["segments"].items()) + list(res["branches"].items()):
+        pts, rad = r.get("points_mm") or [], (r.get("bundle_od_mm") or 0.0) / 2
+        for a, b in zip(pts, pts[1:]):
+            piece = tuple(min(a[i], b[i]) for i in range(3)) + tuple(max(a[i], b[i]) for i in range(3))
+            for e in envs:
+                d = max(gap(piece, named[e]), 0.0)
+                if near is None or d < near[2] - 1e-9:
+                    near = (sid, e, d)
+                if rad - d > 1e-9:
+                    over.append((sid, e, rad - d))
+    worst = max(over, key=lambda o: o[2]) if over else None
+    return {"nearest_centreline": [near[0], near[1], round(near[2], 2)] if near else None,
+            "bundle_overlaps": len(over), "segments": sorted({o[0] for o in over}), "envelopes": sorted({o[1] for o in over}),
+            "worst": [worst[0], worst[1], round(worst[2], 2)] if worst else None}
+
+
 def hdmi_route_rule(P):
     """R-HDMI-ROUTE (W2 MECH-4, B-04): the FPC route envelopes (adapters, folds, ferrite, insert) are in the envelope check without a
-    conflict, each flex is long enough for its centreline with bounded slack, the flex fits the ferrite slot and the plate notch."""
+    conflict, each flex is long enough for its centreline with bounded slack, the flex width fits the ferrite slot and the plate notch
+    (the bare flex thickness against the slot height only once it is measured: parts.json adafruit_flex thickness)."""
     from .layout import fit_checks
     m = P.mech
     hr = m["hdmi_route"]
@@ -864,55 +1030,85 @@ def hdmi_route_rule(P):
     w = flex["width"]
     if w > min(fer["cable_width_max"], fer["slot"][0]):
         bad.append(f"flex {w:g} wider than the ferrite slot {fer['slot'][0]:g}")
+    t_bare = flex.get("thickness")                  # bare flex, measured; not published by Adafruit (thickness_reserve is with the wrap)
+    if t_bare is not None and t_bare > fer["slot"][1]:
+        bad.append(f"bare flex {t_bare:g} thicker than the ferrite slot height {fer['slot'][1]:g}")
     nx, ny, nw, nh = m["plate"]["notches_right"][0]
     xc = hr["segments"][0]["points"][4][0]
     if not (nx + hr["notch_clear"] <= xc - w / 2 and xc + w / 2 <= nx + nw - hr["notch_clear"]):
         bad.append(f"flex band x {xc - w / 2:g}-{xc + w / 2:g} not inside the notch x {nx:g}-{nx + nw:g} with {hr['notch_clear']:g} clearance")
-    val = {"segments": segs, "flex_w": w, "ferrite_slot": fer["slot"], "notch": [nx, ny, nw, nh], "envelopes": len(hr["envelopes"]),
-           "folds": sum(s.get("folds", 0) for s in hr["segments"])}
+    harn = _harness_near(P, [e for e in hr["envelopes"] if e in named], named)
+    val = {"segments": segs, "flex_w": w, "ferrite_slot": fer["slot"], "flex_bare_t": t_bare if t_bare is not None else "not published (measure)",
+           "notch": [nx, ny, nw, nh], "envelopes": len(hr["envelopes"]), "folds": sum(s.get("folds", 0) for s in hr["segments"]),
+           "harness_near": harn}
     rule = {"id": "R-HDMI-ROUTE",
             "rule": "HDMI FPC route Q6A to the Wisecoco input: adapter, fold, ferrite, insert and run envelopes in the envelope check without a conflict; "
-                    f"each flex covers its centreline with slack 0-{hr['slack_max']:g} mm; flex through the ferrite slot and the plate notch",
+                    f"each flex covers its centreline with slack 0-{hr['slack_max']:g} mm; flex width through the ferrite slot and the plate notch "
+                    "(bare flex thickness <= the slot height once measured)",
             "value_mm": val, "source": "mechanical.json hdmi_route, layout hdmi_*; parts.json adafruit_3550, adafruit_3548, adafruit_flex, wurth_74278011"}
     problems = [f"missing envelope {e}" for e in missing] + conflicts + bad
     if problems:
         return dict(rule, result="FAIL (model): " + "; ".join(problems))
     f1, f2 = segs["FLEX1"], segs["FLEX2"]
+    if harn and harn["nearest_centreline"]:
+        hs, he, hd = harn["nearest_centreline"]
+        htxt = (f"harness bundles are centrelines in the envelope check (R-ROUTE-CLEAR): the nearest, {hs}, runs {hd:g} mm from {he}"
+                + (f"; with bundle_od_mm / 2 about the centreline {harn['bundle_overlaps']} route pieces of {', '.join(harn['segments'])} reach into "
+                   f"{', '.join(harn['envelopes'])} (worst {harn['worst'][0]} {harn['worst'][2]:g} mm into {harn['worst'][1]}): the drops must move "
+                   "clear of flex 2, OPEN for the harness routes" if harn["bundle_overlaps"] else ""))
+    else:
+        htxt = "no harness route evaluated"
     return dict(rule, result=(
         f"PASS (model): Adafruit 3550 on the Q6A receptacle, flex 1 {f1['part']} ({f1['slack_mm']:g} mm slack) with the WE-FLAT 74278011 ferrite under the "
         f"LAB BUS nut, through the plate notch to the HDMI_INSERT reserve right of the BMS, flex 2 {f2['part']} ({f2['slack_mm']:g} mm slack) up the strip "
         f"and along y 78.65-88.65 to the Adafruit 3548 in the Wisecoco input; {val['folds']} 45-degree folds; labelled assumptions: 3550 axis from the "
         f"product photos (3550 or 3549 by the receptacle side), flex thickness {flex['thickness_reserve']:g} and bend radius {flex['bend_r']:g} not "
         "published, insert reserve size, Wisecoco HDMI input at the lower end of the board's right edge (STACK D5: measure the received board); "
+        f"only the flex width is checked against the ferrite slot: the bare flex must be <= {fer['slot'][1]:g} thick for the "
+        f"{fer['slot'][0]:g} x {fer['slot'][1]:g} (+0.5/-0) slot (thickness not published: measure, OPEN); {htxt}; "
         "link, EMI of the wrapped flex and the folds stay bench OPEN"))
 
 
 def f101_access_rule(P):
     """R-F101-ACCESS (W2 MECH-4, B-12): can F101 face the service hatch for storage? Free depth in the hatch bottom strip in front of
-    the USB-A plug bay against the carrier + holder + fuse body stack; otherwise storage opens the seam (decision record)."""
+    the USB-A plug bay against the carrier + holder + fuse body stack, and the place must not stand in the hatch access path to a
+    keep-clear reserve behind it (the USB-A plug of the Q6A is reached through that strip, hatch.content); otherwise storage opens the
+    seam (decision record)."""
     m = P.mech
     fa = m["rear_face"]["hatch"]["f101_access"]
     x, y, w, hh = fa["place"]
     t = m["wall"]
     holder, fuse = P.parts["keystone_3568"], P.parts["littelfuse_mini_297"]
-    front = [bx for iid, name, bx, it in item_boxes(P)
-             if iid != "hatch_parts" and not it.get("outside") and bx[0] < x + w and bx[3] > x and bx[1] < y + hh and bx[4] > y and bx[2] > t]
+    behind = [(name, bx, it) for iid, name, bx, it in item_boxes(P)
+              if iid != "hatch_parts" and not it.get("outside") and bx[0] < x + w and bx[3] > x and bx[1] < y + hh and bx[4] > y and bx[2] > t]
+    front = [bx for _, bx, _ in behind]
     z_front = min([bx[2] for bx in front] or [m["stack_z"]["plate_rear"]])
     free = round(z_front - t - fa["clearance"], 2)
     stack = round(fa["carrier_t"] + holder["body"][2] + fuse["body"][2], 2)
+    blocks = sorted(name for name, _, it in behind if it.get("keep_clear"))
     val = {"place": fa["place"], "free_depth": free, "stack": stack,
-           "stack_parts": {"carrier": fa["carrier_t"], "keystone_3568": holder["body"][2], "mini_fuse_body": fuse["body"][2]}}
+           "stack_parts": {"carrier": fa["carrier_t"], "keystone_3568": holder["body"][2], "mini_fuse_body": fuse["body"][2]},
+           "access_path_to": blocks}
     rule = {"id": "R-F101-ACCESS",
             "rule": "F101 for storage (STACK: F1 out for more than 2-4 weeks): the PACK_FUSE carrier with the fuse facing the hatch opening needs "
-                    "carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip; otherwise the seam is opened",
-            "value_mm": val, "limit_mm": stack, "source": "mechanical.json rear_face.hatch.f101_access; parts.json keystone_3568, littelfuse_mini_297"}
-    if stack <= free:
-        return dict(rule, result=f"PASS (model): F101 fits facing the hatch opening ({stack:g} <= {free:g} mm free)")
+                    "carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip, and its place must leave the hatch access path "
+                    "to the keep-clear reserves behind it (USB-A plug bay) open; otherwise the seam is opened",
+            "value_mm": val, "limit_mm": stack, "source": "mechanical.json rear_face.hatch.f101_access, hatch.content, layout usb_plug_bay; "
+                                                          "parts.json keystone_3568, littelfuse_mini_297"}
+    if stack <= free and not blocks:
+        return dict(rule, result=f"PASS (model): F101 fits facing the hatch opening ({stack:g} <= {free:g} mm free) and leaves the hatch access paths open")
+    parts_txt = f"carrier {fa['carrier_t']:g} + Keystone 3568 {holder['body'][2]:g} + MINI body {fuse['body'][2]:g}"
+    if stack > free:
+        why = [f"facing the opening, the stack needs {stack:g} mm ({parts_txt}) against {free:g} mm in front of the USB-A plug bay"]
+    else:
+        why = [f"the stack {stack:g} mm ({parts_txt}) fits facing the hatch opening ({free:g} mm free)"]
+    if blocks:
+        why.append(f"{'but ' if stack <= free else ''}the place is the hatch access path to {', '.join(blocks)} (the USB-A plug of the Q6A goes in "
+                   "through this strip, hatch.content)")
     return dict(rule, result=(
-        f"PASS (model): decision - storage keeps the seam procedure: facing the opening, the stack needs {stack:g} mm (carrier {fa['carrier_t']:g} "
-        f"+ Keystone 3568 {holder['body'][2]:g} + MINI body {fuse['body'][2]:g}) against {free:g} mm in front of the USB-A plug bay, and the rest of the "
-        "hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery tray (envelope MECH-5) "
-        "and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення')"))
+        "PASS (model, decision: seam): storage keeps the seam procedure, F101 is not reached through the hatch: " + "; ".join(why)
+        + "; the rest of the hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery "
+        "tray (envelope MECH-5) and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення')"))
 
 
 def p8_accessory_rule(P):
@@ -934,3 +1130,218 @@ def p8_accessory_rule(P):
 def w2_mech4_rules(P):
     """Rows added by W2 MECH-4 (registration list, append-only)."""
     return [f101_access_rule(P), p8_accessory_rule(P)]
+
+
+def module_mount_geometry(P):
+    """Bosses, rests, spigots and pads of mechanical.json module_mounts as plain numbers (shared by cad.py, the drawings and the rule).
+
+    rear_wall: (x, y) circles standing on the rear-wall inner face up to seat; top_wall: (x, z) circles hanging from the top-wall
+    pocket floor down to seat. seat is the printed face; a taped mount (tape_t) has the board tape_t beyond it (rear: +z, top: -y),
+    otherwise the board lies on it. Insert holes are hole_depth deep from the seat face; a spigot stands len on its rest face."""
+    mm = P.mech.get("module_mounts")
+    if not mm:
+        return []
+    ins = mm["insert"]
+    depth = ins.get("hole_depth", ins["len"])
+    out = []
+    for mt in mm["mounts"]:
+        if mt["on"] not in ("rear_wall", "top_wall"):
+            continue
+        if "pad" in mt:
+            out.append({"item": mt["item"], "on": mt["on"], "kind": "pad", "rect": tuple(mt["pad"]), "seat": mt["pad_top_z"], "tape_t": mt["tape_t"]})
+            continue
+        board = mt.get("seat_z", mt.get("seat_y"))
+        tape = mt.get("tape_t", 0.0)
+        face = board - tape if mt["on"] == "rear_wall" else board + tape
+        for kind in ("screws", "rests"):
+            for c in mt.get(kind, []):
+                out.append({"item": mt["item"], "on": mt["on"], "kind": kind, "c": tuple(c), "d": mm["boss_d"] if kind == "screws" else mm["rest_d"],
+                            "insert": kind == "screws", "hole_d": ins["hole_d"], "hole_depth": depth, "seat": face if kind == "rests" else board,
+                            "board": board, "tape_t": tape if kind == "rests" else 0.0})
+        for c in mt.get("spigots", []):
+            out.append({"item": mt["item"], "on": mt["on"], "kind": "spigot", "c": tuple(c), "d": mt["spigot_d"], "insert": False,
+                        "seat": face, "board": board, "len": mt["spigot_len"]})
+    return out
+
+
+def _seg_box_dist(a, b, bx):
+    """Shortest distance between the segment a-b and the box (x0, y0, z0, x1, y1, z1): convex along the segment, golden-section search."""
+    def d(t):
+        p = [a[i] + t * (b[i] - a[i]) for i in range(3)]
+        return math.sqrt(sum(max(bx[i] - p[i], 0.0, p[i] - bx[i + 3]) ** 2 for i in range(3)))
+    lo, hi = 0.0, 1.0
+    g = (math.sqrt(5) - 1) / 2
+    for _ in range(48):
+        m1, m2 = hi - g * (hi - lo), lo + g * (hi - lo)
+        if d(m1) <= d(m2):
+            hi = m2
+        else:
+            lo = m1
+    return min(d(0.0), d(1.0), d((lo + hi) / 2))
+
+
+def _terminal_room(P, ina, side, routes_all, unit, t):
+    """Free length in front of the INA228 terminal-block wire entries: envelopes and harness bundles (bundle_od_mm / 2) that cross the
+    terminal span in front of the face, the routes ending at the INA228 itself (S06) excepted; the enclosure wall bounds it.
+    Returns (envelopes only, envelopes and bundles, what limits it)."""
+    W, H, D = P.outer
+    cx = (ina[0] + ina[3]) / 2
+    span = (cx - 3.5 * 1.5, cx + 3.5 * 1.5)
+    face = ina[4] if side == "+y" else ina[1]
+    sgn = 1.0 if side == "+y" else -1.0
+    env = [((b[1] if side == "+y" else b[4]), iid) for iid, name, b, it in item_boxes(P) if iid != "ina228" and b[0] < span[1] and b[3] > span[0]
+           and b[2] < ina[5] and b[5] > ina[2] and sgn * ((b[1] if side == "+y" else b[4]) - face) >= -1e-6]
+    env.append(((H - t) if side == "+y" else t, "wall"))
+    lim_env = min(env, key=lambda v: sgn * (v[0] - face))
+    best = (sgn * (lim_env[0] - face), lim_env[1])
+    for sid, r in routes_all:
+        if unit in r.get("ends", []):
+            continue
+        od = r.get("bundle_od_mm") or 0.0
+        pts = r.get("points_mm") or []
+        for a, b in zip(pts, pts[1:]):
+            n = max(2, int(math.dist(a, b) / 0.5) + 1)
+            for k in range(n + 1):
+                p = [a[i] + k / n * (b[i] - a[i]) for i in range(3)]
+                if span[0] - od / 2 < p[0] < span[1] + od / 2 and ina[2] - od / 2 < p[2] < ina[5] + od / 2 and sgn * (p[1] - face) > 0:
+                    room = sgn * (p[1] - face) - od / 2
+                    if room < best[0]:
+                        best = (room, sid)
+    return round(sgn * (lim_env[0] - face), 2), round(best[0], 2), best[1]
+
+
+def module_mounts_rule(P):
+    """R-MODULE-MOUNTS (W2 MECH-5, B-13 / CC-36 item 11): fixing of the modules without a board place; insert skins, seats against the
+    envelopes, insert holes clear of the tripod nut pocket, plate standoffs, the INA228 terminal-block wire side (envelopes and harness
+    bundles) and the 18 AWG fit, the harness-bundle clearance of this package's envelopes, and what stays open."""
+    from . import routes
+    from .layout import gap as box_gap
+    m = P.mech
+    mm = m.get("module_mounts")
+    rule = {"id": "R-MODULE-MOUNTS",
+            "rule": "module fixing (mechanical.json module_mounts): insert hole + skin <= wall + boss, board face = envelope face, screw holes = the "
+                    "makers' board-file holes, rear-wall insert holes >= tripod_clear from the 1/4-20 nut pocket, the INA228 terminal wire side free of "
+                    "envelopes and harness bundles, 18 AWG inside the terminal range, this package's envelopes >= bundle OD / 2 + bundle_clear from "
+                    "other routes, plate standoff barrels clear of the envelopes; plate standoff holes in R-HOLE-EDGE / R-CLINCH-EDGE",
+            "source": "mechanical.json module_mounts, rear_face.tripod; parts.json adafruit_5997, adafruit_4162, adafruit_ina228_5832, pololu_2813, "
+                      "pem_so_m25_6; generated/harness-routes.json bundle_od_mm"}
+    if not mm:
+        return dict(rule, value_mm=None, result="OPEN: no module_mounts")
+    W, H, D = P.outer
+    t = m["wall"]
+    boxes = {iid: bx for iid, name, bx, it in item_boxes(P)}
+    tp = m["rear_face"]["tripod"]
+    hexr = tp["hex_af"] / 2 / math.cos(math.radians(30))
+    veml = P.parts["adafruit_4162"]
+    pocket = {mt["item"]: mt["pocket"][4] for mt in mm["mounts"] if "pocket" in mt}
+    bad, val, tri = [], {}, []
+    for g in module_mount_geometry(P):
+        bx = boxes[g["item"]]
+        if g["kind"] == "spigot":
+            # a locating spigot on a taped rest: thinner than the board hole, ends inside the board
+            ok = g["on"] == "top_wall" and g["d"] < veml["holes"]["d"] and g["len"] <= g["seat"] - g["board"] + veml["board"][2] - 0.1
+            val.setdefault(g["item"], {}).setdefault("spigots", []).append({"c": list(g["c"]), "d": g["d"], "len": g["len"]})
+        elif g["on"] == "rear_wall":
+            if g["kind"] == "pad":
+                x, y, w, h = g["rect"]
+                ok = bx[0] <= x and x + w <= bx[3] and bx[1] <= y and y + h <= bx[4] and abs(g["seat"] + g["tape_t"] - bx[2]) < 1e-6
+                val.setdefault(g["item"], {})["pad"] = {"rect": list(g["rect"]), "seat_z": g["seat"], "tape": g["tape_t"]}
+            else:
+                x, y = g["c"]
+                skin = g["seat"] - g["hole_depth"] if g["insert"] else None
+                ok = bx[0] <= x <= bx[3] and bx[1] <= y <= bx[4] and abs(g["board"] - bx[2]) < 1e-6 and (skin is None or skin >= mm["insert"]["skin_min"])
+                row = {"c": [x, y], "skin_mm": None if skin is None else round(skin, 2)}
+                if g["insert"]:
+                    dt = round(math.hypot(x - tp["c"][0], y - tp["c"][1]) - hexr - g["hole_d"] / 2, 2)
+                    row["to_tripod_pocket_mm"] = dt
+                    tri.append(dt)
+                    ok = ok and dt >= mm.get("tripod_clear", 0.0)
+                val.setdefault(g["item"], {}).setdefault(g["kind"], []).append(row)
+        else:
+            x, z = g["c"]
+            skin = H - (g["seat"] + g["hole_depth"]) if g["insert"] else None
+            ok = (bx[0] <= x <= bx[3] and bx[2] <= z <= bx[5] and (skin is None or skin >= mm["insert"]["skin_min"])
+                  and g["board"] <= g["seat"] <= H - t + pocket.get(g["item"], 0.0) + 1e-6)
+            val.setdefault(g["item"], {}).setdefault(g["kind"], []).append({"c": [x, z], "skin_mm": None if skin is None else round(skin, 2),
+                                                                            "face_y": round(g["seat"], 2), "tape": g.get("tape_t", 0.0)})
+        if not ok:
+            bad.append(f"{g['item']} {g['kind']} {g.get('c', g.get('rect'))}")
+    # VEML7700: pocket skin, board front edge to the front wall, back face to the envelope below it
+    vm = next((mt for mt in mm["mounts"] if mt["item"] == "veml7700"), None)
+    if vm:
+        px, pz, pw, ph, pd = vm["pocket"]
+        fwi = m["stack_z"]["front_wall_inner"]
+        val["veml7700"]["pocket_skin_mm"] = round(t - pd, 2)
+        val["veml7700"]["front_edge_to_wall_mm"] = round(fwi - boxes["veml7700"][5], 2)
+        if t - pd < 1.0 or fwi - boxes["veml7700"][5] < 0.5:
+            bad.append("veml7700 pocket skin or front edge")
+    res = routes.evaluate(P)
+    allr = (list(res["segments"].items()) + list(res["branches"].items()) + list(res.get("coax", {}).items())) if res else []
+    # INA228: free length in front of the terminal-block wire entries (envelopes and harness bundles) and the 18 AWG range
+    ina, term = boxes["ina228"], P.parts["adafruit_ina228_5832"]["terminal"]
+    side = next((mt.get("terminal_side", "-y") for mt in mm["mounts"] if mt["item"] == "ina228"), "-y")
+    env_room, room, lim = _terminal_room(P, ina, side, allr, "INA", t)
+    awg = 18
+    val["ina228"]["terminal"] = {"wire_side": side, "free_mm": room, "free_envelopes_only_mm": env_room, "limited_by": lim, "need_mm": term["wire_room"],
+                                 "awg_range": term["wire_awg"], "vin_awg": awg}
+    if room < term["wire_room"] or not (term["wire_awg"][0] <= awg <= term["wire_awg"][1]):
+        bad.append("ina228 terminal wire side")
+    # this package's envelopes against the harness bundles of the routes that do not end at them
+    margin = mm.get("bundle_clear", 0.5)
+    bc = {}
+    for iid, unit in mm.get("bundle_items", {}).items():
+        bx = boxes[iid]
+        worst = None
+        for sid, r in allr:
+            if unit in r.get("ends", []) or len(r.get("points_mm") or []) < 2:
+                continue
+            need = (r.get("bundle_od_mm") or 0.0) / 2 + margin
+            dmin = min(_seg_box_dist(a, b, bx) for a, b in zip(r["points_mm"], r["points_mm"][1:]))
+            if worst is None or dmin - need < worst[0]:
+                worst = (dmin - need, sid, round(dmin, 2), round(need, 2))
+        if worst:
+            bc[iid] = {"route": worst[1], "centreline_mm": worst[2], "need_mm": worst[3]}
+            if worst[0] < -1e-6:
+                bad.append(f"{iid} {worst[2]:g} from the {worst[1]} centreline < bundle OD / 2 + {margin:g} = {worst[3]:g}")
+    val["bundle_clearance"] = bc
+    # plate standoff barrels (front face up to the board) clear of every other envelope and of the structure (plate bosses)
+    from .layout import structure_boxes
+    obst = dict(boxes)
+    obst.update({n: b for n, b in structure_boxes(P) if n not in ("plate.main", "plate.ext")})
+    pfz = m["stack_z"]["plate_front"]
+    val["plate_standoffs"] = {}
+    for mt in mm["mounts"]:
+        if mt["on"] != "plate_front":
+            continue
+        f = P.parts[mt["fastener"]]
+        r = f.get("barrel_d", f["hole_d"]) / 2
+        rows = []
+        for (hx, hy) in mt["standoffs"]:
+            bar = (hx - r, hy - r, pfz, hx + r, hy + r, pfz + f["length"])
+            near = min(((box_gap(bar, b), iid) for iid, b in obst.items() if not iid.startswith(mt["item"])), default=(99.0, ""))
+            rows.append({"c": [hx, hy], "nearest": near[1], "gap_mm": round(near[0], 2)})
+            if near[0] < 0.5:
+                bad.append(f"{mt['item']} standoff ({hx:g}, {hy:g}) {near[0]:.2f} from {near[1]}")
+        val["plate_standoffs"][mt["item"]] = rows
+    rule["value_mm"] = val
+    if bad:
+        return dict(rule, result="FAIL (model): " + "; ".join(bad))
+    opens = [f"{iid}: fixing TBD ({P.parts[it['part']]['status']}, no drawing)" for it in m["layout"]["items"]
+             for iid in [it["id"]] if iid == "boni_a406"]
+    vr = val["veml7700"]["rests"]
+    gaps = [rw["gap_mm"] for rows in val["plate_standoffs"].values() for rw in rows]
+    return dict(rule, result=(
+        "PASS (model): CH334F 4 x M2.5 and INA228 2 x M2.5 (+2 rests) into TC-M2,5x4 inserts in rear-wall bosses (hole "
+        f"{mm['insert'].get('hole_depth', mm['insert']['len']):g} deep, skin {min(v['skin_mm'] for v in val['hub_ch334f']['screws']):g}, "
+        f"{min(tri):g} from the tripod nut pocket >= {mm.get('tripod_clear', 0.0):g}), #2813 on a printed pad with acrylic foam tape (no mounting "
+        f"hole on the Pololu drawing), VEML7700 taped to {len(vr)} rests (+{len(val['veml7700'].get('spigots', []))} locating spigots) in a "
+        f"{vm['pocket'][4]:g} mm pocket of the top wall (skin {val['veml7700']['pocket_skin_mm']:g}; no insert joint fits that wall), PACK_FUSE on "
+        f"2 PEM SO-M2.5-6ZI (M-07 PF; barrels {min(gaps):g} from the nearest envelope); INA228 terminal wire side {side} with {room:g} mm free of "
+        f"envelopes and harness bundles (limit: {lim}), 18 AWG inside {term['wire_awg'][1]}-{term['wire_awg'][0]} AWG (4UCON 19963; block identity "
+        f"inferred, confirm at incoming inspection); this package's envelopes keep bundle OD / 2 + {margin:g} from the other route centrelines; "
+        "torques coupon-defined (build/17 section 2)" + ("; OPEN: " + "; ".join(opens) if opens else "")))
+
+
+def w2_mech5_rules(P):
+    """Rows added by W2 MECH-5 (registration list, append-only)."""
+    return [module_mounts_rule(P)]

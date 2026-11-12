@@ -1,0 +1,19 @@
+{
+ "schema": 1,
+ "date": "2026-11-11",
+ "note": "PCB-SB2 (wave 2) reads of 2026-11-11 with WebFetch (no browser User-Agent was sent): the DigiKey DE search page of the 13 mm M2.5 polyamide standoff for the BNO085 of the IMU pack (parts DB AI-STANDOFF-IMU-13). RS UK 1842251 (the Würth 13 mm M2.5 F/F polyamide listing) answered 403 to WebFetch on 2026-11-11 and was not read. Würth 970130154 gave no DigiKey DE result. A row records what the source showed; \"stock\": null means not shown, not zero.",
+ "entries": {
+  "digikey:732-13002-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=970130155",
+   "read": "2026-11-11",
+   "method": "WebFetch of the DigiKey DE keyword result page (single product shown)",
+   "mpn": "970130155",
+   "manufacturer": "Würth Elektronik",
+   "stock": 542,
+   "status": "In-Stock",
+   "price": "EUR 0.86 @1, EUR 0.805 @10",
+   "note": "Hex Standoff Threaded M2.5 Polyamide 0.512\" (13.00mm) Black; gender female/female; hex 0.197\" (5.00 mm); datasheet link https://www.we-online.com/components/products/datasheet/970130155.pdf (not read)"
+  }
+ }
+}

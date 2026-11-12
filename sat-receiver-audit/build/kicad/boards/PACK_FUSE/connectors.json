@@ -1,0 +1,80 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "PACK_FUSE",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "PACK",
+      "placement": "default",
+      "board_origin_enclosure_mm": [
+        161.7,
+        11.5
+      ],
+      "z_bottom": 46.5,
+      "facing": "+z",
+      "connectors": [
+        {
+          "template_ref": "J116",
+          "ref": "J116",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            2.4,
+            2.6
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CELL4",
+              "at": [
+                2.4,
+                2.6
+              ],
+              "enclosure_xy": [
+                164.1,
+                14.1
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            164.1,
+            14.1
+          ]
+        },
+        {
+          "template_ref": "J117",
+          "ref": "J117",
+          "kind": "graph",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            2.4,
+            23.8
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_SHUNT_P",
+              "at": [
+                2.4,
+                23.8
+              ],
+              "enclosure_xy": [
+                164.1,
+                35.3
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            164.1,
+            35.3
+          ]
+        }
+      ]
+    }
+  ]
+}

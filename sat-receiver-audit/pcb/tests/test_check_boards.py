@@ -829,5 +829,125 @@ class PadGeometryTests(unittest.TestCase):
         self.assertEqual([u['check'] for u in b.unverified], ['geometry'])
 
 
+class CouponTests(unittest.TestCase):
+    """W2 PCB-RF-2: spec coupons (a test coupon drawn beside the board in the same file)."""
+    SPEC = dict(RF_SPEC, contract_transform={'origin': [OX, OY], 'y': 'up'})
+
+    def with_coupon(self, width='0.36'):
+        t = tree('rf_cpwg.kicad_pcb')
+        loop = rect(0, -12, 30, -4)
+        for a, b in zip(loop, loop[1:] + loop[:1]):
+            (x0, y0), (x1, y1) = K(*a), K(*b)
+            t.append(['gr_line', ['start', '%g' % x0, '%g' % y0], ['end', '%g' % x1, '%g' % y1],
+                      ['stroke', ['width', '0.05'], ['type', 'solid']], ['layer', cb.Q('Edge.Cuts')]])
+        (x0, y0), (x1, y1) = K(5, -8), K(25, -8)
+        t.append(['segment', ['start', '%g' % x0, '%g' % y0], ['end', '%g' % x1, '%g' % y1], ['width', width],
+                  ['layer', cb.Q('F.Cu')], ['net', cb.Q('CPN_X')]])
+        return t
+
+    def test_coupon_loop_needs_the_spec_coupon(self):
+        t = self.with_coupon()
+        self.assertIn('outline', checks_failed(review(t, self.SPEC)))
+        doc = review(t, dict(self.SPEC, coupons=[{'rect': [0, -12, 30, 8], 'reason': 'test'}]))
+        self.assertNotIn('outline', checks_failed(doc))
+        self.assertEqual(doc['checks']['outline']['coupon_loops'], 1)
+        self.assertNotIn('coupon_loops', review(tree('rf_cpwg.kicad_pcb'), RF_SPEC)['checks']['outline'])
+
+    def test_coupon_rf50_nets_are_checked(self):
+        spec = dict(self.SPEC, coupons=[{'rect': [0, -12, 30, 8], 'rf50_nets': ['CPN_X'], 'reason': 'test'}])
+        doc = review(self.with_coupon('0.3'), spec)
+        self.assertTrue(any(f['check'] == 'rf50' and f['item'] == 'CPN_X' and 'width' in f['detail'] for f in doc['findings']))
+        plain = review(self.with_coupon('0.3'), dict(self.SPEC, coupons=[{'rect': [0, -12, 30, 8], 'reason': 'test'}]))
+        self.assertFalse(any(f['item'] == 'CPN_X' for f in plain['findings']))
+
+
+class RfNodeChecks(unittest.TestCase):
+    """W2 PCB-RF-2: the GND-CHASSIS tie on the bond hole and the optional rf_checks (taps, tap capacitors, keepout, SENSE)."""
+
+    def rf_review(self, t, rf_checks, components_csv=None):
+        return cb.review_board(cb.Board(t), dict(RF_SPEC, rf_checks=rf_checks), CONTRACT, GRAPH, NETCLASSES,
+                               components_csv=components_csv)
+
+    def test_tie_must_reach_the_bond_hole(self):
+        doc = review(tree('rf_cpwg.kicad_pcb'), RF_SPEC)
+        self.assertEqual(doc['checks']['gnd_chassis_ties']['ties_on_bond_hole'], ['NT1'])
+        t = tree('rf_cpwg.kicad_pcb')
+        t[:] = [n for n in t if not (isinstance(n, list) and n and n[0] == 'segment' and cb.kid(n, 'net')[1] == 'CHASSIS')]
+        doc = review(t, RF_SPEC)
+        self.assertEqual(checks_failed(doc), ['gnd_chassis_ties'])
+        self.assertEqual([f['item'] for f in doc['findings']], ['NT1'])
+        self.assertEqual(doc['checks']['gnd_chassis_ties']['bond_net_islands'], 2)
+        self.assertNotIn('ties_on_bond_hole', review(tree('power_neck.kicad_pcb'), PWR_SPEC)['checks']['gnd_chassis_ties'])
+
+    def test_taps_on_their_rf50_line(self):
+        rc = {'taps': [{'ref': 'C1', 'pad': '1', 'max_mm': 2.0}]}
+        doc = self.rf_review(tree('rf_cpwg.kicad_pcb'), rc)
+        self.assertEqual(doc['findings'], [])
+        self.assertEqual(doc['checks']['rf_nodes']['taps']['C1.1']['to_rf50_line_mm'], 0.0)
+        t = tree('rf_cpwg.kicad_pcb')
+        cb.kid(footprint(t, 'C1'), 'at')[2] = '%g' % (float(cb.kid(footprint(t, 'C1'), 'at')[2]) - 3)  # 3 mm off the line
+        doc = self.rf_review(t, rc)
+        f = next(f for f in doc['findings'] if f['check'] == 'rf_nodes')
+        self.assertEqual(f['item'], 'C1.1')
+        self.assertAlmostEqual(f['value'], 3 - 0.3 - 0.18, places=3)
+        doc = self.rf_review(tree('rf_cpwg.kicad_pcb'), {'taps': [{'ref': 'NT1', 'pad': '1', 'max_mm': 2.0}]})
+        self.assertTrue(any(f['item'] == 'NT1.1' and 'not an RF50 line' in f['detail'] for f in doc['findings']))
+
+    def test_tap_capacitor_next_to_the_tap(self):
+        near = self.rf_review(tree('rf_cpwg.kicad_pcb'), {'tap_caps': [{'ref': 'C2', 'to': ['C1', '1'], 'max_mm': 40.0}]})
+        self.assertEqual(near['findings'], [])
+        self.assertAlmostEqual(near['checks']['rf_nodes']['tap_caps']['C2 to C1.1']['pad_gap_mm'], 35.4, places=3)
+        far = self.rf_review(tree('rf_cpwg.kicad_pcb'), {'tap_caps': [{'ref': 'C2', 'to': ['C1', '1'], 'max_mm': 2.0}]})
+        self.assertEqual(checks_failed(far), ['rf_nodes'])
+        other = self.rf_review(tree('rf_cpwg.kicad_pcb'), {'tap_caps': [{'ref': 'NT1', 'to': ['C1', '1'], 'max_mm': 2.0}]})
+        self.assertTrue(any('no pad of this part' in f['detail'] for f in other['findings']))
+
+    def test_parts_outside_the_domain_keepout(self):
+        rows = [{'ref': 'C2', 'board_candidate': 'DC_CORE', 'category': 'bare_board_part'}]
+        ok = self.rf_review(tree('rf_cpwg.kicad_pcb'), {'keepout': {'domains': ['DC_CORE'], 'margin_mm': 5.0, 'refs': ['C1']}}, rows)
+        self.assertEqual(ok['findings'], [])
+        self.assertAlmostEqual(ok['checks']['rf_nodes']['keepout']['min_clearance_mm'], 36 - 1 - 5.0, places=3)
+        bad = self.rf_review(tree('rf_cpwg.kicad_pcb'), {'keepout': {'domains': ['DC_CORE'], 'margin_mm': 40.0, 'refs': ['C1']}}, rows)
+        self.assertEqual([f['item'] for f in bad['findings']], ['C1'])
+        none = self.rf_review(tree('rf_cpwg.kicad_pcb'), {'keepout': {'domains': ['NOPE'], 'margin_mm': 5.0, 'refs': ['C1']}}, rows)
+        self.assertEqual([f['item'] for f in none['findings']], ['keepout'])
+
+    def test_sense_length_against_the_prototype(self):
+        with tempfile.TemporaryDirectory() as d:
+            proto = Path(d) / 'proto.json'
+
+            def run(length):
+                proto.write_text(json.dumps({'routing': [{'net': 'E4_RTLA_RF1', 'length_mm': length}]}), encoding='utf-8')
+                return self.rf_review(tree('rf_cpwg.kicad_pcb'), {'sense': {'nets': ['E4_RTLA_RF1'], 'prototype': proto.as_posix()}})
+            ok = run(40.0)
+            self.assertEqual(ok['findings'], [])
+            self.assertEqual(ok['checks']['rf_nodes']['sense']['nets']['E4_RTLA_RF1'], {'board_mm': 36.0, 'prototype_mm': 40.0})
+            self.assertEqual(checks_failed(run(30.0)), ['rf_nodes'])
+            proto.write_text(json.dumps({'routing': []}), encoding='utf-8')
+            doc = self.rf_review(tree('rf_cpwg.kicad_pcb'), {'sense': {'nets': ['E4_RTLA_RF1'], 'prototype': proto.as_posix()}})
+            self.assertTrue(any('not in the prototype routing' in f['detail'] for f in doc['findings']))
+
+    def test_bad_rf_checks_are_refused(self):
+        for bad in ({'nope': 1}, {'taps': [{'ref': 'C1', 'pad': '1'}]}, {'tap_caps': [{'ref': 'C1', 'to': 'C2', 'max_mm': 1}]},
+                    {'keepout': {'domains': [], 'margin_mm': 1, 'refs': []}}, {'sense': {'nets': ['X']}}):
+            with self.assertRaises(SystemExit, msg=bad):
+                self.rf_review(tree('rf_cpwg.kicad_pcb'), bad)
+        with self.assertRaises(SystemExit):
+            cb.normalize_spec(dict(RF_SPEC, rf_checks=[]))
+
+    def test_committed_rf_board(self):
+        spec_path, board_path = ROOT / 'pcb/boards/RF.json', ROOT / 'build/kicad/boards/RF/RF.kicad_pcb'
+        if not spec_path.is_file() or not board_path.is_file():
+            self.skipTest('no RF board yet')
+        spec = cb.normalize_spec(json.loads(spec_path.read_text(encoding='utf-8')))
+        if 'rf_checks' not in spec:
+            self.skipTest('RF spec without rf_checks')
+        doc = cb.review_board(cb.load_board(board_path), spec, json.loads(cb.CONTRACT.read_text(encoding='utf-8')),
+                              cb.load_graph(), NETCLASSES)
+        self.assertEqual(doc['checks']['rf_nodes']['findings'], 0)
+        self.assertEqual(doc['checks']['gnd_chassis_ties']['ties_on_bond_hole'], ['NT401'])
+        self.assertEqual(len(doc['checks']['rf_nodes']['taps']), 3)
+
+
 if __name__ == '__main__':
     unittest.main()

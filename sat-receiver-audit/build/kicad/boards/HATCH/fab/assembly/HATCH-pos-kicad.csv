@@ -1,0 +1,6 @@
+Ref,Val,Package,PosX,PosY,Rot,Side
+"J502","UART5 console 3pin locking","JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",127.400000,-111.500000,180.000000,bottom
+"J503","J21 service harness 3pin locking","Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",115.330000,-103.270000,0.000000,top
+"J509","X14P1-HATCH: Molex Micro-Fit 3.0 2, верхній вхід, S14","Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",112.330000,-110.200000,0.000000,top
+"J510","X15S1-HATCH: JST PH 2, верхній вхід, S15","JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",120.500000,-117.700000,0.000000,top
+"J513","X30S1-HATCH: JST PH 3, верхній вхід, S30","JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",111.000000,-117.700000,0.000000,top

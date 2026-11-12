@@ -538,17 +538,80 @@ class CutoutsViasAndLayerTypes(unittest.TestCase):
         xs, ys = [p[0] for p in strip], [p[1] for p in strip]
         self.assertEqual((round(min(xs), 6), round(max(xs), 6), round(min(ys), 6), round(max(ys), 6)), (-0.2, 10.2, -0.2, 0.2))
 
-    def test_pwr_b_spec_resolves_with_the_b2b_placeholder(self):
+    def test_pwr_b_spec_resolves_with_the_b2b_half_j209(self):
+        # W2 B2B: the graph ref J209 (Samtec LSHM-150) replaced the FX8 pilot placeholder B2B1 on the PWR-B bottom
         if not bg.spec_path('PWR_B').is_file():
             self.skipTest('no PWR_B spec')
         spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('PWR_B')
         self.assertTrue(contract['cutouts_mm'])
         self.assertTrue(bg.domain_audit(spec, bg.read_json(bg.BASE / spec['partition']))['passed'])
-        b2b = next(t for t in template if t['ref'] == 'B2B1')
+        self.assertFalse([p['ref'] for p in spec['parts'] if p['source'] == 'pilot_placeholder'])
+        b2b = next(t for t in template if t['ref'] == 'J209')
+        self.assertEqual((b2b['source'], b2b['anchor']['side']), ('graph', 'B'))
         self.assertEqual(sum(1 for n in b2b['pads'].values() if n == 'LAB5'), 4)  # ceil(4 A / 1 A), b2b-nets.json
         status = {b['status'] for b in bg.boundary_audit(spec, template, graph, db)}
-        self.assertEqual(len(status), 1)
-        self.assertTrue(next(iter(status)).startswith('provisional: B2B ref pending'))
+        self.assertEqual(status, {'pass'})
+
+
+class PwrBPinMapFollowsB2bNets(unittest.TestCase):
+    """W2 PCB-PWRB, W2 B2B: the PWR_B B2B half J209 carries pcb/generated/b2b-nets.json contacts pin for pin (CI does not run
+    build/kicad/boards/PWR_B/make_spec.py --check, and b2b-nets.json is no board_gen input)."""
+
+    def test_contacts_per_net_gnd_count_and_source_hash(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        import collections
+        import hashlib
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        path = bg.BASE / 'pcb/generated/b2b-nets.json'
+        b2b = bg.read_json(path)
+        ref = b2b['graph_refs']['pwr_b']
+        self.assertTrue(any(p['ref'] == ref and p['source'] == 'graph' and p['anchor']['side'] == 'B' for p in spec['parts']))
+        pins = {str(p['number']): (None if p.get('nc') else p.get('net')) for p in bg.load_graph()[ref]['pins']}
+        self.assertEqual(pins, {str(c['pwr_b_pin']): (c['net'] or None) for c in b2b['contacts']})
+        want = collections.Counter({n['net']: int(n['pins']) for n in b2b['nets']})
+        want['GND'] += b2b['totals']['gnd_pins']
+        self.assertEqual(collections.Counter(n for n in pins.values() if n), want)
+        pin_map = spec['b2b_pin_map']
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        self.assertEqual(pin_map['source'], f'pcb/generated/b2b-nets.json sha256 {digest}')
+        self.assertEqual((pin_map['used'], pin_map['spare']), (b2b['totals']['contacts_needed'],
+                                                               b2b['contacts_available'] - b2b['totals']['contacts_needed']))
+
+
+class BondHoleAndCoupon(unittest.TestCase):
+    """W2 PCB-RF-2: optional spec keys bond_hole (plated, netted contract hole) and coupon (post-route test coupon)."""
+
+    def setUp(self):
+        if not bg.spec_path('RF').is_file():
+            self.skipTest('no RF spec')
+
+    def test_rf_bond_hole_is_plated_and_ends_chassis(self):
+        spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('RF')
+        plated = [(h['ref'], h['plated']['net']) for h in bg.holes(spec, contract) if h.get('plated')]
+        self.assertEqual(plated, [('H5', 'CHASSIS')])
+        rows = bg.boundary_audit(spec, template, graph, db)[0]['nets']
+        self.assertEqual(next(r for r in rows if r['net'] == 'CHASSIS')['status'], 'connector')
+        self.assertTrue(spec['coupon']['footprints'] and spec['coupon']['zones'])
+
+    def test_bad_bond_hole_and_coupon_are_refused(self):
+        spec = bg.read_json(bg.spec_path('RF'))
+        mutations = (lambda s: s['bond_hole'].update(net='NOPE'), lambda s: s['bond_hole'].pop('why'),
+                     lambda s: s['coupon'].pop('why'), lambda s: s['coupon']['footprints'][0].update(ref='C401'),
+                     lambda s: s['coupon']['tracks'][0].update(net='NOPE'),
+                     lambda s: s['coupon']['zones'][0].update(outline='board'),
+                     lambda s: s['coupon']['outlines'][0].__setitem__(2, -1.0))
+        for i, mutate in enumerate(mutations):
+            s = copy.deepcopy(spec)
+            mutate(s)
+            with self.assertRaises(SystemExit, msg=i):
+                bg.validate_spec(s, 'RF')
+        contract, _stack = bg.load_contract(spec)
+        for at, pad in (([93.0, 40.5], 7.0), ([92.0, 40.5], 8.0), ([92.0, 40.5], 3.0)):
+            s = copy.deepcopy(spec)
+            s['bond_hole'].update(at=at, pad_mm=pad)
+            with self.assertRaises(SystemExit, msg=(at, pad)):
+                bg.holes(s, contract)
 
 
 if __name__ == '__main__':

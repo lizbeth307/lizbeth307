@@ -1,7 +1,7 @@
 {
   "schema": "srrx-board-report-v1",
   "board_id": "ENC",
-  "status": "PILOT_NOT_FOR_FABRICATION",
+  "status": "SB1_ROUTED_NOT_FOR_FABRICATION",
   "label": "CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN",
   "passed": true,
   "result": {
@@ -24,22 +24,22 @@
   },
   "inputs": {
     "parts": {
-      "spec": "003f66d4f0f534d32ce8d7a98827614b9961b52eba4249068834ba6efd69f64d",
+      "spec": "7e91415e2c15acf79c8cf91bd2d14f549aff732feac1e7d25b679217b62db411",
       "contract": "4bdc61e4af2bafe4262a6b7a88468c41455d44ca1ffdf612adc37f2829893e5e",
       "project_rules": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
-      "template": "4c9dcf416687d46f2147b6af3f9d85d7ae394b072e377e73fba15fcb524a55b9",
+      "template": "d35a736643c1b95ce87dc5407d3ebb95321aa3637f92d7384d4f42e90cb41222",
       "instances": "19a6ad3075d7bb21f060309f07b73889cd960c616b5337231528298fe5da9c08"
     },
-    "sha256": "882f85843a08a349e3dae82fcaf257a5d16c12d2c51dc4d4cbca49837c6ae5ba"
+    "sha256": "19953b7a1d96864f2a2117e37ba664df35aa484204443affb218872f3a170a9b"
   },
   "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-  "board_sha256": "270e0269c50cd03b8df6543a5103052c9468a6e0a8a1bfbce07958bd68e7f4ae",
+  "board_sha256": "4c9a967a046022808cc05c48f71960876ce4433bb293a6949fd3a68ca26490b0",
   "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
   "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
   "layers": {
     "copper": 2,
     "thickness_mm": 1.6,
-    "source": "PCB-SB1 plan: ENC is a 2-layer 1.6 mm 1 oz board (final-plan.json PCB-SB1 brief); the 4-layer default of build/15 'Шари' is for the main boards",
+    "source": "PCB-SB1 plan: ENC is a 2-layer 1.6 mm 1 oz board (final-plan.json PCB-SB1 brief); the 4-layer default of build/15 'Шари' is for the main boards; decision 'Шари малих плат ENC і HATCH (W2 PCB-SB1)' in build/15",
     "plan": {
       "F.Cu": "parts, signals, GND pour",
       "B.Cu": "scripted GND link, signals, GND pour"
@@ -153,7 +153,7 @@
       "library": "kicad-image",
       "file": null,
       "sha256": "c1fbb648efbffa98c740285def47b64fc2cc9e5cf07f24a196e7956b940e8e1d",
-      "value": "PH4 pilot placeholder",
+      "value": "S37/S38 wire land, no part fitted",
       "pads": {
         "1": "GND",
         "2": "ENC_A",
@@ -167,10 +167,10 @@
     {
       "ref": "J1",
       "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical",
-      "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1",
+      "replaced_by": "nothing is fitted: the four 26 AWG S37/S38 wires are soldered into this land (W2 PCB-SB1); a graph ref for the land (ENC domain, mount pcb_pad) is pending in design/E3.json (GR lineage)",
       "pending": "header ref pending GR-3",
-      "pins_source": "build/16-dzhgut-rozyemy.csv:60 and :62 (X37S1-ENCM / X38S1-ENCV: PH 4, pins GND, A, B, PRESS; synthesized, not a graph ref)",
-      "why": "No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm (encoder at 90 deg) and a vertical PH is 8 mm tall against the 6.5 mm envelope (tools/assembly_data.py:120-121). The pilot keeps a 2.0 mm 4-pad land in the contract edge zone left [6, 18]; the header choice stays with GR-3/PCB-SB1/MECH-4."
+      "pins_source": "build/16-dzhgut-rozyemy.csv:49 and :50 (X37S0-ENCM / X38S0-ENCV: synthesized ENC ends of S37/S38, pins GND, A, B, PRESS, not graph refs) in the contact order of the CTRL ends J316/J317 (:37, :38; design/E3.json J316/J317 pins 1-4 GND, ENCx_A_RAW, ENCx_B_RAW, ENCx_PRESS_EXT)",
+      "why": "No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm (encoder at 90 deg) and a vertical PH is 8 mm tall against the 6.5 mm envelope (tools/assembly_data.py:120-121). Decision (W2 PCB-SB1, build/15): the pilot's 2.0 mm 4-pad land stays as the solder-wire land of the S37/S38 pigtail, in the contract edge zone left [6, 18] (pads at y 9-15); the PH 4 housing is only at the CTRL end (J316/J317 S4B-PH-K). Land: KiCad 10.0.7 PinHeader_1x04_P2.00mm_Vertical, drill 0.8, pad 1.35 (gitlab raw 10.0.7, read 2026-11-07, sha256 as above); wire: Alpha Wire 5853, 26 AWG 7/34, OD 0.99 mm (design/parts/snapshots/2026-11-07-w2-src1-manual.json web:alphawire-5853), stripped end through the 0.8 mm hole."
     }
   ],
   "placement": [
@@ -772,7 +772,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 525,
+            "external_refs": 527,
             "external_sample": [
               "A401",
               "A402",
@@ -851,7 +851,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 525,
+            "external_refs": 527,
             "external_sample": [
               "A401",
               "A402",

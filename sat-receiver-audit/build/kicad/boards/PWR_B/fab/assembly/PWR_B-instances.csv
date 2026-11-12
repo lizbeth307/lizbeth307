@@ -1,5 +1,4 @@
 "Instance","Placement","Qty","Template ref","Graph ref"
-"PWRB","default","1","B2B1","none (pilot_placeholder)"
 "PWRB","default","1","C232","C232"
 "PWRB","default","1","C233","C233"
 "PWRB","default","1","C234","C234"
@@ -47,6 +46,7 @@
 "PWRB","default","1","J203","J203"
 "PWRB","default","1","J204","J204"
 "PWRB","default","1","J207","J207"
+"PWRB","default","1","J209","J209"
 "PWRB","default","1","J506","J506"
 "PWRB","default","1","J508","J508"
 "PWRB","default","1","L206","L206"

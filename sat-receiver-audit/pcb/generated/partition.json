@@ -1,12 +1,12 @@
 {
   "summary": {
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-    "components": 849,
-    "schematic_contacts": 2742,
-    "connected_contacts": 2579,
+    "components": 851,
+    "schematic_contacts": 2942,
+    "connected_contacts": 2717,
     "nets": 486,
     "categories": {
-      "bare_board_part": 746,
+      "bare_board_part": 748,
       "harness_assembly": 13,
       "integral_to_host_part": 2,
       "mechanical_or_remote_part": 11,
@@ -23,8 +23,8 @@
       "HDMI_INSERT": 5,
       "IMU_CARRIER": 12,
       "PACK_FUSE": 3,
-      "PWR_BRANCH": 169,
-      "PWR_BRANCH_SW": 107,
+      "PWR_BRANCH": 170,
+      "PWR_BRANCH_SW": 108,
       "PWR_MAIN": 67,
       "RF_HF": 14,
       "RF_HMC": 54,
@@ -33,12 +33,12 @@
       "USB_POWER": 20,
       "USB_POWER_SW": 21
     },
-    "graph_assigned_footprints": 747,
-    "portable_graph_assignments": 747,
+    "graph_assigned_footprints": 749,
+    "portable_graph_assignments": 749,
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2579,
+    "xml_compared_connected_pins": 2717,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
@@ -58,7 +58,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721"
+        "sha256": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db"
       },
       {
         "file": "design/E3.json",
@@ -66,7 +66,7 @@
       },
       {
         "file": "design/E4.json",
-        "sha256": "b7e76b58e992f767726d4d2481d1100987e9cb296a45784f9ebbaac260872595"
+        "sha256": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09"
       },
       {
         "file": "design/E5.json",
@@ -74,11 +74,11 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "2359c03ba0e9e32355e105286c61dcb3463dd69322f3443c894da88289203209"
+        "sha256": "6b9b480ac6f99aaaad27011715b89d5041b16991208551979465eed412dc4748"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "1ef65f1355006a9eac2291e8294f7a279b89b050ff92e33fc0d2cd4b8015d645"
+        "sha256": "ac05a06f77f55061928086aa8f49e5061df3a29c77aff892e66c2cdcc46a1cac"
       }
     ],
     "source_documents": [
@@ -187,11 +187,11 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "dea2e2766cbadcce296fabe587f76436c156e8b60b73c5ca0539f2ea0ee6fbc7"
+      "projection_sha256": "765074bb0546eb8e1a8d854432b1a8b3abc3adb2ba4fa5b4f125e27793b17ea0"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
-      "sha256": "96c2093e38b997474060037dcb22a1091ec98fedc0c6e6aee3f9f2b7e8062745",
+      "sha256": "c7a0b21ae331d6138db1d22f9ef9db2ea77eb03fa36e67e456e2581ee9b8bd02",
       "b2b_currents": "tools/assembly_data.py NET_CURRENT"
     }
   },
@@ -211,7 +211,7 @@
       ]
     },
     "PWR_BRANCH_SW": {
-      "purpose": "PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec QSH/QTH pair (b2b-nets.json).",
+      "purpose": "PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec LSHM-150 pair J208 (PWR-A top) / J209 (PWR-B bottom) (b2b-nets.json, W2 B2B).",
       "source": [
         "pcb/partition-spec.json",
         "design/E2-review.md"
@@ -349,8 +349,8 @@
         "PWR_BRANCH_SW",
         "USB_POWER_SW"
       ],
-      "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec QSH-060-01-L-D-A / QTH-060-01-L-D-A pair (pcb/generated/b2b-nets.json: ceil(I_protection / 1 A) contacts per power net plus one adjacent GND, 25 A ground plane); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
-      "source": "pcb/partition-spec.json (W2 AREA); Samtec QSH/QTH specification Rev K"
+      "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec LSHM-150-02.5-L-DV-A-N-K-TR pair J208 (PWR-A top) / J209 (PWR-B bottom), 5.00 mm mated (pcb/generated/b2b-nets.json contacts: ceil(I_protection / 1 A) contacts per power net, no ground plane, so every rail contact (power, sense/supply tap, rail node) has its GND return in the same column and only GND contacts beside it in its row (b2b.guard_rule); pin n of J208 meets pin n+1 (n odd) / n-1 (n even) of J209); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
+      "source": "pcb/partition-spec.json (W2 AREA, W2 B2B); Samtec LSHM specification Rev H, catalogue F-224, print Rev Z note 4"
     },
     {
       "id": "DC-01",
@@ -5767,6 +5767,40 @@
       "pin_count": 12,
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
+    },
+    {
+      "ref": "J208",
+      "sheet": "E2",
+      "mount": "pcb_smt",
+      "value": "B2B-PWRA: Samtec LSHM-150 2×50, PWR-A верх, стик 5.00 мм",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "PWR_BRANCH",
+      "dnp": false,
+      "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 100,
+      "source": "pcb/generated/b2b-nets.json contacts (pcb/prepare.py b2b_contacts); pcb/partition-spec.json b2b (W2 B2B)",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "J209",
+      "sheet": "E2",
+      "mount": "pcb_smt",
+      "value": "B2B-PWRB: Samtec LSHM-150 2×50, PWR-B низ, стик 5.00 мм",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "PWR_BRANCH_SW",
+      "dnp": false,
+      "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 100,
+      "source": "pcb/generated/b2b-nets.json contacts (pcb/prepare.py b2b_contacts); pcb/partition-spec.json b2b (W2 B2B)",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
       "ref": "J301",
@@ -14951,7 +14985,7 @@
       "ref": "J301",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) — родина IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці, бокс XDFH-0254-2*20P J304 на CTRL. Зафіксовано (W2 MECH-6): стрічка — 3M 3365/40 (assembly_items AI-IDC-RIBBON-40: 40 × 28 AWG, крок 1.27, 50.80 × 0.89 мм, рядок SRC-1 digikey:19-3365/40300-DS-ND), дві половини по 20, укладені одна на одну, крізь проріз SL1 27.5 × 3.8 (M-07; R-PLATE-SLOT-FILL PASS, модель); S01 (UART7) за трасою моделі в межах 200 мм, а PPS/UART6 ідуть гілкою PPS (R-PPS-LEN PASS, модель, і в найгіршому випадку; mechanical/generated/harness-routes.json). Відкрито: висота бокса J304 проти CTRL 5.5 мм (креслення XDFH-0254 не читається, еталон 9.1 мм — R-HDR-HEIGHT OPEN), креслення гнізда XDFH-0258 (стикування зі стрічкою 1.27 мм) і орієнтація контакту 1 J20 (на карті розміщення Radxa V1.21 мітки немає) — тому запис лишається interface_open (запис J-Q6A-EXISTING охоплює вісім ref)."
     },
     {
       "ref": "J303",
@@ -14999,7 +15033,7 @@
       "ref": "J407",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.011 (W407, P7): довжину різьби й виріз з лискою (D-Cut) рядок READS-RF web:taoglas-cab011-datasheet-spe-11-8-068-f (07.11.2026) не містить, а пігтейл P7 замінює MECH-6 (B-06: 95 мм не дістає LC76G), тож виріз, різьба (R-SMA-THREAD OPEN для P7), ущільнення й момент — TBD."
+      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.01029 (W407, P7, W2 MECH-6): водозахищена родина каталогу Taoglas SPE-24-8-198-C с.11 (рядок READS-RF): різьба 1/4-36UNS-2A довжиною 11.4 ±0.3, деталі 5 (1.75 ±0.2) і 6 (1.1 ±0.3) зовні; на кресленні с.11 біля фланця показано круглий переріз ущільнення, але в BOM CAB.0243 (рядок READS-RF web:taoglas-cab0243-datasheet-spe-24-8-147-a) окремого кільця немає, а DigiKey ступеня IP не наводить — ущільнення фланця перевірити на вхідному контролі й на T-07 (IPX4, build/09); виріз ⌀6.5 (вибір конструкції 6.35 + 0.15, отвору креслення не дає; M-02 P7, mechanical/params/parts.json taoglas_mhf1_sma_wp); після стінки 4.5 і деталей 5 + 6 лишається 3.25 мм ≥ 3 витки (R-SMA-THREAD PASS, модель). Відкрито: момент гайки й ущільнення вирізу (T-07), стикування вилки I-PEX MHF I з гніздом IPEX Waveshare 24370 — вхідний контроль."
     },
     {
       "ref": "J408",

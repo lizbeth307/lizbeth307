@@ -2,24 +2,26 @@
   "schema": "srrx-harness-routes-v1",
   "status": "MODEL ESTIMATE: centreline routes through the enclosure model; not cut lengths measured on a built unit. OPEN (end provisional) = an end is a board edge zone or a module without an envelope.",
   "source": "mechanical/params/mechanical.json harness_routes + layout (mechanical/build.py)",
-  "length_rule": "length_mm = polyline + bend allowance (bundle OD / 2 x bend angle) + service loops 15 + 15 mm, rounded up to 1 mm; bundle OD = largest insulation the end terminals accept x sqrt(wires / 0.6) (upper bound until AI-WIRE-PTFE is chosen)",
+  "length_rule": "length_mm = polyline + bend allowance (bundle OD / 2 x bend angle) + service loops 15 + 15 mm, rounded up to 1 mm; bundle OD = largest wire OD (chosen PTFE wire, nominal + tolerance; parts.json hookup_wire_ptfe) x sqrt(wires / 0.6); a gauge without a read OD takes the largest insulation its terminals accept; coax routes: no service loops",
   "pps": {
     "limit_mm": 200.0,
     "via_segments": [
       "S01",
       "S25"
     ],
-    "via_segments_mm": 322,
+    "via_segments_mm": 301,
     "via_segments_provisional": true,
     "decision": "PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1)",
     "branch": "PPS",
-    "branch_mm": 196,
+    "branch_mm": 158,
     "branch_provisional": true,
     "branch_provisional_ends": [
-      "J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
-      "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"
+      "J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
+      "P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm"
     ],
-    "value_mm": 196
+    "value_mm": 158,
+    "branch_bound_mm": 23.1,
+    "branch_max_mm": 182
   },
   "segments": {
     "S01": {
@@ -37,17 +39,17 @@
         ],
         [
           194.43,
-          95.8,
+          94.8,
           14.4
         ],
         [
           175.2,
-          95.8,
+          94.8,
           14.4
         ],
         [
           175.2,
-          95.8,
+          94.8,
           62.98
         ],
         [
@@ -56,21 +58,21 @@
           62.98
         ]
       ],
-      "path_mm": 70.1,
+      "path_mm": 69.5,
       "bends": 3,
       "bundle_od_mm": 2.54,
       "wires": 27,
       "bend_allowance_mm": 6.0,
       "service_loops_mm": 30.0,
-      "length_mm": 107,
+      "length_mm": 106,
       "through": [
         "SL1"
       ],
       "crossings": [],
       "provisional": [
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J304 (X01I1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J304 (X01I1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S02": {
@@ -79,7 +81,7 @@
         "CTRL",
         "PWR"
       ],
-      "note": "front layer: CTRL left edge, down at y 78, west along y 74.25 to the PWR right edge zone",
+      "note": "front layer: CTRL left edge, down at y 78, west along y 74.25 to the PWR-B right edge zone (J201-J203 on PWR-B; the LAB5 pair to J104 on PWR-A breaks out at the same edge, W2 MECH-6 after GR-3)",
       "points_mm": [
         [
           176.0,
@@ -119,23 +121,23 @@
         [
           142.0,
           70.0,
-          47.5
+          54.1
         ]
       ],
-      "path_mm": 84.6,
+      "path_mm": 91.1,
       "bends": 6,
-      "bundle_od_mm": 16.55,
+      "bundle_od_mm": 14.04,
       "wires": 48,
-      "bend_allowance_mm": 78.0,
+      "bend_allowance_mm": 66.2,
       "service_loops_mm": 30.0,
-      "length_mm": 193,
+      "length_mm": 188,
       "through": [],
       "crossings": [],
       "provisional": [
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J302 (CTRL), J305 (X02P1-CTRL, CTRL), J306 (S02-CTRL-SIG-1, CTRL), J307 (S02-CTRL-SIG-2, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
+        "J104 (X02P1-PWR, PWR_A), J201 (X02S0-PWR, PWR_B), J202 (S02-PWR-SIG-1, PWR_B), J203 (S02-PWR-SIG-2, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0"
       ],
-      "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J302 (CTRL), J305 (X02P1-CTRL, CTRL), J306 (S02-CTRL-SIG-1, CTRL), J307 (S02-CTRL-SIG-2, CTRL) position TBD (board placement): end on the CTRL edge zone 0; J104 (X02P1-PWR, PWR_A), J201 (X02S0-PWR, PWR_B), J202 (S02-PWR-SIG-1, PWR_B), J203 (S02-PWR-SIG-2, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0",
       "in_build16": true
     },
     "S03": {
@@ -172,28 +174,28 @@
           42.5
         ],
         [
-          124.25,
+          124.5,
           74.25,
           42.5
         ],
         [
-          124.25,
+          124.5,
           74.25,
           33.0
         ],
         [
-          124.25,
-          95.8,
+          124.5,
+          94.8,
           33.0
         ],
         [
           180.9,
-          95.8,
+          94.8,
           33.0
         ],
         [
           180.9,
-          95.8,
+          94.8,
           7.1
         ],
         [
@@ -217,23 +219,23 @@
           31.5
         ]
       ],
-      "path_mm": 223.2,
+      "path_mm": 222.7,
       "bends": 11,
-      "bundle_od_mm": 6.71,
+      "bundle_od_mm": 4.87,
       "wires": 12,
-      "bend_allowance_mm": 58.0,
+      "bend_allowance_mm": 42.1,
       "service_loops_mm": 30.0,
-      "length_mm": 312,
+      "length_mm": 295,
       "through": [
         "SL2",
         "N4"
       ],
       "crossings": [],
       "provisional": [
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
-        "RF header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J308 (X03S1-CTRL, CTRL), J309 (X03S2-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
+        "J418 (X03S1-RF, RF), J419 (X03S2-RF, RF) position TBD (board placement): end on the RF edge zone 2"
       ],
-      "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; RF header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J308 (X03S1-CTRL, CTRL), J309 (X03S2-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0; J418 (X03S1-RF, RF), J419 (X03S2-RF, RF) position TBD (board placement): end on the RF edge zone 2",
       "in_build16": true
     },
     "S04": {
@@ -242,17 +244,17 @@
         "PWR",
         "RF"
       ],
-      "note": "PWR top edge zone over SL2, rear layer, notch N4, RF bottom edge",
+      "note": "PWR-B top edge zone (J204) over SL2, rear layer, notch N4, RF bottom edge",
       "points_mm": [
         [
           124.0,
           73.5,
-          47.5
+          54.1
         ],
         [
           124.0,
           74.25,
-          47.5
+          54.1
         ],
         [
           124.0,
@@ -261,17 +263,17 @@
         ],
         [
           124.0,
-          95.8,
+          94.8,
           33.0
         ],
         [
           185.1,
-          95.8,
+          94.8,
           33.0
         ],
         [
           185.1,
-          95.8,
+          94.8,
           7.1
         ],
         [
@@ -295,23 +297,23 @@
           31.5
         ]
       ],
-      "path_mm": 151.4,
+      "path_mm": 158.0,
       "bends": 7,
-      "bundle_od_mm": 5.48,
+      "bundle_od_mm": 3.51,
       "wires": 8,
-      "bend_allowance_mm": 30.1,
+      "bend_allowance_mm": 19.3,
       "service_loops_mm": 30.0,
-      "length_mm": 212,
+      "length_mm": 208,
       "through": [
         "SL2",
         "N4"
       ],
       "crossings": [],
       "provisional": [
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
-        "RF header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J204 (X04S1-PWR, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1",
+        "J420 (X04S1-RF, RF) position TBD (board placement): end on the RF edge zone 2"
       ],
-      "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone; RF header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J204 (X04S1-PWR, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1; J420 (X04S1-RF, RF) position TBD (board placement): end on the RF edge zone 2",
       "in_build16": true
     },
     "S05": {
@@ -335,7 +337,7 @@
       ],
       "path_mm": 4.8,
       "bends": 0,
-      "bundle_od_mm": 6.93,
+      "bundle_od_mm": 4.2,
       "wires": 3,
       "bend_allowance_mm": 0.0,
       "service_loops_mm": 30.0,
@@ -344,9 +346,9 @@
       "crossings": [],
       "provisional": [
         "F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J105 (X05J1-PWR, PWR_A), J109 (X05S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
       ],
-      "status": "OPEN (end provisional): F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face; J105 (X05J1-PWR, PWR_A), J109 (X05S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0",
       "in_build16": true
     },
     "S06": {
@@ -355,7 +357,7 @@
         "PWR",
         "INA"
       ],
-      "note": "SL2, rear layer: shaft between the HF+ can and the hatch bay, west along y 74.25 under the HF+ can, down to the INA228 envelope (W2 MECH-3)",
+      "note": "SL2, rear layer: shaft between the HF+ can and the hatch bay, west along y 68 under the HF+ can (between the INA228 top and the LC76G, W2 MECH-6), down to the INA228 envelope (W2 MECH-3)",
       "points_mm": [
         [
           122.0,
@@ -380,35 +382,40 @@
         [
           115.3,
           74.25,
-          10.55
+          11.05
         ],
         [
-          82.7,
-          74.25,
-          10.55
+          115.3,
+          68.0,
+          11.05
         ],
         [
-          82.7,
+          41.4,
+          68.0,
+          11.05
+        ],
+        [
+          41.4,
           64.8,
-          10.55
+          11.05
         ]
       ],
-      "path_mm": 86.5,
-      "bends": 5,
-      "bundle_od_mm": 10.59,
+      "path_mm": 127.3,
+      "bends": 6,
+      "bundle_od_mm": 6.42,
       "wires": 7,
-      "bend_allowance_mm": 41.6,
+      "bend_allowance_mm": 30.3,
       "service_loops_mm": 30.0,
-      "length_mm": 159,
+      "length_mm": 188,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J106 (X06J1-PWR, PWR_A), J110 (X06S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       ],
-      "status": "OPEN (end provisional): INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope; J106 (X06J1-PWR, PWR_A), J110 (X06S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3",
       "in_build16": true
     },
     "S07": {
@@ -457,20 +464,20 @@
       ],
       "path_mm": 70.1,
       "bends": 5,
-      "bundle_od_mm": 8.95,
+      "bundle_od_mm": 5.43,
       "wires": 5,
-      "bend_allowance_mm": 35.1,
+      "bend_allowance_mm": 21.3,
       "service_loops_mm": 30.0,
-      "length_mm": 136,
+      "length_mm": 122,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "#2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J107 (X07J1-PWR, PWR_A), J111 (X07S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       ],
-      "status": "OPEN (end provisional): #2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): #2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope; J107 (X07J1-PWR, PWR_A), J111 (X07S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3",
       "in_build16": true
     },
     "S10": {
@@ -534,17 +541,17 @@
       ],
       "path_mm": 150.8,
       "bends": 8,
-      "bundle_od_mm": 10.59,
+      "bundle_od_mm": 6.42,
       "wires": 7,
-      "bend_allowance_mm": 66.5,
+      "bend_allowance_mm": 40.3,
       "service_loops_mm": 30.0,
-      "length_mm": 248,
+      "length_mm": 222,
       "through": [],
       "crossings": [],
       "provisional": [
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J108 (X10J1-PWR, PWR_A), J112 (X10S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
       ],
-      "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J108 (X10J1-PWR, PWR_A), J112 (X10S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0",
       "in_build16": true
     },
     "S11": {
@@ -562,21 +569,21 @@
         ],
         [
           189.0,
-          12.005,
+          11.421,
           24.0
         ],
         [
-          212.75,
-          12.005,
+          213.75,
+          11.421,
           24.0
         ],
         [
-          212.75,
-          12.005,
+          213.75,
+          11.421,
           53.0
         ],
         [
-          212.75,
+          213.75,
           38.2,
           53.0
         ],
@@ -596,13 +603,13 @@
           47.5
         ]
       ],
-      "path_mm": 175.6,
+      "path_mm": 177.6,
       "bends": 6,
-      "bundle_od_mm": 4.78,
+      "bundle_od_mm": 4.05,
       "wires": 4,
-      "bend_allowance_mm": 22.5,
+      "bend_allowance_mm": 19.1,
       "service_loops_mm": 30.0,
-      "length_mm": 229,
+      "length_mm": 227,
       "through": [
         "SL3"
       ],
@@ -612,7 +619,7 @@
       ],
       "provisional": [
         "behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J113 (X11S1-PWR, PWR_A), J114 (X11P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1"
       ],
       "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 2 through nut.LAB_BUS; piece 3 through nut.LAB_BUS",
       "in_build16": true
@@ -638,7 +645,7 @@
       ],
       "path_mm": 4.8,
       "bends": 0,
-      "bundle_od_mm": 3.38,
+      "bundle_od_mm": 2.87,
       "wires": 2,
       "bend_allowance_mm": 0.0,
       "service_loops_mm": 30.0,
@@ -647,9 +654,9 @@
       "crossings": [],
       "provisional": [
         "XT30 pigtail place in the battery compartment TBD: end on the pack top face",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J115 (X12P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
       ],
-      "status": "OPEN (end provisional): XT30 pigtail place in the battery compartment TBD: end on the pack top face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): XT30 pigtail place in the battery compartment TBD: end on the pack top face; J115 (X12P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0",
       "in_build16": true
     },
     "S13": {
@@ -703,9 +710,9 @@
       ],
       "path_mm": 87.4,
       "bends": 6,
-      "bundle_od_mm": 2.74,
+      "bundle_od_mm": 2.87,
       "wires": 2,
-      "bend_allowance_mm": 12.9,
+      "bend_allowance_mm": 13.5,
       "service_loops_mm": 30.0,
       "length_mm": 131,
       "through": [
@@ -714,9 +721,9 @@
       "crossings": [],
       "provisional": [
         "Adafruit 5997 has no envelope (mechanical/README): end below the Q6A USB stack (J2)",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       ],
-      "status": "OPEN (end provisional): Adafruit 5997 has no envelope (mechanical/README): end below the Q6A USB stack (J2); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): Adafruit 5997 has no envelope (mechanical/README): end below the Q6A USB stack (J2); J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3",
       "in_build16": true
     },
     "S14": {
@@ -755,9 +762,9 @@
       ],
       "path_mm": 34.8,
       "bends": 1,
-      "bundle_od_mm": 3.38,
+      "bundle_od_mm": 2.87,
       "wires": 2,
-      "bend_allowance_mm": 2.7,
+      "bend_allowance_mm": 2.3,
       "service_loops_mm": 30.0,
       "length_mm": 68,
       "through": [
@@ -766,9 +773,9 @@
       "crossings": [],
       "provisional": [
         "hatch-board layout TBD (W2-05): end on the hatch-board envelope",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       ],
-      "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3",
       "in_build16": true
     },
     "S15": {
@@ -805,12 +812,12 @@
           42.5
         ],
         [
-          117.95,
+          118.02,
           74.25,
           42.5
         ],
         [
-          117.95,
+          118.02,
           74.25,
           33.0
         ],
@@ -827,20 +834,20 @@
       ],
       "path_mm": 119.4,
       "bends": 7,
-      "bundle_od_mm": 1.94,
+      "bundle_od_mm": 1.41,
       "wires": 1,
-      "bend_allowance_mm": 10.7,
+      "bend_allowance_mm": 7.8,
       "service_loops_mm": 30.0,
-      "length_mm": 161,
+      "length_mm": 158,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "hatch-board layout TBD (W2-05): end on the hatch-board envelope",
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J310 (S15-30-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; J310 (S15-30-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S16": {
@@ -874,11 +881,11 @@
       ],
       "path_mm": 86.2,
       "bends": 2,
-      "bundle_od_mm": 4.14,
+      "bundle_od_mm": 3.51,
       "wires": 3,
-      "bend_allowance_mm": 6.5,
+      "bend_allowance_mm": 5.5,
       "service_loops_mm": 30.0,
-      "length_mm": 123,
+      "length_mm": 122,
       "through": [],
       "crossings": [],
       "provisional": [
@@ -893,7 +900,7 @@
         "PWR",
         "Q6A.CORE"
       ],
-      "note": "SL2, rear layer east to the Q6A board edge",
+      "note": "SL2, rear layer east to the Q6A left edge, then in the 6 mm gap between the Q6A bottom side and the plate (above the 3.7 mm bottom parts) to the VCC_3V3_MKEY tap C17 (parts.json q6a.mkey_tap, W2 MECH-6 B-07); both wires to the two C17 pads",
       "points_mm": [
         [
           132.0,
@@ -916,27 +923,41 @@
           33.0
         ],
         [
-          142.0,
+          141.0,
           74.25,
-          36.2
+          37.3
+        ],
+        [
+          141.0,
+          79.62,
+          37.3
+        ],
+        [
+          217.86,
+          79.62,
+          37.3
+        ],
+        [
+          217.86,
+          79.62,
+          32.5
         ]
       ],
-      "path_mm": 27.6,
-      "bends": 3,
-      "bundle_od_mm": 2.74,
+      "path_mm": 115.6,
+      "bends": 6,
+      "bundle_od_mm": 2.87,
       "wires": 2,
-      "bend_allowance_mm": 6.0,
+      "bend_allowance_mm": 13.5,
       "service_loops_mm": 30.0,
-      "length_mm": 64,
+      "length_mm": 160,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
-        "VCC_3V3_MKEY tap on the Q6A not chosen (E5/E2; MECH-6 B-07): end at the Q6A board edge",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       ],
-      "status": "OPEN (end provisional): VCC_3V3_MKEY tap on the Q6A not chosen (E5/E2; MECH-6 B-07): end at the Q6A board edge; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3",
       "in_build16": true
     },
     "S18": {
@@ -964,12 +985,12 @@
         ],
         [
           130.0,
-          95.8,
+          94.8,
           33.0
         ],
         [
           210.5,
-          95.8,
+          94.8,
           33.0
         ],
         [
@@ -978,22 +999,22 @@
           38.5
         ]
       ],
-      "path_mm": 122.8,
+      "path_mm": 121.9,
       "bends": 4,
-      "bundle_od_mm": 2.74,
+      "bundle_od_mm": 2.87,
       "wires": 2,
-      "bend_allowance_mm": 8.6,
+      "bend_allowance_mm": 9.0,
       "service_loops_mm": 30.0,
-      "length_mm": 162,
+      "length_mm": 161,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "R44SF envelope TBD: end at the riser window (plate rear face)",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       ],
-      "status": "OPEN (end provisional): R44SF envelope TBD: end at the riser window (plate rear face); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): R44SF envelope TBD: end at the riser window (plate rear face); J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3",
       "in_build16": true
     },
     "S19": {
@@ -1022,18 +1043,18 @@
       ],
       "path_mm": 5.0,
       "bends": 1,
-      "bundle_od_mm": 3.38,
+      "bundle_od_mm": 2.87,
       "wires": 2,
-      "bend_allowance_mm": 2.7,
+      "bend_allowance_mm": 2.3,
       "service_loops_mm": 30.0,
       "length_mm": 38,
       "through": [],
       "crossings": [],
       "provisional": [
         "barrel jack position on the Wisecoco HDMI board TBD (STACK D5): end on the board envelope",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J205 (X19P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 2"
       ],
-      "status": "OPEN (end provisional): barrel jack position on the Wisecoco HDMI board TBD (STACK D5): end on the board envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): barrel jack position on the Wisecoco HDMI board TBD (STACK D5): end on the board envelope; J205 (X19P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 2",
       "in_build16": true
     },
     "S20": {
@@ -1047,12 +1068,12 @@
         [
           116.5,
           73.5,
-          47.5
+          54.1
         ],
         [
           116.5,
           74.25,
-          47.5
+          54.1
         ],
         [
           116.5,
@@ -1061,17 +1082,17 @@
         ],
         [
           116.5,
-          95.8,
+          94.8,
           33.0
         ],
         [
           198.25,
-          95.8,
+          94.8,
           33.0
         ],
         [
           198.25,
-          95.8,
+          94.8,
           7.1
         ],
         [
@@ -1080,13 +1101,13 @@
           7.1
         ]
       ],
-      "path_mm": 146.4,
+      "path_mm": 153.1,
       "bends": 5,
-      "bundle_od_mm": 2.74,
+      "bundle_od_mm": 1.75,
       "wires": 2,
-      "bend_allowance_mm": 10.8,
+      "bend_allowance_mm": 6.9,
       "service_loops_mm": 30.0,
-      "length_mm": 188,
+      "length_mm": 190,
       "through": [
         "SL2",
         "N2"
@@ -1094,9 +1115,9 @@
       "crossings": [],
       "provisional": [
         "J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       ],
-      "status": "OPEN (end provisional): J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead; J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1",
       "in_build16": true
     },
     "S21": {
@@ -1110,12 +1131,12 @@
         [
           120.0,
           73.5,
-          47.5
+          54.1
         ],
         [
           120.0,
           74.25,
-          47.5
+          54.1
         ],
         [
           120.0,
@@ -1124,17 +1145,17 @@
         ],
         [
           120.0,
-          95.8,
+          94.8,
           33.0
         ],
         [
           205.25,
-          95.8,
+          94.8,
           33.0
         ],
         [
           205.25,
-          95.8,
+          94.8,
           13.1
         ],
         [
@@ -1143,13 +1164,13 @@
           13.1
         ]
       ],
-      "path_mm": 143.9,
+      "path_mm": 150.6,
       "bends": 5,
-      "bundle_od_mm": 2.74,
+      "bundle_od_mm": 1.75,
       "wires": 2,
-      "bend_allowance_mm": 10.8,
+      "bend_allowance_mm": 6.9,
       "service_loops_mm": 30.0,
-      "length_mm": 185,
+      "length_mm": 188,
       "through": [
         "SL2",
         "N3"
@@ -1157,9 +1178,9 @@
       "crossings": [],
       "provisional": [
         "J541 place TBD: end at notch N3 of the RTL-B USB lead",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       ],
-      "status": "OPEN (end provisional): J541 place TBD: end at notch N3 of the RTL-B USB lead; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J541 place TBD: end at notch N3 of the RTL-B USB lead; J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1",
       "in_build16": true
     },
     "S22": {
@@ -1173,12 +1194,12 @@
         [
           118.5,
           73.5,
-          47.5
+          54.1
         ],
         [
           118.5,
           74.25,
-          47.5
+          54.1
         ],
         [
           118.5,
@@ -1191,22 +1212,22 @@
           33.0
         ]
       ],
-      "path_mm": 19.2,
+      "path_mm": 25.8,
       "bends": 2,
-      "bundle_od_mm": 3.35,
+      "bundle_od_mm": 2.15,
       "wires": 3,
-      "bend_allowance_mm": 5.3,
+      "bend_allowance_mm": 3.4,
       "service_loops_mm": 30.0,
-      "length_mm": 55,
+      "length_mm": 60,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       ],
-      "status": "OPEN (end provisional): J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face; J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1",
       "in_build16": true
     },
     "S23": {
@@ -1220,17 +1241,17 @@
         [
           142.0,
           45.0,
-          47.5
+          54.1
         ],
         [
           143.0,
           45.0,
-          47.5
+          54.1
         ],
         [
           143.0,
           38.2,
-          47.5
+          54.1
         ],
         [
           143.0,
@@ -1238,23 +1259,23 @@
           53.0
         ],
         [
-          212.75,
+          213.75,
           38.2,
           53.0
         ],
         [
-          212.75,
-          12.005,
+          213.75,
+          11.421,
           53.0
         ],
         [
-          212.75,
-          12.005,
+          213.75,
+          11.421,
           20.0
         ],
         [
           172.0,
-          12.005,
+          11.421,
           20.0
         ],
         [
@@ -1263,13 +1284,13 @@
           24.0
         ]
       ],
-      "path_mm": 193.3,
+      "path_mm": 191.0,
       "bends": 7,
-      "bundle_od_mm": 3.35,
+      "bundle_od_mm": 2.15,
       "wires": 3,
-      "bend_allowance_mm": 18.4,
+      "bend_allowance_mm": 11.8,
       "service_loops_mm": 30.0,
-      "length_mm": 242,
+      "length_mm": 233,
       "through": [
         "SL3"
       ],
@@ -1278,7 +1299,7 @@
       ],
       "provisional": [
         "behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J506 (X23S1-PWR, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0"
       ],
       "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS",
       "in_build16": true
@@ -1317,12 +1338,12 @@
           42.5
         ],
         [
-          132.475,
+          132.96,
           74.25,
           42.5
         ],
         [
-          132.475,
+          132.96,
           74.25,
           33.0
         ],
@@ -1347,22 +1368,22 @@
           12.0
         ]
       ],
-      "path_mm": 143.0,
+      "path_mm": 142.1,
       "bends": 9,
-      "bundle_od_mm": 3.35,
+      "bundle_od_mm": 2.44,
       "wires": 3,
-      "bend_allowance_mm": 23.7,
+      "bend_allowance_mm": 17.2,
       "service_loops_mm": 30.0,
-      "length_mm": 197,
+      "length_mm": 190,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "T7_INSERT envelope TBD (in the USB3 cable between Q6A J5 and the T7 gland): end beside the gland",
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J311 (S24-25-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): T7_INSERT envelope TBD (in the USB3 cable between Q6A J5 and the T7 gland): end beside the gland; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): T7_INSERT envelope TBD (in the USB3 cable between Q6A J5 and the T7 gland): end beside the gland; J311 (S24-25-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S25": {
@@ -1371,7 +1392,7 @@
         "CTRL",
         "GNSS"
       ],
-      "note": "front layer to SL2, rear layer: shaft between the HF+ can and the hatch bay, west under the HF+ can to the LC76G",
+      "note": "front layer to SL2, rear layer: down the shaft between the HF+ can and the hatch bay, west under the HF+ can to the MX1.25 P1 edge of the LC76G (W2 MECH-6: P1 position from the Waveshare outline drawing, parts.json lc76g)",
       "points_mm": [
         [
           176.0,
@@ -1399,12 +1420,12 @@
           42.5
         ],
         [
-          124.25,
+          124.5,
           74.25,
           42.5
         ],
         [
-          124.25,
+          124.5,
           74.25,
           33.0
         ],
@@ -1419,27 +1440,31 @@
           9.55
         ],
         [
-          71.6,
-          74.25,
+          89.1,
+          83.5,
+          9.55
+        ],
+        [
+          88.5,
+          83.5,
           9.55
         ]
       ],
-      "path_mm": 163.6,
-      "bends": 8,
-      "bundle_od_mm": 3.35,
+      "path_mm": 148.3,
+      "bends": 9,
+      "bundle_od_mm": 2.44,
       "wires": 3,
-      "bend_allowance_mm": 21.0,
+      "bend_allowance_mm": 15.7,
       "service_loops_mm": 30.0,
-      "length_mm": 215,
+      "length_mm": 195,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
-        "P1 header position on the Waveshare 24370 board not read: end on the LC76G envelope face towards the route",
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J311 (S24-25-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): P1 header position on the Waveshare 24370 board not read: end on the LC76G envelope face towards the route; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J311 (S24-25-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S26": {
@@ -1468,23 +1493,25 @@
         [
           120.0,
           161.3,
-          64.08
+          63.0
         ]
       ],
-      "path_mm": 67.4,
+      "path_mm": 67.3,
       "bends": 1,
-      "bundle_od_mm": 3.87,
+      "bundle_od_mm": 2.81,
       "wires": 4,
-      "bend_allowance_mm": 3.0,
+      "bend_allowance_mm": 2.2,
       "service_loops_mm": 30.0,
-      "length_mm": 101,
+      "length_mm": 100,
       "through": [],
-      "crossings": [],
+      "crossings": [
+        "piece 3 through veml7700"
+      ],
       "provisional": [
         "Adafruit 4162 envelope TBD: end at the bezel window on the top wall",
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J312 (X26S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 3 through veml7700",
       "in_build16": true
     },
     "S27": {
@@ -1502,22 +1529,27 @@
         ],
         [
           164.0,
-          95.8,
+          94.8,
           15.4
         ],
         [
-          164.0,
-          95.8,
+          170.15,
+          94.8,
+          15.4
+        ],
+        [
+          170.15,
+          94.8,
           42.5
         ],
         [
           175.2,
-          95.8,
+          94.8,
           42.5
         ],
         [
           175.2,
-          95.8,
+          94.8,
           62.98
         ],
         [
@@ -1532,20 +1564,20 @@
         ]
       ],
       "path_mm": 71.6,
-      "bends": 5,
-      "bundle_od_mm": 3.35,
+      "bends": 6,
+      "bundle_od_mm": 2.44,
       "wires": 3,
-      "bend_allowance_mm": 13.2,
+      "bend_allowance_mm": 11.5,
       "service_loops_mm": 30.0,
-      "length_mm": 115,
+      "length_mm": 114,
       "through": [
         "SL1"
       ],
       "crossings": [],
       "provisional": [
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J313 (X27F1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J313 (X27F1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S28": {
@@ -1579,17 +1611,17 @@
       ],
       "path_mm": 9.0,
       "bends": 1,
-      "bundle_od_mm": 3.38,
+      "bundle_od_mm": 2.87,
       "wires": 2,
-      "bend_allowance_mm": 2.7,
+      "bend_allowance_mm": 2.3,
       "service_loops_mm": 30.0,
       "length_mm": 42,
       "through": [],
       "crossings": [],
       "provisional": [
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J314 (X28P1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J314 (X28P1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S29": {
@@ -1633,17 +1665,17 @@
       ],
       "path_mm": 39.3,
       "bends": 4,
-      "bundle_od_mm": 2.74,
+      "bundle_od_mm": 1.99,
       "wires": 2,
-      "bend_allowance_mm": 8.6,
+      "bend_allowance_mm": 6.3,
       "service_loops_mm": 30.0,
-      "length_mm": 78,
+      "length_mm": 76,
       "through": [],
       "crossings": [],
       "provisional": [
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J315 (X29S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J315 (X29S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S30": {
@@ -1680,12 +1712,12 @@
           42.5
         ],
         [
-          117.95,
+          118.02,
           74.25,
           42.5
         ],
         [
-          117.95,
+          118.02,
           74.25,
           33.0
         ],
@@ -1707,20 +1739,20 @@
       ],
       "path_mm": 129.2,
       "bends": 8,
-      "bundle_od_mm": 3.35,
+      "bundle_od_mm": 2.44,
       "wires": 3,
-      "bend_allowance_mm": 21.0,
+      "bend_allowance_mm": 15.3,
       "service_loops_mm": 30.0,
-      "length_mm": 181,
+      "length_mm": 175,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "hatch-board layout TBD (W2-05): J502 on the hatch-board envelope",
-        "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J310 (S15-30-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       ],
-      "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): J502 on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): J502 on the hatch-board envelope; J310 (S15-30-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S31": {
@@ -1754,11 +1786,11 @@
       ],
       "path_mm": 24.2,
       "bends": 2,
-      "bundle_od_mm": 2.74,
+      "bundle_od_mm": 1.99,
       "wires": 2,
-      "bend_allowance_mm": 3.1,
+      "bend_allowance_mm": 2.2,
       "service_loops_mm": 30.0,
-      "length_mm": 58,
+      "length_mm": 57,
       "through": [],
       "crossings": [],
       "provisional": [
@@ -1796,17 +1828,17 @@
           53.0
         ],
         [
-          212.75,
+          213.75,
           38.2,
           53.0
         ],
         [
-          212.75,
+          213.75,
           17.0,
           53.0
         ],
         [
-          212.75,
+          213.75,
           17.0,
           20.1
         ],
@@ -1816,21 +1848,21 @@
           20.1
         ]
       ],
-      "path_mm": 162.9,
+      "path_mm": 164.9,
       "bends": 6,
-      "bundle_od_mm": 3.87,
+      "bundle_od_mm": 2.81,
       "wires": 4,
-      "bend_allowance_mm": 18.2,
+      "bend_allowance_mm": 13.2,
       "service_loops_mm": 30.0,
-      "length_mm": 212,
+      "length_mm": 209,
       "through": [
         "SL3"
       ],
       "crossings": [],
       "provisional": [
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J507 (X32S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1"
       ],
-      "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J507 (X32S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1",
       "in_build16": true
     },
     "S33": {
@@ -1857,17 +1889,17 @@
         [
           142.0,
           41.0,
-          47.5
+          54.1
         ],
         [
           143.0,
           41.0,
-          47.5
+          54.1
         ],
         [
           143.0,
           38.2,
-          47.5
+          54.1
         ],
         [
           143.0,
@@ -1875,23 +1907,23 @@
           53.0
         ],
         [
-          212.75,
+          213.75,
           38.2,
           53.0
         ],
         [
-          212.75,
-          12.005,
+          213.75,
+          11.421,
           53.0
         ],
         [
-          212.75,
-          12.005,
+          213.75,
+          11.421,
           28.5
         ],
         [
           206.0,
-          12.005,
+          11.421,
           28.5
         ],
         [
@@ -1900,13 +1932,13 @@
           28.5
         ]
       ],
-      "path_mm": 146.0,
+      "path_mm": 143.6,
       "bends": 7,
-      "bundle_od_mm": 4.74,
+      "bundle_od_mm": 3.45,
       "wires": 6,
-      "bend_allowance_mm": 26.1,
+      "bend_allowance_mm": 19.0,
       "service_loops_mm": 30.0,
-      "length_mm": 203,
+      "length_mm": 193,
       "through": [
         "SL3"
       ],
@@ -1917,7 +1949,7 @@
       ],
       "provisional": [
         "behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J508 (X34S1-PWR, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0"
       ],
       "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS; piece 7 through nut.LAB_BUS; piece 8 through nut.LAB_BUS",
       "in_build16": true
@@ -1933,12 +1965,12 @@
         [
           115.6,
           73.5,
-          47.5
+          54.1
         ],
         [
           115.6,
           74.25,
-          47.5
+          54.1
         ],
         [
           115.6,
@@ -1947,12 +1979,12 @@
         ],
         [
           115.6,
-          95.8,
+          94.8,
           33.0
         ],
         [
           36.2,
-          95.8,
+          94.8,
           33.0
         ],
         [
@@ -1961,22 +1993,22 @@
           33.0
         ]
       ],
-      "path_mm": 117.5,
+      "path_mm": 122.1,
       "bends": 4,
-      "bundle_od_mm": 2.74,
+      "bundle_od_mm": 1.75,
       "wires": 2,
-      "bend_allowance_mm": 8.6,
+      "bend_allowance_mm": 5.5,
       "service_loops_mm": 30.0,
-      "length_mm": 157,
+      "length_mm": 158,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       ],
-      "status": "OPEN (end provisional): Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge; J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1",
       "in_build16": true
     },
     "S36": {
@@ -1990,12 +2022,12 @@
         [
           117.5,
           73.5,
-          47.5
+          54.1
         ],
         [
           117.5,
           74.25,
-          47.5
+          54.1
         ],
         [
           117.5,
@@ -2004,12 +2036,12 @@
         ],
         [
           117.5,
-          95.8,
+          94.8,
           33.0
         ],
         [
           214.0,
-          95.8,
+          94.8,
           33.0
         ],
         [
@@ -2023,22 +2055,22 @@
           30.0
         ]
       ],
-      "path_mm": 148.5,
+      "path_mm": 155.1,
       "bends": 5,
-      "bundle_od_mm": 2.74,
+      "bundle_od_mm": 1.75,
       "wires": 2,
-      "bend_allowance_mm": 10.8,
+      "bend_allowance_mm": 6.9,
       "service_loops_mm": 30.0,
-      "length_mm": 190,
+      "length_mm": 192,
       "through": [
         "SL2"
       ],
       "crossings": [],
       "provisional": [
         "J551 lead exit at the receptacle rear (0.2 m AWG 24 leads, soldered to the S36 wires, build/16): end at the rear face of the receptacle's inner envelope (nut.J551)",
-        "PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       ],
-      "status": "OPEN (end provisional): J551 lead exit at the receptacle rear (0.2 m AWG 24 leads, soldered to the S36 wires, build/16): end at the rear face of the receptacle's inner envelope (nut.J551); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): J551 lead exit at the receptacle rear (0.2 m AWG 24 leads, soldered to the S36 wires, build/16): end at the rear face of the receptacle's inner envelope (nut.J551); J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1",
       "in_build16": true
     },
     "S37": {
@@ -2062,7 +2094,7 @@
       ],
       "path_mm": 0.8,
       "bends": 0,
-      "bundle_od_mm": 3.87,
+      "bundle_od_mm": 2.81,
       "wires": 4,
       "bend_allowance_mm": 0.0,
       "service_loops_mm": 30.0,
@@ -2070,9 +2102,9 @@
       "through": [],
       "crossings": [],
       "provisional": [
-        "ENC header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "X37S0-ENCM (ENCM) position TBD (board placement): end on the ENC edge zone 0"
       ],
-      "status": "OPEN (end provisional): ENC header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): X37S0-ENCM (ENCM) position TBD (board placement): end on the ENC edge zone 0",
       "in_build16": true
     },
     "S38": {
@@ -2096,7 +2128,7 @@
       ],
       "path_mm": 0.8,
       "bends": 0,
-      "bundle_od_mm": 3.87,
+      "bundle_od_mm": 2.81,
       "wires": 4,
       "bend_allowance_mm": 0.0,
       "service_loops_mm": 30.0,
@@ -2104,9 +2136,9 @@
       "through": [],
       "crossings": [],
       "provisional": [
-        "ENC header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "X38S0-ENCV (ENCV) position TBD (board placement): end on the ENC edge zone 0"
       ],
-      "status": "OPEN (end provisional): ENC header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): X38S0-ENCV (ENCV) position TBD (board placement): end on the ENC edge zone 0",
       "in_build16": true
     },
     "S39": {
@@ -2115,12 +2147,42 @@
         "CTRL",
         "NTCP"
       ],
-      "points_mm": [],
-      "length_mm": null,
-      "provisional": [
-        "TH301 place on the panel rear heat spreader TBD (MECH-6 B-10)"
+      "note": "front layer: CTRL left edge at y 100, down below the panel back, west to the TH301 bead (layout ntc_panel, W2 MECH-6 B-10); the wires are soldered to the bead leads >= 6 mm from the bead (E3 note)",
+      "points_mm": [
+        [
+          176.0,
+          100.0,
+          62.98
+        ],
+        [
+          175.2,
+          100.0,
+          62.98
+        ],
+        [
+          175.2,
+          100.0,
+          59.48
+        ],
+        [
+          168.5,
+          100.0,
+          59.48
+        ]
       ],
-      "status": "OPEN (end provisional): TH301 place on the panel rear heat spreader TBD (MECH-6 B-10)",
+      "path_mm": 11.0,
+      "bends": 2,
+      "bundle_od_mm": 1.99,
+      "wires": 2,
+      "bend_allowance_mm": 3.1,
+      "service_loops_mm": 30.0,
+      "length_mm": 45,
+      "through": [],
+      "crossings": [],
+      "provisional": [
+        "J318 (X39S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
+      ],
+      "status": "OPEN (end provisional): J318 (X39S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S40": {
@@ -2129,12 +2191,47 @@
         "CTRL",
         "NTCC"
       ],
-      "points_mm": [],
-      "length_mm": null,
-      "provisional": [
-        "TH302 place on the inner frame TBD (MECH-6 B-10)"
+      "note": "front layer: CTRL left edge at y 25, down between the BMS (x >= 175) and the blower (y >= 38.5) to 4 mm above the plate, west to the TH302 bead (layout ntc_case, W2 MECH-6 B-10); soldered >= 6 mm from the bead (E3 note)",
+      "points_mm": [
+        [
+          176.0,
+          25.1,
+          62.98
+        ],
+        [
+          174.0,
+          25.1,
+          62.98
+        ],
+        [
+          174.0,
+          25.1,
+          44.7
+        ],
+        [
+          169.0,
+          25.1,
+          44.7
+        ],
+        [
+          169.0,
+          25.1,
+          41.6
+        ]
       ],
-      "status": "OPEN (end provisional): TH302 place on the inner frame TBD (MECH-6 B-10)",
+      "path_mm": 28.4,
+      "bends": 3,
+      "bundle_od_mm": 1.99,
+      "wires": 2,
+      "bend_allowance_mm": 4.7,
+      "service_loops_mm": 30.0,
+      "length_mm": 64,
+      "through": [],
+      "crossings": [],
+      "provisional": [
+        "J319 (X40S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
+      ],
+      "status": "OPEN (end provisional): J319 (X40S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0",
       "in_build16": true
     },
     "S41": {
@@ -2158,7 +2255,7 @@
         "Q6A.HDR",
         "GNSS"
       ],
-      "note": "PPS (J20.7), UART6 (J20.16/18) and one GND leave the S01 ribbon right after the socket and run along y 95.8 in the rear layer to the LC76G",
+      "note": "PPS (J20.7), UART6 (J20.16/18) and one GND leave the S01 ribbon right after the socket and run along the SL1 row in the rear layer, west to the shaft beside the LC76G and down to its MX1.25 P1 edge (W2 MECH-6)",
       "points_mm": [
         [
           194.43,
@@ -2167,34 +2264,40 @@
         ],
         [
           194.43,
-          95.8,
+          94.8,
           14.4
         ],
         [
-          39.8,
-          95.8,
+          89.1,
+          94.8,
           14.4
         ],
         [
-          39.8,
-          92.5,
-          14.4
+          89.1,
+          83.5,
+          9.55
+        ],
+        [
+          88.5,
+          83.5,
+          9.55
         ]
       ],
-      "path_mm": 159.4,
-      "bends": 2,
+      "path_mm": 118.7,
+      "bends": 3,
       "bundle_od_mm": 3.87,
       "wires": 4,
-      "bend_allowance_mm": 6.1,
+      "bend_allowance_mm": 9.1,
       "service_loops_mm": 30.0,
-      "length_mm": 196,
+      "length_mm": 158,
       "through": [],
       "crossings": [],
       "provisional": [
-        "J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
-        "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"
+        "J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
+        "P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm"
       ],
-      "status": "OPEN (end provisional): J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)",
+      "bound_mm": 23.1,
+      "status": "OPEN (end provisional): J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm",
       "from_segment": "S01",
       "nets": [
         "E3_GNSS_PPS",
@@ -2205,19 +2308,83 @@
       "replaces": "the PPS/UART6 transit of S01 + S25 through CTRL (E3 nets unchanged: harness only)"
     }
   },
+  "coax": {
+    "W407": {
+      "kind": "coax",
+      "ends": [
+        "P7",
+        "GNSS"
+      ],
+      "note": "inside the RF bay from the bulkhead body down below the RF board (z 24.9, above the LNA cases at 22.8), diagonally to notch N1 at the lid edge, through it into the rear layer and up beside the LC76G to its IPEX (W2 MECH-6 B-06)",
+      "points_mm": [
+        [
+          163.5,
+          155.9,
+          30.0
+        ],
+        [
+          163.5,
+          150.9,
+          24.9
+        ],
+        [
+          38.2,
+          98.8,
+          24.9
+        ],
+        [
+          38.2,
+          98.8,
+          7.1
+        ],
+        [
+          38.2,
+          96.0,
+          7.1
+        ],
+        [
+          38.2,
+          96.0,
+          16.1
+        ],
+        [
+          61.4,
+          96.0,
+          16.1
+        ],
+        [
+          61.4,
+          93.0,
+          16.1
+        ]
+      ],
+      "path_mm": 198.6,
+      "bends": 6,
+      "bundle_od_mm": 1.13,
+      "wires": 1,
+      "bend_allowance_mm": 5.2,
+      "service_loops_mm": 0.0,
+      "length_mm": 204,
+      "through": [
+        "N1"
+      ],
+      "crossings": [],
+      "provisional": [],
+      "status": "PASS (model)"
+    }
+  },
   "slots": {
     "SL1": {
       "listed": [
-        "S01"
+        "S01",
+        "S27"
       ],
       "routed": [
         "S01",
         "S27"
       ],
       "listed_not_routed": [],
-      "routed_not_listed": [
-        "S27"
-      ]
+      "routed_not_listed": []
     },
     "SL2": {
       "listed": [

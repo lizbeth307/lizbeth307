@@ -1,0 +1,822 @@
+{
+  "schema": "srrx-board-report-v1",
+  "board_id": "PACK_FUSE",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN",
+  "passed": true,
+  "result": {
+    "drc_errors": 0,
+    "drc_unconnected": 0,
+    "drc_warnings": 2,
+    "ignored_checks": [],
+    "source_pad_audit_errors": {
+      "PACK": 0
+    },
+    "boundary_audit": [
+      "pass"
+    ],
+    "domain_audit": true,
+    "keepout_audit": true,
+    "annular_audit": true,
+    "locked_copper_kept": true,
+    "group_audit": true
+  },
+  "inputs": {
+    "parts": {
+      "spec": "5c641c6631f93828112ac446bdd050cef7f1d87d688859e840bf526cb4c7dbf6",
+      "contract": "860dfe9224c8daab42ebf1a86d11a54c0dc3a758f7be08f38fbb0812799e4f60",
+      "project_rules": "d9a60e9c60498e76037aafa247c6f684cebc18c0af0e81278edb87abf456d3d5",
+      "template": "07653f2360051fd4d9bbb9cf010d7b760c1a8cd770e03618c86ee986914ec1dd",
+      "instances": "027a0518fec5aa1809badd77e889fd7d04424f01ec1501091de9419625350ec1"
+    },
+    "sha256": "34c9cba099443258a846a287c3474a3330b4486c98df30b08860a8ddf17cbfed"
+  },
+  "board_file": "build/kicad/boards/PACK_FUSE/PACK_FUSE.kicad_pcb",
+  "board_sha256": "bb250b01be958eac4cc32c0eea38ac1b1ba36dadbd211a5d044ed580ef03f06d",
+  "project_file": "build/kicad/boards/PACK_FUSE/PACK_FUSE.kicad_pro",
+  "fp_lib_table_sha256": "791f0dc638185b50677e7928a83593f7eaf74bc3a66086498a90534f23c225e0",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
+    "plan": {
+      "F.Cu": "F101 holder, J116/J117; E1_CELL4 and E1_SHUNT_P scripted 3.2 mm (class SCRIPTED_BATT in PACK_FUSE.kicad_pro) and pours",
+      "B.Cu": "the same scripted 3.2 mm copper and pours (current shared by both layers); no parts"
+    }
+  },
+  "stackup_contract": {
+    "t": 1.6,
+    "layers": 2,
+    "fab": "JLC 2-layer FR-4 1.6 mm, 1 oz outer copper (standard; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)', build/15)",
+    "components": "top side only (SMD and THT)"
+  },
+  "outline_mm": [
+    [
+      0,
+      0
+    ],
+    [
+      10.7,
+      0
+    ],
+    [
+      10.7,
+      26.4
+    ],
+    [
+      0,
+      26.4
+    ]
+  ],
+  "holes": [
+    {
+      "ref": "H1",
+      "at": [
+        7.3,
+        2.6
+      ],
+      "d": 2.7,
+      "keepout_d": 5.0
+    },
+    {
+      "ref": "H2",
+      "at": [
+        7.3,
+        23.8
+      ],
+      "d": 2.7,
+      "keepout_d": 5.0
+    }
+  ],
+  "instances": [
+    {
+      "id": "PACK",
+      "placement": "default",
+      "qty": 1,
+      "refs": {
+        "F101": "F101",
+        "J116": "J116",
+        "J117": "J117"
+      },
+      "nets": {
+        "E1_CELL4": "E1_CELL4",
+        "E1_SHUNT_P": "E1_SHUNT_P"
+      }
+    }
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "template": [
+    {
+      "ref": "F101",
+      "source": "graph",
+      "fpid": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "library": "project",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuseholder_Blade_Mini_Keystone_3568.kicad_mod",
+      "sha256": "ce9f2576e0604a938518a57905b3876e023afe3a4493bd80dbe5a56b171d068d",
+      "value": "Mini-blade 7.5 A DC ≥32 V",
+      "pads": {
+        "1": "E1_CELL4",
+        "2": "E1_SHUNT_P"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J116",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm.kicad_mod",
+      "sha256": "7ada10a576fca83ea24c69fe1e5d72ea6e96d2278db67c21186aa5616432856f",
+      "value": "Майданчик проводу 18 AWG: вхід F101 від BT104.+",
+      "pads": {
+        "1": "E1_CELL4"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J117",
+      "source": "graph",
+      "fpid": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm.kicad_mod",
+      "sha256": "7ada10a576fca83ea24c69fe1e5d72ea6e96d2278db67c21186aa5616432856f",
+      "value": "Майданчик проводу 18 AWG: вихід F101 у S05",
+      "pads": {
+        "1": "E1_SHUNT_P"
+      },
+      "unused_pads": []
+    }
+  ],
+  "placeholders": [],
+  "placement": [
+    {
+      "ref": "F101",
+      "fpid": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "side": "F",
+      "rotation": 90.0,
+      "at": [
+        3.65,
+        8.24
+      ],
+      "courtyard_box": [
+        1.705,
+        4.925,
+        8.995,
+        21.475
+      ],
+      "fab_box": [
+        1.93,
+        5.15,
+        8.77,
+        21.25
+      ]
+    },
+    {
+      "ref": "H1",
+      "fpid": "NPTH_2.7mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        7.3,
+        2.6
+      ],
+      "courtyard_box": [
+        5.925,
+        1.225,
+        8.675,
+        3.975
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "H2",
+      "fpid": "NPTH_2.7mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        7.3,
+        23.8
+      ],
+      "courtyard_box": [
+        5.925,
+        22.425,
+        8.675,
+        25.175
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "J116",
+      "fpid": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        2.4,
+        2.6
+      ],
+      "courtyard_box": [
+        0.275,
+        0.695,
+        4.525,
+        4.505
+      ],
+      "fab_box": [
+        1.0,
+        1.2,
+        3.8,
+        4.0
+      ]
+    },
+    {
+      "ref": "J117",
+      "fpid": "Connector_Wire:SolderWire-1sqmm_1x01_D1.4mm_OD2.7mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        2.4,
+        23.8
+      ],
+      "courtyard_box": [
+        0.275,
+        21.895,
+        4.525,
+        25.705
+      ],
+      "fab_box": [
+        1.0,
+        22.4,
+        3.8,
+        25.2
+      ]
+    }
+  ],
+  "pads": {
+    "F101": [
+      {
+        "number": "1",
+        "net": "E1_CELL4",
+        "at": [
+          3.65,
+          8.24
+        ]
+      },
+      {
+        "number": "1",
+        "net": "E1_CELL4",
+        "at": [
+          7.05,
+          8.24
+        ]
+      },
+      {
+        "number": "2",
+        "net": "E1_SHUNT_P",
+        "at": [
+          3.65,
+          18.16
+        ]
+      },
+      {
+        "number": "2",
+        "net": "E1_SHUNT_P",
+        "at": [
+          7.05,
+          18.16
+        ]
+      }
+    ],
+    "H1": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          7.3,
+          2.6
+        ]
+      }
+    ],
+    "H2": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          7.3,
+          23.8
+        ]
+      }
+    ],
+    "J116": [
+      {
+        "number": "1",
+        "net": "E1_CELL4",
+        "at": [
+          2.4,
+          2.6
+        ]
+      }
+    ],
+    "J117": [
+      {
+        "number": "1",
+        "net": "E1_SHUNT_P",
+        "at": [
+          2.4,
+          23.8
+        ]
+      }
+    ]
+  },
+  "copper": {
+    "tracks": {
+      "segments": 8,
+      "vias": 0,
+      "locked": 8,
+      "by_layer": {
+        "B.Cu": 4,
+        "F.Cu": 4
+      },
+      "widths_mm": [
+        3.2
+      ]
+    },
+    "zones": [
+      {
+        "name": "CELL4-B",
+        "rule_area": false,
+        "net": "E1_CELL4",
+        "layer": "B.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "CELL4-F",
+        "rule_area": false,
+        "net": "E1_CELL4",
+        "layer": "F.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "SHUNT-B",
+        "rule_area": false,
+        "net": "E1_SHUNT_P",
+        "layer": "B.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "SHUNT-F",
+        "rule_area": false,
+        "net": "E1_SHUNT_P",
+        "layer": "F.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_0_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_0_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_1_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_1_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_2_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_2_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_3_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_EDGE_0_3_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H1_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H1_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H2_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H2_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      }
+    ],
+    "copper_layers": 2
+  },
+  "drc": {
+    "errors": 0,
+    "warnings": 2,
+    "unconnected": 0,
+    "schematic_parity": 0,
+    "ignored_checks": [],
+    "by_type": {
+      "silk_over_copper": {
+        "severity": "warning",
+        "count": 1
+      },
+      "silk_overlap": {
+        "severity": "warning",
+        "count": 1
+      }
+    },
+    "error_items": [],
+    "warning_items": [
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of J116",
+            "pos": [
+              101.0,
+              120.8
+            ]
+          },
+          {
+            "description": "PTH pad 1 [E1_CELL4] of J116",
+            "pos": [
+              102.4,
+              123.8
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of F101",
+            "pos": [
+              105.35,
+              113.2
+            ]
+          },
+          {
+            "description": "Segment of F101 on F.Silkscreen",
+            "pos": [
+              105.35,
+              113.95
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      }
+    ],
+    "unconnected_items": [],
+    "severities_reviewed": {
+      "errors": [
+        "annular_width",
+        "assertion_failure",
+        "clearance",
+        "connection_width",
+        "copper_edge_clearance",
+        "copper_sliver",
+        "courtyards_overlap",
+        "creepage",
+        "diff_pair_gap_out_of_range",
+        "diff_pair_uncoupled_length_too_long",
+        "drill_out_of_range",
+        "footprint",
+        "footprint_type_mismatch",
+        "generic_error",
+        "hole_clearance",
+        "hole_to_hole",
+        "holes_co_located",
+        "invalid_outline",
+        "isolated_copper",
+        "item_on_disabled_layer",
+        "items_not_allowed",
+        "length_out_of_range",
+        "lib_footprint_issues",
+        "lib_footprint_mismatch",
+        "malformed_courtyard",
+        "microvia_drill_out_of_range",
+        "mirrored_text_on_front_layer",
+        "missing_courtyard",
+        "nonmirrored_text_on_back_layer",
+        "npth_inside_courtyard",
+        "padstack",
+        "padstack_invalid",
+        "pth_inside_courtyard",
+        "shorting_items",
+        "silk_edge_clearance",
+        "skew_out_of_range",
+        "solder_mask_bridge",
+        "starved_thermal",
+        "text_height",
+        "text_on_edge_cuts",
+        "text_thickness",
+        "through_hole_pad_without_hole",
+        "too_many_vias",
+        "track_angle",
+        "track_dangling",
+        "track_not_centered_on_via",
+        "track_on_post_machined_layer",
+        "track_segment_length",
+        "track_width",
+        "tracks_crossing",
+        "unconnected_items",
+        "unresolved_variable",
+        "via_dangling",
+        "via_diameter",
+        "zones_intersect"
+      ],
+      "warnings": {
+        "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+        "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+        "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+        "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+        "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
+        "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board"
+      }
+    },
+    "kicad_version": "10.0.7",
+    "coordinate_units": "mm",
+    "passed": true
+  },
+  "audits": {
+    "domain": {
+      "domains": [
+        "PACK_FUSE"
+      ],
+      "domain_refs": [
+        "F101",
+        "J116",
+        "J117"
+      ],
+      "missing": [],
+      "foreign": [],
+      "passed": true
+    },
+    "source_pad": [
+      {
+        "instance": "PACK",
+        "errors": [],
+        "passed": true
+      }
+    ],
+    "boundary": [
+      {
+        "instance": "PACK",
+        "status": "pass",
+        "nets": [
+          {
+            "net": "E1_CELL4",
+            "graph_net": "E1_CELL4",
+            "board_pads": [
+              "F101.1",
+              "J116.1"
+            ],
+            "external_refs": 3,
+            "external_sample": [
+              "BT104",
+              "J102",
+              "U101"
+            ],
+            "status": "connector"
+          },
+          {
+            "net": "E1_SHUNT_P",
+            "graph_net": "E1_SHUNT_P",
+            "board_pads": [
+              "F101.2",
+              "J117.1"
+            ],
+            "external_refs": 4,
+            "external_sample": [
+              "J105",
+              "J106",
+              "R101",
+              "U102"
+            ],
+            "status": "connector"
+          }
+        ],
+        "hosted_contacts": []
+      }
+    ],
+    "keepout": {
+      "rows": [
+        {
+          "hole": "H1",
+          "ref": "F101",
+          "keepout_radius": 2.5,
+          "pad_distance": 4.25,
+          "courtyard_distance": 2.325,
+          "body_distance": 2.55,
+          "courtyard_intrudes": true,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J116",
+          "keepout_radius": 2.5,
+          "pad_distance": 3.525,
+          "courtyard_distance": 2.775,
+          "body_distance": 3.5,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J117",
+          "keepout_radius": 2.5,
+          "pad_distance": 20.1359,
+          "courtyard_distance": 19.4935,
+          "body_distance": 20.107,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "F101",
+          "keepout_radius": 2.5,
+          "pad_distance": 4.25,
+          "courtyard_distance": 2.325,
+          "body_distance": 2.55,
+          "courtyard_intrudes": true,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J116",
+          "keepout_radius": 2.5,
+          "pad_distance": 20.1359,
+          "courtyard_distance": 19.4935,
+          "body_distance": 20.107,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J117",
+          "keepout_radius": 2.5,
+          "pad_distance": 3.525,
+          "courtyard_distance": 2.775,
+          "body_distance": 3.5,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        }
+      ],
+      "errors": [],
+      "passed": true,
+      "note": "Keepout = copper rule area (tracks, vias, fills) on the listed layers. A courtyard box intrusion is reported, not failed, when pads and the F.Fab body clear the keepout."
+    },
+    "annular": {
+      "floor_mm": 0.18,
+      "below_floor": [],
+      "passed": true
+    },
+    "groups": {
+      "rows": [],
+      "errors": [],
+      "passed": true
+    },
+    "locked": {
+      "scripted_segments": 8,
+      "locked_on_board": 8,
+      "kept": true,
+      "note": "SES import before/after counts and the DSN probe are in route-log.json"
+    }
+  },
+  "router": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "runtime": "Eclipse Temurin JRE 25.0.5+8 (sha256 6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6)",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:06:00",
+    "fetch": "CI only, never committed or uploaded"
+  },
+  "heights": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "holder column: mechanical.json layout pack_fuse, 16.17 above the board top"
+    },
+    {
+      "region": [
+        0,
+        0,
+        10.7,
+        4.9
+      ],
+      "max_height_mm": 1.9,
+      "side": "top",
+      "checked": true,
+      "why": "bottom end outside the holder column: layout pack_fuse_board ends at z 50.0 = 1.9 above the board top z 48.1 (screw heads k 1.85, J116 wire end)"
+    },
+    {
+      "region": [
+        0,
+        21.5,
+        10.7,
+        4.9
+      ],
+      "max_height_mm": 1.9,
+      "side": "top",
+      "checked": true,
+      "why": "top end, as the bottom end (J117 wire end)"
+    }
+  ],
+  "does_not_prove": [
+    "that the schematic is right",
+    "current capacity or temperature rise beyond the chosen class widths",
+    "impedance, RF loss or isolation, EMC or signal integrity",
+    "creepage beyond the encoded clearances",
+    "that the enclosure fits (only outline and hole checks; heights are not checked here)",
+    "that the fab's DFM accepts the board, or that CPL rotations are right",
+    "that the land patterns match the purchased MPNs",
+    "any function: hardware and bench gates stay OPEN"
+  ]
+}

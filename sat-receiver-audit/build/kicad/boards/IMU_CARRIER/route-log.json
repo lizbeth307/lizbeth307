@@ -1,0 +1,219 @@
+{
+  "schema": "srrx-board-route-log-v1",
+  "board_id": "IMU_CARRIER",
+  "label": "Frozen route provenance (CI run); --check does not re-route",
+  "tool": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "source_read": "GitHub release API v2.5.0 asset digests, read 2026-11-07"
+  },
+  "runtime": {
+    "name": "Eclipse Temurin JRE",
+    "version": "25.0.5+8",
+    "licence": "GPL-2.0-with-classpath-exception",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jre_x64_linux_hotspot_25.0.5_8.tar.gz",
+    "sha256": "6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6",
+    "source_read": "Adoptium API and GitHub release API, read 2026-11-07"
+  },
+  "command": [
+    "java",
+    "-Djava.awt.headless=true",
+    "-cp",
+    "freerouting-2.5.0.jar",
+    "app.freerouting.cli.FreeroutingCli",
+    "-de",
+    "IMU_CARRIER.dsn",
+    "-do",
+    "IMU_CARRIER.ses",
+    "--router.autorouter.max_passes=30",
+    "-mt",
+    "1",
+    "--router.optimizer.max_threads=1",
+    "--router.automatic_neckdown=false",
+    "-da",
+    "--gui.enabled=false",
+    "--router.job_timeout=00:06:00",
+    "--logging.file.enabled=false",
+    "--user_data_path=<temp>",
+    "--router.fanout.enabled=false",
+    "-inc",
+    "SCRIPTED_VIN,SCRIPTED_SIG,SCRIPTED_PWR1A"
+  ],
+  "exit_code": 0,
+  "log_tail": [
+    "2026-11-12 00:45:56.248 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-12 00:45:56.381 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-12 00:45:56.384 WARN   Deprecated settings path '-inc / --router.ignore_net_classes'; use '--router.autorouter.ignore_net_classes' instead. The old path will be removed in a future release.",
+    "2026-11-12 00:45:56.551 WARN   The '-inc' command-line flag is deprecated; use '--router.autorouter.ignore_net_classes' instead.",
+    "2026-11-12 00:45:56.832 INFO   [12BCBD\\081962] Loading board file 'IMU_CARRIER.dsn'...",
+    "2026-11-12 00:45:57.031 INFO   [12BCBD\\081962] Job '12BCBD\\081962' started at 2026-11-12T00:45:57.031093412Z.",
+    "2026-11-12 00:45:57.102 WARN   Design Warning: Board has 1 pre-existing clearance violation(s) in the loaded design (before routing):",
+    "  - 1 unfixable violation(s) (cannot be resolved by Freerouting):",
+    "      * 1 fixed trace/via clearance violations:",
+    "          - FixedTrace#160 [net IMU_TX] <-> ObstacleArea#5",
+    "  - 0 potentially fixable violations",
+    "Notice: Freerouting does not modify component placement, board outlines, or fixed items.",
+    "Resolving these 1 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).",
+    "2026-11-12 00:45:57.169 INFO   [12BCBD\\081962] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-12 00:45:57.234 INFO   [12BCBD\\081962] Auto-routing stage started on board 'bebd49758e17dd31ba05ee70bb6f2b67' with baseline score 127.54 for 21 unrouted items.",
+    "2026-11-12 00:45:58.098 INFO   [12BCBD\\081962] Auto-routing pass #1 on board 'bebd49758e17dd31ba05ee70bb6f2b67' was completed in 0.82 seconds with score 691.64 (6 unrouted and 1 violation), using 0.89 CPU seconds and the job allocated 0.13 GB of memory so far.",
+    "2026-11-12 00:45:58.205 INFO   [12BCBD\\081962] Auto-routing pass #2 on board '8cbd507eeae30c536a45d75fcd1d08fa' was completed in 0.09 seconds with score 691.64 (6 unrouted and 1 violation), using 0.89 CPU seconds and the job allocated 0.13 GB of memory so far.",
+    "2026-11-12 00:45:58.373 INFO   [12BCBD\\081962] Auto-routing pass #3 on board '3a9e15abc2254f108c9cf477a0b62442' was completed in 0.15 seconds with score 691.64 (6 unrouted and 1 violation), using 0.89 CPU seconds and the job allocated 0.13 GB of memory so far.",
+    "2026-11-12 00:45:58.466 INFO   [12BCBD\\081962] Auto-routing pass #4 on board '84f1908888f60de9bb5718f9a219163e' was completed in 0.08 seconds with score 691.64 (6 unrouted and 1 violation), using 0.89 CPU seconds and the job allocated 0.13 GB of memory so far.",
+    "2026-11-12 00:45:58.643 INFO   [12BCBD\\081962] Auto-routing pass #5 on board '094f6cf29f4586081fd17fb015bf4339' was completed in 0.16 seconds with score 640.36 (7 unrouted and 1 violation), using 0.89 CPU seconds and the job allocated 0.13 GB of memory so far.",
+    "2026-11-12 00:45:58.880 INFO   [12BCBD\\081962] Auto-routing pass #6 on board 'bcae4cf62173d1d3588adc598d775fca' was completed in 0.22 seconds with score 640.36 (7 unrouted and 1 violation), using 0.89 CPU seconds and the job allocated 0.13 GB of memory so far.",
+    "2026-11-12 00:45:59.180 INFO   [12BCBD\\081962] Auto-routing pass #7 on board 'b6c280918ecc08df7943b311c5a5c16c' was completed in 0.29 seconds with score 640.36 (7 unrouted and 1 violation), using 1.85 CPU seconds and the job allocated 0.51 GB of memory so far.",
+    "2026-11-12 00:45:59.481 INFO   [12BCBD\\081962] Auto-routing pass #8 on board '8cbd507eeae30c536a45d75fcd1d08fa' was completed in 0.00 seconds with score 691.64 (6 unrouted and 1 violation), using 1.85 CPU seconds and the job allocated 0.51 GB of memory so far.",
+    "2026-11-12 00:45:59.574 INFO   [12BCBD\\081962] Auto-routing pass #9 on board '8cbd507eeae30c536a45d75fcd1d08fa' was completed in 0.09 seconds with score 691.64 (6 unrouted and 1 violation), using 1.85 CPU seconds and the job allocated 0.51 GB of memory so far.",
+    "2026-11-12 00:45:59.677 INFO   [12BCBD\\081962] Auto-routing pass #10 on board '3edb09d2544c0054e19df9aa19122248' was completed in 0.09 seconds with score 691.64 (6 unrouted and 1 violation), using 1.85 CPU seconds and the job allocated 0.51 GB of memory so far.",
+    "2026-11-12 00:45:59.683 INFO   [12BCBD\\081962] Last-mile rip-up removed 8 blocking trace(s) or via(s) around 6 remaining connection(s).",
+    "2026-11-12 00:45:59.848 INFO   [12BCBD\\081962] Auto-routing pass #11 on board '189d5c13b4248cf2a5182672b510aade' was completed in 0.16 seconds with score 691.64 (6 unrouted and 1 violation), using 1.85 CPU seconds and the job allocated 0.51 GB of memory so far.",
+    "2026-11-12 00:46:00.035 INFO   [12BCBD\\081962] Auto-routing pass #12 on board '8cbd507eeae30c536a45d75fcd1d08fa' was completed in 0.00 seconds with score 691.64 (6 unrouted and 1 violation), using 1.85 CPU seconds and the job allocated 0.51 GB of memory so far.",
+    "2026-11-12 00:46:00.108 INFO   [12BCBD\\081962] Auto-routing pass #13 on board '8cbd507eeae30c536a45d75fcd1d08fa' was completed in 0.07 seconds with score 691.64 (6 unrouted and 1 violation), using 2.82 CPU seconds and the job allocated 0.95 GB of memory so far.",
+    "2026-11-12 00:46:00.197 INFO   [12BCBD\\081962] Auto-routing pass #14 on board '3edb09d2544c0054e19df9aa19122248' was completed in 0.08 seconds with score 691.64 (6 unrouted and 1 violation), using 2.82 CPU seconds and the job allocated 0.95 GB of memory so far.",
+    "2026-11-12 00:46:00.202 INFO   [12BCBD\\081962] Last-mile rip-up removed 8 blocking trace(s) or via(s) around 6 remaining connection(s).",
+    "2026-11-12 00:46:00.337 INFO   [12BCBD\\081962] Auto-routing pass #15 on board '189d5c13b4248cf2a5182672b510aade' was completed in 0.13 seconds with score 691.64 (6 unrouted and 1 violation), using 2.82 CPU seconds and the job allocated 0.95 GB of memory so far.",
+    "2026-11-12 00:46:00.486 INFO   [12BCBD\\081962] Auto-routing pass #16 on board '8599ba00abc4ef3bdb292eb35c739b32' was completed in 0.15 seconds with score 691.64 (6 unrouted and 1 violation), using 2.82 CPU seconds and the job allocated 0.95 GB of memory so far.",
+    "2026-11-12 00:46:00.541 INFO   [12BCBD\\081962] Auto-routing pass #17 on board 'd555ff1ebe934dbf5ddebee2d402ed00' was completed in 0.05 seconds with score 742.93 (5 unrouted and 1 violation), using 2.82 CPU seconds and the job allocated 0.95 GB of memory so far.",
+    "2026-11-12 00:46:00.555 INFO   [12BCBD\\081962] Auto-routing pass #18 on board 'af9d5d8eefaba6518bf008054709bb0b' was completed in 0.01 seconds with score 742.93 (5 unrouted and 1 violation), using 2.82 CPU seconds and the job allocated 0.95 GB of memory so far.",
+    "2026-11-12 00:46:00.578 INFO   [12BCBD\\081962] Auto-routing stage completed: started with 21 unrouted nets, completed in 3.40 seconds, final score: 742.93 (5 unrouted and 1 violation), using 2.82 total CPU seconds, 0.95 GB total allocated, and 50.1 MB peak heap usage.",
+    "2026-11-12 00:46:00.592 INFO   [12BCBD\\081962] Skipping optimization stage: the board has 5 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-12 00:46:00.601 INFO   [12BCBD\\081962] Job '12BCBD\\081962' finished with state: COMPLETED (elapsed: 3.57 seconds, finished at UTC: 2026-11-12T00:46:00.600834099Z).",
+    "2026-11-12 00:46:00.614 INFO   Saving output file '/tmp/sr-rx-IMU_CARRIER-fh3ov0f8/IMU_CARRIER.ses' (SES)...",
+    "2026-11-12 00:46:00.616 INFO   Successfully saved output file '/tmp/sr-rx-IMU_CARRIER-fh3ov0f8/IMU_CARRIER.ses' (5705 bytes)."
+  ],
+  "dsn_sha256": "0047d9969358bd764394ad8183ba688c3dd2bbe817eca5cdd330348ffd708e23",
+  "ses_sha256": "3943b56873ea1040dfb96a8db9f3fdc0697923d2824f12575d3e86d98c081193",
+  "dsn_probe": {
+    "resolution": "um 10",
+    "wires_fix": 32,
+    "wires_protect": 0,
+    "keepouts": 26,
+    "planes": 0,
+    "classes": {
+      "kicad_default": {
+        "width": "200",
+        "clearance": "150"
+      },
+      "SCRIPTED_SIG": {
+        "width": "200",
+        "clearance": "150"
+      },
+      "SCRIPTED_VIN": {
+        "width": "400",
+        "clearance": "150"
+      },
+      "SCRIPTED_PWR1A": {
+        "width": "350",
+        "clearance": "150"
+      }
+    }
+  },
+  "locked_segments": {
+    "before_ses_import": 32,
+    "after_ses_import": 32
+  },
+  "via_centre_stubs": [],
+  "drc_command": [
+    "kicad-cli",
+    "pcb",
+    "drc",
+    "--format",
+    "json",
+    "--severity-all",
+    "--all-track-errors",
+    "--units",
+    "mm",
+    "--refill-zones",
+    "--save-board"
+  ],
+  "board_sha256": "a053850cd54deee8509bcdb061bdab1b12a788921134cdb09aaed23f01cf769a",
+  "previews": [
+    "build/kicad/boards/IMU_CARRIER/IMU_CARRIER-top.svg",
+    "build/kicad/boards/IMU_CARRIER/IMU_CARRIER-bottom.svg"
+  ],
+  "footprint_sources": [
+    {
+      "ref": "J321",
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "0c7ad0be2489f1c3944a4b99c5987cd5a62c3a45f945ea8999e29d4cc3bb82e8"
+    },
+    {
+      "ref": "J320",
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x03_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "3aec59111aec53223d14e038df98ac794e3fdb901b1d9ca06d803c2e03750894"
+    },
+    {
+      "ref": "J322",
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x05_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "fd0bd049af6a685c3715ee6abbad0374ac1f7b4b568e02529e6e544bf9995a18"
+    },
+    {
+      "ref": "J518",
+      "footprint": "Connector_Wire:SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm",
+      "file": "build/kicad/footprints/Connector_Wire.pretty/SolderWire-0.15sqmm_1x04_P4mm_D0.5mm_OD1.5mm.kicad_mod",
+      "sha256": "0c7ad0be2489f1c3944a4b99c5987cd5a62c3a45f945ea8999e29d4cc3bb82e8"
+    },
+    {
+      "ref": "D502",
+      "footprint": "Diode_SMD:D_SMA",
+      "file": "build/kicad/footprints/Diode_SMD.pretty/D_SMA.kicad_mod",
+      "sha256": "f7cba3b52ed8b34dce89170722de58324eac04e9e61a095e0eab37b9ca93cb7f"
+    },
+    {
+      "ref": "U552",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca"
+    },
+    {
+      "ref": "C519",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C340",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C520",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "R390",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R391",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "C341",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    }
+  ],
+  "kicad_version": "10.0.7",
+  "github": {
+    "run_id": "43129454692",
+    "sha": "00ae32804e4c489707fca79cc987bec529cc91e0",
+    "ref": "refs/heads/wip/w2-int"
+  }
+}
