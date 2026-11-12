@@ -20,9 +20,9 @@
   "copper_zones": 0,
   "errors": [],
   "input_file": "pcb/generated/detector-core-input.json",
-  "input_sha256": "140e7ef72bdf85973314c48696017957148ad5d45b7230d1ba34821fe1408fe5",
+  "input_sha256": "11935cf5c5d48f4098c841452a9549f85c9b4f40796db1f16f33c37089234d78",
   "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
-  "board_sha256": "838597889fb9ca1ee830f5008c32fc882d44c21126a8d53447d7bcb47242466c",
+  "board_sha256": "eb2dd254b763f8161321e1438d49e6e31b9a06b57183340ffe2bb6d020d4f950",
   "kicad_version": "10.0.7",
   "outline_candidate_mm": {
     "x": 125.0,
@@ -132,7 +132,7 @@
   "drc": {
     "exit_code": 5,
     "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
-    "raw_sha256": "5537a30f90290b627b62a47fdf1c62269422a3fcc06b4f07d1071126d919ad0a",
+    "raw_sha256": "418dcb4155b94adbc22767dd5c2fccb9068f30b1628aea3c64b724cc04b54a9c",
     "counts": {
       "unconnected_items": 140
     },
