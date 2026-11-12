@@ -826,7 +826,13 @@ BRANCH_REASON = {
              'k 0.048). A short at the end of a branch (a capacitor failing short, the E3_FAN5 node between Q304 and F301, a '
              'fault behind D301) drives the current of the upstream fuse F102 (4 A, holds its rating): about +100 degC on 0.5 mm '
              'outer copper and far outside the formula on the L3 run, which would fuse (the PWR3A rule needs 1.3348 mm outer at '
-             '4 A and +20 degC). Recorded layout deviation from the PWR3A sizing of netclasses.json, CTRL-4 OPEN with ranked '
+             '4 A and +20 degC). A fault on the fan lead S27 behind F301 is limited only by the PTC F301 (Bourns MF-MSMF075/24: '
+             'Ihold 0.75 A and Itrip 1.50 A at 23 degC; Bourns MF-MSMF REV. BE 09/26, '
+             'https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf, read 2026-11-12; build/15 review RV-CTRLR-2): between '
+             'Ihold and Itrip a trip is not guaranteed, so 0.75-1.5 A can flow through Q304 and the L3 run for the PTC hold and '
+             'trip time, +32 to +153 degC on the L3 run (IPC-2221 internal, without the U315 and VSYS load; MODEL); a PTC ahead '
+             'of Q304 does not change that range, so a CTRL-4 closure has to take the Q304 feed off the L3 run. Recorded layout '
+             'deviation from the PWR3A sizing of netclasses.json, CTRL-4 OPEN with ranked '
              'closure options (build/15 "Гілки LAB5 на CTRL (W2 PCB-CTRL)" and "CTRL-4: живлення правої групи LAB5 (W2 CTRL-R)"); '
              'not a bench gate'),
     'BG': ('E3_BLOWER_GND branch from the scripted 1.85 mm return rail (J314.1 -> D306.2 -> Q305.3) to a capacitor of the blower '
@@ -877,7 +883,10 @@ ROUTER_WHY = (
     'dangling router stub) and 43206372346 (DRC 0 errors, 0 unconnected, ignored [], about 4.5 min; check-mode run '
     '43207377886 green), each with 0 unconnected; Freerouting still adds 69-72 redundant short wires per run, DRC-clean. '
     'After the completion the cut-out 1 band has no spare 0.15 mm crossing on L1/L3/L4 (model): any pad, net or '
-    'scripted-copper change stops make_spec at the guard of route-frozen.json and needs a new harvest. Job timeout 34 min '
+    'scripted-copper change stops make_spec at the guard of route-frozen.json and needs a new harvest. CTRL-R route run '
+    '43214226431 (text batch) reproduced that copper. The merge of wip/w2-int 83af246f (the B2B J208/J209 in the graph) '
+    'changes only the external refs of the boundary audit, not the inputs, and is re-routed with the same frozen copper '
+    '(W2 CTRL-R integration). Job timeout 34 min '
     'inside the 45 min CI job')
 
 
