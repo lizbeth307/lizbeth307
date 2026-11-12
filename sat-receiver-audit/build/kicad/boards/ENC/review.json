@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/ENC/ENC.kicad_pcb",
-      "sha256": "4c9a967a046022808cc05c48f71960876ce4433bb293a6949fd3a68ca26490b0"
+      "sha256": "4f221336180fce5c6451816d158c5a6288b7a2df5e5e57f7d09ef409acdfcaa7"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "738a6dd68bfb0aa9723e4a47e10267467b6ca7b4846a174ea6690063e10f2382",
@@ -96,12 +96,12 @@
   "unverified": [
     {
       "check": "heights",
-      "item": "ENC",
+      "item": "J1",
       "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
     },
     {
       "check": "heights",
-      "item": "J1",
+      "item": "ENC",
       "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
     }
   ]
