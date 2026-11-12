@@ -90,9 +90,9 @@
 |---|---|---|---|---|---|---|
 | S01 | Шлейф 40-pin Q6A J20 → CTRL | Q6A.HDR ↔ CTRL | 23 | IDC | 106 (модель, кінець попередній); ≤200 (UART7 і PPS ≤20 см, STACK §5.2) | IDC 2×20 2.54 мм 1:1, стрічка 3M 3365/40 (дві половини по 20, укладені одна на одну: 2 × 0.89 мм) крізь проріз SL1 27.5 × 4.4 над верхнім краєм Q6A (M-07; R-PLATE-SLOT-FILL: вміщується, модель); на CTRL — бокс-роз'єм 2×20 з ключем J304; його висота проти обмеження CTRL 5.5 мм — TBD (R-HDR-HEIGHT); провідники 6, 7, 16 і 18 (GND, PPS, UART6) відходять гілкою PPS одразу за розеткою J20, тож контакти 6/7/16/18 бокса на CTRL — без кола (рішення build/15 W2 MECH-1, W2 GR-3) |
 | PPS | Гілка PPS і UART6 шлейфу S01 → LC76G | Q6A.HDR ↔ GNSS | 4 | IDC, SOLDER | 158 (модель, кінець попередній); ≤200 (STACK §5.2) | провідники 6 (GND), 7 (PPS), 16 і 18 (UART6) стрічки S01 відокремлено одразу за розеткою на J20 і проведено задньою площиною до P1 LC76G (mechanical/params/mechanical.json harness_routes branches.PPS; R-PPS-LEN: ≤200 мм за моделлю і в найгіршому випадку; build/15 W2 MECH-1, W2 MECH-6); на LC76G — пайка; мережі E3 не змінюються |
-| S02 | Керування і LAB5: CTRL ↔ PWR | CTRL ↔ PWR | 48 | MF, PH, PHD | 188 (модель, кінець попередній) | I2C2/3V3_Q6A: на CTRL — J302 (E3, S5B-PH-K-S, боковий вхід; контакт 5 MCP_INT лишається на CTRL), на PWR-B — J201 (S5B-PH-K-S, боковий вхід, контакт 5 без кола); LAB5 — кутова J305 (43650-0400) на CTRL ↔ J104 (43650-0415) на PWR-A; сигнали — 2 × S20B-PHDSS: J306/J307 ↔ J202/J203 (W2 GR-3) |
+| S02 | Керування і LAB5: CTRL ↔ PWR | CTRL ↔ PWR | 48 | MF, PH, PHD | 188 (модель, кінець попередній) | I2C2/3V3_Q6A: на CTRL — J302 (E3, S5B-PH-K-S, боковий вхід; контакт 5 MCP_INT лишається на CTRL), на PWR-B — J201 (S5B-PH-K-S, боковий вхід, контакт 5 без кола); LAB5 — кутова J305 (43650-0400) на CTRL ↔ J104 (43650-0415) на PWR-A; сигнали — 2 × S20B-PHDSS: J306/J307 ↔ J202/J203 (W2 GR-3); S02 як FFC не прийнято: READS-P не встановив пару FH12 + кабель (W2 GR-5B, OPEN) |
 | S03 | Керування RF: CTRL ↔ RF | CTRL ↔ RF | 12 | PH | 295 (модель, кінець попередній) | лінії HMC7992/G6K/DCS; крізь проріз SL2 (M-07) і виріз N4 стінки РЧ-відсіку; подалі від буферних дроселів |
-| S04 | Зміщення і реле: PWR ↔ RF | PWR ↔ RF | 8 | PH | 208 (модель, кінець попередній) | шини bias ch1–ch4, LNB і LAB5_RLY котушок G6K (після PTC F104 на PWR-A, R-E1-09); крізь проріз SL2 і виріз N4 (M-07, M-09) |
+| S04 | Зміщення і реле: PWR ↔ RF | PWR ↔ RF | 8 | PH | 208 (модель, кінець попередній) | шини bias ch1–ch4, LNB і LAB5_RLY котушок G6K (після PTC F104 на PWR-A, R-E1-09); крізь проріз SL2 і виріз N4 (M-07, M-09); J204 (PH 8, PWR-B) ↔ J420 (PH 8, RF): злиття J204 з J207 у PHD 2×10 (SHRINK-2) — OPEN, бо клема PHD бере 22 AWG, а PH — 30–24 AWG, тож потрібна й J420 PHD (лінія RF); LAB5_RLY 1.5 A проти 1.2 A контакту PH — OPEN (W2 GR-5B) |
 | S05 | Пак (після F101) → PWR | PACK ↔ PWR | 3 | MFJ, PH, SOLDER | 35 (модель, кінець попередній) | F101 стоїть біля паку, тож увесь сегмент захищає F101 7.5 A; коло батареї 18 AWG (E1 F101); найкоротша траса, без петель; кінець у паку — майданчик J117 носійної плати PACK_FUSE (мідь від F101.2, W2 GR-4); роз'єм S05 на PWR — також вхід стенда при запуску (19 §4) |
 | S06 | PWR ↔ INA228 (шунт) | PWR ↔ INA | 7 | MFJ, PH, SOLDER | 188 (модель, кінець попередній) | VIN+/VIN− — клеми шунта Adafruit 5832; I2C0/ALERT/VS — гребінка модуля |
 | S07 | PWR ↔ Pololu #2813 | PWR ↔ SWM | 5 | MFJ, PH, SOLDER | 122 (модель, кінець попередній) | пайка до контактів модуля; коло батареї 18 AWG |
@@ -109,7 +109,7 @@
 | S20 | VBUS_RTLA → кабель RTL-A (J543.1) | PWR ↔ RTLA | 2 | PH, SOLDER | 190 (модель, кінець попередній) | VBUS вставляється в пігтейл H2; JP1.1 хаба не з'єднувати; крізь SL2 і виріз N2 |
 | S21 | VBUS_RTLB → кабель RTL-B (J541.1) | PWR ↔ RTLB | 2 | PH, SOLDER | 188 (модель, кінець попередній) | розділений VBUS; J5.10 не з'єднувати; крізь SL2 і виріз N3 |
 | S22 | VBUS_HFP → пігтейл HF+ (J544.1) | PWR ↔ HFP | 3 | PH, SOLDER | 60 (модель, кінець попередній) | після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2 |
-| S23 | VBUS_LABPORT → J501.1 | PWR ↔ LABUSB | 3 | PH, SOLDER | 233 (модель, кінець попередній) | C506 біля вихідного порту; крізь проріз SL3 |
+| S23 | VBUS_LABPORT → J501.1 | PWR ↔ LABUSB | 3 | PH, SOLDER | 233 (модель, кінець попередній) | C506, C521, C522 (3 × 16SVPG47M, 141 мкФ; W2 GR-5B) біля вихідного порту на PWR-B; на PWR-B — контакти 1–3 вилки PH 9 J506 (SL3-PWR-PH, спільна з S34); крізь проріз SL3 |
 | S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH | 190 (модель, кінець попередній) | U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7A, PH 3 бічного входу, W2 GR-4); крізь проріз SL2 |
 | S25 | CTRL → LC76G (живлення і RESET) | CTRL ↔ GNSS | 3 | PH, SOLDER | 195 (модель, кінець попередній) | E3_GNSS5V від U315 і E3_GNSS_RESET_N від Q301 з CTRL, крізь SL2, до P1 (MX1.25) LC76G; PPS і UART6 сюди не входять — вони йдуть гілкою PPS шлейфу S01 (S01 + S25 за моделлю понад 200 мм, R-PPS-LEN; рішення build/15 W2 MECH-1) |
 | S26 | CTRL → VEML7700 | CTRL ↔ VEML | 4 | PH, SOLDER | 100 (модель, кінець попередній) | 100 Ω + TVS біля безеля (на CTRL) |
@@ -120,7 +120,7 @@
 | S31 | Контакти EDL Q6A → SW501 | Q6A.EDL ↔ EDL | 2 | SOLDER | 57 (модель, кінець попередній) | точки пайки на Q6A не локалізовано (E5 §9); пайка до виводів PV6F240SS |
 | S32 | PWR → гніздо GX16-4 (J504) | PWR ↔ GX16 | 4 | PH, SOLDER | 209 (модель, кінець попередній) | U551 біля входу на PWR; корпус GX16 → CHASSIS; крізь проріз SL3 |
 | S33 | Зовнішній кабель IMU | GX16 ↔ IMUPACK | 4 | CABLE | 2000 (HELU 49655, STACK §2.10) | HELU SUPERTRONIC-C-PURO 4×0.14 мм²; оплітка 360° у GX16 і в SKINTOP паку |
-| S34 | PWR → LAB BUS (J505) | PWR ↔ LABBUS | 6 | PH, SOLDER | 193 (модель, кінець попередній) | пайка в чашки KH-GX12-6P; кабель за межами корпусу ≤1 м (понад — PCA9615, E5 §9); крізь проріз SL3 |
+| S34 | PWR → LAB BUS (J505) | PWR ↔ LABBUS | 6 | PH, SOLDER | 193 (модель, кінець попередній) | пайка в чашки KH-GX12-6P; кабель за межами корпусу ≤1 м (понад — PCA9615, E5 §9); на PWR-B — контакти 4–9 вилки PH 9 J506 (SL3-PWR-PH, спільна з S23; W2 GR-5B); крізь проріз SL3 |
 | S35 | BONI13V8_PORT → bias-tee Boni | PWR ↔ BONI | 2 | PH, SOLDER | 158 (модель, кінець попередній) | штекер 5.5/2.1 мм (STACK, «Склад набору кабелів»); крізь проріз SL2 |
 | S36 | BIAS_SB_LNA → панельна розетка J551 | PWR ↔ SBPWR | 2 | PH, SOLDER | 192 (модель, кінець попередній) | виводи розетки J551 (binder 76 6618 1111 00003-0200: 0.2 м, AWG 24) — до роз'єму PWR; місце J551 на стінці — MECH-07 (MECH-3); довжина виводів проти траси — TBD |
 | S37 | CTRL ↔ дочірня плата головного енкодера | CTRL ↔ ENCM | 4 | PH | 31 (модель, кінець попередній) | A/B/C і кнопка ENC1_PRESS; JST PH боковий вхід на обох кінцях (зона з'єднання ENC — лівий край, boards.json) |
@@ -154,9 +154,8 @@
 | J205 | X19P1-PWR | PWR_A | S19 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 (2 з проводом) | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json J-HDR-436500215; design/parts/parts.json harness_families MF; MOLEX-43030 |
 | J206 | SL2-PWR-MF | PWR_A | S13+S14+S17+S18 | Molex Micro-Fit 3.0 (2 ряди, 3.00 мм) | 8 (8 з проводом) | 43045-0812 (C277661) | 43025-0800 (C127351) | 43030-0007 (C293530) | design/parts/parts.json J-HDR-430450812; design/parts/parts.json harness_families MF2; MOLEX-43030 |
 | J207 | SL2-PWR-PH | PWR_B | S20+S21+S22+S35+S36 | JST PH 2.0 мм | 12 (11 з проводом) | S12B-PH-K-S(LF)(SN) (C157943) | PHR-12 (C157960) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S12BPH; design/parts/parts.json harness_families PH; JST-PH |
-| J506 | X23S1-PWR | PWR_B | S23 | JST PH 2.0 мм | 3 (3 з проводом) | S3B-PH-K-S(LF)(SN) (C157929) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S3BPH; design/parts/parts.json harness_families PH; JST-PH |
+| J506 | SL3-PWR-PH | PWR_B | S23+S34 | JST PH 2.0 мм | 9 (9 з проводом) | S9B-PH-K-S(LF)(SN) (C157912) | PHR-9 (C157949) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S9BPH; design/parts/parts.json harness_families PH; JST-PH |
 | J507 | X32S1-PWR | PWR_A | S32 | JST PH 2.0 мм | 4 (4 з проводом) | B4B-PH-K-S(LF)(SN) (C131334) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-B4BPH; design/parts/parts.json harness_families PH; JST-PH |
-| J508 | X34S1-PWR | PWR_B | S34 | JST PH 2.0 мм | 6 (6 з проводом) | S6B-PH-K-S(LF)(SN) (C157920) | PHR-6 (C157952) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S6BPH; design/parts/parts.json harness_families PH; JST-PH |
 | J302 | — | CTRL | S02 | JST PH 2.0 мм | 5 (4 з проводом) | S5B-PH-K-S(LF)(SN) (C157923) | PHR-5 (C157953) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-PH-S5B; design/parts/parts.json harness_families PH; JST-PH |
 | J304 | X01I1-CTRL | CTRL | S01 | IDC 2×20, 2.54 мм, стрічка 1.27 мм | 40 (23 з проводом) | XDFH-0254-2*20P (C19193815) | XDFH-0258-2*20P (C53309344) | — | design/parts/parts.json J-HDR-XDFH02542x20P; design/parts/parts.json harness_families IDC |
 | J305 | X02P1-CTRL | CTRL | S02 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 4 (4 з проводом) | 43650-0400 (C277684) | 43645-0400 (C277618) | 43030-0007 (C293530) | design/parts/parts.json J-HDR-436500400; design/parts/parts.json harness_families MF; MOLEX-43030 |
@@ -298,7 +297,7 @@
 | S04-04 | BIAS_CH2_PORT | PWR: J204.4 (X04S1-PWR) → Q2901.5, Q2901.6, C2901.1 … | RF: J420.4 (X04S1-RF) → L403.2, C449.1, C450.1 | 24 | 1/1 | 0.339 / 0.339 | рожевий |
 | S04-05 | BIAS_CH3_PORT | PWR: J204.5 (X04S1-PWR) → Q2902.5, Q2902.6, C2902.1 … | RF: J420.5 (X04S1-RF) → L404.2, C451.1, C452.1 | 24 | 1/1 | 0.339 / 0.339 | рожевий |
 | S04-06 | BIAS_CH4 | PWR: J204.6 (X04S1-PWR) → L209.2, C246.1, R247.1 … | RF: J420.6 (X04S1-RF) → A424.1, C446.1 | 24 | 1/1 | 0.192 / 0.192 | рожевий |
-| S04-07 | LAB5_RLY | PWR: J204.7 (X04S1-PWR) → F104.2, J208.41, J208.45 … | RF: J420.7 (X04S1-RF) → D401.3, K401.1, K402.1 | 24 | 1/1 | 0.1 / 1.5 | червоний |
+| S04-07 | LAB5_RLY | PWR: J204.7 (X04S1-PWR) → F104.2, J208.17, J208.21 … | RF: J420.7 (X04S1-RF) → D401.3, K401.1, K402.1 | 24 | 1/1 | 0.1 / 1.5 | червоний |
 | S04-08 | LNB13V2 | PWR: J204.8 (X04S1-PWR) → L212.2, C261.1, R259.1 … | RF: J420.8 (X04S1-RF) → L406.2 | 24 | 1/1 | 0.3 / 0.499 | фіолетовий |
 | S05-01 | GND | PACK: пайка: U101.P- (P− BMS) | PWR: J105.1 (X05J1-PWR) → U103.2, C103.2, C104.2 … | 18 | 1/1 | 4.6 / 7.5 | чорний |
 | S05-02 | E1_SHUNT_P | PACK: пайка: F101.2 (вихід тримача F101 біля плюса паку; провід паяється в майданчик J117 носійної плати PACK_FUSE, W2 GR-4) | PWR: J105.2 (X05J1-PWR) (транзит) | 18 | 1/1 | 4.6 / 7.5 | коричневий |
@@ -348,10 +347,10 @@
 | S21-02 | VBUS_RTLB | PWR: J207.4 (SL2-PWR-PH) → L210.2, C250.1, R251.1 … | RTLB: J541.1 (VBUS from E2) | 24 | 1/1 | 0.673 / 0.673 | червоний |
 | S22-01 | GND | PWR: J207.5 (SL2-PWR-PH) → U103.2, C103.2, C104.2 … | HFP: J544.S (shield) | 24 | 1/2 | 0.989 / 0.989 | чорний |
 | S22-02 | GND | PWR: J207.6 (SL2-PWR-PH) → U103.2, C103.2, C104.2 … | HFP: J544.5 (GND) | 24 | 2/2 | 0.989 / 0.989 | чорний |
-| S22-03 | VBUS_HFP | PWR: J207.7 (SL2-PWR-PH) → J208.37, J209.38, L501.2 … | HFP: J544.1 (VBUS filtered) | 24 | 1/1 | 0.989 / 0.989 | червоний |
-| S23-01 | GND | PWR: J506.1 (X23S1-PWR) → U103.2, C103.2, C104.2 … | LABUSB: J501.S (cable shield) | 24 | 1/2 | 0.825 / 0.825 | чорний |
-| S23-02 | GND | PWR: J506.2 (X23S1-PWR) → U103.2, C103.2, C104.2 … | LABUSB: J501.4 (GND) | 24 | 2/2 | 0.825 / 0.825 | чорний |
-| S23-03 | VBUS_LABPORT | PWR: J506.3 (X23S1-PWR) → J208.33, J209.34, U502.6 … | LABUSB: J501.1 (VBUS) | 24 | 1/1 | 0.825 / 0.825 | червоний |
+| S22-03 | VBUS_HFP | PWR: J207.7 (SL2-PWR-PH) → J208.13, J209.14, L501.2 … | HFP: J544.1 (VBUS filtered) | 24 | 1/1 | 0.989 / 0.989 | червоний |
+| S23-01 | GND | PWR: J506.1 (SL3-PWR-PH) → U103.2, C103.2, C104.2 … | LABUSB: J501.S (cable shield) | 24 | 1/2 | 0.825 / 0.825 | чорний |
+| S23-02 | GND | PWR: J506.2 (SL3-PWR-PH) → U103.2, C103.2, C104.2 … | LABUSB: J501.4 (GND) | 24 | 2/2 | 0.825 / 0.825 | чорний |
+| S23-03 | VBUS_LABPORT | PWR: J506.3 (SL3-PWR-PH) → U502.6, C506.1, C521.1 … | LABUSB: J501.1 (VBUS) | 24 | 1/1 | 0.825 / 0.825 | червоний |
 | S24-01 | GND | CTRL: J311.1 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | T7A: J514.1 (X24S1-T7A) → U505.5, U505.7, R514.2 … | 24 | 1/1 | 0.1 / 0.1 | чорний |
 | S24-02 | 3V3_Q6A | CTRL: J311.2 (S24-25-CTRL) → J302.1, R301.2, R302.2 … | T7A: J514.2 (X24S1-T7A) → R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
 | S24-03 | EN_T7 | CTRL: J311.3 (S24-25-CTRL) → U302.8 | T7A: J514.3 (X24S1-T7A) → U505.4, R515.1 | 26 | 1/1 | 0.05 / — | сірий |
@@ -382,12 +381,12 @@
 | S33-02 | E5_IMU5V | GX16: J504.1 (E5_IMU5V to pack) | IMUPACK: J550.1 (5V raw) | 26 | 1/1 | 0.2 / 0.339 | червоний |
 | S33-03 | IMU_RX | GX16: J504.4 (PicoTX → packRX) | IMUPACK: J550.4 (packRX) | 26 | 1/1 | 0.05 / — | зелений |
 | S33-04 | IMU_TX | GX16: J504.3 (packTX → PicoRX) | IMUPACK: J550.3 (packTX) | 26 | 1/1 | 0.05 / — | зелений |
-| S34-01 | GND | PWR: J508.1 (X34S1-PWR) → U103.2, C103.2, C104.2 … | LABBUS: J505.2 (GND power) | 24 | 1/2 | 0.42 / 0.75 | чорний |
-| S34-02 | GND | PWR: J508.2 (X34S1-PWR) → U103.2, C103.2, C104.2 … | LABBUS: J505.4 (GND signal) | 24 | 2/2 | 0.42 / 0.75 | чорний |
-| S34-03 | AUX12 | PWR: J508.3 (X34S1-PWR) → L204.2, C221.1, R223.1 … | LABBUS: J505.1 (AUX12 protected) | 24 | 1/1 | 0.42 / 0.75 | жовтий |
-| S34-04 | I2CB_SCL | PWR: J508.4 (X34S1-PWR) → U507.7, R551.1 | LABBUS: J505.5 (SCL-B) | 26 | 1/1 | 0.05 / — | білий |
-| S34-05 | I2CB_SDA | PWR: J508.5 (X34S1-PWR) → U507.6, R550.1 | LABBUS: J505.3 (SDA-B) | 26 | 1/1 | 0.05 / — | синій |
-| S34-06 | SLED_DET | PWR: J508.6 (X34S1-PWR) (транзит) | LABBUS: J505.6 (SLED_DET_N) | 26 | 1/1 | 0.05 / — | блакитний |
+| S34-01 | GND | PWR: J506.4 (SL3-PWR-PH) → U103.2, C103.2, C104.2 … | LABBUS: J505.2 (GND power) | 24 | 1/2 | 0.42 / 0.75 | чорний |
+| S34-02 | GND | PWR: J506.5 (SL3-PWR-PH) → U103.2, C103.2, C104.2 … | LABBUS: J505.4 (GND signal) | 24 | 2/2 | 0.42 / 0.75 | чорний |
+| S34-03 | AUX12 | PWR: J506.6 (SL3-PWR-PH) → L204.2, C221.1, R223.1 … | LABBUS: J505.1 (AUX12 protected) | 24 | 1/1 | 0.42 / 0.75 | жовтий |
+| S34-04 | I2CB_SCL | PWR: J506.7 (SL3-PWR-PH) → U507.7, R551.1 | LABBUS: J505.5 (SCL-B) | 26 | 1/1 | 0.05 / — | білий |
+| S34-05 | I2CB_SDA | PWR: J506.8 (SL3-PWR-PH) → U507.6, R550.1 | LABBUS: J505.3 (SDA-B) | 26 | 1/1 | 0.05 / — | синій |
+| S34-06 | SLED_DET | PWR: J506.9 (SL3-PWR-PH) (транзит) | LABBUS: J505.6 (SLED_DET_N) | 26 | 1/1 | 0.05 / — | блакитний |
 | S35-01 | GND | PWR: J207.8 (SL2-PWR-PH) → U103.2, C103.2, C104.2 … | BONI: пайка: A406.SHIELDS | 24 | 1/1 | 0.065 / 0.153 | чорний |
 | S35-02 | BONI13V8_PORT | PWR: J207.9 (SL2-PWR-PH) → Q2903.5, Q2903.6, C2903.1 … | BONI: пайка: A406.DC | 24 | 1/1 | 0.065 / 0.153 | фіолетовий |
 | S36-01 | GND | PWR: J207.10 (SL2-PWR-PH) → U103.2, C103.2, C104.2 … | SBPWR: J551.3 (return (GND), lead blue) | 24 | 1/1 | 0.065 / 0.192 | чорний |

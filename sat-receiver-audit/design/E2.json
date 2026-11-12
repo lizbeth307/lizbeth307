@@ -124,7 +124,7 @@
     "Тільки прийом: LNB живиться для вертикальної поляризації 13.2V, без 18V/22kHz, лише при RTL-B на RF3. Boni потребує DC-sense, підтвердження та струмового вікна за 2s. AUX12 дозволений лише BENCH із навантаженими антенними трактами.",
     "Усі фізичні контакти IC наведені явно; невикористані мають NC. EP означає ненумерований виробником тепловий майданчик; його нумерація у фінальному footprint перевіряється окремо.",
     "Всі L/C і захисні Schottky мають обрані MPN виробників. Типова характеристика DC bias не є гарантованим мінімумом: для критичних C застосовано паралельний запас і обов’язковий стендовий контроль.",
-    "15 фільтрувальних дроселів використовують XAL5030-102MEC. Це свідомий запас струму та уніфікація SKU; до закупівлі оновити кошторис.",
+    "9 фільтрувальних дроселів використовують XAL5030-102MEC, 6 гілок PWR-A із захистом до 1.70 A (L202, L204, L211–L214) — Bourns SRP2510PA-1R0M (W2 GR-5B, SHRINK-2). Це свідомий запас струму та уніфікація SKU; до закупівлі оновити кошторис.",
     "Default LAB5 у E1 оновлено до Pololu D36V50F5 + запобіжник 4A. Фізична стеля пари LT3045 — 1A; S-band живиться окремо від LAB5, але входить до єдиного програмного резерву антен I_ANT. Старі ворота 2.5A належать лише legacy D36V28F5.",
     "I_ANT = сума струмів INA3221 LNA1–4 + 65mA, якщо EN_SB_LNA=1. Програмний контракт: I_ANT ≤1A; I_ANT + 0.83A×EN_LABPORT ≤1.5A. LAB-порт не має runtime-амперметра, тому використовує консервативний резерв, а не середній струм.",
     "DC-сенсори E4 живляться тільки від 3V3_Q6A: резерв 12mA у цій шині, внесок у LAB5 = 0mA. Резерв 65mA S-band вже всередині I_ANT; у верхньому бюджеті LAB5 його не додають вдруге.",
@@ -770,14 +770,14 @@
     },
     {
       "ref": "L202",
-      "value": "1uH XAL5030-102MEC",
+      "value": "1uH SRP2510PA-1R0M",
       "kind": "inductor",
       "group": "Дисплей: захищене живлення 12 V",
-      "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
+      "source": "https://www.bourns.com/docs/product-datasheets/srp2510pa.pdf",
       "status": "design",
-      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
-      "manufacturer": "Coilcraft",
-      "lcsc": "C5379798",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "manufacturer": "Bourns",
+      "alt_mpn": "Bourns SRP2510A-1R0M",
       "pins": [
         {
           "number": "1",
@@ -793,10 +793,10 @@
         }
       ],
       "notes": [
-        "Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.",
-        "Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."
+        "Bourns SRP2510PA-1R0M (W2 GR-5B, SHRINK-2, замість XAL5030-102MEC): 1.00 мкГн ±20 %, DCR 41 тип./52 макс. мОм, Irms 3.4 A для нагріву на 40 °C, Isat 4.4 A тип. (спад L на 30 %), SRF 70 МГц тип., 2.5 × 2.0 × 1.0 мм макс. (рядок READS-P web:bourns-srp2510pa).",
+        "Гілка DISP12: 1.27 A тривало, захист 1.7 A (eFuse U202 ≈1.70 A; tools/assembly_data.py NET_CURRENT). Модель на межі захисту: нагрів ≈10.0 °C (40 °C × (I/3.4 A)²), падіння ≈88 мВ при DCR 52 мОм; Isat 4.4 A — понад межу захисту (MODEL). Фактичні нагрів і придушення шуму перевіряються на платі."
       ],
-      "mpn": "XAL5030-102MEC"
+      "mpn": "SRP2510PA-1R0M"
     },
     {
       "ref": "C209",
@@ -1606,16 +1606,16 @@
     },
     {
       "ref": "R219",
-      "value": "0.22R 1% 0.25W",
+      "value": "0.15R 1% 0.25W",
       "kind": "resistor",
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
       "footprint": "Resistor_SMD:R_1206_3216Metric",
-      "mpn": "1206W4F220LT5E",
+      "mpn": "1206W4F150LT5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C25336",
-      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
+      "lcsc": "C37936",
+      "alt_mpn": "YAGEO RL1206FR-7W0R15L",
       "pins": [
         {
           "number": "1",
@@ -1631,19 +1631,20 @@
         }
       ],
       "notes": [
-        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
+        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить.",
+        "W2 GR-5B: перераховано для 16SVPG47M (ESR 25 мОм) C219. Модель фільтра 1 мкГн (XAL5030, DCR 9.4 мОм) з 10 мкФ (C218) на шині LIME3V3 і гілкою R + ESR + 47 мкФ (MODEL, розгортка 100 Гц – 5 МГц): найменший пік вихідного опору з ряду E24 дає 0.15 Ом — 0.230/0.216 Ом (номінальна C / половина C); 0.22 Ом із новим конденсатором — 0.263/0.255 Ом, давній 0.22 Ом + ESR 140 мОм EEU-FR1H470 (LCSC C407950, знімок 2026-11-06) — 0.36 Ом. Енергія заряду 47 мкФ при ввімкненні, ½CU², від R не залежить. Перехідний процес і RF-шум — вимір на платі (OPEN)."
       ]
     },
     {
       "ref": "C219",
-      "value": "47uF 50V EEUFR1H470",
+      "value": "47uF 10V 16SVPG47M",
       "kind": "capacitor",
       "group": "Lime M.2: комутована шина 3.3 V",
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
       "manufacturer": "Panasonic",
-      "lcsc": "C407950",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -1658,10 +1659,10 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEU-FR1H470",
+      "mpn": "16SVPG47M",
       "notes": [
-        "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
-        "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
+        "Полімерний OS-CON Panasonic 16SVPG47M 47 мкФ/16 V ±20 %, ESR не більше 25 мОм (100–300 кГц), висота 4.5 мм макс. (рядки READS-P web:panasonic-svpg-sheet-lcsc і web:panasonic-16svpg47m-page) у паралельній R-C гілці демпфування шини LIME3V3 (3.3 V); W2 GR-5B, SHRINK-2: замість радіального EEU-FR1H470 (11.2 мм). Контакт 1 «+» — до резистора R219, контакт 2 «−» — GND.",
+        "Ємність полімера не спадає від DC bias; запас за напругою 16 V проти 3.3 V. Послідовний резистор R219 перераховано на ESR 25 мОм (0.15 Ом, build/15 «Демпфери і C506 (W2 GR-5B)»). Panasonic позначає 16SVPG47M NRFND (каталог 2026, с. 116): наступник TBD. Ступінчасті тести демпфера — OPEN."
       ]
     },
     {
@@ -1907,14 +1908,14 @@
     },
     {
       "ref": "L204",
-      "value": "1uH XAL5030-102MEC",
+      "value": "1uH SRP2510PA-1R0M",
       "kind": "inductor",
       "group": "AUX12: верхній ключ і PTC",
-      "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
+      "source": "https://www.bourns.com/docs/product-datasheets/srp2510pa.pdf",
       "status": "design",
-      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
-      "manufacturer": "Coilcraft",
-      "lcsc": "C5379798",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "manufacturer": "Bourns",
+      "alt_mpn": "Bourns SRP2510A-1R0M",
       "pins": [
         {
           "number": "1",
@@ -1930,10 +1931,10 @@
         }
       ],
       "notes": [
-        "Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.",
-        "Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."
+        "Bourns SRP2510PA-1R0M (W2 GR-5B, SHRINK-2, замість XAL5030-102MEC): 1.00 мкГн ±20 %, DCR 41 тип./52 макс. мОм, Irms 3.4 A для нагріву на 40 °C, Isat 4.4 A тип. (спад L на 30 %), SRF 70 МГц тип., 2.5 × 2.0 × 1.0 мм макс. (рядок READS-P web:bourns-srp2510pa).",
+        "Гілка AUX12: 0.42 A тривало, захист 0.75 A (PTC утримання 0.75 A; tools/assembly_data.py NET_CURRENT). Модель на межі захисту: нагрів ≈1.9 °C (40 °C × (I/3.4 A)²), падіння ≈39 мВ при DCR 52 мОм; Isat 4.4 A — понад межу захисту (MODEL). Фактичні нагрів і придушення шуму перевіряються на платі."
       ],
-      "mpn": "XAL5030-102MEC"
+      "mpn": "SRP2510PA-1R0M"
     },
     {
       "ref": "C221",
@@ -2134,16 +2135,16 @@
     },
     {
       "ref": "R224",
-      "value": "0.22R 1% 0.25W",
+      "value": "0.15R 1% 0.25W",
       "kind": "resistor",
       "group": "LNA4V5: паралельні LT3045",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
       "footprint": "Resistor_SMD:R_1206_3216Metric",
-      "mpn": "1206W4F220LT5E",
+      "mpn": "1206W4F150LT5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C25336",
-      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
+      "lcsc": "C37936",
+      "alt_mpn": "YAGEO RL1206FR-7W0R15L",
       "pins": [
         {
           "number": "1",
@@ -2159,19 +2160,20 @@
         }
       ],
       "notes": [
-        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
+        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить.",
+        "W2 GR-5B: перераховано для 16SVPG47M (ESR 25 мОм) C225. Модель фільтра 1 мкГн (XAL5030, DCR 9.4 мОм) з 62 мкФ (C224, C226, C228, C289, C291) на шині E2_LNA_IN і гілкою R + ESR + 47 мкФ (MODEL, розгортка 100 Гц – 5 МГц): найменший пік вихідного опору з ряду E24 дає 0.15 Ом — 0.304/0.272 Ом (номінальна C / половина C); 0.22 Ом із новим конденсатором — 0.304/0.287 Ом, давній 0.22 Ом + ESR 140 мОм EEU-FR1H470 (LCSC C407950, знімок 2026-11-06) — 0.36 Ом. Енергія заряду 47 мкФ при ввімкненні, ½CU², від R не залежить. Перехідний процес і RF-шум — вимір на платі (OPEN)."
       ]
     },
     {
       "ref": "C225",
-      "value": "47uF 50V EEUFR1H470",
+      "value": "47uF 10V 16SVPG47M",
       "kind": "capacitor",
       "group": "LNA4V5: паралельні LT3045",
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
       "manufacturer": "Panasonic",
-      "lcsc": "C407950",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -2186,10 +2188,10 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEU-FR1H470",
+      "mpn": "16SVPG47M",
       "notes": [
-        "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
-        "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
+        "Полімерний OS-CON Panasonic 16SVPG47M 47 мкФ/16 V ±20 %, ESR не більше 25 мОм (100–300 кГц), висота 4.5 мм макс. (рядки READS-P web:panasonic-svpg-sheet-lcsc і web:panasonic-16svpg47m-page) у паралельній R-C гілці демпфування шини E2_LNA_IN (5 V (LAB5)); W2 GR-5B, SHRINK-2: замість радіального EEU-FR1H470 (11.2 мм). Контакт 1 «+» — до резистора R224, контакт 2 «−» — GND.",
+        "Ємність полімера не спадає від DC bias; запас за напругою 16 V проти 5 V (LAB5). Послідовний резистор R224 перераховано на ESR 25 мОм (0.15 Ом, build/15 «Демпфери і C506 (W2 GR-5B)»). Panasonic позначає 16SVPG47M NRFND (каталог 2026, с. 116): наступник TBD. Ступінчасті тести демпфера — OPEN."
       ]
     },
     {
@@ -2941,16 +2943,16 @@
     },
     {
       "ref": "R232",
-      "value": "0.22R 1% 0.25W",
+      "value": "0.15R 1% 0.25W",
       "kind": "resistor",
       "group": "LNA: канал 1",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
       "footprint": "Resistor_SMD:R_1206_3216Metric",
-      "mpn": "1206W4F220LT5E",
+      "mpn": "1206W4F150LT5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C25336",
-      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
+      "lcsc": "C37936",
+      "alt_mpn": "YAGEO RL1206FR-7W0R15L",
       "pins": [
         {
           "number": "1",
@@ -2966,19 +2968,20 @@
         }
       ],
       "notes": [
-        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
+        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить.",
+        "W2 GR-5B: перераховано для 16SVPG47M (ESR 25 мОм) C235. Модель фільтра 1 мкГн (XAL5030, DCR 9.4 мОм) з 1 мкФ на шині BIAS_CH1 і гілкою R + ESR + 47 мкФ (MODEL, розгортка 100 Гц – 5 МГц): найменший пік вихідного опору з ряду E24 дає 0.15 Ом — 0.202/0.200 Ом (номінальна C / половина C); 0.22 Ом із новим конденсатором — 0.247/0.246 Ом, давній 0.22 Ом + ESR 140 мОм EEU-FR1H470 (LCSC C407950, знімок 2026-11-06) — 0.36 Ом. Енергія заряду 47 мкФ при ввімкненні, ½CU², від R не залежить. Перехідний процес і RF-шум — вимір на платі (OPEN)."
       ]
     },
     {
       "ref": "C235",
-      "value": "47uF 50V EEUFR1H470",
+      "value": "47uF 10V 16SVPG47M",
       "kind": "capacitor",
       "group": "LNA: канал 1",
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
       "manufacturer": "Panasonic",
-      "lcsc": "C407950",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -2993,10 +2996,10 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEU-FR1H470",
+      "mpn": "16SVPG47M",
       "notes": [
-        "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
-        "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
+        "Полімерний OS-CON Panasonic 16SVPG47M 47 мкФ/16 V ±20 %, ESR не більше 25 мОм (100–300 кГц), висота 4.5 мм макс. (рядки READS-P web:panasonic-svpg-sheet-lcsc і web:panasonic-16svpg47m-page) у паралельній R-C гілці демпфування шини BIAS_CH1 (4.5 V (LNA4V5)); W2 GR-5B, SHRINK-2: замість радіального EEU-FR1H470 (11.2 мм). Контакт 1 «+» — до резистора R232, контакт 2 «−» — GND.",
+        "Ємність полімера не спадає від DC bias; запас за напругою 16 V проти 4.5 V (LNA4V5). Послідовний резистор R232 перераховано на ESR 25 мОм (0.15 Ом, build/15 «Демпфери і C506 (W2 GR-5B)»). Panasonic позначає 16SVPG47M NRFND (каталог 2026, с. 116): наступник TBD. Ступінчасті тести демпфера — OPEN."
       ]
     },
     {
@@ -3285,16 +3288,16 @@
     },
     {
       "ref": "R237",
-      "value": "0.22R 1% 0.25W",
+      "value": "0.15R 1% 0.25W",
       "kind": "resistor",
       "group": "LNA: канал 2",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
       "footprint": "Resistor_SMD:R_1206_3216Metric",
-      "mpn": "1206W4F220LT5E",
+      "mpn": "1206W4F150LT5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C25336",
-      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
+      "lcsc": "C37936",
+      "alt_mpn": "YAGEO RL1206FR-7W0R15L",
       "pins": [
         {
           "number": "1",
@@ -3310,19 +3313,20 @@
         }
       ],
       "notes": [
-        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
+        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить.",
+        "W2 GR-5B: перераховано для 16SVPG47M (ESR 25 мОм) C239. Модель фільтра 1 мкГн (XAL5030, DCR 9.4 мОм) з 1 мкФ на шині BIAS_CH2 і гілкою R + ESR + 47 мкФ (MODEL, розгортка 100 Гц – 5 МГц): найменший пік вихідного опору з ряду E24 дає 0.15 Ом — 0.202/0.200 Ом (номінальна C / половина C); 0.22 Ом із новим конденсатором — 0.247/0.246 Ом, давній 0.22 Ом + ESR 140 мОм EEU-FR1H470 (LCSC C407950, знімок 2026-11-06) — 0.36 Ом. Енергія заряду 47 мкФ при ввімкненні, ½CU², від R не залежить. Перехідний процес і RF-шум — вимір на платі (OPEN)."
       ]
     },
     {
       "ref": "C239",
-      "value": "47uF 50V EEUFR1H470",
+      "value": "47uF 10V 16SVPG47M",
       "kind": "capacitor",
       "group": "LNA: канал 2",
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
       "manufacturer": "Panasonic",
-      "lcsc": "C407950",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -3337,10 +3341,10 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEU-FR1H470",
+      "mpn": "16SVPG47M",
       "notes": [
-        "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
-        "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
+        "Полімерний OS-CON Panasonic 16SVPG47M 47 мкФ/16 V ±20 %, ESR не більше 25 мОм (100–300 кГц), висота 4.5 мм макс. (рядки READS-P web:panasonic-svpg-sheet-lcsc і web:panasonic-16svpg47m-page) у паралельній R-C гілці демпфування шини BIAS_CH2 (4.5 V (LNA4V5)); W2 GR-5B, SHRINK-2: замість радіального EEU-FR1H470 (11.2 мм). Контакт 1 «+» — до резистора R237, контакт 2 «−» — GND.",
+        "Ємність полімера не спадає від DC bias; запас за напругою 16 V проти 4.5 V (LNA4V5). Послідовний резистор R237 перераховано на ESR 25 мОм (0.15 Ом, build/15 «Демпфери і C506 (W2 GR-5B)»). Panasonic позначає 16SVPG47M NRFND (каталог 2026, с. 116): наступник TBD. Ступінчасті тести демпфера — OPEN."
       ]
     },
     {
@@ -3940,16 +3944,16 @@
     },
     {
       "ref": "R242",
-      "value": "0.22R 1% 0.25W",
+      "value": "0.15R 1% 0.25W",
       "kind": "resistor",
       "group": "LNA: канал 3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
       "footprint": "Resistor_SMD:R_1206_3216Metric",
-      "mpn": "1206W4F220LT5E",
+      "mpn": "1206W4F150LT5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C25336",
-      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
+      "lcsc": "C37936",
+      "alt_mpn": "YAGEO RL1206FR-7W0R15L",
       "pins": [
         {
           "number": "1",
@@ -3965,19 +3969,20 @@
         }
       ],
       "notes": [
-        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
+        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить.",
+        "W2 GR-5B: перераховано для 16SVPG47M (ESR 25 мОм) C243. Модель фільтра 1 мкГн (XAL5030, DCR 9.4 мОм) з 1 мкФ на шині BIAS_CH3 і гілкою R + ESR + 47 мкФ (MODEL, розгортка 100 Гц – 5 МГц): найменший пік вихідного опору з ряду E24 дає 0.15 Ом — 0.202/0.200 Ом (номінальна C / половина C); 0.22 Ом із новим конденсатором — 0.247/0.246 Ом, давній 0.22 Ом + ESR 140 мОм EEU-FR1H470 (LCSC C407950, знімок 2026-11-06) — 0.36 Ом. Енергія заряду 47 мкФ при ввімкненні, ½CU², від R не залежить. Перехідний процес і RF-шум — вимір на платі (OPEN)."
       ]
     },
     {
       "ref": "C243",
-      "value": "47uF 50V EEUFR1H470",
+      "value": "47uF 10V 16SVPG47M",
       "kind": "capacitor",
       "group": "LNA: канал 3",
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
       "manufacturer": "Panasonic",
-      "lcsc": "C407950",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -3992,10 +3997,10 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEU-FR1H470",
+      "mpn": "16SVPG47M",
       "notes": [
-        "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
-        "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
+        "Полімерний OS-CON Panasonic 16SVPG47M 47 мкФ/16 V ±20 %, ESR не більше 25 мОм (100–300 кГц), висота 4.5 мм макс. (рядки READS-P web:panasonic-svpg-sheet-lcsc і web:panasonic-16svpg47m-page) у паралельній R-C гілці демпфування шини BIAS_CH3 (4.5 V (LNA4V5)); W2 GR-5B, SHRINK-2: замість радіального EEU-FR1H470 (11.2 мм). Контакт 1 «+» — до резистора R242, контакт 2 «−» — GND.",
+        "Ємність полімера не спадає від DC bias; запас за напругою 16 V проти 4.5 V (LNA4V5). Послідовний резистор R242 перераховано на ESR 25 мОм (0.15 Ом, build/15 «Демпфери і C506 (W2 GR-5B)»). Panasonic позначає 16SVPG47M NRFND (каталог 2026, с. 116): наступник TBD. Ступінчасті тести демпфера — OPEN."
       ]
     },
     {
@@ -4595,16 +4600,16 @@
     },
     {
       "ref": "R247",
-      "value": "0.22R 1% 0.25W",
+      "value": "0.15R 1% 0.25W",
       "kind": "resistor",
       "group": "LNA: канал 4",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
       "footprint": "Resistor_SMD:R_1206_3216Metric",
-      "mpn": "1206W4F220LT5E",
+      "mpn": "1206W4F150LT5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C25336",
-      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
+      "lcsc": "C37936",
+      "alt_mpn": "YAGEO RL1206FR-7W0R15L",
       "pins": [
         {
           "number": "1",
@@ -4620,19 +4625,20 @@
         }
       ],
       "notes": [
-        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
+        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить.",
+        "W2 GR-5B: перераховано для 16SVPG47M (ESR 25 мОм) C247. Модель фільтра 1 мкГн (XAL5030, DCR 9.4 мОм) з 1 мкФ на шині BIAS_CH4 і гілкою R + ESR + 47 мкФ (MODEL, розгортка 100 Гц – 5 МГц): найменший пік вихідного опору з ряду E24 дає 0.15 Ом — 0.202/0.200 Ом (номінальна C / половина C); 0.22 Ом із новим конденсатором — 0.247/0.246 Ом, давній 0.22 Ом + ESR 140 мОм EEU-FR1H470 (LCSC C407950, знімок 2026-11-06) — 0.36 Ом. Енергія заряду 47 мкФ при ввімкненні, ½CU², від R не залежить. Перехідний процес і RF-шум — вимір на платі (OPEN)."
       ]
     },
     {
       "ref": "C247",
-      "value": "47uF 50V EEUFR1H470",
+      "value": "47uF 10V 16SVPG47M",
       "kind": "capacitor",
       "group": "LNA: канал 4",
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
       "manufacturer": "Panasonic",
-      "lcsc": "C407950",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -4647,10 +4653,10 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEU-FR1H470",
+      "mpn": "16SVPG47M",
       "notes": [
-        "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
-        "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
+        "Полімерний OS-CON Panasonic 16SVPG47M 47 мкФ/16 V ±20 %, ESR не більше 25 мОм (100–300 кГц), висота 4.5 мм макс. (рядки READS-P web:panasonic-svpg-sheet-lcsc і web:panasonic-16svpg47m-page) у паралельній R-C гілці демпфування шини BIAS_CH4 (4.5 V (LNA4V5)); W2 GR-5B, SHRINK-2: замість радіального EEU-FR1H470 (11.2 мм). Контакт 1 «+» — до резистора R247, контакт 2 «−» — GND.",
+        "Ємність полімера не спадає від DC bias; запас за напругою 16 V проти 4.5 V (LNA4V5). Послідовний резистор R247 перераховано на ESR 25 мОм (0.15 Ом, build/15 «Демпфери і C506 (W2 GR-5B)»). Panasonic позначає 16SVPG47M NRFND (каталог 2026, с. 116): наступник TBD. Ступінчасті тести демпфера — OPEN."
       ]
     },
     {
@@ -4910,16 +4916,16 @@
     },
     {
       "ref": "R251",
-      "value": "0.22R 1% 0.25W",
+      "value": "0.15R 1% 0.25W",
       "kind": "resistor",
       "group": "RTL-B: комутований VBUS",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
       "footprint": "Resistor_SMD:R_1206_3216Metric",
-      "mpn": "1206W4F220LT5E",
+      "mpn": "1206W4F150LT5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C25336",
-      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
+      "lcsc": "C37936",
+      "alt_mpn": "YAGEO RL1206FR-7W0R15L",
       "pins": [
         {
           "number": "1",
@@ -4935,19 +4941,20 @@
         }
       ],
       "notes": [
-        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
+        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить.",
+        "W2 GR-5B: перераховано для 16SVPG47M (ESR 25 мОм) C251. Модель фільтра 1 мкГн (XAL5030, DCR 9.4 мОм) з 1 мкФ на шині VBUS_RTLB і гілкою R + ESR + 47 мкФ (MODEL, розгортка 100 Гц – 5 МГц): найменший пік вихідного опору з ряду E24 дає 0.15 Ом — 0.202/0.200 Ом (номінальна C / половина C); 0.22 Ом із новим конденсатором — 0.247/0.246 Ом, давній 0.22 Ом + ESR 140 мОм EEU-FR1H470 (LCSC C407950, знімок 2026-11-06) — 0.36 Ом. Енергія заряду 47 мкФ при ввімкненні, ½CU², від R не залежить. Перехідний процес і RF-шум — вимір на платі (OPEN)."
       ]
     },
     {
       "ref": "C251",
-      "value": "47uF 50V EEUFR1H470",
+      "value": "47uF 10V 16SVPG47M",
       "kind": "capacitor",
       "group": "RTL-B: комутований VBUS",
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
       "manufacturer": "Panasonic",
-      "lcsc": "C407950",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -4962,10 +4969,10 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEU-FR1H470",
+      "mpn": "16SVPG47M",
       "notes": [
-        "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
-        "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
+        "Полімерний OS-CON Panasonic 16SVPG47M 47 мкФ/16 V ±20 %, ESR не більше 25 мОм (100–300 кГц), висота 4.5 мм макс. (рядки READS-P web:panasonic-svpg-sheet-lcsc і web:panasonic-16svpg47m-page) у паралельній R-C гілці демпфування шини VBUS_RTLB (5 V (LAB5)); W2 GR-5B, SHRINK-2: замість радіального EEU-FR1H470 (11.2 мм). Контакт 1 «+» — до резистора R251, контакт 2 «−» — GND.",
+        "Ємність полімера не спадає від DC bias; запас за напругою 16 V проти 5 V (LAB5). Послідовний резистор R251 перераховано на ESR 25 мОм (0.15 Ом, build/15 «Демпфери і C506 (W2 GR-5B)»). Panasonic позначає 16SVPG47M NRFND (каталог 2026, с. 116): наступник TBD. Ступінчасті тести демпфера — OPEN."
       ]
     },
     {
@@ -5020,14 +5027,14 @@
     },
     {
       "ref": "L211",
-      "value": "1uH XAL5030-102MEC",
+      "value": "1uH SRP2510PA-1R0M",
       "kind": "inductor",
       "group": "LNB: малошумна захищена шина",
-      "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
+      "source": "https://www.bourns.com/docs/product-datasheets/srp2510pa.pdf",
       "status": "design",
-      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
-      "manufacturer": "Coilcraft",
-      "lcsc": "C5379798",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "manufacturer": "Bourns",
+      "alt_mpn": "Bourns SRP2510A-1R0M",
       "pins": [
         {
           "number": "1",
@@ -5043,10 +5050,10 @@
         }
       ],
       "notes": [
-        "Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.",
-        "Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."
+        "Bourns SRP2510PA-1R0M (W2 GR-5B, SHRINK-2, замість XAL5030-102MEC): 1.00 мкГн ±20 %, DCR 41 тип./52 макс. мОм, Irms 3.4 A для нагріву на 40 °C, Isat 4.4 A тип. (спад L на 30 %), SRF 70 МГц тип., 2.5 × 2.0 × 1.0 мм макс. (рядок READS-P web:bourns-srp2510pa).",
+        "Гілка LNB13V2: 0.3 A тривало, захист 0.499 A (eFuse U212 0.405–0.499 A; tools/assembly_data.py NET_CURRENT). Модель на межі захисту: нагрів ≈0.9 °C (40 °C × (I/3.4 A)²), падіння ≈26 мВ при DCR 52 мОм; Isat 4.4 A — понад межу захисту (MODEL). Фактичні нагрів і придушення шуму перевіряються на платі."
       ],
-      "mpn": "XAL5030-102MEC"
+      "mpn": "SRP2510PA-1R0M"
     },
     {
       "ref": "C253",
@@ -5718,14 +5725,14 @@
     },
     {
       "ref": "L212",
-      "value": "1uH XAL5030-102MEC",
+      "value": "1uH SRP2510PA-1R0M",
       "kind": "inductor",
       "group": "LNB: малошумна захищена шина",
-      "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
+      "source": "https://www.bourns.com/docs/product-datasheets/srp2510pa.pdf",
       "status": "design",
-      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
-      "manufacturer": "Coilcraft",
-      "lcsc": "C5379798",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "manufacturer": "Bourns",
+      "alt_mpn": "Bourns SRP2510A-1R0M",
       "pins": [
         {
           "number": "1",
@@ -5741,10 +5748,10 @@
         }
       ],
       "notes": [
-        "Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.",
-        "Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."
+        "Bourns SRP2510PA-1R0M (W2 GR-5B, SHRINK-2, замість XAL5030-102MEC): 1.00 мкГн ±20 %, DCR 41 тип./52 макс. мОм, Irms 3.4 A для нагріву на 40 °C, Isat 4.4 A тип. (спад L на 30 %), SRF 70 МГц тип., 2.5 × 2.0 × 1.0 мм макс. (рядок READS-P web:bourns-srp2510pa).",
+        "Гілка LNB13V2: 0.3 A тривало, захист 0.499 A (eFuse U212 0.405–0.499 A; tools/assembly_data.py NET_CURRENT). Модель на межі захисту: нагрів ≈0.9 °C (40 °C × (I/3.4 A)²), падіння ≈26 мВ при DCR 52 мОм; Isat 4.4 A — понад межу захисту (MODEL). Фактичні нагрів і придушення шуму перевіряються на платі."
       ],
-      "mpn": "XAL5030-102MEC"
+      "mpn": "SRP2510PA-1R0M"
     },
     {
       "ref": "C261",
@@ -5888,14 +5895,14 @@
     },
     {
       "ref": "L213",
-      "value": "1uH XAL5030-102MEC",
+      "value": "1uH SRP2510PA-1R0M",
       "kind": "inductor",
       "group": "Boni: малошумна захищена шина",
-      "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
+      "source": "https://www.bourns.com/docs/product-datasheets/srp2510pa.pdf",
       "status": "design",
-      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
-      "manufacturer": "Coilcraft",
-      "lcsc": "C5379798",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "manufacturer": "Bourns",
+      "alt_mpn": "Bourns SRP2510A-1R0M",
       "pins": [
         {
           "number": "1",
@@ -5911,10 +5918,10 @@
         }
       ],
       "notes": [
-        "Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.",
-        "Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."
+        "Bourns SRP2510PA-1R0M (W2 GR-5B, SHRINK-2, замість XAL5030-102MEC): 1.00 мкГн ±20 %, DCR 41 тип./52 макс. мОм, Irms 3.4 A для нагріву на 40 °C, Isat 4.4 A тип. (спад L на 30 %), SRF 70 МГц тип., 2.5 × 2.0 × 1.0 мм макс. (рядок READS-P web:bourns-srp2510pa).",
+        "Гілка BONI13V8_PORT: 0.065 A тривало, захист 0.153 A (eFuse U214 0.122–0.153 A; tools/assembly_data.py NET_CURRENT). Модель на межі захисту: нагрів ≈0.1 °C (40 °C × (I/3.4 A)²), падіння ≈8 мВ при DCR 52 мОм; Isat 4.4 A — понад межу захисту (MODEL). Фактичні нагрів і придушення шуму перевіряються на платі."
       ],
-      "mpn": "XAL5030-102MEC"
+      "mpn": "SRP2510PA-1R0M"
     },
     {
       "ref": "C264",
@@ -6586,14 +6593,14 @@
     },
     {
       "ref": "L214",
-      "value": "1uH XAL5030-102MEC",
+      "value": "1uH SRP2510PA-1R0M",
       "kind": "inductor",
       "group": "Boni: малошумна захищена шина",
-      "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
+      "source": "https://www.bourns.com/docs/product-datasheets/srp2510pa.pdf",
       "status": "design",
-      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
-      "manufacturer": "Coilcraft",
-      "lcsc": "C5379798",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "manufacturer": "Bourns",
+      "alt_mpn": "Bourns SRP2510A-1R0M",
       "pins": [
         {
           "number": "1",
@@ -6609,10 +6616,10 @@
         }
       ],
       "notes": [
-        "Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.",
-        "Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."
+        "Bourns SRP2510PA-1R0M (W2 GR-5B, SHRINK-2, замість XAL5030-102MEC): 1.00 мкГн ±20 %, DCR 41 тип./52 макс. мОм, Irms 3.4 A для нагріву на 40 °C, Isat 4.4 A тип. (спад L на 30 %), SRF 70 МГц тип., 2.5 × 2.0 × 1.0 мм макс. (рядок READS-P web:bourns-srp2510pa).",
+        "Гілка BONI13V8_PORT: 0.065 A тривало, захист 0.153 A (eFuse U214 0.122–0.153 A; tools/assembly_data.py NET_CURRENT). Модель на межі захисту: нагрів ≈0.1 °C (40 °C × (I/3.4 A)²), падіння ≈8 мВ при DCR 52 мОм; Isat 4.4 A — понад межу захисту (MODEL). Фактичні нагрів і придушення шуму перевіряються на платі."
       ],
-      "mpn": "XAL5030-102MEC"
+      "mpn": "SRP2510PA-1R0M"
     },
     {
       "ref": "C272",
@@ -9095,19 +9102,20 @@
     },
     {
       "ref": "R295",
-      "value": "0.22R 1%0.25W",
+      "value": "0.15R 1% 0.25W",
       "kind": "resistor",
       "group": "S-band LaNA WB: захищена шина 5 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
       "notes": [
-        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
+        "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить.",
+        "W2 GR-5B: перераховано для 16SVPG47M (ESR 25 мОм) C298. Модель фільтра 1 мкГн (XAL5030, DCR 9.4 мОм) з 1 мкФ на шині BIAS_SB_LNA і гілкою R + ESR + 47 мкФ (MODEL, розгортка 100 Гц – 5 МГц): найменший пік вихідного опору з ряду E24 дає 0.15 Ом — 0.202/0.200 Ом (номінальна C / половина C); 0.22 Ом із новим конденсатором — 0.247/0.246 Ом, давній 0.22 Ом + ESR 140 мОм EEU-FR1H470 (LCSC C407950, знімок 2026-11-06) — 0.36 Ом. Енергія заряду 47 мкФ при ввімкненні, ½CU², від R не залежить. Перехідний процес і RF-шум — вимір на платі (OPEN)."
       ],
       "footprint": "Resistor_SMD:R_1206_3216Metric",
-      "mpn": "1206W4F220LT5E",
+      "mpn": "1206W4F150LT5E",
       "manufacturer": "UNI-ROYAL",
-      "lcsc": "C25336",
-      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
+      "lcsc": "C37936",
+      "alt_mpn": "YAGEO RL1206FR-7W0R15L",
       "pins": [
         {
           "number": "1",
@@ -9125,15 +9133,15 @@
     },
     {
       "ref": "C298",
-      "value": "47uF 50V EEUFR1H470",
-      "mpn": "EEU-FR1H470",
+      "value": "47uF 10V 16SVPG47M",
+      "mpn": "16SVPG47M",
       "kind": "capacitor",
       "group": "S-band LaNA WB: захищена шина 5 V",
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/16SVPG47M",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
       "manufacturer": "Panasonic",
-      "lcsc": "C407950",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -9149,8 +9157,8 @@
         }
       ],
       "notes": [
-        "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
-        "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
+        "Полімерний OS-CON Panasonic 16SVPG47M 47 мкФ/16 V ±20 %, ESR не більше 25 мОм (100–300 кГц), висота 4.5 мм макс. (рядки READS-P web:panasonic-svpg-sheet-lcsc і web:panasonic-16svpg47m-page) у паралельній R-C гілці демпфування шини BIAS_SB_LNA (5 V (LAB5)); W2 GR-5B, SHRINK-2: замість радіального EEU-FR1H470 (11.2 мм). Контакт 1 «+» — до резистора R295, контакт 2 «−» — GND.",
+        "Ємність полімера не спадає від DC bias; запас за напругою 16 V проти 5 V (LAB5). Послідовний резистор R295 перераховано на ESR 25 мОм (0.15 Ом, build/15 «Демпфери і C506 (W2 GR-5B)»). Panasonic позначає 16SVPG47M NRFND (каталог 2026, с. 116): наступник TBD. Ступінчасті тести демпфера — OPEN."
       ]
     },
     {
@@ -9828,9 +9836,9 @@
         },
         {
           "number": "13",
-          "name": "BIAS_CH1_DAMP",
+          "name": "VBUS_HFP",
           "type": "passive",
-          "net": "BIAS_CH1_DAMP"
+          "net": "VBUS_HFP"
         },
         {
           "number": "14",
@@ -9852,9 +9860,9 @@
         },
         {
           "number": "17",
-          "name": "BIAS_CH2_DAMP",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "BIAS_CH2_DAMP"
+          "net": "LAB5_RLY"
         },
         {
           "number": "18",
@@ -9876,9 +9884,9 @@
         },
         {
           "number": "21",
-          "name": "BIAS_CH3_DAMP",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "BIAS_CH3_DAMP"
+          "net": "LAB5_RLY"
         },
         {
           "number": "22",
@@ -9900,9 +9908,9 @@
         },
         {
           "number": "25",
-          "name": "E2_SB_DAMP",
+          "name": "BONI13V8",
           "type": "passive",
-          "net": "E2_SB_DAMP"
+          "net": "BONI13V8"
         },
         {
           "number": "26",
@@ -9924,9 +9932,9 @@
         },
         {
           "number": "29",
-          "name": "VBUS_RTLB_DAMP",
+          "name": "LNB13V2",
           "type": "passive",
-          "net": "VBUS_RTLB_DAMP"
+          "net": "LNB13V2"
         },
         {
           "number": "30",
@@ -9948,9 +9956,9 @@
         },
         {
           "number": "33",
-          "name": "VBUS_LABPORT",
+          "name": "AUX12",
           "type": "passive",
-          "net": "VBUS_LABPORT"
+          "net": "AUX12"
         },
         {
           "number": "34",
@@ -9972,9 +9980,9 @@
         },
         {
           "number": "37",
-          "name": "VBUS_HFP",
+          "name": "BONI13V8_PORT",
           "type": "passive",
-          "net": "VBUS_HFP"
+          "net": "BONI13V8_PORT"
         },
         {
           "number": "38",
@@ -9996,9 +10004,9 @@
         },
         {
           "number": "41",
-          "name": "LAB5_RLY",
+          "name": "GND",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "net": "GND"
         },
         {
           "number": "42",
@@ -10008,9 +10016,9 @@
         },
         {
           "number": "43",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "44",
@@ -10020,9 +10028,9 @@
         },
         {
           "number": "45",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "46",
@@ -10032,9 +10040,9 @@
         },
         {
           "number": "47",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "48",
@@ -10044,9 +10052,9 @@
         },
         {
           "number": "49",
-          "name": "BIAS_CH4_DAMP",
+          "name": "NC",
           "type": "passive",
-          "net": "BIAS_CH4_DAMP"
+          "nc": true
         },
         {
           "number": "50",
@@ -10056,9 +10064,9 @@
         },
         {
           "number": "51",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "52",
@@ -10068,9 +10076,9 @@
         },
         {
           "number": "53",
-          "name": "BONI13V8",
+          "name": "NC",
           "type": "passive",
-          "net": "BONI13V8"
+          "nc": true
         },
         {
           "number": "54",
@@ -10080,9 +10088,9 @@
         },
         {
           "number": "55",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "56",
@@ -10092,9 +10100,9 @@
         },
         {
           "number": "57",
-          "name": "LNB13V2",
+          "name": "NC",
           "type": "passive",
-          "net": "LNB13V2"
+          "nc": true
         },
         {
           "number": "58",
@@ -10104,9 +10112,9 @@
         },
         {
           "number": "59",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "60",
@@ -10116,9 +10124,9 @@
         },
         {
           "number": "61",
-          "name": "AUX12",
+          "name": "NC",
           "type": "passive",
-          "net": "AUX12"
+          "nc": true
         },
         {
           "number": "62",
@@ -10128,9 +10136,9 @@
         },
         {
           "number": "63",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "64",
@@ -10140,9 +10148,9 @@
         },
         {
           "number": "65",
-          "name": "BONI13V8_PORT",
+          "name": "NC",
           "type": "passive",
-          "net": "BONI13V8_PORT"
+          "nc": true
         },
         {
           "number": "66",
@@ -10152,9 +10160,9 @@
         },
         {
           "number": "67",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "68",
@@ -10164,9 +10172,9 @@
         },
         {
           "number": "69",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "70",
@@ -10451,9 +10459,9 @@
         },
         {
           "number": "14",
-          "name": "BIAS_CH1_DAMP",
+          "name": "VBUS_HFP",
           "type": "passive",
-          "net": "BIAS_CH1_DAMP"
+          "net": "VBUS_HFP"
         },
         {
           "number": "15",
@@ -10475,9 +10483,9 @@
         },
         {
           "number": "18",
-          "name": "BIAS_CH2_DAMP",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "BIAS_CH2_DAMP"
+          "net": "LAB5_RLY"
         },
         {
           "number": "19",
@@ -10499,9 +10507,9 @@
         },
         {
           "number": "22",
-          "name": "BIAS_CH3_DAMP",
+          "name": "LAB5_RLY",
           "type": "passive",
-          "net": "BIAS_CH3_DAMP"
+          "net": "LAB5_RLY"
         },
         {
           "number": "23",
@@ -10523,9 +10531,9 @@
         },
         {
           "number": "26",
-          "name": "E2_SB_DAMP",
+          "name": "BONI13V8",
           "type": "passive",
-          "net": "E2_SB_DAMP"
+          "net": "BONI13V8"
         },
         {
           "number": "27",
@@ -10547,9 +10555,9 @@
         },
         {
           "number": "30",
-          "name": "VBUS_RTLB_DAMP",
+          "name": "LNB13V2",
           "type": "passive",
-          "net": "VBUS_RTLB_DAMP"
+          "net": "LNB13V2"
         },
         {
           "number": "31",
@@ -10571,9 +10579,9 @@
         },
         {
           "number": "34",
-          "name": "VBUS_LABPORT",
+          "name": "AUX12",
           "type": "passive",
-          "net": "VBUS_LABPORT"
+          "net": "AUX12"
         },
         {
           "number": "35",
@@ -10595,9 +10603,9 @@
         },
         {
           "number": "38",
-          "name": "VBUS_HFP",
+          "name": "BONI13V8_PORT",
           "type": "passive",
-          "net": "VBUS_HFP"
+          "net": "BONI13V8_PORT"
         },
         {
           "number": "39",
@@ -10619,9 +10627,9 @@
         },
         {
           "number": "42",
-          "name": "LAB5_RLY",
+          "name": "GND",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "net": "GND"
         },
         {
           "number": "43",
@@ -10631,9 +10639,9 @@
         },
         {
           "number": "44",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "45",
@@ -10643,9 +10651,9 @@
         },
         {
           "number": "46",
-          "name": "LAB5_RLY",
+          "name": "NC",
           "type": "passive",
-          "net": "LAB5_RLY"
+          "nc": true
         },
         {
           "number": "47",
@@ -10655,9 +10663,9 @@
         },
         {
           "number": "48",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "49",
@@ -10667,9 +10675,9 @@
         },
         {
           "number": "50",
-          "name": "BIAS_CH4_DAMP",
+          "name": "NC",
           "type": "passive",
-          "net": "BIAS_CH4_DAMP"
+          "nc": true
         },
         {
           "number": "51",
@@ -10679,9 +10687,9 @@
         },
         {
           "number": "52",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "53",
@@ -10691,9 +10699,9 @@
         },
         {
           "number": "54",
-          "name": "BONI13V8",
+          "name": "NC",
           "type": "passive",
-          "net": "BONI13V8"
+          "nc": true
         },
         {
           "number": "55",
@@ -10703,9 +10711,9 @@
         },
         {
           "number": "56",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "57",
@@ -10715,9 +10723,9 @@
         },
         {
           "number": "58",
-          "name": "LNB13V2",
+          "name": "NC",
           "type": "passive",
-          "net": "LNB13V2"
+          "nc": true
         },
         {
           "number": "59",
@@ -10727,9 +10735,9 @@
         },
         {
           "number": "60",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "61",
@@ -10739,9 +10747,9 @@
         },
         {
           "number": "62",
-          "name": "AUX12",
+          "name": "NC",
           "type": "passive",
-          "net": "AUX12"
+          "nc": true
         },
         {
           "number": "63",
@@ -10751,9 +10759,9 @@
         },
         {
           "number": "64",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "65",
@@ -10763,9 +10771,9 @@
         },
         {
           "number": "66",
-          "name": "BONI13V8_PORT",
+          "name": "NC",
           "type": "passive",
-          "net": "BONI13V8_PORT"
+          "nc": true
         },
         {
           "number": "67",
@@ -10775,9 +10783,9 @@
         },
         {
           "number": "68",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "69",
@@ -10787,9 +10795,9 @@
         },
         {
           "number": "70",
-          "name": "GND",
+          "name": "NC",
           "type": "passive",
-          "net": "GND"
+          "nc": true
         },
         {
           "number": "71",
@@ -11099,7 +11107,7 @@
     },
     {
       "id": "R-E2-13",
-      "description": "Усі 15 дроселів фільтрів — Coilcraft XAL5030-102MEC, 1uH, DCR ≤9.4mR, SRF 68MHz тип., Isat 14A тип. Запас перевищує потребу малих каналів; кошторис потребує перерахунку до закупівлі.",
+      "description": "9 дроселів фільтрів — Coilcraft XAL5030-102MEC (до W2 GR-5B — усі 15; L202, L204, L211–L214 — R-E2-22), 1uH, DCR ≤9.4mR, SRF 68MHz тип., Isat 14A тип. Запас перевищує потребу малих каналів; кошторис потребує перерахунку до закупівлі.",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/"
     },
     {
@@ -11109,7 +11117,7 @@
     },
     {
       "id": "R-E2-15",
-      "description": "Захисні діоди OUT→GND: Nexperia PMEG4030ER, фізичні 1K/2A. Конденсатори R-C демпферів: Panasonic EEUFR1H470, 47uF/50V.",
+      "description": "Захисні діоди OUT→GND: Nexperia PMEG4030ER, фізичні 1K/2A. Конденсатори R-C демпферів шин 12 V і вище: Panasonic EEUFR1H470, 47uF/50V; шин до 5 V — Panasonic 16SVPG47M (R-E2-22).",
       "source": "Офіційні даташити Nexperia та Panasonic."
     },
     {
@@ -11141,6 +11149,11 @@
       "id": "R-E2-21",
       "description": "v2.1, рішення власника (E4-06): у кожній контрольованій bias-гілці — зустрічні P-MOSFET DMP6050SSD-13 (−60 V) між захищеним вузлом E2 (BIAS_CH2, BIAS_CH3, BONI13V8) і портовим вузлом E4 (BIAS_CH2_PORT, BIAS_CH3_PORT, BONI13V8_PORT), керовані наявними EN_LNA2/EN_LNA3/EN_BONI через 2N7002; R_GS 220k (Boni 100k), стік затвора 4.7k 1210 (Boni 22k), BZX84C10 обмежує VGS ≥−10 V, C_GS 100 nF 50 V X7R C1608X7R1H104K080AA на кожну пару тримає VGS на швидкому фронті (≈−0.06 V замість ≈−2.5 V, модель; τ увімкнення ≈0.46 ms, Boni ≈1.8 ms; вимкнення ≈22 ms, Boni ≈10 ms). На захищеному боці розрядні 4.7k (Boni 10k) після вимкнення; на портовому — 1 µF 50 V X7R. TPS2553, INA3221, U214, U218 і електроліти — на захищеному боці; клас «TPS2660 eFuse» відкинуто (OUT −0.3 V до RTN не витримує −30 V). Поправки до брифу: розрядні резистори й кола затворів беруть ≈1.9 mA від LNA4V5 (≈0.93 mA на ch2/ch3) і ≈1.55 mA на Boni; при ввімкненні FET відкриваються, коли захищений вузол сягає ≈1.7…3.7 V (Boni ≈1.9…4.4 V), і резервуар ≈48 µF скидається в ємність порту поза ILIM TPS2553/U214 — C_GS це сповільнює, вимір у E4-06. Відомі межі: замкнений FET не виявляється; обрив FET, 2N7002 чи резистора затвора на LNA2/LNA3 мовчазний (немає нижньої межі струму, INA3221 бачить захищений бік); на Boni обрив ловить межа 30 mA, а PG_BONI портову напругу не доводить. Hot-plug сторонньої напруги при ввімкненому bias не покрито. VGS ≈−4.2 V на шині 4.3 V нижче точки −4.5 V специфікації RDS(on): падіння ch3 ≈+26 mV (2×70 mΩ при 184.5 mA) — перевірити на холоді. Позначення 2900–2999 — задокументований розширений діапазон E2 для цих елементів (N-E2-03).",
       "source": "Diodes DMP6050SSD DS37454; Diodes BZX84C DS18001; Nexperia 2N7002; бриф PM30V-BLOCK (варіант B) зі скептичною перевіркою 24.10.2026; STACK §5.3, §8.1 HF-10."
+    },
+    {
+      "id": "R-E2-22",
+      "description": "W2 GR-5B, SHRINK-2 (build/15 «Демпфери і C506», «Дроселі 1 мкГн і C111/C112», «Роз'єми PWR-B»): (1) демпфери шин до 5 V C219, C225, C235, C239, C243, C247, C251, C298 — 16SVPG47M (47 мкФ/16 V, ESR 25 мОм, 4.5 мм), послідовні R219, R224, R232, R237, R242, R247, R251, R295 — 0.15 Ом 1 % 1206 (найменший модельний пік вихідного опору з ряду E24; MODEL); демпфери шин 12 V і вище (C206, C210, C222, C254, C262, C265, C273 з 0.22 Ом) без змін; (2) L202, L204, L211–L214 — Bourns SRP2510PA-1R0M (DCR 52 мОм макс., Irms 3.4 A при 40 °C, Isat 4.4 A); (3) злиття J204 (S04) і J207 в одну JST PHD 2×10 — OPEN: клема PHD SPHD-001T-P0.5 бере провід ⌀ ізоляції 1.0–1.5 мм (у проєкті — 22 AWG), а PH SPH-002T-P0.5S на J420 (RF, E4) — AWG 30–24, тож один провід S04 не обслуговує обидва кінці (як J201/J302, W2 GR-3); потрібна J420 → PHD 2×4 разом із лінією RF, а LAB5_RLY (PTC F104, Itrip 1.50 A) до того лишається на контактах PH J204/J420 (1.2 A) — OPEN. Шість демпферних вузлів BIAS_CH1–4_DAMP, VBUS_RTLB_DAMP, E2_SB_DAMP повертаються на PWR-B разом із конденсаторами. Усі ворота (крокові тести демпферів, нагрів дроселів, H-TRIM) — OPEN.",
+      "source": "READS-P (design/parts/snapshots/2026-11-11-w2-readsp-manual.json: web:panasonic-svpg-sheet-lcsc, web:panasonic-16svpg47m-page, web:bourns-srp2510pa, web:jst-phd-catalogue-lcsc); LCSC C37936/C859925 (design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json); pcb/partition-spec.json candidates.shrink2.planned"
     }
   ],
   "power_flags": [

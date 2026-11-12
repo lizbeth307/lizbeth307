@@ -1,0 +1,157 @@
+{
+ "date": "2026-11-12",
+ "distributor": "LCSC",
+ "entries": {
+  "C157949": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x9P",
+    "Number of PINs Per Row": "9",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-9_C157949.pdf",
+   "description": "-25℃~+85℃ 1 1x9P 2mm 9 Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-12T02:48:35Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHR-9",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0329
+    ],
+    [
+     200,
+     0.0262
+    ],
+    [
+     1000,
+     0.0216
+    ],
+    [
+     2000,
+     0.0194
+    ],
+    [
+     10000,
+     0.0174
+    ],
+    [
+     20000,
+     0.0163
+    ]
+   ],
+   "stock": 7717,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-9_C157949.html"
+  },
+  "C37936": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+155℃",
+    "Power(Watts)": "250mW",
+    "Resistance": "150mΩ",
+    "Temperature Coefficient": "±800ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor",
+    "Voltage-Supply(Max)": "200V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010000_UNI-ROYAL-Uniroyal-Elec-1206W4F150LT5E_C37936.pdf",
+   "description": "-55℃~+155℃ 150mΩ 200V 250mW Thick Film Resistor ±1% ±800ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:48:36Z",
+   "jlc_library": "extended",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "1206W4F150LT5E",
+   "package": "1206",
+   "price_usd": [
+    [
+     1,
+     0.0064
+    ],
+    [
+     500,
+     0.0052
+    ],
+    [
+     1500,
+     0.0045
+    ],
+    [
+     5000,
+     0.004
+    ],
+    [
+     25000,
+     0.0036
+    ],
+    [
+     50000,
+     0.0034
+    ]
+   ],
+   "stock": 117797,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-1206w4f150lt5e_C37936.html"
+  },
+  "C859925": {
+   "attributes": {
+    "Operating Temperature": "-55℃~+125℃",
+    "Power(Watts)": "500mW",
+    "Resistance": "150mΩ",
+    "Temperature Coefficient": "±600ppm/℃",
+    "Tolerance": "±1%",
+    "Type": "Thick Film Resistor"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2202211530_YAGEO-RL1206FR-7W0R15L_C859925.pdf",
+   "description": "-55℃~+125℃ 150mΩ 500mW Thick Film Resistor ±1% ±600ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
+   "fetched_utc": "2026-11-12T02:48:36Z",
+   "jlc_library": "extended",
+   "manufacturer": "YAGEO",
+   "mpn": "RL1206FR-7W0R15L",
+   "package": "1206",
+   "price_usd": [
+    [
+     1,
+     0.044
+    ],
+    [
+     200,
+     0.0367
+    ],
+    [
+     600,
+     0.0326
+    ],
+    [
+     5000,
+     0.029
+    ],
+    [
+     10000,
+     0.0269
+    ],
+    [
+     20000,
+     0.0257
+    ]
+   ],
+   "stock": 5360,
+   "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rl1206fr-7w0r15l_C859925.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C157949",
+  "C37936",
+  "C859925"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}

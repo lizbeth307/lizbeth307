@@ -4,7 +4,7 @@
   "generator": {
     "version": "1.0.0",
     "params_sha256": "5ccb5c406ecc1cddeb10e4c85201e3d535dbc9f4d5bd188d4992f1cbda17abbb",
-    "pcb_components_sha256": "81f0704f245ad22cf7af6e518ba3ee1c1903a0d97d3dca2e814c7a8e205fe66b"
+    "pcb_components_sha256": "7f252dc3d99bc59551ac853031bde450e05fc5a0c20cefb9cf4be1198b8505f9"
   },
   "envelope": {
     "model": [
@@ -716,7 +716,6 @@
           "J207 PH_top 8 mated",
           "J506 PH_top 8 mated",
           "J507 PH_top 8 mated",
-          "J508 PH_top 8 mated",
           "J304 IDC_top 9.1 body",
           "J305 MF_top 17.27 mated",
           "J314 MF_top 17.27 mated"
@@ -1127,7 +1126,7 @@
           "h_basis": "mated",
           "h_status": "datasheet+assumption",
           "courtyard_mm": [
-            8.9,
+            20.9,
             5.5
           ],
           "max_height": 4.5,
@@ -1145,23 +1144,6 @@
           "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
-            5.5
-          ],
-          "max_height": 4.5,
-          "best_front_zone_mm": 12.1,
-          "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 4.5; fits a component-side height zone"
-        },
-        {
-          "connector": "J508",
-          "board": "PWR",
-          "family": "PH",
-          "orientation": "top",
-          "h_mm": 8.0,
-          "h_basis": "mated",
-          "h_status": "datasheet+assumption",
-          "courtyard_mm": [
-            14.9,
             5.5
           ],
           "max_height": 4.5,
@@ -1562,7 +1544,7 @@
           "verdict": "inside the board limit"
         }
       ],
-      "result": "OPEN: GR-3 decides (header orientation, board side or board): 18 headers above their board limit (J104 MF_top 17.27 mated, J109 PH_top 8 mated, J110 PH_top 8 mated, J111 PH_top 8 mated, J112 PH_top 8 mated, J113 PH_top 8 mated, J114 MF_top 17.27 mated, J115 MF_top 17.27 mated, J201 PH_top 8 mated, J204 PH_top 8 mated, J205 MF_top 17.27 mated, J207 PH_top 8 mated, J506 PH_top 8 mated, J507 PH_top 8 mated, J508 PH_top 8 mated, J304 IDC_top 9.1 body, J305 MF_top 17.27 mated, J314 MF_top 17.27 mated); as right-angle Micro-Fit (MF_ra 6.98 mm mated) 6 fit (J104, J114, J115, J205, J305, J314); judged on the header body because the mated height is not read: IDC_top (J304); 10 heights not read"
+      "result": "OPEN: GR-3 decides (header orientation, board side or board): 17 headers above their board limit (J104 MF_top 17.27 mated, J109 PH_top 8 mated, J110 PH_top 8 mated, J111 PH_top 8 mated, J112 PH_top 8 mated, J113 PH_top 8 mated, J114 MF_top 17.27 mated, J115 MF_top 17.27 mated, J201 PH_top 8 mated, J204 PH_top 8 mated, J205 MF_top 17.27 mated, J207 PH_top 8 mated, J506 PH_top 8 mated, J507 PH_top 8 mated, J304 IDC_top 9.1 body, J305 MF_top 17.27 mated, J314 MF_top 17.27 mated); as right-angle Micro-Fit (MF_ra 6.98 mm mated) 6 fit (J104, J114, J115, J205, J305, J314); judged on the header body because the mated height is not read: IDC_top (J304); 10 heights not read"
     },
     {
       "id": "R-BOTTOM-PITCH",
@@ -2083,27 +2065,26 @@
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "courtyard_raw_mm2": 5580.0,
+        "courtyard_raw_mm2": 5041.0,
         "modules_mm2": 0.0,
         "per_domain_raw_mm2": {
           "PWR_MAIN": 2085.0,
-          "PWR_BRANCH": 2980.0,
-          "USB_POWER": 516.0
+          "PWR_BRANCH": 2543.0,
+          "USB_POWER": 413.0
         },
         "per_group_raw_mm2": {
           "E1 Роз'єми джгутів PWR": 870.0,
-          "E2 Boni: малошумна захищена шина": 512.0,
           "E1 LAB5": 469.0,
+          "E2 Boni: малошумна захищена шина": 459.0,
           "E2 Роз'єми джгутів PWR": 430.0,
-          "E2 LNB: малошумна захищена шина": 416.0,
           "E1 SYS12": 412.0,
+          "E2 LNB: малошумна захищена шина": 363.0,
           "E2 LNA4V5: паралельні LT3045": 358.0,
           "E2 J21: захищене живлення 12 V": 320.0,
           "E5 VBUS HF+ з демпфованим LC": 306.0,
-          "E2 AUX12: верхній ключ і PTC": 191.0,
-          "E2 Дисплей: захищене живлення 12 V": 183.0,
-          "E2 Lime M.2: комутована шина 3.3 V": 173.0,
-          "E5 VBUS RTL-A і LAB PORT": 102.0,
+          "E2 Lime M.2: комутована шина 3.3 V": 172.0,
+          "E2 AUX12: верхній ключ і PTC": 165.0,
+          "E2 Дисплей: захищене живлення 12 V": 157.0,
           "E1 AON і UV": 94.0,
           "E1 Головний вимикач": 92.0,
           "E2 INA3221: струми LNA4, LNB і Boni": 67.0,
@@ -2111,12 +2092,6 @@
           "E2 LNB: незалежне точне відсікання OVP": 52.0,
           "E1 Захист USB-PD": 50.0,
           "E5 Сервіс і зовнішні шини": 47.0,
-          "E2 LNA: канал 1": 46.0,
-          "E2 LNA: канал 2": 46.0,
-          "E2 LNA: канал 3": 46.0,
-          "E2 LNA: канал 4": 46.0,
-          "E2 RTL-B: комутований VBUS": 46.0,
-          "E2 S-band LaNA WB: захищена шина 5 V": 46.0,
           "E1 Контрольні точки": 31.0,
           "E1 Сервісний заряд": 27.0,
           "E1 Інгібування заряду": 26.0,
@@ -2127,29 +2102,29 @@
             1306.0,
             1567.0
           ],
-          "E2 Boni: малошумна захищена шина": [
-            768.0,
-            922.0
-          ],
           "E1 LAB5": [
             703.0,
             844.0
+          ],
+          "E2 Boni: малошумна захищена шина": [
+            689.0,
+            827.0
           ],
           "E2 Роз'єми джгутів PWR": [
             645.0,
             775.0
           ],
-          "E2 LNB: малошумна захищена шина": [
-            624.0,
-            748.0
-          ],
           "E1 SYS12": [
             618.0,
             742.0
           ],
+          "E2 LNB: малошумна захищена шина": [
+            544.0,
+            653.0
+          ],
           "E2 LNA4V5: паралельні LT3045": [
             537.0,
-            645.0
+            644.0
           ],
           "E2 J21: захищене живлення 12 V": [
             479.0,
@@ -2159,21 +2134,17 @@
             460.0,
             552.0
           ],
+          "E2 Lime M.2: комутована шина 3.3 V": [
+            258.0,
+            310.0
+          ],
           "E2 AUX12: верхній ключ і PTC": [
-            287.0,
-            345.0
+            247.0,
+            297.0
           ],
           "E2 Дисплей: захищене живлення 12 V": [
-            275.0,
-            330.0
-          ],
-          "E2 Lime M.2: комутована шина 3.3 V": [
-            259.0,
-            311.0
-          ],
-          "E5 VBUS RTL-A і LAB PORT": [
-            153.0,
-            184.0
+            235.0,
+            282.0
           ],
           "E1 AON і UV": [
             142.0,
@@ -2203,30 +2174,6 @@
             71.0,
             85.0
           ],
-          "E2 LNA: канал 1": [
-            69.0,
-            83.0
-          ],
-          "E2 LNA: канал 2": [
-            69.0,
-            83.0
-          ],
-          "E2 LNA: канал 3": [
-            69.0,
-            83.0
-          ],
-          "E2 LNA: канал 4": [
-            69.0,
-            83.0
-          ],
-          "E2 RTL-B: комутований VBUS": [
-            69.0,
-            83.0
-          ],
-          "E2 S-band LaNA WB: захищена шина 5 V": [
-            69.0,
-            83.0
-          ],
           "E1 Контрольні точки": [
             47.0,
             56.0
@@ -2244,33 +2191,33 @@
             23.0
           ]
         },
-        "parts": 287,
-        "need_1_5_mm2": 8370.0,
-        "need_1_8_mm2": 10044.0,
-        "estimate_mm2": 10044.0,
-        "ratio_1_5": 1.06,
-        "ratio_1_8": 1.27,
+        "parts": 280,
+        "need_1_5_mm2": 7562.0,
+        "need_1_8_mm2": 9074.0,
+        "estimate_mm2": 9074.0,
+        "ratio_1_5": 0.96,
+        "ratio_1_8": 1.15,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 10044 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        "result": "OPEN: need 9074 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
       },
       "PWR_B": {
         "area_mm2": 6516.0,
-        "courtyard_raw_mm2": 2560.0,
+        "courtyard_raw_mm2": 2948.0,
         "modules_mm2": 0.0,
         "per_domain_raw_mm2": {
-          "PWR_BRANCH_SW": 2172.0,
-          "USB_POWER_SW": 388.0
+          "PWR_BRANCH_SW": 2447.0,
+          "USB_POWER_SW": 500.0
         },
         "per_group_raw_mm2": {
           "E2 Роз'єми джгутів PWR": 1181.0,
-          "E2 LNA: канал 2": 213.0,
-          "E2 LNA: канал 3": 213.0,
-          "E5 Роз'єми джгутів PWR і HATCH": 205.0,
-          "E5 VBUS RTL-A і LAB PORT": 126.0,
-          "E2 LNA: канал 1": 106.0,
-          "E2 LNA: канал 4": 106.0,
-          "E2 RTL-B: комутований VBUS": 96.0,
-          "E2 S-band LaNA WB: захищена шина 5 V": 96.0,
+          "E5 VBUS RTL-A і LAB PORT": 263.0,
+          "E2 LNA: канал 2": 259.0,
+          "E2 LNA: канал 3": 259.0,
+          "E5 Роз'єми джгутів PWR і HATCH": 180.0,
+          "E2 LNA: канал 1": 152.0,
+          "E2 LNA: канал 4": 152.0,
+          "E2 RTL-B: комутований VBUS": 142.0,
+          "E2 S-band LaNA WB: захищена шина 5 V": 142.0,
           "E2 INA3221: струми LNA1–3": 67.0,
           "E5 LAB BUS I2C buffer": 57.0,
           "E2 LNB: контроль напруги": 31.0,
@@ -2282,37 +2229,37 @@
             1771.0,
             2125.0
           ],
+          "E5 VBUS RTL-A і LAB PORT": [
+            395.0,
+            474.0
+          ],
           "E2 LNA: канал 2": [
-            319.0,
-            383.0
+            388.0,
+            466.0
           ],
           "E2 LNA: канал 3": [
-            319.0,
-            383.0
+            388.0,
+            466.0
           ],
           "E5 Роз'єми джгутів PWR і HATCH": [
-            307.0,
-            368.0
-          ],
-          "E5 VBUS RTL-A і LAB PORT": [
-            189.0,
-            227.0
+            270.0,
+            324.0
           ],
           "E2 LNA: канал 1": [
-            160.0,
-            192.0
+            228.0,
+            274.0
           ],
           "E2 LNA: канал 4": [
-            160.0,
-            192.0
+            228.0,
+            274.0
           ],
           "E2 RTL-B: комутований VBUS": [
-            144.0,
-            173.0
+            213.0,
+            255.0
           ],
           "E2 S-band LaNA WB: захищена шина 5 V": [
-            144.0,
-            173.0
+            213.0,
+            255.0
           ],
           "E2 INA3221: струми LNA1–3": [
             101.0,
@@ -2335,14 +2282,14 @@
             56.0
           ]
         },
-        "parts": 129,
-        "need_1_5_mm2": 3840.0,
-        "need_1_8_mm2": 4608.0,
-        "estimate_mm2": 4608.0,
-        "ratio_1_5": 0.78,
-        "ratio_1_8": 0.94,
+        "parts": 137,
+        "need_1_5_mm2": 4421.0,
+        "need_1_8_mm2": 5306.0,
+        "estimate_mm2": 5306.0,
+        "ratio_1_5": 0.9,
+        "ratio_1_8": 1.08,
         "scope": "board parts and modules, without the harness headers",
-        "result": "PASS (model estimate) against the usable 4892 mm2 of pcb/partition-budget.json candidates.shrink2 boards.PWR_B (outline minus holes, windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline 6516 mm2 minus only the Pololu windows is an upper bound)",
+        "result": "OPEN: need 5306 mm2 at fill 1.8 > usable 4892 mm2 of pcb/partition-budget.json candidates.shrink2 boards.PWR_B (outline minus holes, windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline 6516 mm2 minus only the Pololu windows is an upper bound) (model estimate; partition and placement decide, AREA / PCB)",
         "usable_mm2": 4892.0,
         "ratio_basis": "usable_mm2 (pcb/partition-budget.json)"
       },
@@ -2550,8 +2497,7 @@
         "J419",
         "J420",
         "J506",
-        "J507",
-        "J508"
+        "J507"
       ],
       "courtyard_sources": {
         "KiCad": 2
@@ -4980,7 +4926,7 @@
     "rules_open": 9,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
-    "board_area_open": 2,
+    "board_area_open": 3,
     "board_area_harness_open": 0,
     "thermal_failures": 0,
     "thermal_open": 3,

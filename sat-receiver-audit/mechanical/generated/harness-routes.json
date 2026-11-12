@@ -1299,7 +1299,7 @@
       ],
       "provisional": [
         "behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall",
-        "J506 (X23S1-PWR, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0"
+        "J506 (SL3-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0"
       ],
       "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS",
       "in_build16": true
@@ -1949,7 +1949,7 @@
       ],
       "provisional": [
         "behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall",
-        "J508 (X34S1-PWR, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0"
+        "J506 (SL3-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0"
       ],
       "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS; piece 7 through nut.LAB_BUS; piece 8 through nut.LAB_BUS",
       "in_build16": true
