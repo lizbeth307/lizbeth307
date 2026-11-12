@@ -64,7 +64,7 @@
     },
     {
       "url": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
-      "note": "35SVPF22M:22µF±20%,35V,ESR35mΩ,ripple2.6A@105°C/100kHz,Ø6.3×5.9mm."
+      "note": "35SVPF22M:22µF±20%,35V,ESR35mΩ,ripple2.6A@105°C/100kHz,Ø6.3×5.9mm. W2 GR-5A (SHRINK-2): у схемі більше не використовується — C111/C112 тепер MLCC C3225X7R1H226M250AC; лише історія (bom_changes)."
     },
     {
       "url": "https://industrial.panasonic.com/ww/products/pt/OS-CON/models/16SVPC100M",
@@ -80,7 +80,7 @@
     },
     {
       "url": "https://www.pololu.com/product/4091",
-      "note": "D36V50F5#4091,5V±4%, advertised5.5Atypconditional;6functionalconnectionsізVRP,25.4×25.4×9.5mm;новийLAB5default."
+      "note": "D36V50F5#4091,5V±4%, advertised5.5Atypconditional;6functionalconnectionsізVRP,25.4×25.4×9.5mm. W2 GR-5A (SHRINK-2): у схемі більше не використовується — U108 тепер TPSM63606RDLR; лише історія (bom_changes) і запасний план F2-ENV."
     },
     {
       "url": "https://www.ti.com/lit/ds/symlink/lm74700-q1.pdf",
