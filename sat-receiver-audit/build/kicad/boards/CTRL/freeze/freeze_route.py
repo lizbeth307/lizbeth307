@@ -2,7 +2,7 @@
 """Freeze a CTRL route run and complete it (W2 CTRL-R route study). Needs numpy; offline tool, not run by CI.
 
   python build/kicad/boards/CTRL/freeze/freeze_route.py --artifact <unzipped pcb-regenerated-CTRL> [--out FILE]
-  python build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen [--rip NET] [--scripted NET] [--check]   (incremental.py)
+  python build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen [--rip NET] [--scripted NET] [--renet] [--check]   (incremental.py)
 
 The artifact holds board/CTRL.kicad_pcb and board/report.json of a route run whose inputs equal the spec made by
 build/kicad/boards/CTRL/make_spec.py without route-frozen.json. The tool
@@ -218,6 +218,8 @@ def main(argv=None):
                      help='remove the frozen copper of NET; it must be complete from the scripted copper (never routed here)')
     inc.add_argument('--l2', action='append', default=[], metavar='NET', help='NET may use L2 where three layers have no path')
     inc.add_argument('--l2-cascade', action='store_true', help='nets ripped on the way may use L2 too (as the first freeze)')
+    inc.add_argument('--renet', action='store_true',
+                     help='frozen islands that touch pads/scripted copper of exactly one other net take that net (a net split by a new part)')
     inc.add_argument('--l2-touched', action='store_true', help='every net the change touches may use L2 where three layers have no path')
     inc.add_argument('--retry', action='store_true', help='nets that found no path are joined once more at the end')
     inc.add_argument('--retry-l2', action='store_true', help='with --retry: the retried nets may use L2')

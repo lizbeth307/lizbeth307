@@ -16,8 +16,13 @@ pad, net or scripted-copper change this mode starts from the committed frozen co
   5. every item is checked again (open connections, dangling copper, clearance) and route-frozen.json is written: records
      the step left untouched stay byte for byte as they were, changed router records are re-chained, new copper goes to
      the completion lists; the guard is the one make_spec.py computes now.
+--renet (W2 CTRL-4 PROTECT study, taken into W2 CTRL-4) handles a net split by a new part: pads that only changed nets keep
+their exact board shapes (only their nets follow the spec), and an island of frozen copper of net N that touches pads or
+scripted copper of exactly one other net M takes M (export keeps such records in place under the new net).
 With no change (same pads, same scripted copper, nothing ripped) the output is the committed route-frozen.json byte for byte:
   python build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen --check
+  python build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen --renet --check
+The nets of the router-ignored classes of the spec (router.ignore_net_classes, CTRL.kicad_pro patterns) are never routed here.
 CI/model input only: the CI route run with '[pcb-route CTRL]' is the check (KiCad 10.0.7 DRC); bench gates stay OPEN.
 """
 import collections, hashlib, importlib.util, json, math, time
@@ -56,7 +61,8 @@ def current_spec(ms):
         got['pads'] = list(cu.inp.pads)
         got['keepouts'] = list(cu.inp.keepouts)
     ms.frozen_copper = hook
-    ms.build(lambda *a: None)
+    spec_text, project_text, _cu, _skipped = ms.build(lambda *a: None)
+    got['spec'], got['project'] = json.loads(spec_text), json.loads(project_text)
     return got
 
 
@@ -70,8 +76,9 @@ def to_kicad(shape):
     return cb.Poly([K(x, y) for x, y in shape.pts])
 
 
-def sync_pads(m, pads, log):
-    """Replace the board pads of every ref that moved or changed nets by the pads make_spec places now. Returns the refs."""
+def sync_pads(m, pads, log, renet_in_place=False):
+    """Replace the board pads of every ref that moved or changed nets by the pads make_spec places now. Returns the refs.
+    With renet_in_place (--renet) a ref whose pads did not move and only changed nets keeps the exact board pad shapes."""
     board = collections.defaultdict(list)
     for it in m.items:  # copper pads and holes; paste-only apertures (no copper layer) do not count
         if it.ref and (it.kind == 'npth' or (it.kind == 'pad' and it.layers)):
@@ -94,6 +101,20 @@ def sync_pads(m, pads, log):
                 return False
             left.remove(hit[0])
         return True
+
+    def same_place(old, new):
+        """Same pads at the same places, only nets differ: (board pad, spec pad) pairs, else None."""
+        if len(old) != len(new):
+            return None
+        left, pairs = list(new), []
+        for o in old:
+            hit = [n for n in left if key(o.kind, o.pad, None)[:2] == key(n['kind'], n['number'], None)[:2]
+                   and math.hypot(o.at[0] - K(*n['c'])[0], o.at[1] - K(*n['c'])[1]) <= MOVE_TOL]
+            if not hit:
+                return None
+            left.remove(hit[0])
+            pairs.append((o, hit[0]))
+        return pairs
     changed = []
     for ref in sorted(set(board) | set(spec)):
         old, new = board.get(ref, []), spec.get(ref, [])
@@ -102,6 +123,13 @@ def sync_pads(m, pads, log):
         if matched(old, new):
             continue
         changed.append(ref)
+        pairs = same_place(old, new) if renet_in_place else None
+        if pairs:  # --renet: the part did not move, only pad nets changed: keep the exact board pad shapes
+            for o, n in pairs:
+                if o.kind == 'pad':
+                    o.net = n['net']
+            log(f'  pads of {ref}: nets taken from the spec, exact board shapes kept')
+            continue
         if ref in FP_KEEPOUT_REFS:
             raise SystemExit(f'incremental: {ref} has footprint keepouts (model.py reads them from the board); moving it is not modelled')
         for it in old:
@@ -130,12 +158,12 @@ def frozen_items(m, doc):
             m.add_via(net, K(x, y), d, drill, locked=True, src='router', tag=(key, k))
 
 
-def build_model(board, doc, cur, log):
+def build_model(board, doc, cur, log, renet=False):
     m = M.Model(str(board))
     for it in m.items:  # the board copper: scripted, frozen and Freerouting's redundant wires; rebuilt below
         if it.kind in ('track', 'via'):
             m.remove(it)
-    moved = sync_pads(m, cur['pads'], log)
+    moved = sync_pads(m, cur['pads'], log, renet_in_place=renet)
     drop = {kind: set(doc['drop_scripted'][kind]) for kind in ('tracks', 'vias')}
     for t in cur['tracks']:
         if t['id'] in drop['tracks']:
@@ -149,6 +177,59 @@ def build_model(board, doc, cur, log):
         m.add_via(v['net'], K(*v['at']), v['diameter_mm'], v['drill_mm'], locked=True, src='scripted')
     frozen_items(m, doc)
     return m, moved
+
+
+def renet_frozen(m, log):
+    """--renet (W2 CTRL-4 PROTECT study): a net split by a new part. An island of frozen copper of net N (frozen items of N
+    joined to each other) that touches pads or scripted copper of exactly one net M != N, and none of N, takes the net M:
+    the frozen branches follow the pads and scripted pieces they were routed to. Returns {(N, M): items}."""
+    soft = [it for it in m.items if it.alive and it.src == 'router' and it.kind in ('track', 'via')]
+    by_net = collections.defaultdict(list)
+    for it in soft:
+        by_net[it.net].append(it)
+    done = collections.Counter()
+    for net, items in sorted(by_net.items(), key=lambda kv: str(kv[0])):
+        ids = {it.id: it for it in items}
+        parent = {i: i for i in ids}
+
+        def find(i):
+            while parent[i] != i:
+                parent[i] = parent[parent[i]]
+                i = parent[i]
+            return i
+        hard_nets = collections.defaultdict(set)
+        for it in items:
+            for lay in it.layers:
+                bb = (it.bbox[0] - 0.01, it.bbox[1] - 0.01, it.bbox[2] + 0.01, it.bbox[3] + 0.01)
+                for ot in m.near(lay, bb):
+                    if ot.id == it.id or not ot.alive:
+                        continue
+                    if ot.id in ids:
+                        if find(ot.id) != find(it.id) and M.touches(it, ot):
+                            parent[find(ot.id)] = find(it.id)
+                    elif ot.kind in ('pad', 'track', 'via') and ot.src in ('pad', 'scripted') and ot.net and M.touches(it, ot):
+                        hard_nets[it.id].add(ot.net)
+        groups = collections.defaultdict(list)
+        for i in ids:
+            groups[find(i)].append(ids[i])
+        for members in groups.values():
+            nets = set().union(*(hard_nets[it.id] for it in members))
+            if len(nets) == 1 and net not in nets:
+                new = next(iter(nets))
+                for it in members:
+                    it.net = new
+                done[(net, new)] += len(members)
+    for (a, b), n in sorted(done.items()):
+        log(f'  renet: {n} frozen items {a} -> {b}')
+    return dict(done)
+
+
+def scripted_class_nets(cur):
+    """Nets of the router-ignored classes of the spec make_spec.py makes now (router.ignore_net_classes, CTRL.kicad_pro
+    patterns): complete from the scripted copper, never routed here (W2 CTRL-4: E3_FAN5_P joined GND, E3_FAN5 and
+    E3_BLOWER_GND)."""
+    ignored = set(cur['spec']['router'].get('ignore_net_classes', []))
+    return {p['pattern'] for p in cur['project']['net_settings']['netclass_patterns'] if p['netclass'] in ignored}
 
 
 def frozen_conflicts(m):
@@ -213,14 +294,15 @@ def export(m, doc, guard, history):
         for k, rec in enumerate(doc[key]):
             segs = alive.get((key, k), [])
             if len(segs) == len(rec[3]) - 1:
-                tracks[key].append(rec)
+                tracks[key].append(rec if segs[0].net == rec[0] else [segs[0].net] + rec[1:])  # --renet keeps the record
             elif segs:
                 for it in segs:
                     loose[(key, it.net, it.layers[0], round(it.width, 4))].append((B(it.a), B(it.b)))
     for key in vias:
         for k, rec in enumerate(doc[key]):
             if alive.get((key, k)):
-                vias[key].append(rec)
+                it = alive[(key, k)][0]
+                vias[key].append(rec if it.net == rec[0] else [it.net] + rec[1:])
     vcentre = collections.defaultdict(list)
     for it in m.items:
         if it.alive and it.kind == 'via':
@@ -243,6 +325,8 @@ def export(m, doc, guard, history):
             out[key] = tracks[key]
         elif key in vias:
             out[key] = vias[key]
+        elif key == 'increments' and key in out:
+            continue  # this run's record is already appended (after drop_scripted); keep the key order of the base
         else:
             out[key] = doc[key]
         if key == 'drop_scripted' and history:
@@ -250,12 +334,11 @@ def export(m, doc, guard, history):
     return out
 
 
-def outer_only_nets():
-    """Nets of the classes the spec keeps on the outer layers (router.class_layers, CTRL.kicad_pro patterns)."""
-    spec = json.loads((HERE.parents[4] / 'pcb/boards/CTRL.json').read_text(encoding='utf-8'))
-    pro = json.loads((HERE.parent / 'CTRL.kicad_pro').read_text(encoding='utf-8'))['net_settings']
-    outer = {c for c, lays in spec['router'].get('class_layers', {}).items() if set(lays) <= {'F.Cu', 'B.Cu'}}
-    return {p['pattern'] for p in pro['netclass_patterns'] if p['netclass'] in outer}
+def outer_only_nets(cur):
+    """Nets of the classes the spec make_spec.py makes now keeps on the outer layers (router.class_layers, CTRL.kicad_pro
+    patterns)."""
+    outer = {c for c, lays in cur['spec']['router'].get('class_layers', {}).items() if set(lays) <= {'F.Cu', 'B.Cu'}}
+    return {p['pattern'] for p in cur['project']['net_settings']['netclass_patterns'] if p['netclass'] in outer}
 
 
 def t_junctions(m, log):
@@ -353,11 +436,15 @@ def run(args, log=print):
     ms = load_make_spec()
     cur = current_spec(ms)
     log(f'spec: {len(cur["tracks"])} scripted tracks, {len(cur["vias"])} scripted vias ({time.time() - t0:.0f} s)')
-    m, moved = build_model(Path(args.board), doc, cur, log)
+    m, moved = build_model(Path(args.board), doc, cur, log, renet=getattr(args, 'renet', False))
     log(f'model: {sum(1 for i in m.items if i.alive and i.src == "router")} frozen items, moved/changed refs {moved} ({time.time() - t0:.0f} s)')
     touched = collections.Counter()
     removed = collections.Counter()
-    scripted_only = set(NEVER) | set(args.scripted)
+    renamed = renet_frozen(m, log) if getattr(args, 'renet', False) else {}
+    for (a, b) in renamed:
+        touched[a] += 1
+        touched[b] += 1
+    scripted_only = set(NEVER) | scripted_class_nets(cur) | set(args.scripted)
     for net in list(args.rip) + list(args.scripted):
         for it in m.items:
             if it.alive and it.src == 'router' and it.net == net:
@@ -380,7 +467,7 @@ def run(args, log=print):
             F.prune(m, n)
     fz = F.Finisher(m, log=log)
     widths, default_w = FR.class_widths()
-    outer_only = outer_only_nets()
+    outer_only = outer_only_nets(cur)
     planes0 = PL.split_count(m) if args.plane_guard else 0
     if args.plane_guard:
         log(f'L2 plane components with GND vias before the joins: {planes0}')
@@ -439,7 +526,7 @@ def run(args, log=print):
         log('   ', b_)
     if bad or (open_ and not args.allow_open):
         return 1, None
-    changed = bool(moved or removed or cur['guard'] != doc['guard'] or fz.records)
+    changed = bool(moved or removed or renamed or cur['guard'] != doc['guard'] or fz.records)
     history = None
     if changed:
         history = {
@@ -448,6 +535,7 @@ def run(args, log=print):
             'board': args.board_label or Path(args.board).name,
             'reason': args.reason or '',
             'rip': sorted(args.rip), 'scripted': sorted(args.scripted), 'moved_refs': moved,
+            **({'renamed_frozen_items': {f'{a} -> {b}': n for (a, b), n in sorted(renamed.items())}} if renamed else {}),
             'removed_frozen_items': dict(sorted(removed.items())),
             'rejoined_nets': sorted(fz.tag),
             'left_open_for_freerouting': open_,

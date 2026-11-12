@@ -235,7 +235,7 @@
         "pattern": "E3_FAN5"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR3A",
         "pattern": "E3_FAN5_P"
       },
       {
