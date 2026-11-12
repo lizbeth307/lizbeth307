@@ -639,5 +639,81 @@ class PwrBLeavesPwrACutoutsFree(unittest.TestCase):
         self.assertEqual(cut['overlay']['overlap_mm2'], 0.0)
 
 
+class PwrBSixLayersAndCutoutRuleAreas(unittest.TestCase):
+    """W2 PWRB-R layers6: PWR_B on the 6-layer stackup (S-G-S-S-P-S), power classes on the outer copper only, and every PWR-A
+    cut-out a keepout_rects rule area on all copper layers (tracks, vias, zone fills), audited by board_gen and check_boards."""
+
+    def setUp(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        self.spec = bg.read_json(bg.spec_path('PWR_B'))
+
+    def test_six_layers_planes_and_outer_power(self):
+        spec = self.spec
+        if spec['layers']['copper'] != 6:
+            self.skipTest('PWR_B is not on 6 layers on this branch')
+        self.assertEqual(spec['layers']['types'], {'In1.Cu': 'power', 'In4.Cu': 'power'})
+        planes = {(z['layer'], z['net']) for z in spec['pre_route']['zones']}
+        self.assertEqual(planes, {('In1.Cu', 'GND'), ('In4.Cu', '3V3_Q6A')})
+        for cls, layers in spec['router']['class_layers'].items():
+            if cls.startswith(('PWR', 'BATT')):
+                self.assertEqual(sorted(layers), ['B.Cu', 'F.Cu'])
+        stack = bg.read_json(bg.BASE / 'pcb/generated/stackup-6l.json')
+        self.assertIn('PWR_B', stack['stackup']['boards'])
+        self.assertEqual([l['kicad'] for l in stack['stackup']['layers'] if 'kicad' in l],
+                         ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu'])
+        bg.validate_spec(spec, 'PWR_B')
+
+    def test_cutouts_are_rule_areas_on_every_layer(self):
+        spec = self.spec
+        ko = spec.get('keepout_rects')
+        if not ko:
+            self.skipTest('no keepout_rects on this branch')
+        want = [[c['rect'][0], c['rect'][1], round(c['rect'][0] + c['rect'][2], 4), round(c['rect'][1] + c['rect'][3], 4)]
+                for c in spec['pwr_a_cutouts']['cutouts_mm']]
+        self.assertEqual([r['rect'] for r in ko['rects']], want)
+        copper = ['F.Cu', 'B.Cu'] + [f'In{i}.Cu' for i in range(1, spec['layers']['copper'] - 1)]
+        self.assertEqual(sorted(ko['layers']), sorted(copper))
+        self.assertEqual(sorted(ko['blocks']), ['tracks', 'vias', 'zone_fills'])
+        self.assertGreaterEqual(ko['grow_mm'], ko['audit_clear_mm'])
+        self.assertGreaterEqual(ko['audit_clear_mm'], spec['fab_floor']['min_copper_edge_clearance'])
+
+    def test_keepout_rects_validation_and_distance(self):
+        base = {'why': 'w', 'grow_mm': 0.35, 'audit_clear_mm': 0.3, 'layers': ['F.Cu'], 'blocks': ['tracks'],
+                'rects': [{'id': 'A1', 'rect': [0, 0, 1, 1]}]}
+        bg.validate_keepout_rects({'keepout_rects': base}, 'X', ['F.Cu', 'B.Cu'])
+        bad = [dict(base, grow_mm=0), dict(base, audit_clear_mm=0.5), dict(base, layers=['In9.Cu']), dict(base, blocks=['pads']),
+               dict(base, rects=[{'id': 'A1', 'rect': [1, 0, 0, 1]}]), dict(base, rects=[{'id': 'A 1', 'rect': [0, 0, 1, 1]}]),
+               dict(base, rects=base['rects'] * 2), dict(base, why='')]
+        for i, ko in enumerate(bad):
+            with self.assertRaises(SystemExit, msg=i):
+                bg.validate_keepout_rects({'keepout_rects': ko}, 'X', ['F.Cu', 'B.Cu'])
+        box = (0.0, 0.0, 2.0, 1.0)
+        self.assertEqual(bg.seg_rect_distance((-1.0, 0.5), (3.0, 0.5), box), 0.0)        # crosses
+        self.assertEqual(bg.seg_rect_distance((0.5, 0.5), (0.6, 0.6), box), 0.0)          # inside
+        self.assertAlmostEqual(bg.seg_rect_distance((-1.0, 2.0), (3.0, 2.0), box), 1.0)   # parallel above
+        self.assertAlmostEqual(bg.seg_rect_distance((3.0, 4.0), (3.0, 4.0), box), 10 ** 0.5)
+
+    def test_class_layers_dsn_patch(self):
+        dsn = '(network (class PWR1A A B (circuit (use_via V)) (rule (width 350))) (class kicad_default C (circuit (use_via V))))'
+        out = bg.patch_dsn_class_layers(dsn, {'PWR1A': ['F.Cu', 'B.Cu']})
+        self.assertIn('(circuit\n        (use_layer F.Cu B.Cu) (use_via V)) (rule (width 350))', out)
+        with self.assertRaises(SystemExit):
+            bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu']})
+
+    def test_check_boards_keepout_rects_sees_track_via_and_fill(self):
+        import check_boards as cb
+        box = (10.0, 10.0, 12.0, 12.0)
+        self.assertTrue(cb.shape_hits_box(cb.Capsule(9.0, 9.0, 13.0, 13.0, 0.1), box))
+        self.assertFalse(cb.shape_hits_box(cb.Capsule(9.0, 13.0, 13.0, 13.0, 0.1), box))
+        self.assertTrue(cb.shape_hits_box(cb.Capsule(11.0, 12.5, 11.0, 12.5, 0.6), box))
+        ring = cb.Poly([(0, 0), (30, 0), (30, 30), (0, 30)])            # a fill around the box
+        self.assertTrue(cb.shape_hits_box(ring, box))
+        notch = cb.Poly([(0, 0), (30, 0), (30, 9), (0, 9)])             # a fill below the box
+        self.assertFalse(cb.shape_hits_box(notch, box))
+        edge = cb.Poly([(0, 0), (30, 0), (30, 10.5), (0, 10.5)])        # a fill edge across the box
+        self.assertTrue(cb.shape_hits_box(edge, box))
+
+
 if __name__ == '__main__':
     unittest.main()

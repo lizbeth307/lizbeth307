@@ -691,8 +691,8 @@ def validate_spec(spec, board):
         raise SpecError(f'{board}: spec lacks {missing}')
     if spec['schema'] != SPEC_SCHEMA or spec['board_id'] != board:
         raise SpecError(f'{board}: schema must be {SPEC_SCHEMA} and board_id {board}')
-    if spec['layers']['copper'] not in (2, 4):
-        raise SpecError(f'{board}: copper layers must be 2 or 4')
+    if spec['layers']['copper'] not in (2, 4, 6):  # 6: W2 CTRL-R (CTRL, pcb/generated/stackup-6l.json)
+        raise SpecError(f'{board}: copper layers must be 2, 4 or 6')
     if spec.get('rules_file') is not None:
         raise SpecError(f'{board}: rules_file is set, but copying it into build/kicad/boards/{board}/{board}.kicad_dru '
                         '(and hashing it) is not implemented in board_gen yet; keep it null')
@@ -763,6 +763,15 @@ def validate_spec(spec, board):
         if layer not in copper or kind not in LAYER_TYPES:
             raise SpecError(f'{board}: layers.types {layer!r}: {kind!r} must name a copper layer of the board and one '
                             f'of {sorted(LAYER_TYPES)}')
+    for cls, layers in (spec['router'].get('class_layers') or {}).items():
+        if not re.fullmatch(r'[A-Za-z0-9_]+', str(cls)) or not isinstance(layers, list) or not layers \
+                or not set(layers) <= set(copper):
+            raise SpecError(f'{board}: router.class_layers {cls}: {layers!r} must list copper layers of the board')
+        # W2 CTRL-R: a power class keeps its router copper on the outer layers on any layer count (netclasses.json: inner
+        # copper is no current path for PWR3A/BATT, and the inner PWR1A/PWR2A widths are far above the router class widths)
+        if re.match(r'(PWR|BATT)', str(cls)) and set(layers) - {'F.Cu', 'B.Cu'}:
+            raise SpecError(f'{board}: router.class_layers {cls}: a power class routes on F.Cu/B.Cu only, not {sorted(set(layers) - {"F.Cu", "B.Cu"})}')
+    validate_keepout_rects(spec, board, copper)
     for key, reason in spec['drc_policy'].get('warning_checks', {}).items():
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
@@ -807,6 +816,64 @@ def validate_bond_and_coupon(spec, board, nets):
     for zone in coupon.get('zones', []):
         if not isinstance(zone.get('outline'), list) or zone.get('pad_connection', 'thermal') not in ZONE_PAD_CONNECTIONS:
             raise SpecError(f'{board}: coupon zone {zone.get("id")} needs an explicit outline and a known pad_connection')
+
+
+KEEPOUT_RECT_BLOCKS = ('tracks', 'vias', 'zone_fills')
+
+
+def validate_keepout_rects(spec, board, copper):
+    """Optional spec key keepout_rects (W2 PWRB-R; no other board uses it): rectangles that are not Edge.Cuts yet but must
+    stay free of copper, e.g. the PWR-A cut-outs of PWR_B before the contract carries them.
+
+    keepout_rects {why, grow_mm > 0, audit_clear_mm (0 < audit_clear_mm <= grow_mm), layers [copper layers], blocks [tracks,
+    vias, zone_fills], rects [{id, rect [x0, y0, x1, y1] board mm, ...}]}: one rule area per rect and layer, the rect grown
+    by grow_mm on every side; the report audit (keepout_rect_audit) fails on copper within audit_clear_mm of a rect."""
+    ko = spec.get('keepout_rects')
+    if ko is None:
+        return
+    if not isinstance(ko, dict) or not str(ko.get('why', '')).strip() or not isinstance(ko.get('rects'), list) or not ko['rects']:
+        raise SpecError(f'{board}: keepout_rects needs why and a non-empty rects list')
+    grow, clear = float(ko.get('grow_mm', 0)), float(ko.get('audit_clear_mm', 0))
+    if not grow > 0 or not 0 < clear <= grow:
+        raise SpecError(f'{board}: keepout_rects needs grow_mm > 0 and 0 < audit_clear_mm <= grow_mm')
+    if not ko.get('layers') or not set(ko['layers']) <= set(copper):
+        raise SpecError(f'{board}: keepout_rects.layers must list copper layers of the board')
+    if not ko.get('blocks') or not set(ko['blocks']) <= set(KEEPOUT_RECT_BLOCKS):
+        raise SpecError(f'{board}: keepout_rects.blocks must be a non-empty subset of {list(KEEPOUT_RECT_BLOCKS)}')
+    ids = [str(r.get('id', '')) for r in ko['rects'] if isinstance(r, dict)]
+    if len(ids) != len(ko['rects']) or len(set(ids)) != len(ids) or not all(re.fullmatch(r'[A-Za-z0-9_]+', i) for i in ids):
+        raise SpecError(f'{board}: keepout_rects.rects need unique ids ([A-Za-z0-9_])')
+    for r in ko['rects']:
+        box = r.get('rect')
+        if not isinstance(box, list) or len(box) != 4 or not all(isinstance(v, (int, float)) for v in box) \
+                or not (box[2] > box[0] and box[3] > box[1]):
+            raise SpecError(f'{board}: keepout_rects {r.get("id")}: rect must be [x0, y0, x1, y1] with x1 > x0, y1 > y0')
+
+
+def seg_rect_distance(a, b, box):
+    """Distance from segment ab to an axis-aligned box [x0, y0, x1, y1] (0 when they touch or cross), board mm."""
+    x0, y0, x1, y1 = box
+
+    def inside(p):
+        return x0 <= p[0] <= x1 and y0 <= p[1] <= y1
+
+    def pt_seg(p, q, r):
+        dx, dy = r[0] - q[0], r[1] - q[1]
+        n = dx * dx + dy * dy
+        t = 0.0 if n == 0 else max(0.0, min(1.0, ((p[0] - q[0]) * dx + (p[1] - q[1]) * dy) / n))
+        return math.hypot(p[0] - (q[0] + t * dx), p[1] - (q[1] + t * dy))
+
+    def cross(p, q, r, s):
+        def o(u, v, w):
+            return (v[0] - u[0]) * (w[1] - u[1]) - (v[1] - u[1]) * (w[0] - u[0])
+        return o(p, q, r) * o(p, q, s) < 0 and o(r, s, p) * o(r, s, q) < 0
+    if inside(a) or inside(b):
+        return 0.0
+    corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    edges = list(zip(corners, corners[1:] + corners[:1]))
+    if any(cross(a, b, c, d) for c, d in edges):
+        return 0.0
+    return min([pt_seg(c, a, b) for c in corners] + [pt_seg(p, c, d) for p in (a, b) for c, d in edges])
 
 
 def load_contract(spec):
@@ -1142,6 +1209,21 @@ def circle_polygon(cx, cy, radius, n=48):
     return [(cx + rr * math.cos(2 * math.pi * k / n), cy + rr * math.sin(2 * math.pi * k / n)) for k in range(n)]
 
 
+def patch_dsn_class_layers(text, class_layers):
+    """Restrict net classes to routing layers in a KiCad Specctra DSN: '(use_layer ...)' in each class circuit.
+
+    W2 PCB-CTRL (optional spec key router.class_layers {class: [layers]}): KiCad 10.0.7 exports no per-class layer
+    list; Freerouting 2.5.0 reads '(circuit (use_layer ...))' of a class (io/specctra/parser/Circuit.java and
+    Network.createActiveTraceLayers at tag v2.5.0, read 2026-11-07). Refuses a class that the DSN does not carry.
+    """
+    for name, layers in sorted((class_layers or {}).items()):
+        pattern = re.compile(r'(\(class\s+' + re.escape(name) + r'\s[^()]*\(circuit)')
+        if len(pattern.findall(text)) != 1:
+            raise SpecError(f'router.class_layers: the DSN has no single class {name}')
+        text = pattern.sub(lambda m: m.group(1) + '\n        (use_layer ' + ' '.join(layers) + ')', text)
+    return text
+
+
 def dsn_probe(text):
     """What the KiCad 10.0.7 Specctra export carried (first-run probe, A-PCB-03 research items)."""
     classes = {}
@@ -1374,6 +1456,21 @@ def build_board(pcb, spec, contract, template, temp):
                     zone.SetDoNotAllowPads(False)
                     zone.SetDoNotAllowFootprints(False)
                     board.Add(zone)
+    ko = spec.get('keepout_rects')
+    if ko:  # W2 PWRB-R: copper-free rectangles that are not Edge.Cuts yet (PWR_B: the PWR-A cut-outs), one rule area per layer
+        grow = float(ko['grow_mm'])
+        for item in ko['rects']:
+            x0, y0, x1, y1 = (float(v) for v in item['rect'])
+            pts = [(x0 - grow, y0 - grow), (x1 + grow, y0 - grow), (x1 + grow, y1 + grow), (x0 - grow, y1 + grow)]
+            for name in ko['layers']:
+                zone = add_polygon_zone(pcb, board, frame, pts, board.GetLayerID(name), f'KO_RECT_{item["id"]}_{name}')
+                zone.SetIsRuleArea(True)
+                zone.SetDoNotAllowTracks('tracks' in ko['blocks'])
+                zone.SetDoNotAllowVias('vias' in ko['blocks'])
+                zone.SetDoNotAllowZoneFills('zone_fills' in ko['blocks'])
+                zone.SetDoNotAllowPads(False)
+                zone.SetDoNotAllowFootprints(False)
+                board.Add(zone)
     for track in spec['pre_route'].get('tracks', []):
         layer = board.GetLayerID(track['layer'])
         for a, b in zip(track['path'], track['path'][1:]):
@@ -1766,6 +1863,90 @@ def annular_audit(facts, template, floor):
     return {'floor_mm': floor, 'below_floor': low, 'passed': not low}
 
 
+def keepout_rect_audit(pcb, board, frame, spec, fill_step=0.2):
+    """Spec keepout_rects (W2 PWRB-R): every rect has its rule area on each listed layer, and no copper of any net lies
+    within audit_clear_mm of a rect: track segments (centre line less half the width), vias and copper pads (bounding
+    boxes, conservative) measured exactly; zone fills sampled with ZONE.HitTestFilledArea on a fill_step mm grid over each
+    rect grown by audit_clear_mm (finer slivers than the step are not seen; pcb/check_boards.py keepout_rects measures the
+    filled polygons themselves). Board mm, y up."""
+    ko = spec['keepout_rects']
+    clear, tol = float(ko['audit_clear_mm']), 1e-3
+    rects = [(str(r['id']), tuple(float(v) for v in r['rect'])) for r in ko['rects']]
+    names = {z.GetZoneName() for z in board.Zones() if z.GetIsRuleArea()}
+    missing = [f'KO_RECT_{i}_{layer}' for i, _r in rects for layer in ko['layers'] if f'KO_RECT_{i}_{layer}' not in names]
+
+    def box_mm(b):
+        lo = frame.m(pcb.VECTOR2I(b.GetLeft(), b.GetBottom()))
+        hi = frame.m(pcb.VECTOR2I(b.GetRight(), b.GetTop()))
+        return (min(lo[0], hi[0]), min(lo[1], hi[1]), max(lo[0], hi[0]), max(lo[1], hi[1]))
+    items = []  # (what, net, layer, distance function to a rect)
+    for t in board.GetTracks():
+        net = t.GetNetname() or None
+        if t.Type() == pcb.PCB_TRACE_T:
+            a, b, r = frame.m(t.GetStart()), frame.m(t.GetEnd()), pcb.ToMM(t.GetWidth()) / 2
+            items.append(('track', net, board.GetLayerName(t.GetLayer()), lambda box, a=a, b=b, r=r: seg_rect_distance(a, b, box) - r))
+        elif t.Type() == pcb.PCB_VIA_T:
+            bb = box_mm(t.GetBoundingBox())
+            c, r = ((bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2), (bb[2] - bb[0]) / 2
+            items.append(('via', net, 'through', lambda box, c=c, r=r: seg_rect_distance(c, c, box) - r))
+        else:  # arcs and other track items: their bounding box
+            bb = box_mm(t.GetBoundingBox())
+            items.append(('track_item', net, board.GetLayerName(t.GetLayer()),
+                          lambda box, bb=bb: max(0.0, box[0] - bb[2], bb[0] - box[2]) if box[1] <= bb[3] and bb[1] <= box[3]
+                          else math.hypot(max(0.0, box[0] - bb[2], bb[0] - box[2]), max(0.0, box[1] - bb[3], bb[1] - box[3]))))
+    for fp in board.GetFootprints():
+        for pad in fp.Pads():
+            if not pad.IsOnCopperLayer():
+                continue
+            bb = box_mm(pad.GetBoundingBox())
+            items.append((f'pad {fp.GetReference()}.{pad.GetNumber()}', pad.GetNetname() or None, 'pad',
+                          lambda box, bb=bb: math.hypot(max(0.0, box[0] - bb[2], bb[0] - box[2]), max(0.0, box[1] - bb[3], bb[1] - box[3]))))
+    errors, nearest = [], {}
+    for rid, box in rects:
+        best = None
+        for what, net, layer, dist in items:
+            d = dist(box)
+            if best is None or d < best[0]:
+                best = (d, what, net, layer)
+            if d < clear - tol:
+                errors.append({'kind': 'copper_in_cutout_clearance', 'rect': rid, 'item': what, 'net': net, 'layer': layer,
+                               'distance_mm': r4(max(d, 0.0))})
+        if best:
+            nearest[rid] = {'distance_mm': r4(max(best[0], 0.0)), 'item': best[1], 'net': best[2], 'layer': best[3]}
+    fills = {'step_mm': fill_step, 'zones': 0, 'points': 0, 'hits': 0}
+    try:
+        for z in board.Zones():
+            if z.GetIsRuleArea():
+                continue
+            layer = z.GetLayer()
+            fills['zones'] += 1
+            for rid, (x0, y0, x1, y1) in rects:
+                nx = max(1, int(math.ceil((x1 - x0 + 2 * (clear - tol)) / fill_step)))
+                ny = max(1, int(math.ceil((y1 - y0 + 2 * (clear - tol)) / fill_step)))
+                hit = 0
+                for i in range(nx + 1):
+                    x = x0 - (clear - tol) + (x1 - x0 + 2 * (clear - tol)) * i / nx
+                    for j in range(ny + 1):
+                        y = y0 - (clear - tol) + (y1 - y0 + 2 * (clear - tol)) * j / ny
+                        fills['points'] += 1
+                        if z.HitTestFilledArea(layer, frame.k(x, y), 0):
+                            hit += 1
+                if hit:
+                    fills['hits'] += hit
+                    errors.append({'kind': 'zone_fill_in_cutout_clearance', 'rect': rid, 'zone': z.GetZoneName(),
+                                   'net': z.GetNetname() or None, 'layer': board.GetLayerName(layer), 'grid_points': hit})
+        fills['checked'] = True
+    except Exception as error:  # pcbnew API difference: recorded, the review (pcb/check_boards.py) measures the fills
+        fills['checked'] = False
+        fills['note'] = f'not sampled here ({type(error).__name__}: {error}); pcb/check_boards.py keepout_rects measures them'
+    return {'clear_mm': clear, 'grow_mm': float(ko['grow_mm']), 'rects': len(rects), 'layers': list(ko['layers']),
+            'rule_areas_missing': missing, 'items_checked': len(items), 'zone_fills': fills, 'nearest': nearest,
+            'errors': errors, 'passed': not errors and not missing,
+            'note': 'MODEL geometry: tracks exact (centre line less half width), vias and pads by bounding box; '
+                    'zone fills on a grid; no copper may come within clear_mm of a rect (the copper-to-edge clearance '
+                    'once the rects are Edge.Cuts)'}
+
+
 def connectors_doc(spec, contract, template, facts):
     by_ref = {f['ref']: f for f in facts['footprints']}
     out = []
@@ -1813,9 +1994,12 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'annular_audit': audits['annular']['passed'], 'locked_copper_kept': audits['locked']['kept'],
         'group_audit': audits['groups']['passed'],
     }
+    if 'keepout_rects' in audits:  # only specs with keepout_rects carry this key (every other report stays unchanged)
+        result['keepout_rect_audit'] = audits['keepout_rects']['passed']
     passed = (drc['passed'] and all(a['passed'] for a in source_pad) and audits['domain']['passed']
               and audits['keepout']['passed'] and audits['annular']['passed'] and audits['locked']['kept']
-              and audits['groups']['passed'] and not any(b['status'].startswith('fail') for b in boundary))
+              and audits['groups']['passed'] and audits.get('keepout_rects', {'passed': True})['passed']
+              and not any(b['status'].startswith('fail') for b in boundary))
     return {
         'schema': REPORT_SCHEMA, 'board_id': spec['board_id'], 'status': spec['status'],
         'label': 'CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN',
@@ -1872,6 +2056,8 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
                    'kept': facts['tracks']['locked'] >= want_locked,
                    'note': 'SES import before/after counts and the DSN probe are in route-log.json'},
     }
+    if spec.get('keepout_rects'):
+        audits['keepout_rects'] = keepout_rect_audit(pcb, board, frame, spec)
     report = build_report(spec, contract, stackup, template, proj, facts, drc, audits, board_path, spec['project'])
     return report, connectors_doc(spec, contract, template, facts)
 
@@ -1958,6 +2144,9 @@ def route(board, freerouting):
         dsn, ses = temp / f'{board}.dsn', temp / f'{board}.ses'
         if not pcb.ExportSpecctraDSN(board_obj, str(dsn)) or not dsn.is_file():
             raise SystemExit('board_gen: Specctra DSN export failed')
+        if spec['router'].get('class_layers'):  # per-class routing layers (W2 PCB-CTRL: power classes on the outer layers)
+            dsn.write_text(patch_dsn_class_layers(dsn.read_text(encoding='utf-8'), spec['router']['class_layers']),
+                           encoding='utf-8')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
         cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
                                   temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']))
