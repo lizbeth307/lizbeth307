@@ -18,12 +18,13 @@ What is measured and what is modelled:
   - B2B: Samtec LSHM-150 contact resistance (W2 B2B, J208/J209). The product specification states only the change
     after the tests (LLCR delta <= 15 mOhm per contact); the initial value is not stated there, so it stays TBD.
   - PWR-A copper: no routed PWR-A exists. From the anchors of the SHRINK-2 planner spec PWR_A.spec-shrink2.json
-    (make_spec.py: F102 for the E1 end, U204/U205 IN pads, the J208 LAB5 contacts) the straight and the orthogonal
-    path lengths give the resistance of the narrowest legal copper (PWR3A 1.85 mm, one outer layer) and the copper
-    width x outer layers that the remaining budget needs. L101, L205 and C111/C112 are not anchored: F102.2 and the
-    U204/U205 IN pads stand for the two ends.
-  - E1_LAB5_RAW (LAB5 converter output -> F102.1, upstream of the E1-05 figure): measured from the scripted pours of
-    the spec when the converter is anchored; TBD while the SHRINK-2 converter is a reserved block (GR-5A pending).
+    (make_spec.py: L101.2 for the E1 end since W2 PCB-PWRA-3 part 2 anchors the LAB5 filter, else F102.2; U204/U205 IN
+    pads; the J208 LAB5 contacts) the straight and the orthogonal path lengths give the resistance of the narrowest
+    legal copper (PWR3A 1.85 mm, one outer layer) and the copper width x outer layers that the remaining budget needs.
+    L205 is not anchored: the U204/U205 IN pads stand for the E2 end.
+  - E1_LAB5_RAW (LAB5 converter output -> F102.1) and E1_LAB5_FUSED (F102.2 -> L101.1), upstream of the E1-05 figure:
+    from the scripted pours of the spec when the converter is anchored (an upper bound: the whole orthogonal path at the
+    narrowest pour width, F.Cu only); TBD while the SHRINK-2 converter is a reserved block (GR-5A pending).
 Copper: annealed copper (IACS) at 20 C and at 50 C (the E1-05 thermal test ambient; the copper itself runs warmer).
 """
 from __future__ import annotations
@@ -283,11 +284,14 @@ def build():
     e2_loads = [r['pad'] for r in pwr_b['20C'] if r['sheet'] == 'E2' and r['pad'].split('.')[0].startswith('U')]
 
     # --- PWR-A: anchored ends only ---
-    e1_end = centroid(pad_centres(spec, 'F102', ['2']))
+    l101 = pad_centres(spec, 'L101', ['2'])
+    e1_ref = 'L101.2' if l101 else 'F102.2'
+    e1_end = centroid(l101 or pad_centres(spec, 'F102', ['2']))
     lt_end = centroid(pad_centres(spec, 'U204', list('1234')) + pad_centres(spec, 'U205', list('1234')))
     b2b_end = centroid(pad_centres(spec, mine, my_contacts))
-    raw_pads = pad_centres(spec, 'U108', ['VOUT'])
-    raw_zones = [z for z in spec['pre_route'].get('zones', []) if z['net'] == 'E1_LAB5_RAW']
+    vout = sorted(str(p['number']) for p in graph['U108']['pins'] if str(p.get('name', '')).startswith('VOUT')) \
+        if 'U108' in graph else []
+    raw_pads = pad_centres(spec, 'U108', vout) if vout else None
 
     def path(a, b):
         return {'from': [r4(a[0]), r4(a[1])], 'to': [r4(b[0]), r4(b[1])],
@@ -302,9 +306,9 @@ def build():
 
     out_paths = {}
     for key, (a, b, what) in {
-        'A_E1_to_LT3045': (e1_end, lt_end, 'F102.2 (E1 LAB5 end; L101 adjacent) -> U204/U205 IN pads (E2_LNA_IN via L205): '
+        'A_E1_to_LT3045': (e1_end, lt_end, f'{e1_ref} (E1 LAB5 end) -> U204/U205 IN pads (E2_LNA_IN via L205): '
                                            'the E1-05 headroom path, PWR-A only'),
-        'B_E1_to_B2B': (e1_end, b2b_end, f'F102.2 -> {mine} LAB5 contacts (PWR-A part of the path to the PWR-B loads)'),
+        'B_E1_to_B2B': (e1_end, b2b_end, f'{e1_ref} -> {mine} LAB5 contacts (PWR-A part of the path to the PWR-B loads)'),
     }.items():
         p = path(a, b)
         row = {'what': what, **p, 'by_temperature': {}}
@@ -338,24 +342,37 @@ def build():
                 'fits': left > 0,
             }
         remaining[tk] = rows
-    if raw_pads and raw_zones:
-        raw_a, raw_b = centroid(raw_pads), centroid(pad_centres(spec, 'F102', ['1']))
-        zx = [p[0] for p in raw_zones[0]['outline']]
-        zy = [p[1] for p in raw_zones[0]['outline']]
-        raw_w = min(max(zx) - min(zx), max(zy) - min(zy))
-        raw_len = math.hypot(raw_b[0] - raw_a[0], raw_b[1] - raw_a[1])
-        upstream = {'what': 'E1_LAB5_RAW pours (scripted): LAB5 converter output -> F102.1, before F102 (not part of the '
-                            'E1-05 connection figure; adds to the total drop)',
-                    'from': [r4(raw_a[0]), r4(raw_a[1])], 'to': [r4(raw_b[0]), r4(raw_b[1])], 'length_mm': r4(raw_len),
-                    'pour_width_mm': r4(raw_w), 'outer_layers': len(raw_zones),
-                    'by_temperature': {tk: r4(copper(raw_len, raw_w, len(raw_zones), tc) * 1e3) for tk, tc in temps.items()},
-                    'unit': 'mOhm'}
+    def pour_path(net, a, b, what):
+        zones = [z for z in spec['pre_route'].get('zones', []) if z['net'] == net and z.get('outline') != 'board']
+        main = [z for z in zones if not z.get('pin_entry')]
+        if not main:
+            return None
+        widths = []
+        for z in main:
+            zx, zy = [q[0] for q in z['outline']], [q[1] for q in z['outline']]
+            widths.append(min(max(zx) - min(zx), max(zy) - min(zy)))
+        w = min(widths)
+        length = abs(b[0] - a[0]) + abs(b[1] - a[1])
+        return {'what': what, 'from': [r4(a[0]), r4(a[1])], 'to': [r4(b[0]), r4(b[1])], 'orthogonal_mm': r4(length),
+                'narrowest_pour_width_mm': r4(w), 'pours': sorted(z['id'] for z in zones), 'outer_layers': 1,
+                'by_temperature_upper_bound': {tk: r4(copper(length, w, 1, tc) * 1e3) for tk, tc in temps.items()},
+                'unit': 'mOhm',
+                'label': 'MODEL upper bound: the whole orthogonal path at the narrowest scripted pour width, F.Cu only'}
+
+    if raw_pads:
+        upstream = pour_path('E1_LAB5_RAW', centroid(raw_pads), centroid(pad_centres(spec, 'F102', ['1'])),
+                             f'E1_LAB5_RAW pours (scripted): U108 VOUT ({", ".join(vout)}) -> F102.1, before F102 (not part of '
+                             'the E1-05 connection figure; adds to the total drop)')
+        fused = pour_path('E1_LAB5_FUSED', centroid(pad_centres(spec, 'F102', ['2'])), e1_end if l101 else None,
+                          'E1_LAB5_FUSED pour (scripted): F102.2 -> L101.1 (inside the E1 chain U108 -> F102 -> L101)') \
+            if l101 else None
     else:
         upstream = {'what': 'E1_LAB5_RAW (LAB5 converter output -> F102.1, before F102; not part of the E1-05 connection '
                             'figure)',
                     'value': 'TBD: the SHRINK-2 LAB5 converter (TPSM63606RDLR) is the reserved block CONV_LAB5 until GR-5A '
                              'puts it into the graph; PCB-PWRA-3 part 2 scripts the pour from its output to F102.1',
                     'spec_planned_change': next((c for c in spec.get('planned_changes', []) if c['id'] == 'U108-LAB5'), None)}
+        fused = None
     shared_b = {tk: rows for tk, rows in pwr_b.items()}
 
     return {
@@ -398,6 +415,8 @@ def build():
         'pwr_a_paths': out_paths,
         'path_b_remaining_budget': remaining,
         'upstream_e1_lab5_raw': upstream,
+        'upstream_e1_lab5_fused': fused,
+        'e1_end': e1_ref,
         'findings': [],
     }
 

@@ -59,7 +59,11 @@ sys.path.insert(0, str(BASE / 'pcb'))
 import board_gen as bg  # noqa: E402
 import partition_budget as pbud  # noqa: E402
 
-SPECS = {'PWR_A.spec-draft.json': 'placement-study.json', 'PWR_A.spec-shrink2.json': 'placement-study-shrink2.json'}
+SPECS = {'PWR_A.spec-shrink2.json': 'placement-study-shrink2.json'}
+# W2 PCB-PWRA-3 part 2: the pre-SHRINK draft no longer resolves against the graph (GR-5A: U107/U108 are TI converters, C107.1
+# is E1_CONV_IN), so its study is a frozen record of the obstacle-fix re-baseline (part 1, wip/w2-pwra3 9ecc26f2 on the graph
+# of wip/w2-shrink 59c68774); --spec PWR_A.spec-draft.json still runs it on such a tree.
+FROZEN = {'PWR_A.spec-draft.json': 'placement-study.json'}
 CONTRACT = BASE / 'mechanical/generated/contract/boards.json'
 PARTITION_SPEC = BASE / 'pcb/partition-spec.json'
 BUDGET = BASE / 'pcb/partition-budget.json'
@@ -73,6 +77,8 @@ BOSS_TOL = 0.05    # mm: the locating bosses of two identical mated halves lie m
 PIN_FIELD_TOL = 0.05
 EDGE_TOL = 0.5  # a header courtyard within 0.5 mm of its exit edge counts as on the edge
 ROW_STEP = 0.05  # mm: row pitch of the bottom usable-area integration
+VIA_MARGIN = 0.25  # mm, design value: a bottom courtyard keeps this off a through via of the scripted copper
+POUR_GAP = 0.3  # mm, design value: two scripted pours of different nets on one layer keep twice the class clearance
 # Design value: depth of the header strip along an exit edge = the deepest vertical Mini-Fit Jr./Micro-Fit
 # courtyard of the PWR-A headers at rotation 90 (6.4-6.8 mm, vendored KiCad 10.0.7 footprints), rounded up.
 STRIP_DEPTH = 7.0
@@ -280,7 +286,7 @@ def study(spec_name):
                                               ((box[0], box[1]), (box[2], box[1]), (box[2], box[3]), (box[0], box[3])))
         hits = [h['ref'] for h in hole_list if bg.box_circle_distance(box, h['at']) < h['keepout_d'] / 2 - 1e-9]
         row['checks']['clear_of_hole_keepouts'] = not hits
-        if ref in POLOLU:
+        if ref in POLOLU and len(contract.get('modules_on_board') or []) > POLOLU[ref]:
             mod = contract['modules_on_board'][POLOLU[ref]]
             pf = mod['pin_field']
             want = [pf[0], pf[1], pf[0] + pf[2], pf[1] + pf[3]]
@@ -304,6 +310,31 @@ def study(spec_name):
             if bad:
                 anchor_errors.append({'ref': ref, 'check': key})
         anchor_rows.append(row)
+    # (8) W2 PCB-PWRA-3 part 2: the converter-zone refs of the contract (MECH-7 converter_zone_refs) inside their
+    # thermal_bond zone, and the end of the bottom-edge row against the contract row_end_max
+    template_refs = {p['ref'] for p in template}
+    conv_rows = []
+    for zone, zrefs in sorted((contract.get('converter_zone_refs') or {}).items()):
+        zrect = xywh(contract['thermal_bond_mm'][int(zone) - 1])
+        for ref in zrefs:
+            if ref not in template_refs:
+                conv_rows.append({'zone': int(zone), 'ref': ref, 'inside': None, 'why': 'not a PWR-A ref of this spec'})
+                continue
+            ok = ref in placed and inside(placed[ref]['box'], zrect)
+            conv_rows.append({'zone': int(zone), 'zone_rect': zrect, 'ref': ref,
+                              'courtyard_box': placed[ref]['box'] if ref in placed else None, 'inside': ok})
+            if not ok:
+                anchor_errors.append({'ref': ref, 'check': f'converter courtyard outside thermal_bond zone {zone}'})
+    row_check = None
+    if spec.get('bottom_row'):
+        brow = spec['bottom_row']
+        ends = {r: placed[r]['box'][2] for r in brow['refs'] if r in placed}
+        end = max(ends.values()) + margin
+        row_check = {'rule': brow['rule'], 'refs': brow['refs'], 'turned': brow['turned'],
+                     'courtyard_end_x': {r: r4(v) for r, v in ends.items()}, 'end_x_with_margin': r4(end),
+                     'row_end_max': brow['row_end_max'], 'passed': end <= brow['row_end_max'] + 1e-9}
+        if not row_check['passed']:
+            anchor_errors.append({'ref': max(ends, key=ends.get), 'check': 'bottom row beyond row_end_max'})
     refs_sorted = sorted(anchored, key=bg.sort_ref)
     for i, a in enumerate(refs_sorted):
         for b in refs_sorted[i + 1:]:
@@ -371,6 +402,11 @@ def study(spec_name):
     tht_obstacles = {}
 
     def add_tht_obstacles():
+        # W2 PCB-PWRA-3 part 2: a through via of the scripted copper is a bottom obstacle too (its diameter + VIA_MARGIN)
+        for via in spec['pre_route'].get('vias', []):
+            rv = via['diameter_mm'] / 2 + VIA_MARGIN
+            x, y = via['at']
+            tht_obstacles['__VIA_' + via['id']] = [r4(x - rv), r4(y - rv), r4(x + rv), r4(y + rv)]
         for ref in sorted(placed, key=bg.sort_ref):
             if placed[ref]['side'] != 'F':
                 continue
@@ -449,6 +485,12 @@ def study(spec_name):
             if low - 0.5 - region[1] >= 1.5:
                 regions[name + '+'] = [region[0], region[1], region[2], r4(low - 0.5)]
                 order.insert(i, name + '+')
+            # W2 PCB-PWRA-3 part 2: the strip right of the chunk is free too (no chunk part lies right of its widest
+            # shelf); the long thin plate pockets PB* need it (a chunk otherwise takes a whole 40 x 6 mm pocket)
+            right = max(placed[r]['box'][2] for r in placed_here)
+            if region[2] - (right + 0.5) >= 1.5:
+                regions[name + '>'] = [r4(right + 0.5), region[1], region[2], region[3]]
+                order.insert(i, name + '>')
             used_here.append({'region': name, 'refs': len(placed_here),
                               'courtyard_mm2': r4(sum(area(geometry[r]['courtyard']) for r in placed_here)),
                               'region_mm2': r4(area(region))})
@@ -490,6 +532,9 @@ def study(spec_name):
                 if bg.rects_overlap(ba, bb) and not (a in anchored and b in anchored):
                     overlap_rows.append({'side': side, 'a': a, 'b': b})
             for b, bb in fixed_items:
+                # an anchored power-stage part sits on its scripted pour by design (copper keep-outs CU_* hold the planner off)
+                if b.startswith('CU_') and a in anchored:
+                    continue
                 if bg.rects_overlap(ba, bb) and not (b.startswith('THT_') and b[4:] == a):
                     overlap_rows.append({'side': side, 'a': a, 'b': b})
 
@@ -499,7 +544,8 @@ def study(spec_name):
                          {r for r, a in anchored.items() if a.get('side', 'F') == 'B'}, key=bg.sort_ref)
     top_refs = [r for r in all_refs if r not in set(bottom_refs)]
     cy = {r: area(geometry[r]['courtyard']) for r in all_refs}
-    top_obstacles = [o for o in obstacles if o['side'] == 'F']
+    top_obstacles = [o for o in obstacles if o['side'] == 'F' and o.get('kind') != 'copper']
+    copper_keepouts = [o for o in obstacles if o['side'] == 'F' and o.get('kind') == 'copper']
     reserved_rect_mm2 = sum(area(o['box']) for o in top_obstacles)
     demand_total = sum(cy[r] for r in top_refs) + reserved_rect_mm2 + reserve_mm2
     anchored_mm2 = sum(cy[r] for r in anchored if r in set(top_refs))
@@ -544,6 +590,21 @@ def study(spec_name):
     if bottom_refs:
         b_usable = bottom_usable(outline, hole_list, bond_zones + list(tht_obstacles.values()))
         b_cy = sum(cy[r] for r in bottom_refs)
+        pockets = (two_sided or {}).get('bottom_pockets') or {}
+        pocket_rows = None
+        if pockets:
+            pocket_mm2 = sum(area(b) for b in pockets.values())
+            outside = []
+            for r in bottom_refs:
+                if r not in placed:
+                    continue
+                hit = [n for n, b in pockets.items() if inside(placed[r]['box'], b)]
+                if not hit:
+                    outside.append(r)
+            pocket_rows = {'rule': 'MECH-7 contract bottom_side: every bottom courtyard inside one plate pocket PB*',
+                           'pockets': len(pockets), 'pocket_area_mm2': r4(pocket_mm2),
+                           'fill_of_pockets': r4(b_cy / pocket_mm2), 'courtyards_outside_a_pocket': outside,
+                           'passed': not outside}
         fill['bottom'] = {
             'label': 'MODEL: bottom side of the two-sided PWR-A; usable = outline - hole keepouts - thermal_bond zones - '
                      'THT pin fields of the placed top parts + tht_margin (exact along x, rows of 0.05 mm)',
@@ -553,6 +614,8 @@ def study(spec_name):
             'top_tht_fields': len(tht_obstacles), 'tht_margin_mm': tht_margin,
             'h_room_mm': two_sided.get('h_room_mm') if two_sided else None,
         }
+        if pocket_rows:
+            fill['bottom']['pockets'] = pocket_rows
         fill['unplaced_top_refs'] = unplaced_top
     if fb_id == 'F2-C':
         ref_demand = cand['boards']['PWR_A']['demand_1_mm2']
@@ -564,7 +627,7 @@ def study(spec_name):
 
     # --- the F2 options of pcb/partition-spec.json, measured on the same courtyards (the pre-SHRINK draft only) ---
     graph_refs = [p['ref'] for p in template if p['source'] == 'graph']
-    if all(r in cy for r in POLOLU):
+    if fb_id == 'F2' and all(r in cy for r in POLOLU):
         radials = {r for r in graph_refs if geometry[r]['courtyard'] and next(t for t in template if t['ref'] == r)['fpid']
                    .startswith('Capacitor_THT:CP_Radial')}
         f2b_groups = {('E5', 'VBUS HF+ з демпфованим LC'), ('E5', 'VBUS RTL-A і LAB PORT'), ('E5', 'LAB BUS I2C buffer'),
@@ -716,7 +779,8 @@ def study(spec_name):
             if rot:
                 w, h = h, w
             pad_index.append({'ref': ref, 'pad': str(pad['number']), 'net': tp['pads'].get(str(pad['number'])),
-                              'box': [cx - w / 2, cy0 - h / 2, cx + w / 2, cy0 + h / 2], 'at': [cx, cy0]})
+                              'box': [cx - w / 2, cy0 - h / 2, cx + w / 2, cy0 + h / 2], 'at': [cx, cy0],
+                              'side': p['side'], 'tht': pad['type'] in ('thru_hole', 'np_thru_hole')})
     copper = []
     for track in spec['pre_route'].get('tracks', []):
         ends = []
@@ -729,6 +793,8 @@ def study(spec_name):
         copper.append({'id': track['id'], 'kind': 'track', 'net': track['net'], 'class': cls, 'width_mm': track['width_mm'],
                        'class_outer_width_mm': need, 'width_ok': track['width_mm'] + 1e-9 >= need,
                        'end_pads': ends, 'ends_on_net_pads': all(ends), 'locked': bool(track.get('locked', True))})
+    split_nets = spec.get('split_nets', {})
+    zone_boxes = []
     for zone in spec['pre_route'].get('zones', []):
         if zone.get('outline', 'board') == 'board':  # whole-outline plane (GND In1/In2): no pad geometry to pre-check
             copper.append({'id': zone['id'], 'kind': 'plane', 'net': zone['net'], 'layer': zone['layer'],
@@ -737,16 +803,55 @@ def study(spec_name):
         poly = zone['outline']
         zx, zy = [p[0] for p in poly], [p[1] for p in poly]
         zb = [min(zx), min(zy), max(zx), max(zy)]
+        zone_boxes.append((zone['id'], zone['net'], zone['layer'], zb))
+        zside = 'B' if zone['layer'] == 'B.Cu' else ('F' if zone['layer'] == 'F.Cu' else None)
+        # a pad meets the pour when it is a THT pad, or an SMD pad on the pour's side (W2 PCB-PWRA-3 part 2: the bottom
+        # chips under an F.Cu pour do not)
+        meets = [p for p in pad_index if bg.rects_overlap(p['box'], zb) and (p['tht'] or zside is None or p['side'] == zside)]
         cls = cls_of.get(zone['net'], netclasses['default_class'])
-        on_net = sorted(f'{p["ref"]}.{p["pad"]}' for p in pad_index if p['net'] == zone['net'] and bg.rects_overlap(p['box'], zb))
-        foreign = sorted(f'{p["ref"]}.{p["pad"]}:{p["net"]}' for p in pad_index
-                         if p['net'] != zone['net'] and bg.rects_overlap(p['box'], zb))
-        need = split_of.get(cls) or width_of.get(cls) or 0.0
-        copper.append({'id': zone['id'], 'kind': 'zone', 'net': zone['net'], 'layer': zone['layer'], 'class': cls,
-                       'rect_min_width_mm': r4(min(zb[2] - zb[0], zb[3] - zb[1])), 'class_width_per_layer_mm': need,
-                       'width_ok': min(zb[2] - zb[0], zb[3] - zb[1]) + 1e-9 >= need,
-                       'net_pads_touched': on_net, 'foreign_pads_inside': foreign,
-                       'inside_outline': all(bg.point_in_outline(c, outline) for c in poly)})
+        on_net = sorted(f'{p["ref"]}.{p["pad"]}' for p in meets if p['net'] == zone['net'])
+        foreign = sorted(f'{p["ref"]}.{p["pad"]}:{p["net"]}' for p in meets if p['net'] != zone['net'])
+        # the width the net needs on one layer: the split width only for a net the spec declares split (check_boards rule)
+        split = zone['net'] in split_nets
+        need = (split_of.get(cls) if split else None) or width_of.get(cls) or 0.0
+        width = min(zb[2] - zb[0], zb[3] - zb[1])
+        row = {'id': zone['id'], 'kind': 'zone', 'net': zone['net'], 'layer': zone['layer'], 'class': cls,
+               'rect_min_width_mm': r4(width), 'class_width_mm': need,
+               'class_width_basis': 'split L1+L4 per layer' if split else 'single layer',
+               'width_ok': width + 1e-9 >= need, 'pad_connection': zone.get('pad_connection', 'thermal'),
+               'net_pads_touched': on_net, 'foreign_pads_inside': foreign,
+               'inside_outline': all(bg.point_in_outline(c, outline) for c in poly)}
+        if zone.get('pin_entry') and not row['width_ok']:
+            # a pin-entry stem: every point of it lies within half the class width of its pin (check_boards measures a
+            # pour neck beyond need/2 from every terminal), so it is not a neck of the class
+            pins = [p for p in pad_index if f'{p["ref"]}.{p["pad"]}' in set(zone['pin_entry'])]
+            far = 0.0
+            for cx, cy_ in ((zb[0], zb[1]), (zb[2], zb[1]), (zb[2], zb[3]), (zb[0], zb[3])):
+                far = max(far, min(math.hypot(max(b['box'][0] - cx, 0, cx - b['box'][2]),
+                                              max(b['box'][1] - cy_, 0, cy_ - b['box'][3])) for b in pins))
+            row.update(pin_entry=zone['pin_entry'], entry_reach_mm=r4(far), entry_limit_mm=r4(need / 2),
+                       width_ok=far <= need / 2 + 1e-9)
+        copper.append(row)
+    pour_pairs = []
+    for i, (ia, na, la, ba) in enumerate(zone_boxes):
+        for ib, nb, lb, bb in zone_boxes[i + 1:]:
+            if la != lb or na == nb:
+                continue
+            dx = max(bb[0] - ba[2], ba[0] - bb[2], 0)
+            dy = max(bb[1] - ba[3], ba[1] - bb[3], 0)
+            gap = math.hypot(dx, dy)
+            if gap < POUR_GAP - 1e-9:
+                pour_pairs.append({'a': ia, 'b': ib, 'layer': la, 'gap_mm': r4(gap)})
+    for via in spec['pre_route'].get('vias', []):
+        x, y = via['at']
+        rv = via['diameter_mm'] / 2
+        hits = [f'{p["ref"]}.{p["pad"]}:{p["net"]}' for p in pad_index if p['net'] != via['net'] and
+                math.hypot(max(p['box'][0] - x, 0, x - p['box'][2]), max(p['box'][1] - y, 0, y - p['box'][3])) < rv + 0.15]
+        in_pour = [zid for zid, n, l, b in zone_boxes if n == via['net'] and b[0] <= x <= b[2] and b[1] <= y <= b[3]]
+        near_other = [zid for zid, n, l, b in zone_boxes if n != via['net'] and
+                      math.hypot(max(b[0] - x, 0, x - b[2]), max(b[1] - y, 0, y - b[3])) < rv + 0.15]
+        copper.append({'id': via['id'], 'kind': 'via', 'net': via['net'], 'at': via['at'], 'foreign_pads_within_0_15': hits,
+                       'other_net_pours_within_0_15': near_other, 'in_pours_of_its_net': in_pour})
 
     # --- boundary: nets that leave PWR-A without a connector pin here ---
     boundary = bg.boundary_audit(spec, template, graph, db)[0]
@@ -956,6 +1061,8 @@ def study(spec_name):
         'fill': fill,
         'anchors': {'rows': anchor_rows, 'errors': anchor_errors, 'passed': not anchor_errors,
                     'headers_off_their_edge': edge_rows_off},
+        'converter_zones': {'rule': 'contract converter_zone_refs (MECH-7): each courtyard inside its thermal_bond zone',
+                            'rows': conv_rows, 'passed': all(r['inside'] is not False for r in conv_rows)},
         'reserved': {'rects': reserved_rows, 'area_only': reserve_rows},
         'groups': group_rows,
         'placement_checks': {'rule': 'per side, every placed courtyard box against every other one (anchor pairs: see '
@@ -975,7 +1082,13 @@ def study(spec_name):
                          p['type'] in ('thru_hole', 'np_thru_hole') for p in geometry[r]['pads'])), key=bg.sort_ref)},
         'scripted_copper_precheck': {'label': 'geometry of the spec copper against the planned pads; KiCad fill, '
                                               'thermal spokes and neck widths are checked only on the routed board',
-                                     'items': copper},
+                                     'items': copper,
+                                     'pour_pairs_closer_than_mm': POUR_GAP, 'pour_pairs': pour_pairs,
+                                     'passed': (not pour_pairs and all(c.get('width_ok', True) is not False and
+                                                                       not c.get('foreign_pads_inside') and
+                                                                       not c.get('foreign_pads_within_0_15') and
+                                                                       not c.get('other_net_pours_within_0_15')
+                                                                       for c in copper))},
         'b2b': {'rule': 'spec b2b pin_map: contact k of the PWR-A half on the PWR-A top under contact pin_map(k) of the PWR-B '
                         'half on the PWR-B bottom, same net; MODEL geometry of the two KiCad 10.0.7 lands',
                 'pairs': b2b_rows, 'passed': bool(b2b_rows) and all(r['passed'] for r in b2b_rows)},
@@ -988,9 +1101,12 @@ def study(spec_name):
     }
     if planned_fp or spec.get('planned_changes'):
         out['planned'] = {'footprints': planned_fp, 'changes': spec.get('planned_changes', []),
-                          'note': 'SHRINK-2 changes that are not in the graph yet (status from pcb/partition-budget.json); '
-                                  'the study counts their planned footprints and reserved blocks'}
-    if turn:
+                          'note': 'SHRINK-2 planned changes and their status, read live by make_spec.py '
+                                  '(pcb/partition_budget.py Evaluator.planned on the graph); the study counts the planned '
+                                  'footprints and reserved blocks of the pending ones'}
+    if row_check:
+        out['bottom_row'] = row_check
+    if turn and turn['headers']:
         out['turn_whatif'] = turn
     if htrim:
         out['h_trim'] = htrim
@@ -1000,11 +1116,11 @@ def study(spec_name):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--check', action='store_true')
-    ap.add_argument('--spec', choices=sorted(SPECS))
+    ap.add_argument('--spec', choices=sorted(SPECS) + sorted(FROZEN))
     args = ap.parse_args(argv)
     status = 0
     for name in ([args.spec] if args.spec else list(SPECS)):
-        out = HERE / SPECS[name]
+        out = HERE / {**SPECS, **FROZEN}[name]
         text = json.dumps(study(name), ensure_ascii=False, indent=2) + '\n'
         if args.check:
             if not out.is_file() or out.read_text(encoding='utf-8') != text:

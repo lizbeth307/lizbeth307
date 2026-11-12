@@ -9,36 +9,46 @@ evidence, never committed). It reads, and never writes, the design: nothing here
 Inputs:
   PWR_A.spec-draft.json (this directory)       base: layers, project, rules, anchors, groups, scripted copper
   design/E1-E5 (board_gen.load_graph)          refs, footprints, MPNs and pin nets of the graph of record
-  pcb/generated/partition.json                 PWR-A domain refs (pcb/prepare.py)
+  pcb/generated/partition.json                 PWR-A domain refs (pcb/prepare.py; follows partition.domain_override_pwr_a)
   pcb/partition-spec.json candidates.shrink2   planned changes (blocks w/d, footprints), pwr_a_bottom, h_trim
-  pcb/partition-budget.json candidates.shrink2 status of every planned change ('pending' / 'in graph') and the
-                                               planned PWR-B ref set (pwr_b_refs)
+  pcb/partition_budget.py Evaluator.planned    status of every planned change against the graph of now ('pending' while
+                                               every ref still has the value it replaces, 'in graph' once GR-5A/GR-5B
+                                               changed it; part 2: the status is read live, not from
+                                               pcb/partition-budget.json, which is older than the graph until AREA-2b)
   pcb/boards/PWR_B.json, pcb/generated/b2b-nets.json   the J209 anchor and the J208 -> J209 contact map
-  mechanical/generated/contract/boards.json    thermal_bond zones (MECH-7 writes zones 3'/4'; until then the
-                                               planned zones of pwr_a_bottom.thermal_bond_planned are used)
+  mechanical/generated/contract/boards.json    thermal_bond zones (MECH-7 zones 3'/4'), bottom_side pockets PB1-PB13 and
+                                               h_max, converter_zone_refs, the bottom edge row_end_max
 
 Rules (SHRINK-2 options: F102 holder kept, C506 to PWR-B, 12 V dampers radial):
 - A 'pending' change with reserved blocks drops its refs and adds its blocks as reserved areas at BLOCK_AT (zones
   3'/4' at the old module squares, F103 in the top strip); a 'pending' deletion drops its refs; a 'pending' footprint
   swap keeps the ref and records the planned footprint in planned_footprints (placement_study.py uses its courtyard).
-  An 'in graph' block change becomes a placement group in the block rectangle: the refs of the change still in the
-  graph and the new graph refs of the same schematic group (BLOCK_GROUPS), or carrying a reserve MPN.
-- Refs of the planned PWR-B set (budget pwr_b_refs: the 5 V dampers C235-C298 and C506) leave PWR-A.
-- The chip refs of pwr_a_bottom.refs go on the bottom side, in one bottom group per top group (BOTTOM_REGION),
-  outside the thermal_bond zones (side-B reserved areas) and outside the top THT pin fields + tht_margin
-  (placement_study.py adds those as it places the top).
+  An 'in graph' change counts the graph: its refs and the new graph refs go to the draft group of their schematic
+  group (SCHEMATIC_GROUP; W2 PCB-PWRA-3 part 2: the real converter parts replaced the blocks).
+- Part 2 (GR-5A, GR-5B and MECH-7 in the lane): the power stages are anchored (POWER_ANCHORS, design choice): U107 +
+  L102 in contract zone 3', U108 in zone 4' (contract converter_zone_refs), their input and output capacitors, the
+  reverse-polarity FET Q102, the shared bulk C107 and the LAB5 filter L101 at F102.2; the critical copper is scripted
+  (POWER_POURS, POWER_VIAS: solid pad connection, F.Cu, at least the BATT single-layer width 3.2 mm or PWR3A 1.85 mm)
+  and each pour is a planner keep-out (reserved area kind 'copper', not a courtyard demand).
+- Refs of the planned PWR-B set (budget pwr_b_refs) leave PWR-A; since GR-5B the domain of pcb/generated/partition.json
+  already puts the six 5 V dampers and C506 on PWR-B.
+- The chip refs of pwr_a_bottom.refs go on the bottom side, in one bottom group per top group, packed into the plate
+  pockets PB1-PB13 of the contract (bottom_side.keep_in_mm; MECH-7: every bottom courtyard inside one pocket), the
+  nearest pocket first; placement_study.py adds the top THT pin fields + tht_margin and the through vias as obstacles.
+- The bottom row J105-J112 follows the MECH-7 contract (bottom edge row_end_max): J109-J112 turned by 90 degrees and the
+  row compacted towards x 0 in its order, 0.5 mm apart (BOTTOM_ROW).
 - J208 (LSHM-150, graph ref since W2 B2B) is anchored so that its pad n lies under J209 pad map(n) (b2b-nets.json
   contacts), the B2B2 placeholder of the draft leaves.
 - J113/J114/J115/J507 take FFC_PLACES only if the S02 FFC is in the graph (a PWR-A part with a Connector_FFC-FPC
   footprint, GR-5B); otherwise their wip/w2-pwra1 places (PWRA1_PLACES).
-- Groups and new refs that no designed region names go to group NEW_UNASSIGNED (all top regions): the study lists
-  them; a regeneration after GR-5A/GR-5B/MECH-7 names their regions.
+- Groups and new refs that no designed region names go to group NEW_UNASSIGNED (all top regions): the study lists them.
 MODEL / planning input only: not a board of record, nothing here is a hardware result; bench gates stay OPEN.
 """
 from __future__ import annotations
 
 import argparse
 import json
+import math
 from pathlib import Path
 import sys
 
@@ -46,6 +56,7 @@ HERE = Path(__file__).resolve().parent
 BASE = HERE.parents[3]  # sat-receiver-audit
 sys.path.insert(0, str(BASE / 'pcb'))
 import board_gen as bg  # noqa: E402
+import partition_budget as pbud  # noqa: E402
 
 DRAFT = HERE / 'PWR_A.spec-draft.json'
 OUT = HERE / 'PWR_A.spec-shrink2.json'
@@ -59,72 +70,161 @@ CANDIDATE = 'shrink2'
 B2B_PAIR = ('J208', 'J209')
 FFC_PREFIX = 'Connector_FFC-FPC:'
 
-# Lower-left corner [x, y] (board mm) of each reserved block of the planned changes on the PWR-A top: design choice of the
-# SHRINK-2 study (converters in zones 3'/4' at the old module squares; RPP and the F201 fuse beside CONV_SYS12; F103 in
-# the top strip of the band). Width and depth come from pcb/partition-spec.json candidates.shrink2.planned.
+# Lower-left corner [x, y] (board mm) of each reserved block of a *pending* planned change on the PWR-A top: design choice
+# of the SHRINK-2 study (converters in zones 3'/4' at the old module squares; RPP and the F201 fuse beside CONV_SYS12;
+# F103 in the top strip of the band). Width and depth come from pcb/partition-spec.json candidates.shrink2.planned.
 BLOCK_AT = {'CONV_SYS12': [8.0, 40.0], 'RPP': [8.0, 55.0], 'FUSE_F201': [16.0, 55.0], 'CONV_LAB5': [8.0, 74.0],
             'FUSE_F103': [81.0, 31.0]}
-# Schematic group (sheet, group) whose new graph refs fill a block once its change is 'in graph' (GR-5A).
-BLOCK_GROUPS = {'CONV_SYS12': ('E1', 'SYS12'), 'CONV_LAB5': ('E1', 'LAB5'), 'RPP': ('E1', 'SYS12'),
-                'FUSE_F103': None, 'FUSE_F201': None}
 # wip/w2-pwra1 80d92c28 places of the right-edge headers (no FFC), and the FFC places of the SHRINK-2 decision.
 PWRA1_PLACES = {'J113': ([117.7, 14.15], 90), 'J114': ([124.5, 4.13], 90), 'J115': ([124.5, 15.29], 90),
                 'J507': ([117.7, 2.75], 90)}
 FFC_PLACES = {'J113': ([102.0, 2.75], 90), 'J114': ([108.77, 4.13], 90), 'J115': ([116.04, 4.13], 90),
               'J507': ([122.54, 2.75], 90)}
 GAP = 0.5  # mm, region edge to a fixed courtyard (the planner gap)
+EDGE_INSET = 0.3  # mm, a planner region keeps this off the board outline (the draft regions start at 0.3)
 
-# Top regions of the SHRINK-2 layout (free rectangles after the anchors, J208, the blocks and the hole keepouts; design
-# choice). The band keeps the draft regions left of J208; the leg is re-cut for the converter blocks (the SHRINK-2
-# study regions LEG_P1/P2/P3/P5 and LEG_HFL for L501); the strip y 26.6-34.8 is free again (no QSH-060) apart from
-# the F103 block; around J208 [83.45, 15.4, 114.15, 21.6] the band is cut below, above and beside it.
+# --- W2 PCB-PWRA-3 part 2: power stages and their scripted copper (design choice; board mm, y up, top side) ---
+# Anchors of the power stages once their planned changes are in the graph: ref -> (x, y, rotation). U107 (LM61460, SW
+# up) under L102 pad 1 (SRP1040VA on the SRP1038C land, pads vertical) in zone 3' [7, 39, 24, 63]; the input capacitors
+# C119/C120 left and right of U107 at the VIN/PGND pin pairs (SNVSBD5D split CIN); the output capacitors C123-C125 left of
+# L102 and C126 right of it, pad 1 up in the SYS12 bar at L102 pad 2; U108 (TPSM63606, VIN up, VOUT down) in zone 4'
+# [7, 73, 21, 87] with C130/C131 above it (pad 1 down in the E1_CONV_IN bar) and C133-C135 below it (pad 1 up in the
+# E1_LAB5_RAW bar towards F102.1); Q102 (DMT6007 of the LM74700 stage) at the foot of the E1_CONV_IN spine; C107 (shared
+# input bulk) between the zones; L101 (LAB5 filter) above F102.2.
+POWER_ANCHORS = {
+    'U107': (16.0, 46.5, 90), 'L102': (16.0, 56.0, 90),
+    'C119': (11.95, 46.5, 90), 'C120': (20.05, 46.5, 90),
+    'C123': (2.0, 59.0, 270), 'C124': (5.4, 59.0, 270), 'C125': (8.8, 59.0, 270), 'C126': (22.95, 59.0, 270),
+    'Q102': (26.5, 38.6, 90), 'C107': (19.0, 67.15, 180),
+    'U108': (14.0, 80.0, 0), 'C130': (11.2, 86.475, 90), 'C131': (16.8, 86.475, 90),
+    'C133': (9.2, 73.725, 270), 'C134': (12.6, 73.725, 270), 'C135': (16.0, 73.725, 270),
+    'L101': (4.0, 88.0, 90),
+}
+POWER_ANCHOR_CHANGES = ('U107-SYS12', 'RPP-SYS12', 'U108-LAB5')  # anchors apply once these are in the graph
+BATT_W = 3.2  # mm, netclasses.json BATT outer_min_width_mm (single layer)
+
+
+def rect(x0, y0, x1, y1):
+    return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]
+
+
+# Scripted pours, F.Cu, priority 2, solid pad connection (W2 PCB-PWRA-2 probes 2-4: thermal spokes gave a 1.03 mm neck):
+# id -> (net, outline, why[, pin_entry]). Each outline is a keep-out of the planner (reserved area kind 'copper'). A
+# pin_entry stem (a pour narrower than its class onto a fine pin) lies wholly within half the class width of those pins,
+# where pcb/check_boards.py does not measure a pour neck; different-net pours keep >= 0.3 mm (placement_study POUR_GAP).
+POWER_POURS = {
+    'E1SW-RISE': ('E1_SW', rect(15.85, 1.8, 19.45, 36.0),
+                  'BATT 3.6 mm: J107.2 (battery feed after the main switch) up past U211 to the leg'),
+    'E1SW-BAR': ('E1_SW', rect(15.85, 32.8, 28.4, 36.0), 'BATT 3.2 mm: across to the source pins of Q102'),
+    'E1SW-Q102': ('E1_SW', rect(25.3, 36.0, 27.05, 37.45),
+                  'stem onto Q102 S1-S3 (pins 0.42 mm, gate pad 0.215 mm away): within half the class width of the pins',
+                  ['Q102.1', 'Q102.2', 'Q102.3']),
+    'CONVIN-SPINE': ('E1_CONV_IN', rect(24.8, 38.2, 28.2, 86.6),
+                     '3.4 mm: Q102 drain (after the LM74700 stage) up the leg to both converters (E1_CONV_IN has no '
+                     'NET_CURRENT entry yet: scripted at the BATT width of E1_SW, W2 GR-5A review GR5A-03)'),
+    'CONVIN-C120': ('E1_CONV_IN', rect(18.7, 42.45, 28.2, 45.65), '3.2 mm: spine to C120.1 next to U107 VIN1'),
+    'CONVIN-C107': ('E1_CONV_IN', rect(19.95, 65.55, 28.2, 68.75), '3.2 mm: spine to the shared bulk C107.1'),
+    'CONVIN-U108': ('E1_CONV_IN', rect(9.85, 83.4, 28.2, 86.6), '3.2 mm: spine to C130.1/C131.1 above U108'),
+    'CONVIN-U108-VIN1': ('E1_CONV_IN', rect(11.3, 81.9, 12.7, 83.4), 'onto U108 VIN1 (pad 1.4 mm)', ['U108.1']),
+    'CONVIN-U108-VIN2': ('E1_CONV_IN', rect(15.3, 81.9, 16.7, 83.4), 'onto U108 VIN2 (pad 1.4 mm)', ['U108.16']),
+    'SYS12SW-PIN': ('E1_SYS12_SW', rect(15.65, 46.3, 16.35, 49.3),
+                    'over U107 SW (0.4 mm pin between the PGND pins): within half the class width of the pin', ['U107.10']),
+    'SYS12SW-L102': ('E1_SYS12_SW', rect(14.25, 49.3, 17.75, 53.3), 'BATT 3.5 mm: U107 SW to L102.1 (minimal SW copper)'),
+    'SYS12-BAR': ('SYS12', rect(0.6, 58.7, 24.5, 62.25), 'BATT 3.55 mm: L102.2 over the pads 1 of C123-C126'),
+    'LAB5RAW-F102': ('E1_LAB5_RAW', rect(0.6, 67.6, 7.4, 76.8), 'BATT 6.8 mm: onto both THT pads of F102.1'),
+    'LAB5RAW-BAR': ('E1_LAB5_RAW', rect(0.6, 73.6, 17.6, 76.8), 'BATT 3.2 mm: U108 VOUT over C133-C135 to F102.1'),
+    'LAB5RAW-VOUT1': ('E1_LAB5_RAW', rect(11.3, 76.8, 12.7, 78.1), 'onto U108 VOUT1 (pad 1.4 mm)', ['U108.8']),
+    'LAB5RAW-VOUT2': ('E1_LAB5_RAW', rect(15.3, 76.8, 16.7, 78.1), 'onto U108 VOUT2 (pad 1.4 mm)', ['U108.9']),
+    'LAB5FUSED': ('E1_LAB5_FUSED', rect(0.6, 77.5, 7.4, 87.6), 'PWR3A 6.8 mm: F102.2 (both THT pads) to L101.1'),
+    'GND-U107-L': ('GND', rect(8.4, 47.35, 15.05, 48.95), 'U107 PGND2 to C119.2 and two vias to In1/In2/L4 (zone 3\')'),
+    'GND-U107-R': ('GND', rect(16.95, 47.35, 23.6, 48.95), 'U107 PGND1 to C120.2 and two vias to In1/In2/L4 (zone 3\')'),
+    'GND-COUT-SYS12': ('GND', rect(0.6, 55.6, 10.55, 58.15), 'pads 2 of C123-C125 and their vias'),
+    'GND-COUT-C126': ('GND', rect(21.6, 55.6, 24.3, 58.15), 'pad 2 of C126 and its via'),
+    'GND-COUT-LAB5': ('GND', rect(7.85, 70.75, 17.35, 72.9), 'pads 2 of C133-C135 and their vias'),
+    'GND-CIN-U108': ('GND', rect(9.85, 87.3, 18.15, 89.9), 'pads 2 of C130/C131 and their vias'),
+}
+# GND vias of the power stages (0.6/0.3 like the TPS7A4701 EP vias): to the In1/In2 GND planes and the L4 bond copper of
+# zones 3'/4' (heat to the plate). U108: one via in each PGND pad 17-20 (TI RDL0020A land pattern 4226416/B note 5: optional
+# 0.2 mm vias in pads 17-20, recorded in tools/make_footprints.py rdl0020a(), W2 GR-5A; here the project via 0.6/0.3 in the
+# 0.875 mm pad; via in pad: filled or plugged vias are an order option, OPEN).
+POWER_VIAS = {
+    'U107-PGND-L1': (8.9, 48.1), 'U107-PGND-L2': (9.85, 48.1), 'U107-PGND-R1': (22.15, 48.1), 'U107-PGND-R2': (23.1, 48.1),
+    'COUT-SYS12-1': (2.0, 56.1), 'COUT-SYS12-2': (5.4, 56.1), 'COUT-SYS12-3': (8.8, 56.1), 'COUT-C126': (22.95, 56.1),
+    'COUT-LAB5-1': (9.2, 71.1), 'COUT-LAB5-2': (12.6, 71.1), 'COUT-LAB5-3': (16.0, 71.1),
+    'CIN-U108-1': (11.2, 89.4), 'CIN-U108-2': (16.8, 89.4),
+    'U108-PGND-17': (14.0, 81.6125), 'U108-PGND-18': (14.0, 80.5375), 'U108-PGND-19': (14.0, 79.4625),
+    'U108-PGND-20': (14.0, 78.3875),
+}
+
+# Bottom row of the PWR-A bottom edge (MECH-7 contract edge_zones[0] row_end_max): the headers in their order along the
+# edge; turned ones rotate by 90 degrees. Design choice (part 2): the PH headers J109, J111 and J112 turn; the 5-pin J110
+# stays along the edge (turned it would reach 12.9 mm into bond zone 1 and deepen the PWR-B edge strip to 13.4 mm), and the
+# row still ends inside the MECH-7 row_end_max (bottom_row.end_x_with_margin of the spec).
+BOTTOM_ROW = ['J107', 'J111', 'J105', 'J109', 'J106', 'J110', 'J108', 'J112']
+BOTTOM_ROW_TURNED = ['J109', 'J111', 'J112']
+BOTTOM_ROW_START = 8.2  # x of the first courtyard (right of the H1 keepout), the draft value
+
+# Top regions of the SHRINK-2 layout (free rectangles after the anchors, J208, the scripted copper and the hole keepouts;
+# design choice). The band keeps the draft regions, re-cut around the E1_SW rise and the turned bottom row; the leg is
+# re-cut around the power stages of part 2 (zones 3'/4', the E1_CONV_IN spine, the SYS12 and E1_LAB5_RAW bars).
 TOP_REGIONS = {
-    'BAND_LNB': [15.8, 7.0, 42.6, 26.8], 'BAND_LEFT': [0.3, 9.8, 9.3, 26.8],
-    'BAND_LT_LOW': [43.0, 7.0, 49.4, 11.4], 'BAND_LT_HIGH': [43.0, 22.4, 49.4, 26.8],
+    'BAND_LEFT': [0.3, 9.8, 9.3, 26.8], 'BAND_U211_LOW': [9.6, 7.0, 15.5, 13.3], 'BAND_U211_UP': [9.6, 19.8, 15.5, 26.8],
+    'BAND_LNB': [19.75, 7.5, 42.6, 26.8],
+    'BAND_LT_LOW': [43.0, 7.5, 49.4, 11.4], 'BAND_LT_HIGH': [43.0, 22.4, 49.4, 26.8],
     'BAND_LNA': [49.6, 7.0, 72.3, 26.4], 'BAND_BONI': [78.8, 11.2, 82.95, 26.4],
     'BAND_B2B_BELOW': [83.45, 11.2, 115.2, 14.9], 'BAND_B2B_ABOVE': [83.45, 22.1, 107.8, 26.4],
     'BAND_B2B_ABOVE_R': [107.9, 22.1, 115.0, 24.5],
-    'BAND_BOTTOM_M': [87.3, 6.3, 99.3, 11.0], 'BAND_BOTTOM_R': [99.6, 0.3, 115.2, 11.0],
+    'BAND_BOTTOM_M': [90.1, 0.3, 99.3, 11.0], 'BAND_BOTTOM_R': [99.6, 0.3, 115.2, 11.0],
     'BAND_COL3_TOP': [115.5, 19.1, 121.0, 24.5], 'BAND_COL2_TOP': [121.53, 22.6, 128.3, 24.5],
-    'BAND_TOP_LEFT': [0.3, 27.0, 42.2, 34.8], 'BAND_TOP_MID': [50.0, 26.9, 107.8, 30.8],
-    'BAND_TOP_MID2': [89.0, 30.9, 107.8, 34.8], 'BAND_TOP_MID3': [50.0, 30.9, 80.8, 34.8],
-    'LEG_BOTTOM': [7.75, 35.2, 33.65, 39.6], 'LEG_LEFT_LOW': [0.3, 35.2, 7.75, 65.5],
-    'LEG_LEFT_HIGH': [0.3, 83.0, 7.75, 102.2], 'LEG_P1': [23.2, 39.8, 33.65, 66.0], 'LEG_P2': [8.0, 63.0, 23.0, 73.8],
-    'LEG_P3': [23.2, 66.2, 33.65, 83.8], 'LEG_HFL': [20.2, 84.0, 33.65, 97.7], 'LEG_P5': [8.0, 86.1, 20.0, 97.7],
-    'LEG_Z3R': [19.9, 54.5, 23.0, 62.8],
-    'LEG_RIGHT_LOW': [33.9, 35.2, 41.8, 52.3], 'LEG_RIGHT_HIGH': [33.9, 77.8, 41.8, 102.3],
-    'LEG_TOP': [7.8, 97.9, 34.3, 102.8], 'LEG_TOP_L': [7.8, 102.8, 15.3, 109.7], 'LEG_TOP_R': [26.5, 102.8, 34.3, 109.7],
+    'BAND_TOP_LEFT': [0.3, 27.0, 15.5, 34.8], 'BAND_TOP_LEFT_R': [19.75, 27.0, 42.2, 32.5],
+    'BAND_TOP_LEFT_R2': [28.7, 32.5, 42.2, 34.8],
+    'BAND_TOP_MID': [50.0, 26.9, 107.8, 30.8], 'BAND_TOP_MID2': [89.0, 30.9, 107.8, 34.8],
+    'BAND_TOP_MID3': [50.0, 30.9, 80.8, 34.8],
+    'LEG_LEFT_LOW': [0.3, 35.2, 8.1, 55.3], 'LEG_SYS12_LOW': [8.4, 36.3, 24.3, 42.2], 'LEG_ENTRY': [8.4, 35.2, 15.5, 36.2],
+    'LEG_Z3_L': [8.3, 49.5, 10.5, 55.3], 'LEG_Z3_R': [21.5, 49.5, 24.55, 55.4],
+    'LEG_MID_L': [0.3, 62.5, 7.5, 65.8], 'LEG_MID': [7.8, 62.5, 14.0, 70.6],
+    'LEG_Z4_L': [7.8, 77.0, 10.85, 83.2], 'LEG_Z4_R': [17.6, 71.0, 24.5, 83.1],
+    'LEG_RPP': [28.6, 35.2, 34.2, 41.2], 'LEG_RIGHT_LOW2': [34.4, 35.2, 41.8, 41.2],
+    'LEG_RIGHT_LOW': [28.6, 41.4, 41.8, 52.3], 'LEG_SPINE_R': [28.6, 52.5, 34.2, 77.6],
+    'LEG_RIGHT_MID': [28.6, 77.8, 41.8, 86.8], 'LEG_RIGHT_HIGH': [34.4, 87.0, 41.8, 102.3],
+    'LEG_HFL': [18.4, 87.0, 34.2, 100.4], 'LEG_Z4_TOP': [7.8, 90.2, 18.2, 100.4],
+    'LEG_LEFT_HIGH': [0.3, 91.8, 7.75, 102.2],
+    'LEG_TOP': [7.8, 100.6, 34.3, 102.8], 'LEG_TOP_L': [7.8, 102.8, 15.3, 109.7], 'LEG_TOP_R': [26.5, 102.8, 34.3, 109.7],
 }
 # With the FFC the right column is free (J113/J114/J115/J507 on the bottom edge): the SHRINK-2 study region.
 FFC_REGIONS = {'drop': ['BAND_BOTTOM_R', 'BAND_COL3_TOP', 'BAND_COL2_TOP'],
                'add': {'BAND_RIGHT_COL': [114.65, 11.5, 128.6, 24.8]}}
-# Top group -> (region, alt_regions); groups run in this order (HFP first: L501 needs the leg slot, as in the study).
+# Top group -> (region, alt_regions); groups run in this order (HFP first: L501 needs the leg slot). Part 2: the power-stage
+# groups first (their regions are theirs alone), then the band's E2 low-noise groups (LNB, LNA4V5, Boni), then the
+# SYS12-fed groups J21, DISP and LIME in the leg next to the SYS12 bar, then AUX12 and the E1 control groups.
 TOP_GROUPS = [
-    ('HFP', 'LEG_HFL', ['BAND_BOTTOM_R', 'LEG_P3']),
-    ('LNB', 'BAND_LNB', []), ('LNA4V5', 'BAND_LNA', []), ('BONI', 'BAND_BONI', ['BAND_B2B_BELOW', 'BAND_B2B_ABOVE']),
-    ('INA3221_2', 'LEG_RIGHT_LOW', []), ('LAB5', 'LEG_RIGHT_HIGH', ['LEG_LEFT_HIGH', 'BAND_TOP_MID']),
-    ('SYS12', 'LEG_P2', ['LEG_RIGHT_LOW', 'LEG_BOTTOM']), ('J21', 'BAND_TOP_LEFT', ['BAND_TOP_MID', 'BAND_BOTTOM_R']),
-    ('DISP', 'LEG_TOP', ['BAND_TOP_MID', 'BAND_BOTTOM_R', 'LEG_P3']),
-    ('LIME', 'BAND_TOP_MID', ['BAND_BOTTOM_R', 'LEG_P3', 'LEG_TOP']),
-    ('AUX12', 'BAND_BOTTOM_R', ['BAND_TOP_MID', 'LEG_P3', 'LEG_TOP']),
-    ('E1_CTRL', 'LEG_P3', ['LEG_TOP', 'LEG_RIGHT_LOW', 'LEG_BOTTOM']),
-    ('E1_USBPD', 'LEG_BOTTOM', ['LEG_RIGHT_LOW', 'BAND_LT_LOW']),
-    ('E5_SERVICE', 'LEG_RIGHT_LOW', ['BAND_LT_LOW', 'BAND_LT_HIGH', 'LEG_BOTTOM']),
-    ('E1_SERVICE', 'BAND_B2B_BELOW', ['BAND_TOP_MID']), ('E5_RTLA_LAB', 'LEG_LEFT_HIGH', ['BAND_TOP_MID']),
+    ('HFP', 'LEG_HFL', ['BAND_BOTTOM_R', 'BAND_BOTTOM_M']),
+    ('RPP', 'LEG_RPP', ['LEG_RIGHT_LOW2', 'LEG_SYS12_LOW']),
+    ('SYS12', 'LEG_SYS12_LOW', ['LEG_Z3_R', 'LEG_Z3_L', 'LEG_ENTRY']),
+    ('LAB5_CTRL', 'LEG_Z4_R', ['LEG_Z4_L']),
+    ('LNB', 'BAND_LNB', ['BAND_U211_UP', 'BAND_U211_LOW', 'BAND_LEFT']),
+    ('LNA4V5', 'BAND_LNA', ['BAND_LT_LOW', 'BAND_LT_HIGH']),
+    ('BONI', 'BAND_B2B_BELOW', ['BAND_BONI', 'BAND_B2B_ABOVE', 'BAND_BOTTOM_M', 'BAND_TOP_MID2', 'BAND_B2B_ABOVE_R']),
+    ('DISP', 'LEG_Z4_TOP', ['LEG_TOP', 'LEG_TOP_L', 'LEG_TOP_R']),
+    ('LIME', 'LEG_LEFT_LOW', ['LEG_MID_L', 'LEG_MID']),
+    ('LAB5', 'LEG_LEFT_HIGH', ['LEG_Z4_L', 'LEG_MID_L']),
+    ('J21', 'LEG_RIGHT_LOW', ['LEG_RIGHT_MID', 'LEG_SPINE_R', 'LEG_RIGHT_LOW2']),
+    ('INA3221_2', 'LEG_RIGHT_HIGH', ['LEG_SPINE_R']),
+    ('E5_SERVICE', 'LEG_MID', ['LEG_RIGHT_HIGH', 'LEG_MID_L']),
+    ('AUX12', 'BAND_TOP_MID', ['BAND_TOP_LEFT', 'BAND_TOP_MID3']),
+    ('E1_CTRL', 'BAND_TOP_LEFT_R', ['BAND_TOP_LEFT', 'BAND_TOP_LEFT_R2', 'BAND_TOP_MID3']),
+    ('E1_USBPD', 'BAND_LEFT', ['BAND_TOP_LEFT']),
+    ('E1_SERVICE', 'BAND_TOP_MID', ['BAND_TOP_MID2', 'BAND_B2B_ABOVE']),
+    ('E5_RTLA_LAB', 'LEG_RIGHT_HIGH', ['BAND_TOP_MID']),
     ('PWRB_RADIALS', 'LEG_TOP_L', ['LEG_TOP_R', 'LEG_TOP']),
 ]
-# Bottom regions (free rectangles of the bottom face outside the thermal_bond zones; the SHRINK-2 b1 study regions).
-BOTTOM_REGIONS = {
-    'BB_TOP1': [0.3, 27.2, 42.3, 34.7], 'BB_TOP2': [49.7, 27.2, 107.8, 34.7], 'BB_LEFT': [0.3, 9.8, 8.8, 27.0],
-    'BB_GAP': [69.2, 4.2, 71.8, 27.0], 'BL_LEFT': [0.3, 35.2, 6.8, 102.2], 'BL_BOT': [7.0, 35.2, 41.8, 38.8],
-    'BL_M1': [24.2, 39.0, 41.8, 52.3], 'BL_M2': [24.2, 59.8, 41.8, 102.3], 'BL_M3': [24.2, 52.5, 34.3, 59.6],
-    'BL_M4': [7.0, 63.2, 24.0, 72.8], 'BL_M5': [7.0, 87.2, 24.0, 102.3], 'BL_TOPL': [7.6, 102.5, 15.2, 109.7],
-    'BL_TOPR': [26.5, 102.5, 34.3, 109.7],
-}
-# Bottom group of each top group (the SHRINK-2 b1 study assignment: the nearest free bottom rectangle).
-BOTTOM_REGION = {'LNB': 'BB_TOP1', 'LNA4V5': 'BB_GAP', 'BONI': 'BB_TOP2', 'INA3221_2': 'BL_M1', 'SYS12': 'BL_M4',
-                 'J21': 'BB_LEFT', 'DISP': 'BL_M5', 'LIME': 'BL_BOT', 'AUX12': 'BL_TOPR', 'HFP': 'BL_M2',
-                 'E1_CTRL': 'BL_M2', 'E1_USBPD': 'BL_M3', 'E5_SERVICE': 'BL_LEFT'}
+# Part 2 (design choice): groups split out of their schematic group so that they sit at their stage: the LM74700 stage
+# with the E1_SW bypasses beside Q102 (right of the spine foot), and the U108 feedback, RT and EN parts at U108's
+# small-signal pins (the LAB5 group's C111/C112/F104 stay at L101 above F102).
+SPLIT_GROUPS = {'RPP': ['U111', 'C136', 'C108', 'C110'], 'LAB5_CTRL': ['C132', 'R129', 'R130', 'R131', 'R132', 'R133']}
+# Schematic group (sheet, group) -> draft group of a new graph ref (since the draft): GR-5A put the converter parts
+# into E1 'SYS12' and 'LAB5' (the RPP stage U111/Q102/C136 is in 'SYS12').
+SCHEMATIC_GROUP = {('E1', 'SYS12'): 'SYS12', ('E1', 'LAB5'): 'LAB5'}
 TURN_WHATIF = ['J109', 'J110', 'J111', 'J112']  # PH headers turned by 90 degrees: bottom-edge need and PWR-B strip depth
 
 
@@ -146,6 +246,44 @@ def b2b_anchor(fp_geo, mate_anchor, pin_map):
     raise SystemExit('make_spec: no rotation of J208 puts every contact under its J209 mate')
 
 
+def edge_x(contract, y0, y1):
+    """Right outline edge (x) of the PWR L over the rows y0..y1: the smallest x of an outline vertical edge spanning them."""
+    pts = contract['outline_mm']
+    xs = [ax for (ax, ay), (bx, by) in zip(pts, pts[1:] + pts[:1])
+          if ax == bx and ax > 0 and min(ay, by) < y1 and max(ay, by) > y0]
+    return min(xs)
+
+
+def live_status(pspec):
+    """{change id: status row} of candidates.shrink2.planned against the graph of now (pcb/partition_budget.py
+    Evaluator.planned: the budget's own rule; a half-applied change stops it)."""
+    ev = pbud.Evaluator(pbud.Design(pspec))
+    _, rows, _ = ev.planned(pspec['candidates'][CANDIDATE])
+    return {row['id']: row for row in rows}
+
+
+def bottom_row_anchors(draft_by_ref, fp_geo_of, row_end_max, margin):
+    """Anchors of the bottom-edge row: each header keeps its courtyard bottom on the edge line of the draft and its order;
+    the turned ones rotate by 90 degrees; the row is packed from BOTTOM_ROW_START with GAP between courtyards."""
+    out, x = {}, BOTTOM_ROW_START
+    for ref in BOTTOM_ROW:
+        old = draft_by_ref[ref]['anchor']
+        geo = fp_geo_of(ref)
+        rot = (float(old.get('rotation', 0)) + (90 if ref in BOTTOM_ROW_TURNED else 0)) % 360
+        rot = int(rot) if rot == int(rot) else rot
+        probe = {**old, 'rotation': rot}
+        box0 = bg.placed_geometry(geo, old)['box']
+        box = bg.placed_geometry(geo, probe)['box']
+        dx, dy = x - box[0], box0[1] - box[1]
+        at = [r4(old['at'][0] + dx), r4(old['at'][1] + dy)]
+        out[ref] = {**{k: v for k, v in old.items() if k != 'ref_text'}, 'at': at, 'rotation': rot}
+        x = r4(box[2] + dx + GAP)
+    end = r4(x - GAP + margin)
+    if end > row_end_max + 1e-9:
+        raise SystemExit(f'make_spec: the bottom row ends at x {end} (+ window margin) beyond row_end_max {row_end_max}')
+    return out, end
+
+
 def build():
     draft = bg.read_json(DRAFT)
     graph = bg.load_graph()
@@ -162,10 +300,13 @@ def build():
                          key=bg.sort_ref)
     draft_refs = {p['ref'] for p in draft['parts'] if p['source'] == 'graph'}
 
-    # --- planned changes: status from the budget (generated, checked by sr-rx-pcb), content from the spec ---
-    status = {row['id']: row for row in bud['planned']['changes']}
+    def fp_geo_of(ref):
+        return bg.footprint_geometry((BASE / fps[graph[ref]['footprint']]['file']).read_text(encoding='utf-8'))
+
+    # --- planned changes: status from the graph of now (pcb/partition_budget.py rule), content from the spec ---
+    status = live_status(pspec)
     changes = []
-    drop, planned_fp, reserved, block_groups = set(), {}, [], []
+    drop, planned_fp, reserved = set(), {}, []
     for ch in cand['planned']['changes']:
         st = status[ch['id']]['status']
         to = ch['to']
@@ -193,14 +334,14 @@ def build():
                 row['effect'] = f'planned footprint {to["footprint"]}'
         else:
             row['effect'] = 'in graph: the graph counts'
-            if 'blocks' in to:
-                for b in to['blocks']:
-                    block_groups.append({'block': b, 'change': ch})
+            if status[ch['id']].get('graph_refs'):
+                row['graph_refs'] = status[ch['id']]['graph_refs']
         changes.append(row)
     for f in planned_fp:
         if planned_fp[f]['footprint'] not in fps:
             raise SystemExit(f'make_spec: planned footprint {planned_fp[f]["footprint"]} of {f} is not vendored')
     pwr_b = set(bud['pwr_b_refs'])
+    power_live = all(status[c]['status'] == 'in graph' for c in POWER_ANCHOR_CHANGES)
 
     # --- the PWR-A ref set ---
     keep = [r for r in domain_refs if r not in drop and r not in pwr_b]
@@ -222,11 +363,15 @@ def build():
     pin_map = {c['pwr_a_pin']: c['pwr_b_pin'] for c in b2b_contacts}
     spec_b = bg.read_json(PWR_B_SPEC)
     mate = next(p for p in spec_b['parts'] if p['ref'] == B2B_PAIR[1])
+    edge0 = contract['edge_zones'][0]
+    row_end_max = edge0.get('row_end_max')
+    margin_w = pspec['parameters']['window_margin']
+    row_anchors, row_end = (bottom_row_anchors(by_ref, fp_geo_of, row_end_max, margin_w) if row_end_max is not None
+                            else ({}, None))
     for ref in keep:
         old = by_ref.get(ref)
         if ref == B2B_PAIR[0]:
-            fp_geo = bg.footprint_geometry((BASE / fps[graph[ref]['footprint']]['file']).read_text(encoding='utf-8'))
-            anchor = b2b_anchor(fp_geo, mate['anchor'], pin_map)
+            anchor = b2b_anchor(fp_geo_of(ref), mate['anchor'], pin_map)
             parts.append({'ref': ref, 'source': 'graph', 'anchor': anchor,
                           'anchor_source': f'under PWR_B {B2B_PAIR[1]} (pcb/boards/PWR_B.json anchor {mate["anchor"]["at"]} '
                                            f'side {mate["anchor"]["side"]} rotation {mate["anchor"]["rotation"]}): pad n of '
@@ -234,10 +379,30 @@ def build():
                                            '(n odd -> n+1, n even -> n-1), computed by make_spec.py b2b_anchor'})
             anchored.add(ref)
             continue
+        if power_live and ref in POWER_ANCHORS:
+            x, y, rot = POWER_ANCHORS[ref]
+            parts.append({'ref': ref, 'source': 'graph',
+                          'anchor': {'at': [x, y], 'align': 'origin', 'rotation': rot, 'side': 'F'},
+                          'anchor_source': 'W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): '
+                                           + ('contract converter zone ' + next(z for z, rs in
+                                              contract.get('converter_zone_refs', {}).items() if ref in rs)
+                                              if any(ref in rs for rs in contract.get('converter_zone_refs', {}).values())
+                                              else 'beside its converter, pads on the scripted copper')})
+            anchored.add(ref)
+            continue
+        if ref in row_anchors:
+            parts.append({**old, 'anchor': row_anchors[ref],
+                          'anchor_source': ('bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max '
+                                            f'{row_end_max}): ' + ('turned by 90 degrees, ' if ref in BOTTOM_ROW_TURNED
+                                                                   else '') + 'packed from x '
+                                            f'{BOTTOM_ROW_START} in the draft order {", ".join(BOTTOM_ROW)}, 0.5 mm apart '
+                                            '(make_spec.py bottom_row_anchors)')})
+            anchored.add(ref)
+            continue
         if old is None or not old.get('anchor'):
             parts.append({'ref': ref, 'source': 'graph'})
             continue
-        if ref in ('U107', 'U108'):  # a Pololu square anchor never carries over: the converter is a block group
+        if ref in ('U107', 'U108'):  # a Pololu square anchor never carries over: the converter is a block or POWER_ANCHORS
             parts.append({'ref': ref, 'source': 'graph'})
             continue
         part = {k: v for k, v in old.items()}
@@ -252,6 +417,26 @@ def build():
         parts.append(part)
         anchored.add(ref)
 
+    # --- scripted copper of the power stages: planner keep-outs (kind copper; not a courtyard demand) ---
+    copper_zones, copper_vias = [], []
+    if power_live:
+        for zid, item in POWER_POURS.items():
+            net, outline, why = item[:3]
+            if net not in {pin['net'] for r in keep for pin in graph[r]['pins'] if pin.get('net')}:
+                raise SystemExit(f'make_spec: pour {zid} net {net} is not a PWR-A net')
+            zone = {'id': zid, 'net': net, 'layer': 'F.Cu', 'outline': outline, 'priority': 2, 'pad_connection': 'solid',
+                    'why': why + ' (W2 PCB-PWRA-3 part 2, make_spec.py POWER_POURS; solid pad connection)'}
+            if len(item) > 3:
+                zone['pin_entry'] = item[3]
+            copper_zones.append(zone)
+            xs, ys = [p[0] for p in outline], [p[1] for p in outline]
+            reserved.append({'id': 'CU_' + zid, 'rect': [min(xs), min(ys), max(xs), max(ys)], 'side': 'F', 'kind': 'copper',
+                             'what': f'scripted {net} pour (planner keep-out, not a courtyard)', 'source': 'make_spec.py POWER_POURS'})
+        for vid, at in POWER_VIAS.items():
+            copper_vias.append({'id': vid, 'net': 'GND', 'at': list(at), 'diameter_mm': 0.6, 'drill_mm': 0.3, 'locked': True,
+                                'why': 'W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND '
+                                       'planes and the L4 bond copper of zones 3\'/4\'; size = the project via 0.6/0.3'})
+
     # --- groups ---
     grouped = set()
     draft_groups = {g['id']: g for g in draft['groups']}
@@ -260,13 +445,46 @@ def build():
         for k in FFC_REGIONS['drop']:
             regions.pop(k)
         regions.update(FFC_REGIONS['add'])
+    # new graph refs (since the draft) join the draft group of their schematic group
+    new_refs = [r for r in keep if r not in draft_refs and r not in anchored]
+    extra = {}
+    for r in new_refs:
+        gid = SCHEMATIC_GROUP.get((graph[r]['_sheet'], graph[r].get('group')))
+        if gid:
+            extra.setdefault(gid, []).append({'ref': r, 'rotation': 0})
+    # bottom pockets of the contract (MECH-7): PB1-PB13, board mm [x0, y0, x1, y1]
+    bs = contract.get('bottom_side') or {}
+    pockets = {}
+    for name, (x, y, w, h) in zip(bs.get('pockets', []), bs.get('keep_in_mm', [])):
+        # a pocket that reaches the board edge gives way to EDGE_INSET (design value, as the draft regions): a bottom
+        # chip keeps its copper off the outline
+        pockets[name] = [r4(max(x, EDGE_INSET)), r4(max(y, EDGE_INSET)), r4(min(x + w, edge_x(contract, y, y + h) - EDGE_INSET)),
+                         r4(min(y + h, max(py for _, py in contract['outline_mm']) - EDGE_INSET))]
+    if not pockets:
+        raise SystemExit('make_spec: the contract PWR bottom_side has no pockets (MECH-7)')
+
+    def nearest_pockets(region):
+        cx, cy = (region[0] + region[2]) / 2, (region[1] + region[3]) / 2
+
+        def dist(p):
+            dx = max(p[0] - cx, 0, cx - p[2])
+            dy = max(p[1] - cy, 0, cy - p[3])
+            return math.hypot(dx, dy)
+        return sorted(pockets, key=lambda n: (round(dist(pockets[n]), 6), n))
+
     groups, bottom_groups = [], []
+    split = {r for refs in SPLIT_GROUPS.values() for r in refs}
     for gid, region, alts in TOP_GROUPS:
         g = draft_groups.get(gid)
-        if g is None:
+        if gid in SPLIT_GROUPS:
+            g = {'id': gid, 'gap_mm': 0.5, 'members': [{'ref': r, 'rotation': 0} for r in SPLIT_GROUPS[gid]]}
+        elif g is None:
             continue
-        top = [m for m in g['members'] if m['ref'] in keep_set and m['ref'] not in bottom_set and m['ref'] not in anchored]
-        bot = [{'ref': m['ref'], 'rotation': 0} for m in g['members'] if m['ref'] in bottom_set]
+        else:
+            g = {**g, 'members': [m for m in g['members'] if m['ref'] not in split]}
+        members = list(g['members']) + [m for m in extra.get(gid, []) if m['ref'] not in split]
+        top = [m for m in members if m['ref'] in keep_set and m['ref'] not in bottom_set and m['ref'] not in anchored]
+        bot = [{'ref': m['ref'], 'rotation': 0} for m in members if m['ref'] in bottom_set]
         alts = [a for a in alts if a in regions]
         if region not in regions:
             region, alts = alts[0], alts[1:]
@@ -274,30 +492,13 @@ def build():
             groups.append({'id': gid, 'region': regions[region], 'region_name': region, 'alt_regions': alts,
                            'side': 'F', 'gap_mm': g.get('gap_mm', 0.5), 'members': top})
         if bot:
-            bname = BOTTOM_REGION[gid]
-            bottom_groups.append({'id': gid + '_BOT', 'region': BOTTOM_REGIONS[bname], 'region_name': bname,
-                                  'alt_regions': [], 'side': 'B', 'gap_mm': g.get('gap_mm', 0.5), 'members': bot})
+            order = nearest_pockets(regions[region])
+            bottom_groups.append({'id': gid + '_BOT', 'region': pockets[order[0]], 'region_name': order[0],
+                                  'alt_regions': order[1:], 'side': 'B', 'gap_mm': g.get('gap_mm', 0.5), 'members': bot})
         grouped |= {m['ref'] for m in top} | {m['ref'] for m in bot}
     for gid in draft_groups:
-        if gid not in {t[0] for t in TOP_GROUPS}:
+        if gid not in {t[0] for t in TOP_GROUPS} - set(SPLIT_GROUPS):
             raise SystemExit(f'make_spec: draft group {gid} has no SHRINK-2 region (TOP_GROUPS)')
-    # 'in graph' block changes: the change refs and the new refs of their schematic group fill the block rectangle
-    new_refs = [r for r in keep if r not in draft_refs and r not in anchored]
-    for item in block_groups:
-        b, ch = item['block'], item['change']
-        x, y = BLOCK_AT[b['id']]
-        rect = [x, y, r4(x + b['w']), r4(y + b['d'])]
-        sg = BLOCK_GROUPS.get(b['id'])
-        refs = [r for r in ch['refs'] if r in keep_set and r not in grouped and r not in anchored]
-        refs += [r for r in new_refs if r not in grouped and r not in refs and (
-            (sg and (graph[r]['_sheet'], graph[r].get('group')) == tuple(sg)) or
-            graph[r].get('mpn') in ch.get('until_mpn_in_graph', []))]
-        if refs:
-            groups.insert(0, {'id': b['id'], 'region': rect, 'region_name': b['id'], 'alt_regions': [], 'side': 'F',
-                              'gap_mm': 0.25, 'members': [{'ref': r, 'rotation': 0} for r in refs],
-                              'why': f'planned change {ch["id"]} is in the graph: its parts fill the block rectangle'})
-            regions[b['id']] = rect
-            grouped |= set(refs)
     rest = [r for r in keep if r not in grouped and r not in anchored]
     if rest:
         groups.append({'id': 'NEW_UNASSIGNED', 'region': regions['BAND_TOP_MID'], 'region_name': 'BAND_TOP_MID',
@@ -305,7 +506,7 @@ def build():
                        'members': [{'ref': r, 'rotation': 0} for r in rest],
                        'why': 'graph refs that no designed SHRINK-2 region names (new since the draft): the study packs '
                               'them anywhere and lists them; a regeneration names their region'})
-    # bottom: the thermal_bond zones are side-B obstacles (contract zones 1-2; zones 3/4 planned until MECH-7 lands)
+    # bottom: the thermal_bond zones are side-B obstacles (contract zones; the planned zones until MECH-7 lands)
     zones = [list(z) for z in contract['thermal_bond_mm']]
     planned_zones = cand['pwr_a_bottom'].get('thermal_bond_planned', {})
     zone_src = []
@@ -331,8 +532,8 @@ def build():
     lab5_raw = 'E1_LAB5_RAW'  # the pour of the draft ran U108 VOUT -> F102.1; SHRINK-2 re-scripts it from the converter
     pre_route = {
         'tracks': [t for t in pre.get('tracks', []) if t['net'] in nets and t['net'] != lab5_raw],
-        'vias': [v for v in pre.get('vias', []) if v['net'] in nets],
-        'zones': [z for z in pre.get('zones', []) if z['net'] in nets and z['net'] != lab5_raw],
+        'vias': [v for v in pre.get('vias', []) if v['net'] in nets] + copper_vias,
+        'zones': [z for z in pre.get('zones', []) if z['net'] in nets and z['net'] != lab5_raw] + copper_zones,
     }
     post = []
     for z in draft['post_route_zones']:
@@ -363,11 +564,11 @@ def build():
         elif k == 'title':
             v = 'PWR-A plate-bonded power board, two-sided SHRINK-2 layout - placement draft'
         elif k == 'note':
-            v = ('W2 PCB-PWRA-3: generated by build/kicad/boards/PWR_A/make_spec.py from PWR_A.spec-draft.json, the graph '
-                 'and pcb/partition-spec.json candidates.shrink2 (never hand-edited). Kept in build/kicad/boards/PWR_A/, '
-                 'not in pcb/boards/: while planned changes are pending (GR-5A, GR-5B, MECH-7) the domain audit fails by '
-                 'construction (dropped refs stand as reserved blocks) and placement_study.py uses planned footprints. '
-                 'placement_study.py --spec PWR_A.spec-shrink2.json writes placement-study-shrink2.json.')
+            v = ('W2 PCB-PWRA-3: generated by build/kicad/boards/PWR_A/make_spec.py from PWR_A.spec-draft.json, the graph, '
+                 'pcb/partition-spec.json candidates.shrink2 and the MECH-7 contract (never hand-edited). Kept in '
+                 'build/kicad/boards/PWR_A/, not in pcb/boards/: a placement draft with locked power-stage copper; the '
+                 'board of record (routed to DRC 0, fab set) is W2 PCB-PWRA-4. placement_study.py --spec '
+                 'PWR_A.spec-shrink2.json writes placement-study-shrink2.json.')
         elif k == 'parts':
             v = parts
         elif k == 'instances':
@@ -375,10 +576,11 @@ def build():
         elif k == 'groups':
             v = groups + bottom_groups
         elif k == 'regions':
-            v = {'note': 'free rectangles of the SHRINK-2 layout (make_spec.py TOP_REGIONS / BOTTOM_REGIONS, design '
-                         'choice); a group names its preferred region and alt_regions; board_gen reads only group.region; '
-                         'placement_study.py uses rects for top groups and bottom_rects for bottom groups',
-                 'rects': regions, 'bottom_rects': dict(BOTTOM_REGIONS)}
+            v = {'note': 'free rectangles of the SHRINK-2 layout (make_spec.py TOP_REGIONS, design choice) and the plate '
+                         'pockets PB1-PB13 of the contract (bottom_side.keep_in_mm) as bottom regions; a group names its '
+                         'preferred region and alt_regions (bottom: the nearest pocket first); board_gen reads only '
+                         'group.region; placement_study.py uses rects for top groups and bottom_rects for bottom groups',
+                 'rects': regions, 'bottom_rects': pockets}
         elif k == 'reserved_areas':
             v = reserved
         elif k == 'pre_route':
@@ -397,11 +599,15 @@ def build():
                    'pin_map_source': 'pcb/generated/b2b-nets.json contacts (pwr_a_pin -> pwr_b_pin)'}]
     out['planned_footprints'] = {r: planned_fp[r] for r in sorted(planned_fp, key=bg.sort_ref)}
     out['planned_changes'] = changes
+    out['planned_status_source'] = ('pcb/partition_budget.py Evaluator.planned on the graph of now (live; '
+                                    'pcb/partition-budget.json is regenerated by the AREA lineage)')
     out['two_sided'] = {
         'bottom_refs': bottom, 'bottom_refs_missing': bottom_missing,
         'tht_margin_mm': cand['pwr_a_bottom']['tht_margin'], 'h_room_mm': cand['pwr_a_bottom']['h_room_mm'],
         'thermal_bond_zones': [[x, y, x + w, y + h] for x, y, w, h in zones], 'thermal_bond_zones_source': zone_src,
-        'rule': cand['pwr_a_bottom']['rule'],
+        'bottom_pockets': pockets, 'bottom_pockets_source': 'mechanical/generated/contract/boards.json PWR bottom_side '
+                                                            'keep_in_mm (MECH-7, plate pockets PB1-PB13, board mm)',
+        'rule': bs.get('rule') or cand['pwr_a_bottom']['rule'],
     }
     out['h_trim'] = {k: pspec['keepouts']['h_trim'][k] for k in ('protrusion_max_mm', 'zone_h_max_mm', 'clearance_mm')}
     out['ffc'] = {'adopted': bool(ffc), 'refs': ffc,
@@ -409,14 +615,28 @@ def build():
                           'then J113/J114/J115/J507 take the decision places on the bottom edge and exit_edges says so'}
     if ffc:
         out['exit_edges'] = {r: 'bottom' for r in FFC_PLACES}
-    out['turn_whatif'] = TURN_WHATIF
+    out['turn_whatif'] = [r for r in TURN_WHATIF if r not in row_anchors]
+    if row_anchors:
+        out['bottom_row'] = {'refs': BOTTOM_ROW, 'turned': BOTTOM_ROW_TURNED, 'start_x': BOTTOM_ROW_START,
+                             'end_x_with_margin': row_end, 'row_end_max': row_end_max,
+                             'rule': 'MECH-7 contract edge_zones[0] row_end_max: the courtyards of J105-J112 + window_margin '
+                                     'end at x <= row_end_max, so that the PWR-A bottom edge under the PWR-B PH 9-pin span '
+                                     '(PWR_B edge_zones[2]) stays free of PWR-A headers'}
+    if power_live:
+        out['power_stages'] = {
+            'anchors': sorted(POWER_ANCHORS, key=bg.sort_ref),
+            'converter_zone_refs': contract.get('converter_zone_refs'),
+            'pours': sorted(POWER_POURS), 'vias': sorted(POWER_VIAS),
+            'note': 'W2 PCB-PWRA-3 part 2 (design choice): anchored power stages and their scripted copper; the IC pin '
+                    'breakouts of U107/U108 to their small parts (FB, RT, EN, CBOOT, VCC), the U107 VIN2 link to C119.1 and '
+                    'the long SYS12/LAB5 distribution are left to the router (PCB-PWRA-4)',
+        }
     # pcb/check_boards.py keys of a two-sided board: parts on both sides, bottom height limit = the room under PWR-A
     out['sides'] = ['top', 'bottom']
-    out['max_height_bottom'] = cand['pwr_a_bottom']['h_room_mm']
-    out['max_height_bottom_note'] = ('pcb/partition-spec.json candidates.shrink2.pwr_a_bottom.h_room_mm (shim gap 0.4 + pocket '
-                                     'depth 1.0): an upper bound, the polyimide film and a clearance (TBD) come off it; the '
-                                     'heights of the bottom chip parts are not read (TBD per MPN), so check_boards lists '
-                                     'them as unverified')
+    out['max_height_bottom'] = bs.get('h_max', cand['pwr_a_bottom']['h_room_mm'])
+    out['max_height_bottom_note'] = ('mechanical/generated/contract/boards.json PWR bottom_side h_max (MECH-7: shim gap 0.4 '
+                                     '+ pocket depth 1.0 - polyimide film 0.07 - clearance 0.3); the heights of the bottom '
+                                     'chip parts are not read (TBD per MPN), so check_boards lists them as unverified')
     out['generator'] = 'build/kicad/boards/PWR_A/make_spec.py'
     bg.validate_spec(out, 'PWR_A')
     return out
