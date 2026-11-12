@@ -21,9 +21,9 @@
     },
     "types_why": "In1.Cu (L2) carries a solid GND plane laid before routing and typed power, so the Specctra export marks it (type power) and Freerouting does not route on it; every SMD GND pad has its own scripted via to it. F.Cu, In2.Cu and B.Cu are routing layers; the power classes route on F.Cu/B.Cu only (router.class_layers), as pcb/check_boards.py requires (netclasses.json: no inner copper for PWR3A, 1.8 mm inner for PWR1A).",
     "plan": {
-      "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (right pull-up column, MCP pins), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the link up the right strip between C302/C304 and the J316 pins, the HMI pull-up row to C312 and U306, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing",
+      "F.Cu": "L1: top parts, signals, scripted LAB5 feed J305 -> J314.2 (1.85 mm) and C342 branch, scripted 3V3_Q6A pieces (R301/R302, the RCOL_L rows, the MCP cluster U302/U303 with C303-C306 and R306/R307, U315.3 to C302/R305 and under U301 to VDD and C301), scripted E3_PICO3V3 pieces (HMI2/HMI3 bus along cut-out 1 to R368/R395, the link up the right strip beside the J316 pins, the HMI pull-up row to C312 and U306, R361/R362), PWR1A/PWR3A_BRANCH routes, GND pour after routing",
       "In1.Cu": "L2: GND plane (pre-route zone, DSN plane), no signals",
-      "In2.Cu": "L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column, GND pour after routing",
+      "In2.Cu": "L3: signals, the scripted 18 mm LAB5 run to D301 below cut-out 1, the scripted 3V3_Q6A bus of the left pull-up column with its links to the MCP cluster (between the J306 pin rows) and to the RCOL_L rows (between the J307 pin rows), GND pour after routing",
       "B.Cu": "L4: bottom parts, signals, scripted E3_BLOWER_GND rail and E3_FAN5 (1.85 mm) and the E3_BLOWER_GND capacitor branches, scripted LAB5 islands, scripted E3_PICO3V3 pieces (R4B bus along cut-out 2, up the right strip and along the top edge to J312.4, branch to R362; Pico pin 36 escape via, R330/R327/C308), locked GND copper over the custom Pico GND pads, PWR1A/PWR3A_BRANCH routes, GND pour after routing"
     }
   },
@@ -1396,14 +1396,14 @@
       "source": "graph",
       "anchor": {
         "at": [
-          25.68,
-          10.2
+          20.5,
+          17.0
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "top middle column between the switch columns (x 17.25-31.75), decoupling C303 on the left"
+      "anchor_source": "top, turned 90 degrees into the band between the switch rows (y 11.05-22.96, x 11.3-29.7): both GPIO banks (GPB pins 1-8 on the lower edge, GPA pins 28-21 on the upper edge) sit on the left half and face the J306/J307 pin fields and the left pull-up column; VDD, I2C2, A0-A2, RESET and INT sit on the right half towards J304 (W2 CTRL-R placement study: the 8 GPA nets no longer wrap around the package from its right side)"
     },
     {
       "ref": "U303",
@@ -1411,13 +1411,13 @@
       "anchor": {
         "at": [
           25.68,
-          28.85
+          32.28
         ],
         "align": "origin",
         "rotation": 0,
         "side": "F"
       },
-      "anchor_source": "top middle column, decoupling C305 on the left"
+      "anchor_source": "top middle column above U302 (y 23.05-41.5), decoupling C305 on the left"
     },
     {
       "ref": "U305",
@@ -1439,13 +1439,13 @@
       "anchor": {
         "at": [
           24.5,
-          42.55
+          45.77
         ],
         "align": "origin",
         "rotation": 0,
         "side": "F"
       },
-      "anchor_source": "top middle column above U303, next to the HMI resistors"
+      "anchor_source": "top middle column above U303 (y 41.6-49.95), next to the HMI resistors"
     },
     {
       "ref": "U307",
@@ -1505,14 +1505,14 @@
         17.3,
         0.3,
         31.7,
-        46.5
+        49.9
       ],
       "gap_mm": 0.4,
       "decouple_gap_mm": 0.25,
       "members": [
         {
           "ref": "C303",
-          "rotation": 90,
+          "rotation": 270,
           "decouple": {
             "ref": "U302",
             "pad": "9",
@@ -1620,7 +1620,7 @@
       "side": "F",
       "region": [
         39.35,
-        0.5,
+        50.0,
         41.75,
         58.0
       ],
@@ -1628,65 +1628,11 @@
       "decouple_gap_mm": 0.25,
       "members": [
         {
-          "ref": "R320",
-          "rotation": 90
-        },
-        {
-          "ref": "R321",
-          "rotation": 90
-        },
-        {
-          "ref": "R322",
-          "rotation": 90
-        },
-        {
-          "ref": "R323",
-          "rotation": 90
-        },
-        {
-          "ref": "R324",
-          "rotation": 90
-        },
-        {
-          "ref": "R325",
-          "rotation": 90
-        },
-        {
-          "ref": "R392",
-          "rotation": 90
-        },
-        {
           "ref": "R301",
           "rotation": 90
         },
         {
           "ref": "R302",
-          "rotation": 90
-        }
-      ]
-    },
-    {
-      "id": "TR3A",
-      "side": "F",
-      "region": [
-        37.05,
-        84.0,
-        49.95,
-        93.4
-      ],
-      "gap_mm": 0.45,
-      "decouple_gap_mm": 0.25,
-      "members": [
-        {
-          "ref": "C302",
-          "rotation": 90
-        },
-        {
-          "ref": "C304",
-          "rotation": 90
-        },
-        {
-          "ref": "C306",
           "rotation": 90
         }
       ]
@@ -1718,10 +1664,6 @@
         {
           "ref": "R395",
           "rotation": 90
-        },
-        {
-          "ref": "R305",
-          "rotation": 90
         }
       ]
     },
@@ -1730,9 +1672,9 @@
       "side": "F",
       "region": [
         17.3,
-        46.9,
+        50.05,
         31.7,
-        56.6
+        58.95
       ],
       "gap_mm": 0.4,
       "decouple_gap_mm": 0.25,
@@ -2142,7 +2084,63 @@
         {
           "ref": "R362",
           "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "RCOL_L",
+      "side": "F",
+      "region": [
+        9.9,
+        33.0,
+        19.6,
+        47.3
+      ],
+      "gap_mm": 0.45,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "R320",
+          "rotation": 270
         },
+        {
+          "ref": "R321",
+          "rotation": 270
+        },
+        {
+          "ref": "R322",
+          "rotation": 270
+        },
+        {
+          "ref": "R323",
+          "rotation": 270
+        },
+        {
+          "ref": "R324",
+          "rotation": 270
+        },
+        {
+          "ref": "R325",
+          "rotation": 270
+        },
+        {
+          "ref": "R392",
+          "rotation": 270
+        }
+      ]
+    },
+    {
+      "id": "RST",
+      "side": "F",
+      "region": [
+        31.8,
+        11.2,
+        39.2,
+        25.3
+      ],
+      "gap_mm": 0.45,
+      "decouple_gap_mm": 0.25,
+      "members": [
         {
           "ref": "R306",
           "rotation": 90
@@ -2150,6 +2148,64 @@
         {
           "ref": "R307",
           "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "MCPA",
+      "side": "F",
+      "region": [
+        27.6,
+        93.8,
+        32.9,
+        100.6
+      ],
+      "gap_mm": 0.45,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "C302",
+          "rotation": 270
+        },
+        {
+          "ref": "R305",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "BULK_L",
+      "side": "F",
+      "region": [
+        17.35,
+        0.3,
+        19.6,
+        9.8
+      ],
+      "gap_mm": 0.45,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "C304",
+          "rotation": 270
+        }
+      ]
+    },
+    {
+      "id": "BULK_R",
+      "side": "F",
+      "region": [
+        23.6,
+        0.3,
+        25.8,
+        9.8
+      ],
+      "gap_mm": 0.45,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "C306",
+          "rotation": 270
         }
       ]
     }
@@ -3356,189 +3412,191 @@
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+        "why": "3V3_Q6A chain of the right pull-ups R301/R302, left of the pads"
       },
       {
-        "id": "V33-R302-R320",
+        "id": "V33-RCOL-L-44.99",
         "net": "3V3_Q6A",
         "layer": "F.Cu",
-        "width_mm": 0.2,
+        "width_mm": 0.25,
         "path": [
           [
-            40.08,
-            53.785
+            9.55,
+            44.99
           ],
           [
-            39.27,
-            53.785
+            10.63,
+            44.995
           ],
           [
-            39.27,
-            50.225
+            12.54,
+            44.995
           ],
           [
-            40.08,
-            50.225
+            14.45,
+            44.995
+          ],
+          [
+            16.36,
+            44.995
+          ],
+          [
+            18.27,
+            44.995
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+        "why": "3V3_Q6A line through the pad-2 centres of one RCOL_L row"
       },
       {
-        "id": "V33-R320-R321",
+        "id": "V33-RCOL-L-41.58",
         "net": "3V3_Q6A",
         "layer": "F.Cu",
-        "width_mm": 0.2,
+        "width_mm": 0.25,
         "path": [
           [
-            40.08,
-            50.225
+            9.55,
+            41.58
           ],
           [
-            39.27,
-            50.225
+            10.63,
+            41.585
           ],
           [
-            39.27,
-            46.665
-          ],
-          [
-            40.08,
-            46.665
+            12.54,
+            41.585
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+        "why": "3V3_Q6A line through the pad-2 centres of one RCOL_L row"
       },
       {
-        "id": "V33-R321-R322",
+        "id": "V33-RCOL-L-JOIN",
         "net": "3V3_Q6A",
         "layer": "F.Cu",
-        "width_mm": 0.2,
+        "width_mm": 0.25,
         "path": [
           [
-            40.08,
-            46.665
+            9.55,
+            44.99
           ],
           [
-            39.27,
-            46.665
-          ],
-          [
-            39.27,
-            43.105
-          ],
-          [
-            40.08,
-            43.105
+            9.55,
+            41.58
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+        "why": "3V3_Q6A join of the RCOL_L rows, left of the group"
       },
       {
-        "id": "V33-R322-R323",
+        "id": "V33-RCOL-L-UP",
         "net": "3V3_Q6A",
         "layer": "F.Cu",
-        "width_mm": 0.2,
+        "width_mm": 0.25,
         "path": [
           [
-            40.08,
-            43.105
+            9.55,
+            44.99
           ],
           [
-            39.27,
-            43.105
-          ],
-          [
-            39.27,
-            39.545
-          ],
-          [
-            40.08,
-            39.545
+            9.55,
+            47.6
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+        "why": "3V3_Q6A from the RCOL_L rows to their L3 via"
       },
       {
-        "id": "V33-R323-R324",
+        "id": "V33-RCOL-L3",
         "net": "3V3_Q6A",
-        "layer": "F.Cu",
-        "width_mm": 0.2,
+        "layer": "In2.Cu",
+        "width_mm": 0.25,
         "path": [
           [
-            40.08,
-            39.545
+            9.55,
+            47.6
           ],
           [
-            39.27,
-            39.545
+            8.75,
+            48.6
           ],
           [
-            39.27,
-            35.985
-          ],
-          [
-            40.08,
-            35.985
+            2.3,
+            48.6
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+        "why": "3V3_Q6A on L3 from the RCOL_L via between the J307 pin rows to the left pull-up bus"
       },
       {
-        "id": "V33-R324-R325",
+        "id": "V33-U302-C303",
         "net": "3V3_Q6A",
         "layer": "F.Cu",
-        "width_mm": 0.2,
+        "width_mm": 0.25,
         "path": [
           [
-            40.08,
-            35.985
+            22.405,
+            12.35
           ],
           [
-            39.27,
-            35.985
-          ],
-          [
-            39.27,
-            32.425
-          ],
-          [
-            40.08,
-            32.425
+            22.405,
+            10.115
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+        "why": "3V3_Q6A: U302 VDD pin 9 to its decoupling C303"
       },
       {
-        "id": "V33-R325-R392",
+        "id": "V33-U302",
         "net": "3V3_Q6A",
         "layer": "F.Cu",
-        "width_mm": 0.2,
+        "width_mm": 0.25,
         "path": [
           [
-            40.08,
-            32.425
+            22.405,
+            12.35
           ],
           [
-            39.27,
-            32.425
+            22.405,
+            14.2
           ],
           [
-            39.27,
-            28.865
+            27.485,
+            19.8
           ],
           [
-            40.08,
-            28.865
+            27.485,
+            21.65
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A chain of the right pull-up column, left of the pads"
+        "why": "3V3_Q6A of U302: VDD pin 9 to the address pin 16 (A1 high), under the body"
+      },
+      {
+        "id": "V33-U302-U303",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            27.485,
+            21.65
+          ],
+          [
+            27.485,
+            23.005
+          ],
+          [
+            29.73,
+            23.005
+          ],
+          [
+            30.33,
+            24.025
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A: U302.16 to U303.15 between the two packages"
       },
       {
         "id": "V33-U303",
@@ -3548,53 +3606,133 @@
         "path": [
           [
             21.03,
-            26.945
+            30.375
           ],
           [
             24.0,
-            26.945
+            30.375
           ],
           [
             24.0,
-            21.865
+            25.295
           ],
           [
             30.33,
-            21.865
+            25.295
           ],
           [
             30.33,
-            20.595
+            24.025
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A of U303: VDD pin 9 to the address pins tied high, under the body"
+        "why": "3V3_Q6A of U303: VDD pin 9 to the address pins 15/16 (A0, A1 high), under the body"
       },
       {
-        "id": "V33-U302",
+        "id": "V33-U303-C305",
         "net": "3V3_Q6A",
         "layer": "F.Cu",
         "width_mm": 0.25,
         "path": [
           [
             21.03,
-            8.295
+            30.375
           ],
           [
-            24.0,
-            8.295
-          ],
-          [
-            24.0,
-            3.215
-          ],
-          [
-            30.33,
-            3.215
+            18.77,
+            29.6
           ]
         ],
         "locked": true,
-        "why": "3V3_Q6A of U302: VDD pin 9 to the address pins tied high, under the body"
+        "why": "3V3_Q6A: U303 VDD pin 9 to its decoupling C305"
+      },
+      {
+        "id": "V33-RST",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            34.44,
+            24.645
+          ],
+          [
+            32.53,
+            24.645
+          ],
+          [
+            30.73,
+            24.645
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A: reset pull-ups R307/R306 to U303.15/16 (the line ends on the pad pair)"
+      },
+      {
+        "id": "V33-C306",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            24.58,
+            9.05
+          ],
+          [
+            22.405,
+            10.115
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A: bulk C306 to C303.1, below the U302 pads"
+      },
+      {
+        "id": "V33-MCP-F",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            18.33,
+            9.05
+          ],
+          [
+            20.3675,
+            8.7
+          ],
+          [
+            22.405,
+            10.115
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A: C304.1 and C303.1 to the MCP cluster via"
+      },
+      {
+        "id": "V33-MCP-L3",
+        "net": "3V3_Q6A",
+        "layer": "In2.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            20.3675,
+            8.7
+          ],
+          [
+            19.3675,
+            9.5
+          ],
+          [
+            2.3,
+            9.5
+          ],
+          [
+            2.3,
+            13.735
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A on L3 from the MCP cluster between the J306 pin rows to the left pull-up bus"
       },
       {
         "id": "V33-U315",
@@ -3613,6 +3751,66 @@
         ],
         "locked": true,
         "why": "3V3_Q6A stub, U315.3 to its via"
+      },
+      {
+        "id": "V33-U315-C302",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            27.5,
+            94.45
+          ],
+          [
+            31.9,
+            94.45
+          ],
+          [
+            31.9,
+            99.945
+          ],
+          [
+            30.74,
+            99.945
+          ],
+          [
+            28.58,
+            99.85
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A: U315.3 via along the cut-out edge and up right of R305 to the reset pull-up R305 and the bulk C302"
+      },
+      {
+        "id": "V33-U301",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            28.58,
+            99.85
+          ],
+          [
+            16.895,
+            99.85
+          ],
+          [
+            16.295,
+            102.05
+          ],
+          [
+            16.295,
+            104.58
+          ],
+          [
+            15.52,
+            106.84
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A: under the U301 body to VDD pin 9 and its decoupling C301"
       },
       {
         "id": "P33-R4B-BUS",
@@ -3997,11 +4195,11 @@
             70.3
           ],
           [
-            47.15,
+            45.24,
             70.3
           ],
           [
-            47.15,
+            45.24,
             77.745
           ]
         ],
@@ -4015,11 +4213,11 @@
         "width_mm": 0.2,
         "path": [
           [
-            45.15,
+            41.63,
             120.845
           ],
           [
-            46.91,
+            43.39,
             120.845
           ]
         ],
@@ -4059,7 +4257,7 @@
             120.845
           ],
           [
-            46.91,
+            43.39,
             120.845
           ]
         ],
@@ -4174,19 +4372,19 @@
         "path": [
           [
             18.03,
-            51.32
+            53.67
           ],
           [
             29.165,
-            51.32
+            53.67
           ],
           [
             29.165,
-            46.125
+            49.345
           ],
           [
             27.3625,
-            46.125
+            49.345
           ]
         ],
         "locked": true,
@@ -4200,11 +4398,11 @@
         "path": [
           [
             18.03,
-            52.145
+            54.495
           ],
           [
             18.03,
-            51.32
+            53.67
           ]
         ],
         "locked": true,
@@ -4218,11 +4416,11 @@
         "path": [
           [
             21.75,
-            52.145
+            54.495
           ],
           [
             21.75,
-            51.32
+            53.67
           ]
         ],
         "locked": true,
@@ -4236,11 +4434,11 @@
         "path": [
           [
             25.47,
-            52.145
+            54.495
           ],
           [
             25.47,
-            51.32
+            53.67
           ]
         ],
         "locked": true,
@@ -4254,11 +4452,11 @@
         "path": [
           [
             29.165,
-            52.07
+            54.42
           ],
           [
             29.165,
-            51.32
+            53.67
           ]
         ],
         "locked": true,
@@ -4320,11 +4518,11 @@
         "path": [
           [
             18.2125,
-            54.9
+            57.25
           ],
           [
-            19.299,
-            54.609
+            16.353,
+            57.748
           ]
         ],
         "locked": true
@@ -4337,11 +4535,11 @@
         "path": [
           [
             22.7125,
-            54.9
+            57.25
           ],
           [
             23.799,
-            54.609
+            56.959
           ]
         ],
         "locked": true
@@ -4375,11 +4573,11 @@
           ],
           [
             16.5,
-            56.4
+            55.6
           ],
           [
             34.6,
-            56.4
+            55.6
           ]
         ],
         "locked": true,
@@ -4393,7 +4591,7 @@
         "path": [
           [
             34.6,
-            56.4
+            55.6
           ],
           [
             35.9,
@@ -4431,12 +4629,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            38.03,
-            92.65
+            28.58,
+            97.95
           ],
           [
-            37.791,
-            93.543
+            28.341,
+            97.057
           ]
         ],
         "locked": true
@@ -4448,12 +4646,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            18.77,
-            9.07
+            22.405,
+            8.565
           ],
           [
-            18.531,
-            9.963
+            21.517,
+            8.053
           ]
         ],
         "locked": true
@@ -4465,12 +4663,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            40.44,
-            92.65
+            18.33,
+            7.15
           ],
           [
-            40.201,
-            93.543
+            18.091,
+            6.257
           ]
         ],
         "locked": true
@@ -4483,11 +4681,11 @@
         "path": [
           [
             18.77,
-            27.72
+            31.15
           ],
           [
             18.77,
-            28.545
+            31.975
           ]
         ],
         "locked": true
@@ -4499,12 +4697,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            42.85,
-            92.65
+            24.58,
+            7.15
           ],
           [
-            42.611,
-            93.543
+            24.017,
+            6.176
           ]
         ],
         "locked": true
@@ -4554,8 +4752,8 @@
             29.505
           ],
           [
-            38.275,
-            29.505
+            39.713,
+            30.393
           ]
         ],
         "locked": true
@@ -4602,11 +4800,11 @@
         "path": [
           [
             30.715,
-            52.07
+            54.42
           ],
           [
-            30.152,
-            53.044
+            31.608,
+            54.181
           ]
         ],
         "locked": true
@@ -4619,11 +4817,11 @@
         "path": [
           [
             19.555,
-            48.71
+            51.06
           ],
           [
-            20.448,
-            48.471
+            21.414,
+            50.562
           ]
         ],
         "locked": true
@@ -4707,8 +4905,8 @@
             74.6
           ],
           [
-            45.725,
-            74.6
+            45.987,
+            73.453
           ]
         ],
         "locked": true
@@ -4758,8 +4956,8 @@
             99.87
           ],
           [
-            20.68,
-            99.87
+            20.993,
+            98.982
           ]
         ],
         "locked": true
@@ -4775,8 +4973,8 @@
             95.92
           ],
           [
-            27.884,
-            96.786
+            27.429,
+            96.683
           ]
         ],
         "locked": true
@@ -4792,8 +4990,8 @@
             91.6
           ],
           [
-            38.076,
-            89.644
+            37.837,
+            90.279
           ]
         ],
         "locked": true
@@ -4845,23 +5043,6 @@
           [
             40.875,
             86.65
-          ]
-        ],
-        "locked": true
-      },
-      {
-        "id": "GND-Q305.2",
-        "net": "GND",
-        "layer": "B.Cu",
-        "width_mm": 0.25,
-        "path": [
-          [
-            21.1675,
-            55.45
-          ],
-          [
-            22.953,
-            57.235
           ]
         ],
         "locked": true
@@ -4975,12 +5156,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            45.24,
+            43.33,
             79.395
           ],
           [
-            45.026,
-            80.192
+            42.442,
+            79.907
           ]
         ],
         "locked": true
@@ -5020,7 +5201,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-59",
+        "id": "GND-SW302.2-60",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5054,7 +5235,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-61",
+        "id": "GND-SW303.2-62",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5088,7 +5269,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-63",
+        "id": "GND-SW304.2-64",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5122,7 +5303,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-65",
+        "id": "GND-SW305.2-66",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5132,8 +5313,8 @@
             27.0
           ],
           [
-            39.754,
-            25.988
+            39.376,
+            26.631
           ]
         ],
         "locked": true
@@ -5156,7 +5337,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-67",
+        "id": "GND-SW306.2-68",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5190,7 +5371,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-69",
+        "id": "GND-SW307.2-70",
         "net": "GND",
         "layer": "F.Cu",
         "width_mm": 0.25,
@@ -5281,12 +5462,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            21.03,
-            7.025
+            23.675,
+            12.35
           ],
           [
-            19.074,
-            6.501
+            23.675,
+            10.925
           ]
         ],
         "locked": true
@@ -5298,12 +5479,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            30.33,
-            1.945
+            28.755,
+            21.65
           ],
           [
-            30.142,
-            1.245
+            29.455,
+            21.462
           ]
         ],
         "locked": true
@@ -5315,12 +5496,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            30.33,
-            4.485
+            26.215,
+            21.65
           ],
           [
-            28.905,
-            4.485
+            26.215,
+            23.075
           ]
         ],
         "locked": true
@@ -5333,11 +5514,11 @@
         "path": [
           [
             21.03,
-            25.675
+            29.105
           ],
           [
             19.557,
-            25.28
+            28.71
           ]
         ],
         "locked": true
@@ -5350,11 +5531,11 @@
         "path": [
           [
             30.33,
-            23.135
+            26.565
           ],
           [
-            31.9,
-            22.714
+            28.905,
+            26.565
           ]
         ],
         "locked": true
@@ -5387,8 +5568,8 @@
             46.9
           ],
           [
-            15.0,
-            46.9
+            15.4,
+            46.0
           ]
         ],
         "locked": true
@@ -5421,7 +5602,7 @@
             34.2
           ],
           [
-            28.78,
+            28.68,
             34.2
           ]
         ],
@@ -5438,8 +5619,8 @@
             8.8
           ],
           [
-            17.6,
-            8.8
+            12.533,
+            7.617
           ]
         ],
         "locked": true
@@ -5455,8 +5636,8 @@
             21.5
           ],
           [
-            28.78,
-            21.0
+            30.08,
+            20.6
           ]
         ],
         "locked": true
@@ -5472,7 +5653,7 @@
             8.8
           ],
           [
-            28.78,
+            30.08,
             8.8
           ]
         ],
@@ -5489,8 +5670,8 @@
             21.5
           ],
           [
-            15.0,
-            21.5
+            11.183,
+            20.538
           ]
         ],
         "locked": true
@@ -5507,7 +5688,7 @@
           ],
           [
             22.54,
-            49.525
+            50.525
           ]
         ],
         "locked": true
@@ -5520,11 +5701,11 @@
         "path": [
           [
             21.6375,
-            38.975
+            42.195
           ],
           [
             21.476,
-            38.371
+            41.591
           ]
         ],
         "locked": true
@@ -5537,11 +5718,11 @@
         "path": [
           [
             21.6375,
-            45.475
+            48.695
           ],
           [
             20.512,
-            45.475
+            48.695
           ]
         ],
         "locked": true
@@ -5554,11 +5735,11 @@
         "path": [
           [
             27.3625,
-            44.175
+            47.395
           ],
           [
             28.488,
-            44.175
+            47.395
           ]
         ],
         "locked": true
@@ -5571,11 +5752,11 @@
         "path": [
           [
             21.6375,
-            44.825
+            48.045
           ],
           [
             22.762,
-            44.825
+            48.045
           ]
         ],
         "locked": true
@@ -5644,6 +5825,23 @@
           [
             42.899,
             123.209
+          ]
+        ],
+        "locked": true
+      },
+      {
+        "id": "GND-Q305.2",
+        "net": "GND",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            21.1675,
+            55.45
+          ],
+          [
+            23.799,
+            56.959
           ]
         ],
         "locked": true
@@ -5807,6 +6005,30 @@
         "why": "3V3_Q6A pull-up bus via next to R319.2"
       },
       {
+        "id": "V33-RCOL-L",
+        "net": "3V3_Q6A",
+        "at": [
+          9.55,
+          47.6
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "3V3_Q6A via of the RCOL_L pull-ups, right of J307.17"
+      },
+      {
+        "id": "V33-MCP",
+        "net": "3V3_Q6A",
+        "at": [
+          20.3675,
+          8.7
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.65,
+        "locked": true,
+        "why": "3V3_Q6A via of the MCP cluster, between the bulk C304 and C303"
+      },
+      {
         "id": "V33-U315",
         "net": "3V3_Q6A",
         "at": [
@@ -5870,8 +6092,8 @@
         "id": "GND-U310.2",
         "net": "GND",
         "at": [
-          19.299,
-          54.609
+          16.353,
+          57.748
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5882,7 +6104,7 @@
         "net": "GND",
         "at": [
           23.799,
-          54.609
+          56.959
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5916,7 +6138,7 @@
         "net": "LAB5",
         "at": [
           34.6,
-          56.4
+          55.6
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5938,8 +6160,8 @@
         "id": "GND-C302.2",
         "net": "GND",
         "at": [
-          37.791,
-          93.543
+          28.341,
+          97.057
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5949,8 +6171,8 @@
         "id": "GND-C303.2",
         "net": "GND",
         "at": [
-          18.531,
-          9.963
+          21.517,
+          8.053
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5960,8 +6182,8 @@
         "id": "GND-C304.2",
         "net": "GND",
         "at": [
-          40.201,
-          93.543
+          18.091,
+          6.257
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5972,7 +6194,7 @@
         "net": "GND",
         "at": [
           18.77,
-          28.545
+          31.975
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -5982,8 +6204,8 @@
         "id": "GND-C306.2",
         "net": "GND",
         "at": [
-          42.611,
-          93.543
+          24.017,
+          6.176
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6015,8 +6237,8 @@
         "id": "GND-C309.2",
         "net": "GND",
         "at": [
-          38.275,
-          29.505
+          39.713,
+          30.393
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6048,8 +6270,8 @@
         "id": "GND-C312.2",
         "net": "GND",
         "at": [
-          30.152,
-          53.044
+          31.608,
+          54.181
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6059,8 +6281,8 @@
         "id": "GND-C313.2",
         "net": "GND",
         "at": [
-          20.448,
-          48.471
+          21.414,
+          50.562
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6114,8 +6336,8 @@
         "id": "GND-C318.2",
         "net": "GND",
         "at": [
-          45.725,
-          74.6
+          45.987,
+          73.453
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6147,8 +6369,8 @@
         "id": "GND-C321.2",
         "net": "GND",
         "at": [
-          20.68,
-          99.87
+          20.993,
+          98.982
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6158,8 +6380,8 @@
         "id": "GND-C322.2",
         "net": "GND",
         "at": [
-          27.884,
-          96.786
+          27.429,
+          96.683
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6169,8 +6391,8 @@
         "id": "GND-D305.2",
         "net": "GND",
         "at": [
-          38.076,
-          89.644
+          37.837,
+          90.279
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6204,17 +6426,6 @@
         "at": [
           40.875,
           86.65
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "GND-Q305.2",
-        "net": "GND",
-        "at": [
-          22.953,
-          57.235
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6290,8 +6501,8 @@
         "id": "GND-R394.2",
         "net": "GND",
         "at": [
-          45.026,
-          80.192
+          42.442,
+          79.907
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6320,7 +6531,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW302.2-59",
+        "id": "GND-SW302.2-60",
         "net": "GND",
         "at": [
           15.709,
@@ -6342,7 +6553,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW303.2-61",
+        "id": "GND-SW303.2-62",
         "net": "GND",
         "at": [
           37.709,
@@ -6364,7 +6575,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW304.2-63",
+        "id": "GND-SW304.2-64",
         "net": "GND",
         "at": [
           15.709,
@@ -6386,11 +6597,11 @@
         "locked": true
       },
       {
-        "id": "GND-SW305.2-65",
+        "id": "GND-SW305.2-66",
         "net": "GND",
         "at": [
-          39.754,
-          25.988
+          39.376,
+          26.631
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6408,7 +6619,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW306.2-67",
+        "id": "GND-SW306.2-68",
         "net": "GND",
         "at": [
           15.709,
@@ -6430,7 +6641,7 @@
         "locked": true
       },
       {
-        "id": "GND-SW307.2-69",
+        "id": "GND-SW307.2-70",
         "net": "GND",
         "at": [
           37.709,
@@ -6488,8 +6699,8 @@
         "id": "GND-U302.10",
         "net": "GND",
         "at": [
-          19.074,
-          6.501
+          23.675,
+          10.925
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6499,8 +6710,8 @@
         "id": "GND-U302.15",
         "net": "GND",
         "at": [
-          30.142,
-          1.245
+          29.455,
+          21.462
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6510,8 +6721,8 @@
         "id": "GND-U302.17",
         "net": "GND",
         "at": [
-          28.905,
-          4.485
+          26.215,
+          23.075
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6522,7 +6733,7 @@
         "net": "GND",
         "at": [
           19.557,
-          25.28
+          28.71
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6532,8 +6743,8 @@
         "id": "GND-U303.17",
         "net": "GND",
         "at": [
-          31.9,
-          22.714
+          28.905,
+          26.565
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6554,8 +6765,8 @@
         "id": "GND-U305.18",
         "net": "GND",
         "at": [
-          15.0,
-          46.9
+          15.4,
+          46.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6576,7 +6787,7 @@
         "id": "GND-U305.28",
         "net": "GND",
         "at": [
-          28.78,
+          28.68,
           34.2
         ],
         "drill_mm": 0.3,
@@ -6587,8 +6798,8 @@
         "id": "GND-U305.3",
         "net": "GND",
         "at": [
-          17.6,
-          8.8
+          12.533,
+          7.617
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6598,8 +6809,8 @@
         "id": "GND-U305.33",
         "net": "GND",
         "at": [
-          28.78,
-          21.0
+          30.08,
+          20.6
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6609,7 +6820,7 @@
         "id": "GND-U305.38",
         "net": "GND",
         "at": [
-          28.78,
+          30.08,
           8.8
         ],
         "drill_mm": 0.3,
@@ -6620,8 +6831,8 @@
         "id": "GND-U305.8",
         "net": "GND",
         "at": [
-          15.0,
-          21.5
+          11.183,
+          20.538
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6632,7 +6843,7 @@
         "net": "GND",
         "at": [
           22.54,
-          49.525
+          50.525
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6643,7 +6854,7 @@
         "net": "GND",
         "at": [
           21.476,
-          38.371
+          41.591
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6654,7 +6865,7 @@
         "net": "GND",
         "at": [
           20.512,
-          45.475
+          48.695
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6665,7 +6876,7 @@
         "net": "GND",
         "at": [
           28.488,
-          44.175
+          47.395
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
@@ -6676,7 +6887,7 @@
         "net": "GND",
         "at": [
           22.762,
-          44.825
+          48.045
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.65,
