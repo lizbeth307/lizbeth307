@@ -224,8 +224,9 @@ def astar(grid, layers, blk, vblk, src, dst, via_cost=1.5, bias=None, max_nodes=
     free = bytearray(free_np.astype(np.uint8).tobytes())
     goal = bytearray(goal_np.astype(np.uint8).tobytes())
     vfree = bytearray((~vblk).reshape(-1).astype(np.uint8).tobytes())
-    pen = (np.stack([soft[l] for l in layers]).reshape(-1).astype(np.float64) * soft_cost).tolist() if soft else None
-    vpen = (vsoft.reshape(-1).astype(np.float64) * (soft_cost * 3)).tolist() if vsoft is not None else None
+    # penalties as flat float arrays (a Python list of 18 M floats of a whole-board box took about 1 GB per search)
+    pen = array('d', (np.stack([soft[l] for l in layers]).reshape(-1).astype(np.float64) * soft_cost).tobytes()) if soft else None
+    vpen = array('d', (vsoft.reshape(-1).astype(np.float64) * (soft_cost * 3)).tobytes()) if vsoft is not None else None
     g = grid.g
     K2 = 0.41421356
     inf = float('inf')

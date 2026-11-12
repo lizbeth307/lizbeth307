@@ -291,7 +291,7 @@ def main(argv=None):
         for net in still:
             if len(m.islands(net)) < 2:
                 continue
-            n0, alive = len(m.items), [it.alive for it in m.items]
+            n0, alive, rip0 = len(m.items), [it.alive for it in m.items], collections.Counter(fz.ripped)
             signal = classes.get(net, 'Default') == 'Default'
             ok, ripped = fz.connect(net, allow_rip=True, width=widths.get(net, default_w),
                                     layers=SIGNAL_LAYERS if signal else POWER_LAYERS)
@@ -311,6 +311,7 @@ def main(argv=None):
                     it.alive = was
                 for it in m.items[n0:]:
                     it.alive = False
+                fz.ripped = rip0  # a rolled-back attempt rips nothing
                 print(f'  {net}: no change ({time.time() - t0:.0f} s)', flush=True)
         if not gained:
             break
@@ -358,7 +359,9 @@ def main(argv=None):
         'label': 'CI/model input for pcb/boards/PWR_B.json (W2 PWRB-R route study); not a hardware PASS; bench gates OPEN',
         'source': {'route_run': run, 'inputs_sha256': report['inputs']['sha256'], 'board_sha256': report['board_sha256'],
                    'router': 'Freerouting 2.5.0 (sr-rx-pcb job Board PWR_B)',
-                   'harvest': 'every unlocked track and via of that run, board mm (y up), coordinates as routed'},
+                   'harvest': 'every unlocked track and via of that run' + (
+                       f' and its {moved} locked items of the earlier route-frozen.json (ratchet: frozen copper is harvested '
+                       'again as router copper)' if moved else '') + ', board mm (y up), coordinates as routed'},
         'completion': ('grid A* on the locked copper, 0.05 mm grid, exact clearance check 0.15 mm, 0.3 mm to edges, 0.5 mm hole '
                        'to hole, keep-outs (holes, edge strips, the PWR-A cut-outs), track ends on via centres, path ends 0.13 '
                        'mm inside pads; through vias 0.7/0.3 mm; signals on F.Cu / In2.Cu / B.Cu, power classes on F.Cu / B.Cu'),
