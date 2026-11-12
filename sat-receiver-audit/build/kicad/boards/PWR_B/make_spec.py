@@ -266,9 +266,10 @@ class Inputs:
 #    in the arm to R247 open, and the J209 strip has no room for the ch4 cell, C247 and L210 side by side (each spans
 #    the alignment-hole rows y 16.9-18.4 between the holes x 86.0-111.6). So L209 stands 1.2 mm lower than the cell
 #    template (LNA_ROW_OFFSETS), C247 stands over it between the J204 courtyard and the J113 strip, with R247, TP209 and
-#    TP210 to its right above the J113 strip; C297 and C246, which stood there, take the place R247 had over J209
-#    (C297 west, nearer TP216 on its net, C246 east, nearer L209; route run 43268279241 with the two the other way round:
-#    1 zone-neck error, 1 open), turned so that their GND pads face the J209 spine. Every other part, and every via
+#    TP210 to its right above the J113 strip. C250 (west, next to the L210 output pad) and C246 (east, nearer L209) take
+#    the place R247 had over J209, turned so that their GND pads face the J209 spine, and C297 takes the C250 place right
+#    of L209 (route runs 43268279241 and 43270598656 with C246 / C297 in the R247 place: 1 zone-neck error and 1 open,
+#    3 open). Every other part, and every via
 #    between the J209 upper row and the J204 pins or in the B.Cu escape fan of the lower-row contacts 17-59, stays as in
 #    route run 43241032279: route run 43258433850 had C250 / C297 vias between the upper row and the J204 pins (12
 #    connections open), route run 43261863661 the whole cell 1.2 mm lower with the U209 / C244 vias in the escape fan
@@ -286,11 +287,11 @@ PLACEMENT = {
     'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (37.467, 34.284, 90), 'C239': (30, 14, 90),
     'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 0),
     'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (111.03, 21.325, 180),
-    'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (112.18, 15.097, 90), 'C251': (36, 12, 90),
+    'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.03, 19.65, 270), 'C251': (36, 12, 90),
     'C274': (16.312, 60.638, 0), 'C275': (37.425, 37.725, 90), 'C276': (18.488, 72.388, 0), 'C277': (36.97, 46.405, 90),
     'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
     'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
-    'C297': (94.03, 19.65, 270), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
+    'C297': (112.18, 15.097, 90), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
     'C503': (38.5, 20.5, 0), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (37.5, 73, 0),
     'C507': (36.46, 76.867, 0), 'C521': (31, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
     'C551': (38.651, 50.429, 90), 'C2901': (55.363, 33.73, 0), 'C2902': (40.167, 77.567, 0), 'C2911': (20.334, 42.046, 0),
