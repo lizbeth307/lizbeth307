@@ -4963,6 +4963,334 @@
         ],
         "locked": true,
         "why": "GND fan-out of U507.4 to its plane via"
+      },
+      {
+        "id": "Q6A-J209-2-S",
+        "net": "3V3_Q6A",
+        "layer": "B.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            86.55,
+            20.35
+          ],
+          [
+            86.55,
+            22.0
+          ]
+        ],
+        "locked": true,
+        "why": "J209 contact 2 (3V3_Q6A) out of the upper row between its GND neighbours to its plane via"
+      },
+      {
+        "id": "Q6A-C277-1-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            73.247,
+            -0.574
+          ],
+          [
+            74.272,
+            -0.574
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of C277.1 to its plane via"
+      },
+      {
+        "id": "Q6A-C283-1-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            74.015,
+            5.83
+          ],
+          [
+            73.015,
+            5.83
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of C283.1 to its plane via"
+      },
+      {
+        "id": "Q6A-C285-1-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            71.374,
+            6.658
+          ],
+          [
+            72.399,
+            6.658
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of C285.1 to its plane via"
+      },
+      {
+        "id": "Q6A-C287-1-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            76.399,
+            3.538
+          ],
+          [
+            77.399,
+            3.538
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of C287.1 to its plane via"
+      },
+      {
+        "id": "Q6A-C550-1-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            69.28,
+            -0.129
+          ],
+          [
+            68.28,
+            -0.129
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of C550.1 to its plane via"
+      },
+      {
+        "id": "Q6A-C551-1-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            61.091,
+            -19.216
+          ],
+          [
+            62.116,
+            -19.216
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of C551.1 to its plane via"
+      },
+      {
+        "id": "Q6A-R550-2-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            100.224,
+            -17.649
+          ],
+          [
+            101.174,
+            -17.649
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of R550.2 to its plane via"
+      },
+      {
+        "id": "Q6A-R551-2-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            109.671,
+            -15.279
+          ],
+          [
+            108.721,
+            -15.279
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of R551.2 to its plane via"
+      },
+      {
+        "id": "Q6A-U215-4-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            38.305,
+            19.935
+          ],
+          [
+            38.305,
+            19.2325
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U215.4 to its plane via"
+      },
+      {
+        "id": "Q6A-U215-5-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            39.155,
+            19.085
+          ],
+          [
+            38.6025,
+            19.085
+          ],
+          [
+            39.0268,
+            18.6607
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U215.5 to its plane via"
+      },
+      {
+        "id": "Q6A-U215-16-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            39.155,
+            22.735
+          ],
+          [
+            38.4525,
+            22.735
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U215.16 to its plane via"
+      },
+      {
+        "id": "Q6A-U217-6-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            93.95,
+            -19.8575
+          ],
+          [
+            94.8,
+            -19.8575
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U217.6 to its plane via"
+      },
+      {
+        "id": "Q6A-U218-6-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            79.0125,
+            4.51
+          ],
+          [
+            77.8,
+            4.51
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U218.6 to its plane via"
+      },
+      {
+        "id": "Q6A-U219-6-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            75.2025,
+            -0.61
+          ],
+          [
+            75.2025,
+            -1.46
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U219.6 to its plane via"
+      },
+      {
+        "id": "Q6A-U507-1-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            64.275,
+            -17.145
+          ],
+          [
+            65.8,
+            -17.145
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U507.1 to its plane via"
+      },
+      {
+        "id": "Q6A-U507-5-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            69.225,
+            -20.955
+          ],
+          [
+            67.7,
+            -20.955
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U507.5 to its plane via"
+      },
+      {
+        "id": "Q6A-U507-8-S",
+        "net": "3V3_Q6A",
+        "layer": "F.Cu",
+        "width_mm": 0.25,
+        "path": [
+          [
+            69.225,
+            -17.145
+          ],
+          [
+            70.75,
+            -17.145
+          ]
+        ],
+        "locked": true,
+        "why": "3V3_Q6A fan-out of U507.8 to its plane via"
       }
     ],
     "vias": [
@@ -6105,6 +6433,222 @@
         "diameter_mm": 0.7,
         "locked": true,
         "why": "GND plane via of U507.4"
+      },
+      {
+        "id": "Q6A-J209-2-V",
+        "net": "3V3_Q6A",
+        "at": [
+          86.55,
+          22.0
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via (In2.Cu) of J209 contact 2"
+      },
+      {
+        "id": "Q6A-C277-1-V",
+        "net": "3V3_Q6A",
+        "at": [
+          74.272,
+          -0.574
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of C277.1"
+      },
+      {
+        "id": "Q6A-C283-1-V",
+        "net": "3V3_Q6A",
+        "at": [
+          73.015,
+          5.83
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of C283.1"
+      },
+      {
+        "id": "Q6A-C285-1-V",
+        "net": "3V3_Q6A",
+        "at": [
+          72.399,
+          6.658
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of C285.1"
+      },
+      {
+        "id": "Q6A-C287-1-V",
+        "net": "3V3_Q6A",
+        "at": [
+          77.399,
+          3.538
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of C287.1"
+      },
+      {
+        "id": "Q6A-C550-1-V",
+        "net": "3V3_Q6A",
+        "at": [
+          68.28,
+          -0.129
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of C550.1"
+      },
+      {
+        "id": "Q6A-C551-1-V",
+        "net": "3V3_Q6A",
+        "at": [
+          62.116,
+          -19.216
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of C551.1"
+      },
+      {
+        "id": "Q6A-R550-2-V",
+        "net": "3V3_Q6A",
+        "at": [
+          101.174,
+          -17.649
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of R550.2"
+      },
+      {
+        "id": "Q6A-R551-2-V",
+        "net": "3V3_Q6A",
+        "at": [
+          108.721,
+          -15.279
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of R551.2"
+      },
+      {
+        "id": "Q6A-U215-4-V",
+        "net": "3V3_Q6A",
+        "at": [
+          38.305,
+          19.2325
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U215.4"
+      },
+      {
+        "id": "Q6A-U215-5-V",
+        "net": "3V3_Q6A",
+        "at": [
+          39.0268,
+          18.6607
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U215.5"
+      },
+      {
+        "id": "Q6A-U215-16-V",
+        "net": "3V3_Q6A",
+        "at": [
+          38.4525,
+          22.735
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U215.16"
+      },
+      {
+        "id": "Q6A-U217-6-V",
+        "net": "3V3_Q6A",
+        "at": [
+          94.8,
+          -19.8575
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U217.6"
+      },
+      {
+        "id": "Q6A-U218-6-V",
+        "net": "3V3_Q6A",
+        "at": [
+          77.8,
+          4.51
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U218.6"
+      },
+      {
+        "id": "Q6A-U219-6-V",
+        "net": "3V3_Q6A",
+        "at": [
+          75.2025,
+          -1.46
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U219.6"
+      },
+      {
+        "id": "Q6A-U507-1-V",
+        "net": "3V3_Q6A",
+        "at": [
+          65.8,
+          -17.145
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U507.1"
+      },
+      {
+        "id": "Q6A-U507-5-V",
+        "net": "3V3_Q6A",
+        "at": [
+          67.7,
+          -20.955
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U507.5"
+      },
+      {
+        "id": "Q6A-U507-8-V",
+        "net": "3V3_Q6A",
+        "at": [
+          70.75,
+          -17.145
+        ],
+        "drill_mm": 0.3,
+        "diameter_mm": 0.7,
+        "locked": true,
+        "why": "3V3_Q6A plane via of U507.8"
       }
     ],
     "zones": [
@@ -6118,13 +6662,13 @@
         "why": "GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it"
       },
       {
-        "id": "GND-In2",
-        "net": "GND",
+        "id": "Q6A-In2",
+        "net": "3V3_Q6A",
         "layer": "In2.Cu",
         "outline": "board",
         "priority": 0,
         "pad_connection": "solid",
-        "why": "second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)"
+        "why": "W2 PWRJ F2ENV probe 4: In2.Cu is the solid 3V3_Q6A plane (make_spec.py Q6A_PLANE_IN2), In1.Cu stays the GND plane under F.Cu; second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)"
       }
     ]
   },

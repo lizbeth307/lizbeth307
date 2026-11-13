@@ -72,8 +72,15 @@ PLACEMENT = HERE / 'board-placement.json'
 # (spec router.automatic_neckdown); route iteration 2 (run 43295500516) and F2ENV probe 1 left power-class connections
 # open between neighbouring pins of one part (LT3045 E2_LNA_IN pins 0.65 mm apart at PWR3A 1.85 mm, BATT 3.2 mm into
 # 1206 pads). Each such ref gets a neck_exempt entry of NECK_ESCAPE beyond half its pad (check_boards neck rule).
-ROUTER_NECKDOWN = True
+ROUTER_NECKDOWN = False
 NECK_ESCAPE = 1.5
+# W2 PWRJ F2ENV probe 4: scripted pad-entry stems instead of the router neckdown (probe 2, run 43345481031, neckdown:
+# 340 DRC errors / 106 unconnected). Each SMD pad of a power-class net whose smaller side is below the class width gets a
+# locked stem of the pad's smaller side (at most the class width) from its centre to a landing point where a track of
+# the full class width fits (clear of every other net by CLEAR + MARGIN, of the edge by EDGE + MARGIN); the router then
+# joins the landing at the class width. A pad that scripted copper of its net already touches gets none.
+PAD_STEMS = True
+STEM_LENGTHS = (0.4, 0.8, 1.2, 1.6, 2.0, 2.5, 3.0, 3.6)
 
 
 def r4(v):
@@ -518,6 +525,95 @@ def router_neck_exemptions(inp, netclasses):
                            'reason': 'router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller '
                                      'than its power class width: ' + ', '.join(sorted(set(hits)))}
     return out
+
+
+def pad_stems(inp, pre, netclasses):
+    """Scripted pad-entry stems (PAD_STEMS): (tracks, neck_exempt rows, pads without a stem)."""
+    width = {n: netclasses['classes'][c['class']]['outer_min_width_mm'] for n, c in netclasses['nets'].items()
+             if netclasses['classes'].get(c['class'], {}).get('kind') == 'power'}
+    segs, pours = scripted_items(pre)
+    pads = [(pa.ref, q) for pa in inp.parts.values() for q in pa.pads]
+    need = CLEAR + MARGIN - EPS
+    out, exempt, failed = [], {}, []
+
+    def clear_of(net, layer, a, b, r):
+        for _ref, q in pads:
+            if q['net'] == net or layer not in q['layers']:
+                continue
+            bx = q['box']
+            if min(a[0], b[0]) - r - 1 > bx[2] or max(a[0], b[0]) + r + 1 < bx[0] or \
+                    min(a[1], b[1]) - r - 1 > bx[3] or max(a[1], b[1]) + r + 1 < bx[1]:
+                continue
+            gap = 0.25 + MARGIN if q['type'] == 'np_thru_hole' else need
+            if seg_box_dist(a, b, bx) - r < gap:
+                return False
+        for sg in segs:
+            if sg['net'] == net or sg['layer'] not in (layer, '*'):
+                continue
+            if seg_seg_dist(sg['a'], sg['b'], a, b) - sg['r'] - r < need:
+                return False
+        for z in pours:
+            if z['net'] != net and z['layer'] == layer and seg_box_dist(a, b, z['box']) - r < need:
+                return False
+        for t in out:
+            if t['net'] != net and t['layer'][0] == layer:
+                for c, d in zip(t['path'], t['path'][1:]):
+                    if seg_seg_dist(tuple(c), tuple(d), a, b) - t['width_mm'] / 2 - r < need:
+                        return False
+        for q in (a, b):
+            if not bg.point_in_outline(q, inp.outline) or edge_dist(q, inp.outline) - r < EDGE + MARGIN:
+                return False
+        return True
+
+    def covered(net, layer, q):
+        if any(z['net'] == net and z['layer'] == layer and bg.point_in_outline(q['at'], z['outline']) for z in pours):
+            return True
+        return any(sg['net'] == net and sg['layer'] in (layer, '*') and seg_box_dist(sg['a'], sg['b'], q['box']) <= 0
+                   for sg in segs)
+    for pa in sorted(inp.parts.values(), key=lambda x: bg.sort_ref(x.ref)):
+        rows = []
+        cx0 = (pa.box[0] + pa.box[2]) / 2
+        cy0 = (pa.box[1] + pa.box[3]) / 2
+        for q in pa.pads:
+            W = width.get(q['net'])
+            if W is None or q['type'] != 'smd' or not q['number']:
+                continue
+            pw, ph = q['box'][2] - q['box'][0], q['box'][3] - q['box'][1]
+            if min(pw, ph) + 1e-9 >= W:
+                continue
+            layer = pa.side
+            if covered(q['net'], layer, q):
+                continue
+            w = r4(max(0.25, min(pw, ph, W)))
+            cx, cy = q['at']
+            dirs = sorted(GND_DIRS[:4], key=lambda d: -((cx - cx0) * d[0] + (cy - cy0) * d[1]))
+            done = None
+            for L in STEM_LENGTHS:
+                for dx, dy in dirs:
+                    reach = abs(dx) * pw / 2 + abs(dy) * ph / 2
+                    end = (r4(cx + dx * (reach + L)), r4(cy + dy * (reach + L)))
+                    if not clear_of(q['net'], layer, (cx, cy), end, w / 2):
+                        continue
+                    if not clear_of(q['net'], layer, end, end, W / 2):
+                        continue
+                    done = (end, reach + L)
+                    break
+                if done:
+                    break
+            if not done:
+                failed.append(f'{pa.ref}.{q["number"]} {q["net"]}')
+                continue
+            end, length = done
+            out.append({'id': f'STEM-{pa.ref}-{q["number"]}', 'net': q['net'], 'layer': f'{layer}.Cu', 'width_mm': w,
+                        'path': [[r4(cx), r4(cy)], [end[0], end[1]]], 'locked': True,
+                        'why': f'pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad {min(pw, ph):.2f} mm < class '
+                               f'width {W} mm; the router joins the landing at {list(end)} at the class width'})
+            rows.append((length + W / 2, f'{q["number"]} {q["net"]}'))
+        if rows:
+            exempt[pa.ref] = {'escape_mm': r4(math.ceil((max(r[0] for r in rows) + 0.05) / 0.05) * 0.05),
+                              'reason': 'scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py '
+                                        'PAD_STEMS): ' + ', '.join(r[1] for r in rows)}
+    return out, exempt, failed
 
 
 def scripted_joined(inp, pre):
@@ -967,6 +1063,10 @@ def build():
     problems = check_placement(inp)
     pre, copper_notes = board_copper(spec['pre_route'], inp)
     problems += scripted_joined(inp, pre)
+    stems, stem_exempt, stem_failed = ([], {}, [])
+    if PAD_STEMS:
+        stems, stem_exempt, stem_failed = pad_stems(inp, pre, inp.netclasses)
+        pre = {**pre, 'tracks': pre['tracks'] + stems}
     gt, gv, skipped = gnd_fanout(inp, pre, first=fixed_refs(study))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])
@@ -1000,6 +1100,18 @@ def build():
                  if z['net'] == 'GND' and z['id'].startswith('GND-BOND') else z for z in v]
         out[k] = v
     out['neck_exempt'] = stem_exemptions(inp, out['pre_route']['tracks'], inp.netclasses)
+    for ref, row in stem_exempt.items():
+        if ref in out['neck_exempt']:
+            old = out['neck_exempt'][ref]
+            out['neck_exempt'][ref] = {'escape_mm': max(old['escape_mm'], row['escape_mm']),
+                                       'reason': old['reason'] + '; ' + row['reason']}
+        else:
+            out['neck_exempt'][ref] = row
+    if PAD_STEMS:
+        out['neck_exempt'] = dict(sorted(out['neck_exempt'].items(), key=lambda kv: bg.sort_ref(kv[0])))
+        out['pad_stems'] = {'stems': len(stems), 'pads_without_stem': stem_failed,
+                            'rule': 'make_board.py pad_stems (W2 PWRJ F2ENV probe): a locked stem from each small power-class '
+                                    'pad to a landing that takes the class width'}
     if ROUTER_NECKDOWN:
         out['router']['automatic_neckdown'] = True
         out['router']['why'] += ('; automatic_neckdown true (W2 PWRJ F2ENV probe 2): power-class tracks may narrow into pads '

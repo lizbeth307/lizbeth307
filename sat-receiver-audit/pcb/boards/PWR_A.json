@@ -6108,6 +6108,1716 @@
         "why": "joint of the scripted pours GND-U107-R and GND-C120, which meet edge to edge (make_board.py board_copper)"
       },
       {
+        "id": "STEM-C103-1",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            32.525,
+            -20.1
+          ],
+          [
+            31.55,
+            -20.1
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 3.2 mm; the router joins the landing at [31.55, -20.1] at the class width"
+      },
+      {
+        "id": "STEM-C108-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            36.95,
+            -5.8
+          ],
+          [
+            37.85,
+            -5.8
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.00 mm < class width 3.2 mm; the router joins the landing at [37.85, -5.8] at the class width"
+      },
+      {
+        "id": "STEM-C112-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            5.85,
+            93.425
+          ],
+          [
+            5.85,
+            92.45
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [5.85, 92.45] at the class width"
+      },
+      {
+        "id": "STEM-C116-1",
+        "net": "E1_USB_PD_RAW",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            83.65,
+            -17.3
+          ],
+          [
+            83.65,
+            -16.175
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.00 mm < class width 1.85 mm; the router joins the landing at [83.65, -16.175] at the class width"
+      },
+      {
+        "id": "STEM-C117-1",
+        "net": "E1_USB_PD_SAFE",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            77.85,
+            -17.3
+          ],
+          [
+            77.85,
+            -18.2
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.00 mm < class width 1.85 mm; the router joins the landing at [77.85, -18.2] at the class width"
+      },
+      {
+        "id": "STEM-C129-1",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.9,
+        "path": [
+          [
+            24.475,
+            101.75
+          ],
+          [
+            25.325,
+            101.75
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.90 mm < class width 3.2 mm; the router joins the landing at [25.325, 101.75] at the class width"
+      },
+      {
+        "id": "STEM-C136-2",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.9,
+        "path": [
+          [
+            33.025,
+            28.7
+          ],
+          [
+            33.025,
+            26.625
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.90 mm < class width 3.2 mm; the router joins the landing at [33.025, 26.625] at the class width"
+      },
+      {
+        "id": "STEM-C202-1",
+        "net": "E2_J21_FUSED",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            33.65,
+            71.65
+          ],
+          [
+            33.65,
+            67.55
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.00 mm < class width 3.2 mm; the router joins the landing at [33.65, 67.55] at the class width"
+      },
+      {
+        "id": "STEM-C203-1",
+        "net": "E2_J21_EF",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            22.4,
+            39.8
+          ],
+          [
+            23.3,
+            39.8
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.00 mm < class width 1.85 mm; the router joins the landing at [23.3, 39.8] at the class width"
+      },
+      {
+        "id": "STEM-C204-1",
+        "net": "E2_J21_EF",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            29.9,
+            73.975
+          ],
+          [
+            31.65,
+            73.975
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [31.65, 73.975] at the class width"
+      },
+      {
+        "id": "STEM-C205-1",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            11.35,
+            28.975
+          ],
+          [
+            13.1,
+            28.975
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [13.1, 28.975] at the class width"
+      },
+      {
+        "id": "STEM-C208-1",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            28.075,
+            102.45
+          ],
+          [
+            27.1,
+            102.45
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 3.2 mm; the router joins the landing at [27.1, 102.45] at the class width"
+      },
+      {
+        "id": "STEM-C212-1",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            8.55,
+            101.8
+          ],
+          [
+            8.55,
+            99.875
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.00 mm < class width 3.2 mm; the router joins the landing at [8.55, 99.875] at the class width"
+      },
+      {
+        "id": "STEM-C223-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            105.325,
+            27.55
+          ],
+          [
+            106.3,
+            27.55
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [106.3, 27.55] at the class width"
+      },
+      {
+        "id": "STEM-C224-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            49.8,
+            10.275
+          ],
+          [
+            49.8,
+            11.25
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [49.8, 11.25] at the class width"
+      },
+      {
+        "id": "STEM-C225-1",
+        "net": "E2_LNA_IN_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            53.05,
+            23.1
+          ],
+          [
+            51.15,
+            23.1
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.60 mm < class width 1.85 mm; the router joins the landing at [51.15, 23.1] at the class width"
+      },
+      {
+        "id": "STEM-C226-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            52.275,
+            4.0
+          ],
+          [
+            53.25,
+            4.0
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [53.25, 4.0] at the class width"
+      },
+      {
+        "id": "STEM-C228-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            49.625,
+            0.4
+          ],
+          [
+            48.65,
+            0.4
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [48.65, 0.4] at the class width"
+      },
+      {
+        "id": "STEM-C252-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            77.25,
+            -0.275
+          ],
+          [
+            77.25,
+            -1.25
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 3.2 mm; the router joins the landing at [77.25, -1.25] at the class width"
+      },
+      {
+        "id": "STEM-C253-1",
+        "net": "E2_LNB_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            13.425,
+            21.75
+          ],
+          [
+            13.425,
+            23.5
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 3.2 mm; the router joins the landing at [13.425, 23.5] at the class width"
+      },
+      {
+        "id": "STEM-C264-1",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            82.65,
+            0.875
+          ],
+          [
+            82.65,
+            1.85
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 3.2 mm; the router joins the landing at [82.65, 1.85] at the class width"
+      },
+      {
+        "id": "STEM-C266-1",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            87.05,
+            -3.225
+          ],
+          [
+            87.05,
+            -2.25
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 3.2 mm; the router joins the landing at [87.05, -2.25] at the class width"
+      },
+      {
+        "id": "STEM-C288-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.9,
+        "path": [
+          [
+            35.35,
+            17.475
+          ],
+          [
+            35.35,
+            15.425
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.90 mm < class width 3.2 mm; the router joins the landing at [35.35, 15.425] at the class width"
+      },
+      {
+        "id": "STEM-C289-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            40.525,
+            1.1
+          ],
+          [
+            41.5,
+            1.1
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [41.5, 1.1] at the class width"
+      },
+      {
+        "id": "STEM-C291-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            47.175,
+            1.15
+          ],
+          [
+            48.15,
+            1.15
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.15 mm < class width 1.85 mm; the router joins the landing at [48.15, 1.15] at the class width"
+      },
+      {
+        "id": "STEM-C508-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 0.9,
+        "path": [
+          [
+            10.675,
+            92.25
+          ],
+          [
+            11.525,
+            92.25
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.90 mm < class width 1.85 mm; the router joins the landing at [11.525, 92.25] at the class width"
+      },
+      {
+        "id": "STEM-C509-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            38.9,
+            88.5
+          ],
+          [
+            38.9,
+            89.4
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.00 mm < class width 1.85 mm; the router joins the landing at [38.9, 89.4] at the class width"
+      },
+      {
+        "id": "STEM-D104-K",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 2.3,
+        "path": [
+          [
+            25.65,
+            29.65
+          ],
+          [
+            27.3,
+            29.65
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 2.30 mm < class width 3.2 mm; the router joins the landing at [27.3, 29.65] at the class width"
+      },
+      {
+        "id": "STEM-D105-K",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 2.3,
+        "path": [
+          [
+            57.3,
+            -17.25
+          ],
+          [
+            57.3,
+            -15.7
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 2.30 mm < class width 3.2 mm; the router joins the landing at [57.3, -15.7] at the class width"
+      },
+      {
+        "id": "STEM-F103-1",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 1.96,
+        "path": [
+          [
+            28.345,
+            106.4
+          ],
+          [
+            26.965,
+            106.4
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.96 mm < class width 3.2 mm; the router joins the landing at [26.965, 106.4] at the class width"
+      },
+      {
+        "id": "STEM-F104-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            2.25,
+            97.1125
+          ],
+          [
+            2.25,
+            96.15
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 1.85 mm; the router joins the landing at [2.25, 96.15] at the class width"
+      },
+      {
+        "id": "STEM-F201-1",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 1.96,
+        "path": [
+          [
+            30.43,
+            62.445
+          ],
+          [
+            30.43,
+            61.065
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.96 mm < class width 3.2 mm; the router joins the landing at [30.43, 61.065] at the class width"
+      },
+      {
+        "id": "STEM-F201-2",
+        "net": "E2_J21_FUSED",
+        "layer": "F.Cu",
+        "width_mm": 1.96,
+        "path": [
+          [
+            30.43,
+            67.355
+          ],
+          [
+            32.405,
+            67.355
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.96 mm < class width 3.2 mm; the router joins the landing at [32.405, 67.355] at the class width"
+      },
+      {
+        "id": "STEM-J208-13",
+        "net": "VBUS_HFP",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            89.55,
+            20.35
+          ],
+          [
+            89.55,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.35 mm; the router joins the landing at [89.55, 21.5] at the class width"
+      },
+      {
+        "id": "STEM-J208-17",
+        "net": "LAB5_RLY",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            90.55,
+            20.35
+          ],
+          [
+            90.55,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.35 mm; the router joins the landing at [90.55, 21.5] at the class width"
+      },
+      {
+        "id": "STEM-J208-21",
+        "net": "LAB5_RLY",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            91.55,
+            20.35
+          ],
+          [
+            91.55,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.35 mm; the router joins the landing at [91.55, 21.5] at the class width"
+      },
+      {
+        "id": "STEM-J208-29",
+        "net": "LNB13V2",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            93.55,
+            20.35
+          ],
+          [
+            93.55,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.35 mm; the router joins the landing at [93.55, 21.5] at the class width"
+      },
+      {
+        "id": "STEM-J208-33",
+        "net": "AUX12",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            94.55,
+            20.35
+          ],
+          [
+            94.55,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.35 mm; the router joins the landing at [94.55, 21.5] at the class width"
+      },
+      {
+        "id": "STEM-J208-37",
+        "net": "BONI13V8_PORT",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            95.55,
+            20.35
+          ],
+          [
+            95.55,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.35 mm; the router joins the landing at [95.55, 21.5] at the class width"
+      },
+      {
+        "id": "STEM-J208-99",
+        "net": "E2_LNA4_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            111.05,
+            20.35
+          ],
+          [
+            111.05,
+            21.5
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.35 mm; the router joins the landing at [111.05, 21.5] at the class width"
+      },
+      {
+        "id": "STEM-J208-100",
+        "net": "E2_LNA4_SHUNT",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            111.05,
+            16.65
+          ],
+          [
+            111.6,
+            16.65
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.35 mm; the router joins the landing at [111.6, 16.65] at the class width"
+      },
+      {
+        "id": "STEM-L101-1",
+        "net": "E1_LAB5_FUSED",
+        "layer": "F.Cu",
+        "width_mm": 1.43,
+        "path": [
+          [
+            4.0,
+            85.98
+          ],
+          [
+            4.0,
+            84.865
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.43 mm < class width 1.85 mm; the router joins the landing at [4.0, 84.865] at the class width"
+      },
+      {
+        "id": "STEM-L101-2",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.43,
+        "path": [
+          [
+            4.0,
+            90.02
+          ],
+          [
+            4.0,
+            91.135
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.43 mm < class width 1.85 mm; the router joins the landing at [4.0, 91.135] at the class width"
+      },
+      {
+        "id": "STEM-L201-1",
+        "net": "E2_J21_EF",
+        "layer": "F.Cu",
+        "width_mm": 1.18,
+        "path": [
+          [
+            5.805,
+            50.9
+          ],
+          [
+            6.795,
+            50.9
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.18 mm < class width 1.85 mm; the router joins the landing at [6.795, 50.9] at the class width"
+      },
+      {
+        "id": "STEM-L201-2",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.18,
+        "path": [
+          [
+            2.495,
+            50.9
+          ],
+          [
+            1.505,
+            50.9
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.18 mm < class width 1.85 mm; the router joins the landing at [1.505, 50.9] at the class width"
+      },
+      {
+        "id": "STEM-L202-1",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            33.15,
+            91.425
+          ],
+          [
+            33.15,
+            90.4
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.25 mm < class width 3.2 mm; the router joins the landing at [33.15, 90.4] at the class width"
+      },
+      {
+        "id": "STEM-L202-2",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            33.15,
+            93.575
+          ],
+          [
+            33.15,
+            94.6
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.25 mm < class width 3.2 mm; the router joins the landing at [33.15, 94.6] at the class width"
+      },
+      {
+        "id": "STEM-L205-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.18,
+        "path": [
+          [
+            39.91,
+            25.065
+          ],
+          [
+            39.91,
+            26.055
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.18 mm < class width 1.85 mm; the router joins the landing at [39.91, 26.055] at the class width"
+      },
+      {
+        "id": "STEM-L205-2",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.18,
+        "path": [
+          [
+            39.91,
+            21.755
+          ],
+          [
+            39.91,
+            20.765
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.18 mm < class width 1.85 mm; the router joins the landing at [39.91, 20.765] at the class width"
+      },
+      {
+        "id": "STEM-L211-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            14.925,
+            6.3
+          ],
+          [
+            15.95,
+            6.3
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.25 mm < class width 3.2 mm; the router joins the landing at [15.95, 6.3] at the class width"
+      },
+      {
+        "id": "STEM-L211-2",
+        "net": "E2_LNB_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            12.775,
+            6.3
+          ],
+          [
+            11.75,
+            6.3
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.25 mm < class width 3.2 mm; the router joins the landing at [11.75, 6.3] at the class width"
+      },
+      {
+        "id": "STEM-L213-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            78.3,
+            -4.775
+          ],
+          [
+            78.3,
+            -3.75
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.25 mm < class width 3.2 mm; the router joins the landing at [78.3, -3.75] at the class width"
+      },
+      {
+        "id": "STEM-L213-2",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            78.3,
+            -6.925
+          ],
+          [
+            78.3,
+            -7.95
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.25 mm < class width 3.2 mm; the router joins the landing at [78.3, -7.95] at the class width"
+      },
+      {
+        "id": "STEM-Q102-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.42,
+        "path": [
+          [
+            25.525,
+            37.1
+          ],
+          [
+            25.525,
+            35.95
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.42 mm < class width 3.2 mm; the router joins the landing at [25.525, 35.95] at the class width"
+      },
+      {
+        "id": "STEM-Q102-2",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.42,
+        "path": [
+          [
+            26.175,
+            37.1
+          ],
+          [
+            26.175,
+            35.15
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.42 mm < class width 3.2 mm; the router joins the landing at [26.175, 35.15] at the class width"
+      },
+      {
+        "id": "STEM-Q102-3",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.42,
+        "path": [
+          [
+            26.825,
+            37.1
+          ],
+          [
+            26.825,
+            34.75
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.42 mm < class width 3.2 mm; the router joins the landing at [26.825, 34.75] at the class width"
+      },
+      {
+        "id": "STEM-Q201-2",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            31.4675,
+            57.55
+          ],
+          [
+            31.4675,
+            58.65
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.60 mm < class width 3.2 mm; the router joins the landing at [31.4675, 58.65] at the class width"
+      },
+      {
+        "id": "STEM-R110-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.225,
+        "path": [
+          [
+            37.93,
+            76.5925
+          ],
+          [
+            40.005,
+            76.5925
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.23 mm < class width 1.85 mm; the router joins the landing at [40.005, 76.5925] at the class width"
+      },
+      {
+        "id": "STEM-R113-1",
+        "net": "E1_USB_PD_RAW",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            68.225,
+            -17.3
+          ],
+          [
+            68.225,
+            -16.425
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.80 mm < class width 1.85 mm; the router joins the landing at [68.225, -16.425] at the class width"
+      },
+      {
+        "id": "STEM-R114-1",
+        "net": "E1_USB_PD_RAW",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            68.125,
+            -21.2
+          ],
+          [
+            67.325,
+            -21.2
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.80 mm < class width 1.85 mm; the router joins the landing at [67.325, -21.2] at the class width"
+      },
+      {
+        "id": "STEM-R124-1",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            16.65,
+            94.775
+          ],
+          [
+            14.575,
+            94.775
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.80 mm < class width 3.2 mm; the router joins the landing at [14.575, 94.775] at the class width"
+      },
+      {
+        "id": "STEM-R204-1",
+        "net": "E2_J21_FUSED",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            30.725,
+            69.75
+          ],
+          [
+            30.725,
+            67.675
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.80 mm < class width 3.2 mm; the router joins the landing at [30.725, 67.675] at the class width"
+      },
+      {
+        "id": "STEM-R207-1",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            34.6375,
+            43.85
+          ],
+          [
+            34.6375,
+            45.125
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 1.85 mm; the router joins the landing at [34.6375, 45.125] at the class width"
+      },
+      {
+        "id": "STEM-R207-2",
+        "net": "J21_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            37.5625,
+            43.85
+          ],
+          [
+            37.5625,
+            42.575
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 1.85 mm; the router joins the landing at [37.5625, 42.575] at the class width"
+      },
+      {
+        "id": "STEM-R208-1",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            6.6375,
+            64.45
+          ],
+          [
+            5.675,
+            64.45
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 3.2 mm; the router joins the landing at [5.675, 64.45] at the class width"
+      },
+      {
+        "id": "STEM-R210-1",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            12.575,
+            101.75
+          ],
+          [
+            12.575,
+            99.675
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.80 mm < class width 3.2 mm; the router joins the landing at [12.575, 99.675] at the class width"
+      },
+      {
+        "id": "STEM-R224-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            51.2375,
+            18.6
+          ],
+          [
+            50.275,
+            18.6
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 1.85 mm; the router joins the landing at [50.275, 18.6] at the class width"
+      },
+      {
+        "id": "STEM-R224-2",
+        "net": "E2_LNA_IN_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            54.1625,
+            18.6
+          ],
+          [
+            55.125,
+            18.6
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 1.85 mm; the router joins the landing at [55.125, 18.6] at the class width"
+      },
+      {
+        "id": "STEM-R252-2",
+        "net": "E2_LNB_IN_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            23.9125,
+            21.9
+          ],
+          [
+            24.875,
+            21.9
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 3.2 mm; the router joins the landing at [24.875, 21.9] at the class width"
+      },
+      {
+        "id": "STEM-R260-1",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            91.1,
+            -17.2375
+          ],
+          [
+            91.1,
+            -16.275
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 3.2 mm; the router joins the landing at [91.1, -16.275] at the class width"
+      },
+      {
+        "id": "STEM-R260-2",
+        "net": "E2_BONI_IN_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.125,
+        "path": [
+          [
+            91.1,
+            -20.1625
+          ],
+          [
+            91.1,
+            -21.125
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.12 mm < class width 3.2 mm; the router joins the landing at [91.1, -21.125] at the class width"
+      },
+      {
+        "id": "STEM-TP104-1",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 1.5,
+        "path": [
+          [
+            22.75,
+            54.15
+          ],
+          [
+            22.75,
+            53.0
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.50 mm < class width 3.2 mm; the router joins the landing at [22.75, 53.0] at the class width"
+      },
+      {
+        "id": "STEM-TP201-1",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.5,
+        "path": [
+          [
+            40.75,
+            15.27
+          ],
+          [
+            41.9,
+            15.27
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 1.50 mm < class width 1.85 mm; the router joins the landing at [41.9, 15.27] at the class width"
+      },
+      {
+        "id": "STEM-U103-1",
+        "net": "E1_N",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            53.7625,
+            -9.8
+          ],
+          [
+            53.7625,
+            -8.3
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.60 mm < class width 3.2 mm; the router joins the landing at [53.7625, -8.3] at the class width"
+      },
+      {
+        "id": "STEM-U108-8",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            12.0,
+            77.85
+          ],
+          [
+            12.0,
+            76.4
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.50 mm < class width 3.2 mm; the router joins the landing at [12.0, 76.4] at the class width"
+      },
+      {
+        "id": "STEM-U108-9",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "width_mm": 0.5,
+        "path": [
+          [
+            16.0,
+            77.85
+          ],
+          [
+            16.0,
+            76.4
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.50 mm < class width 3.2 mm; the router joins the landing at [16.0, 76.4] at the class width"
+      },
+      {
+        "id": "STEM-U109-5",
+        "net": "E1_USB_PD_RAW",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            70.9,
+            -17.45
+          ],
+          [
+            68.5,
+            -17.45
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 1.85 mm; the router joins the landing at [68.5, -17.45] at the class width"
+      },
+      {
+        "id": "STEM-U111-3",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            31.5875,
+            35.25
+          ],
+          [
+            31.5875,
+            36.75
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.60 mm < class width 3.2 mm; the router joins the landing at [31.5875, 36.75] at the class width"
+      },
+      {
+        "id": "STEM-U111-6",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            29.3125,
+            33.35
+          ],
+          [
+            29.3125,
+            31.85
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.60 mm < class width 3.2 mm; the router joins the landing at [29.3125, 31.85] at the class width"
+      },
+      {
+        "id": "STEM-U202-5",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            16.55,
+            98.85
+          ],
+          [
+            19.75,
+            98.85
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 3.2 mm; the router joins the landing at [19.75, 98.85] at the class width"
+      },
+      {
+        "id": "STEM-U202-6",
+        "net": "DISP12",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            16.55,
+            99.35
+          ],
+          [
+            14.55,
+            99.35
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.30 mm < class width 0.8 mm; the router joins the landing at [14.55, 99.35] at the class width"
+      },
+      {
+        "id": "STEM-U204-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            21.495
+          ],
+          [
+            42.855,
+            21.495
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [42.855, 21.495] at the class width"
+      },
+      {
+        "id": "STEM-U204-2",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            20.845
+          ],
+          [
+            42.855,
+            20.845
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [42.855, 20.845] at the class width"
+      },
+      {
+        "id": "STEM-U204-3",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            20.195
+          ],
+          [
+            42.855,
+            20.195
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [42.855, 20.195] at the class width"
+      },
+      {
+        "id": "STEM-U204-4",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            19.545
+          ],
+          [
+            43.98,
+            20.545
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [43.98, 20.545] at the class width"
+      },
+      {
+        "id": "STEM-U204-7",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            48.28,
+            18.245
+          ],
+          [
+            48.28,
+            17.245
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [48.28, 17.245] at the class width"
+      },
+      {
+        "id": "STEM-U205-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            15.495
+          ],
+          [
+            43.98,
+            16.095
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [43.98, 16.095] at the class width"
+      },
+      {
+        "id": "STEM-U205-2",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            14.845
+          ],
+          [
+            43.98,
+            15.445
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [43.98, 15.445] at the class width"
+      },
+      {
+        "id": "STEM-U205-3",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            14.195
+          ],
+          [
+            43.98,
+            14.795
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [43.98, 14.795] at the class width"
+      },
+      {
+        "id": "STEM-U205-4",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            13.545
+          ],
+          [
+            43.98,
+            14.545
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [43.98, 14.545] at the class width"
+      },
+      {
+        "id": "STEM-U205-7",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            48.28,
+            12.245
+          ],
+          [
+            50.205,
+            12.245
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.40 mm < class width 1.85 mm; the router joins the landing at [50.205, 12.245] at the class width"
+      },
+      {
+        "id": "STEM-U211-16",
+        "net": "E2_LNB_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.31,
+        "path": [
+          [
+            13.85,
+            18.875
+          ],
+          [
+            13.85,
+            21.25
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.31 mm < class width 3.2 mm; the router joins the landing at [13.85, 21.25] at the class width"
+      },
+      {
+        "id": "STEM-U503-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            60.5125,
+            25.05
+          ],
+          [
+            60.5125,
+            25.75
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.60 mm < class width 1.85 mm; the router joins the landing at [60.5125, 25.75] at the class width"
+      },
+      {
+        "id": "STEM-U553-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            36.3,
+            28.0625
+          ],
+          [
+            35.6,
+            28.0625
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.60 mm < class width 1.85 mm; the router joins the landing at [35.6, 28.0625] at the class width"
+      },
+      {
+        "id": "STEM-U553-3",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            38.2,
+            28.0625
+          ],
+          [
+            38.9,
+            28.0625
+          ]
+        ],
+        "locked": true,
+        "why": "pad-entry stem (W2 PWRJ F2ENV, make_board.py PAD_STEMS): pad 0.60 mm < class width 1.85 mm; the router joins the landing at [38.9, 28.0625] at the class width"
+      },
+      {
         "id": "GND-C107-2-S",
         "net": "GND",
         "layer": "F.Cu",
@@ -6497,7 +8207,7 @@
           ],
           [
             89.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -6533,7 +8243,7 @@
           ],
           [
             90.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -6569,7 +8279,7 @@
           ],
           [
             91.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -6587,7 +8297,7 @@
           ],
           [
             92.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -6605,7 +8315,7 @@
           ],
           [
             93.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -6623,7 +8333,7 @@
           ],
           [
             94.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -6641,7 +8351,7 @@
           ],
           [
             95.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -6659,7 +8369,7 @@
           ],
           [
             96.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -6677,7 +8387,7 @@
           ],
           [
             96.55,
-            19.05
+            21.65
           ]
         ],
         "locked": true,
@@ -6695,7 +8405,7 @@
           ],
           [
             110.55,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -10680,7 +12390,7 @@
         "net": "GND",
         "at": [
           89.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10704,7 +12414,7 @@
         "net": "GND",
         "at": [
           90.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10728,7 +12438,7 @@
         "net": "GND",
         "at": [
           91.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10740,7 +12450,7 @@
         "net": "GND",
         "at": [
           92.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10752,7 +12462,7 @@
         "net": "GND",
         "at": [
           93.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10764,7 +12474,7 @@
         "net": "GND",
         "at": [
           94.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10776,7 +12486,7 @@
         "net": "GND",
         "at": [
           95.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10788,7 +12498,7 @@
         "net": "GND",
         "at": [
           96.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10800,7 +12510,7 @@
         "net": "GND",
         "at": [
           96.55,
-          19.05
+          21.65
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10812,7 +12522,7 @@
         "net": "GND",
         "at": [
           110.55,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -13227,8 +14937,7 @@
     "ignore_net_classes": [
       "SCRIPTED_GND"
     ],
-    "why": "fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm stubs (PWR_A probe run 42413833702); GND (class SCRIPTED_GND) is not autorouted: every SMD GND pad has a scripted plane via (make_board.py gnd_fanout; placement probe 7, run 43148929963, left 140 GND connections open); the budget fits the 45 min board job of sr-rx-pcb with DRC and audits after it; automatic_neckdown true (W2 PWRJ F2ENV probe 2): power-class tracks may narrow into pads smaller than the class width (make_board.py router_neck_exemptions)",
-    "automatic_neckdown": true
+    "why": "fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm stubs (PWR_A probe run 42413833702); GND (class SCRIPTED_GND) is not autorouted: every SMD GND pad has a scripted plane via (make_board.py gnd_fanout; placement probe 7, run 43148929963, left 140 GND connections open); the budget fits the 45 min board job of sr-rx-pcb with DRC and audits after it"
   },
   "drc_policy": {
     "warning_checks": {
@@ -13841,425 +15550,308 @@
   "tht_pockets_note": "proposed plate relief pockets (M-07) = THT pads and NPTH pegs of each placed top part + 1.0 mm (mechanical/params/boards.json tht_pockets margin), rounded outward to 0.05 mm; margin boxes less than 3 mm apart share one pocket (make_probe_spec.py RIB)",
   "neck_exempt": {
     "C103": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_N"
+      "escape_mm": 2.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_N"
     },
     "C108": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW"
-    },
-    "C110": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW"
-    },
-    "C111": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_LAB5_FUSED"
+      "escape_mm": 2.55,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_SW"
     },
     "C112": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5"
-    },
-    "C113": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_LAB5_DAMP"
+      "escape_mm": 1.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5"
     },
     "C116": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_USB_PD_RAW"
+      "escape_mm": 2.15,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_USB_PD_RAW"
     },
     "C117": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_USB_PD_SAFE"
-    },
-    "C123": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12"
-    },
-    "C124": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12"
-    },
-    "C125": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12"
-    },
-    "C126": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12"
-    },
-    "C127": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 2 E1_SYS12_SW"
+      "escape_mm": 1.9,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_USB_PD_SAFE"
     },
     "C129": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12"
-    },
-    "C133": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_LAB5_RAW"
+      "escape_mm": 2.55,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 SYS12"
     },
     "C134": {
-      "escape_mm": 1.5,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-BAR-J-LAB5RAW-VOUT1 (E1_LAB5_RAW, 1.3 mm, pad 1); router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_LAB5_RAW"
+      "escape_mm": 1.05,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-BAR-J-LAB5RAW-VOUT1 (E1_LAB5_RAW, 1.3 mm, pad 1)"
     },
     "C135": {
-      "escape_mm": 1.5,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-BAR-J-LAB5RAW-VOUT2 (E1_LAB5_RAW, 1.3 mm, pad 1); router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_LAB5_RAW"
+      "escape_mm": 1.0,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-BAR-J-LAB5RAW-VOUT2 (E1_LAB5_RAW, 1.3 mm, pad 1)"
     },
     "C136": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 2 E1_SW"
+      "escape_mm": 3.75,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 2 E1_SW"
     },
     "C202": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_J21_FUSED"
+      "escape_mm": 5.75,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_J21_FUSED"
     },
     "C203": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_J21_EF"
+      "escape_mm": 1.9,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_J21_EF"
     },
     "C204": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_J21_EF"
+      "escape_mm": 2.75,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_J21_EF"
     },
     "C205": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 J21"
-    },
-    "C206": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 J21_DAMP"
-    },
-    "C207": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 J21"
+      "escape_mm": 2.75,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 J21"
     },
     "C208": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12"
-    },
-    "C209": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_DISP_IN"
-    },
-    "C210": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_DISP_IN_DAMP"
+      "escape_mm": 2.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 SYS12"
     },
     "C212": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_DISP_IN"
+      "escape_mm": 3.6,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_DISP_IN"
     },
     "C223": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5"
+      "escape_mm": 1.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5"
     },
     "C224": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN"
+      "escape_mm": 2.0,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN"
     },
     "C225": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN_DAMP"
+      "escape_mm": 2.9,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN_DAMP"
     },
     "C226": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN"
+      "escape_mm": 1.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN"
     },
     "C228": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN"
+      "escape_mm": 1.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN"
     },
     "C252": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW"
+      "escape_mm": 2.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_SW"
     },
     "C253": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNB_IN"
-    },
-    "C254": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNB_IN_DAMP"
-    },
-    "C255": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNB_IN"
-    },
-    "C263": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW"
+      "escape_mm": 3.45,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNB_IN"
     },
     "C264": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_BONI_IN"
-    },
-    "C265": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_BONI_IN_DAMP"
+      "escape_mm": 2.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_BONI_IN"
     },
     "C266": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_BONI_IN"
+      "escape_mm": 2.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_BONI_IN"
     },
     "C288": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW"
+      "escape_mm": 3.75,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_SW"
     },
     "C289": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN"
+      "escape_mm": 1.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN"
     },
     "C291": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN"
+      "escape_mm": 1.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN"
     },
     "C508": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5"
+      "escape_mm": 1.85,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5"
     },
     "C509": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5"
-    },
-    "C552": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5"
+      "escape_mm": 1.9,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5"
     },
     "D104": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: K E1_N"
+      "escape_mm": 3.3,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): K E1_N"
     },
     "D105": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: K E1_SW"
-    },
-    "F102": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_LAB5_RAW"
+      "escape_mm": 3.2,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): K E1_SW"
     },
     "F103": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_N"
+      "escape_mm": 3.05,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_N"
     },
     "F104": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5"
+      "escape_mm": 1.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5"
     },
     "F201": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12, 2 E2_J21_FUSED"
-    },
-    "J104": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 3 LAB5, 4 LAB5"
-    },
-    "J105": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 2 E1_SHUNT_P"
-    },
-    "J106": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_N, 2 E1_SHUNT_P"
-    },
-    "J107": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_N, 2 E1_SW"
-    },
-    "J108": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 2 E1_N"
-    },
-    "J114": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 2 E1_USB_PD_RAW"
-    },
-    "J115": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 2 E1_SERVICE_P"
-    },
-    "J206": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 2 LAB5, 4 J21"
+      "escape_mm": 3.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 SYS12, 2 E2_J21_FUSED"
     },
     "J208": {
       "escape_mm": 1.55,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5-J208-2 (LAB5, 0.3 mm, pad 2), LAB5-J208-6 (LAB5, 0.3 mm, pad 6), LAB5-J208-10 (LAB5, 0.3 mm, pad 10), LAB5-J208-14 (LAB5, 0.3 mm, pad 14), LAB5-J208-BAR-J-LAB5-J208-14 (LAB5, 0.3 mm, pad 10); router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 10 LAB5, 100 E2_LNA4_SHUNT, 13 VBUS_HFP, 14 LAB5, 17 LAB5_RLY, 2 LAB5, 21 LAB5_RLY, 29 LNB13V2, 33 AUX12, 37 BONI13V8_PORT, 6 LAB5, 99 E2_LNA4_SW"
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5-J208-2 (LAB5, 0.3 mm, pad 2), LAB5-J208-6 (LAB5, 0.3 mm, pad 6), LAB5-J208-10 (LAB5, 0.3 mm, pad 10), LAB5-J208-14 (LAB5, 0.3 mm, pad 14), LAB5-J208-BAR-J-LAB5-J208-14 (LAB5, 0.3 mm, pad 10); scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 13 VBUS_HFP, 17 LAB5_RLY, 21 LAB5_RLY, 29 LNB13V2, 33 AUX12, 37 BONI13V8_PORT, 99 E2_LNA4_SW, 100 E2_LNA4_SHUNT"
     },
     "L101": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_LAB5_FUSED, 2 LAB5"
+      "escape_mm": 2.1,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_LAB5_FUSED, 2 LAB5"
     },
     "L102": {
       "escape_mm": 0.85,
       "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12SW-PIN-J-SYS12SW-L102 (E1_SYS12_SW, 0.7 mm, pad 1)"
     },
     "L201": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_J21_EF, 2 J21"
+      "escape_mm": 2.0,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_J21_EF, 2 J21"
     },
     "L202": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12, 2 E2_DISP_IN"
+      "escape_mm": 2.7,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 SYS12, 2 E2_DISP_IN"
     },
     "L205": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5, 2 E2_LNA_IN"
+      "escape_mm": 2.0,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5, 2 E2_LNA_IN"
     },
     "L211": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW, 2 E2_LNB_IN"
+      "escape_mm": 2.7,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_SW, 2 E2_LNB_IN"
     },
     "L213": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW, 2 E2_BONI_IN"
+      "escape_mm": 2.7,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_SW, 2 E2_BONI_IN"
     },
     "Q102": {
-      "escape_mm": 2.45,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): E1SW-Q102 (E1_SW, 1.45 mm, pad 2), E1SW-BAR-J-E1SW-Q102 (E1_SW, 1.45 mm, pad 2); router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW, 2 E1_SW, 3 E1_SW"
+      "escape_mm": 4.05,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): E1SW-Q102 (E1_SW, 1.45 mm, pad 2), E1SW-BAR-J-E1SW-Q102 (E1_SW, 1.45 mm, pad 2); scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_SW, 2 E1_SW, 3 E1_SW"
     },
     "Q201": {
-      "escape_mm": 1.5,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12-Q201 (SYS12, 1.4 mm, pad 2); router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 2 SYS12"
-    },
-    "R103": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_N"
+      "escape_mm": 2.8,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12-Q201 (SYS12, 1.4 mm, pad 2); scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 2 SYS12"
     },
     "R110": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5, 2 E1_LAB5_DAMP"
-    },
-    "R111": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW"
+      "escape_mm": 3.05,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5"
     },
     "R113": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_USB_PD_RAW"
+      "escape_mm": 1.9,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_USB_PD_RAW"
     },
     "R114": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_USB_PD_RAW"
+      "escape_mm": 1.8,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_USB_PD_RAW"
     },
     "R124": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12"
-    },
-    "R129": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_LAB5_RAW"
-    },
-    "R201": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_J21_FUSED"
+      "escape_mm": 3.75,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 SYS12"
     },
     "R204": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_J21_FUSED"
+      "escape_mm": 3.75,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_J21_FUSED"
     },
     "R207": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 J21, 2 J21_DAMP"
+      "escape_mm": 2.25,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 J21, 2 J21_DAMP"
     },
     "R208": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_DISP_IN, 2 E2_DISP_IN_DAMP"
+      "escape_mm": 2.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_DISP_IN"
     },
     "R210": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_DISP_IN"
-    },
-    "R221": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12"
+      "escape_mm": 3.75,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_DISP_IN"
     },
     "R224": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN, 2 E2_LNA_IN_DAMP"
+      "escape_mm": 1.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN, 2 E2_LNA_IN_DAMP"
     },
     "R252": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNB_IN, 2 E2_LNB_IN_DAMP"
+      "escape_mm": 2.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 2 E2_LNB_IN_DAMP"
     },
     "R260": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_BONI_IN, 2 E2_BONI_IN_DAMP"
+      "escape_mm": 2.65,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_BONI_IN, 2 E2_BONI_IN_DAMP"
     },
     "TP104": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_N"
-    },
-    "TP105": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_SW"
+      "escape_mm": 2.8,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_N"
     },
     "TP201": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 J21"
+      "escape_mm": 2.15,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 J21"
     },
     "U103": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E1_N"
+      "escape_mm": 3.15,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E1_N"
     },
     "U107": {
-      "escape_mm": 1.5,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12SW-PIN (E1_SYS12_SW, 0.7 mm, pad 10); router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 SYS12, 10 E1_SYS12_SW"
+      "escape_mm": 0.3,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12SW-PIN (E1_SYS12_SW, 0.7 mm, pad 10)"
     },
     "U108": {
-      "escape_mm": 1.5,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-VOUT1 (E1_LAB5_RAW, 1.3 mm, pad 8), LAB5RAW-VOUT2 (E1_LAB5_RAW, 1.3 mm, pad 9); router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 5 E1_LAB5_RAW, 8 E1_LAB5_RAW, 9 E1_LAB5_RAW"
+      "escape_mm": 3.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-VOUT1 (E1_LAB5_RAW, 1.3 mm, pad 8), LAB5RAW-VOUT2 (E1_LAB5_RAW, 1.3 mm, pad 9); scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 8 E1_LAB5_RAW, 9 E1_LAB5_RAW"
     },
     "U109": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 5 E1_USB_PD_RAW, 6 E1_USB_PD_SAFE"
+      "escape_mm": 3.4,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 5 E1_USB_PD_RAW"
     },
     "U111": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 3 E1_SW, 6 E1_SW"
-    },
-    "U201": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 5 E2_J21_FUSED, 6 E2_J21_EF"
+      "escape_mm": 3.2,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 3 E1_SW, 6 E1_SW"
     },
     "U202": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 5 E2_DISP_IN, 6 DISP12"
-    },
-    "U203": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 5 VCC_3V3_MKEY, 6 E2_LIME_EF"
+      "escape_mm": 4.85,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 5 E2_DISP_IN, 6 DISP12"
     },
     "U204": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN, 2 E2_LNA_IN, 3 E2_LNA_IN, 4 E2_LNA_IN, 7 E2_LNA_IN"
+      "escape_mm": 2.15,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN, 2 E2_LNA_IN, 3 E2_LNA_IN, 4 E2_LNA_IN, 7 E2_LNA_IN"
     },
     "U205": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 E2_LNA_IN, 2 E2_LNA_IN, 3 E2_LNA_IN, 4 E2_LNA_IN, 7 E2_LNA_IN"
+      "escape_mm": 2.95,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 E2_LNA_IN, 2 E2_LNA_IN, 3 E2_LNA_IN, 4 E2_LNA_IN, 7 E2_LNA_IN"
     },
     "U211": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 15 E2_LNB_IN, 16 E2_LNB_IN"
-    },
-    "U213": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 15 E2_BONI_IN, 16 E2_BONI_IN"
-    },
-    "U220": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 5 E1_SW"
+      "escape_mm": 4.05,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 16 E2_LNB_IN"
     },
     "U503": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5"
+      "escape_mm": 1.7,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5"
     },
     "U553": {
-      "escape_mm": 1.5,
-      "reason": "router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller than its power class width: 1 LAB5, 3 LAB5"
+      "escape_mm": 1.7,
+      "reason": "scripted pad-entry stem(s) narrower than the power class (W2 PWRJ F2ENV, make_board.py PAD_STEMS): 1 LAB5, 3 LAB5"
     }
+  },
+  "pad_stems": {
+    "stems": 95,
+    "pads_without_stem": [
+      "C110.1 E1_SW",
+      "C127.2 E1_SYS12_SW",
+      "C209.1 E2_DISP_IN",
+      "C255.1 E2_LNB_IN",
+      "C263.1 E1_SW",
+      "C552.1 LAB5",
+      "R103.1 E1_N",
+      "R111.1 E1_SW",
+      "R129.1 E1_LAB5_RAW",
+      "R201.1 E2_J21_FUSED",
+      "R208.2 E2_DISP_IN_DAMP",
+      "R221.1 SYS12",
+      "R252.1 E2_LNB_IN",
+      "TP105.1 E1_SW",
+      "U107.1 SYS12",
+      "U108.5 E1_LAB5_RAW",
+      "U109.6 E1_USB_PD_SAFE",
+      "U201.5 E2_J21_FUSED",
+      "U201.6 E2_J21_EF",
+      "U203.5 VCC_3V3_MKEY",
+      "U203.6 E2_LIME_EF",
+      "U211.15 E2_LNB_IN",
+      "U213.15 E2_BONI_IN",
+      "U213.16 E2_BONI_IN",
+      "U220.5 E1_SW"
+    ],
+    "rule": "make_board.py pad_stems (W2 PWRJ F2ENV probe): a locked stem from each small power-class pad to a landing that takes the class width"
   },
   "edge_keepout": {
     "width_mm": 0.2,
