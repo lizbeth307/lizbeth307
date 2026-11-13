@@ -65,6 +65,11 @@ B2B_REF, B2B_MATE_BOARD, B2B_MATE_REF = 'J209', 'PWR_A', 'J208'
 CLEAR = 0.15          # project clearance (netclasses.json project_defaults)
 MARGIN = 0.05         # design margin of the scripted copper over the clearance
 EDGE = 0.3            # project copper-to-edge clearance
+CRT_GUARD = 0.05      # courtyard boxes here are centre lines; KiCad's include half the 0.05 mm line (review F12 of W2 PCB-PWRB-2, W2 PWRB-R place)
+STACKUP_6L = BASE / 'pcb/generated/stackup-6l.json'
+# W2 PWRJ-LAYERS6: finished outer copper 2 oz, inner 0.5 oz (pcb/generated/stackup-6l.json copper_options; jlcpcb.com read
+# 2026-11-13): the power classes route at their 2 oz outer widths (PWR1A 0.2, PWR2A 0.4, PWR3A 0.95 mm, MODEL)
+COPPER_OPTION = 'outer_2oz'
 VIA_D, VIA_DRILL = 0.7, 0.3   # 0.7 / 0.3: router vias at clearance 0.15 keep the 0.5 mm hole-to-hole rule (0.55)
 
 
@@ -212,13 +217,24 @@ def cutouts_digest(placed):
     return hashlib.sha256(json.dumps(rows, sort_keys=True, separators=(',', ':')).encode('utf-8')).hexdigest()
 
 
+def with_copper_option(nc):
+    """netclasses.json with the power-class widths of COPPER_OPTION (pcb/generated/stackup-6l.json, W2 PWRJ-LAYERS6), as
+    pcb/check_boards.py board_netclasses applies them to this board."""
+    opt = read(STACKUP_6L)['copper_options'][COPPER_OPTION]
+    out = {**nc, 'classes': {k: dict(v) for k, v in nc['classes'].items()}}
+    for name, w in opt['power_classes'].items():
+        out['classes'][name].update({k: w[k] for k in ('outer_min_width_mm', 'outer_ipc_width_mm', 'split_outer_per_layer_mm',
+                                                       'inner_min_width_mm')})
+    return out
+
+
 class Inputs:
     def __init__(self):
         self.graph = bg.load_graph()
         self.manifest = {f['footprint']: f for f in read(MANIFEST)['footprints']}
         self.partition = read(PARTITION)
         self.b2b = read(B2B_NETS)
-        self.netclasses = read(NETCLASSES)
+        self.netclasses = with_copper_option(read(NETCLASSES))
         self.pspec = read(PARTITION_SPEC)
         contract = read(CONTRACT)
         self.contract = contract['boards'][BOARD]
@@ -292,28 +308,28 @@ class Inputs:
 #    arm-to-bar routes (route run 43258433850, with C298 moved there, left arm-to-bar connections open). The remaining
 #    parts were packed next to the pads of their nets, 0.2 mm apart.
 PLACEMENT = {
-    'C232': (2.1, 59.2, 0), 'C233': (10.7, 54.5, 270), 'C234': (51.737, 33.918, 0), 'C235': (18, 49.5, 0),
-    'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (37.467, 34.284, 90), 'C239': (30, 14, 90),
-    'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 0),
-    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (111.03, 21.325, 180),
+    'C232': (2.1, 60.8, 0), 'C233': (10.7, 56.1, 270), 'C234': (15.805, 53.55, 180), 'C235': (18, 49.5, 0),
+    'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (40.776, 8.8, 0), 'C239': (30, 14, 90),
+    'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 180),
+    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (110.98, 21.325, 180),
     'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.03, 19.65, 270), 'C251': (36, 12, 90),
-    'C274': (16.312, 60.638, 0), 'C275': (37.425, 37.725, 90), 'C276': (18.488, 72.388, 0), 'C277': (36.97, 46.405, 90),
+    'C274': (19.675, 54.5, 270), 'C275': (22.55, 61.925, 180), 'C276': (22.825, 50.9, 270), 'C277': (36.97, 46.405, 90),
     'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
     'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
     'C297': (112.18, 15.097, 90), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
     'C503': (38.5, 20.5, 0), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (37.5, 73, 0),
-    'C507': (36.46, 76.867, 0), 'C521': (31, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
+    'C507': (36.46, 76.867, 0), 'C521': (30.95, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
     'C551': (38.651, 50.429, 90), 'C2901': (55.363, 33.73, 0), 'C2902': (40.167, 77.567, 0), 'C2911': (20.334, 42.046, 0),
-    'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (2.95, 49.8, 0),
-    'J202': (9.7, 9.7, 90), 'J203': (15.7, 39.95, 0), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
-    'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.15, 55.4, 90), 'L206': (15.1, 56.2, 0), 'L207': (57.15, 13.2, 0),
+    'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (7.75, 45.8, 270),
+    'J202': (18.08, 27.75, 270), 'J203': (33.7, 31.55, 180), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
+    'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.2, 55.4, 90), 'L206': (15.1, 57.8, 0), 'L207': (57.15, 13.2, 0),
     'L208': (23.1, 80.7, 0), 'L209': (108, 15.2, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
-    'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.119, 0), 'R228': (7.4, 54.6, 270),
-    'R229': (2.1, 52.9, 0), 'R231': (9.3, 57.6, 0), 'R232': (39.368, 40.813, 0), 'R233': (49.45, 11.6, 270),
-    'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (31.066, 28.988, 0), 'R238': (15.4, 79.1, 270),
-    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (22.251, 85.185, 0), 'R243': (100.3, 14.8, 270),
+    'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.069, 0), 'R228': (7.4, 56.2, 270),
+    'R229': (2.1, 54.5, 0), 'R231': (9.3, 59.2, 0), 'R232': (11.588, 49.5, 0), 'R233': (49.45, 11.6, 270),
+    'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (29.288, 8.8, 0), 'R238': (15.4, 79.1, 270),
+    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (21.662, 85.5, 180), 'R243': (100.3, 14.8, 270),
     'R244': (76.281, 16.475, 0), 'R246': (102.2, 17.8, 0), 'R247': (117.33, 20.35, 180), 'R248': (77.5, 19.5, 90),
-    'R249': (83.5, 18.9, 90), 'R251': (59.385, 19.013, 90), 'R268': (8, 60.3, 90), 'R269': (10.6, 60.3, 90),
+    'R249': (83.5, 18.9, 90), 'R251': (59.385, 19.013, 90), 'R268': (8, 61.9, 90), 'R269': (10.6, 61.9, 90),
     'R270': (50.05, 17.3, 90), 'R271': (52.65, 17.3, 90), 'R272': (16, 84.8, 90), 'R273': (18.6, 84.8, 90),
     'R280': (85.517, 20.651, 90), 'R281': (53.817, 23.411, 90), 'R283': (51.5, 25.856, 90), 'R284': (20.217, 22.522, 90),
     'R286': (42.217, 34.038, 0), 'R287': (44.996, 26.692, 0), 'R293': (69.5, 19.5, 90), 'R294': (75.5, 18.9, 90),
@@ -321,12 +337,12 @@ PLACEMENT = {
     'R505': (61.5, 19.5, 90), 'R506': (67.5, 18.9, 90), 'R508': (32.581, 75.617, 90), 'R550': (33.859, 42.821, 90),
     'R551': (35.826, 42.961, 90), 'R2901': (17.112, 44.38, 90), 'R2902': (1.931, 96.061, 90), 'R2911': (30.635, 43.025, 0),
     'R2912': (2.025, 100.365, 90), 'R2921': (48.167, 27.094, 0), 'R2922': (17.073, 98.016, 90),
-    'TP206': (51.499, 31.293, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
+    'TP206': (12.755, 53.05, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
     'TP209': (116.3, 22.8, 0), 'TP210': (118.85, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
-    'TP2902': (40.679, 80.317, 0), 'U206': (4.1, 56, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
+    'TP2902': (40.679, 80.317, 0), 'U206': (4.1, 57.6, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
     'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
     'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90), 'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90),
-    'U502': (64.5, 20, 90), 'U507': (4.5, 38.5, 0),
+    'U502': (64.5, 20, 90), 'U507': (4.5, 51, 0),
 }
 PLUG_ZONES = ('J204', 'J207')   # top-span headers: no part between the mating face and the board edge
 # Kelvin cell of each LNA channel (W2 PCB-PWRB lineage): TPS2553 switch, Kelvin shunt, XAL5030, input / shunt capacitors and,
@@ -464,8 +480,8 @@ def check_placement(inp, parts):
         if not all(point_in_poly(q, outline) for q in corners):
             problems.append(f'{a}: courtyard {pa.box} leaves the outline')
         for cut in cuts:
-            if pa.side == 'F' and bg.rects_overlap(pa.box, cut):
-                problems.append(f'{a}: courtyard over the cutout {cut}')
+            if pa.side == 'F' and bg.rects_overlap(pa.box, cut, CRT_GUARD):
+                problems.append(f'{a}: courtyard within {CRT_GUARD} mm of the cutout {cut}')
         for name in PLUG_ZONES:
             hb = parts[name].box
             if a not in PLUG_ZONES and pa.side == 'F' and bg.rects_overlap(pa.box, (hb[0], hb[3], hb[2], c['outline_mm'][2][1])):
@@ -1151,10 +1167,11 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
         'domains': list(c['domains']),
         'partition': 'pcb/generated/partition.json',
         'layers': {
-            'copper': 6, 'thickness_mm': 1.6,
-            'source': ('W2 PWRB-R layers6 study: 6 layers JLC06161H-2116 1.6 mm, the stackup of the 6-layer CTRL (W2 CTRL-R / '
-                       'CTRL-4; pcb/generated/stackup-6l.json from pcb/stackup.py, jlcpcb.com/impedance read 2026-11-12): outer '
-                       '1 oz, inner 0.5 oz. The contract stackup (mechanical/generated/contract/boards.json: t 1.6, layers 4) '
+            'copper': 6, 'thickness_mm': 1.6, 'copper_option': COPPER_OPTION,
+            'source': ('W2 PWRB-R layers6 study and W2 PWRJ-LAYERS6: 6 layers JLC06161H-2116 1.6 mm, the stackup of the 6-layer CTRL '
+                       '(W2 CTRL-R / CTRL-4; pcb/generated/stackup-6l.json from pcb/stackup.py, jlcpcb.com/impedance read 2026-11-12), '
+                       'ordered with finished outer copper 2 oz and inner 0.5 oz (copper_option outer_2oz, jlcpcb.com read '
+                       '2026-11-13): the power classes take their 2 oz outer widths (PWR1A 0.2 mm). The contract stackup (mechanical/generated/contract/boards.json: t 1.6, layers 4) '
                        'keeps the 1.6 mm the mechanics use; its layer count is the 4-layer default of the other boards'),
             'types': {'In1.Cu': 'power', 'In4.Cu': 'power'},
             'types_why': ('S-G-S-S-P-S as the 6-layer CTRL: In1.Cu (L2) a solid GND plane 0.2234 mm under F.Cu, so the LAB5 '
@@ -1369,7 +1386,11 @@ def project_json(inp, pins):
 # width 0.35 mm (IPC-2221 external 1 oz about 1.1 A at +10 degC per track, MODEL): a wider track does not leave a 0.30 mm
 # J209 pad between its GND neighbours at 0.50 mm pitch (route run 42415437982 on the FX8 placeholder: 0.8 mm could not
 # reach its contacts either).
-BOARD_CLASSES = {'LNA4V5': 'PWR1A'}
+BOARD_CLASSES = {'LNA4V5': 'PWR1A',
+                 # W2 PWRJ-LAYERS6 (PWRB-R layers6 finding): the LNA bias rails ch2/ch3 and their damper links are SIG by default
+                 # (netclasses.json unclassified_supply_candidates) and drifted onto the 0.5 oz inner layers (damper copper 158 and
+                 # 96 mOhm, MODEL); as BIAS_CH2_PORT / BIAS_CH3_PORT they take PWR1A, so they stay on the 2 oz outer copper
+                 **{n: 'PWR1A' for n in ('BIAS_CH2', 'BIAS_CH3', 'BIAS_CH2_DAMP', 'BIAS_CH3_DAMP')}}
 # Nets whose copper is all scripted and locked: widths of their netclasses.json class, not autorouted (router -inc).
 SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
                     **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')},
@@ -1378,8 +1399,9 @@ SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
 # Routing layers of the 6-layer plan (W2 PWRB-R): In1.Cu (GND) and In4.Cu (3V3_Q6A) are planes of type power.
 ROUTING = ['F.Cu', 'In2.Cu', 'In3.Cu', 'B.Cu']
 COPPER = ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']
-# Power classes route on the outer 1 oz copper only (pcb/board_gen.py router.class_layers, as CTRL): the 0.5 oz inner layers
-# would need 1.8 mm for PWR1A (netclasses.json inner_min_width_mm) and do not count for PWR3A.
+# Power classes route on the outer copper only (pcb/board_gen.py router.class_layers, as CTRL): the 0.5 oz inner layers
+# would need 1.8 mm for PWR1A (netclasses.json inner_min_width_mm) and do not count for PWR3A. W2 PWRJ-LAYERS6: the outer
+# copper is 2 oz (COPPER_OPTION), so PWR1A routes at 0.2 mm there.
 CLASS_LAYERS = {'PWR1A': ['F.Cu', 'B.Cu']}
 # W2 PWRB-R probe 2 (diagnostic only): without class_layers Freerouting may put PWR1A on In2.Cu/In3.Cu at the outer width
 # 0.35 mm, which the 0.5 oz inner rule (1.8 mm) forbids; the run measures how much of probe 1's 59 open connections the

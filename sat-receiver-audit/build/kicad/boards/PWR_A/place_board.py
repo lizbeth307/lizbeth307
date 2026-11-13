@@ -337,7 +337,9 @@ def place():
         spots.sort()
         for _d, _x, _y, rot, at in spots[:400]:
             b = m.box(ref, at, rot)
-            hit = [o for o in grids[side].near(b) if o != ref and overlap(b, m.box(o), GAP)]
+            # sorted: near() is a set, and the eviction order below breaks area ties by this order (W2 PWRJ-LAYERS6: with
+            # str hash randomisation the set order made two runs differ)
+            hit = sorted((o for o in grids[side].near(b) if o != ref and overlap(b, m.box(o), GAP)), key=bg.sort_ref)
             if any(m.fixed[o] for o in hit):
                 continue
             saved = {o: (m.at[o], m.rot[o]) for o in hit}

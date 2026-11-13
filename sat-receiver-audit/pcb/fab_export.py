@@ -775,11 +775,21 @@ def stackup_record(inputs):
     if copper == 6:  # W2 CTRL-4 / W2 PWRB-R: a 6-layer board (pcb/generated/stackup-6l.json); 2- and 4-layer boards unchanged
         doc = read_json(STACKUP_6L)
         st, caps = doc['stackup'], doc['capabilities']
-        return {'id': st['id'], 'copper_layers': 6, 'thickness_mm': st['board_thickness_mm'], 'source': st['source'],
-                'read': st['read'], 'layers': st['layers'], 'note': st.get('note', ''),
-                'via': 'pcb/generated/stackup-6l.json (pcb/stackup.py)',
-                'fab_note': (f'6 layers: {caps["via_in_pad"]} ({caps["source"]}, read {caps["read"]}); order without '
-                             'impedance control (no RF50 net on this board).')}
+        rec = {'id': st['id'], 'copper_layers': 6, 'thickness_mm': st['board_thickness_mm'], 'source': st['source'],
+               'read': st['read'], 'layers': st['layers'], 'note': st.get('note', ''),
+               'via': 'pcb/generated/stackup-6l.json (pcb/stackup.py)',
+               'fab_note': (f'6 layers: {caps["via_in_pad"]} ({caps["source"]}, read {caps["read"]}); order without '
+                            'impedance control (no RF50 net on this board).')}
+        option = spec['layers'].get('copper_option')
+        if option:  # W2 PWRJ-LAYERS6: a copper option of stackup-6l.json (outer_2oz: 2 oz outer / 0.5 oz inner finished copper)
+            opt = doc['copper_options'][option]
+            rec['layers'] = [{**layer, 'copper_mm': opt['outer_copper_mm']} if layer.get('kicad') in ('F.Cu', 'B.Cu') else layer
+                             for layer in st['layers']]
+            rec['note'] = (f'{st.get("note", "")} Copper option {option}: finished outer copper {opt["outer_copper_mm"]} mm (2 oz), '
+                           f'inner {opt["inner_copper_mm"]} mm (0.5 oz), read {opt["read"]}; {opt["thickness_note"]}; '
+                           f'price {opt["price"]}.')
+            rec['fab_note'] += f' Order finished outer copper 2 oz and inner 0.5 oz ({option}).'
+        return rec
     return {**STACKUP_2L, 'copper_layers': copper, 'thickness_mm': spec['layers'].get('thickness_mm')}
 
 

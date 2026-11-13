@@ -68,6 +68,7 @@ BOARDS_DIR = ROOT / 'pcb/boards'
 OUT_DIR = ROOT / 'build/kicad/boards'
 CONTRACT = ROOT / 'mechanical/generated/contract/boards.json'
 NETCLASSES = ROOT / 'pcb/generated/netclasses.json'
+STACKUP_6L = ROOT / 'pcb/generated/stackup-6l.json'  # W2 PWRJ-LAYERS6: copper_options of 6-layer boards
 COMPONENTS = ROOT / 'pcb/generated/components.csv'
 GRAPHS = [ROOT / f'design/E{i}.json' for i in range(1, 6)]
 STATUS = 'MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN'
@@ -683,7 +684,7 @@ class Frame:
 NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
                'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
                'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
-               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'keepout_rects')
+               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'keepout_rects', 'copper_option')
 DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
              'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'keepout_rects')
 LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides', 'coupons')
@@ -763,6 +764,8 @@ def normalize_spec(raw):
         project = raw.get('project')
         if 'board_file' not in spec and isinstance(project, str) and project.endswith('.kicad_pro'):
             spec['board_file'] = project[:-len('.kicad_pro')] + '.kicad_pcb'
+        if isinstance(raw.get('layers'), dict) and raw['layers'].get('copper_option'):  # W2 PWRJ-LAYERS6 (6-layer copper option)
+            spec.setdefault('copper_option', str(raw['layers']['copper_option']))
         if 'instances' in raw:
             spec['instances'] = v1_instances(raw, raw['instances'])
         parts = raw.get('parts', [])
@@ -2096,8 +2099,28 @@ def contract_path(spec):
     return ROOT / spec['contract_file'] if spec.get('contract_file') else CONTRACT
 
 
+def board_netclasses(netclasses, spec):
+    """The net classes a board is checked against (W2 PWRJ-LAYERS6): a spec whose layers name a copper_option of
+    pcb/generated/stackup-6l.json (e.g. outer_2oz: 2 oz outer / 0.5 oz inner copper) takes that option's power-class
+    widths; every other board keeps pcb/generated/netclasses.json unchanged."""
+    option = spec.get('copper_option')
+    if not option:
+        return netclasses
+    doc = read_json(STACKUP_6L)
+    opt = (doc.get('copper_options') or {}).get(option)
+    if opt is None or spec.get('board_id') not in opt.get('boards', []):
+        raise SystemExit(f'check_boards: {spec.get("board_id")}: copper_option {option!r} is not in {STACKUP_6L.name} for this board')
+    out = {**netclasses, 'classes': {k: dict(v) for k, v in netclasses.get('classes', {}).items()}}
+    for name, widths in opt['power_classes'].items():
+        out['classes'][name].update({k: widths[k] for k in ('outer_min_width_mm', 'outer_ipc_width_mm',
+                                                           'split_outer_per_layer_mm', 'inner_min_width_mm')})
+        out['classes'][name]['basis'] = widths['basis'] + f' (copper_option {option}, {STACKUP_6L.name})'
+    return out
+
+
 def review_board(board, spec, contract, graph, netclasses, mates=None, components_csv=None, board_rel=None):
     spec = normalize_spec(spec)
+    netclasses = board_netclasses(netclasses, spec)
     bid = spec['board_id']
     cb = contract['boards'].get(spec.get('contract_board', bid))
     if cb is None:

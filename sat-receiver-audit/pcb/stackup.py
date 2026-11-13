@@ -66,7 +66,7 @@ OUTER_CU, INNER_CU, PREPREG_H, PREPREG_ER = 0.035, 0.0152, 0.2104, 4.4
 # rule files (every other board) do not change.
 READ_6L = '2026-11-12'
 STACKUP_6L = {
-    'id': 'JLC06161H-2116', 'board_thickness_mm': 1.6, 'source': URL_STACKUP, 'read': READ_6L, 'boards': ['PWR_B'],
+    'id': 'JLC06161H-2116', 'board_thickness_mm': 1.6, 'source': URL_STACKUP, 'read': READ_6L, 'boards': ['PWR_A', 'PWR_B'],
     'layers': [
         {'kicad': 'F.Cu', 'plan': 'L1', 'copper_mm': 0.035},
         {'dielectric': 'prepreg 2116x1 + 2313x1', 'thickness_mm': 0.2234, 'er': None,
@@ -108,6 +108,47 @@ CAPS_6L = {  # jlcpcb.com/capabilities/pcb-capabilities, read 2026-11-12: the mu
                    'uses those values'),
 }
 OUT_6L = {'json': ROOT / 'pcb/generated/stackup-6l.json', 'rules': ROOT / 'pcb/rules/jlc-6l-1oz.kicad_dru'}
+
+# --- W2 PWRJ-LAYERS6 (PWR_A and PWR_B on 6 layers): the JLC06161H-2116 dielectric table above with finished OUTER copper
+# 2 oz (0.070 mm) and inner 0.5 oz (0.0152 mm, the default). Read 2026-11-13: jlcpcb.com/impedance (6-layer section, "Outer
+# Copper Weight" 1oz 2oz; "inner Copper Weight" 0.5oz 1oz 2oz; every listed 6-layer table shows 0.035 mm outer foil, so no
+# listed stack id carries 2 oz outer), jlcpcb.com/capabilities/pcb-capabilities ("Finished Outer Layer Copper: Multi-layer:
+# 1 oz / 2 oz"; min track width/spacing 2 oz "Multilayer: 0.15 / 0.15 mm (6 / 6 mil)"), jlcpcb.com/6-layer-pcb (inner
+# "0.5 oz / 1 oz / 2 oz (17.5um / 35um / 70um)", no price for the copper options). The power-class widths are recomputed
+# with the same IPC-2221 rule on 0.070 mm outer copper (MODEL); signal widths and clearances stay the project defaults
+# (0.15 / 0.15 mm), equal to the 2 oz floor, so the 2 oz outer layers keep no margin over that floor (recorded).
+READ_2OZ = '2026-11-13'
+OUTER_CU_2OZ = 0.070
+COPPER_OPTIONS_6L = {
+    'outer_2oz': {
+        'boards': ['PWR_A', 'PWR_B'], 'stackup': 'JLC06161H-2116', 'read': READ_2OZ,
+        'sources': [URL_STACKUP, URL_CAPS, 'https://jlcpcb.com/6-layer-pcb'],
+        'outer_copper_mm': OUTER_CU_2OZ, 'inner_copper_mm': INNER_CU,
+        'quotes': {'impedance_6l': '"Outer Copper Weight" 1oz 2oz; "inner Copper Weight" 0.5oz 1oz 2oz (6-layer section)',
+                   'outer': 'Finished Outer Layer Copper: "Multi-layer: 1 oz / 2 oz"',
+                   'track_2oz': 'Min. track width/spacing, 2 oz: "Multilayer: 0.15 / 0.15 mm (6 / 6 mil)"',
+                   'inner': '"0.5 oz / 1 oz / 2 oz (17.5um / 35um / 70um)" (jlcpcb.com/6-layer-pcb)'},
+        'thickness_note': ('the dielectric table of JLC06161H-2116 with 0.070 mm outer foil sums to 1.6644 mm (computed), inside the '
+                           '1.6 mm +/-10 % order tolerance; the fab sets the finished build (not on the pages read): TBD at order'),
+        'price': 'TBD: the copper options carry no price on the pages read; the JLC quote calculator was not read',
+        'floor_note': ('2 oz multilayer floor 0.15 / 0.15 mm equals the project track 0.15 / clearance 0.15: no margin on the outer '
+                       'layers (the 1 oz floor 0.09 / 0.09 left 0.06)'),
+    },
+}
+
+
+def power_widths_2oz():
+    """Power-class widths on 2 oz outer / 0.5 oz inner copper (same IPC-2221 rule as class_table, MODEL)."""
+    out = {}
+    for name, (cont, prot, why, split, inner) in CLASS_CAPACITY.items():
+        out[name] = {
+            'outer_min_width_mm': up(required_width(cont, prot, OUTER_CU_2OZ)),
+            'outer_ipc_width_mm': round(required_width(cont, prot, OUTER_CU_2OZ), 4),
+            'split_outer_per_layer_mm': up(required_width(cont, prot, OUTER_CU_2OZ, share=SPLIT_SHARE)) if split else None,
+            'inner_min_width_mm': up(required_width(cont, prot, INNER_CU, 'internal')) if inner else None,
+            'basis': ('IPC-2221 external k 0.048 on 2 oz (0.070 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at '
+                      'continuous, +10 degC; at protective, +20 degC)')}
+    return out
 
 # --- JLC rigid PCB capabilities (jlcpcb.com/capabilities/pcb-capabilities, read 2026-11-07). Hard floors.
 # key: (multilayer 1 oz value, 2-layer 1 oz value, quoted row)
@@ -689,6 +730,9 @@ def stackup_6l(doc):
         'power_classes': {name: {'outer_min_width_mm': doc['classes'][name]['outer_min_width_mm'],
                                  'inner_min_width_mm': doc['classes'][name]['inner_min_width_mm']} for name in POWER_CLASSES},
         'rules_file': rel(OUT_6L['rules']),
+        # W2 PWRJ-LAYERS6: a board that names copper_option in its spec layers takes these power-class widths
+        # (pcb/check_boards.py, the board generators' .kicad_pro classes); boards without it keep netclasses.json
+        'copper_options': {k: {**v, 'power_classes': power_widths_2oz()} for k, v in COPPER_OPTIONS_6L.items()},
     }
 
 

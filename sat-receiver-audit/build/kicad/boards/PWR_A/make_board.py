@@ -24,7 +24,11 @@ placement-study-shrink2.json origin, side and rotation, with all the scripted co
   * the checker keys of pcb/check_boards.py: sides top and bottom, heights from pcb/partition-spec.json heights (read
     or class values), height zones (board hA, PWR-B windows at the window ceiling, rule H-TRIM under every PWR-B THT
     pin field of pcb/boards/PWR_B.json h_trim), the THT plate pockets of the probe, the B2B pair J208/J209;
-  * the router budget of a board of record.
+  * the router budget of a board of record;
+  * W2 PWRJ-LAYERS6: the 6-layer plan S-G-S-S-P-S of JLC06161H-2116 (as PWR_B and the 6-layer CTRL) with finished outer
+    copper 2 oz and inner 0.5 oz (pcb/generated/stackup-6l.json copper_options outer_2oz): In1.Cu the solid GND plane,
+    In2.Cu/In3.Cu signal routing, In4.Cu the GND fill with the scripted E1_CONV_IN strap/bridge pours (the In2.Cu role of
+    the 4-layer plan), the power classes on F.Cu/B.Cu only at their 2 oz widths (router.class_layers).
 Every value is a CI/MODEL input: no fabrication release, bench gates stay OPEN.
 """
 from __future__ import annotations
@@ -53,6 +57,14 @@ PSPEC = BASE / 'pcb/partition-spec.json'
 PWR_B_SPEC = BASE / 'pcb/boards/PWR_B.json'
 STUDY = HERE / 'placement-study-shrink2.json'
 CONTRACT = BASE / 'mechanical/generated/contract/boards.json'
+STACKUP_6L = BASE / 'pcb/generated/stackup-6l.json'
+
+# W2 PWRJ-LAYERS6: 6 layers, 2 oz outer / 0.5 oz inner (pcb/generated/stackup-6l.json copper_options; jlcpcb.com read 2026-11-13)
+COPPER_OPTION = 'outer_2oz'
+COPPER6 = ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']
+ROUTING6 = ['F.Cu', 'In2.Cu', 'In3.Cu', 'B.Cu']
+INNER_MAP = {'In2.Cu': 'In4.Cu'}   # the 4-layer L3 (GND fill + E1_CONV_IN strap/bridge) becomes L5 of the 6-layer plan
+CLASS_LAYERS = {c: ['F.Cu', 'B.Cu'] for c in ('BATT', 'PWR1A', 'PWR2A', 'PWR3A')}
 
 CLEAR = 0.15          # project clearance (netclasses.json project_defaults)
 MARGIN = 0.05         # design margin of the scripted copper over the clearance
@@ -156,12 +168,36 @@ def poly_box(outline):
 
 
 # ------------------------------------------------------------------ inputs
+def with_copper_option(nc):
+    """netclasses.json with the power-class widths of COPPER_OPTION (pcb/generated/stackup-6l.json, W2 PWRJ-LAYERS6), as
+    pcb/check_boards.py board_netclasses applies them to this board."""
+    opt = read(STACKUP_6L)['copper_options'][COPPER_OPTION]
+    out = {**nc, 'classes': {k: dict(v) for k, v in nc['classes'].items()}}
+    for name, w in opt['power_classes'].items():
+        out['classes'][name].update({k: w[k] for k in ('outer_min_width_mm', 'outer_ipc_width_mm', 'split_outer_per_layer_mm',
+                                                       'inner_min_width_mm')})
+    return out
+
+
+def six_layer_zones(pre):
+    """The scripted inner zones of the 4-layer SHRINK-2 spec on the 6-layer plan (INNER_MAP): In2.Cu (GND fill and the
+    E1_CONV_IN strap/bridge pours) moves to In4.Cu; In1.Cu stays the solid GND plane."""
+    for z in pre['zones']:
+        if z['layer'] in INNER_MAP:
+            z['layer'] = INNER_MAP[z['layer']]
+            z['why'] = (z.get('why', '') + '; W2 PWRJ-LAYERS6: on In4.Cu (L5, the GND fill / power layer of the 6-layer plan; the '
+                        '4-layer L3 role), so In2.Cu/In3.Cu route signals').lstrip('; ')
+    for t in pre['tracks']:
+        if t['layer'] in INNER_MAP:
+            raise SystemExit(f'make_board: scripted track {t["id"]} on {t["layer"]}: no inner scripted tracks on the 6-layer plan')
+
+
 class Inputs:
     def __init__(self, base_spec):
         self.spec = base_spec
         self.graph = bg.load_graph()
         self.manifest = bg.read_json(bg.MANIFEST)
-        self.netclasses = read(NETCLASSES)
+        self.netclasses = with_copper_option(read(NETCLASSES))
         self.pspec = read(PSPEC)
         self.contract = read(CONTRACT)['boards'][base_spec['contract']['board']]
         self.study = read(STUDY)
@@ -930,10 +966,39 @@ def project_json(inp, nets):
 
 
 # ------------------------------------------------------------------ the spec
+def layers6():
+    """The 6-layer plan of W2 PWRJ-LAYERS6."""
+    return {
+        'copper': 6, 'thickness_mm': 1.6, 'copper_option': COPPER_OPTION,
+        'source': ('W2 PWRJ-LAYERS6: 6 layers JLC06161H-2116 1.6 mm (the stackup of PWR_B and the 6-layer CTRL; '
+                   'pcb/generated/stackup-6l.json from pcb/stackup.py, jlcpcb.com/impedance read 2026-11-12), ordered with '
+                   'finished outer copper 2 oz and inner 0.5 oz (copper_option outer_2oz; jlcpcb.com/impedance, '
+                   'capabilities/pcb-capabilities and 6-layer-pcb read 2026-11-13). The contract stackup '
+                   '(mechanical/generated/contract/boards.json: t 1.6) keeps the 1.6 mm the mechanics use'),
+        'plan': {'F.Cu': 'L1: parts (top), signals; BATT/PWR3A pours (scripted, locked tracks) and power routes at the 2 oz widths',
+                 'In1.Cu': 'L2: solid GND plane (pre-route zone, layer type power): every SMD GND pad joins it by its scripted via',
+                 'In2.Cu': 'L3: signal routes only (no power class: router.class_layers)',
+                 'In3.Cu': 'L4: signal routes only (no power class: router.class_layers)',
+                 'In4.Cu': ('L5: GND fill (pre-route plane, layer type power) with the scripted E1_CONV_IN strap/bridge pours of '
+                            'the LM61460 input at higher priority (the L3 role of the 4-layer plan)'),
+                 'B.Cu': ('L6: bottom chips, signals; BATT/PWR3A pours paired with L1; GND bond copper in the four thermal_bond '
+                          'zones, solder mask on')},
+        'plan_source': 'W2 PWRJ-LAYERS6 (build/kicad/boards/PWR_A/make_board.py layers6); the 4-layer plan was build/15 W2 PCB-RULES',
+        'types': {'In1.Cu': 'power', 'In4.Cu': 'power'},
+        'types_why': ('S-G-S-S-P-S as PWR_B and the 6-layer CTRL: In1.Cu (L2) a solid GND plane 0.2234 mm under F.Cu and In4.Cu '
+                      '(L5) the GND fill 0.2234 mm over B.Cu, both of type power so Freerouting routes no trace on them; In2.Cu '
+                      '(L3) and In3.Cu (L4) are the two routing layers the stackup adds, each 0.3 mm from a plane. The power '
+                      'classes stay on the 2 oz outer copper (0.5 oz inner copper would need 1.8 mm for PWR1A and does not count '
+                      'for PWR3A/BATT, netclasses.json). The 4-layer probes routed power on typed-signal inner layers (sr-rx-pcb '
+                      'runs 42424071774, 42424538187), so class_layers keeps them out of In2/In3'),
+    }
+
+
 def build():
     spec = mps.build_placement()
     for k in ('probe_left_out', 'probe_post_route_zones_left_out'):
         spec.pop(k, None)
+    six_layer_zones(spec['pre_route'])
     study = read(STUDY)
     apply_moves(spec, study)
     inp = Inputs(spec)
@@ -956,9 +1021,23 @@ def build():
                  'H-TRIM) and the router budget of a board of record. CI/MODEL only: no fabrication release, bench gates OPEN.')
         elif k == 'pre_route':
             v = {'tracks': pre['tracks'] + gt, 'vias': pre['vias'] + gv, 'zones': pre['zones']}
+        elif k == 'layers':
+            v = layers6()
+        elif k == 'holes':
+            v = {**v, 'keepout_layers': list(COPPER6)}
+        elif k == 'fab_floor':
+            v = {**v, 'min_track_width': 0.15, 'min_clearance': 0.15,
+                 'source': v['source'] + '; W2 PWRJ-LAYERS6: 2 oz outer copper, so track and spacing take the 2 oz multilayer floor '
+                           '"Multilayer: 0.15 / 0.15 mm" (jlcpcb.com/capabilities/pcb-capabilities read 2026-11-13)'}
+        elif k == 'rules_note':
+            v = ('board_gen refuses rules_file until it copies and hashes it, so the net classes and project rules are mirrored in '
+                 'PWR_A.kicad_pro: classes SIG (Default) 0.15 and the power classes at their 2 oz outer widths of '
+                 'pcb/generated/stackup-6l.json copper_options outer_2oz (PWR1A 0.2, PWR2A 0.4, PWR3A 0.95, BATT 1.6 mm, MODEL), '
+                 'clearance 0.15; router vias 0.7/0.3; min through hole 0.2 because the KiCad LT3045 footprint MSOP-12-1EP '
+                 'ThermalVias drills 0.2 mm (JLC multilayer floor 0.15)')
         elif k == 'router':
             v = {'tool': 'freerouting', 'max_passes': 100, 'threads': 1, 'job_timeout': '00:32:00', 'timeout_s': 2040,
-                 'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())),
+                 'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())), 'class_layers': CLASS_LAYERS,
                  'why': 'fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm '
                         'stubs (PWR_A probe run 42413833702); GND (class SCRIPTED_GND) is not autorouted: every SMD GND pad '
                         'has a scripted plane via (make_board.py gnd_fanout; placement probe 7, run 43148929963, left 140 GND '
@@ -973,7 +1052,7 @@ def build():
                  if z['net'] == 'GND' and z['id'].startswith('GND-BOND') else z for z in v]
         out[k] = v
     out['neck_exempt'] = stem_exemptions(inp, out['pre_route']['tracks'], inp.netclasses)
-    out['edge_keepout'] = {'width_mm': 0.2, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
+    out['edge_keepout'] = {'width_mm': 0.2, 'layers': list(ROUTING6), 'blocks': ['tracks', 'vias'],
                            'why': 'rule-area strips (half-width 0.2) on every outline edge, as PWR_B: the router keeps its '
                                   'copper 0.35 mm off the edge, above the project copper-to-edge 0.3'}
     out['heights'] = heights

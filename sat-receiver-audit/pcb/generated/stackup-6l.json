@@ -8,6 +8,7 @@
     "source": "https://jlcpcb.com/impedance",
     "read": "2026-11-12",
     "boards": [
+      "PWR_A",
       "PWR_B"
     ],
     "layers": [
@@ -138,5 +139,61 @@
       "inner_min_width_mm": null
     }
   },
-  "rules_file": "pcb/rules/jlc-6l-1oz.kicad_dru"
+  "rules_file": "pcb/rules/jlc-6l-1oz.kicad_dru",
+  "copper_options": {
+    "outer_2oz": {
+      "boards": [
+        "PWR_A",
+        "PWR_B"
+      ],
+      "stackup": "JLC06161H-2116",
+      "read": "2026-11-13",
+      "sources": [
+        "https://jlcpcb.com/impedance",
+        "https://jlcpcb.com/capabilities/pcb-capabilities",
+        "https://jlcpcb.com/6-layer-pcb"
+      ],
+      "outer_copper_mm": 0.07,
+      "inner_copper_mm": 0.0152,
+      "quotes": {
+        "impedance_6l": "\"Outer Copper Weight\" 1oz 2oz; \"inner Copper Weight\" 0.5oz 1oz 2oz (6-layer section)",
+        "outer": "Finished Outer Layer Copper: \"Multi-layer: 1 oz / 2 oz\"",
+        "track_2oz": "Min. track width/spacing, 2 oz: \"Multilayer: 0.15 / 0.15 mm (6 / 6 mil)\"",
+        "inner": "\"0.5 oz / 1 oz / 2 oz (17.5um / 35um / 70um)\" (jlcpcb.com/6-layer-pcb)"
+      },
+      "thickness_note": "the dielectric table of JLC06161H-2116 with 0.070 mm outer foil sums to 1.6644 mm (computed), inside the 1.6 mm +/-10 % order tolerance; the fab sets the finished build (not on the pages read): TBD at order",
+      "price": "TBD: the copper options carry no price on the pages read; the JLC quote calculator was not read",
+      "floor_note": "2 oz multilayer floor 0.15 / 0.15 mm equals the project track 0.15 / clearance 0.15: no margin on the outer layers (the 1 oz floor 0.09 / 0.09 left 0.06)",
+      "power_classes": {
+        "PWR1A": {
+          "outer_min_width_mm": 0.2,
+          "outer_ipc_width_mm": 0.1502,
+          "split_outer_per_layer_mm": null,
+          "inner_min_width_mm": 1.8,
+          "basis": "IPC-2221 external k 0.048 on 2 oz (0.070 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
+        },
+        "PWR2A": {
+          "outer_min_width_mm": 0.4,
+          "outer_ipc_width_mm": 0.3907,
+          "split_outer_per_layer_mm": null,
+          "inner_min_width_mm": 4.7,
+          "basis": "IPC-2221 external k 0.048 on 2 oz (0.070 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
+        },
+        "PWR3A": {
+          "outer_min_width_mm": 0.95,
+          "outer_ipc_width_mm": 0.9079,
+          "split_outer_per_layer_mm": 0.55,
+          "inner_min_width_mm": null,
+          "basis": "IPC-2221 external k 0.048 on 2 oz (0.070 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
+        },
+        "BATT": {
+          "outer_min_width_mm": 1.6,
+          "outer_ipc_width_mm": 1.5883,
+          "split_outer_per_layer_mm": 0.95,
+          "inner_min_width_mm": null,
+          "basis": "IPC-2221 external k 0.048 on 2 oz (0.070 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
+        }
+      }
+    }
+  }
 }

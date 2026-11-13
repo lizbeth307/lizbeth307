@@ -9,9 +9,9 @@
     "contract_pwr": "5c748b6bee90af6cfc732b7ae9d802818104c989f563dfc8762e994a152664d9",
     "contract_pwr_b_outline": "5bf4182154d377ec7adc55680813024a57154ac35548db0cd0ac1aab975d2ea0",
     "template_sha256": "2b0f95839dd71549f01dd82b1f5ff0fd395f05081cf310e5ac411b5385d87809",
-    "project_sha256": "09b697007560f920fdd4e800cdc6e57edba35cf4b0580b4516e3f4522dfb9539",
+    "project_sha256": "7ef39ebd9b14550ec2d82b5f8357acd536a72bf898fa71b9eefefddb1c712a58",
     "pwr_b_placeholders": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-    "pwr_b_spec_sha256": "1b3d87da0f894b341f776c2414c97e52701162e0a2626bcf5ab0629257b351d0",
+    "pwr_b_spec_sha256": "c826c3be26ec931dc38a27c5011fb9e2247ddddf2096a6ef351d06bef079a209",
     "pwr_b_connectors_sha256": "149dcf057e4df0f04d8c6dd4eaef352157f94692d5d5dc9268f42b9154d053b2"
   },
   "spec_checks": {
@@ -13473,46 +13473,46 @@
       {
         "ref": "J201",
         "pin_field": [
-          2.35,
-          48.925,
-          11.55,
-          50.675
+          6.875,
+          37.2,
+          8.625,
+          46.4
         ],
         "zone": [
-          1.85,
-          48.425,
-          12.05,
-          51.175
+          6.375,
+          36.7,
+          9.125,
+          46.9
         ]
       },
       {
         "ref": "J202",
         "pin_field": [
-          9.1,
-          9.1,
-          12.3,
-          28.3
+          15.48,
+          9.15,
+          18.68,
+          28.35
         ],
         "zone": [
-          8.6,
-          8.6,
-          12.8,
-          28.8
+          14.98,
+          8.65,
+          19.18,
+          28.85
         ]
       },
       {
         "ref": "J203",
         "pin_field": [
           15.1,
-          37.35,
+          30.95,
           34.3,
-          40.55
+          34.15
         ],
         "zone": [
           14.6,
-          36.85,
+          30.45,
           34.8,
-          41.05
+          34.65
         ]
       },
       {
@@ -13548,22 +13548,22 @@
       {
         "ref": "J506",
         "pin_field": [
-          25.275,
+          25.325,
           54.8,
-          27.025,
+          27.075,
           72.0
         ],
         "zone": [
-          24.775,
+          24.825,
           54.3,
-          27.525,
+          27.575,
           72.5
         ]
       }
     ],
     "parts_under": [
       {
-        "ref": "C108",
+        "ref": "C104",
         "under": [
           "J203"
         ],
@@ -13581,49 +13581,13 @@
         "ok": true
       },
       {
-        "ref": "C127",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "C128",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "C129",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "C136",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "C219",
+        "ref": "C218",
         "under": [
           "J201"
         ],
-        "h_mm": 4.5,
+        "h_mm": 2.7,
         "h_lower_bound": false,
-        "ok": false
+        "ok": true
       },
       {
         "ref": "C223",
@@ -13644,7 +13608,7 @@
         "ok": true
       },
       {
-        "ref": "C255",
+        "ref": "C257",
         "under": [
           "J202"
         ],
@@ -13653,7 +13617,7 @@
         "ok": true
       },
       {
-        "ref": "C256",
+        "ref": "C259",
         "under": [
           "J202"
         ],
@@ -13662,9 +13626,18 @@
         "ok": true
       },
       {
-        "ref": "C260",
+        "ref": "D104",
         "under": [
-          "J202"
+          "J203"
+        ],
+        "h_mm": 2.7,
+        "h_lower_bound": false,
+        "ok": true
+      },
+      {
+        "ref": "D105",
+        "under": [
+          "J203"
         ],
         "h_mm": 2.7,
         "h_lower_bound": false,
@@ -13689,15 +13662,6 @@
         "ok": true
       },
       {
-        "ref": "L102",
-        "under": [
-          "J201"
-        ],
-        "h_mm": null,
-        "h_lower_bound": false,
-        "ok": false
-      },
-      {
         "ref": "L213",
         "under": [
           "J204"
@@ -13714,24 +13678,6 @@
         "h_mm": 1.0,
         "h_lower_bound": false,
         "ok": true
-      },
-      {
-        "ref": "Q101",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "Q102",
-        "under": [
-          "J203"
-        ],
-        "h_mm": null,
-        "h_lower_bound": false,
-        "ok": false
       },
       {
         "ref": "Q2903",
@@ -13752,42 +13698,6 @@
         "ok": true
       },
       {
-        "ref": "R125",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "R126",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "R127",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "U111",
-        "under": [
-          "J203"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
         "ref": "U211",
         "under": [
           "J202"
@@ -13795,14 +13705,19 @@
         "h_mm": 2.7,
         "h_lower_bound": false,
         "ok": true
+      },
+      {
+        "ref": "U214",
+        "under": [
+          "J203"
+        ],
+        "h_mm": 2.7,
+        "h_lower_bound": false,
+        "ok": true
       }
     ],
-    "violations": [
-      "C219",
-      "L102",
-      "Q102"
-    ],
-    "passed": false,
+    "violations": [],
+    "passed": true,
     "pwr_b_fields_over_needed_cutouts": [],
     "cutout_note": "PWR-A parts that need a PWR-B cut-out (pwr_b_cutouts) do not lie under PWR-B and are not H-TRIM parts; a current PWR_B THT pin field over such a cut-out is listed for PCB-PWRB-2, which re-places PWR-B against these cut-outs"
   }

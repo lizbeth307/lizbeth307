@@ -693,6 +693,12 @@ def validate_spec(spec, board):
         raise SpecError(f'{board}: schema must be {SPEC_SCHEMA} and board_id {board}')
     if spec['layers']['copper'] not in (2, 4, 6):  # 6: W2 CTRL-R (CTRL, pcb/generated/stackup-6l.json)
         raise SpecError(f'{board}: copper layers must be 2, 4 or 6')
+    option = spec['layers'].get('copper_option')
+    if option is not None:  # W2 PWRJ-LAYERS6: a copper option of pcb/generated/stackup-6l.json (6-layer boards that list it)
+        options = read_json(BASE / 'pcb/generated/stackup-6l.json').get('copper_options', {})
+        if spec['layers']['copper'] != 6 or option not in options or board not in options[option].get('boards', []):
+            raise SpecError(f'{board}: layers.copper_option {option!r} must be a copper option of pcb/generated/stackup-6l.json '
+                            'that lists this 6-layer board')
     if spec.get('rules_file') is not None:
         raise SpecError(f'{board}: rules_file is set, but copying it into build/kicad/boards/{board}/{board}.kicad_dru '
                         '(and hashing it) is not implemented in board_gen yet; keep it null')
