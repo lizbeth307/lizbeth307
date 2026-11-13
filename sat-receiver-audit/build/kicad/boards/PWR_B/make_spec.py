@@ -19,9 +19,11 @@ What it decides, in one place (the spec records each rule with its source):
     four LNA shunts (current path and sense take-off from the shunt pads), the J209 GND spine (every GND contact
     joins a B.Cu spine between the two contact rows, with plane vias on it) and a plane via next to every other SMD
     GND pad (gnd_fanout);
-  * the 4-layer plan (In1.Cu / In2.Cu GND planes of type power, signals on F.Cu / B.Cu), the project rules and net
-    classes, and the router settings: Freerouting without its fan-out stage, the classes of the scripted nets
-    (SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A) not autorouted, rule-area strips on every board edge.
+  * the 6-layer plan of W2 PWRB-R (S-G-S-S-P-S, JLC06161H-2116 as the 6-layer CTRL: In1.Cu GND and In4.Cu 3V3_Q6A planes
+    of type power with a scripted via per SMD pad, signals on F.Cu / In2.Cu / In3.Cu / B.Cu, power classes on F.Cu /
+    B.Cu only), the project rules and net classes, and the router settings: Freerouting without its fan-out stage, the
+    classes of the scripted nets (SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A) not autorouted, rule-area strips on
+    every board edge and a rule area on every copper layer over each PWR-A cut-out (keepout_rects).
 Why each router setting exists is in the spec (router.why, edge_keepout.why) with the sr-rx-pcb run that showed it.
 It checks courtyard overlaps, outline / cutouts, hole keepouts, drilled holes in courtyards, the GND via of every SMD
 GND pad and the clearance of the scripted copper before CI routes. The routed board, its report and the fab set are
@@ -892,7 +894,37 @@ def scripted_copper(inp, parts, pins):
         raise SystemExit(f'make_spec: only {k} plane vias fit on the J209 GND spine (need {SPINE_VIAS_MIN})')
     pins['scripted_nets']['GND'] = [(B2B_REF, n) for n in gnd]
     gt, gv, _n = gnd_fanout(inp, parts, tracks, vias)
-    return tracks + gt, vias + gv, exempt
+    qt, qv = q6a_plane_copper(inp, parts, tracks + gt, vias + gv, pins)
+    return tracks + gt + qt, vias + gv + qv, exempt
+
+
+# ------------------------------------------------------------------ 3V3_Q6A plane (6 layers, W2 PWRB-R)
+Q6A_NET, Q6A_PLANE = '3V3_Q6A', 'In4.Cu'
+Q6A_VY = (22.0, 22.2, 21.9, 22.4)   # via rows above the upper J209 row (pad tops 21.1), below the J207 pins (23.4)
+
+
+def q6a_plane_copper(inp, parts, tracks, vias, pins):
+    """In4.Cu is a solid 3V3_Q6A plane (S-G-S-S-P-S as the 6-layer CTRL of W2 CTRL-R): the J209 3V3_Q6A contact leaves
+    its row on B.Cu (upper row: upwards, between its GND neighbours) to a via above the row, and every SMD 3V3_Q6A pad gets
+    its own fan-out via (gnd_fanout with net 3V3_Q6A); the THT pins J201.1 and J204.2 join the plane directly. The net is
+    then not autorouted (class SCRIPTED_GND, as CTRL)."""
+    out_t, out_v = [], []
+    j = parts[B2B_REF]
+    for n in sorted((n for n, net in pins['pins'].items() if net == Q6A_NET), key=int):
+        pad = j.pad(n)
+        px, py = pad['at']
+        if not py > B2B_AT[1]:
+            raise SystemExit(f'make_spec: J209 {Q6A_NET} contact {n} is not in the upper row (pin map changed)')
+        spot = next((vy for vy in Q6A_VY if via_spot_ok(inp, parts, tracks + out_t, vias + out_v, (px, vy), Q6A_NET)), None)
+        if spot is None:
+            raise SystemExit(f'make_spec: no via spot above J209 contact {n} ({Q6A_NET})')
+        out_t.append({'id': f'Q6A-J209-{n}-S', 'net': Q6A_NET, 'layer': 'B.Cu', 'width_mm': W_PADSTUB,
+                      'path': [[r4(px), r4(py)], [r4(px), r4(spot)]], 'locked': True,
+                      'why': f'J209 contact {n} ({Q6A_NET}) out of the upper row between its GND neighbours to its plane via'})
+        out_v.append({'id': f'Q6A-J209-{n}-V', 'net': Q6A_NET, 'at': [r4(px), r4(spot)], 'drill_mm': VIA_DRILL,
+                      'diameter_mm': VIA_D, 'locked': True, 'why': f'{Q6A_NET} plane via (In4.Cu) of J209 contact {n}'})
+    ft, fv, _n = gnd_fanout(inp, parts, tracks + out_t, vias + out_v, net=Q6A_NET, prefix='Q6A')
+    return out_t + ft, out_v + fv
 
 
 # ------------------------------------------------------------------ GND fan-out (scripted: every SMD GND pad gets a via)
@@ -901,10 +933,11 @@ GND_DIRS = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)
 GND_GAPS = (0.55, 0.9, 1.3, 1.8)
 
 
-def gnd_fanout(inp, parts, tracks, vias):
-    """A locked via next to every GND SMD pad (stub W_GND from the pad centre), so that the GND planes In1/In2 join all
-    GND pads and the router never routes GND (route run 42415437982: Freerouting left 83 GND connections open and did
-    not join the pads to the planes). Through-hole GND pins join the planes directly. The INA3221 exposed pad joins its
+def gnd_fanout(inp, parts, tracks, vias, net='GND', prefix='GND'):
+    """A locked via next to every SMD pad of a plane net (stub W_GND from the pad centre), so that the plane joins all
+    its pads and the router never routes the net (route run 42415437982: Freerouting left 83 GND connections open and did
+    not join the pads to the planes). GND: the In1.Cu plane (6 layers, W2 PWRB-R); 3V3_Q6A: the In4.Cu plane (W2 PWRB-R,
+    as the 6-layer CTRL of W2 CTRL-R). Through-hole pins join the planes directly. The INA3221 exposed pad joins its
     GND pin 3 by a short track. Candidates are tried in a fixed order; the first that clears every other net, the
     edges, the hole keepouts and the via hole spacing is taken."""
     c = inp.contract
@@ -929,6 +962,10 @@ def gnd_fanout(inp, parts, tracks, vias):
         r = VIA_D / 2
         if any(edge_dist(q, outline, cuts) - W_GND / 2 < EDGE + MARGIN for q in path[1:]):
             return False  # stub corners and ends keep the edge clearance (PWR-A cut-outs included, W2 PCB-PWRB-2)
+        # whole stub segments too (W2 PWRB-R: a diagonal 3V3_Q6A stub passed 0.1 mm from a cut-out corner)
+        if any(seg_box_dist(a, q, cut) - W_GND / 2 < EDGE + MARGIN for a, q in stubs for cut in cuts
+               if cut[0] - 4 < vx < cut[2] + 4 and cut[1] - 4 < vy < cut[3] + 4):
+            return False
         if new_via:
             if edge_dist(via_at, outline, cuts) - r < EDGE + MARGIN or not point_in_poly(via_at, outline):
                 return False
@@ -941,7 +978,7 @@ def gnd_fanout(inp, parts, tracks, vias):
                 if math.hypot(vx - dx, vy - dy) < VIA_DRILL / 2 + dd / 2 + 0.55:
                     return False
         for p in pads:
-            if p['net'] == 'GND' and not p['npth']:
+            if p['net'] == net and not p['npth']:
                 continue
             gap = 0.25 + MARGIN if p['npth'] else need
             b = p['box']
@@ -952,23 +989,23 @@ def gnd_fanout(inp, parts, tracks, vias):
             if p['layer'] == layer and any(seg_box_dist(a, q, b) - W_GND / 2 < gap for a, q in stubs):
                 return False
         for s in segs:
-            if s['net'] == 'GND':
+            if s['net'] == net:
                 continue
             if new_via and seg_seg_dist(s['a'], s['b'], via_at, via_at) - s['r'] - r < need:
                 return False
             if s['layer'] == layer and any(seg_seg_dist(s['a'], s['b'], a, q) - s['r'] - W_GND / 2 < need for a, q in stubs):
                 return False
         return True
-    spine_vias = [tuple(v['at']) for v in vias if v['id'].startswith(f'GND-{B2B_REF}-V')]
+    spine_vias = [tuple(v['at']) for v in vias if v['id'].startswith(f'GND-{B2B_REF}-V')] if net == 'GND' else []
     done = 0
     for ref in sorted(parts, key=bg.sort_ref):
         if ref == B2B_REF:
             continue  # the J209 GND contacts join the GND spine (scripted_copper), not a via each
         pa = parts[ref]
         for p in sorted(pa.pads, key=lambda q: (bg.sort_ref(q['number']) if q['number'] else ('', -1, ''))):
-            if p['net'] != 'GND' or p['type'] != 'smd' or not p['number']:
+            if p['net'] != net or p['type'] != 'smd' or not p['number']:
                 continue
-            if ref == 'U215' and p['number'] == 'EP':
+            if net == 'GND' and ref == 'U215' and p['number'] == 'EP':
                 pin3 = pa.pad('3')['at']
                 out_t.append({'id': 'GND-U215-EP', 'net': 'GND', 'layer': 'F.Cu', 'width_mm': W_GND,
                               'path': [[r4(pin3[0]), r4(pin3[1])], [r4(p['at'][0]), r4(pin3[1])]], 'locked': True,
@@ -1009,16 +1046,16 @@ def gnd_fanout(inp, parts, tracks, vias):
                     chosen = (path, at, new_via)
                     break
             if chosen is None:
-                raise SystemExit(f'make_spec: no GND fan-out via position for {ref}.{p["number"]} at {p["at"]}')
+                raise SystemExit(f'make_spec: no {net} fan-out via position for {ref}.{p["number"]} at {p["at"]}')
             path, at, new_via = chosen
-            vid = f'GND-{ref}-{p["number"]}'
-            out_t.append({'id': vid + '-S', 'net': 'GND', 'layer': f'{layer}.Cu', 'width_mm': W_GND,
+            vid = f'{prefix}-{ref}-{p["number"]}'
+            out_t.append({'id': vid + '-S', 'net': net, 'layer': f'{layer}.Cu', 'width_mm': W_GND,
                           'path': [[r4(x), r4(y)] for x, y in path], 'locked': True,
-                          'why': f'GND fan-out of {ref}.{p["number"]} to its plane via' if new_via else
+                          'why': f'{net} fan-out of {ref}.{p["number"]} to its plane via' if new_via else
                                  f'GND fan-out of {ref}.{p["number"]} to the J209 GND spine via at {list(at)}'})
             if new_via:
-                out_v.append({'id': vid + '-V', 'net': 'GND', 'at': [at[0], at[1]], 'drill_mm': VIA_DRILL,
-                              'diameter_mm': VIA_D, 'locked': True, 'why': f'GND plane via of {ref}.{p["number"]}'})
+                out_v.append({'id': vid + '-V', 'net': net, 'at': [at[0], at[1]], 'drill_mm': VIA_DRILL,
+                              'diameter_mm': VIA_D, 'locked': True, 'why': f'{net} plane via of {ref}.{p["number"]}'})
                 drills.append((at, VIA_DRILL))
             segs += scripted_segments(out_t[-1:], out_v[-1:] if new_via else [])
             done += 1
@@ -1076,7 +1113,7 @@ def template_nets(inp, pins):
     return sorted(nets)
 
 
-def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
+def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None):
     c = inp.contract
     overlay = cutout_overlay(inp, pparts)
     nets = template_nets(inp, pins)
@@ -1114,23 +1151,37 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
         'domains': list(c['domains']),
         'partition': 'pcb/generated/partition.json',
         'layers': {
-            'copper': 4, 'thickness_mm': 1.6,
-            'source': 'build/15 Шари (4-layer JLC04161H-7628, 1 oz outer) and mechanical/generated/contract/boards.json stackup',
-            'types': {'In1.Cu': 'power', 'In2.Cu': 'power'},
-            'plan': {'F.Cu': 'parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour',
-                     'In1.Cu': 'solid GND plane (layer type power: the router puts only vias through it)',
-                     'In2.Cu': 'second GND plane (layer type power)',
-                     'B.Cu': 'B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour'}},
+            'copper': 6, 'thickness_mm': 1.6,
+            'source': ('W2 PWRB-R layers6 study: 6 layers JLC06161H-2116 1.6 mm, the stackup of the 6-layer CTRL (W2 CTRL-R / '
+                       'CTRL-4; pcb/generated/stackup-6l.json from pcb/stackup.py, jlcpcb.com/impedance read 2026-11-12): outer '
+                       '1 oz, inner 0.5 oz. The contract stackup (mechanical/generated/contract/boards.json: t 1.6, layers 4) '
+                       'keeps the 1.6 mm the mechanics use; its layer count is the 4-layer default of the other boards'),
+            'types': {'In1.Cu': 'power', 'In4.Cu': 'power'},
+            'types_why': ('S-G-S-S-P-S as the 6-layer CTRL: In1.Cu (L2) a solid GND plane 0.2234 mm under F.Cu, so the LAB5 '
+                          'trunk, the TPS2553 switches, the Kelvin shunts and the LNA bias filters (XAL5030 inductors, '
+                          'dampers) on F.Cu keep a solid return plane directly below; In4.Cu (L5) a solid 3V3_Q6A plane '
+                          '(the 20-pad monitor supply that crosses from the bar to the arm), both typed power so Freerouting '
+                          'routes no trace on them. In2.Cu (L3) and In3.Cu (L4) are the routing layers the stackup adds; '
+                          'every routing layer faces a plane (F.Cu-L2 0.2234 mm, L3-L2 0.3 mm, L4-L5 0.3 mm, B.Cu-L5 '
+                          '0.2234 mm). The power classes route on F.Cu/B.Cu only (router.class_layers): inner copper is '
+                          '0.5 oz (PWR1A would need 1.8 mm there, netclasses.json inner_min_width_mm)'),
+            'plan': {'F.Cu': 'L1: parts (top side only), LAB5 trunk and Kelvin copper, power and signal routes, GND pour',
+                     'In1.Cu': 'L2: solid GND plane (pre-route zone, layer type power: the router puts only vias through it)',
+                     'In2.Cu': 'L3: signal routes (no power class), GND pour after routing',
+                     'In3.Cu': 'L4: signal routes (no power class), GND pour after routing',
+                     'In4.Cu': 'L5: solid 3V3_Q6A plane (pre-route zone, layer type power); every SMD 3V3_Q6A pad has a scripted via',
+                     'B.Cu': 'L6: B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, power and signal routes, GND pour'}},
         'project': 'build/kicad/boards/PWR_B/PWR_B.kicad_pro',
         'rules_file': None,
         'rules_note': ('Project rules live in the committed PWR_B.kicad_pro (generated by make_spec.py): the project defaults of '
                        'pcb/generated/netclasses.json project_defaults (track 0.15 / clearance 0.15, via 0.6 / 0.3, copper-edge '
                        '0.3, hole-hole 0.5) and its net classes SIG (Default), PWR1A, PWR2A, PWR3A with the outer minimum width as '
-                       'track width. pcb/rules/jlc-4l-1oz.kicad_dru is not copied: board_gen refuses rules_file until it copies '
-                       'and hashes it.'),
+                       'track width. pcb/rules/jlc-6l-1oz.kicad_dru is not copied: board_gen refuses rules_file until it copies '
+                       'and hashes it; the multilayer JLC floors it carries equal the 4-layer ones (pcb/generated/stackup-6l.json).'),
         'fab_floor': {
-            'source': f'{inp.netclasses["fab_floor"]["source"]} read {inp.netclasses["fab_floor"]["read"]}, 4-layer 1 oz values '
-                      '(pcb/generated/netclasses.json fab_floor.jlc_4l_1oz)',
+            'source': f'{inp.netclasses["fab_floor"]["source"]} read {inp.netclasses["fab_floor"]["read"]}, multilayer 1 oz values '
+                      '(pcb/generated/netclasses.json fab_floor.jlc_4l_1oz; unchanged for 6 layers on the 2026-11-12 re-read, '
+                      'pcb/generated/stackup-6l.json capabilities)',
             'min_track_width': floor['track_width_min'], 'min_clearance': floor['track_spacing_min'],
             'min_drill': floor['via_hole_min'], 'min_via_diameter': floor['via_diameter_min'],
             'min_hole_to_hole': floor['pad_hole_to_hole_min'],
@@ -1147,23 +1198,29 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
             'spares': 0,
             'spares_source': 'no spare board planned (build/15 W2 PCB-PWRB); a fab panel minimum is a purchasing matter'},
         'parts': parts,
-        'holes': {'from_contract': True, 'ref_prefix': 'H', 'keepout_layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'],
+        'holes': {'from_contract': True, 'ref_prefix': 'H', 'keepout_layers': list(COPPER),
                   'keepout_blocks': ['tracks', 'vias', 'zone_fills']},
         'groups': [],
         'pre_route': {
             'tracks': tracks,
             'vias': vias,
             'zones': [{'id': 'GND-In1', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
-                       'why': 'GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it'},
-                      {'id': 'GND-In2', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
-                       'why': 'second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). '
-                              'Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)'}]},
+                       'why': 'GND plane L2 (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it; '
+                              'solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). '
+                              'Cost: the THT GND pins of J201-J207 and J506 join five GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)'},
+                      {'id': 'Q6A-In4', 'net': Q6A_NET, 'layer': Q6A_PLANE, 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+                       'why': '3V3_Q6A plane L5 (layer type power, W2 PWRB-R as the 6-layer CTRL): every SMD 3V3_Q6A pad joins it through its '
+                              'scripted via (the J209 contact through a B.Cu stub to a via above its row), the THT pins J201.1 and J204.2 directly'}]},
         'post_route_zones': [
             {'id': 'GND-F', 'net': 'GND', 'layer': 'F.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
              'why': 'solid pad connection: thermal spokes of THT header GND pins were starved between the pins (route run 42414083566); '
-                    'the solder-joint cost of solid THT connections is an assembly gate (OPEN, see GND-In2)'},
+                    'the solder-joint cost of solid THT connections is an assembly gate (OPEN, see GND-In1)'},
+            {'id': 'GND-L3', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+             'why': 'GND pour of the routing layer L3 after routing (as the 6-layer CTRL)'},
+            {'id': 'GND-L4', 'net': 'GND', 'layer': 'In3.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+             'why': 'GND pour of the routing layer L4 after routing (as the 6-layer CTRL)'},
             {'id': 'GND-B', 'net': 'GND', 'layer': 'B.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid'}],
-        'edge_keepout': {'width_mm': 0.2, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
+        'edge_keepout': {'width_mm': 0.2, 'layers': list(ROUTING), 'blocks': ['tracks', 'vias'],
                          'why': 'rule-area strips (half-width 0.2) on every outline and cutout edge: the router keeps its copper '
                                 '0.35 mm off the edge, above the project copper-to-edge 0.3 (route run 42414083566 had 0.23)'},
         'height_zones': [
@@ -1211,8 +1268,10 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                      'windows of C265, C512 and C511 of the PCB-PWRA-3 placement. OPEN for MECH and PCB-PWRA-4 (build/15 '
                      'W2 PCB-PWRB-2); check_boards does not check edge zones',
             'cutouts': 'no top courtyard over a PWR-A cut-out (pwr_a_cutouts); pads, scripted copper and scripted vias keep the '
-                       'edge clearance 0.35 mm from them as from a board edge; the router does not know them until they are '
-                       'Edge.Cuts, so the routed copper of record may cross them (re-route after the contract change, OPEN)',
+                       'edge clearance 0.35 mm from them as from a board edge; until they are Edge.Cuts every cut-out is a rule '
+                       'area on all six copper layers (keepout_rects: the rect grown by 0.33 mm, no tracks, vias or zone '
+                       'fills), so the router and the pours leave them free, and the board_gen report (keepout_rect_audit) and '
+                       'pcb/check_boards.py (keepout_rects) fail on any copper within 0.3 mm of one (W2 PWRB-R)',
             'kelvin': 'INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL; a deviation from the '
                       'W2 PCB-PWRB-2 brief, which asked for U215 at its shunts, accepted in build/15 W2 PCB-PWRB-2); every shunt '
                       'net is scripted copper (current path plus sense '
@@ -1242,14 +1301,28 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                     'these pin fields (1.3 mm clearance in the 5.0 mm stack). Gate OPEN: measured at proof-fit',
             'pin_fields': [{'ref': ref, 'pins': n, 'field_mm': f}
                            for ref, n, f in sorted(tht_fields(pparts), key=lambda t: bg.sort_ref(t[0]))]},
+        'keepout_rects': {
+            'why': ('W2 PWRB-R (review F2 of W2 PCB-PWRB-2): the 50 PWR-A cut-outs of pwr_a_cutouts become holes or notches of '
+                    'PWR-B once the contract carries them; until then each is a rule area on every copper layer, grown by '
+                    f'{r4(KEEPOUT_GROW)} mm (copper-to-edge 0.3 + 0.03; the scripted copper keeps 0.35), blocking tracks, '
+                    'vias and zone fills, so no copper of the board of record lies where PWR-B will be cut'),
+            'grow_mm': r4(KEEPOUT_GROW), 'audit_clear_mm': EDGE, 'layers': list(COPPER),
+            'blocks': ['tracks', 'vias', 'zone_fills'],
+            'rects': [{'id': cu['ref'], 'kind': cu['kind'], 'rect': [r4(v) for v in cu['rect']]} for cu in inp.cutouts]},
         'router': {'tool': 'freerouting', 'max_passes': 90, 'threads': 1, 'job_timeout': '00:33:00', 'timeout_s': 2100,
                    'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())),
+                   'class_layers': CLASS_LAYERS,
                    'why': 'the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and '
                           'the router re-routed the scripted nets because locked copper that crosses a pad is no connection '
                           'for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by '
                           'the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)'},
         'drc_policy': {'warning_checks': WARNINGS},
     }
+    if DIAG_POWER_INNER:  # W2 PWRB-R probe 2: a diagnostic, not a candidate board
+        del spec['router']['class_layers']
+        spec['router']['diagnostic'] = DIAG_POWER_INNER
+    if frozen_note:  # W2 PWRB-R: the frozen 6-layer route is part of pre_route
+        spec['pre_route']['frozen_route_note'] = frozen_note
     return json.dumps(spec, ensure_ascii=False, indent=2) + '\n'
 
 
@@ -1299,7 +1372,85 @@ def project_json(inp, pins):
 BOARD_CLASSES = {'LNA4V5': 'PWR1A'}
 # Nets whose copper is all scripted and locked: widths of their netclasses.json class, not autorouted (router -inc).
 SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
-                    **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')}}
+                    **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')},
+                    # 6 layers (W2 PWRB-R): 3V3_Q6A is the In4.Cu plane, every SMD pad on its own scripted via (as CTRL, W2 CTRL-R)
+                    '3V3_Q6A': 'SCRIPTED_GND'}
+# Routing layers of the 6-layer plan (W2 PWRB-R): In1.Cu (GND) and In4.Cu (3V3_Q6A) are planes of type power.
+ROUTING = ['F.Cu', 'In2.Cu', 'In3.Cu', 'B.Cu']
+COPPER = ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']
+# Power classes route on the outer 1 oz copper only (pcb/board_gen.py router.class_layers, as CTRL): the 0.5 oz inner layers
+# would need 1.8 mm for PWR1A (netclasses.json inner_min_width_mm) and do not count for PWR3A.
+CLASS_LAYERS = {'PWR1A': ['F.Cu', 'B.Cu']}
+# W2 PWRB-R probe 2 (diagnostic only): without class_layers Freerouting may put PWR1A on In2.Cu/In3.Cu at the outer width
+# 0.35 mm, which the 0.5 oz inner rule (1.8 mm) forbids; the run measures how much of probe 1's 59 open connections the
+# outer-only power rule causes. Not a candidate board: pcb/check_boards.py class_widths flags every inner PWR1A piece.
+# Route run 43301060296 (that diagnostic): DRC 0 errors, 45 unconnected (against 59), 140 class_widths findings (PWR1A
+# at 0.35 mm on In2.Cu/In3.Cu); Freerouting stopped at its job timeout with 112 unrouted items. Off again (None) since.
+DIAG_POWER_INNER = None
+# PWR-A cut-out rule areas: the rect grown by the copper-to-edge clearance 0.3 plus 0.03; the scripted copper keeps 0.35
+# (EDGE + MARGIN), so it never touches a rule area, and router copper and pours stay >= 0.33 from the future edge
+KEEPOUT_GROW = EDGE + 0.03
+
+
+# ------------------------------------------------------------------ frozen route (W2 PWRB-R, the CTRL-R / CTRL-4 toolkit)
+FROZEN6 = BASE / 'build/kicad/boards/PWR_B/route-frozen-6l.json'
+
+
+def frozen_guard(parts, tracks, vias, cuts):
+    """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers), the scripted copper
+    (by geometry: id, net, layer, width, path, via position and size; the 'why' texts may change without a new harvest) and
+    the PWR-A cut-outs (a PWR-A placement change moves the keepout_rects, so the frozen copper must be harvested anew)."""
+    pads = sorted(f'{ref}.{p["number"]}|{p["net"]}|{p["at"][0]:.4f},{p["at"][1]:.4f}|{",".join(p["layers"])}'
+                  for ref, pa in parts.items() for p in pa.pads if p['number'] and p['type'] != 'np_thru_hole')
+
+    def geometry(item):
+        return json.dumps({k: v for k, v in item.items() if k != 'why'}, sort_keys=True)
+    scripted = [geometry(t) for t in tracks] + [geometry(v) for v in vias]
+    return {'pads_sha256': hashlib.sha256('\n'.join(pads).encode()).hexdigest(),
+            'scripted_sha256': hashlib.sha256('\n'.join(scripted).encode()).hexdigest(),
+            'cutouts_sha256': cutouts_digest(cuts)}
+
+
+def frozen_guard_of_spec():
+    """The guard of the current inputs (freeze/freeze6.py writes it into route-frozen-6l.json)."""
+    inp = Inputs()
+    _a, _m, _p, parts, tracks, vias, _e = build(inp)
+    return frozen_guard(parts, tracks, vias, inp.cutouts)
+
+
+def frozen_copper(inp, parts, tracks, vias):
+    """The frozen 6-layer route (W2 PWRB-R): the router copper of one route run, harvested and locked, plus the grid A*
+    completion of its open connections (freeze/freeze6.py), from route-frozen-6l.json when present. It goes in after the
+    scripted copper, which it does not change; make_spec's own clearance checks cover the scripted copper only, the frozen
+    copper is checked by freeze6.py (model) and by KiCad DRC in the CI route run. Returns (tracks, vias, note)."""
+    if not FROZEN6.is_file():
+        return [], [], None
+    doc = json.loads(FROZEN6.read_text(encoding='utf-8'))
+    if not doc.get('guard'):
+        raise SystemExit(f'make_spec: {FROZEN6.name} has no guard (a freeze6.py --no-guard trial): harvest again with the guard')
+    have = frozen_guard(parts, tracks, vias, inp.cutouts)
+    for key, value in have.items():
+        if doc['guard'][key] != value:
+            raise SystemExit(f'make_spec: {FROZEN6.name} was routed on another {key} ({doc["guard"][key][:12]}... != '
+                             f'{value[:12]}...): route again with [pcb-route PWR_B] without the frozen copper and harvest anew')
+    why = (f'completion of the 6-layer frozen route ({FROZEN6.name}, W2 PWRB-R): grid A* on the locked copper of route run '
+           f'{doc["source"]["route_run"]} (build/kicad/boards/PWR_B/freeze/freeze6.py), exact clearance check')
+    ft, fv = [], []
+    for prefix, key, text in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', why)):
+        for k, (net, layer, width, path) in enumerate(doc[key]):
+            t = {'id': f'{prefix}-{k + 1:04d}', 'net': net, 'layer': layer, 'width_mm': width, 'path': path, 'locked': True}
+            if text:
+                t['why'] = text
+            ft.append(t)
+    for prefix, key in (('RV', 'router_vias'), ('FINV', 'completion_vias')):
+        for k, (net, x, y, d, drill) in enumerate(doc[key]):
+            fv.append({'id': f'{prefix}-{k + 1:04d}', 'net': net, 'at': [x, y], 'drill_mm': drill, 'diameter_mm': d, 'locked': True})
+    note = (f'W2 PWRB-R: the router copper of route run {doc["source"]["route_run"]} is frozen and locked (RT-/RV- items) and its '
+            f'open connections are joined by the grid A* completion (FIN-/FINV- items) of build/kicad/boards/PWR_B/freeze/freeze6.py '
+            f'(numpy, offline; tools copied from the CTRL-4 freeze of origin/wip/w2-ctrl4-layers6). Source: '
+            f'build/kicad/boards/PWR_B/{FROZEN6.name}; valid only for this placement, netlist and scripted copper (guard: SHA256 '
+            f'of the pads and of the scripted copper). Freezer result: {json.dumps(doc.get("result", {}), sort_keys=True)}')
+    return ft, fv, note
 
 
 # ------------------------------------------------------------------ main
@@ -1331,6 +1482,12 @@ def main(argv=None):
     for r, n in gnd_pads:
         if tuple(r4(v) for v in parts[r].pad(n)['at']) not in gnd_vias:
             problems.append(f'GND pad {r}.{n} without a plane via')
+    q6a_pads = [(r, q['number']) for r, pa in parts.items() for q in pa.pads if q['net'] == Q6A_NET and q['type'] == 'smd'
+                and q['number']]
+    q6a_vias = {tuple(t['path'][0]) for t in tracks if t['net'] == Q6A_NET and t['id'].endswith('-S')}
+    for r, n in q6a_pads:  # 6 layers (W2 PWRB-R): every SMD 3V3_Q6A pad, the J209 contact included, has its In4.Cu plane via
+        if tuple(r4(v) for v in parts[r].pad(n)['at']) not in q6a_vias:
+            problems.append(f'{Q6A_NET} pad {r}.{n} without a plane via')
     for net, pad_refs in pins['scripted_nets'].items():
         ok, names = connected(parts, tracks, vias, net, pad_refs)
         if not ok:
@@ -1344,7 +1501,11 @@ def main(argv=None):
         return 1 if problems else 0
     if problems:
         return 1
-    spec_text, project_text = spec_json(inp, anchors, pins, tracks, vias, exempt, parts), project_json(inp, pins)
+    ft, fv, frozen_note = frozen_copper(inp, parts, tracks, vias)
+    if frozen_note:
+        print(f'frozen route: {len(ft)} tracks, {len(fv)} vias')
+    spec_text = spec_json(inp, anchors, pins, tracks + ft, vias + fv, exempt, parts, frozen_note)
+    project_text = project_json(inp, pins)
     if args.check:
         bad = [p for p, text in ((SPEC, spec_text), (PROJECT, project_text)) if not p.is_file() or p.read_text(encoding='utf-8') != text]
         for p in bad:

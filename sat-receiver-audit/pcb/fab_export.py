@@ -41,6 +41,7 @@ BASE = board_gen.BASE
 OUT_ROOT = board_gen.OUT_ROOT
 JLC_BOM = BASE / 'build/10-jlc-bom.csv'
 NETCLASSES = BASE / 'pcb/generated/netclasses.json'
+STACKUP_6L = BASE / 'pcb/generated/stackup-6l.json'  # W2 CTRL-4 / W2 PWRB-R: 6-layer boards only
 KICAD_VERSION = board_gen.KICAD_VERSION
 SCHEMA = 'srrx-fab-manifest-v1'
 LABEL = 'NOT RELEASED: model/CI only; bench gates OPEN'
@@ -649,6 +650,12 @@ def coverage(files, inputs, cpl_rows, bom_rows):
     gerbers = {rel: data.decode('utf-8', errors='replace') for rel, data in files.items()
                if rel.startswith('gerber/') and GERBER_EXT.search(rel)}
     layers = gerber_layers(inputs['spec']['layers']['copper'])
+    # W2 CTRL-4: while the spec of a board changes its copper count (CTRL or PWR_B 4 -> 6) and the new board is not routed yet, the
+    # committed set of the committed board is checked against that board's own copper layers; on a current board both
+    # counts are equal, so nothing changes for any other board
+    board_copper = len(inputs['parsed'].copper_layers)
+    if board_copper and board_copper != int(inputs['spec']['layers']['copper']) and len(gerbers) == len(gerber_layers(board_copper)):
+        layers = gerber_layers(board_copper)
     if len(gerbers) != len(layers):
         problems.append(f'{len(gerbers)} Gerber files for {len(layers)} layers')
     functions = {}
@@ -765,6 +772,14 @@ def stackup_record(inputs):
         return {'id': st['id'], 'copper_layers': 4, 'thickness_mm': st['board_thickness_mm'], 'source': st['source'],
                 'read': st['read'], 'layers': st['layers'], 'note': st.get('note', ''),
                 'via': 'pcb/generated/netclasses.json stackup (pcb/stackup.py)'}
+    if copper == 6:  # W2 CTRL-4 / W2 PWRB-R: a 6-layer board (pcb/generated/stackup-6l.json); 2- and 4-layer boards unchanged
+        doc = read_json(STACKUP_6L)
+        st, caps = doc['stackup'], doc['capabilities']
+        return {'id': st['id'], 'copper_layers': 6, 'thickness_mm': st['board_thickness_mm'], 'source': st['source'],
+                'read': st['read'], 'layers': st['layers'], 'note': st.get('note', ''),
+                'via': 'pcb/generated/stackup-6l.json (pcb/stackup.py)',
+                'fab_note': (f'6 layers: {caps["via_in_pad"]} ({caps["source"]}, read {caps["read"]}); order without '
+                             'impedance control (no RF50 net on this board).')}
     return {**STACKUP_2L, 'copper_layers': copper, 'thickness_mm': spec['layers'].get('thickness_mm')}
 
 
@@ -852,14 +867,17 @@ def notes_lines(inputs, stack, cov, bom_rows):
              ('h', 'Fabrication'),
              ('t', f'Copper layers: {stack["copper_layers"]}; finished thickness {stack["thickness_mm"]} mm '
                    '(JLC tolerance +/-10 % for boards >= 1.0 mm).')]
-    if stack['copper_layers'] == 4:
+    if stack['copper_layers'] in (4, 6):
         lines.append(('t', f'Stack-up {stack["id"]} ({stack["source"]}, read {stack["read"]}; {stack["via"]}):'))
         for layer in stack['layers']:
             if 'kicad' in layer:
                 lines.append(('t', f'  {layer["plan"]} {layer["kicad"]}: copper {layer["copper_mm"]} mm'))
             else:
-                lines.append(('t', f'  {layer["dielectric"]}: {layer["thickness_mm"]} mm, Er {layer["er"]}'))
+                er = 'not given on the source page' if layer['er'] is None else layer['er']
+                lines.append(('t', f'  {layer["dielectric"]}: {layer["thickness_mm"]} mm, Er {er}'))
         lines.append(('t', stack['note']))
+        if stack.get('fab_note'):
+            lines.append(('t', stack['fab_note']))
     else:
         lines.append(('t', f'Stack-up: {stack["id"]}, outer copper {stack["copper_outer"]} '
                            f'({stack["source"]}, read {stack["read"]}).'))

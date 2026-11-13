@@ -45,54 +45,54 @@
   ],
   "exit_code": 0,
   "log_tail": [
-    "    - R273-1  ->  R241-2",
-    "    - R241-2  ->  C241-1",
-    "    - C241-1  ->  L208-1",
-    "  Net 'E2_LNA3_SW' (2 unrouted connections):",
-    "    - R272-1  ->  R241-1",
-    "    - R241-1  ->  U208-6",
-    "  Net 'E2_LNA4_SHUNT' (3 unrouted connections):",
-    "    - R246-2  ->  C245-1",
-    "    - C245-1  ->  L209-1",
-    "    - J209-99  ->  L209-1",
-    "  Net 'E2_LNA4_SW' (2 unrouted connections):",
-    "    - U209-6  ->  R246-1",
-    "    - via  ->  R246-1",
-    "  Net 'I2C2_SCL' (2 unrouted connections):",
-    "    - J201-4  ->  U215-6",
-    "    - J209-43  ->  U215-6",
-    "  Net 'I2C2_SDA' (2 unrouted connections):",
-    "    - J201-3  ->  U215-7",
-    "    - U215-7  ->  J209-45",
-    "  Net 'LAB5' (13 unrouted connections):",
-    "    - via  ->  via",
-    "    - J209-5  ->  J209-9",
-    "    - via  ->  via",
-    "    - U501-1  ->  C502-1",
-    "    - U502-1  ->  C505-1",
-    "    - C295-1  ->  U221-1",
+    "    - U210-1  ->  C248-1",
     "    - C501-1  ->  C502-1",
     "    - C505-1  ->  C504-1",
-    "    - C295-1  ->  C504-1",
-    "    - C501-1  ->  U502-1",
-    "    - J209-1  ->  C248-1",
-    "    - C248-1  ->  C295-1",
-    "    - U210-1  ->  U221-1",
+    "    - C504-1  ->  C295-1",
+    "    - U502-1  ->  C501-1",
+    "    - C248-1  ->  J209-1",
+    "    - C295-1  ->  C248-1",
+    "  Net 'LNA4V5' (7 unrouted connections):",
+    "    - J209-6  ->  J209-10",
+    "    - via  ->  U207-1",
+    "    - U206-1  ->  C232-1",
+    "    - C244-1  ->  U209-1",
+    "    - J209-10  ->  U209-1",
+    "    - C232-1  ->  U208-1",
+    "    - C236-1  ->  U206-1",
+    "  Net 'PG_BONI' (1 unrouted connection):",
+    "    - J203-14  ->  U218-1",
+    "  Net 'PG_LNB' (1 unrouted connection):",
+    "    - U217-1  ->  via",
+    "  Net 'PICO_DISP_EN' (1 unrouted connection):",
+    "    - J203-16  ->  J209-55",
+    "  Net 'PICO_OFF' (1 unrouted connection):",
+    "    - J209-57  ->  J203-17",
     "  Net 'PWR_BUTTON' (1 unrouted connection):",
     "    - J203-19  ->  J209-59",
-    "2026-11-12 18:01:53.215 INFO   [0D570F\\344A41] Auto-routing stage completed: started with 268 unrouted nets, completed in 714.18 seconds, final score: 747.81 (66 unrouted and 14 violations), using 704.44 total CPU seconds, 519.45 GB total allocated, and 664.3 MB peak heap usage.",
-    "2026-11-12 18:01:53.750 INFO   [0D570F\\344A41] Skipping optimization stage: the board has 66 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-12 18:01:53.780 INFO   [0D570F\\344A41] Job '0D570F\\344A41' finished with state: COMPLETED (elapsed: 11 minutes 56.36 seconds, finished at UTC: 2026-11-12T18:01:53.779898914Z).",
-    "2026-11-12 18:01:53.827 INFO   Saving output file '/tmp/sr-rx-PWR_B-367assr6/PWR_B.ses' (SES)...",
-    "2026-11-12 18:01:53.829 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-367assr6/PWR_B.ses' (107838 bytes)."
+    "  Net 'VBUS_LABPORT' (6 unrouted connections):",
+    "    - R508-1  ->  C506-1",
+    "    - C507-1  ->  R508-1",
+    "    - C521-1  ->  C522-1",
+    "    - C507-1  ->  C522-1",
+    "    - J506-3  ->  C506-1",
+    "    - U502-6  ->  J506-3",
+    "  Net 'VBUS_RTLB' (2 unrouted connections):",
+    "    - R251-1  ->  via",
+    "    - via  ->  J207-4",
+    "2026-11-12 21:25:41.754 INFO   [0E7FE9\\4CE62B] Auto-routing stage completed: started with 192 unrouted nets, completed in 917.20 seconds, final score: 504.76 (129 unrouted and 185 violations), using 906.70 total CPU seconds, 800.82 GB total allocated, and 529.8 MB peak heap usage.",
+    "2026-11-12 21:25:42.147 INFO   [0E7FE9\\4CE62B] Skipping optimization stage: the board has 129 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-12 21:25:42.213 INFO   [0E7FE9\\4CE62B] Job '0E7FE9\\4CE62B' finished with state: COMPLETED (elapsed: 15 minutes 18.83 seconds, finished at UTC: 2026-11-12T21:25:42.212775748Z).",
+    "2026-11-12 21:25:42.248 INFO   Saving output file '/tmp/sr-rx-PWR_B-v_kstb8s/PWR_B.ses' (SES)...",
+    "2026-11-12 21:25:42.249 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-v_kstb8s/PWR_B.ses' (20010 bytes)."
   ],
-  "dsn_sha256": "e7695d3aeef1ae7e2d6ea4498077e3110f1524c9c3b3e471b728b62cd387c986",
-  "ses_sha256": "17a7357ece925b58bbf7934e27aa5af1e7e013875d8acd35f3a2a2d346a7424f",
+  "dsn_sha256": "3f06a89a3e71a5886f8e8dc0a5aec62e432a7cb310d9e0b1357458db2242d9ca",
+  "ses_sha256": "5a7d4ba9319ebf7423ebb53e4539c471dd00cf9a68702a176a21e1b51aee32bb",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 255,
+    "wires_fix": 1870,
     "wires_protect": 0,
-    "keepouts": 52,
+    "keepouts": 384,
     "planes": 2,
     "classes": {
       "kicad_default": {
@@ -103,10 +103,6 @@
         "width": "1850",
         "clearance": "150"
       },
-      "SCRIPTED_GND": {
-        "width": "150",
-        "clearance": "150"
-      },
       "SCRIPTED_PWR1A": {
         "width": "350",
         "clearance": "150"
@@ -114,27 +110,18 @@
       "PWR1A": {
         "width": "350",
         "clearance": "150"
+      },
+      "SCRIPTED_GND": {
+        "width": "150",
+        "clearance": "150"
       }
     }
   },
   "locked_segments": {
-    "before_ses_import": 255,
-    "after_ses_import": 255
+    "before_ses_import": 1870,
+    "after_ses_import": 1870
   },
-  "via_centre_stubs": [
-    {
-      "net": "GND",
-      "layer": "F.Cu",
-      "end": [
-        195.155,
-        191.3
-      ],
-      "centre": [
-        195.35,
-        191.5
-      ]
-    }
-  ],
+  "via_centre_stubs": [],
   "drc_command": [
     "kicad-cli",
     "pcb",
@@ -148,7 +135,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "adc2f821e8116ab4463dfc7d8932c017b2c9c0cd71b34c7ee09dbf56531a6c6b",
+  "board_sha256": "264986829ad6029e97c6e6fe46b3be66215e225941bd6bb375737b6eaabf3e4e",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -979,8 +966,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43273190849",
-    "sha": "2aab8f09bf554703eb91849b94761daab977c44c",
-    "ref": "refs/heads/wip/w2-pwrb2"
+    "run_id": "43307238078",
+    "sha": "617eccb3795d641024eddcec1795c362b2bac3a9",
+    "ref": "refs/heads/wip/w2-pwrbr-layers6"
   }
 }

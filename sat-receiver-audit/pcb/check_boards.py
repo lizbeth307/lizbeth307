@@ -683,9 +683,9 @@ class Frame:
 NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
                'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
                'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
-               'sides', 'max_height_bottom', 'coupons', 'rf_checks')
+               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'keepout_rects')
 DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
-             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks')
+             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'keepout_rects')
 LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides', 'coupons')
 
 
@@ -987,6 +987,64 @@ def check_keepouts(board, cb, frame, spec):
             out.append(finding('keepouts', what, f'copper inside the hole keepout (d {2 * r} mm)', contract_at=frame.to_contract(cx, cy),
                                net=it.net, layer=it.layer, distance=it.shape.dist(cx, cy)))
     return out, {'keepout_r_mm': r, 'tolerance_mm': KEEPOUT_TOL}
+
+
+def shape_hits_box(shape, box):
+    """True when a copper shape (Poly, Capsule, Multi) overlaps an axis-aligned box (x0, y0, x1, y1), KiCad mm."""
+    x0, y0, x1, y1 = box
+    bx0, by0, bx1, by1 = shape.bbox
+    if bx1 < x0 or bx0 > x1 or by1 < y0 or by0 > y1:
+        return False
+    if isinstance(shape, Multi):
+        return any(shape_hits_box(s, box) for s in shape.shapes)
+    if isinstance(shape, Capsule):
+        return seg_box_gap(shape.x1, shape.y1, shape.x2, shape.y2, box) <= shape.r
+    # Poly (even-odd, fractured fills): the box centre inside it, or an edge of it inside or across the box
+    if shape.contains((x0 + x1) / 2, (y0 + y1) / 2):
+        return True
+    edges = []
+    for b in range(int(math.floor(y0 / shape.BAND)), int(math.floor(y1 / shape.BAND)) + 1):
+        edges.extend(shape.buckets.get(b, []))
+    return any(seg_box_gap(a[0], a[1], c[0], c[1], box) == 0.0 for a, c in set(edges))
+
+
+def seg_box_gap(xa, ya, xb, yb, box):
+    """Distance from segment ab to an axis-aligned box (0 when it touches, crosses or lies inside)."""
+    x0, y0, x1, y1 = box
+    if x0 <= xa <= x1 and y0 <= ya <= y1 or x0 <= xb <= x1 and y0 <= yb <= y1:
+        return 0.0
+    corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    for (cx, cy), (dx, dy) in zip(corners, corners[1:] + corners[:1]):
+        if seg_seg_dist((xa, ya), (xb, yb), (cx, cy), (dx, dy)) == 0.0:
+            return 0.0
+    return min([seg_dist(cx, cy, xa, ya, xb, yb) for cx, cy in corners]
+               + [seg_dist(px, py, cx, cy, dx, dy) for px, py in ((xa, ya), (xb, yb))
+                  for (cx, cy), (dx, dy) in zip(corners, corners[1:] + corners[:1])])
+
+
+def check_keepout_rects(board, spec, frame):
+    """Spec keepout_rects (W2 PWRB-R, pcb/board_gen.py): rectangles that are not Edge.Cuts yet must stay free of copper.
+    Every copper item of every net (pads, tracks, vias, zone fills, graphic copper) keeps audit_clear_mm from each rect:
+    the rect grown by audit_clear_mm less KEEPOUT_TOL must not overlap it (fills as their filled polygons)."""
+    ko = spec['keepout_rects']
+    clear = float(ko.get('audit_clear_mm', 0))
+    out, per_rect = [], {}
+    for r in ko.get('rects', []):
+        x0, y0, x1, y1 = (float(v) for v in r['rect'])
+        bx0, by0, bx1, by1 = frame.rect([x0, y0, x1 - x0, y1 - y0])
+        g = clear - KEEPOUT_TOL
+        box = (bx0 - g, by0 - g, bx1 + g, by1 + g)
+        hits = collections.Counter()
+        for it in board.copper:
+            if shape_hits_box(it.shape, box):
+                what = f'{it.kind} {it.ref}.{it.pad}' if it.kind == 'pad' else it.kind
+                hits[(what, it.net, it.layer)] += 1
+        for (what, net, layer), n in sorted(hits.items(), key=lambda kv: (kv[0][0], str(kv[0][1]), kv[0][2])):
+            out.append(finding('keepout_rects', f'{r["id"]}: {what}', f'copper within {clear} mm of the keep-out rect {r["id"]} '
+                               f'({r.get("kind", "")})', contract_at=(x0, y0), net=net, layer=layer, items=n))
+        per_rect[str(r['id'])] = sum(hits.values())
+    return out, {'rects': len(per_rect), 'clear_mm': clear, 'tolerance_mm': KEEPOUT_TOL,
+                 'rects_with_copper': sorted(k for k, v in per_rect.items() if v)}
 
 
 def expected_views(spec, graph, components_csv=None):
@@ -2060,6 +2118,8 @@ def review_board(board, spec, contract, graph, netclasses, mates=None, component
     run('outline', check_outline(board, cb, frame, spec))
     run('holes', check_holes(board, cb, frame, spec))
     run('keepouts', check_keepouts(board, cb, frame, spec))
+    if 'keepout_rects' in spec:  # W2 PWRB-R: only specs with keepout_rects (every other review stays unchanged)
+        run('keepout_rects', check_keepout_rects(board, spec, frame))
     run('pad_nets', check_pad_nets(board, spec, graph, views))
     run('class_widths', check_classes(board, spec, netclasses, views))
     run('rf50', check_rf50(board, spec, netclasses, views))
