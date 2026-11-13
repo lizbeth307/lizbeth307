@@ -2223,6 +2223,11 @@ def route(board, freerouting):
             raise RuntimeError('SaveBoard failed (routed)')
         atomic_write(board_path, staged.read_bytes())
         drc_raw, drc_cmd = run_drc(board_path, temp / 'drc.json', save=True)
+        if skip:  # W2 PWR-TOOLS: the report is the DRC of the saved board, as --check runs it
+            # without Freerouting the first DRC (on the board pcbnew saved, zones unfilled) and the --check DRC of the board it
+            # saved listed different unconnected pairs (PWR_B of route run 43375868329 in check runs 43378069305 and
+            # 43378783650: same 0 / 23, other items); a second DRC on the saved board is what --check reproduces
+            drc_raw, _cmd = run_drc(board_path, temp / 'drc-saved.json', save=False)
         report, connectors = audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_path,
                                          drc_raw, project)
         write_outputs(out, report, connectors, drc_raw)
