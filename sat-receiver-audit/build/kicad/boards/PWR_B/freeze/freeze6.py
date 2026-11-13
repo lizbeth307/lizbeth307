@@ -2,7 +2,7 @@
 """Freeze a 6-layer PWR_B route run and complete it (W2 PWRB-R layers6 study). Needs numpy; offline tool, not run by CI.
 
   python build/kicad/boards/PWR_B/freeze/freeze6.py --artifact <unzipped pcb-regenerated-PWR_B> [--out FILE] [--no-guard]
-         [--no-rip] [--order class|short|fanout] [--prev route-frozen-6l.json]
+         [--no-rip] [--order class|short|fanout] [--prev route-frozen-6l.json] [--renet] [--first NET,NET,...]
 
 The PWR_B counterpart of build/kicad/boards/CTRL/freeze/freeze6.py (W2 CTRL-4, origin/wip/w2-ctrl4-layers6); model.py,
 router.py and fin.py here are copies of the CTRL tools. The artifact holds board/PWR_B.kicad_pcb, board/report.json and
@@ -101,6 +101,31 @@ def fanout_first(m, nets, span):
     rest = sorted(set(nets) - set(fan) - set(then), key=lambda n: (span(n), n))
     print('fan-out order:', fan, then)
     return fan + then + rest
+
+
+def renet(m):
+    """W2 PWR-L6-PLACE fourth pass, probe C (J202 <-> J203 pin swap): every pad whose net in the design graph (design/E*.json)
+    differs from the routed board takes the graph net, so a ratchet (--prev) can carry a route across a pin-map change of the
+    board's own headers. All router copper of the old and the new nets of such pads goes (it was routed to the old pads) and
+    those nets are joined again by the completion. Returns ({ref.pad: [old, new]}, nets to join, router items removed)."""
+    import board_gen as bg  # pcb/ is on the path (model.py)
+    graph = bg.load_graph()
+    pins = {(ref, str(p['number'])): (None if p.get('nc') else p.get('net')) for ref, c in graph.items() for p in c['pins']}
+    changed, nets = {}, set()
+    for it in m.items:
+        if it.alive and it.kind == 'pad' and (it.ref, str(it.pad)) in pins and pins[(it.ref, str(it.pad))] != it.net:
+            new = pins[(it.ref, str(it.pad))]
+            changed[f'{it.ref}.{it.pad}'] = [it.net, new]
+            nets |= {it.net, new} - {None}
+            it.net = new
+    gone = 0
+    for it in m.items:
+        if it.alive and it.kind in ('track', 'via') and it.net in nets:
+            if it.src != 'router':
+                raise SystemExit(f'freeze6 --renet: locked {it.kind} of {it.net} is not router copper (use --prev)')
+            m.remove(it)
+            gone += 1
+    return dict(sorted(changed.items())), nets, gone
 
 
 def verify(m):
@@ -267,6 +292,9 @@ def main(argv=None):
                                    'on the board is harvested again together with the new router copper')
     ap.add_argument('--order', choices=('class', 'short', 'fanout'), default='class',
                     help='completion order of the open nets (fanout: W2 PWR-L6-PLACE third pass, fanout_first)')
+    ap.add_argument('--renet', action='store_true', help='W2 PWR-L6-PLACE fourth pass: pads take the nets of the design graph '
+                                                           '(a pin swap since the run); their old and new nets are joined again')
+    ap.add_argument('--first', default='', help='comma-separated nets joined first, in this order (then --order)')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     art = Path(args.artifact)
@@ -296,6 +324,9 @@ def main(argv=None):
             elif it.kind == 'via' and (it.net, (round(it.at[0], 4), round(it.at[1], 4))) in pvias:
                 it.src, hit = 'router', hit + 1
         print(f'ratchet: {hit} locked items of {args.prev} harvested again')
+    renetted, renet_nets, renet_gone = renet(m) if args.renet else ({}, set(), 0)
+    if args.renet:
+        print(f'renet: {len(renetted)} pads take the graph net, {renet_gone} router items of {sorted(renet_nets)} removed')
     stubs_hit, stubs_all = fix_stubs(m, art)
     print(f'via-centre stubs of the route log held fixed: {stubs_hit} of {stubs_all}')
     cls, default_w = classes()
@@ -310,6 +341,7 @@ def main(argv=None):
     bad_never = sorted(set(kicad_open) & NEVER)
     if bad_never:
         raise SystemExit(f'freeze6: KiCad reports open connections of {bad_never}: fix the scripted copper and route again')
+    kicad_open.update({n: 1 for n in renet_nets if n not in kicad_open})
     model_only = {n: k for n, k in fz.unconnected().items() if n not in NEVER and n not in kicad_open}
     print('KiCad open connections:', dict(kicad_open))
     print('model-only islands (joined in KiCad by copper overlap, left as routed):', model_only)
@@ -341,6 +373,8 @@ def main(argv=None):
         first = sorted(set(kicad_open) | viol, key=lambda n: (span(n), n))
     else:
         first = sorted(set(kicad_open) | viol, key=lambda n: (layers(n) != OUTER, n))
+    head = [n for n in args.first.split(',') if n and n in first]
+    first = head + [n for n in first if n not in head]
     queue, rounds, t0 = collections.deque(first), 0, time.time()
     touched, failed, necks = set(first), [], []
     while queue and rounds < args.rounds:
@@ -396,7 +430,7 @@ def main(argv=None):
                        'F.Cu/B.Cu, signals on F.Cu, In2.Cu, In3.Cu, B.Cu, no plane layer) by '
                        'build/kicad/boards/PWR_B/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed))},
-        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops},
+        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops, **({'renet': renetted, 'first': head} if args.renet or head else {})},
         'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),
         'guard': None if args.no_guard else guard(),
         'segments': dict(nseg),

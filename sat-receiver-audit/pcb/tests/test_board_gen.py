@@ -977,5 +977,60 @@ class PwrL6Place3ExitPair(unittest.TestCase):
         self.assertEqual(order, ['B', 'A', 'I2C2_SCL', 'I2C2_SDA', 'C'])     # J209-to-J203 right to left, I2C2, the rest
 
 
+
+class PwrL6ProbeCPinSwap(unittest.TestCase):
+    """W2 PWR-L6-PLACE fourth pass, probe C (connector lever, PWR-B only): the four innermost J202-bound J209 lower-row nets
+    land on J203 (zone-2 top-entry header, harness branch S02B) by a pin swap with the four arm-local J203 nets, and freeze6
+    --renet carries a ratchet across that pin-map change. MODEL / CI inputs only; the CTRL J306 / J307 maps do not change."""
+
+    SWAP = {('J203', '2'): 'EN_HFP', ('J203', '14'): 'EN_LIME3V3', ('J203', '15'): 'EN_LNB', ('J203', '18'): 'FAULT_HFP',
+            ('J202', '5'): 'PG_BONI', ('J202', '7'): 'PTC_AUX', ('J202', '12'): 'PG_LNB', ('J202', '16'): 'FAULT_RTLA'}
+
+    def test_graph_pins(self):
+        graph = bg.load_graph()
+        for (ref, pin), net in self.SWAP.items():
+            got = next(p for p in graph[ref]['pins'] if str(p['number']) == pin)
+            self.assertEqual((got['net'], got['name']), (net, net), (ref, pin))
+        b2b = {p['number']: p.get('net') for p in graph['J209']['pins']}
+        for contact, net in (('25', 'EN_HFP'), ('27', 'EN_LIME3V3'), ('29', 'EN_LNB'), ('31', 'FAULT_HFP')):
+            self.assertEqual(b2b[contact], net)            # the J209 / J208 pin map does not change
+
+    def test_freeze6_renet(self):
+        import ast
+        import types
+        src = (bg.BASE / 'build/kicad/boards/PWR_B/freeze/freeze6.py').read_text(encoding='utf-8')
+        fn = next(n for n in ast.parse(src).body if isinstance(n, ast.FunctionDef) and n.name == 'renet')
+        self.assertIn("ap.add_argument('--renet'", src)
+        self.assertIn("ap.add_argument('--first'", src)
+        graph = {'J203': {'pins': [{'number': '2', 'net': 'EN_HFP'}, {'number': '3', 'net': 'FAULT_RTLB'}]}}
+        fake_bg = types.ModuleType('board_gen')
+        fake_bg.load_graph = lambda: graph
+        ns = {'__builtins__': __builtins__}
+        exec(compile(ast.Module(body=[fn], type_ignores=[]), 'freeze6_renet', 'exec'), ns)
+        it = lambda **k: types.SimpleNamespace(alive=True, **k)
+        items = [it(kind='pad', ref='J203', pad='2', net='FAULT_RTLA'), it(kind='pad', ref='J203', pad='3', net='FAULT_RTLB'),
+                 it(kind='track', net='FAULT_RTLA', src='router'), it(kind='via', net='EN_HFP', src='router'),
+                 it(kind='track', net='FAULT_RTLB', src='router')]
+
+        class Mdl:
+            def __init__(self):
+                self.items = items
+
+            def remove(self, i):
+                i.alive = False
+        import sys
+        sys.modules['board_gen'], saved = fake_bg, sys.modules.get('board_gen')
+        try:
+            changed, nets, gone = ns['renet'](Mdl())
+        finally:
+            if saved is not None:
+                sys.modules['board_gen'] = saved
+            else:
+                del sys.modules['board_gen']
+        self.assertEqual(changed, {'J203.2': ['FAULT_RTLA', 'EN_HFP']})
+        self.assertEqual((nets, gone), ({'FAULT_RTLA', 'EN_HFP'}, 2))
+        self.assertEqual([i.alive for i in items[2:]], [False, False, True])   # FAULT_RTLB keeps its copper
+
+
 if __name__ == '__main__':
     unittest.main()
