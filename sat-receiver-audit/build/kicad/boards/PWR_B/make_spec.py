@@ -21,7 +21,12 @@ What it decides, in one place (the spec records each rule with its source):
     GND pad (gnd_fanout);
   * the 4-layer plan (In1.Cu / In2.Cu GND planes of type power, signals on F.Cu / B.Cu), the project rules and net
     classes, and the router settings: Freerouting without its fan-out stage, the classes of the scripted nets
-    (SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A) not autorouted, rule-area strips on every board edge.
+    (SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A) not autorouted, rule-area strips on every board edge;
+  * the PWR-A cut-outs as rule areas on all four copper layers (spec planned_cutouts, W2 PWRB-R: grown by the 0.3 mm
+    copper-to-edge clearance, blocking tracks, vias, pads and zone fills; pcb/check_boards.py audits the copper);
+  * optionally a frozen route (W2 PWRB-R, port of the W2 CTRL-R tool): build/kicad/boards/PWR_B/route-frozen.json, the
+    harvested router copper of a route run plus its completion by freeze/freeze_route.py, added as locked copper only
+    when its guard (pads and scripted copper) matches.
 Why each router setting exists is in the spec (router.why, edge_keepout.why) with the sr-rx-pcb run that showed it.
 It checks courtyard overlaps, outline / cutouts, hole keepouts, drilled holes in courtyards, the GND via of every SMD
 GND pad and the clearance of the scripted copper before CI routes. The routed board, its report and the fab set are
@@ -63,6 +68,14 @@ B2B_REF, B2B_MATE_BOARD, B2B_MATE_REF = 'J209', 'PWR_A', 'J208'
 CLEAR = 0.15          # project clearance (netclasses.json project_defaults)
 MARGIN = 0.05         # design margin of the scripted copper over the clearance
 EDGE = 0.3            # project copper-to-edge clearance
+CRT_GUARD = 0.05      # courtyard boxes here are centre lines; KiCad's include half the 0.05 mm line (review F12 of W2 PCB-PWRB-2)
+# W2 PWRB-R: In2.Cu as a third routing layer (the S-G-S-S plan of CTRL: In1.Cu solid GND, In2.Cu signals with a GND pour
+# after routing). Route runs 43288408383 and 43290779665 (two routing layers, the PWR-A cut-outs as rule areas) left 98 and
+# 89 connections open; the bar between J209 and the S02 headers has 13-17 mm per layer for 47 nets. Route run 43308775349
+# with IN2_SIGNAL True left 73 open, and Freerouting put PWR1A copper on In2.Cu at 0.35 mm (88 check_boards findings: inner
+# PWR1A needs 1.8 mm, pcb/generated/netclasses.json), because the DSN gives no per-class layer limit; freeze/freeze_route.py
+# --in2-signal rips that copper and completes power nets on the outer layers only. False: the committed plan.
+IN2_SIGNAL = False
 VIA_D, VIA_DRILL = 0.7, 0.3   # 0.7 / 0.3: router vias at clearance 0.15 keep the 0.5 mm hole-to-hole rule (0.55)
 
 
@@ -289,29 +302,43 @@ class Inputs:
 #    assignment keeps each near its nets where it can); the arm place C247 had before iteration 2 stays free for the
 #    arm-to-bar routes (route run 43258433850, with C298 moved there, left arm-to-bar connections open). The remaining
 #    parts were packed next to the pads of their nets, 0.2 mm apart.
+#  * W2 PWRB-R PLACE study (review F3-F5 of W2 PCB-PWRB-2; the PWR-A cut-outs are rule areas now, planned_cutouts):
+#    - H-TRIM (F5): J203 turned by 180 in its own courtyard box, so its pin field lies at y 31-34 (off Q102); J201 turned
+#      to 270 at x 1-9.6, y 35.4-48.3, its pin field in the column between C219 / L203 and L102 (x 6.9-8.6); U507 took the
+#      J201 place below the ch1 cell, which moved up by 1.6 mm (the whole Kelvin cell, LNA_ROWS unchanged); J202 turned
+#      to 270 in its box, so the pin fields of J202 and J203 face the bar and J209;
+#    - dampers (F3): each 0.15 ohm series resistor next to its damper capacitor (R232 / C235, R237 / C239, R242 / C243
+#      turned by 180), ch1 output capacitor C234 and TP206 at L206, ch2 output capacitor C238 on the BIAS_CH2 run between
+#      L207 and the damper; C251 / R251 (VBUS_RTLB) and C298 / R295 (SB) stay where a 6 x 8 mm place exists (no place
+#      within 25 mm of L210 or L215, OPEN);
+#    - INA3221 (F4): U215 turned by 180 (ch1 inputs face the ch1 cell, ch2 inputs the bar), its filter capacitors C274,
+#      C275, C276 at its input pins. Defect found by route run 43290779665: the ch2 inputs (pins 14, 15) then face the
+#      PWR-A TP104 window 0.7 mm away and E2_U215_IP2 cannot leave pin 15; route run 43308775349 (U215 at 0 again, C275 at
+#      (22.55, 61.925, 180), C276 at (22.825, 50.9, 270)) reached both ch2 inputs. That fix changes pads, so it waits for
+#      the next route run (this table equals the spec of route run 43290779665, whose outputs are committed).
 PLACEMENT = {
-    'C232': (2.1, 59.2, 0), 'C233': (10.7, 54.5, 270), 'C234': (51.737, 33.918, 0), 'C235': (18, 49.5, 0),
-    'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (37.467, 34.284, 90), 'C239': (30, 14, 90),
-    'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 0),
-    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (111.03, 21.325, 180),
+    'C232': (2.1, 60.8, 0), 'C233': (10.7, 56.1, 270), 'C234': (15.805, 53.55, 180), 'C235': (18, 49.5, 0),
+    'C236': (44.15, 16.2, 0), 'C237': (52.75, 11.5, 270), 'C238': (40.776, 8.8, 0), 'C239': (30, 14, 90),
+    'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 180),
+    'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (110.98, 21.325, 180),
     'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.03, 19.65, 270), 'C251': (36, 12, 90),
-    'C274': (16.312, 60.638, 0), 'C275': (37.425, 37.725, 90), 'C276': (18.488, 72.388, 0), 'C277': (36.97, 46.405, 90),
+    'C274': (19.675, 54.5, 270), 'C275': (22.825, 50.9, 270), 'C276': (22.55, 61.925, 180), 'C277': (36.97, 46.405, 90),
     'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
     'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
     'C297': (112.18, 15.097, 90), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
     'C503': (38.5, 20.5, 0), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (37.5, 73, 0),
-    'C507': (36.46, 76.867, 0), 'C521': (31, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
+    'C507': (36.46, 76.867, 0), 'C521': (30.95, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
     'C551': (38.651, 50.429, 90), 'C2901': (55.363, 33.73, 0), 'C2902': (40.167, 77.567, 0), 'C2911': (20.334, 42.046, 0),
-    'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (2.95, 49.8, 0),
-    'J202': (9.7, 9.7, 90), 'J203': (15.7, 39.95, 0), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
-    'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.15, 55.4, 90), 'L206': (15.1, 56.2, 0), 'L207': (57.15, 13.2, 0),
+    'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (7.75, 45.8, 270),
+    'J202': (18.08, 27.75, 270), 'J203': (33.7, 31.55, 180), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
+    'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.2, 55.4, 90), 'L206': (15.1, 57.8, 0), 'L207': (57.15, 13.2, 0),
     'L208': (23.1, 80.7, 0), 'L209': (108, 15.2, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
-    'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.119, 0), 'R228': (7.4, 54.6, 270),
-    'R229': (2.1, 52.9, 0), 'R231': (9.3, 57.6, 0), 'R232': (39.368, 40.813, 0), 'R233': (49.45, 11.6, 270),
-    'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (31.066, 28.988, 0), 'R238': (15.4, 79.1, 270),
-    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (22.251, 85.185, 0), 'R243': (100.3, 14.8, 270),
+    'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.069, 0), 'R228': (7.4, 56.2, 270),
+    'R229': (2.1, 54.5, 0), 'R231': (9.3, 59.2, 0), 'R232': (11.588, 49.5, 0), 'R233': (49.45, 11.6, 270),
+    'R234': (44.15, 9.9, 0), 'R236': (51.35, 14.6, 0), 'R237': (29.288, 8.8, 0), 'R238': (15.4, 79.1, 270),
+    'R239': (10.1, 77.4, 0), 'R241': (17.3, 82.1, 0), 'R242': (21.662, 85.5, 180), 'R243': (100.3, 14.8, 270),
     'R244': (76.281, 16.475, 0), 'R246': (102.2, 17.8, 0), 'R247': (117.33, 20.35, 180), 'R248': (77.5, 19.5, 90),
-    'R249': (83.5, 18.9, 90), 'R251': (59.385, 19.013, 90), 'R268': (8, 60.3, 90), 'R269': (10.6, 60.3, 90),
+    'R249': (83.5, 18.9, 90), 'R251': (59.385, 19.013, 90), 'R268': (8, 61.9, 90), 'R269': (10.6, 61.9, 90),
     'R270': (50.05, 17.3, 90), 'R271': (52.65, 17.3, 90), 'R272': (16, 84.8, 90), 'R273': (18.6, 84.8, 90),
     'R280': (85.517, 20.651, 90), 'R281': (53.817, 23.411, 90), 'R283': (51.5, 25.856, 90), 'R284': (20.217, 22.522, 90),
     'R286': (42.217, 34.038, 0), 'R287': (44.996, 26.692, 0), 'R293': (69.5, 19.5, 90), 'R294': (75.5, 18.9, 90),
@@ -319,12 +346,11 @@ PLACEMENT = {
     'R505': (61.5, 19.5, 90), 'R506': (67.5, 18.9, 90), 'R508': (32.581, 75.617, 90), 'R550': (33.859, 42.821, 90),
     'R551': (35.826, 42.961, 90), 'R2901': (17.112, 44.38, 90), 'R2902': (1.931, 96.061, 90), 'R2911': (30.635, 43.025, 0),
     'R2912': (2.025, 100.365, 90), 'R2921': (48.167, 27.094, 0), 'R2922': (17.073, 98.016, 90),
-    'TP206': (51.499, 31.293, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0),
-    'TP209': (116.3, 22.8, 0), 'TP210': (118.85, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0),
-    'TP2902': (40.679, 80.317, 0), 'U206': (4.1, 56, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0),
-    'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90), 'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90),
-    'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90), 'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90),
-    'U502': (64.5, 20, 90), 'U507': (4.5, 38.5, 0),
+    'TP206': (12.755, 53.05, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0), 'TP209': (116.3, 22.8, 0),
+    'TP210': (118.85, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0), 'TP2902': (40.679, 80.317, 0),
+    'U206': (4.1, 57.6, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0), 'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90),
+    'U215': (21.5, 58.5, 180), 'U217': (44.5, 20, 90), 'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90),
+    'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90), 'U502': (64.5, 20, 90), 'U507': (4.5, 51, 0),
 }
 PLUG_ZONES = ('J204', 'J207')   # top-span headers: no part between the mating face and the board edge
 # Kelvin cell of each LNA channel (W2 PCB-PWRB lineage): TPS2553 switch, Kelvin shunt, XAL5030, input / shunt capacitors and,
@@ -462,8 +488,8 @@ def check_placement(inp, parts):
         if not all(point_in_poly(q, outline) for q in corners):
             problems.append(f'{a}: courtyard {pa.box} leaves the outline')
         for cut in cuts:
-            if pa.side == 'F' and bg.rects_overlap(pa.box, cut):
-                problems.append(f'{a}: courtyard over the cutout {cut}')
+            if pa.side == 'F' and bg.rects_overlap(pa.box, cut, CRT_GUARD):
+                problems.append(f'{a}: courtyard within {CRT_GUARD} mm of the cutout {cut}')
         for name in PLUG_ZONES:
             hb = parts[name].box
             if a not in PLUG_ZONES and pa.side == 'F' and bg.rects_overlap(pa.box, (hb[0], hb[3], hb[2], c['outline_mm'][2][1])):
@@ -1116,10 +1142,15 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
         'layers': {
             'copper': 4, 'thickness_mm': 1.6,
             'source': 'build/15 Шари (4-layer JLC04161H-7628, 1 oz outer) and mechanical/generated/contract/boards.json stackup',
-            'types': {'In1.Cu': 'power', 'In2.Cu': 'power'},
+            'types': {'In1.Cu': 'power'} if IN2_SIGNAL else {'In1.Cu': 'power', 'In2.Cu': 'power'},
             'plan': {'F.Cu': 'parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour',
                      'In1.Cu': 'solid GND plane (layer type power: the router puts only vias through it)',
-                     'In2.Cu': 'second GND plane (layer type power)',
+                     'In2.Cu': ('signals (autorouted; W2 PWRB-R: the S-G-S-S plan of CTRL, a third routing layer for the '
+                                'bar between J209 and the S02 headers), GND pour after routing') if IN2_SIGNAL else
+                               'second GND plane (layer type power)' + (
+                         '; locked slow-signal links of the frozen route completion (route-frozen.json, W2 PWRB-R) where '
+                         'F.Cu and B.Cu had no path; the plane fill flows around them, In1.Cu stays solid'
+                         if any(t['layer'] == 'In2.Cu' for t in tracks) else ''),
                      'B.Cu': 'B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour'}},
         'project': 'build/kicad/boards/PWR_B/PWR_B.kicad_pro',
         'rules_file': None,
@@ -1151,21 +1182,40 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                   'keepout_blocks': ['tracks', 'vias', 'zone_fills']},
         'groups': [],
         'pre_route': {
+            **({'frozen_route_note': (
+                'W2 PWRB-R: tracks RT-* / vias RV-* are the router copper of the harvested route run, locked; FIN-* / FINV-* '
+                'are its completion by build/kicad/boards/PWR_B/freeze/freeze_route.py (grid A*, exact clearance check, the '
+                'planned cut-outs as keepouts). Valid only for this placement, netlist and scripted copper (guard: SHA256 of '
+                'the pads and of the scripted copper geometry); a change stops make_spec.py at the guard and needs a new '
+                'harvest. Source: build/kicad/boards/PWR_B/route-frozen.json')} if FROZEN.is_file() else {}),
             'tracks': tracks,
             'vias': vias,
             'zones': [{'id': 'GND-In1', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
-                       'why': 'GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it'},
+                       'why': 'GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it'}] + ([] if IN2_SIGNAL else [
                       {'id': 'GND-In2', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
                        'why': 'second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). '
-                              'Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)'}]},
-        'post_route_zones': [
+                              'Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)'}])},
+        'post_route_zones': ([{'id': 'GND-In2', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+                               'why': 'W2 PWRB-R: In2.Cu is a signal layer (IN2_SIGNAL); its GND pour after routing joins the scripted GND vias'}]
+                             if IN2_SIGNAL else []) + [
             {'id': 'GND-F', 'net': 'GND', 'layer': 'F.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
              'why': 'solid pad connection: thermal spokes of THT header GND pins were starved between the pins (route run 42414083566); '
                     'the solder-joint cost of solid THT connections is an assembly gate (OPEN, see GND-In2)'},
             {'id': 'GND-B', 'net': 'GND', 'layer': 'B.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid'}],
-        'edge_keepout': {'width_mm': 0.2, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
+        'edge_keepout': {'width_mm': 0.2, 'layers': ['F.Cu', 'In2.Cu', 'B.Cu'] if IN2_SIGNAL else ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
                          'why': 'rule-area strips (half-width 0.2) on every outline and cutout edge: the router keeps its copper '
                                 '0.35 mm off the edge, above the project copper-to-edge 0.3 (route run 42414083566 had 0.23)'},
+        'planned_cutouts': {
+            'why': ('W2 PWRB-R (review F2 of W2 PCB-PWRB-2): the PWR-A cut-outs (pwr_a_cutouts) become holes and notches of this '
+                    'board once the MECH lineage writes them into the contract, so no copper may cross them now: each rect grown '
+                    f'by margin_mm (the project copper-to-edge clearance {EDGE}) is a rule area on all four copper layers that '
+                    'blocks tracks, vias, pads and zone fills, so Freerouting routes around it, the GND planes and pours leave '
+                    'it free and KiCad DRC reports any copper in it; pcb/check_boards.py planned_cutouts measures every copper '
+                    'item of the routed board against the rects'),
+            'margin_mm': EDGE, 'layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias', 'zone_fills', 'pads'],
+            'rects': [{'id': cu['ref'], 'kind': cu['kind'],
+                       'rect': [cu['rect'][0], cu['rect'][1], r4(cu['rect'][2] - cu['rect'][0]), r4(cu['rect'][3] - cu['rect'][1])]}
+                      for cu in inp.cutouts]},
         'height_zones': [
             {'region': 'board', 'max_height_mm_from_contract': 'max_component_height', 'side': 'top', 'checked': True,
              'why': 'hB 5.5 (pcb/partition-spec.json parameters.hB): parts on the top side; heights from heights below'},
@@ -1303,14 +1353,75 @@ SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
 
 
 # ------------------------------------------------------------------ main
-def build(inp):
+# ------------------------------------------------------------------ frozen route (W2 PWRB-R, port of the W2 CTRL-R tool)
+FROZEN = BASE / 'build/kicad/boards/PWR_B/route-frozen.json'
+FROZEN_PREFIXES = ('RT-', 'RV-', 'FIN-', 'FINV-')
+FROZEN_WHY = ('completion of the frozen route (build/kicad/boards/PWR_B/route-frozen.json, W2 PWRB-R): grid A* on F.Cu and '
+              'B.Cu on the locked copper of the harvested route run, exact clearance check (freeze/freeze_route.py)')
+
+
+def frozen_guard(parts, tracks, vias, cutouts_sha):
+    """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers), the scripted copper
+    (geometry only: its 'why' texts can be corrected without a new harvest), as W2 CTRL-R did for CTRL, and the PWR-A
+    cut-out list (its rule areas are keepouts of the frozen copper; PCB-PWRA-4 may still move them)."""
+    pads = sorted(f"{ref}.{p['number']}|{p['net']}|{p['at'][0]:.4f},{p['at'][1]:.4f}|{','.join(p['layers'])}"
+                  for ref, pa in parts.items() for p in pa.pads if p['number'])
+
+    def geometry(item):
+        return json.dumps({k: v for k, v in item.items() if k != 'why'}, sort_keys=True)
+    scripted = [geometry(t) for t in tracks] + [geometry(v) for v in vias]
+    return {'pads_sha256': hashlib.sha256('\n'.join(pads).encode()).hexdigest(),
+            'scripted_sha256': hashlib.sha256('\n'.join(scripted).encode()).hexdigest(), 'cutouts_sha256': cutouts_sha}
+
+
+def frozen_guard_of_spec():
+    """The guard of the spec this file makes now without the frozen copper (freeze/freeze_route.py writes it)."""
+    inp = Inputs()
+    _a, _m, _p, parts, tracks, vias, _e = build(inp, frozen=False)
+    return frozen_guard(parts, tracks, vias, inp.cutouts_sha)
+
+
+def frozen_copper(inp, parts, tracks, vias):
+    """The frozen route: the router copper of a harvested route run, locked, and the scripted completion of its open
+    connections, from route-frozen.json. It goes in after the scripted copper, which stays exactly as in that run; the
+    guard stops make_spec when a pad, a net, the scripted copper or the PWR-A cut-out list changed (route again without
+    the frozen copper)."""
+    if not FROZEN.is_file():
+        return [], [], None
+    doc = json.loads(FROZEN.read_text(encoding='utf-8'))
+    have = frozen_guard(parts, tracks, vias, inp.cutouts_sha)
+    for key, value in have.items():
+        if doc['guard'].get(key) != value:
+            raise SystemExit(f'make_spec: route-frozen.json was routed on another {key} ({str(doc["guard"].get(key))[:12]}... != '
+                             f'{value[:12]}...): route again with [pcb-route PWR_B] without the frozen copper and harvest anew')
+    ft, fv = [], []
+    for prefix, key, why in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', FROZEN_WHY)):
+        for k, (net, layer, width, path) in enumerate(doc[key]):
+            t = {'id': f'{prefix}-{k + 1:04d}', 'net': net, 'layer': layer, 'width_mm': width, 'path': path, 'locked': True}
+            if why:
+                t['why'] = why
+            ft.append(t)
+    for prefix, key in (('RV', 'router_vias'), ('FINV', 'completion_vias')):
+        for k, (net, x, y, d, drill) in enumerate(doc[key]):
+            fv.append({'id': f'{prefix}-{k + 1:04d}', 'net': net, 'at': [x, y], 'drill_mm': drill, 'diameter_mm': d, 'locked': True})
+    return ft, fv, doc
+
+
+def build(inp, frozen=True):
     anchors = placement(inp)
     missing = [r for r in inp.refs if r not in anchors]
     pins = b2b_pin_map(inp)
     parts = placed_parts(inp, anchors)
     move_edge_references(inp, anchors, parts)
     tracks, vias, exempt = scripted_copper(inp, parts, pins)
+    if frozen:
+        ft, fv, _doc = frozen_copper(inp, parts, tracks, vias)
+        tracks, vias = tracks + ft, vias + fv
     return anchors, missing, pins, parts, tracks, vias, exempt
+
+
+def scripted_only(items):
+    return [t for t in items if not t['id'].startswith(FROZEN_PREFIXES)]
 
 
 def main(argv=None):
@@ -1323,7 +1434,8 @@ def main(argv=None):
     sys.stdout.reconfigure(encoding='utf-8')
     inp = Inputs()
     anchors, missing, pins, parts, tracks, vias, exempt = build(inp)
-    problems = check_placement(inp, parts) + check_copper(inp, parts, tracks, vias) + kelvin_cells(anchors)
+    # the frozen route copper is checked by freeze/freeze_route.py (exact model) and KiCad DRC, not by the pairwise check here
+    problems = check_placement(inp, parts) + check_copper(inp, parts, scripted_only(tracks), scripted_only(vias)) + kelvin_cells(anchors)
     problems += [f'not placed: {r}' for r in missing]
     gnd_pads = [(r, q['number']) for r, pa in parts.items() for q in pa.pads if q['net'] == 'GND' and q['type'] == 'smd'
                 and (r, q['number']) != ('U215', 'EP') and r != B2B_REF]
