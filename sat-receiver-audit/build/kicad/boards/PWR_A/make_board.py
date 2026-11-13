@@ -79,7 +79,7 @@ NECK_ESCAPE = 1.5
 # locked stem of the pad's smaller side (at most the class width) from its centre to a landing point where a track of
 # the full class width fits (clear of every other net by CLEAR + MARGIN, of the edge by EDGE + MARGIN); the router then
 # joins the landing at the class width. A pad that scripted copper of its net already touches gets none.
-PAD_STEMS = True
+PAD_STEMS = False
 STEM_LENGTHS = (0.4, 0.8, 1.2, 1.6, 2.0, 2.5, 3.0, 3.6)
 
 
@@ -1053,7 +1053,56 @@ def project_json(inp, nets):
 
 
 # ------------------------------------------------------------------ the spec
-def build():
+FROZEN = HERE / 'route-frozen.json'   # W2 PWRJ F2ENV: frozen route (freeze/freeze_route.py), loaded when its guard matches
+FROZEN_PREFIXES = ('RT-', 'RV-', 'FIN-', 'FINV-')
+FROZEN_WHY = ('completion of the frozen route (build/kicad/boards/PWR_A/route-frozen.json, W2 PWRJ F2ENV): grid A* on F.Cu and '
+              'B.Cu on the locked copper of the harvested route run, exact clearance check (freeze/freeze_route.py)')
+
+
+def frozen_guard(inp, tracks, vias, zones):
+    """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers) and the scripted
+    copper (geometry only), as PWR_B make_spec.py frozen_guard (W2 PWRB-R) and CTRL (W2 CTRL-R)."""
+    import hashlib
+    pads = sorted(f"{ref}.{q['number']}|{q['net']}|{q['at'][0]:.4f},{q['at'][1]:.4f}|{','.join(q['layers'])}"
+                  for ref, pa in inp.parts.items() for q in pa.pads if q['number'])
+
+    def geometry(item):
+        return json.dumps({k: v for k, v in item.items() if k != 'why'}, sort_keys=True)
+    scripted = [geometry(t) for t in tracks] + [geometry(v) for v in vias] + [geometry(z) for z in zones]
+    return {'pads_sha256': bg.sha256_bytes('\n'.join(pads).encode()),
+            'scripted_sha256': bg.sha256_bytes('\n'.join(scripted).encode())}
+
+
+def frozen_guard_of_spec():
+    """The guard of the spec this file makes now without the frozen copper (freeze/freeze_route.py writes it)."""
+    out, inp, _problems, _nets = build(frozen=False)
+    pr = out['pre_route']
+    return frozen_guard(inp, pr['tracks'], pr['vias'], pr['zones'])
+
+
+def frozen_copper(inp, tracks, vias, zones):
+    if not FROZEN.is_file():
+        return [], [], None
+    doc = read(FROZEN)
+    have = frozen_guard(inp, tracks, vias, zones)
+    for key, value in have.items():
+        if doc['guard'].get(key) != value:
+            raise SystemExit(f'make_board: route-frozen.json was routed on another {key} ({str(doc["guard"].get(key))[:12]}... != '
+                             f'{value[:12]}...): route again with [pcb-route PWR_A] without the frozen copper and harvest anew')
+    ft, fv = [], []
+    for prefix, key, why in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', FROZEN_WHY)):
+        for k, (net, layer, width, path) in enumerate(doc[key]):
+            t = {'id': f'{prefix}-{k + 1:04d}', 'net': net, 'layer': layer, 'width_mm': width, 'path': path, 'locked': True}
+            if why:
+                t['why'] = why
+            ft.append(t)
+    for prefix, key in (('RV', 'router_vias'), ('FINV', 'completion_vias')):
+        for k, (net, x, y, d, drill) in enumerate(doc[key]):
+            fv.append({'id': f'{prefix}-{k + 1:04d}', 'net': net, 'at': [x, y], 'drill_mm': drill, 'diameter_mm': d, 'locked': True})
+    return ft, fv, doc
+
+
+def build(frozen=True):
     spec = mps.build_placement()
     for k in ('probe_left_out', 'probe_post_route_zones_left_out'):
         spec.pop(k, None)
@@ -1083,6 +1132,10 @@ def build():
                  'H-TRIM) and the router budget of a board of record. CI/MODEL only: no fabrication release, bench gates OPEN.')
         elif k == 'pre_route':
             v = {'tracks': pre['tracks'] + gt, 'vias': pre['vias'] + gv, 'zones': pre['zones']}
+            if frozen:
+                ft, fv, fdoc = frozen_copper(inp, v['tracks'], v['vias'], v['zones'])
+                if fdoc:
+                    v = {'tracks': v['tracks'] + ft, 'vias': v['vias'] + fv, 'zones': v['zones']}
         elif k == 'router':
             v = {'tool': 'freerouting', 'max_passes': 100, 'threads': 1, 'job_timeout': '00:32:00', 'timeout_s': 2040,
                  'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())),
