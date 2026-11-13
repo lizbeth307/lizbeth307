@@ -171,7 +171,7 @@ def board_boxes(P, bid, at=None):
         ox, oy = b["place_at"][at]
     else:
         ox, oy = pl["origin"]
-    t = P.boards["stackup"]["t"]
+    t = P.board_t(bid)      # W2 MECH-8: the board's own stackup (6-layer PWR / PWR_B), else the shared one
     z0 = pl["z_bottom"]
     out = []
 

@@ -170,7 +170,7 @@ def _edge_point(P, wp):
         x, y = ox + max(xs), oy + s
     else:
         raise KeyError(f"harness_routes: edge kind {ez['edge']} has no line")
-    tb = P.boards["stackup"]["t"]
+    tb = P.board_t(wp["edge"])      # W2 MECH-8: the board's own thickness (6-layer PWR / PWR_B)
     pl = b["place"]
     dz = wp.get("dz", P.mech["harness_routes"]["edge_exit_mm"])
     z = pl["z_bottom"] + tb + dz if pl["facing"] == "+z" else pl["z_bottom"] - tb - dz

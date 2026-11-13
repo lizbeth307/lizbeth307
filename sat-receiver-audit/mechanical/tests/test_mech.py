@@ -750,7 +750,7 @@ class EnvelopeW2Mech3(unittest.TestCase):
         spec = self._spec()
         par = spec["parameters"]
         a, b = P.boards["boards"]["PWR"], P.boards["boards"]["PWR_B"]
-        t = P.boards["stackup"]["t"]
+        t = P.board_t("PWR")    # W2 MECH-8: the PWR-A thickness (its own 6-layer stackup), no longer the shared 1.6 mm
         self.assertAlmostEqual(b["place"]["z_bottom"], a["place"]["z_bottom"] + t + par["stack"], places=6)
         self.assertEqual(a["max_height"], par["hA"])
         self.assertEqual(b["max_height"], par["hB"])
@@ -1601,3 +1601,133 @@ class ContractW2Mech7Review(unittest.TestCase):
                                    {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"}]
         zq = [z for z in self._rule(Q, "R-PWRB-EXIT")["value_mm"]["zones"] if z["zone"] == 2][0]
         self.assertTrue(any(v["clear_mm"] < 0 for v in zq["legs"].values()), zq["legs"])
+
+
+class ContractW2Mech8(unittest.TestCase):
+    """W2 MECH-8: PWR-A and PWR-B on 6 layers JLC06161H-2116 with 2 oz outer copper (1.664 mm MODEL) in the mechanical
+    contract, the mated stack re-checked (R-PWR-STACK); every other board keeps the shared 4-layer 1.6 mm stackup."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q):
+        return [x for x in rules.evaluate(Q) if x["id"] == "R-PWR-STACK"][0]
+
+    def _spec(self):
+        return json.loads((HERE.parent / "pcb" / "partition-spec.json").read_text(encoding="utf-8"))
+
+    def test_power_boards_have_the_6_layer_stackup(self):
+        for bid in ("PWR", "PWR_B"):
+            st = P.boards["boards"][bid]["stackup"]
+            self.assertEqual(st["layers"], 6, bid)
+            self.assertAlmostEqual(st["t"], 1.664, places=6)
+            self.assertEqual(st["status"], "MODEL")
+            self.assertIn("JLC06161H-2116", st["fab"])
+            self.assertIn("https://jlcpcb.com/impedance", st["source"])
+            self.assertIn("2026-11-13", st["source"])
+            self.assertAlmostEqual(st["order_t"] * (1 + st["order_tol"]), 1.76, places=6)
+            self.assertEqual(P.board_t(bid), st["t"])
+
+    def test_thickness_is_the_layer_table_with_2_oz_outer_copper(self):
+        # the same JLC06161H-2116 table as pcb/generated/stackup-6l.json (pcb/stackup.py), outer foil of copper_option outer_2oz
+        path = HERE.parent / "pcb" / "generated" / "stackup-6l.json"
+        if not path.exists():
+            self.skipTest("pcb/generated/stackup-6l.json not present")
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        self.assertEqual(doc["stackup"]["id"], "JLC06161H-2116")
+        opt = doc["copper_options"]["outer_2oz"]
+        total = 0.0
+        for layer in doc["stackup"]["layers"]:
+            if layer.get("kicad") in ("F.Cu", "B.Cu"):
+                total += opt["outer_copper_mm"]
+            elif "kicad" in layer:
+                total += layer["copper_mm"]
+            else:
+                total += layer["thickness_mm"]
+        self.assertAlmostEqual(total, 1.6644, places=6)
+        for bid in ("PWR", "PWR_B"):
+            self.assertAlmostEqual(P.board_t(bid), round(total, 3), places=6)
+
+    def test_other_boards_keep_the_shared_stackup(self):
+        self.assertEqual(P.boards["stackup"]["t"], 1.6)
+        self.assertEqual(P.boards["stackup"]["layers"], 4)
+        for bid in ("RF", "CTRL", "ENC"):
+            self.assertNotIn("stackup", P.boards["boards"][bid], bid)
+            self.assertEqual(P.board_t(bid), 1.6, bid)
+        c = boards.contract(P)
+        self.assertEqual(c["stackup"], P.boards["stackup"])                      # the top-level contract stackup is unchanged
+        for bid in ("RF", "CTRL", "ENC"):
+            self.assertNotIn("stackup", c["boards"][bid], bid)
+        for bid in ("PWR", "PWR_B"):
+            st = c["boards"][bid]["stackup"]
+            self.assertEqual((st["layers"], st["t"]), (6, 1.664), bid)
+            self.assertIn("source", st)
+            self.assertFalse([k for k in st if k.startswith("_")], bid)
+
+    def test_pwr_b_follows_the_thicker_pwr_a(self):
+        a, b = P.boards["boards"]["PWR"], P.boards["boards"]["PWR_B"]
+        stack = b["b2b"]["stack"]
+        self.assertEqual(stack, self._spec()["parameters"]["stack"])
+        self.assertAlmostEqual(b["place"]["z_bottom"], a["place"]["z_bottom"] + P.board_t("PWR") + stack, places=6)
+        self.assertAlmostEqual(b["place"]["z_bottom"], 47.564, places=6)
+        tops = [bx[5] for name, bx in layout.board_boxes(P, "PWR_B")]
+        self.assertAlmostEqual(max(tops), 47.564 + 1.664 + b["max_height"], places=6)
+        tops_a = [bx[5] for name, bx in layout.board_boxes(P, "PWR") if not name.startswith("PWR.b")]
+        self.assertAlmostEqual(min(tops_a), a["place"]["z_bottom"] + 1.664 + a["max_height"], places=6)
+
+    def test_stack_rule_reports_the_margin(self):
+        r = self._rule(P)
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        self.assertIn("proof-fit gate (OPEN)", r["result"])
+        v = r["value_mm"]
+        sz = P.mech["stack_z"]
+        floor = sz["module_back"] - self._spec()["envelope"]["air_channel"]
+        top = v["pwr_b"]["parts_top_z"]
+        self.assertAlmostEqual(top, 40.9 + 1.664 + 5.0 + 1.664 + 5.5, places=6)
+        self.assertAlmostEqual(v["margin_mm"], round(floor - top, 3), places=6)
+        self.assertGreaterEqual(v["margin_mm"], 0.0)
+        self.assertAlmostEqual(v["margin_with_shared_t_mm"] - v["margin_mm"], 2 * (1.664 - 1.6), places=6)
+        ob = v["order_band_mm"]
+        self.assertEqual(ob["PWR"], [1.44, 1.76])
+        self.assertAlmostEqual(ob["margin_min_mm"], round(floor - (40.9 + 1.76 + 5.0 + 1.76 + 5.5), 3), places=6)
+        self.assertGreaterEqual(ob["margin_min_mm"], 0.0)
+        self.assertTrue(v["dz_mezz_mm"]["dz_unchanged"], v["dz_mezz_mm"])     # D-ENV: the CTRL bottom still sets dz
+        self.assertAlmostEqual(v["channel_to_module_back_mm"], round(sz["module_back"] - top, 3), places=6)
+        rows = [g for g in layout.channel_check(P) if g["item"].startswith("PWR_B")]
+        for g in rows:                                                        # the channel rows use the same envelope
+            self.assertAlmostEqual(g["top_z"], round(top, 2), places=6)
+
+    def test_stack_rule_fails_when_pwr_b_does_not_follow(self):
+        Q = self._copy()
+        Q.boards["boards"]["PWR_B"]["place"]["z_bottom"] = 47.5                # the 1.6 mm position with the 1.664 mm PWR-A
+        self.assertTrue(self._rule(Q)["result"].startswith("FAIL"))
+        Q = self._copy()
+        Q.mech["stack_z"]["module_back"] -= 2.0                               # display stack 2 mm lower: margin negative
+        self.assertTrue(self._rule(Q)["result"].startswith("FAIL"))
+        Q = self._copy()
+        for bid in ("PWR", "PWR_B"):
+            Q.boards["boards"][bid]["stackup"]["order_tol"] = 0.8              # a band so wide that its upper end does not fit
+        self.assertTrue(self._rule(Q)["result"].startswith("FAIL"))
+
+    def test_h_trim_clearance_does_not_depend_on_the_board_thickness(self):
+        r = [x for x in rules.evaluate(P) if x["id"] == "R-H-TRIM"][0]
+        self.assertAlmostEqual(r["value_mm"]["pwr_a_face_z"], 40.9 + 1.664, places=6)
+        self.assertAlmostEqual(r["value_mm"]["clearance_mm"], self._spec()["keepouts"]["h_trim"]["clearance_mm"], places=6)
+
+    def test_fastener_stacks_use_the_board_thickness(self):
+        from srrx_mech import fasteners
+        J = {j["id"]: j for j in fasteners.stacks(P)["joints"]}
+        self.assertEqual(J["PWR_A-PLATE"]["stack_mm"][0], ["PWR-A", round(1.664, 2)])
+        self.assertEqual(J["PWR_B-STANDOFF"]["stack_mm"], [["PWR-B", round(1.664, 2)]])
+        self.assertIn("z 42.564", J["PWR_A-PLATE"]["seat"])
+        self.assertIn("z 49.228", J["PWR_B-STANDOFF"]["seat"])
+        self.assertTrue(J["PWR_B-STANDOFF"]["result"].startswith("PASS (model)"), J["PWR_B-STANDOFF"]["result"])
+        self.assertEqual(J["RF-STANDOFF"]["stack_mm"], [["RF board", 1.6]])  # the 4-layer boards are unchanged
+
+    def test_board_sheet_names_the_stackup(self):
+        def text(bid):
+            return json.dumps(boards.board_sheet(P, bid).__dict__, ensure_ascii=False, default=str)
+        self.assertIn("6 шарів, 1.664 мм", text("PWR_B"))
+        self.assertIn("TBD при замовленні", text("PWR"))
+        self.assertIn("FR-4, 4 шари, 1.6 мм (build/15)", text("RF"))
