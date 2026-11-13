@@ -62,7 +62,26 @@
       "stem": "E2",
       "instance": "81984160-ffc1-5150-93ba-690a49e1cc5c",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/5)",
-      "components": 63,
+      "components": 48,
+      "sheet": "E2",
+      "notes": [],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {},
+      "fill": 0.704,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 141,
+        "ground_symbols": 33,
+        "junctions": 77,
+        "wire_crossings": 11,
+        "wires": 356
+      }
+    },
+    {
+      "stem": "E2_02",
+      "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
+      "components": 55,
       "sheet": "E2",
       "notes": [
         "N-E2-02",
@@ -75,33 +94,14 @@
         "E2-01": 110,
         "E2-04": 110
       },
-      "fill": 0.857,
+      "fill": 0.817,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 42,
-        "ground_symbols": 41,
-        "junctions": 52,
+        "global_labels": 36,
+        "ground_symbols": 37,
+        "junctions": 49,
         "wire_crossings": 3,
-        "wires": 224
-      }
-    },
-    {
-      "stem": "E2_02",
-      "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
-      "components": 45,
-      "sheet": "E2",
-      "notes": [],
-      "note_wrap_cap": 110,
-      "note_wrap_chars": {},
-      "fill": 0.719,
-      "drawing": {
-        "fallback_labels": 0,
-        "global_labels": 155,
-        "ground_symbols": 28,
-        "junctions": 71,
-        "wire_crossings": 12,
-        "wires": 353
+        "wires": 199
       }
     },
     {
@@ -142,21 +142,21 @@
       "note_wrap_chars": {
         "E2-05": 110
       },
-      "fill": 0.666,
+      "fill": 0.668,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 53,
+        "global_labels": 54,
         "ground_symbols": 31,
         "junctions": 38,
         "wire_crossings": 6,
-        "wires": 191
+        "wires": 190
       }
     },
     {
       "stem": "E2_05",
       "instance": "3b171c1f-559e-51e7-80e8-e40d3812ba35",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (5/5)",
-      "components": 80,
+      "components": 85,
       "sheet": "E2",
       "notes": [
         "E2-03",
@@ -167,14 +167,14 @@
         "E2-03": 110,
         "N-E2-01": 110
       },
-      "fill": 0.579,
+      "fill": 0.664,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 62,
-        "ground_symbols": 39,
-        "junctions": 23,
-        "wire_crossings": 1,
-        "wires": 163
+        "global_labels": 77,
+        "ground_symbols": 38,
+        "junctions": 24,
+        "wire_crossings": 2,
+        "wires": 190
       }
     },
     {
@@ -441,11 +441,11 @@
   "nets": 499,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 1238,
+    "global_labels": 1234,
     "ground_symbols": 553,
-    "junctions": 568,
+    "junctions": 572,
     "wire_crossings": 63,
-    "wires": 3371
+    "wires": 3375
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -1119,7 +1119,7 @@
   },
   "source_sha256": {
     "E1.json": "1b66154dd72b4e8bf8673968f86758e2f5c2e028c1ed92bce2116e002a57ba99",
-    "E2.json": "347a5d345a20c5594237ed92a3265cde7154e956922d5ec0af0cf3377a0406c8",
+    "E2.json": "3adfee75ad5db259432428ac79c29dbe8e9e2abbc82df973e4e03b7359742e21",
     "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "0b594795866dd05e99df4ea42d6548decf45414472e3c4a9475430452f5c4c57"

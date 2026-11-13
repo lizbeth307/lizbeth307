@@ -190,8 +190,8 @@
         "type": "passive"
       },
       {
-        "ref": "J202",
-        "pin": "7",
+        "ref": "J203",
+        "pin": "14",
         "type": "passive"
       },
       {
@@ -414,8 +414,8 @@
         "type": "passive"
       },
       {
-        "ref": "J202",
-        "pin": "12",
+        "ref": "J203",
+        "pin": "15",
         "type": "passive"
       },
       {
@@ -513,43 +513,6 @@
         "type": "passive"
       }
     ],
-    "EN_HFP": [
-      {
-        "ref": "J202",
-        "pin": "5",
-        "type": "passive"
-      },
-      {
-        "ref": "J208",
-        "pin": "26",
-        "type": "passive"
-      },
-      {
-        "ref": "J209",
-        "pin": "25",
-        "type": "passive"
-      },
-      {
-        "ref": "U301",
-        "pin": "25",
-        "type": "output"
-      },
-      {
-        "ref": "J306",
-        "pin": "5",
-        "type": "passive"
-      },
-      {
-        "ref": "U503",
-        "pin": "3",
-        "type": "input"
-      },
-      {
-        "ref": "R510",
-        "pin": "1",
-        "type": "passive"
-      }
-    ],
     "EN_LABPORT": [
       {
         "ref": "J202",
@@ -600,6 +563,43 @@
       },
       {
         "ref": "R502",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "EN_HFP": [
+      {
+        "ref": "J203",
+        "pin": "2",
+        "type": "passive"
+      },
+      {
+        "ref": "J208",
+        "pin": "26",
+        "type": "passive"
+      },
+      {
+        "ref": "J209",
+        "pin": "25",
+        "type": "passive"
+      },
+      {
+        "ref": "U301",
+        "pin": "25",
+        "type": "output"
+      },
+      {
+        "ref": "J306",
+        "pin": "5",
+        "type": "passive"
+      },
+      {
+        "ref": "U503",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R510",
         "pin": "1",
         "type": "passive"
       }
