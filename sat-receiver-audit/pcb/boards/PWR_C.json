@@ -561,11 +561,11 @@
     {
       "source": "pilot_placeholder",
       "ref": "XJW2",
-      "footprint": "Connector_JST:JST_PHD_S12B-PHDSS_2x06_P2.00mm_Horizontal",
+      "footprint": "Connector_PinHeader_2.00mm:PinHeader_2x06_P2.00mm_Horizontal",
       "footprint_library": "kicad-image",
-      "footprint_sha256": "3a3626c19b890267583f120967802ca03191e269cbd86b4b0cdeec4bb7f0e311",
-      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_JST.pretty/JST_PHD_S12B-PHDSS_2x06_P2.00mm_Horizontal.kicad_mod read 2026-11-13 (curl default User-Agent, HTTP 200); copy in build/kicad/boards/PWR_C/footprints-image/ for the generator geometry; checked against the kicad/kicad:10.0.7 image copy at run time",
-      "value": "W-C2 to CTRL J306/J307: JST PHD 2x6 side entry",
+      "footprint_sha256": "0ff352e9039baf842dc9361ab86a5893fea551b0c6f89a5597823816b6498efe",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_PinHeader_2.00mm.pretty/PinHeader_2x06_P2.00mm_Horizontal.kicad_mod read 2026-11-13 (curl default User-Agent, HTTP 200); copy in build/kicad/boards/PWR_C/footprints-image/ for the generator geometry; checked against the kicad/kicad:10.0.7 image copy at run time",
+      "value": "W-C2 to CTRL J306/J307: 2x6 2.00 mm land of a JST PHD S12B-PHDSS side-entry header",
       "pins": {
         "1": "CHG_INHIBIT",
         "2": "GND",
@@ -584,7 +584,7 @@
       "pending": "GR package: PWR-C end of harness W-C2 (the 9 E1/E5 signals that left S02), CTRL end on the same J306/J307 contacts",
       "anchor": {
         "at": [
-          9.8,
+          11.8,
           22.6
         ],
         "align": "origin",
@@ -597,9 +597,9 @@
       "source": "pilot_placeholder",
       "ref": "XR101",
       "footprint": "Resistor_SMD:R_2512_6332Metric",
-      "footprint_library": "kicad-image",
+      "footprint_library": "project",
       "footprint_sha256": "abab4bf8eeb3ed03061d8eeb56b542cdac074ce8a0ace0f9b06e933c0b48f297",
-      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Resistor_SMD.pretty/R_2512_6332Metric.kicad_mod read 2026-11-13 (curl default User-Agent, HTTP 200); copy in build/kicad/boards/PWR_C/footprints-image/ for the generator geometry; checked against the kicad/kicad:10.0.7 image copy at run time",
+      "footprint_sha256_source": "build/kicad/footprints/manifest.json (KiCad 10.0.7 official, unmodified)",
       "value": "15 mOhm 2512 shunt (R1 of the Adafruit 5832 board)",
       "pins": {
         "1": "E1_SHUNT_P",
@@ -622,9 +622,9 @@
       "source": "pilot_placeholder",
       "ref": "XU102",
       "footprint": "Package_SO:MSOP-10_3x3mm_P0.5mm",
-      "footprint_library": "kicad-image",
+      "footprint_library": "project",
       "footprint_sha256": "c179dbee33613027667b07b4dba02648f193fc65f63616c9d73d6f1162c6bb9d",
-      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Package_SO.pretty/MSOP-10_3x3mm_P0.5mm.kicad_mod read 2026-11-13 (curl default User-Agent, HTTP 200); copy in build/kicad/boards/PWR_C/footprints-image/ for the generator geometry; checked against the kicad/kicad:10.0.7 image copy at run time",
+      "footprint_sha256_source": "build/kicad/footprints/manifest.json (KiCad 10.0.7 official, unmodified)",
       "value": "INA228AIDGSR (U102 of the Adafruit 5832, on PWR-C)",
       "pins": {
         "1": "GND",
@@ -729,9 +729,9 @@
     {
       "id": "AON",
       "region": [
-        11.4,
+        13.8,
         10.6,
-        28.4,
+        27.3,
         25.6
       ],
       "side": "F",
@@ -1213,12 +1213,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            25.475,
-            19.55
+            23.375,
+            14.65
           ],
           [
-            26.6,
-            19.55
+            24.5,
+            14.65
           ]
         ],
         "locked": true,
@@ -1231,12 +1231,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            14.05,
-            15.92
+            16.45,
+            11.92
           ],
           [
-            14.05,
-            17.195
+            16.45,
+            13.195
           ]
         ],
         "locked": true,
@@ -1249,12 +1249,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            17.455,
-            16.17
+            19.855,
+            12.17
           ],
           [
-            18.455,
-            16.17
+            20.855,
+            12.17
           ]
         ],
         "locked": true,
@@ -1393,11 +1393,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            17.2,
+            19.6,
             23.35
           ],
           [
-            15.4,
+            21.4,
             23.35
           ]
         ],
@@ -1411,12 +1411,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            24.9,
-            23.35
+            19.6,
+            18.45
           ],
           [
-            26.7,
-            23.35
+            17.8,
+            18.45
           ]
         ],
         "locked": true,
@@ -1573,11 +1573,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            12.3125,
+            22.4125,
             19.0
           ],
           [
-            13.525,
+            23.625,
             19.0
           ]
         ],
@@ -1724,8 +1724,8 @@
         "id": "GND-C103-2-V",
         "net": "GND",
         "at": [
-          26.6,
-          19.55
+          24.5,
+          14.65
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1736,8 +1736,8 @@
         "id": "GND-C104-2-V",
         "net": "GND",
         "at": [
-          14.05,
-          17.195
+          16.45,
+          13.195
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1748,8 +1748,8 @@
         "id": "GND-C105-2-V",
         "net": "GND",
         "at": [
-          18.455,
-          16.17
+          20.855,
+          12.17
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1844,7 +1844,7 @@
         "id": "GND-D104-A-V",
         "net": "GND",
         "at": [
-          15.4,
+          21.4,
           23.35
         ],
         "drill_mm": 0.3,
@@ -1856,8 +1856,8 @@
         "id": "GND-D105-A-V",
         "net": "GND",
         "at": [
-          26.7,
-          23.35
+          17.8,
+          18.45
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1964,7 +1964,7 @@
         "id": "GND-U103-2-V",
         "net": "GND",
         "at": [
-          13.525,
+          23.625,
           19.0
         ],
         "drill_mm": 0.3,

@@ -997,7 +997,7 @@ SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND'}
 # that enter SOT/QFN pins, so a route run separates pad entry (class width wider than the pin) from channel capacity.
 # Router copper below the class width is a pcb/check_boards.py class_widths finding; {} = the committed classes.
 ROUTER_NARROW = {}
-COPPER = 4  # W2 PWRJ-F2C probe: 6 = the 6-layer escalation (In3/In4 signal layers, In1/In2 planes as on 4 layers)
+COPPER = 6  # W2 PWRJ-F2C probe: 6 = the 6-layer escalation (In3/In4 signal layers, In1/In2 planes as on 4 layers)
 
 
 def project_json(inp, nets):

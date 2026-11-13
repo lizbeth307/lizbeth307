@@ -8,6 +8,7 @@
     "source": "https://jlcpcb.com/impedance",
     "read": "2026-11-12",
     "boards": [
+      "PWR_A",
       "PWR_B"
     ],
     "layers": [

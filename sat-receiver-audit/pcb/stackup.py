@@ -66,7 +66,7 @@ OUTER_CU, INNER_CU, PREPREG_H, PREPREG_ER = 0.035, 0.0152, 0.2104, 4.4
 # rule files (every other board) do not change.
 READ_6L = '2026-11-12'
 STACKUP_6L = {
-    'id': 'JLC06161H-2116', 'board_thickness_mm': 1.6, 'source': URL_STACKUP, 'read': READ_6L, 'boards': ['PWR_B'],
+    'id': 'JLC06161H-2116', 'board_thickness_mm': 1.6, 'source': URL_STACKUP, 'read': READ_6L, 'boards': ['PWR_A', 'PWR_B'],
     'layers': [
         {'kicad': 'F.Cu', 'plan': 'L1', 'copper_mm': 0.035},
         {'dielectric': 'prepreg 2116x1 + 2313x1', 'thickness_mm': 0.2234, 'er': None,

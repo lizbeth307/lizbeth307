@@ -908,8 +908,15 @@ def resolve(spec, graph, manifest):
     template = []
     for part in spec['parts']:
         if part['source'] == 'pilot_placeholder':
+            # W2 PWRJ-F2C probe: footprint_library 'project' takes a vendored footprint of the manifest (no clash with the
+            # project library of the board's graph parts in fp-lib-table); 'kicad-image' as before
+            pfile = None
+            if part['footprint_library'] == 'project':
+                if part['footprint'] not in fps or fps[part['footprint']]['sha256'] != part['footprint_sha256']:
+                    raise SpecError(f'placeholder {part["ref"]}: {part["footprint"]} is not the manifest footprint')
+                pfile = fps[part['footprint']]['file']
             template.append({'ref': part['ref'], 'source': part['source'], 'fpid': part['footprint'],
-                             'library': part['footprint_library'], 'file': None,
+                             'library': part['footprint_library'], 'file': pfile,
                              'sha256': part['footprint_sha256'], 'value': part['value'],
                              'pads': {str(k): v for k, v in sorted(part['pins'].items())},
                              'unused_pads': [], 'anchor': part['anchor'], 'pending': part.get('pending', '')})

@@ -15,14 +15,16 @@
   ],
   "partition": "pcb/generated/partition.json",
   "layers": {
-    "copper": 4,
+    "copper": 6,
     "thickness_mm": 1.6,
-    "source": "build/15 'Шари' and 'Мідь і струмові класи (W2 PCB-RULES)': JLC04161H-7628, 1 oz outer / 0.5 oz inner, no 2 oz",
+    "source": "W2 PWRJ-F2C probe: JLC06161H-2116 6 layers 1.6 mm, 1 oz outer / 0.5 oz inner (pcb/generated/stackup-6l.json, read 2026-11-12 by W2 CTRL-R)",
     "plan": {
       "F.Cu": "L1: parts, signals; BATT/PWR3A pours (scripted where both ends are anchored)",
       "In1.Cu": "L2: solid GND (post-route pour over the whole outline)",
       "In2.Cu": "L3: GND fill (pre-route plane) until the placement-dependent power pours take their areas (higher priority)",
-      "B.Cu": "L4: signals; BATT/PWR3A pours paired with L1; GND bond copper in the four thermal_bond zones, solder mask on"
+      "B.Cu": "L4: signals; BATT/PWR3A pours paired with L1; GND bond copper in the four thermal_bond zones, solder mask on",
+      "In3.Cu": "signals (Default class only: router.class_layers keeps the power classes on F.Cu / B.Cu), GND pour after routing",
+      "In4.Cu": "signals (as In3.Cu), GND pour after routing"
     },
     "plan_source": "build/15 'План шарів (W2 PCB-RULES)'",
     "types": {
@@ -3949,6 +3951,8 @@
       "F.Cu",
       "In1.Cu",
       "In2.Cu",
+      "In3.Cu",
+      "In4.Cu",
       "B.Cu"
     ],
     "keepout_blocks": [
@@ -12826,6 +12830,24 @@
       "priority": 1,
       "why": "GND copper on L4 over thermal_bond zone 4 (SHRINK-2 converter zone); mask on; solid pad connection (W2 PCB-PWRA-4: route iteration 2, sr-rx-pcb run 43295500516, starved the thermal spokes of the THT GND pins of J108, J110, J111 and J507 between router tracks; as GND-F on PWR_B, the solid THT joints are an assembly gate, OPEN)",
       "pad_connection": "solid"
+    },
+    {
+      "id": "GND-In3",
+      "net": "GND",
+      "layer": "In3.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "W2 PWRJ-F2C probe, 6 layers: GND pour of a signal layer after routing (joins the scripted GND vias)"
+    },
+    {
+      "id": "GND-In4",
+      "net": "GND",
+      "layer": "In4.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "W2 PWRJ-F2C probe, 6 layers: GND pour of a signal layer after routing (joins the scripted GND vias)"
     }
   ],
   "height_zones": [
@@ -13092,7 +13114,25 @@
     "ignore_net_classes": [
       "SCRIPTED_GND"
     ],
-    "why": "fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm stubs (PWR_A probe run 42413833702); GND (class SCRIPTED_GND) is not autorouted: every SMD GND pad has a scripted plane via (make_board.py gnd_fanout; placement probe 7, run 43148929963, left 140 GND connections open); the budget fits the 45 min board job of sr-rx-pcb with DRC and audits after it"
+    "why": "fanout false as on PWR_B: the Freerouting 2.5.0 fan-out pre-pass escaped SMD pins with 0.1124 mm stubs (PWR_A probe run 42413833702); GND (class SCRIPTED_GND) is not autorouted: every SMD GND pad has a scripted plane via (make_board.py gnd_fanout; placement probe 7, run 43148929963, left 140 GND connections open); the budget fits the 45 min board job of sr-rx-pcb with DRC and audits after it; W2 PWRJ-F2C probe 6 layers: In3.Cu and In4.Cu route the Default class, the power classes stay on F.Cu / B.Cu (router.class_layers, inner copper is no current path in pcb/generated/netclasses.json)",
+    "class_layers": {
+      "BATT": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "PWR1A": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "PWR2A": [
+        "F.Cu",
+        "B.Cu"
+      ],
+      "PWR3A": [
+        "F.Cu",
+        "B.Cu"
+      ]
+    }
   },
   "drc_policy": {
     "warning_checks": {
@@ -13872,6 +13912,8 @@
     "width_mm": 0.2,
     "layers": [
       "F.Cu",
+      "In3.Cu",
+      "In4.Cu",
       "B.Cu"
     ],
     "blocks": [
@@ -14214,7 +14256,7 @@
     "rule": "make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to a 0.7 / 0.3 via, or to a GND via within 3 mm"
   },
   "moves": {
-    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 db20511619f8eced841be5b513d08afc080b0ec479e47f125f6143da8546e268",
+    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 be683a9aac39e4a8f35923b1a460470cd9044daac7d4a711b17025fb7d4ca112",
     "moved_refs": 160,
     "manual": []
   },

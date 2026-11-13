@@ -80,8 +80,8 @@ PLACEHOLDERS = {
     'XJC2': {'fp': 'Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm',
              'value': 'W-C1 LAB5 feed from PWR-A J106 (18 AWG wire lands)', 'pins': {'1': 'GND', '2': 'LAB5'},
              'pending': 'GR package: PWR-C end of harness W-C1 (from PWR-A J106)', 'replaced_by': 'a PWR-C graph ref'},
-    'XJW2': {'fp': 'Connector_JST:JST_PHD_S12B-PHDSS_2x06_P2.00mm_Horizontal',
-             'value': 'W-C2 to CTRL J306/J307: JST PHD 2x6 side entry',
+    'XJW2': {'fp': 'Connector_PinHeader_2.00mm:PinHeader_2x06_P2.00mm_Horizontal',
+             'value': 'W-C2 to CTRL J306/J307: 2x6 2.00 mm land of a JST PHD S12B-PHDSS side-entry header',
              'pins': {'1': 'CHG_INHIBIT', '2': 'GND', '3': 'E1_BAT_ADC', '4': 'PWR_BUTTON', '5': 'I2C0_SCL', '6': 'GND',
                       '7': 'I2C0_SDA', '8': 'IMU_RX', '9': 'INA228_ALERT', '10': 'IMU_TX', '11': 'PICO_OFF', '12': 'GND'},
              'pending': 'GR package: PWR-C end of harness W-C2 (the 9 E1/E5 signals that left S02), CTRL end on the same '
@@ -93,7 +93,7 @@ PLACEHOLDERS = {
 X_VOUT, X_VIN, Y_P1 = 35.27, 53.05, 25.78  # header columns; pin 1 (power node) on top, pins run down 2.54 mm
 MODULE_BODY = [X_VOUT - 1.27, Y_P1 + 5.08 - 25.4, X_VOUT - 1.27 + 20.3, Y_P1 + 5.08]
 ANCHORS = {
-    'XJW2': (9.8, 22.6, 270), 'J105': (11.0, 3.5, 90), 'XR101': (26.8, 3.2, 0), 'XU102': (24.1, 8.4, 0),
+    'XJW2': (11.8, 22.6, 270), 'J105': (11.0, 3.5, 90), 'XR101': (26.8, 3.2, 0), 'XU102': (24.1, 8.4, 0),
     'F103': (29.4, 12.0, 90), 'J115': (26.4, 30.0, 0),
     'XU106B': (X_VOUT, Y_P1, 0), 'XU106A': (X_VIN, Y_P1, 0),
     'XJC1': (65.0, 31.0, 180), 'J108': (66.0, 17.0, 180),
@@ -103,7 +103,7 @@ ANCHORS = {
 }
 # Placement groups (region [x0, y0, x1, y1], members); board_gen packs them in this order.
 GROUPS = [
-    ('AON', [11.4, 10.6, 28.4, 25.6], ['D104', 'D105', 'U103', 'C103', 'C104', 'C105', 'TP104', 'TP106']),
+    ('AON', [13.8, 10.6, 27.3, 25.6], ['D104', 'D105', 'U103', 'C103', 'C104', 'C105', 'TP104', 'TP106']),
     ('SWITCH', [57.9, 6.4, 68.4, 12.8], ['D102', 'D103', 'R111', 'TP105']),
     ('UV', [95.6, 6.6, 112.4, 14.6], ['U104', 'R103', 'R104', 'R105', 'R106', 'R107', 'C106', 'D101', 'TP108', 'Q101',
                                      'R121', 'R122', 'R123']),
@@ -184,9 +184,12 @@ def spec_parts(inp):
         if r in PLACEHOLDERS:
             ph = PLACEHOLDERS[r]
             lib, name = ph['fp'].split(':', 1)
-            parts.append({'source': 'pilot_placeholder', 'ref': r, 'footprint': ph['fp'], 'footprint_library': 'kicad-image',
+            proj = ph['fp'] in inp.fps  # vendored in the project library: no fp-lib-table clash with the graph parts
+            parts.append({'source': 'pilot_placeholder', 'ref': r, 'footprint': ph['fp'],
+                          'footprint_library': 'project' if proj else 'kicad-image',
                           'footprint_sha256': bg.sha256_file(IMG / f'{name}.kicad_mod'),
-                          'footprint_sha256_source': SRC_LIB.format(lib=lib, name=name),
+                          'footprint_sha256_source': ('build/kicad/footprints/manifest.json (KiCad 10.0.7 official, '
+                                                      'unmodified)') if proj else SRC_LIB.format(lib=lib, name=name),
                           'value': ph['value'], 'pins': dict(ph['pins']), 'replaced_by': ph['replaced_by'],
                           'pending': ph['pending'], 'anchor': anchor_of(ANCHORS[r][:2], ANCHORS[r][2]),
                           'anchor_source': f'{TAG}: make_spec.py ANCHORS (design choice)'})

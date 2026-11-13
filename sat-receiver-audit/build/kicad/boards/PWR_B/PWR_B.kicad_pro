@@ -241,6 +241,10 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
+        "netclass": "SCRIPTED_GND",
+        "pattern": "3V3_Q6A"
+      },
+      {
         "netclass": "PWR1A",
         "pattern": "AUX12"
       },
