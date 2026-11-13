@@ -7,10 +7,10 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/CTRL/CTRL.kicad_pcb",
-    "board_sha256": "5dc9ddba980a372430e493cac89ed823b3a7c310d7e61c5a91f0a99900fc2e55",
-    "project_sha256": "dd5c7f1f79cfddb444150ffc14097817c62fb8609b19e56e325c86522d8f0ad0",
-    "spec_projection_sha256": "277f6ab81d65757bf370416f73383553f8f992ea4b40244f2ae820191d86d76d",
-    "report_projection_sha256": "b8456e0e14e72290abad4b9aa81ff88421ec2f35bd309af334a0c0b6039cdb27",
+    "board_sha256": "6aed0b371af7414a739ebc5cca69532945769820d3d82080cafe50270e56158e",
+    "project_sha256": "d2d6832ac874781b236a48ee203c48138fa79f6d8de722dc25104164669c9609",
+    "spec_projection_sha256": "5866467914aabf8ffb9010d1a6195d8d0201f932c4e7141f60822d6425f37481",
+    "report_projection_sha256": "2c7366f9abacf6a1ad9cc315304628aa1c4faf1b176b8aef1657b604bdbe4766",
     "jlc_bom_rows": [
       {
         "Board": "CTRL",
@@ -781,10 +781,10 @@
     "drill": {
       "pth_file": 1,
       "npth_file": 1,
-      "pth_hits": 520,
+      "pth_hits": 597,
       "npth_hits": 9,
       "board_pth_pads": 138,
-      "board_vias": 382,
+      "board_vias": 459,
       "board_npth_pads": 9,
       "maps": [
         "drill/CTRL-NPTH-drl_map.gbr",
@@ -845,13 +845,13 @@
     },
     {
       "path": "CTRL-fab-notes.pdf",
-      "sha256": "8073de494c771a46a85d3cb669c82b2fe40bee75ea775a69a5facc3d96342a7d",
-      "bytes": 29282
+      "sha256": "2592322842bccfc8f22e4dbda3a02290c3e27515540a8aa9b2e615f057a0e574",
+      "bytes": 29280
     },
     {
       "path": "CTRL.ipc356",
-      "sha256": "d66fbe039f7cf2a4d4fd0282b432b5745247754b73de30b0637f0706fd7e8219",
-      "bytes": 80366
+      "sha256": "9698a146c87cffbe4304eb41a5d4b05441f356fdfbceb2b49d8d93f572105e13",
+      "bytes": 86603
     },
     {
       "path": "CTRL.kicad_jobset",
@@ -870,8 +870,8 @@
     },
     {
       "path": "assembly/CTRL-cpl-jlc.csv",
-      "sha256": "03f5e21a28ac696c84a9aae374b722577e7099bd51d1b04cbf474aa05a57bcf1",
-      "bytes": 7877
+      "sha256": "f9aa49b22897f8b1f3bb5eb832533785e168e1444553688e1e657385872c07df",
+      "bytes": 7875
     },
     {
       "path": "assembly/CTRL-cpl-rotation-offsets.csv",
@@ -885,8 +885,8 @@
     },
     {
       "path": "assembly/CTRL-pos-kicad.csv",
-      "sha256": "d005f9c3aabd3da3f1332736546650fad0edd2112ddc5bc3395d8351c6fe2a6f",
-      "bytes": 12155
+      "sha256": "1eb1549ba3517a0a9c86081421056e91264463ba7290715ad96401bf5a0afe90",
+      "bytes": 12153
     },
     {
       "path": "drill/CTRL-NPTH-drl_map.gbr",
@@ -900,33 +900,33 @@
     },
     {
       "path": "drill/CTRL-PTH-drl_map.gbr",
-      "sha256": "abc98e217950e6da5ae1489916ef1fbb6250918ea8f52cdfe542a23b3a64eb6d",
-      "bytes": 142187
+      "sha256": "b3624ac304ec34773309ffcca4ad74e03add34e9d162b9f6b1cf578cfd2e966b",
+      "bytes": 148859
     },
     {
       "path": "drill/CTRL-PTH.drl",
-      "sha256": "6835696bd4ecab9d1c219edcb5e01f92ae1f3b4349d87fe223cfc650b8dadecd",
-      "bytes": 9172
+      "sha256": "28f3714d7598977178759b8ddd7a0a71a5dc658dc881125a44b62963ab657e1b",
+      "bytes": 10331
     },
     {
       "path": "gerber/CTRL-B_Cu.gbl",
-      "sha256": "5219cbe5ccd4e9bd458eb36581e06adb2449a8d7ee06573157ca8c2bddf3f128",
-      "bytes": 476790
+      "sha256": "dd5a9b2cd2c941669c4029ee2ce5833df4f8da10b4d892ac77c33c04767ac6e4",
+      "bytes": 442689
     },
     {
       "path": "gerber/CTRL-B_Mask.gbs",
-      "sha256": "ea3d6193adf40eae2038bc09ec833f3247da1896c8720dfab73a9f8826a3f45e",
-      "bytes": 17048
+      "sha256": "96b4b7c72971ea659bf49be0c6209ae715d4f0d68c0995457e053296164a1f71",
+      "bytes": 17358
     },
     {
       "path": "gerber/CTRL-B_Paste.gbp",
-      "sha256": "ada92fddafcd7bbdde76d9ddf223b1c4108580ab51115f7b5650e8fded2c8cf1",
-      "bytes": 8780
+      "sha256": "22d7ac24313ac03e0e33fdaf018c4958b8381c18d65a34bb742dd8e0e53a35fa",
+      "bytes": 9110
     },
     {
       "path": "gerber/CTRL-B_Silkscreen.gbo",
-      "sha256": "22b46e5e9b5c1892c367998c22358ad88d8e04dfdb18849ec95abf260f43ca83",
-      "bytes": 246903
+      "sha256": "79e64a1e8c44c0d3766389a5336dcf30efca1b85794fc6c9b398f425e671712e",
+      "bytes": 247213
     },
     {
       "path": "gerber/CTRL-Edge_Cuts.gm1",
@@ -935,33 +935,33 @@
     },
     {
       "path": "gerber/CTRL-F_Cu.gtl",
-      "sha256": "beed1aeb9ba9ed2ff1ade9c0cd712bd9d5ecc7393a6dbafdd82f866bbf4721ba",
-      "bytes": 454139
+      "sha256": "eb22083481500b7fbede27c761cc8749bd9e92e3fe706eacfaff9c57d734ad49",
+      "bytes": 484063
     },
     {
       "path": "gerber/CTRL-F_Mask.gts",
-      "sha256": "e7caaa770f21f6ef975390c0bd2faa49d454c42d0f05793f0aa72803e07805b9",
-      "bytes": 16066
+      "sha256": "3eda5a0d925bc4dea47eb1dd5bef7bf61fbfe2715d7782137c286045314b55c2",
+      "bytes": 16106
     },
     {
       "path": "gerber/CTRL-F_Paste.gtp",
-      "sha256": "ead2a321c4a3574c7b30389c16536ba8680a9fdc5f7ee97331a4f08ef2ae9c61",
-      "bytes": 10418
+      "sha256": "57707c2f1a3824e17f691cab5455511819ea63dddd307e90963ad726d5af22d6",
+      "bytes": 10438
     },
     {
       "path": "gerber/CTRL-F_Silkscreen.gto",
-      "sha256": "4f98af912e4eae36348dad1d27e3a1a21094fb9ab1837dc7468720c2260a78b2",
-      "bytes": 220142
+      "sha256": "cdc4db3340c59f67f252437fdc57c8caff789e4c929a137fa7ce00c019dd1c8c",
+      "bytes": 220182
     },
     {
       "path": "gerber/CTRL-In1_Cu.g1",
-      "sha256": "f349a9d82c70bacf13040304526378b674bf32a792e344ce920a65af6a58d1e5",
-      "bytes": 638063
+      "sha256": "b188ee658ecfcd14b9b3ee04c05de6ccb8e0768a0325302b5589206c65ff202a",
+      "bytes": 712814
     },
     {
       "path": "gerber/CTRL-In2_Cu.g2",
-      "sha256": "0e3d05ba8562b374016e18556737cd6271bb12baa90396227bbfaffd5d026bc4",
-      "bytes": 258352
+      "sha256": "388975af799bdf9568ecf8eaacab36327d04197e377560d3aec0181d6eb8966a",
+      "bytes": 336691
     },
     {
       "path": "gerber/CTRL-job.gbrjob",

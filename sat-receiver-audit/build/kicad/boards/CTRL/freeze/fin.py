@@ -263,8 +263,8 @@ def dangling(m):
 
 
 def end_joined(m, it, e, net):
-    """KiCad 10 track_dangling, strict: the end of track it is joined when a pad or via of the net contains it, another
-    track of the net ends on it, or a track of the net that does not share its other end covers it (KiCad anchor test)."""
+    """KiCad 10 track_dangling, strict: the end of track it is joined when a pad or via of the net contains it, or another
+    track of the net ends on it or covers it and is nearer to this end than to the other end of it (KiCad anchor test)."""
     other = it.b if e == it.a else it.a
     lay = it.layers[0]
     for ot in m.near(lay, (e[0] - 0.5, e[1] - 0.5, e[0] + 0.5, e[1] + 0.5)):
@@ -274,10 +274,15 @@ def end_joined(m, it, e, net):
             if ot.shape.dist(*e) <= 1e-4:
                 return True
         elif ot.kind == 'track':
-            if min(math.hypot(e[0] - q[0], e[1] - q[1]) for q in (ot.a, ot.b)) <= 1e-4:
-                return True
-            if min(math.hypot(other[0] - q[0], other[1] - q[1]) for q in (ot.a, ot.b)) <= 1e-4:
-                continue  # the adjacent segment of the same chain
-            if M.seg_dist(e[0], e[1], ot.a[0], ot.a[1], ot.b[0], ot.b[1]) <= ot.width / 2:
-                return True
+            de = min(math.hypot(e[0] - q[0], e[1] - q[1]) for q in (ot.a, ot.b))
+            if de > 1e-4 and M.seg_dist(e[0], e[1], ot.a[0], ot.a[1], ot.b[0], ot.b[1]) > ot.width / 2:
+                continue
+            # W2 CTRL-4 (route run 43314567534, track_dangling on a 0.0001 mm E3_ENC2_B piece): as KiCad
+            # CONNECTIVITY_DATA::TestTrackEndpointDangling, a track that reaches both ends of it (the other end within the
+            # width of it, KiCad's accuracy) counts for the end nearer to its own ends only, so a short piece joined to the
+            # same track at both ends is still dangling, and the adjacent segment of the same chain never joins e
+            do = min(math.hypot(other[0] - q[0], other[1] - q[1]) for q in (ot.a, ot.b))
+            if M.seg_dist(other[0], other[1], ot.a[0], ot.a[1], ot.b[0], ot.b[1]) <= (ot.width + it.width) / 2 and not de < do:
+                continue
+            return True
     return False

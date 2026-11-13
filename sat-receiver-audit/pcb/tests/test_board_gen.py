@@ -711,5 +711,248 @@ class CtrlSpecAndGenerator(unittest.TestCase):
         self.assertEqual(spec_text, bg.spec_path('CTRL').read_text(encoding='utf-8'))
         self.assertEqual(project_text, (bg.BASE / 'build/kicad/boards/CTRL/CTRL.kicad_pro').read_text(encoding='utf-8'))
 
+class CtrlLab5OuterFeedAndFan5p(unittest.TestCase):
+    """W2 CTRL-4 (review RV-CTRLR-1/-2/-5): every LAB5 and E3_BLOWER_GND piece of CTRL is 1.85 mm outer copper that
+    check_boards measures (no branch_exempt for the right group, D306 or C342; the one exemption is the 0.9 x 0.31 mm
+    E3_BLOWER_GND pad entry of C343.2), the LAB5 layer change has at least five 0.3 mm vias, E3_FAN5_P downstream of the PTC
+    F301 is scripted outer copper of 0.6 mm or more with at least three vias per layer change, and the committed board has
+    no inner or router-added copper on these nets. Pins the closure so that a later spec change cannot silently reopen
+    CTRL-4. Skipped on a tree without the CTRL spec."""
+    RIGHT = ('D301', 'U315', 'Q304', 'C320', 'C321', 'C322', 'R367', 'D306', 'C342')
+    ENTRIES = {'LAB5-U315': 0.7}  # named LAB5 pad entries narrower than the class width: max length mm (neck_exempt U315)
+    CLASS_W = 1.85  # PWR3A outer_min_width_mm of pcb/generated/netclasses.json
+    POWER = ('LAB5', 'E3_FAN5_P', 'E3_FAN5', 'E3_BLOWER_GND')
+    BOARD = bg.BASE / 'build/kicad/boards/CTRL/CTRL.kicad_pcb'
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+        self.spec = bg.read_json(bg.spec_path('CTRL'))
+
+    def net(self, name):
+        pre = self.spec['pre_route']
+        return [t for t in pre['tracks'] if t['net'] == name], [v for v in pre['vias'] if v['net'] == name]
+
+    @staticmethod
+    def length(path):
+        return sum(((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2) ** 0.5 for a, b in zip(path, path[1:]))
+
+    @staticmethod
+    def clusters(points, reach=3.0):
+        groups = []
+        for p in points:
+            near = [g for g in groups if any(((p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2) ** 0.5 <= reach for q in g)]
+            groups = [g for g in groups if g not in near] + [[p] + [q for g in near for q in g]]
+        return groups
+
+    def board(self):
+        import re
+        if not self.BOARD.is_file():
+            self.skipTest('no committed CTRL board')
+        text = self.BOARD.read_text(encoding='utf-8')
+        seg = re.compile(r'\(segment\s+\(start ([-\d.]+) ([-\d.]+)\)\s+\(end ([-\d.]+) ([-\d.]+)\)\s+\(width ([\d.]+)\)(.*?)'
+                         r'\(layer "([^"]+)"\)\s+\(net "([^"]+)"\)', re.S)
+        segs = [(m.group(8), m.group(7), float(m.group(5)), 'locked yes' in m.group(6),
+                 [(float(m.group(1)), float(m.group(2))), (float(m.group(3)), float(m.group(4)))]) for m in seg.finditer(text)]
+        vias = []
+        for m in re.finditer(r'\(via\s+(.*?)\(uuid', text, re.S):
+            net = re.search(r'\(net "([^"]+)"\)', m.group(1))
+            at = re.search(r'\(at ([-\d.]+) ([-\d.]+)\)', m.group(1))
+            if net and at:
+                vias.append((net.group(1), (float(at.group(1)), float(at.group(2)))))
+        return segs, vias
+
+    def test_lab5_is_outer_class_width_copper(self):
+        tracks, _ = self.net('LAB5')
+        self.assertTrue(tracks)
+        for t in tracks:
+            self.assertIn(t['layer'], ('F.Cu', 'B.Cu'), t['id'])
+            if t['width_mm'] + 1e-9 < self.CLASS_W:
+                self.assertIn(t['id'], self.ENTRIES, t['id'])
+                self.assertLessEqual(self.length(t['path']), self.ENTRIES[t['id']], t['id'])
+        self.assertFalse([t['id'] for t in tracks if t['id'].startswith(('RT-', 'FIN-'))])  # no frozen router LAB5 copper
+        self.assertEqual(sorted(set(self.spec['neck_exempt']) & (set(self.RIGHT) | {'C343'})), ['U315'])
+
+    def test_no_branch_exempt_hides_the_feed(self):
+        exempt = self.spec['branch_exempt']
+        self.assertFalse(set(exempt) & set(self.RIGHT))
+        self.assertEqual(sorted(exempt), ['C343'])
+        rule = exempt['C343']
+        self.assertLessEqual(rule['max_mm'], 0.5)
+        bg_tracks, _ = self.net('E3_BLOWER_GND')
+        narrow = [t for t in bg_tracks if t['width_mm'] + 1e-9 < self.CLASS_W]
+        self.assertEqual([t['id'] for t in narrow], ['BLOWER-GND-C343'])
+        self.assertLessEqual(self.length(narrow[0]['path']), rule['max_mm'])
+        self.assertGreaterEqual(narrow[0]['width_mm'], rule['min_width_mm'])
+        lab5, _ = self.net('LAB5')  # every 1.85 mm LAB5 piece is longer than max_mm, so the C343 rule cannot cover one
+        self.assertTrue(all(self.length(t['path']) > rule['max_mm'] for t in lab5 if t['width_mm'] >= self.CLASS_W))
+
+    def test_lab5_layer_change_has_five_vias(self):
+        _, vias = self.net('LAB5')
+        groups = self.clusters([v['at'] for v in vias])
+        self.assertTrue(groups)
+        for g in groups:
+            self.assertGreaterEqual(len(g), 5, g)
+        self.assertTrue(all(v['drill_mm'] >= 0.3 for v in vias))
+
+    def test_fan5p_is_scripted_for_the_ptc_trip_current(self):
+        tracks, vias = self.net('E3_FAN5_P')
+        self.assertTrue(tracks)
+        for t in tracks:
+            self.assertIn(t['layer'], ('F.Cu', 'B.Cu'), t['id'])
+            self.assertGreaterEqual(t['width_mm'], 0.6, t['id'])
+            self.assertFalse(t['id'].startswith(('RT-', 'FIN-')), t['id'])
+        self.assertTrue(vias)
+        for g in self.clusters([v['at'] for v in vias]):
+            self.assertGreaterEqual(len(g), 3, g)
+        project = bg.read_json(bg.BASE / self.spec['project'])
+        patterns = {p['pattern']: p['netclass'] for p in project['net_settings']['netclass_patterns']}
+        self.assertEqual(patterns['E3_FAN5_P'], 'SCRIPTED_PWR3A')
+        self.assertIn('SCRIPTED_PWR3A', self.spec['router']['ignore_net_classes'])
+
+    def test_committed_board_power_copper(self):
+        segs, vias = self.board()
+        power = [s for s in segs if s[0] in self.POWER]
+        self.assertTrue(power)
+        self.assertFalse([s for s in power if s[1] not in ('F.Cu', 'B.Cu')])  # no inner copper
+        self.assertFalse([s for s in power if not s[3]])  # every piece locked scripted copper: no Freerouting wire
+        narrow = {n: [s for s in power if s[0] == n and s[2] + 1e-9 < self.CLASS_W] for n in ('LAB5', 'E3_BLOWER_GND')}
+        self.assertLessEqual(sum(self.length(s[4]) for s in narrow['LAB5']), max(self.ENTRIES.values()))
+        self.assertTrue(all(s[2] >= 0.6 for s in narrow['LAB5']))
+        self.assertLessEqual(sum(self.length(s[4]) for s in narrow['E3_BLOWER_GND']),
+                             self.spec['branch_exempt']['C343']['max_mm'])
+        self.assertTrue(all(s[2] >= 0.6 for s in power if s[0] == 'E3_FAN5_P'))
+        for net, least in (('LAB5', 5), ('E3_FAN5_P', 3)):
+            groups = self.clusters([v[1] for v in vias if v[0] == net])
+            self.assertTrue(groups, net)
+            self.assertTrue(all(len(g) >= least for g in groups), (net, groups))
+
+    def test_frozen_route_records_the_increments(self):
+        doc = bg.read_json(bg.BASE / 'build/kicad/boards/CTRL/route-frozen.json')
+        incs = doc.get('increments', [])
+        self.assertTrue(incs)
+        self.assertTrue(all('--from-frozen' in inc['tool'] for inc in incs))
+        self.assertTrue({'LAB5', 'E3_FAN5_P'} <= {n for inc in incs for n in inc['scripted']})
+        self.assertEqual(incs[-1]['left_open_for_freerouting'], {})
+        frozen = [r for key in ('router_tracks', 'completion_tracks') for r in doc[key]]
+        self.assertFalse([r for r in frozen if r[0] in self.POWER])  # the power nets are scripted copper only
+
+    def test_from_frozen_check_reproduces_the_frozen_route(self):
+        """freeze_route.py --from-frozen --check and --from-frozen --renet --check on the committed GENERATED board give
+        route-frozen.json byte for byte (needs numpy, about 20 s each; an offline tool like the first freeze, so skipped in
+        GitHub Actions and without numpy)."""
+        import importlib.util
+        import os
+        import subprocess
+        if os.environ.get('GITHUB_ACTIONS'):
+            self.skipTest('offline re-freeze tool; CI does not run it')
+        if importlib.util.find_spec('numpy') is None:
+            self.skipTest('numpy not installed')
+        tool = bg.BASE / 'build/kicad/boards/CTRL/freeze/freeze_route.py'
+        for extra in ([], ['--renet']):
+            run = subprocess.run([sys.executable, str(tool), '--from-frozen', '--check'] + extra, capture_output=True,
+                                 text=True, encoding='utf-8', cwd=str(bg.BASE), timeout=600)
+            self.assertEqual(run.returncode, 0, run.stdout[-2000:] + run.stderr[-2000:])
+            self.assertIn('reproduced byte for byte', run.stdout)
+
+
+class CtrlPowerViaShares(unittest.TestCase):
+    """W2 CTRL-4 review RV4-S-2 / RV4-E-6 (MODEL): the vias of a scripted power cluster do not share the current equally.
+    A DC network of the scripted centrelines of the net (spec pre_route; each path step a strip of its width and layer
+    copper, each via the plated barrel of pcb/generated/netclasses.json formulas.via across the board thickness; the
+    resistivity cancels) gives every via's current for a fault current entering at the feed side and leaving at the far
+    end. The hottest via must stay within the project's via fit at +20 degC (formulas.via.current_a_dt20) at the net's
+    protective current (nets.<net>.inputs.protective_a: LAB5 4 A by F102, E3_FAN5_P 1.5 A by the F301 trip at 23 degC).
+    At the assumed cold trip of about 2.02 A the second E3_FAN5_P group (entry and exit on the same via) exceeds it:
+    OPEN in build/15 'CTRL-4: залишки (W2 CTRL-4)'. Skipped on a tree without the CTRL spec."""
+    # net: (layer, track id, path index) of the fault current's entry and of its exit
+    CASES = {'LAB5': (('F.Cu', 'LAB5-FEED-F', 0), ('B.Cu', 'LAB5-FEED-B3', -1)),
+             'E3_FAN5_P': (('B.Cu', 'FAN5P-B', -1), ('B.Cu', 'FAN5P-L', 0))}
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+        self.spec = bg.read_json(bg.spec_path('CTRL'))
+        self.nc = bg.read_json(bg.BASE / 'pcb/generated/netclasses.json')
+
+    @staticmethod
+    def key(layer, point):
+        return (layer, round(point[0], 4), round(point[1], 4))
+
+    def network(self, net):
+        import math
+        copper = {l['kicad']: l['copper_mm'] for l in self.nc['stackup']['layers'] if 'kicad' in l}
+        via = self.nc['formulas']['via']
+        barrel = self.nc['stackup']['board_thickness_mm']
+        pre = self.spec['pre_route']
+        tracks = {t['id']: t for t in pre['tracks'] if t['net'] == net}
+        edges = []
+        for t in tracks.values():
+            for a, b in zip(t['path'], t['path'][1:]):
+                if math.dist(a, b) > 0:
+                    edges.append((self.key(t['layer'], a), self.key(t['layer'], b),
+                                  math.dist(a, b) / (t['width_mm'] * copper[t['layer']]), None))
+        for v in pre['vias']:
+            if v['net'] == net:
+                self.assertGreaterEqual(v['drill_mm'], via['drill_mm'], v['id'])
+                d = via['drill_mm']  # the fit is for this drill; a larger drill only adds copper
+                area = math.pi * ((d / 2 + via['plating_mm']) ** 2 - (d / 2) ** 2)
+                edges.append((self.key('F.Cu', v['at']), self.key('B.Cu', v['at']), barrel / area, v['id']))
+        (sl, st, si), (kl, kt, ki) = self.CASES[net]
+        return edges, self.key(sl, tracks[st]['path'][si]), self.key(kl, tracks[kt]['path'][ki])
+
+    def via_currents(self, net, current):
+        edges, src, snk = self.network(net)
+        adj = {}
+        for a, b, _, _ in edges:
+            adj.setdefault(a, set()).add(b)
+            adj.setdefault(b, set()).add(a)
+        seen, todo = {src}, [src]
+        while todo:
+            for q in adj[todo.pop()] - seen:
+                seen.add(q)
+                todo.append(q)
+        self.assertIn(snk, seen, net)
+        edges = [e for e in edges if e[0] in seen]
+        idx = {n: k for k, n in enumerate(sorted(n for n in seen if n != snk))}
+        size = len(idx)
+        g = [[0.0] * size for _ in range(size)]
+        rhs = [0.0] * size
+        for a, b, r, _ in edges:
+            for p, q in ((a, b), (b, a)):
+                if p in idx:
+                    g[idx[p]][idx[p]] += 1 / r
+                    if q in idx:
+                        g[idx[p]][idx[q]] -= 1 / r
+        rhs[idx[src]] = current
+        for col in range(size):  # Gaussian elimination with partial pivoting
+            piv = max(range(col, size), key=lambda r_: abs(g[r_][col]))
+            g[col], g[piv], rhs[col], rhs[piv] = g[piv], g[col], rhs[piv], rhs[col]
+            for r_ in range(col + 1, size):
+                f = g[r_][col] / g[col][col]
+                if f:
+                    for c_ in range(col, size):
+                        g[r_][c_] -= f * g[col][c_]
+                    rhs[r_] -= f * rhs[col]
+        volt = [0.0] * size
+        for r_ in range(size - 1, -1, -1):
+            volt[r_] = (rhs[r_] - sum(g[r_][c_] * volt[c_] for c_ in range(r_ + 1, size))) / g[r_][r_]
+        u = {n: volt[k] for n, k in idx.items()}
+        u[snk] = 0.0
+        return {tag: (abs(u[a] - u[b]) / r, (a[1], a[2])) for a, b, r, tag in edges if tag}
+
+    def test_hottest_via_within_the_fit_at_the_protective_current(self):
+        cap = self.nc['formulas']['via']['current_a_dt20']
+        for net in self.CASES:
+            current = self.nc['nets'][net]['inputs']['protective_a']
+            flows = self.via_currents(net, current)
+            self.assertTrue(flows, net)
+            for group in CtrlLab5OuterFeedAndFan5p.clusters([at for _, at in flows.values()]):
+                # every cluster carries the whole fault current across the layers once
+                self.assertAlmostEqual(sum(i for i, at in flows.values() if at in group), current, places=6, msg=net)
+            hottest = max(i for i, _ in flows.values())
+            self.assertLessEqual(hottest, cap, (net, current, {k: round(i, 3) for k, (i, _) in flows.items()}))
+
+
 if __name__ == '__main__':
     unittest.main()
