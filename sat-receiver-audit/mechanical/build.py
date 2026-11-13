@@ -105,11 +105,11 @@ def envelope_report(P):
 def depth_reason(P):
     """Envelope reason with the front-tier stack computed from the parameters (W2 MECH-3 review F3)."""
     m, B = P.mech, P.boards["boards"]
-    sz, t = m["stack_z"], P.boards["stackup"]["t"]
+    sz, ta, tb = m["stack_z"], P.board_t("PWR"), P.board_t("PWR_B")     # W2 MECH-8: each board's own thickness
     pa, pb = B["PWR"], B["PWR_B"]
     gap = pa["place"]["z_bottom"] - sz["plate_front"]
-    stack = pb["place"]["z_bottom"] - (pa["place"]["z_bottom"] + t)
-    chan = sz["module_back"] - (pb["place"]["z_bottom"] + t + pb["max_height"])
+    stack = pb["place"]["z_bottom"] - (pa["place"]["z_bottom"] + ta)
+    chan = sz["module_back"] - (pb["place"]["z_bottom"] + tb + pb["max_height"])
     front = sz["module_back"] - sz["plate_front"]
     dz = None
     if SPEC.exists():
@@ -120,7 +120,7 @@ def depth_reason(P):
     return (f"height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay ({f(m['rf_bay']['rect'][3])}: two rows "
             "of cased LNA modules, arrangement b, W2 MECH-3) along the top; "
             f"depth: wall {f(m['wall'])} + rear layer {f(sz['plate_rear'] - m['wall'])} (Q6A with cooler and fan duct) + plate {f(sz['plate_t'])} + "
-            f"front layer {f(front)} (bond gap {f(gap)} + PWR-A {f(t)} + B2B {f(stack)} + PWR-B {f(t)} + parts {f(pb['max_height'])} + "
+            f"front layer {f(front)} (bond gap {f(gap)} + PWR-A {f(ta)} + B2B {f(stack)} + PWR-B {f(tb)} + parts {f(pb['max_height'])} + "
             f"path-2 channel {f(chan)}; W2 MECH-3 depth growth "
             + (f"dz {f(dz)} = pcb/partition-spec.json envelope.dz" if dz is not None else "dz: pcb/partition-spec.json not found")
             + f") + display {f(sz['front_wall_inner'] - sz['module_back'])} + front wall {f(P.outer[2] - sz['front_wall_inner'])}; "

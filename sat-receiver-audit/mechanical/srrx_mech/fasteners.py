@@ -118,9 +118,10 @@ def stacks(P):
     # PWR-A to the plate through the M3 male studs of the F45 standoffs
     pw = B["PWR"]
     shim = m["pwr_bond"]["shim"]
-    pwr_top = pw["place"]["z_bottom"] + t_pcb
+    t_a = P.board_t("PWR")      # W2 MECH-8: the 6-layer PWR-A thickness (boards.json PWR stackup, MODEL)
+    pwr_top = pw["place"]["z_bottom"] + t_a
     J.append(_joint("PWR_A-PLATE", "F06 / F45", "PWR-A to the plate: male stud of each PWR-A/PWR-B standoff", len(pw["holes"]), "M3", 3.0,
-                    f"standoff hex face on the PWR-A top, z {pwr_top:g}", [("PWR-A", t_pcb), ("shim washer (pwr_bond.shim)", shim)],
+                    f"standoff hex face on the PWR-A top, z {pwr_top:g}", [("PWR-A", t_a), ("shim washer (pwr_bond.shim)", shim)],
                     f"PEM F-M3-1 flush nut flush with the plate front face, the PWR-A side (M-07): thread = its shank {sh_:g} "
                     f"in the {pl['t']:g} plate, then a {pl['t'] - sh_:.2f} recess to the rear face", sh_, pl["t"] - sh_, sh_,
                     "plate rear face: the stud must not stand proud (HF+ can lid and RF board behind the plate)",
@@ -128,10 +129,11 @@ def stacks(P):
                     pending="F45 standoff not chosen: SRC-2 (C-14) picks a male-female M3 standoff with a stud in this window"))
     # PWR-B to the female thread of the standoffs
     pb = B["PWR_B"]
-    pwrb_top = pb["place"]["z_bottom"] + t_pcb
+    t_b = P.board_t("PWR_B")    # W2 MECH-8: the 6-layer PWR-B thickness
+    pwrb_top = pb["place"]["z_bottom"] + t_b
     body = pb["place"]["z_bottom"] - pwr_top
     J.append(_joint("PWR_B-STANDOFF", "F46", "PWR-B to the female end of each PWR-A/PWR-B standoff", len(pb["holes"]), "M3", 3.0,
-                    f"PWR-B top face, z {pwrb_top:g}", [("PWR-B", t_pcb)],
+                    f"PWR-B top face, z {pwrb_top:g}", [("PWR-B", t_b)],
                     f"female thread of the F45 standoff body {body:g} mm (depth of the part's thread TBD; taken as the body length)", body, -TIP_GAP,
                     ENG_METAL * 3.0, "standoff thread bottom / the male stud root",
                     f"head height of an ISO 14580 M3 ({P.parts['iso14580_lengths']['k_max']['M3']:g} max) stays under hB 5.5 on the PWR-B top",

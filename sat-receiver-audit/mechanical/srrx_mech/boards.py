@@ -25,8 +25,14 @@ def board_sheet(P, bid):
         notes[0] = "Координати — від лівого нижнього кута контуру, вид з боку компонентів; PWR-A двобічна (W2 MECH-7, SHRINK-2)."
         notes.append(f"Деталі нижнього боку — лише в зонах PB1-PB{len(regions)} (кишені пластини M-07 під ними), висота ≤{fmt(pwr_bottom_h_max(P))} мм; "
                      "під полями THT PWR-B — деталі ≤2.7 мм (H-TRIM).")
+    st = b.get("stackup")       # W2 MECH-8: a board with its own stackup (6-layer PWR / PWR_B); the others keep the shared one
+    material = (f"FR-4, {st['layers']} шарів, {fmt(st['t'], 3)} мм ({st['status']}; {st['fab'].split(',')[0]})" if st
+                else "FR-4, 4 шари, 1.6 мм (build/15)")
+    if st:
+        notes.append(f"Товщина {fmt(st['t'], 3)} мм — розрахунок за таблицею шарів ({st['status']}); замовлення "
+                     f"{fmt(st['order_t'])} мм ± {fmt(st['order_tol'] * 100)} %, фактична товщина — TBD при замовленні (W2 MECH-8).")
     sh = Sheet(f"B-{bid}", f"Плата {bid}: контур Edge.Cuts і кріпильні отвори", b["name"], (420.0, 297.0), 1.0, (40.0, 60.0),
-               "FR-4, 4 шари, 1.6 мм (build/15)", notes)
+               material, notes)
     for (x, y, w, h) in b.get("thermal_bond", []):
         sh.rect(x, y, w, h, "HIDDEN")
         sh.label((x + 1, y + h - 3), "термопрокладка", 1.6)
@@ -103,6 +109,8 @@ def contract(P):
             out["boards"][bid]["h_trim"] = {k: b["h_trim"][k] for k in ("protrusion_max", "zone_h_max", "zones", "gate")}
         if "windows" in b:
             out["boards"][bid]["windows_rule"] = b["windows"]
+        if "stackup" in b:      # W2 MECH-8: the board's own stackup (6-layer PWR / PWR_B); the top-level stackup stays the others'
+            out["boards"][bid]["stackup"] = {k: v for k, v in b["stackup"].items() if not k.startswith("_")}
     return out
 
 
@@ -508,7 +516,7 @@ def clearance_map(P, bid):
     b = P.boards["boards"][bid]
     pl = b["place"]
     ox, oy = pl["origin"]
-    tb = P.boards["stackup"]["t"]
+    tb = P.board_t(bid)
     up = pl["facing"] == "+z"
     face = pl["z_bottom"] + tb if up else pl["z_bottom"] - tb      # component face
     back = pl["z_bottom"]                                        # face towards the mounting surface

@@ -310,6 +310,7 @@ def evaluate(P):
     out += w2_mech4_rules(P)
     out += w2_mech5_rules(P)
     out += w2_mech7_rules(P)
+    out += w2_mech8_rules(P)
     return out
 
 
@@ -1608,7 +1609,7 @@ def h_trim_rule(P):
             "source": "boards.json PWR h_trim, PWR_B place; pcb/partition-spec.json keepouts.h_trim (W2 AREA-2)"}
     if not ht:
         return dict(rule, value_mm=None, result="OPEN: boards.json PWR has no h_trim")
-    t = P.boards["stackup"]["t"]
+    t = P.board_t("PWR")        # W2 MECH-8: the 6-layer PWR-A thickness
     face = a["place"]["z_bottom"] + t
     under = bb["place"]["z_bottom"]
     clear = round(under - ht["protrusion_max"] - (face + ht["zone_h_max"]), 3)
@@ -1651,7 +1652,7 @@ def mated_height_rule(P):
     from .boards import footprint_courtyards, header_size, header_height_basis, HEADER_ALT
     root = Path(__file__).resolve().parents[2]
     a = P.boards["boards"]["PWR"]
-    t = P.boards["stackup"]["t"]
+    t = P.board_t("PWR")        # W2 MECH-8: the 6-layer PWR-A thickness
     face = round(a["place"]["z_bottom"] + t, 3)
     ox, oy = a["place"]["origin"]
     z_lim, need = _channel_floor(P)
@@ -1866,7 +1867,7 @@ def pwr_b_exit_rule(P):
         with path.open(encoding="utf-8", newline="") as fh:
             fam_of = {r["connector"]: r["family"] for r in csv.DictReader(fh) if r.get("board") == "PWR_B"}
     hh = P.parts["harness_headers"]
-    face = b["place"]["z_bottom"] + P.boards["stackup"]["t"]
+    face = b["place"]["z_bottom"] + P.board_t("PWR_B")       # W2 MECH-8: the 6-layer PWR-B thickness
     ox, oy = b["place"]["origin"]
     xs, ys = [p[0] for p in b["outline"]], [p[1] for p in b["outline"]]
     obstacles = [(name, bx) for iid, name, bx, it in item_boxes(P) if it.get("board") not in ("PWR", "PWR_B") and not it.get("outside")]
@@ -1981,3 +1982,97 @@ def _pwr_b_exit_legs(P):
 def w2_mech7_rules(P):
     """Rows added by W2 MECH-7 (registration list, append-only)."""
     return [pwr_zones_rule(P), pwr_bottom_rule(P), h_trim_rule(P), mated_height_rule(P), pwr_b_exit_rule(P)]
+
+
+def pwr_stack_rule(P):
+    """R-PWR-STACK (W2 MECH-8): the mated PWR-A/PWR-B stack with the 6-layer boards (boards.json PWR / PWR_B stackup, t
+    1.664 mm MODEL). The PWR-B bottom face must follow PWR-A bottom + PWR-A thickness + B2B stack (boards.json PWR_B b2b.stack
+    = pcb/partition-spec.json parameters.stack), and the PWR-B part envelope (PWR-B top face + hB) must stay under the path-2
+    channel floor (display module back - air_channel). The margin is computed at the board thicknesses of the contract and
+    over the order band order_t +/- order_tol of each board (the B2B stack fixes the gap, so PWR-B follows PWR-A). FAIL
+    (model) when the placement does not follow the stack, the two stack values differ or the margin is negative anywhere
+    in the band; else PASS (model): the finished thickness is TBD at order and the stack is a proof-fit gate (OPEN)."""
+    import json
+    from pathlib import Path
+    B = P.boards["boards"]
+    a, b = B["PWR"], B["PWR_B"]
+    sz = P.mech["stack_z"]
+    ta, tb = P.board_t("PWR"), P.board_t("PWR_B")
+    stack = b["b2b"]["stack"]
+    hB = b["max_height"]
+    za, zb = a["place"]["z_bottom"], b["place"]["z_bottom"]
+    floor, need = _channel_floor(P)
+    p = Path(__file__).resolve().parents[2] / "pcb" / "partition-spec.json"
+    spec = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+    par, env = spec.get("parameters", {}), spec.get("envelope", {})
+    rule = {"id": "R-PWR-STACK",
+            "rule": "mated PWR-A/PWR-B stack (W2 MECH-8, 6-layer boards): PWR-B bottom = PWR-A bottom + t(PWR) + B2B stack, and "
+                    "PWR-B top + hB <= the path-2 channel floor (module back - air_channel), at the contract thickness and over "
+                    "the order band of each board",
+            "source": "boards.json PWR / PWR_B place, stackup (t, order_t, order_tol), max_height, b2b.stack; mechanical.json stack_z; "
+                      "pcb/partition-spec.json parameters.stack, envelope (air_channel, pwr_top_z, display_z, dz)"}
+
+    def r3(v):
+        return round(v, 3)
+
+    def top(t_a, t_b):
+        return za + t_a + stack + t_b + hB
+
+    def band(bd):
+        st = bd.get("stackup") or {}
+        if "order_t" not in st:
+            return None
+        return (r3(st["order_t"] * (1 - st["order_tol"])), r3(st["order_t"] * (1 + st["order_tol"])))
+    ba, bb = band(a), band(b)
+    margin = r3(floor - top(ta, tb))
+    t0 = P.boards["stackup"]["t"]
+    val = {"plate_front_z": sz["plate_front"], "bond_gap_mm": r3(za - sz["plate_front"]),
+           "pwr_a": {"t_mm": ta, "layers": (a.get("stackup") or P.boards["stackup"])["layers"], "bottom_z": za, "top_z": r3(za + ta)},
+           "b2b_stack_mm": stack, "partition_spec_stack_mm": par.get("stack"),
+           "pwr_b": {"t_mm": tb, "layers": (b.get("stackup") or P.boards["stackup"])["layers"], "bottom_z": zb,
+                     "bottom_z_from_stack": r3(za + ta + stack), "top_z": r3(zb + tb), "parts_top_z": r3(zb + tb + hB)},
+           "stack_height_from_plate_mm": r3(zb + tb + hB - sz["plate_front"]),
+           "channel_floor_z": floor, "air_channel_mm": need, "channel_to_module_back_mm": r3(sz["module_back"] - (zb + tb + hB)),
+           "margin_mm": margin, "margin_with_shared_t_mm": r3(floor - top(t0, t0)), "shared_t_mm": t0}
+    worst = margin
+    if ba and bb:
+        lo, hi = r3(floor - top(ba[1], bb[1])), r3(floor - top(ba[0], bb[0]))
+        val["order_band_mm"] = {"PWR": list(ba), "PWR_B": list(bb), "margin_min_mm": lo, "margin_max_mm": hi}
+        worst = min(worst, lo)
+    if env.get("display_z") is not None and env.get("air_channel") is not None:
+        dzm = r3(za + ta + stack + tb + hB + env["air_channel"] - env["display_z"])
+        val["dz_mezz_mm"] = {"at_contract_t": dzm, "partition_spec_recorded": env.get("dz_mezz"), "partition_spec_dz": env.get("dz"),
+                             "dz_unchanged": env.get("dz") is not None and dzm <= env["dz"] + 1e-9}
+    pem = P.parts.get(a.get("plate_fastener", ""), {})
+    if "shank" in pem:
+        pt, shim = P.mech["plate"]["t"], P.mech["pwr_bond"]["shim"]
+
+        def stud(t):
+            return [r3(t + shim + pem["shank"]), r3(t + shim + pt)]
+        val["pwr_a_stud_window_mm"] = {"at_contract_t": stud(ta)}
+        if ba:
+            common = [stud(ba[1])[0], stud(ba[0])[1]]
+            val["pwr_a_stud_window_mm"].update({"at_band_ends": [stud(ba[0]), stud(ba[1])],
+                                                "common_over_band": common if common[0] <= common[1] else None})
+    bad = []
+    if abs(zb - (za + ta + stack)) > 1e-6:
+        bad.append(f"PWR-B bottom {zb:g} != PWR-A {za:g} + {ta:g} + stack {stack:g} = {za + ta + stack:g}")
+    if par.get("stack") is not None and abs(par["stack"] - stack) > 1e-9:
+        bad.append(f"b2b.stack {stack:g} differs from pcb/partition-spec.json parameters.stack {par['stack']:g}")
+    if worst < -1e-9:
+        bad.append(f"PWR-B parts above the channel floor: margin {worst:g} mm")
+    if bad:
+        return dict(rule, value_mm=val, limit_mm=0.0, result="FAIL (model): " + "; ".join(bad))
+    txt = (f"PASS (model): PWR-A {za:g} + {ta:g} + B2B {stack:g} = PWR-B {zb:g}; PWR-B parts top {val['pwr_b']['parts_top_z']:g} "
+           f"under the channel floor {floor:g}: margin {margin:g} mm ({val['margin_with_shared_t_mm']:g} with {t0:g} mm boards)")
+    if "order_band_mm" in val:
+        ob = val["order_band_mm"]
+        txt += (f"; over the order band {ob['PWR'][0]:g}-{ob['PWR'][1]:g} mm of both boards the margin is "
+                f"{ob['margin_min_mm']:g}-{ob['margin_max_mm']:g} mm")
+    txt += "; finished thickness TBD at order, mated stack a proof-fit gate (OPEN)"
+    return dict(rule, value_mm=val, limit_mm=0.0, result=txt)
+
+
+def w2_mech8_rules(P):
+    """Rows added by W2 MECH-8 (registration list, append-only)."""
+    return [pwr_stack_rule(P)]
