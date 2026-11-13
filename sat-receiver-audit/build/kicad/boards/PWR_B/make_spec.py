@@ -23,7 +23,10 @@ What it decides, in one place (the spec records each rule with its source):
     of type power with a scripted via per SMD pad, signals on F.Cu / In2.Cu / In3.Cu / B.Cu, power classes on F.Cu /
     B.Cu only), the project rules and net classes, and the router settings: Freerouting without its fan-out stage, the
     classes of the scripted nets (SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A) not autorouted, rule-area strips on
-    every board edge and a rule area on every copper layer over each PWR-A cut-out (planned_cutouts).
+    every board edge and a rule area on every copper layer over each PWR-A cut-out (planned_cutouts);
+  * the J209 escape corridor (W2 PWR-L6-PLACE, corridor_check and the spec key j209_escape): no PWR-A window over a part
+    taller than hA in the field under the J209 lower contact row, and no PWR-B part or scripted via in the corridor beyond
+    the placement of record; the LAB5 branches to the four TPS2553 at 0.7 mm (>= 0.667 mm, F102 4 A at +20 degC on 2 oz).
 Why each router setting exists is in the spec (router.why, edge_keepout.why) with the sr-rx-pcb run that showed it.
 It checks courtyard overlaps, outline / cutouts, hole keepouts, drilled holes in courtyards, the GND via of every SMD
 GND pad and the clearance of the scripted copper before CI routes. The routed board, its report and the fab set are
