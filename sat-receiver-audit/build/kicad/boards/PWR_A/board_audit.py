@@ -147,7 +147,7 @@ def audit(folder):
             if not ok:
                 findings.append({'check': 'zones', 'item': ref, 'detail': f'courtyard not inside thermal_bond zone {z}'})
     # pockets
-    pockets = [(x, y, x + w, y + h) for x, y, w, h in contract['bottom_side']['keep_in_mm']]
+    pockets = [(x, y, x + w, y + h) for x, y, w, h in (contract.get('bottom_side') or {}).get('keep_in_mm', [])]  # F2ENV: single-sided
     bottom = sorted((r for r, fp in fps.items() if fp['side'] == 'bottom'), key=bg.sort_ref)
     outside = [r for r in bottom if not any(inside(cbox(fps[r]), p) for p in pockets)]
     for r in outside:
