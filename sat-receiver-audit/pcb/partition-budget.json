@@ -28,10 +28,10 @@
  },
  "current_boards_raw": {
   "PWR": {
-   "refs": 356,
-   "parts_raw_mm2": 7484.5,
-   "modules_mm2": 1341.6,
-   "total_raw_mm2": 8826.1
+   "refs": 387,
+   "parts_raw_mm2": 7433.2,
+   "modules_mm2": 0.0,
+   "total_raw_mm2": 7433.2
   },
   "RF": {
    "refs": 171,
@@ -59,35 +59,27 @@
   {
    "sheet": "E1",
    "group": "LAB5",
-   "refs": 11,
-   "raw_mm2": 1178.2,
+   "refs": 21,
+   "raw_mm2": 468.7,
    "tall_refs": [
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "F102",
-    "L101",
-    "U108"
+    "L101"
    ],
    "tht_refs": [
-    "F102",
-    "U108"
+    "F102"
    ],
    "headers_only": false
   },
   {
    "sheet": "E1",
    "group": "SYS12",
-   "refs": 6,
-   "raw_mm2": 759.1,
+   "refs": 26,
+   "raw_mm2": 412.1,
    "tall_refs": [
-    "C107",
-    "U107"
+    "C107"
    ],
-   "tht_refs": [
-    "U107"
-   ],
+   "tht_refs": [],
    "headers_only": false
   },
   {
@@ -167,20 +159,16 @@
    "sheet": "E1",
    "group": "Сервісний заряд",
    "refs": 1,
-   "raw_mm2": 119.5,
-   "tall_refs": [
-    "F103"
-   ],
-   "tht_refs": [
-    "F103"
-   ],
+   "raw_mm2": 27.0,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E2",
    "group": "AUX12: верхній ключ і PTC",
    "refs": 12,
-   "raw_mm2": 191.4,
+   "raw_mm2": 165.0,
    "tall_refs": [
     "C222"
    ],
@@ -211,7 +199,7 @@
    "sheet": "E2",
    "group": "Boni: малошумна захищена шина",
    "refs": 34,
-   "raw_mm2": 512.2,
+   "raw_mm2": 459.3,
    "tall_refs": [
     "C265",
     "C273"
@@ -244,16 +232,14 @@
    "sheet": "E2",
    "group": "J21: захищене живлення 12 V",
    "refs": 20,
-   "raw_mm2": 412.0,
+   "raw_mm2": 319.5,
    "tall_refs": [
     "C206",
-    "C207",
-    "F201"
+    "C207"
    ],
    "tht_refs": [
     "C206",
-    "C207",
-    "F201"
+    "C207"
    ],
    "headers_only": false
   },
@@ -261,65 +247,45 @@
    "sheet": "E2",
    "group": "LNA4V5: паралельні LT3045",
    "refs": 21,
-   "raw_mm2": 358.2,
-   "tall_refs": [
-    "C225"
-   ],
-   "tht_refs": [
-    "C225"
-   ],
+   "raw_mm2": 357.7,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E2",
    "group": "LNA: канал 1",
    "refs": 11,
-   "raw_mm2": 152.6,
-   "tall_refs": [
-    "C235"
-   ],
-   "tht_refs": [
-    "C235"
-   ],
+   "raw_mm2": 152.2,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E2",
    "group": "LNA: канал 2",
    "refs": 20,
-   "raw_mm2": 259.1,
-   "tall_refs": [
-    "C239"
-   ],
-   "tht_refs": [
-    "C239"
-   ],
+   "raw_mm2": 258.7,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E2",
    "group": "LNA: канал 3",
    "refs": 20,
-   "raw_mm2": 259.1,
-   "tall_refs": [
-    "C243"
-   ],
-   "tht_refs": [
-    "C243"
-   ],
+   "raw_mm2": 258.7,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E2",
    "group": "LNA: канал 4",
    "refs": 11,
-   "raw_mm2": 152.6,
-   "tall_refs": [
-    "C247"
-   ],
-   "tht_refs": [
-    "C247"
-   ],
+   "raw_mm2": 152.2,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
@@ -335,7 +301,7 @@
    "sheet": "E2",
    "group": "LNB: малошумна захищена шина",
    "refs": 25,
-   "raw_mm2": 415.8,
+   "raw_mm2": 362.9,
    "tall_refs": [
     "C254",
     "C262"
@@ -359,46 +325,34 @@
    "sheet": "E2",
    "group": "Lime M.2: комутована шина 3.3 V",
    "refs": 14,
-   "raw_mm2": 172.5,
-   "tall_refs": [
-    "C219"
-   ],
-   "tht_refs": [
-    "C219"
-   ],
+   "raw_mm2": 172.1,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E2",
    "group": "RTL-B: комутований VBUS",
    "refs": 10,
-   "raw_mm2": 142.3,
-   "tall_refs": [
-    "C251"
-   ],
-   "tht_refs": [
-    "C251"
-   ],
+   "raw_mm2": 141.9,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E2",
    "group": "S-band LaNA WB: захищена шина 5 V",
    "refs": 10,
-   "raw_mm2": 142.3,
-   "tall_refs": [
-    "C298"
-   ],
-   "tht_refs": [
-    "C298"
-   ],
+   "raw_mm2": 141.9,
+   "tall_refs": [],
+   "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E2",
    "group": "Дисплей: захищене живлення 12 V",
    "refs": 16,
-   "raw_mm2": 183.1,
+   "raw_mm2": 156.7,
    "tall_refs": [
     "C210"
    ],
@@ -452,26 +406,23 @@
   {
    "sheet": "E5",
    "group": "VBUS RTL-A і LAB PORT",
-   "refs": 15,
-   "raw_mm2": 228.0,
-   "tall_refs": [
-    "C506"
-   ],
+   "refs": 17,
+   "raw_mm2": 263.4,
+   "tall_refs": [],
    "tht_refs": [],
    "headers_only": false
   },
   {
    "sheet": "E5",
    "group": "Роз'єми джгутів PWR і HATCH",
-   "refs": 3,
-   "raw_mm2": 264.6,
+   "refs": 2,
+   "raw_mm2": 239.7,
    "tall_refs": [
     "J507"
    ],
    "tht_refs": [
     "J506",
-    "J507",
-    "J508"
+    "J507"
    ],
    "headers_only": true
   },
@@ -490,16 +441,7 @@
    "h": 7.7,
    "src": "MPN EEHZK1V101XP: LCSC C454360 'Height - Seated (Max)' 7.7 mm (JLCPCB parts search, read 2026-11-07)",
    "refs": [
-    "C107",
-    "C109"
-   ]
-  },
-  "35SVPF22M": {
-   "h": 5.9,
-   "src": "MPN 35SVPF22M: LCSC C88142 'Height - Seated (Max)' 5.9 mm (JLCPCB parts search, read 2026-11-07)",
-   "refs": [
-    "C111",
-    "C112"
+    "C107"
    ]
   },
   "16SVPC100M": {
@@ -515,19 +457,11 @@
    "refs": [
     "C206",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
-    "C273",
-    "C298"
+    "C273"
    ]
   },
   "UHE1E221MPD": {
@@ -535,13 +469,6 @@
    "src": "MPN UHE1E221MPD: LCSC C116228 'Height - Seated (Max)' 11.5 mm, package D8xL11.5mm (JLCPCB parts search, read 2026-11-07)",
    "refs": [
     "C207"
-   ]
-  },
-  "16SVPC150M": {
-   "h": 6.9,
-   "src": "MPN 16SVPC150M: LCSC C190722 'Height - Seated (Max)' 6.9 mm (JLCPCB parts search, read 2026-11-07)",
-   "refs": [
-    "C506"
    ]
   },
   "EEU-FR1C101": {
@@ -562,16 +489,7 @@
    "h": 7.37,
    "src": "MPN 0297004.WXNV: LOWER BOUND, holder body only: Keystone 3568 holder body 16.00 x 6.73 x 7.37 mm (Keystone catalogue K75 p48, https://www.keyelco.com/userAssets/file/K75p48.pdf, read 2026-11-07); the mini fuse stands above the holder and the height with the fuse inserted is TBD (Littelfuse 297 drawing not read), so this part always gets a PWR-B window and its height against the window ceiling stays OPEN",
    "refs": [
-    "F102",
-    "F201"
-   ],
-   "lower_bound": true
-  },
-  "0297005.WXNV": {
-   "h": 7.37,
-   "src": "MPN 0297005.WXNV: LOWER BOUND, as 0297004.WXNV: Keystone 3568 body 7.37 mm (K75 p48, read 2026-11-07); fused height TBD",
-   "refs": [
-    "F103"
+    "F102"
    ],
    "lower_bound": true
   },
@@ -634,18 +552,11 @@
     "J207"
    ]
   },
-  "S3B-PH-K-S(LF)(SN)": {
+  "S9B-PH-K-S(LF)(SN)": {
    "h": 4.8,
    "src": "harness header PH_side: courtyard and height: mechanical/params/parts.json harness_headers (JST ePH, read 2026-11-07); pin field from the vendored KiCad JST_PH_S5B-PH-K footprint pads",
    "refs": [
     "J506"
-   ]
-  },
-  "S6B-PH-K-S(LF)(SN)": {
-   "h": 4.8,
-   "src": "harness header PH_side: courtyard and height: mechanical/params/parts.json harness_headers (JST ePH, read 2026-11-07); pin field from the vendored KiCad JST_PH_S5B-PH-K footprint pads",
-   "refs": [
-    "J508"
    ]
   },
   "XAL6060-103MEC": {
@@ -660,20 +571,6 @@
    "src": "MPN SRR1260-101M: Bourns SRR1260 datasheet REV. 03/26, https://www.bourns.com/docs/Product-Datasheets/SRR1260.pdf (read 2026-11-07): 12.5 +-0.3 x 12.5 +-0.3 x 6.0 +-0.5 mm, so 6.5 max",
    "refs": [
     "L501"
-   ]
-  },
-  "D36V50F12": {
-   "h": 10.17,
-   "src": "MPN D36V50F12: mechanical/params/parts.json pololu_d36v50: 7.67 module + 2.5 header spacer (Pololu drawing, read 2026-11-07 by the mech package)",
-   "refs": [
-    "U107"
-   ]
-  },
-  "D36V50F5": {
-   "h": 10.17,
-   "src": "MPN D36V50F5: as D36V50F12",
-   "refs": [
-    "U108"
    ]
   }
  },
@@ -706,89 +603,71 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 256,
+     "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 120,
-     "parts_raw_mm2": 3994.3,
+     "tht_pads": 72,
+     "parts_raw_mm2": 3555.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.94,
-     "demand_1_mm2": 7181.1,
-     "ratio_1": 1.064,
-     "demand_1.5_mm2": 9921.1,
-     "ratio_1.5": 0.77,
-     "demand_1.8_mm2": 11565.1,
-     "ratio_1.8": 0.661,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.707,
+     "demand_1_mm2": 5400.2,
+     "ratio_1": 1.415,
+     "demand_1.5_mm2": 7920.9,
+     "ratio_1.5": 0.965,
+     "demand_1.8_mm2": 9433.3,
+     "ratio_1.8": 0.81,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 2290.5,
-     "refs": 128,
-     "harness_headers": 7,
+     "usable_mm2": 4892.2,
+     "refs": 136,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 1124.8,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 1537.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.118,
-     "demand_1_mm2": 2560.1,
-     "ratio_1": 0.895,
-     "demand_1.5_mm2": 3840.2,
-     "ratio_1.5": 0.596,
-     "demand_1.8_mm2": 4608.2,
-     "ratio_1.8": 0.497,
+     "raw_fill": 0.603,
+     "demand_1_mm2": 2947.6,
+     "ratio_1": 1.66,
+     "demand_1.5_mm2": 4421.4,
+     "ratio_1.5": 1.107,
+     "demand_1.8_mm2": 5305.6,
+     "ratio_1.8": 0.922,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 3797.9,
+   "windows_mm2": 1196.1,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
-    "C506",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
-    "L501",
-    "U107",
-    "U108"
+    "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -828,14 +707,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -866,63 +738,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -962,14 +778,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -987,22 +795,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -1128,33 +920,9 @@
       7.2,
       1.75
      ]
-    },
-    {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298",
-    "C506"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -1197,61 +965,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -1333,18 +1053,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-     },
-     {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-       "C298"
-      ],
-      "pwr_b": [
-       "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -1688,43 +1396,15 @@
       "prot_A": 0.989,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-       "C251"
-      ],
-      "pwr_b": [
-       "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
-    "power_nets": 9,
-    "signal_pins": 31,
-    "power_pins": 14,
-    "gnd_pins": 24,
+    "power_nets": 8,
+    "signal_pins": 25,
+    "power_pins": 13,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 69,
-    "contacts_with_spare": 83,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -1989,18 +1669,23 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C248",
     "C249",
     "C250",
+    "C251",
     "C274",
     "C275",
     "C276",
@@ -2018,12 +1703,16 @@
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -2034,7 +1723,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -2128,89 +1816,71 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 200,
+     "refs": 221,
      "harness_headers": 15,
-     "tht_pads": 120,
-     "parts_raw_mm2": 3449.4,
+     "tht_pads": 72,
+     "parts_raw_mm2": 2990.7,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.864,
-     "demand_1_mm2": 6598.7,
-     "ratio_1": 1.158,
-     "demand_1.5_mm2": 9047.5,
-     "ratio_1.5": 0.845,
-     "demand_1.8_mm2": 10516.8,
-     "ratio_1.8": 0.727,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.628,
+     "demand_1_mm2": 4797.8,
+     "ratio_1": 1.593,
+     "demand_1.5_mm2": 7017.3,
+     "ratio_1.5": 1.089,
+     "demand_1.8_mm2": 8349.0,
+     "ratio_1.8": 0.915,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 2344.5,
-     "refs": 184,
-     "harness_headers": 7,
+     "usable_mm2": 4946.2,
+     "refs": 194,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 1669.7,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 2102.1,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.34,
-     "demand_1_mm2": 3142.5,
-     "ratio_1": 0.746,
-     "demand_1.5_mm2": 4713.8,
-     "ratio_1.5": 0.497,
-     "demand_1.8_mm2": 5656.5,
-     "ratio_1.8": 0.414,
+     "raw_fill": 0.718,
+     "demand_1_mm2": 3549.9,
+     "ratio_1": 1.393,
+     "demand_1.5_mm2": 5324.9,
+     "ratio_1.5": 0.929,
+     "demand_1.8_mm2": 6389.9,
+     "ratio_1.8": 0.774,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 3797.9,
+   "windows_mm2": 1196.1,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
-    "C506",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
-    "L501",
-    "U107",
-    "U108"
+    "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 126.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -2250,14 +1920,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -2288,63 +1951,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -2384,14 +1991,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -2409,22 +2008,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -2550,38 +2133,13 @@
       7.2,
       1.75
      ]
-    },
-    {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
     }
    ],
    "height_overrides_to_pwr_a": [
     "C206",
     "C207",
     "C210",
-    "C219",
-    "C222",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298",
-    "C506",
-    "F201"
+    "C222"
    ],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
@@ -2627,54 +2185,6 @@
       "kind": "rail node",
       "pins": 1,
       "why": "R223 0.22R 1% 0.25W to AUX12"
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -2760,22 +2270,6 @@
       "why": "R208 0.22R 1% 0.25W to E2_DISP_IN"
      },
      {
-      "net": "E2_J21_FUSED",
-      "pwr_a": [
-       "F201"
-      ],
-      "pwr_b": [
-       "C202",
-       "R201",
-       "R204",
-       "U201"
-      ],
-      "kind": "power",
-      "prot_A": 4.0,
-      "current_src": "F201 4 A blade fuse upstream of eFuse U201 (tools/assembly_data.py NET_CURRENT 'J21' protection 'F201 4 A + eFuse U201')",
-      "pins": 4
-     },
-     {
       "net": "E2_LNA4_SHUNT",
       "pwr_a": [
        "R275"
@@ -2799,18 +2293,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-     },
-     {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-       "C298"
-      ],
-      "pwr_b": [
-       "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_BONI",
@@ -3061,18 +2543,6 @@
       "pins": 3
      },
      {
-      "net": "LIME3V3_DAMP",
-      "pwr_a": [
-       "C219"
-      ],
-      "pwr_b": [
-       "R219"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R219 0.22R 1% 0.25W to LIME3V3"
-     },
-     {
       "net": "LNA4V5",
       "pwr_a": [
        "C231",
@@ -3152,11 +2622,18 @@
      {
       "net": "SYS12",
       "pwr_a": [
-       "F201",
+       "C123",
+       "C124",
+       "C125",
+       "C126",
+       "C129",
+       "L102",
+       "R124",
        "U107"
       ],
       "pwr_b": [
        "C208",
+       "F201",
        "L202",
        "Q201",
        "R221"
@@ -3184,34 +2661,6 @@
       "pins": 1
      },
      {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-       "C251"
-      ],
-      "pwr_b": [
-       "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
-     },
-     {
       "net": "VCC_3V3_MKEY",
       "pwr_a": [
        "J206"
@@ -3227,16 +2676,16 @@
       "pins": 3
      }
     ],
-    "power_nets": 14,
-    "signal_pins": 31,
-    "power_pins": 37,
-    "gnd_pins": 51,
+    "power_nets": 12,
+    "signal_pins": 24,
+    "power_pins": 32,
+    "gnd_pins": 39,
     "guard_pins": 3,
-    "contacts_needed": 119,
-    "contacts_with_spare": 143,
+    "contacts_needed": 95,
+    "contacts_with_spare": 114,
     "contacts_available": 100,
     "meets_spare_rule": false,
-    "fits": false,
+    "fits": true,
     "errors": []
    },
    "headers": [],
@@ -3510,23 +2959,29 @@
     "C216",
     "C217",
     "C218",
+    "C219",
     "C220",
     "C221",
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C248",
     "C249",
     "C250",
+    "C251",
     "C274",
     "C275",
     "C276",
@@ -3544,17 +2999,22 @@
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D201",
     "D2901",
     "D2902",
+    "F201",
     "F202",
     "J201",
     "J202",
@@ -3562,7 +3022,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L201",
     "L202",
     "L203",
@@ -3693,87 +3152,71 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 254,
+     "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 96,
-     "parts_raw_mm2": 3994.3,
+     "tht_pads": 72,
+     "parts_raw_mm2": 3555.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.764,
-     "demand_1_mm2": 5839.4,
-     "ratio_1": 1.308,
-     "demand_1.5_mm2": 8579.4,
-     "ratio_1.5": 0.891,
-     "demand_1.8_mm2": 10223.4,
-     "ratio_1.8": 0.747,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.707,
+     "demand_1_mm2": 5400.2,
+     "ratio_1": 1.415,
+     "demand_1.5_mm2": 7920.9,
+     "ratio_1.5": 0.965,
+     "demand_1.8_mm2": 9433.3,
+     "ratio_1.8": 0.81,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 3737.7,
-     "refs": 128,
-     "harness_headers": 7,
+     "usable_mm2": 4892.2,
+     "refs": 136,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 1124.8,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 1537.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.685,
-     "demand_1_mm2": 2560.1,
-     "ratio_1": 1.46,
-     "demand_1.5_mm2": 3840.2,
-     "ratio_1.5": 0.973,
-     "demand_1.8_mm2": 4608.2,
-     "ratio_1.8": 0.811,
+     "raw_fill": 0.603,
+     "demand_1_mm2": 2947.6,
+     "ratio_1": 1.66,
+     "demand_1.5_mm2": 4421.4,
+     "ratio_1.5": 1.107,
+     "demand_1.8_mm2": 5305.6,
+     "ratio_1.8": 0.922,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 2350.7,
+   "windows_mm2": 1196.1,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
-    "C506",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
     "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -3813,14 +3256,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -3851,63 +3287,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -3947,14 +3327,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -3972,22 +3344,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -4115,15 +3471,7 @@
      ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298",
-    "C506"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -4166,61 +3514,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -4302,18 +3602,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-     },
-     {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-       "C298"
-      ],
-      "pwr_b": [
-       "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -4657,43 +3945,15 @@
       "prot_A": 0.989,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-       "C251"
-      ],
-      "pwr_b": [
-       "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
-    "power_nets": 9,
-    "signal_pins": 31,
-    "power_pins": 14,
-    "gnd_pins": 24,
+    "power_nets": 8,
+    "signal_pins": 25,
+    "power_pins": 13,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 69,
-    "contacts_with_spare": 83,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -4958,18 +4218,23 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C248",
     "C249",
     "C250",
+    "C251",
     "C274",
     "C275",
     "C276",
@@ -4987,12 +4252,16 @@
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -5003,7 +4272,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -5085,10 +4353,7 @@
     "U507"
    ],
    "pcb_rear_refs": [],
-   "plate_refs": [
-    "U107",
-    "U108"
-   ]
+   "plate_refs": []
   },
   "h8": {
    "title": "(a) with hB 8.0 (taller PWR-B parts; dz_mezz 4.6 mm)",
@@ -5100,88 +4365,71 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 255,
+     "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 120,
-     "parts_raw_mm2": 3892.2,
+     "tht_pads": 72,
+     "parts_raw_mm2": 3555.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.926,
-     "demand_1_mm2": 7079.0,
-     "ratio_1": 1.079,
-     "demand_1.5_mm2": 9767.9,
-     "ratio_1.5": 0.782,
-     "demand_1.8_mm2": 11381.3,
-     "ratio_1.8": 0.671,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.707,
+     "demand_1_mm2": 5400.2,
+     "ratio_1": 1.415,
+     "demand_1.5_mm2": 7920.9,
+     "ratio_1.5": 0.965,
+     "demand_1.8_mm2": 9433.3,
+     "ratio_1.8": 0.81,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 2413.9,
-     "refs": 129,
-     "harness_headers": 7,
+     "usable_mm2": 4892.2,
+     "refs": 136,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 1226.9,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 1537.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.103,
-     "demand_1_mm2": 2662.2,
-     "ratio_1": 0.907,
-     "demand_1.5_mm2": 3993.3,
-     "ratio_1.5": 0.604,
-     "demand_1.8_mm2": 4792.0,
-     "ratio_1.8": 0.504,
+     "raw_fill": 0.603,
+     "demand_1_mm2": 2947.6,
+     "ratio_1": 1.66,
+     "demand_1.5_mm2": 4421.4,
+     "ratio_1.5": 1.107,
+     "demand_1.8_mm2": 5305.6,
+     "ratio_1.8": 0.922,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 3674.4,
+   "windows_mm2": 1196.1,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
-    "L501",
-    "U107",
-    "U108"
+    "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -5221,14 +4469,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -5259,63 +4500,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -5355,14 +4540,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -5380,22 +4557,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -5521,32 +4682,9 @@
       7.2,
       1.75
      ]
-    },
-    {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -5589,61 +4727,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -5725,18 +4815,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-     },
-     {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-       "C298"
-      ],
-      "pwr_b": [
-       "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -6080,27 +5158,15 @@
       "prot_A": 0.989,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-       "C251"
-      ],
-      "pwr_b": [
-       "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 8,
-    "signal_pins": 31,
+    "signal_pins": 25,
     "power_pins": 13,
-    "gnd_pins": 23,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 67,
-    "contacts_with_spare": 81,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -6365,18 +5431,23 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C248",
     "C249",
     "C250",
+    "C251",
     "C274",
     "C275",
     "C276",
@@ -6394,6 +5465,7 @@
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
@@ -6401,6 +5473,8 @@
     "C505",
     "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -6411,7 +5485,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -6505,106 +5578,88 @@
    "boards": {
     "PCB_REAR": {
      "usable_mm2": 2373.3,
-     "refs": 49,
+     "refs": 53,
      "harness_headers": 0,
      "tht_pads": 2,
-     "parts_raw_mm2": 741.1,
+     "parts_raw_mm2": 868.1,
      "headers_raw_mm2": 0.0,
      "b2b_raw_mm2": 0.0,
      "tps_raw_mm2": 12.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.318,
-     "demand_1_mm2": 753.6,
-     "ratio_1": 3.149,
-     "demand_1.5_mm2": 1130.4,
-     "ratio_1.5": 2.1,
-     "demand_1.8_mm2": 1356.5,
-     "ratio_1.8": 1.75,
+     "raw_fill": 0.371,
+     "demand_1_mm2": 880.6,
+     "ratio_1": 2.695,
+     "demand_1.5_mm2": 1320.9,
+     "ratio_1.5": 1.797,
+     "demand_1.8_mm2": 1585.1,
+     "ratio_1.8": 1.497,
      "fits_at_1_8": true
     },
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 244,
+     "refs": 268,
      "harness_headers": 15,
-     "tht_pads": 118,
-     "parts_raw_mm2": 3616.0,
+     "tht_pads": 70,
+     "parts_raw_mm2": 3279.4,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.89,
-     "demand_1_mm2": 6802.8,
-     "ratio_1": 1.123,
-     "demand_1.5_mm2": 9353.7,
-     "ratio_1.5": 0.817,
-     "demand_1.8_mm2": 10884.2,
-     "ratio_1.8": 0.702,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.671,
+     "demand_1_mm2": 5124.0,
+     "ratio_1": 1.491,
+     "demand_1.5_mm2": 7506.6,
+     "ratio_1.5": 1.018,
+     "demand_1.8_mm2": 8936.1,
+     "ratio_1.8": 0.855,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 2670.8,
-     "refs": 91,
-     "harness_headers": 7,
+     "usable_mm2": 5149.1,
+     "refs": 94,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 762.0,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 945.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 37.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.818,
-     "demand_1_mm2": 2184.8,
-     "ratio_1": 1.222,
-     "demand_1.5_mm2": 3277.2,
-     "ratio_1.5": 0.815,
-     "demand_1.8_mm2": 3932.6,
-     "ratio_1.8": 0.679,
-     "fits_at_1_8": false
+     "raw_fill": 0.455,
+     "demand_1_mm2": 2343.1,
+     "ratio_1": 2.198,
+     "demand_1.5_mm2": 3514.7,
+     "ratio_1.5": 1.465,
+     "demand_1.8_mm2": 4217.6,
+     "ratio_1.8": 1.221,
+     "fits_at_1_8": true
     }
    },
-   "windows_mm2": 3417.6,
+   "windows_mm2": 939.3,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
     "C511",
     "F102",
-    "F103",
-    "F201",
-    "L101",
-    "U107",
-    "U108"
+    "L101"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [
     "3V3_Q6A",
     "BIAS_SB_LNA",
-    "E2_SB_DAMP",
     "EN_HFP",
     "EN_LABPORT",
     "EN_RTLA",
@@ -6623,12 +5678,11 @@
     "VBUS_HFP",
     "VBUS_LABPORT",
     "VBUS_RTLA",
-    "VBUS_RTLB",
-    "VBUS_RTLB_DAMP"
+    "VBUS_RTLB"
    ],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -6668,14 +5722,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -6706,63 +5753,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -6802,14 +5793,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -6819,22 +5802,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -6960,35 +5927,10 @@
       7.2,
       1.75
      ]
-    },
-    {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [
-    "C251",
-    "C298",
     "C511"
    ],
    "b2b": {
@@ -7027,61 +5969,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -7446,12 +6340,12 @@
      }
     ],
     "power_nets": 7,
-    "signal_pins": 27,
+    "signal_pins": 23,
     "power_pins": 9,
-    "gnd_pins": 17,
+    "gnd_pins": 13,
     "guard_pins": 3,
-    "contacts_needed": 53,
-    "contacts_with_spare": 64,
+    "contacts_needed": 45,
+    "contacts_with_spare": 54,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -7716,15 +6610,19 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C274",
     "C275",
     "C276",
@@ -7747,7 +6645,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -7809,9 +6706,11 @@
     "C248",
     "C249",
     "C250",
+    "C251",
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
@@ -7824,6 +6723,8 @@
     "C510",
     "C512",
     "C513",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "L210",
@@ -7868,89 +6769,71 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 256,
+     "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 120,
-     "parts_raw_mm2": 3994.3,
+     "tht_pads": 72,
+     "parts_raw_mm2": 3555.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.94,
-     "demand_1_mm2": 7181.1,
-     "ratio_1": 1.064,
-     "demand_1.5_mm2": 9921.1,
-     "ratio_1.5": 0.77,
-     "demand_1.8_mm2": 11565.1,
-     "ratio_1.8": 0.661,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.707,
+     "demand_1_mm2": 5400.2,
+     "ratio_1": 1.415,
+     "demand_1.5_mm2": 7920.9,
+     "ratio_1.5": 0.965,
+     "demand_1.8_mm2": 9433.3,
+     "ratio_1.8": 0.81,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 2290.5,
-     "refs": 156,
-     "harness_headers": 7,
+     "usable_mm2": 4892.2,
+     "refs": 164,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 1252.8,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 1665.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.174,
-     "demand_1_mm2": 2688.2,
-     "ratio_1": 0.852,
-     "demand_1.5_mm2": 4032.2,
-     "ratio_1.5": 0.568,
-     "demand_1.8_mm2": 4838.7,
-     "ratio_1.8": 0.473,
+     "raw_fill": 0.629,
+     "demand_1_mm2": 3075.6,
+     "ratio_1": 1.591,
+     "demand_1.5_mm2": 4613.4,
+     "ratio_1.5": 1.06,
+     "demand_1.8_mm2": 5536.1,
+     "ratio_1.8": 0.884,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 3797.9,
+   "windows_mm2": 1196.1,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
-    "C506",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
-    "L501",
-    "U107",
-    "U108"
+    "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -7990,14 +6873,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -8028,63 +6904,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -8124,14 +6944,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -8149,22 +6961,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -8290,33 +7086,9 @@
       7.2,
       1.75
      ]
-    },
-    {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298",
-    "C506"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -8387,61 +7159,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -8523,18 +7247,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-     },
-     {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-       "C298"
-      ],
-      "pwr_b": [
-       "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -8882,43 +7594,15 @@
       "prot_A": 0.989,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-       "C251"
-      ],
-      "pwr_b": [
-       "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
-    "power_nets": 9,
-    "signal_pins": 31,
-    "power_pins": 14,
-    "gnd_pins": 24,
+    "power_nets": 8,
+    "signal_pins": 25,
+    "power_pins": 13,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 69,
-    "contacts_with_spare": 83,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -9183,18 +7867,23 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C248",
     "C249",
     "C250",
+    "C251",
     "C274",
     "C275",
     "C276",
@@ -9212,6 +7901,7 @@
     "C295",
     "C296",
     "C297",
+    "C298",
     "C301",
     "C302",
     "C303",
@@ -9223,7 +7913,10 @@
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -9234,7 +7927,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -9350,126 +8042,72 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 250,
+     "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 108,
-     "parts_raw_mm2": 3716.8,
+     "tht_pads": 72,
+     "parts_raw_mm2": 3555.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 439.0,
-     "raw_fill": 0.914,
-     "demand_1_mm2": 6983.2,
-     "ratio_1": 1.094,
-     "demand_1.5_mm2": 9584.5,
-     "ratio_1.5": 0.797,
-     "demand_1.8_mm2": 11145.2,
-     "ratio_1.8": 0.686,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.707,
+     "demand_1_mm2": 5400.2,
+     "ratio_1": 1.415,
+     "demand_1.5_mm2": 7920.9,
+     "ratio_1.5": 0.965,
+     "demand_1.8_mm2": 9433.3,
+     "ratio_1.8": 0.81,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 2655.5,
-     "refs": 134,
-     "harness_headers": 7,
-     "tht_pads": 86,
-     "parts_raw_mm2": 1402.3,
-     "headers_raw_mm2": 1195.0,
+     "usable_mm2": 4892.2,
+     "refs": 136,
+     "harness_headers": 6,
+     "tht_pads": 74,
+     "parts_raw_mm2": 1537.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.069,
-     "demand_1_mm2": 2837.6,
-     "ratio_1": 0.936,
-     "demand_1.5_mm2": 4256.4,
-     "ratio_1.5": 0.624,
-     "demand_1.8_mm2": 5107.6,
-     "ratio_1.8": 0.52,
+     "raw_fill": 0.603,
+     "demand_1_mm2": 2947.6,
+     "ratio_1": 1.66,
+     "demand_1.5_mm2": 4421.4,
+     "ratio_1.5": 1.107,
+     "demand_1.8_mm2": 5305.6,
+     "ratio_1.8": 0.922,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 3432.8,
+   "windows_mm2": 1196.1,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C506",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
-    "L501",
-    "U107",
-    "U108"
+    "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 439.0,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
-    {
-     "item": "C235",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C298",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
     {
      "item": "J201",
      "pin_field_mm": [
@@ -9508,14 +8146,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -9546,23 +8177,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -9619,22 +8234,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -9760,27 +8359,9 @@
       7.2,
       1.75
      ]
-    },
-    {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C506"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -9823,7 +8404,7 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
@@ -10254,31 +8835,15 @@
       "prot_A": 0.989,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
      }
     ],
-    "power_nets": 9,
+    "power_nets": 8,
     "signal_pins": 25,
-    "power_pins": 14,
-    "gnd_pins": 18,
+    "power_pins": 13,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 57,
-    "contacts_with_spare": 69,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -10583,7 +9148,10 @@
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -10594,7 +9162,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -10688,76 +9255,67 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 187,
+     "refs": 217,
      "harness_headers": 15,
-     "tht_pads": 74,
-     "parts_raw_mm2": 2914.7,
+     "tht_pads": 64,
+     "parts_raw_mm2": 2779.7,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
-     "keepouts_at_1_0_mm2": 507.9,
-     "raw_fill": 0.637,
-     "demand_1_mm2": 4870.9,
-     "ratio_1": 1.569,
-     "demand_1.5_mm2": 7052.4,
-     "ratio_1.5": 1.083,
-     "demand_1.8_mm2": 8361.2,
-     "ratio_1.8": 0.914,
+     "keepouts_at_1_0_mm2": 414.5,
+     "raw_fill": 0.608,
+     "demand_1_mm2": 4642.5,
+     "ratio_1": 1.646,
+     "demand_1.5_mm2": 6756.5,
+     "ratio_1.5": 1.131,
+     "demand_1.8_mm2": 8024.9,
+     "ratio_1.8": 0.952,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4490.3,
-     "refs": 195,
-     "harness_headers": 7,
-     "tht_pads": 96,
-     "parts_raw_mm2": 2204.3,
-     "headers_raw_mm2": 1195.0,
+     "usable_mm2": 5219.0,
+     "refs": 198,
+     "harness_headers": 6,
+     "tht_pads": 82,
+     "parts_raw_mm2": 2313.0,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.819,
-     "demand_1_mm2": 3677.2,
-     "ratio_1": 1.221,
-     "demand_1.5_mm2": 5515.7,
-     "ratio_1.5": 0.814,
-     "demand_1.8_mm2": 6618.9,
-     "ratio_1.8": 0.678,
+     "raw_fill": 0.721,
+     "demand_1_mm2": 3760.9,
+     "ratio_1": 1.388,
+     "demand_1.5_mm2": 5641.4,
+     "ratio_1.5": 0.925,
+     "demand_1.8_mm2": 6769.6,
+     "ratio_1.8": 0.771,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1652.0,
+   "windows_mm2": 923.3,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
-    "C225",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C506",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
     "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 126.0,
-   "pwr_a_keepouts_mm2": 507.9,
+   "pwr_a_keepouts_mm2": 414.5,
    "pwr_a_keepout_items": [
     {
      "item": "C206",
@@ -10781,56 +9339,7 @@
      ]
     },
     {
-     "item": "C219",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C298",
      "pin_field_mm": [
       4.1,
       1.6
@@ -10874,27 +9383,12 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
    ],
    "pwr_a_tht_pocket_items": [
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
     {
      "item": "C254",
      "tht_pads": 2,
@@ -10945,22 +9439,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -11088,10 +9566,7 @@
      ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C506",
-    "F201"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -11195,22 +9670,6 @@
       ],
       "kind": "signal",
       "pins": 1
-     },
-     {
-      "net": "E2_J21_FUSED",
-      "pwr_a": [
-       "F201"
-      ],
-      "pwr_b": [
-       "C202",
-       "R201",
-       "R204",
-       "U201"
-      ],
-      "kind": "power",
-      "prot_A": 4.0,
-      "current_src": "F201 4 A blade fuse upstream of eFuse U201 (tools/assembly_data.py NET_CURRENT 'J21' protection 'F201 4 A + eFuse U201')",
-      "pins": 4
      },
      {
       "net": "E2_LNA4_SHUNT",
@@ -11553,10 +10012,18 @@
      {
       "net": "SYS12",
       "pwr_a": [
-       "F201"
+       "C123",
+       "C124",
+       "C125",
+       "C126",
+       "C129",
+       "L102",
+       "R124",
+       "U107"
       ],
       "pwr_b": [
        "C208",
+       "F201",
        "L202",
        "Q201",
        "R221"
@@ -11584,22 +10051,6 @@
       "pins": 1
      },
      {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
       "net": "VCC_3V3_MKEY",
       "pwr_a": [
        "J206"
@@ -11615,13 +10066,13 @@
       "pins": 3
      }
     ],
-    "power_nets": 14,
+    "power_nets": 12,
     "signal_pins": 21,
-    "power_pins": 37,
-    "gnd_pins": 41,
+    "power_pins": 32,
+    "gnd_pins": 36,
     "guard_pins": 3,
-    "contacts_needed": 99,
-    "contacts_with_spare": 119,
+    "contacts_needed": 89,
+    "contacts_with_spare": 107,
     "contacts_available": 100,
     "meets_spare_rule": false,
     "fits": true,
@@ -11948,12 +10399,16 @@
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D201",
     "D2901",
     "D2902",
+    "F201",
     "F202",
     "J201",
     "J202",
@@ -11961,7 +10416,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L201",
     "L202",
     "L203",
@@ -12080,10 +10534,7 @@
     "U507"
    ],
    "pcb_rear_refs": [],
-   "plate_refs": [
-    "U107",
-    "U108"
-   ]
+   "plate_refs": []
   },
   "s8": {
    "title": "(a) with the 8.00 mm B2B stack (two LSHM-150-04.0 halves): hA 7.5, window ceiling 15.1 mm, dz_mezz 5.1",
@@ -12095,82 +10546,67 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 256,
+     "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 120,
-     "parts_raw_mm2": 3994.3,
+     "tht_pads": 72,
+     "parts_raw_mm2": 3555.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.94,
-     "demand_1_mm2": 7181.1,
-     "ratio_1": 1.064,
-     "demand_1.5_mm2": 9921.1,
-     "ratio_1.5": 0.77,
-     "demand_1.8_mm2": 11565.1,
-     "ratio_1.8": 0.661,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.707,
+     "demand_1_mm2": 5400.2,
+     "ratio_1": 1.415,
+     "demand_1.5_mm2": 7920.9,
+     "ratio_1.5": 0.965,
+     "demand_1.8_mm2": 9433.3,
+     "ratio_1.8": 0.81,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 2994.9,
-     "refs": 128,
-     "harness_headers": 7,
+     "usable_mm2": 5301.5,
+     "refs": 136,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 1124.8,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 1537.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.855,
-     "demand_1_mm2": 2560.1,
-     "ratio_1": 1.17,
-     "demand_1.5_mm2": 3840.2,
-     "ratio_1.5": 0.78,
-     "demand_1.8_mm2": 4608.2,
-     "ratio_1.8": 0.65,
+     "raw_fill": 0.556,
+     "demand_1_mm2": 2947.6,
+     "ratio_1": 1.799,
+     "demand_1.5_mm2": 4421.4,
+     "ratio_1.5": 1.199,
+     "demand_1.8_mm2": 5305.6,
+     "ratio_1.8": 0.999,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 3093.4,
+   "windows_mm2": 786.8,
    "window_refs": [
     "C107",
-    "C109",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
     "C511",
-    "F102",
-    "F103",
-    "F201",
-    "U107",
-    "U108"
+    "F102"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -12210,14 +10646,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -12248,63 +10677,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -12344,14 +10717,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -12369,22 +10734,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -12510,33 +10859,9 @@
       7.2,
       1.75
      ]
-    },
-    {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298",
-    "C506"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -12579,61 +10904,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -12715,18 +10992,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-     },
-     {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-       "C298"
-      ],
-      "pwr_b": [
-       "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -13070,43 +11335,15 @@
       "prot_A": 0.989,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-       "C251"
-      ],
-      "pwr_b": [
-       "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
-    "power_nets": 9,
-    "signal_pins": 31,
-    "power_pins": 14,
-    "gnd_pins": 24,
+    "power_nets": 8,
+    "signal_pins": 25,
+    "power_pins": 13,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 69,
-    "contacts_with_spare": 83,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -13371,18 +11608,23 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C248",
     "C249",
     "C250",
+    "C251",
     "C274",
     "C275",
     "C276",
@@ -13400,12 +11642,16 @@
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -13416,7 +11662,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -13510,100 +11755,86 @@
    "boards": {
     "PCB_REAR": {
      "usable_mm2": 2373.3,
-     "refs": 49,
+     "refs": 53,
      "harness_headers": 0,
      "tht_pads": 2,
-     "parts_raw_mm2": 741.1,
+     "parts_raw_mm2": 868.1,
      "headers_raw_mm2": 0.0,
      "b2b_raw_mm2": 0.0,
      "tps_raw_mm2": 12.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.318,
-     "demand_1_mm2": 753.6,
-     "ratio_1": 3.149,
-     "demand_1.5_mm2": 1130.4,
-     "ratio_1.5": 2.1,
-     "demand_1.8_mm2": 1356.5,
-     "ratio_1.8": 1.75,
+     "raw_fill": 0.371,
+     "demand_1_mm2": 880.6,
+     "ratio_1": 2.695,
+     "demand_1.5_mm2": 1320.9,
+     "ratio_1.5": 1.797,
+     "demand_1.8_mm2": 1585.1,
+     "ratio_1.8": 1.497,
      "fits_at_1_8": true
     },
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 242,
+     "refs": 268,
      "harness_headers": 15,
-     "tht_pads": 94,
-     "parts_raw_mm2": 3616.0,
+     "tht_pads": 70,
+     "parts_raw_mm2": 3279.4,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.715,
-     "demand_1_mm2": 5461.2,
-     "ratio_1": 1.399,
-     "demand_1.5_mm2": 8012.0,
-     "ratio_1.5": 0.954,
-     "demand_1.8_mm2": 9542.6,
-     "ratio_1.8": 0.801,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.671,
+     "demand_1_mm2": 5124.0,
+     "ratio_1": 1.491,
+     "demand_1.5_mm2": 7506.6,
+     "ratio_1.5": 1.018,
+     "demand_1.8_mm2": 8936.1,
+     "ratio_1.8": 0.855,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4442.2,
-     "refs": 91,
-     "harness_headers": 7,
+     "usable_mm2": 5301.5,
+     "refs": 94,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 762.0,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 945.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 37.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.492,
-     "demand_1_mm2": 2184.8,
-     "ratio_1": 2.033,
-     "demand_1.5_mm2": 3277.2,
-     "ratio_1.5": 1.355,
-     "demand_1.8_mm2": 3932.6,
-     "ratio_1.8": 1.13,
+     "raw_fill": 0.442,
+     "demand_1_mm2": 2343.1,
+     "ratio_1": 2.263,
+     "demand_1.5_mm2": 3514.7,
+     "ratio_1.5": 1.508,
+     "demand_1.8_mm2": 4217.6,
+     "ratio_1.8": 1.257,
      "fits_at_1_8": true
     }
    },
-   "windows_mm2": 1646.2,
+   "windows_mm2": 786.8,
    "window_refs": [
     "C107",
-    "C109",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
     "C511",
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [
     "3V3_Q6A",
     "BIAS_SB_LNA",
-    "E2_SB_DAMP",
     "EN_HFP",
     "EN_LABPORT",
     "EN_RTLA",
@@ -13622,12 +11853,11 @@
     "VBUS_HFP",
     "VBUS_LABPORT",
     "VBUS_RTLA",
-    "VBUS_RTLB",
-    "VBUS_RTLB_DAMP"
+    "VBUS_RTLB"
    ],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -13667,14 +11897,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -13705,63 +11928,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -13801,14 +11968,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -13818,22 +11977,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -13961,17 +12104,8 @@
      ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [
-    "C251",
-    "C298",
     "C511"
    ],
    "b2b": {
@@ -14010,61 +12144,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -14429,12 +12515,12 @@
      }
     ],
     "power_nets": 7,
-    "signal_pins": 27,
+    "signal_pins": 23,
     "power_pins": 9,
-    "gnd_pins": 17,
+    "gnd_pins": 13,
     "guard_pins": 3,
-    "contacts_needed": 53,
-    "contacts_with_spare": 64,
+    "contacts_needed": 45,
+    "contacts_with_spare": 54,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -14699,15 +12785,19 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C274",
     "C275",
     "C276",
@@ -14730,7 +12820,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -14792,9 +12881,11 @@
     "C248",
     "C249",
     "C250",
+    "C251",
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
@@ -14807,6 +12898,8 @@
     "C510",
     "C512",
     "C513",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "L210",
@@ -14839,10 +12932,7 @@
     "U503",
     "U507"
    ],
-   "plate_refs": [
-    "U107",
-    "U108"
-   ]
+   "plate_refs": []
   },
   "a80": {
    "title": "(a) with the 80-contact pair LSHM-140-02.5-L-DV-A-N-K-TR x2 (the area that the 100-contact choice costs; W2 B2B)",
@@ -14854,89 +12944,71 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 256,
+     "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 120,
-     "parts_raw_mm2": 3994.3,
+     "tht_pads": 72,
+     "parts_raw_mm2": 3555.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 159.3,
      "tps_raw_mm2": 125.0,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.936,
-     "demand_1_mm2": 7150.1,
-     "ratio_1": 1.069,
-     "demand_1.5_mm2": 9874.6,
-     "ratio_1.5": 0.774,
-     "demand_1.8_mm2": 11509.3,
-     "ratio_1.8": 0.664,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.703,
+     "demand_1_mm2": 5369.2,
+     "ratio_1": 1.423,
+     "demand_1.5_mm2": 7874.4,
+     "ratio_1.5": 0.97,
+     "demand_1.8_mm2": 9377.5,
+     "ratio_1.8": 0.815,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 2290.5,
-     "refs": 128,
-     "harness_headers": 7,
+     "usable_mm2": 4892.2,
+     "refs": 136,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 1124.8,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 1537.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 159.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.104,
-     "demand_1_mm2": 2529.1,
-     "ratio_1": 0.906,
-     "demand_1.5_mm2": 3793.7,
-     "ratio_1.5": 0.604,
-     "demand_1.8_mm2": 4552.4,
-     "ratio_1.8": 0.503,
+     "raw_fill": 0.596,
+     "demand_1_mm2": 2916.6,
+     "ratio_1": 1.677,
+     "demand_1.5_mm2": 4374.9,
+     "ratio_1.5": 1.118,
+     "demand_1.8_mm2": 5249.8,
+     "ratio_1.8": 0.932,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 3797.9,
+   "windows_mm2": 1196.1,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
-    "C506",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
-    "L501",
-    "U107",
-    "U108"
+    "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [],
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 1372.3,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -14976,14 +13048,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -15014,63 +13079,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -15110,14 +13119,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -15135,22 +13136,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -15276,33 +13261,9 @@
       7.2,
       1.75
      ]
-    },
-    {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298",
-    "C506"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -15345,61 +13306,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -15481,18 +13394,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-     },
-     {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-       "C298"
-      ],
-      "pwr_b": [
-       "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -15836,45 +13737,17 @@
       "prot_A": 0.989,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-       "C251"
-      ],
-      "pwr_b": [
-       "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
-    "power_nets": 9,
-    "signal_pins": 31,
-    "power_pins": 14,
-    "gnd_pins": 24,
+    "power_nets": 8,
+    "signal_pins": 25,
+    "power_pins": 13,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 69,
-    "contacts_with_spare": 83,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "contacts_available": 80,
-    "meets_spare_rule": false,
+    "meets_spare_rule": true,
     "fits": true,
     "errors": []
    },
@@ -16137,18 +14010,23 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C248",
     "C249",
     "C250",
+    "C251",
     "C274",
     "C275",
     "C276",
@@ -16166,12 +14044,16 @@
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -16182,7 +14064,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -16276,83 +14157,65 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 256,
+     "refs": 279,
      "harness_headers": 17,
-     "tht_pads": 120,
-     "parts_raw_mm2": 3994.3,
+     "tht_pads": 72,
+     "parts_raw_mm2": 3555.6,
      "headers_raw_mm2": 1817.7,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
-     "modules_at_1_0_mm2": 1341.6,
-     "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 1.025,
-     "demand_1_mm2": 7828.3,
-     "ratio_1": 0.976,
-     "demand_1.5_mm2": 10892.0,
-     "ratio_1.5": 0.701,
-     "demand_1.8_mm2": 12730.2,
-     "ratio_1.8": 0.6,
+     "modules_at_1_0_mm2": 0.0,
+     "keepouts_at_1_0_mm2": 358.9,
+     "raw_fill": 0.791,
+     "demand_1_mm2": 6047.5,
+     "ratio_1": 1.263,
+     "demand_1.5_mm2": 8891.8,
+     "ratio_1.5": 0.859,
+     "demand_1.8_mm2": 10598.3,
+     "ratio_1.8": 0.721,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 1566.7,
-     "refs": 128,
-     "harness_headers": 7,
+     "usable_mm2": 4168.4,
+     "refs": 136,
+     "harness_headers": 6,
      "tht_pads": 74,
-     "parts_raw_mm2": 1124.8,
-     "headers_raw_mm2": 1195.0,
+     "parts_raw_mm2": 1537.2,
+     "headers_raw_mm2": 1170.0,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.634,
-     "demand_1_mm2": 2560.1,
-     "ratio_1": 0.612,
-     "demand_1.5_mm2": 3840.2,
-     "ratio_1.5": 0.408,
-     "demand_1.8_mm2": 4608.2,
-     "ratio_1.8": 0.34,
+     "raw_fill": 0.707,
+     "demand_1_mm2": 2947.6,
+     "ratio_1": 1.414,
+     "demand_1.5_mm2": 4421.4,
+     "ratio_1.5": 0.943,
+     "demand_1.8_mm2": 5305.6,
+     "ratio_1.8": 0.786,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 3797.9,
+   "windows_mm2": 1196.1,
    "window_refs": [
     "C107",
-    "C109",
-    "C111",
-    "C112",
     "C113",
     "C206",
     "C207",
     "C210",
-    "C219",
     "C222",
-    "C225",
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
     "C254",
     "C262",
     "C265",
     "C273",
-    "C298",
-    "C506",
     "C511",
     "C512",
     "F102",
-    "F103",
-    "F201",
     "L101",
-    "L501",
-    "U107",
-    "U108"
+    "L501"
    ],
    "window_refs_height_lower_bound": [
-    "F102",
-    "F103",
-    "F201"
+    "F102"
    ],
    "ctrl_headers_moved_to_pwr_a": [
     "J304",
@@ -16361,7 +14224,7 @@
    "pcb_rear_harness_nets": [],
    "edge_strips_mm2": 2096.1,
    "tp_probe_windows_mm2": 180.0,
-   "pwr_a_keepouts_mm2": 359.4,
+   "pwr_a_keepouts_mm2": 358.9,
    "pwr_a_keepout_items": [
     {
      "item": "J201",
@@ -16401,14 +14264,7 @@
     {
      "item": "J506",
      "pin_field_mm": [
-      5.2,
-      1.75
-     ]
-    },
-    {
-     "item": "J508",
-     "pin_field_mm": [
-      11.2,
+      17.2,
       1.75
      ]
     }
@@ -16439,63 +14295,7 @@
      ]
     },
     {
-     "item": "C219",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C222",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C225",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C235",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C239",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C243",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C247",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C251",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -16535,14 +14335,6 @@
      ]
     },
     {
-     "item": "C298",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C511",
      "tht_pads": 2,
      "pin_field_mm": [
@@ -16560,22 +14352,6 @@
     },
     {
      "item": "F102",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F103",
-     "tht_pads": 4,
-     "pin_field_mm": [
-      12.7,
-      6.18
-     ]
-    },
-    {
-     "item": "F201",
      "tht_pads": 4,
      "pin_field_mm": [
       12.7,
@@ -16703,22 +14479,6 @@
      ]
     },
     {
-     "item": "U107",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
-     "item": "U108",
-     "tht_pads": 12,
-     "pin_field_mm": [
-      14.4,
-      4.24
-     ]
-    },
-    {
      "item": "J304",
      "tht_pads": 40,
      "pin_field_mm": [
@@ -16735,15 +14495,7 @@
      ]
     }
    ],
-   "height_overrides_to_pwr_a": [
-    "C235",
-    "C239",
-    "C243",
-    "C247",
-    "C251",
-    "C298",
-    "C506"
-   ],
+   "height_overrides_to_pwr_a": [],
    "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
@@ -16786,61 +14538,13 @@
        "TP204"
       ],
       "pwr_b": [
-       "J508",
+       "J506",
        "R286"
       ],
       "kind": "power",
       "prot_A": 0.75,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "BIAS_CH1_DAMP",
-      "pwr_a": [
-       "C235"
-      ],
-      "pwr_b": [
-       "R232"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
-     },
-     {
-      "net": "BIAS_CH2_DAMP",
-      "pwr_a": [
-       "C239"
-      ],
-      "pwr_b": [
-       "R237"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
-     },
-     {
-      "net": "BIAS_CH3_DAMP",
-      "pwr_a": [
-       "C243"
-      ],
-      "pwr_b": [
-       "R242"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
-     },
-     {
-      "net": "BIAS_CH4_DAMP",
-      "pwr_a": [
-       "C247"
-      ],
-      "pwr_b": [
-       "R247"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -16922,18 +14626,6 @@
       ],
       "kind": "declared sense pair",
       "pins": 1
-     },
-     {
-      "net": "E2_SB_DAMP",
-      "pwr_a": [
-       "C298"
-      ],
-      "pwr_b": [
-       "R295"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -17277,43 +14969,15 @@
       "prot_A": 0.989,
       "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
       "pins": 1
-     },
-     {
-      "net": "VBUS_LABPORT",
-      "pwr_a": [
-       "C506"
-      ],
-      "pwr_b": [
-       "C507",
-       "J506",
-       "R508",
-       "U502"
-      ],
-      "kind": "power",
-      "prot_A": 0.825,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
-     },
-     {
-      "net": "VBUS_RTLB_DAMP",
-      "pwr_a": [
-       "C251"
-      ],
-      "pwr_b": [
-       "R251"
-      ],
-      "kind": "rail node",
-      "pins": 1,
-      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
-    "power_nets": 9,
-    "signal_pins": 31,
-    "power_pins": 14,
-    "gnd_pins": 24,
+    "power_nets": 8,
+    "signal_pins": 25,
+    "power_pins": 13,
+    "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 69,
-    "contacts_with_spare": 83,
+    "contacts_needed": 55,
+    "contacts_with_spare": 66,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -17577,18 +15241,23 @@
     "C232",
     "C233",
     "C234",
+    "C235",
     "C236",
     "C237",
     "C238",
+    "C239",
     "C240",
     "C241",
     "C242",
+    "C243",
     "C244",
     "C245",
     "C246",
+    "C247",
     "C248",
     "C249",
     "C250",
+    "C251",
     "C274",
     "C275",
     "C276",
@@ -17606,12 +15275,16 @@
     "C295",
     "C296",
     "C297",
+    "C298",
     "C501",
     "C502",
     "C503",
     "C504",
     "C505",
+    "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -17622,7 +15295,6 @@
     "J204",
     "J207",
     "J506",
-    "J508",
     "L206",
     "L207",
     "L208",
@@ -17716,23 +15388,22 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 150,
+     "refs": 185,
      "harness_headers": 15,
      "tht_pads": 72,
-     "parts_raw_mm2": 2546.6,
+     "parts_raw_mm2": 3059.4,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "blocks_raw_mm2": 461.7,
-     "raw_fill": 0.588,
-     "demand_1_mm2": 4494.0,
-     "ratio_1": 1.7,
-     "demand_1.5_mm2": 6741.0,
-     "ratio_1.5": 1.133,
-     "demand_1.8_mm2": 8089.2,
-     "ratio_1.8": 0.945,
+     "raw_fill": 0.595,
+     "demand_1_mm2": 4545.1,
+     "ratio_1": 1.681,
+     "demand_1.5_mm2": 6817.7,
+     "ratio_1.5": 1.121,
+     "demand_1.8_mm2": 8181.2,
+     "ratio_1.8": 0.934,
      "fits_at_1_8": false
     },
     "PWR_A_BOTTOM": {
@@ -18550,56 +16221,52 @@
       "refs": [
        "U107"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks CONV_SYS12"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "RPP-SYS12",
       "refs": [],
-      "status": "pending",
+      "status": "in graph",
       "owner": "GR-5A",
       "until_mpn_in_graph": [
        "LM74700QDBVRQ1"
       ],
-      "graph_refs": [],
-      "effect": "reserved blocks RPP"
+      "graph_refs": [
+       "U111"
+      ]
      },
      {
       "id": "U108-LAB5",
       "refs": [
        "U108"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks CONV_LAB5"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "F103-SMD",
       "refs": [
        "F103"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks FUSE_F103"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "F201-SMD",
       "refs": [
        "F201"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks FUSE_F201"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "C109-out",
       "refs": [
        "C109"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "deleted"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "C111-C112-1210",
@@ -18607,9 +16274,8 @@
        "C111",
        "C112"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "Capacitor_SMD:C_1210_3225Metric C3225X7R1H226M250AC"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "dampers-5V",
@@ -18623,18 +16289,16 @@
        "C251",
        "C298"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Capacitor_SMD:CP_Elec_5x4.5 16SVPG47M"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "C506-3x",
       "refs": [
        "C506"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Capacitor_SMD:CP_Elec_5x4.5 16SVPG47M x 3"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "L-1uH-2520",
@@ -18646,9 +16310,8 @@
        "L213",
        "L214"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Inductor_SMD:L_1008_2520Metric SRP2510PA-1R0M"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "J204+J207-PHD",
@@ -18666,86 +16329,23 @@
        "J506",
        "J508"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "merged into J506 (Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal)"
+      "status": "in graph",
+      "owner": "GR-5B"
      }
     ],
-    "blocks": [
-     {
-      "id": "CONV_SYS12",
-      "side": "PWR_A",
-      "w": 15.0,
-      "d": 14.3,
-      "area_mm2": 214.5,
-      "h": 3.2,
-      "stands_for": [
-       "U107"
-      ]
-     },
-     {
-      "id": "RPP",
-      "side": "PWR_A",
-      "w": 7.5,
-      "d": 6.7,
-      "area_mm2": 50.25,
-      "h": 2.7,
-      "stands_for": []
-     },
-     {
-      "id": "CONV_LAB5",
-      "side": "PWR_A",
-      "w": 12.0,
-      "d": 11.6,
-      "area_mm2": 139.2,
-      "h": 4.1,
-      "stands_for": [
-       "U108"
-      ]
-     },
-     {
-      "id": "FUSE_F103",
-      "side": "PWR_A",
-      "w": 7.8,
-      "d": 3.7,
-      "area_mm2": 28.86,
-      "h": 2.69,
-      "stands_for": [
-       "F103"
-      ]
-     },
-     {
-      "id": "FUSE_F201",
-      "side": "PWR_A",
-      "w": 3.7,
-      "d": 7.8,
-      "area_mm2": 28.86,
-      "h": 2.69,
-      "stands_for": [
-       "F201"
-      ]
-     }
-    ],
+    "blocks": [],
     "graph_of_record": {
-     "height_overrides_to_pwr_a": [
-      "C235",
-      "C239",
-      "C243",
-      "C247",
-      "C251",
-      "C298",
-      "C506"
-     ],
+     "height_overrides_to_pwr_a": [],
      "b2b": {
-      "power_pins": 14,
-      "signal_pins": 31,
-      "gnd_pins": 24,
-      "contacts_needed": 69,
-      "contacts_with_spare": 83,
+      "power_pins": 13,
+      "signal_pins": 25,
+      "gnd_pins": 17,
+      "contacts_needed": 55,
+      "contacts_with_spare": 66,
       "meets_spare_rule": true,
       "fits": true,
       "errors": [],
-      "crossing_nets": 40
+      "crossing_nets": 33
      }
     }
    },
@@ -18783,7 +16383,25 @@
     "top_tht_items": 26,
     "tht_margin_mm": 1.0,
     "refs": 94,
-    "chip_refs_left_on_top": [],
+    "chip_refs_left_on_top": [
+     "C121",
+     "C122",
+     "C127",
+     "C128",
+     "C129",
+     "C132",
+     "C136",
+     "R124",
+     "R125",
+     "R126",
+     "R127",
+     "R128",
+     "R129",
+     "R130",
+     "R131",
+     "R132",
+     "R133"
+    ],
     "bottom_refs_with_tht": [],
     "refs_not_moved": []
    },
@@ -19088,6 +16706,8 @@
     "C505",
     "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -19190,23 +16810,22 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 150,
+     "refs": 185,
      "harness_headers": 15,
      "tht_pads": 72,
-     "parts_raw_mm2": 2546.6,
+     "parts_raw_mm2": 3059.4,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 332.6,
-     "blocks_raw_mm2": 461.7,
-     "raw_fill": 0.632,
-     "demand_1_mm2": 4826.6,
-     "ratio_1": 1.583,
-     "demand_1.5_mm2": 7073.7,
-     "ratio_1.5": 1.08,
-     "demand_1.8_mm2": 8421.9,
-     "ratio_1.8": 0.907,
+     "raw_fill": 0.638,
+     "demand_1_mm2": 4877.7,
+     "ratio_1": 1.566,
+     "demand_1.5_mm2": 7150.3,
+     "ratio_1.5": 1.069,
+     "demand_1.8_mm2": 8513.8,
+     "ratio_1.8": 0.897,
      "fits_at_1_8": false
     },
     "PWR_A_BOTTOM": {
@@ -20024,56 +17643,52 @@
       "refs": [
        "U107"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks CONV_SYS12"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "RPP-SYS12",
       "refs": [],
-      "status": "pending",
+      "status": "in graph",
       "owner": "GR-5A",
       "until_mpn_in_graph": [
        "LM74700QDBVRQ1"
       ],
-      "graph_refs": [],
-      "effect": "reserved blocks RPP"
+      "graph_refs": [
+       "U111"
+      ]
      },
      {
       "id": "U108-LAB5",
       "refs": [
        "U108"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks CONV_LAB5"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "F103-SMD",
       "refs": [
        "F103"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks FUSE_F103"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "F201-SMD",
       "refs": [
        "F201"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks FUSE_F201"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "C109-out",
       "refs": [
        "C109"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "deleted"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "C111-C112-1210",
@@ -20081,9 +17696,8 @@
        "C111",
        "C112"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "Capacitor_SMD:C_1210_3225Metric C3225X7R1H226M250AC"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "dampers-5V",
@@ -20097,18 +17711,16 @@
        "C251",
        "C298"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Capacitor_SMD:CP_Elec_5x4.5 16SVPG47M"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "C506-3x",
       "refs": [
        "C506"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Capacitor_SMD:CP_Elec_5x4.5 16SVPG47M x 3"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "L-1uH-2520",
@@ -20120,9 +17732,8 @@
        "L213",
        "L214"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Inductor_SMD:L_1008_2520Metric SRP2510PA-1R0M"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "J204+J207-PHD",
@@ -20140,86 +17751,23 @@
        "J506",
        "J508"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "merged into J506 (Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal)"
+      "status": "in graph",
+      "owner": "GR-5B"
      }
     ],
-    "blocks": [
-     {
-      "id": "CONV_SYS12",
-      "side": "PWR_A",
-      "w": 15.0,
-      "d": 14.3,
-      "area_mm2": 214.5,
-      "h": 3.2,
-      "stands_for": [
-       "U107"
-      ]
-     },
-     {
-      "id": "RPP",
-      "side": "PWR_A",
-      "w": 7.5,
-      "d": 6.7,
-      "area_mm2": 50.25,
-      "h": 2.7,
-      "stands_for": []
-     },
-     {
-      "id": "CONV_LAB5",
-      "side": "PWR_A",
-      "w": 12.0,
-      "d": 11.6,
-      "area_mm2": 139.2,
-      "h": 4.1,
-      "stands_for": [
-       "U108"
-      ]
-     },
-     {
-      "id": "FUSE_F103",
-      "side": "PWR_A",
-      "w": 7.8,
-      "d": 3.7,
-      "area_mm2": 28.86,
-      "h": 2.69,
-      "stands_for": [
-       "F103"
-      ]
-     },
-     {
-      "id": "FUSE_F201",
-      "side": "PWR_A",
-      "w": 3.7,
-      "d": 7.8,
-      "area_mm2": 28.86,
-      "h": 2.69,
-      "stands_for": [
-       "F201"
-      ]
-     }
-    ],
+    "blocks": [],
     "graph_of_record": {
-     "height_overrides_to_pwr_a": [
-      "C235",
-      "C239",
-      "C243",
-      "C247",
-      "C251",
-      "C298",
-      "C506"
-     ],
+     "height_overrides_to_pwr_a": [],
      "b2b": {
-      "power_pins": 14,
-      "signal_pins": 31,
-      "gnd_pins": 24,
-      "contacts_needed": 69,
-      "contacts_with_spare": 83,
+      "power_pins": 13,
+      "signal_pins": 25,
+      "gnd_pins": 17,
+      "contacts_needed": 55,
+      "contacts_with_spare": 66,
       "meets_spare_rule": true,
       "fits": true,
       "errors": [],
-      "crossing_nets": 40
+      "crossing_nets": 33
      }
     }
    },
@@ -20257,7 +17805,25 @@
     "top_tht_items": 26,
     "tht_margin_mm": 1.0,
     "refs": 94,
-    "chip_refs_left_on_top": [],
+    "chip_refs_left_on_top": [
+     "C121",
+     "C122",
+     "C127",
+     "C128",
+     "C129",
+     "C132",
+     "C136",
+     "R124",
+     "R125",
+     "R126",
+     "R127",
+     "R128",
+     "R129",
+     "R130",
+     "R131",
+     "R132",
+     "R133"
+    ],
     "bottom_refs_with_tht": [],
     "refs_not_moved": []
    },
@@ -20562,6 +18128,8 @@
     "C505",
     "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
@@ -20664,23 +18232,22 @@
    "boards": {
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 150,
+     "refs": 185,
      "harness_headers": 15,
      "tht_pads": 72,
-     "parts_raw_mm2": 2546.6,
+     "parts_raw_mm2": 3059.4,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "blocks_raw_mm2": 461.7,
-     "raw_fill": 0.588,
-     "demand_1_mm2": 4494.0,
-     "ratio_1": 1.7,
-     "demand_1.5_mm2": 6741.0,
-     "ratio_1.5": 1.133,
-     "demand_1.8_mm2": 8089.2,
-     "ratio_1.8": 0.945,
+     "raw_fill": 0.595,
+     "demand_1_mm2": 4545.1,
+     "ratio_1": 1.681,
+     "demand_1.5_mm2": 6817.7,
+     "ratio_1.5": 1.121,
+     "demand_1.8_mm2": 8181.2,
+     "ratio_1.8": 0.934,
      "fits_at_1_8": false
     },
     "PWR_A_BOTTOM": {
@@ -21530,56 +19097,52 @@
       "refs": [
        "U107"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks CONV_SYS12"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "RPP-SYS12",
       "refs": [],
-      "status": "pending",
+      "status": "in graph",
       "owner": "GR-5A",
       "until_mpn_in_graph": [
        "LM74700QDBVRQ1"
       ],
-      "graph_refs": [],
-      "effect": "reserved blocks RPP"
+      "graph_refs": [
+       "U111"
+      ]
      },
      {
       "id": "U108-LAB5",
       "refs": [
        "U108"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks CONV_LAB5"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "F103-SMD",
       "refs": [
        "F103"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks FUSE_F103"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "F201-SMD",
       "refs": [
        "F201"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "reserved blocks FUSE_F201"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "C109-out",
       "refs": [
        "C109"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "deleted"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "C111-C112-1210",
@@ -21587,9 +19150,8 @@
        "C111",
        "C112"
       ],
-      "status": "pending",
-      "owner": "GR-5A",
-      "effect": "Capacitor_SMD:C_1210_3225Metric C3225X7R1H226M250AC"
+      "status": "in graph",
+      "owner": "GR-5A"
      },
      {
       "id": "dampers-5V",
@@ -21603,18 +19165,16 @@
        "C251",
        "C298"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Capacitor_SMD:CP_Elec_5x4.5 16SVPG47M"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "C506-3x",
       "refs": [
        "C506"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Capacitor_SMD:CP_Elec_5x4.5 16SVPG47M x 3"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "L-1uH-2520",
@@ -21626,9 +19186,8 @@
        "L213",
        "L214"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "Inductor_SMD:L_1008_2520Metric SRP2510PA-1R0M"
+      "status": "in graph",
+      "owner": "GR-5B"
      },
      {
       "id": "J204+J207-PHD",
@@ -21646,86 +19205,23 @@
        "J506",
        "J508"
       ],
-      "status": "pending",
-      "owner": "GR-5B",
-      "effect": "merged into J506 (Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal)"
+      "status": "in graph",
+      "owner": "GR-5B"
      }
     ],
-    "blocks": [
-     {
-      "id": "CONV_SYS12",
-      "side": "PWR_A",
-      "w": 15.0,
-      "d": 14.3,
-      "area_mm2": 214.5,
-      "h": 3.2,
-      "stands_for": [
-       "U107"
-      ]
-     },
-     {
-      "id": "RPP",
-      "side": "PWR_A",
-      "w": 7.5,
-      "d": 6.7,
-      "area_mm2": 50.25,
-      "h": 2.7,
-      "stands_for": []
-     },
-     {
-      "id": "CONV_LAB5",
-      "side": "PWR_A",
-      "w": 12.0,
-      "d": 11.6,
-      "area_mm2": 139.2,
-      "h": 4.1,
-      "stands_for": [
-       "U108"
-      ]
-     },
-     {
-      "id": "FUSE_F103",
-      "side": "PWR_A",
-      "w": 7.8,
-      "d": 3.7,
-      "area_mm2": 28.86,
-      "h": 2.69,
-      "stands_for": [
-       "F103"
-      ]
-     },
-     {
-      "id": "FUSE_F201",
-      "side": "PWR_A",
-      "w": 3.7,
-      "d": 7.8,
-      "area_mm2": 28.86,
-      "h": 2.69,
-      "stands_for": [
-       "F201"
-      ]
-     }
-    ],
+    "blocks": [],
     "graph_of_record": {
-     "height_overrides_to_pwr_a": [
-      "C235",
-      "C239",
-      "C243",
-      "C247",
-      "C251",
-      "C298",
-      "C506"
-     ],
+     "height_overrides_to_pwr_a": [],
      "b2b": {
-      "power_pins": 14,
-      "signal_pins": 31,
-      "gnd_pins": 24,
-      "contacts_needed": 69,
-      "contacts_with_spare": 83,
+      "power_pins": 13,
+      "signal_pins": 25,
+      "gnd_pins": 17,
+      "contacts_needed": 55,
+      "contacts_with_spare": 66,
       "meets_spare_rule": true,
       "fits": true,
       "errors": [],
-      "crossing_nets": 40
+      "crossing_nets": 33
      }
     }
    },
@@ -21763,7 +19259,25 @@
     "top_tht_items": 26,
     "tht_margin_mm": 1.0,
     "refs": 94,
-    "chip_refs_left_on_top": [],
+    "chip_refs_left_on_top": [
+     "C121",
+     "C122",
+     "C127",
+     "C128",
+     "C129",
+     "C132",
+     "C136",
+     "R124",
+     "R125",
+     "R126",
+     "R127",
+     "R128",
+     "R129",
+     "R130",
+     "R131",
+     "R132",
+     "R133"
+    ],
     "bottom_refs_with_tht": [],
     "refs_not_moved": []
    },
@@ -22074,6 +19588,8 @@
     "C505",
     "C506",
     "C507",
+    "C521",
+    "C522",
     "C550",
     "C551",
     "D2901",
