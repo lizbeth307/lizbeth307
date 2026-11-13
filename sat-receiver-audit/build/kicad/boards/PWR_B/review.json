@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "64b4c4732a13b35bb18ad8ce03b59932573cda80b2e00c14c623a55a2500d572"
+      "sha256": "a0908c19bce70818c7d7a7bd4968667f70d522e2c7e0c0273b0ecc894bec66b6"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "f82bfa88ec8f01282b717d50d80fc511fcb14be450154fdcc7eecca8a2ba3903",
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 146,
     "pads": 522,
-    "tracks": 1272,
-    "vias": 212,
+    "tracks": 1645,
+    "vias": 274,
     "zones": 252,
     "holes": 11,
     "copper_layers": [
@@ -371,7 +371,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1226,
+      "tracks_checked": 1599,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -506,6 +506,11 @@
     },
     {
       "check": "class_widths",
+      "item": "BIAS_CH4 vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 16 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
       "item": "BIAS_SB_LNA vias",
       "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 5 via(s) of the net on the board"
     },
@@ -532,7 +537,7 @@
     {
       "check": "class_widths",
       "item": "VBUS_LABPORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 11 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
