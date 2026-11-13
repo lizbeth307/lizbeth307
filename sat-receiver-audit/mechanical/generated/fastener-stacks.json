@@ -289,18 +289,18 @@
       "what": "PWR-A to the plate: male stud of each PWR-A/PWR-B standoff",
       "count": 7,
       "thread": "M3",
-      "seat": "standoff hex face on the PWR-A top, z 42.5",
+      "seat": "standoff hex face on the PWR-A top, z 42.564",
       "stack_mm": [
         [
           "PWR-A",
-          1.6
+          1.66
         ],
         [
           "shim washer (pwr_bond.shim)",
           0.4
         ]
       ],
-      "grip_mm": 2.0,
+      "grip_mm": 2.06,
       "receiver": {
         "kind": "PEM F-M3-1 flush nut flush with the plate front face, the PWR-A side (M-07): thread = its shank 1.53 in the 2 plate, then a 0.47 recess to the rear face",
         "thread_mm": 1.53,
@@ -308,11 +308,11 @@
       },
       "min_engagement_mm": 1.53,
       "length_window_mm": [
-        3.53,
-        4.0
+        3.59,
+        4.06
       ],
       "max_engagement_mm": 2.0,
-      "result": "OPEN: under-head length window 3.53-4 mm; F45 standoff not chosen: SRC-2 (C-14) picks a male-female M3 standoff with a stud in this window",
+      "result": "OPEN: under-head length window 3.59-4.06 mm; F45 standoff not chosen: SRC-2 (C-14) picks a male-female M3 standoff with a stud in this window",
       "note": "the window is the male stud length of the F45 standoff (male-female M3, body 5.0 = the B2B stack); the MPN with that stud is SRC-2's (C-14)"
     },
     {
@@ -321,14 +321,14 @@
       "what": "PWR-B to the female end of each PWR-A/PWR-B standoff",
       "count": 7,
       "thread": "M3",
-      "seat": "PWR-B top face, z 49.1",
+      "seat": "PWR-B top face, z 49.228",
       "stack_mm": [
         [
           "PWR-B",
-          1.6
+          1.66
         ]
       ],
-      "grip_mm": 1.6,
+      "grip_mm": 1.66,
       "receiver": {
         "kind": "female thread of the F45 standoff body 5 mm (depth of the part's thread TBD; taken as the body length)",
         "thread_mm": 5.0,
@@ -336,8 +336,8 @@
       },
       "min_engagement_mm": 3.0,
       "length_window_mm": [
-        4.6,
-        6.1
+        4.66,
+        6.16
       ],
       "max_engagement_mm": 4.5,
       "orderable_lengths": {
@@ -349,7 +349,7 @@
         ],
         "src": "mechanical/params/parts.json iso14580_lengths"
       },
-      "result": "PASS (model): under-head length 4.6-6.1 mm; ISO 14580 M3 x 5, x 6 in the window",
+      "result": "PASS (model): under-head length 4.66-6.16 mm; ISO 14580 M3 x 5, x 6 in the window",
       "note": "head height of an ISO 14580 M3 (2.4 max) stays under hB 5.5 on the PWR-B top"
     },
     {
