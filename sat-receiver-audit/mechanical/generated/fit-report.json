@@ -4,7 +4,7 @@
   "generator": {
     "version": "1.0.0",
     "params_sha256": "2fe404e780cd67a07327e173fb41d05a077c8e91dc81bd4a5124ef4acb12a634",
-    "pcb_components_sha256": "7f252dc3d99bc59551ac853031bde450e05fc5a0c20cefb9cf4be1198b8505f9"
+    "pcb_components_sha256": "a4314fc62a0f344181ad8914644aa576b0343ddaef3c3a3eae6c4c735b25fc76"
   },
   "envelope": {
     "model": [
@@ -1641,7 +1641,7 @@
         "web_min": 1.0,
         "bond_land": 2.0
       },
-      "result": "OPEN: 13 bottom-part pockets PB1-PB13 (1830 mm2, 1 deep, web 1, >= 2 from every bond zone, outside the converter heat corridors and the plate-hole lands) are drawn (M-07); the PWR-A THT groups (radials, the Keystone 3568 holder of F102, the PWR-A harness headers: pcb/partition-budget.json candidates.<chosen> pwr_a_tht_pocket_items; W2 MECH-7: no Pololu rows any more, PK1/PK2 are deleted) whose pin fields lie outside the PB pockets, in a thermal_bond zone (the Gelid pad is cut there too), a land or a heat corridor get their own pocket at the PCB-PWRA-3 placement: OPEN until it exists (rule R-PWR-POCKETS prints the current count) (pcb/partition-budget.json candidates.shrink2 pwr_a_tht_pocket_items now: 26 items with 72 THT pads)",
+      "result": "OPEN: 13 bottom-part pockets PB1-PB13 (1830 mm2, 1 deep, web 1, >= 2 from every bond zone, outside the converter heat corridors and the plate-hole lands) are drawn (M-07); the PWR-A THT groups (radials, the Keystone 3568 holder of F102, the PWR-A harness headers: pcb/partition-budget.json candidates.<chosen> pwr_a_tht_pocket_items; W2 MECH-7: no Pololu rows any more, PK1/PK2 are deleted) whose pin fields lie outside the PB pockets, in a thermal_bond zone (the Gelid pad is cut there too), a land or a heat corridor get their own pocket at the PCB-PWRA-3 placement: OPEN until it exists (rule R-PWR-POCKETS prints the current count) (pcb/partition-budget.json candidates.shrink2 pwr_a_tht_pocket_items now: 23 items with 66 THT pads)",
       "source": "mechanical.json plate.pwr_bottom_pockets; boards.json PWR tht_pockets, thermal_bond; pcb/partition-spec.json keepouts.pwr_a_tht_pockets; pcb/partition-budget.json pwr_a_tht_pocket_items"
     },
     {
@@ -2106,7 +2106,7 @@
         "budget_demand_1_8_mm2": 893.1,
         "raw_fill": 0.271,
         "ratio_1_8": 0.488,
-        "budget_bottom_usable_mm2": 3163.4
+        "budget_bottom_usable_mm2": 3227.5
       },
       "limit_mm": {
         "h_max": 1.03,
@@ -2172,11 +2172,11 @@
         },
         "alternative_area_total_mm2": 201.3,
         "fill_trigger": 0.6,
-        "pwr_a_margin_mm2": 39.3,
-        "budget": "candidates.shrink2 PWR_A usable 7640.6, demand 4545.1",
+        "pwr_a_margin_mm2": 35.0,
+        "budget": "candidates.shrink2 PWR_A usable 7640.6, demand 4549.4",
         "all_within_margin": false,
         "largest_sets_within_margin": [],
-        "text": "MF_ra adds PWR-A top courtyard area (J104 69, J114 44.1, J115 44.1, J205 44.1; total 201.3 mm2) against the 39.3 mm2 left below the fill trigger 0.60 (pcb/partition-budget.json candidates.shrink2 PWR_A: 0.60 x 7640.6 - 4545.1): MF_ra on all of them would fire F2-C (pcb/partition-spec.json fallbacks F2-C); the largest sets within the margin: none; the others need a place outside the display or F2-C"
+        "text": "MF_ra adds PWR-A top courtyard area (J104 69, J114 44.1, J115 44.1, J205 44.1; total 201.3 mm2) against the 35 mm2 left below the fill trigger 0.60 (pcb/partition-budget.json candidates.shrink2 PWR_A: 0.60 x 7640.6 - 4549.4): MF_ra on all of them would fire F2-C (pcb/partition-spec.json fallbacks F2-C); the largest sets within the margin: none; the others need a place outside the display or F2-C"
       },
       "limit_mm": 56.58,
       "headers": [
@@ -2574,7 +2574,7 @@
           }
         }
       ],
-      "result": "OPEN: 2 pass (J113, J507); 5 fail as specified (J104 MF_top 59.77, J114 MF_top 59.77, J115 MF_top 59.77, J205 MF_top 59.77, J206 MF2_top 60.14), as the right-angle Micro-Fit 43650 (MF_ra) J104, J114, J115, J205 pass; MF_ra adds PWR-A top courtyard area (J104 69, J114 44.1, J115 44.1, J205 44.1; total 201.3 mm2) against the 39.3 mm2 left below the fill trigger 0.60 (pcb/partition-budget.json candidates.shrink2 PWR_A: 0.60 x 7640.6 - 4545.1): MF_ra on all of them would fire F2-C (pcb/partition-spec.json fallbacks F2-C); the largest sets within the margin: none; the others need a place outside the display or F2-C; no passing part read for J206 (TBD: a lower-mated part or a place outside the display); places outside the display, the longest run of each failing header's exit edge zone clear of the display footprint: J104 right 11.8 mm (enclosure y 38.5-50.3), J114 right 11.8 mm (enclosure y 38.5-50.3), J115 right 11.8 mm (enclosure y 38.5-50.3), J205 top 0.3 mm (enclosure x 6-6.3), J206 top 0 mm (shared with the other headers of that zone; positions at the PCB-PWRA-3 placement); outside the display footprint: J105, J106, J107, J108, J109, J110, J111, J112; the header family and orientation are GR's (build/16), the exit edge and position PCB-PWRA-3's"
+      "result": "OPEN: 2 pass (J113, J507); 5 fail as specified (J104 MF_top 59.77, J114 MF_top 59.77, J115 MF_top 59.77, J205 MF_top 59.77, J206 MF2_top 60.14), as the right-angle Micro-Fit 43650 (MF_ra) J104, J114, J115, J205 pass; MF_ra adds PWR-A top courtyard area (J104 69, J114 44.1, J115 44.1, J205 44.1; total 201.3 mm2) against the 35 mm2 left below the fill trigger 0.60 (pcb/partition-budget.json candidates.shrink2 PWR_A: 0.60 x 7640.6 - 4549.4): MF_ra on all of them would fire F2-C (pcb/partition-spec.json fallbacks F2-C); the largest sets within the margin: none; the others need a place outside the display or F2-C; no passing part read for J206 (TBD: a lower-mated part or a place outside the display); places outside the display, the longest run of each failing header's exit edge zone clear of the display footprint: J104 right 11.8 mm (enclosure y 38.5-50.3), J114 right 11.8 mm (enclosure y 38.5-50.3), J115 right 11.8 mm (enclosure y 38.5-50.3), J205 top 0.3 mm (enclosure x 6-6.3), J206 top 0 mm (shared with the other headers of that zone; positions at the PCB-PWRA-3 placement); outside the display footprint: J105, J106, J107, J108, J109, J110, J111, J112; the header family and orientation are GR's (build/16), the exit edge and position PCB-PWRA-3's"
     },
     {
       "id": "R-PWRB-EXIT",
@@ -2838,23 +2838,23 @@
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "courtyard_raw_mm2": 5041.0,
+        "courtyard_raw_mm2": 5046.0,
         "modules_mm2": 0.0,
         "per_domain_raw_mm2": {
           "PWR_MAIN": 2085.0,
-          "PWR_BRANCH": 2543.0,
-          "USB_POWER": 413.0
+          "PWR_BRANCH": 2539.0,
+          "USB_POWER": 422.0
         },
         "per_group_raw_mm2": {
           "E1 Роз'єми джгутів PWR": 870.0,
           "E1 LAB5": 469.0,
-          "E2 Boni: малошумна захищена шина": 459.0,
+          "E2 Boni: малошумна захищена шина": 455.0,
           "E2 Роз'єми джгутів PWR": 430.0,
           "E1 SYS12": 412.0,
           "E2 LNB: малошумна захищена шина": 363.0,
           "E2 LNA4V5: паралельні LT3045": 358.0,
           "E2 J21: захищене живлення 12 V": 320.0,
-          "E5 VBUS HF+ з демпфованим LC": 306.0,
+          "E5 VBUS HF+ з демпфованим LC": 315.0,
           "E2 Lime M.2: комутована шина 3.3 V": 172.0,
           "E2 AUX12: верхній ключ і PTC": 165.0,
           "E2 Дисплей: захищене живлення 12 V": 157.0,
@@ -2880,8 +2880,8 @@
             844.0
           ],
           "E2 Boni: малошумна захищена шина": [
-            689.0,
-            827.0
+            683.0,
+            820.0
           ],
           "E2 Роз'єми джгутів PWR": [
             645.0,
@@ -2904,8 +2904,8 @@
             575.0
           ],
           "E5 VBUS HF+ з демпфованим LC": [
-            460.0,
-            552.0
+            472.0,
+            566.0
           ],
           "E2 Lime M.2: комутована шина 3.3 V": [
             258.0,
@@ -2965,13 +2965,13 @@
           ]
         },
         "parts": 280,
-        "need_1_5_mm2": 7562.0,
-        "need_1_8_mm2": 9074.0,
-        "estimate_mm2": 9074.0,
+        "need_1_5_mm2": 7568.0,
+        "need_1_8_mm2": 9082.0,
+        "estimate_mm2": 9082.0,
         "ratio_1_5": 0.96,
         "ratio_1_8": 1.15,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: 1 planned content changes of pcb/partition-budget.json candidates.shrink2 are pending (GR-5B), so the graph's courtyards (5041 mm2 raw) are not the decided content: the budget's planned PWR_A demand 8181 mm2 at fill 1.8 against its usable 7641 mm2 (budget ratio_1.8 = usable / demand 0.934, raw fill 0.595); model estimate, the placement decides (PCB)",
+        "result": "OPEN: 1 planned content changes of pcb/partition-budget.json candidates.shrink2 are pending (GR-5B), so the graph's courtyards (5046 mm2 raw) are not the decided content: the budget's planned PWR_A demand 8189 mm2 at fill 1.8 against its usable 7641 mm2 (budget ratio_1.8 = usable / demand 0.933, raw fill 0.595); model estimate, the placement decides (PCB)",
         "planned_budget": {
           "candidate": "shrink2",
           "board": "PWR_A",
@@ -2979,9 +2979,9 @@
           "owners": [
             "GR-5B"
           ],
-          "demand_1_8_mm2": 8181.2,
+          "demand_1_8_mm2": 8188.9,
           "usable_mm2": 7640.6,
-          "ratio_1_8": 0.934,
+          "ratio_1_8": 0.933,
           "raw_fill": 0.595
         }
       },
@@ -3071,11 +3071,11 @@
         "need_1_5_mm2": 4421.0,
         "need_1_8_mm2": 5306.0,
         "estimate_mm2": 5306.0,
-        "ratio_1_5": 0.9,
-        "ratio_1_8": 1.08,
+        "ratio_1_5": 0.87,
+        "ratio_1_8": 1.05,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: 1 planned content changes of pcb/partition-budget.json candidates.shrink2 are pending (GR-5B), so the graph's courtyards (2948 mm2 raw) are not the decided content: the budget's planned PWR_B demand 5034 mm2 at fill 1.8 against its usable 4892 mm2 (budget ratio_1.8 = usable / demand 0.972, raw fill 0.572); model estimate, the placement decides (PCB)",
-        "usable_mm2": 4892.0,
+        "result": "PASS (model estimate): 1 planned content changes of pcb/partition-budget.json candidates.shrink2 are pending (GR-5B), so the graph's courtyards (2948 mm2 raw) are not the decided content: the budget's planned PWR_B demand 5034 mm2 at fill 1.8 against its usable 5056 mm2 (budget ratio_1.8 = usable / demand 1.004, raw fill 0.553); model estimate, the placement decides (PCB)",
+        "usable_mm2": 5056.0,
         "ratio_basis": "usable_mm2 (pcb/partition-budget.json)",
         "planned_budget": {
           "candidate": "shrink2",
@@ -3085,9 +3085,9 @@
             "GR-5B"
           ],
           "demand_1_8_mm2": 5033.6,
-          "usable_mm2": 4892.2,
-          "ratio_1_8": 0.972,
-          "raw_fill": 0.572
+          "usable_mm2": 5056.2,
+          "ratio_1_8": 1.004,
+          "raw_fill": 0.553
         }
       },
       "RF": {
@@ -5723,7 +5723,7 @@
     "rules_open": 13,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
-    "board_area_open": 3,
+    "board_area_open": 2,
     "board_area_harness_open": 0,
     "thermal_failures": 0,
     "thermal_open": 3,
