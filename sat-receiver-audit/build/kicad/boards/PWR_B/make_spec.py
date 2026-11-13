@@ -98,6 +98,17 @@ def ref_xy(text):
     return (float(m.group(1)), float(m.group(2))) if m else (0.0, 0.0)
 
 
+def pad_shapes(text):
+    """(shape, roundrect ratio) of every pad of a .kicad_mod in file order (the order of bg.footprint_geometry pads); W2
+    PWR-L6-PLACE third pass: the scripted-copper clearance check measures circles, ovals and rounded rectangles exactly."""
+    out = []
+    for node in bg.sexpr(text)[1:]:
+        if isinstance(node, list) and node and node[0] == 'pad':
+            rr = next((float(n[1]) for n in node if isinstance(n, list) and n and n[0] == 'roundrect_rratio'), 0.0)
+            out.append((node[3] if len(node) > 3 and isinstance(node[3], str) else 'rect', rr))
+    return out
+
+
 def fab_box(text):
     tree = bg.sexpr(text)
     pts = []
@@ -148,6 +159,7 @@ class Placed:
             w, h = p['size'][::-1] if quarter else p['size']
             self.pads.append({'number': p['number'], 'type': p['type'], 'at': (cx, cy),
                               'box': (cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2),
+                              'shape': p.get('shape', 'rect'), 'rratio': p.get('rratio', 0.0),
                               'net': nets.get(p['number']) if p['number'] else None,
                               'layers': ('F', 'B') if p['type'] in ('thru_hole', 'np_thru_hole') else (self.side,)})
 
@@ -184,6 +196,25 @@ def seg_box_dist(p, q, box):
         if best == 0.0:
             return 0.0
     return best
+
+
+def seg_pad_dist(p, q, pad):
+    """Distance from segment pq to a pad (0 when they touch): circles, ovals and rounded rectangles exactly (W2 PWR-L6-PLACE
+    third pass), any other shape by its box."""
+    x0, y0, x1, y1 = pad['box']
+    w, h = x1 - x0, y1 - y0
+    shape = pad.get('shape', 'rect')
+    if shape == 'circle':
+        return max(point_seg(pad['at'], p, q) - min(w, h) / 2, 0.0)
+    if shape == 'oval':
+        r = min(w, h) / 2
+        cx, cy = pad['at']
+        c1, c2 = ((cx - (w / 2 - r), cy), (cx + (w / 2 - r), cy)) if w >= h else ((cx, cy - (h / 2 - r)), (cx, cy + (h / 2 - r)))
+        return max(seg_seg_dist(p, q, c1, c2) - r, 0.0)
+    if shape == 'roundrect' and pad.get('rratio'):
+        r = pad['rratio'] * min(w, h)
+        return max(seg_box_dist(p, q, (x0 + r, y0 + r, x1 - r, y1 - r)) - r, 0.0)
+    return seg_box_dist(p, q, pad['box'])
 
 
 def seg_seg_dist(a, b, c, d):
@@ -255,6 +286,9 @@ class Inputs:
             fp = self.manifest[self.graph[ref]['footprint']]
             text = (BASE / fp['file']).read_text(encoding='utf-8')
             self.geo[ref], self.fab[ref], self.refpos[ref] = bg.footprint_geometry(text), fab_box(text), ref_xy(text)
+            shapes = pad_shapes(text)
+            if len(shapes) == len(self.geo[ref]['pads']):
+                self.geo[ref] = {**self.geo[ref], 'pads': [dict(q, shape=s, rratio=r) for q, (s, r) in zip(self.geo[ref]['pads'], shapes)]}
         if B2B_REF not in self.refs:
             raise SystemExit(f'make_spec: {B2B_REF} is not a {BOARD} ref of pcb/generated/partition.json (rerun pcb/prepare.py)')
         study = read(PWRA_STUDY)
@@ -578,20 +612,24 @@ def copper_items(parts):
         for p in pa.pads:
             if p['type'] == 'smd' and not p['number']:
                 continue  # unnumbered SMD pads of the library footprints are paste apertures (F.Paste only)
-            for layer in p['layers']:
+            for layer in (p['layers'] + INNER_ROUTING if p['type'] in ('thru_hole', 'np_thru_hole') else p['layers']):
                 out.append({'ref': ref, 'pad': p['number'], 'net': p['net'], 'layer': layer, 'box': p['box'],
-                            'npth': p['type'] == 'np_thru_hole'})
+                            'npth': p['type'] == 'np_thru_hole', 'at': p['at'], 'shape': p.get('shape', 'rect'),
+                            'rratio': p.get('rratio', 0.0)})
     return out
+
+
+INNER_ROUTING = ('In2', 'In3')  # the inner routing layers (W2 PWRB-R plan); THT pads and vias exist there too
 
 
 def scripted_segments(tracks, vias):
     segs = []
     for t in tracks:
-        layer = t['layer'][0]
+        layer = t['layer'].split('.')[0] if t['layer'].startswith('In') else t['layer'][0]
         for a, b in zip(t['path'], t['path'][1:]):
             segs.append({'id': t['id'], 'net': t['net'], 'layer': layer, 'a': tuple(a), 'b': tuple(b), 'r': t['width_mm'] / 2})
     for v in vias:
-        for layer in ('F', 'B'):
+        for layer in ('F', 'B') + INNER_ROUTING:
             segs.append({'id': v['id'], 'net': v['net'], 'layer': layer, 'a': tuple(v['at']), 'b': tuple(v['at']),
                          'r': v['diameter_mm'] / 2, 'via': True})
     return segs
@@ -613,7 +651,7 @@ def check_copper(inp, parts, tracks, vias):
             gap = 0.25 + MARGIN if p['npth'] else need
             if s['id'] in VIA_IN_PAD and p['ref'] == VIA_IN_PAD[s['id']][0]:
                 gap = min(gap, VIP_GAP - 1e-6)   # recorded via-in-pad exception (spec via_in_pad): KiCad clearance 0.15 met
-            d = seg_box_dist(s['a'], s['b'], p['box']) - s['r']
+            d = seg_pad_dist(s['a'], s['b'], p) - s['r']
             if d < gap:
                 problems.append(f'{s["id"]} ({s["net"]}, {s["layer"]}.Cu) {d:.3f} mm from {p["ref"]}.{p["pad"]} ({p["net"]})')
         for (hx, hy), r in holes:
@@ -663,7 +701,8 @@ def connected(parts, tracks, vias, net, pad_refs):
                 if s['layer'] == t['layer']:
                     union(('s', i), ('s', j))
         for k, (_r, _n, p) in enumerate(pads):
-            if s['layer'] in p['layers'] and seg_box_dist(s['a'], s['b'], p['box']) <= s['r'] + 1e-6:
+            lay = p['layers'] + INNER_ROUTING if p['type'] in ('thru_hole', 'np_thru_hole') else p['layers']
+            if s['layer'] in lay and seg_box_dist(s['a'], s['b'], p['box']) <= s['r'] + 1e-6:
                 union(('s', i), ('p', k))
     # a via joins its F and B copies
     vidx = {}
@@ -1692,7 +1731,7 @@ def corridor_check(inp, parts, vias):
     # of record in the band: the plane vias of CORRIDOR_PARTS and the LAB5 contact vias of the J209 lower row (LAB5_VY)
     problems += [f'J209 escape band: scripted via {v["id"]} at {v["at"]}' for v in cvias
                  if not ((v['id'].startswith(('GND-', 'Q6A-')) and v['id'].split('-')[1] in CORRIDOR_PARTS)
-                         or v['id'].startswith('LAB5-V-'))]
+                         or v['id'].startswith(('LAB5-V-', 'PLV-')))]
     # the exit pair: only its parts in ZONE2_EXIT, inside the contract edge zone 2 span and the zone-2 height zone
     problems += [f'zone-2 exit field: PWR-B part {r} (not in EXIT_PARTS)' for r in in_ex if r not in EXIT_PARTS]
     problems += [f'zone-2 exit field: scripted via {v["id"]} at {v["at"]}' for v in evias
