@@ -68,6 +68,12 @@ JOINT_OVERLAP = 0.05  # mm, two scripted tracks of one net count as joined when 
 # neither: the board was placed exactly as placement-study-shrink2.json.
 MOVES: dict = {}
 PLACEMENT = HERE / 'board-placement.json'
+# W2 PWRJ F2ENV probe 2: Freerouting may narrow a power-class track where it enters a pad smaller than the class width
+# (spec router.automatic_neckdown); route iteration 2 (run 43295500516) and F2ENV probe 1 left power-class connections
+# open between neighbouring pins of one part (LT3045 E2_LNA_IN pins 0.65 mm apart at PWR3A 1.85 mm, BATT 3.2 mm into
+# 1206 pads). Each such ref gets a neck_exempt entry of NECK_ESCAPE beyond half its pad (check_boards neck rule).
+ROUTER_NECKDOWN = True
+NECK_ESCAPE = 1.5
 
 
 def r4(v):
@@ -491,6 +497,27 @@ def stem_exemptions(inp, tracks, netclasses):
                   'reason': 'scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 '
                             'scripted copper, kept within half the class width of the pins): ' + ', '.join(row['stems'])}
             for ref, row in sorted(out.items(), key=lambda kv: bg.sort_ref(kv[0]))}
+
+
+def router_neck_exemptions(inp, netclasses):
+    """neck_exempt for the router's pad-entry necks (ROUTER_NECKDOWN): every ref with a pad on a power-class net whose
+    smaller side is below the class's outer width, escape NECK_ESCAPE beyond half the pad."""
+    width = {n: netclasses['classes'][c['class']]['outer_min_width_mm'] for n, c in netclasses['nets'].items()
+             if netclasses['classes'].get(c['class'], {}).get('kind') == 'power'}
+    out = {}
+    for pa in inp.parts.values():
+        hits = []
+        for q in pa.pads:
+            need = width.get(q['net'])
+            if need is None or q['type'] == 'np_thru_hole':
+                continue
+            if min(q['box'][2] - q['box'][0], q['box'][3] - q['box'][1]) + 1e-9 < need:
+                hits.append(f'{q["number"]} {q["net"]}')
+        if hits:
+            out[pa.ref] = {'escape_mm': NECK_ESCAPE,
+                           'reason': 'router pad-entry neck (spec router.automatic_neckdown, W2 PWRJ F2ENV probe): pad smaller '
+                                     'than its power class width: ' + ', '.join(sorted(set(hits)))}
+    return out
 
 
 def scripted_joined(inp, pre):
@@ -973,6 +1000,18 @@ def build():
                  if z['net'] == 'GND' and z['id'].startswith('GND-BOND') else z for z in v]
         out[k] = v
     out['neck_exempt'] = stem_exemptions(inp, out['pre_route']['tracks'], inp.netclasses)
+    if ROUTER_NECKDOWN:
+        out['router']['automatic_neckdown'] = True
+        out['router']['why'] += ('; automatic_neckdown true (W2 PWRJ F2ENV probe 2): power-class tracks may narrow into pads '
+                                 'smaller than the class width (make_board.py router_neck_exemptions)')
+        for ref, row in router_neck_exemptions(inp, inp.netclasses).items():
+            if ref in out['neck_exempt']:
+                old = out['neck_exempt'][ref]
+                out['neck_exempt'][ref] = {'escape_mm': max(old['escape_mm'], row['escape_mm']),
+                                           'reason': old['reason'] + '; ' + row['reason']}
+            else:
+                out['neck_exempt'][ref] = row
+        out['neck_exempt'] = dict(sorted(out['neck_exempt'].items(), key=lambda kv: bg.sort_ref(kv[0])))
     out['edge_keepout'] = {'width_mm': 0.2, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
                            'why': 'rule-area strips (half-width 0.2) on every outline edge, as PWR_B: the router keeps its '
                                   'copper 0.35 mm off the edge, above the project copper-to-edge 0.3'}

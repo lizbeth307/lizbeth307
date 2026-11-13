@@ -8219,6 +8219,23 @@
       "J507"
     ],
     "single_sided": true,
-    "generator": "build/kicad/boards/PWR_A/f2env_patch.py (probe only, wip/w2-pwrj-f2env)"
+    "generator": "build/kicad/boards/PWR_A/f2env_patch.py (probe only, wip/w2-pwrj-f2env)",
+    "stage2": {
+      "cut_moves": {
+        "C265": [
+          0.0,
+          -33.6
+        ],
+        "C512": [
+          0.0,
+          -33.6
+        ],
+        "C511": [
+          0.0,
+          -34.9
+        ]
+      },
+      "why": "tall PWR-A radials out from under the PWR-B J209 lower contact row (probe 1, run 43340503685)"
+    }
   }
 }
