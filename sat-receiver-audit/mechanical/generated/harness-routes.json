@@ -2479,7 +2479,7 @@
         "PWR_BUTTON",
         "SLED_DET"
       ],
-      "replaces": "the J307 <-> J203 conductors of S02 (W2 PWR-L6-PLACE third pass: J203 left PWR-B edge zone 0 for the top-entry exit of zone 2; the harness stays straight, J307.k <-> J203.k)"
+      "replaces": "the J203 conductors of S02 (W2 PWR-L6-PLACE third pass: J203 left PWR-B edge zone 0 for the top-entry exit of zone 2; J307.k <-> J203.k except J306.5/7/12/16 <-> J203.2/14/15/18 since the probe C pin swap of the fourth pass, tools/assembly_data.py HEADERS)"
     }
   },
   "coax": {

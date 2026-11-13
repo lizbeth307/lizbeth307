@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "a96d409b1d6cff17503541ff560c427dee0343d4ce02fc62a9b3d31e3227e67e",
+    "params_sha256": "9b3677786edf0216fe9d47a8ac15d5b3aa6a2bf1d65fb14f9982f0be187d55fe",
     "pcb_components_sha256": "b9ffcdd97d39b3ec1176706b8639d253a5829adf7f252d633164c8f092e7937d"
   },
   "envelope": {
