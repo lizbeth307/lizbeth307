@@ -29,9 +29,9 @@
  "current_boards_raw": {
   "PWR": {
    "refs": 387,
-   "parts_raw_mm2": 7433.2,
+   "parts_raw_mm2": 7437.5,
    "modules_mm2": 0.0,
-   "total_raw_mm2": 7433.2
+   "total_raw_mm2": 7437.5
   },
   "RF": {
    "refs": 171,
@@ -199,13 +199,11 @@
    "sheet": "E2",
    "group": "Boni: малошумна захищена шина",
    "refs": 34,
-   "raw_mm2": 459.3,
+   "raw_mm2": 455.4,
    "tall_refs": [
-    "C265",
     "C273"
    ],
    "tht_refs": [
-    "C265",
     "C273"
    ],
    "headers_only": false
@@ -391,16 +389,11 @@
    "sheet": "E5",
    "group": "VBUS HF+ з демпфованим LC",
    "refs": 12,
-   "raw_mm2": 306.4,
+   "raw_mm2": 314.6,
    "tall_refs": [
-    "C511",
-    "C512",
     "L501"
    ],
-   "tht_refs": [
-    "C511",
-    "C512"
-   ],
+   "tht_refs": [],
    "headers_only": false
   },
   {
@@ -460,7 +453,6 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273"
    ]
   },
@@ -469,20 +461,6 @@
    "src": "MPN UHE1E221MPD: LCSC C116228 'Height - Seated (Max)' 11.5 mm, package D8xL11.5mm (JLCPCB parts search, read 2026-11-07)",
    "refs": [
     "C207"
-   ]
-  },
-  "EEU-FR1C101": {
-   "h": 11.0,
-   "src": "MPN EEU-FR1C101: LCSC C278532 'Height - Seated (Max)' 11 mm, package D5xL11mm (JLCPCB parts search, read 2026-11-07)",
-   "refs": [
-    "C511"
-   ]
-  },
-  "EEU-FR1C221": {
-   "h": 7.0,
-   "src": "MPN EEU-FR1C221: class only: KiCad 10.0.7 footprint CP_Radial_D6.3mm_P2.50mm descr 'height=7mm' (the 220 uF/16 V FR size was not read; any radial is above hB, so the rule result does not depend on it)",
-   "refs": [
-    "C512"
    ]
   },
   "0297004.WXNV": {
@@ -605,24 +583,24 @@
      "usable_mm2": 7640.6,
      "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3555.6,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3559.8,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
      "raw_fill": 0.707,
-     "demand_1_mm2": 5400.2,
-     "ratio_1": 1.415,
-     "demand_1.5_mm2": 7920.9,
-     "ratio_1.5": 0.965,
-     "demand_1.8_mm2": 9433.3,
-     "ratio_1.8": 0.81,
+     "demand_1_mm2": 5404.5,
+     "ratio_1": 1.414,
+     "demand_1.5_mm2": 7927.3,
+     "ratio_1.5": 0.964,
+     "demand_1.8_mm2": 9441.0,
+     "ratio_1.8": 0.809,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -632,17 +610,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.603,
+     "raw_fill": 0.583,
      "demand_1_mm2": 2947.6,
-     "ratio_1": 1.66,
+     "ratio_1": 1.715,
      "demand_1.5_mm2": 4421.4,
-     "ratio_1.5": 1.107,
+     "ratio_1.5": 1.144,
      "demand_1.8_mm2": 5305.6,
-     "ratio_1.8": 0.922,
+     "ratio_1.8": 0.953,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -652,10 +630,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -762,31 +737,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -1818,24 +1769,24 @@
      "usable_mm2": 7640.6,
      "refs": 221,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 2990.7,
+     "tht_pads": 66,
+     "parts_raw_mm2": 2995.0,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
      "raw_fill": 0.628,
-     "demand_1_mm2": 4797.8,
-     "ratio_1": 1.593,
-     "demand_1.5_mm2": 7017.3,
-     "ratio_1.5": 1.089,
-     "demand_1.8_mm2": 8349.0,
-     "ratio_1.8": 0.915,
+     "demand_1_mm2": 4802.1,
+     "ratio_1": 1.591,
+     "demand_1.5_mm2": 7023.7,
+     "ratio_1.5": 1.088,
+     "demand_1.8_mm2": 8356.7,
+     "ratio_1.8": 0.914,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4946.2,
+     "usable_mm2": 5110.2,
      "refs": 194,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -1845,17 +1796,17 @@
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.718,
+     "raw_fill": 0.695,
      "demand_1_mm2": 3549.9,
-     "ratio_1": 1.393,
+     "ratio_1": 1.44,
      "demand_1.5_mm2": 5324.9,
-     "ratio_1.5": 0.929,
+     "ratio_1.5": 0.96,
      "demand_1.8_mm2": 6389.9,
-     "ratio_1.8": 0.774,
+     "ratio_1.8": 0.8,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -1865,10 +1816,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -1975,31 +1923,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -3154,24 +3078,24 @@
      "usable_mm2": 7640.6,
      "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3555.6,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3559.8,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
      "raw_fill": 0.707,
-     "demand_1_mm2": 5400.2,
-     "ratio_1": 1.415,
-     "demand_1.5_mm2": 7920.9,
-     "ratio_1.5": 0.965,
-     "demand_1.8_mm2": 9433.3,
-     "ratio_1.8": 0.81,
+     "demand_1_mm2": 5404.5,
+     "ratio_1": 1.414,
+     "demand_1.5_mm2": 7927.3,
+     "ratio_1.5": 0.964,
+     "demand_1.8_mm2": 9441.0,
+     "ratio_1.8": 0.809,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -3181,17 +3105,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.603,
+     "raw_fill": 0.583,
      "demand_1_mm2": 2947.6,
-     "ratio_1": 1.66,
+     "ratio_1": 1.715,
      "demand_1.5_mm2": 4421.4,
-     "ratio_1.5": 1.107,
+     "ratio_1.5": 1.144,
      "demand_1.8_mm2": 5305.6,
-     "ratio_1.8": 0.922,
+     "ratio_1.8": 0.953,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -3201,10 +3125,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -3311,31 +3232,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -4367,24 +4264,24 @@
      "usable_mm2": 7640.6,
      "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3555.6,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3559.8,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
      "raw_fill": 0.707,
-     "demand_1_mm2": 5400.2,
-     "ratio_1": 1.415,
-     "demand_1.5_mm2": 7920.9,
-     "ratio_1.5": 0.965,
-     "demand_1.8_mm2": 9433.3,
-     "ratio_1.8": 0.81,
+     "demand_1_mm2": 5404.5,
+     "ratio_1": 1.414,
+     "demand_1.5_mm2": 7927.3,
+     "ratio_1.5": 0.964,
+     "demand_1.8_mm2": 9441.0,
+     "ratio_1.8": 0.809,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -4394,17 +4291,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.603,
+     "raw_fill": 0.583,
      "demand_1_mm2": 2947.6,
-     "ratio_1": 1.66,
+     "ratio_1": 1.715,
      "demand_1.5_mm2": 4421.4,
-     "ratio_1.5": 1.107,
+     "ratio_1.5": 1.144,
      "demand_1.8_mm2": 5305.6,
-     "ratio_1.8": 0.922,
+     "ratio_1.8": 0.953,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -4414,10 +4311,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -4524,31 +4418,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -5578,46 +5448,46 @@
    "boards": {
     "PCB_REAR": {
      "usable_mm2": 2373.3,
-     "refs": 53,
+     "refs": 54,
      "harness_headers": 0,
-     "tht_pads": 2,
-     "parts_raw_mm2": 868.1,
+     "tht_pads": 0,
+     "parts_raw_mm2": 906.6,
      "headers_raw_mm2": 0.0,
      "b2b_raw_mm2": 0.0,
      "tps_raw_mm2": 12.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.371,
-     "demand_1_mm2": 880.6,
-     "ratio_1": 2.695,
-     "demand_1.5_mm2": 1320.9,
-     "ratio_1.5": 1.797,
-     "demand_1.8_mm2": 1585.1,
-     "ratio_1.8": 1.497,
+     "raw_fill": 0.387,
+     "demand_1_mm2": 919.1,
+     "ratio_1": 2.582,
+     "demand_1.5_mm2": 1378.6,
+     "ratio_1.5": 1.722,
+     "demand_1.8_mm2": 1654.3,
+     "ratio_1.8": 1.435,
      "fits_at_1_8": true
     },
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 268,
+     "refs": 267,
      "harness_headers": 15,
-     "tht_pads": 70,
-     "parts_raw_mm2": 3279.4,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3245.2,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.671,
-     "demand_1_mm2": 5124.0,
-     "ratio_1": 1.491,
-     "demand_1.5_mm2": 7506.6,
-     "ratio_1.5": 1.018,
-     "demand_1.8_mm2": 8936.1,
-     "ratio_1.8": 0.855,
+     "raw_fill": 0.666,
+     "demand_1_mm2": 5089.9,
+     "ratio_1": 1.501,
+     "demand_1.5_mm2": 7455.4,
+     "ratio_1.5": 1.025,
+     "demand_1.8_mm2": 8874.6,
+     "ratio_1.8": 0.861,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 5149.1,
+     "usable_mm2": 5252.2,
      "refs": 94,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -5627,17 +5497,17 @@
      "tps_raw_mm2": 37.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.455,
+     "raw_fill": 0.446,
      "demand_1_mm2": 2343.1,
-     "ratio_1": 2.198,
+     "ratio_1": 2.242,
      "demand_1.5_mm2": 3514.7,
-     "ratio_1.5": 1.465,
+     "ratio_1.5": 1.494,
      "demand_1.8_mm2": 4217.6,
-     "ratio_1.8": 1.221,
+     "ratio_1.8": 1.245,
      "fits_at_1_8": true
     }
    },
-   "windows_mm2": 939.3,
+   "windows_mm2": 836.2,
    "window_refs": [
     "C107",
     "C113",
@@ -5647,9 +5517,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
     "F102",
     "L101"
    ],
@@ -5777,26 +5645,10 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
       1.6
      ]
     },
@@ -5930,9 +5782,7 @@
     }
    ],
    "height_overrides_to_pwr_a": [],
-   "rear_overrides_to_pwr_a": [
-    "C511"
-   ],
+   "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
      {
@@ -6324,28 +6174,15 @@
       ],
       "kind": "signal",
       "pins": 1
-     },
-     {
-      "net": "VBUS_HFP",
-      "pwr_a": [
-       "C511"
-      ],
-      "pwr_b": [
-       "J207"
-      ],
-      "kind": "power",
-      "prot_A": 0.989,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
      }
     ],
-    "power_nets": 7,
+    "power_nets": 6,
     "signal_pins": 23,
-    "power_pins": 9,
-    "gnd_pins": 13,
+    "power_pins": 8,
+    "gnd_pins": 12,
     "guard_pins": 3,
-    "contacts_needed": 45,
-    "contacts_with_spare": 54,
+    "contacts_needed": 43,
+    "contacts_with_spare": 52,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -6721,6 +6558,7 @@
     "C508",
     "C509",
     "C510",
+    "C511",
     "C512",
     "C513",
     "C521",
@@ -6771,24 +6609,24 @@
      "usable_mm2": 7640.6,
      "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3555.6,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3559.8,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
      "raw_fill": 0.707,
-     "demand_1_mm2": 5400.2,
-     "ratio_1": 1.415,
-     "demand_1.5_mm2": 7920.9,
-     "ratio_1.5": 0.965,
-     "demand_1.8_mm2": 9433.3,
-     "ratio_1.8": 0.81,
+     "demand_1_mm2": 5404.5,
+     "ratio_1": 1.414,
+     "demand_1.5_mm2": 7927.3,
+     "ratio_1.5": 0.964,
+     "demand_1.8_mm2": 9441.0,
+     "ratio_1.8": 0.809,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 164,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -6798,17 +6636,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.629,
+     "raw_fill": 0.608,
      "demand_1_mm2": 3075.6,
-     "ratio_1": 1.591,
+     "ratio_1": 1.644,
      "demand_1.5_mm2": 4613.4,
-     "ratio_1.5": 1.06,
+     "ratio_1.5": 1.096,
      "demand_1.8_mm2": 5536.1,
-     "ratio_1.8": 0.884,
+     "ratio_1.8": 0.913,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -6818,10 +6656,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -6928,31 +6763,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -8044,24 +7855,24 @@
      "usable_mm2": 7640.6,
      "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3555.6,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3559.8,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
      "raw_fill": 0.707,
-     "demand_1_mm2": 5400.2,
-     "ratio_1": 1.415,
-     "demand_1.5_mm2": 7920.9,
-     "ratio_1.5": 0.965,
-     "demand_1.8_mm2": 9433.3,
-     "ratio_1.8": 0.81,
+     "demand_1_mm2": 5404.5,
+     "ratio_1": 1.414,
+     "demand_1.5_mm2": 7927.3,
+     "ratio_1.5": 0.964,
+     "demand_1.8_mm2": 9441.0,
+     "ratio_1.8": 0.809,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -8071,17 +7882,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.603,
+     "raw_fill": 0.583,
      "demand_1_mm2": 2947.6,
-     "ratio_1": 1.66,
+     "ratio_1": 1.715,
      "demand_1.5_mm2": 4421.4,
-     "ratio_1.5": 1.107,
+     "ratio_1.5": 1.144,
      "demand_1.8_mm2": 5305.6,
-     "ratio_1.8": 0.922,
+     "ratio_1.8": 0.953,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -8091,10 +7902,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -8201,31 +8009,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -9257,24 +9041,24 @@
      "usable_mm2": 7640.6,
      "refs": 217,
      "harness_headers": 15,
-     "tht_pads": 64,
-     "parts_raw_mm2": 2779.7,
+     "tht_pads": 58,
+     "parts_raw_mm2": 2784.0,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 414.5,
      "raw_fill": 0.608,
-     "demand_1_mm2": 4642.5,
-     "ratio_1": 1.646,
-     "demand_1.5_mm2": 6756.5,
-     "ratio_1.5": 1.131,
-     "demand_1.8_mm2": 8024.9,
-     "ratio_1.8": 0.952,
+     "demand_1_mm2": 4646.8,
+     "ratio_1": 1.644,
+     "demand_1.5_mm2": 6762.9,
+     "ratio_1.5": 1.13,
+     "demand_1.8_mm2": 8032.6,
+     "ratio_1.8": 0.951,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 5219.0,
+     "usable_mm2": 5382.9,
      "refs": 198,
      "harness_headers": 6,
      "tht_pads": 82,
@@ -9284,26 +9068,23 @@
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.721,
+     "raw_fill": 0.699,
      "demand_1_mm2": 3760.9,
-     "ratio_1": 1.388,
+     "ratio_1": 1.431,
      "demand_1.5_mm2": 5641.4,
-     "ratio_1.5": 0.925,
+     "ratio_1.5": 0.954,
      "demand_1.8_mm2": 6769.6,
-     "ratio_1.8": 0.771,
+     "ratio_1.8": 0.795,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 923.3,
+   "windows_mm2": 759.4,
    "window_refs": [
     "C107",
     "C113",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -9406,31 +9187,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -10548,24 +10305,24 @@
      "usable_mm2": 7640.6,
      "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3555.6,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3559.8,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
      "raw_fill": 0.707,
-     "demand_1_mm2": 5400.2,
-     "ratio_1": 1.415,
-     "demand_1.5_mm2": 7920.9,
-     "ratio_1.5": 0.965,
-     "demand_1.8_mm2": 9433.3,
-     "ratio_1.8": 0.81,
+     "demand_1_mm2": 5404.5,
+     "ratio_1": 1.414,
+     "demand_1.5_mm2": 7927.3,
+     "ratio_1.5": 0.964,
+     "demand_1.8_mm2": 9441.0,
+     "ratio_1.8": 0.809,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 5301.5,
+     "usable_mm2": 5404.6,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -10575,17 +10332,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.556,
+     "raw_fill": 0.545,
      "demand_1_mm2": 2947.6,
-     "ratio_1": 1.799,
+     "ratio_1": 1.834,
      "demand_1.5_mm2": 4421.4,
-     "ratio_1.5": 1.199,
+     "ratio_1.5": 1.222,
      "demand_1.8_mm2": 5305.6,
-     "ratio_1.8": 0.999,
-     "fits_at_1_8": false
+     "ratio_1.8": 1.019,
+     "fits_at_1_8": true
     }
    },
-   "windows_mm2": 786.8,
+   "windows_mm2": 683.7,
    "window_refs": [
     "C107",
     "C206",
@@ -10594,9 +10351,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
     "F102"
    ],
    "window_refs_height_lower_bound": [
@@ -10701,31 +10456,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -11755,46 +11486,46 @@
    "boards": {
     "PCB_REAR": {
      "usable_mm2": 2373.3,
-     "refs": 53,
+     "refs": 54,
      "harness_headers": 0,
-     "tht_pads": 2,
-     "parts_raw_mm2": 868.1,
+     "tht_pads": 0,
+     "parts_raw_mm2": 906.6,
      "headers_raw_mm2": 0.0,
      "b2b_raw_mm2": 0.0,
      "tps_raw_mm2": 12.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.371,
-     "demand_1_mm2": 880.6,
-     "ratio_1": 2.695,
-     "demand_1.5_mm2": 1320.9,
-     "ratio_1.5": 1.797,
-     "demand_1.8_mm2": 1585.1,
-     "ratio_1.8": 1.497,
+     "raw_fill": 0.387,
+     "demand_1_mm2": 919.1,
+     "ratio_1": 2.582,
+     "demand_1.5_mm2": 1378.6,
+     "ratio_1.5": 1.722,
+     "demand_1.8_mm2": 1654.3,
+     "ratio_1.8": 1.435,
      "fits_at_1_8": true
     },
     "PWR_A": {
      "usable_mm2": 7640.6,
-     "refs": 268,
+     "refs": 267,
      "harness_headers": 15,
-     "tht_pads": 70,
-     "parts_raw_mm2": 3279.4,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3245.2,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.671,
-     "demand_1_mm2": 5124.0,
-     "ratio_1": 1.491,
-     "demand_1.5_mm2": 7506.6,
-     "ratio_1.5": 1.018,
-     "demand_1.8_mm2": 8936.1,
-     "ratio_1.8": 0.855,
+     "raw_fill": 0.666,
+     "demand_1_mm2": 5089.9,
+     "ratio_1": 1.501,
+     "demand_1.5_mm2": 7455.4,
+     "ratio_1.5": 1.025,
+     "demand_1.8_mm2": 8874.6,
+     "ratio_1.8": 0.861,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 5301.5,
+     "usable_mm2": 5404.6,
      "refs": 94,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -11804,17 +11535,17 @@
      "tps_raw_mm2": 37.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.442,
+     "raw_fill": 0.434,
      "demand_1_mm2": 2343.1,
-     "ratio_1": 2.263,
+     "ratio_1": 2.307,
      "demand_1.5_mm2": 3514.7,
-     "ratio_1.5": 1.508,
+     "ratio_1.5": 1.538,
      "demand_1.8_mm2": 4217.6,
-     "ratio_1.8": 1.257,
+     "ratio_1.8": 1.281,
      "fits_at_1_8": true
     }
    },
-   "windows_mm2": 786.8,
+   "windows_mm2": 683.7,
    "window_refs": [
     "C107",
     "C206",
@@ -11823,9 +11554,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
     "F102"
    ],
    "window_refs_height_lower_bound": [
@@ -11952,26 +11681,10 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
       1.6
      ]
     },
@@ -12105,9 +11818,7 @@
     }
    ],
    "height_overrides_to_pwr_a": [],
-   "rear_overrides_to_pwr_a": [
-    "C511"
-   ],
+   "rear_overrides_to_pwr_a": [],
    "b2b": {
     "nets": [
      {
@@ -12499,28 +12210,15 @@
       ],
       "kind": "signal",
       "pins": 1
-     },
-     {
-      "net": "VBUS_HFP",
-      "pwr_a": [
-       "C511"
-      ],
-      "pwr_b": [
-       "J207"
-      ],
-      "kind": "power",
-      "prot_A": 0.989,
-      "current_src": "tools/assembly_data.py NET_CURRENT (protection limit)",
-      "pins": 1
      }
     ],
-    "power_nets": 7,
+    "power_nets": 6,
     "signal_pins": 23,
-    "power_pins": 9,
-    "gnd_pins": 13,
+    "power_pins": 8,
+    "gnd_pins": 12,
     "guard_pins": 3,
-    "contacts_needed": 45,
-    "contacts_with_spare": 54,
+    "contacts_needed": 43,
+    "contacts_with_spare": 52,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -12896,6 +12594,7 @@
     "C508",
     "C509",
     "C510",
+    "C511",
     "C512",
     "C513",
     "C521",
@@ -12946,24 +12645,24 @@
      "usable_mm2": 7640.6,
      "refs": 279,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3555.6,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3559.8,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 159.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
      "raw_fill": 0.703,
-     "demand_1_mm2": 5369.2,
-     "ratio_1": 1.423,
-     "demand_1.5_mm2": 7874.4,
+     "demand_1_mm2": 5373.5,
+     "ratio_1": 1.422,
+     "demand_1.5_mm2": 7880.8,
      "ratio_1.5": 0.97,
-     "demand_1.8_mm2": 9377.5,
-     "ratio_1.8": 0.815,
+     "demand_1.8_mm2": 9385.2,
+     "ratio_1.8": 0.814,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -12973,17 +12672,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.596,
+     "raw_fill": 0.577,
      "demand_1_mm2": 2916.6,
-     "ratio_1": 1.677,
+     "ratio_1": 1.734,
      "demand_1.5_mm2": 4374.9,
-     "ratio_1.5": 1.118,
+     "ratio_1.5": 1.156,
      "demand_1.8_mm2": 5249.8,
-     "ratio_1.8": 0.932,
+     "ratio_1.8": 0.963,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -12993,10 +12692,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -13103,31 +12799,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -14159,24 +13831,24 @@
      "usable_mm2": 7640.6,
      "refs": 279,
      "harness_headers": 17,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3555.6,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3559.8,
      "headers_raw_mm2": 1817.7,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 358.9,
-     "raw_fill": 0.791,
-     "demand_1_mm2": 6047.5,
+     "raw_fill": 0.792,
+     "demand_1_mm2": 6051.7,
      "ratio_1": 1.263,
-     "demand_1.5_mm2": 8891.8,
+     "demand_1.5_mm2": 8898.2,
      "ratio_1.5": 0.859,
-     "demand_1.8_mm2": 10598.3,
-     "ratio_1.8": 0.721,
+     "demand_1.8_mm2": 10606.0,
+     "ratio_1.8": 0.72,
      "fits_at_1_8": false
     },
     "PWR_B": {
-     "usable_mm2": 4168.4,
+     "usable_mm2": 4332.4,
      "refs": 136,
      "harness_headers": 6,
      "tht_pads": 74,
@@ -14186,17 +13858,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.707,
+     "raw_fill": 0.68,
      "demand_1_mm2": 2947.6,
-     "ratio_1": 1.414,
+     "ratio_1": 1.47,
      "demand_1.5_mm2": 4421.4,
-     "ratio_1.5": 0.943,
+     "ratio_1.5": 0.98,
      "demand_1.8_mm2": 5305.6,
-     "ratio_1.8": 0.786,
+     "ratio_1.8": 0.817,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -14206,10 +13878,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -14319,31 +13988,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -15390,24 +15035,24 @@
      "usable_mm2": 7640.6,
      "refs": 185,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3059.4,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3063.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
      "raw_fill": 0.595,
-     "demand_1_mm2": 4545.1,
-     "ratio_1": 1.681,
-     "demand_1.5_mm2": 6817.7,
-     "ratio_1.5": 1.121,
-     "demand_1.8_mm2": 8181.2,
-     "ratio_1.8": 0.934,
+     "demand_1_mm2": 4549.4,
+     "ratio_1": 1.679,
+     "demand_1.5_mm2": 6824.1,
+     "ratio_1.5": 1.12,
+     "demand_1.8_mm2": 8188.9,
+     "ratio_1.8": 0.933,
      "fits_at_1_8": false
     },
     "PWR_A_BOTTOM": {
-     "usable_mm2": 3163.4,
+     "usable_mm2": 3227.5,
      "refs": 94,
      "harness_headers": 0,
      "tht_pads": 0,
@@ -15417,17 +15062,17 @@
      "tps_raw_mm2": 0.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.157,
+     "raw_fill": 0.154,
      "demand_1_mm2": 496.2,
-     "ratio_1": 6.375,
+     "ratio_1": 6.504,
      "demand_1.5_mm2": 744.3,
-     "ratio_1.5": 4.25,
+     "ratio_1.5": 4.336,
      "demand_1.8_mm2": 893.1,
-     "ratio_1.8": 3.542,
+     "ratio_1.8": 3.614,
      "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 135,
      "harness_headers": 5,
      "tht_pads": 74,
@@ -15437,17 +15082,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.572,
+     "raw_fill": 0.553,
      "demand_1_mm2": 2796.4,
-     "ratio_1": 1.749,
+     "ratio_1": 1.808,
      "demand_1.5_mm2": 4194.6,
-     "ratio_1.5": 1.166,
+     "ratio_1.5": 1.205,
      "demand_1.8_mm2": 5033.6,
-     "ratio_1.8": 0.972,
-     "fits_at_1_8": false
+     "ratio_1.8": 1.004,
+     "fits_at_1_8": true
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -15457,10 +15102,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -15560,31 +15202,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -16379,8 +15997,8 @@
     "bond_zones_mm2": 3272.0,
     "hole_keepouts_mm2": 269.4,
     "outline_minus_holes_and_bond_mm2": 4368.6,
-    "top_tht_fields_plus_margin_mm2": 1205.2,
-    "top_tht_items": 26,
+    "top_tht_fields_plus_margin_mm2": 1141.2,
+    "top_tht_items": 23,
     "tht_margin_mm": 1.0,
     "refs": 94,
     "chip_refs_left_on_top": [
@@ -16812,24 +16430,24 @@
      "usable_mm2": 7640.6,
      "refs": 185,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3059.4,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3063.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 332.6,
-     "raw_fill": 0.638,
-     "demand_1_mm2": 4877.7,
-     "ratio_1": 1.566,
-     "demand_1.5_mm2": 7150.3,
-     "ratio_1.5": 1.069,
-     "demand_1.8_mm2": 8513.8,
+     "raw_fill": 0.639,
+     "demand_1_mm2": 4882.0,
+     "ratio_1": 1.565,
+     "demand_1.5_mm2": 7156.7,
+     "ratio_1.5": 1.068,
+     "demand_1.8_mm2": 8521.5,
      "ratio_1.8": 0.897,
      "fits_at_1_8": false
     },
     "PWR_A_BOTTOM": {
-     "usable_mm2": 3163.4,
+     "usable_mm2": 3227.5,
      "refs": 94,
      "harness_headers": 0,
      "tht_pads": 0,
@@ -16839,17 +16457,17 @@
      "tps_raw_mm2": 0.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.157,
+     "raw_fill": 0.154,
      "demand_1_mm2": 496.2,
-     "ratio_1": 6.375,
+     "ratio_1": 6.504,
      "demand_1.5_mm2": 744.3,
-     "ratio_1.5": 4.25,
+     "ratio_1.5": 4.336,
      "demand_1.8_mm2": 893.1,
-     "ratio_1.8": 3.542,
+     "ratio_1.8": 3.614,
      "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 135,
      "harness_headers": 5,
      "tht_pads": 74,
@@ -16859,17 +16477,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.572,
+     "raw_fill": 0.553,
      "demand_1_mm2": 2796.4,
-     "ratio_1": 1.749,
+     "ratio_1": 1.808,
      "demand_1.5_mm2": 4194.6,
-     "ratio_1.5": 1.166,
+     "ratio_1.5": 1.205,
      "demand_1.8_mm2": 5033.6,
-     "ratio_1.8": 0.972,
-     "fits_at_1_8": false
+     "ratio_1.8": 1.004,
+     "fits_at_1_8": true
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -16879,10 +16497,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -16982,31 +16597,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -17801,8 +17392,8 @@
     "bond_zones_mm2": 3272.0,
     "hole_keepouts_mm2": 269.4,
     "outline_minus_holes_and_bond_mm2": 4368.6,
-    "top_tht_fields_plus_margin_mm2": 1205.2,
-    "top_tht_items": 26,
+    "top_tht_fields_plus_margin_mm2": 1141.2,
+    "top_tht_items": 23,
     "tht_margin_mm": 1.0,
     "refs": 94,
     "chip_refs_left_on_top": [
@@ -18234,24 +17825,24 @@
      "usable_mm2": 7640.6,
      "refs": 185,
      "harness_headers": 15,
-     "tht_pads": 72,
-     "parts_raw_mm2": 3059.4,
+     "tht_pads": 66,
+     "parts_raw_mm2": 3063.6,
      "headers_raw_mm2": 1170.4,
      "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
      "raw_fill": 0.595,
-     "demand_1_mm2": 4545.1,
-     "ratio_1": 1.681,
-     "demand_1.5_mm2": 6817.7,
-     "ratio_1.5": 1.121,
-     "demand_1.8_mm2": 8181.2,
-     "ratio_1.8": 0.934,
+     "demand_1_mm2": 4549.4,
+     "ratio_1": 1.679,
+     "demand_1.5_mm2": 6824.1,
+     "ratio_1.5": 1.12,
+     "demand_1.8_mm2": 8188.9,
+     "ratio_1.8": 0.933,
      "fits_at_1_8": false
     },
     "PWR_A_BOTTOM": {
-     "usable_mm2": 3163.4,
+     "usable_mm2": 3227.5,
      "refs": 94,
      "harness_headers": 0,
      "tht_pads": 0,
@@ -18261,17 +17852,17 @@
      "tps_raw_mm2": 0.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.157,
+     "raw_fill": 0.154,
      "demand_1_mm2": 496.2,
-     "ratio_1": 6.375,
+     "ratio_1": 6.504,
      "demand_1.5_mm2": 744.3,
-     "ratio_1.5": 4.25,
+     "ratio_1.5": 4.336,
      "demand_1.8_mm2": 893.1,
-     "ratio_1.8": 3.542,
+     "ratio_1.8": 3.614,
      "fits_at_1_8": true
     },
     "PWR_B": {
-     "usable_mm2": 4892.2,
+     "usable_mm2": 5056.2,
      "refs": 163,
      "harness_headers": 5,
      "tht_pads": 74,
@@ -18281,17 +17872,17 @@
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.598,
+     "raw_fill": 0.578,
      "demand_1_mm2": 2924.5,
-     "ratio_1": 1.673,
+     "ratio_1": 1.729,
      "demand_1.5_mm2": 4386.7,
-     "ratio_1.5": 1.115,
+     "ratio_1.5": 1.153,
      "demand_1.8_mm2": 5264.0,
-     "ratio_1.8": 0.929,
+     "ratio_1.8": 0.961,
      "fits_at_1_8": false
     }
    },
-   "windows_mm2": 1196.1,
+   "windows_mm2": 1032.2,
    "window_refs": [
     "C107",
     "C113",
@@ -18301,10 +17892,7 @@
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273",
-    "C511",
-    "C512",
     "F102",
     "L101",
     "L501"
@@ -18404,31 +17992,7 @@
      ]
     },
     {
-     "item": "C265",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
      "item": "C273",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      4.1,
-      1.6
-     ]
-    },
-    {
-     "item": "C511",
-     "tht_pads": 2,
-     "pin_field_mm": [
-      3.6,
-      1.6
-     ]
-    },
-    {
-     "item": "C512",
      "tht_pads": 2,
      "pin_field_mm": [
       4.1,
@@ -19255,8 +18819,8 @@
     "bond_zones_mm2": 3272.0,
     "hole_keepouts_mm2": 269.4,
     "outline_minus_holes_and_bond_mm2": 4368.6,
-    "top_tht_fields_plus_margin_mm2": 1205.2,
-    "top_tht_items": 26,
+    "top_tht_fields_plus_margin_mm2": 1141.2,
+    "top_tht_items": 23,
     "tht_margin_mm": 1.0,
     "refs": 94,
     "chip_refs_left_on_top": [
