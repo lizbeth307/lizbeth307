@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "9c79fc821edfc0013be695bd0048c7a3713216b7268fe1ac68bf3b7a74e3faa5"
+      "sha256": "7edb5527f12cc8078691f245054dd000d42a5f75d2580d4491274a13fa9bf638"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "f82bfa88ec8f01282b717d50d80fc511fcb14be450154fdcc7eecca8a2ba3903",
       "footprints": "1fa13212ecccfa1f2f7e8a71b4f9388b534ba8d913129fd1fde6114957b96a60",
       "contract_board": "4b1616d88e13a8f31341ab1884adee4e9faa87dee279b0ef10490a2dc3e7c0eb",
       "netclasses": "64e0ab43e0685c5f6de8ae26633985312708ada531535bc5bb611a1b0d2c018a",
-      "spec": "4ff4800f29ab4fe3e705ff571be57bec23e34cbeaa1918df27e9bc87bbc3c572"
+      "spec": "fc830c53eb7a9d0f25a99de0052f33bd007726fad42f97dc027f74ef020fd8ed"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
@@ -29,7 +29,7 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1528,
+    "tracks": 1455,
     "vias": 261,
     "zones": 370,
     "holes": 9,
@@ -58,12 +58,364 @@
       "keepout_r_mm": 3.5,
       "tolerance_mm": 0.005
     },
-    "keepout_rects": {
+    "planned_cutouts": {
       "findings": 0,
+      "margin_mm": 0.33,
       "rects": 50,
-      "clear_mm": 0.3,
       "tolerance_mm": 0.005,
-      "rects_with_copper": []
+      "fill_points": 64,
+      "per_rect": [
+        {
+          "id": "C107",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.62
+        },
+        {
+          "id": "C113",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "C206",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "C207",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.33
+        },
+        {
+          "id": "C210",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.469
+        },
+        {
+          "id": "C222",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.905
+        },
+        {
+          "id": "C254",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.436
+        },
+        {
+          "id": "C262",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "C265",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.33
+        },
+        {
+          "id": "C273",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.888
+        },
+        {
+          "id": "C511",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "C512",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "F102",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J104",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J105",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J106",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J107",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J108",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J109",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J110",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J111",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J112",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J113",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J114",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J115",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "J205",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.542
+        },
+        {
+          "id": "J206",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.495
+        },
+        {
+          "id": "J507",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "L101",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "L501",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "TP101",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 2.268
+        },
+        {
+          "id": "TP102",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.405
+        },
+        {
+          "id": "TP103",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "TP104",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.652
+        },
+        {
+          "id": "TP105",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.622
+        },
+        {
+          "id": "TP106",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.676
+        },
+        {
+          "id": "TP107",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.406
+        },
+        {
+          "id": "TP108",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.9
+        },
+        {
+          "id": "TP201",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.33
+        },
+        {
+          "id": "TP202",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.455
+        },
+        {
+          "id": "TP203",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.389
+        },
+        {
+          "id": "TP204",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "TP205",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.33
+        },
+        {
+          "id": "TP211",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "TP212",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "TP213",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.33
+        },
+        {
+          "id": "TP214",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.659
+        },
+        {
+          "id": "TP215",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        },
+        {
+          "id": "TP503",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": 0.69
+        },
+        {
+          "id": "TP2903",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "fills_within_margin": 0,
+          "closest_copper_mm": null
+        }
+      ]
     },
     "pad_nets": {
       "findings": 0,
@@ -72,7 +424,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1508,
+      "tracks_checked": 1435,
       "pour_necks": [],
       "split_nets": {}
     },

@@ -19,107 +19,19 @@
     "sha256": "6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6",
     "source_read": "Adoptium API and GitHub release API, read 2026-11-07"
   },
-  "command": [
-    "java",
-    "-Djava.awt.headless=true",
-    "-cp",
-    "freerouting-2.5.0.jar",
-    "app.freerouting.cli.FreeroutingCli",
-    "-de",
-    "PWR_B.dsn",
-    "-do",
-    "PWR_B.ses",
-    "--router.autorouter.max_passes=90",
-    "-mt",
-    "1",
-    "--router.optimizer.max_threads=1",
-    "--router.automatic_neckdown=false",
-    "-da",
-    "--gui.enabled=false",
-    "--router.job_timeout=00:33:00",
-    "--logging.file.enabled=false",
-    "--user_data_path=<temp>",
-    "--router.fanout.enabled=false",
-    "-inc",
-    "PWR1A,SCRIPTED_GND,SCRIPTED_PWR1A,SCRIPTED_PWR3A,kicad_default"
-  ],
-  "exit_code": 0,
-  "log_tail": [
-    "  Net 'LNA4V5' (11 unrouted connections):",
-    "    - J209-10  ->  J209-6",
-    "    - U206-1  ->  via",
-    "    - via  ->  U207-1",
-    "    - U206-1  ->  C232-1",
-    "    - U208-1  ->  C240-1",
-    "    - C236-1  ->  U207-1",
-    "    - U208-1  ->  via",
-    "    - C244-1  ->  U209-1",
-    "    - J209-10  ->  U209-1",
-    "    - via  ->  J209-6",
-    "    - via  ->  C236-1",
-    "  Net 'OVP_LNB_N' (1 unrouted connection):",
-    "    - J203-13  ->  J209-53",
-    "  Net 'PG_BONI' (1 unrouted connection):",
-    "    - J203-14  ->  U218-1",
-    "  Net 'PICO_DISP_EN' (1 unrouted connection):",
-    "    - J203-16  ->  J209-55",
-    "  Net 'PWR_BUTTON' (1 unrouted connection):",
-    "    - J203-19  ->  J209-59",
-    "  Net 'VBUS_LABPORT' (4 unrouted connections):",
-    "    - C506-1  ->  R508-1",
-    "    - C521-1  ->  C522-1",
-    "    - C522-1  ->  C507-1",
-    "    - J506-3  ->  U502-6",
-    "  Net 'VBUS_RTLA' (1 unrouted connection):",
-    "    - via  ->  U501-6",
-    "  Net 'VBUS_RTLB' (5 unrouted connections):",
-    "    - via  ->  R251-1",
-    "    - L210-2  ->  C250-1",
-    "    - C250-1  ->  via",
-    "    - L210-2  ->  J207-4",
-    "    - via  ->  TP210-1",
-    "  Net 'VBUS_RTLB_DAMP' (1 unrouted connection):",
-    "    - via  ->  R251-2",
-    "2026-11-13 03:03:55.254 INFO   [3DD144\\B5ADC3] Auto-routing stage completed: started with 202 unrouted nets, completed in 683.86 seconds, final score: 393.10 (158 unrouted and 241 violations), using 676.17 total CPU seconds, 465.23 GB total allocated, and 555.0 MB peak heap usage.",
-    "2026-11-13 03:03:55.728 INFO   [3DD144\\B5ADC3] Skipping optimization stage: the board has 158 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-13 03:03:55.766 INFO   [3DD144\\B5ADC3] Job '3DD144\\B5ADC3' finished with state: COMPLETED (elapsed: 11 minutes 25.94 seconds, finished at UTC: 2026-11-13T03:03:55.765000855Z).",
-    "2026-11-13 03:03:55.768 INFO   Saving output file '/tmp/sr-rx-PWR_B-u94g1chl/PWR_B.ses' (SES)...",
-    "2026-11-13 03:03:55.769 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-u94g1chl/PWR_B.ses' (16529 bytes)."
-  ],
-  "dsn_sha256": "a0e5e7b2286b083edceeac2501b07efe81cd41cb4b31c92955992df85eca2cc1",
-  "ses_sha256": "0a063e91b7c1f5b5078c6cb881d3bca8cc5a91bf753929ef09b6d76164e63a53",
-  "dsn_probe": {
-    "resolution": "um 10",
-    "wires_fix": 1716,
-    "wires_protect": 0,
-    "keepouts": 384,
-    "planes": 2,
-    "classes": {
-      "kicad_default": {
-        "width": "150",
-        "clearance": "150"
-      },
-      "SCRIPTED_PWR3A": {
-        "width": "950",
-        "clearance": "150"
-      },
-      "SCRIPTED_PWR1A": {
-        "width": "200",
-        "clearance": "150"
-      },
-      "PWR1A": {
-        "width": "200",
-        "clearance": "150"
-      },
-      "SCRIPTED_GND": {
-        "width": "150",
-        "clearance": "150"
-      }
-    }
-  },
+  "command": [],
+  "exit_code": null,
+  "log_tail": [],
+  "dsn_sha256": null,
+  "ses_sha256": null,
+  "dsn_probe": null,
   "locked_segments": {
     "before_ses_import": 1716,
     "after_ses_import": 1716
+  },
+  "freerouting_not_run": {
+    "passes": 0,
+    "why": "router.freeze_only: W2 PWRJ-LAYERS6 freeze-only: with the frozen route in pre_route no class is autorouted (all DSN classes in -inc), so the CI run measures exactly the frozen router copper plus the grid A* completion; in route run 43349395168 Freerouting on top of the frozen copper joined no further connection (model open = KiCad open) and left KiCad clearance errors against the locked copper"
   },
   "via_centre_stubs": [],
   "drc_command": [
@@ -135,7 +47,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "9c79fc821edfc0013be695bd0048c7a3713216b7268fe1ac68bf3b7a74e3faa5",
+  "board_sha256": "7edb5527f12cc8078691f245054dd000d42a5f75d2580d4491274a13fa9bf638",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -966,8 +878,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43354942122",
-    "sha": "9836c6e9b1b80ed511e9c22ada7acd77d6618dfc",
-    "ref": "refs/heads/wip/w2-pwrj-layers6"
+    "run_id": "43375868329",
+    "sha": "19cdb85ae8db053ef14701d8dff26a034924db26",
+    "ref": "refs/heads/wip/w2-pwrtools"
   }
 }
