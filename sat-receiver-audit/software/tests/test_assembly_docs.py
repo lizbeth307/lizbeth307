@@ -355,7 +355,7 @@ class HarnessHeaderRefTests(unittest.TestCase):
                 for pin in gen.pin_list(pins):
                     wires = ends.get((ref, pin), [])
                     self.assertEqual(len(wires), 1, f"{ref}.{pin} ({label})")
-                    self.assertEqual(wires[0]["segment"], sid, f"{ref}.{pin}")
+                    self.assertEqual(wires[0]["segment"], D.SEGMENT_BRANCHES.get(sid, sid), f"{ref}.{pin}")  # a branch is listed under its bundle
             listed = {p for pins in segments.values() for p in gen.pin_list(pins)}
             for pin in comp["pins"]:
                 self.assertEqual(bool(pin.get("net")), str(pin["number"]) in listed, f"{ref}.{pin['number']}: a reserve contact is nc")
@@ -374,7 +374,7 @@ class HarnessHeaderRefTests(unittest.TestCase):
             fp = self.model.db_part.get(row["connector"], {}).get("footprint", "")
             if row["board"] in ("CTRL", "RF") and row["family"] in ("MF", "MF2"):
                 self.assertTrue(fp.endswith("_Horizontal"), f"{row['connector']} {fp}")
-            if row["board"] in ("CTRL", "RF", "PWR_B") and row["family"] in ("PH", "PHD"):
+            if row["board"] in ("CTRL", "RF", "PWR_B") and row["family"] in ("PH", "PHD") and row["connector"] not in ("J203", "J506"):  # zone-2 top-entry pair, W2 PWR-L6-PLACE
                 self.assertIn("_Horizontal", fp, row["connector"])
 
     def test_pps_branch_leaves_the_ribbon(self):
@@ -451,13 +451,41 @@ class Shrink2PwrBHeaderTests(unittest.TestCase):
                 ends.setdefault(w["segment"], set()).add(int(pin))
         self.assertEqual(ends, {"S23": {1, 2, 3}, "S34": {4, 5, 6, 7, 8, 9}})
         rows = {r["connector"]: r for r in csv.DictReader(io.StringIO(self.files[gen.OUT["connectors_csv"]]))}
-        self.assertEqual((rows["J506"]["board"], rows["J506"]["orientation"], rows["J506"]["pins"]), ("PWR_B", "side", "9"))
+        self.assertEqual((rows["J506"]["board"], rows["J506"]["orientation"], rows["J506"]["pins"]), ("PWR_B", "top", "9"))  # top entry since W2 PWR-L6-PLACE
         self.assertNotIn("J508", rows)
 
     def test_s04_keeps_one_crimp_family_per_wire(self):
         # PHD (SPHD-001T, 22 AWG only) at one end and PH (AWG 30-24) at the other end cannot share a wire, so S04 stays PH-PH
         fams = {(w["family_from"], w["family_to"]) for w in self.h.wires if w["segment"] == "S04"}
         self.assertEqual(fams, {("PH", "PH")})
+
+
+class PwrL6ZoneTwoBranchTests(unittest.TestCase):
+    """W2 PWR-L6-PLACE third pass: the J307 <-> J203 conductors of S02 are the branch S02B (J203 is the top-entry header of PWR-B
+    zone 2); the harness stays straight (J307.k <-> J203.k). Design data only, no hardware claim; bend radius and fit stay OPEN."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.model, cls.h, cls.files = gen.build_all(BASE)
+
+    def test_s02b_is_a_straight_branch_of_s02(self):
+        self.assertEqual(D.SEGMENT_BRANCHES.get("S02B"), "S02")
+        self.assertEqual((D.HEADERS["J203"][1], D.HEADERS["J307"][1]), ({"S02B": "1-20"}, {"S02B": "1-20"}))
+        branch = [w for w in self.h.wires if w["wire"].startswith("S02-S02B-")]
+        self.assertEqual(len(branch), 20)
+        for w in branch:
+            a, b = PIN_RE.match(w["from"]), PIN_RE.match(w["to"])
+            self.assertEqual((a[1], b[1], a[2]), ("J307", "J203", b[2]), w["wire"])
+            self.assertEqual(w["segment"], "S02", w["wire"])
+        self.assertFalse([w for w in self.h.wires if w["segment"] == "S02" and not w["wire"].startswith("S02-S02B-")
+                          and ("J203." in w["to"] or "J307." in w["from"])])
+
+    def test_zone_two_pair_is_top_entry(self):
+        rows = {r["connector"]: r for r in csv.DictReader(io.StringIO(self.files[gen.OUT["connectors_csv"]]))}
+        for ref in ("J203", "J506"):
+            self.assertEqual((rows[ref]["board"], rows[ref]["orientation"]), ("PWR_B", "top"), ref)
+            self.assertTrue(self.model.db_part[ref]["footprint"].endswith("_Vertical"), ref)
+        self.assertEqual(self.model.db_part["J307"]["footprint"], "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal")
 
 
 if __name__ == "__main__":

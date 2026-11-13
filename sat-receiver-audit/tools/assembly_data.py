@@ -263,7 +263,7 @@ HEADERS = {
     "J304": ("X01I1-CTRL", {"S01": "1 3 5 8-10 12-15 17 20 25 27-30 32 34 35 38-40"}),
     "J305": ("X02P1-CTRL", {"S02": "1-4"}),
     "J306": ("S02-CTRL-SIG-1", {"S02": "1-20"}),
-    "J307": ("S02-CTRL-SIG-2", {"S02": "1-20"}),
+    "J307": ("S02-CTRL-SIG-2", {"S02B": "1-20"}),  # branch S02B of S02 to the top-entry J203 (W2 PWR-L6-PLACE third pass)
     "J308": ("X03S1-CTRL", {"S03": "1-8"}),
     "J309": ("X03S2-CTRL", {"S03": "1-4"}),
     "J310": ("S15-30-CTRL", {"S15": "1", "S30": "2-4"}),
@@ -293,12 +293,12 @@ HEADERS = {
     "J115": ("X12P1-PWR", {"S12": "1 2"}),
     "J201": ("X02S0-PWR", {"S02": "1-4"}),
     "J202": ("S02-PWR-SIG-1", {"S02": "1-20"}),
-    "J203": ("S02-PWR-SIG-2", {"S02": "1-20"}),
+    "J203": ("S02-PWR-SIG-2", {"S02B": "1-20"}),  # W2 PWR-L6-PLACE third pass: top entry B20B-PHDSS in PWR-B zone 2
     "J204": ("X04S1-PWR", {"S04": "1-8"}),
     "J205": ("X19P1-PWR", {"S19": "1 2"}),
     "J206": ("SL2-PWR-MF", {"S13": "1 2", "S14": "3 4", "S17": "5 6", "S18": "7 8"}),
     "J207": ("SL2-PWR-PH", {"S20": "1 2", "S21": "3 4", "S22": "5-7", "S35": "8 9", "S36": "10 11"}),
-    "J506": ("SL3-PWR-PH", {"S23": "1-3", "S34": "4-9"}),  # W2 GR-5B: J506 (S23) + J508 (S34) in one JST PH 9 side entry
+    "J506": ("SL3-PWR-PH", {"S23": "1-3", "S34": "4-9"}),  # W2 GR-5B: J506 (S23) + J508 (S34) in one JST PH 9; top entry B9B in PWR-B zone 2 since W2 PWR-L6-PLACE
     "J507": ("X32S1-PWR", {"S32": "1-4"}),
     # J508 (X34S1-PWR, S34) is merged into J506 above (W2 GR-5B, SHRINK-2)
     "J509": ("X14P1-HATCH", {"S14": "1 2"}),
@@ -312,7 +312,7 @@ HEADERS = {
 PIN_SEGMENTS = {"J301": {"S01": "1 3 5 8-10 12-15 17 20 25 27-30 32 34 35 38-40", "PPS": "6 7 16 18"}}
 # Branch segments listed under their parent bundle in build/16 (wire ids <parent>-<branch>-nn, segment column = parent): the PPS
 # conductors are S01 ribbon conductors that leave it after the J20 socket; their route is branches.PPS of the mechanical model.
-SEGMENT_BRANCHES = {"PPS": "S01"}
+SEGMENT_BRANCHES = {"PPS": "S01", "S02B": "S02"}  # S02B: the J307 <-> J203 conductors of S02 (W2 PWR-L6-PLACE third pass)
 # Board units whose harness ends have no graph header ref yet, with the reason; only there the generator still writes an X id.
 PENDING_BOARD_ENDS = {
     "ENCM": "роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json "
@@ -476,7 +476,7 @@ SEGMENT_NETS = {
     "S23": {"VBUS_LABPORT"}, "S35": {"BONI13V8_PORT"}, "S36": {"BIAS_SB_LNA"}, "S41": {"BIAS_SB_LNA"},
     "PPS": {"E3_GNSS_PPS", "UART6_RX", "UART6_TX"}, "S25": {"E3_GNSS5V", "E3_GNSS_RESET_N"},
 }
-NO_GND = {"S15"}  # KEY joins J503, whose GND contact already carries the S14 return
+NO_GND = {"S15", "S02B"}  # KEY joins J503, whose GND contact already carries the S14 return; S02B: J307/J203 have no free contact, the return is in S02 (W2 PWR-L6-PLACE)
 GND_GROUP_SKIP = {("S06", "MFJ"), ("S07", "MFJ")}  # shunt path and #2813 switch: no return current in that connector
 GND_CURRENT = {"S06": (0.01, None), "S07": (0.05, None)}  # chip/control ground only (INA228, #2813 logic)
 # Module end of a wire: which contact it lands on, (segment, unit, net) -> "REF.PIN (note)".
@@ -543,6 +543,20 @@ SEG_CURRENT = {
     ("S28", "LAB5"): (0.50, 4.0, "F102 4 A", "E3-03: старт 0.50 A"),
     ("S13", "LAB5"): (0.30, 4.0, "F102 4 A", "бюджет хаба — рішення asm, виміряти"),
 }
+# W2 PWR-L6-PLACE third pass: the J307 <-> J203 conductors of S02 leave the bundle as branch S02B (SEGMENT_BRANCHES), because
+# J203 is the top-entry header of PWR-B zone 2 (mechanical/params/mechanical.json harness_routes branches.S02B). Inserted here,
+# after the NET_CURRENT / SEG_CURRENT rows, so that the line citations into this file (pcb/generated/netclasses.json) keep their
+# numbers. The row stands just before S02 in SEGMENTS, so that the harness router (tools/build_assembly_docs.py route) tries
+# the branch first for its 20 nets (SEGMENT_NETS) and S02 for every other CTRL <-> PWR net.
+SEGMENT_NETS["S02B"] = {"FAULT_LNA4", "FAULT_RTLA", "FAULT_RTLB", "FLT_BONI", "FLT_LIME3V3", "FLT_LNB", "FLT_SB_LNA", "I2C0_SCL",
+                        "I2C0_SDA", "IMU_RX", "IMU_TX", "INA228_ALERT", "OVP_LNB_N", "PG_BONI", "PG_LNB", "PICO_DISP_EN",
+                        "PICO_OFF", "PTC_AUX", "PWR_BUTTON", "SLED_DET"}  # J307.1-20 = J203.1-20 (design/E3.json, design/E2.json)
+SEGMENTS.insert(next(i for i, s in enumerate(SEGMENTS) if s[0] == "S02"), (
+    "S02B", "CTRL", "PWR", "Сигнали S02-SIG-2: CTRL J307 ↔ PWR-B J203 (гілка S02)", None, "TBD (CAD)",
+    "20 проводів PHD 22 AWG (SPHD-001T-P0.5) від J307 (S20B-PHDSS, боковий вхід, зона 0 CTRL) до J203 (B20B-PHDSS(LF)(SN), верхній "
+    "вхід, зона 2 нижнього краю PWR-B); джгут прямий, J307.k ↔ J203.k, розпіновка без змін; відходить від S02 у зоні 0 CTRL; траса — "
+    "harness_routes branches.S02B механічної моделі (повз бобишку кріплення дисплея); радіус згину над J203 і примірка — OPEN "
+    "(W2 PWR-L6-PLACE, третій прохід, build/15)"))
 
 # Wire colours by net (regex, colour) — project convention, first match wins.
 COLOURS = [
@@ -905,7 +919,7 @@ STEPS = [
       "Обжати джгути S02, S03, S04 за 16 §1 (інструмент Molex 0638190000 для Micro-Fit); маркер з ID проводу на обох кінцях (L-WIRE)."],
      ["кожна деталь CPL перевірена в переглядачі JLC до оплати", "жодна шина < 10 Ω до GND",
       "прозвонка кожного проводу джгута від маркера до маркера"],
-     ["S02", "S03", "S04", "L-WIRE", "L-CONN"]),
+     ["S02", "S02B", "S03", "S04", "L-WIRE", "L-CONN"]),
     ("E2", "Збірка середньої пластини (на столі, поза корпусом)",
      "пластина 2 мм EN AW-5754 за шаблоном M-07 (08 крок 5), гайки PEM F-M3-1 ×15, стійки PEM SO-M3-3ZI ×6 і SO-M2.5-6ZI ×2, D36V50F12, D36V50F5, #2813, INA228 5832, "
      "IP2368, PWR-A, PWR-B (стик B2B — дві однакові Samtec LSHM-150: J208 на PWR-A, J209 на PWR-B), стендовий провід (розетка Mini-Fit Jr. 5557 під вхідний "
@@ -991,7 +1005,7 @@ STEPS = [
       "Стяжки до пластини ≤30 мм від кожного роз'єму і далі кожні 50–80 мм (16 §1)."],
      ["S2 і S3 за 19 §3 (ступінь L3)", "EN-тести S4 і кнопки/енкодери за 19 §4 п. 3", "touch енумерується без VBUS (E5 §8)",
       "TH301/TH302: обрив і КЗ датчика вмикають повне охолодження (E3)"],
-     ["F30", "S19", "S02", "S01", "S40", "C-HDMI", "C-TOUCH", "C-T7", "L-DISP12"]),
+     ["F30", "S19", "S02", "S02B", "S01", "S40", "C-HDMI", "C-TOUCH", "C-T7", "L-DISP12"]),
     ("E7", "Передня половина: панельні деталі стінок",
      "прохідники SMA/F/BNC верхньої грані (крізь стінку і верхній Al-кутник), RX2/REF IN правої стінки, USB-C, LAB USB-A, LAB BUS GX12 і аудіо нижньої "
      "грані, клапани V1/V2 — усі в стінках передньої половини (роз'єм половин z 14, mechanical.json split_z)",
