@@ -13,8 +13,8 @@
       "bytes": 155324
     },
     "design/E2.json": {
-      "sha256": "a2fc3faece23498cfadcc6e4a2593a6f2667aa6570c0cc052543d57e4d169075",
-      "bytes": 415038
+      "sha256": "347a5d345a20c5594237ed92a3265cde7154e956922d5ec0af0cf3377a0406c8",
+      "bytes": 415616
     },
     "design/E3.json": {
       "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
@@ -25,8 +25,8 @@
       "bytes": 229605
     },
     "design/E5.json": {
-      "sha256": "8ecfcc1952559a8e8cab32fb281d406c1b5f74090056b09e5e39bf1c0f0244bb",
-      "bytes": 126929
+      "sha256": "0b594795866dd05e99df4ea42d6548decf45414472e3c4a9475430452f5c4c57",
+      "bytes": 127380
     },
     "STACK.md": {
       "sha256": "7b37be7be97c2d1845215199cf455fd1c496aa83aa933bdc60defa266bfdbb19",
@@ -15559,7 +15559,7 @@
       "module_id": "E2/J203",
       "parent_assembly": "E2-CIR-20",
       "ref": "J203",
-      "value": "S02-PWR-SIG-2: JST PHD 2×10, боковий вхід, S02",
+      "value": "S02-PWR-SIG-2: JST PHD 2×10, верхній вхід, S02B",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -15720,7 +15720,8 @@
       ],
       "source_description": "",
       "source_notes": [
-        "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02B (гілка S02); номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWR-L6-PLACE (третій прохід): J203 — вертикальна вилка JST PHD B20B-PHDSS(LF)(SN) верхнього входу (LCSC C471521; каталог JST PHD 05.12.2023, копія LCSC, прочитано 13.11.2026: корпус 6.5 мм над платою, монтажна висота з розеткою 8.8 мм) у зоні 2 нижнього краю PWR-B; розпіновка не змінюється, джгут прямий (J307.k ↔ J203.k), дроти J203 — гілка S02B джгута S02 (build/15)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
@@ -30333,7 +30334,7 @@
       "module_id": "E5/J506",
       "parent_assembly": "E5-CIR-10",
       "ref": "J506",
-      "value": "SL3-PWR-PH: JST PH 9, боковий вхід, S23, S34",
+      "value": "SL3-PWR-PH: JST PH 9, верхній вхід, S23, S34",
       "source_kind": "connector",
       "source_status": "design",
       "interface_family": "passive_connector_or_named_boundary",
@@ -30415,7 +30416,8 @@
       "source_description": "",
       "source_notes": [
         "Роз'єм джгута SL3-PWR-PH (build/16 §4; W2 GR-3, злиття W2 GR-5B за SHRINK-2): на PWR-B, сегмент(и) S23, S34; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
-        "W2 GR-5B: J506 (S23, PH 3) і J508 (S34, PH 6) зведено в одну вилку JST PH 9 бічного входу S9B-PH-K-S(LF)(SN) (рядок READS-P web:jst-ph-catalogue-lcsc, LCSC C157912); контакти 1–3 — S23 як раніше J506, 4–9 — S34 у порядку колишньої J508; джгут розходиться на дальніх кінцях (J501 і J505)."
+        "W2 GR-5B: J506 (S23, PH 3) і J508 (S34, PH 6) зведено в одну вилку JST PH 9 бічного входу S9B-PH-K-S(LF)(SN) (рядок READS-P web:jst-ph-catalogue-lcsc, LCSC C157912); контакти 1–3 — S23 як раніше J506, 4–9 — S34 у порядку колишньої J508; джгут розходиться на дальніх кінцях (J501 і J505).",
+        "W2 PWR-L6-PLACE (третій прохід): J506 — вертикальна вилка JST PH B9B-PH-K-S(LF)(SN) верхнього входу (LCSC/JLCPCB C157968; каталог JST PH, копія LCSC, прочитано 13.11.2026: 6 мм над платою, 8.0 мм з розеткою) у зоні 2 нижнього краю PWR-B, поруч із J203; розпіновка та сама (S23 — 1–3, S34 — 4–9) (build/15)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
