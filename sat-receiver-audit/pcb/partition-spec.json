@@ -154,6 +154,14 @@
    "SRP2510PA-1R0M": {
     "h": 1.0,
     "src": "Bourns SRP2510PA datasheet REV. 06/26: 2.5 x 2.0 mm, height 1.0 max (design/parts/snapshots/2026-11-11-w2-readsp-manual.json (W2 READS-P, read 2026-11-11), row web:bourns-srp2510pa)"
+   },
+   "0451004.MRL": {
+    "h": 2.94,
+    "src": "Littelfuse 451/453 Series datasheet Rev. GD 08/23/21 (Mouser-distributed copy, https://sy-dep-epc-lpc.web.cern.ch/components/datasheets/epc-lpc%20(converters)/451-453_Fuse_(LITTLEFUSE).pdf, read 2026-11-13; the littelfuse.com 451 product page answered HTTP 403 on 2026-11-13): body 6.10 +-0.20 x 2.69 +-0.25 x 2.69 +-0.25 mm, so 2.94 max; 4.00 A (amp code 004.), 125 V, nominal cold resistance 0.0160 ohm"
+   },
+   "0451005.MRL": {
+    "h": 2.94,
+    "src": "Littelfuse 451/453 Series datasheet Rev. GD 08/23/21 (Mouser-distributed copy, https://sy-dep-epc-lpc.web.cern.ch/components/datasheets/epc-lpc%20(converters)/451-453_Fuse_(LITTLEFUSE).pdf, read 2026-11-13; the littelfuse.com 451 product page answered HTTP 403 on 2026-11-13): body 6.10 +-0.20 x 2.69 +-0.25 x 2.69 +-0.25 mm, so 2.94 max; 5.00 A (amp code 005.), 125 V, nominal cold resistance 0.0125 ohm"
    }
   },
   "by_footprint": {

@@ -35140,7 +35140,9 @@
     "D203": 2.7,
     "D2903": 2.7,
     "F102": 7.37,
+    "F103": 2.94,
     "F104": 2.7,
+    "F201": 2.94,
     "F202": 2.7,
     "L101": 6.1,
     "L102": 4.0,
@@ -35310,7 +35312,9 @@
     "D203": "pcb/partition-spec.json heights.low_profile h_max (class bound of Nexperia_CFP3_SOD-123W): class height of chip, SOT, SO, MSOP, (V)QFN, HSOP, SMA/SMB and CFP3 packages: not a tall part for the hA/hB rule (no part here is taller than an SMB body); only the parts listed by MPN or footprint above can exceed hA",
     "D2903": "pcb/partition-spec.json heights.low_profile h_max (class bound of SOT-23): class height of chip, SOT, SO, MSOP, (V)QFN, HSOP, SMA/SMB and CFP3 packages: not a tall part for the hA/hB rule (no part here is taller than an SMB body); only the parts listed by MPN or footprint above can exceed hA",
     "F102": "pcb/partition-spec.json heights.by_mpn.0297004.WXNV: LOWER BOUND, holder body only: Keystone 3568 holder body 16.00 x 6.73 x 7.37 mm (Keystone catalogue K75 p48, https://www.keyelco.com/userAssets/file/K75p48.pdf, read 2026-11-07); the mini fuse stands above the holder and the height with the fuse inserted is TBD (Littelfuse 297 drawing not read), so this part always gets a PWR-B window and its height against the window ceiling stays OPEN",
+    "F103": "pcb/partition-spec.json heights.by_mpn.0451005.MRL: Littelfuse 451/453 Series datasheet Rev. GD 08/23/21 (Mouser-distributed copy, https://sy-dep-epc-lpc.web.cern.ch/components/datasheets/epc-lpc%20(converters)/451-453_Fuse_(LITTLEFUSE).pdf, read 2026-11-13; the littelfuse.com 451 product page answered HTTP 403 on 2026-11-13): body 6.10 +-0.20 x 2.69 +-0.25 x 2.69 +-0.25 mm, so 2.94 max; 5.00 A (amp code 005.), 125 V, nominal cold resistance 0.0125 ohm",
     "F104": "pcb/partition-spec.json heights.low_profile h_max (class bound of Fuse_1812_4532Metric): class height of chip, SOT, SO, MSOP, (V)QFN, HSOP, SMA/SMB and CFP3 packages: not a tall part for the hA/hB rule (no part here is taller than an SMB body); only the parts listed by MPN or footprint above can exceed hA",
+    "F201": "pcb/partition-spec.json heights.by_mpn.0451004.MRL: Littelfuse 451/453 Series datasheet Rev. GD 08/23/21 (Mouser-distributed copy, https://sy-dep-epc-lpc.web.cern.ch/components/datasheets/epc-lpc%20(converters)/451-453_Fuse_(LITTLEFUSE).pdf, read 2026-11-13; the littelfuse.com 451 product page answered HTTP 403 on 2026-11-13): body 6.10 +-0.20 x 2.69 +-0.25 x 2.69 +-0.25 mm, so 2.94 max; 4.00 A (amp code 004.), 125 V, nominal cold resistance 0.0160 ohm",
     "F202": "pcb/partition-spec.json heights.low_profile h_max (class bound of Fuse_1812_4532Metric): class height of chip, SOT, SO, MSOP, (V)QFN, HSOP, SMA/SMB and CFP3 packages: not a tall part for the hA/hB rule (no part here is taller than an SMB body); only the parts listed by MPN or footprint above can exceed hA",
     "L101": "pcb/partition-spec.json heights.by_footprint.L_Coilcraft_XAL6060: KiCad 10.0.7 footprint descr 'XAL6060-XXX, 6.56x6.76x6.1mm' (vendored file; coilcraft.com answered HTTP 403 on 2026-11-07)",
     "L102": "W2 PCB-PWRA-4 make_board.py READ_HEIGHTS.SRP1040VA-4R7M: Bourns SRP1040VA data sheet, page 1 Product Dimensions: side view 3.8 +- 0.2 mm, so 4.0 mm max; https://www.bourns.com/docs/product-datasheets/srp1040va.pdf read 2026-11-12 (curl default User-Agent, HTTP 200, sha256 6be1a36f9fafd7e2e3a24578ecee040640f0cee34f7a6c67e6275214bc63bb1c)",
@@ -35385,8 +35389,6 @@
   },
   "heights_unread": {
     "refs": [
-      "F103",
-      "F201",
       "J104",
       "J105",
       "J106",
