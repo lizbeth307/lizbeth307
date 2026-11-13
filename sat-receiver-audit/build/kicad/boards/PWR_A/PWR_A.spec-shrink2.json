@@ -861,15 +861,45 @@
     },
     {
       "ref": "C127",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          11.15,
+          44.35
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 3' next to the converter pins it serves"
     },
     {
       "ref": "C128",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          15.85,
+          43.15
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 3' next to the converter pins it serves"
     },
     {
       "ref": "C129",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          15.25,
+          39.85
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 3' next to the converter pins it serves"
     },
     {
       "ref": "C130",
@@ -971,11 +1001,31 @@
     },
     {
       "ref": "C206",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          37.8,
+          97.65
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "C207",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          31.1,
+          82.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "C208",
@@ -987,7 +1037,17 @@
     },
     {
       "ref": "C210",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          9.95,
+          97.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "C211",
@@ -1035,7 +1095,17 @@
     },
     {
       "ref": "C222",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          30.75,
+          48.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "C223",
@@ -1083,7 +1153,17 @@
     },
     {
       "ref": "C254",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          29.05,
+          22.15
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "C255",
@@ -1115,7 +1195,17 @@
     },
     {
       "ref": "C262",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          23.15,
+          13.2
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "C263",
@@ -1159,7 +1249,17 @@
     },
     {
       "ref": "C273",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          2.45,
+          31.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "C278",
@@ -1650,7 +1750,17 @@
     },
     {
       "ref": "L501",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          24.9,
+          93.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "Q101",
@@ -1776,11 +1886,31 @@
     },
     {
       "ref": "R124",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.425,
+          39.85
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 3' next to the converter pins it serves"
     },
     {
       "ref": "R125",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.425,
+          41.5
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 3' next to the converter pins it serves"
     },
     {
       "ref": "R126",
@@ -1788,19 +1918,59 @@
     },
     {
       "ref": "R127",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          12.65,
+          44.35
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 3' next to the converter pins it serves"
     },
     {
       "ref": "R128",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          15.25,
+          41.5
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 3' next to the converter pins it serves"
     },
     {
       "ref": "R129",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.7,
+          77.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 4' next to the converter pins it serves"
     },
     {
       "ref": "R130",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.7,
+          78.725
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design choice after the TI layout examples): inside thermal_bond zone 4' next to the converter pins it serves"
     },
     {
       "ref": "R131",
@@ -2052,83 +2222,283 @@
     },
     {
       "ref": "TP101",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          11.65,
+          40.95
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP102",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          5.5,
+          100.95
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP103",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          4.95,
+          12.15
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP104",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          22.75,
+          54.15
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP105",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          19.45,
+          44.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP106",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.01,
+          37.49
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP107",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.85,
+          74.93
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP108",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          21.85,
+          74.93
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP201",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.75,
+          15.27
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP202",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          44.25,
+          23.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP203",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          11.51,
+          69.35
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP204",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.05,
+          43.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP205",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          61.85,
+          11.45
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP211",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          4.01,
+          16.05
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP212",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          90.25,
+          33.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP213",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.75,
+          12.27
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP214",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          47.25,
+          23.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP215",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          7.01,
+          16.05
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP503",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.75,
+          31.25
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "TP2903",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          93.25,
+          33.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record (make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is placed around"
     },
     {
       "ref": "U103",
@@ -2290,7 +2660,7 @@
     {
       "id": "HFP",
       "region": [
-        18.4,
+        31.4,
         87.0,
         34.2,
         100.4
@@ -2313,10 +2683,6 @@
         },
         {
           "ref": "C512",
-          "rotation": 0
-        },
-        {
-          "ref": "L501",
           "rotation": 0
         },
         {
@@ -2368,13 +2734,11 @@
       "region": [
         10.4,
         36.3,
-        24.3,
-        42.2
+        12.9,
+        39.7
       ],
       "region_name": "LEG_SYS12_LOW",
       "alt_regions": [
-        "LEG_U107_L",
-        "LEG_U107_R",
         "LEG_Z3_R",
         "LEG_Z3_L",
         "LEG_ENTRY"
@@ -2383,39 +2747,7 @@
       "gap_mm": 0.5,
       "members": [
         {
-          "ref": "TP101",
-          "rotation": 0
-        },
-        {
-          "ref": "C127",
-          "rotation": 0
-        },
-        {
-          "ref": "C128",
-          "rotation": 0
-        },
-        {
-          "ref": "C129",
-          "rotation": 0
-        },
-        {
-          "ref": "R124",
-          "rotation": 0
-        },
-        {
-          "ref": "R125",
-          "rotation": 0
-        },
-        {
           "ref": "R126",
-          "rotation": 0
-        },
-        {
-          "ref": "R127",
-          "rotation": 0
-        },
-        {
-          "ref": "R128",
           "rotation": 0
         }
       ]
@@ -2423,9 +2755,9 @@
     {
       "id": "LAB5_CTRL",
       "region": [
-        17.6,
-        71.0,
-        24.5,
+        20.6,
+        76.18,
+        23.1,
         83.1
       ],
       "region_name": "LEG_Z4_R",
@@ -2435,14 +2767,6 @@
       "members": [
         {
           "ref": "C132",
-          "rotation": 0
-        },
-        {
-          "ref": "R129",
-          "rotation": 0
-        },
-        {
-          "ref": "R130",
           "rotation": 0
         },
         {
@@ -2464,13 +2788,12 @@
       "region": [
         50.4,
         7.0,
-        72.3,
+        60.6,
         26.4
       ],
       "region_name": "BAND_LNA",
       "alt_regions": [
-        "BAND_LT_LOW",
-        "BAND_LT_HIGH"
+        "BAND_LT_LOW"
       ],
       "side": "F",
       "gap_mm": 0.5,
@@ -2526,10 +2849,6 @@
         {
           "ref": "C292",
           "rotation": 0
-        },
-        {
-          "ref": "TP205",
-          "rotation": 0
         }
       ]
     },
@@ -2537,8 +2856,8 @@
       "id": "LNB",
       "region": [
         19.75,
-        7.5,
-        36.82,
+        17.85,
+        25.65,
         26.8
       ],
       "region_name": "BAND_LNB",
@@ -2556,10 +2875,6 @@
         },
         {
           "ref": "C253",
-          "rotation": 0
-        },
-        {
-          "ref": "C254",
           "rotation": 0
         },
         {
@@ -2587,10 +2902,6 @@
           "rotation": 0
         },
         {
-          "ref": "C262",
-          "rotation": 0
-        },
-        {
           "ref": "C293",
           "rotation": 0
         },
@@ -2607,15 +2918,7 @@
           "rotation": 0
         },
         {
-          "ref": "TP211",
-          "rotation": 0
-        },
-        {
           "ref": "U212",
-          "rotation": 0
-        },
-        {
-          "ref": "TP215",
           "rotation": 0
         },
         {
@@ -2681,10 +2984,6 @@
           "rotation": 0
         },
         {
-          "ref": "C273",
-          "rotation": 0
-        },
-        {
           "ref": "C294",
           "rotation": 0
         },
@@ -2717,14 +3016,6 @@
           "rotation": 0
         },
         {
-          "ref": "TP212",
-          "rotation": 0
-        },
-        {
-          "ref": "TP2903",
-          "rotation": 0
-        },
-        {
           "ref": "U214",
           "rotation": 0
         }
@@ -2733,7 +3024,7 @@
     {
       "id": "J21",
       "region": [
-        28.6,
+        37.1,
         77.8,
         41.8,
         86.8
@@ -2764,27 +3055,11 @@
           "rotation": 0
         },
         {
-          "ref": "C206",
-          "rotation": 0
-        },
-        {
-          "ref": "C207",
-          "rotation": 0
-        },
-        {
           "ref": "D201",
           "rotation": 0
         },
         {
           "ref": "L201",
-          "rotation": 0
-        },
-        {
-          "ref": "TP201",
-          "rotation": 0
-        },
-        {
-          "ref": "TP213",
           "rotation": 0
         },
         {
@@ -2796,9 +3071,9 @@
     {
       "id": "AUX12",
       "region": [
-        28.6,
+        35.4,
         41.4,
-        41.8,
+        38.8,
         52.3
       ],
       "region_name": "LEG_RIGHT_LOW",
@@ -2819,10 +3094,6 @@
           "rotation": 0
         },
         {
-          "ref": "C222",
-          "rotation": 0
-        },
-        {
           "ref": "F202",
           "rotation": 0
         },
@@ -2832,10 +3103,6 @@
         },
         {
           "ref": "Q202",
-          "rotation": 0
-        },
-        {
-          "ref": "TP204",
           "rotation": 0
         }
       ]
@@ -2865,7 +3132,7 @@
     {
       "id": "DISP",
       "region": [
-        7.8,
+        14.6,
         90.2,
         18.2,
         100.4
@@ -2888,10 +3155,6 @@
           "rotation": 0
         },
         {
-          "ref": "C210",
-          "rotation": 0
-        },
-        {
           "ref": "C212",
           "rotation": 0
         },
@@ -2901,14 +3164,6 @@
         },
         {
           "ref": "L202",
-          "rotation": 0
-        },
-        {
-          "ref": "TP202",
-          "rotation": 0
-        },
-        {
-          "ref": "TP214",
           "rotation": 0
         },
         {
@@ -2958,32 +3213,7 @@
           "rotation": 0
         },
         {
-          "ref": "TP203",
-          "rotation": 0
-        },
-        {
           "ref": "U203",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "LAB5",
-      "region": [
-        4.25,
-        97.2,
-        7.4,
-        102.2
-      ],
-      "region_name": "LEG_LEFT_HIGH",
-      "alt_regions": [
-        "LEG_MID_L"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "TP102",
           "rotation": 0
         }
       ]
@@ -2993,8 +3223,8 @@
       "region": [
         34.4,
         87.0,
-        41.8,
-        102.3
+        41.2,
+        95.5
       ],
       "region_name": "LEG_RIGHT_HIGH",
       "alt_regions": [
@@ -3014,7 +3244,7 @@
       "region": [
         7.8,
         62.5,
-        14.0,
+        10.26,
         70.6
       ],
       "region_name": "LEG_MID",
@@ -3025,10 +3255,6 @@
       "side": "F",
       "gap_mm": 0.5,
       "members": [
-        {
-          "ref": "TP503",
-          "rotation": 0
-        },
         {
           "ref": "U551",
           "rotation": 0
@@ -3096,26 +3322,6 @@
         {
           "ref": "Q101",
           "rotation": 0
-        },
-        {
-          "ref": "TP104",
-          "rotation": 0
-        },
-        {
-          "ref": "TP105",
-          "rotation": 0
-        },
-        {
-          "ref": "TP106",
-          "rotation": 0
-        },
-        {
-          "ref": "TP107",
-          "rotation": 0
-        },
-        {
-          "ref": "TP108",
-          "rotation": 0
         }
       ]
     },
@@ -3124,7 +3330,7 @@
       "region": [
         0.3,
         9.8,
-        9.3,
+        2.76,
         26.8
       ],
       "region_name": "BAND_LEFT",
@@ -3143,10 +3349,6 @@
           "rotation": 0
         },
         {
-          "ref": "TP103",
-          "rotation": 0
-        },
-        {
           "ref": "U109",
           "rotation": 0
         }
@@ -3155,22 +3357,22 @@
     {
       "id": "HFP_BOT",
       "region": [
-        0.6,
-        92.6,
         26.5,
+        89.0,
+        41.7,
         95.0
       ],
-      "region_name": "PB9b",
+      "region_name": "PB9",
       "alt_regions": [
-        "PB9",
         "PB11",
-        "PB9c",
+        "PB9b",
         "PB12",
+        "PB9c",
         "PB13",
-        "PB10",
-        "PB8",
         "PB7",
+        "PB10",
         "PB7b",
+        "PB8",
         "PB6",
         "PB5",
         "PB3b",
@@ -3219,22 +3421,22 @@
       ],
       "region_name": "PB3",
       "alt_regions": [
-        "PB3b",
         "PB5",
         "PB1",
-        "PB7b",
+        "PB3b",
         "PB6",
+        "PB7b",
         "PB7",
         "PB8",
         "PB4b",
         "PB9c",
         "PB9",
         "PB9b",
-        "PB11",
         "PB10",
+        "PB11",
         "PB12",
-        "PB4",
         "PB13",
+        "PB4",
         "PB2"
       ],
       "side": "B",
@@ -3260,19 +3462,19 @@
       ],
       "region_name": "PB4b",
       "alt_regions": [
-        "PB4",
         "PB3b",
+        "PB4",
         "PB3",
-        "PB7",
         "PB1",
+        "PB7",
         "PB5",
         "PB7b",
-        "PB2",
         "PB6",
         "PB9",
         "PB8",
-        "PB11",
+        "PB2",
         "PB9c",
+        "PB11",
         "PB9b",
         "PB12",
         "PB10",
@@ -3302,24 +3504,24 @@
     {
       "id": "LNB_BOT",
       "region": [
-        26.5,
-        29.5,
-        40.0,
+        0.3,
+        29.0,
+        24.3,
         37.0
       ],
-      "region_name": "PB3b",
+      "region_name": "PB3",
       "alt_regions": [
-        "PB3",
+        "PB3b",
         "PB1",
-        "PB4b",
         "PB5",
-        "PB7",
+        "PB4b",
         "PB7b",
+        "PB7",
         "PB6",
-        "PB4",
         "PB8",
-        "PB9",
+        "PB4",
         "PB9c",
+        "PB9",
         "PB9b",
         "PB11",
         "PB10",
@@ -3481,8 +3683,8 @@
       "alt_regions": [
         "PB7",
         "PB11",
-        "PB9c",
         "PB9b",
+        "PB9c",
         "PB7b",
         "PB12",
         "PB13",
@@ -3555,8 +3757,8 @@
         "PB9",
         "PB9c",
         "PB9b",
-        "PB11",
         "PB4",
+        "PB11",
         "PB12",
         "PB10",
         "PB13",
@@ -3593,15 +3795,15 @@
       ],
       "region_name": "PB9b",
       "alt_regions": [
-        "PB10",
         "PB9c",
         "PB11",
+        "PB10",
         "PB12",
-        "PB8",
-        "PB13",
         "PB9",
-        "PB6",
+        "PB13",
+        "PB8",
         "PB7b",
+        "PB6",
         "PB7",
         "PB5",
         "PB3",
@@ -3714,8 +3916,8 @@
         "PB11",
         "PB12",
         "PB9b",
-        "PB13",
         "PB9c",
+        "PB13",
         "PB7",
         "PB7b",
         "PB10",
@@ -3918,13 +4120,13 @@
         "PB5",
         "PB3b",
         "PB6",
-        "PB4b",
         "PB7b",
-        "PB7",
+        "PB4b",
         "PB8",
+        "PB7",
         "PB9c",
-        "PB9",
         "PB9b",
+        "PB9",
         "PB10",
         "PB11",
         "PB4",
@@ -3964,7 +4166,25 @@
       "BAND_LEFT": [
         0.3,
         9.8,
-        9.3,
+        2.76,
+        26.8
+      ],
+      "BAND_LEFTb": [
+        6.2,
+        17.3,
+        8.26,
+        26.8
+      ],
+      "BAND_LEFTbb": [
+        6.2,
+        9.8,
+        8.26,
+        14.8
+      ],
+      "BAND_LEFTc": [
+        3.7,
+        17.3,
+        5.26,
         26.8
       ],
       "BAND_U211_LOW": [
@@ -3981,15 +4201,27 @@
       ],
       "BAND_LNB": [
         19.75,
-        7.5,
-        36.82,
+        17.85,
+        25.65,
         26.8
       ],
       "BAND_LNBb": [
         39.5,
         7.5,
-        42.2,
+        42.0,
+        11.02
+      ],
+      "BAND_LNBbb": [
+        39.5,
+        16.52,
+        42.0,
         20.42
+      ],
+      "BAND_LNBc": [
+        32.45,
+        7.5,
+        36.82,
+        26.8
       ],
       "BAND_LT_LOW": [
         43.0,
@@ -3997,17 +4229,29 @@
         49.4,
         11.4
       ],
-      "BAND_LT_HIGH": [
-        43.0,
-        22.4,
-        49.4,
-        25.0
-      ],
       "BAND_LNA": [
         50.4,
         7.0,
+        60.6,
+        26.4
+      ],
+      "BAND_LNAb": [
+        63.1,
+        7.0,
         72.3,
         26.4
+      ],
+      "BAND_LNAc": [
+        60.6,
+        12.7,
+        63.1,
+        26.4
+      ],
+      "BAND_LNAd": [
+        60.6,
+        7.0,
+        63.1,
+        10.2
       ],
       "BAND_BONI": [
         78.8,
@@ -4076,7 +4320,7 @@
         24.5
       ],
       "BAND_TOP_LEFT": [
-        0.3,
+        7.1,
         27.0,
         15.5,
         34.8
@@ -4085,12 +4329,6 @@
         19.75,
         27.0,
         39.5,
-        32.5
-      ],
-      "BAND_TOP_LEFT_Rb": [
-        39.5,
-        29.5,
-        42.2,
         32.5
       ],
       "BAND_TOP_LEFT_R2": [
@@ -4106,7 +4344,7 @@
         30.8
       ],
       "BAND_TOP_MID2": [
-        89.0,
+        94.5,
         30.9,
         107.8,
         34.8
@@ -4138,14 +4376,20 @@
       "LEG_SYS12_LOW": [
         10.4,
         36.3,
-        24.3,
-        42.2
+        12.9,
+        39.7
       ],
       "LEG_SYS12_LOWb": [
         8.4,
         36.3,
         10.4,
         38.1
+      ],
+      "LEG_SYS12_LOWc": [
+        16.945,
+        36.3,
+        19.905,
+        39.12
       ],
       "LEG_ENTRY": [
         8.4,
@@ -4162,20 +4406,8 @@
       "LEG_Z3_R": [
         21.5,
         50.5,
-        24.45,
-        55.4
-      ],
-      "LEG_U107_L": [
-        10.7,
-        42.3,
-        13.8,
-        45.85
-      ],
-      "LEG_U107_R": [
-        18.2,
-        42.3,
-        21.2,
-        45.85
+        24.0,
+        52.9
       ],
       "LEG_MID_L": [
         0.3,
@@ -4186,13 +4418,31 @@
       "LEG_MID": [
         7.8,
         62.5,
-        14.0,
+        10.26,
         70.6
       ],
+      "LEG_MIDb": [
+        10.26,
+        62.5,
+        12.76,
+        68.1
+      ],
       "LEG_Z4_R": [
+        20.6,
+        76.18,
+        23.1,
+        83.1
+      ],
+      "LEG_Z4_Rb": [
         17.6,
         71.0,
-        24.5,
+        20.1,
+        73.68
+      ],
+      "LEG_Z4_Rc": [
+        17.6,
+        79.455,
+        20.18,
         83.1
       ],
       "LEG_RPP": [
@@ -4204,14 +4454,26 @@
       "LEG_RIGHT_LOW2": [
         34.4,
         35.2,
-        41.8,
+        38.76,
+        41.2
+      ],
+      "LEG_RIGHT_LOW2b": [
+        38.76,
+        38.74,
+        41.26,
         41.2
       ],
       "LEG_RIGHT_LOW": [
+        35.4,
+        41.4,
+        38.8,
+        52.3
+      ],
+      "LEG_RIGHT_LOWb": [
         28.6,
         41.4,
-        41.8,
-        52.3
+        35.4,
+        45.5
       ],
       "LEG_SPINE_R": [
         28.6,
@@ -4232,7 +4494,7 @@
         54.9
       ],
       "LEG_RIGHT_MID": [
-        28.6,
+        37.1,
         77.8,
         41.8,
         86.8
@@ -4240,26 +4502,32 @@
       "LEG_RIGHT_HIGH": [
         34.4,
         87.0,
-        41.8,
-        102.3
+        41.2,
+        95.5
       ],
       "LEG_HFL": [
-        18.4,
+        31.4,
         87.0,
         34.2,
         100.4
       ],
       "LEG_Z4_TOP": [
-        7.8,
+        14.6,
         90.2,
         18.2,
         100.4
       ],
+      "LEG_Z4_TOPb": [
+        7.8,
+        90.2,
+        14.6,
+        93.6
+      ],
       "LEG_LEFT_HIGH": [
         4.25,
         97.2,
-        7.4,
-        102.2
+        6.75,
+        99.7
       ],
       "LEG_TOP": [
         7.8,
@@ -8195,7 +8463,214 @@
       ]
     },
     "u107_input_source": "TI LM61460 data sheet SNVSBD5D (rev. D, July 2022) section 11.1 Layout Guidelines and figure 11-2 Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf read 2026-11-12 (curl default User-Agent, HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d; fetch-only, not committed)",
-    "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, F104.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201"
+    "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, F104.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201",
+    "small_signal": {
+      "rule": "W2 PWR-L6-PLACE (placement only): the U107 and U108 small-signal parts anchored inside thermal_bond zones 3'/4' next to their pins (make_spec.py SMALL_SIGNAL_ANCHORS); MODEL geometry, pad centre to pin centre: CVCC <= 2.0 mm of VCC/AGND, CBOOT, RBOOT and the feedback parts <= 5.0 mm of their pins (project limits). Their copper (the SW-CBOOT link through the VIN2-RBOOT gap, the FB node on F.Cu only, AGND to PGND under U108) is W2 PWR-L6-SCRIPT's; the F.Cu VIN2 bar CONVIN-U107-L-BAR closes that gap today",
+      "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf, and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, https://www.ti.com/lit/ds/symlink/tpsm63606.pdf, both read 2026-11-13 (curl default User-Agent, HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d and d1c157ff51c0e24bec9749dc434c3f8cdb8e980a7d1295d3a51c7d13f8ab4147; fetch-only, not committed); the 2 mm and 5 mm limits are project rules for TI's \"as close as possible\", not TI numbers",
+      "rows": [
+        {
+          "ref": "C127",
+          "zone": 3,
+          "zone_rect": [
+            7,
+            39,
+            24,
+            63
+          ],
+          "courtyard_box": [
+            10.42,
+            42.87,
+            11.88,
+            45.83
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "C127.1-U107.14": 3.7152
+          },
+          "limit_mm": 5.0,
+          "ok": true
+        },
+        {
+          "ref": "R127",
+          "zone": 3,
+          "zone_rect": [
+            7,
+            39,
+            24,
+            63
+          ],
+          "courtyard_box": [
+            11.92,
+            42.87,
+            13.38,
+            45.83
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "R127.1-U107.14": 2.5466,
+            "R127.2-U107.13": 1.8848
+          },
+          "limit_mm": 5.0,
+          "ok": true
+        },
+        {
+          "ref": "C128",
+          "zone": 3,
+          "zone_rect": [
+            7,
+            39,
+            24,
+            63
+          ],
+          "courtyard_box": [
+            14.37,
+            42.42,
+            17.33,
+            43.88
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "C128.1-U107.2": 1.5524,
+            "C128.2-U107.3": 1.625
+          },
+          "limit_mm": 2.0,
+          "ok": true
+        },
+        {
+          "ref": "R125",
+          "zone": 3,
+          "zone_rect": [
+            7,
+            39,
+            24,
+            63
+          ],
+          "courtyard_box": [
+            16.945,
+            40.77,
+            19.905,
+            42.23
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "R125.1-U107.4": 3.3284
+          },
+          "limit_mm": 5.0,
+          "ok": true
+        },
+        {
+          "ref": "R128",
+          "zone": 3,
+          "zone_rect": [
+            7,
+            39,
+            24,
+            63
+          ],
+          "courtyard_box": [
+            13.77,
+            40.77,
+            16.73,
+            42.23
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "R128.2-U107.4": 3.182
+          },
+          "limit_mm": 5.0,
+          "ok": true
+        },
+        {
+          "ref": "R124",
+          "zone": 3,
+          "zone_rect": [
+            7,
+            39,
+            24,
+            63
+          ],
+          "courtyard_box": [
+            16.945,
+            39.12,
+            19.905,
+            40.58
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "R124.2-U107.4": 4.9189
+          },
+          "limit_mm": 5.0,
+          "ok": true
+        },
+        {
+          "ref": "C129",
+          "zone": 3,
+          "zone_rect": [
+            7,
+            39,
+            24,
+            63
+          ],
+          "courtyard_box": [
+            13.77,
+            39.12,
+            16.73,
+            40.58
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "C129.1-U107.4": 4.826
+          },
+          "limit_mm": 5.0,
+          "ok": true
+        },
+        {
+          "ref": "R130",
+          "zone": 4,
+          "zone_rect": [
+            7,
+            73,
+            21,
+            87
+          ],
+          "courtyard_box": [
+            17.22,
+            77.995,
+            20.18,
+            79.455
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "R130.1-U108.10": 1.625
+          },
+          "limit_mm": 5.0,
+          "ok": true
+        },
+        {
+          "ref": "R129",
+          "zone": 4,
+          "zone_rect": [
+            7,
+            73,
+            21,
+            87
+          ],
+          "courtyard_box": [
+            17.22,
+            76.27,
+            20.18,
+            77.73
+          ],
+          "inside": true,
+          "pad_to_pin_mm": {
+            "R129.2-U108.10": 3.7015
+          },
+          "limit_mm": 5.0,
+          "ok": true
+        }
+      ],
+      "passed": true
+    }
   },
   "sides": [
     "top",
