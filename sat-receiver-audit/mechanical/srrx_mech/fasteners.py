@@ -226,13 +226,13 @@ def stacks(P):
     J.append(_joint("POD-PANEL", "F41", f"steel panel 1554UPL to the pod body (insert pitch {hp.get('panel_inserts_m3')})", 4, "M3", 3.0, "panel", [],
                     "Hammond M3 panel inserts (depth not read)", None, 0.0, ENG_METAL * 3.0, "insert bottom", "",
                     "insert depth and panel thickness at the screws not read (P-01)"))
+    # W2 MECH-5 (review): module joints of mechanical.json module_mounts - rear-wall insert bosses, taped modules, plate PEM standoffs
+    J += module_joints(P)
     # joints whose fixing is not designed yet
     for jid, row, what in (("PWR-BOND", "F26", "BOND-RF and the other CHASSIS bond points (lug + serrated washer)"),
-                           ("INA228", "F09", "INA228 5832 on stand-offs on the rear wall (W2 MECH-3 place)"),
-                           ("SWM-2813", "F05", "Pololu #2813 on stand-offs on the rear wall (W2 MECH-3 place)"),
-                           ("HUB-5997", "F10", "Adafruit 5997 CH334F"), ("IP2368", "F11", "IP2368 board"),
+                           ("IP2368", "F11", "IP2368 board"),
                            ("FAN-NF-A4X10", "F27", "Noctua fan of cooler A"), ("BLOWER", "F28", "Delta BFB0305HA-C"),
-                           ("HATCH-BOARD", "F38", "hatch board HATCH"), ("PACK-FUSE", "F39", "F101 carrier PACK_FUSE"),
+                           ("HATCH-BOARD", "F38", "hatch board HATCH"),
                            ("POD-MODULES", "F42", "cf2235 / LaNA WB in the pod")):
         J.append(_joint(jid, row, what, None, "TBD", None, "TBD", [], "TBD", None, 0.0, 0.0, "TBD", "",
                         "fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"))
@@ -250,6 +250,55 @@ def stacks(P):
                       "tip_gap_mm": TIP_GAP, "length": "under-head length (ISO 14580); ISO 10642 includes the head",
                       "use": "PASS (model) = a length of the named ISO series (parts.json iso14580_lengths) falls in the window; a window without one, or a joint whose screw or standoff is not chosen, is OPEN; SRC-2 (C-13/C-14) orders the lengths and a window that no stocked length meets keeps the item TBD"},
             "joints": J, "nut_and_kit_rows": nut_rows, "summary": counts}
+
+
+def module_joints(P):
+    """W2 MECH-5 review: F09/F10 screws into the rear-wall TC-M2,5x4 inserts (hole insert + 1.0, mechanical.json module_mounts.insert
+    hole_depth), F05/F47 taped modules (no screw), F39 PACK_FUSE carrier on the PEM SO-M2.5-6ZI standoffs (carrier and screw: PCB-SB2)."""
+    m = P.mech
+    mmt = m.get("module_mounts")
+    if not mmt:
+        return []
+    ins = mmt["insert"]
+    depth = ins.get("hole_depth", ins["len"])
+    mounts = {x["item"]: x for x in mmt["mounts"]}
+    out = []
+    for jid, row, item, part, what in (("INA228", "F09", "ina228", "adafruit_ina228_5832", "INA228 5832 to the rear-wall bosses"),
+                                       ("HUB-5997", "F10", "hub_ch334f", "adafruit_5997", "Adafruit 5997 CH334F to the rear-wall bosses")):
+        mt = mounts.get(item)
+        if not mt:
+            continue
+        tb = P.parts[part]["board"][2]
+        out.append(_joint(jid, row, what, len(mt["screws"]), "M2.5", 2.5, f"{item} board top face, z {mt['seat_z'] + tb:g}", [(f"{item} board", tb)],
+                          f"CNC Kitchen {ins['part']} insert in a printed rear-wall boss (hole {depth:g} deep from the boss top z {mt['seat_z']:g})",
+                          ins["len"], depth - ins["len"] - TIP_GAP, ENG_INSERT * 2.5, f"blind insert hole bottom (insert + {depth - ins['len']:g})",
+                          "M2.5 x 6 passes 0.4 beyond the insert into the empty hole (the full 4.0 insert thread engaged)", lengths=_series(P, "M2.5")))
+    tape = P.parts[mmt["tape"]]
+    for jid, row, item, what in (("SWM-2813", "F05", "swm_2813", "Pololu #2813 to the printed pad of the rear wall"),
+                                 ("VEML7700", "F47", "veml7700", "Adafruit 4162 VEML7700 to 4 printed rests in the top-wall pocket")):
+        mt = mounts.get(item)
+        if not mt:
+            continue
+        n = len(mt.get("rests", [])) or 1
+        out.append({"id": jid, "build17_row": row, "what": what, "count": n, "thread": "none (tape joint)",
+                    "seat": "printed pad top" if "pad" in mt else "printed rest faces",
+                    "stack_mm": [[f"{tape['name'].split(' (')[0]}", tape["t"]]], "grip_mm": None,
+                    "receiver": {"kind": "acrylic foam tape on a printed face (no screw)", "thread_mm": None, "tip_limit": None},
+                    "min_engagement_mm": None, "length_window_mm": None,
+                    "result": f"OPEN: tape joint, no screw: {tape['t']:g} mm tape (parts.json {mmt['tape']}, status {tape['status']}); bond strength on ASA and on "
+                              "the board solder mask not read; hold under vibration and temperature - bench",
+                    "note": ("locating spigots in two board holes (mechanical.json module_mounts veml7700)" if mt.get("spigots") else
+                             "the wires are tied down next to the board (the tape does not carry the wire pull)")})
+    pf = mounts.get("pack_fuse")
+    if pf:
+        so = P.parts[pf["fastener"]]
+        ct = m["rear_face"]["hatch"]["f101_access"]["carrier_t"]
+        out.append(_joint("PACK-FUSE", "F39", "PACK_FUSE carrier (F101) to the PEM standoffs PF1-PF2", len(pf["standoffs"]), "M2.5", 2.5,
+                          "carrier top face", [("PACK_FUSE carrier (thickness assumption, PCB-SB2)", ct)],
+                          f"PEM {so['mpn']} thru-threaded standoff, L {so['length']:g} + its head flush in the plate", so["length"] + m["plate"]["t"], 0.0,
+                          ENG_METAL * 2.5, "plate rear face (head flush with it)", lengths=_series(P, "M2.5", named=False),
+                          pending="the carrier board, its screws and insulation are PCB-SB2's (build/17 F39)"))
+    return out
 
 
 def rule(P):

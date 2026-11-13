@@ -7,14 +7,16 @@ Run from any directory:
   python build/kicad/boards/PWR_B/make_spec.py --svg F    also write a placement preview (courtyards, pads, scripted copper)
 
 What it decides, in one place (the spec records each rule with its source):
-  * placement of the 128 PWR_BRANCH_SW / USB_POWER_SW refs of pcb/generated/partition.json, top side only, plus the B2B
-    placeholder B2B1 on the bottom side (the Samtec QTH-060-01-L-D-A of pcb/partition-spec.json b2b has no graph ref and
-    no vendored land yet: OPEN for the GR-4 / PCB-PWRA lineage; only the contact numbers of the placeholder carry over,
-    its 0.6 mm-pitch contact positions and fan-out do not, see why_placeholder);
-  * the B2B pin map, generated from pcb/generated/b2b-nets.json (contacts per net, one GND contact per power net);
-  * scripted locked copper: the LAB5 path (B2B pins -> B.Cu bar -> via array -> F.Cu trunk -> stubs), the Kelvin
-    nets of the four LNA shunts (current path and sense take-off from the shunt pads) and a plane via next to every
-    SMD GND pad (gnd_fanout);
+  * placement of the PWR_BRANCH_SW / USB_POWER_SW refs of pcb/generated/partition.json, top side only, except the B2B
+    half J209 (W2 B2B: Samtec LSHM-150-02.5-L-DV-A-N-K-TR, graph ref, vendored KiCad 10.0.7 footprint) on the bottom
+    side, at the nearest place to the former FX8 placeholder anchor where its two alignment-post holes clear the
+    top-side courtyards;
+  * the B2B pin map: J209 takes its pin nets from the graph, which carries pcb/generated/b2b-nets.json contacts pin for
+    pin (checked here; the mating map to J208 on PWR-A is b2b-nets.json mating_map);
+  * scripted locked copper: the LAB5 path (J209 contacts -> via blocks -> F.Cu trunk -> stubs), the Kelvin nets of the
+    four LNA shunts (current path and sense take-off from the shunt pads), the J209 GND spine (every GND contact
+    joins a B.Cu spine between the two contact rows, with plane vias on it) and a plane via next to every other SMD
+    GND pad (gnd_fanout);
   * the 4-layer plan (In1.Cu / In2.Cu GND planes of type power, signals on F.Cu / B.Cu), the project rules and net
     classes, and the router settings: Freerouting without its fan-out stage, the classes of the scripted nets
     (SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A) not autorouted, rule-area strips on every board edge.
@@ -50,17 +52,9 @@ PARTITION_SPEC = BASE / 'pcb/partition-spec.json'
 CONTRACT = BASE / 'mechanical/generated/contract/boards.json'
 MANIFEST = BASE / 'build/kicad/footprints/manifest.json'
 
-# B2B placeholder: official KiCad 10.0.7 library footprints (the plug on PWR-B, its socket for PWR-A), read 2026-11-07.
-# Not a part to populate: Hirose rates FX8 contacts at 0.4 A, the pin map runs 1 A per contact (why_placeholder).
-B2B_FP = 'Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm'
-B2B_FP_SHA = '9037e84fbb6b50960b888d23e8ba8dea9d7cd6d705ad00ea4d6b2893bffb586f'
-B2B_FP_URL = ('https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_Hirose_FX8.pretty/'
-              'Hirose_FX8-120P-SV_2x60_P0.6mm.kicad_mod')
-B2B_MATE_FP = 'Connector_Hirose_FX8:Hirose_FX8-120S-SV_2x60_P0.6mm'
-B2B_MATE_SHA = '82ef2a7f5fbd930b90d97ef39fd59bbc18f8f31c22ec51cee135ad045241a67b'
-# Sources of the placeholder texts (fetch-only PDFs, never committed), read 2026-11-07 without a browser User-Agent.
-QTH_PRINT_URL = 'https://suddendocs.samtec.com/prints/qth-xxx-xx-x-d-xxx-footprint.pdf'
-FX8_CATALOG_URL = 'https://media.e-sonic.com/productfiles/mf-HR/HR-FX8120SSV21.pdf'
+# B2B half on PWR-B (W2 B2B): graph ref J209 (design/E2.json), its mate J208 on the PWR-A top (pcb/partition-spec.json
+# b2b.graph_refs). Footprint and MPN come from the graph and the parts DB; the mating map from b2b-nets.json.
+B2B_REF, B2B_MATE_BOARD, B2B_MATE_REF = 'J209', 'PWR_A', 'J208'
 
 CLEAR = 0.15          # project clearance (netclasses.json project_defaults)
 MARGIN = 0.05         # design margin of the scripted copper over the clearance
@@ -223,25 +217,15 @@ class Inputs:
             fp = self.manifest[self.graph[ref]['footprint']]
             text = (BASE / fp['file']).read_text(encoding='utf-8')
             self.geo[ref], self.fab[ref], self.refpos[ref] = bg.footprint_geometry(text), fab_box(text), ref_xy(text)
-        text = self.b2b_text()
-        self.geo['B2B1'], self.fab['B2B1'], self.refpos['B2B1'] = bg.footprint_geometry(text), fab_box(text), ref_xy(text)
-
-    def b2b_text(self):
-        lib = bg.image_library_dir()  # KiCad 10.0.7 library (image), or KICAD10_FOOTPRINT_DIR with a copy of B2B_FP_URL
-        path = lib / 'Connector_Hirose_FX8.pretty' / 'Hirose_FX8-120P-SV_2x60_P0.6mm.kicad_mod' if lib else None
-        if path is None or not path.is_file():
-            raise SystemExit(f'make_spec: B2B placeholder footprint not found; set KICAD10_FOOTPRINT_DIR to a library with {B2B_FP_URL}')
-        data = path.read_bytes()
-        if hashlib.sha256(data).hexdigest() != B2B_FP_SHA:
-            raise SystemExit(f'make_spec: {path} sha256 differs from {B2B_FP_SHA}')
-        return data.decode('utf-8')
+        if B2B_REF not in self.refs:
+            raise SystemExit(f'make_spec: {B2B_REF} is not a {BOARD} ref of pcb/generated/partition.json (rerun pcb/prepare.py)')
 
     def nets_of(self, ref):
         return {str(p['number']): (None if p.get('nc') else p.get('net')) for p in self.graph[ref]['pins']}
 
 
 # ------------------------------------------------------------------ placement (board mm: contract outline origin, y up, top view)
-# Fixed anchors: harness headers on the board edges (mating face outwards), the B2B placeholder on the bottom side.
+# Fixed anchors: harness headers on the board edges (mating face outwards), the B2B half J209 on the bottom side.
 HEADERS = {
     # ref: (align pad 1 at, rotation); rotation 0 = mating face towards -y (bottom edge), 90 = +x (right edge), 180 = +y (top edge)
     'J202': ((62.0, 9.5), 0),     # S02-PWR-SIG-1 PHD 2x10 -> CTRL (bottom edge, towards the CTRL board at x >= 176 of the enclosure)
@@ -252,8 +236,18 @@ HEADERS = {
     'J207': ((107.0, 28.25), 180),  # SL2-PWR-PH PH 12 -> plate slot SL2 (top edge)
     'J204': ((126.0, 28.25), 180),  # X04S1-PWR PH 8 (S04, RF bias) -> SL2 (top edge zone 108-128)
 }
-B2B_AT = (106.0, 18.5)   # FX8 placeholder centre, bottom side, rotation 0: pin 1 at the right end of the lower row
-TX, TY = 72.0, 13.2      # LAB5 F.Cu trunk: vertical at x = TX, horizontal at y = TY (to the B2B via block)
+# J209 centre, bottom side, rotation 180: contact 1 at the left end of the lower row (odd contacts lower, even upper,
+# pads 2k-1 / 2k in one column, 0.5 mm pitch). With the map of b2b-nets.json the upper row carries the rail contacts, each
+# beside its GND return, towards the top-edge headers and the left LNA channels; the lower row starts with the four LAB5
+# contacts next to the end of the LAB5 trunk and goes on with the signals towards J202 / J203; the sense pair (column 50)
+# sits under the ch4 shunt R246 and the spare columns under the ch4 cell. The FX8 placeholder sat at (106.0, 18.5);
+# there the right alignment-post hole (footprint (13.5, -0.85), 1.45 mm NPTH) lands in a top-side courtyard (L209 at
+# rotation 0 or 180). On y 18.5 with rotation 180 both holes clear every top-side courtyard for x 98.46-99.14 (right
+# hole between R244 and R243, left hole right of R506); 98.8 is its middle. With rotation 0 only x 102.05-102.2 is
+# legal, and there the LAB5 contacts lie under U209 (route run 43100556016: 21 connections open).
+B2B_AT = (98.8, 18.5)
+B2B_ROT = 180
+TX, TY = 72.0, 13.2      # LAB5 F.Cu trunk: vertical at x = TX, horizontal at y = TY (to the J209 via blocks)
 
 
 def mirror_rot(rot):
@@ -302,9 +296,9 @@ def placement(inp):
             anchors[ref] = {'at': a['at'], 'align': a.get('align', 'origin'), 'rotation': a['rotation'], 'side': side}
     for ref, (at, rot) in HEADERS.items():
         anchors[ref] = {'at': [at[0], at[1]], 'align': {'pad': '1'}, 'rotation': rot, 'side': 'F'}
-    anchors['B2B1'] = {'at': list(B2B_AT), 'align': 'origin', 'rotation': 0, 'side': 'B'}
+    anchors[B2B_REF] = {'at': list(B2B_AT), 'align': 'origin', 'rotation': B2B_ROT, 'side': 'B'}
     # LNA channels ch1-ch3 in the left column (x 8-28), the INA3221 U215 beside the three Kelvin sense pairs, ch4 over
-    # the right, contact-free part of the B2B (its Kelvin pair and LNA4V5 go through the B2B to PWR-A).
+    # the right end of J209 (its Kelvin pair in column 50 and LNA4V5 go through the B2B to PWR-A).
     lna = [('U206', 'C232', 'R229', 'R228', 'R231', 'C233', 'L206', 'C234', 'R232', 'TP206', 'R268', 'R269', (6.7, 24.0)),
            ('U207', 'C236', 'R234', 'R233', 'R236', 'C237', 'L207', 'C238', 'R237', 'TP207', 'R270', 'R271', (6.7, 12.9)),
            ('U208', 'C240', 'R239', 'R238', 'R241', 'C241', 'L208', 'C242', 'R242', 'TP208', 'R272', 'R273', (6.7, 1.8)),
@@ -331,7 +325,7 @@ def placement(inp):
                         ('R504', 81.0, 31.6, 90), ('C507', 83.2, 24.6, 90), ('R508', 85.0, 24.6, 90)],
              {r: r for r in ('L210', 'L215', 'C503', 'C249', 'C250', 'C296', 'C297', 'R251', 'R295', 'TP210', 'TP216',
                              'R504', 'C507', 'R508')}))
-    # LAB BUS I2C buffer U507 over the B2B, between J201/J506 and ch4.
+    # LAB BUS I2C buffer U507 right of the B2B, between J201/J506 and ch4.
     put(cell(0.0, 0.0, [('U507', 116.0, 12.4, 0), ('C550', 111.0, 13.0, 90), ('C551', 121.0, 13.0, 90),
                         ('R550', 122.8, 13.0, 90), ('R551', 124.6, 13.0, 90)],
              {r: r for r in ('U507', 'C550', 'C551', 'R550', 'R551')}))
@@ -339,12 +333,8 @@ def placement(inp):
 
 
 # ------------------------------------------------------------------ geometry checks (before CI)
-def placed_parts(inp, anchors, b2b_pins):
-    out = {}
-    for ref, anchor in anchors.items():
-        nets = dict(b2b_pins) if ref == 'B2B1' else inp.nets_of(ref)
-        out[ref] = Placed(ref, inp.geo[ref], inp.fab[ref], anchor, nets)
-    return out
+def placed_parts(inp, anchors):
+    return {ref: Placed(ref, inp.geo[ref], inp.fab[ref], anchor, inp.nets_of(ref)) for ref, anchor in anchors.items()}
 
 
 def check_placement(inp, parts):
@@ -555,69 +545,68 @@ def svg(inp, parts, tracks, vias, path):
     Path(path).write_text('\n'.join(out), encoding='utf-8')
 
 
-# ------------------------------------------------------------------ B2B pin map (generated from pcb/generated/b2b-nets.json)
-# Rule (W2 PCB-PWRB): pcb/generated/b2b-nets.json gives every crossing net its contact count (ceil(I_protection / 1 A) for
-# power nets, 1 for the others) and one GND contact per power net. On the placeholder the odd row (lower, y = cy - 2.7) fans
-# out towards the bottom-edge headers and the LAB5 bar, the even row (upper) towards the top-edge headers and the LNA side.
-# Contacts are taken from the left end of each row (pin 119/120) in the order below; a net whose PWR-B pad sits over the
-# connector (the ch4 Kelvin pair and its damping net) takes the free upper-row contact under that pad. Every other contact
-# is a spare without a net. PCB-PWRA-2 mirrors this map pin for pin on the mate (check_boards b2b).
-LOWER_ORDER = ['LAB5', 'LAB5', 'LAB5', 'LAB5', 'GND',
-               # CTRL pass-through to J202 / J203, in the order of their header pins (left to right)
-               'CHG_INHIBIT', 'E1_BAT_ADC', 'EN_AUX12', 'EN_BONI', 'EN_HFP', 'EN_LIME3V3', 'EN_LNB', 'FAULT_HFP',
-               'FLT_BONI', 'FLT_LIME3V3', 'FLT_LNB', 'I2C0_SCL', 'I2C0_SDA', 'IMU_RX', 'IMU_TX', 'INA228_ALERT',
-               'OVP_LNB_N', 'PICO_DISP_EN', 'PICO_OFF', 'PWR_BUTTON',
-               'GND', 'VBUS_LABPORT', 'I2C2_SCL', 'I2C2_SDA', '3V3_Q6A', 'GND']
-UPPER_ORDER = ['LNA4V5', 'LNA4V5', 'GND', 'BIAS_CH1_DAMP', 'BIAS_CH2_DAMP', 'BIAS_CH3_DAMP', 'VBUS_RTLB_DAMP', 'E2_SB_DAMP',
-               'BONI13V8', 'AUX12', 'GND', 'BONI13V8_PORT', 'GND', 'VBUS_HFP', 'GND', 'LNB13V2', 'GND',
-               'LAB5_RLY', 'LAB5_RLY', 'GND']
-UNDER_PAD = {'E2_LNA4_SW': ('R246', '1'), 'E2_LNA4_SHUNT': ('R246', '2'), 'BIAS_CH4_DAMP': ('R247', '2')}
-
-
-def b2b_pin_xy(number):
-    """Board position of a placeholder contact (FX8 at B2B_AT, bottom side, rotation 0: KiCad flips x)."""
-    k = int(number)
-    cx, cy = B2B_AT
-    if k % 2:
-        return (r4(cx + 17.7 - 0.3 * (k - 1)), r4(cy - 2.7))
-    return (r4(cx + 17.7 - 0.3 * (k - 2)), r4(cy + 2.7))
-
-
-def b2b_pin_map(inp, anchors):
-    want = {}
-    for n in inp.b2b['nets']:
-        want[n['net']] = int(n['pins'])
-    gnd = sum(int(n.get('gnd_pins', 0)) for n in inp.b2b['nets'])
-    order_nets = [n for n in LOWER_ORDER + UPPER_ORDER if n != 'GND'] + list(UNDER_PAD)
-    counts = {}
-    for n in order_nets:
-        counts[n] = counts.get(n, 0) + 1
-    if counts != want:
-        diff = sorted(set(counts.items()) ^ set(want.items()))
-        raise SystemExit(f'make_spec: B2B order differs from pcb/generated/b2b-nets.json: {diff}')
-    if (LOWER_ORDER + UPPER_ORDER).count('GND') != gnd:
-        raise SystemExit(f'make_spec: {gnd} GND contacts in b2b-nets.json, the order has {(LOWER_ORDER + UPPER_ORDER).count("GND")}')
-    pins = {}
-    for i, net in enumerate(LOWER_ORDER):
-        pins[str(119 - 2 * i)] = net
-    for i, net in enumerate(UPPER_ORDER):
-        pins[str(120 - 2 * i)] = net
-    # nets under their pad: the free upper-row contact closest in x to the pad, two contacts apart from any used one
-    geo = {ref: Placed(ref, inp.geo[ref], inp.fab[ref], anchors[ref], inp.nets_of(ref)) for ref, _p in UNDER_PAD.values()}
-    for net, (ref, number) in UNDER_PAD.items():
-        x = geo[ref].pad(number)['at'][0]
-        free = [k for k in range(2, 121, 2) if str(k) not in pins and str(k - 2) not in pins and str(k + 2) not in pins]
-        k = min(free, key=lambda k: (abs(b2b_pin_xy(k)[0] - x), k))
-        pins[str(k)] = net
-    used = sorted(pins, key=int)
-    return {'pins': dict(sorted(pins.items(), key=lambda kv: int(kv[0]))), 'used': len(used), 'spare': 120 - len(used),
-            'scripted_nets': {}}
+# ------------------------------------------------------------------ B2B pin map (J209 graph pins = pcb/generated/b2b-nets.json)
+# W2 B2B: pcb/prepare.py b2b_contacts generates the contact map of both halves (b2b-nets.json contacts: pwr_a_pin on J208,
+# pwr_b_pin on J209, pin_map_rule and guard_rule there) and the graph carries it pin for pin. This board takes the J209
+# pad nets from the graph and stops when they differ from the map. Spare contacts are nc in the graph (no net).
+def b2b_pin_map(inp):
+    graph = inp.nets_of(B2B_REF)
+    want = {str(c['pwr_b_pin']): (c['net'] or None) for c in inp.b2b['contacts']}
+    have = {n: graph.get(n) for n in want}
+    diff = sorted((n for n in want if want[n] != have[n]), key=int)
+    if diff or set(graph) != set(want):
+        raise SystemExit(f'make_spec: {B2B_REF} graph pins differ from pcb/generated/b2b-nets.json contacts at '
+                         f'{diff[:6] or sorted(set(graph) ^ set(want))} (rerun pcb/write_b2b_graph.py and the refreeze chain)')
+    if inp.b2b['graph_refs'].get('pwr_b') != B2B_REF or inp.b2b['graph_refs'].get('pwr_a') != B2B_MATE_REF:
+        raise SystemExit(f'make_spec: b2b-nets.json graph_refs {inp.b2b["graph_refs"]} are not {B2B_MATE_REF} / {B2B_REF}')
+    pins = {n: net for n, net in want.items() if net}
+    return {'pins': dict(sorted(pins.items(), key=lambda kv: int(kv[0]))), 'used': len(pins),
+            'spare': int(inp.b2b['contacts_available']) - len(pins), 'scripted_nets': {}}
 
 
 # ------------------------------------------------------------------ scripted locked copper
-LAB5_BAR_X = 89.2          # B.Cu bar over the four LAB5 contacts 113-119 and the via block
-LAB5_VIAS = [(88.7, 12.2), (89.7, 12.2), (88.7, 13.2), (89.7, 13.2), (88.7, 14.2), (89.7, 14.2)]
 W_TRUNK, W_BRANCH, W_CURRENT, W_SENSE = 2.0, 0.6, 0.5, 0.35
+# J209 escape copper (W2 B2B). The LSHM pads are 0.30 mm wide at 0.50 mm pitch (0.20 mm gaps), and every rail contact has a
+# GND neighbour in its row (b2b-nets.json guard_rule), so: GND contacts join a B.Cu spine between the rows (inwards), rail
+# and signal contacts escape outwards, and copper that enters a pad between two neighbours is at most W_PADSTUB wide.
+W_SIG = 0.2               # scripted signal copper (FAULT_LABPORT), above the SIG minimum 0.15 mm
+W_PADSTUB = 0.25          # into a 0.30 mm pad beside a neighbour: 0.225 mm gap (clearance 0.15 + margin 0.05)
+W_SPINE = 1.4             # GND spine on the connector centre line: 0.40 mm from the inner pad ends of both rows
+SPINE_STUB = 0.5          # GND stubs end 0.5 mm off the spine centre line, so no stub end lies inside a spine via
+NPTH_CLEAR = 0.25 + 0.05  # copper to the J209 alignment-post holes (KiCad hole clearance 0.25, design margin 0.05)
+SPINE_VIAS_MIN = 4
+SPINE_VIA_PITCH = 1.2     # spine plane vias at least this far apart: 0.5 mm between them for one F.Cu track
+LAB5_UP_VY = 22.2         # upper LAB5 vias above the upper contact row (top side free there)
+LAB5_LO_VY = 15.35        # lower LAB5 vias below the lower contact row, clear of the GND contacts beside them
+W_PAIR = 0.8              # copper of one LAB5 contact pair (2 A): PWR2A width (netclasses.json)
+K4_KLO = 15.2             # ch4 SHUNT sense: B.Cu right of the J209 hole, under the lower row into its contact
+
+
+def via_spot_ok(inp, parts, tracks, vias, at, net):
+    """A through via of `net` at `at` keeps CLEAR + MARGIN from every pad of both sides and any net (no via in a pad), from
+    scripted copper of other nets, the edges and hole keepouts, and the hole-to-hole rule (with margin) to drilled holes."""
+    c = inp.contract
+    outline = [tuple(p) for p in c['outline_mm']]
+    cuts = bg.cutout_boxes(c)
+    r = VIA_D / 2
+    vx, vy = at
+    if not point_in_poly(at, outline) or edge_dist(at, outline, cuts) - r < EDGE + MARGIN:
+        return False
+    if any(math.hypot(vx - hx, vy - hy) - r < c['hole_keepout_d'] / 2 for hx, hy in c['holes_mm']):
+        return False
+    for p in copper_items(parts):
+        if box_dist((vx, vy, vx, vy), p['box']) - r < (0.25 + MARGIN if p['npth'] else CLEAR + MARGIN):
+            return False
+    for pa in parts.values():
+        for p in pa.pads:
+            if p['type'] in ('thru_hole', 'np_thru_hole'):
+                d = min(p['box'][2] - p['box'][0], p['box'][3] - p['box'][1])
+                if math.hypot(vx - p['at'][0], vy - p['at'][1]) < VIA_DRILL / 2 + d / 2 + 0.55:
+                    return False
+    if any(math.hypot(vx - v['at'][0], vy - v['at'][1]) < VIA_DRILL + 0.55 for v in vias):
+        return False
+    return all(s['net'] == net or point_seg(at, s['a'], s['b']) - s['r'] - r >= CLEAR + MARGIN
+               for s in scripted_segments(tracks, []))
 
 
 def scripted_copper(inp, parts, pins):
@@ -634,16 +623,48 @@ def scripted_copper(inp, parts, pins):
 
     def P(ref, number):
         return parts[ref].pad(number)['at']
-    # LAB5: B2B contacts -> B.Cu bar -> six vias -> F.Cu trunk (PWR3A 2.0 mm >= 1.85) -> 0.6 mm branch to each switch IN.
-    lab5 = [n for n, net in pins['pins'].items() if net == 'LAB5']
-    ys = [P('B2B1', n)[1] for n in lab5]
-    T('LAB5-B2B-BAR', 'LAB5', 'B.Cu', W_TRUNK, [(LAB5_BAR_X, ys[0] + 0.2), (LAB5_BAR_X, 12.4)],
-      'B.Cu bar over the four LAB5 contacts (pcb/generated/b2b-nets.json: ceil(4 A / 1 A)) to the via block')
-    for i, at in enumerate(LAB5_VIAS, 1):
-        V(f'LAB5-V{i}', 'LAB5', at, 'LAB5 B.Cu bar to the F.Cu trunk: six vias (netclasses.json PWR3A vias_per_transition 5)')
-    T('LAB5-F-LANDING', 'LAB5', 'F.Cu', W_TRUNK, [(LAB5_BAR_X, TY), (LAB5_BAR_X, 14.5)], 'F.Cu copper over the via block')
+    j = parts[B2B_REF]
+
+    def row(n):  # upper / lower contact row of J209 on the board (rotation 180: odd contacts lower, even upper)
+        return 'upper' if j.pad(n)['at'][1] > B2B_AT[1] else 'lower'
+    # LAB5: four J209 contacts (b2b-nets.json: ceil(4 A / 1 A)) next to the end of the trunk. Each contact: B.Cu stub -> one via
+    # beside its row (above the upper row, below the lower row); the vias of a row are joined by F.Cu (2.0 mm for more than two
+    # contacts, else 0.8 mm, PWR2A for 2 A); upper-row LAB5 vias reach the trunk by an F.Cu riser over the strip (no top-side
+    # part there), lower-row vias by a 2.0 mm plate (PWR3A >= 1.85 where the four contacts meet) -> 0.6 mm branch to each IN.
+    lab5 = sorted((n for n, net in pins['pins'].items() if net == 'LAB5'), key=int)
+    up, lo = [n for n in lab5 if row(n) == 'upper'], [n for n in lab5 if row(n) == 'lower']
+    for n in up:
+        x = P(B2B_REF, n)[0]
+        end = j.pad(n)['box'][3] + 0.3
+        T(f'LAB5-J209-{n}', 'LAB5', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (x, end)],
+          f'out of J209 contact {n} (upper row) between its GND neighbours')
+        T(f'LAB5-J209-{n}-E', 'LAB5', 'B.Cu', W_SENSE, [(x, end), (x, LAB5_UP_VY)],
+          f'J209 contact {n} to its via: one contact, at most 1 A (b2b_i_pin_A), PWR1A width')
+        V(f'LAB5-UV-{n}', 'LAB5', (x, LAB5_UP_VY), f'LAB5 via of J209 contact {n}')
+    for n in lo:
+        x = P(B2B_REF, n)[0]
+        T(f'LAB5-J209-{n}', 'LAB5', 'B.Cu', W_PADSTUB, [P(B2B_REF, n), (x, LAB5_LO_VY)],
+          f'out of J209 contact {n} (lower row) between its GND neighbours to its via: one contact, at most 1 A')
+        V(f'LAB5-LV-{n}', 'LAB5', (x, LAB5_LO_VY), f'LAB5 via of J209 contact {n}')
+    if lo:
+        lx = sorted(P(B2B_REF, n)[0] for n in lo)
+        xm = r4(sum(lx) / len(lx))
+        T('LAB5-PLATE', 'LAB5', 'F.Cu', W_TRUNK, [(lx[0], LAB5_LO_VY), (lx[-1], LAB5_LO_VY)],
+          f'F.Cu plate over the {len(lo)} LAB5 vias of the lower J209 row (PWR3A width 2.0 mm)')
+        T('LAB5-PLATE-DOWN', 'LAB5', 'F.Cu', W_TRUNK, [(xm, LAB5_LO_VY), (xm, TY)], 'LAB5 plate to the trunk (4 A)')
+    if up:
+        ux = sorted(P(B2B_REF, n)[0] for n in up)
+        xu = r4(sum(ux) / len(ux))
+        # the bar runs from via centre to via centre (KiCad: a track end inside a via must be its centre) at the PWR2A width:
+        # each half carries at most two contacts (2 A) to the riser in the middle; 2.0 mm would reach the neighbouring escapes
+        T('LAB5-UP-BAR', 'LAB5', 'F.Cu', W_PAIR, [(ux[0], LAB5_UP_VY), (ux[-1], LAB5_UP_VY)],
+          f'F.Cu bar over the {len(up)} LAB5 vias above the upper J209 row (at most 2 A on each side of the riser)')
+        T('LAB5-RISER', 'LAB5', 'F.Cu', W_TRUNK if len(up) > 2 else W_PAIR, [(xu, LAB5_UP_VY), (xu, LAB5_LO_VY if lo else TY)],
+          'F.Cu riser of the upper-row LAB5 contacts over the strip (no top-side part there)')
+        if not lo:
+            xm = xu
     first = LAB5_CELLS[0][0] - 0.95
-    T('LAB5-TRUNK', 'LAB5', 'F.Cu', W_TRUNK, [(LAB5_BAR_X, TY), (first, TY)],
+    T('LAB5-TRUNK', 'LAB5', 'F.Cu', W_TRUNK, [(xm, TY), (first, TY)],
       'LAB5 trunk to the four TPS2553 inputs: PWR3A width 2.0 mm >= 1.85 (netclasses.json)')
     exempt = {}
     for cx, refs in LAB5_CELLS:
@@ -655,7 +676,13 @@ def scripted_copper(inp, parts, pins):
                      'reason': f'LAB5 branch from the 2.0 mm trunk to {u} IN (pin 1), through the input capacitor {refs["cA"]}: '
                                f'it carries at most the TPS2553 limit of {u} (<= 0.825 A, tools/assembly_data.py NET_CURRENT), '
                                f'within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm'}
-    lab5_pads = [('B2B1', n) for n in lab5] + [(refs['U'], '1') for _cx, refs in LAB5_CELLS] + \
+    exempt[B2B_REF] = {'max_mm': 10.0, 'min_width_mm': W_PADSTUB,
+                       'reason': 'J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail '
+                                 'neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, '
+                                 'pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row and 0.35 mm '
+                                 '(PWR1A, 1 A) beyond it up to its via, where the LAB5 contacts meet on the 2.0 mm LAB5-PLATE; '
+                                 'the 1.85 mm of PWR3A does not fit between 0.30 mm pads'}
+    lab5_pads = [(B2B_REF, n) for n in lab5] + [(refs['U'], '1') for _cx, refs in LAB5_CELLS] + \
         [(refs['cA'], '1') for _cx, refs in LAB5_CELLS] + [(refs['cB'], '1') for _cx, refs in LAB5_CELLS if 'cB' in refs]
     pins['scripted_nets']['LAB5'] = lab5_pads
     # Kelvin shunts of the four LNA channels: current path and sense take-off from the shunt pads (cell frame of LNA_ROWS).
@@ -674,18 +701,85 @@ def scripted_copper(inp, parts, pins):
             T(f'K{ch}-SH-S', shunt, 'F.Cu', W_SENSE, [(m1[0], s2[1]), m1], f'Kelvin sense: {rsh} pad 2 to the INA3221 filter {rsm}')
             pins['scripted_nets'][sw] = [(u, '6'), (rsh, '1'), (rsp, '1')]
             pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'), (rsm, '1')]
-        else:  # ch4: the sense pair crosses the B2B to INA3221 #2 U216 on PWR-A (declared sense pair, partition-spec b2b)
-            for net, pad, tag in ((sw, s1, 'SW'), (shunt, s2, 'SH')):
-                k = next(n for n, v in pins['pins'].items() if v == net)
-                bk = P('B2B1', k)
-                top = parts[rsh].pad('1')['box'][3]
-                via = (pad[0] + (0.16 if tag == 'SW' else -0.16), top + 0.65)
-                T(f'K{ch}-{tag}-S', net, 'F.Cu', W_SENSE, [(via[0], pad[1]), via], f'Kelvin sense: {rsh} pad to its via')
-                V(f'K{ch}-{tag}-V', net, via, f'Kelvin sense {net} to the B2B contact {k} (bottom side)')
-                T(f'K{ch}-{tag}-B', net, 'B.Cu', W_SENSE, [via, (bk[0], via[1] - 1.0), bk], f'Kelvin sense to B2B contact {k}')
-            pins['scripted_nets'][sw] = [(u, '6'), (rsh, '1'), ('B2B1', next(n for n, v in pins['pins'].items() if v == sw))]
-            pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'),
-                                            ('B2B1', next(n for n, v in pins['pins'].items() if v == shunt))]
+            continue
+        # ch4: the sense pair crosses the B2B to INA3221 #2 U216 on PWR-A (declared sense pair, partition-spec b2b). Its
+        # contacts are J209 column 50 under R246: SW in the upper row, SHUNT in the lower row. Each take-off leaves the top of
+        # its shunt pad to a via (as for the FX8 placeholder); SW runs on B.Cu into its contact from above, SHUNT on B.Cu
+        # right of the J209 alignment hole and under the lower row into its contact. The take-offs touch only their shunt
+        # pad, not the current-path copper (K4-SW-I enters pad 1 from the left, K4-SH-I and K4-SH-C leave pad 2 to the
+        # right and below).
+        ksw = next(n for n, v in pins['pins'].items() if v == sw)
+        ksh = next(n for n, v in pins['pins'].items() if v == shunt)
+        if (row(ksw), row(ksh)) != ('upper', 'lower') or j.pad(ksw)['at'][0] != j.pad(ksh)['at'][0]:
+            raise SystemExit(f'make_spec: J209 {sw} {ksw} / {shunt} {ksh} are not one column (SW upper, SHUNT lower)')
+        b1 = parts[rsh].pad('1')['box']
+        top = b1[3]
+        # SW: via left of the top of pad 1 (clear of the current path K4-SW-I, which enters pad 1 from below), so that the
+        # SHUNT path can pass close to the J209 hole and leave the board right of it open; SHUNT: via over pad 2 as before
+        vsw, vsh = (r4(b1[0] - 0.775), r4(top - 0.075)), (s2[0] - 0.16, top + 0.65)
+        T('K4-SW-S', sw, 'F.Cu', W_SENSE, [(r4(b1[0] + 0.15), vsw[1]), vsw], f'Kelvin sense: top-left of {rsh} pad 1 to its via')
+        V('K4-SW-V', sw, vsw, f'Kelvin sense {sw} to J209 contact {ksw} (bottom side)')
+        bx, by = P(B2B_REF, ksw)
+        end = j.pad(ksw)['box'][3] + 0.3
+        T('K4-SW-B', sw, 'B.Cu', W_SENSE, [vsw, (bx, end + 0.6), (bx, end)], f'Kelvin sense to J209 contact {ksw}')
+        T('K4-SW-P', sw, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksw} between its neighbours')
+        T('K4-SH-S', shunt, 'F.Cu', W_SENSE, [(vsh[0], s2[1]), vsh], f'Kelvin sense: top of {rsh} pad 2 to its via')
+        V('K4-SH-V', shunt, vsh, f'Kelvin sense {shunt} to J209 contact {ksh} (bottom side)')
+        bx, by = P(B2B_REF, ksh)
+        end = j.pad(ksh)['box'][1] - 0.3
+        hole_r = max(p['box'][2] for p in j.pads if p['type'] == 'np_thru_hole')
+        xs = r4(hole_r + NPTH_CLEAR + W_SENSE / 2 + 0.4)
+        T('K4-SH-B', shunt, 'B.Cu', W_SENSE, [vsh, (xs, r4(vsw[1] - 0.7)), (xs, K4_KLO), (bx, K4_KLO), (bx, end)],
+          f'Kelvin sense on B.Cu just right of the J209 alignment hole, under the lower row to contact {ksh}')
+        T('K4-SH-P', shunt, 'B.Cu', W_PADSTUB, [(bx, end), (bx, by)], f'into J209 contact {ksh} between its neighbours')
+        pins['scripted_nets'][sw] = [(u, '6'), (rsh, '1'), (B2B_REF, ksw)]
+        pins['scripted_nets'][shunt] = [(rsh, '2'), (ind, '1'), (csh, '1'), (B2B_REF, ksh)]
+    # FAULT_LABPORT (U502 FAULT to J202 pin 17, W2 B2B): the J202 signals from J209 run west under the LAB5 trunk on B.Cu
+    # and left this net, which must cross both, without a path in route runs 43123026213 and 43123819057 (DRC 0 errors,
+    # 1 open). Scripted: F.Cu from U502 pad 4 to a via right of the switch, B.Cu down left of the J209 alignment hole and
+    # diagonally under the trunk into the pin (SIG width 0.2 mm, not autorouted).
+    fx, fy = P('U502', '4')
+    fv = (r4(parts['U502'].pad('4')['box'][2] + 0.75), r4(fy + 0.365))
+    jx, jy = P('J202', '17')
+    T('FAULT-LABPORT-F', 'FAULT_LABPORT', 'F.Cu', W_SIG, [(fx, fy), fv], 'U502 FAULT (pad 4) to its via right of the switch')
+    V('FAULT-LABPORT-V', 'FAULT_LABPORT', fv, 'FAULT_LABPORT to B.Cu, between U502 and R506')
+    T('FAULT-LABPORT-B', 'FAULT_LABPORT', 'B.Cu', W_SIG,
+      [fv, (r4(fv[0] + 0.85), r4(fv[1] - 0.85)), (r4(fv[0] + 0.85), r4(jy + 6.15)), (r4(jx + 1.2), r4(jy + 2.0)),
+       (jx, r4(jy + 0.8)), (jx, jy)],
+      'down left of the J209 hole and under the LAB5 trunk into J202 pin 17')
+    pins['scripted_nets']['FAULT_LABPORT'] = [('U502', '4'), ('J202', '17')]
+    # J209 GND spine: every GND contact (b2b-nets.json guard_rule: the return beside each rail contact and the guards)
+    # stubs inwards to a B.Cu track on the connector centre line, between the two rows; plane vias on the spine where a
+    # via clears every pad and the other copper. The rail and signal contacts all escape outwards.
+    gnd = sorted((n for n, net in pins['pins'].items() if net == 'GND'), key=int)
+    sy = B2B_AT[1]
+    gx = [P(B2B_REF, n)[0] for n in gnd]
+    holes = [p['box'] for p in j.pads if p['type'] == 'np_thru_hole']
+    x0, x1 = min(gx), max(gx)
+    # keep the spine ends clear of the alignment-post holes beside columns 1 and 50 (hole box, as check_copper measures)
+    while any(seg_box_dist((x0, sy), (x1, sy), h) - W_SPINE / 2 < NPTH_CLEAR for h in holes if h[0] < (x0 + x1) / 2):
+        x0 = r4(x0 + 0.05)
+    while any(seg_box_dist((x0, sy), (x1, sy), h) - W_SPINE / 2 < NPTH_CLEAR for h in holes if h[0] > (x0 + x1) / 2):
+        x1 = r4(x1 - 0.05)
+    T('GND-J209-SPINE', 'GND', 'B.Cu', W_SPINE, [(x0, sy), (x1, sy)],
+      f'GND spine of the {len(gnd)} J209 GND contacts between the contact rows (no ground plane in the LSHM)')
+    for n in gnd:
+        px, py = P(B2B_REF, n)
+        T(f'GND-J209-{n}-S', 'GND', 'B.Cu', W_PADSTUB, [(px, py), (px, sy + (SPINE_STUB if py > sy else -SPINE_STUB))],
+          f'J209 GND contact {n} inwards into the spine')
+    # plane vias only under GND columns (rail block, guards) and SPINE_VIA_PITCH apart, so the spine leaves F.Cu channels
+    # across the strip between them and none at all over the signal and spare columns
+    k, last, x = 0, None, x0
+    while x <= x1 + 1e-9:
+        if (last is None or x - last >= SPINE_VIA_PITCH - 1e-9) and min(abs(x - g) for g in gx) <= 0.25 + 1e-9 and \
+                min(abs(x - x0), abs(x - x1)) >= VIA_D / 2 + 0.05 and via_spot_ok(inp, parts, tracks, vias, (x, sy), 'GND'):
+            k += 1
+            V(f'GND-J209-V{k}', 'GND', (x, sy), 'plane via on the J209 GND spine')
+            last = x
+        x = r4(x + 0.05)
+    if k < SPINE_VIAS_MIN:
+        raise SystemExit(f'make_spec: only {k} plane vias fit on the J209 GND spine (need {SPINE_VIAS_MIN})')
+    pins['scripted_nets']['GND'] = [(B2B_REF, n) for n in gnd]
     gt, gv, _n = gnd_fanout(inp, parts, tracks, vias)
     return tracks + gt, vias + gv, exempt
 
@@ -718,20 +812,21 @@ def gnd_fanout(inp, parts, tracks, vias):
     need = CLEAR + MARGIN
     out_t, out_v = [], []
 
-    def clear(path, via_at, layer):
+    def clear(path, via_at, layer, new_via=True):
         vx, vy = via_at
         stubs = list(zip(path, path[1:]))
         r = VIA_D / 2
-        if edge_dist(via_at, outline, cuts) - r < EDGE + MARGIN or not point_in_poly(via_at, outline):
-            return False
-        if any(bg.rects_overlap((vx - r, vy - r, vx + r, vy + r), cut) for cut in cuts):
-            return False
-        for (hx, hy), hr in holes:
-            if math.hypot(vx - hx, vy - hy) - r < hr:
+        if new_via:
+            if edge_dist(via_at, outline, cuts) - r < EDGE + MARGIN or not point_in_poly(via_at, outline):
                 return False
-        for (dx, dy), dd in drills:
-            if math.hypot(vx - dx, vy - dy) < VIA_DRILL / 2 + dd / 2 + 0.55:
+            if any(bg.rects_overlap((vx - r, vy - r, vx + r, vy + r), cut) for cut in cuts):
                 return False
+            for (hx, hy), hr in holes:
+                if math.hypot(vx - hx, vy - hy) - r < hr:
+                    return False
+            for (dx, dy), dd in drills:
+                if math.hypot(vx - dx, vy - dy) < VIA_DRILL / 2 + dd / 2 + 0.55:
+                    return False
         for p in pads:
             if p['net'] == 'GND' and not p['npth']:
                 continue
@@ -739,20 +834,23 @@ def gnd_fanout(inp, parts, tracks, vias):
             b = p['box']
             if b[0] - 3 > vx or b[2] + 3 < vx or b[1] - 3 > vy or b[3] + 3 < vy:
                 continue
-            if box_dist((vx, vy, vx, vy), b) - r < gap:
+            if new_via and box_dist((vx, vy, vx, vy), b) - r < gap:
                 return False
             if p['layer'] == layer and any(seg_box_dist(a, q, b) - W_GND / 2 < gap for a, q in stubs):
                 return False
         for s in segs:
             if s['net'] == 'GND':
                 continue
-            if seg_seg_dist(s['a'], s['b'], via_at, via_at) - s['r'] - r < need:
+            if new_via and seg_seg_dist(s['a'], s['b'], via_at, via_at) - s['r'] - r < need:
                 return False
             if s['layer'] == layer and any(seg_seg_dist(s['a'], s['b'], a, q) - s['r'] - W_GND / 2 < need for a, q in stubs):
                 return False
         return True
+    spine_vias = [tuple(v['at']) for v in vias if v['id'].startswith(f'GND-{B2B_REF}-V')]
     done = 0
     for ref in sorted(parts, key=bg.sort_ref):
+        if ref == B2B_REF:
+            continue  # the J209 GND contacts join the GND spine (scripted_copper), not a via each
         pa = parts[ref]
         for p in sorted(pa.pads, key=lambda q: (bg.sort_ref(q['number']) if q['number'] else ('', -1, ''))):
             if p['net'] != 'GND' or p['type'] != 'smd' or not p['number']:
@@ -767,50 +865,49 @@ def gnd_fanout(inp, parts, tracks, vias):
             cx, cy = p['at']
             hw, hh = (p['box'][2] - p['box'][0]) / 2, (p['box'][3] - p['box'][1]) / 2
             cands = []
-            if ref == 'B2B1':  # out of the contact row first (away from the connector centre line), then a dog-leg
-                s = 1 if cy > B2B_AT[1] else -1
-                out = (cx, r4(cy + s * (hh + 0.35)))
-                for gap in GND_GAPS:
-                    for k in (0, 1, -1, 2, -2):
-                        at = (r4(cx + 0.65 * k), r4(cy + s * (hh + 0.35 + gap)))
-                        cands.append(([(cx, cy), out, at] if k else [(cx, cy), at], at))
-            else:
-                for gap in GND_GAPS:
-                    for dx, dy in GND_DIRS:
-                        n = math.hypot(dx, dy)
-                        ux, uy = dx / n, dy / n
-                        reach = (abs(ux) * hw + abs(uy) * hh) if (dx == 0 or dy == 0) else max(hw, hh)
-                        at = (r4(cx + ux * (reach + gap)), r4(cy + uy * (reach + gap)))
-                        cands.append(([(cx, cy), at], at))
-                # dog-legs: out of the pad along an axis, then to the via in any direction (pads in a pin row,
-                # or over the B2B contact rows of the bottom side where no via fits)
-                for leg in (0.4, 0.9, 1.5):
-                    for dx, dy in GND_DIRS[:4]:
-                        reach = abs(dx) * hw + abs(dy) * hh
-                        knee = (r4(cx + dx * (reach + leg)), r4(cy + dy * (reach + leg)))
-                        for gap in (0.6, 1.0, 1.5, 2.2):
-                            for ex, ey in GND_DIRS:
-                                if (ex, ey) == (-dx, -dy):
-                                    continue
-                                n = math.hypot(ex, ey)
-                                at = (r4(knee[0] + ex / n * gap), r4(knee[1] + ey / n * gap))
-                                cands.append(([(cx, cy), knee, at], at))
+            for gap in GND_GAPS:
+                for dx, dy in GND_DIRS:
+                    n = math.hypot(dx, dy)
+                    ux, uy = dx / n, dy / n
+                    reach = (abs(ux) * hw + abs(uy) * hh) if (dx == 0 or dy == 0) else max(hw, hh)
+                    at = (r4(cx + ux * (reach + gap)), r4(cy + uy * (reach + gap)))
+                    cands.append(([(cx, cy), at], at))
+            # dog-legs: out of the pad along an axis, then to the via in any direction (pads in a pin row)
+            for leg in (0.4, 0.9, 1.5):
+                for dx, dy in GND_DIRS[:4]:
+                    reach = abs(dx) * hw + abs(dy) * hh
+                    knee = (r4(cx + dx * (reach + leg)), r4(cy + dy * (reach + leg)))
+                    for gap in (0.6, 1.0, 1.5, 2.2):
+                        for ex, ey in GND_DIRS:
+                            if (ex, ey) == (-dx, -dy):
+                                continue
+                            n = math.hypot(ex, ey)
+                            at = (r4(knee[0] + ex / n * gap), r4(knee[1] + ey / n * gap))
+                            cands.append(([(cx, cy), knee, at], at))
+            cands = [(path, at, True) for path, at in cands]
+            # last resort over the J209 contact rows (W2 B2B), where no new via fits: sideways out of the pad, then to the
+            # nearest plane via of the J209 GND spine (the bottom side there carries GND copper only)
+            for sv in sorted(spine_vias, key=lambda v: (math.hypot(v[0] - cx, v[1] - cy), v)):
+                if math.hypot(sv[0] - cx, sv[1] - cy) < 4.0:
+                    cands.append(([(cx, cy), (sv[0], cy), sv], sv, False))
             chosen = None
-            for path, at in cands:
-                if clear(path, at, layer):
-                    chosen = (path, at)
+            for path, at, new_via in cands:
+                if clear(path, at, layer, new_via):
+                    chosen = (path, at, new_via)
                     break
             if chosen is None:
                 raise SystemExit(f'make_spec: no GND fan-out via position for {ref}.{p["number"]} at {p["at"]}')
-            path, at = chosen
+            path, at, new_via = chosen
             vid = f'GND-{ref}-{p["number"]}'
             out_t.append({'id': vid + '-S', 'net': 'GND', 'layer': f'{layer}.Cu', 'width_mm': W_GND,
                           'path': [[r4(x), r4(y)] for x, y in path], 'locked': True,
-                          'why': f'GND fan-out of {ref}.{p["number"]} to its plane via'})
-            out_v.append({'id': vid + '-V', 'net': 'GND', 'at': [at[0], at[1]], 'drill_mm': VIA_DRILL,
-                          'diameter_mm': VIA_D, 'locked': True, 'why': f'GND plane via of {ref}.{p["number"]}'})
-            drills.append((at, VIA_DRILL))
-            segs += scripted_segments(out_t[-1:], out_v[-1:])
+                          'why': f'GND fan-out of {ref}.{p["number"]} to its plane via' if new_via else
+                                 f'GND fan-out of {ref}.{p["number"]} to the J209 GND spine via at {list(at)}'})
+            if new_via:
+                out_v.append({'id': vid + '-V', 'net': 'GND', 'at': [at[0], at[1]], 'drill_mm': VIA_DRILL,
+                              'diameter_mm': VIA_D, 'locked': True, 'why': f'GND plane via of {ref}.{p["number"]}'})
+                drills.append((at, VIA_DRILL))
+            segs += scripted_segments(out_t[-1:], out_v[-1:] if new_via else [])
             done += 1
     return out_t, out_v, done
 
@@ -854,7 +951,7 @@ WARNINGS = {
     'missing_tuning_profile': 'no length-tuned nets and no tuning profiles on this board',
     'tuning_profile_track_geometries': 'no length-tuned nets and no tuning profiles on this board',
     'generic_warning': "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
-    'silk_over_copper': 'legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads',
+    'silk_over_copper': 'legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads',
     'silk_overlap': 'legend only: overlapping legend items are cosmetic; every instance is listed in report.json',
 }
 
@@ -873,58 +970,30 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt):
     b2b_sha = hashlib.sha256(B2B_NETS.read_bytes()).hexdigest()
     parts = []
     for ref in sorted(anchors, key=bg.sort_ref):
-        if ref == 'B2B1':
-            continue
         a = anchors[ref]
         anchor = {'at': a['at'], 'align': a['align'], 'rotation': a['rotation'], 'side': a['side']}
         if 'ref_text' in a:
             anchor['ref_text'] = a['ref_text']
         parts.append({'ref': ref, 'source': 'graph', 'anchor': anchor})
-    a = anchors['B2B1']
-    parts.append({
-        'ref': 'B2B1', 'source': 'pilot_placeholder', 'footprint': B2B_FP, 'footprint_library': 'kicad-image',
-        'footprint_sha256': B2B_FP_SHA,
-        'footprint_sha256_source': f'{B2B_FP_URL} read 2026-11-07; checked against the kicad/kicad:10.0.7 image copy at run time',
-        'value': 'B2B placeholder: Samtec QTH-060-01-L-D-A pending',
-        'pins': pins['pins'],
-        'pins_source': 'generated by build/kicad/boards/PWR_B/make_spec.py b2b_pin_map() from pcb/generated/b2b-nets.json '
-                       f'(sha256 {b2b_sha}): every crossing net with its contact count, one GND contact per power net',
-        'replaced_by': 'graph ref of the Samtec QTH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_b) once its land, derived '
-                       'from the dimensions of the Samtec recommended PCB layout Rev M, is vendored (GR-4 / PCB-PWRA lineage); only '
-                       'the contact numbers of this pin map carry over, then PWR_B and PWR_A are re-routed',
-        'pending': 'B2B ref pending: Samtec QTH-060-01-L-D-A land not derived and vendored yet, no graph ref (GR-4 / PCB-PWRA OPEN)',
-        'why_placeholder': 'The QTH-060-01-L-D-A has no KiCad 10.0.7 footprint and its land is not vendored yet (build/kicad/footprints/ '
-                           'belongs to the GR-4 / PCB-PWRA lineage), so pcb/partition-spec.json b2b has no graph ref. Samtec\'s '
-                           f'RECOMMENDED PCB LAYOUT FOR QTH-XXX-XX-X-D-XXX ({QTH_PRINT_URL}, Rev M, 2024-01-26, FOOTPRINT FOR '
-                           'QTH-060-01-X-D-XXX SHOWN) is readable (HTTP 200, read 2026-11-07; the 403 that GR-3 recorded no longer '
-                           'holds) but carries a Samtec proprietary note, so the PDF is fetch-only and the land must be derived from its '
-                           'dimensions: 0.500 mm contact pitch, banks 20.003 mm apart, ground-plane pads 2 per bank. The placeholder is '
-                           'the official KiCad 10.0.7 Hirose FX8-120P-SV land (2 x 60 contacts, 0.6 mm pitch, no ground-plane pad, '
-                           'courtyard 43.6 x 7.9 against the QTH-060 catalogue outline 40.0 x 7.11, F-226 qth.pdf). It keeps routing, '
-                           'DRC and the pin map checkable as a model, but only its contact numbers carry over: the FX8 contact '
-                           'coordinates, the fan-out, connectors.json positions and the GND-contact return (the QTH carries GND on its '
-                           'ground plane, 25 A per plane, F-226) are placeholder-only. Hirose rates FX8 contacts at 0.4 A (FX8/FX8C '
-                           f'Series Catalog p. 3 Rated Current, distributor copy {FX8_CATALOG_URL}, read 2026-11-07), below the 1 A per '
-                           'contact of this pin map (LAB5 4 A on 4 contacts): the placeholder must never be populated, and the fab set '
-                           'stays MODEL_NOT_FOR_FABRICATION until the QTH land replaces it. It is not the part to buy; its socket '
-                           f'{B2B_MATE_FP} (sha256 {B2B_MATE_SHA}) is the PWR-A placeholder mate.',
-        'anchor': {'at': a['at'], 'align': a['align'], 'rotation': a['rotation'], 'side': a['side']}})
     heights, sources = {}, {}
-    for ref in inp.refs:
-        heights[ref], sources[ref] = height_of(inp, ref)
     stack = inp.pspec['parameters']['stack']
-    heights['B2B1'] = stack
-    sources['B2B1'] = ('mated QTH-060-01 / QSH-060-01 stack = the PWR-A to PWR-B gap '
-                       f'{stack} mm (pcb/partition-spec.json parameters.stack: Samtec catalogue F-226 qth.pdf, lead style -01)')
+    for ref in inp.refs:
+        if ref == B2B_REF:
+            heights[ref] = stack
+            sources[ref] = ('mated LSHM-150-02.5 pair J209 / J208 = the PWR-A to PWR-B gap '
+                            f'{stack} mm (pcb/partition-spec.json parameters.stack: Samtec catalogue F-224 lshm.pdf and spec Rev H '
+                            '7.9, read 2026-11-07 by W2 B2B); one half alone is lower (b2b.mpn.src lead style -02.5 A 3.95)')
+            continue
+        heights[ref], sources[ref] = height_of(inp, ref)
     spec = {
         'schema': bg.SPEC_SCHEMA,
         'board_id': BOARD,
         'status': 'MODEL_NOT_FOR_FABRICATION',
         'title': 'PWR-B power mezzanine (PWR_BRANCH_SW + USB_POWER_SW): LNA and USB branch switches, monitors, harness headers',
-        'note': ('W2 PCB-PWRB. Generated by build/kicad/boards/PWR_B/make_spec.py (do not hand-edit; rerun it). Placement, the B2B pin '
-                 'map and the scripted copper are design choices of this package (build/15 rows W2 PCB-PWRB); KiCad DRC, the '
-                 'audits and check_boards are CI/model results. Not a fabrication release; mezzanine fit, heat and every bench '
-                 'gate stay OPEN.'),
+        'note': ('W2 PCB-PWRB, W2 B2B. Generated by build/kicad/boards/PWR_B/make_spec.py (do not hand-edit; rerun it). Placement '
+                 'and the scripted copper are design choices of these packages (build/15 rows W2 PCB-PWRB and W2 B2B); the J209 '
+                 'pin map is the graph (pcb/generated/b2b-nets.json contacts). KiCad DRC, the audits and check_boards are '
+                 'CI/model results. Not a fabrication release; mezzanine fit, heat and every bench gate stay OPEN.'),
         'contract': {'file': 'mechanical/generated/contract/boards.json', 'board': BOARD},
         'domains': list(c['domains']),
         'partition': 'pcb/generated/partition.json',
@@ -935,7 +1004,7 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt):
             'plan': {'F.Cu': 'parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour',
                      'In1.Cu': 'solid GND plane (layer type power: the router puts only vias through it)',
                      'In2.Cu': 'second GND plane (layer type power)',
-                     'B.Cu': 'B2B placeholder (bottom), LAB5 bar, B2B fan-out, signals, GND pour'}},
+                     'B.Cu': 'B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour'}},
         'project': 'build/kicad/boards/PWR_B/PWR_B.kicad_pro',
         'rules_file': None,
         'rules_note': ('Project rules live in the committed PWR_B.kicad_pro (generated by make_spec.py): the project defaults of '
@@ -956,7 +1025,7 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt):
         'instances': {
             'template_nets': nets,
             'list': [{'id': 'PWRB', 'placement': 'default', 'qty': 1,
-                      'refs': {**{r: r for r in inp.refs}, 'B2B1': None}, 'nets': {n: n for n in nets},
+                      'refs': {r: r for r in inp.refs}, 'nets': {n: n for n in nets},
                       'source': 'one board per device; template refs and nets are the graph refs and nets '
                                 '(pcb/generated/partition.json domains PWR_BRANCH_SW, USB_POWER_SW)'}],
             'spares': 0,
@@ -985,24 +1054,27 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt):
             {'region': 'board', 'max_height_mm_from_contract': 'max_component_height', 'side': 'top', 'checked': True,
              'why': 'hB 5.5 (pcb/partition-spec.json parameters.hB): parts on the top side; heights from heights below'},
             {'region': 'board', 'max_height_mm': stack, 'side': 'bottom', 'checked': True,
-             'why': 'bottom side: only the B2B in the PWR-A to PWR-B gap (stack 5.0)'}],
+             'why': 'bottom side: only the B2B half J209 in the PWR-A to PWR-B gap (stack 5.0; mechanical/params/boards.json '
+                    'PWR_B b2b.bottom_side)'}],
         'sides': ['top', 'bottom'],
         'max_height_bottom': stack,
         'heights': dict(sorted(heights.items(), key=lambda kv: bg.sort_ref(kv[0]))),
         'heights_source': dict(sorted(sources.items(), key=lambda kv: bg.sort_ref(kv[0]))),
         'branch_exempt': exempt,
         'b2b_pin_map': {
-            'connector': 'B2B1 (placeholder for the Samtec QTH-060-01-L-D-A, bottom side)',
-            'mate': {'board': 'PWR_A', 'placeholder_footprint': B2B_MATE_FP, 'placeholder_sha256': B2B_MATE_SHA,
-                     'mpn': 'Samtec QSH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_a)',
-                     'rule': 'PCB-PWRA-2 puts the mate on the PWR-A top under B2B1 (connectors.json enclosure_xy of every contact) '
-                             'and gives each contact the same net (check_boards b2b, pin_map identity); the contact positions are '
-                             'those of the FX8 placeholder and change with the QTH land, the contact numbers stay'},
+            'connector': f'{B2B_REF} (Samtec LSHM-150-02.5-L-DV-A-N-K-TR, graph ref of design/E2.json, bottom side)',
+            'mate': {'board': B2B_MATE_BOARD, 'ref': B2B_MATE_REF,
+                     'pin_map': inp.b2b['mating_map']['formula'],
+                     'rule': ('PWR_A has no board of record yet (W2 PCB-PWRA-2 not run: area study); when it has one, its spec '
+                              f'places {B2B_MATE_REF} on the PWR-A top under {B2B_REF} ({B2B_REF} = {B2B_MATE_REF} mirrored about '
+                              f'the strip axis, so {B2B_REF} pad m lies over {B2B_MATE_REF} pad m+1 for m odd and m-1 for m even, '
+                              'and the alignment holes coincide) and both specs get the check_boards b2b pair with that pin_map; '
+                              'a geometric pad-over-pad check is not in check_boards yet (OPEN, build/15 W2 B2B)')},
             'source': f'pcb/generated/b2b-nets.json sha256 {b2b_sha}',
-            'rule': ('contacts per crossing net from b2b-nets.json (ceil(I_protection / 1 A) for power nets, else 1) and one GND '
-                     'contact per power net; odd (lower) row from contact 119 in LOWER_ORDER, even (upper) row from 120 in '
-                     'UPPER_ORDER (make_spec.py), the ch4 Kelvin pair and BIAS_CH4_DAMP on the free upper contact under their pad'),
-            'contacts': 120, 'used': pins['used'], 'spare': pins['spare'],
+            'rule': (f'{B2B_REF} pad nets are its graph pins, which equal b2b-nets.json contacts[].pwr_b_pin (make_spec.py '
+                     'b2b_pin_map stops on any difference); the map itself is pcb/prepare.py b2b_contacts (pin_map_rule, '
+                     'guard_rule in b2b-nets.json)'),
+            'contacts': int(inp.b2b['contacts_available']), 'used': pins['used'], 'spare': pins['spare'],
             'needed_with_spare': inp.b2b['totals']['contacts_with_spare']},
         'placement_rules': {
             'edges': 'harness headers on the board edges with the mating face outwards: CTRL-bound J202, J203, J201 and the '
@@ -1042,7 +1114,8 @@ def project_json(inp, pins):
     classes = []
     for name, cls in (('Default', nc['classes']['SIG']), ('PWR1A', nc['classes']['PWR1A']), ('PWR2A', nc['classes']['PWR2A']),
                       ('PWR3A', nc['classes']['PWR3A']), ('SCRIPTED_GND', nc['classes']['SIG']),
-                      ('SCRIPTED_PWR1A', nc['classes']['PWR1A']), ('SCRIPTED_PWR3A', nc['classes']['PWR3A'])):
+                      ('SCRIPTED_PWR1A', nc['classes']['PWR1A']), ('SCRIPTED_PWR3A', nc['classes']['PWR3A']),
+                      ('SCRIPTED_SIG', nc['classes']['SIG'])):
         row = copy.deepcopy(default)
         row['name'] = name
         row['track_width'] = cls['outer_min_width_mm']
@@ -1072,11 +1145,12 @@ def project_json(inp, pins):
 
 # Board routing classes beyond pcb/generated/netclasses.json (never narrower than its minimum).
 # LNA4V5: 2 B2B contacts, up to 1.209 A at the protection limits (b2b-nets.json net_current_extra); routed at the PWR1A
-# width 0.35 mm (IPC-2221 external 1 oz about 1.1 A at +10 degC per track, MODEL), the widest track that leaves a
-# 0.6 mm-pitch contact of the B2B placeholder (route run 42415437982: 0.8 mm could not reach contacts 118 and 120).
+# width 0.35 mm (IPC-2221 external 1 oz about 1.1 A at +10 degC per track, MODEL): a wider track does not leave a 0.30 mm
+# J209 pad between its GND neighbours at 0.50 mm pitch (route run 42415437982 on the FX8 placeholder: 0.8 mm could not
+# reach its contacts either).
 BOARD_CLASSES = {'LNA4V5': 'PWR1A'}
 # Nets whose copper is all scripted and locked: widths of their netclasses.json class, not autorouted (router -inc).
-SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
+SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A', 'FAULT_LABPORT': 'SCRIPTED_SIG',
                     **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')}}
 
 
@@ -1084,8 +1158,8 @@ SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
 def build(inp):
     anchors = placement(inp)
     missing = [r for r in inp.refs if r not in anchors]
-    pins = b2b_pin_map(inp, anchors)
-    parts = placed_parts(inp, anchors, pins['pins'])
+    pins = b2b_pin_map(inp)
+    parts = placed_parts(inp, anchors)
     move_edge_references(inp, anchors, parts)
     tracks, vias, exempt = scripted_copper(inp, parts, pins)
     return anchors, missing, pins, parts, tracks, vias, exempt
@@ -1104,7 +1178,7 @@ def main(argv=None):
     problems = check_placement(inp, parts) + check_copper(inp, parts, tracks, vias)
     problems += [f'not placed: {r}' for r in missing]
     gnd_pads = [(r, q['number']) for r, pa in parts.items() for q in pa.pads if q['net'] == 'GND' and q['type'] == 'smd'
-                and (r, q['number']) != ('U215', 'EP')]
+                and (r, q['number']) != ('U215', 'EP') and r != B2B_REF]
     gnd_vias = {tuple(t['path'][0]) for t in tracks if t['net'] == 'GND' and t['id'].endswith('-S')}
     for r, n in gnd_pads:
         if tuple(r4(v) for v in parts[r].pad(n)['at']) not in gnd_vias:

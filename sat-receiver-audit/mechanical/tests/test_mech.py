@@ -982,6 +982,73 @@ class RoutesW2Mech4Review(unittest.TestCase):
         self.assertTrue(self._rule(Q, "R-HDMI-ROUTE")["result"].startswith("FAIL"))
 
 
+class ModulesW2Mech5(unittest.TestCase):
+    """W2 MECH-5: module envelopes with part keys, module fixing (bosses, pad, pocket, plate PEM standoffs) and the INA228 terminal side."""
+
+    ITEMS = ("hub_ch334f", "veml7700", "t7_insert", "hdmi_insert", "pack_fuse", "boni_a406", "ina228", "swm_2813")
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def test_items_have_parts_with_status_and_no_collision(self):
+        items = {it["id"]: it for it in P.mech["layout"]["items"]}
+        for iid in self.ITEMS:
+            with self.subTest(item=iid):
+                self.assertIn(iid, items)
+                part = P.parts[items[iid]["part"]]
+                self.assertTrue(part["status"] and part["src"])
+        coll, outside = layout.fit_checks(P)
+        self.assertEqual([c for c in coll if c["gap_mm"] < 0 and ({c["a"], c["b"]} & set(self.ITEMS))], [])
+        self.assertEqual([o for o in outside if o["item"] in self.ITEMS], [])
+
+    def test_module_mounts_pass_and_follow_the_board_files(self):
+        r = self._rule(P, "R-MODULE-MOUNTS")
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        hub = P.parts["adafruit_5997"]
+        self.assertEqual(len(hub["holes"]["uv"]), 4)
+        mt = {m["item"]: m for m in P.mech["module_mounts"]["mounts"]}
+        sx = sorted({round(c[0], 2) for c in mt["hub_ch334f"]["screws"]})
+        sy = sorted({round(c[1], 2) for c in mt["hub_ch334f"]["screws"]})
+        du = hub["holes"]["uv"][1][0] - hub["holes"]["uv"][0][0]
+        dv = hub["holes"]["uv"][2][1] - hub["holes"]["uv"][0][1]
+        self.assertEqual(sorted([round(sx[1] - sx[0], 2), round(sy[1] - sy[0], 2)]), sorted([round(du, 2), round(dv, 2)]))   # either board orientation
+        self.assertEqual(P.parts["pololu_2813"]["mount_holes"], 0)
+        self.assertIn("pad", mt["swm_2813"])
+        self.assertGreaterEqual(r["value_mm"]["ina228"]["terminal"]["free_mm"], P.parts["adafruit_ina228_5832"]["terminal"]["wire_room"])
+
+    def test_ina228_terminal_blocked_again_fails(self):
+        Q = self._copy()
+        ina = [it for it in Q.mech["layout"]["items"] if it["id"] == "ina228"][0]
+        mt = [m for m in Q.mech["module_mounts"]["mounts"] if m["item"] == "ina228"][0]
+        dx = 30.0                                            # module and its bosses together: the terminal edge then faces the LC76G (6.2 mm)
+        ina["box"][0] += dx
+        for kind in ("screws", "rests"):
+            mt[kind] = [[c[0] + dx, c[1]] for c in mt[kind]]
+        r = self._rule(Q, "R-MODULE-MOUNTS")
+        self.assertTrue(r["result"].startswith("FAIL"), r["result"])
+        self.assertIn("ina228 terminal wire side", r["result"])
+
+    def test_pack_fuse_standoffs_are_plate_holes_with_the_pem_edge_rule(self):
+        pf = [h for h in rules.plate_holes(P) if h["id"].startswith("PF")]
+        self.assertEqual(len(pf), 2)
+        for h in pf:
+            self.assertGreaterEqual(rules.edge_distance(P, h["c"]), h["edge_min"] - 1e-9)
+        for rid in ("R-HOLE-EDGE", "R-CLINCH-EDGE"):
+            self.assertTrue(self._rule(P, rid)["result"].startswith("PASS"), rid)
+
+    def test_veml_board_clears_the_front_wall_and_sits_behind_the_window(self):
+        vw = P.mech["top_face"]["veml7700_window"]
+        box = [b for i, n, b, it in layout.item_boxes(P) if i == "veml7700"][0]
+        v = P.parts["adafruit_4162"]
+        self.assertAlmostEqual(box[0] + v["sensor_uv"][0], vw["x"])
+        self.assertAlmostEqual(box[2] + v["sensor_uv"][1], vw["z"])
+        self.assertGreaterEqual(P.mech["stack_z"]["front_wall_inner"] - box[5], 0.5)
+
+
 class SlotFillAndW2Mech6(unittest.TestCase):
     """W2 MECH-6: slot fill with the chosen wire and trim, the P7 pigtail, the PPS worst case, the VCC_3V3_MKEY tap,
     the NTC markers and the header refs at the route ends."""
@@ -1127,3 +1194,100 @@ class SlotFillW2Mech6Review(unittest.TestCase):
         s["trim"]["left"] = "grommet"                                         # legs would sit under the BMS (0.5 mm above the plate)
         v = rules.plate_slot_fill(Q)["value_mm"]["SL3"]
         self.assertIn("bms", v["result"])
+
+
+class ModulesW2Mech5Review(unittest.TestCase):
+    """W2 MECH-5 review fixes: re-placement after MECH-6 (LC76G, case NTC, W407), tripod pocket clearance, insert hole depth and
+    the M2.5 x 6 window, tape joints, harness-bundle clearance and the INA228 terminal room with bundles."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def test_merged_layout_has_no_collision_and_the_p7_pigtail_is_clear(self):
+        coll, outside = layout.fit_checks(P)
+        self.assertEqual([c for c in coll if c["gap_mm"] < 0], [])
+        for rid in ("R-P7-PIGTAIL", "R-ROUTE-CLEAR"):
+            self.assertFalse(self._rule(P, rid)["result"].startswith("FAIL"), rid)
+        from srrx_mech import routes
+        res = routes.evaluate(P)
+        self.assertFalse(any("boni_a406" in c for c in res["coax"]["W407"]["crossings"]))
+        self.assertFalse(any("t7_insert" in c for r in res["segments"].values() for c in r.get("crossings", [])))
+
+    def test_insert_holes_keep_clear_of_the_tripod_pocket(self):
+        from srrx_mech import interference
+        self.assertEqual(interference.ALLOWED["tripod_boss"], {"rear.tripod_boss"})
+        r = self._rule(P, "R-MODULE-MOUNTS")
+        d = [s["to_tripod_pocket_mm"] for item in ("hub_ch334f", "ina228") for s in r["value_mm"][item]["screws"]]
+        self.assertGreaterEqual(min(d), P.mech["module_mounts"]["tripod_clear"])
+        Q = self._copy()
+        mt = [m for m in Q.mech["module_mounts"]["mounts"] if m["item"] == "hub_ch334f"][0]
+        hub = [it for it in Q.mech["layout"]["items"] if it["id"] == "hub_ch334f"][0]
+        dx, dy = 6.06, 11.3                                  # hub and bosses together: a corner hole at (90.44, 68.08) as in the first MECH-5 place
+        hub["box"][0] += dx
+        hub["box"][1] += dy
+        mt["screws"] = [[round(c[0] + dx, 2), round(c[1] + dy, 2)] for c in mt["screws"]]
+        r = self._rule(Q, "R-MODULE-MOUNTS")
+        self.assertTrue(r["result"].startswith("FAIL"), r["result"])
+        self.assertIn("hub_ch334f screws (90.44, 68.08)", r["result"])
+        self.assertLess(min(s["to_tripod_pocket_mm"] for s in r["value_mm"]["hub_ch334f"]["screws"]), 3.0)
+
+    def test_rear_insert_joints_take_an_iso_length_with_full_engagement(self):
+        from srrx_mech import fasteners
+        J = {j["id"]: j for j in fasteners.stacks(P)["joints"]}
+        ins = P.mech["module_mounts"]["insert"]
+        self.assertGreaterEqual(ins["hole_depth"], ins["len"] + 0.5)
+        for jid in ("INA228", "HUB-5997"):
+            j = J[jid]
+            self.assertTrue(j["result"].startswith("PASS (model)"), j["result"])
+            self.assertIn(6, j["orderable_lengths"]["in_window"])
+            self.assertGreaterEqual(6 - j["grip_mm"], fasteners.ENG_INSERT * 2.5)
+        for g in rules.module_mount_geometry(P):
+            if g["on"] == "rear_wall" and g.get("insert"):
+                self.assertGreaterEqual(g["seat"] - g["hole_depth"], 1.0)    # rear-wall skin under the hole
+        for jid in ("SWM-2813", "VEML7700"):
+            self.assertTrue(J[jid]["result"].startswith("OPEN: tape joint"), J[jid]["result"])
+            self.assertIsNone(J[jid]["length_window_mm"])
+        self.assertIn("PCB-SB2", J["PACK-FUSE"]["result"])
+        self.assertNotIn("fixing not designed", " ".join(J[j]["result"] for j in ("INA228", "HUB-5997", "SWM-2813", "PACK-FUSE")))
+
+    def test_veml_is_taped_on_rests_with_locating_spigots(self):
+        mt = [m for m in P.mech["module_mounts"]["mounts"] if m["item"] == "veml7700"][0]
+        self.assertNotIn("screws", mt)
+        holes = [(round(107.3 + u, 3), round(49.284 + v, 3)) for u, v in P.parts["adafruit_4162"]["holes"]["uv"]]
+        self.assertEqual(sorted(tuple(round(c, 3) for c in r) for r in mt["rests"]), sorted(holes))
+        g = [x for x in rules.module_mount_geometry(P) if x["item"] == "veml7700"]
+        self.assertTrue(all(abs(x["seat"] - (mt["seat_y"] + mt["tape_t"])) < 1e-9 for x in g if x["kind"] == "rests"))
+        self.assertEqual(len([x for x in g if x["kind"] == "spigot"]), 2)
+
+    def test_terminal_room_counts_harness_bundles(self):
+        ina = [b for i, n, b, it in layout.item_boxes(P) if i == "ina228"][0]
+        fake = [("SX", {"ends": ["A", "B"], "bundle_od_mm": 4.0, "points_mm": [[ina[0], ina[4] + 5.0, ina[2] + 3.0], [ina[3], ina[4] + 5.0, ina[2] + 3.0]]}),
+                ("S06", {"ends": ["PWR", "INA"], "bundle_od_mm": 6.0, "points_mm": [[ina[0], ina[4] + 1.0, ina[2] + 3.0], [ina[3], ina[4] + 1.0, ina[2] + 3.0]]})]
+        env, room, lim = rules._terminal_room(P, ina, "+y", fake, "INA", P.mech["wall"])
+        self.assertEqual((room, lim), (3.0, "SX"))                                   # its own S06 bundle is not counted
+        self.assertGreater(env, room)
+
+    def test_new_envelopes_keep_the_bundle_clearance(self):
+        r = self._rule(P, "R-MODULE-MOUNTS")
+        bc = r["value_mm"]["bundle_clearance"]
+        self.assertTrue({"hub_ch334f", "ina228", "t7_insert", "pack_fuse", "boni_a406"} <= set(bc))
+        for iid, v in bc.items():
+            self.assertGreaterEqual(v["centreline_mm"], v["need_mm"] - 1e-6, iid)
+        Q = self._copy()
+        pf = [it for it in Q.mech["layout"]["items"] if it["id"] == "pack_fuse_board"][0]
+        pf["box"][2] += 2.0                                 # carrier board raised towards the y 38.2 / z 53 trunk
+        self.assertIn("pack_fuse_board", self._rule(Q, "R-MODULE-MOUNTS")["result"])
+
+    def test_case_ntc_lies_under_the_pack_fuse_carrier_clear_of_the_standoffs(self):
+        boxes = {i: b for i, n, b, it in layout.item_boxes(P)}
+        pf, ntc = boxes["pack_fuse_board"], boxes["ntc_case"]
+        self.assertGreaterEqual(pf[2] - ntc[5], 0.5)
+        self.assertTrue(P.parts[[it for it in P.mech["layout"]["items"] if it["id"] == "pack_fuse_board"][0]["part"]]["status"])
+        r = self._rule(P, "R-MODULE-MOUNTS")
+        self.assertTrue(all(x["gap_mm"] >= 0.5 for x in r["value_mm"]["plate_standoffs"]["pack_fuse"]))
+        coll, _ = layout.fit_checks(P)
+        self.assertEqual([c for c in coll if "pack_fuse" in c["a"] + c["b"]], [])       # PM4 plate boss included (no allowance)

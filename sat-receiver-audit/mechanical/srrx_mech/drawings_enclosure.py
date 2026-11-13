@@ -122,6 +122,32 @@ def face_outline(sh, P, face, ox, oy):
     sh.dim_v(oy, oy + h, ox, ox - 12, fmt(h))
 
 
+def _module_mounts_table(sh, P, x, y):
+    """M-06: module bosses, rests and tape pads on the inner face of the rear wall (mechanical.json module_mounts, W2 MECH-5); u = W - x as seen from outside."""
+    from .rules import module_mount_geometry
+    W = P.outer[0]
+    rows = [g for g in module_mount_geometry(P) if g["on"] == "rear_wall"]
+    if not rows:
+        return y
+    sh.ptext((x, y), "Бобишки модулів усередині (W2 MECH-5; u як ззовні)", 2.4)
+    y -= 4.0
+    names = {"screws": "бобишка ⌀{d}, вставка TC-M2,5x4 в отворі ⌀{hd} × {h}, верх z {s}", "rests": "упор ⌀{d}, верх z {s}"}
+    k = 0
+    for g in rows:
+        k += 1
+        if g["kind"] == "pad":
+            gx, gy, gw, gh = g["rect"]
+            sh.rect(W - gx - gw, gy, gw, gh, "HIDDEN")
+            line = f"MB{k:<3d} u {fmt(W - gx - gw, 1)}..{fmt(W - gx, 1)} v {fmt(gy, 1)}..{fmt(gy + gh, 1)}  {g['item']}: майданчик, верх z {fmt(g['seat'])} + скотч {fmt(g['tape_t'])}"
+        else:
+            cx, cy = g["c"]
+            sh.circle((W - cx, cy), g["d"] / 2, "HIDDEN")
+            line = f"MB{k:<3d} u {fmt(W - cx, 2)} v {fmt(cy, 2)}  {g['item']}: " + names[g["kind"]].format(d=fmt(g["d"]), s=fmt(g["seat"]), hd=fmt(g["hole_d"]), h=fmt(g["hole_depth"]))
+        sh.ptext((x, y), line[:96], 1.7, layer="TABLE")
+        y -= 2.6
+    return y
+
+
 def face_sheets(P):
     F = face_features(P)
     sheets = []
@@ -150,7 +176,9 @@ def face_sheets(P):
             sh.rect(W - t7[0] - t7[2], t7[1], t7[2], t7[3], "HIDDEN")
             sh.text((W - t7[0] - t7[2] + 2, t7[1] + 12), "тримач T7 (зовні): 3 гвинти M3 ззовні", 1.8)
             sh.text((W - t7[0] - t7[2] + 2, t7[1] + 9), "у вставки майданчиків T7_PAD; знімати першим", 1.8)
-        _table(sh, F[face], 268.0, 222.0, "Таблиця отворів")
+        ty = _table(sh, F[face], 268.0, 222.0, "Таблиця отворів")
+        if face == "rear":
+            ty = _module_mounts_table(sh, P, 268.0, ty - 4.0)
         sheets.append(sh)
     # top + bottom on one sheet, left + right on another
     for sid, pair in (("M-02", ("top", "bottom")), ("M-03", ("left", "right"))):
@@ -167,7 +195,28 @@ def face_sheets(P):
                 _feature(sh, f, ox, oy)
             w, h = face_size(P, face)
             sh.text((ox, oy + h + 3), FACE_UK[face], 2.6)
+            vm = next((mt for mt in P.mech.get("module_mounts", {}).get("mounts", []) if mt["on"] == "top_wall"), None)
+            if face == "top" and vm:
+                px, pz, pw, ph, pd = vm["pocket"]
+                Dm = P.outer[2]
+                v0 = max(0.0, Dm - (pz + ph))
+                sh.rect(ox + px, oy + v0, pw, Dm - pz - v0, "HIDDEN")
+                sh.text((ox + px, oy + Dm - pz + 1.0), f"кишеня {fmt(pd)} мм усередині (VEML7700: 4 упори ⌀{fmt(P.mech['module_mounts']['rest_d'])} зі скотчем, "
+                        f"2 шипи ⌀{fmt(vm['spigot_d'])}; W2 MECH-5)", 1.6)
+                from .rules import module_mount_geometry
+                vr = [g for g in module_mount_geometry(P) if g["on"] == "top_wall" and g["kind"] == "rests"]
+                for g in vr:
+                    sh.circle((ox + g["c"][0], oy + Dm - g["c"][1]), g["d"] / 2, "HIDDEN")
             ty = _table(sh, F[face], 268.0, ty, f"Таблиця: {face}") - 4.0
+            if face == "top" and vm:
+                sh.ptext((268.0, ty), "Упори VEML7700 у кишені (W2 MECH-5; x, z — як ззовні)", 2.0)
+                ty -= 3.2
+                sp = [tuple(c) for c in vm.get("spigots", [])]
+                for k, g in enumerate(vr, 1):
+                    sh.ptext((268.0, ty), f"VR{k} x {fmt(g['c'][0], 2)} z {fmt(g['c'][1], 3)}: упор ⌀{fmt(g['d'])}, грань y {fmt(g['seat'], 2)} + скотч "
+                             f"{fmt(g['tape_t'])}" + (f", шип ⌀{fmt(vm['spigot_d'])} x {fmt(vm['spigot_len'])}" if g["c"] in sp else ""), 1.6, layer="TABLE")
+                    ty -= 2.6
+                ty -= 2.0
         sheets.append(sh)
     return sheets
 
@@ -187,7 +236,9 @@ def plate_sheet(P):
                 "SL1-SL3: прорізи джгутів між лицьовим і тильним шаром (build/16 §1), кромки — кант або грумет; гайки PEM ставити пресом.",
                 "Пунктир: контури плат, Q6A, бобишки UFS (тильна грань), п'єдесталу Lime і зон термопрокладок PWR.",
                 "PK1-PK2: глухі кишені 1.0 мм у лицьовій грані під рядами виводів Pololu U107/U108 (поле виводів + 1.0 з кожного боку); поверх — поліімід "
-                "через зазор 0.4 мм; прокладка Gelid зони 3/4 — з вирізом над кишенею. Кишені під інші THT-групи PWR-A — за розкладкою PCB-PWRA (R-PWR-POCKETS)."])
+                "через зазор 0.4 мм; прокладка Gelid зони 3/4 — з вирізом над кишенею. Кишені під інші THT-групи PWR-A — за розкладкою PCB-PWRA (R-PWR-POCKETS).",
+                "PF1-PF2: стійки PEM SO-M2.5-6ZI (4.22 +0.08) носія PACK_FUSE, голівка врівень з тильною гранню, стійка 6 мм з лицьового боку "
+                "(W2 MECH-5; модулі задньої і верхньої стінок кріпляться не до пластини — таблиця M-06)."])
     sh.poly(plate_outline(P), True, "CUT")
     rw = pl["riser_window"]
     sh.rect(rw[0], rw[1], rw[2], rw[3], "CUT")

@@ -1,0 +1,456 @@
+{
+  "schema": "srrx-board-spec-v1",
+  "board_id": "PACK_FUSE",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "title": "PACK_FUSE carrier 10.7 x 26.4: F101 in a Keystone 3568 holder, 18 AWG pads J116 (BT104.+) and J117 (S05)",
+  "note": "W2 PCB-SB2. Two-layer carrier of the pack fuse F101 on two PEM SO-M2.5-6ZI standoffs of the plate extension beside the battery tray (MECH-5 place; build/17 F39). Outline, holes and heights come from build/kicad/boards/PACK_FUSE/contract-proposal.json (no PACK_FUSE entry in the mechanical contract yet). Both battery nets are scripted 3.2 mm copper on both layers plus solid pours; nothing is autorouted. Insulation: no copper within 2.5 of the screw axes, polyimide tape over the bottom-side pin tails (build/17 F39). CI/model output only; not a fabrication release; the bench gates (7.5 A temperature rise, fuse-holder contact) stay OPEN.",
+  "contract": {
+    "file": "build/kicad/boards/PACK_FUSE/contract-proposal.json",
+    "board": "PACK_FUSE"
+  },
+  "domains": [
+    "PACK_FUSE"
+  ],
+  "partition": "pcb/generated/partition.json",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
+    "plan": {
+      "F.Cu": "F101 holder, J116/J117; E1_CELL4 and E1_SHUNT_P scripted 3.2 mm (class SCRIPTED_BATT in PACK_FUSE.kicad_pro) and pours",
+      "B.Cu": "the same scripted 3.2 mm copper and pours (current shared by both layers); no parts"
+    }
+  },
+  "project": "build/kicad/boards/PACK_FUSE/PACK_FUSE.kicad_pro",
+  "rules_file": null,
+  "rules_note": "The rules live in the committed project file, the same set as pcb/boards/HATCH.json and ENC (track 0.25 / clearance 0.2, minimum 0.15 / 0.15, via 0.6 / 0.3, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15), plus the board net classes named in layers.plan. pcb/rules/jlc-2l.kicad_dru is not attached: pcb/board_gen.py refuses a non-null rules_file (validate_spec).",
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 1-2 layer values (as pcb/boards/ENC.json; pcb/generated/netclasses.json fab_floor.jlc_2l_1oz)",
+    "min_track_width": 0.1,
+    "min_clearance": 0.1,
+    "min_drill": 0.15,
+    "min_via_diameter": 0.25,
+    "min_hole_to_hole": 0.45,
+    "min_hole_to_hole_note": "0.45 = pad hole-to-hole of different nets; via hole-to-hole is 0.2",
+    "min_copper_edge_clearance": 0.2,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "npth_min_diameter": 0.5,
+    "pth_annular_min": 0.18,
+    "pth_annular_recommended": 0.25
+  },
+  "instances": {
+    "template_nets": [
+      "E1_CELL4",
+      "E1_SHUNT_P"
+    ],
+    "list": [
+      {
+        "id": "PACK",
+        "placement": "default",
+        "qty": 1,
+        "refs": {
+          "F101": "F101",
+          "J116": "J116",
+          "J117": "J117"
+        },
+        "nets": {
+          "E1_CELL4": "E1_CELL4",
+          "E1_SHUNT_P": "E1_SHUNT_P"
+        },
+        "source": "pcb/generated/partition.json board_candidate PACK_FUSE (F101, J116, J117: W2 GR-4); design/E1.json pins"
+      }
+    ],
+    "spares": 0,
+    "spares_source": "one board per device (tools/assembly_data.py UNITS); the JLC minimum order quantity gives spare bare boards"
+  },
+  "parts": [
+    {
+      "ref": "F101",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          3.65,
+          8.24
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            5.35,
+            13.2
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "origin = pin 1 pad; rotation 90 puts the long axis along y with pin 1 (E1_CELL4) at the J116 end; body centre (5.35, 13.2) = the centre of layout pack_fuse (x 163.7-170.4, y 16.7-32.7 = board x 2.0-8.7, y 5.2-21.2); courtyard x 1.73-8.97, y 4.95-21.45"
+    },
+    {
+      "ref": "J116",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          2.4,
+          2.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            1.0,
+            5.6
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "bottom end beside hole H1: pad edge 3.78 from the hole axis (keepout 2.5), courtyard x 0.3-4.5, y 0.72-4.48 (holder courtyard from y 4.95)"
+    },
+    {
+      "ref": "J117",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          2.4,
+          23.8
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            1.0,
+            20.8
+          ],
+          "angle": 90
+        }
+      },
+      "anchor_source": "top end beside hole H2, mirror of J116; courtyard y 21.92-25.68"
+    }
+  ],
+  "holes": {
+    "from_contract": true,
+    "ref_prefix": "H",
+    "keepout_layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "keepout_blocks": [
+      "tracks",
+      "vias",
+      "zone_fills"
+    ]
+  },
+  "groups": [],
+  "pre_route": {
+    "tracks": [
+      {
+        "id": "CELL4-F",
+        "net": "E1_CELL4",
+        "layer": "F.Cu",
+        "width_mm": 3.2,
+        "path": [
+          [
+            2.4,
+            2.6
+          ],
+          [
+            3.65,
+            8.24
+          ],
+          [
+            7.05,
+            8.24
+          ]
+        ],
+        "locked": true,
+        "why": "BATT class (pcb/generated/netclasses.json: E1_CELL4 and E1_SHUNT_P 4.6 A continuous / 7.5 A F101, outer 3.2 mm on one 1 oz layer) as locked 3.2 mm copper on BOTH outer layers (twice the class), J116 to both pin-1 pads of F101; the pours add to it"
+      },
+      {
+        "id": "CELL4-B",
+        "net": "E1_CELL4",
+        "layer": "B.Cu",
+        "width_mm": 3.2,
+        "path": [
+          [
+            2.4,
+            2.6
+          ],
+          [
+            3.65,
+            8.24
+          ],
+          [
+            7.05,
+            8.24
+          ]
+        ],
+        "locked": true,
+        "why": "BATT class (pcb/generated/netclasses.json: E1_CELL4 and E1_SHUNT_P 4.6 A continuous / 7.5 A F101, outer 3.2 mm on one 1 oz layer) as locked 3.2 mm copper on BOTH outer layers (twice the class), J116 to both pin-1 pads of F101; the pours add to it"
+      },
+      {
+        "id": "SHUNT-F",
+        "net": "E1_SHUNT_P",
+        "layer": "F.Cu",
+        "width_mm": 3.2,
+        "path": [
+          [
+            2.4,
+            23.8
+          ],
+          [
+            3.65,
+            18.16
+          ],
+          [
+            7.05,
+            18.16
+          ]
+        ],
+        "locked": true,
+        "why": "BATT class (pcb/generated/netclasses.json: E1_CELL4 and E1_SHUNT_P 4.6 A continuous / 7.5 A F101, outer 3.2 mm on one 1 oz layer) as locked 3.2 mm copper on BOTH outer layers (twice the class), J117 to both pin-2 pads of F101; the pours add to it"
+      },
+      {
+        "id": "SHUNT-B",
+        "net": "E1_SHUNT_P",
+        "layer": "B.Cu",
+        "width_mm": 3.2,
+        "path": [
+          [
+            2.4,
+            23.8
+          ],
+          [
+            3.65,
+            18.16
+          ],
+          [
+            7.05,
+            18.16
+          ]
+        ],
+        "locked": true,
+        "why": "BATT class (pcb/generated/netclasses.json: E1_CELL4 and E1_SHUNT_P 4.6 A continuous / 7.5 A F101, outer 3.2 mm on one 1 oz layer) as locked 3.2 mm copper on BOTH outer layers (twice the class), J117 to both pin-2 pads of F101; the pours add to it"
+      }
+    ],
+    "zones": []
+  },
+  "post_route_zones": [
+    {
+      "id": "CELL4-F",
+      "net": "E1_CELL4",
+      "layer": "F.Cu",
+      "outline": [
+        [
+          0,
+          0
+        ],
+        [
+          4.5,
+          0
+        ],
+        [
+          4.5,
+          5.5
+        ],
+        [
+          10.7,
+          5.5
+        ],
+        [
+          10.7,
+          12.7
+        ],
+        [
+          0,
+          12.7
+        ]
+      ],
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "pour of the net half on both layers, solid pad connection (thermal spokes would be the narrowest copper of a 7.5 A path); the notch beside the hole stays 0.3 outside its keepout circle so the fill never meets the rule area (no sliver)"
+    },
+    {
+      "id": "CELL4-B",
+      "net": "E1_CELL4",
+      "layer": "B.Cu",
+      "outline": [
+        [
+          0,
+          0
+        ],
+        [
+          4.5,
+          0
+        ],
+        [
+          4.5,
+          5.5
+        ],
+        [
+          10.7,
+          5.5
+        ],
+        [
+          10.7,
+          12.7
+        ],
+        [
+          0,
+          12.7
+        ]
+      ],
+      "priority": 0,
+      "pad_connection": "solid"
+    },
+    {
+      "id": "SHUNT-F",
+      "net": "E1_SHUNT_P",
+      "layer": "F.Cu",
+      "outline": [
+        [
+          0,
+          13.7
+        ],
+        [
+          10.7,
+          13.7
+        ],
+        [
+          10.7,
+          20.9
+        ],
+        [
+          4.5,
+          20.9
+        ],
+        [
+          4.5,
+          26.4
+        ],
+        [
+          0,
+          26.4
+        ]
+      ],
+      "priority": 0,
+      "pad_connection": "solid"
+    },
+    {
+      "id": "SHUNT-B",
+      "net": "E1_SHUNT_P",
+      "layer": "B.Cu",
+      "outline": [
+        [
+          0,
+          13.7
+        ],
+        [
+          10.7,
+          13.7
+        ],
+        [
+          10.7,
+          20.9
+        ],
+        [
+          4.5,
+          20.9
+        ],
+        [
+          4.5,
+          26.4
+        ],
+        [
+          0,
+          26.4
+        ]
+      ],
+      "priority": 0,
+      "pad_connection": "solid"
+    }
+  ],
+  "edge_keepout": {
+    "width_mm": 0.2,
+    "layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "blocks": [
+      "tracks",
+      "vias"
+    ],
+    "why": "rule-area strips (half-width 0.2) on every outline edge keep router copper 0.35 mm off the edge, above the project copper-to-edge 0.3 (as pcb/boards/PWR_B.json edge_keepout)"
+  },
+  "height_zones": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "holder column: mechanical.json layout pack_fuse, 16.17 above the board top"
+    },
+    {
+      "region": [
+        0,
+        0,
+        10.7,
+        4.9
+      ],
+      "max_height_mm": 1.9,
+      "side": "top",
+      "checked": true,
+      "why": "bottom end outside the holder column: layout pack_fuse_board ends at z 50.0 = 1.9 above the board top z 48.1 (screw heads k 1.85, J116 wire end)"
+    },
+    {
+      "region": [
+        0,
+        21.5,
+        10.7,
+        4.9
+      ],
+      "max_height_mm": 1.9,
+      "side": "top",
+      "checked": true,
+      "why": "top end, as the bottom end (J117 wire end)"
+    }
+  ],
+  "sides": [
+    "top"
+  ],
+  "heights": {
+    "F101": 16.17,
+    "J116": 1.9,
+    "J117": 1.9
+  },
+  "heights_note": "F101 = Keystone 3568 holder 7.37 + Littelfuse MINI 297 body 8.8 fitted (mechanical/params/parts.json keystone_3568, littelfuse_mini_297); J116/J117 = solder joint and the bent 18 AWG end, 1.9 = the pack_fuse_board envelope above the board (design value of W2 MECH-5: 'J116/J117 wire ends up to z 50.0')",
+  "router": {
+    "tool": "freerouting",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:06:00",
+    "timeout_s": 480,
+    "fanout": false,
+    "ignore_net_classes": [
+      "SCRIPTED_BATT"
+    ],
+    "why": "both nets are fully scripted and locked (class SCRIPTED_BATT, not autorouted: the router does not count locked copper that crosses a pad as a connection, pcb/boards/PWR_B.json); fan-out pre-pass off: on PWR_B it escaped SMD pins with necked-down stubs and dangling vias (pcb/boards/PWR_B.json router.why)"
+  },
+  "drc_policy": {
+    "warning_checks": {
+      "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+      "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+      "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board",
+      "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+      "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+      "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+    }
+  }
+}

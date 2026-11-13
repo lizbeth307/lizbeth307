@@ -1,0 +1,343 @@
+{
+  "schema": "srrx-board-spec-v1",
+  "board_id": "HDMI_INSERT",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "title": "HDMI_INSERT 16 x 18: U506 pin-18 ideal-diode island; FPC sockets OPEN (placeholders J1/J2)",
+  "note": "W2 PCB-SB2. Outline and placement only (plan PCB-SB2: GR-4 added no FPC socket refs and no pass-through net set): the U506 (LM66100) pin-18 island with C517/C518/R552/TP502 in the MECH-4 reserve, and two placeholder lands J1/J2 for the pin-18 and GND contacts of the not-chosen FPC sockets, so the boundary audit is 'provisional' (OPEN with the GR-4 reason). The final pass-through (TMDS 100 ohm differential, length-matched) needs the socket MPN and pinout and becomes a 4-layer JLC04161H-7628 board (decision 'HDMI_INSERT - прохідна плата (W2 PCB-SB2)', build/15). CI/model output only; not a fabrication release; the HDMI link test stays OPEN.",
+  "contract": {
+    "file": "build/kicad/boards/HDMI_INSERT/contract-proposal.json",
+    "board": "HDMI_INSERT"
+  },
+  "domains": [
+    "HDMI_INSERT"
+  ],
+  "partition": "pcb/generated/partition.json",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "final-plan.json PCB-SB2 / A-PCB-10 decision: 2-layer 1.6 mm JLC standard for the small boards; decision 'Малі плати II: шари й мідь (W2 PCB-SB2)' in build/15",
+    "plan": {
+      "F.Cu": "parts, signals, GND pour",
+      "B.Cu": "signals, GND pour"
+    }
+  },
+  "project": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pro",
+  "rules_file": null,
+  "rules_note": "The rules live in the committed project file, the same set as pcb/boards/HATCH.json and ENC (track 0.25 / clearance 0.2, minimum 0.15 / 0.15, via 0.6 / 0.3, copper-edge 0.3, hole-hole 0.5, hole clearance 0.25, text 1.0 / 0.15), plus the board net classes named in layers.plan. pcb/rules/jlc-2l.kicad_dru is not attached: pcb/board_gen.py refuses a non-null rules_file (validate_spec).",
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 1-2 layer values (as pcb/boards/ENC.json; pcb/generated/netclasses.json fab_floor.jlc_2l_1oz)",
+    "min_track_width": 0.1,
+    "min_clearance": 0.1,
+    "min_drill": 0.15,
+    "min_via_diameter": 0.25,
+    "min_hole_to_hole": 0.45,
+    "min_hole_to_hole_note": "0.45 = pad hole-to-hole of different nets; via hole-to-hole is 0.2",
+    "min_copper_edge_clearance": 0.2,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "npth_min_diameter": 0.5,
+    "pth_annular_min": 0.18,
+    "pth_annular_recommended": 0.25
+  },
+  "instances": {
+    "template_nets": [
+      "E5_HDMI_5V_DISP",
+      "E5_HDMI_5V_Q6A",
+      "E5_HDMI_ST_N",
+      "GND"
+    ],
+    "list": [
+      {
+        "id": "HDMIA",
+        "placement": "default",
+        "qty": 1,
+        "refs": {
+          "J1": null,
+          "J2": null,
+          "U506": "U506",
+          "C517": "C517",
+          "C518": "C518",
+          "R552": "R552",
+          "TP502": "TP502"
+        },
+        "nets": {
+          "E5_HDMI_5V_Q6A": "E5_HDMI_5V_Q6A",
+          "E5_HDMI_5V_DISP": "E5_HDMI_5V_DISP",
+          "E5_HDMI_ST_N": "E5_HDMI_ST_N",
+          "GND": "GND"
+        },
+        "source": "pcb/generated/partition.json board_candidate HDMI_INSERT (U506, C517, C518, R552, TP502); design/E5.json pins"
+      }
+    ],
+    "spares": 0,
+    "spares_source": "one board per device (tools/assembly_data.py UNITS); the JLC minimum order quantity gives spare bare boards"
+  },
+  "parts": [
+    {
+      "source": "pilot_placeholder",
+      "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "3fb9d4d7de927c5ce8ddecff227a5f36e9a2e9b2bd1184b9c1d53c807998e92e",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_PinHeader_2.00mm.pretty/PinHeader_1x02_P2.00mm_Vertical.kicad_mod read 2026-11-11 (the 1x04 file of the same tag gives the sha256 that pcb/boards/ENC.json records and the kicad/kicad:10.0.7 image matched); checked against the image copy at run time",
+      "pending": "FPC socket ref pending GR-4 (Adafruit 3548/3550/3560 FPC pinout and socket MPN unpublished)",
+      "pins_source": "design/E5.json U506 pins 1 (E5_HDMI_5V_Q6A: HDMI pin 18 from the Q6A side) and 3/6 (E5_HDMI_5V_DISP: pin 18 to the display side) and GND; the FPC contact numbers of these conductors are not published (W2 GR-4)",
+      "why_placeholder": "The boundary nets E5_HDMI_5V_Q6A, E5_HDMI_5V_DISP and GND leave the board through the two FPC sockets, which have no graph ref, no MPN and no published pinout (W2 GR-4). Two 2-pad 2.0 mm lands (KiCad 10.0.7 PinHeader_1x02_P2.00mm_Vertical, drill 0.8, pad 1.35) mark where the socket A / socket B pin-18 and GND contacts join the island, so the boundary audit reads 'provisional' (OPEN) instead of 'dangling'. Nothing is fitted in them; the TMDS, clock, DDC, CEC, HPD and shield conductors stay OPEN with the sockets.",
+      "ref": "J1",
+      "value": "FPC socket A placeholder (pin 18 in, GND), nothing fitted",
+      "pins": {
+        "1": "E5_HDMI_5V_Q6A",
+        "2": "GND"
+      },
+      "replaced_by": "FPC socket A for flex 1 (MPN TBD; W2 GR-4 OPEN): its pin-18 and GND contacts",
+      "anchor": {
+        "at": [
+          7.0,
+          2.2
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            4.0,
+            2.2
+          ],
+          "angle": 0
+        }
+      }
+    },
+    {
+      "source": "pilot_placeholder",
+      "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical",
+      "footprint_library": "kicad-image",
+      "footprint_sha256": "3fb9d4d7de927c5ce8ddecff227a5f36e9a2e9b2bd1184b9c1d53c807998e92e",
+      "footprint_sha256_source": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_PinHeader_2.00mm.pretty/PinHeader_1x02_P2.00mm_Vertical.kicad_mod read 2026-11-11 (the 1x04 file of the same tag gives the sha256 that pcb/boards/ENC.json records and the kicad/kicad:10.0.7 image matched); checked against the image copy at run time",
+      "pending": "FPC socket ref pending GR-4 (Adafruit 3548/3550/3560 FPC pinout and socket MPN unpublished)",
+      "pins_source": "design/E5.json U506 pins 1 (E5_HDMI_5V_Q6A: HDMI pin 18 from the Q6A side) and 3/6 (E5_HDMI_5V_DISP: pin 18 to the display side) and GND; the FPC contact numbers of these conductors are not published (W2 GR-4)",
+      "why_placeholder": "The boundary nets E5_HDMI_5V_Q6A, E5_HDMI_5V_DISP and GND leave the board through the two FPC sockets, which have no graph ref, no MPN and no published pinout (W2 GR-4). Two 2-pad 2.0 mm lands (KiCad 10.0.7 PinHeader_1x02_P2.00mm_Vertical, drill 0.8, pad 1.35) mark where the socket A / socket B pin-18 and GND contacts join the island, so the boundary audit reads 'provisional' (OPEN) instead of 'dangling'. Nothing is fitted in them; the TMDS, clock, DDC, CEC, HPD and shield conductors stay OPEN with the sockets.",
+      "ref": "J2",
+      "value": "FPC socket B placeholder (pin 18 out, GND), nothing fitted",
+      "pins": {
+        "1": "E5_HDMI_5V_DISP",
+        "2": "GND"
+      },
+      "replaced_by": "FPC socket B for flex 2 (MPN TBD; W2 GR-4 OPEN): its pin-18 and GND contacts",
+      "anchor": {
+        "at": [
+          7.0,
+          15.8
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            4.0,
+            15.8
+          ],
+          "angle": 0
+        }
+      }
+    },
+    {
+      "ref": "U506",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          8.0,
+          9.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            8.0,
+            11.6
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "middle of the board between the two socket edges"
+    },
+    {
+      "ref": "C517",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          4.6,
+          9.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            4.6,
+            11.1
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "input capacitor (E5_HDMI_5V_Q6A) beside U506 pin 1"
+    },
+    {
+      "ref": "C518",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          11.4,
+          9.65
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            11.4,
+            11.1
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "output capacitor (E5_HDMI_5V_DISP) beside U506 pins 6/3"
+    },
+    {
+      "ref": "R552",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          8.0,
+          6.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            8.0,
+            4.9
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "ST pull-up (E5_HDMI_ST_N to E5_HDMI_5V_Q6A) under U506"
+    },
+    {
+      "ref": "TP502",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          12.6,
+          6.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            12.6,
+            4.5
+          ],
+          "angle": 0
+        }
+      },
+      "anchor_source": "ST_N diagnostic pad, probe side up"
+    }
+  ],
+  "holes": {
+    "from_contract": true,
+    "ref_prefix": "H",
+    "keepout_layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "keepout_blocks": [
+      "tracks",
+      "vias",
+      "zone_fills"
+    ]
+  },
+  "groups": [],
+  "pre_route": {
+    "tracks": [],
+    "zones": []
+  },
+  "post_route_zones": [
+    {
+      "id": "GND-F",
+      "net": "GND",
+      "layer": "F.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid"
+    },
+    {
+      "id": "GND-B",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid"
+    }
+  ],
+  "edge_keepout": {
+    "width_mm": 0.2,
+    "layers": [
+      "F.Cu",
+      "B.Cu"
+    ],
+    "blocks": [
+      "tracks",
+      "vias"
+    ],
+    "why": "rule-area strips (half-width 0.2) on every outline edge keep router copper 0.35 mm off the edge, above the project copper-to-edge 0.3 (as pcb/boards/PWR_B.json edge_keepout)"
+  },
+  "height_zones": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "side": "top",
+      "checked": true,
+      "why": "reserve hdmi_insert top z 45.5 (contract-proposal max_component_height)"
+    }
+  ],
+  "sides": [
+    "top"
+  ],
+  "heights": {
+    "U506": 1.1,
+    "C517": 0.95,
+    "C518": 0.95,
+    "R552": 0.55,
+    "TP502": 0.1,
+    "J1": 2.0,
+    "J2": 2.0
+  },
+  "heights_note": "U506 SOT-363 1.1 max, 0603 parts <= 0.95 (land patterns of the KiCad 10.0.7 library; package height assumption until the datasheets are read), TP502 bare pad; J1/J2 = a 2.0 mm reserve for the straight FPC sockets (assumption, MPN OPEN)",
+  "router": {
+    "tool": "freerouting",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:06:00",
+    "timeout_s": 480,
+    "fanout": false,
+    "why": "fan-out pre-pass off: on PWR_B it escaped SMD pins with necked-down stubs and dangling vias (pcb/boards/PWR_B.json router.why)"
+  },
+  "drc_policy": {
+    "warning_checks": {
+      "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+      "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+      "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board",
+      "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+      "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json",
+      "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+    }
+  }
+}

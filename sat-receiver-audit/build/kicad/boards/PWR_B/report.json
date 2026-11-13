@@ -7,13 +7,13 @@
   "result": {
     "drc_errors": 0,
     "drc_unconnected": 0,
-    "drc_warnings": 269,
+    "drc_warnings": 268,
     "ignored_checks": [],
     "source_pad_audit_errors": {
       "PWRB": 0
     },
     "boundary_audit": [
-      "provisional: B2B ref pending: Samtec QTH-060-01-L-D-A land not derived and vendored yet, no graph ref (GR-4 / PCB-PWRA OPEN)"
+      "pass"
     ],
     "domain_audit": true,
     "keepout_audit": true,
@@ -23,18 +23,18 @@
   },
   "inputs": {
     "parts": {
-      "spec": "8e96968c2fcbc03507f3437417422ffd527d1041b7faba7384f726097b27c2ac",
+      "spec": "338aae7d000ebad3aba047c26793489f900387cf1e823bf2bf327eb334d39d25",
       "contract": "2634a7d82faba41d5149273091dd74465c91431cbb3348cfc79d4212e02937d4",
-      "project_rules": "9254857ee3a5ee80c97fcbae8c86419aa7b7537a14dccc63b2938d7d2a885d4a",
-      "template": "3bab3d47e8a5690b6450b895a77e29ee17f9163d2f664df35297e63141707667",
-      "instances": "1571b4718ac041c73f930ea0282813645092df5e16e5067ca8b60d24943cb67b"
+      "project_rules": "4f5bc0bec78bf803053c46d46388d83d41b2fc7246dc96a4abc9cc91d28865f9",
+      "template": "e0bd962202e7e5665c855ae3b39ee7cd3e717416538c01332ad0f236f6fc7b46",
+      "instances": "bdf3a9cfb3722109454c27889b13db7f2fb5f22fae54c4510a3b7d3eb1292979"
     },
-    "sha256": "a0ea948bc0c66f944ad4ce47b235fa9aae9603782f177090a814460abf788a02"
+    "sha256": "141582cb6e53689f084f64006d4fa9f96293a33405c928d8789dbc8d153431f8"
   },
   "board_file": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-  "board_sha256": "1cfcb89bddef060d434013324d60a1298a85f35fecfeaf80654c67c3e09d9480",
+  "board_sha256": "476ddc3a3aed59c428beebc74c1a5fd645f9a833de3e5b5dbcefd0709dcf0808",
   "project_file": "build/kicad/boards/PWR_B/PWR_B.kicad_pro",
-  "fp_lib_table_sha256": "939c61d28ec5c89c1f2e8cc9e131fe6bff1d7fc4b7e07bd56d8019a5f9eec2aa",
+  "fp_lib_table_sha256": "9a5eff2456cb36deae2e28ef21b277618ca2f051b6b38a68a080d558e2ac22db",
   "layers": {
     "copper": 4,
     "thickness_mm": 1.6,
@@ -47,7 +47,7 @@
       "F.Cu": "parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour",
       "In1.Cu": "solid GND plane (layer type power: the router puts only vias through it)",
       "In2.Cu": "second GND plane (layer type power)",
-      "B.Cu": "B2B placeholder (bottom), LAB5 bar, B2B fan-out, signals, GND pour"
+      "B.Cu": "B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour"
     }
   },
   "stackup_contract": {
@@ -214,6 +214,7 @@
         "J203": "J203",
         "J204": "J204",
         "J207": "J207",
+        "J209": "J209",
         "J506": "J506",
         "J508": "J508",
         "L206": "L206",
@@ -294,8 +295,7 @@
         "U221": "U221",
         "U501": "U501",
         "U502": "U502",
-        "U507": "U507",
-        "B2B1": null
+        "U507": "U507"
       },
       "nets": {
         "3V3_Q6A": "3V3_Q6A",
@@ -1125,6 +1125,118 @@
         "7": "VBUS_HFP",
         "8": "GND",
         "9": "BONI13V8_PORT"
+      },
+      "unused_pads": []
+    },
+    {
+      "ref": "J209",
+      "source": "graph",
+      "fpid": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+      "library": "project",
+      "file": "build/kicad/footprints/Connector_Samtec.pretty/Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical.kicad_mod",
+      "sha256": "ff556995775651c9e6395aaa029847ad24251f121cbd478fd464f46bd691cec1",
+      "value": "B2B-PWRB: Samtec LSHM-150 2×50, PWR-B низ, стик 5.00 мм",
+      "pads": {
+        "1": "LAB5",
+        "10": "LNA4V5",
+        "100": "E2_LNA4_SW",
+        "11": "GND",
+        "12": "GND",
+        "13": "LAB5",
+        "14": "BIAS_CH1_DAMP",
+        "15": "GND",
+        "16": "GND",
+        "17": "CHG_INHIBIT",
+        "18": "BIAS_CH2_DAMP",
+        "19": "E1_BAT_ADC",
+        "2": "3V3_Q6A",
+        "20": "GND",
+        "21": "EN_AUX12",
+        "22": "BIAS_CH3_DAMP",
+        "23": "EN_BONI",
+        "24": "GND",
+        "25": "EN_HFP",
+        "26": "E2_SB_DAMP",
+        "27": "EN_LIME3V3",
+        "28": "GND",
+        "29": "EN_LNB",
+        "3": "GND",
+        "30": "VBUS_RTLB_DAMP",
+        "31": "FAULT_HFP",
+        "32": "GND",
+        "33": "FLT_BONI",
+        "34": "VBUS_LABPORT",
+        "35": "FLT_LIME3V3",
+        "36": "GND",
+        "37": "FLT_LNB",
+        "38": "VBUS_HFP",
+        "39": "I2C0_SCL",
+        "4": "GND",
+        "40": "GND",
+        "41": "I2C0_SDA",
+        "42": "LAB5_RLY",
+        "43": "I2C2_SCL",
+        "44": "GND",
+        "45": "I2C2_SDA",
+        "46": "LAB5_RLY",
+        "47": "IMU_RX",
+        "48": "GND",
+        "49": "IMU_TX",
+        "5": "LAB5",
+        "50": "BIAS_CH4_DAMP",
+        "51": "INA228_ALERT",
+        "52": "GND",
+        "53": "OVP_LNB_N",
+        "54": "BONI13V8",
+        "55": "PICO_DISP_EN",
+        "56": "GND",
+        "57": "PICO_OFF",
+        "58": "LNB13V2",
+        "59": "PWR_BUTTON",
+        "6": "LNA4V5",
+        "60": "GND",
+        "61": null,
+        "62": "AUX12",
+        "63": null,
+        "64": "GND",
+        "65": null,
+        "66": "BONI13V8_PORT",
+        "67": null,
+        "68": "GND",
+        "69": null,
+        "7": "GND",
+        "70": "GND",
+        "71": null,
+        "72": null,
+        "73": null,
+        "74": null,
+        "75": null,
+        "76": null,
+        "77": null,
+        "78": null,
+        "79": null,
+        "8": "GND",
+        "80": null,
+        "81": null,
+        "82": null,
+        "83": null,
+        "84": null,
+        "85": null,
+        "86": null,
+        "87": null,
+        "88": null,
+        "89": null,
+        "9": "LAB5",
+        "90": null,
+        "91": null,
+        "92": null,
+        "93": null,
+        "94": null,
+        "95": null,
+        "96": null,
+        "97": "GND",
+        "98": "GND",
+        "99": "E2_LNA4_SHUNT"
       },
       "unused_pads": []
     },
@@ -2337,107 +2449,10 @@
         "8": "3V3_Q6A"
       },
       "unused_pads": []
-    },
-    {
-      "ref": "B2B1",
-      "source": "pilot_placeholder",
-      "fpid": "Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm",
-      "library": "kicad-image",
-      "file": null,
-      "sha256": "9037e84fbb6b50960b888d23e8ba8dea9d7cd6d705ad00ea4d6b2893bffb586f",
-      "value": "B2B placeholder: Samtec QTH-060-01-L-D-A pending",
-      "pads": {
-        "100": "GND",
-        "101": "EN_HFP",
-        "102": "AUX12",
-        "103": "EN_BONI",
-        "104": "BONI13V8",
-        "105": "EN_AUX12",
-        "106": "E2_SB_DAMP",
-        "107": "E1_BAT_ADC",
-        "108": "VBUS_RTLB_DAMP",
-        "109": "CHG_INHIBIT",
-        "110": "BIAS_CH3_DAMP",
-        "111": "GND",
-        "112": "BIAS_CH2_DAMP",
-        "113": "LAB5",
-        "114": "BIAS_CH1_DAMP",
-        "115": "LAB5",
-        "116": "GND",
-        "117": "LAB5",
-        "118": "LNA4V5",
-        "119": "LAB5",
-        "120": "LNA4V5",
-        "14": "BIAS_CH4_DAMP",
-        "22": "E2_LNA4_SHUNT",
-        "32": "E2_LNA4_SW",
-        "59": "GND",
-        "61": "3V3_Q6A",
-        "63": "I2C2_SDA",
-        "65": "I2C2_SCL",
-        "67": "VBUS_LABPORT",
-        "69": "GND",
-        "71": "PWR_BUTTON",
-        "73": "PICO_OFF",
-        "75": "PICO_DISP_EN",
-        "77": "OVP_LNB_N",
-        "79": "INA228_ALERT",
-        "81": "IMU_TX",
-        "82": "GND",
-        "83": "IMU_RX",
-        "84": "LAB5_RLY",
-        "85": "I2C0_SDA",
-        "86": "LAB5_RLY",
-        "87": "I2C0_SCL",
-        "88": "GND",
-        "89": "FLT_LNB",
-        "90": "LNB13V2",
-        "91": "FLT_LIME3V3",
-        "92": "GND",
-        "93": "FLT_BONI",
-        "94": "VBUS_HFP",
-        "95": "FAULT_HFP",
-        "96": "GND",
-        "97": "EN_LNB",
-        "98": "BONI13V8_PORT",
-        "99": "EN_LIME3V3"
-      },
-      "unused_pads": []
     }
   ],
-  "placeholders": [
-    {
-      "ref": "B2B1",
-      "footprint": "Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm",
-      "replaced_by": "graph ref of the Samtec QTH-060-01-L-D-A (pcb/partition-spec.json b2b.mpn.pwr_b) once its land, derived from the dimensions of the Samtec recommended PCB layout Rev M, is vendored (GR-4 / PCB-PWRA lineage); only the contact numbers of this pin map carry over, then PWR_B and PWR_A are re-routed",
-      "pending": "B2B ref pending: Samtec QTH-060-01-L-D-A land not derived and vendored yet, no graph ref (GR-4 / PCB-PWRA OPEN)",
-      "pins_source": "generated by build/kicad/boards/PWR_B/make_spec.py b2b_pin_map() from pcb/generated/b2b-nets.json (sha256 0070cf483d67c0ba2cb0b29629961b04f89c11126aa82bebad9b510c98d44705): every crossing net with its contact count, one GND contact per power net",
-      "why": "The QTH-060-01-L-D-A has no KiCad 10.0.7 footprint and its land is not vendored yet (build/kicad/footprints/ belongs to the GR-4 / PCB-PWRA lineage), so pcb/partition-spec.json b2b has no graph ref. Samtec's RECOMMENDED PCB LAYOUT FOR QTH-XXX-XX-X-D-XXX (https://suddendocs.samtec.com/prints/qth-xxx-xx-x-d-xxx-footprint.pdf, Rev M, 2024-01-26, FOOTPRINT FOR QTH-060-01-X-D-XXX SHOWN) is readable (HTTP 200, read 2026-11-07; the 403 that GR-3 recorded no longer holds) but carries a Samtec proprietary note, so the PDF is fetch-only and the land must be derived from its dimensions: 0.500 mm contact pitch, banks 20.003 mm apart, ground-plane pads 2 per bank. The placeholder is the official KiCad 10.0.7 Hirose FX8-120P-SV land (2 x 60 contacts, 0.6 mm pitch, no ground-plane pad, courtyard 43.6 x 7.9 against the QTH-060 catalogue outline 40.0 x 7.11, F-226 qth.pdf). It keeps routing, DRC and the pin map checkable as a model, but only its contact numbers carry over: the FX8 contact coordinates, the fan-out, connectors.json positions and the GND-contact return (the QTH carries GND on its ground plane, 25 A per plane, F-226) are placeholder-only. Hirose rates FX8 contacts at 0.4 A (FX8/FX8C Series Catalog p. 3 Rated Current, distributor copy https://media.e-sonic.com/productfiles/mf-HR/HR-FX8120SSV21.pdf, read 2026-11-07), below the 1 A per contact of this pin map (LAB5 4 A on 4 contacts): the placeholder must never be populated, and the fab set stays MODEL_NOT_FOR_FABRICATION until the QTH land replaces it. It is not the part to buy; its socket Connector_Hirose_FX8:Hirose_FX8-120S-SV_2x60_P0.6mm (sha256 82ef2a7f5fbd930b90d97ef39fd59bbc18f8f31c22ec51cee135ad045241a67b) is the PWR-A placeholder mate."
-    }
-  ],
+  "placeholders": [],
   "placement": [
-    {
-      "ref": "B2B1",
-      "fpid": "Connector_Hirose_FX8:Hirose_FX8-120P-SV_2x60_P0.6mm",
-      "side": "B",
-      "rotation": 180.0,
-      "at": [
-        106.0,
-        18.5
-      ],
-      "courtyard_box": [
-        84.175,
-        14.525,
-        127.825,
-        22.475
-      ],
-      "fab_box": [
-        84.65,
-        15.9,
-        127.35,
-        21.1
-      ]
-    },
     {
       "ref": "C232",
       "fpid": "Capacitor_SMD:C_0805_2012Metric",
@@ -3589,6 +3604,28 @@
         26.85,
         109.0,
         34.55
+      ]
+    },
+    {
+      "ref": "J209",
+      "fpid": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+      "side": "B",
+      "rotation": 0.0,
+      "at": [
+        98.8,
+        18.5
+      ],
+      "courtyard_box": [
+        83.425,
+        15.375,
+        114.175,
+        21.625
+      ],
+      "fab_box": [
+        83.9,
+        15.96,
+        113.7,
+        21.04
       ]
     },
     {
@@ -5335,984 +5372,6 @@
     }
   ],
   "pads": {
-    "B2B1": [
-      {
-        "number": "",
-        "net": null,
-        "at": [
-          85.9,
-          17.0
-        ]
-      },
-      {
-        "number": "",
-        "net": null,
-        "at": [
-          126.1,
-          17.0
-        ]
-      },
-      {
-        "number": "1",
-        "net": null,
-        "at": [
-          123.7,
-          15.8
-        ]
-      },
-      {
-        "number": "2",
-        "net": null,
-        "at": [
-          123.7,
-          21.2
-        ]
-      },
-      {
-        "number": "3",
-        "net": null,
-        "at": [
-          123.1,
-          15.8
-        ]
-      },
-      {
-        "number": "4",
-        "net": null,
-        "at": [
-          123.1,
-          21.2
-        ]
-      },
-      {
-        "number": "5",
-        "net": null,
-        "at": [
-          122.5,
-          15.8
-        ]
-      },
-      {
-        "number": "6",
-        "net": null,
-        "at": [
-          122.5,
-          21.2
-        ]
-      },
-      {
-        "number": "7",
-        "net": null,
-        "at": [
-          121.9,
-          15.8
-        ]
-      },
-      {
-        "number": "8",
-        "net": null,
-        "at": [
-          121.9,
-          21.2
-        ]
-      },
-      {
-        "number": "9",
-        "net": null,
-        "at": [
-          121.3,
-          15.8
-        ]
-      },
-      {
-        "number": "10",
-        "net": null,
-        "at": [
-          121.3,
-          21.2
-        ]
-      },
-      {
-        "number": "11",
-        "net": null,
-        "at": [
-          120.7,
-          15.8
-        ]
-      },
-      {
-        "number": "12",
-        "net": null,
-        "at": [
-          120.7,
-          21.2
-        ]
-      },
-      {
-        "number": "13",
-        "net": null,
-        "at": [
-          120.1,
-          15.8
-        ]
-      },
-      {
-        "number": "14",
-        "net": "BIAS_CH4_DAMP",
-        "at": [
-          120.1,
-          21.2
-        ]
-      },
-      {
-        "number": "15",
-        "net": null,
-        "at": [
-          119.5,
-          15.8
-        ]
-      },
-      {
-        "number": "16",
-        "net": null,
-        "at": [
-          119.5,
-          21.2
-        ]
-      },
-      {
-        "number": "17",
-        "net": null,
-        "at": [
-          118.9,
-          15.8
-        ]
-      },
-      {
-        "number": "18",
-        "net": null,
-        "at": [
-          118.9,
-          21.2
-        ]
-      },
-      {
-        "number": "19",
-        "net": null,
-        "at": [
-          118.3,
-          15.8
-        ]
-      },
-      {
-        "number": "20",
-        "net": null,
-        "at": [
-          118.3,
-          21.2
-        ]
-      },
-      {
-        "number": "21",
-        "net": null,
-        "at": [
-          117.7,
-          15.8
-        ]
-      },
-      {
-        "number": "22",
-        "net": "E2_LNA4_SHUNT",
-        "at": [
-          117.7,
-          21.2
-        ]
-      },
-      {
-        "number": "23",
-        "net": null,
-        "at": [
-          117.1,
-          15.8
-        ]
-      },
-      {
-        "number": "24",
-        "net": null,
-        "at": [
-          117.1,
-          21.2
-        ]
-      },
-      {
-        "number": "25",
-        "net": null,
-        "at": [
-          116.5,
-          15.8
-        ]
-      },
-      {
-        "number": "26",
-        "net": null,
-        "at": [
-          116.5,
-          21.2
-        ]
-      },
-      {
-        "number": "27",
-        "net": null,
-        "at": [
-          115.9,
-          15.8
-        ]
-      },
-      {
-        "number": "28",
-        "net": null,
-        "at": [
-          115.9,
-          21.2
-        ]
-      },
-      {
-        "number": "29",
-        "net": null,
-        "at": [
-          115.3,
-          15.8
-        ]
-      },
-      {
-        "number": "30",
-        "net": null,
-        "at": [
-          115.3,
-          21.2
-        ]
-      },
-      {
-        "number": "31",
-        "net": null,
-        "at": [
-          114.7,
-          15.8
-        ]
-      },
-      {
-        "number": "32",
-        "net": "E2_LNA4_SW",
-        "at": [
-          114.7,
-          21.2
-        ]
-      },
-      {
-        "number": "33",
-        "net": null,
-        "at": [
-          114.1,
-          15.8
-        ]
-      },
-      {
-        "number": "34",
-        "net": null,
-        "at": [
-          114.1,
-          21.2
-        ]
-      },
-      {
-        "number": "35",
-        "net": null,
-        "at": [
-          113.5,
-          15.8
-        ]
-      },
-      {
-        "number": "36",
-        "net": null,
-        "at": [
-          113.5,
-          21.2
-        ]
-      },
-      {
-        "number": "37",
-        "net": null,
-        "at": [
-          112.9,
-          15.8
-        ]
-      },
-      {
-        "number": "38",
-        "net": null,
-        "at": [
-          112.9,
-          21.2
-        ]
-      },
-      {
-        "number": "39",
-        "net": null,
-        "at": [
-          112.3,
-          15.8
-        ]
-      },
-      {
-        "number": "40",
-        "net": null,
-        "at": [
-          112.3,
-          21.2
-        ]
-      },
-      {
-        "number": "41",
-        "net": null,
-        "at": [
-          111.7,
-          15.8
-        ]
-      },
-      {
-        "number": "42",
-        "net": null,
-        "at": [
-          111.7,
-          21.2
-        ]
-      },
-      {
-        "number": "43",
-        "net": null,
-        "at": [
-          111.1,
-          15.8
-        ]
-      },
-      {
-        "number": "44",
-        "net": null,
-        "at": [
-          111.1,
-          21.2
-        ]
-      },
-      {
-        "number": "45",
-        "net": null,
-        "at": [
-          110.5,
-          15.8
-        ]
-      },
-      {
-        "number": "46",
-        "net": null,
-        "at": [
-          110.5,
-          21.2
-        ]
-      },
-      {
-        "number": "47",
-        "net": null,
-        "at": [
-          109.9,
-          15.8
-        ]
-      },
-      {
-        "number": "48",
-        "net": null,
-        "at": [
-          109.9,
-          21.2
-        ]
-      },
-      {
-        "number": "49",
-        "net": null,
-        "at": [
-          109.3,
-          15.8
-        ]
-      },
-      {
-        "number": "50",
-        "net": null,
-        "at": [
-          109.3,
-          21.2
-        ]
-      },
-      {
-        "number": "51",
-        "net": null,
-        "at": [
-          108.7,
-          15.8
-        ]
-      },
-      {
-        "number": "52",
-        "net": null,
-        "at": [
-          108.7,
-          21.2
-        ]
-      },
-      {
-        "number": "53",
-        "net": null,
-        "at": [
-          108.1,
-          15.8
-        ]
-      },
-      {
-        "number": "54",
-        "net": null,
-        "at": [
-          108.1,
-          21.2
-        ]
-      },
-      {
-        "number": "55",
-        "net": null,
-        "at": [
-          107.5,
-          15.8
-        ]
-      },
-      {
-        "number": "56",
-        "net": null,
-        "at": [
-          107.5,
-          21.2
-        ]
-      },
-      {
-        "number": "57",
-        "net": null,
-        "at": [
-          106.9,
-          15.8
-        ]
-      },
-      {
-        "number": "58",
-        "net": null,
-        "at": [
-          106.9,
-          21.2
-        ]
-      },
-      {
-        "number": "59",
-        "net": "GND",
-        "at": [
-          106.3,
-          15.8
-        ]
-      },
-      {
-        "number": "60",
-        "net": null,
-        "at": [
-          106.3,
-          21.2
-        ]
-      },
-      {
-        "number": "61",
-        "net": "3V3_Q6A",
-        "at": [
-          105.7,
-          15.8
-        ]
-      },
-      {
-        "number": "62",
-        "net": null,
-        "at": [
-          105.7,
-          21.2
-        ]
-      },
-      {
-        "number": "63",
-        "net": "I2C2_SDA",
-        "at": [
-          105.1,
-          15.8
-        ]
-      },
-      {
-        "number": "64",
-        "net": null,
-        "at": [
-          105.1,
-          21.2
-        ]
-      },
-      {
-        "number": "65",
-        "net": "I2C2_SCL",
-        "at": [
-          104.5,
-          15.8
-        ]
-      },
-      {
-        "number": "66",
-        "net": null,
-        "at": [
-          104.5,
-          21.2
-        ]
-      },
-      {
-        "number": "67",
-        "net": "VBUS_LABPORT",
-        "at": [
-          103.9,
-          15.8
-        ]
-      },
-      {
-        "number": "68",
-        "net": null,
-        "at": [
-          103.9,
-          21.2
-        ]
-      },
-      {
-        "number": "69",
-        "net": "GND",
-        "at": [
-          103.3,
-          15.8
-        ]
-      },
-      {
-        "number": "70",
-        "net": null,
-        "at": [
-          103.3,
-          21.2
-        ]
-      },
-      {
-        "number": "71",
-        "net": "PWR_BUTTON",
-        "at": [
-          102.7,
-          15.8
-        ]
-      },
-      {
-        "number": "72",
-        "net": null,
-        "at": [
-          102.7,
-          21.2
-        ]
-      },
-      {
-        "number": "73",
-        "net": "PICO_OFF",
-        "at": [
-          102.1,
-          15.8
-        ]
-      },
-      {
-        "number": "74",
-        "net": null,
-        "at": [
-          102.1,
-          21.2
-        ]
-      },
-      {
-        "number": "75",
-        "net": "PICO_DISP_EN",
-        "at": [
-          101.5,
-          15.8
-        ]
-      },
-      {
-        "number": "76",
-        "net": null,
-        "at": [
-          101.5,
-          21.2
-        ]
-      },
-      {
-        "number": "77",
-        "net": "OVP_LNB_N",
-        "at": [
-          100.9,
-          15.8
-        ]
-      },
-      {
-        "number": "78",
-        "net": null,
-        "at": [
-          100.9,
-          21.2
-        ]
-      },
-      {
-        "number": "79",
-        "net": "INA228_ALERT",
-        "at": [
-          100.3,
-          15.8
-        ]
-      },
-      {
-        "number": "80",
-        "net": null,
-        "at": [
-          100.3,
-          21.2
-        ]
-      },
-      {
-        "number": "81",
-        "net": "IMU_TX",
-        "at": [
-          99.7,
-          15.8
-        ]
-      },
-      {
-        "number": "82",
-        "net": "GND",
-        "at": [
-          99.7,
-          21.2
-        ]
-      },
-      {
-        "number": "83",
-        "net": "IMU_RX",
-        "at": [
-          99.1,
-          15.8
-        ]
-      },
-      {
-        "number": "84",
-        "net": "LAB5_RLY",
-        "at": [
-          99.1,
-          21.2
-        ]
-      },
-      {
-        "number": "85",
-        "net": "I2C0_SDA",
-        "at": [
-          98.5,
-          15.8
-        ]
-      },
-      {
-        "number": "86",
-        "net": "LAB5_RLY",
-        "at": [
-          98.5,
-          21.2
-        ]
-      },
-      {
-        "number": "87",
-        "net": "I2C0_SCL",
-        "at": [
-          97.9,
-          15.8
-        ]
-      },
-      {
-        "number": "88",
-        "net": "GND",
-        "at": [
-          97.9,
-          21.2
-        ]
-      },
-      {
-        "number": "89",
-        "net": "FLT_LNB",
-        "at": [
-          97.3,
-          15.8
-        ]
-      },
-      {
-        "number": "90",
-        "net": "LNB13V2",
-        "at": [
-          97.3,
-          21.2
-        ]
-      },
-      {
-        "number": "91",
-        "net": "FLT_LIME3V3",
-        "at": [
-          96.7,
-          15.8
-        ]
-      },
-      {
-        "number": "92",
-        "net": "GND",
-        "at": [
-          96.7,
-          21.2
-        ]
-      },
-      {
-        "number": "93",
-        "net": "FLT_BONI",
-        "at": [
-          96.1,
-          15.8
-        ]
-      },
-      {
-        "number": "94",
-        "net": "VBUS_HFP",
-        "at": [
-          96.1,
-          21.2
-        ]
-      },
-      {
-        "number": "95",
-        "net": "FAULT_HFP",
-        "at": [
-          95.5,
-          15.8
-        ]
-      },
-      {
-        "number": "96",
-        "net": "GND",
-        "at": [
-          95.5,
-          21.2
-        ]
-      },
-      {
-        "number": "97",
-        "net": "EN_LNB",
-        "at": [
-          94.9,
-          15.8
-        ]
-      },
-      {
-        "number": "98",
-        "net": "BONI13V8_PORT",
-        "at": [
-          94.9,
-          21.2
-        ]
-      },
-      {
-        "number": "99",
-        "net": "EN_LIME3V3",
-        "at": [
-          94.3,
-          15.8
-        ]
-      },
-      {
-        "number": "100",
-        "net": "GND",
-        "at": [
-          94.3,
-          21.2
-        ]
-      },
-      {
-        "number": "101",
-        "net": "EN_HFP",
-        "at": [
-          93.7,
-          15.8
-        ]
-      },
-      {
-        "number": "102",
-        "net": "AUX12",
-        "at": [
-          93.7,
-          21.2
-        ]
-      },
-      {
-        "number": "103",
-        "net": "EN_BONI",
-        "at": [
-          93.1,
-          15.8
-        ]
-      },
-      {
-        "number": "104",
-        "net": "BONI13V8",
-        "at": [
-          93.1,
-          21.2
-        ]
-      },
-      {
-        "number": "105",
-        "net": "EN_AUX12",
-        "at": [
-          92.5,
-          15.8
-        ]
-      },
-      {
-        "number": "106",
-        "net": "E2_SB_DAMP",
-        "at": [
-          92.5,
-          21.2
-        ]
-      },
-      {
-        "number": "107",
-        "net": "E1_BAT_ADC",
-        "at": [
-          91.9,
-          15.8
-        ]
-      },
-      {
-        "number": "108",
-        "net": "VBUS_RTLB_DAMP",
-        "at": [
-          91.9,
-          21.2
-        ]
-      },
-      {
-        "number": "109",
-        "net": "CHG_INHIBIT",
-        "at": [
-          91.3,
-          15.8
-        ]
-      },
-      {
-        "number": "110",
-        "net": "BIAS_CH3_DAMP",
-        "at": [
-          91.3,
-          21.2
-        ]
-      },
-      {
-        "number": "111",
-        "net": "GND",
-        "at": [
-          90.7,
-          15.8
-        ]
-      },
-      {
-        "number": "112",
-        "net": "BIAS_CH2_DAMP",
-        "at": [
-          90.7,
-          21.2
-        ]
-      },
-      {
-        "number": "113",
-        "net": "LAB5",
-        "at": [
-          90.1,
-          15.8
-        ]
-      },
-      {
-        "number": "114",
-        "net": "BIAS_CH1_DAMP",
-        "at": [
-          90.1,
-          21.2
-        ]
-      },
-      {
-        "number": "115",
-        "net": "LAB5",
-        "at": [
-          89.5,
-          15.8
-        ]
-      },
-      {
-        "number": "116",
-        "net": "GND",
-        "at": [
-          89.5,
-          21.2
-        ]
-      },
-      {
-        "number": "117",
-        "net": "LAB5",
-        "at": [
-          88.9,
-          15.8
-        ]
-      },
-      {
-        "number": "118",
-        "net": "LNA4V5",
-        "at": [
-          88.9,
-          21.2
-        ]
-      },
-      {
-        "number": "119",
-        "net": "LAB5",
-        "at": [
-          88.3,
-          15.8
-        ]
-      },
-      {
-        "number": "120",
-        "net": "LNA4V5",
-        "at": [
-          88.3,
-          21.2
-        ]
-      }
-    ],
     "C232": [
       {
         "number": "1",
@@ -7682,6 +6741,824 @@
         "at": [
           85.0,
           28.25
+        ]
+      }
+    ],
+    "J209": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          85.3,
+          17.65
+        ]
+      },
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          112.3,
+          17.65
+        ]
+      },
+      {
+        "number": "1",
+        "net": "LAB5",
+        "at": [
+          86.55,
+          16.65
+        ]
+      },
+      {
+        "number": "2",
+        "net": "3V3_Q6A",
+        "at": [
+          86.55,
+          20.35
+        ]
+      },
+      {
+        "number": "3",
+        "net": "GND",
+        "at": [
+          87.05,
+          16.65
+        ]
+      },
+      {
+        "number": "4",
+        "net": "GND",
+        "at": [
+          87.05,
+          20.35
+        ]
+      },
+      {
+        "number": "5",
+        "net": "LAB5",
+        "at": [
+          87.55,
+          16.65
+        ]
+      },
+      {
+        "number": "6",
+        "net": "LNA4V5",
+        "at": [
+          87.55,
+          20.35
+        ]
+      },
+      {
+        "number": "7",
+        "net": "GND",
+        "at": [
+          88.05,
+          16.65
+        ]
+      },
+      {
+        "number": "8",
+        "net": "GND",
+        "at": [
+          88.05,
+          20.35
+        ]
+      },
+      {
+        "number": "9",
+        "net": "LAB5",
+        "at": [
+          88.55,
+          16.65
+        ]
+      },
+      {
+        "number": "10",
+        "net": "LNA4V5",
+        "at": [
+          88.55,
+          20.35
+        ]
+      },
+      {
+        "number": "11",
+        "net": "GND",
+        "at": [
+          89.05,
+          16.65
+        ]
+      },
+      {
+        "number": "12",
+        "net": "GND",
+        "at": [
+          89.05,
+          20.35
+        ]
+      },
+      {
+        "number": "13",
+        "net": "LAB5",
+        "at": [
+          89.55,
+          16.65
+        ]
+      },
+      {
+        "number": "14",
+        "net": "BIAS_CH1_DAMP",
+        "at": [
+          89.55,
+          20.35
+        ]
+      },
+      {
+        "number": "15",
+        "net": "GND",
+        "at": [
+          90.05,
+          16.65
+        ]
+      },
+      {
+        "number": "16",
+        "net": "GND",
+        "at": [
+          90.05,
+          20.35
+        ]
+      },
+      {
+        "number": "17",
+        "net": "CHG_INHIBIT",
+        "at": [
+          90.55,
+          16.65
+        ]
+      },
+      {
+        "number": "18",
+        "net": "BIAS_CH2_DAMP",
+        "at": [
+          90.55,
+          20.35
+        ]
+      },
+      {
+        "number": "19",
+        "net": "E1_BAT_ADC",
+        "at": [
+          91.05,
+          16.65
+        ]
+      },
+      {
+        "number": "20",
+        "net": "GND",
+        "at": [
+          91.05,
+          20.35
+        ]
+      },
+      {
+        "number": "21",
+        "net": "EN_AUX12",
+        "at": [
+          91.55,
+          16.65
+        ]
+      },
+      {
+        "number": "22",
+        "net": "BIAS_CH3_DAMP",
+        "at": [
+          91.55,
+          20.35
+        ]
+      },
+      {
+        "number": "23",
+        "net": "EN_BONI",
+        "at": [
+          92.05,
+          16.65
+        ]
+      },
+      {
+        "number": "24",
+        "net": "GND",
+        "at": [
+          92.05,
+          20.35
+        ]
+      },
+      {
+        "number": "25",
+        "net": "EN_HFP",
+        "at": [
+          92.55,
+          16.65
+        ]
+      },
+      {
+        "number": "26",
+        "net": "E2_SB_DAMP",
+        "at": [
+          92.55,
+          20.35
+        ]
+      },
+      {
+        "number": "27",
+        "net": "EN_LIME3V3",
+        "at": [
+          93.05,
+          16.65
+        ]
+      },
+      {
+        "number": "28",
+        "net": "GND",
+        "at": [
+          93.05,
+          20.35
+        ]
+      },
+      {
+        "number": "29",
+        "net": "EN_LNB",
+        "at": [
+          93.55,
+          16.65
+        ]
+      },
+      {
+        "number": "30",
+        "net": "VBUS_RTLB_DAMP",
+        "at": [
+          93.55,
+          20.35
+        ]
+      },
+      {
+        "number": "31",
+        "net": "FAULT_HFP",
+        "at": [
+          94.05,
+          16.65
+        ]
+      },
+      {
+        "number": "32",
+        "net": "GND",
+        "at": [
+          94.05,
+          20.35
+        ]
+      },
+      {
+        "number": "33",
+        "net": "FLT_BONI",
+        "at": [
+          94.55,
+          16.65
+        ]
+      },
+      {
+        "number": "34",
+        "net": "VBUS_LABPORT",
+        "at": [
+          94.55,
+          20.35
+        ]
+      },
+      {
+        "number": "35",
+        "net": "FLT_LIME3V3",
+        "at": [
+          95.05,
+          16.65
+        ]
+      },
+      {
+        "number": "36",
+        "net": "GND",
+        "at": [
+          95.05,
+          20.35
+        ]
+      },
+      {
+        "number": "37",
+        "net": "FLT_LNB",
+        "at": [
+          95.55,
+          16.65
+        ]
+      },
+      {
+        "number": "38",
+        "net": "VBUS_HFP",
+        "at": [
+          95.55,
+          20.35
+        ]
+      },
+      {
+        "number": "39",
+        "net": "I2C0_SCL",
+        "at": [
+          96.05,
+          16.65
+        ]
+      },
+      {
+        "number": "40",
+        "net": "GND",
+        "at": [
+          96.05,
+          20.35
+        ]
+      },
+      {
+        "number": "41",
+        "net": "I2C0_SDA",
+        "at": [
+          96.55,
+          16.65
+        ]
+      },
+      {
+        "number": "42",
+        "net": "LAB5_RLY",
+        "at": [
+          96.55,
+          20.35
+        ]
+      },
+      {
+        "number": "43",
+        "net": "I2C2_SCL",
+        "at": [
+          97.05,
+          16.65
+        ]
+      },
+      {
+        "number": "44",
+        "net": "GND",
+        "at": [
+          97.05,
+          20.35
+        ]
+      },
+      {
+        "number": "45",
+        "net": "I2C2_SDA",
+        "at": [
+          97.55,
+          16.65
+        ]
+      },
+      {
+        "number": "46",
+        "net": "LAB5_RLY",
+        "at": [
+          97.55,
+          20.35
+        ]
+      },
+      {
+        "number": "47",
+        "net": "IMU_RX",
+        "at": [
+          98.05,
+          16.65
+        ]
+      },
+      {
+        "number": "48",
+        "net": "GND",
+        "at": [
+          98.05,
+          20.35
+        ]
+      },
+      {
+        "number": "49",
+        "net": "IMU_TX",
+        "at": [
+          98.55,
+          16.65
+        ]
+      },
+      {
+        "number": "50",
+        "net": "BIAS_CH4_DAMP",
+        "at": [
+          98.55,
+          20.35
+        ]
+      },
+      {
+        "number": "51",
+        "net": "INA228_ALERT",
+        "at": [
+          99.05,
+          16.65
+        ]
+      },
+      {
+        "number": "52",
+        "net": "GND",
+        "at": [
+          99.05,
+          20.35
+        ]
+      },
+      {
+        "number": "53",
+        "net": "OVP_LNB_N",
+        "at": [
+          99.55,
+          16.65
+        ]
+      },
+      {
+        "number": "54",
+        "net": "BONI13V8",
+        "at": [
+          99.55,
+          20.35
+        ]
+      },
+      {
+        "number": "55",
+        "net": "PICO_DISP_EN",
+        "at": [
+          100.05,
+          16.65
+        ]
+      },
+      {
+        "number": "56",
+        "net": "GND",
+        "at": [
+          100.05,
+          20.35
+        ]
+      },
+      {
+        "number": "57",
+        "net": "PICO_OFF",
+        "at": [
+          100.55,
+          16.65
+        ]
+      },
+      {
+        "number": "58",
+        "net": "LNB13V2",
+        "at": [
+          100.55,
+          20.35
+        ]
+      },
+      {
+        "number": "59",
+        "net": "PWR_BUTTON",
+        "at": [
+          101.05,
+          16.65
+        ]
+      },
+      {
+        "number": "60",
+        "net": "GND",
+        "at": [
+          101.05,
+          20.35
+        ]
+      },
+      {
+        "number": "61",
+        "net": null,
+        "at": [
+          101.55,
+          16.65
+        ]
+      },
+      {
+        "number": "62",
+        "net": "AUX12",
+        "at": [
+          101.55,
+          20.35
+        ]
+      },
+      {
+        "number": "63",
+        "net": null,
+        "at": [
+          102.05,
+          16.65
+        ]
+      },
+      {
+        "number": "64",
+        "net": "GND",
+        "at": [
+          102.05,
+          20.35
+        ]
+      },
+      {
+        "number": "65",
+        "net": null,
+        "at": [
+          102.55,
+          16.65
+        ]
+      },
+      {
+        "number": "66",
+        "net": "BONI13V8_PORT",
+        "at": [
+          102.55,
+          20.35
+        ]
+      },
+      {
+        "number": "67",
+        "net": null,
+        "at": [
+          103.05,
+          16.65
+        ]
+      },
+      {
+        "number": "68",
+        "net": "GND",
+        "at": [
+          103.05,
+          20.35
+        ]
+      },
+      {
+        "number": "69",
+        "net": null,
+        "at": [
+          103.55,
+          16.65
+        ]
+      },
+      {
+        "number": "70",
+        "net": "GND",
+        "at": [
+          103.55,
+          20.35
+        ]
+      },
+      {
+        "number": "71",
+        "net": null,
+        "at": [
+          104.05,
+          16.65
+        ]
+      },
+      {
+        "number": "72",
+        "net": null,
+        "at": [
+          104.05,
+          20.35
+        ]
+      },
+      {
+        "number": "73",
+        "net": null,
+        "at": [
+          104.55,
+          16.65
+        ]
+      },
+      {
+        "number": "74",
+        "net": null,
+        "at": [
+          104.55,
+          20.35
+        ]
+      },
+      {
+        "number": "75",
+        "net": null,
+        "at": [
+          105.05,
+          16.65
+        ]
+      },
+      {
+        "number": "76",
+        "net": null,
+        "at": [
+          105.05,
+          20.35
+        ]
+      },
+      {
+        "number": "77",
+        "net": null,
+        "at": [
+          105.55,
+          16.65
+        ]
+      },
+      {
+        "number": "78",
+        "net": null,
+        "at": [
+          105.55,
+          20.35
+        ]
+      },
+      {
+        "number": "79",
+        "net": null,
+        "at": [
+          106.05,
+          16.65
+        ]
+      },
+      {
+        "number": "80",
+        "net": null,
+        "at": [
+          106.05,
+          20.35
+        ]
+      },
+      {
+        "number": "81",
+        "net": null,
+        "at": [
+          106.55,
+          16.65
+        ]
+      },
+      {
+        "number": "82",
+        "net": null,
+        "at": [
+          106.55,
+          20.35
+        ]
+      },
+      {
+        "number": "83",
+        "net": null,
+        "at": [
+          107.05,
+          16.65
+        ]
+      },
+      {
+        "number": "84",
+        "net": null,
+        "at": [
+          107.05,
+          20.35
+        ]
+      },
+      {
+        "number": "85",
+        "net": null,
+        "at": [
+          107.55,
+          16.65
+        ]
+      },
+      {
+        "number": "86",
+        "net": null,
+        "at": [
+          107.55,
+          20.35
+        ]
+      },
+      {
+        "number": "87",
+        "net": null,
+        "at": [
+          108.05,
+          16.65
+        ]
+      },
+      {
+        "number": "88",
+        "net": null,
+        "at": [
+          108.05,
+          20.35
+        ]
+      },
+      {
+        "number": "89",
+        "net": null,
+        "at": [
+          108.55,
+          16.65
+        ]
+      },
+      {
+        "number": "90",
+        "net": null,
+        "at": [
+          108.55,
+          20.35
+        ]
+      },
+      {
+        "number": "91",
+        "net": null,
+        "at": [
+          109.05,
+          16.65
+        ]
+      },
+      {
+        "number": "92",
+        "net": null,
+        "at": [
+          109.05,
+          20.35
+        ]
+      },
+      {
+        "number": "93",
+        "net": null,
+        "at": [
+          109.55,
+          16.65
+        ]
+      },
+      {
+        "number": "94",
+        "net": null,
+        "at": [
+          109.55,
+          20.35
+        ]
+      },
+      {
+        "number": "95",
+        "net": null,
+        "at": [
+          110.05,
+          16.65
+        ]
+      },
+      {
+        "number": "96",
+        "net": null,
+        "at": [
+          110.05,
+          20.35
+        ]
+      },
+      {
+        "number": "97",
+        "net": "GND",
+        "at": [
+          110.55,
+          16.65
+        ]
+      },
+      {
+        "number": "98",
+        "net": "GND",
+        "at": [
+          110.55,
+          20.35
+        ]
+      },
+      {
+        "number": "99",
+        "net": "E2_LNA4_SHUNT",
+        "at": [
+          111.05,
+          16.65
+        ]
+      },
+      {
+        "number": "100",
+        "net": "E2_LNA4_SW",
+        "at": [
+          111.05,
+          20.35
         ]
       }
     ],
@@ -9786,19 +9663,21 @@
   },
   "copper": {
     "tracks": {
-      "segments": 1406,
-      "vias": 209,
-      "locked": 217,
+      "segments": 1416,
+      "vias": 211,
+      "locked": 249,
       "by_layer": {
-        "B.Cu": 484,
-        "F.Cu": 922
+        "B.Cu": 520,
+        "F.Cu": 896
       },
       "widths_mm": [
         0.15,
+        0.2,
         0.25,
         0.35,
         0.5,
         0.6,
+        1.4,
         2.0
       ]
     },
@@ -10288,14 +10167,14 @@
   },
   "drc": {
     "errors": 0,
-    "warnings": 269,
+    "warnings": 268,
     "unconnected": 0,
     "schematic_parity": 0,
     "ignored_checks": [],
     "by_type": {
       "silk_over_copper": {
         "severity": "warning",
-        "count": 134
+        "count": 133
       },
       "silk_overlap": {
         "severity": "warning",
@@ -10325,7 +10204,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10348,7 +10227,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10371,7 +10250,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10394,7 +10273,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10417,7 +10296,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10440,7 +10319,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10463,7 +10342,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10486,7 +10365,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10509,7 +10388,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10532,7 +10411,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10555,7 +10434,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10578,7 +10457,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10601,7 +10480,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10624,7 +10503,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10647,7 +10526,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10670,7 +10549,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10693,7 +10572,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10716,7 +10595,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10739,7 +10618,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10762,7 +10641,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10785,7 +10664,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10808,7 +10687,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10831,7 +10710,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10854,7 +10733,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10877,7 +10756,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10900,7 +10779,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10923,7 +10802,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10946,7 +10825,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10969,7 +10848,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -10992,7 +10871,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11015,7 +10894,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11038,7 +10917,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11061,7 +10940,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11084,7 +10963,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11107,7 +10986,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11130,7 +11009,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11153,7 +11032,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11176,7 +11055,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11199,7 +11078,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11222,7 +11101,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11245,7 +11124,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11268,7 +11147,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11291,7 +11170,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11314,7 +11193,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11337,7 +11216,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11360,7 +11239,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11383,7 +11262,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11406,7 +11285,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11429,7 +11308,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11452,7 +11331,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11475,7 +11354,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11498,7 +11377,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11521,7 +11400,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11544,30 +11423,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of J508",
-            "pos": [
-              226.7,
-              191.5
-            ]
-          },
-          {
-            "description": "NPTH pad of B2B1",
-            "pos": [
-              226.1,
-              193.0
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11590,7 +11446,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11613,7 +11469,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11636,7 +11492,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11659,7 +11515,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11682,7 +11538,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11705,7 +11561,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11728,7 +11584,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11751,7 +11607,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11774,7 +11630,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11797,7 +11653,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11820,7 +11676,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11843,7 +11699,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11866,7 +11722,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11889,7 +11745,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11912,7 +11768,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11935,7 +11791,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11958,7 +11814,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -11981,7 +11837,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12004,7 +11860,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12027,7 +11883,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12050,7 +11906,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12073,7 +11929,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12096,7 +11952,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12119,7 +11975,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12142,7 +11998,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12165,7 +12021,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12188,7 +12044,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12211,7 +12067,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12234,7 +12090,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12257,7 +12113,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12280,7 +12136,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12303,7 +12159,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12326,7 +12182,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12349,7 +12205,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12372,7 +12228,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12395,7 +12251,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12418,7 +12274,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12441,7 +12297,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12464,7 +12320,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12487,7 +12343,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12510,7 +12366,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12533,7 +12389,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12556,7 +12412,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12579,7 +12435,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12602,7 +12458,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12625,7 +12481,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12648,7 +12504,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12671,7 +12527,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12694,7 +12550,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12717,7 +12573,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12740,7 +12596,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12763,7 +12619,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12786,7 +12642,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12809,7 +12665,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12832,7 +12688,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12855,7 +12711,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12878,7 +12734,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12901,7 +12757,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12924,7 +12780,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12947,7 +12803,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12970,7 +12826,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -12993,7 +12849,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13016,7 +12872,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13039,7 +12895,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13062,7 +12918,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13085,7 +12941,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13108,7 +12964,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13131,7 +12987,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13154,7 +13010,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13177,7 +13033,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13200,7 +13056,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13223,7 +13079,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13246,7 +13102,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13269,7 +13125,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13292,7 +13148,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13315,7 +13171,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13338,7 +13194,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13361,7 +13217,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13384,7 +13240,7 @@
             ]
           }
         ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads"
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
       },
       {
         "section": "violations",
@@ -13393,17 +13249,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Polygon of U207 on F.Silkscreen",
+            "description": "Polygon of U206 on F.Silkscreen",
             "pos": [
               110.25,
-              190.59
+              179.49
             ]
           },
           {
-            "description": "Reference field of U207",
+            "description": "Reference field of U206",
             "pos": [
               111.7,
-              189.7
+              178.6
             ]
           }
         ],
@@ -13485,17 +13341,40 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Polygon of U219 on F.Silkscreen",
+            "description": "Polygon of U210 on F.Silkscreen",
             "pos": [
-              133.15,
-              185.89
+              159.49,
+              192.55
             ]
           },
           {
-            "description": "Reference field of U219",
+            "description": "Reference field of U210",
+            "pos": [
+              158.6,
+              191.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Polygon of U217 on F.Silkscreen",
+            "pos": [
+              133.15,
+              191.69
+            ]
+          },
+          {
+            "description": "Reference field of U217",
             "pos": [
               134.6,
-              185.0
+              190.8
             ]
           }
         ],
@@ -13515,10 +13394,10 @@
             ]
           },
           {
-            "description": "Reference field of U221",
+            "description": "Reference field of C295",
             "pos": [
-              165.1,
-              191.1
+              167.5,
+              192.52
             ]
           }
         ],
@@ -13646,17 +13525,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C234",
+            "description": "Reference field of C233",
             "pos": [
-              128.58,
-              180.0
+              119.98,
+              182.5
             ]
           },
           {
-            "description": "Reference field of C275",
+            "description": "Segment of L206 on F.Silkscreen",
             "pos": [
-              130.6,
-              182.17
+              125.55,
+              183.75
             ]
           }
         ],
@@ -13701,8 +13580,31 @@
           {
             "description": "Segment of L208 on F.Silkscreen",
             "pos": [
-              125.55,
+              119.85,
               205.95
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C242",
+            "pos": [
+              128.58,
+              202.2
+            ]
+          },
+          {
+            "description": "Reference field of R2901",
+            "pos": [
+              128.67,
+              200.9
             ]
           }
         ],
@@ -13761,6 +13663,75 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of C248",
+            "pos": [
+              161.0,
+              192.52
+            ]
+          },
+          {
+            "description": "Segment of U210 on F.Silkscreen",
+            "pos": [
+              159.49,
+              192.01
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C248",
+            "pos": [
+              161.0,
+              192.52
+            ]
+          },
+          {
+            "description": "Segment of U210 on F.Silkscreen",
+            "pos": [
+              162.56,
+              190.19
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C248",
+            "pos": [
+              161.0,
+              192.52
+            ]
+          },
+          {
+            "description": "Segment of U210 on F.Silkscreen",
+            "pos": [
+              162.56,
+              192.01
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of C274",
             "pos": [
               130.6,
@@ -13784,17 +13755,40 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C283",
+            "description": "Reference field of C275",
             "pos": [
-              136.67,
-              193.2
+              130.6,
+              182.17
             ]
           },
           {
-            "description": "Reference field of C2901",
+            "description": "Reference field of C234",
             "pos": [
-              135.2,
-              195.52
+              128.58,
+              180.0
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C282",
+            "pos": [
+              131.0,
+              193.37
+            ]
+          },
+          {
+            "description": "Segment of R281 on F.Silkscreen",
+            "pos": [
+              130.7627,
+              193.7225
             ]
           }
         ],
@@ -13830,17 +13824,40 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C2911",
+            "description": "Reference field of C286",
             "pos": [
-              139.07,
-              201.2
+              131.0,
+              187.57
             ]
           },
           {
-            "description": "Reference field of R2911",
+            "description": "Segment of R287 on F.Silkscreen",
             "pos": [
-              138.22,
-              205.1
+              130.7627,
+              187.9225
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C2901",
+            "pos": [
+              135.2,
+              195.52
+            ]
+          },
+          {
+            "description": "Reference field of C283",
+            "pos": [
+              136.67,
+              193.2
             ]
           }
         ],
@@ -13876,17 +13893,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C295",
+            "description": "Reference field of C2912",
             "pos": [
-              167.5,
-              192.52
+              154.07,
+              201.2
             ]
           },
           {
-            "description": "Polygon of U221 on F.Silkscreen",
+            "description": "Reference field of R2912",
             "pos": [
-              165.99,
-              192.55
+              153.22,
+              205.1
             ]
           }
         ],
@@ -13899,17 +13916,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C295",
+            "description": "Reference field of C2912",
             "pos": [
-              167.5,
-              192.52
+              154.07,
+              201.2
             ]
           },
           {
-            "description": "Reference field of R294",
+            "description": "Reference field of R2922",
             "pos": [
-              169.07,
-              192.2
+              154.07,
+              198.0
             ]
           }
         ],
@@ -13931,8 +13948,54 @@
           {
             "description": "Segment of U221 on F.Silkscreen",
             "pos": [
-              169.06,
+              165.99,
               192.01
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C505",
+            "pos": [
+              180.5,
+              192.52
+            ]
+          },
+          {
+            "description": "Reference field of R506",
+            "pos": [
+              182.07,
+              192.2
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C505",
+            "pos": [
+              180.5,
+              192.52
+            ]
+          },
+          {
+            "description": "Segment of U502 on F.Silkscreen",
+            "pos": [
+              182.06,
+              190.19
             ]
           }
         ],
@@ -14060,6 +14123,52 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of D2902",
+            "pos": [
+              146.2,
+              203.3
+            ]
+          },
+          {
+            "description": "Reference field of R2902",
+            "pos": [
+              143.67,
+              200.9
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of D2902",
+            "pos": [
+              146.2,
+              203.3
+            ]
+          },
+          {
+            "description": "Segment of Q2902 on F.Silkscreen",
+            "pos": [
+              148.14,
+              203.46
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of J508",
             "pos": [
               226.7,
@@ -14083,40 +14192,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of L206",
+            "description": "Reference field of Q2901",
             "pos": [
-              122.7,
-              177.01
+              135.2,
+              197.5
             ]
           },
           {
-            "description": "Segment of R232 on F.Silkscreen",
+            "description": "Segment of C2901 on F.Silkscreen",
             "pos": [
-              123.4271,
-              177.31
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of L208",
-            "pos": [
-              122.7,
-              199.21
-            ]
-          },
-          {
-            "description": "Segment of R242 on F.Silkscreen",
-            "pos": [
-              123.4271,
-              199.51
+              134.9387,
+              197.935
             ]
           }
         ],
@@ -14244,6 +14330,29 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of Q2912",
+            "pos": [
+              150.4,
+              203.3
+            ]
+          },
+          {
+            "description": "Segment of Q2902 on F.Silkscreen",
+            "pos": [
+              152.26,
+              203.46
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of R229",
             "pos": [
               109.7,
@@ -14253,7 +14362,7 @@
           {
             "description": "Segment of U206 on F.Silkscreen",
             "pos": [
-              110.79,
+              112.61,
               182.56
             ]
           }
@@ -14267,17 +14376,40 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R231",
+            "description": "Reference field of R234",
             "pos": [
-              116.9,
-              177.57
+              109.7,
+              193.77
             ]
           },
           {
-            "description": "Reference field of R269",
+            "description": "Segment of U207 on F.Silkscreen",
+            "pos": [
+              112.61,
+              193.66
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R236",
+            "pos": [
+              116.9,
+              188.67
+            ]
+          },
+          {
+            "description": "Reference field of R271",
             "pos": [
               116.77,
-              176.7
+              187.8
             ]
           }
         ],
@@ -14290,17 +14422,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R231",
+            "description": "Reference field of R236",
             "pos": [
               116.9,
-              177.57
+              188.67
             ]
           },
           {
-            "description": "Segment of R269 on F.Silkscreen",
+            "description": "Segment of R271 on F.Silkscreen",
             "pos": [
               117.6775,
-              176.9373
+              188.0373
             ]
           }
         ],
@@ -14313,17 +14445,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R232",
+            "description": "Reference field of R241",
             "pos": [
-              122.7,
-              178.23
+              116.9,
+              199.77
             ]
           },
           {
-            "description": "Segment of L206 on F.Silkscreen",
+            "description": "Reference field of R273",
             "pos": [
-              119.85,
-              177.85
+              116.77,
+              198.9
             ]
           }
         ],
@@ -14336,40 +14468,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R237",
+            "description": "Reference field of R244",
             "pos": [
-              122.7,
-              189.33
+              208.8,
+              191.17
             ]
           },
           {
-            "description": "Segment of L207 on F.Silkscreen",
+            "description": "Segment of U209 on F.Silkscreen",
             "pos": [
-              119.85,
-              188.95
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R242",
-            "pos": [
-              122.7,
-              200.43
-            ]
-          },
-          {
-            "description": "Segment of L208 on F.Silkscreen",
-            "pos": [
-              119.85,
-              200.05
+              211.71,
+              191.06
             ]
           }
         ],
@@ -14405,17 +14514,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R270",
+            "description": "Reference field of R249",
             "pos": [
-              114.17,
-              187.8
+              162.57,
+              192.2
             ]
           },
           {
-            "description": "Reference field of U207",
+            "description": "Segment of U210 on F.Silkscreen",
             "pos": [
-              111.7,
-              189.7
+              162.56,
+              190.19
             ]
           }
         ],
@@ -14428,40 +14537,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R271",
+            "description": "Reference field of R269",
             "pos": [
               116.77,
-              187.8
+              176.7
             ]
           },
           {
-            "description": "Reference field of R236",
+            "description": "Reference field of R231",
             "pos": [
               116.9,
-              188.67
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R271",
-            "pos": [
-              116.77,
-              187.8
-            ]
-          },
-          {
-            "description": "Segment of R236 on F.Silkscreen",
-            "pos": [
-              116.1729,
-              189.59
+              177.57
             ]
           }
         ],
@@ -14481,10 +14567,10 @@
             ]
           },
           {
-            "description": "Reference field of R241",
+            "description": "Segment of R241 on F.Silkscreen",
             "pos": [
-              116.9,
-              199.77
+              116.1729,
+              200.69
             ]
           }
         ],
@@ -14497,17 +14583,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R286",
+            "description": "Reference field of R280",
             "pos": [
               131.0,
-              184.37
+              190.17
             ]
           },
           {
-            "description": "Reference field of U219",
+            "description": "Reference field of U217",
             "pos": [
               134.6,
-              185.0
+              190.8
             ]
           }
         ],
@@ -14520,17 +14606,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R2901",
+            "description": "Reference field of R281",
             "pos": [
-              128.67,
-              200.9
+              131.0,
+              191.77
             ]
           },
           {
-            "description": "Reference field of C242",
+            "description": "Segment of R280 on F.Silkscreen",
             "pos": [
-              128.58,
-              202.2
+              130.7627,
+              192.1225
             ]
           }
         ],
@@ -14543,17 +14629,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R2902",
+            "description": "Reference field of R283",
             "pos": [
-              143.67,
-              200.9
+              141.0,
+              190.17
             ]
           },
           {
-            "description": "Reference field of D2902",
+            "description": "Reference field of U218",
             "pos": [
-              146.2,
-              203.3
+              144.6,
+              190.8
             ]
           }
         ],
@@ -14566,39 +14652,16 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R2912",
+            "description": "Reference field of R2911",
             "pos": [
-              153.22,
+              138.22,
               205.1
             ]
           },
           {
-            "description": "Reference field of C2912",
+            "description": "Reference field of C2911",
             "pos": [
-              154.07,
-              201.2
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R2922",
-            "pos": [
-              154.07,
-              198.0
-            ]
-          },
-          {
-            "description": "Reference field of C2912",
-            "pos": [
-              154.07,
+              139.07,
               201.2
             ]
           }
@@ -14619,10 +14682,56 @@
             ]
           },
           {
-            "description": "Segment of U221 on F.Silkscreen",
+            "description": "Reference field of C295",
             "pos": [
-              169.06,
-              192.01
+              167.5,
+              192.52
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R295",
+            "pos": [
+              172.5,
+              180.62
+            ]
+          },
+          {
+            "description": "Segment of C503 on F.Silkscreen",
+            "pos": [
+              173.24,
+              179.8956
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R295",
+            "pos": [
+              172.5,
+              180.62
+            ]
+          },
+          {
+            "description": "Segment of C503 on F.Silkscreen",
+            "pos": [
+              174.3044,
+              180.96
             ]
           }
         ],
@@ -14750,98 +14859,6 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R506",
-            "pos": [
-              182.07,
-              192.2
-            ]
-          },
-          {
-            "description": "Reference field of C505",
-            "pos": [
-              180.5,
-              192.52
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R506",
-            "pos": [
-              182.07,
-              192.2
-            ]
-          },
-          {
-            "description": "Segment of U502 on F.Silkscreen",
-            "pos": [
-              182.06,
-              190.19
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R506",
-            "pos": [
-              182.07,
-              192.2
-            ]
-          },
-          {
-            "description": "Segment of U502 on F.Silkscreen",
-            "pos": [
-              182.06,
-              192.01
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R508",
-            "pos": [
-              183.57,
-              185.4
-            ]
-          },
-          {
-            "description": "Segment of C507 on F.Silkscreen",
-            "pos": [
-              183.71,
-              185.5406
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Reference field of R550",
             "pos": [
               221.37,
@@ -14897,7 +14914,7 @@
           {
             "description": "Segment of J204 on F.Silkscreen",
             "pos": [
-              226.86,
+              227.14,
               181.61
             ]
           }
@@ -14911,17 +14928,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of TP210",
+            "description": "Reference field of TP209",
             "pos": [
-              177.0,
-              183.352
+              226.0,
+              183.252
             ]
           },
           {
-            "description": "Reference field of TP216",
+            "description": "Segment of J204 on F.Silkscreen",
             "pos": [
-              180.0,
-              183.352
+              227.14,
+              183.21
             ]
           }
         ],
@@ -14957,6 +14974,29 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of TP216",
+            "pos": [
+              180.0,
+              183.352
+            ]
+          },
+          {
+            "description": "Reference field of TP210",
+            "pos": [
+              177.0,
+              183.352
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of U206",
             "pos": [
               111.7,
@@ -14964,10 +15004,33 @@
             ]
           },
           {
-            "description": "Polygon of U206 on F.Silkscreen",
+            "description": "Segment of C232 on F.Silkscreen",
+            "pos": [
+              109.4387,
+              178.535
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of U207",
+            "pos": [
+              111.7,
+              189.7
+            ]
+          },
+          {
+            "description": "Polygon of U207 on F.Silkscreen",
             "pos": [
               110.25,
-              179.49
+              190.59
             ]
           }
         ],
@@ -14980,17 +15043,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U209",
+            "description": "Reference field of U207",
             "pos": [
-              210.8,
-              187.1
+              111.7,
+              189.7
             ]
           },
           {
-            "description": "Segment of C244 on F.Silkscreen",
+            "description": "Reference field of R270",
             "pos": [
-              208.5387,
-              187.035
+              114.17,
+              187.8
             ]
           }
         ],
@@ -15003,63 +15066,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U210",
+            "description": "Reference field of U207",
             "pos": [
-              158.6,
-              191.1
+              111.7,
+              189.7
             ]
           },
           {
-            "description": "Polygon of U210 on F.Silkscreen",
+            "description": "Segment of C236 on F.Silkscreen",
             "pos": [
-              159.49,
-              192.55
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of U217",
-            "pos": [
-              134.6,
-              190.8
-            ]
-          },
-          {
-            "description": "Polygon of U217 on F.Silkscreen",
-            "pos": [
-              133.15,
-              191.69
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of U217",
-            "pos": [
-              134.6,
-              190.8
-            ]
-          },
-          {
-            "description": "Reference field of R280",
-            "pos": [
-              131.0,
-              190.17
+              109.4387,
+              189.635
             ]
           }
         ],
@@ -15095,17 +15112,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U218",
+            "description": "Reference field of U219",
             "pos": [
-              144.6,
-              190.8
+              134.6,
+              185.0
             ]
           },
           {
-            "description": "Reference field of R283",
+            "description": "Polygon of U219 on F.Silkscreen",
             "pos": [
-              141.0,
-              190.17
+              133.15,
+              185.89
             ]
           }
         ],
@@ -15118,16 +15135,62 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U501",
+            "description": "Reference field of U219",
             "pos": [
-              171.6,
+              134.6,
+              185.0
+            ]
+          },
+          {
+            "description": "Reference field of R286",
+            "pos": [
+              131.0,
+              184.37
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of U221",
+            "pos": [
+              165.1,
               191.1
             ]
           },
           {
-            "description": "Segment of R294 on F.Silkscreen",
+            "description": "Polygon of U221 on F.Silkscreen",
             "pos": [
-              171.0225,
+              165.99,
+              192.55
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of U221",
+            "pos": [
+              165.1,
+              191.1
+            ]
+          },
+          {
+            "description": "Segment of R249 on F.Silkscreen",
+            "pos": [
+              164.5225,
               192.4373
             ]
           }
@@ -15141,40 +15204,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of C232 on F.Silkscreen",
+            "description": "Reference field of U502",
             "pos": [
-              109.4387,
-              178.535
+              178.1,
+              191.1
             ]
           },
           {
-            "description": "Reference field of U206",
+            "description": "Segment of R502 on F.Silkscreen",
             "pos": [
-              111.7,
-              178.6
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C236 on F.Silkscreen",
-            "pos": [
-              109.4387,
-              189.635
-            ]
-          },
-          {
-            "description": "Reference field of U207",
-            "pos": [
-              111.7,
-              189.7
+              177.5225,
+              192.4373
             ]
           }
         ],
@@ -15210,6 +15250,29 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Segment of C244 on F.Silkscreen",
+            "pos": [
+              208.5387,
+              187.035
+            ]
+          },
+          {
+            "description": "Reference field of U209",
+            "pos": [
+              210.8,
+              187.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Segment of C275 on F.Silkscreen",
             "pos": [
               130.4594,
@@ -15233,63 +15296,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of C2901 on F.Silkscreen",
+            "description": "Segment of C507 on F.Silkscreen",
             "pos": [
-              134.9387,
-              197.935
+              183.71,
+              185.5406
             ]
           },
           {
-            "description": "Reference field of Q2901",
+            "description": "Reference field of R508",
             "pos": [
-              135.2,
-              197.5
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C503 on F.Silkscreen",
-            "pos": [
-              173.24,
-              179.8956
-            ]
-          },
-          {
-            "description": "Reference field of R295",
-            "pos": [
-              172.5,
-              180.62
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C503 on F.Silkscreen",
-            "pos": [
-              174.3044,
-              180.96
-            ]
-          },
-          {
-            "description": "Reference field of R295",
-            "pos": [
-              172.5,
-              180.62
+              183.57,
+              185.4
             ]
           }
         ],
@@ -15304,31 +15321,8 @@
           {
             "description": "Segment of J204 on F.Silkscreen",
             "pos": [
-              227.14,
+              226.86,
               181.61
-            ]
-          },
-          {
-            "description": "Reference field of TP209",
-            "pos": [
-              226.0,
-              183.252
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of J204 on F.Silkscreen",
-            "pos": [
-              227.14,
-              183.21
             ]
           },
           {
@@ -15373,15 +15367,38 @@
           {
             "description": "Segment of L206 on F.Silkscreen",
             "pos": [
-              125.55,
-              183.75
+              119.85,
+              177.85
             ]
           },
           {
-            "description": "Reference field of C233",
+            "description": "Reference field of R232",
             "pos": [
-              119.98,
-              182.5
+              122.7,
+              178.23
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of L207 on F.Silkscreen",
+            "pos": [
+              119.85,
+              188.95
+            ]
+          },
+          {
+            "description": "Reference field of R237",
+            "pos": [
+              122.7,
+              189.33
             ]
           }
         ],
@@ -15420,6 +15437,29 @@
             "description": "Segment of L208 on F.Silkscreen",
             "pos": [
               119.85,
+              200.05
+            ]
+          },
+          {
+            "description": "Reference field of R242",
+            "pos": [
+              122.7,
+              200.43
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of L208 on F.Silkscreen",
+            "pos": [
+              125.55,
               205.95
             ]
           },
@@ -15534,29 +15574,6 @@
           {
             "description": "Segment of Q2902 on F.Silkscreen",
             "pos": [
-              148.14,
-              203.46
-            ]
-          },
-          {
-            "description": "Reference field of D2902",
-            "pos": [
-              146.2,
-              203.3
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of Q2902 on F.Silkscreen",
-            "pos": [
               152.26,
               203.46
             ]
@@ -15565,29 +15582,6 @@
             "description": "Reference field of D2902",
             "pos": [
               146.2,
-              203.3
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of Q2902 on F.Silkscreen",
-            "pos": [
-              152.26,
-              203.46
-            ]
-          },
-          {
-            "description": "Reference field of Q2912",
-            "pos": [
-              150.4,
               203.3
             ]
           }
@@ -15624,6 +15618,52 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Segment of R232 on F.Silkscreen",
+            "pos": [
+              123.4271,
+              177.31
+            ]
+          },
+          {
+            "description": "Reference field of L206",
+            "pos": [
+              122.7,
+              177.01
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of R236 on F.Silkscreen",
+            "pos": [
+              116.1729,
+              189.59
+            ]
+          },
+          {
+            "description": "Reference field of R271",
+            "pos": [
+              116.77,
+              187.8
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Segment of R237 on F.Silkscreen",
             "pos": [
               123.4271,
@@ -15647,17 +15687,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R241 on F.Silkscreen",
+            "description": "Segment of R242 on F.Silkscreen",
             "pos": [
-              116.1729,
-              200.69
+              123.4271,
+              199.51
             ]
           },
           {
-            "description": "Reference field of R273",
+            "description": "Reference field of L208",
             "pos": [
-              116.77,
-              198.9
+              122.7,
+              199.21
             ]
           }
         ],
@@ -15693,17 +15733,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R249 on F.Silkscreen",
+            "description": "Segment of R269 on F.Silkscreen",
             "pos": [
-              164.5225,
-              192.4373
+              117.6775,
+              176.9373
             ]
           },
           {
-            "description": "Reference field of U221",
+            "description": "Reference field of R231",
             "pos": [
-              165.1,
-              191.1
+              116.9,
+              177.57
             ]
           }
         ],
@@ -15739,29 +15779,6 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R271 on F.Silkscreen",
-            "pos": [
-              117.6775,
-              188.0373
-            ]
-          },
-          {
-            "description": "Reference field of R236",
-            "pos": [
-              116.9,
-              188.67
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Segment of R272 on F.Silkscreen",
             "pos": [
               116.1225,
@@ -15773,52 +15790,6 @@
             "pos": [
               116.77,
               198.9
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R280 on F.Silkscreen",
-            "pos": [
-              130.7627,
-              192.1225
-            ]
-          },
-          {
-            "description": "Reference field of R281",
-            "pos": [
-              131.0,
-              191.77
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R281 on F.Silkscreen",
-            "pos": [
-              130.7627,
-              193.7225
-            ]
-          },
-          {
-            "description": "Reference field of C282",
-            "pos": [
-              131.0,
-              193.37
             ]
           }
         ],
@@ -15877,17 +15848,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R287 on F.Silkscreen",
+            "description": "Segment of R294 on F.Silkscreen",
             "pos": [
-              130.7627,
-              187.9225
+              171.0225,
+              192.4373
             ]
           },
           {
-            "description": "Reference field of C286",
+            "description": "Reference field of U501",
             "pos": [
-              131.0,
-              187.57
+              171.6,
+              191.1
             ]
           }
         ],
@@ -15923,32 +15894,9 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R502 on F.Silkscreen",
-            "pos": [
-              177.5225,
-              192.4373
-            ]
-          },
-          {
-            "description": "Reference field of U502",
-            "pos": [
-              178.1,
-              191.1
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Segment of U206 on F.Silkscreen",
             "pos": [
-              112.61,
+              110.79,
               182.56
             ]
           },
@@ -15957,29 +15905,6 @@
             "pos": [
               109.7,
               182.67
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U207 on F.Silkscreen",
-            "pos": [
-              112.61,
-              193.66
-            ]
-          },
-          {
-            "description": "Reference field of R234",
-            "pos": [
-              109.7,
-              193.77
             ]
           }
         ],
@@ -16038,124 +15963,9 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of U209 on F.Silkscreen",
-            "pos": [
-              211.71,
-              191.06
-            ]
-          },
-          {
-            "description": "Reference field of R244",
-            "pos": [
-              208.8,
-              191.17
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Segment of U210 on F.Silkscreen",
             "pos": [
               159.44,
-              192.01
-            ]
-          },
-          {
-            "description": "Reference field of C248",
-            "pos": [
-              161.0,
-              192.52
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U210 on F.Silkscreen",
-            "pos": [
-              159.49,
-              192.01
-            ]
-          },
-          {
-            "description": "Reference field of C248",
-            "pos": [
-              161.0,
-              192.52
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U210 on F.Silkscreen",
-            "pos": [
-              162.56,
-              190.19
-            ]
-          },
-          {
-            "description": "Reference field of C248",
-            "pos": [
-              161.0,
-              192.52
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U210 on F.Silkscreen",
-            "pos": [
-              162.56,
-              190.19
-            ]
-          },
-          {
-            "description": "Reference field of R249",
-            "pos": [
-              162.57,
-              192.2
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U210 on F.Silkscreen",
-            "pos": [
-              162.56,
               192.01
             ]
           },
@@ -16224,7 +16034,53 @@
           {
             "description": "Segment of U221 on F.Silkscreen",
             "pos": [
-              165.99,
+              169.06,
+              190.19
+            ]
+          },
+          {
+            "description": "Reference field of C295",
+            "pos": [
+              167.5,
+              192.52
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U221 on F.Silkscreen",
+            "pos": [
+              169.06,
+              190.19
+            ]
+          },
+          {
+            "description": "Reference field of R294",
+            "pos": [
+              169.07,
+              192.2
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U221 on F.Silkscreen",
+            "pos": [
+              169.06,
               192.01
             ]
           },
@@ -16248,30 +16104,7 @@
             "description": "Segment of U221 on F.Silkscreen",
             "pos": [
               169.06,
-              190.19
-            ]
-          },
-          {
-            "description": "Reference field of C295",
-            "pos": [
-              167.5,
-              192.52
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U221 on F.Silkscreen",
-            "pos": [
-              169.06,
-              190.19
+              192.01
             ]
           },
           {
@@ -16459,10 +16292,10 @@
             ]
           },
           {
-            "description": "Reference field of C505",
+            "description": "Reference field of R506",
             "pos": [
-              180.5,
-              192.52
+              182.07,
+              192.2
             ]
           }
         ],
@@ -16486,6 +16319,29 @@
             "pos": [
               180.5,
               192.52
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U502 on F.Silkscreen",
+            "pos": [
+              182.06,
+              192.01
+            ]
+          },
+          {
+            "description": "Reference field of R506",
+            "pos": [
+              182.07,
+              192.2
             ]
           }
         ],
@@ -16561,7 +16417,7 @@
         "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
         "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
         "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
-        "silk_over_copper": "legend only: the fab clips legend over exposed copper; library outlines of the JST and FX8 footprints sit close to their pads",
+        "silk_over_copper": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads",
         "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
         "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board"
       }
@@ -16624,6 +16480,7 @@
         "J203",
         "J204",
         "J207",
+        "J209",
         "J506",
         "J508",
         "L206",
@@ -16720,7 +16577,7 @@
     "boundary": [
       {
         "instance": "PWRB",
-        "status": "provisional: B2B ref pending: Samtec QTH-060-01-L-D-A land not derived and vendored yet, no graph ref (GR-4 / PCB-PWRA OPEN)",
+        "status": "pass",
         "nets": [
           {
             "net": "3V3_Q6A",
@@ -16734,6 +16591,7 @@
               "C551.1",
               "J201.1",
               "J204.2",
+              "J209.2",
               "R550.2",
               "R551.2",
               "U215.16",
@@ -16744,10 +16602,9 @@
               "U219.6",
               "U507.1",
               "U507.5",
-              "U507.8",
-              "B2B1.61"
+              "U507.8"
             ],
-            "external_refs": 72,
+            "external_refs": 73,
             "external_sample": [
               "C281",
               "C301",
@@ -16762,13 +16619,14 @@
             "net": "AUX12",
             "graph_net": "AUX12",
             "board_pads": [
+              "J209.62",
               "J508.3",
-              "R286.1",
-              "B2B1.102"
+              "R286.1"
             ],
-            "external_refs": 5,
+            "external_refs": 6,
             "external_sample": [
               "C221",
+              "J208",
               "J505",
               "L204",
               "R223",
@@ -16799,14 +16657,15 @@
             "net": "BIAS_CH1_DAMP",
             "graph_net": "BIAS_CH1_DAMP",
             "board_pads": [
-              "R232.2",
-              "B2B1.114"
+              "J209.14",
+              "R232.2"
             ],
-            "external_refs": 1,
+            "external_refs": 2,
             "external_sample": [
-              "C235"
+              "C235",
+              "J208"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "BIAS_CH2",
@@ -16828,14 +16687,15 @@
             "net": "BIAS_CH2_DAMP",
             "graph_net": "BIAS_CH2_DAMP",
             "board_pads": [
-              "R237.2",
-              "B2B1.112"
+              "J209.18",
+              "R237.2"
             ],
-            "external_refs": 1,
+            "external_refs": 2,
             "external_sample": [
-              "C239"
+              "C239",
+              "J208"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "BIAS_CH2_PORT",
@@ -16876,14 +16736,15 @@
             "net": "BIAS_CH3_DAMP",
             "graph_net": "BIAS_CH3_DAMP",
             "board_pads": [
-              "R242.2",
-              "B2B1.110"
+              "J209.22",
+              "R242.2"
             ],
-            "external_refs": 1,
+            "external_refs": 2,
             "external_sample": [
-              "C243"
+              "C243",
+              "J208"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "BIAS_CH3_PORT",
@@ -16926,14 +16787,15 @@
             "net": "BIAS_CH4_DAMP",
             "graph_net": "BIAS_CH4_DAMP",
             "board_pads": [
-              "R247.2",
-              "B2B1.14"
+              "J209.50",
+              "R247.2"
             ],
-            "external_refs": 1,
+            "external_refs": 2,
             "external_sample": [
-              "C247"
+              "C247",
+              "J208"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "BIAS_SB_LNA",
@@ -16956,31 +16818,32 @@
             "net": "BONI13V8",
             "graph_net": "BONI13V8",
             "board_pads": [
-              "R283.1",
-              "B2B1.104"
+              "J209.54",
+              "R283.1"
             ],
-            "external_refs": 6,
+            "external_refs": 7,
             "external_sample": [
               "C272",
+              "J208",
               "L214",
               "Q2903",
               "R267",
-              "R2923",
-              "TP212"
+              "R2923"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "BONI13V8_PORT",
             "graph_net": "BONI13V8_PORT",
             "board_pads": [
               "J207.9",
-              "B2B1.98"
+              "J209.66"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
               "A406",
               "C2903",
+              "J208",
               "Q2903",
               "TP2903"
             ],
@@ -16991,10 +16854,11 @@
             "graph_net": "CHG_INHIBIT",
             "board_pads": [
               "J202.1",
-              "B2B1.109"
+              "J209.17"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J208",
               "J306",
               "R122",
               "U303"
@@ -17006,11 +16870,12 @@
             "graph_net": "E1_BAT_ADC",
             "board_pads": [
               "J202.2",
-              "B2B1.107"
+              "J209.19"
             ],
-            "external_refs": 5,
+            "external_refs": 6,
             "external_sample": [
               "C114",
+              "J208",
               "J306",
               "R111",
               "R112",
@@ -17178,29 +17043,31 @@
             "graph_net": "E2_LNA4_SHUNT",
             "board_pads": [
               "C245.1",
+              "J209.99",
               "L209.1",
-              "R246.2",
-              "B2B1.22"
+              "R246.2"
             ],
-            "external_refs": 1,
+            "external_refs": 2,
             "external_sample": [
+              "J208",
               "R275"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "E2_LNA4_SW",
             "graph_net": "E2_LNA4_SW",
             "board_pads": [
+              "J209.100",
               "R246.1",
-              "U209.6",
-              "B2B1.32"
+              "U209.6"
             ],
-            "external_refs": 1,
+            "external_refs": 2,
             "external_sample": [
+              "J208",
               "R274"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "E2_RTLB_SW",
@@ -17218,14 +17085,15 @@
             "net": "E2_SB_DAMP",
             "graph_net": "E2_SB_DAMP",
             "board_pads": [
-              "R295.2",
-              "B2B1.106"
+              "J209.26",
+              "R295.2"
             ],
-            "external_refs": 1,
+            "external_refs": 2,
             "external_sample": [
-              "C298"
+              "C298",
+              "J208"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "E2_SB_ILIM",
@@ -17476,10 +17344,11 @@
             "graph_net": "EN_AUX12",
             "board_pads": [
               "J202.3",
-              "B2B1.105"
+              "J209.21"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
+              "J208",
               "J306",
               "Q202",
               "R220",
@@ -17492,16 +17361,16 @@
             "graph_net": "EN_BONI",
             "board_pads": [
               "J202.4",
-              "B2B1.103"
+              "J209.23"
             ],
-            "external_refs": 6,
+            "external_refs": 7,
             "external_sample": [
+              "J208",
               "J306",
               "Q2913",
               "R261",
               "U213",
-              "U214",
-              "U301"
+              "U214"
             ],
             "status": "connector"
           },
@@ -17510,10 +17379,11 @@
             "graph_net": "EN_HFP",
             "board_pads": [
               "J202.5",
-              "B2B1.101"
+              "J209.25"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
+              "J208",
               "J306",
               "R510",
               "U301",
@@ -17541,10 +17411,11 @@
             "graph_net": "EN_LIME3V3",
             "board_pads": [
               "J202.7",
-              "B2B1.99"
+              "J209.27"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
+              "J208",
               "J306",
               "R218",
               "U203",
@@ -17619,10 +17490,11 @@
             "graph_net": "EN_LNB",
             "board_pads": [
               "J202.12",
-              "B2B1.97"
+              "J209.29"
             ],
-            "external_refs": 5,
+            "external_refs": 6,
             "external_sample": [
+              "J208",
               "J306",
               "R253",
               "R291",
@@ -17681,10 +17553,11 @@
             "graph_net": "FAULT_HFP",
             "board_pads": [
               "J202.16",
-              "B2B1.95"
+              "J209.31"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
+              "J208",
               "J306",
               "R323",
               "U303",
@@ -17802,10 +17675,11 @@
             "graph_net": "FLT_BONI",
             "board_pads": [
               "J203.4",
-              "B2B1.93"
+              "J209.33"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
+              "J208",
               "J307",
               "R314",
               "U214",
@@ -17818,10 +17692,11 @@
             "graph_net": "FLT_LIME3V3",
             "board_pads": [
               "J203.5",
-              "B2B1.91"
+              "J209.35"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
+              "J208",
               "J307",
               "R325",
               "U203",
@@ -17834,10 +17709,11 @@
             "graph_net": "FLT_LNB",
             "board_pads": [
               "J203.6",
-              "B2B1.89"
+              "J209.37"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
+              "J208",
               "J307",
               "R313",
               "U212",
@@ -17907,6 +17783,30 @@
               "J207.5",
               "J207.6",
               "J207.8",
+              "J209.11",
+              "J209.12",
+              "J209.15",
+              "J209.16",
+              "J209.20",
+              "J209.24",
+              "J209.28",
+              "J209.3",
+              "J209.32",
+              "J209.36",
+              "J209.4",
+              "J209.40",
+              "J209.44",
+              "J209.48",
+              "J209.52",
+              "J209.56",
+              "J209.60",
+              "J209.64",
+              "J209.68",
+              "J209.7",
+              "J209.70",
+              "J209.8",
+              "J209.97",
+              "J209.98",
               "J506.1",
               "J506.2",
               "J508.1",
@@ -17949,18 +17849,9 @@
               "U221.2",
               "U501.2",
               "U502.2",
-              "U507.4",
-              "B2B1.100",
-              "B2B1.111",
-              "B2B1.116",
-              "B2B1.59",
-              "B2B1.69",
-              "B2B1.82",
-              "B2B1.88",
-              "B2B1.92",
-              "B2B1.96"
+              "U507.4"
             ],
-            "external_refs": 449,
+            "external_refs": 450,
             "external_sample": [
               "A401",
               "A402",
@@ -17976,11 +17867,12 @@
             "graph_net": "I2C0_SCL",
             "board_pads": [
               "J203.8",
-              "B2B1.87"
+              "J209.39"
             ],
-            "external_refs": 5,
+            "external_refs": 6,
             "external_sample": [
               "J110",
+              "J208",
               "J301",
               "J304",
               "J307",
@@ -17993,11 +17885,12 @@
             "graph_net": "I2C0_SDA",
             "board_pads": [
               "J203.9",
-              "B2B1.85"
+              "J209.41"
             ],
-            "external_refs": 5,
+            "external_refs": 6,
             "external_sample": [
               "J110",
+              "J208",
               "J301",
               "J304",
               "J307",
@@ -18010,18 +17903,18 @@
             "graph_net": "I2C2_SCL",
             "board_pads": [
               "J201.4",
+              "J209.43",
               "U215.6",
-              "U507.2",
-              "B2B1.65"
+              "U507.2"
             ],
-            "external_refs": 8,
+            "external_refs": 9,
             "external_sample": [
+              "J208",
               "J301",
               "J302",
               "J304",
               "R304",
-              "U216",
-              "U301"
+              "U216"
             ],
             "status": "connector"
           },
@@ -18030,18 +17923,18 @@
             "graph_net": "I2C2_SDA",
             "board_pads": [
               "J201.3",
+              "J209.45",
               "U215.7",
-              "U507.3",
-              "B2B1.63"
+              "U507.3"
             ],
-            "external_refs": 8,
+            "external_refs": 9,
             "external_sample": [
+              "J208",
               "J301",
               "J302",
               "J304",
               "R303",
-              "U216",
-              "U301"
+              "U216"
             ],
             "status": "connector"
           },
@@ -18078,16 +17971,16 @@
             "graph_net": "IMU_RX",
             "board_pads": [
               "J203.10",
-              "B2B1.83"
+              "J209.47"
             ],
-            "external_refs": 10,
+            "external_refs": 11,
             "external_sample": [
+              "J208",
               "J307",
               "J321",
               "J504",
               "J507",
-              "J518",
-              "J550"
+              "J518"
             ],
             "status": "connector"
           },
@@ -18096,16 +17989,16 @@
             "graph_net": "IMU_TX",
             "board_pads": [
               "J203.11",
-              "B2B1.81"
+              "J209.49"
             ],
-            "external_refs": 10,
+            "external_refs": 11,
             "external_sample": [
+              "J208",
               "J307",
               "J321",
               "J504",
               "J507",
-              "J518",
-              "J550"
+              "J518"
             ],
             "status": "connector"
           },
@@ -18114,16 +18007,16 @@
             "graph_net": "INA228_ALERT",
             "board_pads": [
               "J203.12",
-              "B2B1.79"
+              "J209.51"
             ],
-            "external_refs": 6,
+            "external_refs": 7,
             "external_sample": [
               "J110",
+              "J208",
               "J301",
               "J304",
               "J307",
-              "R301",
-              "U102"
+              "R301"
             ],
             "status": "connector"
           },
@@ -18137,16 +18030,16 @@
               "C502.1",
               "C504.1",
               "C505.1",
+              "J209.1",
+              "J209.13",
+              "J209.5",
+              "J209.9",
               "U210.1",
               "U221.1",
               "U501.1",
-              "U502.1",
-              "B2B1.113",
-              "B2B1.115",
-              "B2B1.117",
-              "B2B1.119"
+              "U502.1"
             ],
-            "external_refs": 27,
+            "external_refs": 28,
             "external_sample": [
               "C112",
               "C223",
@@ -18155,20 +18048,21 @@
               "C322",
               "C342"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "LAB5_RLY",
             "graph_net": "LAB5_RLY",
             "board_pads": [
               "J204.7",
-              "B2B1.84",
-              "B2B1.86"
+              "J209.42",
+              "J209.46"
             ],
-            "external_refs": 5,
+            "external_refs": 6,
             "external_sample": [
               "D401",
               "F104",
+              "J208",
               "J420",
               "K401",
               "K402"
@@ -18183,38 +18077,39 @@
               "C236.1",
               "C240.1",
               "C244.1",
+              "J209.10",
+              "J209.6",
               "U206.1",
               "U207.1",
               "U208.1",
-              "U209.1",
-              "B2B1.118",
-              "B2B1.120"
+              "U209.1"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
               "C231",
+              "J208",
               "R225",
               "R226",
               "TP205"
             ],
-            "status": "provisional"
+            "status": "connector"
           },
           {
             "net": "LNB13V2",
             "graph_net": "LNB13V2",
             "board_pads": [
               "J204.8",
-              "R280.1",
-              "B2B1.90"
+              "J209.58",
+              "R280.1"
             ],
-            "external_refs": 6,
+            "external_refs": 7,
             "external_sample": [
               "C261",
+              "J208",
               "J420",
               "L212",
               "L406",
-              "R259",
-              "TP211"
+              "R259"
             ],
             "status": "connector"
           },
@@ -18223,16 +18118,16 @@
             "graph_net": "OVP_LNB_N",
             "board_pads": [
               "J203.13",
-              "B2B1.77"
+              "J209.53"
             ],
-            "external_refs": 7,
+            "external_refs": 8,
             "external_sample": [
+              "J208",
               "J307",
               "R291",
               "R292",
               "TP215",
-              "U212",
-              "U220"
+              "U212"
             ],
             "status": "connector"
           },
@@ -18271,10 +18166,11 @@
             "graph_net": "PICO_DISP_EN",
             "board_pads": [
               "J203.16",
-              "B2B1.75"
+              "J209.55"
             ],
-            "external_refs": 4,
+            "external_refs": 5,
             "external_sample": [
+              "J208",
               "J307",
               "R213",
               "U202",
@@ -18287,11 +18183,12 @@
             "graph_net": "PICO_OFF",
             "board_pads": [
               "J203.17",
-              "B2B1.73"
+              "J209.57"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
               "D102",
+              "J208",
               "J307",
               "U305"
             ],
@@ -18317,16 +18214,16 @@
             "graph_net": "PWR_BUTTON",
             "board_pads": [
               "J203.19",
-              "B2B1.71"
+              "J209.59"
             ],
-            "external_refs": 6,
+            "external_refs": 7,
             "external_sample": [
               "D103",
               "D302",
               "D303",
+              "J208",
               "J307",
-              "J315",
-              "SW301"
+              "J315"
             ],
             "status": "connector"
           },
@@ -18351,16 +18248,16 @@
             "graph_net": "VBUS_HFP",
             "board_pads": [
               "J207.7",
-              "B2B1.94"
+              "J209.38"
             ],
-            "external_refs": 7,
+            "external_refs": 8,
             "external_sample": [
               "A414",
               "C511",
               "C513",
+              "J208",
               "J544",
-              "L501",
-              "R512"
+              "L501"
             ],
             "status": "connector"
           },
@@ -18369,14 +18266,15 @@
             "graph_net": "VBUS_LABPORT",
             "board_pads": [
               "C507.1",
+              "J209.34",
               "J506.3",
               "R508.1",
-              "U502.6",
-              "B2B1.67"
+              "U502.6"
             ],
-            "external_refs": 2,
+            "external_refs": 3,
             "external_sample": [
               "C506",
+              "J208",
               "J501"
             ],
             "status": "connector"
@@ -18418,14 +18316,15 @@
             "net": "VBUS_RTLB_DAMP",
             "graph_net": "VBUS_RTLB_DAMP",
             "board_pads": [
-              "R251.2",
-              "B2B1.108"
+              "J209.30",
+              "R251.2"
             ],
-            "external_refs": 1,
+            "external_refs": 2,
             "external_sample": [
-              "C251"
+              "C251",
+              "J208"
             ],
-            "status": "provisional"
+            "status": "connector"
           }
         ],
         "hosted_contacts": []
@@ -18433,16 +18332,6 @@
     ],
     "keepout": {
       "rows": [
-        {
-          "hole": "H1",
-          "ref": "B2B1",
-          "keepout_radius": 3.5,
-          "pad_distance": 84.6104,
-          "courtyard_distance": 80.627,
-          "body_distance": 81.2554,
-          "courtyard_intrudes": false,
-          "body_intrudes": false
-        },
         {
           "hole": "H1",
           "ref": "C232",
@@ -18910,6 +18799,16 @@
           "pad_distance": 83.1929,
           "courtyard_distance": 81.1253,
           "body_distance": 81.7051,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J209",
+          "keepout_radius": 3.5,
+          "pad_distance": 82.9926,
+          "courtyard_distance": 79.9764,
+          "body_distance": 80.5184,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -19725,16 +19624,6 @@
         },
         {
           "hole": "H2",
-          "ref": "B2B1",
-          "keepout_radius": 3.5,
-          "pad_distance": 12.1622,
-          "courtyard_distance": 9.4924,
-          "body_distance": 10.9377,
-          "courtyard_intrudes": false,
-          "body_intrudes": false
-        },
-        {
-          "hole": "H2",
           "ref": "C232",
           "keepout_radius": 3.5,
           "pad_distance": 123.5059,
@@ -20200,6 +20089,16 @@
           "pad_distance": 32.4384,
           "courtyard_distance": 30.373,
           "body_distance": 31.0439,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J209",
+          "keepout_radius": 3.5,
+          "pad_distance": 23.0358,
+          "courtyard_distance": 20.14,
+          "body_distance": 20.8349,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -21015,16 +20914,6 @@
         },
         {
           "hole": "H3",
-          "ref": "B2B1",
-          "keepout_radius": 3.5,
-          "pad_distance": 12.1622,
-          "courtyard_distance": 9.4924,
-          "body_distance": 10.9377,
-          "courtyard_intrudes": false,
-          "body_intrudes": false
-        },
-        {
-          "hole": "H3",
           "ref": "C232",
           "keepout_radius": 3.5,
           "pad_distance": 120.8509,
@@ -21490,6 +21379,16 @@
           "pad_distance": 24.4719,
           "courtyard_distance": 22.525,
           "body_distance": 23.0,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H3",
+          "ref": "J209",
+          "keepout_radius": 3.5,
+          "pad_distance": 23.0358,
+          "courtyard_distance": 20.14,
+          "body_distance": 20.8349,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -22305,16 +22204,6 @@
         },
         {
           "hole": "H4",
-          "ref": "B2B1",
-          "keepout_radius": 3.5,
-          "pad_distance": 43.0862,
-          "courtyard_distance": 39.1153,
-          "body_distance": 39.8978,
-          "courtyard_intrudes": false,
-          "body_intrudes": false
-        },
-        {
-          "hole": "H4",
           "ref": "C232",
           "keepout_radius": 3.5,
           "pad_distance": 34.8532,
@@ -22780,6 +22669,16 @@
           "pad_distance": 38.4457,
           "courtyard_distance": 36.525,
           "body_distance": 37.0,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H4",
+          "ref": "J209",
+          "keepout_radius": 3.5,
+          "pad_distance": 41.5953,
+          "courtyard_distance": 38.5814,
+          "body_distance": 39.1869,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -23595,16 +23494,6 @@
         },
         {
           "hole": "H5",
-          "ref": "B2B1",
-          "keepout_radius": 3.5,
-          "pad_distance": 118.9177,
-          "courtyard_distance": 115.7776,
-          "body_distance": 117.1001,
-          "courtyard_intrudes": false,
-          "body_intrudes": false
-        },
-        {
-          "hole": "H5",
           "ref": "C232",
           "keepout_radius": 3.5,
           "pad_distance": 73.1985,
@@ -24070,6 +23959,16 @@
           "pad_distance": 111.2381,
           "courtyard_distance": 105.8472,
           "body_distance": 106.5181,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H5",
+          "ref": "J209",
+          "keepout_radius": 3.5,
+          "pad_distance": 118.3122,
+          "courtyard_distance": 115.877,
+          "body_distance": 116.6285,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -24885,16 +24784,6 @@
         },
         {
           "hole": "H6",
-          "ref": "B2B1",
-          "keepout_radius": 3.5,
-          "pad_distance": 97.8617,
-          "courtyard_distance": 95.4388,
-          "body_distance": 96.8722,
-          "courtyard_intrudes": false,
-          "body_intrudes": false
-        },
-        {
-          "hole": "H6",
           "ref": "C232",
           "keepout_radius": 3.5,
           "pad_distance": 77.8516,
@@ -25360,6 +25249,16 @@
           "pad_distance": 89.7927,
           "courtyard_distance": 83.785,
           "body_distance": 84.4399,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H6",
+          "ref": "J209",
+          "keepout_radius": 3.5,
+          "pad_distance": 97.727,
+          "courtyard_distance": 95.8257,
+          "body_distance": 96.5661,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -26175,16 +26074,6 @@
         },
         {
           "hole": "H7",
-          "ref": "B2B1",
-          "keepout_radius": 3.5,
-          "pad_distance": 60.5964,
-          "courtyard_distance": 57.0619,
-          "body_distance": 58.26,
-          "courtyard_intrudes": false,
-          "body_intrudes": false
-        },
-        {
-          "hole": "H7",
           "ref": "C232",
           "keepout_radius": 3.5,
           "pad_distance": 35.4031,
@@ -26650,6 +26539,16 @@
           "pad_distance": 53.6211,
           "courtyard_distance": 49.2181,
           "body_distance": 49.8508,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H7",
+          "ref": "J209",
+          "keepout_radius": 3.5,
+          "pad_distance": 59.6705,
+          "courtyard_distance": 56.9655,
+          "body_distance": 57.6976,
           "courtyard_intrudes": false,
           "body_intrudes": false
         },
@@ -27479,8 +27378,8 @@
       "passed": true
     },
     "locked": {
-      "scripted_segments": 217,
-      "locked_on_board": 217,
+      "scripted_segments": 249,
+      "locked_on_board": 249,
       "kept": true,
       "note": "SES import before/after counts and the DSN probe are in route-log.json"
     }
@@ -27511,7 +27410,7 @@
       "max_height_mm": 5.0,
       "side": "bottom",
       "checked": true,
-      "why": "bottom side: only the B2B in the PWR-A to PWR-B gap (stack 5.0)"
+      "why": "bottom side: only the B2B half J209 in the PWR-A to PWR-B gap (stack 5.0; mechanical/params/boards.json PWR_B b2b.bottom_side)"
     }
   ],
   "does_not_prove": [

@@ -677,6 +677,24 @@
    ]
   }
  },
+ "b2b_footprints": {
+  "pwr_a": {
+   "ref": "J208",
+   "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+   "crtyd_mm": [
+    30.7,
+    6.2
+   ]
+  },
+  "pwr_b": {
+   "ref": "J209",
+   "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+   "crtyd_mm": [
+    30.7,
+    6.2
+   ]
+  }
+ },
  "candidates": {
   "a": {
    "title": "(a) draft PWR-B list (the LNB OVP comparator stays with U212 on PWR-A)",
@@ -693,17 +711,17 @@
      "tht_pads": 120,
      "parts_raw_mm2": 3994.3,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.959,
-     "demand_1_mm2": 7324.5,
-     "ratio_1": 1.043,
-     "demand_1.5_mm2": 10136.2,
-     "ratio_1.5": 0.754,
-     "demand_1.8_mm2": 11823.2,
-     "ratio_1.8": 0.646,
+     "raw_fill": 0.94,
+     "demand_1_mm2": 7181.1,
+     "ratio_1": 1.064,
+     "demand_1.5_mm2": 9921.1,
+     "ratio_1.5": 0.77,
+     "demand_1.8_mm2": 11565.1,
+     "ratio_1.8": 0.661,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -713,17 +731,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 1124.8,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.169,
-     "demand_1_mm2": 2678.0,
-     "ratio_1": 0.855,
-     "demand_1.5_mm2": 4017.0,
-     "ratio_1.5": 0.57,
-     "demand_1.8_mm2": 4820.4,
-     "ratio_1.8": 0.475,
+     "raw_fill": 1.118,
+     "demand_1_mm2": 2560.1,
+     "ratio_1": 0.895,
+     "demand_1.5_mm2": 3840.2,
+     "ratio_1.5": 0.596,
+     "demand_1.8_mm2": 4608.2,
+     "ratio_1.8": 0.497,
      "fits_at_1_8": false
     }
    },
@@ -1195,8 +1213,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -1206,8 +1225,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -1217,8 +1237,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -1228,8 +1249,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -1320,8 +1342,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -1690,17 +1713,19 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 9,
-    "contacts_needed": 54,
-    "contacts_with_spare": 65,
-    "contacts_available": 120,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []
@@ -2108,17 +2133,17 @@
      "tht_pads": 120,
      "parts_raw_mm2": 3449.4,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.882,
-     "demand_1_mm2": 6742.1,
-     "ratio_1": 1.133,
-     "demand_1.5_mm2": 9262.6,
-     "ratio_1.5": 0.825,
-     "demand_1.8_mm2": 10774.9,
-     "ratio_1.8": 0.709,
+     "raw_fill": 0.864,
+     "demand_1_mm2": 6598.7,
+     "ratio_1": 1.158,
+     "demand_1.5_mm2": 9047.5,
+     "ratio_1.5": 0.845,
+     "demand_1.8_mm2": 10516.8,
+     "ratio_1.8": 0.727,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -2128,17 +2153,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 1669.7,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.391,
-     "demand_1_mm2": 3260.4,
-     "ratio_1": 0.719,
-     "demand_1.5_mm2": 4890.6,
-     "ratio_1.5": 0.479,
-     "demand_1.8_mm2": 5868.7,
-     "ratio_1.8": 0.399,
+     "raw_fill": 1.34,
+     "demand_1_mm2": 3142.5,
+     "ratio_1": 0.746,
+     "demand_1.5_mm2": 4713.8,
+     "ratio_1.5": 0.497,
+     "demand_1.8_mm2": 5656.5,
+     "ratio_1.8": 0.414,
      "fits_at_1_8": false
     }
    },
@@ -2599,8 +2624,9 @@
       "pwr_b": [
        "R223"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R223 0.22R 1% 0.25W to AUX12"
      },
      {
       "net": "BIAS_CH1_DAMP",
@@ -2610,8 +2636,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -2621,8 +2648,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -2632,8 +2660,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -2643,8 +2672,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -2725,8 +2755,9 @@
       "pwr_b": [
        "R208"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R208 0.22R 1% 0.25W to E2_DISP_IN"
      },
      {
       "net": "E2_J21_FUSED",
@@ -2777,8 +2808,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_BONI",
@@ -2961,8 +2993,9 @@
       "pwr_b": [
        "R207"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R207 0.22R 1% 0.25W to J21"
      },
      {
       "net": "LAB5",
@@ -3035,8 +3068,9 @@
       "pwr_b": [
        "R219"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R219 0.22R 1% 0.25W to LIME3V3"
      },
      {
       "net": "LNA4V5",
@@ -3173,8 +3207,9 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      },
      {
       "net": "VCC_3V3_MKEY",
@@ -3195,12 +3230,13 @@
     "power_nets": 14,
     "signal_pins": 31,
     "power_pins": 37,
-    "gnd_pins": 14,
-    "contacts_needed": 82,
-    "contacts_with_spare": 99,
-    "contacts_available": 120,
-    "meets_spare_rule": true,
-    "fits": true,
+    "gnd_pins": 51,
+    "guard_pins": 3,
+    "contacts_needed": 119,
+    "contacts_with_spare": 143,
+    "contacts_available": 100,
+    "meets_spare_rule": false,
+    "fits": false,
     "errors": []
    },
    "headers": [],
@@ -3662,17 +3698,17 @@
      "tht_pads": 96,
      "parts_raw_mm2": 3994.3,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.783,
-     "demand_1_mm2": 5982.8,
-     "ratio_1": 1.277,
-     "demand_1.5_mm2": 8794.5,
-     "ratio_1.5": 0.869,
-     "demand_1.8_mm2": 10481.6,
-     "ratio_1.8": 0.729,
+     "raw_fill": 0.764,
+     "demand_1_mm2": 5839.4,
+     "ratio_1": 1.308,
+     "demand_1.5_mm2": 8579.4,
+     "ratio_1.5": 0.891,
+     "demand_1.8_mm2": 10223.4,
+     "ratio_1.8": 0.747,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -3682,17 +3718,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 1124.8,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.716,
-     "demand_1_mm2": 2678.0,
-     "ratio_1": 1.396,
-     "demand_1.5_mm2": 4017.0,
-     "ratio_1.5": 0.93,
-     "demand_1.8_mm2": 4820.4,
-     "ratio_1.8": 0.775,
+     "raw_fill": 0.685,
+     "demand_1_mm2": 2560.1,
+     "ratio_1": 1.46,
+     "demand_1.5_mm2": 3840.2,
+     "ratio_1.5": 0.973,
+     "demand_1.8_mm2": 4608.2,
+     "ratio_1.8": 0.811,
      "fits_at_1_8": false
     }
    },
@@ -4146,8 +4182,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -4157,8 +4194,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -4168,8 +4206,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -4179,8 +4218,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -4271,8 +4311,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -4641,17 +4682,19 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 9,
-    "contacts_needed": 54,
-    "contacts_with_spare": 65,
-    "contacts_available": 120,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []
@@ -5062,17 +5105,17 @@
      "tht_pads": 120,
      "parts_raw_mm2": 3892.2,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.945,
-     "demand_1_mm2": 7222.4,
-     "ratio_1": 1.058,
-     "demand_1.5_mm2": 9983.0,
-     "ratio_1.5": 0.765,
-     "demand_1.8_mm2": 11639.4,
-     "ratio_1.8": 0.656,
+     "raw_fill": 0.926,
+     "demand_1_mm2": 7079.0,
+     "ratio_1": 1.079,
+     "demand_1.5_mm2": 9767.9,
+     "ratio_1.5": 0.782,
+     "demand_1.8_mm2": 11381.3,
+     "ratio_1.8": 0.671,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -5082,17 +5125,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 1226.9,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.152,
-     "demand_1_mm2": 2780.1,
-     "ratio_1": 0.868,
-     "demand_1.5_mm2": 4170.1,
-     "ratio_1.5": 0.579,
-     "demand_1.8_mm2": 5004.1,
-     "ratio_1.8": 0.482,
+     "raw_fill": 1.103,
+     "demand_1_mm2": 2662.2,
+     "ratio_1": 0.907,
+     "demand_1.5_mm2": 3993.3,
+     "ratio_1.5": 0.604,
+     "demand_1.8_mm2": 4792.0,
+     "ratio_1.8": 0.504,
      "fits_at_1_8": false
     }
    },
@@ -5562,8 +5605,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -5573,8 +5617,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -5584,8 +5629,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -5595,8 +5641,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -5687,8 +5734,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -6041,17 +6089,19 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 8,
     "signal_pins": 31,
     "power_pins": 13,
-    "gnd_pins": 8,
-    "contacts_needed": 52,
-    "contacts_with_spare": 63,
-    "contacts_available": 120,
+    "gnd_pins": 23,
+    "guard_pins": 3,
+    "contacts_needed": 67,
+    "contacts_with_spare": 81,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []
@@ -6480,17 +6530,17 @@
      "tht_pads": 118,
      "parts_raw_mm2": 3616.0,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.909,
-     "demand_1_mm2": 6946.2,
-     "ratio_1": 1.1,
-     "demand_1.5_mm2": 9568.8,
-     "ratio_1.5": 0.798,
-     "demand_1.8_mm2": 11142.3,
-     "ratio_1.8": 0.686,
+     "raw_fill": 0.89,
+     "demand_1_mm2": 6802.8,
+     "ratio_1": 1.123,
+     "demand_1.5_mm2": 9353.7,
+     "ratio_1.5": 0.817,
+     "demand_1.8_mm2": 10884.2,
+     "ratio_1.8": 0.702,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -6500,17 +6550,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 762.0,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 37.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.862,
-     "demand_1_mm2": 2302.7,
-     "ratio_1": 1.16,
-     "demand_1.5_mm2": 3454.0,
-     "ratio_1.5": 0.773,
-     "demand_1.8_mm2": 4144.8,
-     "ratio_1.8": 0.644,
+     "raw_fill": 0.818,
+     "demand_1_mm2": 2184.8,
+     "ratio_1": 1.222,
+     "demand_1.5_mm2": 3277.2,
+     "ratio_1.5": 0.815,
+     "demand_1.8_mm2": 3932.6,
+     "ratio_1.8": 0.679,
      "fits_at_1_8": false
     }
    },
@@ -6993,8 +7043,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -7004,8 +7055,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -7015,8 +7067,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -7026,8 +7079,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -7394,10 +7448,11 @@
     "power_nets": 7,
     "signal_pins": 27,
     "power_pins": 9,
-    "gnd_pins": 7,
-    "contacts_needed": 43,
-    "contacts_with_spare": 52,
-    "contacts_available": 120,
+    "gnd_pins": 17,
+    "guard_pins": 3,
+    "contacts_needed": 53,
+    "contacts_with_spare": 64,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []
@@ -7818,17 +7873,17 @@
      "tht_pads": 120,
      "parts_raw_mm2": 3994.3,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.959,
-     "demand_1_mm2": 7324.5,
-     "ratio_1": 1.043,
-     "demand_1.5_mm2": 10136.2,
-     "ratio_1.5": 0.754,
-     "demand_1.8_mm2": 11823.2,
-     "ratio_1.8": 0.646,
+     "raw_fill": 0.94,
+     "demand_1_mm2": 7181.1,
+     "ratio_1": 1.064,
+     "demand_1.5_mm2": 9921.1,
+     "ratio_1.5": 0.77,
+     "demand_1.8_mm2": 11565.1,
+     "ratio_1.8": 0.661,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -7838,17 +7893,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 1252.8,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.225,
-     "demand_1_mm2": 2806.0,
-     "ratio_1": 0.816,
-     "demand_1.5_mm2": 4209.0,
-     "ratio_1.5": 0.544,
-     "demand_1.8_mm2": 5050.9,
-     "ratio_1.8": 0.453,
+     "raw_fill": 1.174,
+     "demand_1_mm2": 2688.2,
+     "ratio_1": 0.852,
+     "demand_1.5_mm2": 4032.2,
+     "ratio_1.5": 0.568,
+     "demand_1.8_mm2": 4838.7,
+     "ratio_1.8": 0.473,
      "fits_at_1_8": false
     }
    },
@@ -8348,8 +8403,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -8359,8 +8415,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -8370,8 +8427,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -8381,8 +8439,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -8473,8 +8532,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -8847,17 +8907,19 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 9,
-    "contacts_needed": 54,
-    "contacts_with_spare": 65,
-    "contacts_available": 120,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []
@@ -9293,17 +9355,17 @@
      "tht_pads": 108,
      "parts_raw_mm2": 3716.8,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 439.0,
-     "raw_fill": 0.933,
-     "demand_1_mm2": 7126.6,
-     "ratio_1": 1.072,
-     "demand_1.5_mm2": 9799.6,
-     "ratio_1.5": 0.78,
-     "demand_1.8_mm2": 11403.4,
-     "ratio_1.8": 0.67,
+     "raw_fill": 0.914,
+     "demand_1_mm2": 6983.2,
+     "ratio_1": 1.094,
+     "demand_1.5_mm2": 9584.5,
+     "ratio_1.5": 0.797,
+     "demand_1.8_mm2": 11145.2,
+     "ratio_1.8": 0.686,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -9313,17 +9375,17 @@
      "tht_pads": 86,
      "parts_raw_mm2": 1402.3,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.113,
-     "demand_1_mm2": 2955.4,
-     "ratio_1": 0.899,
-     "demand_1.5_mm2": 4433.2,
-     "ratio_1.5": 0.599,
-     "demand_1.8_mm2": 5319.8,
-     "ratio_1.8": 0.499,
+     "raw_fill": 1.069,
+     "demand_1_mm2": 2837.6,
+     "ratio_1": 0.936,
+     "demand_1.5_mm2": 4256.4,
+     "ratio_1.5": 0.624,
+     "demand_1.8_mm2": 5107.6,
+     "ratio_1.8": 0.52,
      "fits_at_1_8": false
     }
    },
@@ -10213,10 +10275,11 @@
     "power_nets": 9,
     "signal_pins": 25,
     "power_pins": 14,
-    "gnd_pins": 9,
-    "contacts_needed": 48,
-    "contacts_with_spare": 58,
-    "contacts_available": 120,
+    "gnd_pins": 18,
+    "guard_pins": 3,
+    "contacts_needed": 57,
+    "contacts_with_spare": 69,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []
@@ -10630,17 +10693,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 2914.7,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 507.9,
-     "raw_fill": 0.656,
-     "demand_1_mm2": 5014.3,
-     "ratio_1": 1.524,
-     "demand_1.5_mm2": 7267.5,
-     "ratio_1.5": 1.051,
-     "demand_1.8_mm2": 8619.4,
-     "ratio_1.8": 0.886,
+     "raw_fill": 0.637,
+     "demand_1_mm2": 4870.9,
+     "ratio_1": 1.569,
+     "demand_1.5_mm2": 7052.4,
+     "ratio_1.5": 1.083,
+     "demand_1.8_mm2": 8361.2,
+     "ratio_1.8": 0.914,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -10650,17 +10713,17 @@
      "tht_pads": 96,
      "parts_raw_mm2": 2204.3,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 87.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.845,
-     "demand_1_mm2": 3795.0,
-     "ratio_1": 1.183,
-     "demand_1.5_mm2": 5692.5,
-     "ratio_1.5": 0.789,
-     "demand_1.8_mm2": 6831.1,
-     "ratio_1.8": 0.657,
+     "raw_fill": 0.819,
+     "demand_1_mm2": 3677.2,
+     "ratio_1": 1.221,
+     "demand_1.5_mm2": 5515.7,
+     "ratio_1.5": 0.814,
+     "demand_1.8_mm2": 6618.9,
+     "ratio_1.8": 0.678,
      "fits_at_1_8": false
     }
    },
@@ -11555,11 +11618,12 @@
     "power_nets": 14,
     "signal_pins": 21,
     "power_pins": 37,
-    "gnd_pins": 14,
-    "contacts_needed": 72,
-    "contacts_with_spare": 87,
-    "contacts_available": 120,
-    "meets_spare_rule": true,
+    "gnd_pins": 41,
+    "guard_pins": 3,
+    "contacts_needed": 99,
+    "contacts_with_spare": 119,
+    "contacts_available": 100,
+    "meets_spare_rule": false,
     "fits": true,
     "errors": []
    },
@@ -12022,7 +12086,7 @@
    ]
   },
   "s8": {
-   "title": "(a) with the 8.00 mm B2B stack (QTH lead style -02): hA 7.5, window ceiling 15.1 mm, dz_mezz 5.1",
+   "title": "(a) with the 8.00 mm B2B stack (two LSHM-150-04.0 halves): hA 7.5, window ceiling 15.1 mm, dz_mezz 5.1",
    "hA": 7.5,
    "hB": 5.5,
    "stack": 8.0,
@@ -12036,17 +12100,17 @@
      "tht_pads": 120,
      "parts_raw_mm2": 3994.3,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.959,
-     "demand_1_mm2": 7324.5,
-     "ratio_1": 1.043,
-     "demand_1.5_mm2": 10136.2,
-     "ratio_1.5": 0.754,
-     "demand_1.8_mm2": 11823.2,
-     "ratio_1.8": 0.646,
+     "raw_fill": 0.94,
+     "demand_1_mm2": 7181.1,
+     "ratio_1": 1.064,
+     "demand_1.5_mm2": 9921.1,
+     "ratio_1.5": 0.77,
+     "demand_1.8_mm2": 11565.1,
+     "ratio_1.8": 0.661,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -12056,17 +12120,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 1124.8,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.894,
-     "demand_1_mm2": 2678.0,
-     "ratio_1": 1.118,
-     "demand_1.5_mm2": 4017.0,
-     "ratio_1.5": 0.746,
-     "demand_1.8_mm2": 4820.4,
-     "ratio_1.8": 0.621,
+     "raw_fill": 0.855,
+     "demand_1_mm2": 2560.1,
+     "ratio_1": 1.17,
+     "demand_1.5_mm2": 3840.2,
+     "ratio_1.5": 0.78,
+     "demand_1.8_mm2": 4608.2,
+     "ratio_1.8": 0.65,
      "fits_at_1_8": false
     }
    },
@@ -12531,8 +12595,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -12542,8 +12607,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -12553,8 +12619,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -12564,8 +12631,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -12656,8 +12724,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -13026,17 +13095,19 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 9,
-    "contacts_needed": 54,
-    "contacts_with_spare": 65,
-    "contacts_available": 120,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []
@@ -13464,17 +13535,17 @@
      "tht_pads": 94,
      "parts_raw_mm2": 3616.0,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.734,
-     "demand_1_mm2": 5604.6,
-     "ratio_1": 1.363,
-     "demand_1.5_mm2": 8227.2,
-     "ratio_1.5": 0.929,
-     "demand_1.8_mm2": 9800.7,
-     "ratio_1.8": 0.78,
+     "raw_fill": 0.715,
+     "demand_1_mm2": 5461.2,
+     "ratio_1": 1.399,
+     "demand_1.5_mm2": 8012.0,
+     "ratio_1.5": 0.954,
+     "demand_1.8_mm2": 9542.6,
+     "ratio_1.8": 0.801,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -13484,17 +13555,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 762.0,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 37.5,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 0.518,
-     "demand_1_mm2": 2302.7,
-     "ratio_1": 1.929,
-     "demand_1.5_mm2": 3454.0,
-     "ratio_1.5": 1.286,
-     "demand_1.8_mm2": 4144.8,
-     "ratio_1.8": 1.072,
+     "raw_fill": 0.492,
+     "demand_1_mm2": 2184.8,
+     "ratio_1": 2.033,
+     "demand_1.5_mm2": 3277.2,
+     "ratio_1.5": 1.355,
+     "demand_1.8_mm2": 3932.6,
+     "ratio_1.8": 1.13,
      "fits_at_1_8": true
     }
    },
@@ -13955,8 +14026,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -13966,8 +14038,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -13977,8 +14050,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -13988,8 +14062,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -14356,10 +14431,11 @@
     "power_nets": 7,
     "signal_pins": 27,
     "power_pins": 9,
-    "gnd_pins": 7,
-    "contacts_needed": 43,
-    "contacts_with_spare": 52,
-    "contacts_available": 120,
+    "gnd_pins": 17,
+    "guard_pins": 3,
+    "contacts_needed": 53,
+    "contacts_with_spare": 64,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []
@@ -14768,8 +14844,8 @@
     "U108"
    ]
   },
-  "a60": {
-   "title": "(a) with the 60-contact pair QSH-030-01-L-D-A / QTH-030-01-L-D-A (the area that the 120-contact choice costs)",
+  "a80": {
+   "title": "(a) with the 80-contact pair LSHM-140-02.5-L-DV-A-N-K-TR x2 (the area that the 100-contact choice costs; W2 B2B)",
    "hA": 4.5,
    "hB": 5.5,
    "stack": 5.0,
@@ -14783,17 +14859,17 @@
      "tht_pads": 120,
      "parts_raw_mm2": 3994.3,
      "headers_raw_mm2": 1170.4,
-     "b2b_raw_mm2": 173.9,
+     "b2b_raw_mm2": 159.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 0.938,
-     "demand_1_mm2": 7164.7,
-     "ratio_1": 1.066,
-     "demand_1.5_mm2": 9896.5,
-     "ratio_1.5": 0.772,
-     "demand_1.8_mm2": 11535.5,
-     "ratio_1.8": 0.662,
+     "raw_fill": 0.936,
+     "demand_1_mm2": 7150.1,
+     "ratio_1": 1.069,
+     "demand_1.5_mm2": 9874.6,
+     "ratio_1.5": 0.774,
+     "demand_1.8_mm2": 11509.3,
+     "ratio_1.8": 0.664,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -14803,17 +14879,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 1124.8,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 156.0,
+     "b2b_raw_mm2": 159.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.103,
-     "demand_1_mm2": 2525.8,
-     "ratio_1": 0.907,
-     "demand_1.5_mm2": 3788.7,
-     "ratio_1.5": 0.605,
-     "demand_1.8_mm2": 4546.4,
-     "ratio_1.8": 0.504,
+     "raw_fill": 1.104,
+     "demand_1_mm2": 2529.1,
+     "ratio_1": 0.906,
+     "demand_1.5_mm2": 3793.7,
+     "ratio_1.5": 0.604,
+     "demand_1.8_mm2": 4552.4,
+     "ratio_1.8": 0.503,
      "fits_at_1_8": false
     }
    },
@@ -15285,8 +15361,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -15296,8 +15373,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -15307,8 +15385,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -15318,8 +15397,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -15410,8 +15490,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -15780,17 +15861,19 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 9,
-    "contacts_needed": 54,
-    "contacts_with_spare": 65,
-    "contacts_available": 60,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
+    "contacts_available": 80,
     "meets_spare_rule": false,
     "fits": true,
     "errors": []
@@ -16198,17 +16281,17 @@
      "tht_pads": 120,
      "parts_raw_mm2": 3994.3,
      "headers_raw_mm2": 1817.7,
-     "b2b_raw_mm2": 333.7,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 125.0,
      "modules_at_1_0_mm2": 1341.6,
      "keepouts_at_1_0_mm2": 359.4,
-     "raw_fill": 1.043,
-     "demand_1_mm2": 7971.7,
-     "ratio_1": 0.958,
-     "demand_1.5_mm2": 11107.1,
-     "ratio_1.5": 0.688,
-     "demand_1.8_mm2": 12988.3,
-     "ratio_1.8": 0.588,
+     "raw_fill": 1.025,
+     "demand_1_mm2": 7828.3,
+     "ratio_1": 0.976,
+     "demand_1.5_mm2": 10892.0,
+     "ratio_1.5": 0.701,
+     "demand_1.8_mm2": 12730.2,
+     "ratio_1.8": 0.6,
      "fits_at_1_8": false
     },
     "PWR_B": {
@@ -16218,17 +16301,17 @@
      "tht_pads": 74,
      "parts_raw_mm2": 1124.8,
      "headers_raw_mm2": 1195.0,
-     "b2b_raw_mm2": 308.2,
+     "b2b_raw_mm2": 190.3,
      "tps_raw_mm2": 50.0,
      "modules_at_1_0_mm2": 0.0,
      "keepouts_at_1_0_mm2": 0.0,
-     "raw_fill": 1.709,
-     "demand_1_mm2": 2678.0,
-     "ratio_1": 0.585,
-     "demand_1.5_mm2": 4017.0,
-     "ratio_1.5": 0.39,
-     "demand_1.8_mm2": 4820.4,
-     "ratio_1.8": 0.325,
+     "raw_fill": 1.634,
+     "demand_1_mm2": 2560.1,
+     "ratio_1": 0.612,
+     "demand_1.5_mm2": 3840.2,
+     "ratio_1.5": 0.408,
+     "demand_1.8_mm2": 4608.2,
+     "ratio_1.8": 0.34,
      "fits_at_1_8": false
     }
    },
@@ -16719,8 +16802,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -16730,8 +16814,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -16741,8 +16826,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -16752,8 +16838,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -16844,8 +16931,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -17214,17 +17302,19 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 9,
-    "contacts_needed": 54,
-    "contacts_with_spare": 65,
-    "contacts_available": 120,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
+    "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
     "errors": []

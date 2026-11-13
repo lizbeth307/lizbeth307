@@ -1,0 +1,97 @@
+{
+  "schema": "srrx-board-review-v1",
+  "board_id": "HATCH",
+  "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "pcb/check_boards.py",
+  "result": "NO_FINDINGS",
+  "inputs": {
+    "board_file": {
+      "path": "build/kicad/boards/HATCH/HATCH.kicad_pcb",
+      "sha256": "fcf62294ab531ea859559f1e1e39b35158344062d6790c7c52bfc18670b31b31"
+    },
+    "projection_sha256": {
+      "graph_refs_pins_nets": "29a840d606deb77cab4b7c649bb7f93202ea0cd5b1b91efe890c095a0c663684",
+      "footprints": "a230b0eef106d15c706ecf427aca369e6bab98324e437dbc549a923d2ece709c",
+      "contract_board": "998129d379070ae814943d5da529e726b74d88b40ff5a854cd1e200d755c6024",
+      "netclasses": "7348ca6591d7fba089fbb55685ad65107265e6afb7a5ac500fb43025e559a767",
+      "spec": "146095c6de64cb046deb1d24303c4e01a19b948bbc64ac9ed22ff172de51d9ee"
+    },
+    "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
+  },
+  "frame": {
+    "origin": [
+      100.0,
+      121.5
+    ],
+    "y": "up",
+    "source": "Edge.Cuts bounding box"
+  },
+  "counts": {
+    "footprints": 7,
+    "pads": 19,
+    "tracks": 23,
+    "vias": 0,
+    "zones": 6,
+    "holes": 6,
+    "copper_layers": [
+      "F.Cu",
+      "B.Cu"
+    ]
+  },
+  "checks": {
+    "outline": {
+      "findings": 0,
+      "area_mm2": 633.0,
+      "loops": 1
+    },
+    "holes": {
+      "findings": 0,
+      "contract_holes": 2,
+      "board_holes": 6
+    },
+    "keepouts": {
+      "findings": 0,
+      "keepout_r_mm": 4.0,
+      "tolerance_mm": 0.005
+    },
+    "pad_nets": {
+      "findings": 0,
+      "expected_refs": 5,
+      "board_footprints": 7
+    },
+    "class_widths": {
+      "findings": 0,
+      "tracks_checked": 23,
+      "pour_necks": [],
+      "split_nets": {}
+    },
+    "rf50": {
+      "findings": 0,
+      "rf50_segments": 0
+    },
+    "gnd_chassis_ties": {
+      "findings": 0,
+      "ties": [],
+      "expected": 0
+    },
+    "b2b": {
+      "findings": 0,
+      "pairs": 0
+    },
+    "tht_pockets": {
+      "findings": 0,
+      "applies": false
+    },
+    "heights": {
+      "findings": 0,
+      "checked": 5
+    },
+    "pth_annular": {
+      "findings": 0,
+      "floor_mm": 0.18,
+      "fab_floor": "jlc_2l_1oz"
+    }
+  },
+  "findings": [],
+  "unverified": []
+}

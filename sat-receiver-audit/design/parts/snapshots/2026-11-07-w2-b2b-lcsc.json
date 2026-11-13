@@ -1,0 +1,166 @@
+{
+ "date": "2026-11-07",
+ "distributor": "LCSC",
+ "entries": {
+  "C2940507": {
+   "attributes": {
+    "Connection Type": "Slot Contact",
+    "Contact Material": "Phosphor Bronze",
+    "Contact Plating": "Gold",
+    "Current Rating": "2A",
+    "Gender": "Male",
+    "Mounting Type": "Surface Mount,Vertical",
+    "Number of Pins": "100P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-55℃~+125℃",
+    "Pitch": "0.5mm",
+    "Supplementary Features": "With column"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2404021212_Samtec-LSHM-150-02-5-L-DV-A-N-K-TR_C2940507.pdf",
+   "description": "-55℃~+125℃ 0.5mm 100P 2 2A Gold Male Phosphor Bronze Slot Contact Surface Mount,Vertical With column SMD,P=0.5mm Board-to-Board and Backplane Connector ROHS",
+   "fetched_utc": "2026-11-07T22:01:45Z",
+   "jlc_library": "extended",
+   "manufacturer": "Samtec",
+   "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR",
+   "package": "SMD,P=0.5mm",
+   "price_usd": [
+    [
+     1,
+     9.9338
+    ],
+    [
+     10,
+     8.6451
+    ],
+    [
+     30,
+     7.8584
+    ],
+    [
+     100,
+     7.1993
+    ],
+    [
+     102,
+     7.1993
+    ],
+    [
+     104,
+     7.1993
+    ]
+   ],
+   "stock": 243,
+   "url": "https://www.lcsc.com/product-detail/board-to-board-and-backplane-connector_samtec-lshm-150-02-5-l-dv-a-n-k-tr_C2940507.html"
+  },
+  "C2941242": {
+   "attributes": {
+    "Connection Type": "Slot Contact",
+    "Contact Material": "Phosphor Bronze",
+    "Contact Plating": "Gold",
+    "Current Rating": "2A",
+    "Gender": "Male",
+    "Mounting Type": "Surface Mount,Vertical",
+    "Number of Pins": "80P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-55℃~+125℃",
+    "Pitch": "0.5mm",
+    "System Fit Height": "6.5mm"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2306061118_Samtec-LSHM-140-02-5-L-DV-A-N-K-TR_C2941242.pdf",
+   "description": "-55℃~+125℃ 0.5mm 2 2A 80P Gold Phosphor bronze Surface Mount,Vertical SMD-80P Board-to-Board and Backplane Connector ROHS",
+   "fetched_utc": "2026-11-07T22:01:46Z",
+   "jlc_library": "extended",
+   "manufacturer": "Samtec",
+   "mpn": "LSHM-140-02.5-L-DV-A-N-K-TR",
+   "package": "SMD-80P",
+   "price_usd": [
+    [
+     1,
+     8.7563
+    ],
+    [
+     10,
+     7.7309
+    ],
+    [
+     30,
+     7.1061
+    ],
+    [
+     100,
+     6.5828
+    ],
+    [
+     102,
+     6.5828
+    ],
+    [
+     104,
+     6.5828
+    ]
+   ],
+   "stock": 430,
+   "url": "https://www.lcsc.com/product-detail/board-to-board-and-backplane-connector_samtec-lshm-140-02-5-l-dv-a-n-k-tr_C2941242.html"
+  },
+  "C5753117": {
+   "attributes": {
+    "Connection Type": "Slot Type Butting",
+    "Contact Material": "Phosphor bronze",
+    "Contact Plating": "Gold",
+    "Current Rating": "2A",
+    "Gender": "Male",
+    "Mounting Type": "Surface Mount,Vertical",
+    "Number of Pins": "100P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-55℃~+125℃",
+    "Pitch": "0.5mm",
+    "Supplementary Features": "With column"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2404160942_Samtec-LSHM-150-04-0-L-DV-A-N-K-TR_C5753117.pdf",
+   "description": "-55℃~+125℃ 0.5mm 100P 2 2A Gold Male Phosphor bronze Slot Type Butting Surface Mount,Vertical With column SMD,P=0.5mm Board-to-Board and Backplane Connector ROHS",
+   "fetched_utc": "2026-11-07T22:01:47Z",
+   "jlc_library": "extended",
+   "manufacturer": "Samtec",
+   "mpn": "LSHM-150-04.0-L-DV-A-N-K-TR",
+   "package": "SMD,P=0.5mm",
+   "price_usd": [
+    [
+     1,
+     7.4054
+    ],
+    [
+     10,
+     7.2141
+    ],
+    [
+     30,
+     7.0865
+    ],
+    [
+     100,
+     6.9606
+    ],
+    [
+     102,
+     6.9606
+    ],
+    [
+     104,
+     6.9606
+    ]
+   ],
+   "stock": 14,
+   "url": "https://www.lcsc.com/product-detail/board-to-board-and-backplane-connector_samtec-lshm-150-04-0-l-dv-a-n-k-tr_C5753117.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C2940507",
+  "C2941242",
+  "C5753117"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}

@@ -774,6 +774,47 @@ def validate_spec(spec, board):
     for key, reason in spec['drc_policy'].get('warning_checks', {}).items():
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
+    validate_bond_and_coupon(spec, board, nets)
+
+
+def validate_bond_and_coupon(spec, board, nets):
+    """Optional spec keys of W2 PCB-RF-2 (standard library).
+
+    bond_hole {at [x, y], net, pad_mm, why}: the contract hole at `at` becomes a plated hole with a pad_mm land on
+    every copper layer, on a template net (the BOND-RF chassis bond); its keepout rule areas are left out, so only
+    the land's own copper sits there (pcb/check_boards.py bond_hole: only the BOND-RF hole may be plated or netted).
+    coupon {why, outlines [[x0, y0, x1, y1]] board mm outside the outline, footprints [{ref, footprint (manifest),
+    value, pads {pad: template net}, anchor}], tracks, vias (pre_route forms), zones (post_route_zones form with an
+    explicit outline)}: test-coupon copper drawn after the SES import, so the router never sees it; its footprints
+    are board-only, excluded from the position files and the BOM.
+    """
+    bond = spec.get('bond_hole')
+    if bond is not None:
+        if not isinstance(bond, dict) or len(bond.get('at', [])) != 2 or bond.get('net') not in nets or \
+                not float(bond.get('pad_mm', 0)) > 0 or not str(bond.get('why', '')).strip():
+            raise SpecError(f'{board}: bond_hole needs at [x, y], a template net, pad_mm > 0 and why')
+    coupon = spec.get('coupon')
+    if coupon is None:
+        return
+    if not isinstance(coupon, dict) or not coupon.get('outlines') or not str(coupon.get('why', '')).strip():
+        raise SpecError(f'{board}: coupon needs outlines and why')
+    for box in coupon['outlines']:
+        if len(box) != 4 or not (box[2] > box[0] and box[3] > box[1]):
+            raise SpecError(f'{board}: coupon outline {box} must be [x0, y0, x1, y1] with x1 > x0, y1 > y0')
+    refs = {p['ref'] for p in spec['parts']}
+    for item in coupon.get('footprints', []):
+        if item.get('ref') in refs or not item.get('footprint') or not isinstance(item.get('pads'), dict) or \
+                not item.get('anchor') or len(item['anchor'].get('at', [])) != 2:
+            raise SpecError(f'{board}: coupon footprint {item.get("ref")} needs a new ref, footprint, pads and anchor')
+        bad = sorted(set(item['pads'].values()) - nets)
+        if bad:
+            raise SpecError(f'{board}: coupon footprint {item["ref"]} uses unknown nets {bad}')
+    for item in coupon.get('tracks', []) + coupon.get('vias', []) + coupon.get('zones', []):
+        if item.get('net') not in nets:
+            raise SpecError(f'{board}: coupon item {item.get("id")} on unknown net {item.get("net")}')
+    for zone in coupon.get('zones', []):
+        if not isinstance(zone.get('outline'), list) or zone.get('pad_connection', 'thermal') not in ZONE_PAD_CONNECTIONS:
+            raise SpecError(f'{board}: coupon zone {zone.get("id")} needs an explicit outline and a known pad_connection')
 
 
 def load_contract(spec):
@@ -896,6 +937,14 @@ def holes(spec, contract):
     for h in out:
         if h['d'] + 1e-9 < floor:
             raise SpecError(f'hole {h["ref"]} {h["d"]} mm is below the NPTH floor {floor}')
+    bond = spec.get('bond_hole')
+    if bond:  # the one plated, netted contract hole (W2 PCB-RF-2)
+        hit = [h for h in out if math.hypot(h['at'][0] - float(bond['at'][0]), h['at'][1] - float(bond['at'][1])) < 1e-6]
+        if len(hit) != 1:
+            raise SpecError(f'bond_hole {bond["at"]} is not a contract hole')
+        if not hit[0]['d'] < float(bond['pad_mm']) <= hit[0]['keepout_d'] + 1e-9:
+            raise SpecError(f'bond_hole pad {bond["pad_mm"]} mm must exceed the hole and stay within its keepout')
+        hit[0]['plated'] = {'net': bond['net'], 'pad_mm': float(bond['pad_mm'])}
     return out
 
 
@@ -949,6 +998,9 @@ def boundary_audit(spec, template, graph, db):
             connector = [f'{r}.{n}' for r, n in pads for p in template if p['ref'] == r and p['source'] == 'graph'
                          and (graph[item['refs'][r]]['kind'] == 'connector' or item['refs'][r][:1] in 'JX')]
             placeholder = [f'{r}.{n}' for r, n in pads for p in template if p['ref'] == r and p['source'] == 'pilot_placeholder']
+            bond = spec.get('bond_hole')
+            if bond and bond['net'] == neutral and not connector:  # the plated bond hole and its screw end the net
+                connector = [f'bond_hole {bond["at"]}']
             if not external:
                 status = 'internal'
             elif connector:
@@ -1070,6 +1122,26 @@ def edge_strip(a, b, w):
     nx, ny = -uy * w, ux * w
     p, q = (x1 - ux * w, y1 - uy * w), (x2 + ux * w, y2 + uy * w)
     return [(p[0] + nx, p[1] + ny), (q[0] + nx, q[1] + ny), (q[0] - nx, q[1] - ny), (p[0] - nx, p[1] - ny)]
+
+
+def bond_footprint(name, d, pad):
+    """Board-only plated mounting hole (spec bond_hole): a pad-diameter land on every copper layer, mask open."""
+    r = d / 2
+    return f'''(footprint "{name}"
+\t(version 20260206)
+\t(generator "sr_rx_board_gen")
+\t(generator_version "10.0")
+\t(layer "F.Cu")
+\t(descr "Plated bond hole {d:g} mm with a {pad:g} mm land on every copper layer (spec bond_hole)")
+\t(property "Reference" "H" (at 0 {-(pad / 2 + 1.2):g} 0) (layer "F.SilkS") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
+\t(property "Value" "{name}" (at 0 {pad / 2 + 1.2:g} 0) (layer "F.Fab") (hide yes) (effects (font (size 1 1) (thickness 0.15))))
+\t(attr exclude_from_pos_files exclude_from_bom)
+\t(fp_circle (center 0 0) (end {r:g} 0) (stroke (width 0.05) (type solid)) (fill no) (layer "F.CrtYd"))
+\t(fp_circle (center 0 0) (end {r:g} 0) (stroke (width 0.05) (type solid)) (fill no) (layer "B.CrtYd"))
+\t(pad "1" thru_hole circle (at 0 0) (size {pad:g} {pad:g}) (drill {d:g}) (layers "*.Cu" "*.Mask"))
+\t(embedded_fonts no)
+)
+'''
 
 
 def circle_polygon(cx, cy, radius, n=48):
@@ -1290,6 +1362,9 @@ def build_board(pcb, spec, contract, template, temp):
     layers = [board.GetLayerID(n) for n in spec['holes'].get('keepout_layers', [])]
     blocks = set(spec['holes'].get('keepout_blocks', []))
     for hole in holes(spec, contract):
+        if hole.get('plated'):  # spec bond_hole: plated land on its net, no keepout rule areas (W2 PCB-RF-2)
+            add_bond_hole(pcb, board, frame, lib, hole, nets)
+            continue
         name = f'NPTH_{hole["d"]:g}mm'
         (lib / f'{name}.kicad_mod').write_text(npth_footprint(name, hole['d']), encoding='utf-8')
         fp = pcb.FootprintLoad(str(lib), name)
@@ -1355,6 +1430,89 @@ def build_board(pcb, spec, contract, template, temp):
     return board, frame, nets, sources
 
 
+def add_bond_hole(pcb, board, frame, lib, hole, nets):
+    plated = hole['plated']
+    name = f'PTH_BOND_{hole["d"]:g}mm_{plated["pad_mm"]:g}mm'
+    (lib / f'{name}.kicad_mod').write_text(bond_footprint(name, hole['d'], plated['pad_mm']), encoding='utf-8')
+    fp = pcb.FootprintLoad(str(lib), name)
+    fp.SetReference(hole['ref'])
+    fp.SetFPID(pcb.LIB_ID('', name))  # empty nickname: board-only, skipped by library parity
+    fp.SetPosition(frame.k(*hole['at']))
+    for pad in fp.Pads():
+        pad.SetNet(nets[plated['net']])
+    board.Add(fp)
+
+
+def add_tracks_and_vias(pcb, board, frame, nets, tracks, vias):
+    for track in tracks:
+        layer = board.GetLayerID(track['layer'])
+        for a, b in zip(track['path'], track['path'][1:]):
+            seg = pcb.PCB_TRACK(board)
+            seg.SetStart(frame.k(*a))
+            seg.SetEnd(frame.k(*b))
+            seg.SetWidth(pcb.FromMM(track['width_mm']))
+            seg.SetLayer(layer)
+            seg.SetNet(nets[track['net']])
+            seg.SetLocked(bool(track.get('locked', True)))
+            board.Add(seg)
+    for item in vias:
+        via = pcb.PCB_VIA(board)
+        via.SetViaType(pcb.VIATYPE_THROUGH)
+        via.SetPosition(frame.k(*item['at']))
+        via.SetLayerPair(pcb.F_Cu, pcb.B_Cu)
+        via.SetWidth(pcb.FromMM(item['diameter_mm']))
+        via.SetDrill(pcb.FromMM(item['drill_mm']))
+        via.SetNet(nets[item['net']])
+        via.SetLocked(bool(item.get('locked', True)))
+        board.Add(via)
+
+
+def add_coupon(pcb, board, frame, spec, contract, nets):
+    """Test-coupon outlines, footprints and copper (spec coupon), drawn after the SES import (W2 PCB-RF-2)."""
+    coupon = spec.get('coupon')
+    if not coupon:
+        return []
+    for x0, y0, x1, y1 in coupon['outlines']:
+        corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+        for a, b in zip(corners, corners[1:] + corners[:1]):
+            edge = pcb.PCB_SHAPE(board)
+            edge.SetShape(pcb.SHAPE_T_SEGMENT)
+            edge.SetLayer(pcb.Edge_Cuts)
+            edge.SetStart(frame.k(*a))
+            edge.SetEnd(frame.k(*b))
+            edge.SetWidth(pcb.FromMM(0.05))
+            board.Add(edge)
+    fps = {f['footprint']: f for f in read_json(MANIFEST)['footprints']}
+    sources = []
+    for item in coupon.get('footprints', []):
+        entry = fps.get(item['footprint'])
+        if entry is None:
+            raise SpecError(f'coupon footprint {item["footprint"]} is not in the portable manifest')
+        part = {'fpid': item['footprint'], 'library': 'project', 'file': entry['file'], 'sha256': entry['sha256']}
+        fp, fpath = load_footprint(pcb, part, None)
+        fp.SetReference(item['ref'])
+        fp.SetValue(item['value'])
+        nick, name = item['footprint'].split(':', 1)
+        fp.SetFPID(pcb.LIB_ID(nick, name))
+        board.Add(fp)
+        place(pcb, frame, fp, item['anchor'])
+        for pad in fp.Pads():
+            net = item['pads'].get(str(pad.GetNumber()))
+            if net:
+                pad.SetNet(nets[net])
+            else:
+                pad.SetNetCode(0)
+        flags = 0
+        for name_ in ('FP_EXCLUDE_FROM_POS_FILES', 'FP_EXCLUDE_FROM_BOM', 'FP_BOARD_ONLY'):
+            flags |= int(getattr(pcb, name_, 0))
+        fp.SetAttributes(fp.GetAttributes() | flags)
+        sources.append({'ref': item['ref'], 'footprint': item['footprint'], 'file': rel(fpath), 'sha256': entry['sha256']})
+    add_tracks_and_vias(pcb, board, frame, nets, coupon.get('tracks', []), coupon.get('vias', []))
+    for zone in coupon.get('zones', []):
+        add_copper_zone(pcb, board, frame, spec, contract, zone, nets)
+    return sources
+
+
 def add_copper_zone(pcb, board, frame, spec, contract, zone, nets):
     points = contract['outline_mm'] if zone.get('outline', 'board') == 'board' else zone['outline']
     item = add_polygon_zone(pcb, board, frame, points, board.GetLayerID(zone['layer']), zone['id'])
@@ -1364,6 +1522,47 @@ def add_copper_zone(pcb, board, frame, spec, contract, zone, nets):
         item.SetPadConnection(getattr(pcb, ZONE_PAD_CONNECTIONS[zone['pad_connection']]))
     board.Add(item)
     return item
+
+
+def via_centre_stubs(pcb, board):
+    """Join router track ends that end inside a via, off its centre, to the centre with a short stub (W2 PCB-RF-2).
+
+    KiCad 10.0.7 reports track_not_centered_on_via for a via layer where tracks end inside the via but none ends on
+    its centre (pcbnew/drc/drc_test_provider_connectivity.cpp at 10.0.7: layerHasCenteredTrack). Freerouting joined a
+    scripted locked via 0.135 mm off its centre (route run 42423540033). For each such via layer one stub of the
+    track's width runs from that end to the centre, inside the via copper; no track is moved (moving the end tilted
+    long tracks into clearance errors, route run 42424111495). Returns [{net, layer, end, centre}] in KiCad mm.
+    """
+    tracks = [t for t in board.GetTracks() if t.Type() == pcb.PCB_TRACE_T]
+    added = []
+    for via in [v for v in board.GetTracks() if v.Type() == pcb.PCB_VIA_T]:
+        c = via.GetPosition()
+        cx, cy = int(c.x), int(c.y)
+        layers = {}
+        for track in tracks:
+            if track.GetNetCode() != via.GetNetCode() or not via.IsOnLayer(track.GetLayer()):
+                continue
+            for pt in (track.GetStart(), track.GetEnd()):
+                x, y = int(pt.x), int(pt.y)
+                entry = layers.setdefault(track.GetLayer(), {'centred': False, 'off': None})
+                if (x, y) == (cx, cy):
+                    entry['centred'] = True
+                elif entry['off'] is None and via.HitTest(pcb.VECTOR2I(x, y)):
+                    entry['off'] = (x, y, track.GetWidth())
+        for layer, entry in sorted(layers.items()):
+            if entry['centred'] or entry['off'] is None:
+                continue
+            x, y, width = entry['off']
+            stub = pcb.PCB_TRACK(board)
+            stub.SetStart(pcb.VECTOR2I(x, y))
+            stub.SetEnd(pcb.VECTOR2I(cx, cy))
+            stub.SetWidth(width)
+            stub.SetLayer(layer)
+            stub.SetNetCode(via.GetNetCode())
+            board.Add(stub)
+            added.append({'net': via.GetNetname(), 'layer': board.GetLayerName(layer),
+                          'end': [r4(pcb.ToMM(x)), r4(pcb.ToMM(y))], 'centre': [r4(pcb.ToMM(cx)), r4(pcb.ToMM(cy))]})
+    return sorted(added, key=lambda m: (m['net'], m['layer'], m['end']))
 
 
 def count_locked(board):
@@ -1833,6 +2032,8 @@ def route(board, freerouting):
         if locked_after < locked_before:
             raise SystemExit(f'board_gen: SES import dropped locked copper ({locked_before} -> {locked_after}); '
                              'use keepouts plus post-route copper for this board')
+        stubs = via_centre_stubs(pcb, board_obj)  # track_not_centered_on_via
+        sources += add_coupon(pcb, board_obj, frame, spec, contract, nets)
         for zone in spec['post_route_zones']:
             add_copper_zone(pcb, board_obj, frame, spec, contract, zone, nets)
         board_path = out / f'{board}.kicad_pcb'
@@ -1854,6 +2055,7 @@ def route(board, freerouting):
             'exit_code': proc, 'log_tail': log.strip().splitlines()[-40:],
             'dsn_sha256': sha256_file(dsn), 'ses_sha256': sha256_file(ses), 'dsn_probe': probe,
             'locked_segments': {'before_ses_import': locked_before, 'after_ses_import': locked_after},
+            'via_centre_stubs': stubs,
             'drc_command': drc_cmd, 'board_sha256': sha256_file(board_path), 'previews': shown,
             'footprint_sources': sources, 'kicad_version': str(pcb.Version()),
             'github': {k: os.environ.get(v, '') for k, v in (('run_id', 'GITHUB_RUN_ID'), ('sha', 'GITHUB_SHA'),

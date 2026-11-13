@@ -1,0 +1,379 @@
+{
+  "schema": "srrx-fab-manifest-v1",
+  "board_id": "HDMI_INSERT",
+  "status": "SB2_ROUTED_MECH_FIT_OPEN_NOT_FOR_FABRICATION",
+  "label": "NOT RELEASED: model/CI only; bench gates OPEN",
+  "generator": "pcb/fab_export.py",
+  "kicad_version": "10.0.7",
+  "inputs": {
+    "board_file": "build/kicad/boards/HDMI_INSERT/HDMI_INSERT.kicad_pcb",
+    "board_sha256": "70d646061f4e1df3dc970c12afbc67577399e0a82bf0674915304f93f32d0d94",
+    "project_sha256": "9c6b51914209dcf6e402366b9cfd8abd3faf7fc8ad7464a313b8d3fec876a300",
+    "spec_projection_sha256": "d03c0701ef143e4b9484a255906fe0288c3320e70508ac3449ec434c230c5bb9",
+    "report_projection_sha256": "404cfd62373c0eb6a3bd3278b85ecfefb5b5ff5d86765cf35d711f4231e363eb",
+    "jlc_bom_rows": [
+      {
+        "Board": "HDMI_INSERT",
+        "Comment": "0603WAF1003T5E",
+        "Designator": "R552",
+        "Footprint": "R_0603_1608Metric",
+        "LCSC Part #": "C25803",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "HDMI_INSERT",
+        "Comment": "CC0603KRX7R9BB104",
+        "Designator": "C517,C518",
+        "Footprint": "C_0603_1608Metric",
+        "LCSC Part #": "C14663",
+        "Mount": "SMD"
+      },
+      {
+        "Board": "HDMI_INSERT",
+        "Comment": "LM66100DCKR",
+        "Designator": "U506",
+        "Footprint": "SOT-363_SC-70-6",
+        "LCSC Part #": "C2869734",
+        "Mount": "SMD"
+      }
+    ],
+    "jlc_bom_rows_sha256": "8e164fde96082fd0516617d6120ac29cdb1abb67d956a75c7cd9306463ef5942",
+    "stackup": {
+      "id": "JLC standard 2-layer FR-4",
+      "material": "FR-4",
+      "copper_outer": "1 oz",
+      "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "note": "finished thickness from the spec layers.thickness_mm; JLC tolerance +/-10 % for boards >= 1.0 mm; 1 oz outer copper is the project choice (build/15 rows Шари and Мідь і струмові класи)",
+      "copper_layers": 2,
+      "thickness_mm": 1.6
+    },
+    "stackup_sha256": "5d4429eae592c730808058b5134bdf6fb5f9b87bf3e9f3435e687871bce8f37a",
+    "rf50_nets": [],
+    "note": "projections (F10): an unrelated build/10-jlc-bom.csv row, LCSC stock or spec edit does not stale this set"
+  },
+  "commands": [
+    {
+      "job": "gerbers",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "gerbers",
+        "--output",
+        "<temp>/raw/gerber/",
+        "--layers",
+        "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+        "--subtract-soldermask",
+        "--precision",
+        "6",
+        "<temp>/src/HDMI_INSERT.kicad_pcb"
+      ]
+    },
+    {
+      "job": "drill",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "drill",
+        "--output",
+        "<temp>/raw/drill/",
+        "--format",
+        "excellon",
+        "--drill-origin",
+        "absolute",
+        "--excellon-zeros-format",
+        "decimal",
+        "--excellon-oval-format",
+        "alternate",
+        "--excellon-units",
+        "mm",
+        "--excellon-separate-th",
+        "--generate-map",
+        "--map-format",
+        "gerberx2",
+        "<temp>/src/HDMI_INSERT.kicad_pcb"
+      ]
+    },
+    {
+      "job": "ipcd356",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "ipcd356",
+        "--output",
+        "<temp>/raw/HDMI_INSERT.ipc356",
+        "<temp>/src/HDMI_INSERT.kicad_pcb"
+      ]
+    },
+    {
+      "job": "pos",
+      "argv": [
+        "kicad-cli",
+        "pcb",
+        "export",
+        "pos",
+        "--output",
+        "<temp>/raw/assembly/HDMI_INSERT-pos-kicad.csv",
+        "--side",
+        "both",
+        "--format",
+        "csv",
+        "--units",
+        "mm",
+        "--exclude-dnp",
+        "<temp>/src/HDMI_INSERT.kicad_pcb"
+      ]
+    }
+  ],
+  "normalisation": [
+    "Gerber and drill-map Gerber: the %TF.CreationDate attribute line (optional in Gerber X2) is removed; 'G04 Created by KiCad (...) date ...*' keeps the creator and loses the date",
+    "Excellon: the '; #@! TF.CreationDate' line is removed; \"; DRILL file KiCad ... date ...\" loses the date",
+    "Gerber job file (.gbrjob): Header.CreationDate is removed (JSON re-written with indent 2)",
+    "IPC-D-356: comment-record dates are removed and file paths become the board file name",
+    "KiCad build strings that start with 10.0.7 become 10.0.7 in generator lines",
+    "after normalisation no date/time stamp and no path of the export directory may remain (checked)"
+  ],
+  "build_quantity": {
+    "instances": 1,
+    "spares": 0,
+    "total": 1
+  },
+  "dnp_excluded": [
+    "TP502"
+  ],
+  "coverage": {
+    "cpl": {
+      "rows": 6,
+      "placed_by_side_and_mount": {
+        "Top": {
+          "SMD": 4,
+          "THT": 2
+        }
+      },
+      "smd_refs_once_per_side": true
+    },
+    "bom": {
+      "rows": 5,
+      "designators": 6,
+      "tbd": [
+        "J1",
+        "J2"
+      ],
+      "boards": 1
+    },
+    "ipc356": {
+      "board_pad_nets": [
+        "E5_HDMI_5V_DISP",
+        "E5_HDMI_5V_Q6A",
+        "E5_HDMI_ST_N",
+        "GND"
+      ],
+      "ipc_nets": [
+        "E5_HDMI_5V_DISP",
+        "E5_HDMI_5V_Q6A",
+        "E5_HDMI_ST_N",
+        "GND"
+      ],
+      "aliases": {
+        "M0000": "E5_HDMI_5V_DISP"
+      },
+      "missing": []
+    },
+    "gerber_x2": {
+      "files": {
+        "gerber/HDMI_INSERT-B_Cu.gbl": "Copper,L2,Bot",
+        "gerber/HDMI_INSERT-B_Mask.gbs": "Soldermask,Bot",
+        "gerber/HDMI_INSERT-B_Paste.gbp": "Paste,Bot",
+        "gerber/HDMI_INSERT-B_Silkscreen.gbo": "Legend,Bot",
+        "gerber/HDMI_INSERT-Edge_Cuts.gm1": "Profile,NP",
+        "gerber/HDMI_INSERT-F_Cu.gtl": "Copper,L1,Top",
+        "gerber/HDMI_INSERT-F_Mask.gts": "Soldermask,Top",
+        "gerber/HDMI_INSERT-F_Paste.gtp": "Paste,Top",
+        "gerber/HDMI_INSERT-F_Silkscreen.gto": "Legend,Top"
+      }
+    },
+    "drill": {
+      "pth_file": 1,
+      "npth_file": 1,
+      "pth_hits": 6,
+      "npth_hits": 0,
+      "board_pth_pads": 4,
+      "board_vias": 2,
+      "board_npth_pads": 0,
+      "maps": [
+        "drill/HDMI_INSERT-NPTH-drl_map.gbr",
+        "drill/HDMI_INSERT-PTH-drl_map.gbr"
+      ]
+    },
+    "passed": true,
+    "area_mm2": 288.0
+  },
+  "problems": [],
+  "sources": {
+    "jlc_bom": {
+      "url": "https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "required BOM columns Comment, Designator, Footprint; .csv/.xls/.xlsx; designators are upper-cased by JLC"
+    },
+    "jlc_cpl": {
+      "url": "https://jlcpcb.com/help/article/pick-place-file-for-pcb-assembly",
+      "read": "2026-11-07",
+      "used": "CPL columns Designator, Mid X, Mid Y (mm, component centroid), Layer (Top/Bottom), Rotation (degrees, positive counter-clockwise); the page names no coordinate origin and no rotation offsets"
+    },
+    "jlc_kicad": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad",
+      "read": "2026-11-07",
+      "used": "BOM Comment, Designator, Footprint, LCSC Part #; KiCad pos Ref/PosX/PosY/Rot/Side become Designator/Mid X/Mid Y/Rotation/Layer"
+    },
+    "jlc_gerber": {
+      "url": "https://jlcpcb.com/help/article/how-to-generate-gerber-and-drill-files-in-kicad-8",
+      "read": "2026-11-07",
+      "used": "layers F/B.Cu (+ inner), F/B.Paste, F/B.Silkscreen, F/B.Mask, Edge.Cuts; Protel extensions; subtract soldermask from silkscreen; drill: alternate oval mode, absolute origin, millimetres, decimal zeros, drill map recommended"
+    },
+    "jlc_capabilities": {
+      "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+      "read": "2026-11-07",
+      "used": "FR-4; thickness 0.4/0.6/0.8/1.0/1.2/1.6/2.0 mm, tolerance +/-10 % for >= 1.0 mm; 2-layer outer copper 1/2/2.5/3.5/4.5 oz; impedance control listed from 4 layers, standard +/-10 %"
+    },
+    "kicad_cli": {
+      "url": "https://docs.kicad.org/10.0/en/cli/cli.html",
+      "read": "2026-11-07",
+      "used": "options of pcb export gerbers/drill/ipcd356/pos and jobset run"
+    },
+    "kicad_jobs": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs",
+      "read": "2026-11-07",
+      "used": "jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp"
+    },
+    "kicad_d356": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp",
+      "read": "2026-11-07",
+      "used": "IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 characters); test record types 307/317/327/367"
+    }
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "sha256": "f86c57c52f7adff3ee5d122070d2fe7e8c8cfd1a4f0eaa361fddee04152d0b82",
+      "bytes": 113
+    },
+    {
+      "path": "HDMI_INSERT-fab-notes.pdf",
+      "sha256": "9ee0f7f3a2b99f7f4a20d87e6618d4c2377f7fcdf26110b15f2b7242c0983b9a",
+      "bytes": 7908
+    },
+    {
+      "path": "HDMI_INSERT.ipc356",
+      "sha256": "0d1a9c2899897b965f128a98fce1bc4d7b783516370af902d1b5356695d116b4",
+      "bytes": 2127
+    },
+    {
+      "path": "HDMI_INSERT.kicad_jobset",
+      "sha256": "93392c38d518dc4f35bdf6c3d4f2429f53c7941d476148043a8a41fe7dd1fa65",
+      "bytes": 3335
+    },
+    {
+      "path": "README.md",
+      "sha256": "09507e3fc9db0b783e0bd2852552b238bd0b113fb651be225cfb078258bfd987",
+      "bytes": 7617
+    },
+    {
+      "path": "assembly/HDMI_INSERT-bom-jlc.csv",
+      "sha256": "d7be9de8ef8e2127b8c2e7c79c6a34f7c30a0a0a7259b40ae765450d7ee26772",
+      "bytes": 973
+    },
+    {
+      "path": "assembly/HDMI_INSERT-cpl-jlc.csv",
+      "sha256": "bf7a839e419b528675ceaa502e39a92dcc5c93840e3536c075a5645bc169df05",
+      "bytes": 354
+    },
+    {
+      "path": "assembly/HDMI_INSERT-cpl-rotation-offsets.csv",
+      "sha256": "478f579cba7770b28115a02960e83d624d2498cb4ce3351207caeb389040690e",
+      "bytes": 1461
+    },
+    {
+      "path": "assembly/HDMI_INSERT-instances.csv",
+      "sha256": "4134dc6218ed4f173a5b53f769e63f3270fdaa0cb46775aeba2ae3bdc784254a",
+      "bytes": 346
+    },
+    {
+      "path": "assembly/HDMI_INSERT-pos-kicad.csv",
+      "sha256": "9e500095173b4586256a2dd1b84f4a1fe74e9f7b1d861b1cec84912f91eb758a",
+      "bytes": 635
+    },
+    {
+      "path": "drill/HDMI_INSERT-NPTH-drl_map.gbr",
+      "sha256": "0938ec5c9c26e735dc3f60a938d4188478593ea0f6e272fdeaf6d5dd5535f4a9",
+      "bytes": 3937
+    },
+    {
+      "path": "drill/HDMI_INSERT-NPTH.drl",
+      "sha256": "35c59b5e8f2bf8e09d607c817dfd7cb8870656eb0860167f53f49c80b4c04bd4",
+      "bytes": 191
+    },
+    {
+      "path": "drill/HDMI_INSERT-PTH-drl_map.gbr",
+      "sha256": "c395217538ccb11b3655e839e3d43b8dad3659914d6dc11e1cd0d289ceac0878",
+      "bytes": 31813
+    },
+    {
+      "path": "drill/HDMI_INSERT-PTH.drl",
+      "sha256": "d35c70cf4df36c83d6e92f67c2182ea0de4129788abb01cab3b446ab09401f55",
+      "bytes": 393
+    },
+    {
+      "path": "gerber/HDMI_INSERT-B_Cu.gbl",
+      "sha256": "04a6e878ee6aee3ba5cc41561fe09bc086f1877a8eb99d87d4bacf7e3f9a6617",
+      "bytes": 6170
+    },
+    {
+      "path": "gerber/HDMI_INSERT-B_Mask.gbs",
+      "sha256": "d11addaae45ab6151c489e300bc568bba5bddae12a150a7b21ca940fc6ea124f",
+      "bytes": 596
+    },
+    {
+      "path": "gerber/HDMI_INSERT-B_Paste.gbp",
+      "sha256": "c488a2d499aee79aa7dacb826f4bd65220677a2300dc1a9cae6c31ecd7df059c",
+      "bytes": 386
+    },
+    {
+      "path": "gerber/HDMI_INSERT-B_Silkscreen.gbo",
+      "sha256": "d3d3596e099a95524513ea110543dd92c7d410bbc03092874b176c25206d28ac",
+      "bytes": 606
+    },
+    {
+      "path": "gerber/HDMI_INSERT-Edge_Cuts.gm1",
+      "sha256": "591f6564fc2e76f821a44bdae3f73295edb5d77c1d0932b9b8bc4624945ec846",
+      "bytes": 624
+    },
+    {
+      "path": "gerber/HDMI_INSERT-F_Cu.gtl",
+      "sha256": "90868e43dd4b7f1f597183c3827920c3065221ff671d6bc169ad411e09e50ef2",
+      "bytes": 17383
+    },
+    {
+      "path": "gerber/HDMI_INSERT-F_Mask.gts",
+      "sha256": "92d840d6abf1ab20f6f722adfe730a254b25f8e207e2a603750e6ccc21d6873b",
+      "bytes": 1934
+    },
+    {
+      "path": "gerber/HDMI_INSERT-F_Paste.gtp",
+      "sha256": "66762a6a2f0b2365ecb15c3053dc5951495c6dc1d35acdbbfacc6601e0e0bfdc",
+      "bytes": 1654
+    },
+    {
+      "path": "gerber/HDMI_INSERT-F_Silkscreen.gto",
+      "sha256": "0ad51b459d4e7550e054d915e068142b530e4ef4437dfb6ad5c40c8ec1bd2dc3",
+      "bytes": 19362
+    },
+    {
+      "path": "gerber/HDMI_INSERT-job.gbrjob",
+      "sha256": "016bd832ed04887b915dc807effde8be74d8855d386f1b6736be4ccb20c08d1a",
+      "bytes": 2670
+    }
+  ]
+}

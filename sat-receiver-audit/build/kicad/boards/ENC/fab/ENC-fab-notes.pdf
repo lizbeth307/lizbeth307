@@ -12,20 +12,20 @@ endobj
 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
 endobj
 5 0 obj
-<< /Title (ENC fab notes - NOT RELEASED: model/CI only; bench gates OPEN) /Subject (pcb/fab_export.py; board ENC; PILOT_NOT_FOR_FABRICATION) /Producer (pcb/fab_export.py) >>
+<< /Title (ENC fab notes - NOT RELEASED: model/CI only; bench gates OPEN) /Subject (pcb/fab_export.py; board ENC; SB1_ROUTED_NOT_FOR_FABRICATION) /Producer (pcb/fab_export.py) >>
 endobj
 6 0 obj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
 endobj
 7 0 obj
-<< /Length 5105 >>
+<< /Length 5136 >>
 stream
 1.00 w 36.00 470.00 m 36.00 80.00 l S
 1.00 w 36.00 80.00 m 426.00 80.00 l S
 1.00 w 426.00 470.00 m 36.00 470.00 l S
 1.00 w 426.00 80.00 m 426.00 470.00 l S
-0.60 w 399.19 421.25 m 399.19 433.37 389.37 443.19 377.25 443.19 c 365.13 443.19 355.31 433.37 355.31 421.25 c 355.31 409.13 365.13 399.31 377.25 399.31 c 389.37 399.31 399.19 409.13 399.19 421.25 c S
 0.60 w 106.69 128.75 m 106.69 140.87 96.87 150.69 84.75 150.69 c 72.63 150.69 62.81 140.87 62.81 128.75 c 62.81 116.63 72.63 106.81 84.75 106.81 c 96.87 106.81 106.69 116.63 106.69 128.75 c S
+0.60 w 399.19 421.25 m 399.19 433.37 389.37 443.19 377.25 443.19 c 365.13 443.19 355.31 433.37 355.31 421.25 c 355.31 409.13 365.13 399.31 377.25 399.31 c 389.37 399.31 399.19 409.13 399.19 421.25 c S
 0.40 w 186.38 153.12 m 194.38 153.12 l S
 0.40 w 190.38 149.12 m 190.38 157.12 l S
 BT /F1 7.00 Tf 195.38 156.12 Td (ENC \(Top\)) Tj ET
@@ -37,7 +37,7 @@ BT /F1 7.00 Tf 36.00 48.00 Td (Top view, Edge.Cuts and holes of ENC.kicad_pcb; c
 BT /F1 7.00 Tf 36.00 38.00 Td (NOT RELEASED: model/CI only; bench gates OPEN) Tj ET
 BT /F2 11.00 Tf 450.00 545.00 Td (ENC fab notes) Tj ET
 BT /F2 8.00 Tf 450.00 531.00 Td (NOT RELEASED: model/CI only; bench gates OPEN.) Tj ET
-BT /F1 8.00 Tf 450.00 520.00 Td (Board status: PILOT_NOT_FOR_FABRICATION. Every value below is a CI/model) Tj ET
+BT /F1 8.00 Tf 450.00 520.00 Td (Board status: SB1_ROUTED_NOT_FOR_FABRICATION. Every value below is a CI/model) Tj ET
 BT /F1 8.00 Tf 450.00 509.00 Td (output of pcb/fab_export.py and pcb/board_gen.py; no hardware or bench gate is) Tj ET
 BT /F1 8.00 Tf 450.00 498.00 Td (closed by it.) Tj ET
 BT /F2 11.00 Tf 450.00 481.00 Td (Board) Tj ET
@@ -71,28 +71,30 @@ BT /F1 8.00 Tf 450.00 154.00 Td (component centroid\) and Rotation the raw KiCad
 BT /F1 8.00 Tf 450.00 143.00 Td (clockwise as the JLC CPL column\). JLC rotation and centroid offsets per) Tj ET
 BT /F1 8.00 Tf 450.00 132.00 Td (footprint are TBD \(assembly/ENC-cpl-rotation-offsets.csv\): check every part in) Tj ET
 BT /F1 8.00 Tf 450.00 121.00 Td (the JLC viewer at order time; nothing here verifies them.) Tj ET
-BT /F1 8.00 Tf 450.00 110.00 Td (BOM TBD: J1 \(PH4 pilot placeholder\): TBD: pilot_placeholder, no graph ref and) Tj ET
-BT /F1 8.00 Tf 450.00 99.00 Td (no MPN yet; replaced by GR-3 ENC-side header ref \(graph\), then PCB-SB1) Tj ET
-BT /F2 11.00 Tf 450.00 82.00 Td (Not proved here \(OPEN\)) Tj ET
-BT /F1 8.00 Tf 450.00 68.00 Td (- that the schematic is right) Tj ET
-BT /F1 8.00 Tf 450.00 57.00 Td (- current capacity or temperature rise beyond the chosen class widths) Tj ET
-BT /F1 8.00 Tf 450.00 46.00 Td (- impedance, RF loss or isolation, EMC or signal integrity) Tj ET
+BT /F1 8.00 Tf 450.00 110.00 Td (BOM TBD: J1 \(S37/S38 wire land, no part fitted\): TBD: pilot_placeholder, no) Tj ET
+BT /F1 8.00 Tf 450.00 99.00 Td (graph ref and no MPN yet; replaced by nothing is fitted: the four 26 AWG) Tj ET
+BT /F1 8.00 Tf 450.00 88.00 Td (S37/S38 wires are soldered into this land \(W2 PCB-SB1\); a graph ref for the) Tj ET
+BT /F1 8.00 Tf 450.00 77.00 Td (land \(ENC domain, mount pcb_pad\) is pending in design/E3.json \(GR lineage\)) Tj ET
+BT /F2 11.00 Tf 450.00 60.00 Td (Not proved here \(OPEN\)) Tj ET
+BT /F1 8.00 Tf 450.00 46.00 Td (- that the schematic is right) Tj ET
 endstream
 endobj
 8 0 obj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
 endobj
 9 0 obj
-<< /Length 998 >>
+<< /Length 1205 >>
 stream
-BT /F1 8.00 Tf 36.00 560.00 Td (- creepage beyond the encoded clearances) Tj ET
-BT /F1 8.00 Tf 36.00 549.00 Td (- that the enclosure fits \(only outline and hole checks; heights are not checked here\)) Tj ET
-BT /F1 8.00 Tf 36.00 538.00 Td (- that the fab's DFM accepts the board, or that CPL rotations are right) Tj ET
-BT /F1 8.00 Tf 36.00 527.00 Td (- that the land patterns match the purchased MPNs) Tj ET
-BT /F1 8.00 Tf 36.00 516.00 Td (- any function: hardware and bench gates stay OPEN) Tj ET
-BT /F1 8.00 Tf 36.00 505.00 Td (Sources \(read 2026-11-07\): https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly; https://jlcpcb.com/help/article/pick-place-file-for-) Tj ET
-BT /F1 8.00 Tf 36.00 494.00 Td (pcb-assembly; https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad; https://jlcpcb.com/help/article/how-to-generate-) Tj ET
-BT /F1 8.00 Tf 36.00 483.00 Td (gerber-and-drill-files-in-kicad-8; https://jlcpcb.com/capabilities/pcb-capabilities) Tj ET
+BT /F1 8.00 Tf 36.00 560.00 Td (- current capacity or temperature rise beyond the chosen class widths) Tj ET
+BT /F1 8.00 Tf 36.00 549.00 Td (- impedance, RF loss or isolation, EMC or signal integrity) Tj ET
+BT /F1 8.00 Tf 36.00 538.00 Td (- creepage beyond the encoded clearances) Tj ET
+BT /F1 8.00 Tf 36.00 527.00 Td (- that the enclosure fits \(only outline and hole checks; heights are not checked here\)) Tj ET
+BT /F1 8.00 Tf 36.00 516.00 Td (- that the fab's DFM accepts the board, or that CPL rotations are right) Tj ET
+BT /F1 8.00 Tf 36.00 505.00 Td (- that the land patterns match the purchased MPNs) Tj ET
+BT /F1 8.00 Tf 36.00 494.00 Td (- any function: hardware and bench gates stay OPEN) Tj ET
+BT /F1 8.00 Tf 36.00 483.00 Td (Sources \(read 2026-11-07\): https://jlcpcb.com/help/article/bill-of-materials-for-pcb-assembly; https://jlcpcb.com/help/article/pick-place-file-for-) Tj ET
+BT /F1 8.00 Tf 36.00 472.00 Td (pcb-assembly; https://jlcpcb.com/help/article/how-to-generate-the-bom-and-centroid-file-from-kicad; https://jlcpcb.com/help/article/how-to-generate-) Tj ET
+BT /F1 8.00 Tf 36.00 461.00 Td (gerber-and-drill-files-in-kicad-8; https://jlcpcb.com/capabilities/pcb-capabilities) Tj ET
 endstream
 endobj
 xref
@@ -103,12 +105,12 @@ xref
 0000000121 00000 n 
 0000000218 00000 n 
 0000000320 00000 n 
-0000000509 00000 n 
-0000000645 00000 n 
-0000005801 00000 n 
-0000005937 00000 n 
+0000000514 00000 n 
+0000000650 00000 n 
+0000005837 00000 n 
+0000005973 00000 n 
 trailer
 << /Size 10 /Root 1 0 R /Info 5 0 R >>
 startxref
-6985
+7229
 %%EOF

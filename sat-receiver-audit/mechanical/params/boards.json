@@ -103,25 +103,26 @@
         "origin": [6.0, 38.5],
         "z_bottom": 47.5,
         "facing": "+z",
-        "mount": "on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec QTH-060-01-L-D-A on the PWR-B bottom mates the QSH-060-01-L-D-A on the PWR-A top at 5.00 mm (pcb/partition-spec.json b2b)"
+        "mount": "on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec LSHM-150-02.5-L-DV-A-N-K-TR J209 on the PWR-B bottom mates the same part J208 on the PWR-A top at 5.00 mm (two -02.5 halves, catalogue F-224; pcb/partition-spec.json b2b, W2 B2B)"
       },
       "holes": [[4, 6], [132, 6], [132, 31], [46, 31], [4, 106], [38, 106], [38, 56]],
       "screw": "M3 ISO 14580 A2 TX10 from the component side into the female thread of the F45 standoff (F46; length from generated/fastener-stacks.json PWR_B-STANDOFF)",
       "hole_d": 3.2,
       "hole_keepout_d": 7.0,
       "max_height": 5.5,
-      "_max_height_note": "hB 5.5 of pcb/partition-spec.json (JST PH side entry 4.8 and PHD side entry 5.0 fit); parts on the top side only; bottom face z 47.5 = PWR-A top 42.5 + stack 5.0, top face 49.1, parts to 54.6, path-2 channel 5.98 to the display module back 60.58 (layout channel_check; at least 4.0 by the rule, dz 4.08 is set by the CTRL bottom, W2 GR-3)",
+      "_max_height_note": "hB 5.5 of pcb/partition-spec.json (JST PH side entry 4.8 and PHD side entry 5.0 fit); parts on the top side only, with one exception: the B2B half J209 on the bottom side (b2b.bottom_side, W2 B2B); bottom face z 47.5 = PWR-A top 42.5 + stack 5.0, top face 49.1, parts to 54.6, path-2 channel 5.98 to the display module back 60.58 (layout channel_check; at least 4.0 by the rule, dz 4.08 is set by the CTRL bottom, W2 GR-3)",
       "b2b": {
-        "pwr_a": {"mpn": "QSH-060-01-L-D-A", "manufacturer": "Samtec", "courtyard": [41.77, 7.99]},
-        "pwr_b": {"mpn": "QTH-060-01-L-D-A", "manufacturer": "Samtec", "courtyard": [40.5, 7.61]},
+        "pwr_a": {"ref": "J208", "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR", "manufacturer": "Samtec", "courtyard": [30.7, 6.2]},
+        "pwr_b": {"ref": "J209", "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR", "manufacturer": "Samtec", "courtyard": [30.7, 6.2]},
         "stack": 5.0,
-        "contacts": 120,
+        "contacts": 100,
+        "bottom_side": "J209 is the only PWR-B part on the bottom side (it faces J208 on the PWR-A top); its height (A (3.95) for lead style -02.5 in the F-224 lead-style table) stays inside the 5.00 mm stack, and no other PWR-B part goes on the bottom side",
         "position": "TBD: PCB-PWRA / PCB-PWRB placement (anchor of both boards)",
-        "_src": "pcb/partition-spec.json b2b (AREA: Samtec catalogue F-226 qth.pdf read 2026-11-07; LCSC codes C5199901 / C116054 are GR-3's to record, not LCSC-snapshot evidence yet)"
+        "_src": "pcb/partition-spec.json b2b (W2 B2B, read 2026-11-07): stack -02.5 & -02.5 (5.00) mm, Samtec catalogue F-224 Rev 20NOV24 https://suddendocs.samtec.com/catalog_english/lshm.pdf, nominal .197 [5.00] with standoff code XXXX-0515 in spec Rev H 7.9 https://suddendocs.samtec.com/productspecs/lshm.pdf; courtyard = F.CrtYd of the vendored KiCad 10.0.7 Connector_Samtec LSHM-150 -DV-N footprint; LCSC C2940507 (design/parts/snapshots/2026-11-07-w2-b2b-lcsc.json); W2 AREA had QSH-060-01 / QTH-060-01"
       },
       "keepouts": {
         "pwr_a_under_pwr_b_tht": "no PWR-A component under a PWR-B THT pin field (pin field + window_margin 0.5 each side; copper and mask allowed): pcb/partition-budget.json candidates.<chosen> pwr_a_keepout_items (the THT harness headers of PWR-B, build/16-dzhgut-rozyemy.csv rows with board PWR_B; their area is pwr_a_keepouts_mm2 there)",
-        "pwr_a_under_b2b": "no PWR-A component under the mated QSH/QTH stack outside the QSH courtyard",
+        "pwr_a_under_b2b": "no PWR-A component under the mated LSHM stack outside the J208 courtyard",
         "pwr_a_test_points": "PWR-A test points under probe windows of PWR-B (tp_probe_window 3.0)",
         "positions": "TBD: from the PCB-PWRA / PCB-PWRB placement (MODEL contract only)",
         "_src": "pcb/partition-spec.json keepouts"
@@ -139,7 +140,7 @@
           "use": "J207 SL2-PWR-PH (JST PH side entry: S20, S21, S22, S35, S36) and J204 X04S1-PWR (RF board lead S04) through plate slot SL2 (build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3)"
         }
       ],
-      "notes": "Mezzanine of the W2 AREA decision 'Кількість плат' (four main boards): parts <= hB on the top side only, no PWR-B part over a window (check_boards, PCB-PWRB). Its outline and windows are the mechanical contract; MODEL FIT ONLY."
+      "notes": "Mezzanine of the W2 AREA decision 'Кількість плат' (four main boards): parts <= hB on the top side only (except the B2B half J209 on the bottom, b2b.bottom_side), no PWR-B part over a window (check_boards, PCB-PWRB). Its outline and windows are the mechanical contract; MODEL FIT ONLY."
     },
     "RF": {
       "name": "RF / detector board (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE)",
@@ -163,9 +164,13 @@
         {"rect": [0.0, 0.0, 184.0, 0.1], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
         {"rect": [0.0, 0.1, 73.7, 30.6], "max_height": 5.5, "free_mm": 11.1, "fits_mm": 10.6, "limit": "sawbird"},
         {"rect": [73.7, 0.1, 7.9, 27.0], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
-        {"rect": [81.6, 0.1, 95.0, 27.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
+        {"rect": [81.6, 0.1, 95.0, 0.5], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
         {"rect": [176.6, 0.1, 7.4, 22.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "usb_socket_a"},
+        {"rect": [81.6, 0.6, 6.8, 26.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
+        {"rect": [88.4, 0.6, 30.0, 26.0], "max_height": 5.5, "free_mm": 6.5, "fits_mm": 6.0, "limit": "boni_a406"},
+        {"rect": [118.4, 0.6, 58.2, 26.0], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
         {"rect": [176.6, 22.1, 7.4, 5.0], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
+        {"rect": [81.6, 26.6, 95.0, 0.5], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_a"},
         {"rect": [73.7, 27.1, 110.3, 0.5], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
         {"rect": [73.7, 27.6, 7.9, 3.1], "max_height": 5.5, "free_mm": 29.8, "fits_mm": 29.3, "limit": "rfbay.lid"},
         {"rect": [81.6, 27.6, 95.0, 16.9], "max_height": 5.5, "free_mm": 16.8, "fits_mm": 16.3, "limit": "v4l_b"},
@@ -321,9 +326,9 @@
   "small_boards": {
     "_note": "boards of pcb/prepare.py that are not mounted on the plate or the front shell: their envelope is a layout item (or the IMU pack) and their layout is wave 2 (W2-05); listed here so the board domains of the partition are all accounted for",
     "HATCH": {"domains": ["HATCH"], "envelope": "layout hatch_parts", "name": "service-hatch board: J502 B3B-PH-K (UART5), J503 43650-0315 (J21), SW501 PV6F240SS through the board"},
-    "T7_INSERT": {"domains": ["T7_INSERT"], "envelope": "in the T7 USB3 cable (not modelled)", "name": "VBUS key insert U505 of the T7 cable"},
-    "HDMI_INSERT": {"domains": ["HDMI_INSERT"], "envelope": "layout hdmi_insert (reserve 16 x 18 x 5 on the plate front face right of the BMS, between the two HDMI flexes, W2 MECH-4; refined by MECH-5)", "name": "pin-18 pass-through U506 between the two HDMI FPC segments"},
+    "T7_INSERT": {"domains": ["T7_INSERT"], "envelope": "layout t7_insert (reserve 22 x 9 x 9 in the T7 USB3 cable under the Q6A USB stack, W2 MECH-5; board by PCB-SB2)", "name": "VBUS key insert U505 of the T7 cable"},
+    "HDMI_INSERT": {"domains": ["HDMI_INSERT"], "envelope": "layout hdmi_insert (reserve 16 x 18 x 5 on the plate front face right of the BMS, between the two HDMI flexes, W2 MECH-4; kept by W2 MECH-5 while the FPC sockets are not chosen)", "name": "pin-18 pass-through U506 between the two HDMI FPC segments"},
     "IMU_CARRIER": {"domains": ["IMU_CARRIER"], "envelope": "imu_pack.json carrier_pcb", "name": "carrier board in the Hammond 1550Z101 IMU pack"},
-    "PACK_FUSE": {"domains": ["PACK_FUSE"], "envelope": "not modelled yet (OPEN, mechanical/README)", "name": "F101 carrier with the Keystone 3568 holder at the pack positive"}
+    "PACK_FUSE": {"domains": ["PACK_FUSE"], "envelope": "layout pack_fuse (reserve 11 x 26 x 23.77 on 2 PEM SO-M2.5-6ZI on the plate extension beside the right end of the battery tray, M-07 PF1-PF2, W2 MECH-5; board by PCB-SB2)", "name": "F101 carrier with the Keystone 3568 holder at the pack positive"}
   }
 }

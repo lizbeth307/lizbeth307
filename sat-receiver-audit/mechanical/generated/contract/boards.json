@@ -296,7 +296,7 @@
           "facing": "+z"
         }
       },
-      "mount": "on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec QTH-060-01-L-D-A on the PWR-B bottom mates the QSH-060-01-L-D-A on the PWR-A top at 5.00 mm (pcb/partition-spec.json b2b)",
+      "mount": "on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec LSHM-150-02.5-L-DV-A-N-K-TR J209 on the PWR-B bottom mates the same part J208 on the PWR-A top at 5.00 mm (two -02.5 halves, catalogue F-224; pcb/partition-spec.json b2b, W2 B2B)",
       "edge_zones": [
         {
           "edge": "right",
@@ -460,7 +460,7 @@
             81.6,
             0.1,
             95.0,
-            27.0
+            0.5
           ],
           "max_height": 5.5,
           "free_mm": 16.8,
@@ -481,6 +481,42 @@
         },
         {
           "rect": [
+            81.6,
+            0.6,
+            6.8,
+            26.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
+        },
+        {
+          "rect": [
+            88.4,
+            0.6,
+            30.0,
+            26.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 6.5,
+          "fits_mm": 6.0,
+          "limit": "boni_a406"
+        },
+        {
+          "rect": [
+            118.4,
+            0.6,
+            58.2,
+            26.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
+        },
+        {
+          "rect": [
             176.6,
             22.1,
             7.4,
@@ -490,6 +526,18 @@
           "free_mm": 29.8,
           "fits_mm": 29.3,
           "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            81.6,
+            26.6,
+            95.0,
+            0.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
         },
         {
           "rect": [
