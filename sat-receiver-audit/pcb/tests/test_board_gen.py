@@ -954,5 +954,206 @@ class CtrlPowerViaShares(unittest.TestCase):
             self.assertLessEqual(hottest, cap, (net, current, {k: round(i, 3) for k, (i, _) in flows.items()}))
 
 
+
+class CtrlFaultPathsCtrl5(unittest.TestCase):
+    """W2 CTRL-5 (reviews RV4-E-2, RV4-E-4, RV4-E-5, RV4-S-2 of W2 CTRL-4): the PTC F301 sits ahead of the fan switch Q304 in
+    the graph and on the board; every GND pad of a fault loop whose supply copper CTRL-4 sized returns its protective current
+    through its own scripted via cluster within the project's via fit (DC network of the spurs and barrels to a common plane
+    node, MODEL); each E3_FAN5_P via group is an end-to-end ladder (no via carries both the entry and the exit) within the via
+    fit at the assumed cold-ambient trip of the PTC; the frozen-route guard covers the net classes of the frozen nets; PWR3A is
+    an outer-only router class that board_gen may skip while no net is in it; and the re-freeze tool gives a power-class join
+    a via group per layer change. Skipped on a tree without the CTRL spec."""
+    # pad: (protective current of the loop in A, least vias); the PTC loops at the 1.5 A protective current of the class
+    # (the assumed cold 2.02 A is OPEN in build/15), C321.2 and U315.2 keep one via (OPEN in build/15: no room in the band
+    # between the cut-outs without a re-freeze cascade, a SOT-23-6 middle pin)
+    CLUSTERS = {'C320.2': (4.0, 5), 'C322.2': (4.0, 5), 'Q305.2': (4.0, 5), 'C318.2': (1.5, 2), 'C319.2': (1.5, 2),
+                'D305.2': (1.5, 2)}
+    OPEN_PADS = ('C321.2', 'U315.2')
+    COLD_TRIP = 2.02  # assumed cold-ambient trip of F301 (Ihold 1.01 A at -20 degC scaled, build/15)
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+        self.spec = bg.read_json(bg.spec_path('CTRL'))
+        self.nc = bg.read_json(bg.BASE / 'pcb/generated/netclasses.json')
+        self.graph = bg.load_graph()
+
+    @staticmethod
+    def solve(edges, src, current, sink='PLANE'):
+        """Node voltages of a resistor network (edges (a, b, ohm-like)); current enters at src and leaves at sink."""
+        adj = {}
+        for a, b, _r in edges:
+            adj.setdefault(a, set()).add(b)
+            adj.setdefault(b, set()).add(a)
+        seen, todo = {src}, [src]
+        while todo:
+            for q in adj[todo.pop()] - seen:
+                seen.add(q)
+                todo.append(q)
+        edges = [e for e in edges if e[0] in seen]
+        idx = {n: k for k, n in enumerate(sorted(n for n in seen if n != sink))}
+        size = len(idx)
+        g = [[0.0] * size for _ in range(size)]
+        rhs = [0.0] * size
+        for a, b, r in edges:
+            for p, q in ((a, b), (b, a)):
+                if p in idx:
+                    g[idx[p]][idx[p]] += 1 / r
+                    if q in idx:
+                        g[idx[p]][idx[q]] -= 1 / r
+        rhs[idx[src]] = current
+        for col in range(size):
+            piv = max(range(col, size), key=lambda r_: abs(g[r_][col]))
+            g[col], g[piv], rhs[col], rhs[piv] = g[piv], g[col], rhs[piv], rhs[col]
+            for r_ in range(col + 1, size):
+                f = g[r_][col] / g[col][col]
+                if f:
+                    for c_ in range(col, size):
+                        g[r_][c_] -= f * g[col][c_]
+                    rhs[r_] -= f * rhs[col]
+        volt = [0.0] * size
+        for r_ in range(size - 1, -1, -1):
+            volt[r_] = (rhs[r_] - sum(g[r_][c_] * volt[c_] for c_ in range(r_ + 1, size))) / g[r_][r_]
+        u = {n: volt[k] for n, k in idx.items()}
+        u[sink] = 0.0
+        return u, seen
+
+    def barrel(self):
+        import math
+        via = self.nc['formulas']['via']
+        d = via['drill_mm']
+        return self.nc['stackup']['board_thickness_mm'] / (math.pi * ((d / 2 + via['plating_mm']) ** 2 - (d / 2) ** 2))
+
+    def test_ptc_ahead_of_the_fan_switch(self):
+        pins = {(ref, p['number']): p.get('net') for ref in ('F301', 'Q304') for p in self.graph[ref]['pins']}
+        self.assertEqual(pins[('F301', '1')], 'LAB5')
+        self.assertEqual(pins[('F301', '2')], 'E3_FAN5')
+        self.assertEqual(pins[('Q304', '2')], 'E3_FAN5')  # source behind the PTC
+        self.assertEqual(pins[('Q304', '3')], 'E3_FAN5_P')  # drain to the fan side
+        self.assertEqual({p.get('net') for p in self.graph['R367']['pins']}, {'E3_FAN_PG', 'LAB5'})  # gate pull-up on LAB5
+        import importlib.util
+        loader = importlib.util.spec_from_file_location('ctrl_make_spec_c5a', bg.BASE / 'build/kicad/boards/CTRL/make_spec.py')
+        ms = importlib.util.module_from_spec(loader)
+        loader.loader.exec_module(ms)
+        inp = ms.Inputs(copy.deepcopy(self.spec))
+        pad = {(p['ref'], p['number']): [round(v, 4) for v in p['c']] for p in inp.pads if p['ref'] in ('F301', 'Q304')}
+        tracks = {t['id']: t for t in self.spec['pre_route']['tracks']}
+        self.assertEqual(tracks['LAB5-FEED-B1']['path'][-1], pad[('F301', '1')])  # the LAB5 feed ends in the PTC
+        fan5 = tracks['FAN5-F301-Q304']
+        self.assertEqual((fan5['net'], fan5['path'][0], fan5['path'][-1]), ('E3_FAN5', pad[('F301', '2')], pad[('Q304', '2')]))
+        self.assertGreaterEqual(fan5['width_mm'], 1.85)
+        self.assertEqual(tracks['FAN5P-B']['path'][-1], pad[('Q304', '3')])  # the switch drain feeds the fan side
+
+    def test_gnd_clusters_carry_the_fault_current(self):
+        import math
+        copper = {l['kicad']: l['copper_mm'] for l in self.nc['stackup']['layers'] if 'kicad' in l}
+        fit = self.nc['formulas']['via']['current_a_dt20']
+        pre = self.spec['pre_route']
+        gnd_tracks = [t for t in pre['tracks'] if t['net'] == 'GND' and t['id'].startswith('GNDC-')]
+        gnd_vias = [v for v in pre['vias'] if v['net'] == 'GND' and v['id'].startswith('GNDC-')]
+        key = lambda p: (round(p[0], 4), round(p[1], 4))
+        edges = []
+        for t in gnd_tracks:
+            self.assertEqual(t['layer'], 'B.Cu', t['id'])
+            self.assertGreaterEqual(t['width_mm'], 0.6, t['id'])
+            for a, b in zip(t['path'], t['path'][1:]):
+                edges.append((key(a), key(b), math.dist(a, b) / (t['width_mm'] * copper[t['layer']])))
+        for v in gnd_vias:
+            self.assertGreaterEqual(v['drill_mm'], self.nc['formulas']['via']['drill_mm'], v['id'])
+            edges.append((key(v['at']), 'PLANE', self.barrel()))
+        vias = {key(v['at']) for v in gnd_vias}
+        template = bg.resolve(self.spec, self.graph, bg.read_json(bg.MANIFEST))
+        ids = {t['id'] for t in pre['tracks']}
+        for pad, (amps, least) in self.CLUSTERS.items():
+            ref, num = pad.split('.')
+            self.assertIn(ref, {p['ref'] for p in template})
+            self.assertNotIn(f'GND-{pad}', ids)  # no single plane via and stub any more
+            ends = [t['path'][0] for t in gnd_tracks if f'-{pad}-' in t['id']]
+            self.assertTrue(ends, pad)
+            src = key(ends[0])
+            u, seen = self.solve(edges, src, amps)
+            flows = {n: u[n] / self.barrel() for n in vias if n in seen}
+            self.assertGreaterEqual(len(flows), least, pad)
+            self.assertAlmostEqual(sum(flows.values()), amps, places=6, msg=pad)
+            self.assertLessEqual(max(flows.values()), fit, (pad, amps, sorted(round(i, 3) for i in flows.values())))
+        for pad in self.OPEN_PADS:  # recorded OPEN: still the single plane via and stub of gnd_vias
+            self.assertIn(f'GND-{pad}', ids)
+
+    def test_fan5p_groups_are_end_to_end_ladders(self):
+        import math
+        pre = self.spec['pre_route']
+        tracks = [t for t in pre['tracks'] if t['net'] == 'E3_FAN5_P']
+        vias = [tuple(v['at']) for v in pre['vias'] if v['net'] == 'E3_FAN5_P']
+        groups = CtrlLab5OuterFeedAndFan5p.clusters(vias)
+        self.assertEqual(len(groups), 2)
+        on = lambda p, g: any(math.dist(p, q) < 1e-6 for q in g)
+        for g in groups:
+            attach = {}
+            for t in tracks:
+                for a, b in zip(t['path'], t['path'][1:]):
+                    if on(a, g) != on(b, g):  # a segment that leaves the group: it attaches at the via it starts from
+                        attach.setdefault(t['layer'], set()).add(tuple(round(c, 4) for c in (a if on(a, g) else b)))
+            self.assertEqual(sorted(attach), ['B.Cu', 'F.Cu'], g)
+            self.assertFalse(attach['B.Cu'] & attach['F.Cu'], (g, attach))  # entry and exit on different vias
+        shares = CtrlPowerViaShares()
+        shares.spec, shares.nc = self.spec, self.nc
+        flows = shares.via_currents('E3_FAN5_P', self.COLD_TRIP)
+        hottest = max(i for i, _ in flows.values())
+        self.assertLessEqual(hottest, self.nc['formulas']['via']['current_a_dt20'], {k: round(i, 3) for k, (i, _) in flows.items()})
+
+    def test_frozen_guard_covers_the_classes_of_frozen_nets(self):
+        import importlib.util
+        path = bg.BASE / 'build/kicad/boards/CTRL/make_spec.py'
+        loader = importlib.util.spec_from_file_location('ctrl_make_spec_c5', path)
+        ms = importlib.util.module_from_spec(loader)
+        loader.loader.exec_module(ms)
+        doc = bg.read_json(bg.BASE / 'build/kicad/boards/CTRL/route-frozen.json')
+        nets = ms.frozen_nets(doc)
+        self.assertEqual(doc['guard']['netclass_sha256'], ms.netclass_guard(nets))
+        self.assertIn('E3_PICO_VSYS', nets)
+        ms.PATTERNS = ms.PATTERNS + [('PWR1A', 'E3_PICO_VSYS')]  # the RV4-E-4 recipe: a reclass of a frozen net
+        self.assertNotEqual(doc['guard']['netclass_sha256'], ms.netclass_guard(nets))
+        self.assertEqual(self.spec['router']['class_layers']['PWR3A'], ['F.Cu', 'B.Cu'])
+        self.assertEqual(self.spec['router']['class_layers_reserved'], ['PWR3A'])
+
+    def test_reserved_class_layers_are_skipped_only_when_absent(self):
+        dsn = '(network (class kicad_default "A" (circuit (use_via V)) (rule (width 150))) (class PWR1A "B" (circuit (use_via V))))'
+        out = bg.patch_dsn_class_layers(dsn, {'PWR1A': ['F.Cu', 'B.Cu'], 'PWR3A': ['F.Cu', 'B.Cu']}, ['PWR3A'])
+        self.assertIn('(use_layer F.Cu B.Cu)', out)
+        self.assertEqual(out.count('use_layer'), 1)
+        with self.assertRaises(bg.SpecError):
+            bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu', 'B.Cu']})
+        spec = copy.deepcopy(self.spec)
+        spec['router']['class_layers_reserved'] = ['NOPE']
+        with self.assertRaises(SystemExit):
+            bg.validate_spec(spec, 'CTRL')
+
+    def test_power_joins_get_a_via_group_per_layer_change(self):
+        import importlib.util
+        if importlib.util.find_spec('numpy') is None:
+            self.skipTest('numpy not installed (freeze/fin.py imports the grid router)')
+        sys.path.insert(0, str(bg.BASE / 'build/kicad/boards/CTRL/freeze'))
+        import fin
+        fit = self.nc['formulas']['via']['current_a_dt20']
+        self.assertEqual(fin.vias_per_change(4.0, fit), 5)  # LAB5 by F102
+        self.assertEqual(fin.vias_per_change(1.5, fit), 3)  # E3_FAN5_P by the F301 trip
+        self.assertEqual(fin.vias_per_change(0.192, fit), 1)  # E3_GNSS5V by the U315 limit
+        self.assertEqual(fin.add_extra_vias(None, 'X', {'runs': [], 'vias': [], 'width': 0.6}, 5)['vias'], [])
+
+    def test_from_frozen_reproduces_byte_for_byte_wherever_numpy_runs(self):
+        """review RV4-E-4: the byte-for-byte re-freeze check of CtrlLab5OuterFeedAndFan5p, without its GitHub Actions skip:
+        it runs in every job that has numpy (about 20 s per mode) and skips only where numpy is missing."""
+        import importlib.util
+        import subprocess
+        if importlib.util.find_spec('numpy') is None:
+            self.skipTest('numpy not installed in this job: the re-freeze check needs it (sr-rx-pcb installs no numpy; build/15)')
+        tool = bg.BASE / 'build/kicad/boards/CTRL/freeze/freeze_route.py'
+        for extra in ([], ['--renet']):
+            run = subprocess.run([sys.executable, str(tool), '--from-frozen', '--check'] + extra, capture_output=True,
+                                 text=True, encoding='utf-8', cwd=str(bg.BASE), timeout=900)
+            self.assertEqual(run.returncode, 0, run.stdout[-2000:] + run.stderr[-2000:])
+            self.assertIn('reproduced byte for byte', run.stdout)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -64,6 +64,7 @@ def current_spec(ms):
     ms.frozen_copper = hook
     spec_text, project_text, _cu, _skipped = ms.build(lambda *a: None)
     got['spec'], got['project'] = json.loads(spec_text), json.loads(project_text)
+    got['netclass_guard'] = ms.netclass_guard
     return got
 
 
@@ -335,6 +336,14 @@ def export(m, doc, guard, history):
     return out
 
 
+def power_vias(nets):
+    """W2 CTRL-5 (review RV4-E-4): vias per layer change of every outer-only (power-class) net from its protective current in
+    pcb/generated/netclasses.json and the project via fit (fin.vias_per_change); 1 for a net without a current entry."""
+    nc = json.loads((HERE.parents[4] / 'pcb/generated/netclasses.json').read_text(encoding='utf-8'))
+    fit = nc['formulas']['via']['current_a_dt20']
+    return {n: F.vias_per_change(nc['nets'][n]['inputs']['protective_a'], fit) if n in nc['nets'] else 1 for n in nets}
+
+
 def outer_only_nets(cur):
     """Nets of the classes the spec make_spec.py makes now keeps on the outer layers (router.class_layers, CTRL.kicad_pro
     patterns)."""
@@ -506,6 +515,7 @@ def run(args, log=print):
     fz = F.Finisher(m, log=log)
     widths, default_w = FR.class_widths()
     outer_only = outer_only_nets(cur)
+    vias_n = power_vias(outer_only)
     planes0 = PL.split_count(m) if args.plane_guard else 0
     if args.plane_guard:
         log(f'L2 plane components with GND vias before the joins: {planes0}')
@@ -517,7 +527,8 @@ def run(args, log=print):
         rounds += 1
         n0, alive0 = len(m.items), [it.id for it in m.items if it.alive]
         if net in outer_only:  # power classes route on F.Cu/B.Cu only (spec router.class_layers; check_boards inner widths)
-            ok, ripped = fz.connect(net, l2_bias=None, width=widths.get(net, default_w), layers=('F.Cu', 'B.Cu'))
+            ok, ripped = fz.connect(net, l2_bias=None, width=widths.get(net, default_w), layers=('F.Cu', 'B.Cu'),
+                                    vias_per_change=vias_n[net])
         else:
             ok, ripped = fz.connect(net, l2_bias=FR.L2_BIAS if net in fallback else None, width=widths.get(net, default_w))
         if args.plane_guard and any(it.alive and it.kind == 'track' and 'In1.Cu' in it.layers for it in m.items[n0:])                 and PL.split_count(m) > planes0:
@@ -528,7 +539,8 @@ def run(args, log=print):
                 m.items[i].alive = True
             log(f'{net}: L2 link would split the GND plane, joined again without L2')
             ok, ripped = fz.connect(net, l2_bias=None, width=widths.get(net, default_w),
-                                    layers=('F.Cu', 'B.Cu') if net in outer_only else ('F.Cu', 'In2.Cu', 'B.Cu'))
+                                    layers=('F.Cu', 'B.Cu') if net in outer_only else ('F.Cu', 'In2.Cu', 'B.Cu'),
+                                    vias_per_change=vias_n.get(net, 1))
         log(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)')
         if not ok and net not in failed:
             failed.append(net)
@@ -564,7 +576,11 @@ def run(args, log=print):
         log('   ', b_)
     if bad or (open_ and not args.allow_open):
         return 1, None
-    changed = bool(moved or removed or renamed or cur['guard'] != doc['guard'] or fz.records)
+    # W2 CTRL-5 (review RV4-E-4): the guard also covers the net classes of the nets that keep frozen copper
+    guard = dict(cur['guard'])
+    guard['netclass_sha256'] = cur['netclass_guard']({it.net for it in m.items if it.alive and it.src in ('router', 'new')
+                                                      and it.kind in ('track', 'via') and it.net})
+    changed = bool(moved or removed or renamed or guard != doc['guard'] or fz.records)
     history = None
     if changed:
         history = {
@@ -579,7 +595,7 @@ def run(args, log=print):
             'rejoined_nets': sorted(fz.tag),
             'left_open_for_freerouting': open_,
         }
-    new = export(m, doc, cur['guard'], history)
+    new = export(m, doc, guard, history)
     if history is not None:
         history.update(copper_diff(doc, new))
     text = FR.dump(new)

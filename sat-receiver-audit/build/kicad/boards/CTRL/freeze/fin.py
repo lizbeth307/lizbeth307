@@ -51,6 +51,52 @@ def island_box(groups, margin=6.0):
     return (max(b[0], BOARD_BOX[0]), max(b[1], BOARD_BOX[1]), min(b[2], BOARD_BOX[2]), min(b[3], BOARD_BOX[3]))
 
 
+def vias_per_change(protective_a, via_fit_a):
+    """W2 CTRL-5 (review RV4-E-4): vias a power net needs at each layer change. One via up to the project via fit (pcb/stackup.py:
+    a 0.3 mm via carries about 1.0 A at +20 degC); above it the fit count plus one, because the vias of a group do not share
+    the current equally (review RV4-S-2, MODEL): LAB5 4 A -> 5, E3_FAN5_P 1.5 A -> 3."""
+    if protective_a <= via_fit_a:
+        return 1
+    return int(math.ceil(protective_a / via_fit_a - 1e-9)) + 1
+
+
+EXTRA_STEPS = (0.97, 1.1, 1.3, 1.6)  # same-net via pitch of the scripted clusters, then wider
+
+
+def add_extra_vias(m, net, res, n, layers=('F.Cu', 'B.Cu')):
+    """W2 CTRL-5 (review RV4-E-4): grow every via of a routed result into a group of n vias: n - 1 extra 0.65/0.3 mm vias around
+    it, each joined to it on both layers by a track of the result width (exact clearance check; the extra vias keep 0.97 mm
+    between centres). Returns the result with the extra vias and joints, or None when a group does not fit."""
+    if n <= 1 or not res['vias']:
+        return res
+    w = res['width']
+    out = {'runs': list(res['runs']), 'vias': list(res['vias']), 'width': w}
+    placed = list(res['vias'])
+    for v in res['vias']:
+        got = 0
+        for d in EXTRA_STEPS:
+            for k in range(16):
+                if got == n - 1:
+                    break
+                a = 2 * math.pi * k / 16
+                c = (round(v[0] + d * math.cos(a), 4), round(v[1] + d * math.sin(a), 4))
+                if any(math.hypot(c[0] - q[0], c[1] - q[1]) < 0.97 for q in placed):
+                    continue
+                if m.via_margin(net, c, R.VIA_D, R.VIA_DRILL)[0] < 0:
+                    continue
+                if any(m.track_margin(net, lay, w, c, v)[0] < 0 for lay in layers):
+                    continue
+                placed.append(c)
+                out['vias'].append(c)
+                out['runs'] += [(lay, [c, v]) for lay in layers]
+                got += 1
+            if got == n - 1:
+                break
+        if got < n - 1:
+            return None
+    return out
+
+
 class Finisher:
     def __init__(self, m, log=print):
         self.m, self.log = m, log
@@ -59,8 +105,10 @@ class Finisher:
         self.tag = collections.Counter()
 
     def connect(self, net, allow_rip=True, width=0.15, soft_cost=2.0, margin=6.0, g=0.05, via_cost=1.5, first=None, max_iter=12,
-                layers=('F.Cu', 'In2.Cu', 'B.Cu'), bias=None, l2_bias=None):
-        """Join the islands of net one by one; returns the list of nets whose router copper was ripped."""
+                layers=('F.Cu', 'In2.Cu', 'B.Cu'), bias=None, l2_bias=None, vias_per_change=1):
+        """Join the islands of net one by one; returns the list of nets whose router copper was ripped. vias_per_change > 1
+        (W2 CTRL-5, power classes on F.Cu/B.Cu): every layer change of a join becomes a group of that many vias
+        (add_extra_vias); a join whose group does not fit counts as no path."""
         ripped = []
         prune(self.m, net)
         for _ in range(max_iter):
@@ -164,6 +212,11 @@ class Finisher:
                     self.log(f'    {net}: zero-length link not fixable')
                     return False, ripped
                 how = 'overlap-join'
+            if res is not None and vias_per_change > 1 and res['vias']:
+                grown = add_extra_vias(self.m, net, res, vias_per_change, layers=tuple(l for l in layers if l in ('F.Cu', 'B.Cu')))
+                if grown is None:
+                    self.log(f'    {net}: no room for {vias_per_change} vias at a layer change')
+                res = grown
             if res is None:
                 self.log(f'    {net}: no path between islands {[f"{i.ref}.{i.pad}" for i in A if i.kind == "pad"][:3]} and '
                          f'{[f"{i.ref}.{i.pad}" for i in B if i.kind == "pad"][:3]}')
