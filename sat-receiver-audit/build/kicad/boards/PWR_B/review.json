@@ -7,10 +7,10 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "01043894d4f23999353f820084ef0eef9c6ac293d8f578f97450eea1c127df79"
+      "sha256": "4a989cdb12066271f464f42237cc89ca6f95c5a6c74783339222d6351b178e28"
     },
     "projection_sha256": {
-      "graph_refs_pins_nets": "e8f58dc170c6ec5c719a4fe31516cbcbe5a2ca3950f562f2a33ff2c401fbcd5d",
+      "graph_refs_pins_nets": "b483f0fb2abe8abd025661b086b0b19d8b8d8f979ac22f4224295b0cb8ba5110",
       "footprints": "92e42020e0190146fadf2920d9ca6dd75364f034fa9d3aaefba5ca16b10c741d",
       "contract_board": "4b1616d88e13a8f31341ab1884adee4e9faa87dee279b0ef10490a2dc3e7c0eb",
       "netclasses": "64e0ab43e0685c5f6de8ae26633985312708ada531535bc5bb611a1b0d2c018a",
@@ -29,8 +29,8 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1598,
-    "vias": 255,
+    "tracks": 1613,
+    "vias": 264,
     "zones": 352,
     "holes": 9,
     "copper_layers": [
@@ -112,14 +112,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.618
+          "closest_copper_mm": 0.381
         },
         {
           "id": "C262",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.399
+          "closest_copper_mm": 0.39
         },
         {
           "id": "C273",
@@ -196,7 +196,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.924
+          "closest_copper_mm": 3.124
         },
         {
           "id": "J113",
@@ -315,14 +315,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.636
+          "closest_copper_mm": 0.68
         },
         {
           "id": "TP202",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 1.682
+          "closest_copper_mm": 0.418
         },
         {
           "id": "TP203",
@@ -403,7 +403,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1578,
+      "tracks_checked": 1593,
       "pour_necks": [],
       "split_nets": {}
     },
