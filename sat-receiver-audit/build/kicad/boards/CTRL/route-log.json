@@ -50,12 +50,12 @@
     "  Net 'E3_PANEL_TEMP' (1 unrouted connection):",
     "    - C310-1  ->  U305-31",
     "  Net 'E3_PICO3V3' (9 unrouted connections):",
-    "    - C312-1  ->  via",
+    "    - via  ->  C312-1",
     "    - via  ->  R357-2",
-    "    - R349-2  ->  R347-2",
+    "    - R347-2  ->  R349-2",
     "    - R353-2  ->  R351-2",
     "    - R355-2  ->  R353-2",
-    "    - R341-2  ->  C312-1",
+    "    - C312-1  ->  R341-2",
     "    - R339-2  ->  R337-2",
     "    - C312-1  ->  R335-2",
     "    - R368-2  ->  R349-2",
@@ -73,20 +73,20 @@
     "  Net 'MCP_INT' (1 unrouted connection):",
     "    - via  ->  R302-1",
     "  Net 'PWR_BUTTON' (5 unrouted connections):",
-    "    - via  ->  D302-3",
-    "    - J307-19  ->  via",
-    "    - D302-3  ->  D303-3",
+    "    - via  ->  J307-19",
+    "    - D303-3  ->  D302-3",
+    "    - D303-3  ->  via",
     "    - J307-19  ->  via",
     "    - via  ->  J315-2",
     "  Net 'UART5_RX' (1 unrouted connection):",
     "    - via  ->  J304-10",
-    "2026-11-13 01:25:20.776 INFO   [DA2701\\F17039] Auto-routing stage completed: started with 172 unrouted nets, completed in 589.15 seconds, final score: 766.43 (68 unrouted and 419 violations), using 586.27 total CPU seconds, 348.79 GB total allocated, and 445.5 MB peak heap usage.",
-    "2026-11-13 01:25:21.320 INFO   [DA2701\\F17039] Skipping optimization stage: the board has 68 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-13 01:25:21.396 INFO   [DA2701\\F17039] Job 'DA2701\\F17039' finished with state: COMPLETED (elapsed: 9 minutes 51.61 seconds, finished at UTC: 2026-11-13T01:25:21.395441854Z).",
-    "2026-11-13 01:25:21.433 INFO   Saving output file '/tmp/sr-rx-CTRL-fref2unj/CTRL.ses' (SES)...",
-    "2026-11-13 01:25:21.434 INFO   Successfully saved output file '/tmp/sr-rx-CTRL-fref2unj/CTRL.ses' (26935 bytes)."
+    "2026-11-13 03:04:42.609 INFO   [C08538\\5A7BA2] Auto-routing stage completed: started with 172 unrouted nets, completed in 462.54 seconds, final score: 766.43 (68 unrouted and 419 violations), using 460.06 total CPU seconds, 339.70 GB total allocated, and 419.3 MB peak heap usage.",
+    "2026-11-13 03:04:43.053 INFO   [C08538\\5A7BA2] Skipping optimization stage: the board has 68 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-13 03:04:43.140 INFO   [C08538\\5A7BA2] Job 'C08538\\5A7BA2' finished with state: COMPLETED (elapsed: 7 minutes 44.44 seconds, finished at UTC: 2026-11-13T03:04:43.139773629Z).",
+    "2026-11-13 03:04:43.170 INFO   Saving output file '/tmp/sr-rx-CTRL-8ovidptf/CTRL.ses' (SES)...",
+    "2026-11-13 03:04:43.170 INFO   Successfully saved output file '/tmp/sr-rx-CTRL-8ovidptf/CTRL.ses' (26935 bytes)."
   ],
-  "dsn_sha256": "0555ca0dc304aedd9c98e37fc2296a294c2d7b8a0ae05758d1c6273496a0da27",
+  "dsn_sha256": "629a9e0c15bb749b01147b51ff566bf22100e81a1fd079de5638cbce254424d1",
   "ses_sha256": "03957767e27b49398dc3135fbfe0b5e0cfd115bf77eb7d20a5082d1b9b6ead8d",
   "dsn_probe": {
     "resolution": "um 10",
@@ -121,6 +121,7 @@
     "before_ses_import": 3549,
     "after_ses_import": 3549
   },
+  "via_centre_stubs": [],
   "drc_command": [
     "kicad-cli",
     "pcb",
@@ -134,7 +135,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "ec05b6d8887eefb4485bc116c92a9c2ffb201b278c3ed8c3d44d24d1d204123f",
+  "board_sha256": "6aed0b371af7414a739ebc5cca69532945769820d3d82080cafe50270e56158e",
   "previews": [
     "build/kicad/boards/CTRL/CTRL-top.svg",
     "build/kicad/boards/CTRL/CTRL-bottom.svg"
@@ -1025,8 +1026,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43343260630",
-    "sha": "7f9b05aee9fb457aef9ef4d57f906da699fe3af2",
+    "run_id": "43355370368",
+    "sha": "b467c33ea5cda9805b790d6aeb5ec2fea0e48e4d",
     "ref": "refs/heads/wip/w2-ctrl4"
   }
 }
