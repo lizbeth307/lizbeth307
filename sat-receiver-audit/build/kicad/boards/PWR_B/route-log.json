@@ -41,56 +41,56 @@
     "--user_data_path=<temp>",
     "--router.fanout.enabled=false",
     "-inc",
-    "SCRIPTED_GND,SCRIPTED_PWR1A,SCRIPTED_PWR3A"
+    "PWR1A,SCRIPTED_GND,SCRIPTED_PWR1A,SCRIPTED_PWR3A,kicad_default"
   ],
   "exit_code": 0,
   "log_tail": [
-    "    - U210-1  ->  C248-1",
-    "    - C501-1  ->  C502-1",
-    "    - C505-1  ->  C504-1",
-    "    - C504-1  ->  C295-1",
-    "    - U502-1  ->  C501-1",
-    "    - C248-1  ->  J209-1",
-    "    - C295-1  ->  C248-1",
-    "  Net 'LNA4V5' (7 unrouted connections):",
-    "    - J209-6  ->  J209-10",
+    "  Net 'LNA4V5' (11 unrouted connections):",
+    "    - J209-10  ->  J209-6",
+    "    - U206-1  ->  via",
     "    - via  ->  U207-1",
     "    - U206-1  ->  C232-1",
+    "    - U208-1  ->  C240-1",
+    "    - C236-1  ->  U207-1",
+    "    - U208-1  ->  via",
     "    - C244-1  ->  U209-1",
     "    - J209-10  ->  U209-1",
-    "    - C232-1  ->  U208-1",
-    "    - C236-1  ->  U206-1",
+    "    - via  ->  J209-6",
+    "    - via  ->  C236-1",
+    "  Net 'OVP_LNB_N' (1 unrouted connection):",
+    "    - J203-13  ->  J209-53",
     "  Net 'PG_BONI' (1 unrouted connection):",
     "    - J203-14  ->  U218-1",
-    "  Net 'PG_LNB' (1 unrouted connection):",
-    "    - U217-1  ->  via",
     "  Net 'PICO_DISP_EN' (1 unrouted connection):",
     "    - J203-16  ->  J209-55",
-    "  Net 'PICO_OFF' (1 unrouted connection):",
-    "    - J209-57  ->  J203-17",
     "  Net 'PWR_BUTTON' (1 unrouted connection):",
     "    - J203-19  ->  J209-59",
-    "  Net 'VBUS_LABPORT' (6 unrouted connections):",
-    "    - R508-1  ->  C506-1",
-    "    - C507-1  ->  R508-1",
+    "  Net 'VBUS_LABPORT' (4 unrouted connections):",
+    "    - C506-1  ->  R508-1",
     "    - C521-1  ->  C522-1",
-    "    - C507-1  ->  C522-1",
-    "    - J506-3  ->  C506-1",
-    "    - U502-6  ->  J506-3",
-    "  Net 'VBUS_RTLB' (2 unrouted connections):",
-    "    - R251-1  ->  via",
-    "    - via  ->  J207-4",
-    "2026-11-12 21:25:41.754 INFO   [0E7FE9\\4CE62B] Auto-routing stage completed: started with 192 unrouted nets, completed in 917.20 seconds, final score: 504.76 (129 unrouted and 185 violations), using 906.70 total CPU seconds, 800.82 GB total allocated, and 529.8 MB peak heap usage.",
-    "2026-11-12 21:25:42.147 INFO   [0E7FE9\\4CE62B] Skipping optimization stage: the board has 129 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-12 21:25:42.213 INFO   [0E7FE9\\4CE62B] Job '0E7FE9\\4CE62B' finished with state: COMPLETED (elapsed: 15 minutes 18.83 seconds, finished at UTC: 2026-11-12T21:25:42.212775748Z).",
-    "2026-11-12 21:25:42.248 INFO   Saving output file '/tmp/sr-rx-PWR_B-v_kstb8s/PWR_B.ses' (SES)...",
-    "2026-11-12 21:25:42.249 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-v_kstb8s/PWR_B.ses' (20010 bytes)."
+    "    - C522-1  ->  C507-1",
+    "    - J506-3  ->  U502-6",
+    "  Net 'VBUS_RTLA' (1 unrouted connection):",
+    "    - via  ->  U501-6",
+    "  Net 'VBUS_RTLB' (5 unrouted connections):",
+    "    - via  ->  R251-1",
+    "    - L210-2  ->  C250-1",
+    "    - C250-1  ->  via",
+    "    - L210-2  ->  J207-4",
+    "    - via  ->  TP210-1",
+    "  Net 'VBUS_RTLB_DAMP' (1 unrouted connection):",
+    "    - via  ->  R251-2",
+    "2026-11-13 03:03:55.254 INFO   [3DD144\\B5ADC3] Auto-routing stage completed: started with 202 unrouted nets, completed in 683.86 seconds, final score: 393.10 (158 unrouted and 241 violations), using 676.17 total CPU seconds, 465.23 GB total allocated, and 555.0 MB peak heap usage.",
+    "2026-11-13 03:03:55.728 INFO   [3DD144\\B5ADC3] Skipping optimization stage: the board has 158 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-13 03:03:55.766 INFO   [3DD144\\B5ADC3] Job '3DD144\\B5ADC3' finished with state: COMPLETED (elapsed: 11 minutes 25.94 seconds, finished at UTC: 2026-11-13T03:03:55.765000855Z).",
+    "2026-11-13 03:03:55.768 INFO   Saving output file '/tmp/sr-rx-PWR_B-u94g1chl/PWR_B.ses' (SES)...",
+    "2026-11-13 03:03:55.769 INFO   Successfully saved output file '/tmp/sr-rx-PWR_B-u94g1chl/PWR_B.ses' (16529 bytes)."
   ],
-  "dsn_sha256": "3f06a89a3e71a5886f8e8dc0a5aec62e432a7cb310d9e0b1357458db2242d9ca",
-  "ses_sha256": "5a7d4ba9319ebf7423ebb53e4539c471dd00cf9a68702a176a21e1b51aee32bb",
+  "dsn_sha256": "a0e5e7b2286b083edceeac2501b07efe81cd41cb4b31c92955992df85eca2cc1",
+  "ses_sha256": "0a063e91b7c1f5b5078c6cb881d3bca8cc5a91bf753929ef09b6d76164e63a53",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 1870,
+    "wires_fix": 1716,
     "wires_protect": 0,
     "keepouts": 384,
     "planes": 2,
@@ -100,15 +100,15 @@
         "clearance": "150"
       },
       "SCRIPTED_PWR3A": {
-        "width": "1850",
+        "width": "950",
         "clearance": "150"
       },
       "SCRIPTED_PWR1A": {
-        "width": "350",
+        "width": "200",
         "clearance": "150"
       },
       "PWR1A": {
-        "width": "350",
+        "width": "200",
         "clearance": "150"
       },
       "SCRIPTED_GND": {
@@ -118,8 +118,8 @@
     }
   },
   "locked_segments": {
-    "before_ses_import": 1870,
-    "after_ses_import": 1870
+    "before_ses_import": 1716,
+    "after_ses_import": 1716
   },
   "via_centre_stubs": [],
   "drc_command": [
@@ -135,7 +135,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "264986829ad6029e97c6e6fe46b3be66215e225941bd6bb375737b6eaabf3e4e",
+  "board_sha256": "9c79fc821edfc0013be695bd0048c7a3713216b7268fe1ac68bf3b7a74e3faa5",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -966,8 +966,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43307238078",
-    "sha": "617eccb3795d641024eddcec1795c362b2bac3a9",
-    "ref": "refs/heads/wip/w2-pwrbr-layers6"
+    "run_id": "43354942122",
+    "sha": "9836c6e9b1b80ed511e9c22ada7acd77d6618dfc",
+    "ref": "refs/heads/wip/w2-pwrj-layers6"
   }
 }
