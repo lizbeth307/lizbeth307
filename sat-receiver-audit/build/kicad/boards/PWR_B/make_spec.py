@@ -1180,8 +1180,9 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
             'source': ('W2 PWRB-R layers6 study and W2 PWRJ-LAYERS6: 6 layers JLC06161H-2116 1.6 mm, the stackup of the 6-layer CTRL '
                        '(W2 CTRL-R / CTRL-4; pcb/generated/stackup-6l.json from pcb/stackup.py, jlcpcb.com/impedance read 2026-11-12), '
                        'ordered with finished outer copper 2 oz and inner 0.5 oz (copper_option outer_2oz, jlcpcb.com read '
-                       '2026-11-13): the power classes take their 2 oz outer widths (PWR1A 0.2 mm). The contract stackup (mechanical/generated/contract/boards.json: t 1.6, layers 4) '
-                       'keeps the 1.6 mm the mechanics use; its layer count is the 4-layer default of the other boards'),
+                       '2026-11-13): the power classes take their 2 oz outer widths (PWR1A 0.2 mm). 1.6 mm is the order thickness; the contract '
+                       'gives PWR_B its own stackup (mechanical/generated/contract/boards.json PWR_B stackup: t 1.664 MODEL with '
+                       '2 oz outer, 6 layers, order 1.6 +/- 10 %, W2 MECH-8), which the mechanics use'),
             'types': {'In1.Cu': 'power', 'In4.Cu': 'power'},
             'types_why': ('S-G-S-S-P-S as the 6-layer CTRL: In1.Cu (L2) a solid GND plane 0.2234 mm under F.Cu, so the LAB5 '
                           'trunk, the TPS2553 switches, the Kelvin shunts and the LNA bias filters (XAL5030 inductors, '

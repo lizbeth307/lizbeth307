@@ -1057,8 +1057,9 @@ def layers6():
         'source': ('W2 PWRJ-LAYERS6: 6 layers JLC06161H-2116 1.6 mm (the stackup of PWR_B and the 6-layer CTRL; '
                    'pcb/generated/stackup-6l.json from pcb/stackup.py, jlcpcb.com/impedance read 2026-11-12), ordered with '
                    'finished outer copper 2 oz and inner 0.5 oz (copper_option outer_2oz; jlcpcb.com/impedance, '
-                   'capabilities/pcb-capabilities and 6-layer-pcb read 2026-11-13). The contract stackup '
-                   '(mechanical/generated/contract/boards.json: t 1.6) keeps the 1.6 mm the mechanics use'),
+                   'capabilities/pcb-capabilities and 6-layer-pcb read 2026-11-13). 1.6 mm is the order thickness; the contract '
+                   'gives PWR its own stackup (mechanical/generated/contract/boards.json PWR stackup: t 1.664 MODEL with 2 oz '
+                   'outer, order 1.6 +/- 10 %, W2 MECH-8), which the mechanics and the B2B stack row of placement_study use'),
         'plan': {'F.Cu': 'L1: parts (top), signals; BATT/PWR3A pours (scripted, locked tracks) and power routes at the 2 oz widths',
                  'In1.Cu': 'L2: solid GND plane (pre-route zone, layer type power): every SMD GND pad joins it by its scripted via',
                  'In2.Cu': 'L3: signal routes only (no power class: router.class_layers)',

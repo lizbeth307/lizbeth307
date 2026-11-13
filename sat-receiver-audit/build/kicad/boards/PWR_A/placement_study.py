@@ -1207,7 +1207,10 @@ def study(spec_name):
             abs(a[0] - b[0]) <= BOSS_TOL and abs(a[1] - b[1]) <= BOSS_TOL and abs(a[2] - b[2]) <= 1e-9
             for a, b in zip(mirrored, bosses['mate']))
         same_footprint = mine['fpid'] == mate_fpid
-        z_top_a = contract['placements']['default']['z_bottom'] + spec['layers']['thickness_mm']
+        # W2 MECH-8 / PWR-L6-PLACE third pass: the contract per-board stackup t (1.664 mm MODEL, 2 oz outer) when present;
+        # the spec keeps the 1.6 mm order thickness
+        z_top_a = contract['placements']['default']['z_bottom'] + \
+            (contract.get('stackup') or {}).get('t', spec['layers']['thickness_mm'])
         z_bot_b = contract_b['placements']['default']['z_bottom']
         passed = (not net_diff and not missing and not extra and rows_ok and worst_dx <= B2B_X_TOL + 1e-9
                   and worst_row <= B2B_ROW_TOL + 1e-9 and len(ci_at) == len(mate_pads)
