@@ -60,6 +60,8 @@ PLACEMENT_FIELDS = ('origin', 'z_bottom', 'facing')
 ZONE_PAD_CONNECTIONS = {'thermal': 'ZONE_CONNECTION_THERMAL', 'solid': 'ZONE_CONNECTION_FULL',
                         'tht_thermal': 'ZONE_CONNECTION_THT_THERMAL', 'none': 'ZONE_CONNECTION_NONE'}
 LAYER_TYPES = {'signal': 'LT_SIGNAL', 'power': 'LT_POWER', 'mixed': 'LT_MIXED'}
+# Optional spec key planned_cutouts (W2 PWRB-R): what each rule area of a planned cut-out may block.
+PLANNED_CUTOUT_BLOCKS = ('tracks', 'vias', 'zone_fills', 'pads')
 
 # Release v2.5.0 of https://github.com/freerouting/freerouting (published 2026-10-05, GPL-3.0; licence from
 # gh api repos/freerouting/freerouting/license). Asset digests read from the GitHub release API
@@ -224,6 +226,22 @@ def router_extra(router):
             raise SpecError('router.ignore_net_classes must be net class names ([A-Za-z0-9_])')
         extra += ['-inc', ','.join(names)]
     return extra
+
+
+def router_skip(router):
+    """Optional spec router key freeze_only (W2 PWR-TOOLS): a non-empty reason. The frozen route in pre_route (locked router
+    copper of an earlier run plus its scripted completion) is then the whole router copper of the board, so a route run
+    does not start Freerouting at all; the board is built, its via-centre stubs and post-route zones are added and KiCad
+    DRC and the audits run as in any route run. Passing every DSN class to -inc did not stop Freerouting 2.5.0 from running
+    passes on a frozen board (route run 43354942122: 232 -> 200 unrouted in 29 min, 33 PWR_A and 51 PWR_B wires added),
+    and its additions broke the clearance of the locked copper in route run 43349395168; a frozen CTRL route is likewise
+    completed offline (build/kicad/boards/CTRL/freeze/freeze_route.py --from-frozen, W2 CTRL-4). Returns the reason or None."""
+    reason = router.get('freeze_only')
+    if reason is None:
+        return None
+    if not isinstance(reason, str) or not reason.strip():
+        raise SpecError('router.freeze_only must be a non-empty reason (the frozen route is the whole router copper)')
+    return reason
 
 
 def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout, extra=()):
@@ -760,6 +778,8 @@ def validate_spec(spec, board):
                             '0 < drill_mm < diameter_mm')
     copper = [f'In{i}.Cu' for i in range(1, int(spec['layers']['copper']) - 1)] + ['F.Cu', 'B.Cu']
     router_extra(spec['router'])
+    if router_skip(spec['router']) and not any(t.get('locked') for t in spec['pre_route'].get('tracks', [])):
+        raise SpecError(f'{board}: router.freeze_only needs the frozen route as locked pre_route copper')
     edge = spec.get('edge_keepout')
     if edge is not None and (not isinstance(edge, dict) or float(edge.get('width_mm', 0)) <= 0
                              or not set(edge.get('layers', [])) <= set(copper) or not edge.get('layers')
@@ -777,7 +797,7 @@ def validate_spec(spec, board):
         # copper is no current path for PWR3A/BATT, and the inner PWR1A/PWR2A widths are far above the router class widths)
         if re.match(r'(PWR|BATT)', str(cls)) and set(layers) - {'F.Cu', 'B.Cu'}:
             raise SpecError(f'{board}: router.class_layers {cls}: a power class routes on F.Cu/B.Cu only, not {sorted(set(layers) - {"F.Cu", "B.Cu"})}')
-    validate_keepout_rects(spec, board, copper)
+    validate_planned_cutouts(spec, board, copper)
     for key, reason in spec['drc_policy'].get('warning_checks', {}).items():
         if key not in DRC_KEYS or not reason.strip():
             raise SpecError(f'{board}: drc_policy warning {key!r} is not a KiCad 10.0.7 check or has no reason')
@@ -824,36 +844,42 @@ def validate_bond_and_coupon(spec, board, nets):
             raise SpecError(f'{board}: coupon zone {zone.get("id")} needs an explicit outline and a known pad_connection')
 
 
-KEEPOUT_RECT_BLOCKS = ('tracks', 'vias', 'zone_fills')
+def validate_planned_cutouts(spec, board, copper):
+    """Optional spec key of W2 PWRB-R (standard library); W2 PWR-TOOLS made it the only cut-out key (keepout_rects removed).
 
-
-def validate_keepout_rects(spec, board, copper):
-    """Optional spec key keepout_rects (W2 PWRB-R; no other board uses it): rectangles that are not Edge.Cuts yet but must
-    stay free of copper, e.g. the PWR-A cut-outs of PWR_B before the contract carries them.
-
-    keepout_rects {why, grow_mm > 0, audit_clear_mm (0 < audit_clear_mm <= grow_mm), layers [copper layers], blocks [tracks,
-    vias, zone_fills], rects [{id, rect [x0, y0, x1, y1] board mm, ...}]}: one rule area per rect and layer, the rect grown
-    by grow_mm on every side; the report audit (keepout_rect_audit) fails on copper within audit_clear_mm of a rect."""
-    ko = spec.get('keepout_rects')
-    if ko is None:
+    planned_cutouts {why, margin_mm > 0, layers [copper layers], blocks [tracks, vias, zone_fills, pads], rects [{id, rect
+    [x, y, w, h] board mm (contract frame, as cutouts_mm), why}]}: areas that become board cut-outs later (another board's
+    tall parts, header strips, probe windows) but are not Edge.Cuts yet. Each rect, grown by margin_mm (the copper-to-edge
+    clearance the cut will need), becomes a rule area on every listed layer, so the router, the pours and KiCad DRC keep
+    all copper out of it; the report audit (planned_cutout_audit) and pcb/check_boards.py planned_cutouts measure the drawn
+    copper against the rects.
+    """
+    pc = spec.get('planned_cutouts')
+    if pc is None:
         return
-    if not isinstance(ko, dict) or not str(ko.get('why', '')).strip() or not isinstance(ko.get('rects'), list) or not ko['rects']:
-        raise SpecError(f'{board}: keepout_rects needs why and a non-empty rects list')
-    grow, clear = float(ko.get('grow_mm', 0)), float(ko.get('audit_clear_mm', 0))
-    if not grow > 0 or not 0 < clear <= grow:
-        raise SpecError(f'{board}: keepout_rects needs grow_mm > 0 and 0 < audit_clear_mm <= grow_mm')
-    if not ko.get('layers') or not set(ko['layers']) <= set(copper):
-        raise SpecError(f'{board}: keepout_rects.layers must list copper layers of the board')
-    if not ko.get('blocks') or not set(ko['blocks']) <= set(KEEPOUT_RECT_BLOCKS):
-        raise SpecError(f'{board}: keepout_rects.blocks must be a non-empty subset of {list(KEEPOUT_RECT_BLOCKS)}')
-    ids = [str(r.get('id', '')) for r in ko['rects'] if isinstance(r, dict)]
-    if len(ids) != len(ko['rects']) or len(set(ids)) != len(ids) or not all(re.fullmatch(r'[A-Za-z0-9_]+', i) for i in ids):
-        raise SpecError(f'{board}: keepout_rects.rects need unique ids ([A-Za-z0-9_])')
-    for r in ko['rects']:
-        box = r.get('rect')
-        if not isinstance(box, list) or len(box) != 4 or not all(isinstance(v, (int, float)) for v in box) \
-                or not (box[2] > box[0] and box[3] > box[1]):
-            raise SpecError(f'{board}: keepout_rects {r.get("id")}: rect must be [x0, y0, x1, y1] with x1 > x0, y1 > y0')
+    if not isinstance(pc, dict) or not float(pc.get('margin_mm', 0)) > 0 or not str(pc.get('why', '')).strip() \
+            or not pc.get('layers') or not set(pc['layers']) <= set(copper) \
+            or not pc.get('blocks') or not set(pc['blocks']) <= set(PLANNED_CUTOUT_BLOCKS) \
+            or not isinstance(pc.get('rects'), list) or not pc['rects']:
+        raise SpecError(f'{board}: planned_cutouts needs why, margin_mm > 0, copper layers, blocks out of '
+                        f'{list(PLANNED_CUTOUT_BLOCKS)} and rects')
+    ids = [r.get('id') for r in pc['rects']]
+    if len(set(ids)) != len(ids) or not all(isinstance(i, str) and re.fullmatch(r'[A-Za-z0-9_]+', i) for i in ids):
+        raise SpecError(f'{board}: planned_cutouts rect ids must be unique [A-Za-z0-9_]+ names')
+    for r in pc['rects']:
+        rect = r.get('rect', [])
+        if len(rect) != 4 or not all(isinstance(v, (int, float)) for v in rect) or not (rect[2] > 0 and rect[3] > 0):
+            raise SpecError(f'{board}: planned_cutouts rect {r.get("id")} must be [x, y, w, h] with w, h > 0')
+
+
+def planned_cutout_boxes(spec):
+    """(id, box [x0, y0, x1, y1] grown by margin_mm) of every spec planned_cutouts rect (board mm); [] without the key."""
+    pc = spec.get('planned_cutouts')
+    if not pc:
+        return []
+    m = float(pc['margin_mm'])
+    return [(r['id'], (r['rect'][0] - m, r['rect'][1] - m, r['rect'][0] + r['rect'][2] + m, r['rect'][1] + r['rect'][3] + m))
+            for r in pc['rects']]
 
 
 def seg_rect_distance(a, b, box):
@@ -1462,21 +1488,18 @@ def build_board(pcb, spec, contract, template, temp):
                     zone.SetDoNotAllowPads(False)
                     zone.SetDoNotAllowFootprints(False)
                     board.Add(zone)
-    ko = spec.get('keepout_rects')
-    if ko:  # W2 PWRB-R: copper-free rectangles that are not Edge.Cuts yet (PWR_B: the PWR-A cut-outs), one rule area per layer
-        grow = float(ko['grow_mm'])
-        for item in ko['rects']:
-            x0, y0, x1, y1 = (float(v) for v in item['rect'])
-            pts = [(x0 - grow, y0 - grow), (x1 + grow, y0 - grow), (x1 + grow, y1 + grow), (x0 - grow, y1 + grow)]
-            for name in ko['layers']:
-                zone = add_polygon_zone(pcb, board, frame, pts, board.GetLayerID(name), f'KO_RECT_{item["id"]}_{name}')
-                zone.SetIsRuleArea(True)
-                zone.SetDoNotAllowTracks('tracks' in ko['blocks'])
-                zone.SetDoNotAllowVias('vias' in ko['blocks'])
-                zone.SetDoNotAllowZoneFills('zone_fills' in ko['blocks'])
-                zone.SetDoNotAllowPads(False)
-                zone.SetDoNotAllowFootprints(False)
-                board.Add(zone)
+    pc = spec.get('planned_cutouts')
+    for cid, (x0, y0, x1, y1) in planned_cutout_boxes(spec):  # W2 PWRB-R: planned cut-outs, not Edge.Cuts yet
+        for name in pc['layers']:
+            zone = add_polygon_zone(pcb, board, frame, [(x0, y0), (x1, y0), (x1, y1), (x0, y1)], board.GetLayerID(name),
+                                    f'KO_CUT_{cid}_{name}')
+            zone.SetIsRuleArea(True)
+            zone.SetDoNotAllowTracks('tracks' in pc['blocks'])
+            zone.SetDoNotAllowVias('vias' in pc['blocks'])
+            zone.SetDoNotAllowZoneFills('zone_fills' in pc['blocks'])
+            zone.SetDoNotAllowPads('pads' in pc['blocks'])
+            zone.SetDoNotAllowFootprints(False)
+            board.Add(zone)
     for track in spec['pre_route'].get('tracks', []):
         layer = board.GetLayerID(track['layer'])
         for a, b in zip(track['path'], track['path'][1:]):
@@ -1869,17 +1892,19 @@ def annular_audit(facts, template, floor):
     return {'floor_mm': floor, 'below_floor': low, 'passed': not low}
 
 
-def keepout_rect_audit(pcb, board, frame, spec, fill_step=0.2):
-    """Spec keepout_rects (W2 PWRB-R): every rect has its rule area on each listed layer, and no copper of any net lies
-    within audit_clear_mm of a rect: track segments (centre line less half the width), vias and copper pads (bounding
-    boxes, conservative) measured exactly; zone fills sampled with ZONE.HitTestFilledArea on a fill_step mm grid over each
-    rect grown by audit_clear_mm (finer slivers than the step are not seen; pcb/check_boards.py keepout_rects measures the
-    filled polygons themselves). Board mm, y up."""
-    ko = spec['keepout_rects']
-    clear, tol = float(ko['audit_clear_mm']), 1e-3
-    rects = [(str(r['id']), tuple(float(v) for v in r['rect'])) for r in ko['rects']]
+def planned_cutout_audit(pcb, board, frame, spec, fill_step=0.2):
+    """Spec planned_cutouts (W2 PWRB-R; the report audit of the W2 PWRB-R layers6 keepout_rects, re-pointed at this key by
+    W2 PWR-TOOLS): every rect has its rule area KO_CUT_<id>_<layer> on each listed layer, and no copper of any net lies
+    within margin_mm of a rect: track segments (centre line less half the width), vias and copper pads (bounding boxes,
+    conservative) measured exactly; zone fills sampled with ZONE.HitTestFilledArea on a fill_step mm grid over each rect
+    grown by margin_mm (finer slivers than the step are not seen; pcb/check_boards.py planned_cutouts measures the filled
+    polygons themselves). Board mm, y up."""
+    pc = spec['planned_cutouts']
+    clear, tol = float(pc['margin_mm']), 1e-3
+    rects = [(str(r['id']), (float(r['rect'][0]), float(r['rect'][1]), float(r['rect'][0]) + float(r['rect'][2]),
+                             float(r['rect'][1]) + float(r['rect'][3]))) for r in pc['rects']]
     names = {z.GetZoneName() for z in board.Zones() if z.GetIsRuleArea()}
-    missing = [f'KO_RECT_{i}_{layer}' for i, _r in rects for layer in ko['layers'] if f'KO_RECT_{i}_{layer}' not in names]
+    missing = [f'KO_CUT_{i}_{layer}' for i, _r in rects for layer in pc['layers'] if f'KO_CUT_{i}_{layer}' not in names]
 
     def box_mm(b):
         lo = frame.m(pcb.VECTOR2I(b.GetLeft(), b.GetBottom()))
@@ -1944,13 +1969,13 @@ def keepout_rect_audit(pcb, board, frame, spec, fill_step=0.2):
         fills['checked'] = True
     except Exception as error:  # pcbnew API difference: recorded, the review (pcb/check_boards.py) measures the fills
         fills['checked'] = False
-        fills['note'] = f'not sampled here ({type(error).__name__}: {error}); pcb/check_boards.py keepout_rects measures them'
-    return {'clear_mm': clear, 'grow_mm': float(ko['grow_mm']), 'rects': len(rects), 'layers': list(ko['layers']),
+        fills['note'] = f'not sampled here ({type(error).__name__}: {error}); pcb/check_boards.py planned_cutouts measures them'
+    return {'margin_mm': clear, 'rects': len(rects), 'layers': list(pc['layers']), 'blocks': list(pc['blocks']),
             'rule_areas_missing': missing, 'items_checked': len(items), 'zone_fills': fills, 'nearest': nearest,
             'errors': errors, 'passed': not errors and not missing,
             'note': 'MODEL geometry: tracks exact (centre line less half width), vias and pads by bounding box; '
-                    'zone fills on a grid; no copper may come within clear_mm of a rect (the copper-to-edge clearance '
-                    'once the rects are Edge.Cuts)'}
+                    'zone fills on a grid; no copper may come within margin_mm of a rect (the copper-to-edge clearance '
+                    'once the rects are Edge.Cuts; the rule areas are the rects grown by margin_mm)'}
 
 
 def connectors_doc(spec, contract, template, facts):
@@ -2000,11 +2025,11 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'annular_audit': audits['annular']['passed'], 'locked_copper_kept': audits['locked']['kept'],
         'group_audit': audits['groups']['passed'],
     }
-    if 'keepout_rects' in audits:  # only specs with keepout_rects carry this key (every other report stays unchanged)
-        result['keepout_rect_audit'] = audits['keepout_rects']['passed']
+    if 'planned_cutouts' in audits:  # only specs with planned_cutouts carry this key (every other report stays unchanged)
+        result['planned_cutout_audit'] = audits['planned_cutouts']['passed']
     passed = (drc['passed'] and all(a['passed'] for a in source_pad) and audits['domain']['passed']
               and audits['keepout']['passed'] and audits['annular']['passed'] and audits['locked']['kept']
-              and audits['groups']['passed'] and audits.get('keepout_rects', {'passed': True})['passed']
+              and audits['groups']['passed'] and audits.get('planned_cutouts', {'passed': True})['passed']
               and not any(b['status'].startswith('fail') for b in boundary))
     return {
         'schema': REPORT_SCHEMA, 'board_id': spec['board_id'], 'status': spec['status'],
@@ -2015,6 +2040,11 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'layers': spec['layers'], 'stackup_contract': stackup,
         'outline_mm': contract['outline_mm'],
         **({'cutouts_mm': contract['cutouts_mm']} if contract.get('cutouts_mm') else {}),
+        **({'planned_cutouts': {'margin_mm': spec['planned_cutouts']['margin_mm'],
+                                'rule_areas': [{'id': cid, 'box_mm': [r4(v) for v in box]} for cid, box in planned_cutout_boxes(spec)],
+                                'note': 'rule areas (spec blocks) on the spec layers; DRC reports copper inside one, '
+                                        'pcb/check_boards.py planned_cutouts measures every copper item against the rects'}}
+           if spec.get('planned_cutouts') else {}),
         'holes': holes(spec, contract),
         'instances': [{'id': i['id'], 'placement': i.get('placement'), 'qty': i['qty'], 'refs': i['refs'], 'nets': i['nets']}
                       for i in spec['instances']['list']],
@@ -2035,7 +2065,9 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'router': {k: FREEROUTING[k] for k in ('name', 'version', 'licence', 'url', 'sha256', 'main_class')}
         | {'runtime': f'{TEMURIN_JRE["name"]} {TEMURIN_JRE["version"]} (sha256 {TEMURIN_JRE["sha256"]})',
            'max_passes': spec['router']['max_passes'], 'threads': spec['router']['threads'],
-           'job_timeout': spec['router']['job_timeout'], 'fetch': 'CI only, never committed or uploaded'},
+           'job_timeout': spec['router']['job_timeout'], 'fetch': 'CI only, never committed or uploaded'}
+        | ({'not_run': 'router.freeze_only: the frozen route in pre_route is the whole router copper; Freerouting is not '
+                       'started (pcb/board_gen.py router_skip)'} if router_skip(spec['router']) else {}),
         'heights': spec.get('height_zones', []),
         'does_not_prove': NOT_PROVED,
     }
@@ -2062,8 +2094,8 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
                    'kept': facts['tracks']['locked'] >= want_locked,
                    'note': 'SES import before/after counts and the DSN probe are in route-log.json'},
     }
-    if spec.get('keepout_rects'):
-        audits['keepout_rects'] = keepout_rect_audit(pcb, board, frame, spec)
+    if spec.get('planned_cutouts'):
+        audits['planned_cutouts'] = planned_cutout_audit(pcb, board, frame, spec)
     report = build_report(spec, contract, stackup, template, proj, facts, drc, audits, board_path, spec['project'])
     return report, connectors_doc(spec, contract, template, facts)
 
@@ -2148,30 +2180,35 @@ def route(board, freerouting):
             raise RuntimeError('SaveBoard failed (placed)')
         locked_before = count_locked(board_obj)
         dsn, ses = temp / f'{board}.dsn', temp / f'{board}.ses'
-        if not pcb.ExportSpecctraDSN(board_obj, str(dsn)) or not dsn.is_file():
-            raise SystemExit('board_gen: Specctra DSN export failed')
-        if spec['router'].get('class_layers'):  # per-class routing layers (W2 PCB-CTRL: power classes on the outer layers)
-            dsn.write_text(patch_dsn_class_layers(dsn.read_text(encoding='utf-8'), spec['router']['class_layers']),
-                           encoding='utf-8')
-        probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
-        cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
-                                  temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']))
-        shown_cmd = [shown_arg(c) for c in cmd]
-        print('Freerouting command:', ' '.join(shown_cmd), flush=True)
+        skip = router_skip(spec['router'])
         art = os.environ.get('SR_RX_PCB_ARTIFACTS')
-        if art:  # the DSN is our design data; keep it for review even if routing fails
-            Path(art).mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(dsn, Path(art) / dsn.name)
-        proc = run_logged(cmd, temp / 'freerouting.log', int(spec['router'].get('timeout_s', 900)), temp)
-        log = re.sub(r'\x1b\[[0-9;]*m', '', (temp / 'freerouting.log').read_text(encoding='utf-8', errors='replace'))
-        if art:
-            atomic_write(Path(art) / 'freerouting.log', log)
-        if proc is None:
-            raise SystemExit(f'board_gen: Freerouting timed out after {spec["router"].get("timeout_s", 900)} s:\n{log[-6000:]}')
-        if proc != 0 or not ses.is_file():
-            raise SystemExit(f'board_gen: Freerouting failed ({proc}):\n{log[-6000:]}')
-        if not pcb.ImportSpecctraSES(board_obj, str(ses)):
-            raise SystemExit('board_gen: Specctra SES import failed')
+        if skip:  # W2 PWR-TOOLS: a frozen board routes nothing, so Freerouting is not started (router_skip)
+            probe, shown_cmd, proc, log = None, [], None, ''
+            print(f'Freerouting not run (router.freeze_only): {skip}', flush=True)
+        else:
+            if not pcb.ExportSpecctraDSN(board_obj, str(dsn)) or not dsn.is_file():
+                raise SystemExit('board_gen: Specctra DSN export failed')
+            if spec['router'].get('class_layers'):  # per-class routing layers (W2 PCB-CTRL: power classes on the outer layers)
+                dsn.write_text(patch_dsn_class_layers(dsn.read_text(encoding='utf-8'), spec['router']['class_layers']),
+                               encoding='utf-8')
+            probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
+            cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
+                                      temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']))
+            shown_cmd = [shown_arg(c) for c in cmd]
+            print('Freerouting command:', ' '.join(shown_cmd), flush=True)
+            if art:  # the DSN is our design data; keep it for review even if routing fails
+                Path(art).mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(dsn, Path(art) / dsn.name)
+            proc = run_logged(cmd, temp / 'freerouting.log', int(spec['router'].get('timeout_s', 900)), temp)
+            log = re.sub(r'\x1b\[[0-9;]*m', '', (temp / 'freerouting.log').read_text(encoding='utf-8', errors='replace'))
+            if art:
+                atomic_write(Path(art) / 'freerouting.log', log)
+            if proc is None:
+                raise SystemExit(f'board_gen: Freerouting timed out after {spec["router"].get("timeout_s", 900)} s:\n{log[-6000:]}')
+            if proc != 0 or not ses.is_file():
+                raise SystemExit(f'board_gen: Freerouting failed ({proc}):\n{log[-6000:]}')
+            if not pcb.ImportSpecctraSES(board_obj, str(ses)):
+                raise SystemExit('board_gen: Specctra SES import failed')
         locked_after = count_locked(board_obj)
         if locked_after < locked_before:
             raise SystemExit(f'board_gen: SES import dropped locked copper ({locked_before} -> {locked_after}); '
@@ -2197,8 +2234,9 @@ def route(board, freerouting):
             'runtime': {k: TEMURIN_JRE[k] for k in ('name', 'version', 'licence', 'url', 'sha256', 'source_read')},
             'command': shown_cmd,
             'exit_code': proc, 'log_tail': log.strip().splitlines()[-40:],
-            'dsn_sha256': sha256_file(dsn), 'ses_sha256': sha256_file(ses), 'dsn_probe': probe,
+            'dsn_sha256': None if skip else sha256_file(dsn), 'ses_sha256': None if skip else sha256_file(ses), 'dsn_probe': probe,
             'locked_segments': {'before_ses_import': locked_before, 'after_ses_import': locked_after},
+            **({'freerouting_not_run': {'passes': 0, 'why': f'router.freeze_only: {skip}'}} if skip else {}),
             'via_centre_stubs': stubs,
             'drc_command': drc_cmd, 'board_sha256': sha256_file(board_path), 'previews': shown,
             'footprint_sources': sources, 'kicad_version': str(pcb.Version()),
@@ -2207,7 +2245,7 @@ def route(board, freerouting):
         }
         atomic_write(out / 'route-log.json', dump(route_log))
         # The DSN and SES are design data (not Freerouting code): kept as artifacts for review, not committed.
-        if art:
+        if art and not skip:
             shutil.copyfile(ses, Path(art) / ses.name)
     summary = {k: report['result'][k] for k in report['result']}
     print(dump({'board': board, 'passed': report['passed'], **summary}), end='')

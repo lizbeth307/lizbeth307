@@ -1,7 +1,7 @@
 """Board model of a routed board for the frozen-route completion (W2 CTRL-R; KiCad mm, y down).
 
 W2 PWRB-R: copied unchanged in function from build/kicad/boards/CTRL/freeze/model.py of origin/wip/w2-ctrl4-layers6 (W2 CTRL-4)
-for the 6-layer PWR_B board; configure() switches the stackup, keepouts include the keepout_rects rule areas.
+for the 6-layer PWR_B board; configure() switches the stackup, keepouts include the planned_cutouts rule areas.
 W2 PWRJ-LAYERS6: copied unchanged from build/kicad/boards/PWR_B/freeze/model.py for the 6-layer PWR_A board.
 
 Items: pads (exact check_boards shapes), track segments, vias, keepout polygons, edge segments.

@@ -7,7 +7,7 @@ The PWR_B counterpart of build/kicad/boards/CTRL/freeze/freeze6.py (W2 CTRL-4, o
 router.py and fin.py here are copies of the CTRL tools. The artifact holds board/PWR_B.kicad_pcb, board/report.json and
 board/drc.json of a route run whose inputs equal the spec made by make_spec.py without route-frozen-6l.json. The tool
   1. reads the routed 6-layer board (In1.Cu GND plane, In4.Cu 3V3_Q6A plane; routing layers F.Cu, In2.Cu, In3.Cu, B.Cu;
-     the keepout_rects rule areas of the PWR-A cut-outs and the edge strips count as keepouts);
+     the planned_cutouts rule areas (KO_CUT_*) of the PWR-A cut-outs and the edge strips count as keepouts);
   2. removes router copper that breaks a clearance in the model and joins its net again;
   3. joins every open connection of KiCad's DRC by grid A* (exact clearance check, rip-up of router copper only when no
      free path exists, ripped nets joined again): power-class nets (PWR1A) on F.Cu/B.Cu only at their class width (the

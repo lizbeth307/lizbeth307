@@ -42,6 +42,9 @@ OUT_ROOT = board_gen.OUT_ROOT
 JLC_BOM = BASE / 'build/10-jlc-bom.csv'
 NETCLASSES = BASE / 'pcb/generated/netclasses.json'
 STACKUP_6L = BASE / 'pcb/generated/stackup-6l.json'  # W2 CTRL-4 / W2 PWRB-R: 6-layer boards only
+# W2 PWR-TOOLS: the finish of a 6-layer board (fab notes of 6-layer boards only; 2- and 4-layer notes unchanged)
+SIX_LAYER_FINISH = ('ENIG: jlcpcb.com/capabilities/pcb-capabilities (Surface Finish, read 2026-11-13) offers HASL (leaded / '
+                    'lead-free), ENIG and OSP, and "FR-4/HDI boards with 6 or more layers" do not support HASL')
 KICAD_VERSION = board_gen.KICAD_VERSION
 SCHEMA = 'srrx-fab-manifest-v1'
 LABEL = 'NOT RELEASED: model/CI only; bench gates OPEN'
@@ -778,7 +781,8 @@ def stackup_record(inputs):
         rec = {'id': st['id'], 'copper_layers': 6, 'thickness_mm': st['board_thickness_mm'], 'source': st['source'],
                'read': st['read'], 'layers': st['layers'], 'note': st.get('note', ''),
                'via': 'pcb/generated/stackup-6l.json (pcb/stackup.py)',
-               'fab_note': (f'6 layers: {caps["via_in_pad"]} ({caps["source"]}, read {caps["read"]}); order without '
+               'fab_note': (f'6 layers, stack-up {st["id"]} ({st["source"]}, read {st["read"]}): {caps["via_in_pad"]} '
+                            f'({caps["source"]}, read {caps["read"]}); surface finish {SIX_LAYER_FINISH}; order without '
                             'impedance control (no RF50 net on this board).')}
         option = spec['layers'].get('copper_option')
         if option:  # W2 PWRJ-LAYERS6: a copper option of stackup-6l.json (outer_2oz: 2 oz outer / 0.5 oz inner finished copper)
@@ -788,7 +792,11 @@ def stackup_record(inputs):
             rec['note'] = (f'{st.get("note", "")} Copper option {option}: finished outer copper {opt["outer_copper_mm"]} mm (2 oz), '
                            f'inner {opt["inner_copper_mm"]} mm (0.5 oz), read {opt["read"]}; {opt["thickness_note"]}; '
                            f'price {opt["price"]}.')
-            rec['fab_note'] += f' Order finished outer copper 2 oz and inner 0.5 oz ({option}).'
+            # W2 PWR-TOOLS: the build with this copper sums to more than the nominal order thickness (MODEL, layer table)
+            built = sum(float(layer.get('copper_mm', layer.get('thickness_mm', 0.0))) for layer in rec['layers'])
+            rec['fab_note'] += (f' Order finished outer copper 2 oz and inner 0.5 oz ({option}), stack-up {st["id"]}; finished '
+                                f'thickness TBD at order: the layer table with this copper sums to {built:.3f} mm (MODEL) '
+                                f'against the nominal {st["board_thickness_mm"]} mm +/-10 %.')
         return rec
     return {**STACKUP_2L, 'copper_layers': copper, 'thickness_mm': spec['layers'].get('thickness_mm')}
 

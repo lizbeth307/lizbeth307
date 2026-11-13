@@ -641,7 +641,8 @@ class PwrBLeavesPwrACutoutsFree(unittest.TestCase):
 
 class PwrBSixLayersAndCutoutRuleAreas(unittest.TestCase):
     """W2 PWRB-R layers6: PWR_B on the 6-layer stackup (S-G-S-S-P-S), power classes on the outer copper only, and every PWR-A
-    cut-out a keepout_rects rule area on all copper layers (tracks, vias, zone fills), audited by board_gen and check_boards."""
+    cut-out a rule area on all copper layers, audited by board_gen and check_boards (W2 PWR-TOOLS: the layers6 keepout_rects
+    key gave way to planned_cutouts, the one cut-out key; these tests now read that key)."""
 
     def setUp(self):
         if not bg.spec_path('PWR_B').is_file():
@@ -668,28 +669,26 @@ class PwrBSixLayersAndCutoutRuleAreas(unittest.TestCase):
 
     def test_cutouts_are_rule_areas_on_every_layer(self):
         spec = self.spec
-        ko = spec.get('keepout_rects')
-        if not ko:
-            self.skipTest('no keepout_rects on this branch')
-        want = [[c['rect'][0], c['rect'][1], round(c['rect'][0] + c['rect'][2], 4), round(c['rect'][1] + c['rect'][3], 4)]
-                for c in spec['pwr_a_cutouts']['cutouts_mm']]
-        self.assertEqual([r['rect'] for r in ko['rects']], want)
+        pc = spec.get('planned_cutouts')
+        if not pc:
+            self.skipTest('no planned_cutouts on this branch')
+        self.assertNotIn('keepout_rects', spec)
+        self.assertEqual([r['rect'] for r in pc['rects']], [c['rect'] for c in spec['pwr_a_cutouts']['cutouts_mm']])
         copper = ['F.Cu', 'B.Cu'] + [f'In{i}.Cu' for i in range(1, spec['layers']['copper'] - 1)]
-        self.assertEqual(sorted(ko['layers']), sorted(copper))
-        self.assertEqual(sorted(ko['blocks']), ['tracks', 'vias', 'zone_fills'])
-        self.assertGreaterEqual(ko['grow_mm'], ko['audit_clear_mm'])
-        self.assertGreaterEqual(ko['audit_clear_mm'], spec['fab_floor']['min_copper_edge_clearance'])
+        self.assertEqual(sorted(pc['layers']), sorted(copper))
+        self.assertEqual(sorted(pc['blocks']), ['pads', 'tracks', 'vias', 'zone_fills'])
+        self.assertGreaterEqual(pc['margin_mm'], spec['fab_floor']['min_copper_edge_clearance'])
 
-    def test_keepout_rects_validation_and_distance(self):
-        base = {'why': 'w', 'grow_mm': 0.35, 'audit_clear_mm': 0.3, 'layers': ['F.Cu'], 'blocks': ['tracks'],
+    def test_planned_cutouts_validation_and_distance(self):
+        base = {'why': 'w', 'margin_mm': 0.33, 'layers': ['F.Cu'], 'blocks': ['tracks', 'pads'],
                 'rects': [{'id': 'A1', 'rect': [0, 0, 1, 1]}]}
-        bg.validate_keepout_rects({'keepout_rects': base}, 'X', ['F.Cu', 'B.Cu'])
-        bad = [dict(base, grow_mm=0), dict(base, audit_clear_mm=0.5), dict(base, layers=['In9.Cu']), dict(base, blocks=['pads']),
+        bg.validate_planned_cutouts({'planned_cutouts': base}, 'X', ['F.Cu', 'B.Cu'])
+        bad = [dict(base, margin_mm=0), dict(base, layers=['In9.Cu']), dict(base, blocks=['footprints']),
                dict(base, rects=[{'id': 'A1', 'rect': [1, 0, 0, 1]}]), dict(base, rects=[{'id': 'A 1', 'rect': [0, 0, 1, 1]}]),
-               dict(base, rects=base['rects'] * 2), dict(base, why='')]
-        for i, ko in enumerate(bad):
+               dict(base, rects=base['rects'] * 2), dict(base, why=''), dict(base, rects=[])]
+        for i, pc in enumerate(bad):
             with self.assertRaises(SystemExit, msg=i):
-                bg.validate_keepout_rects({'keepout_rects': ko}, 'X', ['F.Cu', 'B.Cu'])
+                bg.validate_planned_cutouts({'planned_cutouts': pc}, 'X', ['F.Cu', 'B.Cu'])
         box = (0.0, 0.0, 2.0, 1.0)
         self.assertEqual(bg.seg_rect_distance((-1.0, 0.5), (3.0, 0.5), box), 0.0)        # crosses
         self.assertEqual(bg.seg_rect_distance((0.5, 0.5), (0.6, 0.6), box), 0.0)          # inside
@@ -703,8 +702,8 @@ class PwrBSixLayersAndCutoutRuleAreas(unittest.TestCase):
         with self.assertRaises(SystemExit):
             bg.patch_dsn_class_layers(dsn, {'PWR3A': ['F.Cu']})
 
-    def test_check_boards_keepout_rects_sees_track_via_and_fill(self):
-        import check_boards as cb
+    def test_check_boards_fill_overlap_test_sees_track_via_and_fill(self):
+        import check_boards as cb  # shape_hits_box: the zone-fill test of check_planned_cutouts
         box = (10.0, 10.0, 12.0, 12.0)
         self.assertTrue(cb.shape_hits_box(cb.Capsule(9.0, 9.0, 13.0, 13.0, 0.1), box))
         self.assertFalse(cb.shape_hits_box(cb.Capsule(9.0, 13.0, 13.0, 13.0, 0.1), box))
@@ -715,6 +714,119 @@ class PwrBSixLayersAndCutoutRuleAreas(unittest.TestCase):
         self.assertFalse(cb.shape_hits_box(notch, box))
         edge = cb.Poly([(0, 0), (30, 0), (30, 10.5), (0, 10.5)])        # a fill edge across the box
         self.assertTrue(cb.shape_hits_box(edge, box))
+
+
+
+class PlannedCutoutKeyAndFrozenRouter(unittest.TestCase):
+    """W2 PWR-TOOLS: planned_cutouts is the one cut-out key (the layers6 keepout_rects path is gone): PWR_B carries the
+    regenerated PWR-A placement-study pwr_b_cutouts as rule areas on all six copper layers, and the board_gen report audit
+    (planned_cutout_audit) and pcb/check_boards.py planned_cutouts read that key; a spec router with freeze_only routes
+    nothing (router_skip: Freerouting is not started on a frozen board)."""
+
+    def test_pwr_b_cutouts_equal_the_regenerated_placement_study(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        self.assertNotIn('keepout_rects', spec)
+        pc = spec['planned_cutouts']
+        study = bg.read_json(bg.BASE / 'build/kicad/boards/PWR_A/placement-study-shrink2.json')['pwr_b_cutouts']['placed']
+        want = [[c['rect'][0], c['rect'][1], round(c['rect'][2] - c['rect'][0], 4), round(c['rect'][3] - c['rect'][1], 4)]
+                for c in study]
+        self.assertEqual(len(pc['rects']), 50)
+        self.assertEqual([r['rect'] for r in pc['rects']], want)
+        self.assertEqual([r['id'] for r in pc['rects']], [c['ref'] for c in study])
+        self.assertEqual(pc['margin_mm'], 0.33)
+        self.assertEqual(pc['layers'], ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu'])
+        self.assertEqual(set(pc['blocks']), {'tracks', 'vias', 'zone_fills', 'pads'})
+        boxes = bg.planned_cutout_boxes(spec)
+        self.assertEqual(len(boxes), 50)
+        for (cid, box), r in zip(boxes, pc['rects']):
+            self.assertEqual(cid, r['id'])
+            self.assertAlmostEqual(box[0], r['rect'][0] - 0.33)
+            self.assertAlmostEqual(box[3], r['rect'][1] + r['rect'][3] + 0.33)
+        bg.validate_spec(spec, 'PWR_B')
+
+    def test_check_boards_reads_planned_cutouts(self):
+        import check_boards as cb
+        self.assertIn('planned_cutouts', cb.NATIVE_KEYS)
+        self.assertNotIn('keepout_rects', cb.NATIVE_KEYS + cb.DICT_KEYS)
+        self.assertFalse(hasattr(cb, 'check_keepout_rects') or hasattr(bg, 'validate_keepout_rects')
+                         or hasattr(bg, 'keepout_rect_audit'))
+        key = {'why': 'test', 'margin_mm': 0.3, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
+               'rects': [{'id': 'C1', 'rect': [2.0, 4.0, 1.0, 1.0]}]}
+        edges = ''.join(f'(gr_line (start {a} {b}) (end {c} {d}) (layer "Edge.Cuts") (stroke (width 0.05)))'
+                        for a, b, c, d in ((100, 100, 110, 100), (110, 100, 110, 110), (110, 110, 100, 110), (100, 110, 100, 100)))
+        # contract rect [2, 4, 1, 1] (y up) = KiCad x 102-103, y 105-106; one track crosses it, one passes 0.2 mm off its
+        # right edge (inside the 0.3 mm margin), one stays 1 mm away
+        tracks = ('(segment (start 101 105.5) (end 104 105.5) (width 0.2) (layer "F.Cu") (net 1))'
+                  '(segment (start 103.3 104) (end 103.3 107) (width 0.2) (layer "B.Cu") (net 1))'
+                  '(segment (start 101 108) (end 104 108) (width 0.2) (layer "F.Cu") (net 1))')
+        text = (f'(kicad_pcb (version 20241229) (layers (0 "F.Cu" signal) (31 "B.Cu" signal)) (net 0 "") (net 1 "A") '
+                f'{edges}{tracks})')
+        board = cb.Board(cb.parse(text))
+        spec = {'board_id': 'T', 'planned_cutouts': key}
+        contract = {'outline_mm': [[0, 0], [10, 0], [10, 10], [0, 10]]}
+        out, info = cb.check_planned_cutouts(board, cb.Frame(board, contract, spec), spec)
+        self.assertEqual(len(out), 2)
+        self.assertEqual((info['per_rect'][0]['items_inside'], info['per_rect'][0]['items_within_margin']), (1, 1))
+        self.assertEqual(cb.normalize_spec(dict(spec, schema=cb.SPEC_SCHEMA_V1))['planned_cutouts'], key)
+
+    def test_board_gen_report_audit_reads_planned_cutouts(self):
+        """planned_cutout_audit against a minimal stand-in of the pcbnew objects it reads (no KiCad here)."""
+        class Obj:
+            def __init__(self, **k):
+                self.__dict__.update(k)
+
+        class Box:
+            def __init__(self, x0, y0, x1, y1):
+                self.b = (x0, y0, x1, y1)
+
+            def GetLeft(self):
+                return self.b[0]
+
+            def GetBottom(self):
+                return self.b[1]
+
+            def GetRight(self):
+                return self.b[2]
+
+            def GetTop(self):
+                return self.b[3]
+        pcb = Obj(PCB_TRACE_T=1, PCB_VIA_T=2, VECTOR2I=lambda x, y: (x, y), ToMM=lambda v: v)
+        frame = Obj(m=lambda p: (float(p[0]), float(p[1])), k=lambda x, y: (x, y))
+        track = Obj(Type=lambda: 1, GetNetname=lambda: 'A', GetStart=lambda: (0.0, 4.5), GetEnd=lambda: (2.5, 4.5),
+                    GetWidth=lambda: 0.2, GetLayer=lambda: 'F.Cu')
+        names = [f'KO_CUT_C1_{n}' for n in ('F.Cu', 'B.Cu')]
+        zones = [Obj(GetZoneName=lambda n=n: n, GetIsRuleArea=lambda: True) for n in names]
+        board = Obj(Zones=lambda: zones, GetTracks=lambda: [track], GetFootprints=lambda: [], GetLayerName=lambda layer: layer)
+        spec = {'planned_cutouts': {'why': 'test', 'margin_mm': 0.33, 'layers': ['F.Cu', 'B.Cu'], 'blocks': ['tracks'],
+                                    'rects': [{'id': 'C1', 'rect': [2.0, 4.0, 1.0, 1.0]}]}}
+        res = bg.planned_cutout_audit(pcb, board, frame, spec)
+        self.assertFalse(res['passed'])
+        self.assertEqual([e['rect'] for e in res['errors']], ['C1'])
+        self.assertEqual((res['margin_mm'], res['rule_areas_missing']), (0.33, []))
+        track.GetEnd = lambda: (1.5, 4.5)  # 0.4 mm from the rect: clear of the 0.33 mm margin
+        res = bg.planned_cutout_audit(pcb, board, frame, spec)
+        self.assertTrue(res['passed'], res['errors'])
+        board.Zones = lambda: zones[:1]
+        self.assertEqual(bg.planned_cutout_audit(pcb, board, frame, spec)['rule_areas_missing'], ['KO_CUT_C1_B.Cu'])
+
+    def test_freeze_only_router_skip(self):
+        self.assertIsNone(bg.router_skip({'tool': 'freerouting'}))
+        self.assertEqual(bg.router_skip({'freeze_only': 'frozen'}), 'frozen')
+        for bad in ('', '  ', True, 1):
+            with self.assertRaises(SystemExit, msg=bad):
+                bg.router_skip({'freeze_only': bad})
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        if not spec['router'].get('freeze_only'):
+            self.skipTest('PWR_B has no frozen route on this branch')
+        bg.validate_spec(spec, 'PWR_B')
+        s = copy.deepcopy(spec)
+        s['pre_route']['tracks'] = [dict(t, locked=False) for t in s['pre_route']['tracks']]
+        with self.assertRaises(SystemExit):
+            bg.validate_spec(s, 'PWR_B')
 
 
 if __name__ == '__main__':

@@ -48,6 +48,9 @@ Checker keys (optional, in either form; contract frame mm, y up unless contract_
   sense {nets [...], prototype <routed prototype review json>} (track length on the board > 0 and <= the prototype's routing
   length of that net)} (W2 PCB-RF-2). With bond_hole, each GND-CHASSIS tie must also reach the plated bond hole land through
   copper of the bond net.
+  planned_cutouts {margin_mm, rects [{id, rect [x, y, w, h]}]} (W2 PWRB-R; the same key makes pcb/board_gen.py rule areas, and
+  W2 PWR-TOOLS made it the only cut-out key): areas that become cut-outs later; no copper of any kind on any layer inside a
+  rect or within margin_mm of it.
 """
 from __future__ import annotations
 
@@ -684,9 +687,9 @@ class Frame:
 NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
                'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
                'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
-               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'keepout_rects', 'copper_option')
+               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'planned_cutouts', 'copper_option')
 DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
-             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'keepout_rects')
+             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'planned_cutouts')
 LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides', 'coupons')
 
 
@@ -1025,29 +1028,52 @@ def seg_box_gap(xa, ya, xb, yb, box):
                   for (cx, cy), (dx, dy) in zip(corners, corners[1:] + corners[:1])])
 
 
-def check_keepout_rects(board, spec, frame):
-    """Spec keepout_rects (W2 PWRB-R, pcb/board_gen.py): rectangles that are not Edge.Cuts yet must stay free of copper.
-    Every copper item of every net (pads, tracks, vias, zone fills, graphic copper) keeps audit_clear_mm from each rect:
-    the rect grown by audit_clear_mm less KEEPOUT_TOL must not overlap it (fills as their filled polygons)."""
-    ko = spec['keepout_rects']
-    clear = float(ko.get('audit_clear_mm', 0))
-    out, per_rect = [], {}
-    for r in ko.get('rects', []):
-        x0, y0, x1, y1 = (float(v) for v in r['rect'])
-        bx0, by0, bx1, by1 = frame.rect([x0, y0, x1 - x0, y1 - y0])
-        g = clear - KEEPOUT_TOL
-        box = (bx0 - g, by0 - g, bx1 + g, by1 + g)
-        hits = collections.Counter()
+# A copper polygon with more points than this is a zone fill: planned_cutouts tests it for overlap (shape_hits_box, banded
+# edges) instead of an edge-to-edge distance over all its edges
+FILL_POINTS = 64
+
+
+def check_planned_cutouts(board, frame, spec):
+    """planned_cutouts {margin_mm, rects [{id, rect [x, y, w, h] contract mm}]} (W2 PWRB-R; pcb/board_gen.py makes each rect
+    grown by margin_mm a rule area; W2 PWR-TOOLS: the only cut-out key, keepout_rects removed): areas that become board
+    cut-outs later. No copper item of any kind or layer (pads, tracks, arcs, vias, zone fills, footprint and board copper)
+    may lie inside a rect or closer than margin_mm to it, the copper-to-edge clearance the cut will need. Pads, tracks, vias
+    and small polygons are measured edge to edge against the rect; a zone fill (a polygon of more than FILL_POINTS points)
+    must not overlap the rect grown by margin_mm less KEEPOUT_TOL (its filled polygon, holes and slits included)."""
+    pc = spec['planned_cutouts']
+    if not isinstance(pc.get('rects'), list) or not isinstance(pc.get('margin_mm'), (int, float)):
+        spec_error(spec, 'planned_cutouts needs margin_mm and rects [{id, rect [x, y, w, h]}]')
+    m = float(pc['margin_mm'])
+    out, rows = [], []
+    for r in pc['rects']:
+        x0, y0, x1, y1 = frame.rect(r['rect'])
+        box = Poly([(x0, y0), (x1, y0), (x1, y1), (x0, y1)])
+        g = m - KEEPOUT_TOL
+        grown = (x0 - g, y0 - g, x1 + g, y1 + g)
+        inside, near, fills, closest = 0, 0, 0, None
         for it in board.copper:
-            if shape_hits_box(it.shape, box):
-                what = f'{it.kind} {it.ref}.{it.pad}' if it.kind == 'pad' else it.kind
-                hits[(what, it.net, it.layer)] += 1
-        for (what, net, layer), n in sorted(hits.items(), key=lambda kv: (kv[0][0], str(kv[0][1]), kv[0][2])):
-            out.append(finding('keepout_rects', f'{r["id"]}: {what}', f'copper within {clear} mm of the keep-out rect {r["id"]} '
-                               f'({r.get("kind", "")})', contract_at=(x0, y0), net=net, layer=layer, items=n))
-        per_rect[str(r['id'])] = sum(hits.values())
-    return out, {'rects': len(per_rect), 'clear_mm': clear, 'tolerance_mm': KEEPOUT_TOL,
-                 'rects_with_copper': sorted(k for k, v in per_rect.items() if v)}
+            bb = it.shape.bbox
+            if bb[0] > x1 + m or bb[2] < x0 - m or bb[1] > y1 + m or bb[3] < y0 - m:
+                continue
+            what = f'{it.kind} {it.ref}.{it.pad}' if it.kind == 'pad' else it.kind
+            if isinstance(it.shape, Poly) and len(it.shape.pts) > FILL_POINTS:
+                if shape_hits_box(it.shape, grown):
+                    fills += 1
+                    out.append(finding('planned_cutouts', what, f"copper fill within {m} mm of the planned cut-out {r['id']}",
+                                       contract_at=r['rect'][:2], net=it.net, layer=it.layer))
+                continue
+            d = shape_gap(it.shape, box)
+            closest = d if closest is None else min(closest, d)
+            if d >= m - KEEPOUT_TOL:
+                continue
+            inside += d <= 0.0
+            near += d > 0.0
+            out.append(finding('planned_cutouts', what, f"copper {r3(d)} mm from the planned cut-out {r['id']} (needs {m} mm)",
+                               contract_at=r['rect'][:2], net=it.net, layer=it.layer, distance=d))
+        rows.append({'id': r['id'], 'items_inside': inside, 'items_within_margin': near, 'fills_within_margin': fills,
+                     'closest_copper_mm': r3(closest) if closest is not None else None})
+    return out, {'margin_mm': m, 'rects': len(pc['rects']), 'tolerance_mm': KEEPOUT_TOL, 'fill_points': FILL_POINTS,
+                 'per_rect': rows}
 
 
 def expected_views(spec, graph, components_csv=None):
@@ -2141,8 +2167,8 @@ def review_board(board, spec, contract, graph, netclasses, mates=None, component
     run('outline', check_outline(board, cb, frame, spec))
     run('holes', check_holes(board, cb, frame, spec))
     run('keepouts', check_keepouts(board, cb, frame, spec))
-    if 'keepout_rects' in spec:  # W2 PWRB-R: only specs with keepout_rects (every other review stays unchanged)
-        run('keepout_rects', check_keepout_rects(board, spec, frame))
+    if 'planned_cutouts' in spec:  # W2 PWRB-R: only specs with planned_cutouts (every other review stays unchanged)
+        run('planned_cutouts', check_planned_cutouts(board, frame, spec))
     run('pad_nets', check_pad_nets(board, spec, graph, views))
     run('class_widths', check_classes(board, spec, netclasses, views))
     run('rf50', check_rf50(board, spec, netclasses, views))

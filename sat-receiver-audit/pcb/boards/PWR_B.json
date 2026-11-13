@@ -18731,7 +18731,7 @@
   },
   "placement_rules": {
     "edges": "W2 PCB-PWRB-2 (SHRINK-2 without the S02 FFC and without the J204 + J207 PHD merge): J204 and J207 on the top span x 58-107 of contract edge zone 1 (mechanical/generated/contract/boards.json PWR_B), mating faces 4.51 mm inboard of the edge (R-PWRB-EXIT set_back_min_mm of zone 1) and no part in front of them (plug zones). The S02 headers J202, J203 and J201 and the PH 9 J506 are parked inside the board without a harness exit: zone 0 (right edge) is covered by the PWR-A strips of J104, J113-J115 and J507 and two hole keep-outs, zone 2 (bottom span x 93-114.5) by the PWR-A windows of C265, C512 and C511 of the PCB-PWRA-3 placement. OPEN for MECH and PCB-PWRA-4 (build/15 W2 PCB-PWRB-2); check_boards does not check edge zones",
-    "cutouts": "no top courtyard over a PWR-A cut-out (pwr_a_cutouts); pads, scripted copper and scripted vias keep the edge clearance 0.35 mm from them as from a board edge; until they are Edge.Cuts every cut-out is a rule area on all six copper layers (keepout_rects: the rect grown by 0.33 mm, no tracks, vias or zone fills), so the router and the pours leave them free, and the board_gen report (keepout_rect_audit) and pcb/check_boards.py (keepout_rects) fail on any copper within 0.3 mm of one (W2 PWRB-R)",
+    "cutouts": "no top courtyard over a PWR-A cut-out (pwr_a_cutouts); pads, scripted copper and scripted vias keep the edge clearance 0.35 mm from them as from a board edge; until they are Edge.Cuts every cut-out is a rule area on all six copper layers (planned_cutouts: the rect grown by margin_mm 0.33, no tracks, vias, pads or zone fills), so the router and the pours leave them free, and the board_gen report (planned_cutout_audit) and pcb/check_boards.py (planned_cutouts) fail on any copper within 0.33 mm of one (W2 PWRB-R, one key since W2 PWR-TOOLS)",
     "kelvin": "INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL; a deviation from the W2 PCB-PWRB-2 brief, which asked for U215 at its shunts, accepted in build/15 W2 PCB-PWRB-2); every shunt net is scripted copper (current path plus sense take-off from the shunt pads) up to the 10 ohm INA3221 filter resistors next to each shunt; the filtered input nets E2_U215_IP1-3 / IM1-3 from those resistors to U215 are autorouted as separate nets, not as pairs (routed lengths of the board of record in build/kicad/boards/PWR_B/README.md and build/15 W2 PCB-PWRB-2), so INA3221 accuracy stays a bench gate; ch4 senses through the B2B to U216 on PWR-A"
   },
   "pwr_a_cutouts": {
@@ -19318,10 +19318,9 @@
       }
     ]
   },
-  "keepout_rects": {
-    "why": "W2 PWRB-R (review F2 of W2 PCB-PWRB-2): the 50 PWR-A cut-outs of pwr_a_cutouts become holes or notches of PWR-B once the contract carries them; until then each is a rule area on every copper layer, grown by 0.33 mm (copper-to-edge 0.3 + 0.03; the scripted copper keeps 0.35), blocking tracks, vias and zone fills, so no copper of the board of record lies where PWR-B will be cut",
-    "grow_mm": 0.33,
-    "audit_clear_mm": 0.3,
+  "planned_cutouts": {
+    "why": "W2 PWRB-R (review F2 of W2 PCB-PWRB-2), the only cut-out key since W2 PWR-TOOLS: the PWR-A cut-outs of pwr_a_cutouts become holes or notches of PWR-B once the MECH lineage writes them into the contract, so no copper may cross them now: each rect grown by margin_mm 0.33 (copper-to-edge 0.3 + 0.03; the scripted copper keeps 0.35) is a rule area on all six copper layers that blocks tracks, vias, pads and zone fills, so Freerouting routes around it, the planes and pours leave it free and KiCad DRC reports any copper in it; the board_gen report (planned_cutout_audit) and pcb/check_boards.py planned_cutouts measure every copper item of the routed board against the rects",
+    "margin_mm": 0.33,
     "layers": [
       "F.Cu",
       "In1.Cu",
@@ -19333,7 +19332,8 @@
     "blocks": [
       "tracks",
       "vias",
-      "zone_fills"
+      "zone_fills",
+      "pads"
     ],
     "rects": [
       {
@@ -19342,8 +19342,8 @@
         "rect": [
           13.8,
           63.1,
-          24.2,
-          71.2
+          10.4,
+          8.1
         ]
       },
       {
@@ -19352,8 +19352,8 @@
         "rect": [
           33.9,
           59.3,
-          42.0,
-          69.9
+          8.1,
+          10.6
         ]
       },
       {
@@ -19362,8 +19362,8 @@
         "rect": [
           33.9,
           95.0,
-          41.7,
-          102.8
+          7.8,
+          7.8
         ]
       },
       {
@@ -19372,8 +19372,8 @@
         "rect": [
           28.1,
           77.8,
-          37.6,
-          87.3
+          9.5,
+          9.5
         ]
       },
       {
@@ -19382,8 +19382,8 @@
         "rect": [
           7.3,
           93.1,
-          15.1,
-          100.9
+          7.8,
+          7.8
         ]
       },
       {
@@ -19392,8 +19392,8 @@
         "rect": [
           28.1,
           45.0,
-          35.9,
-          52.8
+          7.8,
+          7.8
         ]
       },
       {
@@ -19402,8 +19402,8 @@
         "rect": [
           25.15,
           19.5,
-          32.95,
-          27.3
+          7.8,
+          7.8
         ]
       },
       {
@@ -19412,8 +19412,8 @@
         "rect": [
           19.25,
           10.55,
-          27.05,
-          18.35
+          7.8,
+          7.8
         ]
       },
       {
@@ -19422,8 +19422,8 @@
         "rect": [
           89.6,
           3.7,
-          97.4,
-          11.5
+          7.8,
+          7.8
         ]
       },
       {
@@ -19432,8 +19432,8 @@
         "rect": [
           -0.2,
           27.5,
-          7.6,
-          35.3
+          7.8,
+          7.8
         ]
       },
       {
@@ -19442,8 +19442,8 @@
         "rect": [
           106.4,
           5.0,
-          112.9,
-          11.5
+          6.5,
+          6.5
         ]
       },
       {
@@ -19452,8 +19452,8 @@
         "rect": [
           99.1,
           3.7,
-          106.9,
-          11.5
+          7.8,
+          7.8
         ]
       },
       {
@@ -19462,8 +19462,8 @@
         "rect": [
           -0.2,
           65.5,
-          8.04,
-          83.0
+          8.24,
+          17.5
         ]
       },
       {
@@ -19472,8 +19472,8 @@
         "rect": [
           128.53,
           9.5,
-          136.3,
-          27.16
+          7.77,
+          17.66
         ]
       },
       {
@@ -19482,8 +19482,8 @@
         "rect": [
           26.2,
           -0.2,
-          39.2,
-          7.2
+          13.0,
+          7.4
         ]
       },
       {
@@ -19492,8 +19492,8 @@
         "rect": [
           44.7,
           -0.2,
-          57.7,
-          7.2
+          13.0,
+          7.4
         ]
       },
       {
@@ -19502,8 +19502,8 @@
         "rect": [
           7.7,
           -0.2,
-          20.7,
-          7.2
+          13.0,
+          7.4
         ]
       },
       {
@@ -19512,8 +19512,8 @@
         "rect": [
           70.6,
           -0.2,
-          83.6,
-          11.4
+          13.0,
+          11.6
         ]
       },
       {
@@ -19522,8 +19522,8 @@
         "rect": [
           38.7,
           -0.2,
-          45.2,
-          7.7
+          6.5,
+          7.9
         ]
       },
       {
@@ -19532,8 +19532,8 @@
         "rect": [
           57.2,
           -0.2,
-          71.1,
-          6.3
+          13.9,
+          6.5
         ]
       },
       {
@@ -19542,8 +19542,8 @@
         "rect": [
           20.2,
           -0.2,
-          26.7,
-          9.7
+          6.5,
+          9.9
         ]
       },
       {
@@ -19552,8 +19552,8 @@
         "rect": [
           83.1,
           -0.2,
-          89.6,
-          11.7
+          6.5,
+          11.9
         ]
       },
       {
@@ -19562,8 +19562,8 @@
         "rect": [
           115.0,
           11.2,
-          121.5,
-          19.1
+          6.5,
+          7.9
         ]
       },
       {
@@ -19572,8 +19572,8 @@
         "rect": [
           121.03,
           -0.2,
-          128.8,
-          11.46
+          7.77,
+          11.66
         ]
       },
       {
@@ -19582,8 +19582,8 @@
         "rect": [
           121.03,
           10.96,
-          128.8,
-          22.62
+          7.77,
+          11.66
         ]
       },
       {
@@ -19592,8 +19592,8 @@
         "rect": [
           15.1,
           102.53,
-          26.76,
-          110.3
+          11.66,
+          7.77
         ]
       },
       {
@@ -19602,8 +19602,8 @@
         "rect": [
           107.8,
           24.52,
-          125.96,
-          35.3
+          18.16,
+          10.78
         ]
       },
       {
@@ -19612,8 +19612,8 @@
         "rect": [
           115.0,
           -0.2,
-          121.5,
-          11.7
+          6.5,
+          11.9
         ]
       },
       {
@@ -19622,8 +19622,8 @@
         "rect": [
           -0.13,
           83.97,
-          8.13,
-          92.03
+          8.26,
+          8.06
         ]
       },
       {
@@ -19632,8 +19632,8 @@
         "rect": [
           17.9,
           86.9,
-          31.9,
-          100.9
+          14.0,
+          14.0
         ]
       },
       {
@@ -19642,8 +19642,8 @@
         "rect": [
           10.15,
           39.45,
-          13.15,
-          42.45
+          3.0,
+          3.0
         ]
       },
       {
@@ -19652,8 +19652,8 @@
         "rect": [
           4.0,
           99.45,
-          7.0,
-          102.45
+          3.0,
+          3.0
         ]
       },
       {
@@ -19662,8 +19662,8 @@
         "rect": [
           3.45,
           10.65,
-          6.45,
-          13.65
+          3.0,
+          3.0
         ]
       },
       {
@@ -19672,8 +19672,8 @@
         "rect": [
           21.25,
           52.65,
-          24.25,
-          55.65
+          3.0,
+          3.0
         ]
       },
       {
@@ -19682,8 +19682,8 @@
         "rect": [
           17.95,
           43.1,
-          20.95,
-          46.1
+          3.0,
+          3.0
         ]
       },
       {
@@ -19692,8 +19692,8 @@
         "rect": [
           38.51,
           35.99,
-          41.51,
-          38.99
+          3.0,
+          3.0
         ]
       },
       {
@@ -19702,8 +19702,8 @@
         "rect": [
           17.35,
           73.43,
-          20.35,
-          76.43
+          3.0,
+          3.0
         ]
       },
       {
@@ -19712,8 +19712,8 @@
         "rect": [
           20.35,
           73.43,
-          23.35,
-          76.43
+          3.0,
+          3.0
         ]
       },
       {
@@ -19722,8 +19722,8 @@
         "rect": [
           39.25,
           13.77,
-          42.25,
-          16.77
+          3.0,
+          3.0
         ]
       },
       {
@@ -19732,8 +19732,8 @@
         "rect": [
           42.75,
           22.25,
-          45.75,
-          25.25
+          3.0,
+          3.0
         ]
       },
       {
@@ -19742,8 +19742,8 @@
         "rect": [
           10.01,
           67.85,
-          13.01,
-          70.85
+          3.0,
+          3.0
         ]
       },
       {
@@ -19752,8 +19752,8 @@
         "rect": [
           38.55,
           42.25,
-          41.55,
-          45.25
+          3.0,
+          3.0
         ]
       },
       {
@@ -19762,8 +19762,8 @@
         "rect": [
           60.35,
           9.95,
-          63.35,
-          12.95
+          3.0,
+          3.0
         ]
       },
       {
@@ -19772,8 +19772,8 @@
         "rect": [
           2.51,
           14.55,
-          5.51,
-          17.55
+          3.0,
+          3.0
         ]
       },
       {
@@ -19782,8 +19782,8 @@
         "rect": [
           88.75,
           32.05,
-          91.75,
-          35.05
+          3.0,
+          3.0
         ]
       },
       {
@@ -19792,8 +19792,8 @@
         "rect": [
           39.25,
           10.77,
-          42.25,
-          13.77
+          3.0,
+          3.0
         ]
       },
       {
@@ -19802,8 +19802,8 @@
         "rect": [
           45.75,
           22.25,
-          48.75,
-          25.25
+          3.0,
+          3.0
         ]
       },
       {
@@ -19812,8 +19812,8 @@
         "rect": [
           5.51,
           14.55,
-          8.51,
-          17.55
+          3.0,
+          3.0
         ]
       },
       {
@@ -19822,8 +19822,8 @@
         "rect": [
           39.25,
           29.75,
-          42.25,
-          32.75
+          3.0,
+          3.0
         ]
       },
       {
@@ -19832,8 +19832,8 @@
         "rect": [
           91.75,
           32.05,
-          94.75,
-          35.05
+          3.0,
+          3.0
         ]
       }
     ]

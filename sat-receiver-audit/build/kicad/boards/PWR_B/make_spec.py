@@ -23,7 +23,7 @@ What it decides, in one place (the spec records each rule with its source):
     of type power with a scripted via per SMD pad, signals on F.Cu / In2.Cu / In3.Cu / B.Cu, power classes on F.Cu /
     B.Cu only), the project rules and net classes, and the router settings: Freerouting without its fan-out stage, the
     classes of the scripted nets (SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A) not autorouted, rule-area strips on
-    every board edge and a rule area on every copper layer over each PWR-A cut-out (keepout_rects).
+    every board edge and a rule area on every copper layer over each PWR-A cut-out (planned_cutouts).
 Why each router setting exists is in the spec (router.why, edge_keepout.why) with the sr-rx-pcb run that showed it.
 It checks courtyard overlaps, outline / cutouts, hole keepouts, drilled holes in courtyards, the GND via of every SMD
 GND pad and the clearance of the scripted copper before CI routes. The routed board, its report and the fab set are
@@ -1285,9 +1285,10 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
                      'W2 PCB-PWRB-2); check_boards does not check edge zones',
             'cutouts': 'no top courtyard over a PWR-A cut-out (pwr_a_cutouts); pads, scripted copper and scripted vias keep the '
                        'edge clearance 0.35 mm from them as from a board edge; until they are Edge.Cuts every cut-out is a rule '
-                       'area on all six copper layers (keepout_rects: the rect grown by 0.33 mm, no tracks, vias or zone '
-                       'fills), so the router and the pours leave them free, and the board_gen report (keepout_rect_audit) and '
-                       'pcb/check_boards.py (keepout_rects) fail on any copper within 0.3 mm of one (W2 PWRB-R)',
+                       'area on all six copper layers (planned_cutouts: the rect grown by margin_mm 0.33, no tracks, vias, pads '
+                       'or zone fills), so the router and the pours leave them free, and the board_gen report '
+                       '(planned_cutout_audit) and pcb/check_boards.py (planned_cutouts) fail on any copper within 0.33 mm of '
+                       'one (W2 PWRB-R, one key since W2 PWR-TOOLS)',
             'kelvin': 'INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL; a deviation from the '
                       'W2 PCB-PWRB-2 brief, which asked for U215 at its shunts, accepted in build/15 W2 PCB-PWRB-2); every shunt '
                       'net is scripted copper (current path plus sense '
@@ -1317,14 +1318,18 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
                     'these pin fields (1.3 mm clearance in the 5.0 mm stack). Gate OPEN: measured at proof-fit',
             'pin_fields': [{'ref': ref, 'pins': n, 'field_mm': f}
                            for ref, n, f in sorted(tht_fields(pparts), key=lambda t: bg.sort_ref(t[0]))]},
-        'keepout_rects': {
-            'why': ('W2 PWRB-R (review F2 of W2 PCB-PWRB-2): the 50 PWR-A cut-outs of pwr_a_cutouts become holes or notches of '
-                    'PWR-B once the contract carries them; until then each is a rule area on every copper layer, grown by '
-                    f'{r4(KEEPOUT_GROW)} mm (copper-to-edge 0.3 + 0.03; the scripted copper keeps 0.35), blocking tracks, '
-                    'vias and zone fills, so no copper of the board of record lies where PWR-B will be cut'),
-            'grow_mm': r4(KEEPOUT_GROW), 'audit_clear_mm': EDGE, 'layers': list(COPPER),
-            'blocks': ['tracks', 'vias', 'zone_fills'],
-            'rects': [{'id': cu['ref'], 'kind': cu['kind'], 'rect': [r4(v) for v in cu['rect']]} for cu in inp.cutouts]},
+        'planned_cutouts': {
+            'why': ('W2 PWRB-R (review F2 of W2 PCB-PWRB-2), the only cut-out key since W2 PWR-TOOLS: the PWR-A cut-outs of '
+                    'pwr_a_cutouts become holes or notches of PWR-B once the MECH lineage writes them into the contract, so no '
+                    f'copper may cross them now: each rect grown by margin_mm {r4(KEEPOUT_GROW)} (copper-to-edge 0.3 + 0.03; '
+                    'the scripted copper keeps 0.35) is a rule area on all six copper layers that blocks tracks, vias, pads and '
+                    'zone fills, so Freerouting routes around it, the planes and pours leave it free and KiCad DRC reports any '
+                    'copper in it; the board_gen report (planned_cutout_audit) and pcb/check_boards.py planned_cutouts measure '
+                    'every copper item of the routed board against the rects'),
+            'margin_mm': r4(KEEPOUT_GROW), 'layers': list(COPPER), 'blocks': ['tracks', 'vias', 'zone_fills', 'pads'],
+            'rects': [{'id': cu['ref'], 'kind': cu['kind'],
+                       'rect': [cu['rect'][0], cu['rect'][1], r4(cu['rect'][2] - cu['rect'][0]), r4(cu['rect'][3] - cu['rect'][1])]}
+                      for cu in inp.cutouts]},
         'router': {'tool': 'freerouting', 'max_passes': 90, 'threads': 1, 'job_timeout': '00:33:00', 'timeout_s': 2100,
                    'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())),
                    'class_layers': CLASS_LAYERS,
@@ -1424,7 +1429,7 @@ FREEZE_ONLY = True  # route run with the frozen copper: Freerouting routes no cl
 def frozen_guard(parts, tracks, vias, cuts):
     """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers), the scripted copper
     (by geometry: id, net, layer, width, path, via position and size; the 'why' texts may change without a new harvest) and
-    the PWR-A cut-outs (a PWR-A placement change moves the keepout_rects, so the frozen copper must be harvested anew)."""
+    the PWR-A cut-outs (a PWR-A placement change moves the planned_cutouts rule areas, so the frozen copper must be harvested anew)."""
     pads = sorted(f'{ref}.{p["number"]}|{p["net"]}|{p["at"][0]:.4f},{p["at"][1]:.4f}|{",".join(p["layers"])}'
                   for ref, pa in parts.items() for p in pa.pads if p['number'] and p['type'] != 'np_thru_hole')
 
