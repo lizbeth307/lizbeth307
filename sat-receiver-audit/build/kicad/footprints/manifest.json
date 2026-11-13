@@ -488,6 +488,37 @@
       ]
     },
     {
+      "footprint": "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical.kicad_mod",
+      "sha256": "168ae449942c3542ee04208deb2c1beecb1cbd4b3e525b6bf918ae568b54c26c",
+      "pads": [
+        "1",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "2",
+        "20",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J203"
+      ]
+    },
+    {
       "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
       "file": "build/kicad/footprints/Connector_JST.pretty/JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal.kicad_mod",
       "sha256": "7f8ab891bb8ca28840688f5e3db368339970e0550e1b90069a72accc900677d5",
@@ -516,7 +547,6 @@
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
         "J202",
-        "J203",
         "J306",
         "J307"
       ]
@@ -582,6 +612,26 @@
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
         "J110"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical.kicad_mod",
+      "sha256": "9a629fe0a83b61c4e7c3285e6892b998209b911dae31f17e96f4b5afa7f64734",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J506"
       ]
     },
     {
@@ -710,26 +760,6 @@
         "J308",
         "J418",
         "J420"
-      ]
-    },
-    {
-      "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal",
-      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal.kicad_mod",
-      "sha256": "5f66e17ce30e395f6100c8f83b87e5cab7a9cc680a9ef3554d30f4c83c261ab0",
-      "pads": [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9"
-      ],
-      "origin": "KiCad 10.0.7 official, unmodified",
-      "refs": [
-        "J506"
       ]
     },
     {

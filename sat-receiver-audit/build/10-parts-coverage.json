@@ -29,10 +29,12 @@
   "design/parts/snapshots/2026-11-12-w2-gr5a-lcsc.json",
   "design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json",
   "design/parts/snapshots/2026-11-13-w2-grzone2-lcsc.json",
-  "design/parts/snapshots/2026-11-13-w2-grzone2-manual.json"
+  "design/parts/snapshots/2026-11-13-w2-grzone2-manual.json",
+  "design/parts/snapshots/2026-11-13-w2-pwrl6p3-manual.json",
+  "design/parts/snapshots/2026-11-13-w2-pwrl6p3-lcsc.json"
  ],
  "refs": 882,
- "parts": 269,
+ "parts": 270,
  "refs_by_mount": {
   "assembly": 8,
   "existing": 9,
@@ -65,7 +67,7 @@
   "у каталозі": 20
  },
  "purchased_refs_with_mpn": 812,
- "harness_family_items": 59,
+ "harness_family_items": 61,
  "tbd": [
   {
    "part": "J-BALANCE-DNP",
