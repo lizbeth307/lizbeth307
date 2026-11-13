@@ -4,7 +4,7 @@ import math, collections
 import model as M
 import router as R
 
-BOARD_BOX = (100.0, 100.0, 236.0, 210.0)  # KiCad mm: the PWR_B outline box (board mm x + 100, 210 - y)
+BOARD_BOX = (100.0, 100.0, 236.0, 240.0)  # KiCad mm: the PWR_B outline box (board mm x + 100, 210 - y); W2 PWRJ F2ENV: the slab to board y -30
 # PWR_B (W2 PWRB-R): completion copper of an earlier net may be ripped too (two routing layers leave no detour around it);
 # the ripped net is queued again by freeze_route.py
 SOFT = ('router', 'new')

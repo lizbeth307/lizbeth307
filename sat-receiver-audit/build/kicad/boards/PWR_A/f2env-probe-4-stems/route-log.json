@@ -1,0 +1,1908 @@
+{
+  "schema": "srrx-board-route-log-v1",
+  "board_id": "PWR_A",
+  "label": "Frozen route provenance (CI run); --check does not re-route",
+  "tool": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "source_read": "GitHub release API v2.5.0 asset digests, read 2026-11-07"
+  },
+  "runtime": {
+    "name": "Eclipse Temurin JRE",
+    "version": "25.0.5+8",
+    "licence": "GPL-2.0-with-classpath-exception",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jre_x64_linux_hotspot_25.0.5_8.tar.gz",
+    "sha256": "6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6",
+    "source_read": "Adoptium API and GitHub release API, read 2026-11-07"
+  },
+  "command": [
+    "java",
+    "-Djava.awt.headless=true",
+    "-cp",
+    "freerouting-2.5.0.jar",
+    "app.freerouting.cli.FreeroutingCli",
+    "-de",
+    "PWR_A.dsn",
+    "-do",
+    "PWR_A.ses",
+    "--router.autorouter.max_passes=100",
+    "-mt",
+    "1",
+    "--router.optimizer.max_threads=1",
+    "--router.automatic_neckdown=false",
+    "-da",
+    "--gui.enabled=false",
+    "--router.job_timeout=00:32:00",
+    "--logging.file.enabled=false",
+    "--user_data_path=<temp>",
+    "--router.fanout.enabled=false",
+    "-inc",
+    "SCRIPTED_GND"
+  ],
+  "exit_code": 0,
+  "log_tail": [
+    "   - Thermal Reliefs: Spoked connections for vias or pins that connect to the plane, facilitating soldering.",
+    "2. Why Signal Wires/Traces are Banned:",
+    "   - Destroyed Return Paths: High-speed signals on adjacent layers couple to the solid plane below/above as return paths. Crossing a trace gap detours return currents, causing severe EMI and signal integrity issues.",
+    "   - Compromised Power Delivery: Power planes should provide the lowest impedance path. Routing traces chops up the copper, creating bottleneck restrictions and voltage drops.",
+    "",
+    "2026-11-13 02:45:30.861 INFO   [098DA6\\58E356] Job '098DA6\\58E356' started at 2026-11-13T02:45:30.861032352Z.",
+    "2026-11-13 02:45:32.562 WARN   Design Warning: Board has 40 pre-existing clearance violation(s) in the loaded design (before routing):",
+    "  - 40 unfixable violation(s) (cannot be resolved by Freerouting):",
+    "      * 40 fixed trace/via clearance violations (first 5 shown):",
+    "          - C225.2 [net GND] <-> FixedVia#4480 [net GND]",
+    "          - C124.2 [net GND] <-> FixedVia#4665 [net GND]",
+    "          - C125.2 [net GND] <-> FixedVia#4664 [net GND]",
+    "          - C134.2 [net GND] <-> FixedVia#4659 [net GND]",
+    "          - C135.2 [net GND] <-> FixedVia#4658 [net GND]",
+    "          ... and 35 more",
+    "  - 0 potentially fixable violations",
+    "Notice: Freerouting does not modify component placement, board outlines, or fixed items.",
+    "Resolving these 40 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).",
+    "2026-11-13 02:45:32.633 INFO   [098DA6\\58E356] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-13 02:45:35.614 INFO   [098DA6\\58E356] Auto-routing stage started on board '777eed803df0534555ed89637ac0d4a3' with baseline score 227.72 for 416 unrouted items.",
+    "2026-11-13 02:45:50.348 WARN   BasicBoard.normalizeTraces: reached 2000 iterations for net 'E1_CONV_IN' — stopping to prevent hang. The board geometry for this net may be oscillating (split/combine cycle); traces are kept as-is and further normalization for this net is suppressed on this board candidate.",
+    "2026-11-13 02:46:07.341 WARN   BasicBoard.normalizeTraces: reached 2000 iterations for net 'SYS12' — stopping to prevent hang. The board geometry for this net may be oscillating (split/combine cycle); traces are kept as-is and further normalization for this net is suppressed on this board candidate.",
+    "2026-11-13 02:49:24.887 INFO   [098DA6\\58E356] Auto-routing pass #1 on board '777eed803df0534555ed89637ac0d4a3' was completed in 227.64 seconds with score 525.30 (225 unrouted and 40 violations), using 229.63 CPU seconds and the job allocated 100.32 GB of memory so far.",
+    "2026-11-13 02:51:49.025 INFO   [098DA6\\58E356] Auto-routing pass #2 on board '63ac2f9d7d68293f3ef7494ad791ac51' was completed in 142.09 seconds with score 504.27 (235 unrouted and 40 violations), using 373.80 CPU seconds and the job allocated 164.78 GB of memory so far.",
+    "2026-11-13 02:54:19.662 INFO   [098DA6\\58E356] Auto-routing pass #3 on board '997e708ea82c667f8b1fb997ba3ff475' was completed in 148.62 seconds with score 518.99 (228 unrouted and 40 violations), using 522.95 CPU seconds and the job allocated 230.56 GB of memory so far.",
+    "2026-11-13 02:57:11.501 INFO   [098DA6\\58E356] Auto-routing pass #4 on board 'db13c0e4d89bce9645328cc6f3168906' was completed in 169.79 seconds with score 508.48 (233 unrouted and 40 violations), using 693.76 CPU seconds and the job allocated 308.88 GB of memory so far.",
+    "2026-11-13 02:59:52.251 INFO   [098DA6\\58E356] Auto-routing pass #5 on board 'f66cd7a87b5b7bc69e2a9cbbb0bdc8ad' was completed in 158.66 seconds with score 508.48 (233 unrouted and 40 violations), using 853.81 CPU seconds and the job allocated 379.29 GB of memory so far.",
+    "2026-11-13 03:02:38.633 INFO   [098DA6\\58E356] Auto-routing pass #6 on board 'a0857018ac9dd47486918d15db0fd650' was completed in 164.30 seconds with score 535.81 (220 unrouted and 40 violations), using 1018.78 CPU seconds and the job allocated 454.31 GB of memory so far.",
+    "2026-11-13 03:05:26.484 INFO   [098DA6\\58E356] Auto-routing pass #7 on board '35a029fc66af2ab02e4f84115b080d8e' was completed in 165.73 seconds with score 523.20 (226 unrouted and 40 violations), using 1185.69 CPU seconds and the job allocated 531.34 GB of memory so far.",
+    "2026-11-13 03:08:10.447 INFO   [098DA6\\58E356] Auto-routing pass #8 on board '35a029fc66af2ab02e4f84115b080d8e' was completed in 0.00 seconds with score 535.81 (220 unrouted and 40 violations), using 1348.61 CPU seconds and the job allocated 606.19 GB of memory so far.",
+    "2026-11-13 03:08:22.377 WARN   BasicBoard.normalizeTraces: reached 2000 iterations for net 'E1_CONV_IN' — stopping to prevent hang. The board geometry for this net may be oscillating (split/combine cycle); traces are kept as-is and further normalization for this net is suppressed on this board candidate.",
+    "2026-11-13 03:10:41.146 WARN   BasicBoard.normalizeTraces: reached 2000 iterations for net 'SYS12' — stopping to prevent hang. The board geometry for this net may be oscillating (split/combine cycle); traces are kept as-is and further normalization for this net is suppressed on this board candidate.",
+    "2026-11-13 03:10:57.814 INFO   [098DA6\\58E356] Auto-routing pass #9 on board '35a029fc66af2ab02e4f84115b080d8e' was completed in 167.33 seconds with score 550.54 (213 unrouted and 40 violations), using 1514.35 CPU seconds and the job allocated 698.69 GB of memory so far.",
+    "2026-11-13 03:13:23.691 INFO   [098DA6\\58E356] Auto-routing pass #10 on board '002b95d134f49945662ddf1265014528' was completed in 143.94 seconds with score 554.74 (211 unrouted and 40 violations), using 1659.33 CPU seconds and the job allocated 771.96 GB of memory so far.",
+    "2026-11-13 03:15:55.104 INFO   [098DA6\\58E356] Auto-routing pass #11 on board '85e1d081932d270070d274494e8aa9c8' was completed in 149.48 seconds with score 558.95 (209 unrouted and 40 violations), using 1809.38 CPU seconds and the job allocated 847.00 GB of memory so far.",
+    "2026-11-13 03:17:37.270 INFO   [098DA6\\58E356] Auto-routing pass #12 on board 'f16d9b2a63b22352697ef8db07e3b278' was completed in 100.22 seconds with score 558.95 (209 unrouted and 40 violations), using 1905.74 CPU seconds and the job allocated 896.51 GB of memory so far.",
+    "2026-11-13 03:17:42.558 INFO   [098DA6\\58E356] Auto-routing stage completed with timeout: started with 416 unrouted nets, completed in 1928.16 seconds, final score: 558.95 (209 unrouted and 40 violations), using 1905.74 total CPU seconds, 896.51 GB total allocated, and 638.2 MB peak heap usage.",
+    "2026-11-13 03:17:42.623 INFO   [098DA6\\58E356] Job '098DA6\\58E356' finished with state: TIMED_OUT (elapsed: 32 minutes 11.76 seconds, finished at UTC: 2026-11-13T03:17:42.622226055Z).",
+    "2026-11-13 03:17:42.624 INFO   Saving output file '/tmp/sr-rx-PWR_A-t5mkmsj1/PWR_A.ses' (SES)...",
+    "2026-11-13 03:17:42.631 INFO   Successfully saved output file '/tmp/sr-rx-PWR_A-t5mkmsj1/PWR_A.ses' (97690 bytes)."
+  ],
+  "dsn_sha256": "e3045227a501e8ca29403eb5c3dc623443e9b1ca8ac99dec34d49efa94edadd8",
+  "ses_sha256": "1ed70da5026dc2a8d54c1bd5300170056119b3ff22fdda744cb3d607147f4602",
+  "dsn_probe": {
+    "resolution": "um 10",
+    "wires_fix": 629,
+    "wires_protect": 0,
+    "keepouts": 92,
+    "planes": 4,
+    "classes": {
+      "kicad_default": {
+        "width": "150",
+        "clearance": "150"
+      },
+      "SCRIPTED_GND": {
+        "width": "150",
+        "clearance": "150"
+      },
+      "BATT": {
+        "width": "3200",
+        "clearance": "150"
+      },
+      "PWR3A": {
+        "width": "1850",
+        "clearance": "150"
+      },
+      "PWR2A": {
+        "width": "800",
+        "clearance": "150"
+      },
+      "PWR1A": {
+        "width": "350",
+        "clearance": "150"
+      }
+    }
+  },
+  "locked_segments": {
+    "before_ses_import": 629,
+    "after_ses_import": 629
+  },
+  "via_centre_stubs": [
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "end": [
+        108.3,
+        161.75
+      ],
+      "centre": [
+        108.3,
+        161.8
+      ]
+    },
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "end": [
+        109.15,
+        161.75
+      ],
+      "centre": [
+        109.3,
+        161.8
+      ]
+    },
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "end": [
+        122.85,
+        161.75
+      ],
+      "centre": [
+        122.7,
+        161.8
+      ]
+    },
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "end": [
+        123.7,
+        161.75
+      ],
+      "centre": [
+        123.7,
+        161.8
+      ]
+    },
+    {
+      "net": "LAB5",
+      "layer": "F.Cu",
+      "end": [
+        140.85,
+        181.85
+      ],
+      "centre": [
+        140.85,
+        182.05
+      ]
+    },
+    {
+      "net": "LAB5",
+      "layer": "F.Cu",
+      "end": [
+        150.95,
+        181.95
+      ],
+      "centre": [
+        150.95,
+        182.05
+      ]
+    }
+  ],
+  "drc_command": [
+    "kicad-cli",
+    "pcb",
+    "drc",
+    "--format",
+    "json",
+    "--severity-all",
+    "--all-track-errors",
+    "--units",
+    "mm",
+    "--refill-zones",
+    "--save-board"
+  ],
+  "board_sha256": "48da6e72817470abd968f3aeb56d830075bd360817abb6d5e6522eb0b97550b1",
+  "previews": [
+    "build/kicad/boards/PWR_A/PWR_A-top.svg",
+    "build/kicad/boards/PWR_A/PWR_A-bottom.svg"
+  ],
+  "footprint_sources": [
+    {
+      "ref": "C103",
+      "footprint": "Capacitor_SMD:C_1206_3216Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1206_3216Metric.kicad_mod",
+      "sha256": "b2e4a08e3aaf40bc587090190c0e3969e962d7ae962c172cce0581ae8327651c"
+    },
+    {
+      "ref": "C104",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C105",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C106",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C107",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_6.3x7.7.kicad_mod",
+      "sha256": "5dd8fd24f704c6b1cff4e68302d61d80f9c0fd0e703478891b918fe51807f43e"
+    },
+    {
+      "ref": "C108",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C110",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C111",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C112",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C113",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_6.3x5.9.kicad_mod",
+      "sha256": "efe6ce7548c27034d3ee899c6d00ac17e75879f562c4f5b40d445e4770b8bdcd"
+    },
+    {
+      "ref": "C114",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C115",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C116",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C117",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C119",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C120",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C121",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C122",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C123",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C124",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C125",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C126",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C127",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C128",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C129",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C130",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C131",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C132",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C133",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C134",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C135",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C136",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C201",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C202",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C203",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C204",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C205",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C206",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+      "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+    },
+    {
+      "ref": "C207",
+      "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D8.0mm_P3.50mm.kicad_mod",
+      "sha256": "e7256cc327aa5d1bc5410a487248fa9b5e3d25153b2315201d5da5108cb49580"
+    },
+    {
+      "ref": "C208",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C209",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C210",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+      "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+    },
+    {
+      "ref": "C211",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C212",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C213",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C214",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C215",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C216",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C217",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C218",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C219",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+    },
+    {
+      "ref": "C220",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C221",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C222",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+      "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+    },
+    {
+      "ref": "C223",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C224",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C225",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/CP_Elec_5x4.5.kicad_mod",
+      "sha256": "8280b8a959d5826470ed9e25556e3a05af8dfbc8dec5c1d2635fd7f94a22e6ab"
+    },
+    {
+      "ref": "C226",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C227",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C228",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C229",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C230",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C231",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C252",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C253",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C254",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+      "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+    },
+    {
+      "ref": "C255",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C256",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C257",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C258",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C259",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C260",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C261",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C262",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+      "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+    },
+    {
+      "ref": "C263",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C264",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C265",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+      "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+    },
+    {
+      "ref": "C266",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C267",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C268",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C269",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C270",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C271",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C272",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C273",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+      "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+    },
+    {
+      "ref": "C278",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C279",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C280",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C281",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C288",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C289",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C290",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C291",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C292",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C293",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C294",
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f"
+    },
+    {
+      "ref": "C508",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C509",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C510",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C511",
+      "footprint": "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D5.0mm_P2.00mm.kicad_mod",
+      "sha256": "fd0a251de515130de6e789ffb786d43c746b83178e437feb9fc4f39b6ea9ef39"
+    },
+    {
+      "ref": "C512",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
+      "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0"
+    },
+    {
+      "ref": "C513",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C552",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C553",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "C2903",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb"
+    },
+    {
+      "ref": "C2913",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405"
+    },
+    {
+      "ref": "D101",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "D102",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "D103",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "D104",
+      "footprint": "SR_RX_Custom:D_SMB_KA",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/D_SMB_KA.kicad_mod",
+      "sha256": "243590db2adf6f22c3a69ddd36b26b9660c8be8393dae2a436d0817f4b96c7f7"
+    },
+    {
+      "ref": "D105",
+      "footprint": "SR_RX_Custom:D_SMB_KA",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/D_SMB_KA.kicad_mod",
+      "sha256": "243590db2adf6f22c3a69ddd36b26b9660c8be8393dae2a436d0817f4b96c7f7"
+    },
+    {
+      "ref": "D201",
+      "footprint": "SR_RX_Custom:D_SMB_KA",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/D_SMB_KA.kicad_mod",
+      "sha256": "243590db2adf6f22c3a69ddd36b26b9660c8be8393dae2a436d0817f4b96c7f7"
+    },
+    {
+      "ref": "D202",
+      "footprint": "Diode_SMD:Nexperia_CFP3_SOD-123W",
+      "file": "build/kicad/footprints/Diode_SMD.pretty/Nexperia_CFP3_SOD-123W.kicad_mod",
+      "sha256": "89ef0339e4b40830049981c4b2399acae4b93461c56423016d586bebea47f940"
+    },
+    {
+      "ref": "D203",
+      "footprint": "Diode_SMD:Nexperia_CFP3_SOD-123W",
+      "file": "build/kicad/footprints/Diode_SMD.pretty/Nexperia_CFP3_SOD-123W.kicad_mod",
+      "sha256": "89ef0339e4b40830049981c4b2399acae4b93461c56423016d586bebea47f940"
+    },
+    {
+      "ref": "D2903",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "F102",
+      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuseholder_Blade_Mini_Keystone_3568.kicad_mod",
+      "sha256": "ce9f2576e0604a938518a57905b3876e023afe3a4493bd80dbe5a56b171d068d"
+    },
+    {
+      "ref": "F103",
+      "footprint": "Fuse:Fuse_Littelfuse-NANO2-451_453",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuse_Littelfuse-NANO2-451_453.kicad_mod",
+      "sha256": "4d7971c5346420f32946d8f6f19189db0074a717fa4ad9566c72a60c7c21cb84"
+    },
+    {
+      "ref": "F104",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuse_1812_4532Metric.kicad_mod",
+      "sha256": "b2bd7adcbcc58fa3957f88eedc5c2c057055a8e1737142fc9ffea5afdb68f6e3"
+    },
+    {
+      "ref": "F201",
+      "footprint": "Fuse:Fuse_Littelfuse-NANO2-451_453",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuse_Littelfuse-NANO2-451_453.kicad_mod",
+      "sha256": "4d7971c5346420f32946d8f6f19189db0074a717fa4ad9566c72a60c7c21cb84"
+    },
+    {
+      "ref": "F202",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "file": "build/kicad/footprints/Fuse.pretty/Fuse_1812_4532Metric.kicad_mod",
+      "sha256": "b2bd7adcbcc58fa3957f88eedc5c2c057055a8e1737142fc9ffea5afdb68f6e3"
+    },
+    {
+      "ref": "J104",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical.kicad_mod",
+      "sha256": "9dc8529b288dff1cfbc3efe7b49cb9110ebfae665b8e7705dcc91fd305deaa2b"
+    },
+    {
+      "ref": "J105",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical.kicad_mod",
+      "sha256": "0b8945d43b6a2a9282971785c2b7d23b50eea9795bbb8c0398390b37883a1278"
+    },
+    {
+      "ref": "J106",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical.kicad_mod",
+      "sha256": "0b8945d43b6a2a9282971785c2b7d23b50eea9795bbb8c0398390b37883a1278"
+    },
+    {
+      "ref": "J107",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical.kicad_mod",
+      "sha256": "0b8945d43b6a2a9282971785c2b7d23b50eea9795bbb8c0398390b37883a1278"
+    },
+    {
+      "ref": "J108",
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical.kicad_mod",
+      "sha256": "1f4aa9a92dea496e784b2fa2ec1b8145a153a88c644cd010a2eac5c14b85edb4"
+    },
+    {
+      "ref": "J109",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd59286748b9a6fa9174237072608f811cf3169dddf00eab54a5c196fcb6f7e8"
+    },
+    {
+      "ref": "J110",
+      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical.kicad_mod",
+      "sha256": "03211833fb2e60a511e2fe68e1604d057517e1315ad0221909895d20be5cd7fc"
+    },
+    {
+      "ref": "J111",
+      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c"
+    },
+    {
+      "ref": "J112",
+      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical.kicad_mod",
+      "sha256": "f5488d79bbafc8c929bcfacf8e960e81dcfc126c598e03083de317607937b58e"
+    },
+    {
+      "ref": "J113",
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd59286748b9a6fa9174237072608f811cf3169dddf00eab54a5c196fcb6f7e8"
+    },
+    {
+      "ref": "J114",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6"
+    },
+    {
+      "ref": "J115",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6"
+    },
+    {
+      "ref": "J205",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6"
+    },
+    {
+      "ref": "J206",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical.kicad_mod",
+      "sha256": "1aaa5ed421b2f1c499e2f293531216e3eb6d548960cc7941d6669c8ce52ddc75"
+    },
+    {
+      "ref": "J208",
+      "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Samtec.pretty/Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical.kicad_mod",
+      "sha256": "ff556995775651c9e6395aaa029847ad24251f121cbd478fd464f46bd691cec1"
+    },
+    {
+      "ref": "J507",
+      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical.kicad_mod",
+      "sha256": "f5488d79bbafc8c929bcfacf8e960e81dcfc126c598e03083de317607937b58e"
+    },
+    {
+      "ref": "L101",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL6060-XXX",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_Coilcraft_XAL6060-XXX.kicad_mod",
+      "sha256": "5d27dc6b6b402bcbbe858a0606c8fcb585007cf04b3635392f9e3d253306936a"
+    },
+    {
+      "ref": "L102",
+      "footprint": "Inductor_SMD:L_Bourns_SRP1038C_10.0x10.0mm",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_Bourns_SRP1038C_10.0x10.0mm.kicad_mod",
+      "sha256": "5d7a5b273fe08a1fa48a67136c29d86da9dd2965882d689fa0fcf7789d9c6dfa"
+    },
+    {
+      "ref": "L201",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_Coilcraft_XAL5030-XXX.kicad_mod",
+      "sha256": "92ff22d3cd6d396cb55a5be65cf4ba1d5ef45247dc673c5ec2fcde91794871ad"
+    },
+    {
+      "ref": "L202",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_1008_2520Metric.kicad_mod",
+      "sha256": "eb3f2dc53b4e27df9f2bd5f79eb68100105fc58c34397b04f546d6f57939db6a"
+    },
+    {
+      "ref": "L203",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_Coilcraft_XAL5030-XXX.kicad_mod",
+      "sha256": "92ff22d3cd6d396cb55a5be65cf4ba1d5ef45247dc673c5ec2fcde91794871ad"
+    },
+    {
+      "ref": "L204",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_1008_2520Metric.kicad_mod",
+      "sha256": "eb3f2dc53b4e27df9f2bd5f79eb68100105fc58c34397b04f546d6f57939db6a"
+    },
+    {
+      "ref": "L205",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_Coilcraft_XAL5030-XXX.kicad_mod",
+      "sha256": "92ff22d3cd6d396cb55a5be65cf4ba1d5ef45247dc673c5ec2fcde91794871ad"
+    },
+    {
+      "ref": "L211",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_1008_2520Metric.kicad_mod",
+      "sha256": "eb3f2dc53b4e27df9f2bd5f79eb68100105fc58c34397b04f546d6f57939db6a"
+    },
+    {
+      "ref": "L212",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_1008_2520Metric.kicad_mod",
+      "sha256": "eb3f2dc53b4e27df9f2bd5f79eb68100105fc58c34397b04f546d6f57939db6a"
+    },
+    {
+      "ref": "L213",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_1008_2520Metric.kicad_mod",
+      "sha256": "eb3f2dc53b4e27df9f2bd5f79eb68100105fc58c34397b04f546d6f57939db6a"
+    },
+    {
+      "ref": "L214",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_1008_2520Metric.kicad_mod",
+      "sha256": "eb3f2dc53b4e27df9f2bd5f79eb68100105fc58c34397b04f546d6f57939db6a"
+    },
+    {
+      "ref": "L501",
+      "footprint": "Inductor_SMD:L_Bourns_SRR1260",
+      "file": "build/kicad/footprints/Inductor_SMD.pretty/L_Bourns_SRR1260.kicad_mod",
+      "sha256": "5f4820601909aaee7397c98ea39a4be00d0fa474ca18cbcfebf15a3f62851349"
+    },
+    {
+      "ref": "Q101",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "Q102",
+      "footprint": "Package_SON:Diodes_PowerDI3333-8",
+      "file": "build/kicad/footprints/Package_SON.pretty/Diodes_PowerDI3333-8.kicad_mod",
+      "sha256": "e868e39c4329b02aca12e4f1e25421231fa667922dea0c90c50f585b5ab32d1a"
+    },
+    {
+      "ref": "Q201",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "Q202",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "Q2903",
+      "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+      "file": "build/kicad/footprints/Package_SO.pretty/SOIC-8_3.9x4.9mm_P1.27mm.kicad_mod",
+      "sha256": "074ecb2092b24fa4b4b9cdd7c926fc587b0d7d6d21e7341e57935fd42d36894f"
+    },
+    {
+      "ref": "Q2913",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15"
+    },
+    {
+      "ref": "R103",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R104",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R105",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R106",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R107",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R108",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R109",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R110",
+      "footprint": "Resistor_SMD:R_2512_6332Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_2512_6332Metric.kicad_mod",
+      "sha256": "abab4bf8eeb3ed03061d8eeb56b542cdac074ce8a0ace0f9b06e933c0b48f297"
+    },
+    {
+      "ref": "R111",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R112",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R113",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R114",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R115",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R116",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R121",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R122",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R123",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R124",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R125",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R126",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R127",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R128",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R129",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R130",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R131",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R132",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R133",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R201",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R202",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R203",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R204",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R205",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R206",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R207",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R208",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R209",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R210",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R211",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R212",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R213",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R214",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R215",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R216",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R218",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R219",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R220",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R221",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R222",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R223",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R224",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R225",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R226",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R227",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R252",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R253",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R254",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R255",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R256",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R258",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R259",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R260",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R261",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R262",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R263",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R264",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R266",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R267",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1206_3216Metric.kicad_mod",
+      "sha256": "c7320668dc81bbb954cb4f15e4e7a766c120059343d43551468c8f7ccc8fde37"
+    },
+    {
+      "ref": "R274",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R275",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R276",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R277",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R278",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R279",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R288",
+      "footprint": "Resistor_SMD:R_0805_2012Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0805_2012Metric.kicad_mod",
+      "sha256": "f050b6a50cc7e6f86291fb7aa8f87b0d02255e21cfbddf291cdccc87e5889794"
+    },
+    {
+      "ref": "R289",
+      "footprint": "Resistor_SMD:R_0805_2012Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0805_2012Metric.kicad_mod",
+      "sha256": "f050b6a50cc7e6f86291fb7aa8f87b0d02255e21cfbddf291cdccc87e5889794"
+    },
+    {
+      "ref": "R290",
+      "footprint": "Resistor_SMD:R_0805_2012Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0805_2012Metric.kicad_mod",
+      "sha256": "f050b6a50cc7e6f86291fb7aa8f87b0d02255e21cfbddf291cdccc87e5889794"
+    },
+    {
+      "ref": "R291",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R292",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R509",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R510",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R512",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1210_3225Metric.kicad_mod",
+      "sha256": "8816a8edfa0e619a86c5a65a59048b0fa2c3472d0df5a62244290224abacf7ff"
+    },
+    {
+      "ref": "R513",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R553",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R2903",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R2913",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "R2923",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23"
+    },
+    {
+      "ref": "TP101",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP102",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP103",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP104",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP105",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP106",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP107",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP108",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP201",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP202",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP203",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP204",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP205",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP211",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP212",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP213",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP214",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP215",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP503",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "TP2903",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "file": "build/kicad/footprints/TestPoint.pretty/TestPoint_Pad_D1.5mm.kicad_mod",
+      "sha256": "d7ae230b69d8c3dad5082515a51aac9e4840360c8f4324a00673353676d43042"
+    },
+    {
+      "ref": "U103",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-5",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod",
+      "sha256": "455a3f7c3e5eb5b8847eaa5df23e18651e78ab9f75afd09a0883758a0d901761"
+    },
+    {
+      "ref": "U104",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca"
+    },
+    {
+      "ref": "U107",
+      "footprint": "SR_RX_Custom:TI_RJR0014A_VQFN-HR-14_4x3.5mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RJR0014A_VQFN-HR-14_4x3.5mm.kicad_mod",
+      "sha256": "f990d5d08399f73d531964c797ceaa6e3351c1bb4ef10cbf89e6e55ee174abcb"
+    },
+    {
+      "ref": "U108",
+      "footprint": "SR_RX_Custom:TI_RDL0020A_B3QFN-20_5x5.5mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RDL0020A_B3QFN-20_5x5.5mm.kicad_mod",
+      "sha256": "effa692ae8f9dff965c760182a44b3680f18f71f29baace91c53dbbcbe40afb8"
+    },
+    {
+      "ref": "U109",
+      "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm.kicad_mod",
+      "sha256": "29d72363394623860e2ca3fe74a9cf3d6ebe7b265694989d3d5ca3d94a0b087f"
+    },
+    {
+      "ref": "U111",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca"
+    },
+    {
+      "ref": "U201",
+      "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm.kicad_mod",
+      "sha256": "29d72363394623860e2ca3fe74a9cf3d6ebe7b265694989d3d5ca3d94a0b087f"
+    },
+    {
+      "ref": "U202",
+      "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm.kicad_mod",
+      "sha256": "29d72363394623860e2ca3fe74a9cf3d6ebe7b265694989d3d5ca3d94a0b087f"
+    },
+    {
+      "ref": "U203",
+      "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm.kicad_mod",
+      "sha256": "29d72363394623860e2ca3fe74a9cf3d6ebe7b265694989d3d5ca3d94a0b087f"
+    },
+    {
+      "ref": "U204",
+      "footprint": "Package_SO:MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias",
+      "file": "build/kicad/footprints/Package_SO.pretty/MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias.kicad_mod",
+      "sha256": "8b6bece92cec10d1e5c523200e161f3cb727242f49f594c2b6474cf657f6e53b"
+    },
+    {
+      "ref": "U205",
+      "footprint": "Package_SO:MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias",
+      "file": "build/kicad/footprints/Package_SO.pretty/MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias.kicad_mod",
+      "sha256": "8b6bece92cec10d1e5c523200e161f3cb727242f49f594c2b6474cf657f6e53b"
+    },
+    {
+      "ref": "U211",
+      "footprint": "SR_RX_Custom:TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm.kicad_mod",
+      "sha256": "e37866768c11f6a268569a71bc7771ae6cb58afe655230a8b2b8d84985276a49"
+    },
+    {
+      "ref": "U212",
+      "footprint": "SR_RX_Custom:TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm.kicad_mod",
+      "sha256": "9a4eae28b9c4517a814e72ca25d1faaf31be20f3149407542195331836f0bd72"
+    },
+    {
+      "ref": "U213",
+      "footprint": "SR_RX_Custom:TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm.kicad_mod",
+      "sha256": "e37866768c11f6a268569a71bc7771ae6cb58afe655230a8b2b8d84985276a49"
+    },
+    {
+      "ref": "U214",
+      "footprint": "SR_RX_Custom:TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm.kicad_mod",
+      "sha256": "9a4eae28b9c4517a814e72ca25d1faaf31be20f3149407542195331836f0bd72"
+    },
+    {
+      "ref": "U216",
+      "footprint": "SR_RX_Custom:TI_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.16x2.16mm",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/TI_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.16x2.16mm.kicad_mod",
+      "sha256": "021b0285c99bdf68ceed8e61b18f71d6dda8c2cd9de9c35f1fe2117187ecba86"
+    },
+    {
+      "ref": "U220",
+      "footprint": "Package_TO_SOT_SMD:TSOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/TSOT-23-6.kicad_mod",
+      "sha256": "2b3e097508a6979b828ca1125470c9edb557dced151630c94ad579b9b0e83442"
+    },
+    {
+      "ref": "U503",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca"
+    },
+    {
+      "ref": "U551",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca"
+    },
+    {
+      "ref": "U553",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca"
+    }
+  ],
+  "kicad_version": "10.0.7",
+  "github": {
+    "run_id": "43354141527",
+    "sha": "a28dc2203ae2c4d171369f57fca7d777e77ccf8d",
+    "ref": "refs/heads/wip/w2-pwrj-f2env"
+  }
+}

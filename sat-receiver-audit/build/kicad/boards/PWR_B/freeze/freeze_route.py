@@ -136,6 +136,7 @@ def main(argv=None):
     ap.add_argument('--in2-signal', action='store_true', help='In2.Cu is a signal layer (make_spec.py IN2_SIGNAL): signal nets '
                     'are completed on F.Cu, In2.Cu and B.Cu, power-class nets on F.Cu and B.Cu only (inner class widths)')
     ap.add_argument('--in2-bias', type=float, default=1.0, help='extra cost per mm on In2.Cu (1.0: an In2 mm costs two)')
+    ap.add_argument('--no-rip', action='store_true', help='W2 PWRJ F2ENV: join only along free paths, never rip router copper')
     ap.add_argument('--partial', action='store_true', help='write route-frozen.json even with open connections (listed under open)')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
@@ -172,7 +173,8 @@ def main(argv=None):
             ok, ripped = fz.connect(net, width=w, max_iter=200,
                                     layers=('F.Cu', 'B.Cu') if net in widths else ('F.Cu', 'In2.Cu', 'B.Cu'))
         else:
-            ok, ripped = fz.connect(net, width=w, max_iter=200, l2_bias=(args.in2_bias if args.in2 and net not in widths else None))
+            ok, ripped = fz.connect(net, allow_rip=not args.no_rip, width=w, max_iter=200,
+                                    l2_bias=(args.in2_bias if args.in2 and net not in widths else None))
         after = len(m.islands(net))
         print(f'{net}: {"OK" if ok else "FAILED"} islands {before} -> {after} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if ok:
