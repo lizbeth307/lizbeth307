@@ -2,7 +2,7 @@
   "inputs": [
     {
       "file": "design/E1.json",
-      "sha256": "12b5f60417ddec0e48a1e76aacfb67ad160d3f67586aa06870f43ebef082421b"
+      "sha256": "87d008b4b7026c3390caa139e46bd5e8aae9d0ba3ccea83bb6ec09fb52fddac1"
     },
     {
       "file": "design/E2.json",
@@ -18,7 +18,7 @@
     },
     {
       "file": "design/E5.json",
-      "sha256": "e31f686e1fcad7a02e32a449b1876d08af3d7164130ef55fd37d0d3ffcf52cff"
+      "sha256": "56eacafd2dc6bc4498382ec6b164ec8972aaa78c7182bfaef2725881bcff9d9f"
     },
     {
       "file": "build/kicad/footprints/manifest.json",

@@ -14,16 +14,19 @@
   ],
   "partition": "pcb/generated/partition.json",
   "layers": {
-    "copper": 4,
+    "copper": 6,
     "thickness_mm": 1.6,
     "source": "build/15 Шари (4-layer JLC04161H-7628, 1 oz outer) and mechanical/generated/contract/boards.json stackup",
     "types": {
-      "In1.Cu": "power"
+      "In1.Cu": "power",
+      "In4.Cu": "power"
     },
     "plan": {
       "F.Cu": "parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour",
       "In1.Cu": "solid GND plane (layer type power: the router puts only vias through it)",
       "In2.Cu": "signals (autorouted; W2 PWRB-R: the S-G-S-S plan of CTRL, a third routing layer for the bar between J209 and the S02 headers), GND pour after routing",
+      "In3.Cu": "signals (6 layers), GND pour after routing",
+      "In4.Cu": "solid GND plane (6 layers, layer type power)",
       "B.Cu": "B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour"
     }
   },
@@ -2541,6 +2544,8 @@
       "F.Cu",
       "In1.Cu",
       "In2.Cu",
+      "In3.Cu",
+      "In4.Cu",
       "B.Cu"
     ],
     "keepout_blocks": [
@@ -6286,6 +6291,15 @@
         "priority": 0,
         "pad_connection": "solid",
         "why": "GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it"
+      },
+      {
+        "id": "GND-In4",
+        "net": "GND",
+        "layer": "In4.Cu",
+        "outline": "board",
+        "priority": 0,
+        "pad_connection": "solid",
+        "why": "W2 PWRJ-F2C probe, 6 layers: second solid GND plane (L5 of JLC06161H-2116)"
       }
     ]
   },
@@ -6297,7 +6311,16 @@
       "outline": "board",
       "priority": 0,
       "pad_connection": "solid",
-      "why": "W2 PWRB-R: In2.Cu is a signal layer (IN2_SIGNAL); its GND pour after routing joins the scripted GND vias"
+      "why": "W2 PWRB-R: In2.Cu is a signal layer (IN2_SIGNAL / 6 layers); its GND pour after routing joins the scripted GND vias"
+    },
+    {
+      "id": "GND-In3",
+      "net": "GND",
+      "layer": "In3.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "W2 PWRB-R: In3.Cu is a signal layer (IN2_SIGNAL / 6 layers); its GND pour after routing joins the scripted GND vias"
     },
     {
       "id": "GND-F",
@@ -6322,6 +6345,7 @@
     "layers": [
       "F.Cu",
       "In2.Cu",
+      "In3.Cu",
       "B.Cu"
     ],
     "blocks": [
@@ -6337,6 +6361,8 @@
       "F.Cu",
       "In1.Cu",
       "In2.Cu",
+      "In3.Cu",
+      "In4.Cu",
       "B.Cu"
     ],
     "blocks": [

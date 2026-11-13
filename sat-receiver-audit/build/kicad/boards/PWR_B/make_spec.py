@@ -78,6 +78,12 @@ CRT_GUARD = 0.05      # courtyard boxes here are centre lines; KiCad's include h
 # W2 PWRJ-F2C probe: True, with router.class_layers (the DSN use_layer patch of pcb/board_gen.py, from the W2 PCB-CTRL
 # lineage as on wip/w2-pwrbr-route) keeping PWR1A on F.Cu / B.Cu, so In2.Cu carries only Default-class signals.
 IN2_SIGNAL = True
+# W2 PWRJ-F2C probe: COPPER 6 is the escalation of the task brief (JLC06161H-2116, pcb/generated/stackup-6l.json, ported
+# from wip/w2-pwrbr-layers6): S-G-S-S-G-S, In1.Cu and In4.Cu solid GND planes, F.Cu / In2.Cu / In3.Cu / B.Cu route (PWR1A
+# on F.Cu / B.Cu only, router.class_layers), GND pours on In2.Cu and In3.Cu after routing.
+COPPER = 6
+CU_LAYERS = ['F.Cu'] + [f'In{i}.Cu' for i in range(1, COPPER - 1)] + ['B.Cu']
+SIGNAL_INNER = ['In2.Cu', 'In3.Cu'] if COPPER == 6 else (['In2.Cu'] if IN2_SIGNAL else [])
 VIA_D, VIA_DRILL = 0.7, 0.3   # 0.7 / 0.3: router vias at clearance 0.15 keep the 0.5 mm hole-to-hole rule (0.55)
 
 
@@ -1142,9 +1148,10 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
         'domains': list(c['domains']),
         'partition': 'pcb/generated/partition.json',
         'layers': {
-            'copper': 4, 'thickness_mm': 1.6,
+            'copper': COPPER, 'thickness_mm': 1.6,
             'source': 'build/15 Шари (4-layer JLC04161H-7628, 1 oz outer) and mechanical/generated/contract/boards.json stackup',
-            'types': {'In1.Cu': 'power'} if IN2_SIGNAL else {'In1.Cu': 'power', 'In2.Cu': 'power'},
+            'types': ({'In1.Cu': 'power', 'In4.Cu': 'power'} if COPPER == 6 else
+                      {'In1.Cu': 'power'} if IN2_SIGNAL else {'In1.Cu': 'power', 'In2.Cu': 'power'}),
             'plan': {'F.Cu': 'parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour',
                      'In1.Cu': 'solid GND plane (layer type power: the router puts only vias through it)',
                      'In2.Cu': ('signals (autorouted; W2 PWRB-R: the S-G-S-S plan of CTRL, a third routing layer for the '
@@ -1153,6 +1160,8 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                          '; locked slow-signal links of the frozen route completion (route-frozen.json, W2 PWRB-R) where '
                          'F.Cu and B.Cu had no path; the plane fill flows around them, In1.Cu stays solid'
                          if any(t['layer'] == 'In2.Cu' for t in tracks) else ''),
+                     **({'In3.Cu': 'signals (6 layers), GND pour after routing', 'In4.Cu': 'solid GND plane (6 layers, layer type power)'}
+                        if COPPER == 6 else {}),
                      'B.Cu': 'B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour'}},
         'project': 'build/kicad/boards/PWR_B/PWR_B.kicad_pro',
         'rules_file': None,
@@ -1180,7 +1189,7 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
             'spares': 0,
             'spares_source': 'no spare board planned (build/15 W2 PCB-PWRB); a fab panel minimum is a purchasing matter'},
         'parts': parts,
-        'holes': {'from_contract': True, 'ref_prefix': 'H', 'keepout_layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'],
+        'holes': {'from_contract': True, 'ref_prefix': 'H', 'keepout_layers': list(CU_LAYERS),
                   'keepout_blocks': ['tracks', 'vias', 'zone_fills']},
         'groups': [],
         'pre_route': {
@@ -1193,18 +1202,20 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
             'tracks': tracks,
             'vias': vias,
             'zones': [{'id': 'GND-In1', 'net': 'GND', 'layer': 'In1.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
-                       'why': 'GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it'}] + ([] if IN2_SIGNAL else [
+                       'why': 'GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it'}] + ([
+                      {'id': 'GND-In4', 'net': 'GND', 'layer': 'In4.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+                       'why': 'W2 PWRJ-F2C probe, 6 layers: second solid GND plane (L5 of JLC06161H-2116)'}] if COPPER == 6 else []) + ([] if IN2_SIGNAL else [
                       {'id': 'GND-In2', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
                        'why': 'second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). '
                               'Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)'}])},
-        'post_route_zones': ([{'id': 'GND-In2', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
-                               'why': 'W2 PWRB-R: In2.Cu is a signal layer (IN2_SIGNAL); its GND pour after routing joins the scripted GND vias'}]
-                             if IN2_SIGNAL else []) + [
+        'post_route_zones': ([{'id': f'GND-{lay[:3]}', 'net': 'GND', 'layer': lay, 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+                               'why': f'W2 PWRB-R: {lay} is a signal layer (IN2_SIGNAL / 6 layers); its GND pour after routing joins the scripted GND vias'}
+                              for lay in SIGNAL_INNER]) + [
             {'id': 'GND-F', 'net': 'GND', 'layer': 'F.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
              'why': 'solid pad connection: thermal spokes of THT header GND pins were starved between the pins (route run 42414083566); '
                     'the solder-joint cost of solid THT connections is an assembly gate (OPEN, see GND-In2)'},
             {'id': 'GND-B', 'net': 'GND', 'layer': 'B.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid'}],
-        'edge_keepout': {'width_mm': 0.2, 'layers': ['F.Cu', 'In2.Cu', 'B.Cu'] if IN2_SIGNAL else ['F.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias'],
+        'edge_keepout': {'width_mm': 0.2, 'layers': ['F.Cu'] + SIGNAL_INNER + ['B.Cu'], 'blocks': ['tracks', 'vias'],
                          'why': 'rule-area strips (half-width 0.2) on every outline and cutout edge: the router keeps its copper '
                                 '0.35 mm off the edge, above the project copper-to-edge 0.3 (route run 42414083566 had 0.23)'},
         'planned_cutouts': {
@@ -1214,7 +1225,7 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
                     'blocks tracks, vias, pads and zone fills, so Freerouting routes around it, the GND planes and pours leave '
                     'it free and KiCad DRC reports any copper in it; pcb/check_boards.py planned_cutouts measures every copper '
                     'item of the routed board against the rects'),
-            'margin_mm': EDGE, 'layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'], 'blocks': ['tracks', 'vias', 'zone_fills', 'pads'],
+            'margin_mm': EDGE, 'layers': list(CU_LAYERS), 'blocks': ['tracks', 'vias', 'zone_fills', 'pads'],
             'rects': [{'id': cu['ref'], 'kind': cu['kind'],
                        'rect': [cu['rect'][0], cu['rect'][1], r4(cu['rect'][2] - cu['rect'][0]), r4(cu['rect'][3] - cu['rect'][1])]}
                       for cu in inp.cutouts]},

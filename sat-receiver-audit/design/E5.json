@@ -3605,15 +3605,14 @@
     },
     {
       "ref": "J507",
-      "value": "X32S1-PWR: JST PH 4, верхній вхід, S32",
+      "value": "X32S1-PWR: JST PH 4, бічний вхід, S32",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR і HATCH",
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
       "status": "design",
-      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
-      "mpn": "B4B-PH-K-S(LF)(SN)",
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
       "manufacturer": "JST",
-      "lcsc": "C131334",
       "pins": [
         {
           "number": "1",
@@ -3641,7 +3640,8 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X32S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S32; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X32S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S32; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWRJ-F2C probe: роз’єм стоїть на PWR-C (деталі до 6.5 мм), тому бічний вхід JST PH S*B-PH-K-S замість вертикального B*B (з вилкою 8.0 мм)."
       ]
     },
     {

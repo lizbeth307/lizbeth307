@@ -693,8 +693,8 @@ def validate_spec(spec, board):
         raise SpecError(f'{board}: spec lacks {missing}')
     if spec['schema'] != SPEC_SCHEMA or spec['board_id'] != board:
         raise SpecError(f'{board}: schema must be {SPEC_SCHEMA} and board_id {board}')
-    if spec['layers']['copper'] not in (2, 4):
-        raise SpecError(f'{board}: copper layers must be 2 or 4')
+    if spec['layers']['copper'] not in (2, 4, 6):  # 6: W2 CTRL-R (CTRL, pcb/generated/stackup-6l.json)
+        raise SpecError(f'{board}: copper layers must be 2, 4 or 6')
     if spec.get('rules_file') is not None:
         raise SpecError(f'{board}: rules_file is set, but copying it into build/kicad/boards/{board}/{board}.kicad_dru '
                         '(and hashing it) is not implemented in board_gen yet; keep it null')

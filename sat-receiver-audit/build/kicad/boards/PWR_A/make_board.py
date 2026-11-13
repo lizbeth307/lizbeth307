@@ -894,6 +894,11 @@ def height_zones(inp):
 
 # ------------------------------------------------------------------ project rules
 SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND'}
+# W2 PWRJ-F2C probe, diagnostic only (not a candidate board): the router widths of the power classes narrowed to widths
+# that enter SOT/QFN pins, so a route run separates pad entry (class width wider than the pin) from channel capacity.
+# Router copper below the class width is a pcb/check_boards.py class_widths finding; {} = the committed classes.
+ROUTER_NARROW = {'BATT': 0.6, 'PWR3A': 0.6, 'PWR2A': 0.5}
+COPPER = 4  # W2 PWRJ-F2C probe: 6 = the 6-layer escalation (In3/In4 signal layers, In1/In2 planes as on 4 layers)
 
 
 def project_json(inp, nets):
@@ -908,7 +913,7 @@ def project_json(inp, nets):
                       ('SCRIPTED_GND', nc['classes']['SIG'])):
         row = copy.deepcopy(default)
         row['name'] = name
-        row['track_width'] = cls['outer_min_width_mm']
+        row['track_width'] = min(cls['outer_min_width_mm'], ROUTER_NARROW.get(name, 99.0))
         row['clearance'] = cls['clearance_mm']
         row['via_diameter'] = VIA_D
         row['via_drill'] = pd['via_hole']
@@ -992,6 +997,25 @@ def build():
                     'moved_refs': len(all_moves(study)),
                     'manual': [{'ref': ref, 'to': [x, y], 'rotation': rot, 'side': side, 'why': why}
                                for ref, (x, y, rot, side, why) in sorted(MOVES.items(), key=lambda kv: bg.sort_ref(kv[0]))]}
+    if COPPER == 6:  # W2 PWRJ-F2C probe: the 6-layer escalation of the task brief (JLC06161H-2116, pcb/generated/stackup-6l.json)
+        sig = ['In3.Cu', 'In4.Cu']
+        out['layers'] = {**out['layers'], 'copper': 6,
+                         'source': 'W2 PWRJ-F2C probe: JLC06161H-2116 6 layers 1.6 mm, 1 oz outer / 0.5 oz inner '
+                                   '(pcb/generated/stackup-6l.json, read 2026-11-12 by W2 CTRL-R)',
+                         'plan': {**out['layers']['plan'],
+                                  'In3.Cu': 'signals (Default class only: router.class_layers keeps the power classes on '
+                                            'F.Cu / B.Cu), GND pour after routing',
+                                  'In4.Cu': 'signals (as In3.Cu), GND pour after routing'}}
+        out['holes'] = {**out['holes'], 'keepout_layers': ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']}
+        out['post_route_zones'] = out['post_route_zones'] + [
+            {'id': f'GND-{lay[:3]}', 'net': 'GND', 'layer': lay, 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
+             'why': 'W2 PWRJ-F2C probe, 6 layers: GND pour of a signal layer after routing (joins the scripted GND vias)'}
+            for lay in sig]
+        out['edge_keepout'] = {**out['edge_keepout'], 'layers': ['F.Cu'] + sig + ['B.Cu']}
+        out['router'] = {**out['router'], 'class_layers': {c: ['F.Cu', 'B.Cu'] for c in ('BATT', 'PWR1A', 'PWR2A', 'PWR3A')},
+                         'why': out['router']['why'] + '; W2 PWRJ-F2C probe 6 layers: In3.Cu and In4.Cu route the Default '
+                                'class, the power classes stay on F.Cu / B.Cu (router.class_layers, inner copper is no '
+                                'current path in pcb/generated/netclasses.json)'}
     out['generator'] = 'build/kicad/boards/PWR_A/make_board.py'
     bg.validate_spec(out, BOARD)
     return out, inp, problems, nets
