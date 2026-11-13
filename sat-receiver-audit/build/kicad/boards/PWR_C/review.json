@@ -1,0 +1,590 @@
+{
+  "schema": "srrx-board-review-v1",
+  "board_id": "PWR_C",
+  "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "pcb/check_boards.py",
+  "result": "NO_FINDINGS",
+  "inputs": {
+    "board_file": {
+      "path": "build/kicad/boards/PWR_C/PWR_C.kicad_pcb",
+      "sha256": "8a74618ea35452f5198c7a7aa23ddc818471674d991ee57799d5f7a4d5c5d167"
+    },
+    "projection_sha256": {
+      "graph_refs_pins_nets": "f6a2d4d61d5da261bce24e81407fbb9d5caa035abf0996b941cb80d92c1dd25f",
+      "footprints": "c42eea472cebc4e0b294e3f0be2919667066677a24b55ffd4cf24254c0787726",
+      "contract_board": "1e6931ac8c78c988612c2811c2f716420583798da53f71a9179f7ccf60ceec80",
+      "netclasses": "587a78c0355b0aabe2ca4a93601d8baf761bea8693539789b6d740e4b2bdfcfd",
+      "spec": "fd45f1fa7676aeae3731da58610988c5ac737ab23b81e47eb95289ed91e75351"
+    },
+    "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
+  },
+  "frame": {
+    "origin": [
+      100.0,
+      133.5
+    ],
+    "y": "up",
+    "source": "Edge.Cuts bounding box"
+  },
+  "counts": {
+    "footprints": 64,
+    "pads": 183,
+    "tracks": 425,
+    "vias": 72,
+    "zones": 40,
+    "holes": 9,
+    "copper_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ]
+  },
+  "checks": {
+    "outline": {
+      "findings": 0,
+      "area_mm2": 4886.875,
+      "loops": 2
+    },
+    "holes": {
+      "findings": 0,
+      "contract_holes": 5,
+      "board_holes": 9
+    },
+    "keepouts": {
+      "findings": 0,
+      "keepout_r_mm": 3.5,
+      "tolerance_mm": 0.005
+    },
+    "pad_nets": {
+      "findings": 0,
+      "expected_refs": 52,
+      "board_footprints": 64
+    },
+    "class_widths": {
+      "findings": 0,
+      "tracks_checked": 337,
+      "pour_necks": [],
+      "split_nets": {}
+    },
+    "rf50": {
+      "findings": 0,
+      "rf50_segments": 0
+    },
+    "gnd_chassis_ties": {
+      "findings": 0,
+      "ties": [],
+      "expected": 0
+    },
+    "b2b": {
+      "findings": 0,
+      "pairs": 0
+    },
+    "tht_pockets": {
+      "findings": 0,
+      "applies": false
+    },
+    "heights": {
+      "findings": 0,
+      "checked": 0
+    },
+    "pth_annular": {
+      "findings": 0,
+      "floor_mm": 0.15,
+      "fab_floor": "jlc_4l_1oz"
+    }
+  },
+  "findings": [],
+  "unverified": [
+    {
+      "check": "class_widths",
+      "item": "C103 branch on E1_N",
+      "reason": "branch_exempt: 8 track piece(s), path 12.81 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "C116 branch on E1_USB_PD_RAW",
+      "reason": "branch_exempt: 4 track piece(s), path 10.294 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_USB_PD_RAW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "C117 branch on E1_USB_PD_SAFE",
+      "reason": "branch_exempt: 1 track piece(s), path 4.6 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_USB_PD_SAFE at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "C552 branch on LAB5",
+      "reason": "branch_exempt: 2 track piece(s), path 2.065 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of LAB5 at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "D104 branch on E1_N",
+      "reason": "branch_exempt: 8 track piece(s), path 20.621 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "D105 branch on E1_SW",
+      "reason": "branch_exempt: 5 track piece(s), path 30.846 mm <= 40.0 mm, width >= 0.5 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_SW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "F103 branch on E1_N",
+      "reason": "branch_exempt: 1 track piece(s), path 6.345 mm <= 40.0 mm, width >= 0.5 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N, E1_SERVICE_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "F103 branch on E1_SERVICE_P",
+      "reason": "branch_exempt: 1 track piece(s), path 15.545 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N, E1_SERVICE_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "J105 branch on E1_SHUNT_P",
+      "reason": "branch_exempt: 1 track piece(s), path 7.344 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_SHUNT_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "J108 branch on E1_N",
+      "reason": "branch_exempt: 1 track piece(s), path 11.6 mm <= 40.0 mm, width >= 0.5 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N, E1_USB_PD_SAFE at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "J108 branch on E1_USB_PD_SAFE",
+      "reason": "branch_exempt: 2 track piece(s), path 39.4 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N, E1_USB_PD_SAFE at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "J114 branch on E1_USB_PD_RAW",
+      "reason": "branch_exempt: 15 track piece(s), path 33.914 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_USB_PD_RAW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "J115 branch on E1_SERVICE_P",
+      "reason": "branch_exempt: 1 track piece(s), path 15.545 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_SERVICE_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "R103 branch on E1_N",
+      "reason": "branch_exempt: 10 track piece(s), path 19.776 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "R111 branch on E1_SW",
+      "reason": "branch_exempt: 5 track piece(s), path 37.971 mm <= 40.0 mm, width >= 0.5 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_SW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "R113 branch on E1_USB_PD_RAW",
+      "reason": "branch_exempt: 11 track piece(s), path 33.682 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_USB_PD_RAW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "R114 branch on E1_USB_PD_RAW",
+      "reason": "branch_exempt: 11 track piece(s), path 34.572 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_USB_PD_RAW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "TP104 branch on E1_N",
+      "reason": "branch_exempt: 9 track piece(s), path 17.692 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "TP105 branch on E1_SW",
+      "reason": "branch_exempt: 2 track piece(s), path 1.785 mm <= 40.0 mm, width >= 0.5 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_SW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "U103 branch on E1_N",
+      "reason": "branch_exempt: 8 track piece(s), path 14.694 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "U109 branch on E1_USB_PD_RAW",
+      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_USB_PD_RAW, E1_USB_PD_SAFE at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "U109 branch on E1_USB_PD_SAFE",
+      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of E1_USB_PD_RAW, E1_USB_PD_SAFE at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "U553 branch on E5_IMU5V",
+      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR1A width and neck checks: W2 PWRJ-F2C probe: router branch of LAB5 at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "U553 branch on LAB5",
+      "reason": "branch_exempt: 15 track piece(s), path 19.86 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of LAB5 at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "XJC1 branch on E1_SW",
+      "reason": "branch_exempt: 6 track piece(s), path 29.55 mm <= 40.0 mm, width >= 0.5 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_SW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "XJC2 branch on LAB5",
+      "reason": "branch_exempt: 6 track piece(s), path 23.347 mm <= 40.0 mm, width >= 0.5 mm left out of the PWR3A width and neck checks: W2 PWRJ-F2C probe: router branch of LAB5 at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "XR101 branch on E1_N",
+      "reason": "branch_exempt: 4 track piece(s), path 26.238 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N, E1_SHUNT_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "XR101 branch on E1_SHUNT_P",
+      "reason": "branch_exempt: 7 track piece(s), path 9.055 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N, E1_SHUNT_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "XU102 branch on E1_N",
+      "reason": "branch_exempt: 9 track piece(s), path 18.571 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N, E1_SHUNT_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "XU102 branch on E1_SHUNT_P",
+      "reason": "branch_exempt: 10 track piece(s), path 6.014 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N, E1_SHUNT_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "XU106A branch on E1_N",
+      "reason": "branch_exempt: 3 track piece(s), path 25.53 mm <= 40.0 mm, width >= 0.2 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "XU106B branch on E1_SW",
+      "reason": "branch_exempt: 7 track piece(s), path 31.586 mm <= 40.0 mm, width >= 0.5 mm left out of the BATT width and neck checks: W2 PWRJ-F2C probe: router branch of E1_SW at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_SW vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 2 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_USB_PD_RAW vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 1 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E5_IMU5V vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+    },
+    {
+      "check": "heights",
+      "item": "F103",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C552",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C553",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C117",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "TP503",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D101",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R112",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "TP108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J112",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "XJC2",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "XR101",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R122",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R553",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C103",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C116",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J109",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "XU102",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R121",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "XJC1",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D103",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J507",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "XU106B",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U553",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "TP107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "TP104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R113",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "XU106A",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "C105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D102",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U551",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "TP103",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "D104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R116",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U109",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "XJW2",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J113",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "TP106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R111",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "U103",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R123",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "Q101",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "TP105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "R103",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    }
+  ]
+}

@@ -1,0 +1,762 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "PWR_C",
+  "status": "PROBE_W2_PWRJ_F2C_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "PWRC",
+      "placement": "default",
+      "board_origin_enclosure_mm": null,
+      "z_bottom": null,
+      "facing": null,
+      "connectors": [
+        {
+          "template_ref": "J105",
+          "ref": "J105",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            11.0,
+            3.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                11.0,
+                3.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SHUNT_P",
+              "at": [
+                16.5,
+                3.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J108",
+          "ref": "J108",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            66.0,
+            17.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                66.0,
+                17.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_N",
+              "at": [
+                61.8,
+                17.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E1_USB_PD_SAFE",
+              "at": [
+                66.0,
+                22.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": null,
+              "at": [
+                61.8,
+                22.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J109",
+          "ref": "J109",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            122.95,
+            26.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_NTC",
+              "at": [
+                122.95,
+                26.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": null,
+              "at": [
+                120.95,
+                26.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J112",
+          "ref": "J112",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            115.45,
+            26.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_CC1",
+              "at": [
+                115.45,
+                26.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_CHG_CC2",
+              "at": [
+                113.45,
+                26.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E1_CHG_INHIBIT_LOW",
+              "at": [
+                111.45,
+                26.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E1_CHG_NTC",
+              "at": [
+                109.45,
+                26.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J113",
+          "ref": "J113",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            130.45,
+            26.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_CHG_CC1",
+              "at": [
+                130.45,
+                26.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_CHG_CC2",
+              "at": [
+                128.45,
+                26.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J114",
+          "ref": "J114",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            137.33,
+            25.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                137.33,
+                25.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_USB_PD_RAW",
+              "at": [
+                140.33,
+                25.0
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J115",
+          "ref": "J115",
+          "kind": "graph",
+          "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            26.4,
+            30.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                26.4,
+                30.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SERVICE_P",
+              "at": [
+                29.4,
+                30.0
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "J507",
+          "ref": "J507",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            103.95,
+            26.5
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                103.95,
+                26.5
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E5_IMU5V",
+              "at": [
+                101.95,
+                26.5
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "IMU_RX",
+              "at": [
+                99.95,
+                26.5
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "IMU_TX",
+              "at": [
+                97.95,
+                26.5
+              ]
+            }
+          ]
+        },
+        {
+          "template_ref": "XJC1",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            65.0,
+            31.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                65.0,
+                31.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SW",
+              "at": [
+                59.6,
+                31.0
+              ]
+            }
+          ],
+          "replaced_by": "a PWR-C graph ref"
+        },
+        {
+          "template_ref": "XJC2",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Wire:SolderWire-1sqmm_1x02_P5.4mm_D1.4mm_OD2.7mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            77.9,
+            30.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                77.9,
+                30.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "LAB5",
+              "at": [
+                83.3,
+                30.0
+              ]
+            }
+          ],
+          "replaced_by": "a PWR-C graph ref"
+        },
+        {
+          "template_ref": "XJW2",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_PinHeader_2.00mm:PinHeader_2x06_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            11.8,
+            22.6
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "CHG_INHIBIT",
+              "at": [
+                11.8,
+                22.6
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                11.8,
+                20.6
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E1_BAT_ADC",
+              "at": [
+                9.8,
+                22.6
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "PWR_BUTTON",
+              "at": [
+                9.8,
+                20.6
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "I2C0_SCL",
+              "at": [
+                7.8,
+                22.6
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "GND",
+              "at": [
+                7.8,
+                20.6
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "I2C0_SDA",
+              "at": [
+                5.8,
+                22.6
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "IMU_RX",
+              "at": [
+                5.8,
+                20.6
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "INA228_ALERT",
+              "at": [
+                3.8,
+                22.6
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "IMU_TX",
+              "at": [
+                3.8,
+                20.6
+              ]
+            },
+            {
+              "pad": "11",
+              "net": "PICO_OFF",
+              "at": [
+                1.8,
+                22.6
+              ]
+            },
+            {
+              "pad": "12",
+              "net": "GND",
+              "at": [
+                1.8,
+                20.6
+              ]
+            }
+          ],
+          "replaced_by": "a PWR-C graph ref"
+        },
+        {
+          "template_ref": "XR101",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Resistor_SMD:R_2512_6332Metric",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            26.8,
+            3.2
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_SHUNT_P",
+              "at": [
+                23.8375,
+                3.2
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_N",
+              "at": [
+                29.7625,
+                3.2
+              ]
+            }
+          ],
+          "replaced_by": "R101"
+        },
+        {
+          "template_ref": "XU102",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Package_SO:MSOP-10_3x3mm_P0.5mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            24.1,
+            8.4
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                22.0,
+                9.4
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                22.0,
+                8.9
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "INA228_ALERT",
+              "at": [
+                22.0,
+                8.4
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "I2C0_SDA",
+              "at": [
+                22.0,
+                7.9
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "I2C0_SCL",
+              "at": [
+                22.0,
+                7.4
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "AON3V3",
+              "at": [
+                26.2,
+                7.4
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "GND",
+              "at": [
+                26.2,
+                7.9
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "E1_SHUNT_P",
+              "at": [
+                26.2,
+                8.4
+              ]
+            },
+            {
+              "pad": "9",
+              "net": "E1_N",
+              "at": [
+                26.2,
+                8.9
+              ]
+            },
+            {
+              "pad": "10",
+              "net": "E1_SHUNT_P",
+              "at": [
+                26.2,
+                9.4
+              ]
+            }
+          ],
+          "replaced_by": "U102"
+        },
+        {
+          "template_ref": "XU106A",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            53.05,
+            25.78
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_N",
+              "at": [
+                53.05,
+                25.78
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_N",
+              "at": [
+                53.05,
+                23.24
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "GND",
+              "at": [
+                53.05,
+                20.7
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "GND",
+              "at": [
+                53.05,
+                18.16
+              ]
+            },
+            {
+              "pad": "5",
+              "net": null,
+              "at": [
+                53.05,
+                15.62
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "E1_MASTER_OFF",
+              "at": [
+                53.05,
+                13.08
+              ]
+            },
+            {
+              "pad": "7",
+              "net": null,
+              "at": [
+                53.05,
+                10.54
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "GND",
+              "at": [
+                53.05,
+                8.0
+              ]
+            }
+          ],
+          "replaced_by": "U106"
+        },
+        {
+          "template_ref": "XU106B",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_PinHeader_2.54mm:PinHeader_1x08_P2.54mm_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            35.27,
+            25.78
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E1_SW",
+              "at": [
+                35.27,
+                25.78
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E1_SW",
+              "at": [
+                35.27,
+                23.24
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "GND",
+              "at": [
+                35.27,
+                20.7
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "GND",
+              "at": [
+                35.27,
+                18.16
+              ]
+            },
+            {
+              "pad": "5",
+              "net": null,
+              "at": [
+                35.27,
+                15.62
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "E1_SWITCH_A",
+              "at": [
+                35.27,
+                13.08
+              ]
+            },
+            {
+              "pad": "7",
+              "net": null,
+              "at": [
+                35.27,
+                10.54
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "GND",
+              "at": [
+                35.27,
+                8.0
+              ]
+            }
+          ],
+          "replaced_by": "U106"
+        }
+      ]
+    }
+  ]
+}
