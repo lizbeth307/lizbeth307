@@ -964,11 +964,13 @@ class CtrlFaultPathsCtrl5(unittest.TestCase):
     an outer-only router class that board_gen may skip while no net is in it; and the re-freeze tool gives a power-class join
     a via group per layer change. Skipped on a tree without the CTRL spec."""
     # pad: (protective current of the loop in A, least vias); the PTC loops at the 1.5 A protective current of the class
-    # (the assumed cold 2.02 A is OPEN in build/15), C321.2 and U315.2 keep one via (OPEN in build/15: no room in the band
-    # between the cut-outs without a re-freeze cascade, a SOT-23-6 middle pin)
+    # (the assumed cold 2.02 A is OPEN in build/15). OPEN_PADS are the F102 loop pads still on one via (OPEN in build/15: no
+    # room in the band between the cut-outs without its re-placement); review RV-CTRL5-S2-3: the test does not pin that
+    # state, a pad is either still OPEN in build/15 or closed by a cluster that carries OPEN_PAD_AMPS within the via fit
     CLUSTERS = {'C320.2': (4.0, 5), 'C322.2': (4.0, 5), 'Q305.2': (4.0, 5), 'C318.2': (1.5, 2), 'C319.2': (1.5, 2),
                 'D305.2': (1.5, 2)}
     OPEN_PADS = ('C321.2', 'U315.2')
+    OPEN_PAD_AMPS = 4.4  # 110 % of F102 4 A: the Littelfuse MINI fuse passes it for at least 360000 s (build/15)
     COLD_TRIP = 2.02  # assumed cold-ambient trip of F301 (Ihold 1.01 A at -20 degC scaled, build/15)
 
     def setUp(self):
@@ -1076,8 +1078,17 @@ class CtrlFaultPathsCtrl5(unittest.TestCase):
             self.assertGreaterEqual(len(flows), least, pad)
             self.assertAlmostEqual(sum(flows.values()), amps, places=6, msg=pad)
             self.assertLessEqual(max(flows.values()), fit, (pad, amps, sorted(round(i, 3) for i in flows.values())))
-        for pad in self.OPEN_PADS:  # recorded OPEN: still the single plane via and stub of gnd_vias
-            self.assertIn(f'GND-{pad}', ids)
+        b15 = (bg.BASE / 'build/15-rishennia-komplektu.md').read_text(encoding='utf-8').splitlines()
+        for pad in self.OPEN_PADS:
+            ends = [t['path'][0] for t in gnd_tracks if f'-{pad}-' in t['id']]
+            if not ends:  # still the single plane via and stub of gnd_vias: then build/15 must record it OPEN
+                self.assertIn(f'GND-{pad}', ids)
+                self.assertTrue(any(pad in line and 'OPEN' in line for line in b15), pad)
+                continue
+            u, seen = self.solve(edges, key(ends[0]), self.OPEN_PAD_AMPS)  # closed: a cluster at 110 % of F102
+            flows = {n: u[n] / self.barrel() for n in vias if n in seen and u[n] > 1e-9}  # the vias its spurs reach
+            self.assertGreaterEqual(len(flows), 5, pad)
+            self.assertLessEqual(max(flows.values()), fit, (pad, self.OPEN_PAD_AMPS, sorted(round(i, 3) for i in flows.values())))
 
     def test_fan5p_groups_are_end_to_end_ladders(self):
         import math
@@ -1110,11 +1121,19 @@ class CtrlFaultPathsCtrl5(unittest.TestCase):
         doc = bg.read_json(bg.BASE / 'build/kicad/boards/CTRL/route-frozen.json')
         nets = ms.frozen_nets(doc)
         self.assertEqual(doc['guard']['netclass_sha256'], ms.netclass_guard(nets))
-        self.assertIn('E3_PICO_VSYS', nets)
-        ms.PATTERNS = ms.PATTERNS + [('PWR1A', 'E3_PICO_VSYS')]  # the RV4-E-4 recipe: a reclass of a frozen net
+        classed = {c for c, _p in ms.PATTERNS}
+        free = sorted(n for n in nets if n not in {p for _c, p in ms.PATTERNS})  # frozen nets of the Default class
+        self.assertTrue(free)
+        net = 'E3_PICO_VSYS' if 'E3_PICO_VSYS' in free else free[0]  # review RV-CTRL5-S2-3: not pinned to one net
+        ms.PATTERNS = ms.PATTERNS + [('PWR1A', net)]  # the RV4-E-4 recipe: a reclass of a frozen net
         self.assertNotEqual(doc['guard']['netclass_sha256'], ms.netclass_guard(nets))
-        self.assertEqual(self.spec['router']['class_layers']['PWR3A'], ['F.Cu', 'B.Cu'])
-        self.assertEqual(self.spec['router']['class_layers_reserved'], ['PWR3A'])
+        router = self.spec['router']
+        self.assertEqual(router['class_layers']['PWR3A'], ['F.Cu', 'B.Cu'])
+        # a reserved class is one of the class_layers that no net pattern uses yet (PWR3A today); a net put in it later (the
+        # E3_PICO_VSYS fallback of build/15) takes it off the reserved list without an edit of this test
+        for cls in router.get('class_layers_reserved', []):
+            self.assertIn(cls, router['class_layers'])
+            self.assertNotIn(cls, classed)
 
     def test_reserved_class_layers_are_skipped_only_when_absent(self):
         dsn = '(network (class kicad_default "A" (circuit (use_via V)) (rule (width 150))) (class PWR1A "B" (circuit (use_via V))))'
