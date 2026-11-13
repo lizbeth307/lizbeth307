@@ -3190,7 +3190,7 @@
         "ratio_1_5": 0.82,
         "ratio_1_8": 0.99,
         "scope": "board parts and modules, without the harness headers",
-        "result": "PASS (model estimate): 1 planned content changes of pcb/partition-budget.json candidates.shrink2 are pending (GR-5B), so the graph's courtyards (2777 mm2 raw) are not the decided content: the budget's planned PWR_B demand 5034 mm2 at fill 1.8 against its usable 5056 mm2 (budget ratio_1.8 = usable / demand 1.004, raw fill 0.553); model estimate, the placement decides (PCB)",
+        "result": "PASS (model estimate): 1 planned content changes of pcb/partition-budget.json candidates.shrink2 are pending (GR-5B), so the graph's courtyards (2777 mm2 raw) are not the decided content: the budget's planned PWR_B demand 4727 mm2 at fill 1.8 against its usable 5056 mm2 (budget ratio_1.8 = usable / demand 1.07, raw fill 0.519); model estimate, the placement decides (PCB)",
         "usable_mm2": 5056.0,
         "ratio_basis": "usable_mm2 (pcb/partition-budget.json)",
         "planned_budget": {
@@ -3200,10 +3200,10 @@
           "owners": [
             "GR-5B"
           ],
-          "demand_1_8_mm2": 5033.6,
+          "demand_1_8_mm2": 4727.3,
           "usable_mm2": 5056.2,
-          "ratio_1_8": 1.004,
-          "raw_fill": 0.553
+          "ratio_1_8": 1.07,
+          "raw_fill": 0.519
         }
       },
       "RF": {
