@@ -140,6 +140,8 @@ def main(argv=None):
     ap.add_argument('--in2-signal', action='store_true', help='In2.Cu is a signal layer (make_spec.py IN2_SIGNAL): signal nets '
                     'are completed on F.Cu, In2.Cu and B.Cu, power-class nets on F.Cu and B.Cu only (inner class widths)')
     ap.add_argument('--in2-bias', type=float, default=1.0, help='extra cost per mm on In2.Cu (1.0: an In2 mm costs two)')
+    ap.add_argument('--aon', type=int, default=0, help='W2 PWRJ F2ENV: after the main pass, this many all-or-nothing rounds: '
+                    'join a still open net with rip-up, re-join every ripped net without rip-up, else restore the board')
     ap.add_argument('--no-rip', action='store_true', help='W2 PWRJ F2ENV: join only along free paths, never rip router copper')
     ap.add_argument('--partial', action='store_true', help='write route-frozen.json even with open connections (listed under open)')
     args = ap.parse_args(argv)
@@ -188,9 +190,56 @@ def main(argv=None):
             if after < before and net not in queue:  # progress: try the rest again after the others
                 queue.append(net)
         queue.extend(n for n in ripped if n not in queue and n not in never)
+    for rnd in range(args.aon):
+        still = [n for n in nets if n not in never and len(m.islands(n)) > 1]
+        print(f'AON round {rnd + 1}: {len(still)} open nets', flush=True)
+        for net in still:
+            if len(m.islands(net)) <= 1:
+                continue
+            mark = len(m.items)
+            alive0 = [it.alive for it in m.items]
+            ok, ripped = fz.connect(net, allow_rip=True, width=widths.get(net, default_w), max_iter=200)
+            good = ok
+            for rn in ripped:
+                if not good:
+                    break
+                if rn in never or len(m.islands(rn)) <= 1:
+                    continue
+                ok2, _r2 = fz.connect(rn, allow_rip=False, width=widths.get(rn, default_w), max_iter=200)
+                good = good and ok2
+            if good:
+                failed.pop(net, None)
+                print(f'AON {net}: joined (ripped and re-joined {ripped})', flush=True)
+            else:
+                for it in m.items[mark:]:
+                    it.alive = False
+                for it, was in zip(m.items[:mark], alive0):
+                    it.alive = was
+                print(f'AON {net}: reverted (ripped {ripped})', flush=True)
     for n in nets:
         F.prune(m, n)
     open_, bad = verify(m)
+    if bad:
+        # W2 PWRJ F2ENV (PWR_A): completion copper that the final exact check finds too close is dropped with its
+        # dangling rest, and the board is checked again (the joins it made stay open)
+        drop = []
+        for it in m.items:
+            if not (it.alive and it.src == 'new'):
+                continue
+            if it.kind == 'track':
+                mg, _w = m.track_margin(it.net, it.layers[0], it.width, it.a, it.b, ignore={it.id})
+            elif it.kind == 'via':
+                mg, _w = m.via_margin(it.net, it.at, it.size, it.drill, ignore={it.id})
+            else:
+                continue
+            if mg < -0.0005:
+                drop.append(it)
+        for it in drop:
+            m.remove(it)
+        for n in sorted({it.net for it in drop}):
+            F.prune(m, n)
+        print('dropped completion items after the final check:', len(drop), sorted({it.net for it in drop}))
+        open_, bad = verify(m)
     open_ = {k: v for k, v in open_.items() if k not in never or k == 'GND'}
     print('open connections', open_, 'clearance violations', len(bad))
     for b_ in bad[:12]:
