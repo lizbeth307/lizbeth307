@@ -43,6 +43,10 @@ F.BOARD_BOX = (100.0, 100.0, 236.0, 210.0)  # KiCad mm: board_gen frame of the 1
 OUT = HERE.parent / 'route-frozen-6l.json'
 # planes and scripted nets (classes SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A of make_spec.py): never routed here
 NEVER = {'GND', '3V3_Q6A', 'LAB5'} | {f'E2_LNA{ch}_{k}' for ch in '1234' for k in ('SW', 'SHUNT')}
+# W2 PWR-L6-PLACE third pass, stage 2: the planned nets of route-planned-6l.json are scripted copper too (make_spec PLANNED)
+_PLANNED = HERE.parent / 'route-planned-6l.json'
+if _PLANNED.is_file():
+    NEVER |= set(json.loads(_PLANNED.read_text(encoding='utf-8'))['nets'])
 ROUTING = tuple(M.RLAYERS)
 OUTER = ('F.Cu', 'B.Cu')
 K = lambda x, y: (round(x + 100.0, 4), round(210.0 - y, 4))  # board mm -> KiCad mm (frame of pcb/board_gen.py)

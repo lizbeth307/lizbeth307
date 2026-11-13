@@ -951,7 +951,29 @@ def scripted_copper(inp, parts, pins):
     pins['scripted_nets']['GND'] = [(B2B_REF, n) for n in gnd]
     gt, gv, _n = gnd_fanout(inp, parts, tracks, vias)
     qt, qv = q6a_plane_copper(inp, parts, tracks + gt, vias + gv, pins)
-    return tracks + gt + qt, vias + gv + qv, exempt
+    pt, pv = planned_copper(parts, pins)
+    return tracks + gt + qt + pt, vias + gv + qv + pv, exempt
+
+
+def planned_copper(parts, pins):
+    """Stage 2 of W2 PWR-L6-PLACE third pass: the locked copper of route-planned-6l.json (PLANNED), one tree per net that joins
+    every pad of the net on this board (checked by connected() through pins['scripted_nets'])."""
+    if not PLANNED:
+        return [], []
+    src = PLANNED['source']
+    out_t, out_v = [], []
+    for net, d in sorted(PLANNED['nets'].items()):
+        why = (f'planned {d["kind"]} copper of {net} (W2 PWR-L6-PLACE third pass, stage 2): freeze6 grid A* on route run '
+               f'{src["route_run"]} with all router copper removed, at the scripted-copper margins; {PLANNED6.name}')
+        for k, (layer, w, a, b) in enumerate(d['tracks'], 1):
+            out_t.append({'id': f'PL-{net}-{k:03d}', 'net': net, 'layer': layer, 'width_mm': w,
+                          'path': [[r4(a[0]), r4(a[1])], [r4(b[0]), r4(b[1])]], 'locked': True, 'why': why})
+        for k, (x, y, size, drill) in enumerate(d['vias'], 1):
+            out_v.append({'id': f'PLV-{net}-{k:02d}', 'net': net, 'at': [r4(x), r4(y)], 'drill_mm': drill,
+                          'diameter_mm': size, 'locked': True, 'why': why})
+        pins['scripted_nets'][net] = sorted({(r, p['number']) for r, pa in parts.items() for p in pa.pads
+                                             if p['net'] == net and p['number'] and p['type'] != 'np_thru_hole'})
+    return out_t, out_v
 
 
 # ------------------------------------------------------------------ 3V3_Q6A plane (6 layers, W2 PWRB-R)
@@ -1439,7 +1461,8 @@ def project_json(inp, pins):
     classes = []
     for name, cls in (('Default', nc['classes']['SIG']), ('PWR1A', nc['classes']['PWR1A']), ('PWR2A', nc['classes']['PWR2A']),
                       ('PWR3A', nc['classes']['PWR3A']), ('SCRIPTED_GND', nc['classes']['SIG']),
-                      ('SCRIPTED_PWR1A', nc['classes']['PWR1A']), ('SCRIPTED_PWR3A', nc['classes']['PWR3A'])):
+                      ('SCRIPTED_PWR1A', nc['classes']['PWR1A']), ('SCRIPTED_PWR3A', nc['classes']['PWR3A'])) + \
+            ((('SCRIPTED_SIG', nc['classes']['SIG']),) if 'SCRIPTED_SIG' in SCRIPTED_CLASSES.values() else ()):
         row = copy.deepcopy(default)
         row['name'] = name
         row['track_width'] = cls['outer_min_width_mm']
@@ -1482,6 +1505,17 @@ SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
                     **{f'E2_LNA{ch}_{k}': 'SCRIPTED_PWR1A' for ch in '1234' for k in ('SW', 'SHUNT')},
                     # 6 layers (W2 PWRB-R): 3V3_Q6A is the In4.Cu plane, every SMD pad on its own scripted via (as CTRL, W2 CTRL-R)
                     '3V3_Q6A': 'SCRIPTED_GND'}
+# W2 PWR-L6-PLACE third pass, stage 2 (judge decision ESC-JUDGE: W's planned power copper re-planned on the M placement, and
+# planned escapes for the innermost / interleaved J209 lower-row contacts): the nets that the fresh route of the zone-2 placement
+# and its no-rip completion left open are planned on that route's board with all router copper removed (the freeze6 grid A* at
+# the scripted-copper margins CLEAR + MARGIN 0.20 and EDGE + MARGIN 0.35; power class on F.Cu / B.Cu at its 2 oz width, signals
+# on the four routing layers at 0.15 mm) and come in as locked copper of route-planned-6l.json; the router and freeze6 leave them
+# alone (classes SCRIPTED_PWR1A / SCRIPTED_SIG), so the next fresh route works around them. MODEL plan, KiCad DRC is the check.
+PLANNED6 = BASE / 'build/kicad/boards/PWR_B/route-planned-6l.json'
+PLANNED = json.loads(PLANNED6.read_text(encoding='utf-8')) if PLANNED6.is_file() else None
+if PLANNED:
+    SCRIPTED_CLASSES.update({net: ('SCRIPTED_PWR1A' if d['kind'] == 'power' else 'SCRIPTED_SIG')
+                             for net, d in PLANNED['nets'].items()})
 # Routing layers of the 6-layer plan (W2 PWRB-R): In1.Cu (GND) and In4.Cu (3V3_Q6A) are planes of type power.
 ROUTING = ['F.Cu', 'In2.Cu', 'In3.Cu', 'B.Cu']
 COPPER = ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']
