@@ -13,7 +13,7 @@
       "bytes": 155324
     },
     "design/E2.json": {
-      "sha256": "347a5d345a20c5594237ed92a3265cde7154e956922d5ec0af0cf3377a0406c8",
+      "sha256": "3adfee75ad5db259432428ac79c29dbe8e9e2abbc82df973e4e03b7359742e21",
       "bytes": 415616
     },
     "design/E3.json": {
@@ -15396,22 +15396,22 @@
         "E1_BAT_ADC",
         "EN_AUX12",
         "EN_BONI",
-        "EN_HFP",
         "EN_LABPORT",
-        "EN_LIME3V3",
         "EN_LNA1",
         "EN_LNA2",
         "EN_LNA3",
         "EN_LNA4",
-        "EN_LNB",
         "EN_RTLA",
         "EN_RTLB",
         "EN_SB_LNA",
-        "FAULT_HFP",
         "FAULT_LABPORT",
         "FAULT_LNA1",
         "FAULT_LNA2",
-        "FAULT_LNA3"
+        "FAULT_LNA3",
+        "FAULT_RTLA",
+        "PG_BONI",
+        "PG_LNB",
+        "PTC_AUX"
       ],
       "configuration_from_source": {},
       "pinout_status": "project_harness_assignment_not_factory_pinout",
@@ -15443,9 +15443,9 @@
         },
         {
           "number": "5",
-          "name": "EN_HFP",
+          "name": "PG_BONI",
           "type": "passive",
-          "net": "EN_HFP"
+          "net": "PG_BONI"
         },
         {
           "number": "6",
@@ -15455,9 +15455,9 @@
         },
         {
           "number": "7",
-          "name": "EN_LIME3V3",
+          "name": "PTC_AUX",
           "type": "passive",
-          "net": "EN_LIME3V3"
+          "net": "PTC_AUX"
         },
         {
           "number": "8",
@@ -15485,9 +15485,9 @@
         },
         {
           "number": "12",
-          "name": "EN_LNB",
+          "name": "PG_LNB",
           "type": "passive",
-          "net": "EN_LNB"
+          "net": "PG_LNB"
         },
         {
           "number": "13",
@@ -15509,9 +15509,9 @@
         },
         {
           "number": "16",
-          "name": "FAULT_HFP",
+          "name": "FAULT_RTLA",
           "type": "passive",
-          "net": "FAULT_HFP"
+          "net": "FAULT_RTLA"
         },
         {
           "number": "17",
@@ -15565,8 +15565,11 @@
       "interface_family": "passive_connector_or_named_boundary",
       "software_interface_specified": false,
       "interface_signals": [
+        "EN_HFP",
+        "EN_LIME3V3",
+        "EN_LNB",
+        "FAULT_HFP",
         "FAULT_LNA4",
-        "FAULT_RTLA",
         "FAULT_RTLB",
         "FLT_BONI",
         "FLT_LIME3V3",
@@ -15578,11 +15581,8 @@
         "IMU_TX",
         "INA228_ALERT",
         "OVP_LNB_N",
-        "PG_BONI",
-        "PG_LNB",
         "PICO_DISP_EN",
         "PICO_OFF",
-        "PTC_AUX",
         "PWR_BUTTON",
         "SLED_DET"
       ],
@@ -15598,9 +15598,9 @@
         },
         {
           "number": "2",
-          "name": "FAULT_RTLA",
+          "name": "EN_HFP",
           "type": "passive",
-          "net": "FAULT_RTLA"
+          "net": "EN_HFP"
         },
         {
           "number": "3",
@@ -15670,15 +15670,15 @@
         },
         {
           "number": "14",
-          "name": "PG_BONI",
+          "name": "EN_LIME3V3",
           "type": "passive",
-          "net": "PG_BONI"
+          "net": "EN_LIME3V3"
         },
         {
           "number": "15",
-          "name": "PG_LNB",
+          "name": "EN_LNB",
           "type": "passive",
-          "net": "PG_LNB"
+          "net": "EN_LNB"
         },
         {
           "number": "16",
@@ -15694,9 +15694,9 @@
         },
         {
           "number": "18",
-          "name": "PTC_AUX",
+          "name": "FAULT_HFP",
           "type": "passive",
-          "net": "PTC_AUX"
+          "net": "FAULT_HFP"
         },
         {
           "number": "19",
@@ -49506,8 +49506,8 @@
       "pins": [
         {
           "sheet": "E2",
-          "ref": "J202",
-          "pin": "5",
+          "ref": "J203",
+          "pin": "2",
           "name": "EN_HFP",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49642,8 +49642,8 @@
         },
         {
           "sheet": "E2",
-          "ref": "J202",
-          "pin": "7",
+          "ref": "J203",
+          "pin": "14",
           "name": "EN_LIME3V3",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -49942,8 +49942,8 @@
         },
         {
           "sheet": "E2",
-          "ref": "J202",
-          "pin": "12",
+          "ref": "J203",
+          "pin": "15",
           "name": "EN_LNB",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -50202,8 +50202,8 @@
       "pins": [
         {
           "sheet": "E2",
-          "ref": "J202",
-          "pin": "16",
+          "ref": "J203",
+          "pin": "18",
           "name": "FAULT_HFP",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -50530,8 +50530,8 @@
       "pins": [
         {
           "sheet": "E2",
-          "ref": "J203",
-          "pin": "2",
+          "ref": "J202",
+          "pin": "16",
           "name": "FAULT_RTLA",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -58956,8 +58956,8 @@
         },
         {
           "sheet": "E2",
-          "ref": "J203",
-          "pin": "14",
+          "ref": "J202",
+          "pin": "5",
           "name": "PG_BONI",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -59008,8 +59008,8 @@
         },
         {
           "sheet": "E2",
-          "ref": "J203",
-          "pin": "15",
+          "ref": "J202",
+          "pin": "12",
           "name": "PG_LNB",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
@@ -59188,8 +59188,8 @@
         },
         {
           "sheet": "E2",
-          "ref": "J203",
-          "pin": "18",
+          "ref": "J202",
+          "pin": "7",
           "name": "PTC_AUX",
           "electrical_type": "passive",
           "assembly": "E2-CIR-20"
