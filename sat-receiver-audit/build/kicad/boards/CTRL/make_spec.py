@@ -496,8 +496,8 @@ def lab5_feed(cu):
              [(x, 64.5) for x in xs] + [(24.75, YR), d301, (43.3, YR), (43.3, 71.2), (XC, 72.9), (XC, YH), r367, c320,
                                          (q304[0], YH), q304],
              FEED_WHY + ': trunk side under cut-out 1 through D301.2, left of D304 and up the right strip between J313 and F301, '
-             'over to R367.2 and C320.1 above Q304 and down to the centre of Q304.2 (0.525 mm from the board edge, 0.25 mm from '
-             'the E3_FAN5 piece at Q304.3)')
+             'over to R367.2 and C320.1 above Q304 and down to the centre of Q304.2 (the 1.85 mm copper ends 0.355 mm from the '
+             'board edge, 0.25 mm from the E3_FAN5 piece at Q304.3)')
     XT, YT = 28.9, 97.3  # right of the GND via of U315.2 (27.312, 95.7), below the Q301 pads; above U315.1
     assert abs(c321[1] - YT) < 1e-6
     cu.track('LAB5-FEED-B2', 'LAB5', 'B.Cu', W, [(XC, YH), c322, (XC, YU), (XT, YU), (XT, YT), (27.2, YT)],
@@ -797,7 +797,12 @@ FAN5P_WHY = ('W2 CTRL-4: E3_FAN5_P (fan supply behind the PTC F301, class PWR1A 
              'class SCRIPTED_PWR3A of CTRL.kicad_pro so Freerouting leaves it alone): ' + FAN_LEAD + '. 0.8 mm outer copper '
              '(0.6 mm between Q303.3 and the LAB5 column) and three 0.3 mm vias at each of its two layer changes, a short F.Cu '
              'hop over the LAB5 column (IPC-2221 MODEL: 0.6 mm outer 2.24 A at +20 degC, +8.0 degC at 1.5 A and +15.8 degC at '
-             '2.02 A; 0.8 mm +9.8 degC at 2.02 A; a via 1.0 A at +20 degC, three vias +8.1 degC each at 2.02 A)')
+             '2.02 A; 0.8 mm +9.8 degC at 2.02 A; a via 1.0 A at +20 degC). The three vias of a layer change do not share the '
+             'current equally (DC network of the scripted centre lines, barrel 0.3 mm / 18 um over 1.6 mm, MODEL): below F301.2 '
+             '36.7/26.5/36.7 %, the hottest via 0.74 A and +10.1 degC at 2.02 A; left of the LAB5 column the F.Cu entry and the '
+             'B.Cu exit share the via at (43.54, 76.05), which takes 60.8 %: 0.91 A and +16.2 degC at the 1.5 A protective current '
+             'of the class (rule met), 1.23 A and +31.9 degC at the assumed cold-ambient 2.02 A (OPEN, build/15 "CTRL-4: залишки '
+             '(W2 CTRL-4)"))')
 
 
 def fan5p_copper(cu):
@@ -991,15 +996,18 @@ ROUTER_WHY = (
     '43189431817 (12 errors: a completion via in the Pico SWCLK pad, whose copper the SMD drill offset moves by 0.8 mm, and '
     '8 track ends off via centres), 43199848180 (2 errors), 43204137006 (6 errors: the Pico TP7 footprint keepout, a '
     'dangling router stub) and 43206372346 (DRC 0 errors, 0 unconnected, ignored [], about 4.5 min; check-mode run '
-    '43207377886 green), each with 0 unconnected; Freerouting still adds 69-72 redundant short wires per run, DRC-clean. '
+    '43207377886 green), each with 0 unconnected; Freerouting still adds redundant short wires, DRC-clean: 69-72 per run in '
+    'the CTRL-R runs, 188 (58.7 mm on 62 nets) in route run 43343260630 of W2 CTRL-4 (parse of CTRL.kicad_pcb). '
     'After the completion the cut-out 1 band has no spare 0.15 mm crossing on L1/L3/L4 (model): any pad, net or '
     'scripted-copper change stops make_spec at the guard of route-frozen.json. W2 CTRL-4: freeze_route.py --from-frozen '
     're-freezes from the committed GENERATED board (FEED4 study route runs 43270651486, 43276220883 and 43287143670: 2/2, 1/0 '
     'and 0/0 DRC errors/unconnected), here for the outer LAB5 feed, the fully scripted E3_FAN5_P and the blower capacitor '
     'bars; route run 43314567534 of that increment gave 3 errors and 0 unconnected (C319/D304 courtyards; an L2 E3_FAN_PG '
     'piece inside the scripted Q304 gate via off its centre; a dangling 0.0001 mm E3_ENC2_B piece the model read as joined), '
-    'so a third increment moves C319 and removes the frozen pieces the exact checks now flag. Job timeout 34 min inside the '
-    '45 min CI job')
+    'so a third increment moves C319 and removes the frozen pieces the exact checks now flag. The lane merge of wip/w2-int '
+    '5283b260 (W2 CTRL-R integration: the B2B J208/J209 in the graph) changes only the external refs of the boundary audit, '
+    'not the pads, nets or scripted copper, and is re-routed with the same frozen copper (W2 CTRL-4 integration). Job timeout '
+    '34 min inside the 45 min CI job')
 
 
 def l2_plan():
