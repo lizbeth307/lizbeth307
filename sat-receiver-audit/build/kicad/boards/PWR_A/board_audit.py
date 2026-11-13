@@ -184,6 +184,9 @@ def audit(folder):
     nc = read(NETCLASSES)
     layers = {l.get('kicad'): l for l in nc['stackup']['layers'] if l.get('kicad')}
     t_outer, thick, plating = layers['F.Cu']['copper_mm'], nc['stackup']['board_thickness_mm'], nc['formulas']['via']['plating_mm']
+    option = spec['layers'].get('copper_option')
+    if option:  # W2 PWRJ-LAYERS6: the outer copper of the spec's copper option (pcb/generated/stackup-6l.json; outer_2oz 0.070 mm)
+        t_outer = read(BASE / 'pcb/generated/stackup-6l.json')['copper_options'][option]['outer_copper_mm']
     lab5 = read(LAB5)
     contacts = lab5['constants']['b2b_lab5_contacts_pwr_a']
 

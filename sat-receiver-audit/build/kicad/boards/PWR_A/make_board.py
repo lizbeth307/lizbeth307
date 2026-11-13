@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -965,6 +966,88 @@ def project_json(inp, nets):
     return json.dumps(proj, indent=2) + '\n'
 
 
+# ------------------------------------------------------------------ frozen route (W2 PWRJ-LAYERS6, the PWR_B / CTRL toolkit)
+FROZEN6 = HERE / 'route-frozen-6l.json'
+
+
+def frozen_guard(inp, tracks, vias):
+    """SHA256 of what the frozen copper depends on: every copper pad (ref, pad, net, centre, layers) and the scripted copper
+    (pours as locked tracks, GND fan-out; by geometry: the 'why' texts may change without a new harvest)."""
+    pads = sorted(f'{ref}.{q["number"]}|{q["net"]}|{q["at"][0]:.4f},{q["at"][1]:.4f}|{",".join(q["layers"])}'
+                  for ref, pa in inp.parts.items() for q in pa.pads if q['number'] and q['type'] != 'np_thru_hole')
+
+    def geometry(item):
+        return json.dumps({k: v for k, v in item.items() if k != 'why'}, sort_keys=True)
+    scripted = [geometry(t) for t in tracks] + [geometry(v) for v in vias]
+    return {'pads_sha256': hashlib.sha256('\n'.join(pads).encode()).hexdigest(),
+            'scripted_sha256': hashlib.sha256('\n'.join(scripted).encode()).hexdigest()}
+
+
+def frozen_guard_of_spec():
+    """The guard of the current inputs (freeze/freeze6.py writes it into route-frozen-6l.json)."""
+    spec, inp, _problems, _nets = build(frozen=False)
+    return frozen_guard(inp, spec['pre_route']['tracks'], spec['pre_route']['vias'])
+
+
+def frozen_copper(inp, tracks, vias):
+    """The frozen 6-layer route: the router copper of one route run, harvested and locked (RT-/RV-), plus the grid A*
+    completion of its open connections (FIN-/FINV-, freeze/freeze6.py), from route-frozen-6l.json when present. It goes
+    in after the scripted copper, which it does not change; the guard stops make_board when a pad or the scripted copper
+    changed. Returns (tracks, vias, note, necks, branches)."""
+    if not FROZEN6.is_file():
+        return [], [], None, [], []
+    doc = read(FROZEN6)
+    if not doc.get('guard'):
+        raise SystemExit(f'make_board: {FROZEN6.name} has no guard (a freeze6.py --no-guard trial): harvest again with the guard')
+    have = frozen_guard(inp, tracks, vias)
+    for key, value in have.items():
+        if doc['guard'].get(key) != value:
+            raise SystemExit(f'make_board: {FROZEN6.name} was routed on another {key} ({str(doc["guard"].get(key))[:12]}... != '
+                             f'{value[:12]}...): route again with [pcb-route PWR_A] without the frozen copper and harvest anew')
+    why = (f'completion of the 6-layer frozen route ({FROZEN6.name}, W2 PWRJ-LAYERS6): grid A* on the locked copper of route '
+           f'run {doc["source"]["route_run"]} (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check')
+    ft, fv = [], []
+    for prefix, key, text in (('RT', 'router_tracks', None), ('FIN', 'completion_tracks', why)):
+        for k, (net, layer, width, path) in enumerate(doc[key]):
+            t = {'id': f'{prefix}-{k + 1:04d}', 'net': net, 'layer': layer, 'width_mm': width, 'path': path, 'locked': True}
+            if text:
+                t['why'] = text
+            ft.append(t)
+    for prefix, key in (('RV', 'router_vias'), ('FINV', 'completion_vias')):
+        for k, (net, x, y, d, drill) in enumerate(doc[key]):
+            fv.append({'id': f'{prefix}-{k + 1:04d}', 'net': net, 'at': [x, y], 'drill_mm': drill, 'diameter_mm': d, 'locked': True})
+    note = (f'W2 PWRJ-LAYERS6: the router copper of route run {doc["source"]["route_run"]} is frozen and locked (RT-/RV- items) '
+            'and its open connections are joined by the grid A* completion (FIN-/FINV- items) of '
+            'build/kicad/boards/PWR_A/freeze/freeze6.py (numpy, offline; tools copied from build/kicad/boards/PWR_B/freeze). '
+            f'Source: build/kicad/boards/PWR_A/{FROZEN6.name}; valid only for this placement, netlist and scripted copper (guard: '
+            f'SHA256 of the pads and of the scripted copper). Freezer result: {json.dumps(doc.get("result", {}), sort_keys=True)}')
+    return ft, fv, note, list(doc.get('necks', [])), list(doc.get('branches', []))
+
+
+def branch_rows(branches):
+    """branch_exempt rows for the low-current branches of the frozen completion (freeze/fin.py branch_pass): per ref the
+    longest branch path (rounded up to 0.5 mm, + 0.5) as max_mm and the narrowest branch width as min_width_mm."""
+    out = {}
+    for b in branches:
+        for ref in b['refs']:
+            row = out.setdefault(ref, {'max_mm': 0.0, 'min_width_mm': 9.9, 'links': []})
+            row['max_mm'] = max(row['max_mm'], math.ceil(float(b['length_mm']) * 2) / 2 + 0.5)
+            row['min_width_mm'] = min(row['min_width_mm'], float(b['width_mm']))
+            row['links'].append(f'{b["net"]} {b["width_mm"]} mm x {b["length_mm"]} mm on {"/".join(b["layers"])}')
+    return out
+
+
+def neck_rows(necks):
+    """neck_exempt rows for the pad-to-pad necks of the frozen completion (freeze/fin.py neck_link): per ref, the longest
+    neck as escape_mm (pcb/check_boards.py: both ends of a narrower piece within escape_mm + half the pad of that ref's pad)."""
+    out = {}
+    for r in necks:
+        row = out.setdefault(r['ref'], {'escape_mm': 0.0, 'links': []})
+        row['escape_mm'] = max(row['escape_mm'], float(r['escape_mm']))
+        row['links'].append(f'{r["net"]} {r["ref"]}.{r["pad"]}-{r["to"]} {r["width_mm"]} mm x {r["length_mm"]} mm on {r["layer"]}')
+    return out
+
+
 # ------------------------------------------------------------------ the spec
 def layers6():
     """The 6-layer plan of W2 PWRJ-LAYERS6."""
@@ -994,7 +1077,7 @@ def layers6():
     }
 
 
-def build():
+def build(frozen=True):
     spec = mps.build_placement()
     for k in ('probe_left_out', 'probe_post_route_zones_left_out'):
         spec.pop(k, None)
@@ -1006,6 +1089,8 @@ def build():
     pre, copper_notes = board_copper(spec['pre_route'], inp)
     problems += scripted_joined(inp, pre)
     gt, gv, skipped = gnd_fanout(inp, pre, first=fixed_refs(study))
+    ft, fv, frozen_note, necks, branches = (frozen_copper(inp, pre['tracks'] + gt, pre['vias'] + gv) if frozen
+                                            else ([], [], None, [], []))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])
     out = {}
@@ -1020,7 +1105,9 @@ def build():
                  'of make_board.py MOVES, a GND plane via for every SMD GND pad, heights and height zones (hA, PWR-B windows, '
                  'H-TRIM) and the router budget of a board of record. CI/MODEL only: no fabrication release, bench gates OPEN.')
         elif k == 'pre_route':
-            v = {'tracks': pre['tracks'] + gt, 'vias': pre['vias'] + gv, 'zones': pre['zones']}
+            v = {'tracks': pre['tracks'] + gt + ft, 'vias': pre['vias'] + gv + fv, 'zones': pre['zones']}
+            if frozen_note:
+                v['frozen_route_note'] = frozen_note
         elif k == 'layers':
             v = layers6()
         elif k == 'holes':
@@ -1052,6 +1139,22 @@ def build():
                  if z['net'] == 'GND' and z['id'].startswith('GND-BOND') else z for z in v]
         out[k] = v
     out['neck_exempt'] = stem_exemptions(inp, out['pre_route']['tracks'], inp.netclasses)
+    for ref, row in sorted(neck_rows(necks).items(), key=lambda kv: bg.sort_ref(kv[0])):
+        old = out['neck_exempt'].get(ref)
+        why = ('W2 PWRJ-LAYERS6: pad-to-pad neck(s) of the frozen-route completion where no class-width path exists (a pin-entry '
+               'piece no wider than the narrower pad, at most 3 mm; MODEL, the trace temperature stays a bench gate): '
+               + ', '.join(row['links']))
+        out['neck_exempt'][ref] = {'escape_mm': r4(max(row['escape_mm'], old['escape_mm'] if old else 0.0)),
+                                   'reason': (old['reason'] + '; ' + why) if old else why}
+    out['neck_exempt'] = dict(sorted(out['neck_exempt'].items(), key=lambda kv: bg.sort_ref(kv[0])))
+    rows = branch_rows(branches)
+    if rows:
+        out['branch_exempt'] = {
+            ref: {'max_mm': r4(row['max_mm']), 'min_width_mm': r4(row['min_width_mm']),
+                  'reason': ('W2 PWRJ-LAYERS6: low-current branch of a power net from the frozen-route completion (a test point: '
+                             'no current; a capacitor: ripple only, at 0.4 mm on 2 oz outer copper, IPC-2221 about 2 A at +10 degC; '
+                             'a resistor of 100 ohm or more: milliamperes; MODEL, bench gates OPEN): ' + ', '.join(row['links']))}
+            for ref, row in sorted(rows.items(), key=lambda kv: bg.sort_ref(kv[0]))}
     out['edge_keepout'] = {'width_mm': 0.2, 'layers': list(ROUTING6), 'blocks': ['tracks', 'vias'],
                            'why': 'rule-area strips (half-width 0.2) on every outline edge, as PWR_B: the router keeps its '
                                   'copper 0.35 mm off the edge, above the project copper-to-edge 0.3'}

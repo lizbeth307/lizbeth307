@@ -176,6 +176,8 @@ def main(argv=None):
     ap.add_argument('--no-guard', action='store_true', help='trial: write no guard (make_spec refuses the file)')
     ap.add_argument('--rounds', type=int, default=400)
     ap.add_argument('--no-rip', action='store_true', help='join only where a free path exists (no rip-up of router copper)')
+    ap.add_argument('--prev', help='W2 PWRJ-LAYERS6 ratchet: the route-frozen-6l.json the run was routed with; its locked copper '
+                                   'on the board is harvested again together with the new router copper')
     ap.add_argument('--order', choices=('class', 'short'), default='class', help='completion order of the open nets')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
@@ -184,6 +186,28 @@ def main(argv=None):
     m = M.Model(str(art / 'board/PWR_B.kicad_pcb'))
     assert m.b.copper_layers == M.LAYERS, m.b.copper_layers
     fz = F.Finisher(m)
+    if args.prev:  # ratchet (W2 PWRJ-LAYERS6): the frozen copper of the previous file, locked on this board, is harvested again
+        prev = json.loads(Path(args.prev).read_text(encoding='utf-8'))
+        segs, pvias = set(), set()
+        for key in ('router_tracks', 'completion_tracks'):
+            for net, lay, w, path in prev[key]:
+                for a, b in zip(path, path[1:]):
+                    ka, kb = K(*a), K(*b)
+                    segs.add((net, lay, round(w, 4), ka, kb))
+                    segs.add((net, lay, round(w, 4), kb, ka))
+        for key in ('router_vias', 'completion_vias'):
+            for net, x, y, d, drill in prev[key]:
+                pvias.add((net, K(x, y)))
+        hit = 0
+        for it in m.items:
+            if not it.alive or it.src != 'scripted':
+                continue
+            if it.kind == 'track' and (it.net, it.layers[0], round(it.width, 4), (round(it.a[0], 4), round(it.a[1], 4)),
+                                       (round(it.b[0], 4), round(it.b[1], 4))) in segs:
+                it.src, hit = 'router', hit + 1
+            elif it.kind == 'via' and (it.net, (round(it.at[0], 4), round(it.at[1], 4))) in pvias:
+                it.src, hit = 'router', hit + 1
+        print(f'ratchet: {hit} locked items of {args.prev} harvested again')
     cls, default_w = classes()
     width = lambda n: cls.get(n, ('Default', default_w))[1]
     layers = lambda n: OUTER if 'PWR' in cls.get(n, ('Default',))[0] else ROUTING
@@ -223,7 +247,7 @@ def main(argv=None):
     else:
         first = sorted(set(kicad_open) | viol, key=lambda n: (layers(n) != OUTER, n))
     queue, rounds, t0 = collections.deque(first), 0, time.time()
-    touched, failed = set(first), []
+    touched, failed, necks = set(first), [], []
     while queue and rounds < args.rounds:
         net = queue.popleft()
         rounds += 1
@@ -232,7 +256,9 @@ def main(argv=None):
         if layers(net) == OUTER:
             for pad, e in j209_escape(m, net):
                 print(f'  {net}: J209.{pad} escape stub {ESCAPE_W} mm to {e}')
-        ok, ripped = fz.connect(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip)
+        # W2 PWRJ-LAYERS6: pair by pair (a walled-in pair is skipped, the rest of the net is joined)
+        ok, ripped, nk = fz.connect_all(net, width=width(net), layers=layers(net), allow_rip=not args.no_rip)
+        necks += nk
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if not ok:
             failed.append(net)
@@ -275,11 +301,17 @@ def main(argv=None):
                        'F.Cu/B.Cu, signals on F.Cu, In2.Cu, In3.Cu, B.Cu, no plane layer) by '
                        'build/kicad/boards/PWR_B/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed))},
+        'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),
         'guard': None if args.no_guard else guard(),
         'segments': dict(nseg),
         'router_tracks': tracks['router'], 'router_vias': vias['router'],
         'completion_tracks': tracks['new'], 'completion_vias': vias['new'],
     }
+    if args.prev:  # carry the neck and branch records of the frozen copper harvested again
+        for key in ('necks', 'branches'):
+            if key in doc:
+                doc[key] = sorted(doc[key] + prev.get(key, []), key=lambda r: json.dumps(r, sort_keys=True))
+        doc['source']['ratchet_of'] = prev.get('source', {}).get('route_run')
     Path(args.out).write_text(dump(doc), encoding='utf-8', newline='\n')
     print('wrote', args.out, dict(nseg), {k: len(v) for k, v in vias.items()})
     return 1 if (open_ or bad) else 0

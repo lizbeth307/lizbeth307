@@ -282,3 +282,122 @@ def end_joined(m, it, e, net):
             if M.seg_dist(e[0], e[1], ot.a[0], ot.a[1], ot.b[0], ot.b[1]) <= ot.width / 2:
                 return True
     return False
+
+
+# ---------------------------------------------------------------- W2 PWRJ-LAYERS6 additions (PWR_A, PWR_B)
+def _pads(gr):
+    return frozenset(f'{i.ref}.{i.pad}' for i in gr if i.kind == 'pad')
+
+
+def _gap(A, B):
+    ax = (min(i.bbox[0] for i in A), min(i.bbox[1] for i in A), max(i.bbox[2] for i in A), max(i.bbox[3] for i in A))
+    bx = (min(i.bbox[0] for i in B), min(i.bbox[1] for i in B), max(i.bbox[2] for i in B), max(i.bbox[3] for i in B))
+    return math.hypot(max(ax[0] - bx[2], bx[0] - ax[2], 0), max(ax[1] - bx[3], bx[1] - ax[3], 0))
+
+
+def neck_link(m, net, A, B, layers, class_w, neck_max, neck_min=0.25):
+    """A short pad-to-pad joint narrower than the class (W2 PWRJ-LAYERS6): between a pad of island A and a pad of island B
+    at most neck_max apart on a common outer layer, a straight or one-elbow track from pad centre to pad centre, as wide as
+    the class or the narrower pad (never below neck_min). The board spec lists the first pad's ref in neck_exempt with the
+    link length as escape_mm (pcb/check_boards.py: both ends of the piece within escape_mm + half the pad of that pad), so
+    the class-width check does not apply to this pin-entry piece. Returns (res, neck record) or (None, None)."""
+    pa_list = [i for i in A if i.kind == 'pad']
+    pb_list = [i for i in B if i.kind == 'pad']
+    cands = []
+    for pa in pa_list:
+        for pb in pb_list:
+            d = math.hypot(pa.at[0] - pb.at[0], pa.at[1] - pb.at[1])
+            if d > neck_max:
+                continue
+            for lay in layers:
+                if lay in pa.layers and lay in pb.layers:
+                    cands.append((d, lay, pa, pb))
+    cands.sort(key=lambda c: (c[0], c[1], c[2].ref or '', c[2].pad or ''))
+    for d, lay, pa, pb in cands:
+        def short(p):
+            b = p.shape.bbox
+            return min(b[2] - b[0], b[3] - b[1])
+        w = max(neck_min, math.floor(min(class_w, short(pa), short(pb)) * 20 + 1e-9) / 20)
+        paths = [[pa.at, pb.at], [pa.at, (pa.at[0], pb.at[1]), pb.at], [pa.at, (pb.at[0], pa.at[1]), pb.at]]
+        for pts in paths:
+            pts = [p for k, p in enumerate(pts) if k == 0 or math.hypot(p[0] - pts[k - 1][0], p[1] - pts[k - 1][1]) > 1e-6]
+            if len(pts) < 2:
+                continue
+            if all(m.track_margin(net, lay, w, a, b)[0] >= 0.0 for a, b in zip(pts, pts[1:])):
+                length = sum(math.hypot(q[0] - p[0], q[1] - p[1]) for p, q in zip(pts, pts[1:]))
+                far = max(math.hypot(p[0] - pa.at[0], p[1] - pa.at[1]) for p in pts)
+                return ({'runs': [(lay, pts)], 'vias': [], 'width': w},
+                        {'net': net, 'ref': pa.ref, 'pad': pa.pad, 'to': f'{pb.ref}.{pb.pad}', 'layer': lay, 'width_mm': round(w, 4),
+                         'length_mm': round(length, 4), 'escape_mm': round(math.ceil(far / 0.05 - 1e-9) * 0.05, 4)})
+    return None, None
+
+
+def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu', 'B.Cu'), g=0.05, via_cost=1.5, neck=None,
+                max_links=80):
+    """Join the islands of a net pair by pair (W2 PWRJ-LAYERS6): as Finisher.connect, but a pair without a path is skipped
+    and the next pair is tried, so one walled-in pad does not leave the rest of the net open; neck = (class width, max mm)
+    allows neck_link for a pair that has no class-width path. Returns (all joined, ripped nets, neck records)."""
+    ripped, necks, failed = [], [], set()
+    prune(self.m, net)
+    for _ in range(max_links):
+        groups = [gr for gr in self.m.islands(net) if any(i.kind == 'pad' for i in gr) or len(gr) > 1]
+        if len(groups) <= 1:
+            return True, ripped, necks
+        groups.sort(key=lambda gr: (-len(gr), sorted(_pads(gr))))
+        done = False
+        for A in groups:
+            # the nearest three other islands of A only, the wide search for the nearest one only (bounded cost per net)
+            for nb, B in enumerate(sorted((gr for gr in groups if gr is not A), key=lambda gr: (_gap(A, gr), sorted(_pads(gr))))[:3]):
+                key = frozenset((_pads(A), _pads(B)))
+                if key in failed:
+                    continue
+                res, how, rec = None, 'free', None
+                res = R.route_link(self.m, net, A, B, island_box([A, B], 6.0), width=width, g=g, via_cost=via_cost, verbose=False,
+                                   layers=layers, max_nodes=2_000_000)
+                if res is None and nb == 0:
+                    res = R.route_link(self.m, net, A, B, island_box([A, B], 25.0), width=width, g=g, via_cost=via_cost,
+                                       verbose=False, layers=layers, max_nodes=3_000_000)
+                    how = 'free-wide'
+                if res is None and neck:
+                    res, rec = neck_link(self.m, net, A, B, [l for l in layers if l in ('F.Cu', 'B.Cu')], neck[0], neck[1])
+                    how = 'neck'
+                if res is None and allow_rip:
+                    res = R.route_link(self.m, net, A, B, island_box([A, B], 8.0), width=width, g=g, via_cost=via_cost,
+                                       verbose=False, layers=layers, soft_src=('router',), soft_cost=2.0)
+                    how = 'rip'
+                    if res is not None:
+                        hits, bad = conflicts(self.m, net, res)
+                        if bad:
+                            res = None
+                        else:
+                            for h in hits:
+                                self.m.remove(h)
+                                self.ripped[h.net] += 1
+                                if h.net not in ripped:
+                                    ripped.append(h.net)
+                if res is None or (not res['runs'] and not res['vias']):
+                    failed.add(key)
+                    self.log(f'    {net}: no path {sorted(_pads(A))[:3]} - {sorted(_pads(B))[:3]}')
+                    continue
+                self.tag[net] += 1
+                tag = f'FIN-{net}-{self.tag[net]}'
+                try:
+                    self.records += R.commit(self.m, net, res, tag, lambda *a: None)
+                except RuntimeError as e:
+                    failed.add(key)
+                    self.log(f'    {net}: commit failed {e}')
+                    continue
+                if rec:
+                    necks.append(rec)
+                L = sum(math.hypot(q[0] - p[0], q[1] - p[1]) for _, pts in res['runs'] for p, q in zip(pts, pts[1:]))
+                self.log(f'  {tag} ({how}): {len(res["runs"])} runs {len(res["vias"])} vias {L:.1f} mm')
+                done = True
+                break
+            if done:
+                break
+        if not done:
+            return False, ripped, necks
+    return False, ripped, necks
+
+
+Finisher.connect_all = connect_all
