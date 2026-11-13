@@ -845,7 +845,7 @@ class PwrL6PlaceEscapeAndAnchors(unittest.TestCase):
         self.assertEqual({c['kind'] for c in esc['cutouts_in_field']}, {'header_edge_strip'})
         ids = {r['id'] for r in spec['planned_cutouts']['rects']}
         self.assertFalse(ids & {'C265', 'C511', 'C512'})
-        self.assertGreaterEqual(esc['corridor_free_of_cutouts_mm2'], 400.0)
+        self.assertGreaterEqual(esc['field_free_of_cutouts_mm2'], 400.0)  # third pass: the corridor is the band y 11.75-15.4, the field keeps 430.5 mm2 free
 
     def test_lab5_branches_take_the_f102_rating(self):
         if not bg.spec_path('PWR_B').is_file():
@@ -872,6 +872,109 @@ class PwrL6PlaceEscapeAndAnchors(unittest.TestCase):
             self.assertTrue(all(d <= r['limit_mm'] for d in r['pad_to_pin_mm'].values()), r['ref'])
         anchored = {p['ref'] for p in spec['parts'] if p.get('anchor')}
         self.assertLessEqual(set(want), anchored)
+
+
+class PwrL6Place3ExitPair(unittest.TestCase):
+    """W2 PWR-L6-PLACE third pass (judge decision ESC-JUDGE, option M): the vertical top-entry exit pair J203 / J506 in PWR_B
+    zone 2 under the J209 escape band, the U215 I2C2 via in pad, the zone-2 height zone from the contract, the PWR-A parts under
+    the new PWR-B pin fields (H-TRIM) and the fan-out-first completion order of freeze6. MODEL / CI inputs only."""
+
+    def spec(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        return bg.read_json(bg.spec_path('PWR_B'))
+
+    def test_exit_pair_in_zone_two(self):
+        spec = self.spec()
+        parts = {p['ref']: p['anchor'] for p in spec['parts']}
+        self.assertEqual((parts['J203']['at'], parts['J203']['rotation']), ([93.3, 9.75], 0))
+        self.assertEqual((parts['J506']['at'], parts['J506']['rotation']), ([92.5, 3.55], 0))
+        self.assertEqual((parts['C249']['at'], parts['C249']['rotation']), ([112.85, 3.0], 180))
+        esc = spec['j209_escape']
+        self.assertTrue(esc['passed'])
+        self.assertEqual(esc['exit_field_mm'], [90.0, 0.0, 115.0, 11.75])
+        self.assertEqual(sorted(esc['exit_field_courtyards']), ['C249', 'J203', 'J506'])
+        for ref in ('J203', 'J506'):
+            self.assertTrue(esc['exit_pair'][ref]['inside_exit_field'], ref)
+        self.assertEqual(spec['pwr_a_cutouts']['overlay']['overlaps'], [])
+        for c in spec['pwr_a_cutouts']['cutouts_mm']:                      # no cut-out reaches into the exit field
+            x0, y0, w, h = c['rect']
+            hit = min(x0 + w, 115.0) - max(x0, 90.0) > 1e-9 and min(y0 + h, 11.75) - max(y0, 0.0) > 1e-9
+            self.assertFalse(hit, c)
+        contract = bg.read_json(bg.BASE / 'mechanical/generated/contract/boards.json')['boards']['PWR_B']
+        ez = [z for z in contract['edge_zones'] if 'J203' in z.get('headers', [])]
+        self.assertEqual([(z['edge'], z['span'], z.get('exit'), z['headers']) for z in ez], [('bottom', [90.0, 115.0], 'top', ['J203', 'J506'])])
+
+    def test_escape_band_rule(self):
+        esc = self.spec()['j209_escape']
+        self.assertEqual(esc['corridor_mm'], [84.0, 11.75, 116.0, 15.4])
+        self.assertAlmostEqual(esc['band_height_mm'], 3.65, places=3)          # J203 courtyard top 11.75 to J209 courtyard 15.4
+        self.assertNotIn('J203', esc['pwr_b_top_courtyards_in_corridor'])
+        self.assertNotIn('C249', esc['pwr_b_top_courtyards_in_corridor'])
+        self.assertEqual(esc['zone2_windows_in_field'], [])
+
+    def test_no_tall_pwr_a_part_under_the_new_pin_fields(self):
+        study = bg.read_json(bg.BASE / 'build/kicad/boards/PWR_A/placement-study-shrink2.json')
+        ht = study['h_trim']
+        self.assertTrue(ht['passed'])
+        self.assertEqual(ht['violations'], [])
+        zones = {f['ref']: f['zone'] for f in ht['pwr_b_tht_fields']}
+        self.assertEqual(zones['J203'], [92.2, 6.65, 112.4, 10.85])
+        self.assertEqual(zones['J506'], [91.4, 2.175, 109.6, 4.925])
+        for u in ht['parts_under']:
+            if set(u['under']) & {'J203', 'J506'}:
+                self.assertTrue(u['ok'] and u['h_mm'] is not None and u['h_mm'] <= 2.7, u)
+        pos = {r['ref']: r for r in study['positions']['refs']}
+        self.assertEqual((pos['C512']['at'], pos['C512']['how']), ([101.9, 31.45], 'anchor'))
+        self.assertEqual(study['unplaced_refs'], [])
+        self.assertEqual(study['pwr_b_cutouts']['unplaced_needing_one'], [])
+
+    def test_u215_via_in_pad(self):
+        spec = self.spec()
+        vias = {v['id']: v for v in spec['pre_route']['vias']}
+        rec = {r['id']: r for r in spec['via_in_pad']['vias']}
+        want = {'VIP-U215-6': ('I2C2_SCL', [21.175, 56.35], 'U215.6'), 'VIP-U215-7': ('I2C2_SDA', [21.825, 56.9], 'U215.7')}
+        for vid, (net, at, pad) in want.items():
+            v = vias[vid]
+            self.assertEqual((v['net'], v['at'], v['diameter_mm'], v['drill_mm'], v['locked']), (net, at, 0.6, 0.3, True))
+            self.assertEqual(rec[vid]['pad'], pad)
+            self.assertGreaterEqual(rec[vid]['gap_to_neighbour_pads_mm'], 0.15)    # KiCad clearance
+            self.assertLess(rec[vid]['gap_to_neighbour_pads_mm'], 0.20)            # the recorded exception to CLEAR + MARGIN
+        a, b = vias['VIP-U215-6']['at'], vias['VIP-U215-7']['at']
+        self.assertGreaterEqual(((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5 - 0.3, 0.5 + 0.05)   # hole to hole
+        self.assertIn('TBD at order', spec['via_in_pad']['fab'])
+        self.assertTrue(spec['via_in_pad']['gate'].startswith('OPEN'))
+
+    def test_zone_two_height_zone(self):
+        spec = self.spec()
+        contract = bg.read_json(bg.BASE / 'mechanical/generated/contract/boards.json')['boards']['PWR_B']
+        top = [z for z in spec['height_zones'] if z['side'] == 'top' and z.get('max_height_mm', 0) > 0]
+        self.assertEqual([z['region'] for z in top], [z['rect'] for z in contract['height_zones']])
+        self.assertEqual([z['max_height_mm'] for z in top], [z['fits_mm'] for z in contract['height_zones']])
+        self.assertFalse([z for z in spec['height_zones'] if z['side'] == 'top' and z['region'] == 'board'])
+        self.assertEqual(contract['max_component_height'], 5.5)               # every other top part: the contract default
+        self.assertEqual((spec['heights']['J203'], spec['heights']['J506']), (6.5, 6.0))
+        self.assertLessEqual(spec['heights']['J203'], top[0]['max_height_mm'])
+
+    def test_freeze6_fanout_order(self):
+        import ast
+        import collections
+        import types
+        src = (bg.BASE / 'build/kicad/boards/PWR_B/freeze/freeze6.py').read_text(encoding='utf-8')
+        tree = ast.parse(src)
+        keep = [n for n in tree.body if (isinstance(n, ast.FunctionDef) and n.name == 'fanout_first')
+                or (isinstance(n, ast.Assign) and any(isinstance(t, ast.Tuple) and 'FANOUT_TO' in [e.id for e in t.elts]
+                                                     for t in n.targets))]
+        self.assertEqual(len(keep), 2)
+        self.assertIn("choices=('class', 'short', 'fanout')", src)
+        ns = {'collections': collections, 'B2B': 'J209'}
+        exec(compile(ast.Module(body=keep, type_ignores=[]), 'freeze6_fanout', 'exec'), ns)
+        pad = lambda net, ref, x: types.SimpleNamespace(alive=True, kind='pad', net=net, ref=ref, at=(x, 0.0))
+        items = [pad('A', 'J209', 190.0), pad('A', 'J203', 195.0), pad('B', 'J209', 199.0), pad('B', 'J203', 201.0),
+                 pad('I2C2_SDA', 'J209', 195.5), pad('I2C2_SCL', 'J209', 196.0), pad('C', 'J209', 180.0), pad('C', 'U1', 120.0)]
+        m = types.SimpleNamespace(items=items)
+        order = ns['fanout_first'](m, {'A', 'B', 'C', 'I2C2_SCL', 'I2C2_SDA'}, lambda n: 0.0)
+        self.assertEqual(order, ['B', 'A', 'I2C2_SCL', 'I2C2_SDA', 'C'])     # J209-to-J203 right to left, I2C2, the rest
 
 
 if __name__ == '__main__':
