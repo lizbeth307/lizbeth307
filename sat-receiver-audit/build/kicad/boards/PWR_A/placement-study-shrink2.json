@@ -12,7 +12,7 @@
     "project_sha256": "7ef39ebd9b14550ec2d82b5f8357acd536a72bf898fa71b9eefefddb1c712a58",
     "pwr_b_placeholders": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
     "pwr_b_spec_sha256": "9f6bee253f724f418076c9fa16204c87f2f3d8f31ae1b910ba0a4bbf9d0294db",
-    "pwr_b_connectors_sha256": "149dcf057e4df0f04d8c6dd4eaef352157f94692d5d5dc9268f42b9154d053b2"
+    "pwr_b_connectors_sha256": "4f5ddb6e3763c573527eb25c17bc341e61372c7e7349365be91d257ed0f5cf78"
   },
   "spec_checks": {
     "validate_spec": "passed",
