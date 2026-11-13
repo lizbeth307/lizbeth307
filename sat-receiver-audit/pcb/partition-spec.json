@@ -8,11 +8,11 @@
   "ratios_1_8": {
    "PWR_A": 0.933,
    "PWR_A_BOTTOM": 3.614,
-   "PWR_B": 1.004,
+   "PWR_B": 1.07,
    "CTRL_top": 1.117,
    "CTRL_bottom": 0.908
   },
-  "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2, two-sided since W2 AREA-2), PWR-B (mezzanine on the PWR-A footprint, Samtec LSHM-150-02.5 pair J208/J209, 5.00 mm stack), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a) (the draft PWR-B group list, with the LNB OVP comparator U220 kept on PWR-A next to U212) with the SHRINK-2 content (candidate shrink2, W2 AREA-2): TI converters instead of the Pololu modules, SMD F103/F201, low-profile 5 V dampers, 2520 inductors, 1210 C111/C112, C109 deleted, C506 as three 16SVPG47M on PWR-B, merged PWR-B headers, a two-sided PWR-A and rule H-TRIM. Computed (MODEL ESTIMATE, pcb/partition-budget.json; W2 AREA-REC, 13.11.2026, on the graph with the GR-5A/GR-5B parts, 11 of the 12 planned changes in the graph, J204+J207-PHD still pending): PWR-A top raw fill 0.595 (185 refs, demand 4549.4 mm2 with the W2 GR-ZONE2-SMD POSCAP parts, 4545.1 before; the reserved blocks are gone; W2 AREA-2 with the changes pending: 0.588, 150 refs, 4494 mm2 incl. 461.7 mm2 of reserved blocks), bottom 0.154 (94 refs; 0.157 before W2 GR-ZONE2-SMD), PWR-B 0.553 (135 refs; 0.572 before W2 GR-ZONE2-SMD); B2B 55 contacts, 66 with the spare, of 100. The 0.60 placement trigger of F2 and F2-C is met with 35.0 mm2 to spare (39.3 mm2 before W2 GR-ZONE2-SMD, 90.4 mm2 with the reserved blocks); the 1.8 planning factor is not (ratios_1_8), so the placement fill and the route are the record (next_decision). CTRL is unchanged (two-sided; the bottom headers without a height-valid variant are decision.ctrl_headers_unresolved)",
+  "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2, two-sided since W2 AREA-2), PWR-B (mezzanine on the PWR-A footprint, Samtec LSHM-150-02.5 pair J208/J209, 5.00 mm stack), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a) (the draft PWR-B group list, with the LNB OVP comparator U220 kept on PWR-A next to U212) with the SHRINK-2 content (candidate shrink2, W2 AREA-2): TI converters instead of the Pololu modules, SMD F103/F201, low-profile 5 V dampers, 2520 inductors, 1210 C111/C112, C109 deleted, C506 as three 16SVPG47M on PWR-B, merged PWR-B headers, a two-sided PWR-A and rule H-TRIM. Computed (MODEL ESTIMATE, pcb/partition-budget.json; W2 AREA-REC, 13.11.2026, on the graph with the GR-5A/GR-5B parts, 11 of the 12 planned changes in the graph, J204+J207-PHD still pending): PWR-A top raw fill 0.595 (185 refs, demand 4549.4 mm2 with the W2 GR-ZONE2-SMD POSCAP parts, 4545.1 before; the reserved blocks are gone; W2 AREA-2 with the changes pending: 0.588, 150 refs, 4494 mm2 incl. 461.7 mm2 of reserved blocks), bottom 0.154 (94 refs; 0.157 before W2 GR-ZONE2-SMD), PWR-B 0.519 (135 refs; 0.553 before the W2 PWR-L6-PLACE top-entry J203/J506, 0.572 before W2 GR-ZONE2-SMD); B2B 55 contacts, 66 with the spare, of 100. The 0.60 placement trigger of F2 and F2-C is met with 35.0 mm2 to spare (39.3 mm2 before W2 GR-ZONE2-SMD, 90.4 mm2 with the reserved blocks); the 1.8 planning factor is not (ratios_1_8), so the placement fill and the route are the record (next_decision). CTRL is unchanged (two-sided; the bottom headers without a height-valid variant are decision.ctrl_headers_unresolved)",
   "why_a": "(a) and (b) leave almost the same total shortfall (about 7.3k mm2 at 1.8), but (a) needs 53 B2B contacts against 81, moves no fused high-current internal net (E2_J21_FUSED) across the boards, and keeps the J21/display/Lime/AUX12 eFuses with their fuse holders and bulk capacitors; moving more groups to PWR-B overfills PWR-B, whose usable area is set by the windows. W2 AREA-REC, 13.11.2026, on the graph after GR-5A/GR-5B: (a) needs 55 contacts (66 with the spare) against 95 (114) of (b), so (b) misses the spare rule of the 100-contact pair (b2b.spare_rule); the total shortfall at 1.8 is again almost the same (a 2677, b 2623 mm2); E2_J21_FUSED no longer crosses in (b), because the NANO2 F201 (2.94 mm, heights.by_mpn) now goes to PWR-B with its group, so that reason no longer separates them; the contact count and the spare rule still do",
   "b2b_contacts_quoted": {
    "a": 55,
@@ -49,6 +49,7 @@
   "recomputed_w2_area2": "W2 AREA-2, 12.11.2026: chosen becomes shrink2. partition_budget.py evaluates planned content changes (they count until GR-5A/GR-5B put the parts into the graph), reserved blocks, a two-sided PWR-A and rule H-TRIM; the existing candidates reproduce unchanged. ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, b2b.budget_planned and the fallback ratios are computed; partition.domain_override_pwr_a and b2b.budget_chosen stay the graph of record that pcb/prepare.py, pcb/generated/b2b-nets.json and pcb/tests/test_b2b_map.py follow (candidates.shrink2 planned.graph_of_record in pcb/partition-budget.json), and the *_planned keys hold the SHRINK-2 state. The figures in the texts of the earlier records above are history; the computed keys win. Review fixes of 12.11.2026: the RPP block is the reserve RPP-SYS12 (it no longer leaves with U107), and the F2/F3 texts cite their sources by commit and read the computed numbers in the right direction",
   "recomputed_w2_area_rec": "W2 AREA-REC, 13.11.2026: the AREA-lineage pass after the GR-5A/GR-5B merge that pcb/partition_budget.py --check named. 11 of the 12 planned changes of shrink2 are in the graph (J204+J207-PHD stays pending: GR-5B left that merge OPEN), so the graph counts: the reserved blocks CONV_SYS12, RPP, CONV_LAB5, FUSE_F103 and FUSE_F201 (461.7 mm2) are replaced by the GR-5A graph parts (PWR-A top refs 150 -> 185). ratios_1_8, shortfall_1_8_mm2, b2b_contacts_quoted, placement_study and the fallback ratios are recomputed; b2b.budget_chosen and b2b.budget_planned are both 33 nets, 55 contacts, 66 with the spare, as before. Old -> new for shrink2 (MODEL ESTIMATE): PWR-A top raw fill 0.588 -> 0.595, demand at 1.0 4494.0 -> 4545.1 mm2 (+51.1 mm2, less than the 90.4 mm2 the F2-C trigger allowed; 39.3 mm2 left below 0.60), ratio_1_8 0.945 -> 0.934, shortfall at 1.8 449 -> 541 mm2; PWR-A bottom (0.157, 3.542), PWR-B (0.572, 0.972) and CTRL are unchanged. The 17 GR-5A chip refs C121, C122, C127-C129, C132, C136 and R124-R133 stay on the PWR-A top beside U107/U108 (pwr_a_bottom.rule; build/kicad/boards/PWR_A/placement-study-shrink2.json places them on F), so pwr_a_bottom.refs keeps its 94 refs. The candidates without planned changes now evaluate the graph after GR-5A/GR-5B (no Pololu modules, low-profile 5 V dampers, NANO2 F201), so their ratios move a lot: (a) PWR-A 0.661 -> 0.810, PWR-B 0.497 -> 0.922; (a) needs 55 contacts (was 69), (b) 95 (was 119). Decisions checked on the new numbers: the SHRINK-2 pair inside the envelope holds (PWR-A top 0.595 <= 0.60, PWR-B 0.572 <= 0.60; the LAYERS6 decision of 13.11.2026 keeps it on the LSHM-150), the B2B budget holds (66 <= 100) and the fallback order holds (F2-C not fired on area, s2nt without H-TRIM 0.632 -> 0.638; F2-ENV not fired); the verdict is unchanged: no evaluated partition fits at 1.8. Two stated reasons changed without changing a decision: the 80-contact LSHM-140 (a80) would now meet the spare rule (rejected, b2b.spare_rule), and E2_J21_FUSED no longer crosses in (b) (why_a). With the merge J204+J207-PHD left out (the graph's separate J204/J207), PWR-B is 0.603 > 0.60 (MODEL), as the build/15 PWR-B placement row already records; mechanical/generated/fit-report.json (sr-rx-mech run 43396163513, applied as GENERATED) follows: R-HDR-MATED's MF_ra swaps no longer fit the margin below 0.60 (fallbacks F2-C verdict)",
   "recomputed_w2_grzone2": "W2 GR-ZONE2-SMD, 13.11.2026: C265, C511 and C512 are Panasonic POSCAP SMD parts (35TQS47MEX, 16TQC100MD2, 16TQC220MD3; heights.by_mpn 1.5/2.0/3.0 mm) instead of the radials EEU-FR1H470, EEU-FR1C101 and EEU-FR1C221, so they need no PWR-B window and no THT pin field. ratios_1_8, shortfall_1_8_mm2 and the fallback ratios are recomputed. Old -> new for shrink2 (MODEL ESTIMATE): PWR-A top demand at 1.0 4545.1 -> 4549.4 mm2 (the KiCad 7343 courtyards, 8.82 x 4.80 mm, are larger than the D5/D6.3 radial ones), raw fill 0.595 (unchanged at three places), margin below 0.60 39.3 -> 35.0 mm2, ratio_1_8 0.934 -> 0.933, shortfall at 1.8 541 -> 548 mm2; PWR-A bottom usable 3163.4 -> 3227.5 mm2 (three THT pin fields fewer), raw fill 0.157 -> 0.154, ratio_1_8 3.542 -> 3.614; PWR-B windows 1196.1 -> 1032.2 mm2, usable 4892.2 -> 5056.2 mm2, raw fill 0.572 -> 0.553, ratio_1_8 0.972 -> 1.004, so PWR-B now fits at 1.8 (shortfall 141 -> 0 mm2); CTRL unchanged. Without the pending J204+J207-PHD merge (candidate a, the graph of record) PWR-B is 0.583 instead of 0.603, below the 0.60 trigger. Decisions checked on the new numbers, none flips: the SHRINK-2 pair holds (PWR-A top 0.595 <= 0.60, PWR-B 0.553 <= 0.60), F2-C did not fire (+4.3 mm2 against the 39.3 mm2 left), no evaluated candidate fits at 1.8 (PWR-A below 1 in all). placement_study still records the committed study (0.5949), which PWR-L6-PLACE regenerates after this package; the computed 0.595 is within its 0.01 tolerance",
+  "recomputed_w2_pwrl6p3": "W2 PWR-L6-PLACE third pass, 13.11.2026 (judge decision ESC-JUDGE, option M): J203 (S02-PWR-SIG-2) is the JST PHD top entry B20B-PHDSS(LF)(SN) and J506 (SL3-PWR-PH) the JST PH top entry B9B-PH-K-S(LF)(SN), the vertical exit pair of PWR-B edge zone 2 (heights.by_mpn 6.5 / 6.0 mm, header_families.PHD_top h 6.5 body, h_mated 8.8; the courtyards of the vendored KiCad 10.0.7 footprints). ratios_1_8, shortfall_1_8_mm2 and the fallback ratios are recomputed. Old -> new (MODEL ESTIMATE): J203 courtyard 242.74 -> 137.40 mm2, J506 179.74 -> 114.95 mm2; shrink2 PWR-B headers 1018.9 -> 848.8 mm2, demand at 1.0 2796.4 -> 2626.3 mm2, raw fill 0.553 -> 0.519, ratio_1_8 1.004 -> 1.07; the same -170.1 mm2 in every candidate with the PWR-B headers (a 0.583 -> 0.549, s2f3 0.578 -> 0.545, f3 0.608 -> 0.575, s2nt 0.553 -> 0.519); PWR-A (top 0.595, ratio 0.933, 35.0 mm2 below 0.60; bottom 0.154), CTRL and the B2B (55 contacts, 66 with the spare) are unchanged. pwr_heights_above_hA lists the two top-entry headers on PWR-B (mated 8.8 / 8.0 mm; they stand in the zone-2 height zone of the contract, free to the front wall, not under PWR-B). Decisions checked on the new numbers, none flips: the SHRINK-2 pair holds (PWR-A top 0.595 <= 0.60, PWR-B 0.519 <= 0.60), F2-C did not fire (PWR-A unchanged), no evaluated candidate fits at 1.8 (PWR-A below 1 in all), D-ENV unchanged",
   "placement_study": {
    "candidate": "shrink2",
    "top_fill_all_refs": 0.5949,
@@ -2934,14 +2935,14 @@
    "ratios_1_8": {
     "c": {
      "PWR_A": 0.809,
-     "PWR_B": 0.953,
+     "PWR_B": 1.011,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "f2b": {
      "PCB_REAR": 1.435,
      "PWR_A": 0.861,
-     "PWR_B": 1.245,
+     "PWR_B": 1.343,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
@@ -2971,18 +2972,18 @@
    ],
    "option": "MCP23017 #1/#3/#4 (E3 group 'MCP23017 control') from CTRL to the power side (PWR-B), as STACK.md:277 allows (MCP23017-E/SO 'на силовій платі'); needs an E3/E2 review of the EN/FAULT logic",
    "trigger": "CTRL fill > 0.60 on either side in placement (PCB-CTRL). The area model of (a) is at raw fill 0.617 (top) / 0.612 (bottom), pcb/partition-budget.json candidates.a ctrl",
-   "verdict": "at 1.8 the CTRL top already fits without F3 (candidate a 1.117, f3 1.124) and F3 does not close the bottom (0.908 -> 0.946); against the 0.60 placement trigger it is the other way round: F3 brings the CTRL bottom raw fill from 0.612 to 0.587 and leaves the top at 0.614 (computed, candidates a and f3). It leaves decision.ctrl_headers_unresolved as they are. On SHRINK-2 (candidate s2f3) the MCP23017 group lifts the PWR-B raw fill from 0.553 to 0.578 with S02 unchanged, 0.022 below the 0.60 trigger (W2 GR-ZONE2-SMD; 0.572 to 0.598 before) (the SHRINK-2 decision estimated about 0.62), so F3 on PWR-B needs the S02 FFC (not adopted: no mating FFC pair established, W2 READS-P) or a PWR-B placement check (PCB-PWRB-2) first. Apply only if PCB-CTRL shows the fill",
+   "verdict": "at 1.8 the CTRL top already fits without F3 (candidate a 1.117, f3 1.124) and F3 does not close the bottom (0.908 -> 0.946); against the 0.60 placement trigger it is the other way round: F3 brings the CTRL bottom raw fill from 0.612 to 0.587 and leaves the top at 0.614 (computed, candidates a and f3). It leaves decision.ctrl_headers_unresolved as they are. On SHRINK-2 (candidate s2f3) the MCP23017 group lifts the PWR-B raw fill from 0.519 to 0.545 with S02 unchanged, 0.055 below the 0.60 trigger (W2 PWR-L6-PLACE third pass, top-entry J203/J506; 0.553 to 0.578 at W2 GR-ZONE2-SMD, 0.572 to 0.598 before) (the SHRINK-2 decision estimated about 0.62), so F3 on PWR-B needs the S02 FFC (not adopted: no mating FFC pair established, W2 READS-P) or a PWR-B placement check (PCB-PWRB-2) first. Apply only if PCB-CTRL shows the fill",
    "ratios_1_8": {
     "f3": {
      "PWR_A": 0.809,
-     "PWR_B": 0.913,
+     "PWR_B": 0.967,
      "CTRL_top": 1.124,
      "CTRL_bottom": 0.946
     },
     "s2f3": {
      "PWR_A": 0.933,
      "PWR_A_BOTTOM": 3.614,
-     "PWR_B": 0.961,
+     "PWR_B": 1.02,
      "CTRL_top": 1.124,
      "CTRL_bottom": 0.946
     }
@@ -3000,13 +3001,13 @@
    "ratios_1_8": {
     "w1": {
      "PWR_A": 0.809,
-     "PWR_B": 0.953,
+     "PWR_B": 1.011,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "w2": {
      "PWR_A": 0.951,
-     "PWR_B": 0.795,
+     "PWR_B": 0.833,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
@@ -3026,26 +3027,26 @@
    "ratios_1_8": {
     "s8": {
      "PWR_A": 0.809,
-     "PWR_B": 1.019,
+     "PWR_B": 1.081,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "s8c": {
      "PCB_REAR": 1.435,
      "PWR_A": 0.861,
-     "PWR_B": 1.281,
+     "PWR_B": 1.382,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "a80": {
      "PWR_A": 0.814,
-     "PWR_B": 0.963,
+     "PWR_B": 1.023,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     },
     "am": {
      "PWR_A": 0.72,
-     "PWR_B": 0.817,
+     "PWR_B": 0.867,
      "CTRL_top": 1.205,
      "CTRL_bottom": 1.175
     }
@@ -3067,7 +3068,7 @@
     "s2nt": {
      "PWR_A": 0.897,
      "PWR_A_BOTTOM": 3.614,
-     "PWR_B": 1.004,
+     "PWR_B": 1.07,
      "CTRL_top": 1.117,
      "CTRL_bottom": 0.908
     }
