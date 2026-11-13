@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "0d99343ce2e092780aa16415743162ad831c624f4361be8dac0a5df86bc8a614",
+    "params_sha256": "3a3651c7668911919d8b572d478038b4077ec22faa97cfa8eeaeb5bc587ce4d7",
     "pcb_components_sha256": "7f252dc3d99bc59551ac853031bde450e05fc5a0c20cefb9cf4be1198b8505f9"
   },
   "envelope": {
@@ -2500,7 +2500,7 @@
             "edge": "right",
             "span": [
               -30,
-              35
+              0
             ],
             "headers": [
               "J201",
@@ -2515,8 +2515,8 @@
               49.1,
               54.1
             ],
-            "room_mm": 2.0,
-            "nearest": "blower",
+            "room_mm": 33.0,
+            "nearest": "bms",
             "plug_proud_mm": 2.0,
             "plug_proud_tbd": [
               "PHD"
@@ -2534,8 +2534,8 @@
                 "nearest": "PWR.r0"
               }
             },
-            "set_back_min_mm": 14.54,
-            "verdict": "room 2 mm to blower < housing proud 2 + bundle OD 14.04 (S02) + clearance 0.5 = 16.54 (bundle OD 14.04 > room 2: the bundle cannot turn in front of the edge): the header face sits >= 14.54 mm inboard of the board edge and the wires turn over the board (bend radius TBD); housing proud of PHD TBD; leg to the first opening, bundle (centreline + OD/2) against the envelopes: S02 reaches 7.02 into PWR.r0"
+            "set_back_min_mm": 0.0,
+            "verdict": "room 33 mm to bms >= housing proud 2 + bundle OD 14.04 (S02) + clearance 0.5: header face at the edge; the wire bend radius (TBD) needs the rest; housing proud of PHD TBD; leg to the first opening, bundle (centreline + OD/2) against the envelopes: S02 reaches 7.02 into PWR.r0"
           },
           {
             "zone": 1,
@@ -2659,7 +2659,7 @@
       "limit_mm": {
         "PH": 2.0
       },
-      "result": "OPEN: zone 0 (right -30-35, J201, J202, J203): room 2 mm to blower < housing proud 2 + bundle OD 14.04 (S02) + clearance 0.5 = 16.54 (bundle OD 14.04 > room 2: the bundle cannot turn in front of the edge): the header face sits >= 14.54 mm inboard of the board edge and the wires turn over the board (bend radius TBD); housing proud of PHD TBD; leg to the first opening, bundle (centreline + OD/2) against the envelopes: S02 reaches 7.02 into PWR.r0; zone 1 (top 58-107, J204, J207): room 1.5 mm to hdmi_board < housing proud 2 + bundle OD 3.51 (S04) + clearance 0.5 = 6.01 (bundle OD 3.51 > room 1.5: the bundle cannot turn in front of the edge): the header face sits >= 4.51 mm inboard of the board edge and the wires turn over the board (bend radius TBD); leg to the first opening, bundle (centreline + OD/2) against the envelopes: S04 reaches 1 into hdmi_board, S20 reaches 0.12 into hdmi_board, S21 reaches 0.12 into hdmi_board, S22 reaches 0.32 into hdmi_board, S35 reaches 0.12 into hdmi_board, S36 reaches 0.12 into hdmi_board; zone 2 (bottom 93-114.5, J506): room 0.55 mm to battery_tray < housing proud 2 + bundle OD 3.45 (S34) + clearance 0.5 = 5.95 (bundle OD 3.45 > room 0.55: the bundle cannot turn in front of the edge): the header face sits >= 5.4 mm inboard of the board edge and the wires turn over the board (bend radius TBD); leg to the first opening, bundle (centreline + OD/2) against the envelopes: clear: S23 0.93, S34 0.27 mm; OPEN: PCB-PWRB-2 sets the header set-back from the board edge at its placement (at least the R-PWRB-EXIT set_back_min_mm of the zone, plus the bend radius, TBD) and the wire turn is checked at proof-fit (rule R-PWRB-EXIT)"
+      "result": "OPEN: zone 0 (right -30-0, J201, J202, J203): room 33 mm to bms >= housing proud 2 + bundle OD 14.04 (S02) + clearance 0.5: header face at the edge; the wire bend radius (TBD) needs the rest; housing proud of PHD TBD; leg to the first opening, bundle (centreline + OD/2) against the envelopes: S02 reaches 7.02 into PWR.r0; zone 1 (top 58-107, J204, J207): room 1.5 mm to hdmi_board < housing proud 2 + bundle OD 3.51 (S04) + clearance 0.5 = 6.01 (bundle OD 3.51 > room 1.5: the bundle cannot turn in front of the edge): the header face sits >= 4.51 mm inboard of the board edge and the wires turn over the board (bend radius TBD); leg to the first opening, bundle (centreline + OD/2) against the envelopes: S04 reaches 1 into hdmi_board, S20 reaches 0.12 into hdmi_board, S21 reaches 0.12 into hdmi_board, S22 reaches 0.32 into hdmi_board, S35 reaches 0.12 into hdmi_board, S36 reaches 0.12 into hdmi_board; zone 2 (bottom 93-114.5, J506): room 0.55 mm to battery_tray < housing proud 2 + bundle OD 3.45 (S34) + clearance 0.5 = 5.95 (bundle OD 3.45 > room 0.55: the bundle cannot turn in front of the edge): the header face sits >= 5.4 mm inboard of the board edge and the wires turn over the board (bend radius TBD); leg to the first opening, bundle (centreline + OD/2) against the envelopes: clear: S23 0.93, S34 0.27 mm; OPEN: PCB-PWRB-2 sets the header set-back from the board edge at its placement (at least the R-PWRB-EXIT set_back_min_mm of the zone, plus the bend radius, TBD) and the wire turn is checked at proof-fit (rule R-PWRB-EXIT)"
     },
     {
       "id": "R-TOOL-ACCESS",
