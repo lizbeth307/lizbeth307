@@ -120,7 +120,8 @@
       "edge_zones": [
         {
           "edge": "right",
-          "span": [-30, 35],
+          "span": [-30, 0],
+          "_span_f2env": "W2 PWRJ F2ENV probe: J201-J203 stand in the slab (bay, board y < 0) with their wires rising there; they leave over the slab part of this edge (enclosure y 38.5-68.5, below the blower)",
           "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false, READS-P found no mating FFC) the three headers (58.7 mm of courtyards) have no conflict-free home: this 35 mm edge also carries the PWR-A J104 strip and the hole keep-outs, and the PWR-B bottom edge lies over the PWR-A bottom-row strips, so the recorded bottom-edge deviation of W2 PCB-PWRB stays OPEN (SHRINK-2 stays_open: 'S02 has a home only with a sourced FFC'); J506/J508 left this edge (edge zone 2)",
           "headers": ["J201", "J202", "J203"]
         },

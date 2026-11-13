@@ -247,6 +247,10 @@ def dangling(m):
     for it in m.items:
         if not it.alive or it.kind not in ('track', 'via'):
             continue
+        if it.src == 'scripted':
+            # W2 PWRJ F2ENV: the locked scripted copper of make_spec.py (J209 GND spine vias on a running B.Cu track,
+            # fan-out vias) is KiCad-checked by the route run; this strict end test reports only router and completion copper
+            continue
         net = it.net
         if it.kind == 'track':
             for e in (it.a, it.b):

@@ -37,6 +37,10 @@ WEIGHT = {'BATT': 4.0, 'PWR3A': 3.0, 'PWR2A': 2.0, 'PWR1A': 1.5}
 FIXED_ALWAYS = {'J201', 'J202', 'J203', 'J204', 'J207', 'J209', 'J506'}
 FIXED_PREFIX = ('LAB5', 'K4', 'GND-J209')
 NO_TURN = {'U215'}   # its exposed-pad GND stub (make_spec gnd_fanout) is drawn for the table rotation
+# F2ENV probe 3: escape corridor of the J209 lower contact row down to the S02 headers in the slab (probe 2, run 43345481031:
+# the placer packed U217-U219, U507 and their passives under J209, and the S02 nets J209 -> J202 / J203 stayed open, also
+# after the A* completion): no moved courtyard in it
+CORRIDORS = [(84.0, -1.4, 116.0, 15.3)]
 
 
 def ov(a, b, g=0.0):
@@ -77,6 +81,7 @@ class Model:
         for name in ms.BAY_PLUGS:
             hb = parts[name].box
             self.static.append((hb[0], hb[3], hb[2], hb[3] + ms.BAY_PLUG_MM))
+        self.static += CORRIDORS
         # fixed scripted copper of the current spec (LAB5 trunk and taps, J209 spine and stubs, ch4 sense)
         spec = json.loads(ms.SPEC.read_text(encoding='utf-8'))
         for t in spec['pre_route']['tracks']:
