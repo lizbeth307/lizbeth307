@@ -1640,7 +1640,7 @@
         "wires": 20,
         "awg": 22,
         "_awg_src": "build/16-dzhgut.csv rows S02-S02B-01..20: PHD-PHD, 22 AWG (SPHD-001T-P0.5, AWG 26-22, insulation 1.0-1.5 mm: parts.json harness_families PHD); bundle OD from parts.json hookup_wire_ptfe 22 AWG (2845/7, 1.07 + 0.05) x sqrt(20 / fill 0.6) = 6.47 mm (MODEL, srrx_mech.routes)",
-        "replaces": "the J307 <-> J203 conductors of S02 (W2 PWR-L6-PLACE third pass: J203 left PWR-B edge zone 0 for the top-entry exit of zone 2; the harness stays straight, J307.k <-> J203.k)",
+        "replaces": "the J203 conductors of S02 (W2 PWR-L6-PLACE third pass: J203 left PWR-B edge zone 0 for the top-entry exit of zone 2; J307.k <-> J203.k except J306.5/7/12/16 <-> J203.2/14/15/18 since the probe C pin swap of the fourth pass, tools/assembly_data.py HEADERS)",
         "via": [
           {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.4},
           {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.4, "off": [-0.8, 0, 0]},
