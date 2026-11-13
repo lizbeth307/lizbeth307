@@ -185,7 +185,7 @@ TEXT
 40
 1.6
 1
-E1: CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J20
+E1: CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202 S02
 50
 0
 0
@@ -225,13 +225,13 @@ LINE
 8
 CENTER
 10
-93
+90
 20
 -2
 30
 0
 11
-114.5
+115
 21
 -2
 31
@@ -241,7 +241,7 @@ TEXT
 8
 TEXT
 10
-93
+90
 20
 -12.5
 30
@@ -249,7 +249,7 @@ TEXT
 40
 1.6
 1
-E3: W2 MECH-7 part 2 (SHRINK-2): J506 SL3-PWR-PH, the JST PH 9-pin side-en
+E3: W2 PWR-L6-PLACE third pass (judge decision ESC-JUDGE, option M): the v
 50
 0
 0

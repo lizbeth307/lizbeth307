@@ -106,8 +106,8 @@
             "J111",
             "J112"
           ],
-          "row_end_max": 92.5,
-          "_row_end_max_note": "W2 MECH-7 part 2 (contract for PCB-PWRA-3): the courtyards of J105-J112 + window_margin 0.5 end at x <= 92.5; turned, the row is 70.0 mm of courtyards from x 8.2, about 81.7 with the gaps of today, so about 10 mm of slack stay; at wip/w2-pwra3 9ecc26f2 probe 7 (not turned) J112 still ends at x 99.3 (MODEL)"
+          "row_end_max": 90.0,
+          "_row_end_max_note": "W2 PWR-L6-PLACE third pass: 92.5 -> 90.0, so that PWR-B edge zone 2 (x 90-115, the top-entry exit pair J203 / J506) starts clear of the row; the row of record ends at x 89.6 (build/kicad/boards/PWR_A/PWR_A.spec-shrink2.json bottom_row end_x_with_margin). W2 MECH-7 part 2 (contract for PCB-PWRA-3): the courtyards of J105-J112 + window_margin 0.5 end at x <= 92.5; turned, the row is 70.0 mm of courtyards from x 8.2, about 81.7 with the gaps of today, so about 10 mm of slack stay; at wip/w2-pwra3 9ecc26f2 probe 7 (not turned) J112 still ends at x 99.3 (MODEL)"
         },
         {
           "edge": "right",
@@ -392,11 +392,10 @@
             0,
             35
           ],
-          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false, READS-P found no mating FFC) the three headers (58.7 mm of courtyards) have no conflict-free home: this 35 mm edge also carries the PWR-A J104 strip and the hole keep-outs, and the PWR-B bottom edge lies over the PWR-A bottom-row strips, so the recorded bottom-edge deviation of W2 PCB-PWRB stays OPEN (SHRINK-2 stays_open: 'S02 has a home only with a sourced FFC'); J506/J508 left this edge (edge zone 2)",
+          "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202 S02-PWR-SIG-1 JST PHD side entry; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 PWR-L6-PLACE third pass: J203 S02-PWR-SIG-2 left this edge for the top-entry exit of edge zone 2 (harness branch S02B), so J201 and J202 stay here without a home (S02 FFC OPEN); W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false, READS-P found no mating FFC) the three headers (58.7 mm of courtyards) have no conflict-free home: this 35 mm edge also carries the PWR-A J104 strip and the hole keep-outs, and the PWR-B bottom edge lies over the PWR-A bottom-row strips, so the recorded bottom-edge deviation of W2 PCB-PWRB stays OPEN (SHRINK-2 stays_open: 'S02 has a home only with a sourced FFC'); J506/J508 left this edge (edge zone 2)",
           "headers": [
             "J201",
-            "J202",
-            "J203"
+            "J202"
           ]
         },
         {
@@ -415,18 +414,34 @@
         {
           "edge": "bottom",
           "span": [
-            93,
-            114.5
+            90.0,
+            115.0
           ],
-          "use": "W2 MECH-7 part 2 (SHRINK-2): J506 SL3-PWR-PH, the JST PH 9-pin side-entry header S9B-PH-K-S (KiCad courtyard 20.9 mm) that merged J506 (S23) and J508 (S34) (W2 GR-5B), towards plate slot SL3: the header face set back from the edge (R-PWRB-EXIT; the 0.55 mm slot to the battery-tray wall takes no bundle), the S23/S34 bundle rises over PWR-B and runs at z 59 along y 44 over the blower to x 165, then down to z 53 at y 36 (mechanical.json harness_routes, W2 MECH-7 review F2); the span lies between the PWR-A bottom-row strips (they end at x <= 92.5: boards PWR edge_zones[0] row_end_max, J109-J112 turned by 90 deg) and the J507 / J113 corner strips (x >= 115.0, the wip/w2-pwra1 place that SHRINK-2 keeps without the S02 FFC; wip/w2-pwra3 9ecc26f2 probe 7: J507 courtyard from x 115.475, MODEL)",
+          "exit": "top",
+          "depth": 11.8,
+          "use": "W2 PWR-L6-PLACE third pass (judge decision ESC-JUDGE, option M): the vertical top-entry exit pair in the free part of the PWR-B bottom edge outside the display (board y < 11.8: the display box starts at enclosure y 50.3): J203 S02-PWR-SIG-2, the JST PHD 2 x 10 top entry B20B-PHDSS(LF)(SN) (pin 1 at board (93.3, 9.75), rows y 9.75 / 7.75; harness branch S02B of S02 to J307 on CTRL) and J506 SL3-PWR-PH, the JST PH 9 top entry B9B-PH-K-S(LF)(SN) (pin 1 at (92.5, 3.55); S23 LAB PORT and S34 LAB BUS, W2 GR-5B); the plugs (PHDR 8.8, PHR 8.0 mounted, parts.json harness_headers PHD_top / PH_top) take their wires straight up into the free room up to the front wall (no envelope over the zone up to front_wall_inner 67.58, R-PWRB-EXIT top-entry room); a side entry here is ruled out (R-PWRB-EXIT: plug proud 2.3 + bundle OD + 0.5 - the 0.55 mm room to the battery-tray wall puts the J203 pins on J209); the span lies between the PWR-A bottom-row strips (they end at x <= 90.0: boards PWR edge_zones[0] row_end_max; the row of record ends at 89.6) and the J507 / J113 corner strips (x >= 115.0); depth = the free height zone of the clearance map (height_zones)",
           "headers": [
+            "J203",
             "J506"
           ]
         }
       ],
       "thermal_bond_mm": [],
       "modules_on_board": [],
-      "height_zones": [],
+      "height_zones": [
+        {
+          "rect": [
+            90.0,
+            0.0,
+            25.0,
+            11.8
+          ],
+          "max_height": 5.5,
+          "free_mm": 18.35,
+          "fits_mm": 17.85,
+          "limit": "front wall"
+        }
+      ],
       "rear_zones": [],
       "dxf": "boards/pwr_b-edge-cuts.dxf",
       "windows_rule": "W2 MECH-7: a placement rule, not contract cut-outs: PCB-PWRB-2 leaves a window (courtyard + window_margin 0.5) over every PWR-A part taller than hA (pcb/partition-budget.json candidates.<chosen>.window_refs), the edge strips of the PWR-A harness headers, the test-point probe windows (tp_probe_window 3.0) and the B2B keepout, at the PCB-PWRA-3 placement",
