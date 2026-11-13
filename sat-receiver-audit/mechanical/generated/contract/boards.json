@@ -1075,34 +1075,12 @@
           "rect": [
             34.0,
             0.0,
-            9.5,
-            5.5
-          ],
-          "free_mm": 18.48,
-          "fits_mm": 17.98,
-          "limit": "plate.ext"
-        },
-        {
-          "rect": [
-            43.5,
-            0.0,
-            6.5,
-            5.5
-          ],
-          "free_mm": 4.48,
-          "fits_mm": 3.98,
-          "limit": "plate.boss2"
-        },
-        {
-          "rect": [
-            34.0,
-            5.5,
             16.0,
-            8.0
+            13.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
-          "limit": "plate.ext"
+          "limit": "plate.main"
         },
         {
           "rect": [
@@ -1113,7 +1091,7 @@
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
-          "limit": "plate.ext"
+          "limit": "plate.main"
         },
         {
           "rect": [
@@ -1135,18 +1113,18 @@
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
-          "limit": "plate.ext"
+          "limit": "plate.main"
         },
         {
           "rect": [
             34.0,
             21.0,
             0.5,
-            4.5
+            18.0
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
-          "limit": "plate.ext"
+          "limit": "plate.main"
         },
         {
           "rect": [
@@ -1158,17 +1136,6 @@
           "free_mm": 13.48,
           "fits_mm": 12.98,
           "limit": "hdmi_insert"
-        },
-        {
-          "rect": [
-            34.0,
-            25.5,
-            0.5,
-            13.5
-          ],
-          "free_mm": 18.48,
-          "fits_mm": 17.98,
-          "limit": "plate.main"
         },
         {
           "rect": [

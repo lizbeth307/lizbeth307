@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-02 Корпус: верхня грань і нижня грань</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 2fe404e780cd</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 0d99343ce2e0</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="30" y1="127" x2="260" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="260" y1="127" x2="260" y2="56.92" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -314,10 +314,10 @@
 <text x="272" y="136.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E-Switch PV6 datasheet 8.28.2025: panel cut-out 16.00 +0.20/-0.00 (drill 16.0, ream to 16.1)</text>
 <text x="268" y="138.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">VEML7700           120     7.1  ⌀4</text>
 <text x="268" y="145.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">Упори VEML7700 у кишені (W2 MECH-5; x, z — як ззовні)</text>
-<text x="268" y="149.1" font-family="DejaVu Sans Mono, monospace" font-size="2.24" text-anchor="start" fill="#000">VR1 x 109.84 z 51.824: упор ⌀6, грань y 160.1 + скотч 1</text>
-<text x="268" y="151.7" font-family="DejaVu Sans Mono, monospace" font-size="2.24" text-anchor="start" fill="#000">VR2 x 130.16 z 51.824: упор ⌀6, грань y 160.1 + скотч 1, шип ⌀2.2 x 2</text>
-<text x="268" y="154.3" font-family="DejaVu Sans Mono, monospace" font-size="2.24" text-anchor="start" fill="#000">VR3 x 109.84 z 64.524: упор ⌀6, грань y 160.1 + скотч 1, шип ⌀2.2 x 2</text>
-<text x="268" y="156.9" font-family="DejaVu Sans Mono, monospace" font-size="2.24" text-anchor="start" fill="#000">VR4 x 130.16 z 64.524: упор ⌀6, грань y 160.1 + скотч 1</text>
+<text x="268" y="149.1" font-family="DejaVu Sans Mono, monospace" font-size="2.24" text-anchor="start" fill="#000">VR1 x 109.84 z 51.824: упор ⌀6, грань y 190.1 + скотч 1</text>
+<text x="268" y="151.7" font-family="DejaVu Sans Mono, monospace" font-size="2.24" text-anchor="start" fill="#000">VR2 x 130.16 z 51.824: упор ⌀6, грань y 190.1 + скотч 1, шип ⌀2.2 x 2</text>
+<text x="268" y="154.3" font-family="DejaVu Sans Mono, monospace" font-size="2.24" text-anchor="start" fill="#000">VR3 x 109.84 z 64.524: упор ⌀6, грань y 190.1 + скотч 1, шип ⌀2.2 x 2</text>
+<text x="268" y="156.9" font-family="DejaVu Sans Mono, monospace" font-size="2.24" text-anchor="start" fill="#000">VR4 x 130.16 z 64.524: упор ⌀6, грань y 190.1 + скотч 1</text>
 <text x="268" y="161.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця: bottom</text>
 <text x="268" y="166" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">ID                 u       v  розмір</text>
 <text x="268" y="169.4" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">USB_C_IN           189      24  12 x 6</text>
@@ -357,7 +357,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-02 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: ASA (Polymaker PF01002), друк</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 2fe404e780cd · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 0d99343ce2e0 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Корпус: верхня грань і нижня грань</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">свердління/вирізи, 1:1</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Координати u/v — від лівої (A) і нижньої (B) кромок грані, як видно ззовні. Одиниці мм, допуск ±0.2.</text>

@@ -13,7 +13,7 @@
       "id": "CLOSURE",
       "build17_row": "F12",
       "what": "half shells, 14 seam screws",
-      "count": 14,
+      "count": 16,
       "thread": "M3",
       "seat": "counterbore bottom, z 3 (rear shell, counterbore d 6.5)",
       "stack_mm": [
@@ -287,7 +287,7 @@
       "id": "PWR_A-PLATE",
       "build17_row": "F06 / F45",
       "what": "PWR-A to the plate: male stud of each PWR-A/PWR-B standoff",
-      "count": 7,
+      "count": 9,
       "thread": "M3",
       "seat": "standoff hex face on the PWR-A top, z 42.5",
       "stack_mm": [
@@ -319,7 +319,7 @@
       "id": "PWR_B-STANDOFF",
       "build17_row": "F46",
       "what": "PWR-B to the female end of each PWR-A/PWR-B standoff",
-      "count": 7,
+      "count": 9,
       "thread": "M3",
       "seat": "PWR-B top face, z 49.1",
       "stack_mm": [
