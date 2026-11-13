@@ -1483,6 +1483,211 @@ def frozen_copper(inp, parts, tracks, vias):
     return ft, fv, note
 
 
+# ------------------------------------------------------------------ J209 escape corridor and the zone-2 radials (W2 PWR-L6-PLACE)
+# The J209 lower contact row (pads to y 15.9) escapes downwards: B.Cu stubs to vias, then In2/In3/B.Cu west over the PWR-A
+# J112/J108 strips. W2 PWRJ (LAYERS6 capacity, F2ENV probes 2-5, CI) measured that the PWR-A windows of the 12 V / HFP
+# radials C265, C512 and C511 at y 3.7-11.5 wall that escape in (route run 43354942122: all 23 open connections start at
+# J209 lower-row contacts; F2ENV probes 1-5 on the grown board: 52 -> 6 open, the radials moved off in probe 2 and the
+# corridor kept in probe 3). J209_FIELD is the field the radials must leave (W2 PWR-L6 synthesis: PWR-B frame x 84-117,
+# y 0-16); J209_CORRIDOR is the corridor of place_f2env.py CORRIDORS on the in-envelope outline (x 84-116, y 0-15.3), to
+# be kept free of PWR-A windows and of new fixed vias. MODEL report only (--corridor; --zone2-slots takes about 8 min):
+# it writes nothing and is not a placement check yet, because the radial windows still stand in it.
+J209_FIELD = (84.0, 0.0, 117.0, 16.0)
+J209_CORRIDOR = (84.0, 0.0, 116.0, 15.3)
+ZONE2_RADIALS = ('C265', 'C512', 'C511')
+SLOT_STEP = 0.25        # mm, grid of the slot search (courtyard lower-left corner)
+RELOCATE_MAX = 50.0     # mm, spiral radius of the relocation search for a displaced PWR-B part
+RELOCATE_GAP = 0.1      # mm, courtyard gap of a relocated PWR-B part (the placement table packs at 0.2)
+PWRA_EDGE_INSET = 0.3   # mm, a PWR-A courtyard keeps this off the outline (placement_study / place_board rule)
+
+
+def _ov(a, b, gap=0.0):
+    return min(a[2], b[2]) - max(a[0], b[0]) > -gap + 1e-9 and min(a[3], b[3]) - max(a[1], b[1]) > -gap + 1e-9
+
+
+def _raster_area(boxes, clip, step=0.05):
+    """Area (mm2) of the union of boxes inside clip, by rows of `step` (MODEL)."""
+    x0, y0, x1, y1 = clip
+    total, y = 0.0, y0 + step / 2
+    while y < y1:
+        iv = sorted((max(b[0], x0), min(b[2], x1)) for b in boxes if b[1] <= y < b[3] and b[2] > x0 and b[0] < x1)
+        cur = None
+        for a, b in iv:
+            if cur and a <= cur[1]:
+                cur[1] = max(cur[1], b)
+            else:
+                if cur:
+                    total += cur[1] - cur[0]
+                cur = [a, b]
+        if cur:
+            total += cur[1] - cur[0]
+        y += step
+    return total * step
+
+
+def corridor_report(inp, parts, tracks, vias):
+    """MODEL numbers of the J209 escape corridor: area, the PWR-A cut-outs in it (with and without the zone-2 radials),
+    the PWR-B top courtyards in it and the scripted vias in it."""
+    cor = J209_CORRIDOR
+    cuts = [(c['ref'], c['rect']) for c in inp.cutouts if _ov(c['rect'], cor)]
+    rad = [r for r, _ in cuts if r in ZONE2_RADIALS]
+    crt = [(r, p.box) for r, p in sorted(parts.items()) if p.side == 'F' and _ov(p.box, cor)]
+    fixed_vias = sorted({v['id'].rsplit('-', 1)[0] for v in vias if cor[0] <= v['at'][0] <= cor[2] and cor[1] <= v['at'][1] <= cor[3]})
+    area = (cor[2] - cor[0]) * (cor[3] - cor[1])
+    blocked = _raster_area([r for _, r in cuts], cor)
+    blocked_wo = _raster_area([r for n, r in cuts if n not in ZONE2_RADIALS], cor)
+    return {'corridor_mm': list(cor), 'field_mm': list(J209_FIELD), 'area_mm2': round(area, 1),
+            'cutouts_in_corridor': [n for n, _ in cuts], 'zone2_radials_in_corridor': rad,
+            'free_of_cutouts_mm2': round(area - blocked, 1),
+            'free_of_cutouts_without_zone2_radials_mm2': round(area - blocked_wo, 1),
+            'pwr_b_top_courtyards_in_corridor': [n for n, _ in crt],
+            'pwr_b_top_courtyard_mm2': round(_raster_area([b for _, b in crt], cor), 1),
+            'scripted_vias_in_corridor': len([v for v in vias if cor[0] <= v['at'][0] <= cor[2] and cor[1] <= v['at'][1] <= cor[3]]),
+            'scripted_via_groups': fixed_vias}
+
+
+def zone2_slots(inp, parts, tracks, vias):
+    """MODEL slot search for the zone-2 radials (W2 PWR-L6-PLACE): every in-envelope place of a radial courtyard on the
+    PWR-A top whose window (courtyard + window_margin) lies outside J209_FIELD, off the PWR-A hole keep-outs, the outline
+    inset, the PWR-A anchors, the scripted F.Cu copper (reserved areas) and every other PWR-A part taller than hA or with a
+    header strip, with PWR-A low parts allowed to give way (place_board.py re-places them). A PWR-A test point in the way
+    is listed (its probe window would need a new PWR-B place, not searched here): 'strict' counts only slots that displace
+    no test point, 'relaxed' also the others. On
+    PWR-B the window must leave every top courtyard (CRT_GUARD) and scripted copper (KEEPOUT_GROW) free; a PWR-B part in
+    the way counts only if it is not a header, J209 or scripted-copper part and a spiral search (RELOCATE_MAX) finds it a
+    legal place off the cut-outs, the plug zones, J209_CORRIDOR and the hole keep-outs (pads), RELOCATE_GAP from the other
+    courtyards. Returns the slot clusters per radial size and whether three disjoint slots exist (strict and relaxed)."""
+    study = read(PWRA_STUDY)
+    pspec = inp.pspec
+    margin = float(pspec['parameters']['window_margin'])
+    pwr_a = read(CONTRACT)['boards']['PWR']
+    holes_a = [(tuple(h), pwr_a['hole_keepout_d'] / 2) for h in pwr_a['holes_mm']]
+    outline = [tuple(p) for p in pwr_a['outline_mm']]
+    xs, ys = sorted({p[0] for p in outline}), sorted({p[1] for p in outline})
+    areas = [(xs[0] + PWRA_EDGE_INSET, ys[0] + PWRA_EDGE_INSET, xs[-1] - PWRA_EDGE_INSET, ys[1] - PWRA_EDGE_INSET),
+             (xs[0] + PWRA_EDGE_INSET, ys[0] + PWRA_EDGE_INSET, xs[1] - PWRA_EDGE_INSET, ys[-1] - PWRA_EDGE_INSET)]
+    cut_refs = {c['ref'] for c in study['pwr_b_cutouts']['placed'] if c['kind'] != 'test_point_probe_window'}
+    probes = {c['ref'] for c in study['pwr_b_cutouts']['placed'] if c['kind'] == 'test_point_probe_window'}
+    size = {c['ref']: round(c['rect'][2] - c['rect'][0] - 2 * margin, 4) for c in study['pwr_b_cutouts']['placed']
+            if c['ref'] in ZONE2_RADIALS}
+    fixed_a, low_a = [], []
+    for r in study['positions']['refs']:
+        if r['side'] != 'F' or r['ref'] in ZONE2_RADIALS:
+            continue
+        (fixed_a if (r['how'] == 'anchor' or r['ref'] in cut_refs) else low_a).append((r['ref'], r['courtyard_box']))
+    fixed_a += [(rr['id'], rr['rect']) for rr in study['reserved']['rects'] if rr.get('side', 'F') == 'F']
+    cuts = [c['rect'] for c in inp.cutouts if c['ref'] not in ZONE2_RADIALS]
+    seg = []
+    for t in tracks:
+        w = t['width_mm'] / 2
+        for (xa, ya), (xb, yb) in zip(t['path'], t['path'][1:]):
+            seg.append((t['id'], t['net'], (min(xa, xb) - w, min(ya, yb) - w, max(xa, xb) + w, max(ya, yb) + w)))
+    for v in vias:
+        r = v['diameter_mm'] / 2
+        seg.append((v['id'], v['net'], (v['at'][0] - r, v['at'][1] - r, v['at'][0] + r, v['at'][1] + r)))
+    # PWR-B parts that cannot move: headers (THT pin fields: H-TRIM zones of PWR-A), J209 and every part whose pad carries
+    # scripted copper other than its own GND / 3V3_Q6A plane via (Kelvin cells, LAB5 cells, J209 rail block)
+    own = ('GND-', 'Q6A-')
+    hard = {r for r, p in parts.items() if p.side == 'B' or any(q['type'] == 'thru_hole' for q in p.pads)}
+    for sid, net, box in seg:
+        if sid.startswith(own):
+            continue
+        for r, p in parts.items():
+            if any(_ov(q['box'], box) for q in p.pads):
+                hard.add(r)
+    top = {r: p for r, p in parts.items() if p.side == 'F'}
+    plugs = [(parts[n].box[0], parts[n].box[3], parts[n].box[2], max(y for _, y in outline)) for n in PLUG_ZONES]
+    holes_b = [(tuple(h), inp.contract['hole_keepout_d'] / 2) for h in inp.contract['holes_mm']]
+
+    def in_l(b, regions):
+        return any(a[0] - 1e-9 <= b[0] and a[1] - 1e-9 <= b[1] and b[2] <= a[2] + 1e-9 and b[3] <= a[3] + 1e-9 for a in regions)
+
+    def off_holes(b, holes):
+        return all(math.hypot(max(b[0] - hx, 0, hx - b[2]), max(b[1] - hy, 0, hy - b[3])) >= r for (hx, hy), r in holes)
+
+    b_areas = [(xs[0], ys[0], xs[-1], ys[1]), (xs[0], ys[0], xs[1], ys[-1])]
+
+    def relocate(ref, wins, taken):
+        p = top[ref]
+        others = [q.box for r, q in top.items() if r != ref and r not in taken] + list(taken.values())
+        steps = int(RELOCATE_MAX / SLOT_STEP)
+        for k in range(steps + 1):
+            rad = k * SLOT_STEP
+            n = max(8, int(rad * 8))
+            for i in range(n if rad else 1):
+                a = 2 * math.pi * i / n
+                dx, dy = round(rad * math.cos(a), 3), round(rad * math.sin(a), 3)
+                b = (p.box[0] + dx, p.box[1] + dy, p.box[2] + dx, p.box[3] + dy)
+                if not in_l(b, b_areas) or _ov(b, J209_CORRIDOR) or any(_ov(b, w, CRT_GUARD) for w in wins):
+                    continue
+                if any(_ov(b, z) for z in plugs) or any(_ov(b, o, RELOCATE_GAP) for o in others):
+                    continue
+                if not all(off_holes((q['box'][0] + dx, q['box'][1] + dy, q['box'][2] + dx, q['box'][3] + dy), holes_b)
+                           for q in p.pads if q['type'] != 'np_thru_hole'):
+                    continue
+                if any(_ov(b, box, KEEPOUT_GROW) for sid, net, box in seg if not sid.startswith(own)):
+                    continue
+                return rad, b
+        return None, None
+
+    out = {}
+    for cw in sorted(set(size.values()), reverse=True):
+        found = []
+        y = areas[0][1]
+        while y + cw <= areas[1][3] + 1e-9:
+            x = areas[0][0]
+            while x + cw <= areas[0][2] + 1e-9:
+                cy = (round(x, 3), round(y, 3), round(x + cw, 3), round(y + cw, 3))
+                x += SLOT_STEP
+                win = (cy[0] - margin, cy[1] - margin, cy[2] + margin, cy[3] + margin)
+                if not in_l(cy, areas) or _ov(win, J209_FIELD) or not off_holes(cy, holes_a):
+                    continue
+                if any(_ov(cy, b, margin) for _, b in fixed_a):
+                    continue
+                conf = sorted(r for r, p in top.items() if _ov(win, p.box, CRT_GUARD))
+                if any(r in hard for r in conf) or len(conf) > 4:
+                    continue
+                mine = tuple(f'{o}{r}-' for o in own for r in conf)  # the plane vias of a part that moves go with it
+                if any(_ov(win, box, KEEPOUT_GROW) for sid, net, box in seg if not sid.startswith(mine or ('\0',))):
+                    continue
+                taken, moved = {}, {}
+                for r in sorted(conf, key=lambda r: -(top[r].box[2] - top[r].box[0]) * (top[r].box[3] - top[r].box[1])):
+                    d, b = relocate(r, cuts + [win], taken)
+                    if d is None:
+                        break
+                    taken[r], moved[r] = b, round(d, 2)
+                else:
+                    disp = sorted(r for r, b in low_a if _ov(cy, b, margin))
+                    found.append({'courtyard': list(cy), 'window': [round(v, 3) for v in win], 'pwr_b_moves_mm': moved,
+                                  'pwr_a_low_parts_displaced': [r for r in disp if r not in probes],
+                                  'pwr_a_test_points_displaced': [r for r in disp if r in probes]})
+            y += SLOT_STEP
+        def clusters(rows):
+            got = []
+            for s in sorted(rows, key=lambda s: (len(s['pwr_a_test_points_displaced']),
+                                                 max(s['pwr_b_moves_mm'].values(), default=0.0),
+                                                 len(s['pwr_a_low_parts_displaced']), s['courtyard'][1], s['courtyard'][0])):
+                if not any(_ov(s['window'], c['window']) for c in got):
+                    got.append(s)
+            return got
+        out[str(cw)] = {'radials': sorted(r for r, v in size.items() if v == cw), 'slot_positions': len(found),
+                        'strict': clusters([s for s in found if not s['pwr_a_test_points_displaced']]),
+                        'relaxed': clusters(found)}
+    need = {str(cw): sum(1 for v in size.values() if v == cw) for cw in set(size.values())}
+
+    def three(mode):
+        # the large radials first, then the small ones in windows disjoint from those (greedy over the clusters)
+        chosen = []
+        for cw in sorted(need, key=float, reverse=True):
+            for s in out[cw][mode]:
+                if len([c for c in chosen if c[0] == cw]) < need[cw] and not any(_ov(s['window'], c[1]['window']) for c in chosen):
+                    chosen.append((cw, s))
+        return all(len([c for c in chosen if c[0] == cw]) >= need[cw] for cw in need)
+    return {'rule': 'MODEL slot search of make_spec.py zone2_slots (W2 PWR-L6-PLACE); PWR-A study of '
+                    f'{PWRA_STUDY.name}, PWR-B placement of this table', 'courtyard_mm': size, 'need': need,
+            'sizes': out, 'three_disjoint_slots': {'strict': three('strict'), 'relaxed': three('relaxed')}}
+
+
 # ------------------------------------------------------------------ main
 def build(inp):
     anchors = placement(inp)
@@ -1500,10 +1705,18 @@ def main(argv=None):
     ap.add_argument('--svg')
     ap.add_argument('--bar', action='store_true')
     ap.add_argument('--draft', action='store_true', help='report placement and copper problems, write nothing')
+    ap.add_argument('--corridor', action='store_true', help='MODEL report of the J209 escape corridor, write nothing')
+    ap.add_argument('--zone2-slots', action='store_true', help='MODEL slot search for the zone-2 radials, write nothing')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     inp = Inputs()
     anchors, missing, pins, parts, tracks, vias, exempt = build(inp)
+    if args.corridor or args.zone2_slots:
+        rep = {'corridor': corridor_report(inp, parts, tracks, vias)}
+        if args.zone2_slots:
+            rep['zone2_slots'] = zone2_slots(inp, parts, tracks, vias)
+        print(json.dumps(rep, ensure_ascii=False, indent=1))
+        return 0
     problems = check_placement(inp, parts) + check_copper(inp, parts, tracks, vias) + kelvin_cells(anchors)
     problems += [f'not placed: {r}' for r in missing]
     gnd_pads = [(r, q['number']) for r, pa in parts.items() for q in pa.pads if q['net'] == 'GND' and q['type'] == 'smd'
