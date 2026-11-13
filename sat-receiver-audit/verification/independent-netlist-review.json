@@ -4,11 +4,11 @@
   "graph_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
     "E2.json": "daa2d4f6e062a4e8e293ee7018702baf7ff680ebec33667037e4c71778d003db",
-    "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
+    "E3.json": "950e961ff1bcb0a3c20b54bcfcf44ad45f63fa79fc7bc2a0b8eb43192a36d75f",
     "E4.json": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
   },
-  "netlist_sha256": "ac05a06f77f55061928086aa8f49e5061df3a29c77aff892e66c2cdcc46a1cac",
+  "netlist_sha256": "957df5afc368d31ce2f7704c504923348f6f2da84d1dd723d733538b6b6b82e4",
   "counts": {
     "hardware_components": 851,
     "hardware_pin_declarations": 2942,
@@ -163,7 +163,7 @@
     {
       "sheet": "E3",
       "net": "E3_FAN5_P",
-      "reason": "Fan supply is physically powered from LAB5 through AO3401A Q304 and PTC F301 when enabled. Both pass elements have passive pins, so KiCad requires a powered-net marker on the fan side.",
+      "reason": "Fan supply is physically powered from LAB5 through PTC F301 and AO3401A Q304 when enabled (W2 CTRL-5 order). Both pass elements have passive pins, so KiCad requires a powered-net marker on the fan side.",
       "source": "STACK.md high-side Noctua fan control; E3 Q304/F301 connectivity."
     },
     {

@@ -5385,8 +5385,8 @@
       "type": "passive"
     },
     {
-      "ref": "Q304",
-      "pin": "2",
+      "ref": "F301",
+      "pin": "1",
       "sheet": "E3",
       "type": "passive"
     },
@@ -13496,21 +13496,21 @@
   "E3_FAN5": [
     {
       "ref": "Q304",
-      "pin": "3",
+      "pin": "2",
       "sheet": "E3",
       "type": "passive"
     },
     {
       "ref": "F301",
-      "pin": "1",
+      "pin": "2",
       "sheet": "E3",
       "type": "passive"
     }
   ],
   "E3_FAN5_P": [
     {
-      "ref": "F301",
-      "pin": "2",
+      "ref": "Q304",
+      "pin": "3",
       "sheet": "E3",
       "type": "passive"
     },
