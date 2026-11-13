@@ -5,7 +5,7 @@
   "generator": "build/kicad/boards/PWR_A/place_board.py",
   "inputs": {
     "spec_sha256": "bc49960de3437204f618f39b1a3f52fd837654457c9c0c5ac4bb751fda185662",
-    "study_sha256": "f4f3f626f8cbdd26e153074149d69307115507ccda48dc811d482c753f61e5e9",
+    "study_sha256": "a456eeb557bdf44dfed72e362784155de3f3302de1b32b9772cf61ef0b2b7134",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995"
   },
   "rules": {
