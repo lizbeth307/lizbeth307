@@ -22,6 +22,11 @@ from srrx_mech.geom2d import fmt  # noqa: E402
 from srrx_mech.params import Params  # noqa: E402
 
 P = Params()
+# W2 PWRJ F2ENV probe (wip/w2-pwrj-f2env only): the slab variant of mechanical/f2env/env_slab.py. Tests that pin a
+# coordinate of the 163.8 mm envelope read it shifted by F2ENV_SLAB; tests of a premise the variant removes on purpose
+# (two-sided PWR-A pockets, the BMS edge at SL3, the D-ENV height cap) are skipped with the reason.
+F2ENV = "_growth_w2_pwrj_f2env" in P.mech["outer"]
+F2ENV_SLAB = round(P.outer[1] - 163.8, 6) if F2ENV else 0.0
 
 
 class Formatting(unittest.TestCase):
@@ -304,7 +309,7 @@ class ReviewCad(unittest.TestCase):
         self.assertTrue(r["result"].startswith("PASS"), r)
         import copy
         Q = copy.deepcopy(P)
-        Q.mech["rear_face"]["strap_lugs"] = [[14.0, 150.0], [216.0, 150.0]]   # the reviewed lugs buried screws 9 and 12
+        Q.mech["rear_face"]["strap_lugs"] = [[14.0, 150.0 + F2ENV_SLAB], [216.0, 150.0 + F2ENV_SLAB]]   # the reviewed lugs buried screws 9 and 12
         solids["rear_shell"] = cad.rear_shell(Q)
         r = interference.access(Q, solids)
         self.assertTrue(r["result"].startswith("FAIL"), r)
@@ -739,6 +744,8 @@ class EnvelopeW2Mech3(unittest.TestCase):
         self.assertTrue(rules.bay_packing(Q)["result"].startswith("FAIL"))
 
     def test_joint_growth_is_inside_the_area_caps(self):
+        if F2ENV:
+            self.skipTest("F2ENV probe: dh 30 breaks the D-ENV cap by design (owner row 'Оболонка D15')")
         env = self._spec()["envelope"]
         W, H, D = P.outer
         self.assertEqual(W, 230.0)                                           # width unchanged (STACK.md:109)
@@ -783,6 +790,8 @@ class EnvelopeW2Mech3(unittest.TestCase):
         self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
 
     def test_pololu_pin_rows_are_pocketed(self):
+        if F2ENV and "pwr_bottom_pockets" not in P.mech["plate"]:
+            self.skipTest("F2ENV probe: single-sided PWR-A, no plate pockets PB*")
         r = [x for x in rules.evaluate(P) if x["id"] == "R-PWR-POCKETS"][0]
         self.assertFalse(r["result"].startswith("FAIL"), r["result"])
         # W2 MECH-7: the Pololu rows PK1/PK2 are gone with the modules; the bottom-part pockets PB* take their place
@@ -920,7 +929,7 @@ class RoutesW2Mech4(unittest.TestCase):
 
     def test_harness_anchor_of_the_hdmi_run_is_kept(self):
         box = [it for it in P.mech["layout"]["items"] if it["id"] == "hdmi_route_front_run"][0]["box"]
-        self.assertAlmostEqual(box[1] + box[4], 76.8)   # waypoint y 78.0 of the CTRL harness drops (harness_routes)
+        self.assertAlmostEqual(box[1] + box[4], 76.8 + F2ENV_SLAB)   # waypoint y 78.0 of the CTRL harness drops (harness_routes)
 
     def test_pwr_key_nut_reserve_clears_and_stays_open(self):
         names = {n for _, n, _, _ in layout.item_boxes(P)}
@@ -1193,6 +1202,8 @@ class SlotFillW2Mech6Review(unittest.TestCase):
         self.assertEqual(rules._shelf_pack([2.0], 1.9, 5.0), [2.0])
 
     def test_sl3_bms_edge_takes_the_tape(self):
+        if F2ENV:
+            self.skipTest("F2ENV probe: the BMS moved up with the block, SL3 stayed with the pack-positive group")
         sl3 = next(x for x in P.mech["plate"]["slots"] if x["id"] == "SL3")
         self.assertEqual(sl3["trim"]["left"], "tape")
         self.assertEqual(sl3["trim"]["right"], "grommet")
@@ -1239,7 +1250,7 @@ class ModulesW2Mech5Review(unittest.TestCase):
         mt["screws"] = [[round(c[0] + dx, 2), round(c[1] + dy, 2)] for c in mt["screws"]]
         r = self._rule(Q, "R-MODULE-MOUNTS")
         self.assertTrue(r["result"].startswith("FAIL"), r["result"])
-        self.assertIn("hub_ch334f screws (90.44, 68.08)", r["result"])
+        self.assertIn(f"hub_ch334f screws (90.44, {68.08 + F2ENV_SLAB:.2f})", r["result"])
         self.assertLess(min(s["to_tripod_pocket_mm"] for s in r["value_mm"]["hub_ch334f"]["screws"]), 3.0)
 
     def test_rear_insert_joints_take_an_iso_length_with_full_engagement(self):
@@ -1338,6 +1349,8 @@ class ContractW2Mech7(unittest.TestCase):
         self.assertEqual(boards.contract(P)["boards"]["PWR_B"]["cutouts_mm"], [])
 
     def test_bottom_pockets_keep_the_lands_and_corridors(self):
+        if F2ENV and "pwr_bottom_pockets" not in P.mech["plate"]:
+            self.skipTest("F2ENV probe: single-sided PWR-A, no plate pockets PB*")
         a = P.boards["boards"]["PWR"]
         sp = P.mech["plate"]["pwr_bottom_pockets"]
         regions = rules.pwr_bottom_regions(P)
@@ -1360,6 +1373,8 @@ class ContractW2Mech7(unittest.TestCase):
         self.assertTrue(self._rule(Q, "R-PWR-POCKETS")["result"].startswith("FAIL"))
 
     def test_bottom_room_and_area(self):
+        if F2ENV and "pwr_bottom_pockets" not in P.mech["plate"]:
+            self.skipTest("F2ENV probe: single-sided PWR-A, no plate pockets PB*")
         r = self._rule(P, "R-PWR-BOTTOM")
         sp, bs = P.mech["plate"]["pwr_bottom_pockets"], P.boards["boards"]["PWR"]["bottom_side"]
         depth = P.boards["boards"]["PWR"]["tht_pockets"]["depth"]
@@ -1559,7 +1574,8 @@ class ContractW2Mech7Review(unittest.TestCase):
         self.assertIn("J206", r["result"].split("no passing part read for", 1)[1])
         right = rows["J104"]["off_display_run_mm"]                                         # the right edge below the display
         disp = [bx for i, _, bx, _ in layout.item_boxes(P) if i == "display"][0]
-        self.assertAlmostEqual(right["run_mm"], disp[1] - (P.boards["boards"]["PWR"]["place"]["origin"][1]), places=2)
+        self.assertAlmostEqual(right["run_mm"], disp[1] - (P.boards["boards"]["PWR"]["place"]["origin"][1]
+                                                           + min(q[1] for q in P.boards["boards"]["PWR"]["outline"])), places=2)
         self.assertEqual(rows["J206"]["off_display_run_mm"]["run_mm"], 0.0)                 # the SL2 span lies under the display
 
     def test_s23_s34_leave_the_slot_in_front_of_the_bottom_edge(self):
