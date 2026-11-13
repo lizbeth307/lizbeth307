@@ -677,7 +677,7 @@
         "rotation": 0,
         "side": "B"
       },
-      "anchor_source": "bottom over the zones x 43.5-50 y 65.6-72 (15.98 / 17.98 mm >= 9.6 mm LED, worst case of the 8.6 mm body plus up to 1.0 mm past the flange), between J304 (y <= 65.51) and J313; its pins + 1.0 mm stay clear of the top parts"
+      "anchor_source": "bottom over the zones x 43.5-50 y 65.6-72 (15.98 / 17.98 mm >= 9.85 mm LED, worst case of the 8.6 mm body with its +-0.25 mm drawing tolerance plus up to 1.0 mm past the flange; W2 CTRL-4, review RV-CTRLR-6), between J304 (y <= 65.51) and J313; its pins + 1.0 mm stay clear of the top parts"
     },
     {
       "ref": "D305",

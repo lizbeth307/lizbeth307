@@ -208,8 +208,9 @@ ANCHORS = {
     'J313': (anchor((40.43, 75.7), 90), 'bottom, vertical KK over the plate zones x 37-46 y 68.5-83 (15.98 / 17.98 mm); '
              'courtyard y 73.93-82.55, below the lime band (y >= 83, 4.98 mm); its pin field + 1.0 mm (x <= 42.53) stays clear '
              'of the top TR3B parts; next to the fan switch'),
-    'D304': (anchor((48.04, 68.81), 0), 'bottom over the zones x 43.5-50 y 65.6-72 (15.98 / 17.98 mm >= 9.6 mm LED, worst '
-             'case of the 8.6 mm body plus up to 1.0 mm past the flange), between J304 (y <= 65.51) and J313; its pins + 1.0 mm '
+    'D304': (anchor((48.04, 68.81), 0), 'bottom over the zones x 43.5-50 y 65.6-72 (15.98 / 17.98 mm >= 9.85 mm LED, worst '
+             'case of the 8.6 mm body with its +-0.25 mm drawing tolerance plus up to 1.0 mm past the flange; W2 CTRL-4, '
+             'review RV-CTRLR-6), between J304 (y <= 65.51) and J313; its pins + 1.0 mm '
              'stay clear of the top parts'),
     'F301': (anchor((48.0, 79.4), 270), FAN_NOTE),
     'Q304': (anchor((47.77, 84.3005), 270), FAN_NOTE + '; W2 CTRL-4: 0.23 mm left of the board-of-record place so that the '
