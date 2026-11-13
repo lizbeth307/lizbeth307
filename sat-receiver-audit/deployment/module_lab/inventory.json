@@ -13,8 +13,8 @@
       "bytes": 155324
     },
     "design/E2.json": {
-      "sha256": "22d7f2ef8ffaf1d8c5e934c4eed8137aa96c09b86f99d9b4893bef2c8cf02a19",
-      "bytes": 414365
+      "sha256": "a2fc3faece23498cfadcc6e4a2593a6f2667aa6570c0cc052543d57e4d169075",
+      "bytes": 415038
     },
     "design/E3.json": {
       "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
@@ -25,8 +25,8 @@
       "bytes": 229605
     },
     "design/E5.json": {
-      "sha256": "e31f686e1fcad7a02e32a449b1876d08af3d7164130ef55fd37d0d3ffcf52cff",
-      "bytes": 125823
+      "sha256": "8ecfcc1952559a8e8cab32fb281d406c1b5f74090056b09e5e39bf1c0f0244bb",
+      "bytes": 126929
     },
     "STACK.md": {
       "sha256": "7b37be7be97c2d1845215199cf455fd1c496aa83aa933bdc60defa266bfdbb19",
@@ -3836,7 +3836,7 @@
         {
           "ref": "C265",
           "kind": "capacitor",
-          "value": "47uF 50V EEUFR1H470",
+          "value": "47uF 35V 35TQS47MEX",
           "status": "design"
         },
         {
@@ -10079,7 +10079,7 @@
         {
           "ref": "C511",
           "kind": "capacitor",
-          "value": "EEU-FR1C101 100uF 16V",
+          "value": "100uF 16V 16TQC100MD2",
           "status": "design"
         },
         {
@@ -10091,7 +10091,7 @@
         {
           "ref": "C512",
           "kind": "capacitor",
-          "value": "220uF 16V low-ESR",
+          "value": "220uF 16V 16TQC220MD3",
           "status": "design"
         },
         {
