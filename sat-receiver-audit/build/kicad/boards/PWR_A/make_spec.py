@@ -152,6 +152,12 @@ CUTOUT_KEEP = {
     'TP205': (61.85, 11.45, 0), 'TP211': (4.01, 16.05, 90), 'TP212': (90.25, 33.55, 0), 'TP213': (40.75, 12.27, 90),
     'TP214': (47.25, 23.75, 0), 'TP215': (7.01, 16.05, 90), 'TP503': (40.75, 31.25, 90), 'TP2903': (93.25, 33.55, 0),
 }
+# W2 PWR-L6-PLACE third pass: the zone-2 exit pair of PWR-B (J203 / J506, top entry) puts THT pin fields over the PWR-A
+# area x 91.4-112.4, y 2.2-10.9 (pin field + window_margin), where rule H-TRIM allows PWR-A parts of 2.7 mm at most. C512
+# (16TQC220MD3, 3.0 mm max, pcb/partition-spec.json heights.by_mpn) stood there (planner place (104.01, 3.3), under J506);
+# it is pinned at the place pcb place_board.py legalised for it against the new pin fields (board-placement.json), off
+# every PWR-B pin field and header strip; the planner packs the rest of the HFP group around it. ref -> (x, y, rotation).
+HTRIM_KEEP = {'C512': (101.9, 31.45, 180)}
 SMALL_SIGNAL_LIMIT = {'C128': 2.0}  # mm, pad centre to pin centre (CVCC); the others 5.0
 SMALL_SIGNAL_SOURCE = ('TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 Layout Example, '
                        'https://www.ti.com/lit/ds/symlink/lm61460.pdf, and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section '
@@ -614,6 +620,14 @@ def build():
                                            'to the converter pins it serves'})
             anchored.add(ref)
             continue
+        if ref in HTRIM_KEEP:
+            x, y, rot = HTRIM_KEEP[ref]
+            parts.append({'ref': ref, 'source': 'graph',
+                          'anchor': {'at': [x, y], 'align': 'origin', 'rotation': rot, 'side': 'F'},
+                          'anchor_source': 'W2 PWR-L6-PLACE third pass (make_spec.py HTRIM_KEEP): taller than the H-TRIM zone '
+                                           'height 2.7 mm, pinned off the PWR-B THT pin fields of the zone-2 exit pair J203 / J506'})
+            anchored.add(ref)
+            continue
         if ref in CUTOUT_KEEP:
             x, y, rot = CUTOUT_KEEP[ref]
             parts.append({'ref': ref, 'source': 'graph',
@@ -695,7 +709,7 @@ def build():
         cuts = [[min(p[0] for p in it['outline']), min(p[1] for p in it['outline']), max(p[0] for p in it['outline']),
                  max(p[1] for p in it['outline'])] for it in POWER_POURS.values() if it['layer'] == 'F.Cu']
         cuts += [bg.placed_geometry(fp_geo_of(r), next(p['anchor'] for p in parts if p['ref'] == r))['box']
-                 for r in list(POWER_ANCHORS) + list(SMALL_SIGNAL_ANCHORS) + list(CUTOUT_KEEP) if r in anchored]
+                 for r in list(POWER_ANCHORS) + list(SMALL_SIGNAL_ANCHORS) + list(CUTOUT_KEEP) + list(HTRIM_KEEP) if r in anchored]
         for cut in cuts:
             nxt = {}
             for name, reg in regions.items():
