@@ -818,5 +818,103 @@ class CtrlLab5OuterFeedAndFan5p(unittest.TestCase):
             self.assertIn('reproduced byte for byte', run.stdout)
 
 
+class CtrlPowerViaShares(unittest.TestCase):
+    """W2 CTRL-4 review RV4-S-2 / RV4-E-6 (MODEL): the vias of a scripted power cluster do not share the current equally.
+    A DC network of the scripted centrelines of the net (spec pre_route; each path step a strip of its width and layer
+    copper, each via the plated barrel of pcb/generated/netclasses.json formulas.via across the board thickness; the
+    resistivity cancels) gives every via's current for a fault current entering at the feed side and leaving at the far
+    end. The hottest via must stay within the project's via fit at +20 degC (formulas.via.current_a_dt20) at the net's
+    protective current (nets.<net>.inputs.protective_a: LAB5 4 A by F102, E3_FAN5_P 1.5 A by the F301 trip at 23 degC).
+    At the assumed cold trip of about 2.02 A the second E3_FAN5_P group (entry and exit on the same via) exceeds it:
+    OPEN in build/15 'CTRL-4: залишки (W2 CTRL-4)'. Skipped on a tree without the CTRL spec."""
+    # net: (layer, track id, path index) of the fault current's entry and of its exit
+    CASES = {'LAB5': (('F.Cu', 'LAB5-FEED-F', 0), ('B.Cu', 'LAB5-FEED-B3', -1)),
+             'E3_FAN5_P': (('B.Cu', 'FAN5P-B', -1), ('B.Cu', 'FAN5P-L', 0))}
+
+    def setUp(self):
+        if not bg.spec_path('CTRL').is_file():
+            self.skipTest('no CTRL spec')
+        self.spec = bg.read_json(bg.spec_path('CTRL'))
+        self.nc = bg.read_json(bg.BASE / 'pcb/generated/netclasses.json')
+
+    @staticmethod
+    def key(layer, point):
+        return (layer, round(point[0], 4), round(point[1], 4))
+
+    def network(self, net):
+        import math
+        copper = {l['kicad']: l['copper_mm'] for l in self.nc['stackup']['layers'] if 'kicad' in l}
+        via = self.nc['formulas']['via']
+        barrel = self.nc['stackup']['board_thickness_mm']
+        pre = self.spec['pre_route']
+        tracks = {t['id']: t for t in pre['tracks'] if t['net'] == net}
+        edges = []
+        for t in tracks.values():
+            for a, b in zip(t['path'], t['path'][1:]):
+                if math.dist(a, b) > 0:
+                    edges.append((self.key(t['layer'], a), self.key(t['layer'], b),
+                                  math.dist(a, b) / (t['width_mm'] * copper[t['layer']]), None))
+        for v in pre['vias']:
+            if v['net'] == net:
+                self.assertGreaterEqual(v['drill_mm'], via['drill_mm'], v['id'])
+                d = via['drill_mm']  # the fit is for this drill; a larger drill only adds copper
+                area = math.pi * ((d / 2 + via['plating_mm']) ** 2 - (d / 2) ** 2)
+                edges.append((self.key('F.Cu', v['at']), self.key('B.Cu', v['at']), barrel / area, v['id']))
+        (sl, st, si), (kl, kt, ki) = self.CASES[net]
+        return edges, self.key(sl, tracks[st]['path'][si]), self.key(kl, tracks[kt]['path'][ki])
+
+    def via_currents(self, net, current):
+        edges, src, snk = self.network(net)
+        adj = {}
+        for a, b, _, _ in edges:
+            adj.setdefault(a, set()).add(b)
+            adj.setdefault(b, set()).add(a)
+        seen, todo = {src}, [src]
+        while todo:
+            for q in adj[todo.pop()] - seen:
+                seen.add(q)
+                todo.append(q)
+        self.assertIn(snk, seen, net)
+        edges = [e for e in edges if e[0] in seen]
+        idx = {n: k for k, n in enumerate(sorted(n for n in seen if n != snk))}
+        size = len(idx)
+        g = [[0.0] * size for _ in range(size)]
+        rhs = [0.0] * size
+        for a, b, r, _ in edges:
+            for p, q in ((a, b), (b, a)):
+                if p in idx:
+                    g[idx[p]][idx[p]] += 1 / r
+                    if q in idx:
+                        g[idx[p]][idx[q]] -= 1 / r
+        rhs[idx[src]] = current
+        for col in range(size):  # Gaussian elimination with partial pivoting
+            piv = max(range(col, size), key=lambda r_: abs(g[r_][col]))
+            g[col], g[piv], rhs[col], rhs[piv] = g[piv], g[col], rhs[piv], rhs[col]
+            for r_ in range(col + 1, size):
+                f = g[r_][col] / g[col][col]
+                if f:
+                    for c_ in range(col, size):
+                        g[r_][c_] -= f * g[col][c_]
+                    rhs[r_] -= f * rhs[col]
+        volt = [0.0] * size
+        for r_ in range(size - 1, -1, -1):
+            volt[r_] = (rhs[r_] - sum(g[r_][c_] * volt[c_] for c_ in range(r_ + 1, size))) / g[r_][r_]
+        u = {n: volt[k] for n, k in idx.items()}
+        u[snk] = 0.0
+        return {tag: (abs(u[a] - u[b]) / r, (a[1], a[2])) for a, b, r, tag in edges if tag}
+
+    def test_hottest_via_within_the_fit_at_the_protective_current(self):
+        cap = self.nc['formulas']['via']['current_a_dt20']
+        for net in self.CASES:
+            current = self.nc['nets'][net]['inputs']['protective_a']
+            flows = self.via_currents(net, current)
+            self.assertTrue(flows, net)
+            for group in CtrlLab5OuterFeedAndFan5p.clusters([at for _, at in flows.values()]):
+                # every cluster carries the whole fault current across the layers once
+                self.assertAlmostEqual(sum(i for i, at in flows.values() if at in group), current, places=6, msg=net)
+            hottest = max(i for i, _ in flows.values())
+            self.assertLessEqual(hottest, cap, (net, current, {k: round(i, 3) for k, (i, _) in flows.items()}))
+
+
 if __name__ == '__main__':
     unittest.main()
