@@ -13,8 +13,8 @@
       "bytes": 155324
     },
     "design/E2.json": {
-      "sha256": "3adfee75ad5db259432428ac79c29dbe8e9e2abbc82df973e4e03b7359742e21",
-      "bytes": 415616
+      "sha256": "847441b3249771d63c3e6429c3869445ebc9873d0d600da46edff93b1266b5ce",
+      "bytes": 415862
     },
     "design/E3.json": {
       "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
@@ -15721,7 +15721,7 @@
       "source_description": "",
       "source_notes": [
         "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02B (гілка S02); номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
-        "W2 PWR-L6-PLACE (третій прохід): J203 — вертикальна вилка JST PHD B20B-PHDSS(LF)(SN) верхнього входу (LCSC C471521; каталог JST PHD 05.12.2023, копія LCSC, прочитано 13.11.2026: корпус 6.5 мм над платою, монтажна висота з розеткою 8.8 мм) у зоні 2 нижнього краю PWR-B; розпіновка не змінюється, джгут прямий (J307.k ↔ J203.k), дроти J203 — гілка S02B джгута S02 (build/15)."
+        "W2 PWR-L6-PLACE (третій прохід): J203 — вертикальна вилка JST PHD B20B-PHDSS(LF)(SN) верхнього входу (LCSC C471521; каталог JST PHD 05.12.2023, копія LCSC, прочитано 13.11.2026: корпус 6.5 мм над платою, монтажна висота з розеткою 8.8 мм) у зоні 2 нижнього краю PWR-B; дроти J203 — гілка S02B джгута S02 (build/15). W2 PWR-L6-PLACE (четвертий прохід, проба C): J203.2/14/15/18 = EN_HFP/EN_LIME3V3/EN_LNB/FAULT_HFP обміном із J202.5/7/12/16 (FAULT_RTLA, PG_BONI, PG_LNB, PTC_AUX → J202); розпіновки CTRL не змінюються, тож J306.5/7/12/16 ↔ J203.2/14/15/18, решта J307.k ↔ J203.k (build/15)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
