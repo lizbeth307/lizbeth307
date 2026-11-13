@@ -273,8 +273,9 @@ class Inputs:
 #    J207 pin 4); the SB filter inductor L215 stands below the LAB5 trunk next to U221; the LAB BUS buffer U507 stands in
 #    the arm with its I2C partners J201, U215 and J506.
 #  * The S02 headers J202 / J203 / J201 and the PH 9 J506 are parked: zone 0 (right edge) is covered by the PWR-A
-#    J104 / J113-J115 / J507 strips and two hole keep-outs, and zone 2 (bottom span x 93-114.5) by the PWR-A windows of
-#    C265, C512 and C511 (PCB-PWRA-3 placed them after MECH-7 set the span). J202 stands in the 10.6 mm column between
+#    J104 / J113-J115 / J507 strips and two hole keep-outs; zone 2 (bottom span x 93-114.5) was covered by the PWR-A windows
+#    of C265, C512 and C511 until W2 GR-ZONE2-SMD made them low SMD parts (no window) and is now the J209 escape corridor
+#    (J209_CORRIDOR, W2 PWR-L6-PLACE), so it takes no header either. J202 stands in the 10.6 mm column between
 #    the PWR-A probe windows TP211 / TP215 and the C262 window, J203 above it, J201 and J506 in the arm; every one of
 #    them has no harness exit (OPEN, build/15 W2 PCB-PWRB-2).
 #  * LNA ch1-ch3 keep the Kelvin cell of the W2 PCB-PWRB lineage (LNA_ROWS) without its output parts (cout, rdamp, test
@@ -724,7 +725,10 @@ def b2b_pin_map(inp):
 
 
 # ------------------------------------------------------------------ scripted locked copper
-W_TRUNK, W_BRANCH, W_CURRENT, W_SENSE = 2.0, 0.6, 0.5, 0.35
+# W2 PWR-L6-PLACE: the LAB5 branches to the four TPS2553 are 0.7 mm >= 0.667 mm, the IPC-2221 width of the F102 rating (4 A)
+# at +20 degC on the 2 oz outer copper (external k 0.048, foil 0.070 mm; MODEL), so a branch fault up to the LAB5 fuse stays
+# within the protective rise (W2 PWR-L6 synthesis; 0.6 mm before)
+W_TRUNK, W_BRANCH, W_CURRENT, W_SENSE = 2.0, 0.7, 0.5, 0.35
 # J209 escape copper (W2 B2B). The LSHM pads are 0.30 mm wide at 0.50 mm pitch (0.20 mm gaps), and every rail contact has a
 # GND neighbour in its row (b2b-nets.json guard_rule), so: GND contacts join a B.Cu spine between the rows (inwards), rail
 # and signal contacts escape outwards, and copper that enters a pad between two neighbours is at most W_PADSTUB wide.
@@ -818,7 +822,9 @@ def scripted_copper(inp, parts, pins):
         exempt[u] = {'max_mm': reach, 'min_width_mm': W_BRANCH,
                      'reason': f'LAB5 branch from the 2.0 mm trunk to {u} IN (pin 1), through the input capacitor {refs["cA"]}: '
                                f'it carries at most the TPS2553 limit of {u} (<= 0.825 A, tools/assembly_data.py NET_CURRENT), '
-                               f'within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm'}
+                               f'and is {W_BRANCH} mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the '
+                               f'2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm '
+                               f'does not take the PWR3A width'}
     exempt[B2B_REF] = {'max_mm': 10.0, 'min_width_mm': W_PADSTUB,
                        'reason': 'J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail '
                                  'neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, '
@@ -1129,7 +1135,7 @@ def template_nets(inp, pins):
     return sorted(nets)
 
 
-def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None):
+def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None, escape=None):
     c = inp.contract
     overlay = cutout_overlay(inp, pparts)
     nets = template_nets(inp, pins)
@@ -1280,8 +1286,9 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
                      f'{r4(c["outline_mm"][2][1] - (anchors["J204"]["at"][1] + 6.25))} mm inboard of the edge (R-PWRB-EXIT '
                      'set_back_min_mm of zone 1) and no part in front of them (plug zones). The S02 headers J202, J203 and J201 '
                      'and the PH 9 J506 are parked inside the board without a harness exit: zone 0 (right edge) is covered by the '
-                     'PWR-A strips of J104, J113-J115 and J507 and two hole keep-outs, zone 2 (bottom span x 93-114.5) by the PWR-A '
-                     'windows of C265, C512 and C511 of the PCB-PWRA-3 placement. OPEN for MECH and PCB-PWRA-4 (build/15 '
+                     'PWR-A strips of J104, J113-J115 and J507 and two hole keep-outs; zone 2 (bottom span x 93-114.5), free of '
+                     'PWR-A windows since W2 GR-ZONE2-SMD, is the J209 escape corridor (j209_escape, W2 PWR-L6-PLACE) and takes '
+                     'no header. OPEN for MECH and PCB-PWRA-4 (build/15 '
                      'W2 PCB-PWRB-2); check_boards does not check edge zones',
             'cutouts': 'no top courtyard over a PWR-A cut-out (pwr_a_cutouts); pads, scripted copper and scripted vias keep the '
                        'edge clearance 0.35 mm from them as from a board edge; until they are Edge.Cuts every cut-out is a rule '
@@ -1312,6 +1319,7 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
                         'note': 'MODEL: exact rectangle intersection of the top courtyards with the cut-outs plus a raster of '
                                 'their union; usable = L outline less the cut-out union and the hole keep-outs; fill_with_b2b '
                                 'counts J209 on the top area as pcb/partition-budget.json does'}},
+        'j209_escape': escape,
         'h_trim': {
             'rule': 'H-TRIM (pcb/partition-spec.json keepouts.h_trim, W2 AREA-2): after soldering, every THT pin of this board is '
                     'trimmed flush, protrusion at most 1.0 mm below the PWR-B bottom face; PWR-A parts up to 2.7 mm stand under '
@@ -1346,7 +1354,11 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
         spec['pre_route']['frozen_route_note'] = frozen_note
     if FREEZE_ONLY and frozen_note:
         spec['router']['ignore_net_classes'] = sorted(set(SCRIPTED_CLASSES.values()) | {'kicad_default', 'PWR1A'})
-        spec['router']['freeze_only'] = 'W2 PWRJ-LAYERS6 freeze-only: with the frozen route in pre_route no class is autorouted (all DSN classes in -inc), so the CI run measures exactly the frozen router copper plus the grid A* completion; in route run 43349395168 Freerouting on top of the frozen copper joined no further connection (model open = KiCad open) and left KiCad clearance errors against the locked copper'
+        spec['router']['freeze_only'] = ('W2 PWRJ-LAYERS6 freeze-only: the frozen route in pre_route is the whole router copper, so '
+                                         'pcb/board_gen.py does not start Freerouting (router_skip, W2 PWR-TOOLS) and the CI run '
+                                         'measures exactly the frozen router copper plus the grid A* completion; in route run '
+                                         '43349395168 Freerouting on top of the frozen copper joined no further connection (model '
+                                         'open = KiCad open) and left KiCad clearance errors against the locked copper')
     return json.dumps(spec, ensure_ascii=False, indent=2) + '\n'
 
 
@@ -1490,8 +1502,16 @@ def frozen_copper(inp, parts, tracks, vias):
 # J209 lower-row contacts; F2ENV probes 1-5 on the grown board: 52 -> 6 open, the radials moved off in probe 2 and the
 # corridor kept in probe 3). J209_FIELD is the field the radials must leave (W2 PWR-L6 synthesis: PWR-B frame x 84-117,
 # y 0-16); J209_CORRIDOR is the corridor of place_f2env.py CORRIDORS on the in-envelope outline (x 84-116, y 0-15.3), to
-# be kept free of PWR-A windows and of new fixed vias. MODEL report only (--corridor; --zone2-slots takes about 8 min):
-# it writes nothing and is not a placement check yet, because the radial windows still stand in it.
+# be kept free of PWR-A windows and of new fixed vias. --corridor and --zone2-slots (about 8 min) are MODEL reports that
+# write nothing; the slot search found no in-envelope place for the radial windows (build/15 W2 PWR-L6-PLACE), so W2
+# GR-ZONE2-SMD made C265, C511 and C512 low SMD parts: they need no window any more.
+# Since that swap the corridor is a placement check (corridor_check, W2 PWR-L6-PLACE second pass) and the spec records it
+# (j209_escape): no PWR-A cut-out in J209_FIELD but the header edge strips of the MECH-7 bottom row and right column
+# (CORRIDOR_STRIPS, which reach into its sides), and in J209_CORRIDOR no PWR-B top courtyard and no scripted via other than
+# those of the placement of record (CORRIDOR_PARTS: the ch4 Kelvin cell of the J209 sense column, its bypasses, the
+# BIAS_SB_LNA test point and the E2_RTLB_SW bypass C249, with their GND plane vias).
+CORRIDOR_STRIPS = ('J112', 'J113', 'J507')
+CORRIDOR_PARTS = ('C244', 'C245', 'C249', 'C297', 'L209', 'R243', 'TP216', 'U209')
 J209_FIELD = (84.0, 0.0, 117.0, 16.0)
 J209_CORRIDOR = (84.0, 0.0, 116.0, 15.3)
 ZONE2_RADIALS = ('C265', 'C512', 'C511')
@@ -1544,6 +1564,49 @@ def corridor_report(inp, parts, tracks, vias):
             'pwr_b_top_courtyard_mm2': round(_raster_area([b for _, b in crt], cor), 1),
             'scripted_vias_in_corridor': len([v for v in vias if cor[0] <= v['at'][0] <= cor[2] and cor[1] <= v['at'][1] <= cor[3]]),
             'scripted_via_groups': fixed_vias}
+
+
+def corridor_check(inp, parts, vias):
+    """The J209 escape corridor as a placement rule (W2 PWR-L6-PLACE second pass): returns (record, problems). MODEL
+    geometry: areas by raster (_raster_area, 0.05 mm rows)."""
+    field, cor = J209_FIELD, J209_CORRIDOR
+    in_field = [c for c in inp.cutouts if _ov(c['rect'], field)]
+    in_cor = [c for c in inp.cutouts if _ov(c['rect'], cor)]
+    crt = sorted((r for r, p in parts.items() if p.side == 'F' and _ov(p.box, cor)), key=bg.sort_ref)
+    cvias = [v for v in vias if cor[0] <= v['at'][0] <= cor[2] and cor[1] <= v['at'][1] <= cor[3]]
+    problems = []
+    for c in in_field:
+        if c['ref'] in ZONE2_RADIALS or c['kind'] != 'header_edge_strip' or c['ref'] not in CORRIDOR_STRIPS:
+            problems.append(f'J209 escape field: PWR-A cut-out {c["ref"]} ({c["kind"]}) {c["rect"]}')
+    problems += [f'J209 escape corridor: PWR-B part {r} (not in CORRIDOR_PARTS)' for r in crt if r not in CORRIDOR_PARTS]
+    owners = sorted({v['id'].split('-')[1] for v in cvias if v['id'].startswith(('GND-', 'Q6A-'))}, key=bg.sort_ref)
+    problems += [f'J209 escape corridor: scripted via {v["id"]} at {v["at"]}' for v in cvias
+                 if not (v['id'].startswith(('GND-', 'Q6A-')) and v['id'].split('-')[1] in CORRIDOR_PARTS)]
+    area = (field[2] - field[0]) * (field[3] - field[1])
+    carea = (cor[2] - cor[0]) * (cor[3] - cor[1])
+    record = {
+        'rule': ('W2 PWR-L6-PLACE (W2 PWR-L6 synthesis, the place_f2env.py CORRIDORS idea of W2 PWRJ-F2ENV on the in-envelope '
+                 'outline): the J209 lower contact row escapes downwards into the field; no PWR-A window over a part taller '
+                 'than hA in J209_FIELD (C265, C511 and C512 are low SMD parts since W2 GR-ZONE2-SMD), only the header edge '
+                 'strips of the MECH-7 bottom row and right column reach into it from its sides; in J209_CORRIDOR no PWR-B top '
+                 'courtyard and no scripted via other than those of the placement of record (make_spec.py corridor_check '
+                 'fails otherwise)'),
+        'field_mm': list(field), 'field_area_mm2': round(area, 1),
+        'field_free_of_cutouts_mm2': round(area - _raster_area([c['rect'] for c in in_field], field), 1),
+        'cutouts_in_field': [{'ref': c['ref'], 'kind': c['kind'], 'rect': c['rect']} for c in in_field],
+        'zone2_windows_in_field': sorted(c['ref'] for c in in_field if c['ref'] in ZONE2_RADIALS),
+        'corridor_mm': list(cor), 'corridor_area_mm2': round(carea, 1),
+        'corridor_free_of_cutouts_mm2': round(carea - _raster_area([c['rect'] for c in in_cor], cor), 1),
+        'corridor_free_of_cutouts_and_pwr_b_courtyards_mm2': round(
+            carea - _raster_area([c['rect'] for c in in_cor] + [parts[r].box for r in crt], cor), 1),
+        'pwr_b_top_courtyards_in_corridor': crt,
+        'scripted_vias_in_corridor': len(cvias), 'scripted_via_owners': owners,
+        'before': ('W2 PCB-PWRB-2 / PWRJ-LAYERS6 (until W2 GR-ZONE2-SMD): the windows of C265, C512 and C511 stood in the field '
+                   '([89.6, 3.7, 97.4, 11.5], [99.1, 3.7, 106.9, 11.5], [106.4, 5.0, 112.9, 11.5]); the corridor had 248.1 mm2 '
+                   'free of cut-outs (W2 PWR-L6-PLACE first pass, make_spec.py --corridor)'),
+        'label': 'MODEL: rectangle geometry of the courtyards and cut-outs, raster 0.05 mm; not a routed result',
+        'passed': not problems}
+    return record, problems
 
 
 def zone2_slots(inp, parts, tracks, vias):
@@ -1717,7 +1780,8 @@ def main(argv=None):
             rep['zone2_slots'] = zone2_slots(inp, parts, tracks, vias)
         print(json.dumps(rep, ensure_ascii=False, indent=1))
         return 0
-    problems = check_placement(inp, parts) + check_copper(inp, parts, tracks, vias) + kelvin_cells(anchors)
+    escape, escape_problems = corridor_check(inp, parts, vias)
+    problems = check_placement(inp, parts) + check_copper(inp, parts, tracks, vias) + kelvin_cells(anchors) + escape_problems
     problems += [f'not placed: {r}' for r in missing]
     gnd_pads = [(r, q['number']) for r, pa in parts.items() for q in pa.pads if q['net'] == 'GND' and q['type'] == 'smd'
                 and (r, q['number']) != ('U215', 'EP') and r != B2B_REF]
@@ -1747,7 +1811,7 @@ def main(argv=None):
     ft, fv, frozen_note = frozen_copper(inp, parts, tracks, vias)
     if frozen_note:
         print(f'frozen route: {len(ft)} tracks, {len(fv)} vias')
-    spec_text = spec_json(inp, anchors, pins, tracks + ft, vias + fv, exempt, parts, frozen_note)
+    spec_text = spec_json(inp, anchors, pins, tracks + ft, vias + fv, exempt, parts, frozen_note, escape)
     project_text = project_json(inp, pins)
     if args.check:
         bad = [p for p, text in ((SPEC, spec_text), (PROJECT, project_text)) if not p.is_file() or p.read_text(encoding='utf-8') != text]

@@ -732,14 +732,14 @@ class PlannedCutoutKeyAndFrozenRouter(unittest.TestCase):
         study = bg.read_json(bg.BASE / 'build/kicad/boards/PWR_A/placement-study-shrink2.json')['pwr_b_cutouts']['placed']
         want = [[c['rect'][0], c['rect'][1], round(c['rect'][2] - c['rect'][0], 4), round(c['rect'][3] - c['rect'][1], 4)]
                 for c in study]
-        self.assertEqual(len(pc['rects']), 50)
+        self.assertEqual(len(pc['rects']), 47)  # 50 until W2 GR-ZONE2-SMD (no C265/C511/C512 windows), W2 PWR-L6-PLACE
         self.assertEqual([r['rect'] for r in pc['rects']], want)
         self.assertEqual([r['id'] for r in pc['rects']], [c['ref'] for c in study])
         self.assertEqual(pc['margin_mm'], 0.33)
         self.assertEqual(pc['layers'], ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu'])
         self.assertEqual(set(pc['blocks']), {'tracks', 'vias', 'zone_fills', 'pads'})
         boxes = bg.planned_cutout_boxes(spec)
-        self.assertEqual(len(boxes), 50)
+        self.assertEqual(len(boxes), 47)
         for (cid, box), r in zip(boxes, pc['rects']):
             self.assertEqual(cid, r['id'])
             self.assertAlmostEqual(box[0], r['rect'][0] - 0.33)
@@ -827,6 +827,51 @@ class PlannedCutoutKeyAndFrozenRouter(unittest.TestCase):
         s['pre_route']['tracks'] = [dict(t, locked=False) for t in s['pre_route']['tracks']]
         with self.assertRaises(SystemExit):
             bg.validate_spec(s, 'PWR_B')
+
+
+
+class PwrL6PlaceEscapeAndAnchors(unittest.TestCase):
+    """W2 PWR-L6-PLACE: the J209 escape corridor of PWR_B (no PWR-A window over a part taller than hA in the J209 field,
+    C265/C511/C512 without a cut-out), the LAB5 branches of PWR_B at >= 0.667 mm (F102 4 A at +20 degC on 2 oz, IPC-2221
+    MODEL) and the U107/U108 small-signal anchors of the PWR-A planner spec inside thermal_bond zones 3'/4'."""
+
+    def test_j209_escape_corridor(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        esc = spec['j209_escape']
+        self.assertTrue(esc['passed'])
+        self.assertEqual(esc['zone2_windows_in_field'], [])
+        self.assertEqual({c['kind'] for c in esc['cutouts_in_field']}, {'header_edge_strip'})
+        ids = {r['id'] for r in spec['planned_cutouts']['rects']}
+        self.assertFalse(ids & {'C265', 'C511', 'C512'})
+        self.assertGreaterEqual(esc['corridor_free_of_cutouts_mm2'], 400.0)
+
+    def test_lab5_branches_take_the_f102_rating(self):
+        if not bg.spec_path('PWR_B').is_file():
+            self.skipTest('no PWR_B spec')
+        spec = bg.read_json(bg.spec_path('PWR_B'))
+        branches = [t for t in spec['pre_route']['tracks'] if t['id'].startswith('LAB5-BR-')]
+        self.assertEqual(sorted(t['id'][8:] for t in branches), ['U210', 'U221', 'U501', 'U502'])
+        for t in branches:
+            self.assertGreaterEqual(t['width_mm'], 0.667, t['id'])
+        for ref in ('U210', 'U221', 'U501', 'U502'):
+            self.assertGreaterEqual(spec['branch_exempt'][ref]['min_width_mm'], 0.667, ref)
+
+    def test_small_signal_anchors_inside_zones(self):
+        path = bg.BASE / 'build/kicad/boards/PWR_A/PWR_A.spec-shrink2.json'
+        if not path.is_file():
+            self.skipTest('no PWR_A planner spec')
+        spec = bg.read_json(path)
+        ss = spec['power_stages']['small_signal']
+        self.assertTrue(ss['passed'])
+        want = {'C127': 3, 'R127': 3, 'C128': 3, 'C129': 3, 'R124': 3, 'R125': 3, 'R128': 3, 'R129': 4, 'R130': 4}
+        self.assertEqual({r['ref']: r['zone'] for r in ss['rows']}, want)
+        for r in ss['rows']:
+            self.assertTrue(r['inside'], r['ref'])
+            self.assertTrue(all(d <= r['limit_mm'] for d in r['pad_to_pin_mm'].values()), r['ref'])
+        anchored = {p['ref'] for p in spec['parts'] if p.get('anchor')}
+        self.assertLessEqual(set(want), anchored)
 
 
 if __name__ == '__main__':
