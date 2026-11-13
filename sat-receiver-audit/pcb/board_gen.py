@@ -216,6 +216,8 @@ def router_extra(router):
     (--router.fanout.enabled=false); 'ignore_net_classes' [names] are not autorouted (-inc), for nets whose
     copper is all scripted and locked (the router does not count locked copper that crosses a pad as a connection)."""
     extra = []
+    if not isinstance(router.get('automatic_neckdown', False), bool):
+        raise SpecError('router.automatic_neckdown must be true or false')
     if 'fanout' in router:
         if not isinstance(router['fanout'], bool):
             raise SpecError('router.fanout must be true or false')
@@ -228,8 +230,10 @@ def router_extra(router):
     return extra
 
 
-def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout, extra=()):
-    """Headless Freerouting call: analytics off (-da), no GUI, optimizer on one thread (-mt), bounded job."""
+def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout, extra=(), neckdown=False):
+    """Headless Freerouting call: analytics off (-da), no GUI, optimizer on one thread (-mt), bounded job.
+    neckdown (spec router.automatic_neckdown, default false; W2 PWRJ F2ENV probe): the router may narrow a track to
+    the pad it enters (pad-entry necks of power classes at small pads; check_boards neck_exempt / branch_exempt)."""
     if int(max_passes) < 1 or int(threads) < 1:
         raise SpecError('router.max_passes and router.threads must be >= 1')
     if not re.fullmatch(r'\d{2}:\d{2}:\d{2}', str(job_timeout)):
@@ -238,7 +242,7 @@ def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_
     # key is passed too; automatic neckdown off keeps every routed track at its net-class width.
     return [str(java), '-Djava.awt.headless=true', '-cp', str(jar), FREEROUTING['main_class'],
             '-de', str(dsn), '-do', str(ses), f'--router.autorouter.max_passes={int(max_passes)}', '-mt', str(int(threads)),
-            f'--router.optimizer.max_threads={int(threads)}', '--router.automatic_neckdown=false',
+            f'--router.optimizer.max_threads={int(threads)}', f'--router.automatic_neckdown={str(bool(neckdown)).lower()}',
             '-da', '--gui.enabled=false', f'--router.job_timeout={job_timeout}', '--logging.file.enabled=false',
             f'--user_data_path={user_dir}'] + [str(a) for a in extra]
 
@@ -2017,7 +2021,8 @@ def route(board, freerouting):
             raise SystemExit('board_gen: Specctra DSN export failed')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
         cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
-                                  temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']))
+                                  temp / 'fr-user', spec['router']['job_timeout'], router_extra(spec['router']),
+                                  neckdown=spec['router'].get('automatic_neckdown', False))
         shown_cmd = [shown_arg(c) for c in cmd]
         print('Freerouting command:', ' '.join(shown_cmd), flush=True)
         art = os.environ.get('SR_RX_PCB_ARTIFACTS')
