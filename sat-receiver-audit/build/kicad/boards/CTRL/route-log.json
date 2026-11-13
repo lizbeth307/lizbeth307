@@ -45,27 +45,26 @@
   ],
   "exit_code": 0,
   "log_tail": [
-    "  Net 'E3_MCP_RESET_GATE' (1 unrouted connection):",
-    "    - Q306-1  ->  R393-2",
+    "    - via  ->  R364-2",
+    "  Net 'E3_LOCK_EXT' (1 unrouted connection):",
+    "    - U311-3  ->  R346-2",
     "  Net 'E3_PANEL_TEMP' (1 unrouted connection):",
     "    - C310-1  ->  U305-31",
     "  Net 'E3_PICO3V3' (9 unrouted connections):",
     "    - via  ->  C312-1",
     "    - via  ->  R357-2",
-    "    - R347-2  ->  R349-2",
-    "    - R353-2  ->  R351-2",
+    "    - R349-2  ->  R347-2",
+    "    - R351-2  ->  R353-2",
     "    - R355-2  ->  R353-2",
-    "    - C312-1  ->  R341-2",
-    "    - R339-2  ->  R337-2",
+    "    - R341-2  ->  C312-1",
+    "    - R337-2  ->  R339-2",
     "    - C312-1  ->  R335-2",
     "    - R368-2  ->  R349-2",
     "  Net 'E3_PICO_SWCLK' (2 unrouted connections):",
-    "    - via  ->  U305-SWCLK",
-    "    - J304-12  ->  via",
+    "    - U305-SWCLK  ->  via",
+    "    - via  ->  J304-12",
     "  Net 'E3_PICO_SWDIO' (1 unrouted connection):",
     "    - via  ->  U305-SWDIO",
-    "  Net 'E3_PIEZO_DRIVE' (1 unrouted connection):",
-    "    - via  ->  U305-26",
     "  Net 'E3_Q6A_KEY_GATE' (1 unrouted connection):",
     "    - via  ->  Q302-1",
     "  Net 'E3_REC_EXT' (1 unrouted connection):",
@@ -73,24 +72,25 @@
     "  Net 'MCP_INT' (1 unrouted connection):",
     "    - via  ->  R302-1",
     "  Net 'PWR_BUTTON' (5 unrouted connections):",
-    "    - via  ->  J307-19",
+    "    - via  ->  D302-3",
+    "    - J307-19  ->  via",
     "    - D303-3  ->  D302-3",
-    "    - D303-3  ->  via",
     "    - J307-19  ->  via",
     "    - via  ->  J315-2",
-    "  Net 'UART5_RX' (1 unrouted connection):",
+    "  Net 'UART5_RX' (2 unrouted connections):",
     "    - via  ->  J304-10",
-    "2026-11-13 03:04:42.609 INFO   [C08538\\5A7BA2] Auto-routing stage completed: started with 172 unrouted nets, completed in 462.54 seconds, final score: 766.43 (68 unrouted and 419 violations), using 460.06 total CPU seconds, 339.70 GB total allocated, and 419.3 MB peak heap usage.",
-    "2026-11-13 03:04:43.053 INFO   [C08538\\5A7BA2] Skipping optimization stage: the board has 68 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-13 03:04:43.140 INFO   [C08538\\5A7BA2] Job 'C08538\\5A7BA2' finished with state: COMPLETED (elapsed: 7 minutes 44.44 seconds, finished at UTC: 2026-11-13T03:04:43.139773629Z).",
-    "2026-11-13 03:04:43.170 INFO   Saving output file '/tmp/sr-rx-CTRL-8ovidptf/CTRL.ses' (SES)...",
-    "2026-11-13 03:04:43.170 INFO   Successfully saved output file '/tmp/sr-rx-CTRL-8ovidptf/CTRL.ses' (26935 bytes)."
+    "    - J310-3  ->  via",
+    "2026-11-13 08:06:37.286 INFO   [ECB674\\D5E738] Auto-routing stage completed: started with 169 unrouted nets, completed in 435.66 seconds, final score: 776.31 (65 unrouted and 420 violations), using 433.18 total CPU seconds, 380.47 GB total allocated, and 457.1 MB peak heap usage.",
+    "2026-11-13 08:06:37.687 INFO   [ECB674\\D5E738] Skipping optimization stage: the board has 65 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-13 08:06:37.730 INFO   [ECB674\\D5E738] Job 'ECB674\\D5E738' finished with state: COMPLETED (elapsed: 7 minutes 17.29 seconds, finished at UTC: 2026-11-13T08:06:37.729773111Z).",
+    "2026-11-13 08:06:37.761 INFO   Saving output file '/tmp/sr-rx-CTRL-a9bw5sgw/CTRL.ses' (SES)...",
+    "2026-11-13 08:06:37.762 INFO   Successfully saved output file '/tmp/sr-rx-CTRL-a9bw5sgw/CTRL.ses' (27195 bytes)."
   ],
-  "dsn_sha256": "629a9e0c15bb749b01147b51ff566bf22100e81a1fd079de5638cbce254424d1",
-  "ses_sha256": "03957767e27b49398dc3135fbfe0b5e0cfd115bf77eb7d20a5082d1b9b6ead8d",
+  "dsn_sha256": "c4e980d2580cf82dd3f969719f0727bf735ae362b2b26a44bbf6672d7350309d",
+  "ses_sha256": "fa2d296e954e98fc4830ff26079ff6cbc310aba0b017d411a6e6a25c72d36d19",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 3538,
+    "wires_fix": 3591,
     "wires_protect": 0,
     "keepouts": 83,
     "planes": 1,
@@ -118,8 +118,8 @@
     }
   },
   "locked_segments": {
-    "before_ses_import": 3549,
-    "after_ses_import": 3549
+    "before_ses_import": 3603,
+    "after_ses_import": 3603
   },
   "via_centre_stubs": [],
   "drc_command": [
@@ -135,7 +135,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "6aed0b371af7414a739ebc5cca69532945769820d3d82080cafe50270e56158e",
+  "board_sha256": "4805e0f87cbc1b3d4630e4c09cc8c0ce8ce0f67507e3013798236a07328e3a6d",
   "previews": [
     "build/kicad/boards/CTRL/CTRL-top.svg",
     "build/kicad/boards/CTRL/CTRL-bottom.svg"
@@ -1026,8 +1026,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43355370368",
-    "sha": "b467c33ea5cda9805b790d6aeb5ec2fea0e48e4d",
-    "ref": "refs/heads/wip/w2-ctrl4"
+    "run_id": "43389430702",
+    "sha": "c6f2591305eb9602d6a23a6bebb1413da12c9528",
+    "ref": "refs/heads/wip/w2-ctrl5"
   }
 }
