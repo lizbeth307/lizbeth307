@@ -33,7 +33,7 @@
     "sha256": "89b7b83db91ef1e1ad3e43702094f6204dd0d25b1faee45929d691c8b20ca7e8"
   },
   "board_file": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-  "board_sha256": "7edb5527f12cc8078691f245054dd000d42a5f75d2580d4491274a13fa9bf638",
+  "board_sha256": "68d3c77bb5eb3aee0cbf70516e422af50d737ae440055fbfed5838584b462c16",
   "project_file": "build/kicad/boards/PWR_B/PWR_B.kicad_pro",
   "fp_lib_table_sha256": "9a5eff2456cb36deae2e28ef21b277618ca2f051b6b38a68a080d558e2ac22db",
   "layers": {
@@ -13628,52 +13628,6 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of C233",
-            "pos": [
-              112.38,
-              153.9
-            ]
-          },
-          {
-            "description": "Pad 1 [E2_LNA1_SHUNT] of L206 on F.Cu",
-            "pos": [
-              113.445,
-              152.2
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of C235",
-            "pos": [
-              118.0,
-              156.8
-            ]
-          },
-          {
-            "description": "Pad 1 [BIAS_CH1] of C234 on F.Cu",
-            "pos": [
-              116.755,
-              156.45
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
             "description": "Reference field of C235",
             "pos": [
               118.0,
@@ -13812,6 +13766,52 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
+            "description": "Reference field of C240",
+            "pos": [
+              110.1,
+              126.3
+            ]
+          },
+          {
+            "description": "Pad 1 [LNA4V5] of C240 on F.Cu",
+            "pos": [
+              109.15,
+              126.3
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C240",
+            "pos": [
+              110.1,
+              126.3
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C240 on F.Cu",
+            "pos": [
+              111.05,
+              126.3
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
             "description": "Reference field of C241",
             "pos": [
               118.7,
@@ -13846,6 +13846,52 @@
             "pos": [
               118.7,
               131.95
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C242",
+            "pos": [
+              116.623,
+              115.394
+            ]
+          },
+          {
+            "description": "Pad 1 [BIAS_CH3] of C242 on F.Cu",
+            "pos": [
+              116.623,
+              116.344
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C242",
+            "pos": [
+              116.623,
+              115.394
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of C242 on F.Cu",
+            "pos": [
+              116.623,
+              114.444
             ]
           }
         ],
@@ -14341,52 +14387,6 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of C283",
-            "pos": [
-              126.97,
-              179.25
-            ]
-          },
-          {
-            "description": "PTH pad 7 [FLT_SB_LNA] of J203",
-            "pos": [
-              127.7,
-              178.45
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of C283",
-            "pos": [
-              126.97,
-              179.25
-            ]
-          },
-          {
-            "description": "PTH pad 9 [I2C0_SDA] of J203",
-            "pos": [
-              125.7,
-              178.45
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
             "description": "Reference field of C284",
             "pos": [
               123.475,
@@ -14824,6 +14824,52 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
+            "description": "Reference field of C2912",
+            "pos": [
+              105.654,
+              111.384
+            ]
+          },
+          {
+            "description": "Pad 1 [E2_BLK3_S] of C2912 on F.Cu",
+            "pos": [
+              104.879,
+              111.384
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C2912",
+            "pos": [
+              105.654,
+              111.384
+            ]
+          },
+          {
+            "description": "Pad 2 [E2_BLK3_G] of C2912 on F.Cu",
+            "pos": [
+              106.429,
+              111.384
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
             "description": "Reference field of C295",
             "pos": [
               172.5,
@@ -14950,52 +14996,6 @@
             "pos": [
               209.655,
               194.8
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of C298",
-            "pos": [
-              105.5,
-              188.0
-            ]
-          },
-          {
-            "description": "Pad 1 [E2_SB_DAMP] of C298 on F.Cu",
-            "pos": [
-              105.5,
-              190.2
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of C298",
-            "pos": [
-              105.5,
-              188.0
-            ]
-          },
-          {
-            "description": "Pad 2 [GND] of C298 on F.Cu",
-            "pos": [
-              105.5,
-              185.8
             ]
           }
         ],
@@ -15245,6 +15245,29 @@
             ]
           },
           {
+            "description": "Pad 1 [3V3_Q6A] of C550 on F.Cu",
+            "pos": [
+              140.625,
+              163.674
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of C550",
+            "pos": [
+              140.625,
+              162.899
+            ]
+          },
+          {
             "description": "Pad 2 [GND] of C550 on F.Cu",
             "pos": [
               140.625,
@@ -15399,17 +15422,17 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of J203",
+            "description": "Reference field of D2902",
             "pos": [
-              124.7,
-              180.25
+              105.225,
+              114.019
             ]
           },
           {
-            "description": "Pad 1 [3V3_Q6A] of C283 on F.Cu",
+            "description": "Pad 1 [E2_BLK3_G] of D2902 on F.Cu",
             "pos": [
-              126.195,
-              180.68
+              104.2875,
+              113.069
             ]
           }
         ],
@@ -15422,17 +15445,17 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of J203",
+            "description": "Reference field of D2902",
             "pos": [
-              124.7,
-              180.25
+              105.225,
+              114.019
             ]
           },
           {
-            "description": "Pad 1 [E2_U218_SENSE] of C284 on F.Cu",
+            "description": "Pad 1 [E2_BLK3_S] of C2912 on F.Cu",
             "pos": [
-              122.7,
-              180.978
+              104.879,
+              111.384
             ]
           }
         ],
@@ -15445,17 +15468,40 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of J203",
+            "description": "Reference field of D2902",
             "pos": [
-              124.7,
-              180.25
+              105.225,
+              114.019
             ]
           },
           {
-            "description": "Pad 2 [GND] of C284 on F.Cu",
+            "description": "Pad 2 [<no net>] of D2902 on F.Cu",
             "pos": [
-              124.25,
-              180.978
+              104.2875,
+              114.969
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of D2902",
+            "pos": [
+              105.225,
+              114.019
+            ]
+          },
+          {
+            "description": "Pad 3 [E2_BLK3_S] of D2902 on F.Cu",
+            "pos": [
+              106.1625,
+              114.019
             ]
           }
         ],
@@ -15686,52 +15732,6 @@
             "pos": [
               124.365,
               162.525
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of Q2911",
-            "pos": [
-              123.034,
-              181.431
-            ]
-          },
-          {
-            "description": "Pad 1 [E2_U218_SENSE] of C284 on F.Cu",
-            "pos": [
-              122.7,
-              180.978
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of Q2911",
-            "pos": [
-              123.034,
-              181.431
-            ]
-          },
-          {
-            "description": "Pad 2 [GND] of C284 on F.Cu",
-            "pos": [
-              124.25,
-              180.978
             ]
           }
         ],
@@ -16008,29 +16008,6 @@
             "pos": [
               150.05,
               193.525
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of R237",
-            "pos": [
-              129.288,
-              201.2
-            ]
-          },
-          {
-            "description": "Pad 1 [BIAS_CH2] of R237 on F.Cu",
-            "pos": [
-              127.8255,
-              201.2
             ]
           }
         ],
@@ -16572,52 +16549,6 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of R284",
-            "pos": [
-              118.787,
-              187.478
-            ]
-          },
-          {
-            "description": "PTH pad 5 [EN_HFP] of J202",
-            "pos": [
-              118.08,
-              186.25
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of R284",
-            "pos": [
-              118.787,
-              187.478
-            ]
-          },
-          {
-            "description": "PTH pad 7 [EN_LIME3V3] of J202",
-            "pos": [
-              118.08,
-              188.25
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
             "description": "Reference field of R286",
             "pos": [
               142.217,
@@ -16664,6 +16595,75 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
+            "description": "Reference field of R2902",
+            "pos": [
+              101.931,
+              113.939
+            ]
+          },
+          {
+            "description": "Pad 1 [E2_BLK3_G] of R2912 on F.Cu",
+            "pos": [
+              102.025,
+              111.0975
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R2902",
+            "pos": [
+              101.931,
+              113.939
+            ]
+          },
+          {
+            "description": "Pad 1 [E2_BLK3_S] of R2902 on F.Cu",
+            "pos": [
+              101.931,
+              114.764
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R2902",
+            "pos": [
+              101.931,
+              113.939
+            ]
+          },
+          {
+            "description": "Pad 2 [E2_BLK3_G] of R2902 on F.Cu",
+            "pos": [
+              101.931,
+              113.114
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
             "description": "Reference field of R2911",
             "pos": [
               130.635,
@@ -16698,6 +16698,98 @@
             "pos": [
               132.0975,
               166.975
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R2912",
+            "pos": [
+              102.025,
+              109.635
+            ]
+          },
+          {
+            "description": "Pad 1 [E2_BLK3_G] of R2912 on F.Cu",
+            "pos": [
+              102.025,
+              111.0975
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R2912",
+            "pos": [
+              102.025,
+              109.635
+            ]
+          },
+          {
+            "description": "Pad 2 [E2_BLK3_SINK] of R2912 on F.Cu",
+            "pos": [
+              102.025,
+              108.1725
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R2922",
+            "pos": [
+              117.073,
+              111.984
+            ]
+          },
+          {
+            "description": "Pad 1 [BIAS_CH3] of R2922 on F.Cu",
+            "pos": [
+              117.073,
+              112.809
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Reference field of R2922",
+            "pos": [
+              117.073,
+              111.984
+            ]
+          },
+          {
+            "description": "Pad 2 [GND] of R2922 on F.Cu",
+            "pos": [
+              117.073,
+              111.159
             ]
           }
         ],
@@ -17285,29 +17377,6 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of TP206",
-            "pos": [
-              112.755,
-              155.302
-            ]
-          },
-          {
-            "description": "Pad 2 [GND] of C234 on F.Cu",
-            "pos": [
-              114.855,
-              156.45
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
             "description": "Reference field of TP207",
             "pos": [
               137.667,
@@ -17653,29 +17722,6 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of U208",
-            "pos": [
-              112.1,
-              127.1
-            ]
-          },
-          {
-            "description": "Pad 2 [GND] of C240 on F.Cu",
-            "pos": [
-              111.05,
-              126.3
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
             "description": "Reference field of U209",
             "pos": [
               197.0,
@@ -17975,52 +18021,6 @@
         "description": "Silkscreen clipped by solder mask",
         "items": [
           {
-            "description": "Reference field of U219",
-            "pos": [
-              120.6,
-              188.0
-            ]
-          },
-          {
-            "description": "Pad 1 [E2_U218_SENSE] of R284 on F.Cu",
-            "pos": [
-              120.217,
-              188.303
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
-            "description": "Reference field of U219",
-            "pos": [
-              120.6,
-              188.0
-            ]
-          },
-          {
-            "description": "Pad 2 [GND] of R284 on F.Cu",
-            "pos": [
-              120.217,
-              186.653
-            ]
-          }
-        ],
-        "reason": "legend only: the fab clips legend over exposed copper; library outlines of the JST and Samtec LSHM footprints sit close to their pads"
-      },
-      {
-        "section": "violations",
-        "type": "silk_over_copper",
-        "severity": "warning",
-        "description": "Silkscreen clipped by solder mask",
-        "items": [
-          {
             "description": "Reference field of U221",
             "pos": [
               170.1,
@@ -18182,17 +18182,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Circle of TP2901 on F.Silkscreen",
+            "description": "Circle of TP208 on F.Silkscreen",
             "pos": [
-              158.876,
-              176.27
+              113.323,
+              124.984
             ]
           },
           {
-            "description": "Reference field of TP2901",
+            "description": "Reference field of C243",
             "pos": [
-              158.876,
-              176.27
+              113.5,
+              124.2
             ]
           }
         ],
@@ -18205,17 +18205,86 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Circle of TP2902 on F.Silkscreen",
+            "description": "Circle of TP209 on F.Silkscreen",
             "pos": [
-              140.679,
-              129.683
+              216.3,
+              187.2
             ]
           },
           {
-            "description": "Reference field of TP2902",
+            "description": "Reference field of TP209",
             "pos": [
-              140.679,
-              129.683
+              216.3,
+              187.2
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Circle of TP209 on F.Silkscreen",
+            "pos": [
+              216.3,
+              187.2
+            ]
+          },
+          {
+            "description": "Reference field of TP210",
+            "pos": [
+              218.85,
+              187.2
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Circle of TP210 on F.Silkscreen",
+            "pos": [
+              218.85,
+              187.2
+            ]
+          },
+          {
+            "description": "Reference field of TP209",
+            "pos": [
+              216.3,
+              187.2
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Circle of TP210 on F.Silkscreen",
+            "pos": [
+              218.85,
+              187.2
+            ]
+          },
+          {
+            "description": "Reference field of TP210",
+            "pos": [
+              218.85,
+              187.2
             ]
           }
         ],
@@ -18251,17 +18320,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Polygon of U206 on F.Silkscreen",
+            "description": "Polygon of Q2901 on F.Silkscreen",
             "pos": [
-              102.65,
-              150.89
+              122.53,
+              167.6
             ]
           },
           {
-            "description": "Reference field of C232",
+            "description": "Reference field of C2911",
             "pos": [
-              102.1,
-              149.2
+              120.334,
+              167.954
             ]
           }
         ],
@@ -18297,6 +18366,29 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Polygon of U207 on F.Silkscreen",
+            "pos": [
+              144.7,
+              195.49
+            ]
+          },
+          {
+            "description": "Reference field of U207",
+            "pos": [
+              146.15,
+              194.6
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Polygon of U208 on F.Silkscreen",
             "pos": [
               110.65,
@@ -18320,17 +18412,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Polygon of U208 on F.Silkscreen",
+            "description": "Polygon of U209 on F.Silkscreen",
             "pos": [
-              110.65,
-              127.99
+              195.55,
+              192.29
             ]
           },
           {
-            "description": "Reference field of U208",
+            "description": "Reference field of C250",
             "pos": [
-              112.1,
-              127.1
+              195.71,
+              190.35
             ]
           }
         ],
@@ -18366,17 +18458,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Polygon of U210 on F.Silkscreen",
+            "description": "Polygon of U221 on F.Silkscreen",
             "pos": [
-              178.99,
+              170.99,
               191.45
             ]
           },
           {
-            "description": "Reference field of C248",
+            "description": "Reference field of U221",
             "pos": [
-              180.5,
-              191.42
+              170.1,
+              190.0
             ]
           }
         ],
@@ -18389,17 +18481,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Polygon of U221 on F.Silkscreen",
+            "description": "Polygon of U501 on F.Silkscreen",
             "pos": [
-              170.99,
-              191.45
+              154.99,
+              183.15
             ]
           },
           {
-            "description": "Reference field of C295",
+            "description": "Reference field of C502",
             "pos": [
-              172.5,
-              191.42
+              156.5,
+              183.12
             ]
           }
         ],
@@ -18435,17 +18527,109 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C235",
+            "description": "Reference field of C232",
             "pos": [
-              118.0,
-              156.8
+              102.1,
+              149.2
             ]
           },
           {
-            "description": "Reference field of C274",
+            "description": "Polygon of U206 on F.Silkscreen",
             "pos": [
-              119.675,
-              155.5
+              102.65,
+              150.89
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C232",
+            "pos": [
+              102.1,
+              149.2
+            ]
+          },
+          {
+            "description": "Segment of C232 on F.Silkscreen",
+            "pos": [
+              101.8387,
+              148.465
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C232",
+            "pos": [
+              102.1,
+              149.2
+            ]
+          },
+          {
+            "description": "Segment of C232 on F.Silkscreen",
+            "pos": [
+              101.8387,
+              149.935
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C234",
+            "pos": [
+              115.805,
+              158.13
+            ]
+          },
+          {
+            "description": "Segment of C235 on F.Silkscreen",
+            "pos": [
+              114.6875,
+              158.5025
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C234",
+            "pos": [
+              115.805,
+              158.13
+            ]
+          },
+          {
+            "description": "Segment of C235 on F.Silkscreen",
+            "pos": [
+              116.3044,
+              157.74
             ]
           }
         ],
@@ -18465,10 +18649,10 @@
             ]
           },
           {
-            "description": "Segment of C236 on F.Silkscreen",
+            "description": "Reference field of U207",
             "pos": [
-              143.8887,
-              193.065
+              146.15,
+              194.6
             ]
           }
         ],
@@ -18527,17 +18711,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C240",
+            "description": "Reference field of C244",
             "pos": [
-              110.1,
-              126.3
+              195.211,
+              195.287
             ]
           },
           {
-            "description": "Reference field of U208",
+            "description": "Segment of U209 on F.Silkscreen",
             "pos": [
-              112.1,
-              127.1
+              196.09,
+              195.36
             ]
           }
         ],
@@ -18550,17 +18734,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C243",
+            "description": "Reference field of C244",
             "pos": [
-              113.5,
-              124.2
+              195.211,
+              195.287
             ]
           },
           {
-            "description": "Reference field of TP208",
+            "description": "Segment of U209 on F.Silkscreen",
             "pos": [
-              113.323,
-              123.336
+              197.91,
+              195.36
             ]
           }
         ],
@@ -18596,17 +18780,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C250",
+            "description": "Reference field of C247",
             "pos": [
-              195.71,
-              190.35
+              210.98,
+              192.375
             ]
           },
           {
-            "description": "Polygon of U209 on F.Silkscreen",
+            "description": "Segment of L209 on F.Silkscreen",
             "pos": [
-              195.55,
-              192.29
+              210.85,
+              191.85
             ]
           }
         ],
@@ -18619,40 +18803,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C250",
+            "description": "Reference field of C248",
             "pos": [
-              195.71,
-              190.35
+              180.5,
+              191.42
             ]
           },
           {
-            "description": "Reference field of J204",
+            "description": "Polygon of U210 on F.Silkscreen",
             "pos": [
-              197.55,
-              188.31
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C250",
-            "pos": [
-              195.71,
-              190.35
-            ]
-          },
-          {
-            "description": "Reference field of U209",
-            "pos": [
-              197.0,
-              191.4
+              178.99,
+              191.45
             ]
           }
         ],
@@ -18688,17 +18849,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C251",
+            "description": "Reference field of C274",
             "pos": [
-              132.3,
-              198.0
+              119.675,
+              155.5
             ]
           },
           {
-            "description": "Segment of C239 on F.Silkscreen",
+            "description": "Reference field of C235",
             "pos": [
-              131.6956,
-              198.76
+              118.0,
+              156.8
             ]
           }
         ],
@@ -18711,17 +18872,40 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C251",
+            "description": "Reference field of C274",
             "pos": [
-              132.3,
-              198.0
+              119.675,
+              155.5
             ]
           },
           {
-            "description": "Segment of C239 on F.Silkscreen",
+            "description": "Segment of C274 on F.Silkscreen",
             "pos": [
-              132.76,
-              197.6956
+              119.165,
+              155.3594
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C274",
+            "pos": [
+              119.675,
+              155.5
+            ]
+          },
+          {
+            "description": "Segment of C274 on F.Silkscreen",
+            "pos": [
+              120.185,
+              155.3594
             ]
           }
         ],
@@ -18757,17 +18941,63 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C275",
+            "description": "Reference field of C276",
             "pos": [
-              122.55,
-              149.505
+              122.825,
+              159.1
             ]
           },
           {
-            "description": "Segment of U215 on F.Silkscreen",
+            "description": "Segment of C276 on F.Silkscreen",
             "pos": [
-              123.61,
-              149.99
+              122.315,
+              158.9594
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C277",
+            "pos": [
+              136.97,
+              163.595
+            ]
+          },
+          {
+            "description": "Reference field of C285",
+            "pos": [
+              138.734,
+              162.837
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C277",
+            "pos": [
+              136.97,
+              163.595
+            ]
+          },
+          {
+            "description": "Reference field of C287",
+            "pos": [
+              136.764,
+              160.412
             ]
           }
         ],
@@ -18789,192 +19019,8 @@
           {
             "description": "Segment of C277 on F.Silkscreen",
             "pos": [
-              137.48,
+              136.46,
               163.7356
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C282",
-            "pos": [
-              153.053,
-              189.831
-            ]
-          },
-          {
-            "description": "Reference field of R281",
-            "pos": [
-              152.387,
-              186.589
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C284",
-            "pos": [
-              123.475,
-              179.548
-            ]
-          },
-          {
-            "description": "Reference field of C283",
-            "pos": [
-              126.97,
-              179.25
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C284",
-            "pos": [
-              123.475,
-              179.548
-            ]
-          },
-          {
-            "description": "Reference field of J203",
-            "pos": [
-              124.7,
-              180.25
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C285",
-            "pos": [
-              138.734,
-              162.837
-            ]
-          },
-          {
-            "description": "Reference field of C277",
-            "pos": [
-              136.97,
-              163.595
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C285",
-            "pos": [
-              138.734,
-              162.837
-            ]
-          },
-          {
-            "description": "Reference field of C550",
-            "pos": [
-              140.625,
-              162.899
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C285",
-            "pos": [
-              138.734,
-              162.837
-            ]
-          },
-          {
-            "description": "Segment of C285 on F.Silkscreen",
-            "pos": [
-              138.224,
-              162.9776
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C285",
-            "pos": [
-              138.734,
-              162.837
-            ]
-          },
-          {
-            "description": "Segment of C285 on F.Silkscreen",
-            "pos": [
-              139.244,
-              162.9776
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C285",
-            "pos": [
-              138.734,
-              162.837
-            ]
-          },
-          {
-            "description": "Segment of C550 on F.Silkscreen",
-            "pos": [
-              140.115,
-              163.0396
             ]
           }
         ],
@@ -19019,6 +19065,29 @@
           {
             "description": "Segment of C286 on F.Silkscreen",
             "pos": [
+              141.986,
+              182.6906
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C286",
+            "pos": [
+              142.496,
+              182.55
+            ]
+          },
+          {
+            "description": "Segment of C286 on F.Silkscreen",
+            "pos": [
               143.006,
               182.6906
             ]
@@ -19033,63 +19102,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C287",
+            "description": "Reference field of C2901",
             "pos": [
-              136.764,
-              160.412
+              155.363,
+              176.27
             ]
           },
           {
-            "description": "Reference field of C277",
+            "description": "Reference field of TP2901",
             "pos": [
-              136.97,
-              163.595
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C287",
-            "pos": [
-              136.764,
-              160.412
-            ]
-          },
-          {
-            "description": "Segment of C287 on F.Silkscreen",
-            "pos": [
-              136.254,
-              160.5526
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C287",
-            "pos": [
-              136.764,
-              160.412
-            ]
-          },
-          {
-            "description": "Segment of C287 on F.Silkscreen",
-            "pos": [
-              137.274,
-              160.5526
+              158.876,
+              176.27
             ]
           }
         ],
@@ -19155,75 +19178,6 @@
             ]
           },
           {
-            "description": "Segment of C2902 on F.Silkscreen",
-            "pos": [
-              139.9057,
-              131.698
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C2902",
-            "pos": [
-              140.167,
-              132.433
-            ]
-          },
-          {
-            "description": "Segment of C2902 on F.Silkscreen",
-            "pos": [
-              139.9057,
-              133.168
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C2902",
-            "pos": [
-              140.167,
-              132.433
-            ]
-          },
-          {
-            "description": "Segment of C506 on F.Silkscreen",
-            "pos": [
-              135.8044,
-              134.24
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C2902",
-            "pos": [
-              140.167,
-              132.433
-            ]
-          },
-          {
             "description": "Segment of C506 on F.Silkscreen",
             "pos": [
               140.26,
@@ -19247,10 +19201,10 @@
             ]
           },
           {
-            "description": "Polygon of Q2901 on F.Silkscreen",
+            "description": "Segment of C2911 on F.Silkscreen",
             "pos": [
-              122.53,
-              167.6
+              120.1934,
+              168.464
             ]
           }
         ],
@@ -19263,17 +19217,201 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C502",
+            "description": "Reference field of C2912",
             "pos": [
-              156.5,
-              183.12
+              105.654,
+              111.384
             ]
           },
           {
-            "description": "Polygon of U501 on F.Silkscreen",
+            "description": "Reference field of D2902",
             "pos": [
-              154.99,
-              183.15
+              105.225,
+              114.019
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C2912",
+            "pos": [
+              105.654,
+              111.384
+            ]
+          },
+          {
+            "description": "Segment of D2902 on F.Silkscreen",
+            "pos": [
+              104.465,
+              112.459
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C2912",
+            "pos": [
+              105.654,
+              111.384
+            ]
+          },
+          {
+            "description": "Segment of D2902 on F.Silkscreen",
+            "pos": [
+              105.985,
+              112.459
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C295",
+            "pos": [
+              172.5,
+              191.42
+            ]
+          },
+          {
+            "description": "Polygon of U221 on F.Silkscreen",
+            "pos": [
+              170.99,
+              191.45
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C295",
+            "pos": [
+              172.5,
+              191.42
+            ]
+          },
+          {
+            "description": "Reference field of R294",
+            "pos": [
+              174.07,
+              191.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C295",
+            "pos": [
+              172.5,
+              191.42
+            ]
+          },
+          {
+            "description": "Segment of U221 on F.Silkscreen",
+            "pos": [
+              170.94,
+              190.91
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C295",
+            "pos": [
+              172.5,
+              191.42
+            ]
+          },
+          {
+            "description": "Segment of U221 on F.Silkscreen",
+            "pos": [
+              170.99,
+              190.91
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C295",
+            "pos": [
+              172.5,
+              191.42
+            ]
+          },
+          {
+            "description": "Segment of U221 on F.Silkscreen",
+            "pos": [
+              174.06,
+              190.91
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of C297",
+            "pos": [
+              210.5,
+              194.903
+            ]
+          },
+          {
+            "description": "Segment of L209 on F.Silkscreen",
+            "pos": [
+              210.85,
+              191.85
             ]
           }
         ],
@@ -19318,54 +19456,8 @@
           {
             "description": "Segment of U501 on F.Silkscreen",
             "pos": [
-              154.99,
-              182.61
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C502",
-            "pos": [
-              156.5,
-              183.12
-            ]
-          },
-          {
-            "description": "Segment of U501 on F.Silkscreen",
-            "pos": [
               158.06,
               180.79
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C502",
-            "pos": [
-              156.5,
-              183.12
-            ]
-          },
-          {
-            "description": "Segment of U501 on F.Silkscreen",
-            "pos": [
-              158.06,
-              182.61
             ]
           }
         ],
@@ -19401,98 +19493,6 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C505",
-            "pos": [
-              164.5,
-              191.42
-            ]
-          },
-          {
-            "description": "Reference field of R506",
-            "pos": [
-              166.07,
-              191.1
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C505",
-            "pos": [
-              164.5,
-              191.42
-            ]
-          },
-          {
-            "description": "Segment of U502 on F.Silkscreen",
-            "pos": [
-              162.94,
-              190.91
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C505",
-            "pos": [
-              164.5,
-              191.42
-            ]
-          },
-          {
-            "description": "Segment of U502 on F.Silkscreen",
-            "pos": [
-              166.06,
-              189.09
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of C505",
-            "pos": [
-              164.5,
-              191.42
-            ]
-          },
-          {
-            "description": "Segment of U502 on F.Silkscreen",
-            "pos": [
-              166.06,
-              190.91
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Reference field of C507",
             "pos": [
               136.46,
@@ -19516,17 +19516,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of C507",
+            "description": "Reference field of C550",
             "pos": [
-              136.46,
-              133.133
+              140.625,
+              162.899
             ]
           },
           {
-            "description": "Segment of C507 on F.Silkscreen",
+            "description": "Reference field of C285",
             "pos": [
-              136.3194,
-              133.643
+              138.734,
+              162.837
             ]
           }
         ],
@@ -19539,17 +19539,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of J203",
+            "description": "Reference field of C551",
             "pos": [
-              124.7,
-              180.25
+              138.651,
+              159.571
             ]
           },
           {
-            "description": "Reference field of C283",
+            "description": "Segment of C551 on F.Silkscreen",
             "pos": [
-              126.97,
-              179.25
+              138.141,
+              159.7116
             ]
           }
         ],
@@ -19562,17 +19562,63 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of J203",
+            "description": "Reference field of D2902",
             "pos": [
-              124.7,
-              180.25
+              105.225,
+              114.019
             ]
           },
           {
-            "description": "Segment of C284 on F.Silkscreen",
+            "description": "Segment of D2902 on F.Silkscreen",
             "pos": [
-              123.3344,
-              180.468
+              104.465,
+              112.459
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of D2902",
+            "pos": [
+              105.225,
+              114.019
+            ]
+          },
+          {
+            "description": "Segment of D2902 on F.Silkscreen",
+            "pos": [
+              105.985,
+              115.579
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of J204",
+            "pos": [
+              197.55,
+              188.31
+            ]
+          },
+          {
+            "description": "Reference field of C250",
+            "pos": [
+              195.71,
+              190.35
             ]
           }
         ],
@@ -19608,6 +19654,52 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of L207",
+            "pos": [
+              157.15,
+              193.01
+            ]
+          },
+          {
+            "description": "Reference field of R295",
+            "pos": [
+              154.959,
+              190.74
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of L209",
+            "pos": [
+              208.0,
+              191.01
+            ]
+          },
+          {
+            "description": "Segment of C247 on F.Silkscreen",
+            "pos": [
+              208.22,
+              191.435
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of L210",
             "pos": [
               190.0,
@@ -19618,6 +19710,52 @@
             "description": "Segment of J204 on F.Silkscreen",
             "pos": [
               188.49,
+              179.4
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of L210",
+            "pos": [
+              190.0,
+              187.71
+            ]
+          },
+          {
+            "description": "Segment of J204 on F.Silkscreen",
+            "pos": [
+              188.49,
+              187.22
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of L210",
+            "pos": [
+              190.0,
+              187.71
+            ]
+          },
+          {
+            "description": "Segment of J204 on F.Silkscreen",
+            "pos": [
+              189.41,
               187.22
             ]
           }
@@ -19654,17 +19792,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of Q2911",
+            "description": "Reference field of R229",
             "pos": [
-              123.034,
-              181.431
+              102.1,
+              155.5
             ]
           },
           {
-            "description": "Segment of C284 on F.Silkscreen",
+            "description": "Segment of R229 on F.Silkscreen",
             "pos": [
-              123.3344,
-              181.488
+              101.8627,
+              154.9775
             ]
           }
         ],
@@ -19677,17 +19815,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of Q2912",
+            "description": "Reference field of R229",
             "pos": [
-              110.491,
-              143.931
+              102.1,
+              155.5
             ]
           },
           {
-            "description": "Segment of Q2912 on F.Silkscreen",
+            "description": "Segment of R229 on F.Silkscreen",
             "pos": [
-              109.731,
-              142.371
+              101.8627,
+              156.0225
             ]
           }
         ],
@@ -19700,17 +19838,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of Q2912",
+            "description": "Reference field of R229",
             "pos": [
-              110.491,
-              143.931
+              102.1,
+              155.5
             ]
           },
           {
-            "description": "Segment of Q2912 on F.Silkscreen",
+            "description": "Segment of U507 on F.Silkscreen",
             "pos": [
-              111.251,
-              145.491
+              102.44,
+              156.535
             ]
           }
         ],
@@ -19723,17 +19861,63 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R236",
+            "description": "Reference field of R231",
             "pos": [
-              151.35,
-              193.57
+              109.3,
+              148.97
             ]
           },
           {
-            "description": "Reference field of R271",
+            "description": "Reference field of R269",
             "pos": [
-              151.22,
-              192.7
+              109.17,
+              148.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R234",
+            "pos": [
+              144.15,
+              200.1
+            ]
+          },
+          {
+            "description": "Segment of R234 on F.Silkscreen",
+            "pos": [
+              143.9127,
+              199.5775
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R234",
+            "pos": [
+              144.15,
+              200.1
+            ]
+          },
+          {
+            "description": "Segment of R234 on F.Silkscreen",
+            "pos": [
+              143.9127,
+              200.6225
             ]
           }
         ],
@@ -19778,31 +19962,8 @@
           {
             "description": "Segment of R238 on F.Silkscreen",
             "pos": [
-              115.9225,
+              114.8775,
               130.6627
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R239",
-            "pos": [
-              110.1,
-              132.6
-            ]
-          },
-          {
-            "description": "Segment of R239 on F.Silkscreen",
-            "pos": [
-              109.8627,
-              132.0775
             ]
           }
         ],
@@ -19861,6 +20022,75 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of R242",
+            "pos": [
+              121.662,
+              126.33
+            ]
+          },
+          {
+            "description": "Reference field of R273",
+            "pos": [
+              118.6,
+              125.2
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R242",
+            "pos": [
+              121.662,
+              126.33
+            ]
+          },
+          {
+            "description": "Segment of L208 on F.Silkscreen",
+            "pos": [
+              120.25,
+              126.35
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R242",
+            "pos": [
+              121.662,
+              126.33
+            ]
+          },
+          {
+            "description": "Segment of L208 on F.Silkscreen",
+            "pos": [
+              120.25,
+              132.25
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of R244",
             "pos": [
               176.281,
@@ -19868,10 +20098,33 @@
             ]
           },
           {
+            "description": "Reference field of R294",
+            "pos": [
+              174.07,
+              191.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of R248",
             "pos": [
               176.07,
               190.5
+            ]
+          },
+          {
+            "description": "Reference field of R244",
+            "pos": [
+              176.281,
+              192.095
             ]
           }
         ],
@@ -19917,6 +20170,29 @@
             "description": "Segment of U210 on F.Silkscreen",
             "pos": [
               182.06,
+              189.09
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R249",
+            "pos": [
+              182.07,
+              191.1
+            ]
+          },
+          {
+            "description": "Segment of U210 on F.Silkscreen",
+            "pos": [
+              182.06,
               190.91
             ]
           }
@@ -19930,17 +20206,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R269",
+            "description": "Reference field of R251",
             "pos": [
-              109.17,
-              148.1
+              157.555,
+              190.987
             ]
           },
           {
-            "description": "Reference field of R231",
+            "description": "Segment of R295 on F.Silkscreen",
             "pos": [
-              109.3,
-              148.97
+              157.699,
+              191.4671
             ]
           }
         ],
@@ -19953,17 +20229,132 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R269",
+            "description": "Reference field of R270",
             "pos": [
-              109.17,
-              148.1
+              148.62,
+              192.7
             ]
           },
           {
-            "description": "Segment of R231 on F.Silkscreen",
+            "description": "Reference field of U207",
             "pos": [
-              108.5729,
-              149.89
+              146.15,
+              194.6
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R271",
+            "pos": [
+              151.22,
+              192.7
+            ]
+          },
+          {
+            "description": "Reference field of R236",
+            "pos": [
+              151.35,
+              193.57
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R271",
+            "pos": [
+              151.22,
+              192.7
+            ]
+          },
+          {
+            "description": "Segment of R236 on F.Silkscreen",
+            "pos": [
+              150.6229,
+              194.49
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R271",
+            "pos": [
+              151.22,
+              192.7
+            ]
+          },
+          {
+            "description": "Segment of R270 on F.Silkscreen",
+            "pos": [
+              150.5725,
+              192.9373
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R272",
+            "pos": [
+              114.57,
+              125.2
+            ]
+          },
+          {
+            "description": "Reference field of C243",
+            "pos": [
+              113.5,
+              124.2
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R272",
+            "pos": [
+              114.57,
+              125.2
+            ]
+          },
+          {
+            "description": "Reference field of TP208",
+            "pos": [
+              113.323,
+              123.336
             ]
           }
         ],
@@ -19983,10 +20374,56 @@
             ]
           },
           {
-            "description": "Reference field of R242",
+            "description": "Segment of R273 on F.Silkscreen",
             "pos": [
-              121.662,
-              126.33
+              119.1225,
+              125.4373
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R280",
+            "pos": [
+              184.087,
+              189.349
+            ]
+          },
+          {
+            "description": "Segment of R249 on F.Silkscreen",
+            "pos": [
+              184.0225,
+              191.3373
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R281",
+            "pos": [
+              152.387,
+              186.589
+            ]
+          },
+          {
+            "description": "Reference field of C282",
+            "pos": [
+              153.053,
+              189.831
             ]
           }
         ],
@@ -20022,6 +20459,75 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of R286",
+            "pos": [
+              142.217,
+              175.962
+            ]
+          },
+          {
+            "description": "Segment of R286 on F.Silkscreen",
+            "pos": [
+              141.9797,
+              176.4845
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R2902",
+            "pos": [
+              101.931,
+              113.939
+            ]
+          },
+          {
+            "description": "Reference field of R2912",
+            "pos": [
+              102.025,
+              109.635
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R2911",
+            "pos": [
+              130.635,
+              166.975
+            ]
+          },
+          {
+            "description": "Reference field of R550",
+            "pos": [
+              133.859,
+              167.179
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of R2921",
             "pos": [
               148.167,
@@ -20045,155 +20551,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R294",
+            "description": "Reference field of R293",
             "pos": [
-              174.07,
-              191.1
+              168.07,
+              190.5
             ]
           },
           {
-            "description": "Reference field of C295",
+            "description": "Segment of R506 on F.Silkscreen",
             "pos": [
-              172.5,
-              191.42
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R294",
-            "pos": [
-              174.07,
-              191.1
-            ]
-          },
-          {
-            "description": "Reference field of R244",
-            "pos": [
-              176.281,
-              192.095
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R294",
-            "pos": [
-              174.07,
-              191.1
-            ]
-          },
-          {
-            "description": "Segment of U221 on F.Silkscreen",
-            "pos": [
-              174.06,
-              189.09
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R294",
-            "pos": [
-              174.07,
-              191.1
-            ]
-          },
-          {
-            "description": "Segment of U221 on F.Silkscreen",
-            "pos": [
-              174.06,
-              190.91
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R295",
-            "pos": [
-              154.959,
-              190.74
-            ]
-          },
-          {
-            "description": "Reference field of L207",
-            "pos": [
-              157.15,
-              193.01
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R295",
-            "pos": [
-              154.959,
-              190.74
-            ]
-          },
-          {
-            "description": "Segment of C282 on F.Silkscreen",
-            "pos": [
-              154.993,
-              189.9716
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R501",
-            "pos": [
-              152.07,
-              182.2
-            ]
-          },
-          {
-            "description": "Segment of R283 on F.Silkscreen",
-            "pos": [
-              152.0225,
-              184.3813
+              168.0225,
+              191.3373
             ]
           }
         ],
@@ -20275,6 +20643,52 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of R505",
+            "pos": [
+              160.07,
+              190.5
+            ]
+          },
+          {
+            "description": "Segment of R251 on F.Silkscreen",
+            "pos": [
+              160.295,
+              191.7141
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of R506",
+            "pos": [
+              166.07,
+              191.1
+            ]
+          },
+          {
+            "description": "Reference field of C505",
+            "pos": [
+              164.5,
+              191.42
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of R506",
             "pos": [
               166.07,
@@ -20321,17 +20735,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of R550",
+            "description": "Reference field of R508",
             "pos": [
-              133.859,
-              167.179
+              132.581,
+              134.383
             ]
           },
           {
-            "description": "Reference field of R2911",
+            "description": "Segment of R508 on F.Silkscreen",
             "pos": [
-              130.635,
-              166.975
+              132.0585,
+              134.6203
             ]
           }
         ],
@@ -20376,29 +20790,6 @@
           {
             "description": "Segment of R550 on F.Silkscreen",
             "pos": [
-              133.3365,
-              167.4163
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of R550",
-            "pos": [
-              133.859,
-              167.179
-            ]
-          },
-          {
-            "description": "Segment of R550 on F.Silkscreen",
-            "pos": [
               134.3815,
               167.4163
             ]
@@ -20413,17 +20804,63 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of TP206",
+            "description": "Reference field of R551",
             "pos": [
-              112.755,
-              155.302
+              135.826,
+              167.039
             ]
           },
           {
-            "description": "Reference field of C233",
+            "description": "Segment of R551 on F.Silkscreen",
             "pos": [
-              112.38,
-              153.9
+              135.3035,
+              167.2763
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of TP208",
+            "pos": [
+              113.323,
+              123.336
+            ]
+          },
+          {
+            "description": "Reference field of C243",
+            "pos": [
+              113.5,
+              124.2
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of TP208",
+            "pos": [
+              113.323,
+              123.336
+            ]
+          },
+          {
+            "description": "Segment of C243 on F.Silkscreen",
+            "pos": [
+              115.1956,
+              123.26
             ]
           }
         ],
@@ -20459,75 +20896,6 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of TP209",
-            "pos": [
-              216.3,
-              187.2
-            ]
-          },
-          {
-            "description": "Circle of TP209 on F.Silkscreen",
-            "pos": [
-              216.3,
-              187.2
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of TP209",
-            "pos": [
-              216.3,
-              187.2
-            ]
-          },
-          {
-            "description": "Circle of TP210 on F.Silkscreen",
-            "pos": [
-              218.85,
-              187.2
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of TP209",
-            "pos": [
-              216.3,
-              187.2
-            ]
-          },
-          {
-            "description": "Reference field of TP210",
-            "pos": [
-              218.85,
-              187.2
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Reference field of TP210",
             "pos": [
               218.85,
@@ -20535,32 +20903,9 @@
             ]
           },
           {
-            "description": "Circle of TP209 on F.Silkscreen",
+            "description": "Reference field of TP209",
             "pos": [
               216.3,
-              187.2
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of TP210",
-            "pos": [
-              218.85,
-              187.2
-            ]
-          },
-          {
-            "description": "Circle of TP210 on F.Silkscreen",
-            "pos": [
-              218.85,
               187.2
             ]
           }
@@ -20604,10 +20949,33 @@
             ]
           },
           {
-            "description": "Reference field of C2901",
+            "description": "Circle of TP2901 on F.Silkscreen",
             "pos": [
-              155.363,
+              158.876,
               176.27
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of TP2902",
+            "pos": [
+              140.679,
+              129.683
+            ]
+          },
+          {
+            "description": "Circle of TP2902 on F.Silkscreen",
+            "pos": [
+              140.679,
+              129.683
             ]
           }
         ],
@@ -20643,17 +21011,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U207",
+            "description": "Reference field of U206",
             "pos": [
-              146.15,
-              194.6
+              104.1,
+              152.4
             ]
           },
           {
-            "description": "Polygon of U207 on F.Silkscreen",
+            "description": "Segment of U206 on F.Silkscreen",
             "pos": [
-              144.7,
-              195.49
+              105.01,
+              153.96
             ]
           }
         ],
@@ -20666,17 +21034,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U207",
+            "description": "Reference field of U208",
             "pos": [
-              146.15,
-              194.6
+              112.1,
+              127.1
             ]
           },
           {
-            "description": "Reference field of C236",
+            "description": "Polygon of U208 on F.Silkscreen",
             "pos": [
-              144.15,
-              193.8
+              110.65,
+              127.99
             ]
           }
         ],
@@ -20689,17 +21057,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U207",
+            "description": "Reference field of U208",
             "pos": [
-              146.15,
-              194.6
+              112.1,
+              127.1
             ]
           },
           {
-            "description": "Reference field of R270",
+            "description": "Reference field of C240",
             "pos": [
-              148.62,
-              192.7
+              110.1,
+              126.3
             ]
           }
         ],
@@ -20712,17 +21080,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U207",
+            "description": "Reference field of U209",
             "pos": [
-              146.15,
-              194.6
+              197.0,
+              191.4
             ]
           },
           {
-            "description": "Segment of C236 on F.Silkscreen",
+            "description": "Reference field of C250",
             "pos": [
-              143.8887,
-              194.535
+              195.71,
+              190.35
             ]
           }
         ],
@@ -20804,63 +21172,40 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Reference field of U219",
+            "description": "Reference field of U217",
             "pos": [
-              120.6,
-              188.0
-            ]
-          },
-          {
-            "description": "Polygon of U219 on F.Silkscreen",
-            "pos": [
-              121.49,
-              189.45
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of U219",
-            "pos": [
-              120.6,
-              188.0
-            ]
-          },
-          {
-            "description": "Segment of R284 on F.Silkscreen",
-            "pos": [
-              120.7395,
-              187.7153
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Reference field of U221",
-            "pos": [
-              170.1,
+              144.5,
               190.0
             ]
           },
           {
-            "description": "Polygon of U221 on F.Silkscreen",
+            "description": "Segment of U217 on F.Silkscreen",
             "pos": [
-              170.99,
-              191.45
+              142.94,
+              190.91
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Reference field of U217",
+            "pos": [
+              144.5,
+              190.0
+            ]
+          },
+          {
+            "description": "Segment of U217 on F.Silkscreen",
+            "pos": [
+              146.06,
+              189.09
             ]
           }
         ],
@@ -20896,6 +21241,29 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Reference field of U501",
+            "pos": [
+              154.1,
+              181.7
+            ]
+          },
+          {
+            "description": "Segment of R501 on F.Silkscreen",
+            "pos": [
+              154.0225,
+              182.4373
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Reference field of U502",
             "pos": [
               162.1,
@@ -20919,63 +21287,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of C232 on F.Silkscreen",
+            "description": "Reference field of U502",
             "pos": [
-              101.8387,
-              148.465
+              162.1,
+              190.0
             ]
           },
           {
-            "description": "Reference field of C232",
+            "description": "Segment of R505 on F.Silkscreen",
             "pos": [
-              102.1,
-              149.2
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C232 on F.Silkscreen",
-            "pos": [
-              101.8387,
-              149.935
-            ]
-          },
-          {
-            "description": "Reference field of C232",
-            "pos": [
-              102.1,
-              149.2
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C235 on F.Silkscreen",
-            "pos": [
-              114.6875,
-              158.5025
-            ]
-          },
-          {
-            "description": "Reference field of C234",
-            "pos": [
-              115.805,
-              158.13
+              162.0225,
+              190.7373
             ]
           }
         ],
@@ -21011,17 +21333,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of C235 on F.Silkscreen",
+            "description": "Segment of C236 on F.Silkscreen",
             "pos": [
-              116.3044,
-              157.74
+              143.8887,
+              193.065
             ]
           },
           {
-            "description": "Reference field of C234",
+            "description": "Reference field of C236",
             "pos": [
-              115.805,
-              158.13
+              144.15,
+              193.8
             ]
           }
         ],
@@ -21057,6 +21379,75 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Segment of C236 on F.Silkscreen",
+            "pos": [
+              143.8887,
+              194.535
+            ]
+          },
+          {
+            "description": "Reference field of U207",
+            "pos": [
+              146.15,
+              194.6
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C239 on F.Silkscreen",
+            "pos": [
+              131.6956,
+              198.76
+            ]
+          },
+          {
+            "description": "Reference field of C251",
+            "pos": [
+              132.3,
+              198.0
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C239 on F.Silkscreen",
+            "pos": [
+              132.76,
+              197.6956
+            ]
+          },
+          {
+            "description": "Reference field of C251",
+            "pos": [
+              132.3,
+              198.0
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Segment of C240 on F.Silkscreen",
             "pos": [
               109.8387,
@@ -21064,10 +21455,10 @@
             ]
           },
           {
-            "description": "Reference field of U208",
+            "description": "Reference field of C240",
             "pos": [
-              112.1,
-              127.1
+              110.1,
+              126.3
             ]
           }
         ],
@@ -21128,29 +21519,6 @@
           {
             "description": "Segment of C247 on F.Silkscreen",
             "pos": [
-              208.22,
-              191.435
-            ]
-          },
-          {
-            "description": "Reference field of L209",
-            "pos": [
-              208.0,
-              191.01
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C247 on F.Silkscreen",
-            "pos": [
               212.6756,
               191.435
             ]
@@ -21160,52 +21528,6 @@
             "pos": [
               208.0,
               191.01
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C274 on F.Silkscreen",
-            "pos": [
-              119.165,
-              155.3594
-            ]
-          },
-          {
-            "description": "Reference field of C274",
-            "pos": [
-              119.675,
-              155.5
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C274 on F.Silkscreen",
-            "pos": [
-              120.185,
-              155.3594
-            ]
-          },
-          {
-            "description": "Reference field of C274",
-            "pos": [
-              119.675,
-              155.5
             ]
           }
         ],
@@ -21243,29 +21565,6 @@
           {
             "description": "Segment of C276 on F.Silkscreen",
             "pos": [
-              122.315,
-              158.9594
-            ]
-          },
-          {
-            "description": "Reference field of C276",
-            "pos": [
-              122.825,
-              159.1
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of C276 on F.Silkscreen",
-            "pos": [
               123.335,
               158.9594
             ]
@@ -21289,7 +21588,7 @@
           {
             "description": "Segment of C277 on F.Silkscreen",
             "pos": [
-              136.46,
+              137.48,
               163.7356
             ]
           },
@@ -21310,17 +21609,132 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of C286 on F.Silkscreen",
+            "description": "Segment of C282 on F.Silkscreen",
             "pos": [
-              141.986,
-              182.6906
+              154.993,
+              189.9716
             ]
           },
           {
-            "description": "Reference field of C286",
+            "description": "Reference field of R295",
             "pos": [
-              142.496,
-              182.55
+              154.959,
+              190.74
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C285 on F.Silkscreen",
+            "pos": [
+              138.224,
+              162.9776
+            ]
+          },
+          {
+            "description": "Reference field of C285",
+            "pos": [
+              138.734,
+              162.837
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C285 on F.Silkscreen",
+            "pos": [
+              139.244,
+              162.9776
+            ]
+          },
+          {
+            "description": "Reference field of C285",
+            "pos": [
+              138.734,
+              162.837
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C287 on F.Silkscreen",
+            "pos": [
+              136.254,
+              160.5526
+            ]
+          },
+          {
+            "description": "Reference field of C287",
+            "pos": [
+              136.764,
+              160.412
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C287 on F.Silkscreen",
+            "pos": [
+              137.274,
+              160.5526
+            ]
+          },
+          {
+            "description": "Reference field of C287",
+            "pos": [
+              136.764,
+              160.412
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C2902 on F.Silkscreen",
+            "pos": [
+              139.9057,
+              131.698
+            ]
+          },
+          {
+            "description": "Reference field of C2902",
+            "pos": [
+              140.167,
+              132.433
             ]
           }
         ],
@@ -21356,6 +21770,29 @@
         "description": "Silkscreen clearance",
         "items": [
           {
+            "description": "Segment of C2902 on F.Silkscreen",
+            "pos": [
+              139.9057,
+              133.168
+            ]
+          },
+          {
+            "description": "Reference field of C2902",
+            "pos": [
+              140.167,
+              132.433
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
             "description": "Segment of C2911 on F.Silkscreen",
             "pos": [
               120.1934,
@@ -21379,17 +21816,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of C2911 on F.Silkscreen",
+            "description": "Segment of C2912 on F.Silkscreen",
             "pos": [
-              120.1934,
-              168.464
+              105.5134,
+              111.894
             ]
           },
           {
-            "description": "Reference field of C2911",
+            "description": "Reference field of D2902",
             "pos": [
-              120.334,
-              167.954
+              105.225,
+              114.019
             ]
           }
         ],
@@ -21402,17 +21839,86 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of C551 on F.Silkscreen",
+            "description": "Segment of C506 on F.Silkscreen",
             "pos": [
-              138.141,
-              159.7116
+              135.8044,
+              134.24
             ]
           },
           {
-            "description": "Reference field of C551",
+            "description": "Reference field of C2902",
             "pos": [
-              138.651,
-              159.571
+              140.167,
+              132.433
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C507 on F.Silkscreen",
+            "pos": [
+              136.3194,
+              133.643
+            ]
+          },
+          {
+            "description": "Reference field of C507",
+            "pos": [
+              136.46,
+              133.133
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C550 on F.Silkscreen",
+            "pos": [
+              140.115,
+              163.0396
+            ]
+          },
+          {
+            "description": "Reference field of C285",
+            "pos": [
+              138.734,
+              162.837
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of C550 on F.Silkscreen",
+            "pos": [
+              140.115,
+              163.0396
+            ]
+          },
+          {
+            "description": "Reference field of C550",
+            "pos": [
+              140.625,
+              162.899
             ]
           }
         ],
@@ -21494,52 +22000,6 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of J204 on F.Silkscreen",
-            "pos": [
-              188.49,
-              179.4
-            ]
-          },
-          {
-            "description": "Reference field of L210",
-            "pos": [
-              190.0,
-              187.71
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of J204 on F.Silkscreen",
-            "pos": [
-              189.41,
-              187.22
-            ]
-          },
-          {
-            "description": "Reference field of L210",
-            "pos": [
-              190.0,
-              187.71
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Segment of J506 on F.Silkscreen",
             "pos": [
               128.2,
@@ -21563,98 +22023,6 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of L206 on F.Silkscreen",
-            "pos": [
-              112.25,
-              155.15
-            ]
-          },
-          {
-            "description": "Reference field of C233",
-            "pos": [
-              112.38,
-              153.9
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of L206 on F.Silkscreen",
-            "pos": [
-              117.95,
-              155.15
-            ]
-          },
-          {
-            "description": "Reference field of C233",
-            "pos": [
-              112.38,
-              153.9
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of L206 on F.Silkscreen",
-            "pos": [
-              117.95,
-              155.15
-            ]
-          },
-          {
-            "description": "Reference field of TP206",
-            "pos": [
-              112.755,
-              155.302
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of L208 on F.Silkscreen",
-            "pos": [
-              120.25,
-              126.35
-            ]
-          },
-          {
-            "description": "Reference field of R242",
-            "pos": [
-              121.662,
-              126.33
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Segment of L208 on F.Silkscreen",
             "pos": [
               120.25,
@@ -21666,29 +22034,6 @@
             "pos": [
               118.7,
               131.0
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of L208 on F.Silkscreen",
-            "pos": [
-              120.25,
-              132.25
-            ]
-          },
-          {
-            "description": "Reference field of R242",
-            "pos": [
-              121.662,
-              126.33
             ]
           }
         ],
@@ -21747,170 +22092,9 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of L209 on F.Silkscreen",
-            "pos": [
-              210.85,
-              191.85
-            ]
-          },
-          {
-            "description": "Reference field of C247",
-            "pos": [
-              210.98,
-              192.375
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of L209 on F.Silkscreen",
-            "pos": [
-              210.85,
-              191.85
-            ]
-          },
-          {
-            "description": "Reference field of C297",
-            "pos": [
-              210.5,
-              194.903
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R229 on F.Silkscreen",
-            "pos": [
-              101.8627,
-              154.9775
-            ]
-          },
-          {
-            "description": "Reference field of R229",
-            "pos": [
-              102.1,
-              155.5
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R229 on F.Silkscreen",
-            "pos": [
-              101.8627,
-              156.0225
-            ]
-          },
-          {
-            "description": "Reference field of R229",
-            "pos": [
-              102.1,
-              155.5
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R234 on F.Silkscreen",
-            "pos": [
-              143.9127,
-              199.5775
-            ]
-          },
-          {
-            "description": "Reference field of R234",
-            "pos": [
-              144.15,
-              200.1
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R234 on F.Silkscreen",
-            "pos": [
-              143.9127,
-              200.6225
-            ]
-          },
-          {
-            "description": "Reference field of R234",
-            "pos": [
-              144.15,
-              200.1
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R236 on F.Silkscreen",
-            "pos": [
-              150.6229,
-              194.49
-            ]
-          },
-          {
-            "description": "Reference field of R271",
-            "pos": [
-              151.22,
-              192.7
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Segment of R238 on F.Silkscreen",
             "pos": [
-              114.8775,
+              115.9225,
               130.6627
             ]
           },
@@ -21919,6 +22103,29 @@
             "pos": [
               115.4,
               130.9
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of R239 on F.Silkscreen",
+            "pos": [
+              109.8627,
+              132.0775
+            ]
+          },
+          {
+            "description": "Reference field of R239",
+            "pos": [
+              110.1,
+              132.6
             ]
           }
         ],
@@ -21977,98 +22184,6 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R249 on F.Silkscreen",
-            "pos": [
-              184.0225,
-              191.3373
-            ]
-          },
-          {
-            "description": "Reference field of R280",
-            "pos": [
-              184.087,
-              189.349
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R251 on F.Silkscreen",
-            "pos": [
-              160.295,
-              191.7141
-            ]
-          },
-          {
-            "description": "Reference field of R505",
-            "pos": [
-              160.07,
-              190.5
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R269 on F.Silkscreen",
-            "pos": [
-              110.0775,
-              148.3373
-            ]
-          },
-          {
-            "description": "Reference field of R231",
-            "pos": [
-              109.3,
-              148.97
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R270 on F.Silkscreen",
-            "pos": [
-              150.5725,
-              192.9373
-            ]
-          },
-          {
-            "description": "Reference field of R271",
-            "pos": [
-              151.22,
-              192.7
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
             "description": "Segment of R273 on F.Silkscreen",
             "pos": [
               118.0775,
@@ -22092,17 +22207,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R273 on F.Silkscreen",
+            "description": "Segment of R283 on F.Silkscreen",
             "pos": [
-              119.1225,
-              125.4373
+              152.0225,
+              184.3813
             ]
           },
           {
-            "description": "Reference field of R273",
+            "description": "Reference field of R501",
             "pos": [
-              118.6,
-              125.2
+              152.07,
+              182.2
             ]
           }
         ],
@@ -22115,17 +22230,63 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R286 on F.Silkscreen",
+            "description": "Segment of R2902 on F.Silkscreen",
             "pos": [
-              141.9797,
-              176.4845
+              101.4085,
+              114.1763
             ]
           },
           {
-            "description": "Reference field of R286",
+            "description": "Reference field of R2902",
             "pos": [
-              142.217,
-              175.962
+              101.931,
+              113.939
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of R2902 on F.Silkscreen",
+            "pos": [
+              102.4535,
+              114.1763
+            ]
+          },
+          {
+            "description": "Reference field of R2902",
+            "pos": [
+              101.931,
+              113.939
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of R2922 on F.Silkscreen",
+            "pos": [
+              116.5505,
+              112.2213
+            ]
+          },
+          {
+            "description": "Reference field of R2922",
+            "pos": [
+              117.073,
+              111.984
             ]
           }
         ],
@@ -22184,109 +22345,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of R295 on F.Silkscreen",
+            "description": "Segment of R550 on F.Silkscreen",
             "pos": [
-              157.699,
-              191.4671
+              133.3365,
+              167.4163
             ]
           },
           {
-            "description": "Reference field of R251",
+            "description": "Reference field of R550",
             "pos": [
-              157.555,
-              190.987
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R501 on F.Silkscreen",
-            "pos": [
-              154.0225,
-              182.4373
-            ]
-          },
-          {
-            "description": "Reference field of U501",
-            "pos": [
-              154.1,
-              181.7
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R505 on F.Silkscreen",
-            "pos": [
-              162.0225,
-              190.7373
-            ]
-          },
-          {
-            "description": "Reference field of U502",
-            "pos": [
-              162.1,
-              190.0
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R506 on F.Silkscreen",
-            "pos": [
-              168.0225,
-              191.3373
-            ]
-          },
-          {
-            "description": "Reference field of R293",
-            "pos": [
-              168.07,
-              190.5
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R508 on F.Silkscreen",
-            "pos": [
-              132.0585,
-              134.6203
-            ]
-          },
-          {
-            "description": "Reference field of R508",
-            "pos": [
-              132.581,
-              134.383
+              133.859,
+              167.179
             ]
           }
         ],
@@ -22324,29 +22393,6 @@
           {
             "description": "Segment of R551 on F.Silkscreen",
             "pos": [
-              135.3035,
-              167.2763
-            ]
-          },
-          {
-            "description": "Reference field of R551",
-            "pos": [
-              135.826,
-              167.039
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of R551 on F.Silkscreen",
-            "pos": [
               136.3485,
               167.2763
             ]
@@ -22356,75 +22402,6 @@
             "pos": [
               135.826,
               167.039
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U206 on F.Silkscreen",
-            "pos": [
-              105.01,
-              153.96
-            ]
-          },
-          {
-            "description": "Reference field of U206",
-            "pos": [
-              104.1,
-              152.4
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U209 on F.Silkscreen",
-            "pos": [
-              196.09,
-              195.36
-            ]
-          },
-          {
-            "description": "Reference field of C244",
-            "pos": [
-              195.211,
-              195.287
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U209 on F.Silkscreen",
-            "pos": [
-              197.91,
-              195.36
-            ]
-          },
-          {
-            "description": "Reference field of C244",
-            "pos": [
-              195.211,
-              195.287
             ]
           }
         ],
@@ -22509,29 +22486,6 @@
             "description": "Segment of U210 on F.Silkscreen",
             "pos": [
               182.06,
-              189.09
-            ]
-          },
-          {
-            "description": "Reference field of R249",
-            "pos": [
-              182.07,
-              191.1
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U210 on F.Silkscreen",
-            "pos": [
-              182.06,
               190.91
             ]
           },
@@ -22552,86 +22506,17 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of U217 on F.Silkscreen",
+            "description": "Segment of U215 on F.Silkscreen",
             "pos": [
-              142.94,
-              190.91
+              123.61,
+              149.99
             ]
           },
           {
-            "description": "Reference field of U217",
+            "description": "Reference field of C275",
             "pos": [
-              144.5,
-              190.0
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U217 on F.Silkscreen",
-            "pos": [
-              146.06,
-              189.09
-            ]
-          },
-          {
-            "description": "Reference field of U217",
-            "pos": [
-              144.5,
-              190.0
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U221 on F.Silkscreen",
-            "pos": [
-              170.94,
-              190.91
-            ]
-          },
-          {
-            "description": "Reference field of C295",
-            "pos": [
-              172.5,
-              191.42
-            ]
-          }
-        ],
-        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
-      },
-      {
-        "section": "violations",
-        "type": "silk_overlap",
-        "severity": "warning",
-        "description": "Silkscreen clearance",
-        "items": [
-          {
-            "description": "Segment of U221 on F.Silkscreen",
-            "pos": [
-              170.99,
-              190.91
-            ]
-          },
-          {
-            "description": "Reference field of C295",
-            "pos": [
-              172.5,
-              191.42
+              122.55,
+              149.505
             ]
           }
         ],
@@ -22670,13 +22555,105 @@
             "description": "Segment of U221 on F.Silkscreen",
             "pos": [
               174.06,
+              189.09
+            ]
+          },
+          {
+            "description": "Reference field of R294",
+            "pos": [
+              174.07,
+              191.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U221 on F.Silkscreen",
+            "pos": [
+              174.06,
               190.91
             ]
           },
           {
-            "description": "Reference field of C295",
+            "description": "Reference field of R294",
             "pos": [
-              172.5,
+              174.07,
+              191.1
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U501 on F.Silkscreen",
+            "pos": [
+              154.99,
+              182.61
+            ]
+          },
+          {
+            "description": "Reference field of C502",
+            "pos": [
+              156.5,
+              183.12
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U501 on F.Silkscreen",
+            "pos": [
+              158.06,
+              182.61
+            ]
+          },
+          {
+            "description": "Reference field of C502",
+            "pos": [
+              156.5,
+              183.12
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U502 on F.Silkscreen",
+            "pos": [
+              162.94,
+              190.91
+            ]
+          },
+          {
+            "description": "Reference field of C505",
+            "pos": [
+              164.5,
               191.42
             ]
           }
@@ -22713,17 +22690,40 @@
         "description": "Silkscreen clearance",
         "items": [
           {
-            "description": "Segment of U507 on F.Silkscreen",
+            "description": "Segment of U502 on F.Silkscreen",
             "pos": [
-              102.44,
-              156.535
+              166.06,
+              189.09
             ]
           },
           {
-            "description": "Reference field of R229",
+            "description": "Reference field of C505",
             "pos": [
-              102.1,
-              155.5
+              164.5,
+              191.42
+            ]
+          }
+        ],
+        "reason": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+      },
+      {
+        "section": "violations",
+        "type": "silk_overlap",
+        "severity": "warning",
+        "description": "Silkscreen clearance",
+        "items": [
+          {
+            "description": "Segment of U502 on F.Silkscreen",
+            "pos": [
+              166.06,
+              190.91
+            ]
+          },
+          {
+            "description": "Reference field of C505",
+            "pos": [
+              164.5,
+              191.42
             ]
           }
         ],
@@ -23141,9 +23141,9 @@
             ]
           },
           {
-            "description": "Track [VBUS_LABPORT] on F.Cu, length 2.6654 mm",
+            "description": "Track [VBUS_LABPORT] on F.Cu, length 5.5364 mm",
             "pos": [
-              126.2,
+              128.8654,
               150.6
             ]
           }
@@ -23156,10 +23156,10 @@
         "description": "Missing connection between items",
         "items": [
           {
-            "description": "Track [I2C2_SCL] on F.Cu, length 1.2728 mm",
+            "description": "Track [I2C2_SCL] on F.Cu, length 9.2500 mm",
             "pos": [
-              103.75,
-              159.565
+              106.6,
+              168.365
             ]
           },
           {
@@ -23207,10 +23207,10 @@
             ]
           },
           {
-            "description": "Pad 1 [LNA4V5] of C236 on F.Cu",
+            "description": "Track [LNA4V5] on F.Cu, length 0.4375 mm",
             "pos": [
               143.2,
-              193.8
+              194.2375
             ]
           }
         ]
@@ -23222,10 +23222,10 @@
         "description": "Missing connection between items",
         "items": [
           {
-            "description": "Track [LNA4V5] on F.Cu, length 0.9172 mm",
+            "description": "Track [LNA4V5] on F.Cu, length 2.2800 mm",
             "pos": [
-              193.8352,
-              194.4622
+              195.4474,
+              192.85
             ]
           },
           {
