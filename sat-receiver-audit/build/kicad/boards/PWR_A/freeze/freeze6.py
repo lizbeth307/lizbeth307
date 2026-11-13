@@ -246,6 +246,15 @@ def drop_failing_completion(m):
     return len(drop), nets
 
 
+# W2 PWR-TOOLS: why a net may be left open (--leave-open) in a harvest
+LEAVE_OPEN_WHY = {
+    'E2_BONI_EF': ('the grid A* joins it only through a B.Cu end inside the copper of a diagonal E2_BONI_EF track, which KiCad '
+                   '10.0.7 reported as track_dangling (route run 43375868329; the same piece was the track_dangling error of '
+                   'route run 43354942122), while the net stayed open in KiCad; left open for the scripted power copper of '
+                   'PWR-L6-SCRIPT'),
+}
+
+
 def guard():
     """The guard make_board.py checks: computed by make_board itself on the spec without the frozen copper."""
     loader = importlib.util.spec_from_file_location('pwr_a_make_board', HERE.parent / 'make_board.py')
@@ -280,6 +289,9 @@ def main(argv=None):
     ap.add_argument('--prev', help='W2 PWRJ-LAYERS6 ratchet: the route-frozen-6l.json the run was routed with; its locked copper '
                                    'on the board is harvested again together with the new router copper')
     ap.add_argument('--order', choices=('class', 'short'), default='class', help='completion order of the open nets')
+    ap.add_argument('--leave-open', action='append', default=[], metavar='NET',
+                    help='W2 PWR-TOOLS: a net the grid A* does not complete in this harvest (its DRC drops and pruning still '
+                         'apply); recorded under fixes.left_open with LEAVE_OPEN_WHY')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     art = Path(args.artifact)
@@ -352,6 +364,8 @@ def main(argv=None):
         first = sorted(set(kicad_open) | viol, key=lambda n: (span(n), n))
     else:
         first = sorted(set(kicad_open) | viol, key=lambda n: (layers(n) != OUTER, n))
+    left_open = {n: LEAVE_OPEN_WHY.get(n, 'left open on the command line (--leave-open)') for n in sorted(set(args.leave_open))}
+    first = [n for n in first if n not in left_open]
     queue, rounds, t0 = collections.deque(first), 0, time.time()
     touched, failed, necks, branches = set(first), [], [], []
     while queue and rounds < args.rounds:
@@ -374,7 +388,7 @@ def main(argv=None):
         print(f'{net}: {"OK" if ok else "FAILED"} ripped {ripped} ({time.time() - t0:.0f} s)', flush=True)
         if not ok:
             failed.append(net)
-        queue.extend(n for n in ripped if n not in queue)
+        queue.extend(n for n in ripped if n not in queue and n not in left_open)
         touched |= set(ripped)
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in M.PLANES}):
         F.prune(m, n, srcs=('router', 'new', 'escape'))  # an escape stub whose link failed goes too
@@ -384,7 +398,7 @@ def main(argv=None):
         dropped = drop_failing_completion(m)
         print('dropped completion items after the final check:', dropped)
         open_, bad = verify(m)
-    open_ = {n: k for n, k in open_.items() if n in touched}
+    open_ = {n: k for n, k in open_.items() if n in touched or n in left_open}
     bad = [b for b in bad if not (b[0] == 'dangling' and (b[2] in NEVER or b[2] in model_only))]
     print('open connections', open_, 'clearance violations', len(bad), 'failed', sorted(set(failed)))
     for b_ in bad[:12]:
@@ -419,7 +433,7 @@ def main(argv=None):
                        'plane layer) by build/kicad/boards/PWR_A/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed))},
         'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops,
-                  'final_check_dropped': {'items': dropped[0], 'nets': dropped[1]}},
+                  'final_check_dropped': {'items': dropped[0], 'nets': dropped[1]}, 'left_open': left_open},
         'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),
         'branches': sorted(branches, key=lambda r: (r['net'], r['refs'])),
         'guard': None if args.no_guard else guard(),

@@ -27959,208 +27959,6 @@
       },
       {
         "id": "FIN-0006",
-        "net": "E2_BONI_EF",
-        "layer": "B.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            75.475,
-            26.725
-          ],
-          [
-            75.1514,
-            26.6603
-          ],
-          [
-            69.725,
-            25.575
-          ],
-          [
-            69.4083,
-            25.2583
-          ],
-          [
-            69.175,
-            25.025
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the 6-layer frozen route (route-frozen-6l.json, W2 PWRJ-LAYERS6): grid A* on the locked copper of route run 43354942122 (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check"
-      },
-      {
-        "id": "FIN-0007",
-        "net": "E2_BONI_EF",
-        "layer": "B.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            86.775,
-            29.525
-          ],
-          [
-            86.6898,
-            29.4256
-          ],
-          [
-            86.475,
-            29.175
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the 6-layer frozen route (route-frozen-6l.json, W2 PWRJ-LAYERS6): grid A* on the locked copper of route run 43354942122 (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check"
-      },
-      {
-        "id": "FIN-0008",
-        "net": "E2_BONI_EF",
-        "layer": "F.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            37.775,
-            8.575
-          ],
-          [
-            37.5244,
-            8.7898
-          ],
-          [
-            37.425,
-            8.875
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the 6-layer frozen route (route-frozen-6l.json, W2 PWRJ-LAYERS6): grid A* on the locked copper of route run 43354942122 (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check"
-      },
-      {
-        "id": "FIN-0009",
-        "net": "E2_BONI_EF",
-        "layer": "In2.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            61.325,
-            18.175
-          ],
-          [
-            61.0352,
-            18.0172
-          ],
-          [
-            56.825,
-            15.725
-          ],
-          [
-            48.475,
-            13.925
-          ],
-          [
-            46.775,
-            12.325
-          ],
-          [
-            38.0796,
-            8.7019
-          ],
-          [
-            37.775,
-            8.575
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the 6-layer frozen route (route-frozen-6l.json, W2 PWRJ-LAYERS6): grid A* on the locked copper of route run 43354942122 (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check"
-      },
-      {
-        "id": "FIN-0010",
-        "net": "E2_BONI_EF",
-        "layer": "In2.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            69.175,
-            25.025
-          ],
-          [
-            69.0149,
-            24.7364
-          ],
-          [
-            65.5351,
-            18.4636
-          ],
-          [
-            65.375,
-            18.175
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the 6-layer frozen route (route-frozen-6l.json, W2 PWRJ-LAYERS6): grid A* on the locked copper of route run 43354942122 (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check"
-      },
-      {
-        "id": "FIN-0011",
-        "net": "E2_BONI_EF",
-        "layer": "In2.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            86.475,
-            29.175
-          ],
-          [
-            86.1643,
-            29.0637
-          ],
-          [
-            83.125,
-            27.975
-          ],
-          [
-            82.625,
-            27.375
-          ],
-          [
-            75.975,
-            27.225
-          ],
-          [
-            75.7083,
-            26.9583
-          ],
-          [
-            75.475,
-            26.725
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the 6-layer frozen route (route-frozen-6l.json, W2 PWRJ-LAYERS6): grid A* on the locked copper of route run 43354942122 (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check"
-      },
-      {
-        "id": "FIN-0012",
-        "net": "E2_BONI_EF",
-        "layer": "In3.Cu",
-        "width_mm": 0.15,
-        "path": [
-          [
-            65.375,
-            18.175
-          ],
-          [
-            65.045,
-            18.175
-          ],
-          [
-            61.655,
-            18.175
-          ],
-          [
-            61.325,
-            18.175
-          ]
-        ],
-        "locked": true,
-        "why": "completion of the 6-layer frozen route (route-frozen-6l.json, W2 PWRJ-LAYERS6): grid A* on the locked copper of route run 43354942122 (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check"
-      },
-      {
-        "id": "FIN-0013",
         "net": "E2_LNA_IN_DAMP",
         "layer": "B.Cu",
         "width_mm": 0.4,
@@ -28182,7 +27980,7 @@
         "why": "completion of the 6-layer frozen route (route-frozen-6l.json, W2 PWRJ-LAYERS6): grid A* on the locked copper of route run 43354942122 (build/kicad/boards/PWR_A/freeze/freeze6.py), exact clearance check"
       },
       {
-        "id": "FIN-0014",
+        "id": "FIN-0007",
         "net": "E2_LNA_IN_DAMP",
         "layer": "F.Cu",
         "width_mm": 0.4,
@@ -34416,72 +34214,6 @@
       },
       {
         "id": "FINV-0004",
-        "net": "E2_BONI_EF",
-        "at": [
-          37.775,
-          8.575
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "FINV-0005",
-        "net": "E2_BONI_EF",
-        "at": [
-          61.325,
-          18.175
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "FINV-0006",
-        "net": "E2_BONI_EF",
-        "at": [
-          65.375,
-          18.175
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "FINV-0007",
-        "net": "E2_BONI_EF",
-        "at": [
-          69.175,
-          25.025
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "FINV-0008",
-        "net": "E2_BONI_EF",
-        "at": [
-          75.475,
-          26.725
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "FINV-0009",
-        "net": "E2_BONI_EF",
-        "at": [
-          86.475,
-          29.175
-        ],
-        "drill_mm": 0.3,
-        "diameter_mm": 0.65,
-        "locked": true
-      },
-      {
-        "id": "FINV-0010",
         "net": "E2_LNA_IN_DAMP",
         "at": [
           49.9,
@@ -34572,7 +34304,7 @@
         "why": "merged scripted pours CONVIN-STRAP+CONVIN-STRAP-L (KiCad 10.0.7 reports zones_intersect for same-net zones of one priority that overlap, sr-rx-pcb run 43287918183)"
       }
     ],
-    "frozen_route_note": "W2 PWRJ-LAYERS6: the router copper of route run 43354942122 is frozen and locked (RT-/RV- items) and its open connections are joined by the grid A* completion (FIN-/FINV- items) of build/kicad/boards/PWR_A/freeze/freeze6.py (numpy, offline; tools copied from build/kicad/boards/PWR_B/freeze). Source: build/kicad/boards/PWR_A/route-frozen-6l.json; valid only for this placement, netlist and scripted copper (guard: SHA256 of the pads and of the scripted copper). Freezer result: {\"failed_nets\": [\"3V3_Q6A\", \"BONI13V8\", \"DISP12\", \"E1_LAB5_RAW\", \"E1_N\", \"E1_PD_ILM\", \"E1_SERVICE_P\", \"E1_SW\", \"E1_USB_PD_RAW\", \"E1_USB_PD_SAFE\", \"E2_BONI_EF\", \"E2_BONI_IN\", \"E2_BONI_IN_DAMP\", \"E2_DISP_IN\", \"E2_J21_EF\", \"E2_J21_FUSED\", \"E2_LIME_EF\", \"E2_LNA_IN\", \"E2_LNB_DVDT\", \"E2_LNB_EF\", \"E2_LNB_IN\", \"E2_LNB_IN_DAMP\", \"E2_LNB_LDO\", \"E2_LNB_NR\", \"E2_U216_IP1\", \"E2_U216_IP3\", \"FAULT_HFP\", \"FLT_LIME3V3\", \"J21\", \"LAB5\", \"LAB5_RLY\", \"LNB13V2\", \"PICO_DISP_EN\", \"PICO_OFF\", \"SYS12\", \"VBUS_HFP\", \"VCC_3V3_MKEY\"], \"open\": {\"3V3_Q6A\": 1, \"BONI13V8\": 2, \"DISP12\": 1, \"E1_LAB5_RAW\": 1, \"E1_N\": 4, \"E1_PD_ILM\": 1, \"E1_SERVICE_P\": 1, \"E1_SW\": 7, \"E1_USB_PD_RAW\": 3, \"E1_USB_PD_SAFE\": 2, \"E2_BONI_EF\": 1, \"E2_BONI_IN\": 3, \"E2_BONI_IN_DAMP\": 1, \"E2_DISP_IN\": 2, \"E2_J21_EF\": 1, \"E2_J21_FUSED\": 1, \"E2_LIME_EF\": 1, \"E2_LNA_IN\": 2, \"E2_LNB_DVDT\": 1, \"E2_LNB_EF\": 1, \"E2_LNB_IN\": 3, \"E2_LNB_IN_DAMP\": 1, \"E2_LNB_LDO\": 1, \"E2_LNB_NR\": 1, \"E2_U216_IP1\": 1, \"E2_U216_IP3\": 1, \"FAULT_HFP\": 1, \"FLT_LIME3V3\": 1, \"J21\": 3, \"LAB5\": 24, \"LAB5_RLY\": 1, \"LNB13V2\": 1, \"PICO_DISP_EN\": 1, \"PICO_OFF\": 1, \"SYS12\": 2, \"VBUS_HFP\": 1, \"VCC_3V3_MKEY\": 2}, \"violations\": 37}"
+    "frozen_route_note": "W2 PWRJ-LAYERS6: the router copper of route run 43354942122 is frozen and locked (RT-/RV- items) and its open connections are joined by the grid A* completion (FIN-/FINV- items) of build/kicad/boards/PWR_A/freeze/freeze6.py (numpy, offline; tools copied from build/kicad/boards/PWR_B/freeze). Source: build/kicad/boards/PWR_A/route-frozen-6l.json; valid only for this placement, netlist and scripted copper (guard: SHA256 of the pads and of the scripted copper). Freezer result: {\"failed_nets\": [\"3V3_Q6A\", \"BONI13V8\", \"DISP12\", \"E1_LAB5_RAW\", \"E1_N\", \"E1_PD_ILM\", \"E1_SERVICE_P\", \"E1_SW\", \"E1_USB_PD_RAW\", \"E1_USB_PD_SAFE\", \"E2_BONI_IN\", \"E2_BONI_IN_DAMP\", \"E2_DISP_IN\", \"E2_J21_EF\", \"E2_J21_FUSED\", \"E2_LIME_EF\", \"E2_LNA_IN\", \"E2_LNB_DVDT\", \"E2_LNB_EF\", \"E2_LNB_IN\", \"E2_LNB_IN_DAMP\", \"E2_LNB_LDO\", \"E2_LNB_NR\", \"E2_U216_IP1\", \"E2_U216_IP3\", \"FAULT_HFP\", \"FLT_LIME3V3\", \"J21\", \"LAB5\", \"LAB5_RLY\", \"LNB13V2\", \"PICO_DISP_EN\", \"PICO_OFF\", \"SYS12\", \"VBUS_HFP\", \"VCC_3V3_MKEY\"], \"open\": {\"3V3_Q6A\": 1, \"BONI13V8\": 2, \"DISP12\": 1, \"E1_LAB5_RAW\": 1, \"E1_N\": 4, \"E1_PD_ILM\": 1, \"E1_SERVICE_P\": 1, \"E1_SW\": 7, \"E1_USB_PD_RAW\": 3, \"E1_USB_PD_SAFE\": 2, \"E2_BONI_EF\": 2, \"E2_BONI_IN\": 3, \"E2_BONI_IN_DAMP\": 1, \"E2_DISP_IN\": 2, \"E2_J21_EF\": 1, \"E2_J21_FUSED\": 1, \"E2_LIME_EF\": 1, \"E2_LNA_IN\": 2, \"E2_LNB_DVDT\": 1, \"E2_LNB_EF\": 1, \"E2_LNB_IN\": 3, \"E2_LNB_IN_DAMP\": 1, \"E2_LNB_LDO\": 1, \"E2_LNB_NR\": 1, \"E2_U216_IP1\": 1, \"E2_U216_IP3\": 1, \"FAULT_HFP\": 1, \"FLT_LIME3V3\": 1, \"J21\": 3, \"LAB5\": 24, \"LAB5_RLY\": 1, \"LNB13V2\": 1, \"PICO_DISP_EN\": 1, \"PICO_OFF\": 1, \"SYS12\": 2, \"VBUS_HFP\": 1, \"VCC_3V3_MKEY\": 2}, \"violations\": 37}"
   },
   "post_route_zones": [
     {
