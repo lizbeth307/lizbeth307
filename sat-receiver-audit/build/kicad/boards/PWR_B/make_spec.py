@@ -791,6 +791,16 @@ W_TRUNK, W_BRANCH, W_CURRENT, W_SENSE = 2.0, 0.7, 0.5, 0.35
 # stated, TBD at order; https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-13); assembly gate OPEN
 VIP_D, VIP_GAP = 0.6, 0.197
 VIA_IN_PAD = {'VIP-U215-6': ('U215', '6', 'I2C2_SCL', (21.175, 56.35)), 'VIP-U215-7': ('U215', '7', 'I2C2_SDA', (21.825, 56.90))}
+# W2 PWR-L6-PLACE fourth pass, probe A: deterministic escape fan of the four innermost J202-bound contacts of the J209 lower
+# row (25, 27, 29, 31 at 0.5 mm pitch; the greedy A* reached at most three of them in any order, PLACE third pass). Each
+# contact leaves its row on a B.Cu stub (0.15 mm, the SIG width) to a locked via in the escape band y 11.75-15.4; the vias
+# are staggered on two rows (outer contacts 1.35 mm, inner contacts 2.3 mm below the pad centre), so the inner stubs pass
+# between the outer vias and every via pair keeps the 0.85 mm centre rule of via_spot_ok (0.95 and more). The rows sit
+# between the J209 pads (y >= 15.9) and the F.Cu pads of TP216 / C244 (y <= 13.76) with CLEAR + MARGIN 0.20 to both.
+# Offsets from the pad centre: (knee dy of the vertical stub, via dx, via dy).
+FAN_NETS = ('EN_HFP', 'EN_LIME3V3', 'EN_LNB', 'FAULT_HFP')
+FAN_OFFSETS = None   # probe A: set by the closure run (None: the escapes are planned links of route-planned-6l.json)
+W_FAN = 0.15
 # J209 escape copper (W2 B2B). The LSHM pads are 0.30 mm wide at 0.50 mm pitch (0.20 mm gaps), and every rail contact has a
 # GND neighbour in its row (b2b-nets.json guard_rule), so: GND contacts join a B.Cu spine between the rows (inwards), rail
 # and signal contacts escape outwards, and copper that enters a pad between two neighbours is at most W_PADSTUB wide.
@@ -991,7 +1001,31 @@ def scripted_copper(inp, parts, pins):
     gt, gv, _n = gnd_fanout(inp, parts, tracks, vias)
     qt, qv = q6a_plane_copper(inp, parts, tracks + gt, vias + gv, pins)
     pt, pv = planned_copper(parts, pins)
-    return tracks + gt + qt + pt, vias + gv + qv + pv, exempt
+    et, ev = escape_fan(parts, pins)
+    return tracks + gt + qt + pt + et, vias + gv + qv + pv + ev, exempt
+
+
+def escape_fan(parts, pins):
+    """W2 PWR-L6-PLACE fourth pass, probe A: the locked escape fan of the J209 lower-row contacts of FAN_NETS (FAN_OFFSETS)."""
+    if not FAN_OFFSETS:
+        return [], []
+    j = parts[B2B_REF]
+    at = {net: n for n, net in pins['pins'].items() if net in FAN_NETS}
+    xs = [j.pad(at[net])['at'] if net in at else None for net in FAN_NETS]
+    if None in xs or any(p[1] >= B2B_AT[1] for p in xs) or \
+            any(abs(b[0] - a[0] - 0.5) > 1e-6 or abs(b[1] - a[1]) > 1e-6 for a, b in zip(xs, xs[1:])):
+        raise SystemExit(f'make_spec: the J209 contacts of {FAN_NETS} are not four neighbours of the lower row (pin map changed)')
+    out_t, out_v = [], []
+    for net, (px, py), (knee, dx, dy) in zip(FAN_NETS, xs, FAN_OFFSETS):
+        n = at[net]
+        via = (r4(px + dx), r4(py + dy))
+        why = (f'W2 PWR-L6-PLACE fourth pass, probe A: escape fan of J209 contact {n} ({net}, lower row) to its via in the '
+               f'escape band (FAN_OFFSETS)')
+        out_t.append({'id': f'ESC-J209-{n}', 'net': net, 'layer': 'B.Cu', 'width_mm': W_FAN,
+                      'path': [[r4(px), r4(py)], [r4(px), r4(py + knee)], list(via)], 'locked': True, 'why': why})
+        out_v.append({'id': f'ESC-J209-{n}-V', 'net': net, 'at': list(via), 'drill_mm': VIA_DRILL, 'diameter_mm': VIA_D,
+                      'locked': True, 'why': why})
+    return out_t, out_v
 
 
 def planned_copper(parts, pins):
@@ -1002,16 +1036,18 @@ def planned_copper(parts, pins):
     src = PLANNED['source']
     out_t, out_v = [], []
     for net, d in sorted(PLANNED['nets'].items()):
-        why = (f'planned {d["kind"]} copper of {net} (W2 PWR-L6-PLACE third pass, stage 2): freeze6 grid A* on route run '
-               f'{src["route_run"]} with all router copper removed, at the scripted-copper margins; {PLANNED6.name}')
+        how = src.get('why_short') or (f'W2 PWR-L6-PLACE third pass, stage 2): freeze6 grid A* on route run {src["route_run"]} '
+                                       'with all router copper removed, at the scripted-copper margins')
+        why = f'planned {d["kind"]} copper of {net} ({how}; {PLANNED6.name}'
         for k, (layer, w, a, b) in enumerate(d['tracks'], 1):
             out_t.append({'id': f'PL-{net}-{k:03d}', 'net': net, 'layer': layer, 'width_mm': w,
                           'path': [[r4(a[0]), r4(a[1])], [r4(b[0]), r4(b[1])]], 'locked': True, 'why': why})
         for k, (x, y, size, drill) in enumerate(d['vias'], 1):
             out_v.append({'id': f'PLV-{net}-{k:02d}', 'net': net, 'at': [r4(x), r4(y)], 'drill_mm': drill,
                           'diameter_mm': size, 'locked': True, 'why': why})
-        pins['scripted_nets'][net] = sorted({(r, p['number']) for r, pa in parts.items() for p in pa.pads
-                                             if p['net'] == net and p['number'] and p['type'] != 'np_thru_hole'})
+        if d['kind'] in PLANNED_WHOLE:  # a 'link' (W2 PWR-L6-PLACE fourth pass) is locked copper of a net that stays routed
+            pins['scripted_nets'][net] = sorted({(r, p['number']) for r, pa in parts.items() for p in pa.pads
+                                                 if p['net'] == net and p['number'] and p['type'] != 'np_thru_hole'})
     return out_t, out_v
 
 
@@ -1552,9 +1588,13 @@ SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND', 'LAB5': 'SCRIPTED_PWR3A',
 # alone (classes SCRIPTED_PWR1A / SCRIPTED_SIG), so the next fresh route works around them. MODEL plan, KiCad DRC is the check.
 PLANNED6 = BASE / 'build/kicad/boards/PWR_B/route-planned-6l.json'
 PLANNED = json.loads(PLANNED6.read_text(encoding='utf-8')) if PLANNED6.is_file() else None
+# W2 PWR-L6-PLACE fourth pass (probe A): kind 'power' / 'signal' is the whole copper of its net (scripted class, joins every pad
+# by itself); kind 'link' is locked copper that joins islands of a net whose other copper stays router / frozen copper (its
+# class stays, connected() does not apply, freeze6 may complete it)
+PLANNED_WHOLE = ('power', 'signal')
 if PLANNED:
     SCRIPTED_CLASSES.update({net: ('SCRIPTED_PWR1A' if d['kind'] == 'power' else 'SCRIPTED_SIG')
-                             for net, d in PLANNED['nets'].items()})
+                             for net, d in PLANNED['nets'].items() if d['kind'] in PLANNED_WHOLE})
 # Routing layers of the 6-layer plan (W2 PWRB-R): In1.Cu (GND) and In4.Cu (3V3_Q6A) are planes of type power.
 ROUTING = ['F.Cu', 'In2.Cu', 'In3.Cu', 'B.Cu']
 COPPER = ['F.Cu', 'In1.Cu', 'In2.Cu', 'In3.Cu', 'In4.Cu', 'B.Cu']
@@ -1731,7 +1771,7 @@ def corridor_check(inp, parts, vias):
     # of record in the band: the plane vias of CORRIDOR_PARTS and the LAB5 contact vias of the J209 lower row (LAB5_VY)
     problems += [f'J209 escape band: scripted via {v["id"]} at {v["at"]}' for v in cvias
                  if not ((v['id'].startswith(('GND-', 'Q6A-')) and v['id'].split('-')[1] in CORRIDOR_PARTS)
-                         or v['id'].startswith(('LAB5-V-', 'PLV-')))]
+                         or v['id'].startswith(('LAB5-V-', 'PLV-', 'ESC-J209-')))]
     # the exit pair: only its parts in ZONE2_EXIT, inside the contract edge zone 2 span and the zone-2 height zone
     problems += [f'zone-2 exit field: PWR-B part {r} (not in EXIT_PARTS)' for r in in_ex if r not in EXIT_PARTS]
     problems += [f'zone-2 exit field: scripted via {v["id"]} at {v["at"]}' for v in evias
