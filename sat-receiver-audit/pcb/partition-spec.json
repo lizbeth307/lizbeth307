@@ -175,6 +175,14 @@
    "16TQC220MD3": {
     "h": 3.0,
     "src": "Panasonic POSCAP TQC D3L H 2.8 +/-0.2 mm (Conductive Polymer Capacitor General Catalog 2026 printed p.71-72; product page industrial.panasonic.com/ww/products/pt/poscap/models/16TQC220MD3); DigiKey DE 'Height - Seated (Max)' 3.00 mm (read 2026-11-13)"
+   },
+   "B20B-PHDSS(LF)(SN)": {
+    "h": 6.5,
+    "src": "W2 PWR-L6-PLACE third pass (J203, top entry, PWR-B zone 2): JST PHD catalogue, LCSC-hosted copy (PDF of 2023-12-05, https://datasheet.lcsc.com/datasheet/pdf/f3100db869994757010c015e3792d908.pdf?productCode=C2983880, read 2026-11-13) p.3 top entry body 6.5 mm above the board, p.1 (8.8) with the PHDR housing mated (header_families.PHD_top h_mated); LCSC C471521 'Z-Height of the Board' 6.5mm (JLCPCB parts search, read 2026-11-13)"
+   },
+   "B9B-PH-K-S(LF)(SN)": {
+    "h": 6.0,
+    "src": "W2 PWR-L6-PLACE third pass (J506, top entry, PWR-B zone 2): JST PH catalogue, LCSC-hosted copy (PDF of 2012-12, https://datasheet.lcsc.com/datasheet/pdf/6c6fce4367275d84ec6a99bf09f1250f.pdf?productCode=C157912, read 2026-11-13) top entry drawing 6 above the board, '8.0mm in height after mounting' (header_families.PH_top h_mated); LCSC/JLCPCB C157968 'Z-Height of the Board' 6mm (JLCPCB parts search and part page, read 2026-11-13)"
    }
   },
   "by_footprint": {
@@ -262,7 +270,7 @@
    "a": 2.0,
    "b": 5.9,
    "d": 6.0,
-   "h": 8.8,
+   "h": 6.5,
    "h_mated": 8.8,
    "per_row": true,
    "pin_field": {
@@ -270,7 +278,7 @@
     "b": 1.2,
     "d": 3.2
    },
-   "src": "JST PHD catalogue ePHD.pdf (read 2026-11-07): top entry B__B-PHDSS, 'mounting height of 8.8 mm and a depth of 5 mm', B = A + 3.9; courtyard = B + 2.0 by 5.0 + 1.0 (design margin); LCSC stock not read for top entry"
+   "src": "JST PHD catalogue ePHD.pdf (read 2026-11-07): top entry B__B-PHDSS, 'mounting height of 8.8 mm and a depth of 5 mm', B = A + 3.9; courtyard = B + 2.0 by 5.0 + 1.0 (design margin). W2 PWR-L6-PLACE third pass: h is the header body, h_mated the height with the PHDR housing: LCSC-hosted copy of the catalogue (PDF of 2023-12-05, https://datasheet.lcsc.com/datasheet/pdf/f3100db869994757010c015e3792d908.pdf?productCode=C2983880, read 2026-11-13) p.3 top entry drawing 6.5 above the board, p.1 top entry assembly (8.8); LCSC C471521 B20B-PHDSS(LF)(SN) 'Z-Height of the Board' 6.5mm (JLCPCB parts search, read 2026-11-13)"
   },
   "MF_top": {
    "h": 9.9,

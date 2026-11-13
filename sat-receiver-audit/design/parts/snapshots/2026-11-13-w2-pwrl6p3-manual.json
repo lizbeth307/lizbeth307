@@ -1,0 +1,85 @@
+{
+ "schema": 1,
+ "date": "2026-11-13",
+ "note": "W2 PWR-L6-PLACE third pass reads of 2026-11-13: the top-entry headers of the PWR-B zone-2 exit pair, J203 (S02-PWR-SIG-2, JST PHD B20B-PHDSS) and J506 (SL3-PWR-PH, JST PH B9B-PH-K-S), their KiCad 10.0.7 land patterns, and the fab via-in-pad capability used for the INA3221 U215 I2C pins. A row records what the source showed; \"stock\": null means not shown, not zero; \"mpn\": null marks a library or capability row that confirms no part. No browser User-Agent was sent (curl default, WebFetch). PDFs were read locally and are not committed. Arithmetic is labelled MODEL. LCSC listings of this package are in 2026-11-13-w2-pwrl6p3-lcsc.json (tools/check_parts_availability.py --codes).",
+ "entries": {
+  "web:jst-phd-catalogue-lcsc-b20b": {
+   "item": "W2 PWR-L6-PLACE third pass: J203 top-entry PHD 2 x 10 (B20B-PHDSS) in PWR-B zone 2",
+   "distributor": "distributor-hosted catalogue (LCSC)",
+   "url": "https://datasheet.lcsc.com/datasheet/pdf/f3100db869994757010c015e3792d908.pdf?productCode=C2983880",
+   "read": "2026-11-13",
+   "method": "curl (default User-Agent), 97531 bytes, sha256 0e0ccc080b8f45dbdc1e234f3cd48db4749d2a48037ac0c1e9f7f8e6c48eeedf (PDF of 2023-12-05, the copy READS-P read on 2026-11-11); text via PyMuPDF; page 3 rendered with PyMuPDF and the top-entry header drawing read from the image; not committed",
+   "mpn": "B20B-PHDSS(LF)(SN)",
+   "manufacturer": "JST",
+   "title": "PHD Connector, 2.0 mm pitch wire-to-board (catalogue PDF of 2023-12-05)",
+   "stock": null,
+   "price": null,
+   "note": "p.1: 'With a mounting height of 8.8 mm and a depth of 5 mm'; assembly layout: top entry type (8.8) above the board with the housing mated, side entry type (11.8) mated length; holes phi 0.7 +0.1/0 on 2.0 x 2.0; applicable PC board thickness 1.6 mm; 3 A AC/DC (AWG #22), 250 V, -25 to +85 C. p.3 header, top entry type: B20B-PHDSS A 18.0 B 21.9 (250 per box); drawing: body 6.5 above the board, depth 5, rows 2 apart, pin 1 1.95 from the body end, tails (3) reference. p.4 model number allocation: 'Header type: B...Top entry type, S...Side entry type'. MODEL arithmetic for MECH: side-entry plug proud of the S20B body = (11.8) - 9.5 = 2.3 mm (9.5 overall side-entry length from the READS-P row web:jst-phd-catalogue-lcsc of 2026-11-11). The mating housing PHDR-20VS is the same for both header types (p.2)."
+  },
+  "web:jst-ph-catalogue-lcsc-b9b": {
+   "item": "W2 PWR-L6-PLACE third pass: J506 top-entry PH 9 (B9B-PH-K-S) in PWR-B zone 2",
+   "distributor": "distributor-hosted catalogue (LCSC)",
+   "url": "https://datasheet.lcsc.com/datasheet/pdf/6c6fce4367275d84ec6a99bf09f1250f.pdf?productCode=C157912",
+   "read": "2026-11-13",
+   "method": "curl (default User-Agent), 118956 bytes, sha256 4e41351f09263b950a29282923e6f6ef7c5bc95b538fe8db9d1d1e4a8c082918 (PDF of 2012-12, the copy READS-P read on 2026-11-11); text via PyMuPDF; not committed. The LCSC datasheet link of C157968 (https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B9B-PH-K-S-LF-SN_C157968.pdf) answered an HTML page, not a PDF (2026-11-13)",
+   "mpn": "B9B-PH-K-S(LF)(SN)",
+   "manufacturer": "JST",
+   "title": "PH Connector, 2.0 mm pitch disconnectable crimp style (catalogue pages, PDF of 2012-12)",
+   "stock": null,
+   "price": null,
+   "note": "p.1: 'connector 8.0mm in height after mounting and 4.5mm in width'; 2 A AC/DC (AWG #24), 100 V, applicable PC board thickness 0.8 to 1.6 mm; through-hole layout phi 0.7 on 2.0 pitch. p.2 header table, top entry type: B9B-PH-K-S A 16.0 B 19.9; top entry drawing 6 above the board, 4.5 wide, tails 3.4."
+  },
+  "web:jlcpcb-partdetail-c157968": {
+   "item": "W2 PWR-L6-PLACE third pass: J506 B9B-PH-K-S(LF)(SN) listing",
+   "distributor": "JLCPCB parts page",
+   "url": "https://jlcpcb.com/partdetail/JST_SalesAmerica-B9B_PH_K_S_LF_SN/C157968",
+   "read": "2026-11-13",
+   "method": "WebFetch (the tool's own client, no browser User-Agent)",
+   "mpn": "B9B-PH-K-S(LF)(SN)",
+   "manufacturer": "JST",
+   "title": "JLCPCB part C157968",
+   "stock": null,
+   "price": null,
+   "note": "The page shows MFR.Part # B9B-PH-K-S(LF)(SN), JLCPCB Part # C157968, package Plugin,P=2mm, Through Hole, 1x9P, pitch 2mm, 'Z-Height of the Board' 6mm, Y-width 4.5mm, X-length 19.9mm. It showed no stock and no price as read; the JLCPCB parts search API of the same day (2026-11-13-w2-pwrl6p3-lcsc.json) gives them."
+  },
+  "web:lcsc-product-c471521": {
+   "item": "W2 PWR-L6-PLACE third pass: J203 B20B-PHDSS(LF)(SN) listing",
+   "distributor": "LCSC product page",
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b20b-phdss-lf-sn_C471521.html",
+   "read": "2026-11-13",
+   "method": "WebFetch (the tool's own client, no browser User-Agent)",
+   "mpn": "B20B-PHDSS(LF)(SN)",
+   "manufacturer": "JST",
+   "title": "LCSC part C471521",
+   "stock": null,
+   "price": null,
+   "note": "The page shows MPN B20B-PHDSS(LF)(SN), LCSC Part # C471521, Through Hole P=2mm, 'CONN HEADER TH 20POS 2mm', 2 x 10, row spacing 2mm, X-length 21.9mm; no Z-height, no stock and no price as read. The JLCPCB parts search API of the same day (2026-11-13-w2-pwrl6p3-lcsc.json) gives 'Z-Height of the Board' 6.5mm, Y-width 5mm, stock and price."
+  },
+  "web:kicad-10.0.7-jst-vertical-pwrl6p3": {
+   "item": "W2 PWR-L6-PLACE third pass: land patterns of J203 and J506",
+   "distributor": "KiCad library repository",
+   "url": "https://gitlab.com/kicad/libraries/kicad-footprints/-/raw/10.0.7/Connector_JST.pretty/",
+   "read": "2026-11-13",
+   "method": "tools/make_footprints.py --fetch (byte-for-byte from the 10.0.7 tag; vendored into build/kicad/footprints/Connector_JST.pretty, sha256 in footprints/manifest.json)",
+   "mpn": null,
+   "manufacturer": null,
+   "title": null,
+   "stock": null,
+   "price": null,
+   "note": "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical (sha256 168ae449942c3542ee04208deb2c1beecb1cbd4b3e525b6bf918ae568b54c26c) and Connector_JST:JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical (sha256 9a629fe0a83b61c4e7c3285e6892b998209b911dae31f17e96f4b5afa7f64734). The side-entry JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal is no longer used by any part and is removed from the vendored library."
+  },
+  "web:jlcpcb-pcb-capabilities-via-in-pad": {
+   "item": "W2 PWR-L6-PLACE third pass: via in pad of the INA3221 U215 I2C pins (PWR-B, 6 layers)",
+   "distributor": "fab capability page",
+   "url": "https://jlcpcb.com/capabilities/pcb-capabilities",
+   "read": "2026-11-13",
+   "method": "WebFetch (the tool's own client, no browser User-Agent)",
+   "mpn": null,
+   "manufacturer": null,
+   "title": null,
+   "stock": null,
+   "price": null,
+   "note": "Via-in-pad (POFV, filled and capped): 'This process is the default for 6-layer and above multilayer boards'; 'Compatible with via diameters from 0.15 to 0.55 mm' (the page does not say whether hole or finished diameter: TBD at order). Multilayer minimum via 0.15 mm hole / 0.25 mm diameter; PTH annular ring 2 oz 0.254 mm or above; minimum track/space 2 oz multilayer 0.15 / 0.15 mm; finished outer copper 'Multi-layer: 1 oz / 2 oz'."
+  }
+ }
+}

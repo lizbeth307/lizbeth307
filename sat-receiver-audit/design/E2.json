@@ -9368,15 +9368,15 @@
     },
     {
       "ref": "J203",
-      "value": "S02-PWR-SIG-2: JST PHD 2×10, боковий вхід, S02",
+      "value": "S02-PWR-SIG-2: JST PHD 2×10, верхній вхід, S02B",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
       "status": "design",
-      "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
-      "mpn": "S20B-PHDSS(LF)(SN)",
+      "footprint": "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical",
+      "mpn": "B20B-PHDSS(LF)(SN)",
       "manufacturer": "JST",
-      "lcsc": "C2983880",
+      "lcsc": "C471521",
       "pins": [
         {
           "number": "1",
@@ -9500,7 +9500,8 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02B (гілка S02); номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWR-L6-PLACE (третій прохід): J203 — вертикальна вилка JST PHD B20B-PHDSS(LF)(SN) верхнього входу (LCSC C471521; каталог JST PHD 05.12.2023, копія LCSC, прочитано 13.11.2026: корпус 6.5 мм над платою, монтажна висота з розеткою 8.8 мм) у зоні 2 нижнього краю PWR-B; розпіновка не змінюється, джгут прямий (J307.k ↔ J203.k), дроти J203 — гілка S02B джгута S02 (build/15)."
       ]
     },
     {

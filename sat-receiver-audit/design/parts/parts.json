@@ -43,7 +43,9 @@
   "design/parts/snapshots/2026-11-12-w2-gr5a-lcsc.json",
   "design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json",
   "design/parts/snapshots/2026-11-13-w2-grzone2-lcsc.json",
-  "design/parts/snapshots/2026-11-13-w2-grzone2-manual.json"
+  "design/parts/snapshots/2026-11-13-w2-grzone2-manual.json",
+  "design/parts/snapshots/2026-11-13-w2-pwrl6p3-manual.json",
+  "design/parts/snapshots/2026-11-13-w2-pwrl6p3-lcsc.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -543,6 +545,14 @@
     },
     {
      "pins": 9,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B9B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157968"
+      },
+      "footprint": "Connector_JST:JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical"
+     },
      "header_side": {
       "manufacturer": "JST",
       "mpn": "S9B-PH-K-S(LF)(SN)",
@@ -558,7 +568,7 @@
        "lcsc": "C157949"
       }
      },
-     "note": "W2 GR-5B: J506 SL3-PWR-PH on PWR-B (S23 + S34); top-entry B9B not read (not needed)"
+     "note": "W2 GR-5B: J506 SL3-PWR-PH on PWR-B (S23 + S34) was the side entry S9B; W2 PWR-L6-PLACE third pass: J506 is the top entry B9B-PH-K-S (LCSC/JLCPCB C157968, read 2026-11-13, snapshot 2026-11-13-w2-pwrl6p3-lcsc.json) in PWR-B zone 2"
     },
     {
      "pins": 12,
@@ -869,6 +879,15 @@
    "sizes": [
     {
      "pins": 20,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B20B-PHDSS(LF)(SN)",
+      "sku": {
+       "lcsc": "C471521"
+      },
+      "footprint": "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical",
+      "note": "верхній вхід (W2 PWR-L6-PLACE, третій прохід): J203 у зоні 2 PWR-B; корпус 6.5 мм над платою, 8.8 мм з розеткою (каталог JST PHD, копія LCSC, прочитано 13.11.2026)"
+     },
      "header_side": {
       "manufacturer": "JST",
       "mpn": "S20B-PHDSS(LF)(SN)",
@@ -5222,11 +5241,25 @@
    "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
    "refs": [
     "J202",
-    "J203",
     "J306",
     "J307"
    ],
-   "note": "Board-side harness header (W2 GR-3): J202 S02-PWR-SIG-1, J203 S02-PWR-SIG-2, J306 S02-CTRL-SIG-1, J307 S02-CTRL-SIG-2 on CTRL, PWR_B. Part, LCSC SKU and footprint as harness_families PHD 20 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+   "note": "Board-side harness header (W2 GR-3): J202 S02-PWR-SIG-1, J306 S02-CTRL-SIG-1, J307 S02-CTRL-SIG-2 on CTRL, PWR_B (J203 S02-PWR-SIG-2 became the top-entry B20B-PHDSS, entry J-HDR-B20BPHDSS, W2 PWR-L6-PLACE third pass). Part, LCSC SKU and footprint as harness_families PHD 20 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-B20BPHDSS",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical",
+   "manufacturer": "JST",
+   "mpn": "B20B-PHDSS(LF)(SN)",
+   "sku": {
+    "lcsc": "C471521"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», W2 GR-3); top-entry exit in PWR-B zone 2 (W2 PWR-L6-PLACE, третій прохід)",
+   "refs": [
+    "J203"
+   ],
+   "note": "Board-side harness header (W2 PWR-L6-PLACE third pass): J203 S02-PWR-SIG-2 on PWR_B, the top-entry PHD 2 x 10 of the zone-2 exit pair (harness branch S02B of S02; its CTRL mate J307 stays the side-entry S20B-PHDSS, pin for pin). JST PHD catalogue (PDF of 2023-12-05, LCSC-hosted copy https://datasheet.lcsc.com/datasheet/pdf/f3100db869994757010c015e3792d908.pdf?productCode=C2983880, sha256 0e0ccc08..., read 2026-11-13): p.1 top entry mounting height (8.8) mm with the housing, depth 5 mm; p.3 top entry B20B-PHDSS A 18.0 B 21.9, body 6.5 mm above the board, tails (3); p.4 header type B = top entry. LCSC C471521 (JLCPCB parts search via tools/check_parts_availability.py, 2026-11-13: 'Z-Height of the Board' 6.5mm, Y-width 5mm; snapshot 2026-11-13-w2-pwrl6p3-lcsc.json); footprint the official KiCad 10.0.7 file. The mating housing PHDR-20VS and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
    "id": "J-HDR-S8BPH",
@@ -5505,19 +5538,19 @@
    "note": "Board-side harness header: J514 X24S1-T7A on T7_INSERT (W2 GR-4, segment S24); J506 became the PH 9 header SL3-PWR-PH (W2 GR-5B). Part, LCSC SKU and footprint as harness_families PH 3 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
-   "id": "J-HDR-S9BPH",
+   "id": "J-HDR-B9BPH",
    "mount": "pcb_tht",
-   "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal",
+   "footprint": "Connector_JST:JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical",
    "manufacturer": "JST",
-   "mpn": "S9B-PH-K-S(LF)(SN)",
+   "mpn": "B9B-PH-K-S(LF)(SN)",
    "sku": {
-    "lcsc": "C157912"
+    "lcsc": "C157968"
    },
-   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3); PWR-B header merge (W2 GR-5B)",
+   "single_source": "family decision build/15 («Сигнальні джгути», W2 GR-3); PWR-B header merge (W2 GR-5B); top-entry exit in PWR-B zone 2 (W2 PWR-L6-PLACE, третій прохід)",
    "refs": [
     "J506"
    ],
-   "note": "Board-side harness header (W2 GR-5B, SHRINK-2): J506 SL3-PWR-PH on PWR_B, segments S23 (LAB PORT) and S34 (LAB BUS), which replaces J506 (PH 3) and J508 (PH 6). Part and LCSC SKU from READS-P (row web:jst-ph-catalogue-lcsc, LCSC C157912 stock 5130 on 2026-11-11); footprint the official KiCad 10.0.7 file; harness_families PH 9 header_side. The mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+   "note": "Board-side harness header (W2 GR-5B, SHRINK-2; top entry since W2 PWR-L6-PLACE third pass): J506 SL3-PWR-PH on PWR_B, segments S23 (LAB PORT) and S34 (LAB BUS), the top-entry PH 9 of the zone-2 exit pair (was the side-entry S9B-PH-K-S(LF)(SN), C157912). JST PH catalogue (PDF of 2012-12, LCSC-hosted copy https://datasheet.lcsc.com/datasheet/pdf/6c6fce4367275d84ec6a99bf09f1250f.pdf?productCode=C157912, read 2026-11-13): p.1 '8.0mm in height after mounting', top entry drawing 6 above the board, 4.5 wide, tails 3.4; p.2 top entry B9B-PH-K-S A 16.0 B 19.9. LCSC/JLCPCB C157968 (JLCPCB parts search via tools/check_parts_availability.py, 2026-11-13: 'Z-Height of the Board' 6mm, Y-width 4.5mm, X-length 19.9mm; snapshot 2026-11-13-w2-pwrl6p3-lcsc.json); footprint the official KiCad 10.0.7 file. The mating housing PHR-9 and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
    "id": "J-B2B-LSHM150",

@@ -421,7 +421,7 @@ class Shrink2PowerSwapTest(unittest.TestCase):
     def test_lab_port_and_lab_bus_share_one_ph9_header(self):
         self.assertNotIn("J508", self.model.comps)
         j506 = self.model.comps["J506"][1]
-        self.assertEqual(j506["footprint"], "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal")
+        self.assertEqual(j506["footprint"], "Connector_JST:JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical")  # top entry: W2 PWR-L6-PLACE third pass
         self.assertEqual([pn["net"] for pn in j506["pins"]],
                          ["GND", "GND", "VBUS_LABPORT", "GND", "GND", "AUX12", "I2CB_SCL", "I2CB_SDA", "SLED_DET"])
         ph = next(f for f in self.model.db["harness_families"] if f["id"] == "PH")
@@ -469,6 +469,50 @@ class ZoneTwoSmdTest(unittest.TestCase):
         self.assertEqual(nets("C511"), {"1": "VBUS_HFP", "2": "GND"})
         self.assertEqual(nets("C512"), {"1": "E5_HFP_DAMP", "2": "GND"})
         self.assertEqual(set(nets("R512").values()), {"VBUS_HFP", "E5_HFP_DAMP"})
+
+
+class PwrL6ZoneTwoExitPairTest(unittest.TestCase):
+    """W2 PWR-L6-PLACE third pass: J203 (S02-PWR-SIG-2) and J506 (SL3-PWR-PH) are the vertical top-entry exit pair of PWR-B
+    zone 2, JST PHD B20B-PHDSS and JST PH B9B-PH-K-S with read heights; the pin maps and the CTRL mate J307 are unchanged.
+    Fit, bend radius and the harness proof-fit stay OPEN."""
+
+    PAIR = {"J203": ("J-HDR-B20BPHDSS", "B20B-PHDSS(LF)(SN)", "C471521",
+                     "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical", 6.5),
+            "J506": ("J-HDR-B9BPH", "B9B-PH-K-S(LF)(SN)", "C157968",
+                     "Connector_JST:JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical", 6.0)}
+
+    def setUp(self):
+        self.model = parts.Model()
+        self.model.check()
+
+    def test_top_entry_pair_with_read_heights(self):
+        import json
+        self.assertEqual(self.model.errors, [])
+        heights = json.loads((BASE / "pcb/partition-spec.json").read_text(encoding="utf-8"))["heights"]["by_mpn"]
+        for ref, (pid, mpn, lcsc, fp, h) in self.PAIR.items():
+            p = part(self.model.db, pid)
+            self.assertEqual((p["refs"], p["mpn"], p["sku"]["lcsc"], p["footprint"]), ([ref], mpn, lcsc, fp), ref)
+            c = self.model.comps[ref][1]
+            self.assertEqual((c["footprint"], c["mpn"], c["lcsc"]), (fp, mpn, lcsc), ref)
+            self.assertIn("верхній вхід", c["value"], ref)
+            self.assertEqual(heights[mpn]["h"], h, ref)
+            self.assertIn("2026-11-13", heights[mpn]["src"], ref)
+        self.assertFalse([p for p in self.model.db["parts"] if p["id"] == "J-HDR-S9BPH"])
+        s20 = part(self.model.db, "J-HDR-S20BPHDSS")
+        self.assertEqual(sorted(s20["refs"]), ["J202", "J306", "J307"])
+        self.assertEqual(self.model.comps["J307"][1]["footprint"], "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal")
+
+    def test_pin_maps_are_unchanged(self):
+        def nets(ref):
+            return [pn.get("net") for pn in self.model.comps[ref][1]["pins"]]
+        self.assertEqual(len(nets("J203")), 20)
+        self.assertEqual(nets("J506"), ["GND", "GND", "VBUS_LABPORT", "GND", "GND", "AUX12", "I2CB_SCL", "I2CB_SDA", "SLED_DET"])
+        self.assertEqual(len(nets("J307")), 20)
+
+    def test_snapshots_of_this_package_are_listed(self):
+        for s in ("design/parts/snapshots/2026-11-13-w2-pwrl6p3-manual.json", "design/parts/snapshots/2026-11-13-w2-pwrl6p3-lcsc.json"):
+            self.assertIn(s, self.model.db["snapshots"])
+            self.assertTrue((BASE / s).is_file(), s)
 
 
 if __name__ == "__main__":

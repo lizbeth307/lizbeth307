@@ -1,0 +1,131 @@
+{
+ "date": "2026-11-13",
+ "distributor": "LCSC",
+ "entries": {
+  "C157968": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "9",
+    "Number of Pins": "9P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x9P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "19.9mm",
+    "Y-Width of Bottom Edge on Board": "4.5mm",
+    "Z-Height of the Board": "6mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B9B-PH-K-S-LF-SN_C157968.pdf",
+   "description": "-25℃~+85℃ 1 100V 19.9mm 1x9P 2A 2mm 4.5mm 6mm 9 9P Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-13T17:54:40Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B9B-PH-K-S(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1401
+    ],
+    [
+     50,
+     0.1106
+    ],
+    [
+     150,
+     0.0961
+    ],
+    [
+     500,
+     0.085
+    ],
+    [
+     2500,
+     0.0763
+    ],
+    [
+     5000,
+     0.0719
+    ]
+   ],
+   "stock": 9958,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b9b-ph-k-s-lf-sn_C157968.html"
+  },
+  "C471521": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Copper Alloy",
+    "Contact Plating": "Tin",
+    "Current Rating": "3A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "10",
+    "Number of Pins": "20P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "2x10P",
+    "Pitch": "2mm",
+    "Plastic Material": "Glass fiber reinforced PA66",
+    "Reference Series": "PHD",
+    "Row Spacing": "2mm",
+    "Voltage Rating": "250V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "21.9mm",
+    "Y-Width of Bottom Edge on Board": "5mm",
+    "Z-Height of the Board": "6.5mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B20B-PHDSS-LF-SN_C471521.pdf",
+   "description": "-25℃~+85℃ 10 2 20P 21.9mm 250V 2mm 2mm 2x10P 3A 5mm 6.5mm Copper alloy Glass fiber reinforced PA66 PHD Through Hole Tin UL94V-0 White Plugin,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-13T17:54:41Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B20B-PHDSS(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.589
+    ],
+    [
+     10,
+     0.4778
+    ],
+    [
+     30,
+     0.4303
+    ],
+    [
+     250,
+     0.3714
+    ],
+    [
+     500,
+     0.3452
+    ],
+    [
+     1000,
+     0.3289
+    ]
+   ],
+   "stock": 6180,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b20b-phdss-lf-sn_C471521.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C157968",
+  "C471521"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}
