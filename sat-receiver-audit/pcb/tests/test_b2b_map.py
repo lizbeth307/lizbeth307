@@ -222,14 +222,15 @@ class GuardRuleTests(unittest.TestCase):
         # (sense pair at the end of the strip since 11.11.2026, for the PWR-B board of record)
         # (W2 GR-5B: 10 rail contacts instead of 17 once the six damper nodes and VBUS_LABPORT stopped crossing)
         self.assertIn('odd 1-37 the 10 rail contacts (1, 5, ... 37) with their GND returns (3, 7, ... 39), 41 guard, even 2-14 the '
-                      '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-60 the 22 signal nets',
+                      '4 LAB5 contacts (2, 6, 10, 14) with their GND returns (4, 8, 12, 16), even 18-42 the 13 signal nets',
                       SPEC['pin_map_rule'])
         self.assertTrue({role[p] for p in range(1, 38, 4)} <= set(prepare.B2B_RAIL_KINDS))
         self.assertEqual({role[p] for p in range(3, 40, 4)} | {role[p] for p in range(4, 17, 4)}, {'gnd'})
         self.assertEqual(role[41], 'guard')
         self.assertEqual({role[p] for p in range(2, 15, 4)}, {'power'})
-        self.assertEqual({role[p] for p in range(18, 61, 2)}, {'signal'})
-        self.assertEqual({role[p] for p in list(range(62, 97, 2)) + list(range(43, 97, 2))}, {'spare'})
+        # W2 PWRJ-F2C probe: 13 signal nets on the even row since the 9 E1/E5 signals of the PWR-C groups left S02
+        self.assertEqual({role[p] for p in range(18, 43, 2)}, {'signal'})
+        self.assertEqual({role[p] for p in list(range(44, 97, 2)) + list(range(43, 97, 2))}, {'spare'})
         self.assertEqual([role[p] for p in (97, 98, 99, 100)], ['guard', 'guard', 'sense pair', 'sense pair'])
 
 
