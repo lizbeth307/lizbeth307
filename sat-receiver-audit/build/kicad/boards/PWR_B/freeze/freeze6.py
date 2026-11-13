@@ -79,6 +79,25 @@ def j209_escape(m, net):
     return out
 
 
+FANOUT_TO, FANOUT_THEN = 'J203', ('I2C2_SCL', 'I2C2_SDA')
+
+
+def fanout_first(m, nets, span):
+    """W2 PWR-L6-PLACE third pass (judge decision ESC-JUDGE, --order fanout): the nets that join a J209 lower-row contact to the
+    top-entry J203 of PWR-B zone 2 first, right to left along J209 (their short fan-out runs take the escape band before any long
+    link crosses it), then I2C2 (its B2B contacts J209.43 / .45 sit between the fan-out contacts), then the rest shortest first
+    (--order short). In the judge's model this order left 11 open connections against 17 for --order short (MODEL)."""
+    pads = collections.defaultdict(dict)
+    for i in m.items:
+        if i.alive and i.kind == 'pad' and i.net in nets and i.ref in (B2B, FANOUT_TO):
+            pads[i.net].setdefault(i.ref, i.at)
+    fan = sorted((n for n in nets if B2B in pads[n] and FANOUT_TO in pads[n]), key=lambda n: (-pads[n][B2B][0], n))
+    then = [n for n in FANOUT_THEN if n in nets and n not in fan]
+    rest = sorted(set(nets) - set(fan) - set(then), key=lambda n: (span(n), n))
+    print('fan-out order:', fan, then)
+    return fan + then + rest
+
+
 def verify(m):
     """Open connections, dangling copper and clearance of every track and via (exact checks), as CTRL freeze_route.py."""
     nets = sorted({i.net for i in m.items if i.alive and i.net})
@@ -241,7 +260,8 @@ def main(argv=None):
     ap.add_argument('--no-rip', action='store_true', help='join only where a free path exists (no rip-up of router copper)')
     ap.add_argument('--prev', help='W2 PWRJ-LAYERS6 ratchet: the route-frozen-6l.json the run was routed with; its locked copper '
                                    'on the board is harvested again together with the new router copper')
-    ap.add_argument('--order', choices=('class', 'short'), default='class', help='completion order of the open nets')
+    ap.add_argument('--order', choices=('class', 'short', 'fanout'), default='class',
+                    help='completion order of the open nets (fanout: W2 PWR-L6-PLACE third pass, fanout_first)')
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding='utf-8')
     art = Path(args.artifact)
@@ -310,7 +330,9 @@ def main(argv=None):
     def span(n):
         pts = [i.at for i in m.items if i.alive and i.kind == 'pad' and i.net == n]
         return math.hypot(max(p[0] for p in pts) - min(p[0] for p in pts), max(p[1] for p in pts) - min(p[1] for p in pts)) if pts else 0.0
-    if args.order == 'short':
+    if args.order == 'fanout':
+        first = fanout_first(m, set(kicad_open) | viol, span)
+    elif args.order == 'short':
         first = sorted(set(kicad_open) | viol, key=lambda n: (span(n), n))
     else:
         first = sorted(set(kicad_open) | viol, key=lambda n: (layers(n) != OUTER, n))
