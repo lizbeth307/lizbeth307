@@ -58,7 +58,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "22d7f2ef8ffaf1d8c5e934c4eed8137aa96c09b86f99d9b4893bef2c8cf02a19"
+        "sha256": "a2fc3faece23498cfadcc6e4a2593a6f2667aa6570c0cc052543d57e4d169075"
       },
       {
         "file": "design/E3.json",
@@ -70,15 +70,15 @@
       },
       {
         "file": "design/E5.json",
-        "sha256": "e31f686e1fcad7a02e32a449b1876d08af3d7164130ef55fd37d0d3ffcf52cff"
+        "sha256": "8ecfcc1952559a8e8cab32fb281d406c1b5f74090056b09e5e39bf1c0f0244bb"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "a950498c1f9da8bbda4c1ce4b1f1d8a5d6bca42599bed83a039e55edf729c739"
+        "sha256": "65a173dc5a6ddb0a1b4dbc5e73931f69be1a968f2d2f6d7fee9366409aeefd26"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "dafe6727e7c15e0ed2f7bc31f194a7ada05608b532332d25fee3f1d641057fe3"
+        "sha256": "ca0b5c5e62a45099354cb6f9b9dfbbd38602d32f8b588e0ab1d33f52f63aed11"
       }
     ],
     "source_documents": [
@@ -191,11 +191,11 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "9ed5d6062062bad6ccc73b1e42b54134abbac36d975a608f1bcd4c17becf2f56"
+      "projection_sha256": "550c434b3737595bdfe5f02e54beb9036e3f8c9993964448daaf8949513ab8f7"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
-      "sha256": "19eca5aa1edd1015653fb792a94d92b25b5f8195fd02414dad0898150ae8baa9",
+      "sha256": "f9659e6ee9b7deb36cc2a0ffe9624ee6c571a7d8fbee9a61e0674a1f9f1825dd",
       "b2b_currents": "tools/assembly_data.py NET_CURRENT"
     }
   },
@@ -2630,19 +2630,19 @@
     {
       "ref": "C265",
       "sheet": "E2",
-      "mount": "pcb_tht",
-      "value": "47uF 50V EEUFR1H470",
+      "mount": "pcb_smt",
+      "value": "47uF 35V 35TQS47MEX",
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
       "board_candidate": "PWR_BRANCH",
       "dnp": false,
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-15_Kemet-W",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 2,
-      "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
-      "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
+      "source": "https://industrial.panasonic.com/ww/products/pt/poscap/models/35TQS47MEX",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
       "ref": "C266",
@@ -4381,36 +4381,36 @@
     {
       "ref": "C511",
       "sheet": "E5",
-      "mount": "pcb_tht",
-      "value": "EEU-FR1C101 100uF 16V",
+      "mount": "pcb_smt",
+      "value": "100uF 16V 16TQC100MD2",
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
       "board_candidate": "USB_POWER",
       "dnp": false,
-      "footprint": "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm",
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 2,
-      "source": "STACK.md §5.2 / engineering design",
-      "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
+      "source": "https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC100MD2",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
       "ref": "C512",
       "sheet": "E5",
-      "mount": "pcb_tht",
-      "value": "220uF 16V low-ESR",
+      "mount": "pcb_smt",
+      "value": "220uF 16V 16TQC220MD3",
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
       "board_candidate": "USB_POWER",
       "dnp": false,
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 2,
-      "source": "STACK.md §5.2 / engineering design",
-      "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
+      "source": "https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC220MD3",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
       "ref": "C513",

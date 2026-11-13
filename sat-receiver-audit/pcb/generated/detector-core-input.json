@@ -9076,7 +9076,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "22d7f2ef8ffaf1d8c5e934c4eed8137aa96c09b86f99d9b4893bef2c8cf02a19"
+        "sha256": "a2fc3faece23498cfadcc6e4a2593a6f2667aa6570c0cc052543d57e4d169075"
       },
       {
         "file": "design/E3.json",
@@ -9088,15 +9088,15 @@
       },
       {
         "file": "design/E5.json",
-        "sha256": "e31f686e1fcad7a02e32a449b1876d08af3d7164130ef55fd37d0d3ffcf52cff"
+        "sha256": "8ecfcc1952559a8e8cab32fb281d406c1b5f74090056b09e5e39bf1c0f0244bb"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "a950498c1f9da8bbda4c1ce4b1f1d8a5d6bca42599bed83a039e55edf729c739"
+        "sha256": "65a173dc5a6ddb0a1b4dbc5e73931f69be1a968f2d2f6d7fee9366409aeefd26"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "dafe6727e7c15e0ed2f7bc31f194a7ada05608b532332d25fee3f1d641057fe3"
+        "sha256": "ca0b5c5e62a45099354cb6f9b9dfbbd38602d32f8b588e0ab1d33f52f63aed11"
       }
     ],
     "source_documents": [

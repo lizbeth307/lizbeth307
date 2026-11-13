@@ -4483,23 +4483,23 @@
       </units>
     </comp>
     <comp ref="C265">
-      <value>47uF 50V EEUFR1H470</value>
-      <footprint>Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</footprint>
-      <datasheet>https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470</datasheet>
+      <value>47uF 35V 35TQS47MEX</value>
+      <footprint>Capacitor_Tantalum_SMD:CP_EIA-7343-15_Kemet-W</footprint>
+      <datasheet>https://industrial.panasonic.com/ww/products/pt/poscap/models/35TQS47MEX</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">EEU-FR1H470</field>
+        <field name="MPN">35TQS47MEX</field>
         <field name="Manufacturer">Panasonic</field>
-        <field name="LCSC">C407950</field>
-        <field name="Footprint">Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</field>
-        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470</field>
+        <field name="LCSC">C36799600</field>
+        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-7343-15_Kemet-W</field>
+        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/poscap/models/35TQS47MEX</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C265" description="| design | Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.; Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."/>
+      <libsource lib="sr_rx_v2_completed" part="C_C265" description="| design | Полімерний танталовий конденсатор Panasonic POSCAP 35TQS47MEX 47 мкФ/35 V ±20 % (TQS, D15S 7.3 × 4.3 × 1.4 ±0.1 мм) у паралельній R-C гілці демпфування (W2 GR-ZONE2-SMD замість радіального EEU-FR1H470: висота до 1.5 мм, тож PWR-B не потребує вікна над ним). Контакт 1 «+» — до R260, контакт 2 «−» — GND.; 35 V проти E1_SW 13.2–16.4 V і кліпу SMBJ17A D105 27.6 V при 21.7 A (Vishay 88392); сплеск 1.15 × 35 = 40.25 V. ESR ≤ 100 мОм (100 kHz), пульсації 1.2 A rms (105 °C, 100 kHz), витік ≤ 164.5 мкА через 5 хв. Ємність без спаду від DC bias.; Кидок струму в гілку при ввімкненні E1_SW має бути ≤ 20 A (умова Panasonic для POSCAP); режим випадкової відмови POSCAP — коротке замикання. Обидва — стендові ворота design/E2-review.md (OPEN)."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="EEU-FR1H470"/>
+      <property name="MPN" value="35TQS47MEX"/>
       <property name="Manufacturer" value="Panasonic"/>
-      <property name="LCSC" value="C407950"/>
+      <property name="LCSC" value="C36799600"/>
       <property name="Sheetname" value="E2"/>
       <property name="Sheetfile" value="E2.kicad_sch"/>
       <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
@@ -28273,23 +28273,25 @@
       </units>
     </comp>
     <comp ref="C511">
-      <value>EEU-FR1C101 100uF 16V</value>
-      <footprint>Capacitor_THT:CP_Radial_D5.0mm_P2.00mm</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <value>100uF 16V 16TQC100MD2</value>
+      <footprint>Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V</footprint>
+      <datasheet>https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC100MD2</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">EEU-FR1C101</field>
+        <field name="MPN">16TQC100MD2</field>
         <field name="Manufacturer">Panasonic</field>
-        <field name="LCSC">C278532</field>
-        <field name="Footprint">Capacitor_THT:CP_Radial_D5.0mm_P2.00mm</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="LCSC">C53054838</field>
+        <field name="Alt_MPN">Panasonic 16TQC100MYF</field>
+        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V</field>
+        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC100MD2</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C511" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_C511" description="| design | W2 GR-ZONE2-SMD: Panasonic POSCAP 16TQC100MD2 polymer tantalum, 100 uF 16 V +/-20 %, D2 7.3 x 4.3 x 1.9 +/-0.1 mm, ESR &lt;= 50 mOhm (100 kHz), ripple 1.8 A rms (105 C, 100 kHz), leakage &lt;= 160 uA; replaces the radial EEU-FR1C101, so PWR-B needs no window over it.; Main bulk of the L501 100 uH filter; damping comes from the R512/C512 branch (design/E5-review.md, MODEL); bench gate HF-7 (OPEN)."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="EEU-FR1C101"/>
+      <property name="MPN" value="16TQC100MD2"/>
       <property name="Manufacturer" value="Panasonic"/>
-      <property name="LCSC" value="C278532"/>
+      <property name="LCSC" value="C53054838"/>
+      <property name="Alt_MPN" value="Panasonic 16TQC100MYF"/>
       <property name="Sheetname" value="E5_02"/>
       <property name="Sheetfile" value="E5_02.kicad_sch"/>
       <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
@@ -28304,21 +28306,23 @@
       </units>
     </comp>
     <comp ref="C512">
-      <value>220uF 16V low-ESR</value>
-      <footprint>Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <value>220uF 16V 16TQC220MD3</value>
+      <footprint>Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D</footprint>
+      <datasheet>https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC220MD3</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">EEU-FR1C221</field>
+        <field name="MPN">16TQC220MD3</field>
         <field name="Manufacturer">Panasonic</field>
-        <field name="Footprint">Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="LCSC">C4979618</field>
+        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D</field>
+        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC220MD3</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C512" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_C512" description="| design | W2 GR-ZONE2-SMD: Panasonic POSCAP 16TQC220MD3 polymer tantalum, 220 uF 16 V +/-20 %, D3L 7.3 x 4.3 x 2.8 +/-0.2 mm, ESR &lt;= 50 mOhm (100 kHz), ripple 1.75 A rms (105 C, 100 kHz), leakage &lt;= 352 uA, reflow condition C (peak 250 C); replaces the radial EEU-FR1C221, so PWR-B needs no window over it.; Damper capacitor in series with R512 1 Ohm; its ESR adds at most 0.05 Ohm to the damping resistance. 3.0 mm max: not under a PWR-B THT field (H-TRIM 2.7 mm)."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="EEU-FR1C221"/>
+      <property name="MPN" value="16TQC220MD3"/>
       <property name="Manufacturer" value="Panasonic"/>
+      <property name="LCSC" value="C4979618"/>
       <property name="Sheetname" value="E5_02"/>
       <property name="Sheetfile" value="E5_02.kicad_sch"/>
       <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
@@ -31354,14 +31358,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_C265">
-      <description>| design | Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.; Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу.</description>
-      <docs>https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470</docs>
+      <description>| design | Полімерний танталовий конденсатор Panasonic POSCAP 35TQS47MEX 47 мкФ/35 V ±20 % (TQS, D15S 7.3 × 4.3 × 1.4 ±0.1 мм) у паралельній R-C гілці демпфування (W2 GR-ZONE2-SMD замість радіального EEU-FR1H470: висота до 1.5 мм, тож PWR-B не потребує вікна над ним). Контакт 1 «+» — до R260, контакт 2 «−» — GND.; 35 V проти E1_SW 13.2–16.4 V і кліпу SMBJ17A D105 27.6 V при 21.7 A (Vishay 88392); сплеск 1.15 × 35 = 40.25 V. ESR ≤ 100 мОм (100 kHz), пульсації 1.2 A rms (105 °C, 100 kHz), витік ≤ 164.5 мкА через 5 хв. Ємність без спаду від DC bias.; Кидок струму в гілку при ввімкненні E1_SW має бути ≤ 20 A (умова Panasonic для POSCAP); режим випадкової відмови POSCAP — коротке замикання. Обидва — стендові ворота design/E2-review.md (OPEN).</description>
+      <docs>https://industrial.panasonic.com/ww/products/pt/poscap/models/35TQS47MEX</docs>
       <fields>
         <field name="Reference">C265</field>
-        <field name="Value">47uF 50V EEUFR1H470</field>
-        <field name="Footprint">Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</field>
-        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470</field>
-        <field name="Description">| design | Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.; Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу.</field>
+        <field name="Value">47uF 35V 35TQS47MEX</field>
+        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-7343-15_Kemet-W</field>
+        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/poscap/models/35TQS47MEX</field>
+        <field name="Description">| design | Полімерний танталовий конденсатор Panasonic POSCAP 35TQS47MEX 47 мкФ/35 V ±20 % (TQS, D15S 7.3 × 4.3 × 1.4 ±0.1 мм) у паралельній R-C гілці демпфування (W2 GR-ZONE2-SMD замість радіального EEU-FR1H470: висота до 1.5 мм, тож PWR-B не потребує вікна над ним). Контакт 1 «+» — до R260, контакт 2 «−» — GND.; 35 V проти E1_SW 13.2–16.4 V і кліпу SMBJ17A D105 27.6 V при 21.7 A (Vishay 88392); сплеск 1.15 × 35 = 40.25 V. ESR ≤ 100 мОм (100 kHz), пульсації 1.2 A rms (105 °C, 100 kHz), витік ≤ 164.5 мкА через 5 хв. Ємність без спаду від DC bias.; Кидок струму в гілку при ввімкненні E1_SW має бути ≤ 20 A (умова Panasonic для POSCAP); режим випадкової відмови POSCAP — коротке замикання. Обидва — стендові ворота design/E2-review.md (OPEN).</field>
       </fields>
       <pins>
         <pin num="1" name="+" type="passive"/>
@@ -33304,14 +33308,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_C511">
-      <description>| design |</description>
-      <docs>STACK.md §5.2 / engineering design</docs>
+      <description>| design | W2 GR-ZONE2-SMD: Panasonic POSCAP 16TQC100MD2 polymer tantalum, 100 uF 16 V +/-20 %, D2 7.3 x 4.3 x 1.9 +/-0.1 mm, ESR &lt;= 50 mOhm (100 kHz), ripple 1.8 A rms (105 C, 100 kHz), leakage &lt;= 160 uA; replaces the radial EEU-FR1C101, so PWR-B needs no window over it.; Main bulk of the L501 100 uH filter; damping comes from the R512/C512 branch (design/E5-review.md, MODEL); bench gate HF-7 (OPEN).</description>
+      <docs>https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC100MD2</docs>
       <fields>
         <field name="Reference">C511</field>
-        <field name="Value">EEU-FR1C101 100uF 16V</field>
-        <field name="Footprint">Capacitor_THT:CP_Radial_D5.0mm_P2.00mm</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description">| design |</field>
+        <field name="Value">100uF 16V 16TQC100MD2</field>
+        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V</field>
+        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC100MD2</field>
+        <field name="Description">| design | W2 GR-ZONE2-SMD: Panasonic POSCAP 16TQC100MD2 polymer tantalum, 100 uF 16 V +/-20 %, D2 7.3 x 4.3 x 1.9 +/-0.1 mm, ESR &lt;= 50 mOhm (100 kHz), ripple 1.8 A rms (105 C, 100 kHz), leakage &lt;= 160 uA; replaces the radial EEU-FR1C101, so PWR-B needs no window over it.; Main bulk of the L501 100 uH filter; damping comes from the R512/C512 branch (design/E5-review.md, MODEL); bench gate HF-7 (OPEN).</field>
       </fields>
       <pins>
         <pin num="1" name="+" type="passive"/>
@@ -33319,14 +33323,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_C512">
-      <description>| design |</description>
-      <docs>STACK.md §5.2 / engineering design</docs>
+      <description>| design | W2 GR-ZONE2-SMD: Panasonic POSCAP 16TQC220MD3 polymer tantalum, 220 uF 16 V +/-20 %, D3L 7.3 x 4.3 x 2.8 +/-0.2 mm, ESR &lt;= 50 mOhm (100 kHz), ripple 1.75 A rms (105 C, 100 kHz), leakage &lt;= 352 uA, reflow condition C (peak 250 C); replaces the radial EEU-FR1C221, so PWR-B needs no window over it.; Damper capacitor in series with R512 1 Ohm; its ESR adds at most 0.05 Ohm to the damping resistance. 3.0 mm max: not under a PWR-B THT field (H-TRIM 2.7 mm).</description>
+      <docs>https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC220MD3</docs>
       <fields>
         <field name="Reference">C512</field>
-        <field name="Value">220uF 16V low-ESR</field>
-        <field name="Footprint">Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description">| design |</field>
+        <field name="Value">220uF 16V 16TQC220MD3</field>
+        <field name="Footprint">Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D</field>
+        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC220MD3</field>
+        <field name="Description">| design | W2 GR-ZONE2-SMD: Panasonic POSCAP 16TQC220MD3 polymer tantalum, 220 uF 16 V +/-20 %, D3L 7.3 x 4.3 x 2.8 +/-0.2 mm, ESR &lt;= 50 mOhm (100 kHz), ripple 1.75 A rms (105 C, 100 kHz), leakage &lt;= 352 uA, reflow condition C (peak 250 C); replaces the radial EEU-FR1C221, so PWR-B needs no window over it.; Damper capacitor in series with R512 1 Ohm; its ESR adds at most 0.05 Ohm to the damping resistance. 3.0 mm max: not under a PWR-B THT field (H-TRIM 2.7 mm).</field>
       </fields>
       <pins>
         <pin num="1" name="+" type="passive"/>
