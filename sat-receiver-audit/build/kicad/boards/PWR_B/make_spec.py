@@ -792,14 +792,16 @@ W_TRUNK, W_BRANCH, W_CURRENT, W_SENSE = 2.0, 0.7, 0.5, 0.35
 VIP_D, VIP_GAP = 0.6, 0.197
 VIA_IN_PAD = {'VIP-U215-6': ('U215', '6', 'I2C2_SCL', (21.175, 56.35)), 'VIP-U215-7': ('U215', '7', 'I2C2_SDA', (21.825, 56.90))}
 # W2 PWR-L6-PLACE fourth pass, probe A: deterministic escape fan of the four innermost J202-bound contacts of the J209 lower
-# row (25, 27, 29, 31 at 0.5 mm pitch; the greedy A* reached at most three of them in any order, PLACE third pass). Each
-# contact leaves its row on a B.Cu stub (0.15 mm, the SIG width) to a locked via in the escape band y 11.75-15.4; the vias
-# are staggered on two rows (outer contacts 1.35 mm, inner contacts 2.3 mm below the pad centre), so the inner stubs pass
-# between the outer vias and every via pair keeps the 0.85 mm centre rule of via_spot_ok (0.95 and more). The rows sit
-# between the J209 pads (y >= 15.9) and the F.Cu pads of TP216 / C244 (y <= 13.76) with CLEAR + MARGIN 0.20 to both.
-# Offsets from the pad centre: (knee dy of the vertical stub, via dx, via dy).
+# row (25, 27, 29, 31 at 0.5 mm pitch; the greedy A* reached at most three of them in any order, PLACE third pass). The band
+# y 14.3-15.35 between the J209 pads (y >= 15.9) and the F.Cu pads of TP216 / C244 (y <= 13.76) holds no four vias with
+# their stubs at CLEAR + MARGIN 0.20 while the neighbour contacts 23 (EN_BONI, its via of record) and 33 (FLT_BONI, straight
+# down) keep their escapes (MODEL search on a 0.1 mm grid, 0 solutions). So each contact leaves its row on a B.Cu stub
+# (0.15 mm, the SIG width) 1.05 mm straight down and then diagonally to a locked via in the deep row under TP216 / C244
+# (y 11.0-12.0, above the J203 pins at y <= 10.35); three of the vias stand in the J203 courtyard strip of the exit field
+# (tented, no part there; corridor_check allows ESC-J209- vias). Offsets from the pad centre: (knee dy, via dx, via dy);
+# the search kept CLEAR + MARGIN 0.20 to every pad and scripted item, the 0.9 mm via centre rule and EN_BONI's escape.
 FAN_NETS = ('EN_HFP', 'EN_LIME3V3', 'EN_LNB', 'FAULT_HFP')
-FAN_OFFSETS = None   # probe A: set by the closure run (None: the escapes are planned links of route-planned-6l.json)
+FAN_OFFSETS = ((-1.05, -1.15, -5.65), (-1.05, -0.85, -5.15), (-1.05, -0.55, -4.65), (-1.05, -0.05, -4.95))
 W_FAN = 0.15
 # J209 escape copper (W2 B2B). The LSHM pads are 0.30 mm wide at 0.50 mm pitch (0.20 mm gaps), and every rail contact has a
 # GND neighbour in its row (b2b-nets.json guard_rule), so: GND contacts join a B.Cu spine between the rows (inwards), rail
@@ -1775,7 +1777,8 @@ def corridor_check(inp, parts, vias):
     # the exit pair: only its parts in ZONE2_EXIT, inside the contract edge zone 2 span and the zone-2 height zone
     problems += [f'zone-2 exit field: PWR-B part {r} (not in EXIT_PARTS)' for r in in_ex if r not in EXIT_PARTS]
     problems += [f'zone-2 exit field: scripted via {v["id"]} at {v["at"]}' for v in evias
-                 if not (v['id'].startswith(('GND-', 'Q6A-')) and v['id'].split('-')[1] in EXIT_PARTS)]
+                 if not ((v['id'].startswith(('GND-', 'Q6A-')) and v['id'].split('-')[1] in EXIT_PARTS)
+                         or v['id'].startswith('ESC-J209-'))]
     ez = next((z for z in inp.contract.get('edge_zones', []) if set(z.get('headers', [])) >= {'J203', 'J506'}), None)
     pair = {}
     for r in ('J203', 'J506'):
@@ -1797,7 +1800,8 @@ def corridor_check(inp, parts, vias):
                  'exit pair J203 / J506 and C249 in ZONE2_EXIT (contract edge zone 2, exit top) and nothing else; the J209 lower '
                  'row escapes through the band J209_CORRIDOR between the J203 courtyard and the J209 courtyard, where no PWR-B '
                  'top courtyard and no scripted via stand other than those of the placement of record (make_spec.py '
-                 'corridor_check fails otherwise)'),
+                 'corridor_check fails otherwise); W2 PWR-L6-PLACE fourth pass (probe A): the escape-fan vias ESC-J209- of the '
+                 'contacts 25-31 (FAN_OFFSETS) belong to that record in the band and in the exit field'),
         'field_mm': list(field), 'field_area_mm2': round(area, 1),
         'field_free_of_cutouts_mm2': round(area - _raster_area([c['rect'] for c in in_field], field), 1),
         'cutouts_in_field': [{'ref': c['ref'], 'kind': c['kind'], 'rect': c['rect']} for c in in_field],
