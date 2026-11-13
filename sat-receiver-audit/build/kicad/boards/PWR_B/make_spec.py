@@ -322,16 +322,16 @@ PLACEMENT = {
     'C240': (10.1, 83.7, 0), 'C241': (18.7, 79, 270), 'C242': (16.623, 94.606, 90), 'C243': (13.5, 89.5, 180),
     'C244': (95.211, 13.033, 0), 'C245': (103.6, 14.7, 270), 'C246': (98.85, 19.65, 270), 'C247': (110.98, 21.325, 180),
     'C248': (80.5, 16.9, 0), 'C249': (91.447, 2.319, 0), 'C250': (94.03, 19.65, 270), 'C251': (36, 12, 90),
-    'C274': (19.675, 54.5, 270), 'C275': (22.825, 50.9, 270), 'C276': (22.55, 61.925, 180), 'C277': (36.97, 46.405, 90),
+    'C274': (19.675, 54.5, 270), 'C275': (22.55, 61.925, 180), 'C276': (22.825, 50.9, 270), 'C277': (36.97, 46.405, 90),
     'C282': (54.483, 20.169, 90), 'C283': (26.97, 29.32, 0), 'C284': (23.475, 29.022, 0), 'C285': (38.734, 47.163, 90),
     'C286': (42.496, 27.45, 90), 'C287': (36.764, 49.588, 90), 'C295': (72.5, 16.9, 0), 'C296': (61.947, 8.569, 0),
     'C297': (112.18, 15.097, 90), 'C298': (5.5, 22, 90), 'C501': (59, 23.5, 90), 'C502': (56.5, 25.2, 0),
     'C503': (38.5, 20.5, 0), 'C504': (67, 15.2, 90), 'C505': (64.5, 16.9, 0), 'C506': (37.5, 73, 0),
     'C507': (36.46, 76.867, 0), 'C521': (30.95, 105, 90), 'C522': (36, 90.5, 0), 'C550': (40.625, 47.101, 90),
     'C551': (38.651, 50.429, 90), 'C2901': (55.363, 33.73, 0), 'C2902': (40.167, 77.567, 0), 'C2911': (20.334, 42.046, 0),
-    'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (7.75, 45.8, 270),
-    'J202': (18.08, 27.75, 270), 'J203': (33.7, 31.55, 180), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
-    'J209': (98.8, 18.5, 180, 'B'), 'J506': (26.2, 55.4, 90), 'L206': (15.1, 57.8, 0), 'L207': (57.15, 13.2, 0),
+    'C2912': (5.654, 98.616, 0), 'D2901': (25.835, 50.625, 0), 'D2902': (5.225, 95.981, 0), 'J201': (110.95, -12.15, 180),
+    'J202': (73.15, -14.9, 180), 'J203': (97.05, -14.9, 180), 'J204': (104.55, 24.24, 180), 'J207': (85, 24.24, 180),
+    'J209': (98.8, 18.5, 180, 'B'), 'J506': (133.05, -12.15, 180), 'L206': (15.1, 57.8, 0), 'L207': (57.15, 13.2, 0),
     'L208': (23.1, 80.7, 0), 'L209': (108, 15.2, 0), 'L210': (90, 18.5, 0), 'L215': (67, 10, 0), 'Q2901': (25, 45, 90),
     'Q2902': (11, 104, 0), 'Q2911': (23.034, 26.169, 0), 'Q2912': (10.491, 66.069, 0), 'R228': (7.4, 56.2, 270),
     'R229': (2.1, 54.5, 0), 'R231': (9.3, 59.2, 0), 'R232': (11.588, 49.5, 0), 'R233': (49.45, 11.6, 270),
@@ -349,10 +349,16 @@ PLACEMENT = {
     'TP206': (12.755, 53.05, 0), 'TP207': (37.667, 31.094, 0), 'TP208': (13.323, 85.016, 0), 'TP209': (116.3, 22.8, 0),
     'TP210': (118.85, 22.8, 0), 'TP216': (92, 13, 0), 'TP2901': (58.876, 33.73, 0), 'TP2902': (40.679, 80.317, 0),
     'U206': (4.1, 57.6, 0), 'U207': (46.15, 13, 0), 'U208': (12.1, 80.5, 0), 'U209': (97, 16.2, 0), 'U210': (80.5, 20, 90),
-    'U215': (21.5, 58.5, 180), 'U217': (44.5, 20, 90), 'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90),
+    'U215': (21.5, 58.5, 0), 'U217': (44.5, 20, 90), 'U218': (9.5, 32.5, 90), 'U219': (23, 22, 90),
     'U221': (72.5, 20, 90), 'U501': (56.5, 28.3, 90), 'U502': (64.5, 20, 90), 'U507': (4.5, 51, 0),
 }
 PLUG_ZONES = ('J204', 'J207')   # top-span headers: no part between the mating face and the board edge
+BAND_TOP = 35.0                 # the top span edge of the band (contract outline; W2 PWRJ F2ENV: the outline grows down)
+# W2 PWRJ F2ENV probe: the S02 headers J201 / J202 / J203 and the PH 9 J506 stand in the slab under the band (board y < 0,
+# inside the bay: no display over board y < 11.8), side entry turned by 180 so that the mating face looks up the board (+y);
+# the plug and the wire bend need BAY_PLUG_MM of free board in front of the face, and the wires rise into the bay
+BAY_PLUGS = ('J201', 'J202', 'J203', 'J506')
+BAY_PLUG_MM = 4.0
 # Kelvin cell of each LNA channel (W2 PCB-PWRB lineage): TPS2553 switch, Kelvin shunt, XAL5030, input / shunt capacitors and,
 # for ch1-ch3, the two INA3221 filter resistors above the shunt; cell frame mm from the cell origin. The scripted Kelvin
 # copper assumes this geometry, so kelvin_cells() checks every channel against it.
@@ -403,10 +409,17 @@ LAB5_TAP_X = 62.6   # LAB5 tap: west end of the trunk, between R505 and the U502
 LAB5_TAP_Y = 22.6   # run of the fourth cell: below the J207 pin 12 pad (y >= 23.37), above U502's current-limit resistor
 
 
+F2ENV_PLACEMENT = BASE / 'build/kicad/boards/PWR_B/placement-f2env.json'   # W2 PWRJ F2ENV probe (place_f2env.py)
+
+
 def placement(inp):
-    """Anchor of every template ref (footprint origin)."""
+    """Anchor of every template ref (footprint origin); the F2-ENV probe re-placement (placement-f2env.json, written by
+    place_f2env.py) overrides the table for the refs it moved."""
     anchors = {}
-    for ref, row in PLACEMENT.items():
+    table = dict(PLACEMENT)
+    if F2ENV_PLACEMENT.is_file():
+        table.update({ref: tuple(v) for ref, v in read(F2ENV_PLACEMENT)['positions'].items()})
+    for ref, row in table.items():
         side = row[3] if len(row) > 3 else 'F'
         anchors[ref] = {'at': [row[0], row[1]], 'align': 'origin', 'rotation': row[2] % 360, 'side': side}
     if tuple(anchors[B2B_REF]['at']) != B2B_AT or anchors[B2B_REF]['side'] != 'B':
@@ -492,8 +505,12 @@ def check_placement(inp, parts):
                 problems.append(f'{a}: courtyard within {CRT_GUARD} mm of the cutout {cut}')
         for name in PLUG_ZONES:
             hb = parts[name].box
-            if a not in PLUG_ZONES and pa.side == 'F' and bg.rects_overlap(pa.box, (hb[0], hb[3], hb[2], c['outline_mm'][2][1])):
+            if a not in PLUG_ZONES and pa.side == 'F' and bg.rects_overlap(pa.box, (hb[0], hb[3], hb[2], BAND_TOP)):
                 problems.append(f'{a}: courtyard in the plug zone in front of {name}')
+        for name in BAY_PLUGS:
+            hb = parts[name].box
+            if a != name and pa.side == 'F' and bg.rects_overlap(pa.box, (hb[0], hb[3], hb[2], hb[3] + BAY_PLUG_MM)):
+                problems.append(f'{a}: courtyard in the bay plug zone in front of {name}')
         for (hx, hy), r in holes:
             for p in pa.pads:
                 if p['type'] != 'np_thru_hole' and box_dist(p['box'], (hx, hy, hx, hy)) < r:

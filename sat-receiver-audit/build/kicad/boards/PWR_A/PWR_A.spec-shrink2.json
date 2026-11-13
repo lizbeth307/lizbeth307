@@ -1358,7 +1358,7 @@
       "anchor": {
         "at": [
           29.45,
-          3.5
+          -26.5
         ],
         "align": "origin",
         "rotation": 90,
@@ -1372,7 +1372,7 @@
       "anchor": {
         "at": [
           47.95,
-          3.5
+          -26.5
         ],
         "align": "origin",
         "rotation": 90,
@@ -1386,7 +1386,7 @@
       "anchor": {
         "at": [
           10.95,
-          3.5
+          -26.5
         ],
         "align": "origin",
         "rotation": 90,
@@ -1400,7 +1400,7 @@
       "anchor": {
         "at": [
           73.85,
-          3.5
+          -26.5
         ],
         "align": "origin",
         "rotation": 90,
@@ -1414,7 +1414,7 @@
       "anchor": {
         "at": [
           42.5,
-          4.75
+          -25.25
         ],
         "align": "origin",
         "rotation": 270,
@@ -1428,7 +1428,7 @@
       "anchor": {
         "at": [
           68.15,
-          2.5
+          -27.5
         ],
         "align": "origin",
         "rotation": 180,
@@ -1442,7 +1442,7 @@
       "anchor": {
         "at": [
           24.0,
-          6.75
+          -23.25
         ],
         "align": "origin",
         "rotation": 270,
@@ -1456,7 +1456,7 @@
       "anchor": {
         "at": [
           86.9,
-          8.75
+          -21.25
         ],
         "align": "origin",
         "rotation": 270,
@@ -1484,7 +1484,7 @@
       "anchor": {
         "at": [
           124.5,
-          4.13
+          -25.87
         ],
         "align": "origin",
         "rotation": 90,
@@ -1566,7 +1566,7 @@
       "anchor": {
         "at": [
           117.7,
-          2.75
+          -27.25
         ],
         "align": "origin",
         "rotation": 90,
@@ -4396,7 +4396,7 @@
       "id": "CU_E1SW-RISE",
       "rect": [
         15.85,
-        1.8,
+        -28.2,
         19.45,
         36.0
       ],
@@ -5912,11 +5912,11 @@
         "outline": [
           [
             15.85,
-            1.8
+            -28.2
           ],
           [
             19.45,
-            1.8
+            -28.2
           ],
           [
             19.45,
@@ -5929,7 +5929,7 @@
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "BATT 3.6 mm: J107.2 (battery feed after the main switch) up past U211 to the leg (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "BATT 3.6 mm: J107.2 (battery feed after the main switch) up past U211 to the leg (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection); W2 PWRJ F2ENV probe: grown down by 30 mm with the bottom row (slab under the band)"
       },
       {
         "id": "E1SW-BAR",
@@ -7931,7 +7931,8 @@
       ]
     },
     "bottom_pockets_source": "mechanical/generated/contract/boards.json PWR bottom_side keep_in_mm (MECH-7, plate pockets PB1-PB13, board mm)",
-    "rule": "two-sided PWR-A (SHRINK-2 decision (6), W2 AREA-2 / MECH-7): the chip R/C listed in pcb/partition-budget.json candidates.<chosen>.pwr_a_bottom go on the bottom side; every bottom courtyard lies inside one plate pocket PB* (mechanical.json plate.pwr_bottom_pockets, computed by srrx_mech.rules.pwr_bottom_regions; board-coordinate list in mechanical/generated/contract/boards.json PWR bottom_side.keep_in_mm), so it is outside every thermal_bond zone and its land, outside the converter heat corridors and outside the plate-hole lands; it also stays outside every top THT pin field + 1.0 mm (pcb/partition-spec.json keepouts.pwr_a_bottom_parts); its height is at most the room h_max = shim gap + pocket depth - polyimide film - clearance (R-PWR-BOTTOM)"
+    "rule": "two-sided PWR-A (SHRINK-2 decision (6), W2 AREA-2 / MECH-7): the chip R/C listed in pcb/partition-budget.json candidates.<chosen>.pwr_a_bottom go on the bottom side; every bottom courtyard lies inside one plate pocket PB* (mechanical.json plate.pwr_bottom_pockets, computed by srrx_mech.rules.pwr_bottom_regions; board-coordinate list in mechanical/generated/contract/boards.json PWR bottom_side.keep_in_mm), so it is outside every thermal_bond zone and its land, outside the converter heat corridors and outside the plate-hole lands; it also stays outside every top THT pin field + 1.0 mm (pcb/partition-spec.json keepouts.pwr_a_bottom_parts); its height is at most the room h_max = shim gap + pocket depth - polyimide film - clearance (R-PWR-BOTTOM)",
+    "f2env_single_sided": "W2 PWRJ F2ENV probe: the bottom_refs go to the top side (study positions side F, legalised by place_board.py); the list is kept as a record"
   },
   "h_trim": {
     "protrusion_max_mm": 1.0,
@@ -8198,10 +8199,26 @@
     "note": "W2 PCB-PWRA-3 (design choice; review fixes F1/F2): anchored power stages and their scripted copper. Scripted: E1_SW from J107.2 to Q102; E1_CONV_IN from Q102 to both LM61460 VIN pins (each side with its CIN_HF and CIN, joined by the In2 VIN strap), C107 and both TPSM63606 VIN pins; SYS12 from L102.2 over COUT across the spine to the SYS12 node with F201.1, L202.1 and Q201.2; E1_LAB5_RAW from U108 VOUT to F102.1; E1_LAB5_FUSED from F102.2 to C111.1 and L101.1; LAB5 from L101.2 to C112.1, F104.1, L205.1 (the LT3045 feed) and the four J208 LAB5 contacts (F.Cu and B.Cu trunk). Left to the router (PCB-PWRA-4; placement_study.py corridor pre-check): the U107/U108 small-signal pins (FB, RT, EN, CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 IN pins and every branch net after F201, L202 and Q201"
   },
   "sides": [
-    "top",
-    "bottom"
+    "top"
   ],
   "max_height_bottom": 1.03,
   "max_height_bottom_note": "mechanical/generated/contract/boards.json PWR bottom_side h_max (MECH-7: shim gap 0.4 + pocket depth 1.0 - polyimide film 0.07 - clearance 0.3); the heights of the bottom chip parts are not read (TBD per MPN), so check_boards lists them as unverified",
-  "generator": "build/kicad/boards/PWR_A/make_spec.py"
+  "generator": "build/kicad/boards/PWR_A/make_spec.py",
+  "f2env": {
+    "slab_mm": 30.0,
+    "row_moved_down": [
+      "J105",
+      "J106",
+      "J107",
+      "J108",
+      "J109",
+      "J110",
+      "J111",
+      "J112",
+      "J114",
+      "J507"
+    ],
+    "single_sided": true,
+    "generator": "build/kicad/boards/PWR_A/f2env_patch.py (probe only, wip/w2-pwrj-f2env)"
+  }
 }

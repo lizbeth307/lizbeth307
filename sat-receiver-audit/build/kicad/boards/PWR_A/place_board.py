@@ -156,9 +156,11 @@ class Model:
         ol = contract['outline_mm']
         xs = sorted({p[0] for p in ol})
         ys = sorted({p[1] for p in ol})
-        # the L of the contract as the union of two rectangles (outline [[0,0],[136,0],[136,35],[42,35],[42,110],[0,110]])
-        self.areas_top = [(EDGE_INSET, EDGE_INSET, xs[-1] - EDGE_INSET, ys[1] - EDGE_INSET),
-                          (EDGE_INSET, EDGE_INSET, xs[1] - EDGE_INSET, ys[-1] - EDGE_INSET)]
+        # the L of the contract as the union of two rectangles (outline [[0,0],[136,0],[136,35],[42,35],[42,110],[0,110]];
+        # W2 PWRJ F2ENV probe: the band grows down to y -30, so the lower bound is the outline's, not 0)
+        self.areas_top = [(xs[0] + EDGE_INSET, ys[0] + EDGE_INSET, xs[-1] - EDGE_INSET, ys[1] - EDGE_INSET),
+                          (xs[0] + EDGE_INSET, ys[0] + EDGE_INSET, xs[1] - EDGE_INSET, ys[-1] - EDGE_INSET)]
+        self.bbox = (xs[0], ys[0], xs[-1], ys[-1])
         self.holes = [(tuple(h), contract['hole_keepout_d'] / 2) for h in contract['holes_mm']]
         self.copper = {'F': [], 'B': []}
         for ra in self.spec['reserved_areas']:
@@ -184,7 +186,7 @@ class Model:
         # each pocket clipped to the inset L (route iteration 2, sr-rx-pcb run 43295500516: R123 stood at the inner edge
         # x 42 of the leg, copper_edge_clearance)
         self.pockets = []
-        for x, y, w, h in contract['bottom_side']['keep_in_mm']:
+        for x, y, w, h in (contract.get('bottom_side') or {}).get('keep_in_mm', []):   # F2ENV: single-sided, none
             cuts = [(max(x, a[0]), max(y, a[1]), min(x + w, a[2]), min(y + h, a[3])) for a in self.areas_top]
             cuts = [c for c in cuts if c[2] > c[0] and c[3] > c[1]]
             self.pockets.append(max(cuts, key=lambda c: ((c[2] - c[0]) * (c[3] - c[1]), c)))
@@ -327,15 +329,15 @@ def place():
         a spiral spot within 15 mm; all or nothing. Returns ([evicted refs], spot) or None."""
         side = m.side[ref]
         spots = []
-        for x in range(1, 136):
-            for y in range(1, 110):
+        for x in range(int(m.bbox[0]) + 1, int(m.bbox[2])):
+            for y in range(int(m.bbox[1]) + 1, int(m.bbox[3])):
                 for rot in (0, 90, 180, 270):
                     at = at_for_centre(ref, (x, y), rot)
                     b = m.box(ref, at, rot)
                     if m.static_ok(ref, b):
                         spots.append((math.dist((x, y), c0), x, y, rot, at))
         spots.sort()
-        for _d, _x, _y, rot, at in spots[:400]:
+        for _d, _x, _y, rot, at in spots[:2000]:
             b = m.box(ref, at, rot)
             hit = [o for o in grids[side].near(b) if o != ref and overlap(b, m.box(o), GAP)]
             if any(m.fixed[o] for o in hit):
@@ -373,7 +375,7 @@ def place():
         if legal(ref, m.at[ref], m.rot[ref]):
             continue
         grids[m.side[ref]].remove(ref, m.box(ref))
-        found = spiral(ref, m.at[ref], (m.rot[ref], (m.rot[ref] + 90) % 360), 30.0)
+        found = spiral(ref, m.at[ref], (m.rot[ref], (m.rot[ref] + 90) % 360), 90.0)  # F2ENV: the slab is up to 80 mm away
         if found:
             m.at[ref], m.rot[ref] = found
             grids[m.side[ref]].add(ref, m.box(ref))

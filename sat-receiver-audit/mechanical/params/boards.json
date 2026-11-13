@@ -12,15 +12,16 @@
     "PWR": {
       "name": "power board PWR-A, plate-bonded (PWR_MAIN + PWR_BRANCH + USB_POWER)",
       "domains": ["PWR_MAIN", "PWR_BRANCH", "USB_POWER"],
-      "outline": [[0, 0], [136, 0], [136, 35], [42, 35], [42, 110], [0, 110]],
-      "rects": [[0, 0, 136, 35], [0, 35, 42, 75]],
+      "outline": [[0, -30], [136, -30], [136, 35], [42, 35], [42, 110], [0, 110]],
+      "_outline_f2env": "W2 PWRJ F2ENV probe: the band grows down by the 30 mm slab (board frame of the L kept, so place.origin is +30 and the lower-left corner stays at enclosure (6, 38.5)); the bottom harness row moves to the new bottom edge in the PCB probe (it stays above the tray); two more coaxial F45 holes (4, -24) and (132, -24) at the R-CLINCH-EDGE distance 6.0 from the plate edge; single-sided in the probe (no bottom_side, no plate pockets PB*)",
+      "rects": [[0, -30, 136, 65], [0, 35, 42, 75]],
       "place": {
-        "origin": [6.0, 38.5],
+        "origin": [6.0, 68.5],
         "z_bottom": 40.9,
         "facing": "+z",
         "mount": "plate front face; Gelid 0.5 mm pads under the thermal_bond zones, gap 0.4 mm set by shim washers (mechanical.json pwr_bond)"
       },
-      "holes": [[4, 6], [132, 6], [132, 31], [46, 31], [4, 106], [38, 106], [38, 56]],
+      "holes": [[4, 6], [132, 6], [132, 31], [46, 31], [4, 106], [38, 106], [38, 56], [4, -24], [132, -24]],
       "plate_fastener": "pem_f_m3_1",
       "screw": "the M3 male stud of the PWR-A/PWR-B standoff (F45, M3 male-female, body 5.0 = the B2B stack) from the component side (board 1.6 + shim 0.4 + plate 2.0: the stud is 3.53-4.0 long, so it fills the 1.53 thread of the PEM nut flush with the plate front face and its tip ends at most flush with the plate rear face, as the earlier M3 x 4 did; generated/fastener-stacks.json PWR_A-PLATE)",
       "hole_d": 3.2,
@@ -33,12 +34,6 @@
       "_converter_zones_note": "W2 MECH-7: thermal_bond zone number (1-based) -> reserved block id of pcb/partition-budget.json candidates.<chosen>.planned.blocks that must fit inside it (R-PWR-ZONES, block w x d in either orientation) while its planned change is pending; once GR-5A has put the converter into the graph the block is retired (srrx_mech.boards.planned_live, the rule of pcb/partition_budget.py) and R-PWR-ZONES packs the graph courtyards of converter_zone_refs instead (MECH-7 part 2)",
       "converter_zone_refs": {"3": ["U107", "L102"], "4": ["U108"]},
       "_converter_zone_refs_note": "W2 MECH-7 part 2: the parts each converter zone holds over its Gelid pad, the heat sources of the converter (W2 GR-5A report: 'Thermal zones 3/4 hold U107, L102 and U108'): zone 3 the LM61460AANRJRR (exposed-pad VQFN-HR, SR_RX_Custom:TI_RJR0014A_VQFN-HR-14_4x3.5mm) and its 4.7 uH SRP1040VA-4R7M on the KiCad SRP1038C land; zone 4 the TPSM63606RDLR power module (SR_RX_Custom:TI_RDL0020A_B3QFN-20_5x5.5mm); their input and output capacitors sit next to them (SNVSBD5D / SLVSGB4B layout), inside or beside the zone at the PCB-PWRA-3 placement",
-      "bottom_side": {
-        "rule": "two-sided PWR-A (SHRINK-2 decision (6), W2 AREA-2 / MECH-7): the chip R/C listed in pcb/partition-budget.json candidates.<chosen>.pwr_a_bottom go on the bottom side; every bottom courtyard lies inside one plate pocket PB* (mechanical.json plate.pwr_bottom_pockets, computed by srrx_mech.rules.pwr_bottom_regions; board-coordinate list in mechanical/generated/contract/boards.json PWR bottom_side.keep_in_mm), so it is outside every thermal_bond zone and its land, outside the converter heat corridors and outside the plate-hole lands; it also stays outside every top THT pin field + 1.0 mm (pcb/partition-spec.json keepouts.pwr_a_bottom_parts); its height is at most the room h_max = shim gap + pocket depth - polyimide film - clearance (R-PWR-BOTTOM)",
-        "clearance": 0.3,
-        "_clearance_note": "design value of this package: shim gap tolerance 0.05 (mechanical.json pwr_bond gap_tol) + pocket depth tolerance 0.05 + 0.2 for board bow between the F45 studs",
-        "heights": "TBD per MPN: the heights of the bottom chip refs are not read (pcb/partition-spec.json candidates.shrink2.pwr_a_bottom.h_room_formula); PCB-PWRA-3 checks each against h_max"
-      },
       "h_trim": {
         "rule": "rule H-TRIM (pcb/partition-spec.json keepouts.h_trim, W2 AREA-2): the THT pins of every PWR-B header and THT part are trimmed flush after soldering, protrusion_max below the PWR-B bottom face; PWR-A may then place parts up to zone_h_max under those pin fields (pin field + window_margin 0.5 each side), so the field costs no PWR-A area",
         "protrusion_max": 1.0,
@@ -57,7 +52,7 @@
         },
         {
           "edge": "right",
-          "span": [0, 35],
+          "span": [-30, 35],
           "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports, GX16 and the XT30 service pigtail through plate slot SL3 and the battery compartment; W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false: READS-P found no mating FFC) J113, J114, J115 and J507 keep the wip/w2-pwra1 80d92c28 place in the second and third column of the bottom-right corner and leave by this edge (S11, S12, S32)",
           "headers": ["J104", "J113", "J114", "J115", "J507"]
         },
@@ -90,16 +85,17 @@
       "name": "power mezzanine PWR-B (PWR_BRANCH_SW + USB_POWER_SW)",
       "domains": ["PWR_BRANCH_SW", "USB_POWER_SW"],
       "_domains_note": "CC-12: the third copy of the domain map (pcb/prepare.py and tools/assembly_data.py BOARD_OF_DOMAIN / tools/build_parts.py BOARD3 are GR-3's); names from pcb/partition-spec.json domains.PWR_B.prepare_domains (AREA candidate a: E2 'LNA: канал 1'..'4', 'RTL-B', 'S-band LaNA WB', 'INA3221: струми LNA1–3', the LNB/Boni/AUX12 voltage monitors -> PWR_BRANCH_SW; E5 'VBUS RTL-A і LAB PORT', 'LAB BUS I2C buffer' -> USB_POWER_SW; parts above hB stay PWR-A by DOMAIN_OVERRIDE)",
-      "outline": [[0, 0], [136, 0], [136, 35], [42, 35], [42, 110], [0, 110]],
+      "outline": [[0, -30], [136, -30], [136, 35], [42, 35], [42, 110], [0, 110]],
       "_outline_note": "W2 MECH-7 (SHRINK-2): the full PWR-A L (same origin, coaxial holes); the two Pololu windows are deleted with the modules. The windows over the PWR-A parts taller than hA (pcb/partition-budget.json candidates.<chosen>.window_refs: C107, C113, C206, C207, C210, C222, C254, C262, C265, C273, C511, C512, F102, L101, L501; courtyard + window_margin 0.5), the edge strips of the PWR-A harness headers and the probe windows stay a placement rule for PCB-PWRB-2 at the PCB-PWRA-3 placement (windows_mm2, edge_strips_mm2, tp_probe_windows_mm2 and boards.PWR_B.usable_mm2 of the budget), not contract cut-outs; the fit-report board_area row of PWR_B judges the need against that usable area, this outline is only an upper bound",
-      "rects": [[0, 0, 136, 35], [0, 35, 42, 75]],
+      "_outline_f2env": "W2 PWRJ F2ENV probe: same outline as PWR-A (band + 30 mm slab, coaxial holes); the slab lies in the bay (no display over board y < 11.8), where the S02 headers J201-J203 and J506 stand with their wires rising into the bay (build/kicad/boards/PWR_B/make_spec.py BAY_PLUGS)",
+      "rects": [[0, -30, 136, 65], [0, 35, 42, 75]],
       "place": {
-        "origin": [6.0, 38.5],
+        "origin": [6.0, 68.5],
         "z_bottom": 47.5,
         "facing": "+z",
         "mount": "on seven M3 male-female standoffs 5.0 mm (F45) over the PWR-A holes, M3 screws from the component side (F46); the Samtec LSHM-150-02.5-L-DV-A-N-K-TR J209 on the PWR-B bottom mates the same part J208 on the PWR-A top at 5.00 mm (two -02.5 halves, catalogue F-224; pcb/partition-spec.json b2b, W2 B2B)"
       },
-      "holes": [[4, 6], [132, 6], [132, 31], [46, 31], [4, 106], [38, 106], [38, 56]],
+      "holes": [[4, 6], [132, 6], [132, 31], [46, 31], [4, 106], [38, 106], [38, 56], [4, -24], [132, -24]],
       "screw": "M3 ISO 14580 A2 TX10 from the component side into the female thread of the F45 standoff (F46; length from generated/fastener-stacks.json PWR_B-STANDOFF)",
       "hole_d": 3.2,
       "hole_keepout_d": 7.0,
@@ -124,7 +120,7 @@
       "edge_zones": [
         {
           "edge": "right",
-          "span": [0, 35],
+          "span": [-30, 35],
           "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false, READS-P found no mating FFC) the three headers (58.7 mm of courtyards) have no conflict-free home: this 35 mm edge also carries the PWR-A J104 strip and the hole keep-outs, and the PWR-B bottom edge lies over the PWR-A bottom-row strips, so the recorded bottom-edge deviation of W2 PCB-PWRB stays OPEN (SHRINK-2 stays_open: 'S02 has a home only with a sourced FFC'); J506/J508 left this edge (edge zone 2)",
           "headers": ["J201", "J202", "J203"]
         },
@@ -158,7 +154,7 @@
       "outline": [[0, 0], [184, 0], [184, 44.5], [0, 44.5]],
       "rects": [[0, 0, 184, 44.5]],
       "place": {
-        "origin": [17.6, 99.0],
+        "origin": [17.6, 129.0],
         "z_bottom": 35.5,
         "facing": "-z",
         "mount": "PEM SO-M3-3 thru-hole standoffs (3 mm) clinched into the plate, heads flush with the plate front face; single RF GND/CHASSIS bond at BOND-RF"
@@ -218,7 +214,7 @@
       "cutouts": [[12.0, 68.5, 25.0, 25.0], [12.0, 109.5, 25.0, 25.0]],
       "rects": [[0, 0, 50, 68.5], [0, 68.5, 12, 66], [37, 68.5, 13, 66], [0, 93.5, 50, 16], [0, 134.5, 40, 9.5], [40, 134.5, 10, 2.5]],
       "place": {
-        "origin": [176.0, 13.0],
+        "origin": [176.0, 43.0],
         "z_bottom": 58.98,
         "facing": "+z",
         "mount": "M2.5 screws into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses"
@@ -310,8 +306,8 @@
       "outline": [[0, 0], [24, 0], [24, 24], [0, 24]],
       "rects": [[0, 0, 24, 24]],
       "place_at": {
-        "main": [188.5, 123.0],
-        "volume": [188.5, 82.0]
+        "main": [188.5, 153.0],
+        "volume": [188.5, 112.0]
       },
       "place": {
         "z_bottom": 58.38,

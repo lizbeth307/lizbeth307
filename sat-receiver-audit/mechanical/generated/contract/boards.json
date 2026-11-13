@@ -19,11 +19,11 @@
       "outline_mm": [
         [
           0,
-          0
+          -30
         ],
         [
           136,
-          0
+          -30
         ],
         [
           136,
@@ -43,7 +43,7 @@
         ]
       ],
       "cutouts_mm": [],
-      "area_mm2": 7910.0,
+      "area_mm2": 11990.0,
       "holes_mm": [
         [
           4,
@@ -72,6 +72,14 @@
         [
           38,
           56
+        ],
+        [
+          4,
+          -24
+        ],
+        [
+          132,
+          -24
         ]
       ],
       "hole_d": 3.2,
@@ -81,7 +89,7 @@
         "default": {
           "origin": [
             6.0,
-            38.5
+            68.5
           ],
           "z_bottom": 40.9,
           "facing": "+z"
@@ -112,7 +120,7 @@
         {
           "edge": "right",
           "span": [
-            0,
+            -30,
             35
           ],
           "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports, GX16 and the XT30 service pigtail through plate slot SL3 and the battery compartment; W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false: READS-P found no mating FFC) J113, J114, J115 and J507 keep the wip/w2-pwra1 80d92c28 place in the second and third column of the bottom-right corner and leave by this edge (S11, S12, S32)",
@@ -178,105 +186,6 @@
       "height_zones": [],
       "rear_zones": [],
       "dxf": "boards/pwr-edge-cuts.dxf",
-      "bottom_side": {
-        "keep_in_mm": [
-          [
-            0,
-            12.0,
-            7.0,
-            17.0
-          ],
-          [
-            130.0,
-            12.0,
-            6.0,
-            13.0
-          ],
-          [
-            0,
-            29.0,
-            40.0,
-            8.0
-          ],
-          [
-            52.0,
-            29.0,
-            74.0,
-            5.1
-          ],
-          [
-            0,
-            37.0,
-            5.0,
-            28.0
-          ],
-          [
-            0,
-            65.0,
-            9.6,
-            5.5
-          ],
-          [
-            21.6,
-            65.0,
-            20.4,
-            5.5
-          ],
-          [
-            0,
-            71.0,
-            5.0,
-            18.0
-          ],
-          [
-            0,
-            89.0,
-            42,
-            6.0
-          ],
-          [
-            0,
-            95.0,
-            9.6,
-            5.0
-          ],
-          [
-            21.6,
-            95.0,
-            20.4,
-            5.0
-          ],
-          [
-            21.6,
-            100.0,
-            10.4,
-            7.0
-          ],
-          [
-            10.0,
-            107.0,
-            22.0,
-            3.0
-          ]
-        ],
-        "pockets": [
-          "PB1",
-          "PB2",
-          "PB3",
-          "PB4",
-          "PB5",
-          "PB6",
-          "PB7",
-          "PB8",
-          "PB9",
-          "PB10",
-          "PB11",
-          "PB12",
-          "PB13"
-        ],
-        "h_max": 1.03,
-        "rule": "two-sided PWR-A (SHRINK-2 decision (6), W2 AREA-2 / MECH-7): the chip R/C listed in pcb/partition-budget.json candidates.<chosen>.pwr_a_bottom go on the bottom side; every bottom courtyard lies inside one plate pocket PB* (mechanical.json plate.pwr_bottom_pockets, computed by srrx_mech.rules.pwr_bottom_regions; board-coordinate list in mechanical/generated/contract/boards.json PWR bottom_side.keep_in_mm), so it is outside every thermal_bond zone and its land, outside the converter heat corridors and outside the plate-hole lands; it also stays outside every top THT pin field + 1.0 mm (pcb/partition-spec.json keepouts.pwr_a_bottom_parts); its height is at most the room h_max = shim gap + pocket depth - polyimide film - clearance (R-PWR-BOTTOM)"
-      },
       "converter_zones": {
         "3": "CONV_SYS12",
         "4": "CONV_LAB5"
@@ -306,11 +215,11 @@
       "outline_mm": [
         [
           0,
-          0
+          -30
         ],
         [
           136,
-          0
+          -30
         ],
         [
           136,
@@ -330,7 +239,7 @@
         ]
       ],
       "cutouts_mm": [],
-      "area_mm2": 7910.0,
+      "area_mm2": 11990.0,
       "holes_mm": [
         [
           4,
@@ -359,6 +268,14 @@
         [
           38,
           56
+        ],
+        [
+          4,
+          -24
+        ],
+        [
+          132,
+          -24
         ]
       ],
       "hole_d": 3.2,
@@ -368,7 +285,7 @@
         "default": {
           "origin": [
             6.0,
-            38.5
+            68.5
           ],
           "z_bottom": 47.5,
           "facing": "+z"
@@ -379,7 +296,7 @@
         {
           "edge": "right",
           "span": [
-            0,
+            -30,
             35
           ],
           "use": "CTRL harness S02 (J201 X02S0-PWR JST PH side entry, J202/J203 S02-PWR-SIG-1/2 JST PHD side entry; build/16-dzhgut-rozyemy.csv board PWR_B, W2 GR-3); W2 MECH-7 part 2: without the S02 FFC (W2 GR-5B ffc_adopted false, READS-P found no mating FFC) the three headers (58.7 mm of courtyards) have no conflict-free home: this 35 mm edge also carries the PWR-A J104 strip and the hole keep-outs, and the PWR-B bottom edge lies over the PWR-A bottom-row strips, so the recorded bottom-edge deviation of W2 PCB-PWRB stays OPEN (SHRINK-2 stays_open: 'S02 has a home only with a sourced FFC'); J506/J508 left this edge (edge zone 2)",
@@ -482,7 +399,7 @@
         "default": {
           "origin": [
             17.6,
-            99.0
+            129.0
           ],
           "z_bottom": 35.5,
           "facing": "-z"
@@ -813,7 +730,7 @@
         "default": {
           "origin": [
             176.0,
-            13.0
+            43.0
           ],
           "z_bottom": 58.98,
           "facing": "+z"
@@ -1529,7 +1446,7 @@
         "main": {
           "origin": [
             188.5,
-            123.0
+            153.0
           ],
           "z_bottom": 58.38,
           "facing": "+z"
@@ -1537,7 +1454,7 @@
         "volume": {
           "origin": [
             188.5,
-            82.0
+            112.0
           ],
           "z_bottom": 58.38,
           "facing": "+z"

@@ -419,19 +419,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.1,
-          60.8
+          5.15,
+          56.73
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            2.1,
-            60.8
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -439,8 +432,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.7,
-          56.1
+          13.75,
+          52.03
         ],
         "align": "origin",
         "rotation": 270,
@@ -452,12 +445,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          15.805,
-          53.55
+          37.495,
+          47.182
         ],
         "align": "origin",
-        "rotation": 180,
-        "side": "F"
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            37.495,
+            47.182
+          ],
+          "angle": 90
+        }
       }
     },
     {
@@ -465,12 +465,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          18,
-          49.5
+          11.315,
+          46.487
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F"
+        "rotation": 180,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            11.315,
+            46.487
+          ],
+          "angle": 90
+        }
       }
     },
     {
@@ -478,19 +485,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          44.15,
-          16.2
+          44.07,
+          16.4
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            44.15,
-            16.2
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -498,8 +498,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          52.75,
-          11.5
+          52.67,
+          11.7
         ],
         "align": "origin",
         "rotation": 270,
@@ -511,16 +511,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.776,
-          8.8
+          49.866,
+          21.623
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F",
         "ref_text": {
           "at": [
-            40.776,
-            8.8
+            49.866,
+            21.623
           ],
           "angle": 0
         }
@@ -531,18 +531,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30,
-          14
+          21.052,
+          22.737
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 180,
         "side": "F",
         "ref_text": {
           "at": [
-            30.0,
-            14.0
+            21.052,
+            22.737
           ],
-          "angle": 0
+          "angle": 90
         }
       }
     },
@@ -551,19 +551,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.1,
-          83.7
+          30.62,
+          2.774
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            10.1,
-            83.7
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -571,19 +564,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          18.7,
-          79
+          39.22,
+          -1.926
         ],
         "align": "origin",
         "rotation": 270,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            18.7,
-            79.0
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -591,19 +577,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          16.623,
-          94.606
+          23.259,
+          50.558
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            16.623,
-            94.606
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -611,8 +590,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          13.5,
-          89.5
+          19.56,
+          82.05
         ],
         "align": "origin",
         "rotation": 180,
@@ -722,11 +701,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36,
-          12
+          50.83,
+          5.65
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 270,
         "side": "F"
       }
     },
@@ -735,19 +714,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          19.675,
-          54.5
+          28.781,
+          39.146
         ],
         "align": "origin",
-        "rotation": 270,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            19.675,
-            54.5
-          ],
-          "angle": 90
-        }
+        "rotation": 90,
+        "side": "F"
       }
     },
     {
@@ -755,19 +727,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.825,
-          50.9
+          45.62,
+          18.425
         ],
         "align": "origin",
-        "rotation": 270,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            22.825,
-            50.9
-          ],
-          "angle": 0
-        }
+        "rotation": 0,
+        "side": "F"
       }
     },
     {
@@ -775,11 +740,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          22.55,
-          61.925
+          39.795,
+          6.39
         ],
         "align": "origin",
-        "rotation": 180,
+        "rotation": 0,
         "side": "F"
       }
     },
@@ -788,19 +753,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36.97,
-          46.405
+          76.237,
+          -0.589
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            36.97,
-            46.405
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -808,11 +766,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          54.483,
-          20.169
+          84.913,
+          12.189
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 0,
         "side": "F"
       }
     },
@@ -821,11 +779,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          26.97,
-          29.32
+          67.29,
+          1.38
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F"
       }
     },
@@ -834,12 +792,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.475,
-          29.022
+          88.225,
+          7.892
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F"
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            88.225,
+            7.892
+          ],
+          "angle": 90
+        }
       }
     },
     {
@@ -847,19 +812,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.734,
-          47.163
+          65.234,
+          4.083
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            38.734,
-            47.163
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -867,19 +825,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          42.496,
-          27.45
+          96.492,
+          0.514
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            42.496,
-            27.45
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -887,19 +838,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36.764,
-          49.588
+          69.524,
+          1.548
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            36.764,
-            49.588
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -953,19 +897,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.5,
-          22
+          57.04,
+          5.79
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            5.5,
-            22.0
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -999,11 +936,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.5,
-          20.5
+          39.74,
+          24.32
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F"
       }
     },
@@ -1038,16 +975,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          37.5,
-          73
+          36.963,
+          72.859
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 180,
         "side": "F",
         "ref_text": {
           "at": [
-            37.5,
-            73.0
+            36.963,
+            72.859
           ],
           "angle": 90
         }
@@ -1058,18 +995,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36.46,
-          76.867
+          56.18,
+          32.997
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 270,
         "side": "F",
         "ref_text": {
           "at": [
-            36.46,
-            76.867
+            56.18,
+            32.997
           ],
-          "angle": 90
+          "angle": 0
         }
       }
     },
@@ -1078,19 +1015,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.95,
-          105
+          29.82,
+          63.8
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            30.95,
-            105.0
-          ],
-          "angle": 0
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -1098,16 +1028,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          36,
-          90.5
+          30.13,
+          56.26
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 180,
         "side": "F",
         "ref_text": {
           "at": [
-            36.0,
-            90.5
+            30.13,
+            56.26
           ],
           "angle": 90
         }
@@ -1118,19 +1048,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.625,
-          47.101
+          73.035,
+          2.811
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            40.625,
-            47.101
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -1138,19 +1061,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          38.651,
-          50.429
+          67.891,
+          5.019
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            38.651,
-            50.429
-          ],
-          "angle": 90
-        }
+        "rotation": 270,
+        "side": "F"
       }
     },
     {
@@ -1158,19 +1074,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          55.363,
-          33.73
+          50.479,
+          26.356
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            55.363,
-            33.73
-          ],
-          "angle": 0
-        }
+        "rotation": 270,
+        "side": "F"
       }
     },
     {
@@ -1178,16 +1087,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.167,
-          77.567
+          39.975,
+          51.402
         ],
         "align": "origin",
         "rotation": 0,
         "side": "F",
         "ref_text": {
           "at": [
-            40.167,
-            77.567
+            39.975,
+            51.402
           ],
           "angle": 90
         }
@@ -1198,19 +1107,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          20.334,
-          42.046
+          28.154,
+          31.616
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            20.334,
-            42.046
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -1218,19 +1120,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.654,
-          98.616
+          11.721,
+          79.532
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            5.654,
-            98.616
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -1238,19 +1133,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          25.835,
-          50.625
+          29.207,
+          34.427
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            25.835,
-            50.625
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -1258,19 +1146,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          5.225,
-          95.981
+          12.035,
+          82.301
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            5.225,
-            95.981
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -1278,19 +1159,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          7.75,
-          45.8
+          110.95,
+          -12.15
         ],
         "align": "origin",
-        "rotation": 270,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            5.3,
-            41.8
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -1298,19 +1172,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          18.08,
-          27.75
+          73.15,
+          -14.9
         ],
         "align": "origin",
-        "rotation": 270,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            13.88,
-            18.75
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -1318,8 +1185,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          33.7,
-          31.55
+          97.05,
+          -14.9
         ],
         "align": "origin",
         "rotation": 180,
@@ -1370,16 +1237,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          26.2,
-          55.4
+          133.05,
+          -12.15
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 180,
         "side": "F",
         "ref_text": {
           "at": [
-            28.65,
-            63.4
+            125.05,
+            -9.7
           ],
           "angle": 90
         }
@@ -1390,8 +1257,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          15.1,
-          57.8
+          18.15,
+          53.73
         ],
         "align": "origin",
         "rotation": 0,
@@ -1403,8 +1270,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          57.15,
-          13.2
+          57.07,
+          13.4
         ],
         "align": "origin",
         "rotation": 0,
@@ -1416,8 +1283,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.1,
-          80.7
+          43.62,
+          -0.226
         ],
         "align": "origin",
         "rotation": 0,
@@ -1468,18 +1335,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          25,
-          45
+          35.43,
+          32.13
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 0,
         "side": "F",
         "ref_text": {
           "at": [
-            25.0,
-            45.0
+            35.43,
+            32.13
           ],
-          "angle": 90
+          "angle": 0
         }
       }
     },
@@ -1488,8 +1355,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          11,
-          104
+          13.53,
+          74.037
         ],
         "align": "origin",
         "rotation": 0,
@@ -1501,12 +1368,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23.034,
-          26.169
+          36.724,
+          14.409
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F"
+        "rotation": 180,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            36.724,
+            14.409
+          ],
+          "angle": 90
+        }
       }
     },
     {
@@ -1514,19 +1388,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.491,
-          66.069
+          27.791,
+          8.359
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            10.491,
-            66.069
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -1534,8 +1401,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          7.4,
-          56.2
+          10.45,
+          52.13
         ],
         "align": "origin",
         "rotation": 270,
@@ -1547,19 +1414,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.1,
-          54.5
+          5.15,
+          50.43
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            2.1,
-            54.5
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -1567,8 +1427,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.3,
-          59.2
+          12.35,
+          55.13
         ],
         "align": "origin",
         "rotation": 0,
@@ -1580,12 +1440,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          11.588,
-          49.5
+          16.718,
+          48.01
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F"
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            16.718,
+            48.01
+          ],
+          "angle": 90
+        }
       }
     },
     {
@@ -1593,8 +1460,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          49.45,
-          11.6
+          49.37,
+          11.8
         ],
         "align": "origin",
         "rotation": 270,
@@ -1606,18 +1473,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          44.15,
-          9.9
+          44.07,
+          10.1
         ],
         "align": "origin",
         "rotation": 0,
         "side": "F",
         "ref_text": {
           "at": [
-            44.15,
-            9.9
+            44.07,
+            10.1
           ],
-          "angle": 0
+          "angle": 90
         }
       }
     },
@@ -1626,8 +1493,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          51.35,
-          14.6
+          51.27,
+          14.8
         ],
         "align": "origin",
         "rotation": 0,
@@ -1639,19 +1506,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          29.288,
-          8.8
+          35.378,
+          24.16
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            29.288,
-            8.8
-          ],
-          "angle": 0
-        }
+        "rotation": 270,
+        "side": "F"
       }
     },
     {
@@ -1659,19 +1519,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          15.4,
-          79.1
+          35.92,
+          -1.826
         ],
         "align": "origin",
         "rotation": 270,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            15.4,
-            79.1
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -1679,19 +1532,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.1,
-          77.4
+          30.62,
+          -3.526
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            10.1,
-            77.4
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -1699,8 +1545,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          17.3,
-          82.1
+          37.82,
+          1.174
         ],
         "align": "origin",
         "rotation": 0,
@@ -1712,11 +1558,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          21.662,
-          85.5
+          20.222,
+          77.72
         ],
         "align": "origin",
-        "rotation": 180,
+        "rotation": 0,
         "side": "F"
       }
     },
@@ -1810,11 +1656,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          59.385,
-          19.013
+          78.245,
+          9.79
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 270,
         "side": "F"
       }
     },
@@ -1823,8 +1669,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          8,
-          61.9
+          11.05,
+          57.83
         ],
         "align": "origin",
         "rotation": 90,
@@ -1836,8 +1682,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          10.6,
-          61.9
+          13.65,
+          57.83
         ],
         "align": "origin",
         "rotation": 90,
@@ -1849,8 +1695,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          50.05,
-          17.3
+          49.97,
+          17.5
         ],
         "align": "origin",
         "rotation": 90,
@@ -1862,8 +1708,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          52.65,
-          17.3
+          52.57,
+          17.5
         ],
         "align": "origin",
         "rotation": 90,
@@ -1875,8 +1721,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          16,
-          84.8
+          36.52,
+          3.874
         ],
         "align": "origin",
         "rotation": 90,
@@ -1888,19 +1734,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          18.6,
-          84.8
+          39.12,
+          3.874
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            18.6,
-            84.8
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -1921,11 +1760,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          53.817,
-          23.411
+          83.033,
+          9.585
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 180,
         "side": "F"
       }
     },
@@ -1934,12 +1773,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          51.5,
-          25.856
+          88.39,
+          11.246
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F"
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            88.39,
+            11.246
+          ],
+          "angle": 90
+        }
       }
     },
     {
@@ -1947,11 +1793,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          20.217,
-          22.522
+          86.227,
+          9.172
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 270,
         "side": "F"
       }
     },
@@ -1960,19 +1806,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          42.217,
-          34.038
+          94.577,
+          0.438
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            42.217,
-            34.038
-          ],
-          "angle": 0
-        }
+        "rotation": 270,
+        "side": "F"
       }
     },
     {
@@ -1980,11 +1819,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          44.996,
-          26.692
+          88.557,
+          0.633
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F"
       }
     },
@@ -2019,11 +1858,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          56.789,
-          19.26
+          62.559,
+          4.97
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 270,
         "side": "F"
       }
     },
@@ -2097,16 +1936,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          32.581,
-          75.617
+          120.151,
+          9.087
         ],
         "align": "origin",
         "rotation": 90,
         "side": "F",
         "ref_text": {
           "at": [
-            32.581,
-            75.617
+            120.151,
+            9.087
           ],
           "angle": 0
         }
@@ -2117,19 +1956,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          33.859,
-          42.821
+          48.339,
+          -12.129
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            33.859,
-            42.821
-          ],
-          "angle": 0
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -2137,19 +1969,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          35.826,
-          42.961
+          51.506,
+          -11.269
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            35.826,
-            42.961
-          ],
-          "angle": 0
-        }
+        "rotation": 270,
+        "side": "F"
       }
     },
     {
@@ -2157,11 +1982,11 @@
       "source": "graph",
       "anchor": {
         "at": [
-          17.112,
-          44.38
+          30.692,
+          30.94
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 270,
         "side": "F"
       }
     },
@@ -2170,19 +1995,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          1.931,
-          96.061
+          11.701,
+          77.771
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            1.931,
-            96.061
-          ],
-          "angle": 90
-        }
+        "rotation": 0,
+        "side": "F"
       }
     },
     {
@@ -2190,19 +2008,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          30.635,
-          43.025
+          34.821,
+          18.841
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            30.635,
-            43.025
-          ],
-          "angle": 0
-        }
+        "rotation": 270,
+        "side": "F"
       }
     },
     {
@@ -2210,18 +2021,18 @@
       "source": "graph",
       "anchor": {
         "at": [
-          2.025,
-          100.365
+          21.163,
+          60.687
         ],
         "align": "origin",
-        "rotation": 90,
+        "rotation": 270,
         "side": "F",
         "ref_text": {
           "at": [
-            2.025,
-            100.365
+            21.163,
+            60.687
           ],
-          "angle": 90
+          "angle": 0
         }
       }
     },
@@ -2230,12 +2041,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          48.167,
-          27.094
+          46.633,
+          20.36
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            46.633,
+            20.36
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -2243,19 +2061,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          17.073,
-          98.016
+          19.763,
+          46.956
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            17.073,
-            98.016
-          ],
-          "angle": 0
-        }
+        "rotation": 0,
+        "side": "F"
       }
     },
     {
@@ -2263,12 +2074,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.755,
-          53.05
+          39.685,
+          40.63
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F"
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            39.685,
+            40.63
+          ],
+          "angle": 90
+        }
       }
     },
     {
@@ -2276,19 +2094,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          37.667,
-          31.094
+          55.357,
+          18.164
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            37.667,
-            31.094
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -2296,12 +2107,19 @@
       "source": "graph",
       "anchor": {
         "at": [
-          13.323,
-          85.016
+          30.233,
+          42.716
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F"
+        "rotation": 270,
+        "side": "F",
+        "ref_text": {
+          "at": [
+            30.233,
+            42.716
+          ],
+          "angle": 0
+        }
       }
     },
     {
@@ -2362,19 +2180,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          58.876,
-          33.73
+          50.882,
+          30.736
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            58.876,
-            33.73
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -2382,16 +2193,16 @@
       "source": "graph",
       "anchor": {
         "at": [
-          40.679,
-          80.317
+          40.235,
+          47.131
         ],
         "align": "origin",
-        "rotation": 0,
+        "rotation": 90,
         "side": "F",
         "ref_text": {
           "at": [
-            40.679,
-            80.317
+            40.235,
+            47.131
           ],
           "angle": 90
         }
@@ -2402,19 +2213,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.1,
-          57.6
+          7.15,
+          53.53
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            4.1,
-            57.6
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -2422,8 +2226,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          46.15,
-          13
+          46.07,
+          13.2
         ],
         "align": "origin",
         "rotation": 0,
@@ -2435,8 +2239,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          12.1,
-          80.5
+          32.62,
+          -0.426
         ],
         "align": "origin",
         "rotation": 0,
@@ -2474,19 +2278,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          21.5,
-          58.5
+          45.16,
+          6.42
         ],
         "align": "origin",
-        "rotation": 180,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            21.5,
-            58.5
-          ],
-          "angle": 90
-        }
+        "rotation": 0,
+        "side": "F"
       }
     },
     {
@@ -2494,19 +2291,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          44.5,
-          20
+          81.03,
+          2.57
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            44.5,
-            20.0
-          ],
-          "angle": 0
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -2514,19 +2304,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          9.5,
-          32.5
+          83.13,
+          6.46
         ],
         "align": "origin",
-        "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            9.5,
-            32.5
-          ],
-          "angle": 90
-        }
+        "rotation": 180,
+        "side": "F"
       }
     },
     {
@@ -2534,8 +2317,8 @@
       "source": "graph",
       "anchor": {
         "at": [
-          23,
-          22
+          85.09,
+          0.68
         ],
         "align": "origin",
         "rotation": 90,
@@ -2586,19 +2369,12 @@
       "source": "graph",
       "anchor": {
         "at": [
-          4.5,
-          51
+          49.66,
+          -5.72
         ],
         "align": "origin",
-        "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            4.5,
-            51.0
-          ],
-          "angle": 90
-        }
+        "rotation": 270,
+        "side": "F"
       }
     }
   ],
@@ -2883,16 +2659,16 @@
         "width_mm": 0.5,
         "path": [
           [
-            5.2375,
-            58.55
+            8.2875,
+            54.48
           ],
           [
-            6.9975,
-            58.55
+            10.0475,
+            54.48
           ],
           [
-            7.8375,
-            59.2
+            10.8875,
+            55.13
           ]
         ],
         "locked": true,
@@ -2905,16 +2681,16 @@
         "width_mm": 0.5,
         "path": [
           [
-            10.7625,
-            59.2
+            13.8125,
+            55.13
           ],
           [
-            13.445,
-            59.2
+            16.495,
+            55.13
           ],
           [
-            13.445,
-            57.8
+            16.495,
+            53.73
           ]
         ],
         "locked": true,
@@ -2927,12 +2703,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            10.7,
-            57.05
+            13.75,
+            52.98
           ],
           [
-            10.7,
-            59.2
+            13.75,
+            55.13
           ]
         ],
         "locked": true,
@@ -2945,12 +2721,12 @@
         "width_mm": 0.35,
         "path": [
           [
-            8.0,
-            59.2
+            11.05,
+            55.13
           ],
           [
-            8.0,
-            61.075
+            11.05,
+            57.005
           ]
         ],
         "locked": true,
@@ -2963,12 +2739,12 @@
         "width_mm": 0.35,
         "path": [
           [
-            10.6,
-            59.2
+            13.65,
+            55.13
           ],
           [
-            10.6,
-            61.075
+            13.65,
+            57.005
           ]
         ],
         "locked": true,
@@ -2981,16 +2757,16 @@
         "width_mm": 0.5,
         "path": [
           [
-            47.2875,
-            13.95
+            47.2075,
+            14.15
           ],
           [
-            49.0475,
-            13.95
+            48.9675,
+            14.15
           ],
           [
-            49.8875,
-            14.6
+            49.8075,
+            14.8
           ]
         ],
         "locked": true,
@@ -3003,16 +2779,16 @@
         "width_mm": 0.5,
         "path": [
           [
-            52.8125,
-            14.6
+            52.7325,
+            14.8
           ],
           [
-            55.495,
-            14.6
+            55.415,
+            14.8
           ],
           [
-            55.495,
-            13.2
+            55.415,
+            13.4
           ]
         ],
         "locked": true,
@@ -3025,12 +2801,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            52.75,
-            12.45
+            52.67,
+            12.65
           ],
           [
-            52.75,
-            14.6
+            52.67,
+            14.8
           ]
         ],
         "locked": true,
@@ -3043,12 +2819,12 @@
         "width_mm": 0.35,
         "path": [
           [
-            50.05,
-            14.6
+            49.97,
+            14.8
           ],
           [
-            50.05,
-            16.475
+            49.97,
+            16.675
           ]
         ],
         "locked": true,
@@ -3061,12 +2837,12 @@
         "width_mm": 0.35,
         "path": [
           [
-            52.65,
-            14.6
+            52.57,
+            14.8
           ],
           [
-            52.65,
-            16.475
+            52.57,
+            16.675
           ]
         ],
         "locked": true,
@@ -3079,16 +2855,16 @@
         "width_mm": 0.5,
         "path": [
           [
-            13.2375,
-            81.45
+            33.7575,
+            0.524
           ],
           [
-            14.9975,
-            81.45
+            35.5175,
+            0.524
           ],
           [
-            15.8375,
-            82.1
+            36.3575,
+            1.174
           ]
         ],
         "locked": true,
@@ -3101,16 +2877,16 @@
         "width_mm": 0.5,
         "path": [
           [
-            18.7625,
-            82.1
+            39.2825,
+            1.174
           ],
           [
-            21.445,
-            82.1
+            41.965,
+            1.174
           ],
           [
-            21.445,
-            80.7
+            41.965,
+            -0.226
           ]
         ],
         "locked": true,
@@ -3123,12 +2899,12 @@
         "width_mm": 0.5,
         "path": [
           [
-            18.7,
-            79.95
+            39.22,
+            -0.976
           ],
           [
-            18.7,
-            82.1
+            39.22,
+            1.174
           ]
         ],
         "locked": true,
@@ -3141,12 +2917,12 @@
         "width_mm": 0.35,
         "path": [
           [
-            16.0,
-            82.1
+            36.52,
+            1.174
           ],
           [
-            16.0,
-            83.975
+            36.52,
+            3.049
           ]
         ],
         "locked": true,
@@ -3159,12 +2935,12 @@
         "width_mm": 0.35,
         "path": [
           [
-            18.6,
-            82.1
+            39.12,
+            1.174
           ],
           [
-            18.6,
-            83.975
+            39.12,
+            3.049
           ]
         ],
         "locked": true,
@@ -3687,12 +3463,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            3.05,
-            60.8
+            6.1,
+            56.73
           ],
           [
-            4.1,
-            60.8
+            7.15,
+            56.73
           ]
         ],
         "locked": true,
@@ -3705,12 +3481,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            10.7,
-            55.15
+            13.75,
+            51.08
           ],
           [
-            11.975,
-            55.15
+            15.025,
+            51.08
           ]
         ],
         "locked": true,
@@ -3723,12 +3499,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            14.855,
-            53.55
+            37.495,
+            46.232
           ],
           [
-            14.855,
-            54.825
+            38.77,
+            46.232
           ]
         ],
         "locked": true,
@@ -3741,12 +3517,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            20.2,
-            49.5
+            9.115,
+            46.487
           ],
           [
-            18.15,
-            49.5
+            11.165,
+            46.487
           ]
         ],
         "locked": true,
@@ -3759,12 +3535,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            45.1,
-            16.2
+            45.02,
+            16.4
           ],
           [
-            46.15,
-            16.2
+            46.07,
+            16.4
           ]
         ],
         "locked": true,
@@ -3777,12 +3553,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            52.75,
-            10.55
+            52.67,
+            10.75
           ],
           [
-            54.025,
-            10.55
+            53.945,
+            10.75
           ]
         ],
         "locked": true,
@@ -3795,12 +3571,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            41.726,
-            8.8
+            49.866,
+            22.573
           ],
           [
-            42.776,
-            8.8
+            51.141,
+            22.573
           ]
         ],
         "locked": true,
@@ -3813,12 +3589,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            30.0,
-            16.2
+            18.852,
+            22.737
           ],
           [
-            31.35,
-            16.2
+            20.902,
+            22.737
           ]
         ],
         "locked": true,
@@ -3831,12 +3607,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            11.05,
-            83.7
+            31.57,
+            2.774
           ],
           [
-            12.1,
-            83.7
+            32.62,
+            2.774
           ]
         ],
         "locked": true,
@@ -3849,12 +3625,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            18.7,
-            78.05
+            39.22,
+            -2.876
           ],
           [
-            19.975,
-            78.05
+            40.495,
+            -2.876
           ]
         ],
         "locked": true,
@@ -3867,16 +3643,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            16.623,
-            95.556
+            22.309,
+            50.558
           ],
           [
-            16.623,
-            96.456
-          ],
-          [
-            16.023,
-            96.456
+            21.259,
+            50.558
           ]
         ],
         "locked": true,
@@ -3889,12 +3661,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            11.3,
-            89.5
+            17.36,
+            82.05
           ],
           [
-            13.35,
-            89.5
+            19.41,
+            82.05
           ]
         ],
         "locked": true,
@@ -4037,12 +3809,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            36.0,
-            14.2
+            50.83,
+            3.45
           ],
           [
-            37.35,
-            14.2
+            52.18,
+            3.45
           ]
         ],
         "locked": true,
@@ -4055,12 +3827,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            36.97,
-            47.18
+            75.462,
+            -0.589
           ],
           [
-            37.6948,
-            47.9048
+            74.462,
+            -0.589
           ]
         ],
         "locked": true,
@@ -4073,12 +3845,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            54.483,
-            20.944
+            85.688,
+            12.189
           ],
           [
-            53.458,
-            20.944
+            86.688,
+            12.189
           ]
         ],
         "locked": true,
@@ -4091,12 +3863,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            27.745,
-            29.32
+            67.29,
+            2.155
           ],
           [
-            28.745,
-            29.32
+            68.315,
+            2.155
           ]
         ],
         "locked": true,
@@ -4109,12 +3881,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            24.25,
-            29.022
+            88.225,
+            7.117
           ],
           [
-            24.25,
-            30.047
+            87.2,
+            7.117
           ]
         ],
         "locked": true,
@@ -4127,12 +3899,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            38.734,
-            47.938
+            65.234,
+            4.858
           ],
           [
-            39.759,
-            47.938
+            66.259,
+            4.858
           ]
         ],
         "locked": true,
@@ -4145,12 +3917,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            42.496,
-            28.225
+            96.492,
+            1.289
           ],
           [
-            41.471,
-            28.225
+            97.517,
+            1.289
           ]
         ],
         "locked": true,
@@ -4163,12 +3935,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            36.764,
-            50.363
+            69.524,
+            2.323
           ],
           [
-            36.764,
-            51.363
+            70.549,
+            2.323
           ]
         ],
         "locked": true,
@@ -4239,12 +4011,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            5.5,
-            24.2
+            57.04,
+            7.99
           ],
           [
-            6.85,
-            24.2
+            58.39,
+            7.99
           ]
         ],
         "locked": true,
@@ -4293,12 +4065,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            40.7,
-            20.5
+            39.74,
+            26.52
           ],
           [
-            38.65,
-            20.5
+            41.09,
+            26.52
           ]
         ],
         "locked": true,
@@ -4347,12 +4119,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            39.7,
-            73.0
+            34.763,
+            72.859
           ],
           [
-            37.65,
-            73.0
+            36.813,
+            72.859
           ]
         ],
         "locked": true,
@@ -4365,12 +4137,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            37.235,
-            76.867
+            56.18,
+            32.222
           ],
           [
-            37.235,
-            75.842
+            57.205,
+            32.222
           ]
         ],
         "locked": true,
@@ -4383,12 +4155,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            30.95,
-            107.2
+            27.62,
+            63.8
           ],
           [
-            32.3,
-            107.2
+            29.67,
+            63.8
           ]
         ],
         "locked": true,
@@ -4401,12 +4173,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            38.2,
-            90.5
+            27.93,
+            56.26
           ],
           [
-            40.25,
-            90.5
+            29.98,
+            56.26
           ]
         ],
         "locked": true,
@@ -4419,12 +4191,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            40.625,
-            47.876
+            73.035,
+            3.586
           ],
           [
-            40.625,
-            48.876
+            74.06,
+            3.586
           ]
         ],
         "locked": true,
@@ -4437,12 +4209,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            38.651,
-            51.204
+            67.891,
+            4.244
           ],
           [
-            39.676,
-            51.204
+            68.916,
+            4.244
           ]
         ],
         "locked": true,
@@ -4455,12 +4227,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            56.313,
-            33.73
+            50.479,
+            25.406
           ],
           [
-            57.363,
-            33.73
+            51.754,
+            25.406
           ]
         ],
         "locked": true,
@@ -4473,12 +4245,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            41.117,
-            77.567
+            40.925,
+            51.402
           ],
           [
-            41.117,
-            78.842
+            40.925,
+            52.677
           ]
         ],
         "locked": true,
@@ -4491,12 +4263,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            22.0965,
-            25.219
+            37.6615,
+            15.359
           ],
           [
-            23.384,
-            25.219
+            36.374,
+            15.359
           ]
         ],
         "locked": true,
@@ -4509,12 +4281,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            9.5535,
-            65.119
+            28.7285,
+            9.309
           ],
           [
-            10.841,
-            65.119
+            30.016,
+            9.309
           ]
         ],
         "locked": true,
@@ -4527,12 +4299,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            7.4,
-            55.375
+            10.45,
+            51.305
           ],
           [
-            8.425,
-            55.375
+            11.475,
+            51.305
           ]
         ],
         "locked": true,
@@ -4545,12 +4317,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.925,
-            54.5
+            5.975,
+            50.43
           ],
           [
-            3.875,
-            54.5
+            6.925,
+            50.43
           ]
         ],
         "locked": true,
@@ -4563,12 +4335,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            49.45,
-            10.775
+            49.37,
+            10.975
           ],
           [
-            50.475,
-            10.775
+            50.395,
+            10.975
           ]
         ],
         "locked": true,
@@ -4581,12 +4353,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            44.975,
-            9.9
+            44.895,
+            10.1
           ],
           [
-            45.925,
-            9.9
+            45.845,
+            10.1
           ]
         ],
         "locked": true,
@@ -4599,12 +4371,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            15.4,
-            78.275
+            35.92,
+            -2.651
           ],
           [
-            16.425,
-            78.275
+            36.945,
+            -2.651
           ]
         ],
         "locked": true,
@@ -4617,12 +4389,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            10.925,
-            77.4
+            31.445,
+            -3.526
           ],
           [
-            11.875,
-            77.4
+            32.395,
+            -3.526
           ]
         ],
         "locked": true,
@@ -4707,12 +4479,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            53.817,
-            24.236
+            82.208,
+            9.585
           ],
           [
-            52.792,
-            24.236
+            81.258,
+            9.585
           ]
         ],
         "locked": true,
@@ -4725,12 +4497,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            20.217,
-            23.347
+            86.227,
+            8.347
           ],
           [
-            20.217,
-            24.297
+            85.202,
+            8.347
           ]
         ],
         "locked": true,
@@ -4743,12 +4515,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            45.821,
-            26.692
+            88.557,
+            1.458
           ],
           [
-            46.5458,
-            25.9672
+            87.532,
+            1.458
           ]
         ],
         "locked": true,
@@ -4855,8 +4627,8 @@
             20.325
           ],
           [
-            61.5,
-            21.275
+            60.475,
+            20.325
           ]
         ],
         "locked": true,
@@ -4887,12 +4659,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            32.581,
-            76.442
+            120.151,
+            9.912
           ],
           [
-            33.606,
-            76.442
+            121.176,
+            9.912
           ]
         ],
         "locked": true,
@@ -4905,12 +4677,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            48.992,
-            27.094
+            47.458,
+            20.36
           ],
           [
-            49.942,
-            27.094
+            48.408,
+            20.36
           ]
         ],
         "locked": true,
@@ -4923,12 +4695,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            17.073,
-            98.841
+            20.588,
+            46.956
           ],
           [
-            16.048,
-            98.841
+            21.538,
+            46.956
           ]
         ],
         "locked": true,
@@ -4941,12 +4713,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.9625,
-            57.6
+            6.0125,
+            53.53
           ],
           [
-            1.75,
-            57.6
+            4.8,
+            53.53
           ]
         ],
         "locked": true,
@@ -4959,12 +4731,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            45.0125,
-            13.0
+            44.9325,
+            13.2
           ],
           [
-            43.8,
-            13.0
+            43.72,
+            13.2
           ]
         ],
         "locked": true,
@@ -4977,12 +4749,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            10.9625,
-            80.5
+            31.4825,
+            -0.426
           ],
           [
-            9.75,
-            80.5
+            30.27,
+            -0.426
           ]
         ],
         "locked": true,
@@ -5039,12 +4811,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            23.325,
-            58.825
+            43.335,
+            6.095
           ],
           [
-            24.25,
-            58.825
+            44.26,
+            6.095
           ]
         ],
         "locked": true,
@@ -5057,12 +4829,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            23.325,
-            58.825
+            43.335,
+            6.095
           ],
           [
-            21.5,
-            58.825
+            45.16,
+            6.095
           ]
         ],
         "locked": true,
@@ -5075,12 +4847,16 @@
         "width_mm": 0.25,
         "path": [
           [
-            44.5,
-            18.8625
+            82.1675,
+            2.57
           ],
           [
-            44.5,
-            17.65
+            83.23,
+            2.57
+          ],
+          [
+            83.9371,
+            3.2771
           ]
         ],
         "locked": true,
@@ -5093,12 +4869,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            9.5,
-            31.3625
+            84.2675,
+            6.46
           ],
           [
-            9.5,
-            30.15
+            85.48,
+            6.46
           ]
         ],
         "locked": true,
@@ -5111,12 +4887,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            23.0,
-            20.8625
+            85.09,
+            -0.4575
           ],
           [
-            23.0,
-            19.65
+            85.09,
+            -1.67
           ]
         ],
         "locked": true,
@@ -5195,12 +4971,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            2.025,
-            49.095
+            47.755,
+            -3.245
           ],
           [
-            3.55,
-            49.095
+            46.905,
+            -3.245
           ]
         ],
         "locked": true,
@@ -5368,8 +5144,8 @@
         "id": "GND-C232-2-V",
         "net": "GND",
         "at": [
-          4.1,
-          60.8
+          7.15,
+          56.73
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5380,8 +5156,8 @@
         "id": "GND-C233-2-V",
         "net": "GND",
         "at": [
-          11.975,
-          55.15
+          15.025,
+          51.08
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5392,8 +5168,8 @@
         "id": "GND-C234-2-V",
         "net": "GND",
         "at": [
-          14.855,
-          54.825
+          38.77,
+          46.232
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5404,8 +5180,8 @@
         "id": "GND-C235-2-V",
         "net": "GND",
         "at": [
-          18.15,
-          49.5
+          11.165,
+          46.487
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5416,8 +5192,8 @@
         "id": "GND-C236-2-V",
         "net": "GND",
         "at": [
-          46.15,
-          16.2
+          46.07,
+          16.4
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5428,8 +5204,8 @@
         "id": "GND-C237-2-V",
         "net": "GND",
         "at": [
-          54.025,
-          10.55
+          53.945,
+          10.75
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5440,8 +5216,8 @@
         "id": "GND-C238-2-V",
         "net": "GND",
         "at": [
-          42.776,
-          8.8
+          51.141,
+          22.573
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5452,8 +5228,8 @@
         "id": "GND-C239-2-V",
         "net": "GND",
         "at": [
-          31.35,
-          16.2
+          20.902,
+          22.737
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5464,8 +5240,8 @@
         "id": "GND-C240-2-V",
         "net": "GND",
         "at": [
-          12.1,
-          83.7
+          32.62,
+          2.774
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5476,8 +5252,8 @@
         "id": "GND-C241-2-V",
         "net": "GND",
         "at": [
-          19.975,
-          78.05
+          40.495,
+          -2.876
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5488,8 +5264,8 @@
         "id": "GND-C242-2-V",
         "net": "GND",
         "at": [
-          16.023,
-          96.456
+          21.259,
+          50.558
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5500,8 +5276,8 @@
         "id": "GND-C243-2-V",
         "net": "GND",
         "at": [
-          13.35,
-          89.5
+          19.41,
+          82.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5596,8 +5372,8 @@
         "id": "GND-C251-2-V",
         "net": "GND",
         "at": [
-          37.35,
-          14.2
+          52.18,
+          3.45
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5608,8 +5384,8 @@
         "id": "GND-C277-2-V",
         "net": "GND",
         "at": [
-          37.6948,
-          47.9048
+          74.462,
+          -0.589
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5620,8 +5396,8 @@
         "id": "GND-C282-2-V",
         "net": "GND",
         "at": [
-          53.458,
-          20.944
+          86.688,
+          12.189
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5632,8 +5408,8 @@
         "id": "GND-C283-2-V",
         "net": "GND",
         "at": [
-          28.745,
-          29.32
+          68.315,
+          2.155
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5644,8 +5420,8 @@
         "id": "GND-C284-2-V",
         "net": "GND",
         "at": [
-          24.25,
-          30.047
+          87.2,
+          7.117
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5656,8 +5432,8 @@
         "id": "GND-C285-2-V",
         "net": "GND",
         "at": [
-          39.759,
-          47.938
+          66.259,
+          4.858
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5668,8 +5444,8 @@
         "id": "GND-C286-2-V",
         "net": "GND",
         "at": [
-          41.471,
-          28.225
+          97.517,
+          1.289
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5680,8 +5456,8 @@
         "id": "GND-C287-2-V",
         "net": "GND",
         "at": [
-          36.764,
-          51.363
+          70.549,
+          2.323
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5728,8 +5504,8 @@
         "id": "GND-C298-2-V",
         "net": "GND",
         "at": [
-          6.85,
-          24.2
+          58.39,
+          7.99
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5764,8 +5540,8 @@
         "id": "GND-C503-2-V",
         "net": "GND",
         "at": [
-          38.65,
-          20.5
+          41.09,
+          26.52
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5800,8 +5576,8 @@
         "id": "GND-C506-2-V",
         "net": "GND",
         "at": [
-          37.65,
-          73.0
+          36.813,
+          72.859
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5812,8 +5588,8 @@
         "id": "GND-C507-2-V",
         "net": "GND",
         "at": [
-          37.235,
-          75.842
+          57.205,
+          32.222
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5824,8 +5600,8 @@
         "id": "GND-C521-2-V",
         "net": "GND",
         "at": [
-          32.3,
-          107.2
+          29.67,
+          63.8
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5836,8 +5612,8 @@
         "id": "GND-C522-2-V",
         "net": "GND",
         "at": [
-          40.25,
-          90.5
+          29.98,
+          56.26
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5848,8 +5624,8 @@
         "id": "GND-C550-2-V",
         "net": "GND",
         "at": [
-          40.625,
-          48.876
+          74.06,
+          3.586
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5860,8 +5636,8 @@
         "id": "GND-C551-2-V",
         "net": "GND",
         "at": [
-          39.676,
-          51.204
+          68.916,
+          4.244
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5872,8 +5648,8 @@
         "id": "GND-C2901-2-V",
         "net": "GND",
         "at": [
-          57.363,
-          33.73
+          51.754,
+          25.406
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5884,8 +5660,8 @@
         "id": "GND-C2902-2-V",
         "net": "GND",
         "at": [
-          41.117,
-          78.842
+          40.925,
+          52.677
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5896,8 +5672,8 @@
         "id": "GND-Q2911-2-V",
         "net": "GND",
         "at": [
-          23.384,
-          25.219
+          36.374,
+          15.359
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5908,8 +5684,8 @@
         "id": "GND-Q2912-2-V",
         "net": "GND",
         "at": [
-          10.841,
-          65.119
+          30.016,
+          9.309
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5920,8 +5696,8 @@
         "id": "GND-R228-2-V",
         "net": "GND",
         "at": [
-          8.425,
-          55.375
+          11.475,
+          51.305
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5932,8 +5708,8 @@
         "id": "GND-R229-2-V",
         "net": "GND",
         "at": [
-          3.875,
-          54.5
+          6.925,
+          50.43
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5944,8 +5720,8 @@
         "id": "GND-R233-2-V",
         "net": "GND",
         "at": [
-          50.475,
-          10.775
+          50.395,
+          10.975
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5956,8 +5732,8 @@
         "id": "GND-R234-2-V",
         "net": "GND",
         "at": [
-          45.925,
-          9.9
+          45.845,
+          10.1
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5968,8 +5744,8 @@
         "id": "GND-R238-2-V",
         "net": "GND",
         "at": [
-          16.425,
-          78.275
+          36.945,
+          -2.651
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -5980,8 +5756,8 @@
         "id": "GND-R239-2-V",
         "net": "GND",
         "at": [
-          11.875,
-          77.4
+          32.395,
+          -3.526
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6040,8 +5816,8 @@
         "id": "GND-R281-2-V",
         "net": "GND",
         "at": [
-          52.792,
-          24.236
+          81.258,
+          9.585
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6052,8 +5828,8 @@
         "id": "GND-R284-2-V",
         "net": "GND",
         "at": [
-          20.217,
-          24.297
+          85.202,
+          8.347
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6064,8 +5840,8 @@
         "id": "GND-R287-2-V",
         "net": "GND",
         "at": [
-          46.5458,
-          25.9672
+          87.532,
+          1.458
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6136,8 +5912,8 @@
         "id": "GND-R505-2-V",
         "net": "GND",
         "at": [
-          61.5,
-          21.275
+          60.475,
+          20.325
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6160,8 +5936,8 @@
         "id": "GND-R508-2-V",
         "net": "GND",
         "at": [
-          33.606,
-          76.442
+          121.176,
+          9.912
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6172,8 +5948,8 @@
         "id": "GND-R2921-2-V",
         "net": "GND",
         "at": [
-          49.942,
-          27.094
+          48.408,
+          20.36
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6184,8 +5960,8 @@
         "id": "GND-R2922-2-V",
         "net": "GND",
         "at": [
-          16.048,
-          98.841
+          21.538,
+          46.956
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6196,8 +5972,8 @@
         "id": "GND-U206-2-V",
         "net": "GND",
         "at": [
-          1.75,
-          57.6
+          4.8,
+          53.53
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6208,8 +5984,8 @@
         "id": "GND-U207-2-V",
         "net": "GND",
         "at": [
-          43.8,
-          13.0
+          43.72,
+          13.2
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6220,8 +5996,8 @@
         "id": "GND-U208-2-V",
         "net": "GND",
         "at": [
-          9.75,
-          80.5
+          30.27,
+          -0.426
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6256,8 +6032,8 @@
         "id": "GND-U215-3-V",
         "net": "GND",
         "at": [
-          24.25,
-          58.825
+          44.26,
+          6.095
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6268,8 +6044,8 @@
         "id": "GND-U217-2-V",
         "net": "GND",
         "at": [
-          44.5,
-          17.65
+          83.9371,
+          3.2771
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6280,8 +6056,8 @@
         "id": "GND-U218-2-V",
         "net": "GND",
         "at": [
-          9.5,
-          30.15
+          85.48,
+          6.46
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6292,8 +6068,8 @@
         "id": "GND-U219-2-V",
         "net": "GND",
         "at": [
-          23.0,
-          19.65
+          85.09,
+          -1.67
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6340,8 +6116,8 @@
         "id": "GND-U507-4-V",
         "net": "GND",
         "at": [
-          3.55,
-          49.095
+          46.905,
+          -3.245
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6562,7 +6338,7 @@
         "kind": "header_edge_strip",
         "rect": [
           26.2,
-          -0.2,
+          -30.2,
           13.0,
           7.4
         ]
@@ -6572,7 +6348,7 @@
         "kind": "header_edge_strip",
         "rect": [
           44.7,
-          -0.2,
+          -30.2,
           13.0,
           7.4
         ]
@@ -6582,7 +6358,7 @@
         "kind": "header_edge_strip",
         "rect": [
           7.7,
-          -0.2,
+          -30.2,
           13.0,
           7.4
         ]
@@ -6592,7 +6368,7 @@
         "kind": "header_edge_strip",
         "rect": [
           70.6,
-          -0.2,
+          -30.2,
           13.0,
           11.6
         ]
@@ -6602,7 +6378,7 @@
         "kind": "header_edge_strip",
         "rect": [
           38.7,
-          -0.2,
+          -30.2,
           6.5,
           7.9
         ]
@@ -6612,7 +6388,7 @@
         "kind": "header_edge_strip",
         "rect": [
           57.2,
-          -0.2,
+          -30.2,
           13.9,
           6.5
         ]
@@ -6622,7 +6398,7 @@
         "kind": "header_edge_strip",
         "rect": [
           20.2,
-          -0.2,
+          -30.2,
           6.5,
           9.9
         ]
@@ -6632,7 +6408,7 @@
         "kind": "header_edge_strip",
         "rect": [
           83.1,
-          -0.2,
+          -30.2,
           6.5,
           11.9
         ]
@@ -6652,7 +6428,7 @@
         "kind": "header_edge_strip",
         "rect": [
           121.03,
-          -0.2,
+          -30.2,
           7.77,
           11.66
         ]
@@ -6692,7 +6468,7 @@
         "kind": "header_edge_strip",
         "rect": [
           115.0,
-          -0.2,
+          -30.2,
           6.5,
           11.9
         ]
@@ -7105,7 +6881,7 @@
     {
       "region": [
         26.2,
-        -0.2,
+        -30.2,
         13.0,
         7.4
       ],
@@ -7117,7 +6893,7 @@
     {
       "region": [
         44.7,
-        -0.2,
+        -30.2,
         13.0,
         7.4
       ],
@@ -7129,7 +6905,7 @@
     {
       "region": [
         7.7,
-        -0.2,
+        -30.2,
         13.0,
         7.4
       ],
@@ -7141,7 +6917,7 @@
     {
       "region": [
         70.6,
-        -0.2,
+        -30.2,
         13.0,
         11.6
       ],
@@ -7153,7 +6929,7 @@
     {
       "region": [
         38.7,
-        -0.2,
+        -30.2,
         6.5,
         7.9
       ],
@@ -7165,7 +6941,7 @@
     {
       "region": [
         57.2,
-        -0.2,
+        -30.2,
         13.9,
         6.5
       ],
@@ -7177,7 +6953,7 @@
     {
       "region": [
         20.2,
-        -0.2,
+        -30.2,
         6.5,
         9.9
       ],
@@ -7189,7 +6965,7 @@
     {
       "region": [
         83.1,
-        -0.2,
+        -30.2,
         6.5,
         11.9
       ],
@@ -7213,7 +6989,7 @@
     {
       "region": [
         121.03,
-        -0.2,
+        -30.2,
         7.77,
         11.66
       ],
@@ -7261,7 +7037,7 @@
     {
       "region": [
         115.0,
-        -0.2,
+        -30.2,
         6.5,
         11.9
       ],
@@ -7866,7 +7642,7 @@
     "kelvin": "INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL; a deviation from the W2 PCB-PWRB-2 brief, which asked for U215 at its shunts, accepted in build/15 W2 PCB-PWRB-2); every shunt net is scripted copper (current path plus sense take-off from the shunt pads) up to the 10 ohm INA3221 filter resistors next to each shunt; the filtered input nets E2_U215_IP1-3 / IM1-3 from those resistors to U215 are autorouted as separate nets, not as pairs (routed lengths of the board of record in build/kicad/boards/PWR_B/README.md and build/15 W2 PCB-PWRB-2), so INA3221 accuracy stays a bench gate; ch4 senses through the B2B to U216 on PWR-A"
   },
   "pwr_a_cutouts": {
-    "source": "build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts (sha256 of the list: 28e103fbd0b2eb88bb76724c156b129b85da0e9b0dc3a3e6946a04c09da4b67a; make_spec.py cutouts_digest)",
+    "source": "build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts (sha256 of the list: 58add0cb0e9763a5d0fc5216670d74b45a15f952476d652c01a307a3ffb8db0e; make_spec.py cutouts_digest)",
     "rule": "window (courtyard + 0.5) over every PWR-A part taller than hA, the edge strips of the PWR-A harness headers and the test-point probe windows (pcb/partition-spec.json keepouts, height_rule)",
     "hand_back": "not Edge.Cuts yet: the W2 MECH-7 contract is the full L (cutouts_mm []) and check_boards requires the outline, the cut-outs and the area to equal the contract; the MECH lineage writes these rectangles into mechanical/params/boards.json PWR_B (inner ones as cutouts, the edge ones as outline notches), then this board is re-routed (OPEN, build/15 W2 PCB-PWRB-2)",
     "cutouts_mm": [
@@ -8015,7 +7791,7 @@
         "kind": "header_edge_strip",
         "rect": [
           26.2,
-          -0.2,
+          -30.2,
           13.0,
           7.4
         ]
@@ -8025,7 +7801,7 @@
         "kind": "header_edge_strip",
         "rect": [
           44.7,
-          -0.2,
+          -30.2,
           13.0,
           7.4
         ]
@@ -8035,7 +7811,7 @@
         "kind": "header_edge_strip",
         "rect": [
           7.7,
-          -0.2,
+          -30.2,
           13.0,
           7.4
         ]
@@ -8045,7 +7821,7 @@
         "kind": "header_edge_strip",
         "rect": [
           70.6,
-          -0.2,
+          -30.2,
           13.0,
           11.6
         ]
@@ -8055,7 +7831,7 @@
         "kind": "header_edge_strip",
         "rect": [
           38.7,
-          -0.2,
+          -30.2,
           6.5,
           7.9
         ]
@@ -8065,7 +7841,7 @@
         "kind": "header_edge_strip",
         "rect": [
           57.2,
-          -0.2,
+          -30.2,
           13.9,
           6.5
         ]
@@ -8075,7 +7851,7 @@
         "kind": "header_edge_strip",
         "rect": [
           20.2,
-          -0.2,
+          -30.2,
           6.5,
           9.9
         ]
@@ -8085,7 +7861,7 @@
         "kind": "header_edge_strip",
         "rect": [
           83.1,
-          -0.2,
+          -30.2,
           6.5,
           11.9
         ]
@@ -8105,7 +7881,7 @@
         "kind": "header_edge_strip",
         "rect": [
           121.03,
-          -0.2,
+          -30.2,
           7.77,
           11.66
         ]
@@ -8145,7 +7921,7 @@
         "kind": "header_edge_strip",
         "rect": [
           115.0,
-          -0.2,
+          -30.2,
           6.5,
           11.9
         ]
@@ -8373,13 +8149,13 @@
     ],
     "overlay": {
       "raster_step_mm": 0.1,
-      "cutout_union_mm2": 2749.8,
+      "cutout_union_mm2": 2756.0,
       "overlap_mm2": 0.0,
-      "usable_mm2": 4892.1,
+      "usable_mm2": 8888.8,
       "top_courtyards_mm2": 2757.2,
       "b2b_courtyard_mm2": 190.3,
-      "fill_top": 0.5636,
-      "fill_with_b2b": 0.6025,
+      "fill_top": 0.3102,
+      "fill_with_b2b": 0.3316,
       "overlaps": [],
       "note": "MODEL: exact rectangle intersection of the top courtyards with the cut-outs plus a raster of their union; usable = L outline less the cut-out union and the hole keep-outs; fill_with_b2b counts J209 on the top area as pcb/partition-budget.json does"
     }
@@ -8391,30 +8167,30 @@
         "ref": "J201",
         "pins": 5,
         "field_mm": [
-          6.875,
-          37.2,
-          8.625,
-          46.4
+          102.35,
+          -13.025,
+          111.55,
+          -11.275
         ]
       },
       {
         "ref": "J202",
         "pins": 20,
         "field_mm": [
-          15.48,
-          9.15,
-          18.68,
-          28.35
+          54.55,
+          -15.5,
+          73.75,
+          -12.3
         ]
       },
       {
         "ref": "J203",
         "pins": 20,
         "field_mm": [
-          15.1,
-          30.95,
-          34.3,
-          34.15
+          78.45,
+          -15.5,
+          97.65,
+          -12.3
         ]
       },
       {
@@ -8441,10 +8217,10 @@
         "ref": "J506",
         "pins": 9,
         "field_mm": [
-          25.325,
-          54.8,
-          27.075,
-          72.0
+          116.45,
+          -13.025,
+          133.65,
+          -11.275
         ]
       }
     ]

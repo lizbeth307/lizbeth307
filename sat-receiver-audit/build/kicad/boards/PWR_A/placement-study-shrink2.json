@@ -5,7 +5,7 @@
   "status": "MODEL / planning result of the board_gen planner (standard library); no KiCad board, no routing, no hardware result; bench gates OPEN",
   "generator": "build/kicad/boards/PWR_A/placement_study.py",
   "inputs": {
-    "spec_sha256": "f4388d982cccab6c99c70a145b33b5c83b220df86ec83c0198ad62ea249fd80e",
+    "spec_sha256": "1e61c3dd1ccc7e2c11bca2ea3a9896edd2968be8ba5c1c51a6271008df20c0c1",
     "contract_pwr": "5c748b6bee90af6cfc732b7ae9d802818104c989f563dfc8762e994a152664d9",
     "contract_pwr_b_outline": "5bf4182154d377ec7adc55680813024a57154ac35548db0cd0ac1aab975d2ea0",
     "template_sha256": "2b0f95839dd71549f01dd82b1f5ff0fd395f05081cf310e5ac411b5385d87809",
@@ -5308,9 +5308,9 @@
         "kind": "header_edge_strip",
         "rect": [
           26.2,
-          -0.2,
+          -30.2,
           39.2,
-          7.2
+          -22.8
         ],
         "area_mm2": 96.2
       },
@@ -5319,9 +5319,9 @@
         "kind": "header_edge_strip",
         "rect": [
           44.7,
-          -0.2,
+          -30.2,
           57.7,
-          7.2
+          -22.8
         ],
         "area_mm2": 96.2
       },
@@ -5330,9 +5330,9 @@
         "kind": "header_edge_strip",
         "rect": [
           7.7,
-          -0.2,
+          -30.2,
           20.7,
-          7.2
+          -22.8
         ],
         "area_mm2": 96.2
       },
@@ -5341,9 +5341,9 @@
         "kind": "header_edge_strip",
         "rect": [
           70.6,
-          -0.2,
+          -30.2,
           83.6,
-          11.4
+          -18.6
         ],
         "area_mm2": 150.8
       },
@@ -5352,9 +5352,9 @@
         "kind": "header_edge_strip",
         "rect": [
           38.7,
-          -0.2,
+          -30.2,
           45.2,
-          7.7
+          -22.3
         ],
         "area_mm2": 51.35
       },
@@ -5363,9 +5363,9 @@
         "kind": "header_edge_strip",
         "rect": [
           57.2,
-          -0.2,
+          -30.2,
           71.1,
-          6.3
+          -23.7
         ],
         "area_mm2": 90.35
       },
@@ -5374,9 +5374,9 @@
         "kind": "header_edge_strip",
         "rect": [
           20.2,
-          -0.2,
+          -30.2,
           26.7,
-          9.7
+          -20.3
         ],
         "area_mm2": 64.35
       },
@@ -5385,9 +5385,9 @@
         "kind": "header_edge_strip",
         "rect": [
           83.1,
-          -0.2,
+          -30.2,
           89.6,
-          11.7
+          -18.3
         ],
         "area_mm2": 77.35
       },
@@ -5407,9 +5407,9 @@
         "kind": "header_edge_strip",
         "rect": [
           121.03,
-          -0.2,
+          -30.2,
           128.8,
-          11.46
+          -18.54
         ],
         "area_mm2": 90.5982
       },
@@ -5451,9 +5451,9 @@
         "kind": "header_edge_strip",
         "rect": [
           115.0,
-          -0.2,
+          -30.2,
           121.5,
-          11.7
+          -18.3
         ],
         "area_mm2": 77.35
       },
@@ -8821,8 +8821,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           52.0,
           29.88,
@@ -8837,8 +8837,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           55.46,
           29.88,
@@ -8949,8 +8949,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           58.92,
           29.88,
@@ -8965,8 +8965,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           103.56,
           29.88,
@@ -9301,8 +9301,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           31.56,
           93.54,
@@ -9461,8 +9461,8 @@
           98.52
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           5.36,
           97.04,
@@ -9509,8 +9509,8 @@
           63.52
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           3.06,
           62.04,
@@ -9893,8 +9893,8 @@
           30.75
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           30.36,
           30.02,
@@ -10069,8 +10069,8 @@
           33.37
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           97.98,
           32.64,
@@ -10149,8 +10149,8 @@
           108.97
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           10.0,
           108.24,
@@ -10165,8 +10165,8 @@
           69.02
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           21.6,
           67.54,
@@ -10181,8 +10181,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           21.36,
           93.54,
@@ -10197,8 +10197,8 @@
           34.31
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           33.58,
@@ -10213,8 +10213,8 @@
           30.75
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           33.82,
           30.02,
@@ -10325,8 +10325,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.6,
           93.54,
@@ -10357,8 +10357,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           4.06,
           93.54,
@@ -10405,8 +10405,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           7.52,
           93.54,
@@ -10421,8 +10421,8 @@
           36.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           7.22,
           35.54,
@@ -10437,8 +10437,8 @@
           36.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           10.68,
           35.54,
@@ -10469,8 +10469,8 @@
           33.37
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           101.44,
           32.64,
@@ -10722,128 +10722,128 @@
         "ref": "J105",
         "at": [
           29.45,
-          3.5
+          -26.5
         ],
         "rotation": 90,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           26.7,
-          0.3,
+          -29.7,
           38.7,
-          6.7
+          -23.3
         ]
       },
       {
         "ref": "J106",
         "at": [
           47.95,
-          3.5
+          -26.5
         ],
         "rotation": 90,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           45.2,
-          0.3,
+          -29.7,
           57.2,
-          6.7
+          -23.3
         ]
       },
       {
         "ref": "J107",
         "at": [
           10.95,
-          3.5
+          -26.5
         ],
         "rotation": 90,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           8.2,
-          0.3,
+          -29.7,
           20.2,
-          6.7
+          -23.3
         ]
       },
       {
         "ref": "J108",
         "at": [
           73.85,
-          3.5
+          -26.5
         ],
         "rotation": 90,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           71.1,
-          0.3,
+          -29.7,
           83.1,
-          10.9
+          -19.1
         ]
       },
       {
         "ref": "J109",
         "at": [
           42.5,
-          4.75
+          -25.25
         ],
         "rotation": 270,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           39.2,
-          0.3,
+          -29.7,
           44.7,
-          7.2
+          -22.8
         ]
       },
       {
         "ref": "J110",
         "at": [
           68.15,
-          2.5
+          -27.5
         ],
         "rotation": 180,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           57.7,
-          0.3,
+          -29.7,
           70.6,
-          5.8
+          -24.2
         ]
       },
       {
         "ref": "J111",
         "at": [
           24.0,
-          6.75
+          -23.25
         ],
         "rotation": 270,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           20.7,
-          0.3,
+          -29.7,
           26.2,
-          9.2
+          -20.8
         ]
       },
       {
         "ref": "J112",
         "at": [
           86.9,
-          8.75
+          -21.25
         ],
         "rotation": 270,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           83.6,
-          0.3,
+          -29.7,
           89.1,
-          11.2
+          -18.8
         ]
       },
       {
@@ -10866,16 +10866,16 @@
         "ref": "J114",
         "at": [
           124.5,
-          4.13
+          -25.87
         ],
         "rotation": 90,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           121.53,
-          0.3,
+          -29.7,
           128.3,
-          10.96
+          -19.04
         ]
       },
       {
@@ -10946,16 +10946,16 @@
         "ref": "J507",
         "at": [
           117.7,
-          2.75
+          -27.25
         ],
         "rotation": 90,
         "side": "F",
         "how": "anchor",
         "courtyard_box": [
           115.5,
-          0.3,
+          -29.7,
           121.0,
-          11.2
+          -18.8
         ]
       },
       {
@@ -11253,8 +11253,8 @@
           32.97
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           70.64,
           31.84,
@@ -11269,8 +11269,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           62.38,
           29.88,
@@ -11285,8 +11285,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           65.84,
           29.88,
@@ -11301,8 +11301,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           69.3,
           29.88,
@@ -11317,8 +11317,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           72.76,
           29.88,
@@ -11333,8 +11333,8 @@
           36.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           35.54,
@@ -11349,8 +11349,8 @@
           36.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           3.76,
           35.54,
@@ -11381,8 +11381,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           76.22,
           29.88,
@@ -11397,8 +11397,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           79.68,
           29.88,
@@ -11413,8 +11413,8 @@
           67.01
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           26.5,
           66.28,
@@ -11429,8 +11429,8 @@
           67.01
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           29.96,
           66.28,
@@ -11445,8 +11445,8 @@
           67.01
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           33.42,
           66.28,
@@ -11461,8 +11461,8 @@
           67.01
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           36.88,
           66.28,
@@ -11477,8 +11477,8 @@
           33.37
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           75.7,
           32.64,
@@ -11493,8 +11493,8 @@
           33.37
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           79.16,
           32.64,
@@ -11509,8 +11509,8 @@
           20.6
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           19.12,
@@ -11685,8 +11685,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           35.02,
           93.54,
@@ -11701,8 +11701,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           38.48,
           93.54,
@@ -11717,8 +11717,8 @@
           91.51
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           26.5,
           90.78,
@@ -11733,8 +11733,8 @@
           91.51
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           29.96,
           90.78,
@@ -11749,8 +11749,8 @@
           91.51
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           33.42,
           90.78,
@@ -11765,8 +11765,8 @@
           91.51
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           36.88,
           90.78,
@@ -11781,8 +11781,8 @@
           93.87
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           26.5,
           92.74,
@@ -11797,8 +11797,8 @@
           98.87
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           97.74,
@@ -11813,8 +11813,8 @@
           96.51
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           95.78,
@@ -11829,8 +11829,8 @@
           99.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           21.6,
           98.54,
@@ -11845,8 +11845,8 @@
           99.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           25.06,
           98.54,
@@ -11861,8 +11861,8 @@
           99.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           28.52,
           98.54,
@@ -11877,8 +11877,8 @@
           99.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           31.98,
           98.54,
@@ -11893,8 +11893,8 @@
           58.46
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           56.98,
@@ -11909,8 +11909,8 @@
           58.46
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           2.26,
           56.98,
@@ -11925,8 +11925,8 @@
           87.52
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           86.04,
@@ -11941,8 +11941,8 @@
           87.52
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           2.26,
           86.04,
@@ -11957,8 +11957,8 @@
           62.72
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           60.44,
@@ -11973,8 +11973,8 @@
           69.77
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           31.56,
           69.04,
@@ -11989,8 +11989,8 @@
           69.77
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           35.02,
           69.04,
@@ -12005,8 +12005,8 @@
           69.77
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           38.48,
           69.04,
@@ -12021,8 +12021,8 @@
           69.37
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           26.5,
           68.24,
@@ -12037,8 +12037,8 @@
           32.97
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           52.0,
           31.84,
@@ -12053,8 +12053,8 @@
           32.97
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           57.06,
           31.84,
@@ -12069,8 +12069,8 @@
           32.97
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           62.12,
           31.84,
@@ -12085,8 +12085,8 @@
           33.37
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           67.18,
           32.64,
@@ -12101,8 +12101,8 @@
           35.87
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           26.5,
           34.74,
@@ -12117,8 +12117,8 @@
           27.52
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           26.04,
@@ -12133,8 +12133,8 @@
           27.52
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           2.26,
           26.04,
@@ -12149,8 +12149,8 @@
           27.52
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           4.22,
           26.04,
@@ -12165,8 +12165,8 @@
           24.06
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           0.3,
           22.58,
@@ -12181,8 +12181,8 @@
           35.87
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           31.56,
           34.74,
@@ -12197,8 +12197,8 @@
           33.11
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           26.5,
           31.98,
@@ -12213,8 +12213,8 @@
           32.97
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           82.8,
           31.84,
@@ -12229,8 +12229,8 @@
           33.37
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           104.9,
           32.64,
@@ -12245,8 +12245,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           82.8,
           29.88,
@@ -12261,8 +12261,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           86.26,
           29.88,
@@ -12277,8 +12277,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           89.72,
           29.88,
@@ -12293,8 +12293,8 @@
           32.97
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           87.86,
           31.84,
@@ -12309,8 +12309,8 @@
           32.97
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           92.92,
           31.84,
@@ -12325,8 +12325,8 @@
           34.31
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           3.76,
           33.58,
@@ -12341,8 +12341,8 @@
           34.31
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           7.22,
           33.58,
@@ -12357,8 +12357,8 @@
           34.31
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           10.68,
           33.58,
@@ -12373,8 +12373,8 @@
           34.31
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           14.14,
           33.58,
@@ -12389,8 +12389,8 @@
           34.31
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           17.6,
           33.58,
@@ -12405,8 +12405,8 @@
           34.31
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           21.06,
           33.58,
@@ -12421,8 +12421,8 @@
           33.29
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           31.56,
           32.34,
@@ -12437,8 +12437,8 @@
           33.29
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           35.42,
           32.34,
@@ -12453,8 +12453,8 @@
           30.53
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           26.5,
           29.58,
@@ -12469,8 +12469,8 @@
           24.06
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           2.26,
           22.58,
@@ -12485,8 +12485,8 @@
           24.06
         ],
         "rotation": 90.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           4.22,
           22.58,
@@ -12501,8 +12501,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           10.98,
           93.54,
@@ -12517,8 +12517,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           14.44,
           93.54,
@@ -12549,8 +12549,8 @@
           94.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           17.9,
           93.54,
@@ -12565,8 +12565,8 @@
           36.27
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           14.14,
           35.54,
@@ -12581,8 +12581,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           93.18,
           29.88,
@@ -12597,8 +12597,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           96.64,
           29.88,
@@ -12613,8 +12613,8 @@
           30.61
         ],
         "rotation": 0.0,
-        "side": "B",
-        "how": "group",
+        "side": "F",
+        "how": "group (F2ENV: bottom -> top)",
         "courtyard_box": [
           100.1,
           29.88,
@@ -13805,5 +13805,22 @@
     "passed": false,
     "pwr_b_fields_over_needed_cutouts": [],
     "cutout_note": "PWR-A parts that need a PWR-B cut-out (pwr_b_cutouts) do not lie under PWR-B and are not H-TRIM parts; a current PWR_B THT pin field over such a cut-out is listed for PCB-PWRB-2, which re-places PWR-B against these cut-outs"
+  },
+  "f2env": {
+    "slab_mm": 30.0,
+    "row_moved_down": [
+      "J105",
+      "J106",
+      "J107",
+      "J108",
+      "J109",
+      "J110",
+      "J111",
+      "J112",
+      "J114",
+      "J507"
+    ],
+    "single_sided": true,
+    "generator": "build/kicad/boards/PWR_A/f2env_patch.py (probe only, wip/w2-pwrj-f2env)"
   }
 }
