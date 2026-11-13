@@ -7,8 +7,9 @@ pad, net or scripted-copper change this mode starts from the committed frozen co
      places (its check_boards shapes); all copper of that board is dropped;
   2. the copper: the scripted copper make_spec.py makes now (before the frozen copper; drop_scripted applied) as hard,
      locked copper, and the frozen copper of route-frozen.json (router and completion copper) as soft copper;
-  3. frozen copper of the nets named with --rip / --scripted is removed, and every frozen item that breaks a clearance
-     against the hard copper, a pad, a keepout or an edge is removed (exact check of model.py);
+  3. frozen copper of the nets named with --rip / --scripted is removed, every frozen item that breaks a clearance
+     against the hard copper, a pad, a keepout or an edge is removed (exact check of model.py), and so is every frozen
+     track the exact checks of step 5 flag (a dangling end, an end in a scripted via off its centre);
   4. dangling frozen copper of the touched nets is pruned and every touched net with open connections is joined again by
      the grid A* of fin.py (other nets' frozen copper is ripped only where the cheapest path crosses it, and those nets are
      joined again in turn); nets named with --scripted and the scripted classes are never routed here, they must be
@@ -424,6 +425,37 @@ def copper_diff(old, new):
             'added_l2_mm': {k: round(v, 1) for k, v in sorted(l2.items())}}
 
 
+def flagged_frozen(m, skip=()):
+    """Frozen tracks the exact checks of freeze_route.verify flag although no change of this run touches them (W2 CTRL-4,
+    route run 43314567534): a dangling end (KiCad track_dangling: a 0.0001 mm E3_ENC2_B piece left where an earlier
+    increment removed the via it ended in) or an end inside a scripted via off its centre that no track of the net joins to
+    the centre (KiCad track_not_centered_on_via: an L2 E3_FAN_PG piece inside the scripted Q304 gate via). They are removed
+    and their nets pruned and joined again like the touched nets; with none (the committed route) nothing changes."""
+    ends = collections.defaultdict(list)
+    for it in m.items:
+        if it.alive and it.kind == 'track':
+            for e, o in ((it.a, it.b), (it.b, it.a)):
+                ends[(it.net, round(e[0], 5), round(e[1], 5))].append(o)
+    out = []
+    for it in m.items:
+        if not (it.alive and it.kind == 'track' and it.src == 'router') or it.net in skip:
+            continue
+        bad = not all(F.end_joined(m, it, e, it.net) for e in (it.a, it.b))
+        for e in (it.a, it.b):
+            if bad:
+                break
+            for v in m.near(it.layers[0], (e[0] - 0.5, e[1] - 0.5, e[0] + 0.5, e[1] + 0.5)):
+                if v.kind == 'via' and v.net == it.net and v.src == 'scripted' and v.shape.dist(*e) <= 0 \
+                        and math.hypot(e[0] - v.at[0], e[1] - v.at[1]) > 1e-4 \
+                        and not any(math.hypot(o[0] - v.at[0], o[1] - v.at[1]) <= 1e-4
+                                    for o in ends[(it.net, round(e[0], 5), round(e[1], 5))]):
+                    bad = True
+                    break
+        if bad:
+            out.append(it)
+    return out
+
+
 def run(args, log=print):
     import freeze_route as FR
     import router as R
@@ -445,6 +477,11 @@ def run(args, log=print):
         touched[a] += 1
         touched[b] += 1
     scripted_only = set(NEVER) | scripted_class_nets(cur) | set(args.scripted)
+    flagged = flagged_frozen(m, scripted_only)  # before the removals below, so it names what the frozen copper had
+    for it in flagged:
+        m.remove(it)
+        removed[it.net] += 1
+        touched[it.net] += 1
     for net in list(args.rip) + list(args.scripted):
         for it in m.items:
             if it.alive and it.src == 'router' and it.net == net:
@@ -456,7 +493,8 @@ def run(args, log=print):
         m.remove(it)
         removed[it.net] += 1
         touched[it.net] += 1
-    log(f'removed frozen items by net: {dict(sorted(removed.items()))} ({len(hits)} clearance conflicts)')
+    log(f'removed frozen items by net: {dict(sorted(removed.items()))} ({len(hits)} clearance conflicts, '
+        f'{len(flagged)} flagged by the exact checks)')
     for ref in moved:
         for it in m.items:
             if it.alive and it.kind == 'pad' and it.ref == ref and it.net:
@@ -536,6 +574,7 @@ def run(args, log=print):
             'reason': args.reason or '',
             'rip': sorted(args.rip), 'scripted': sorted(args.scripted), 'moved_refs': moved,
             **({'renamed_frozen_items': {f'{a} -> {b}': n for (a, b), n in sorted(renamed.items())}} if renamed else {}),
+            **({'flagged_frozen_items': dict(sorted(collections.Counter(it.net for it in flagged).items()))} if flagged else {}),
             'removed_frozen_items': dict(sorted(removed.items())),
             'rejoined_nets': sorted(fz.tag),
             'left_open_for_freerouting': open_,

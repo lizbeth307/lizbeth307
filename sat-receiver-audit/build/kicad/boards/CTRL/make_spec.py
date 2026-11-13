@@ -225,7 +225,7 @@ ANCHORS = {
     'R366': (anchor((38.6, 88.0), 0), FAN_NOTE),
     'C318': (anchor((47.6, 74.6), 0), FAN_NOTE),
     'D305': (anchor((40.6, 91.6), 0), FAN_NOTE),
-    'C319': (anchor((47.825, 72.35), 0), FAN_NOTE + '; W2 CTRL-4: below C318, right of the LAB5 feed column, so that its '
+    'C319': (anchor((47.825, 72.82), 0), FAN_NOTE + '; W2 CTRL-4: between the D304 and C318 courtyards (0.07 mm each side), right of the LAB5 feed column, so that its '
              'E3_FAN5_P pad joins F301.2 and C318.1 on B.Cu without a layer change (it sat above the LAB5 branch to Q304)'),
     'D306': (anchor((14.5, 56.3), 0), BLOWER_NOTE),
     'Q305': (anchor((20.23, 56.4), 0), BLOWER_NOTE),
@@ -995,7 +995,10 @@ ROUTER_WHY = (
     'scripted-copper change stops make_spec at the guard of route-frozen.json. W2 CTRL-4: freeze_route.py --from-frozen '
     're-freezes from the committed GENERATED board (FEED4 study route runs 43270651486, 43276220883 and 43287143670: 2/2, 1/0 '
     'and 0/0 DRC errors/unconnected), here for the outer LAB5 feed, the fully scripted E3_FAN5_P and the blower capacitor '
-    'bars. Job timeout 34 min inside the 45 min CI job')
+    'bars; route run 43314567534 of that increment gave 3 errors and 0 unconnected (C319/D304 courtyards; an L2 E3_FAN_PG '
+    'piece inside the scripted Q304 gate via off its centre; a dangling 0.0001 mm E3_ENC2_B piece the model read as joined), '
+    'so a third increment moves C319 and removes the frozen pieces the exact checks now flag. Job timeout 34 min inside the '
+    '45 min CI job')
 
 
 def l2_plan():
@@ -1062,7 +1065,10 @@ def spec_texts(spec, inp, cu, skipped):
         doc = json.loads(FROZEN.read_text(encoding='utf-8'))
         for inc in doc.get('increments', []):
             spec['pre_route']['frozen_route_note'] += (
-                f'. Increment ({inc["tool"]}): {inc["reason"]}; frozen copper of {", ".join(inc["scripted"] + inc["rip"])} removed, '
+                f'. Increment ({inc["tool"]}): {inc["reason"]}; frozen copper of '
+                f'{", ".join(inc["scripted"] + inc["rip"]) or "no whole net"} removed, '
+                + (f'frozen pieces flagged by the exact checks {inc["flagged_frozen_items"]} removed, '
+                   if inc.get('flagged_frozen_items') else '') +
                 f'pads of {", ".join(inc["moved_refs"]) or "no ref"} moved, {sum(inc["removed_frozen_items"].values())} frozen '
                 f'items removed, {len(inc["rejoined_nets"])} nets joined again by the same grid A* (copper added '
                 f'{inc["added_copper_mm"]} mm and removed {inc["removed_copper_mm"]} mm by layer, vias +{inc["added_vias"]} '

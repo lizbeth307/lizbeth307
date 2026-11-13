@@ -107,8 +107,8 @@ def verify(m):
             continue
         for e in (it.a, it.b):
             for v in m.near(it.layers[0], (e[0] - 0.5, e[1] - 0.5, e[0] + 0.5, e[1] + 0.5)):
-                if v.kind != 'via' or v.net != it.net or (it.src != 'new' and v.src != 'new'):
-                    continue
+                if v.kind != 'via' or v.net != it.net or (it.src != 'new' and v.src not in ('new', 'scripted')):
+                    continue  # W2 CTRL-4: scripted vias too (route run 43314567534: a frozen track end left in a scripted via)
                 if v.shape.dist(*e) <= 0 and math.hypot(e[0] - v.at[0], e[1] - v.at[1]) > 1e-4:
                     if not any(math.hypot(o[0] - v.at[0], o[1] - v.at[1]) <= 1e-4 for o in ends[(it.net, round(e[0], 5), round(e[1], 5))]):
                         bad.append(('track end not on via centre', it.net, e, 'via', v.at, v.src))
