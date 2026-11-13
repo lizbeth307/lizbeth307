@@ -18,7 +18,7 @@
     "copper": 6,
     "thickness_mm": 1.6,
     "copper_option": "outer_2oz",
-    "source": "W2 PWRJ-LAYERS6: 6 layers JLC06161H-2116 1.6 mm (the stackup of PWR_B and the 6-layer CTRL; pcb/generated/stackup-6l.json from pcb/stackup.py, jlcpcb.com/impedance read 2026-11-12), ordered with finished outer copper 2 oz and inner 0.5 oz (copper_option outer_2oz; jlcpcb.com/impedance, capabilities/pcb-capabilities and 6-layer-pcb read 2026-11-13). The contract stackup (mechanical/generated/contract/boards.json: t 1.6) keeps the 1.6 mm the mechanics use",
+    "source": "W2 PWRJ-LAYERS6: 6 layers JLC06161H-2116 1.6 mm (the stackup of PWR_B and the 6-layer CTRL; pcb/generated/stackup-6l.json from pcb/stackup.py, jlcpcb.com/impedance read 2026-11-12), ordered with finished outer copper 2 oz and inner 0.5 oz (copper_option outer_2oz; jlcpcb.com/impedance, capabilities/pcb-capabilities and 6-layer-pcb read 2026-11-13). 1.6 mm is the order thickness; the contract gives PWR its own stackup (mechanical/generated/contract/boards.json PWR stackup: t 1.664 MODEL with 2 oz outer, order 1.6 +/- 10 %, W2 MECH-8), which the mechanics and the B2B stack row of placement_study use",
     "plan": {
       "F.Cu": "L1: parts (top), signals; BATT/PWR3A pours (scripted, locked tracks) and power routes at the 2 oz widths",
       "In1.Cu": "L2: solid GND plane (pre-route zone, layer type power): every SMD GND pad joins it by its scripted via",
@@ -14883,7 +14883,7 @@
     "rule": "make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to a 0.7 / 0.3 via, or to a GND via within 3 mm"
   },
   "moves": {
-    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 aa655ed626e19232e5fee2ecdb31407d5b2b20ada6e2b2d12cd1e857554ec73b",
+    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 78a6bcfd276b31fd5a945050df8ff9c01c6210b47965f8fdb3921084f6d277e8",
     "moved_refs": 195,
     "manual": []
   },
