@@ -3,6 +3,8 @@
 W2 PWRB-R: copied unchanged in function from build/kicad/boards/CTRL/freeze/model.py of origin/wip/w2-ctrl4-layers6 (W2 CTRL-4)
 for the 6-layer PWR_B board; configure() switches the stackup, keepouts include the planned_cutouts rule areas.
 W2 PWRJ-LAYERS6: copied unchanged from build/kicad/boards/PWR_B/freeze/model.py for the 6-layer PWR_A board.
+W2 PWR-TOOLS: two fixes of the W2 PWRJ F2ENV copy (origin/wip/w2-pwrj-f2env a1d63ae0) for PWR_A: filled zones of scripted
+nets are items (src 'zone'), and a track that covers a pad anchor joins the pad.
 
 Items: pads (exact check_boards shapes), track segments, vias, keepout polygons, edge segments.
 Clearance checks of new copper, per-net connectivity (union-find), numpy rasters for a grid router.
@@ -125,6 +127,19 @@ class Model:
             lays = [l for l in p['layers'] if l in LAYERS] if kind == 'pad' else list(LAYERS)
             self.add(Item(kind=kind, net=p['net'] if kind == 'pad' else None, layers=lays, shape=p['geo'], ref=p['ref'], pad=p['number'],
                           at=(p['x'], p['y']), drill=(p['drill'][0] if p['drill'] else 0.0), locked=True, src='pad'))
+        # W2 PWR-TOOLS (port of W2 PWRJ F2ENV, PWR_A): the filled copper zones of the scripted nets (the In4.Cu E1_CONV_IN
+        # bridge and strap of make_board.py; F.Cu/B.Cu pours are locked tracks there) join and block like pads (src 'zone');
+        # the plane nets stay planes (PLANES), and GND fills are never items
+        for z in self.b.zones:
+            if z['keepout'] or not z['net'] or z['net'] == 'GND' or z['net'] in PLANES:
+                continue
+            for lay, polys in z['fills'].items():
+                if lay not in LAYERS:
+                    continue
+                for poly in polys:
+                    bx = poly.bbox
+                    self.add(Item(kind='pad', net=z['net'], layers=[lay], shape=poly, ref='ZONE', pad=z['name'] or 'fill',
+                                  at=((bx[0] + bx[2]) / 2, (bx[1] + bx[3]) / 2), drill=0.0, locked=True, src='zone'))
         tree = cb.parse(text)
         for seg in cb.kids(tree, 'segment'):
             s, e = cb.kid(seg, 'start'), cb.kid(seg, 'end')
@@ -254,7 +269,7 @@ class Model:
                 if it.kind == 'npth':
                     continue
                 if it.net == net:
-                    if it.kind == 'pad' and not it.drill:
+                    if it.kind == 'pad' and not it.drill and it.src != 'zone':  # a via may stand in its own zone fill
                         m = it.shape.dist(*at) - r - 0.02  # no via in an SMD pad
                         if m < worst:
                             worst, why = m, f'own pad {it.ref}.{it.pad}'
@@ -315,8 +330,11 @@ def touches(p, q):
     if p.kind == 'track':
         p, q = q, p
     if q.kind == 'track':
-        # KiCad joins a track to a pad/via when a track end lies inside it
-        return any(p.shape.dist(*e) <= 1e-4 for e in (q.a, q.b)) or (p.kind == 'via' and False)
+        # KiCad joins a track to a pad/via when a track end lies inside it; W2 PWR-TOOLS (port of W2 PWRJ F2ENV, PWR_A): also
+        # when the track copper covers the pad anchor (a scripted pour drawn as a wide locked track; KiCad counted those pads
+        # connected in route run 43340503685)
+        return any(p.shape.dist(*e) <= 1e-4 for e in (q.a, q.b)) or (p.kind == 'pad' and p.src != 'zone' and p.at is not None
+                                                                     and q.shape.dist(*p.at) <= 1e-4)
     # pad/via vs pad/via
     if p.kind == 'via' and q.kind == 'via':
         return math.hypot(p.at[0] - q.at[0], p.at[1] - q.at[1]) <= 1e-4
@@ -324,6 +342,11 @@ def touches(p, q):
         p, q = q, p
     if q.kind == 'via':
         return p.shape.dist(*q.at) <= 1e-4
+    # W2 PWR-TOOLS: a filled zone of a scripted net joins a pad of its net whose anchor lies in the fill (THT pads on In4.Cu)
+    if p.src == 'zone' and q.src != 'zone':
+        return q.at is not None and p.shape.dist(*q.at) <= 1e-4
+    if q.src == 'zone' and p.src != 'zone':
+        return p.at is not None and q.shape.dist(*p.at) <= 1e-4
     return False
 
 

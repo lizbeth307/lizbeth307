@@ -244,6 +244,11 @@ def dangling(m):
     for it in m.items:
         if not it.alive or it.kind not in ('track', 'via'):
             continue
+        if it.src in ('scripted', 'stub'):
+            # W2 PWR-TOOLS (port of W2 PWRJ F2ENV 7beff19a): the locked scripted copper of make_spec.py (J209 GND spine vias on
+            # a running B.Cu track, fan-out vias) and the board_gen via-centre stubs are KiCad-checked by the route run; this
+            # strict end test reports only router and completion copper
+            continue
         net = it.net
         if it.kind == 'track':
             for e in (it.a, it.b):

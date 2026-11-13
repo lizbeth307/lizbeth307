@@ -16,6 +16,9 @@ route run whose inputs equal the spec made by make_board.py without route-frozen
   4. removes dangling router/completion copper, checks every item again and writes route-frozen-6l.json (router copper
      as routed, completion copper, a guard: SHA256 of the pads and of the scripted copper, which make_board.py compares).
 With --no-guard it writes no guard (a trial; make_board refuses such a file).
+W2 PWR-TOOLS: the via-centre stubs that pcb/board_gen.py added in the run (route-log.json via_centre_stubs) are fixed copper
+(fix_stubs), router copper that KiCad's DRC of the run flags as an error is removed and its net joined again (drc_drops), and
+completion copper that fails the final exact check is dropped (port of W2 PWRJ F2ENV feb76b8f).
 CI/model input only: the CI route run with '[pcb-route PWR_A]' is the check (KiCad 10.0.7 DRC); bench gates stay OPEN.
 """
 import argparse
@@ -159,6 +162,90 @@ def branch_kind(graph):
     return kind
 
 
+def fix_stubs(m, art):
+    """W2 PWR-TOOLS: the stubs pcb/board_gen.py via_centre_stubs drew after the SES import (route-log.json, KiCad mm) come back
+    in every run on the same locked copper, so they are fixed copper here (src 'stub'): never removed, ripped or harvested.
+    Router copper that breaks their clearance goes instead (route run 43354942122: the frozen E2_AUX_SWITCHED via against
+    the LAB5 stub at KiCad (150.95, 181.95), harvested as router copper and removed in place of the stub before).
+    Returns (stubs matched, stubs in the log)."""
+    path = art / 'board/route-log.json'
+    stubs = json.loads(path.read_text(encoding='utf-8')).get('via_centre_stubs', []) if path.is_file() else []
+    hit = 0
+    for s in stubs:
+        e, c = tuple(s['end']), tuple(s['centre'])
+        box = (min(e[0], c[0]) - 0.01, min(e[1], c[1]) - 0.01, max(e[0], c[0]) + 0.01, max(e[1], c[1]) + 0.01)
+        for it in m.near(s['layer'], box):
+            if it.kind != 'track' or it.net != s['net'] or it.src == 'pad':
+                continue
+            ends = sorted([it.a, it.b])
+            if all(math.hypot(q[0] - w[0], q[1] - w[1]) <= 1e-3 for q, w in zip(ends, sorted([e, c]))):
+                it.src, it.locked, hit = 'stub', True, hit + 1
+    return hit, len(stubs)
+
+
+def drc_drops(m, drc):
+    """W2 PWR-TOOLS: router copper (src 'router': the frozen copper harvested again and new router copper) that KiCad's DRC of
+    the run names in an error (clearance, connection_width, track_dangling, ...) is removed before the completion; its net is
+    pruned and joined again by the grid A*. Scripted copper, pads and fixed stubs stay. The exact model missed three such
+    items in route run 43354942122: the E2_AUX_SWITCHED via against the LAB5 stub (clearance), the 0.81 mm 3V3_Q6A piece at
+    J208.1 (connection_width: it leaves the pad over a corner) and a 0.13 mm E2_BONI_EF stub (track_dangling).
+    Returns [{type, item, net, removed}]."""
+    out = []
+    for v in drc.get('violations', []):
+        if v.get('severity') != 'error':
+            continue
+        for d in v.get('items', []):
+            desc = d.get('description', '')
+            mt = re.match(r'(Track|Via) \[([^\]]+)\]', desc)
+            if not mt or 'pos' not in d:
+                continue
+            kind, net, pos = mt.group(1).lower(), mt.group(2), (float(d['pos']['x']), float(d['pos']['y']))
+            ml = re.search(r'length ([0-9.]+) mm', desc)
+            ly = re.search(r' on (\S+?),', desc)
+            found = None
+            for lay in ([ly.group(1)] if kind == 'track' and ly else M.LAYERS):
+                for it in m.near(lay, (pos[0] - 0.5, pos[1] - 0.5, pos[0] + 0.5, pos[1] + 0.5)):
+                    if it.kind != kind or it.net != net:
+                        continue
+                    if kind == 'via' and math.hypot(it.at[0] - pos[0], it.at[1] - pos[1]) <= 1e-3:
+                        found = it
+                    elif kind == 'track' and ml and abs(math.hypot(it.b[0] - it.a[0], it.b[1] - it.a[1]) - float(ml.group(1))) <= 1e-3 \
+                            and min(math.hypot(q[0] - pos[0], q[1] - pos[1]) for q in (it.a, it.b)) <= 1e-3:
+                        found = it
+                    if found:
+                        break
+                if found:
+                    break
+            row = {'type': v.get('type'), 'item': desc, 'net': net, 'removed': bool(found and found.alive and found.src == 'router')}
+            if row['removed']:
+                m.remove(found)
+            out.append(row)
+    return out
+
+
+def drop_failing_completion(m):
+    """W2 PWR-TOOLS (port of W2 PWRJ F2ENV feb76b8f, PWR_A): completion copper that the final exact check finds too close
+    is dropped with its dangling rest (the joins it made stay open). Returns the nets touched."""
+    drop = []
+    for it in m.items:
+        if not (it.alive and it.src == 'new'):
+            continue
+        if it.kind == 'track':
+            mg, _w = m.track_margin(it.net, it.layers[0], it.width, it.a, it.b, ignore={it.id})
+        elif it.kind == 'via':
+            mg, _w = m.via_margin(it.net, it.at, it.size, it.drill, ignore={it.id})
+        else:
+            continue
+        if mg < -0.0005:
+            drop.append(it)
+    for it in drop:
+        m.remove(it)
+    nets = sorted({it.net for it in drop})
+    for n in nets:
+        F.prune(m, n)
+    return len(drop), nets
+
+
 def guard():
     """The guard make_board.py checks: computed by make_board itself on the spec without the frozen copper."""
     loader = importlib.util.spec_from_file_location('pwr_a_make_board', HERE.parent / 'make_board.py')
@@ -222,10 +309,14 @@ def main(argv=None):
             elif it.kind == 'via' and (it.net, (round(it.at[0], 4), round(it.at[1], 4))) in pvias:
                 it.src, hit = 'router', hit + 1
         print(f'ratchet: {hit} locked items of {args.prev} harvested again')
+    stubs_hit, stubs_all = fix_stubs(m, art)
+    print(f'via-centre stubs of the route log held fixed: {stubs_hit} of {stubs_all}')
     cls, default_w = classes()
     width = lambda n: cls.get(n, ('Default', default_w))[1]
     layers = lambda n: OUTER if cls.get(n, ('Default',))[0] in POWER else ROUTING
     drc = json.loads((art / 'board/drc.json').read_text(encoding='utf-8'))
+    drops = drc_drops(m, drc)
+    print('router copper named in a KiCad DRC error:', drops)
     kicad_open = collections.Counter(n for u in drc.get('unconnected_items', []) for n in
                                      {re.search(r'\[([^\]]+)\]', i.get('description', '')).group(1)
                                       for i in u.get('items', []) if re.search(r'\[([^\]]+)\]', i.get('description', ''))})
@@ -249,6 +340,7 @@ def main(argv=None):
             print(f'  router {it.kind} of {it.net} breaks a clearance ({mg:+.3f}, {why}): removed')
             m.remove(it)
             viol.add(it.net)
+    viol |= {d['net'] for d in drops if d['removed']}
     for n in sorted(viol):
         F.prune(m, n)
     # power-class nets first: they have only the outer layers (--order class); or the shortest nets first (--order short:
@@ -287,6 +379,11 @@ def main(argv=None):
     for n in sorted({i.net for i in m.items if i.alive and i.net and i.net not in M.PLANES}):
         F.prune(m, n, srcs=('router', 'new', 'escape'))  # an escape stub whose link failed goes too
     open_, bad = verify(m)
+    dropped = (0, [])
+    if bad:
+        dropped = drop_failing_completion(m)
+        print('dropped completion items after the final check:', dropped)
+        open_, bad = verify(m)
     open_ = {n: k for n, k in open_.items() if n in touched}
     bad = [b for b in bad if not (b[0] == 'dangling' and (b[2] in NEVER or b[2] in model_only))]
     print('open connections', open_, 'clearance violations', len(bad), 'failed', sorted(set(failed)))
@@ -321,6 +418,8 @@ def main(argv=None):
                        'PWR1A, PWR2A and PWR3A on F.Cu/B.Cu at their 2 oz widths, signals on F.Cu, In2.Cu, In3.Cu, B.Cu, no '
                        'plane layer) by build/kicad/boards/PWR_A/freeze/freeze6.py'),
         'result': {'open': open_, 'violations': len(bad), 'failed_nets': sorted(set(failed))},
+        'fixes': {'via_centre_stubs_fixed': stubs_hit, 'drc_drops': drops,
+                  'final_check_dropped': {'items': dropped[0], 'nets': dropped[1]}},
         'necks': sorted(necks, key=lambda r: (r['ref'], r['pad'], r['to'])),
         'branches': sorted(branches, key=lambda r: (r['net'], r['refs'])),
         'guard': None if args.no_guard else guard(),

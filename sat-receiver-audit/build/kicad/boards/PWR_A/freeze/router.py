@@ -131,7 +131,7 @@ class Grid:
                     continue
                 if it.net == net:
                     tgt = blk  # same-net rules are never ripped
-                    if it.kind == 'pad' and not it.drill:
+                    if it.kind == 'pad' and not it.drill and it.src != 'zone':  # W2 PWR-TOOLS: a via may stand in its own zone fill
                         infl = r + 0.02 + margin
                     elif it.kind == 'track':
                         # a new via either sits on a same-net track centre line (an explicit joint follows) or keeps off

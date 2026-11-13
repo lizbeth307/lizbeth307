@@ -8,8 +8,8 @@
     "board_sha256": "1d421e23880089981bdf75122aad9a86b5173c67c818f9ec94c5a13fe1e2a517",
     "spec": "build/kicad/boards/PWR_A/route-iteration-1/board-spec.json",
     "spec_sha256": "4970df10c2cdd47488b4bb3cbd8d4954f2e42e2a0056caf32a14965f2dc974db",
-    "pwr_b_h_trim_sha256": "11a839539c6493dec94330f4bf8489b24fac7d3db4cb126a97161c6ebe70825a",
-    "lab5_budget_sha256": "3dd536a173e20d665b7f159421f55b9b9c5ff9376cf4c5c2654d7406b168167e"
+    "pwr_b_h_trim_sha256": "816e871c2f8471fc60cd208e4ce5a8d4f805e5638ea600076ac0d473cfa81023",
+    "lab5_budget_sha256": "fb3a64c1cf28708d6c47046cac93a1003f964bb426a6b753030cec081e2533a4"
   },
   "drc": {
     "drc_errors": 70,
@@ -128,19 +128,31 @@
         "ok": true
       },
       {
-        "ref": "C218",
+        "ref": "C219",
         "under": "J201",
-        "h_mm": 2.7,
-        "ok": true
+        "h_mm": 4.5,
+        "ok": false
       },
       {
-        "ref": "C257",
+        "ref": "L102",
+        "under": "J201",
+        "h_mm": null,
+        "ok": null
+      },
+      {
+        "ref": "C255",
         "under": "J202",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C259",
+        "ref": "C256",
+        "under": "J202",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "C260",
         "under": "J202",
         "h_mm": 2.7,
         "ok": true
@@ -152,25 +164,67 @@
         "ok": true
       },
       {
-        "ref": "C104",
+        "ref": "C108",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "D104",
+        "ref": "C127",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "D105",
+        "ref": "C128",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "U214",
+        "ref": "C129",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "C136",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "Q101",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "Q102",
+        "under": "J203",
+        "h_mm": null,
+        "ok": null
+      },
+      {
+        "ref": "R125",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "R126",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "R127",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "U111",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
@@ -363,7 +417,24 @@
     "usable_mm2": 7640.6084,
     "fill": 0.5949
   },
-  "findings": [],
-  "unverified": [],
-  "result": "NO_FINDINGS"
+  "findings": [
+    {
+      "check": "h_trim",
+      "item": "C219",
+      "detail": "4.5 mm under the PWR-B J201 pin field (H-TRIM zone height 2.7 mm)"
+    }
+  ],
+  "unverified": [
+    {
+      "check": "h_trim",
+      "item": "L102",
+      "reason": "under the J201 pin field; height not read"
+    },
+    {
+      "check": "h_trim",
+      "item": "Q102",
+      "reason": "under the J203 pin field; height not read"
+    }
+  ],
+  "result": "FINDINGS"
 }
