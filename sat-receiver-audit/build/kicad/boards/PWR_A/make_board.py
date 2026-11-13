@@ -664,6 +664,105 @@ def grid_paths(p, layer, pads, segs, pours, outline):
                 queue.append((ni, nj))
 
 
+# W2 PWRJ-F2C probe: pin-entry stems. Run 1b of the probe (sr-rx-pcb 43341423197) left 82 of 126 open connections at a pad
+# narrower than its net-class width (BATT 3.2, PWR3A 1.85, PWR2A 0.8, PWR1A 0.35 mm into SOT/QFN pins): Freerouting routes a
+# net at its class width only. A stem is a locked track as wide as the pad (at least STEM_MIN), from the pad centre outward
+# to a point where a disc of the class width is free of other-net copper, so the router lands its class-width wire on the
+# stem end; stem_exemptions() lists each stem under neck_exempt (check_boards: escape length from the pad).
+PIN_STEMS = True
+STEM_MIN = 0.3
+STEM_LENS = (0.8, 1.2, 1.6, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0)
+
+
+def pin_stems(inp, pre):
+    nc = inp.netclasses
+    width = {n: nc['classes'][c['class']]['outer_min_width_mm'] for n, c in nc['nets'].items()
+             if nc['classes'].get(c['class'], {}).get('kind') == 'power'}
+    c = inp.contract
+    holes = [(tuple(h), c['hole_keepout_d'] / 2) for h in c['holes_mm']]
+    pads = [(pa.ref, q) for pa in inp.parts.values() for q in pa.pads]
+    segs, pours = scripted_items(pre)
+    need = CLEAR + MARGIN - EPS
+    out = []
+
+    def touched(ref, q):
+        for sgm in segs:
+            if sgm['net'] == q['net'] and sgm['layer'] in ('*',) + tuple(q['layers']) and                     capsule_hits_box(sgm['a'], sgm['b'], sgm['r'] + 0.01, q['box']):
+                return True
+        for z in pours:
+            if z['net'] == q['net'] and z['layer'] in q['layers'] and box_dist(z['box'], q['box']) <= 0.0:
+                return True
+        return False
+
+    def free(a, b, half, end_r, layer, net, own):
+        if not bg.point_in_outline(b, inp.outline) or edge_dist(b, inp.outline) - end_r < EDGE + MARGIN:
+            return False
+        for (hx, hy), hr in holes:
+            if math.hypot(b[0] - hx, b[1] - hy) - end_r < hr:
+                return False
+        for ref, q in pads:
+            if q is own:
+                continue
+            bb = q['box']
+            if bb[0] - 7 > b[0] or bb[2] + 7 < b[0] or bb[1] - 7 > b[1] or bb[3] + 7 < b[1]:
+                continue
+            if layer not in q['layers'] and q['type'] != 'np_thru_hole':
+                continue
+            if q['net'] == net and q['type'] != 'np_thru_hole':
+                continue
+            gap = 0.25 + MARGIN - EPS if q['type'] == 'np_thru_hole' else need
+            if seg_box_dist(a, b, bb) - half < gap or box_dist((b[0], b[1], b[0], b[1]), bb) - end_r < gap:
+                return False
+        for sgm in segs:
+            if sgm['net'] == net or sgm['layer'] not in (layer, '*'):
+                continue
+            if seg_seg_dist(sgm['a'], sgm['b'], a, b) - sgm['r'] - half < need or                     seg_seg_dist(sgm['a'], sgm['b'], b, b) - sgm['r'] - end_r < need:
+                return False
+        for z in pours:
+            if z['net'] == net or z['layer'] != layer:
+                continue
+            if seg_box_dist(a, b, z['box']) - half < need or box_dist((b[0], b[1], b[0], b[1]), z['box']) - end_r < need:
+                return False
+        return True
+
+    for ref in sorted(inp.parts, key=bg.sort_ref):
+        pa = inp.parts[ref]
+        cx0 = (pa.box[0] + pa.box[2]) / 2
+        cy0 = (pa.box[1] + pa.box[3]) / 2
+        for q in pa.pads:
+            w = width.get(q['net'])
+            if w is None or not q['number']:
+                continue
+            bb = q['box']
+            mind = min(bb[2] - bb[0], bb[3] - bb[1])
+            if mind + 1e-6 >= w or touched(ref, q):
+                continue
+            layer = pa.side if q['type'] == 'smd' else 'F'
+            sw = round(max(STEM_MIN, min(mind, w)), 2)
+            px, py = q['at']
+            ox, oy = px - cx0, py - cy0
+            dirs = sorted(GND_DIRS, key=lambda d: -((d[0] * ox + d[1] * oy) / (math.hypot(*d) * (math.hypot(ox, oy) or 1))))
+            hit = None
+            for length in STEM_LENS:
+                for dx, dy in dirs:
+                    n = math.hypot(dx, dy)
+                    b = (round(px + dx / n * length, 3), round(py + dy / n * length, 3))
+                    if free((px, py), b, sw / 2, w / 2, layer, q['net'], q):
+                        hit = b
+                        break
+                if hit:
+                    break
+            if hit is None:
+                continue
+            t = {'id': f'CU-STEM-{ref}-{q["number"]}', 'net': q['net'], 'layer': f'{layer}.Cu', 'width_mm': sw,
+                 'path': [[r4(px), r4(py)], [r4(hit[0]), r4(hit[1])]], 'locked': True,
+                 'why': f'W2 PWRJ-F2C probe pin-entry stem: {sw} mm from the {mind:.2f} mm pad to a free {w} mm landing for '
+                        'the router (make_board.py pin_stems)'}
+            out.append(t)
+            segs.append({'net': q['net'], 'layer': layer, 'a': (px, py), 'b': hit, 'r': sw / 2})
+    return out
+
+
 def fixed_refs(study, shrink2=None):
     """Refs place_board.py never moves: the anchors of the SHRINK-2 spec and every part with a PWR-B cut-out."""
     shrink2 = shrink2 or read(HERE / 'PWR_A.spec-shrink2.json')
@@ -897,7 +996,7 @@ SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND'}
 # W2 PWRJ-F2C probe, diagnostic only (not a candidate board): the router widths of the power classes narrowed to widths
 # that enter SOT/QFN pins, so a route run separates pad entry (class width wider than the pin) from channel capacity.
 # Router copper below the class width is a pcb/check_boards.py class_widths finding; {} = the committed classes.
-ROUTER_NARROW = {'BATT': 0.6, 'PWR3A': 0.6, 'PWR2A': 0.5}
+ROUTER_NARROW = {}
 COPPER = 4  # W2 PWRJ-F2C probe: 6 = the 6-layer escalation (In3/In4 signal layers, In1/In2 planes as on 4 layers)
 
 
@@ -945,6 +1044,8 @@ def build():
     problems = check_placement(inp)
     pre, copper_notes = board_copper(spec['pre_route'], inp)
     problems += scripted_joined(inp, pre)
+    if PIN_STEMS:
+        pre = {**pre, 'tracks': pre['tracks'] + pin_stems(inp, pre)}
     gt, gv, skipped = gnd_fanout(inp, pre, first=fixed_refs(study))
     heights, sources, unread = heights_block(inp)
     nets = set(spec['instances']['template_nets'])

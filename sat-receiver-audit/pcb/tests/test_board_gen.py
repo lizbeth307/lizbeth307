@@ -694,7 +694,9 @@ class PlannedCutoutRuleAreas(unittest.TestCase):
         spec = bg.read_json(bg.spec_path('PWR_B'))
         pc = spec['planned_cutouts']
         self.assertEqual([r['rect'] for r in pc['rects']], [c['rect'] for c in spec['pwr_a_cutouts']['cutouts_mm']])
-        self.assertEqual(pc['layers'], ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'])
+        # W2 PWRJ-F2C probe: every copper layer of the board (4 or 6)
+        n = spec['layers']['copper']
+        self.assertEqual(pc['layers'], ['F.Cu'] + [f'In{i}.Cu' for i in range(1, n - 1)] + ['B.Cu'])
         self.assertEqual(set(pc['blocks']), {'tracks', 'vias', 'zone_fills', 'pads'})
         self.assertGreaterEqual(pc['margin_mm'], 0.3)
         bg.validate_spec(spec, 'PWR_B')

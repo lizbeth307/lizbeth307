@@ -5165,6 +5165,1536 @@
         "why": "joint of the scripted pours GND-U107-R and GND-C120, which meet edge to edge (make_board.py board_copper)"
       },
       {
+        "id": "CU-STEM-C108-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            39.85,
+            7.1
+          ],
+          [
+            39.85,
+            7.9
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.0 mm from the 1.00 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C110-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            67.25,
+            7.9
+          ],
+          [
+            66.45,
+            7.9
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.0 mm from the 1.00 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C129-1",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.9,
+        "path": [
+          [
+            31.075,
+            53.55
+          ],
+          [
+            30.275,
+            53.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.9 mm from the 0.90 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C203-1",
+        "net": "E2_J21_EF",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            40.7,
+            81.3
+          ],
+          [
+            40.7,
+            82.1
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.0 mm from the 1.00 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C204-1",
+        "net": "E2_J21_EF",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            34.775,
+            76.25
+          ],
+          [
+            34.775,
+            77.05
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C205-1",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            98.4,
+            32.875
+          ],
+          [
+            98.4,
+            33.675
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C206-1",
+        "net": "J21_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            37.8,
+            97.65
+          ],
+          [
+            37.8,
+            96.85
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.6 mm from the 1.60 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C207-1",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            31.1,
+            82.55
+          ],
+          [
+            30.3,
+            82.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.6 mm from the 1.60 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C208-1",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            9.075,
+            65.15
+          ],
+          [
+            8.275,
+            65.15
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C209-1",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            31.75,
+            101.725
+          ],
+          [
+            31.75,
+            100.925
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C210-1",
+        "net": "E2_DISP_IN_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            9.95,
+            97.0
+          ],
+          [
+            9.15,
+            97.0
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.6 mm from the 1.60 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C212-1",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            16.8,
+            100.45
+          ],
+          [
+            16.8,
+            101.25
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.0 mm from the 1.00 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C223-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            126.075,
+            17.95
+          ],
+          [
+            126.875,
+            17.95
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C224-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            48.75,
+            10.375
+          ],
+          [
+            48.75,
+            11.175
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C225-1",
+        "net": "E2_LNA_IN_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            52.8,
+            23.6
+          ],
+          [
+            52.0,
+            23.6
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.6 mm from the 1.60 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C226-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            44.7,
+            10.375
+          ],
+          [
+            45.266,
+            10.941
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C228-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            40.225,
+            11.1
+          ],
+          [
+            41.025,
+            11.1
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C252-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            58.3,
+            9.625
+          ],
+          [
+            58.866,
+            9.059
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C253-1",
+        "net": "E2_LNB_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            34.65,
+            26.975
+          ],
+          [
+            35.216,
+            27.541
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C254-1",
+        "net": "E2_LNB_IN_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            29.05,
+            22.15
+          ],
+          [
+            29.05,
+            21.35
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.6 mm from the 1.60 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C255-1",
+        "net": "E2_LNB_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            39.15,
+            18.575
+          ],
+          [
+            39.716,
+            19.141
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C263-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            32.625,
+            4.15
+          ],
+          [
+            33.425,
+            4.15
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C264-1",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            77.6,
+            28.175
+          ],
+          [
+            78.4,
+            28.175
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C265-1",
+        "net": "E2_BONI_IN_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.6,
+        "path": [
+          [
+            93.5,
+            6.35
+          ],
+          [
+            93.5,
+            5.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.6 mm from the 1.60 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C266-1",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            71.225,
+            22.45
+          ],
+          [
+            70.425,
+            22.45
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C289-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            54.825,
+            32.9
+          ],
+          [
+            54.025,
+            32.9
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C291-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.15,
+        "path": [
+          [
+            52.55,
+            11.475
+          ],
+          [
+            53.116,
+            12.041
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.15 mm from the 1.15 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C508-1",
+        "net": "LAB5",
+        "layer": "B.Cu",
+        "width_mm": 0.9,
+        "path": [
+          [
+            24.125,
+            96.1
+          ],
+          [
+            23.325,
+            96.1
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.9 mm from the 0.90 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-C509-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.0,
+        "path": [
+          [
+            120.1,
+            10.15
+          ],
+          [
+            120.1,
+            10.95
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.0 mm from the 1.00 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-F201-2",
+        "net": "E2_J21_FUSED",
+        "layer": "F.Cu",
+        "width_mm": 1.96,
+        "path": [
+          [
+            30.43,
+            67.355
+          ],
+          [
+            30.43,
+            68.155
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.96 mm from the 1.96 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J104-3",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.5,
+        "path": [
+          [
+            132.0,
+            19.83
+          ],
+          [
+            132.0,
+            20.63
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.5 mm from the 1.50 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J104-4",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.5,
+        "path": [
+          [
+            132.0,
+            22.83
+          ],
+          [
+            132.0,
+            23.63
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.5 mm from the 1.50 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J206-2",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.5,
+        "path": [
+          [
+            115.38,
+            31.83
+          ],
+          [
+            114.814,
+            32.396
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.5 mm from the 1.50 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J206-4",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.5,
+        "path": [
+          [
+            121.38,
+            31.83
+          ],
+          [
+            121.946,
+            32.396
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.5 mm from the 1.50 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J208-13",
+        "net": "VBUS_HFP",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            89.55,
+            20.35
+          ],
+          [
+            89.55,
+            21.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.35 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J208-17",
+        "net": "LAB5_RLY",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            90.55,
+            20.35
+          ],
+          [
+            90.55,
+            21.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.35 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J208-21",
+        "net": "LAB5_RLY",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            91.55,
+            20.35
+          ],
+          [
+            91.55,
+            21.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.35 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J208-29",
+        "net": "LNB13V2",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            93.55,
+            20.35
+          ],
+          [
+            93.55,
+            21.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.35 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J208-33",
+        "net": "AUX12",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            94.55,
+            20.35
+          ],
+          [
+            94.55,
+            21.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.35 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J208-37",
+        "net": "BONI13V8_PORT",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            95.55,
+            20.35
+          ],
+          [
+            95.55,
+            21.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.35 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J208-99",
+        "net": "E2_LNA4_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            111.05,
+            20.35
+          ],
+          [
+            111.616,
+            20.916
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.35 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-J208-100",
+        "net": "E2_LNA4_SHUNT",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            111.05,
+            16.65
+          ],
+          [
+            111.85,
+            16.65
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.35 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-L201-1",
+        "net": "E2_J21_EF",
+        "layer": "F.Cu",
+        "width_mm": 1.18,
+        "path": [
+          [
+            70.305,
+            31.55
+          ],
+          [
+            71.105,
+            31.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.18 mm from the 1.18 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-L201-2",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.18,
+        "path": [
+          [
+            66.995,
+            31.55
+          ],
+          [
+            66.195,
+            31.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.18 mm from the 1.18 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-L202-2",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            21.675,
+            78.2
+          ],
+          [
+            21.109,
+            77.634
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.25 mm from the 1.25 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-L205-2",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.18,
+        "path": [
+          [
+            39.91,
+            21.755
+          ],
+          [
+            39.91,
+            20.955
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.18 mm from the 1.18 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-L211-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            37.7,
+            31.775
+          ],
+          [
+            37.7,
+            32.575
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.25 mm from the 1.25 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-L211-2",
+        "net": "E2_LNB_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            37.7,
+            29.625
+          ],
+          [
+            37.7,
+            28.825
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.25 mm from the 1.25 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-L213-1",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            68.875,
+            18.75
+          ],
+          [
+            68.075,
+            18.75
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.25 mm from the 1.25 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-L213-2",
+        "net": "E2_BONI_IN",
+        "layer": "F.Cu",
+        "width_mm": 1.25,
+        "path": [
+          [
+            71.025,
+            18.75
+          ],
+          [
+            71.591,
+            19.316
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.25 mm from the 1.25 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R110-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 1.23,
+        "path": [
+          [
+            37.93,
+            76.5925
+          ],
+          [
+            37.364,
+            77.158
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.23 mm from the 1.23 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R124-1",
+        "net": "SYS12",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            29.65,
+            44.425
+          ],
+          [
+            30.216,
+            44.991
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.8 mm from the 0.80 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R129-1",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            18.85,
+            78.275
+          ],
+          [
+            18.284,
+            77.709
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.8 mm from the 0.80 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R201-1",
+        "net": "E2_J21_FUSED",
+        "layer": "B.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            32.65,
+            69.825
+          ],
+          [
+            32.65,
+            71.425
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.8 mm from the 0.80 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R204-1",
+        "net": "E2_J21_FUSED",
+        "layer": "B.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            38.425,
+            69.75
+          ],
+          [
+            39.225,
+            69.75
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.8 mm from the 0.80 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R207-1",
+        "net": "J21",
+        "layer": "B.Cu",
+        "width_mm": 1.12,
+        "path": [
+          [
+            40.7125,
+            92.6
+          ],
+          [
+            40.712,
+            93.4
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.12 mm from the 1.12 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R207-2",
+        "net": "J21_DAMP",
+        "layer": "B.Cu",
+        "width_mm": 1.12,
+        "path": [
+          [
+            37.7875,
+            92.6
+          ],
+          [
+            36.988,
+            92.6
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.12 mm from the 1.12 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R208-1",
+        "net": "E2_DISP_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.12,
+        "path": [
+          [
+            7.3125,
+            98.85
+          ],
+          [
+            7.878,
+            99.416
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.12 mm from the 1.12 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R208-2",
+        "net": "E2_DISP_IN_DAMP",
+        "layer": "B.Cu",
+        "width_mm": 1.12,
+        "path": [
+          [
+            4.3875,
+            98.85
+          ],
+          [
+            3.587,
+            98.85
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.12 mm from the 1.12 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R210-1",
+        "net": "E2_DISP_IN",
+        "layer": "B.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            24.225,
+            101.4
+          ],
+          [
+            23.659,
+            100.834
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.8 mm from the 0.80 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R221-1",
+        "net": "SYS12",
+        "layer": "B.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            31.225,
+            65.8
+          ],
+          [
+            30.425,
+            65.8
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.8 mm from the 0.80 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R224-1",
+        "net": "E2_LNA_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.12,
+        "path": [
+          [
+            55.7425,
+            32.97
+          ],
+          [
+            56.308,
+            33.536
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.12 mm from the 1.12 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R224-2",
+        "net": "E2_LNA_IN_DAMP",
+        "layer": "B.Cu",
+        "width_mm": 1.12,
+        "path": [
+          [
+            52.8175,
+            32.97
+          ],
+          [
+            52.018,
+            32.97
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.12 mm from the 1.12 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R260-1",
+        "net": "E2_BONI_IN",
+        "layer": "B.Cu",
+        "width_mm": 1.12,
+        "path": [
+          [
+            83.0375,
+            30.9
+          ],
+          [
+            82.472,
+            31.466
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.12 mm from the 1.12 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-R260-2",
+        "net": "E2_BONI_IN_DAMP",
+        "layer": "B.Cu",
+        "width_mm": 1.12,
+        "path": [
+          [
+            85.9625,
+            30.9
+          ],
+          [
+            85.963,
+            32.9
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.12 mm from the 1.12 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-TP201-1",
+        "net": "J21",
+        "layer": "F.Cu",
+        "width_mm": 1.5,
+        "path": [
+          [
+            18.85,
+            74.93
+          ],
+          [
+            19.65,
+            74.93
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 1.5 mm from the 1.50 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U111-3",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            31.9875,
+            37.2
+          ],
+          [
+            31.988,
+            38.4
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.6 mm from the 0.60 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U111-6",
+        "net": "E1_SW",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            29.7125,
+            35.3
+          ],
+          [
+            25.713,
+            35.3
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.6 mm from the 0.60 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U201-5",
+        "net": "E2_J21_FUSED",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            33.9,
+            72.75
+          ],
+          [
+            33.9,
+            69.75
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U201-6",
+        "net": "E2_J21_EF",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            34.4,
+            72.75
+          ],
+          [
+            34.4,
+            75.25
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U202-5",
+        "net": "E2_DISP_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            27.9,
+            102.45
+          ],
+          [
+            27.9,
+            99.45
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 3.2 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U202-6",
+        "net": "DISP12",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            28.4,
+            102.45
+          ],
+          [
+            28.4,
+            104.45
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.8 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U203-5",
+        "net": "VCC_3V3_MKEY",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            10.5,
+            30.55
+          ],
+          [
+            12.5,
+            30.55
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.8 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U203-6",
+        "net": "E2_LIME_EF",
+        "layer": "F.Cu",
+        "width_mm": 0.3,
+        "path": [
+          [
+            10.5,
+            31.05
+          ],
+          [
+            8.5,
+            31.05
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.3 mm from the 0.30 mm pad to a free 0.8 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U204-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            21.495
+          ],
+          [
+            43.414,
+            22.061
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U204-2",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            20.845
+          ],
+          [
+            43.414,
+            21.411
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U204-3",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            20.195
+          ],
+          [
+            43.414,
+            20.761
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U204-4",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            19.545
+          ],
+          [
+            43.98,
+            20.345
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U204-7",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            48.28,
+            18.245
+          ],
+          [
+            48.28,
+            17.445
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U205-1",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            15.495
+          ],
+          [
+            43.414,
+            16.061
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U205-2",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            14.845
+          ],
+          [
+            43.414,
+            15.411
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U205-3",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            14.195
+          ],
+          [
+            43.414,
+            14.761
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U205-4",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            43.98,
+            13.545
+          ],
+          [
+            43.98,
+            14.345
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U205-7",
+        "net": "E2_LNA_IN",
+        "layer": "F.Cu",
+        "width_mm": 0.4,
+        "path": [
+          [
+            48.28,
+            12.245
+          ],
+          [
+            48.28,
+            11.445
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.4 mm from the 0.40 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
+        "id": "CU-STEM-U503-1",
+        "net": "LAB5",
+        "layer": "F.Cu",
+        "width_mm": 0.6,
+        "path": [
+          [
+            13.15,
+            32.7125
+          ],
+          [
+            11.736,
+            34.127
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe pin-entry stem: 0.6 mm from the 0.60 mm pad to a free 1.85 mm landing for the router (make_board.py pin_stems)"
+      },
+      {
         "id": "GND-C107-2-S",
         "net": "GND",
         "layer": "F.Cu",
@@ -5572,7 +7102,7 @@
           ],
           [
             89.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -5608,7 +7138,7 @@
           ],
           [
             90.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -5644,7 +7174,7 @@
           ],
           [
             91.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -5662,7 +7192,7 @@
           ],
           [
             92.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -5680,7 +7210,7 @@
           ],
           [
             93.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -5698,7 +7228,7 @@
           ],
           [
             94.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -5716,7 +7246,7 @@
           ],
           [
             95.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -5734,7 +7264,7 @@
           ],
           [
             96.05,
-            21.65
+            19.05
           ]
         ],
         "locked": true,
@@ -5752,7 +7282,7 @@
           ],
           [
             96.55,
-            19.05
+            21.65
           ]
         ],
         "locked": true,
@@ -6561,8 +8091,8 @@
             101.25
           ],
           [
-            27.725,
-            100.225
+            27.0002,
+            100.5252
           ]
         ],
         "locked": true,
@@ -6615,8 +8145,12 @@
             33.275
           ],
           [
-            12.175,
+            14.075,
             33.275
+          ],
+          [
+            14.075,
+            32.675
           ]
         ],
         "locked": true,
@@ -8274,11 +9808,11 @@
           ],
           [
             14.1,
-            31.65
+            31.15
           ],
           [
-            13.0393,
-            30.5893
+            13.3929,
+            30.4429
           ]
         ],
         "locked": true,
@@ -9323,7 +10857,7 @@
         "net": "GND",
         "at": [
           89.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9347,7 +10881,7 @@
         "net": "GND",
         "at": [
           90.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9371,7 +10905,7 @@
         "net": "GND",
         "at": [
           91.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9383,7 +10917,7 @@
         "net": "GND",
         "at": [
           92.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9395,7 +10929,7 @@
         "net": "GND",
         "at": [
           93.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9407,7 +10941,7 @@
         "net": "GND",
         "at": [
           94.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9419,7 +10953,7 @@
         "net": "GND",
         "at": [
           95.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9431,7 +10965,7 @@
         "net": "GND",
         "at": [
           96.05,
-          21.65
+          19.05
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9443,7 +10977,7 @@
         "net": "GND",
         "at": [
           96.55,
-          19.05
+          21.65
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -9970,8 +11504,8 @@
         "id": "GND-C211-2-V",
         "net": "GND",
         "at": [
-          27.725,
-          100.225
+          27.0002,
+          100.5252
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -10006,8 +11540,8 @@
         "id": "GND-C214-2-V",
         "net": "GND",
         "at": [
-          12.175,
-          33.275
+          14.075,
+          32.675
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -11098,8 +12632,8 @@
         "id": "GND-U503-2-V",
         "net": "GND",
         "at": [
-          13.0393,
-          30.5893
+          13.3929,
+          30.4429
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -12077,6 +13611,18 @@
   "tht_pocket_margin_mm": 1.0,
   "tht_pockets_note": "proposed plate relief pockets (M-07) = THT pads and NPTH pegs of each placed top part + 1.0 mm (mechanical/params/boards.json tht_pockets margin), rounded outward to 0.05 mm; margin boxes less than 3 mm apart share one pocket (make_probe_spec.py RIB)",
   "neck_exempt": {
+    "C108": {
+      "escape_mm": 0.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C108-1 (E1_SW, 1.0 mm, pad 1)"
+    },
+    "C110": {
+      "escape_mm": 0.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C110-1 (E1_SW, 1.0 mm, pad 1)"
+    },
+    "C129": {
+      "escape_mm": 0.4,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C129-1 (SYS12, 0.9 mm, pad 1)"
+    },
     "C134": {
       "escape_mm": 1.05,
       "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-BAR-J-LAB5RAW-VOUT1 (E1_LAB5_RAW, 1.3 mm, pad 1)"
@@ -12085,21 +13631,205 @@
       "escape_mm": 1.0,
       "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-BAR-J-LAB5RAW-VOUT2 (E1_LAB5_RAW, 1.3 mm, pad 1)"
     },
+    "C203": {
+      "escape_mm": 0.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C203-1 (E2_J21_EF, 1.0 mm, pad 1)"
+    },
+    "C204": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C204-1 (E2_J21_EF, 1.15 mm, pad 1)"
+    },
+    "C205": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C205-1 (J21, 1.15 mm, pad 1)"
+    },
+    "C206": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C206-1 (J21_DAMP, 1.6 mm, pad 1)"
+    },
+    "C207": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C207-1 (J21, 1.6 mm, pad 1)"
+    },
+    "C208": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C208-1 (SYS12, 1.15 mm, pad 1)"
+    },
+    "C209": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C209-1 (E2_DISP_IN, 1.15 mm, pad 1)"
+    },
+    "C210": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C210-1 (E2_DISP_IN_DAMP, 1.6 mm, pad 1)"
+    },
+    "C212": {
+      "escape_mm": 0.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C212-1 (E2_DISP_IN, 1.0 mm, pad 1)"
+    },
+    "C223": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C223-1 (LAB5, 1.15 mm, pad 1)"
+    },
+    "C224": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C224-1 (E2_LNA_IN, 1.15 mm, pad 1)"
+    },
+    "C225": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C225-1 (E2_LNA_IN_DAMP, 1.6 mm, pad 1)"
+    },
+    "C226": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C226-1 (E2_LNA_IN, 1.15 mm, pad 1)"
+    },
+    "C228": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C228-1 (E2_LNA_IN, 1.15 mm, pad 1)"
+    },
+    "C252": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C252-1 (E1_SW, 1.15 mm, pad 1)"
+    },
+    "C253": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C253-1 (E2_LNB_IN, 1.15 mm, pad 1)"
+    },
+    "C254": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C254-1 (E2_LNB_IN_DAMP, 1.6 mm, pad 1)"
+    },
+    "C255": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C255-1 (E2_LNB_IN, 1.15 mm, pad 1)"
+    },
+    "C263": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C263-1 (E1_SW, 1.15 mm, pad 1)"
+    },
+    "C264": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C264-1 (E2_BONI_IN, 1.15 mm, pad 1)"
+    },
+    "C265": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C265-1 (E2_BONI_IN_DAMP, 1.6 mm, pad 1)"
+    },
+    "C266": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C266-1 (E2_BONI_IN, 1.15 mm, pad 1)"
+    },
+    "C289": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C289-1 (E2_LNA_IN, 1.15 mm, pad 1)"
+    },
+    "C291": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C291-1 (E2_LNA_IN, 1.15 mm, pad 1)"
+    },
+    "C508": {
+      "escape_mm": 0.4,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C508-1 (LAB5, 0.9 mm, pad 1)"
+    },
+    "C509": {
+      "escape_mm": 0.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-C509-1 (LAB5, 1.0 mm, pad 1)"
+    },
+    "F201": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-F201-2 (E2_J21_FUSED, 1.96 mm, pad 2)"
+    },
+    "J104": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-J104-3 (LAB5, 1.5 mm, pad 3), STEM-J104-4 (LAB5, 1.5 mm, pad 4)"
+    },
+    "J206": {
+      "escape_mm": 0.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-J206-2 (LAB5, 1.5 mm, pad 2), STEM-J206-4 (J21, 1.5 mm, pad 4)"
+    },
     "J208": {
       "escape_mm": 1.55,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5-J208-2 (LAB5, 0.3 mm, pad 2), LAB5-J208-6 (LAB5, 0.3 mm, pad 6), LAB5-J208-10 (LAB5, 0.3 mm, pad 10), LAB5-J208-14 (LAB5, 0.3 mm, pad 14), LAB5-J208-BAR-J-LAB5-J208-14 (LAB5, 0.3 mm, pad 10)"
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5-J208-2 (LAB5, 0.3 mm, pad 2), LAB5-J208-6 (LAB5, 0.3 mm, pad 6), LAB5-J208-10 (LAB5, 0.3 mm, pad 10), LAB5-J208-14 (LAB5, 0.3 mm, pad 14), LAB5-J208-BAR-J-LAB5-J208-14 (LAB5, 0.3 mm, pad 10), STEM-J208-13 (VBUS_HFP, 0.3 mm, pad 13), STEM-J208-17 (LAB5_RLY, 0.3 mm, pad 17), STEM-J208-21 (LAB5_RLY, 0.3 mm, pad 21), STEM-J208-29 (LNB13V2, 0.3 mm, pad 29), STEM-J208-33 (AUX12, 0.3 mm, pad 33), STEM-J208-37 (BONI13V8_PORT, 0.3 mm, pad 37), STEM-J208-99 (E2_LNA4_SW, 0.3 mm, pad 99), STEM-J208-100 (E2_LNA4_SHUNT, 0.3 mm, pad 100)"
     },
     "L102": {
       "escape_mm": 0.85,
       "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12SW-PIN-J-SYS12SW-L102 (E1_SYS12_SW, 0.7 mm, pad 1)"
     },
+    "L201": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-L201-1 (E2_J21_EF, 1.18 mm, pad 1), STEM-L201-2 (J21, 1.18 mm, pad 2)"
+    },
+    "L202": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-L202-2 (E2_DISP_IN, 1.25 mm, pad 2)"
+    },
+    "L205": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-L205-2 (E2_LNA_IN, 1.18 mm, pad 2)"
+    },
+    "L211": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-L211-1 (E1_SW, 1.25 mm, pad 1), STEM-L211-2 (E2_LNB_IN, 1.25 mm, pad 2)"
+    },
+    "L213": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-L213-1 (E1_SW, 1.25 mm, pad 1), STEM-L213-2 (E2_BONI_IN, 1.25 mm, pad 2)"
+    },
     "Q102": {
-      "escape_mm": 2.45,
-      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): E1SW-Q102 (E1_SW, 1.45 mm, pad 2), E1SW-BAR-J-E1SW-Q102 (E1_SW, 1.45 mm, pad 2)"
+      "escape_mm": 3.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): E1SW-Q102 (E1_SW, 1.45 mm, pad 2), E1SW-BAR-J-E1SW-Q102 (E1_SW, 1.45 mm, pad 2), STEM-U111-6 (E1_SW, 0.6 mm, pad 3)"
     },
     "Q201": {
       "escape_mm": 0.1,
       "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): SYS12-Q201 (SYS12, 1.4 mm, pad 2)"
+    },
+    "R110": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R110-1 (LAB5, 1.23 mm, pad 1)"
+    },
+    "R124": {
+      "escape_mm": 0.4,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R124-1 (SYS12, 0.8 mm, pad 1)"
+    },
+    "R129": {
+      "escape_mm": 0.4,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R129-1 (E1_LAB5_RAW, 0.8 mm, pad 1)"
+    },
+    "R201": {
+      "escape_mm": 1.2,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R201-1 (E2_J21_FUSED, 0.8 mm, pad 1)"
+    },
+    "R204": {
+      "escape_mm": 0.4,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R204-1 (E2_J21_FUSED, 0.8 mm, pad 1)"
+    },
+    "R207": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R207-1 (J21, 1.12 mm, pad 1), STEM-R207-2 (J21_DAMP, 1.12 mm, pad 2)"
+    },
+    "R208": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R208-1 (E2_DISP_IN, 1.12 mm, pad 1), STEM-R208-2 (E2_DISP_IN_DAMP, 1.12 mm, pad 2)"
+    },
+    "R210": {
+      "escape_mm": 0.4,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R210-1 (E2_DISP_IN, 0.8 mm, pad 1)"
+    },
+    "R221": {
+      "escape_mm": 0.4,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R221-1 (SYS12, 0.8 mm, pad 1)"
+    },
+    "R224": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R224-1 (E2_LNA_IN, 1.12 mm, pad 1), STEM-R224-2 (E2_LNA_IN_DAMP, 1.12 mm, pad 2)"
+    },
+    "R260": {
+      "escape_mm": 1.2,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-R260-1 (E2_BONI_IN, 1.12 mm, pad 1), STEM-R260-2 (E2_BONI_IN_DAMP, 1.12 mm, pad 2)"
+    },
+    "TP201": {
+      "escape_mm": 0.1,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-TP201-1 (J21, 1.5 mm, pad 1)"
     },
     "U107": {
       "escape_mm": 0.3,
@@ -12108,6 +13838,34 @@
     "U108": {
       "escape_mm": 0.1,
       "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): LAB5RAW-VOUT1 (E1_LAB5_RAW, 1.3 mm, pad 8), LAB5RAW-VOUT2 (E1_LAB5_RAW, 1.3 mm, pad 9)"
+    },
+    "U111": {
+      "escape_mm": 0.6,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-U111-3 (E1_SW, 0.6 mm, pad 3)"
+    },
+    "U201": {
+      "escape_mm": 1.85,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-U201-5 (E2_J21_FUSED, 0.3 mm, pad 5), STEM-U201-6 (E2_J21_EF, 0.3 mm, pad 6)"
+    },
+    "U202": {
+      "escape_mm": 1.85,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-U202-5 (E2_DISP_IN, 0.3 mm, pad 5), STEM-U202-6 (DISP12, 0.3 mm, pad 6)"
+    },
+    "U203": {
+      "escape_mm": 0.9,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-U203-5 (VCC_3V3_MKEY, 0.3 mm, pad 5), STEM-U203-6 (E2_LIME_EF, 0.3 mm, pad 6)"
+    },
+    "U204": {
+      "escape_mm": 0.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-U204-1 (E2_LNA_IN, 0.4 mm, pad 1), STEM-U204-2 (E2_LNA_IN, 0.4 mm, pad 1), STEM-U204-3 (E2_LNA_IN, 0.4 mm, pad 2), STEM-U204-4 (E2_LNA_IN, 0.4 mm, pad 3), STEM-U204-7 (E2_LNA_IN, 0.4 mm, pad 7)"
+    },
+    "U205": {
+      "escape_mm": 0.15,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-U205-1 (E2_LNA_IN, 0.4 mm, pad 1), STEM-U205-2 (E2_LNA_IN, 0.4 mm, pad 1), STEM-U205-3 (E2_LNA_IN, 0.4 mm, pad 2), STEM-U205-4 (E2_LNA_IN, 0.4 mm, pad 3), STEM-U205-7 (E2_LNA_IN, 0.4 mm, pad 7)"
+    },
+    "U503": {
+      "escape_mm": 1.4,
+      "reason": "scripted pin-entry stem(s) narrower than the net class where they enter the pins (W2 PCB-PWRA-3 scripted copper, kept within half the class width of the pins): STEM-U503-1 (LAB5, 0.6 mm, pad 1)"
     }
   },
   "edge_keepout": {
@@ -12456,7 +14214,7 @@
     "rule": "make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to a 0.7 / 0.3 via, or to a GND via within 3 mm"
   },
   "moves": {
-    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 e171f3a68bc632c40d166c3e110598108111941b1219c351f29cc83c598981c3",
+    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 db20511619f8eced841be5b513d08afc080b0ec479e47f125f6143da8546e268",
     "moved_refs": 160,
     "manual": []
   },
