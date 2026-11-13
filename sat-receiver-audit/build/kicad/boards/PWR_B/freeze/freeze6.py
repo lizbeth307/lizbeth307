@@ -2,6 +2,7 @@
 """Freeze a 6-layer PWR_B route run and complete it (W2 PWRB-R layers6 study). Needs numpy; offline tool, not run by CI.
 
   python build/kicad/boards/PWR_B/freeze/freeze6.py --artifact <unzipped pcb-regenerated-PWR_B> [--out FILE] [--no-guard]
+         [--no-rip] [--order class|short|fanout] [--prev route-frozen-6l.json]
 
 The PWR_B counterpart of build/kicad/boards/CTRL/freeze/freeze6.py (W2 CTRL-4, origin/wip/w2-ctrl4-layers6); model.py,
 router.py and fin.py here are copies of the CTRL tools. The artifact holds board/PWR_B.kicad_pcb, board/report.json and
