@@ -1184,8 +1184,8 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
                           '0.5 oz (PWR1A would need 1.8 mm there, netclasses.json inner_min_width_mm)'),
             'plan': {'F.Cu': 'L1: parts (top side only), LAB5 trunk and Kelvin copper, power and signal routes, GND pour',
                      'In1.Cu': 'L2: solid GND plane (pre-route zone, layer type power: the router puts only vias through it)',
-                     'In2.Cu': 'L3: signal routes (no power class), GND pour after routing',
-                     'In3.Cu': 'L4: signal routes (no power class), GND pour after routing',
+                     'In2.Cu': 'L3: signal routes (no power class), no pour (W2 PWRJ-LAYERS6)',
+                     'In3.Cu': 'L4: signal routes (no power class), no pour (W2 PWRJ-LAYERS6)',
                      'In4.Cu': 'L5: solid 3V3_Q6A plane (pre-route zone, layer type power); every SMD 3V3_Q6A pad has a scripted via',
                      'B.Cu': 'L6: B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, power and signal routes, GND pour'}},
         'project': 'build/kicad/boards/PWR_B/PWR_B.kicad_pro',
@@ -1232,11 +1232,10 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
             {'id': 'GND-F', 'net': 'GND', 'layer': 'F.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
              'why': 'solid pad connection: thermal spokes of THT header GND pins were starved between the pins (route run 42414083566); '
                     'the solder-joint cost of solid THT connections is an assembly gate (OPEN, see GND-In1)'},
-            {'id': 'GND-L3', 'net': 'GND', 'layer': 'In2.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
-             'why': 'GND pour of the routing layer L3 after routing (as the 6-layer CTRL)'},
-            {'id': 'GND-L4', 'net': 'GND', 'layer': 'In3.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid',
-             'why': 'GND pour of the routing layer L4 after routing (as the 6-layer CTRL)'},
-            {'id': 'GND-B', 'net': 'GND', 'layer': 'B.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid'}],
+            # W2 PWRJ-LAYERS6: no GND pours on the inner routing layers In2.Cu/In3.Cu any more: route run 43349395168 had two
+            # connection_width errors on GND-L3 (necks between frozen tracks), the layers6 runs 43289131388 and 43307238078
+            # on GND-F/GND-B; In1.Cu (GND) and In4.Cu (3V3_Q6A) stay solid planes next to both inner routing layers
+            {'id': 'GND-B','net': 'GND', 'layer': 'B.Cu', 'outline': 'board', 'priority': 0, 'pad_connection': 'solid'}],
         'edge_keepout': {'width_mm': 0.2, 'layers': list(ROUTING), 'blocks': ['tracks', 'vias'],
                          'why': 'rule-area strips (half-width 0.2) on every outline and cutout edge: the router keeps its copper '
                                 '0.35 mm off the edge, above the project copper-to-edge 0.3 (route run 42414083566 had 0.23)'},
@@ -1340,6 +1339,9 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts, frozen_note=None
         spec['router']['diagnostic'] = DIAG_POWER_INNER
     if frozen_note:  # W2 PWRB-R: the frozen 6-layer route is part of pre_route
         spec['pre_route']['frozen_route_note'] = frozen_note
+    if FREEZE_ONLY and frozen_note:
+        spec['router']['ignore_net_classes'] = sorted(set(SCRIPTED_CLASSES.values()) | {'kicad_default', 'PWR1A'})
+        spec['router']['freeze_only'] = 'W2 PWRJ-LAYERS6 freeze-only: with the frozen route in pre_route no class is autorouted (all DSN classes in -inc), so the CI run measures exactly the frozen router copper plus the grid A* completion; in route run 43349395168 Freerouting on top of the frozen copper joined no further connection (model open = KiCad open) and left KiCad clearance errors against the locked copper'
     return json.dumps(spec, ensure_ascii=False, indent=2) + '\n'
 
 
@@ -1416,6 +1418,7 @@ KEEPOUT_GROW = EDGE + 0.03
 
 # ------------------------------------------------------------------ frozen route (W2 PWRB-R, the CTRL-R / CTRL-4 toolkit)
 FROZEN6 = BASE / 'build/kicad/boards/PWR_B/route-frozen-6l.json'
+FREEZE_ONLY = True  # route run with the frozen copper: Freerouting routes no class (router.freeze_only)
 
 
 def frozen_guard(parts, tracks, vias, cuts):

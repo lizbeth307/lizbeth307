@@ -968,6 +968,7 @@ def project_json(inp, nets):
 
 # ------------------------------------------------------------------ frozen route (W2 PWRJ-LAYERS6, the PWR_B / CTRL toolkit)
 FROZEN6 = HERE / 'route-frozen-6l.json'
+FREEZE_ONLY = True  # route run with the frozen copper: Freerouting routes no class (router.freeze_only)
 
 
 def frozen_guard(inp, tracks, vias):
@@ -1174,6 +1175,9 @@ def build(frozen=True):
                     'moved_refs': len(all_moves(study)),
                     'manual': [{'ref': ref, 'to': [x, y], 'rotation': rot, 'side': side, 'why': why}
                                for ref, (x, y, rot, side, why) in sorted(MOVES.items(), key=lambda kv: bg.sort_ref(kv[0]))]}
+    if FREEZE_ONLY and frozen_note:
+        out['router']['ignore_net_classes'] = sorted(set(SCRIPTED_CLASSES.values()) | {'kicad_default', 'BATT', 'PWR1A', 'PWR2A', 'PWR3A'})
+        out['router']['freeze_only'] = 'W2 PWRJ-LAYERS6 freeze-only: with the frozen route in pre_route no class is autorouted (all DSN classes in -inc), so the CI run measures exactly the frozen router copper plus the grid A* completion; in route run 43349395168 Freerouting on top of the frozen copper joined no further connection (model open = KiCad open) and left KiCad clearance errors against the locked copper'
     out['generator'] = 'build/kicad/boards/PWR_A/make_board.py'
     bg.validate_spec(out, BOARD)
     return out, inp, problems, nets

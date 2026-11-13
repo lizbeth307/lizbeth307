@@ -7,7 +7,7 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "636cc087d84d2cfbc85a95dfb041cda96e4699723843c6e521ab943955cf0a2e",
+    "spec_sha256": "30c170290db4414124274846ea574dc935de87c1f5e752e1f6c90396cd31b2a5",
     "pwr_b_h_trim_sha256": "11a839539c6493dec94330f4bf8489b24fac7d3db4cb126a97161c6ebe70825a",
     "lab5_budget_sha256": "fcc0261d003746071b97e641aef13cbfcdbae685de425f2153c424fd89651d91"
   },
@@ -242,12 +242,12 @@
         "L205.1"
       ],
       "mohm": {
-        "20C": 11.5452,
-        "50C": 12.9064
+        "20C": 11.5241,
+        "50C": 12.8827
       },
       "joined": true,
       "network": {
-        "tracks": 90,
+        "tracks": 105,
         "vias": 31,
         "pads": 19,
         "zones_not_modelled": []
@@ -265,12 +265,12 @@
         "J208.14"
       ],
       "mohm": {
-        "20C": 17.8647,
-        "50C": 19.9709
+        "20C": 17.8435,
+        "50C": 19.9472
       },
       "joined": true,
       "network": {
-        "tracks": 90,
+        "tracks": 105,
         "vias": 31,
         "pads": 19,
         "zones_not_modelled": []
@@ -291,7 +291,7 @@
       },
       "joined": true,
       "network": {
-        "tracks": 12,
+        "tracks": 18,
         "vias": 0,
         "pads": 9,
         "zones_not_modelled": []
@@ -311,7 +311,7 @@
       },
       "joined": true,
       "network": {
-        "tracks": 4,
+        "tracks": 5,
         "vias": 0,
         "pads": 4,
         "zones_not_modelled": []
@@ -319,17 +319,17 @@
     },
     "B_total_20C": {
       "U210.1": {
-        "pwr_a_mohm": 17.8647,
+        "pwr_a_mohm": 17.8435,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 6.7293,
-        "total_mohm": 28.344,
+        "total_mohm": 28.3228,
         "within_10_mohm": false
       },
       "U221.1": {
-        "pwr_a_mohm": 17.8647,
+        "pwr_a_mohm": 17.8435,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 8.6997,
-        "total_mohm": 30.3144,
+        "total_mohm": 30.2932,
         "within_10_mohm": false
       }
     }

@@ -26,8 +26,8 @@
     "plan": {
       "F.Cu": "L1: parts (top side only), LAB5 trunk and Kelvin copper, power and signal routes, GND pour",
       "In1.Cu": "L2: solid GND plane (pre-route zone, layer type power: the router puts only vias through it)",
-      "In2.Cu": "L3: signal routes (no power class), GND pour after routing",
-      "In3.Cu": "L4: signal routes (no power class), GND pour after routing",
+      "In2.Cu": "L3: signal routes (no power class), no pour (W2 PWRJ-LAYERS6)",
+      "In3.Cu": "L4: signal routes (no power class), no pour (W2 PWRJ-LAYERS6)",
       "In4.Cu": "L5: solid 3V3_Q6A plane (pre-route zone, layer type power); every SMD 3V3_Q6A pad has a scripted via",
       "B.Cu": "L6: B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, power and signal routes, GND pour"
     }
@@ -17766,24 +17766,6 @@
       "why": "solid pad connection: thermal spokes of THT header GND pins were starved between the pins (route run 42414083566); the solder-joint cost of solid THT connections is an assembly gate (OPEN, see GND-In1)"
     },
     {
-      "id": "GND-L3",
-      "net": "GND",
-      "layer": "In2.Cu",
-      "outline": "board",
-      "priority": 0,
-      "pad_connection": "solid",
-      "why": "GND pour of the routing layer L3 after routing (as the 6-layer CTRL)"
-    },
-    {
-      "id": "GND-L4",
-      "net": "GND",
-      "layer": "In3.Cu",
-      "outline": "board",
-      "priority": 0,
-      "pad_connection": "solid",
-      "why": "GND pour of the routing layer L4 after routing (as the 6-layer CTRL)"
-    },
-    {
       "id": "GND-B",
       "net": "GND",
       "layer": "B.Cu",
@@ -19864,9 +19846,11 @@
     "timeout_s": 2100,
     "fanout": false,
     "ignore_net_classes": [
+      "PWR1A",
       "SCRIPTED_GND",
       "SCRIPTED_PWR1A",
-      "SCRIPTED_PWR3A"
+      "SCRIPTED_PWR3A",
+      "kicad_default"
     ],
     "class_layers": {
       "PWR1A": [
@@ -19874,7 +19858,8 @@
         "B.Cu"
       ]
     },
-    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)"
+    "why": "the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and the router re-routed the scripted nets because locked copper that crosses a pad is no connection for it (route run 42414083566): fan-out off, the scripted classes not autorouted; GND is joined by the scripted plane vias of every SMD GND pad (run 42415437982 left 83 GND connections open)",
+    "freeze_only": "W2 PWRJ-LAYERS6 freeze-only: with the frozen route in pre_route no class is autorouted (all DSN classes in -inc), so the CI run measures exactly the frozen router copper plus the grid A* completion; in route run 43349395168 Freerouting on top of the frozen copper joined no further connection (model open = KiCad open) and left KiCad clearance errors against the locked copper"
   },
   "drc_policy": {
     "warning_checks": {
