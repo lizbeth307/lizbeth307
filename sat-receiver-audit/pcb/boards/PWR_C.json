@@ -1196,6 +1196,24 @@
         "why": "W2 PWRJ-F2C probe: scripted battery-path copper (make_spec.py TRUNKS); the router joins only branches"
       },
       {
+        "id": "CU-PD-SAFE-C117",
+        "net": "E1_USB_PD_SAFE",
+        "layer": "F.Cu",
+        "width_mm": 0.8,
+        "path": [
+          [
+            136.95,
+            9.0
+          ],
+          [
+            139.25,
+            9.0
+          ]
+        ],
+        "locked": true,
+        "why": "W2 PWRJ-F2C probe: scripted battery-path copper (make_spec.py TRUNKS); the router joins only branches"
+      },
+      {
         "id": "CU-PD-SAFE",
         "net": "E1_USB_PD_SAFE",
         "layer": "F.Cu",
@@ -2278,6 +2296,10 @@
     "XU106B": {
       "escape_mm": 3.0,
       "reason": "W2 PWRJ-F2C probe: the 1.6 mm entry of the scripted battery copper between the two 0.1 in header pins of a #2813 power node (TRUNKS N-MOD2, SW-MOD2); the pins share the module current"
+    },
+    "U109": {
+      "escape_mm": 3.6,
+      "reason": "W2 PWRJ-F2C probe: the 0.3 mm entries of the USB-PD path into the 0.3 x 2.4 mm IN/OUT bars of the TPS259470 HotRod package (TRUNKS PD-RAW-IN, PD-SAFE-OUT), 3.5 mm each, then 1.85 mm copper"
     }
   },
   "gnd_fanout": {

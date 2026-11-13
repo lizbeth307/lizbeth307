@@ -131,6 +131,8 @@ TRUNKS = [
     ('PD-RAW', 'E1_USB_PD_RAW', 'F.Cu', PWR3A_W, [('J114', '2'), (140.33, 18.5), (138.75, 18.5)]),
     ('PD-RAW-IN', 'E1_USB_PD_RAW', 'F.Cu', HOTROD_W, [(138.75, 18.5), ('U109', '5')]),
     ('PD-SAFE-OUT', 'E1_USB_PD_SAFE', 'F.Cu', HOTROD_W, [('U109', '6'), (139.25, 11.5)]),
+    # probe 4 (run 43358262804): the router left C117.1 -> PD-SAFE open (1.35 mm); scripted like the trunk branch
+    ('PD-SAFE-C117', 'E1_USB_PD_SAFE', 'F.Cu', 0.8, [('C117', '1'), (139.25, 9.0)]),
     ('PD-SAFE', 'E1_USB_PD_SAFE', 'F.Cu', PWR3A_W, [(139.25, 11.5), (139.25, 4.6), (69.6, 4.6), (69.6, 22.5),
                                                    ('J108', '3')]),
 ]
@@ -440,7 +442,10 @@ def build():
         'neck_exempt': {r: {'escape_mm': 3.0, 'reason': f'{TAG}: the 1.6 mm entry of the scripted battery copper between '
                                                          'the two 0.1 in header pins of a #2813 power node (TRUNKS N-MOD2, '
                                                          'SW-MOD2); the pins share the module current'}
-                        for r in ('XU106A', 'XU106B')},
+                        for r in ('XU106A', 'XU106B')} | {
+            'U109': {'escape_mm': 3.6, 'reason': f'{TAG}: the 0.3 mm entries of the USB-PD path into the 0.3 x 2.4 mm IN/OUT '
+                                                 'bars of the TPS259470 HotRod package (TRUNKS PD-RAW-IN, PD-SAFE-OUT), '
+                                                 '3.5 mm each, then 1.85 mm copper'}},
         'gnd_fanout': {'vias': len(gv), 'stubs': len(gt), 'pads_joined_by_scripted_gnd_pours': skipped,
                        'rule': 'build/kicad/boards/PWR_A/make_board.py gnd_fanout: stub 0.25 mm to a 0.7 / 0.3 via'},
         'module_body_keepout': {'rect': MODULE_BODY, 'why': 'Pololu #2813 (psw03b: 20.3 x 25.4 mm, PCB 1.57 mm, parts '
