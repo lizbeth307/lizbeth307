@@ -160,14 +160,16 @@ def chains(segs):
     return out
 
 
-def guard():
-    """The guard make_spec.py checks: computed by make_spec itself on the spec without the frozen copper."""
+def guard(nets=()):
+    """The guard make_spec.py checks: computed by make_spec itself on the spec without the frozen copper, plus (W2 CTRL-5)
+    the SHA256 of the net classes of the frozen nets."""
     loader = importlib.util.spec_from_file_location('ctrl_make_spec', HERE.parent / 'make_spec.py')
     ms = importlib.util.module_from_spec(loader)
     loader.loader.exec_module(ms)
     got = {}
     ms.frozen_copper = lambda cu, log: got.update(ms.frozen_guard(cu))
     ms.build(lambda *a: None)
+    got['netclass_sha256'] = ms.netclass_guard(set(nets))
     return got
 
 
@@ -291,7 +293,7 @@ def main(argv=None):
         'completion': ('grid A* completion on the frozen copper (0.05 mm grid, exact clearance check 0.15 mm, 0.3 mm to edges, '
                        '0.5 mm hole to hole, keepouts; through vias 0.65/0.3 mm; L2 only where three layers have no path) by '
                        'build/kicad/boards/CTRL/freeze/freeze_route.py'),
-        'guard': guard(),
+        'guard': guard({r[0] for r in tracks['router'] + tracks['new'] + vias['router'] + vias['new']}),
         'drop_scripted': DROP,
         'segments': dict(nseg),
         'router_tracks': tracks['router'], 'router_vias': vias['router'],

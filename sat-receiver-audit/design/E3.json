@@ -4959,16 +4959,19 @@
           "number": "2",
           "name": "S",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E3_FAN5"
         },
         {
           "number": "3",
           "name": "D",
           "type": "passive",
-          "net": "E3_FAN5"
+          "net": "E3_FAN5_P"
         }
       ],
-      "footprint": "Package_TO_SOT_SMD:SOT-23"
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "notes": [
+        "W2 CTRL-5 (review RV4-E-5): the PTC F301 sits ahead of Q304 (source on E3_FAN5 behind the PTC, drain on E3_FAN5_P); the gate pull-up R367 stays on LAB5, so with Q303 off VGS >= 0 V and the switch stays off also when the PTC drops voltage. AO3401A Rev 3.1 (Dec 2023, read 2026-11-13): ID -4.0 A at 25 C / -3.2 A at 70 C, IDM -27 A, RDS(on) < 60 mOhm at VGS -4.5 V, RthJA 100 C/W (125 C/W max, steady state). In the old order a short of the node between Q304 and the PTC drew F102 current through Q304: the MINI 0297004 fuse carries 110 % for 360000 s and opens 135 % only in 0.75 -600 s (Littelfuse MINI 32 V data sheet), about 1.2-1.7 W in SOT-23 (MODEL), over TJ 150 C."
+      ]
     },
     {
       "ref": "F301",
@@ -4986,18 +4989,18 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "E3_FAN5"
+          "net": "LAB5"
         },
         {
           "number": "2",
           "name": "2",
           "type": "passive",
-          "net": "E3_FAN5_P"
+          "net": "E3_FAN5"
         }
       ],
       "notes": [
-        "Bourns MF-MSMF075/24-2 after Q304: Ihold 0.75 A / Itrip 1.50 A at 23 C; Ihold 0.60 A at 50 C and 0.49 A at 70 C (Bourns MF-MSMF REV. AO, p.1 and p.4). It limits the Noctua lead S27 (1x26 AWG) instead of F102 4 A; the flyback D305 and C318/C319 stay across the fan after the PTC (R-E3-17).",
-        "Reflow only: the maker forbids wave and hand soldering."
+        "Bourns MF-MSMF075/24-2 ahead of the fan switch Q304 (W2 CTRL-5, review RV4-E-5): LAB5 -> F301 -> E3_FAN5 -> Q304 -> E3_FAN5_P, so a short of the node between the PTC and the switch, of the switch or of the fan side is limited by the PTC and never by F102 4 A alone. Ihold 0.75 A / Itrip 1.50 A at 23 C, Ihold 1.01 A at -20 C, 0.49 A at 70 C; 8.0 A trips in 0.2 s max; Rmin 0.11 ohm, R1max 0.45 ohm; Imax 40 A at 24 V (Bourns MF-MSMF REV. BE 09/26, https://www.bourns.com/docs/Product-Datasheets/mf-msmf.pdf, read 2026-11-13). It limits the Noctua lead S27 (1x26 AWG) instead of F102 4 A; the flyback D305 and C318/C319 stay across the fan after the switch (R-E3-17).",
+        "Reflow soldering: wave soldering only with the device on the top side opposite the heat source, hand soldering not recommended (Bourns MF-MSMF REV. BE 09/26, solder reflow recommendations, read 2026-11-13); F301 sits on the bottom side of CTRL, so it goes through the bottom reflow pass."
       ]
     },
     {
@@ -7289,7 +7292,7 @@
     },
     {
       "id": "R-E3-17",
-      "description": "Fan path 1 gets the PTC F301 = Bourns MF-MSMF075/24-2 between Q304 and the fan (E3_FAN5 -> E3_FAN5_P): Itrip 1.50 A at 23 C is below the 2.3 A of 1x26 AWG in the 3-wire S27 lead (ESCC 3901/001 bundle rule), Ihold 0.49 A at 70 C stays above the 0.25 A design current.",
+      "description": "Fan path 1 gets the PTC F301 = Bourns MF-MSMF075/24-2 ahead of Q304 (LAB5 -> E3_FAN5; W2 CTRL-5, review RV4-E-5: the switch and the node before it are behind the PTC too, Q304 drives E3_FAN5_P): Itrip 1.50 A at 23 C is below the 2.3 A of 1x26 AWG in the 3-wire S27 lead (ESCC 3901/001 bundle rule), Ihold 0.49 A at 70 C stays above the 0.25 A design current.",
       "source": "Bourns MF-MSMF REV. AO (read 2026-11-07). A passive limit never latches cooling off, needs no GPIO and rides through fan inrush; a TPS2553 in place of Q304 would change the gate polarity and could latch cooling off."
     }
   ],
@@ -7301,7 +7304,7 @@
     },
     {
       "net": "E3_FAN5_P",
-      "reason": "Fan supply is physically powered from LAB5 through AO3401A Q304 and PTC F301 when enabled. Both pass elements have passive pins, so KiCad requires a powered-net marker on the fan side.",
+      "reason": "Fan supply is physically powered from LAB5 through PTC F301 and AO3401A Q304 when enabled (W2 CTRL-5 order). Both pass elements have passive pins, so KiCad requires a powered-net marker on the fan side.",
       "source": "STACK.md high-side Noctua fan control; E3 Q304/F301 connectivity."
     }
   ],

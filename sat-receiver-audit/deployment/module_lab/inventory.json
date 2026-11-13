@@ -17,8 +17,8 @@
       "bytes": 399635
     },
     "design/E3.json": {
-      "sha256": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
-      "bytes": 211423
+      "sha256": "950e961ff1bcb0a3c20b54bcfcf44ad45f63fa79fc7bc2a0b8eb43192a36d75f",
+      "bytes": 212850
     },
     "design/E4.json": {
       "sha256": "df3b0bacaa1e1f120b099bc8ac0cb4b4ed4d51d45309acfc207faec465eabb09",
@@ -41020,16 +41020,16 @@
         {
           "sheet": "E3",
           "ref": "Q304",
-          "pin": "3",
-          "name": "D",
+          "pin": "2",
+          "name": "S",
           "electrical_type": "passive",
           "assembly": "E3-CIR-12"
         },
         {
           "sheet": "E3",
           "ref": "F301",
-          "pin": "1",
-          "name": "1",
+          "pin": "2",
+          "name": "2",
           "electrical_type": "passive",
           "assembly": "E3-CIR-12"
         }
@@ -41044,9 +41044,9 @@
       "pins": [
         {
           "sheet": "E3",
-          "ref": "F301",
-          "pin": "2",
-          "name": "2",
+          "ref": "Q304",
+          "pin": "3",
+          "name": "D",
           "electrical_type": "passive",
           "assembly": "E3-CIR-12"
         },
@@ -57136,9 +57136,9 @@
         },
         {
           "sheet": "E3",
-          "ref": "Q304",
-          "pin": "2",
-          "name": "S",
+          "ref": "F301",
+          "pin": "1",
+          "name": "1",
           "electrical_type": "passive",
           "assembly": "E3-CIR-12"
         },
