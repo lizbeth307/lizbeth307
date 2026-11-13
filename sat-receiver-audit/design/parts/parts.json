@@ -41,7 +41,9 @@
   "design/parts/snapshots/2026-11-11-w2-readsp-lcsc.json",
   "design/parts/snapshots/2026-11-12-w2-gr5a-manual.json",
   "design/parts/snapshots/2026-11-12-w2-gr5a-lcsc.json",
-  "design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json"
+  "design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json",
+  "design/parts/snapshots/2026-11-13-w2-grzone2-lcsc.json",
+  "design/parts/snapshots/2026-11-13-w2-grzone2-manual.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -3763,14 +3765,13 @@
    },
    "polarized": true,
    "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
-   "note": "FR radial D6.3×L11.2, lead spacing 2.5 mm (LCSC attributes); LCSC stock 39 on 2026-10-24 is below the 7+spares needed (15 until W2 GR-5B moved the dampers of the 5 V rails to 16SVPG47M): order at DigiKey.",
+   "note": "FR radial D6.3×L11.2, lead spacing 2.5 mm (LCSC attributes); LCSC stock 39 on 2026-10-24 is below the 6+spares needed (15 until W2 GR-5B moved the dampers of the 5 V rails to 16SVPG47M, 7 until W2 GR-ZONE2-SMD moved the BONI input damper C265 to 35TQS47MEX): order at DigiKey.",
    "refs": [
     "C206",
     "C210",
     "C222",
     "C254",
     "C262",
-    "C265",
     "C273"
    ]
   },
@@ -3850,37 +3851,67 @@
    ]
   },
   {
-   "id": "C-THT-EEU-FR1C101",
-   "mount": "pcb_tht",
+   "id": "C-SMD-35TQS47MEX",
+   "mount": "pcb_smt",
    "kind": "capacitor",
-   "package": "Plugin,D5xL11mm",
-   "footprint": "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm",
+   "package": "SMD,7.3x4.3mm",
+   "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-15_Kemet-W",
    "manufacturer": "Panasonic",
-   "mpn": "EEU-FR1C101",
+   "mpn": "35TQS47MEX",
    "sku": {
-    "lcsc": "C278532",
-    "digikey": "P14391-ND"
+    "lcsc": "C36799600",
+    "digikey": "10-35TQS47MEXCT-ND"
    },
    "polarized": true,
-   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
-   "note": "FR radial D5×L11, lead spacing 2 mm (LCSC attributes); HF+ LC filter per 10-bom row 19.",
+   "single_source": "Named polymer series; a second source needs the same land, a read height at or below this one, the same rating and an ESR/ripple and rush-current qualification before substitution",
+   "note": "W2 GR-ZONE2-SMD: POSCAP TQS D15S polymer tantalum, 47 uF 35 V, 7.3 x 4.3 x 1.4 +/-0.1 mm, ESR 100 mOhm max (100 kHz), ripple 1200 mA rms (105 C, 100 kHz), surge 1.15 x rated (snapshot rows web:panasonic-poscap-tqs-35tqs47mex, web:panasonic-35tqs47mex-page). Replaces the radial EEU-FR1H470 of the E2_BONI_IN damper so that PWR-B needs no window over it (1.5 mm max, below hA 4.5 mm and the 2.7 mm H-TRIM zone). 35 V against E1_SW 13.2-16.4 V and the SMBJ17A clamp 27.6 V (web:vishay-smbj-grzone2); the review's 50 V class is not available at 4.5 mm or less (web:panasonic-oscon-hybrid-low-profile-search). Rush current at E1 switch-on must stay at or below 20 A (Panasonic precaution, web:panasonic-poscap-precautions): bench gate in design/E2-review.md (OPEN). Land: KiCad 7343 pads 2.07 x 2.59 at +/-3.12 cover the Panasonic D15S land (web:panasonic-poscap-land-pattern); review before release. LCSC C36799600 stock 0 on 2026-11-13: DigiKey.",
+   "refs": [
+    "C265"
+   ]
+  },
+  {
+   "id": "C-SMD-16TQC100MD2",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "SMD,7.3x4.3mm",
+   "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V",
+   "manufacturer": "Panasonic",
+   "mpn": "16TQC100MD2",
+   "sku": {
+    "lcsc": "C53054838",
+    "digikey": "10-16TQC100MD2CT-ND"
+   },
+   "polarized": true,
+   "alternates": [
+    {
+     "manufacturer": "Panasonic",
+     "mpn": "16TQC100MYF",
+     "sku": {
+      "lcsc": "C109085"
+     },
+     "note": "same D2 case (7.3 x 4.3 x 1.9 mm), 16 V, 100 uF, ESR 50 mOhm, 1800 mA rms in the catalogue list; Panasonic marks it NRFND (web:panasonic-poscap-tqc-d-16tqc); LCSC stock 9684 on 2026-11-13"
+    }
+   ],
+   "note": "W2 GR-ZONE2-SMD: POSCAP TQC D2 polymer tantalum, 100 uF 16 V, 7.3 x 4.3 x 1.9 +/-0.1 mm, ESR 50 mOhm max (100 kHz), ripple 1800 mA rms (105 C, 100 kHz) (snapshot rows web:panasonic-poscap-tqc-d-16tqc, web:panasonic-16tqc100md2-page). Replaces the radial EEU-FR1C101 of the HF+ LC filter (L501 100 uH) so that PWR-B needs no window over it (2.0 mm max, below the 2.7 mm H-TRIM zone); the 16 V rating is kept. The damping now rests on R512/C512 alone (MODEL in design/E5-review.md); bench gate HF-7 (OPEN). The LCSC listing C53054838 carries no attributes (stock 5), so the value check uses the NRFND alternate C109085.",
    "refs": [
     "C511"
    ]
   },
   {
-   "id": "C-THT-EEU-FR1C221",
-   "mount": "pcb_tht",
+   "id": "C-SMD-16TQC220MD3",
+   "mount": "pcb_smt",
    "kind": "capacitor",
-   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "package": "2917",
+   "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D",
    "manufacturer": "Panasonic",
-   "mpn": "EEU-FR1C221",
+   "mpn": "16TQC220MD3",
    "sku": {
-    "digikey": "P14393-ND"
+    "lcsc": "C4979618",
+    "digikey": "10-16TQC220MD3CT-ND"
    },
    "polarized": true,
-   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
-   "note": "FR 220 µF 16 V radial, HF+ damper with R512 (10-bom row 19). DigiKey listing read (EUR 0.40); size not shown there — confirm D6.3/2.5 mm with the Panasonic table before PCB release (EEU-FR1C221B at LCSC is the formed-lead 5 mm variant, not this footprint).",
+   "single_source": "Named polymer series; a second source needs the same land, a read height at or below this one, the same rating and an ESR/ripple and rush-current qualification before substitution",
+   "note": "W2 GR-ZONE2-SMD: POSCAP TQC D3L polymer tantalum, 220 uF 16 V, 7.3 x 4.3 x 2.8 +/-0.2 mm, ESR 50 mOhm max (100 kHz), ripple 1750 mA rms (105 C, 100 kHz), reflow condition C (peak 250 C, 2 cycles) (snapshot rows web:panasonic-poscap-tqc-d-16tqc, web:panasonic-16tqc220md3-page). Replaces the radial EEU-FR1C221 of the HF+ damper (R512 1 Ohm) so that PWR-B needs no window over it (3.0 mm max: below hA 4.5 mm, but above the 2.7 mm H-TRIM zone, so it may not sit under a PWR-B THT field); no 220 uF part of 10 V or more is 2.7 mm or lower in the Panasonic catalogue. DigiKey DE stock 0 (2,500 due 17-Dec-2026), LCSC C4979618 stock 1715 on 2026-11-13.",
    "refs": [
     "C512"
    ]

@@ -163,6 +163,18 @@
    "0451005.MRL": {
     "h": 2.94,
     "src": "Littelfuse 451/453 Series datasheet Rev. GD 08/23/21 (Mouser-distributed copy, https://sy-dep-epc-lpc.web.cern.ch/components/datasheets/epc-lpc%20(converters)/451-453_Fuse_(LITTLEFUSE).pdf, read 2026-11-13; the littelfuse.com 451 product page answered HTTP 403 on 2026-11-13): body 6.10 +-0.20 x 2.69 +-0.25 x 2.69 +-0.25 mm, so 2.94 max; 5.00 A (amp code 005.), 125 V, nominal cold resistance 0.0125 ohm"
+   },
+   "35TQS47MEX": {
+    "h": 1.5,
+    "src": "Panasonic POSCAP TQS D15S H 1.4 +/-0.1 mm (Conductive Polymer Capacitor General Catalog 2026 printed p.68; product page industrial.panasonic.com/ww/products/pt/poscap/models/35TQS47MEX); DigiKey DE 'Height - Seated (Max)' 1.50 mm (read 2026-11-13)"
+   },
+   "16TQC100MD2": {
+    "h": 2.0,
+    "src": "Panasonic POSCAP TQC D2 H 1.9 +/-0.1 mm (Conductive Polymer Capacitor General Catalog 2026 printed p.71-72; product page industrial.panasonic.com/ww/products/pt/poscap/models/16TQC100MD2); DigiKey DE 'Height - Seated (Max)' 2.00 mm (read 2026-11-13)"
+   },
+   "16TQC220MD3": {
+    "h": 3.0,
+    "src": "Panasonic POSCAP TQC D3L H 2.8 +/-0.2 mm (Conductive Polymer Capacitor General Catalog 2026 printed p.71-72; product page industrial.panasonic.com/ww/products/pt/poscap/models/16TQC220MD3); DigiKey DE 'Height - Seated (Max)' 3.00 mm (read 2026-11-13)"
    }
   },
   "by_footprint": {

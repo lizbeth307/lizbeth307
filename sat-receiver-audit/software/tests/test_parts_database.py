@@ -391,7 +391,7 @@ class Shrink2PowerSwapTest(unittest.TestCase):
         self.assertTrue(set(self.DAMP_C + ["C506", "C521", "C522"]) <= set(svpg["refs"]))
         self.assertEqual(svpg["sku"]["lcsc"], "C2161511")
         radial = part(self.model.db, "C-THT-EEU-FR1H470")
-        self.assertEqual(sorted(radial["refs"]), sorted(["C206", "C210", "C222", "C254", "C262", "C265", "C273"]))
+        self.assertEqual(sorted(radial["refs"]), sorted(["C206", "C210", "C222", "C254", "C262", "C273"]))  # C265: W2 GR-ZONE2-SMD
         r = part(self.model.db, "R-1206-1206W4F150LT5E")
         self.assertEqual(sorted(r["refs"]), sorted(self.DAMP_R))
         for ref in self.DAMP_R:
@@ -427,6 +427,48 @@ class Shrink2PowerSwapTest(unittest.TestCase):
         ph = next(f for f in self.model.db["harness_families"] if f["id"] == "PH")
         size = next(s for s in ph["sizes"] if s["pins"] == 9)
         self.assertEqual((size["header_side"]["sku"]["lcsc"], size["housing"]["mpn"]), ("C157912", "PHR-9"))
+
+
+class ZoneTwoSmdTest(unittest.TestCase):
+    """W2 GR-ZONE2-SMD: the PWR-A zone-2 radials C265, C511 and C512 are low SMD polymer parts with read sources, so PWR-B needs
+    no window over them. The values and the damper topology are unchanged; rush current, ripple and the damped response stay
+    bench gates (OPEN)."""
+
+    SWAP = {"C265": ("C-SMD-35TQS47MEX", 47e-6, 35.0, 1.5), "C511": ("C-SMD-16TQC100MD2", 100e-6, 16.0, 2.0),
+            "C512": ("C-SMD-16TQC220MD3", 220e-6, 16.0, 3.0)}
+
+    def setUp(self):
+        self.model = parts.Model()
+        self.model.check()
+
+    def test_low_smd_parts_with_read_heights(self):
+        import json
+        self.assertEqual(self.model.errors, [])
+        heights = json.loads((BASE / "pcb/partition-spec.json").read_text(encoding="utf-8"))["heights"]["by_mpn"]
+        for ref, (pid, cap, volt, h_max) in self.SWAP.items():
+            p = part(self.model.db, pid)
+            self.assertEqual((p["refs"], p["mount"], p["polarized"]), ([ref], "pcb_smt", True), ref)
+            self.assertTrue(p["footprint"].startswith("Capacitor_Tantalum_SMD:CP_EIA-7343-"), ref)
+            c = self.model.comps[ref][1]
+            self.assertEqual((c["footprint"], c["mpn"]), (p["footprint"], p["mpn"]), ref)
+            self.assertAlmostEqual(parts.capacitance(c["value"]), cap, delta=cap * 1e-6)
+            self.assertEqual(parts.voltage(c["value"]), volt, ref)
+            self.assertEqual(heights[p["mpn"]]["h"], h_max, ref)
+            self.assertLessEqual(heights[p["mpn"]]["h"], 4.5, ref)   # hA: no PWR-B window
+            self.assertIn("digikey:" + p["sku"]["digikey"], self.model.manual)
+        # C265 sits on E1_SW behind L213: its rating stays above the SMBJ17A clamp of D105 (27.6 V, Vishay 88392)
+        self.assertGreater(parts.voltage(self.model.comps["C265"][1]["value"]), 27.6)
+        for pid in ("C-THT-EEU-FR1C101", "C-THT-EEU-FR1C221"):
+            self.assertFalse([p for p in self.model.db["parts"] if p["id"] == pid])
+
+    def test_damper_topology_is_unchanged(self):
+        def nets(ref):
+            return {pn["number"]: pn["net"] for pn in self.model.comps[ref][1]["pins"]}
+        self.assertEqual(nets("C265"), {"1": "E2_BONI_IN_DAMP", "2": "GND"})
+        self.assertEqual(set(nets("R260").values()), {"E2_BONI_IN", "E2_BONI_IN_DAMP"})
+        self.assertEqual(nets("C511"), {"1": "VBUS_HFP", "2": "GND"})
+        self.assertEqual(nets("C512"), {"1": "E5_HFP_DAMP", "2": "GND"})
+        self.assertEqual(set(nets("R512").values()), {"VBUS_HFP", "E5_HFP_DAMP"})
 
 
 if __name__ == "__main__":

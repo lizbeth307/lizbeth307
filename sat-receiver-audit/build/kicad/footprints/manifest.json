@@ -343,19 +343,6 @@
       ]
     },
     {
-      "footprint": "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm",
-      "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D5.0mm_P2.00mm.kicad_mod",
-      "sha256": "fd0a251de515130de6e789ffb786d43c746b83178e437feb9fc4f39b6ea9ef39",
-      "pads": [
-        "1",
-        "2"
-      ],
-      "origin": "KiCad 10.0.7 official, unmodified",
-      "refs": [
-        "C511"
-      ]
-    },
-    {
       "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
       "file": "build/kicad/footprints/Capacitor_THT.pretty/CP_Radial_D6.3mm_P2.50mm.kicad_mod",
       "sha256": "e81a44655d3a9e86e6745c01be07bb025069d56a88e72074fba35f4b042e25e0",
@@ -370,9 +357,7 @@
         "C222",
         "C254",
         "C262",
-        "C265",
-        "C273",
-        "C512"
+        "C273"
       ]
     },
     {
@@ -386,6 +371,45 @@
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
         "C207"
+      ]
+    },
+    {
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-15_Kemet-W",
+      "file": "build/kicad/footprints/Capacitor_Tantalum_SMD.pretty/CP_EIA-7343-15_Kemet-W.kicad_mod",
+      "sha256": "eec3276fdd0139ad1eb20da8178a93118bc202abe83c53ad27bb45c739fbe0e3",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "C265"
+      ]
+    },
+    {
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V",
+      "file": "build/kicad/footprints/Capacitor_Tantalum_SMD.pretty/CP_EIA-7343-20_Kemet-V.kicad_mod",
+      "sha256": "3a812fab287380d7f3d508fa6fb462a8023774c33563f2454987310811e5c849",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "C511"
+      ]
+    },
+    {
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D",
+      "file": "build/kicad/footprints/Capacitor_Tantalum_SMD.pretty/CP_EIA-7343-31_Kemet-D.kicad_mod",
+      "sha256": "0905e7446ef34f88377453b2db0b67a5f81e607f668f8b37e0cba58eb07f6557",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "C512"
       ]
     },
     {

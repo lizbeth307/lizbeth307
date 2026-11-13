@@ -1437,15 +1437,16 @@
     },
     {
       "ref": "C511",
-      "value": "EEU-FR1C101 100uF 16V",
+      "value": "100uF 16V 16TQC100MD2",
       "kind": "capacitor",
       "group": "VBUS HF+ з демпфованим LC",
-      "source": "STACK.md §5.2 / engineering design",
+      "source": "https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC100MD2",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm",
-      "mpn": "EEU-FR1C101",
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-20_Kemet-V",
+      "mpn": "16TQC100MD2",
       "manufacturer": "Panasonic",
-      "lcsc": "C278532",
+      "lcsc": "C53054838",
+      "alt_mpn": "Panasonic 16TQC100MYF",
       "pins": [
         {
           "number": "1",
@@ -1459,6 +1460,10 @@
           "type": "passive",
           "net": "GND"
         }
+      ],
+      "notes": [
+        "W2 GR-ZONE2-SMD: Panasonic POSCAP 16TQC100MD2 polymer tantalum, 100 uF 16 V +/-20 %, D2 7.3 x 4.3 x 1.9 +/-0.1 mm, ESR <= 50 mOhm (100 kHz), ripple 1.8 A rms (105 C, 100 kHz), leakage <= 160 uA; replaces the radial EEU-FR1C101, so PWR-B needs no window over it.",
+        "Main bulk of the L501 100 uH filter; damping comes from the R512/C512 branch (design/E5-review.md, MODEL); bench gate HF-7 (OPEN)."
       ]
     },
     {
@@ -1494,14 +1499,15 @@
     },
     {
       "ref": "C512",
-      "value": "220uF 16V low-ESR",
+      "value": "220uF 16V 16TQC220MD3",
       "kind": "capacitor",
       "group": "VBUS HF+ з демпфованим LC",
-      "source": "STACK.md §5.2 / engineering design",
+      "source": "https://industrial.panasonic.com/ww/products/pt/poscap/models/16TQC220MD3",
       "status": "design",
-      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
-      "mpn": "EEU-FR1C221",
+      "footprint": "Capacitor_Tantalum_SMD:CP_EIA-7343-31_Kemet-D",
+      "mpn": "16TQC220MD3",
       "manufacturer": "Panasonic",
+      "lcsc": "C4979618",
       "pins": [
         {
           "number": "1",
@@ -1515,6 +1521,10 @@
           "type": "passive",
           "net": "GND"
         }
+      ],
+      "notes": [
+        "W2 GR-ZONE2-SMD: Panasonic POSCAP 16TQC220MD3 polymer tantalum, 220 uF 16 V +/-20 %, D3L 7.3 x 4.3 x 2.8 +/-0.2 mm, ESR <= 50 mOhm (100 kHz), ripple 1.75 A rms (105 C, 100 kHz), leakage <= 352 uA, reflow condition C (peak 250 C); replaces the radial EEU-FR1C221, so PWR-B needs no window over it.",
+        "Damper capacitor in series with R512 1 Ohm; its ESR adds at most 0.05 Ohm to the damping resistance. 3.0 mm max: not under a PWR-B THT field (H-TRIM 2.7 mm)."
       ]
     },
     {

@@ -27,10 +27,12 @@
   "design/parts/snapshots/2026-11-11-w2-readsp-lcsc.json",
   "design/parts/snapshots/2026-11-12-w2-gr5a-manual.json",
   "design/parts/snapshots/2026-11-12-w2-gr5a-lcsc.json",
-  "design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json"
+  "design/parts/snapshots/2026-11-12-w2-gr5b-lcsc.json",
+  "design/parts/snapshots/2026-11-13-w2-grzone2-lcsc.json",
+  "design/parts/snapshots/2026-11-13-w2-grzone2-manual.json"
  ],
  "refs": 882,
- "parts": 268,
+ "parts": 269,
  "refs_by_mount": {
   "assembly": 8,
   "existing": 9,
@@ -40,8 +42,8 @@
   "panel": 14,
   "pcb_module": 1,
   "pcb_pad": 41,
-  "pcb_smt": 674,
-  "pcb_tht": 63,
+  "pcb_smt": 677,
+  "pcb_tht": 60,
   "remote": 9,
   "rework": 5,
   "virtual": 2
@@ -57,9 +59,9 @@
  "purchased_refs": 814,
  "purchased_refs_by_availability": {
   "TBD": 2,
-  "в наявності": 703,
+  "в наявності": 704,
   "з 10-bom": 17,
-  "склад 0": 72,
+  "склад 0": 71,
   "у каталозі": 20
  },
  "purchased_refs_with_mpn": 812,

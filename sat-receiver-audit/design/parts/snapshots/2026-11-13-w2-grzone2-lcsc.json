@@ -1,0 +1,189 @@
+{
+ "date": "2026-11-13",
+ "distributor": "LCSC",
+ "entries": {
+  "C109085": {
+   "attributes": {
+    "Capacitance": "100uF",
+    "Equivalent Series Resistance(ESR)": "50mΩ@100kHz",
+    "Operating Temperature": "-55℃~+105℃",
+    "Tolerance": "±20%",
+    "Voltage Rating": "16V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_PANASONIC-16TQC100MYF_C109085.pdf",
+   "description": "-55℃~+105℃ 100uF 16V 50mΩ@100kHz ±20% SMD,7.3x4.3mm Tantalum Capacitors ROHS",
+   "fetched_utc": "2026-11-13T10:45:56Z",
+   "jlc_library": "extended",
+   "manufacturer": "PANASONIC",
+   "mpn": "16TQC100MYF",
+   "package": "SMD,7.3x4.3mm",
+   "price_usd": [
+    [
+     1,
+     0.998
+    ],
+    [
+     10,
+     0.8491
+    ],
+    [
+     30,
+     0.7428
+    ],
+    [
+     100,
+     0.6561
+    ],
+    [
+     500,
+     0.6299
+    ],
+    [
+     1000,
+     0.6119
+    ]
+   ],
+   "stock": 9684,
+   "url": "https://www.lcsc.com/product-detail/tantalum-capacitors_panasonic-16tqc100myf_C109085.html"
+  },
+  "C36799600": {
+   "attributes": {
+    "Capacitance": "47uF",
+    "Current - Leakage": "164.5uA@5mins",
+    "Equivalent Series Resistance(ESR)": "100mΩ@100kHz",
+    "Operating Temperature": "-55℃~+105℃",
+    "Ripple Current": "1.2A@100kHz",
+    "Tolerance": "±20%",
+    "Voltage Rating": "35V"
+   },
+   "datasheet": null,
+   "description": "-55℃~+105℃ 1.2A@100kHz 100mΩ@100kHz 164.5uA@5mins 35V 47uF ±20% SMD,7.3x4.3mm Tantalum Capacitors ROHS",
+   "fetched_utc": "2026-11-13T10:45:57Z",
+   "jlc_library": "extended",
+   "manufacturer": "PANASONIC",
+   "mpn": "35TQS47MEX",
+   "package": "SMD,7.3x4.3mm",
+   "price_usd": [
+    [
+     1,
+     3.0839
+    ],
+    [
+     10,
+     3.0152
+    ],
+    [
+     30,
+     2.971
+    ],
+    [
+     100,
+     2.9269
+    ],
+    [
+     102,
+     2.9269
+    ],
+    [
+     104,
+     2.9269
+    ]
+   ],
+   "stock": 0,
+   "url": null
+  },
+  "C4979618": {
+   "attributes": {
+    "Capacitance": "220uF",
+    "Equivalent Series Resistance(ESR)": "50mΩ@100kHz",
+    "Operating Temperature": "-55℃~+105℃",
+    "Tolerance": "±20%",
+    "Voltage Rating": "16V"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410121811_PANASONIC-16TQC220MD3_C4979618.pdf",
+   "description": "-55℃~+105℃ 16V 220uF 50mΩ@100kHz ±20% 2917 Tantalum Capacitors ROHS",
+   "fetched_utc": "2026-11-13T10:45:57Z",
+   "jlc_library": "extended",
+   "manufacturer": "PANASONIC",
+   "mpn": "16TQC220MD3",
+   "package": "2917",
+   "price_usd": [
+    [
+     1,
+     2.153
+    ],
+    [
+     10,
+     1.8782
+    ],
+    [
+     30,
+     1.7048
+    ],
+    [
+     100,
+     1.3694
+    ],
+    [
+     500,
+     1.2892
+    ],
+    [
+     1000,
+     1.2549
+    ]
+   ],
+   "stock": 1715,
+   "url": "https://www.lcsc.com/product-detail/tantalum-capacitors_panasonic-16tqc220md3_C4979618.html"
+  },
+  "C53054838": {
+   "attributes": {},
+   "datasheet": null,
+   "description": "CASE-D-7343-19(mm) Tantalum Capacitors ROHS",
+   "fetched_utc": "2026-11-13T10:45:58Z",
+   "jlc_library": "extended",
+   "manufacturer": "PANASONIC",
+   "mpn": "16TQC100MD2",
+   "package": "CASE-D-7343-19(mm)",
+   "price_usd": [
+    [
+     1,
+     3.7121
+    ],
+    [
+     10,
+     3.223
+    ],
+    [
+     30,
+     2.9301
+    ],
+    [
+     100,
+     2.6356
+    ],
+    [
+     500,
+     2.4999
+    ],
+    [
+     1000,
+     2.4393
+    ]
+   ],
+   "stock": 5,
+   "url": null
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C109085",
+  "C36799600",
+  "C4979618",
+  "C53054838"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}
