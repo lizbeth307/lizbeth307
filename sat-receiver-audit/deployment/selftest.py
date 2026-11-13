@@ -82,16 +82,18 @@ _B07, _B09 = "build/07-pz-vstanovlennia.md", "build/09-testy.md"
 CATALOGUE = (
     ("RX-00", None, "OFFLINE", "Target inventory: no special file, no symlink escaping the rootfs, within bounds", (_B07 + ":546",)),
     ("RX-01a", 1, "OFFLINE", "dpkg status: no forbidden package present (unpacked/half-*/triggers-* count)", (_B07 + ":540", _B07 + ":546", "STACK.md:888", "STACK.md:892", _B09 + ":70")),
-    ("RX-01b", 1, "OFFLINE", "File names: no forbidden basename, AppImage, snap/flatpak/docker state, transmitting Dream", (_B07 + ":540", _B07 + ":546", "STACK.md:888")),
+    ("RX-01b", 1, "OFFLINE", "File names: no forbidden basename, AppImage, snap/flatpak/docker state, transmitting Dream; wsjtx_app_version only as the lab-wsjt-decoders stub",
+     (_B07 + ":540", _B07 + ":546", "STACK.md:888", "STACK.md:886")),
     ("RX-01c", 1, "OFFLINE", "Engine configs: direct sampling mode 0, no direct_sampling/direct_samp/bias keys or device args, no HF+ 256000",(_B07 + ":324", _B07 + ":409", _B07 + ":431", _B07 + ":540", "STACK.md:888")),
     ("RX-02", 2, "OFFLINE", "SDRangel: plugin set equals allowlist, deny layer, signed reviewed hash manifest", (_B07 + ":415-424", _B07 + ":547", "STACK.md:890", _B09 + ":79")),
     ("RX-03", 3, "OFFLINE", "SDR++: no recorder/iq_exporter/network_sink/pager_decoder, ON list only, no sdrpp --server", (_B07 + ":401-409", _B07 + ":548", "STACK.md:890")),
     ("RX-04", 4, "OFFLINE", "SatDump: allowlisted plugins and five pipelines, no sinks/sources/mqtt, kepler Never", (_B07 + ":362-389", _B07 + ":549", "STACK.md:886", _B09 + ":78")),
     ("RX-04-decode", 4, "BUILDER", "SatDump baseline decode of one stored file per allowlisted pipeline", (_B07 + ":389", _B07 + ":549")),
-    ("RX-04-bb", 4, "OFFLINE", "v2.1 LRPT baseband recorder: policy constants, computed channel filter, out-of-window tone stored as zeros, fixed SatDump units",
-     ("STACK.md:977", "STACK.md:882", "build/12-revision-v2.1.md:71", "software/srrx/baseband.py", "software/srrx/satdump_pass.py")),
+    ("RX-04-bb", 4, "OFFLINE", "v2.1 LRPT baseband recorder: policy constants, computed channel filter, out-of-window tone stored as zeros, fixed SatDump units, staged record/decode templates and their polkit rule",
+     ("STACK.md:977", "STACK.md:882", "build/12-revision-v2.1.md:71", "software/srrx/baseband.py", "software/srrx/satdump_pass.py",
+      "software/srrx/baseband_scheduler.py")),
     ("RX-04-live", 4, "DEVICE", "SatDump live unit on the Q6A: only 127.0.0.1 datagrams reach net_source; live products equal the file decode",
-     ("STACK.md:1480", "software/srrx/satdump_pass.py unit_properties")),
+     ("STACK.md:1480", "software/srrx/satdump_pass.py unit_lines")),
     ("RX-05", 5, "OFFLINE", "OpenWebRX+: static modes subset of allowlist, locked settings, admin password present", (_B07 + ":426-433", _B07 + ":550", _B09 + ":79")),
     ("RX-05-live", 5, "DEVICE", "OpenWebRX+ live feature/mode list", (_B07 + ":433", _B07 + ":550")),
     ("RX-06", 6, "OFFLINE", "Soapy modules0.8 exactly rtlsdr/airspyhf, no Lime module, no 0.9, no plugin path override", (_B07 + ":328-338", _B07 + ":551", "deployment/deploy.py validate_devices")),
@@ -103,10 +105,19 @@ CATALOGUE = (
     ("RX-09-hw", 9, "HARDWARE", "RTL bias/token tests without token", (_B07 + ":308-310", _B07 + ":554", _B09 + ":71")),
     ("RX-10", 10, "OFFLINE", "Gpredict: no libgps/libhamlib in DT_NEEDED, RX-only radios, network TLE update off", (_B07 + ":505-509", _B07 + ":555")),
     ("RX-11", 11, "OFFLINE", "Menu model: each leaf reaches a staged backend, Lime/T7 leaves declare their fallback, critical leaves have a key or encoder",
-     (_B07 + ":556", "STACK.md:884", "STACK.md:110", "software/srrx/menu_model.py LEAVES")),
+     (_B07 + ":556", "STACK.md:884", "STACK.md:110", "software/srrx/menu_model.py LEAVES", "software/srrx/lab_shell_menu.py LEAVES")),
     ("RX-12", 12, "OFFLINE", "Lease units (systemd precedence): DevicePolicy=closed, ProtectSystem=strict, /data read-only, products lease, localhost only",
      (_B07 + ":532", _B07 + ":534", _B07 + ":557")),
     ("RX-12-runtime", 12, "DEVICE", "Lease EPERM/EROFS/EGL behaviour on the Q6A", (_B07 + ":557", _B09 + ":62")),
+    # W2 SW-ADSB: the plan named this row RX-17, which is the kernel command line row; it extends row 12 (leases).
+    ("RX-12-readsb", 12, "OFFLINE", "readsb ADS-B lease: RTL-SDR-only binary (allowlisted DT_NEEDED, no bias-tee call), exactly the reviewed readsb "
+     "argv between the srrx.adsb_filter steps and no other Exec command, the reviewed environment without PATH or mount overrides, "
+     "its output discarded, no other unit runs readsb, no tar1090 web UI",
+     ("STACK.md:621-622", "STACK.md:825", "STACK.md:882", "STACK.md:2180-2181", _B07 + ":439", "software/srrx/adsb_filter.py",
+      "deployment/recipes/readsb/recipe.json")),
+    ("RX-12-ais", 12, "OFFLINE", "AIS-catcher lease engine: reviewed ExecStart through srrx.ais_filter, no network output or bias option, "
+     "no TLS/Soapy/database library, bias-tee call not compiled, filter rules probed",
+     (_B07 + ":440", _B07 + ":557", "STACK.md:599", "STACK.md:882", "software/srrx/ais_filter.py")),
     ("RX-13", 13, "OFFLINE", "Band mask CPU path: 20 kHz, 300 MHz, 406.05 MHz, 1544.5 MHz bins invalid; annotate refuses",
      (_B07 + ":558", _B09 + ":73", "STACK.md:626", "software/srrx/spectrum.py mask_frame")),
     ("RX-13-npu", 13, "DEVICE", "NPU class-signal mask on the device", (_B07 + ":558",)),
@@ -118,7 +129,7 @@ CATALOGUE = (
     ("RX-17", 17, "OFFLINE", "/etc/kernel/cmdline SHA-256 equals the reviewed record", (_B07 + ":181-193", _B07 + ":562")),
     ("RX-17-proc", 17, "DEVICE", "/proc/cmdline on the running device", (_B07 + ":193", _B07 + ":562")),
     ("RX-18", 18, "DEVICE", "labbar visible over every full-screen Expert GUI", (_B07 + ":563", "STACK.md:884")),
-    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, AIS, ADS-B presets disabled; SatDump installation-gated (unavailable offline)",
+    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC presets disabled; SatDump, AIS and ADS-B installation-gated (unavailable offline)",
      ("software/srrx/decoder_policy.py availability", "STACK.md:85")),
     ("RX-S2", None, "OFFLINE", "Field/QUIET Wi-Fi/BT off as staged: AIC8800/btusb blacklist + install /bin/false, FE1.1s port-4 authorized=0 rule, "
      "rfkill oneshot required by srrx.service only", ("STACK.md:726", "STACK.md:2167", "STACK.md:125", _B09 + ":69", "deployment/deploy.py stage")),
@@ -195,6 +206,13 @@ POLICY_SCHEMA = {
         "soapy": dict(_COMMON, plugin_dirs=(_text,), forbidden_dirs=[_text]),
         "gpredict": dict(_COMMON, binaries=[_text], forbidden_needed=(_text,), radio_config_globs=[_text], rx_only_radio_type=_text,
                          tle_update={"file_globs": (_text,), "section": _text, "key": _text, "required": _text}),
+        # W2 SW-WSJT: jt9/wsprd and the wsjtx_app_version stub kept in files/ for review (RX-01b, _wsjt_app_version).
+        "lab-wsjt-decoders": {"footprint": (_text,), "app_version_stub": {"basename": _text, "lines": (_text,)}, "sources": [_text]},
+        "readsb": dict(_COMMON, binaries=(_text,), allowed_needed=(_text,), forbidden_symbols=(_text,), forbidden_dirs=[_text], lease_unit=_text,
+                       exec_start=_text, exec_start_pre=(_text,), exec_start_post=(_text,), exec_stop_post=(_text,), required_settings=_scalars,
+                       environment=(_text,), environment_files=(_text,), forbidden_settings=(_text,), filter_module=_text),
+        "ais-catcher": dict(_COMMON, binaries=(_text,), forbidden_needed=(_text,), forbidden_strings=(_text,), lease_template=_text,
+                            exec_start_pre=(_text,), exec_start=_text, required_options=(_text,), exec_start_post=(_text,), filter_module=_text),
     },
     "lime": {"runtime_library_globs": [_text], "sources": [_text]},
     "librtlsdr": {"library_glob": _text, "old_library_glob": _text, "soname": _text, "export_prefix": _text, "exports": int, "forbidden_strings": [_text], "sources": [_text]},
@@ -972,6 +990,33 @@ def check_01b(ctx, r):
             final = ctx.file(rel)
             if final is not None and ctx.contains(final, policy["dream"]["forbidden_strings"]):
                 r.fail(rel, "dream_transmitter_strings")
+    _wsjt_app_version(ctx, r)
+
+
+def _wsjt_app_version(ctx, r):
+    """W2 SW-WSJT: every file named wsjtx_app_version (any directory, any case, also behind a
+    link) must be the 2-line lab-wsjt-decoders stub kept in files/ for review, which only prints
+    the version OpenWebRX+ reads; anything else of that name is upstream WSJT-X tooling outside the
+    jt9/wsprd allowlist (STACK.md:127, STACK.md:886). The target file is compared byte for byte, never run."""
+    comp = ctx.comp("lab-wsjt-decoders")
+    stub = comp["app_version_stub"]
+    expected, name = ("\n".join(stub["lines"]) + "\n").encode(), stub["basename"].lower()
+    for rel in ctx.keys:
+        if rel.rsplit("/", 1)[-1].lower() != name:
+            continue
+        final = ctx.file(rel)
+        if final is None:
+            r.block(rel, "wsjtx_app_version_not_a_file")
+            continue
+        try:
+            with ctx.open(final) as handle:
+                data = handle.read(len(expected) + 1)
+        except (OSError, DeploymentError):
+            r.block(rel, "wsjtx_app_version_unreadable")
+            continue
+        if data != expected:
+            r.fail(rel, "wsjtx_app_version_not_stub")
+    r.note("lab_wsjt_decoders_present" if ctx.globs(comp["footprint"]) else "lab_wsjt_decoders_absent")
 
 
 def check_01c(ctx, r):
@@ -1527,6 +1572,339 @@ def check_12(ctx, r):
     r.note("EPERM_EROFS_behaviour_is_RX-12-runtime")
 
 
+def _exec_lines(texts, key):
+    """Command lines of one Exec*= key (or the values of another list setting with the same reset
+    rule, such as Environment=) in the [Service] section of a unit fragment and its drop-ins, in
+    order; an empty assignment resets the list (systemd.service(5), systemd.exec(5)); continuation
+    lines as _unit_settings joins them."""
+    lines = []
+    for text in texts:
+        section, joined = None, ""
+        for raw in text.splitlines():
+            stripped = raw.strip()
+            if stripped[:1] in ("#", ";"):
+                continue
+            if stripped.endswith("\\"):
+                joined += stripped[:-1] + " "
+                continue
+            line, joined = joined + stripped, ""
+            if line.startswith("[") and line.endswith("]"):
+                section = line[1:-1]
+                continue
+            name, sep, value = line.partition("=")
+            if section == "Service" and sep and name.strip() == key:
+                lines = lines + [value.strip()] if value.strip() else []
+    return lines
+
+
+_ENGINE_EXEC_KEYS = ("ExecCondition", "ExecStartPre", "ExecStart", "ExecStartPost", "ExecReload", "ExecStop", "ExecStopPost")
+
+
+def check_12_readsb(ctx, r):
+    """readsb ADS-B lease (W2 SW-ADSB; STACK.md:621-622, :2181, build/07 §16): the binary links only
+    the allowlisted libraries and imports no bias-tee or other-SDR call; the lease template and each
+    instance with its drop-ins run exactly the reviewed readsb argv between the srrx.adsb_filter steps
+    and no other Exec*= command, with exactly the reviewed Environment=/EnvironmentFile= lists, no
+    setting that brings in other environment, $PATH or mounts, the private RuntimeDirectory and
+    StandardOutput/StandardError null; no other unit starts readsb; no tar1090 web UI; the target
+    srrx.adsb_filter equals the checker's. Static only: the filter's behaviour is its host tests."""
+    comp = ctx.comp("readsb")
+    binaries = set(ctx.globs(comp["binaries"])) | {k for k in ctx.keys if k.rsplit("/", 1)[-1] == "readsb" and k.split("/")[-2:-1] in (["bin"], ["sbin"])}
+    found = sorted(set(ctx.globs(comp["footprint"])) | binaries)
+    _presence(ctx, r, found, "readsb")
+    for rel in ctx.globs(comp["forbidden_dirs"]):
+        r.fail(rel, "web_ui_present")
+    evaluated = 0
+    for rel in sorted(binaries):
+        final = ctx.file(rel)
+        if final is None:
+            continue
+        if not ctx.is_elf(final):
+            r.block(rel, "not_elf")
+            continue
+        info = ctx.elf(final, r)
+        if info is None:
+            continue
+        evaluated += 1
+        if any(name not in comp["allowed_needed"] for name in info["needed"]):
+            r.fail(rel, "dependency_outside_allowlist")  # the DT_NEEDED text itself is never echoed
+        for name, _, _, ndx in info["symbols"]:
+            if ndx == "UND" and name.split("@", 1)[0] in comp["forbidden_symbols"]:
+                r.fail(rel, "forbidden_symbol_imported", name.split("@", 1)[0])
+    if found and not evaluated:
+        r.block(found[0], "readsb_binary_not_found")
+    dirs = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in ctx.policy["units"]["system_unit_paths"]) if d is not None))
+    stem = comp["lease_unit"].split("@", 1)[0] + "@"
+    names = {comp["lease_unit"]}
+    for directory in dirs:
+        for child in ctx.children(directory):
+            base = child[:-2] if child.endswith(".service.d") else child
+            if base.startswith(stem) and base.endswith(".service") and base != stem + ".service":
+                names.add(base)
+    leases, own = 0, set()
+    for name in sorted(names):
+        fragment = _unit_fragment(ctx, r, dirs, name)
+        if fragment is None:
+            continue
+        leases += 1
+        listed, final = fragment
+        dropins = _unit_dropins(ctx, r, dirs, [name])
+        own.update([final] + dropins)
+        texts = [ctx.text(final)] + [ctx.text(f) for f in dropins]
+        if posixpath.basename(listed) != name:  # an instance evaluated through its template
+            listed = next((d + "/" + name + ".d" for d in dirs if d + "/" + name + ".d" in ctx.entries), listed)
+        starts = _exec_lines(texts, "ExecStart")
+        if starts != [comp["exec_start"]]:
+            r.fail(listed, "exec_start_not_allowlisted")
+        for line in starts:  # second layer: a policy edit cannot let a network or bias option through
+            for word in line.split()[2:]:
+                if word.split("=", 1)[0] in comp["deny_tokens"]:
+                    r.fail(listed, "denied_option", word.split("=", 1)[0].lstrip("-"))  # item: no leading dash (_SAFE_ITEM)
+        pinned = {"ExecStartPre": comp["exec_start_pre"], "ExecStartPost": comp["exec_start_post"], "ExecStopPost": comp["exec_stop_post"]}
+        for key, expected in pinned.items():
+            if _exec_lines(texts, key) != expected:
+                r.fail(listed, "filter_step_not_allowlisted", key)
+        for key in _ENGINE_EXEC_KEYS:  # any other command (ExecStop, ExecReload, ExecCondition) runs beside the filter
+            if key != "ExecStart" and key not in pinned and _exec_lines(texts, key):
+                r.fail(listed, "exec_key_not_allowlisted", key)
+        # Environment= and EnvironmentFile= accumulate over the drop-ins (systemd.exec(5)): a later PATH,
+        # PYTHONPATH or LD_PRELOAD would swap readsb or srrx.adsb_filter, so both lists are exact.
+        for key, expected in (("Environment", comp["environment"]), ("EnvironmentFile", comp["environment_files"])):
+            if _exec_lines(texts, key) != expected:
+                r.fail(listed, "lease_setting", key)
+        for key in comp["forbidden_settings"]:  # manager environment, ExecSearchPath= ($PATH), mounts over the reviewed files
+            if _exec_lines(texts, key):
+                r.fail(listed, "lease_setting", key)
+        settings = _unit_settings(texts)
+        for key, value in comp["required_settings"].items():
+            if settings.get(key) != value:
+                r.fail(listed, "lease_setting", key)
+    for listed, final in ctx.unit_texts():
+        if final in own:
+            continue
+        lines = [line.split("=", 1)[1] for line in ctx.text(final).splitlines() if "=" in line and line.split("=", 1)[0].strip() in _ENGINE_EXEC_KEYS]
+        if any(posixpath.basename(word.strip("'\"").lstrip(_EXEC_PREFIXES)) in ("readsb", "viewadsb") for line in lines for word in line.split()):
+            r.fail(listed, "readsb_outside_lease")
+    if not leases:
+        if found:
+            r.fail(found[0], "readsb_without_filter_lease")
+        elif ctx.profile == "controller":
+            r.note("readsb_lease_unit_absent")
+        else:
+            r.block(".", "readsb_lease_unit_missing")
+    else:
+        _relative(comp["filter_module"], "readsb.filter_module")
+        rel = ctx.policy["srrx_root"] + "/" + comp["filter_module"]
+        final = ctx.file(rel)
+        if final is None:
+            r.fail(rel, "adsb_filter_missing")
+        else:
+            digest = deploy.sha(deploy.PROJECT / comp["filter_module"])
+            ctx.evaluated[comp["filter_module"]] = digest
+            if ctx.digest(final) != digest:
+                r.block(rel, "adsb_filter_differs")
+    r.note("filter_behaviour_is_software_tests_test_adsb_filter")
+    r.note("reception_and_accepted_database_are_device_evidence")
+
+
+def _service_commands(texts, key):
+    """Every <key>= command line of the [Service] section of a unit fragment and its drop-ins, in
+    application order; an empty assignment resets the list (systemd.service(5)). Comment and
+    continuation handling as in _unit_settings."""
+    commands = []
+    for text in texts:
+        section, lines, joined = None, [], ""
+        for raw in text.splitlines():
+            stripped = raw.strip()
+            if stripped[:1] in ("#", ";"):
+                continue
+            if stripped.endswith("\\"):
+                joined += stripped[:-1] + " "
+                continue
+            lines.append(joined + stripped)
+            joined = ""
+        for line in lines + ([joined] if joined else []):
+            if line.startswith("[") and line.endswith("]"):
+                section = line[1:-1]
+                continue
+            name, sep, value = line.partition("=")
+            if section != "Service" or not sep or name.strip() != key:
+                continue
+            commands = commands + [value.strip()] if value.strip() else []
+    return commands
+
+
+def _checker_module(ctx, r, name):
+    """The checker's software/srrx/<name>.py loaded on its own (a module that imports no srrx module),
+    only when the target copy is byte-identical; otherwise BLOCKED and nothing is imported."""
+    from importlib import util
+    source = deploy.PROJECT / "software/srrx" / (name + ".py")
+    rel = ctx.policy["srrx_root"] + "/software/srrx/" + name + ".py"
+    final = ctx.file(rel)
+    if final is None:
+        r.block(rel, "target_module_missing")
+        return None
+    digest = deploy.sha(source)
+    ctx.evaluated["software/srrx/" + name + ".py"] = digest
+    if ctx.digest(final) != digest:
+        r.block(rel, "target_module_differs")
+        return None
+    spec = util.spec_from_file_location("srrx_selftest_" + name, source)
+    module = util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _ais_filter_probe(module):
+    """Synthetic records through srrx.ais_filter.VesselFilter (STACK.md:599); the rules it breaks."""
+    broken, f = [], module.VesselFilter()
+    f.feed({"class": "AIS", "type": 1, "mmsi": 200000001, "lat": 1.0, "lon": 2.0}, 0.0)
+    if f.vessels:
+        broken.append("position_before_static_published")
+    for shiptype in (0, 35, 100, None):
+        f.feed({"class": "AIS", "type": 5, "mmsi": 200000002, "shiptype": shiptype}, 1.0)
+    f.feed({"class": "AIS", "type": 24, "partno": 0, "mmsi": 200000003, "shipname": "X"}, 1.0)
+    if f.vessels:
+        broken.append("unknown_military_or_part_a_published")
+    f.feed({"class": "AIS", "type": 5, "mmsi": 200000002, "shiptype": 70}, 2.0)
+    if 200000002 in f.vessels:
+        broken.append("suppressed_vessel_published_again")
+    f.feed({"class": "AIS", "type": 5, "mmsi": 200000004, "shiptype": 70}, 2.0)
+    f.feed({"class": "AIS", "type": 5, "mmsi": 200000004, "shiptype": 0}, 2.5)
+    if 200000004 in f.vessels:  # an unknown type would hide a military vessel just as 35 does
+        broken.append("late_unknown_type_not_deleted")
+    for record in ({"type": 5, "shiptype": 70}, {"type": 19, "shiptype": 30}, {"type": 24, "partno": 1, "shiptype": 37}):
+        mmsi = 200000010 + record["type"]
+        f.feed(dict(record, **{"class": "AIS", "mmsi": mmsi}), 3.0)
+        if mmsi not in f.vessels:
+            broken.append("civil_static_not_published")
+        f.feed(dict(record, **{"class": "AIS", "mmsi": mmsi, "shiptype": 35}), 4.0)
+        if mmsi in f.vessels:
+            broken.append("late_type_35_not_deleted")
+    try:
+        hfplus = module.device_args("hfplus", {"usb": {"hfplus": {"serial": "AIRSPYHF SN:0123456789abcdef"}}})
+        rtla = module.device_args("rtla", {"usb": {"rtl_a": {"serial": "LABRXA"}}})
+    except Exception:  # noqa: BLE001 (any refusal of a valid binding breaks the rule)
+        hfplus = rtla = []
+    if hfplus[0::2] != ["-d", "-s"] or rtla[0::2] != ["-d", "-s"]:
+        broken.append("receiver_arguments_beyond_device_and_rate")
+    return sorted(set(broken))
+
+
+def _ais_word_issues(words, deny_tokens, required):
+    """(denied tokens, missing required options) of one ExecStart word list. A required option
+    ("-X off") must appear as consecutive words followed by nothing but the next option (a dash and a
+    letter, as AIS-catcher v0.70 isOption counts parameters, Source/Application/Main.cpp:315-318);
+    that exact form is the only accepted use of its first word, a deny token in every other form."""
+    sequences = [option.split() for option in required]
+
+    def is_option(word):
+        return len(word) >= 2 and word[0] == "-" and word[1].isascii() and word[1].isalpha()
+
+    def accepted(index, sequence):
+        after = index + len(sequence)
+        return words[index:after] == sequence and (after == len(words) or is_option(words[after]))
+    denied = []
+    for token in deny_tokens:  # flags are case-sensitive (-o output, -O own MMSI); setting names are not
+        if any((w == token if token.startswith("-") else w.upper() == token.upper())
+               and not (token.startswith("-") and any(accepted(i, s) for s in sequences if s[0] == w))
+               for i, w in enumerate(words)):
+            denied.append(token.lstrip("-"))  # item ids cannot start with a dash
+    missing = [s[0].lstrip("-") for s in sequences if not any(accepted(i, s) for i in range(len(words)))]
+    return denied, missing
+
+
+def check_12ais(ctx, r):
+    """AIS-catcher (deployment/recipes/ais-catcher) only as the lease engine behind srrx.ais_filter:
+    the effective template and every instance (its own fragment, a drop-in directory or a name in a
+    .wants/.requires/.upholds directory, as in RX-12; an instance fragment wins over the template)
+    run exactly the reviewed ExecStartPre, ExecStart and ExecStartPost of the policy, with its
+    required options (-X off: v0.70 enables the community feed by default otherwise) and the deny
+    tokens as a second layer; the binary links no TLS, Soapy, database or message-bus library and
+    imports no bias-tee call; no other unit file starts it (a lease unit file linked into a .wants
+    directory counts as such a file); the target filter module (byte-identical to the checker's)
+    passes a synthetic rule probe."""
+    comp = ctx.comp("ais-catcher")
+    binaries = sorted(set(ctx.globs(comp["binaries"])) | {k for k in ctx.keys if k.rsplit("/", 1)[-1] == "AIS-catcher"
+                                                          and k.split("/")[-2:-1] in (["bin"], ["sbin"])})
+    found = sorted(set(ctx.globs(comp["footprint"])) | set(binaries))
+    _presence(ctx, r, found, "ais-catcher")
+    for rel in binaries:
+        final = ctx.file(rel)
+        if final is None:
+            continue
+        if not ctx.is_elf(final):
+            r.block(rel, "not_elf")
+            continue
+        info = ctx.elf(final, r)
+        for needed in (info or {}).get("needed", []):
+            for prefix in comp["forbidden_needed"]:
+                if needed.lower().startswith(prefix.lower()):
+                    r.fail(rel, "forbidden_dependency", prefix)  # the policy prefix, not the DT_NEEDED text
+        if ctx.contains(final, comp["forbidden_strings"]):
+            r.fail(rel, "bias_tee_call_compiled")
+    template = comp["lease_template"]
+    units = ctx.policy["units"]
+    dirs = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in units["system_unit_paths"]) if d is not None))
+    prefix = template.split("@", 1)[0] + "@"
+    # Instances exist by name: a fragment of their own, a drop-in directory or a .wants/.requires/.upholds entry (check_12).
+    instances = set()
+    for directory in dirs:
+        for name in ctx.children(directory):
+            rel = directory + "/" + name
+            if name.endswith(".service") and ctx.entries[rel].kind != "dir":
+                instances.add(name)
+            elif name.endswith(".service.d"):
+                instances.add(name[:-2])
+            elif name.endswith((".wants", ".requires", ".upholds")):
+                sub = ctx.resolve_kind(rel, "dir")
+                instances.update(n for n in (ctx.children(sub) if sub else []) if n.endswith(".service"))
+    instances = {n for n in instances if n.startswith(prefix) and not n.startswith(prefix + ".")}
+    expected = ([c.split() for c in comp["exec_start_pre"]], [comp["exec_start"].split()], [c.split() for c in comp["exec_start_post"]])
+    evaluated, names = 0, {template} | instances
+    for name in [template] + sorted(instances):
+        fragment = _unit_fragment(ctx, r, dirs, name)
+        if fragment is None:
+            continue
+        listed, final = fragment
+        evaluated += 1
+        alias = posixpath.basename(final)
+        aliases = [name] + ([alias] if alias != name and alias.endswith(".service") else [])
+        texts = [ctx.text(final)] + [ctx.text(f) for f in _unit_dropins(ctx, r, dirs, aliases)]
+        if posixpath.basename(listed) != name:  # an instance evaluated through its template: name its drop-ins
+            listed = next((d + "/" + name + ".d" for d in dirs if d + "/" + name + ".d" in ctx.entries), listed)
+        pre, start, post = ([c.split() for c in _service_commands(texts, key)] for key in ("ExecStartPre", "ExecStart", "ExecStartPost"))
+        denied, missing = _ais_word_issues([w for command in start for w in command], comp["deny_tokens"], comp["required_options"])
+        for token in denied:
+            r.fail(listed, "ais_denied_argument", token)
+        for option in missing:
+            r.fail(listed, "ais_required_option_missing", option)
+        for got, want, rule in ((pre, expected[0], "ais_prepare_not_reviewed"), (start, expected[1], "ais_exec_start_not_reviewed"),
+                                (post, expected[2], "ais_filter_not_in_lease")):
+            if got != want:
+                r.fail(listed, rule)
+    if not evaluated:
+        if found:
+            r.fail(found[0], "ais_engine_without_filter_unit")
+        else:
+            r.note("ais_lease_template_absent")
+    for listed, final in ctx.unit_texts():
+        # Only the fragments and drop-in directories of the lease unit names collected above are skipped.
+        top = next((listed[len(d) + 1:].split("/", 1)[0] for d in dirs if listed.startswith(d + "/")), None)
+        own = top is not None and (top in names or (top.endswith(".d") and top[:-2] in names))
+        if own or not ctx.contains(final, ["AIS-catcher"]):
+            continue  # streamed first: only a unit that names the engine is parsed
+        for line in ctx.text(final, 256 * 1024).splitlines():
+            key, sep, value = line.strip().partition("=")
+            if sep and key.strip().startswith("Exec") and any(posixpath.basename(w.lstrip("@-:+!|")) == "AIS-catcher" for w in value.split()):
+                r.fail(listed, "ais_engine_outside_lease")
+    module = _checker_module(ctx, r, comp["filter_module"])
+    if module is not None:
+        for rule in _ais_filter_probe(module):
+            r.fail(ctx.policy["srrx_root"] + "/software/srrx/" + comp["filter_module"] + ".py", "ais_filter_rule", rule)
+    r.note("reception_and_lease_runtime_are_device_rows")
+
+
 def _synthetic_frame(center, rate, size=64):
     width = rate / size
     return {"v": 1, "kind": "spectrum", "center_hz": center, "sample_rate_hz": rate, "fft_size": size,
@@ -1774,8 +2152,9 @@ def check_17(ctx, r):
     r.note("proc_cmdline_is_RX-17-proc")
 
 
-# v2.1: only satdump-weather is installation-gated (UNAVAILABLE_* offline); every other gated preset stays DISABLED_*.
-_INSTALLATION_GATED = frozenset(("satdump-weather",))
+# v2.1: satdump-weather, (W2 SW-AIS) ais-public and (W2 SW-ADSB) adsb-public are installation-gated
+# (UNAVAILABLE_* offline); every other gated preset stays DISABLED_*.
+_INSTALLATION_GATED = frozenset(("satdump-weather", "ais-public", "adsb-public"))
 
 
 def check_s1(ctx, r):
@@ -1836,22 +2215,16 @@ def check_04bb(ctx, r):
     bb, glue = _target_module(ctx, r, "baseband"), _target_module(ctx, r, "satdump_pass")
     if bb is None or glue is None:
         return
-    try:
-        import numpy as np
-    except ImportError:
-        return r.block(".", "numpy_unavailable")
     where, units = "software/srrx/baseband.py", "software/srrx/satdump_pass.py"
     for name, value in _BASEBAND_POLICY.items():
         if getattr(bb, name, None) != value:
             r.fail(where, "baseband_policy_constant", name)
     if bb.LIVE_MAX_SAMPLES * 8 > 65507 or set(bb.PIPELINES.values()) != {"meteor_m2-x_lrpt", "meteor_m2-x_lrpt_80k"}:
         r.fail(where, "baseband_policy_constant", "LIVE_OR_PIPELINES")
-    _replay_probe(r, "RX-04-bb", np, srrx_closure("baseband"), lambda findings: _baseband_probe(np, bb, where, findings))
     window = _lrpt_window(bb)
-    ident = "0" * 16
-    decode = glue.unit_properties("decode", ident, work_dir="/data/products/satdump/.satdump-" + ident,
-                                  input_path="/data/raw/baseband-lrpt/lrpt-" + ident + ".sigmf-data")
-    live = glue.unit_properties("live", ident, work_dir="/data/products/satdump/.satdump-" + ident)
+    instance = "lrpt-" + "0" * 16
+    decode = glue.unit_lines("decode", instance)
+    live = glue.unit_lines("live", instance)
     common = {"ProtectHome=yes", "ProtectSystem=strict", "NoNewPrivileges=yes", "Environment=LC_ALL=C.UTF-8",
               "WorkingDirectory=" + glue.EMPTY_WORKDIR, "TemporaryFileSystem=/data:ro", "IPAddressDeny=any",
               "User=" + glue.UNIT_USER}
@@ -1867,13 +2240,72 @@ def check_04bb(ctx, r):
     if command[1:3] != ["legacy", "live"] or command[command.index("--source") + 1] != "net_source" or any(
             a in command for a in _LIVE_FORBIDDEN_ARGS):
         r.fail(units, "live_argv")
+    _check_04bb_scheduler(ctx, r, glue, instance, decode)
     staged = ctx.file("etc/tmpfiles.d/srrx-satdump.conf")
     if staged is None:
         r.note("baseband_tmpfiles_not_staged")
     elif ctx.read(staged, 64 * 1024).decode("utf-8", "replace") != glue.tmpfiles():
         r.fail("etc/tmpfiles.d/srrx-satdump.conf", "baseband_tmpfiles_differs")
+    # W2 IMG-3: the sweep service and timer are the generator's text, so the 24 h deletion runs the reviewed
+    # interpreter, r2's /usr/bin/python3 without NumPy (deployment/image/recipe.json unit_interpreters.stdlib).
+    for rel, expected in sorted(glue.sweep_units().items()):
+        final = ctx.file(rel)
+        if final is None:
+            r.note("sweep_units_not_staged")
+        elif ctx.read(final, 64 * 1024).decode("utf-8", "replace") != expected:
+            r.fail(rel, "sweep_unit_differs")
     r.note("live_localhost_behaviour_is_RX-04-live")
     r.note("device_recording_needs_labd_utc_verified")
+    # The unit, template and rule checks above need no NumPy; the filter and tone probes do.
+    try:
+        import numpy as np
+    except ImportError:
+        return r.block(".", "numpy_unavailable")
+    _replay_probe(r, "RX-04-bb", np, srrx_closure("baseband"), lambda findings: _baseband_probe(np, bb, where, findings))
+
+
+def _check_04bb_scheduler(ctx, r, glue, instance, decode):
+    """No transient SatDump unit; the staged record/decode templates, labd's drop-in and the polkit rule
+    equal their generators (srrx.satdump_pass.unit_text, srrx.baseband_scheduler.staged_files); the
+    decode template expands to the reviewed sandbox; the rule allows labd only start/stop of the two
+    templates' instances. A root without them (not a deploy.stage root) is noted, never passed as staged."""
+    sched = _target_module(ctx, r, "baseband_scheduler")
+    if sched is None:
+        return
+    if glue.transient_units():
+        r.fail("software/srrx/satdump_pass.py", "transient_units_present")
+    for kind, template in (("decode", glue.DECODE_TEMPLATE), ("record", glue.RECORD_TEMPLATE)):
+        rel = "etc/systemd/system/" + template
+        final = ctx.file(rel)
+        if final is None:
+            r.note("scheduler_templates_not_staged")
+            continue
+        text = ctx.read(final, 64 * 1024).decode("utf-8", "replace")
+        if text != glue.unit_text(kind):
+            r.fail(rel, "template_differs")
+        lines = set(text.replace("%i", instance).splitlines())
+        if kind == "decode" and not set(decode) <= lines:
+            r.fail(rel, "decode_unit_properties")
+        if "[Install]" in text or any(line.startswith(("User=root", "ExecStartPre=", "PermissionsStartOnly"))
+                                      for line in lines):
+            r.fail(rel, "template_not_fixed")
+    for rel, expected in sorted(sched.staged_files().items()):
+        final = ctx.file(rel)
+        if final is None:
+            r.note("scheduler_files_not_staged")
+        elif ctx.read(final, 64 * 1024).decode("utf-8", "replace") != expected:
+            r.fail(rel, "scheduler_file_differs")
+    pattern = re.compile(sched.UNIT_PATTERN)
+    allowed = [glue.unit_name(template, instance) for template in (glue.DECODE_TEMPLATE, glue.RECORD_TEMPLATE)]
+    refused = ("srrx-satdump-decode@.service", "srrx-satdump-decode@lrpt-0.service", "srrx.service",
+               "srrx-satdump-decode@lrpt-" + "0" * 16 + ".service.d", "run-u1.service",
+               "srrx-baseband-record@lrpt-" + "A" * 16 + ".service")
+    rule = sched.polkit_rule()
+    if (not all(pattern.match(name) for name in allowed) or any(pattern.match(name) for name in refused)
+            or "/" + sched.UNIT_PATTERN + "/" not in rule or rule.count("polkit.Result.YES") != 1
+            or 'subject.user == "labd"' not in rule or "restart" in rule):
+        r.fail("software/srrx/baseband_scheduler.py", "polkit_rule_scope")
+    r.note("polkit_decisions_are_the_sr-rx-system_node_harness")
 
 
 # kmod and udev read these persistent directories in this precedence order (/run is runtime state).
@@ -2039,13 +2471,13 @@ def _exec_file(ctx, word):
     return next((f for f in (ctx.file(d + "/" + word) for d in _EXEC_SEARCH) if f is not None), None)
 
 
-def _unit_backend(ctx, r, backend, item):
+def _unit_backend(ctx, r, backend, item, where="software/srrx/menu_model.py"):
     """A unit of the backend's scope is effective in the rootfs and its ExecStart runs the declared
     program: `-m srrx.<module>` with that module staged, or an absolute binary present in the rootfs.
     The executables ExecStart starts (the interpreter, also behind /usr/bin/env) must be files of the
     rootfs; a controller overlay without a dpkg database lacks the base image and the venv, so a
-    missing one is a note there and BLOCKED otherwise. Enablement is an install step, not checked."""
-    where = "software/srrx/menu_model.py"
+    missing one is a note there and BLOCKED otherwise. Enablement is an install step, not checked.
+    `where` is the model file a missing unit is filed under (the console's or the Lab Shell's)."""
     paths = ctx.policy["units"]["system_unit_paths"] if backend["scope"] == "system" else _USER_UNIT_DIRS
     if backend["scope"] == "user":
         _home_unit_overrides(ctx, r, backend["name"])
@@ -2070,12 +2502,155 @@ def _unit_backend(ctx, r, backend, item):
             r.block(fragment[0], "unit_interpreter_missing", item)
 
 
+_LAB_SHELL = "software/srrx/lab_shell_menu.py"
+
+
+def _lab_shell_lime(ctx):
+    """The root has the Lime: /etc/srrx/devices.json enables it and a Lime runtime library is staged
+    (policy lime.runtime_library_globs, the RX-08 match). deploy.validate_devices refuses an enabled
+    Lime today, so a staged root has none; anything unreadable counts as no Lime."""
+    final = ctx.file("etc/srrx/devices.json")
+    try:
+        devices = ctx.json(final) if final is not None else None
+    except Blocked:
+        return False
+    lime = devices.get("lime") if isinstance(devices, dict) else None
+    if not (isinstance(lime, dict) and lime.get("enabled") is True):
+        return False
+    globs = [g.lower() for g in ctx.policy["lime"]["runtime_library_globs"]]
+    return any(ctx.entries[rel].kind in ("file", "link") and _matches(rel.rsplit("/", 1)[-1].lower(), globs) for rel in ctx.keys)
+
+
+def _lab_shell_capabilities(ctx, r, shell, operations, presets):
+    """What the root offers the Lab Shell model: a package when every executable PACKAGES names is on
+    systemd's search path, an effective unit, the staged srrx modules, labd's operations, the decoder
+    presets and the policy allowlists. A unit a leaf requires (an engine lease) is a system unit
+    (STACK.md:76, "не --user"), so it is looked up in the system unit paths only, as RX-12 does; an
+    engine_unit backend in the paths of its scope. Returns the capability set and {unit: (listed,
+    final)} of the required units with the system unit directories for the reach check."""
+    names = shell.referenced()
+    system = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in ctx.policy["units"]["system_unit_paths"]) if d is not None))
+    user = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in _USER_UNIT_DIRS) if d is not None))
+    required = {u for leaf in shell.LEAVES for u in leaf["requires"]["units"]}
+    units, present = {}, set()
+    for name in sorted(required):
+        fragment = _unit_fragment(ctx, r, system, name)
+        if fragment is not None:
+            units[name] = fragment
+            present.add(name)
+    for leaf in shell.LEAVES:
+        backend = leaf["backend"]
+        if backend["kind"] == "engine_unit" and backend["name"] in names["units"] and backend["name"] not in required | present:
+            if _unit_fragment(ctx, r, user if backend["scope"] == "user" else system, backend["name"]) is not None:
+                present.add(backend["name"])
+    root = ctx.policy["srrx_root"] + "/software/srrx/"
+    packages = [name for name, package in shell.PACKAGES.items()
+                if package["binaries"] and all(_exec_file(ctx, binary) is not None for binary in package["binaries"])]
+    caps = shell.capabilities(lime=_lab_shell_lime(ctx), packages=packages, units=present,
+                              modules=[m for m in names["modules"] if ctx.file(root + m + ".py") is not None],
+                              ops=operations or (), presets=presets or {}, policy=shell.policy_lists(ctx.policy))
+    return caps, units, system
+
+
+def _lab_shell_unknown(shell, leaf, presets, checker_ops, lists):
+    """Names of the leaf that the checker's own tree does not build and PLANNED does not list, and an
+    allowlist entry the policy neither allows nor denies (`lists`, policy_lists of ctx.policy): a typo
+    or a forbidden operation is a FAIL, never a quietly hidden leaf."""
+    software = deploy.PROJECT / "software"
+    backend, needs, unknown = leaf["backend"], leaf["requires"], []
+    kind, name = backend["kind"], backend["name"]
+    if not name.startswith(shell.PLANNED_PREFIX):
+        known = (name in checker_ops if kind == "labd_op"
+                 else (software / "srrx" / (name + ".py")).is_file() if kind == "page_only"
+                 else (software / "systemd" / name).is_file() if kind == "engine_unit"
+                 else presets is None or name in presets)
+        if not known:
+            unknown.append("backend")
+    unknown += ["module:" + m for m in needs["modules"] if not (software / "srrx" / (m + ".py")).is_file()]
+    unknown += ["unit:" + u for u in needs["units"] if not (software / "systemd" / u).is_file()]
+    unknown += ["preset:" + p for p in needs["presets"] if presets is not None and p not in presets]
+    allow = leaf["allowlist"]
+    if allow is not None and (shell.allowlist_reason(allow, lists) or "").startswith("not_allowlisted:"):
+        unknown.append("allowlist:%s:%s" % (allow["component"], allow["name"]))
+    return unknown
+
+
+def _lab_shell_reach(ctx, r, shell, leaf, units, dirs):
+    """A visible leaf reaches its backend in depth: the page's srrx module is the checker's copy, an
+    engine unit runs its program, and each unit it needs runs one of its packages' executables with
+    every executable of the ExecStart chain on the root (overlay rule as _unit_backend). `dirs` are
+    the system unit directories, whose drop-ins apply to a required unit."""
+    backend, item = leaf["backend"], leaf["id"]
+    if backend["kind"] == "page_only":
+        _target_identical(ctx, r, backend["name"])
+    elif backend["kind"] == "engine_unit":
+        _unit_backend(ctx, r, backend, item, _LAB_SHELL)
+    binaries = {b for p in leaf["requires"]["packages"] for b in shell.PACKAGES[p]["binaries"]}
+    for name in leaf["requires"]["units"]:
+        listed, final = units[name]
+        texts = [ctx.text(final)] + [ctx.text(f) for f in _unit_dropins(ctx, r, dirs, [name])]
+        chain = _exec_chain(_unit_settings(texts).get("ExecStart", "").split())
+        if not chain or (binaries and not binaries & {posixpath.basename(w) for w in chain if w}):
+            r.fail(listed, "lab_shell_unit_program_mismatch", item)
+        elif any(_exec_file(ctx, word) is None for word in chain):
+            if ctx.profile == "controller" and ctx.file("var/lib/dpkg/status") is None:
+                r.note("unit_interpreter_absent_controller_overlay")
+            else:
+                r.block(listed, "unit_interpreter_missing", item)
+
+
+def _lab_shell_menu(ctx, r, operations):
+    """srrx.lab_shell_menu (STACK.md:884) on the same root, the CI menu test of that line: the model
+    is valid; every backend and requirement is built by the checker's tree or PLANNED; a Lime/T7
+    leaf declares its no-Lime/no-T7 backend; a critical leaf has a key or encoder (BLOCKED, as for
+    the console); every leaf the capability check shows reaches its backend; every hidden leaf is
+    listed with its reasons (note lab_shell_hidden:<id>:<reasons>). A hidden critical leaf gets a
+    second note, lab_shell_critical_hidden:<id>:<reasons>: the key/encoder rule above holds for the
+    controls it declares, not for a glove path that exists (BACK, the encoders and LOCK wait for
+    labinput and the touch lock, МЕН-03/Д-06 OPEN). A T7 is removable and has no binding offline
+    (software/RX.md), so T7 leaves are evaluated with and without it; the Lime comes from the root
+    (_lab_shell_lime). The QML shell itself is not built (note)."""
+    shell = _target_module(ctx, r, "lab_shell_menu")
+    if shell is None:
+        return
+    try:
+        shell.validate()
+    except ValueError:
+        return r.fail(_LAB_SHELL, "lab_shell_menu_invalid")
+    decoders = _target_module(ctx, r, "decoder_policy")
+    presets = decoders.availability() if decoders is not None else None
+    caps, units, dirs = _lab_shell_capabilities(ctx, r, shell, operations, presets)
+    checker_ops = _labd_operations()  # parsed once: the checker's engine.py, whatever the target holds
+    for leaf in shell.LEAVES:
+        item = leaf["id"]
+        for what in _lab_shell_unknown(shell, leaf, presets, checker_ops, caps["policy"]):
+            r.fail(_LAB_SHELL, "lab_shell_backend_unknown" if what == "backend" else "lab_shell_requirement_unknown", item)
+        if leaf["needs_lime"] and not leaf["fallback_text"]:
+            r.fail(_LAB_SHELL, "no_lime_backend_undeclared", item)
+        if leaf["needs_t7"] and not leaf["fallback_text"]:
+            r.fail(_LAB_SHELL, "no_t7_backend_undeclared", item)
+        if leaf["critical"] and not leaf["controls"]["keys"]:
+            r.block(_LAB_SHELL, "critical_leaf_touch_only", item)
+    visible = {}
+    for t7 in (False, True):
+        for leaf in shell.visible_leaves(dict(caps, t7=t7)):
+            visible.setdefault(leaf["id"], leaf)
+    for leaf in visible.values():
+        _lab_shell_reach(ctx, r, shell, leaf, units, dirs)
+    critical = {leaf["id"] for leaf in shell.LEAVES if leaf["critical"]}
+    for item, reasons in shell.hidden_leaves(caps):
+        r.note("lab_shell_hidden:%s:%s" % (item, ",".join(reasons)))
+        if item in critical:
+            r.note("lab_shell_critical_hidden:%s:%s" % (item, ",".join(reasons)))
+    r.note("lab_shell_qml_not_built")
+
+
 def check_11(ctx, r):
     """srrx.menu_model against the staged rootfs (build/07 row 11, STACK.md:884): every leaf reaches
     its backend, a Lime/T7 leaf declares its no-Lime/no-T7 backend, a critical leaf has a key or
     encoder (STACK.md:110). The target console (hmi and its imports) must be the evaluated code.
-    The model describes only the srrx.hmi touch console: the Lab Shell menu of STACK.md:884 (hubs,
-    Lime capability check) has no code yet and stays outside this row (note, Д-06)."""
+    Then the Lab Shell menu of STACK.md:884 (srrx.lab_shell_menu: hubs and the Lime/T7 and package
+    capability check) on the same root (_lab_shell_menu); the QML shell itself stays OPEN (Д-06)."""
     menu = _target_module(ctx, r, "menu_model")
     hmi = _target_module(ctx, r, "hmi") if menu is not None else None  # importing srrx.hmi loads no Qt
     if hmi is None:
@@ -2124,7 +2699,7 @@ def check_11(ctx, r):
     r.note("fallback_text_is_declared_not_rendered")
     r.note("glove_and_physical_key_operation_is_hardware_acceptance")
     r.note("unit_enablement_is_an_install_step")
-    r.note("lab_shell_menu_not_modelled")
+    _lab_shell_menu(ctx, r, operations)
 
 
 # RX-14 probes (build/07 row 14, ПОЛ-05): label, centre, rate, NFM voices, active windows, bench
@@ -2268,7 +2843,7 @@ def check_14(ctx, r):
 
 CHECKS = {"RX-00": check_00, "RX-01a": check_01a, "RX-01b": check_01b, "RX-01c": check_01c, "RX-02": check_02, "RX-03": check_03,
           "RX-04": check_04, "RX-04-bb": check_04bb, "RX-05": check_05, "RX-06": check_06, "RX-07": check_07, "RX-08": check_08, "RX-09": check_09,
-          "RX-10": check_10, "RX-11": check_11, "RX-12": check_12, "RX-13": check_13, "RX-14": check_14, "RX-15": check_15,
+          "RX-10": check_10, "RX-11": check_11, "RX-12": check_12, "RX-12-readsb": check_12_readsb, "RX-12-ais": check_12ais, "RX-13": check_13, "RX-14": check_14, "RX-15": check_15,
           "RX-16": check_16, "RX-17": check_17, "RX-S1": check_s1, "RX-S2": check_s2}
 
 

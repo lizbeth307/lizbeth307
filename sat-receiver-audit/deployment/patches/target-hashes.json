@@ -16,7 +16,53 @@
     },
     "src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp": {
       "before_sha256": "f76a14d5589fa516090984e9a95258bd3ae481f6e4134dc7e6ff298d5f98ce09",
-      "after_sha256": "c226888485b1fcb37509e84083d61fec8cf6ac0b0d91ade4cb1e199e4ade645e"
+      "after_sha256": "60c7df9676bdf0237b9f9a2289eb74c1004a762d14388c8526a3a02eee32591d"
+    },
+    "plugins/soapysdr/Settings.cpp": {
+      "before_sha256": "bf336221f5acc2d8e399e192c02fd83c9a3e052ce6a73b3d87900604ae9ac677",
+      "after_sha256": "46b9ae68c520378d3bb1724167afc50be30a5a8f57ee59c19d43ca73de5e9fc1"
+    },
+    "src/API/LimePlugin.cpp": {
+      "before_sha256": "23ea500ed90f66b354cece6d61bbcbfea81496530a54c918b8701e77fe93271f",
+      "after_sha256": "7d335028a19a9f50c37b2870d60a4515cdc31ce8b988f554fd544b94e2250712"
+    },
+    "src/boards/LMS7002M_SDRDevice.cpp": {
+      "before_sha256": "69f77cba2db4597b29fde5bac2ef43a0af076b3dadbb89b595be8990dd932164",
+      "after_sha256": "a5186a985a99973b18b534fde6456ddf2e9c18bdf1001425412ff66506c78c4b"
+    },
+    "src/boards/LimeSDR_Micro/calibrations.cpp": {
+      "before_sha256": "9dda7312e6e8a2c968d28470b6ef16e1625331598f2e583f9f33bb4e4f08a438",
+      "after_sha256": "917f85c70d59b816aff3d3bde54eddc3aace92a88aaa23a17c34726a8c5d1e20"
+    },
+    "src/boards/BoardSupportLoader.in.cpp": {
+      "before_sha256": "0a9d2a1440742f9b2bc5cfa9d26f9aa0493ab4b709a008082de54a1f3805c781",
+      "after_sha256": "072f4a8c904465189c62c8f62236a3909a3d8fca231cf0406e8df8afe1e5739a"
+    },
+    "src/boards/CMakeLists.txt": {
+      "before_sha256": "b2b8e0db5bde601dc3203a2aa5fd60460b887bdadb374ef1703810c56f9b765a",
+      "after_sha256": "1969ba765e95dc99befaf95bca436216ff18dc634edc6a7323beddfb117ee386"
+    },
+    "src/boards/LimeSDR_Micro/LA9310_TRX.cpp": {
+      "before_sha256": "6b08913c85268f02f4d0d654624c9adc0768842ea5c81b8f3c59439870990874",
+      "after_sha256": "2c3d28208da2903f24e1ed564785ce2a95d940acc497e43c5af61d645bcf9ebf"
+    }
+  },
+  "sdrangel": {
+    "CMakeLists.txt": {
+      "before_sha256": "b719077d6793c693103b3d5acfc00309fb3cf1a171dcf7f832ff1013f06dc4b6",
+      "after_sha256": "1d5fbb3a41a7d09112476938c69716a6a6765168a1569244fb907f123bcf860f"
+    },
+    "plugins/CMakeLists.txt": {
+      "before_sha256": "c098ff1a939ad1da7c7909ae88f2100a8a0fc8f7ee73ee98717f3083ae768a88",
+      "after_sha256": "e3846fa6cf36eb7b13d97fed6439c3b15fa033ac99cbbc8483110ecaf0888e8f"
+    },
+    "plugins/channelrx/CMakeLists.txt": {
+      "before_sha256": "4a2e023aec9183659c987343570e84f85998cdf6cc017d40e28a9329a2e9735f",
+      "after_sha256": "1dea9b3d77beead4e8c34dd7aaabc17baec1f3a3f6063f3b620339ffb676aff9"
+    },
+    "plugins/samplesource/CMakeLists.txt": {
+      "before_sha256": "7b7c5a3f740018f01a8f29b96f6b8fdb451914169a606add0c8124cfe7b373d3",
+      "after_sha256": "96f82eabaed869ea4674020446d6c55d5cb733ac78984198a2a7ef1b65079e24"
     }
   }
 }

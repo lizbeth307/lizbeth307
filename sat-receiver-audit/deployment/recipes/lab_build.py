@@ -32,8 +32,10 @@ import deploy  # noqa: E402
 import build_recipe  # noqa: E402
 import fetch_sources  # noqa: E402  (the gpgv + lock comparison of `fetch_sources.py verify-debian`)
 
-# Always in the chroot: the interpreter of build_recipe.py, git for vendor_patch.py (`git apply`
-# of the reviewed patch, offline) and the CMake toolchain. buildd adds build-essential/dpkg-dev.
+# Always in the chroot: the interpreter of build_recipe.py and of the recipe hooks (check_recipe.py,
+# stdlib only), git for vendor_patch.py (`git apply` of the reviewed and the listed patches, offline)
+# and the CMake toolchain. buildd adds build-essential/dpkg-dev (make, binutils readelf for
+# forbid_needed). Nothing regenerates configure: autotools recipes build release tarballs.
 BASE_PACKAGES = ("python3", "git", "cmake", "pkgconf")
 BUILDER_UID = 1000
 CLEAN_ENV = "/usr/bin/env -i PATH=/usr/sbin:/usr/bin:/sbin:/bin HOME=/work LANG=C.UTF-8"
@@ -235,7 +237,10 @@ def lab_build(component, cache, work, out, jobs=4, repeat=False):
     subprocess.run(mmdebstrap_argv(recipe, lock, chroot, keyring), check=True)
     releases = installed_releases(chroot, lock)
     installed = install_lab_packages(chroot, depends)
+    # deployment/ without tests and labs: recipes/<id>/ comes along with its patches/, files/ and check_recipe.py.
     shutil.copytree(DEPLOYMENT, chroot / "srrx/deployment", ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "tests", "linux_lab", "module_lab"))
+    if not (chroot / "srrx/deployment/recipes" / component / "recipe.json").is_file():
+        raise build_recipe.RecipeError("the recipe directory did not reach the chroot: " + component)
     (chroot / "cache").mkdir()
     shutil.copyfile(archive, chroot / "cache" / archive.name)
     for name in ("work", "out"):

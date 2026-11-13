@@ -17,9 +17,11 @@ on:
     branches: ['wip/**', 'codex/**', 'ccr-*']
     # Everything the jobs consume: build_image.py stages the controller tree (deploy.py stage copies
     # software/, firmware/, design/ and deployment/ into /opt/srrx, with deployment/system and the *.template.json
-    # files), runs selftest.py, reads the lock and the policy.
+    # files), runs selftest.py, reads the lock and the policy, and installs deployment/repo's lab.pref and
+    # apt sources byte for byte.
     paths:
       - 'sat-receiver-audit/deployment/image/**'
+      - 'sat-receiver-audit/deployment/repo/**'
       - 'sat-receiver-audit/deployment/deploy.py'
       - 'sat-receiver-audit/deployment/*.template.json'
       - 'sat-receiver-audit/deployment/tests/test_image.py'
@@ -27,6 +29,9 @@ on:
       - 'sat-receiver-audit/deployment/sources.lock.json'
       - 'sat-receiver-audit/deployment/selftest.py'
       - 'sat-receiver-audit/deployment/receive-only-policy.json'
+      # W2 IMG-3: the venv wheels come from the guest wheelhouse (URL, SHA-256, size) and its lock lines.
+      - 'sat-receiver-audit/deployment/linux_lab/wheelhouse-manifest.json'
+      - 'sat-receiver-audit/deployment/linux_lab/wheelhouse-requirements.txt'
       - 'sat-receiver-audit/software/**'
       - 'sat-receiver-audit/firmware/**'
       - 'sat-receiver-audit/design/**'
@@ -233,6 +238,9 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y -q --no-install-recommends dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler \
             qemu-system-arm qemu-efi-aarch64 qemu-utils python3-numpy zstd
+          # W2 IMG-4: the builder builds pps-gpio with dkms and gcc-12 (the kernel's compiler line), as sr-rx-system's pps-gpio-dkms job.
+          sudo apt-get install -y -q --no-install-recommends gcc-12 make kmod dkms
+          dkms --version; gcc-12 --version | head -1
       - name: Work directory on the largest free filesystem
         if: steps.sel.outputs.run == 'true'
         run: |
@@ -248,6 +256,12 @@ jobs:
           import hashlib, json
           arts = json.load(open("deployment/sources.lock.json"))["artifacts"]
           print("CACHE_KEY=srrx-locked-" + hashlib.sha256(json.dumps(sorted(a["sha256"] for a in arts)).encode()).hexdigest()[:16])
+          # The package closure debs (W2 IMG-2) have their own key: a closure change never refetches the 1.6 GB base image.
+          print("CLOSURE_KEY=srrx-closure-" + hashlib.sha256(open("deployment/image/package-closure.json", "rb").read()).hexdigest()[:16])
+          # The venv wheels (W2 IMG-3) likewise: keyed by the two venv locks and the guest lock (its pip line).
+          locks = ("software/config/hmi-requirements.lock", "software/config/passes-requirements.lock",
+                   "deployment/linux_lab/wheelhouse-requirements.txt")
+          print("WHEELS_KEY=srrx-wheels-" + hashlib.sha256(b"".join(open(p, "rb").read() for p in locks)).hexdigest()[:16])
           EOF
       - uses: actions/cache@v4
         if: steps.sel.outputs.run == 'true'
@@ -255,10 +269,23 @@ jobs:
           # Public upstream release files only (Radxa r2 image and kernel debs), never a derived image.
           path: ~/srrx-cache
           key: ${{ env.CACHE_KEY }}
-      - name: Fetch and verify the locked base image and kernel debs
+      - uses: actions/cache@v4
+        if: steps.sel.outputs.run == 'true'
+        with:
+          # Public Ubuntu snapshot debs of deployment/image/package-closure.json only.
+          path: ~/srrx-cache/closure
+          key: ${{ env.CLOSURE_KEY }}
+      - uses: actions/cache@v4
+        if: steps.sel.outputs.run == 'true'
+        with:
+          # Public PyPI wheels of the two venv locks and the pip bootstrap wheel only (W2 IMG-3).
+          path: ~/srrx-cache/wheels
+          key: ${{ env.WHEELS_KEY }}
+      - name: Fetch and verify the locked base image, kernel debs, package closure debs and venv wheels
         if: steps.sel.outputs.run == 'true'
         run: python3 deployment/image/build_image.py fetch --cache "$CACHE"
       - name: Build the golden image (candidate)
+        id: build
         if: steps.sel.outputs.run == 'true'
         run: |
           mkdir -p "$OUT"
@@ -279,7 +306,11 @@ jobs:
                   print(name, "missing"); continue
               d = json.loads(p.read_text())
               if name == "image-manifest.json":
-                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "kernel", "bootloader", "entries", "enabled_units", "accounts", "hardening", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:14000])
+                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "blocking_by_closes_at", "kernel", "package_closure", "bootloader", "entries", "enabled_units", "accounts", "hardening", "apt_sources", "npu_payload", "mcu_firmware", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:24000])
+                  # W2 IMG-3: the venvs (freeze, tree SHA-256, Qt), each SR-RX python3 unit's interpreter, the build-manifest draft.
+                  print(json.dumps({k: d.get(k) for k in ("venvs", "unit_interpreters", "build_manifest_draft", "target_python_numpy")}, indent=1)[:24000])
+                  # W2 IMG-4: the builder-built pps-gpio module (no author text is recorded) and the touch session.
+                  print(json.dumps({k: d.get(k) for k in ("pps_gpio", "session")}, indent=1)[:16000])
               else:
                   r = d.get("root", {})
                   print(json.dumps({"partitions": d.get("partitions"), "base_cmdline_status": d.get("base_cmdline_status"),
@@ -287,7 +318,8 @@ jobs:
                                     "loader_conf": d.get("esp", {}).get("loader_conf"), "kernel_install_plugins": r.get("kernel_install_plugins"),
                                     "packages_of_interest": r.get("packages_of_interest"), "diversions": r.get("diversions"), "units": r.get("units"),
                                     "accounts": r.get("accounts"), "machine_id": r.get("machine_id"), "kernel_deb_config": d.get("kernel_deb_config"),
-                                    "kernel_debs": d.get("kernel_debs"), "fstab": r.get("fstab"), "used_bytes": r.get("used_bytes")}, indent=1)[:30000])
+                                    "kernel_debs": d.get("kernel_debs"), "fstab": r.get("fstab"), "used_bytes": r.get("used_bytes"),
+                                    "dpkg_holds": r.get("dpkg_holds"), "netplan": r.get("netplan")}, indent=1)[:30000])
           EOF
       - name: QEMU boot smoke of the Route A image
         if: steps.sel.outputs.run == 'true' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
@@ -296,6 +328,44 @@ jobs:
           sudo python3 deployment/image/smoke_qemu.py --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
             --work "$W/smoke" --out "$OUT/smoke" --require-model
           python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/smoke-report.json"
+      # W2 IMG-4: a separate boot of its own copy (about 15 min under TCG), also after a failed A/B smoke of a built image:
+      # graphical.target with greetd, labwc and the console on a ramfb framebuffer (simpledrm) and USB input. A MODEL.
+      - name: QEMU session scenario of the Route A image (greetd, labwc, console)
+        if: always() && steps.build.outcome == 'success' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
+        run: |
+          sudo python3 deployment/image/smoke_qemu.py --session --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
+            --work "$W/smoke" --out "$OUT/smoke" --require-model
+          python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/session-report.json"
+      - name: Update model A->B with a test-key srrx-mirror, then QEMU scenario 4 (W2 IMG-UPD)
+        if: steps.sel.outputs.run == 'true' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
+        run: |
+          # deployment/image/update_slot.py on a fresh copy of the Route A image (build_image.update_model): the srrx-mirror
+          # publication of the package closure signed by a TEST key that exists only in this step, then one QEMU boot of the
+          # trial slot B. A CI model: the record says NOT_RELEASE; the owner's key, +lab packages and the Q6A stay OPEN (ОБР-10).
+          sudo apt-get install -y -q --no-install-recommends aptly gnupg gpgv
+          dpkg-query -W aptly gnupg gpgv | tee "$RUNNER_TEMP/update-host-tools.txt"
+          export GNUPGHOME="$RUNNER_TEMP/update-gnupg"
+          mkdir -m 700 "$GNUPGHOME"
+          gpg --batch --pinentry-mode loopback --passphrase '' --quick-gen-key 'SR-RX lab CI TEST KEY - not for release' ed25519 sign 2d
+          fpr=$(gpg --batch --with-colons --list-keys 'SR-RX lab CI TEST KEY' | awk -F: '$1 == "fpr" {print $10; exit}')
+          gpg --batch --export "$fpr" > "$RUNNER_TEMP/srrx-update-TEST.gpg"
+          # build_image.py --release-keyring never takes the CI test key (ОБР-09).
+          if python3 deployment/image/build_image.py release-keyring --check "$RUNNER_TEMP/srrx-update-TEST.gpg" 2> "$RUNNER_TEMP/release-keyring-refusal.txt"; then
+            echo "::error::build_image.py release-keyring accepted the CI test key"; exit 1
+          fi
+          grep "CI test key" "$RUNNER_TEMP/release-keyring-refusal.txt"
+          mapfile -t debs < <(python3 -c "import json, sys; [print(sys.argv[1] + '/closure/' + p['filename'].rsplit('/', 1)[-1]) for p in json.load(open('deployment/image/package-closure.json'))['packages']]" "$CACHE")
+          sh deployment/repo/publish.sh --mirror "$W/update-repo" "$fpr" "${debs[@]}"
+          # Only the public keyring checks the publication from here on: the private test key is discarded.
+          gpgconf --kill all
+          rm -rf "$GNUPGHOME"
+          rc=0
+          sudo python3 deployment/image/smoke_qemu.py --update-model --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
+            --mirror-repo "$W/update-repo/public" --ci-test-key "$RUNNER_TEMP/srrx-update-TEST.gpg" "$fpr" \
+            --work "$W/smoke-update" --out "$OUT/smoke" --require-model || rc=$?
+          sudo cp "$RUNNER_TEMP/update-host-tools.txt" "$RUNNER_TEMP/release-keyring-refusal.txt" "$OUT/smoke/" || true
+          python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/update-smoke-report.json"
+          exit $rc
       - name: Pack the image data (sparse tar + zstd) and measure it
         if: steps.sel.outputs.run == 'true'
         run: |
@@ -316,6 +386,20 @@ jobs:
           EOF
           cat "$OUT/packed-image.json" "$OUT/packed-listing.txt"
           echo "PACKED=$W/$I.tar.zst" >> "$GITHUB_ENV"
+      - name: Resolve the package closure from the gpgv-verified snapshot (CI helper; the build never resolves)
+        if: always() && steps.sel.outputs.run == 'true' && matrix.route == 'A'
+        run: |
+          # The r2 dpkg status of this run's facts against the signed snapshot indices. The step fails when the result
+          # differs from the committed deployment/image/package-closure.json: package-closure.resolved.json of the
+          # artifact is then applied as a GENERATED commit.
+          sudo chown -R "$(id -u)" "$OUT" || true
+          test -f "$OUT/image-facts.json" || { echo "::error::no image-facts.json to resolve against"; exit 1; }
+          rc=0
+          python3 deployment/image/build_image.py closure --resolve --facts "$OUT/image-facts.json" \
+            --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --work "$W/closure-resolve" \
+            --write "$OUT/package-closure.resolved.json" > "$OUT/closure-resolve.json" || rc=$?
+          python3 -c "import json, sys; r = json.load(open(sys.argv[1])); print(json.dumps({k: r.get(k) for k in ('status', 'differs', 'issues', 'dpkg_holds')}, indent=1))" "$OUT/closure-resolve.json" || true
+          exit $rc
       - name: Upload the manifest, facts, logs and extent map
         if: always() && steps.sel.outputs.run == 'true'
         uses: actions/upload-artifact@v5

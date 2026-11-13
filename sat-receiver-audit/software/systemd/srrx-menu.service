@@ -1,5 +1,9 @@
 [Unit]
 Description=SR-RX local touch console
+# User unit of the touch session (srrx-ui): the labwc autostart, or cage in safe mode, starts it with
+# `systemctl --user start --wait` once it is enabled (deployment/system/session). Without the venv the start
+# is skipped (ConditionResult=no): no console, no failure. Restart=no: a stop counts as a session failure.
+ConditionPathExists=/opt/srrx/venv/bin/python3
 PartOf=graphical-session.target
 After=graphical-session.target
 

@@ -10,21 +10,26 @@ image to the UFS is a separate, explicit bench step (recovery_kit.py write, neve
 The chroot gets a minimal /dev (no host disks) and a policy-rc.d that starts no service.
 
   plan   - ordered steps, sources and layout geometry (no root; host tests)
-  fetch  - download the locked base image and kernel debs into a cache and verify them
+  fetch  - download the locked base image and kernel debs (and the closure debs, venv wheels, pps-gpio.c) into a cache and verify them
   facts  - read-only facts of the locked r2 image (partition table, cmdline, ESP, dpkg, units)
   blank  - partitioned and formatted image without an OS (CI layout round trip)
   build  - the full golden image, image-manifest.json and the extent map for the recovery kit
+  venvs  - --check: the two venv locks against the guest lock and the wheelhouse manifest (offline, W2 IMG-3)
+  release-keyring --check - the owner keyring as build --release-keyring takes it; a 'CI TEST KEY' uid is refused (W2 IMG-UPD)
+  update-model - update_slot.py apply A->B on an image copy with a CI test key: the CI model of the updater (W2 IMG-UPD)
 
 The result is a CANDIDATE: hardware_ready is always false, bench gates W-01/W-02/W-03/W-08/W-09/W-10
 stay OPEN, and the image contains Radxa OS and Qualcomm material that must not be published.
 """
 import argparse
 import datetime
+import functools
 import hashlib
 import json
 import os
 from pathlib import Path
 import platform
+import posixpath
 import re
 import shlex
 import shutil
@@ -50,10 +55,100 @@ BLOCKDEV_PREFIXES = ("/dev/sd", "/dev/mmcblk", "/dev/nvme", "/dev/disk/", "/dev/
 CONFIG_KEYS = ("CONFIG_VIRTIO_BLK", "CONFIG_VIRTIO_PCI", "CONFIG_VIRTIO_MMIO", "CONFIG_PCI_HOST_GENERIC", "CONFIG_SERIAL_AMBA_PL011",
                "CONFIG_SERIAL_AMBA_PL011_CONSOLE", "CONFIG_EFI", "CONFIG_EFI_STUB", "CONFIG_EXT4_FS", "CONFIG_VFAT_FS", "CONFIG_NLS_CODEPAGE_437",
                "CONFIG_NLS_ISO8859_1", "CONFIG_QUOTA", "CONFIG_QFMT_V2", "CONFIG_QUOTACTL", "CONFIG_CGROUP_BPF", "CONFIG_PPS_CLIENT_GPIO",
-               "CONFIG_BLK_DEV_LOOP", "CONFIG_RTC_DRV_PL031", "CONFIG_DRM_VIRTIO_GPU", "CONFIG_HW_RANDOM_VIRTIO", "CONFIG_ARM_SMMU_V3")
+               "CONFIG_BLK_DEV_LOOP", "CONFIG_RTC_DRV_PL031", "CONFIG_DRM_VIRTIO_GPU", "CONFIG_HW_RANDOM_VIRTIO", "CONFIG_ARM_SMMU_V3",
+               # Module signing decides whether a builder-built out-of-tree module (DKMS pps-gpio) can load at all.
+               "CONFIG_MODULE_SIG", "CONFIG_MODULE_SIG_FORCE", "CONFIG_MODULE_SIG_ALL", "CONFIG_MODULE_SIG_HASH",
+               # W2 IMG-4: pps-gpio needs PPS core built in; the QEMU session model needs a firmware framebuffer DRM device
+               # (DRM_VIRTIO_GPU is not set in 6.18.2-4-qcom), a VT and USB input.
+               "CONFIG_PPS", "CONFIG_MODULE_UNLOAD", "CONFIG_MODULE_COMPRESS_ZSTD", "CONFIG_DRM_SIMPLEDRM", "CONFIG_SYSFB_SIMPLEFB",
+               "CONFIG_VT", "CONFIG_USB_XHCI_PCI", "CONFIG_USB_HID", "CONFIG_USER_NS")
+# The pin_only globs of receive-only-policy.json (libsnpe*, hexagon-dsp-binaries*, dragonwing-defaults) and tzdata
+# (chrony's tzdata-legacy closure) are listed too, so the facts name every package RX-01a could block.
 INTEREST = re.compile(r"(linux-(image|headers|modules|firmware)|systemd|embloader|sdboot|radxa|rsetup|u-boot|edk2|fastrpc|qcom|qnn|qairt|"
                       r"mesa|libdrm|task-|aic8800|unattended|brltty|modemmanager|gdm3|greetd|labwc|python3$|python3\.12|dkms|gcc|initramfs|"
-                      r"util-linux|e2fsprogs|dosfstools|chrony|gpsd|network-manager|openssh|wpasupplicant|bluez)")
+                      r"util-linux|e2fsprogs|dosfstools|chrony|gpsd|libgps|network-manager|openssh|wpasupplicant|bluez|"
+                      r"snpe|hexagon-dsp|dragonwing|tzdata)")
+REPO = DEPLOYMENT / "repo"
+# STACK.md:894: the signed publications are the only apt sources of the image (build/07 section 2):
+# srrx-lab (+labN, 1001) and srrx-mirror (mirrored noble snapshot, 990), both Signed-By the owner's
+# keyring; lab.pref goes in byte for byte. {image path: repository file}
+SRRX_APT_FILES = {"etc/apt/preferences.d/lab.pref": REPO / "lab.pref",
+                  "etc/apt/sources.list.d/srrx-lab.sources": REPO / "srrx-lab.sources",
+                  "etc/apt/sources.list.d/srrx-mirror.sources": REPO / "srrx-mirror.sources"}
+SRRX_KEYRING = "usr/share/keyrings/srrx-lab.gpg"
+# NPU payload (build/15 «Збирання образу», software/DEPLOYMENT.md NPU/QNN): the golden image never
+# carries the QNN SDK or QAIRT; the owner installs a verified deb on the unit. Package and file globs.
+NPU_PAYLOAD_PACKAGES = ("qcom-qnn-sdk*", "radxa-qcom-qairt*", "qairt-*", "libqnn*", "libsnpe*", "qnn-tools", "snpe-tools")
+NPU_PAYLOAD_FILES = ("libQnn*", "libSnpe*", "libSNPE*")
+MCU_BUILD_MANIFEST = "firmware/dist/build-manifest.json"
+# Package closure (W2 IMG-2, build/15 «Закриття пакетів образу (W2 IMG-2)»): what the image adds to r2,
+# as hash-locked debs of the pinned snapshot. `closure --resolve` (CI, network) derives the file from the
+# gpgv-verified snapshot indices and the r2 dpkg status of image-facts.json; `build` never resolves, it
+# installs exactly the listed files with apt and every apt source and preference disabled.
+CLOSURE = HERE / "package-closure.json"
+CLOSURE_CACHE = "closure"  # cache subdirectory of the closure debs (sr-rx-image.yml caches it under its own key)
+CLOSURE_CHROOT_DIR = "var/cache/srrx-closure"
+SNAPSHOT_URL = "https://snapshot.ubuntu.com/ubuntu/"
+# The packages the closure is resolved for (STACK.md:902, build/07 §1.2) and the accounts their postinst
+# creates with adduser: chrony -> _chrony (+ group), gpsd -> gpsd in group dialout (debian/postinst of
+# chrony 4.5-1ubuntu4.2 and gpsd 3.25-3ubuntu3.2, read from the snapshot debs 2026-11-07).
+# W2 IMG-4 (build/15 «Пакети сеансу в образі (W2 IMG-4)»): the touch session of STACK.md:160/:884. greetd's postinst
+# creates the system user and group _greetd (debian/greetd.postinst of 0.9.0-4ubuntu1); labwc 0.7.1-1build1, kanshi
+# 1.5.1-1, cage 0.1.5+20240127-2build1 and wlopm 0.1.0-1 have no maintainer script that creates an account (their
+# debian/ directories; all read 2026-11-12 from http://archive.ubuntu.com/ubuntu/pool/universe/, SHA-256 equal to the .dsc).
+CLOSURE_ROOTS = {"cage": (), "chrony": ("_chrony",), "gpsd": ("gpsd",), "greetd": ("_greetd",), "kanshi": (), "labwc": (), "wlopm": ()}
+# Where each root is specified (the "reason" of its closure entry); a root not listed is a STACK.md:902 package.
+SESSION_ROOT_SOURCE = "STACK.md:160, :884; W2 IMG-4"
+CLOSURE_ROOT_SOURCES = {name: SESSION_ROOT_SOURCE for name in ("cage", "greetd", "kanshi", "labwc", "wlopm")}
+CLOSURE_PACKAGE_KEYS = ("package", "version", "architecture", "filename", "suite", "sha256", "size", "r2_version", "reason")
+# Compared between the committed file and a fresh `closure --resolve` (resolved_on is the run date).
+CLOSURE_COMPARED = ("snapshot", "suites", "base", "roots", "packages", "expected_removed", "removed_because", "expected_accounts")
+# r2's apt hooks (needrestart 3.6, apt-listchanges 3.27 in image-facts.json) stay quiet in the chroot; ucf keeps a local file.
+CLOSURE_ENV = {"NEEDRESTART_SUSPEND": "1", "APT_LISTCHANGES_FRONTEND": "none", "UCF_FORCE_CONFFOLD": "1"}
+# Python venvs (W2 IMG-3, build/15 «Python venv в еталонному образі (W2 IMG-3)»): /opt/srrx/venv (touch console,
+# record unit) and /opt/srrx/passes-venv (srrx-passes@.service, the QEMU live selftest) are built in root A from the
+# hash-locked wheels of the guest wheelhouse: venv --copies --without-pip, pip run from its locked wheel through
+# PYTHONPATH (never installed), --no-index --require-hashes --no-compile, then the project --no-deps
+# --no-build-isolation from a copy in /tmp (setuptools writes build/ and *.egg-info next to its sources).
+WHEELHOUSE = DEPLOYMENT / "linux_lab/wheelhouse-manifest.json"
+GUEST_LOCK = DEPLOYMENT / "linux_lab/wheelhouse-requirements.txt"
+VENVS = {"opt/srrx/venv": {"lock": "software/config/hmi-requirements.lock", "qt": True},
+         "opt/srrx/passes-venv": {"lock": "software/config/passes-requirements.lock", "qt": False}}
+PIP_BOOTSTRAP = "pip"  # the guest-lock pip wheel: on PYTHONPATH of the install commands only
+WHEEL_CACHE = "wheels"  # cache subdirectory of the venv wheels (sr-rx-image.yml caches it under its own key)
+WHEEL_URL = "https://files.pythonhosted.org/packages/"
+WHEELS_CHROOT_DIR = "var/cache/srrx-wheels"
+BUILD_COPY = "tmp/srrx-software-build"  # chroot /tmp is a tmpfs (chroot_api)
+PROJECT_DIST = "srrx-control"
+VENV_HOME = "/tmp/srrx-venv-home"
+VENV_ENV = {"PYTHONDONTWRITEBYTECODE": "1", "HOME": VENV_HOME, "XDG_CACHE_HOME": VENV_HOME + "/cache"}
+PIP_OPTIONS = ["--isolated", "--disable-pip-version-check", "--no-input"]  # general options; --root-user-action is install-only
+BUILD_MANIFEST_DRAFT = "build-manifest.draft.json"  # next to image-manifest.json; always OPEN
+# SR-RX units whose Exec lines start python3 (unit_interpreters, recipe.json unit_interpreters).
+UNIT_SEARCH = ("etc/systemd/system", "usr/lib/systemd/system", "etc/systemd/user", "usr/lib/systemd/user")
+EXEC_KEYS = ("ExecCondition", "ExecStartPre", "ExecStart", "ExecStartPost", "ExecReload", "ExecStop", "ExecStopPost")
+EXEC_PREFIXES = "-@:+!|"  # systemd.service(5) command prefixes
+PYTHON_NAME = re.compile(r"python3(?:\.[0-9]+)?\Z")
+FREEZE_CODE = "import importlib.metadata as m, json; print(json.dumps(sorted([d.metadata['Name'], d.version] for d in m.distributions())))"
+NUMPY_CODE = ("import json, sys\ntry:\n    import numpy\nexcept ImportError as error:\n"
+              "    print(json.dumps({'python': sys.version.split()[0], 'numpy': None, 'error': type(error).__name__}))\n"
+              "else:\n    print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__}))\n")
+QT_CODE = ("import json\nfrom PySide6 import QtCore, QtGui, QtWidgets\napp = QtWidgets.QApplication(['srrx-image-check'])\n"
+           "print(json.dumps({'qt': QtCore.qVersion(), 'platform': app.platformName()}))\n")
+QT_ENV = {"QT_QPA_PLATFORM": "offscreen", "XDG_RUNTIME_DIR": VENV_HOME + "/run"}
+# pps-gpio (W2 IMG-4, build/15 «Модуль pps-gpio в образі (W2 IMG-4)»): the held 6.18.2-4-qcom has CONFIG_PPS=y and
+# PPS_CLIENT_GPIO unset, so /dev/pps-gnss needs the out-of-tree module. The builder (never the device: no compiler in the
+# image) builds deployment/system/dkms/pps-gpio with dkms and gcc-12 against the locked headers deb, as the sr-rx-system
+# job does, checks its vermagic and installs the .ko under updates/srrx with depmod in the root A chroot. pps-gpio.c is
+# fetch-only (its header carries author e-mail addresses): it lives in the cache, never in the tree or the manifest.
+PPS_SOURCES = DEPLOYMENT / "system/system-sources.lock.json"
+PPS_CACHE = "pps-gpio"  # cache subdirectory of the fetched pps-gpio.c
+PPS_WORK = ("pps-headers", "pps-dkms-src", "pps-dkms-tree", "pps-gpio.ko")  # under --work, removed before each build
+PPS_TOOLS = ("dkms", "gcc-12", "make", "zstd", "xz", "dpkg-deb")
+PPS_MODULE_NAME = "pps_gpio"
+# modinfo fields recorded; author (MODULE_AUTHOR: names and e-mail addresses) and description are never read.
+PPS_MODINFO_FIELDS = ("filename", "name", "license", "vermagic", "depends", "srcversion")
+MODULE_SIG_KEYS = ("CONFIG_MODULE_SIG", "CONFIG_MODULE_SIG_FORCE", "CONFIG_MODULE_SIG_ALL", "CONFIG_MODULE_SIG_HASH")
 
 
 class BuildError(RuntimeError):
@@ -139,8 +234,39 @@ def lock_artifacts(lock=None):
     return {a["id"]: a for a in lock["artifacts"]}
 
 
-def fetch(cache, ids=None):
-    """Download locked artifacts into cache_path; size and SHA-256 are checked before the rename."""
+def _download(url, target, expected_sha, expected_size, label):
+    """Stream url into target; size and SHA-256 are checked before the rename. Returns PRESENT or FETCHED."""
+    target = Path(target)
+    if target.is_file() and target.stat().st_size == expected_size and sha256(target) == expected_sha:
+        return "PRESENT"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    part = target.with_name(target.name + ".part")
+    digest, size = hashlib.sha256(), 0
+    LOG.write("fetch " + url)
+    request = urllib.request.Request(url, headers={"User-Agent": "sr-rx-image-builder"})
+    with urllib.request.urlopen(request, timeout=120) as response, open(part, "wb") as out:
+        while True:
+            chunk = response.read(1 << 20)
+            if not chunk:
+                break
+            digest.update(chunk)
+            size += len(chunk)
+            if size > expected_size:
+                raise BuildError("download exceeds the locked size: " + label)
+            out.write(chunk)
+    if size != expected_size or digest.hexdigest() != expected_sha:
+        part.unlink()
+        raise BuildError("downloaded bytes differ from the lock: " + label)
+    os.replace(part, target)
+    return "FETCHED"
+
+
+def fetch(cache, ids=None, closure=True, wheels=True):
+    """Download locked artifacts into cache_path, the package closure debs into cache/closure and the
+    venv wheels (W2 IMG-3) into cache/wheels; size and SHA-256 are checked before the rename. A
+    package-closure.json that closure_issues refuses (a root added to CLOSURE_ROOTS, a new lock pin)
+    downloads no deb and is reported, not raised: build() records image-facts.json before it stops on it,
+    so `closure --resolve` can propose the new file."""
     cache = Path(cache)
     artifacts = lock_artifacts()
     ids = list(artifacts) if ids is None else ids
@@ -148,34 +274,21 @@ def fetch(cache, ids=None):
     for art_id in ids:
         art = artifacts[art_id]
         target = cache / art["cache_path"]
-        if target.is_file() and target.stat().st_size == art["size"] and sha256(target) == art["sha256"]:
-            done[art_id] = "PRESENT"
-            continue
-        if not art["url"].startswith("https://github.com/"):
+        if not (target.is_file() and target.stat().st_size == art["size"] and sha256(target) == art["sha256"]) \
+                and not art["url"].startswith("https://github.com/"):
             raise BuildError("locked artifact URL is not a GitHub release asset: " + art_id)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        part = target.with_name(target.name + ".part")
-        digest, size = hashlib.sha256(), 0
-        LOG.write("fetch " + art["url"])
-        request = urllib.request.Request(art["url"], headers={"User-Agent": "sr-rx-image-builder"})
-        with urllib.request.urlopen(request, timeout=120) as response, open(part, "wb") as out:
-            while True:
-                chunk = response.read(1 << 20)
-                if not chunk:
-                    break
-                digest.update(chunk)
-                size += len(chunk)
-                if size > art["size"]:
-                    raise BuildError("download exceeds the locked size: " + art_id)
-                out.write(chunk)
-        if size != art["size"] or digest.hexdigest() != art["sha256"]:
-            part.unlink()
-            raise BuildError("downloaded bytes differ from the lock: " + art_id)
-        os.replace(part, target)
-        done[art_id] = "FETCHED"
+        done[art_id] = _download(art["url"], target, art["sha256"], art["size"], art_id)
     import deploy
     verified = deploy.verify_cache(cache, components=[])
-    return {"status": "LOCKED_ARTIFACTS_VERIFIED", "artifacts": done, "verify_cache": verified}
+    result = {"status": "LOCKED_ARTIFACTS_VERIFIED", "artifacts": done, "verify_cache": verified}
+    if closure:
+        document = load_json(CLOSURE)
+        issues = closure_issues(document, load_json(LOCK))
+        result["closure"] = {"status": "CLOSURE_INCONSISTENT", "issues": issues} if issues else \
+            {"status": "CLOSURE_DEBS_VERIFIED", "debs": fetch_closure(cache, document)}
+    if wheels:
+        result["wheels"] = fetch_wheels(cache)
+    return result
 
 
 def sparse_decompress(xz_path, out_path, expected_sha=None):
@@ -397,8 +510,25 @@ def _units(root):
                           if re.search(r"first|rsetup|resize|grow|repart|embloader|bless|boot-complete|aic|ssh|gdm|greetd", p.name)})
     masked = sorted(p.name for p in (root / "etc/systemd/system").iterdir() if p.is_symlink() and os.readlink(p) == "/dev/null") \
         if (root / "etc/systemd/system").is_dir() else []
+    # gdm3's postinst links display-manager.service to its unit; graphical.target wants that alias (W2 IMG-2).
+    display_manager = root / "etc/systemd/system/display-manager.service"
     return {"wants": wants, "default_target": os.readlink(default) if default.is_symlink() else None,
-            "interesting_units": interesting, "masked": masked}
+            "interesting_units": interesting, "masked": masked,
+            "display_manager": os.readlink(display_manager) if display_manager.is_symlink() else
+            ("file" if display_manager.exists() else None)}
+
+
+def _dpkg_holds(root):
+    """Packages whose dpkg selection is hold (apt would refuse to change them without a flag)."""
+    path = Path(root) / "var/lib/dpkg/status"
+    if not path.is_file():
+        return []
+    held = set()
+    for para in path.read_text(encoding="utf-8", errors="replace").split("\n\n"):
+        name = re.search(r"^Package: (\S+)$", para, re.M)
+        if name and re.search(r"^Status: hold ", para, re.M):
+            held.add(name.group(1))
+    return sorted(held)
 
 
 # before.txt commands whose arguments are recorded; others keep only their argument count
@@ -500,11 +630,13 @@ def root_facts(root):
         "embloader_share": _listing(root / "usr/share/embloader", hashes=True),
         "dtb_paths": _find(root, "qcs6490-radxa-dragon-q6a*.dtb"),
         "packages_total": len(packages), "packages_of_interest": {k: v for k, v in sorted(packages.items()) if INTEREST.search(k)},
-        "packages": packages, "diversions": _diversions(root),
+        "packages": packages, "dpkg_holds": _dpkg_holds(root), "diversions": _diversions(root),
         "apt_sources_list_d": _listing(root / "etc/apt/sources.list.d"),
         "apt_sources_urls": sorted({u for p in [root / "etc/apt/sources.list", *sorted((root / "etc/apt/sources.list.d").glob("*"))]
                                     if p.is_file() for u in re.findall(r"https?://[^\s\"']+", p.read_text(errors="replace"))}),
         "apt_preferences_d": _listing(root / "etc/apt/preferences.d"),
+        # names, sizes and SHA-256 only: a netplan file could carry a Wi-Fi secret (W2 SYS-HOST asked whether r2 has a wired profile)
+        "netplan": _listing(root / "etc/netplan", hashes=True),
         "units": _units(root), "accounts": _accounts(root),
         "machine_id": "missing" if machine_id is None else ("empty" if not machine_id.strip() else ("uninitialized" if machine_id.strip() == "uninitialized" else "set")),
         "hostname": (_text(root / "etc/hostname") or "").strip(),
@@ -659,14 +791,33 @@ STEPS = (
     ("dtb", "package DTB from the locked linux-image deb; lab.dtb = + lab-q6a.dtbo, field.dtb = + lab-q6a.dtbo + field-q6a.dtbo via fdtoverlay when the IMG-05 overlays exist (compared with deployment/system/dt/dt-manifest.json), else the unmerged package DTB marked merged=false"),
     ("bootloader", "Route A: dpkg --purge sdboot-is-embloader, bootctl install --no-variables, embloader pinned -1; Route B: embloader kept (0.4 required)"),
     ("boot-config", "/etc/srrx/boot.json, /etc/srrx/slot, /etc/kernel/cmdline, tries, install.conf layout=other, 90-srrx-bls.install, boot-check unit (Route B: initramfs write-back and commit unit)"),
-    ("kernel", "dpkg -i the five locked 6.18.2-4 debs before any apt run; the plugin writes the slot A entry and ESP files"),
+    ("kernel", "dpkg -i the five locked 6.18.2-4 debs before any apt run; the plugin writes the slot A entry and ESP files; "
+               "pps-gpio (W2 IMG-4): dkms build with gcc-12 on the builder against the locked headers deb (no compiler in the image), "
+               "vermagic check, /lib/modules/<kver>/updates/srrx/pps-gpio.ko and depmod in root A, unless CONFIG_MODULE_SIG_FORCE=y"),
+    ("closure", "step 8b: apt-get install --purge of the hash-locked package-closure.json debs (chrony, tzdata-legacy, tzdata, gpsd, "
+                "libgps30t64; greetd, labwc, kanshi, cage, wlopm and the libraries r2 lacks, W2 IMG-4) with every apt source and "
+                "preference disabled and policy-rc.d 101; the apt plan and the dpkg status "
+                "change must be exactly the closure (systemd-timesyncd purged); /etc/chrony/chrony.conf replaced by "
+                "system_files.chrony_conf() and parsed by chronyd -p (no network directive)"),
     ("accounts", "systemd-sysusers and systemd-tmpfiles --create of the staged SR-RX sysusers.d/tmpfiles.d in the root A chroot "
                  "(/data, /run, /tmp left to systemd-tmpfiles-setup on boot); every SERVICE_ACCOUNTS uid/gid recorded, a missing one is a blocker"),
     ("hardening", "apt-mark hold, purge unattended-upgrades/brltty, masks (apt/fwupd timers, ModemManager, sleep targets, rsetup.service, "
                   "ssh/samba/cups/avahi that rsetup's skipped first boot or the recipe disables, bluetooth/wpa_supplicant, the Ubuntu Pro "
-                  "and motd-news units), PPA lists removed, default-password accounts locked, empty machine-id, r2 SSH host keys removed"),
+                  "and motd-news units), PPA lists removed, every other r2 apt source diverted to *.srrx-disabled, deployment/repo "
+                  "lab.pref, srrx-lab.sources and srrx-mirror.sources installed, default-password accounts locked, empty machine-id, "
+                  "r2 SSH host keys removed"),
     ("enable", "srrx-radio-off.service, srrx-boot-check.service (Route B also srrx-ab-commit.service), srrx-ssh-hostkeys.service for a later "
-               "sshd start; srrx.service is not enabled (IMG-06); every before.txt step is checked as replaced or skipped"),
+               "sshd start; srrx.service is not enabled (IMG-06); every before.txt step is checked as replaced or skipped; "
+               "npu_payload (no QNN SDK/QAIRT) and mcu_firmware (staged firmware/dist/build-manifest.json SHA-256) recorded; "
+               "touch session (W2 IMG-4): every SYS-SESSION file still the bundle's after dpkg, no /etc/greetd/greetd.conf, "
+               "display-manager.service from the masked gdm3 unit to greetd.service, graphical.target default, srrx-menu.service "
+               "user preset disabled"),
+    ("venvs", "step 11b (W2 IMG-3): /opt/srrx/venv (hmi-requirements.lock) and /opt/srrx/passes-venv (passes-requirements.lock) "
+              "in the root A chroot: venv --copies --without-pip, pip from its locked wheel on PYTHONPATH, --no-index "
+              "--require-hashes --no-compile, the project --no-deps --no-build-isolation; pip check, freeze = lock, no "
+              "__pycache__, srrx copy = staged tree, tree SHA-256; offscreen PySide6 import; unit_interpreters (each SR-RX "
+              "python3 unit: interpreter present, NumPy where recipe.json says the unit needs it); OPEN build-manifest draft "
+              "of /opt/srrx (deployment/system/build_manifest.py)"),
     ("data", "/etc/fstab of slot A, /data directories, the locked cache copied to /data/srrx-cache (read-only bind at /srv/srrx-cache)"),
     ("selftest", "deployment/selftest.py offline --profile controller on root A (policy DRAFT: BLOCKED expected)"),
     ("root-b", "rsync root A to root B, slot B fstab/cmdline/slot file, kernel-install add in a root B chroot (slot B entry and ESP files)"),
@@ -1001,6 +1152,12 @@ def hardening(root, recipe, route):
         else:
             run(["systemctl", "--root", str(root), "mask", unit])
         masked.append(unit)
+    # graphical.target wants display-manager.service, r2's alias of the gdm3 unit (W2 IMG-2): its target must be masked,
+    # or be the recipe's session display manager (W2 IMG-4: greetd.service, which install_session links after this step).
+    display_manager = _units(root)["display_manager"]
+    session_manager = (recipe.get("session") or {}).get("display_manager")
+    if display_manager not in (None, "file") and Path(display_manager).name not in masked + [session_manager]:
+        raise BuildError("display-manager.service points to " + display_manager + ", which the recipe does not mask")
     policy = load_json(POLICY)
     tokens = policy["apt"]["forbidden_list_name_tokens"]
     origins = policy["apt_forbidden_origins"]
@@ -1010,6 +1167,7 @@ def hardening(root, recipe, route):
         if any(t in path.name for t in tokens) or any(o in text for o in origins):
             path.unlink()
             removed.append(path.name)
+    sources = apt_sources(root, removed)
     # STACK.md:894: the signed aptly publication is the only apt source and only lab.pref pins positively
     # (selftest RX-16 apt_pin_positive_outside_lab_pref). r2 ships positive pins (local-apt-repository,
     # ubuntu-pro-esm-*): divert them away from apt (it reads only names without an extension or *.pref).
@@ -1047,8 +1205,41 @@ def hardening(root, recipe, route):
         (ssh_dir / name).unlink()
     install_file(FILES / "srrx-ssh-hostkeys.service", root / "etc/systemd/system/srrx-ssh-hostkeys.service")
     return {"held": hold, "hold_names_not_installed": missing, "purged": purge, "masked": masked, "masked_by_stage": masked_by_stage,
-            "removed_apt_lists": removed, "diverted_apt_preferences": diverted_prefs, "locked_accounts": locked,
-            "machine_id_before": previous, "removed_ssh_host_keys": host_keys}
+            "display_manager": display_manager, "removed_apt_lists": removed, "diverted_apt_preferences": diverted_prefs, "locked_accounts": locked,
+            "machine_id_before": previous, "removed_ssh_host_keys": host_keys, "apt_sources": sources}
+
+
+def apt_sources(root, removed=()):
+    """STACK.md:894: every r2 apt source entry that survived the PPA removal (etc/apt/sources.list and
+    each sources.list.d entry, files and links alike) is diverted to <name>.srrx-disabled with
+    dpkg-divert --local --rename, so a package upgrade writes its copy there too and apt never reads
+    it; then lab.pref, srrx-lab.sources and srrx-mirror.sources are installed byte for byte (0644).
+    Returns {installed, disabled, removed}; installed carries the route A pin file when present."""
+    root = Path(root)
+    lists = root / "etc/apt/sources.list.d"
+    ours = {Path(p).name for p in SRRX_APT_FILES if p.startswith("etc/apt/sources.list.d/")}
+    candidates = [root / "etc/apt/sources.list"] + (sorted(lists.iterdir()) if lists.is_dir() else [])
+    disabled = []
+    for path in candidates:
+        if not os.path.lexists(path) or path.name in ours or path.name.endswith(".srrx-disabled") or path.is_dir():
+            continue
+        target = "/" + path.relative_to(root).as_posix()
+        chroot(root, ["dpkg-divert", "--local", "--rename", "--divert", target + ".srrx-disabled", "--add", target])
+        disabled.append({"path": target[1:], "divert_to": target[1:] + ".srrx-disabled"})
+    installed = []
+    for relative, source in SRRX_APT_FILES.items():
+        install_file(source, root / relative)
+        if sha256(root / relative) != sha256(source):
+            raise BuildError("installed apt file differs from " + source.relative_to(PROJECT).as_posix())
+        installed.append({"path": relative, "source": source.relative_to(PROJECT).as_posix(), "sha256": sha256(root / relative)})
+    route_pref = "etc/apt/preferences.d/srrx-boot-route-a.pref"
+    if (root / route_pref).is_file():
+        installed.append({"path": route_pref, "source": "deployment/image/files/srrx-boot-route-a.pref", "sha256": sha256(root / route_pref)})
+    left = sorted(p.name for p in lists.iterdir() if p.name not in ours and not p.name.endswith(".srrx-disabled")) if lists.is_dir() else []
+    if left or os.path.lexists(root / "etc/apt/sources.list"):
+        raise BuildError("apt source entries other than the SR-RX publications remain: " + ", ".join(left or ["etc/apt/sources.list"]))
+    return {"installed": installed, "disabled": disabled, "removed": ["etc/apt/sources.list.d/" + n for n in removed],
+            "keyring": {"path": SRRX_KEYRING, "present": (root / SRRX_KEYRING).is_file()}}
 
 
 # systemd-tmpfiles-setup.service applies these on every boot: /data is its own partition (not mounted
@@ -1092,7 +1283,9 @@ def system_accounts(root, stage_dir):
         if None in entry.values():
             missing.append(name)
         service[name] = entry
-    package = {name: {"uid": int(passwd[name][2]) if name in passwd else None, "gid": int(group[name][2]) if name in group else None}
+    # primary_gid: gpsd has no group of its own (its postinst puts it in dialout).
+    package = {name: {"uid": int(passwd[name][2]) if name in passwd else None, "gid": int(group[name][2]) if name in group else None,
+                      "primary_gid": int(passwd[name][3]) if name in passwd else None}
                for name in sorted(system.PACKAGE_ACCOUNTS)}
     return {"sysusers": sysusers, "tmpfiles": tmpfiles, "tmpfiles_left_to_boot": list(TMPFILES_AT_BOOT),
             "service_accounts": service, "service_accounts_missing": missing, "package_accounts": package,
@@ -1137,15 +1330,1176 @@ def selftest(root, cmdline_sha, output):
             "--policy", str(POLICY), "--project", str(PROJECT), "--cmdline-sha256", cmdline_sha, "--output", str(output)]
     done = run(argv, check=False)
     report = load_json(output) if Path(output).is_file() else {}
+    # Finding items (policy identifiers, never dpkg text) only for the (row, rule) pairs tagged per item.
+    items, keys = {}, {(r, f) for r, f, _ in SELFTEST_ITEM_CLOSES_AT}
+    for row in report.get("checks", []):
+        for finding in row.get("findings", []) if row.get("status") in ("FAIL", "BLOCKED") else []:
+            if (row.get("id"), finding.get("rule")) in keys and "item" in finding:
+                items.setdefault(row["id"] + ":" + finding["rule"], set()).add(str(finding["item"]))
     return {"exit_code": done.returncode, "status": report.get("status"), "counts": report.get("counts"),
-            "fail_or_blocked_rows": bootchain.fail_or_blocked_rows(report), "report_sha256": sha256(output) if Path(output).is_file() else None}
+            "fail_or_blocked_rows": bootchain.fail_or_blocked_rows(report), "report_sha256": sha256(output) if Path(output).is_file() else None,
+            "policy_status": report.get("policy_status"),
+            "policy_blockers": sorted(b for b in report.get("blockers", []) if str(b).startswith("POLICY_")),
+            "tagged_items": {key: sorted(found) for key, found in sorted(items.items())}}
+
+
+# What closes each manifest blocker. "recipe": this recipe or CI must still fix it; "commissioning":
+# a per-unit value written when the unit is commissioned; "bench:W-10": the Q6A bench gate;
+# "bench:Phase0": the FastRPC/DSP/HTP matrix on the bench; "owner:key-ceremony": the owner's offline
+# signing-key ceremony (deployment/repo/README.md); "owner:policy-review": the human review that may
+# set receive-only-policy.json REVIEWED (build/09 РЕЦ-01). A tag never removes a blocker.
+CLOSES_AT = ("recipe", "commissioning", "bench:W-10", "bench:Phase0", "owner:key-ceremony", "owner:policy-review")
+BLOCKER_CLOSES_AT = (  # (blocker text prefix, id, tag); the selftest blocker is tagged per row and rule
+    ("dt_overlays_missing", "dt_overlays_missing", "recipe"),
+    ("dt_merge_not_the_ci_record", "dt_merge_not_the_ci_record", "recipe"),
+    ("dt_not_booted", "dt_not_booted", "bench:W-10"),
+    ("route_b_embloader_not_0.4", "route_b_embloader_not_0.4", "recipe"),
+    ("unknown kernel-install plugins", "unknown_kernel_install_plugins", "recipe"),
+    ("service_accounts_missing", "service_accounts_missing", "recipe"),
+    ("package_accounts_missing", "package_accounts_missing", "recipe"),
+    ("rsetup_first_boot_", "rsetup_first_boot", "recipe"),
+    ("locked cache not on /data", "locked_cache_not_on_data", "recipe"),
+    # W2 IMG-3: unit_interpreters replaces target_python_without_numpy (the image python3 still has no numpy).
+    ("unit_interpreter_missing", "unit_interpreter_missing", "recipe"),
+    ("unit_interpreter_without_numpy", "unit_interpreter_without_numpy", "recipe"),
+    ("unit_interpreter_unclassified", "unit_interpreter_unclassified", "recipe"),
+    ("hmi_venv_qt_offscreen_failed", "hmi_venv_qt_offscreen_failed", "recipe"),
+    ("build_manifest_draft_blocked", "build_manifest_draft_blocked", "recipe"),
+    ("apt_keyring_absent", "apt_keyring_absent", "owner:key-ceremony"),
+    ("npu_payload_present", "npu_payload_present", "recipe"),
+    ("mcu_firmware_manifest", "mcu_firmware_manifest", "recipe"),
+    # W2 IMG-4: a locked kernel that enforces module signatures, or ships PPS differently, needs a recipe decision.
+    ("pps_gpio_signature_enforced", "pps_gpio_signature_enforced", "recipe"),
+    ("pps_gpio_kernel_config", "pps_gpio_kernel_config", "recipe"),
+)
+SELFTEST_BLOCKER = "selftest root A "
+SELFTEST_RULE_CLOSES_AT = {("RX-S2", "radio_off_binding_missing"): "commissioning",
+                           # any present pin_only package without a passing version_rule waits for Phase 0
+                           ("RX-01a", "pinned_package_present_unreviewed"): "bench:Phase0"}
+SELFTEST_ITEM_CLOSES_AT = {  # (row, rule, finding item): tag, ahead of the (row, rule) tag
+    # embloader's version is fixed by the boot recipe (recipe.json routes.B.embloader_version), not by
+    # Phase 0: a present embloader outside its version_rule allow_only 0.4 is recipe drift
+    ("RX-01a", "pinned_package_present_unreviewed", "embloader"): "recipe"}
+SELFTEST_VERDICTS = ("FAIL", "BLOCKED", "OFFLINE_CHECKS_PASS")  # selftest.py run_offline; exit 0 only on a pass
+
+
+def _selftest_closes_at(text, record):
+    """Tags of the selftest blocker: "recipe" when the run left no usable verdict (no report, an
+    unknown status or an exit code that disagrees with it), one per FAIL/BLOCKED (row, rule) or
+    tagged finding item, and one per POLICY_* blocker of the verdict."""
+    status = record["status"] if "status" in record else text[len(SELFTEST_BLOCKER):].split(":", 1)[0]
+    exit_code = 0 if status == "OFFLINE_CHECKS_PASS" else 2
+    no_report = (status not in SELFTEST_VERDICTS or ("report_sha256" in record and record["report_sha256"] is None)
+                 or record.get("exit_code", exit_code) != exit_code)
+    tags = [{"blocker": "selftest_root_a:no_report", "closes_at": "recipe"}] if no_report else []
+    rows, items = record.get("fail_or_blocked_rows") or {}, record.get("tagged_items") or {}
+    for row in sorted(rows):
+        for rule in rows[row] or ["?"]:
+            found = items.get(row + ":" + rule, [])
+            tagged = [i for i in found if (row, rule, i) in SELFTEST_ITEM_CLOSES_AT]
+            for item in tagged:
+                tags.append({"blocker": "selftest_root_a:" + row + ":" + rule + ":" + item,
+                             "closes_at": SELFTEST_ITEM_CLOSES_AT[(row, rule, item)]})
+            if not found or len(tagged) < len(found):
+                tags.append({"blocker": "selftest_root_a:" + row + ":" + rule,
+                             "closes_at": SELFTEST_RULE_CLOSES_AT.get((row, rule), "recipe")})
+    if not no_report and "policy_blockers" in record:
+        policy = record["policy_blockers"]  # POLICY_NOT_REVIEWED, or POLICY_REVIEW_RECORD_* of a REVIEWED policy
+    else:  # no verdict (or an older record): the status of the policy file the builder passed
+        policy = [] if load_json(POLICY).get("status") == "REVIEWED" else ["POLICY_NOT_REVIEWED"]
+    tags += [{"blocker": "selftest_root_a:" + str(b).lower(), "closes_at": "owner:policy-review"} for b in policy]
+    if not tags:  # a verdict with no row and no policy blocker is still listed: the recipe must decide
+        tags.append({"blocker": "selftest_root_a:verdict_" + str(status).lower(), "closes_at": "recipe"})
+    return tags
+
+
+def blocking_closes_at(blocking, selftest_report=None):
+    """One {blocker, closes_at} per blocker, the selftest blocker one per (row, rule) plus its policy
+    status; an unlisted blocker is tagged "recipe" (CI must still fix it), so nothing is hidden."""
+    tags = []
+    for text in blocking:
+        if text.startswith(SELFTEST_BLOCKER):
+            tags += _selftest_closes_at(text, selftest_report or {})
+            continue
+        found = next(((i, t) for prefix, i, t in BLOCKER_CLOSES_AT if text.startswith(prefix)), None)
+        tags.append({"blocker": found[0] if found else text.split(":", 1)[0], "closes_at": found[1] if found else "recipe"})
+    return tags
+
+
+def closes_at_summary(tags):
+    """{tag: [blocker ids]} in CLOSES_AT order, for the CI summary and the README."""
+    return {tag: [t["blocker"] for t in tags if t["closes_at"] == tag] for tag in CLOSES_AT if any(t["closes_at"] == tag for t in tags)}
+
+
+def npu_payload(root):
+    """The golden image never carries the QNN SDK or QAIRT (owner install on the unit, never
+    redistributed): installed packages and files matching the NPU globs, names only."""
+    import fnmatch
+    names = sorted({n.split(":", 1)[0] for n in _dpkg_status(root)})
+    packages = sorted(n for n in names if any(fnmatch.fnmatchcase(n, g) for g in NPU_PAYLOAD_PACKAGES))
+    files = sorted({f for pattern in NPU_PAYLOAD_FILES for f in _find(root, pattern, ("usr/lib", "usr/share", "lib/firmware", "opt"))})[:50]
+    status = "absent" if not packages and not files else "PRESENT"
+    return {"status": status, "why": "owner install on the unit from a verified deb (software/DEPLOYMENT.md, NPU/QNN); "
+                                     "QAIRT and the QNN SDK are never redistributed (build/15, «Збирання образу»)",
+            "package_globs": list(NPU_PAYLOAD_PACKAGES), "file_globs": list(NPU_PAYLOAD_FILES), "packages": packages, "files": files}
+
+
+def mcu_firmware(root):
+    """MCU firmware is flashed and verified from a bench host (tools/flash_mcu.py), never from the
+    image; the image carries the pinned packages under /opt/srrx/firmware for audit only and records
+    the SHA-256 of the staged firmware/dist/build-manifest.json it expects."""
+    staged = Path(root) / "opt/srrx" / MCU_BUILD_MANIFEST
+    repo = PROJECT / MCU_BUILD_MANIFEST
+    record = {"flashing": "bench host only: tools/flash_mcu.py before installation; re-flashing is a service step with the case open "
+                          "(BOOTSEL); the image never flashes the Pico or the IMU MCU",
+              "build_manifest": "opt/srrx/" + MCU_BUILD_MANIFEST, "sha256": sha256(staged) if staged.is_file() else None,
+              "repo_sha256": sha256(repo) if repo.is_file() else None}
+    record["matches_repo"] = record["sha256"] is not None and record["sha256"] == record["repo_sha256"]
+    return record
+
+
+# ---------------------------------------------------------------- package closure (W2 IMG-2)
+
+def _order(char):
+    """dpkg lib/dpkg/version.c order(): '~' sorts before everything, letters by code, others after letters."""
+    if char == "~":
+        return -1
+    if "0" <= char <= "9":
+        return 0
+    if ("a" <= char <= "z") or ("A" <= char <= "Z"):
+        return ord(char)
+    return ord(char) + 256
+
+
+def _verrevcmp(a, b):
+    """dpkg verrevcmp() of an upstream version or revision."""
+    i = j = 0
+    while i < len(a) or j < len(b):
+        while (i < len(a) and not "0" <= a[i] <= "9") or (j < len(b) and not "0" <= b[j] <= "9"):
+            ac = _order(a[i]) if i < len(a) else 0
+            bc = _order(b[j]) if j < len(b) else 0
+            if ac != bc:
+                return ac - bc
+            i, j = i + 1, j + 1
+        while i < len(a) and a[i] == "0":
+            i += 1
+        while j < len(b) and b[j] == "0":
+            j += 1
+        first_diff = 0
+        while i < len(a) and "0" <= a[i] <= "9" and j < len(b) and "0" <= b[j] <= "9":
+            if not first_diff:
+                first_diff = ord(a[i]) - ord(b[j])
+            i, j = i + 1, j + 1
+        if i < len(a) and "0" <= a[i] <= "9":
+            return 1
+        if j < len(b) and "0" <= b[j] <= "9":
+            return -1
+        if first_diff:
+            return first_diff
+    return 0
+
+
+def _split_version(version):
+    epoch, sep, rest = version.partition(":")
+    if not sep:
+        epoch, rest = "0", version
+    upstream, sep, revision = rest.rpartition("-")
+    if not sep:
+        upstream, revision = rest, ""
+    return int(epoch), upstream, revision
+
+
+def deb_version_compare(a, b):
+    """<0, 0 or >0 like `dpkg --compare-versions` (epoch, upstream version, Debian revision)."""
+    ea, ua, ra = _split_version(a)
+    eb, ub, rb = _split_version(b)
+    if ea != eb:
+        return ea - eb
+    return _verrevcmp(ua, ub) or _verrevcmp(ra, rb)
+
+
+def version_satisfies(version, op, wanted):
+    if op is None:
+        return True
+    c = deb_version_compare(version, wanted)
+    return {"<<": c < 0, "<=": c <= 0, "<": c <= 0, "=": c == 0, ">=": c >= 0, ">>": c > 0, ">": c >= 0}[op]
+
+
+_RELATION = re.compile(r"([a-z0-9][a-z0-9+.-]*)(?::([a-z0-9-]+))?\s*(?:\(\s*(<<|<=|>=|>>|=|<|>)\s*([^\s)]+)\s*\))?\s*(?:\[[^\]]*\]\s*)?(?:<[^>]*>\s*)*\Z")
+
+
+def parse_relations(text):
+    """Depends-style field -> [[(name, arch qualifier, op, version), alternatives...], ...] (deb-control(5))."""
+    groups = []
+    for part in (text or "").replace("\n", " ").split(","):
+        if not part.strip():
+            continue
+        group = []
+        for alternative in part.split("|"):
+            match = _RELATION.match(alternative.strip())
+            if not match:
+                raise BuildError("unparsable package relation: " + alternative.strip()[:120])
+            group.append(match.groups())
+        groups.append(group)
+    return groups
+
+
+def _relation_text(group):
+    return " | ".join(n + ((":" + a) if a else "") + ((" (%s %s)" % (o, w)) if o else "") for n, a, o, w in group)
+
+
+def _source(stanza):
+    """(source package, source version) of a binary stanza ("Source: name (version)", default: itself)."""
+    source = (stanza.get("source") or stanza["package"]).split()
+    return source[0], source[1].strip("()") if len(source) > 1 else stanza["version"]
+
+
+def _versions(by_name, name, suites):
+    """[(version, suite, area, stanza)] of a package, newest first; a version belongs to the first suite
+    (apt_snapshot.suites order) whose signed index lists it."""
+    seen = {}
+    for suite, area, stanza in by_name.get(name, ()):
+        key = stanza["version"]
+        if key not in seen or suites.index(suite) < suites.index(seen[key][1]):
+            seen[key] = (key, suite, area, stanza)
+    return sorted(seen.values(), key=functools.cmp_to_key(lambda x, y: deb_version_compare(y[0], x[0])))
+
+
+def resolve_closure(stanzas, installed, lock, roots=None):
+    """The packages the image must add to r2 for roots, from the signed snapshot indices.
+
+    stanzas: [(suite, area, {field: value})] of every binary-<arch> Packages index of the snapshot;
+    installed: {package[:arch]: version}, the r2 dpkg status (image-facts.json root.packages).
+    A dependency r2 already satisfies stays as it is. A missing one takes the version sources.lock.json
+    binary_debs pins, else the newest snapshot version that satisfies it (apt's candidate). An r2 package
+    built from the same source as a closure package at another version joins at the closure's source
+    version (tzdata with tzdata-legacy). An r2 package that a closure package Conflicts with or Breaks,
+    also through a virtual package it Provides, is removed. Installed relations are read from the
+    snapshot stanza of the installed version (else the newest one): r2 versions older than the
+    snapshot are an approximation, which the build's apt plan check settles."""
+    snapshot = lock["apt_snapshot"]
+    suites = list(snapshot["suites"])
+    by_name = {}
+    for suite, area, stanza in stanzas:
+        if stanza.get("architecture") in (snapshot["architecture"], "all") and stanza.get("package") and stanza.get("version"):
+            by_name.setdefault(stanza["package"], []).append((suite, area, stanza))
+    r2 = {name.split(":", 1)[0]: version for name, version in installed.items()}
+    locked = {}
+    for component in lock["components"]:
+        for deb in component.get("binary_debs") or []:
+            locked.setdefault(deb["package"], {})[deb["version"]] = deb
+
+    def approx(name, version):
+        found = _versions(by_name, name, suites)
+        return ([v for v in found if v[0] == version] or found or [None])[0]
+
+    installed_stanzas = {name: approx(name, version) for name, version in r2.items()}
+    installed_provides = {}
+    for name, entry in installed_stanzas.items():
+        for group in parse_relations(entry[3].get("provides")) if entry else []:
+            for pname, _, _, pversion in group:
+                installed_provides.setdefault(pname, []).append((name, pversion))
+    selected, removed, issues = {}, {}, []
+
+    def satisfied(name, op, wanted):
+        version = selected[name]["version"] if name in selected else (None if name in removed else r2.get(name))
+        if version is not None and version_satisfies(version, op, wanted):
+            return True
+        provided = [pv for sel in selected.values() for group in parse_relations(sel["stanza"].get("provides"))
+                    for pn, _, _, pv in group if pn == name]
+        provided += [pv for provider, pv in installed_provides.get(name, ()) if provider not in selected and provider not in removed]
+        return any(op is None or (pv is not None and version_satisfies(pv, op, wanted)) for pv in provided)
+
+    def choose(name, op=None, wanted=None):
+        options = [v for v in _versions(by_name, name, suites) if version_satisfies(v[0], op, wanted)]
+        return ([v for v in options if v[0] in locked.get(name, {})] or options or [None])[0]
+
+    queue = [(name, "root (" + CLOSURE_ROOT_SOURCES.get(name, "STACK.md:902, build/07 §1.2") + ")", None, None)
+             for name in sorted(CLOSURE_ROOTS if roots is None else roots)]
+    while queue:
+        name, reason, op, wanted = queue.pop(0)
+        if name in selected:
+            if not version_satisfies(selected[name]["version"], op, wanted):
+                issues.append("%s %s does not satisfy %s" % (name, selected[name]["version"], reason))
+            continue
+        choice = choose(name, op, wanted)
+        if choice is None:
+            issues.append("no snapshot version of %s for %s" % (name, reason))
+            continue
+        version, suite, area, stanza = choice
+        selected[name] = {"version": version, "suite": suite, "area": area, "stanza": stanza, "reason": reason}
+        for field in ("pre-depends", "depends"):
+            for group in parse_relations(stanza.get(field)):
+                if any(satisfied(n, o, w) for n, _, o, w in group):
+                    continue
+                for n, _, o, w in group:
+                    if choose(n, o, w) is not None:
+                        queue.append((n, "%s of %s: %s (r2 has %s)" % (field.capitalize(), name, _relation_text(group),
+                                                                     r2.get(n) or "none"), o, w))
+                        break
+                else:
+                    issues.append("%s of %s %s satisfied neither by r2 nor by the snapshot: %s" % (field, name, version, _relation_text(group)))
+        source = _source(stanza)
+        for sibling, sibling_version in sorted(r2.items()):
+            entry = installed_stanzas.get(sibling)
+            if sibling in selected or not entry or _source(entry[3])[0] != source[0]:
+                continue
+            same = [v for v in _versions(by_name, sibling, suites) if _source(v[3]) == source]
+            if same and same[0][0] != sibling_version:
+                queue.append((sibling, "same source as %s (%s %s; r2 has %s)" % (name, source[0], source[1], sibling_version), "=", same[0][0]))
+    for name, sel in sorted(selected.items()):
+        for field in ("conflicts", "breaks"):
+            for group in parse_relations(sel["stanza"].get(field)):
+                for n, _, o, w in group:
+                    if n != name and n not in selected and r2.get(n) is not None and version_satisfies(r2[n], o, w):
+                        removed.setdefault(n, "%s of %s: %s" % (field.capitalize(), name, _relation_text([(n, None, o, w)])))
+                    if o is None:
+                        for provider, _ in installed_provides.get(n, ()):
+                            if provider != name and provider not in selected:
+                                removed.setdefault(provider, "%s of %s: %s, which %s provides" % (field.capitalize(), name, n, provider))
+    provided_by_closure = {pn for sel in selected.values() for group in parse_relations(sel["stanza"].get("provides")) for pn, *_ in group}
+    for name, version in sorted(r2.items()):
+        entry = installed_stanzas.get(name)
+        if name in selected or name in removed or not entry:
+            continue
+        for field in ("conflicts", "breaks"):
+            for group in parse_relations(entry[3].get(field)):
+                for n, _, o, w in group:
+                    if (n in selected and version_satisfies(selected[n]["version"], o, w)) or (o is None and n in provided_by_closure):
+                        issues.append("r2 %s %s %s %s, which the closure installs" % (name, version, field, n))
+        for field in ("pre-depends", "depends"):
+            for group in parse_relations(entry[3].get(field)):
+                if any(n in removed for n, *_ in group) and not any(satisfied(n, o, w) for n, _, o, w in group):
+                    issues.append("removing %s breaks %s of r2 %s: %s" % (",".join(n for n, *_ in group if n in removed), field, name,
+                                                                           _relation_text(group)))
+    packages = []
+    for name in sorted(selected):
+        sel, stanza = selected[name], selected[name]["stanza"]
+        entry = {"package": name, "version": sel["version"], "architecture": stanza["architecture"], "filename": stanza["filename"],
+                 "suite": sel["suite"], "sha256": stanza["sha256"], "size": int(stanza["size"]), "r2_version": r2.get(name),
+                 "reason": sel["reason"]}
+        pinned = locked.get(name, {}).get(sel["version"])
+        if pinned and any(pinned[k] != entry[k] for k in ("architecture", "filename", "sha256", "size")):
+            issues.append("snapshot %s %s differs from sources.lock.json binary_debs" % (name, sel["version"]))
+        packages.append(entry)
+    return {"packages": packages, "expected_removed": sorted(removed), "removed_because": dict(sorted(removed.items())), "issues": issues}
+
+
+CLOSURE_DESCRIPTION = ("Packages the golden image adds to Radxa OS r2 (build_image.py step 8b): apt-get install --purge of exactly these "
+                       "hash-locked debs of the pinned snapshot, with every apt source and preference disabled. chrony replaces r2's "
+                       "systemd-timesyncd (Conflicts/Provides time-daemon) and needs tzdata-legacy; tzdata follows its source; gpsd needs "
+                       "libgps30t64. greetd, labwc, kanshi, cage and wlopm are the touch session (W2 IMG-4) with the libraries r2 lacks. "
+                       "The postinst scripts create _chrony, gpsd and _greetd. Generated by `build_image.py closure --resolve`; "
+                       "never edited by hand.")
+CLOSURE_METHOD = ("build_image.py closure --resolve: gpgv of each suite InRelease against the pinned archive key (fetch_sources.signed_release), "
+                  "equal to sources.lock.json apt_snapshot.releases; the signed SHA256 list checks every binary-arm64 Packages.xz; "
+                  "resolve_closure() against the r2 dpkg status of image-facts.json.")
+
+
+def closure_document(resolved, lock, recipe, packages_total, resolved_on):
+    snapshot = lock["apt_snapshot"]
+    base = lock_artifacts(lock)[recipe["base_artifact"]]
+    return {"schema_version": 1, "status": "CANDIDATE", "description": CLOSURE_DESCRIPTION,
+            "snapshot": {k: snapshot[k] for k in ("archive", "timestamp", "architecture")},
+            "suites": [dict(r) for r in snapshot["releases"]], "resolved_on": resolved_on, "method": CLOSURE_METHOD,
+            "base": {"artifact": base["id"], "sha256": base["sha256"], "packages_total": packages_total},
+            "roots": sorted(CLOSURE_ROOTS), "packages": resolved["packages"], "expected_removed": resolved["expected_removed"],
+            "removed_because": resolved["removed_because"],
+            "expected_accounts": sorted({a for accounts in CLOSURE_ROOTS.values() for a in accounts})}
+
+
+def closure_issues(closure, lock):
+    """Consistency of package-closure.json with sources.lock.json (host-tested; the build refuses any)."""
+    snapshot, issues = lock["apt_snapshot"], []
+    if closure.get("schema_version") != 1:
+        issues.append("schema_version must be 1")
+    if closure.get("snapshot") != {k: snapshot[k] for k in ("archive", "timestamp", "architecture")}:
+        issues.append("snapshot differs from sources.lock.json apt_snapshot")
+    if not (closure.get("snapshot", {}).get("archive", "") + "/").startswith(SNAPSHOT_URL):
+        issues.append("archive is not " + SNAPSHOT_URL)
+    if closure.get("suites") != snapshot["releases"]:
+        issues.append("suites differ from sources.lock.json apt_snapshot.releases")
+    packages = closure.get("packages") or []
+    names = [p.get("package") for p in packages]
+    if names != sorted(set(names)) or not names:
+        issues.append("packages must be non-empty, unique and sorted by name")
+    locked = {(d["package"], d["version"]): d for c in lock["components"] for d in c.get("binary_debs") or []}
+    basenames = set()
+    for p in packages:
+        if tuple(p) != CLOSURE_PACKAGE_KEYS:
+            issues.append("package entry keys: " + str(p.get("package")))
+            continue
+        if not re.fullmatch(r"[0-9a-f]{64}", p["sha256"]) or type(p["size"]) is not int or p["size"] <= 0:
+            issues.append("sha256/size: " + p["package"])
+        if not re.fullmatch(r"pool/(main|universe)/[a-z0-9]+/[a-z0-9][a-z0-9+.-]*/[A-Za-z0-9+.~_-]+\.deb", p["filename"]) \
+                or Path(p["filename"]).name in basenames:
+            issues.append("filename: " + p["package"])
+        basenames.add(Path(p["filename"]).name)
+        if p["suite"] not in snapshot["suites"] or p["architecture"] not in (snapshot["architecture"], "all"):
+            issues.append("suite/architecture: " + p["package"])
+        pinned = locked.get((p["package"], p["version"]))
+        if pinned and any(pinned[k] != p[k] for k in ("architecture", "filename", "sha256", "size")):
+            issues.append("differs from sources.lock.json binary_debs: " + p["package"])
+    if set(closure.get("expected_removed") or []) & set(names) or sorted(closure.get("removed_because") or {}) != closure.get("expected_removed"):
+        issues.append("expected_removed must be outside packages and match removed_because")
+    return issues + closure_roots_issues(closure)
+
+
+def closure_roots_issues(closure):
+    """The part of closure_issues that a CLOSURE_ROOTS edit causes until `closure --resolve` regenerates the file. The
+    build stops on it after the r2 facts (IMG2-R1); host tests fail on every other issue (PackageClosureFileTests)."""
+    issues, names = [], [p.get("package") for p in closure.get("packages") or []]
+    if closure.get("roots") != sorted(CLOSURE_ROOTS) or not set(CLOSURE_ROOTS) <= set(names):
+        issues.append("roots must be " + ",".join(sorted(CLOSURE_ROOTS)) + " and in packages")
+    if closure.get("expected_accounts") != sorted({a for accounts in CLOSURE_ROOTS.values() for a in accounts}):
+        issues.append("expected_accounts must be the accounts of the roots")
+    return issues
+
+
+def load_closure(path=CLOSURE, lock=None):
+    closure = load_json(path)
+    issues = closure_issues(closure, load_json(LOCK) if lock is None else lock)
+    if issues:
+        raise BuildError("package-closure.json: " + "; ".join(issues))
+    return closure
+
+
+def compare_closure(proposed, committed):
+    """Keys of CLOSURE_COMPARED where a fresh resolution differs from the committed file."""
+    return [k for k in CLOSURE_COMPARED if proposed.get(k) != committed.get(k)]
+
+
+def fetch_closure(cache, closure=None):
+    """Each closure deb from snapshot.ubuntu.com/ubuntu/<timestamp>/<filename>, accepted only with its SHA-256 and size."""
+    closure = load_closure() if closure is None else closure
+    base = closure["snapshot"]["archive"] + "/" + closure["snapshot"]["timestamp"] + "/"
+    return {p["package"]: _download(base + p["filename"], Path(cache) / CLOSURE_CACHE / Path(p["filename"]).name, p["sha256"], p["size"],
+                                    "closure " + p["package"]) for p in closure["packages"]}
+
+
+def apt_local_options(parts_dir):
+    """apt reads no source and no preference: only the debs on the command line and the dpkg status (apt.conf(5),
+    Dir::Etc). dpkg keeps a conffile that is already there (the staged /etc/default/gpsd) instead of asking."""
+    return ["-o", "Dir::Etc::SourceList=/dev/null", "-o", "Dir::Etc::SourceParts=" + parts_dir,
+            "-o", "Dir::Etc::Preferences=/dev/null", "-o", "Dir::Etc::PreferencesParts=" + parts_dir,
+            "-o", "Dpkg::Options::=--force-confdef", "-o", "Dpkg::Options::=--force-confold"]
+
+
+_APT_ACTION = re.compile(r"^(Inst|Remv|Purg) (\S+)(?: \[([^\]]*)\])?(?: \((\S+))?", re.M)
+
+
+def apt_simulation(text):
+    """{"install": {package: version}, "remove": [package]} of `apt-get -s` output (Inst/Remv/Purg lines)."""
+    plan = {"install": {}, "remove": set()}
+    for action, name, _, version in _APT_ACTION.findall(text):
+        name = name.split(":", 1)[0]
+        if action == "Inst":
+            plan["install"][name] = version
+        else:
+            plan["remove"].add(name)
+    return {"install": dict(sorted(plan["install"].items())), "remove": sorted(plan["remove"])}
+
+
+def closure_plan_issues(plan, closure):
+    want = {p["package"]: p["version"] for p in closure["packages"]}
+    issues = []
+    if plan["install"] != want:
+        issues.append("apt would install %s, the closure lists %s" % (json.dumps(plan["install"], sort_keys=True), json.dumps(want, sort_keys=True)))
+    if plan["remove"] != sorted(closure["expected_removed"]):
+        issues.append("apt would remove %s, the closure expects %s" % (plan["remove"], sorted(closure["expected_removed"])))
+    return issues
+
+
+def status_changes(before, after):
+    """{package: (version before, version after)} of every package whose installed version changed (None: absent)."""
+    b = {n.split(":", 1)[0]: v for n, v in before.items()}
+    a = {n.split(":", 1)[0]: v for n, v in after.items()}
+    return {n: (b.get(n), a.get(n)) for n in sorted(set(b) | set(a)) if b.get(n) != a.get(n)}
+
+
+def closure_status_issues(changes, closure):
+    issues = []
+    for p in closure["packages"]:
+        if changes.get(p["package"]) != (p["r2_version"], p["version"]):
+            issues.append("%s: %r, expected %r" % (p["package"], changes.get(p["package"]), (p["r2_version"], p["version"])))
+    for name in closure["expected_removed"]:
+        if not changes.get(name) or changes[name][1] is not None:
+            issues.append("%s was not removed: %r" % (name, changes.get(name)))
+    others = sorted(set(changes) - {p["package"] for p in closure["packages"]} - set(closure["expected_removed"]))
+    if others:
+        issues.append("packages outside the closure changed: " + json.dumps({n: changes[n] for n in others}))
+    return issues
+
+
+# dpkg's message for a file of an installed package that a new package also ships (archives.c, forcibleerr with --force-overwrite).
+_TAKEOVER = re.compile(r"(?:trying to overwrite|overwriting) '([^']+)', which is also in package ([a-z0-9][a-z0-9+.-]*)")
+
+
+def install_closure(root, cache, closure, takeovers=None):
+    """Step 8b: apt-get install --purge of the closure debs in the chroot (policy-rc.d 101 starts nothing);
+    the simulated plan and the dpkg status change must both be exactly the closure. takeovers ({path: r2 package}, W2 IMG-4,
+    recipe.json closure_takeovers): files of an r2 package that a closure package also ships; only then dpkg runs with
+    --force-overwrite, and any other file it reports overwriting stops the build."""
+    root = Path(root)
+    takeovers = dict(takeovers or {})
+    before = _dpkg_status(root)
+    plain = {n.split(":", 1)[0]: v for n, v in before.items()}
+    drift = {p["package"]: plain.get(p["package"]) for p in closure["packages"] if plain.get(p["package"]) != p["r2_version"]}
+    drift.update({n: None for n in closure["expected_removed"] if n not in plain})
+    if drift:
+        raise BuildError("the r2 root differs from the dpkg status the closure was resolved against: " + json.dumps(drift))
+    target = root / CLOSURE_CHROOT_DIR
+    if target.exists():
+        shutil.rmtree(target)
+    (target / "parts.d").mkdir(parents=True)
+    names = []
+    for p in closure["packages"]:
+        source = Path(cache) / CLOSURE_CACHE / Path(p["filename"]).name
+        dest = target / source.name
+        shutil.copyfile(source, dest)
+        os.chmod(dest, 0o644)
+        if dest.stat().st_size != p["size"] or sha256(dest) != p["sha256"]:
+            raise BuildError("closure deb differs from package-closure.json: " + p["package"])
+        names.append("/" + CLOSURE_CHROOT_DIR + "/" + source.name)
+    for directory in (target, target / "parts.d"):
+        os.chmod(directory, 0o755)
+    argv = ["apt-get", "install", "-y", "-q", "--no-install-recommends", "--purge"] + apt_local_options("/" + CLOSURE_CHROOT_DIR + "/parts.d")
+    if takeovers:
+        argv += ["-o", "Dpkg::Options::=--force-overwrite"]
+    simulated = chroot(root, argv[:2] + ["-s"] + argv[2:] + names, extra_env=CLOSURE_ENV)
+    plan = apt_simulation(simulated.stdout)
+    issues = closure_plan_issues(plan, closure)
+    if issues:
+        raise BuildError("apt plan of the package closure: " + "; ".join(issues) + "\n" + simulated.stdout[-2000:])
+    done = chroot(root, argv + names, extra_env=CLOSURE_ENV)
+    shutil.rmtree(target)
+    overwritten = dict(_TAKEOVER.findall((done.stdout or "") + "\n" + (done.stderr or "")))
+    unexpected = {path: owner for path, owner in overwritten.items() if takeovers.get(path) != owner}
+    if unexpected:
+        raise BuildError("dpkg overwrote files of installed packages outside recipe.json closure_takeovers: " + json.dumps(unexpected))
+    changes = status_changes(before, _dpkg_status(root))
+    issues = closure_status_issues(changes, closure)
+    if issues:
+        raise BuildError("dpkg status after the package closure: " + "; ".join(issues))
+    passwd = _colon_table(root / "etc/passwd")
+    accounts = {n: {"uid": int(passwd[n][2]) if n in passwd else None, "primary_gid": int(passwd[n][3]) if n in passwd else None}
+                for n in closure["expected_accounts"]}
+    missing = sorted(n for n, ids in accounts.items() if ids["uid"] is None)
+    if missing:
+        raise BuildError("the closure's maintainer scripts did not create " + ", ".join(missing))
+    return {"file_sha256": sha256(CLOSURE), "snapshot": closure["snapshot"]["timestamp"],
+            "installed": {p["package"]: p["version"] for p in closure["packages"]},
+            "deb_sha256": {p["package"]: p["sha256"] for p in closure["packages"]},
+            "removed": sorted(n for n, (_, after) in changes.items() if after is None),
+            "upgraded": {n: {"from": b, "to": a} for n, (b, a) in changes.items() if b and a},
+            "accounts": accounts, "apt_plan": plan, "apt_tail": done.stdout[-1500:],
+            "takeovers": {"allowed": takeovers, "overwritten": overwritten, "not_seen": sorted(set(takeovers) - set(overwritten))}}
+
+
+def install_chrony_conf(root):
+    """Replace chrony's own /etc/chrony/chrony.conf (ucf copy with the Ubuntu pools) by the offline SR-RX file,
+    then let the image's chronyd parse it (-p prints every directive, conf.d included, and exits)."""
+    import deploy
+    system = deploy.system_files()
+    root = Path(root)
+    target = root / system.CHRONY_CONF
+    if not target.parent.is_dir():
+        raise BuildError("chrony is not installed: /etc/chrony is missing")
+    replaced = sha256(target) if target.is_file() else None
+    write_text(target, system.chrony_conf(), 0o644)
+    parsed = chroot(root, ["chronyd", "-p", "-f", "/" + system.CHRONY_CONF])
+    directives = [line.split()[0].lower() for line in parsed.stdout.splitlines() if line.split()]
+    network = sorted(set(directives) & set(system.CHRONY_NETWORK_DIRECTIVES))
+    if network or not directives:
+        raise BuildError("chronyd -p of the SR-RX chrony.conf: " + (",".join(network) or "no directive") + "\n" + parsed.stdout[-800:])
+    return {"path": system.CHRONY_CONF, "sha256": sha256(target), "source": "deployment/system/system_files.py chrony_conf()",
+            "replaced_sha256": replaced, "chronyd_p_directives": directives, "network_directives": network}
+
+
+def staged_gnss_mode(root):
+    """The GNSS mode of the staged /etc/default/gpsd (deploy.py stage --gnss; the image stages the default)."""
+    import deploy
+    system = deploy.system_files()
+    path = Path(root) / system.GPSD_DEFAULTS
+    text = path.read_text(encoding="utf-8") if path.is_file() else None
+    return next((mode for mode in deploy.GNSS_MODES if text == system.gpsd_defaults(mode)), None)
+
+
+def snapshot_stanzas(lock, keyring, work):
+    """Every binary-<arch> Packages stanza of the pinned snapshot: gpgv of each suite InRelease by the pinned
+    key (fetch_sources.signed_release) must give the lock record, and each index its signed SHA-256."""
+    import deploy
+    import fetch_sources
+    snapshot = lock["apt_snapshot"]
+    recorded = {r["suite"]: r for r in snapshot["releases"]}
+    stanzas = []
+    Path(work).mkdir(parents=True, exist_ok=True)
+    for suite in snapshot["suites"]:
+        release, files = fetch_sources.signed_release(snapshot, suite, keyring, work)
+        if recorded.get(suite) != release:
+            raise BuildError("InRelease differs from sources.lock.json: " + suite)
+        for area in snapshot["areas"]:
+            _, text = fetch_sources.index(snapshot, suite, area + "/binary-" + snapshot["architecture"] + "/Packages.xz", files, work)
+            stanzas += [(suite, area, s) for s in deploy.deb822(text, suite + " " + area + " Packages")]
+    return stanzas
+
+
+def closure_resolve(facts_path, keyring, work, write=None):
+    """CI helper (network): the closure the signed snapshot gives for the r2 facts, compared with the committed file."""
+    lock, recipe, facts = load_json(LOCK), load_json(RECIPE), load_json(facts_path)
+    resolved = resolve_closure(snapshot_stanzas(lock, keyring, work), facts["root"]["packages"], lock)
+    proposed = closure_document(resolved, lock, recipe, facts["root"]["packages_total"], datetime.date.today().isoformat())
+    if write:
+        dump(write, proposed)
+    committed = load_json(CLOSURE) if CLOSURE.is_file() else {}
+    differs = compare_closure(proposed, committed)
+    issues = resolved["issues"] + closure_issues(proposed, lock)
+    return {"status": "CLOSURE_MATCHES_COMMITTED" if not differs and not issues else "CLOSURE_DIFFERS",
+            "differs": differs, "issues": issues, "dpkg_holds": facts["root"].get("dpkg_holds"), "proposed": proposed}
+
+
+# ---------------------------------------------------------------- Python venvs (W2 IMG-3)
+
+_LOCK_LINE = re.compile(r"([A-Za-z0-9][A-Za-z0-9_.-]*)==(\S+) --hash=sha256:([0-9a-f]{64})\Z")
+
+
+def normalized(name):
+    """PEP 503 normalized distribution name (PySide6_Essentials -> pyside6-essentials)."""
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def lock_lines(path):
+    """[(name, version, sha256, line)] of a hashed requirements file; comments and blank lines are skipped."""
+    rows = []
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        match = _LOCK_LINE.fullmatch(line)
+        if match is None:
+            raise BuildError("unparsable lock line in " + Path(path).name + ": " + line[:80])
+        rows.append(match.groups() + (line,))
+    return rows
+
+
+def venv_lock_issues(lock, guest_lines, wheels):
+    """Why a venv lock is not a verbatim, dependency-closed subset of the guest lock whose every wheel the
+    wheelhouse manifest records with that version and SHA-256 (host-testable; the build refuses any issue).
+    wheels: {normalized name: wheelhouse-manifest.json entry}."""
+    names = {normalized(name) for name, _, _, _ in lock}
+    issues = [] if len(names) == len(lock) else ["duplicate distribution names"]
+    for name, version, digest, line in lock:
+        if line not in guest_lines:
+            issues.append(name + ": line differs from deployment/linux_lab/wheelhouse-requirements.txt")
+        wheel = wheels.get(normalized(name))
+        if wheel is None or wheel["version"] != version or wheel["sha256"] != digest or not wheel.get("hash_verified"):
+            issues.append(name + ": wheelhouse-manifest.json has no hash-verified wheel " + version + " with this SHA-256")
+            continue
+        if not wheel["url"].startswith(WHEEL_URL):
+            issues.append(name + ": wheel URL is not on files.pythonhosted.org")
+        for requirement in wheel["requires_dist"]:
+            if ";" in requirement:
+                continue  # environment-marked: python < 3.11 or an extra
+            dependency = normalized(re.split(r"[\s=<>!~(\[]", requirement.strip(), maxsplit=1)[0])
+            if dependency not in names:
+                issues.append(name + " needs " + requirement)
+    return issues
+
+
+def venv_plan(manifest=None):
+    """{"pip": bootstrap wheel, "venvs": {venv: [wheel entries]}} from the two locks and the wheelhouse manifest;
+    raises BuildError on any venv_lock_issues."""
+    manifest = load_json(WHEELHOUSE) if manifest is None else manifest
+    wheels = {normalized(w["name"]): w for w in manifest["wheels"]}
+    guest = lock_lines(GUEST_LOCK)
+    guest_lines = {row[3] for row in guest}
+    pip = [row for row in guest if normalized(row[0]) == PIP_BOOTSTRAP]
+    issues = venv_lock_issues(pip, guest_lines, wheels) if len(pip) == 1 else ["the guest lock has no single pip line"]
+    plan = {"pip": wheels.get(PIP_BOOTSTRAP), "venvs": {}}
+    for venv, spec in VENVS.items():
+        lock = lock_lines(PROJECT / spec["lock"])
+        issues += [spec["lock"] + ": " + issue for issue in venv_lock_issues(lock, guest_lines, wheels)]
+        if PIP_BOOTSTRAP in {normalized(row[0]) for row in lock}:
+            issues.append(spec["lock"] + ": pip is a build tool here, never a venv package")
+        plan["venvs"][venv] = [wheels[normalized(row[0])] for row in lock if normalized(row[0]) in wheels]
+    if issues:
+        raise BuildError("venv locks: " + "; ".join(issues))
+    return plan
+
+
+def plan_wheels(plan):
+    """Every distinct wheel of a venv_plan (the pip bootstrap first), by file name."""
+    out = {plan["pip"]["filename"]: plan["pip"]}
+    for wheels in plan["venvs"].values():
+        out.update((w["filename"], w) for w in wheels)
+    return out
+
+
+def fetch_wheels(cache, plan=None):
+    """Each venv wheel from its wheelhouse-manifest.json URL, accepted only with its SHA-256 and size."""
+    plan = venv_plan() if plan is None else plan
+    return {name: _download(w["url"], Path(cache) / WHEEL_CACHE / name, w["sha256"], w["size_bytes"], "wheel " + w["name"])
+            for name, w in plan_wheels(plan).items()}
+
+
+def project_version():
+    import tomllib
+    return tomllib.loads((PROJECT / "software/pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+
+
+def expected_freeze(lock_path, version):
+    """{normalized name: version} a venv must hold: the lock pins plus the project (pip is never installed)."""
+    want = {normalized(name): pin for name, pin, _, _ in lock_lines(lock_path)}
+    want[normalized(PROJECT_DIST)] = version
+    return want
+
+
+def freeze_issues(freeze, want):
+    """Differences between a venv's distributions ([[name, version], ...]) and expected_freeze."""
+    have = {}
+    for name, version in freeze:
+        if normalized(name) in have:
+            return ["distribution listed twice: " + name]
+        have[normalized(name)] = version
+    extra = sorted(set(have) - set(want))
+    missing = sorted(set(want) - set(have))
+    wrong = sorted(n for n in set(have) & set(want) if have[n] != want[n])
+    return (["not in the lock: " + ", ".join("%s %s" % (n, have[n]) for n in extra)] if extra else []) + \
+           (["missing: " + ", ".join(missing)] if missing else []) + \
+           (["versions differ: " + ", ".join("%s %s != %s" % (n, have[n], want[n]) for n in wrong)] if wrong else [])
+
+
+def _site_packages(venv):
+    found = sorted(Path(venv).glob("lib/python3*/site-packages"))
+    if len(found) != 1:
+        raise BuildError("expected one site-packages in " + str(venv) + ", found " + str(len(found)))
+    return found[0]
+
+
+def package_copy_issues(installed, staged):
+    """The venv's srrx package must be the staged /opt/srrx/software/srrx byte for byte (file names and SHA-256)."""
+    def tree(path):
+        return {p.relative_to(path).as_posix(): sha256(p) for p in sorted(Path(path).rglob("*")) if p.is_file()}
+    have, want = tree(installed), tree(staged)
+    if have == want:
+        return []
+    differs = sorted(set(have) ^ set(want)) + sorted(k for k in set(have) & set(want) if have[k] != want[k])
+    return ["srrx copy differs from the staged tree: " + ", ".join(differs[:10])]
+
+
+def unrecorded_bytecode(venv):
+    """__pycache__ files of a venv that no installed distribution's RECORD lists, i.e. written by the build
+    (--no-compile and -B everywhere) rather than shipped in a wheel (pyside6_essentials 6.12.0 ships
+    PySide6/support/__pycache__/*.cpython-312.pyc)."""
+    site = _site_packages(venv)
+    recorded = set()
+    for record in site.glob("*.dist-info/RECORD"):
+        for line in record.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                recorded.add(posixpath.normpath(line.rsplit(",", 2)[0]))
+    found = []
+    for path in sorted(Path(venv).rglob("*")):
+        if path.is_file() and "__pycache__" in path.parts:
+            rel = path.relative_to(site).as_posix() if path.is_relative_to(site) else None
+            if rel is None or rel not in recorded:
+                found.append(path.relative_to(venv).as_posix())
+    return found
+
+
+def tree_record(path):
+    """deploy.build_inventory of a venv (the walk verify-build compares) and its SHA-256 over the sorted file map."""
+    import deploy
+    files, modules = deploy.build_inventory(path)
+    size = sum(p.stat().st_size for p in Path(path).rglob("*") if p.is_file() and not p.is_symlink())
+    return {"tree_sha256": hashlib.sha256(json.dumps(files, sort_keys=True).encode()).hexdigest(), "files": len(files),
+            "bytes": size, "so_modules": len(modules)}
+
+
+def _chroot_json(root, argv, extra_env=None):
+    """(returncode, last stdout line parsed as JSON or None, output tail) of a bounded chroot command."""
+    done = chroot(root, argv, extra_env=extra_env, check=False)
+    lines = (done.stdout or "").strip().splitlines()
+    try:
+        value = json.loads(lines[-1]) if lines else None
+    except ValueError:
+        value = None
+    return done.returncode, value, ((done.stdout or "")[-600:] + (done.stderr or "")[-600:]).strip()
+
+
+def build_venvs(root, cache, plan=None):
+    """Step 11b in the root A chroot (W2 IMG-3). The wheels and the project copy are removed afterwards. A venv that is
+    not exactly its lock (pip check, freeze, a __pycache__, a srrx copy other than the staged tree) stops the build;
+    the offscreen PySide6 check of the HMI venv is recorded and becomes a blocker in build()."""
+    root = Path(root)
+    plan = venv_plan() if plan is None else plan
+    wheel_dir, build_copy, home = root / WHEELS_CHROOT_DIR, root / BUILD_COPY, root / VENV_HOME.lstrip("/")
+    for path in (wheel_dir, build_copy, home):
+        if path.exists():
+            shutil.rmtree(path)
+    wheel_dir.mkdir(parents=True)
+    for name, wheel in plan_wheels(plan).items():
+        dest = wheel_dir / name
+        shutil.copyfile(Path(cache) / WHEEL_CACHE / name, dest)
+        os.chmod(dest, 0o644)
+        if dest.stat().st_size != wheel["size_bytes"] or sha256(dest) != wheel["sha256"]:
+            raise BuildError("venv wheel differs from wheelhouse-manifest.json: " + name)
+    os.chmod(wheel_dir, 0o755)
+    shutil.copytree(root / "opt/srrx/software", build_copy, ignore=shutil.ignore_patterns("__pycache__", "build", "*.egg-info"))
+    (home / "run").mkdir(parents=True, mode=0o700)
+    pip_env = dict(VENV_ENV, PYTHONPATH="/" + WHEELS_CHROOT_DIR + "/" + plan["pip"]["filename"])
+    version = project_version()
+    record = {"pip_bootstrap": {"wheel": plan["pip"]["filename"], "sha256": plan["pip"]["sha256"], "installed_in_venv": False},
+              "wheelhouse_manifest_sha256": sha256(WHEELHOUSE), "venvs": {}}
+    try:
+        for venv, spec in VENVS.items():
+            target = root / venv
+            if os.path.lexists(target):
+                raise BuildError("/" + venv + " already exists before the venv step (the controller bundle never carries one)")
+            chroot(root, ["/usr/bin/python3", "-P", "-B", "-m", "venv", "--copies", "--without-pip", "/" + venv], extra_env=VENV_ENV)
+            python = "/" + venv + "/bin/python3"
+            pip = [python, "-P", "-B", "-m", "pip"] + PIP_OPTIONS
+            install = pip + ["install", "--root-user-action=ignore", "--no-index", "--no-cache-dir", "--no-compile"]
+            chroot(root, install + ["--find-links", "/" + WHEELS_CHROOT_DIR, "--only-binary", ":all:", "--require-hashes",
+                                    "-r", "/opt/srrx/" + spec["lock"]], extra_env=pip_env)
+            chroot(root, install + ["--no-deps", "--no-build-isolation", "/" + BUILD_COPY], extra_env=pip_env)
+            check = chroot(root, pip + ["check"], extra_env=pip_env, check=False)
+            code, freeze, tail = _chroot_json(root, [python, "-I", "-B", "-c", FREEZE_CODE], VENV_ENV)
+            issues = [] if check.returncode == 0 else ["pip check: " + ((check.stdout or "") + (check.stderr or ""))[-600:]]
+            issues += freeze_issues(freeze or [], expected_freeze(PROJECT / spec["lock"], version)) if code == 0 else ["freeze: " + tail]
+            cached = unrecorded_bytecode(target)
+            if cached:
+                issues.append("byte-compiled files outside every RECORD: " + ", ".join(cached[:5]))
+            issues += package_copy_issues(_site_packages(target) / "srrx", root / "opt/srrx/software/srrx")
+            if issues:
+                raise BuildError("venv /" + venv + ": " + "; ".join(issues))
+            code, numpy, tail = _chroot_json(root, [python, "-I", "-B", "-c", NUMPY_CODE], VENV_ENV)
+            entry = {"lock": spec["lock"], "lock_sha256": sha256(PROJECT / spec["lock"]), "python": python,
+                     "pyvenv_cfg": (target / "pyvenv.cfg").read_text(encoding="utf-8").splitlines(),
+                     "freeze": [[name, pin] for name, pin in sorted(freeze, key=lambda row: normalized(row[0]))],
+                     "freeze_matches_lock": True, "pip_check": (check.stdout or "").strip()[-300:],
+                     "numpy": (numpy or {}).get("numpy"), "python_version": (numpy or {}).get("python")}
+            if spec["qt"]:
+                plugins = _site_packages(target) / "PySide6/Qt/plugins/platforms"
+                code, qt, tail = _chroot_json(root, [python, "-I", "-B", "-c", QT_CODE], dict(VENV_ENV, **QT_ENV))
+                entry["qt_offscreen"] = {"status": "OK" if code == 0 and qt and qt.get("platform") == "offscreen" else "FAILED",
+                                         "result": qt, "exit_code": code, "tail": None if code == 0 else tail[-800:],
+                                         "env": dict(QT_ENV)}
+                entry["qt_platform_plugins"] = sorted(p.name for p in plugins.iterdir()) if plugins.is_dir() else None
+            entry.update(tree_record(target))
+            record["venvs"]["/" + venv] = entry
+    finally:
+        for path in (wheel_dir, build_copy, home):
+            shutil.rmtree(path, ignore_errors=True)
+    return record
+
+
+def unit_exec_words(text):
+    """[(key, words)] of the Exec*= lines of one unit fragment or drop-in (SR-RX units use no line continuation)."""
+    out = []
+    for line in text.splitlines():
+        key, sep, value = line.partition("=")
+        if sep and key.strip() in EXEC_KEYS and value.split():
+            out.append((key.strip(), value.split()))
+    return out
+
+
+def exec_interpreter(words):
+    """The python3 interpreter an Exec line starts: its first word, or the command behind env(1) NAME=value; else None."""
+    chain = [words[0].lstrip(EXEC_PREFIXES)]
+    if chain[0].rsplit("/", 1)[-1] == "env":
+        rest = words[1:]
+        while rest and "=" in rest[0] and not rest[0].startswith(("-", "/")):
+            rest = rest[1:]
+        if rest and not rest[0].startswith("-"):
+            chain.append(rest[0])
+    found = [word for word in chain if PYTHON_NAME.fullmatch(word.rsplit("/", 1)[-1])]
+    return found[-1] if found else None
+
+
+def python_units(root):
+    """{unit: {"files", "interpreters", "commands"}} of each SR-RX unit (name srrx*: fragment or <unit>.d/*.conf drop-in,
+    system or user) whose Exec lines start python3. A masked unit (symlink) runs nothing and is skipped."""
+    root = Path(root)
+    units = {}
+    for directory in UNIT_SEARCH:
+        base = root / directory
+        for path in sorted(base.iterdir()) if base.is_dir() and not base.is_symlink() else []:
+            if not path.name.startswith("srrx") or path.is_symlink():
+                continue
+            if path.is_file():
+                pairs = [(path, path.name)]
+            elif path.is_dir() and path.name.endswith(".d"):
+                pairs = [(p, path.name[:-2]) for p in sorted(path.glob("*.conf")) if p.is_file() and not p.is_symlink()]
+            else:
+                continue
+            for file, unit in pairs:
+                for key, words in unit_exec_words(file.read_text(encoding="utf-8", errors="replace")):
+                    interpreter = exec_interpreter(words)
+                    if interpreter is None:
+                        continue
+                    entry = units.setdefault(unit, {"files": [], "interpreters": [], "commands": []})
+                    rel = file.relative_to(root).as_posix()
+                    if rel not in entry["files"]:
+                        entry["files"].append(rel)
+                    if interpreter not in entry["interpreters"]:
+                        entry["interpreters"].append(interpreter)
+                    module = words[words.index("-m") + 1] if "-m" in words[:-1] else None
+                    entry["commands"].append({"key": key, "interpreter": interpreter, "module": module})
+    return units
+
+
+def unit_interpreter_findings(units, probes, classes):
+    """(per-unit record, blockers) of python_units against the interpreter probes ({path: {"present", "numpy"}}) and
+    recipe.json unit_interpreters (numpy: the unit imports NumPy; stdlib: it needs none). Host-testable."""
+    record, missing, without, unclassified = {}, [], [], []
+    for unit, entry in sorted(units.items()):
+        needs = "numpy" if unit in classes["numpy"] else "stdlib" if unit in classes["stdlib"] else None
+        found = {path: probes.get(path) or {"present": False, "numpy": None} for path in entry["interpreters"]}
+        record[unit] = dict(entry, needs=needs, why=(classes.get(needs) or {}).get(unit), interpreter_probe=found)
+        if needs is None:
+            unclassified.append(unit)
+        for path, probe in found.items():
+            if not probe["present"]:
+                missing.append("%s (%s)" % (unit, path))
+            elif needs == "numpy" and not probe.get("numpy"):
+                without.append("%s (%s)" % (unit, path))
+    # Listed but absent (srrx-ab-commit.service on Route A): recorded only; the host test keeps the lists exact.
+    stale = sorted((set(classes["numpy"]) | set(classes["stdlib"])) - set(units))
+    blockers = []
+    if missing:
+        blockers.append("unit_interpreter_missing: " + ", ".join(missing))
+    if without:
+        blockers.append("unit_interpreter_without_numpy: " + ", ".join(without) + " (recipe.json unit_interpreters.numpy)")
+    if unclassified:
+        blockers.append("unit_interpreter_unclassified: " + ", ".join(unclassified) + " (neither list of recipe.json unit_interpreters)")
+    return {"units": record, "classified_not_staged": stale}, blockers
+
+
+def unit_interpreters(root, recipe):
+    """Step 11b: each SR-RX python3 unit's interpreters probed in the root A chroot (present; NumPy imports), then
+    unit_interpreter_findings. Replaces the target_python_numpy blocker (the image python3 still has no NumPy)."""
+    units = python_units(root)
+    probes = {}
+    for path in sorted({p for entry in units.values() for p in entry["interpreters"]}):
+        code, value, tail = _chroot_json(root, [path, "-I", "-B", "-c", NUMPY_CODE], VENV_ENV)
+        probes[path] = {"present": code == 0 and value is not None, "numpy": (value or {}).get("numpy"),
+                        "python": (value or {}).get("python"), "exit_code": code}
+    found, blockers = unit_interpreter_findings(units, probes, recipe["unit_interpreters"])
+    return dict(found, probes=probes, source=recipe["unit_interpreters"]["source"]), blockers
+
+
+def build_manifest_draft(root, out):
+    """The OPEN build-manifest draft of root A's /opt/srrx after the venvs (deployment/system/build_manifest.py, the
+    deploy.build_inventory walk verify-build compares), next to image-manifest.json. Never PASS or REVIEWED: a reviewer
+    attaches the evidence and sets REVIEWED by hand (software/DEPLOYMENT.md)."""
+    if str(DEPLOYMENT / "system") not in sys.path:
+        sys.path.insert(0, str(DEPLOYMENT / "system"))
+    import build_manifest
+    target = Path(out) / BUILD_MANIFEST_DRAFT
+    try:
+        draft = build_manifest.generate(Path(root) / "opt/srrx")
+    except (OSError, ValueError) as exc:  # deploy.DeploymentError: a refusal of verify-build's own walk
+        return {"status": "BLOCKED", "error": str(exc)[:600], "path": None}
+    target.write_text(json.dumps(draft, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
+    return {"status": draft["status"], "path": BUILD_MANIFEST_DRAFT, "sha256": sha256(target), "prefix": "/opt/srrx",
+            "files": len(draft["files"]), "allowed_modules": len(draft["allowed_modules"]),
+            "evidence": {name: draft[name]["status"] for name in ("source_audit", "tx_negative_tests")},
+            "next": "review, attach PASS evidence, set REVIEWED by hand (software/DEPLOYMENT.md)"}
+
+
+# ---------------------------------------------------------------- pps-gpio module (W2 IMG-4)
+
+def pps_pin():
+    """The system-sources.lock.json pin of pps-gpio.c: a raw file of radxa/kernel at the pinned commit, fetch-only."""
+    pin = load_json(PPS_SOURCES)["pps_gpio"]
+    if pin.get("committed") is not False or pin["url"] != "https://raw.githubusercontent.com/%s/%s/%s" % (pin["repository"], pin["commit"], pin["path"]):
+        raise BuildError("the pps-gpio.c pin must be a fetch-only raw.githubusercontent.com file of the pinned commit")
+    return pin
+
+
+def fetch_pps_source(cache):
+    """pps-gpio.c into cache/pps-gpio by the pin's URL, accepted only with its SHA-256 and size (never committed)."""
+    pin = pps_pin()
+    return _download(pin["url"], Path(cache) / PPS_CACHE / "pps-gpio.c", pin["sha256"], pin["size"], "pps-gpio.c")
+
+
+def pps_kernel_findings(kconfig):
+    """(record, blocker or None): can the locked kernel load an unsigned out-of-tree pps-gpio? (host-testable)"""
+    record = {k: kconfig.get(k) for k in MODULE_SIG_KEYS + ("CONFIG_PPS", "CONFIG_PPS_CLIENT_GPIO", "CONFIG_MODULE_UNLOAD")}
+    if kconfig.get("CONFIG_MODULE_SIG_FORCE") == "y":
+        return record, ("pps_gpio_signature_enforced: CONFIG_MODULE_SIG_FORCE=y in the locked kernel, so the unsigned builder-built "
+                        "module would not load (the kernel's signing key is not available)")
+    if kconfig.get("CONFIG_PPS") != "y":
+        return record, "pps_gpio_kernel_config: CONFIG_PPS is %r; the module needs the PPS core built in" % kconfig.get("CONFIG_PPS")
+    if kconfig.get("CONFIG_PPS_CLIENT_GPIO") in ("y", "m"):
+        return record, "pps_gpio_kernel_config: CONFIG_PPS_CLIENT_GPIO=%s; the kernel ships its own pps-gpio" % kconfig["CONFIG_PPS_CLIENT_GPIO"]
+    return record, None
+
+
+def modules_dir(root, kver):
+    """/lib/modules/<kver> of a root as a builder path: through usr/lib (merged /usr) or a real lib/, never through a link."""
+    root = Path(root).resolve()
+    for relative in ("usr/lib/modules", "lib/modules"):
+        if (root / relative.split("/", 1)[0]).is_symlink():
+            continue
+        path = root / relative / kver
+        if path.is_dir() and not path.is_symlink() and path.resolve().is_relative_to(root):
+            return path
+    raise BuildError("no /lib/modules/" + kver + " in the root (the locked linux-image deb installs it at the kernel step)")
+
+
+def module_path(path):
+    """A module file as kmod names it, /lib/modules/... (merged /usr: /usr/lib/modules/... is the same file)."""
+    return bootchain.module_path(path)
+
+
+def _modinfo(root, kver, field):
+    """One modinfo field of pps_gpio in the root's chroot (-n: the file depmod resolves); None when modinfo fails."""
+    done = chroot(root, ["modinfo", "-k", kver] + (["-n"] if field == "filename" else ["-F", field]) + [PPS_MODULE_NAME], check=False)
+    return done.stdout.strip() if done.returncode == 0 else None
+
+
+def build_pps_module(root, cache, work, recipe, kconfig):
+    """Kernel step, after the locked debs (W2 IMG-4): dkms add/build of deployment/system/dkms/pps-gpio (MAKE[0]: gcc-12) on
+    the builder against the locked headers deb, in trees under --work; vermagic must be recipe.json pps_gpio.vermagic; the .ko
+    goes to /lib/modules/<kver>/updates/srrx/pps-gpio.ko (0644) in root A and depmod runs in its chroot. Root B gets it with
+    the rsync and its own kernel-install depmod. Returns (record, blocker or None); the record never holds MODULE_AUTHOR."""
+    spec, kver = recipe["pps_gpio"], recipe["kernel_version"]
+    kernel, blocker = pps_kernel_findings(kconfig)
+    record = {"status": "BLOCKED", "source": spec["source"], "kernel_config": kernel, "path": spec["install_path"]}
+    if blocker:
+        return dict(record, why=blocker), blocker
+    missing = [tool for tool in PPS_TOOLS if shutil.which(tool) is None]
+    if missing:
+        raise BuildError("pps-gpio builder tools missing: " + ", ".join(missing) + " (sr-rx-image.yml installs them on the builder)")
+    if str(DEPLOYMENT / "system") not in sys.path:
+        sys.path.insert(0, str(DEPLOYMENT / "system"))
+    import pps_dkms
+    pin, fetched = pps_pin(), fetch_pps_source(cache)
+    headers, source_tree, dkms_tree, module = (Path(work) / name for name in PPS_WORK)
+    for path in (headers, source_tree, dkms_tree, module):
+        if path.is_dir() and not path.is_symlink():
+            shutil.rmtree(path)
+        elif os.path.lexists(path):
+            path.unlink()
+    dkms_tree.mkdir(parents=True)  # dkms 3.0.11 check_rw_dkms_tree: the tree must exist and be writable
+    run(["dpkg-deb", "-x", Path(cache) / lock_artifacts()[spec["headers_artifact"]]["cache_path"], headers])
+    kdir = headers / "usr/src" / ("linux-headers-" + kver)
+    if not (kdir / "Makefile").is_file():
+        raise BuildError("the locked headers deb has no usr/src/linux-headers-" + kver + "/Makefile")
+    assembled = pps_dkms.assemble(Path(cache) / PPS_CACHE / "pps-gpio.c", source_tree)
+    name, version = spec["dkms_package"], pps_dkms.package_version()
+    trees = ["--sourcetree", str(source_tree), "--dkmstree", str(dkms_tree)]
+    run(["dkms", "add", "-m", name, "-v", version] + trees)
+    built = run(["dkms", "build", "-m", name, "-v", version, "-k", kver, "--kernelsourcedir", str(kdir)] + trees, check=False)
+    if built.returncode:
+        logs = sorted(dkms_tree.glob(name + "/" + version + "/build/make.log"))
+        # Compiler output quotes source lines: address-like tokens of the upstream file never reach the manifest.
+        raise BuildError("dkms build of %s %s failed: %s" % (name, version, bootchain.redact_addresses(
+            (built.stdout or "")[-1200:] + (built.stderr or "")[-1200:] + (logs[0].read_text(errors="replace")[-1500:] if logs else ""))))
+    found = sorted(p for p in dkms_tree.glob(name + "/" + version + "/" + kver + "/*/module/pps-gpio.ko*") if p.is_file())
+    if len(found) != 1:
+        raise BuildError("dkms build left %d pps-gpio modules: %s" % (len(found), [p.name for p in found]))
+    if found[0].suffix == ".ko":
+        shutil.copyfile(found[0], module)
+    else:  # dkms compresses like the host's /lib/modules/<kver> (none on the builder, so normally a plain .ko)
+        decompress = {".zst": ["zstd", "-d", "-q", "-c"], ".xz": ["xz", "-d", "-c"]}.get(found[0].suffix)
+        if decompress is None:
+            raise BuildError("unexpected dkms module " + found[0].name)
+        with open(module, "xb") as handle:
+            if subprocess.run(decompress + [str(found[0])], stdout=handle, timeout=120).returncode:
+                raise BuildError("decompressing " + found[0].name + " failed")
+    vermagic = pps_dkms.check_vermagic(module, kver)["vermagic"]
+    if vermagic != spec["vermagic"]:
+        raise BuildError("pps-gpio vermagic %r differs from recipe.json pps_gpio.vermagic %r" % (vermagic, spec["vermagic"]))
+    relative = spec["install_path"].split("/" + kver + "/", 1)[1]
+    target = modules_dir(root, kver) / relative
+    install_file(module, target, 0o644)
+    chroot(root, ["depmod", "-a", kver])
+    listed = [line for line in (modules_dir(root, kver) / "modules.dep").read_text(errors="replace").splitlines()
+              if line.split(":", 1)[0] == relative]
+    modinfo = {field: _modinfo(root, kver, field) for field in PPS_MODINFO_FIELDS}
+    if len(listed) != 1 or module_path(modinfo["filename"]) != spec["install_path"] or modinfo["vermagic"] != vermagic:
+        raise BuildError("depmod/modinfo of pps_gpio in the root A chroot: " + json.dumps({"modules.dep": listed, "modinfo": modinfo}))
+    status = run(["dkms", "status", "-m", name, "-v", version, "-k", kver] + trees, check=False)
+    return dict(record, status="INSTALLED", why=None, sha256=sha256(target), size=target.stat().st_size, vermagic=vermagic,
+                modules_dep=listed[0], modinfo=modinfo, dkms_package=name + "/" + version, dkms_status=(status.stdout or "").strip()[-300:],
+                built_module=found[0].name, assembled_tree=Path(assembled["tree"]).name, source_fetch=fetched,
+                source_pin={k: pin[k] for k in ("repository", "commit", "path", "sha256", "size", "license")},
+                headers_deb=spec["headers_artifact"], compiler=run(["gcc-12", "--version"]).stdout.splitlines()[0],
+                dkms_version=run(["dkms", "--version"]).stdout.strip(), loaded_on_the_builder=False,
+                bench="OPEN: GPIO96 pinmux owner, /dev/pps-gnss and the chrony PPS selection on the Q6A (W1-2)"), None
+
+
+# ---------------------------------------------------------------- touch session (W2 IMG-4)
+
+def install_session(root, recipe, stage_dir):
+    """Enable step (W2 IMG-4): the closure installed greetd, labwc, kanshi, cage and wlopm, and the controller bundle carries
+    the SYS-SESSION files (system_files.session_files). Each of them must still be the bundle's after dpkg (--force-confold
+    keeps /etc/greetd/config.toml, the package's copy goes to config.toml.dpkg-dist); /etc/greetd/greetd.conf must not exist
+    (greetd 0.9.0 reads it before config.toml); display-manager.service moves from the masked gdm3 unit to greetd.service;
+    the default target must be graphical.target; srrx-menu.service stays disabled in the user preset (the administrator
+    enables the console after the venv review, software/HMI.md). Returns the manifest record; anything else stops the build."""
+    import deploy
+    system = deploy.system_files()
+    spec, root = recipe["session"], Path(root)
+    packages = {n.split(":", 1)[0]: v for n, v in _dpkg_status(root).items()}
+    missing = [p for p in spec["packages"] if p not in packages]
+    if missing:
+        raise BuildError("session packages not installed after the package closure: " + ", ".join(missing))
+    staged = load_json(Path(stage_dir) / "stage-files.json")["files"]
+    files, differs = {}, []
+    for relative in sorted(system.session_files()):
+        have = sha256(root / relative) if (root / relative).is_file() and not (root / relative).is_symlink() else None
+        if have is None or staged.get(relative) != have:
+            differs.append(relative)
+        files["/" + relative] = have
+    if differs:
+        raise BuildError("session files differ from the controller bundle after the package closure: " + ", ".join(differs))
+    present = [p for p in spec["must_not_exist"] if os.path.lexists(root / p.lstrip("/"))]
+    if present:
+        raise BuildError("session files that must not exist: " + ", ".join(present))
+    link = root / "etc/systemd/system/display-manager.service"
+    before = os.readlink(link) if link.is_symlink() else ("file" if os.path.lexists(link) else None)
+    if before == "file" or (before is not None and Path(before).name not in set(recipe["mask"]["units"]) | {spec["display_manager"]}):
+        raise BuildError("display-manager.service is %r before the session step" % before)
+    if before is not None:
+        link.unlink()
+    run(["systemctl", "--root", str(root), "enable", spec["display_manager"]])
+    after = os.readlink(link) if link.is_symlink() else None
+    if after is None or Path(after).name != spec["display_manager"]:
+        raise BuildError("display-manager.service is %r after enabling %s" % (after, spec["display_manager"]))
+    default = run(["systemctl", "--root", str(root), "get-default"]).stdout.strip()
+    if default != spec["default_target"]:
+        raise BuildError("default target %r: greetd starts with %s" % (default, spec["default_target"]))
+    # The console stays off until the administrator enables it: no .wants link in either user unit directory.
+    console_links = sorted(p.relative_to(root).as_posix() for d in ("etc/systemd/user", "usr/lib/systemd/user") if (root / d).is_dir()
+                           for p in (root / d).glob("*.wants/" + spec["console_unit"]))
+    if console_links:
+        raise BuildError("%s is enabled in the image (%s); the administrator enables it after the venv review"
+                         % (spec["console_unit"], ", ".join(console_links)))
+    done = run(["systemctl", "--root", str(root), "--global", "is-enabled", spec["console_unit"]], check=False)
+    console = ((done.stdout or "").strip() or (done.stderr or "").strip())[-200:]
+    passwd, group = _colon_table(root / "etc/passwd"), _colon_table(root / "etc/group")
+    user = passwd.get(system.SESSION_USER)
+    if user is None:
+        raise BuildError("the session user " + system.SESSION_USER + " is missing (step 9, systemd-sysusers)")
+    return {"source": spec["source"], "packages": {p: packages[p] for p in spec["packages"]}, "files": files,
+            "package_copies": sorted("/" + p.relative_to(root).as_posix() for p in (root / "etc/greetd").glob("*.dpkg-*")),
+            "must_not_exist": spec["must_not_exist"], "display_manager": {"before": before, "after": after},
+            "default_target": default, "console_unit": {spec["console_unit"]: console},
+            "session_user": {"name": system.SESSION_USER, "uid": int(user[2]), "home": user[5], "shell": user[6],
+                             "groups": sorted(name for name, entry in group.items() if system.SESSION_USER in entry[3].split(","))},
+            "x11_default_display_manager": _text(root / "etc/X11/default-display-manager", 200),
+            "bench": "OPEN: HDMI-A-1 mode, touch mapping and greetd recovery on the Q6A (W1-2, STACK.md:1442, :1486)"}
 
 
 # ---------------------------------------------------------------- build
 
 def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, data_bytes=None,
-          allow_unmerged_dtb=False, copy_locked_cache=True, keep_base=False):
+          allow_unmerged_dtb=False, copy_locked_cache=True, keep_base=False, release_keyring_path=None):
     require_builder()
+    # W2 IMG-UPD: the owner's public key after the ceremony; checked before anything is built.
+    keyring = release_keyring(release_keyring_path) if release_keyring_path else None
     started = utc_now()
     recipe, layout = load_json(RECIPE), layoutlib.load()
     work, out = Path(work).resolve(), Path(out).resolve()
@@ -1170,8 +2524,10 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         LOG.step("inputs", "DONE", artifacts=fetched["artifacts"], bundle_sha256=staged["bundle"]["sha256"],
                  stage_files=staged["stage"]["files"])
         manifest["inputs"] = {"locked_artifacts": {a["id"]: a["sha256"] for a in load_json(LOCK)["artifacts"]},
-                              "sources_lock_sha256": sha256(LOCK), "recipe_sha256": sha256(RECIPE),
-                              "layout_sha256": sha256(layoutlib.LAYOUT), "controller_bundle": staged}
+                              "sources_lock_sha256": sha256(LOCK), "recipe_sha256": sha256(RECIPE), "package_closure_sha256": sha256(CLOSURE),
+                              "layout_sha256": sha256(layoutlib.LAYOUT), "controller_bundle": staged,
+                              "wheelhouse_manifest_sha256": sha256(WHEELHOUSE),
+                              "venv_locks_sha256": {spec["lock"]: sha256(PROJECT / spec["lock"]) for spec in VENVS.values()}}
         base = facts(cache, work, out / "image-facts.json", keep_mounted=keep)
         base_mounts, base_loop, base_root, base_esp = keep
         LOG.step("base-facts", "DONE", base_cmdline=base["base_cmdline_status"], rescue=base["rescue"]["status"])
@@ -1179,6 +2535,10 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
             raise BuildError("observed r2 /etc/kernel/cmdline is not usable: " + base["base_cmdline_status"])
         if base["rescue"]["status"] != "IDENTIFIED":
             raise BuildError("r2 rescue entry (6.18.2-3) not identified on the base ESP: " + json.dumps(base["rescue"]))
+        if fetched["closure"]["status"] != "CLOSURE_DEBS_VERIFIED":
+            # The r2 facts are written: the CI resolve step proposes package-closure.resolved.json from them (GENERATED commit).
+            raise BuildError("package-closure.json: " + "; ".join(fetched["closure"]["issues"])
+                             + " (image-facts.json recorded; `build_image.py closure --resolve` proposes the file)")
         kernel_tree, kconfig = kernel_deb_config(cache, recipe, work)
         quota = False  # partition-layout.json "quota": TBD, enabled on the unit (the builder kernel may lack quota_v2)
         loop, devices, geo = create_disk(image, layout, ids, data_bytes, quota=quota)
@@ -1265,24 +2625,69 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["kernel"] = {"packages": status, "slot_a_plugin_entry": entry_a,
                               "cache_only": sorted(set(recipe["kernel_artifacts"]) - set(recipe["kernel_debs_install"]["artifacts"])),
                               "why_cache_only": recipe["kernel_debs_install"]["source"]}
+        # W2 IMG-4: the builder-built pps-gpio module in root A, before the closure and long before the root B rsync.
+        manifest["pps_gpio"], blocker = build_pps_module(root_a, cache, work, recipe, kconfig)
+        if blocker:
+            manifest["blocking"].append(blocker)
+        LOG.step("pps-gpio", manifest["pps_gpio"]["status"], path=manifest["pps_gpio"]["path"],
+                 sha256=manifest["pps_gpio"].get("sha256"), vermagic=manifest["pps_gpio"].get("vermagic"))
+        closure = load_closure()
+        manifest["package_closure"] = install_closure(root_a, cache, closure, (recipe.get("closure_takeovers") or {}).get("files"))
+        manifest["package_closure"]["chrony_conf"] = install_chrony_conf(root_a)
+        manifest["package_closure"]["gnss_mode"] = staged_gnss_mode(root_a)
+        LOG.step("closure", "DONE", installed=manifest["package_closure"]["installed"], removed=manifest["package_closure"]["removed"],
+                 accounts=manifest["package_closure"]["accounts"], gnss_mode=manifest["package_closure"]["gnss_mode"])
         manifest["accounts"] = system_accounts(root_a, stage_dir)
         if manifest["accounts"]["service_accounts_missing"]:
             manifest["blocking"].append("service_accounts_missing: " + ", ".join(manifest["accounts"]["service_accounts_missing"])
                                         + " (systemd-sysusers did not create them)")
         if manifest["accounts"]["package_accounts_missing"]:
             manifest["blocking"].append("package_accounts_missing: " + ", ".join(manifest["accounts"]["package_accounts_missing"])
-                                        + " (their packages are not in r2; package closure IMG-09)")
+                                        + " (neither r2 nor the package closure, step 8b, created them)")
         LOG.step("accounts", "DONE", service=len(manifest["accounts"]["service_accounts"]),
                  missing=manifest["accounts"]["service_accounts_missing"] + manifest["accounts"]["package_accounts_missing"])
+        if keyring:  # before hardening, so apt_sources records the keyring as present (no apt_keyring_absent)
+            manifest["release_keyring"] = install_release_keyring(root_a, keyring)
         manifest["hardening"] = hardening(root_a, recipe, route)
-        LOG.step("hardening", "DONE", held=len(manifest["hardening"]["held"]), masked=manifest["hardening"]["masked"])
+        manifest["apt_sources"] = manifest["hardening"].pop("apt_sources")
+        if not manifest["apt_sources"]["keyring"]["present"]:
+            manifest["blocking"].append("apt_keyring_absent: both SR-RX sources are Signed-By /" + SRRX_KEYRING + ", the public key of the "
+                                        "owner's offline key ceremony (deployment/repo/README.md); until it is installed apt reads no source")
+        LOG.step("hardening", "DONE", held=len(manifest["hardening"]["held"]), masked=manifest["hardening"]["masked"],
+                 apt_sources=[e["path"] for e in manifest["apt_sources"]["installed"]],
+                 apt_disabled=[e["path"] for e in manifest["apt_sources"]["disabled"]])
         manifest["enabled_units"] = enable_units(root_a, recipe, route)
         manifest["not_enabled"] = recipe["not_enabled"]
+        manifest["npu_payload"] = npu_payload(root_a)
+        if manifest["npu_payload"]["status"] != "absent":  # a package or a loose file: either one is a payload
+            manifest["blocking"].append("npu_payload_present: " + ", ".join(manifest["npu_payload"]["packages"]
+                                                                             + manifest["npu_payload"]["files"])
+                                        + " (the golden image never carries the QNN SDK or QAIRT)")
+        manifest["mcu_firmware"] = mcu_firmware(root_a)
+        if not manifest["mcu_firmware"]["matches_repo"]:
+            manifest["blocking"].append("mcu_firmware_manifest: the staged " + manifest["mcu_firmware"]["build_manifest"]
+                                        + " is missing or differs from the tree")
         first_boot = base.get("rsetup_first_boot")
         rows, unhandled = first_boot_review(first_boot, recipe, root_a)
         manifest["rsetup_first_boot"] = {"before_txt_sha256": (first_boot or {}).get("sha256"), "commands": rows}
         manifest["blocking"] += unhandled
-        LOG.step("enable", "DONE")
+        manifest["session"] = install_session(root_a, recipe, stage_dir)
+        LOG.step("enable", "DONE", display_manager=manifest["session"]["display_manager"]["after"],
+                 default_target=manifest["session"]["default_target"])
+        manifest["venvs"] = build_venvs(root_a, cache)
+        qt = manifest["venvs"]["venvs"]["/opt/srrx/venv"]["qt_offscreen"]
+        if qt["status"] != "OK":
+            manifest["blocking"].append("hmi_venv_qt_offscreen_failed: QT_QPA_PLATFORM=offscreen QApplication in /opt/srrx/venv: "
+                                        + str(qt["tail"] or qt["result"])[-300:])
+        manifest["unit_interpreters"], blockers = unit_interpreters(root_a, recipe)
+        manifest["blocking"] += blockers
+        manifest["build_manifest_draft"] = build_manifest_draft(root_a, out)
+        if manifest["build_manifest_draft"]["status"] != "OPEN":
+            manifest["blocking"].append("build_manifest_draft_blocked: deployment/system/build_manifest.py refused /opt/srrx: "
+                                        + manifest["build_manifest_draft"]["error"][-300:])
+        LOG.step("venvs", "DONE", venvs={v: {"numpy": e["numpy"], "files": e["files"], "tree_sha256": e["tree_sha256"]}
+                                         for v, e in manifest["venvs"]["venvs"].items()},
+                 qt=qt["status"], unit_interpreter_blockers=blockers, build_manifest_draft=manifest["build_manifest_draft"]["status"])
         data = work / "mnt/data"
         mounts.mount(devices["data"], data, "ext4")
         for name in layout["partitions"][3]["directories"]:
@@ -1302,13 +2707,9 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["blocking"].append("selftest root A " + str(manifest["selftest_root_a"]["status"]) + ": "
                                     + json.dumps(manifest["selftest_root_a"]["fail_or_blocked_rows"], sort_keys=True))
         LOG.step("selftest", "DONE", report=manifest["selftest_root_a"])
-        # selftest.py ran with the builder's python3 (python3-numpy installed): RX-14 and RX-04-bb import
-        # numpy, which the image's own python3 lacks until the HMI venv (IMG-10); the QEMU smoke expects
-        # those rows live (smoke_qemu.INTERPRETER_ROWS).
+        # A fact since W2 IMG-3, no blocker: the image python3 has no numpy, and each unit that imports it runs a
+        # venv interpreter (unit_interpreters above); the QEMU live selftest runs under /opt/srrx/passes-venv.
         manifest["target_python_numpy"] = (root_a / "usr/lib/python3/dist-packages/numpy/__init__.py").is_file()
-        if not manifest["target_python_numpy"]:
-            manifest["blocking"].append("target_python_without_numpy: RX-14 and RX-04-bb were evaluated with the builder's "
-                                        "python3-numpy; on the image python3 they are BLOCKED numpy_unavailable (HMI venv, IMG-10)")
         mounts.umount_under(root_a / "boot/efi")
         root_b = work / "mnt/root_b"
         mounts.mount(devices["root_b"], root_b, "ext4")
@@ -1373,7 +2774,185 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
             base_loop.detach()
         if loop:
             loop.detach()
+        manifest["blocking_closes_at"] = blocking_closes_at(manifest["blocking"], manifest.get("selftest_root_a"))
+        manifest["blocking_by_closes_at"] = closes_at_summary(manifest["blocking_closes_at"])
         dump(out / "image-manifest.json", manifest)
+
+
+# ---------------------------------------------------------------- release keyring and update model (W2 IMG-UPD)
+
+# deployment/repo/README.md: the CI test key carries this in its uid and must never become the image keyring.
+CI_TEST_KEY_UID = "CI TEST KEY"
+_PUBLIC_KEY, _PUBLIC_SUBKEY, _USER_ID, _SECRET_KEY, _SECRET_SUBKEY = 6, 14, 13, 5, 7
+
+
+def openpgp_packets(data):
+    """[(tag, body)] of a binary OpenPGP keyring (RFC 9580 section 4.2: old and new packet headers;
+    keyrings use no partial body lengths)."""
+    out, i = [], 0
+    while i < len(data):
+        header = data[i]
+        i += 1
+        if not header & 0x80:
+            raise ValueError("not an OpenPGP packet at byte %d" % (i - 1))
+        if header & 0x40:  # new format
+            tag = header & 0x3F
+            first = data[i] if i < len(data) else None
+            if first is None:
+                raise ValueError("truncated packet header")
+            if first < 192:
+                length, i = first, i + 1
+            elif first < 224:
+                if i + 1 >= len(data):
+                    raise ValueError("truncated packet header")
+                length, i = ((first - 192) << 8) + data[i + 1] + 192, i + 2
+            elif first == 255:
+                length, i = int.from_bytes(data[i + 1:i + 5], "big"), i + 5
+            else:
+                raise ValueError("partial body length in a keyring")
+        else:
+            tag, kind = (header >> 2) & 0x0F, header & 3
+            if kind == 3:
+                raise ValueError("indeterminate packet length in a keyring")
+            size = (1, 2, 4)[kind]
+            length, i = int.from_bytes(data[i:i + size], "big"), i + size
+        body = data[i:i + length]
+        if len(body) != length:
+            raise ValueError("truncated packet body")
+        out.append((tag, body))
+        i += length
+    return out
+
+
+def dearmor(data):
+    """Binary bytes of an ASCII-armored OpenPGP block (the base64 body, CRC line dropped); binary input unchanged."""
+    import base64
+    import binascii
+    if data.lstrip()[:5] != b"-----":
+        return data, None
+    lines = data.lstrip().decode("ascii").replace("\r", "").split("\n")
+    kind = lines[0].strip("- ").replace("BEGIN ", "")
+    i = 1
+    while i < len(lines) and lines[i].strip() and ":" in lines[i]:
+        i += 1  # armor headers (Version:, Comment:), then one empty line
+    if i < len(lines) and not lines[i].strip():
+        i += 1
+    body = []
+    for line in lines[i:]:
+        if line.startswith("-----END"):
+            break
+        if not line.startswith("="):  # the CRC-24 line; base64 itself never starts with '='
+            body.append(line.strip())
+    try:
+        return base64.b64decode("".join(body), validate=True), kind
+    except binascii.Error as exc:
+        raise ValueError("armored keyring body is not base64: " + str(exc)) from exc
+
+
+def _key_fingerprint(body):
+    if body[:1] == b"\x04":
+        return hashlib.sha1(b"\x99" + len(body).to_bytes(2, "big") + body).hexdigest().upper()
+    if body[:1] == b"\x06":
+        return hashlib.sha256(b"\x9b" + len(body).to_bytes(4, "big") + body).hexdigest().upper()
+    raise ValueError("unsupported OpenPGP key version %r" % body[:1])
+
+
+def keyring_info(data):
+    """Primary and subkey fingerprints (v4 SHA-1, v6 SHA-256), user ids and whether secret key material is
+    present, of an OpenPGP keyring (armored or binary); "binary" is what apt reads as a .gpg keyring."""
+    binary, armor = dearmor(data)
+    packets = openpgp_packets(binary)
+    tags = [t for t, _ in packets]
+    return {"sha256": hashlib.sha256(binary).hexdigest(), "armor": armor, "binary": binary,
+            "fingerprints": [_key_fingerprint(b) for t, b in packets if t in (_PUBLIC_KEY, _SECRET_KEY)],
+            "subkeys": [_key_fingerprint(b) for t, b in packets if t in (_PUBLIC_SUBKEY, _SECRET_SUBKEY)],
+            "uids": [b.decode("utf-8", errors="replace") for t, b in packets if t == _USER_ID],
+            "secret": _SECRET_KEY in tags or _SECRET_SUBKEY in tags or (armor or "").find("PRIVATE") >= 0}
+
+
+def release_keyring_issues(info):
+    """Why a keyring cannot be the image's release keyring /usr/share/keyrings/srrx-lab.gpg."""
+    issues = []
+    if info["secret"]:
+        issues.append("the keyring carries secret key material: only the public key goes into an image")
+    if not info["fingerprints"]:
+        issues.append("the keyring has no primary public key")
+    if not info["uids"]:
+        issues.append("the keyring has no user id")
+    test = [u for u in info["uids"] if CI_TEST_KEY_UID.lower() in u.lower()]
+    if test:
+        issues.append("uid %r is a CI test key ('%s'): never the release keyring" % (test[0], CI_TEST_KEY_UID))
+    return issues
+
+
+def release_keyring(path):
+    """The record of an owner keyring for --release-keyring (deployment/repo/srrx-lab.pub.asc after the
+    ceremony); refused: secret material, no key or uid, a uid with 'CI TEST KEY'."""
+    data = Path(path).read_bytes()
+    try:
+        info = keyring_info(data)
+    except ValueError as exc:
+        raise BuildError("--release-keyring is not an OpenPGP keyring: " + str(exc)) from exc
+    issues = release_keyring_issues(info)
+    if issues:
+        raise BuildError("--release-keyring refused: " + "; ".join(issues))
+    return {"path": SRRX_KEYRING, "source_sha256": hashlib.sha256(data).hexdigest(), "sha256": info["sha256"],
+            "armored_input": info["armor"] is not None, "fingerprints": info["fingerprints"], "subkeys": info["subkeys"],
+            "uids": info["uids"], "binary": info["binary"]}
+
+
+def install_release_keyring(root, record):
+    """/usr/share/keyrings/srrx-lab.gpg (0644, binary: apt's Signed-By reads .gpg keyrings) in the image root."""
+    target = Path(root) / SRRX_KEYRING
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(record["binary"])
+    os.chmod(target, 0o644)
+    if sha256(target) != record["sha256"]:
+        raise BuildError("installed release keyring differs from the checked one")
+    return {k: v for k, v in record.items() if k != "binary"}
+
+
+def _blkid_value(device, key):
+    done = run(["blkid", "-p", "-o", "value", "-s", key, device], check=False)
+    return done.stdout.strip().lower() or None
+
+
+def update_model(image, work, mirror_repo=None, lab_repo=None, build_records=(), ci_test_key=None,
+                 power_note="CI model on the image builder: no battery, no labd"):
+    """CI model of the inactive-slot updater (W2 IMG-UPD, update_slot.py) on an image COPY, never the built
+    image: root A (read-only), its ESP and /data are mounted as the active system, and update_slot.apply
+    copies root A into root B and upgrades it in a chroot from the publications signed by a job-only test
+    key (the record says NOT_RELEASE). smoke_qemu.py scenario 4 then boots the trial."""
+    require_builder()
+    import update_slot
+    image, work = Path(image).resolve(), Path(work).resolve()
+    for path in (image, work):
+        refuse_block_path(path)
+    if not image.is_file():
+        raise BuildError("update model needs an image copy (regular file): " + str(image))
+    if not ci_test_key:
+        raise BuildError("the update model runs with a job-only CI test key (--ci-test-key KEYRING FINGERPRINT)")
+    work.mkdir(parents=True, exist_ok=True)
+    loop, mounts = Loop(image), Mounts()
+    try:
+        devices = {role: loop.part(i) for i, role in enumerate(layoutlib.ROLES, 1)}
+        partitions = {}
+        for device in devices.values():
+            partuuid, uuid = _blkid_value(device, "PART_ENTRY_UUID"), _blkid_value(device, "UUID")
+            if not partuuid:
+                raise BuildError("no PARTUUID on " + device)
+            partitions[device] = ["by-partuuid/" + partuuid] + (["by-uuid/" + uuid] if uuid else [])
+        active = work / "mnt/active"
+        mounts.mount(devices["root_a"], active, "ext4", "ro")
+        mounts.mount(devices["esp"], active / "boot/efi", "vfat", "umask=0077")
+        mounts.mount(devices["data"], active / "data", "ext4")
+        record = update_slot.apply(root=active, target_device=devices["root_b"], lab_repo=lab_repo, mirror_repo=mirror_repo,
+                                   build_records=build_records, ci_test_key=ci_test_key, external_power=power_note,
+                                   partitions=partitions, execute=True, online=False)
+    finally:
+        mounts.umount_all()
+        loop.detach()
+    return record
 
 
 def main():
@@ -1403,12 +2982,55 @@ def main():
     p.add_argument("--allow-unmerged-dtb", action="store_true", help="CI candidate only: package DTB without the IMG-05 overlays")
     p.add_argument("--no-cache-copy", action="store_true")
     p.add_argument("--keep-base", action="store_true")
+    p.add_argument("--release-keyring", type=Path, help="W2 IMG-UPD: the owner's public key (srrx-lab.pub.asc or .gpg) installed as "
+                   "/" + SRRX_KEYRING + "; a uid with 'CI TEST KEY' or secret material is refused")
+    p = sub.add_parser("closure", help="package-closure.json: --check (offline, against the lock) or --resolve (CI, network)")
+    mode = p.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--resolve", action="store_true")
+    p.add_argument("--facts", type=Path, help="--resolve: image-facts.json of the locked r2 image")
+    p.add_argument("--keyring", type=Path, help="--resolve: keyring holding the pinned archive key")
+    p.add_argument("--work", type=Path, help="--resolve: directory for the downloaded InRelease and indices")
+    p.add_argument("--write", type=Path, help="--resolve: also write the proposed package-closure.json here")
+    p = sub.add_parser("venvs", help="W2 IMG-3: --check the venv locks against the guest lock and the wheelhouse manifest (offline)")
+    p.add_argument("--check", action="store_true", required=True)
+    p = sub.add_parser("release-keyring", help="W2 IMG-UPD: --check a keyring the way build --release-keyring does (offline)")
+    p.add_argument("--check", type=Path, required=True)
+    p = sub.add_parser("update-model", help="W2 IMG-UPD: update_slot.py apply A->B on an image COPY with a CI test key (root, CI)")
+    p.add_argument("--image", type=Path, required=True)
+    p.add_argument("--work", type=Path, required=True)
+    p.add_argument("--mirror-repo", type=Path)
+    p.add_argument("--lab-repo", type=Path)
+    p.add_argument("--build-record", type=Path, action="append", default=[])
+    p.add_argument("--ci-test-key", nargs=2, metavar=("KEYRING", "FINGERPRINT"), required=True)
     args = parser.parse_args()
     try:
         if args.op == "plan":
             result = plan(args.route)
+        elif args.op == "closure":
+            if args.check:
+                closure = load_closure()
+                result = {"status": "CLOSURE_CONSISTENT_WITH_LOCK", "packages": {p["package"]: p["version"] for p in closure["packages"]},
+                          "expected_removed": closure["expected_removed"], "expected_accounts": closure["expected_accounts"]}
+            else:
+                if not (args.facts and args.keyring and args.work):
+                    raise ValueError("--resolve needs --facts, --keyring and --work")
+                result = closure_resolve(args.facts, args.keyring, args.work, args.write)
+                print(json.dumps(result, indent=2, ensure_ascii=False))
+                return 0 if result["status"] == "CLOSURE_MATCHES_COMMITTED" else 2
+        elif args.op == "venvs":
+            wheel_plan = venv_plan()
+            result = {"status": "VENV_LOCKS_CONSISTENT", "pip_bootstrap": wheel_plan["pip"]["filename"],
+                      "venvs": {"/" + v: [w["filename"] for w in wheels] for v, wheels in wheel_plan["venvs"].items()}}
+        elif args.op == "release-keyring":
+            result = dict({k: v for k, v in release_keyring(args.check).items() if k != "binary"}, status="RELEASE_KEYRING_ACCEPTABLE")
+        elif args.op == "update-model":
+            result = update_model(args.image, args.work, args.mirror_repo, args.lab_repo, args.build_record, args.ci_test_key)
+            print(json.dumps(result, indent=2, ensure_ascii=False))
+            return 0 if result["status"] == "INACTIVE_SLOT_UPDATED_TRIAL_ARMED" else 1
         elif args.op == "fetch":
             result = fetch(args.cache)
+            result["pps_gpio_source"] = fetch_pps_source(args.cache)  # W2 IMG-4: fetch-only pps-gpio.c into cache/pps-gpio
         elif args.op == "facts":
             require_builder()
             result = facts(args.cache, args.work, args.output)
@@ -1418,8 +3040,8 @@ def main():
             result = blank(args.work, args.output, args.test_sizes)
         else:
             result = build(args.cache, args.work, args.out, args.route, args.dt_profile, not args.no_lime, args.uuid_seed,
-                           args.data_bytes, args.allow_unmerged_dtb, not args.no_cache_copy, args.keep_base)
-            result = {k: result[k] for k in ("status", "route", "image", "blocking", "hardware_ready")}
+                           args.data_bytes, args.allow_unmerged_dtb, not args.no_cache_copy, args.keep_base, args.release_keyring)
+            result = {k: result[k] for k in ("status", "route", "image", "blocking", "blocking_by_closes_at", "hardware_ready")}
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0 if result.get("status") not in ("BLOCKED",) else 2
     except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as exc:

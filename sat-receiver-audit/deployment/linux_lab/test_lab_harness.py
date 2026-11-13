@@ -537,5 +537,78 @@ class PtyFixtureTests(unittest.TestCase):
         self.assertEqual([q for _, _, q in frames], list(range(len(frames))))
 
 
+class ConsoleRedactionTests(unittest.TestCase):
+    """console.log loses third-party addresses before it is hashed (W2 EVID-G); reserved example domains only."""
+    # The two banner shapes of the archived run07-run11 logs (console.log:167 and :290), with RFC 2606 domains.
+    ADDRESSES = (b"<author@example.com>", b"dm-list@example.org")
+    PPS = b"[    0.489278] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 A. Author %s\n"
+    DM = b"[    1.181995] device-mapper: ioctl: 4.48.0-ioctl (2023-03-01) initialised: %s\n"
+    UNITS = ("[   29.612064] systemd[1]: Starting modprobe@configfs.service - Load Kernel Module configfs...\n"
+             "         Starting \x1b[0;1;39mmodprobe@efi_pstore.servi\u2026\x1b[0m - Load Kernel Module efi_pstore...\n"
+             "         Starting \x1b[0;1;39mmodprobe@configfs.servi\u2026\x1b[0m - Load Kernel Module configfs...\n"
+             "[\x1b[0;32m  OK  \x1b[0m] Stopped \x1b[0;1;39mgetty@tty1.service\x1b[0m - Getty on tty1.\n"
+             "         Stopping \x1b[0;1;39mserial-getty@ttyAMA0.service\x1b[0m - Serial Getty on ttyAMA0...\n"
+             "[  136.039624] cloud-init[663]: SHA256:tWcHQH+bC8SkBjlxb7NVCaZ6zIKxDfS0wEgANzlOgLs root@srrx-arm64-lab\n"
+             "[    0.000000] Linux version 6.8.0-147-generic (buildd@bos03-arm64-084) (aarch64-linux-gnu-gcc-13)\n").encode()
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.work = Path(self.temporary.name)
+        self.captured = self.PPS % self.ADDRESSES[0] + self.UNITS + self.DM % self.ADDRESSES[1]
+        self.expected = self.PPS % b"<address removed>" + self.UNITS + self.DM % b"<address removed>"
+
+    def test_both_banner_addresses_are_removed_and_unit_names_kept(self):
+        log = self.work / "console.log"
+        log.write_bytes(self.captured)
+        record = host.redact_console(log)
+        self.assertEqual(log.read_bytes(), self.expected)
+        self.assertEqual(record["count"], 2)
+        self.assertEqual([(p["name"], p["count"]) for p in record["patterns"]],
+                         [("angle_bracket_address", 1), ("bare_address", 1)])
+        text = json.dumps(record)
+        for removed in ("author", "example", "dm-list"):
+            self.assertNotIn(removed, text)  # counts and patterns only, never the removed text
+        again = host.redact_console(log)
+        self.assertEqual(again["count"], 0)
+
+    def test_console_sha_is_taken_after_the_filter_also_when_the_guest_overruns(self):
+        work = self.work / "vm"
+        work.mkdir()
+        (work / "run.json").write_text(json.dumps({"command": [str(work / "bin/qemu-system-aarch64")], "network_devices": [],
+                                                   "host_device_passthrough": [], "shared_host_directories": []}))
+        captured = self.captured
+
+        class Guest:
+            def __init__(self, command, stdin, stdout, stderr, env):
+                stdout.write(captured)
+            def wait(self, timeout=None):
+                if overrun and timeout == 7200:
+                    raise subprocess.TimeoutExpired("qemu", timeout)
+                return 0
+            terminate = kill = lambda self: None
+
+        def debugfs(args, **kwargs):
+            target = Path(args[2].split(" ", 2)[2])
+            (target / "summary.json").write_text(json.dumps({"status": "PASS"}))
+        args = types.SimpleNamespace(work=work, timeout=7200)
+        overrun = False
+        with mock.patch.object(host.subprocess, "Popen", Guest), mock.patch.object(host, "call", debugfs), \
+                mock.patch.object(sys, "stdout", io.StringIO()):
+            host.run(args)
+        report = json.loads((work / "report.json").read_text())
+        filtered = (work / "console.log").read_bytes()
+        self.assertEqual(filtered, self.expected)
+        self.assertEqual(report["host"]["console_sha256"], sha(filtered))
+        self.assertEqual(report["host"]["console_redactions"]["count"], 2)
+        for name in ("results", "loader-audit"):
+            shutil.rmtree(work / name)
+        overrun = True
+        with mock.patch.object(host.subprocess, "Popen", Guest), mock.patch.object(host, "call", debugfs), \
+                self.assertRaisesRegex(RuntimeError, "bounded run time"):
+            host.run(args)
+        self.assertEqual((work / "console.log").read_bytes(), filtered)  # the uploaded log is filtered too
+
+
 if __name__ == "__main__":
     unittest.main()

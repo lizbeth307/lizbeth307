@@ -44,6 +44,19 @@ EARLIER_BINDING = {"pico_identity_or_calibration_mismatch":
                    "pico_qualification_record_mismatch":
                        "Pico commissioning did not match the labd acceptance file"}
 BINDING_FAULTS = tuple(EARLIER_BINDING)
+# The Pico's own physical stop (firmware/pico/supervisor.py OPERATOR_STOP, LOCK held 1 s).
+PICO_STOP_TEXT = "Stopped by LOCK held 1 s on the Pico — all loads off; an explicit start is required"
+
+
+def pico_stop_text(pico):
+    """PICO_STOP_TEXT while the Pico reports its LOCK-hold trip, else None.
+
+    Every Pico trip rotates its session, so labd latches new_pico_session first and keeps
+    pico_OPERATOR_STOP only in last_error and events; the console names the stop from the
+    Pico status itself."""
+    if type(pico) is dict and pico.get("state") == "TRIPPED" and pico.get("fault") == "OPERATOR_STOP":
+        return PICO_STOP_TEXT
+    return None
 
 
 def readable_fault(value):
@@ -51,6 +64,7 @@ def readable_fault(value):
         return "No protection fault reported"
     return {"new_pico_session": "Stopped — ready for an explicit start",
             "operator_disarm": "Stopped by operator",
+            "pico_OPERATOR_STOP": PICO_STOP_TEXT,
             "operator_shutdown": "Shutdown requested",
             "pico_identity_or_calibration_mismatch": "Pico serial or calibration CRC does not match the labd"
                 " acceptance file — wrong Pico or calibration (ARM refused)",
@@ -1959,6 +1973,9 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
                      # The labd fault stays visible, but never as "ready" without fresh Pico status.
                      + ("\n" + latched_fault_text(policy["fault"], binding_verified(data))
                         if policy.get("fault") not in (None, "", "new_pico_session") else ""))
+            stop = pico_stop_text(pico) if pico_live else None
+            if stop is not None and stop not in fault:
+                fault = stop + "\n" + fault  # The LOCK-hold stop is named first, then labd's line.
             # The console's own error never hides the labd protection fault.
             self.fault_text.setText(fault + ("\nConsole: " + str(view["error"])[:240] if view.get("error") else ""))
             self.gnss_reset_text.setText(gnss_reset_summary(policy.get("gnss_reset"), live))

@@ -1,0 +1,22 @@
+SR-RX recipe patch 0004 (+lab): no -march=native in the root CMakeLists.txt.
+Pinned SatDump 1aedd60 adds -march=native to CMAKE_CXX_FLAGS whenever the CI environment variable
+is not defined (CMakeLists.txt:166-172, with the warning "Will likely not be portable to other systems"),
+and its first set() also replaces CMAKE_CXX_FLAGS with CMAKE_C_FLAGS, which drops -fopenmp. The lab
+builder runs CMake with a clean environment (build_recipe.py), so the package would target the arm64
+CI runner, not the QCS6490. With this change the flags are those of upstream CI builds.
+SatDump is GPL-3.0 (upstream LICENSE, git blob f288702d2fa16d3cdf0035b15a9fcbc552cd88e7). This change is distributed under the same licence.
+---
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -163,7 +163,9 @@
+     link_directories(windows/deps/output/bin)
+ endif()
+ 
+-if((NOT DEFINED ENV{CI}) AND NOT DEFINED ANDROID)
++# SR-RX +lab: never -march=native. The lab builder runs CMake with a clean environment (no CI), so this
++# block would target the build machine's CPU instead of the Q6A and replace CMAKE_CXX_FLAGS (-fopenmp).
++if(FALSE)
+     if(APPLE OR UNIX)
+         message("-- Not running on CI. Building for native architecture! Will likely not be portable to other systems.")
+         set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -march=native")    

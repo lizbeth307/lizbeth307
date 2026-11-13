@@ -1,0 +1,53 @@
+[Unit]
+Description=SR-RX LRPT baseband recording %i on RTL-A (receive only, no network)
+# Generated text: srrx.satdump_pass.unit_text("record"); edit the generator, then this file.
+# Started and stopped only by labd (srrx.baseband_scheduler) through 60-srrx-satdump.rules.
+# No install section. labrx observes labd read-only: the operator's lease, ARM and EN_RTLA stay theirs.
+CollectMode=inactive-or-failed
+RequiresMountsFor=/data
+# Skipped, not failed, until the administrator writes the storage binding at commissioning.
+ConditionPathExists=/etc/srrx/baseband.env
+
+[Service]
+Type=oneshot
+User=labd
+Group=srrx-bb
+SupplementaryGroups=lab
+UMask=0027
+WorkingDirectory=/
+EnvironmentFile=/etc/srrx/baseband.env
+Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1 LC_ALL=C.UTF-8
+Environment=OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+LoadCredential=job:/run/srrx/satdump/%i/job.json
+ReadWritePaths=/data /run/srrx/satdump/%i
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateIPC=yes
+PrivateNetwork=yes
+IPAddressDeny=any
+RestrictAddressFamilies=AF_UNIX AF_NETLINK
+DevicePolicy=closed
+DeviceAllow=/dev/lab/rtla rw
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+LimitCORE=0
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+SystemCallArchitectures=native
+MemoryMax=512M
+MemorySwapMax=0
+TasksMax=32
+KillMode=mixed
+TimeoutStartSec=1320
+TimeoutStopSec=15
+ExecStart=/usr/bin/env /opt/srrx/venv/bin/python3 -P -s -B -m srrx.satdump_unit record %i

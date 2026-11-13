@@ -29,8 +29,8 @@
       "bytes": 123087
     },
     "STACK.md": {
-      "sha256": "a9475a40d0f735e392b9bc7b3ebbff8cd6193af1276d316238180cca79def48e",
-      "bytes": 1967181
+      "sha256": "dafd305f262c7cf74a1de9544293f3ae86589acac78a9259b1f4a6d8123692c6",
+      "bytes": 1968170
     },
     "build/12-revision-v2.1.md": {
       "sha256": "56f71210b0d3e3f4547ebfc2cabe35fb746866183493882612da9707cbc806e5",
@@ -31283,7 +31283,7 @@
     },
     {
       "path": "components/gnss_imu.md",
-      "sha256": "5bb7e239507f084edffdd061d6006d7a8cda033754a47bd0bbc4b23d4da90f54",
+      "sha256": "e7b1ceb16cda208fba315d068f01ca34d0b5aee502f0a883e176f2f5036cfe1e",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "U304",

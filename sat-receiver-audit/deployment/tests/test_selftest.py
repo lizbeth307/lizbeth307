@@ -122,6 +122,13 @@ class SelftestTests(unittest.TestCase):
         path.write_bytes(data.encode() if isinstance(data, str) else data)
         return path
 
+    def dpkg_image(self, status):
+        """A dpkg database makes the root a full image, which RX-11 expects to carry its unit interpreters
+        (W2 FW-STOP: RX-11 now passes on the clean tree, so a missing interpreter would flip it too)."""
+        for rel in ("usr/bin/python3", "usr/bin/env", "opt/srrx/venv/bin/python3"):
+            self.put(rel, "#!fixture\n")
+        return self.put("var/lib/dpkg/status", status)
+
     def symlink(self, link, target):
         link.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -136,8 +143,8 @@ class SelftestTests(unittest.TestCase):
         # Invariants of every report: no hardware claim, no PASS outside OFFLINE evidence.
         self.assertFalse(report["hardware_ready"])
         self.assertFalse(report["receive_only_proven"])
-        if not allow_pass:  # honest today: RX-11 reports the touch-only DISARM leaf
-            self.assertNotEqual(report["status"], "OFFLINE_CHECKS_PASS")
+        if report["status"] == "OFFLINE_CHECKS_PASS":  # allow_pass is kept for callers (W2 FW-STOP)
+            self.assertEqual((report["policy_status"], report["policy_review"]["status"]), ("REVIEWED", "BOUND"))
         for check in report["checks"]:
             if check["evaluability"] in ("BUILDER", "DEVICE", "HARDWARE"):
                 self.assertEqual(check["status"], "RUNTIME_ONLY", check["id"])
@@ -190,16 +197,16 @@ class SelftestTests(unittest.TestCase):
         out = subprocess.run([sys.executable, str(HERE / "selftest.py"), "catalogue"], capture_output=True, text=True, check=True)
         self.assertEqual([c["id"] for c in json.loads(out.stdout)], ids)
 
-    def test_clean_staged_tree_passes_offline_rows_but_stays_blocked(self):
+    def test_clean_staged_tree_passes_offline_rows_with_the_synthetic_review(self):
         report = self.run_check(rootfs=self.clean)
-        self.assertEqual(report["status"], "BLOCKED")
-        self.assertEqual(report["blockers"], ["RX-11"])  # honest today: DISARM has no key or encoder path
+        # W2 FW-STOP: the LOCK hold gave DISARM its glove path, the last RX-11 finding. This PASS needs the
+        # synthetic REVIEWED policy and its bound record; the shipped DRAFT policy blocks (test below).
+        self.assertEqual((report["status"], report["blockers"]), ("OFFLINE_CHECKS_PASS", []))
         self.assertEqual(report["policy_status"], "REVIEWED")
         self.assertEqual(report["policy_review"], {"status": "BOUND", "sha256": deploy.sha(self.review)})
-        self.assertEqual(self.check(report, "RX-11")["findings"], [{"path": "software/srrx/menu_model.py", "rule": "critical_leaf_touch_only",
-                                                                   "effect": "BLOCKED", "item": "frame.disarm"}])
+        self.assertEqual(self.check(report, "RX-11")["findings"], [])
         for check in report["checks"]:
-            if check["evaluability"] == "OFFLINE" and check["id"] != "RX-11":
+            if check["evaluability"] == "OFFLINE":
                 self.assertEqual(check["status"], "PASS", check)
         self.assertTrue(report["target"]["inventory_complete"])
         self.assertGreater(report["target"]["files_scanned"], 50)
@@ -285,7 +292,7 @@ class SelftestTests(unittest.TestCase):
         expect = {"RX-01a": "dpkg_database_missing", "RX-02": "component_not_found", "RX-03": "component_not_found",
                   "RX-04": "component_not_found", "RX-05": "component_not_found", "RX-06": "component_not_found",
                   "RX-09": "librtlsdr_missing", "RX-10": "component_not_found", "RX-11": "unit_interpreter_missing",
-                  "RX-12": "lease_units_not_found", "RX-16": "apt_configuration_missing"}
+                  "RX-16": "apt_configuration_missing"}  # RX-12: the staged lease templates (EngineLeaseRowTests)
         for check_id, rule in expect.items():
             check = self.check(full, check_id)
             self.assertEqual(check["status"], "BLOCKED", check)
@@ -320,9 +327,9 @@ class SelftestTests(unittest.TestCase):
             ("RX-01c", "direct_sampling_nonzero", lambda: self.put("home/lab/.config/sdrpp/rtl_sdr_config.json", {"devices": {"LABRXA": {"directSamplingMode": 1}}})),
             ("RX-01c", "bias_key", lambda: self.put("etc/SoapySDR/rtl.conf", "[rtlsdr]\nbiastee = 0\n")),
             ("RX-01c", "hfplus_rate_256000", lambda: self.put("etc/openwebrx/openwebrx.conf", "[hfplus]\nsamp_rate = 256000\n")),
-            ("RX-01a", "forbidden_package", lambda: self.put("var/lib/dpkg/status", "Package: direwolf\nStatus: install ok unpacked\nVersion: 1.7-1\n\nPackage: bash\nStatus: install ok installed\nVersion: 5.2.21-2ubuntu4\n")),
-            ("RX-01a", "forbidden_package", lambda: self.put("var/lib/dpkg/status", "Package: librtlsdr2\nStatus: install ok installed\nVersion: 2.0.1-2build1\n")),
-            ("RX-01a", "forbidden_package", lambda: self.put("var/lib/dpkg/status", "Package: dream\nStatus: install ok installed\nVersion: 2.1.1-3\n")),
+            ("RX-01a", "forbidden_package", lambda: self.dpkg_image("Package: direwolf\nStatus: install ok unpacked\nVersion: 1.7-1\n\nPackage: bash\nStatus: install ok installed\nVersion: 5.2.21-2ubuntu4\n")),
+            ("RX-01a", "forbidden_package", lambda: self.dpkg_image("Package: librtlsdr2\nStatus: install ok installed\nVersion: 2.0.1-2build1\n")),
+            ("RX-01a", "forbidden_package", lambda: self.dpkg_image("Package: dream\nStatus: install ok installed\nVersion: 2.1.1-3\n")),
             ("RX-16", "apt_forbidden_origin", lambda: self.put("etc/apt/sources.list.d/extra.list", "deb http://ppa.launchpadcontent.net/x/y/ubuntu noble main\n")),
             ("RX-16", "rsdk_ppa_list_present", lambda: self.put("etc/apt/sources.list.d/ubuntu-qcom-iot-ubuntu-qcom-ppa-noble.list", "# disabled\n")),
             ("RX-16", "lab_pref_structure", lambda: self.put("etc/apt/preferences.d/lab.pref", "Package: *\nPin: release o=lab\nPin-Priority: 1001\n\nPackage: *\nPin: origin *\nPin-Priority: 500\n")),
@@ -337,7 +344,7 @@ class SelftestTests(unittest.TestCase):
             ("RX-01c", "direct_sampling_key", lambda: self.put("var/lib/openwebrx/sdrs.json", {"sdrs": {"rtl": {"type": "soapy", "device": "driver=rtlsdr,direct_samp=2"}}})),
             ("RX-01c", "bias_key", lambda: self.put("etc/SoapySDR/rtl.conf", "[rtl]\nargs = driver=rtlsdr biastee=true\n")),
             ("RX-01c", "direct_sampling_nonzero", lambda: self.put("etc/lab/receivers.json", {"rx": ["driver=rtlsdr, directSampling=\"1\""]})),
-            ("RX-01a", "pinned_package_present_unreviewed", lambda: self.put("var/lib/dpkg/status", "Package: libqnn1\nStatus: install ok installed\nVersion: 2.49.0-1\n"), "BLOCKED"),
+            ("RX-01a", "pinned_package_present_unreviewed", lambda: self.dpkg_image("Package: libqnn1\nStatus: install ok installed\nVersion: 2.49.0-1\n"), "BLOCKED"),
             ("RX-16", "apt_pin_positive_outside_lab_pref", lambda: (self.put("etc/apt/preferences.d/lab.pref", self.LAB_PREF),
                                                                      self.put("etc/apt/preferences.d/50-unpin", "Package: wsjtx\nPin: release *\nPin-Priority: 500\n"))),
             ("RX-16", "apt_pin_positive_outside_lab_pref", lambda: (self.put("etc/apt/preferences.d/lab.pref", self.LAB_PREF),
@@ -526,7 +533,7 @@ class SelftestTests(unittest.TestCase):
         accepted = [
             lambda: self.put("etc/systemd/system/lab-lease-sdrpp.service", self.lease()),
             lambda: self.put("home/lab/.config/sdrpp/rtl_sdr_config.json", {"devices": {"LABRXA": {"directSamplingMode": 0, "gain": 20}}}),
-            lambda: self.put("var/lib/dpkg/status", "Package: librtlsdr2\nStatus: install ok installed\nVersion: 2.0.3-0+lab1\n\n"
+            lambda: self.dpkg_image("Package: librtlsdr2\nStatus: install ok installed\nVersion: 2.0.3-0+lab1\n\n"
                              "Package: direwolf\nStatus: deinstall ok config-files\nVersion: 1.7-1\n\n"
                              "Package: dream\nStatus: install ok installed\nVersion: 2.1.1-3+lab1\n\n"
                              "Package: gpredict\nStatus: install ok installed\nVersion: 2.6+git20261011-0+lab1\n\n"
@@ -582,7 +589,7 @@ class SelftestTests(unittest.TestCase):
                 report = self.run_check()
                 expected = {check for check, deps in closure.items() if name in deps}
                 self.assertTrue(expected)
-                # RX-11 is already BLOCKED (touch-only DISARM): its findings below still show the copy.
+                # A row already BLOCKED in the baseline does not flip; its findings below still show the copy.
                 flips = {check for check in expected if self.base("controller")[check] != "BLOCKED"}
                 self.assertEqual({k for k, v in self.statuses(report).items() if v != self.base("controller")[k]}, flips)
                 for check_id in expected:
@@ -685,11 +692,11 @@ class SelftestTests(unittest.TestCase):
     def test_menu_model_row_reports_each_defect(self):
         menu = self.checker_module("menu_model")
         base = self.check(self.run_check(rootfs=self.clean), "RX-11")
-        self.assertEqual(base["status"], "BLOCKED")
-        self.assertEqual({(f["rule"], f.get("item")) for f in base["findings"]}, {("critical_leaf_touch_only", "frame.disarm")})
-        # Not evaluated here, and said so: the Lab Shell menu (STACK.md:884), unit enablement, and on an
-        # overlay without the base image the interpreters (/usr/bin/python3, the venv).
-        self.assertTrue({"lab_shell_menu_not_modelled", "unit_enablement_is_an_install_step",
+        self.assertEqual(base["status"], "PASS")  # W2 FW-STOP: DISARM has its LOCK-hold glove path
+        self.assertEqual({(f["rule"], f.get("item")) for f in base["findings"]}, set())
+        # Not evaluated here, and said so: the QML Lab Shell itself (its menu model is, W2 SW-MENU), unit
+        # enablement, and on an overlay without the base image the interpreters (/usr/bin/python3, the venv).
+        self.assertTrue({"lab_shell_qml_not_built", "unit_enablement_is_an_install_step",
                          "unit_interpreter_absent_controller_overlay"} <= set(base["notes"]), base["notes"])
 
         def rx11(leaves=None, **patches):
@@ -727,13 +734,13 @@ class SelftestTests(unittest.TestCase):
                 self.assertIn(finding, findings)
         self.setUp()
         apt = leaf("overview.apt", "decoder_preset", "noaa-apt-weather", fallback_text="No accepted APT installation: the WAV stays on file")
-        self.assertEqual(rx11(menu.LEAVES + (apt,)), ("BLOCKED", {("critical_leaf_touch_only", "frame.disarm")}))
+        self.assertEqual(rx11(menu.LEAVES + (apt,)), ("PASS", set()))
         # The engine leaf fails on a unit without its binary and passes once both are staged.
         self.setUp()
         self.put("etc/systemd/system/fixture-engine.service", "[Service]\nExecStart=/usr/bin/fixture-engine --rx-only\n")
         self.assertIn(("backend_program_missing", "overview.engine"), rx11(menu.LEAVES + (engine,))[1])
         self.put("usr/bin/fixture-engine", "#!/bin/sh\n")
-        self.assertEqual(rx11(menu.LEAVES + (engine,)), ("BLOCKED", {("critical_leaf_touch_only", "frame.disarm")}))
+        self.assertEqual(rx11(menu.LEAVES + (engine,)), ("PASS", set()))
         # A missing console unit, a model defect, gesture drift or a page without builder fail.
         self.setUp()
         (self.rootfs / "usr/lib/systemd/user/srrx-menu.service").unlink()
@@ -742,7 +749,7 @@ class SelftestTests(unittest.TestCase):
         self.assertIn(("menu_model_invalid", None), rx11(menu.LEAVES + menu.LEAVES[:1])[1])
         self.assertIn(("physical_controls_drift", None), rx11(GESTURES=menu.GESTURES[::-1])[1])
         self.assertIn(("page_builder_missing", "radio"), rx11(PAGES=menu.PAGES + ({"id": "radio", "label": "Radio"},))[1])
-        # With a physical DISARM path (hypothetical model) the row passes.
+        # With the physical DISARM path patched in explicitly (the shipped LOCK hold) the row passes.
         glove = tuple(dict(item, controls={"touch": True, "keys": ("LOCK",)}) if item["id"] == "frame.disarm" else item for item in menu.LEAVES)
         self.assertEqual(rx11(glove), ("PASS", set()))
 
@@ -1024,17 +1031,17 @@ class SelftestTests(unittest.TestCase):
         self.assertFalse((self.rootfs / "report.json").exists())
         fresh = self.work / "fresh.json"
         out = subprocess.run(base + ["--output", str(fresh)], capture_output=True, text=True, env=env, timeout=120)
-        self.assertEqual(out.returncode, 2, out.stderr)  # honest BLOCKED: exit 0 only for OFFLINE_CHECKS_PASS
+        self.assertEqual(out.returncode, 0, out.stderr)  # exit 0 only for OFFLINE_CHECKS_PASS (synthetic review)
         written = json.loads(fresh.read_text(encoding="utf-8"))
-        self.assertEqual((written["tool"], written["status"]), ("srrx-selftest", "BLOCKED"))
-        self.assertEqual((written["policy_review"]["status"], written["blockers"]), ("BOUND", ["RX-11"]))
-        self.assertEqual(json.loads(out.stdout)["status"], "BLOCKED")
+        self.assertEqual((written["tool"], written["status"]), ("srrx-selftest", "OFFLINE_CHECKS_PASS"))
+        self.assertEqual((written["policy_review"]["status"], written["blockers"]), ("BOUND", []))
+        self.assertEqual(json.loads(out.stdout)["status"], "OFFLINE_CHECKS_PASS")
         bad = subprocess.run(base[:-2] + ["--cmdline-sha256", "XYZ", "--output", str(self.work / "bad.json")], capture_output=True, text=True, env=env, timeout=120)
         self.assertEqual(bad.returncode, 2)
         self.assertFalse((self.work / "bad.json").exists())
 
     def test_all_offline_rows_pass_exit_zero_and_fail_exits_two(self):
-        # Hypothetical menu model with a physical DISARM path (the one open RX-11 item) and a bound review
+        # The menu model with its physical DISARM path (the LOCK hold, patched in explicitly) and a bound review
         # record: RUNTIME_ONLY rows do not block an all-PASS offline report, which is still no hardware or
         # receive-only proof.
         menu = self.checker_module("menu_model")
@@ -1267,13 +1274,803 @@ class SelftestTests(unittest.TestCase):
         rules = ("pinned_package_present_unreviewed", "modes_py_not_found", "gpredict_binary_not_found", "critical_leaf_touch_only",
                  "backend_unit_missing", "no_lime_backend_undeclared", "voice_residual_above_noise", "voice_mask_control_removed",
                  "user_unit_in_home_directory", "unit_interpreter_missing", "unit_interpreter_absent_controller_overlay",
-                 "unavailable_preset_without_fallback", "lab_shell_menu_not_modelled",
+                 "unavailable_preset_without_fallback",  # W2 SW-MENU: the Lab Shell rule ids, LabShellMenuRowTests
                  "POLICY_REVIEW_RECORD_MISSING", "POLICY_REVIEW_RECORD_NOT_BOUND", "--policy-review")
         for rule in rules + ("tool_dependencies", "lab-lease@.service.d"):
             self.assertIn(rule, documented)
         source = (HERE / "selftest.py").read_text(encoding="utf-8")
         for rule in tuple(r for r in rules if not r.startswith("POLICY_")) + ('"tool_dependencies"', '"POLICY_REVIEW_RECORD_" + reviewed'):
             self.assertIn(rule, source)  # the documented ids are the ones the checker emits
+
+
+class PhysicalDisarmSelftestTests(unittest.TestCase):
+    """RX-11 fixtures for frame.disarm's LOCK-hold glove path (W2 FW-STOP); synthetic rootfs only.
+    It borrows the SelftestTests staging and helpers, so their cases do not run twice."""
+    setUpClass, tearDownClass = SelftestTests.__dict__["setUpClass"], SelftestTests.__dict__["tearDownClass"]
+    setUp, run_check = SelftestTests.setUp, SelftestTests.run_check
+    check, checker_module = SelftestTests.__dict__["check"], SelftestTests.__dict__["checker_module"]
+
+    def test_disarm_leaf_has_the_lock_hold_and_rx11_passes(self):
+        menu = self.checker_module("menu_model")
+        disarm = next(item for item in menu.LEAVES if item["id"] == "frame.disarm")
+        self.assertEqual((disarm["critical"], disarm["controls"]["keys"]), (True, (menu.HOLD_STOP["key"],)))
+        result = self.check(self.run_check(rootfs=self.clean), "RX-11")
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+
+    def test_touch_only_critical_leaf_is_still_blocked(self):
+        # The rule stays: a critical leaf without a key or encoder (DISARM before W2 FW-STOP) BLOCKs RX-11.
+        menu = self.checker_module("menu_model")
+        touch_only = tuple(dict(item, controls={"touch": True, "keys": ()}) if item["id"] == "frame.disarm" else item
+                           for item in menu.LEAVES)
+        with patch.object(menu, "LEAVES", touch_only):
+            report = self.run_check()
+        result = self.check(report, "RX-11")
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertEqual(result["findings"], [{"path": "software/srrx/menu_model.py", "rule": "critical_leaf_touch_only",
+                                               "effect": "BLOCKED", "item": "frame.disarm"}])
+        self.assertEqual((report["status"], report["blockers"]), ("BLOCKED", ["RX-11"]))
+
+
+class EngineLeaseRowTests(unittest.TestCase):
+    """RX-12 on a deploy.stage root that carries the three srrx-lease-<engine>@.service templates
+    (software/systemd): offline unit evaluation only; EPERM/EROFS on a Q6A stay RX-12-runtime."""
+
+    TEMPLATES = ("srrx-lease-readsb@.service", "srrx-lease-aiscatcher@.service", "srrx-lease-sdrangelsrv@.service")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="srrx-selftest-lease-")
+        cls.root = Path(cls.temp.name)
+        deploy.stage(cls.root / "stage", devices())
+        cls.clean = cls.root / "stage/rootfs"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp.cleanup()
+
+    def row(self, rootfs, profile):
+        report = selftest.run_offline(rootfs, profile, POLICY)
+        self.assertFalse(report["hardware_ready"])
+        return next(c for c in report["checks"] if c["id"] == "RX-12")
+
+    def test_rx12_evaluates_the_staged_templates_with_no_fail(self):
+        units = self.clean / "etc/systemd/system"
+        self.assertEqual(sorted(p.name for p in units.glob("srrx-lease-*")), sorted(self.TEMPLATES))
+        for profile in ("controller", "full"):
+            row = self.row(self.clean, profile)
+            self.assertEqual(row["status"], "PASS", row)
+            self.assertNotIn("no_lease_units_in_controller_profile", row["notes"])
+            self.assertIn("EPERM_EROFS_behaviour_is_RX-12-runtime", row["notes"])
+        self.assertIn(("RX-12-runtime", "DEVICE"), {(c[0], c[2]) for c in selftest.CATALOGUE})
+        # The row really reads the templates: one weakened setting in an instance drop-in fails it.
+        work = Path(tempfile.mkdtemp(prefix="case-", dir=self.root))
+        self.addCleanup(shutil.rmtree, work, True)
+        for name, text in (("srrx-lease-readsb@rtla.service.d/50-x.conf", "[Service]\nDevicePolicy=auto\n"),
+                           ("srrx-lease-sdrangelsrv@hfplus.service.d/50-x.conf", "[Service]\nReadWritePaths=/data\n"),
+                           ("srrx-lease-aiscatcher@rtlb.service.d/50-x.conf", "[Service]\nIPAddressDeny=\n")):
+            rootfs = work / name.split("/")[0]
+            shutil.copytree(self.clean, rootfs, symlinks=True)
+            dropin = rootfs / "etc/systemd/system" / name
+            dropin.parent.mkdir(parents=True)
+            dropin.write_text(text, encoding="utf-8")
+            row = self.row(rootfs, "controller")
+            self.assertEqual(row["status"], "FAIL", (name, row))
+            self.assertIn("lease_setting", {f["rule"] for f in row["findings"]})
+
+    def test_rx11_finds_the_engine_lease_operations_of_labd(self):
+        self.assertTrue({"engine_lease", "engine_stop"} <= selftest._labd_operations())
+
+
+class BasebandSchedulerRowTests(unittest.TestCase):
+    """SW-SCHED: RX-04-bb on a deploy.py stage root checks the record/decode templates, labd's drop-in and the
+    polkit rule, and that no SatDump unit is transient. Reuses the SelftestTests fixture and helpers."""
+    setUpClass = classmethod(SelftestTests.setUpClass.__func__)
+    tearDownClass = classmethod(SelftestTests.tearDownClass.__func__)
+    setUp, put, run_check = SelftestTests.setUp, SelftestTests.put, SelftestTests.run_check
+    check = staticmethod(SelftestTests.check)
+    statuses = staticmethod(SelftestTests.statuses)
+    checker_module = staticmethod(SelftestTests.checker_module)
+
+    def row(self, rootfs=None):
+        return self.check(self.run_check(rootfs=rootfs), "RX-04-bb")
+
+    @staticmethod
+    def rules(row):
+        return {(f["rule"], f["path"]) for f in row["findings"]}
+
+    def test_staged_root_passes_with_templates_rule_and_dropin(self):
+        row = self.row(self.clean)
+        self.assertEqual(row["status"], "PASS", row)
+        self.assertIn("polkit_decisions_are_the_sr-rx-system_node_harness", row["notes"])
+        for note in ("scheduler_templates_not_staged", "scheduler_files_not_staged"):
+            self.assertNotIn(note, row["notes"])
+
+    def test_each_defect_of_the_staged_units_and_rule_is_reported(self):
+        # Independent defects in one root, so the row runs twice only (TCG-cheap).
+        glue, sched = self.checker_module("satdump_pass"), self.checker_module("baseband_scheduler")
+        decode = "etc/systemd/system/" + glue.DECODE_TEMPLATE
+        self.put(decode, glue.unit_text("decode").replace("PrivateNetwork=yes\n", "") + "[Install]\nWantedBy=multi-user.target\n")
+        (self.rootfs / "etc/systemd/system" / glue.RECORD_TEMPLATE).unlink()
+        self.put(sched.POLKIT_RULE, sched.polkit_rule().replace('== "stop")', '== "stop" || action.lookup("verb") == "restart")'))
+        self.put(sched.LABD_DROPIN, sched.labd_dropin() + "SupplementaryGroups=lab\n")
+        row = self.row()
+        self.assertEqual(row["status"], "FAIL")
+        self.assertTrue({("template_differs", decode), ("decode_unit_properties", decode), ("template_not_fixed", decode),
+                         ("scheduler_file_differs", sched.POLKIT_RULE), ("scheduler_file_differs", sched.LABD_DROPIN)}
+                        <= self.rules(row), row)
+        self.assertIn("scheduler_templates_not_staged", row["notes"])
+        self.setUp()
+        with patch.object(glue, "transient_units", lambda: ["[Service]\nUser=root\n"]), \
+                patch.object(sched, "UNIT_PATTERN", r"^srrx-.*\.service$"):
+            found = {f["rule"] for f in self.row()["findings"]}
+        self.assertTrue({"transient_units_present", "polkit_rule_scope"} <= found, found)
+
+
+class ImageAptAndPinOnlyTests(unittest.TestCase):
+    """W2 IMG-1: embloader's version_rule (allow_only 0.4, the boot-chain recipe's version) and the
+    repository lab.pref, with its -1 pattern stanzas, on minimal synthetic roots (RX-01a, RX-16)."""
+
+    def run_row(self, row_id, files):
+        with tempfile.TemporaryDirectory(prefix="srrx-img1-") as temp:
+            root = Path(temp)
+            for rel, data in files.items():
+                (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                (root / rel).write_bytes(data.encode() if isinstance(data, str) else data)
+            policy = selftest.load_policy(POLICY)
+            ctx = selftest.Ctx(root, "controller", policy, deploy.PROJECT, {}, None, None, None)
+            result = selftest.Result(next(row for row in selftest.CATALOGUE if row[0] == row_id))
+            getattr(selftest, "check_" + row_id[3:].replace("-", "_").lower())(ctx, result)
+            return {(f["rule"], f.get("item")) for f in result.findings}, policy
+
+    @staticmethod
+    def status(**packages):
+        return "".join("Package: %s\nStatus: install ok installed\nVersion: %s\n\n" % kv for kv in packages.items())
+
+    def test_embloader_0_4_passes_and_any_other_version_blocks(self):
+        found, policy = self.run_row("RX-01a", {"var/lib/dpkg/status": self.status(embloader="0.4", bash="5.2.21-2ubuntu4")})
+        self.assertEqual(found, set())
+        entry = next(e for e in policy["forbidden_packages"] if e.get("name") == "embloader")
+        self.assertEqual((entry["check"], entry["version_rule"]), ("pin_only", {"allow_only": ["0.4"]}))
+        self.assertEqual(json.loads((HERE / "image/recipe.json").read_text(encoding="utf-8"))["routes"]["B"]["embloader_version"], "0.4")
+        self.assertEqual(policy["status"], "DRAFT")  # a content rule, not a review
+        for version in ("0.5", "0.4.1", "0.7"):
+            found, _ = self.run_row("RX-01a", {"var/lib/dpkg/status": self.status(embloader=version)})
+            self.assertEqual(found, {("pinned_package_present_unreviewed", "embloader")}, version)
+        # Every other pin_only entry still waits for the Phase 0 matrix: present means BLOCKED.
+        others = [e for e in policy["forbidden_packages"] if e["check"] == "pin_only" and e.get("name") != "embloader"]
+        self.assertTrue(others and not any("version_rule" in e for e in others))
+        found, _ = self.run_row("RX-01a", {"var/lib/dpkg/status": self.status(**{"dragonwing-defaults": "1.21", "libsnpe1": "2.42"})})
+        self.assertEqual(found, {("pinned_package_present_unreviewed", "dragonwing-defaults"), ("pinned_package_present_unreviewed", "libsnpe*")})
+
+    def test_repository_lab_pref_with_its_minus_one_stanzas_passes_rx16(self):
+        files = {"etc/apt/preferences.d/lab.pref": (HERE / "repo/lab.pref").read_bytes(),
+                 "etc/apt/preferences.d/srrx-boot-route-a.pref": (HERE / "image/files/srrx-boot-route-a.pref").read_bytes(),
+                 "etc/apt/sources.list.d/srrx-lab.sources": (HERE / "repo/srrx-lab.sources").read_bytes(),
+                 "etc/apt/sources.list.d/srrx-mirror.sources": (HERE / "repo/srrx-mirror.sources").read_bytes(),
+                 # what the image builder leaves of r2's entries: apt reads neither name
+                 "etc/apt/sources.list.d/50-noble.list.srrx-disabled": "deb http://ports.ubuntu.com/ubuntu-ports noble main\n",
+                 "etc/apt/preferences.d/ubuntu-pro-esm-apps.srrx-disabled": "Package: *\nPin: release o=UbuntuESMApps\nPin-Priority: 510\n"}
+        found, _ = self.run_row("RX-16", files)
+        self.assertEqual(found, set())
+        broken = dict(files)
+        broken["etc/apt/preferences.d/lab.pref"] = (HERE / "repo/lab.pref").read_text(encoding="utf-8") + "\nPackage: wsjtx\nPin: release *\nPin-Priority: 5\n"
+        self.assertIn(("apt_pin_positive_extra", None), self.run_row("RX-16", broken)[0])
+        broken["etc/apt/preferences.d/lab.pref"] = "Package: *\nPin: release o=srrx-lab\nPin-Priority: -1\n\n" + (HERE / "repo/lab.pref").read_text(encoding="utf-8")
+        self.assertIn(("lab_pref_structure", None), self.run_row("RX-16", broken)[0])
+
+
+class SweepInterpreterRowTests(unittest.TestCase):
+    """W2 IMG-3: RX-04-bb holds the staged srrx-baseband-sweep.service/.timer to srrx.satdump_pass.sweep_units(), so the
+    24 h deletion runs its reviewed interpreter (r2's /usr/bin/python3; deployment/image/recipe.json unit_interpreters).
+    Reuses the SelftestTests fixture; three RX runs (TCG-cheap)."""
+    setUpClass = classmethod(SelftestTests.setUpClass.__func__)
+    tearDownClass = classmethod(SelftestTests.tearDownClass.__func__)
+    setUp, put, run_check = SelftestTests.setUp, SelftestTests.put, SelftestTests.run_check
+    check = staticmethod(SelftestTests.check)
+    checker_module = staticmethod(SelftestTests.checker_module)
+
+    from importlib.util import find_spec as _find_spec
+
+    def row(self, rootfs=None):
+        return self.check(self.run_check(rootfs=rootfs), "RX-04-bb")
+
+    @unittest.skipUnless(_find_spec("numpy"), "RX-04-bb probes need NumPy")
+    def test_staged_sweep_unit_passes_and_another_interpreter_fails(self):
+        glue = self.checker_module("satdump_pass")
+        units = glue.sweep_units()
+        service = "etc/systemd/system/srrx-baseband-sweep.service"
+        self.assertIn("\nExecStart=/usr/bin/python3 -P -s -B -m srrx.baseband sweep ", units[service])
+        row = self.row(self.clean)
+        self.assertEqual(row["status"], "PASS", row)
+        self.assertNotIn("sweep_units_not_staged", row["notes"])
+        self.put(service, units[service].replace("ExecStart=/usr/bin/python3 ", "ExecStart=/usr/bin/env /opt/srrx/passes-venv/bin/python3 "))
+        row = self.row()
+        self.assertEqual(row["status"], "FAIL", row)
+        self.assertIn(("sweep_unit_differs", service), {(f["rule"], f["path"]) for f in row["findings"]})
+        self.setUp()
+        (self.rootfs / "etc/systemd/system/srrx-baseband-sweep.timer").unlink()  # a root without it: noted, not failed
+        row = self.row()
+        self.assertEqual(row["status"], "PASS", row)
+        self.assertIn("sweep_units_not_staged", row["notes"])
+
+
+class LabShellMenuRowTests(unittest.TestCase):
+    """W2 SW-MENU: RX-11 evaluates srrx.lab_shell_menu (STACK.md:884) on the same root as the console model:
+    capability check from the root, hidden leaves listed with reasons, visible leaves reached in depth.
+    Synthetic deploy.py stage roots only; the QML Lab Shell is not built. Reuses the SelftestTests fixture."""
+    setUpClass = classmethod(SelftestTests.setUpClass.__func__)
+    tearDownClass = classmethod(SelftestTests.tearDownClass.__func__)
+    setUp, put, run_check, dpkg_image = SelftestTests.setUp, SelftestTests.put, SelftestTests.run_check, SelftestTests.dpkg_image
+    check = staticmethod(SelftestTests.check)
+    checker_module = staticmethod(SelftestTests.checker_module)
+    # What a deploy.py stage root shows today: labd operations and staged srrx modules, nothing that needs
+    # a +lab package, the Lime, the T7 or a backend PLANNED lists.
+    VISIBLE = {"home.tiles", "home.stop", "satellites.passes", "satellites.tle", "hf.band_survey", "hf.antenna",
+               "spectrum.waterfall", "spectrum.survey", "spectrum.measure", "spectrum.interference_hunt", "spectrum.noise_floor",
+               "instruments.bench", "instruments.rf_path", "signals_ai.label", "signals_ai.train", "signals_ai.models",
+               "recordings.export", "map_point.live_map", "gnss_time.fix", "gnss_time.egnos", "gnss_time.time_sources",
+               "gnss_time.reset", "system.power", "system.profiles", "system.storage", "system.shutdown"}
+    LEASE = "etc/systemd/system/srrx-lease-sdrangelsrv@.service"
+
+    @staticmethod
+    def hidden(result):
+        """{leaf id: reasons} from the lab_shell_hidden:<id>:<reason,...> notes."""
+        out = {}
+        for note in result["notes"]:
+            if note.startswith("lab_shell_hidden:"):
+                _, item, reasons = note.split(":", 2)
+                out[item] = reasons
+        return out
+
+    def rx11(self, rootfs=None, leaves=None):
+        shell = self.checker_module("lab_shell_menu")
+        with patch.object(shell, "LEAVES", shell.LEAVES if leaves is None else tuple(leaves)):
+            return self.check(self.run_check(rootfs=rootfs), "RX-11")
+
+    def sdrangel_leaves(self, shell):
+        return {item["id"] for item in shell.LEAVES if "srrx-lease-sdrangelsrv@.service" in item["requires"]["units"]
+                and not item["backend"]["name"].startswith(shell.PLANNED_PREFIX) and item["allowlist"]["name"] != "demoddsc"}
+
+    def test_staged_root_lists_every_hidden_leaf_with_its_reasons(self):
+        shell = self.checker_module("lab_shell_menu")
+        result = self.rx11(self.clean)
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        self.assertNotIn("lab_shell_menu_not_modelled", result["notes"])
+        self.assertIn("lab_shell_qml_not_built", result["notes"])
+        self.assertIn("software/srrx/lab_shell_menu.py LEAVES", result["sources"])
+        hidden = self.hidden(result)
+        self.assertEqual(set(hidden), {item["id"] for item in shell.LEAVES} - self.VISIBLE)
+        for item, reason in (("hf.wefax", "package_deferred:openwebrx"), ("satellites.hrpt", "no_lime"), ("system.lime_power", "no_lime"),
+                             ("satellites.safetynet", "preset:egc-safetynet=DISABLED_NO_VERIFIED_HEADER_PARSER_AND_TEST_VECTORS"),
+                             ("air_sea.adsb", "package_missing:readsb"), ("hf.navtex", "package_missing:sdrangelsrv"),
+                             ("hf.dsc", "denied:sdrangel:demoddsc"), ("signals_ai.dataset_export", "no_t7"),
+                             ("home.back", "planned:labinput"), ("system.bluetooth", "hidden:bluetooth_off_permanently")):
+            self.assertIn(reason, hidden[item].split(","), (item, hidden[item]))
+
+    def test_installed_engine_and_lime_show_their_leaves_and_each_is_reached(self):
+        shell, menu = self.checker_module("lab_shell_menu"), self.checker_module("menu_model")
+        lease_leaves = self.sdrangel_leaves(shell)
+        self.assertGreaterEqual(len(lease_leaves), 10)
+        # The Lime build (devices.json and a Lime runtime library), sdrangelsrv on the search path and a T7 leaf
+        # on a module outside the console's closure: visible with the T7, so it is reached although listed hidden.
+        t7 = shell._leaf("recordings.fixture_t7", "Fixture", "page_only", "timegate", t7=True, fallback="fixture fallback")
+        devices = json.loads((self.rootfs / "etc/srrx/devices.json").read_text(encoding="utf-8"))
+        devices["lime"]["enabled"] = True
+        self.put("etc/srrx/devices.json", devices)
+        self.put("usr/lib/aarch64-linux-gnu/liblimesuiteng.so.24", "x")
+        self.put("usr/bin/sdrangelsrv", "#!fixture\n")
+        result = self.rx11(leaves=shell.LEAVES + (t7,))
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        hidden = self.hidden(result)
+        self.assertFalse((lease_leaves | {"system.lime_power"}) & set(hidden), hidden)
+        self.assertEqual(hidden["recordings.fixture_t7"], "no_t7")
+        self.assertNotIn("no_lime", hidden["satellites.hrpt"].split(","))
+        self.assertIn("unit_interpreter_absent_controller_overlay", result["notes"])  # /usr/bin/env: no base image
+        # Reached in depth: a changed target copy of the T7 leaf's module and a lease unit that runs another program.
+        target = self.rootfs / "opt/srrx/software/srrx/timegate.py"
+        target.write_text(target.read_text(encoding="utf-8") + "\n# changed target copy\n", encoding="utf-8")
+        self.put(self.LEASE + ".d/50-other.conf", "[Service]\nExecStart=\nExecStart=/usr/bin/env other-engine --rx\n")
+        result = self.rx11(leaves=shell.LEAVES + (t7,))
+        self.assertEqual(result["status"], "FAIL")
+        self.assertIn({"path": "opt/srrx/software/srrx/timegate.py", "rule": "target_module_differs", "effect": "BLOCKED"}, result["findings"])
+        mismatched = {f["item"] for f in result["findings"] if f["rule"] == "lab_shell_unit_program_mismatch"}
+        self.assertEqual(mismatched, lease_leaves)
+        self.assertEqual(menu.HOLD_STOP["key"], "LOCK")
+
+    def test_full_image_needs_the_unit_interpreters_of_a_visible_lease(self):
+        shell = self.checker_module("lab_shell_menu")
+        self.dpkg_image("Package: base-files\nStatus: install ok installed\nVersion: 13ubuntu10\n\n")
+        self.put("usr/bin/sdrangelsrv", "#!fixture\n")
+        result = self.rx11()
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        self.assertNotIn("unit_interpreter_absent_controller_overlay", result["notes"])
+        self.assertFalse(self.sdrangel_leaves(shell) & set(self.hidden(result)))
+        (self.rootfs / "usr/bin/env").unlink()
+        result = self.rx11()
+        self.assertEqual(result["status"], "BLOCKED")
+        blocked = {f["item"] for f in result["findings"] if f["rule"] == "unit_interpreter_missing"}
+        self.assertTrue(self.sdrangel_leaves(shell) <= blocked, blocked)
+
+    def test_model_defects_are_findings_and_a_touch_only_critical_leaf_blocks(self):
+        shell = self.checker_module("lab_shell_menu")
+        defects = (shell._leaf("system.fixture_tx", "Fixture", "labd_op", "transmit"),
+                   shell._leaf("system.fixture_lime", "Fixture", "labd_op", "status", lime=True),
+                   shell._leaf("system.fixture_t7", "Fixture", "labd_op", "status", t7=True),
+                   shell._leaf("system.fixture_module", "Fixture", "labd_op", "status", modules=("no_such_module",)),
+                   shell._leaf("system.fixture_stop", "Fixture", "labd_op", "disarm", critical=True))
+        result = self.rx11(self.clean, shell.LEAVES + defects)
+        self.assertEqual(result["status"], "FAIL")
+        where = "software/srrx/lab_shell_menu.py"
+        self.assertEqual({(f["rule"], f["item"], f["effect"]) for f in result["findings"] if f["path"] == where},
+                         {("lab_shell_backend_unknown", "system.fixture_tx", "FAIL"),
+                          ("no_lime_backend_undeclared", "system.fixture_lime", "FAIL"),
+                          ("no_t7_backend_undeclared", "system.fixture_t7", "FAIL"),
+                          ("lab_shell_requirement_unknown", "system.fixture_module", "FAIL"),
+                          ("critical_leaf_touch_only", "system.fixture_stop", "BLOCKED")})
+        result = self.rx11(self.clean, shell.LEAVES + shell.LEAVES[:1])
+        self.assertEqual(result["findings"], [{"path": where, "rule": "lab_shell_menu_invalid", "effect": "FAIL"}])
+
+    def test_rule_ids_are_emitted_and_documented(self):
+        source = (HERE / "selftest.py").read_text(encoding="utf-8")
+        documented = "\n".join((deploy.PROJECT / name).read_text(encoding="utf-8") for name in ("software/HMI.md", "build/09-testy.md"))
+        for rule in ("lab_shell_menu_invalid", "lab_shell_backend_unknown", "lab_shell_requirement_unknown",
+                     "lab_shell_unit_program_mismatch", "lab_shell_hidden", "lab_shell_critical_hidden", "lab_shell_qml_not_built"):
+            self.assertIn(rule, source)
+            self.assertIn(rule, documented)
+        self.assertNotIn("lab_shell_menu_not_modelled", source)
+
+    # W2 SW-MENU review fixes.
+    def test_hidden_critical_leaves_get_their_own_note(self):
+        # A PASS covers the controls the critical leaves declare: BACK, the encoders and LOCK have no
+        # backend yet (labinput, the touch lock), and every report names them (МЕН-03/Д-06 OPEN).
+        result = self.rx11(self.clean)
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        critical = {n.split(":", 2)[1]: n.split(":", 2)[2] for n in result["notes"] if n.startswith("lab_shell_critical_hidden:")}
+        self.assertEqual(critical, {"home.back": "planned:labinput", "home.encoders": "planned:labinput",
+                                    "home.lock": "planned:touch_lock"})
+
+    def test_lease_units_are_system_units_only(self):
+        shell = self.checker_module("lab_shell_menu")
+        lease_leaves = self.sdrangel_leaves(shell)
+        self.put("usr/bin/sdrangelsrv", "#!fixture\n")
+        # A drop-in in a user unit directory does not apply to the system lease unit.
+        self.put("etc/systemd/user/srrx-lease-sdrangelsrv@.service.d/50-other.conf",
+                 "[Service]\nExecStart=\nExecStart=/usr/bin/env other-engine --rx\n")
+        result = self.rx11()
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        self.assertFalse(lease_leaves & set(self.hidden(result)))
+        # A lease template only in a user unit directory is not the lease: its leaves stay hidden.
+        text = (self.rootfs / self.LEASE).read_text(encoding="utf-8")
+        (self.rootfs / self.LEASE).unlink()
+        self.put("usr/lib/systemd/user/srrx-lease-sdrangelsrv@.service", text)
+        hidden = self.hidden(self.rx11())
+        for item in lease_leaves:
+            self.assertIn("unit_missing:srrx-lease-sdrangelsrv@.service", hidden[item].split(","), item)
+
+    def test_engine_unit_leaf_is_reached_through_its_unit(self):
+        shell = self.checker_module("lab_shell_menu")
+        user = shell._leaf("system.fixture_user_unit", "Fixture", "engine_unit", "srrx-menu.service", scope="user", program="srrx.hmi")
+        system = shell._leaf("system.fixture_system_unit", "Fixture", "engine_unit", "srrx.service", scope="system", program="srrx.daemon")
+        wrong = shell._leaf("system.fixture_program", "Fixture", "engine_unit", "srrx.service", scope="system", program="srrx.labrx")
+        result = self.rx11(leaves=shell.LEAVES + (user, system))
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        self.assertFalse({"system.fixture_user_unit", "system.fixture_system_unit"} & set(self.hidden(result)))
+        result = self.rx11(leaves=shell.LEAVES + (user, system, wrong))
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual({(f["rule"], f["item"]) for f in result["findings"]}, {("backend_program_missing", "system.fixture_program")})
+        (self.rootfs / "usr/lib/systemd/user/srrx-menu.service").unlink()
+        self.assertEqual(self.hidden(self.rx11(leaves=shell.LEAVES + (user,)))["system.fixture_user_unit"], "unit_missing:srrx-menu.service")
+
+    def test_an_allowlist_entry_the_policy_does_not_know_fails(self):
+        shell = self.checker_module("lab_shell_menu")
+        typo = shell._lease("hf.fixture_typo", "Fixture", "demodnavtexx")
+        mode = shell._leaf("hf.fixture_mode", "Fixture", "page_only", "spectrum", allowlist=("openwebrx", "faxx"))
+        result = self.rx11(self.clean, shell.LEAVES + (typo, mode))
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual({(f["path"], f["rule"], f["item"]) for f in result["findings"]},
+                         {("software/srrx/lab_shell_menu.py", "lab_shell_requirement_unknown", "hf.fixture_typo"),
+                          ("software/srrx/lab_shell_menu.py", "lab_shell_requirement_unknown", "hf.fixture_mode")})
+        self.assertIn("not_allowlisted:openwebrx:faxx", self.hidden(result)["hf.fixture_mode"].split(","))
+
+
+class WsjtDecodersTests(unittest.TestCase):
+    """W2 SW-WSJT: the lab-wsjt-decoders recipe (jt9, wsprd and the wsjtx_app_version stub only), its
+    runtime_check.py output parsing, and RX-01b's stub check on minimal synthetic roots. No decoder
+    runs here; the decodes of the tag samples are the sr-rx-packages runtime check (CI model)."""
+    RECIPE_DIR = HERE / "recipes" / "wsjt-decoders"
+
+    @classmethod
+    def setUpClass(cls):
+        import importlib.util
+        sys.path.insert(0, str(HERE / "recipes"))
+        import build_recipe
+        cls.build_recipe = build_recipe
+        cls.recipe = deploy.load(cls.RECIPE_DIR / "recipe.json")
+        spec = importlib.util.spec_from_file_location("srrx_wsjt_runtime_check", cls.RECIPE_DIR / "runtime_check.py")
+        cls.runtime = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.runtime)
+        cls.policy = selftest.load_policy(POLICY)
+        stub = cls.policy["components"]["lab-wsjt-decoders"]["app_version_stub"]
+        cls.stub = ("\n".join(stub["lines"]) + "\n").encode()
+
+    def rx01b(self, files, links=()):
+        with tempfile.TemporaryDirectory(prefix="srrx-wsjt-") as temp:
+            root = Path(temp)
+            for rel, data in files.items():
+                (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                (root / rel).write_bytes(data)
+            for rel, target in links:
+                (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                try:
+                    os.symlink(target, root / rel)
+                except OSError as exc:  # unprivileged Windows host only; Linux CI always creates links
+                    self.skipTest("symlinks unavailable: " + str(exc))
+            ctx = selftest.Ctx(root, "full", self.policy, deploy.PROJECT, {}, None, None, None)
+            result = selftest.Result(next(row for row in selftest.CATALOGUE if row[0] == "RX-01b"))
+            selftest.check_01b(ctx, result)
+            return {(f["rule"], f["path"]) for f in result.findings}, result.notes
+
+    def test_recipe_builds_only_jt9_wsprd_and_ships_the_policy_stub(self):
+        component = self.build_recipe.validate_recipe(self.recipe)
+        self.assertEqual((component["id"], component["version"], component["tag"]), ("wsjt-decoders", "2.7.0+lab1", "wsjtx-2.7.0"))
+        self.assertEqual(self.recipe["source"]["member"]["path"], "wsjtx-2.7.0/src/wsjtx.tgz")
+        self.assertEqual(self.recipe["build"], [["cmake", "--build", "{build}", "--target", "jt9", "wsprd", "--parallel", "{jobs}"]])
+        options = self.recipe["cmake"]["options"]
+        self.assertEqual((options["WSJT_BUILD_UTILS"], options["WSJT_GENERATE_DOCS"], options["WSJT_SKIP_MANPAGES"]), ("OFF", "OFF", "ON"))
+        self.assertEqual(len(options), 14)  # every option() of the 2.7.0 tree (CMakeLists.txt:112-141), checked again by the build
+        self.assertEqual([p["name"] for p in self.recipe["packages"]], ["lab-wsjt-decoders"])
+        self.assertEqual(sorted(self.recipe["packages"][0]["files"]), ["usr/bin/jt9", "usr/bin/wsjtx_app_version", "usr/bin/wsprd",
+                                                                       "usr/share/doc/lab-wsjt-decoders/COPYING"])
+        self.assertIn({"from": "{recipe}/files/wsjtx_app_version", "to": "usr/bin"}, self.recipe["install"]["copy"])
+        # libhamlib-dev only in this chroot for configure; the binaries must not link it.
+        self.assertIn("libhamlib-dev", self.recipe["build_depends"])
+        needed = next(c for c in self.recipe["checks"] if c["kind"] == "forbid_needed")
+        self.assertEqual(needed["files"], ["usr/bin/jt9", "usr/bin/wsprd"])
+        self.assertIn("libhamlib*", needed["needed"])
+        forbidden = next(c for c in self.recipe["checks"] if c["kind"] == "forbid_paths")["globs"]
+        for path in ("usr/bin/wsjtx", "usr/bin/rigctl", "usr/bin/rigctld-wsjtx", "usr/bin/jt9code", "usr/bin/ft8sim", "usr/lib/libhamlib.so.4"):
+            self.assertTrue(any(fnmatch.fnmatchcase(path, g) for g in forbidden), path)
+        for path in self.recipe["packages"][0]["files"]:
+            self.assertFalse(any(fnmatch.fnmatchcase(path, g) for g in forbidden), path)
+        self.assertEqual(self.recipe["ci"], {"heavy": False, "runtime_depends": [], "tag_samples": list(self.runtime.SAMPLES)})
+        self.assertEqual((self.RECIPE_DIR / "files/wsjtx_app_version").read_bytes(), self.stub)
+        self.assertEqual(self.stub, b"#!/bin/sh\necho 'WSJT-X 2.7.0'\n")  # 2 lines; prints what OpenWebRX+ reads
+        if os.name == "posix":
+            self.assertTrue(os.access(self.RECIPE_DIR / "files/wsjtx_app_version", os.X_OK))
+        with patch.object(self.build_recipe, "DEPLOYMENT", HERE):
+            plan = self.build_recipe.ci_plan()
+        self.assertIn("wsjt-decoders", plan["light"])
+        self.assertTrue(plan["recipes"]["wsjt-decoders"]["runtime_check"])
+
+    def test_runtime_check_counts_decodes_and_finds_hamlib(self):
+        ft8 = ("133430 -12  0.3 1234 ~  CQ K1ABC FN42                          \n"
+               "133430   5 -0.5  456 ~  K1ABC W9XYZ -11                         a1\n"
+               "<DecodeFinished>   2   2        0\n"
+               "133430 -20  1.1 2001 ~  W9XYZ K1ABC RR73                        \n"
+               "<DecodeFinished>   1   1        0\n")
+        self.assertEqual(self.runtime.ft8_messages(ft8), ["CQ K1ABC FN42", "K1ABC W9XYZ -11                         a1", "W9XYZ K1ABC RR73"])
+        wspr = ("0918  -9  0.2   0.001456  0  K1JT FN20 30 \n0918 -25 -1.0   0.001523 -1  W9XYZ EN37 37 \n<DecodeFinished>\n"
+                "0918   1  0.1   0.001500  0  AFTER FINISH 10 \n")
+        self.assertEqual(self.runtime.wspr_messages(wspr), ["K1JT FN20 30", "W9XYZ EN37 37"])
+        self.assertEqual(self.runtime.ft8_messages("EOF on input file x.wav\n"), [])
+        self.assertTrue(self.runtime.finished(ft8) and self.runtime.finished(wspr))  # jt9 appends counts to the marker
+        self.assertFalse(self.runtime.finished("133430 -12  0.3 1234 ~  CQ K1ABC FN42\n"))
+        ldd = "\tlibgfortran.so.5 => /lib/x.so (0x1)\n\tlibhamlib.so.4 => /lib/y.so (0x2)\n"
+        self.assertEqual(self.runtime.hamlib_libraries(ldd), ["libhamlib.so.4"])
+        self.assertEqual(self.runtime.STUB_OUTPUT.encode(), self.stub.split(b"\n")[1].split(b"'")[1] + b"\n")
+
+    def test_rx01b_accepts_only_the_stub_as_wsjtx_app_version(self):
+        elf = selftest.ELF_MAGIC + b"\x02\x01\x01" + b"\0" * 57
+        found, notes = self.rx01b({"usr/bin/jt9": elf, "usr/bin/wsprd": elf, "usr/bin/wsjtx_app_version": self.stub})
+        self.assertEqual((found, notes), (set(), ["lab_wsjt_decoders_present"]))
+        self.assertEqual(self.rx01b({"usr/bin/bash": elf}), (set(), ["lab_wsjt_decoders_absent"]))
+        for rel, data in (("usr/bin/wsjtx_app_version", elf), ("usr/bin/wsjtx_app_version", self.stub + b"exec /opt/wsjtx/bin/wsjtx\n"),
+                          ("usr/bin/wsjtx_app_version", self.stub.replace(b"2.7.0", b"2.6.1")), ("opt/other/bin/WSJTX_APP_VERSION", elf)):
+            found, _ = self.rx01b({"usr/bin/jt9": elf, rel: data})
+            self.assertEqual(found, {("wsjtx_app_version_not_stub", rel)}, rel)
+        # The stub's name is not a forbidden basename; the GUI's is.
+        self.assertNotIn("wsjtx_app_version", deploy.forbidden_basenames(self.policy))
+        self.assertIn(("forbidden_basename", "usr/bin/wsjtx"), self.rx01b({"usr/bin/wsjtx": elf})[0])
+        # Links last: an unprivileged Windows host skips from here.
+        found, _ = self.rx01b({"usr/lib/srrx/wsjtx_app_version": self.stub}, links=(("usr/bin/wsjtx_app_version", "/usr/lib/srrx/wsjtx_app_version"),))
+        self.assertEqual(found, set())  # a link to the stub is the stub
+        found, _ = self.rx01b({}, links=(("usr/bin/wsjtx_app_version", "/opt/missing"),))
+        self.assertEqual(found, {("wsjtx_app_version_not_a_file", "usr/bin/wsjtx_app_version")})
+
+
+class AdsbLeaseRowTests(unittest.TestCase):
+    """W2 SW-ADSB: RX-12-readsb on a deploy.stage root (the staged srrx-lease-readsb@.service and
+    srrx.adsb_filter), with a fake readsb ELF and a fake readelf where the binary matters. Offline
+    unit text only; reception and the accepted database are device evidence."""
+
+    GOOD = readelf(None, ["librtlsdr.so.2", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6", "ld-linux-aarch64.so.1"])  # run 42406849942
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="srrx-selftest-adsb-")
+        cls.root = Path(cls.temp.name)
+        deploy.stage(cls.root / "stage", devices())
+        cls.clean = cls.root / "stage/rootfs"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp.cleanup()
+
+    def copy(self, files=None, remove=()):
+        work = Path(tempfile.mkdtemp(prefix="case-", dir=self.root))
+        self.addCleanup(shutil.rmtree, work, True)
+        rootfs = work / "rootfs"
+        shutil.copytree(self.clean, rootfs, symlinks=True)
+        for rel, data in (files or {}).items():
+            path = rootfs / rel
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data if isinstance(data, bytes) else data.encode("utf-8"))
+        for rel in remove:
+            (rootfs / rel).unlink()
+        return rootfs
+
+    def row(self, rootfs, profile="controller", policy=POLICY, outputs=None):
+        report = selftest.run_offline(rootfs, profile, policy, runner=FakeTools({"readsb": self.GOOD} if outputs is None else outputs))
+        self.assertFalse(report["hardware_ready"] or report["receive_only_proven"])
+        return next(c for c in report["checks"] if c["id"] == "RX-12-readsb")
+
+    @staticmethod
+    def rules(row):
+        return {(f["rule"], f.get("item")) for f in row["findings"]}
+
+    def test_catalogue_row_extends_the_lease_row_and_keeps_rx17(self):
+        rows = {c[0]: c for c in selftest.CATALOGUE}
+        self.assertEqual((rows["RX-12-readsb"][1], rows["RX-12-readsb"][2]), (12, "OFFLINE"))
+        self.assertIn("kernel/cmdline", rows["RX-17"][3])  # RX-17 stays the command line row
+        self.assertIs(selftest.CHECKS["RX-12-readsb"], selftest.check_12_readsb)
+
+    def test_staged_template_passes_and_readsb_follows_the_profile_rule(self):
+        row = self.row(self.clean)
+        self.assertEqual((row["status"], row["findings"]), ("PASS", []), row)
+        self.assertIn("readsb_absent", row["notes"])
+        full = self.row(self.clean, "full")
+        self.assertEqual((full["status"], self.rules(full)), ("BLOCKED", {("component_not_found", "readsb")}))
+        rootfs = self.copy({"usr/bin/readsb": FAKE_ELF})
+        self.assertEqual(self.row(rootfs, "full")["status"], "PASS")
+        self.assertEqual(self.rules(self.row(rootfs)), {("radio_application_in_controller_profile", None)})
+
+    def test_each_defect_flips_the_row(self):
+        lease = "etc/systemd/system/srrx-lease-readsb@rtla.service.d/50-x.conf"
+        net = deploy.load(POLICY)["components"]["readsb"]["exec_start"] + " --net --net-sbs-port 30003"
+        cases = [
+            ("dependency_outside_allowlist", None, {"usr/bin/readsb": FAKE_ELF}, (),
+             {"readsb": readelf(None, ["librtlsdr.so.2", "libSoapySDR.so.0.8", "libc.so.6"])}),
+            ("forbidden_symbol_imported", "rtlsdr_set_bias_tee", {"usr/bin/readsb": FAKE_ELF}, (),
+             {"readsb": self.GOOD.replace("UND rtlsdr_undefined_import", "UND rtlsdr_set_bias_tee")}),
+            ("exec_start_not_allowlisted", None, {lease: "[Service]\nExecStart=\nExecStart=" + net + "\n"}, (), None),
+            ("denied_option", "net-sbs-port", {lease: "[Service]\nExecStart=\nExecStart=" + net + "\n"}, (), None),
+            ("lease_setting", "StandardError", {lease: "[Service]\nStandardError=journal\n"}, (), None),
+            ("filter_step_not_allowlisted", "ExecStartPost", {lease: "[Service]\nExecStartPost=\n"}, (), None),
+            ("filter_step_not_allowlisted", "ExecStartPre", {lease: "[Service]\nExecStartPre=-/bin/true\n"}, (), None),
+            # Review SWADSB-R1: a command beside the filter steps, or an environment or mount that swaps what runs.
+            ("exec_key_not_allowlisted", "ExecStop", {lease: "[Service]\nExecStop=/bin/cp /run/srrx-lease-readsb-rtla/json/aircraft.json "
+                                                             "/data/products/readsb-rtla/raw.json\n"}, (), None),
+            ("exec_key_not_allowlisted", "ExecReload", {lease: "[Service]\nExecReload=/bin/true\n"}, (), None),
+            ("exec_key_not_allowlisted", "ExecCondition", {lease: "[Service]\nExecCondition=/bin/true\n"}, (), None),
+            ("lease_setting", "Environment", {lease: "[Service]\nEnvironment=PYTHONPATH=/var/tmp/other\n"}, (), None),
+            ("lease_setting", "Environment", {lease: "[Service]\nEnvironment=\nEnvironment=HOME=/var/tmp\n"}, (), None),
+            ("lease_setting", "EnvironmentFile", {lease: "[Service]\nEnvironmentFile=\nEnvironmentFile=/var/tmp/x.env\n"
+                                                         "EnvironmentFile=-%t/srrx-lease-readsb-%i/readsb.env\n"}, (), None),
+            ("lease_setting", "PassEnvironment", {lease: "[Service]\nPassEnvironment=PYTHONPATH\n"}, (), None),
+            ("lease_setting", "UnsetEnvironment", {lease: "[Service]\nUnsetEnvironment=PYTHONPATH\n"}, (), None),
+            ("lease_setting", "ExecSearchPath", {lease: "[Service]\nExecSearchPath=/var/tmp/bin\n"}, (), None),
+            ("lease_setting", "BindReadOnlyPaths", {lease: "[Service]\nBindReadOnlyPaths=/var/tmp/srrx:/opt/srrx/software/srrx\n"}, (), None),
+            ("lease_setting", "RuntimeDirectoryMode", {lease: "[Service]\nRuntimeDirectoryMode=0755\n"}, (), None),
+            ("lease_setting", "UMask", {lease: "[Service]\nUMask=0000\n"}, (), None),
+            ("readsb_outside_lease", None, {"etc/systemd/system/adsb.service": "[Service]\nExecStart=/usr/bin/env readsb --net\n"}, (), None),
+            ("web_ui_present", None, {"usr/share/tar1090/html/index.html": "<html></html>\n"}, (), None),
+            ("adsb_filter_missing", None, {}, ("opt/srrx/software/srrx/adsb_filter.py",), None),
+        ]
+        for rule, item, files, remove, outputs in cases:
+            with self.subTest(rule=rule, item=item):
+                row = self.row(self.copy(files, remove), "full" if "usr/bin/readsb" in files else "controller", outputs=outputs)
+                self.assertEqual(row["status"], "FAIL", row)
+                self.assertIn((rule, item), self.rules(row))
+        changed = self.copy({"opt/srrx/software/srrx/adsb_filter.py": (deploy.PROJECT / "software/srrx/adsb_filter.py").read_text(encoding="utf-8") + "\n# changed\n"})
+        row = self.row(changed)
+        self.assertEqual((row["status"], self.rules(row)), ("BLOCKED", {("adsb_filter_differs", None)}))
+        # readsb present without its filter lease.
+        row = self.row(self.copy({"usr/bin/readsb": FAKE_ELF}, ("etc/systemd/system/srrx-lease-readsb@.service",)), "full")
+        self.assertIn(("readsb_without_filter_lease", None), self.rules(row))
+
+    def test_deny_layer_catches_a_policy_that_allowlists_a_network_option(self):
+        policy = deploy.load(POLICY)
+        component = policy["components"]["readsb"]
+        component["exec_start"] += " --net-json-port 30047"
+        work = Path(tempfile.mkdtemp(prefix="case-", dir=self.root))
+        self.addCleanup(shutil.rmtree, work, True)
+        edited = work / "policy.json"
+        edited.write_text(json.dumps(policy), encoding="utf-8")
+        unit = self.clean / "etc/systemd/system/srrx-lease-readsb@.service"
+        rootfs = self.copy({"etc/systemd/system/srrx-lease-readsb@.service": unit.read_text(encoding="utf-8").replace(
+            "--net-bind-address 127.0.0.1 --quiet", "--net-bind-address 127.0.0.1 --quiet --net-json-port 30047")})
+        row = self.row(rootfs, policy=edited)
+        self.assertEqual(self.rules(row), {("denied_option", "net-json-port")})
+
+    def test_rx_s1_accepts_adsb_public_unavailable_offline(self):
+        sys.path.insert(0, str(deploy.PROJECT / "software"))
+        import srrx.decoder_policy as decoder_policy
+        self.assertEqual(decoder_policy.availability()["adsb-public"], "UNAVAILABLE_NO_ACCEPTED_INSTALLATION")
+        report = selftest.run_offline(self.clean, "controller", POLICY)
+        self.assertEqual(next(c for c in report["checks"] if c["id"] == "RX-S1")["status"], "PASS")
+        self.assertIn("adsb-public", selftest._INSTALLATION_GATED)
+
+
+class AisCatcherRowTests(unittest.TestCase):
+    """W2 SW-AIS: RX-12-ais on a deploy.stage root (the srrx-lease-aiscatcher@.service template and the
+    staged srrx.ais_filter). A synthetic ELF stands in for the ais-catcher package; readelf is the
+    injected FakeTools. Offline unit and file evaluation only: reception and the running lease stay
+    device rows (RX-12-runtime)."""
+
+    ALLOWED = ["librtlsdr.so.2", "libairspyhf.so.0", "libusb-1.0.so.0", "libz.so.1", "libstdc++.so.6", "libm.so.6",
+               "libgcc_s.so.1", "libc.so.6"]
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="srrx-selftest-ais-")
+        cls.root = Path(cls.temp.name)
+        deploy.stage(cls.root / "stage", devices())
+        cls.clean = cls.root / "stage/rootfs"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp.cleanup()
+
+    def case(self, files=(), binary=None, remove=()):
+        rootfs = Path(tempfile.mkdtemp(prefix="case-", dir=self.root)) / "rootfs"
+        self.addCleanup(shutil.rmtree, rootfs.parent, True)
+        shutil.copytree(self.clean, rootfs, symlinks=True)
+        if binary is not None:
+            files = dict(files, **{"usr/bin/AIS-catcher": binary})
+        for rel, data in dict(files).items():
+            path = rootfs / rel
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data.encode() if isinstance(data, str) else data)
+        for rel in remove:
+            (rootfs / rel).unlink()
+        return rootfs
+
+    def row(self, rootfs, profile="full", needed=None):
+        tools = FakeTools({"AIS-catcher": readelf(None, self.ALLOWED if needed is None else needed)})
+        report = selftest.run_offline(rootfs, profile, POLICY, runner=tools)
+        self.assertFalse(report["hardware_ready"])
+        return next(c for c in report["checks"] if c["id"] == "RX-12-ais")
+
+    def rules(self, row):
+        return {(f["rule"], f.get("item")) for f in row["findings"]}
+
+    def test_staged_template_and_filter_pass_and_the_package_binary_is_evaluated(self):
+        self.assertIn(("RX-12-ais", 12, "OFFLINE"), {c[:3] for c in selftest.CATALOGUE})
+        controller = self.row(self.clean, "controller")
+        self.assertEqual((controller["status"], controller["findings"]), ("PASS", []), controller)
+        self.assertIn("ais-catcher_absent", controller["notes"])
+        absent = self.row(self.clean, "full")
+        self.assertEqual((absent["status"], self.rules(absent)), ("BLOCKED", {("component_not_found", "ais-catcher")}))
+        present = self.row(self.case(binary=FAKE_ELF))
+        self.assertEqual((present["status"], present["findings"]), ("PASS", []), present)
+        self.assertIn("reception_and_lease_runtime_are_device_rows", present["notes"])
+        # In the controller profile the engine package itself is a radio application.
+        self.assertIn(("radio_application_in_controller_profile", None), self.rules(self.row(self.case(binary=FAKE_ELF), "controller")))
+
+    def test_tls_soapy_or_database_libraries_and_a_compiled_bias_call_fail(self):
+        for library, prefix in (("libssl.so.3", "libssl"), ("libSoapySDR.so.0.8", "libSoapySDR"), ("libsqlite3.so.0", "libsqlite3"),
+                                ("libairspy.so.0", "libairspy."), ("libzmq.so.5", "libzmq")):
+            with self.subTest(library=library):
+                row = self.row(self.case(binary=FAKE_ELF), needed=self.ALLOWED + [library])
+                self.assertEqual((row["status"], self.rules(row)), ("FAIL", {("forbidden_dependency", prefix)}))
+        row = self.row(self.case(binary=FAKE_ELF + b"\0rtlsdr_set_bias_tee\0"))
+        self.assertEqual((row["status"], self.rules(row)), ("FAIL", {("bias_tee_call_compiled", None)}))
+        self.assertEqual(self.row(self.case(binary=b"#!/bin/sh\n"))["status"], "BLOCKED")  # not an ELF: never PASS
+
+    def test_changed_arguments_or_a_lease_without_the_filter_fail(self):
+        unit = "etc/systemd/system/srrx-lease-aiscatcher@"
+        reviewed = ("ExecStart=/usr/bin/env AIS-catcher @%t/srrx-lease-aiscatcher-%i/receiver.args -o 0 -X off "
+                    "-f %t/srrx-lease-aiscatcher-%i/ais.fifo MSGFORMAT JSON_FULL\n")
+        no_feed = {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "X"), ("ais_required_option_missing", "X")}
+        cases = (
+            ("hfplus.service.d/50-x.conf", "[Service]\nExecStart=\nExecStart=/usr/bin/env AIS-catcher -X 0123 -o 0\n", no_feed),
+            # Without -X, v0.70 enables the community feed by default; -X is accepted only as "-X off".
+            ("rtla.service.d/51-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off ", ""),
+             {("ais_exec_start_not_reviewed", None), ("ais_required_option_missing", "X")}),
+            ("rtlb.service.d/51-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off", "-X on"), no_feed),
+            ("hfplus.service.d/51-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off", "-X"), no_feed),
+            ("rtla.service.d/52-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off", "-X OFF"), no_feed),
+            ("rtlb.service.d/52-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off", "-X off 0123"), no_feed),
+            ("rtla.service.d/50-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-o 0", "-o 5"), {("ais_exec_start_not_reviewed", None)}),
+            ("rtlb.service.d/50-x.conf", "[Service]\nExecStart=\n" + reviewed.rstrip("\n") + " -N 8100\n",
+             {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "N")}),
+            ("hfplus.service.d/60-x.conf", "[Service]\nExecStart=\n" + reviewed.rstrip("\n") + " -gh BIASTEE on\n",
+             {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "BIASTEE")}),
+            (".service.d/50-x.conf", "[Service]\nExecStartPost=\n", {("ais_filter_not_in_lease", None)}),
+            ("rtla.service.d/70-x.conf", "[Service]\nExecStartPre=\nExecStartPre=/bin/true\n", {("ais_prepare_not_reviewed", None)}),
+        )
+        for name, text, expected in cases:
+            with self.subTest(dropin=name):
+                row = self.row(self.case({unit + name: text}, binary=FAKE_ELF))
+                self.assertEqual((row["status"], self.rules(row)), ("FAIL", expected), row)
+        # A comment or an unrelated setting in a drop-in changes nothing.
+        quiet = self.row(self.case({unit + "rtla.service.d/80-x.conf": "[Service]\n# ExecStart=/usr/bin/env AIS-catcher -X\nNice=5\n"},
+                                   binary=FAKE_ELF))
+        self.assertEqual(quiet["status"], "PASS", quiet)
+
+    def test_the_engine_outside_its_lease_or_without_the_template_fails(self):
+        other = self.row(self.case({"etc/systemd/system/ais-share.service": "[Service]\nUser=lab\nExecStart=/usr/bin/AIS-catcher -o 5\n"},
+                                   binary=FAKE_ELF))
+        self.assertEqual((other["status"], self.rules(other)), ("FAIL", {("ais_engine_outside_lease", None)}))
+        missing = self.row(self.case(binary=FAKE_ELF, remove=("etc/systemd/system/srrx-lease-aiscatcher@.service",)))
+        self.assertEqual((missing["status"], self.rules(missing)), ("FAIL", {("ais_engine_without_filter_unit", None)}))
+
+    def test_an_instance_fragment_wins_over_the_template_and_is_compared_exactly(self):
+        template = (self.clean / "etc/systemd/system/srrx-lease-aiscatcher@.service").read_text(encoding="utf-8")
+        execs = ("ExecStartPre=", "ExecStart=", "ExecStartPost=")
+        unfiltered = "\n".join(line for line in template.splitlines() if not line.startswith(execs))
+        unfiltered += "\nExecStart=/usr/bin/env AIS-catcher -d LABRXA -o 5\n"  # straight to the journal, no filter
+        expected = {("ais_prepare_not_reviewed", None), ("ais_exec_start_not_reviewed", None), ("ais_filter_not_in_lease", None),
+                    ("ais_required_option_missing", "X")}
+        for directory in ("etc/systemd/system", "usr/lib/systemd/system"):
+            with self.subTest(directory=directory):
+                rel = directory + "/srrx-lease-aiscatcher@rtla.service"
+                row = self.row(self.case({rel: unfiltered}, binary=FAKE_ELF))
+                self.assertEqual((row["status"], self.rules(row)), ("FAIL", expected), row)
+                self.assertEqual({f["path"] for f in row["findings"]}, {rel})
+        # Only one argument of the reviewed ExecStart changed in an instance fragment.
+        row = self.row(self.case({"etc/systemd/system/srrx-lease-aiscatcher@rtlb.service": template.replace(" -o 0 -X off ", " -o 5 -X off ")},
+                                 binary=FAKE_ELF))
+        self.assertEqual((row["status"], self.rules(row)), ("FAIL", {("ais_exec_start_not_reviewed", None)}))
+        # An exact copy of the template as an instance fragment runs the reviewed lines.
+        same = self.row(self.case({"etc/systemd/system/srrx-lease-aiscatcher@hfplus.service": template}, binary=FAKE_ELF))
+        self.assertEqual((same["status"], same["findings"]), ("PASS", []), same)
+        # A lease unit file in a .wants directory would start the engine outside a labd lease.
+        wanted = self.row(self.case({"etc/systemd/system/multi-user.target.wants/srrx-lease-aiscatcher@rtlb.service": template},
+                                    binary=FAKE_ELF))
+        self.assertEqual((wanted["status"], self.rules(wanted)), ("FAIL", {("ais_engine_outside_lease", None)}))
+
+    def test_the_target_filter_must_be_the_checkers_and_the_probe_catches_a_weak_filter(self):
+        rel = "opt/srrx/software/srrx/ais_filter.py"
+        changed = self.case({rel: (self.clean / rel).read_text(encoding="utf-8") + "\n# changed target copy\n"})
+        row = self.row(changed, "controller")
+        self.assertEqual((row["status"], self.rules(row)), ("BLOCKED", {("target_module_differs", None)}))
+        self.assertEqual(self.row(self.case(remove=(rel,)), "controller")["status"], "BLOCKED")
+
+        class Everything:  # a filter that publishes every MMSI and never deletes
+            def __init__(self):
+                self.vessels = {}
+
+            def feed(self, record, now):
+                self.vessels[record["mmsi"]] = record
+                return True
+
+        weak = type("Weak", (), {"VesselFilter": Everything, "device_args": staticmethod(lambda r, d: ["-d", "x", "-s", "1", "-X", "k"])})
+        self.assertEqual(selftest._ais_filter_probe(weak),
+                         ["late_type_35_not_deleted", "late_unknown_type_not_deleted", "position_before_static_published",
+                          "receiver_arguments_beyond_device_and_rate", "suppressed_vessel_published_again",
+                          "unknown_military_or_part_a_published"])
+        sys.path.insert(0, str(deploy.PROJECT / "software"))
+        from srrx import ais_filter
+        self.assertEqual(selftest._ais_filter_probe(ais_filter), [])
+
+    def test_ais_public_is_installation_gated_offline(self):
+        sys.path.insert(0, str(deploy.PROJECT / "software"))
+        from srrx import decoder_policy
+        self.assertIn("ais-public", selftest._INSTALLATION_GATED)
+        self.assertEqual(decoder_policy.availability()["ais-public"], "UNAVAILABLE_NO_ACCEPTED_INSTALLATION")
+        report = selftest.run_offline(self.clean, "controller", POLICY)
+        self.assertEqual(next(c for c in report["checks"] if c["id"] == "RX-S1")["status"], "PASS")
+        record = {"v": 1, "tool_id": "ais-catcher", "version": "0.70+lab1", "source_commit": decoder_policy.AIS_COMMIT,
+                  "executable": "/usr/bin/AIS-catcher", "sha256": "a" * 64, "evidence_id": "admin/ais-001",
+                  "filter_sha256": "b" * 64, "unit_sha256": "c" * 64, "recipe_sha256": "d" * 64}
+        # Off the device the record cannot be qualified (no root-owned ELF): never accepted here.
+        self.assertTrue(decoder_policy.availability(ais_installation=record)["ais-public"].startswith("UNAVAILABLE"))
+        for change in ({"version": "0.70"}, {"executable": "/usr/local/bin/AIS-catcher"}, {"sha256": "x"}, {"extra": 1}):
+            with self.assertRaises(decoder_policy.DecoderRefused):
+                decoder_policy._validate_ais_installation(dict(record, **change))
+        with self.assertRaisesRegex(decoder_policy.DecoderRefused, "^DISABLED_FILE_PLAN_AIS_RUNS_ONLY_AS_LEASE_ENGINE$"):
+            decoder_policy.make_plan("ais-public", None, None, None)
 
 
 if __name__ == "__main__":

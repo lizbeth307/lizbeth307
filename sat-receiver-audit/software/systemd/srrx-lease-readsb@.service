@@ -1,0 +1,78 @@
+[Unit]
+Description=SR-RX exclusive engine lease: readsb on receiver %i (receive-only, localhost only)
+# Started and stopped only by labd (operation engine_lease, srrx.engine_leases) through the polkit
+# rule 60-srrx-engine-lease.rules. No [Install]: never enabled and never wanted by another unit.
+# The instance is the udev alias /dev/lab/%i of one receiver (rtla, rtlb or hfplus; deploy.udev_rules).
+AssertPathExists=/dev/lab/%i
+# No lease outlives the labd that granted it: a stop, a crash or a restart of srrx.service stops it.
+BindsTo=srrx.service
+After=srrx.service
+CollectMode=inactive-or-failed
+
+[Service]
+Type=simple
+User=lab
+Group=lab
+WorkingDirectory=/
+# STACK.md C7 lease mode 2: DeviceAllow= stat()s the alias at start; a missing node adds no rule,
+# so DevicePolicy=closed leaves only the pseudo devices and read-only RTC (ProtectClock=yes implies
+# DeviceAllow=char-rtc r). Without cgroup BPF systemd starts the unit with no device ACL and no IP
+# filter at all (fail open): CONFIG_CGROUP_BPF=y and RX-12-runtime come before any lease is used.
+DevicePolicy=closed
+DeviceAllow=/dev/lab/%i rw
+ProtectSystem=strict
+ProtectHome=yes
+ReadOnlyPaths=/data
+# 2750 lab:labd, created by usr/lib/tmpfiles.d/srrx.conf (deployment/system/system_files.py).
+ReadWritePaths=/data/products/readsb-%i
+# Engine-private state lives only as long as the lease.
+RuntimeDirectory=srrx-lease-readsb-%i
+RuntimeDirectoryMode=0700
+Environment=HOME=%t/srrx-lease-readsb-%i
+UMask=0027
+IPAddressDeny=any
+IPAddressAllow=localhost
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+KeyringMode=private
+SystemCallArchitectures=native
+# build/07 §21 OOM order: an engine lease ranks with OpenWebRX+ (500), before labd and labrx.
+OOMScoreAdjust=500
+# labd stops the lease with the operator lease; these bound a lease labd failed to stop.
+RuntimeMaxSec=12h
+TimeoutStartSec=30s
+TimeoutStopSec=10s
+Restart=no
+# Arguments: readsb 3.16.17+lab1 (W2 SW-ADSB, deployment/recipes/readsb: RTL-SDR only, bias tee
+# compiled out). The /usr/bin/env prefix stays: the lab guest verifies every staged unit without
+# the +lab engine packages (guest_smoke.verify_units).
+# ADS-B privacy (STACK.md:621-622, :2181): readsb writes aircraft.json only into the private
+# RuntimeDirectory, never to /data or the network (no --net option; IPAddressDeny=any), and its
+# own output may name any aircraft, so nothing this unit prints is kept. srrx.adsb_filter is the
+# only path to /data/products/readsb-%i: prepare refuses the lease (fail closed) without the
+# accepted aircraft.csv.gz (at most 90 days old) and military range table of
+# /var/lib/srrx/adsb/acceptance.json and puts the USB serial of /dev/lab/%i into readsb.env for
+# --device; run (detached, stays in this unit's cgroup) publishes only civil aircraft and stops
+# readsb ($MAINPID) on a fatal error; stop removes the published picture. selftest RX-12-readsb
+# pins these lines (deployment/receive-only-policy.json components.readsb).
+Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1 LC_ALL=C.UTF-8
+StandardOutput=null
+StandardError=null
+# Read after ExecStartPre has written it (systemd.exec(5) EnvironmentFile=); "-": absent until then.
+EnvironmentFile=-%t/srrx-lease-readsb-%i/readsb.env
+ExecStartPre=/usr/bin/python3 -P -s -B -m srrx.adsb_filter prepare --receiver %i --run-dir %t/srrx-lease-readsb-%i --products /data/products/readsb-%i
+ExecStart=/usr/bin/env readsb --device-type rtlsdr --device ${SRRX_READSB_SERIAL} --db-file /var/lib/srrx/adsb/aircraft.csv.gz --write-json %t/srrx-lease-readsb-%i/json --write-json-every 1 --net-bind-address 127.0.0.1 --quiet
+ExecStartPost=/usr/bin/python3 -P -s -B -m srrx.adsb_filter run --detach --receiver %i --run-dir %t/srrx-lease-readsb-%i --products /data/products/readsb-%i
+ExecStopPost=/usr/bin/python3 -P -s -B -m srrx.adsb_filter stop --receiver %i --products /data/products/readsb-%i

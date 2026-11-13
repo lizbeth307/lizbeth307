@@ -1,0 +1,44 @@
+--- a/src/gtk-rot-ctrl.c
++++ b/src/gtk-rot-ctrl.c
+@@ -169,17 +169,23 @@
+         sat_log_log(SAT_LOG_LEVEL_ERROR, _("%s: SIZE ERROR %d / %d"), __func__,
+                     written, size);
+     }
+-    if (written == -1)
++    if (written < 0)
+     {
+         sat_log_log(SAT_LOG_LEVEL_ERROR, _("%s: rotctld Socket Down"),
+                     __func__);
+         return FALSE;
+     }
+ 
++    /* SRRX +lab: leave room for the terminating NUL (upstream read sizeout
++       bytes and then wrote buffout[sizeout], one byte past the buffer). */
++    if (sizeout < 2)
++        return FALSE;
++    buffout[0] = '\0';
++
+     /* try to read answer */
+-    size = recv(sock, buffout, sizeout, 0);
++    size = recv(sock, buffout, sizeout - 1, 0);
+ 
+-    if (size == -1)
++    if (size < 0)
+     {
+         sat_log_log(SAT_LOG_LEVEL_ERROR, _("%s: rotctld Socket Down"),
+                     __func__);
+@@ -192,6 +198,14 @@
+         sat_log_log(SAT_LOG_LEVEL_ERROR, _("%s:%s: Got 0 bytes from rotctld"),
+                     __FILE__, __func__);
+     }
++    else if (size == sizeout - 1)
++    {
++        /* SRRX +lab: a full buffer may be a truncated answer: an error. */
++        sat_log_log(SAT_LOG_LEVEL_ERROR,
++                    _("%s:%s: rotctld answer fills the %d byte buffer"),
++                    __FILE__, __func__, sizeout);
++        return FALSE;
++    }
+ 
+     return TRUE;
+ }

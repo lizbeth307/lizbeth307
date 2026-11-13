@@ -37,20 +37,21 @@
     "names": ["unattended-upgrades", "brltty"]
   },
   "mask": {
-    "source": "build/07-pz-vstanovlennia.md:92-96; STACK.md:845 (sleep targets); rsetup.service runs `rsetup __on_boot`, which executes /config/before.txt (https://github.com/radxa-pkg/rsetup debian/rsetup.service, read 2026-10-24) - STACK.md:138 never rsetup in the field, STACK.md:843 BLS entries never from rsetup; ssh.service, ssh.socket, smbd.service, nmbd.service: before.txt disable_service ssh ssh.socket smbd nmbd systemd-networkd (https://raw.githubusercontent.com/radxa-pkg/rsetup/main/config/before.txt, read 2026-11-06), which this image does not run (systemd-networkd is not enabled in r2: image-facts.json units); samba-ad-dc.service (enabled in r2, the samba set), cups.service, cups.socket, cups.path, avahi-daemon.service, avahi-daemon.socket: r2 enables them (image-facts.json multi-user.target.wants, sockets.target.wants), the SR-RX controller needs no print, file-sharing or mDNS service, and avahi announces the unit on any connected LAN; IMG-06 may unmask a service with a recorded reason. IMG-06 decision (build/15-rishennia-komplektu.md «Збирання образу», 07.11.2026): bluetooth.service and wpa_supplicant.service (enabled in r2: image-facts.json bluetooth.target.wants, multi-user.target.wants of CI run 42300813861) are masked, also by deploy.py stage (deployment/system/system_files.py MASKED_UNITS): the field/QUIET root is receive-only, the AIC8800 drivers are blacklisted on it, and wpa_supplicant is the component that would start Wi-Fi frames if an interface ever appeared; ubuntu-advantage.service, ua-reboot-cmds.service, ua-timer.timer and motd-news.timer (enabled in r2, same facts) contact Canonical services, and STACK.md:894 makes the signed offline repository the only package source; NetworkManager stays enabled for wired bench Ethernet (the staged polkit NO rule blocks Wi-Fi enable, scan and hotspot)",
+    "source": "build/07-pz-vstanovlennia.md:92-96; STACK.md:845 (sleep targets); rsetup.service runs `rsetup __on_boot`, which executes /config/before.txt (https://github.com/radxa-pkg/rsetup debian/rsetup.service, read 2026-10-24) - STACK.md:138 never rsetup in the field, STACK.md:843 BLS entries never from rsetup; ssh.service, ssh.socket, smbd.service, nmbd.service: before.txt disable_service ssh ssh.socket smbd nmbd systemd-networkd (https://raw.githubusercontent.com/radxa-pkg/rsetup/main/config/before.txt, read 2026-11-06), which this image does not run (systemd-networkd is not enabled in r2: image-facts.json units); samba-ad-dc.service (enabled in r2, the samba set), cups.service, cups.socket, cups.path, avahi-daemon.service, avahi-daemon.socket: r2 enables them (image-facts.json multi-user.target.wants, sockets.target.wants), the SR-RX controller needs no print, file-sharing or mDNS service, and avahi announces the unit on any connected LAN; IMG-06 may unmask a service with a recorded reason. IMG-06 decision (build/15-rishennia-komplektu.md «Збирання образу», 07.11.2026): bluetooth.service and wpa_supplicant.service (enabled in r2: image-facts.json bluetooth.target.wants, multi-user.target.wants of CI run 42300813861) are masked, also by deploy.py stage (deployment/system/system_files.py MASKED_UNITS): the field/QUIET root is receive-only, the AIC8800 drivers are blacklisted on it, and wpa_supplicant is the component that would start Wi-Fi frames if an interface ever appeared; ubuntu-advantage.service, ua-reboot-cmds.service, ua-timer.timer and motd-news.timer (enabled in r2, same facts) contact Canonical services, and STACK.md:894 makes the signed offline repository the only package source; NetworkManager stays enabled for wired bench Ethernet (the staged polkit NO rule blocks Wi-Fi enable, scan and hotspot); W2 IMG-2 decision (build/15 «Сеанс до greetd (W2 IMG-2)»): gdm.service and gdm3.service of r2's gdm3 46.2-1ubuntu1~24.04.6 (image-facts.json packages_of_interest and interesting_units of CI run 42390143862) are masked, so graphical.target starts no GNOME greeter (gdm3's postinst links display-manager.service to its unit; the builder refuses a display-manager link to an unmasked unit): the field image has no GNOME session (STACK.md:160: greetd and labwc, W2 IMG-4)",
     "units": ["apt-daily.timer", "apt-daily-upgrade.timer", "fwupd-refresh.timer", "ModemManager.service",
               "sleep.target", "suspend.target", "hibernate.target", "hybrid-sleep.target",
               "bluetooth.service", "wpa_supplicant.service", "rsetup.service",
               "ssh.service", "ssh.socket", "smbd.service", "nmbd.service", "samba-ad-dc.service",
               "cups.service", "cups.socket", "cups.path", "avahi-daemon.service", "avahi-daemon.socket",
-              "ubuntu-advantage.service", "ua-reboot-cmds.service", "ua-timer.timer", "motd-news.timer"]
+              "ubuntu-advantage.service", "ua-reboot-cmds.service", "ua-timer.timer", "motd-news.timer",
+              "gdm.service", "gdm3.service"]
   },
   "rsetup_first_boot": {
     "source": "rsetup config/before.txt on the main branch (https://raw.githubusercontent.com/radxa-pkg/rsetup/main/config/before.txt, read 2026-11-06): no_fail, log, update_generic_hostname, add_user + user_append_group (radxa, rock), resize_root, disable_service ssh ssh.socket smbd nmbd systemd-networkd, regenerate_ssh_hostkey, update_locale, `if headless enable_service ssh`, rebuild_current_overlays, remove_packages rsetup-config-first-boot. The r2 copy (/config/before.txt, sha256 and command list in image-facts.json rsetup_first_boot) is what the builder checks: a command without a row here is a blocker, and so is a disable_service unit that is neither masked nor disabled in the image",
     "handled": {
       "no_fail": "no effect: error mode of the script",
       "log": "no effect",
-      "update_generic_hostname": "skipped: the golden image keeps the r2 hostname (image-facts.json root.hostname, radxa-dragon-q6a in CI run 42300813861); IMG-06 decision: one golden image serves many units, so commissioning sets the per-unit hostname from the acceptance hardware_unit_id (build/15)",
+      "update_generic_hostname": "skipped: the golden image keeps the r2 hostname (image-facts.json root.hostname, radxa-dragon-q6a in CI run 42300813861); IMG-06 decision: one golden image serves many units, so commissioning sets the per-unit hostname from the acceptance hardware_unit_id (format: build/15 «Ім'я хоста (W2 SYS-HOST)», written by srrx.provision prepare)",
       "add_user": "skipped: no radxa/radxa or rock/rock accounts; any account with a usable password is locked (lock_default_password_accounts); IMG-06 decision: no password account in the image; operator access is the local HMI, service access the rescue microSD and the UART5 console of the service hatch (boot messages; no account can log in) (build/15)",
       "user_append_group": "skipped together with add_user",
       "resize_root": "skipped: root A and B have fixed sizes; recovery_kit.py write grows /data to the UFS end",
@@ -112,5 +113,47 @@
   "data_cache": {
     "source": "deployment/deploy.py release_guard (verify_cache of the locked base image and kernel debs at /srv/srrx-cache)",
     "copy_locked_artifacts": true
+  },
+  "unit_interpreters": {
+    "source": "W2 IMG-3 (build/15 «Інтерпретатори unit (W2 IMG-3)»): the python3 that the Exec lines of each SR-RX unit start (build_image.py unit_interpreters, step 11b). numpy: the command imports NumPy, so its interpreter must import it (a venv built from software/config/*.lock); stdlib: the command needs the standard library only, and r2's /usr/bin/python3 (no python3-numpy) runs it. A staged python3 unit in neither list is the blocker unit_interpreter_unclassified; deployment/tests/test_image.py keeps both lists equal to the python3 units deploy.py stage and deployment/image/files stage.",
+    "numpy": {
+      "srrx-menu.service": "srrx.hmi touch console: PySide6 QtCore/QtGui/QtWidgets and NumPy (hmi extra, software/config/hmi-requirements.lock)",
+      "srrx-baseband-record@.service": "srrx.satdump_unit record imports srrx.labrx, which imports numpy at module level (software/srrx/labrx.py:22)",
+      "srrx-passes@.service": "srrx.passes predicts with Skyfield, SGP4 and NumPy (orbits extra, software/config/passes-requirements.lock)"
+    },
+    "stdlib": {
+      "srrx.service": "labd (srrx.daemon) and the release guard ExecStartPre (deployment/deploy.py): standard library only (software/DEPLOYMENT.md)",
+      "srrx-poweroff.service": "srrx.poweroff and the release guard ExecStartPre: standard library only",
+      "srrx-radio-off.service": "srrx.rfkill block: standard library only",
+      "srrx-gnss-config.service": "srrx.gnss_config: standard library only",
+      "srrx-locationd.service": "srrx.locationd: standard library only",
+      "srrx-timegate.service": "srrx.timegate: standard library only",
+      "srrx-satdump-decode@.service": "srrx.satdump_unit decode: SatDump decodes; srrx.baseband and srrx.voice_mask import numpy only inside try/except ImportError (software/srrx/baseband.py:54-57) (W2 SW-SCHED, build/15 «Інтерпретатор шаблонів (W2 SW-SCHED)»)",
+      "srrx-baseband-sweep.service": "srrx.baseband sweep: BasebandStore.sweep lists the class directory, reads each metadata file and stats each data file (_sweep_locked, _keep), no NumPy call; the guarded import keeps the module importable without NumPy (deployment/tests/test_image.py VenvAndUnitInterpreterTests runs the sweep with NumPy blocked)",
+      "srrx-lease-readsb@.service": "srrx.adsb_filter prepare, run --detach and stop (ExecStartPre, ExecStartPost, ExecStopPost of the readsb lease, W2 SW-ADSB): standard library only, no srrx or NumPy import (software/srrx/adsb_filter.py); readsb itself is ExecStart via /usr/bin/env",
+      "srrx-lease-aiscatcher@.service": "srrx.ais_filter prepare and serve --detach (ExecStartPre, ExecStartPost of the AIS-catcher lease, W2 SW-AIS): standard library only, no srrx or NumPy import (software/srrx/ais_filter.py); AIS-catcher itself is ExecStart via /usr/bin/env",
+      "srrx-boot-check.service": "deployment/image/bootchain.py boot-check: standard library only",
+      "srrx-ab-commit.service": "deployment/image/bootchain.py route-b-commit (Route B only): standard library only"
+    }
+  },
+  "pps_gpio": {
+    "source": "W2 IMG-4 (build/15 «Модуль pps-gpio в образі (W2 IMG-4)»): STACK.md C13, build/07 §5.2; 6.18.2-4-qcom has CONFIG_PPS=y, PPS_CLIENT_GPIO not set and CONFIG_MODULE_SIG not set (boot/config-6.18.2-4-qcom of the locked linux-image deb, read 2026-11-12; image-facts.json kernel_deb_config). The builder builds deployment/system/dkms/pps-gpio with dkms (dkms.conf MAKE[0], gcc-12) against the locked headers deb, as .github/workflows/sr-rx-system.yml job pps-gpio-dkms does, and installs the .ko as a file: the image carries no compiler for it",
+    "dkms_package": "srrx-pps-gpio",
+    "headers_artifact": "linux-headers-6.18.2-4-qcom",
+    "install_path": "/lib/modules/6.18.2-4-qcom/updates/srrx/pps-gpio.ko",
+    "vermagic": "6.18.2-4-qcom SMP preempt mod_unload aarch64",
+    "vermagic_source": "sr-rx-system pps-gpio-dkms CI record (software/DEPLOYMENT.md, DKMS pps-gpio); the kernel config gives SMP, PREEMPT_DYNAMIC=y, MODULE_UNLOAD=y and no MODVERSIONS"
+  },
+  "session": {
+    "source": "W2 IMG-4 (build/15 «Сеанс greetd і labwc в образі (W2 IMG-4)»): STACK.md:160, :884; the session files are W2 SYS-SESSION's (deployment/system/system_files.py session_files, software/HMI.md «Сеанс на дисплеї»); greetd.service of greetd 0.9.0-4ubuntu1 has [Install] Alias=display-manager.service and the Debian rules run dh_installsystemd --no-start (greetd.service, debian/rules, read 2026-11-12 from http://archive.ubuntu.com/ubuntu/pool/universe/g/greetd/, SHA-256 equal to the .dsc)",
+    "packages": ["cage", "greetd", "kanshi", "labwc", "wlopm"],
+    "display_manager": "greetd.service",
+    "default_target": "graphical.target",
+    "must_not_exist": ["/etc/greetd/greetd.conf"],
+    "console_unit": "srrx-menu.service"
+  },
+  "closure_takeovers": {
+    "source": "W2 IMG-4 (build/15 «Пакети сеансу в образі (W2 IMG-4)»): r2's radxa-system-config-common 0.6.30 ships /etc/greetd/config.toml (an agreety/sway example for the _greetd user, https://raw.githubusercontent.com/radxa-pkg/radxa-system-config/0.6.30/radxa-system-config-common/etc/greetd/config.toml, read 2026-11-12) without Replaces: greetd, so dpkg refused greetd 0.9.0-4ubuntu1 (image run 43148918724: trying to overwrite '/etc/greetd/config.toml', which is also in package radxa-system-config-common 0.6.30). Only these files may pass to the closure package with --force-overwrite; the content stays the controller bundle's (system_files.greetd_config, kept by --force-confold) and radxa-system-config-* stays held",
+    "files": {"/etc/greetd/config.toml": "radxa-system-config-common"}
   }
 }

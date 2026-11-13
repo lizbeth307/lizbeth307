@@ -1,0 +1,508 @@
+{
+ "schema_version": 1,
+ "kind": "srrx_polkit_cases",
+ "description": "SW-SCHED: labd may start and stop only srrx-satdump-decode@lrpt-<16 hex>.service and srrx-baseband-record@lrpt-<16 hex>.service (srrx.baseband_scheduler.polkit_rule); every other verb, unit, user and action falls through. Evaluated by harness.js over every staged rule of a deploy.py stage root with fixture devices and --gnss gpsd (CI model).",
+ "requires": [
+  "60-srrx-satdump.rules",
+  "60-srrx-passes.rules",
+  "60-srrx-gnss-config.rules",
+  "60-srrx-radio-off.rules"
+ ],
+ "cases": [
+  {
+   "name": "labd start srrx-satdump-decode@lrpt-0123456789abcdef.service",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "groups": [
+    "labd",
+    "i2c",
+    "dialout",
+    "srrx-pico",
+    "srrx-satdump"
+   ],
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "yes"
+  },
+  {
+   "name": "labd stop srrx-satdump-decode@lrpt-0123456789abcdef.service",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "groups": [
+    "labd",
+    "i2c",
+    "dialout",
+    "srrx-pico",
+    "srrx-satdump"
+   ],
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "stop"
+   },
+   "expect": "yes"
+  },
+  {
+   "name": "labd start srrx-baseband-record@lrpt-0123456789abcdef.service",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "groups": [
+    "labd",
+    "i2c",
+    "dialout",
+    "srrx-pico",
+    "srrx-satdump"
+   ],
+   "details": {
+    "unit": "srrx-baseband-record@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "yes"
+  },
+  {
+   "name": "labd stop srrx-baseband-record@lrpt-0123456789abcdef.service",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "groups": [
+    "labd",
+    "i2c",
+    "dialout",
+    "srrx-pico",
+    "srrx-satdump"
+   ],
+   "details": {
+    "unit": "srrx-baseband-record@lrpt-0123456789abcdef.service",
+    "verb": "stop"
+   },
+   "expect": "yes"
+  },
+  {
+   "name": "labd restart is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "restart"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd reload is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "reload"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd try-restart is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "try-restart"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd reload-or-restart is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "reload-or-restart"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd reload-or-try-restart is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "reload-or-try-restart"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd kill is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "kill"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd reset-failed is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "reset-failed"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd freeze is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "freeze"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd thaw is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "thaw"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd clean is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "clean"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-decode@.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-baseband-record@.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-baseband-record@.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-decode@lrpt-0123456789ABCDEF.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789ABCDEF.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-decode@lrpt-0123456789abcde.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcde.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-decode@lrpt-0123456789abcdef0.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef0.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-decode@0123456789abcdef.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-live@lrpt-0123456789abcdef.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-live@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-decode@lrpt-0123456789abcdef.service.d' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service.d",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-decode@lrpt-0123456789abcdef.service\\nx' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service\nx",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'xsrrx-satdump-decode@lrpt-0123456789abcdef.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "xsrrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-satdump-decode@lrpt-0123456789abcdef.socket' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.socket",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-poweroff.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-poweroff.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-baseband-sweep.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-baseband-sweep.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'run-u42.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "run-u42.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start 'srrx-lease-readsb@lrpt-0123456789abcdef.service' is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-lease-readsb@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd StartTransientUnit (no details) is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {},
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start with no unit detail is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "user srrx-satdump start of a decode instance is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "srrx-satdump",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "user lab start of a decode instance is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "lab",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "user labclient start of a decode instance is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labclient",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "user srrx-passes start of a decode instance is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "srrx-passes",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "user nobody start of a decode instance is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "nobody",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "user labdx start of a decode instance is not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labdx",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "a member of group labd is not labd",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labclient",
+   "groups": [
+    "labclient",
+    "labd"
+   ],
+   "details": {
+    "unit": "srrx-baseband-record@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd org.freedesktop.systemd1.manage-unit-files is not allowed",
+   "action": "org.freedesktop.systemd1.manage-unit-files",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd org.freedesktop.systemd1.reload-daemon is not allowed",
+   "action": "org.freedesktop.systemd1.reload-daemon",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd org.freedesktop.systemd1.set-environment is not allowed",
+   "action": "org.freedesktop.systemd1.set-environment",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd org.freedesktop.login1.power-off is not allowed",
+   "action": "org.freedesktop.login1.power-off",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-satdump-decode@lrpt-0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start srrx-passes@<16 hex> stays allowed (60-srrx-passes.rules)",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-passes@0123456789abcdef.service",
+    "verb": "start"
+   },
+   "expect": "yes"
+  },
+  {
+   "name": "labd stop srrx-passes@<16 hex> stays not allowed",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-passes@0123456789abcdef.service",
+    "verb": "stop"
+   },
+   "expect": "not_handled"
+  },
+  {
+   "name": "labd start srrx-gnss-config.service stays allowed (60-srrx-gnss-config.rules)",
+   "action": "org.freedesktop.systemd1.manage-units",
+   "user": "labd",
+   "details": {
+    "unit": "srrx-gnss-config.service",
+    "verb": "start"
+   },
+   "expect": "yes"
+  },
+  {
+   "name": "Wi-Fi switch stays refused (60-srrx-radio-off.rules)",
+   "action": "org.freedesktop.NetworkManager.enable-disable-wifi",
+   "user": "labd",
+   "details": {},
+   "expect": "no"
+  }
+ ]
+}
