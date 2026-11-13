@@ -117,6 +117,48 @@ POWER_ANCHORS = {
     'F201': (30.43, 64.9, 90), 'Q201': (30.53, 56.6, 180),
 }
 POWER_ANCHOR_CHANGES = ('U107-SYS12', 'RPP-SYS12', 'U108-LAB5')  # anchors apply once these are in the graph
+# W2 PWR-L6-PLACE (design choice; placement only, the copper is W2 PWR-L6-SCRIPT's): the small-signal parts of both
+# converters are anchored inside their thermal_bond zones (contract thermal_bond_mm zones 3' and 4'), next to the pins
+# they serve, in the arrangement of the TI layout examples (SMALL_SIGNAL_SOURCE): ref -> (x, y, rotation, zone, pins).
+#  * U107 LM61460 (SNVSBD5D figure 11-2): CBOOT C127 and RBOOT R127 upright left of the CBOOT/RBOOT pins 14/13 (C127
+#    outside, R127 next to the pins; pads 1 = CBOOT down, pads 2 = SW / RBOOT up, so that the SW link can leave the
+#    device through the gap between VIN2 and RBOOT); CVCC C128 under the VCC/AGND pins 2/3; the feedback divider in two
+#    rows under it: RFBB R125 and RFF R128 (FB pads joined on one row), RFBT R124 and CFF C129 below (R124 FB under R125
+#    FB, C129 FF under R128 FF, the two SYS12 sense pads on the outer ends of the row).
+#  * U108 TPSM63606 (SLVSGB4B 11.1: feedback resistors close to the FB pin): RFBB R130 on the FB pin 10 row right of the
+#    module, RFBT R129 under it (FB pad right), its VOUT pad on the corner of the E1_LAB5_RAW bar of the output capacitors
+#    (the regulation point) and above the probe window of TP107 (CUTOUT_KEEP).
+# Project limits checked by make_spec (small_signal_check, MODEL geometry, pad centre to pin centre): CVCC <= 2.0 mm of
+# VCC and AGND, every feedback part <= 5.0 mm of FB, CBOOT/RBOOT <= 5.0 mm of their pins; every courtyard inside its zone.
+SMALL_SIGNAL_ANCHORS = {
+    'C127': (11.15, 44.35, 90, 3, {'1': 'U107.14'}), 'R127': (12.65, 44.35, 90, 3, {'1': 'U107.14', '2': 'U107.13'}),
+    'C128': (15.85, 43.15, 0, 3, {'1': 'U107.2', '2': 'U107.3'}),
+    'R125': (18.425, 41.5, 0, 3, {'1': 'U107.4'}), 'R128': (15.25, 41.5, 0, 3, {'2': 'U107.4'}),
+    'R124': (18.425, 39.85, 180, 3, {'2': 'U107.4'}), 'C129': (15.25, 39.85, 180, 3, {'1': 'U107.4'}),
+    'R130': (18.7, 78.725, 0, 4, {'1': 'U108.10'}), 'R129': (18.7, 77.0, 0, 4, {'2': 'U108.10'}),
+}
+# W2 PWR-L6-PLACE (design choice): the planner-placed PWR-A parts that need a PWR-B cut-out (pwr_b_cutouts of the study:
+# probe windows of the test points, windows over the group-placed parts taller than hA) keep the places of the PWR-B
+# placement of record (placement-study-shrink2.json of 10da9104, W2 PCB-PWRA-3/4 planner): ref -> (x, y, rotation). PWR-B
+# (pcb/boards/PWR_B.json) is placed around exactly that cut-out list; without the pin the planner re-packs these parts
+# whenever a group changes (the zone-2 swap of W2 GR-ZONE2-SMD and the small-signal anchors above moved 11 probe windows,
+# three of them onto PWR-B parts). The three zone-2 parts C265/C511/C512 left the list with W2 GR-ZONE2-SMD (no window).
+CUTOUT_KEEP = {
+    'C206': (37.8, 97.65, 90), 'C207': (31.1, 82.55, 0), 'C210': (9.95, 97.0, 0), 'C222': (30.75, 48.9, 0),
+    'C254': (29.05, 22.15, 90), 'C262': (23.15, 13.2, 90), 'C273': (2.45, 31.4, 0), 'L501': (24.9, 93.9, 0),
+    'TP101': (11.65, 40.95, 0), 'TP102': (5.5, 100.95, 90), 'TP103': (4.95, 12.15, 0), 'TP104': (22.75, 54.15, 90),
+    'TP105': (19.45, 44.6, 90), 'TP106': (40.01, 37.49, 0), 'TP107': (18.85, 74.93, 0), 'TP108': (21.85, 74.93, 0),
+    'TP201': (40.75, 15.27, 90), 'TP202': (44.25, 23.75, 0), 'TP203': (11.51, 69.35, 90), 'TP204': (40.05, 43.75, 0),
+    'TP205': (61.85, 11.45, 0), 'TP211': (4.01, 16.05, 90), 'TP212': (90.25, 33.55, 0), 'TP213': (40.75, 12.27, 90),
+    'TP214': (47.25, 23.75, 0), 'TP215': (7.01, 16.05, 90), 'TP503': (40.75, 31.25, 90), 'TP2903': (93.25, 33.55, 0),
+}
+SMALL_SIGNAL_LIMIT = {'C128': 2.0}  # mm, pad centre to pin centre (CVCC); the others 5.0
+SMALL_SIGNAL_SOURCE = ('TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 Layout Example, '
+                       'https://www.ti.com/lit/ds/symlink/lm61460.pdf, and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section '
+                       '11.1, https://www.ti.com/lit/ds/symlink/tpsm63606.pdf, both read 2026-11-13 (curl default User-Agent, '
+                       'HTTP 200, sha256 2c8a0bf340c70aa3ac29e586146804d7651822e14bee0897f6415ee9e56be84d and '
+                       'd1c157ff51c0e24bec9749dc434c3f8cdb8e980a7d1295d3a51c7d13f8ab4147; fetch-only, not committed); the 2 mm '
+                       'and 5 mm limits are project rules for TI\'s "as close as possible", not TI numbers')
 BATT_W = 3.2  # mm, netclasses.json BATT outer_min_width_mm (single layer)
 POWER_FIX_SOURCE = ('TI LM61460 data sheet SNVSBD5D (rev. D, July 2022) section 11.1 Layout Guidelines and figure 11-2 '
                     'Layout Example, https://www.ti.com/lit/ds/symlink/lm61460.pdf read 2026-11-12 (curl default '
@@ -397,6 +439,36 @@ def edge_x(contract, y0, y1):
     return min(xs)
 
 
+def small_signal_check(fp_geo_of, parts, contract):
+    """Rows of the W2 PWR-L6-PLACE small-signal anchors: courtyard inside its thermal_bond zone, and the distance from each
+    named pad to its converter pin (pad centre to pin centre, MODEL geometry) against SMALL_SIGNAL_LIMIT (5.0 mm else).
+    Returns (rows, problems)."""
+    anchor = {p['ref']: p['anchor'] for p in parts if p.get('anchor')}
+
+    def pad_at(ref, number):
+        return bg.placed_geometry(fp_geo_of(ref), anchor[ref])['pads'][str(number)][0][:2]
+    rows, problems = [], []
+    for ref, (_x, _y, _rot, zone, pins) in SMALL_SIGNAL_ANCHORS.items():
+        if ref not in anchor:
+            problems.append(f'{ref}: not anchored')
+            continue
+        zx, zy, zw, zh = contract['thermal_bond_mm'][zone - 1]
+        box = [r4(v) for v in bg.placed_geometry(fp_geo_of(ref), anchor[ref])['box']]
+        inside = zx - 1e-9 <= box[0] and zy - 1e-9 <= box[1] and box[2] <= zx + zw + 1e-9 and box[3] <= zy + zh + 1e-9
+        limit = SMALL_SIGNAL_LIMIT.get(ref, 5.0)
+        dist = {}
+        for number, pin in pins.items():
+            cref, cpin = pin.split('.')
+            a, b = pad_at(ref, number), pad_at(cref, cpin)
+            dist[f'{ref}.{number}-{pin}'] = r4(math.hypot(a[0] - b[0], a[1] - b[1]))
+        ok = inside and all(d <= limit + 1e-9 for d in dist.values())
+        rows.append({'ref': ref, 'zone': zone, 'zone_rect': [zx, zy, zx + zw, zy + zh], 'courtyard_box': box,
+                     'inside': inside, 'pad_to_pin_mm': dist, 'limit_mm': limit, 'ok': ok})
+        if not ok:
+            problems.append(f'{ref}: zone {zone} inside {inside}, pad to pin {dist} (limit {limit} mm)')
+    return rows, problems
+
+
 def live_status(pspec):
     """{change id: status row} of candidates.shrink2.planned against the graph of now (pcb/partition_budget.py
     Evaluator.planned: the budget's own rule; a half-applied change stops it)."""
@@ -533,6 +605,24 @@ def build():
                                               else 'beside its converter, pads on the scripted copper')})
             anchored.add(ref)
             continue
+        if power_live and ref in SMALL_SIGNAL_ANCHORS:
+            x, y, rot, zone, _pins = SMALL_SIGNAL_ANCHORS[ref]
+            parts.append({'ref': ref, 'source': 'graph',
+                          'anchor': {'at': [x, y], 'align': 'origin', 'rotation': rot, 'side': 'F'},
+                          'anchor_source': f'W2 PWR-L6-PLACE small-signal stage (make_spec.py SMALL_SIGNAL_ANCHORS, design '
+                                           f'choice after the TI layout examples): inside thermal_bond zone {zone}\' next '
+                                           'to the converter pins it serves'})
+            anchored.add(ref)
+            continue
+        if ref in CUTOUT_KEEP:
+            x, y, rot = CUTOUT_KEEP[ref]
+            parts.append({'ref': ref, 'source': 'graph',
+                          'anchor': {'at': [x, y], 'align': 'origin', 'rotation': rot, 'side': 'F'},
+                          'anchor_source': 'W2 PWR-L6-PLACE: kept at its planner place of the PWR-B placement of record '
+                                           '(make_spec.py CUTOUT_KEEP): its PWR-B cut-out is part of the list PWR-B is '
+                                           'placed around'})
+            anchored.add(ref)
+            continue
         if ref in row_anchors:
             parts.append({**old, 'anchor': row_anchors[ref],
                           'anchor_source': ('bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max '
@@ -601,11 +691,11 @@ def build():
     if power_live:
         # review fix F2: every top region gives way to the F.Cu scripted copper and the power-stage anchors (the planner
         # packs a region from its corner and does not step over an obstacle); a cut region keeps its name for its first
-        # piece, the others get a letter
+        # piece, the others get a letter. W2 PWR-L6-PLACE: also the small-signal anchors and the CUTOUT_KEEP parts
         cuts = [[min(p[0] for p in it['outline']), min(p[1] for p in it['outline']), max(p[0] for p in it['outline']),
                  max(p[1] for p in it['outline'])] for it in POWER_POURS.values() if it['layer'] == 'F.Cu']
         cuts += [bg.placed_geometry(fp_geo_of(r), next(p['anchor'] for p in parts if p['ref'] == r))['box']
-                 for r in POWER_ANCHORS if r in anchored]
+                 for r in list(POWER_ANCHORS) + list(SMALL_SIGNAL_ANCHORS) + list(CUTOUT_KEEP) if r in anchored]
         for cut in cuts:
             nxt = {}
             for name, reg in regions.items():
@@ -813,6 +903,9 @@ def build():
                                      'end at x <= row_end_max, so that the PWR-A bottom edge under the PWR-B PH 9-pin span '
                                      '(PWR_B edge_zones[2]) stays free of PWR-A headers'}
     if power_live:
+        ss_rows, ss_problems = small_signal_check(fp_geo_of, parts, contract)
+        if ss_problems:
+            raise SystemExit('make_spec: small-signal anchors: ' + '; '.join(ss_problems))
         out['power_stages'] = {
             'anchors': sorted(POWER_ANCHORS, key=bg.sort_ref),
             'converter_zone_refs': contract.get('converter_zone_refs'),
@@ -830,6 +923,15 @@ def build():
                     'CBOOT, RBOOT, VCC, BIAS, PG) to their parts, the 0603 E1_CONV_IN bypass C132 at U108, the other '
                     'LAB5 loads (J104, J206.2, U503, U553, C552, C509, C223, R110), E2_LNA_IN from L205.2 to the LT3045 '
                     'IN pins and every branch net after F201, L202 and Q201',
+            'small_signal': {
+                'rule': ('W2 PWR-L6-PLACE (placement only): the U107 and U108 small-signal parts anchored inside thermal_bond '
+                         'zones 3\'/4\' next to their pins (make_spec.py SMALL_SIGNAL_ANCHORS); MODEL geometry, pad centre to '
+                         'pin centre: CVCC <= 2.0 mm of VCC/AGND, CBOOT, RBOOT and the feedback parts <= 5.0 mm of their pins (project limits). '
+                         'Their copper (the SW-CBOOT link through the VIN2-RBOOT gap, the FB node on F.Cu only, AGND to PGND '
+                         'under U108) is W2 PWR-L6-SCRIPT\'s; the F.Cu VIN2 bar CONVIN-U107-L-BAR closes that gap today'),
+                'source': SMALL_SIGNAL_SOURCE,
+                'rows': ss_rows,
+                'passed': not ss_problems},
         }
     # pcb/check_boards.py keys of a two-sided board: parts on both sides, bottom height limit = the room under PWR-A
     out['sides'] = ['top', 'bottom']
