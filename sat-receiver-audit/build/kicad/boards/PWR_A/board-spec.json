@@ -35780,7 +35780,7 @@
     "rule": "make_board.py gnd_fanout (port of PWR_B make_spec.py): stub 0.25 mm from the pad centre to a 0.7 / 0.3 via, or to a GND via within 3 mm"
   },
   "moves": {
-    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 194b76b7bbd0f1b56616fd600e11c752f346c9e6e20d8321fb66406bc17219da",
+    "placement_file": "build/kicad/boards/PWR_A/board-placement.json sha256 a419ec7756399bc8393cab8c0a8d7cd3cff4546bcb0d577fd6962050229d6204",
     "moved_refs": 199,
     "manual": []
   },
