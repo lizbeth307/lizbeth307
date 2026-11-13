@@ -8,7 +8,7 @@
 |---|---|---|
 | `f2c_graph.py` → `design/E1.json`, `E2.json`, `E5.json` | J110, J111 — dnp (S06/S07 видалено); J107 = GND + E1_SW, J106 = GND + LAB5 (кінці W-C1 на PWR-A, та сама вилка Mini-Fit Jr. 2×1); 9 сигналів E1/E5 (CHG_INHIBIT, E1_BAT_ADC, I2C0_SCL/SDA, IMU_RX/TX, INA228_ALERT, PICO_OFF, PWR_BUTTON) виходять із J202/J203 (S02) і йдуть PWR-C ↔ CTRL джгутом W-C2 до тих самих контактів J306/J307; J109, J112, J113, J507 — бічний вхід JST PH S*B (PWR-C бере деталі до 6.5 мм) | Пара B2B: 33 → 24 кола, 55 → 46 контактів; PWR-B втрачає 9 довгих кіл J209 → J202/J203 |
 | `pcb/partition-spec.json` `partition.domain_override_pwr_c`, `pcb/prepare.py` | 52 позиції з PWR-A (групи E1 «AON і UV», «Головний вимикач», «Інгібування заряду», «Аварійний ADC», «Захист USB-PD», «Сервісний заряд», «Контрольні точки»; E5 «Сервіс і зовнішні шини»; J105, J108, J109, J112–J115, J507) отримують домен PWR_ENTRY | Аудит домену плат |
-| `make_spec.py`, `contract-proposal.json` | Специфікація PWR_C: контур 156 × 33.5 мм із фаскою 5.5 мм, виріз 18 × 18 мм під вентилятор V2, шість отворів M3, 4 шари JLC04161H-7628 | Нової плати в механічному контракті ще немає |
+| `make_spec.py`, `contract-proposal.json` | Специфікація PWR_C: контур 156 × 33.5 мм із фаскою 5.5 мм, виріз 18 × 18 мм під вентилятор V2, п’ять отворів M3, 4 шари JLC04161H-7628 | Нової плати в механічному контракті ще немає |
 | `build/kicad/boards/PWR_A/make_spec.py` | F2C_PLACES / F2C_PINS: J106 на місці J108, деталі з вирізами PWR-B на місцях PCB-PWRA-4, тестові точки J21/DISP з поясу PWR-B у вільні вікна E1 | Вирізи PWR-B: 50 → 33 |
 | `build/kicad/boards/PWR_B/make_spec.py` | In2.Cu — сигнальний шар, router.class_layers тримає PWR1A на F.Cu/B.Cu; перемикач COPPER = 6 | Ємність поясу x 42–50 |
 

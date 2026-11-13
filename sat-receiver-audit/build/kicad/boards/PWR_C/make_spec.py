@@ -97,22 +97,28 @@ ANCHORS = {
     'F103': (29.4, 12.0, 90), 'J115': (26.4, 30.0, 0),
     'XU106B': (X_VOUT, Y_P1, 0), 'XU106A': (X_VIN, Y_P1, 0),
     'XJC1': (65.0, 31.0, 180), 'J108': (66.0, 17.0, 180),
-    'XJC2': (79.0, 30.0, 0),
+    'XJC2': (77.9, 30.0, 0),
     'J507': (103.95, 26.5, 180), 'J112': (115.45, 26.5, 180), 'J109': (122.95, 26.5, 180), 'J113': (130.45, 26.5, 180),
     'J114': (137.33, 25.0, 0), 'U109': (139.0, 15.0, 0),
+    # probe 3 (run 43353768554): the U109 input and output capacitors at the HotRod bars, beside the scripted trunks
+    'C116': (136.0, 19.5, 180), 'C117': (136.0, 9.0, 180),
 }
 # Placement groups (region [x0, y0, x1, y1], members); board_gen packs them in this order.
 GROUPS = [
-    ('AON', [13.8, 10.6, 27.3, 25.6], ['D104', 'D105', 'U103', 'C103', 'C104', 'C105', 'TP104', 'TP106']),
+    ('AON', [13.8, 10.6, 27.3, 25.6], ['D104', 'D105', 'U103', 'C103', 'C104', 'C105', 'R103', 'TP104', 'TP106']),
     ('SWITCH', [57.9, 6.4, 68.4, 12.8], ['D102', 'D103', 'R111', 'TP105']),
-    ('UV', [95.6, 6.6, 112.4, 14.6], ['U104', 'R103', 'R104', 'R105', 'R106', 'R107', 'C106', 'D101', 'TP108', 'Q101',
+    ('UV', [95.6, 6.6, 112.4, 14.6], ['U104', 'R104', 'R105', 'R106', 'R107', 'C106', 'D101', 'TP108', 'Q101',
                                      'R121', 'R122', 'R123']),
     ('E5', [95.6, 15.0, 112.4, 24.2], ['U553', 'U551', 'C552', 'C553', 'R553', 'TP503', 'R112', 'C114', 'TP107']),
-    ('USBPD', [113.0, 6.6, 137.0, 20.5], ['C115', 'C116', 'C117', 'R113', 'R114', 'R115', 'R116', 'TP103']),
+    ('USBPD', [113.0, 6.6, 133.8, 20.5], ['C115', 'R113', 'R114', 'R115', 'R116', 'TP103']),
 ]
 
 # Scripted locked copper: (id, net, layer, width, path); paths end on pad centres.
 BATT_W, PWR3A_W, NECK_W, HOTROD_W = 3.2, 1.85, 1.6, 0.3
+# probe 3 (run 43353768554): the router's 0.5 mm E1_N / E1_SHUNT_P branches did not enter the 0.3 mm MSOP pins of the
+# INA228 (IN+ 10, IN- 9, VBUS 8 alternate on one side). Every current path of these two nets is scripted copper, so
+# the router joins only sense and small-signal branches (INA228, AON LDO input, UV divider, TVS, test point): 0.2 mm.
+SENSE_NETS = {'E1_N', 'E1_SHUNT_P'}
 TRUNKS = [
     ('SHUNTP', 'E1_SHUNT_P', 'F.Cu', BATT_W, [('J105', '2'), ('XR101', '1')]),
     ('N-BUS', 'E1_N', 'F.Cu', BATT_W, [('XR101', '2'), (56.0, 3.2), (56.0, Y_P1), ('XU106A', '1')]),
@@ -173,8 +179,14 @@ class Inputs:
             self.geo[r] = {**geo, 'pads': keep}
 
 
-def anchor_of(at, rot):
-    return {'at': [r4(at[0]), r4(at[1])], 'align': 'origin', 'rotation': rot, 'side': 'F'}
+REF_TEXT = {'J115': [27.9, 27.4]}  # probe 3 (run 43353768554): the default legend of J115 crossed the top edge
+
+
+def anchor_of(at, rot, ref=None):
+    a = {'at': [r4(at[0]), r4(at[1])], 'align': 'origin', 'rotation': rot, 'side': 'F'}
+    if ref in REF_TEXT:
+        a['ref_text'] = {'at': REF_TEXT[ref], 'angle': 0}
+    return a
 
 
 def spec_parts(inp):
@@ -198,7 +210,7 @@ def spec_parts(inp):
         else:
             if r not in ANCHORS:
                 raise SystemExit(f'make_spec: {r} has neither an anchor nor a group')
-            parts.append({'ref': r, 'source': 'graph', 'anchor': anchor_of(ANCHORS[r][:2], ANCHORS[r][2]),
+            parts.append({'ref': r, 'source': 'graph', 'anchor': anchor_of(ANCHORS[r][:2], ANCHORS[r][2], r),
                           'anchor_source': f'{TAG}: make_spec.py ANCHORS (design choice)'})
     return parts
 
@@ -314,6 +326,7 @@ def project_json(inp, nets):
     for name, width, clearance in (('Default', nc['classes']['SIG']['outer_min_width_mm'], nc['classes']['SIG']['clearance_mm']),
                                    ('PWR1A', nc['classes']['PWR1A']['outer_min_width_mm'], nc['classes']['PWR1A']['clearance_mm']),
                                    ('PWRC_BRANCH', 0.5, nc['classes']['BATT']['clearance_mm']),
+                                   ('PWRC_SENSE', 0.2, nc['classes']['BATT']['clearance_mm']),
                                    ('SCRIPTED_GND', nc['classes']['SIG']['outer_min_width_mm'], nc['classes']['SIG']['clearance_mm'])):
         row = copy.deepcopy(default)
         row['name'] = name
@@ -330,6 +343,8 @@ def project_json(inp, nets):
         cls = (nc['nets'].get(n) or {}).get('class', 'SIG')
         if n == 'GND':
             pats.append({'netclass': 'SCRIPTED_GND', 'pattern': n})
+        elif n in SENSE_NETS:
+            pats.append({'netclass': 'PWRC_SENSE', 'pattern': n})
         elif cls in ('BATT', 'PWR3A', 'PWR2A'):
             pats.append({'netclass': 'PWRC_BRANCH', 'pattern': n})
         elif cls == 'PWR1A':
@@ -352,7 +367,7 @@ def branch_exempt(inp, placed, tracks):
         nets = sorted({p['net'] for p in pa.pads if p['net'] in power})
         if not nets:
             continue
-        out[ref] = {'max_mm': 40.0, 'min_width_mm': 0.5,
+        out[ref] = {'max_mm': 40.0, 'min_width_mm': 0.2 if set(nets) <= SENSE_NETS else 0.5,
                     'reason': f'{TAG}: router branch of {", ".join(nets)} at the 0.5 mm PWRC_BRANCH width to a pad that the '
                               'class width does not enter; the high-current path is the scripted copper (make_spec.py '
                               'TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, '

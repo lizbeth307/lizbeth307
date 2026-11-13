@@ -996,7 +996,10 @@ SCRIPTED_CLASSES = {'GND': 'SCRIPTED_GND'}
 # W2 PWRJ-F2C probe, diagnostic only (not a candidate board): the router widths of the power classes narrowed to widths
 # that enter SOT/QFN pins, so a route run separates pad entry (class width wider than the pin) from channel capacity.
 # Router copper below the class width is a pcb/check_boards.py class_widths finding; {} = the committed classes.
-ROUTER_NARROW = {}
+# Probe 4: the 2 oz outer-copper lever as a diagnostic. IPC-2221 (external k 0.048, the class temperature rises of
+# pcb/generated/netclasses.json) gives the cross-section; at 2 oz (0.070 mm) the width is half the 1 oz width, so the
+# router widths become BATT 1.6, PWR3A 0.93, PWR2A 0.4 mm. check_boards still measures against the 1 oz classes.
+ROUTER_NARROW = {'BATT': 1.6, 'PWR3A': 0.93, 'PWR2A': 0.4}
 COPPER = 6  # W2 PWRJ-F2C probe: 6 = the 6-layer escalation (In3/In4 signal layers, In1/In2 planes as on 4 layers)
 
 

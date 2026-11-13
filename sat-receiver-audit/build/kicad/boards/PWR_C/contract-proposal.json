@@ -6,7 +6,7 @@
   "sources": {
     "envelope": "pwr-decision.json fallback F2-C and the PWR-C+R proposal of the SHRINK study (pwr-study.json proposals[1]): enclosure x 4-160, y 4-37.5, z 58.4-67.58, parts 6.5 mm or lower, an 18 mm hole for the V2 vent at enclosure (80, 21); judges 2 and 3 found no layout item, structure box or harness route there on wip/w2-int 4d459155",
     "corner": "enclosure outer corner radius 14 and wall 2.5 (mechanical/params/mechanical.json outer): the inner-wall arc of the lower-left corner is centred at enclosure (14, 14) with radius 11.5; the 5.5 mm chamfer at board (150.5, 0)-(156, 5.5) keeps its midpoint 10.25 mm from that centre (1.25 mm clear)",
-    "holes": "design choice of the probe: six M3 holes on front-shell bosses like the CTRL bosses; MECH places the bosses"
+    "holes": "design choice of the probe: five M3 holes on front-shell bosses like the CTRL bosses (probe 4 dropped the sixth at (91.5, 29.5): its keep-out closed the LAB5 path from XJC2 to U553); MECH places the bosses"
   },
   "stackup": {
     "t": 1.6,
@@ -66,10 +66,6 @@
           30.0
         ],
         [
-          91.5,
-          29.5
-        ],
-        [
           145.0,
           4.5
         ],
@@ -107,7 +103,7 @@
         ],
         "z_bottom": 65.48,
         "facing": "-z",
-        "mount": "six M3 screws into front-shell bosses (proposal); fitted before the battery tray"
+        "mount": "five M3 screws into front-shell bosses (proposal); fitted before the battery tray"
       }
     }
   }

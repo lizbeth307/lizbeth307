@@ -226,11 +226,31 @@
     },
     {
       "ref": "C116",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          136.0,
+          19.5
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: make_spec.py ANCHORS (design choice)"
     },
     {
       "ref": "C117",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          136.0,
+          9.0
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: make_spec.py ANCHORS (design choice)"
     },
     {
       "ref": "C552",
@@ -368,7 +388,14 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F"
+        "side": "F",
+        "ref_text": {
+          "at": [
+            27.9,
+            27.4
+          ],
+          "angle": 0
+        }
       },
       "anchor_source": "W2 PWRJ-F2C probe: make_spec.py ANCHORS (design choice)"
     },
@@ -549,7 +576,7 @@
       "pending": "GR package: PWR-C end of harness W-C1 (from PWR-A J106)",
       "anchor": {
         "at": [
-          79.0,
+          77.9,
           30.0
         ],
         "align": "origin",
@@ -762,6 +789,10 @@
           "rotation": 0
         },
         {
+          "ref": "R103",
+          "rotation": 0
+        },
+        {
           "ref": "TP104",
           "rotation": 0
         },
@@ -813,10 +844,6 @@
       "members": [
         {
           "ref": "U104",
-          "rotation": 0
-        },
-        {
-          "ref": "R103",
           "rotation": 0
         },
         {
@@ -919,7 +946,7 @@
       "region": [
         113.0,
         6.6,
-        137.0,
+        133.8,
         20.5
       ],
       "side": "F",
@@ -927,14 +954,6 @@
       "members": [
         {
           "ref": "C115",
-          "rotation": 0
-        },
-        {
-          "ref": "C116",
-          "rotation": 0
-        },
-        {
-          "ref": "C117",
           "rotation": 0
         },
         {
@@ -1231,11 +1250,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            16.45,
+            21.41,
             11.92
           ],
           [
-            16.45,
+            21.41,
             13.195
           ]
         ],
@@ -1249,11 +1268,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            19.855,
+            24.815,
             12.17
           ],
           [
-            20.855,
+            25.815,
             12.17
           ]
         ],
@@ -1267,11 +1286,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            102.815,
+            97.855,
             10.07
           ],
           [
-            102.815,
+            97.855,
             11.095
           ]
         ],
@@ -1303,11 +1322,11 @@
         "width_mm": 0.25,
         "path": [
           [
-            125.755,
+            118.155,
             19.77
           ],
           [
-            125.755,
+            118.155,
             20.795
           ]
         ],
@@ -1321,12 +1340,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            118.55,
-            19.52
+            135.05,
+            19.5
           ],
           [
-            118.55,
-            20.795
+            134.0,
+            19.5
           ]
         ],
         "locked": true,
@@ -1339,12 +1358,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            122.35,
-            19.52
+            135.05,
+            9.0
           ],
           [
-            122.35,
-            20.795
+            134.0,
+            9.0
           ]
         ],
         "locked": true,
@@ -1447,12 +1466,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            109.585,
+            104.625,
             10.07
           ],
           [
-            110.535,
-            10.07
+            104.625,
+            11.095
           ]
         ],
         "locked": true,
@@ -1483,12 +1502,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            135.885,
+            128.285,
             19.77
           ],
           [
-            136.835,
-            19.77
+            128.285,
+            20.795
           ]
         ],
         "locked": true,
@@ -1501,12 +1520,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            115.305,
-            16.87
+            131.645,
+            19.77
           ],
           [
-            116.255,
-            16.87
+            132.595,
+            19.77
           ]
         ],
         "locked": true,
@@ -1519,12 +1538,12 @@
         "width_mm": 0.25,
         "path": [
           [
-            111.345,
-            7.41
+            104.625,
+            8.21
           ],
           [
-            112.295,
-            7.41
+            105.575,
+            8.21
           ]
         ],
         "locked": true,
@@ -1736,7 +1755,7 @@
         "id": "GND-C104-2-V",
         "net": "GND",
         "at": [
-          16.45,
+          21.41,
           13.195
         ],
         "drill_mm": 0.3,
@@ -1748,7 +1767,7 @@
         "id": "GND-C105-2-V",
         "net": "GND",
         "at": [
-          20.855,
+          25.815,
           12.17
         ],
         "drill_mm": 0.3,
@@ -1760,7 +1779,7 @@
         "id": "GND-C106-2-V",
         "net": "GND",
         "at": [
-          102.815,
+          97.855,
           11.095
         ],
         "drill_mm": 0.3,
@@ -1784,7 +1803,7 @@
         "id": "GND-C115-2-V",
         "net": "GND",
         "at": [
-          125.755,
+          118.155,
           20.795
         ],
         "drill_mm": 0.3,
@@ -1796,8 +1815,8 @@
         "id": "GND-C116-2-V",
         "net": "GND",
         "at": [
-          118.55,
-          20.795
+          134.0,
+          19.5
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1808,8 +1827,8 @@
         "id": "GND-C117-2-V",
         "net": "GND",
         "at": [
-          122.35,
-          20.795
+          134.0,
+          9.0
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1880,8 +1899,8 @@
         "id": "GND-R105-2-V",
         "net": "GND",
         "at": [
-          110.535,
-          10.07
+          104.625,
+          11.095
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1904,8 +1923,8 @@
         "id": "GND-R115-2-V",
         "net": "GND",
         "at": [
-          136.835,
-          19.77
+          128.285,
+          20.795
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1916,8 +1935,8 @@
         "id": "GND-R116-2-V",
         "net": "GND",
         "at": [
-          116.255,
-          16.87
+          132.595,
+          19.77
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -1928,8 +1947,8 @@
         "id": "GND-R123-2-V",
         "net": "GND",
         "at": [
-          112.295,
-          7.41
+          105.575,
+          8.21
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -2122,7 +2141,7 @@
   "branch_exempt": {
     "C103": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "C116": {
@@ -2142,7 +2161,7 @@
     },
     "D104": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "D105": {
@@ -2157,7 +2176,7 @@
     },
     "J105": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_SHUNT_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "J108": {
@@ -2177,7 +2196,7 @@
     },
     "R103": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "R111": {
@@ -2197,7 +2216,7 @@
     },
     "TP104": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "TP105": {
@@ -2207,7 +2226,7 @@
     },
     "U103": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "U109": {
@@ -2232,17 +2251,17 @@
     },
     "XR101": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_N, E1_SHUNT_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "XU102": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_N, E1_SHUNT_P at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "XU106A": {
       "max_mm": 40.0,
-      "min_width_mm": 0.5,
+      "min_width_mm": 0.2,
       "reason": "W2 PWRJ-F2C probe: router branch of E1_N at the 0.5 mm PWRC_BRANCH width to a pad that the class width does not enter; the high-current path is the scripted copper (make_spec.py TRUNKS); the branch carries the current of this part only (divider, LDO, TVS, test point, sense or a header contact whose full current the scripted copper does not carry: OPEN, see README)"
     },
     "XU106B": {
