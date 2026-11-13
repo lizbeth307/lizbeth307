@@ -262,8 +262,8 @@ SOURCES["JST-PHD"] = ("https://datasheet.lcsc.com/datasheet/pdf/5f2def6b1b145b42
 HEADERS = {
     "J304": ("X01I1-CTRL", {"S01": "1 3 5 8-10 12-15 17 20 25 27-30 32 34 35 38-40"}),
     "J305": ("X02P1-CTRL", {"S02": "1-4"}),
-    "J306": ("S02-CTRL-SIG-1", {"S02": "1-20"}),
-    "J307": ("S02-CTRL-SIG-2", {"S02B": "1-20"}),  # branch S02B of S02 to the top-entry J203 (W2 PWR-L6-PLACE third pass)
+    "J306": ("S02-CTRL-SIG-1", {"S02": "1-4 6 8-11 13-15 17-20", "S02B": "5 7 12 16"}),  # W2 PWR-L6-PLACE probe C: 5/7/12/16 to J203
+    "J307": ("S02-CTRL-SIG-2", {"S02B": "1 3-13 16 17 19 20", "S02": "2 14 15 18"}),  # branch S02B to J203; 2/14/15/18 to J202 (probe C)
     "J308": ("X03S1-CTRL", {"S03": "1-8"}),
     "J309": ("X03S2-CTRL", {"S03": "1-4"}),
     "J310": ("S15-30-CTRL", {"S15": "1", "S30": "2-4"}),
@@ -292,8 +292,8 @@ HEADERS = {
     "J114": ("X11P1-PWR", {"S11": "1 2"}),
     "J115": ("X12P1-PWR", {"S12": "1 2"}),
     "J201": ("X02S0-PWR", {"S02": "1-4"}),
-    "J202": ("S02-PWR-SIG-1", {"S02": "1-20"}),
-    "J203": ("S02-PWR-SIG-2", {"S02B": "1-20"}),  # W2 PWR-L6-PLACE third pass: top entry B20B-PHDSS in PWR-B zone 2
+    "J202": ("S02-PWR-SIG-1", {"S02": "1-20"}),  # W2 PWR-L6-PLACE probe C: 5/7/12/16 carry PG_BONI/PTC_AUX/PG_LNB/FAULT_RTLA
+    "J203": ("S02-PWR-SIG-2", {"S02B": "1-20"}),  # top entry B20B-PHDSS in PWR-B zone 2; 2/14/15/18 = EN_HFP/EN_LIME3V3/EN_LNB/FAULT_HFP (probe C)
     "J204": ("X04S1-PWR", {"S04": "1-8"}),
     "J205": ("X19P1-PWR", {"S19": "1 2"}),
     "J206": ("SL2-PWR-MF", {"S13": "1 2", "S14": "3 4", "S17": "5 6", "S18": "7 8"}),
@@ -548,15 +548,15 @@ SEG_CURRENT = {
 # after the NET_CURRENT / SEG_CURRENT rows, so that the line citations into this file (pcb/generated/netclasses.json) keep their
 # numbers. The row stands just before S02 in SEGMENTS, so that the harness router (tools/build_assembly_docs.py route) tries
 # the branch first for its 20 nets (SEGMENT_NETS) and S02 for every other CTRL <-> PWR net.
-SEGMENT_NETS["S02B"] = {"FAULT_LNA4", "FAULT_RTLA", "FAULT_RTLB", "FLT_BONI", "FLT_LIME3V3", "FLT_LNB", "FLT_SB_LNA", "I2C0_SCL",
-                        "I2C0_SDA", "IMU_RX", "IMU_TX", "INA228_ALERT", "OVP_LNB_N", "PG_BONI", "PG_LNB", "PICO_DISP_EN",
-                        "PICO_OFF", "PTC_AUX", "PWR_BUTTON", "SLED_DET"}  # J307.1-20 = J203.1-20 (design/E3.json, design/E2.json)
+SEGMENT_NETS["S02B"] = {"EN_HFP", "EN_LIME3V3", "EN_LNB", "FAULT_HFP", "FAULT_LNA4", "FAULT_RTLB", "FLT_BONI", "FLT_LIME3V3",
+                        "FLT_LNB", "FLT_SB_LNA", "I2C0_SCL", "I2C0_SDA", "IMU_RX", "IMU_TX", "INA228_ALERT", "OVP_LNB_N",
+                        "PICO_DISP_EN", "PICO_OFF", "PWR_BUTTON", "SLED_DET"}  # the 20 J203 nets (design/E2.json; probe C pin swap)
 SEGMENTS.insert(next(i for i, s in enumerate(SEGMENTS) if s[0] == "S02"), (
-    "S02B", "CTRL", "PWR", "Сигнали S02-SIG-2: CTRL J307 ↔ PWR-B J203 (гілка S02)", None, "TBD (CAD)",
-    "20 проводів PHD 22 AWG (SPHD-001T-P0.5) від J307 (S20B-PHDSS, боковий вхід, зона 0 CTRL) до J203 (B20B-PHDSS(LF)(SN), верхній "
-    "вхід, зона 2 нижнього краю PWR-B); джгут прямий, J307.k ↔ J203.k, розпіновка без змін; відходить від S02 у зоні 0 CTRL; траса — "
-    "harness_routes branches.S02B механічної моделі (повз бобишку кріплення дисплея); радіус згину над J203 і примірка — OPEN "
-    "(W2 PWR-L6-PLACE, третій прохід, build/15)"))
+    "S02B", "CTRL", "PWR", "Сигнали S02-SIG-2: CTRL J307 (16) і J306 (4) ↔ PWR-B J203 (гілка S02)", None, "TBD (CAD)",
+    "20 проводів PHD 22 AWG (SPHD-001T-P0.5) від J307/J306 (S20B-PHDSS, боковий вхід, зона 0 CTRL) до J203 (B20B-PHDSS(LF)(SN), верхній "
+    "вхід, зона 2 PWR-B); J307.k ↔ J203.k, крім J306.5/7/12/16 ↔ J203.2/14/15/18 (обмін контактів PWR-B, проба C); відходить від S02 у "
+    "зоні 0 CTRL; траса — harness_routes branches.S02B механічної моделі (повз бобишку дисплея); радіус згину над J203 і примірка — OPEN "
+    "(W2 PWR-L6-PLACE, третій прохід і проба C четвертого, build/15)"))
 
 # Wire colours by net (regex, colour) — project convention, first match wins.
 COLOURS = [

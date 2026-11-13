@@ -9267,9 +9267,9 @@
         },
         {
           "number": "5",
-          "name": "EN_HFP",
+          "name": "PG_BONI",
           "type": "passive",
-          "net": "EN_HFP"
+          "net": "PG_BONI"
         },
         {
           "number": "6",
@@ -9279,9 +9279,9 @@
         },
         {
           "number": "7",
-          "name": "EN_LIME3V3",
+          "name": "PTC_AUX",
           "type": "passive",
-          "net": "EN_LIME3V3"
+          "net": "PTC_AUX"
         },
         {
           "number": "8",
@@ -9309,9 +9309,9 @@
         },
         {
           "number": "12",
-          "name": "EN_LNB",
+          "name": "PG_LNB",
           "type": "passive",
-          "net": "EN_LNB"
+          "net": "PG_LNB"
         },
         {
           "number": "13",
@@ -9333,9 +9333,9 @@
         },
         {
           "number": "16",
-          "name": "FAULT_HFP",
+          "name": "FAULT_RTLA",
           "type": "passive",
-          "net": "FAULT_HFP"
+          "net": "FAULT_RTLA"
         },
         {
           "number": "17",
@@ -9386,9 +9386,9 @@
         },
         {
           "number": "2",
-          "name": "FAULT_RTLA",
+          "name": "EN_HFP",
           "type": "passive",
-          "net": "FAULT_RTLA"
+          "net": "EN_HFP"
         },
         {
           "number": "3",
@@ -9458,15 +9458,15 @@
         },
         {
           "number": "14",
-          "name": "PG_BONI",
+          "name": "EN_LIME3V3",
           "type": "passive",
-          "net": "PG_BONI"
+          "net": "EN_LIME3V3"
         },
         {
           "number": "15",
-          "name": "PG_LNB",
+          "name": "EN_LNB",
           "type": "passive",
-          "net": "PG_LNB"
+          "net": "EN_LNB"
         },
         {
           "number": "16",
@@ -9482,9 +9482,9 @@
         },
         {
           "number": "18",
-          "name": "PTC_AUX",
+          "name": "FAULT_HFP",
           "type": "passive",
-          "net": "PTC_AUX"
+          "net": "FAULT_HFP"
         },
         {
           "number": "19",

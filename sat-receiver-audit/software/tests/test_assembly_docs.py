@@ -468,17 +468,18 @@ class PwrL6ZoneTwoBranchTests(unittest.TestCase):
     def setUpClass(cls):
         cls.model, cls.h, cls.files = gen.build_all(BASE)
 
-    def test_s02b_is_a_straight_branch_of_s02(self):
+    def test_s02b_is_a_straight_branch_of_s02(self):  # W2 PWR-L6-PLACE probe C: straight except the J202 <-> J203 pin swap
         self.assertEqual(D.SEGMENT_BRANCHES.get("S02B"), "S02")
-        self.assertEqual((D.HEADERS["J203"][1], D.HEADERS["J307"][1]), ({"S02B": "1-20"}, {"S02B": "1-20"}))
+        self.assertEqual((D.HEADERS["J203"][1], D.HEADERS["J307"][1]), ({"S02B": "1-20"}, {"S02B": "1 3-13 16 17 19 20", "S02": "2 14 15 18"}))
         branch = [w for w in self.h.wires if w["wire"].startswith("S02-S02B-")]
         self.assertEqual(len(branch), 20)
         for w in branch:
             a, b = PIN_RE.match(w["from"]), PIN_RE.match(w["to"])
-            self.assertEqual((a[1], b[1], a[2]), ("J307", "J203", b[2]), w["wire"])
+            swap = {"2": "5", "14": "7", "15": "12", "18": "16"}  # J203 contact -> J306 contact (probe C)
+            self.assertEqual((a[1], b[1], a[2]), ("J306" if b[2] in swap else "J307", "J203", swap.get(b[2], b[2])), w["wire"])
             self.assertEqual(w["segment"], "S02", w["wire"])
         self.assertFalse([w for w in self.h.wires if w["segment"] == "S02" and not w["wire"].startswith("S02-S02B-")
-                          and ("J203." in w["to"] or "J307." in w["from"])])
+                          and "J203." in w["to"]])  # probe C: J307.2/14/15/18 run in S02 to J202
 
     def test_zone_two_pair_is_top_entry(self):
         rows = {r["connector"]: r for r in csv.DictReader(io.StringIO(self.files[gen.OUT["connectors_csv"]]))}
@@ -486,6 +487,36 @@ class PwrL6ZoneTwoBranchTests(unittest.TestCase):
             self.assertEqual((rows[ref]["board"], rows[ref]["orientation"]), ("PWR_B", "top"), ref)
             self.assertTrue(self.model.db_part[ref]["footprint"].endswith("_Vertical"), ref)
         self.assertEqual(self.model.db_part["J307"]["footprint"], "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal")
+
+
+
+class PwrL6ProbeCPinSwapTests(unittest.TestCase):
+    """W2 PWR-L6-PLACE fourth pass, probe C (connector lever on PWR-B only): the four innermost J202-bound J209 lower-row nets
+    EN_HFP / EN_LIME3V3 / EN_LNB / FAULT_HFP land on J203.2 / .14 / .15 / .18 (harness branch S02B), and the arm-local
+    PG_BONI / PTC_AUX / PG_LNB / FAULT_RTLA land on J202.5 / .7 / .12 / .16 (S02); the CTRL J306 / J307 pin maps do not
+    change, so these eight wires cross between the two CTRL headers. Design data only, no hardware claim."""
+
+    SWAP = {"EN_HFP": ("J306.5", "J203.2"), "EN_LIME3V3": ("J306.7", "J203.14"), "EN_LNB": ("J306.12", "J203.15"),
+            "FAULT_HFP": ("J306.16", "J203.18"), "PG_BONI": ("J307.14", "J202.5"), "PTC_AUX": ("J307.18", "J202.7"),
+            "PG_LNB": ("J307.15", "J202.12"), "FAULT_RTLA": ("J307.2", "J202.16")}
+
+    @classmethod
+    def setUpClass(cls):
+        cls.model, cls.h, cls.files = gen.build_all(BASE)
+
+    def test_swapped_wires(self):
+        for net, (ctrl, pwr) in self.SWAP.items():
+            rows = [w for w in self.h.wires if w["net"] == net and w["segment"] == "S02"]
+            self.assertEqual(len(rows), 1, net)
+            a, b = PIN_RE.match(rows[0]["from"]), PIN_RE.match(rows[0]["to"])
+            self.assertEqual((f"{a[1]}.{a[2]}", f"{b[1]}.{b[2]}"), (ctrl, pwr), net)
+            self.assertEqual(rows[0]["wire"].startswith("S02-S02B-"), pwr.startswith("J203."), net)
+
+    def test_s02b_nets_are_the_j203_nets(self):
+        graph = json.loads((BASE / "design/E2.json").read_text(encoding="utf-8"))
+        j203 = next(c for c in graph["components"] if c["ref"] == "J203")
+        self.assertEqual(D.SEGMENT_NETS["S02B"], {p["net"] for p in j203["pins"] if p.get("net")})
+        self.assertEqual(D.HEADERS["J306"][1], {"S02": "1-4 6 8-11 13-15 17-20", "S02B": "5 7 12 16"})
 
 
 if __name__ == "__main__":
