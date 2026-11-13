@@ -1,0 +1,348 @@
+{
+  "schema": "srrx-board-review-v1",
+  "board_id": "PWR_A",
+  "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "pcb/check_boards.py",
+  "result": "NO_FINDINGS",
+  "inputs": {
+    "board_file": {
+      "path": "build/kicad/boards/PWR_A/f2env-probe-5/PWR_A.kicad_pcb",
+      "sha256": "6f0b169fcce09b024858f1aacd37344c42502e2b8162984d922febd0449e9909"
+    },
+    "projection_sha256": {
+      "graph_refs_pins_nets": "d31e7c989388f40cd4f04869d4b8f166e0ea639b7cceefb52f5263c8852fb5c7",
+      "footprints": "8029615925e9a36d38d1ec8432859bf051de21ad75e6d04f6e94d75f2e2135c8",
+      "contract_board": "075bb97c4e1b89f890d41c4ff7cfb7db655db50f30babdd3783c7c8f4549b8f2",
+      "netclasses": "fd69d03ddfc81f0e19ba234f9c9de50df615204cb36e1834b55f9d641b4f5c4e",
+      "spec": "aac2c693babfe6ddbe4104dac987b6e82375c5d18c669755dbd525c3478803b5"
+    },
+    "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
+  },
+  "frame": {
+    "origin": [
+      100.0,
+      210.0
+    ],
+    "y": "up",
+    "source": "Edge.Cuts bounding box"
+  },
+  "counts": {
+    "footprints": 289,
+    "pads": 946,
+    "tracks": 1563,
+    "vias": 393,
+    "zones": 56,
+    "holes": 21,
+    "copper_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ]
+  },
+  "checks": {
+    "outline": {
+      "findings": 0,
+      "area_mm2": 11990.0,
+      "loops": 1
+    },
+    "holes": {
+      "findings": 0,
+      "contract_holes": 9,
+      "board_holes": 21
+    },
+    "keepouts": {
+      "findings": 0,
+      "keepout_r_mm": 3.5,
+      "tolerance_mm": 0.005
+    },
+    "pad_nets": {
+      "findings": 0,
+      "expected_refs": 280,
+      "board_footprints": 289
+    },
+    "class_widths": {
+      "findings": 0,
+      "tracks_checked": 1563,
+      "pour_necks": [],
+      "split_nets": {}
+    },
+    "rf50": {
+      "findings": 0,
+      "rf50_segments": 0
+    },
+    "gnd_chassis_ties": {
+      "findings": 0,
+      "ties": [],
+      "expected": 0
+    },
+    "b2b": {
+      "findings": 0,
+      "pairs": 1
+    },
+    "tht_pockets": {
+      "findings": 0,
+      "applies": true,
+      "tht_pads": 96,
+      "npth_pegs": 12,
+      "pockets": 31
+    },
+    "heights": {
+      "findings": 0,
+      "checked": 262
+    },
+    "pth_annular": {
+      "findings": 0,
+      "floor_mm": 0.15,
+      "fab_floor": "jlc_4l_1oz"
+    }
+  },
+  "findings": [],
+  "unverified": [
+    {
+      "check": "class_widths",
+      "item": "BONI13V8_PORT vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "DISP12 vias",
+      "reason": "vias_per_transition 3 (PWR2A) is advisory, not counted: 3 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_N vias",
+      "reason": "vias_per_transition 8 (BATT) is advisory, not counted: 1 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E1_USB_PD_RAW vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 3 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_AUX_SWITCHED vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E5_IMU5V vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E5_VBUS_HFP_SW vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "LAB5 vias",
+      "reason": "vias_per_transition 5 (PWR3A) is advisory, not counted: 24 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "LIME3V3 vias",
+      "reason": "vias_per_transition 3 (PWR2A) is advisory, not counted: 4 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "LNB13V2 vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 8 via(s) of the net on the board"
+    },
+    {
+      "check": "heights",
+      "item": "J105",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J208",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J114",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J108",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J110",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "F201",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J107",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "F103",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J112",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J205",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J507",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J106",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J109",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J113",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J111",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J206",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J115",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J104",
+      "reason": "height unknown (spec heights or footprint property Height); limit 4.5 mm"
+    },
+    {
+      "check": "geometry",
+      "item": "U201.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U201.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U201.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U201.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U109.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "Q102.5",
+      "reason": "custom pad modelled as its anchor + 4 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U202.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U202.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U202.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U202.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U107.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U107.5",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U107.9",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U107.11",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U203.1",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U203.4",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U203.7",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    },
+    {
+      "check": "geometry",
+      "item": "U203.10",
+      "reason": "custom pad modelled as its anchor + 1 primitive shape(s)"
+    }
+  ]
+}

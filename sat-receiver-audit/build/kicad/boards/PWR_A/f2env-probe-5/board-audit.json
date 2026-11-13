@@ -1,0 +1,338 @@
+{
+  "schema": "srrx-pwra-board-audit-v1",
+  "board_id": "PWR_A",
+  "status": "MODEL/CI: audits of the drawn board (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "build/kicad/boards/PWR_A/board_audit.py",
+  "board": "routed board PWR_A.kicad_pcb of this folder",
+  "inputs": {
+    "board_sha256": "6f0b169fcce09b024858f1aacd37344c42502e2b8162984d922febd0449e9909",
+    "spec": "build/kicad/boards/PWR_A/f2env-probe-5/board-spec.json",
+    "spec_sha256": "14f53e891b51f7c027224804704b3223e3cc1419158435c72ec3be9c5844e7c3",
+    "pwr_b_h_trim_sha256": "3ebde7bd9cf716f231728ed67e981aba41f6434f84442e7549117bbb51e0dac6",
+    "lab5_budget_sha256": "fb3a64c1cf28708d6c47046cac93a1003f964bb426a6b753030cec081e2533a4"
+  },
+  "drc": {
+    "drc_errors": 0,
+    "drc_unconnected": 134,
+    "drc_warnings": 398,
+    "ignored_checks": [],
+    "source_pad_audit_errors": {
+      "PWRA": 0
+    },
+    "boundary_audit": [
+      "pass"
+    ],
+    "domain_audit": true,
+    "keepout_audit": true,
+    "annular_audit": true,
+    "locked_copper_kept": true,
+    "group_audit": true
+  },
+  "zones": [
+    {
+      "ref": "U204",
+      "part": "LT3045EMSE#PBF",
+      "courtyard": [
+        43.0,
+        17.6,
+        49.26,
+        22.14
+      ],
+      "zones": "1-2",
+      "ok": true
+    },
+    {
+      "ref": "U205",
+      "part": "LT3045EMSE#PBF",
+      "courtyard": [
+        43.0,
+        11.6,
+        49.26,
+        16.14
+      ],
+      "zones": "1-2",
+      "ok": true
+    },
+    {
+      "ref": "U211",
+      "part": "TPS7A4701RGWT",
+      "courtyard": [
+        9.6,
+        13.6,
+        15.5,
+        19.5
+      ],
+      "zones": "1-2",
+      "ok": true
+    },
+    {
+      "ref": "U213",
+      "part": "TPS7A4701RGWT",
+      "courtyard": [
+        72.6,
+        13.6,
+        78.5,
+        19.5
+      ],
+      "zones": "1-2",
+      "ok": true
+    },
+    {
+      "ref": "U107",
+      "part": "LM61460AANRJRR",
+      "courtyard": [
+        13.8,
+        44.05,
+        18.2,
+        48.95
+      ],
+      "zones": "3",
+      "ok": true
+    },
+    {
+      "ref": "L102",
+      "part": "SRP1040VA-4R7M",
+      "courtyard": [
+        10.75,
+        49.5,
+        21.25,
+        62.5
+      ],
+      "zones": "3",
+      "ok": true
+    },
+    {
+      "ref": "U108",
+      "part": "TPSM63606RDLR",
+      "courtyard": [
+        11.05,
+        77.0,
+        16.95,
+        83.0
+      ],
+      "zones": "4",
+      "ok": true
+    }
+  ],
+  "pockets": {
+    "bottom_refs": 0,
+    "outside_a_pocket": []
+  },
+  "h_trim": {
+    "zone_h_max_mm": 2.7,
+    "parts_under": [
+      {
+        "ref": "C115",
+        "under": "J202",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "D105",
+        "under": "J202",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "R116",
+        "under": "J202",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "R262",
+        "under": "J202",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "U103",
+        "under": "J202",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "U109",
+        "under": "J202",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "U214",
+        "under": "J202",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "C117",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "Q101",
+        "under": "J203",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "C2903",
+        "under": "J204",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "R106",
+        "under": "J204",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "Q2903",
+        "under": "J207",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "Q2913",
+        "under": "J207",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "R220",
+        "under": "J207",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "R509",
+        "under": "J207",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "U503",
+        "under": "J207",
+        "h_mm": 2.7,
+        "ok": true
+      }
+    ]
+  },
+  "holes": {
+    "mounting_holes": 9,
+    "netted": []
+  },
+  "cell_nets_on_board": [],
+  "copper": {
+    "A_L101_to_L205": {
+      "net": "LAB5",
+      "from": [
+        "L101.2"
+      ],
+      "to": [
+        "L205.1"
+      ],
+      "mohm": {
+        "20C": 22.4589,
+        "50C": 25.1069
+      },
+      "joined": true,
+      "network": {
+        "tracks": 26,
+        "vias": 24,
+        "pads": 19,
+        "zones_not_modelled": []
+      }
+    },
+    "B_L101_to_J208": {
+      "net": "LAB5",
+      "from": [
+        "L101.2"
+      ],
+      "to": [
+        "J208.2",
+        "J208.6",
+        "J208.10",
+        "J208.14"
+      ],
+      "mohm": {
+        "20C": 36.707,
+        "50C": 41.0348
+      },
+      "joined": true,
+      "network": {
+        "tracks": 26,
+        "vias": 24,
+        "pads": 19,
+        "zones_not_modelled": []
+      }
+    },
+    "raw_U108_to_F102": {
+      "net": "E1_LAB5_RAW",
+      "from": [
+        "U108.8",
+        "U108.9"
+      ],
+      "to": [
+        "F102.1"
+      ],
+      "mohm": {
+        "20C": 0.2158,
+        "50C": 0.2413
+      },
+      "joined": true,
+      "network": {
+        "tracks": 8,
+        "vias": 0,
+        "pads": 9,
+        "zones_not_modelled": []
+      }
+    },
+    "fused_F102_to_L101": {
+      "net": "E1_LAB5_FUSED",
+      "from": [
+        "F102.2"
+      ],
+      "to": [
+        "L101.1"
+      ],
+      "mohm": {
+        "20C": 0.0,
+        "50C": 0.0
+      },
+      "joined": true,
+      "network": {
+        "tracks": 6,
+        "vias": 0,
+        "pads": 4,
+        "zones_not_modelled": []
+      }
+    },
+    "B_total_20C": {
+      "U210.1": {
+        "pwr_a_mohm": 36.707,
+        "b2b_delta_max_mohm": 3.75,
+        "pwr_b_mohm": 6.7293,
+        "total_mohm": 47.1863,
+        "within_10_mohm": false
+      },
+      "U221.1": {
+        "pwr_a_mohm": 36.707,
+        "b2b_delta_max_mohm": 3.75,
+        "pwr_b_mohm": 8.6997,
+        "total_mohm": 49.1567,
+        "within_10_mohm": false
+      }
+    }
+  },
+  "fill": {
+    "label": "MODEL: KiCad courtyard boxes of the top footprints over the outline less the 7 hole keep-outs",
+    "top_courtyards_mm2": 5041.3188,
+    "usable_mm2": 11643.6394,
+    "fill": 0.433
+  },
+  "findings": [],
+  "unverified": [],
+  "result": "NO_FINDINGS"
+}
