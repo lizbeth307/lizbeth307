@@ -7,9 +7,9 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "0095bdf85bac68dc936e5f0a98d6413664565ec2d35c6d2b61f396147be59dab",
-    "pwr_b_h_trim_sha256": "11a839539c6493dec94330f4bf8489b24fac7d3db4cb126a97161c6ebe70825a",
-    "lab5_budget_sha256": "a06142e23864e8843fae6a8b29da7d3fefecfbafaedf7830e8ca548ecd53374d"
+    "spec_sha256": "da6499b39d2cd252f114ae03efa391a40eeda369fd3eca14508e5f1728c6d59d",
+    "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
+    "lab5_budget_sha256": "45d3085a9f771f8bd2b97bdb07a2cccad022b8f464b1ff72673521cf9e1edb9d"
   },
   "drc": null,
   "zones": [
@@ -106,14 +106,26 @@
     "zone_h_max_mm": 2.7,
     "parts_under": [
       {
-        "ref": "C104",
+        "ref": "C119",
         "under": "J201",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C119",
+        "ref": "C132",
         "under": "J201",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "U109",
+        "under": "J201",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "C257",
+        "under": "J202",
         "h_mm": 2.7,
         "ok": true
       },
@@ -124,25 +136,19 @@
         "ok": true
       },
       {
-        "ref": "C265",
-        "under": "J203",
-        "h_mm": 1.5,
-        "ok": true
-      },
-      {
-        "ref": "C270",
+        "ref": "C205",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "L211",
+        "ref": "C227",
         "under": "J203",
-        "h_mm": 1.0,
+        "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "Q2903",
+        "ref": "D201",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
@@ -154,21 +160,15 @@
         "ok": true
       },
       {
-        "ref": "C205",
+        "ref": "C268",
         "under": "J204",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C267",
+        "ref": "D102",
         "under": "J204",
         "h_mm": 2.7,
-        "ok": true
-      },
-      {
-        "ref": "L212",
-        "under": "J204",
-        "h_mm": 1.0,
         "ok": true
       },
       {
@@ -178,21 +178,39 @@
         "ok": true
       },
       {
-        "ref": "C221",
+        "ref": "U551",
+        "under": "J204",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "C220",
         "under": "J207",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C268",
+        "ref": "C260",
         "under": "J207",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "L213",
+        "ref": "L204",
         "under": "J207",
         "h_mm": 1.0,
+        "ok": true
+      },
+      {
+        "ref": "L212",
+        "under": "J207",
+        "h_mm": 1.0,
+        "ok": true
+      },
+      {
+        "ref": "U103",
+        "under": "J207",
+        "h_mm": 2.7,
         "ok": true
       },
       {
@@ -202,8 +220,26 @@
         "ok": true
       },
       {
-        "ref": "U216",
-        "under": "J207",
+        "ref": "C267",
+        "under": "J506",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "C511",
+        "under": "J506",
+        "h_mm": 2.0,
+        "ok": true
+      },
+      {
+        "ref": "D103",
+        "under": "J506",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
+        "ref": "U214",
+        "under": "J506",
         "h_mm": 2.7,
         "ok": true
       }

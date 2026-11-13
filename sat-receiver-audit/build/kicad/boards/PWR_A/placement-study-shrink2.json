@@ -5,13 +5,13 @@
   "status": "MODEL / planning result of the board_gen planner (standard library); no KiCad board, no routing, no hardware result; bench gates OPEN",
   "generator": "build/kicad/boards/PWR_A/placement_study.py",
   "inputs": {
-    "spec_sha256": "54ed43e51119e898f92ae1e40299233ad5ef5ae452d686c4117e44886f9afc4b",
-    "contract_pwr": "5c748b6bee90af6cfc732b7ae9d802818104c989f563dfc8762e994a152664d9",
-    "contract_pwr_b_outline": "5bf4182154d377ec7adc55680813024a57154ac35548db0cd0ac1aab975d2ea0",
+    "spec_sha256": "bc49960de3437204f618f39b1a3f52fd837654457c9c0c5ac4bb751fda185662",
+    "contract_pwr": "ad2613a3ccb2a39d96c6bc01578c8554cdea1d1272e286a8570187c76fe8c18e",
+    "contract_pwr_b_outline": "ffe8e8c1eab5700401657c3c70be9da78460409e41ebaf72ceb0224135d4d0ed",
     "template_sha256": "1c0998e843c5d6df4532fb48c9522947e04aaf025ecaa898156dc183b2ad9621",
     "project_sha256": "7ef39ebd9b14550ec2d82b5f8357acd536a72bf898fa71b9eefefddb1c712a58",
     "pwr_b_placeholders": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-    "pwr_b_spec_sha256": "128227b6dbd82fb54573f867ebec1584b8918f15967a630185f6b93706175e58",
+    "pwr_b_spec_sha256": "bae44b75d7ab1e9442e559ff1f62f03cabf6be06e7af59f0b328abd142d3be8a",
     "pwr_b_connectors_sha256": "4f5ddb6e3763c573527eb25c17bc341e61372c7e7349365be91d257ed0f5cf78"
   },
   "spec_checks": {
@@ -40,11 +40,11 @@
     "demand_mm2": 4549.4032,
     "fill_all_refs": 0.5954,
     "budget_raw_fill": 0.595,
-    "anchored_refs": 85,
-    "anchored_mm2": 3014.5104,
-    "free_after_anchors_and_reserves_mm2": 4626.098,
-    "remaining_demand_mm2": 1534.8928,
-    "free_regions_of_spec_mm2": 2809.2349,
+    "anchored_refs": 86,
+    "anchored_mm2": 3056.8464,
+    "free_after_anchors_and_reserves_mm2": 4583.762,
+    "remaining_demand_mm2": 1492.5568,
+    "free_regions_of_spec_mm2": 2747.7799,
     "placed_refs": 280,
     "placed_top_refs": 186,
     "placed_mm2": 4549.4032,
@@ -592,6 +592,24 @@
           28.0,
           7.1,
           34.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true
+        }
+      },
+      {
+        "ref": "C512",
+        "at": [
+          101.9,
+          31.45
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          97.49,
+          29.05,
+          106.31,
+          33.85
         ],
         "checks": {
           "inside_outline": true,
@@ -2616,9 +2634,9 @@
   "groups": [
     {
       "group": "HFP",
-      "members": 5,
-      "courtyard_mm2": 119.6856,
-      "placed_refs": 5,
+      "members": 4,
+      "courtyard_mm2": 77.3496,
+      "placed_refs": 4,
       "chunks": [
         {
           "region": "LEG_HFL",
@@ -2629,14 +2647,8 @@
         {
           "region": "BAND_BOTTOM_R",
           "refs": 3,
-          "courtyard_mm2": 99.0816,
+          "courtyard_mm2": 70.6856,
           "region_mm2": 166.92
-        },
-        {
-          "region": "BAND_BOTTOM_M",
-          "refs": 1,
-          "courtyard_mm2": 13.94,
-          "region_mm2": 98.44
         }
       ],
       "unplaced_refs": [],
@@ -2644,10 +2656,6 @@
         {
           "region": "LEG_HFL",
           "first_refusal": "C511 (4.8 x 8.82) does not fit region [31.4, 87.0, 34.2, 100.4]"
-        },
-        {
-          "region": "LEG_HFL",
-          "first_refusal": "C512 (4.8 x 8.82) does not fit region [31.4, 87.0, 34.2, 100.4]"
         },
         {
           "region": "LEG_HFL",
@@ -2660,10 +2668,6 @@
         {
           "region": "LEG_HFL+",
           "first_refusal": "C511 (4.8 x 8.82) does not fit region [31.4, 87.0, 34.2, 96.5]"
-        },
-        {
-          "region": "LEG_HFL+",
-          "first_refusal": "C512 (4.8 x 8.82) does not fit region [31.4, 87.0, 34.2, 96.5]"
         },
         {
           "region": "LEG_HFL+",
@@ -3335,10 +3339,16 @@
           "region_mm2": 104.705
         },
         {
+          "region": "BAND_BOTTOM_M",
+          "refs": 2,
+          "courtyard_mm2": 52.294,
+          "region_mm2": 98.44
+        },
+        {
           "region": "BAND_TOP_MID2",
-          "refs": 3,
-          "courtyard_mm2": 19.992,
-          "region_mm2": 51.87
+          "refs": 1,
+          "courtyard_mm2": 6.664,
+          "region_mm2": 11.661
         },
         {
           "region": "BAND_B2B_ABOVE_R",
@@ -3353,6 +3363,12 @@
           "region_mm2": 9.75
         },
         {
+          "region": "BAND_B2B_BELOWb",
+          "refs": 1,
+          "courtyard_mm2": 6.664,
+          "region_mm2": 14.19
+        },
+        {
           "region": "BAND_TOP_LEFT",
           "refs": 1,
           "courtyard_mm2": 39.96,
@@ -3360,8 +3376,8 @@
         },
         {
           "region": "BAND_TOP_LEFT_R",
-          "refs": 2,
-          "courtyard_mm2": 87.966,
+          "refs": 1,
+          "courtyard_mm2": 42.336,
           "region_mm2": 108.625
         }
       ],
@@ -3476,40 +3492,36 @@
           "first_refusal": "C2903 (1.96 x 3.4) does not fit region [105.97, 22.1, 107.8, 26.4]"
         },
         {
-          "region": "BAND_TOP_MID2",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [94.5, 30.9, 107.8, 34.8]"
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "C265 (8.82 x 4.8) does not fit region [90.1, 0.3, 99.3, 2.05]"
+        },
+        {
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [90.1, 0.3, 99.3, 2.05]"
+        },
+        {
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "C270 (3.4 x 1.96) does not fit region [90.1, 0.3, 99.3, 2.05]"
+        },
+        {
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "C271 (3.4 x 1.96) does not fit region [90.1, 0.3, 99.3, 2.05]"
+        },
+        {
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "C272 (3.4 x 1.96) does not fit region [90.1, 0.3, 99.3, 2.05]"
+        },
+        {
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "C2903 (3.4 x 1.96) does not fit region [90.1, 0.3, 99.3, 2.05]"
         },
         {
           "region": "BAND_TOP_MID2",
-          "first_refusal": "C265 (8.82 x 4.8) does not fit region [94.5, 30.9, 107.8, 34.8]"
+          "first_refusal": "C265 (4.8 x 8.82) does not fit region [94.5, 30.9, 97.49, 34.8]"
         },
         {
           "region": "BAND_TOP_MID2",
-          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [94.5, 30.9, 107.8, 34.8]"
-        },
-        {
-          "region": "BAND_TOP_MID2>",
-          "first_refusal": "U214 (5.4 x 8.45) does not fit region [106.2, 30.9, 107.8, 34.8]"
-        },
-        {
-          "region": "BAND_TOP_MID2>",
-          "first_refusal": "C265 (4.8 x 8.82) does not fit region [106.2, 30.9, 107.8, 34.8]"
-        },
-        {
-          "region": "BAND_TOP_MID2>",
-          "first_refusal": "Q2903 (5.4 x 7.4) does not fit region [106.2, 30.9, 107.8, 34.8]"
-        },
-        {
-          "region": "BAND_TOP_MID2>",
-          "first_refusal": "C272 (1.96 x 3.4) does not fit region [106.2, 30.9, 107.8, 34.8]"
-        },
-        {
-          "region": "BAND_TOP_MID2>",
-          "first_refusal": "C2903 (1.96 x 3.4) does not fit region [106.2, 30.9, 107.8, 34.8]"
-        },
-        {
-          "region": "BAND_B2B_ABOVE_R",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [107.9, 22.1, 115.0, 24.5]"
+          "first_refusal": "Q2903 (5.4 x 7.4) does not fit region [94.5, 30.9, 97.49, 34.8]"
         },
         {
           "region": "BAND_B2B_ABOVE_R",
@@ -3521,10 +3533,6 @@
         },
         {
           "region": "BAND_B2B_ABOVE_R>",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [111.8, 22.1, 115.0, 24.5]"
-        },
-        {
-          "region": "BAND_B2B_ABOVE_R>",
           "first_refusal": "C265 (8.82 x 4.8) does not fit region [111.8, 22.1, 115.0, 24.5]"
         },
         {
@@ -3533,11 +3541,11 @@
         },
         {
           "region": "BAND_B2B_ABOVE_R>",
-          "first_refusal": "C2903 (3.4 x 1.96) does not fit region [111.8, 22.1, 115.0, 24.5]"
+          "first_refusal": "C272 (3.4 x 1.96) does not fit region [111.8, 22.1, 115.0, 24.5]"
         },
         {
-          "region": "BAND_LEFTc",
-          "first_refusal": "U214 (5.4 x 8.45) does not fit region [3.7, 17.3, 5.26, 26.8]"
+          "region": "BAND_B2B_ABOVE_R>",
+          "first_refusal": "C2903 (3.4 x 1.96) does not fit region [111.8, 22.1, 115.0, 24.5]"
         },
         {
           "region": "BAND_LEFTc",
@@ -3549,11 +3557,11 @@
         },
         {
           "region": "BAND_LEFTc",
-          "first_refusal": "C2903 (1.96 x 3.4) does not fit region [3.7, 17.3, 5.26, 26.8]"
+          "first_refusal": "C272 (1.96 x 3.4) does not fit region [3.7, 17.3, 5.26, 26.8]"
         },
         {
-          "region": "BAND_LNBbb",
-          "first_refusal": "U214 (5.4 x 8.45) does not fit region [39.5, 16.52, 42.0, 20.42]"
+          "region": "BAND_LEFTc",
+          "first_refusal": "C2903 (1.96 x 3.4) does not fit region [3.7, 17.3, 5.26, 26.8]"
         },
         {
           "region": "BAND_LNBbb",
@@ -3565,10 +3573,6 @@
         },
         {
           "region": "BAND_LNAd",
-          "first_refusal": "U214 (5.4 x 8.45) does not fit region [60.6, 7.0, 63.1, 10.2]"
-        },
-        {
-          "region": "BAND_LNAd",
           "first_refusal": "C265 (4.8 x 8.82) does not fit region [60.6, 7.0, 63.1, 10.2]"
         },
         {
@@ -3576,8 +3580,8 @@
           "first_refusal": "Q2903 (5.4 x 7.4) does not fit region [60.6, 7.0, 63.1, 10.2]"
         },
         {
-          "region": "BAND_BONIb",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [80.4, 11.2, 82.8, 13.4]"
+          "region": "BAND_LNAd",
+          "first_refusal": "C2903 (1.96 x 3.4) does not fit region [60.6, 7.0, 63.1, 10.2]"
         },
         {
           "region": "BAND_BONIb",
@@ -3588,8 +3592,8 @@
           "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [80.4, 11.2, 82.8, 13.4]"
         },
         {
-          "region": "BAND_B2B_BELOWb",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [83.45, 11.2, 89.9, 13.4]"
+          "region": "BAND_BONIb",
+          "first_refusal": "C2903 (3.4 x 1.96) does not fit region [80.4, 11.2, 82.8, 13.4]"
         },
         {
           "region": "BAND_B2B_BELOWb",
@@ -3600,8 +3604,12 @@
           "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [83.45, 11.2, 89.9, 13.4]"
         },
         {
-          "region": "BAND_COL3_TOP",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [115.5, 19.1, 121.0, 24.5]"
+          "region": "BAND_B2B_BELOWb>",
+          "first_refusal": "C265 (8.82 x 4.8) does not fit region [87.35, 11.2, 89.9, 13.4]"
+        },
+        {
+          "region": "BAND_B2B_BELOWb>",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [87.35, 11.2, 89.9, 13.4]"
         },
         {
           "region": "BAND_COL3_TOP",
@@ -3613,10 +3621,6 @@
         },
         {
           "region": "BAND_COL2_TOP",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [121.53, 22.6, 128.3, 24.5]"
-        },
-        {
-          "region": "BAND_COL2_TOP",
           "first_refusal": "C265 (8.82 x 4.8) does not fit region [121.53, 22.6, 128.3, 24.5]"
         },
         {
@@ -3625,15 +3629,7 @@
         },
         {
           "region": "BAND_TOP_LEFT",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [7.1, 27.0, 15.5, 34.8]"
-        },
-        {
-          "region": "BAND_TOP_LEFT",
           "first_refusal": "C265 (8.82 x 4.8) does not fit region [7.1, 27.0, 15.5, 34.8]"
-        },
-        {
-          "region": "BAND_TOP_LEFT+",
-          "first_refusal": "U214 (8.45 x 5.4) does not fit region [7.1, 27.0, 15.5, 28.9]"
         },
         {
           "region": "BAND_TOP_LEFT+",
@@ -3666,12 +3662,6 @@
           "region_mm2": 32.9766
         },
         {
-          "region": "BAND_B2B_BELOWb",
-          "refs": 1,
-          "courtyard_mm2": 6.664,
-          "region_mm2": 14.19
-        },
-        {
           "region": "BAND_COL3_TOP",
           "refs": 1,
           "courtyard_mm2": 14.72,
@@ -3679,8 +3669,8 @@
         },
         {
           "region": "BAND_TOP_LEFT_R2",
-          "refs": 1,
-          "courtyard_mm2": 6.664,
+          "refs": 2,
+          "courtyard_mm2": 13.328,
           "region_mm2": 31.05
         }
       ],
@@ -3759,20 +3749,16 @@
           "first_refusal": "C203 (3.4 x 1.96) does not fit region [80.4, 11.2, 82.8, 13.4]"
         },
         {
-          "region": "BAND_B2B_BELOWb",
-          "first_refusal": "C205 (4.6 x 3.2) does not fit region [83.45, 11.2, 89.9, 13.4]"
-        },
-        {
-          "region": "BAND_B2B_BELOWb>",
-          "first_refusal": "C205 (4.6 x 3.2) does not fit region [87.35, 11.2, 89.9, 13.4]"
-        },
-        {
-          "region": "BAND_B2B_BELOWb>",
-          "first_refusal": "C203 (3.4 x 1.96) does not fit region [87.35, 11.2, 89.9, 13.4]"
+          "region": "BAND_COL3_TOP+",
+          "first_refusal": "C202 (3.4 x 1.96) does not fit region [115.5, 19.1, 121.0, 20.8]"
         },
         {
           "region": "BAND_COL3_TOP+",
           "first_refusal": "C203 (3.4 x 1.96) does not fit region [115.5, 19.1, 121.0, 20.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C202 (3.4 x 1.96) does not fit region [121.53, 22.6, 128.3, 24.5]"
         },
         {
           "region": "BAND_COL2_TOP",
@@ -3977,7 +3963,7 @@
           "region": "BAND_TOP_MID_R",
           "refs": 2,
           "courtyard_mm2": 27.88,
-          "region_mm2": 96.33
+          "region_mm2": 56.121
         }
       ],
       "unplaced_refs": [],
@@ -4031,10 +4017,10 @@
       "placed_refs": 10,
       "chunks": [
         {
-          "region": "LEG_Z3_L",
+          "region": "BAND_TOP_MID_Rb",
           "refs": 1,
           "courtyard_mm2": 6.664,
-          "region_mm2": 10.56
+          "region_mm2": 18.963
         },
         {
           "region": "LEG_MIDb",
@@ -4049,22 +4035,16 @@
           "region_mm2": 27.88
         },
         {
-          "region": "BAND_BOTTOM_M+",
-          "refs": 1,
-          "courtyard_mm2": 32.85,
-          "region_mm2": 56.12
-        },
-        {
-          "region": "BAND_BOTTOM_M>",
-          "refs": 1,
-          "courtyard_mm2": 13.94,
-          "region_mm2": 56.71
-        },
-        {
           "region": "BAND_LNBc+",
           "refs": 2,
-          "courtyard_mm2": 26.248,
+          "courtyard_mm2": 27.064,
           "region_mm2": 39.767
+        },
+        {
+          "region": "BAND_TOP_LEFT_R>",
+          "refs": 1,
+          "courtyard_mm2": 32.85,
+          "region_mm2": 57.365
         },
         {
           "region": "BAND_TOP_MID3>",
@@ -4077,6 +4057,12 @@
           "refs": 1,
           "courtyard_mm2": 13.124,
           "region_mm2": 28.08
+        },
+        {
+          "region": "LEG_TOP_L+",
+          "refs": 1,
+          "courtyard_mm2": 13.124,
+          "region_mm2": 26.25
         },
         {
           "region": "BAND_TOP_MID4>",
@@ -4288,6 +4274,78 @@
           "first_refusal": "C104 (3.4 x 1.96) does not fit region [121.53, 22.6, 128.3, 24.5]"
         },
         {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb",
+          "first_refusal": "C103 (4.6 x 2.3) does not fit region [97.49, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
+          "region": "BAND_TOP_MID_Rb>",
+          "first_refusal": "C103 (4.6 x 2.3) does not fit region [101.39, 26.9, 106.31, 29.05]"
+        },
+        {
           "region": "LEG_SYS12_LOWb",
           "first_refusal": "D104 (7.3 x 4.5) does not fit region [8.4, 36.3, 10.4, 38.1]"
         },
@@ -4322,10 +4380,6 @@
         {
           "region": "LEG_SYS12_LOWb",
           "first_refusal": "C103 (4.6 x 2.3) does not fit region [8.4, 36.3, 10.4, 38.1]"
-        },
-        {
-          "region": "LEG_SYS12_LOWb",
-          "first_refusal": "C104 (3.4 x 1.96) does not fit region [8.4, 36.3, 10.4, 38.1]"
         },
         {
           "region": "LEG_SYS12_LOWc",
@@ -4364,10 +4418,6 @@
           "first_refusal": "C103 (4.6 x 2.3) does not fit region [16.945, 36.3, 19.905, 39.12]"
         },
         {
-          "region": "LEG_SYS12_LOWc",
-          "first_refusal": "C104 (3.4 x 1.96) does not fit region [16.945, 36.3, 19.905, 39.12]"
-        },
-        {
           "region": "LEG_ENTRY",
           "first_refusal": "D104 (7.3 x 4.5) does not fit region [8.4, 35.2, 15.5, 36.2]"
         },
@@ -4402,10 +4452,6 @@
         {
           "region": "LEG_ENTRY",
           "first_refusal": "C103 (4.6 x 2.3) does not fit region [8.4, 35.2, 15.5, 36.2]"
-        },
-        {
-          "region": "LEG_ENTRY",
-          "first_refusal": "C104 (3.4 x 1.96) does not fit region [8.4, 35.2, 15.5, 36.2]"
         },
         {
           "region": "LEG_Z3_L",
@@ -4784,32 +4830,72 @@
           "first_refusal": "Q101 (3.4 x 3.86) does not fit region [31.4, 87.0, 34.2, 96.5]"
         },
         {
-          "region": "BAND_BOTTOM_M>",
-          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M>: D105 overlaps D104"
+          "region": "BAND_BOTTOM_R+",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [99.6, 0.3, 115.2, 2.04]"
         },
         {
-          "region": "BAND_BOTTOM_M>+",
-          "first_refusal": "D105 (4.5 x 7.3) does not fit region [94.0, 0.3, 99.3, 6.4]"
+          "region": "BAND_BOTTOM_R+",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [99.6, 0.3, 115.2, 2.04]"
         },
         {
-          "region": "BAND_BOTTOM_M>+",
-          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M>+: D101 overlaps D104"
+          "region": "BAND_BOTTOM_R+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [99.6, 0.3, 115.2, 2.04]"
         },
         {
-          "region": "BAND_BOTTOM_M>+",
-          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M>+: D102 overlaps D104"
+          "region": "BAND_BOTTOM_R+",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [99.6, 0.3, 115.2, 2.04]"
         },
         {
-          "region": "BAND_BOTTOM_M>+",
-          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M>+: D103 overlaps D104"
+          "region": "BAND_BOTTOM_R+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [99.6, 0.3, 115.2, 2.04]"
         },
         {
-          "region": "BAND_BOTTOM_M>+",
-          "first_refusal": "group E1_CTRL@BAND_BOTTOM_M>+: Q101 overlaps D104"
+          "region": "BAND_BOTTOM_R+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [99.6, 0.3, 115.2, 2.04]"
+        },
+        {
+          "region": "BAND_BOTTOM_R+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [99.6, 0.3, 115.2, 2.04]"
+        },
+        {
+          "region": "BAND_BOTTOM_R>",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [113.52, 0.3, 115.2, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_R>",
+          "first_refusal": "D105 (4.5 x 7.3) does not fit region [113.52, 0.3, 115.2, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_R>",
+          "first_refusal": "U104 (3.4 x 4.1) does not fit region [113.52, 0.3, 115.2, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_R>",
+          "first_refusal": "D101 (3.4 x 3.86) does not fit region [113.52, 0.3, 115.2, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_R>",
+          "first_refusal": "D102 (3.4 x 3.86) does not fit region [113.52, 0.3, 115.2, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_R>",
+          "first_refusal": "D103 (3.4 x 3.86) does not fit region [113.52, 0.3, 115.2, 11.0]"
+        },
+        {
+          "region": "BAND_BOTTOM_R>",
+          "first_refusal": "Q101 (3.4 x 3.86) does not fit region [113.52, 0.3, 115.2, 11.0]"
+        },
+        {
+          "region": "LEG_RIGHT_LOW2>",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [36.86, 35.2, 38.76, 41.2]"
         },
         {
           "region": "LEG_RIGHT_LOW2>",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [36.86, 35.2, 38.76, 41.2]"
+        },
+        {
+          "region": "LEG_RIGHT_LOW2>",
+          "first_refusal": "U104 (3.4 x 4.1) does not fit region [36.86, 35.2, 38.76, 41.2]"
         },
         {
           "region": "LEG_RIGHT_LOW2>",
@@ -4829,7 +4915,15 @@
         },
         {
           "region": "BAND_LEFT+",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [0.3, 9.8, 2.76, 19.88]"
+        },
+        {
+          "region": "BAND_LEFT+",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [0.3, 9.8, 2.76, 19.88]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U104 (3.4 x 4.1) does not fit region [0.3, 9.8, 2.76, 19.88]"
         },
         {
           "region": "BAND_LEFT+",
@@ -4849,7 +4943,15 @@
         },
         {
           "region": "BAND_U211_LOW>",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [13.3, 7.0, 15.5, 13.3]"
+        },
+        {
+          "region": "BAND_U211_LOW>",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [13.3, 7.0, 15.5, 13.3]"
+        },
+        {
+          "region": "BAND_U211_LOW>",
+          "first_refusal": "U104 (3.4 x 4.1) does not fit region [13.3, 7.0, 15.5, 13.3]"
         },
         {
           "region": "BAND_U211_LOW>",
@@ -4869,7 +4971,15 @@
         },
         {
           "region": "BAND_U211_UP+",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [9.6, 19.8, 15.5, 21.7]"
+        },
+        {
+          "region": "BAND_U211_UP+",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [9.6, 19.8, 15.5, 21.7]"
+        },
+        {
+          "region": "BAND_U211_UP+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [9.6, 19.8, 15.5, 21.7]"
         },
         {
           "region": "BAND_U211_UP+",
@@ -4889,7 +4999,15 @@
         },
         {
           "region": "BAND_U211_UP>",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [13.3, 19.8, 15.5, 26.8]"
+        },
+        {
+          "region": "BAND_U211_UP>",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [13.3, 19.8, 15.5, 26.8]"
+        },
+        {
+          "region": "BAND_U211_UP>",
+          "first_refusal": "U104 (3.4 x 4.1) does not fit region [13.3, 19.8, 15.5, 26.8]"
         },
         {
           "region": "BAND_U211_UP>",
@@ -4909,7 +5027,15 @@
         },
         {
           "region": "BAND_LNB>",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [23.45, 17.85, 25.65, 26.8]"
+        },
+        {
+          "region": "BAND_LNB>",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [23.45, 17.85, 25.65, 26.8]"
+        },
+        {
+          "region": "BAND_LNB>",
+          "first_refusal": "U104 (3.4 x 4.1) does not fit region [23.45, 17.85, 25.65, 26.8]"
         },
         {
           "region": "BAND_LNB>",
@@ -4929,11 +5055,23 @@
         },
         {
           "region": "BAND_LNBc+",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [32.45, 7.5, 36.82, 16.6]"
+        },
+        {
+          "region": "BAND_LNBc+",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [32.45, 7.5, 36.82, 16.6]"
         },
         {
           "region": "BAND_LEFTb+",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [6.2, 17.3, 8.26, 19.0]"
+        },
+        {
+          "region": "BAND_LEFTb+",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [6.2, 17.3, 8.26, 19.0]"
+        },
+        {
+          "region": "BAND_LEFTb+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [6.2, 17.3, 8.26, 19.0]"
         },
         {
           "region": "BAND_LEFTb+",
@@ -4945,7 +5083,15 @@
         },
         {
           "region": "BAND_LNAc+",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [60.6, 12.7, 63.1, 21.4]"
+        },
+        {
+          "region": "BAND_LNAc+",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [60.6, 12.7, 63.1, 21.4]"
+        },
+        {
+          "region": "BAND_LNAc+",
+          "first_refusal": "D102 (3.4 x 3.86) does not fit region [60.6, 12.7, 63.1, 21.4]"
         },
         {
           "region": "BAND_LNAc+",
@@ -4957,7 +5103,15 @@
         },
         {
           "region": "BAND_U213_UP>+",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [77.2, 19.8, 80.1, 22.0]"
+        },
+        {
+          "region": "BAND_U213_UP>+",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [77.2, 19.8, 80.1, 22.0]"
+        },
+        {
+          "region": "BAND_U213_UP>+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [77.2, 19.8, 80.1, 22.0]"
         },
         {
           "region": "BAND_U213_UP>+",
@@ -4969,7 +5123,15 @@
         },
         {
           "region": "BAND_B2B_ABOVE>",
+          "first_refusal": "D104 (4.5 x 7.3) does not fit region [105.97, 22.1, 107.8, 26.4]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE>",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [105.97, 22.1, 107.8, 26.4]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE>",
+          "first_refusal": "D102 (3.4 x 3.86) does not fit region [105.97, 22.1, 107.8, 26.4]"
         },
         {
           "region": "BAND_B2B_ABOVE>",
@@ -4980,20 +5142,36 @@
           "first_refusal": "Q101 (3.4 x 3.86) does not fit region [105.97, 22.1, 107.8, 26.4]"
         },
         {
-          "region": "BAND_TOP_MID2>",
-          "first_refusal": "D105 (4.5 x 7.3) does not fit region [106.2, 30.9, 107.8, 34.8]"
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [90.1, 0.3, 99.3, 2.05]"
         },
         {
-          "region": "BAND_TOP_MID2>",
-          "first_refusal": "D103 (3.4 x 3.86) does not fit region [106.2, 30.9, 107.8, 34.8]"
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [90.1, 0.3, 99.3, 2.05]"
         },
         {
-          "region": "BAND_TOP_MID2>",
-          "first_refusal": "Q101 (3.4 x 3.86) does not fit region [106.2, 30.9, 107.8, 34.8]"
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [90.1, 0.3, 99.3, 2.05]"
+        },
+        {
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [90.1, 0.3, 99.3, 2.05]"
+        },
+        {
+          "region": "BAND_BOTTOM_M+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [90.1, 0.3, 99.3, 2.05]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R>",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [111.8, 22.1, 115.0, 24.5]"
         },
         {
           "region": "BAND_B2B_ABOVE_R>",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [111.8, 22.1, 115.0, 24.5]"
+        },
+        {
+          "region": "BAND_B2B_ABOVE_R>",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [111.8, 22.1, 115.0, 24.5]"
         },
         {
           "region": "BAND_B2B_ABOVE_R>",
@@ -5004,32 +5182,16 @@
           "first_refusal": "Q101 (3.86 x 3.4) does not fit region [111.8, 22.1, 115.0, 24.5]"
         },
         {
-          "region": "BAND_TOP_LEFT+",
-          "first_refusal": "D105 (7.3 x 4.5) does not fit region [7.1, 27.0, 15.5, 28.9]"
-        },
-        {
-          "region": "BAND_TOP_LEFT+",
-          "first_refusal": "D103 (3.86 x 3.4) does not fit region [7.1, 27.0, 15.5, 28.9]"
-        },
-        {
-          "region": "BAND_TOP_LEFT+",
-          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [7.1, 27.0, 15.5, 28.9]"
-        },
-        {
-          "region": "LEG_RIGHT_HIGH+",
-          "first_refusal": "D105 (7.3 x 4.5) does not fit region [34.4, 87.0, 41.2, 88.82]"
-        },
-        {
-          "region": "LEG_RIGHT_HIGH+",
-          "first_refusal": "D103 (3.86 x 3.4) does not fit region [34.4, 87.0, 41.2, 88.82]"
-        },
-        {
-          "region": "LEG_RIGHT_HIGH+",
-          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [34.4, 87.0, 41.2, 88.82]"
+          "region": "BAND_B2B_BELOWb>",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [87.35, 11.2, 89.9, 13.4]"
         },
         {
           "region": "BAND_B2B_BELOWb>",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [87.35, 11.2, 89.9, 13.4]"
+        },
+        {
+          "region": "BAND_B2B_BELOWb>",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [87.35, 11.2, 89.9, 13.4]"
         },
         {
           "region": "BAND_B2B_BELOWb>",
@@ -5040,8 +5202,64 @@
           "first_refusal": "Q101 (3.86 x 3.4) does not fit region [87.35, 11.2, 89.9, 13.4]"
         },
         {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [7.1, 27.0, 15.5, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [7.1, 27.0, 15.5, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [7.1, 27.0, 15.5, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [7.1, 27.0, 15.5, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [7.1, 27.0, 15.5, 28.9]"
+        },
+        {
+          "region": "BAND_TOP_LEFT_R>>",
+          "first_refusal": "D105 (4.5 x 7.3) does not fit region [36.87, 27.0, 39.5, 32.5]"
+        },
+        {
+          "region": "BAND_TOP_LEFT_R>>",
+          "first_refusal": "D102 (3.4 x 3.86) does not fit region [36.87, 27.0, 39.5, 32.5]"
+        },
+        {
+          "region": "BAND_TOP_LEFT_R>>",
+          "first_refusal": "D103 (3.4 x 3.86) does not fit region [36.87, 27.0, 39.5, 32.5]"
+        },
+        {
+          "region": "BAND_TOP_LEFT_R>>",
+          "first_refusal": "Q101 (3.4 x 3.86) does not fit region [36.87, 27.0, 39.5, 32.5]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [34.4, 87.0, 41.2, 88.82]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [34.4, 87.0, 41.2, 88.82]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [34.4, 87.0, 41.2, 88.82]"
+        },
+        {
+          "region": "LEG_RIGHT_HIGH+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [34.4, 87.0, 41.2, 88.82]"
+        },
+        {
           "region": "BAND_COL3_TOP+",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [115.5, 19.1, 121.0, 20.8]"
+        },
+        {
+          "region": "BAND_COL3_TOP+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [115.5, 19.1, 121.0, 20.8]"
         },
         {
           "region": "BAND_COL3_TOP+",
@@ -5053,15 +5271,19 @@
         },
         {
           "region": "BAND_TOP_LEFT_R2>",
-          "first_refusal": "D105 (7.3 x 4.5) does not fit region [32.6, 32.5, 42.2, 34.8]"
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [36.5, 32.5, 42.2, 34.8]"
         },
         {
           "region": "BAND_TOP_LEFT_R2>",
-          "first_refusal": "D103 (3.86 x 3.4) does not fit region [32.6, 32.5, 42.2, 34.8]"
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [36.5, 32.5, 42.2, 34.8]"
         },
         {
           "region": "BAND_TOP_LEFT_R2>",
-          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [32.6, 32.5, 42.2, 34.8]"
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [36.5, 32.5, 42.2, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_LEFT_R2>",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [36.5, 32.5, 42.2, 34.8]"
         },
         {
           "region": "BAND_TOP_MID3>",
@@ -5070,6 +5292,10 @@
         {
           "region": "BAND_TOP_MID3>>",
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [63.12, 30.9, 66.0, 34.8]"
+        },
+        {
+          "region": "BAND_TOP_MID3>>",
+          "first_refusal": "D103 (3.4 x 3.86) does not fit region [63.12, 30.9, 66.0, 34.8]"
         },
         {
           "region": "BAND_TOP_MID3>>",
@@ -5084,16 +5310,32 @@
           "first_refusal": "D105 (4.5 x 7.3) does not fit region [63.16, 26.9, 66.0, 30.8]"
         },
         {
+          "region": "BAND_TOP_MID>>",
+          "first_refusal": "Q101 (3.4 x 3.86) does not fit region [63.16, 26.9, 66.0, 30.8]"
+        },
+        {
           "region": "LEG_TOP_R+",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [26.5, 102.8, 34.3, 105.54]"
+        },
+        {
+          "region": "LEG_TOP_R+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [26.5, 102.8, 34.3, 105.54]"
         },
         {
           "region": "LEG_TOP>",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [15.6, 100.6, 34.3, 102.8]"
         },
         {
+          "region": "LEG_TOP>",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [15.6, 100.6, 34.3, 102.8]"
+        },
+        {
           "region": "LEG_TOP_L+",
           "first_refusal": "D105 (7.3 x 4.5) does not fit region [7.8, 102.8, 15.3, 106.3]"
+        },
+        {
+          "region": "LEG_TOP_L+>",
+          "first_refusal": "D105 (4.5 x 7.3) does not fit region [12.16, 102.8, 15.3, 106.3]"
         },
         {
           "region": "LEG_MID+",
@@ -5112,6 +5354,12 @@
       "placed_refs": 3,
       "chunks": [
         {
+          "region": "LEG_Z3_L",
+          "refs": 1,
+          "courtyard_mm2": 6.664,
+          "region_mm2": 10.56
+        },
+        {
           "region": "LEG_Z4_Rc",
           "refs": 1,
           "courtyard_mm2": 6.664,
@@ -5119,8 +5367,8 @@
         },
         {
           "region": "LEG_Z4_TOPb",
-          "refs": 2,
-          "courtyard_mm2": 15.074,
+          "refs": 1,
+          "courtyard_mm2": 8.41,
           "region_mm2": 23.12
         }
       ],
@@ -5223,12 +5471,12 @@
           "first_refusal": "C117 (3.4 x 1.96) does not fit region [8.4, 35.2, 15.5, 36.2]"
         },
         {
-          "region": "LEG_Z3_R",
-          "first_refusal": "U109 (2.9 x 2.9) does not fit region [21.5, 50.5, 24.0, 52.9]"
+          "region": "LEG_Z3_L",
+          "first_refusal": "U109 (2.9 x 2.9) does not fit region [8.3, 50.5, 10.5, 55.3]"
         },
         {
           "region": "LEG_Z3_R",
-          "first_refusal": "C116 (3.4 x 1.96) does not fit region [21.5, 50.5, 24.0, 52.9]"
+          "first_refusal": "U109 (2.9 x 2.9) does not fit region [21.5, 50.5, 24.0, 52.9]"
         },
         {
           "region": "LEG_Z3_R",
@@ -5237,10 +5485,6 @@
         {
           "region": "LEG_Z4_Rb",
           "first_refusal": "U109 (2.9 x 2.9) does not fit region [17.6, 71.0, 20.1, 73.68]"
-        },
-        {
-          "region": "LEG_Z4_Rb",
-          "first_refusal": "C116 (1.96 x 3.4) does not fit region [17.6, 71.0, 20.1, 73.68]"
         },
         {
           "region": "LEG_Z4_Rb",
@@ -5255,24 +5499,12 @@
           "first_refusal": "U109 (2.9 x 2.9) does not fit region [38.76, 38.74, 41.26, 41.2]"
         },
         {
-          "region": "LEG_RIGHT_LOW2b",
-          "first_refusal": "C117 (3.4 x 1.96) does not fit region [38.76, 38.74, 41.26, 41.2]"
-        },
-        {
           "region": "LEG_SPINE_Rb",
           "first_refusal": "U109 (2.9 x 2.9) does not fit region [32.6, 52.5, 34.2, 77.6]"
         },
         {
-          "region": "LEG_SPINE_Rb",
-          "first_refusal": "C117 (1.96 x 3.4) does not fit region [32.6, 52.5, 34.2, 77.6]"
-        },
-        {
           "region": "LEG_SPINE_Rc",
           "first_refusal": "U109 (2.9 x 2.9) does not fit region [28.6, 52.5, 30.73, 54.9]"
-        },
-        {
-          "region": "LEG_SPINE_Rc",
-          "first_refusal": "C117 (1.96 x 3.4) does not fit region [28.6, 52.5, 30.73, 54.9]"
         }
       ]
     },
@@ -6197,12 +6429,12 @@
         },
         {
           "ref": "J203",
-          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "footprint": "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical",
           "extent_mm": 22.9
         },
         {
           "ref": "J506",
-          "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal",
+          "footprint": "Connector_JST:JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical",
           "extent_mm": 20.9
         }
       ],
@@ -9392,12 +9624,8 @@
         "branch_pads_not_checked": [],
         "components": [
           [
-            "J114.2"
-          ],
-          [
-            "C116.1"
-          ],
-          [
+            "C116.1",
+            "J114.2",
             "R113.1",
             "R114.1"
           ],
@@ -9419,7 +9647,9 @@
             "J108.3"
           ],
           [
-            "C117.1",
+            "C117.1"
+          ],
+          [
             "U109.6"
           ]
         ],
@@ -9518,13 +9748,15 @@
         "branch_pads_not_checked": [],
         "components": [
           [
-            "C203.1",
             "C204.1",
             "L201.1",
             "U201.6"
+          ],
+          [
+            "C203.1"
           ]
         ],
-        "connected": true
+        "connected": false
       },
       {
         "net": "E2_J21_FUSED",
@@ -9646,20 +9878,16 @@
         "branch_pads_not_checked": [],
         "components": [
           [
+            "C205.1",
             "C207.1",
             "D201.K",
+            "J206.4",
             "L201.2",
-            "R207.1"
-          ],
-          [
-            "C205.1",
-            "J206.4"
-          ],
-          [
+            "R207.1",
             "TP201.1"
           ]
         ],
-        "connected": false
+        "connected": true
       },
       {
         "net": "J21_DAMP",
@@ -9698,7 +9926,6 @@
             "L101.2",
             "L205.1",
             "R110.1",
-            "U503.1",
             "U553.1",
             "U553.3"
           ],
@@ -9710,6 +9937,9 @@
           ],
           [
             "J206.2"
+          ],
+          [
+            "U503.1"
           ]
         ],
         "connected": false
@@ -9754,12 +9984,12 @@
       "E2_BONI_IN_DAMP",
       "E2_DISP_IN",
       "E2_DISP_IN_DAMP",
+      "E2_J21_EF",
       "E2_J21_FUSED",
       "E2_LNA_IN",
       "E2_LNA_IN_DAMP",
       "E2_LNB_IN",
       "E2_LNB_IN_DAMP",
-      "J21",
       "LAB5"
     ],
     "all_connected": false,
@@ -9872,17 +10102,17 @@
       {
         "ref": "C104",
         "at": [
-          9.28,
-          53.6
+          99.19,
+          28.07
         ],
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          8.3,
-          51.9,
-          10.26,
-          55.3
+          97.49,
+          27.09,
+          100.89,
+          29.05
         ]
       },
       {
@@ -10048,6 +10278,22 @@
       {
         "ref": "C116",
         "at": [
+          9.28,
+          53.6
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          8.3,
+          51.9,
+          10.26,
+          55.3
+        ]
+      },
+      {
+        "ref": "C117",
+        "at": [
           18.58,
           81.4
         ],
@@ -10059,22 +10305,6 @@
           79.7,
           19.56,
           83.1
-        ]
-      },
-      {
-        "ref": "C117",
-        "at": [
-          12.9,
-          92.62
-        ],
-        "rotation": 0.0,
-        "side": "F",
-        "how": "group",
-        "courtyard_box": [
-          11.2,
-          91.64,
-          14.6,
-          93.6
         ]
       },
       {
@@ -10384,22 +10614,6 @@
       {
         "ref": "C202",
         "at": [
-          85.15,
-          12.42
-        ],
-        "rotation": 0.0,
-        "side": "F",
-        "how": "group",
-        "courtyard_box": [
-          83.45,
-          11.44,
-          86.85,
-          13.4
-        ]
-      },
-      {
-        "ref": "C203",
-        "at": [
           30.4,
           33.82
         ],
@@ -10410,6 +10624,22 @@
           28.7,
           32.84,
           32.1,
+          34.8
+        ]
+      },
+      {
+        "ref": "C203",
+        "at": [
+          34.3,
+          33.82
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          32.6,
+          32.84,
+          36.0,
           34.8
         ]
       },
@@ -11072,16 +11302,16 @@
       {
         "ref": "C265",
         "at": [
-          33.11,
+          24.16,
           30.1
         ],
         "rotation": 0.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          28.7,
+          19.75,
           27.7,
-          37.52,
+          28.57,
           32.5
         ]
       },
@@ -11120,17 +11350,17 @@
       {
         "ref": "C268",
         "at": [
-          96.2,
-          33.82
+          96.98,
+          9.3
         ],
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          94.5,
-          32.84,
-          97.9,
-          34.8
+          96.0,
+          7.6,
+          97.96,
+          11.0
         ]
       },
       {
@@ -11152,37 +11382,21 @@
       {
         "ref": "C270",
         "at": [
-          100.1,
-          33.82
+          95.48,
+          33.1
         ],
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          98.4,
-          32.84,
-          101.8,
+          94.5,
+          31.4,
+          96.46,
           34.8
         ]
       },
       {
         "ref": "C271",
-        "at": [
-          104.0,
-          33.82
-        ],
-        "rotation": 0.0,
-        "side": "F",
-        "how": "group",
-        "courtyard_box": [
-          102.3,
-          32.84,
-          105.7,
-          34.8
-        ]
-      },
-      {
-        "ref": "C272",
         "at": [
           109.6,
           23.52
@@ -11195,6 +11409,22 @@
           22.54,
           111.3,
           24.5
+        ]
+      },
+      {
+        "ref": "C272",
+        "at": [
+          40.48,
+          18.72
+        ],
+        "rotation": 90.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          39.5,
+          17.02,
+          41.46,
+          20.42
         ]
       },
       {
@@ -11456,17 +11686,17 @@
       {
         "ref": "C512",
         "at": [
-          104.01,
-          3.3
+          101.9,
+          31.45
         ],
-        "rotation": 0.0,
+        "rotation": 180,
         "side": "F",
-        "how": "group",
+        "how": "anchor",
         "courtyard_box": [
-          99.6,
-          0.9,
-          108.42,
-          5.7
+          97.49,
+          29.05,
+          106.31,
+          33.85
         ]
       },
       {
@@ -11520,17 +11750,17 @@
       {
         "ref": "C2903",
         "at": [
-          40.48,
-          18.72
+          85.15,
+          12.42
         ],
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          39.5,
-          17.02,
-          41.46,
-          20.42
+          83.45,
+          11.44,
+          86.85,
+          13.4
         ]
       },
       {
@@ -11553,36 +11783,20 @@
         "ref": "D101",
         "at": [
           34.15,
-          14.67
+          10.07
         ],
         "rotation": 90.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
           32.45,
-          12.74,
+          8.14,
           35.85,
-          16.6
+          12.0
         ]
       },
       {
         "ref": "D102",
-        "at": [
-          34.15,
-          10.31
-        ],
-        "rotation": 90.0,
-        "side": "F",
-        "how": "group",
-        "courtyard_box": [
-          32.45,
-          8.38,
-          35.85,
-          12.24
-        ]
-      },
-      {
-        "ref": "D103",
         "at": [
           60.69,
           33.1
@@ -11598,19 +11812,35 @@
         ]
       },
       {
-        "ref": "D104",
+        "ref": "D103",
         "at": [
-          93.75,
-          4.15
+          60.73,
+          29.1
         ],
         "rotation": 0.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          90.1,
-          1.9,
-          97.4,
-          6.4
+          58.8,
+          27.4,
+          62.66,
+          30.8
+        ]
+      },
+      {
+        "ref": "D104",
+        "at": [
+          32.72,
+          30.25
+        ],
+        "rotation": 0.0,
+        "side": "F",
+        "how": "group",
+        "courtyard_box": [
+          29.07,
+          28.0,
+          36.37,
+          32.5
         ]
       },
       {
@@ -12224,17 +12454,17 @@
       {
         "ref": "Q101",
         "at": [
-          60.73,
-          29.1
+          9.73,
+          104.6
         ],
         "rotation": 0.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          58.8,
-          27.4,
-          62.66,
-          30.8
+          7.8,
+          102.9,
+          11.66,
+          106.3
         ]
       },
       {
@@ -13600,16 +13830,16 @@
       {
         "ref": "R512",
         "at": [
-          111.2,
+          101.88,
           4.12
         ],
         "rotation": 0.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          108.92,
+          99.6,
           2.54,
-          113.48,
+          104.16,
           5.7
         ]
       },
@@ -14032,17 +14262,17 @@
       {
         "ref": "U104",
         "at": [
-          95.7,
-          8.95
+          34.15,
+          14.55
         ],
         "rotation": 90.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          94.0,
-          6.9,
-          97.4,
-          11.0
+          32.45,
+          12.5,
+          35.85,
+          16.6
         ]
       },
       {
@@ -14240,17 +14470,17 @@
       {
         "ref": "U214",
         "at": [
-          23.975,
-          29.8
+          92.8,
+          6.775
         ],
-        "rotation": 0.0,
+        "rotation": 90.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          19.75,
-          27.1,
-          28.2,
-          32.5
+          90.1,
+          2.55,
+          95.5,
+          11.0
         ]
       },
       {
@@ -14288,16 +14518,16 @@
       {
         "ref": "U503",
         "at": [
-          91.8,
-          8.95
+          110.97,
+          9.3
         ],
-        "rotation": 90.0,
+        "rotation": 0.0,
         "side": "F",
         "how": "group",
         "courtyard_box": [
-          90.1,
-          6.9,
-          93.5,
+          108.92,
+          7.6,
+          113.02,
           11.0
         ]
       },
@@ -14534,7 +14764,7 @@
       "J112": 89.1
     },
     "end_x_with_margin": 89.6,
-    "row_end_max": 92.5,
+    "row_end_max": 90.0,
     "passed": true
   },
   "h_trim": {
@@ -14574,16 +14804,16 @@
       {
         "ref": "J203",
         "pin_field": [
-          15.1,
-          30.95,
-          34.3,
-          34.15
+          92.7,
+          7.15,
+          111.9,
+          10.35
         ],
         "zone": [
-          14.6,
-          30.45,
-          34.8,
-          34.65
+          92.2,
+          6.65,
+          112.4,
+          10.85
         ]
       },
       {
@@ -14619,16 +14849,16 @@
       {
         "ref": "J506",
         "pin_field": [
-          25.325,
-          54.8,
-          27.075,
-          72.0
+          91.9,
+          2.675,
+          109.1,
+          4.425
         ],
         "zone": [
-          24.825,
-          54.3,
-          27.575,
-          72.5
+          91.4,
+          2.175,
+          109.6,
+          4.925
         ]
       }
     ],
@@ -14637,15 +14867,6 @@
         "ref": "C119",
         "under": [
           "J201"
-        ],
-        "h_mm": 2.7,
-        "h_lower_bound": false,
-        "ok": true
-      },
-      {
-        "ref": "C203",
-        "under": [
-          "J203"
         ],
         "h_mm": 2.7,
         "h_lower_bound": false,
@@ -14670,11 +14891,20 @@
         "ok": true
       },
       {
-        "ref": "C265",
+        "ref": "C268",
         "under": [
           "J203"
         ],
-        "h_mm": 1.5,
+        "h_mm": 2.7,
+        "h_lower_bound": false,
+        "ok": true
+      },
+      {
+        "ref": "C511",
+        "under": [
+          "J203"
+        ],
+        "h_mm": 2.0,
         "h_lower_bound": false,
         "ok": true
       },
@@ -14742,6 +14972,15 @@
         "ok": true
       },
       {
+        "ref": "R512",
+        "under": [
+          "J506"
+        ],
+        "h_mm": 2.7,
+        "h_lower_bound": false,
+        "ok": true
+      },
+      {
         "ref": "U211",
         "under": [
           "J202"
@@ -14762,7 +15001,8 @@
       {
         "ref": "U214",
         "under": [
-          "J203"
+          "J203",
+          "J506"
         ],
         "h_mm": 2.7,
         "h_lower_bound": false,
@@ -14772,6 +15012,15 @@
         "ref": "U220",
         "under": [
           "J207"
+        ],
+        "h_mm": 2.7,
+        "h_lower_bound": false,
+        "ok": true
+      },
+      {
+        "ref": "U503",
+        "under": [
+          "J203"
         ],
         "h_mm": 2.7,
         "h_lower_bound": false,

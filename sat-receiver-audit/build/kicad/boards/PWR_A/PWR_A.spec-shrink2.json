@@ -1323,7 +1323,17 @@
     },
     {
       "ref": "C512",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          101.9,
+          31.45
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-PLACE third pass (make_spec.py HTRIM_KEEP): taller than the H-TRIM zone height 2.7 mm, pinned off the PWR-B THT pin fields of the zone-2 exit pair J203 / J506"
     },
     {
       "ref": "C513",
@@ -1464,7 +1474,7 @@
         "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 90.0): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
     },
     {
       "ref": "J106",
@@ -1478,7 +1488,7 @@
         "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 90.0): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
     },
     {
       "ref": "J107",
@@ -1492,7 +1502,7 @@
         "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 90.0): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
     },
     {
       "ref": "J108",
@@ -1506,7 +1516,7 @@
         "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 90.0): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
     },
     {
       "ref": "J109",
@@ -1520,7 +1530,7 @@
         "rotation": 270,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 90.0): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
     },
     {
       "ref": "J110",
@@ -1534,7 +1544,7 @@
         "rotation": 180,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 90.0): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
     },
     {
       "ref": "J111",
@@ -1548,7 +1558,7 @@
         "rotation": 270,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 90.0): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
     },
     {
       "ref": "J112",
@@ -1562,7 +1572,7 @@
         "rotation": 270,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 90.0): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
     },
     {
       "ref": "J113",
@@ -2679,10 +2689,6 @@
         },
         {
           "ref": "C511",
-          "rotation": 0
-        },
-        {
-          "ref": "C512",
           "rotation": 0
         },
         {
@@ -4346,7 +4352,7 @@
       "BAND_TOP_MID2": [
         94.5,
         30.9,
-        107.8,
+        97.49,
         34.8
       ],
       "BAND_TOP_MID3": [
@@ -4364,8 +4370,14 @@
       "BAND_TOP_MID_R": [
         83.1,
         26.9,
-        107.8,
+        97.49,
         30.8
+      ],
+      "BAND_TOP_MID_Rb": [
+        97.49,
+        26.9,
+        106.31,
+        29.05
       ],
       "LEG_LEFT_LOW": [
         0.3,
@@ -8230,7 +8242,7 @@
     ],
     "start_x": 8.2,
     "end_x_with_margin": 89.6,
-    "row_end_max": 92.5,
+    "row_end_max": 90.0,
     "rule": "MECH-7 contract edge_zones[0] row_end_max: the courtyards of J105-J112 + window_margin end at x <= row_end_max, so that the PWR-A bottom edge under the PWR-B PH 9-pin span (PWR_B edge_zones[2]) stays free of PWR-A headers"
   },
   "power_stages": {
