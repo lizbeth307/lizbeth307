@@ -443,9 +443,11 @@ def loader_tokens(config, slot):
     return allowed
 
 
-def smoke_tokens(selftest=False):
-    """The tokens smoke_qemu.py appends to a slot line in its QEMU copy (one parameter each)."""
-    report = "/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py smoke-report" + (" --selftest" if selftest else "")
+def smoke_tokens(selftest=False, session=False):
+    """The tokens smoke_qemu.py appends to a slot line in its QEMU copy (one parameter each); session: the separate
+    greetd/labwc scenario (W2 IMG-4)."""
+    report = ("/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py smoke-report" + (" --selftest" if selftest else "")
+              + (" --session" if session else ""))
     return ["console=ttyAMA0,115200", 'systemd.run="' + report + '"', "systemd.run_success_action=poweroff",
             "systemd.run_failure_action=poweroff"]
 
@@ -491,7 +493,8 @@ def cmdline_findings(config, slot, running_text, virt="none"):
     unexpected = [t for t in extra if t not in allowed and not t.startswith("root=")]
     if loader:
         notes.append("boot loader tokens: " + ",".join(loader) + ("" if config["route"] == "A" else " (Route B: embloader bootargs, unverified)"))
-    if unexpected and virt not in ("none", "unknown", "") and sorted(unexpected) in (sorted(smoke_tokens(False)), sorted(smoke_tokens(True))):
+    if unexpected and virt not in ("none", "unknown", "") and sorted(unexpected) in (sorted(smoke_tokens(False)), sorted(smoke_tokens(True)),
+                                                                                     sorted(smoke_tokens(session=True))):
         notes.append("QEMU smoke tokens accepted inside the VM (" + virt + "): " + ",".join(unexpected))
     elif unexpected:
         issues.append("running cmdline has tokens beyond the slot line and the boot loader's: " + ",".join(unexpected)[:600])
@@ -577,6 +580,18 @@ def unit_properties(text):
     return dict(line.split("=", 1) for line in text.splitlines() if "=" in line)
 
 
+# The smoke report and the console logs are CI artifacts of a public repository: an address-like
+# token (a local part, "@", a dotted domain) in captured unit or journal text is replaced. systemd unit instance names
+# (modprobe@configfs.service, getty@tty1.service) are not addresses and stay as they are.
+ADDRESS = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.([A-Za-z]{2,})\b")
+UNIT_SUFFIXES = frozenset(("service", "socket", "target", "mount", "automount", "swap", "timer", "path", "slice", "scope", "device"))
+FAILED_UNIT_STATUS_UNITS, FAILED_UNIT_STATUS_LINES, FAILED_UNIT_STATUS_BYTES = 6, 20, 2000
+
+
+def redact_addresses(text):
+    return ADDRESS.sub(lambda m: m.group(0) if m.group(1).lower() in UNIT_SUFFIXES else "<address removed>", text or "")
+
+
 def fail_or_blocked_rows(report):
     """{row id: sorted rules} of the FAIL/BLOCKED rows of a selftest.py offline report."""
     return {row["id"]: sorted({f.get("rule", "?") for f in row.get("findings", [])})
@@ -584,22 +599,271 @@ def fail_or_blocked_rows(report):
 
 
 SMOKE_VIEW = Path("/run/srrx-smoke-root")
-SMOKE_SELFTEST_LIMIT = 1500  # seconds; the live run under QEMU TCG took about 17 min on 2026-11-06
+# seconds; the live run under QEMU TCG took 1024-1092 s without its NumPy probes (2026-11-06/07). W2 IMG-3 adds the
+# RX-14/RX-04-bb probes and the venv files to the walk, so the bound is 2400 s (the QEMU boot timeout grows with it).
+SMOKE_SELFTEST_LIMIT = 2400
+# W2 IMG-3: the live selftest runs under the image's passes-venv (numpy 2.3.5, software/config/passes-requirements.lock)
+# when it exists; build_image.py evaluates the same rows with the builder's python3-numpy.
+SELFTEST_PYTHON = Path("/opt/srrx/passes-venv/bin/python3")
+SMOKE_VENVS = ("/opt/srrx/venv", "/opt/srrx/passes-venv")  # build_image.VENVS
+VENV_NUMPY_CODE = "import json, numpy, sys; print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__}))"
+VENV_QT_CODE = ("import json\nfrom PySide6 import QtCore, QtGui, QtWidgets\napp = QtWidgets.QApplication(['srrx-smoke'])\n"
+                "print(json.dumps({'qt': QtCore.qVersion(), 'platform': app.platformName()}))\n")
+VENV_PROBE_LIMIT = 600  # seconds per probe under TCG
+# W2 IMG-2: the package closure of the booted slot (package-closure.json, staged under /opt/srrx) and the
+# units it adds or removes; display-manager.service is r2's gdm3 alias, which the recipe masks with gdm.
+CLOSURE_FILE = HERE / "package-closure.json"
+CLOSURE_UNITS = ("chrony.service", "gpsd.service", "gpsd.socket", "systemd-timesyncd.service")
+CHRONY_CONF = Path("/etc/chrony/chrony.conf")
+UNIT_SHOW = "--property=LoadState,ActiveState,SubState,Result,UnitFileState"
 
 
-def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW):
+# W2 IMG-4: the builder-built pps-gpio module (build_image.build_pps_module). QEMU virt has no /pps-gnss node, so the
+# module loads but binds no device; the model checks the load and the file, never a PPS signal (W1-2 bench).
+PPS_MODULE = "pps_gpio"
+# W2 IMG-4: the separate QEMU session scenario (smoke_qemu.py --session) starts graphical.target, which wants
+# display-manager.service = greetd.service. greetd 0.9.0 execs the session with the PAM environment only
+# (greetd/src/session/worker.rs), and noble's login stack, which greetd-greeter includes, reads /etc/environment with
+# pam_env readenv=1 (shadow 4.13+dfsg1-4ubuntu3.2 debian/login.pam:51): WLR_RENDERER=pixman reaches labwc only through
+# a /run copy of /etc/environment bound over the file for that boot. srrx-menu.service (user preset: disabled) is enabled
+# for that boot only by a link in /run/systemd/user. Nothing is written to the root filesystem.
+SESSION_TARGET = "graphical.target"
+SESSION_UNITS = ("greetd.service", "display-manager.service", SESSION_TARGET, "getty@tty1.service", "systemd-logind.service")
+SESSION_SHOW = "--property=Id,LoadState,ActiveState,SubState,Result,UnitFileState,NRestarts"
+SESSION_MODEL_DIR = Path("/run/srrx-smoke-session")
+SESSION_ENV = "WLR_RENDERER=pixman"
+CONSOLE_UNIT = "srrx-menu.service"
+CONSOLE_SHOW = "--property=LoadState,ActiveState,SubState,Result,UnitFileState,ConditionResult,ExecMainPID,ExecMainStatus"
+SESSION_STATE = Path("/run/srrx-session")  # lab-session's mode, failures and reason (deployment/system/session/lab-session)
+SESSION_PROCESSES = ("greetd", "lab-session", "labwc", "kanshi", "cage")
+SESSION_LIMIT = 900  # seconds for labwc and the console to come up under TCG
+SESSION_SETTLE = 60  # seconds both must then keep their PIDs
+SESSION_JOURNAL_TAGS = ("lab-session", "labwc", "cage")
+
+
+def module_path(path):
+    """A module file as /lib/modules/...: with merged /usr, kmod may name the same file under /usr/lib/modules/."""
+    text = str(path or "")
+    return "/lib/modules/" + text[len("/usr/lib/modules/"):] if text.startswith("/usr/lib/modules/") else (text or None)
+
+
+def pps_report(out):
+    """QEMU smoke only (W2 IMG-4): `modprobe pps_gpio` on the booted slot kernel, then the loaded module's state, file and
+    vermagic (modinfo -n/-F; the author field is never read). The module stays loaded until the poweroff."""
+    import subprocess
+    try:
+        done = subprocess.run(["modprobe", PPS_MODULE], capture_output=True, text=True, timeout=120)
+        modprobe = {"exit_code": done.returncode, "stderr": redact_addresses(done.stderr)[-400:]}
+    except (OSError, subprocess.SubprocessError) as exc:
+        modprobe = {"exit_code": None, "error": type(exc).__name__}
+    sysfs = Path("/sys/module") / PPS_MODULE
+    filename = out(["modinfo", "-n", PPS_MODULE])
+    path = Path(filename) if filename.startswith("/") else None
+
+    def read(name):
+        try:
+            return (sysfs / name).read_text().strip()
+        except OSError:
+            return None
+    return {"modprobe": modprobe, "loaded": sysfs.is_dir(), "initstate": read("initstate"), "taint": read("taint"),
+            "filename": module_path(filename), "sha256": hashlib.sha256(path.read_bytes()).hexdigest() if path and path.is_file() else None,
+            "vermagic": out(["modinfo", "-F", "vermagic", PPS_MODULE]), "uname_r": platform.release(),
+            "pps_devices": sorted(p.name for p in Path("/sys/class/pps").iterdir()) if Path("/sys/class/pps").is_dir() else []}
+
+
+def session_model_setup(root=Path("/")):
+    """QEMU session scenario only: the two runtime-only model changes of this boot (see SESSION_TARGET)."""
+    import subprocess
+    record = {}
+    SESSION_MODEL_DIR.mkdir(mode=0o755, exist_ok=True)
+    original = root / "etc/environment"
+    text = original.read_text(encoding="utf-8", errors="replace") if original.is_file() else None
+    if text is None:
+        record["environment"] = {"bound": False, "error": "/etc/environment is missing"}
+    else:
+        copy = SESSION_MODEL_DIR / "environment"
+        copy.write_text(text + ("\n" if text and not text.endswith("\n") else "") + SESSION_ENV + "\n", encoding="utf-8")
+        os.chmod(copy, 0o644)
+        done = subprocess.run(["mount", "--bind", str(copy), str(original)], capture_output=True, text=True, timeout=60)
+        record["environment"] = {"bound": done.returncode == 0, "line": SESSION_ENV, "error": done.stderr[-300:] or None}
+    wants = Path("/run/systemd/user/graphical-session.target.wants")
+    wants.mkdir(parents=True, exist_ok=True)
+    link = wants / CONSOLE_UNIT
+    if not link.is_symlink():
+        os.symlink("/usr/lib/systemd/user/" + CONSOLE_UNIT, link)
+    record["console"] = {"runtime_link": str(link), "target": os.readlink(link)}
+    return record
+
+
+def _processes():
+    """[{pid, uid, comm, args}] of every process (from /proc)."""
+    rows = []
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            comm = (entry / "comm").read_text().strip()
+            args = (entry / "cmdline").read_bytes().replace(b"\0", b" ").decode("utf-8", "replace").strip()
+            uid = int(next(line for line in (entry / "status").read_text().splitlines() if line.startswith("Uid:")).split()[1])
+        except (OSError, StopIteration, ValueError, IndexError):
+            continue
+        rows.append({"pid": int(entry.name), "uid": uid, "comm": comm, "args": redact_addresses(args)[:300]})
+    return sorted(rows, key=lambda row: row["pid"])
+
+
+def session_processes():
+    return [p for p in _processes() if p["comm"] in SESSION_PROCESSES or "srrx.hmi" in p["args"]]
+
+
+def session_report(out, model, user, limit=SESSION_LIMIT, settle=SESSION_SETTLE):
+    """QEMU session scenario only: wait until the session user's labwc runs and its console unit is active, check that both
+    keep their PIDs for `settle` seconds, then report the session (smoke_qemu.session_mismatches compares it)."""
+    import pwd
+    import subprocess
+    import time
+    try:
+        entry = pwd.getpwnam(user)
+    except KeyError:
+        return {"unavailable": "no account " + user, "model": model}
+    uid, gid = entry.pw_uid, entry.pw_gid
+    runtime = "/run/user/%d" % uid
+    as_user = ["setpriv", "--reuid", str(uid), "--regid", str(gid), "--init-groups", "--reset-env", "--",
+               "/usr/bin/env", "XDG_RUNTIME_DIR=" + runtime, "DBUS_SESSION_BUS_ADDRESS=unix:path=" + runtime + "/bus"]
+
+    def console():
+        return unit_properties(out(as_user + ["systemctl", "--user", "show", CONSOLE_SHOW, CONSOLE_UNIT]))
+
+    def labwc():
+        return sorted(p["pid"] for p in session_processes() if p["comm"] == "labwc" and p["uid"] == uid)
+
+    started, up = time.monotonic(), None
+    while True:
+        state = console()
+        if labwc() and state.get("ActiveState") == "active":
+            up = (labwc(), state.get("ExecMainPID"))
+            break
+        if time.monotonic() - started > limit:
+            break
+        time.sleep(10)
+    seconds = round(time.monotonic() - started)
+    stable = None
+    if up is not None:
+        time.sleep(settle)
+        stable = (labwc(), console().get("ExecMainPID")) == up
+    state_files = {}
+    for name in ("mode", "reason", "failures"):
+        try:
+            text = (SESSION_STATE / name).read_text(encoding="utf-8", errors="replace")
+            state_files[name] = len(text.splitlines()) if name == "failures" else text.strip()[:200]
+        except OSError:
+            state_files[name] = None
+    sessions = {}
+    for line in out(["loginctl", "list-sessions", "--no-legend"]).splitlines()[:6]:
+        if line.split():
+            sid = line.split()[0]
+            # One -p per property (image run 43149697672 printed nothing for a comma list); the raw text if nothing parses.
+            argv = ["loginctl", "--no-pager", "show-session", sid] + [word for name in ("Name", "Class", "Type", "Service", "Seat", "VTNr",
+                                                                                          "Active", "State", "Remote") for word in ("-p", name)]
+            try:
+                done = subprocess.run(argv, capture_output=True, text=True, timeout=60)
+                text, error = done.stdout, done.stderr
+            except (OSError, subprocess.SubprocessError) as exc:
+                text, error = "", type(exc).__name__
+            sessions[sid] = unit_properties(text) or {"raw": redact_addresses(line + " | " + text + " | " + error)[:400]}
+    drm = {}
+    for path in sorted(Path("/sys/class/drm").glob("card*")) if Path("/sys/class/drm").is_dir() else []:
+        status = path / "status"
+        driver = path / "device/driver"
+        drm[path.name] = status.read_text().strip() if status.is_file() else (Path(os.readlink(driver)).name if driver.is_symlink() else "")
+    inputs = [line.split("=", 1)[1].strip('"') for line in Path("/proc/bus/input/devices").read_text(errors="replace").splitlines()
+              if line.startswith("N: Name=")] if Path("/proc/bus/input/devices").is_file() else []
+    conf = Path("/etc/greetd/config.toml")
+    tags = [word for tag in SESSION_JOURNAL_TAGS for word in ("-t", tag)]
+    return {"model": model, "user": {"name": user, "uid": uid}, "seconds_until_up": seconds, "up": up is not None, "stable": stable,
+            "units": {u: unit_properties(out(["systemctl", "show", SESSION_SHOW, u])) for u in SESSION_UNITS},
+            "console": console(), "user_failed_units": out(as_user + ["systemctl", "--user", "--failed", "--no-legend", "--plain"]).splitlines(),
+            "processes": session_processes(), "lab_session_state": state_files, "logind_sessions": sessions, "drm": drm,
+            "input_devices": inputs[:10], "wayland_sockets": sorted(p.name for p in Path(runtime).glob("wayland-*")) if Path(runtime).is_dir() else [],
+            "greetd_config_sha256": hashlib.sha256(conf.read_bytes()).hexdigest() if conf.is_file() else None,
+            "greetd_conf_present": os.path.lexists("/etc/greetd/greetd.conf"),
+            "journal": redact_addresses(out(["journalctl", "-b", "-o", "cat", "--no-pager", "-n", "120"] + tags))[-4000:],
+            "greetd_journal": redact_addresses(out(["journalctl", "-b", "-u", "greetd.service", "-o", "cat", "--no-pager", "-n", "40"]))[-2000:],
+            # the framebuffer and DRM lines of this boot's kernel log (the cmdline has quiet: they are not on the console)
+            "kernel_display_journal": redact_addresses(out(["journalctl", "-b", "-k", "-o", "cat", "--no-pager", "-n", "40", "--grep",
+                                                            "drm|framebuffer|simpledrm|efifb|fb0|ramfb|input:"]))[-2500:],
+            "console_journal": redact_addresses(out(["journalctl", "-b", "_SYSTEMD_USER_UNIT=" + CONSOLE_UNIT, "-o", "cat", "--no-pager",
+                                                     "-n", "40"]))[-2000:]}
+
+
+def closure_report(out, root=Path("/")):
+    """QEMU smoke only: dpkg state of every closure and removed package, getent of the accounts their
+    postinst creates, the closure units and the SHA-256 of chrony.conf on the booted slot.
+    out(argv) runs a bounded command and returns its stdout ("" when dpkg-query finds nothing)."""
+    closure = json.loads(CLOSURE_FILE.read_text(encoding="utf-8"))
+    names = [p["package"] for p in closure["packages"]] + list(closure["expected_removed"])
+    conf = root / CHRONY_CONF.relative_to("/")
+    return {"dpkg": {n: out(["dpkg-query", "-W", "-f=${Version}\t${db:Status-Status}", n]) for n in names},
+            "accounts": {n: out(["getent", "passwd", n]) for n in closure["expected_accounts"]},
+            "units": {u: unit_properties(out(["systemctl", "show", UNIT_SHOW, u])) for u in CLOSURE_UNITS},
+            "chrony_conf_sha256": hashlib.sha256(conf.read_bytes()).hexdigest() if conf.is_file() else None}
+
+
+def _python_json(argv, limit=VENV_PROBE_LIMIT, env=None):
+    """Last stdout line of a bounded interpreter run, parsed as JSON; {"error": ...} when it fails."""
+    import subprocess
+    try:
+        done = subprocess.run(argv, capture_output=True, text=True, timeout=limit, env=env)
+        lines = done.stdout.strip().splitlines()
+        if done.returncode == 0 and lines:
+            return json.loads(lines[-1])
+        return {"error": "exit %d: %s" % (done.returncode, redact_addresses(done.stderr)[-400:])}
+    except (OSError, ValueError, subprocess.SubprocessError) as exc:
+        return {"error": type(exc).__name__}
+
+
+def venv_report(venvs=SMOKE_VENVS):
+    """QEMU smoke only (W2 IMG-3): NumPy of each venv's python3 on the booted slot and, for the HMI venv, an offscreen
+    QApplication of PySide6 (the imports of srrx.hmi). Caches go to /run, so the booted root gains no file."""
+    report = {}
+    env = dict(os.environ, QT_QPA_PLATFORM="offscreen", XDG_RUNTIME_DIR="/run/srrx-smoke-qt", HOME="/run/srrx-smoke-qt",
+               XDG_CACHE_HOME="/run/srrx-smoke-qt/cache", PYTHONDONTWRITEBYTECODE="1")
+    for venv in venvs:
+        python = venv + "/bin/python3"
+        if not Path(python).is_file():
+            report[venv] = {"present": False}
+            continue
+        entry = {"present": True, "numpy": _python_json([python, "-I", "-B", "-c", VENV_NUMPY_CODE])}
+        if Path(venv, "lib").is_dir() and any(Path(venv).glob("lib/python3*/site-packages/PySide6")):
+            Path("/run/srrx-smoke-qt").mkdir(mode=0o700, exist_ok=True)
+            entry["qt_offscreen"] = _python_json([python, "-I", "-B", "-c", VENV_QT_CODE], env=env)
+        report[venv] = entry
+    return report
+
+
+def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW, python=None):
     """QEMU smoke only: selftest.py offline on a read-only, non-recursive bind of / with /boot/efi
     bound in, i.e. the booted slot's root filesystem and the ESP, the scope of the build-time run
     on root A (no /data, /proc, /run). The CLI writes its report outside that view, in /run, and
-    the run is bounded. interpreter_numpy records whether the image's python3 has numpy: the
-    builder evaluates the target modules with its own python3-numpy."""
+    the run is bounded. The interpreter is the image's passes-venv when it exists (W2 IMG-3), else
+    this python3; interpreter_numpy records whether that interpreter has numpy (the builder
+    evaluates the target modules with its own python3-numpy)."""
     import importlib.util
     import subprocess
     import time
 
     line = cmdline(config["base_cmdline_without_root"], root_partuuid(config, slot), config["lime_build"]) + "\n"
     output = view.with_name(view.name + "-selftest.json")
-    result = {"interpreter_numpy": importlib.util.find_spec("numpy") is not None, "scope": "ro bind of / + /boot/efi"}
+    if python is None:
+        python = SELFTEST_PYTHON.as_posix() if SELFTEST_PYTHON.is_file() else sys.executable
+    if python == sys.executable:
+        numpy = importlib.util.find_spec("numpy") is not None
+    else:
+        try:
+            numpy = subprocess.run([python, "-I", "-B", "-c", "import importlib.util, sys; sys.exit(importlib.util.find_spec('numpy') is None)"],
+                                   capture_output=True, timeout=VENV_PROBE_LIMIT).returncode == 0
+        except (OSError, subprocess.SubprocessError):
+            numpy = None
+    result = {"interpreter": python, "interpreter_numpy": numpy, "scope": "ro bind of / + /boot/efi"}
     mounted = []
     try:
         view.mkdir(exist_ok=True)
@@ -609,7 +873,7 @@ def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW):
             # private: the ESP bound into the view must not propagate back onto the shared /
             for options in (["--make-private"], ["-o", "remount,bind,ro"]):
                 subprocess.run(["mount"] + options + [str(target)], check=True, capture_output=True, timeout=60)
-        argv = [sys.executable, "-I", "-B", str(DEPLOYMENT / "selftest.py"), "offline", "--rootfs", str(view), "--profile", "controller",
+        argv = [python, "-I", "-B", str(DEPLOYMENT / "selftest.py"), "offline", "--rootfs", str(view), "--profile", "controller",
                 "--policy", str(DEPLOYMENT / "receive-only-policy.json"), "--project", str(DEPLOYMENT.parent),
                 "--cmdline-sha256", hashlib.sha256(line.encode()).hexdigest(), "--output", str(output)]
         started = time.monotonic()
@@ -627,14 +891,16 @@ def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW):
     return result
 
 
-def smoke_report(timeout=900, root=Path("/"), selftest=False):
+def smoke_report(timeout=900, root=Path("/"), selftest=False, session=False):
     """QEMU smoke only (deployment/image/smoke_qemu.py passes systemd.run= on the smoke entry). Inert otherwise.
 
     systemd-run-generator points default.target at kernel-command-line.target, which needs only
     kernel-command-line.service (After=, not Requires=, basic.target). So the regular transaction
     (basic.target -> systemd-bless-boot.service -> boot-complete.target -> srrx-boot-check.service)
-    is queued here by starting multi-user.target; the graphical session is not part of the model.
-    Then wait until every other job has finished, with selftest=True run live_selftest, and print
+    is queued here by starting multi-user.target; the graphical session is not part of the A/B model.
+    session=True (W2 IMG-4, the separate session scenario) starts graphical.target instead, after the
+    runtime-only model changes of session_model_setup, and adds session_report. Then wait until every
+    other job has finished, with selftest=True run live_selftest, load pps_gpio (every boot) and print
     one JSON line between markers."""
     import subprocess
     import time
@@ -645,7 +911,13 @@ def smoke_report(timeout=900, root=Path("/"), selftest=False):
         except (OSError, subprocess.SubprocessError) as exc:
             return "unavailable: " + type(exc).__name__
 
-    started = out(["systemctl", "start", "--no-block", SMOKE_TARGET])
+    model = None
+    if session:
+        try:
+            model = session_model_setup(root)
+        except OSError as exc:
+            model = {"unavailable": type(exc).__name__ + ": " + str(exc)[:200]}
+    started = out(["systemctl", "start", "--no-block", SESSION_TARGET if session else SMOKE_TARGET])
     time.sleep(2)
     deadline = time.monotonic() + timeout
     while True:
@@ -654,16 +926,32 @@ def smoke_report(timeout=900, root=Path("/"), selftest=False):
         if not jobs or time.monotonic() > deadline:
             break
         time.sleep(5)
+    session_part = None
+    if session:  # before the unit and failure lists below, so a session unit that failed while it came up is in them
+        try:
+            if str(DEPLOYMENT) not in sys.path:
+                sys.path.insert(0, str(DEPLOYMENT))
+            import deploy  # noqa: E402  (stdlib-only module of the same tree)
+            session_part = session_report(out, model, deploy.system_files().SESSION_USER)
+        except (ImportError, OSError, ValueError, AttributeError) as exc:
+            session_part = {"unavailable": type(exc).__name__ + ": " + str(exc)[:300], "model": model}
     show = "--property=LoadState,ActiveState,SubState,Result,UnitFileState,ExecMainStatus"
-    report = {"started_target": SMOKE_TARGET, "start_output": started, "pending_jobs": jobs, "uname_r": platform.release(),
+    report = {"started_target": SESSION_TARGET if session else SMOKE_TARGET, "start_output": started, "pending_jobs": jobs,
+              "uname_r": platform.release(),
               "proc_cmdline": Path("/proc/cmdline").read_text(errors="replace").strip(),
               "units": {u: unit_properties(out(["systemctl", "show", show, u])) for u in SMOKE_UNITS},
               "failed_units": out(["systemctl", "--failed", "--no-legend", "--plain"]).splitlines(),
               "bless_boot_status": out(["/usr/lib/systemd/systemd-bless-boot", "status"]),
               # The boot-time run of the unit (it prints its JSON result): the post-boot boot_check below
               # can pass where the boot-time one failed, e.g. on a timeout while the boot loaded the CPU.
-              "boot_check_journal": out(["journalctl", "-b", "-u", "srrx-boot-check.service", "-o", "cat", "--no-pager", "-n", "60"]),
+              "boot_check_journal": redact_addresses(out(["journalctl", "-b", "-u", "srrx-boot-check.service", "-o", "cat", "--no-pager", "-n", "60"])),
               "boot_check": boot_check(root)}
+    # A bounded `systemctl status` tail of every failed unit (state, exit status, last lines of its
+    # journal), so a failed unit of any smoke boot can be diagnosed from the report alone.
+    failed = [line.split()[0] for line in report["failed_units"] if line.split()][:FAILED_UNIT_STATUS_UNITS]
+    report["failed_unit_status"] = {unit: redact_addresses(out(["systemctl", "status", "--no-pager", "--full",
+                                                                 "--lines=%d" % FAILED_UNIT_STATUS_LINES, unit]))[-FAILED_UNIT_STATUS_BYTES:]
+                                    for unit in failed}
     try:
         recipe = json.loads((HERE / "recipe.json").read_text(encoding="utf-8"))
         report["masked_units"] = {u: unit_properties(out(["systemctl", "show", "--property=LoadState,UnitFileState", u]))
@@ -678,11 +966,29 @@ def smoke_report(timeout=900, root=Path("/"), selftest=False):
                               for kind, name, *_ in deploy.system_files().SERVICE_ACCOUNTS}
     except (ImportError, OSError, ValueError) as exc:
         report["accounts"] = {"unavailable": type(exc).__name__}
+    try:
+        report["package_closure"] = closure_report(out, root)
+    except (OSError, ValueError, KeyError) as exc:
+        report["package_closure"] = {"unavailable": type(exc).__name__}
+    # Id: since W2 IMG-4 the alias resolves to greetd.service (smoke_qemu.check compares it with the manifest's session).
+    report["display_manager"] = unit_properties(out(["systemctl", "show", "--property=Id," + UNIT_SHOW.split("=", 1)[1],
+                                                     "display-manager.service"]))
+    if session_part is not None:
+        report["session"] = session_part
     if selftest:
+        try:
+            report["venvs"] = venv_report()
+        except (OSError, ValueError) as exc:
+            report["venvs"] = {"unavailable": type(exc).__name__}
         try:
             report["selftest"] = live_selftest(load_config(root / BOOT_CONFIG.relative_to("/")), read_slot(root / SLOT_FILE.relative_to("/")))
         except (OSError, ValueError, KeyError) as exc:
             report["selftest"] = {"status": "unavailable: " + type(exc).__name__ + ": " + str(exc)[:300]}
+    # W2 IMG-4: after the live selftest, so the read-only view it checks is the boot's state without the extra module.
+    try:
+        report["pps_gpio"] = pps_report(out)
+    except OSError as exc:
+        report["pps_gpio"] = {"unavailable": type(exc).__name__}
     print(SMOKE_BEGIN + json.dumps(report, sort_keys=True) + SMOKE_END, flush=True)
     return 0
 
@@ -703,6 +1009,7 @@ def main(argv=None):
     env.add_argument("--config", type=Path, default=BOOT_CONFIG)
     smoke = sub.add_parser("smoke-report", help="QEMU smoke only: report the boot after every other job finished")
     smoke.add_argument("--selftest", action="store_true", help="also run selftest.py offline on a read-only view of the booted root")
+    smoke.add_argument("--session", action="store_true", help="W2 IMG-4: start graphical.target and report the greetd/labwc session")
     golden = sub.add_parser("golden-entries")
     golden.add_argument("--esp", type=Path, default=ESP_MOUNT)
     golden.add_argument("--config", type=Path, default=BOOT_CONFIG)
@@ -721,7 +1028,7 @@ def main(argv=None):
             print(initramfs_env(args.config), end="")
             return 0
         if args.op == "smoke-report":
-            return smoke_report(selftest=args.selftest)
+            return smoke_report(selftest=args.selftest, session=args.session)
         if args.op == "cmdline":
             config = load_config(args.config)
             print(cmdline(config["base_cmdline_without_root"], root_partuuid(config, args.slot), config["lime_build"]))

@@ -144,6 +144,13 @@ class Supervisor:
             return "CASE_HOT"
         if self._inputs.get("fan_stalled") is True:
             return "FAN_STALLED"
+        # Physical DISARM/STOP: main.py sets operator_stop for a LOCK hold seen on
+        # fresh key reads. It refuses ARM and, via _advance, trips WARMING,
+        # CONFIGURING or ACTIVE; SAFE, TRIPPED, SHUTTING_DOWN and OFF stay as they are.
+        # Checked last, so a protective cause in the same sample names the trip and
+        # CASE_HOT/FAN_STALLED still drop DISP12; the armed path skips only battery.
+        if self._inputs.get("operator_stop") is True:
+            return "OPERATOR_STOP"
         return None
 
     def _trip(self, reason):

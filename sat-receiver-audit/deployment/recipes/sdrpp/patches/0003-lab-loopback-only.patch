@@ -1,0 +1,111 @@
+--- a/misc_modules/rigctl_server/src/main.cpp
++++ b/misc_modules/rigctl_server/src/main.cpp
+@@ -13,6 +13,8 @@
+ #define CONCAT(a, b) ((std::string(a) + b).c_str())
+ 
+ #define MAX_COMMAND_LENGTH 8192
++// SRRX +lab: the rigctl server listens on the IPv4 loopback only; the host is fixed, not configurable.
++#define SRRX_LAB_LOOPBACK "127.0.0.1"
+ 
+ SDRPP_MOD_INFO{
+     /* Name:            */ "rigctl_server",
+@@ -36,7 +38,6 @@
+ 
+         config.acquire();
+         if (!config.conf.contains(name)) {
+-            config.conf[name]["host"] = "localhost";
+             config.conf[name]["port"] = 4532;
+             config.conf[name]["tuning"] = true;
+             config.conf[name]["recording"] = false;
+@@ -44,8 +45,6 @@
+             config.conf[name]["vfo"] = "";
+             config.conf[name]["recorder"] = "";
+         }
+-        std::string host = config.conf[name]["host"];
+-        strcpy(hostname, host.c_str());
+         port = config.conf[name]["port"];
+         tuningEnabled = config.conf[name]["tuning"];
+         recordingEnabled = config.conf[name]["recording"];
+@@ -111,11 +110,8 @@
+         bool listening = (_this->listener && _this->listener->isListening());
+ 
+         if (listening) { style::beginDisabled(); }
+-        if (ImGui::InputText(CONCAT("##_rigctl_srv_host_", _this->name), _this->hostname, 1023)) {
+-            config.acquire();
+-            config.conf[_this->name]["host"] = std::string(_this->hostname);
+-            config.release(true);
+-        }
++        // SRRX +lab: the listen host is shown, not edited (loopback only).
++        ImGui::TextUnformatted(SRRX_LAB_LOOPBACK);
+         ImGui::SameLine();
+         ImGui::SetNextItemWidth(menuWidth - ImGui::GetCursorPosX());
+         if (ImGui::InputInt(CONCAT("##_rigctl_srv_port_", _this->name), &_this->port, 0, 0)) {
+@@ -197,8 +193,9 @@
+ 
+     void startServer() {
+         try {
+-            listener = net::listen(hostname, port);
++            listener = net::listen(SRRX_LAB_LOOPBACK, port);
+             listener->acceptAsync(clientHandler, this);
++            flog::info("SR-RX lab rigctl server listens on " SRRX_LAB_LOOPBACK " only, port {}", port);
+         }
+         catch (const std::exception& e) {
+             flog::error("Could not start rigctl server: {}", e.what());
+--- a/source_modules/network_source/src/main.cpp
++++ b/source_modules/network_source/src/main.cpp
+@@ -11,6 +11,8 @@
+ #include <utils/optionlist.h>
+ 
+ #define CONCAT(a, b) ((std::string(a) + b).c_str())
++// SRRX +lab: the TCP client and the UDP socket use the IPv4 loopback only; the host is fixed, not configurable.
++#define SRRX_LAB_LOOPBACK "127.0.0.1"
+ 
+ SDRPP_MOD_INFO{
+     /* Name:            */ "network_source",
+@@ -83,10 +85,6 @@
+             std::string sampTypeStr = config.conf[name]["sampleType"];
+             if (sampleTypes.keyExists(sampTypeStr)) { sampType = sampleTypes.value(sampleTypes.keyId(sampTypeStr)); }
+         }
+-        if (config.conf[name].contains("host")) {
+-            std::string hostStr = config.conf[name]["host"];
+-            strcpy(hostname, hostStr.c_str());
+-        }
+         if (config.conf[name].contains("port")) {
+             port = config.conf[name]["port"];
+             port = std::clamp<int>(port, 1, 65535);
+@@ -149,6 +147,7 @@
+         NetworkSourceModule* _this = (NetworkSourceModule*)ctx;
+         if (_this->running) { return; }
+         
++        flog::info("SR-RX lab network source uses " SRRX_LAB_LOOPBACK " only, port {0}", _this->port);
+         // Depends on protocol
+         try {
+             if (_this->proto == PROTOCOL_TCP_SERVER) {
+@@ -160,11 +159,11 @@
+             }
+             else if (_this->proto == PROTOCOL_TCP_CLIENT) {
+                 // Connect to TCP server
+-                _this->sock = net::connect(_this->hostname, _this->port);
++                _this->sock = net::connect(SRRX_LAB_LOOPBACK, _this->port);
+             }
+             else if (_this->proto == PROTOCOL_UDP) {
+                 // Open UDP socket
+-                _this->sock = net::openudp("0.0.0.0", _this->port, _this->hostname, _this->port, true);
++                _this->sock = net::openudp("0.0.0.0", _this->port, SRRX_LAB_LOOPBACK, _this->port, true);
+             }
+         }
+         catch (const std::exception& e) {
+@@ -213,11 +212,8 @@
+         if (_this->running) { SmGui::BeginDisabled(); }
+ 
+         // Hostname and port field
+-        if (SmGui::InputText(("##network_source_host_" + _this->name).c_str(), _this->hostname, sizeof(_this->hostname))) {
+-            config.acquire();
+-            config.conf[_this->name]["host"] = _this->hostname;
+-            config.release(true);
+-        }
++        // SRRX +lab: the host is shown, not edited (loopback only).
++        SmGui::Text(SRRX_LAB_LOOPBACK);
+         SmGui::SameLine();
+         SmGui::FillWidth();
+         if (SmGui::InputInt(("##network_source_port_" + _this->name).c_str(), &_this->port, 0, 0)) {

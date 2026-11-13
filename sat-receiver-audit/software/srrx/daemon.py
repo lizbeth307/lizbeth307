@@ -1,5 +1,6 @@
 """Local single-writer control service. Simulation is the default backend."""
 import argparse
+import ctypes as C
 from datetime import datetime, timezone
 import fcntl
 import json
@@ -65,6 +66,38 @@ class SocTempSampler:
 
     def close(self):
         self.stopping.set()
+
+
+class _Timeval(C.Structure):
+    _fields_ = [("tv_sec", C.c_long), ("tv_usec", C.c_long)]
+
+
+class _Timex(C.Structure):
+    """struct timex of include/uapi/linux/timex.h (64-bit Linux: time_t and long are 8 bytes)."""
+    _fields_ = [("modes", C.c_uint), ("offset", C.c_long), ("freq", C.c_long), ("maxerror", C.c_long),
+                ("esterror", C.c_long), ("status", C.c_int), ("constant", C.c_long), ("precision", C.c_long),
+                ("tolerance", C.c_long), ("time", _Timeval), ("tick", C.c_long), ("ppsfreq", C.c_long),
+                ("jitter", C.c_long), ("shift", C.c_int), ("stabil", C.c_long), ("jitcnt", C.c_long),
+                ("calcnt", C.c_long), ("errcnt", C.c_long), ("stbcnt", C.c_long), ("tai", C.c_int),
+                ("_reserved", C.c_int * 11)]
+
+
+def kernel_clock(libc=None):
+    """The kernel time state, read only: adjtimex(2) with modes 0, which needs no privilege and sets nothing.
+
+    {"state": return value (TIME_ERROR 5 when STA_UNSYNC/STA_CLOCKERR), "status", "maxerror_us",
+    "esterror_us"}; srrx.location.system_utc_verified decides. OSError when it cannot be read.
+    """
+    if sys.platform != "linux" or C.sizeof(C.c_long) != 8:
+        raise OSError("kernel clock state needs 64-bit Linux")
+    runtime = libc if libc is not None else C.CDLL(None, use_errno=True)
+    timex = _Timex()
+    timex.modes = 0
+    state = runtime.adjtimex(C.byref(timex))
+    if state == -1:
+        raise OSError(C.get_errno(), "adjtimex read failed")
+    return {"state": int(state), "status": int(timex.status), "maxerror_us": int(timex.maxerror),
+            "esterror_us": int(timex.esterror)}
 
 
 def request_once(path, request, timeout=2.0):
@@ -279,10 +312,15 @@ def main(argv=None):
             from .runtime_telemetry import ProjectTelemetry
             telemetry = ProjectTelemetry(args.i2c0, hardware, acceptance)
             engine = Engine(hardware, link, simulated=False, acceptance=acceptance, telemetry_reader=telemetry,
-                            soc_temp_reader=SocTempSampler(), qualification_record=qualification, gnss=gnss)
+                            soc_temp_reader=SocTempSampler(), qualification_record=qualification, gnss=gnss,
+                            clock_reader=kernel_clock)
             # Pass plans: the sandboxed srrx-passes@.service through polkit, never in labd's cgroup (LOCATION.md).
+            # Both take labd's own utc_verified (srrx.location.system_utc_verified; device check W-04/W-05).
             from .pass_jobs import PassPlanner
-            engine.passes = PassPlanner()
+            engine.passes = PassPlanner(utc_verified=engine.utc_verified)
+            # Attended LRPT passes: the static record/decode template units through polkit (software/RX.md).
+            from .baseband_scheduler import BasebandScheduler
+            engine.baseband = BasebandScheduler(planner=engine.passes, utc_verified=engine.utc_verified)
         else:
             hardware = SimHardware(load_mapping(args.project / "design/E3.json"))
             # Synthetic detector idle levels and power-good signals are labelled

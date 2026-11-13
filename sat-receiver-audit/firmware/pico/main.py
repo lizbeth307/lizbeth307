@@ -5,6 +5,16 @@
 # STATUS follows within 200 ms with battery, temperatures, fan and brightness.
 HELLO_FIELDS = ("state", "fault", "mcp_reset", "calibration_valid",
                 "hardware_commissioned", "reject_reason", "hb_fresh", "q6a_on")
+# Physical DISARM/STOP: LOCK held this long, seen on fresh key reads, is the
+# input operator_stop; the supervisor then trips OPERATOR_STOP (reset asserted)
+# without the host. Distinct from the 1.5 s case-button shutdown hold;
+# srrx.menu_model.HOLD_STOP names the same key and time (test_menu_model).
+LOCK_STOP_HOLD_MS = 1000
+
+
+def operator_stop(poller, now_ms):
+    """True only for a continuous LOCK hold of LOCK_STOP_HOLD_MS on fresh key reads."""
+    return poller.lock_held_ms(now_ms) >= LOCK_STOP_HOLD_MS
 
 
 def hello_payload(supervisor, serial, calibration_crc32=None, qualification_record=None):
@@ -130,6 +140,13 @@ def run():
         machine.Pin(8, machine.Pin.IN)
         clock = TickClock(time.ticks_ms, time.ticks_diff)
         hmi = PeripheralPoller(PicoHMITransport())
+
+        def sense(moment):
+            # Every step gets the LOCK hold as a fresh local input, like the ADC.
+            inputs = hardware.sample(moment)
+            inputs["operator_stop"] = operator_stop(hmi, moment)
+            return inputs
+
         tx_session = None
         tx_seq = 0
         schedule = TelemetrySchedule()
@@ -144,7 +161,7 @@ def run():
             # UART telemetry must not postpone a safety deadline. Re-sense and
             # apply before every bounded transmit, including a burst of events.
             moment = clock.now_ms()
-            supervisor.step(moment, hardware.sample(moment))
+            supervisor.step(moment, sense(moment))
             hardware.apply(supervisor.outputs)
             if hardware.uart is None:
                 return False
@@ -175,10 +192,11 @@ def run():
 
         while True:
             now = clock.now_ms()
-            supervisor.step(now, hardware.sample(now))
+            supervisor.step(now, sense(now))
             hardware.apply(supervisor.outputs)
             # Fixed-size I2C transactions only; integration waits are scheduled,
-            # never slept. HMI has no reference to Supervisor.receive/ARM.
+            # never slept. HMI has no reference to Supervisor.receive/ARM; only
+            # sense() turns a LOCK hold into the stop input.
             hmi.poll(now)
             pending_imu = []
             # Keep draining the pack while Q6A is off. Otherwise an old UART
@@ -228,7 +246,7 @@ def run():
                             # Resample before each command; readiness must use
                             # current local measurements, never host values.
                             now = clock.now_ms()
-                            supervisor.step(now, hardware.sample(now))
+                            supervisor.step(now, sense(now))
                             supervisor.receive(frame, now)
                             hardware.apply(supervisor.outputs)
                 # One outbound frame per iteration avoids routine UART bursts

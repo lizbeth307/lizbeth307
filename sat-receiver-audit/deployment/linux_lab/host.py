@@ -165,6 +165,51 @@ def loader_audit(logs, root, program):
             "dlopened": sorted(dlopened), "outside_tools_root": outside, "logs": len(logs)}
 
 
+# Third-party kernel banners print addresses (pps_core: its author; device-mapper: its list) into the
+# serial console. The committed console.log must carry none, so the file is filtered after QEMU exits
+# and before it is hashed; a lower guest loglevel would also drop every KERN_INFO boot diagnostic.
+# systemd unit instances (modprobe@configfs.service, getty@tty1.service) look alike and are kept,
+# also when systemd's status line cut the suffix short (modprobe@efi_pstore.servi followed by U+2026).
+UNIT_SUFFIXES = ("service", "socket", "target", "mount", "timer", "path", "slice", "scope", "device",
+                 "swap", "automount")
+_LOCAL = rb"[A-Za-z0-9._%+-]+"
+_DOMAIN = rb"[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}"
+# The look-behind starts a match only at a token start, which keeps the scan linear on long lines.
+CONSOLE_ADDRESS_PATTERNS = (
+    ("angle_bracket_address", re.compile(rb"<" + _LOCAL + rb"@" + _DOMAIN + rb">")),
+    ("bare_address", re.compile(rb"(?<![A-Za-z0-9._%+-])" + _LOCAL + rb"@" + _DOMAIN)),
+)
+ADDRESS_REPLACEMENT = b"<address removed>"
+ELLIPSIS = "\u2026".encode()
+
+
+def unit_name(token, following):
+    """A systemd unit instance: the last domain label is a unit type, or a cut-short one before U+2026."""
+    label = token.rstrip(b">").rsplit(b".", 1)[-1].decode("ascii").lower()
+    return label in UNIT_SUFFIXES or (following.startswith(ELLIPSIS) and any(s.startswith(label) for s in UNIT_SUFFIXES))
+
+
+def redact_console(path):
+    """Rewrite console.log in place without addresses; the record has counts and patterns, never the text."""
+    data = Path(path).read_bytes()
+    counts = {}
+
+    def replace(match):
+        if unit_name(match.group(0), match.string[match.end():match.end() + len(ELLIPSIS)]):
+            return match.group(0)
+        counts[match.re] = counts.get(match.re, 0) + 1
+        return ADDRESS_REPLACEMENT
+    for _, pattern in CONSOLE_ADDRESS_PATTERNS:
+        data = pattern.sub(replace, data)
+    counts = {name: counts.get(pattern, 0) for name, pattern in CONSOLE_ADDRESS_PATTERNS}
+    Path(path).write_bytes(data)
+    return {"count": sum(counts.values()),
+            "patterns": [{"name": name, "regex": pattern.pattern.decode("ascii"), "count": counts[name]}
+                         for name, pattern in CONSOLE_ADDRESS_PATTERNS],
+            "replacement": ADDRESS_REPLACEMENT.decode("ascii"), "kept_unit_suffixes": list(UNIT_SUFFIXES),
+            "applied": "after QEMU exit, before console_sha256"}
+
+
 def check_results(result):
     """debugfs recreates guest symlinks and modes; never follow a guest link or skip an unlistable directory."""
     def unreadable(error):
@@ -323,6 +368,7 @@ def run(args):
     audit = work / "loader-audit"
     audit.mkdir()
     started = time.monotonic()
+    timed_out = False
     with (work / "console.log").open("wb") as console:
         # The wrapper turns this into LD_DEBUG for the locked ld.so: one log per process, qemu.<pid>.
         proc = subprocess.Popen(record["command"], stdin=subprocess.DEVNULL, stdout=console, stderr=subprocess.STDOUT,
@@ -336,7 +382,11 @@ def run(args):
             except subprocess.TimeoutExpired:
                 proc.kill()
                 proc.wait()
-            raise RuntimeError("Guest exceeded bounded run time; inspect console.log")
+            timed_out = True
+    # QEMU has exited and closed the log: filter it before anything hashes or uploads it.
+    redactions = redact_console(work / "console.log")
+    if timed_out:
+        raise RuntimeError("Guest exceeded bounded run time; inspect console.log")
     result = work / "results"
     result.mkdir(exist_ok=False)
     with (work / "debugfs.log").open("wb") as log:
@@ -350,7 +400,7 @@ def run(args):
     (work / "qemu-loaded-objects.json").write_text(json.dumps(dict(loaded, tools_root=str(tools)), indent=2) + "\n")
     report["host"] = {"qemu_exit_code": code, "elapsed_s": round(time.monotonic() - started, 3),
                       "run_manifest_sha256": sha(work / "run.json"),
-                      "console_sha256": sha(work / "console.log"),
+                      "console_sha256": sha(work / "console.log"), "console_redactions": redactions,
                       "loader_audit": {"status": loaded["status"], "objects": loaded["objects"],
                                        "dlopened": loaded["dlopened"], "outside_tools_root": loaded["outside_tools_root"],
                                        "sha256": sha(work / "qemu-loaded-objects.json")}}

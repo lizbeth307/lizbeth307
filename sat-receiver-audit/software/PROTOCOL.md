@@ -65,6 +65,8 @@ STATUS (але не HELLO) містить також `q6a_key_pulses`: ціле 
 
 Після власного trip хост не надсилає `HB`, поки Pico звітує WARMING/CONFIGURING/ACTIVE для ARM, якого хост не веде. Замість HB він повторює `TRIP` не частіше ніж раз на 200 ms. Отже, один втрачений кадр TRIP не лишає Pico в ACTIVE: щонайпізніше через 750 ms без HB Pico сам утримує MCP RESET. Повторний звіт Pico про той самий TRIPPED/SHUTTING_DOWN/OFF у тому ж сеансі не є новою подією. Він не скасовує ARM, що вже в черзі, і не повторює запис all_off у MCP, які Pico тримає в RESET. ARM без підтвердження впродовж 1 s скасовується як `pico_arm_not_acknowledged`.
 
+Фізичний STOP (рішення W2 FW-STOP, `firmware/pico/README.md`, розділ «Operator STOP»): утримання LOCK ≥ 1,0 s на свіжих читаннях клавіш Pico сам, без кадру від хоста, перетворює на trip з fault `OPERATOR_STOP` у WARMING/CONFIGURING/ACTIVE (MCP RESET, новий сеанс). Нового типу кадру немає. Хост бачить HELLO нового сеансу і STATUS зі `state` `TRIPPED` та `fault` `OPERATOR_STOP`, а також діагностичний `EVENT` `{"event": "TRIP", "fault": "OPERATOR_STOP"}`. labd фіксує fault політики `new_pico_session` (якщо іншого ще немає), а `pico_OPERATOR_STOP` — в `last_error` і подіях, і вимикає всі виходи. Pico перевіряє цей вхід після решти воріт готовності: захисна причина в тому самому знімку (наприклад, `CASE_HOT` чи `FAN_STALLED`) сама називає trip, а поки LOCK утримано, ARM відхиляється (подія `ARM_REFUSED`) з `reject_reason` `OPERATOR_STOP`, якщо раніше не відмовили інші ворота. Тривалість утримання в HMI-знімок `EVENT` не входить: поля `hmi` не змінено (`software/PERIPHERALS.md`).
+
 ## API
 
 ```python

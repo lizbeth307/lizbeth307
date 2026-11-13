@@ -30,6 +30,9 @@ OUTPUTS = tuple("EN_" + name for name in (
     "RTLB", "HFP", "LIME3V3", "T7", "LABPORT", "AUX12"))
 NO_LIME = "No Lime build: EN_LIME3V3 stays OFF (OFF needs no lease in labd); RTL-A, RTL-B and HF+ cover reception"
 NO_T7 = "No T7: EN_T7 stays OFF; storage falls back to UFS and the V30 microSD (STACK.md:977)"
+# Physical DISARM/STOP: LOCK held this long trips the Pico locally (firmware/pico/main.py
+# LOCK_STOP_HOLD_MS, supervisor fault OPERATOR_STOP): MCP reset, every EN off, without labd or Qt.
+HOLD_STOP = {"key": "LOCK", "hold_ms": 1000}
 
 _LEAF_FIELDS = frozenset(("id", "page", "label", "backend", "needs_lime", "needs_t7", "fallback_text", "critical", "controls"))
 _ID = re.compile(r"[a-z][a-z0-9_]*(?:\.[a-z0-9_]+){0,3}\Z")
@@ -47,16 +50,17 @@ def _leaf(leaf_id, page, label, kind, name, *, touch=True, keys=(), critical=Fal
 
 
 LEAVES = (
-    # Command row and bottom row (touch). DISARM is critical and touch-only: RX-11 reports it BLOCKED
-    # until a physical DISARM path exists; the Pico input core has no power API (firmware/pico/hmi.py).
+    # Command row and bottom row (touch). DISARM is critical: touch sends labd disarm, and holding
+    # LOCK (HOLD_STOP) stops on the Pico itself, which labd follows (engine trip pico_OPERATOR_STOP).
     _leaf("frame.arm", FRAME, "ARM + HOLD", "labd_op", "arm"),
     _leaf("frame.recover", FRAME, "RECOVER + ARM", "labd_op", "recover"),
-    _leaf("frame.disarm", FRAME, "DISARM / STOP", "labd_op", "disarm", critical=True),
+    _leaf("frame.disarm", FRAME, "DISARM / STOP", "labd_op", "disarm", keys=(HOLD_STOP["key"],), critical=True),
     _leaf("frame.hold", FRAME, "HOLD lease", "labd_op", "lease"),
     _leaf("frame.shutdown", FRAME, "Shutdown…", "labd_op", "shutdown"),
     _leaf("frame.unlock", FRAME, "Unlock touch…", "page_only", "hmi"),
     _leaf("frame.close", FRAME, "Close + DISARM", "labd_op", "disarm"),
-    # Physical inputs (srrx.hmi.HMINavigation): they navigate and lock, they never power anything.
+    # Physical inputs (srrx.hmi.HMINavigation): they navigate and lock, they never power anything
+    # (a LOCK tap toggles the touch lock; a LOCK hold also counts as that one tap).
     _leaf("frame.home", FRAME, "HOME", "page_only", "hmi", touch=False, keys=("HOME",), critical=True),
     _leaf("frame.back", FRAME, "BACK", "page_only", "hmi", touch=False, keys=("BACK",), critical=True),
     _leaf("frame.next_page", FRAME, "FN", "page_only", "hmi", touch=False, keys=("FN",), critical=True),

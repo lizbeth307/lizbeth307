@@ -369,5 +369,118 @@ class HMIErrorTests(unittest.TestCase):
         self.assertFalse(results[-1]["lux_valid"])
 
 
+class LockHoldStopTests(unittest.TestCase):
+    """Physical DISARM/STOP (W2 FW-STOP): hmi.lock_held_ms is an input fact and main.operator_stop
+    is LOCK held >= LOCK_STOP_HOLD_MS on fresh key reads. Synthetic bus, no hardware PASS."""
+    LOCK = b"\xdf\xff"  # PI4IO port 0 bit 5 low: LOCK pressed (keys are active low).
+    # The HMI sample labd accepts (engine.py:546-547): the hold is not part of it.
+    HOST_FIELDS = {"ok", "fresh", "age_ms", "keys", "presses", "encoders", "lux", "lux_valid",
+                   "lux_age_ms", "sequence", "generation", "error"}
+
+    def test_constant_key_and_host_sample_are_unchanged(self):
+        self.assertEqual(pico_main.LOCK_STOP_HOLD_MS, 1000)  # Not the 1.5 s case-button shutdown hold.
+        self.assertEqual(hmi.KEY_NAMES[hmi.LOCK_BIT], "LOCK")
+        poller = hmi.PeripheralPoller(Bus())
+        self.assertEqual(set(poller.poll(0)), self.HOST_FIELDS)
+        self.assertEqual(set(pico_main.hmi_payload(poller, 0)["hmi"]), self.HOST_FIELDS)
+
+    def test_hold_counts_from_the_sampled_edge_and_release_ends_it(self):
+        bus = Bus()
+        poller = hmi.PeripheralPoller(bus)
+        held = {}
+        for now in range(0, 1401, 20):
+            bus.regs[0x20][0] = self.LOCK if 100 <= now < 1200 else b"\xff\xff"
+            snapshot = poller.poll(now)
+            held[now] = (poller.lock_held_ms(now), pico_main.operator_stop(poller, now), snapshot["keys"])
+        self.assertEqual(held[120], (0, False, 0))  # 30 ms debounce still running.
+        self.assertEqual(held[140], (40, False, 1 << hmi.LOCK_BIT))  # Counted from the 100 ms edge.
+        self.assertEqual(held[1080][:2], (980, False))
+        self.assertEqual(held[1100][:2], (1000, True))
+        self.assertEqual(held[1220][:2], (1120, True))  # Release still debouncing.
+        self.assertEqual(held[1240], (0, False, 0))
+        # The hold is also one LOCK press: the console's touch lock toggles once (HMI.md).
+        self.assertEqual(poller.snapshot(1400)["presses"][hmi.LOCK_BIT], 1)
+
+    def test_stale_faulted_or_regapped_key_reads_are_not_a_stop(self):
+        bus = Bus()
+        bus.regs[0x20][0] = self.LOCK
+        poller = hmi.PeripheralPoller(bus)
+        for now in range(0, 1201, 20):
+            poller.poll(now)
+        self.assertTrue(pico_main.operator_stop(poller, 1200))
+        self.assertTrue(pico_main.operator_stop(poller, 1299))
+        self.assertFalse(pico_main.operator_stop(poller, 1300))  # Last key read 100 ms old.
+        self.assertEqual(poller.lock_held_ms(1190), 0)  # Before the last read: not a fresh fact.
+        # A poll gap re-baselines: the hold restarts from the recovery, it is not carried over.
+        poller.poll(1400)
+        self.assertEqual(poller.snapshot(1400)["generation"], 1)  # HMI_POLL_GAP, then a new baseline.
+        self.assertEqual(poller.lock_held_ms(1400), 0)
+        for now in range(1420, 2400, 20):
+            poller.poll(now)
+            self.assertFalse(pico_main.operator_stop(poller, now), now)
+        poller.poll(2400)
+        self.assertTrue(pico_main.operator_stop(poller, 2400))
+        # A key-bus fault ends the hold at once; so does a reversed clock, for good.
+        bus.dead = {0x20}
+        poller.poll(2420)
+        self.assertEqual(poller.lock_held_ms(2420), 0)
+        bus.dead = set()
+        clock = hmi.PeripheralPoller(Bus())
+        clock.transport.regs[0x20][0] = self.LOCK
+        for now in range(0, 1101, 20):
+            clock.poll(now)
+        self.assertTrue(pico_main.operator_stop(clock, 1100))
+        clock.poll(1000)
+        self.assertEqual(clock.lock_held_ms(1100), 0)
+        clock.poll(1120)
+        self.assertFalse(pico_main.operator_stop(clock, 1120))
+
+    def test_lock_down_at_boot_counts_from_the_baseline_without_a_press(self):
+        bus = Bus()
+        bus.regs[0x20][0] = self.LOCK  # Held, or stuck, before the poller starts.
+        poller = hmi.PeripheralPoller(bus)
+        for now in range(0, 1001, 20):
+            snapshot = poller.poll(now)
+            self.assertEqual(pico_main.operator_stop(poller, now), now >= 1000, now)
+        self.assertEqual(snapshot["presses"][hmi.LOCK_BIT], 0)  # A baseline, no synthetic edge.
+
+    def test_deployed_loop_feeds_the_hold_to_every_supervisor_step(self):
+        board = Board(loops=70)
+        bus = Bus()
+        bus.regs[0x20][0] = self.LOCK  # LOCK held from Pico boot.
+        steps = []
+
+        class SoftI2C:
+            def __init__(self, **kwargs):
+                pass
+
+            def readfrom_mem(self, address, register, count, addrsize=8):
+                return bus.read(address, register, count)
+
+            def writeto_mem(self, address, register, data, addrsize=8):
+                return bus.write(address, register, data)
+
+        class Recording(board.Supervisor):
+            def step(self, now_ms, inputs):
+                steps.append((now_ms, inputs.get("operator_stop", "missing")))
+                return super().step(now_ms, inputs)
+
+        board.machine.SoftI2C, board.Supervisor = SoftI2C, Recording
+        with self.assertRaises(_Stop):
+            board.run()
+        self.assertTrue(steps)
+        self.assertEqual({value for unused, value in steps} - {True, False}, set())  # Every step.
+        self.assertEqual(min(now for now, value in steps if value is True), 1000)
+        self.assertFalse(any(value for now, value in steps if now < 1000))
+        self.assertTrue(all(value for now, value in steps if now >= 1000))
+        # Unarmed (no records, host TRIP injected): the hold changes nothing and arms nothing.
+        self.assertEqual((board.model.state, board.model.fault), ("TRIPPED", "HOST_TRIP"))
+        self.assertNotIn((17, 0), board.writes)
+        events = [frame["p"]["hmi"] for frame in board.frames() if frame["t"] == "EVENT" and "hmi" in frame["p"]]
+        self.assertTrue(events)
+        self.assertTrue(all(set(event) == self.HOST_FIELDS for event in events))
+        self.assertTrue(any(event["keys"] == 1 << hmi.LOCK_BIT for event in events))
+
+
 if __name__ == "__main__":
     unittest.main()

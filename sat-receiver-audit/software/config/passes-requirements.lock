@@ -1,0 +1,11 @@
+# SR-RX pass predictor venv /opt/srrx/passes-venv (CPython 3.12, aarch64): the hashed subset of
+# deployment/linux_lab/wheelhouse-requirements.txt that the golden image installs (W2 IMG-3): the runtime of
+# srrx.passes (Skyfield, SGP4, jplephem, certifi, NumPy) and setuptools for the --no-build-isolation project
+# build. The QEMU smoke runs its live selftest with this interpreter. Lines are copied verbatim;
+# deployment/tests/test_system_files.py keeps this file a dependency-closed subset.
+certifi==2026.10.19 --hash=sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b
+jplephem==2.24 --hash=sha256:2de15608a0f13010a71a0a8af8765646d5884402006dac0dd7639d7db13629ac
+numpy==2.3.5 --hash=sha256:8b973c57ff8e184109db042c842423ff4f60446239bd585a5131cc47f06f789d
+setuptools==84.2.1 --hash=sha256:ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2
+sgp4==2.27 --hash=sha256:ef915c124cdd9807a4eae0abe655ade89076c2cee5df0392cad172aef456cd0e
+skyfield==1.55 --hash=sha256:9f98964855067460c94aa81a337194136f4a97a62ba8bbbfac1b8556f2b66ad4

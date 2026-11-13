@@ -1,0 +1,125 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -342,11 +342,14 @@
+   set(INSTALL_DOC_DIR ".")
+ else()
+   set(INSTALL_BIN_DIR "bin")
+-  set(INSTALL_LIB_DIR "lib${LIB_SUFFIX}/${CMAKE_PROJECT_NAME}")
++  # SR-RX: core libraries in lib/, so lib/sdrangel holds only the plugin directories the
++  # receive-only audit compares with its allowlist; pluginmanager.cpp still loads
++  # <bindir>/../lib/sdrangel/plugins and pluginssrv.
++  set(INSTALL_LIB_DIR "lib${LIB_SUFFIX}")
+   set(INSTALL_DOC_DIR "share/${CMAKE_PROJECT_NAME}")
+ endif()
+-set(INSTALL_PLUGINS_DIR "${INSTALL_LIB_DIR}/plugins")
+-set(INSTALL_PLUGINSSRV_DIR "${INSTALL_LIB_DIR}/pluginssrv")
++set(INSTALL_PLUGINS_DIR "lib${LIB_SUFFIX}/${CMAKE_PROJECT_NAME}/plugins")
++set(INSTALL_PLUGINSSRV_DIR "lib${LIB_SUFFIX}/${CMAKE_PROJECT_NAME}/pluginssrv")
+ 
+ if(ANDROID)
+   set(PLUGINS_PREFIX    "sdrangel_plugins_")
+@@ -898,12 +901,9 @@
+                             QuickWidgets
+                             Location
+                             TextToSpeech
+-                            Svg
+-                           OPTIONAL_COMPONENTS
+-                            WebEngine
+-                            WebEngineCore
+-                            WebEngineWidgets
+-                            Gamepad)
++                            Svg)
++            # SR-RX: no QtWebEngine and no QtGamepad: only the map and skymap features and the
++            # gs232controller feature use them, and none of these is built.
+         endif()
+     endif()
+ endif()
+@@ -1071,9 +1071,8 @@
+ add_subdirectory(swagger)
+ add_subdirectory(devices)
+ 
+-add_subdirectory(modemm17)
+-add_subdirectory(modemmeshtastic)
+-add_subdirectory(modemmeshcore)
++# SR-RX: modemm17, modemmeshtastic and modemmeshcore serve only the M17/Meshtastic/MeshCore
++# modulators and demodulators, none of which is built; they are not compiled.
+ 
+ if (FFTW3F_FOUND)
+     add_subdirectory(ft8)
+@@ -1081,11 +1080,7 @@
+     set(FT8_SUPPORT ON CACHE INTERNAL "")
+ endif()
+ 
+-if (FFTW3F_FOUND)
+-    add_subdirectory(wdsp)
+-    add_definitions(-DHAS_WDSP)
+-    set(WDSP_SUPPORT ON CACHE INTERNAL "")
+-endif()
++# SR-RX: WDSP (with its transmit chain) serves only the wdsprx channel, which is not built.
+ 
+ if (BUILD_BENCH)
+ add_subdirectory(sdrbench)
+--- a/plugins/CMakeLists.txt
++++ b/plugins/CMakeLists.txt
+@@ -69,6 +69,6 @@
+     add_subdirectory(feature)
+ endif()
+ 
+-add_subdirectory(samplemimo)
++# SR-RX receive-only: samplesink (Tx devices: testsink, fileoutput, localoutput, audiooutput, ...)
++# and samplemimo (testmi, testmosync, audiocatsiso, ...) are never compiled.
+ add_subdirectory(samplesource)
+-add_subdirectory(samplesink)
+--- a/plugins/channelrx/CMakeLists.txt
++++ b/plugins/channelrx/CMakeLists.txt
+@@ -103,7 +103,8 @@
+     message(STATUS "Not building demodvor (ENABLE_CHANNELRX_DEMODVOR=${ENABLE_CHANNELRX_DEMODVOR})")
+ endif()
+ 
+-if (ENABLE_CHANNELRX_DEMODPACKET)
++# SR-RX: text decoder, server plugin only (labd sets its frequency; no GUI variant).
++if (ENABLE_CHANNELRX_DEMODPACKET AND SERVER_MODE)
+     add_subdirectory(demodpacket)
+ else()
+     message(STATUS "Not building demodpacket (ENABLE_CHANNELRX_DEMODPACKET=${ENABLE_CHANNELRX_DEMODPACKET})")
+@@ -199,13 +200,15 @@
+     message(STATUS "Not building demodft8 (ENABLE_CHANNELRX_DEMODFT8=${ENABLE_CHANNELRX_DEMODFT8} FT8_SUPPORT=${FT8_SUPPORT})")
+ endif()
+ 
+-if (ENABLE_CHANNELRX_DEMODNAVTEX)
++# SR-RX: text decoder, server plugin only (labd sets its frequency; no GUI variant).
++if (ENABLE_CHANNELRX_DEMODNAVTEX AND SERVER_MODE)
+     add_subdirectory(demodnavtex)
+ else()
+     message(STATUS "Not building demodnavtex (ENABLE_CHANNELRX_DEMODNAVTEX=${ENABLE_CHANNELRX_DEMODNAVTEX})")
+ endif()
+ 
+-if (ENABLE_CHANNELRX_DEMODRTTY)
++# SR-RX: text decoder, server plugin only (labd sets its frequency; no GUI variant).
++if (ENABLE_CHANNELRX_DEMODRTTY AND SERVER_MODE)
+     add_subdirectory(demodrtty)
+ else()
+     message(STATUS "Not building demodrtty (ENABLE_CHANNELRX_DEMODRTTY=${ENABLE_CHANNELRX_DEMODRTTY})")
+--- a/plugins/samplesource/CMakeLists.txt
++++ b/plugins/samplesource/CMakeLists.txt
+@@ -2,7 +2,7 @@
+ 
+ add_subdirectory(fileinput)
+ add_subdirectory(testsource)
+-add_subdirectory(localinput)
++# SR-RX: localinput (channel-to-device loop) is not compiled.
+ 
+ if(ENABLE_FOBOS AND (WIN32 OR (UNIX AND NOT APPLE)))
+     add_subdirectory(fobos)
+@@ -108,9 +108,8 @@
+     message(STATUS "Not building usrpinput (ENABLE_USRP=${ENABLE_USRP} UHD_FOUND=${UHD_FOUND})")
+ endif()
+ 
+-add_subdirectory(audioinput)
+-add_subdirectory(kiwisdr)
+-add_subdirectory(remotetcpinput)
++# SR-RX: audioinput (sound card as IQ source) and the network inputs kiwisdr and remotetcpinput
++# are not compiled.
+ 
+ if(ENABLE_AARONIARTSA AND NOT ANDROID)
+     add_subdirectory(aaroniartsainput)

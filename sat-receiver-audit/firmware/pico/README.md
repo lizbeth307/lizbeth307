@@ -105,9 +105,10 @@ are RP2040 GPIO, with physical Pico header numbers in parentheses.
 GP2/3 and GP6/7 read the two encoders; GP4/5 and GP10 serve the local HMI
 I2C/interrupt. `hmi.py` implements the PI4IOE5V9555 keys and VEML7700 sensor,
 with bounded EVENT telemetry documented in `software/PERIPHERALS.md`. These
-inputs never authorize power outputs. GP17 is committed to reset and must
-never be used for display brightness. Physical HMI timing and wiring remain
-subject to unit acceptance.
+inputs never authorize power outputs; the one power effect they have is the
+LOCK-hold operator STOP below, which only asserts reset. GP17 is committed to
+reset and must never be used for display brightness. Physical HMI timing and
+wiring remain subject to unit acceptance.
 
 ## Session, ARM and trip contract
 
@@ -134,8 +135,9 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
 2. Host sends ARM with `p.qualified=true`, current Pico session and a strictly
    increasing uint32 sequence. Pico separately requires a validated local ADC
    calibration, a local commissioning record, Q6A power, fresh valid sensors,
-   battery above 13.05 V, panel below 68 C and case at most 60 C. Refused ARM
-   leaves reset asserted and reports its reason.
+   battery above 13.05 V, panel below 68 C and case at most 60 C, and no LOCK
+   hold (`OPERATOR_STOP`, below). Refused ARM leaves reset asserted and reports
+   its reason.
 3. WARMING holds reset for at least 100 ms and waits for two distinct fresh HB
    observations after ARM. Multiple packets received at one timestamp count as
    one observation. Host sends HB every 200 ms while its STATUS readings are
@@ -149,8 +151,8 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
    not an independent Pico readback of the I2C bus.
 5. ACTIVE keeps reset released; host independently controls its qualified MCP
    loads. An HB gap of **750 ms or greater**, stale/invalid local sensor, loss
-   of Q6A, hot panel/case, tach stall, bad configuration or host TRIP asserts
-   reset and restores full cooling. Low battery while armed is left to the host
+   of Q6A, hot panel/case, tach stall, bad configuration, host TRIP or a LOCK
+   hold of 1.0 s (`OPERATOR_STOP`) asserts reset and restores full cooling. Low battery while armed is left to the host
    dwell, but never masks the panel/case/tach trips. DISP12 stays on in TRIPPED
    so the console can show the fault and RECOVER + ARM, unless Q6A is off, the
    panel is hot, or the trip was CASE_HOT or FAN_STALLED. Those two remove the
@@ -168,6 +170,41 @@ latency, which must be scoped and recorded. Before each bounded UART transmit,
 the firmware re-samples safety inputs and applies the current outputs. The
 1000 ms hardware WDT is fed only after the loop's safety work; interpreter hangs
 must reset the MCU rather than keep a timer-based feeder alive.
+
+### Operator STOP (LOCK hold)
+
+The physical DISARM/STOP needs neither the Q6A, labd nor the Qt console
+(decision W2 FW-STOP in `build/15-rishennia-komplektu.md`):
+
+- `hmi.py` reports `lock_held_ms(now_ms)`, the continuous LOCK hold measured
+  from the first sampled press edge (or from the boot/recovery baseline when
+  LOCK is already down). It returns 0 unless the last key read is under
+  100 ms old with no bus, poll-gap or clock fault; a stale HMI is never a stop.
+  The value is not part of the HMI EVENT snapshot sent to labd.
+- `main.py` adds `operator_stop` (hold >= `LOCK_STOP_HOLD_MS` = 1000 ms) to
+  every sample it passes to `Supervisor.step`, like the ADC readings.
+- The supervisor treats it as the last readiness gate, after SENSOR_STALE and
+  the Q6A, sensor, battery, panel, case and fan gates: ARM is refused (with
+  `OPERATOR_STOP` when no other gate applies), and WARMING, CONFIGURING or
+  ACTIVE trip with fault `OPERATOR_STOP` in the same step (reset asserted, full
+  cooling, DISP12 kept for the console, nonce rotated). A protective cause in
+  the same sample names the trip instead, so a CASE_HOT or FAN_STALLED seen
+  with the hold still removes DISP12 (item 5 above); armed, only the battery
+  gate is skipped, so low battery never masks the stop. SAFE, TRIPPED,
+  SHUTTING_DOWN and OFF are not changed, and the hold never cuts Pololu power.
+- labd needs no new path: a Pico TRIPPED report trips labd
+  (`pico_OPERATOR_STOP`, `software/srrx/engine.py:189-192`) and all outputs go
+  off; the console names the stop. Restart is the normal explicit host ARM in
+  the new session after LOCK is released.
+- 1.0 s differs from the 1.5 s case-button shutdown hold. A stuck LOCK key
+  keeps ARM refused (fail-safe). A hold that starts as a sampled press also
+  counts as one LOCK press, so the console's touch lock toggles once; a LOCK
+  already down at boot or after a bus or poll-gap recovery is a baseline with
+  no press and toggles nothing.
+
+Host tests cover the model and the deployed loop wiring; the glove operation
+and the LOCK-to-EN-off latency on the assembled unit are bench work (build/09
+МЕН-01, E3-02/E5-01).
 
 ## Shutdown, button and cooling
 

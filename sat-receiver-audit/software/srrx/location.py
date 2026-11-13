@@ -881,3 +881,51 @@ class GpsdClient:
         except OSError:
             self.close("GPSD_IO_ERROR")
         return count
+
+
+# ---------------------------------------------------------------- labd's verified-UTC export
+
+# Kernel clock error bound for labd's utc_verified (timex maxerror, microseconds). A design value for
+# pass timing (windows have 60 s margins, baseband.MARGIN_S), far below the 16 s at which the kernel
+# itself marks the clock unsynchronized; it is no PPS qualification (W-04/W-05 on the Q6A).
+UTC_MAX_ERROR_US = 100_000
+STA_UNSYNC, STA_CLOCKERR = 0x0040, 0x1000  # linux/timex.h
+TIME_ERROR = 5  # adjtimex(2) return value: STA_UNSYNC or STA_CLOCKERR set
+UTC_REASONS = ("UTC_SOURCE_MISSING", "UTC_GNSS_OFF", "UTC_PPS_GATE_CLOSED", "UTC_JAMMING", "UTC_JAMMING_NOT_VISIBLE",
+               "UTC_RESET_REQUIRED", "UTC_CLOCK_UNREADABLE", "UTC_CLOCK_UNSYNCHRONIZED", "UTC_CLOCK_MAXERROR", "UTC_STALE")
+
+
+def system_utc_verified(gnss_status, clock):
+    """labd's utc_verified: (True, None) or (False, a UTC_REASONS code). Pure; never sets a clock.
+
+    The per-fix utc_verified of LocationTracker (_accept above) needs an independent utc_reference,
+    and srrx-locationd builds its tracker without one, so labd decides from what it holds instead:
+    gnss_status: srrx.gnss_orchestrator.GnssOrchestrator.status(), or None (labd --gnss off). PPS
+      must be selected through labd's own gate (pps_gate_open: state SELECTED after a qualified fix
+      held QUALIFY_MS - 3D, >= 6 satellites, a fresh "good" jamming report - a confirmed select and
+      the RTC no longer stale), with no jamming flag, a fresh "good" report now and no reset owed.
+    clock: the kernel time state of adjtimex(2) with modes 0, {"state", "status", "maxerror_us"},
+      or None when unreadable. chronyd clears STA_UNSYNC only with rtcsync (chrony 4.5
+      sys_timex.c:174-183; build/07 §18 sets rtcsync) and the kernel sets it again once maxerror
+      reaches 16 s, so a free-running clock ages out of verified.
+    Both are required: the gate proves the GNSS qualification labd saw, the kernel that the system
+    clock (pass times, window starts) is disciplined. Neither proves that chrony selected PPS
+    ("PPS *" in chronyc sources), which stays the device rows W-04/W-05.
+    """
+    if not isinstance(gnss_status, dict):
+        return False, "UTC_GNSS_OFF"
+    if gnss_status.get("jamming_active") is not False:
+        return False, "UTC_JAMMING"
+    if gnss_status.get("reset_required") is not False:
+        return False, "UTC_RESET_REQUIRED"
+    if gnss_status.get("pps_gate_open") is not True:
+        return False, "UTC_PPS_GATE_CLOSED"
+    if gnss_status.get("jamming_visible") is not True:
+        return False, "UTC_JAMMING_NOT_VISIBLE"
+    if not isinstance(clock, dict) or any(type(clock.get(key)) is not int for key in ("state", "status", "maxerror_us")):
+        return False, "UTC_CLOCK_UNREADABLE"
+    if clock["state"] in (-1, TIME_ERROR) or clock["status"] & (STA_UNSYNC | STA_CLOCKERR):
+        return False, "UTC_CLOCK_UNSYNCHRONIZED"
+    if not 0 <= clock["maxerror_us"] <= UTC_MAX_ERROR_US:
+        return False, "UTC_CLOCK_MAXERROR"
+    return True, None

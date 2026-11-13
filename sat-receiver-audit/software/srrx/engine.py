@@ -1,4 +1,5 @@
 """Single-writer host state machine. Requests never write GPIO directly."""
+from .location import system_utc_verified
 from .policy import SafetyPolicy, CAPS, _number
 
 # LNA1-4 share LNA4V5, 4.30 V since v2.1 (R227 21.5k, E2-04).
@@ -11,6 +12,10 @@ BRANCHES = {"LNA1": 4.3, "LNA2": 4.3, "LNA3": 4.3, "LNA4": 4.3,
 # the STATUS that carried them is at most 500 ms old.
 STATUS_ONLY = ("battery_mv", "panel_temp_c", "case_temp_c", "fan_stalled",
                "brightness_limit_pct", "adc_raw", "q6a_key_pulses")
+# labd's utc_verified (srrx.location.system_utc_verified) is re-evaluated at most this often and is
+# stale (not verified) when older than UTC_STALE_MS, e.g. while the loop stood still.
+UTC_PERIOD_MS = 1000
+UTC_STALE_MS = 3000
 
 
 def _sha256_hex(value):
@@ -19,8 +24,12 @@ def _sha256_hex(value):
 
 class Engine:
     def __init__(self, hardware, link, *, simulated=True, acceptance=None, telemetry_reader=None,
-                 soc_temp_reader=None, qualification_record=None, gnss=None):
+                 soc_temp_reader=None, qualification_record=None, gnss=None, clock_reader=None):
         self.hardware, self.link = hardware, link
+        # Kernel clock state for utc_verified (srrx.daemon.kernel_clock: adjtimex, read only); None: never verified.
+        self.clock_reader = clock_reader
+        self.utc = {"utc_verified": False, "reason": "UTC_SOURCE_MISSING"}
+        self.utc_ms = None
         # srrx.gnss_orchestrator.GnssOrchestrator (daemon --gnss gpsd|raw), or None for --gnss off.
         self.gnss = gnss
         self.simulated, self.acceptance = simulated, acceptance
@@ -45,6 +54,14 @@ class Engine:
         self.now_ms = 0
         self.arm_owner = None
         self.sim_overrides = {}
+        # srrx.engine_leases.EngineLeases: the exclusive engine lease units (hardware only; a
+        # simulation has no receivers to lease, so engine_lease is ENGINE_LEASE_DISABLED there).
+        if simulated:
+            self.leases = None
+        else:
+            from .engine_leases import EngineLeases
+            self.leases = EngineLeases()
+        self._leases_armed, self._leases_powered = False, {}
         self.events = []
         self.uv_since = None
         self.identity_ok = simulated
@@ -54,6 +71,8 @@ class Engine:
         self.requested_mode = "field"
         # srrx.pass_jobs.PassPlanner (daemon --hardware); without one, plan_passes is PASSES_DISABLED.
         self.passes = None
+        # srrx.baseband_scheduler.BasebandScheduler (daemon --hardware); without one, BASEBAND_DISABLED.
+        self.baseband = None
         if simulated:
             # These are explicitly synthetic, never written into acceptance.
             self.policy.configure_limits({b: {"baseline_a": min(.1, CAPS[b][0] * .5),
@@ -80,6 +99,9 @@ class Engine:
             self.events.append({"at_ms": self.now_ms, "reason": str(reason)})
             self.events = self.events[-32:]
         self.policy.trip(str(reason))
+        if self.leases is not None:
+            # DISARM and every other trip: all_off has cut the receivers' VBUS, no engine keeps one.
+            self.leases.stop_all("POLICY_TRIP")
         if notify and self.session is not None:
             self.last_trip_tx_ms = self.now_ms
             try:
@@ -171,8 +193,25 @@ class Engine:
 
     def tick(self, now_ms):
         self.now_ms = int(now_ms)
+        if self.leases is not None:
+            # Before the Pico freshness return below: a lost operator lease, a policy that left
+            # ARMED by its own trip (lease expiry, a fault, undervoltage), and a receiver EN output
+            # switched off while ARMED (control, not a trip) end the engine leases.
+            if self._leases_armed and not self.policy.armed:
+                self.leases.stop_all("POLICY_TRIP")
+            self._leases_armed = self.policy.armed
+            from .engine_leases import POWER_OUTPUTS
+            for receiver, output in POWER_OUTPUTS.items():
+                powered = self.policy.outputs.get(output) is True
+                if self.policy.armed and self._leases_powered.get(receiver) and not powered:
+                    self.leases.stop(receiver, "RECEIVER_OFF")
+                self._leases_powered[receiver] = powered
+            self.leases.tick(self.now_ms, self._own_valid_lease)
         if self.gnss is not None:
             self._gnss_tick()
+        self._utc_tick()
+        if self.baseband is not None:
+            self._baseband_tick()
         try:
             if self.last_tick_ms is not None and self.now_ms - self.last_tick_ms > 100:
                 self.imu_sample = None
@@ -304,12 +343,55 @@ class Engine:
         except Exception as exc:
             self.gnss.fault("GNSS_ORCHESTRATOR_ERROR: " + type(exc).__name__, self.now_ms)
 
+    def _utc_tick(self):
+        """utc_verified from the orchestrator's PPS gate and the kernel clock; never trips the power policy."""
+        if self.utc_ms is not None and 0 <= self.now_ms - self.utc_ms < UTC_PERIOD_MS:
+            return
+        self.utc_ms = self.now_ms
+        verified, reason = False, "UTC_SOURCE_MISSING"
+        if self.clock_reader is not None:
+            try:
+                clock = self.clock_reader()
+            except Exception:
+                clock = None
+            try:
+                gnss = None if self.gnss is None else self.gnss.status()
+            except Exception:
+                gnss = None
+            verified, reason = system_utc_verified(gnss, clock)
+        self.utc = {"utc_verified": verified is True, "reason": reason}
+
+    def utc_verified(self):
+        """labd's verified-UTC state for PassPlanner, the scheduler and status (labrx reads utc_verified)."""
+        return (self.utc.get("utc_verified") is True and self.utc_ms is not None
+                and 0 <= self.now_ms - self.utc_ms <= UTC_STALE_MS)
+
+    def _lease_view(self):
+        """The operator lease as the baseband scheduler sees it: owner, still valid, ARM and EN_RTLA."""
+        deadline = self.policy.lease_deadline_ms
+        return {"owner": self.policy.owner, "armed": self.policy.armed is True,
+                "valid": self.policy.owner is not None and deadline is not None and self.now_ms < deadline,
+                "rtla_on": self.policy.outputs.get("EN_RTLA") is True}
+
+    def _baseband_tick(self):
+        # Before the Pico freshness return below, like the GNSS tick: a lost Pico must stop a recording too.
+        try:
+            self.baseband.tick(self.now_ms, self._lease_view())
+        except Exception as exc:
+            self.events.append({"at_ms": self.now_ms, "reason": "BASEBAND_SCHEDULER_ERROR: " + type(exc).__name__})
+            self.events = self.events[-32:]
+
     def _read_soc_temp(self):
         try:
             value = self.soc_temp_reader()
         except Exception:
             return None
         return round(float(value), 1) if _number(value) and -40 <= value <= 130 else None
+
+    def _own_valid_lease(self, owner):
+        """True while owner holds the unexpired operator lease (the gnss_config rule)."""
+        return (owner is not None and self.policy.owner == owner and self.policy.lease_deadline_ms is not None
+                and self.now_ms < self.policy.lease_deadline_ms)
 
     def request(self, request, now_ms=None):
         if now_ms is not None:
@@ -328,6 +410,19 @@ class Engine:
             if self.passes is None:
                 return {"ok": False, "error": "PASSES_DISABLED"}
             return self.passes.request(request.get("value"), self.now_ms)
+        if op in ("baseband_schedule", "baseband_cancel"):
+            # Attended LRPT pass recording (srrx.baseband_scheduler): scheduling needs the caller's own
+            # valid lease; cancelling is the de-energizing side and open to any local operator.
+            if self.baseband is None:
+                return {"ok": False, "error": "BASEBAND_DISABLED"}
+            if op == "baseband_cancel":
+                value = request.get("value")
+                return self.baseband.cancel(owner, self.now_ms, scope_stop=type(value) is dict
+                                            and value.get("scope_stop") is True)
+            if (self.policy.owner != owner or self.policy.lease_deadline_ms is None
+                    or self.now_ms >= self.policy.lease_deadline_ms):
+                return {"ok": False, "error": "BASEBAND_LEASE_REQUIRED"}
+            return self.baseband.request(request.get("value"), owner, self.now_ms)
         if op in {"arm", "recover", "mode", "control", "relay", "route", "confirmations"} and self.policy.owner not in (None, owner):
             if op != "control" or request.get("value") is not False:
                 return {"ok": False, "error": "another local operator owns the lease"}
@@ -401,6 +496,19 @@ class Engine:
                     or self.now_ms >= self.policy.lease_deadline_ms):
                 return {"ok": False, "error": "gnss_config requires the caller's own valid lease"}
             return self.gnss.request_config(owner, self.now_ms)
+        if op == "engine_lease":
+            # Exclusive engine lease (STACK.md C7 mode 2, srrx.engine_leases): labd starts the
+            # srrx-lease-<engine>@<alias> unit through polkit; the client never starts a unit.
+            if self.leases is None:
+                return {"ok": False, "error": "ENGINE_LEASE_DISABLED"}
+            if not self._own_valid_lease(owner):
+                return {"ok": False, "error": "ENGINE_LEASE_NO_OPERATOR_LEASE"}
+            return self.leases.request(request.get("value"), owner, self.now_ms)
+        if op == "engine_stop":
+            # Operator or scope stop: like DISARM it needs no lease and energizes nothing.
+            if self.leases is None:
+                return {"ok": False, "error": "ENGINE_LEASE_DISABLED"}
+            return self.leases.stop_request(request.get("value"))
         if op == "route":
             receiver = request.get("receiver")
             if type(receiver) is not str or receiver not in {"RTLA", "RTLB", "LIME"}:
@@ -489,7 +597,12 @@ class Engine:
             "pico_age_ms": None if report_age is None else max(0, report_age),
             "policy": self.policy.status(), "events": list(self.events),
             "imu": imu, "hmi": self._hmi_status(),
+            "engine_leases": self.leases.status() if self.leases else {"enabled": False},
             "passes": self.passes.status(self.now_ms) if self.passes else {"enabled": False, "state": "DISABLED"},
+            "baseband": self.baseband.status() if self.baseband else {"enabled": False, "state": "DISABLED"},
+            # labrx.run_baseband requires utc_verified on every block (RX.md); the reason is a UTC_REASONS code.
+            "utc_verified": self.utc_verified(),
+            "utc_reason": None if self.utc_verified() else (self.utc.get("reason") or "UTC_STALE"),
             "gnss": None if self.gnss is None else self.gnss.status(),
             "live_identity_verified": self.identity_ok,
             "qualification_record_verified": self.qualification_ok and not self.simulated,
@@ -507,7 +620,8 @@ class Engine:
                         self.hardware.close()
                     finally:
                         try:
-                            for reader in (self.soc_temp_reader, self.telemetry_reader, self.passes):
+                            for reader in (self.soc_temp_reader, self.telemetry_reader, self.passes, self.baseband,
+                                           self.leases):
                                 if reader and hasattr(reader, "close"):
                                     reader.close()
                         finally:

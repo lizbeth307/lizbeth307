@@ -1,92 +1,147 @@
-"""SatDump +lab recipe (deployment/recipes/satdump): structure, option completeness, packaging steps.
+"""SatDump +lab recipe (deployment/recipes/satdump): builder recipe, packaging data, hooks, runtime check.
 
-Offline only: the pinned source is not in Git, so verify-source runs here on a synthetic tree;
-on the package builder it runs on the extracted archive (recipe.json "build"). PENDING_BUILDER
-stays the recipe status until an arm64 build and the builder checks have run.
+Offline only: the pinned source is not in Git, so verify-source runs here on synthetic trees; on
+the package builder it is the recipe's source_check hook on the extracted archive (sr-rx-packages
+heavy job). The runtime check itself runs only in the sr-rx-packages runtime chroot; here its
+constants are compared with the recipe, packaging.json and srrx.satdump_pass, and its strace parser
+is fed sample lines. The OMM CSV column order (omm-csv) is checked here against the pinned reader.
 """
+import contextlib
 import copy
+import csv
 import hashlib
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 HERE = Path(__file__).resolve().parents[1]
 RECIPE = HERE / "recipes/satdump"
 spec = importlib.util.spec_from_file_location("check_recipe", RECIPE / "check_recipe.py")
 check_recipe = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(check_recipe)
+spec = importlib.util.spec_from_file_location("satdump_runtime_check", RECIPE / "runtime_check.py")
+runtime_check = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(runtime_check)
 sys.path.insert(0, str(HERE.parent / "software"))
-from srrx import decoder_policy  # noqa: E402
+from srrx import baseband, decoder_policy, orbits, satdump_pass  # noqa: E402
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE / "recipes"))
+import build_recipe  # noqa: E402
+import deploy  # noqa: E402
 import selftest  # noqa: E402
 
 
 class RecipeTests(unittest.TestCase):
     def setUp(self):
         self.recipe, self.options = check_recipe.load("recipe.json"), check_recipe.load("upstream-options.json")
+        self.packaging = check_recipe.load("packaging.json")
 
-    def test_committed_recipe_is_consistent(self):
+    def findings(self, recipe=None, packaging=None, policy=None):
+        return check_recipe.check(recipe or self.recipe, self.options, policy, packaging or self.packaging)
+
+    def test_committed_recipe_is_consistent_and_a_heavy_builder_recipe(self):
         self.assertEqual(check_recipe.check(), [])
-        self.assertEqual(self.recipe["status"], "PENDING_BUILDER")
-        self.assertTrue(all(c["status"].startswith("PENDING") for c in self.recipe["builder_checks"]))
+        component = build_recipe.validate_recipe(self.recipe)
+        self.assertEqual((component["id"], component["version"]), ("satdump", self.packaging["package"]["version"]))
+        self.assertFalse(build_recipe.is_pending(self.recipe))
+        plan = build_recipe.ci_plan()
+        self.assertIn("satdump", plan["heavy"])
+        self.assertEqual(plan["recipes"]["satdump"]["chain"], ["satdump"])
+        self.assertEqual(plan["recipes"]["satdump"]["runtime_depends"], ["binutils", "strace"])
+        self.assertTrue(plan["recipes"]["satdump"]["runtime_check"])
+        self.assertNotIn("satdump", plan["skipped"])
 
     def test_every_upstream_option_is_set_and_only_the_allowlist_is_on(self):
-        definitions = self.recipe["cmake"]["definitions"]
+        values = self.recipe["cmake"]["options"]
         self.assertEqual(len(self.options["options"]), 105)
-        self.assertEqual(definitions["PLUGINS_ALL"], "OFF")
-        on = sorted(name for name, value in definitions.items() if value == "ON")
+        self.assertEqual(list(values), [o["name"] for o in self.options["options"]])  # manifest order
+        self.assertEqual(values["PLUGINS_ALL"], "OFF")
+        on = sorted(name for name, value in values.items() if value == "ON")
         self.assertEqual(on, sorted(check_recipe.ALLOWED_ON))
         for name in ("PLUGIN_HACKRF_SDR_SUPPORT", "PLUGIN_RTLSDR_SDR_SUPPORT", "PLUGIN_REMOTE_SDR_SUPPORT",
                      "PLUGIN_SPYSERVER_SUPPORT", "PLUGIN_PORTAUDIO_SINK", "PLUGIN_AAUDIO_SINK", "PLUGIN_INMARSAT",
                      "PLUGIN_WEBHOOK_APP", "PLUGIN_EXPERIMENTAL_DEVICES_SUPPORT", "PLUGIN_SIMD_NEON", "BUILD_GUI",
-                     "ENABLE_CRASHDUMP", "BUILD_OPENCL"):
-            self.assertEqual(definitions[name], "OFF", name)
+                     "ENABLE_CRASHDUMP", "BUILD_OPENCL", "BUILD_ZIQ"):
+            self.assertEqual(values[name], "OFF", name)
         # Default-ON options upstream (plugins/CMakeLists.txt at 1aedd60) are each switched off by name.
         defaults_on = {o["name"] for o in self.options["options"] if o["default"] == "ON"}
         self.assertIn("PLUGIN_HACKRF_SDR_SUPPORT", defaults_on)
-        self.assertEqual({n for n in defaults_on if definitions[n] == "ON"},
-                         {"PLUGIN_NET_SOURCE_SDR_SUPPORT", "BUILD_OPENMP", "ENABLE_INSTALL"})
+        self.assertEqual({n for n in defaults_on if values[n] == "ON"}, {"PLUGIN_NET_SOURCE_SDR_SUPPORT", "BUILD_OPENMP", "ENABLE_INSTALL"})
+        # The builder's own completeness rule: every declared option is set, and nothing undeclared.
+        self.assertEqual(set(values) & set(self.recipe["cmake"]["variables"]), set())
 
     def test_drift_and_tampering_are_findings(self):
-        cases = []
-        missing = copy.deepcopy(self.recipe)
-        del missing["cmake"]["definitions"]["PLUGIN_LIMESDR_SDR_SUPPORT"]
-        cases.append((missing, "option_not_set:PLUGIN_LIMESDR_SDR_SUPPORT"))
-        on = copy.deepcopy(self.recipe)
-        on["cmake"]["definitions"]["PLUGIN_GOES"] = "ON"
-        cases.append((on, "on_set_not_allowlist"))
-        typo = copy.deepcopy(self.recipe)
-        typo["cmake"]["definitions"]["PLUGIN_METEOR_LRPT"] = "OFF"
-        cases.append((typo, "unknown_definition:PLUGIN_METEOR_LRPT"))
-        patch = copy.deepcopy(self.recipe)
-        patch["patches"][2]["sha256"] = "0" * 64
-        cases.append((patch, "patch_digest:patches/0003-lab-udp-loopback.patch"))
-        network = copy.deepcopy(self.recipe)
-        network["build"]["steps"].append("curl -O https://example.invalid/x")
-        cases.append((network, "build_network"))
-        claim = copy.deepcopy(self.recipe)
-        claim["status"] = "BUILT"
-        cases.append((claim, "status_claims_more_than_checks"))
+        def changed(edit, target="recipe"):
+            data = copy.deepcopy(self.recipe if target == "recipe" else self.packaging)
+            edit(data)
+            return data
+        cases = [
+            (changed(lambda r: r["cmake"]["options"].pop("PLUGIN_LIMESDR_SDR_SUPPORT")), "option_not_set:PLUGIN_LIMESDR_SDR_SUPPORT"),
+            (changed(lambda r: r["cmake"]["options"].update(PLUGIN_GOES="ON")), "on_set_not_allowlist"),
+            (changed(lambda r: r["cmake"]["options"].update(PLUGIN_METEOR_LRPT="OFF")), "unknown_option:PLUGIN_METEOR_LRPT"),
+            (changed(lambda r: r["source"]["patches"][2].update(sha256="0" * 64)), "patch_digest:patches/0003-lab-udp-loopback.patch"),
+            (changed(lambda r: r["build"].append(["cmake", "--build", "https://example.invalid/x"])), "build_network"),
+            (changed(lambda r: r["cmake"]["variables"].update(CMAKE_INSTALL_RPATH="$ORIGIN")), "fixed_variable:CMAKE_INSTALL_RPATH"),
+            (changed(lambda r: r["build_depends"].append("libarmadillo-dev")), "build_depends_forbidden:libarmadillo-dev"),
+            (changed(lambda r: r["build_depends"].remove("ninja-build")), "build_depends_changed"),
+            (changed(lambda r: r["ci"].update(heavy=False)), "recipe_ci"),
+            (changed(lambda r: r["checks"].pop(0)), "require_paths_differ_from_packaging"),
+            (changed(lambda r: r["packages"][0].update(shlibs_depends=False)), "recipe_package"),
+            (changed(lambda r: r["hooks"].update(package=None)), "recipe_hooks"),
+            (changed(lambda r: r["cmake"].update(configure=["cmake", "-S", "{src}", "-B", "{build}"])), "recipe_steps"),
+        ]
         for recipe, finding in cases:
             with self.subTest(finding=finding):
-                self.assertIn(finding, check_recipe.check(recipe, self.options))
+                self.assertIn(finding, self.findings(recipe=recipe))
+        packaging = changed(lambda p: p["builder_checks"][0].update(status="CI_PASS"), "packaging")
+        self.assertIn("builder_checks", self.findings(packaging=packaging))
+        packaging = changed(lambda p: p["upstream_files"].update({"src-core/core/cli/pipeline.cpp": "0" * 40}), "packaging")
+        self.assertIn("patch_target_blob:src-core/core/cli/pipeline.cpp", self.findings(packaging=packaging))
         policy = check_recipe.strict_json((HERE / "receive-only-policy.json").read_text(encoding="utf-8"))
         policy["components"]["satdump"]["allow_plugins"].append("goes")
-        self.assertIn("plugins_differ_from_policy", check_recipe.check(self.recipe, self.options, policy))
+        self.assertIn("plugins_differ_from_policy", self.findings(policy=policy))
+        # Every committed data file is pinned by this script, which the build record binds.
+        with patch.dict(check_recipe.DATA_SHA256, {"packaging.json": "0" * 64}):
+            self.assertIn("data_file_digest:packaging.json", check_recipe.check())
+            with self.assertRaisesRegex(check_recipe.RecipeError, "data_file_digest:packaging.json"):
+                check_recipe.load("packaging.json")
+
+    def test_recipe_json_pins_the_hook_script_and_both_data_files(self):
+        # recipe_sha256 of the installation record is the SHA-256 of recipe.json; its pin note makes a
+        # change of check_recipe.py, packaging.json or upstream-options.json a change of recipe.json too.
+        pins = [n for n in self.recipe["notes"] if n.startswith("Pinned recipe files")]
+        self.assertEqual(pins, [check_recipe.pin_note()])
+        for name in check_recipe.PINNED_FILES:
+            self.assertIn(name + " " + hashlib.sha256((RECIPE / name).read_bytes()).hexdigest(), pins[0])
+        with patch.object(check_recipe, "pin_note", return_value="Pinned recipe files (SHA-256): stale"):
+            self.assertEqual(check_recipe.check(), ["recipe_pin_note"])
+            with patch("sys.stdout", new_callable=io.StringIO) as stdout:
+                self.assertEqual(check_recipe.main(["verify-source", "--source", str(RECIPE)]), 2)
+            self.assertIn("recipe_pin_note", stdout.getvalue())
+
+    def test_data_files_are_the_pinned_ones(self):
+        for name, digest in check_recipe.DATA_SHA256.items():
+            self.assertEqual(hashlib.sha256((RECIPE / name).read_bytes()).hexdigest(), digest, name)
+        self.assertEqual(set(self.packaging), check_recipe.PACKAGING_KEYS)
+        self.assertEqual({c["id"]: c["status"] for c in self.packaging["builder_checks"]}, check_recipe.BUILDER_CHECKS)
 
     def test_plugin_files_are_named_after_the_upstream_directory(self):
         # PLUGIN_FY2 builds plugins/fengyun2_support (add_library(fengyun2_support SHARED) at 1aedd60): the
         # expected file names come from the manifest's subdirectory, never from the option name.
         manifest = {o["name"]: o for o in self.options["options"]}
-        definitions = self.recipe["cmake"]["definitions"]
+        values = self.recipe["cmake"]["options"]
         libraries = {"lib" + manifest[n]["subdirectory"].rsplit("/", 1)[-1] + ".so"
-                     for n, value in definitions.items() if value == "ON" and n.startswith("PLUGIN_")}
-        self.assertEqual(set(self.recipe["install"]["expected_plugins"]), libraries)
+                     for n, value in values.items() if value == "ON" and n.startswith("PLUGIN_")}
+        install = self.packaging["install"]
+        self.assertEqual(set(install["expected_plugins"]), libraries)
         self.assertIn("libfengyun2_support.so", libraries)
         self.assertNotIn("libfy2_support.so", libraries)
         # decoder_policy's installation record and selftest RX-04 name exactly the same files.
@@ -95,36 +150,61 @@ class RecipeTests(unittest.TestCase):
         self.assertEqual({selftest._plugin_name(lib, ("_sdr_support", "_support")) for lib in libraries},
                          set(policy["allow_plugins"]))
         self.assertEqual(set(policy["allow_plugins"]), set(decoder_policy.SATDUMP_PLUGINS))
-        # Every ON plugin's CMakeLists.txt is bound by blob, so verify-source checks its add_library().
         for name in check_recipe.on_plugin_libraries(self.recipe, self.options):
-            self.assertIn(manifest[name]["subdirectory"] + "/CMakeLists.txt", self.recipe["upstream_files"])
-        old = copy.deepcopy(self.recipe)
+            self.assertIn(manifest[name]["subdirectory"] + "/CMakeLists.txt", self.packaging["upstream_files"])
+        old = copy.deepcopy(self.packaging)
         old["install"]["expected_plugins"] = [p.replace("fengyun2", "fy2") for p in old["install"]["expected_plugins"]]
-        self.assertIn("expected_plugins_differ_from_options", check_recipe.check(old, self.options))
-        old_policy = check_recipe.strict_json((HERE / "receive-only-policy.json").read_text(encoding="utf-8"))
-        old_policy["components"]["satdump"]["allow_plugins"] = [
-            "fy2" if p == "fengyun2" else p for p in old_policy["components"]["satdump"]["allow_plugins"]]
-        self.assertIn("plugins_differ_from_policy", check_recipe.check(self.recipe, self.options, old_policy))
+        self.assertIn("expected_plugins_differ_from_options", self.findings(packaging=old))
 
-    def test_rpath_and_config_steps(self):
-        definitions = self.recipe["cmake"]["definitions"]
-        self.assertEqual(definitions["CMAKE_INSTALL_RPATH"], "/usr/lib/satdump/plugins")  # STACK.md:142
-        changed = copy.deepcopy(self.recipe)
-        changed["cmake"]["definitions"]["CMAKE_INSTALL_RPATH"] = "$ORIGIN"
-        self.assertIn("fixed_definition:CMAKE_INSTALL_RPATH", check_recipe.check(changed, self.options))
-        paths = {tuple(item["path"]): item["value"] for item in self.recipe["install"]["config_set"]}
+    def test_installation_layout_is_decoder_policy_s(self):
+        install = self.packaging["install"]
+        self.assertEqual("/" + install["executable"], satdump_pass.SATDUMP)
+        self.assertEqual("/" + install["core_library"], decoder_policy.SATDUMP_CORE)
+        self.assertEqual("/" + install["plugin_dir"], decoder_policy.SATDUMP_PLUGIN_DIR)
+        self.assertEqual("/" + install["pipeline_dir"], decoder_policy.SATDUMP_PIPELINE_DIR)
+        self.assertEqual("/" + install["resources_dir"], decoder_policy.SATDUMP_RESOURCES)
+        self.assertEqual("/" + install["config"], decoder_policy.SATDUMP_CONFIG)
+        self.assertEqual(tuple(install["keep_pipelines"]), decoder_policy.SATDUMP_PIPELINE_FILES)
+        self.assertEqual(self.packaging["package"]["version"], decoder_policy.SATDUMP_VERSION)
+        self.assertEqual(self.packaging["source"]["commit"], decoder_policy.SATDUMP_COMMIT)
+        self.assertEqual(self.recipe["cmake"]["variables"]["CMAKE_INSTALL_RPATH"], "/" + install["plugin_dir"])  # STACK.md:142
+        paths = {tuple(item["path"]): item["value"] for item in install["config_set"]}
         self.assertEqual(paths[("kepler_settings", "url_template")], "")
         self.assertEqual(paths[("satdump_general", "tle_space_track_login", "value")], "")
+        self.assertEqual(paths[("satdump_general", "kepler_update_interval", "value")], "Never")
+        # One package; its require_paths checks name each allowlisted file once.
+        self.assertEqual([p["name"] for p in self.recipe["packages"]], ["satdump"])
+        required = [c["globs"][0] for c in self.recipe["checks"] if c["kind"] == "require_paths"]
+        self.assertEqual(required, check_recipe.required_paths(self.packaging))
+        forbid = next(c for c in self.recipe["checks"] if c["kind"] == "forbid_needed")
+        self.assertIn("libarmadillo*", forbid["needed"])
+        self.assertIn("libzstd*", forbid["needed"])
 
-    def test_patches_target_the_pinned_files_and_the_loopback_patch_removes_inaddr_any(self):
+    def test_patches_target_the_pinned_files(self):
         loopback = (RECIPE / "patches/0003-lab-udp-loopback.patch").read_text(encoding="utf-8")
         self.assertIn("-            sock_addr.sin_addr.s_addr = INADDR_ANY;", loopback)
         self.assertIn("+            sock_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);", loopback)
         self.assertNotIn("+            sock_addr.sin_addr.s_addr = INADDR_ANY", loopback)
-        for entry in self.recipe["patches"]:
-            self.assertEqual(set(entry["targets"]) - set(self.recipe["upstream_files"]) - {
-                "src-core/dsp/clock_recovery/clock_recovery_gardner.cpp", "src-core/dsp/clock_recovery/clock_recovery_mm.cpp",
-                "src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp"}, set())
+        native = (RECIPE / "patches/0004-lab-no-march-native.patch").read_text(encoding="utf-8")
+        self.assertIn("-if((NOT DEFINED ENV{CI}) AND NOT DEFINED ANDROID)", native)
+        self.assertIn("+if(FALSE)", native)
+        self.assertNotIn("+        set(CMAKE_CXX_FLAGS", native)
+        iers = (RECIPE / "patches/0005-lab-no-iers-download.patch").read_text(encoding="utf-8")
+        added = [line for line in iers.splitlines() if line.startswith("+") and not line.startswith("+++")]
+        self.assertEqual([line for line in added if not line.lstrip("+ ").startswith("//")], ["+        return;", "+"])
+        listed = self.recipe["source"]["patches"]
+        self.assertEqual([p["file"] for p in listed], ["patches/0001-cli-add-option-c0b6f88.patch", "patches/0002-clock-recovery-free-6b5957f.patch",
+                                                       "patches/0003-lab-udp-loopback.patch", "patches/0004-lab-no-march-native.patch",
+                                                       "patches/0005-lab-no-iers-download.patch"])
+        self.assertEqual([p["kind"] for p in listed], ["cherry-pick", "cherry-pick", "lab", "lab", "lab"])
+        with patch.object(build_recipe, "DEPLOYMENT", HERE):
+            self.assertEqual(len(build_recipe._patches(listed, "satdump")), 5)
+        clock = {"src-core/dsp/clock_recovery/clock_recovery_gardner.cpp", "src-core/dsp/clock_recovery/clock_recovery_mm.cpp",
+                 "src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp"}
+        for entry in listed:
+            for target, blob in entry["targets"].items():
+                if target not in clock:
+                    self.assertEqual(self.packaging["upstream_files"][target], blob, target)
 
     def test_cmake_option_parser(self):
         text = ('option(A "x" ON)\n# option(B "commented" ON)\noption(\n  C\n  "multi (line)"\n  OFF)\n'
@@ -142,7 +222,7 @@ class SourceAndPackageTests(unittest.TestCase):
         temp = tempfile.TemporaryDirectory(prefix="srrx-satdump-recipe-")
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name)
-        self.recipe = check_recipe.load("recipe.json")
+        self.recipe, self.packaging = check_recipe.load("recipe.json"), check_recipe.load("packaging.json")
 
     def test_verify_source_reports_missing_or_changed_upstream_files(self):
         tree = self.root / "src"
@@ -150,11 +230,14 @@ class SourceAndPackageTests(unittest.TestCase):
         (tree / "CMakeLists.txt").write_text('option(BUILD_GUI "Build the GUI" ON)\n')
         findings = check_recipe.verify_source(tree)
         self.assertIn("upstream_file:CMakeLists.txt", findings)
+        self.assertIn("upstream_file:src-core/db/kepler/kepler_utils.cpp", findings)
         self.assertIn("options_manifest_drift", findings)
         self.assertIn("patch_base:src-core/common/net/udp.h", findings)
+        self.assertIn("patch_base:src-core/db/iers/iers_handler.cpp", findings)
         self.assertIn("plugin_library_name:plugins/fengyun2_support", findings)
+        self.assertIn("cache_string_default:EXTERNAL_PLUGINS", findings)
 
-    def test_verify_source_checks_each_plugin_library_name(self):
+    def test_verify_source_checks_each_plugin_library_name_and_the_external_plugins_default(self):
         tree = self.root / "src"
         options = check_recipe.load("upstream-options.json")
         manifest = {o["name"]: o for o in options["options"]}
@@ -166,7 +249,7 @@ class SourceAndPackageTests(unittest.TestCase):
             (tree / directory / "CMakeLists.txt").write_text(
                 "project(%s)\nadd_library(%s SHARED ${CPPS})\n# set_target_properties(OUTPUT_NAME x)\n"
                 "install(TARGETS %s\n        DESTINATION ${CMAKE_INSTALL_LIBDIR}/satdump/plugins)\n" % (target, target, target))
-        names = lambda: {f for f in check_recipe.verify_source(tree) if f.startswith("plugin_library_name:")}
+        names = lambda: {f for f in check_recipe.verify_source(tree) if f.startswith("plugin_library_name:")}  # noqa: E731
         self.assertEqual(names(), set())
         (tree / "plugins/fengyun2_support/CMakeLists.txt").write_text(
             "add_library(fy2_support SHARED x.cpp)\ninstall(TARGETS fy2_support DESTINATION ${CMAKE_INSTALL_LIBDIR}/satdump/plugins)\n")
@@ -175,10 +258,15 @@ class SourceAndPackageTests(unittest.TestCase):
             "add_library(fengyun2_support SHARED x.cpp)\nset_target_properties(fengyun2_support PROPERTIES OUTPUT_NAME fy2)\n"
             "install(TARGETS fengyun2_support DESTINATION ${CMAKE_INSTALL_LIBDIR}/satdump/plugins)\n")
         self.assertEqual(names(), {"plugin_library_name:plugins/fengyun2_support"})
+        default = lambda: "cache_string_default:EXTERNAL_PLUGINS" in check_recipe.verify_source(tree)  # noqa: E731
+        (tree / "plugins/CMakeLists.txt").write_text('set(EXTERNAL_PLUGINS "" CACHE STRING "Optional external plugins")\n')
+        self.assertFalse(default())
+        (tree / "plugins/CMakeLists.txt").write_text('set(EXTERNAL_PLUGINS "x" CACHE STRING "Optional external plugins")\n')
+        self.assertTrue(default())
 
     def stage(self):
         root = self.root / "stage"
-        install = self.recipe["install"]
+        install = self.packaging["install"]
         pipelines = root / install["pipeline_dir"]
         pipelines.mkdir(parents=True)
         for name in install["keep_pipelines"]:
@@ -207,12 +295,14 @@ class SourceAndPackageTests(unittest.TestCase):
         (root / install["core_library"]).write_bytes(b"\x7fELF core")
         (root / "usr/include/satdump").mkdir(parents=True)
         (root / "usr/include/satdump/x.h").write_text("")
+        (root / "usr/share/applications").mkdir(parents=True)
+        (root / "usr/share/applications/satdump.desktop").write_text("[Desktop Entry]\n")
         return root
 
     def test_package_keeps_five_pipelines_and_writes_a_never_config(self):
         root = self.stage()
         files = check_recipe.package(root)
-        install = self.recipe["install"]
+        install = self.packaging["install"]
         pipelines = root / install["pipeline_dir"]
         self.assertEqual(sorted(p.name for p in pipelines.iterdir()), sorted(install["keep_pipelines"]))
         elektro = json.loads((pipelines / "Elektro_Arktika.json").read_text())
@@ -226,8 +316,13 @@ class SourceAndPackageTests(unittest.TestCase):
         self.assertEqual(config["satdump_general"]["tle_space_track_login"]["value"], "")
         self.assertNotIn("://", text)
         self.assertFalse((root / "usr/include").exists())
+        self.assertFalse((root / "usr/share/applications").exists())
         self.assertIn("usr/lib/satdump/plugins/libnet_source_support.so", files)
         self.assertIn("usr/lib/satdump/plugins/libfengyun2_support.so", files)
+        # The builder's checks and file assignment after the hook: every staged file in the one package.
+        checks = [c for c in self.recipe["checks"] if c["kind"] != "forbid_needed"]  # readelf: builder only
+        self.assertTrue(all(r["status"] == "CI_PASS" for r in build_recipe.run_checks(dict(self.recipe, checks=checks), root)))
+        self.assertEqual(sorted(build_recipe.assign(self.recipe, root)["satdump"]), sorted(files))
         # The record digests decoder_policy re-checks: one tree digest algorithm on both sides.
         digests = check_recipe.record_digests(root, files)
         self.assertEqual(digests["resources_sha256"],
@@ -237,10 +332,72 @@ class SourceAndPackageTests(unittest.TestCase):
         self.assertEqual(set(digests["plugins"]), set(install["expected_plugins"]))
         self.assertEqual(set(digests) | {"v", "tool_id", "version", "source_commit", "executable", "evidence_id"},
                          decoder_policy._SATDUMP_FIELDS)
+        self.assertEqual(digests["resources_sha256"], runtime_check.tree_digest(root / install["resources_dir"]))
+
+    def test_package_hook_writes_record_digests_and_a_template_decoder_policy_refuses(self):
+        root = self.stage()
+        out = self.root / "package-hook.json"
+        with patch("sys.stdout", new_callable=io.StringIO) as stdout:
+            code = check_recipe.main(["package", "--root", str(root), "--manifest", str(out)])
+        self.assertEqual((code, json.loads(stdout.getvalue().splitlines()[-1])), (0, {"command": "package", "findings": [], "ok": True}))
+        output = build_recipe.hook_output(out)  # what the builder copies into the record
+        template = output["installation_template"]
+        self.assertEqual(set(template), decoder_policy._SATDUMP_FIELDS)
+        self.assertEqual({k: template[k] for k in output["record_digests"]}, output["record_digests"])
+        self.assertEqual((template["version"], template["source_commit"], template["executable"]),
+                         (decoder_policy.SATDUMP_VERSION, decoder_policy.SATDUMP_COMMIT, satdump_pass.SATDUMP))
+        self.assertLessEqual(len(json.dumps(template).encode()), 8192)  # load_satdump_installation's size bound
+        with self.assertRaisesRegex(decoder_policy.DecoderRefused, "INSTALLATION_VERSION_OR_PROVENANCE_UNVERIFIED"):
+            decoder_policy._validate_satdump_installation(template)  # the placeholder is never accepted as it is
+        self.assertFalse(decoder_policy._EVIDENCE.fullmatch(check_recipe.TEMPLATE_EVIDENCE))
+        with patch("sys.stdout", new_callable=io.StringIO) as stdout:
+            self.assertEqual(check_recipe.main(["package", "--root", str(root), "--manifest", str(out)]), 2)  # never overwrites
+        with patch.dict(check_recipe.DATA_SHA256, {"upstream-options.json": "0" * 64}), patch("sys.stdout", new_callable=io.StringIO) as stdout:
+            self.assertEqual(check_recipe.main(["package", "--root", str(root)]), 2)
+        self.assertIn("data_file_digest:upstream-options.json", stdout.getvalue())
+
+    def test_the_template_with_an_evidence_id_passes_every_record_check(self):
+        # Only evidence_id is left to the administrator: filled with a well-formed id, the template gets past
+        # the schema and provenance step on any host and is refused only where the installed files are looked
+        # at. Against the staged tree as the installed one (decoder_policy's paths pointed at it, its root
+        # ownership checks and the ELF path relocated, nothing else changed) every check passes, and a
+        # changed digest of each kind is still refused.
+        root = self.stage().resolve()
+        out = self.root / "package-hook.json"
+        with patch("sys.stdout", new_callable=io.StringIO):
+            self.assertEqual(check_recipe.main(["package", "--root", str(root), "--manifest", str(out)]), 0)
+        template = build_recipe.hook_output(out)["installation_template"]
+        filled = dict(template, evidence_id="sr-rx-packages-42406828911")
+        self.assertTrue(decoder_policy._EVIDENCE.fullmatch(filled["evidence_id"]))
+        with self.assertRaises(decoder_policy.DecoderRefused) as refused:
+            decoder_policy._validate_satdump_installation(filled)
+        self.assertNotIn(str(refused.exception), {"INSTALLATION_SCHEMA", "INSTALLATION_VERSION_OR_PROVENANCE_UNVERIFIED",
+                                                  "SATDUMP_RECIPE_DIGEST_CHANGED", "SATDUMP_FILE_SET_NOT_ALLOWLISTED"})
+        install = self.packaging["install"]
+        installed = {"SATDUMP_CORE": install["core_library"], "SATDUMP_PLUGIN_DIR": install["plugin_dir"],
+                     "SATDUMP_PIPELINE_DIR": install["pipeline_dir"], "SATDUMP_RESOURCES": install["resources_dir"],
+                     "SATDUMP_CONFIG": install["config"]}
+        file_check = decoder_policy._file
+        staged = dict(filled, executable=str(root / install["executable"]))
+        with contextlib.ExitStack() as stack:
+            for name, relative in installed.items():
+                stack.enter_context(patch.object(decoder_policy, name, str(root / relative)))
+            stack.enter_context(patch.object(decoder_policy, "_admin_owned", lambda info: True))
+            stack.enter_context(patch.object(decoder_policy, "_admin_directories", lambda path: None))
+            stack.enter_context(patch.object(decoder_policy, "_file", lambda path, executable=False: file_check(path)))
+            self.assertEqual(decoder_policy._validate_satdump_installation(staged), Path(staged["executable"]))
+            plugin = sorted(staged["plugins"])[0]
+            for change, code in ((dict(sha256="0" * 64), "EXECUTABLE_DIGEST_CHANGED"), (dict(core_sha256="0" * 64), "SATDUMP_CORE_DIGEST_CHANGED"),
+                                 (dict(plugins=dict(staged["plugins"], **{plugin: "0" * 64})), "SATDUMP_FILE_DIGEST_CHANGED"),
+                                 (dict(resources_sha256="0" * 64), "SATDUMP_RESOURCES_DIGEST_CHANGED"),
+                                 (dict(config_sha256="0" * 64), "SATDUMP_CONFIG_DIGEST_CHANGED"),
+                                 (dict(recipe_sha256="0" * 64), "SATDUMP_RECIPE_DIGEST_CHANGED")):
+                with self.subTest(code=code), self.assertRaisesRegex(decoder_policy.DecoderRefused, code):
+                    decoder_policy._validate_satdump_installation(dict(staged, **change))
 
     def test_package_refuses_a_url_left_in_the_config(self):
         root = self.stage()
-        config = root / self.recipe["install"]["config"]
+        config = root / self.packaging["install"]["config"]
         document = json.loads(check_recipe.strip_json_comments(config.read_text()))
         document["kepler_settings"]["mirror"] = "https://example.invalid/omm"  # a key no config_set step blanks
         config.write_text(json.dumps(document))
@@ -249,16 +406,207 @@ class SourceAndPackageTests(unittest.TestCase):
 
     def test_package_refuses_an_extra_plugin_or_a_link(self):
         root = self.stage()
-        (root / self.recipe["install"]["plugin_dir"] / "libhackrf_sdr_support.so").write_bytes(b"\x7fELF")
+        (root / self.packaging["install"]["plugin_dir"] / "libhackrf_sdr_support.so").write_bytes(b"\x7fELF")
         with self.assertRaisesRegex(check_recipe.RecipeError, "plugin_set_not_allowlist"):
             check_recipe.package(root)
         if hasattr(os, "symlink") and os.name == "posix":
             shutil.rmtree(root)
             root = self.stage()
-            link = root / self.recipe["install"]["pipeline_dir"] / "Link.json"
+            link = root / self.packaging["install"]["pipeline_dir"] / "Link.json"
             os.symlink("/etc/passwd", link)
             with self.assertRaisesRegex(check_recipe.RecipeError, "symlink_in_stage"):
                 check_recipe.package(root)
+
+    def test_forbid_paths_catch_what_the_hook_must_have_removed(self):
+        root = self.stage()
+        check_recipe.package(root)
+        forbid = next(c for c in self.recipe["checks"] if c["kind"] == "forbid_paths")
+        for relative in ("usr/lib/satdump/plugins/libhackrf_sdr_support.so", "usr/lib/satdump/plugins/libportaudio_sink.so",
+                         "usr/lib/satdump/plugins/libsimd_neon.so", "usr/lib/satdump/plugins/x/libmeteor_support.so",
+                         "usr/share/satdump/resources/pipelines/common.json.inc", "usr/include/satdump/x.h"):
+            with self.subTest(relative):
+                (root / relative).parent.mkdir(parents=True, exist_ok=True)
+                (root / relative).write_bytes(b"x")
+                with self.assertRaisesRegex(build_recipe.RecipeError, "forbid_paths failed"):
+                    build_recipe.run_checks({"checks": [forbid]}, root)
+                (root / relative).unlink()
+
+
+class RuntimeCheckTests(unittest.TestCase):
+    """deployment/recipes/satdump/runtime_check.py: its constants and its strace parser."""
+
+    def setUp(self):
+        self.packaging = check_recipe.load("packaging.json")
+        self.recipe = check_recipe.load("recipe.json")
+
+    def test_constants_are_the_recipe_s_and_satdump_pass_s(self):
+        install = self.packaging["install"]
+        self.assertEqual(runtime_check.SATDUMP, "/" + install["executable"])
+        self.assertEqual(runtime_check.CORE, "/" + install["core_library"])
+        self.assertEqual(runtime_check.PLUGIN_DIR, "/" + install["plugin_dir"])
+        self.assertEqual(runtime_check.PIPELINE_DIR, "/" + install["pipeline_dir"])
+        self.assertEqual(runtime_check.RESOURCES, "/" + install["resources_dir"])
+        self.assertEqual(runtime_check.CONFIG, "/" + install["config"])
+        self.assertEqual(runtime_check.EXPECTED_PLUGINS, tuple(install["expected_plugins"]))
+        self.assertEqual(runtime_check.PIPELINES, tuple(install["keep_pipelines"]))
+        self.assertEqual(runtime_check.RUNPATH, self.recipe["cmake"]["variables"]["CMAKE_INSTALL_RPATH"])
+        self.assertEqual(runtime_check.SAMPLERATE, baseband.OUTPUT_RATE_HZ)
+        self.assertIn(runtime_check.PIPELINE, baseband.PIPELINES.values())
+        self.assertEqual(tuple(m.encode() for m in runtime_check.PROBE_MARKERS), satdump_pass.PROBE_MARKERS)
+        self.assertEqual(satdump_pass.probe_argv(satdump_pass.SATDUMP, runtime_check.PIPELINE),
+                         [runtime_check.SATDUMP, "pipeline", runtime_check.PIPELINE, "--help"])
+        self.assertEqual(satdump_pass.decode_argv(satdump_pass.SATDUMP, runtime_check.PIPELINE, "/in", "/out")[6:],
+                         ["--samplerate=%d" % runtime_check.SAMPLERATE, "--baseband_format=cs16"])
+        rows = dict({n: "RUNTIME_CHECK" for n in runtime_check.RUN_ROWS}, **{n: r["status"] for n, r in runtime_check.STATIC_ROWS.items()})
+        self.assertEqual(rows, check_recipe.BUILDER_CHECKS)
+        self.assertEqual(sorted(self.recipe["ci"]["runtime_depends"]), ["binutils", "strace"])  # strace, readelf
+
+    def test_the_unit_shape_it_emulates_is_the_decode_template_s(self):
+        # The unit-shaped runs use an empty working directory and a private empty HOME, as the template does.
+        lines = satdump_pass.unit_lines("decode")
+        self.assertIn("WorkingDirectory=" + satdump_pass.EMPTY_WORKDIR, lines)
+        self.assertIn("RuntimeDirectory=srrx-satdump-%i", lines)
+        self.assertIn("Environment=HOME=/run/srrx-satdump-%i", lines)
+        self.assertIn("Environment=LC_ALL=C.UTF-8", lines)
+        self.assertIn("PrivateNetwork=yes", lines)
+        self.assertIn("RestrictAddressFamilies=AF_UNIX", lines)
+
+    def test_trace_parser_joins_resumed_calls_and_flags_network_use(self):
+        trace = "\n".join([
+            '101 openat(AT_FDCWD, "/usr/lib/satdump/plugins/libmeteor_support.so", O_RDONLY|O_CLOEXEC) = 3',
+            '101 openat(AT_FDCWD, "/usr/lib/satdump/plugins/libjemalloc.so.2", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)',
+            '102 openat(AT_FDCWD, "pipelines.json", O_RDONLY <unfinished ...>',
+            '101 connect(4, {sa_family=AF_UNIX, sun_path="/var/run/nscd/socket"}, 110) = -1 ENOENT (No such file or directory)',
+            '102 <... openat resumed>) = 5',
+            '103 socket(AF_INET, SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK, IPPROTO_IP) = 6',
+            '103 connect(6, {sa_family=AF_INET, sin_port=htons(53), sin_addr=inet_addr("127.0.0.53")}, 16) = -1 ENETUNREACH (Network is unreachable)',
+            '103 sendto(7, "x", 1, 0, {sa_family=AF_INET6, sin6_port=htons(443)}, 28) = -1 ENETUNREACH (Network is unreachable)',
+            '104 socket(AF_NETLINK, SOCK_RAW|SOCK_CLOEXEC, NETLINK_ROUTE) = 8',
+            '104 bind(8, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0',
+            '104 +++ exited with 0 +++',
+            '105 socket(AF_UNIX, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 9',
+            '105 socketpair(AF_UNIX, SOCK_STREAM, 0, [10, 11]) = 0',
+            '105 sendto(9, "y", 1, MSG_NOSIGNAL, NULL, 0) = 1',
+            '105 socket(PF_INET6, SOCK_STREAM, IPPROTO_TCP) = 12',
+            '--- SIGCHLD {si_signo=SIGCHLD} ---',
+        ])
+        calls = runtime_check.parse_trace(trace)
+        files = runtime_check.opened(calls)
+        self.assertIn(("/usr/lib/satdump/plugins/libmeteor_support.so", 3), files)
+        self.assertIn(("/usr/lib/satdump/plugins/libjemalloc.so.2", -1), files)
+        self.assertIn(("pipelines.json", 5), files)
+        self.assertEqual(runtime_check.opened_ok([("./pipelines.json", 5), ("settings.json", -1), ("/a/b.json", 0)]),
+                         {"pipelines.json", "/a/b.json"})
+        findings, sockets = runtime_check.network(calls)
+        # The decode unit allows AF_UNIX only (RestrictAddressFamilies=AF_UNIX): a socket of any other family,
+        # netlink included, is a finding, and so is each address outside AF_UNIX.
+        self.assertEqual(findings, ["socket AF_INET", "connect AF_INET", "sendto AF_INET6", "socket AF_NETLINK", "bind AF_NETLINK",
+                                    "socket AF_INET6"])
+        self.assertEqual(sockets, ["AF_INET", "AF_INET6", "AF_NETLINK", "AF_UNIX"])
+        self.assertEqual(runtime_check.network(runtime_check.parse_trace(
+            '7 connect(3, {sa_family=AF_UNIX, sun_path="/run/x"}, 110) = 0\n7 socket(AF_LOCAL, SOCK_DGRAM, 0) = 4')), ([], ["AF_LOCAL"]))
+        self.assertIn("RestrictAddressFamilies=AF_UNIX", satdump_pass.unit_lines("decode"))
+
+    def test_planted_files_are_the_lookups_of_the_pinned_tree(self):
+        # planted-pipelines-json plants every user file SatDump 1aedd60 looks up; the files that say so are
+        # bound by verify-source (packaging.json upstream_files).
+        upstream = self.packaging["upstream_files"]
+        for name in runtime_check.LOOKUP_SOURCES:
+            self.assertIn(name, upstream)
+        self.assertEqual((upstream["src-core/init.cpp"], upstream["src-core/core/config.cpp"], upstream["src-core/pipeline/pipeline.cpp"]),
+                         ("65237ed135d4711692c5808d5ff16347ac67bcaf", "9ee8d402974d2d89a1a8a435ab684bc6c8b23af4",
+                          "25ea1f8aac6aadbac4c89563a7bb5989c53cbc32"))
+        self.assertEqual(set(runtime_check.CWD_FILES), {"pipelines.json", "settings.json", "satdump_cfg.json"})
+        self.assertEqual({n.rsplit("/", 1)[-1] for n in runtime_check.HOME_FILES}, {"pipelines.json", "settings.json"})
+        self.assertTrue(all(n.startswith(".config/satdump/") for n in runtime_check.HOME_FILES))
+        self.assertEqual(Path(runtime_check.CONFIG).name, "satdump_cfg.json")  # the one config the unit shape may open
+        how = {c["id"]: c["how"] for c in self.packaging["builder_checks"]}
+        for name in runtime_check.CWD_FILES:
+            self.assertIn(name, how["planted-pipelines-json"])
+        self.assertIn("socket()", how["no-connect"])
+
+    def test_tree_digest_is_check_recipe_s(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-satdump-digest-") as temporary:
+            top = Path(temporary)
+            (top / "a/b").mkdir(parents=True)
+            (top / "a/b/c.lut").write_bytes(b"lut")
+            (top / "z.json").write_text("{}")
+            self.assertEqual(runtime_check.tree_digest(top), check_recipe.tree_digest(top))
+
+
+class OmmCsvReaderTests(unittest.TestCase):
+    """omm-csv: srrx.orbits.satdump_csv against the reader of the pinned tree (check_recipe.OMM_CSV_READER,
+    ccsdsOmmToKepler in src-core/db/kepler/kepler_utils.cpp; its blob is in packaging.json upstream_files,
+    so the builder's verify-source hook refuses another reader)."""
+
+    EPOCH = "2026-10-20T06:00:00.123456"
+
+    def record(self, norad=90010, **changes):
+        value = {"OBJECT_NAME": "SYNTHETIC LEO %d" % norad, "OBJECT_ID": "2026-901A", "EPOCH": self.EPOCH,
+                 "MEAN_MOTION": 14.2412, "ECCENTRICITY": 0.00071, "INCLINATION": 98.71, "RA_OF_ASC_NODE": 120.5,
+                 "ARG_OF_PERICENTER": 87.25, "MEAN_ANOMALY": 272.9, "EPHEMERIS_TYPE": 0, "CLASSIFICATION_TYPE": "U",
+                 "NORAD_CAT_ID": norad, "ELEMENT_SET_NO": 999, "REV_AT_EPOCH": 1234, "BSTAR": 0.00012,
+                 "MEAN_MOTION_DOT": 1.2e-06, "MEAN_MOTION_DDOT": 0.0}
+        value.update(changes)
+        targets = orbits.allowlist({"schema_version": 1, "kind": "srrx_orbit_allowlist",
+                                    "targets": [{"norad_id": norad, "name": "ALIAS", "role": "LRPT"}]})
+        with tempfile.TemporaryDirectory(prefix="srrx-omm-") as temporary:
+            path = Path(temporary) / "omm.json"
+            path.write_text(json.dumps([value]), encoding="ascii")
+            return orbits.load_omm(path, allow_norad=targets, now_utc_s=orbits.epoch_unix_s(self.EPOCH) + 3600, utc_verified=True)
+
+    @staticmethod
+    def reader(line):
+        """ccsdsOmmToKepler: split on ",", exactly 17 fields, sscanf of the epoch, std::stod of each number read."""
+        reader = check_recipe.OMM_CSV_READER
+        fields = line.split(reader["separator"])
+        if len(fields) != reader["fields"]:
+            return None
+        values = {}
+        try:
+            for index, name in enumerate(reader["columns"]):
+                if name in ("OBJECT_NAME", "OBJECT_ID"):
+                    values[name] = fields[index]
+                elif name == "EPOCH":
+                    values[name] = re.match(r"(\d{1,4})-(\d{1,2})-(\d{1,2})T(\d{1,2}):(\d{1,2}):(\d+(?:\.\d*)?)", fields[index])
+                elif name is not None:
+                    values[name] = float(fields[index].strip())
+        except ValueError:
+            return None
+        return values
+
+    def test_columns_are_the_reader_order(self):
+        reader = check_recipe.OMM_CSV_READER
+        self.assertEqual((reader["fields"], len(reader["columns"]), len(orbits.OMM_FIELDS)), (17, 17, 17))
+        for index, name in enumerate(reader["columns"]):
+            if name is not None:
+                self.assertEqual(orbits.OMM_FIELDS[index], name, index)
+        self.assertEqual([orbits.OMM_FIELDS[i] for i, n in enumerate(reader["columns"]) if n is None],
+                         ["EPHEMERIS_TYPE", "CLASSIFICATION_TYPE"])  # written, not read
+        self.assertIn(reader["file"], check_recipe.load("packaging.json")["upstream_files"])
+
+    def test_export_rows_parse_as_the_pinned_reader_reads_them(self):
+        records = self.record(BSTAR=-1.5e-05, MEAN_MOTION_DDOT=0.0)
+        lines = orbits.satdump_csv(records).decode("ascii").split("\n")
+        self.assertEqual(lines[-1], "")  # "\n" line ends: std::getline leaves no "\r"
+        header, row = lines[0], lines[1]
+        self.assertIsNone(self.reader(header))  # std::stod("MEAN_MOTION") throws: the header line is skipped
+        values = self.reader(row)
+        elements = records[0]["elements"]
+        self.assertIsNotNone(values)
+        self.assertTrue(values["EPOCH"])
+        for name in ("MEAN_MOTION", "ECCENTRICITY", "INCLINATION", "RA_OF_ASC_NODE", "ARG_OF_PERICENTER", "MEAN_ANOMALY",
+                     "NORAD_CAT_ID", "ELEMENT_SET_NO", "REV_AT_EPOCH", "BSTAR", "MEAN_MOTION_DOT", "MEAN_MOTION_DDOT"):
+            self.assertEqual(values[name], float(elements[name]), name)
+        self.assertEqual((values["OBJECT_NAME"], values["OBJECT_ID"]), (elements["OBJECT_NAME"], elements["OBJECT_ID"]))
+
+    def test_a_comma_in_object_name_is_a_row_the_reader_drops(self):
+        # srrx.orbits accepts any printable OBJECT_NAME; csv quotes a comma and the pinned reader (no
+        # quoting) then counts 18 fields and drops the row. Recorded as an OPEN finding of omm-csv.
+        records = self.record(OBJECT_NAME="SYNTHETIC, LEO")
+        row = orbits.satdump_csv(records).decode("ascii").split("\n")[1]
+        self.assertEqual(next(csv.reader([row]))[0], "SYNTHETIC, LEO")
+        self.assertIsNone(self.reader(row))
 
 
 if __name__ == "__main__":

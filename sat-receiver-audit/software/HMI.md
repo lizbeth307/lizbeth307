@@ -259,20 +259,63 @@ disarm, «Close + DISARM» — disarm. Лист `page_only` не надсила�
 (LIME лишається PARK, EN_LIME3V3 — OFF; OFF і PARK labd приймає без оренди), EN_T7 —
 бекенд без T7 (OFF; сховище — UFS і microSD V30, STACK.md:977). Це декларація для
 перевірки: консоль цей текст не показує й нічого не ховає. Перевірка можливостей,
-що ховає пункти лише для Lime (STACK.md:884), належить Lab Shell, а не цій консолі.
+що ховає пункти лише для Lime (STACK.md:884), належить Lab Shell, а не цій консолі: це
+модель `srrx.lab_shell_menu` (рішення W2 SW-MENU, [build/15](../build/15-rishennia-komplektu.md)) —
+дванадцять хабів STACK.md:884 і листи Home, кожен з бекендом (ті самі види, що тут; `engine_unit`
+— з областю system/user і програмою), потрібними пакетами (`PACKAGES`: компонент `sources.lock.json`
+і виконувані файли на шляху пошуку systemd), системними unit (шаблони оренд — лише системні,
+STACK.md:76, тож RX-11 шукає їх і їхні drop-in лише в системних шляхах unit, як RX-12), модулями
+srrx, пресетами, записом алоу-листа політики (плагін SDRangel, режим OpenWebRX+, конвеєр SatDump),
+`needs_lime`/`needs_t7` з `fallback_text` і `hidden_reason`; бекенд `planned.<функція>` — ще не
+зібраний (`PLANNED` з джерелом). `visible_leaves(capabilities)` показує лист, лише коли все це є на
+корені, запис дозволено й не заборонено, пресет прийнято, а Lime/T7 є; інакше лист приховано з
+причинами (`hide_reasons`), напр. WEFAX — `package_deferred:openwebrx` (OpenWebRX+ відкладено: у
+`sources.lock.json` немає csdr, pycsdr і owrx_connector), SafetyNET — `preset:egc-safetynet=DISABLED_…`,
+DSC — `denied:sdrangel:demoddsc`, HRPT — `no_lime`. Live map показує лише власне місце
+(`srrx.location`); шари літаків, суден, зондів, трас і APRS — окремий запланований лист.
+RX-11 оцінює її на тому самому корені після консолі: Lime — з `/etc/srrx/devices.json` і бібліотеки
+Lime, T7 (знімний, без прив'язки офлайн) — з ним і без нього. FAIL у
+`software/srrx/lab_shell_menu.py` з id листа як `item`: `lab_shell_menu_invalid` (без листа),
+`lab_shell_backend_unknown`, `lab_shell_requirement_unknown` (ім'я не зібране й не в `PLANNED` або
+запис алоу-листа, якого політика ні дозволяє, ні забороняє), `no_lime_backend_undeclared`/
+`no_t7_backend_undeclared`; BLOCKED `critical_leaf_touch_only`. Перевірка досяжності видимого листа
+пише знахідку за шляхом unit чи модуля: `lab_shell_unit_program_mismatch` (FAIL: unit не запускає
+виконуваний файл пакета листа), `unit_interpreter_missing` (BLOCKED) і для листа `engine_unit`
+`backend_program_missing` (FAIL) — з id листа (`backend_unit_missing` такого листа — у
+`software/srrx/lab_shell_menu.py`), а `target_module_differs` (BLOCKED, спільне з консоллю) — за
+шляхом модуля цілі без id листа. Кожен прихований лист — примітка
+`lab_shell_hidden:<лист>:<причини>`; прихований критичний лист — ще й примітка
+`lab_shell_critical_hidden:<лист>:<причини>`. PASS RX-11 означає лише, що критичні листи оголошують
+клавіші чи енкодери: BACK, ENC1/ENC2 і LOCK приховано (`planned:labinput`, `planned:touch_lock`),
+доки немає labinput і блокування дотику, тож шлях у рукавицях для них лишається OPEN (МЕН-03, Д-06).
+Сама QML-оболонка не зібрана (примітка `lab_shell_qml_not_built`).
 
 Критичні листи — дії, потрібні в рукавицях, коли ємнісна панель не працює
 (STACK.md:110): навігація HOME/BACK/FN/ENC1/ENC2/ENC1_PRESS/ENC2_PRESS, LOCK,
-Overview (статус і захисний fault за HOME) і **DISARM / STOP**. Фізичні входи лише
-навігують, блокують і показують статус: вхідне ядро Pico не має API живлення
-(`firmware/pico/hmi.py`), тому DISARM сьогодні — лише touch-дія. Selftest RX-11
-через це дає BLOCKED `critical_leaf_touch_only` (`frame.disarm`). Це відкрите
-проєктне рішення, а не порушення «лише прийом». Потрібен фізичний шлях DISARM, що
-діє лише в бік вимкнення (окрема клавіша або утримання LOCK), зі змінами прошивки
-Pico, labd і консолі та рецензією. До того без touch лишається `labctl disarm` з
-локального терміналу. Оренду консоль поновлює, поки GUI відповідає, тож зупинка
-GUI знімає HOLD через 1,5 с, а TTL 3 с і Pico обмежують решту. Shutdown критичним
-листом не вважається: RF він не вимикає швидше за DISARM, а без touch є `labctl shutdown`.
+Overview (статус і захисний fault за HOME) і **DISARM / STOP**. Фізичний шлях DISARM
+(рішення W2 FW-STOP, [build/15](../build/15-rishennia-komplektu.md)): утримання
+**LOCK ≥ 1,0 с** — локальний STOP на Pico. Вхідне ядро (`firmware/pico/hmi.py`) API
+живлення не має: воно лише повідомляє тривалість утримання за свіжими читаннями
+клавіш. `firmware/pico/main.py` (`LOCK_STOP_HOLD_MS`) подає вхід `operator_stop`, і
+Supervisor у WARMING/CONFIGURING/ACTIVE дає trip `OPERATOR_STOP`: MCP RESET (усі EN
+вимкнено), повне охолодження, новий сеанс. Цей вхід Supervisor перевіряє останнім:
+захисна причина в тому самому знімку (втрата Q6A, недійсний датчик, гаряча панель
+чи корпус, зупинка вентилятора) сама називає trip, тож CASE_HOT і FAN_STALLED і тоді гасять DISP12 (див. вище). SAFE,
+TRIPPED, SHUTTING_DOWN і OFF не змінюються; поки LOCK утримано, ARM відхиляється.
+Застаріле читання клавіш — не STOP.
+Шлях діє лише в бік вимкнення й без labd, Qt чи Q6A; labd іде за trip Pico
+(`pico_OPERATOR_STOP`), консоль показує причину, а повторний старт — лише явний ARM
+хоста в новому сеансі. Час 1,0 с відрізняється від утримання кнопки корпусу 1,5 с
+(shutdown). `frame.disarm` оголошує клавішу LOCK, тож RX-11 більше не дає
+`critical_leaf_touch_only`; тест стежить, щоб `menu_model.HOLD_STOP` дорівнював
+сталій прошивки. Якщо натискання LOCK зафіксовано, утримання рахується як одне
+натискання: touch-блокування консолі перемикається один раз (LOCK, затиснена до
+старту чи відновлення шини, перемикання не дає). Затримку
+«LOCK → EN off» у рукавицях вимірюють лише на пристрої (МЕН-01). Без touch лишаються
+й `labctl disarm` та `labctl shutdown` з локального терміналу. Оренду консоль
+поновлює, поки GUI відповідає, тож зупинка GUI знімає HOLD через 1,5 с, а TTL 3 с і
+Pico обмежують решту. Shutdown критичним листом не вважається: RF він не вимикає
+швидше за DISARM.
 
 ## Фізичні клавіші й енкодери
 
@@ -295,9 +338,9 @@ Qt споживає поточний стан моделі з ураховани
 | ENC1_PRESS / ENC2_PRESS | Переміщення focus вперед/назад |
 | MARK | Локальний лічильник spectral marks; файл автоматично не записується |
 | REC | Повідомлення про отриману кнопку; capture/ARM/EN автоматично не запускаються |
-| LOCK | Блокує touch-команди, вкладки й кнопки ARM/RECOVER/HOLD; DISARM/shutdown лишаються доступними |
+| LOCK | Натискання блокує touch-команди, вкладки й кнопки ARM/RECOVER/HOLD; DISARM/shutdown лишаються доступними. Утримання ≥ 1,0 с — фізичний STOP на Pico (усі EN вимкнено, розділ вище); якщо натискання зафіксовано, touch-блокування при цьому перемикається один раз |
 
-LOCK не змінює поточні виходи; вже обрана оренда підтримується, поки UI
+Натискання LOCK не змінює поточні виходи; вже обрана оренда підтримується, поки UI
 відповідає. Нові queued energizing-команди при LOCK відкидаються; заблокована
 команда не відкриває діалог підтвердження, а рядок стану пояснює відмову. Повторний
 LOCK або підтверджене **Unlock touch** розблоковує UI без ARM. Валідні lux
@@ -374,3 +417,136 @@ SIM ARM+HOLD, знімає шість сторінок у стані READY/CONTR
 Widgets змінюються тільки у GUI thread; worker передає стан сигналами.
 
 Станом на 24.10.2026 анотація, навчання CPU-моделі, класифікація та load/save датасету й моделі виконуються у фоновій задачі (див. вище), а не в GUI thread; датасет сеансу обмежено 2 MiB, тож задача триває секунди, а не хвилини. Найдовший неподільний крок (один збережений кадр або перевірка печатки всього датасету) визначає затримку Cancel. Відкрито: затримку на Q6A не виміряно; у GUI thread лишаються три попоінтові проходи на кожен показаний кадр до 2 MiB (`accept_frame`, `Plot.add` через `spectrum_columns`, перечитування відстежуваного файлу). Якщо GUI thread усе ж зупиниться понад 1,5 с, worker і далі знімає HOLD (відмова безпечна).
+
+## Сеанс на дисплеї: greetd, lab-session, labwc
+
+Станом на 07.11.2026 (W2 SYS-SESSION) файли сеансу генерує `deployment/system/system_files.py`
+(`session_files()`), а `deploy.py stage` кладе їх у rootfs для кожного режиму GNSS. Пакети greetd,
+labwc, kanshi і cage та greetd як display-manager додає образ (лінія IMG). Поки Lab Shell не має
+коду, клієнтом сеансу є ця консоль (`srrx-menu.service`, `-m srrx.hmi`). Поведінку greetd 0.9.0,
+labwc 0.7.1, kanshi 1.5.1 і cage 0.1.5 прочитано з вихідних пакетів noble (SHA-256 архівів
+збігаються з .dsc), а systemd v255 — з його upstream-тега; усі джерела перелічено наприкінці
+розділу, файли й функції — у коментарях `system_files.py` і скриптів `deployment/system/session`.
+
+| Файл у rootfs | Призначення |
+|---|---|
+| `usr/lib/sysusers.d/srrx.conf` | Обліковий запис `srrx-ui`: `u`, домівка `/var/lib/srrx-ui`, оболонка `/usr/sbin/nologin`, створюється вимкненим (без пароля). Єдиний рядок `m srrx-ui labd`: група `labd` відкриває `/run/srrx` (0750) і `control.sock` (0660). `srrx-pico` і `srrx-gnss` лишаються без членів |
+| `usr/lib/tmpfiles.d/srrx-session.conf` | Домівка `/var/lib/srrx-ui` 0700 (sysusers записує лише шлях) і каталог лічильника `/run/srrx-session` 0700 |
+| `etc/greetd/config.toml` | `vt = 1`, `source_profile = false`, лише `default_session`: `/usr/lib/srrx/lab-session` від `srrx-ui`. Замінює conffile пакета (agreety на VT 7); `/etc/greetd/greetd.conf` greetd 0.9.0 читав би раніше, тому його не має бути |
+| `etc/systemd/system/greetd.service.d/60-srrx-session.conf` | `StartLimitBurst=0` (unit пакета дозволяє 5 перезапусків за 30 с) і `Conflicts=`/`After=getty@tty1.service` (патч Debian переніс конфлікт на tty7) |
+| `usr/lib/srrx/lab-session` (0755) | Обгортка сеансу, яка ніколи не завершується через збій (нижче) |
+| `usr/lib/srrx/labwc/rc.xml`, `environment`, `autostart` | Конфігурація, яку lab-session передає labwc через `-C`: каталоги XDG, зокрема пакетний `/etc/xdg/labwc` зі swaybg, waybar і swayidle, не читаються |
+| `usr/lib/srrx/kanshi/field60`, `field52` | Профілі з польового EDID: `output HDMI-A-1 mode 1920x1080@59.986Hz` і `…@51.677Hz` |
+
+greetd запускає `/bin/sh -c "exec /usr/lib/srrx/lab-session"` від `srrx-ui` (клас greeter, PAM
+`greetd-greeter`, без автентифікації) незалежно від оболонки облікового запису і сам завершується,
+щойно default_session виходить, не створивши сеансу. Тому lab-session наглядає за графічним етапом
+і рахує кожне його завершення як збій:
+
+1. **normal** — `labwc -C /usr/lib/srrx/labwc`. Автозапуск запускає `kanshi -c /usr/lib/srrx/kanshi/field60`
+   (або `field52`, якщо адміністратор під час введення в дію записав це слово в
+   `/etc/srrx/display-profile`; kanshi 1.5.1-1 у noble зібрано без IPC, тож `kanshictl switch`
+   недоступний), імпортує `WAYLAND_DISPLAY` у менеджер користувача і, якщо `srrx-menu.service`
+   увімкнено, виконує `systemctl --user start --wait srrx-menu.service`. Коли консоль зупиняється,
+   автозапуск завершує свій labwc (`labwc --exit`, лише якщо `LABWC_PID` ще належить labwc).
+   Якщо менеджер користувача не відповідає (`is-enabled` не друкує жодного стану), автозапуск теж
+   завершує labwc: це збій сеансу, а не «консоль не ввімкнено».
+2. **safe** — після 3 збоїв за 600 с: `cage -d -- /usr/lib/srrx/lab-session client`, тобто лише
+   консоль (той самий user unit з тією самою пісочницею) без labwc, kanshi та інших вікон; режим
+   екрана — бажаний режим EDID (DTD1, 59.986 Hz). Якщо консолі немає (unit не ввімкнено або його
+   старт пропущено без venv), клієнт виходить зі статусом 69, cage 0.1.5 повертає його, і
+   lab-session одразу, без лічильника, переходить у text: чорний cage без клієнта нічого б не показав.
+3. **text** — ще 3 збої за 600 с: текст стану на VT 1 (`python3 -m srrx.cli … status`, тобто
+   `labctl status`), оновлення кожні 30 с, до перезавантаження. labd працює далі. Перший рядок
+   називає причину (`/run/srrx-session/reason`).
+
+Режим і моменти збоїв (секунди `/proc/uptime`, тож крок годинника від GNSS чи RTC їх не зсуває)
+лежать у `/run/srrx-session`: перезапуск greetd їх зберігає, перезавантаження очищає. Без цього
+каталогу лічильник працює в `$XDG_RUNTIME_DIR/srrx-session`, але лише до перезапуску greetd.
+
+Зупинка й перезапуск greetd. greetd 0.9.0 надсилає SIGTERM лише обгортці (sub_task,
+`session/interface.rs`), а вихід worker-а знімає VT, і SIGHUP від цього labwc 0.7.1 сприймає як
+«перечитати конфігурацію» (`src/server.c`). Тому кожен етап (labwc, cage, пауза текстового режиму)
+працює у фоні, а SIGTERM, SIGHUP чи SIGINT обгортка передає етапу як SIGTERM, чекає до 5 с, далі
+SIGKILL, і лише тоді виходить (143, 129 чи 130); зупинка не рахується як збій. Перед кожним
+графічним етапом lab-session зупиняє `srrx-menu.service`, щоб консоль, яка лишилася від попереднього
+compositor-а (Ubuntu не вбиває процеси закритого сеансу, KillUserProcesses=no), не тримала
+`start --wait` нового автозапуску на старому дисплеї.
+
+Журнал. greetd з'єднує stdin/stdout/stderr сеансу з VT (`session/worker.rs`), тож без цього повідомлення
+обгортки й compositor-а не потрапляли б у journald. Поки існує потоковий сокет journald
+(`/run/systemd/journal/stdout`), lab-session пише свої рядки ще й через `systemd-cat -t lab-session`, а
+labwc і cage запускає через `systemd-cat -t labwc` / `-t cage` (systemd-cat v255 виконує команду
+через execvp, тож PID етапу не змінюється; вивід автозапуску й kanshi іде з labwc). Журнал сеансу:
+`journalctl -t lab-session -t labwc -t cage`. Без сокета все лишається на VT.
+
+`srrx-menu.service` має `ConditionPathExists=/opt/srrx/venv/bin/python3` і `Restart=no` (перезапуск
+робить lab-session). Без venv `systemctl --user start --wait` повертає 0 одразу (systemd v255: умова
+не виконана — job `done`, unit `inactive`), тож автозапуск після нього читає
+`systemctl --user show -P ConditionResult`: `no` означає визначений стан «venv немає» — labwc працює
+далі без консолі, збою немає. Пресет користувача лишається `disable`: консоль стартує лише після
+того, як адміністратор увімкне unit після збирання й аудиту venv; до того labwc теж працює без
+консолі. Увімкнути unit без venv (наприклад, для сценарію QEMU) отже безпечно: сеанс лишається в
+normal з активним labwc.
+
+rc.xml має один `<touch mapToOutput="HDMI-A-1"/>` без `deviceName` (типовий запис для всіх сенсорних
+пристроїв) і по одній прив'язці клавіатури й миші з дією `None`: labwc 0.7.1 тоді не завантажує
+типових прив'язок (термінал, запускач, кореневе меню з Exit) і відкидає прив'язки без дій, тож
+кіоск не має жодної. Правило вікна `lab.shell` (без декорацій, розгорнуте) чекає на Lab Shell.
+
+Перевірки хоста (CI-модель, не апаратний результат): `deployment/tests/test_system_files.py`,
+класи `SessionFilesTests` (вміст, розбір config.toml за правилами greetd 0.9.0, один рядок `m`,
+staging і режими в архіві) і `LabSessionExecutionTests` (справжні lab-session і автозапуск під
+POSIX sh з підробленими labwc, cage, systemctl, systemd-cat, kanshi і sleep: 3 збої → safe, ще 3 →
+текст, вікно 600 с, режим після перезапуску greetd, клієнт safe-режиму, safe без консолі → одразу
+текст, SIGTERM/SIGHUP обгортці доходять до labwc, який ігнорує SIGHUP, а labwc, що ігнорує й
+SIGTERM, отримує SIGKILL, пропущений за умовою старт консолі лишає labwc, менеджер користувача без
+відповіді — збій, рядки журналу через systemd-cat, вибір профілю kanshi).
+
+Відкрито:
+- Стенд W1-2 (STACK.md:1442, :1486): режим 59.986 Hz і дотик на HDMI Q6A, відновлення greetd
+  (Lab Shell → консоль), повернення VT у текстовий режим після виходу labwc чи cage, доступ сеансу
+  класу greeter до DRM і вводу через logind і запуск user@ для `srrx-ui` (`loginctl`); групи
+  `video` та `input` не додано.
+- `LABWC_FALLBACK_OUTPUT=NOOP-fallback` записано, але labwc 0.7.1 його ігнорує (резервний вихід
+  з'явився в 0.7.2): поведінку при від'єднанні HDMI з 0.7.1 перевіряє стенд; 0.7.4+lab1 — група E.
+- `WLR_DRM_DEVICES` (by-path контролера дисплея Q6A) — TBD до читання на стенді.
+- Порожній робочий стіл labwc — суцільний чорний фон wlroots 0.17.1 (0x00), який правило палітри
+  STACK.md:884 забороняє для великих заливок; консоль на весь екран його закриває, клієнта фону
+  в образі немає.
+- `PrivateTmp=yes` у user unit потребує просторів імен; чи стартує консоль у noble, покаже
+  сценарій сеансу QEMU (лінія IMG).
+- LOCK (фрагмент rc.xml із `sendEventsMode=no`) потребує записуваного каталогу конфігурації — разом
+  із Lab Shell.
+- `/var/lib/srrx-ui` записуваний для `srrx-ui`: перевизначення user unit у цій домівці має блокувати
+  RX-11 (у selftest її ще немає серед домівок).
+- Перемикання VT у labwc лишається: labwc 0.7.1 обробляє XF86Switch_VT_1…12 (Ctrl+Alt+F1…F12) раніше
+  за прив'язки (`src/input/keyboard.c`, `handle_change_vt_key`), тож з USB-клавіатурою можна дійти до
+  getty, які logind запускає на вимогу (autovt). cage без `-s` перемикання VT не дозволяє, тож це
+  стосується лише режиму normal. Чи ставити logind `NAutoVTs=0`/`ReserveVT=0`, вирішує власник або
+  пакет SYS (logind тут не змінено).
+- Ескалація до SIGKILL через 5 с і запис у журнал через systemd-cat перевірено лише на підроблених
+  процесах (CI-модель); на Q6A — стенд W1-2 (STACK.md:1486 (a), `journalctl -t lab-session`).
+
+Джерела (прочитано 07.11.2026):
+- greetd: http://archive.ubuntu.com/ubuntu/pool/universe/g/greetd/greetd_0.9.0.orig.tar.gz і
+  greetd_0.9.0-4ubuntu1.debian.tar.xz (`greetd/src/{context.rs,server.rs,config/mod.rs}`,
+  `session/{worker.rs,interface.rs}`, `debian/patches/systemd_service_tweaks.patch`).
+- labwc: http://archive.ubuntu.com/ubuntu/pool/universe/l/labwc/labwc_0.7.1.orig.tar.gz і
+  labwc_0.7.1-1build1.debian.tar.xz (`src/server.c`, `src/main.c`, `src/config/{rcxml.c,session.c,touch.c}`,
+  `src/input/keyboard.c`); https://raw.githubusercontent.com/labwc/labwc/0.7.4/NEWS.md.
+- kanshi: http://archive.ubuntu.com/ubuntu/pool/universe/k/kanshi/kanshi_1.5.1.orig.tar.gz і
+  kanshi_1.5.1-1.debian.tar.xz; cage:
+  http://archive.ubuntu.com/ubuntu/pool/universe/c/cage/cage_0.1.5+20240127.orig.tar.gz (`cage.c`).
+- wlroots 0.17.1: https://gitlab.freedesktop.org/wlroots/wlroots/-/raw/0.17.1/types/scene/wlr_scene.c.
+- systemd v255: https://raw.githubusercontent.com/systemd/systemd/v255/ — `src/basic/ratelimit.h`,
+  `src/core/load-fragment-gperf.gperf.in`, `src/core/job.c`, `src/login/logind-session.c`,
+  `src/journal/cat.c`, `src/libsystemd/sd-journal/journal-send.c`, `src/systemctl/{systemctl.c,
+  systemctl-start-unit.c,systemctl-is-enabled.c}`, `src/shared/bus-wait-for-units.c`,
+  `man/{sysusers.d.xml,systemd.unit.xml,systemd.exec.xml,logind.conf.xml}`; systemd noble
+  http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/systemd_255.4-1ubuntu8.debian.tar.xz
+  (`debian/rules`: `-Ddefault-kill-user-processes=false`).
+- Qt: https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/gui/kernel/qguiapplication.cpp.
+- Версії noble: Launchpad API `https://api.launchpad.net/1.0/ubuntu/+archive/primary?ws.op=getPublishedSources`
+  (greetd 0.9.0-4ubuntu1, labwc 0.7.1-1build1, kanshi 1.5.1-1, cage 0.1.5+20240127-2build1,
+  wlroots 0.17.1-2.1build1, wlopm 0.1.0-1).

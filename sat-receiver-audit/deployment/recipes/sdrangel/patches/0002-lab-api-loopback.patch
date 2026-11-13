@@ -1,0 +1,51 @@
+SR-RX recipe patch 0002 (+lab): the web API of sdrangel and sdrangelsrv binds 127.0.0.1 by default
+and refuses any other address. Pinned SDRangel 97e9e21 defaults -a to "" (sdrbase/mainparser.cpp),
+which httpserver/httplistener.cpp maps to QHostAddress::Any, so the unauthenticated REST API of a
+GUI started from its desktop entry listened on every interface on port 8091. MainParser is shared
+by the GUI (app/main.cpp) and the server (appsrv/main.cpp). The lease unit's IPAddressDeny=any +
+IPAddressAllow=localhost stays the primary control for sdrangelsrv.
+SDRangel is GPL-3.0 (upstream LICENSE, GNU GPL version 3, "or any later version" in every
+source header); this change is distributed under the same licence.
+---
+diff --git a/sdrbase/mainparser.cpp b/sdrbase/mainparser.cpp
+--- a/sdrbase/mainparser.cpp
++++ b/sdrbase/mainparser.cpp
+@@ -24,9 +24,9 @@
+ 
+ MainParser::MainParser() :
+     m_serverAddressOption(QStringList() << "a" << "api-address",
+-        "Web API server address.",
++        "Web API server address (SR-RX: loopback 127.x.y.z only).",
+         "address",
+-        ""),
++        "127.0.0.1"),
+     m_serverPortOption(QStringList() << "p" << "api-port",
+         "Web API server port.",
+         "port",
+@@ -46,7 +46,7 @@ MainParser::MainParser() :
+     m_startOption("start", "Start all devices and features")
+ {
+ 
+-    m_serverAddress = "";   // Bind to any address
++    m_serverAddress = "127.0.0.1";   // SR-RX: loopback only (upstream: "" binds any address)
+     m_serverPort = 8091;
+     m_scratch = false;
+     m_soapy = false;
+@@ -98,10 +98,14 @@ void MainParser::parse(const QCoreApplication& app)
+     QString serverAddress = m_parser.value(m_serverAddressOption);
+     if (!serverAddress.isEmpty())
+     {
+-        if (ipValidator.validate(serverAddress, pos) == QValidator::Acceptable) {
+-            m_serverAddress = serverAddress;
++        if (ipValidator.validate(serverAddress, pos) != QValidator::Acceptable) {
++            qWarning() << "MainParser::parse: server address invalid. Defaulting to 127.0.0.1.";
++        } else if (!serverAddress.startsWith("127.")) {
++            // SR-RX: the REST API has no authentication; it never leaves loopback.
++            qCritical("MainParser::parse: SR-RX: refusing web API address %s: not a loopback address", qPrintable(serverAddress));
++            exit (EXIT_FAILURE);
+         } else {
+-            qWarning() << "MainParser::parse: server address invalid. Defaulting to any address.";
++            m_serverAddress = serverAddress;
+         }
+     }
+ 

@@ -1,0 +1,75 @@
+{
+  "schema_version": 2,
+  "component": "ais-catcher",
+  "summary": "ais-catcher 0.70+lab1: AIS-catcher v0.70 (8833c64) for the AIS engine lease; RTL-SDR (lab librtlsdr2) and Airspy HF+ input only, ZLIB; no TLS, web viewer, database, message-bus, NMEA2000 or other SDR drivers; bias-tee call compiled out",
+  "source": {"patch": null, "patches": [], "member": null},
+  "build_system": "cmake",
+  "build_depends": ["libusb-1.0-0-dev", "libairspyhf-dev", "zlib1g-dev"],
+  "lab_build_depends": ["librtlsdr2", "librtlsdr-dev"],
+  "cmake": {
+    "configure": ["cmake", "-S", "{src}", "-B", "{build}", "-G", "Unix Makefiles"],
+    "options": {
+      "AIRSPY": "OFF",
+      "AIRSPYHF": "ON",
+      "ARMV6": "OFF",
+      "HACKRF": "OFF",
+      "HYDRASDR": "OFF",
+      "HYDRASDR_STATIC": "OFF",
+      "MSVC_VCPKG": "OFF",
+      "NMEA2000": "OFF",
+      "OPENSSL": "OFF",
+      "PSQL": "OFF",
+      "RBIT": "OFF",
+      "RTLSDR": "ON",
+      "RTLSDR_STATIC": "OFF",
+      "SAMPLERATE": "OFF",
+      "SANITIZE": "OFF",
+      "SDRPLAY": "OFF",
+      "SOAPYSDR": "OFF",
+      "SOXR": "OFF",
+      "SQLITE": "OFF",
+      "TSAN": "OFF",
+      "WEBVIEWER": "OFF",
+      "ZLIB": "ON",
+      "ZMQ": "OFF"
+    },
+    "variables": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_INSTALL_PREFIX": "/usr",
+      "FETCHCONTENT_FULLY_DISCONNECTED": "ON",
+      "HASRTLSDR_BIASTEE": "0",
+      "RUN_NUMBER": "0"
+    }
+  },
+  "autotools": null,
+  "build": [["cmake", "--build", "{build}", "--target", "AIS-catcher", "--parallel", "{jobs}"]],
+  "install": {"cmake_install": true, "make_install": false, "copy": []},
+  "hooks": {"source_check": null, "package": null},
+  "packages": [
+    {
+      "name": "ais-catcher",
+      "section": "hamradio",
+      "description": "AIS receiver for the SR-RX engine lease, receive-only lab build (RTL-SDR and Airspy HF+, no network outputs compiled for TLS, web or databases)",
+      "files": ["usr/bin/AIS-catcher"],
+      "depends": [],
+      "shlibs_depends": true
+    }
+  ],
+  "drop": [],
+  "checks": [
+    {"kind": "require_paths", "globs": ["usr/bin/AIS-catcher"]},
+    {"kind": "forbid_paths", "globs": ["usr/lib/*", "usr/share/*", "usr/include/*", "usr/sbin/*", "etc/*", "lib/*", "*.so", "*.so.*", "*.a"]},
+    {"kind": "forbid_needed", "files": ["usr/bin/AIS-catcher"],
+     "needed": ["libssl*", "libcrypto*", "libSoapySDR*", "libzmq*", "libpq*", "libsqlite3*", "libsoxr*", "libsamplerate*",
+                "libhackrf*", "libairspy.so*", "libhydrasdr*", "libsdrplay*", "libmirsdrapi*", "libNMEA2000*", "libbladeRF*", "libiio*"]},
+    {"kind": "forbid_strings", "file": "usr/bin/AIS-catcher", "substrings": ["rtlsdr_set_bias_tee", "RTLSDR-BIASTEE"]}
+  ],
+  "notes": [
+    "Every option() of the pinned tree is explicit (CMakeLists.txt:42-61, :89, :94-95): RTLSDR, AIRSPYHF and ZLIB ON, all others OFF. OPENSSL, WEBVIEWER, ZMQ, PSQL, SQLITE and NMEA2000 OFF remove the HTTPS upload, the embedded web server, the message-bus and database outputs and the NMEA2000 push at build time, a second layer under IPAddressDeny=any of the lease unit; the plain TCP/UDP/HTTP/MQTT outputs, the RTL-TCP/SpyServer inputs and the aiscatcher.org community-feed TCP client (Source/Application/AIS-catcher.h:28-29) are always compiled upstream. v0.70 turns the community feed ON by default as soon as any output such as -f exists (Source/Application/Main.cpp:1077-1086) and only -X off disables it (Main.cpp:923-936), so the reviewed ExecStart carries -X off and runtime_check.py asserts it from the engine's stderr; the rest is excluded by the reviewed ExecStart (selftest RX-12-ais) and by the unit's IP filter.",
+    "SOXR and SAMPLERATE OFF: the lease runs RTL-SDR at the AIS-catcher default 1536000 and HF+ at 192000 (srrx.ais_filter SAMPLE_RATES), both in the v0.70 model's own downsampler list (Source/DSP/Model.cpp:128-129); 192000 is in the airspyhf rate list of STACK.md:143.",
+    "HASRTLSDR_BIASTEE=0 pre-sets the check_function_exists result (cmake/dependencies/RTLSDR.cmake:37-44), so -gr BIASTEE never reaches rtlsdr_set_bias_tee: Source/Device/RTLSDR.cpp:198-199 then throws 'bias tee not supported'. The forbid_strings check proves that the symbol is not imported; the lab librtlsdr2 keeps GPIO0 off as well (V4L-0, ПОЛ-03).",
+    "Version string: without .git the tree's commit hash is 'unknown' and RUN_NUMBER is fixed at 0 (CMakeLists.txt:13-35), so VERSION_DESCRIBE is constant; __DATE__ (Source/Application/Main.cpp:73) follows SOURCE_DATE_EPOCH of the archive (GCC), and repeat=true checks the .deb bytes.",
+    "lab_build_depends librtlsdr2 and librtlsdr-dev: AIS-catcher links the patched lab librtlsdr.so.2 (dpkg-shlibdeps gives librtlsdr2 >= 2.0.3-0+lab1), libairspyhf from noble (STACK.md:902).",
+    "Only the AIS-catcher binary is installed (CMakeLists.txt:406). runtime_check.py replays synthetic AIVDM through the built binary (the FIFO run with exactly the lease's output arguments, -X off included) and checks the JSON_FULL keys that srrx.ais_filter reads and that the community feed is disabled; reception on the Q6A (HF+ at 162 MHz, RTL-A) stays a device row."
+  ]
+}

@@ -915,5 +915,206 @@ class IMURelayTests(unittest.TestCase):
         self.assertTrue(relay.receive(self.event(seq=4), 320)["imu"]["ok"])
 
 
+class OperatorStopTests(unittest.TestCase):
+    """Physical DISARM/STOP (W2 FW-STOP): main.py sets operator_stop for LOCK held >= 1 s on
+    fresh key reads; the supervisor trips only an armed Pico. Model results, no hardware PASS."""
+
+    def armed(self, phase):
+        rig = Rig()
+        if phase == "ACTIVE":
+            return rig.activate()
+        self.assertTrue(rig.send("ARM", {"qualified": True}))
+        if phase == "CONFIGURING":
+            rig.advance(20)
+            rig.send("HB")
+            rig.advance(120)
+            rig.send("HB")
+        self.assertEqual(rig.model.state, phase)
+        return rig
+
+    def test_trips_warming_configuring_and_active_in_one_step(self):
+        for phase in ("WARMING", "CONFIGURING", "ACTIVE"):
+            with self.subTest(phase=phase):
+                rig = self.armed(phase)
+                session = rig.model.session
+                rig.model.drain_events()
+                rig.inputs["operator_stop"] = True
+                rig.now += 20
+                outputs = rig.model.step(rig.now, rig.inputs)  # The same step asserts reset.
+                self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", "OPERATOR_STOP"))
+                self.assertTrue(outputs["mcp_reset"])
+                self.assertTrue(outputs["safe_boot"] and outputs["led"])
+                self.assertTrue(outputs["fan_en"] and outputs["blower_en"])  # Full cooling.
+                self.assertTrue(outputs["disp_en"])  # The console stays lit to show the stop.
+                self.assertFalse(outputs["pico_off"])  # A stop, not a power cut.
+                self.assertNotEqual(rig.model.session, session)
+                self.assertEqual(rig.model.last_host_seq, -1)
+                self.assertFalse(rig.model.status()["hb_fresh"])
+                self.assertIn({"event": "TRIP", "fault": "OPERATOR_STOP"}, rig.model.drain_events())
+
+    def test_operator_stop_never_leads_to_active_while_held(self):
+        rig = self.armed("ACTIVE")
+        old = rig.model.session
+        rig.inputs["operator_stop"] = True
+        rig.advance(rig.now + 20)
+        self.assertEqual(rig.model.fault, "OPERATOR_STOP")
+        # The old session is dead; in the new one ARM is refused for as long as LOCK is held,
+        # and a CONFIGURED without ARM is rejected without leaving TRIPPED.
+        self.assertFalse(rig.send("ARM", {"qualified": True}, s=old))
+        self.assertEqual(rig.model.reject_reason, "FRAME_OR_REPLAY")
+        while rig.now < 3000:
+            rig.advance(rig.now + 100, heartbeat=True)
+            self.assertFalse(rig.send("ARM", {"qualified": True}))
+            self.assertEqual(rig.model.reject_reason, "OPERATOR_STOP")
+            self.assertFalse(rig.send("CONFIGURED", {"safe": True}))
+            self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", "OPERATOR_STOP"))
+            self.assertTrue(rig.model.outputs["mcp_reset"])
+        # Released: only the normal host ARM in the new session restarts, through WARMING.
+        rig.inputs["operator_stop"] = False
+        rig.advance(rig.now + 20)
+        self.assertTrue(rig.send("ARM", {"qualified": True}))
+        self.assertEqual((rig.model.state, rig.model.fault), ("WARMING", None))
+        self.assertTrue(rig.model.outputs["mcp_reset"])
+
+    def test_ignored_in_safe_tripped_shutting_down_and_off(self):
+        rig = Rig()
+        session = rig.model.session
+        rig.inputs["operator_stop"] = True
+        rig.advance(2000)
+        self.assertEqual((rig.model.state, rig.model.fault, rig.model.session), ("SAFE", None, session))
+        self.assertFalse(rig.send("ARM", {"qualified": True}))  # Refused; SAFE itself unchanged.
+        self.assertEqual((rig.model.reject_reason, rig.model.state), ("OPERATOR_STOP", "SAFE"))
+        self.assertTrue(rig.model.outputs["mcp_reset"])
+        rig = self.armed("ACTIVE")
+        rig.send("TRIP")
+        session = rig.model.session
+        rig.inputs["operator_stop"] = True
+        rig.advance(rig.now + 1000)
+        self.assertEqual((rig.model.state, rig.model.fault, rig.model.session), ("TRIPPED", "HOST_TRIP", session))
+        rig = self.armed("ACTIVE")
+        self.assertTrue(rig.send("SHUTDOWN", {"phase": "ARM_OFF"}))
+        rig.inputs["operator_stop"] = True
+        rig.advance(rig.now + 1000)
+        self.assertEqual((rig.model.state, rig.model.fault), ("SHUTTING_DOWN", "HOST_SHUTDOWN"))
+        rig = Rig()
+        rig.inputs["battery_mv"] = 12800
+        rig.advance(6000)
+        self.assertEqual((rig.model.state, rig.model.fault), ("OFF", "UNDERVOLTAGE_NO_HEARTBEAT"))
+        rig.inputs["operator_stop"] = True
+        rig.advance(7000)
+        self.assertEqual((rig.model.state, rig.model.fault), ("OFF", "UNDERVOLTAGE_NO_HEARTBEAT"))
+
+    def test_only_a_true_input_in_a_fresh_sample_is_a_stop(self):
+        for value in (1, "true", 1000, None, False):
+            with self.subTest(value=value):
+                rig = self.armed("ACTIVE")
+                rig.inputs["operator_stop"] = value
+                rig.advance(rig.now + 400, heartbeat=True)
+                self.assertEqual(rig.model.state, "ACTIVE")
+        # A stop seen only in a sample older than 250 ms reads as SENSOR_STALE, never as a stop.
+        rig = Rig()
+        rig.inputs["operator_stop"] = True
+        rig.model.step(20, rig.inputs)
+        rig.now = 300
+        self.assertFalse(rig.send("ARM", {"qualified": True}))
+        self.assertEqual(rig.model.reject_reason, "SENSOR_STALE")
+
+    def test_a_thermal_cause_in_the_same_step_names_the_trip_and_drops_the_console(self):
+        # The hold completing in the step where the case first exceeds 60 C or the fan stalls
+        # must not hide the thermal latch: the trip is CASE_HOT/FAN_STALLED and DISP12 goes off.
+        for phase in ("WARMING", "ACTIVE"):
+            for field, value, reason in (("case_temp_c", 65, "CASE_HOT"),
+                                         ("fan_stalled", True, "FAN_STALLED")):
+                with self.subTest(phase=phase, field=field):
+                    rig = self.armed(phase)
+                    rig.inputs["operator_stop"] = True
+                    rig.inputs[field] = value
+                    rig.now += 20
+                    outputs = rig.model.step(rig.now, rig.inputs)
+                    self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", reason))
+                    self.assertTrue(outputs["mcp_reset"])
+                    self.assertFalse(outputs["disp_en"])
+                    # Cooled / tach back with LOCK still held: the latch holds DISP12 off and
+                    # ARM stays refused by the stop; only a new ARM after release relights it.
+                    rig.inputs[field] = READY.get(field, False)
+                    rig.advance(rig.now + 1000, heartbeat=True)
+                    self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", reason))
+                    self.assertFalse(rig.model.outputs["disp_en"])
+                    self.assertFalse(rig.send("ARM", {"qualified": True}))
+                    self.assertEqual(rig.model.reject_reason, "OPERATOR_STOP")
+                    rig.inputs["operator_stop"] = False
+                    rig.advance(rig.now + 20)
+                    self.assertTrue(rig.send("ARM", {"qualified": True}))
+                    self.assertTrue(rig.model.outputs["disp_en"])
+        # Armed, the stop still trips with low battery (the armed path skips only that gate);
+        # a held stop cannot mask a hot panel either.
+        rig = self.armed("ACTIVE")
+        rig.inputs.update(operator_stop=True, battery_mv=12800)
+        rig.advance(rig.now + 20)
+        self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", "OPERATOR_STOP"))
+        rig = self.armed("ACTIVE")
+        rig.inputs.update(operator_stop=True, panel_temp_c=80)
+        rig.advance(rig.now + 20)
+        self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", "PANEL_HOT"))
+        self.assertFalse(rig.model.outputs["disp_en"])
+
+
+@unittest.skipUnless(sys.platform != "win32", "srrx.hardware imports POSIX fcntl")
+class OperatorStopEngineTests(unittest.TestCase):
+    """labd follows the Pico's own stop through its existing TRIPPED path (engine.py:189-192):
+    the real Engine, SimLink wire codecs and this supervisor; a CI model, not a bench result."""
+
+    def test_labd_and_console_follow_the_pico_stop_without_a_new_path(self):
+        from srrx.engine import Engine
+        from srrx.hardware import SimHardware
+        from srrx.hmi import PICO_STOP_TEXT, pico_stop_text, readable_fault
+        from srrx.link import SimLink
+        hardware, link = SimHardware(), SimLink(Path(__file__).resolve().parents[2])
+        hardware.set_inputs({n: False for n in hardware.inputs if n.startswith("DCS_")})
+        engine = Engine(hardware, link, simulated=True)
+        now = 0
+
+        def advance(target):
+            nonlocal now
+            while now < target:
+                now = min(target, now + 20)
+                engine.tick(now)
+        try:
+            engine.tick(now)
+            self.assertTrue(engine.request({"op": "arm", "_owner": "operator-A"})["ok"])
+            advance(800)
+            self.assertTrue(engine.policy.armed, engine.status())
+            self.assertTrue(engine.request({"op": "control", "name": "EN_LNA1", "value": True,
+                                            "_owner": "operator-A"})["ok"])
+            self.assertTrue(hardware.outputs["EN_LNA1"])
+            link.inputs["operator_stop"] = True  # LOCK held 1 s: what main.sense() reports.
+            advance(now + 200)
+            status = engine.status()
+            self.assertEqual((link.model.state, link.model.fault), ("TRIPPED", "OPERATOR_STOP"))
+            self.assertTrue(link.model.outputs["mcp_reset"])
+            self.assertFalse(engine.policy.armed)
+            self.assertTrue(hardware.outputs["CHG_INHIBIT"])
+            self.assertFalse(any(v for n, v in hardware.outputs.items() if n != "CHG_INHIBIT"))
+            self.assertIn("pico_OPERATOR_STOP", [e.get("reason") for e in status["events"]])
+            self.assertEqual(pico_stop_text(status["pico"]), PICO_STOP_TEXT)
+            self.assertEqual(readable_fault("pico_OPERATOR_STOP"), PICO_STOP_TEXT)
+            # Held: labd's ARM reaches the Pico, which refuses it; nothing is energized.
+            self.assertTrue(engine.request({"op": "recover", "_owner": "operator-A"})["ok"])
+            advance(now + 1500)
+            self.assertFalse(engine.policy.armed)
+            self.assertNotEqual(link.model.state, "ACTIVE")
+            self.assertFalse(hardware.outputs["EN_LNA1"])
+            # Released: an explicit RECOVER + ARM in the new session restarts normally.
+            link.inputs["operator_stop"] = False
+            advance(now + 100)
+            self.assertTrue(engine.request({"op": "recover", "_owner": "operator-A"})["ok"])
+            advance(now + 800)
+            self.assertTrue(engine.policy.armed, engine.status())
+            self.assertEqual(link.model.state, "ACTIVE")
+            self.assertIsNone(pico_stop_text(engine.status()["pico"]))
+        finally:
+            engine.close()
+
+
 if __name__ == "__main__":
     unittest.main()

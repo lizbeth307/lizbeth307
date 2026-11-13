@@ -2020,5 +2020,50 @@ class ViewRendererTests(unittest.TestCase):
                          ("PASS_OFFSCREEN_SIMULATION", False, False))
 
 
+class OperatorStopTextTests(unittest.TestCase):
+    """The Pico's own LOCK-hold stop (W2 FW-STOP, fault OPERATOR_STOP) as the console names it."""
+    def test_stop_text_only_for_the_tripped_lock_hold(self):
+        from srrx.hmi import PICO_STOP_TEXT, pico_stop_text, readable_fault
+        self.assertEqual(pico_stop_text({"state": "TRIPPED", "fault": "OPERATOR_STOP"}), PICO_STOP_TEXT)
+        for pico in ({"state": "TRIPPED", "fault": "HOST_TRIP"}, {"state": "SAFE", "fault": "OPERATOR_STOP"},
+                     {"state": "WARMING", "fault": None}, {}, None, ["TRIPPED", "OPERATOR_STOP"]):
+            self.assertIsNone(pico_stop_text(pico), pico)
+        # labd keeps pico_OPERATOR_STOP in last_error/events (its first fault is new_pico_session).
+        self.assertEqual(readable_fault("pico_OPERATOR_STOP"), PICO_STOP_TEXT)
+        self.assertIn("LOCK held 1 s", PICO_STOP_TEXT)
+        self.assertNotIn("ready", PICO_STOP_TEXT)
+
+
+@unittest.skipUnless(importlib.util.find_spec("PySide6"), "optional PySide6 is not installed")
+class OperatorStopQtTests(unittest.TestCase):
+    def test_fault_line_names_the_lock_hold_stop_only_with_fresh_pico_status(self):
+        from srrx.hmi import PICO_STOP_TEXT
+        app = qt_app()
+        controller, backend, clock = active()
+        window = create_window(controller, start_worker=False)
+
+        def render():
+            clock.now += .25
+            controller.poll()
+            window.render_state(controller.status())
+            return window.fault_text.text()
+        try:
+            # What labd reports after the Pico tripped on a LOCK hold (engine.py:142, :189-192).
+            backend.data["policy"].update(armed=False, fault="new_pico_session")
+            backend.data["pico"].update(state="TRIPPED", fault="OPERATOR_STOP")
+            backend.data["last_error"] = "pico_OPERATOR_STOP"
+            text = render()
+            self.assertTrue(text.startswith(PICO_STOP_TEXT + "\nStopped — ready for an explicit start"), text)
+            self.assertIn("PROTECTION STOP", window.banner.text())
+            self.assertFalse(controller.status()["holding"])  # HOLD stopped; no automatic re-arm.
+            backend.data["pico_fresh"] = False  # Never claimed from a stale Pico status.
+            self.assertNotIn(PICO_STOP_TEXT, render())
+            backend.data["pico_fresh"] = True
+            backend.data["pico"].update(state="TRIPPED", fault="HOST_TRIP")  # Relabelled by a later host TRIP.
+            self.assertNotIn(PICO_STOP_TEXT, render())
+        finally:
+            window.close(); app.processEvents()
+
+
 if __name__ == "__main__":
     unittest.main()

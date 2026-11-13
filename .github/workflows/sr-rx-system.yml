@@ -27,6 +27,13 @@ on:
       - 'sat-receiver-audit/software/srrx/pass_jobs.py'
       - 'sat-receiver-audit/software/srrx/satdump_pass.py'
       - 'sat-receiver-audit/software/srrx/baseband.py'
+      # the polkit harness: the scheduler and lease code that stage rules, and the cases every staged rule must decide
+      - 'sat-receiver-audit/software/srrx/baseband_scheduler.py'
+      - 'sat-receiver-audit/software/srrx/satdump_unit.py'
+      - 'sat-receiver-audit/software/srrx/engine_leases.py'
+      - 'sat-receiver-audit/software/srrx/engine.py'
+      - 'sat-receiver-audit/software/srrx/location.py'
+      - 'sat-receiver-audit/deployment/tests/polkit_cases/**'
       - '.github/workflows/sr-rx-system.yml'
   pull_request:
     paths:
@@ -42,6 +49,13 @@ on:
       - 'sat-receiver-audit/software/srrx/pass_jobs.py'
       - 'sat-receiver-audit/software/srrx/satdump_pass.py'
       - 'sat-receiver-audit/software/srrx/baseband.py'
+      # the polkit harness: the scheduler and lease code that stage rules, and the cases every staged rule must decide
+      - 'sat-receiver-audit/software/srrx/baseband_scheduler.py'
+      - 'sat-receiver-audit/software/srrx/satdump_unit.py'
+      - 'sat-receiver-audit/software/srrx/engine_leases.py'
+      - 'sat-receiver-audit/software/srrx/engine.py'
+      - 'sat-receiver-audit/software/srrx/location.py'
+      - 'sat-receiver-audit/deployment/tests/polkit_cases/**'
       - '.github/workflows/sr-rx-system.yml'
 
 permissions:
@@ -142,6 +156,14 @@ jobs:
           for rule in "$rootfs"/etc/polkit-1/rules.d/*.rules; do cp "$rule" "$RUNNER_TEMP/check.js"; node --check "$RUNNER_TEMP/check.js"; done
           for hook in "$rootfs"/etc/initramfs-tools/hooks/*; do sh -n "$hook"; shellcheck -s sh -e SC1091,SC2154 "$hook"; done
           tar -tvzf "$RUNNER_TEMP/stage.tar.gz" | grep -E 'etc/initramfs-tools/hooks/' | grep -c '^-rwxr-xr-x' | grep -qx 2
+      - name: Every staged polkit rule decides the documented cases (node harness, CI model)
+        run: |
+          set -euo pipefail
+          node --version
+          # polkitd 124 semantics (deployment/tests/polkit_cases/harness.js): all staged rules, file-name order,
+          # first truthy result. Each cases file names the rule files it needs staged.
+          node deployment/tests/polkit_cases/harness.js --root "$RUNNER_TEMP/stage/rootfs" deployment/tests/polkit_cases/*.json             | tee "$RUNNER_TEMP/polkit-harness.txt"
+          echo "polkit decisions PASS (CI model of polkitd; Q6A decisions stay OPEN: build/09 ПРХ-01 covers srrx-passes@ only, 60-srrx-satdump.rules has no build/09 row yet)"
       - name: The staged override replaces exactly the i2c-tools rule that would open every bus to group i2c
         run: |
           set -eu
@@ -169,6 +191,21 @@ jobs:
           # Any diagnostic (unknown key, bad value, missing program) fails the step.
           SYSTEMD_UNIT_PATH="$units:" systemd-analyze verify --man=no "$units/inferd-htp.service" > "$RUNNER_TEMP/verify.txt" 2>&1 || { cat "$RUNNER_TEMP/verify.txt"; exit 1; }
           if [ -s "$RUNNER_TEMP/verify.txt" ]; then cat "$RUNNER_TEMP/verify.txt"; exit 1; fi
+      - name: The LRPT record/decode templates pass systemd-analyze verify (template and one instance)
+        run: |
+          set -eu
+          units="$RUNNER_TEMP/sched-units"
+          mkdir -p "$units"
+          rootfs="$RUNNER_TEMP/stage/rootfs"
+          for template in srrx-satdump-decode@.service srrx-baseband-record@.service; do
+            cp "$rootfs/etc/systemd/system/$template" "$units/"
+            cp "$rootfs/etc/systemd/system/$template" "$units/${template/@./@lrpt-0123456789abcdef.}"
+          done
+          ls "$units"
+          # Any diagnostic (unknown key, bad value, missing program) fails the step, as for inferd-htp.
+          SYSTEMD_UNIT_PATH="$units:" systemd-analyze verify --man=no "$units"/*.service > "$RUNNER_TEMP/sched-verify.txt" 2>&1 || { cat "$RUNNER_TEMP/sched-verify.txt"; exit 1; }
+          if [ -s "$RUNNER_TEMP/sched-verify.txt" ]; then cat "$RUNNER_TEMP/sched-verify.txt"; exit 1; fi
+          echo "systemd-analyze verify PASS (CI model, $(systemctl --version | head -1)); the guest repeats it in the ARM64 lab"
       - name: Both hooks inside a real mkinitramfs (noble initramfs-tools)
         run: |
           set -euo pipefail  # a failing or truncated lsinitramfs before tee must fail the cdsp.mbn absence check

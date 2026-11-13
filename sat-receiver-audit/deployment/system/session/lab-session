@@ -1,0 +1,247 @@
+#!/bin/sh
+# SR-RX v2.1 lab-session: the greetd 0.9.0 default_session of the touch display (user srrx-ui).
+# Installed as /usr/lib/srrx/lab-session (mode 0755) by deployment/system/system_files.py through
+# deploy.py stage; /etc/greetd/config.toml from the same generator names it.
+#
+# greetd runs it as `/bin/sh -c "exec /usr/lib/srrx/lab-session"` (greetd 0.9.0
+# greetd/src/session/worker.rs) and exits itself as soon as a default_session ends without having
+# started a user session (greetd/src/context.rs check_children). So this wrapper never exits on a crash
+# (STACK.md:160, :884): it supervises the graphical stage and counts every end of it as one failure.
+#   normal: labwc 0.7.1 with the reviewed configuration in /usr/lib/srrx/labwc (-C: no XDG lookup); its
+#           autostart starts kanshi and srrx-menu.service and ends labwc when the console stops;
+#   safe:   after 3 failures within 10 min, cage runs only the console (no labwc, kanshi or other window);
+#           a safe mode without a console (unit not enabled, or skipped for lack of its venv) goes
+#           straight to the text mode instead of a black cage;
+#   text:   after 3 more failures within 10 min, a status text on this VT, refreshed every 30 s, until reboot.
+# Mode and failure times are kept in /run/srrx-session (tmpfiles, cleared at reboot), so they survive a
+# greetd restart. Times are /proc/uptime seconds: a GNSS or RTC step of the wall clock does not move them.
+# Signals: greetd stop sends SIGTERM to this wrapper only (greetd/src/session/interface.rs term()), and
+# the worker's exit then hangs up the VT, whose SIGHUP labwc 0.7.1 takes as "reconfigure"
+# (src/server.c handle_sighup). So every stage runs in the background, and SIGTERM, SIGHUP or SIGINT
+# is passed on to it as SIGTERM (SIGKILL after 5 s); the wrapper exits only once its stage has gone.
+# Before each graphical stage a console left by an earlier compositor is stopped, so the new
+# compositor's `systemctl --user start --wait` starts it again instead of waiting on the old one.
+# Logs go to this VT and, while journald's stream socket exists, to the journal (systemd v255
+# systemd-cat execs the stage, so the stage keeps its PID): journalctl -t lab-session -t labwc -t cage.
+# Receive-only: nothing here starts an engine, a radio, a transmitter or a network service.
+
+set -u
+umask 077
+
+STATE=/run/srrx-session
+WINDOW=600
+LIMIT=3
+PAUSE=1
+STATUS_EVERY=30
+STOP_WAIT=5
+# Exit status of `lab-session client` when the safe mode has no console to show (EX_UNAVAILABLE);
+# cage 0.1.5 returns its client's exit status (cage.c sigchld_handler, return_app_code).
+NO_CONSOLE=69
+LABWC_CONFIG=/usr/lib/srrx/labwc
+JOURNAL=/run/systemd/journal/stdout
+SELF=$0
+child=
+
+log() {
+	printf 'lab-session: %s\n' "$*" >&2
+	if [ -S "$JOURNAL" ]; then
+		printf '%s\n' "$*" | /usr/bin/systemd-cat -t lab-session 2>/dev/null || :
+	fi
+}
+
+uptime_s() {
+	up=0
+	read -r up _ < /proc/uptime
+	printf '%s\n' "${up%%.*}"
+}
+
+use_state_dir() {
+	if [ -d "$STATE" ] && [ -w "$STATE" ]; then
+		return 0
+	fi
+	# Without the tmpfiles directory the counter still works, but only until greetd restarts.
+	if [ -n "${XDG_RUNTIME_DIR:-}" ] && mkdir -p "$XDG_RUNTIME_DIR/srrx-session" 2>/dev/null \
+		&& [ -w "$XDG_RUNTIME_DIR/srrx-session" ]; then
+		log "$STATE is not writable; counting failures in $XDG_RUNTIME_DIR/srrx-session"
+		STATE=$XDG_RUNTIME_DIR/srrx-session
+		return 0
+	fi
+	fallback=$(mktemp -d "${TMPDIR:-/tmp}/srrx-session.XXXXXX") || fallback=
+	log "$STATE is not writable; counting failures in ${fallback:-nowhere (every end counts as the first)}"
+	STATE=${fallback:-$STATE}
+}
+
+current_mode() {
+	mode=
+	if [ -r "$STATE/mode" ]; then
+		read -r mode < "$STATE/mode"
+	fi
+	case $mode in
+	normal|safe|text) ;;
+	'') mode=normal ;;
+	*)
+		log "unknown mode '$mode' in $STATE/mode; using normal"
+		mode=normal
+		;;
+	esac
+}
+
+set_mode() {
+	printf '%s\n' "$1" > "$STATE/mode.new" && mv -f "$STATE/mode.new" "$STATE/mode"
+	printf '%s\n' "$2" > "$STATE/reason"
+	: > "$STATE/failures"
+}
+
+record_failure() {
+	now=$(uptime_s)
+	: > "$STATE/failures.new"
+	if [ -r "$STATE/failures" ]; then
+		while read -r when; do
+			case $when in
+			''|*[!0-9]*) continue ;;
+			esac
+			if [ $((now - when)) -lt "$WINDOW" ]; then
+				printf '%s\n' "$when" >> "$STATE/failures.new"
+			fi
+		done < "$STATE/failures"
+	fi
+	printf '%s\n' "$now" >> "$STATE/failures.new"
+	mv -f "$STATE/failures.new" "$STATE/failures"
+	count=$(wc -l < "$STATE/failures")
+	count=$((count + 0))
+}
+
+# One stage in the background, so that a trapped signal ends `wait` at once (a foreground command
+# would delay the trap until it ends). Its stdin is /dev/null (POSIX asynchronous list); labwc and
+# cage do not read stdin, and stdout/stderr stay on the VT or go to the journal.
+run_stage() {
+	tag=$1
+	shift
+	if [ -S "$JOURNAL" ]; then
+		/usr/bin/systemd-cat -t "$tag" "$@" &
+	else
+		"$@" &
+	fi
+	child=$!
+	wait "$child"
+	status=$?
+	child=
+}
+
+# Trap action: pass the signal on to the stage as SIGTERM, give it STOP_WAIT seconds, then SIGKILL.
+stop_stage() {
+	trap '' HUP INT TERM
+	if [ -n "$child" ]; then
+		kill -TERM "$child" 2>/dev/null
+		( sleep "$STOP_WAIT"; kill -KILL "$child" 2>/dev/null ) > /dev/null 2>&1 &
+		watchdog=$!
+		wait "$child"
+		ended=$?
+		kill -KILL "$watchdog" 2>/dev/null
+		if [ "$ended" -eq 137 ]; then
+			log "the stage did not end within $STOP_WAIT s of SIGTERM and was killed"
+		fi
+	fi
+	log "ending on SIG$2"
+	exit "$1"
+}
+
+stop_console() {
+	/usr/bin/systemctl --user stop srrx-menu.service 2>/dev/null || :
+}
+
+text_console() {
+	reason="the graphical session failed $LIMIT times within $WINDOW s in safe mode as well"
+	if [ -s "$STATE/reason" ] && [ -r "$STATE/reason" ]; then
+		read -r reason < "$STATE/reason"
+	fi
+	while :; do
+		printf '\033[H\033[2J'
+		printf '%s\n' "SR-RX: no graphical session: $reason." \
+			"lab-session text console. labd keeps running; this console only reads its status." \
+			"Reboot to try the graphical session again. Log: journalctl -t lab-session -t labwc -t cage" ""
+		PYTHONPATH=/opt/srrx/software /usr/bin/python3 -B -m srrx.cli --socket /run/srrx/control.sock status 2>&1
+		sleep "$STATUS_EVERY" &
+		child=$!
+		wait "$child"
+		child=
+	done
+}
+
+# Safe-mode client inside cage: the console is the same user unit as in the normal session, so it
+# keeps the unit's sandbox; cage ends when this client ends, that is when the console stops.
+# systemctl is-enabled prints the unit file state and exits 0 only when enabled (systemd v255
+# systemctl-is-enabled.c); without any state printed the user manager did not answer.
+client() {
+	/usr/bin/systemctl --user import-environment WAYLAND_DISPLAY
+	state=$(/usr/bin/systemctl --user is-enabled srrx-menu.service 2>/dev/null)
+	enabled=$?
+	if [ "$enabled" -ne 0 ]; then
+		if [ -z "$state" ]; then
+			log "the user manager did not answer: the safe mode cannot start the console"
+			exit 1
+		fi
+		log "srrx-menu.service is $state (venv not built and audited): the safe mode has no console"
+		exit "$NO_CONSOLE"
+	fi
+	/usr/bin/systemctl --user start --wait srrx-menu.service
+	status=$?
+	# A start skipped by ConditionPathExists= returns 0 at once (systemd v255 job.c: -ECOMM -> JOB_DONE).
+	if [ "$(/usr/bin/systemctl --user show -P ConditionResult srrx-menu.service 2>/dev/null)" = no ]; then
+		log "srrx-menu.service was skipped by its condition (no /opt/srrx/venv/bin/python3): the safe mode has no console"
+		exit "$NO_CONSOLE"
+	fi
+	exit "$status"
+}
+
+case ${1:-} in
+client)
+	client
+	;;
+'') ;;
+*)
+	log "ignoring unexpected arguments: $*"
+	;;
+esac
+
+trap 'stop_stage 129 HUP' HUP
+trap 'stop_stage 130 INT' INT
+trap 'stop_stage 143 TERM' TERM
+use_state_dir
+log "started; state in $STATE"
+while :; do
+	current_mode
+	case $mode in
+	normal)
+		stop_console
+		run_stage labwc /usr/bin/labwc -C "$LABWC_CONFIG"
+		;;
+	safe)
+		stop_console
+		run_stage cage /usr/bin/cage -d -- "$SELF" client
+		if [ "$status" -eq "$NO_CONSOLE" ]; then
+			set_mode text "the safe mode has no console (srrx-menu.service not enabled, or its venv is missing)"
+			log "switching to the text console: the safe mode has no console"
+			continue
+		fi
+		;;
+	text)
+		text_console
+		;;
+	esac
+	record_failure
+	log "$mode session ended with status $status: $count failure(s) in the last $WINDOW s"
+	if [ "$count" -ge "$LIMIT" ]; then
+		case $mode in
+		normal)
+			set_mode safe "the normal session failed $LIMIT times within $WINDOW s"
+			log "switching to safe mode: cage with the console only"
+			;;
+		safe)
+			set_mode text "the graphical session failed $LIMIT times within $WINDOW s in safe mode as well"
+			log "switching to the text console"
+			;;
+		esac
+	fi
+	sleep "$PAUSE"
+done

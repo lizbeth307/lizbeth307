@@ -211,7 +211,7 @@
     },
     {
       "id": "sdrpp",
-      "version": "git8c9f5ee+lab1",
+      "version": "1.3.0~git20260705.8c9f5ee+lab1",
       "repo": "AlexandreRouma/SDRPlusPlus",
       "ref": "8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af",
       "commit": "8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af",
@@ -989,24 +989,26 @@
     },
     {
       "id": "gpredict",
-      "version": "2.6+git20261011+lab1",
+      "version": "2.7+lab1",
       "upstream_url": "https://github.com/csete/gpredict",
-      "ref": "1d80049b0fecc06a18378d88f09b1d154a070234",
-      "commit": "1d80049b0fecc06a18378d88f09b1d154a070234",
+      "ref": "22593781b5fc922aa7064c8665d40ef8b3f98ddb",
+      "commit": "22593781b5fc922aa7064c8665d40ef8b3f98ddb",
       "ref_verified": true,
-      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "recipe": "deployment/recipes/gpredict: v2.7 release tarball, autotools without libgps and hamlib, lab patches (rotctld_socket_rw, no network TLE/transponder updates, RX only radios, no TLE import from local files)",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
-        "isolated arm64 recipe and acceptance tests"
+        "reviewed +lab build (the CI build record is CI_BUILT_UNREVIEWED)",
+        "binary archive hash of the reviewed deb: the CI deb gpredict_2.7+lab1_arm64.deb (sha256 92715e16920aa010e2166a2c1e83d8cb52dfba5722a35142f8d8ce695cf48ce0, 4522920 bytes, reproducible in two builds; sr-rx-packages run 42417292582 on a0a8197d, 2026-11-07) is CI_BUILT_UNREVIEWED, not a release hash",
+        "device rows: Doppler loop to the SDR++ rigctl_server, the Expert-GUI session on the Q6A and the bridge writing /var/lib/srrx-ui/.config/Gpredict before Gpredict starts"
       ],
-      "source_archive_sha256": "4b0dadbc059fe231ad9c3fc179ef2a327a4137ea25c23054ac9e47f3d140ca9a",
-      "source_cache_path": "sources/gpredict.tar.gz",
-      "primary_url": "https://github.com/csete/gpredict/commit/1d80049b0fecc06a18378d88f09b1d154a070234",
+      "source_archive_sha256": "1d58b0fc4f13173cde6f64277a8b2e36e84cf0f2a27d8b8d0e48b76780b1236c",
+      "source_cache_path": "sources/gpredict.tar.bz2",
+      "primary_url": "https://github.com/csete/gpredict/releases/tag/v2.7",
       "repo": "csete/gpredict",
-      "source_archive_size": 7719554,
-      "source_archive_url": "https://github.com/csete/gpredict/archive/1d80049b0fecc06a18378d88f09b1d154a070234.tar.gz",
-      "git_tree_sha1": "133d9c929c3f0fccf56a8b23f0734b584653854c"
+      "source_archive_size": 4727308,
+      "source_archive_url": "https://github.com/csete/gpredict/releases/download/v2.7/gpredict-2.7.tar.bz2",
+      "tag": "v2.7",
+      "tag_object": "e0b632468c2a2b8653a3452a9ddc50fecac4b9a8",
+      "archive_note": "Official release asset gpredict-2.7.tar.bz2 of release v2.7 (GitHub release API https://api.github.com/repos/csete/gpredict/releases/tags/v2.7, read 2026-11-07: published 2026-11-01T19:20:01Z, size 4727308, digest sha256:1d58b0fc4f13173cde6f64277a8b2e36e84cf0f2a27d8b8d0e48b76780b1236c); SHA-256 and size measured again from the downloaded bytes on 2026-11-07, MD5 12893183f0cdb1c7ad2e8684ea35e222. Annotated tag v2.7 (tag object e0b63246, tagger date 2026-11-01T19:02:56Z) peels to commit 22593781 'Version 2.7' (git tree 7c1118de; GitHub git/refs and git/tags API, 2026-11-07); the earlier pin 1d80049b is its ancestor 143 commits behind (compare API). The tarball is make dist output with a generated configure (.tarball-version 2.7), not a git archive, so it has no git_tree_sha1: the sr-rx-packages sources job compares it with a clone of the tag (check_repo.py tarball-vs-tag, reported). Blobs of the patched files src/gtk-rot-ctrl.c, src/tle-update.c, src/trsp-update.c, src/sat-cfg.c, src/radio-conf.c and src/gtk-rig-ctrl.c equal the tag tree (contents API, 2026-11-07). Upstream licence GPL-2.0 (repository metadata). CI (sr-rx-packages.yml run 42411548268, 2026-11-07, check_repo.py tarball-vs-tag) compared the tarball with a clone of the tag: no common file differs in bytes or mode; the release lacks 23 paths (dotfiles, .github/workflows/ci.yml, contributing.md, doc/notes/*, doc/um/gpredict-user-manual.odt, data/satdata/scripts/*, win32/loaders.cache) and adds 50 generated autotools/gettext files (configure, Makefile.in, aclocal.m4, .tarball-version, ...): git tree 7b6b2839 of the release against 7c1118de of the tag."
     },
     {
       "id": "wsjt-decoders",
