@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "adc2f821e8116ab4463dfc7d8932c017b2c9c0cd71b34c7ee09dbf56531a6c6b"
+      "sha256": "bb715b648da6ac58c1e6408513b0dc8cf2ae81245b525e082378cd1026f406c7"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "f82bfa88ec8f01282b717d50d80fc511fcb14be450154fdcc7eecca8a2ba3903",
       "footprints": "1fa13212ecccfa1f2f7e8a71b4f9388b534ba8d913129fd1fde6114957b96a60",
       "contract_board": "4b1616d88e13a8f31341ab1884adee4e9faa87dee279b0ef10490a2dc3e7c0eb",
       "netclasses": "9e600b028a9b15dc6b5300504884fbce7797e7e6e234de3ecf1fc1819c233513",
-      "spec": "565e657af6b1ccc182be3e7f67dccbec25b6e654d69050bf2ed3e51a424d5d0f"
+      "spec": "14710289d8f7b7c2613752ed26fe29591b5552c095decba44fb3545605cd6b4b"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
@@ -29,9 +29,9 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1774,
-    "vias": 255,
-    "zones": 44,
+    "tracks": 1055,
+    "vias": 196,
+    "zones": 244,
     "holes": 9,
     "copper_layers": [
       "F.Cu",
@@ -56,6 +56,314 @@
       "keepout_r_mm": 3.5,
       "tolerance_mm": 0.005
     },
+    "planned_cutouts": {
+      "findings": 0,
+      "margin_mm": 0.3,
+      "rects": 50,
+      "tolerance_mm": 0.005,
+      "per_rect": [
+        {
+          "id": "C107",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C113",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C206",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C207",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C210",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C222",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C254",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C262",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C265",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C273",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C511",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "C512",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "F102",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J104",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J105",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J106",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J107",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J108",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J109",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J110",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J111",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J112",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J113",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J114",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 6.33
+        },
+        {
+          "id": "J115",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J205",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J206",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "J507",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "L101",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "L501",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP101",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP102",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP103",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP104",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP105",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP106",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP107",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP108",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP201",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP202",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP203",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP204",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP205",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP211",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP212",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP213",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP214",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP215",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP503",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        },
+        {
+          "id": "TP2903",
+          "items_inside": 0,
+          "items_within_margin": 0,
+          "closest_copper_mm": 0.3
+        }
+      ]
+    },
     "pad_nets": {
       "findings": 0,
       "expected_refs": 137,
@@ -63,7 +371,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1729,
+      "tracks_checked": 1015,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -99,12 +407,12 @@
     {
       "check": "class_widths",
       "item": "J209 branch on AUX12",
-      "reason": "branch_exempt: 5 track piece(s), path 6.873 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 3 track piece(s), path 7.038 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
       "item": "J209 branch on BONI13V8_PORT",
-      "reason": "branch_exempt: 5 track piece(s), path 6.935 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 3 track piece(s), path 8.98 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
@@ -124,7 +432,7 @@
     {
       "check": "class_widths",
       "item": "J209 branch on LAB5_RLY",
-      "reason": "branch_exempt: 9 track piece(s), path 5.418 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 3 track piece(s), path 2.153 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
@@ -134,7 +442,7 @@
     {
       "check": "class_widths",
       "item": "J209 branch on VBUS_HFP",
-      "reason": "branch_exempt: 2 track piece(s), path 8.552 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
+      "reason": "branch_exempt: 7 track piece(s), path 7.739 mm <= 10.0 mm, width >= 0.25 mm left out of the PWR1A width and neck checks: J209 contact escapes (Samtec LSHM-150, pads 0.30 mm at 0.50 mm pitch, a GND or rail neighbour 0.20 mm away): every contact carries at most 1 A (b2b_i_pin_A, pcb/partition-spec.json b2b.i_pin_note), its stub is 0.25 mm wide inside the row up to its via, from where an 0.8 mm F.Cu stub joins the 2.0 mm LAB5 trunk; the 1.85 mm of PWR3A does not fit between 0.30 mm pads"
     },
     {
       "check": "class_widths",
@@ -179,37 +487,27 @@
     {
       "check": "class_widths",
       "item": "AUX12 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
-      "item": "BIAS_CH1 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
-      "item": "BIAS_CH1_DAMP vias",
       "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
+      "item": "BIAS_CH1 vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
       "item": "BIAS_CH2_PORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
-      "item": "BIAS_CH3_PORT vias",
+      "item": "BIAS_CH4 vias",
       "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
-      "item": "BIAS_SB_LNA vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 9 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "BONI13V8_PORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -224,7 +522,7 @@
     {
       "check": "class_widths",
       "item": "E2_SB_DAMP vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 6 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -238,28 +536,13 @@
     },
     {
       "check": "class_widths",
-      "item": "LAB5_RLY vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
-      "item": "VBUS_HFP vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
-      "item": "VBUS_LABPORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
       "item": "VBUS_RTLA vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 6 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "VBUS_RTLB vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
