@@ -5,7 +5,7 @@
   "generator": "build/kicad/boards/PWR_A/lab5_budget.py",
   "inputs": {
     "spec_sha256": "54ed43e51119e898f92ae1e40299233ad5ef5ae452d686c4117e44886f9afc4b",
-    "pwr_b_board_sha256": "68d3c77bb5eb3aee0cbf70516e422af50d737ae440055fbfed5838584b462c16",
+    "pwr_b_board_sha256": "86d05a0b7b848e76575ba66204ec417054d03c017b54015fe5450cfdddaf5ce0",
     "pwr_b_mate_pins_sha256": "db96a57ff4815c02eee75ab7fc03f0467957012f3a10723e2af32ef2a3a7302a",
     "netclasses_sha256": "95b4858058b99d613ed90219bc1ceba892dcf5edb10bc8b989493109240f3061",
     "e1_05": "Відкрито: MPN F102 з холодним опором ≤10 mΩ і опір з'єднання LAB5 E1→E2 ≤10 mΩ (кожні 10 mΩ — 32 mV при 3.2 A)."
@@ -61,16 +61,16 @@
           "pad": "C248.1",
           "sheet": "E2",
           "group": "RTL-B: комутований VBUS",
-          "resistance_mohm": 5.118,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 4.8131,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 2.9834
         },
         {
           "pad": "C295.1",
           "sheet": "E2",
           "group": "S-band LaNA WB: захищена шина 5 V",
-          "resistance_mohm": 7.0885,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 6.7835,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 4.9538
         },
         {
@@ -85,8 +85,8 @@
           "pad": "C502.1",
           "sheet": "E5",
           "group": "VBUS RTL-A і LAB PORT",
-          "resistance_mohm": 18.5109,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 18.206,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 16.3763
         },
         {
@@ -101,40 +101,40 @@
           "pad": "C505.1",
           "sheet": "E5",
           "group": "VBUS RTL-A і LAB PORT",
-          "resistance_mohm": 9.0589,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 8.754,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 6.9243
         },
         {
           "pad": "U210.1",
           "sheet": "E2",
           "group": "RTL-B: комутований VBUS",
-          "resistance_mohm": 6.7293,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 6.1942,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 2.9834
         },
         {
           "pad": "U221.1",
           "sheet": "E2",
           "group": "S-band LaNA WB: захищена шина 5 V",
-          "resistance_mohm": 8.6997,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 8.1646,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 4.9538
         },
         {
           "pad": "U501.1",
           "sheet": "E5",
           "group": "VBUS RTL-A і LAB PORT",
-          "resistance_mohm": 20.1222,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 19.587,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 16.3763
         },
         {
           "pad": "U502.1",
           "sheet": "E5",
           "group": "VBUS RTL-A і LAB PORT",
-          "resistance_mohm": 10.6702,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 10.1351,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 6.9243
         }
       ],
@@ -143,16 +143,16 @@
           "pad": "C248.1",
           "sheet": "E2",
           "group": "RTL-B: комутований VBUS",
-          "resistance_mohm": 5.7215,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 5.3806,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 3.3351
         },
         {
           "pad": "C295.1",
           "sheet": "E2",
           "group": "S-band LaNA WB: захищена шина 5 V",
-          "resistance_mohm": 7.9242,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 7.5833,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 5.5379
         },
         {
@@ -167,8 +167,8 @@
           "pad": "C502.1",
           "sheet": "E5",
           "group": "VBUS RTL-A і LAB PORT",
-          "resistance_mohm": 20.6933,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 20.3524,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 18.307
         },
         {
@@ -183,40 +183,40 @@
           "pad": "C505.1",
           "sheet": "E5",
           "group": "VBUS RTL-A і LAB PORT",
-          "resistance_mohm": 10.127,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 9.7861,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 7.7407
         },
         {
           "pad": "U210.1",
           "sheet": "E2",
           "group": "RTL-B: комутований VBUS",
-          "resistance_mohm": 7.5227,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 6.9245,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 3.3351
         },
         {
           "pad": "U221.1",
           "sheet": "E2",
           "group": "S-band LaNA WB: захищена шина 5 V",
-          "resistance_mohm": 9.7254,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 9.1272,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 5.5379
         },
         {
           "pad": "U501.1",
           "sheet": "E5",
           "group": "VBUS RTL-A і LAB PORT",
-          "resistance_mohm": 22.4946,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 21.8963,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 18.307
         },
         {
           "pad": "U502.1",
           "sheet": "E5",
           "group": "VBUS RTL-A і LAB PORT",
-          "resistance_mohm": 11.9282,
-          "last_track_width_mm": 0.6,
+          "resistance_mohm": 11.33,
+          "last_track_width_mm": 0.7,
           "to_start_of_last_track_mohm": 7.7407
         }
       ]
@@ -301,44 +301,44 @@
   "path_b_remaining_budget": {
     "20C": {
       "U210.1": {
-        "pwr_b_copper_mohm": 6.7293,
+        "pwr_b_copper_mohm": 6.1942,
         "pwr_b_copper_to_branch_start_mohm": 2.9834,
-        "pwr_b_branch_width_mm": 0.6,
+        "pwr_b_branch_width_mm": 0.7,
         "b2b_delta_max_mohm": 3.75,
         "b2b_initial_mohm": "TBD (not stated in the Samtec product specification)",
-        "left_for_pwr_a_copper_mohm": -0.4793,
-        "pwr_a_width_x_outer_layers_mm_needed_orthogonal": null,
-        "fits": false
+        "left_for_pwr_a_copper_mohm": 0.0558,
+        "pwr_a_width_x_outer_layers_mm_needed_orthogonal": 1389.7276,
+        "fits": true
       },
       "U221.1": {
-        "pwr_b_copper_mohm": 8.6997,
+        "pwr_b_copper_mohm": 8.1646,
         "pwr_b_copper_to_branch_start_mohm": 4.9538,
-        "pwr_b_branch_width_mm": 0.6,
+        "pwr_b_branch_width_mm": 0.7,
         "b2b_delta_max_mohm": 3.75,
         "b2b_initial_mohm": "TBD (not stated in the Samtec product specification)",
-        "left_for_pwr_a_copper_mohm": -2.4497,
+        "left_for_pwr_a_copper_mohm": -1.9146,
         "pwr_a_width_x_outer_layers_mm_needed_orthogonal": null,
         "fits": false
       }
     },
     "50C": {
       "U210.1": {
-        "pwr_b_copper_mohm": 7.5227,
+        "pwr_b_copper_mohm": 6.9245,
         "pwr_b_copper_to_branch_start_mohm": 3.3351,
-        "pwr_b_branch_width_mm": 0.6,
+        "pwr_b_branch_width_mm": 0.7,
         "b2b_delta_max_mohm": 3.75,
         "b2b_initial_mohm": "TBD (not stated in the Samtec product specification)",
-        "left_for_pwr_a_copper_mohm": -1.2727,
+        "left_for_pwr_a_copper_mohm": -0.6745,
         "pwr_a_width_x_outer_layers_mm_needed_orthogonal": null,
         "fits": false
       },
       "U221.1": {
-        "pwr_b_copper_mohm": 9.7254,
+        "pwr_b_copper_mohm": 9.1272,
         "pwr_b_copper_to_branch_start_mohm": 5.5379,
-        "pwr_b_branch_width_mm": 0.6,
+        "pwr_b_branch_width_mm": 0.7,
         "b2b_delta_max_mohm": 3.75,
         "b2b_initial_mohm": "TBD (not stated in the Samtec product specification)",
-        "left_for_pwr_a_copper_mohm": -3.4754,
+        "left_for_pwr_a_copper_mohm": -2.8772,
         "pwr_a_width_x_outer_layers_mm_needed_orthogonal": null,
         "fits": false
       }
@@ -401,7 +401,7 @@
   "e1_end": "L101.2",
   "findings": [
     "A (E1 -> LT3045, PWR-A only): the narrowest legal LAB5 copper (PWR3A 1.85 mm, one outer layer) gives 29.9507 mOhm on the orthogonal path at 20 C; the 10 mOhm budget needs width x outer layers >= 5.5409 mm there",
-    "B (E1 -> U210.1 on PWR-B): PWR-B copper 6.7293 mOhm (of it 2.9834 mOhm up to its 0.6 mm branch) + B2B delta <= 3.75 mOhm already exceed 10 mOhm before any PWR-A copper",
-    "B (E1 -> U221.1 on PWR-B): PWR-B copper 8.6997 mOhm (of it 4.9538 mOhm up to its 0.6 mm branch) + B2B delta <= 3.75 mOhm already exceed 10 mOhm before any PWR-A copper"
+    "B (E1 -> U210.1 on PWR-B): PWR-B copper 6.1942 mOhm + B2B delta <= 3.75 mOhm leaves 0.0558 mOhm for the PWR-A copper (width x outer layers >= 1389.7276 mm orthogonal); B2B initial resistance TBD",
+    "B (E1 -> U221.1 on PWR-B): PWR-B copper 8.1646 mOhm (of it 4.9538 mOhm up to its 0.7 mm branch) + B2B delta <= 3.75 mOhm already exceed 10 mOhm before any PWR-A copper"
   ]
 }

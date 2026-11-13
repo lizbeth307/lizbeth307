@@ -7,14 +7,14 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/PWR_B/PWR_B.kicad_pcb",
-      "sha256": "68d3c77bb5eb3aee0cbf70516e422af50d737ae440055fbfed5838584b462c16"
+      "sha256": "86d05a0b7b848e76575ba66204ec417054d03c017b54015fe5450cfdddaf5ce0"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "f82bfa88ec8f01282b717d50d80fc511fcb14be450154fdcc7eecca8a2ba3903",
       "footprints": "1fa13212ecccfa1f2f7e8a71b4f9388b534ba8d913129fd1fde6114957b96a60",
       "contract_board": "4b1616d88e13a8f31341ab1884adee4e9faa87dee279b0ef10490a2dc3e7c0eb",
       "netclasses": "64e0ab43e0685c5f6de8ae26633985312708ada531535bc5bb611a1b0d2c018a",
-      "spec": "fc830c53eb7a9d0f25a99de0052f33bd007726fad42f97dc027f74ef020fd8ed"
+      "spec": "6dbc89367f29da07509f8a40901bf671a0e4335a795b8dd1d6a8d0531e4500a5"
     },
     "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
@@ -29,9 +29,9 @@
   "counts": {
     "footprints": 144,
     "pads": 520,
-    "tracks": 1455,
-    "vias": 261,
-    "zones": 370,
+    "tracks": 1529,
+    "vias": 256,
+    "zones": 352,
     "holes": 9,
     "copper_layers": [
       "F.Cu",
@@ -61,7 +61,7 @@
     "planned_cutouts": {
       "findings": 0,
       "margin_mm": 0.33,
-      "rects": 50,
+      "rects": 47,
       "tolerance_mm": 0.005,
       "fill_points": 64,
       "per_rect": [
@@ -70,21 +70,21 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.62
+          "closest_copper_mm": 0.504
         },
         {
           "id": "C113",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
+          "closest_copper_mm": 1.072
         },
         {
           "id": "C206",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
+          "closest_copper_mm": 0.502
         },
         {
           "id": "C207",
@@ -98,52 +98,31 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.469
+          "closest_copper_mm": 0.461
         },
         {
           "id": "C222",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.905
+          "closest_copper_mm": 0.82
         },
         {
           "id": "C254",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.436
+          "closest_copper_mm": 0.454
         },
         {
           "id": "C262",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
-          "id": "C265",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.33
+          "closest_copper_mm": 0.485
         },
         {
           "id": "C273",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": 0.888
-        },
-        {
-          "id": "C511",
-          "items_inside": 0,
-          "items_within_margin": 0,
-          "fills_within_margin": 0,
-          "closest_copper_mm": null
-        },
-        {
-          "id": "C512",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
@@ -245,14 +224,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.542
+          "closest_copper_mm": 0.525
         },
         {
           "id": "J206",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.495
+          "closest_copper_mm": 0.483
         },
         {
           "id": "J507",
@@ -266,21 +245,21 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
+          "closest_copper_mm": 0.373
         },
         {
           "id": "L501",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
+          "closest_copper_mm": 0.383
         },
         {
           "id": "TP101",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 2.268
+          "closest_copper_mm": 0.628
         },
         {
           "id": "TP102",
@@ -301,7 +280,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.652
+          "closest_copper_mm": 0.753
         },
         {
           "id": "TP105",
@@ -315,7 +294,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.676
+          "closest_copper_mm": 0.488
         },
         {
           "id": "TP107",
@@ -336,28 +315,28 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.33
+          "closest_copper_mm": 0.474
         },
         {
           "id": "TP202",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.455
+          "closest_copper_mm": 1.661
         },
         {
           "id": "TP203",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.389
+          "closest_copper_mm": null
         },
         {
           "id": "TP204",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": null
+          "closest_copper_mm": 5.155
         },
         {
           "id": "TP205",
@@ -385,14 +364,14 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.33
+          "closest_copper_mm": 0.886
         },
         {
           "id": "TP214",
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.659
+          "closest_copper_mm": 0.622
         },
         {
           "id": "TP215",
@@ -406,7 +385,7 @@
           "items_inside": 0,
           "items_within_margin": 0,
           "fills_within_margin": 0,
-          "closest_copper_mm": 0.69
+          "closest_copper_mm": 0.629
         },
         {
           "id": "TP2903",
@@ -424,7 +403,7 @@
     },
     "class_widths": {
       "findings": 0,
-      "tracks_checked": 1435,
+      "tracks_checked": 1509,
       "pour_necks": [],
       "split_nets": {}
     },
@@ -500,47 +479,47 @@
     {
       "check": "class_widths",
       "item": "U210 branch on E2_RTLB_SW",
-      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 5.0 mm, width >= 0.6 mm left out of the PWR1A width and neck checks: LAB5 branch from the 2.0 mm trunk to U210 IN (pin 1), through the input capacitor C248: it carries at most the TPS2553 limit of U210 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm"
+      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 5.0 mm, width >= 0.7 mm left out of the PWR1A width and neck checks: LAB5 branch from the 2.0 mm trunk to U210 IN (pin 1), through the input capacitor C248: it carries at most the TPS2553 limit of U210 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), and is 0.7 mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the 2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm does not take the PWR3A width"
     },
     {
       "check": "class_widths",
       "item": "U210 branch on LAB5",
-      "reason": "branch_exempt: 1 track piece(s), path 4.562 mm <= 5.0 mm, width >= 0.6 mm left out of the PWR3A width and neck checks: LAB5 branch from the 2.0 mm trunk to U210 IN (pin 1), through the input capacitor C248: it carries at most the TPS2553 limit of U210 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm"
+      "reason": "branch_exempt: 1 track piece(s), path 4.562 mm <= 5.0 mm, width >= 0.7 mm left out of the PWR3A width and neck checks: LAB5 branch from the 2.0 mm trunk to U210 IN (pin 1), through the input capacitor C248: it carries at most the TPS2553 limit of U210 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), and is 0.7 mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the 2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm does not take the PWR3A width"
     },
     {
       "check": "class_widths",
       "item": "U221 branch on E2_SB_SW",
-      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 5.0 mm, width >= 0.6 mm left out of the PWR1A width and neck checks: LAB5 branch from the 2.0 mm trunk to U221 IN (pin 1), through the input capacitor C295: it carries at most the TPS2553 limit of U221 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm"
+      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 5.0 mm, width >= 0.7 mm left out of the PWR1A width and neck checks: LAB5 branch from the 2.0 mm trunk to U221 IN (pin 1), through the input capacitor C295: it carries at most the TPS2553 limit of U221 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), and is 0.7 mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the 2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm does not take the PWR3A width"
     },
     {
       "check": "class_widths",
       "item": "U221 branch on LAB5",
-      "reason": "branch_exempt: 1 track piece(s), path 4.562 mm <= 5.0 mm, width >= 0.6 mm left out of the PWR3A width and neck checks: LAB5 branch from the 2.0 mm trunk to U221 IN (pin 1), through the input capacitor C295: it carries at most the TPS2553 limit of U221 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm"
+      "reason": "branch_exempt: 1 track piece(s), path 4.562 mm <= 5.0 mm, width >= 0.7 mm left out of the PWR3A width and neck checks: LAB5 branch from the 2.0 mm trunk to U221 IN (pin 1), through the input capacitor C295: it carries at most the TPS2553 limit of U221 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), and is 0.7 mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the 2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm does not take the PWR3A width"
     },
     {
       "check": "class_widths",
       "item": "U501 branch on LAB5",
-      "reason": "branch_exempt: 3 track piece(s), path 19.912 mm <= 21.9 mm, width >= 0.6 mm left out of the PWR3A width and neck checks: LAB5 branch from the 2.0 mm trunk to U501 IN (pin 1), through the input capacitor C502: it carries at most the TPS2553 limit of U501 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm"
+      "reason": "branch_exempt: 3 track piece(s), path 19.912 mm <= 21.9 mm, width >= 0.7 mm left out of the PWR3A width and neck checks: LAB5 branch from the 2.0 mm trunk to U501 IN (pin 1), through the input capacitor C502: it carries at most the TPS2553 limit of U501 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), and is 0.7 mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the 2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm does not take the PWR3A width"
     },
     {
       "check": "class_widths",
       "item": "U501 branch on VBUS_RTLA",
-      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 21.9 mm, width >= 0.6 mm left out of the PWR1A width and neck checks: LAB5 branch from the 2.0 mm trunk to U501 IN (pin 1), through the input capacitor C502: it carries at most the TPS2553 limit of U501 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm"
+      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 21.9 mm, width >= 0.7 mm left out of the PWR1A width and neck checks: LAB5 branch from the 2.0 mm trunk to U501 IN (pin 1), through the input capacitor C502: it carries at most the TPS2553 limit of U501 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), and is 0.7 mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the 2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm does not take the PWR3A width"
     },
     {
       "check": "class_widths",
       "item": "U502 branch on LAB5",
-      "reason": "branch_exempt: 1 track piece(s), path 4.562 mm <= 5.0 mm, width >= 0.6 mm left out of the PWR3A width and neck checks: LAB5 branch from the 2.0 mm trunk to U502 IN (pin 1), through the input capacitor C505: it carries at most the TPS2553 limit of U502 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm"
+      "reason": "branch_exempt: 1 track piece(s), path 4.562 mm <= 5.0 mm, width >= 0.7 mm left out of the PWR3A width and neck checks: LAB5 branch from the 2.0 mm trunk to U502 IN (pin 1), through the input capacitor C505: it carries at most the TPS2553 limit of U502 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), and is 0.7 mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the 2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm does not take the PWR3A width"
     },
     {
       "check": "class_widths",
       "item": "U502 branch on VBUS_LABPORT",
-      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 5.0 mm, width >= 0.6 mm left out of the PWR1A width and neck checks: LAB5 branch from the 2.0 mm trunk to U502 IN (pin 1), through the input capacitor C505: it carries at most the TPS2553 limit of U502 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), within the PWR1A width 0.35 mm; the SOT-23-6 pin pitch 0.95 mm does not take 1.85 mm"
+      "reason": "branch_exempt: 0 track piece(s), path 0.0 mm <= 5.0 mm, width >= 0.7 mm left out of the PWR1A width and neck checks: LAB5 branch from the 2.0 mm trunk to U502 IN (pin 1), through the input capacitor C505: it carries at most the TPS2553 limit of U502 (<= 0.825 A, tools/assembly_data.py NET_CURRENT), and is 0.7 mm wide, at least the 0.667 mm that F102 (4 A) needs at +20 degC on the 2 oz outer copper (IPC-2221 external, MODEL; W2 PWR-L6-PLACE); the SOT-23-6 pin pitch 0.95 mm does not take the PWR3A width"
     },
     {
       "check": "class_widths",
       "item": "AUX12 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -550,7 +529,7 @@
     {
       "check": "class_widths",
       "item": "BIAS_CH2_PORT vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 6 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -559,13 +538,8 @@
     },
     {
       "check": "class_widths",
-      "item": "BIAS_CH4 vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
-    },
-    {
-      "check": "class_widths",
       "item": "BIAS_SB_LNA vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 7 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 5 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -576,6 +550,11 @@
       "check": "class_widths",
       "item": "E2_LNA4_SW vias",
       "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
+    },
+    {
+      "check": "class_widths",
+      "item": "E2_RTLB_SW vias",
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 2 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
@@ -595,12 +574,12 @@
     {
       "check": "class_widths",
       "item": "VBUS_RTLA vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 3 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 1 via(s) of the net on the board"
     },
     {
       "check": "class_widths",
       "item": "VBUS_RTLB vias",
-      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 7 via(s) of the net on the board"
+      "reason": "vias_per_transition 2 (PWR1A) is advisory, not counted: 4 via(s) of the net on the board"
     },
     {
       "check": "class_widths",

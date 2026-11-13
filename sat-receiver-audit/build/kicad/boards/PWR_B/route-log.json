@@ -26,14 +26,27 @@
   "ses_sha256": null,
   "dsn_probe": null,
   "locked_segments": {
-    "before_ses_import": 1716,
-    "after_ses_import": 1716
+    "before_ses_import": 1784,
+    "after_ses_import": 1784
   },
   "freerouting_not_run": {
     "passes": 0,
-    "why": "router.freeze_only: W2 PWRJ-LAYERS6 freeze-only: with the frozen route in pre_route no class is autorouted (all DSN classes in -inc), so the CI run measures exactly the frozen router copper plus the grid A* completion; in route run 43349395168 Freerouting on top of the frozen copper joined no further connection (model open = KiCad open) and left KiCad clearance errors against the locked copper"
+    "why": "router.freeze_only: W2 PWRJ-LAYERS6 freeze-only: the frozen route in pre_route is the whole router copper, so pcb/board_gen.py does not start Freerouting (router_skip, W2 PWR-TOOLS) and the CI run measures exactly the frozen router copper plus the grid A* completion; in route run 43349395168 Freerouting on top of the frozen copper joined no further connection (model open = KiCad open) and left KiCad clearance errors against the locked copper"
   },
-  "via_centre_stubs": [],
+  "via_centre_stubs": [
+    {
+      "net": "GND",
+      "layer": "F.Cu",
+      "end": [
+        195.155,
+        191.3
+      ],
+      "centre": [
+        195.35,
+        191.5
+      ]
+    }
+  ],
   "drc_command": [
     "kicad-cli",
     "pcb",
@@ -47,7 +60,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "68d3c77bb5eb3aee0cbf70516e422af50d737ae440055fbfed5838584b462c16",
+  "board_sha256": "86d05a0b7b848e76575ba66204ec417054d03c017b54015fe5450cfdddaf5ce0",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -878,8 +891,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43379303211",
-    "sha": "3dbb09506f5d1e9cb39cbee3246eee58d2fb54c2",
-    "ref": "refs/heads/wip/w2-pwrtools"
+    "run_id": "43433071671",
+    "sha": "46245a52f9a6a38a1e1f6e6a02b5e91d8b73d3e0",
+    "ref": "refs/heads/wip/w2-pwrl6"
   }
 }
