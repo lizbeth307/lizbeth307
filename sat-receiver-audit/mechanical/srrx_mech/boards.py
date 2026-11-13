@@ -424,7 +424,8 @@ def header_size(P, family, pins, unit, courtyards=None, orient=None):
     if key not in hh or "a" not in hh[key]:
         return None
     c = hh[key]
-    return c["a"] * (pins - 1) + c["b"], c["d"], "parts.json"
+    n = pins // 2 if c.get("per_row") else pins      # W2 PWR-L6-PLACE third pass: dual-row families (PHD_top) count per row
+    return c["a"] * (n - 1) + c["b"], c["d"], "parts.json"
 
 
 def harness_check(P, parts_res, root, courtyards=None):

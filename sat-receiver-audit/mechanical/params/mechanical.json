@@ -1350,9 +1350,9 @@
       "S23": {
         "ends": ["PWR", "LABUSB"],
         "via": [
-          {"edge": "PWR_B", "zone": 2, "s": 10.75, "off": [0, 1.7, 0]},
+          {"edge": "PWR_B", "zone": 2, "s": 10.5, "dz": 8.0, "off": [0, 3.55, 0]},
           {"box": "blower", "at": [0.5, 0.5, 1.0], "off": [0, 0, 3.5], "keep": "xy"},
-          {"box": "display", "at": [0.5, 0.0, 0.5], "off": [0, -6.3, 0], "keep": "xz"},
+          {"box": "display", "at": [0.5, 0.0, 0.5], "off": [0, -9.8, 0], "keep": "xz"},
           {"box": "battery_tray", "at": [1.0, 0.5, 0.5], "off": [3.8, 0, 0], "keep": "yz"},
           {"box": "blower", "at": [0.5, 0.0, 0.5], "off": [0, -2.5, 0], "keep": "xz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
@@ -1365,7 +1365,7 @@
           {"port": "LAB_USB_A"}
         ],
         "end_status": [{"unit": "LABUSB", "provisional": "behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall"}],
-        "note": "W2 MECH-7 part 2: J506 (PH 9, W2 GR-5B) on the PWR-B bottom span x 93-114.5; the plug exit 1.7 inboard of the bottom edge (header set back, rule R-PWRB-EXIT: the 0.55 mm slot between the battery-tray wall and the PWR-B edge takes no bundle), up over PWR-B to z 59 (3.5 above the blower), along y 44 (between the tray wall, y 37.95, and the display, y >= 50.3) over PWR-B and the blower to x 165 past the tray end, down at y 36 (between the pack-fuse carrier, y <= 32.7, and the blower, y >= 38.5) to z 53 and along y 36 over the BMS to SL3 (W2 MECH-7 review F2); down at y 17.55 (between the LAB BUS nut envelope and the HDMI flex rise) to z 20, west right of the GX16 socket and along y 8 under the plate extension to the bottom-face port"
+        "note": "W2 PWR-L6-PLACE third pass: J506 (PH 9, W2 GR-5B) is the top-entry B9B-PH-K-S in PWR-B edge zone 2 (x 90-115): the route starts at the PHR plug top (pin row board y 3.55, PH_top h_mated 8.0 over the component face), rises to z 59 (3.5 above the blower) and runs along y 40.5, not y 44: the display clamp boss (163.8, 46), boss_d 7.5, z 60.58-67.68 (mechanical.json display clamp_bosses) is not a structure box, and the bundle keeps >= 0.5 mm plus its radius from it (y 44 reached 0.145 mm into it); was: W2 MECH-7 part 2: J506 on the PWR-B bottom span x 93-114.5; the plug exit 1.7 inboard of the bottom edge (header set back, rule R-PWRB-EXIT: the 0.55 mm slot between the battery-tray wall and the PWR-B edge takes no bundle), up over PWR-B to z 59 (3.5 above the blower), along y 44 (between the tray wall, y 37.95, and the display, y >= 50.3) over PWR-B and the blower to x 165 past the tray end, down at y 36 (between the pack-fuse carrier, y <= 32.7, and the blower, y >= 38.5) to z 53 and along y 36 over the BMS to SL3 (W2 MECH-7 review F2); down at y 17.55 (between the LAB BUS nut envelope and the HDMI flex rise) to z 20, west right of the GX16 socket and along y 8 under the plate extension to the bottom-face port"
       },
       "S24": {
         "ends": ["CTRL", "T7A"],
@@ -1501,9 +1501,9 @@
       "S34": {
         "ends": ["PWR", "LABBUS"],
         "via": [
-          {"edge": "PWR_B", "zone": 2, "s": 10.75, "off": [0, 1.7, 0]},
+          {"edge": "PWR_B", "zone": 2, "s": 10.5, "dz": 8.0, "off": [0, 3.55, 0]},
           {"box": "blower", "at": [0.5, 0.5, 1.0], "off": [0, 0, 3.5], "keep": "xy"},
-          {"box": "display", "at": [0.5, 0.0, 0.5], "off": [0, -6.3, 0], "keep": "xz"},
+          {"box": "display", "at": [0.5, 0.0, 0.5], "off": [0, -9.8, 0], "keep": "xz"},
           {"box": "battery_tray", "at": [1.0, 0.5, 0.5], "off": [3.8, 0, 0], "keep": "yz"},
           {"box": "blower", "at": [0.5, 0.0, 0.5], "off": [0, -2.5, 0], "keep": "xz"},
           {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
@@ -1514,7 +1514,7 @@
           {"box": "nut.LAB_BUS", "at": [0.5, 1.0, 0.5]}
         ],
         "end_status": [{"unit": "LABBUS", "provisional": "KH-GX12-6P solder cups inside the receptacle not modelled: end at the rear (+y) face of its inner nut envelope (nut.LAB_BUS, READS-E drawing row), W2 MECH-7 part 2"}],
-        "note": "W2 MECH-7 part 2: J506 (PH 9, W2 GR-5B) on the PWR-B bottom span x 93-114.5; the plug exit 1.7 inboard of the bottom edge (header set back, rule R-PWRB-EXIT: the 0.55 mm slot between the battery-tray wall and the PWR-B edge takes no bundle), up over PWR-B to z 59 (3.5 above the blower), along y 44 (between the tray wall, y 37.95, and the display, y >= 50.3) over PWR-B and the blower to x 165 past the tray end, down at y 36 (between the pack-fuse carrier, y <= 32.7, and the blower, y >= 38.5) to z 53 and along y 36 over the BMS to SL3 (W2 MECH-7 review F2); down at y 17.55 to the LAB BUS port height and into the rear face of the receptacle's inner envelope"
+        "note": "W2 PWR-L6-PLACE third pass: J506 (PH 9, W2 GR-5B) is the top-entry B9B-PH-K-S in PWR-B edge zone 2 (x 90-115): the route starts at the PHR plug top (pin row board y 3.55, PH_top h_mated 8.0 over the component face), rises to z 59 (3.5 above the blower) and runs along y 40.5, not y 44: the display clamp boss (163.8, 46), boss_d 7.5, z 60.58-67.68 (mechanical.json display clamp_bosses) is not a structure box, and the bundle keeps >= 0.5 mm plus its radius from it (y 44 reached 0.145 mm into it); was: W2 MECH-7 part 2: J506 on the PWR-B bottom span x 93-114.5; the plug exit 1.7 inboard of the bottom edge (header set back, rule R-PWRB-EXIT: the 0.55 mm slot between the battery-tray wall and the PWR-B edge takes no bundle), up over PWR-B to z 59 (3.5 above the blower), along y 44 (between the tray wall, y 37.95, and the display, y >= 50.3) over PWR-B and the blower to x 165 past the tray end, down at y 36 (between the pack-fuse carrier, y <= 32.7, and the blower, y >= 38.5) to z 53 and along y 36 over the BMS to SL3 (W2 MECH-7 review F2); down at y 17.55 to the LAB BUS port height and into the rear face of the receptacle's inner envelope"
       },
       "S35": {
         "ends": ["PWR", "BONI"],
@@ -1632,6 +1632,25 @@
         "end_status": [{"unit": "Q6A.HDR", "provisional": "J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch", "bound_mm": 16.5},
                        {"unit": "GNSS", "provisional": "P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm", "bound_mm": 6.6}],
         "note": "PPS (J20.7), UART6 (J20.16/18) and one GND leave the S01 ribbon right after the socket and run along the SL1 row in the rear layer, west to the shaft beside the LC76G and down to its MX1.25 P1 edge (W2 MECH-6)"
+      },
+      "S02B": {
+        "from_segment": "S02",
+        "ends": ["CTRL", "PWR"],
+        "nets": ["FAULT_LNA4", "FAULT_RTLA", "FAULT_RTLB", "FLT_BONI", "FLT_LIME3V3", "FLT_LNB", "FLT_SB_LNA", "I2C0_SCL", "I2C0_SDA", "IMU_RX", "IMU_TX", "INA228_ALERT", "OVP_LNB_N", "PG_BONI", "PG_LNB", "PICO_DISP_EN", "PICO_OFF", "PTC_AUX", "PWR_BUTTON", "SLED_DET"],
+        "wires": 20,
+        "awg": 22,
+        "_awg_src": "build/16-dzhgut.csv rows S02-S02B-01..20: PHD-PHD, 22 AWG (SPHD-001T-P0.5, AWG 26-22, insulation 1.0-1.5 mm: parts.json harness_families PHD); bundle OD from parts.json hookup_wire_ptfe 22 AWG (2845/7, 1.07 + 0.05) x sqrt(20 / fill 0.6) = 6.47 mm (MODEL, srrx_mech.routes)",
+        "replaces": "the J307 <-> J203 conductors of S02 (W2 PWR-L6-PLACE third pass: J203 left PWR-B edge zone 0 for the top-entry exit of zone 2; the harness stays straight, J307.k <-> J203.k)",
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "battery_tray", "at": [0.5, 1.0, 0.5], "off": [0, -0.95, 0], "keep": "xz"},
+          {"edge": "PWR_B", "zone": 2, "s": 12.3, "keep": "yz"},
+          {"edge": "PWR_B", "zone": 2, "s": 12.3, "off": [0, 8.0, 0], "keep": "z"},
+          {"edge": "PWR_B", "zone": 2, "s": 12.3, "dz": 8.8, "off": [0, 8.0, 0]},
+          {"edge": "PWR_B", "zone": 2, "s": 12.3, "dz": 8.8, "off": [0, 8.75, 0]}
+        ],
+        "note": "W2 PWR-L6-PLACE third pass: the 20 S02-SIG-2 wires leave S02 at the CTRL left edge (zone 0, s 47) and run at the CTRL exit height z 62.98 down x 175.2 (right of the display, x <= 170.52, and of the blower) to y 37.0 over the battery tray (top z 58.4), west along y 37.0 to x 108.3 (clear of the display clamp boss (163.8, 46) and the display, y >= 50.3, by >= 0.5 mm plus the bundle radius), north to y 46.5 and down onto the PHDR plug top of J203 (rows board y 9.75 / 7.75, PHD_top h_mated 8.8; the last 0.75 mm in y at the housing top); not along y 46: that leg crosses the clamp boss; with the 22 AWG PTFE bundle (OD 6.47) the leg keeps >= 0.5 mm to the front wall (67.58) and to the tray top; it runs beside the S23/S34 bundle at the zone-2 exit (dressing, bend radius over J203 and proof-fit OPEN)"
       }
     }
   }

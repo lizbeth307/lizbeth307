@@ -311,7 +311,9 @@ def evaluate_route(P, sid, spec, named, opens, wires, root=None):
     if "od" in spec:                                   # a single cable (coax pigtail W407): its own OD
         od, n = spec["od"], 1
     else:
-        od, n = bundle(P, sid, wires) if spec.get("wires") is None else (round(hr["insulation_max_mm"]["default"] * math.sqrt(spec["wires"] / hr["fill"]), 2), spec["wires"])
+        # W2 PWR-L6-PLACE third pass: a branch that names its gauge ("awg") takes the chosen PTFE wire OD (wire_od), else the default insulation
+        dw = (wire_od(P, spec["awg"]) if spec.get("awg") is not None else None) or hr["insulation_max_mm"]["default"]
+        od, n = bundle(P, sid, wires) if spec.get("wires") is None else (round(dw * math.sqrt(spec["wires"] / hr["fill"]), 2), spec["wires"])
     bends, ang = 0, 0.0
     for a, b, c in zip(pts, pts[1:], pts[2:]):
         u = [b[i] - a[i] for i in range(3)]

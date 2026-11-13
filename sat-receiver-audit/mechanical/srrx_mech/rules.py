@@ -1876,6 +1876,12 @@ def pwr_b_exit_rule(P):
     rows, txt = [], []
     for i, ez in enumerate(b["edge_zones"]):
         fams = sorted({fam_of[h] for h in ez.get("headers", []) if h in fam_of})
+        if ez.get("exit") == "top":                      # W2 PWR-L6-PLACE third pass: vertical top-entry exit (zone 2)
+            row = _pwr_b_top_exit(P, b, ez, i, fams, face, ox, oy, xs, ys, obstacles, legs, clr)
+            rows.append(row)
+            txt.append(f"zone {i} ({ez['edge']} {ez['span'][0]:g}-{ez['span'][1]:g}, top entry {', '.join(ez.get('headers', [])) or 'no header'}): "
+                       f"{row['verdict']}")
+            continue
         hs = [hh.get(f"{f}_side", {}).get("h") for f in fams]
         band = (face, face + max([h for h in hs if h] or [b["max_height"]]))
         a0, a1 = ez["span"]
@@ -1947,9 +1953,11 @@ def _pwr_b_exit_legs(P):
         return {}
     named = routes.boxes(P)
     out = {}
-    for sid, spec in P.mech["harness_routes"]["segments"].items():
+    # W2 PWR-L6-PLACE third pass: the branches (S02B) too, and every leg's whole route against the display clamp bosses
+    specs = [(sid, spec, res["segments"].get(sid, {})) for sid, spec in P.mech["harness_routes"]["segments"].items()]
+    specs += [(bid, spec, res.get("branches", {}).get(bid, {})) for bid, spec in P.mech["harness_routes"].get("branches", {}).items()]
+    for sid, spec, r in specs:
         via = spec.get("via") or []
-        r = res["segments"].get(sid, {})
         pts = r.get("points_mm") or []
         if not via or len(pts) != len(via):
             continue
@@ -1976,7 +1984,85 @@ def _pwr_b_exit_legs(P):
                     worst = (d, name)
         out[sid] = {"zone": via[ends[0]]["zone"], "bundle_od_mm": r.get("bundle_od_mm"), "pieces": len(leg) - 1,
                     "clear_mm": None if worst is None else round(worst[0], 2), "nearest": None if worst is None else worst[1]}
+        boss = clamp_boss_clearance(P, pts, r.get("bundle_od_mm") or 0.0)
+        if boss is not None:
+            out[sid].update(boss_clear_mm=boss[0], boss=boss[1])
     return out
+
+
+def clamp_boss_clearance(P, pts, od, steps=200):
+    """W2 PWR-L6-PLACE third pass: smallest gap (mm) from the bundle surface (centreline - OD/2) of a route polyline to the display
+    clamp bosses (mechanical.json display clamp_bosses: cylinders of boss_d from the module back to the front-wall inner face,
+    as cad.py builds them), which are no structure box of the keep-clear check; returns (gap, [x, y]) or None."""
+    d = P.mech.get("display", {})
+    bosses = d.get("clamp_bosses") or []
+    if not bosses or len(pts) < 2:
+        return None
+    rc = d["clamp"]["boss_d"] / 2.0
+    za, zb = P.mech["stack_z"]["module_back"], P.mech["stack_z"]["front_wall_inner"] + 0.1
+    best = None
+    for a, b in zip(pts, pts[1:]):
+        for c in bosses:
+            for k in range(steps + 1):
+                q = [a[j] + k / steps * (b[j] - a[j]) for j in range(3)]
+                g = math.hypot(max(math.hypot(q[0] - c[0], q[1] - c[1]) - rc, 0.0), max(za - q[2], 0.0, q[2] - zb)) - od / 2.0
+                if best is None or g < best[0] - 1e-9:
+                    best = (g, [c[0], c[1]])
+    return round(best[0], 3), best[1]
+
+
+def _pwr_b_top_exit(P, b, ez, i, fams, face, ox, oy, xs, ys, obstacles, legs, clr):
+    """R-PWRB-EXIT row of a top-entry zone (boards.json PWR_B edge_zones exit 'top', W2 PWR-L6-PLACE third pass): the free height
+    over the zone footprint (span x depth from the edge) from the component face to the lowest envelope or structure part above
+    it, else the front-wall inner face, less the largest mated header height of the zone (harness_headers <family>_top), against
+    the largest bundle OD of the zone's segments and branches plus the bundle clearance; plus the legs and the clamp bosses."""
+    hh = P.parts["harness_headers"]
+    tops = {f: hh.get(f"{f}_top", {}) for f in fams}
+    hm = {f: c.get("h_mated", c.get("h")) for f, c in tops.items()}
+    h_max = max([h for h in hm.values() if h is not None], default=None)
+    a0, a1 = ez["span"]
+    dep = ez.get("depth", 0.0)
+    if ez["edge"] in ("bottom", "top"):
+        line = oy + (min(ys) if ez["edge"] == "bottom" else ez.get("at", max(ys)))
+        y0, y1 = (line, line + dep) if ez["edge"] == "bottom" else (line - dep, line)
+        fp = (ox + a0, y0, ox + a1, y1)
+    else:
+        line = ox + (max(xs) if ez["edge"] == "right" else min(xs))
+        x0, x1 = (line - dep, line) if ez["edge"] == "right" else (line, line + dep)
+        fp = (x0, oy + a0, x1, oy + a1)
+    ceil_z, ceil = P.mech["stack_z"]["front_wall_inner"], "front wall"
+    for name, bx in obstacles:
+        if bx[0] < fp[2] - 1e-9 and bx[3] > fp[0] + 1e-9 and bx[1] < fp[3] - 1e-9 and bx[4] > fp[1] + 1e-9 and bx[2] >= face - 1e-9:
+            if bx[2] < ceil_z:
+                ceil_z, ceil = bx[2], name
+    zl = {sid: v for sid, v in legs.items() if v["zone"] == i}
+    od = max([v["bundle_od_mm"] for v in zl.values() if v["bundle_od_mm"]], default=None)
+    od_seg = [sid for sid, v in zl.items() if v["bundle_od_mm"] == od]
+    row = {"zone": i, "edge": ez["edge"], "exit": "top", "span": ez["span"], "headers": ez.get("headers", []), "families": fams,
+           "footprint_xy": [round(v, 2) for v in fp], "face_z": round(face, 3), "ceiling_z": round(ceil_z, 3), "ceiling": ceil,
+           "mated_h_mm": hm, "plug_top_z": round(face + h_max, 3) if h_max is not None else None,
+           "segments": sorted(zl), "bundle_od_max_mm": od, "bundle_clearance_mm": clr,
+           "legs": {sid: {k: v.get(k) for k in ("bundle_od_mm", "pieces", "clear_mm", "nearest", "boss_clear_mm", "boss")}
+                    for sid, v in sorted(zl.items())}}
+    if h_max is None:
+        row["verdict"] = f"mated height of {', '.join(fams) or 'no header'} top entry not read (TBD)"
+        return row
+    room = round(ceil_z - face - h_max, 3)
+    need = round((od or 0.0) + clr, 3)
+    row.update(vertical_room_mm=room, room_mm=room, room_kind="vertical over the mated plugs (top entry)", plug_proud_mm=None,
+               need_mm=need, room_ok=room >= need - 1e-9)
+    row["verdict"] = (f"vertical room {room:g} mm over the mated plugs ({ceil} z {ceil_z:g} - face {face:g} - mated {h_max:g}) "
+                      + (">=" if room >= need - 1e-9 else "<") + f" bundle OD {od or 0:g} ({', '.join(od_seg) or 'none'}) + clearance {clr:g} = {need:g}"
+                      + "; the wires rise from the plug tops (bend radius over the plugs TBD)")
+    bad = [f"{sid} reaches {-v['clear_mm']:g} into {v['nearest']}" for sid, v in sorted(zl.items()) if v["clear_mm"] is not None and v["clear_mm"] < -1e-9]
+    ok = [f"{sid} {v['clear_mm']:g}" for sid, v in sorted(zl.items()) if v["clear_mm"] is not None and v["clear_mm"] >= -1e-9]
+    if zl:
+        row["verdict"] += ("; legs, bundle (centreline + OD/2) against the envelopes: "
+                           + "; ".join(([", ".join(bad)] if bad else []) + ([f"clear: {', '.join(ok)} mm"] if ok else [])))
+        bz = [f"{sid} {v['boss_clear_mm']:g}" for sid, v in sorted(zl.items()) if v.get("boss_clear_mm") is not None]
+        if bz:
+            row["verdict"] += "; bundle surface to the display clamp bosses (whole route): " + ", ".join(bz) + " mm"
+    return row
 
 
 def w2_mech7_rules(P):

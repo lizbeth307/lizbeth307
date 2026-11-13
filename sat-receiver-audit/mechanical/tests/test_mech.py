@@ -1479,7 +1479,7 @@ class ContractW2Mech7Part2(unittest.TestCase):
         row = a["edge_zones"][0]
         for ez in b["edge_zones"]:
             need = sum(cy[graph[h]["footprint"]]["w"] for h in ez["headers"] if h in graph)
-            if ez["edge"] == "right":
+            if ez["edge"] == "right" or ez.get("exit") == "top":  # top entry: J203 and J506 in two rows (W2 PWR-L6-PLACE, ContractW2PwrL6Place3)
                 continue                                                                 # S02: no home without the FFC (OPEN)
             self.assertLessEqual(need, ez["span"][1] - ez["span"][0] + 1e-9, ez["headers"])
             if ez["edge"] == "top":
@@ -1515,7 +1515,7 @@ class ContractW2Mech7Part2(unittest.TestCase):
             self.assertIsNotNone(z["room_mm"], z)
             self.assertGreaterEqual(z["room_mm"], 0.0)
         Q = self._copy()
-        Q.boards["boards"]["PWR_B"]["exit_rule"]["plug_proud_mm"]["PH"] = 0.1
+        Q.boards["boards"]["PWR_B"]["exit_rule"]["plug_proud_mm"].update(PH=0.1, PHD=0.4)  # each 1.9 lower (PHD 2.3 read, W2 PWR-L6-PLACE)
         zq = {z["zone"]: z for z in self._rule(Q, "R-PWRB-EXIT")["value_mm"]["zones"]}
         for i, z in zq.items():                    # review F2: the set-back also counts the bundle OD, so a lower housing only moves it by 1.9
             if "set_back_min_mm" in z:
@@ -1731,3 +1731,98 @@ class ContractW2Mech8(unittest.TestCase):
         self.assertIn("6 шарів, 1.664 мм", text("PWR_B"))
         self.assertIn("TBD при замовленні", text("PWR"))
         self.assertIn("FR-4, 4 шари, 1.6 мм (build/15)", text("RF"))
+
+
+class ContractW2PwrL6Place3(unittest.TestCase):
+    """W2 PWR-L6-PLACE third pass (judge decision ESC-JUDGE, option M): PWR-B edge zone 2 is the vertical top-entry exit pair
+    J203 (JST PHD B20B-PHDSS, harness branch S02B of S02) and J506 (JST PH B9B-PH-K-S, S23 + S34); the S23/S34 display leg and
+    the S02B leg keep clear of the display clamp bosses, which are no structure box; D-ENV is unchanged. MODEL only: bend radius,
+    dressing and the fit stay proof-fit gates (OPEN)."""
+
+    @classmethod
+    def setUpClass(cls):
+        from srrx_mech import routes
+        cls.res = routes.evaluate(P)
+        cls.rows = {r["id"]: r for r in rules.evaluate(P)}
+
+    def test_zone_two_is_the_top_exit_pair(self):
+        b, a = P.boards["boards"]["PWR_B"], P.boards["boards"]["PWR"]
+        ez = b["edge_zones"][2]
+        self.assertEqual((ez["edge"], ez["span"], ez["headers"], ez["exit"]), ("bottom", [90.0, 115.0], ["J203", "J506"], "top"))
+        self.assertEqual(b["edge_zones"][0]["headers"], ["J201", "J202"])
+        self.assertEqual(a["edge_zones"][0]["row_end_max"], 90.0)
+        self.assertGreaterEqual(ez["span"][0], a["edge_zones"][0]["row_end_max"])
+        cy = boards.footprint_courtyards()
+        graph = boards.graph_board_parts()
+        for h in ez["headers"]:
+            fp = graph[h]["footprint"]
+            self.assertTrue(fp.endswith("_Vertical"), fp)
+            self.assertLessEqual(cy[fp]["w"], ez["span"][1] - ez["span"][0], h)       # each header along the span
+        self.assertLessEqual(sum(cy[graph[h]["footprint"]]["h"] for h in ez["headers"]), ez["depth"])   # two rows in the depth
+        self.assertEqual(P.boards["boards"]["PWR_B"]["exit_rule"]["plug_proud_mm"]["PHD"], 2.3)
+
+    def test_zone_two_height_zone_is_the_clearance_map(self):
+        b = P.boards["boards"]["PWR_B"]
+        (hz,) = b["height_zones"]
+        self.assertEqual(hz["rect"], [90.0, 0.0, 25.0, 11.8])
+        self.assertEqual(hz["max_height"], b["max_height"])            # the board envelope stays 5.5 (layout.board_boxes)
+        cm = [z for z in boards.clearance_map(P, "PWR_B")["front"]
+              if z["rect"][0] <= 90.0 and z["rect"][0] + z["rect"][2] >= 115.0 and z["rect"][1] <= 0.0 and z["rect"][1] + z["rect"][3] >= 11.8]
+        self.assertEqual(len(cm), 1)
+        self.assertAlmostEqual(hz["free_mm"], cm[0]["free_mm"], places=2)
+        self.assertAlmostEqual(hz["fits_mm"], cm[0]["fits_mm"], places=2)
+        rows = {h["connector"]: h for h in self.rows["R-HDR-HEIGHT"]["headers"]}
+        for ref, hm in (("J203", 8.8), ("J506", 8.0)):
+            self.assertEqual((rows[ref]["orientation"], rows[ref]["h_mm"]), ("top", hm), ref)
+            self.assertIn("fits a component-side height zone", rows[ref]["verdict"], ref)
+
+    def test_top_entry_room_and_plug_tops(self):
+        z = [z for z in self.rows["R-PWRB-EXIT"]["value_mm"]["zones"] if z["zone"] == 2][0]
+        face = P.boards["boards"]["PWR_B"]["place"]["z_bottom"] + P.board_t("PWR_B")
+        self.assertAlmostEqual(face, 49.228, places=6)
+        fw = P.mech["stack_z"]["front_wall_inner"]
+        self.assertEqual((z["exit"], z["ceiling"], z["ceiling_z"]), ("top", "front wall", fw))
+        self.assertAlmostEqual(z["plug_top_z"], 58.028, places=3)                 # J203 PHDR 8.8 mated (J506 PHR: 57.228)
+        self.assertAlmostEqual(face + P.parts["harness_headers"]["PH_top"]["h_mated"], 57.228, places=3)
+        self.assertLess(z["plug_top_z"], fw)
+        self.assertTrue(z["room_ok"], z["verdict"])
+        self.assertEqual(sorted(z["segments"]), ["S02B", "S23", "S34"])
+        self.assertAlmostEqual(z["bundle_od_max_mm"], 6.47, places=2)            # S02B, 20 x 22 AWG PTFE at fill 0.6
+
+    def test_s02b_is_routed_and_clear(self):
+        br = self.res["branches"]["S02B"]
+        self.assertEqual(br["crossings"], [])
+        self.assertEqual((br["wires"], br["from_segment"]), (20, "S02"))
+        self.assertAlmostEqual(br["bundle_od_mm"], 6.47, places=2)
+        pts = br["points_mm"]
+        self.assertAlmostEqual(pts[-1][0], 108.3, places=3)
+        self.assertAlmostEqual(pts[-1][1], 47.25, places=3)
+        self.assertAlmostEqual(pts[-1][2], 58.028, places=3)
+        r = br["bundle_od_mm"] / 2
+        fw = P.mech["stack_z"]["front_wall_inner"]
+        self.assertLessEqual(max(p[2] for p in pts) + r, fw - 0.5)                  # the PTFE bundle under the front wall
+        legs = rules._pwr_b_exit_legs(P)
+        self.assertGreaterEqual(legs["S02B"]["clear_mm"], 0.5)                       # bundle to every envelope (display, tray)
+        self.assertNotIn("S02B", [s for s, v in self.res["segments"].items() if v.get("crossings")])
+
+    def test_legs_clear_the_display_clamp_bosses(self):
+        self.assertEqual(len(P.mech["display"]["clamp_bosses"]), 4)
+        for sid, r in (("S23", self.res["segments"]["S23"]), ("S34", self.res["segments"]["S34"]), ("S02B", self.res["branches"]["S02B"])):
+            gap, boss = rules.clamp_boss_clearance(P, r["points_mm"], r["bundle_od_mm"])
+            self.assertGreaterEqual(gap, 0.5, (sid, gap, boss))                      # >= 0.5 + r from the boss axis surface
+        for sid in ("S23", "S34"):                                                     # the display leg along y <= 40.5, not 41 / 44
+            pts = self.res["segments"][sid]["points_mm"]
+            leg = [p for p in pts if abs(p[2] - 59.0) < 1e-6 and p[0] > 106.0]
+            self.assertTrue(leg, sid)
+            self.assertLessEqual(max(p[1] for p in leg[1:]), 40.5 + 1e-6, sid)
+        Q = __import__("copy").deepcopy(P)                                            # the old y 44 leg reaches into the boss
+        for sid in ("S23", "S34"):
+            Q.mech["harness_routes"]["segments"][sid]["via"][2]["off"] = [0, -6.3, 0]
+        from srrx_mech import routes
+        r = routes.evaluate(Q)["segments"]["S34"]
+        self.assertLess(rules.clamp_boss_clearance(Q, r["points_mm"], r["bundle_od_mm"])[0], 0.0)
+
+    def test_route_clear_count_and_envelope(self):
+        rc = self.rows["R-ROUTE-CLEAR"]
+        self.assertEqual(rc["value_mm"]["crossing"], ["S26"])                          # unchanged: only S26 crosses
+        self.assertEqual(P.boards["stackup"]["t"], 1.6)                                 # D-ENV and the shared stackup untouched
