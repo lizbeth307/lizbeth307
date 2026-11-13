@@ -18,13 +18,12 @@
     "thickness_mm": 1.6,
     "source": "build/15 Шари (4-layer JLC04161H-7628, 1 oz outer) and mechanical/generated/contract/boards.json stackup",
     "types": {
-      "In1.Cu": "power",
-      "In2.Cu": "power"
+      "In1.Cu": "power"
     },
     "plan": {
       "F.Cu": "parts (top side only), LAB5 trunk and Kelvin copper, signals, GND pour",
       "In1.Cu": "solid GND plane (layer type power: the router puts only vias through it)",
-      "In2.Cu": "second GND plane (layer type power)",
+      "In2.Cu": "signals (autorouted; W2 PWRB-R: the S-G-S-S plan of CTRL, a third routing layer for the bar between J209 and the S02 headers), GND pour after routing",
       "B.Cu": "B2B half J209 (bottom), its GND spine and contact escapes, LAB5 stubs, signals, GND pour"
     }
   },
@@ -63,8 +62,6 @@
       "BIAS_SB_LNA",
       "BONI13V8",
       "BONI13V8_PORT",
-      "CHG_INHIBIT",
-      "E1_BAT_ADC",
       "E2_BLK2_G",
       "E2_BLK2_S",
       "E2_BLK2_SINK",
@@ -128,15 +125,10 @@
       "FLT_LNB",
       "FLT_SB_LNA",
       "GND",
-      "I2C0_SCL",
-      "I2C0_SDA",
       "I2C2_SCL",
       "I2C2_SDA",
       "I2CB_SCL",
       "I2CB_SDA",
-      "IMU_RX",
-      "IMU_TX",
-      "INA228_ALERT",
       "LAB5",
       "LAB5_RLY",
       "LNA4V5",
@@ -145,9 +137,7 @@
       "PG_BONI",
       "PG_LNB",
       "PICO_DISP_EN",
-      "PICO_OFF",
       "PTC_AUX",
-      "PWR_BUTTON",
       "SLED_DET",
       "VBUS_HFP",
       "VBUS_LABPORT",
@@ -315,8 +305,6 @@
           "BIAS_SB_LNA": "BIAS_SB_LNA",
           "BONI13V8": "BONI13V8",
           "BONI13V8_PORT": "BONI13V8_PORT",
-          "CHG_INHIBIT": "CHG_INHIBIT",
-          "E1_BAT_ADC": "E1_BAT_ADC",
           "E2_BLK2_G": "E2_BLK2_G",
           "E2_BLK2_S": "E2_BLK2_S",
           "E2_BLK2_SINK": "E2_BLK2_SINK",
@@ -380,15 +368,10 @@
           "FLT_LNB": "FLT_LNB",
           "FLT_SB_LNA": "FLT_SB_LNA",
           "GND": "GND",
-          "I2C0_SCL": "I2C0_SCL",
-          "I2C0_SDA": "I2C0_SDA",
           "I2C2_SCL": "I2C2_SCL",
           "I2C2_SDA": "I2C2_SDA",
           "I2CB_SCL": "I2CB_SCL",
           "I2CB_SDA": "I2CB_SDA",
-          "IMU_RX": "IMU_RX",
-          "IMU_TX": "IMU_TX",
-          "INA228_ALERT": "INA228_ALERT",
           "LAB5": "LAB5",
           "LAB5_RLY": "LAB5_RLY",
           "LNA4V5": "LNA4V5",
@@ -397,9 +380,7 @@
           "PG_BONI": "PG_BONI",
           "PG_LNB": "PG_LNB",
           "PICO_DISP_EN": "PICO_DISP_EN",
-          "PICO_OFF": "PICO_OFF",
           "PTC_AUX": "PTC_AUX",
-          "PWR_BUTTON": "PWR_BUTTON",
           "SLED_DET": "SLED_DET",
           "VBUS_HFP": "VBUS_HFP",
           "VBUS_LABPORT": "VBUS_LABPORT",
@@ -483,14 +464,7 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            44.15,
-            16.2
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -516,14 +490,7 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            40.776,
-            8.8
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -872,14 +839,7 @@
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            42.496,
-            27.45
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -1611,14 +1571,7 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            44.15,
-            9.9
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -1769,14 +1722,7 @@
         ],
         "align": "origin",
         "rotation": 180,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            117.33,
-            20.35
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -2281,14 +2227,7 @@
         ],
         "align": "origin",
         "rotation": 0,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            37.667,
-            31.094
-          ],
-          "angle": 90
-        }
+        "side": "F"
       }
     },
     {
@@ -2499,14 +2438,7 @@
         ],
         "align": "origin",
         "rotation": 90,
-        "side": "F",
-        "ref_text": {
-          "at": [
-            44.5,
-            20.0
-          ],
-          "angle": 0
-        }
+        "side": "F"
       }
     },
     {
@@ -4221,12 +4153,8 @@
             16.047
           ],
           [
-            112.18,
-            15.147
-          ],
-          [
-            112.8871,
-            15.8541
+            114.705,
+            16.047
           ]
         ],
         "locked": true,
@@ -4747,8 +4675,8 @@
             26.692
           ],
           [
-            46.5458,
-            25.9672
+            45.821,
+            25.667
           ]
         ],
         "locked": true,
@@ -5716,8 +5644,8 @@
         "id": "GND-C297-2-V",
         "net": "GND",
         "at": [
-          112.8871,
-          15.8541
+          114.705,
+          16.047
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6064,8 +5992,8 @@
         "id": "GND-R287-2-V",
         "net": "GND",
         "at": [
-          46.5458,
-          25.9672
+          45.821,
+          25.667
         ],
         "drill_mm": 0.3,
         "diameter_mm": 0.7,
@@ -6358,19 +6286,19 @@
         "priority": 0,
         "pad_connection": "solid",
         "why": "GND plane (layer type power, a plane in the DSN): the scripted vias of every SMD GND pad and the THT GND pins join it"
-      },
-      {
-        "id": "GND-In2",
-        "net": "GND",
-        "layer": "In2.Cu",
-        "outline": "board",
-        "priority": 0,
-        "pad_connection": "solid",
-        "why": "second GND plane (power layer); solid pad connection: a THT GND pin of J207 had one thermal spoke left on both planes (route run 42417213682). Cost: the THT GND pins of J201-J207 and J506 join four GND layers without thermal relief, so their hole fill and solder joints are an assembly gate (OPEN, build/15 W2 PCB-PWRB)"
       }
     ]
   },
   "post_route_zones": [
+    {
+      "id": "GND-In2",
+      "net": "GND",
+      "layer": "In2.Cu",
+      "outline": "board",
+      "priority": 0,
+      "pad_connection": "solid",
+      "why": "W2 PWRB-R: In2.Cu is a signal layer (IN2_SIGNAL); its GND pour after routing joins the scripted GND vias"
+    },
     {
       "id": "GND-F",
       "net": "GND",
@@ -6393,6 +6321,7 @@
     "width_mm": 0.2,
     "layers": [
       "F.Cu",
+      "In2.Cu",
       "B.Cu"
     ],
     "blocks": [
@@ -6558,20 +6487,10 @@
         ]
       },
       {
-        "id": "J105",
-        "kind": "header_edge_strip",
-        "rect": [
-          26.2,
-          -0.2,
-          13.0,
-          7.4
-        ]
-      },
-      {
         "id": "J106",
         "kind": "header_edge_strip",
         "rect": [
-          44.7,
+          70.6,
           -0.2,
           13.0,
           7.4
@@ -6585,86 +6504,6 @@
           -0.2,
           13.0,
           7.4
-        ]
-      },
-      {
-        "id": "J108",
-        "kind": "header_edge_strip",
-        "rect": [
-          70.6,
-          -0.2,
-          13.0,
-          11.6
-        ]
-      },
-      {
-        "id": "J109",
-        "kind": "header_edge_strip",
-        "rect": [
-          38.7,
-          -0.2,
-          6.5,
-          7.9
-        ]
-      },
-      {
-        "id": "J110",
-        "kind": "header_edge_strip",
-        "rect": [
-          57.2,
-          -0.2,
-          13.9,
-          6.5
-        ]
-      },
-      {
-        "id": "J111",
-        "kind": "header_edge_strip",
-        "rect": [
-          20.2,
-          -0.2,
-          6.5,
-          9.9
-        ]
-      },
-      {
-        "id": "J112",
-        "kind": "header_edge_strip",
-        "rect": [
-          83.1,
-          -0.2,
-          6.5,
-          11.9
-        ]
-      },
-      {
-        "id": "J113",
-        "kind": "header_edge_strip",
-        "rect": [
-          115.0,
-          11.2,
-          6.5,
-          7.9
-        ]
-      },
-      {
-        "id": "J114",
-        "kind": "header_edge_strip",
-        "rect": [
-          121.03,
-          -0.2,
-          7.77,
-          11.66
-        ]
-      },
-      {
-        "id": "J115",
-        "kind": "header_edge_strip",
-        "rect": [
-          121.03,
-          10.96,
-          7.77,
-          11.66
         ]
       },
       {
@@ -6685,16 +6524,6 @@
           24.52,
           18.16,
           10.78
-        ]
-      },
-      {
-        "id": "J507",
-        "kind": "header_edge_strip",
-        "rect": [
-          115.0,
-          -0.2,
-          6.5,
-          11.9
         ]
       },
       {
@@ -6738,47 +6567,7 @@
         ]
       },
       {
-        "id": "TP103",
-        "kind": "test_point_probe_window",
-        "rect": [
-          3.45,
-          10.65,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "id": "TP104",
-        "kind": "test_point_probe_window",
-        "rect": [
-          21.25,
-          52.65,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "id": "TP105",
-        "kind": "test_point_probe_window",
-        "rect": [
-          17.95,
-          43.1,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "id": "TP106",
-        "kind": "test_point_probe_window",
-        "rect": [
-          38.51,
-          35.99,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "id": "TP107",
+        "id": "TP201",
         "kind": "test_point_probe_window",
         "rect": [
           17.35,
@@ -6788,31 +6577,11 @@
         ]
       },
       {
-        "id": "TP108",
-        "kind": "test_point_probe_window",
-        "rect": [
-          20.35,
-          73.43,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "id": "TP201",
-        "kind": "test_point_probe_window",
-        "rect": [
-          39.25,
-          13.77,
-          3.0,
-          3.0
-        ]
-      },
-      {
         "id": "TP202",
         "kind": "test_point_probe_window",
         "rect": [
-          42.75,
-          22.25,
+          21.25,
+          52.65,
           3.0,
           3.0
         ]
@@ -6871,8 +6640,8 @@
         "id": "TP213",
         "kind": "test_point_probe_window",
         "rect": [
-          39.25,
-          10.77,
+          20.35,
+          73.43,
           3.0,
           3.0
         ]
@@ -6881,8 +6650,8 @@
         "id": "TP214",
         "kind": "test_point_probe_window",
         "rect": [
-          45.75,
-          22.25,
+          17.95,
+          43.1,
           3.0,
           3.0
         ]
@@ -6893,16 +6662,6 @@
         "rect": [
           5.51,
           14.55,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "id": "TP503",
-        "kind": "test_point_probe_window",
-        "rect": [
-          39.25,
-          29.75,
           3.0,
           3.0
         ]
@@ -7104,19 +6863,7 @@
     },
     {
       "region": [
-        26.2,
-        -0.2,
-        13.0,
-        7.4
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J105 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        44.7,
+        70.6,
         -0.2,
         13.0,
         7.4
@@ -7137,102 +6884,6 @@
       "side": "top",
       "checked": true,
       "why": "PWR-A cut-out J107 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        70.6,
-        -0.2,
-        13.0,
-        11.6
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J108 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        38.7,
-        -0.2,
-        6.5,
-        7.9
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J109 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        57.2,
-        -0.2,
-        13.9,
-        6.5
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J110 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        20.2,
-        -0.2,
-        6.5,
-        9.9
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J111 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        83.1,
-        -0.2,
-        6.5,
-        11.9
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J112 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        115.0,
-        11.2,
-        6.5,
-        7.9
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J113 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        121.03,
-        -0.2,
-        7.77,
-        11.66
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J114 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        121.03,
-        10.96,
-        7.77,
-        11.66
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J115 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
     },
     {
       "region": [
@@ -7257,18 +6908,6 @@
       "side": "top",
       "checked": true,
       "why": "PWR-A cut-out J206 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        115.0,
-        -0.2,
-        6.5,
-        11.9
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out J507 (header_edge_strip, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
     },
     {
       "region": [
@@ -7320,80 +6959,8 @@
     },
     {
       "region": [
-        3.45,
-        10.65,
-        3.0,
-        3.0
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out TP103 (test_point_probe_window, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        21.25,
-        52.65,
-        3.0,
-        3.0
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out TP104 (test_point_probe_window, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        17.95,
-        43.1,
-        3.0,
-        3.0
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out TP105 (test_point_probe_window, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        38.51,
-        35.99,
-        3.0,
-        3.0
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out TP106 (test_point_probe_window, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
         17.35,
         73.43,
-        3.0,
-        3.0
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out TP107 (test_point_probe_window, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        20.35,
-        73.43,
-        3.0,
-        3.0
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out TP108 (test_point_probe_window, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        39.25,
-        13.77,
         3.0,
         3.0
       ],
@@ -7404,8 +6971,8 @@
     },
     {
       "region": [
-        42.75,
-        22.25,
+        21.25,
+        52.65,
         3.0,
         3.0
       ],
@@ -7476,8 +7043,8 @@
     },
     {
       "region": [
-        39.25,
-        10.77,
+        20.35,
+        73.43,
         3.0,
         3.0
       ],
@@ -7488,8 +7055,8 @@
     },
     {
       "region": [
-        45.75,
-        22.25,
+        17.95,
+        43.1,
         3.0,
         3.0
       ],
@@ -7509,18 +7076,6 @@
       "side": "top",
       "checked": true,
       "why": "PWR-A cut-out TP215 (test_point_probe_window, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
-    },
-    {
-      "region": [
-        39.25,
-        29.75,
-        3.0,
-        3.0
-      ],
-      "max_height_mm": 0.0,
-      "side": "top",
-      "checked": true,
-      "why": "PWR-A cut-out TP503 (test_point_probe_window, build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts): no PWR-B part over it (W2 PCB-PWRB-2), so pcb/check_boards.py reports any courtyard that reaches it"
     },
     {
       "region": [
@@ -7853,12 +7408,12 @@
       "pin_map": "pin n of J208 (PWR-A) meets pin n+1 of J209 (PWR-B) for n odd and pin n-1 for n even; the map is its own inverse",
       "rule": "PWR_A has no board of record yet (W2 PCB-PWRA-3 placed it in a study: build/kicad/boards/PWR_A/placement-study-shrink2.json, J208 at [98.8, 18.5] rotation 0 on the top, its b2b check against J209 0 net differences); J209 = J208 mirrored about the strip axis, so J209 pad m lies over J208 pad m+1 for m odd and m-1 for m even, and its alignment-post holes are mirrored too, they do not coincide: J208 has them at (+/-13.5, +0.85) and J209 at (+/-13.5, -0.85) off the strip centre (b2b-nets.json mating_map.placement); the check_boards b2b pair joins both specs once PWR_A has a board of record (W2 PCB-PWRA-4); a geometric pad-over-pad check is not in check_boards yet (OPEN, build/15 W2 B2B)"
     },
-    "source": "pcb/generated/b2b-nets.json sha256 e5e6500288f924365530277f1b857d054c7b455260791d6499935e8709975802",
+    "source": "pcb/generated/b2b-nets.json sha256 6af1aadaba71517b71e553fe0889061fbe5f97f435b3b6fc039d137e0494ea34",
     "rule": "J209 pad nets are its graph pins, which equal b2b-nets.json contacts[].pwr_b_pin (make_spec.py b2b_pin_map stops on any difference); the map itself is pcb/prepare.py b2b_contacts (pin_map_rule, guard_rule in b2b-nets.json)",
     "contacts": 100,
-    "used": 55,
-    "spare": 45,
-    "needed_with_spare": 66
+    "used": 46,
+    "spare": 54,
+    "needed_with_spare": 56
   },
   "placement_rules": {
     "edges": "W2 PCB-PWRB-2 (SHRINK-2 without the S02 FFC and without the J204 + J207 PHD merge): J204 and J207 on the top span x 58-107 of contract edge zone 1 (mechanical/generated/contract/boards.json PWR_B), mating faces 4.51 mm inboard of the edge (R-PWRB-EXIT set_back_min_mm of zone 1) and no part in front of them (plug zones). The S02 headers J202, J203 and J201 and the PH 9 J506 are parked inside the board without a harness exit: zone 0 (right edge) is covered by the PWR-A strips of J104, J113-J115 and J507 and two hole keep-outs, zone 2 (bottom span x 93-114.5) by the PWR-A windows of C265, C512 and C511 of the PCB-PWRA-3 placement. OPEN for MECH and PCB-PWRA-4 (build/15 W2 PCB-PWRB-2); check_boards does not check edge zones",
@@ -7866,7 +7421,7 @@
     "kelvin": "INA3221 U215 near the ch1 shunt (the ch2 and ch3 sense lines are longer, MODEL; a deviation from the W2 PCB-PWRB-2 brief, which asked for U215 at its shunts, accepted in build/15 W2 PCB-PWRB-2); every shunt net is scripted copper (current path plus sense take-off from the shunt pads) up to the 10 ohm INA3221 filter resistors next to each shunt; the filtered input nets E2_U215_IP1-3 / IM1-3 from those resistors to U215 are autorouted as separate nets, not as pairs (routed lengths of the board of record in build/kicad/boards/PWR_B/README.md and build/15 W2 PCB-PWRB-2), so INA3221 accuracy stays a bench gate; ch4 senses through the B2B to U216 on PWR-A"
   },
   "pwr_a_cutouts": {
-    "source": "build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts (sha256 of the list: 28e103fbd0b2eb88bb76724c156b129b85da0e9b0dc3a3e6946a04c09da4b67a; make_spec.py cutouts_digest)",
+    "source": "build/kicad/boards/PWR_A/placement-study-shrink2.json pwr_b_cutouts (sha256 of the list: 010a7ec6476a132db6fc3cb36a0fa2806b1dca77482953f58169a504e8c3de16; make_spec.py cutouts_digest)",
     "rule": "window (courtyard + 0.5) over every PWR-A part taller than hA, the edge strips of the PWR-A harness headers and the test-point probe windows (pcb/partition-spec.json keepouts, height_rule)",
     "hand_back": "not Edge.Cuts yet: the W2 MECH-7 contract is the full L (cutouts_mm []) and check_boards requires the outline, the cut-outs and the area to equal the contract; the MECH lineage writes these rectangles into mechanical/params/boards.json PWR_B (inner ones as cutouts, the edge ones as outline notches), then this board is re-routed (OPEN, build/15 W2 PCB-PWRB-2)",
     "cutouts_mm": [
@@ -8011,20 +7566,10 @@
         ]
       },
       {
-        "ref": "J105",
-        "kind": "header_edge_strip",
-        "rect": [
-          26.2,
-          -0.2,
-          13.0,
-          7.4
-        ]
-      },
-      {
         "ref": "J106",
         "kind": "header_edge_strip",
         "rect": [
-          44.7,
+          70.6,
           -0.2,
           13.0,
           7.4
@@ -8038,86 +7583,6 @@
           -0.2,
           13.0,
           7.4
-        ]
-      },
-      {
-        "ref": "J108",
-        "kind": "header_edge_strip",
-        "rect": [
-          70.6,
-          -0.2,
-          13.0,
-          11.6
-        ]
-      },
-      {
-        "ref": "J109",
-        "kind": "header_edge_strip",
-        "rect": [
-          38.7,
-          -0.2,
-          6.5,
-          7.9
-        ]
-      },
-      {
-        "ref": "J110",
-        "kind": "header_edge_strip",
-        "rect": [
-          57.2,
-          -0.2,
-          13.9,
-          6.5
-        ]
-      },
-      {
-        "ref": "J111",
-        "kind": "header_edge_strip",
-        "rect": [
-          20.2,
-          -0.2,
-          6.5,
-          9.9
-        ]
-      },
-      {
-        "ref": "J112",
-        "kind": "header_edge_strip",
-        "rect": [
-          83.1,
-          -0.2,
-          6.5,
-          11.9
-        ]
-      },
-      {
-        "ref": "J113",
-        "kind": "header_edge_strip",
-        "rect": [
-          115.0,
-          11.2,
-          6.5,
-          7.9
-        ]
-      },
-      {
-        "ref": "J114",
-        "kind": "header_edge_strip",
-        "rect": [
-          121.03,
-          -0.2,
-          7.77,
-          11.66
-        ]
-      },
-      {
-        "ref": "J115",
-        "kind": "header_edge_strip",
-        "rect": [
-          121.03,
-          10.96,
-          7.77,
-          11.66
         ]
       },
       {
@@ -8138,16 +7603,6 @@
           24.52,
           18.16,
           10.78
-        ]
-      },
-      {
-        "ref": "J507",
-        "kind": "header_edge_strip",
-        "rect": [
-          115.0,
-          -0.2,
-          6.5,
-          11.9
         ]
       },
       {
@@ -8191,47 +7646,7 @@
         ]
       },
       {
-        "ref": "TP103",
-        "kind": "test_point_probe_window",
-        "rect": [
-          3.45,
-          10.65,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "ref": "TP104",
-        "kind": "test_point_probe_window",
-        "rect": [
-          21.25,
-          52.65,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "ref": "TP105",
-        "kind": "test_point_probe_window",
-        "rect": [
-          17.95,
-          43.1,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "ref": "TP106",
-        "kind": "test_point_probe_window",
-        "rect": [
-          38.51,
-          35.99,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "ref": "TP107",
+        "ref": "TP201",
         "kind": "test_point_probe_window",
         "rect": [
           17.35,
@@ -8241,31 +7656,11 @@
         ]
       },
       {
-        "ref": "TP108",
-        "kind": "test_point_probe_window",
-        "rect": [
-          20.35,
-          73.43,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "ref": "TP201",
-        "kind": "test_point_probe_window",
-        "rect": [
-          39.25,
-          13.77,
-          3.0,
-          3.0
-        ]
-      },
-      {
         "ref": "TP202",
         "kind": "test_point_probe_window",
         "rect": [
-          42.75,
-          22.25,
+          21.25,
+          52.65,
           3.0,
           3.0
         ]
@@ -8324,8 +7719,8 @@
         "ref": "TP213",
         "kind": "test_point_probe_window",
         "rect": [
-          39.25,
-          10.77,
+          20.35,
+          73.43,
           3.0,
           3.0
         ]
@@ -8334,8 +7729,8 @@
         "ref": "TP214",
         "kind": "test_point_probe_window",
         "rect": [
-          45.75,
-          22.25,
+          17.95,
+          43.1,
           3.0,
           3.0
         ]
@@ -8346,16 +7741,6 @@
         "rect": [
           5.51,
           14.55,
-          3.0,
-          3.0
-        ]
-      },
-      {
-        "ref": "TP503",
-        "kind": "test_point_probe_window",
-        "rect": [
-          39.25,
-          29.75,
           3.0,
           3.0
         ]
@@ -8373,13 +7758,13 @@
     ],
     "overlay": {
       "raster_step_mm": 0.1,
-      "cutout_union_mm2": 2749.8,
+      "cutout_union_mm2": 1905.0,
       "overlap_mm2": 0.0,
-      "usable_mm2": 4892.1,
+      "usable_mm2": 5736.3,
       "top_courtyards_mm2": 2757.2,
       "b2b_courtyard_mm2": 190.3,
-      "fill_top": 0.5636,
-      "fill_with_b2b": 0.6025,
+      "fill_top": 0.4807,
+      "fill_with_b2b": 0.5138,
       "overlaps": [],
       "note": "MODEL: exact rectangle intersection of the top courtyards with the cut-outs plus a raster of their union; usable = L outline less the cut-out union and the hole keep-outs; fill_with_b2b counts J209 on the top area as pcb/partition-budget.json does"
     }
@@ -8455,6 +7840,12 @@
     "threads": 1,
     "job_timeout": "00:33:00",
     "timeout_s": 2100,
+    "class_layers": {
+      "PWR1A": [
+        "F.Cu",
+        "B.Cu"
+      ]
+    },
     "fanout": false,
     "ignore_net_classes": [
       "SCRIPTED_GND",

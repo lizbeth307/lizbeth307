@@ -85,6 +85,28 @@ PWRA1_PLACES = {'J113': ([117.7, 14.15], 90), 'J114': ([124.5, 4.13], 90), 'J115
                 'J507': ([117.7, 2.75], 90)}
 FFC_PLACES = {'J113': ([102.0, 2.75], 90), 'J114': ([108.77, 4.13], 90), 'J115': ([116.04, 4.13], 90),
               'J507': ([122.54, 2.75], 90)}
+# W2 PWRJ-F2C probe (fallback F2-C, wip/w2-pwrj-f2c): with pcb/partition-spec.json partition.domain_override_pwr_c set,
+# the E1 front end, the E5 IMU service group and their headers are on PWR-C. Design choices of the probe:
+# - J106 (W-C1 LAB5 feed, GND + LAB5) stands in the bottom row at the freed J108 slot (row_end_max 92.5 of the MECH-7
+#   contract), below the LAB5 contacts of J208; J107 (W-C1 E1_SW feed) keeps its row place, so the scripted E1_SW rise stays.
+# - The PWR-A parts that keep a PWR-B cut-out stay at their PCB-PWRA-4 places (placement-study-shrink2.json of
+#   00fdc9e8, origins align 'origin'), so the PWR-B placement around the remaining cut-outs stays legal; the J21 and DISP
+#   test points TP201/TP213/TP202/TP214 leave the PWR-B bar at x 42-50 (review of the PWRB-R PLACE probe: 12.8-17.4 mm
+#   per layer for 47 crossing nets) for the probe windows of the E1 test points that moved to PWR-C (TP107, TP108,
+#   TP104, TP105), which PWR-B already keeps free.
+F2C_PLACES = {'J106': ([73.85, 3.5], 90)}
+F2C_PINS = {
+    'C206': (37.8, 97.65, 90), 'C207': (31.1, 82.55, 0), 'C210': (9.95, 97.0, 0), 'C222': (30.75, 48.9, 0),
+    'C254': (29.05, 22.15, 90), 'C262': (23.15, 13.2, 90), 'C265': (93.5, 6.35, 90), 'C273': (2.45, 31.4, 0),
+    'C511': (108.65, 8.25, 0), 'C512': (101.75, 7.6, 0), 'L501': (24.9, 93.9, 0),
+    'TP101': (11.65, 40.95, 0), 'TP102': (5.5, 100.95, 90), 'TP203': (11.51, 69.35, 90), 'TP204': (40.05, 43.75, 0),
+    'TP205': (61.85, 11.45, 0), 'TP211': (4.01, 16.05, 90), 'TP212': (90.25, 33.55, 0), 'TP215': (7.01, 16.05, 90),
+    'C219': (3.2, 51.35, 90), 'TP2903': (93.25, 33.55, 0), 'U216': (117.95, 22.05, 0), 'L203': (3.29, 43.81, 0),
+    'TP201': (18.85, 74.93, 0),  # the TP107 slot
+    'TP213': (21.85, 74.93, 0),  # the TP108 slot
+    'TP202': (22.75, 54.15, 90),  # the TP104 slot
+    'TP214': (19.45, 44.6, 90),  # the TP105 slot
+}
 GAP = 0.5  # mm, region edge to a fixed courtyard (the planner gap)
 EDGE_INSET = 0.3  # mm, a planner region keeps this off the board outline (the draft regions start at 0.3)
 
@@ -405,11 +427,13 @@ def live_status(pspec):
     return {row['id']: row for row in rows}
 
 
-def bottom_row_anchors(draft_by_ref, fp_geo_of, row_end_max, margin):
+def bottom_row_anchors(draft_by_ref, fp_geo_of, row_end_max, margin, keep=None):
     """Anchors of the bottom-edge row: each header keeps its courtyard bottom on the edge line of the draft and its order;
     the turned ones rotate by 90 degrees; the row is packed from BOTTOM_ROW_START with GAP between courtyards."""
     out, x = {}, BOTTOM_ROW_START
-    for ref in BOTTOM_ROW:
+    for ref in [r for r in BOTTOM_ROW if r in draft_by_ref and (keep is None or (r in keep and r not in F2C_PLACES))]:
+        # W2 PWRJ-F2C probe: headers that moved to PWR-C (pcb/partition-spec.json partition.domain_override_pwr_c) or
+        # were deleted with S06/S07 (dnp) leave the row; the rest keep the draft order
         old = draft_by_ref[ref]['anchor']
         geo = fp_geo_of(ref)
         rot = (float(old.get('rotation', 0)) + (90 if ref in BOTTOM_ROW_TURNED else 0)) % 360
@@ -438,6 +462,7 @@ def build():
     bud = budget['candidates'][CANDIDATE]
     contract = bg.read_json(CONTRACT)['boards'][draft['contract']['board']]
     partition = bg.read_json(PARTITION)
+    f2c = bool(pspec['partition'].get('domain_override_pwr_c'))  # W2 PWRJ-F2C probe
     domains = set(draft['domains'])
     domain_refs = sorted((p['ref'] for p in partition['parts'] if p['board_candidate'] in domains and not p['dnp']),
                          key=bg.sort_ref)
@@ -509,7 +534,7 @@ def build():
     edge0 = contract['edge_zones'][0]
     row_end_max = edge0.get('row_end_max')
     margin_w = pspec['parameters']['window_margin']
-    row_anchors, row_end = (bottom_row_anchors(by_ref, fp_geo_of, row_end_max, margin_w) if row_end_max is not None
+    row_anchors, row_end = (bottom_row_anchors(by_ref, fp_geo_of, row_end_max, margin_w, keep_set) if row_end_max is not None
                             else ({}, None))
     for ref in keep:
         old = by_ref.get(ref)
@@ -531,6 +556,22 @@ def build():
                                               contract.get('converter_zone_refs', {}).items() if ref in rs)
                                               if any(ref in rs for rs in contract.get('converter_zone_refs', {}).values())
                                               else 'beside its converter, pads on the scripted copper')})
+            anchored.add(ref)
+            continue
+        if f2c and ref in F2C_PLACES:
+            at, rot = F2C_PLACES[ref]
+            parts.append({**old, 'anchor': {'at': at, 'align': 'origin', 'rotation': rot, 'side': 'F'},
+                          'anchor_source': 'W2 PWRJ-F2C probe: W-C1 LAB5 feed in the bottom row at the freed J108 slot (make_spec.py '
+                                           'F2C_PLACES, design choice)'})
+            anchored.add(ref)
+            continue
+        if f2c and ref in F2C_PINS and not (old and old.get('anchor')):
+            x, y, rot = F2C_PINS[ref]
+            parts.append({'ref': ref, 'source': 'graph',
+                          'anchor': {'at': [x, y], 'align': 'origin', 'rotation': rot, 'side': 'F'},
+                          'anchor_source': 'W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP '
+                                           'test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py '
+                                           'F2C_PINS)'})
             anchored.add(ref)
             continue
         if ref in row_anchors:

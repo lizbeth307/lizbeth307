@@ -52,20 +52,12 @@
   "instances": {
     "template_nets": [
       "3V3_Q6A",
-      "AON3V3",
       "AUX12",
       "AUX12_DAMP",
       "BONI13V8",
       "BONI13V8_DAMP",
       "BONI13V8_PORT",
-      "CHG_INHIBIT",
       "DISP12",
-      "E1_BAT_ADC",
-      "E1_CHG_CC1",
-      "E1_CHG_CC2",
-      "E1_CHG_GATE",
-      "E1_CHG_INHIBIT_LOW",
-      "E1_CHG_NTC",
       "E1_CONV_IN",
       "E1_EN_LAB5",
       "E1_EN_SYS12",
@@ -74,21 +66,11 @@
       "E1_LAB5_FUSED",
       "E1_LAB5_RAW",
       "E1_LAB5_RT",
-      "E1_MASTER_OFF",
-      "E1_N",
-      "E1_PD_DVDT",
-      "E1_PD_EN",
-      "E1_PD_FLT",
-      "E1_PD_ILM",
-      "E1_PD_OVLO",
       "E1_PG_LAB5",
       "E1_PG_SYS12",
       "E1_RPP_GATE",
       "E1_RPP_VCAP",
-      "E1_SERVICE_P",
-      "E1_SHUNT_P",
       "E1_SW",
-      "E1_SWITCH_A",
       "E1_SYS12_CBOOT",
       "E1_SYS12_FB",
       "E1_SYS12_FF",
@@ -96,13 +78,6 @@
       "E1_SYS12_RT",
       "E1_SYS12_SW",
       "E1_SYS12_VCC",
-      "E1_USB_PD_RAW",
-      "E1_USB_PD_SAFE",
-      "E1_UV_OFF",
-      "E1_UV_REF",
-      "E1_UV_REFH",
-      "E1_UV_SENSE",
-      "E1_UV_TRIM",
       "E2_AUX_GATE",
       "E2_AUX_GSINK",
       "E2_AUX_PTC",
@@ -161,10 +136,7 @@
       "E2_U216_IP2",
       "E2_U216_IP3",
       "E5_HFP_DAMP",
-      "E5_IMU5V",
-      "E5_IMU_FAULT",
       "E5_U503_ILIM",
-      "E5_U553_ILIM",
       "E5_VBUS_HFP_SW",
       "EN_AUX12",
       "EN_BONI",
@@ -176,13 +148,8 @@
       "FLT_LIME3V3",
       "FLT_LNB",
       "GND",
-      "I2C0_SCL",
-      "I2C0_SDA",
       "I2C2_SCL",
       "I2C2_SDA",
-      "IMU_RX",
-      "IMU_TX",
-      "INA228_ALERT",
       "J21",
       "J21_DAMP",
       "LAB5",
@@ -194,8 +161,6 @@
       "LNB13V2_DAMP",
       "OVP_LNB_N",
       "PICO_DISP_EN",
-      "PICO_OFF",
-      "PWR_BUTTON",
       "SYS12",
       "VBUS_HFP",
       "VCC_3V3_MKEY"
@@ -206,20 +171,12 @@
         "placement": "default",
         "qty": 1,
         "refs": {
-          "C103": "C103",
-          "C104": "C104",
-          "C105": "C105",
-          "C106": "C106",
           "C107": "C107",
           "C108": "C108",
           "C110": "C110",
           "C111": "C111",
           "C112": "C112",
           "C113": "C113",
-          "C114": "C114",
-          "C115": "C115",
-          "C116": "C116",
-          "C117": "C117",
           "C119": "C119",
           "C120": "C120",
           "C121": "C121",
@@ -308,40 +265,22 @@
           "C511": "C511",
           "C512": "C512",
           "C513": "C513",
-          "C552": "C552",
-          "C553": "C553",
           "C2903": "C2903",
           "C2913": "C2913",
-          "D101": "D101",
-          "D102": "D102",
-          "D103": "D103",
-          "D104": "D104",
-          "D105": "D105",
           "D201": "D201",
           "D202": "D202",
           "D203": "D203",
           "D2903": "D2903",
           "F102": "F102",
-          "F103": "F103",
           "F104": "F104",
           "F201": "F201",
           "F202": "F202",
           "J104": "J104",
-          "J105": "J105",
           "J106": "J106",
           "J107": "J107",
-          "J108": "J108",
-          "J109": "J109",
-          "J110": "J110",
-          "J111": "J111",
-          "J112": "J112",
-          "J113": "J113",
-          "J114": "J114",
-          "J115": "J115",
           "J205": "J205",
           "J206": "J206",
           "J208": "J208",
-          "J507": "J507",
           "L101": "L101",
           "L102": "L102",
           "L201": "L201",
@@ -354,29 +293,14 @@
           "L213": "L213",
           "L214": "L214",
           "L501": "L501",
-          "Q101": "Q101",
           "Q102": "Q102",
           "Q201": "Q201",
           "Q202": "Q202",
           "Q2903": "Q2903",
           "Q2913": "Q2913",
-          "R103": "R103",
-          "R104": "R104",
-          "R105": "R105",
-          "R106": "R106",
-          "R107": "R107",
           "R108": "R108",
           "R109": "R109",
           "R110": "R110",
-          "R111": "R111",
-          "R112": "R112",
-          "R113": "R113",
-          "R114": "R114",
-          "R115": "R115",
-          "R116": "R116",
-          "R121": "R121",
-          "R122": "R122",
-          "R123": "R123",
           "R124": "R124",
           "R125": "R125",
           "R126": "R126",
@@ -442,18 +366,11 @@
           "R510": "R510",
           "R512": "R512",
           "R513": "R513",
-          "R553": "R553",
           "R2903": "R2903",
           "R2913": "R2913",
           "R2923": "R2923",
           "TP101": "TP101",
           "TP102": "TP102",
-          "TP103": "TP103",
-          "TP104": "TP104",
-          "TP105": "TP105",
-          "TP106": "TP106",
-          "TP107": "TP107",
-          "TP108": "TP108",
           "TP201": "TP201",
           "TP202": "TP202",
           "TP203": "TP203",
@@ -464,13 +381,9 @@
           "TP213": "TP213",
           "TP214": "TP214",
           "TP215": "TP215",
-          "TP503": "TP503",
           "TP2903": "TP2903",
-          "U103": "U103",
-          "U104": "U104",
           "U107": "U107",
           "U108": "U108",
-          "U109": "U109",
           "U111": "U111",
           "U201": "U201",
           "U202": "U202",
@@ -483,26 +396,16 @@
           "U214": "U214",
           "U216": "U216",
           "U220": "U220",
-          "U503": "U503",
-          "U551": "U551",
-          "U553": "U553"
+          "U503": "U503"
         },
         "nets": {
           "3V3_Q6A": "3V3_Q6A",
-          "AON3V3": "AON3V3",
           "AUX12": "AUX12",
           "AUX12_DAMP": "AUX12_DAMP",
           "BONI13V8": "BONI13V8",
           "BONI13V8_DAMP": "BONI13V8_DAMP",
           "BONI13V8_PORT": "BONI13V8_PORT",
-          "CHG_INHIBIT": "CHG_INHIBIT",
           "DISP12": "DISP12",
-          "E1_BAT_ADC": "E1_BAT_ADC",
-          "E1_CHG_CC1": "E1_CHG_CC1",
-          "E1_CHG_CC2": "E1_CHG_CC2",
-          "E1_CHG_GATE": "E1_CHG_GATE",
-          "E1_CHG_INHIBIT_LOW": "E1_CHG_INHIBIT_LOW",
-          "E1_CHG_NTC": "E1_CHG_NTC",
           "E1_CONV_IN": "E1_CONV_IN",
           "E1_EN_LAB5": "E1_EN_LAB5",
           "E1_EN_SYS12": "E1_EN_SYS12",
@@ -511,21 +414,11 @@
           "E1_LAB5_FUSED": "E1_LAB5_FUSED",
           "E1_LAB5_RAW": "E1_LAB5_RAW",
           "E1_LAB5_RT": "E1_LAB5_RT",
-          "E1_MASTER_OFF": "E1_MASTER_OFF",
-          "E1_N": "E1_N",
-          "E1_PD_DVDT": "E1_PD_DVDT",
-          "E1_PD_EN": "E1_PD_EN",
-          "E1_PD_FLT": "E1_PD_FLT",
-          "E1_PD_ILM": "E1_PD_ILM",
-          "E1_PD_OVLO": "E1_PD_OVLO",
           "E1_PG_LAB5": "E1_PG_LAB5",
           "E1_PG_SYS12": "E1_PG_SYS12",
           "E1_RPP_GATE": "E1_RPP_GATE",
           "E1_RPP_VCAP": "E1_RPP_VCAP",
-          "E1_SERVICE_P": "E1_SERVICE_P",
-          "E1_SHUNT_P": "E1_SHUNT_P",
           "E1_SW": "E1_SW",
-          "E1_SWITCH_A": "E1_SWITCH_A",
           "E1_SYS12_CBOOT": "E1_SYS12_CBOOT",
           "E1_SYS12_FB": "E1_SYS12_FB",
           "E1_SYS12_FF": "E1_SYS12_FF",
@@ -533,13 +426,6 @@
           "E1_SYS12_RT": "E1_SYS12_RT",
           "E1_SYS12_SW": "E1_SYS12_SW",
           "E1_SYS12_VCC": "E1_SYS12_VCC",
-          "E1_USB_PD_RAW": "E1_USB_PD_RAW",
-          "E1_USB_PD_SAFE": "E1_USB_PD_SAFE",
-          "E1_UV_OFF": "E1_UV_OFF",
-          "E1_UV_REF": "E1_UV_REF",
-          "E1_UV_REFH": "E1_UV_REFH",
-          "E1_UV_SENSE": "E1_UV_SENSE",
-          "E1_UV_TRIM": "E1_UV_TRIM",
           "E2_AUX_GATE": "E2_AUX_GATE",
           "E2_AUX_GSINK": "E2_AUX_GSINK",
           "E2_AUX_PTC": "E2_AUX_PTC",
@@ -598,10 +484,7 @@
           "E2_U216_IP2": "E2_U216_IP2",
           "E2_U216_IP3": "E2_U216_IP3",
           "E5_HFP_DAMP": "E5_HFP_DAMP",
-          "E5_IMU5V": "E5_IMU5V",
-          "E5_IMU_FAULT": "E5_IMU_FAULT",
           "E5_U503_ILIM": "E5_U503_ILIM",
-          "E5_U553_ILIM": "E5_U553_ILIM",
           "E5_VBUS_HFP_SW": "E5_VBUS_HFP_SW",
           "EN_AUX12": "EN_AUX12",
           "EN_BONI": "EN_BONI",
@@ -613,13 +496,8 @@
           "FLT_LIME3V3": "FLT_LIME3V3",
           "FLT_LNB": "FLT_LNB",
           "GND": "GND",
-          "I2C0_SCL": "I2C0_SCL",
-          "I2C0_SDA": "I2C0_SDA",
           "I2C2_SCL": "I2C2_SCL",
           "I2C2_SDA": "I2C2_SDA",
-          "IMU_RX": "IMU_RX",
-          "IMU_TX": "IMU_TX",
-          "INA228_ALERT": "INA228_ALERT",
           "J21": "J21",
           "J21_DAMP": "J21_DAMP",
           "LAB5": "LAB5",
@@ -631,8 +509,6 @@
           "LNB13V2_DAMP": "LNB13V2_DAMP",
           "OVP_LNB_N": "OVP_LNB_N",
           "PICO_DISP_EN": "PICO_DISP_EN",
-          "PICO_OFF": "PICO_OFF",
-          "PWR_BUTTON": "PWR_BUTTON",
           "SYS12": "SYS12",
           "VBUS_HFP": "VBUS_HFP",
           "VCC_3V3_MKEY": "VCC_3V3_MKEY"
@@ -644,22 +520,6 @@
     "spares_source": "one board per device (build/15 'Кількість плат'); the JLC order quantity is an order-time choice"
   },
   "parts": [
-    {
-      "ref": "C103",
-      "source": "graph"
-    },
-    {
-      "ref": "C104",
-      "source": "graph"
-    },
-    {
-      "ref": "C105",
-      "source": "graph"
-    },
-    {
-      "ref": "C106",
-      "source": "graph"
-    },
     {
       "ref": "C107",
       "source": "graph",
@@ -730,22 +590,6 @@
         }
       },
       "anchor_source": "LAB5 damper R110 + C113 (E1_LAB5_DAMP has only C113.1 and R110.2: an RC damper, not a sense shunt): right strip of the leg above the H7 keepout; scripted locked link R110.2 -> C113.1"
-    },
-    {
-      "ref": "C114",
-      "source": "graph"
-    },
-    {
-      "ref": "C115",
-      "source": "graph"
-    },
-    {
-      "ref": "C116",
-      "source": "graph"
-    },
-    {
-      "ref": "C117",
-      "source": "graph"
     },
     {
       "ref": "C119",
@@ -971,11 +815,31 @@
     },
     {
       "ref": "C206",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          37.8,
+          97.65
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C207",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          31.1,
+          82.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C208",
@@ -987,7 +851,17 @@
     },
     {
       "ref": "C210",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          9.95,
+          97.0
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C211",
@@ -1023,7 +897,17 @@
     },
     {
       "ref": "C219",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          3.2,
+          51.35
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C220",
@@ -1035,7 +919,17 @@
     },
     {
       "ref": "C222",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          30.75,
+          48.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C223",
@@ -1083,7 +977,17 @@
     },
     {
       "ref": "C254",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          29.05,
+          22.15
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C255",
@@ -1115,7 +1019,17 @@
     },
     {
       "ref": "C262",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          23.15,
+          13.2
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C263",
@@ -1127,7 +1041,17 @@
     },
     {
       "ref": "C265",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          93.5,
+          6.35
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C266",
@@ -1159,7 +1083,17 @@
     },
     {
       "ref": "C273",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          2.45,
+          31.4
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C278",
@@ -1219,22 +1153,34 @@
     },
     {
       "ref": "C511",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          108.65,
+          8.25
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C512",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          101.75,
+          7.6
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "C513",
-      "source": "graph"
-    },
-    {
-      "ref": "C552",
-      "source": "graph"
-    },
-    {
-      "ref": "C553",
       "source": "graph"
     },
     {
@@ -1243,26 +1189,6 @@
     },
     {
       "ref": "C2913",
-      "source": "graph"
-    },
-    {
-      "ref": "D101",
-      "source": "graph"
-    },
-    {
-      "ref": "D102",
-      "source": "graph"
-    },
-    {
-      "ref": "D103",
-      "source": "graph"
-    },
-    {
-      "ref": "D104",
-      "source": "graph"
-    },
-    {
-      "ref": "D105",
       "source": "graph"
     },
     {
@@ -1301,10 +1227,6 @@
         }
       },
       "anchor_source": "next to U108 VOUT (E1_LAB5_RAW, BATT class): left strip x 0-7.75 of the leg, rotation 90; PWR-B window (Keystone 3568, height >= 7.37 mm lower bound)"
-    },
-    {
-      "ref": "F103",
-      "source": "graph"
     },
     {
       "ref": "F104",
@@ -1353,32 +1275,18 @@
       "anchor_source": "contract edge_zones right (CTRL harness S02, LAB5 to CTRL); column between the keepouts of H2 and H3"
     },
     {
-      "ref": "J105",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          29.45,
-          3.5
-        ],
-        "align": "origin",
-        "rotation": 90,
-        "side": "F"
-      },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
-    },
-    {
       "ref": "J106",
       "source": "graph",
       "anchor": {
         "at": [
-          47.95,
+          73.85,
           3.5
         ],
         "align": "origin",
         "rotation": 90,
         "side": "F"
       },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
+      "anchor_source": "W2 PWRJ-F2C probe: W-C1 LAB5 feed in the bottom row at the freed J108 slot (make_spec.py F2C_PLACES, design choice)"
     },
     {
       "ref": "J107",
@@ -1393,118 +1301,6 @@
         "side": "F"
       },
       "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
-    },
-    {
-      "ref": "J108",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          73.85,
-          3.5
-        ],
-        "align": "origin",
-        "rotation": 90,
-        "side": "F"
-      },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
-    },
-    {
-      "ref": "J109",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          42.5,
-          4.75
-        ],
-        "align": "origin",
-        "rotation": 270,
-        "side": "F"
-      },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
-    },
-    {
-      "ref": "J110",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          68.15,
-          2.5
-        ],
-        "align": "origin",
-        "rotation": 180,
-        "side": "F"
-      },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
-    },
-    {
-      "ref": "J111",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          24.0,
-          6.75
-        ],
-        "align": "origin",
-        "rotation": 270,
-        "side": "F"
-      },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
-    },
-    {
-      "ref": "J112",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          86.9,
-          8.75
-        ],
-        "align": "origin",
-        "rotation": 270,
-        "side": "F"
-      },
-      "anchor_source": "bottom edge row of the MECH-7 contract (edge_zones[0] row_end_max 92.5): turned by 90 degrees, packed from x 8.2 in the draft order J107, J111, J105, J109, J106, J110, J108, J112, 0.5 mm apart (make_spec.py bottom_row_anchors)"
-    },
-    {
-      "ref": "J113",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          117.7,
-          14.15
-        ],
-        "align": "origin",
-        "rotation": 90,
-        "side": "F"
-      },
-      "anchor_source": "SHRINK-2 without the S02 FFC: the wip/w2-pwra1 80d92c28 place (second/third column of the right edge, the recorded deviation of W2 PCB-PWRA-1); J208 ends at x 114.15, so the column is free again"
-    },
-    {
-      "ref": "J114",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          124.5,
-          4.13
-        ],
-        "align": "origin",
-        "rotation": 90,
-        "side": "F"
-      },
-      "anchor_source": "SHRINK-2 without the S02 FFC: the wip/w2-pwra1 80d92c28 place (second/third column of the right edge, the recorded deviation of W2 PCB-PWRA-1); J208 ends at x 114.15, so the column is free again"
-    },
-    {
-      "ref": "J115",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          124.5,
-          15.29
-        ],
-        "align": "origin",
-        "rotation": 90,
-        "side": "F"
-      },
-      "anchor_source": "SHRINK-2 without the S02 FFC: the wip/w2-pwra1 80d92c28 place (second/third column of the right edge, the recorded deviation of W2 PCB-PWRA-1); J208 ends at x 114.15, so the column is free again"
     },
     {
       "ref": "J205",
@@ -1561,20 +1357,6 @@
       "anchor_source": "under PWR_B J209 (pcb/boards/PWR_B.json anchor [98.8, 18.5] side B rotation 180): pad n of J208 under J209 pad map(n) of pcb/generated/b2b-nets.json contacts (n odd -> n+1, n even -> n-1), computed by make_spec.py b2b_anchor"
     },
     {
-      "ref": "J507",
-      "source": "graph",
-      "anchor": {
-        "at": [
-          117.7,
-          2.75
-        ],
-        "align": "origin",
-        "rotation": 90,
-        "side": "F"
-      },
-      "anchor_source": "SHRINK-2 without the S02 FFC: the wip/w2-pwra1 80d92c28 place (second/third column of the right edge, the recorded deviation of W2 PCB-PWRA-1); J208 ends at x 114.15, so the column is free again"
-    },
-    {
       "ref": "L101",
       "source": "graph",
       "anchor": {
@@ -1612,7 +1394,17 @@
     },
     {
       "ref": "L203",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          3.29,
+          43.81
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "L204",
@@ -1650,11 +1442,17 @@
     },
     {
       "ref": "L501",
-      "source": "graph"
-    },
-    {
-      "ref": "Q101",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          24.9,
+          93.9
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "Q102",
@@ -1697,26 +1495,6 @@
       "source": "graph"
     },
     {
-      "ref": "R103",
-      "source": "graph"
-    },
-    {
-      "ref": "R104",
-      "source": "graph"
-    },
-    {
-      "ref": "R105",
-      "source": "graph"
-    },
-    {
-      "ref": "R106",
-      "source": "graph"
-    },
-    {
-      "ref": "R107",
-      "source": "graph"
-    },
-    {
       "ref": "R108",
       "source": "graph"
     },
@@ -1737,42 +1515,6 @@
         "side": "F"
       },
       "anchor_source": "LAB5 damper R110 + C113 (E1_LAB5_DAMP has only C113.1 and R110.2: an RC damper, not a sense shunt): right strip of the leg above the H7 keepout; scripted locked link R110.2 -> C113.1"
-    },
-    {
-      "ref": "R111",
-      "source": "graph"
-    },
-    {
-      "ref": "R112",
-      "source": "graph"
-    },
-    {
-      "ref": "R113",
-      "source": "graph"
-    },
-    {
-      "ref": "R114",
-      "source": "graph"
-    },
-    {
-      "ref": "R115",
-      "source": "graph"
-    },
-    {
-      "ref": "R116",
-      "source": "graph"
-    },
-    {
-      "ref": "R121",
-      "source": "graph"
-    },
-    {
-      "ref": "R122",
-      "source": "graph"
-    },
-    {
-      "ref": "R123",
-      "source": "graph"
     },
     {
       "ref": "R124",
@@ -2035,10 +1777,6 @@
       "source": "graph"
     },
     {
-      "ref": "R553",
-      "source": "graph"
-    },
-    {
       "ref": "R2903",
       "source": "graph"
     },
@@ -2052,91 +1790,185 @@
     },
     {
       "ref": "TP101",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          11.65,
+          40.95
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP102",
-      "source": "graph"
-    },
-    {
-      "ref": "TP103",
-      "source": "graph"
-    },
-    {
-      "ref": "TP104",
-      "source": "graph"
-    },
-    {
-      "ref": "TP105",
-      "source": "graph"
-    },
-    {
-      "ref": "TP106",
-      "source": "graph"
-    },
-    {
-      "ref": "TP107",
-      "source": "graph"
-    },
-    {
-      "ref": "TP108",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          5.5,
+          100.95
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP201",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          18.85,
+          74.93
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP202",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          22.75,
+          54.15
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP203",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          11.51,
+          69.35
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP204",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          40.05,
+          43.75
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP205",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          61.85,
+          11.45
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP211",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          4.01,
+          16.05
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP212",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          90.25,
+          33.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP213",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          21.85,
+          74.93
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP214",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          19.45,
+          44.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP215",
-      "source": "graph"
-    },
-    {
-      "ref": "TP503",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          7.01,
+          16.05
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "TP2903",
-      "source": "graph"
-    },
-    {
-      "ref": "U103",
-      "source": "graph"
-    },
-    {
-      "ref": "U104",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          93.25,
+          33.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "U107",
@@ -2165,10 +1997,6 @@
         "side": "F"
       },
       "anchor_source": "W2 PCB-PWRA-3 part 2 power stage (make_spec.py POWER_ANCHORS, design choice): contract converter zone 4"
-    },
-    {
-      "ref": "U109",
-      "source": "graph"
     },
     {
       "ref": "U111",
@@ -2252,7 +2080,17 @@
     },
     {
       "ref": "U216",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          117.95,
+          22.05
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWRJ-F2C probe: PWR-B cut-out part kept at its PCB-PWRA-4 place, or a J21/DISP test point moved out of the PWR-B bar into a freed E1 probe window (make_spec.py F2C_PINS)"
     },
     {
       "ref": "U220",
@@ -2260,14 +2098,6 @@
     },
     {
       "ref": "U503",
-      "source": "graph"
-    },
-    {
-      "ref": "U551",
-      "source": "graph"
-    },
-    {
-      "ref": "U553",
       "source": "graph"
     }
   ],
@@ -2305,18 +2135,6 @@
       "members": [
         {
           "ref": "C509",
-          "rotation": 0
-        },
-        {
-          "ref": "C511",
-          "rotation": 0
-        },
-        {
-          "ref": "C512",
-          "rotation": 0
-        },
-        {
-          "ref": "L501",
           "rotation": 0
         },
         {
@@ -2382,10 +2200,6 @@
       "side": "F",
       "gap_mm": 0.5,
       "members": [
-        {
-          "ref": "TP101",
-          "rotation": 0
-        },
         {
           "ref": "C127",
           "rotation": 0
@@ -2526,10 +2340,6 @@
         {
           "ref": "C292",
           "rotation": 0
-        },
-        {
-          "ref": "TP205",
-          "rotation": 0
         }
       ]
     },
@@ -2559,10 +2369,6 @@
           "rotation": 0
         },
         {
-          "ref": "C254",
-          "rotation": 0
-        },
-        {
           "ref": "C255",
           "rotation": 0
         },
@@ -2587,10 +2393,6 @@
           "rotation": 0
         },
         {
-          "ref": "C262",
-          "rotation": 0
-        },
-        {
           "ref": "C293",
           "rotation": 0
         },
@@ -2607,15 +2409,7 @@
           "rotation": 0
         },
         {
-          "ref": "TP211",
-          "rotation": 0
-        },
-        {
           "ref": "U212",
-          "rotation": 0
-        },
-        {
-          "ref": "TP215",
           "rotation": 0
         },
         {
@@ -2653,10 +2447,6 @@
           "rotation": 0
         },
         {
-          "ref": "C265",
-          "rotation": 0
-        },
-        {
           "ref": "C266",
           "rotation": 0
         },
@@ -2678,10 +2468,6 @@
         },
         {
           "ref": "C272",
-          "rotation": 0
-        },
-        {
-          "ref": "C273",
           "rotation": 0
         },
         {
@@ -2714,14 +2500,6 @@
         },
         {
           "ref": "Q2913",
-          "rotation": 0
-        },
-        {
-          "ref": "TP212",
-          "rotation": 0
-        },
-        {
-          "ref": "TP2903",
           "rotation": 0
         },
         {
@@ -2764,27 +2542,11 @@
           "rotation": 0
         },
         {
-          "ref": "C206",
-          "rotation": 0
-        },
-        {
-          "ref": "C207",
-          "rotation": 0
-        },
-        {
           "ref": "D201",
           "rotation": 0
         },
         {
           "ref": "L201",
-          "rotation": 0
-        },
-        {
-          "ref": "TP201",
-          "rotation": 0
-        },
-        {
-          "ref": "TP213",
           "rotation": 0
         },
         {
@@ -2819,10 +2581,6 @@
           "rotation": 0
         },
         {
-          "ref": "C222",
-          "rotation": 0
-        },
-        {
           "ref": "F202",
           "rotation": 0
         },
@@ -2832,32 +2590,6 @@
         },
         {
           "ref": "Q202",
-          "rotation": 0
-        },
-        {
-          "ref": "TP204",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "E1_SERVICE",
-      "region": [
-        26.5,
-        102.8,
-        34.3,
-        109.7
-      ],
-      "region_name": "LEG_TOP_R",
-      "alt_regions": [
-        "BAND_TOP_MID3",
-        "BAND_TOP_MID"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "F103",
           "rotation": 0
         }
       ]
@@ -2888,10 +2620,6 @@
           "rotation": 0
         },
         {
-          "ref": "C210",
-          "rotation": 0
-        },
-        {
           "ref": "C212",
           "rotation": 0
         },
@@ -2901,14 +2629,6 @@
         },
         {
           "ref": "L202",
-          "rotation": 0
-        },
-        {
-          "ref": "TP202",
-          "rotation": 0
-        },
-        {
-          "ref": "TP214",
           "rotation": 0
         },
         {
@@ -2950,204 +2670,7 @@
           "rotation": 0
         },
         {
-          "ref": "C219",
-          "rotation": 0
-        },
-        {
-          "ref": "L203",
-          "rotation": 0
-        },
-        {
-          "ref": "TP203",
-          "rotation": 0
-        },
-        {
           "ref": "U203",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "LAB5",
-      "region": [
-        4.25,
-        97.2,
-        7.4,
-        102.2
-      ],
-      "region_name": "LEG_LEFT_HIGH",
-      "alt_regions": [
-        "LEG_MID_L"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "TP102",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "INA3221_2",
-      "region": [
-        34.4,
-        87.0,
-        41.8,
-        102.3
-      ],
-      "region_name": "LEG_RIGHT_HIGH",
-      "alt_regions": [
-        "LEG_SPINE_R"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "U216",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "E5_SERVICE",
-      "region": [
-        7.8,
-        62.5,
-        14.0,
-        70.6
-      ],
-      "region_name": "LEG_MID",
-      "alt_regions": [
-        "LEG_RIGHT_HIGH",
-        "LEG_MID_L"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "TP503",
-          "rotation": 0
-        },
-        {
-          "ref": "U551",
-          "rotation": 0
-        },
-        {
-          "ref": "U553",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "E1_CTRL",
-      "region": [
-        19.75,
-        27.0,
-        39.5,
-        32.5
-      ],
-      "region_name": "BAND_TOP_LEFT_R",
-      "alt_regions": [
-        "BAND_TOP_MID4",
-        "BAND_TOP_LEFT",
-        "BAND_TOP_LEFT_R2",
-        "BAND_TOP_MID3"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C103",
-          "rotation": 0
-        },
-        {
-          "ref": "C104",
-          "rotation": 0
-        },
-        {
-          "ref": "D101",
-          "rotation": 0
-        },
-        {
-          "ref": "U103",
-          "rotation": 0
-        },
-        {
-          "ref": "U104",
-          "rotation": 0
-        },
-        {
-          "ref": "D102",
-          "rotation": 0
-        },
-        {
-          "ref": "D103",
-          "rotation": 0
-        },
-        {
-          "ref": "D104",
-          "rotation": 0
-        },
-        {
-          "ref": "D105",
-          "rotation": 0
-        },
-        {
-          "ref": "Q101",
-          "rotation": 0
-        },
-        {
-          "ref": "TP104",
-          "rotation": 0
-        },
-        {
-          "ref": "TP105",
-          "rotation": 0
-        },
-        {
-          "ref": "TP106",
-          "rotation": 0
-        },
-        {
-          "ref": "TP107",
-          "rotation": 0
-        },
-        {
-          "ref": "TP108",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "E1_USBPD",
-      "region": [
-        0.3,
-        9.8,
-        9.3,
-        26.8
-      ],
-      "region_name": "BAND_LEFT",
-      "alt_regions": [
-        "BAND_TOP_LEFT"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C116",
-          "rotation": 0
-        },
-        {
-          "ref": "C117",
-          "rotation": 0
-        },
-        {
-          "ref": "TP103",
-          "rotation": 0
-        },
-        {
-          "ref": "U109",
           "rotation": 0
         }
       ]
@@ -3770,189 +3293,6 @@
         },
         {
           "ref": "R279",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "E5_SERVICE_BOT",
-      "region": [
-        0.3,
-        65.0,
-        9.6,
-        70.5
-      ],
-      "region_name": "PB6",
-      "alt_regions": [
-        "PB5",
-        "PB8",
-        "PB7b",
-        "PB7",
-        "PB9c",
-        "PB9b",
-        "PB9",
-        "PB10",
-        "PB3",
-        "PB11",
-        "PB3b",
-        "PB12",
-        "PB1",
-        "PB13",
-        "PB4b",
-        "PB4",
-        "PB2"
-      ],
-      "side": "B",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C552",
-          "rotation": 0
-        },
-        {
-          "ref": "C553",
-          "rotation": 0
-        },
-        {
-          "ref": "R553",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "E1_CTRL_BOT",
-      "region": [
-        26.5,
-        29.5,
-        40.0,
-        37.0
-      ],
-      "region_name": "PB3b",
-      "alt_regions": [
-        "PB3",
-        "PB4b",
-        "PB1",
-        "PB5",
-        "PB7",
-        "PB7b",
-        "PB6",
-        "PB8",
-        "PB4",
-        "PB9",
-        "PB9c",
-        "PB9b",
-        "PB11",
-        "PB10",
-        "PB12",
-        "PB13",
-        "PB2"
-      ],
-      "side": "B",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C105",
-          "rotation": 0
-        },
-        {
-          "ref": "C106",
-          "rotation": 0
-        },
-        {
-          "ref": "R103",
-          "rotation": 0
-        },
-        {
-          "ref": "R104",
-          "rotation": 0
-        },
-        {
-          "ref": "R105",
-          "rotation": 0
-        },
-        {
-          "ref": "R106",
-          "rotation": 0
-        },
-        {
-          "ref": "R107",
-          "rotation": 0
-        },
-        {
-          "ref": "R121",
-          "rotation": 0
-        },
-        {
-          "ref": "R122",
-          "rotation": 0
-        },
-        {
-          "ref": "R123",
-          "rotation": 0
-        },
-        {
-          "ref": "C114",
-          "rotation": 0
-        },
-        {
-          "ref": "R111",
-          "rotation": 0
-        },
-        {
-          "ref": "R112",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "E1_USBPD_BOT",
-      "region": [
-        0.3,
-        12.0,
-        7.0,
-        29.0
-      ],
-      "region_name": "PB1",
-      "alt_regions": [
-        "PB3",
-        "PB5",
-        "PB3b",
-        "PB6",
-        "PB4b",
-        "PB7b",
-        "PB7",
-        "PB8",
-        "PB9c",
-        "PB9",
-        "PB9b",
-        "PB10",
-        "PB11",
-        "PB4",
-        "PB12",
-        "PB13",
-        "PB2"
-      ],
-      "side": "B",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "C115",
-          "rotation": 0
-        },
-        {
-          "ref": "R113",
-          "rotation": 0
-        },
-        {
-          "ref": "R114",
-          "rotation": 0
-        },
-        {
-          "ref": "R115",
-          "rotation": 0
-        },
-        {
-          "ref": "R116",
           "rotation": 0
         }
       ]
@@ -7720,10 +7060,6 @@
   "planned_status_source": "pcb/partition_budget.py Evaluator.planned on the graph of now (live; pcb/partition-budget.json is regenerated by the AREA lineage)",
   "two_sided": {
     "bottom_refs": [
-      "C105",
-      "C106",
-      "C114",
-      "C115",
       "C201",
       "C211",
       "C214",
@@ -7737,25 +7073,9 @@
       "C508",
       "C510",
       "C513",
-      "C552",
-      "C553",
       "C2913",
-      "R103",
-      "R104",
-      "R105",
-      "R106",
-      "R107",
       "R108",
       "R109",
-      "R111",
-      "R112",
-      "R113",
-      "R114",
-      "R115",
-      "R116",
-      "R121",
-      "R122",
-      "R123",
       "R201",
       "R202",
       "R203",
@@ -7810,12 +7130,33 @@
       "R509",
       "R510",
       "R513",
-      "R553",
       "R2903",
       "R2913",
       "R2923"
     ],
-    "bottom_refs_missing": [],
+    "bottom_refs_missing": [
+      "C105",
+      "C106",
+      "C114",
+      "C115",
+      "C552",
+      "C553",
+      "R103",
+      "R104",
+      "R105",
+      "R106",
+      "R107",
+      "R111",
+      "R112",
+      "R113",
+      "R114",
+      "R115",
+      "R116",
+      "R121",
+      "R122",
+      "R123",
+      "R553"
+    ],
     "tht_margin_mm": 1.0,
     "h_room_mm": 1.03,
     "h_room_source": "mechanical/generated/contract/boards.json PWR bottom_side h_max (MECH-7)",
@@ -7943,7 +7284,12 @@
     "refs": [],
     "rule": "the S02 FFC counts as adopted when a PWR-A graph part has a Connector_FFC-FPC footprint (GR-5B); then J113/J114/J115/J507 take the decision places on the bottom edge and exit_edges says so"
   },
-  "turn_whatif": [],
+  "turn_whatif": [
+    "J109",
+    "J110",
+    "J111",
+    "J112"
+  ],
   "bottom_row": {
     "refs": [
       "J107",
@@ -7961,7 +7307,7 @@
       "J112"
     ],
     "start_x": 8.2,
-    "end_x_with_margin": 89.6,
+    "end_x_with_margin": 20.7,
     "row_end_max": 92.5,
     "rule": "MECH-7 contract edge_zones[0] row_end_max: the courtyards of J105-J112 + window_margin end at x <= row_end_max, so that the PWR-A bottom edge under the PWR-B PH 9-pin span (PWR_B edge_zones[2]) stays free of PWR-A headers"
   },

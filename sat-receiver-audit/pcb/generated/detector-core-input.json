@@ -5322,6 +5322,18 @@
           "name": "GND"
         },
         {
+          "ref": "J106",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J107",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
           "ref": "J108",
           "pin": "1",
           "sheet": "E1",
@@ -9038,6 +9050,7 @@
         "PWR_BRANCH_SW",
         "USB_POWER_SW",
         "CTRL_HMI",
+        "PWR_ENTRY",
         "USB_POWER",
         "RF_HMC",
         "RF_HF",
@@ -9072,11 +9085,11 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "1b66154dd72b4e8bf8673968f86758e2f5c2e028c1ed92bce2116e002a57ba99"
+        "sha256": "12b5f60417ddec0e48a1e76aacfb67ad160d3f67586aa06870f43ebef082421b"
       },
       {
         "file": "design/E2.json",
-        "sha256": "22d7f2ef8ffaf1d8c5e934c4eed8137aa96c09b86f99d9b4893bef2c8cf02a19"
+        "sha256": "23ac135b0570f3cb4d03a7b31b1eef8d0a3dca2d283ea4d91ed4a9a9119e677e"
       },
       {
         "file": "design/E3.json",

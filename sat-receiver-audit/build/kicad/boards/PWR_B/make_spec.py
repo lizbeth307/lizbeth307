@@ -75,7 +75,9 @@ CRT_GUARD = 0.05      # courtyard boxes here are centre lines; KiCad's include h
 # with IN2_SIGNAL True left 73 open, and Freerouting put PWR1A copper on In2.Cu at 0.35 mm (88 check_boards findings: inner
 # PWR1A needs 1.8 mm, pcb/generated/netclasses.json), because the DSN gives no per-class layer limit; freeze/freeze_route.py
 # --in2-signal rips that copper and completes power nets on the outer layers only. False: the committed plan.
-IN2_SIGNAL = False
+# W2 PWRJ-F2C probe: True, with router.class_layers (the DSN use_layer patch of pcb/board_gen.py, from the W2 PCB-CTRL
+# lineage as on wip/w2-pwrbr-route) keeping PWR1A on F.Cu / B.Cu, so In2.Cu carries only Default-class signals.
+IN2_SIGNAL = True
 VIA_D, VIA_DRILL = 0.7, 0.3   # 0.7 / 0.3: router vias at clearance 0.15 keep the 0.5 mm hole-to-hole rule (0.55)
 
 
@@ -1293,6 +1295,7 @@ def spec_json(inp, anchors, pins, tracks, vias, exempt, pparts):
             'pin_fields': [{'ref': ref, 'pins': n, 'field_mm': f}
                            for ref, n, f in sorted(tht_fields(pparts), key=lambda t: bg.sort_ref(t[0]))]},
         'router': {'tool': 'freerouting', 'max_passes': 90, 'threads': 1, 'job_timeout': '00:33:00', 'timeout_s': 2100,
+                   **({'class_layers': {'PWR1A': ['F.Cu', 'B.Cu']}} if IN2_SIGNAL else {}),
                    'fanout': False, 'ignore_net_classes': sorted(set(SCRIPTED_CLASSES.values())),
                    'why': 'the fan-out pre-pass escaped every SMD pin with necked-down (0.1124 mm) stubs and dangling vias, and '
                           'the router re-routed the scripted nets because locked copper that crosses a pad is no connection '

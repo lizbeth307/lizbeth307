@@ -3693,7 +3693,7 @@
     },
     {
       "ref": "J106",
-      "value": "X06J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S06",
+      "value": "X06J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, W-C1 (LAB5 на PWR-C)",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
@@ -3705,24 +3705,25 @@
       "pins": [
         {
           "number": "1",
-          "name": "E1_N",
+          "name": "GND",
           "type": "passive",
-          "net": "E1_N"
+          "net": "GND"
         },
         {
           "number": "2",
-          "name": "E1_SHUNT_P",
+          "name": "LAB5",
           "type": "passive",
-          "net": "E1_SHUNT_P"
+          "net": "LAB5"
         }
       ],
       "notes": [
-        "Роз'єм джгута X06J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X06J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWRJ-F2C probe: кінець PWR-A джгута W-C1 до PWR-C: LAB5 для U553/C552 (група E5 «Сервіс і зовнішні шини» на PWR-C) за запобіжником F102 4 A; контакти 1 GND, 2 LAB5."
       ]
     },
     {
       "ref": "J107",
-      "value": "X07J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, S07",
+      "value": "X07J1-PWR: Molex Mini-Fit Jr. 2×1, верхній вхід, W-C1 (E1_SW з PWR-C)",
       "kind": "connector",
       "group": "Роз'єми джгутів PWR",
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
@@ -3734,9 +3735,9 @@
       "pins": [
         {
           "number": "1",
-          "name": "E1_N",
+          "name": "GND",
           "type": "passive",
-          "net": "E1_N"
+          "net": "GND"
         },
         {
           "number": "2",
@@ -3746,7 +3747,8 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X07J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута X07J1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWRJ-F2C probe: кінець PWR-A джгута W-C1 до PWR-C: E1_SW з #2813 на PWR-C (раніше S07 із задньої стінки); контакти 1 GND, 2 E1_SW."
       ]
     },
     {
@@ -3863,8 +3865,10 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X06S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
-      ]
+        "Роз'єм джгута X06S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S06; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWRJ-F2C probe: S06/S07 видалено (F2-C): модулі INA228 5832 (U102) і Pololu #2813 (U106) стоять на PWR-C біля входу батареї, тож цей роз’єм не встановлюється (dnp)."
+      ],
+      "dnp": true
     },
     {
       "ref": "J111",
@@ -3898,8 +3902,10 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X07S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
-      ]
+        "Роз'єм джгута X07S1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S07; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWRJ-F2C probe: S06/S07 видалено (F2-C): модулі INA228 5832 (U102) і Pololu #2813 (U106) стоять на PWR-C біля входу батареї, тож цей роз’єм не встановлюється (dnp)."
+      ],
+      "dnp": true
     },
     {
       "ref": "J112",

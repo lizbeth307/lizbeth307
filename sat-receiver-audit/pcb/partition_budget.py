@@ -55,7 +55,8 @@ OUT = ROOT / "pcb" / "partition-budget.json"
 SHEETS = ("E1", "E2", "E3", "E4", "E5")
 # the last two are the PWR-B domains that GR-3 adds to pcb/prepare.py (partition-spec domains.PWR_B); listing them
 # here keeps the PWR part set the same before and after that change
-PWR_DOMAINS = ("PWR_MAIN", "PWR_BRANCH", "USB_POWER", "PWR_BRANCH_SW", "USB_POWER_SW")
+PWR_DOMAINS = ("PWR_MAIN", "PWR_BRANCH", "USB_POWER", "PWR_BRANCH_SW", "USB_POWER_SW",
+               "PWR_ENTRY")  # PWR_ENTRY: PWR-C of the W2 PWRJ-F2C probe (pcb/prepare.py, fallback F2-C)
 PWR_B_DOMAINS = ("PWR_BRANCH_SW", "USB_POWER_SW")
 CURRENT_BOARDS = {"PWR": PWR_DOMAINS, "RF": ("RF_HMC", "RF_HF", "RF_INJECTOR", "DC_CORE"), "CTRL": ("CTRL_HMI",)}
 

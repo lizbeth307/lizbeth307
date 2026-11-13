@@ -33,14 +33,14 @@
     "USB_POWER_SW"
   ],
   "totals": {
-    "crossing_nets": 33,
+    "crossing_nets": 24,
     "power_nets": 8,
     "power_pins": 13,
-    "signal_pins": 25,
+    "signal_pins": 16,
     "gnd_pins": 17,
     "guard_pins": 3,
-    "contacts_needed": 55,
-    "contacts_with_spare": 66,
+    "contacts_needed": 46,
+    "contacts_with_spare": 56,
     "fits": true,
     "meets_spare_rule": true
   },
@@ -124,30 +124,6 @@
       "prot_A": 0.153,
       "pins": 1,
       "gnd_pins": 1
-    },
-    {
-      "net": "CHG_INHIBIT",
-      "pwr_a": [
-        "R122"
-      ],
-      "pwr_b": [
-        "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "E1_BAT_ADC",
-      "pwr_a": [
-        "C114",
-        "R111",
-        "R112"
-      ],
-      "pwr_b": [
-        "J202"
-      ],
-      "kind": "signal",
-      "pins": 1
     },
     {
       "net": "E2_LNA4_SHUNT",
@@ -282,28 +258,6 @@
       "pins": 1
     },
     {
-      "net": "I2C0_SCL",
-      "pwr_a": [
-        "J110"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "I2C0_SDA",
-      "pwr_a": [
-        "J110"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
       "net": "I2C2_SCL",
       "pwr_a": [
         "U216"
@@ -330,56 +284,20 @@
       "pins": 1
     },
     {
-      "net": "IMU_RX",
-      "pwr_a": [
-        "J507",
-        "U551"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "IMU_TX",
-      "pwr_a": [
-        "J507",
-        "U551"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "INA228_ALERT",
-      "pwr_a": [
-        "J110"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
       "net": "LAB5",
       "pwr_a": [
         "C112",
         "C223",
         "C508",
         "C509",
-        "C552",
         "F104",
         "J104",
+        "J106",
         "J206",
         "L101",
         "L205",
         "R110",
-        "U503",
-        "U553"
+        "U503"
       ],
       "pwr_b": [
         "C248",
@@ -471,28 +389,6 @@
       "pwr_a": [
         "R213",
         "U202"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "PICO_OFF",
-      "pwr_a": [
-        "D102"
-      ],
-      "pwr_b": [
-        "J203"
-      ],
-      "kind": "signal",
-      "pins": 1
-    },
-    {
-      "net": "PWR_BUTTON",
-      "pwr_a": [
-        "D103"
       ],
       "pwr_b": [
         "J203"
@@ -657,7 +553,7 @@
     {
       "pwr_a_pin": "18",
       "pwr_b_pin": "17",
-      "net": "CHG_INHIBIT",
+      "net": "EN_AUX12",
       "role": "signal"
     },
     {
@@ -669,7 +565,7 @@
     {
       "pwr_a_pin": "20",
       "pwr_b_pin": "19",
-      "net": "E1_BAT_ADC",
+      "net": "EN_BONI",
       "role": "signal"
     },
     {
@@ -681,7 +577,7 @@
     {
       "pwr_a_pin": "22",
       "pwr_b_pin": "21",
-      "net": "EN_AUX12",
+      "net": "EN_HFP",
       "role": "signal"
     },
     {
@@ -693,7 +589,7 @@
     {
       "pwr_a_pin": "24",
       "pwr_b_pin": "23",
-      "net": "EN_BONI",
+      "net": "EN_LIME3V3",
       "role": "signal"
     },
     {
@@ -705,7 +601,7 @@
     {
       "pwr_a_pin": "26",
       "pwr_b_pin": "25",
-      "net": "EN_HFP",
+      "net": "EN_LNB",
       "role": "signal"
     },
     {
@@ -717,7 +613,7 @@
     {
       "pwr_a_pin": "28",
       "pwr_b_pin": "27",
-      "net": "EN_LIME3V3",
+      "net": "FAULT_HFP",
       "role": "signal"
     },
     {
@@ -729,7 +625,7 @@
     {
       "pwr_a_pin": "30",
       "pwr_b_pin": "29",
-      "net": "EN_LNB",
+      "net": "FLT_BONI",
       "role": "signal"
     },
     {
@@ -741,7 +637,7 @@
     {
       "pwr_a_pin": "32",
       "pwr_b_pin": "31",
-      "net": "FAULT_HFP",
+      "net": "FLT_LIME3V3",
       "role": "signal"
     },
     {
@@ -753,7 +649,7 @@
     {
       "pwr_a_pin": "34",
       "pwr_b_pin": "33",
-      "net": "FLT_BONI",
+      "net": "FLT_LNB",
       "role": "signal"
     },
     {
@@ -765,7 +661,7 @@
     {
       "pwr_a_pin": "36",
       "pwr_b_pin": "35",
-      "net": "FLT_LIME3V3",
+      "net": "I2C2_SCL",
       "role": "signal"
     },
     {
@@ -777,7 +673,7 @@
     {
       "pwr_a_pin": "38",
       "pwr_b_pin": "37",
-      "net": "FLT_LNB",
+      "net": "I2C2_SDA",
       "role": "signal"
     },
     {
@@ -789,7 +685,7 @@
     {
       "pwr_a_pin": "40",
       "pwr_b_pin": "39",
-      "net": "I2C0_SCL",
+      "net": "OVP_LNB_N",
       "role": "signal"
     },
     {
@@ -801,7 +697,7 @@
     {
       "pwr_a_pin": "42",
       "pwr_b_pin": "41",
-      "net": "I2C0_SDA",
+      "net": "PICO_DISP_EN",
       "role": "signal"
     },
     {
@@ -813,8 +709,8 @@
     {
       "pwr_a_pin": "44",
       "pwr_b_pin": "43",
-      "net": "I2C2_SCL",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "45",
@@ -825,8 +721,8 @@
     {
       "pwr_a_pin": "46",
       "pwr_b_pin": "45",
-      "net": "I2C2_SDA",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "47",
@@ -837,8 +733,8 @@
     {
       "pwr_a_pin": "48",
       "pwr_b_pin": "47",
-      "net": "IMU_RX",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "49",
@@ -849,8 +745,8 @@
     {
       "pwr_a_pin": "50",
       "pwr_b_pin": "49",
-      "net": "IMU_TX",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "51",
@@ -861,8 +757,8 @@
     {
       "pwr_a_pin": "52",
       "pwr_b_pin": "51",
-      "net": "INA228_ALERT",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "53",
@@ -873,8 +769,8 @@
     {
       "pwr_a_pin": "54",
       "pwr_b_pin": "53",
-      "net": "OVP_LNB_N",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "55",
@@ -885,8 +781,8 @@
     {
       "pwr_a_pin": "56",
       "pwr_b_pin": "55",
-      "net": "PICO_DISP_EN",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "57",
@@ -897,8 +793,8 @@
     {
       "pwr_a_pin": "58",
       "pwr_b_pin": "57",
-      "net": "PICO_OFF",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "59",
@@ -909,8 +805,8 @@
     {
       "pwr_a_pin": "60",
       "pwr_b_pin": "59",
-      "net": "PWR_BUTTON",
-      "role": "signal"
+      "net": "",
+      "role": "spare"
     },
     {
       "pwr_a_pin": "61",

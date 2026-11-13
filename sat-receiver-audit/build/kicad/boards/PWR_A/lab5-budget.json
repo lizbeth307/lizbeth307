@@ -4,9 +4,9 @@
   "status": "MODEL: copper resistance from geometry (IACS copper, finished 1 oz outer); no PWR-A board exists, no measurement; E1-05 and every bench gate stay OPEN",
   "generator": "build/kicad/boards/PWR_A/lab5_budget.py",
   "inputs": {
-    "spec_sha256": "f4388d982cccab6c99c70a145b33b5c83b220df86ec83c0198ad62ea249fd80e",
-    "pwr_b_board_sha256": "adc2f821e8116ab4463dfc7d8932c017b2c9c0cd71b34c7ee09dbf56531a6c6b",
-    "pwr_b_mate_pins_sha256": "db96a57ff4815c02eee75ab7fc03f0467957012f3a10723e2af32ef2a3a7302a",
+    "spec_sha256": "1a616582fd69b2f8feb164dca056b6598681d67db32155927fb8fb7bdec4db50",
+    "pwr_b_board_sha256": "bb715b648da6ac58c1e6408513b0dc8cf2ae81245b525e082378cd1026f406c7",
+    "pwr_b_mate_pins_sha256": "6e81f0aa941ddd43ba6e4bd82fe37d33c55dfe433d8f4121f789865ee28a3098",
     "netclasses_sha256": "95b4858058b99d613ed90219bc1ceba892dcf5edb10bc8b989493109240f3061",
     "e1_05": "Відкрито: MPN F102 з холодним опором ≤10 mΩ і опір з'єднання LAB5 E1→E2 ≤10 mΩ (кожні 10 mΩ — 32 mV при 3.2 A)."
   },

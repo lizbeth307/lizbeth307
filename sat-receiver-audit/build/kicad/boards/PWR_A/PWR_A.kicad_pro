@@ -252,31 +252,11 @@
       },
       {
         "netclass": "BATT",
-        "pattern": "E1_N"
-      },
-      {
-        "netclass": "PWR3A",
-        "pattern": "E1_SERVICE_P"
-      },
-      {
-        "netclass": "BATT",
-        "pattern": "E1_SHUNT_P"
-      },
-      {
-        "netclass": "BATT",
         "pattern": "E1_SW"
       },
       {
         "netclass": "BATT",
         "pattern": "E1_SYS12_SW"
-      },
-      {
-        "netclass": "PWR3A",
-        "pattern": "E1_USB_PD_RAW"
-      },
-      {
-        "netclass": "PWR3A",
-        "pattern": "E1_USB_PD_SAFE"
       },
       {
         "netclass": "PWR1A",
@@ -345,10 +325,6 @@
       {
         "netclass": "PWR1A",
         "pattern": "E2_LNB_MON"
-      },
-      {
-        "netclass": "PWR1A",
-        "pattern": "E5_IMU5V"
       },
       {
         "netclass": "PWR1A",

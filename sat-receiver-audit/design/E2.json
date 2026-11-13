@@ -9242,15 +9242,15 @@
       "pins": [
         {
           "number": "1",
-          "name": "CHG_INHIBIT",
-          "type": "passive",
-          "net": "CHG_INHIBIT"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "2",
-          "name": "E1_BAT_ADC",
-          "type": "passive",
-          "net": "E1_BAT_ADC"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "3",
@@ -9362,7 +9362,8 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута S02-PWR-SIG-1 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута S02-PWR-SIG-1 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWRJ-F2C probe: сигнали E1/E5 перенесених на PWR-C груп (контакти 1, 2) виходять з S02: вони йдуть PWR-C ↔ CTRL джгутом W-C2 до тих самих контактів J306/J307; тут ці контакти — резерв."
       ]
     },
     {
@@ -9421,33 +9422,33 @@
         },
         {
           "number": "8",
-          "name": "I2C0_SCL",
-          "type": "passive",
-          "net": "I2C0_SCL"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "9",
-          "name": "I2C0_SDA",
-          "type": "passive",
-          "net": "I2C0_SDA"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "10",
-          "name": "IMU_RX",
-          "type": "passive",
-          "net": "IMU_RX"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "11",
-          "name": "IMU_TX",
-          "type": "passive",
-          "net": "IMU_TX"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "12",
-          "name": "INA228_ALERT",
-          "type": "passive",
-          "net": "INA228_ALERT"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "13",
@@ -9475,9 +9476,9 @@
         },
         {
           "number": "17",
-          "name": "PICO_OFF",
-          "type": "passive",
-          "net": "PICO_OFF"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "18",
@@ -9487,9 +9488,9 @@
         },
         {
           "number": "19",
-          "name": "PWR_BUTTON",
-          "type": "passive",
-          "net": "PWR_BUTTON"
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
         },
         {
           "number": "20",
@@ -9499,7 +9500,8 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+        "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу.",
+        "W2 PWRJ-F2C probe: сигнали E1/E5 перенесених на PWR-C груп (контакти 8, 9, 10, 11, 12, 17, 19) виходять з S02: вони йдуть PWR-C ↔ CTRL джгутом W-C2 до тих самих контактів J306/J307; тут ці контакти — резерв."
       ]
     },
     {
@@ -9866,9 +9868,9 @@
         },
         {
           "number": "18",
-          "name": "CHG_INHIBIT",
+          "name": "EN_AUX12",
           "type": "passive",
-          "net": "CHG_INHIBIT"
+          "net": "EN_AUX12"
         },
         {
           "number": "19",
@@ -9878,9 +9880,9 @@
         },
         {
           "number": "20",
-          "name": "E1_BAT_ADC",
+          "name": "EN_BONI",
           "type": "passive",
-          "net": "E1_BAT_ADC"
+          "net": "EN_BONI"
         },
         {
           "number": "21",
@@ -9890,9 +9892,9 @@
         },
         {
           "number": "22",
-          "name": "EN_AUX12",
+          "name": "EN_HFP",
           "type": "passive",
-          "net": "EN_AUX12"
+          "net": "EN_HFP"
         },
         {
           "number": "23",
@@ -9902,9 +9904,9 @@
         },
         {
           "number": "24",
-          "name": "EN_BONI",
+          "name": "EN_LIME3V3",
           "type": "passive",
-          "net": "EN_BONI"
+          "net": "EN_LIME3V3"
         },
         {
           "number": "25",
@@ -9914,9 +9916,9 @@
         },
         {
           "number": "26",
-          "name": "EN_HFP",
+          "name": "EN_LNB",
           "type": "passive",
-          "net": "EN_HFP"
+          "net": "EN_LNB"
         },
         {
           "number": "27",
@@ -9926,9 +9928,9 @@
         },
         {
           "number": "28",
-          "name": "EN_LIME3V3",
+          "name": "FAULT_HFP",
           "type": "passive",
-          "net": "EN_LIME3V3"
+          "net": "FAULT_HFP"
         },
         {
           "number": "29",
@@ -9938,9 +9940,9 @@
         },
         {
           "number": "30",
-          "name": "EN_LNB",
+          "name": "FLT_BONI",
           "type": "passive",
-          "net": "EN_LNB"
+          "net": "FLT_BONI"
         },
         {
           "number": "31",
@@ -9950,9 +9952,9 @@
         },
         {
           "number": "32",
-          "name": "FAULT_HFP",
+          "name": "FLT_LIME3V3",
           "type": "passive",
-          "net": "FAULT_HFP"
+          "net": "FLT_LIME3V3"
         },
         {
           "number": "33",
@@ -9962,9 +9964,9 @@
         },
         {
           "number": "34",
-          "name": "FLT_BONI",
+          "name": "FLT_LNB",
           "type": "passive",
-          "net": "FLT_BONI"
+          "net": "FLT_LNB"
         },
         {
           "number": "35",
@@ -9974,9 +9976,9 @@
         },
         {
           "number": "36",
-          "name": "FLT_LIME3V3",
+          "name": "I2C2_SCL",
           "type": "passive",
-          "net": "FLT_LIME3V3"
+          "net": "I2C2_SCL"
         },
         {
           "number": "37",
@@ -9986,9 +9988,9 @@
         },
         {
           "number": "38",
-          "name": "FLT_LNB",
+          "name": "I2C2_SDA",
           "type": "passive",
-          "net": "FLT_LNB"
+          "net": "I2C2_SDA"
         },
         {
           "number": "39",
@@ -9998,9 +10000,9 @@
         },
         {
           "number": "40",
-          "name": "I2C0_SCL",
+          "name": "OVP_LNB_N",
           "type": "passive",
-          "net": "I2C0_SCL"
+          "net": "OVP_LNB_N"
         },
         {
           "number": "41",
@@ -10010,9 +10012,9 @@
         },
         {
           "number": "42",
-          "name": "I2C0_SDA",
+          "name": "PICO_DISP_EN",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "net": "PICO_DISP_EN"
         },
         {
           "number": "43",
@@ -10022,9 +10024,9 @@
         },
         {
           "number": "44",
-          "name": "I2C2_SCL",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C2_SCL"
+          "nc": true
         },
         {
           "number": "45",
@@ -10034,9 +10036,9 @@
         },
         {
           "number": "46",
-          "name": "I2C2_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C2_SDA"
+          "nc": true
         },
         {
           "number": "47",
@@ -10046,9 +10048,9 @@
         },
         {
           "number": "48",
-          "name": "IMU_RX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_RX"
+          "nc": true
         },
         {
           "number": "49",
@@ -10058,9 +10060,9 @@
         },
         {
           "number": "50",
-          "name": "IMU_TX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_TX"
+          "nc": true
         },
         {
           "number": "51",
@@ -10070,9 +10072,9 @@
         },
         {
           "number": "52",
-          "name": "INA228_ALERT",
+          "name": "NC",
           "type": "passive",
-          "net": "INA228_ALERT"
+          "nc": true
         },
         {
           "number": "53",
@@ -10082,9 +10084,9 @@
         },
         {
           "number": "54",
-          "name": "OVP_LNB_N",
+          "name": "NC",
           "type": "passive",
-          "net": "OVP_LNB_N"
+          "nc": true
         },
         {
           "number": "55",
@@ -10094,9 +10096,9 @@
         },
         {
           "number": "56",
-          "name": "PICO_DISP_EN",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_DISP_EN"
+          "nc": true
         },
         {
           "number": "57",
@@ -10106,9 +10108,9 @@
         },
         {
           "number": "58",
-          "name": "PICO_OFF",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_OFF"
+          "nc": true
         },
         {
           "number": "59",
@@ -10118,9 +10120,9 @@
         },
         {
           "number": "60",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "61",
@@ -10477,9 +10479,9 @@
         },
         {
           "number": "17",
-          "name": "CHG_INHIBIT",
+          "name": "EN_AUX12",
           "type": "passive",
-          "net": "CHG_INHIBIT"
+          "net": "EN_AUX12"
         },
         {
           "number": "18",
@@ -10489,9 +10491,9 @@
         },
         {
           "number": "19",
-          "name": "E1_BAT_ADC",
+          "name": "EN_BONI",
           "type": "passive",
-          "net": "E1_BAT_ADC"
+          "net": "EN_BONI"
         },
         {
           "number": "20",
@@ -10501,9 +10503,9 @@
         },
         {
           "number": "21",
-          "name": "EN_AUX12",
+          "name": "EN_HFP",
           "type": "passive",
-          "net": "EN_AUX12"
+          "net": "EN_HFP"
         },
         {
           "number": "22",
@@ -10513,9 +10515,9 @@
         },
         {
           "number": "23",
-          "name": "EN_BONI",
+          "name": "EN_LIME3V3",
           "type": "passive",
-          "net": "EN_BONI"
+          "net": "EN_LIME3V3"
         },
         {
           "number": "24",
@@ -10525,9 +10527,9 @@
         },
         {
           "number": "25",
-          "name": "EN_HFP",
+          "name": "EN_LNB",
           "type": "passive",
-          "net": "EN_HFP"
+          "net": "EN_LNB"
         },
         {
           "number": "26",
@@ -10537,9 +10539,9 @@
         },
         {
           "number": "27",
-          "name": "EN_LIME3V3",
+          "name": "FAULT_HFP",
           "type": "passive",
-          "net": "EN_LIME3V3"
+          "net": "FAULT_HFP"
         },
         {
           "number": "28",
@@ -10549,9 +10551,9 @@
         },
         {
           "number": "29",
-          "name": "EN_LNB",
+          "name": "FLT_BONI",
           "type": "passive",
-          "net": "EN_LNB"
+          "net": "FLT_BONI"
         },
         {
           "number": "30",
@@ -10561,9 +10563,9 @@
         },
         {
           "number": "31",
-          "name": "FAULT_HFP",
+          "name": "FLT_LIME3V3",
           "type": "passive",
-          "net": "FAULT_HFP"
+          "net": "FLT_LIME3V3"
         },
         {
           "number": "32",
@@ -10573,9 +10575,9 @@
         },
         {
           "number": "33",
-          "name": "FLT_BONI",
+          "name": "FLT_LNB",
           "type": "passive",
-          "net": "FLT_BONI"
+          "net": "FLT_LNB"
         },
         {
           "number": "34",
@@ -10585,9 +10587,9 @@
         },
         {
           "number": "35",
-          "name": "FLT_LIME3V3",
+          "name": "I2C2_SCL",
           "type": "passive",
-          "net": "FLT_LIME3V3"
+          "net": "I2C2_SCL"
         },
         {
           "number": "36",
@@ -10597,9 +10599,9 @@
         },
         {
           "number": "37",
-          "name": "FLT_LNB",
+          "name": "I2C2_SDA",
           "type": "passive",
-          "net": "FLT_LNB"
+          "net": "I2C2_SDA"
         },
         {
           "number": "38",
@@ -10609,9 +10611,9 @@
         },
         {
           "number": "39",
-          "name": "I2C0_SCL",
+          "name": "OVP_LNB_N",
           "type": "passive",
-          "net": "I2C0_SCL"
+          "net": "OVP_LNB_N"
         },
         {
           "number": "40",
@@ -10621,9 +10623,9 @@
         },
         {
           "number": "41",
-          "name": "I2C0_SDA",
+          "name": "PICO_DISP_EN",
           "type": "passive",
-          "net": "I2C0_SDA"
+          "net": "PICO_DISP_EN"
         },
         {
           "number": "42",
@@ -10633,9 +10635,9 @@
         },
         {
           "number": "43",
-          "name": "I2C2_SCL",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C2_SCL"
+          "nc": true
         },
         {
           "number": "44",
@@ -10645,9 +10647,9 @@
         },
         {
           "number": "45",
-          "name": "I2C2_SDA",
+          "name": "NC",
           "type": "passive",
-          "net": "I2C2_SDA"
+          "nc": true
         },
         {
           "number": "46",
@@ -10657,9 +10659,9 @@
         },
         {
           "number": "47",
-          "name": "IMU_RX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_RX"
+          "nc": true
         },
         {
           "number": "48",
@@ -10669,9 +10671,9 @@
         },
         {
           "number": "49",
-          "name": "IMU_TX",
+          "name": "NC",
           "type": "passive",
-          "net": "IMU_TX"
+          "nc": true
         },
         {
           "number": "50",
@@ -10681,9 +10683,9 @@
         },
         {
           "number": "51",
-          "name": "INA228_ALERT",
+          "name": "NC",
           "type": "passive",
-          "net": "INA228_ALERT"
+          "nc": true
         },
         {
           "number": "52",
@@ -10693,9 +10695,9 @@
         },
         {
           "number": "53",
-          "name": "OVP_LNB_N",
+          "name": "NC",
           "type": "passive",
-          "net": "OVP_LNB_N"
+          "nc": true
         },
         {
           "number": "54",
@@ -10705,9 +10707,9 @@
         },
         {
           "number": "55",
-          "name": "PICO_DISP_EN",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_DISP_EN"
+          "nc": true
         },
         {
           "number": "56",
@@ -10717,9 +10719,9 @@
         },
         {
           "number": "57",
-          "name": "PICO_OFF",
+          "name": "NC",
           "type": "passive",
-          "net": "PICO_OFF"
+          "nc": true
         },
         {
           "number": "58",
@@ -10729,9 +10731,9 @@
         },
         {
           "number": "59",
-          "name": "PWR_BUTTON",
+          "name": "NC",
           "type": "passive",
-          "net": "PWR_BUTTON"
+          "nc": true
         },
         {
           "number": "60",
