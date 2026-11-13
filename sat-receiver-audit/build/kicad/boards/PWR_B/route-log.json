@@ -26,8 +26,8 @@
   "ses_sha256": null,
   "dsn_probe": null,
   "locked_segments": {
-    "before_ses_import": 1784,
-    "after_ses_import": 1784
+    "before_ses_import": 1852,
+    "after_ses_import": 1852
   },
   "freerouting_not_run": {
     "passes": 0,
@@ -60,7 +60,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "86d05a0b7b848e76575ba66204ec417054d03c017b54015fe5450cfdddaf5ce0",
+  "board_sha256": "01043894d4f23999353f820084ef0eef9c6ac293d8f578f97450eea1c127df79",
   "previews": [
     "build/kicad/boards/PWR_B/PWR_B-top.svg",
     "build/kicad/boards/PWR_B/PWR_B-bottom.svg"
@@ -386,9 +386,9 @@
     },
     {
       "ref": "J203",
-      "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
-      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal.kicad_mod",
-      "sha256": "7f8ab891bb8ca28840688f5e3db368339970e0550e1b90069a72accc900677d5"
+      "footprint": "Connector_JST:JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PHD_B20B-PHDSS_2x10_P2.00mm_Vertical.kicad_mod",
+      "sha256": "168ae449942c3542ee04208deb2c1beecb1cbd4b3e525b6bf918ae568b54c26c"
     },
     {
       "ref": "J204",
@@ -410,9 +410,9 @@
     },
     {
       "ref": "J506",
-      "footprint": "Connector_JST:JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal",
-      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S9B-PH-K_1x09_P2.00mm_Horizontal.kicad_mod",
-      "sha256": "5f66e17ce30e395f6100c8f83b87e5cab7a9cc680a9ef3554d30f4c83c261ab0"
+      "footprint": "Connector_JST:JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B9B-PH-K_1x09_P2.00mm_Vertical.kicad_mod",
+      "sha256": "9a629fe0a83b61c4e7c3285e6892b998209b911dae31f17e96f4b5afa7f64734"
     },
     {
       "ref": "L206",
@@ -891,8 +891,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "43433071671",
-    "sha": "46245a52f9a6a38a1e1f6e6a02b5e91d8b73d3e0",
+    "run_id": "43491820451",
+    "sha": "d5196a0ecac437b78faac9854ff679e17b5e8f2f",
     "ref": "refs/heads/wip/w2-pwrl6"
   }
 }
