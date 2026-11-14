@@ -7,7 +7,7 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "69de49e17d919d9489619a4c0e33771713a4ca4996974e45d3b9eba34292989e",
+    "spec_sha256": "49251a6e75eb5ea8bddf44a80c31e14415586c60847f253bbe4dad313e9519c6",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
     "lab5_budget_sha256": "3925466bb96c5ac7008392c4b19dc76e3fe300ee88070206cf7e8c9509dcef5e"
   },
