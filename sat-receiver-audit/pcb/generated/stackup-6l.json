@@ -193,6 +193,50 @@
           "inner_min_width_mm": null,
           "basis": "IPC-2221 external k 0.048 on 2 oz (0.070 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
         }
+      },
+      "inner_classes": {
+        "PWR05A": {
+          "kind": "power",
+          "parent_class": "PWR1A",
+          "capacity": {
+            "continuous_a": 0.339,
+            "continuous_dt_c": 10,
+            "protective_a": 0.499,
+            "protective_dt_c": 20,
+            "why": "TPS2553 bias switches limited at <=0.339 A (RILIM 88.7k, U206-U208) and the eFuse U212 at <=0.499 A (RILM 2.05k, LNB13V2); tools/assembly_data.py NET_CURRENT"
+          },
+          "outer_min_width_mm": 0.2,
+          "outer_ipc_width_mm": 0.0378,
+          "split_outer_per_layer_mm": null,
+          "inner_min_width_mm": 0.5,
+          "inner_ipc_width_mm": 0.4529,
+          "clearance_mm": 0.15,
+          "vias_per_transition": 1,
+          "vias_per_transition_status": "advisory design value: neither KiCad DRC nor pcb/check_boards.py counts vias per transition (review.json lists it under unverified)",
+          "nets": [
+            "BIAS_CH1",
+            "BIAS_CH1_DAMP",
+            "BIAS_CH2_PORT",
+            "BIAS_CH3_PORT",
+            "BIAS_CH4",
+            "BIAS_CH4_DAMP",
+            "BIAS_SB_LNA",
+            "BONI13V8_PORT",
+            "E2_LNA1_SHUNT",
+            "E2_LNA1_SW",
+            "E2_LNA4_SHUNT",
+            "E2_LNA4_SW",
+            "E2_LNB_EF",
+            "E2_LNB_MON",
+            "E2_SB_DAMP",
+            "E2_SB_SW",
+            "E3_GNSS5V",
+            "E5_IMU5V",
+            "LNB13V2",
+            "LNB13V2_DAMP"
+          ],
+          "basis": "IPC-2221 internal k 0.024 on 0.5 oz (0.0152 mm) for In2/In3, width = max(at 0.339 A, +10 degC; at 0.499 A, +20 degC); outer: the PWR1A width on 2 oz (0.07 mm); members: the PWR1A nets of netclasses.json within the capacity (MODEL)"
+        }
       }
     }
   }
