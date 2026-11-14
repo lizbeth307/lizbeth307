@@ -203,19 +203,106 @@ def converter_checks(board, spec):
         hit = [t for t in board.tracks if t.net == 'GND' and t.layer == 'F.Cu' and a and g and touches_pad(t, a) and touches_pad(t, g)]
         row(f'{agnd} AGND to PGND pin 19 under the module', bool(hit), f'{len(hit)} F.Cu GND track(s) from {agnd} to U108.19')
     cz = spec.get('converter_zones') or {}
+    cz_layers = tuple(cz.get('layers') or ('F.Cu', 'In1.Cu'))  # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-02: + B.Cu
     for zi, z in sorted((cz.get('zones') or {}).items()):
         box = tuple(z['rect'])
         own = set(z['own_nets'])
-        foreign = sorted({t.net for t in board.tracks if t.layer in ('F.Cu', 'In1.Cu') and t.net not in own
+        foreign = sorted({t.net for t in board.tracks if t.layer in cz_layers and t.net not in own
                           and cb.seg_box_gap(t.shape.x1, t.shape.y1, t.shape.x2, t.shape.y2, box) <= 0.0}
                          | {v['net'] for v in board.vias if v['net'] not in own and box[0] <= v['x'] <= box[2] and box[1] <= v['y'] <= box[3]}
-                         | {zz['net'] for zz in board.zones if zz['layers'][0] in ('F.Cu', 'In1.Cu') and zz['net'] not in own
+                         | {zz['net'] for zz in board.zones if zz['layers'][0] in cz_layers and zz['net'] not in own
                             and zz.get('outline') and bg.rects_overlap(poly_box(zz['outline']), box)})
-        row(f'no foreign net on F.Cu / In1.Cu over converter zone {zi}', not foreign, f'zone {list(box)}: foreign nets {foreign}')
+        row(f'no foreign net on {" / ".join(cz_layers)} over converter zone {zi}', not foreign, f'zone {list(box)}: foreign nets {foreign}')
+    # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-07 (SLVSGB4B 11.1): the PGND via array of U108 (at least two vias in each PGND pad 17-20)
+    # and the ground returns of its input/output capacitors (localized top-side PGND copper, or the deviation the spec records)
+    pg = {n: pad(f'U108.{n}') for n in ('17', '18', '19', '20')}
+    counts = {n: sum(1 for v in board.vias if v['net'] == 'GND' and q and q['geo'].contains(v['x'], v['y'])) for n, q in pg.items()}
+    row('U108 PGND via array (at least 2 vias in each PGND pad 17-20)', all(c >= 2 for c in counts.values()),
+        f'vias in the PGND pads {counts}; about 240 K/W per 0.3 mm via with 18 um plating, MODEL')
+    devs = {d['id']: d for d in spec.get('converter_deviations', [])}
+    for caps, dev in ((('C130', 'C131'), 'DEV-U108-CIN-RETURN'), (('C133', 'C134', 'C135'), 'DEV-U108-COUT-RETURN')):
+        gnd = [(c, q['number']) for c in caps for q in board.pads if q['ref'] == c and q['net'] == 'GND']
+        top = joined_on(board, 'GND', 'F.Cu', gnd + [('U108', n) for n in ('17', '18', '19', '20')])
+        ok = top or dev in devs
+        rows.append({'check': f'U108 {"/".join(caps)} ground return on top-side PGND copper', 'ok': ok,
+                     'detail': f'top-side GND copper joins {[f"{c}.{n}" for c, n in gnd]} to PGND 17-20: {top}'
+                               + ('' if top else f'; recorded deviation {dev}: {devs[dev]["why"]}' if dev in devs else ''),
+                     'label': 'MODEL', 'source': SCRIPT_SOURCE, **({'deviation': dev} if not top and dev in devs else {})})
+        if not ok:
+            findings.append({'check': 'converters', 'item': f'U108 {"/".join(caps)} ground return', 'detail': 'no top-side PGND copper'})
     in1 = [z for z in board.zones if z['layers'][0] == 'In1.Cu']
     in1_tracks = [t for t in board.tracks if t.layer == 'In1.Cu']
     row('In1.Cu solid GND plane', bool(in1) and all(z['net'] == 'GND' and z.get('plane') for z in in1) and not in1_tracks,
         f'In1.Cu zones {[(z["name"], z["net"]) for z in in1]}, tracks {len(in1_tracks)}')
+    return rows, findings
+
+
+def htrim_check(spec, boxes, pin_fields, zmax, wm):
+    """Rule H-TRIM on the drawn board (W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-04): every top courtyard (boxes: ref -> box in
+    contract mm) under a PWR-B THT pin field + window_margin needs a read height of at most zmax; a part without a height, or with a
+    lower-bound height (spec heights_lower_bound), is a finding as well (synthesis htrim_decision). Returns (rows, findings)."""
+    lower = set((spec.get('heights_lower_bound') or {}).get('refs', []))
+    rows, findings = [], []
+    for f in pin_fields:
+        x0, y0, x1, y1 = f['field_mm']
+        zone = (x0 - wm, y0 - wm, x1 + wm, y1 + wm)
+        for ref, box in sorted(boxes.items(), key=lambda kv: bg.sort_ref(kv[0])):
+            if not overlap(box, zone):
+                continue
+            h = spec.get('heights', {}).get(ref)
+            ok = h is not None and ref not in lower and h <= zmax + EPS
+            rows.append({'ref': ref, 'under': f['ref'], 'h_mm': h, 'ok': ok, **({'h_lower_bound': True} if ref in lower else {})})
+            if not ok:
+                why = ('height not read (no source: a violation under the binding H-TRIM rule)' if h is None else
+                       f'{h} mm is a lower bound only' if ref in lower else f'{h} mm')
+                findings.append({'check': 'h_trim', 'item': ref, 'detail': f'{why} under the PWR-B {f["ref"]} pin field '
+                                 f'(H-TRIM zone height {zmax} mm)'})
+    return rows, findings
+
+
+TVS_MAX_MM = 5.0  # mm, synthesis PWR-L6-SCRIPT: TVS joined at class width within 5 mm
+TVS_REQUIRED = ('D104', 'D105')  # the TVS clamps the synthesis names (E1_N, E1_SW); the others are reported (OPEN when they miss)
+
+
+def tvs_checks(board, spec, graph):
+    """W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-03: every TVS cathode on a power net lies on class-width copper of its net (a track at
+    least the class width, or a pour, touches the pad) and within TVS_MAX_MM of the net's other copper (another part's pad of the net, or
+    class-width copper that does not touch the cathode): MODEL geometry, pad boxes. Returns (rows, findings)."""
+    import make_board as mb
+    nc = mb.with_copper_option(read(NETCLASSES))
+    rows, findings = [], []
+    for fp in sorted(board.footprints, key=lambda f: bg.sort_ref(f['ref'] or '')):
+        ref = fp['ref'] or ''
+        value = str((graph.get(ref) or {}).get('value', '')).upper()
+        if not ref.startswith('D') or not any(k in value for k in cb.TVS_MARKERS):
+            continue
+        for q in [x for x in board.pads if x['ref'] == ref and x['net'] and x['net'] != 'GND']:
+            cls = (nc['nets'].get(q['net']) or {}).get('class')
+            need = (nc['classes'].get(cls) or {}).get('outer_min_width_mm') if cls else None
+            if need is None or nc['classes'][cls].get('kind') != 'power':
+                continue
+            box = q['geo'].bbox
+            wide = [t for t in board.tracks if t.net == q['net'] and t.layer in q['layers'] and t.width + EPS >= need]
+            pours = [z for z in board.zones if z['net'] == q['net'] and z['layers'][0] in q['layers'] and z.get('boxes')]
+            on = [t for t in wide if touches_pad(t, q)] + [z for z in pours if any(bg.rects_overlap(b, box, EPS) for b in z['boxes'])]
+            dist = []
+            for t in wide:
+                if not touches_pad(t, q):
+                    s = t.shape
+                    dist.append(max(0.0, cb.seg_box_gap(s.x1, s.y1, s.x2, s.y2, box) - s.r))
+            for o in board.pads:
+                if o['net'] == q['net'] and o['ref'] != ref:
+                    ob = o['geo'].bbox
+                    dist.append(math.hypot(max(ob[0] - box[2], 0.0, box[0] - ob[2]), max(ob[1] - box[3], 0.0, box[1] - ob[3])))
+            near = min(dist) if dist else None
+            ok = bool(on) and near is not None and near <= TVS_MAX_MM + EPS
+            rows.append({'check': f'TVS {ref}.{q["number"]} on {q["net"]} at class width within {TVS_MAX_MM} mm', 'ok': ok,
+                         'detail': f'{len(on)} class-width ({cls} {need} mm) track(s)/pour(s) on the cathode; nearest other copper of the net '
+                                   f'{r4(near) if near is not None else None} mm from the cathode pad', 'label': 'MODEL'})
+            if not ok and ref in TVS_REQUIRED:
+                findings.append({'check': 'tvs', 'item': f'{ref}.{q["number"]}', 'detail': rows[-1]['detail']})
+            elif not ok:  # a TVS the synthesis does not name: reported OPEN for PWR-L6-ROUTE (build/15), not a finding of this plan
+                rows[-1]['open'] = 'OPEN for PWR-L6-ROUTE: the routed trunk must pass within the limit, or the part moves before the final route'
     return rows, findings
 
 
@@ -318,24 +405,12 @@ def audit(folder):
     outside = [r for r in bottom if not any(inside(cbox(fps[r]), p) for p in pockets)]
     for r in outside:
         findings.append({'check': 'pockets', 'item': r, 'detail': 'bottom courtyard not inside one plate pocket PB1-PB13'})
-    # H-TRIM
+    # H-TRIM (W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-04: an unread or lower-bound height under a field is a finding)
     zmax = pspec['keepouts']['h_trim']['zone_h_max_mm']
     wm = pspec['parameters']['window_margin']
-    trim_rows = []
-    for f in read(PWR_B_SPEC)['h_trim']['pin_fields']:
-        x0, y0, x1, y1 = f['field_mm']
-        zone = (x0 - wm, y0 - wm, x1 + wm, y1 + wm)
-        for ref, fp in sorted(fps.items(), key=lambda kv: bg.sort_ref(kv[0])):
-            if fp['side'] != 'top' or not fp['courtyard'] or not overlap(cbox(fp), zone):
-                continue
-            h = spec.get('heights', {}).get(ref)
-            ok = h is not None and h <= zmax + EPS
-            trim_rows.append({'ref': ref, 'under': f['ref'], 'h_mm': h, 'ok': ok if h is not None else None})
-            if h is None:
-                unverified.append({'check': 'h_trim', 'item': ref, 'reason': f'under the {f["ref"]} pin field; height not read'})
-            elif not ok:
-                findings.append({'check': 'h_trim', 'item': ref, 'detail': f'{h} mm under the PWR-B {f["ref"]} pin field '
-                                 f'(H-TRIM zone height {zmax} mm)'})
+    trim_rows, trim_findings = htrim_check(spec, {r: cbox(fp) for r, fp in fps.items() if fp['side'] == 'top' and fp['courtyard']},
+                                           read(PWR_B_SPEC)['h_trim']['pin_fields'], zmax, wm)
+    findings += trim_findings
     # holes
     holes = [h for h in board.holes if h['ref'] and h['ref'].startswith('H')]
     netted = [h['ref'] for h in holes if h['net']]
@@ -438,6 +513,9 @@ def audit(folder):
         e105['B'] = {'joined': copper['B_L101_to_J208']['joined'], 'met': None}
     conv_rows, conv_findings = converter_checks(board, spec) if spec.get('converter_zones') else ([], [])
     findings += conv_findings
+    tvs_rows, tvs_findings = tvs_checks(board, spec, graph) if planned else ([], [])
+    findings += tvs_findings
+    unverified += [{'check': 'tvs', 'item': r['check'], 'reason': r['open'] + '; ' + r['detail']} for r in tvs_rows if r.get('open')]
     class_doc = None
     if planned:  # W2 PWR-L6-SCRIPT: pcb/check_boards.py check_classes on the scripted copper (2 oz widths, exemption policy)
         nspec = cb.normalize_spec(spec)
@@ -474,6 +552,7 @@ def audit(folder):
         'copper': copper,
         'e1_05': e105,
         'converters': {'rows': conv_rows, 'source': SCRIPT_SOURCE} if conv_rows else None,
+        'tvs': {'rows': tvs_rows, 'rule': f'synthesis PWR-L6-SCRIPT: TVS joined at class width within {TVS_MAX_MM} mm (MODEL)'} if tvs_rows else None,
         'class_widths': class_doc,
         'fill': {'label': 'MODEL: KiCad courtyard boxes of the top footprints over the outline less the 7 hole keep-outs',
                  'top_courtyards_mm2': r4(demand), 'usable_mm2': r4(usable), 'fill': r4(demand / usable)},

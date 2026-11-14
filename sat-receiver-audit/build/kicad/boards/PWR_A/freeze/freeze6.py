@@ -92,11 +92,15 @@ def policy(m):
     return branch_ok, neck_ok
 
 
+CZ_LAYERS = ['F.Cu', 'In1.Cu']  # the converter-zone layers of board-spec.json (W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-02: + B.Cu)
+
+
 def converter_zone_rule(m):
-    """[(poly KiCad mm, own nets)] of board-spec.json converter_zones (W2 PWR-L6-SCRIPT), F.Cu and In1.Cu."""
+    """[(poly KiCad mm, own nets)] of board-spec.json converter_zones (W2 PWR-L6-SCRIPT), on CZ_LAYERS."""
     path = HERE.parent / 'board-spec.json'
     cz = (json.loads(path.read_text(encoding='utf-8')).get('converter_zones') or {}) if path.is_file() else {}
     out = []
+    CZ_LAYERS[:] = cz.get('layers') or ['F.Cu', 'In1.Cu']
     for _zi, z in sorted((cz.get('zones') or {}).items()):
         x0, y0, x1, y1 = z['rect']
         a, b = K(x0, y1), K(x1, y0)
@@ -375,7 +379,7 @@ def main(argv=None):
     base_keepouts = list(m.keepouts)
 
     def zone_keepouts(net):
-        return [{'layers': ['F.Cu', 'In1.Cu'], 'poly': poly, 'name': 'converter zone'} for poly, own in czones if net not in own]
+        return [{'layers': list(CZ_LAYERS), 'poly': poly, 'name': 'converter zone'} for poly, own in czones if net not in own]
     drc = json.loads((art / 'board/drc.json').read_text(encoding='utf-8'))
     drops = drc_drops(m, drc)
     print('router copper named in a KiCad DRC error:', drops)
@@ -407,7 +411,7 @@ def main(argv=None):
         for it in m.items:
             if not (it.alive and it.src == 'router') or it.net in own or it.net in NEVER:
                 continue
-            on = [l for l in it.layers if l in ('F.Cu', 'In1.Cu')]
+            on = [l for l in it.layers if l in CZ_LAYERS]
             if on and (M.shape_seg_dist(poly, it.a, it.b) <= it.width / 2 if it.kind == 'track' else poly.dist(*it.at) <= it.size / 2):
                 print(f'  router {it.kind} of {it.net} on {on} over a converter zone: removed')
                 m.remove(it)
@@ -442,7 +446,9 @@ def main(argv=None):
             bk = branch_kind(GRAPH)
             okb, br = fz.branch_pass(net, lambda r: bk(r) is not None and branch_ok(r, net),
                                      lambda refs: max(BRANCH_W[bk(r)] for r in refs),
-                                     lambda refs: ROUTING if all(bk(r) == 'TP' for r in refs) else OUTER, BRANCH_MAX)
+                                     lambda refs: ROUTING if all(bk(r) == 'TP' for r in refs) else OUTER, BRANCH_MAX,
+                                     target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= width(net))
+                                     or (i.kind == 'pad' and i.src == 'zone'))
             branches += br
             ok = ok or okb
         m.keepouts[:] = base_keepouts

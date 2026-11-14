@@ -7,9 +7,9 @@
   "inputs": {
     "board_sha256": null,
     "spec": "build/kicad/boards/PWR_A/board-spec.json",
-    "spec_sha256": "cafc175bc994602833f423af3221af49a2923f7470d55f747e6209456398dfe2",
+    "spec_sha256": "d20f9456bbdc89d72b6a999b1654564a063bd31ebc548968eebb507b0dfba34e",
     "pwr_b_h_trim_sha256": "fb2433bcd9df58384b91940efb08570ef93a43bd7e8cc45418338db52344a995",
-    "lab5_budget_sha256": "3795e9c969342b74a98a0229cc5405cc3cb8fac5808640ebc047a9829aebbe74"
+    "lab5_budget_sha256": "c0fa69af5815aea68922272b5bada80ab8c431d3672419c330c0925f774fee7e"
   },
   "drc": null,
   "zones": [
@@ -106,19 +106,13 @@
     "zone_h_max_mm": 2.7,
     "parts_under": [
       {
-        "ref": "C119",
-        "under": "J201",
-        "h_mm": 2.7,
-        "ok": true
-      },
-      {
         "ref": "U109",
         "under": "J201",
-        "h_mm": 2.7,
+        "h_mm": 1.0,
         "ok": true
       },
       {
-        "ref": "C253",
+        "ref": "Q2903",
         "under": "J202",
         "h_mm": 2.7,
         "ok": true
@@ -126,17 +120,23 @@
       {
         "ref": "U211",
         "under": "J202",
-        "h_mm": 2.7,
+        "h_mm": 1.0,
         "ok": true
       },
       {
-        "ref": "C267",
+        "ref": "C270",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "D201",
+        "ref": "C511",
+        "under": "J203",
+        "h_mm": 2.0,
+        "ok": true
+      },
+      {
+        "ref": "D102",
         "under": "J203",
         "h_mm": 2.7,
         "ok": true
@@ -148,15 +148,15 @@
         "ok": true
       },
       {
-        "ref": "U551",
-        "under": "J203",
+        "ref": "C272",
+        "under": "J204",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C294",
+        "ref": "L214",
         "under": "J204",
-        "h_mm": 2.7,
+        "h_mm": 1.0,
         "ok": true
       },
       {
@@ -166,13 +166,13 @@
         "ok": true
       },
       {
-        "ref": "U553",
+        "ref": "U103",
         "under": "J204",
         "h_mm": 2.7,
         "ok": true
       },
       {
-        "ref": "C266",
+        "ref": "C260",
         "under": "J207",
         "h_mm": 2.7,
         "ok": true
@@ -184,15 +184,9 @@
         "ok": true
       },
       {
-        "ref": "C292",
+        "ref": "L212",
         "under": "J207",
-        "h_mm": 2.7,
-        "ok": true
-      },
-      {
-        "ref": "C2903",
-        "under": "J207",
-        "h_mm": 2.7,
+        "h_mm": 1.0,
         "ok": true
       },
       {
@@ -226,6 +220,12 @@
         "ok": true
       },
       {
+        "ref": "D203",
+        "under": "J506",
+        "h_mm": 2.7,
+        "ok": true
+      },
+      {
         "ref": "U214",
         "under": "J506",
         "h_mm": 2.7,
@@ -248,13 +248,13 @@
         "L205.1"
       ],
       "mohm": {
-        "20C": 8.3184,
-        "50C": 9.2992
+        "20C": 8.5586,
+        "50C": 9.5677
       },
       "joined": true,
       "network": {
-        "tracks": 146,
-        "vias": 50,
+        "tracks": 100,
+        "vias": 40,
         "pads": 19,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
@@ -277,13 +277,13 @@
         "J208.14"
       ],
       "mohm": {
-        "20C": 13.3251,
-        "50C": 14.8961
+        "20C": 14.0432,
+        "50C": 15.6989
       },
       "joined": true,
       "network": {
-        "tracks": 146,
-        "vias": 50,
+        "tracks": 100,
+        "vias": 40,
         "pads": 19,
         "zones_not_modelled": [],
         "zones_as_ideal_joints": [
@@ -340,17 +340,17 @@
     },
     "B_total_20C": {
       "U210.1": {
-        "pwr_a_mohm": 13.3251,
+        "pwr_a_mohm": 14.0432,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 3.3152,
-        "total_mohm": 20.3903,
+        "total_mohm": 21.1084,
         "within_10_mohm": false
       },
       "U221.1": {
-        "pwr_a_mohm": 13.3251,
+        "pwr_a_mohm": 14.0432,
         "b2b_delta_max_mohm": 3.75,
         "pwr_b_mohm": 4.3004,
-        "total_mohm": 21.3755,
+        "total_mohm": 22.0936,
         "within_10_mohm": false
       }
     }
@@ -359,48 +359,48 @@
     "label": "MODEL: copper of the drawn (planned or routed) board, IACS copper at 20 degC; E1-05 and its bench stay OPEN",
     "A": {
       "what": "L101.2 -> L205.1 (the LT3045 pair feed)",
-      "mohm_20c": 8.3184,
+      "mohm_20c": 8.5586,
       "limit_mohm": 10.0,
       "met": true
     },
     "B": {
       "what": "L101.2 -> J208 / J209 -> each TPS2553 input on PWR-B at the worst-case concurrent currents (NET_CURRENT protective column), segment by segment",
       "total_current_a": 2.363,
-      "pwr_a_mohm_20c": 13.3251,
+      "pwr_a_mohm_20c": 14.0432,
       "per_destination": {
         "U210.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 31.4872,
+          "pwr_a_mv": 33.1841,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 5.1207,
-          "total_mv": 45.4692,
+          "total_mv": 47.1661,
           "limit_mv": 32.0,
           "met": false
         },
         "U221.1": {
           "current_a": 0.192,
-          "pwr_a_mv": 31.4872,
+          "pwr_a_mv": 33.1841,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 6.0135,
-          "total_mv": 46.362,
+          "total_mv": 48.0589,
           "limit_mv": 32.0,
           "met": false
         },
         "U501.1": {
           "current_a": 0.673,
-          "pwr_a_mv": 31.4872,
+          "pwr_a_mv": 33.1841,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 11.4422,
-          "total_mv": 51.7907,
+          "total_mv": 53.4876,
           "limit_mv": 32.0,
           "met": false
         },
         "U502.1": {
           "current_a": 0.825,
-          "pwr_a_mv": 31.4872,
+          "pwr_a_mv": 33.1841,
           "b2b_mv_max": 8.8613,
           "pwr_b_mv": 8.5056,
-          "total_mv": 48.8541,
+          "total_mv": 50.551,
           "limit_mv": 32.0,
           "met": false
         }
@@ -512,30 +512,53 @@
       {
         "check": "U108.6 AGND to PGND pin 19 under the module",
         "ok": true,
-        "detail": "1 F.Cu GND track(s) from U108.6 to U108.19",
+        "detail": "2 F.Cu GND track(s) from U108.6 to U108.19",
         "label": "MODEL",
         "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
       },
       {
         "check": "U108.11 AGND to PGND pin 19 under the module",
         "ok": true,
-        "detail": "1 F.Cu GND track(s) from U108.11 to U108.19",
+        "detail": "2 F.Cu GND track(s) from U108.11 to U108.19",
         "label": "MODEL",
         "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
       },
       {
-        "check": "no foreign net on F.Cu / In1.Cu over converter zone 3",
+        "check": "no foreign net on F.Cu / In1.Cu / B.Cu over converter zone 3",
         "ok": true,
         "detail": "zone [7, 39, 24, 63]: foreign nets []",
         "label": "MODEL",
         "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
       },
       {
-        "check": "no foreign net on F.Cu / In1.Cu over converter zone 4",
+        "check": "no foreign net on F.Cu / In1.Cu / B.Cu over converter zone 4",
         "ok": true,
         "detail": "zone [7, 73, 21, 87]: foreign nets []",
         "label": "MODEL",
         "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "U108 PGND via array (at least 2 vias in each PGND pad 17-20)",
+        "ok": true,
+        "detail": "vias in the PGND pads {'17': 2, '18': 2, '19': 2, '20': 2}; about 240 K/W per 0.3 mm via with 18 um plating, MODEL",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
+      },
+      {
+        "check": "U108 C130/C131 ground return on top-side PGND copper",
+        "ok": true,
+        "detail": "top-side GND copper joins ['C130.2', 'C131.2'] to PGND 17-20: False; recorded deviation DEV-U108-CIN-RETURN: SLVSGB4B 11.1 asks for input-capacitor ground returns on localized top-side planes to the PGND pads; here the GND pads of the 1210 bulk capacitors C130/C131 face away from the module (the E1_CONV_IN bar at y 85 lies between) and return through their own GND vias to the solid In1.Cu plane 0.2234 mm under F.Cu. Accepted because the module integrates dual 0402 input capacitors for the high-frequency bypass (SLVSGB4B 11.1), so the fast input loop closes inside the package; turning the capacitors would put the VIN pads away from VIN1/VIN2. EMI and ripple: bench gate, OPEN",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\"",
+        "deviation": "DEV-U108-CIN-RETURN"
+      },
+      {
+        "check": "U108 C133/C134/C135 ground return on top-side PGND copper",
+        "ok": true,
+        "detail": "top-side GND copper joins ['C133.2', 'C134.2', 'C135.2'] to PGND 17-20: False; recorded deviation DEV-U108-COUT-RETURN: SLVSGB4B 11.1 asks for output-capacitor ground returns on localized top-side planes to the PGND pads; C133-C135 return through the GND bar at y 71.8 and its vias to In1.Cu (0.2234 mm under F.Cu), next to the module, because the VOUT bars to the VOUT pins and their thermal vias fill the space between the capacitors and PGND pad 20. Output ripple and EMI: bench gate, OPEN",
+        "label": "MODEL",
+        "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\"",
+        "deviation": "DEV-U108-COUT-RETURN"
       },
       {
         "check": "In1.Cu solid GND plane",
@@ -547,10 +570,33 @@
     ],
     "source": "TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section 11.1, re-read 2026-11-14 (fetch-only, not committed); the 2 mm / 5 mm limits are project rules for TI's \"as close as possible\""
   },
+  "tvs": {
+    "rows": [
+      {
+        "check": "TVS D104.K on E1_N at class width within 5.0 mm",
+        "ok": true,
+        "detail": "2 class-width (BATT 1.6 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 1.0 mm from the cathode pad",
+        "label": "MODEL"
+      },
+      {
+        "check": "TVS D105.K on E1_SW at class width within 5.0 mm",
+        "ok": true,
+        "detail": "1 class-width (BATT 1.6 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 1.15 mm from the cathode pad",
+        "label": "MODEL"
+      },
+      {
+        "check": "TVS D201.K on J21 at class width within 5.0 mm",
+        "ok": true,
+        "detail": "5 class-width (PWR3A 0.95 mm) track(s)/pour(s) on the cathode; nearest other copper of the net 3.8667 mm from the cathode pad",
+        "label": "MODEL"
+      }
+    ],
+    "rule": "synthesis PWR-L6-SCRIPT: TVS joined at class width within 5.0 mm (MODEL)"
+  },
   "class_widths": {
     "label": "MODEL: pcb/check_boards.py check_classes on the planned board (pads as copper boxes, pours filled to their outlines)",
     "findings": [],
-    "tracks_checked": 942,
+    "tracks_checked": 1326,
     "exemption_policy": {
       "branch_roles": [
         "test_point",
@@ -564,17 +610,573 @@
         "fuse",
         "power_switch",
         "efuse_in_out",
-        "converter_capacitor"
+        "converter_capacitor",
+        "converter_power_pin"
       ],
       "neck_rule": "at least the narrow side of its pad wide, no longer than its long side",
-      "branch_exempt": 8,
+      "branch_exempt": 6,
       "neck_exempt": 1,
       "pin_entry_pours": {
-        "declared": 19,
-        "accepted": 19
-      }
+        "declared": 22,
+        "accepted": 22
+      },
+      "pin_entry_measured": [
+        {
+          "zone": "PE-E1_CONV_IN-U111.4",
+          "pad": "U111.4",
+          "role": "sense_logic_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "+x",
+                "pad_side_mm": 1.325,
+                "strip_mm": 0.0
+              }
+            ],
+            "strip_mm": 0.0,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.0,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "PE-E1_N-U103.1",
+          "pad": "U103.1",
+          "role": "ic_power_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "+y",
+                "pad_side_mm": 1.325,
+                "strip_mm": 0.0
+              }
+            ],
+            "strip_mm": 0.0,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.0,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "PE-E1_SW-U111.3",
+          "pad": "U111.3",
+          "role": "sense_logic_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "+x",
+                "pad_side_mm": 1.325,
+                "strip_mm": 0.0
+              }
+            ],
+            "strip_mm": 0.0,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.0,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "PE-E1_SW-U111.6",
+          "pad": "U111.6",
+          "role": "sense_logic_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "-x",
+                "pad_side_mm": 1.325,
+                "strip_mm": 0.0
+              }
+            ],
+            "strip_mm": 0.0,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.0,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "PE-E1_SW-U220.5",
+          "pad": "U220.5",
+          "role": "sense_logic_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "-x",
+                "pad_side_mm": 0.6,
+                "strip_mm": 0.3
+              }
+            ],
+            "strip_mm": 0.3,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.3,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "PE-E2_BONI_IN-U213.15",
+          "pad": "U213.15",
+          "role": "ic_power_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "+y",
+                "pad_side_mm": 0.75,
+                "strip_mm": 0.45
+              }
+            ],
+            "strip_mm": 0.45,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.45,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "PE-E2_LNA_IN-U204.4",
+          "pad": "U204.4",
+          "role": "sense_logic_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "+y",
+                "pad_side_mm": 1.45,
+                "strip_mm": 0.0
+              }
+            ],
+            "strip_mm": 0.0,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.0,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "PE-E2_LNA_IN-U205.4",
+          "pad": "U205.4",
+          "role": "sense_logic_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "+y",
+                "pad_side_mm": 1.45,
+                "strip_mm": 0.0
+              }
+            ],
+            "strip_mm": 0.0,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.0,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "PE-LAB5-J208.10",
+          "pad": "J208.10",
+          "role": "b2b_contact",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "-y",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.35
+              }
+            ],
+            "strip_mm": 0.35,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.35,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "PE-LAB5-J208.14",
+          "pad": "J208.14",
+          "role": "b2b_contact",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "-y",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.35
+              }
+            ],
+            "strip_mm": 0.35,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.35,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "PE-LAB5-J208.2",
+          "pad": "J208.2",
+          "role": "b2b_contact",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "-x",
+                "pad_side_mm": 1.5,
+                "strip_mm": 0.0
+              }
+            ],
+            "strip_mm": 0.0,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.0,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "PE-LAB5-J208.6",
+          "pad": "J208.6",
+          "role": "b2b_contact",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "-y",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.35
+              }
+            ],
+            "strip_mm": 0.35,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.35,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "SC-PE-U109-IN",
+          "pad": "U109.5",
+          "role": "efuse_in_out",
+          "carve_out": "CO-EFUSE-BAR-END",
+          "measured": {
+            "sides": [
+              {
+                "side": "-x",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.35
+              }
+            ],
+            "strip_mm": 0.35,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.35,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "SC-PE-U109-OUT",
+          "pad": "U109.6",
+          "role": "efuse_in_out",
+          "carve_out": "CO-EFUSE-BAR-END",
+          "measured": {
+            "sides": [
+              {
+                "side": "+x",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.35
+              }
+            ],
+            "strip_mm": 0.35,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.35,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "SC-PE-U201-IN",
+          "pad": "U201.5",
+          "role": "efuse_in_out",
+          "carve_out": "CO-EFUSE-BAR-END",
+          "measured": {
+            "sides": [
+              {
+                "side": "-y",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.5
+              }
+            ],
+            "strip_mm": 0.5,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.5,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "SC-PE-U201-OUT",
+          "pad": "U201.6",
+          "role": "efuse_in_out",
+          "carve_out": "CO-EFUSE-BAR-END",
+          "measured": {
+            "sides": [
+              {
+                "side": "+y",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.2
+              }
+            ],
+            "strip_mm": 0.2,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.2,
+            "landing_mm": [
+              0.95,
+              0.95
+            ]
+          }
+        },
+        {
+          "zone": "SC-PE-U202-IN",
+          "pad": "U202.5",
+          "role": "efuse_in_out",
+          "carve_out": "CO-EFUSE-BAR-END",
+          "measured": {
+            "sides": [
+              {
+                "side": "-x",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.5
+              }
+            ],
+            "strip_mm": 0.5,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.5,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "SC-PE-U202-OUT",
+          "pad": "U202.6",
+          "role": "efuse_in_out",
+          "carve_out": "CO-EFUSE-BAR-END",
+          "measured": {
+            "sides": [
+              {
+                "side": "+x",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.15
+              }
+            ],
+            "strip_mm": 0.15,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.15,
+            "landing_mm": [
+              0.4,
+              0.4
+            ]
+          }
+        },
+        {
+          "zone": "SC-PE-U203-IN",
+          "pad": "U203.5",
+          "role": "efuse_in_out",
+          "carve_out": "CO-EFUSE-BAR-END",
+          "measured": {
+            "sides": [
+              {
+                "side": "-y",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.1
+              }
+            ],
+            "strip_mm": 0.1,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.1,
+            "landing_mm": [
+              0.4,
+              0.4
+            ]
+          }
+        },
+        {
+          "zone": "SC-PE-U203-OUT",
+          "pad": "U203.6",
+          "role": "efuse_in_out",
+          "carve_out": "CO-EFUSE-BAR-END",
+          "measured": {
+            "sides": [
+              {
+                "side": "+y",
+                "pad_side_mm": 0.3,
+                "strip_mm": 0.15
+              }
+            ],
+            "strip_mm": 0.15,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.15,
+            "landing_mm": [
+              0.4,
+              0.4
+            ]
+          }
+        },
+        {
+          "zone": "SC-U211-IN-ENTRY",
+          "pad": "U211.16",
+          "role": "ic_power_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "+y",
+                "pad_side_mm": 0.31,
+                "strip_mm": 0.45
+              }
+            ],
+            "strip_mm": 0.45,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.45,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        },
+        {
+          "zone": "SC-U213-IN-ENTRY",
+          "pad": "U213.16",
+          "role": "ic_power_pin",
+          "carve_out": null,
+          "measured": {
+            "sides": [
+              {
+                "side": "+y",
+                "pad_side_mm": 0.31,
+                "strip_mm": 0.45
+              }
+            ],
+            "strip_mm": 0.45,
+            "problem": null
+          },
+          "declared": {
+            "strip_mm": 0.45,
+            "landing_mm": [
+              1.6,
+              1.6
+            ]
+          }
+        }
+      ],
+      "carve_outs": [
+        {
+          "id": "CO-EFUSE-BAR-END",
+          "scope": "pin_entry",
+          "pads": [
+            "U109.5",
+            "U109.6",
+            "U201.5",
+            "U201.6",
+            "U202.5",
+            "U202.6",
+            "U203.5",
+            "U203.6"
+          ],
+          "role": "efuse_in_out"
+        },
+        {
+          "id": "CO-U107-BOOT",
+          "scope": "branch",
+          "pads": [
+            "C127.2"
+          ],
+          "role": "converter_capacitor"
+        }
+      ]
     },
-    "branch_rows": 8,
+    "branch_rows": 6,
     "neck_rows": 1,
     "widths_mm": {
       "BATT": 1.6,

@@ -317,7 +317,7 @@
         "pattern": "AUX12"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "AUX12_DAMP"
       },
       {
@@ -327,6 +327,10 @@
       {
         "netclass": "PWR2A",
         "pattern": "DISP12"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E1_CONV_IN"
       },
       {
         "netclass": "PWR3A",
@@ -353,7 +357,7 @@
         "pattern": "E1_N"
       },
       {
-        "netclass": "PWR3A",
+        "netclass": "SCRIPTED_PWR3A",
         "pattern": "E1_SERVICE_P"
       },
       {
@@ -393,7 +397,7 @@
         "pattern": "E1_USB_PD_RAW"
       },
       {
-        "netclass": "PWR3A",
+        "netclass": "SCRIPTED_PWR3A",
         "pattern": "E1_USB_PD_SAFE"
       },
       {
@@ -401,7 +405,7 @@
         "pattern": "E2_AUX_PTC"
       },
       {
-        "netclass": "SCRIPTED_PWR1A",
+        "netclass": "PWR1A",
         "pattern": "E2_AUX_SWITCHED"
       },
       {
@@ -425,7 +429,7 @@
         "pattern": "E2_J21_EF"
       },
       {
-        "netclass": "SCRIPTED_BATT",
+        "netclass": "BATT",
         "pattern": "E2_J21_FUSED"
       },
       {
@@ -433,7 +437,7 @@
         "pattern": "E2_LIME_EF"
       },
       {
-        "netclass": "PWR1A",
+        "netclass": "SCRIPTED_PWR1A",
         "pattern": "E2_LNA4_SHUNT"
       },
       {
@@ -457,11 +461,11 @@
         "pattern": "E2_LNB_IN"
       },
       {
-        "netclass": "BATT",
+        "netclass": "SCRIPTED_BATT",
         "pattern": "E2_LNB_IN_DAMP"
       },
       {
-        "netclass": "SCRIPTED_PWR1A",
+        "netclass": "PWR1A",
         "pattern": "E2_LNB_MON"
       },
       {
@@ -469,7 +473,7 @@
         "pattern": "E5_IMU5V"
       },
       {
-        "netclass": "SCRIPTED_PWR1A",
+        "netclass": "PWR1A",
         "pattern": "E5_VBUS_HFP_SW"
       },
       {

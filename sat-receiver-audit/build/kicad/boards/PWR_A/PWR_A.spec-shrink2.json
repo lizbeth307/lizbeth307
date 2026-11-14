@@ -753,7 +753,7 @@
       "anchor": {
         "at": [
           9.15,
-          48.2
+          49.25
         ],
         "align": "origin",
         "rotation": 90,
@@ -1083,7 +1083,17 @@
     },
     {
       "ref": "C219",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          5.95,
+          24.7
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py PINNED): kept at its board place of 8ed0778b: taller than the H-TRIM zone height; no planner region off the fields left"
     },
     {
       "ref": "C220",
@@ -1217,7 +1227,17 @@
     },
     {
       "ref": "C265",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          24.3,
+          30.3
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py PINNED): kept at its board place of 8ed0778b: low part; its planner region went to the pins above"
     },
     {
       "ref": "C266",
@@ -1365,15 +1385,45 @@
     },
     {
       "ref": "D103",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          98.0,
+          4.6
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py PINNED): kept at its board place of 8ed0778b: low part; its planner region went to the eFuse anchors"
     },
     {
       "ref": "D104",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          67.4,
+          8.25
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py TVS_ANCHORS): TVS clamp next to class-width copper of its net, cathode joined by a scripted BATT stub within 5 mm"
     },
     {
       "ref": "D105",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          11.3,
+          9.25
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py TVS_ANCHORS): TVS clamp next to class-width copper of its net, cathode joined by a scripted BATT stub within 5 mm"
     },
     {
       "ref": "D201",
@@ -1722,7 +1772,17 @@
     },
     {
       "ref": "L203",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          3.35,
+          46.25
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py PINNED): kept at its board place of 8ed0778b: taller than the H-TRIM zone height; no planner region off the fields left"
     },
     {
       "ref": "L204",
@@ -1774,7 +1834,17 @@
     },
     {
       "ref": "Q101",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          31.75,
+          102.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py PINNED): kept at its board place of 8ed0778b: low part; its planner region went to the eFuse anchors"
     },
     {
       "ref": "Q102",
@@ -2548,7 +2618,17 @@
     },
     {
       "ref": "U109",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          5.25,
+          36.7
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py EFUSE_ANCHORS): eFuse kept at its board place, oriented after TI SLVSFC9C figure 8-22 (IN and OUT bars leave at opposite ends)"
     },
     {
       "ref": "U111",
@@ -2556,15 +2636,45 @@
     },
     {
       "ref": "U201",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          30.0,
+          70.85
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py EFUSE_ANCHORS): eFuse kept at its board place, oriented after TI SLVSFC9C figure 8-22 (IN and OUT bars leave at opposite ends)"
     },
     {
       "ref": "U202",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          10.05,
+          102.4
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py EFUSE_ANCHORS): eFuse kept at its board place, oriented after TI SLVSFC9C figure 8-22 (IN and OUT bars leave at opposite ends)"
     },
     {
       "ref": "U203",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          16.55,
+          91.85
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py EFUSE_ANCHORS): eFuse kept at its board place, oriented after TI SLVSFC9C figure 8-22 (IN and OUT bars leave at opposite ends)"
     },
     {
       "ref": "U204",
@@ -2632,7 +2742,17 @@
     },
     {
       "ref": "U216",
-      "source": "graph"
+      "source": "graph",
+      "anchor": {
+        "at": [
+          72.65,
+          27.35
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "W2 PWR-L6-SCRIPT review fix (make_spec.py PINNED): kept at its board place of 8ed0778b: low part; its planner region went to the pins above"
     },
     {
       "ref": "U220",
@@ -2870,8 +2990,7 @@
       "region_name": "BAND_LNB",
       "alt_regions": [
         "BAND_U211_UP",
-        "BAND_U211_LOW",
-        "BAND_LEFT"
+        "BAND_U211_LOW"
       ],
       "side": "F",
       "gap_mm": 0.5,
@@ -2960,10 +3079,6 @@
         },
         {
           "ref": "C264",
-          "rotation": 0
-        },
-        {
-          "ref": "C265",
           "rotation": 0
         },
         {
@@ -3068,10 +3183,6 @@
         {
           "ref": "L201",
           "rotation": 0
-        },
-        {
-          "ref": "U201",
-          "rotation": 0
         }
       ]
     },
@@ -3119,7 +3230,7 @@
       "region": [
         26.5,
         102.8,
-        34.3,
+        29.82,
         109.7
       ],
       "region_name": "LEG_TOP_R",
@@ -3139,9 +3250,9 @@
     {
       "id": "DISP",
       "region": [
-        14.6,
-        90.2,
-        18.2,
+        15.1,
+        93.3,
+        18.0,
         100.4
       ],
       "region_name": "LEG_Z4_TOP",
@@ -3172,20 +3283,16 @@
         {
           "ref": "L202",
           "rotation": 0
-        },
-        {
-          "ref": "U202",
-          "rotation": 0
         }
       ]
     },
     {
       "id": "LIME",
       "region": [
-        0.3,
+        0.36,
         35.2,
-        7.2,
-        55.3
+        3.8,
+        43.16
       ],
       "region_name": "LEG_LEFT_LOW",
       "alt_regions": [
@@ -3209,39 +3316,6 @@
         },
         {
           "ref": "C218",
-          "rotation": 0
-        },
-        {
-          "ref": "C219",
-          "rotation": 0
-        },
-        {
-          "ref": "L203",
-          "rotation": 0
-        },
-        {
-          "ref": "U203",
-          "rotation": 0
-        }
-      ]
-    },
-    {
-      "id": "INA3221_2",
-      "region": [
-        34.4,
-        87.0,
-        41.2,
-        95.5
-      ],
-      "region_name": "LEG_RIGHT_HIGH",
-      "alt_regions": [
-        "LEG_SPINE_R"
-      ],
-      "side": "F",
-      "gap_mm": 0.5,
-      "members": [
-        {
-          "ref": "U216",
           "rotation": 0
         }
       ]
@@ -3275,7 +3349,7 @@
     {
       "id": "E1_CTRL",
       "region": [
-        19.75,
+        28.71,
         27.0,
         39.5,
         32.5
@@ -3313,37 +3387,19 @@
         {
           "ref": "D102",
           "rotation": 0
-        },
-        {
-          "ref": "D103",
-          "rotation": 0
-        },
-        {
-          "ref": "D104",
-          "rotation": 0
-        },
-        {
-          "ref": "D105",
-          "rotation": 0
-        },
-        {
-          "ref": "Q101",
-          "rotation": 0
         }
       ]
     },
     {
       "id": "E1_USBPD",
       "region": [
-        0.75,
-        14.25,
-        2.76,
-        26.8
+        9.9,
+        27.0,
+        15.5,
+        34.8
       ],
-      "region_name": "BAND_LEFT",
-      "alt_regions": [
-        "BAND_TOP_LEFT"
-      ],
+      "region_name": "BAND_TOP_LEFT",
+      "alt_regions": [],
       "side": "F",
       "gap_mm": 0.5,
       "members": [
@@ -3353,10 +3409,6 @@
         },
         {
           "ref": "C117",
-          "rotation": 0
-        },
-        {
-          "ref": "U109",
           "rotation": 0
         }
       ]
@@ -3802,10 +3854,10 @@
       ],
       "region_name": "PB9b",
       "alt_regions": [
-        "PB9c",
         "PB11",
-        "PB10",
         "PB12",
+        "PB9c",
+        "PB10",
         "PB9",
         "PB13",
         "PB8",
@@ -3865,15 +3917,15 @@
       "alt_regions": [
         "PB3",
         "PB1",
-        "PB6",
         "PB3b",
+        "PB6",
         "PB8",
         "PB7b",
         "PB7",
         "PB9c",
+        "PB4b",
         "PB9b",
         "PB9",
-        "PB4b",
         "PB10",
         "PB11",
         "PB12",
@@ -4045,8 +4097,8 @@
         "PB7",
         "PB7b",
         "PB6",
-        "PB8",
         "PB4",
+        "PB8",
         "PB9",
         "PB9c",
         "PB9b",
@@ -4117,27 +4169,27 @@
       "id": "E1_USBPD_BOT",
       "region": [
         0.3,
-        12.0,
-        7.0,
-        29.0
+        29.0,
+        24.3,
+        37.0
       ],
-      "region_name": "PB1",
+      "region_name": "PB3",
       "alt_regions": [
-        "PB3",
+        "PB1",
         "PB5",
         "PB3b",
         "PB6",
         "PB7b",
-        "PB8",
         "PB7",
         "PB4b",
+        "PB8",
         "PB9c",
-        "PB9b",
         "PB9",
+        "PB9b",
         "PB10",
         "PB11",
-        "PB4",
         "PB12",
+        "PB4",
         "PB13",
         "PB2"
       ],
@@ -4170,38 +4222,26 @@
   "regions": {
     "note": "free rectangles of the SHRINK-2 layout (make_spec.py TOP_REGIONS, design choice) and the plate pockets PB1-PB13 of the contract (bottom_side.keep_in_mm) as bottom regions; a group names its preferred region and alt_regions (bottom: the nearest pocket first); board_gen reads only group.region; placement_study.py uses rects for top groups and bottom_rects for bottom groups",
     "rects": {
-      "BAND_LEFT": [
-        0.75,
-        14.25,
-        2.76,
-        26.8
-      ],
       "BAND_LEFTb": [
         6.2,
         17.3,
         8.26,
-        26.8
-      ],
-      "BAND_LEFTbb": [
-        6.2,
-        9.8,
-        8.26,
-        14.8
+        21.8
       ],
       "BAND_LEFTc": [
         3.7,
         17.3,
         5.26,
-        26.8
+        21.8
       ],
       "BAND_U211_LOW": [
         9.6,
-        7.0,
-        15.5,
+        11.5,
+        14.95,
         13.3
       ],
       "BAND_U211_UP": [
-        9.6,
+        9.9,
         19.8,
         15.5,
         26.8
@@ -4243,9 +4283,9 @@
         26.4
       ],
       "BAND_LNAb": [
-        63.1,
-        7.0,
-        72.3,
+        63.75,
+        10.5,
+        70.2,
         26.4
       ],
       "BAND_LNAc": [
@@ -4273,10 +4313,16 @@
         13.4
       ],
       "BAND_U213_UP": [
-        72.6,
+        75.1,
         19.8,
         80.1,
         26.4
+      ],
+      "BAND_U213_UPb": [
+        72.6,
+        19.8,
+        75.1,
+        24.9
       ],
       "BAND_B2B_BELOW": [
         89.9,
@@ -4305,11 +4351,23 @@
       "BAND_BOTTOM_M": [
         90.1,
         0.3,
+        96.3,
+        11.0
+      ],
+      "BAND_BOTTOM_Mb": [
+        96.3,
+        6.53,
         99.3,
         11.0
       ],
+      "BAND_BOTTOM_Mc": [
+        96.3,
+        0.3,
+        99.3,
+        2.67
+      ],
       "BAND_BOTTOM_R": [
-        99.6,
+        99.7,
         0.3,
         115.2,
         11.0
@@ -4327,13 +4385,19 @@
         24.5
       ],
       "BAND_TOP_LEFT": [
-        7.1,
+        9.9,
         27.0,
         15.5,
         34.8
       ],
+      "BAND_TOP_LEFTb": [
+        7.1,
+        27.6,
+        9.9,
+        34.8
+      ],
       "BAND_TOP_LEFT_R": [
-        19.75,
+        28.71,
         27.0,
         39.5,
         32.5
@@ -4345,7 +4409,7 @@
         32.5
       ],
       "BAND_TOP_LEFT_R2": [
-        28.7,
+        28.71,
         32.5,
         42.2,
         34.8
@@ -4369,9 +4433,21 @@
         34.8
       ],
       "BAND_TOP_MID4": [
-        66.3,
+        75.1,
         26.9,
         80.1,
+        34.8
+      ],
+      "BAND_TOP_MID4b": [
+        66.3,
+        26.9,
+        70.2,
+        34.8
+      ],
+      "BAND_TOP_MID4c": [
+        70.2,
+        29.8,
+        75.1,
         34.8
       ],
       "BAND_TOP_MID_R": [
@@ -4387,10 +4463,22 @@
         29.05
       ],
       "LEG_LEFT_LOW": [
-        0.3,
+        0.36,
         35.2,
-        7.2,
+        3.8,
+        43.16
+      ],
+      "LEG_LEFT_LOWb": [
+        3.8,
+        49.34,
+        6.34,
         55.3
+      ],
+      "LEG_LEFT_LOWbb": [
+        3.8,
+        38.15,
+        6.34,
+        43.16
       ],
       "LEG_SYS12_LOW": [
         10.4,
@@ -4418,7 +4506,7 @@
       ],
       "LEG_Z3_L": [
         8.3,
-        50.5,
+        51.55,
         10.5,
         55.3
       ],
@@ -4496,8 +4584,8 @@
       ],
       "LEG_SPINE_R": [
         28.6,
-        68.59,
-        32.26,
+        72.3,
+        31.45,
         77.6
       ],
       "LEG_SPINE_Rb": [
@@ -4531,9 +4619,9 @@
         100.4
       ],
       "LEG_Z4_TOP": [
-        14.6,
-        90.2,
-        18.2,
+        15.1,
+        93.3,
+        18.0,
         100.4
       ],
       "LEG_Z4_TOPb": [
@@ -4549,21 +4637,33 @@
         99.7
       ],
       "LEG_TOP": [
-        7.8,
+        11.5,
         100.6,
-        34.3,
+        29.82,
         102.8
       ],
       "LEG_TOP_L": [
-        7.8,
+        11.5,
         102.8,
         15.3,
+        109.7
+      ],
+      "LEG_TOP_Lb": [
+        8.6,
+        103.85,
+        11.5,
         109.7
       ],
       "LEG_TOP_R": [
         26.5,
         102.8,
-        34.3,
+        29.82,
+        109.7
+      ],
+      "LEG_TOP_Rb": [
+        29.82,
+        104.25,
+        33.68,
         109.7
       ]
     },
@@ -4789,7 +4889,7 @@
         7.2,
         38.1,
         10.4,
-        47.2
+        47.9
       ],
       "side": "F",
       "kind": "copper",
@@ -5215,10 +5315,10 @@
     {
       "id": "CU_GND-U107-L",
       "rect": [
-        7.55,
-        47.5,
+        11.4,
+        47.95,
         15.05,
-        49.0
+        49.45
       ],
       "side": "F",
       "kind": "copper",
@@ -5229,9 +5329,9 @@
       "id": "CU_GND-C119",
       "rect": [
         7.55,
-        49.0,
+        50.0,
         10.75,
-        50.5
+        51.45
       ],
       "side": "F",
       "kind": "copper",
@@ -5528,8 +5628,8 @@
         "id": "U107-PGND-L1",
         "net": "GND",
         "at": [
-          8.3,
-          48.2
+          8.4,
+          50.9
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -5540,8 +5640,8 @@
         "id": "U107-PGND-L2",
         "net": "GND",
         "at": [
-          9.3,
-          48.2
+          9.9,
+          50.9
         ],
         "diameter_mm": 0.6,
         "drill_mm": 0.3,
@@ -5684,7 +5784,19 @@
         "id": "U108-PGND-17",
         "net": "GND",
         "at": [
-          14.0,
+          13.55,
+          81.6125
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND planes and the L4 bond copper of zones 3'/4'; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "U108-PGND-17B",
+        "net": "GND",
+        "at": [
+          14.45,
           81.6125
         ],
         "diameter_mm": 0.6,
@@ -5696,7 +5808,19 @@
         "id": "U108-PGND-18",
         "net": "GND",
         "at": [
-          14.0,
+          13.55,
+          80.5375
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND planes and the L4 bond copper of zones 3'/4'; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "U108-PGND-18B",
+        "net": "GND",
+        "at": [
+          14.45,
           80.5375
         ],
         "diameter_mm": 0.6,
@@ -5708,7 +5832,19 @@
         "id": "U108-PGND-19",
         "net": "GND",
         "at": [
-          14.0,
+          13.55,
+          79.4625
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND planes and the L4 bond copper of zones 3'/4'; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "U108-PGND-19B",
+        "net": "GND",
+        "at": [
+          14.45,
           79.4625
         ],
         "diameter_mm": 0.6,
@@ -5720,7 +5856,19 @@
         "id": "U108-PGND-20",
         "net": "GND",
         "at": [
-          14.0,
+          13.55,
+          78.3875
+        ],
+        "diameter_mm": 0.6,
+        "drill_mm": 0.3,
+        "locked": true,
+        "why": "W2 PCB-PWRA-3 part 2 GND via of a power stage (make_spec.py POWER_VIAS): In1/In2 GND planes and the L4 bond copper of zones 3'/4'; size = the project via 0.6/0.3"
+      },
+      {
+        "id": "U108-PGND-20B",
+        "net": "GND",
+        "at": [
+          14.45,
           78.3875
         ],
         "diameter_mm": 0.6,
@@ -6453,11 +6601,11 @@
           ],
           [
             10.4,
-            47.2
+            47.9
           ],
           [
             7.2,
-            47.2
+            47.9
           ]
         ],
         "priority": 2,
@@ -7393,25 +7541,25 @@
         "layer": "F.Cu",
         "outline": [
           [
-            7.55,
-            47.5
+            11.4,
+            47.95
           ],
           [
             15.05,
-            47.5
+            47.95
           ],
           [
             15.05,
-            49.0
+            49.45
           ],
           [
-            7.55,
-            49.0
+            11.4,
+            49.45
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "U107 PGND2 to C122.2 and C119.2 and two vias to In1/In2/L4 (zone 3'; review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "U107 PGND2 to C122.2 (zone 3'; review fix F1; W2 PWR-L6-SCRIPT review fix: off C119.1 after the C119 move, the PGND2 copper on the board is make_board.py SC-U107-PGND2) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-C119",
@@ -7420,24 +7568,24 @@
         "outline": [
           [
             7.55,
-            49.0
+            50.0
           ],
           [
             10.75,
-            49.0
+            50.0
           ],
           [
             10.75,
-            50.5
+            51.45
           ],
           [
             7.55,
-            50.5
+            51.45
           ]
         ],
         "priority": 2,
         "pad_connection": "solid",
-        "why": "C119.2 (review fix F1) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
+        "why": "C119.2 and its two vias (review fix F1; moved with C119) (W2 PCB-PWRA-3, make_spec.py POWER_POURS; solid pad connection)"
       },
       {
         "id": "GND-U107-R",
@@ -8396,9 +8544,13 @@
       "U107-PGND-R1",
       "U107-PGND-R2",
       "U108-PGND-17",
+      "U108-PGND-17B",
       "U108-PGND-18",
+      "U108-PGND-18B",
       "U108-PGND-19",
-      "U108-PGND-20"
+      "U108-PGND-19B",
+      "U108-PGND-20",
+      "U108-PGND-20B"
     ],
     "branch_pads": {
       "SYS12": {

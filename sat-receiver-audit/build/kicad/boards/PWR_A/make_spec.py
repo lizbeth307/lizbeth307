@@ -107,7 +107,7 @@ EDGE_INSET = 0.3  # mm, a planner region keeps this off the board outline (the d
 # display filter L202 does not fit there (C113, R110 and the hole keep-out at (38, 56)) and stays with its group.
 POWER_ANCHORS = {
     'U107': (16.0, 46.5, 90), 'L102': (16.0, 56.0, 90),
-    'C119': (9.15, 48.2, 90), 'C122': (13.07, 47.525, 90), 'C121': (18.93, 47.525, 90), 'C120': (22.85, 48.2, 90),
+    'C119': (9.15, 49.25, 90), 'C122': (13.07, 47.525, 90), 'C121': (18.93, 47.525, 90), 'C120': (22.85, 48.2, 90),
     'C123': (2.0, 59.0, 270), 'C124': (5.4, 59.0, 270), 'C125': (8.8, 59.0, 270), 'C126': (22.95, 59.0, 270),
     'Q102': (26.5, 38.6, 90), 'C107': (19.0, 67.15, 180),
     'U108': (14.0, 80.0, 0), 'C130': (11.2, 86.475, 90), 'C131': (16.8, 86.475, 90),
@@ -116,6 +116,9 @@ POWER_ANCHORS = {
     'L205': (39.91, 23.41, 270),
     'F201': (30.43, 64.9, 90), 'Q201': (30.53, 56.6, 180),
 }
+# W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-01 (design choice): C119 (CIN2, C3225X7R1H106K250AC, 2.80 mm max read, pcb/partition-spec.json
+# heights.by_mpn) 1.05 mm up from (9.15, 48.2), so that its courtyard leaves the H-TRIM zone of the PWR-B J201 pin field (zone y <= 46.9;
+# courtyard y 46.95-51.55): pad 1 (E1_CONV_IN) still faces the VIN2 level, pad 2 (GND) gets the PGND2 bar of make_board.py
 POWER_ANCHOR_CHANGES = ('U107-SYS12', 'RPP-SYS12', 'U108-LAB5')  # anchors apply once these are in the graph
 # W2 PWR-L6-PLACE (design choice; placement only, the copper is W2 PWR-L6-SCRIPT's): the small-signal parts of both
 # converters are anchored inside their thermal_bond zones (contract thermal_bond_mm zones 3' and 4'), next to the pins
@@ -162,6 +165,27 @@ CUTOUT_KEEP = {
 # it is pinned at the place pcb place_board.py legalised for it against the new pin fields (board-placement.json), off
 # every PWR-B pin field and header strip; the planner packs the rest of the HFP group around it. ref -> (x, y, rotation).
 HTRIM_KEEP = {'C512': (101.9, 31.45, 180)}
+# W2 PWR-L6-SCRIPT review fixes (design choice): parts pinned at their board-placement.json places of 8ed0778b, which are off every
+# PWR-B THT pin field for the parts taller than the H-TRIM zone height: ref -> (x, y, rotation, why). The planner now keeps a part taller
+# than the zone height out of the regions under a field (placement_study.py htrim_ok, RV-PWRL6-PRE-C-01); C219 (16SVPG47M, 4.5 mm) and
+# L203 (XAL5030) then find no region left, and U216, C265, Q101 and D103 (low parts) lose theirs to the pins
+PINNED = {
+    'C219': (5.95, 24.7, 0, 'taller than the H-TRIM zone height; no planner region off the fields left'),
+    'L203': (3.35, 46.25, 0, 'taller than the H-TRIM zone height; no planner region off the fields left'),
+    'C265': (24.3, 30.3, 0, 'low part; its planner region went to the pins above'),
+    'U216': (72.65, 27.35, 0, 'low part; its planner region went to the pins above'),
+    'Q101': (31.75, 102.55, 0, 'low part; its planner region went to the eFuse anchors'),
+    'D103': (98.0, 4.6, 90, 'low part; its planner region went to the eFuse anchors'),
+}
+# W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-03 / -C-03 (design choice): the TVS clamps stand next to class-width copper of their net so
+# that make_board.py joins each cathode at the BATT width within 5 mm (scripted stub): D105 (E1_SW) left of the E1_SW rise pour above
+# J107, cathode 1.15 mm from the pour; D104 (E1_N) left of J108, cathode 1.4 mm from the J108.2 (E1_N) pin. Both are low SMB parts
+# off every PWR-B THT pin field (no H-TRIM zone) and off every cut-out: ref -> (x, y, rotation)
+TVS_ANCHORS = {'D104': (67.4, 8.25, 180), 'D105': (11.3, 9.25, 180)}
+# W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04 (design choice): the TPS259470 eFuses keep their board places of 8ed0778b and
+# take the orientation of TI SLVSFC9C figure 8-22 (IN bar leaves at one end, OUT at the other), with room for both bar ends: U201 turned
+# from 90 to 0 so that IN leaves down to F201 and OUT up to C204 (at 90 both ends faced the E1_CONV_IN spine or C202): ref -> (x, y, rot)
+EFUSE_ANCHORS = {'U109': (5.25, 36.7, 90), 'U201': (30.0, 70.85, 0), 'U202': (10.05, 102.4, 90), 'U203': (16.55, 91.85, 180)}
 SMALL_SIGNAL_LIMIT = {'C128': 2.0}  # mm, pad centre to pin centre (CVCC); the others 5.0
 SMALL_SIGNAL_SOURCE = ('TI LM61460 SNVSBD5D (rev. D, July 2022) section 11.1 and figure 11-2 Layout Example, '
                        'https://www.ti.com/lit/ds/symlink/lm61460.pdf, and TI TPSM63606 SLVSGB4B (rev. B, April 2022) section '
@@ -213,7 +237,7 @@ POWER_POURS = {
                               'the RT/EN pins 6/7 escape below it (review fix F1)', ['C121.1', 'C120.1']),
     'CONVIN-U107-VIN1': pour('E1_CONV_IN', rect(17.55, 46.75, 18.7, 47.15),
                              'onto U107 VIN1 (pin 8, 1.0 x 0.4 mm) from C121.1 (review fix F1)', ['U107.8']),
-    'CONVIN-U107-L': pour('E1_CONV_IN', rect(7.2, 38.1, 10.4, 47.2),
+    'CONVIN-U107-L': pour('E1_CONV_IN', rect(7.2, 38.1, 10.4, 47.9),
                           '3.2 mm: C119.1 (CIN2) down to the In2 strap vias below thermal_bond zone 3\' (review fix F1)'),
     'CONVIN-U107-L-BAR': pour('E1_CONV_IN', rect(10.2, 46.15, 13.545, 47.2),
                               'C119.1 to C122.1 (CIN_HF2) along the VIN2 level, within half the class width of the two pads; '
@@ -275,9 +299,10 @@ POWER_POURS = {
     'LAB5-J208-6': pour('LAB5', rect(87.4, 15.3, 87.7, 16.4), 'onto J208.6 between the GND contacts', ['J208.6']),
     'LAB5-J208-10': pour('LAB5', rect(88.4, 15.3, 88.7, 16.4), 'onto J208.10 between the GND contacts', ['J208.10']),
     'LAB5-J208-14': pour('LAB5', rect(89.4, 15.3, 89.7, 16.4), 'onto J208.14 between the GND contacts', ['J208.14']),
-    'GND-U107-L': pour('GND', rect(7.55, 47.5, 15.05, 49.0),
-                       'U107 PGND2 to C122.2 and C119.2 and two vias to In1/In2/L4 (zone 3\'; review fix F1)'),
-    'GND-C119': pour('GND', rect(7.55, 49.0, 10.75, 50.5), 'C119.2 (review fix F1)'),
+    'GND-U107-L': pour('GND', rect(11.4, 47.95, 15.05, 49.45),
+                       'U107 PGND2 to C122.2 (zone 3\'; review fix F1; W2 PWR-L6-SCRIPT review fix: off C119.1 after the C119 move, the '
+                       'PGND2 copper on the board is make_board.py SC-U107-PGND2)'),
+    'GND-C119': pour('GND', rect(7.55, 50.0, 10.75, 51.45), 'C119.2 and its two vias (review fix F1; moved with C119)'),
     'GND-U107-R': pour('GND', rect(16.95, 47.5, 24.45, 49.0),
                        'U107 PGND1 to C121.2 and C120.2 and two vias to In1/In2/L4 (zone 3\'; review fix F1)'),
     'GND-C120': pour('GND', rect(21.25, 49.0, 24.45, 50.5), 'C120.2 (review fix F1)'),
@@ -294,12 +319,15 @@ POWER_POURS = {
 # option, OPEN). E1_CONV_IN: the In2 strap and bridge (review fix F1/F2). LAB5: F.Cu <-> B.Cu trunk transitions, six each
 # (PWR3A vias_per_transition 5, advisory; review fix F2).
 POWER_VIAS = {
-    'U107-PGND-L1': (8.3, 48.2), 'U107-PGND-L2': (9.3, 48.2), 'U107-PGND-R1': (22.7, 48.2), 'U107-PGND-R2': (23.7, 48.2),
+    'U107-PGND-L1': (8.4, 50.9), 'U107-PGND-L2': (9.9, 50.9), 'U107-PGND-R1': (22.7, 48.2), 'U107-PGND-R2': (23.7, 48.2),
     'COUT-SYS12-1': (2.0, 56.1), 'COUT-SYS12-2': (5.4, 56.1), 'COUT-SYS12-3': (8.8, 56.1), 'COUT-C126': (22.95, 56.1),
     'COUT-LAB5-1': (9.2, 71.1), 'COUT-LAB5-2': (12.6, 71.1), 'COUT-LAB5-3': (16.0, 71.1),
     'CIN-U108-1': (11.2, 89.4), 'CIN-U108-2': (16.8, 89.4),
-    'U108-PGND-17': (14.0, 81.6125), 'U108-PGND-18': (14.0, 80.5375), 'U108-PGND-19': (14.0, 79.4625),
-    'U108-PGND-20': (14.0, 78.3875),
+    # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-07 (SLVSGB4B 11.1: "Use an array of heat-sinking vias to connect the exposed pads (PGND)
+    # of the package to the PCB ground plane"): two vias in each PGND pad 17-20 (x 13.55 / 14.45, 0.6 mm hole pitch 0.9: 0.6 mm drill
+    # to drill); via in pad is the JLC default on 6 layers (pcb/generated/stackup-6l.json capabilities.via_in_pad)
+    **{f'U108-PGND-{n}{s}': (x, y) for n, y in ((17, 81.6125), (18, 80.5375), (19, 79.4625), (20, 78.3875))
+       for s, x in (('', 13.55), ('B', 14.45))},
     'C111-GND': (9.3, 82.55),
     'STRAP-L1': (7.7, 38.4, 'E1_CONV_IN'), 'STRAP-L2': (8.65, 38.4, 'E1_CONV_IN'), 'STRAP-L3': (9.6, 38.4, 'E1_CONV_IN'),
     'STRAP-R1': (27.5, 44.4, 'E1_CONV_IN'), 'STRAP-R2': (27.5, 45.35, 'E1_CONV_IN'), 'STRAP-R3': (27.5, 46.3, 'E1_CONV_IN'),
@@ -624,6 +652,23 @@ def build():
                                            'to the converter pins it serves'})
             anchored.add(ref)
             continue
+        if ref in TVS_ANCHORS or ref in EFUSE_ANCHORS:
+            x, y, rot = TVS_ANCHORS.get(ref) or EFUSE_ANCHORS[ref]
+            parts.append({'ref': ref, 'source': 'graph',
+                          'anchor': {'at': [x, y], 'align': 'origin', 'rotation': rot, 'side': 'F'},
+                          'anchor_source': ('W2 PWR-L6-SCRIPT review fix (make_spec.py TVS_ANCHORS): TVS clamp next to class-width '
+                                            'copper of its net, cathode joined by a scripted BATT stub within 5 mm' if ref in TVS_ANCHORS else
+                                            'W2 PWR-L6-SCRIPT review fix (make_spec.py EFUSE_ANCHORS): eFuse kept at its board place, '
+                                            'oriented after TI SLVSFC9C figure 8-22 (IN and OUT bars leave at opposite ends)')})
+            anchored.add(ref)
+            continue
+        if ref in PINNED:
+            x, y, rot, why = PINNED[ref]
+            parts.append({'ref': ref, 'source': 'graph',
+                          'anchor': {'at': [x, y], 'align': 'origin', 'rotation': rot, 'side': 'F'},
+                          'anchor_source': f'W2 PWR-L6-SCRIPT review fix (make_spec.py PINNED): kept at its board place of 8ed0778b: {why}'})
+            anchored.add(ref)
+            continue
         if ref in HTRIM_KEEP:
             x, y, rot = HTRIM_KEEP[ref]
             parts.append({'ref': ref, 'source': 'graph',
@@ -713,7 +758,8 @@ def build():
         cuts = [[min(p[0] for p in it['outline']), min(p[1] for p in it['outline']), max(p[0] for p in it['outline']),
                  max(p[1] for p in it['outline'])] for it in POWER_POURS.values() if it['layer'] == 'F.Cu']
         cuts += [bg.placed_geometry(fp_geo_of(r), next(p['anchor'] for p in parts if p['ref'] == r))['box']
-                 for r in list(POWER_ANCHORS) + list(SMALL_SIGNAL_ANCHORS) + list(CUTOUT_KEEP) + list(HTRIM_KEEP) if r in anchored]
+                 for r in list(POWER_ANCHORS) + list(SMALL_SIGNAL_ANCHORS) + list(CUTOUT_KEEP) + list(HTRIM_KEEP) + list(TVS_ANCHORS)
+                 + list(EFUSE_ANCHORS) + list(PINNED) if r in anchored]
         for cut in cuts:
             nxt = {}
             for name, reg in regions.items():

@@ -182,8 +182,13 @@ def board_text(spec, inp, shapes=None):
         L.append(f' (zone (net 0) (net_name "") (layers "F.Cu" "In1.Cu" "In2.Cu" "In3.Cu" "In4.Cu" "B.Cu") (name "HOLE{i + 1}") '
                  f'(keepout (tracks not_allowed) (vias not_allowed) (pads not_allowed) (copperpour not_allowed) (footprints allowed)) '
                  f'(polygon (pts {pts})))')
-    for z in spec.get('post_route_zones', []):  # B.Cu GND bond copper of the thermal_bond zones (+ 0.3): no other copper
-        if z['net'] == 'GND' and z['layer'] == 'B.Cu' and z['outline'] != 'board':
+    # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-02 (decision, build/15): B.Cu GND bond copper of the converter zones 3/4 (+ 0.3) only;
+    # over the LDO bond zones 1-2 other nets may run on B.Cu under the solder mask, as the router does
+    conv = [z['rect'] for z in ((spec.get('converter_zones') or {}).get('zones') or {}).values()]
+    for z in spec.get('post_route_zones', []):
+        if z['net'] == 'GND' and z['layer'] == 'B.Cu' and z['outline'] != 'board' and any(
+                min(p[0] for p in z['outline']) < r[2] and r[0] < max(p[0] for p in z['outline'])
+                and min(p[1] for p in z['outline']) < r[3] and r[1] < max(p[1] for p in z['outline']) for r in conv):
             xs, ys = [p[0] for p in z['outline']], [p[1] for p in z['outline']]
             box = (min(xs) - 0.3, min(ys) - 0.3, max(xs) + 0.3, max(ys) + 0.3)
             pts = ' '.join(f'(xy {K(*p)[0]} {K(*p)[1]})' for p in ((box[0], box[1]), (box[2], box[1]), (box[2], box[3]), (box[0], box[3])))
@@ -218,6 +223,7 @@ class Planner:
         self.base_keepouts = list(self.m.keepouts)
         nc = self.inp.netclasses
         self.cls = {n: v['class'] for n, v in nc['nets'].items()}
+        self.cls.update(getattr(mb, 'BOARD_CLASS_OVERRIDES', {}))  # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-06: E1_CONV_IN at BATT
         self.classes = nc['classes']
         self.fz = F.Finisher(self.m, log=lambda *a: None)
         cb = mb.bg  # pcb/board_gen; check_boards for the exemption roles
@@ -247,7 +253,7 @@ class Planner:
             if net in own:
                 continue
             k0, k1 = K(box[0], box[3]), K(box[2], box[1])
-            out.append({'layers': ['F.Cu', 'In1.Cu'], 'poly': M.cb.Poly([(k0[0], k0[1]), (k1[0], k0[1]), (k1[0], k1[1]), (k0[0], k1[1])]),
+            out.append({'layers': ['F.Cu', 'In1.Cu', 'B.Cu'], 'poly': M.cb.Poly([(k0[0], k0[1]), (k1[0], k0[1]), (k1[0], k1[1]), (k0[0], k1[1])]),
                         'name': f'converter zone {zi}'})
         return out
 
@@ -269,7 +275,23 @@ class Planner:
                     return True
         return False
 
-    def entry_pour(self, net, pad, w):
+    def on_scripted(self, net, pad, w):
+        """True when scripted copper of the net at the class width w (a make_board track or pour at least w wide) touches the pad on
+        one of its layers: the pad then needs no entry pour of its own (a narrower pin-group pour still needs one for its landing)."""
+        cx, cy = (pad.bbox[0] + pad.bbox[2]) / 2, (pad.bbox[1] + pad.bbox[3]) / 2
+        for lay in pad.layers:
+            for it in self.m.near(lay, pad.bbox):
+                if not it.alive or it.net != net or it is pad:
+                    continue
+                if it.kind == 'track' and it.src == 'scripted' and it.width + 1e-6 >= w                         and M.shape_seg_dist(pad.shape, it.a, it.b) <= it.width / 2 + 1e-6:
+                    return True
+                x0, y0, x1, y1 = pad.bbox
+                probes = ((cx, cy), (cx, y1 + 0.01), (cx, y0 - 0.01), (x1 + 0.01, cy), (x0 - 0.01, cy))
+                if it.kind == 'pad' and it.src == 'zone' and any(it.shape.dist(px, py) <= 1e-6 for px, py in probes)                         and min(it.bbox[2] - it.bbox[0], it.bbox[3] - it.bbox[1]) + 1e-6 >= w:
+                    return True
+        return False
+
+    def entry_pour(self, net, pad, w, clr=None):
         """A pin-entry pour for a pad that a class-width track cannot reach: the pad's cross-section extended e <= w/2 beyond the
         pad in one axis direction, then a w x w landing (both clear of other nets by PLAN_CLR). Returns (layer, rects KiCad) or None."""
         x0, y0, x1, y1 = pad.bbox
@@ -297,11 +319,11 @@ class Planner:
                         cross = x1 - x0
                     # the landing: a class-width disc at its centre and the square around it clear of other nets
                     lc = ((land[0] + land[2]) / 2, (land[1] + land[3]) / 2)
-                    if self.m.track_margin(net, lay, w * math.sqrt(2) + 1e-3, lc, lc, clr=PLAN_CLR)[0] < 0:
+                    if self.m.track_margin(net, lay, w * math.sqrt(2) + 1e-3, lc, lc, clr=clr or PLAN_CLR)[0] < 0:
                         continue
-                    if strip and not self.rect_clear(net, lay, strip, clr=STRIP_CLR):
+                    if strip and not self.rect_clear(net, lay, strip, clr=min(STRIP_CLR, clr or STRIP_CLR)):
                         continue
-                    if not self.rect_clear(net, lay, land):
+                    if not self.rect_clear(net, lay, land, clr=clr or PLAN_CLR):
                         continue
                     cand = (e, lay, [r for r in ((x0, y0, x1, y1), strip, land) if r], (round(e, 4), [round(w, 4), round(w, 4)]))
                     if best is None or cand[0] < best[0]:
@@ -373,7 +395,15 @@ class Planner:
             for k, pad in enumerate(sorted(self.pads_of(net), key=lambda p: (p.ref, p.pad))):
                 if self.reachable(net, pad, w) or pad.drill:
                     continue
+                if self.on_scripted(net, pad, w):  # W2 PWR-L6-SCRIPT review fix: class-width scripted copper already joins it
+                    continue
+                role = self.CB.exemption_role(self.cboard, self.spec, self.graph, pad.ref, pad.pad, self.lookup, self.classes)[0]
+                if role in self.CB.EXEMPT_NECK_FORBIDDEN and not self.CB.carve_out(self.spec, 'pin_entry', pad.ref, pad.pad):
+                    rec['log'].append(f'no entry pour for {pad.ref}.{pad.pad}: {role} without a carve-out (exemption policy)')
+                    continue
                 ep = self.entry_pour(net, pad, w)
+                if ep is None:  # second try at the project clearance (+5 um), as the second link pass
+                    ep = self.entry_pour(net, pad, w, clr=RELAXED_CLR)
                 if ep is None:
                     rec['log'].append(f'no entry pour for {pad.ref}.{pad.pad}')
                     continue
@@ -385,7 +415,8 @@ class Planner:
             # 2. class-width links (no rip-up: only scripted copper exists); a net with pin-entry pours is checked by the 0.05 mm neck
             # raster of pcb/check_boards.py over its pours, which reads a diagonal track of exactly the class width up to a cell
             # narrower: its links take RASTER_MARGIN more
-            w_link = round(w + RASTER_MARGIN, 4) if rec['zones'] else w
+            scripted_entries = {v[0] for v in getattr(self.mb, 'ENTRY_ZONES', {}).values()}  # make_board's scripted pin entries
+            w_link = round(w + RASTER_MARGIN, 4) if rec['zones'] or net in scripted_entries else w
             rec['link_width_mm'] = w_link
             ok, _ripped, _necks = self.fz.connect_all(net, allow_rip=False, width=w_link, layers=OUTER, via_cost=VIA_COST[cname],
                                                     neck=None, max_links=60)
@@ -405,7 +436,9 @@ class Planner:
                     pads = [p for p in self.cboard.pads if p['ref'] == ref and p['net'] == net]
                     return bool(pads) and all(CB.exemption_role(self.cboard, {'b2b': self.spec.get('b2b', [])}, self.graph, ref, p['number'],
                                                                 self.lookup, self.classes)[0] in CB.EXEMPT_BRANCH_ROLES for p in pads)
-                okb, br = self.fz.branch_pass(net, allowed, lambda refs: BRANCH_W, lambda refs: OUTER, BRANCH_MAX)
+                okb, br = self.fz.branch_pass(net, allowed, lambda refs: BRANCH_W, lambda refs: OUTER, BRANCH_MAX,
+                                              target_ok=lambda i: (i.kind == 'track' and i.width + 1e-6 >= w)
+                                              or (i.kind == 'pad' and i.src == 'zone'))
                 rec['branches'] = br
                 ok = ok or okb
             rec['via_cluster'] = len(self.via_cluster(net, w, need_v))

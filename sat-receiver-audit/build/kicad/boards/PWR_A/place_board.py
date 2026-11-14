@@ -58,6 +58,14 @@ GAP = 0.4          # mm, courtyard to courtyard on one side (routing room; the p
 VIA_KEEP = 0.5     # mm, courtyard to a scripted via centre beyond its radius (pads keep the 0.15 clearance with room)
 STEPS = 400000     # annealing moves
 GRIDSTEP = 0.05    # mm, position grid
+# W2 PWR-L6-SCRIPT review fix: the eviction of the legaliser searches the 3000 nearest statically legal spots and moves the evicted
+# parts up to 30 mm (was 400 and 15 mm): with the read 1210 heights (2.80 mm) the H-TRIM zones take no 1210 any more and the make_board
+# copper is an obstacle, so a ghost needs a wider search
+EVICT_SPOTS = 3000
+EVICT_R = 30.0
+# W2 PWR-L6-SCRIPT review fix: parts this tool keeps at a given place (fixed like the anchors, but not anchors of the planner, whose
+# group regions they would cut): R131 (RT of U108) carries the end of the scripted RT track of make_board.py: ref -> (x, y, rotation)
+BOARD_PINS = {'R131': (22.15, 78.85, 270)}
 WEIGHT = {'BATT': 4.0, 'PWR3A': 3.0, 'PWR2A': 2.0, 'PWR1A': 1.5}  # cost weight per net class (others 1.0)
 
 
@@ -99,12 +107,15 @@ class Model:
         graph = bg.load_graph()
         manifest = bg.read_json(bg.MANIFEST)
         pos = {r['ref']: r for r in self.study['positions']['refs']}
-        fixed = mb.fixed_refs(self.study, self.spec)
+        fixed = mb.fixed_refs(self.study, self.spec) | set(BOARD_PINS)
         parts = []
         for p in self.spec['parts']:
             r = pos[p['ref']]
             anchor = p['anchor'] if p.get('anchor') else {'at': r['at'], 'align': 'origin', 'rotation': r['rotation'],
                                                           'side': r['side']}
+            if p['ref'] in BOARD_PINS:
+                bx, by, brot = BOARD_PINS[p['ref']]
+                anchor = {'at': [bx, by], 'align': 'origin', 'rotation': brot, 'side': 'F'}
             parts.append({'ref': p['ref'], 'source': p['source'], 'anchor': anchor})
         template = bg.resolve({**self.spec, 'parts': parts, 'groups': []}, graph, manifest)
         self.refs = [t['ref'] for t in template]
@@ -164,7 +175,19 @@ class Model:
         for ra in self.spec['reserved_areas']:
             if ra.get('kind') in ('copper', 'thermal_bond'):
                 self.copper[ra.get('side', 'F')].append(tuple(ra['rect']))
+        # W2 PWR-L6-SCRIPT review fix: the converter-stage and stub copper of make_board.py (SCRIPT_TRACKS, SCRIPT_ZONES on F.Cu/B.Cu,
+        # SCRIPT_VIAS) is copper too: no movable courtyard on it (a part placed on the F.Cu LAB5 band had no GND fan-out left)
+        for tr in mb.SCRIPT_TRACKS:
+            if tr['layer'] in ('F.Cu', 'B.Cu'):
+                w = tr['width_mm'] / 2
+                for a, b in zip(tr['path'], tr['path'][1:]):
+                    self.copper[tr['layer'][0]].append((min(a[0], b[0]) - w, min(a[1], b[1]) - w, max(a[0], b[0]) + w, max(a[1], b[1]) + w))
+        for z in mb.SCRIPT_ZONES:
+            if z['layer'] in ('F.Cu', 'B.Cu'):
+                xs, ys = [q[0] for q in z['outline']], [q[1] for q in z['outline']]
+                self.copper[z['layer'][0]].append((min(xs), min(ys), max(xs), max(ys)))
         self.vias = [(tuple(v['at']), v['diameter_mm'] / 2 + VIA_KEEP) for v in self.spec['pre_route']['vias']]
+        self.vias += [(tuple(at), 0.3 + VIA_KEEP) for _vid, _net, at, _why in mb.SCRIPT_VIAS]
         # the GND fan-out of the fixed parts (make_board.py gnd_fanout on the fixed parts alone; make_board fans them out
         # first, so the same vias and stubs come back): its vias keep every courtyard off, its stubs the courtyards of
         # their side
@@ -335,7 +358,7 @@ def place():
                     if m.static_ok(ref, b):
                         spots.append((math.dist((x, y), c0), x, y, rot, at))
         spots.sort()
-        for _d, _x, _y, rot, at in spots[:400]:
+        for _d, _x, _y, rot, at in spots[:EVICT_SPOTS]:
             b = m.box(ref, at, rot)
             # sorted: near() is a set, and the eviction order below breaks area ties by this order (W2 PWRJ-LAYERS6: with
             # str hash randomisation the set order made two runs differ)
@@ -350,7 +373,7 @@ def place():
             placed = []
             ok = True
             for o in sorted(hit, key=lambda r: -((m.box(r)[2] - m.box(r)[0]) * (m.box(r)[3] - m.box(r)[1]))):
-                s = spiral(o, saved[o][0], (saved[o][1], (saved[o][1] + 90) % 360), 15.0)
+                s = spiral(o, saved[o][0], (saved[o][1], (saved[o][1] + 90) % 360), EVICT_R)
                 if s is None:
                     ok = False
                     break
@@ -573,6 +596,8 @@ def place():
         s = study_pos[ref]
         if (r4(m.at[ref][0]), r4(m.at[ref][1])) != (r4(s['at'][0]), r4(s['at'][1])) or m.rot[ref] != int(s['rotation']) % 360:
             rows[ref] = {'at': [r4(m.at[ref][0]), r4(m.at[ref][1])], 'rotation': m.rot[ref], 'side': m.side[ref]}
+    for ref, (bx, by, brot) in BOARD_PINS.items():  # pinned by this tool: make_board.py places them from this file
+        rows[ref] = {'at': [r4(bx), r4(by)], 'rotation': brot, 'side': 'F'}
     unweighted = 0.0
     for n, lst in m.net_pins.items():
         xs = [pinpos[r][num][0] for r, num in lst]
@@ -587,7 +612,8 @@ def place():
                    'study_sha256': bg.sha256_bytes(bg.canonical(m.study)),
                    'pwr_b_h_trim_sha256': bg.sha256_bytes(bg.canonical(read(PWR_B_SPEC)['h_trim']))},
         'rules': {'seed': SEED, 'steps': STEPS, 'gap_mm': GAP, 'edge_inset_mm': EDGE_INSET, 'via_keep_mm': VIA_KEEP,
-                  'weights': WEIGHT, 'fixed': 'anchors of PWR_A.spec-shrink2.json and parts with a PWR-B cut-out'},
+                  'weights': WEIGHT, 'fixed': 'anchors of PWR_A.spec-shrink2.json, parts with a PWR-B cut-out and BOARD_PINS',
+                  'board_pins': {r: list(v) for r, v in sorted(BOARD_PINS.items())}},
         'cost': {'note': 'sum over the non-GND nets of the half-perimeter of the pin box (weighted by class), mm',
                  'planner': r4(start_cost), 'after_legalising': r4(legal_cost), 'final': r4(final),
                  'final_unweighted_hpwl_mm': r4(unweighted), 'accepted_moves': accepted},

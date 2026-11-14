@@ -419,12 +419,13 @@ def connect_all(self, net, allow_rip=True, width=0.15, layers=('F.Cu', 'In2.Cu',
 Finisher.connect_all = connect_all
 
 
-def branch_pass(self, net, is_branch, width_of, layers_of, max_mm=12.0):
+def branch_pass(self, net, is_branch, width_of, layers_of, max_mm=12.0, target_ok=None):
     """Low-current branches of a power net (W2 PWRJ-LAYERS6): an island whose pads all belong to branch parts (test points,
     capacitors, divider resistors: is_branch) joins any other copper of the net within max_mm at the branch width
     (width_of(refs)) on layers_of(refs); the spec lists each such ref in branch_exempt (pcb/check_boards.py: power-class
     chains from that ref's pads within max_mm, at least the branch width, leave the class width check). Main-path islands
-    are not touched. Returns (all joined, branch records)."""
+    are not touched. target_ok (W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-02): only the copper it accepts is a target (a branch taps
+    class-width copper, never a power pad). Returns (all joined, branch records)."""
     recs, tried = [], set()
     for _ in range(60):
         groups = [gr for gr in self.m.islands(net) if any(i.kind == 'pad' for i in gr) or len(gr) > 1]
@@ -438,7 +439,11 @@ def branch_pass(self, net, is_branch, width_of, layers_of, max_mm=12.0):
             if key in tried:
                 continue
             refs = sorted({i.ref for i in G if i.kind == 'pad'})
-            rest = [i for gr in groups if gr is not G for i in gr]
+            rest = [i for gr in groups if gr is not G for i in gr if target_ok is None or target_ok(i)]
+            if not rest:
+                tried.add(key)
+                self.log(f'    {net}: branch {refs} no class-width copper to tap')
+                continue
             w, lays = width_of(refs), layers_of(refs)
             res = R.route_link(self.m, net, G, rest, island_box([G], max_mm * 0.7), width=w, verbose=False, layers=lays)
             if res is None or (not res['runs'] and not res['vias']):

@@ -703,6 +703,32 @@ def study(spec_name):
             return None, str(error).replace('board_gen: ', '')
         return (anchors, rows), None
 
+    # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-01: the planner keeps a part that may not stand under a PWR-B THT pin field (read height
+    # above zone_h_max_mm, a lower bound, or none read) out of every region that overlaps an H-TRIM zone (pin field + window_margin of the
+    # current pcb/boards/PWR_B.json), as place_board.py does on the board; the low parts still use those regions (rule H-TRIM)
+    htrim_zones, htrim_tall = [], set()
+    if spec.get('h_trim'):
+        hz0 = SimpleNamespace(spec=pspec)
+        for t_ in template:
+            pf = planned_fp.get(t_['ref'])
+            mpn = pf['mpn'] if pf else (db.get(t_['ref']) or {}).get('mpn')
+            h, _src, lb = pbud.Design.height_for(hz0, mpn, pf['footprint'] if pf else t_['fpid'])
+            if h is None or lb or h > spec['h_trim']['zone_h_max_mm'] + 1e-9:
+                htrim_tall.add(t_['ref'])
+        for p_ in bg.read_json(PWR_B_SPEC)['parts']:
+            if p_['source'] != 'graph' or not p_.get('anchor') or p_['anchor'].get('side', 'F') != 'F':
+                continue
+            gm = graph.get(p_['ref'])
+            if gm is None or gm['footprint'] not in fp_files:
+                continue
+            f = tht_field(bg.footprint_geometry((BASE / fp_files[gm['footprint']]['file']).read_text(encoding='utf-8')), p_['anchor'])
+            if f and f[1]:
+                b = f[0]
+                htrim_zones.append([r4(b[0] - margin), r4(b[1] - margin), r4(b[2] + margin), r4(b[3] + margin)])
+
+    def htrim_ok(ref, region, side):
+        return side != 'F' or ref not in htrim_tall or not any(bg.rects_overlap(region, z) for z in htrim_zones)
+
     group_anchor_of = {}
     for group in spec['groups']:
         side = group.get('side', 'F')
@@ -724,6 +750,8 @@ def study(spec_name):
             cand_refs = sorted(remaining, key=lambda r: (-round(area(geometry[r]['courtyard']), 6), bg.sort_ref(r)))
             chunk, last = [], None
             for ref in cand_refs:
+                if not htrim_ok(ref, region, side):
+                    continue
                 member = {'ref': ref, 'rotation': orient(ref, region)}
                 ok, why = try_pack(f'{group["id"]}@{name}', region, chunk + [member], side)
                 if ok:

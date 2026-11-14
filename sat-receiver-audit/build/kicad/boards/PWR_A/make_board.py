@@ -84,7 +84,9 @@ MOVES: dict = {
     # W2 PWR-L6-SCRIPT (design choice): CIN_HF2 0.375 mm up, pad 1 still at the VIN2 level and pad 2 at the PGND2 level, so that
     # the SW link to the CBOOT capacitor passes under it from the gap between VIN2 and RBOOT (TI SNVSBD5D 11.1 / figure 11-2:
     # "route the SW connection under the device through the gap between VIN2 and RBOOT pins"); a 0603, no H-TRIM field
-    'C122': (13.07, 47.9, 90, 'F', 'W2 PWR-L6-SCRIPT: C122 (CIN_HF2) 0.375 mm up for the SW-CBOOT link under it (SNVSBD5D 11.1)'),
+    # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-05: 0.475 mm up (was 0.375), so that the SW link under it is 0.45 mm wide (TI "short,
+    # wide traces" for CBOOT), 0.175 mm from C122.1; pad 1 still overlaps the VIN2 stub, pad 2 the PGND2 bar
+    'C122': (13.07, 48.0, 90, 'F', 'W2 PWR-L6-SCRIPT: C122 (CIN_HF2) 0.475 mm up for the 0.45 mm SW-CBOOT link under it (SNVSBD5D 11.1)'),
 }
 PLACEMENT = HERE / 'board-placement.json'
 
@@ -184,6 +186,13 @@ def with_copper_option(nc):
         out['classes'][name].update({k: w[k] for k in ('outer_min_width_mm', 'outer_ipc_width_mm', 'split_outer_per_layer_mm',
                                                        'inner_min_width_mm')})
     return out
+
+
+# W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-06: E1_CONV_IN (Q102 drain -> U107/U108 VIN, about 3.4 A of the 4 A SYS12 at the LM61460
+# input, under F101 7.5 A) has no tools/assembly_data.py NET_CURRENT entry, so pcb/generated/netclasses.json leaves it SIG. On this board
+# it is planned (freeze/plan6.py) and routed (PWR_A.kicad_pro) at the BATT width of its feed E1_SW until NET_CURRENT lists it (owner: the
+# GR lineage, build/15 OPEN); pcb/check_boards.py does not check it before then (its narrower converter-input pieces: build/15)
+BOARD_CLASS_OVERRIDES = {'E1_CONV_IN': 'BATT'}
 
 
 def six_layer_zones(pre):
@@ -568,7 +577,6 @@ SCRIPT_DROP = {
     'CU-SYS12SW-PIN': 'U107 SW stem 0.7 mm: the SW entry pour instead (within half the class width of the pin)',
     'CU-SYS12SW-PIN-J-SYS12SW-L102': 'joint of the old SW stem',
     'CU-CONVIN-U107-L-BAR': 'VIN2 bar re-scripted above the SW-CBOOT link (C122 moved up)',
-    'CU-CONVIN-U107-L-J-CONVIN-U107-L-BAR': 'joint of the old VIN2 bar (it crossed the SW-CBOOT link)',
     'CU-GND-U107-L': 'PGND2 bar re-scripted clear of the moved C122.1',
     'CU-LAB5RAW-VOUT1': 'U108 VOUT1 stem 1.3 mm < BATT 1.6: a 1.6 mm entry instead',
     'CU-LAB5RAW-VOUT2': 'U108 VOUT2 stem 1.3 mm < BATT 1.6: a 1.6 mm entry instead',
@@ -587,12 +595,20 @@ U108_WHY = 'TPSM63606 U108 stage per SLVSGB4B 11.1 / figure 11-2'
 # branch_exempt rows of SCRIPT_BRANCHES (exemption policy: sense or logic pins only).
 SCRIPT_TRACKS = [
     # --- U107 LM61460 (zone 3') ---
-    sc_track('SC-U107-SWLINK', 'E1_SYS12_SW', 0.25, [(16.0, 46.375), (11.15, 46.375), (11.15, 45.3)],
+    # W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-05 (TI SNVSBD5D 11.1: "Use wide traces for the CBOOT capacitor ... short, wide traces to
+    # the CBOOT and SW pins"): the SW link 0.45 mm through the VIN2-RBOOT gap (0.75 mm: 0.15 mm each side) and on to x 12.15 above the RBOOT
+    # track, then 0.6 mm down to C127.2; the CBOOT tracks 0.4 mm except the 0.25 mm pin-row exit between BIAS and RBOOT. C127/R127 stay:
+    # nearer the pins there is no room (the RBOOT exit, the VIN2 stub and C122 fill the corner; build/15)
+    sc_track('SC-U107-SWLINK', 'E1_SYS12_SW', 0.45, [(16.0, 46.375), (12.15, 46.375)],
              f'{U107_WHY}: SW to the CBOOT capacitor C127.2 under the device through the gap between VIN2 (pin 12) and RBOOT (pin 13), '
-             'then under C122.1 and above R127.2; F.Cu only, no via (gate-drive charge only: branch of C127)'),
-    sc_track('SC-U107-CBOOT', 'E1_SYS12_CBOOT', 0.25, [(14.3, 45.375), (13.5, 45.375), (13.5, 43.525), (12.65, 43.525)],
-             f'{U107_WHY}: CBOOT pin 14 to RBOOT R127.1 (short)'),
-    sc_track('SC-U107-CBOOT-C127', 'E1_SYS12_CBOOT', 0.25, [(12.65, 43.55), (11.15, 43.575)], f'{U107_WHY}: R127.1 to CBOOT C127.1'),
+             'then under C122.1 and above the RBOOT track; F.Cu only, no via (gate-drive charge: carve-out CO-U107-BOOT of C127)'),
+    sc_track('SC-U107-SWLINK-2', 'E1_SYS12_SW', 0.6, [(12.15, 46.375), (11.15, 46.375), (11.15, 45.3)],
+             f'{U107_WHY}: the SW link 0.6 mm left of the RBOOT turn, down onto C127.2'),
+    sc_track('SC-U107-CBOOT', 'E1_SYS12_CBOOT', 0.25, [(14.3, 45.375), (13.7, 45.375)],
+             f'{U107_WHY}: CBOOT pin 14 out of the pin row (0.25 mm between BIAS and RBOOT)'),
+    sc_track('SC-U107-CBOOT-W', 'E1_SYS12_CBOOT', 0.4, [(13.7, 45.375), (13.5, 45.375), (13.5, 43.525), (12.65, 43.525)],
+             f'{U107_WHY}: CBOOT to RBOOT R127.1, 0.4 mm'),
+    sc_track('SC-U107-CBOOT-C127', 'E1_SYS12_CBOOT', 0.4, [(12.65, 43.55), (11.15, 43.575)], f'{U107_WHY}: R127.1 to CBOOT C127.1, 0.4 mm'),
     sc_track('SC-U107-RBOOT', 'E1_SYS12_RBOOT', 0.2, [(14.3, 45.875), (12.65, 45.875), (12.65, 45.3)],
              f'{U107_WHY}: RBOOT pin 13 to R127.2, between the CBOOT track and the SW link'),
     sc_track('SC-U107-VCC', 'E1_SYS12_VCC', 0.25, [(15.475, 44.5), (15.475, 43.3)], f'{U107_WHY}: VCC pin 2 to CVCC C128.1, short'),
@@ -612,8 +628,9 @@ SCRIPT_TRACKS = [
     sc_track('SC-U107-SENSE-IN2', 'SYS12', 0.25, [(12.9, 38.3), (12.9, 55.0), (6.2, 61.7), (6.2, 62.0)],
              f'{U107_WHY}: the BIAS / RFBT output sense on In2.Cu (In1.Cu GND between it and the F.Cu SW copper) to the SYS12 bar '
              'left of zone 3\'', layer='In2.Cu'),
-    sc_track('SC-U107-VINBAR', 'E1_CONV_IN', 0.5, [(9.15, 46.725), (10.2, 47.05), (13.07, 47.05)],
-             f'{U107_WHY}: CIN2 C119.1 to CIN_HF2 C122.1 along the VIN2 level, above the SW-CBOOT link'),
+    sc_track('SC-U107-VINBAR', 'E1_CONV_IN', 1.2, [(9.6, 47.5), (12.7, 47.5)],
+             f'{U107_WHY}: CIN2 C119.1 (1.05 mm up for H-TRIM) to CIN_HF2 C122.1 at the VIN2 level, 1.2 mm between the SW link and the '
+             'PGND2 bar (W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-06: as wide as the corner allows; the In4 VIN strap runs in parallel)'),
     # --- E1-05 path A (L101.2 -> L205.1): the B.Cu LAB5 trunk at the free width (MODEL scan of freeze/plan6.py at 0.20 mm) ---
     sc_track('SC-LAB5-B-TOP-1', 'LAB5', 2.4, [(2.0, 91.5), (13.0, 91.5)], E105_WHY + ': top run from the L101 vias, 2.4 mm', 'B.Cu'),
     sc_track('SC-LAB5-B-TOP-2', 'LAB5', 2.3, [(13.0, 91.5), (25.4, 91.5)], E105_WHY + ': top run to the spine, 2.3 mm', 'B.Cu'),
@@ -631,18 +648,25 @@ SCRIPT_TRACKS = [
     sc_track('SC-LAB5-F-BAND', 'LAB5', 2.0, [(26.2, 27.8), (39.6, 27.8)],
              E105_WHY.replace('B.Cu', 'F.Cu') + ': F.Cu strip over the B.Cu band (y 26.8-28.8, free at 0.20 mm) into the RISE-L copper; '
              'three vias to the band at its left end'),
-    sc_track('SC-U107-PGND2', 'GND', 1.2, [(8.3, 48.4), (14.3, 48.4)], f'{U107_WHY}: PGND2 to C122.2 and C119.2 (clear of C122.1)'),
+    sc_track('SC-U107-PGND2', 'GND', 1.0, [(14.3, 48.4), (13.07, 48.8), (12.3, 49.95), (9.15, 50.0)],
+             f'{U107_WHY}: PGND2 to C122.2 and round the VIN bar up to C119.2 (C119 1.05 mm up for H-TRIM)'),
     sc_track('SC-Q102-S', 'E1_SW', 1.6, [(26.175, 35.0), (26.175, 36.9)],
              'BATT 1.6 mm pin-group bar over the Q102 sources S1-S3 from the E1_SW bar (power switch: no neck, no stem)'),
     sc_track('SC-Q201-S', 'SYS12', 1.6, [(31.468, 58.05), (31.468, 59.5)],
              'BATT 1.6 mm from the SYS12 crossing onto the Q201 source (power switch: no neck, no stem)'),
+    # --- W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-03 / -C-03: the TVS cathodes on BATT copper within 5 mm (make_spec.py TVS_ANCHORS) ---
+    sc_track('SC-D105-K', 'E1_SW', 1.6, [(13.45, 9.25), (16.6, 9.25)],
+             'TVS D105 (SMBJ17A) cathode to the E1_SW rise pour at the BATT width 1.6 mm, 1.15 mm pad to pour (TVS joined at class width)'),
+    sc_track('SC-D104-K', 'E1_N', 1.6, [(69.55, 8.25), (72.6, 8.25), (73.85, 7.9)],
+             'TVS D104 (SMBJ17A) cathode to the J108.2 (E1_N) pin at the BATT width 1.6 mm, 1.4 mm pad to pad (TVS joined at class width)'),
     # --- U108 TPSM63606 (zone 4') ---
     sc_track('SC-U108-VOUT1', 'E1_LAB5_RAW', 1.6, [(12.0, 76.2), (12.0, 77.3)], f'{U108_WHY}: BATT 1.6 mm onto VOUT1 (pin 8) from its via'),
     sc_track('SC-U108-VOUT2', 'E1_LAB5_RAW', 1.6, [(16.0, 76.2), (16.0, 77.3)], f'{U108_WHY}: BATT 1.6 mm onto VOUT2 (pin 9) from its via'),
     sc_track('SC-U108-R129', 'E1_LAB5_RAW', 1.6, [(16.0, 77.0), (17.875, 77.0)],
              f'{U108_WHY}: the regulation point RFBT R129.1 at the VOUT2 copper, at the class width'),
-    sc_track('SC-U108-VLDOIN', 'E1_LAB5_RAW', 0.25, [(11.75, 79.725), (11.0, 79.725), (11.0, 78.35), (11.45, 77.9)],
-             f'{U108_WHY}: VLDOIN pin 5 (LDO bias input, milliamperes: branch of U108 pad 5) to VOUT1'),
+    sc_track('SC-U108-VLDOIN', 'E1_LAB5_RAW', 0.25, [(11.75, 79.725), (11.0, 79.725), (11.0, 77.2), (11.5, 77.2)],
+             f'{U108_WHY}: VLDOIN pin 5 (LDO bias input, milliamperes: branch of U108 pad 5) to the 1.6 mm VOUT1 track below the VOUT1 pad '
+             '(W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-02: a branch taps class-width copper, never a power pad)'),
     sc_track('SC-U108-AGND6', 'GND', 0.25, [(11.75, 79.225), (13.4, 79.225)], f'{U108_WHY}: AGND pin 6 to PGND pin 19 under the module'),
     sc_track('SC-U108-AGND11', 'GND', 0.25, [(16.25, 79.225), (14.6, 79.225)], f'{U108_WHY}: AGND pin 11 to PGND pin 19 under the module'),
     sc_track('SC-U108-FB', 'E1_LAB5_FB', 0.2, [(16.25, 78.725), (17.875, 78.725), (18.7, 78.1), (19.525, 77.0)],
@@ -667,6 +691,45 @@ def sc_zone(zid, net, layer, outline, why, priority=3):
             'its class only within half the class width of its pad, where pcb/check_boards.py counts it as the pad)'}
 
 
+IN_GROUP_WHY = ('W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-04: TPS7A4701 IN pins 15 and 16 joined by a pin-group pour round the package corner '
+                '(pin 15 cannot leave to the right: the E1_SW rise pour / the part beside it; pin 16 has its BATT entry upward); 0.375 mm from the EP, '
+                'every point within half the BATT width of a pin')
+
+
+def in_group(zid, net, x, y):
+    """The IN pin-group pour of a TPS7A4701 RGW0020A at (x, y), rotation 0: pins 15 (right column, top) and 16 (top row, right)."""
+    return sc_zone(zid, net, 'F.Cu', [(x + 1.95, y + 1.145), (x + 2.7, y + 1.145), (x + 2.7, y + 2.7), (x + 1.145, y + 2.7),
+                                      (x + 1.145, y + 1.95), (x + 1.95, y + 1.95)], IN_GROUP_WHY, priority=2)  # under the entry pour
+
+
+EFUSE_ENTRY_WHY = ('W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-01 / -P-04: TPS259470 bar-end entry (carve-out CO-EFUSE-BAR-END, TI SLVSFC9C '
+                   'figure 8-22: IN leaves at one bar end, OUT at the other): the bar cross-section at most half the class width long, then a '
+                   'class-width landing; scripted so that the placement keeps its courtyards off it')
+LDO_ENTRY_WHY = ('W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-04: BATT entry of TPS7A4701 IN pin 16 (0.31 mm pin cross-section 0.45 mm up, '
+                 '1.6 mm landing); pin 15 joins it through the pin-group pour')
+# zone id -> (net, pad, strip mm, landing mm, rectangles [x0, y0, x1, y1] board mm, why): the scripted pin entries
+ENTRY_ZONES = {
+    'SC-PE-U109-IN': ('E1_USB_PD_RAW', 'U109.5', 0.35, 0.95, [[4.05, 36.3, 6.45, 36.6], [3.7, 36.3, 4.05, 36.6], [2.75, 35.975, 3.7, 36.925]], EFUSE_ENTRY_WHY),
+    'SC-PE-U109-OUT': ('E1_USB_PD_SAFE', 'U109.6', 0.35, 0.95, [[4.05, 36.8, 6.45, 37.1], [6.45, 36.8, 6.8, 37.1], [6.8, 36.475, 7.75, 37.425]], EFUSE_ENTRY_WHY),
+    'SC-PE-U201-IN': ('E2_J21_FUSED', 'U201.5', 0.5, 1.6, [[29.6, 69.65, 29.9, 72.05], [29.6, 69.15, 29.9, 69.65], [28.95, 67.55, 30.55, 69.15]], EFUSE_ENTRY_WHY),
+    'SC-PE-U201-OUT': ('E2_J21_EF', 'U201.6', 0.2, 0.95, [[30.1, 69.65, 30.4, 72.05], [30.1, 72.05, 30.4, 72.25], [29.775, 72.25, 30.725, 73.2]], EFUSE_ENTRY_WHY),
+    'SC-PE-U202-IN': ('E2_DISP_IN', 'U202.5', 0.5, 1.6, [[8.85, 102, 11.25, 102.3], [8.35, 102.0, 8.85, 102.3], [6.75, 101.35, 8.35, 102.95]], EFUSE_ENTRY_WHY),
+    'SC-PE-U202-OUT': ('DISP12', 'U202.6', 0.15, 0.4, [[8.85, 102.5, 11.25, 102.8], [11.25, 102.5, 11.4, 102.8], [11.4, 102.45, 11.8, 102.85]], EFUSE_ENTRY_WHY),
+    'SC-PE-U203-IN': ('VCC_3V3_MKEY', 'U203.5', 0.1, 0.4, [[16.65, 90.65, 16.95, 93.05], [16.65, 90.55, 16.95, 90.65], [16.6, 90.15, 17.0, 90.55]], EFUSE_ENTRY_WHY),
+    'SC-PE-U203-OUT': ('E2_LIME_EF', 'U203.6', 0.15, 0.4, [[16.15, 90.65, 16.45, 93.05], [16.15, 93.05, 16.45, 93.2], [16.1, 93.2, 16.5, 93.6]], EFUSE_ENTRY_WHY),
+    'SC-U211-IN-ENTRY': ('E2_LNB_IN', 'U211.16', 0.45, 1.6, [[13.695, 18.5, 14.005, 19.25], [13.695, 19.25, 14.005, 19.7], [13.05, 19.7, 14.65, 21.3]], LDO_ENTRY_WHY),
+    'SC-U213-IN-ENTRY': ('E2_BONI_IN', 'U213.16', 0.45, 1.6, [[76.695, 18.5, 77.005, 19.25], [76.695, 19.25, 77.005, 19.7], [76.05, 19.7, 77.65, 21.3]], LDO_ENTRY_WHY),
+}
+
+
+def make_board_outline(rects):
+    """The outline of a scripted entry: the union of its rectangles (one rectilinear piece)."""
+    out = rect_union_outline([tuple(r) for r in rects])
+    if out is None:
+        raise SystemExit(f'make_board: the entry rectangles {rects} are not one rectilinear piece')
+    return [tuple(p) for p in out]
+
+
 SCRIPT_ZONES = [
     sc_zone('SC-U107-SW-ENTRY', 'E1_SYS12_SW', 'F.Cu', [(15.25, 46.5), (16.75, 46.5), (16.75, 49.6), (15.25, 49.6)],
             f'{U107_WHY}: SW pin 10 (0.4 x 2.4 mm between the PGND/VIN pins) up to the L102.1 trunk: 1.5 mm wide inside the pin rows '
@@ -674,21 +737,66 @@ SCRIPT_ZONES = [
     sc_zone('SC-U108-VOUT-IN4', 'E1_LAB5_RAW', 'In4.Cu', [(11.2, 75.5), (16.8, 75.5), (16.8, 76.9), (11.2, 76.9)],
             f'{U108_WHY}: VOUT pins 8/9 joined by a polygon on a lower layer (In4.Cu, over the GND fill) through the three VOUT vias',
             priority=2),
+    in_group('SC-U211-IN-GROUP', 'E2_LNB_IN', 12.55, 16.55),
+    in_group('SC-U213-IN-GROUP', 'E2_BONI_IN', 75.55, 16.55),
+    *[sc_zone(zid, net, 'F.Cu', make_board_outline(rects), why) for zid, (net, _pad, _strip, _land, rects, why) in ENTRY_ZONES.items()],
+]
+# scripted pin entries (pcb/check_boards.py measures them; same form as the planned PE- pours): zone id -> row
+SCRIPT_ENTRIES = {zid: {'pad': pad, 'strip_mm': strip, 'landing_mm': [land, land]} for zid, (_net, pad, strip, land, _r, _w) in ENTRY_ZONES.items()}
+# W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-P-07 (decision, build/15): deviations from TI SLVSGB4B 11.1 that the converter stage records
+# (board_audit.py reports them instead of a finding)
+CONVERTER_DEVIATIONS = [
+    {'id': 'DEV-U108-CIN-RETURN', 'parts': ['C130', 'C131'],
+     'why': ('SLVSGB4B 11.1 asks for input-capacitor ground returns on localized top-side planes to the PGND pads; here the GND pads of the '
+             '1210 bulk capacitors C130/C131 face away from the module (the E1_CONV_IN bar at y 85 lies between) and return through their '
+             'own GND vias to the solid In1.Cu plane 0.2234 mm under F.Cu. Accepted because the module integrates dual 0402 input '
+             'capacitors for the high-frequency bypass (SLVSGB4B 11.1), so the fast input loop closes inside the package; turning the '
+             'capacitors would put the VIN pads away from VIN1/VIN2. EMI and ripple: bench gate, OPEN')},
+    {'id': 'DEV-U108-COUT-RETURN', 'parts': ['C133', 'C134', 'C135'],
+     'why': ('SLVSGB4B 11.1 asks for output-capacitor ground returns on localized top-side planes to the PGND pads; C133-C135 return '
+             'through the GND bar at y 71.8 and its vias to In1.Cu (0.2234 mm under F.Cu), next to the module, because the VOUT bars to '
+             'the VOUT pins and their thermal vias fill the space between the capacitors and PGND pad 20. Output ripple and EMI: bench '
+             'gate, OPEN')},
 ]
 # branch_exempt rows of the scripted converter copper (exemption policy: sense or logic pins only): ref -> row
 SCRIPT_BRANCHES = {
-    'C127': {'max_mm': 7.0, 'min_width_mm': 0.25,
-             'reason': 'SW-CBOOT link (SNVSBD5D 11.1: through the VIN2-RBOOT gap) to the bootstrap capacitor; gate-drive charge only'},
+    'C127': {'pads': ['2'], 'max_mm': 7.0, 'min_width_mm': 0.45,
+             'reason': 'SW-CBOOT link (SNVSBD5D 11.1: through the VIN2-RBOOT gap) to the bootstrap capacitor, 0.45 / 0.6 mm; gate-drive charge '
+                       'only; carve-out CO-U107-BOOT'},
     'U107': {'pads': ['1'], 'max_mm': 40.0, 'min_width_mm': 0.25,
              'reason': 'BIAS pin 1 and the RFBT / CFF output sense: bias and sense current (milliamperes), In2.Cu under the In1.Cu GND'},
-    'U108': {'pads': ['5'], 'max_mm': 3.5, 'min_width_mm': 0.25,
+    'U108': {'pads': ['5'], 'max_mm': 4.0, 'min_width_mm': 0.25,
              'reason': 'VLDOIN pin 5 (internal LDO input, milliamperes) to VOUT1 between the module pins'},
 }
+TPS25947_SOURCE = ('TI TPS25947xx data sheet SLVSFC9C (rev. C, May 2026) section 8.4.1 Layout Guidelines and figure 8-22 Layout Example, '
+                   'https://www.ti.com/lit/ds/symlink/tps25947.pdf, read 2026-11-14 (curl default User-Agent, HTTP 200, sha256 '
+                   '8f96de389903091650d4f462dcfad3210071c3ae7093623a7978f34baf8a65b4; fetch-only, not committed)')
 EXEMPTION_POLICY = {
     'why': ('W2 PWR-L6-SCRIPT (synthesis PWR-L6-SCRIPT, judge 1 power rating): class-width exemptions follow the pad they serve. '
             'branch_exempt only for test points, resistors of 100 ohm or more and sense or logic pins; no neck on TVS, connector or '
-            'harness lands, shunts, fuses, power-switch nodes, eFuse IN/OUT or converter capacitors; a neck at least as wide as its '
-            'pad and no longer than it (no pin stems); pin entries are pours within half the class width of the pad'),
+            'harness lands, shunts, fuses, power-switch nodes, eFuse IN/OUT, converter VIN/VOUT/SW pins or converter capacitors; a neck '
+            'at least as wide as its pad and no longer than it (no pin stems); pin entries are pours whose strip, measured on the zone, '
+            'is at most half the class width and no narrower than the pad; a branch taps class-width copper, never a power pad. A '
+            'forbidden role takes an exemption only through a carve-out row below, recorded in build/15 for owner/judge acceptance'),
+    'carve_outs': [
+        {'id': 'CO-EFUSE-BAR-END', 'scope': 'pin_entry', 'role': 'efuse_in_out',
+         'pads': ['U109.5', 'U109.6', 'U201.5', 'U201.6', 'U202.5', 'U202.6', 'U203.5', 'U203.6'],
+         'why': ('the TPS259470 RPW0010A IN and OUT are 0.3 x 2.4 mm bars between the signal pin rows, 0.2 mm apart: copper reaches them '
+                 'only at a bar end. TI\'s own layout (figure 8-22) leaves the IN bar at one end and the OUT bar at the other, at the bar '
+                 'width, into the IN and OUT planes; the entry here is that strip (bar cross-section, at most half the class width long, '
+                 'measured by pcb/check_boards.py) and then a class-width landing. MODEL: a 0.3 x 0.475 mm strip of 2 oz copper is about '
+                 '0.39 mOhm (6 mW at 4 A); IPC-2221 for long conductors (1.65 A at +10 degC) does not describe a stub between the package '
+                 'bar and the landing; the bench temperature gate stays OPEN. TI also asks for vias under the device into the IN/OUT '
+                 'planes: not taken (0.3 mm bars, project hole-to-hole 0.5 mm), recorded OPEN'),
+         'source': TPS25947_SOURCE, 'status': 'OPEN: owner/judge acceptance (build/15)'},
+        {'id': 'CO-U107-BOOT', 'scope': 'branch', 'role': 'converter_capacitor', 'pads': ['C127.2'], 'min_width_mm': 0.45, 'max_mm': 7.0,
+         'reaches': ['U107.10'],
+         'why': ('LM61460 bootstrap capacitor C127: TI routes the SW connection to CBOOT under the device through the 0.75 mm gap between '
+                 'VIN2 and RBOOT, so this link cannot take the SW class width (BATT 1.6 mm); it carries the gate-drive charge only. Width at '
+                 'least 0.45 mm (the gap less 0.15 mm each side), 0.6 mm outside it, path at most 7 mm, F.Cu only (MODEL; IPC-2221 0.45 mm '
+                 '2 oz about 2.2 A at +10 degC)'),
+         'source': SCRIPT_SOURCE, 'status': 'OPEN: owner/judge acceptance (build/15)'},
+    ],
 }
 
 
@@ -1140,6 +1248,21 @@ def height_of(inp, ref):
     return None, f'not read: no row of pcb/partition-spec.json heights covers {fp} (TBD)'
 
 
+def lower_bound_refs(inp):
+    """Top refs whose pcb/partition-spec.json height row is a lower bound only (W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-04): the
+    H-TRIM check of board_audit.py counts such a part under a PWR-B field as a violation."""
+    out = []
+    by_mpn = inp.pspec['heights']['by_mpn']
+    for ref, pa in sorted(inp.parts.items(), key=lambda kv: bg.sort_ref(kv[0])):
+        if pa.side != 'F':
+            continue
+        _h, src = height_of(inp, ref)
+        key = src.split('heights.by_mpn.', 1)[1].split(':', 1)[0] if 'heights.by_mpn.' in src else None
+        if key and by_mpn.get(key, {}).get('lower_bound'):
+            out.append(ref)
+    return out
+
+
 def heights_block(inp):
     """heights / heights_source for the top parts (the bottom chip heights are not read: TBD, check_boards lists them
     unverified); a part without a source stays out, so check_boards lists it unverified instead of passing it."""
@@ -1186,6 +1309,7 @@ def scripted_classes(inp, scripted_nets):
     """GND plus every net whose copper is all scripted (W2 PWR-L6-SCRIPT: the converter-stage nets and the 'power' nets of
     script-planned-6l.json): net -> SCRIPTED_<class>, a class with the widths of the net's class that the router never routes."""
     cls = {n: v['class'] for n, v in inp.netclasses['nets'].items()}
+    cls.update(BOARD_CLASS_OVERRIDES)  # W2 PWR-L6-SCRIPT review fix: E1_CONV_IN scripted at the BATT widths
     out = dict(SCRIPTED_CLASSES)
     for net in sorted(scripted_nets):
         out[net] = 'SCRIPTED_' + cls.get(net, 'SIG')
@@ -1215,6 +1339,8 @@ def project_json(inp, nets, scripted=None):
         classes.append(row)
     proj['net_settings']['classes'] = classes
     patterns = [p for p in nc['kicad']['netclass_patterns'] if p['pattern'] in nets and p['pattern'] not in scripted]
+    patterns += [{'netclass': cls, 'pattern': net} for net, cls in sorted(BOARD_CLASS_OVERRIDES.items())
+                 if net in nets and net not in scripted and not any(p['pattern'] == net for p in patterns)]
     patterns += [{'netclass': cls, 'pattern': net} for net, cls in scripted.items()]
     proj['net_settings']['netclass_patterns'] = sorted(patterns, key=lambda p: p['pattern'])
     rules = proj['board']['design_settings']['rules']
@@ -1358,7 +1484,9 @@ def planned_copper(inp, pre):
         for b in d['branches']:
             for ref in b['refs']:
                 row = branches.setdefault(ref, {'max_mm': 0.0, 'min_width_mm': 9.9, 'links': []})
-                row['max_mm'] = max(row['max_mm'], math.ceil(float(b['length_mm']) * 2) / 2 + 0.5)
+                # + 1.5 mm: the planner's run length leaves out the stub from the pad centre and the leg after a layer change, which
+                # pcb/check_boards.py track_chain counts (W2 PWR-L6-SCRIPT review fix: R221 measured 8.78 mm against a 7.67 mm run)
+                row['max_mm'] = max(row['max_mm'], math.ceil(float(b['length_mm']) * 2) / 2 + 1.5)
                 row['min_width_mm'] = min(row['min_width_mm'], float(b['width_mm']))
                 row['links'].append(f'{net} {b["width_mm"]} mm x {b["length_mm"]} mm')
         if d['kind'] == 'power':
@@ -1547,8 +1675,11 @@ def build(frozen=True, planned=True):
     if exempt:
         out['branch_exempt'] = dict(sorted(exempt.items(), key=lambda kv: bg.sort_ref(kv[0])))
     out['exemption_policy'] = EXEMPTION_POLICY
+    entries = dict(SCRIPT_ENTRIES)
     if plan_doc and plan_doc.get('pin_entry_pours'):
-        out['pin_entry_pours'] = dict(sorted(plan_doc['pin_entry_pours'].items()))
+        entries.update(plan_doc['pin_entry_pours'])
+    if entries:
+        out['pin_entry_pours'] = dict(sorted(entries.items()))
     zones = inp.contract['thermal_bond_mm']
     conv = {}
     for zi in (3, 4):
@@ -1558,9 +1689,12 @@ def build(frozen=True, planned=True):
                       and box[0] <= q['at'][0] <= box[2] and box[1] <= q['at'][1] <= box[3]} | {'GND'})
         conv[str(zi)] = {'rect': box, 'own_nets': own}
     out['converter_zones'] = {
-        'zones': conv, 'layers': ['F.Cu', 'In1.Cu'], 'scripted_nets': sorted(n for n in scripted if n != 'GND'),
+        'zones': conv, 'layers': ['F.Cu', 'In1.Cu', 'B.Cu'], 'scripted_nets': sorted(n for n in scripted if n != 'GND'),
         'rule': ("W2 PWR-L6-SCRIPT: on F.Cu and In1.Cu over the converter zones 3'/4' (contract thermal_bond zones 3 and 4) only "
                  'the nets with a pad inside the zone (own_nets) carry copper; In1.Cu is the solid GND plane under the converters. '
+                 'Review fix RV-PWRL6-PRE-C-02 (decision, build/15): on B.Cu too, so the GND bond copper under the Gelid pad of a converter '
+                 'zone stays whole; over the LDO bond zones 1-2 other nets may run on B.Cu under the solder mask (the Gelid pad insulates '
+                 'every zone, as it does the GND copper). '
                  'The scripted nets are not autorouted (scripted classes); freeze/plan6.py keeps the zones as F.Cu keep-outs for the '
                  'other nets, freeze/freeze6.py drops router copper of other nets there; board_audit.py checks it (MODEL)'),
         'source': SCRIPT_SOURCE}
@@ -1579,6 +1713,10 @@ def build(frozen=True, planned=True):
     out['heights_unread'] = {'refs': unread, 'why': 'no read or class height in pcb/partition-spec.json heights (harness '
                              'headers in uncovered edge strips, whose ceilings the contract does not give, and parts not '
                              'read yet): check_boards lists them unverified (TBD)'}
+    out['heights_lower_bound'] = {'refs': lower_bound_refs(inp),
+                                  'why': 'W2 PWR-L6-SCRIPT review fix RV-PWRL6-PRE-C-04: the height row is a lower bound only (pcb/partition-spec.json '
+                                         'lower_bound); board_audit.py counts such a part under a PWR-B THT pin field as an H-TRIM violation'}
+    out['converter_deviations'] = CONVERTER_DEVIATIONS
     out['scripted_copper_on_board'] = {'notes': copper_notes,
                                        'rule': 'make_board.py board_copper: F.Cu/B.Cu pours of PWR_A.spec-shrink2.json as locked '
                                                'tracks (ids CU-<pour>); same-net overlapping In2.Cu pours merged'}
