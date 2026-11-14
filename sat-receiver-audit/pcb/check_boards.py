@@ -51,6 +51,11 @@ Checker keys (optional, in either form; contract frame mm, y up unless contract_
   planned_cutouts {margin_mm, rects [{id, rect [x, y, w, h]}]} (W2 PWRB-R; the same key makes pcb/board_gen.py rule areas, and
   W2 PWR-TOOLS made it the only cut-out key): areas that become cut-outs later; no copper of any kind on any layer inside a
   rect or within margin_mm of it.
+  exemption_policy {why} (W2 PWR-L6-SCRIPT, opt-in): the class-width exemptions follow the power rating of the pad they serve
+  (exemption_role, from the graph value, footprint and pin names). branch_exempt (optionally limited to `pads`) is kept only
+  for test points, resistors of 100 ohm or more and sense or logic pins; a neck (neck_exempt) is kept only at a pad that is
+  not a TVS, connector or harness land, shunt, fuse, power-switch node, eFuse IN/OUT or converter capacitor, at least as wide
+  as that pad's narrow side and no longer than its long side (no pin stems). Anything else is a class_widths finding.
 """
 from __future__ import annotations
 
@@ -687,9 +692,9 @@ class Frame:
 NATIVE_KEYS = ('board_id', 'board_file', 'contract_file', 'contract_board', 'refs', 'domains', 'board_only_refs', 'board_only_pins',
                'instances', 'hole_ref_prefixes', 'contract_transform', 'bond_hole', 'gnd_chassis_ties', 'split_nets', 'neck_exempt',
                'branch_exempt', 'rf50_exempt', 'rf50_taper', 'b2b', 'tht_pockets', 'tht_pocket_margin_mm', 'height_zones', 'heights',
-               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'planned_cutouts', 'copper_option')
+               'sides', 'max_height_bottom', 'coupons', 'rf_checks', 'planned_cutouts', 'copper_option', 'exemption_policy')
 DICT_KEYS = ('board_only_refs', 'board_only_pins', 'contract_transform', 'bond_hole', 'split_nets', 'neck_exempt', 'branch_exempt',
-             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'planned_cutouts')
+             'rf50_exempt', 'rf50_taper', 'heights', 'rf_checks', 'planned_cutouts', 'exemption_policy')
 LIST_KEYS = ('refs', 'domains', 'hole_ref_prefixes', 'b2b', 'tht_pockets', 'height_zones', 'sides', 'coupons')
 
 
@@ -1470,21 +1475,144 @@ def track_chain(board, net, start_pads, max_len, width_ok):
     return [chain[i] for i in sorted(chain)], longest
 
 
-def branch_exemptions(board, spec, netclasses, views):
-    """branch_exempt {ref: {max_mm, min_width_mm, reason}}: power-class track chains ending at that ref's pads.
-    Returns ({id(track item)}, {id(pad)}, unverified entries)."""
+# W2 PWR-L6-SCRIPT exemption policy (spec key exemption_policy, opt-in): the role of a pad decides which class-width exemption
+# it may carry. Allowed for branch_exempt: test points, resistors of 100 ohm or more, sense or logic pins. Never for a neck:
+# the power-path parts below. Sense or logic pins of an IC (pin names, upper case); a capacitor between a power net and a
+# signal net (not GND, not power class: a bootstrap, feed-forward or filter capacitor) counts as a sense or logic part too.
+EXEMPT_BRANCH_ROLES = ('test_point', 'resistor_ge_100', 'sense_logic_pin')
+EXEMPT_NECK_FORBIDDEN = ('tvs', 'connector', 'shunt', 'fuse', 'power_switch', 'efuse_in_out', 'converter_capacitor')
+SENSE_LOGIC_PINS = frozenset((
+    'FB', 'SENSE/FB', 'SENSE', 'VSENSE', 'BIAS', 'VCC', 'VDD', 'VS', 'VLDOIN', 'VCAP', 'EN', 'EN/UV', 'EN/UVLO', 'EN/SYNC',
+    'UVLO', 'OVLO', 'PG', 'PGOOD', 'PGFB', 'RT', 'SS', 'TR', 'ILM', 'ILIM', 'DVDT', 'SET', 'OUTS', 'ANODE', 'CATHODE', 'INA', 'INB',
+    'CBOOT', 'BOOT', 'BST', 'RBOOT', 'IN+', 'IN-', 'INP', 'INN'))
+TVS_MARKERS = ('SMBJ', 'SMAJ', 'SMCJ', 'SMF', 'TVS', 'ESD', 'PESD', 'TPD')
+EFUSE_MARKERS = ('TPS259', 'TPS2596', 'TPS2594')        # TI eFuses (TPS259470, TPS259630, ...)
+LOAD_SWITCH_MARKERS = ('TPS2553', 'TPS2051', 'TPS22')     # TI current-limited power switches
+CONVERTER_POWER_PINS = ('VIN', 'VIN1', 'VIN2', 'PVIN', 'VOUT', 'VOUT1', 'VOUT2', 'SW', 'LX', 'PH')
+
+
+def ohms_of(value):
+    """Resistance of a graph value string ('10k 1%', '0.22R', '0R33', 'WSL2512R3300FEA 0.330 Ω'): ohms or None."""
+    text = str(value or '').replace('Ω', 'R').replace('Ohm', 'R').replace('ohm', 'R')
+    toks = text.split()
+    for i, tok in enumerate(toks):
+        m = re.fullmatch(r'([0-9]+)[Rr]([0-9]+)', tok)
+        if m:
+            return float(f'{m.group(1)}.{m.group(2)}')
+        m = re.match(r'([0-9]+(?:[.,][0-9]+)?)([RrKkMm]?)', tok)
+        if not m:
+            continue
+        unit = m.group(2) or ('R' if i + 1 < len(toks) and toks[i + 1] == 'R' else '')
+        if unit or '.' in m.group(1):
+            return float(m.group(1).replace(',', '.')) * {'': 1.0, 'r': 1.0, 'k': 1e3, 'm': 1e6}[unit.lower()]
+    return None
+
+
+def exemption_role(board, spec, graph, ref, number, lookup, classes):
+    """(role, why) of pad ref.number for the exemption policy (W2 PWR-L6-SCRIPT): from the ref prefix, the graph value and
+    footprint, the pin name and the nets of the part's other pads. MODEL classification; the spec says why it is used."""
+    comp = (graph or {}).get(ref) or {}
+    value = str(comp.get('value', ''))
+    fp = next((f for f in board.footprints if f['ref'] == ref), None)
+    lib = (comp.get('footprint') or (fp or {}).get('lib') or '')
+    pins = {str(p.get('number')): p for p in comp.get('pins', [])}
+    name = str((pins.get(str(number)) or {}).get('name') or '').upper()
+    up = value.upper()
+    pads = [p for p in board.pads if p['ref'] == ref]
+    mine = [p for p in pads if p['number'] == str(number)]
+    net = mine[0]['net'] if mine else (pins.get(str(number)) or {}).get('net')
+    other_nets = sorted({p['net'] for p in pads if p['number'] != str(number) and p['net']})
+
+    def power(n):
+        return n and classes.get(lookup(n)[1], {}).get('kind') == 'power'
+    b2b = {e.get('ref') for e in spec.get('b2b', []) if isinstance(e, dict)}
+    if ref.startswith('TP'):
+        return 'test_point', 'test point (no load current)'
+    if re.match(r'F\d', ref):
+        return 'fuse', 'fuse in the power path'
+    if ref in b2b:
+        return 'b2b_contact', 'board-to-board mezzanine contact of the spec b2b pair'
+    if re.match(r'(J|P|X|CN)\d', ref) or lib.startswith('Connector'):
+        return 'connector', 'connector or harness land'
+    if re.match(r'D\d', ref):
+        if any(k in up for k in TVS_MARKERS) or 'TVS' in lib.upper():
+            return 'tvs', 'TVS diode on the power net'
+        return 'diode', 'diode in the power path'
+    if re.match(r'Q\d', ref):
+        return 'power_switch', 'power FET (switch node of the power path)'
+    if re.match(r'L\d', ref) or re.match(r'FB\d', ref):
+        return 'inductor', 'series inductor or bead of the power path'
+    if re.match(r'R\d', ref):
+        r = ohms_of(value)
+        if r is None:
+            return 'resistor_unknown', f'resistor of unread value {value!r}'
+        if r < 1.0:
+            return 'shunt', f'shunt / damper resistor {r:g} ohm in the power path'
+        return ('resistor_ge_100', f'resistor {r:g} ohm (milliamperes)') if r >= 100.0 else \
+            ('resistor_lt_100', f'resistor {r:g} ohm (below 100 ohm)')
+    if re.match(r'C\d', ref):
+        if other_nets and all(n != 'GND' and not power(n) for n in other_nets):
+            return 'sense_logic_pin', f'capacitor from the power net to the signal net(s) {", ".join(other_nets)} (bootstrap, feed-forward, filter)'
+        conv = any(p.get('net') in {net, *other_nets} and str(p.get('name', '')).upper() in CONVERTER_POWER_PINS
+                   for c in (graph or {}).values() if re.match(r'U\d', c.get('ref', ''))
+                   for p in c.get('pins', []) if p.get('net') and p.get('net') != 'GND')
+        return ('converter_capacitor', 'input or output capacitor of a converter') if conv else \
+            ('capacitor', 'decoupling or bulk capacitor on the power net')
+    if re.match(r'U\d', ref):
+        if any(k in up for k in EFUSE_MARKERS) and name in ('IN', 'OUT', 'VIN', 'VOUT'):
+            return 'efuse_in_out', f'eFuse {name} pin'
+        if any(k in up for k in LOAD_SWITCH_MARKERS) and name in ('IN', 'OUT', 'VIN', 'VOUT'):
+            return 'power_switch', f'power-switch {name} pin'
+        if name in SENSE_LOGIC_PINS:
+            return 'sense_logic_pin', f'{name} pin (sense or logic, milliamperes)'
+        if name in CONVERTER_POWER_PINS:
+            return 'converter_power_pin', f'converter {name} pin'
+        return 'ic_power_pin', f'IC pin {name or number} on the power net'
+    return 'other', 'not classified'
+
+
+def policy_neck_ok(role, pad, piece):
+    """Neck rule of the exemption policy: not a forbidden role, at least the pad's narrow side wide, no longer than its long side."""
+    if role in EXEMPT_NECK_FORBIDDEN:
+        return False, f'no neck on a {role.replace("_", " ")}'
+    s = piece.shape
+    length = math.hypot(s.x2 - s.x1, s.y2 - s.y1)
+    narrow, long_side = min(pad['w'], pad['h']), max(pad['w'], pad['h'])
+    if piece.width + 1e-9 < narrow:
+        return False, f'neck {r3(piece.width)} mm narrower than the pad ({r3(narrow)} mm)'
+    if length > long_side + 1e-9:
+        return False, f'neck {r3(length)} mm longer than the pad ({r3(long_side)} mm): a pin stem'
+    return True, ''
+
+
+def branch_exemptions(board, spec, netclasses, views, graph=None, policy_out=None):
+    """branch_exempt {ref: {max_mm, min_width_mm, reason[, pads]}}: power-class track chains ending at that ref's pads (all of
+    them, or only `pads`). With exemption_policy, a row whose start pads are not all allowed roles exempts nothing and is a
+    finding in policy_out. Returns ({id(track item)}, {id(pad)}, unverified entries)."""
     lookup = class_map(netclasses, views)
     classes = netclasses.get('classes', {})
     tracks, pads, notes = set(), set(), []
+    policy = spec.get('exemption_policy')
     for ref, rule in sorted(spec.get('branch_exempt', {}).items()):
         if not isinstance(rule, dict) or 'max_mm' not in rule or 'min_width_mm' not in rule:
             spec_error(spec, f'branch_exempt.{ref} needs max_mm, min_width_mm and reason')
-        mine = [p for p in board.pads if p['ref'] == ref and p['net']]
+        only = {str(n) for n in rule['pads']} if rule.get('pads') is not None else None
+        mine = [p for p in board.pads if p['ref'] == ref and p['net'] and (only is None or p['number'] in only)]
         for bnet in sorted({p['net'] for p in mine}):
             gnet, cname = lookup(bnet)
             if classes.get(cname, {}).get('kind') != 'power':
                 continue
             start = [p for p in mine if p['net'] == bnet]
+            if policy is not None:
+                roles = {p['number']: exemption_role(board, spec, graph, ref, p['number'], lookup, classes) for p in start}
+                bad = {n: r for n, r in roles.items() if r[0] not in EXEMPT_BRANCH_ROLES}
+                if bad:
+                    if policy_out is not None:
+                        n, (role, why) = sorted(bad.items())[0]
+                        policy_out.append(finding('class_widths', f'{ref} branch on {gnet}',
+                                                  f'exemption_policy: branch_exempt not allowed on {ref}.{n} ({role}: {why}); only '
+                                                  f'{", ".join(EXEMPT_BRANCH_ROLES)}', at=(start[0]['x'], start[0]['y'])))
+                    continue
             items, longest = track_chain(board, bnet, start, float(rule['max_mm']), lambda it: it.width + 1e-9 >= float(rule['min_width_mm']))
             tracks.update(id(it) for it in items)
             pads.update(id(p) for p in start)
@@ -1494,14 +1622,26 @@ def branch_exemptions(board, spec, netclasses, views):
     return tracks, pads, notes
 
 
-def check_classes(board, spec, netclasses, views):
+def check_classes(board, spec, netclasses, views, graph=None):
     out, unverified, info = [], [], {'tracks_checked': 0, 'pour_necks': [], 'split_nets': {}}
     lookup = class_map(netclasses, views)
     classes = netclasses.get('classes', {})
     outer = [l for l in ('F.Cu', 'B.Cu') if l in board.copper_layers]
     exempt = spec.get('neck_exempt', {})
-    branch_tracks, branch_pads, notes = branch_exemptions(board, spec, netclasses, views)
+    policy = spec.get('exemption_policy')
+    branch_tracks, branch_pads, notes = branch_exemptions(board, spec, netclasses, views, graph=graph, policy_out=out)
     unverified.extend(notes)
+    if policy is not None:
+        info['exemption_policy'] = {'branch_roles': list(EXEMPT_BRANCH_ROLES), 'neck_forbidden_roles': list(EXEMPT_NECK_FORBIDDEN),
+                                    'neck_rule': 'at least the narrow side of its pad wide, no longer than its long side',
+                                    'branch_exempt': len(spec.get('branch_exempt', {})), 'neck_exempt': len(exempt)}
+    role_cache = {}
+
+    def role(p):
+        key = (p['ref'], p['number'])
+        if key not in role_cache:
+            role_cache[key] = exemption_role(board, spec, graph, p['ref'], p['number'], lookup, classes)
+        return role_cache[key]
     pads_by_net = collections.defaultdict(list)
     for p in board.pads:
         if p['net']:
@@ -1520,15 +1660,27 @@ def check_classes(board, spec, netclasses, views):
             out.append(finding('class_widths', f'split {gnet}', f'split_nets declares {list(layers)} but {why}; '
                                f'checked at the single-layer width {classes[cname]["outer_min_width_mm"]} mm', layer=','.join(layers)))
 
+    refused = []
+
     def escaped(it):
-        # a pad-escape segment: both ends within escape_mm (+ half the pad) of a pad of an exempt ref on the same net
+        # a pad-escape segment: both ends within escape_mm (+ half the pad) of a pad of an exempt ref on the same net; with
+        # exemption_policy only where that pad's role and the piece's width and length allow a neck (policy_neck_ok)
+        why_not = None
         for p in pads_by_net.get(it.net, []):
             e = exempt.get(p['ref'])
             if not e:
                 continue
             lim = float(e.get('escape_mm', 0)) + max(p['w'], p['h']) / 2
             if all(math.hypot(px - p['x'], py - p['y']) <= lim for px, py in ((it.shape.x1, it.shape.y1), (it.shape.x2, it.shape.y2))):
-                return True
+                if policy is None:
+                    return True
+                r, rwhy = role(p)
+                ok, why = policy_neck_ok(r, p, it)
+                if ok:
+                    return True
+                why_not = why_not or f'{p["ref"]}.{p["number"]} ({r}: {rwhy}): {why}'
+        if why_not:
+            refused.append(why_not)
         return False
     noted = set()
     for it in board.tracks:
@@ -1549,8 +1701,10 @@ def check_classes(board, spec, netclasses, views):
                                    'low-current branches go in branch_exempt)', at=(it.shape.x1, it.shape.y1), value=it.width, layer=it.layer))
             continue
         if it.width + 1e-9 < need and not escaped(it):
-            out.append(finding('class_widths', f'{it.kind} {gnet}', f'{cname} copper narrower than {need} mm ({why}) on {it.layer}',
+            note = f'; exemption_policy refuses the neck at {refused.pop()}' if refused else ''
+            out.append(finding('class_widths', f'{it.kind} {gnet}', f'{cname} copper narrower than {need} mm ({why}) on {it.layer}{note}',
                                at=(it.shape.x1, it.shape.y1), value=it.width, limit=need, layer=it.layer))
+        refused.clear()
     by_net_layer = collections.defaultdict(list)
     for it in board.copper:
         if it.net and it.kind in ('zone', 'track', 'arc', 'pad', 'via') and id(it) not in branch_tracks:
@@ -2181,7 +2335,7 @@ def review_board(board, spec, contract, graph, netclasses, mates=None, component
     if 'planned_cutouts' in spec:  # W2 PWRB-R: only specs with planned_cutouts (every other review stays unchanged)
         run('planned_cutouts', check_planned_cutouts(board, frame, spec))
     run('pad_nets', check_pad_nets(board, spec, graph, views))
-    run('class_widths', check_classes(board, spec, netclasses, views))
+    run('class_widths', check_classes(board, spec, netclasses, views, graph))
     run('rf50', check_rf50(board, spec, netclasses, views))
     run('gnd_chassis_ties', check_ties(board, spec, graph, views, frame))
     if 'rf_checks' in spec:

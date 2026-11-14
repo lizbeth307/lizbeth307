@@ -780,6 +780,87 @@ class BranchAndTaperTests(unittest.TestCase):
         self.assertEqual(checks_failed(review(self.taper(), spec)), ['rf50'])
 
 
+class ExemptionPolicyTests(unittest.TestCase):
+    """W2 PWR-L6-SCRIPT: with exemption_policy, branch_exempt is kept only for test points, resistors of 100 ohm or more and sense
+    or logic pins, and a neck only at a pad that is no power-path part, at least that pad's narrow side wide and no longer than
+    its long side. MODEL classification from the graph value, footprint and pin names."""
+    POLICY = {'why': 'W2 PWR-L6-SCRIPT unit test'}
+
+    def graph(self, ref, value='', pin_name='', other=None):
+        g = dict(GRAPH)
+        pins = [{'number': '1', 'name': pin_name, 'net': 'E1_N'}]
+        if other:
+            pins.append({'number': '2', 'name': '', 'net': other})
+        g[ref] = {'ref': ref, 'value': value, 'footprint': 'Fixture:PAD_SMD', 'pins': pins}
+        g['U90'] = {'ref': 'U90', 'value': 'LM61460', 'footprint': '', 'pins': [{'number': '1', 'name': 'VIN', 'net': 'E1_N'}]}
+        return g
+
+    def branch(self, ref, value='', pin_name='', policy=True, other=None):
+        t = tree('power_neck.kicad_pcb')  # a 0.2 mm line from TP1 (E1_N, BATT) to the pad of `ref`
+        smd_footprint(t, ref, (12, 5), 'E1_N')
+        if other:
+            x, y = K(12, 3.5)
+            fp = cb.kids(t, 'footprint')[-1]
+            fp.append(['pad', cb.Q('2'), 'smd', 'rect', ['at', '0', '%g' % (y - K(12, 5)[1])], ['size', '1', '1'],
+                       ['layers', cb.Q('F.Cu')], ['net', cb.Q(other)]])
+        seg(t, (12, 5), (12, 17), 0.2, 'F.Cu', 'E1_N')
+        spec = dict(PWR_SPEC, board_only_refs={ref: 'policy fixture'},
+                    branch_exempt={ref: {'max_mm': 13.0, 'min_width_mm': 0.15, 'reason': 'test'}})
+        if policy:
+            spec['exemption_policy'] = self.POLICY
+        return review(t, spec, graph=self.graph(ref, value, pin_name, other))
+
+    def test_allowed_branch_roles(self):
+        for ref, value, pin, other in (('U1', 'INA228', 'IN+', None), ('R1', '100k 1%', '', 'E1_SENSE'),
+                                       ('C1', '4.7pF', '', 'E1_FF'), ('U2', 'LM61460', 'BIAS', None)):
+            doc = self.branch(ref, value, pin, other=other)
+            self.assertEqual(doc['findings'], [], ref)
+            self.assertIn('exemption_policy', doc['checks']['class_widths'])
+
+    def test_refused_branch_roles(self):
+        for ref, value, pin, other, role in (('F1', '4A fuse', '', None, 'fuse'), ('D1', 'SMBJ17A', '', None, 'tvs'),
+                                             ('Q1', 'DMT6007', '', None, 'power_switch'), ('R2', '0.22R 1%', '', None, 'shunt'),
+                                             ('J3', 'header', '', None, 'connector'), ('U3', 'TPS259470', 'IN', None, 'efuse_in_out'),
+                                             ('U4', 'TPS2553', 'OUT', None, 'power_switch'), ('C2', '10uF', '', 'GND', 'converter_capacitor'),
+                                             ('R3', '10.0R', '', 'E1_X', 'resistor_lt_100'), ('U5', 'LM61460', 'SW', None, 'converter_power_pin')):
+            doc = self.branch(ref, value, pin, other=other)
+            hits = [f for f in doc['findings'] if 'exemption_policy' in f['detail']]
+            self.assertEqual(len(hits), 1, (ref, doc['findings']))
+            self.assertIn(role, hits[0]['detail'])
+            self.assertEqual(checks_failed(doc), ['class_widths'])
+            self.assertEqual(self.branch(ref, value, pin, policy=False, other=other)['findings'], [], ref)  # without the policy: as before
+
+    def test_branch_exempt_pads(self):
+        t = tree('power_neck.kicad_pcb')  # U6: pad 1 BIAS (sense) and pad 2 SW on the same net; only pad 1 is exempted
+        smd_footprint(t, 'U6', (12, 5), 'E1_N')
+        seg(t, (12, 5), (12, 17), 0.2, 'F.Cu', 'E1_N')
+        g = dict(GRAPH, U6={'ref': 'U6', 'value': 'LM61460', 'footprint': '', 'pins': [{'number': '1', 'name': 'BIAS', 'net': 'E1_N'},
+                                                                                         {'number': '2', 'name': 'SW', 'net': 'E1_N'}]})
+        spec = dict(PWR_SPEC, board_only_refs={'U6': 'policy fixture'}, exemption_policy=self.POLICY,
+                    branch_exempt={'U6': {'max_mm': 13.0, 'min_width_mm': 0.15, 'reason': 'BIAS line', 'pads': ['1']}})
+        self.assertEqual(review(t, spec, graph=g)['findings'], [])
+        spec['branch_exempt']['U6']['pads'] = ['1', '2']
+        g['U6']['pins'][0]['name'] = 'SW'
+        self.assertEqual(checks_failed(review(t, spec, graph=g)), ['class_widths'])
+
+    def neck(self, ref, value, length, width, size=0.4):
+        t = tree('power_neck.kicad_pcb')
+        smd_footprint(t, ref, (20, 5), 'E1_N', size=size)
+        seg(t, (20, 5), (20, 5 + length), width, 'F.Cu', 'E1_N')
+        spec = dict(PWR_SPEC, board_only_refs={ref: 'policy fixture'}, exemption_policy=self.POLICY,
+                    neck_exempt={ref: {'escape_mm': length + 0.2, 'reason': 'test'}})
+        return review(t, spec, graph=self.graph(ref, value, 'FB'))
+
+    def test_neck_rule(self):
+        self.assertEqual(self.neck('U7', 'LM61460', 0.3, 0.4)['findings'], [])            # at pad width, within the pad length
+        for ref, value, length, width, why in (('U7', 'LM61460', 1.0, 0.4, 'pin stem'), ('U7', 'LM61460', 0.3, 0.3, 'narrower than the pad'),
+                                               ('F7', 'fuse', 0.3, 0.4, 'no neck on a fuse'), ('D7', 'SMBJ17A', 0.3, 0.4, 'no neck on a tvs'),
+                                               ('Q7', 'FET', 0.3, 0.4, 'no neck on a power switch')):
+            doc = self.neck(ref, value, length, width)
+            self.assertEqual(checks_failed(doc), ['class_widths'], ref)
+            self.assertTrue(any(why in f['detail'] for f in doc['findings']), (ref, doc['findings']))
+
+
 class AdvisoryViaTests(unittest.TestCase):
     """PR-09: vias_per_transition is advisory and listed, not silently implied."""
 
